@@ -9,7 +9,7 @@ import { LandingFeedItem as LandingFeedItemType } from "src/utils/types/landing"
 
 const LandingHeader = (): JSX.Element => (
   <header
-    className="flex flex-col items-center gap-16 sm:items-start p-16 font-display min-h-screen sm:min-h-[calc(100vh-12rem)]
+    className="flex flex-col items-center gap-16 sm:items-start px-8 sm:px-16 py-16 font-display min-h-screen sm:min-h-[calc(100vh-12rem)]
     bg-[url('/images/landing.png')] bg-bottom bg-cover snap-start"
   >
     <div className="flex flex-col items-center sm:flex-row sm:gap-8 text-center sm:text-left">
