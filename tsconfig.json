@@ -6,7 +6,7 @@
       "dom.iterable",
       "esnext"
     ],
-    // "allowJs": true,
+    "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
     "allowSyntheticDefaultImports": true,
@@ -24,8 +24,7 @@
       "@styles/*": [
         "src/styles/*"
       ]
-    },
-    "allowJs": true
+    }
   },
   "include": [
     "next-env.d.ts",

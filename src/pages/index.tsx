@@ -9,7 +9,7 @@ import { LandingFeedItem as LandingFeedItemType } from "src/utils/types/landing"
 
 const LandingHeader = (): JSX.Element => (
   <header
-    className="flex flex-col items-center gap-16 sm:items-start p-16 font-display h-screen sm:min-h-[calc(100vh-12rem)] sm:h-fit
+    className="flex flex-col items-center gap-16 sm:items-start p-16 font-display min-h-screen sm:min-h-[calc(100vh-12rem)]
     bg-[url('/images/landing.png')] bg-bottom bg-cover snap-start"
   >
     <div className="flex flex-col items-center sm:flex-row sm:gap-8 text-center sm:text-left">
@@ -77,7 +77,7 @@ const LandingFeed = ({
 }): JSX.Element => {
   return (
     <section className="min-h-screen pb-20 snap-start">
-      <ul className="grid grid-cols-[repeat(auto-fill,minmax(22.5rem,1fr))] gap-8 p-8">
+      <ul className="flex flex-col sm:grid sm:grid-cols-[repeat(auto-fill,minmax(22.5rem,1fr))] gap-8 p-8">
         {feed.map((feedItem) => (
           <LandingFeedItem feedItem={feedItem} />
         ))}
