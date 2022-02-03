@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  * {
+    outline: none;
+  }
+}
+
 @layer utilities {
   .max-lines-1 {
     @apply [display:-webkit-box] [-webkit-line-clamp:1] [-webkit-box-orient:vertical]

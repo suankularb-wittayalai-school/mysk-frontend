@@ -34,7 +34,7 @@ const LandingHeader = (): JSX.Element => (
         icon={<MaterialIcon icon="login" />}
         url="/account/login"
         LinkElement={Link}
-        className="!text-light-on-tertiary-container !bg-light-tertiary-container"
+        className="!text-light-on-tertiary-container !bg-light-tertiary-container focus:shadow-lg"
       />
       <LinkButton
         name="ช่วยเหลือ"
@@ -42,7 +42,8 @@ const LandingHeader = (): JSX.Element => (
         url="/help"
         LinkElement={Link}
         className="!text-light-tertiary-container !bg-transparent !border-light-tertiary-container
-          hover:!bg-light-tertiary-translucent-08 focus:!bg-light-tertiary-translucent-12"
+          hover:!bg-light-tertiary-translucent-08 focus:!bg-light-tertiary-translucent-12
+          focus-visible:!bg-light-tertiary"
       />
     </div>
   </header>
@@ -54,7 +55,7 @@ const LandingFeedItem = ({ feedItem }: { feedItem: LandingFeedItemType }) => (
       <a className="flex flex-col gap-3 rounded-8xl group">
         <div
           className="relative grid place-items-center text-center font-display w-full aspect-[3/2] rounded-8xl
-            transition-shadow group-hover:shadow group-focus:shadow-lg
+            transition-shadow group-hover:shadow group-focus:shadow-md
             bg-light-surface-variant bg-center bg-cover"
           style={{ backgroundImage: `url('${feedItem.image}')` }}
         >
@@ -75,7 +76,7 @@ const LandingFeed = ({
   feed: Array<LandingFeedItemType>;
 }): JSX.Element => {
   return (
-    <section className="h-screen snap-start">
+    <section className="min-h-screen pb-20 snap-start">
       <ul className="grid grid-cols-[repeat(auto-fill,minmax(22.5rem,1fr))] gap-8 p-8">
         {feed.map((feedItem) => (
           <LandingFeedItem feedItem={feedItem} />
