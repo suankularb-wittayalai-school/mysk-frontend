@@ -4,4 +4,4 @@ export type LandingFeedItem = {
   desc: string;
   image?: string;
   url: string;
-}
+};
