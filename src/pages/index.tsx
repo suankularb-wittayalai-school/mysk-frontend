@@ -1,50 +1,55 @@
 // Modules
-import { LinkButton, MaterialIcon } from "@suankularb-components/react";
 import type { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
+
+// SK Components
+import { LinkButton, MaterialIcon } from "@suankularb-components/react";
 
 // Types
 import { LandingFeedItem as LandingFeedItemType } from "src/utils/types/landing";
 
 const LandingHeader = (): JSX.Element => (
   <header
-    className="flex flex-col items-center gap-16 sm:items-start px-8 sm:px-16 py-16 font-display min-h-screen sm:min-h-[calc(100vh-12rem)]
-    bg-[url('/images/landing.png')] bg-bottom bg-cover snap-start"
+    className="font-display min-h-screen sm:min-h-[calc(100vh-12rem)]
+      bg-[url('/images/landing.png')] bg-left bg-cover snap-start"
   >
-    <div className="flex flex-col items-center sm:flex-row sm:gap-8 text-center sm:text-left">
-      <div className="relative w-40 h-40">
-        <Image
-          src={"/images/branding/logo-white.png"}
-          layout="fill"
-          priority={true}
+    <div className="flex flex-col items-center gap-16 sm:items-start px-8 sm:px-16 py-16 h-full
+      bg-gradient-to-b sm:bg-gradient-to-r from-[#00000033] via-transparent to-[#00000033]">
+      <div className="flex flex-col items-center sm:flex-row sm:gap-8 text-center sm:text-left">
+        <div className="relative w-40 h-40">
+          <Image
+            src={"/images/branding/logo-white.png"}
+            layout="fill"
+            priority={true}
+          />
+        </div>
+        <div className="text-light-white font-display">
+          <h1 className="text-9xl font-bold">
+            My<span className="text-light-secondary-container">SK</span>
+          </h1>
+          <p className="text-4xl font-light">โรงเรียนสวนกุหลาบวิทยาลัย</p>
+        </div>
+      </div>
+      <div className="flex flex-row flex-wrap justify-center gap-4">
+        <LinkButton
+          name="เข้าสู่ระบบ"
+          type="filled"
+          icon={<MaterialIcon icon="login" />}
+          url="/account/login"
+          LinkElement={Link}
+          className="!text-light-on-tertiary-container !bg-light-tertiary-container focus:shadow-lg"
+        />
+        <LinkButton
+          name="ช่วยเหลือ"
+          type="outlined"
+          url="/help"
+          LinkElement={Link}
+          className="!text-light-tertiary-container !bg-transparent !border-light-tertiary-container
+            hover:!bg-light-tertiary-translucent-08 focus:!bg-light-tertiary-translucent-12
+            focus-visible:!bg-light-tertiary"
         />
       </div>
-      <div className="text-light-white font-display">
-        <h1 className="text-9xl font-bold">
-          My<span className="text-light-secondary-container">SK</span>
-        </h1>
-        <p className="text-4xl font-light">โรงเรียนสวนกุหลาบวิทยาลัย</p>
-      </div>
-    </div>
-    <div className="flex flex-row flex-wrap justify-center gap-4">
-      <LinkButton
-        name="เข้าสู่ระบบ"
-        type="filled"
-        icon={<MaterialIcon icon="login" />}
-        url="/account/login"
-        LinkElement={Link}
-        className="!text-light-on-tertiary-container !bg-light-tertiary-container focus:shadow-lg"
-      />
-      <LinkButton
-        name="ช่วยเหลือ"
-        type="outlined"
-        url="/help"
-        LinkElement={Link}
-        className="!text-light-tertiary-container !bg-transparent !border-light-tertiary-container
-          hover:!bg-light-tertiary-translucent-08 focus:!bg-light-tertiary-translucent-12
-          focus-visible:!bg-light-tertiary"
-      />
     </div>
   </header>
 );
