@@ -12,18 +12,19 @@ import { LandingFeedItem as LandingFeedItemType } from "src/utils/types/landing"
 const LandingHeader = (): JSX.Element => (
   <header
     className="min-h-screen snap-start bg-[url('/images/landing.png')]
-      bg-cover bg-left font-display sm:min-h-[calc(100vh-12rem)]"
+      bg-cover bg-left font-display sm:min-h-[calc(100vh-4rem)]"
   >
     <div
-      className="flex h-full flex-col items-center gap-16 bg-gradient-to-b from-[#00000033] via-transparent to-[#00000033]
-        px-8 py-16 sm:items-start sm:bg-gradient-to-r sm:px-16"
+      className="flex h-full flex-col items-center gap-16 bg-gradient-to-b
+        from-[#00000033] via-transparent to-[#00000033] px-8 py-16 sm:items-start sm:bg-gradient-to-r sm:px-16"
     >
       <div className="flex flex-col items-center text-center sm:flex-row sm:gap-8 sm:text-left">
         <div className="relative h-40 w-40">
           <Image
-            src={"/images/branding/logo-white.png"}
+            alt="โลโก้ดอกไม้สีชมพู มีตัวอักษร MySK อยู่ตรงกลาง"
             layout="fill"
             priority={true}
+            src={"/images/branding/logo-white.png"}
           />
         </div>
         <div className="font-display text-light-white">
@@ -56,7 +57,11 @@ const LandingHeader = (): JSX.Element => (
   </header>
 );
 
-const LandingFeedItem = ({ feedItem }: { feedItem: LandingFeedItemType }) => (
+const LandingFeedItem = ({
+  feedItem,
+}: {
+  feedItem: LandingFeedItemType;
+}): JSX.Element => (
   <li key={feedItem.id}>
     <Link href={feedItem.url}>
       <a className="group flex flex-col gap-3 rounded-8xl">
@@ -86,7 +91,7 @@ const LandingFeed = ({
     <section className="min-h-screen snap-start pb-20">
       <ul className="flex flex-col gap-8 p-8 sm:grid sm:grid-cols-[repeat(auto-fill,minmax(22.5rem,1fr))]">
         {feed.map((feedItem) => (
-          <LandingFeedItem feedItem={feedItem} />
+          <LandingFeedItem feedItem={feedItem} key={feedItem.id} />
         ))}
       </ul>
     </section>
