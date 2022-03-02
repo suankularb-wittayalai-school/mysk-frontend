@@ -13,6 +13,7 @@ import {
 
 // Types
 import { LandingFeedItem as LandingFeedItemType } from "src/utils/types/landing";
+import { useState } from "react";
 
 const LandingHeader = (): JSX.Element => (
   <header
@@ -106,29 +107,39 @@ const LandingFeed = ({
 }: {
   feed: Array<LandingFeedItemType>;
 }): JSX.Element => {
+  const [fullscreen, setFullScreen] = useState<boolean>(false);
+
   return (
     <section
-      className="absolute right-4 top-4 h-[calc(100vh-6.5rem)] w-[22.5rem] rounded-xl
-      bg-[#fbfcff88] text-light-on-surface backdrop-blur-xl dark:bg-[#191c1e88] dark:text-dark-on-surface"
+      className={`absolute bottom-0 h-[calc(100vh-4.75rem)] rounded-t-xl bg-[#fbfcff88] text-light-on-surface backdrop-blur-xl
+        transition-transform dark:bg-[#191c1e88] dark:text-dark-on-surface
+        sm:right-4 sm:top-4 sm:h-[calc(100vh-6.5rem)] sm:w-[22.5rem] sm:translate-y-0 sm:rounded-xl sm:transition-colors ${
+          fullscreen ? "translate-y-0" : "translate-y-[calc(100vh-14.25rem)]"
+        }`}
     >
       <Card
         type="stacked"
         appearance="tonal"
         className="h-full !bg-transparent"
       >
-        <CardHeader
-          icon="newspaper"
-          title={
-            <h2 className="font-display text-lg font-medium">
-              ข่าวสารสวนกุหลาบ
-            </h2>
-          }
-          label={
-            <p className="font-display">
-              ล่าสุด <time>21 กุมภาพันธ์ 2565</time>
-            </p>
-          }
-        />
+        <button
+          onClick={() => setFullScreen(!fullscreen)}
+          className="text-left"
+        >
+          <CardHeader
+            icon="newspaper"
+            title={
+              <h2 className="font-display text-lg font-medium">
+                ข่าวสารสวนกุหลาบ
+              </h2>
+            }
+            label={
+              <p className="font-display">
+                ล่าสุด <time>21 กุมภาพันธ์ 2565</time>
+              </p>
+            }
+          />
+        </button>
         <div className="grow overflow-y-auto">
           <ul className="flex flex-col">
             {feed.map((feedItem) => (
@@ -143,7 +154,7 @@ const LandingFeed = ({
 
 const Landing: NextPage = () => {
   return (
-    <div className="relative flex flex-col">
+    <div className="flex flex-col overflow-hidden sm:relative">
       <LandingHeader />
       <LandingFeed
         feed={[
