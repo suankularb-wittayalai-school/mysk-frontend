@@ -4,7 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 
 // SK Components
-import { LinkButton, MaterialIcon } from "@suankularb-components/react";
+import {
+  Card,
+  CardHeader,
+  LinkButton,
+  MaterialIcon,
+} from "@suankularb-components/react";
 
 // Types
 import { LandingFeedItem as LandingFeedItemType } from "src/utils/types/landing";
@@ -12,11 +17,13 @@ import { LandingFeedItem as LandingFeedItemType } from "src/utils/types/landing"
 const LandingHeader = (): JSX.Element => (
   <header
     className="min-h-screen snap-start bg-[url('/images/landing.png')]
-      bg-cover bg-left font-display sm:min-h-[calc(100vh-4rem)]"
+      bg-cover bg-left font-display sm:min-h-[calc(100vh-4.5rem)]"
   >
     <div
       className="flex h-full flex-col items-center gap-16 bg-gradient-to-b
-        from-[#00000033] via-transparent to-[#00000033] px-8 py-16 sm:items-start sm:bg-gradient-to-r sm:px-16"
+        from-[#00000033] via-transparent to-[#00000033]
+        px-8 py-16 dark:from-[#00000085] dark:via-[#00000060] dark:to-[#00000085]
+        sm:items-start sm:bg-gradient-to-r sm:px-16"
     >
       <div className="flex flex-col items-center text-center sm:flex-row sm:gap-8 sm:text-left">
         <div className="relative h-40 w-40">
@@ -41,7 +48,10 @@ const LandingHeader = (): JSX.Element => (
           icon={<MaterialIcon icon="login" />}
           url="/account/login"
           LinkElement={Link}
-          className="!bg-light-tertiary-container !text-light-on-tertiary-container focus:shadow-lg"
+          className="container-tertiary
+            hover:before:bg-light-tertiary-translucent-08 focus:shadow-lg
+            focus:before:bg-light-tertiary-translucent-12 hover:before:dark:bg-dark-tertiary-translucent-08
+            focus:before:dark:bg-dark-tertiary-translucent-12"
         />
         <LinkButton
           name="ช่วยเหลือ"
@@ -64,18 +74,27 @@ const LandingFeedItem = ({
 }): JSX.Element => (
   <li key={feedItem.id}>
     <Link href={feedItem.url}>
-      <a className="group flex flex-col gap-3 rounded-8xl">
+      <a
+        className="group relative flex
+          flex-col before:absolute before:top-0 before:left-0 before:h-full before:w-full before:content-['']
+          before:hover:bg-light-primary-translucent-08 before:focus:bg-light-primary-translucent-12
+          before:hover:dark:bg-dark-primary-translucent-08 before:focus:dark:bg-dark-primary-translucent-12"
+      >
         <div
-          className="relative grid aspect-[3/2] w-full place-items-center rounded-8xl bg-light-surface-variant bg-cover
-            bg-center text-center font-display
-            transition-shadow group-hover:shadow group-focus:shadow-md"
+          className="surface grid aspect-[2/1] w-full place-items-center text-center"
           style={{ backgroundImage: `url('${feedItem.image}')` }}
         >
           {!feedItem.image && feedItem.name}
         </div>
-        <div>
-          <h3 className="font-display text-4xl font-bold">{feedItem.name}</h3>
-          <p className="max-lines-2 font-display text-xl">{feedItem.desc}</p>
+        <div className="flex flex-col p-4">
+          <h3
+            className="font-display text-lg font-bold
+              group-hover:text-light-on-primary-container group-focus:text-light-on-primary-container
+              group-hover:dark:text-dark-on-primary-container group-focus:dark:text-dark-on-primary-container"
+          >
+            {feedItem.name}
+          </h3>
+          <p className="max-lines-2">{feedItem.desc}</p>
         </div>
       </a>
     </Link>
@@ -88,19 +107,43 @@ const LandingFeed = ({
   feed: Array<LandingFeedItemType>;
 }): JSX.Element => {
   return (
-    <section className="min-h-screen snap-start pb-20">
-      <ul className="flex flex-col gap-8 p-8 sm:grid sm:grid-cols-[repeat(auto-fill,minmax(22.5rem,1fr))]">
-        {feed.map((feedItem) => (
-          <LandingFeedItem feedItem={feedItem} key={feedItem.id} />
-        ))}
-      </ul>
+    <section
+      className="absolute right-4 top-4 h-[calc(100vh-6.5rem)] w-[22.5rem] rounded-xl
+      bg-[#fbfcff88] text-light-on-surface backdrop-blur-xl dark:bg-[#191c1e88] dark:text-dark-on-surface"
+    >
+      <Card
+        type="stacked"
+        appearance="tonal"
+        className="h-full !bg-transparent"
+      >
+        <CardHeader
+          icon="newspaper"
+          title={
+            <h2 className="font-display text-lg font-medium">
+              ข่าวสารสวนกุหลาบ
+            </h2>
+          }
+          label={
+            <p className="font-display">
+              ล่าสุด <time>21 กุมภาพันธ์ 2565</time>
+            </p>
+          }
+        />
+        <div className="grow overflow-y-auto">
+          <ul className="flex flex-col">
+            {feed.map((feedItem) => (
+              <LandingFeedItem feedItem={feedItem} key={feedItem.id} />
+            ))}
+          </ul>
+        </div>
+      </Card>
     </section>
   );
 };
 
 const Landing: NextPage = () => {
   return (
-    <div className="flex snap-y flex-col">
+    <div className="relative flex flex-col">
       <LandingHeader />
       <LandingFeed
         feed={[

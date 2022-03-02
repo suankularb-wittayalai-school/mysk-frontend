@@ -4,7 +4,7 @@
 
 @layer base {
   * {
-    outline: none;
+    @apply outline-none transition-colors;
   }
 }
 
