@@ -1,8 +1,13 @@
 // Modules
 import { useState } from "react";
+
+import { useTranslation, Trans } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+
 import type { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 // SK Components
 import {
@@ -15,72 +20,86 @@ import {
 // Types
 import { LandingFeedItem as LandingFeedItemType } from "src/utils/types/landing";
 
-const LandingBanner = (): JSX.Element => (
-  <header
-    className="min-h-screen snap-start bg-[url('/images/landing.png')]
+const ChangeLanguageButton = () => {
+  const { t } = useTranslation("landing");
+
+  return (
+    <Link href="/" locale={useRouter().locale == "en-US" ? "th" : "en-US"}>
+      <button className="btn--text flex flex-row gap-2 !text-light-tertiary-container">
+        <MaterialIcon icon="translate" />
+        <span>{t("changeLang")}</span>
+      </button>
+    </Link>
+  );
+};
+
+const LandingBanner = (): JSX.Element => {
+  const { t } = useTranslation(["landing", "common"]);
+
+  return (
+    <header
+      className="min-h-screen snap-start bg-[url('/images/landing.png')]
       bg-cover bg-left font-display sm:min-h-[calc(100vh-4.5rem)]"
-  >
-    {/* Vignette layer */}
-    <div
-      className="flex h-full flex-col items-center gap-16 bg-gradient-to-b
+    >
+      {/* Vignette layer */}
+      <div
+        className="flex h-full flex-col items-center gap-16 bg-gradient-to-b
         from-[#00000033] via-transparent to-[#00000033]
         px-8 py-16 sm:items-start sm:bg-gradient-to-r sm:px-16"
-    >
+      >
+        <div className="flex flex-col items-center text-center sm:flex-row sm:gap-8 sm:text-left">
+          {/* Logo */}
+          <div className="relative h-40 w-40">
+            <Image
+              alt="โลโก้ดอกไม้สีชมพู มีตัวอักษร MySK อยู่ตรงกลาง"
+              layout="fill"
+              priority={true}
+              src={"/images/branding/logo-white.png"}
+            />
+          </div>
 
-      <div className="flex flex-col items-center text-center sm:flex-row sm:gap-8 sm:text-left">
-        {/* Logo */}
-        <div className="relative h-40 w-40">
-          <Image
-            alt="โลโก้ดอกไม้สีชมพู มีตัวอักษร MySK อยู่ตรงกลาง"
-            layout="fill"
-            priority={true}
-            src={"/images/branding/logo-white.png"}
-          />
+          {/* Text */}
+          <div className="font-display text-light-white">
+            <h1 className="text-9xl font-bold">
+              <Trans i18nKey="brand.name" ns="common">
+                My<span className="text-light-secondary-container">SK</span>
+              </Trans>
+            </h1>
+            <p className="text-4xl font-light">
+              {t("brand.school", { ns: "common" })}
+            </p>
+          </div>
         </div>
 
-        {/* Text */}
-        <div className="font-display text-light-white">
-          <h1 className="text-9xl font-bold">
-            My<span className="text-light-secondary-container">SK</span>
-          </h1>
-          <p className="text-4xl font-light">โรงเรียนสวนกุหลาบวิทยาลัย</p>
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-2">
-        {/* Buttons */}
-        <div className="flex flex-row flex-wrap justify-center gap-4">
-          <LinkButton
-            name="เข้าสู่ระบบ"
-            type="filled"
-            icon={<MaterialIcon icon="login" />}
-            url="/account/login"
-            LinkElement={Link}
-            className="!bg-light-tertiary-container !text-light-tertiary
+        <div className="flex flex-col items-center gap-2 sm:items-start">
+          <div className="flex flex-row flex-wrap justify-center gap-4">
+            <LinkButton
+              name={t("login")}
+              type="filled"
+              icon={<MaterialIcon icon="login" />}
+              url="/account/login"
+              LinkElement={Link}
+              className="!bg-light-tertiary-container !text-light-tertiary
               hover:before:bg-light-tertiary-translucent-08 focus:shadow-lg
               focus:before:bg-light-tertiary-translucent-12 hover:before:dark:bg-dark-tertiary-translucent-08
               focus:before:dark:bg-dark-tertiary-translucent-12"
-          />
-          <LinkButton
-            name="ช่วยเหลือ"
-            type="outlined"
-            url="/help"
-            LinkElement={Link}
-            className="!border-light-tertiary-container !bg-transparent !text-light-tertiary-container
+            />
+            <LinkButton
+              name={t("help")}
+              type="outlined"
+              url="/help"
+              LinkElement={Link}
+              className="!border-light-tertiary-container !bg-transparent !text-light-tertiary-container
               hover:!bg-light-tertiary-translucent-08 focus:!bg-light-tertiary-translucent-12
               focus-visible:!bg-light-tertiary"
-          />
+            />
+          </div>
+          <ChangeLanguageButton />
         </div>
-
-        {/* Localization */}
-        <button className="btn--text flex flex-row gap-2 !text-light-tertiary-container">
-          <MaterialIcon icon="translate" />
-          <span>Available in English</span>
-        </button>
       </div>
-    </div>
-  </header>
-);
+    </header>
+  );
+};
 
 const LandingFeedItem = ({
   feedItem,
@@ -122,6 +141,7 @@ const LandingFeed = ({
   feed: Array<LandingFeedItemType>;
 }): JSX.Element => {
   const [fullscreen, setFullScreen] = useState<boolean>(false);
+  const { t } = useTranslation("landing");
 
   return (
     <section
@@ -166,30 +186,34 @@ const LandingFeed = ({
   );
 };
 
-const Landing: NextPage = () => {
-  return (
-    <div className="flex flex-col overflow-hidden sm:relative">
-      <LandingBanner />
-      <LandingFeed
-        feed={[
-          {
-            id: 0,
-            name: "ประกาศเกียรติคุณ",
-            desc: "ประกาศเกียรติคุณโรงเรียนสวนกุหลาบวิทยาลัย ประจำปีการศึกษา 2563",
-            url: "/certificate?year=2563",
-          },
-          {
-            id: 1,
-            name: "การบริหารจัดการชั้นเรียน",
-            desc: "เรื่องที่พวกเราจะเล่านั้น เป็นเพียงประเด็นเล็กๆ ที่ใช้บริหารจัดการชั้นเรียนได้อยู่หมัด มันดึงความสนใจของเด็กน้อยจากมือถือได้ \
+const Landing: NextPage = () => (
+  <div className="relative h-screen overflow-hidden">
+    <LandingBanner />
+    <LandingFeed
+      feed={[
+        {
+          id: 0,
+          name: "ประกาศเกียรติคุณ",
+          desc: "ประกาศเกียรติคุณโรงเรียนสวนกุหลาบวิทยาลัย ประจำปีการศึกษา 2563",
+          url: "/certificate?year=2563",
+        },
+        {
+          id: 1,
+          name: "การบริหารจัดการชั้นเรียน",
+          desc: "เรื่องที่พวกเราจะเล่านั้น เป็นเพียงประเด็นเล็กๆ ที่ใช้บริหารจัดการชั้นเรียนได้อยู่หมัด มันดึงความสนใจของเด็กน้อยจากมือถือได้ \
               แถมมีเสียงหัวเราะเกิดขึ้นในชั้นเรียน นักเรียนได้ค้นคว้าได้ทดลอง ได้ฝึกปฏิบัติ กิจกรรมเหล่านี้ส่งเสริมให้นักเรียนเกิดทักษะการคิดและ แลกเปลี่ยนเรียนรู้ร่วมกัน \
               ทำให้นักเรียนมีความสุขสนุกสนานในการเรียนและเกิดทักษะการรวบรวมข้อมูล คิดอย่างเป็นระบบสร้างเป็นองค์ความรู้ที่ยั่งยืนได้อย่างแท้จริง",
-            url: "/online/teacher-videos",
-          },
-        ]}
-      />
-    </div>
-  );
-};
+          url: "/online/teacher-videos",
+        },
+      ]}
+    />
+  </div>
+);
+
+export const getStaticProps = async ({ locale }: { locale: string }) => ({
+  props: {
+    ...(await serverSideTranslations(locale, ["common", "landing"])),
+  },
+});
 
 export default Landing;
