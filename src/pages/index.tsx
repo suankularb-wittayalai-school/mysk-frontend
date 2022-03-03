@@ -116,7 +116,11 @@ const LandingFeedItem = ({
       >
         <div
           className="surface grid aspect-[2/1] w-full place-items-center text-center"
-          style={{ backgroundImage: `url('${feedItem.image}')` }}
+          style={{
+            backgroundImage: feedItem.image
+              ? `url('${feedItem.image}')`
+              : "none",
+          }}
         >
           {!feedItem.image && feedItem.name}
         </div>
