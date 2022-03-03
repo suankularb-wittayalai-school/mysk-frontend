@@ -1,4 +1,5 @@
 // Modules
+import { useState } from "react";
 import type { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -13,20 +14,21 @@ import {
 
 // Types
 import { LandingFeedItem as LandingFeedItemType } from "src/utils/types/landing";
-import { useState } from "react";
 
-const LandingHeader = (): JSX.Element => (
+const LandingBanner = (): JSX.Element => (
   <header
     className="min-h-screen snap-start bg-[url('/images/landing.png')]
       bg-cover bg-left font-display sm:min-h-[calc(100vh-4.5rem)]"
   >
+    {/* Vignette layer */}
     <div
       className="flex h-full flex-col items-center gap-16 bg-gradient-to-b
         from-[#00000033] via-transparent to-[#00000033]
-        px-8 py-16 dark:from-[#00000085] dark:via-[#00000060] dark:to-[#00000085]
-        sm:items-start sm:bg-gradient-to-r sm:px-16"
+        px-8 py-16 sm:items-start sm:bg-gradient-to-r sm:px-16"
     >
+
       <div className="flex flex-col items-center text-center sm:flex-row sm:gap-8 sm:text-left">
+        {/* Logo */}
         <div className="relative h-40 w-40">
           <Image
             alt="โลโก้ดอกไม้สีชมพู มีตัวอักษร MySK อยู่ตรงกลาง"
@@ -35,6 +37,8 @@ const LandingHeader = (): JSX.Element => (
             src={"/images/branding/logo-white.png"}
           />
         </div>
+
+        {/* Text */}
         <div className="font-display text-light-white">
           <h1 className="text-9xl font-bold">
             My<span className="text-light-secondary-container">SK</span>
@@ -42,27 +46,37 @@ const LandingHeader = (): JSX.Element => (
           <p className="text-4xl font-light">โรงเรียนสวนกุหลาบวิทยาลัย</p>
         </div>
       </div>
-      <div className="flex flex-row flex-wrap justify-center gap-4">
-        <LinkButton
-          name="เข้าสู่ระบบ"
-          type="filled"
-          icon={<MaterialIcon icon="login" />}
-          url="/account/login"
-          LinkElement={Link}
-          className="container-tertiary
-            hover:before:bg-light-tertiary-translucent-08 focus:shadow-lg
-            focus:before:bg-light-tertiary-translucent-12 hover:before:dark:bg-dark-tertiary-translucent-08
-            focus:before:dark:bg-dark-tertiary-translucent-12"
-        />
-        <LinkButton
-          name="ช่วยเหลือ"
-          type="outlined"
-          url="/help"
-          LinkElement={Link}
-          className="!border-light-tertiary-container !bg-transparent !text-light-tertiary-container
-            hover:!bg-light-tertiary-translucent-08 focus:!bg-light-tertiary-translucent-12
-            focus-visible:!bg-light-tertiary"
-        />
+
+      <div className="flex flex-col gap-2">
+        {/* Buttons */}
+        <div className="flex flex-row flex-wrap justify-center gap-4">
+          <LinkButton
+            name="เข้าสู่ระบบ"
+            type="filled"
+            icon={<MaterialIcon icon="login" />}
+            url="/account/login"
+            LinkElement={Link}
+            className="!bg-light-tertiary-container !text-light-tertiary
+              hover:before:bg-light-tertiary-translucent-08 focus:shadow-lg
+              focus:before:bg-light-tertiary-translucent-12 hover:before:dark:bg-dark-tertiary-translucent-08
+              focus:before:dark:bg-dark-tertiary-translucent-12"
+          />
+          <LinkButton
+            name="ช่วยเหลือ"
+            type="outlined"
+            url="/help"
+            LinkElement={Link}
+            className="!border-light-tertiary-container !bg-transparent !text-light-tertiary-container
+              hover:!bg-light-tertiary-translucent-08 focus:!bg-light-tertiary-translucent-12
+              focus-visible:!bg-light-tertiary"
+          />
+        </div>
+
+        {/* Localization */}
+        <button className="btn--text flex flex-row gap-2 !text-light-tertiary-container">
+          <MaterialIcon icon="translate" />
+          <span>Available in English</span>
+        </button>
       </div>
     </div>
   </header>
@@ -155,7 +169,7 @@ const LandingFeed = ({
 const Landing: NextPage = () => {
   return (
     <div className="flex flex-col overflow-hidden sm:relative">
-      <LandingHeader />
+      <LandingBanner />
       <LandingFeed
         feed={[
           {
