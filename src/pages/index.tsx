@@ -153,15 +153,12 @@ const LandingBanner = (): JSX.Element => {
   const { t } = useTranslation(["landing", "common"]);
 
   return (
-    <header
-      className="min-h-screen snap-start bg-[url('/images/landing.png')]
-      bg-cover bg-left font-display sm:min-h-[calc(100vh-4.5rem)]"
-    >
+    <header className="bg-[url('/images/landing.png')] bg-cover bg-left font-display sm:min-h-[calc(100vh-4.5rem)]">
       {/* Vignette layer */}
       <div
-        className="flex min-h-screen flex-col items-center gap-16 bg-gradient-to-b
-        from-[#00000033] via-transparent to-[#00000033]
-        px-8 py-16 sm:items-start sm:bg-gradient-to-r sm:px-16"
+        className="flex flex-col items-center gap-16 bg-gradient-to-b
+          from-[#00000033] via-transparent to-[#00000033]
+          px-8 py-16 sm:items-start sm:bg-gradient-to-r sm:px-16"
       >
         <div className="flex flex-col items-center text-center sm:flex-row sm:gap-8 sm:text-left">
           {/* Logo */}
@@ -196,9 +193,9 @@ const LandingBanner = (): JSX.Element => {
               url="/account/login"
               LinkElement={Link}
               className="!bg-light-tertiary-container !text-light-tertiary
-              hover:before:bg-light-tertiary-translucent-08 focus:shadow-lg
-              focus:before:bg-light-tertiary-translucent-12 hover:before:dark:bg-dark-tertiary-translucent-08
-              focus:before:dark:bg-dark-tertiary-translucent-12"
+                hover:before:bg-light-tertiary-translucent-08 focus:shadow-lg
+                focus:before:bg-light-tertiary-translucent-12 hover:before:dark:bg-dark-tertiary-translucent-08
+                focus:before:dark:bg-dark-tertiary-translucent-12"
             />
             <LinkButton
               name={t("help")}
@@ -206,8 +203,8 @@ const LandingBanner = (): JSX.Element => {
               url="/help"
               LinkElement={Link}
               className="!border-light-tertiary-container !bg-transparent !text-light-tertiary-container
-              hover:!bg-light-tertiary-translucent-08 focus:!bg-light-tertiary-translucent-12
-              focus-visible:!bg-light-tertiary"
+                hover:!bg-light-tertiary-translucent-08 focus:!bg-light-tertiary-translucent-12
+                focus-visible:!bg-light-tertiary"
             />
           </div>
           <ChangeLanguageButton />
@@ -219,7 +216,7 @@ const LandingBanner = (): JSX.Element => {
 
 // Page
 const Landing: NextPage = () => (
-  <div className="relative h-screen overflow-hidden">
+  <div className="relative h-full overflow-hidden">
     <LandingBanner />
     <LandingFeed
       feed={{

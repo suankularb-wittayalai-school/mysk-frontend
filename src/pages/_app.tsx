@@ -1,51 +1,73 @@
 // Modules
+import { AnimatePresence, motion } from "framer-motion";
 import type { AppProps } from "next/app";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { appWithTranslation, useTranslation } from "next-i18next";
+
+// SK Components
 import { MaterialIcon, PageLayout } from "@suankularb-components/react";
 
 // Styles
 import "@styles/global.css";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+
+// Animations
+import { fromUpToDown } from "@utils/animations/slide";
 
 const App = ({ Component, pageProps }: AppProps) => {
   const path = useRouter().asPath;
   const { t } = useTranslation();
 
   return (
-    <PageLayout
-      currentPath={path}
-      navItems={[
-        {
-          name: t("navigation.home"),
-          icon: {
-            inactive: <MaterialIcon icon="home" type="outlined" />,
-            active: <MaterialIcon icon="home" type="filled" />,
-          },
-          url: "/",
-        },
-        {
-          name: t("navigation.login"),
-          icon: {
-            inactive: <MaterialIcon icon="login" type="outlined" />,
-            active: <MaterialIcon icon="login" type="filled" />,
-          },
-          url: "/account/login",
-        },
-        {
-          name: t("navigation.about"),
-          icon: {
-            inactive: <MaterialIcon icon="information" type="outlined" />,
-            active: <MaterialIcon icon="information" type="filled" />,
-          },
-          url: "/about",
-        },
-      ]}
-      LinkElement={Link}
+    <AnimatePresence
+      exitBeforeEnter
+      initial={false}
+      onExitComplete={() => window.scrollTo(0, 0)}
     >
-      <Component {...pageProps} />
-    </PageLayout>
+      <div className="overflow-hidden">
+        <PageLayout
+          key={useRouter().route}
+          currentPath={path}
+          navItems={[
+            {
+              name: t("navigation.home"),
+              icon: {
+                inactive: <MaterialIcon icon="home" type="outlined" />,
+                active: <MaterialIcon icon="home" type="filled" />,
+              },
+              url: "/",
+            },
+            {
+              name: t("navigation.login"),
+              icon: {
+                inactive: <MaterialIcon icon="login" type="outlined" />,
+                active: <MaterialIcon icon="login" type="filled" />,
+              },
+              url: "/account/login",
+            },
+            {
+              name: t("navigation.about"),
+              icon: {
+                inactive: <MaterialIcon icon="information" type="outlined" />,
+                active: <MaterialIcon icon="information" type="filled" />,
+              },
+              url: "/about",
+            },
+          ]}
+          LinkElement={Link}
+        >
+          <motion.div
+            initial="hidden"
+            animate="enter"
+            exit="exit"
+            variants={fromUpToDown}
+            transition={{ duration: 0.25, ease: "easeInOut" }}
+          >
+            <Component {...pageProps} />
+          </motion.div>
+        </PageLayout>
+      </div>
+    </AnimatePresence>
   );
 };
 
