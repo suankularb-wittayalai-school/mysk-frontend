@@ -111,7 +111,8 @@ const LandingFeedItem = ({
       <a
         className="group relative flex
           flex-col before:absolute before:top-0 before:left-0 before:h-full before:w-full before:content-['']
-          before:hover:bg-light-primary-translucent-08 before:focus:bg-light-primary-translucent-12
+          before:hover:bg-light-primary-translucent-08 before:hover:transition-none
+          before:focus:bg-light-primary-translucent-12 before:focus:transition-none
           before:hover:dark:bg-dark-primary-translucent-08 before:focus:dark:bg-dark-primary-translucent-12"
       >
         <div
