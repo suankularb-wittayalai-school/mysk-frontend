@@ -20,6 +20,116 @@ import {
 // Types
 import { LandingFeedItem as LandingFeedItemType } from "src/utils/types/landing";
 
+// Banner
+
+// News
+const LandingFeed = ({
+  feed,
+}: {
+  feed: { lastUpdated: Date; content: Array<LandingFeedItemType> };
+}): JSX.Element => {
+  const [fullscreen, setFullScreen] = useState<boolean>(false);
+  const { t } = useTranslation("landing");
+
+  return (
+    <section
+      className={`absolute bottom-0 h-[calc(100vh-4.75rem)] rounded-t-xl bg-[#fbfcff88] text-light-on-surface backdrop-blur-xl
+        transition-transform dark:bg-[#191c1e88] dark:text-dark-on-surface sm:right-4
+        sm:top-4 sm:h-[calc(100vh-6.5rem)] sm:w-[22.5rem] sm:translate-y-0 sm:rounded-xl sm:transition-[width] ${
+          fullscreen
+            ? "translate-y-0 sm:w-[calc(100vw-2rem)]"
+            : "translate-y-[calc(100vh-14.25rem)]"
+        }`}
+    >
+      <Card
+        type="stacked"
+        appearance="tonal"
+        className="h-full !bg-transparent"
+      >
+        <button
+          onClick={() => setFullScreen(!fullscreen)}
+          className="text-left"
+        >
+          <CardHeader
+            icon="newspaper"
+            title={
+              <h2 className="font-display text-lg font-medium">
+                {t("news.title")}
+              </h2>
+            }
+            label={
+              <p className="font-display">
+                <Trans i18nKey="news.lastUpdated" ns="landing">
+                  {{
+                    lastUpdated: feed.lastUpdated.toLocaleDateString(
+                      useRouter().locale
+                    ),
+                  }}
+                </Trans>
+              </p>
+            }
+            end={
+              <div className="btn--text !p-2">
+                {fullscreen ? (
+                  <MaterialIcon icon="fullscreen_exit" />
+                ) : (
+                  <MaterialIcon icon="fullscreen" />
+                )}
+              </div>
+            }
+          />
+        </button>
+        <div className="grow overflow-y-auto">
+          <ul className="flex flex-col">
+            {feed.content.map((feedItem) => (
+              <LandingFeedItem feedItem={feedItem} key={feedItem.id} />
+            ))}
+          </ul>
+        </div>
+      </Card>
+    </section>
+  );
+};
+
+const LandingFeedItem = ({
+  feedItem,
+}: {
+  feedItem: LandingFeedItemType;
+}): JSX.Element => (
+  <li key={feedItem.id}>
+    <Link href={feedItem.url}>
+      <a
+        className="group relative flex
+          flex-col before:absolute before:top-0 before:left-0 before:h-full before:w-full before:content-['']
+          before:hover:bg-light-primary-translucent-08 before:hover:transition-none
+          before:focus:bg-light-primary-translucent-12 before:focus:transition-none
+          before:hover:dark:bg-dark-primary-translucent-08 before:focus:dark:bg-dark-primary-translucent-12"
+      >
+        <div
+          className="surface grid aspect-[2/1] w-full place-items-center text-center"
+          style={{
+            backgroundImage: feedItem.image
+              ? `url('${feedItem.image}')`
+              : "none",
+          }}
+        >
+          {!feedItem.image && feedItem.name}
+        </div>
+        <div className="flex flex-col p-4">
+          <h3
+            className="font-display text-lg font-bold
+              group-hover:text-light-on-primary-container group-focus:text-light-on-primary-container
+              group-hover:dark:text-dark-on-primary-container group-focus:dark:text-dark-on-primary-container"
+          >
+            {feedItem.name}
+          </h3>
+          <p className="max-lines-2">{feedItem.desc}</p>
+        </div>
+      </a>
+    </Link>
+  </li>
+);
+
 const ChangeLanguageButton = () => {
   const { t } = useTranslation("landing");
 
@@ -33,6 +143,7 @@ const ChangeLanguageButton = () => {
   );
 };
 
+// Banner
 const LandingBanner = (): JSX.Element => {
   const { t } = useTranslation(["landing", "common"]);
 
@@ -101,102 +212,7 @@ const LandingBanner = (): JSX.Element => {
   );
 };
 
-const LandingFeedItem = ({
-  feedItem,
-}: {
-  feedItem: LandingFeedItemType;
-}): JSX.Element => (
-  <li key={feedItem.id}>
-    <Link href={feedItem.url}>
-      <a
-        className="group relative flex
-          flex-col before:absolute before:top-0 before:left-0 before:h-full before:w-full before:content-['']
-          before:hover:bg-light-primary-translucent-08 before:hover:transition-none
-          before:focus:bg-light-primary-translucent-12 before:focus:transition-none
-          before:hover:dark:bg-dark-primary-translucent-08 before:focus:dark:bg-dark-primary-translucent-12"
-      >
-        <div
-          className="surface grid aspect-[2/1] w-full place-items-center text-center"
-          style={{
-            backgroundImage: feedItem.image
-              ? `url('${feedItem.image}')`
-              : "none",
-          }}
-        >
-          {!feedItem.image && feedItem.name}
-        </div>
-        <div className="flex flex-col p-4">
-          <h3
-            className="font-display text-lg font-bold
-              group-hover:text-light-on-primary-container group-focus:text-light-on-primary-container
-              group-hover:dark:text-dark-on-primary-container group-focus:dark:text-dark-on-primary-container"
-          >
-            {feedItem.name}
-          </h3>
-          <p className="max-lines-2">{feedItem.desc}</p>
-        </div>
-      </a>
-    </Link>
-  </li>
-);
-
-const LandingFeed = ({
-  feed,
-}: {
-  feed: { lastUpdated: Date; content: Array<LandingFeedItemType> };
-}): JSX.Element => {
-  const [fullscreen, setFullScreen] = useState<boolean>(false);
-  const { t } = useTranslation("landing");
-
-  return (
-    <section
-      className={`absolute bottom-0 h-[calc(100vh-4.75rem)] rounded-t-xl bg-[#fbfcff88] text-light-on-surface backdrop-blur-xl
-        transition-transform dark:bg-[#191c1e88] dark:text-dark-on-surface
-        sm:right-4 sm:top-4 sm:h-[calc(100vh-6.5rem)] sm:w-[22.5rem] sm:translate-y-0 sm:rounded-xl sm:transition-colors ${
-          fullscreen ? "translate-y-0" : "translate-y-[calc(100vh-14.25rem)]"
-        }`}
-    >
-      <Card
-        type="stacked"
-        appearance="tonal"
-        className="h-full !bg-transparent"
-      >
-        <button
-          onClick={() => setFullScreen(!fullscreen)}
-          className="text-left"
-        >
-          <CardHeader
-            icon="newspaper"
-            title={
-              <h2 className="font-display text-lg font-medium">
-                {t("news.title")}
-              </h2>
-            }
-            label={
-              <p className="font-display">
-                <Trans i18nKey="news.lastUpdated" ns="landing">
-                  {{
-                    lastUpdated: feed.lastUpdated.toLocaleDateString(
-                      useRouter().locale
-                    ),
-                  }}
-                </Trans>
-              </p>
-            }
-          />
-        </button>
-        <div className="grow overflow-y-auto">
-          <ul className="flex flex-col">
-            {feed.content.map((feedItem) => (
-              <LandingFeedItem feedItem={feedItem} key={feedItem.id} />
-            ))}
-          </ul>
-        </div>
-      </Card>
-    </section>
-  );
-};
-
+// Page
 const Landing: NextPage = () => (
   <div className="relative h-screen overflow-hidden">
     <LandingBanner />
