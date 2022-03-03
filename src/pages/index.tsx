@@ -111,7 +111,7 @@ const LandingFeedItem = ({
           before:hover:dark:bg-dark-primary-translucent-08 before:focus:dark:bg-dark-primary-translucent-12"
       >
         <div
-          className="surface grid aspect-[2/1] w-full place-items-center text-center"
+          className="surface grid h-48 w-full place-items-center text-center"
           style={{
             backgroundImage: feedItem.image
               ? `url('${feedItem.image}')`
