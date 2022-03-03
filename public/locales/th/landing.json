@@ -1,5 +1,9 @@
 {
   "changeLang": "Available in English",
   "login": "เข้าสู่ระบบ",
-  "help": "ช่วยเหลือ"
+  "help": "ช่วยเหลือ",
+  "news": {
+    "title": "ข่าวสารสวนกุหลาบ",
+    "lastUpdated": "ล่าสุด {{lastUpdated}}"
+  }
 }

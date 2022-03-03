@@ -143,7 +143,7 @@ const LandingFeedItem = ({
 const LandingFeed = ({
   feed,
 }: {
-  feed: Array<LandingFeedItemType>;
+  feed: { lastUpdated: Date; content: Array<LandingFeedItemType> };
 }): JSX.Element => {
   const [fullscreen, setFullScreen] = useState<boolean>(false);
   const { t } = useTranslation("landing");
@@ -169,19 +169,25 @@ const LandingFeed = ({
             icon="newspaper"
             title={
               <h2 className="font-display text-lg font-medium">
-                ข่าวสารสวนกุหลาบ
+                {t("news.title")}
               </h2>
             }
             label={
               <p className="font-display">
-                ล่าสุด <time>21 กุมภาพันธ์ 2565</time>
+                <Trans i18nKey="news.lastUpdated" ns="landing">
+                  {{
+                    lastUpdated: feed.lastUpdated.toLocaleDateString(
+                      useRouter().locale
+                    ),
+                  }}
+                </Trans>
               </p>
             }
           />
         </button>
         <div className="grow overflow-y-auto">
           <ul className="flex flex-col">
-            {feed.map((feedItem) => (
+            {feed.content.map((feedItem) => (
               <LandingFeedItem feedItem={feedItem} key={feedItem.id} />
             ))}
           </ul>
@@ -195,22 +201,25 @@ const Landing: NextPage = () => (
   <div className="relative h-screen overflow-hidden">
     <LandingBanner />
     <LandingFeed
-      feed={[
-        {
-          id: 0,
-          name: "ประกาศเกียรติคุณ",
-          desc: "ประกาศเกียรติคุณโรงเรียนสวนกุหลาบวิทยาลัย ประจำปีการศึกษา 2563",
-          url: "/certificate?year=2563",
-        },
-        {
-          id: 1,
-          name: "การบริหารจัดการชั้นเรียน",
-          desc: "เรื่องที่พวกเราจะเล่านั้น เป็นเพียงประเด็นเล็กๆ ที่ใช้บริหารจัดการชั้นเรียนได้อยู่หมัด มันดึงความสนใจของเด็กน้อยจากมือถือได้ \
+      feed={{
+        lastUpdated: new Date(),
+        content: [
+          {
+            id: 0,
+            name: "ประกาศเกียรติคุณ",
+            desc: "ประกาศเกียรติคุณโรงเรียนสวนกุหลาบวิทยาลัย ประจำปีการศึกษา 2563",
+            url: "/certificate?year=2563",
+          },
+          {
+            id: 1,
+            name: "การบริหารจัดการชั้นเรียน",
+            desc: "เรื่องที่พวกเราจะเล่านั้น เป็นเพียงประเด็นเล็กๆ ที่ใช้บริหารจัดการชั้นเรียนได้อยู่หมัด มันดึงความสนใจของเด็กน้อยจากมือถือได้ \
               แถมมีเสียงหัวเราะเกิดขึ้นในชั้นเรียน นักเรียนได้ค้นคว้าได้ทดลอง ได้ฝึกปฏิบัติ กิจกรรมเหล่านี้ส่งเสริมให้นักเรียนเกิดทักษะการคิดและ แลกเปลี่ยนเรียนรู้ร่วมกัน \
               ทำให้นักเรียนมีความสุขสนุกสนานในการเรียนและเกิดทักษะการรวบรวมข้อมูล คิดอย่างเป็นระบบสร้างเป็นองค์ความรู้ที่ยั่งยืนได้อย่างแท้จริง",
-          url: "/online/teacher-videos",
-        },
-      ]}
+            url: "/online/teacher-videos",
+          },
+        ],
+      }}
     />
   </div>
 );

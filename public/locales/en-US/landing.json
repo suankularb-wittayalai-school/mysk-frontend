@@ -1,5 +1,9 @@
 {
   "changeLang": "ใช้ในภาษาไทย",
   "login": "Log in",
-  "help": "Help"
+  "help": "Help",
+  "news": {
+    "title": "Suankularb News",
+    "lastUpdated": "Last updated {{lastUpdated}}"
+  }
 }
