@@ -48,7 +48,11 @@ const LandingFeed = ({
       >
         <button
           onClick={() => setFullScreen(!fullscreen)}
-          className="text-left"
+          className="relative text-left
+            before:absolute before:top-0 before:left-0 before:h-full before:w-full before:content-['']
+            before:hover:bg-light-primary-translucent-08 before:hover:transition-none
+            before:focus:bg-light-primary-translucent-12 before:focus:transition-none
+            before:hover:dark:bg-dark-primary-translucent-08 before:focus:dark:bg-dark-primary-translucent-12"
         >
           <CardHeader
             icon="newspaper"
@@ -62,7 +66,8 @@ const LandingFeed = ({
                 <Trans i18nKey="news.lastUpdated" ns="landing">
                   {{
                     lastUpdated: feed.lastUpdated.toLocaleDateString(
-                      useRouter().locale
+                      useRouter().locale,
+                      { year: "numeric", month: "long", day: "numeric" }
                     ),
                   }}
                 </Trans>
@@ -99,8 +104,8 @@ const LandingFeedItem = ({
   <li key={feedItem.id}>
     <Link href={feedItem.url}>
       <a
-        className="group relative flex
-          flex-col before:absolute before:top-0 before:left-0 before:h-full before:w-full before:content-['']
+        className="group relative flex flex-col
+          before:absolute before:top-0 before:left-0 before:h-full before:w-full before:content-['']
           before:hover:bg-light-primary-translucent-08 before:hover:transition-none
           before:focus:bg-light-primary-translucent-12 before:focus:transition-none
           before:hover:dark:bg-dark-primary-translucent-08 before:focus:dark:bg-dark-primary-translucent-12"
