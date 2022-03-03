@@ -154,7 +154,7 @@ const LandingBanner = (): JSX.Element => {
     >
       {/* Vignette layer */}
       <div
-        className="flex h-full flex-col items-center gap-16 bg-gradient-to-b
+        className="flex min-h-screen flex-col items-center gap-16 bg-gradient-to-b
         from-[#00000033] via-transparent to-[#00000033]
         px-8 py-16 sm:items-start sm:bg-gradient-to-r sm:px-16"
       >
