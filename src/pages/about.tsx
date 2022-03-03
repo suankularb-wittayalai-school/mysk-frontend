@@ -3,14 +3,14 @@ import type { NextPage } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 // Page
-const Login: NextPage = (): JSX.Element => (
+const Developers: NextPage = (): JSX.Element => (
   <main className="content-layout"></main>
 );
 
 export const getStaticProps = async ({ locale }: { locale: string }) => ({
   props: {
-    ...(await serverSideTranslations(locale, ["common", "account"])),
+    ...(await serverSideTranslations(locale, ["common", "about"])),
   },
 });
 
-export default Login;
+export default Developers;

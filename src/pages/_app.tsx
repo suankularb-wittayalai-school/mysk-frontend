@@ -36,10 +36,10 @@ const App = ({ Component, pageProps }: AppProps) => {
         {
           name: t("navigation.about"),
           icon: {
-            inactive: <MaterialIcon icon="contacts" type="outlined" />,
-            active: <MaterialIcon icon="contacts" type="filled" />,
+            inactive: <MaterialIcon icon="information" type="outlined" />,
+            active: <MaterialIcon icon="information" type="filled" />,
           },
-          url: "/developers",
+          url: "/about",
         },
       ]}
       LinkElement={Link}
