@@ -1,0 +1,11 @@
+{
+  "brand": {
+    "name": "My<1>SK</1>",
+    "school": "Suankularb Wittayalai School"
+  },
+  "navigation": {
+    "home": "Home",
+    "login": "Log in",
+    "about": "About"
+  }
+}
