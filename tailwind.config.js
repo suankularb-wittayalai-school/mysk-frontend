@@ -146,8 +146,8 @@ module.exports = {
       },
     },
     screens: {
-      sm: "820px",
-      md: "1240px",
+      sm: "600px",
+      md: "905px",
       lg: "1440px",
     },
   },

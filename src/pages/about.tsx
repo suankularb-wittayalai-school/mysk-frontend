@@ -1,10 +1,27 @@
 // Modules
 import type { NextPage } from "next";
+import Link from "next/link";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+
+// SK Components
+import { ListLayout, MainSection, Title } from "@suankularb-components/react";
 
 // Page
 const Developers: NextPage = (): JSX.Element => (
-  <main className="content-layout"></main>
+  <ListLayout
+    Title={
+      <Title
+        name={{ title: "" }}
+        pageIcon="home"
+        backGoesTo="/account/login"
+        LinkElement={Link}
+        className="sm:none"
+        key="title"
+      />
+    }
+  >
+    <MainSection></MainSection>
+  </ListLayout>
 );
 
 export const getStaticProps = async ({ locale }: { locale: string }) => ({

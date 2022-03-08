@@ -1,1 +1,11 @@
-{}
+{
+  "title": "Log in",
+  "form": {
+    "userID": "Student/Teacher ID",
+    "password": "Password"
+  },
+  "action": {
+    "forgotPassword": "Forgot password",
+    "logIn": "Log in"
+  }
+}
