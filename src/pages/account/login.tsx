@@ -68,6 +68,7 @@ const Login: NextPage = (): JSX.Element => {
           name={{ title: t("title") }}
           pageIcon="person"
           backGoesTo="/"
+          LinkElement={Link}
           className="sm:none"
           key="title"
         />

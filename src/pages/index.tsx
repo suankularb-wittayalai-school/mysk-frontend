@@ -20,8 +20,6 @@ import {
 // Types
 import { LandingFeedItem as LandingFeedItemType } from "src/utils/types/landing";
 
-// Banner
-
 // News
 const LandingFeed = ({
   feed,
@@ -138,7 +136,7 @@ const ChangeLanguageButton = () => {
 
   return (
     <Link href="/" locale={useRouter().locale == "en-US" ? "th" : "en-US"}>
-      <button className="btn--text flex flex-row gap-2 !text-tertiary-container">
+      <button className="btn--text flex flex-row gap-2 !text-tertiary-container dark:!text-tertiary">
         <MaterialIcon icon="translate" />
         <span>{t("changeLang")}</span>
       </button>
@@ -151,12 +149,13 @@ const LandingBanner = (): JSX.Element => {
   const { t } = useTranslation(["landing", "common"]);
 
   return (
-    <header className="bg-[url('/images/landing.png')] bg-cover bg-left font-display sm:min-h-[calc(100vh-4.5rem)]">
+    <header className="h-screen bg-[url('/images/landing.png')] bg-cover bg-left font-display sm:min-h-[calc(100vh-4.5rem)]">
       {/* Vignette layer */}
       <div
-        className="flex flex-col items-center gap-16 bg-gradient-to-b
-          from-[#00000033] via-transparent to-[#00000033]
-          px-8 py-16 sm:items-start sm:bg-gradient-to-r sm:px-16"
+        className="flex h-screen flex-col items-center gap-16 bg-gradient-to-b
+          from-[#00000033] via-transparent to-[#00000033] px-8 py-16
+          dark:from-[#00000099] dark:via-[#00000066] dark:to-[#00000099]
+          sm:min-h-[calc(100vh-4.5rem)] sm:items-start sm:bg-gradient-to-r sm:px-16"
       >
         <div className="flex flex-col items-center text-center sm:flex-row sm:gap-8 sm:text-left">
           {/* Logo */}
@@ -173,7 +172,10 @@ const LandingBanner = (): JSX.Element => {
           <div className="font-display text-white">
             <h1 className="text-9xl font-bold">
               <Trans i18nKey="brand.name" ns="common">
-                My<span className="text-secondary-container">SK</span>
+                My
+                <span className="text-secondary-container dark:text-secondary">
+                  SK
+                </span>
               </Trans>
             </h1>
             <p className="text-4xl font-light">
@@ -201,7 +203,7 @@ const LandingBanner = (): JSX.Element => {
               LinkElement={Link}
               className="!border-tertiary-container !bg-transparent !text-tertiary-container
                 hover:!bg-tertiary-translucent-08 focus:!bg-tertiary-translucent-12
-                focus-visible:!bg-tertiary"
+                focus-visible:!bg-tertiary dark:!border-tertiary dark:!text-tertiary"
             />
           </div>
           <ChangeLanguageButton />

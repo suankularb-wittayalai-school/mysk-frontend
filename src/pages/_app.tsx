@@ -24,7 +24,7 @@ const App = ({ Component, pageProps }: AppProps) => {
       initial={false}
       onExitComplete={() => window.scrollTo(0, 0)}
     >
-      <div className="overflow-hidden">
+      <div className="overflow-hidden bg-background">
         <PageLayout
           key={useRouter().route}
           currentPath={path}
