@@ -1,5 +1,7 @@
 // Modules
 import type { NextPage } from "next";
+import Link from "next/link";
+import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { FormEvent, useState } from "react";
@@ -10,8 +12,6 @@ import {
   RegularLayout,
   Title,
 } from "@suankularb-components/react";
-import { useRouter } from "next/router";
-import Link from "next/link";
 
 const LoginForm = () => {
   const { t } = useTranslation("account");
