@@ -33,8 +33,8 @@ const LandingFeed = ({
 
   return (
     <section
-      className={`absolute bottom-0 h-[calc(100vh-4.75rem)] rounded-t-xl bg-[#fbfcff88] text-light-on-surface backdrop-blur-xl
-        transition-transform dark:bg-[#191c1e88] dark:text-dark-on-surface sm:right-4
+      className={`absolute bottom-0 h-[calc(100vh-4.75rem)] rounded-t-xl bg-[#fbfcff88] text-on-surface
+        backdrop-blur-xl transition-transform dark:bg-[#191c1e88] sm:right-4
         sm:top-4 sm:h-[calc(100vh-6.5rem)] sm:w-[22.5rem] sm:translate-y-0 sm:rounded-xl sm:transition-[width] ${
           fullscreen
             ? "translate-y-0 sm:w-[calc(100vw-2rem)]"
@@ -49,10 +49,10 @@ const LandingFeed = ({
         <button
           onClick={() => setFullScreen(!fullscreen)}
           className="relative text-left
-            before:absolute before:top-0 before:left-0 before:h-full before:w-full before:content-['']
-            before:hover:bg-light-primary-translucent-08 before:hover:transition-none
-            before:focus:bg-light-primary-translucent-12 before:focus:transition-none
-            before:hover:dark:bg-dark-primary-translucent-08 before:focus:dark:bg-dark-primary-translucent-12"
+            before:absolute before:top-0 before:left-0 before:h-full
+            before:w-full before:content-['']
+            before:hover:bg-primary-translucent-08 before:hover:transition-none
+            before:focus:bg-primary-translucent-12 before:focus:transition-none"
         >
           <CardHeader
             icon="newspaper"
@@ -106,9 +106,8 @@ const LandingFeedItem = ({
       <a
         className="group relative flex flex-col
           before:absolute before:top-0 before:left-0 before:h-full before:w-full before:content-['']
-          before:hover:bg-light-primary-translucent-08 before:hover:transition-none
-          before:focus:bg-light-primary-translucent-12 before:focus:transition-none
-          before:hover:dark:bg-dark-primary-translucent-08 before:focus:dark:bg-dark-primary-translucent-12"
+          before:hover:bg-primary-translucent-08 before:hover:transition-none
+          before:focus:bg-primary-translucent-12 before:focus:transition-none"
       >
         <div
           className="surface grid h-48 w-full place-items-center text-center"
@@ -123,8 +122,7 @@ const LandingFeedItem = ({
         <div className="flex flex-col p-4">
           <h3
             className="font-display text-lg font-bold
-              group-hover:text-light-on-primary-container group-focus:text-light-on-primary-container
-              group-hover:dark:text-dark-on-primary-container group-focus:dark:text-dark-on-primary-container"
+              group-hover:text-on-primary-container group-focus:text-on-primary-container"
           >
             {feedItem.name}
           </h3>
@@ -140,7 +138,7 @@ const ChangeLanguageButton = () => {
 
   return (
     <Link href="/" locale={useRouter().locale == "en-US" ? "th" : "en-US"}>
-      <button className="btn--text flex flex-row gap-2 !text-light-tertiary-container">
+      <button className="btn--text flex flex-row gap-2 !text-tertiary-container">
         <MaterialIcon icon="translate" />
         <span>{t("changeLang")}</span>
       </button>
@@ -172,10 +170,10 @@ const LandingBanner = (): JSX.Element => {
           </div>
 
           {/* Text */}
-          <div className="font-display text-light-white">
+          <div className="font-display text-white">
             <h1 className="text-9xl font-bold">
               <Trans i18nKey="brand.name" ns="common">
-                My<span className="text-light-secondary-container">SK</span>
+                My<span className="text-secondary-container">SK</span>
               </Trans>
             </h1>
             <p className="text-4xl font-light">
@@ -192,19 +190,18 @@ const LandingBanner = (): JSX.Element => {
               icon={<MaterialIcon icon="login" />}
               url="/account/login"
               LinkElement={Link}
-              className="!bg-light-tertiary-container !text-light-tertiary
-                hover:before:bg-light-tertiary-translucent-08 focus:shadow-lg
-                focus:before:bg-light-tertiary-translucent-12 hover:before:dark:bg-dark-tertiary-translucent-08
-                focus:before:dark:bg-dark-tertiary-translucent-12"
+              className="!bg-tertiary-container !text-tertiary
+                hover:before:bg-tertiary-translucent-08 focus:shadow-lg
+                focus:before:bg-tertiary-translucent-12"
             />
             <LinkButton
               name={t("help")}
               type="outlined"
               url="/help"
               LinkElement={Link}
-              className="!border-light-tertiary-container !bg-transparent !text-light-tertiary-container
-                hover:!bg-light-tertiary-translucent-08 focus:!bg-light-tertiary-translucent-12
-                focus-visible:!bg-light-tertiary"
+              className="!border-tertiary-container !bg-transparent !text-tertiary-container
+                hover:!bg-tertiary-translucent-08 focus:!bg-tertiary-translucent-12
+                focus-visible:!bg-tertiary"
             />
           </div>
           <ChangeLanguageButton />
