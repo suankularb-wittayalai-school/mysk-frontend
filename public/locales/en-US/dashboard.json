@@ -1,0 +1,14 @@
+{
+  "user": {
+    "classAndNo": "M.{{class}} No. {{classNo}}",
+    "hasNotifications_zero": "You have no notifications.",
+    "hasNotifications_one": "You have 1 notification.",
+    "hasNotifications_other": "You have {{notifCount}} notifications.",
+    "action": {
+      "logOut": "Log out",
+      "edit": "Edit profile",
+      "requestEdit": "Request profile edit",
+      "changePassword": "Change password"
+    }
+  }
+}

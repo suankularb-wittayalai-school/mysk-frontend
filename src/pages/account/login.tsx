@@ -13,6 +13,9 @@ import {
   Title,
 } from "@suankularb-components/react";
 
+/**
+ * Form for logging in
+ */
 const LoginForm = () => {
   const { t } = useTranslation("account");
   const [userID, setUserID] = useState<string>("");
@@ -23,10 +26,7 @@ const LoginForm = () => {
     <div className="flex flex-col items-center">
       <form
         className="section w-full md:w-1/3"
-        onSubmit={(e: FormEvent) => {
-          e.preventDefault;
-          router.push("/home");
-        }}
+        onSubmit={(e: FormEvent) => e.preventDefault()}
       >
         <KeyboardInput
           name="user-id"

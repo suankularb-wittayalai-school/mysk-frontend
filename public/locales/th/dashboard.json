@@ -1,0 +1,14 @@
+{
+  "user": {
+    "classAndNo": "ม.{{class}} เลขที่ {{classNo}}",
+    "hasNotifications_zero": "ไม่มีการแจ้งเตือน",
+    "hasNotifications_one": "มีการแจ้งเตือน 1 รายการ",
+    "hasNotifications_other": "มีการแจ้งเตือน {{notifCount}} รายการ",
+    "action": {
+      "logOut": "ออกจากระบบ",
+      "edit": "แก้ไขข้อมูล",
+      "requestEdit": "ขอแก้ไขข้อมูล",
+      "changePassword": "เปลี่ยนรหัสผ่าน"
+    }
+  }
+}
