@@ -10,5 +10,25 @@
       "requestEdit": "ขอแก้ไขข้อมูล",
       "changePassword": "เปลี่ยนรหัสผ่าน"
     }
+  },
+  "news": {
+    "title": "ข่าวสาร",
+    "action": {
+      "seeAll": "ดูข่าวสารทั้งหมด"
+    }
+  },
+  "class": {
+    "title": "ห้องเรียน",
+    "action": {
+      "seeSchedule": "ดูตารางเรียน",
+      "seeClassDetail": "ดูรายละเอียดห้องเรียน"
+    }
+  },
+  "teachers": {
+    "title": "อาจารย์",
+    "classAdvisors": "ครูที่ปรึกษา",
+    "action": {
+      "seeAll": "ดูรายชื่ออาจารย์"
+    }
   }
 }

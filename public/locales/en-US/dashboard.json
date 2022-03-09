@@ -10,5 +10,25 @@
       "requestEdit": "Request profile edit",
       "changePassword": "Change password"
     }
+  },
+  "news": {
+    "title": "News",
+    "action": {
+      "seeAll": "See all"
+    }
+  },
+  "class": {
+    "title": "Class",
+    "action": {
+      "seeSchedule": "See schedule",
+      "seeClassDetail": "See class detail"
+    }
+  },
+  "teachers": {
+    "title": "Teachers",
+    "classAdvisors": "Class Advisors",
+    "action": {
+      "seeAll": "See all"
+    }
   }
 }
