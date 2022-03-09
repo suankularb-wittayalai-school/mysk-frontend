@@ -1,22 +1,52 @@
 // Modules
 import { NextPage } from "next";
+import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { Trans, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 // SK Components
 import {
   Button,
-  Card,
-  CardHeader,
   MaterialIcon,
   RegularLayout,
   Title,
 } from "@suankularb-components/react";
-import { useRouter } from "next/router";
 
-const UserSection = () => {
+const UserActions = ({ className }: { className: string }): JSX.Element => {
   const { t } = useTranslation("dashboard");
+
+  return (
+    <div
+      className={`flex-row flex-wrap items-center justify-end gap-2 ${
+        className || "flex"
+      }`}
+    >
+      <Button
+        name={t("user.action.changePassword")}
+        type="text"
+        onClick={() => {}}
+        className="!hidden sm:!flex"
+      />
+      <Button
+        name={t("user.action.requestEdit")}
+        type="outlined"
+        icon={<MaterialIcon icon="edit" />}
+        onClick={() => {}}
+      />
+      <Button
+        name={t("user.action.logOut")}
+        type="filled"
+        icon={<MaterialIcon icon="logout" />}
+        onClick={() => {}}
+        className="!bg-error !text-on-error"
+      />
+    </div>
+  );
+};
+
+const UserSection = (): JSX.Element => {
   const router = useRouter();
 
   // Dummybase
@@ -32,10 +62,14 @@ const UserSection = () => {
 
   return (
     <div className="section">
-      <div className="grid grid-cols-[1fr_3fr] gap-2 sm:grid-cols-[1fr_5fr] sm:gap-6">
-        <div className="container-tertiary aspect-square w-full rounded-xl sm:rounded-8xl" />
-        <div className="items-between flex flex-col">
-          <div className="flex flex-col gap-2">
+      <div className="grid grid-cols-[1fr_3fr] items-stretch gap-2 sm:gap-6 md:grid-cols-[1fr_5fr]">
+        <div>
+          <div className="container-tertiary relative aspect-square w-full overflow-hidden rounded-4xl sm:rounded-8xl">
+            <Image src="/images/dummybase/sadudee.jpg" layout="fill" />
+          </div>
+        </div>
+        <div className="flex flex-col gap-2">
+          <div className="flex flex-grow flex-col gap-2">
             <div className="flex flex-col">
               <h2 className="font-display text-4xl font-bold">
                 {user.name[router.locale == "th" ? "th" : "en-US"].firstName}{" "}
@@ -49,7 +83,7 @@ const UserSection = () => {
             </div>
 
             {/* TODO: Replace the following element with `Chip` once it is added to `@suankularb-components/react */}
-            <div className="container-error flex w-fit flex-row gap-1 rounded-xl p-2">
+            <div className="container-error hidden w-fit flex-row gap-1 rounded-xl p-2 sm:flex">
               <MaterialIcon
                 icon={notifCount > 0 ? "notifications_active" : "notifications"}
                 className="text-error"
@@ -63,45 +97,27 @@ const UserSection = () => {
                   You have {{ notifCount }} notifications.
                 </Trans>
               </p>
-              {notifCount > 0 && (
-                <MaterialIcon icon="arrow_forward" className="text-error" />
-              )}
+              <MaterialIcon icon="arrow_forward" className="text-error" />
             </div>
           </div>
-
-          <div className="flex flex-row items-center justify-end gap-2">
-            <Button
-              name={t("user.action.changePassword")}
-              type="text"
-              onClick={() => {}}
-            />
-            <Button
-              name={t("user.action.requestEdit")}
-              type="outlined"
-              onClick={() => {}}
-            />
-            <Button
-              name={t("user.action.logOut")}
-              type="filled"
-              onClick={() => {}}
-            />
-          </div>
+          <UserActions className="hidden md:flex" />
         </div>
       </div>
+      <UserActions className="flex md:hidden" />
     </div>
   );
 };
 
 // Page
 const Home: NextPage = () => {
-  const { t } = useTranslation("dashboard");
+  const { t } = useTranslation("common");
 
   return (
     <RegularLayout
       Title={
         <Title
-          name={{ title: t("title") }}
-          pageIcon="home"
+          name={{ title: t("brand.name") }}
+          pageIcon={<MaterialIcon icon="home" />}
           backGoesTo="/"
           LinkElement={Link}
           className="sm:!hidden"

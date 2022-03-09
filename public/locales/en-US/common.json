@@ -1,6 +1,7 @@
 {
   "brand": {
     "name": "My<1>SK</1>",
+    "nameWithAccent": "My<1>SK</1>",
     "school": "Suankularb Wittayalai School"
   },
   "navigation": {

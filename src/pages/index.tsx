@@ -171,7 +171,7 @@ const LandingBanner = (): JSX.Element => {
           {/* Text */}
           <div className="font-display text-white">
             <h1 className="text-9xl font-bold">
-              <Trans i18nKey="brand.name" ns="common">
+              <Trans i18nKey="brand.nameWithAccent" ns="common">
                 My
                 <span className="text-secondary-container dark:text-secondary">
                   SK
