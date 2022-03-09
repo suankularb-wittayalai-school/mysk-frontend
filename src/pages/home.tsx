@@ -9,6 +9,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 // SK Components
 import {
   Button,
+  Header,
   MaterialIcon,
   RegularLayout,
   Title,
@@ -108,6 +109,19 @@ const UserSection = (): JSX.Element => {
   );
 };
 
+const NewsSection = (): JSX.Element => {
+  const { t } = useTranslation("dashboard");
+
+  return (
+    <div className="section">
+      <Header
+        icon={<MaterialIcon icon="newspaper" allowCustomSize={true} />}
+        text={t("news.title")}
+      />
+    </div>
+  );
+};
+
 // Page
 const Home: NextPage = () => {
   const { t } = useTranslation("common");
@@ -125,6 +139,7 @@ const Home: NextPage = () => {
       }
     >
       <UserSection />
+      <NewsSection />
     </RegularLayout>
   );
 };
