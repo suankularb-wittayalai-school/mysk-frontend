@@ -223,7 +223,7 @@ const NewsSection = (): JSX.Element => {
                 className="font-display"
               />
               <CardSupportingText>
-                <p>
+                <p className="max-lines-2">
                   {
                     newsItem.content[locale == "en-US" ? "en-US" : "th"]
                       .supportingText
