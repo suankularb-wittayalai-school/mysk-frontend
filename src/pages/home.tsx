@@ -74,7 +74,7 @@ const UserSection = (): JSX.Element => {
 
   return (
     <div className="section">
-      <div className="grid grid-cols-[1fr_3fr] items-stretch gap-2 sm:gap-6 md:grid-cols-[1fr_5fr]">
+      <div className="grid grid-cols-[1fr_3fr] items-stretch gap-4 sm:gap-6 md:grid-cols-[1fr_5fr]">
         <div>
           <div className="container-tertiary relative aspect-square w-full overflow-hidden rounded-4xl sm:rounded-8xl">
             <Image src="/images/dummybase/sadudee.jpg" layout="fill" />
@@ -83,7 +83,7 @@ const UserSection = (): JSX.Element => {
         <div className="flex flex-col gap-2">
           <div className="flex flex-grow flex-col gap-2">
             <div className="flex flex-col">
-              <h2 className="font-display text-4xl font-bold">
+              <h2 className="max-lines-1 break-all font-display text-4xl font-bold">
                 {user.name[router.locale == "th" ? "th" : "en-US"].firstName}{" "}
                 {user.name[router.locale == "th" ? "th" : "en-US"].lastName}
               </h2>
