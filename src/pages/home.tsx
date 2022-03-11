@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { Trans, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // SK Components
 import {
@@ -24,6 +24,7 @@ import {
   LinkButton,
 } from "@suankularb-components/react";
 import { NewsList } from "@utils/types/news";
+import { isPast } from "date-fns";
 
 const UserActions = ({ className }: { className: string }): JSX.Element => {
   const { t } = useTranslation("dashboard");
@@ -121,10 +122,6 @@ const UserSection = (): JSX.Element => {
 
 const NewsSection = (): JSX.Element => {
   const locale = useRouter().locale;
-  const [newsFilter, setNewsFilter] = useState<Array<string>>([]);
-  const { t } = useTranslation("dashboard");
-
-  // Dummybase
   const news: NewsList = [
     {
       id: 7,
@@ -163,7 +160,37 @@ const NewsSection = (): JSX.Element => {
         },
       },
     },
+    {
+      id: 6,
+      type: "payment",
+      postDate: new Date(2022, 0, 7),
+      done: true,
+      content: {
+        "en-US": {
+          title: "School Maintainance Payment",
+          supportingText:
+            "Enter the School ICT system to help contribute to the maintenance of our school.",
+        },
+        th: {
+          title: "การชำระเงินบำรุงการศึกษา",
+          supportingText: "เข้าระบบ School ICT เพื่อชําระเงินบํารุงการศึกษา",
+        },
+      },
+    },
   ];
+  const [newsFilter, setNewsFilter] = useState<Array<string | undefined>>([]);
+  const [filteredNews, setFilteredNews] = useState<NewsList>(news);
+  const { t } = useTranslation("dashboard");
+
+  useEffect(() => {
+    if (newsFilter.length <= 1) {
+      setFilteredNews(news);
+    } else {
+      setFilteredNews(
+        news.filter((newsItem) => newsFilter.includes(newsItem.type))
+      );
+    }
+  }, [newsFilter]);
 
   return (
     <Section>
@@ -174,8 +201,8 @@ const NewsSection = (): JSX.Element => {
       <ChipFilterList
         choices={[
           { id: "news", name: t("news.filter.news") },
-          { id: "forms", name: t("news.filter.forms") },
-          { id: "payments", name: t("news.filter.payments") },
+          { id: "form", name: t("news.filter.forms") },
+          { id: "payment", name: t("news.filter.payments") },
           [
             { id: "not-done", name: t("news.filter.amountDone.notDone") },
             { id: "done", name: t("news.filter.amountDone.done") },
@@ -184,7 +211,7 @@ const NewsSection = (): JSX.Element => {
         onChange={(newFilter: Array<string>) => setNewsFilter(newFilter)}
       />
       <XScrollContent>
-        {news.map((newsItem) => (
+        {filteredNews.map((newsItem) => (
           <li key={`${newsItem.type}-${newsItem.id}`}>
             <Card type="stacked" appearance="outlined">
               <CardHeader
@@ -210,7 +237,14 @@ const NewsSection = (): JSX.Element => {
                 end={
                   <div
                     className={`${
-                      newsItem.done ? "container-primary" : "container-tertiary"
+                      newsItem.done
+                        ? "container-primary"
+                        : (newsItem.type == "form" ||
+                            newsItem.type == "payment") &&
+                          newsItem.dueDate &&
+                          isPast(newsItem.dueDate)
+                        ? "bg-error text-on-error"
+                        : "container-tertiary"
                     } grid aspect-square w-10 place-content-center rounded-xl`}
                   >
                     {newsItem.done ? (
