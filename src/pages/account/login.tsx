@@ -50,7 +50,9 @@ const LoginForm = () => {
           <Link href="/account/forgot-password">
             <a className="btn--text">{t("action.forgotPassword")}</a>
           </Link>
-          <button className="btn--filled">{t("action.logIn")}</button>
+          <button className="btn--filled" onClick={() => router.push("/home")}>
+            {t("action.logIn")}
+          </button>
         </div>
       </form>
     </div>

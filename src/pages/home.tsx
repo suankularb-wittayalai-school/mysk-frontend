@@ -328,6 +328,20 @@ const ClassSection = (): JSX.Element => {
         icon={<MaterialIcon icon="groups" allowCustomSize={true} />}
         text={t("class.title")}
       />
+      <div className="flex flex-row items-center justify-end gap-2">
+        <LinkButton
+          name={t("class.action.seeSchedule")}
+          type="outlined"
+          url="/405/schedule"
+          LinkElement={Link}
+        />
+        <LinkButton
+          name={t("class.action.seeClassDetail")}
+          type="filled"
+          url="/405/class"
+          LinkElement={Link}
+        />
+      </div>
     </Section>
   );
 };
