@@ -7,6 +7,10 @@
   "navigation": {
     "home": "Home",
     "login": "Log in",
-    "about": "About"
+    "about": "About",
+    "schedule": "Schedule",
+    "class": "Class",
+    "teachers": "Teachers",
+    "news": "News"
   }
 }
