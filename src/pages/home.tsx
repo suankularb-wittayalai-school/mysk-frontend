@@ -12,6 +12,8 @@ import {
   Button,
   Card,
   CardHeader,
+  CardSupportingText,
+  CardActions,
   ChipFilterList,
   Header,
   MaterialIcon,
@@ -151,8 +153,19 @@ const NewsSection = (): JSX.Element => {
                   <time className="pl-2 text-outline">20 มี.ค.</time>
                 </div>
               }
+              end={
+                <div className="container-tertiary grid aspect-square w-10 place-content-center rounded-xl">
+                  <MaterialIcon icon="close" />
+                </div>
+              }
               className="font-display"
             />
+            <CardSupportingText>
+              <p>ตรวจสอบและยืนยันข้อมูลนักเรียนรายบุคคล (DMC)</p>
+            </CardSupportingText>
+            <CardActions>
+              <Button name="ทำแบบสำรวจ" type="filled" onClick={() => {}} className="container-secondary" />
+            </CardActions>
           </Card>
         </li>
       </XScrollContent>
