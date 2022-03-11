@@ -305,6 +305,14 @@ const NewsSection = (): JSX.Element => {
           </li>
         ))}
       </XScrollContent>
+      <div className="flex flex-row items-center justify-end gap-2">
+        <LinkButton
+          name={t("news.action.seeAll")}
+          type="filled"
+          url="/news"
+          LinkElement={Link}
+        />
+      </div>
     </Section>
   );
 };
