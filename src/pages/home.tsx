@@ -121,14 +121,17 @@ const UserSection = (): JSX.Element => {
 
 const NewsSection = (): JSX.Element => {
   const locale = useRouter().locale;
-  const { t } = useTranslation("dashboard");
   const [newsFilter, setNewsFilter] = useState<Array<string>>([]);
+  const { t } = useTranslation("dashboard");
 
   // Dummybase
   const news: NewsList = [
     {
       id: 7,
       type: "form",
+      frequency: "once",
+      postDate: new Date(2022, 2, 20),
+      done: false,
       content: {
         "en-US": {
           title: "Student Information",
@@ -140,8 +143,25 @@ const NewsSection = (): JSX.Element => {
           supportingText: "ตรวจสอบและยืนยันข้อมูลนักเรียนรายบุคคล (DMC)",
         },
       },
-      postDate: new Date(20, 2, 2022),
-      done: false,
+    },
+    {
+      id: 6,
+      type: "form",
+      frequency: "once",
+      postDate: new Date(2022, 2, 20),
+      done: true,
+      content: {
+        "en-US": {
+          title: "Classes Feedback",
+          supportingText:
+            "All personal information will be kept as a secret. For EPlus+ students, give feedback through co-teachers.",
+        },
+        th: {
+          title: "การจัดการเรียนการสอนออนไลน์",
+          supportingText:
+            "ข้อมูลส่วนบุคคลของนักเรียนจะถูกเก็บไว้เป็นความลับ สำหรับโครงการ EPlus+ ให้ประเมินผ่าน co-teacher",
+        },
+      },
     },
   ];
 
@@ -179,7 +199,12 @@ const NewsSection = (): JSX.Element => {
                     <span className="pr-2">
                       {t(`news.itemType.${newsItem.type}`)}
                     </span>
-                    <time className="pl-2 text-outline">20 มี.ค.</time>
+                    <time className="pl-2 text-outline">
+                      {newsItem.postDate.toLocaleDateString(locale, {
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </time>
                   </div>
                 }
                 end={
@@ -207,7 +232,11 @@ const NewsSection = (): JSX.Element => {
               </CardSupportingText>
               <CardActions>
                 <LinkButton
-                  name={t(`news.itemAction.${newsItem.type}`)}
+                  name={t(
+                    `news.itemAction.${newsItem.type}.${
+                      newsItem.done ? "edit" : "do"
+                    }`
+                  )}
                   type="filled"
                   url={`/${newsItem.type}/${newsItem.id}`}
                   LinkElement={Link}

@@ -31,9 +31,15 @@
       "payment": "Payment"
     },
     "itemAction": {
-      "form": "Do form",
+      "form": {
+        "do": "Do form",
+        "edit": "Edit form"
+      },
       "news": "Read more",
-      "payment": "Pay"
+      "payment": {
+        "do": "Pay",
+        "edit": "See payment"
+      }
     },
     "action": {
       "seeAll": "See all"
