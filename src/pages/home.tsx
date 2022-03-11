@@ -5,14 +5,20 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { Trans, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useState } from "react";
 
 // SK Components
 import {
   Button,
+  Card,
+  CardHeader,
+  ChipFilterList,
   Header,
   MaterialIcon,
   RegularLayout,
+  Section,
   Title,
+  XScrollContent,
 } from "@suankularb-components/react";
 
 const UserActions = ({ className }: { className: string }): JSX.Element => {
@@ -84,7 +90,7 @@ const UserSection = (): JSX.Element => {
             </div>
 
             {/* TODO: Replace the following element with `Chip` once it is added to `@suankularb-components/react */}
-            <div className="container-error hidden w-fit flex-row gap-1 rounded-xl p-2 sm:flex">
+            <div className="container-error hidden w-fit flex-row items-center gap-1 rounded-xl p-2 sm:flex">
               <MaterialIcon
                 icon={notifCount > 0 ? "notifications_active" : "notifications"}
                 className="text-error"
@@ -111,14 +117,46 @@ const UserSection = (): JSX.Element => {
 
 const NewsSection = (): JSX.Element => {
   const { t } = useTranslation("dashboard");
+  const [newsFilter, setNewsFilter] = useState<Array<string>>([]);
 
   return (
-    <div className="section">
+    <Section>
       <Header
         icon={<MaterialIcon icon="newspaper" allowCustomSize={true} />}
         text={t("news.title")}
       />
-    </div>
+      <ChipFilterList
+        choices={[
+          { id: "forms", name: "Forms" },
+          { id: "news", name: "News" },
+          { id: "payments", name: "Payments" },
+          [
+            { id: "not-done", name: "Not done" },
+            { id: "done", name: "Done" },
+          ],
+        ]}
+        onChange={(newFilter: Array<string>) => setNewsFilter(newFilter)}
+      />
+      <XScrollContent>
+        <li>
+          <Card type="stacked" appearance="outlined">
+            <CardHeader
+              icon={<MaterialIcon icon="edit" />}
+              title={
+                <h3 className="text-lg font-medium">ข้อมูลนักเรียนรายบุคคล</h3>
+              }
+              label={
+                <div className="flex divide-x divide-outline">
+                  <span className="pr-2">แบบสำรวจ</span>
+                  <time className="pl-2 text-outline">20 มี.ค.</time>
+                </div>
+              }
+              className="font-display"
+            />
+          </Card>
+        </li>
+      </XScrollContent>
+    </Section>
   );
 };
 

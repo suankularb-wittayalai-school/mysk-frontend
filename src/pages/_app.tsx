@@ -15,7 +15,7 @@ import "@styles/global.css";
 import { fromUpToDown } from "@utils/animations/slide";
 
 const App = ({ Component, pageProps }: AppProps) => {
-  const path = useRouter().asPath;
+  const router = useRouter();
   const { t } = useTranslation();
 
   return (
@@ -26,8 +26,8 @@ const App = ({ Component, pageProps }: AppProps) => {
     >
       <div className="overflow-hidden bg-background">
         <PageLayout
-          key={useRouter().route}
-          currentPath={path}
+          key={router.route}
+          currentPath={router.asPath}
           navItems={[
             {
               name: t("navigation.home"),
