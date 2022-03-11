@@ -317,6 +317,19 @@ const NewsSection = (): JSX.Element => {
   );
 };
 
+const ClassSection = (): JSX.Element => {
+  const { t } = useTranslation("dashboard");
+
+  return (
+    <Section>
+      <Header
+        icon={<MaterialIcon icon="groups" allowCustomSize={true} />}
+        text={t("class.title")}
+      />
+    </Section>
+  );
+};
+
 // Page
 const Home: NextPage = () => {
   const { t } = useTranslation("common");
@@ -335,6 +348,7 @@ const Home: NextPage = () => {
     >
       <UserSection />
       <NewsSection />
+      <ClassSection />
     </RegularLayout>
   );
 };

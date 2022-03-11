@@ -62,7 +62,7 @@ const App = ({ Component, pageProps }: AppProps) => {
             exit="exit"
             variants={fromUpToDown}
             transition={{ duration: 0.25, ease: "easeInOut" }}
-            className="flex flex-grow flex-col"
+            className="flex flex-grow flex-col overflow-auto"
           >
             <Component {...pageProps} />
           </motion.div>
