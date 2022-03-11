@@ -1,4 +1,5 @@
 // Modules
+import { isPast } from "date-fns";
 import { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -23,8 +24,9 @@ import {
   XScrollContent,
   LinkButton,
 } from "@suankularb-components/react";
+
+// Types
 import { NewsList } from "@utils/types/news";
-import { isPast } from "date-fns";
 
 const UserActions = ({ className }: { className: string }): JSX.Element => {
   const { t } = useTranslation("dashboard");
@@ -73,7 +75,7 @@ const UserSection = (): JSX.Element => {
   const notifCount = 1;
 
   return (
-    <div className="section">
+    <Section>
       <div className="grid grid-cols-[1fr_3fr] items-stretch gap-4 sm:gap-6 md:grid-cols-[1fr_5fr]">
         <div>
           <div className="container-tertiary relative aspect-square w-full overflow-hidden rounded-4xl sm:rounded-8xl">
@@ -93,7 +95,6 @@ const UserSection = (): JSX.Element => {
                 </Trans>
               </p>
             </div>
-
             {/* TODO: Replace the following element with `Chip` once it is added to `@suankularb-components/react */}
             <div className="container-error hidden w-fit flex-row items-center gap-1 rounded-xl p-2 sm:flex">
               <MaterialIcon
@@ -116,7 +117,7 @@ const UserSection = (): JSX.Element => {
         </div>
       </div>
       <UserActions className="flex md:hidden" />
-    </div>
+    </Section>
   );
 };
 
@@ -225,6 +226,7 @@ const NewsSection = (): JSX.Element => {
           ],
         ]}
         onChange={(newFilter: Array<string>) => setNewsFilter(newFilter)}
+        scrollable={true}
       />
       <XScrollContent>
         {filteredNews.map((newsItem) => (
@@ -330,6 +332,19 @@ const ClassSection = (): JSX.Element => {
   );
 };
 
+const TeachersSection = (): JSX.Element => {
+  const { t } = useTranslation("dashboard");
+
+  return (
+    <Section>
+      <Header
+        icon={<MaterialIcon icon="school" allowCustomSize={true} />}
+        text={t("teachers.title")}
+      />
+    </Section>
+  );
+};
+
 // Page
 const Home: NextPage = () => {
   const { t } = useTranslation("common");
@@ -349,6 +364,7 @@ const Home: NextPage = () => {
       <UserSection />
       <NewsSection />
       <ClassSection />
+      <TeachersSection />
     </RegularLayout>
   );
 };
