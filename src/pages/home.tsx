@@ -355,6 +355,14 @@ const TeachersSection = (): JSX.Element => {
         icon={<MaterialIcon icon="school" allowCustomSize={true} />}
         text={t("teachers.title")}
       />
+      <div className="flex flex-row items-center justify-end gap-2">
+        <LinkButton
+          name={t("teachers.action.seeAll")}
+          type="filled"
+          url="/teachers"
+          LinkElement={Link}
+        />
+      </div>
     </Section>
   );
 };
