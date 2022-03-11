@@ -25,6 +25,16 @@
         "allDone": "All done"
       }
     },
+    "itemType": {
+      "form": "Form",
+      "news": "News",
+      "payment": "Payment"
+    },
+    "itemAction": {
+      "form": "Do form",
+      "news": "Read more",
+      "payment": "Pay"
+    },
     "action": {
       "seeAll": "See all"
     }

@@ -21,7 +21,9 @@ import {
   Section,
   Title,
   XScrollContent,
+  LinkButton,
 } from "@suankularb-components/react";
+import { NewsList } from "@utils/types/news";
 
 const UserActions = ({ className }: { className: string }): JSX.Element => {
   const { t } = useTranslation("dashboard");
@@ -118,8 +120,30 @@ const UserSection = (): JSX.Element => {
 };
 
 const NewsSection = (): JSX.Element => {
+  const locale = useRouter().locale;
   const { t } = useTranslation("dashboard");
   const [newsFilter, setNewsFilter] = useState<Array<string>>([]);
+
+  // Dummybase
+  const news: NewsList = [
+    {
+      id: 7,
+      type: "form",
+      content: {
+        "en-US": {
+          title: "Student Information",
+          supportingText:
+            "Edit and confirm your student information on the Data Management Center (DMC)",
+        },
+        th: {
+          title: "ข้อมูลนักเรียนรายบุคคล",
+          supportingText: "ตรวจสอบและยืนยันข้อมูลนักเรียนรายบุคคล (DMC)",
+        },
+      },
+      postDate: new Date(20, 2, 2022),
+      done: false,
+    },
+  ];
 
   return (
     <Section>
@@ -140,34 +164,59 @@ const NewsSection = (): JSX.Element => {
         onChange={(newFilter: Array<string>) => setNewsFilter(newFilter)}
       />
       <XScrollContent>
-        <li>
-          <Card type="stacked" appearance="outlined">
-            <CardHeader
-              icon={<MaterialIcon icon="edit" />}
-              title={
-                <h3 className="text-lg font-medium">ข้อมูลนักเรียนรายบุคคล</h3>
-              }
-              label={
-                <div className="flex divide-x divide-outline">
-                  <span className="pr-2">แบบสำรวจ</span>
-                  <time className="pl-2 text-outline">20 มี.ค.</time>
-                </div>
-              }
-              end={
-                <div className="container-tertiary grid aspect-square w-10 place-content-center rounded-xl">
-                  <MaterialIcon icon="close" />
-                </div>
-              }
-              className="font-display"
-            />
-            <CardSupportingText>
-              <p>ตรวจสอบและยืนยันข้อมูลนักเรียนรายบุคคล (DMC)</p>
-            </CardSupportingText>
-            <CardActions>
-              <Button name="ทำแบบสำรวจ" type="filled" onClick={() => {}} className="container-secondary" />
-            </CardActions>
-          </Card>
-        </li>
+        {news.map((newsItem) => (
+          <li key={`${newsItem.type}-${newsItem.id}`}>
+            <Card type="stacked" appearance="outlined">
+              <CardHeader
+                icon={<MaterialIcon icon="edit" />}
+                title={
+                  <h3 className="text-lg font-medium">
+                    {newsItem.content[locale == "en-US" ? "en-US" : "th"].title}
+                  </h3>
+                }
+                label={
+                  <div className="flex divide-x divide-outline">
+                    <span className="pr-2">
+                      {t(`news.itemType.${newsItem.type}`)}
+                    </span>
+                    <time className="pl-2 text-outline">20 มี.ค.</time>
+                  </div>
+                }
+                end={
+                  <div
+                    className={`${
+                      newsItem.done ? "container-primary" : "container-tertiary"
+                    } grid aspect-square w-10 place-content-center rounded-xl`}
+                  >
+                    {newsItem.done ? (
+                      <MaterialIcon icon="done" />
+                    ) : (
+                      <MaterialIcon icon="close" />
+                    )}
+                  </div>
+                }
+                className="font-display"
+              />
+              <CardSupportingText>
+                <p>
+                  {
+                    newsItem.content[locale == "en-US" ? "en-US" : "th"]
+                      .supportingText
+                  }
+                </p>
+              </CardSupportingText>
+              <CardActions>
+                <LinkButton
+                  name={t(`news.itemAction.${newsItem.type}`)}
+                  type="filled"
+                  url={`/${newsItem.type}/${newsItem.id}`}
+                  LinkElement={Link}
+                  className="container-secondary"
+                />
+              </CardActions>
+            </Card>
+          </li>
+        ))}
       </XScrollContent>
     </Section>
   );
