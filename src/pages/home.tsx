@@ -127,12 +127,12 @@ const NewsSection = (): JSX.Element => {
       />
       <ChipFilterList
         choices={[
-          { id: "forms", name: "Forms" },
-          { id: "news", name: "News" },
-          { id: "payments", name: "Payments" },
+          { id: "news", name: t("news.filter.news") },
+          { id: "forms", name: t("news.filter.forms") },
+          { id: "payments", name: t("news.filter.payments") },
           [
-            { id: "not-done", name: "Not done" },
-            { id: "done", name: "Done" },
+            { id: "not-done", name: t("news.filter.amountDone.notDone") },
+            { id: "done", name: t("news.filter.amountDone.done") },
           ],
         ]}
         onChange={(newFilter: Array<string>) => setNewsFilter(newFilter)}
