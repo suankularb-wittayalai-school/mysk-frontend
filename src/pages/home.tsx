@@ -161,7 +161,7 @@ const NewsSection = (): JSX.Element => {
       },
     },
     {
-      id: 6,
+      id: 5,
       type: "payment",
       postDate: new Date(2022, 0, 7),
       done: true,
@@ -185,6 +185,22 @@ const NewsSection = (): JSX.Element => {
   useEffect(() => {
     if (newsFilter.length <= 1) {
       setFilteredNews(news);
+    } else if (newsFilter.includes("not-done") || newsFilter.includes("done")) {
+      if (newsFilter.length > 2) {
+        setFilteredNews(
+          news.filter(
+            (newsItem) =>
+              newsFilter.includes(newsItem.type) &&
+              (newsFilter.includes("done") ? newsItem.done : !newsItem.done)
+          )
+        );
+      } else {
+        setFilteredNews(
+          news.filter((newsItem) =>
+            newsFilter.includes("done") ? newsItem.done : !newsItem.done
+          )
+        );
+      }
     } else {
       setFilteredNews(
         news.filter((newsItem) => newsFilter.includes(newsItem.type))
@@ -215,7 +231,15 @@ const NewsSection = (): JSX.Element => {
           <li key={`${newsItem.type}-${newsItem.id}`}>
             <Card type="stacked" appearance="outlined">
               <CardHeader
-                icon={<MaterialIcon icon="edit" />}
+                icon={
+                  newsItem.type == "form" ? (
+                    <MaterialIcon icon="edit" />
+                  ) : newsItem.type == "payment" ? (
+                    <MaterialIcon icon="account_balance" />
+                  ) : (
+                    <MaterialIcon icon="information" />
+                  )
+                }
                 title={
                   <h3 className="text-lg font-medium">
                     {newsItem.content[locale == "en-US" ? "en-US" : "th"].title}
