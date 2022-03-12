@@ -4,7 +4,7 @@ import Link from "next/link";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 // SK Components
-import { ListLayout, MainSection, Title } from "@suankularb-components/react";
+import { ListLayout, Title } from "@suankularb-components/react";
 
 // Page
 const Developers: NextPage = (): JSX.Element => (
@@ -20,8 +20,8 @@ const Developers: NextPage = (): JSX.Element => (
       />
     }
   >
-    <MainSection></MainSection>
-  </ListLayout>
+    <p>TODO</p>
+    </ListLayout>
 );
 
 export const getStaticProps = async ({ locale }: { locale: string }) => ({
