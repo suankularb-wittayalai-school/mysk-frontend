@@ -179,15 +179,18 @@ const NewsSection = (): JSX.Element => {
       },
     },
   ];
-  const [newsFilter, setNewsFilter] = useState<Array<string | undefined>>([]);
+  const [newsFilter, setNewsFilter] = useState<Array<string>>([]);
   const [filteredNews, setFilteredNews] = useState<NewsList>(news);
   const { t } = useTranslation("dashboard");
 
   useEffect(() => {
-    if (newsFilter.length <= 1) {
+    // Reset filtered news if all filters are deselected
+    if (newsFilter.length == 0) {
       setFilteredNews(news);
+    
+    // Handles done
     } else if (newsFilter.includes("not-done") || newsFilter.includes("done")) {
-      if (newsFilter.length > 2) {
+      if (newsFilter.length > 1) {
         setFilteredNews(
           news.filter(
             (newsItem) =>
@@ -202,7 +205,10 @@ const NewsSection = (): JSX.Element => {
           )
         );
       }
-    } else {
+    }
+
+    // Handles types
+    else {
       setFilteredNews(
         news.filter((newsItem) => newsFilter.includes(newsItem.type))
       );

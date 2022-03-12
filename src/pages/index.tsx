@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 
 // SK Components
 import {
+  Button,
   Card,
   CardHeader,
   LinkButton,
@@ -134,9 +135,22 @@ const LandingFeedItem = ({
 const ChangeLanguageButton = () => {
   const { t } = useTranslation("landing");
 
+  // ATTENTION: This is broken right now because of bad component library code
+  // return (
+  //   <Link href="/" locale={useRouter().locale == "en-US" ? "th" : "en-US"}>
+  //     <Button
+  //       name={t("changeLang")}
+  //       type="text"
+  //       icon={<MaterialIcon icon="translate" />}
+  //       className="!text-tertiary-container dark:!text-tertiary"
+  //     />
+  //   </Link>
+  // );
+
+  // A temporary component is created with CSS rather than React SK Components to avoid this issue
   return (
     <Link href="/" locale={useRouter().locale == "en-US" ? "th" : "en-US"}>
-      <button className="btn--text flex flex-row gap-2 !text-tertiary-container dark:!text-tertiary">
+      <button className="btn--text btn--has-icon !text-tertiary-container dark:!text-tertiary">
         <MaterialIcon icon="translate" />
         <span>{t("changeLang")}</span>
       </button>
@@ -184,6 +198,7 @@ const LandingBanner = (): JSX.Element => {
           </div>
         </div>
 
+        {/* Actions */}
         <div className="flex flex-col items-center gap-2 sm:items-start">
           <div className="flex flex-row flex-wrap justify-center gap-4">
             <LinkButton
@@ -201,9 +216,9 @@ const LandingBanner = (): JSX.Element => {
               type="outlined"
               url="/help"
               LinkElement={Link}
-              className="!border-tertiary-container !bg-transparent !text-tertiary-container
+              className="!bg-transparent !text-tertiary-container !outline-tertiary-container
                 hover:!bg-tertiary-translucent-08 focus:!bg-tertiary-translucent-12
-                focus-visible:!bg-tertiary dark:!border-tertiary dark:!text-tertiary"
+                focus-visible:!bg-tertiary dark:!text-tertiary dark:!outline-tertiary"
             />
           </div>
           <ChangeLanguageButton />
