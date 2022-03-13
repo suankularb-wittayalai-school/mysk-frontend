@@ -43,6 +43,7 @@ const ScheduleRow = ({ scheduleRow }: ScheduleRowProps): JSX.Element => {
       <ul className="flex flex-row items-stretch gap-2">
         {scheduleRow.content.map((schedulePeriod) => (
           <li
+            key={schedulePeriod.periodStart}
             className="container-secondary flex w-28 flex-col rounded-xl px-4 py-2 leading-snug"
             title={schedulePeriod.subject.name[locale].name}
           >

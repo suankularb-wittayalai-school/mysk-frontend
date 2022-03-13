@@ -150,10 +150,10 @@ const ChangeLanguageButton = () => {
   // A temporary component is created with CSS rather than React SK Components to avoid this issue
   return (
     <Link href="/" locale={useRouter().locale == "en-US" ? "th" : "en-US"}>
-      <button className="btn--text btn--has-icon !text-tertiary-container dark:!text-tertiary">
+      <a className="btn--text btn--has-icon !text-tertiary-container dark:!text-tertiary">
         <MaterialIcon icon="translate" />
         <span>{t("changeLang")}</span>
-      </button>
+      </a>
     </Link>
   );
 };

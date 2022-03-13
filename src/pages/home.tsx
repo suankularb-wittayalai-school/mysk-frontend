@@ -457,7 +457,10 @@ const ClassCounselorsCard = (): JSX.Element => {
         <div className="grid grid-cols-2 p-[2px]">
           {/* Loop through the array of Class Advisors */}
           {classAdvisors.map((teacher) => (
-            <div className="relative aspect-square bg-tertiary-container">
+            <div
+              key={teacher.id}
+              className="relative aspect-square bg-tertiary-container"
+            >
               {/* Photo */}
               {teacher.profile && <Image src={teacher.profile} layout="fill" />}
               {/* Darkens photo in dark mode */}
