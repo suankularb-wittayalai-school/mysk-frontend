@@ -30,6 +30,7 @@ import Schedule from "@components/Schedule";
 
 // Types
 import { NewsList } from "@utils/types/news";
+import { Schedule as ScheduleType } from "@utils/types/schedule";
 
 const UserActions = ({ className }: { className: string }): JSX.Element => {
   const { t } = useTranslation("dashboard");
@@ -330,6 +331,41 @@ const NewsSection = (): JSX.Element => {
 
 const ClassSection = (): JSX.Element => {
   const { t } = useTranslation("dashboard");
+  const schedule: ScheduleType = {
+    content: [
+      {
+        day: 1,
+        content: [
+          {
+            periodStart: 1,
+            periodEnd: 1,
+            subject: {
+              name: {
+                "en-US": { name: "English" },
+                th: { name: "ภาษาอังกฤษ" },
+              },
+              teachers: [
+                {
+                  name: {
+                    "en-US": {
+                      firstName: "John",
+                      middleName: "Peter",
+                      lastName: "Smith",
+                    },
+                    th: {
+                      firstName: "จอห์น",
+                      middleName: "ปีเตอร์",
+                      lastName: "สมิธ",
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    ],
+  };
 
   return (
     <Section>
@@ -337,16 +373,7 @@ const ClassSection = (): JSX.Element => {
         icon={<MaterialIcon icon="groups" allowCustomSize={true} />}
         text={t("class.title")}
       />
-      <Schedule
-        schedule={{
-          content: [
-            {
-              day: 1,
-              content: [],
-            },
-          ],
-        }}
-      />
+      <Schedule schedule={schedule} />
       <div className="flex flex-row items-center justify-end gap-2">
         <LinkButton
           name={t("class.action.seeSchedule")}
