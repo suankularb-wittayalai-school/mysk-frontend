@@ -31,6 +31,7 @@ import Schedule from "@components/Schedule";
 // Types
 import { NewsList } from "@utils/types/news";
 import { Schedule as ScheduleType } from "@utils/types/schedule";
+import { Teacher } from "@utils/types/person";
 
 const UserActions = ({ className }: { className: string }): JSX.Element => {
   const { t } = useTranslation("dashboard");
@@ -346,6 +347,7 @@ const ClassSection = (): JSX.Element => {
               },
               teachers: [
                 {
+                  id: 1,
                   name: {
                     "en-US": {
                       firstName: "John",
@@ -374,7 +376,7 @@ const ClassSection = (): JSX.Element => {
         text={t("class.title")}
       />
       <Schedule schedule={schedule} />
-      <div className="flex flex-row items-center justify-end gap-2">
+      <div className="flex flex-row flex-wrap items-center justify-end gap-2">
         <LinkButton
           name={t("class.action.seeSchedule")}
           type="outlined"
@@ -392,6 +394,76 @@ const ClassSection = (): JSX.Element => {
   );
 };
 
+const ClassCounselorsCard = (): JSX.Element => {
+  const locale = useRouter().locale == "th" ? "th" : "en-US";
+  const classAdvisors: Array<Teacher> = [
+    {
+      id: 2,
+      name: {
+        "en-US": { firstName: "Taradol", lastName: "Ranarintr" },
+        th: { firstName: "ธราดล", lastName: "รานรินทร์" },
+      },
+      profile: "/images/dummybase/taradol.jpg",
+    },
+    {
+      id: 3,
+      name: {
+        "en-US": { firstName: "Mattana", lastName: "Tatanyang" },
+        th: { firstName: "มัทนา", lastName: "ต๊ะตันยาง" },
+      },
+      profile: "/images/dummybase/mattana.jpg",
+    },
+  ];
+
+  return (
+    <Card type="stacked">
+      <CardHeader
+        icon={<MaterialIcon icon="group" />}
+        title={<h3 className="text-lg font-medium">ครูที่ปรึกษา</h3>}
+        label="" // FIXME: When Label is no longer necessary, remove this
+        className="font-display"
+      />
+      <div className="aspect-[2/1] overflow-y-auto overflow-x-hidden rounded-b-2xl">
+        <div className="grid grid-cols-2 p-[2px]">
+          {/* Loop through the array of Class Advisors */}
+          {classAdvisors.map((teacher) => (
+            <div className="relative aspect-square bg-tertiary-container">
+              {/* Photo */}
+              {teacher.profile && <Image src={teacher.profile} layout="fill" />}
+              {/* Darkens photo in dark mode */}
+              <div className="pointer-events-none absolute h-full w-full dark:bg-[#00000033]" />
+              {/* Name bar */}
+              <div
+                className="absolute bottom-0 flex w-full flex-row items-center justify-between gap-2
+                  bg-[#b5007788] p-2 text-on-secondary backdrop-blur-sm dark:bg-[#ffafd588]"
+              >
+                {/* Name */}
+                <h4 className="flex flex-col font-display font-medium leading-none">
+                  <span className="max-lines-1 text-lg">
+                    {teacher.name[locale].firstName}{" "}
+                    {(teacher.name[locale].middleName || "")[0]}
+                  </span>
+                  <span className="max-lines-1 text-base">
+                    {teacher.name[locale].lastName}
+                  </span>
+                </h4>
+                {/* Go to Teacher button */}
+                <button className="btn btn--filled container-secondary !p-1 text-2xl">
+                  <MaterialIcon
+                    icon="arrow_forward"
+                    allowCustomSize={true}
+                    className="!block"
+                  />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </Card>
+  );
+};
+
 const TeachersSection = (): JSX.Element => {
   const { t } = useTranslation("dashboard");
 
@@ -401,6 +473,9 @@ const TeachersSection = (): JSX.Element => {
         icon={<MaterialIcon icon="school" allowCustomSize={true} />}
         text={t("teachers.title")}
       />
+      <div className="flex flex-col gap-3 sm:grid sm:grid-cols-2 md:grid-cols-4">
+        <ClassCounselorsCard />
+      </div>
       <div className="flex flex-row items-center justify-end gap-2">
         <LinkButton
           name={t("teachers.action.seeAll")}

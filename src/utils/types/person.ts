@@ -1,8 +1,10 @@
 export type Person = {
+  id: number;
   name: {
     "en-US": PersonName;
     th: PersonName;
   };
+  profile?: string;
 };
 
 export type PersonName = {
