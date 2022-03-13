@@ -25,6 +25,9 @@ import {
   LinkButton,
 } from "@suankularb-components/react";
 
+// Components
+import Schedule from "@components/Schedule";
+
 // Types
 import { NewsList } from "@utils/types/news";
 
@@ -187,8 +190,8 @@ const NewsSection = (): JSX.Element => {
     // Reset filtered news if all filters are deselected
     if (newsFilter.length == 0) {
       setFilteredNews(news);
-    
-    // Handles done
+
+      // Handles done
     } else if (newsFilter.includes("not-done") || newsFilter.includes("done")) {
       if (newsFilter.length > 1) {
         setFilteredNews(
@@ -333,6 +336,16 @@ const ClassSection = (): JSX.Element => {
       <Header
         icon={<MaterialIcon icon="groups" allowCustomSize={true} />}
         text={t("class.title")}
+      />
+      <Schedule
+        schedule={{
+          content: [
+            {
+              day: 1,
+              content: [],
+            },
+          ],
+        }}
       />
       <div className="flex flex-row items-center justify-end gap-2">
         <LinkButton

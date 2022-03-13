@@ -1,26 +1,48 @@
 // Modules
-import { Schedule as ScheduleType } from "@utils/types/schedule";
+import { setDay } from "date-fns";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
-const ScheduleRowDay = (): JSX.Element => {
-  const { t } = useTranslation("schedule");
+// Types
+import {
+  Schedule as ScheduleType,
+  ScheduleRow as ScheduleRowType,
+} from "@utils/types/schedule";
 
-  return <div></div>;
-};
+interface ScheduleDaysProps {
+  day: ScheduleRowType["day"];
+}
 
-const ScheduleRowPeriods = (): JSX.Element => {
+const ScheduleDay = ({ day }: ScheduleDaysProps): JSX.Element => {
   const locale = useRouter().locale;
+  const { t } = useTranslation("common");
+  const today = new Date();
 
   return (
-    <ul></ul>
+    <div className="container-primary flex w-40 flex-col rounded-xl px-4 py-2 leading-snug">
+      <p className="font-display text-xl font-medium">
+        {t(`datetime.day.${day}`)}
+      </p>
+      <time className="text-base font-light">
+        {setDay(today, day).toLocaleDateString(locale)}
+      </time>
+    </div>
   );
 };
 
-const ScheduleRow = (): JSX.Element => (
+interface ScheduleRowProps {
+  scheduleRow: ScheduleRowType;
+}
+
+const ScheduleRow = ({ scheduleRow }: ScheduleRowProps): JSX.Element => (
   <li>
-    <ScheduleRowDay />
-    <ScheduleRowPeriods />
+    <ul>
+      {scheduleRow.content.map((schedulePeriod) => (
+        <li className="container-secondary flex w-24 flex-col rounded-xl px-4 py-2">
+          {schedulePeriod.subject.name}
+        </li>
+      ))}
+    </ul>
   </li>
 );
 
@@ -32,13 +54,20 @@ const Schedule = ({ schedule }: ScheduleProps): JSX.Element => {
   const { t } = useTranslation("schedule");
 
   return (
-    <ul className="flex flex-col">
-      {schedule.content.map((scheduleRow) => (
-        <ScheduleRow />
-      ))}
-    </ul>
+    <div className="flex flex-row">
+      <div className="flex flex-col">
+        {schedule.content.map((scheduleRow) => (
+          <ScheduleDay key={scheduleRow.day} day={scheduleRow.day} />
+        ))}
+      </div>
+      <ul className="flex flex-col">
+        {schedule.content.map((scheduleRow) => (
+          <ScheduleRow key={scheduleRow.day} scheduleRow={scheduleRow} />
+        ))}
+      </ul>
+    </div>
   );
 };
 
 export default Schedule;
-export { ScheduleRowDay, ScheduleRowPeriods, ScheduleRow };
+export { ScheduleDay as ScheduleDays, ScheduleRow };
