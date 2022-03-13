@@ -472,7 +472,9 @@ const ClassCounselorsCard = ({
               className="relative aspect-square bg-tertiary-container"
             >
               {/* Photo */}
-              {teacher.profile && <Image src={teacher.profile} layout="fill" />}
+              {teacher.profile && (
+                <Image src={teacher.profile} layout="fill" alt="" />
+              )}
 
               {/* Darkens photo in dark mode */}
               <div className="pointer-events-none absolute h-full w-full dark:bg-[#00000033]" />
@@ -596,6 +598,7 @@ const TeachersSection = (): JSX.Element => {
             >
               {teachers.map((teacher, index) => (
                 <TeacherCard
+                  key={teacher.id}
                   teacher={teacher}
                   hasAction
                   className={`w-80 sm:w-full md:col-span-3 ${
