@@ -35,6 +35,7 @@ import { Teacher } from "@utils/types/person";
 
 const UserActions = ({ className }: { className: string }): JSX.Element => {
   const { t } = useTranslation("dashboard");
+  const router = useRouter();
 
   return (
     <div
@@ -58,7 +59,7 @@ const UserActions = ({ className }: { className: string }): JSX.Element => {
         name={t("user.action.logOut")}
         type="filled"
         icon={<MaterialIcon icon="logout" />}
-        onClick={() => {}}
+        onClick={() => router.push("/")}
         className="!bg-error !text-on-error"
       />
     </div>
@@ -423,7 +424,11 @@ const ClassCounselorsCard = (): JSX.Element => {
         label="" // FIXME: When Label is no longer necessary, remove this
         className="font-display"
       />
-      <div className="aspect-[2/1] overflow-y-auto overflow-x-hidden rounded-b-2xl">
+      <div
+        className={`aspect-[2/1] overflow-x-hidden rounded-b-2xl ${
+          classAdvisors.length > 2 ? "overflow-y-auto" : ""
+        }`}
+      >
         <div className="grid grid-cols-2 p-[2px]">
           {/* Loop through the array of Class Advisors */}
           {classAdvisors.map((teacher) => (
