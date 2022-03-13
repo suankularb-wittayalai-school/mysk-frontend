@@ -1,5 +1,5 @@
 // Modules
-import { isPast } from "date-fns";
+import { isPast, isThisYear } from "date-fns";
 import { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -30,8 +30,8 @@ import Schedule from "@components/Schedule";
 
 // Types
 import { NewsList } from "@utils/types/news";
-import { Schedule as ScheduleType } from "@utils/types/schedule";
 import { Teacher } from "@utils/types/person";
+import { Schedule as ScheduleType } from "@utils/types/schedule";
 
 const UserActions = ({ className }: { className: string }): JSX.Element => {
   const { t } = useTranslation("dashboard");
@@ -184,6 +184,23 @@ const NewsSection = (): JSX.Element => {
         },
       },
     },
+    {
+      id: 4,
+      type: "news",
+      postDate: new Date(2021, 8, 16),
+      content: {
+        "en-US": {
+          title: "Certificates Announcement",
+          supportingText:
+            "Announcement of the 2020 Suankularb Wittayalai winners of certificates.",
+        },
+        th: {
+          title: "ประกาศเกียรติคุณ",
+          supportingText:
+            "ประกาศเกียรติคุณโรงเรียนสวนกุหลาบวิทยาลัย ประจปีการศึกษา 2563",
+        },
+      },
+    },
   ];
   const [newsFilter, setNewsFilter] = useState<Array<string>>([]);
   const [filteredNews, setFilteredNews] = useState<NewsList>(news);
@@ -266,6 +283,9 @@ const NewsSection = (): JSX.Element => {
                     </span>
                     <time className="pl-2 text-outline">
                       {newsItem.postDate.toLocaleDateString(locale, {
+                        year: isThisYear(newsItem.postDate)
+                          ? undefined
+                          : "numeric",
                         month: "short",
                         day: "numeric",
                       })}
@@ -273,24 +293,26 @@ const NewsSection = (): JSX.Element => {
                   </div>
                 }
                 end={
-                  <div
-                    className={`${
-                      newsItem.done
-                        ? "container-primary"
-                        : (newsItem.type == "form" ||
-                            newsItem.type == "payment") &&
-                          newsItem.dueDate &&
-                          isPast(newsItem.dueDate)
-                        ? "bg-error text-on-error"
-                        : "container-tertiary"
-                    } grid aspect-square w-10 place-content-center rounded-xl`}
-                  >
-                    {newsItem.done ? (
-                      <MaterialIcon icon="done" />
-                    ) : (
-                      <MaterialIcon icon="close" />
-                    )}
-                  </div>
+                  newsItem.type != "news" ? (
+                    <div
+                      className={`${
+                        newsItem.done
+                          ? "container-primary"
+                          : (newsItem.type == "form" ||
+                              newsItem.type == "payment") &&
+                            newsItem.dueDate &&
+                            isPast(newsItem.dueDate)
+                          ? "bg-error text-on-error"
+                          : "container-tertiary"
+                      } grid aspect-square w-10 place-content-center rounded-xl`}
+                    >
+                      {newsItem.done ? (
+                        <MaterialIcon icon="done" />
+                      ) : (
+                        <MaterialIcon icon="close" />
+                      )}
+                    </div>
+                  ) : undefined
                 }
                 className="font-display"
               />
@@ -305,8 +327,10 @@ const NewsSection = (): JSX.Element => {
               <CardActions>
                 <LinkButton
                   name={t(
-                    `news.itemAction.${newsItem.type}.${
-                      newsItem.done ? "edit" : "do"
+                    `news.itemAction.${newsItem.type}${
+                      newsItem.type != "news"
+                        ? `.${newsItem.done ? "edit" : "do"}`
+                        : ""
                     }`
                   )}
                   type="filled"
@@ -426,7 +450,7 @@ const ClassCounselorsCard = (): JSX.Element => {
       />
       <div
         className={`aspect-[2/1] overflow-x-hidden rounded-b-2xl ${
-          classAdvisors.length > 2 ? "overflow-y-auto" : ""
+          classAdvisors.length > 2 ? "overflow-y-auto" : "overflow-y-hidden"
         }`}
       >
         <div className="grid grid-cols-2 p-[2px]">
