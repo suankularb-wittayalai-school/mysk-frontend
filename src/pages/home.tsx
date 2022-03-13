@@ -579,22 +579,22 @@ const TeachersSection = (): JSX.Element => {
       />
       <div className="flex flex-col justify-start gap-3 !px-0 sm:grid sm:grid-cols-2 md:grid-cols-4">
         <ClassCounselorsCard className="mx-4 sm:mx-0" />
-        <div
-          className="scroll-w-0 h-full overflow-x-auto
+        {teachers.length == 0 ? (
+          <div className="bg-surface-1 mx-4 grid place-items-center rounded-xl p-8 text-center text-on-surface-variant sm:mx-0 md:col-span-3">
+            <p>{t("teachers.noTeachers")}</p>
+          </div>
+        ) : (
+          <div
+            className="scroll-w-0 h-full overflow-x-auto
             sm:relative sm:overflow-y-scroll
             md:static md:col-span-3 md:overflow-y-visible"
-        >
-          <div
-            className="flex h-full w-fit flex-row gap-3
+          >
+            <div
+              className="flex h-full w-fit flex-row gap-3
               px-4 sm:absolute sm:top-0 sm:w-full sm:grid-rows-2 sm:flex-col
               sm:px-0 md:static md:grid md:grid-cols-9 md:pr-0"
-          >
-            {teachers.length == 0 ? (
-              <div className="grid h-full place-items-center sm:row-span-2 md:col-span-9">
-                <p className="text-center">No recommended teachers.</p>
-              </div>
-            ) : (
-              teachers.map((teacher, index) => (
+            >
+              {teachers.map((teacher, index) => (
                 <TeacherCard
                   teacher={teacher}
                   hasAction
@@ -610,10 +610,10 @@ const TeachersSection = (): JSX.Element => {
                       : "md:hidden"
                   }`}
                 />
-              ))
-            )}
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
       <div className="flex flex-row items-center justify-end gap-2">
         <LinkButton
