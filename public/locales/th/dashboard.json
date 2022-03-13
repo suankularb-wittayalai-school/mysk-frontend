@@ -1,5 +1,6 @@
 {
   "user": {
+    "profileAlt": "รูปของคุณ",
     "classAndNo": "ม.{{class}} เลขที่ {{classNo}}",
     "hasNotifications_zero": "ไม่มีการแจ้งเตือน",
     "hasNotifications_one": "มีการแจ้งเตือน 1 รายการ",

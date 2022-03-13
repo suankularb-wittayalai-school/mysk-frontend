@@ -11,7 +11,6 @@ import { useRouter } from "next/router";
 
 // SK Components
 import {
-  Button,
   Card,
   CardHeader,
   LinkButton,
@@ -135,7 +134,7 @@ const LandingFeedItem = ({
 const ChangeLanguageButton = () => {
   const { t } = useTranslation("landing");
 
-  // ATTENTION: This is broken right now because of bad component library code
+  // FIXME: This is broken right now because of bad component library code
   // return (
   //   <Link href="/" locale={useRouter().locale == "en-US" ? "th" : "en-US"}>
   //     <Button

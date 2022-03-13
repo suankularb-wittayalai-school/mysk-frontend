@@ -68,7 +68,8 @@ const UserActions = ({ className }: { className: string }): JSX.Element => {
 };
 
 const UserSection = (): JSX.Element => {
-  const router = useRouter();
+  const locale = useRouter().locale == "th" ? "th" : "en-US";
+  const { t } = useTranslation("dashboard");
 
   // Dummybase
   const user = {
@@ -86,15 +87,18 @@ const UserSection = (): JSX.Element => {
       <div className="grid grid-cols-[1fr_3fr] items-stretch gap-4 sm:gap-6 md:grid-cols-[1fr_5fr]">
         <div>
           <div className="container-tertiary relative aspect-square w-full overflow-hidden rounded-4xl sm:rounded-8xl">
-            <Image src="/images/dummybase/sadudee.jpg" layout="fill" />
+            <Image
+              src="/images/dummybase/sadudee.jpg"
+              layout="fill"
+              alt={t("user.profileAlt")}
+            />
           </div>
         </div>
         <div className="flex flex-col gap-2">
           <div className="flex flex-grow flex-col gap-2">
             <div className="flex flex-col">
               <h2 className="max-lines-1 break-all font-display text-4xl font-bold">
-                {user.name[router.locale == "th" ? "th" : "en-US"].firstName}{" "}
-                {user.name[router.locale == "th" ? "th" : "en-US"].lastName}
+                {user.name[locale].firstName} {user.name[locale].lastName}
               </h2>
               <p className="font-display text-xl">
                 <Trans i18nKey="user.classAndNo" ns="dashboard">
@@ -468,7 +472,7 @@ const ClassCounselorsCard = (): JSX.Element => {
               {/* Name bar */}
               <div
                 className="absolute bottom-0 flex w-full flex-row items-center justify-between gap-2
-                  bg-[#b5007788] p-2 text-on-secondary backdrop-blur-sm dark:bg-[#ffafd588]"
+                  bg-[#c1c7cecc] p-2 text-on-surface-variant backdrop-blur-sm dark:bg-[#41484dcc]"
               >
                 {/* Name */}
                 <h4 className="flex flex-col font-display font-medium leading-none">

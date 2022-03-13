@@ -17,7 +17,7 @@ const TeacherCard = ({ className }: TeacherCardProps) => {
       {/* FIXME: When Card Media is added to React SK Components, change this */}
       <div className="card__media p-[2px]">
         <div className="relative h-full w-full">
-          <Image src="/images/dummybase/thanakorn.jpg" layout="fill" />
+          <Image src="/images/dummybase/thanakorn.png" layout="fill" alt="" />
         </div>
       </div>
 

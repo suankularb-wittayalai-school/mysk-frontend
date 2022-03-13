@@ -1,5 +1,6 @@
 {
   "user": {
+    "profileAlt": "A picture of you",
     "classAndNo": "M.{{class}} No. {{classNo}}",
     "hasNotifications_zero": "No notifications",
     "hasNotifications_one": "1 notification",
