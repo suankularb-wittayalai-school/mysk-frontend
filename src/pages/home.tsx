@@ -32,6 +32,7 @@ import Schedule from "@components/Schedule";
 import { NewsList } from "@utils/types/news";
 import { Teacher } from "@utils/types/person";
 import { Schedule as ScheduleType } from "@utils/types/schedule";
+import TeacherCard from "@components/TeacherCard";
 
 const UserActions = ({ className }: { className: string }): JSX.Element => {
   const { t } = useTranslation("dashboard");
@@ -504,6 +505,14 @@ const TeachersSection = (): JSX.Element => {
       />
       <div className="flex flex-col gap-3 sm:grid sm:grid-cols-2 md:grid-cols-4">
         <ClassCounselorsCard />
+        <div className="flex flex-col justify-between md:col-span-3">
+          <div className="flex flex-col gap-3 sm:grid sm:grid-cols-6 md:grid-cols-9">
+            <TeacherCard className="col-span-3" />
+          </div>
+          <div className="flex flex-col gap-3 sm:grid sm:grid-cols-6 md:grid-cols-9">
+            <TeacherCard className="col-span-3" />
+          </div>
+        </div>
       </div>
       <div className="flex flex-row items-center justify-end gap-2">
         <LinkButton
