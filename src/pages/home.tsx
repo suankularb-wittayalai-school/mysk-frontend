@@ -424,7 +424,13 @@ const ClassSection = (): JSX.Element => {
   );
 };
 
-const ClassCounselorsCard = (): JSX.Element => {
+interface ClassCounselorsCardProps {
+  className?: string;
+}
+
+const ClassCounselorsCard = ({
+  className,
+}: ClassCounselorsCardProps): JSX.Element => {
   const locale = useRouter().locale == "th" ? "th" : "en-US";
   const classAdvisors: Array<Teacher> = [
     {
@@ -446,7 +452,7 @@ const ClassCounselorsCard = (): JSX.Element => {
   ];
 
   return (
-    <Card type="stacked">
+    <Card type="stacked" className={`h-fit ${className || ""}`}>
       <CardHeader
         icon={<MaterialIcon icon="group" />}
         title={<h3 className="text-lg font-medium">ครูที่ปรึกษา</h3>}
@@ -467,12 +473,14 @@ const ClassCounselorsCard = (): JSX.Element => {
             >
               {/* Photo */}
               {teacher.profile && <Image src={teacher.profile} layout="fill" />}
+
               {/* Darkens photo in dark mode */}
               <div className="pointer-events-none absolute h-full w-full dark:bg-[#00000033]" />
+
               {/* Name bar */}
               <div
-                className="absolute bottom-0 flex w-full flex-row items-center justify-between gap-2
-                  bg-[#c1c7cecc] p-2 text-on-surface-variant backdrop-blur-sm dark:bg-[#41484dcc]"
+                className="absolute bottom-0 flex w-full flex-row items-center justify-between
+                  gap-2 bg-[#c1c7cecc] p-2 text-on-surface-variant backdrop-blur-sm dark:bg-[#41484dcc]"
               >
                 {/* Name */}
                 <h4 className="flex flex-col font-display font-medium leading-none">
@@ -503,6 +511,65 @@ const ClassCounselorsCard = (): JSX.Element => {
 
 const TeachersSection = (): JSX.Element => {
   const { t } = useTranslation("dashboard");
+  const teachers: Array<Teacher> = [
+    {
+      id: 0,
+      name: {
+        "en-US": {
+          firstName: "Taradol",
+          lastName: "Ranarintr",
+        },
+        th: {
+          firstName: "ธราดล",
+          lastName: "รานรินทร์",
+        },
+      },
+      profile: "/images/dummybase/taradol.jpg",
+    },
+    {
+      id: 1,
+      name: {
+        "en-US": {
+          firstName: "Thanakorn",
+          lastName: "Atjanawat",
+        },
+        th: {
+          firstName: "ธนกร",
+          lastName: "อรรจนาวัฒน์",
+        },
+      },
+      profile: "/images/dummybase/thanakorn.png",
+    },
+    {
+      id: 2,
+      name: {
+        "en-US": {
+          firstName: "Mattana",
+          lastName: "Tatanyang",
+        },
+        th: {
+          firstName: "มัทนา",
+          lastName: "ต๊ะตันยาง",
+        },
+      },
+      profile: "/images/dummybase/mattana.jpg",
+    },
+    {
+      id: 3,
+      name: {
+        "en-US": {
+          firstName: "John",
+          middleName: "Peter",
+          lastName: "Smith",
+        },
+        th: {
+          firstName: "จอห์น",
+          middleName: "ปีเตอร์",
+          lastName: "สมิธ",
+        },
+      },
+    },
+  ];
 
   return (
     <Section>
@@ -510,14 +577,41 @@ const TeachersSection = (): JSX.Element => {
         icon={<MaterialIcon icon="school" allowCustomSize={true} />}
         text={t("teachers.title")}
       />
-      <div className="flex flex-col gap-3 sm:grid sm:grid-cols-2 md:grid-cols-4">
-        <ClassCounselorsCard />
-        <div className="flex flex-col justify-between md:col-span-3">
-          <div className="flex flex-col gap-3 sm:grid sm:grid-cols-6 md:grid-cols-9">
-            <TeacherCard className="col-span-3" />
-          </div>
-          <div className="flex flex-col gap-3 sm:grid sm:grid-cols-6 md:grid-cols-9">
-            <TeacherCard className="col-span-3" />
+      <div className="flex flex-col justify-start gap-3 !px-0 sm:grid sm:grid-cols-2 md:grid-cols-4">
+        <ClassCounselorsCard className="mx-4 sm:mx-0" />
+        <div
+          className="scroll-w-0 h-full overflow-x-auto
+            sm:relative sm:overflow-y-scroll
+            md:static md:col-span-3 md:overflow-y-visible"
+        >
+          <div
+            className="flex h-full w-fit flex-row gap-3
+              px-4 sm:absolute sm:top-0 sm:w-full sm:grid-rows-2 sm:flex-col
+              sm:px-0 md:static md:grid md:grid-cols-9 md:pr-0"
+          >
+            {teachers.length == 0 ? (
+              <div className="grid h-full place-items-center sm:row-span-2 md:col-span-9">
+                <p className="text-center">No recommended teachers.</p>
+              </div>
+            ) : (
+              teachers.map((teacher, index) => (
+                <TeacherCard
+                  teacher={teacher}
+                  hasAction
+                  className={`w-80 sm:w-full md:col-span-3 ${
+                    index == 0
+                      ? "md:col-start-1"
+                      : index == 1
+                      ? "md:col-start-5"
+                      : index == 2
+                      ? "md:col-start-3"
+                      : index == 3
+                      ? "md:col-start-7"
+                      : "md:hidden"
+                  }`}
+                />
+              ))
+            )}
           </div>
         </div>
       </div>
