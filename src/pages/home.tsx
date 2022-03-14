@@ -245,8 +245,6 @@ const NewsSection = (): JSX.Element => {
     }
   }, [newsFilter]);
 
-  // useEffect(() => console.log(filteredNews), [filteredNews]);
-
   return (
     <Section>
       <Header

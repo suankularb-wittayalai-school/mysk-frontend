@@ -32,7 +32,7 @@ const LandingFeed = ({
   return (
     <section
       className="fixed bottom-[6rem] right-2 w-[calc(100vw-1rem)] rounded-xl bg-[#fbfcff88]
-        text-on-surface backdrop-blur-xl dark:bg-[#191c1e88] sm:right-4 sm:bottom-4
+        text-on-surface backdrop-blur-xl dark:bg-[#191c1e88] sm:absolute sm:right-4 sm:top-4
         sm:h-[calc(100vh-6.5rem)] sm:w-[22.5rem]"
     >
       <Card
