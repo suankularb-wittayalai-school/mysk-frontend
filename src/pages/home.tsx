@@ -432,6 +432,7 @@ const ClassCounselorsCard = ({
   className,
 }: ClassCounselorsCardProps): JSX.Element => {
   const locale = useRouter().locale == "th" ? "th" : "en-US";
+  const { t } = useTranslation("dashboard");
   const classAdvisors: Array<Teacher> = [
     {
       id: 2,
@@ -455,13 +456,17 @@ const ClassCounselorsCard = ({
     <Card type="stacked" className={`h-fit ${className || ""}`}>
       <CardHeader
         icon={<MaterialIcon icon="group" />}
-        title={<h3 className="text-lg font-medium">ครูที่ปรึกษา</h3>}
+        title={
+          <h3 className="text-lg font-medium">{t("teachers.classAdvisors")}</h3>
+        }
         label="" // FIXME: When Label is no longer necessary, remove this
         className="font-display"
       />
       <div
-        className={`aspect-[2/1] overflow-x-hidden rounded-b-2xl ${
-          classAdvisors.length > 2 ? "overflow-y-auto" : "overflow-y-hidden"
+        className={`overflow-x-hidden rounded-b-2xl ${
+          classAdvisors.length > 2
+            ? "aspect-[2/1] overflow-y-auto"
+            : "overflow-y-hidden"
         }`}
       >
         <div className="grid grid-cols-2 p-[2px]">

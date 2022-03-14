@@ -38,7 +38,7 @@ const TeacherCard = ({ teacher, hasAction, className }: TeacherCardProps) => {
           </div>
           <CardHeader
             title={
-              <h4 className="font-display text-lg font-medium">
+              <h4 className="font-display text-lg font-medium break-all">
                 {teacher.name[locale].firstName}{" "}
                 {teacher.name[locale].middleName}{" "}
                 {teacher.name[locale].lastName}
