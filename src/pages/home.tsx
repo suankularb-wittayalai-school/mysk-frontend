@@ -106,7 +106,7 @@ const UserSection = (): JSX.Element => {
                 </Trans>
               </p>
             </div>
-            {/* TODO: Replace the following element with `Chip` once it is added to `@suankularb-components/react */}
+            {/* FIXME: Replace the following element with `Chip` when you can use a JSX element as `name` */}
             <div className="container-error hidden w-fit flex-row items-center gap-1 rounded-xl p-2 sm:flex">
               <MaterialIcon
                 icon={notifCount > 0 ? "notifications_active" : "notifications"}
@@ -623,7 +623,10 @@ const TeachersSection = (): JSX.Element => {
       <div className="flex flex-col justify-start gap-3 !px-0 sm:grid sm:grid-cols-2 md:grid-cols-4">
         <ClassCounselorsCard className="mx-4 sm:mx-0" />
         {teachers.length == 0 ? (
-          <div className="bg-surface-1 mx-4 grid place-items-center rounded-xl p-8 text-center text-on-surface-variant sm:mx-0 md:col-span-3">
+          <div
+            className="bg-surface-1 mx-4 grid place-items-center rounded-xl p-8 text-center text-on-surface-variant
+              sm:mx-0 md:col-span-3"
+          >
             <p>{t("teachers.noTeachers")}</p>
           </div>
         ) : (
@@ -639,6 +642,7 @@ const TeachersSection = (): JSX.Element => {
             >
               {teachers.map((teacher, index) => (
                 <li
+                  key={teacher.id}
                   className={`w-80 sm:w-full md:col-span-3 ${
                     index == 0
                       ? "md:col-start-1"
@@ -651,7 +655,7 @@ const TeachersSection = (): JSX.Element => {
                       : "md:hidden"
                   }`}
                 >
-                  <TeacherCard key={teacher.id} teacher={teacher} hasArrow />
+                  <TeacherCard teacher={teacher} hasArrow />
                 </li>
               ))}
             </ul>

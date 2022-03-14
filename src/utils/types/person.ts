@@ -1,4 +1,4 @@
-import { Subject } from "./subject";
+import { SubjectMini } from "./subject";
 
 export type Person = {
   id: number;
@@ -18,5 +18,5 @@ export type PersonName = {
 
 export type Teacher = Person & {
   // TODO: Add more properties when the schema is completed
-  subjectsInCharge: Array<Subject>;
+  subjectsInCharge: Array<SubjectMini>;
 };

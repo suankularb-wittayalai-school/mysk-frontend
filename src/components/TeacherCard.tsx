@@ -30,6 +30,15 @@ const TeacherCard = ({
   const locale = useRouter().locale == "th" ? "th" : "en-US";
   const { t } = useTranslation("teachers");
 
+  // (@SiravitPhokeed) I love how hilariously overengineered this is
+  const teacherName = [
+    teacher.name[locale].firstName,
+    teacher.name[locale].middleName,
+    teacher.name[locale].lastName,
+  ]
+    .filter((namePart) => namePart)
+    .join(" ");
+
   return (
     <Card
       type="horizontal"
@@ -50,9 +59,11 @@ const TeacherCard = ({
       </div>
       <CardHeader
         title={
-          <h4 className="break-all font-display text-lg font-medium">
-            {teacher.name[locale].firstName} {teacher.name[locale].middleName}{" "}
-            {teacher.name[locale].lastName}
+          <h4
+            className="break-all font-display text-lg font-medium"
+            title={teacherName}
+          >
+            {teacherName}
           </h4>
         }
         label={
