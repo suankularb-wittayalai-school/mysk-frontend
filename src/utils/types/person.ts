@@ -1,3 +1,5 @@
+import { Subject } from "./subject";
+
 export type Person = {
   id: number;
   name: {
@@ -16,4 +18,5 @@ export type PersonName = {
 
 export type Teacher = Person & {
   // TODO: Add more properties when the schema is completed
+  subjectsInCharge: Array<Subject>;
 };

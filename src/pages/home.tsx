@@ -392,8 +392,21 @@ const ClassSection = (): JSX.Element => {
                       lastName: "สมิธ",
                     },
                   },
+                  subjectsInCharge: [],
                 },
               ],
+              subjectSubgroup: {
+                name: {
+                  "en-US": "English",
+                  th: "ภาษาอังกฤษ",
+                },
+                subjectGroup: {
+                  name: {
+                    "en-US": "Foreign Languages",
+                    th: "ภาษาต่างประเทศ",
+                  },
+                },
+              },
             },
           },
         ],
@@ -443,6 +456,22 @@ const ClassCounselorsCard = ({
         th: { firstName: "ธราดล", lastName: "รานรินทร์" },
       },
       profile: "/images/dummybase/taradol.jpg",
+      subjectsInCharge: [
+        {
+          name: {
+            "en-US": {
+              name: "Social Studies 2 (World)",
+            },
+            th: { name: "สังคมศึกษา 2 (พลโลก)" },
+          },
+          subjectSubgroup: {
+            name: { "en-US": "Social Studies", th: "สังคมศึกษา" },
+            subjectGroup: {
+              name: { "en-US": "Social Studies", th: "สังคมศึกษา" },
+            },
+          },
+        },
+      ],
     },
     {
       id: 3,
@@ -451,6 +480,7 @@ const ClassCounselorsCard = ({
         th: { firstName: "มัทนา", lastName: "ต๊ะตันยาง" },
       },
       profile: "/images/dummybase/mattana.jpg",
+      subjectsInCharge: [],
     },
   ];
 
@@ -534,6 +564,7 @@ const TeachersSection = (): JSX.Element => {
         },
       },
       profile: "/images/dummybase/taradol.jpg",
+      subjectsInCharge: [],
     },
     {
       id: 1,
@@ -548,6 +579,7 @@ const TeachersSection = (): JSX.Element => {
         },
       },
       profile: "/images/dummybase/thanakorn.png",
+      subjectsInCharge: [],
     },
     {
       id: 2,
@@ -562,6 +594,7 @@ const TeachersSection = (): JSX.Element => {
         },
       },
       profile: "/images/dummybase/mattana.jpg",
+      subjectsInCharge: [],
     },
     {
       id: 3,
@@ -577,6 +610,7 @@ const TeachersSection = (): JSX.Element => {
           lastName: "สมิธ",
         },
       },
+      subjectsInCharge: [],
     },
   ];
 
@@ -598,16 +632,13 @@ const TeachersSection = (): JSX.Element => {
             sm:relative sm:overflow-y-scroll
             md:static md:col-span-3 md:overflow-y-visible"
           >
-            <div
+            <ul
               className="flex h-full w-fit flex-row gap-3
               px-4 sm:absolute sm:top-0 sm:w-full sm:grid-rows-2 sm:flex-col
               sm:px-0 md:static md:grid md:grid-cols-9 md:pr-0"
             >
               {teachers.map((teacher, index) => (
-                <TeacherCard
-                  key={teacher.id}
-                  teacher={teacher}
-                  hasAction
+                <li
                   className={`w-80 sm:w-full md:col-span-3 ${
                     index == 0
                       ? "md:col-start-1"
@@ -619,9 +650,11 @@ const TeachersSection = (): JSX.Element => {
                       ? "md:col-start-7"
                       : "md:hidden"
                   }`}
-                />
+                >
+                  <TeacherCard key={teacher.id} teacher={teacher} hasArrow />
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
         )}
       </div>
