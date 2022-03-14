@@ -10,6 +10,7 @@ import ArrowButton from "@components/ArrowButton";
 
 // Types
 import { Teacher } from "@utils/types/person";
+import { useTranslation } from "next-i18next";
 
 interface TeacherCardProps {
   teacher: Teacher;
@@ -27,6 +28,7 @@ const TeacherCard = ({
   hasAction,
 }: TeacherCardProps) => {
   const locale = useRouter().locale == "th" ? "th" : "en-US";
+  const { t } = useTranslation("teachers");
 
   return (
     <Card
@@ -59,7 +61,11 @@ const TeacherCard = ({
               <div className="flex w-fit flex-row gap-1 pr-1">
                 <MaterialIcon icon="mail" className="text-primary" />
               </div>
-              <span className="pl-1">ชีววิทยา</span>
+              <span className="pl-1">
+                {teacher.subjectsInCharge.length == 0
+                  ? t("noSubjectGroup")
+                  : teacher.subjectsInCharge[0].subjectSubgroup.name[locale]}
+              </span>
             </div>
           ) : (
             <div className="flex w-fit flex-row gap-1 pr-1">
@@ -68,9 +74,7 @@ const TeacherCard = ({
           )
         }
         end={
-          hasArrow ? (
-            <ArrowButton href={`/teacher/${teacher.id}`} />
-          ) : undefined
+          hasArrow ? <ArrowButton href={`/teacher/${teacher.id}`} /> : undefined
         }
       />
     </Card>
