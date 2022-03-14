@@ -223,13 +223,17 @@ const NewsSection = (): JSX.Element => {
           news.filter(
             (newsItem) =>
               newsFilter.includes(newsItem.type) &&
-              (newsFilter.includes("done") ? newsItem.done : !newsItem.done)
+              (newsFilter.includes("done")
+                ? newsItem.done
+                : newsItem.done == false)
           )
         );
       } else {
         setFilteredNews(
           news.filter((newsItem) =>
-            newsFilter.includes("done") ? newsItem.done : !newsItem.done
+            newsFilter.includes("done")
+              ? newsItem.done
+              : newsItem.done == false
           )
         );
       }
@@ -242,6 +246,8 @@ const NewsSection = (): JSX.Element => {
       );
     }
   }, [newsFilter]);
+
+  // useEffect(() => console.log(filteredNews), [filteredNews]);
 
   return (
     <Section>
