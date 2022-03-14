@@ -5,9 +5,11 @@ import { useRouter } from "next/router";
 // SK Components
 import { Card, CardHeader, MaterialIcon } from "@suankularb-components/react";
 
+// Components
+import ArrowButton from "@components/ArrowButton";
+
 // Types
 import { Teacher } from "@utils/types/person";
-import Link from "next/link";
 
 interface TeacherCardProps {
   teacher: Teacher;
@@ -67,11 +69,7 @@ const TeacherCard = ({
         }
         end={
           hasArrow ? (
-            <Link href={`/teacher/${teacher.id}`}>
-              <a className="btn btn--filled !flex container-secondary !p-2 text-2xl">
-                <MaterialIcon icon="arrow_forward" />
-              </a>
-            </Link>
+            <ArrowButton href={`/teacher/${teacher.id}`} />
           ) : undefined
         }
       />
