@@ -133,7 +133,7 @@ const UserSection = (): JSX.Element => {
 };
 
 const NewsSection = (): JSX.Element => {
-  const locale = useRouter().locale;
+  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
   const news: NewsList = [
     {
       id: 7,
@@ -231,9 +231,7 @@ const NewsSection = (): JSX.Element => {
       } else {
         setFilteredNews(
           news.filter((newsItem) =>
-            newsFilter.includes("done")
-              ? newsItem.done
-              : newsItem.done == false
+            newsFilter.includes("done") ? newsItem.done : newsItem.done == false
           )
         );
       }
@@ -284,7 +282,7 @@ const NewsSection = (): JSX.Element => {
                 }
                 title={
                   <h3 className="text-lg font-medium">
-                    {newsItem.content[locale == "en-US" ? "en-US" : "th"].title}
+                    {newsItem.content[locale].title}
                   </h3>
                 }
                 label={

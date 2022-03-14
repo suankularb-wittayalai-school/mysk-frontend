@@ -5,6 +5,7 @@ export type NewsItem = NewsItemNews | NewsItemForm | NewsItemPayment;
 type NewsItemCommon = {
   id: number;
   postDate: Date;
+  image?: string;
   done?: boolean;
   content: {
     "en-US": NewsContent;

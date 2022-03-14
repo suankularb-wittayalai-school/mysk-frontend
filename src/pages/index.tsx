@@ -18,13 +18,13 @@ import {
 } from "@suankularb-components/react";
 
 // Types
-import { LandingFeedItem as LandingFeedItemType } from "src/utils/types/landing";
+import { NewsItem, NewsList } from "@utils/types/news";
 
 // News
 const LandingFeed = ({
   feed,
 }: {
-  feed: { lastUpdated: Date; content: Array<LandingFeedItemType> };
+  feed: { lastUpdated: Date; content: NewsList };
 }): JSX.Element => {
   const [fullscreen, setFullScreen] = useState<boolean>(false);
   const { t } = useTranslation("landing");
@@ -94,42 +94,40 @@ const LandingFeed = ({
   );
 };
 
-const LandingFeedItem = ({
-  feedItem,
-}: {
-  feedItem: LandingFeedItemType;
-}): JSX.Element => (
-  <li key={feedItem.id}>
-    <Link href={feedItem.url}>
-      <a
-        className="group relative flex flex-col
-          before:absolute before:top-0 before:left-0 before:h-full before:w-full before:content-['']
-          before:hover:bg-primary-translucent-08 before:hover:transition-none
-          before:focus:bg-primary-translucent-12 before:focus:transition-none"
-      >
-        <div
-          className="surface grid h-48 w-full place-items-center text-center"
-          style={{
-            backgroundImage: feedItem.image
-              ? `url('${feedItem.image}')`
-              : "none",
-          }}
+const LandingFeedItem = ({ feedItem }: { feedItem: NewsItem }): JSX.Element => {
+  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+
+  return (
+    <li key={feedItem.id}>
+      <Link href={`/news/${feedItem.id}`}>
+        <a
+          className="relative flex flex-col has-action"
         >
-          {!feedItem.image && feedItem.name}
-        </div>
-        <div className="flex flex-col p-4">
-          <h3
-            className="font-display text-lg font-bold
-              group-hover:text-on-primary-container group-focus:text-on-primary-container"
+          <div
+            className="surface grid h-48 w-full place-items-center text-center bg-cover"
+            style={{
+              backgroundImage: feedItem.image
+                ? `url('${feedItem.image}')`
+                : "none",
+            }}
           >
-            {feedItem.name}
-          </h3>
-          <p className="max-lines-2">{feedItem.desc}</p>
-        </div>
-      </a>
-    </Link>
-  </li>
-);
+            {!feedItem.image && feedItem.content[locale].title}
+          </div>
+          <div className="flex flex-col p-4">
+            <h3
+              className="font-display text-lg font-bold"
+            >
+              {feedItem.content[locale].title}
+            </h3>
+            <p className="max-lines-2">
+              {feedItem.content[locale].supportingText}
+            </p>
+          </div>
+        </a>
+      </Link>
+    </li>
+  );
+};
 
 const ChangeLanguageButton = () => {
   const { t } = useTranslation("landing");
@@ -236,18 +234,43 @@ const Landing: NextPage = () => (
         lastUpdated: new Date(),
         content: [
           {
-            id: 0,
-            name: "ประกาศเกียรติคุณ",
-            desc: "ประกาศเกียรติคุณโรงเรียนสวนกุหลาบวิทยาลัย ประจำปีการศึกษา 2563",
-            url: "/certificate?year=2563",
+            id: 4,
+            type: "news",
+            postDate: new Date(2021, 8, 16),
+            image: "/images/dummybase/certificates-announcement.jpg",
+            content: {
+              "en-US": {
+                title: "Certificates Announcement",
+                supportingText:
+                  "Announcement of the 2020 Suankularb Wittayalai winners of certificates.",
+              },
+              th: {
+                title: "ประกาศเกียรติคุณ",
+                supportingText:
+                  "ประกาศเกียรติคุณโรงเรียนสวนกุหลาบวิทยาลัย ประจปีการศึกษา 2563",
+              },
+            },
           },
           {
             id: 1,
-            name: "การบริหารจัดการชั้นเรียน",
-            desc: "เรื่องที่พวกเราจะเล่านั้น เป็นเพียงประเด็นเล็กๆ ที่ใช้บริหารจัดการชั้นเรียนได้อยู่หมัด มันดึงความสนใจของเด็กน้อยจากมือถือได้ \
-              แถมมีเสียงหัวเราะเกิดขึ้นในชั้นเรียน นักเรียนได้ค้นคว้าได้ทดลอง ได้ฝึกปฏิบัติ กิจกรรมเหล่านี้ส่งเสริมให้นักเรียนเกิดทักษะการคิดและ แลกเปลี่ยนเรียนรู้ร่วมกัน \
-              ทำให้นักเรียนมีความสุขสนุกสนานในการเรียนและเกิดทักษะการรวบรวมข้อมูล คิดอย่างเป็นระบบสร้างเป็นองค์ความรู้ที่ยั่งยืนได้อย่างแท้จริง",
-            url: "/online/teacher-videos",
+            type: "news",
+            postDate: new Date(2020, 4, 12),
+            image: "/images/dummybase/sk-teaching-practice.jpg",
+            content: {
+              "en-US": {
+                title: "SK Teaching Practice",
+                supportingText:
+                  "The stories we’re about to tell might seem small, but can go a long way in creating an enjoyable \
+                  environment for teachers and students alike.",
+              },
+              th: {
+                title: "การบริหารจัดการชั้นเรียน",
+                supportingText:
+                  "เรื่องที่พวกเราจะเล่านั้น เป็นเพียงประเด็นเล็กๆ ที่ใช้บริหารจัดการชั้นเรียนได้อยู่หมัด มันดึงความสนใจของเด็กน้อยจากมือถือได้ \
+                  แถมมีเสียงหัวเราะเกิดขึ้นในชั้นเรียน นักเรียนได้ค้นคว้าได้ทดลอง ได้ฝึกปฏิบัติ กิจกรรมเหล่านี้ส่งเสริมให้นักเรียนเกิดทักษะการคิดและแลกเปลี่ยนเรียนรู้ร่วมกัน \
+                  ทำให้นักเรียนมีความสุขสนุกสนานในการเรียนและเกิดทักษะการรวบรวมข้อมูล คิดอย่างเป็นระบบสร้างเป็นองค์ความรู้ที่ยั่งยืนได้อย่างแท้จริง",
+              },
+            },
           },
         ],
       }}
