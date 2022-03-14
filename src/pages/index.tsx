@@ -31,13 +31,9 @@ const LandingFeed = ({
 
   return (
     <section
-      className={`absolute bottom-0 h-[calc(100vh-4.75rem)] rounded-t-xl bg-[#fbfcff88] text-on-surface
-        backdrop-blur-xl transition-transform dark:bg-[#191c1e88] sm:right-4
-        sm:top-4 sm:h-[calc(100vh-6.5rem)] sm:w-[22.5rem] sm:translate-y-0 sm:rounded-xl sm:transition-[width] ${
-          fullscreen
-            ? "translate-y-0 sm:w-[calc(100vw-2rem)]"
-            : "translate-y-[calc(100vh-14.25rem)]"
-        }`}
+      className="fixed bottom-[6rem] right-2 w-[calc(100vw-1rem)] rounded-xl bg-[#fbfcff88]
+        text-on-surface backdrop-blur-xl dark:bg-[#191c1e88] sm:right-4 sm:bottom-4
+        sm:h-[calc(100vh-6.5rem)] sm:w-[22.5rem]"
     >
       <Card
         type="stacked"
@@ -72,7 +68,7 @@ const LandingFeed = ({
               </p>
             }
             end={
-              <div className="btn--text !p-2">
+              <div className="btn--text !p-2 sm:!hidden">
                 {fullscreen ? (
                   <MaterialIcon icon="fullscreen_exit" />
                 ) : (
@@ -82,10 +78,14 @@ const LandingFeed = ({
             }
           />
         </button>
-        <div className="grow overflow-y-auto">
+        <div
+          className={`grow overflow-y-auto transition-[height] sm:h-full ${
+            fullscreen ? "h-[calc(100vh-14.5rem)]" : "h-0"
+          }`}
+        >
           <ul className="flex flex-col">
             {feed.content.map((feedItem) => (
-              <LandingFeedItem feedItem={feedItem} key={feedItem.id} />
+              <LandingFeedItem key={feedItem.id} feedItem={feedItem} />
             ))}
           </ul>
         </div>
@@ -100,11 +100,9 @@ const LandingFeedItem = ({ feedItem }: { feedItem: NewsItem }): JSX.Element => {
   return (
     <li key={feedItem.id}>
       <Link href={`/news/${feedItem.id}`}>
-        <a
-          className="relative flex flex-col has-action"
-        >
+        <a className="has-action relative flex flex-col">
           <div
-            className="surface grid h-48 w-full place-items-center text-center bg-cover"
+            className="surface grid h-48 w-full place-items-center bg-cover text-center"
             style={{
               backgroundImage: feedItem.image
                 ? `url('${feedItem.image}')`
@@ -114,9 +112,7 @@ const LandingFeedItem = ({ feedItem }: { feedItem: NewsItem }): JSX.Element => {
             {!feedItem.image && feedItem.content[locale].title}
           </div>
           <div className="flex flex-col p-4">
-            <h3
-              className="font-display text-lg font-bold"
-            >
+            <h3 className="font-display text-lg font-bold">
               {feedItem.content[locale].title}
             </h3>
             <p className="max-lines-2">
@@ -160,10 +156,10 @@ const LandingBanner = (): JSX.Element => {
   const { t } = useTranslation(["landing", "common"]);
 
   return (
-    <header className="h-screen bg-[url('/images/landing.png')] bg-cover bg-left font-display sm:min-h-[calc(100vh-4.5rem)]">
+    <header className="h-full bg-[url('/images/landing.png')] bg-cover bg-left font-display sm:min-h-[calc(100vh-4.5rem)]">
       {/* Vignette layer */}
       <div
-        className="flex h-screen flex-col items-center gap-16 bg-gradient-to-b
+        className="flex h-full flex-col items-center gap-16 bg-gradient-to-b
           from-[#00000033] via-transparent to-[#00000033] px-8 py-16
           dark:from-[#00000099] dark:via-[#00000066] dark:to-[#00000099]
           sm:min-h-[calc(100vh-4.5rem)] sm:items-start sm:bg-gradient-to-r sm:px-16"
@@ -227,7 +223,7 @@ const LandingBanner = (): JSX.Element => {
 
 // Page
 const Landing: NextPage = () => (
-  <div className="relative h-full overflow-hidden">
+  <div className="h-full sm:relative">
     <LandingBanner />
     <LandingFeed
       feed={{

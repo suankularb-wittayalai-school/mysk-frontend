@@ -27,12 +27,12 @@ import {
 
 // Components
 import Schedule from "@components/Schedule";
+import TeacherCard from "@components/TeacherCard";
 
 // Types
 import { NewsList } from "@utils/types/news";
 import { Teacher } from "@utils/types/person";
 import { Schedule as ScheduleType } from "@utils/types/schedule";
-import TeacherCard from "@components/TeacherCard";
 
 const UserActions = ({ className }: { className: string }): JSX.Element => {
   const { t } = useTranslation("dashboard");
