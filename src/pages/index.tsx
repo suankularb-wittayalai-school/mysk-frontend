@@ -19,6 +19,7 @@ import {
 
 // Types
 import { NewsItem, NewsList } from "@utils/types/news";
+import Head from "next/head";
 
 // News
 const LandingFeed = ({
@@ -42,7 +43,7 @@ const LandingFeed = ({
       >
         <button
           onClick={() => setFullScreen(!fullscreen)}
-          className="relative text-left has-action"
+          className="has-action relative text-left"
         >
           <CardHeader
             icon="newspaper"
@@ -220,57 +221,68 @@ const LandingBanner = (): JSX.Element => {
 };
 
 // Page
-const Landing: NextPage = () => (
-  <div className="h-full sm:relative">
-    <LandingBanner />
-    <LandingFeed
-      feed={{
-        lastUpdated: new Date(),
-        content: [
-          {
-            id: 4,
-            type: "news",
-            postDate: new Date(2021, 8, 16),
-            image: "/images/dummybase/certificates-announcement.jpg",
-            content: {
-              "en-US": {
-                title: "Certificates Announcement",
-                supportingText:
-                  "Announcement of the 2020 Suankularb Wittayalai winners of certificates.",
+const Landing: NextPage = () => {
+  const { t } = useTranslation(["landing", "common"]);
+  
+  return (
+    <>
+      <Head>
+        <title>
+          {t("title")} - {t("brand.name", { ns: "common" })}
+        </title>
+      </Head>
+      <div className="h-full sm:relative">
+        <LandingBanner />
+        <LandingFeed
+          feed={{
+            lastUpdated: new Date(),
+            content: [
+              {
+                id: 4,
+                type: "news",
+                postDate: new Date(2021, 8, 16),
+                image: "/images/dummybase/certificates-announcement.jpg",
+                content: {
+                  "en-US": {
+                    title: "Certificates Announcement",
+                    supportingText:
+                      "Announcement of the 2020 Suankularb Wittayalai winners of certificates.",
+                  },
+                  th: {
+                    title: "ประกาศเกียรติคุณ",
+                    supportingText:
+                      "ประกาศเกียรติคุณโรงเรียนสวนกุหลาบวิทยาลัย ประจปีการศึกษา 2563",
+                  },
+                },
               },
-              th: {
-                title: "ประกาศเกียรติคุณ",
-                supportingText:
-                  "ประกาศเกียรติคุณโรงเรียนสวนกุหลาบวิทยาลัย ประจปีการศึกษา 2563",
-              },
-            },
-          },
-          {
-            id: 1,
-            type: "news",
-            postDate: new Date(2020, 4, 12),
-            image: "/images/dummybase/sk-teaching-practice.jpg",
-            content: {
-              "en-US": {
-                title: "SK Teaching Practice",
-                supportingText:
-                  "The stories we’re about to tell might seem small, but can go a long way in creating an enjoyable \
+              {
+                id: 1,
+                type: "news",
+                postDate: new Date(2020, 4, 12),
+                image: "/images/dummybase/sk-teaching-practice.jpg",
+                content: {
+                  "en-US": {
+                    title: "SK Teaching Practice",
+                    supportingText:
+                      "The stories we’re about to tell might seem small, but can go a long way in creating an enjoyable \
                   environment for teachers and students alike.",
-              },
-              th: {
-                title: "การบริหารจัดการชั้นเรียน",
-                supportingText:
-                  "เรื่องที่พวกเราจะเล่านั้น เป็นเพียงประเด็นเล็กๆ ที่ใช้บริหารจัดการชั้นเรียนได้อยู่หมัด มันดึงความสนใจของเด็กน้อยจากมือถือได้ \
+                  },
+                  th: {
+                    title: "การบริหารจัดการชั้นเรียน",
+                    supportingText:
+                      "เรื่องที่พวกเราจะเล่านั้น เป็นเพียงประเด็นเล็กๆ ที่ใช้บริหารจัดการชั้นเรียนได้อยู่หมัด มันดึงความสนใจของเด็กน้อยจากมือถือได้ \
                   แถมมีเสียงหัวเราะเกิดขึ้นในชั้นเรียน นักเรียนได้ค้นคว้าได้ทดลอง ได้ฝึกปฏิบัติ กิจกรรมเหล่านี้ส่งเสริมให้นักเรียนเกิดทักษะการคิดและแลกเปลี่ยนเรียนรู้ร่วมกัน \
                   ทำให้นักเรียนมีความสุขสนุกสนานในการเรียนและเกิดทักษะการรวบรวมข้อมูล คิดอย่างเป็นระบบสร้างเป็นองค์ความรู้ที่ยั่งยืนได้อย่างแท้จริง",
+                  },
+                },
               },
-            },
-          },
-        ],
-      }}
-    />
-  </div>
-);
+            ],
+          }}
+        />
+      </div>
+    </>
+  );
+};
 
 export const getStaticProps = async ({ locale }: { locale: string }) => ({
   props: {

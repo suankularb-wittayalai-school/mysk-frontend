@@ -16,6 +16,12 @@ export type PersonName = {
   nickname?: string;
 };
 
+export type Student = Person & {
+  // TODO: Add more properties when the schema is completed
+  class: string;
+  classNo: number;
+}
+
 export type Teacher = Person & {
   // TODO: Add more properties when the schema is completed
   subjectsInCharge: Array<SubjectMini>;

@@ -31,8 +31,9 @@ import TeacherCard from "@components/TeacherCard";
 
 // Types
 import { NewsList } from "@utils/types/news";
-import { Teacher } from "@utils/types/person";
+import { Student, Teacher } from "@utils/types/person";
 import { Schedule as ScheduleType } from "@utils/types/schedule";
+import Head from "next/head";
 
 const UserActions = ({ className }: { className: string }): JSX.Element => {
   const { t } = useTranslation("dashboard");
@@ -69,46 +70,53 @@ const UserActions = ({ className }: { className: string }): JSX.Element => {
 
 const UserSection = (): JSX.Element => {
   const locale = useRouter().locale == "th" ? "th" : "en-US";
-  const { t } = useTranslation("dashboard");
+  const { t } = useTranslation(["dashboard", "common"]);
 
   // Dummybase
-  const user = {
+  const user: Student | Teacher = {
+    id: 9,
     name: {
       "en-US": { firstName: "Sadudee", lastName: "Theparree" },
       th: { firstName: "สดุดี", lastName: "เทพอารีย์" },
     },
+    profile: "/images/dummybase/sadudee.jpg",
     class: "405",
-    classNo: "11",
+    classNo: 11,
   };
   const notifCount = 1;
 
   return (
-    <Section>
-      <div className="grid grid-cols-[1fr_3fr] items-stretch gap-4 sm:gap-6 md:grid-cols-[1fr_5fr]">
-        <div>
-          <div className="container-tertiary relative aspect-square w-full overflow-hidden rounded-4xl sm:rounded-8xl">
-            <Image
-              src="/images/dummybase/sadudee.jpg"
-              layout="fill"
-              alt={t("user.profileAlt")}
-            />
-          </div>
-        </div>
-        <div className="flex flex-col gap-2">
-          <div className="flex flex-grow flex-col gap-2">
-            <div className="flex flex-col">
-              <h2 className="max-lines-1 break-all font-display text-4xl font-bold">
-                {user.name[locale].firstName} {user.name[locale].lastName}
-              </h2>
-              <p className="font-display text-xl">
-                <Trans i18nKey="user.classAndNo" ns="dashboard">
-                  M.{{ class: user.class }} No.{{ classNo: user.classNo }}
-                </Trans>
-              </p>
+    <>
+      <Head>
+        <title>
+          {t("title")} - {t("brand.name", { ns: "common" })}
+        </title>
+      </Head>
+      <Section>
+        <div className="grid grid-cols-[1fr_3fr] items-stretch gap-4 sm:gap-6 md:grid-cols-[1fr_5fr]">
+          <div>
+            <div className="container-tertiary relative aspect-square w-full overflow-hidden rounded-4xl sm:rounded-8xl">
+              <Image
+                src={user.profile ? user.profile : "/images/common/avatar.svg"}
+                layout="fill"
+                alt={t("user.profileAlt")}
+              />
             </div>
-            {/* FIXME: Replace the following element with `Chip` when you can use a JSX element as `name` */}
-            <Link href="/notifications">
-              <a
+          </div>
+          <div className="flex flex-col gap-2">
+            <div className="flex flex-grow flex-col gap-2">
+              <div className="flex flex-col">
+                <h2 className="max-lines-1 break-all font-display text-4xl font-bold">
+                  {user.name[locale].firstName} {user.name[locale].lastName}
+                </h2>
+                <p className="font-display text-xl">
+                  <Trans i18nKey="user.classAndNo" ns="dashboard">
+                    M.{{ class: user.class }} No.{{ classNo: user.classNo }}
+                  </Trans>
+                </p>
+              </div>
+              {/* FIXME: Replace the following element with `Chip` when you can use a JSX element as `name` */}
+              <button
                 className="container-error has-action--tertiary hidden w-fit flex-row items-center gap-1 rounded-xl p-2
                   hover:shadow focus:shadow-none sm:flex"
               >
@@ -128,14 +136,14 @@ const UserSection = (): JSX.Element => {
                   </Trans>
                 </p>
                 <MaterialIcon icon="arrow_forward" className="text-error" />
-              </a>
-            </Link>
+              </button>
+            </div>
+            <UserActions className="hidden md:flex" />
           </div>
-          <UserActions className="hidden md:flex" />
         </div>
-      </div>
-      <UserActions className="flex md:hidden" />
-    </Section>
+        <UserActions className="flex md:hidden" />
+      </Section>
+    </>
   );
 };
 

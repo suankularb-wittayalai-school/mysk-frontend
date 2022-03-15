@@ -1,5 +1,6 @@
 // Modules
 import type { NextPage } from "next";
+import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
@@ -25,7 +26,7 @@ const LoginForm = () => {
   return (
     <div className="flex flex-col items-center">
       <form
-        className="section w-full sm:w-1/2 md:w-1/3"
+        className="section w-full md:w-1/3"
         onSubmit={(e: FormEvent) => e.preventDefault()}
       >
         <KeyboardInput
@@ -61,23 +62,30 @@ const LoginForm = () => {
 
 // Page
 const Login: NextPage = (): JSX.Element => {
-  const { t } = useTranslation("account");
+  const { t } = useTranslation(["account", "common"]);
 
   return (
-    <RegularLayout
-      Title={
-        <Title
-          name={{ title: t("title") }}
-          pageIcon="person"
-          backGoesTo="/"
-          LinkElement={Link}
-          className="sm:none"
-          key="title"
-        />
-      }
-    >
-      <LoginForm />
-    </RegularLayout>
+    <>
+      <Head>
+        <title>
+          {t("title")} - {t("brand.name", { ns: "common" })}
+        </title>
+      </Head>
+      <RegularLayout
+        Title={
+          <Title
+            name={{ title: t("title") }}
+            pageIcon="person"
+            backGoesTo="/"
+            LinkElement={Link}
+            className="sm:none"
+            key="title"
+          />
+        }
+      >
+        <LoginForm />
+      </RegularLayout>
+    </>
   );
 };
 
