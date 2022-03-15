@@ -25,7 +25,7 @@ const LoginForm = () => {
   return (
     <div className="flex flex-col items-center">
       <form
-        className="section w-full md:w-1/3"
+        className="section w-full sm:w-1/2 md:w-1/3"
         onSubmit={(e: FormEvent) => e.preventDefault()}
       >
         <KeyboardInput
