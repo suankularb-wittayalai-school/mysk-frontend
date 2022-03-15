@@ -555,13 +555,15 @@ const ClassCounselorsCard = ({
                   </span>
                 </h4>
                 {/* Go to Teacher button */}
-                <button className="btn btn--filled container-secondary !p-1 text-2xl">
-                  <MaterialIcon
-                    icon="arrow_forward"
-                    allowCustomSize={true}
-                    className="!block"
-                  />
-                </button>
+                <Link href={`/teacher/${teacher.id}`}>
+                  <a className="btn btn--filled container-secondary !p-1 text-2xl">
+                    <MaterialIcon
+                      icon="arrow_forward"
+                      allowCustomSize={true}
+                      className="!block"
+                    />
+                  </a>
+                </Link>
               </div>
             </div>
           ))}
