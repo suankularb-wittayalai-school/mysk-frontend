@@ -107,22 +107,29 @@ const UserSection = (): JSX.Element => {
               </p>
             </div>
             {/* FIXME: Replace the following element with `Chip` when you can use a JSX element as `name` */}
-            <div className="container-error hidden w-fit flex-row items-center gap-1 rounded-xl p-2 sm:flex">
-              <MaterialIcon
-                icon={notifCount > 0 ? "notifications_active" : "notifications"}
-                className="text-error"
-              />
-              <p>
-                <Trans
-                  i18nKey="user.hasNotifications"
-                  ns="dashboard"
-                  count={notifCount}
-                >
-                  You have {{ notifCount }} notifications.
-                </Trans>
-              </p>
-              <MaterialIcon icon="arrow_forward" className="text-error" />
-            </div>
+            <Link href="/notifications">
+              <a
+                className="container-error has-action--tertiary hidden w-fit flex-row items-center gap-1 rounded-xl p-2
+                  hover:shadow focus:shadow-none sm:flex"
+              >
+                <MaterialIcon
+                  icon={
+                    notifCount > 0 ? "notifications_active" : "notifications"
+                  }
+                  className="text-error"
+                />
+                <p>
+                  <Trans
+                    i18nKey="user.hasNotifications"
+                    ns="dashboard"
+                    count={notifCount}
+                  >
+                    You have {{ notifCount }} notifications.
+                  </Trans>
+                </p>
+                <MaterialIcon icon="arrow_forward" className="text-error" />
+              </a>
+            </Link>
           </div>
           <UserActions className="hidden md:flex" />
         </div>
