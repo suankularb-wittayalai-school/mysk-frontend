@@ -31,9 +31,9 @@ const LandingFeed = ({
 
   return (
     <section
-      className="fixed bottom-[6rem] right-2 w-[calc(100vw-1rem)] rounded-xl bg-[#fbfcff88]
-        text-on-surface backdrop-blur-xl dark:bg-[#191c1e88] sm:absolute sm:right-4 sm:top-4
-        sm:h-[calc(100vh-6.5rem)] sm:w-[22.5rem]"
+      className="fixed bottom-[6rem] right-2 w-[calc(100vw-1rem)] rounded-xl
+        bg-[#fbfcff88] text-on-surface backdrop-blur-xl dark:bg-[#191c1e88]
+        sm:bottom-2 sm:w-[22.5rem] md:absolute md:right-4 md:top-4 md:h-[calc(100vh-6.5rem)]"
     >
       <Card
         type="stacked"
@@ -44,7 +44,7 @@ const LandingFeed = ({
           onClick={() => setFullScreen(!fullscreen)}
           className="relative text-left
             before:absolute before:top-0 before:left-0 before:h-full
-            before:w-full before:content-['']
+            before:w-full before:content-[''] before:pointer-events-none
             before:hover:bg-primary-translucent-08 before:hover:transition-none
             before:focus:bg-primary-translucent-12 before:focus:transition-none"
         >
@@ -68,19 +68,21 @@ const LandingFeed = ({
               </p>
             }
             end={
-              <div className="btn--text !p-2 sm:!hidden">
+              <div className="btn--text btn--icon-only md:!hidden">
                 {fullscreen ? (
-                  <MaterialIcon icon="fullscreen_exit" />
+                  <MaterialIcon icon="expand_more" />
                 ) : (
-                  <MaterialIcon icon="fullscreen" />
+                  <MaterialIcon icon="expand_less" />
                 )}
               </div>
             }
           />
         </button>
         <div
-          className={`grow overflow-y-auto transition-[height] sm:h-full ${
-            fullscreen ? "h-[calc(100vh-14.5rem)]" : "h-0"
+          className={`grow overflow-y-auto transition-[height] md:h-full ${
+            fullscreen
+              ? "h-[calc(100vh-14.5rem)] sm:h-[calc(100vh-16rem)]"
+              : "h-0"
           }`}
         >
           <ul className="flex flex-col">
