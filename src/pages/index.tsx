@@ -42,11 +42,7 @@ const LandingFeed = ({
       >
         <button
           onClick={() => setFullScreen(!fullscreen)}
-          className="relative text-left
-            before:absolute before:top-0 before:left-0 before:h-full
-            before:w-full before:content-[''] before:pointer-events-none
-            before:hover:bg-primary-translucent-08 before:hover:transition-none
-            before:focus:bg-primary-translucent-12 before:focus:transition-none"
+          className="relative text-left has-action"
         >
           <CardHeader
             icon="newspaper"
