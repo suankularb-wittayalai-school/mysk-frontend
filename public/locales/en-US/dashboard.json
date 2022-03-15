@@ -27,6 +27,7 @@
         "allDone": "All done"
       }
     },
+    "noRelevantNews": "We couldn’t find any relevant news.",
     "itemType": {
       "form": "Form",
       "news": "News",
