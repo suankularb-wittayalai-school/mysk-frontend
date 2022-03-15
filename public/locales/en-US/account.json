@@ -1,1 +1,21 @@
-{}
+{
+  "title": "Log in",
+  "form": {
+    "userID": "Student/Teacher ID",
+    "password": "Password"
+  },
+  "action": {
+    "forgotPassword": "Forgot password",
+    "logIn": "Log in"
+  },
+  "dialog": {
+    "logOut": {
+      "title": "Log out",
+      "supportingText": "Are you sure you want to log out?",
+      "action": {
+        "logOut": "Log out",
+        "back": "Back"
+      }
+    }
+  }
+}

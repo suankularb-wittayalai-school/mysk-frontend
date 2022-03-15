@@ -1,11 +1,27 @@
 {
   "brand": {
-    "name": "My<1>SK</1>",
+    "name": "MySK",
+    "nameWithAccent": "My<1>SK</1>",
     "school": "Suankularb Wittayalai School"
   },
   "navigation": {
     "home": "Home",
     "login": "Log in",
-    "about": "About"
+    "about": "About",
+    "schedule": "Schedule",
+    "class": "Class",
+    "teachers": "Teachers",
+    "news": "News"
+  },
+  "datetime": {
+    "day": {
+      "0": "Sunday",
+      "1": "Monday",
+      "2": "Tuesday",
+      "3": "Wednesday",
+      "4": "Thursday",
+      "5": "Friday",
+      "6": "Saturday"
+    }
   }
 }

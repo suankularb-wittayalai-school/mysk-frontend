@@ -1,0 +1,66 @@
+{
+  "title": "หน้าหลัก",
+  "user": {
+    "profileAlt": "รูปของคุณ",
+    "classAndNo": "ม.{{class}} เลขที่ {{classNo}}",
+    "hasNotifications_zero": "ไม่มีการแจ้งเตือน",
+    "hasNotifications_one": "มีการแจ้งเตือน 1 รายการ",
+    "hasNotifications_other": "มีการแจ้งเตือน {{notifCount}} รายการ",
+    "action": {
+      "logOut": "ออกจากระบบ",
+      "edit": "แก้ไขข้อมูล",
+      "requestEdit": "ขอแก้ไขข้อมูล",
+      "changePassword": "เปลี่ยนรหัสผ่าน"
+    }
+  },
+  "news": {
+    "title": "ข่าวสาร",
+    "filter": {
+      "forms": "แบบสอบถาม",
+      "news": "ข่าวสาร",
+      "payments": "การชำระเงิน",
+      "amountDone": {
+        "notDone": "ยังไม่ได้ทำ",
+        "done": "ทำแล้ว",
+        "fewDone": "นักเรียนทำน้อย",
+        "mostDone": "นักเรียนทำมาก",
+        "allDone": "นักเรียนทุกคนทำแล้ว"
+      }
+    },
+    "noRelevantNews": "ไม่มีข่าวสารที่เกี่ยวข้อง",
+    "itemType": {
+      "form": "แบบสอบถาม",
+      "news": "ข่าวสาร",
+      "payment": "การชำระเงิน"
+    },
+    "itemAction": {
+      "form": {
+        "do": "ทำแบบสอบถาม",
+        "edit": "แก้ไขแบบสอบถาม"
+      },
+      "news": "อ่านเพิ่มเติม",
+      "payment": {
+        "do": "ชำระเงิน",
+        "edit": "ดูการชำระเงิน"
+      }
+    },
+    "action": {
+      "seeAll": "ดูข่าวสารทั้งหมด"
+    }
+  },
+  "class": {
+    "title": "ห้องเรียน",
+    "action": {
+      "seeSchedule": "ดูตารางเรียน",
+      "seeClassDetail": "ดูรายละเอียดห้องเรียน"
+    }
+  },
+  "teachers": {
+    "title": "อาจารย์",
+    "classAdvisors": "ครูที่ปรึกษา",
+    "noTeachers": "ยังไม่มีอาจารย์ที่จะเรียนด้วยเร็วๆ นี้",
+    "action": {
+      "seeAll": "ดูรายชื่ออาจารย์"
+    }
+  }
+}

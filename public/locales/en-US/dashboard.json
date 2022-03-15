@@ -1,0 +1,66 @@
+{
+  "title": "Home",
+  "user": {
+    "profileAlt": "A picture of you",
+    "classAndNo": "M.{{class}} No. {{classNo}}",
+    "hasNotifications_zero": "No notifications",
+    "hasNotifications_one": "1 notification",
+    "hasNotifications_other": "{{notifCount}} notifications",
+    "action": {
+      "logOut": "Log out",
+      "edit": "Edit profile",
+      "requestEdit": "Request profile edit",
+      "changePassword": "Change password"
+    }
+  },
+  "news": {
+    "title": "News",
+    "filter": {
+      "forms": "Forms",
+      "news": "News",
+      "payments": "Payments",
+      "amountDone": {
+        "notDone": "Not done",
+        "done": "Done",
+        "fewDone": "Few done",
+        "mostDone": "Most done",
+        "allDone": "All done"
+      }
+    },
+    "noRelevantNews": "We couldn’t find any relevant news.",
+    "itemType": {
+      "form": "Form",
+      "news": "News",
+      "payment": "Payment"
+    },
+    "itemAction": {
+      "form": {
+        "do": "Do form",
+        "edit": "Edit form"
+      },
+      "news": "Read more",
+      "payment": {
+        "do": "Pay",
+        "edit": "See payment"
+      }
+    },
+    "action": {
+      "seeAll": "See all"
+    }
+  },
+  "class": {
+    "title": "Class",
+    "action": {
+      "seeSchedule": "See schedule",
+      "seeClassDetail": "See class detail"
+    }
+  },
+  "teachers": {
+    "title": "Teachers",
+    "classAdvisors": "Class Advisors",
+    "noTeachers": "We couldn’t find any relevant teachers.",
+    "action": {
+      "seeAll": "See all"
+    }
+  }
+}
