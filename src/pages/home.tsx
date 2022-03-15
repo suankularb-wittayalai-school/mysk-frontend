@@ -536,9 +536,6 @@ const ClassCounselorsCard = ({
                 <Image src={teacher.profile} layout="fill" alt="" />
               )}
 
-              {/* Darkens photo in dark mode */}
-              <div className="pointer-events-none absolute h-full w-full dark:bg-[#00000033]" />
-
               {/* Name bar */}
               <div
                 className="absolute bottom-0 flex w-full flex-row items-center justify-between
