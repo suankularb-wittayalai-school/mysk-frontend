@@ -1,11 +1,15 @@
 // Modules
 import { isPast, isThisYear } from "date-fns";
+
 import { NextPage } from "next";
+import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
+
 import { Trans, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+
 import { useEffect, useState } from "react";
 
 // SK Components
@@ -28,16 +32,21 @@ import {
 // Components
 import Schedule from "@components/Schedule";
 import TeacherCard from "@components/TeacherCard";
+import LogOutDialog from "@components/dialogs/LogOut";
 
 // Types
 import { NewsList } from "@utils/types/news";
 import { Student, Teacher } from "@utils/types/person";
 import { Schedule as ScheduleType } from "@utils/types/schedule";
-import Head from "next/head";
 
-const UserActions = ({ className }: { className: string }): JSX.Element => {
+const UserActions = ({
+  setShowLogOut,
+  className,
+}: {
+  setShowLogOut: Function;
+  className?: string;
+}): JSX.Element => {
   const { t } = useTranslation("dashboard");
-  const router = useRouter();
 
   return (
     <div
@@ -61,14 +70,18 @@ const UserActions = ({ className }: { className: string }): JSX.Element => {
         name={t("user.action.logOut")}
         type="filled"
         icon={<MaterialIcon icon="logout" />}
-        onClick={() => router.push("/")}
+        onClick={() => setShowLogOut(true)}
         className="!bg-error !text-on-error"
       />
     </div>
   );
 };
 
-const UserSection = (): JSX.Element => {
+const UserSection = ({
+  setShowLogOut,
+}: {
+  setShowLogOut: Function;
+}): JSX.Element => {
   const locale = useRouter().locale == "th" ? "th" : "en-US";
   const { t } = useTranslation(["dashboard", "common"]);
 
@@ -138,10 +151,13 @@ const UserSection = (): JSX.Element => {
                 <MaterialIcon icon="arrow_forward" className="text-error" />
               </button>
             </div>
-            <UserActions className="hidden md:flex" />
+            <UserActions
+              className="hidden md:flex"
+              setShowLogOut={setShowLogOut}
+            />
           </div>
         </div>
-        <UserActions className="flex md:hidden" />
+        <UserActions className="flex md:hidden" setShowLogOut={setShowLogOut} />
       </Section>
     </>
   );
@@ -226,39 +242,50 @@ const NewsSection = (): JSX.Element => {
   const [filteredNews, setFilteredNews] = useState<NewsList>(news);
   const { t } = useTranslation("dashboard");
 
-  useEffect(() => {
-    // Reset filtered news if all filters are deselected
-    if (newsFilter.length == 0) {
-      setFilteredNews(news);
+  useEffect(
+    () => {
+      // Reset filtered news if all filters are deselected
+      if (newsFilter.length == 0) {
+        setFilteredNews(news);
 
-      // Handles done
-    } else if (newsFilter.includes("not-done") || newsFilter.includes("done")) {
-      if (newsFilter.length > 1) {
-        setFilteredNews(
-          news.filter(
-            (newsItem) =>
-              newsFilter.includes(newsItem.type) &&
-              (newsFilter.includes("done")
+        // Handles done
+      } else if (
+        newsFilter.includes("not-done") ||
+        newsFilter.includes("done")
+      ) {
+        if (newsFilter.length > 1) {
+          setFilteredNews(
+            news.filter(
+              (newsItem) =>
+                newsFilter.includes(newsItem.type) &&
+                (newsFilter.includes("done")
+                  ? newsItem.done
+                  : newsItem.done == false)
+            )
+          );
+        } else {
+          setFilteredNews(
+            news.filter((newsItem) =>
+              newsFilter.includes("done")
                 ? newsItem.done
-                : newsItem.done == false)
-          )
-        );
-      } else {
+                : newsItem.done == false
+            )
+          );
+        }
+      }
+
+      // Handles types
+      else {
         setFilteredNews(
-          news.filter((newsItem) =>
-            newsFilter.includes("done") ? newsItem.done : newsItem.done == false
-          )
+          news.filter((newsItem) => newsFilter.includes(newsItem.type))
         );
       }
-    }
+    },
 
-    // Handles types
-    else {
-      setFilteredNews(
-        news.filter((newsItem) => newsFilter.includes(newsItem.type))
-      );
-    }
-  }, [newsFilter]);
+    // Adding `news` as a dependency causes an inifinie loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [newsFilter]
+  );
 
   return (
     <Section>
@@ -462,13 +489,11 @@ const ClassSection = (): JSX.Element => {
   );
 };
 
-interface ClassCounselorsCardProps {
-  className?: string;
-}
-
 const ClassCounselorsCard = ({
   className,
-}: ClassCounselorsCardProps): JSX.Element => {
+}: {
+  className?: string;
+}): JSX.Element => {
   const locale = useRouter().locale == "th" ? "th" : "en-US";
   const { t } = useTranslation("dashboard");
   const classAdvisors: Array<Teacher> = [
@@ -699,30 +724,38 @@ const TeachersSection = (): JSX.Element => {
 // Page
 const Home: NextPage = () => {
   const { t } = useTranslation("common");
+  const [showLogOut, setShowLogOut] = useState<boolean>(false);
 
   return (
-    <RegularLayout
-      Title={
-        <Title
-          name={{ title: t("brand.name") }}
-          pageIcon={<MaterialIcon icon="home" />}
-          backGoesTo="/"
-          LinkElement={Link}
-          className="sm:!hidden"
-        />
-      }
-    >
-      <UserSection />
-      <NewsSection />
-      <ClassSection />
-      <TeachersSection />
-    </RegularLayout>
+    <>
+      <RegularLayout
+        Title={
+          <Title
+            name={{ title: t("brand.name") }}
+            pageIcon={<MaterialIcon icon="home" />}
+            backGoesTo="/"
+            LinkElement={Link}
+            className="sm:!hidden"
+          />
+        }
+      >
+        <UserSection setShowLogOut={setShowLogOut} />
+        <NewsSection />
+        <ClassSection />
+        <TeachersSection />
+      </RegularLayout>
+      <LogOutDialog show={showLogOut} onClose={() => setShowLogOut(false)} />
+    </>
   );
 };
 
 export const getStaticProps = async ({ locale }: { locale: string }) => ({
   props: {
-    ...(await serverSideTranslations(locale, ["common", "dashboard"])),
+    ...(await serverSideTranslations(locale, [
+      "common",
+      "account",
+      "dashboard",
+    ])),
   },
 });
 
