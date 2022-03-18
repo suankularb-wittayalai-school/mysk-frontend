@@ -38,11 +38,14 @@ import LogOutDialog from "@components/dialogs/LogOut";
 import { NewsList } from "@utils/types/news";
 import { Student, Teacher } from "@utils/types/person";
 import { Schedule as ScheduleType } from "@utils/types/schedule";
+import EditProfileDialog from "@components/dialogs/EditProfile";
 
 const UserActions = ({
+  setShowEditProfile,
   setShowLogOut,
   className,
 }: {
+  setShowEditProfile: Function;
   setShowLogOut: Function;
   className?: string;
 }): JSX.Element => {
@@ -64,7 +67,7 @@ const UserActions = ({
         name={t("user.action.requestEdit")}
         type="outlined"
         icon={<MaterialIcon icon="edit" />}
-        onClick={() => {}}
+        onClick={() => setShowEditProfile(true)}
       />
       <Button
         name={t("user.action.logOut")}
@@ -78,8 +81,10 @@ const UserActions = ({
 };
 
 const UserSection = ({
+  setShowEditProfile,
   setShowLogOut,
 }: {
+  setShowEditProfile: Function;
   setShowLogOut: Function;
 }): JSX.Element => {
   const locale = useRouter().locale == "th" ? "th" : "en-US";
@@ -153,11 +158,16 @@ const UserSection = ({
             </div>
             <UserActions
               className="hidden md:flex"
+              setShowEditProfile={setShowEditProfile}
               setShowLogOut={setShowLogOut}
             />
           </div>
         </div>
-        <UserActions className="flex md:hidden" setShowLogOut={setShowLogOut} />
+        <UserActions
+          className="flex md:hidden"
+          setShowEditProfile={setShowEditProfile}
+          setShowLogOut={setShowLogOut}
+        />
       </Section>
     </>
   );
@@ -724,10 +734,12 @@ const TeachersSection = (): JSX.Element => {
 // Page
 const Home: NextPage = () => {
   const { t } = useTranslation("common");
+  const [showEditProfile, setShowEditProfile] = useState<boolean>(false);
   const [showLogOut, setShowLogOut] = useState<boolean>(false);
 
   return (
     <>
+      {/* Content */}
       <RegularLayout
         Title={
           <Title
@@ -739,11 +751,20 @@ const Home: NextPage = () => {
           />
         }
       >
-        <UserSection setShowLogOut={setShowLogOut} />
+        <UserSection
+          setShowEditProfile={setShowEditProfile}
+          setShowLogOut={setShowLogOut}
+        />
         <NewsSection />
         <ClassSection />
         <TeachersSection />
       </RegularLayout>
+
+      {/* Dialogs */}
+      <EditProfileDialog
+        show={showEditProfile}
+        onClose={() => setShowEditProfile(false)}
+      />
       <LogOutDialog show={showLogOut} onClose={() => setShowLogOut(false)} />
     </>
   );

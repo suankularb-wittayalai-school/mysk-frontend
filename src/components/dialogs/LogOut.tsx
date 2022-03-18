@@ -11,11 +11,7 @@ import { DialogProps } from "@utils/types/common";
 // Backend
 import { logOut } from "@utils/backend/account";
 
-interface LogOutDialogProps extends DialogProps {
-  onClose: Function;
-}
-
-const LogOutDialog = ({ show, onClose }: LogOutDialogProps): JSX.Element => {
+const LogOutDialog = ({ show, onClose }: DialogProps): JSX.Element => {
   const { t } = useTranslation("account");
   const router = useRouter();
 
