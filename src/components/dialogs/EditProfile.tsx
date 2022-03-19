@@ -1,5 +1,4 @@
 // Modules
-import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 
 // SK Components
@@ -16,22 +15,35 @@ import { DialogProps } from "@utils/types/common";
 // Backend
 import { editProfile } from "@utils/backend/account";
 
-const EditProfileDialog = ({ show, onClose }: DialogProps): JSX.Element => {
+interface EditProfileDialogProps extends DialogProps {
+  userRole: "student" | "teacher";
+}
+
+const EditProfileDialog = ({
+  userRole,
+  show,
+  onClose,
+}: EditProfileDialogProps): JSX.Element => {
   const { t } = useTranslation("account");
+  const ns = userRole == "teacher" ? "editProfile" : "requestEditProfile";
 
   return (
     <Dialog
       type="large"
       label="edit-profile"
-      title={t("dialog.requestEditProfile.title")}
-      supportingText={t("dialog.requestEditProfile.supportingText")}
+      title={t(`dialog.${ns}.title`)}
+      supportingText={
+        userRole == "teacher"
+          ? undefined
+          : t("dialog.requestEditProfile.supportingText")
+      }
       actions={[
         {
-          name: t("dialog.requestEditProfile.action.cancel"),
+          name: t(`dialog.${ns}.action.cancel`),
           type: "close",
         },
         {
-          name: t("dialog.requestEditProfile.action.sendRequest"),
+          name: t(`dialog.${ns}.action.sendRequest`),
           type: "submit",
         },
       ]}

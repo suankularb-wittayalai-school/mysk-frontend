@@ -13,8 +13,8 @@
       "title": "Local Name (Thai)",
       "prefix": {
         "label": "Prefix",
-        "master": "Master",
-        "mister": "Mister"
+        "master": "เด็กชาย (Master)",
+        "mister": "นาย (Mister)"
       },
       "firstName": "First name",
       "middleName": "Middle name",
@@ -34,6 +34,13 @@
       "action": {
         "cancel": "Cancel",
         "sendRequest": "Send request"
+      }
+    },
+    "editProfile": {
+      "title": "Edit profile",
+      "action": {
+        "cancel": "Cancel",
+        "sendRequest": "Save"
       }
     },
     "logOut": {
