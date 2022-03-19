@@ -1,6 +1,7 @@
 // Modules
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
+import { useState } from "react";
 
 // SK Components
 import {
@@ -11,6 +12,9 @@ import {
   KeyboardInput,
   MaterialIcon,
 } from "@suankularb-components/react";
+
+// Components
+import DiscardDraft from "@components/dialogs/DiscardDraft";
 
 // Types
 import { DialogProps } from "@utils/types/common";
@@ -29,6 +33,7 @@ const EditProfileDialog = ({
 }: EditProfileDialogProps): JSX.Element => {
   const { t } = useTranslation("account");
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const [showDiscard, setShowDiscard] = useState<boolean>(false);
 
   // Dummybase
   const subjectGroups = [
@@ -72,129 +77,139 @@ const EditProfileDialog = ({
   ];
 
   return (
-    <Dialog
-      type="large"
-      label="edit-profile"
-      title={
-        userRole == "teacher"
-          ? t("dialog.editProfile.title")
-          : t("dialog.requestEditProfile.title")
-      }
-      supportingText={
-        <>
-          {userRole == "student" && (
-            <p>{t("dialog.requestEditProfile.supportingText")}</p>
-          )}
-          <div className="sm:hidden">
-            <Button
-              name={t("dialog.changePassword.title")}
-              label={t("dialog.changePassword.title")}
-              type="text"
-              icon={<MaterialIcon icon="password" />}
-            />
-          </div>
-        </>
-      }
-      actions={[
-        {
-          name:
-            userRole == "teacher"
-              ? t("dialog.editProfile.action.cancel")
-              : t("dialog.requestEditProfile.action.cancel"),
-          type: "close",
-        },
-        {
-          name:
-            userRole == "teacher"
-              ? t("dialog.editProfile.action.save")
-              : t("dialog.requestEditProfile.action.sendRequest"),
-          type: "submit",
-        },
-      ]}
-      show={show}
-      onClose={() => onClose()}
-      onSubmit={async () => {
-        onClose();
-        editProfile();
-      }}
-    >
-      <DialogSection name={t("profile.name.title")} isDoubleColumn>
-        <Dropdown
-          name="prefix"
-          label={t("profile.name.prefix.label")}
-          options={
-            userRole == "teacher"
-              ? [
-                  { value: "mister", label: t("profile.name.prefix.mister") },
-                  { value: "miss", label: t("profile.name.prefix.miss") },
-                  { value: "missus", label: t("profile.name.prefix.missus") },
-                ]
-              : [
-                  { value: "master", label: t("profile.name.prefix.master") },
-                  { value: "mister", label: t("profile.name.prefix.mister") },
-                ]
-          }
-        />
-        <KeyboardInput
-          name="th-first-name"
-          type="text"
-          label={t("profile.name.firstName")}
-          onChange={() => {}}
-        />
-        <KeyboardInput
-          name="th-middle-name"
-          type="text"
-          label={t("profile.name.middleName")}
-          onChange={() => {}}
-        />
-        <KeyboardInput
-          name="th-last-name"
-          type="text"
-          label={t("profile.name.lastName")}
-          onChange={() => {}}
-        />
-      </DialogSection>
-      <DialogSection name={t("profile.enName.title")} isDoubleColumn>
-        <KeyboardInput
-          name="en-first-name"
-          type="text"
-          label={t("profile.enName.firstName")}
-          onChange={() => {}}
-        />
-        <KeyboardInput
-          name="en-middle-name"
-          type="text"
-          label={t("profile.enName.middleName")}
-          onChange={() => {}}
-        />
-        <KeyboardInput
-          name="en-last-name"
-          type="text"
-          label={t("profile.enName.lastName")}
-          onChange={() => {}}
-        />
-      </DialogSection>
-      {userRole == "teacher" && (
-        <DialogSection name={t("profile.role.title")} isDoubleColumn>
+    <>
+      <Dialog
+        type="large"
+        label="edit-profile"
+        title={
+          userRole == "teacher"
+            ? t("dialog.editProfile.title")
+            : t("dialog.requestEditProfile.title")
+        }
+        supportingText={
+          <>
+            {userRole == "student" && (
+              <p>{t("dialog.requestEditProfile.supportingText")}</p>
+            )}
+            <div className="sm:hidden">
+              <Button
+                name={t("dialog.changePassword.title")}
+                label={t("dialog.changePassword.title")}
+                type="text"
+                icon={<MaterialIcon icon="password" />}
+              />
+            </div>
+          </>
+        }
+        actions={[
+          {
+            name:
+              userRole == "teacher"
+                ? t("dialog.editProfile.action.cancel")
+                : t("dialog.requestEditProfile.action.cancel"),
+            type: "close",
+          },
+          {
+            name:
+              userRole == "teacher"
+                ? t("dialog.editProfile.action.save")
+                : t("dialog.requestEditProfile.action.sendRequest"),
+            type: "submit",
+          },
+        ]}
+        show={show}
+        onClose={() => setShowDiscard(true)}
+        onSubmit={async () => {
+          onClose();
+          editProfile();
+        }}
+      >
+        <DialogSection name={t("profile.name.title")} isDoubleColumn>
           <Dropdown
-            name="subject-group"
-            label={t("profile.role.subjectGroup")}
-            options={subjectGroups.map((subjectGroup) => ({
-              value: subjectGroup.id,
-              label: subjectGroup.name[locale],
-            }))}
+            name="prefix"
+            label={t("profile.name.prefix.label")}
+            options={
+              userRole == "teacher"
+                ? [
+                    { value: "mister", label: t("profile.name.prefix.mister") },
+                    { value: "miss", label: t("profile.name.prefix.miss") },
+                    { value: "missus", label: t("profile.name.prefix.missus") },
+                  ]
+                : [
+                    { value: "master", label: t("profile.name.prefix.master") },
+                    { value: "mister", label: t("profile.name.prefix.mister") },
+                  ]
+            }
           />
-          <Dropdown
-            name="class-counselor-at"
-            label={t("profile.role.classCounselorAt")}
-            options={classes.map((classItem) => ({
-              value: classItem.id,
-              label: classItem.name[locale],
-            }))}
+          <KeyboardInput
+            name="th-first-name"
+            type="text"
+            label={t("profile.name.firstName")}
+            onChange={() => {}}
+          />
+          <KeyboardInput
+            name="th-middle-name"
+            type="text"
+            label={t("profile.name.middleName")}
+            onChange={() => {}}
+          />
+          <KeyboardInput
+            name="th-last-name"
+            type="text"
+            label={t("profile.name.lastName")}
+            onChange={() => {}}
           />
         </DialogSection>
-      )}
-    </Dialog>
+        <DialogSection name={t("profile.enName.title")} isDoubleColumn>
+          <KeyboardInput
+            name="en-first-name"
+            type="text"
+            label={t("profile.enName.firstName")}
+            onChange={() => {}}
+          />
+          <KeyboardInput
+            name="en-middle-name"
+            type="text"
+            label={t("profile.enName.middleName")}
+            onChange={() => {}}
+          />
+          <KeyboardInput
+            name="en-last-name"
+            type="text"
+            label={t("profile.enName.lastName")}
+            onChange={() => {}}
+          />
+        </DialogSection>
+        {userRole == "teacher" && (
+          <DialogSection name={t("profile.role.title")} isDoubleColumn>
+            <Dropdown
+              name="subject-group"
+              label={t("profile.role.subjectGroup")}
+              options={subjectGroups.map((subjectGroup) => ({
+                value: subjectGroup.id,
+                label: subjectGroup.name[locale],
+              }))}
+            />
+            <Dropdown
+              name="class-counselor-at"
+              label={t("profile.role.classCounselorAt")}
+              options={classes.map((classItem) => ({
+                value: classItem.id,
+                label: classItem.name[locale],
+              }))}
+            />
+          </DialogSection>
+        )}
+      </Dialog>
+      <DiscardDraft
+        show={showDiscard}
+        onClose={() => setShowDiscard(false)}
+        onSubmit={() => {
+          setShowDiscard(false);
+          onClose();
+        }}
+      />
+    </>
   );
 };
 
