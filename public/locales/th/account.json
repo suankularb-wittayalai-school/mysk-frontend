@@ -28,6 +28,9 @@
     }
   },
   "dialog": {
+    "changePassword": {
+      "title": "เปลี่ยนรหัสผ่าน"
+    },
     "editProfile": {
       "title": "แก้ไขข้อมูล",
       "action": {

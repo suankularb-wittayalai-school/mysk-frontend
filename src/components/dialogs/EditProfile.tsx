@@ -3,10 +3,12 @@ import { useTranslation } from "next-i18next";
 
 // SK Components
 import {
+  Button,
   Dialog,
   DialogSection,
   Dropdown,
   KeyboardInput,
+  MaterialIcon,
 } from "@suankularb-components/react";
 
 // Types
@@ -36,9 +38,19 @@ const EditProfileDialog = ({
           : t("dialog.requestEditProfile.title")
       }
       supportingText={
-        userRole == "teacher"
-          ? undefined
-          : t("dialog.requestEditProfile.supportingText")
+        <>
+          {userRole == "student" && (
+            <p>{t("dialog.requestEditProfile.supportingText")}</p>
+          )}
+          <div className="sm:hidden">
+            <Button
+              name={t("dialog.changePassword.title")}
+              label={t("dialog.changePassword.title")}
+              type="text"
+              icon={<MaterialIcon icon="password" />}
+            />
+          </div>
+        </>
       }
       actions={[
         {

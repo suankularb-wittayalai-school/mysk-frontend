@@ -28,6 +28,9 @@
     }
   },
   "dialog": {
+    "changePassword": {
+      "title": "Change password"
+    },
     "requestEditProfile": {
       "title": "Request profile edit",
       "supportingText": "You can request changes to your personal information. Administrators will review your request and approve the changes as they see fit.",
