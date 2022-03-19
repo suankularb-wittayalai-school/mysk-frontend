@@ -14,7 +14,9 @@
       "prefix": {
         "label": "คำนำหน้า",
         "master": "เด็กชาย",
-        "mister": "นาย"
+        "mister": "นาย",
+        "miss": "นางสาว",
+        "missus": "นาง"
       },
       "firstName": "ชื่อ",
       "middleName": "ชื่อกลาง",
@@ -25,6 +27,11 @@
       "firstName": "ชื่อภาษาอังกฤษ",
       "middleName": "ชื่อกลางภาษาอังกฤษ",
       "lastName": "นามสกุลภาษาอังกฤษ"
+    },
+    "role": {
+      "title": "หน้าที่",
+      "subjectGroup": "กลุ่มสาระการเรียนรู้",
+      "classCounselorAt": "ครูที่ปรึกษา"
     }
   },
   "dialog": {
@@ -35,7 +42,7 @@
       "title": "แก้ไขข้อมูล",
       "action": {
         "cancel": "ยกเลิก",
-        "sendRequest": "บันทึก"
+        "save": "บันทึก"
       }
     },
     "requestEditProfile": {

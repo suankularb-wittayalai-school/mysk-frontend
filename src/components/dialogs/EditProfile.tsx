@@ -1,4 +1,5 @@
 // Modules
+import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 
 // SK Components
@@ -27,6 +28,48 @@ const EditProfileDialog = ({
   onClose,
 }: EditProfileDialogProps): JSX.Element => {
   const { t } = useTranslation("account");
+  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+
+  // Dummybase
+  const subjectGroups = [
+    {
+      id: 0,
+      name: {
+        "en-US": "Science and Technology",
+        th: "วิทยาศาสตร์และเทคโนโลยี",
+      },
+    },
+    {
+      id: 1,
+      name: {
+        "en-US": "Mathematics",
+        th: "คณิตศาสตร์",
+      },
+    },
+    {
+      id: 2,
+      name: {
+        "en-US": "Foreign Language",
+        th: "ภาษาต่างประเทศ",
+      },
+    },
+    {
+      id: 3,
+      name: {
+        "en-US": "Thai",
+        th: "ภาษาไทย",
+      },
+    },
+  ];
+  const classes = [
+    {
+      id: 509,
+      name: {
+        "en-US": "M.509",
+        th: "ม.509",
+      },
+    },
+  ];
 
   return (
     <Dialog
@@ -79,10 +122,18 @@ const EditProfileDialog = ({
         <Dropdown
           name="prefix"
           label={t("profile.name.prefix.label")}
-          options={[
-            { value: "master", label: t("profile.name.prefix.master") },
-            { value: "mister", label: t("profile.name.prefix.mister") },
-          ]}
+          options={
+            userRole == "teacher"
+              ? [
+                  { value: "mister", label: t("profile.name.prefix.mister") },
+                  { value: "miss", label: t("profile.name.prefix.miss") },
+                  { value: "missus", label: t("profile.name.prefix.missus") },
+                ]
+              : [
+                  { value: "master", label: t("profile.name.prefix.master") },
+                  { value: "mister", label: t("profile.name.prefix.mister") },
+                ]
+          }
         />
         <KeyboardInput
           name="th-first-name"
@@ -123,6 +174,26 @@ const EditProfileDialog = ({
           onChange={() => {}}
         />
       </DialogSection>
+      {userRole == "teacher" && (
+        <DialogSection name={t("profile.role.title")} isDoubleColumn>
+          <Dropdown
+            name="subject-group"
+            label={t("profile.role.subjectGroup")}
+            options={subjectGroups.map((subjectGroup) => ({
+              value: subjectGroup.id,
+              label: subjectGroup.name[locale],
+            }))}
+          />
+          <Dropdown
+            name="class-counselor-at"
+            label={t("profile.role.classCounselorAt")}
+            options={classes.map((classItem) => ({
+              value: classItem.id,
+              label: classItem.name[locale],
+            }))}
+          />
+        </DialogSection>
+      )}
     </Dialog>
   );
 };

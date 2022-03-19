@@ -14,7 +14,9 @@
       "prefix": {
         "label": "Prefix",
         "master": "เด็กชาย (Master)",
-        "mister": "นาย (Mister)"
+        "mister": "นาย (Mister)",
+        "miss": "นางสาว (Miss)",
+        "missus": "นาง (Missus)"
       },
       "firstName": "First name",
       "middleName": "Middle name",
@@ -25,6 +27,11 @@
       "firstName": "English first name",
       "middleName": "English middle name",
       "lastName": "English last name"
+    },
+    "role": {
+      "title": "Role",
+      "subjectGroup": "Subject group",
+      "classCounselorAt": "Class counselor at"
     }
   },
   "dialog": {

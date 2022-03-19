@@ -762,7 +762,7 @@ const Home: NextPage = () => {
 
       {/* Dialogs */}
       <EditProfileDialog
-        userRole="student"
+        userRole="teacher"
         show={showEditProfile}
         onClose={() => setShowEditProfile(false)}
       />
