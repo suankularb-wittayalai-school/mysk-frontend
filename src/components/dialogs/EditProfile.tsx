@@ -25,13 +25,16 @@ const EditProfileDialog = ({
   onClose,
 }: EditProfileDialogProps): JSX.Element => {
   const { t } = useTranslation("account");
-  const ns = userRole == "teacher" ? "editProfile" : "requestEditProfile";
 
   return (
     <Dialog
       type="large"
       label="edit-profile"
-      title={t(`dialog.${ns}.title`)}
+      title={
+        userRole == "teacher"
+          ? t("dialog.editProfile.title")
+          : t("dialog.requestEditProfile.title")
+      }
       supportingText={
         userRole == "teacher"
           ? undefined
@@ -39,11 +42,17 @@ const EditProfileDialog = ({
       }
       actions={[
         {
-          name: t(`dialog.${ns}.action.cancel`),
+          name:
+            userRole == "teacher"
+              ? t("dialog.editProfile.action.cancel")
+              : t("dialog.requestEditProfile.action.cancel"),
           type: "close",
         },
         {
-          name: t(`dialog.${ns}.action.sendRequest`),
+          name:
+            userRole == "teacher"
+              ? t("dialog.editProfile.action.save")
+              : t("dialog.requestEditProfile.action.sendRequest"),
           type: "submit",
         },
       ]}

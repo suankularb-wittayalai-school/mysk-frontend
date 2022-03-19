@@ -40,7 +40,7 @@
       "title": "Edit profile",
       "action": {
         "cancel": "Cancel",
-        "sendRequest": "Save"
+        "save": "Save"
       }
     },
     "logOut": {
