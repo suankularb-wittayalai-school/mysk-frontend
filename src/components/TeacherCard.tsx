@@ -13,6 +13,7 @@ import {
 // Types
 import { Teacher } from "@utils/types/person";
 import { useTranslation } from "next-i18next";
+import ProfilePicture from "./ProfilePicture";
 
 interface TeacherCardProps {
   teacher: Teacher;
@@ -49,7 +50,7 @@ const TeacherCard = ({
     >
       {/* FIXME: When Card Media is added to React SK Components, change this */}
       <div className="card__media container-tertiary m-[2px]">
-        <div className="relative h-full w-full">
+        {/* <div className="relative h-full w-full">
           <Image
             src={
               teacher.profile ? teacher.profile : "/images/common/avatar.svg"
@@ -57,7 +58,8 @@ const TeacherCard = ({
             layout="fill"
             alt=""
           />
-        </div>
+        </div> */}
+        <ProfilePicture src={teacher.profile} />
       </div>
       <CardHeader
         title={
