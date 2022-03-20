@@ -3,10 +3,12 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 
 // SK Components
-import { Card, CardHeader, MaterialIcon } from "@suankularb-components/react";
-
-// Components
-import ArrowButton from "@components/ArrowButton";
+import {
+  Button,
+  Card,
+  CardHeader,
+  MaterialIcon,
+} from "@suankularb-components/react";
 
 // Types
 import { Teacher } from "@utils/types/person";
@@ -85,7 +87,16 @@ const TeacherCard = ({
           )
         }
         end={
-          hasArrow ? <ArrowButton href={`/teacher/${teacher.id}`} /> : undefined
+          hasArrow ? (
+            <div>
+              <Button
+                type="tonal"
+                icon={<MaterialIcon icon="arrow_forward" />}
+                iconOnly
+                // url={`/teacher/${teacher.id}`}
+              />
+            </div>
+          ) : undefined
         }
       />
     </Card>
