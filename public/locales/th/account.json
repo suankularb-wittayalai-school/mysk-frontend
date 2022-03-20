@@ -37,7 +37,7 @@
   "dialog": {
     "changePassword": {
       "title": "เปลี่ยนรหัสผ่าน",
-      "supportingText": "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+      "supportingText": "หากนักเรียนยังใช้รหัสผ่านที่มากับบัญชี แนะนำให้นักเรียนเปลี่ยนรหัสผ่าน โดยใส่รหัสผ่านปัจจุบัน และใส่รหัสผ่านใหม่สองครั้ง",
       "originalPwd": "รหัสผ่านเดิม",
       "newPwd": "รหัสผ่านใหม่",
       "confirmNewPwd": "รหัสผ่านใหม่อีกครั้ง",

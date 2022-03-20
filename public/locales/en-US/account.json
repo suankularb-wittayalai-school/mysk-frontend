@@ -37,7 +37,7 @@
   "dialog": {
     "changePassword": {
       "title": "Change password",
-      "supportingText": "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+      "supportingText": "If you are still using the default password, changing it is highly recommended.",
       "originalPwd": "Current password",
       "newPwd": "New password",
       "confirmNewPwd": "Confirm new password",

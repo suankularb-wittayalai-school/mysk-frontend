@@ -6,6 +6,7 @@ import {
   Dialog,
   DialogSection,
   KeyboardInput,
+  MaterialIcon,
 } from "@suankularb-components/react";
 
 // Types
@@ -42,18 +43,18 @@ const ChangePassword = ({ show, onClose }: DialogProps): JSX.Element => {
           label={t("dialog.changePassword.originalPwd")}
           onChange={() => {}}
         />
-        <KeyboardInput
-          name="new-password"
-          type="password"
-          label={t("dialog.changePassword.newPwd")}
-          onChange={() => {}}
-        />
-        <KeyboardInput
-          name="confirm-new-password"
-          type="password"
-          label={t("dialog.changePassword.confirmNewPwd")}
-          onChange={() => {}}
-        />
+          <KeyboardInput
+            name="new-password"
+            type="password"
+            label={t("dialog.changePassword.newPwd")}
+            onChange={() => {}}
+          />
+          <KeyboardInput
+            name="confirm-new-password"
+            type="password"
+            label={t("dialog.changePassword.confirmNewPwd")}
+            onChange={() => {}}
+          />
       </DialogSection>
     </Dialog>
   );

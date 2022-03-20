@@ -199,9 +199,7 @@ const LandingBanner = (): JSX.Element => {
               icon={<MaterialIcon icon="login" />}
               url="/account/login"
               LinkElement={Link}
-              className="!bg-tertiary-container !text-tertiary
-                hover:before:bg-tertiary-translucent-08 focus:shadow-lg
-                focus:before:bg-tertiary-translucent-12"
+              className="has-action--tertiary !bg-tertiary-container !text-tertiary"
             />
             <LinkButton
               name={t("help")}
@@ -223,7 +221,7 @@ const LandingBanner = (): JSX.Element => {
 // Page
 const Landing: NextPage = () => {
   const { t } = useTranslation(["landing", "common"]);
-  
+
   return (
     <>
       <Head>
