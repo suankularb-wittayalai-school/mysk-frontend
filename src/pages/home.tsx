@@ -506,11 +506,7 @@ const ClassSection = (): JSX.Element => {
   );
 };
 
-const ClassCounselorsCard = ({
-  className,
-}: {
-  className?: string;
-}): JSX.Element => {
+const ClassCounselorsCard = (): JSX.Element => {
   const locale = useRouter().locale == "th" ? "th" : "en-US";
   const { t } = useTranslation("dashboard");
   const classAdvisors: Array<Teacher> = [
@@ -550,7 +546,7 @@ const ClassCounselorsCard = ({
   ];
 
   return (
-    <Card type="stacked" className={`h-fit ${className || ""}`}>
+    <Card type="stacked" className="h-fit">
       <CardHeader
         icon={<MaterialIcon icon="group" />}
         title={
@@ -685,7 +681,9 @@ const TeachersSection = (): JSX.Element => {
         text={t("teachers.title")}
       />
       <div className="flex flex-col justify-start gap-3 !px-0 sm:grid sm:grid-cols-2 md:grid-cols-4">
-        <ClassCounselorsCard className="mx-4 sm:mx-0" />
+        <div className="px-4 sm:px-0">
+          <ClassCounselorsCard />
+        </div>
         {teachers.length == 0 ? (
           <div
             className="bg-surface-1 mx-4 grid place-items-center rounded-xl p-8 text-center text-on-surface-variant
