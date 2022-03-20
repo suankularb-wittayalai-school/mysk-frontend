@@ -21,6 +21,7 @@ import { DialogProps } from "@utils/types/common";
 
 // Backend
 import { editProfile } from "@utils/backend/account";
+import ChangePassword from "./ChangePassword";
 
 interface EditProfileDialogProps extends DialogProps {
   userRole: "student" | "teacher";
@@ -33,6 +34,7 @@ const EditProfileDialog = ({
 }: EditProfileDialogProps): JSX.Element => {
   const { t } = useTranslation("account");
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const [showChangePassword, setShowChangePassword] = useState<boolean>(false);
   const [showDiscard, setShowDiscard] = useState<boolean>(false);
 
   // Dummybase
@@ -97,6 +99,7 @@ const EditProfileDialog = ({
                 label={t("dialog.changePassword.title")}
                 type="text"
                 icon={<MaterialIcon icon="password" />}
+                onClick={() => setShowChangePassword(true)}
               />
             </div>
           </>
@@ -201,6 +204,10 @@ const EditProfileDialog = ({
           </DialogSection>
         )}
       </Dialog>
+      <ChangePassword
+        show={showChangePassword}
+        onClose={() => setShowChangePassword(false)}
+      />
       <DiscardDraft
         show={showDiscard}
         onClose={() => setShowDiscard(false)}

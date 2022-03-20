@@ -36,7 +36,15 @@
   },
   "dialog": {
     "changePassword": {
-      "title": "เปลี่ยนรหัสผ่าน"
+      "title": "เปลี่ยนรหัสผ่าน",
+      "supportingText": "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+      "originalPwd": "รหัสผ่านเดิม",
+      "newPwd": "รหัสผ่านใหม่",
+      "confirmNewPwd": "รหัสผ่านใหม่อีกครั้ง",
+      "action": {
+        "cancel": "ยกเลิก",
+        "save": "บันทึก"
+      }
     },
     "editProfile": {
       "title": "แก้ไขข้อมูล",

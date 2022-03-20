@@ -32,19 +32,22 @@ import {
 // Components
 import Schedule from "@components/Schedule";
 import TeacherCard from "@components/TeacherCard";
+import ChangePassword from "@components/dialogs/ChangePassword";
+import EditProfileDialog from "@components/dialogs/EditProfile";
 import LogOutDialog from "@components/dialogs/LogOut";
 
 // Types
 import { NewsList } from "@utils/types/news";
 import { Student, Teacher } from "@utils/types/person";
 import { Schedule as ScheduleType } from "@utils/types/schedule";
-import EditProfileDialog from "@components/dialogs/EditProfile";
 
 const UserActions = ({
+  setshowChangePassword,
   setShowEditProfile,
   setShowLogOut,
   className,
 }: {
+  setshowChangePassword: Function;
   setShowEditProfile: Function;
   setShowLogOut: Function;
   className?: string;
@@ -60,7 +63,7 @@ const UserActions = ({
       <Button
         name={t("user.action.changePassword")}
         type="text"
-        onClick={() => {}}
+        onClick={() => setshowChangePassword(true)}
         className="!hidden sm:!flex"
       />
       <Button
@@ -81,9 +84,11 @@ const UserActions = ({
 };
 
 const UserSection = ({
+  setShowChangePassword,
   setShowEditProfile,
   setShowLogOut,
 }: {
+  setShowChangePassword: Function;
   setShowEditProfile: Function;
   setShowLogOut: Function;
 }): JSX.Element => {
@@ -158,6 +163,7 @@ const UserSection = ({
             </div>
             <UserActions
               className="hidden md:flex"
+              setshowChangePassword={setShowChangePassword}
               setShowEditProfile={setShowEditProfile}
               setShowLogOut={setShowLogOut}
             />
@@ -165,6 +171,7 @@ const UserSection = ({
         </div>
         <UserActions
           className="flex md:hidden"
+          setshowChangePassword={setShowChangePassword}
           setShowEditProfile={setShowEditProfile}
           setShowLogOut={setShowLogOut}
         />
@@ -734,6 +741,7 @@ const TeachersSection = (): JSX.Element => {
 // Page
 const Home: NextPage = () => {
   const { t } = useTranslation("common");
+  const [showChangePassword, setShowChangePassword] = useState<boolean>(false);
   const [showEditProfile, setShowEditProfile] = useState<boolean>(false);
   const [showLogOut, setShowLogOut] = useState<boolean>(false);
 
@@ -752,6 +760,7 @@ const Home: NextPage = () => {
         }
       >
         <UserSection
+          setShowChangePassword={setShowChangePassword}
           setShowEditProfile={setShowEditProfile}
           setShowLogOut={setShowLogOut}
         />
@@ -761,6 +770,10 @@ const Home: NextPage = () => {
       </RegularLayout>
 
       {/* Dialogs */}
+      <ChangePassword
+        show={showChangePassword}
+        onClose={() => setShowChangePassword(false)}
+      />
       <EditProfileDialog
         userRole="student"
         show={showEditProfile}

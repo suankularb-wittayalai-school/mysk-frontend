@@ -36,7 +36,15 @@
   },
   "dialog": {
     "changePassword": {
-      "title": "Change password"
+      "title": "Change password",
+      "supportingText": "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+      "originalPwd": "Current password",
+      "newPwd": "New password",
+      "confirmNewPwd": "Confirm new password",
+      "action": {
+        "cancel": "Cancel",
+        "save": "Save"
+      }
     },
     "requestEditProfile": {
       "title": "Request profile edit",
