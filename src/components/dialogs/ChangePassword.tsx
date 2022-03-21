@@ -18,9 +18,33 @@ import { DialogProps } from "@utils/types/common";
 // Backend
 import { changePassword } from "@utils/backend/account";
 
-const ChangePassword = ({ show, onClose }: DialogProps): JSX.Element => {
+interface ChangePasswordProps extends DialogProps {
+  setShowDiscard?: Function;
+}
+
+const ChangePassword = ({
+  show,
+  onClose,
+  setShowDiscard,
+}: ChangePasswordProps): JSX.Element => {
   const { t } = useTranslation("account");
-  const [showDiscard, setShowDiscard] = useState<boolean>(false);
+  const [showDiscardP, setShowDiscardP] = useState<boolean>(false);
+  const [form, setForm] = useState({
+    originalPassword: "",
+    newPassword: "",
+    confirmNewPassword: "",
+  });
+
+  function validateAndSend() {
+    let formData = new FormData();
+
+    if (form.originalPassword)
+      formData.append("original-password", form.originalPassword);
+    if (form.newPassword == form.confirmNewPassword)
+      formData.append("new-password", form.newPassword);
+
+    changePassword(formData);
+  }
 
   return (
     <>
@@ -34,42 +58,52 @@ const ChangePassword = ({ show, onClose }: DialogProps): JSX.Element => {
           { name: t("dialog.changePassword.action.save"), type: "submit" },
         ]}
         show={show}
-        onClose={() => setShowDiscard(true)}
+        onClose={() =>
+          setShowDiscard ? setShowDiscard(true) : setShowDiscardP(true)
+        }
         onSubmit={() => {
-          changePassword();
+          validateAndSend();
           onClose();
         }}
       >
         {/* FIXME: Once `name` is no longer necessary, remove it */}
-        <DialogSection name="">
-          <KeyboardInput
-            name="original-password"
-            type="password"
-            label={t("dialog.changePassword.originalPwd")}
-            onChange={() => {}}
-          />
-          <KeyboardInput
-            name="new-password"
-            type="password"
-            label={t("dialog.changePassword.newPwd")}
-            onChange={() => {}}
-          />
-          <KeyboardInput
-            name="confirm-new-password"
-            type="password"
-            label={t("dialog.changePassword.confirmNewPwd")}
-            onChange={() => {}}
-          />
-        </DialogSection>
+        <form>
+          <DialogSection name="">
+            <KeyboardInput
+              name="original-password"
+              type="password"
+              label={t("dialog.changePassword.originalPwd")}
+              onChange={(e: string) =>
+                setForm({ ...form, originalPassword: e })
+              }
+            />
+            <KeyboardInput
+              name="new-password"
+              type="password"
+              label={t("dialog.changePassword.newPwd")}
+              onChange={(e: string) => setForm({ ...form, newPassword: e })}
+            />
+            <KeyboardInput
+              name="confirm-new-password"
+              type="password"
+              label={t("dialog.changePassword.confirmNewPwd")}
+              onChange={(e: string) =>
+                setForm({ ...form, confirmNewPassword: e })
+              }
+            />
+          </DialogSection>
+        </form>
       </Dialog>
-      <DiscardDraft
-        show={showDiscard}
-        onClose={() => setShowDiscard(false)}
-        onSubmit={() => {
-          setShowDiscard(false);
-          onClose();
-        }}
-      />
+      {setShowDiscard || (
+        <DiscardDraft
+          show={showDiscardP}
+          onClose={() => setShowDiscardP(false)}
+          onSubmit={() => {
+            setShowDiscardP(false);
+            onClose();
+          }}
+        />
+      )}
     </>
   );
 };

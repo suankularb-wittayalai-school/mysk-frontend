@@ -1,5 +1,5 @@
 export function logOut() {}
 
-export function editProfile() {}
+export function editProfile(formData: FormData) {}
 
-export function changePassword() {}
+export function changePassword(formData: FormData) {}

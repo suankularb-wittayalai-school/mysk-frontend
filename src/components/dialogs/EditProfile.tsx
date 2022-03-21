@@ -38,9 +38,14 @@ const EditProfileDialog = ({
 }: EditProfileDialogProps): JSX.Element => {
   const { t } = useTranslation("account");
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+
+  // Dialog control
   const [showChangePasswordP, setShowChangePasswordP] =
     useState<boolean>(false);
   const [showDiscardP, setShowDiscardP] = useState<boolean>(false);
+
+  // Form control
+  const [form, setForm] = useState({})
 
   // Dummybase
   const subjectGroups = [
@@ -82,6 +87,12 @@ const EditProfileDialog = ({
       },
     },
   ];
+
+  function validateAndSend() {
+    let formData = new FormData();
+
+    console.log(form);
+  }
 
   return (
     <>
@@ -133,9 +144,9 @@ const EditProfileDialog = ({
         onClose={() =>
           setShowDiscard ? setShowDiscard(true) : setShowDiscardP(true)
         }
-        onSubmit={async () => {
+        onSubmit={() => {
+          validateAndSend();
           onClose();
-          editProfile();
         }}
       >
         <DialogSection name={t("profile.name.title")} isDoubleColumn>
