@@ -25,17 +25,22 @@ import ChangePassword from "./ChangePassword";
 
 interface EditProfileDialogProps extends DialogProps {
   userRole: "student" | "teacher";
+  setShowChangePassword?: Function;
+  setShowDiscard?: Function;
 }
 
 const EditProfileDialog = ({
   userRole,
   show,
   onClose,
+  setShowChangePassword,
+  setShowDiscard,
 }: EditProfileDialogProps): JSX.Element => {
   const { t } = useTranslation("account");
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
-  const [showChangePassword, setShowChangePassword] = useState<boolean>(false);
-  const [showDiscard, setShowDiscard] = useState<boolean>(false);
+  const [showChangePasswordP, setShowChangePasswordP] =
+    useState<boolean>(false);
+  const [showDiscardP, setShowDiscardP] = useState<boolean>(false);
 
   // Dummybase
   const subjectGroups = [
@@ -99,7 +104,11 @@ const EditProfileDialog = ({
                 label={t("dialog.changePassword.title")}
                 type="text"
                 icon={<MaterialIcon icon="password" />}
-                onClick={() => setShowChangePassword(true)}
+                onClick={() =>
+                  setShowChangePassword
+                    ? setShowChangePassword(true)
+                    : setShowChangePasswordP(true)
+                }
               />
             </div>
           </>
@@ -121,7 +130,9 @@ const EditProfileDialog = ({
           },
         ]}
         show={show}
-        onClose={() => setShowDiscard(true)}
+        onClose={() =>
+          setShowDiscard ? setShowDiscard(true) : setShowDiscardP(true)
+        }
         onSubmit={async () => {
           onClose();
           editProfile();
@@ -204,18 +215,22 @@ const EditProfileDialog = ({
           </DialogSection>
         )}
       </Dialog>
-      <ChangePassword
-        show={showChangePassword}
-        onClose={() => setShowChangePassword(false)}
-      />
-      <DiscardDraft
-        show={showDiscard}
-        onClose={() => setShowDiscard(false)}
-        onSubmit={() => {
-          setShowDiscard(false);
-          onClose();
-        }}
-      />
+      {setShowChangePassword || (
+        <ChangePassword
+          show={showChangePasswordP}
+          onClose={() => setShowChangePasswordP(false)}
+        />
+      )}
+      {setShowDiscard || (
+        <DiscardDraft
+          show={showDiscardP}
+          onClose={() => setShowDiscardP(false)}
+          onSubmit={() => {
+            setShowDiscardP(false);
+            onClose();
+          }}
+        />
+      )}
     </>
   );
 };
