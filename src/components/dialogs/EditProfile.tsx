@@ -42,7 +42,18 @@ const EditProfileDialog = ({
   const [showDiscard, setShowDiscard] = useState<boolean>(false);
 
   // Form control
-  const [form, setForm] = useState({});
+  const [form, setForm] = useState({
+    th: {
+      firstName: "",
+      middleName: "",
+      lastName: "",
+    },
+    "en-US": {
+      firstName: "",
+      middleName: "",
+      lastName: "",
+    },
+  });
 
   // Dummybase
   const subjectGroups = [
@@ -85,10 +96,24 @@ const EditProfileDialog = ({
     },
   ];
 
+  // prettier-ignore
   function validateAndSend() {
     let formData = new FormData();
 
-    console.log(form);
+    if (form.th.firstName)
+      formData.append("th-first-name", form.th.firstName);
+    if (form.th.middleName)
+      formData.append("th-middle-name", form.th.middleName);
+    if (form.th.lastName)
+      formData.append("th-last-name", form.th.lastName);
+
+    if (form["en-US"].firstName)
+      formData.append("en-first-name", form["en-US"].firstName);
+    if (form["en-US"].middleName)
+      formData.append("en-middle-name", form["en-US"].middleName);
+    if (form["en-US"].lastName)
+      formData.append("en-last-name", form["en-US"].lastName);
+
     editProfile(formData);
   }
 
