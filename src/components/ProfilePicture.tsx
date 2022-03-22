@@ -11,7 +11,15 @@ const ProfilePicture = ({
   appearance,
 }: ProfilePictureProps): JSX.Element => {
   return (
-    <div className="container-tertiary relative h-full w-full">
+    <div
+      className={`relative h-full w-full ${
+        appearance == "primary"
+          ? "container-primary"
+          : appearance == "secondary"
+          ? "container-secondary"
+          : "container-tertiary"
+      }`}
+    >
       {src ? (
         <Image src={src} layout="fill" alt="" />
       ) : (
