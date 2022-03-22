@@ -40,7 +40,6 @@ import LogOutDialog from "@components/dialogs/LogOut";
 import { NewsList } from "@utils/types/news";
 import { Student, Teacher } from "@utils/types/person";
 import { Schedule as ScheduleType } from "@utils/types/schedule";
-import DiscardDraft from "@components/dialogs/DiscardDraft";
 
 const UserActions = ({
   setshowChangePassword,
@@ -99,6 +98,8 @@ const UserSection = ({
   // Dummybase
   const user: Student | Teacher = {
     id: 9,
+    role: "student",
+    prefix: "mister",
     name: {
       "en-US": { firstName: "Sadudee", lastName: "Theparree" },
       th: { firstName: "สดุดี", lastName: "เทพอารีย์" },
@@ -448,6 +449,8 @@ const ClassSection = (): JSX.Element => {
               teachers: [
                 {
                   id: 1,
+                  role: "teacher",
+                  prefix: "mister",
                   name: {
                     "en-US": {
                       firstName: "John",
@@ -513,6 +516,8 @@ const ClassCounselorsCard = (): JSX.Element => {
   const classAdvisors: Array<Teacher> = [
     {
       id: 2,
+      role: "teacher",
+      prefix: "mister",
       name: {
         "en-US": { firstName: "Taradol", lastName: "Ranarintr" },
         th: { firstName: "ธราดล", lastName: "รานรินทร์" },
@@ -537,6 +542,8 @@ const ClassCounselorsCard = (): JSX.Element => {
     },
     {
       id: 3,
+      role: "teacher",
+      prefix: "missus",
       name: {
         "en-US": { firstName: "Mattana", lastName: "Tatanyang" },
         th: { firstName: "มัทนา", lastName: "ต๊ะตันยาง" },
@@ -616,6 +623,8 @@ const TeachersSection = (): JSX.Element => {
   const teachers: Array<Teacher> = [
     {
       id: 0,
+      role: "teacher",
+      prefix: "mister",
       name: {
         "en-US": {
           firstName: "Taradol",
@@ -631,6 +640,8 @@ const TeachersSection = (): JSX.Element => {
     },
     {
       id: 1,
+      role: "teacher",
+      prefix: "mister",
       name: {
         "en-US": {
           firstName: "Thanakorn",
@@ -646,6 +657,8 @@ const TeachersSection = (): JSX.Element => {
     },
     {
       id: 2,
+      role: "teacher",
+      prefix: "missus",
       name: {
         "en-US": {
           firstName: "Mattana",
@@ -661,6 +674,8 @@ const TeachersSection = (): JSX.Element => {
     },
     {
       id: 3,
+      role: "teacher",
+      prefix: "mister",
       name: {
         "en-US": {
           firstName: "John",
@@ -778,7 +793,18 @@ const Home: NextPage = () => {
         onClose={() => setShowChangePassword(false)}
       />
       <EditProfileDialog
-        userRole="student"
+        user={{
+          id: 9,
+          role: "student",
+          prefix: "mister",
+          name: {
+            "en-US": { firstName: "Sadudee", lastName: "Theparree" },
+            th: { firstName: "สดุดี", lastName: "เทพอารีย์" },
+          },
+          profile: "/images/dummybase/sadudee.webp",
+          class: "405",
+          classNo: 11,
+        }}
         show={showEditProfile}
         onClose={() => setShowEditProfile(false)}
       />

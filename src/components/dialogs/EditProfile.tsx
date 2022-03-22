@@ -19,18 +19,19 @@ import DiscardDraft from "@components/dialogs/DiscardDraft";
 
 // Types
 import { DialogProps } from "@utils/types/common";
+import { Person, Student, Teacher } from "@utils/types/person";
 
 // Backend
 import { editProfile } from "@utils/backend/account";
 
 interface EditProfileDialogProps extends DialogProps {
-  userRole: "student" | "teacher";
+  user: Student | Teacher;
   setShowChangePassword?: Function;
   setShowDiscard?: Function;
 }
 
 const EditProfileDialog = ({
-  userRole,
+  user,
   show,
   onClose,
 }: EditProfileDialogProps): JSX.Element => {
@@ -43,16 +44,13 @@ const EditProfileDialog = ({
 
   // Form control
   const [form, setForm] = useState({
-    th: {
-      firstName: "",
-      middleName: "",
-      lastName: "",
-    },
-    "en-US": {
-      firstName: "",
-      middleName: "",
-      lastName: "",
-    },
+    prefix: user.prefix,
+    thFirstName: user.name.th.firstName,
+    thMiddleName: user.name.th.middleName,
+    thLastName: user.name.th.lastName,
+    enFirstName: user.name["en-US"].firstName,
+    enMiddleName: user.name["en-US"].middleName,
+    enLastName: user.name["en-US"].lastName,
   });
 
   // Dummybase
@@ -100,19 +98,19 @@ const EditProfileDialog = ({
   function validateAndSend() {
     let formData = new FormData();
 
-    if (form.th.firstName)
-      formData.append("th-first-name", form.th.firstName);
-    if (form.th.middleName)
-      formData.append("th-middle-name", form.th.middleName);
-    if (form.th.lastName)
-      formData.append("th-last-name", form.th.lastName);
+    if (form.thFirstName)
+      formData.append("th-first-name", form.thFirstName);
+    if (form.thMiddleName)
+      formData.append("th-middle-name", form.thMiddleName);
+    if (form.thLastName)
+      formData.append("th-last-name", form.thLastName);
 
-    if (form["en-US"].firstName)
-      formData.append("en-first-name", form["en-US"].firstName);
-    if (form["en-US"].middleName)
-      formData.append("en-middle-name", form["en-US"].middleName);
-    if (form["en-US"].lastName)
-      formData.append("en-last-name", form["en-US"].lastName);
+    if (form.enFirstName)
+      formData.append("en-first-name", form.enFirstName);
+    if (form.enMiddleName)
+      formData.append("en-middle-name", form.enMiddleName);
+    if (form.enLastName)
+      formData.append("en-last-name", form.enLastName);
 
     editProfile(formData);
   }
@@ -123,13 +121,13 @@ const EditProfileDialog = ({
         type="large"
         label="edit-profile"
         title={
-          userRole == "teacher"
+          user.role == "teacher"
             ? t("dialog.editProfile.title")
             : t("dialog.requestEditProfile.title")
         }
         supportingText={
           <>
-            {userRole == "student" && (
+            {user.role == "student" && (
               <p>{t("dialog.requestEditProfile.supportingText")}</p>
             )}
             <div className="sm:hidden">
@@ -146,14 +144,14 @@ const EditProfileDialog = ({
         actions={[
           {
             name:
-              userRole == "teacher"
+              user.role == "teacher"
                 ? t("dialog.editProfile.action.cancel")
                 : t("dialog.requestEditProfile.action.cancel"),
             type: "close",
           },
           {
             name:
-              userRole == "teacher"
+              user.role == "teacher"
                 ? t("dialog.editProfile.action.save")
                 : t("dialog.requestEditProfile.action.sendRequest"),
             type: "submit",
@@ -167,11 +165,12 @@ const EditProfileDialog = ({
         }}
       >
         <DialogSection name={t("profile.name.title")} isDoubleColumn>
+          {/* FIXME: Add `defaultValue` when it is added to React SK Components */}
           <Dropdown
             name="prefix"
             label={t("profile.name.prefix.label")}
             options={
-              userRole == "teacher"
+              user.role == "teacher"
                 ? [
                     { value: "mister", label: t("profile.name.prefix.mister") },
                     { value: "miss", label: t("profile.name.prefix.miss") },
@@ -182,24 +181,28 @@ const EditProfileDialog = ({
                     { value: "mister", label: t("profile.name.prefix.mister") },
                   ]
             }
+            onChange={(e: Person["prefix"]) => setForm({ ...form, prefix: e })}
           />
           <KeyboardInput
             name="th-first-name"
             type="text"
             label={t("profile.name.firstName")}
-            onChange={() => {}}
+            defaultValue={user.name.th.firstName}
+            onChange={(e: string) => setForm({ ...form, thFirstName: e })}
           />
           <KeyboardInput
             name="th-middle-name"
             type="text"
             label={t("profile.name.middleName")}
-            onChange={() => {}}
+            defaultValue={user.name.th.middleName}
+            onChange={(e: string) => setForm({ ...form, thMiddleName: e })}
           />
           <KeyboardInput
             name="th-last-name"
             type="text"
             label={t("profile.name.lastName")}
-            onChange={() => {}}
+            defaultValue={user.name.th.lastName}
+            onChange={(e: string) => setForm({ ...form, thLastName: e })}
           />
         </DialogSection>
         <DialogSection name={t("profile.enName.title")} isDoubleColumn>
@@ -207,22 +210,25 @@ const EditProfileDialog = ({
             name="en-first-name"
             type="text"
             label={t("profile.enName.firstName")}
-            onChange={() => {}}
+            defaultValue={user.name["en-US"].firstName}
+            onChange={(e: string) => setForm({ ...form, thFirstName: e })}
           />
           <KeyboardInput
             name="en-middle-name"
             type="text"
             label={t("profile.enName.middleName")}
-            onChange={() => {}}
+            defaultValue={user.name["en-US"].middleName}
+            onChange={(e: string) => setForm({ ...form, thMiddleName: e })}
           />
           <KeyboardInput
             name="en-last-name"
             type="text"
             label={t("profile.enName.lastName")}
-            onChange={() => {}}
+            defaultValue={user.name["en-US"].lastName}
+            onChange={(e: string) => setForm({ ...form, thLastName: e })}
           />
         </DialogSection>
-        {userRole == "teacher" && (
+        {user.role == "teacher" && (
           <DialogSection name={t("profile.role.title")} isDoubleColumn>
             <Dropdown
               name="subject-group"
