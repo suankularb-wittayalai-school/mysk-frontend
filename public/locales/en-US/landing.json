@@ -5,6 +5,7 @@
   "help": "Help",
   "news": {
     "title": "Suankularb News",
-    "lastUpdated": "Last updated {{lastUpdated}}"
+    "lastUpdated": "Last updated {{lastUpdated}}",
+    "expand": "Expand"
   }
 }

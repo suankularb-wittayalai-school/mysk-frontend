@@ -1,6 +1,7 @@
 // Modules
 import { useState } from "react";
 
+import Head from "next/head";
 import { useTranslation, Trans } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
@@ -11,6 +12,7 @@ import { useRouter } from "next/router";
 
 // SK Components
 import {
+  Button,
   Card,
   CardHeader,
   LinkButton,
@@ -19,7 +21,6 @@ import {
 
 // Types
 import { NewsItem, NewsList } from "@utils/types/news";
-import Head from "next/head";
 
 // News
 const LandingFeed = ({
@@ -32,6 +33,7 @@ const LandingFeed = ({
 
   return (
     <section
+      aria-label={t("news.title")}
       className="fixed bottom-[6rem] right-2 w-[calc(100vw-1rem)] rounded-xl
         bg-[#fbfcff88] text-on-surface backdrop-blur-xl dark:bg-[#191c1e88]
         sm:bottom-2 sm:w-[22.5rem] md:absolute md:right-4 md:top-4 md:h-[calc(100vh-6.5rem)]"
@@ -42,6 +44,7 @@ const LandingFeed = ({
         className="h-full !bg-transparent"
       >
         <button
+          aria-label={t("news.expand")}
           onClick={() => setFullScreen(!fullscreen)}
           className="has-action relative text-left"
         >
@@ -65,13 +68,18 @@ const LandingFeed = ({
               </p>
             }
             end={
-              <div className="btn--text btn--icon-only md:!hidden">
-                {fullscreen ? (
-                  <MaterialIcon icon="expand_more" />
-                ) : (
-                  <MaterialIcon icon="expand_less" />
-                )}
-              </div>
+              <Button
+                type="text"
+                iconOnly
+                icon={
+                  fullscreen ? (
+                    <MaterialIcon icon="expand_more" />
+                  ) : (
+                    <MaterialIcon icon="expand_less" />
+                  )
+                }
+                className="md:!hidden"
+              />
             }
           />
         </button>

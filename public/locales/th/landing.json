@@ -5,6 +5,7 @@
   "help": "ช่วยเหลือ",
   "news": {
     "title": "ข่าวสารสวนกุหลาบ",
-    "lastUpdated": "ล่าสุด {{lastUpdated}}"
+    "lastUpdated": "ล่าสุด {{lastUpdated}}",
+    "expand": "ดูทั้งหมด"
   }
 }
