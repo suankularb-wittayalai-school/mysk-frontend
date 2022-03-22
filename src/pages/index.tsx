@@ -178,7 +178,7 @@ const LandingBanner = (): JSX.Element => {
               alt="โลโก้ดอกไม้สีชมพู มีตัวอักษร MySK อยู่ตรงกลาง"
               layout="fill"
               priority={true}
-              src={"/images/branding/logo-white.png"}
+              src={"/images/branding/logo-white.webp"}
             />
           </div>
 

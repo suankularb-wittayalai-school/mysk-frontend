@@ -641,7 +641,7 @@ const TeachersSection = (): JSX.Element => {
           lastName: "อรรจนาวัฒน์",
         },
       },
-      profile: "/images/dummybase/thanakorn.png",
+      profile: "/images/dummybase/thanakorn.webp",
       subjectsInCharge: [],
     },
     {
