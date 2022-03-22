@@ -14,6 +14,7 @@ import {
 } from "@suankularb-components/react";
 
 // Components
+import ChangePassword from "@components/dialogs/ChangePassword";
 import DiscardDraft from "@components/dialogs/DiscardDraft";
 
 // Types
@@ -21,7 +22,6 @@ import { DialogProps } from "@utils/types/common";
 
 // Backend
 import { editProfile } from "@utils/backend/account";
-import ChangePassword from "./ChangePassword";
 
 interface EditProfileDialogProps extends DialogProps {
   userRole: "student" | "teacher";
@@ -33,19 +33,16 @@ const EditProfileDialog = ({
   userRole,
   show,
   onClose,
-  setShowChangePassword,
-  setShowDiscard,
 }: EditProfileDialogProps): JSX.Element => {
   const { t } = useTranslation("account");
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
 
   // Dialog control
-  const [showChangePasswordP, setShowChangePasswordP] =
-    useState<boolean>(false);
-  const [showDiscardP, setShowDiscardP] = useState<boolean>(false);
+  const [showChangePassword, setShowChangePassword] = useState<boolean>(false);
+  const [showDiscard, setShowDiscard] = useState<boolean>(false);
 
   // Form control
-  const [form, setForm] = useState({})
+  const [form, setForm] = useState({});
 
   // Dummybase
   const subjectGroups = [
@@ -92,6 +89,7 @@ const EditProfileDialog = ({
     let formData = new FormData();
 
     console.log(form);
+    editProfile(formData);
   }
 
   return (
@@ -115,11 +113,7 @@ const EditProfileDialog = ({
                 label={t("dialog.changePassword.title")}
                 type="text"
                 icon={<MaterialIcon icon="password" />}
-                onClick={() =>
-                  setShowChangePassword
-                    ? setShowChangePassword(true)
-                    : setShowChangePasswordP(true)
-                }
+                onClick={() => setShowChangePassword(true)}
               />
             </div>
           </>
@@ -141,9 +135,7 @@ const EditProfileDialog = ({
           },
         ]}
         show={show}
-        onClose={() =>
-          setShowDiscard ? setShowDiscard(true) : setShowDiscardP(true)
-        }
+        onClose={() => setShowDiscard(true)}
         onSubmit={() => {
           validateAndSend();
           onClose();
@@ -226,22 +218,18 @@ const EditProfileDialog = ({
           </DialogSection>
         )}
       </Dialog>
-      {setShowChangePassword || (
-        <ChangePassword
-          show={showChangePasswordP}
-          onClose={() => setShowChangePasswordP(false)}
-        />
-      )}
-      {setShowDiscard || (
-        <DiscardDraft
-          show={showDiscardP}
-          onClose={() => setShowDiscardP(false)}
-          onSubmit={() => {
-            setShowDiscardP(false);
-            onClose();
-          }}
-        />
-      )}
+      <ChangePassword
+        show={showChangePassword}
+        onClose={() => setShowChangePassword(false)}
+      />
+      <DiscardDraft
+        show={showDiscard}
+        onClose={() => setShowDiscard(false)}
+        onSubmit={() => {
+          setShowDiscard(false);
+          onClose();
+        }}
+      />
     </>
   );
 };

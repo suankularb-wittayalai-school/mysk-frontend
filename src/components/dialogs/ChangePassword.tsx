@@ -25,10 +25,9 @@ interface ChangePasswordProps extends DialogProps {
 const ChangePassword = ({
   show,
   onClose,
-  setShowDiscard,
 }: ChangePasswordProps): JSX.Element => {
   const { t } = useTranslation("account");
-  const [showDiscardP, setShowDiscardP] = useState<boolean>(false);
+  const [showDiscard, setShowDiscard] = useState<boolean>(false);
   const [form, setForm] = useState({
     originalPassword: "",
     newPassword: "",
@@ -58,9 +57,7 @@ const ChangePassword = ({
           { name: t("dialog.changePassword.action.save"), type: "submit" },
         ]}
         show={show}
-        onClose={() =>
-          setShowDiscard ? setShowDiscard(true) : setShowDiscardP(true)
-        }
+        onClose={() => setShowDiscard(true)}
         onSubmit={() => {
           validateAndSend();
           onClose();
@@ -94,16 +91,14 @@ const ChangePassword = ({
           </DialogSection>
         </form>
       </Dialog>
-      {setShowDiscard || (
-        <DiscardDraft
-          show={showDiscardP}
-          onClose={() => setShowDiscardP(false)}
-          onSubmit={() => {
-            setShowDiscardP(false);
-            onClose();
-          }}
-        />
-      )}
+      <DiscardDraft
+        show={showDiscard}
+        onClose={() => setShowDiscard(false)}
+        onSubmit={() => {
+          setShowDiscard(false);
+          onClose();
+        }}
+      />
     </>
   );
 };

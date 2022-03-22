@@ -745,16 +745,6 @@ const Home: NextPage = () => {
   const [showChangePassword, setShowChangePassword] = useState<boolean>(false);
   const [showEditProfile, setShowEditProfile] = useState<boolean>(false);
   const [showLogOut, setShowLogOut] = useState<boolean>(false);
-  const [showDiscard, setShowDiscard] = useState<boolean>(false);
-  const [currDiscardOnClose, setCurrDiscardOnClose] = useState<Function>(
-    setShowChangePassword
-  );
-  useEffect(() => {
-    setCurrDiscardOnClose(() => () => setShowChangePassword(false));
-  }, [showChangePassword]);
-  useEffect(() => {
-    setCurrDiscardOnClose(() => () => setShowEditProfile(false));
-  }, [showEditProfile]);
 
   return (
     <>
@@ -789,18 +779,8 @@ const Home: NextPage = () => {
         userRole="student"
         show={showEditProfile}
         onClose={() => setShowEditProfile(false)}
-        setShowChangePassword={setShowChangePassword}
-        setShowDiscard={setShowDiscard}
       />
       <LogOutDialog show={showLogOut} onClose={() => setShowLogOut(false)} />
-      <DiscardDraft
-        show={showDiscard}
-        onClose={() => setShowDiscard(false)}
-        onSubmit={() => {
-          if (currDiscardOnClose) currDiscardOnClose();
-          setShowDiscard(false);
-        }}
-      />
     </>
   );
 };
