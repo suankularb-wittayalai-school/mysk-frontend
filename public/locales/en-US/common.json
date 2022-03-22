@@ -24,6 +24,7 @@
       "6": "Saturday"
     }
   },
+  "seeDetails": "See details",
   "dialog": {
     "discardDraft": {
       "title": "Discard draft?",

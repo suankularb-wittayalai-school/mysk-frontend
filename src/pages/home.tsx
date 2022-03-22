@@ -103,7 +103,7 @@ const UserSection = ({
       "en-US": { firstName: "Sadudee", lastName: "Theparree" },
       th: { firstName: "สดุดี", lastName: "เทพอารีย์" },
     },
-    profile: "/images/dummybase/sadudee.jpg",
+    profile: "/images/dummybase/sadudee.webp",
     class: "405",
     classNo: 11,
   };
@@ -509,7 +509,7 @@ const ClassSection = (): JSX.Element => {
 
 const ClassCounselorsCard = (): JSX.Element => {
   const locale = useRouter().locale == "th" ? "th" : "en-US";
-  const { t } = useTranslation("dashboard");
+  const { t } = useTranslation(["dashboard", "common"]);
   const classAdvisors: Array<Teacher> = [
     {
       id: 2,
@@ -517,7 +517,7 @@ const ClassCounselorsCard = (): JSX.Element => {
         "en-US": { firstName: "Taradol", lastName: "Ranarintr" },
         th: { firstName: "ธราดล", lastName: "รานรินทร์" },
       },
-      profile: "/images/dummybase/taradol.jpg",
+      profile: "/images/dummybase/taradol.webp",
       subjectsInCharge: [
         {
           name: {
@@ -541,7 +541,7 @@ const ClassCounselorsCard = (): JSX.Element => {
         "en-US": { firstName: "Mattana", lastName: "Tatanyang" },
         th: { firstName: "มัทนา", lastName: "ต๊ะตันยาง" },
       },
-      profile: "/images/dummybase/mattana.jpg",
+      profile: "/images/dummybase/mattana.webp",
       subjectsInCharge: [],
     },
   ];
@@ -553,7 +553,6 @@ const ClassCounselorsCard = (): JSX.Element => {
         title={
           <h3 className="text-lg font-medium">{t("teachers.classAdvisors")}</h3>
         }
-        label="" // FIXME: When Label is no longer necessary, remove this
         className="font-display"
       />
       <div
@@ -592,7 +591,10 @@ const ClassCounselorsCard = (): JSX.Element => {
                 </h4>
                 {/* Go to Teacher button */}
                 <Link href={`/teacher/${teacher.id}`}>
-                  <a className="btn btn--filled container-secondary !p-1 text-2xl">
+                  <a
+                    aria-label={t("seeDetails", { ns: "common" })}
+                    className="btn btn--filled container-secondary !p-1 text-2xl"
+                  >
                     <MaterialIcon
                       icon="arrow_forward"
                       allowCustomSize={true}
@@ -624,7 +626,7 @@ const TeachersSection = (): JSX.Element => {
           lastName: "รานรินทร์",
         },
       },
-      profile: "/images/dummybase/taradol.jpg",
+      profile: "/images/dummybase/taradol.webp",
       subjectsInCharge: [],
     },
     {
@@ -654,7 +656,7 @@ const TeachersSection = (): JSX.Element => {
           lastName: "ต๊ะตันยาง",
         },
       },
-      profile: "/images/dummybase/mattana.jpg",
+      profile: "/images/dummybase/mattana.webp",
       subjectsInCharge: [],
     },
     {

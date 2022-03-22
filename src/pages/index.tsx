@@ -163,7 +163,7 @@ const LandingBanner = (): JSX.Element => {
   const { t } = useTranslation(["landing", "common"]);
 
   return (
-    <header className="h-full bg-[url('/images/landing.png')] bg-cover bg-left font-display sm:min-h-[calc(100vh-4.5rem)]">
+    <header className="h-full bg-[url('/images/landing.webp')] bg-cover bg-left font-display sm:min-h-[calc(100vh-4.5rem)]">
       {/* Vignette layer */}
       <div
         className="flex h-full flex-col items-center gap-16 bg-gradient-to-b
@@ -234,7 +234,7 @@ const Landing: NextPage = () => {
     <>
       <Head>
         <title>
-          {t("title")} - {t("brand.name", { ns: "common" })}
+          {t("brand.name", { ns: "common" })}
         </title>
       </Head>
       <div className="h-full sm:relative">
@@ -247,7 +247,7 @@ const Landing: NextPage = () => {
                 id: 4,
                 type: "news",
                 postDate: new Date(2021, 8, 16),
-                image: "/images/dummybase/certificates-announcement.jpg",
+                image: "/images/dummybase/certificates-announcement.webp",
                 content: {
                   "en-US": {
                     title: "Certificates Announcement",
@@ -265,7 +265,7 @@ const Landing: NextPage = () => {
                 id: 1,
                 type: "news",
                 postDate: new Date(2020, 4, 12),
-                image: "/images/dummybase/sk-teaching-practice.jpg",
+                image: "/images/dummybase/sk-teaching-practice.webp",
                 content: {
                   "en-US": {
                     title: "SK Teaching Practice",

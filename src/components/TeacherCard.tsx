@@ -1,12 +1,11 @@
 // Modules
-import Image from "next/image";
 import { useRouter } from "next/router";
 
 // SK Components
 import {
-  Button,
   Card,
   CardHeader,
+  LinkButton,
   MaterialIcon,
 } from "@suankularb-components/react";
 
@@ -31,7 +30,7 @@ const TeacherCard = ({
   hasAction,
 }: TeacherCardProps) => {
   const locale = useRouter().locale == "th" ? "th" : "en-US";
-  const { t } = useTranslation("teachers");
+  const { t } = useTranslation(["teachers", "common"]);
 
   // (@SiravitPhokeed) I love how hilariously overengineered this is
   const teacherName = [
@@ -50,15 +49,6 @@ const TeacherCard = ({
     >
       {/* FIXME: When Card Media is added to React SK Components, change this */}
       <div className="card__media container-tertiary m-[2px]">
-        {/* <div className="relative h-full w-full">
-          <Image
-            src={
-              teacher.profile ? teacher.profile : "/images/common/avatar.svg"
-            }
-            layout="fill"
-            alt=""
-          />
-        </div> */}
         <ProfilePicture src={teacher.profile} />
       </div>
       <CardHeader
@@ -91,11 +81,12 @@ const TeacherCard = ({
         end={
           hasArrow ? (
             <div>
-              <Button
+              <LinkButton
+                label={t("see-details", { ns: "common" })}
                 type="tonal"
                 icon={<MaterialIcon icon="arrow_forward" />}
                 iconOnly
-                // url={`/teacher/${teacher.id}`}
+                url={`/teacher/${teacher.id}`}
               />
             </div>
           ) : undefined
