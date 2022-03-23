@@ -14,6 +14,9 @@ import {
   Table,
   Title,
 } from "@suankularb-components/react";
+import { nameJoiner } from "@utils/helpers/name";
+import { useRouter } from "next/router";
+import { Student } from "@utils/types/person";
 
 const ClassCounselorsSection = (): JSX.Element => {
   const { t } = useTranslation("class");
@@ -43,6 +46,28 @@ const ContactSection = (): JSX.Element => {
 
 const StudentListSection = (): JSX.Element => {
   const { t } = useTranslation("class");
+  const locale = useRouter().locale || "";
+
+  // Dummybase
+  const studentList: Array<Student> = [
+    {
+      id: 248,
+      role: "student",
+      prefix: "mister",
+      name: {
+        "en-US": {
+          firstName: "Paniti",
+          lastName: "Putpan",
+        },
+        th: {
+          firstName: "ปณิธิ",
+          lastName: "พุฒพันธ์",
+        },
+      },
+      class: "405",
+      classNo: 1,
+    },
+  ];
 
   return (
     <Section labelledBy="student-list">
@@ -61,10 +86,14 @@ const StudentListSection = (): JSX.Element => {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>1</td>
-            <td className="!text-left">นายปณิธิ พุฒพันธ์</td>
-          </tr>
+          {studentList.map((student) => (
+            <tr key={student.id}>
+              <td>{student.classNo}</td>
+              <td className="!text-left">
+                {nameJoiner(locale, student.name, student.prefix)}
+              </td>
+            </tr>
+          ))}
         </tbody>
       </Table>
     </Section>
