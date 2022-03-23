@@ -1,0 +1,13 @@
+{
+  "title": "M.{{className}}",
+  "classCounselors": {
+    "title": "Class counselors"
+  },
+  "classContacts": {
+    "title": "Class contacts"
+  },
+  "studentList": {
+    "title": "Student list",
+    "searchStudents": "Search students"
+  }
+}

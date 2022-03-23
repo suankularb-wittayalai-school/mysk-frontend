@@ -1,0 +1,13 @@
+{
+  "title": "ม.{{className}}",
+  "classCounselors": {
+    "title": "ครูที่ปรึกษา"
+  },
+  "classContacts": {
+    "title": "ช่องทางติดต่อ"
+  },
+  "studentList": {
+    "title": "รายชื่อนักเรียน",
+    "searchStudents": "ค้นหาชื่อนักเรียน"
+  }
+}
