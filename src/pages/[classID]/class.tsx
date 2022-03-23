@@ -83,10 +83,10 @@ const ClassAdvisorsSection = (): JSX.Element => {
   ];
 
   return (
-    <Section labelledBy="class-counselors">
+    <Section labelledBy="class-advisors">
       <Header
         icon={<MaterialIcon icon="group" />}
-        text={t("classCounselors.title")}
+        text={t("classAdvisors.title")}
       />
       <div className="layout-grid-cols-3">
         {classAdvisors.map((classAdvisor) => (

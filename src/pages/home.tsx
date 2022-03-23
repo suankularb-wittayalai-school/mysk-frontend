@@ -510,7 +510,7 @@ const ClassSection = (): JSX.Element => {
   );
 };
 
-const ClassCounselorsCard = (): JSX.Element => {
+const ClassAdvisorsCard = (): JSX.Element => {
   const locale = useRouter().locale == "th" ? "th" : "en-US";
   const { t } = useTranslation(["dashboard", "common"]);
   const classAdvisors: Array<Teacher> = [
@@ -700,7 +700,7 @@ const TeachersSection = (): JSX.Element => {
       />
       <div className="flex flex-col justify-start gap-3 !px-0 sm:grid sm:grid-cols-2 md:grid-cols-4">
         <div className="px-4 sm:px-0">
-          <ClassCounselorsCard />
+          <ClassAdvisorsCard />
         </div>
         {teachers.length == 0 ? (
           <div
