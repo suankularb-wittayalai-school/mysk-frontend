@@ -8,6 +8,10 @@
   },
   "studentList": {
     "title": "Student list",
-    "searchStudents": "Search students"
+    "searchStudents": "Search students",
+    "table": {
+      "number": "Number",
+      "name": "Name"
+    }
   }
 }
