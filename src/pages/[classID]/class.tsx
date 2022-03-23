@@ -1,6 +1,7 @@
 // Modules
 import { GetStaticPaths, NextPage } from "next";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
@@ -15,12 +16,71 @@ import {
   Table,
   Title,
 } from "@suankularb-components/react";
-import { nameJoiner } from "@utils/helpers/name";
-import { useRouter } from "next/router";
-import { Student } from "@utils/types/person";
 
-const ClassCounselorsSection = (): JSX.Element => {
+// Helpers
+import { nameJoiner } from "@utils/helpers/name";
+
+// Types
+import { Student, Teacher } from "@utils/types/person";
+import TeacherCard from "@components/TeacherCard";
+
+const ClassAdvisorsSection = (): JSX.Element => {
   const { t } = useTranslation("class");
+
+  const classAdvisors: Array<Teacher> = [
+    {
+      id: 2,
+      role: "teacher",
+      prefix: "mister",
+      name: {
+        "en-US": { firstName: "Taradol", lastName: "Ranarintr" },
+        th: { firstName: "ธราดล", lastName: "รานรินทร์" },
+      },
+      profile: "/images/dummybase/taradol.webp",
+      subjectsInCharge: [
+        {
+          name: {
+            "en-US": {
+              name: "Social Studies 2 (World)",
+            },
+            th: { name: "สังคมศึกษา 2 (พลโลก)" },
+          },
+          subjectSubgroup: {
+            name: { "en-US": "Social Studies", th: "สังคมศึกษา" },
+            subjectGroup: {
+              name: { "en-US": "Social Studies", th: "สังคมศึกษา" },
+            },
+          },
+        },
+      ],
+    },
+    {
+      id: 3,
+      role: "teacher",
+      prefix: "missus",
+      name: {
+        "en-US": { firstName: "Mattana", lastName: "Tatanyang" },
+        th: { firstName: "มัทนา", lastName: "ต๊ะตันยาง" },
+      },
+      profile: "/images/dummybase/mattana.webp",
+      subjectsInCharge: [
+        {
+          name: {
+            "en-US": {
+              name: "Communication 2",
+            },
+            th: { name: "ภาษาอังกฤษเพื่อการสื่อสาร 2" },
+          },
+          subjectSubgroup: {
+            name: { "en-US": "English", th: "ภาษาอังกฤษ" },
+            subjectGroup: {
+              name: { "en-US": "Foreign Language", th: "ภาษาต่างประเทศ" },
+            },
+          },
+        },
+      ],
+    },
+  ];
 
   return (
     <Section labelledBy="class-counselors">
@@ -28,6 +88,16 @@ const ClassCounselorsSection = (): JSX.Element => {
         icon={<MaterialIcon icon="group" />}
         text={t("classCounselors.title")}
       />
+      <div className="layout-grid-cols-3">
+        {classAdvisors.map((classAdvisor) => (
+          <TeacherCard
+            key={classAdvisor.id}
+            teacher={classAdvisor}
+            hasSubjectSubgroup
+            appearance="tonal"
+          />
+        ))}
+      </div>
     </Section>
   );
 };
@@ -215,7 +285,7 @@ const Class: NextPage = () => {
         />
       }
     >
-      <ClassCounselorsSection />
+      <ClassAdvisorsSection />
       <ContactSection />
       <StudentListSection />
     </RegularLayout>
