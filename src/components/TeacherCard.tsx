@@ -1,5 +1,6 @@
 // Modules
 import { useRouter } from "next/router";
+import { useTranslation } from "next-i18next";
 
 // SK Components
 import {
@@ -9,10 +10,14 @@ import {
   MaterialIcon,
 } from "@suankularb-components/react";
 
+// Components
+import ProfilePicture from "@components/ProfilePicture";
+
+// Helpers
+import { nameJoiner } from "@utils/helpers/name";
+
 // Types
 import { Teacher } from "@utils/types/person";
-import { useTranslation } from "next-i18next";
-import ProfilePicture from "./ProfilePicture";
 
 interface TeacherCardProps {
   teacher: Teacher;
@@ -32,14 +37,7 @@ const TeacherCard = ({
   const locale = useRouter().locale == "th" ? "th" : "en-US";
   const { t } = useTranslation(["teachers", "common"]);
 
-  // (@SiravitPhokeed) I love how hilariously overengineered this is
-  const teacherName = [
-    teacher.name[locale].firstName,
-    teacher.name[locale].middleName,
-    teacher.name[locale].lastName,
-  ]
-    .filter((namePart) => namePart)
-    .join(" ");
+  const teacherName = nameJoiner(locale, teacher.name);
 
   return (
     <Card

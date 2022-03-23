@@ -302,7 +302,7 @@ export const getStaticPaths: GetStaticPaths<{ classID: string }> = async () => {
 
 export const getStaticProps = async ({ locale }: { locale: string }) => ({
   props: {
-    ...(await serverSideTranslations(locale, ["common", "class"])),
+    ...(await serverSideTranslations(locale, ["common", "class", "teacher"])),
   },
 });
 
