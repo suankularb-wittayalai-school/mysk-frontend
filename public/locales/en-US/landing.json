@@ -1,10 +1,10 @@
 {
-  "title": "Suankularb Data Center",
   "changeLang": "ใช้ในภาษาไทย",
   "login": "Log in",
   "help": "Help",
   "news": {
     "title": "Suankularb News",
-    "lastUpdated": "Last updated {{lastUpdated}}"
+    "lastUpdated": "Last updated {{lastUpdated}}",
+    "expand": "Expand"
   }
 }

@@ -1,11 +1,15 @@
 // Modules
 import { isPast, isThisYear } from "date-fns";
+
 import { NextPage } from "next";
+import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
+
 import { Trans, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+
 import { useEffect, useState } from "react";
 
 // SK Components
@@ -28,16 +32,27 @@ import {
 // Components
 import Schedule from "@components/Schedule";
 import TeacherCard from "@components/TeacherCard";
+import ChangePassword from "@components/dialogs/ChangePassword";
+import EditProfileDialog from "@components/dialogs/EditProfile";
+import LogOutDialog from "@components/dialogs/LogOut";
 
 // Types
 import { NewsList } from "@utils/types/news";
 import { Student, Teacher } from "@utils/types/person";
 import { Schedule as ScheduleType } from "@utils/types/schedule";
-import Head from "next/head";
 
-const UserActions = ({ className }: { className: string }): JSX.Element => {
+const UserActions = ({
+  setshowChangePassword,
+  setShowEditProfile,
+  setShowLogOut,
+  className,
+}: {
+  setshowChangePassword: Function;
+  setShowEditProfile: Function;
+  setShowLogOut: Function;
+  className?: string;
+}): JSX.Element => {
   const { t } = useTranslation("dashboard");
-  const router = useRouter();
 
   return (
     <div
@@ -48,38 +63,48 @@ const UserActions = ({ className }: { className: string }): JSX.Element => {
       <Button
         name={t("user.action.changePassword")}
         type="text"
-        onClick={() => {}}
+        onClick={() => setshowChangePassword(true)}
         className="!hidden sm:!flex"
       />
       <Button
         name={t("user.action.requestEdit")}
         type="outlined"
         icon={<MaterialIcon icon="edit" />}
-        onClick={() => {}}
+        onClick={() => setShowEditProfile(true)}
       />
       <Button
         name={t("user.action.logOut")}
         type="filled"
         icon={<MaterialIcon icon="logout" />}
-        onClick={() => router.push("/")}
+        onClick={() => setShowLogOut(true)}
         className="!bg-error !text-on-error"
       />
     </div>
   );
 };
 
-const UserSection = (): JSX.Element => {
+const UserSection = ({
+  setShowChangePassword,
+  setShowEditProfile,
+  setShowLogOut,
+}: {
+  setShowChangePassword: Function;
+  setShowEditProfile: Function;
+  setShowLogOut: Function;
+}): JSX.Element => {
   const locale = useRouter().locale == "th" ? "th" : "en-US";
   const { t } = useTranslation(["dashboard", "common"]);
 
   // Dummybase
   const user: Student | Teacher = {
     id: 9,
+    role: "student",
+    prefix: "mister",
     name: {
       "en-US": { firstName: "Sadudee", lastName: "Theparree" },
       th: { firstName: "สดุดี", lastName: "เทพอารีย์" },
     },
-    profile: "/images/dummybase/sadudee.jpg",
+    profile: "/images/dummybase/sadudee.webp",
     class: "405",
     classNo: 11,
   };
@@ -138,10 +163,20 @@ const UserSection = (): JSX.Element => {
                 <MaterialIcon icon="arrow_forward" className="text-error" />
               </button>
             </div>
-            <UserActions className="hidden md:flex" />
+            <UserActions
+              className="hidden md:flex"
+              setshowChangePassword={setShowChangePassword}
+              setShowEditProfile={setShowEditProfile}
+              setShowLogOut={setShowLogOut}
+            />
           </div>
         </div>
-        <UserActions className="flex md:hidden" />
+        <UserActions
+          className="flex md:hidden"
+          setshowChangePassword={setShowChangePassword}
+          setShowEditProfile={setShowEditProfile}
+          setShowLogOut={setShowLogOut}
+        />
       </Section>
     </>
   );
@@ -226,39 +261,50 @@ const NewsSection = (): JSX.Element => {
   const [filteredNews, setFilteredNews] = useState<NewsList>(news);
   const { t } = useTranslation("dashboard");
 
-  useEffect(() => {
-    // Reset filtered news if all filters are deselected
-    if (newsFilter.length == 0) {
-      setFilteredNews(news);
+  useEffect(
+    () => {
+      // Reset filtered news if all filters are deselected
+      if (newsFilter.length == 0) {
+        setFilteredNews(news);
 
-      // Handles done
-    } else if (newsFilter.includes("not-done") || newsFilter.includes("done")) {
-      if (newsFilter.length > 1) {
-        setFilteredNews(
-          news.filter(
-            (newsItem) =>
-              newsFilter.includes(newsItem.type) &&
-              (newsFilter.includes("done")
+        // Handles done
+      } else if (
+        newsFilter.includes("not-done") ||
+        newsFilter.includes("done")
+      ) {
+        if (newsFilter.length > 1) {
+          setFilteredNews(
+            news.filter(
+              (newsItem) =>
+                newsFilter.includes(newsItem.type) &&
+                (newsFilter.includes("done")
+                  ? newsItem.done
+                  : newsItem.done == false)
+            )
+          );
+        } else {
+          setFilteredNews(
+            news.filter((newsItem) =>
+              newsFilter.includes("done")
                 ? newsItem.done
-                : newsItem.done == false)
-          )
-        );
-      } else {
+                : newsItem.done == false
+            )
+          );
+        }
+      }
+
+      // Handles types
+      else {
         setFilteredNews(
-          news.filter((newsItem) =>
-            newsFilter.includes("done") ? newsItem.done : newsItem.done == false
-          )
+          news.filter((newsItem) => newsFilter.includes(newsItem.type))
         );
       }
-    }
+    },
 
-    // Handles types
-    else {
-      setFilteredNews(
-        news.filter((newsItem) => newsFilter.includes(newsItem.type))
-      );
-    }
-  }, [newsFilter]);
+    // Adding `news` as a dependency causes an inifinie loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [newsFilter]
+  );
 
   return (
     <Section>
@@ -403,6 +449,8 @@ const ClassSection = (): JSX.Element => {
               teachers: [
                 {
                   id: 1,
+                  role: "teacher",
+                  prefix: "mister",
                   name: {
                     "en-US": {
                       firstName: "John",
@@ -462,23 +510,19 @@ const ClassSection = (): JSX.Element => {
   );
 };
 
-interface ClassCounselorsCardProps {
-  className?: string;
-}
-
-const ClassCounselorsCard = ({
-  className,
-}: ClassCounselorsCardProps): JSX.Element => {
+const ClassCounselorsCard = (): JSX.Element => {
   const locale = useRouter().locale == "th" ? "th" : "en-US";
-  const { t } = useTranslation("dashboard");
+  const { t } = useTranslation(["dashboard", "common"]);
   const classAdvisors: Array<Teacher> = [
     {
       id: 2,
+      role: "teacher",
+      prefix: "mister",
       name: {
         "en-US": { firstName: "Taradol", lastName: "Ranarintr" },
         th: { firstName: "ธราดล", lastName: "รานรินทร์" },
       },
-      profile: "/images/dummybase/taradol.jpg",
+      profile: "/images/dummybase/taradol.webp",
       subjectsInCharge: [
         {
           name: {
@@ -498,23 +542,24 @@ const ClassCounselorsCard = ({
     },
     {
       id: 3,
+      role: "teacher",
+      prefix: "missus",
       name: {
         "en-US": { firstName: "Mattana", lastName: "Tatanyang" },
         th: { firstName: "มัทนา", lastName: "ต๊ะตันยาง" },
       },
-      profile: "/images/dummybase/mattana.jpg",
+      profile: "/images/dummybase/mattana.webp",
       subjectsInCharge: [],
     },
   ];
 
   return (
-    <Card type="stacked" className={`h-fit ${className || ""}`}>
+    <Card type="stacked" className="h-fit">
       <CardHeader
         icon={<MaterialIcon icon="group" />}
         title={
           <h3 className="text-lg font-medium">{t("teachers.classAdvisors")}</h3>
         }
-        label="" // FIXME: When Label is no longer necessary, remove this
         className="font-display"
       />
       <div
@@ -553,7 +598,10 @@ const ClassCounselorsCard = ({
                 </h4>
                 {/* Go to Teacher button */}
                 <Link href={`/teacher/${teacher.id}`}>
-                  <a className="btn btn--filled container-secondary !p-1 text-2xl">
+                  <a
+                    aria-label={t("seeDetails", { ns: "common" })}
+                    className="btn btn--filled container-secondary !p-1 text-2xl"
+                  >
                     <MaterialIcon
                       icon="arrow_forward"
                       allowCustomSize={true}
@@ -575,6 +623,8 @@ const TeachersSection = (): JSX.Element => {
   const teachers: Array<Teacher> = [
     {
       id: 0,
+      role: "teacher",
+      prefix: "mister",
       name: {
         "en-US": {
           firstName: "Taradol",
@@ -585,11 +635,13 @@ const TeachersSection = (): JSX.Element => {
           lastName: "รานรินทร์",
         },
       },
-      profile: "/images/dummybase/taradol.jpg",
+      profile: "/images/dummybase/taradol.webp",
       subjectsInCharge: [],
     },
     {
       id: 1,
+      role: "teacher",
+      prefix: "mister",
       name: {
         "en-US": {
           firstName: "Thanakorn",
@@ -600,11 +652,13 @@ const TeachersSection = (): JSX.Element => {
           lastName: "อรรจนาวัฒน์",
         },
       },
-      profile: "/images/dummybase/thanakorn.png",
+      profile: "/images/dummybase/thanakorn.webp",
       subjectsInCharge: [],
     },
     {
       id: 2,
+      role: "teacher",
+      prefix: "missus",
       name: {
         "en-US": {
           firstName: "Mattana",
@@ -615,11 +669,13 @@ const TeachersSection = (): JSX.Element => {
           lastName: "ต๊ะตันยาง",
         },
       },
-      profile: "/images/dummybase/mattana.jpg",
+      profile: "/images/dummybase/mattana.webp",
       subjectsInCharge: [],
     },
     {
       id: 3,
+      role: "teacher",
+      prefix: "mister",
       name: {
         "en-US": {
           firstName: "John",
@@ -643,7 +699,9 @@ const TeachersSection = (): JSX.Element => {
         text={t("teachers.title")}
       />
       <div className="flex flex-col justify-start gap-3 !px-0 sm:grid sm:grid-cols-2 md:grid-cols-4">
-        <ClassCounselorsCard className="mx-4 sm:mx-0" />
+        <div className="px-4 sm:px-0">
+          <ClassCounselorsCard />
+        </div>
         {teachers.length == 0 ? (
           <div
             className="bg-surface-1 mx-4 grid place-items-center rounded-xl p-8 text-center text-on-surface-variant
@@ -700,29 +758,68 @@ const TeachersSection = (): JSX.Element => {
 const Home: NextPage = () => {
   const { t } = useTranslation("common");
 
+  // Dialog controls
+  const [showChangePassword, setShowChangePassword] = useState<boolean>(false);
+  const [showEditProfile, setShowEditProfile] = useState<boolean>(false);
+  const [showLogOut, setShowLogOut] = useState<boolean>(false);
+
   return (
-    <RegularLayout
-      Title={
-        <Title
-          name={{ title: t("brand.name") }}
-          pageIcon={<MaterialIcon icon="home" />}
-          backGoesTo="/"
-          LinkElement={Link}
-          className="sm:!hidden"
+    <>
+      {/* Content */}
+      <RegularLayout
+        Title={
+          <Title
+            name={{ title: t("brand.name") }}
+            pageIcon={<MaterialIcon icon="home" />}
+            backGoesTo="/"
+            LinkElement={Link}
+            className="sm:!hidden"
+          />
+        }
+      >
+        <UserSection
+          setShowChangePassword={setShowChangePassword}
+          setShowEditProfile={setShowEditProfile}
+          setShowLogOut={setShowLogOut}
         />
-      }
-    >
-      <UserSection />
-      <NewsSection />
-      <ClassSection />
-      <TeachersSection />
-    </RegularLayout>
+        <NewsSection />
+        <ClassSection />
+        <TeachersSection />
+      </RegularLayout>
+
+      {/* Dialogs */}
+      <ChangePassword
+        show={showChangePassword}
+        onClose={() => setShowChangePassword(false)}
+      />
+      <EditProfileDialog
+        user={{
+          id: 9,
+          role: "student",
+          prefix: "mister",
+          name: {
+            "en-US": { firstName: "Sadudee", lastName: "Theparree" },
+            th: { firstName: "สดุดี", lastName: "เทพอารีย์" },
+          },
+          profile: "/images/dummybase/sadudee.webp",
+          class: "405",
+          classNo: 11,
+        }}
+        show={showEditProfile}
+        onClose={() => setShowEditProfile(false)}
+      />
+      <LogOutDialog show={showLogOut} onClose={() => setShowLogOut(false)} />
+    </>
   );
 };
 
 export const getStaticProps = async ({ locale }: { locale: string }) => ({
   props: {
-    ...(await serverSideTranslations(locale, ["common", "dashboard"])),
+    ...(await serverSideTranslations(locale, [
+      "common",
+      "account",
+      "dashboard",
+    ])),
   },
 });
 

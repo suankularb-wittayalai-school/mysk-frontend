@@ -1,6 +1,7 @@
 // Modules
 import { useState } from "react";
 
+import Head from "next/head";
 import { useTranslation, Trans } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
@@ -11,6 +12,7 @@ import { useRouter } from "next/router";
 
 // SK Components
 import {
+  Button,
   Card,
   CardHeader,
   LinkButton,
@@ -19,7 +21,6 @@ import {
 
 // Types
 import { NewsItem, NewsList } from "@utils/types/news";
-import Head from "next/head";
 
 // News
 const LandingFeed = ({
@@ -32,6 +33,7 @@ const LandingFeed = ({
 
   return (
     <section
+      aria-label={t("news.title")}
       className="fixed bottom-[6rem] right-2 w-[calc(100vw-1rem)] rounded-xl
         bg-[#fbfcff88] text-on-surface backdrop-blur-xl dark:bg-[#191c1e88]
         sm:bottom-2 sm:w-[22.5rem] md:absolute md:right-4 md:top-4 md:h-[calc(100vh-6.5rem)]"
@@ -42,6 +44,7 @@ const LandingFeed = ({
         className="h-full !bg-transparent"
       >
         <button
+          aria-label={t("news.expand")}
           onClick={() => setFullScreen(!fullscreen)}
           className="has-action relative text-left"
         >
@@ -65,13 +68,18 @@ const LandingFeed = ({
               </p>
             }
             end={
-              <div className="btn--text btn--icon-only md:!hidden">
-                {fullscreen ? (
-                  <MaterialIcon icon="expand_more" />
-                ) : (
-                  <MaterialIcon icon="expand_less" />
-                )}
-              </div>
+              <Button
+                type="text"
+                iconOnly
+                icon={
+                  fullscreen ? (
+                    <MaterialIcon icon="expand_more" />
+                  ) : (
+                    <MaterialIcon icon="expand_less" />
+                  )
+                }
+                className="md:!hidden"
+              />
             }
           />
         </button>
@@ -155,7 +163,7 @@ const LandingBanner = (): JSX.Element => {
   const { t } = useTranslation(["landing", "common"]);
 
   return (
-    <header className="h-full bg-[url('/images/landing.png')] bg-cover bg-left font-display sm:min-h-[calc(100vh-4.5rem)]">
+    <header className="h-full bg-[url('/images/landing.webp')] bg-cover bg-left font-display sm:min-h-[calc(100vh-4.5rem)]">
       {/* Vignette layer */}
       <div
         className="flex h-full flex-col items-center gap-16 bg-gradient-to-b
@@ -170,7 +178,7 @@ const LandingBanner = (): JSX.Element => {
               alt="โลโก้ดอกไม้สีชมพู มีตัวอักษร MySK อยู่ตรงกลาง"
               layout="fill"
               priority={true}
-              src={"/images/branding/logo-white.png"}
+              src={"/images/branding/logo-white.webp"}
             />
           </div>
 
@@ -199,9 +207,7 @@ const LandingBanner = (): JSX.Element => {
               icon={<MaterialIcon icon="login" />}
               url="/account/login"
               LinkElement={Link}
-              className="!bg-tertiary-container !text-tertiary
-                hover:before:bg-tertiary-translucent-08 focus:shadow-lg
-                focus:before:bg-tertiary-translucent-12"
+              className="has-action--tertiary !bg-tertiary-container !text-tertiary"
             />
             <LinkButton
               name={t("help")}
@@ -223,12 +229,12 @@ const LandingBanner = (): JSX.Element => {
 // Page
 const Landing: NextPage = () => {
   const { t } = useTranslation(["landing", "common"]);
-  
+
   return (
     <>
       <Head>
         <title>
-          {t("title")} - {t("brand.name", { ns: "common" })}
+          {t("brand.name", { ns: "common" })}
         </title>
       </Head>
       <div className="h-full sm:relative">
@@ -241,7 +247,7 @@ const Landing: NextPage = () => {
                 id: 4,
                 type: "news",
                 postDate: new Date(2021, 8, 16),
-                image: "/images/dummybase/certificates-announcement.jpg",
+                image: "/images/dummybase/certificates-announcement.webp",
                 content: {
                   "en-US": {
                     title: "Certificates Announcement",
@@ -259,7 +265,7 @@ const Landing: NextPage = () => {
                 id: 1,
                 type: "news",
                 postDate: new Date(2020, 4, 12),
-                image: "/images/dummybase/sk-teaching-practice.jpg",
+                image: "/images/dummybase/sk-teaching-practice.webp",
                 content: {
                   "en-US": {
                     title: "SK Teaching Practice",

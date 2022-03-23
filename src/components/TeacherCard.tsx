@@ -1,16 +1,18 @@
 // Modules
-import Image from "next/image";
 import { useRouter } from "next/router";
 
 // SK Components
-import { Card, CardHeader, MaterialIcon } from "@suankularb-components/react";
-
-// Components
-import ArrowButton from "@components/ArrowButton";
+import {
+  Card,
+  CardHeader,
+  LinkButton,
+  MaterialIcon,
+} from "@suankularb-components/react";
 
 // Types
 import { Teacher } from "@utils/types/person";
 import { useTranslation } from "next-i18next";
+import ProfilePicture from "./ProfilePicture";
 
 interface TeacherCardProps {
   teacher: Teacher;
@@ -28,7 +30,7 @@ const TeacherCard = ({
   hasAction,
 }: TeacherCardProps) => {
   const locale = useRouter().locale == "th" ? "th" : "en-US";
-  const { t } = useTranslation("teachers");
+  const { t } = useTranslation(["teachers", "common"]);
 
   // (@SiravitPhokeed) I love how hilariously overengineered this is
   const teacherName = [
@@ -47,15 +49,7 @@ const TeacherCard = ({
     >
       {/* FIXME: When Card Media is added to React SK Components, change this */}
       <div className="card__media container-tertiary m-[2px]">
-        <div className="relative h-full w-full">
-          <Image
-            src={
-              teacher.profile ? teacher.profile : "/images/common/avatar.svg"
-            }
-            layout="fill"
-            alt=""
-          />
-        </div>
+        <ProfilePicture src={teacher.profile} />
       </div>
       <CardHeader
         title={
@@ -85,7 +79,17 @@ const TeacherCard = ({
           )
         }
         end={
-          hasArrow ? <ArrowButton href={`/teacher/${teacher.id}`} /> : undefined
+          hasArrow ? (
+            <div>
+              <LinkButton
+                label={t("see-details", { ns: "common" })}
+                type="tonal"
+                icon={<MaterialIcon icon="arrow_forward" />}
+                iconOnly
+                url={`/teacher/${teacher.id}`}
+              />
+            </div>
+          ) : undefined
         }
       />
     </Card>

@@ -23,5 +23,16 @@
       "5": "Friday",
       "6": "Saturday"
     }
+  },
+  "seeDetails": "See details",
+  "dialog": {
+    "discardDraft": {
+      "title": "Discard draft?",
+      "supportingText": "All changes will be deleted.",
+      "action": {
+        "discard": "Discard",
+        "continue": "Continue editing"
+      }
+    }
   }
 }

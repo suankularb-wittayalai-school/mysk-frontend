@@ -8,7 +8,59 @@
     "forgotPassword": "Forgot password",
     "logIn": "Log in"
   },
+  "profile": {
+    "name": {
+      "title": "Local Name (Thai)",
+      "prefix": {
+        "label": "Prefix",
+        "master": "เด็กชาย (Master)",
+        "mister": "นาย (Mister)",
+        "miss": "นางสาว (Miss)",
+        "missus": "นาง (Missus)"
+      },
+      "firstName": "First name",
+      "middleName": "Middle name",
+      "lastName": "Last name"
+    },
+    "enName": {
+      "title": "English Name",
+      "firstName": "English first name",
+      "middleName": "English middle name",
+      "lastName": "English last name"
+    },
+    "role": {
+      "title": "Role",
+      "subjectGroup": "Subject group",
+      "classCounselorAt": "Class counselor at"
+    }
+  },
   "dialog": {
+    "changePassword": {
+      "title": "Change password",
+      "supportingText": "If you are still using the default password, changing it is highly recommended.",
+      "originalPwd": "Current password",
+      "newPwd": "New password",
+      "confirmNewPwd": "Confirm new password",
+      "action": {
+        "cancel": "Cancel",
+        "save": "Save"
+      }
+    },
+    "requestEditProfile": {
+      "title": "Request profile edit",
+      "supportingText": "You can request changes to your personal information. Administrators will review your request and approve the changes as they see fit.",
+      "action": {
+        "cancel": "Cancel",
+        "sendRequest": "Send request"
+      }
+    },
+    "editProfile": {
+      "title": "Edit profile",
+      "action": {
+        "cancel": "Cancel",
+        "save": "Save"
+      }
+    },
     "logOut": {
       "title": "Log out",
       "supportingText": "Are you sure you want to log out?",
