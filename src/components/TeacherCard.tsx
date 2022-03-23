@@ -46,7 +46,11 @@ const TeacherCard = ({
       hasAction={hasAction}
     >
       {/* FIXME: When Card Media is added to React SK Components, change this */}
-      <div className="card__media container-tertiary m-[2px]">
+      <div
+        className={`card__media container-tertiary ${
+          appearance == "outlined" ? "m-[2px]" : ""
+        }`}
+      >
         <ProfilePicture src={teacher.profile} />
       </div>
       <CardHeader
