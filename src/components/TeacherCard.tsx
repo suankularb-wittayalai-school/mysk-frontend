@@ -1,4 +1,5 @@
 // Modules
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 
@@ -25,6 +26,7 @@ interface TeacherCardProps {
   hasArrow?: boolean;
   appearance?: "outlined" | "tonal";
   hasAction?: boolean;
+  className?: string;
 }
 
 const TeacherCard = ({
@@ -33,6 +35,7 @@ const TeacherCard = ({
   hasArrow,
   appearance,
   hasAction,
+  className,
 }: TeacherCardProps) => {
   const locale = useRouter().locale == "th" ? "th" : "en-US";
   const { t } = useTranslation(["teachers", "common"]);
@@ -44,11 +47,12 @@ const TeacherCard = ({
       type="horizontal"
       appearance={appearance || "outlined"}
       hasAction={hasAction}
+      className={className}
     >
       {/* FIXME: When Card Media is added to React SK Components, change this */}
       <div
         className={`card__media container-tertiary ${
-          appearance == "outlined" ? "m-[2px]" : ""
+          appearance == "outlined" || appearance == undefined ? "m-[2px]" : ""
         }`}
       >
         <ProfilePicture src={teacher.profile} />
@@ -68,7 +72,7 @@ const TeacherCard = ({
               <div className="flex w-fit flex-row gap-1 pr-1">
                 <MaterialIcon icon="mail" className="text-primary" />
               </div>
-              <span className="pl-1">
+              <span className="max-lines-1 pl-1">
                 {teacher.subjectsInCharge.length == 0
                   ? t("noSubjectGroup")
                   : teacher.subjectsInCharge[0].subjectSubgroup.name[locale]}
@@ -89,6 +93,7 @@ const TeacherCard = ({
                 icon={<MaterialIcon icon="arrow_forward" />}
                 iconOnly
                 url={`/teacher/${teacher.id}`}
+                LinkElement={Link}
               />
             </div>
           ) : undefined

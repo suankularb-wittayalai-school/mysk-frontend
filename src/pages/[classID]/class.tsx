@@ -88,13 +88,14 @@ const ClassAdvisorsSection = (): JSX.Element => {
         icon={<MaterialIcon icon="group" />}
         text={t("classAdvisors.title")}
       />
-      <div className="layout-grid-cols-3">
+      <div className="layout-grid-cols-3 !flex-col !w-full">
         {classAdvisors.map((classAdvisor) => (
           <TeacherCard
             key={classAdvisor.id}
             teacher={classAdvisor}
             hasSubjectSubgroup
-            appearance="tonal"
+            hasArrow
+            className="!w-full"
           />
         ))}
       </div>
@@ -280,7 +281,7 @@ const Class: NextPage = () => {
         <Title
           name={{ title: t("title") }}
           pageIcon={<MaterialIcon icon="groups" />}
-          backGoesTo="/"
+          backGoesTo="/home"
           LinkElement={Link}
         />
       }
