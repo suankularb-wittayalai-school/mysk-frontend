@@ -15,6 +15,62 @@ import {
   Title,
 } from "@suankularb-components/react";
 
+const ClassCounselorsSection = (): JSX.Element => {
+  const { t } = useTranslation("class");
+
+  return (
+    <Section labelledBy="class-counselors">
+      <Header
+        icon={<MaterialIcon icon="group" />}
+        text={t("classCounselors.title")}
+      />
+    </Section>
+  );
+};
+
+const ContactSection = (): JSX.Element => {
+  const { t } = useTranslation("class");
+
+  return (
+    <Section labelledBy="class-contacts">
+      <Header
+        icon={<MaterialIcon icon="contacts" />}
+        text={t("classContacts.title")}
+      />
+    </Section>
+  );
+};
+
+const StudentListSection = (): JSX.Element => {
+  const { t } = useTranslation("class");
+
+  return (
+    <Section labelledBy="student-list">
+      <div className="layout-grid-cols-3--header items-start">
+        <Header
+          icon={<MaterialIcon icon="groups" />}
+          text={t("studentList.title")}
+        />
+        <Search placeholder={t("studentList.searchStudents")} />
+      </div>
+      <Table>
+        <thead>
+          <tr>
+            <td>{t("studentList.table.number")}</td>
+            <td>{t("studentList.table.name")}</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td className="!text-left">นายปณิธิ พุฒพันธ์</td>
+          </tr>
+        </tbody>
+      </Table>
+    </Section>
+  );
+};
+
 // Page
 const Class: NextPage = () => {
   const { t } = useTranslation("class");
@@ -30,41 +86,9 @@ const Class: NextPage = () => {
         />
       }
     >
-      <Section labelledBy="class-counselors">
-        <Header
-          icon={<MaterialIcon icon="group" />}
-          text={t("classCounselors.title")}
-        />
-      </Section>
-      <Section labelledBy="class-contacts">
-        <Header
-          icon={<MaterialIcon icon="contacts" />}
-          text={t("classContacts.title")}
-        />
-      </Section>
-      <Section labelledBy="student-list">
-        <div className="layout-grid-cols-3--header items-start">
-          <Header
-            icon={<MaterialIcon icon="groups" />}
-            text={t("studentList.title")}
-          />
-          <Search placeholder={t("studentList.searchStudents")} />
-        </div>
-        <Table>
-          <thead>
-            <tr>
-              <td>{t("studentList.table.number")}</td>
-              <td>{t("studentList.table.name")}</td>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>1</td>
-              <td className="!text-left">นายปณิธิ พุฒพันธ์</td>
-            </tr>
-          </tbody>
-        </Table>
-      </Section>
+      <ClassCounselorsSection />
+      <ContactSection />
+      <StudentListSection />
     </RegularLayout>
   );
 };
