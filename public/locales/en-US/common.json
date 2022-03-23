@@ -13,6 +13,14 @@
     "teachers": "Teachers",
     "news": "News"
   },
+  "name": {
+    "prefix": {
+      "master": "Master",
+      "mister": "Mr. ",
+      "miss": "Miss ",
+      "missus": "Mrs. "
+    }
+  },
   "datetime": {
     "day": {
       "0": "Sunday",

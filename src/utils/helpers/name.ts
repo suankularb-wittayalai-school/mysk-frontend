@@ -1,9 +1,9 @@
 import { Person } from "@utils/types/person";
 
 export function nameJoiner(
-  locale: string,
+  locale: "en-US" | "th",
   name: Person["name"],
-  prefix?: Person["prefix"],
+  prefix?: string,
   options?: {
     prefix?: boolean;
     firstName?: boolean;
@@ -11,27 +11,31 @@ export function nameJoiner(
     lastName?: boolean;
   }
 ) {
-  const cleanedLocale = locale == "th" ? "th" : "en-US";
-
   if (options)
     return [
       options.prefix ? prefix : undefined,
       [
-        options.firstName ? name[cleanedLocale].firstName : undefined,
-        options.middleName ? name[cleanedLocale].middleName : undefined,
-        options.lastName ? name[cleanedLocale].lastName : undefined,
+        options.firstName == true || options.firstName == undefined
+          ? name[locale].firstName
+          : undefined,
+        options.middleName == true || options.middleName == undefined
+          ? name[locale].middleName
+          : undefined,
+        options.lastName == true || options.lastName == undefined
+          ? name[locale].lastName
+          : undefined,
       ]
-        .map((item) => item != undefined)
+        .filter((item) => item != undefined)
         .join(" "),
     ]
-      .map((item) => item != undefined)
+      .filter((item) => item != undefined)
       .join("");
   else
     return [
-      name[cleanedLocale].firstName,
-      name[cleanedLocale].middleName,
-      name[cleanedLocale].lastName,
+      name[locale].firstName,
+      name[locale].middleName,
+      name[locale].lastName,
     ]
-      .map((item) => item != undefined)
+      .filter((item) => item != undefined)
       .join(" ");
 }

@@ -10,7 +10,7 @@
     "title": "Student list",
     "searchStudents": "Search students",
     "table": {
-      "number": "Number",
+      "classNo": "Class №",
       "name": "Name"
     }
   }

@@ -8,10 +8,10 @@
   },
   "studentList": {
     "title": "รายชื่อนักเรียน",
-    "searchStudents": "ค้นหาชื่อนักเรียน"
-  },
-  "table": {
-    "number": "เลขที่",
-    "name": "ชื่อ-นามสกุล"
+    "searchStudents": "ค้นหาชื่อนักเรียน",
+    "table": {
+      "classNo": "เลขที่",
+      "name": "ชื่อ-นามสกุล"
+    }
   }
 }
