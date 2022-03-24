@@ -8,7 +8,6 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 // SK Components
 import {
-  Button,
   Header,
   MaterialIcon,
   RegularLayout,
@@ -19,13 +18,14 @@ import {
 } from "@suankularb-components/react";
 
 // Components
+import ContactChip from "@components/ContactChip";
 import TeacherCard from "@components/TeacherCard";
 
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
 
 // Types
-import { Class as ClassType } from "@utils/types/class";
+import { Class as ClassType, Contact } from "@utils/types/class";
 import { Student, Teacher } from "@utils/types/person";
 
 const ClassAdvisorsSection = ({
@@ -56,7 +56,11 @@ const ClassAdvisorsSection = ({
   );
 };
 
-const ContactSection = (): JSX.Element => {
+const ContactSection = ({
+  contacts,
+}: {
+  contacts: Array<Contact>;
+}): JSX.Element => {
   const { t } = useTranslation("class");
 
   return (
@@ -65,6 +69,15 @@ const ContactSection = (): JSX.Element => {
         icon={<MaterialIcon icon="contacts" />}
         text={t("classContacts.title")}
       />
+      <div className="layout-grid-cols-3 !w-full !flex-col">
+        {contacts.map((contact) => (
+          <ContactChip
+            key={contact.id}
+            contact={contact}
+            className="!w-initial"
+          />
+        ))}
+      </div>
     </Section>
   );
 };
@@ -124,13 +137,15 @@ const StudentListSection = ({
 
 // Page
 const Class: NextPage<{ classItem: ClassType }> = ({ classItem }) => {
-  const { t } = useTranslation("class");
+  const { t } = useTranslation("common");
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
 
   return (
     <>
       <Head>
-        <title>{classItem.name[locale]}</title>
+        <title>
+          {classItem.name[locale]} - {t("brand.name")}
+        </title>
       </Head>
       <RegularLayout
         Title={
@@ -143,7 +158,7 @@ const Class: NextPage<{ classItem: ClassType }> = ({ classItem }) => {
         }
       >
         <ClassAdvisorsSection classAdvisors={classItem.classAdvisors} />
-        <ContactSection />
+        <ContactSection contacts={classItem.contacts} />
         <StudentListSection students={classItem.students} />
       </RegularLayout>
     </>
@@ -159,12 +174,84 @@ export const getStaticPaths: GetStaticPaths<{ classID: string }> = async () => {
 
 export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   // TODO: Fetch class here
-  const classItem = {
+  const classItem: ClassType = {
     id: 405,
     name: {
       "en-US": "M.405",
       th: "ม.405",
     },
+    contacts: [
+      {
+        id: 15,
+        via: "line",
+        name: {
+          "en-US": "Students only",
+          th: "กลุ่มนักเรียน",
+        },
+        includes: {
+          students: true,
+          parents: false,
+          teachers: false,
+        },
+        url: "https://line.me/R/ti/g/aOslRIgnDj",
+      },
+      {
+        id: 16,
+        via: "discord",
+        name: {
+          "en-US": "Students only",
+          th: "กลุ่มนักเรียน",
+        },
+        includes: {
+          students: true,
+          parents: false,
+          teachers: false,
+        },
+        url: "https://discord.gg/BEsTtp",
+      },
+      {
+        id: 17,
+        via: "line",
+        name: {
+          "en-US": "Students and teachers",
+          th: "กลุ่มนักเรียนกับอาจารย์",
+        },
+        includes: {
+          students: true,
+          parents: false,
+          teachers: true,
+        },
+        url: "https://line.me/R/ti/g/aOslRIgnDj",
+      },
+      {
+        id: 17,
+        via: "line",
+        name: {
+          "en-US": "Whole class",
+          th: "กลุ่มรวมห้อง",
+        },
+        includes: {
+          students: true,
+          parents: true,
+          teachers: true,
+        },
+        url: "https://line.me/R/ti/g/aOslRIgnDj",
+      },
+      {
+        id: 18,
+        via: "line",
+        name: {
+          "en-US": "M.4 EPlus+",
+          th: "กลุ่ม EPlus+ ม.4",
+        },
+        includes: {
+          students: true,
+          parents: true,
+          teachers: true,
+        },
+        url: "https://line.me/R/ti/g/aOslRIgnDj",
+      },
+    ],
     classAdvisors: [
       {
         id: 2,
