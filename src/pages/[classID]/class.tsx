@@ -25,7 +25,8 @@ import TeacherCard from "@components/TeacherCard";
 import { nameJoiner } from "@utils/helpers/name";
 
 // Types
-import { Class as ClassType, Contact } from "@utils/types/class";
+import { Class as ClassType } from "@utils/types/class";
+import { Contact } from "@utils/types/contact";
 import { Student, Teacher } from "@utils/types/person";
 
 const ClassAdvisorsSection = ({

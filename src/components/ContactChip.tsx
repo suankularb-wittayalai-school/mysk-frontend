@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { MaterialIcon } from "@suankularb-components/react";
 
 // Types
-import { Contact } from "@utils/types/class";
+import { Contact } from "@utils/types/contact";
 
 const ContactChip = ({
   contact,
@@ -49,20 +49,22 @@ const ContactChip = ({
       <span id={`contact-${contact.id}`} className="grow">
         {contact.name[locale]}
       </span>
-      <div className="flex flex-row-reverse">
-        {contact.includes.teachers && (
-          <MaterialIcon icon="school" className="-ml-2.5 text-secondary" />
-        )}
-        {contact.includes.parents && (
-          <MaterialIcon
-            icon="escalator_warning"
-            className="-ml-2.5 text-primary"
-          />
-        )}
-        {contact.includes.students && (
-          <MaterialIcon icon="groups" className="-ml-2.5 text-primary" />
-        )}
-      </div>
+      {contact.includes && (
+        <div className="flex flex-row-reverse">
+          {contact.includes.teachers && (
+            <MaterialIcon icon="school" className="-ml-2.5 text-secondary" />
+          )}
+          {contact.includes.parents && (
+            <MaterialIcon
+              icon="escalator_warning"
+              className="-ml-2.5 text-primary"
+            />
+          )}
+          {contact.includes.students && (
+            <MaterialIcon icon="groups" className="-ml-2.5 text-primary" />
+          )}
+        </div>
+      )}
     </a>
   );
 };
