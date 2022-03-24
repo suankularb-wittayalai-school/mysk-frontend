@@ -1,5 +1,6 @@
 // Modules
-import { GetStaticPaths, NextPage } from "next";
+import { GetStaticPaths, GetStaticProps, NextPage } from "next";
+import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
@@ -17,70 +18,22 @@ import {
   Title,
 } from "@suankularb-components/react";
 
+// Components
+import TeacherCard from "@components/TeacherCard";
+
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
 
 // Types
+import { Class as ClassType } from "@utils/types/class";
 import { Student, Teacher } from "@utils/types/person";
-import TeacherCard from "@components/TeacherCard";
 
-const ClassAdvisorsSection = (): JSX.Element => {
+const ClassAdvisorsSection = ({
+  classAdvisors,
+}: {
+  classAdvisors: Array<Teacher>;
+}): JSX.Element => {
   const { t } = useTranslation("class");
-
-  const classAdvisors: Array<Teacher> = [
-    {
-      id: 2,
-      role: "teacher",
-      prefix: "mister",
-      name: {
-        "en-US": { firstName: "Taradol", lastName: "Ranarintr" },
-        th: { firstName: "ธราดล", lastName: "รานรินทร์" },
-      },
-      profile: "/images/dummybase/taradol.webp",
-      subjectsInCharge: [
-        {
-          name: {
-            "en-US": {
-              name: "Social Studies 2 (World)",
-            },
-            th: { name: "สังคมศึกษา 2 (พลโลก)" },
-          },
-          subjectSubgroup: {
-            name: { "en-US": "Social Studies", th: "สังคมศึกษา" },
-            subjectGroup: {
-              name: { "en-US": "Social Studies", th: "สังคมศึกษา" },
-            },
-          },
-        },
-      ],
-    },
-    {
-      id: 3,
-      role: "teacher",
-      prefix: "missus",
-      name: {
-        "en-US": { firstName: "Mattana", lastName: "Tatanyang" },
-        th: { firstName: "มัทนา", lastName: "ต๊ะตันยาง" },
-      },
-      profile: "/images/dummybase/mattana.webp",
-      subjectsInCharge: [
-        {
-          name: {
-            "en-US": {
-              name: "Communication 2",
-            },
-            th: { name: "ภาษาอังกฤษเพื่อการสื่อสาร 2" },
-          },
-          subjectSubgroup: {
-            name: { "en-US": "English", th: "ภาษาอังกฤษ" },
-            subjectGroup: {
-              name: { "en-US": "Foreign Language", th: "ภาษาต่างประเทศ" },
-            },
-          },
-        },
-      ],
-    },
-  ];
 
   return (
     <Section labelledBy="class-advisors">
@@ -88,7 +41,7 @@ const ClassAdvisorsSection = (): JSX.Element => {
         icon={<MaterialIcon icon="group" />}
         text={t("classAdvisors.title")}
       />
-      <div className="layout-grid-cols-3 !flex-col !w-full">
+      <div className="layout-grid-cols-3 !w-full !flex-col">
         {classAdvisors.map((classAdvisor) => (
           <TeacherCard
             key={classAdvisor.id}
@@ -116,115 +69,13 @@ const ContactSection = (): JSX.Element => {
   );
 };
 
-const StudentListSection = (): JSX.Element => {
+const StudentListSection = ({
+  students,
+}: {
+  students: Array<Student>;
+}): JSX.Element => {
   const { t } = useTranslation(["class", "common"]);
   const locale = useRouter().locale == "th" ? "th" : "en-US";
-
-  // Dummybase
-  const studentList: Array<Student> = [
-    {
-      id: 248,
-      role: "student",
-      prefix: "mister",
-      name: {
-        "en-US": {
-          firstName: "Paniti",
-          lastName: "Putpan",
-        },
-        th: {
-          firstName: "ปณิธิ",
-          lastName: "พุฒพันธ์",
-        },
-      },
-      class: "405",
-      classNo: 1,
-    },
-    {
-      id: 249,
-      role: "student",
-      prefix: "mister",
-      name: {
-        "en-US": {
-          firstName: "Chayatawn",
-          lastName: "Yupattanawong",
-        },
-        th: {
-          firstName: "ชยธร",
-          lastName: "อยู่พัฒนวงศ์",
-        },
-      },
-      class: "405",
-      classNo: 2,
-    },
-    {
-      id: 250,
-      role: "student",
-      prefix: "miss",
-      name: {
-        "en-US": {
-          firstName: "Tanvin",
-          lastName: "Chanchairujira",
-        },
-        th: {
-          firstName: "ธันวิน",
-          lastName: "ชาญชัยรุจิรา",
-        },
-      },
-      class: "405",
-      classNo: 3,
-    },
-    {
-      id: 251,
-      role: "student",
-      prefix: "mister",
-      name: {
-        "en-US": {
-          firstName: "Thas",
-          lastName: "Thasanakosol",
-        },
-        th: {
-          firstName: "ธรรศ",
-          lastName: "ทัศนโกศล",
-        },
-      },
-      class: "405",
-      classNo: 4,
-    },
-    {
-      id: 252,
-      role: "student",
-      prefix: "mister",
-      name: {
-        "en-US": {
-          firstName: "Katakorn",
-          lastName: "Worakittiphan",
-        },
-        th: {
-          firstName: "กตกร",
-          lastName: "วรกิตติพันธ์",
-        },
-      },
-      class: "405",
-      classNo: 5,
-    },
-    {
-      id: 253,
-      role: "student",
-      prefix: "mister",
-      name: {
-        "en-US": {
-          firstName: "Rojravee",
-          lastName: "Boonchokcharoensri",
-        },
-        th: {
-          firstName: "โรจน์รวี",
-          lastName: "บุญโชคเจริญศรี",
-        },
-      },
-      class: "405",
-      classNo: 6,
-    },
-  ];
 
   return (
     <Section labelledBy="student-list">
@@ -249,7 +100,7 @@ const StudentListSection = (): JSX.Element => {
             </tr>
           </thead>
           <tbody>
-            {studentList.map((student) => (
+            {students.map((student) => (
               <tr key={student.id}>
                 <td>{student.classNo}</td>
                 <td className="!text-left">
@@ -272,28 +123,33 @@ const StudentListSection = (): JSX.Element => {
 };
 
 // Page
-const Class: NextPage = () => {
+const Class: NextPage<{ classItem: ClassType }> = ({ classItem }) => {
   const { t } = useTranslation("class");
+  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
 
   return (
-    <RegularLayout
-      Title={
-        <Title
-          name={{ title: t("title") }}
-          pageIcon={<MaterialIcon icon="groups" />}
-          backGoesTo="/home"
-          LinkElement={Link}
-        />
-      }
-    >
-      <ClassAdvisorsSection />
-      <ContactSection />
-      <StudentListSection />
-    </RegularLayout>
+    <>
+      <Head>
+        <title>{classItem.name[locale]}</title>
+      </Head>
+      <RegularLayout
+        Title={
+          <Title
+            name={{ title: classItem.name[locale] }}
+            pageIcon={<MaterialIcon icon="groups" />}
+            backGoesTo="/home"
+            LinkElement={Link}
+          />
+        }
+      >
+        <ClassAdvisorsSection classAdvisors={classItem.classAdvisors} />
+        <ContactSection />
+        <StudentListSection students={classItem.students} />
+      </RegularLayout>
+    </>
   );
 };
 
-// TODO: This needs to be updated when we start using getStaticProps for more than translations
 export const getStaticPaths: GetStaticPaths<{ classID: string }> = async () => {
   return {
     paths: [],
@@ -301,10 +157,184 @@ export const getStaticPaths: GetStaticPaths<{ classID: string }> = async () => {
   };
 };
 
-export const getStaticProps = async ({ locale }: { locale: string }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ["common", "class", "teacher"])),
-  },
-});
+export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
+  // TODO: Fetch class here
+  const classItem = {
+    id: 405,
+    name: {
+      "en-US": "M.405",
+      th: "ม.405",
+    },
+    classAdvisors: [
+      {
+        id: 2,
+        role: "teacher",
+        prefix: "mister",
+        name: {
+          "en-US": { firstName: "Taradol", lastName: "Ranarintr" },
+          th: { firstName: "ธราดล", lastName: "รานรินทร์" },
+        },
+        profile: "/images/dummybase/taradol.webp",
+        subjectsInCharge: [
+          {
+            name: {
+              "en-US": {
+                name: "Social Studies 2 (World)",
+              },
+              th: { name: "สังคมศึกษา 2 (พลโลก)" },
+            },
+            subjectSubgroup: {
+              name: { "en-US": "Social Studies", th: "สังคมศึกษา" },
+              subjectGroup: {
+                name: { "en-US": "Social Studies", th: "สังคมศึกษา" },
+              },
+            },
+          },
+        ],
+      },
+      {
+        id: 3,
+        role: "teacher",
+        prefix: "missus",
+        name: {
+          "en-US": { firstName: "Mattana", lastName: "Tatanyang" },
+          th: { firstName: "มัทนา", lastName: "ต๊ะตันยาง" },
+        },
+        profile: "/images/dummybase/mattana.webp",
+        subjectsInCharge: [
+          {
+            name: {
+              "en-US": {
+                name: "Communication 2",
+              },
+              th: { name: "ภาษาอังกฤษเพื่อการสื่อสาร 2" },
+            },
+            subjectSubgroup: {
+              name: { "en-US": "English", th: "ภาษาอังกฤษ" },
+              subjectGroup: {
+                name: { "en-US": "Foreign Language", th: "ภาษาต่างประเทศ" },
+              },
+            },
+          },
+        ],
+      },
+    ],
+    students: [
+      {
+        id: 248,
+        role: "student",
+        prefix: "mister",
+        name: {
+          "en-US": {
+            firstName: "Paniti",
+            lastName: "Putpan",
+          },
+          th: {
+            firstName: "ปณิธิ",
+            lastName: "พุฒพันธ์",
+          },
+        },
+        class: "405",
+        classNo: 1,
+      },
+      {
+        id: 249,
+        role: "student",
+        prefix: "mister",
+        name: {
+          "en-US": {
+            firstName: "Chayatawn",
+            lastName: "Yupattanawong",
+          },
+          th: {
+            firstName: "ชยธร",
+            lastName: "อยู่พัฒนวงศ์",
+          },
+        },
+        class: "405",
+        classNo: 2,
+      },
+      {
+        id: 250,
+        role: "student",
+        prefix: "miss",
+        name: {
+          "en-US": {
+            firstName: "Tanvin",
+            lastName: "Chanchairujira",
+          },
+          th: {
+            firstName: "ธันวิน",
+            lastName: "ชาญชัยรุจิรา",
+          },
+        },
+        class: "405",
+        classNo: 3,
+      },
+      {
+        id: 251,
+        role: "student",
+        prefix: "mister",
+        name: {
+          "en-US": {
+            firstName: "Thas",
+            lastName: "Thasanakosol",
+          },
+          th: {
+            firstName: "ธรรศ",
+            lastName: "ทัศนโกศล",
+          },
+        },
+        class: "405",
+        classNo: 4,
+      },
+      {
+        id: 252,
+        role: "student",
+        prefix: "mister",
+        name: {
+          "en-US": {
+            firstName: "Katakorn",
+            lastName: "Worakittiphan",
+          },
+          th: {
+            firstName: "กตกร",
+            lastName: "วรกิตติพันธ์",
+          },
+        },
+        class: "405",
+        classNo: 5,
+      },
+      {
+        id: 253,
+        role: "student",
+        prefix: "mister",
+        name: {
+          "en-US": {
+            firstName: "Rojravee",
+            lastName: "Boonchokcharoensri",
+          },
+          th: {
+            firstName: "โรจน์รวี",
+            lastName: "บุญโชคเจริญศรี",
+          },
+        },
+        class: "405",
+        classNo: 6,
+      },
+    ],
+  };
+
+  return {
+    props: {
+      ...(await serverSideTranslations(locale == "en-US" ? "en-US" : "th", [
+        "common",
+        "class",
+        "teacher",
+      ])),
+      classItem,
+    },
+  };
+};
 
 export default Class;
