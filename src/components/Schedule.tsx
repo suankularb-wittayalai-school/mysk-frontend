@@ -20,7 +20,11 @@ const ScheduleDay = ({ day }: { day: ScheduleRowType["day"] }): JSX.Element => {
         {t(`datetime.day.${day}`)}
       </p>
       <time className="text-base">
-        {setDay(today, day).toLocaleDateString(locale)}
+        {setDay(today, day).toLocaleDateString(locale, {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        })}
       </time>
     </div>
   );
@@ -43,7 +47,7 @@ const ScheduleRow = ({
               key={schedulePeriod.periodStart}
               className="container-secondary flex flex-col rounded-xl px-4 py-2 leading-snug"
               title={schedulePeriod.subject.name[locale].name}
-              style={{ width: 100 * schedulePeriod.duration }}
+              style={{ width: 112 * schedulePeriod.duration }}
             >
               <p className="max-lines-1 font-display text-xl font-medium">
                 {schedulePeriod.subject.name[locale].name}
@@ -75,7 +79,7 @@ const ScheduleRow = ({
             <li
               key={schedulePeriod.periodStart}
               className="w-28 rounded-xl outline-offset-[-2px] outline-outline"
-              style={{ width: 100 * schedulePeriod.duration }}
+              style={{ width: 112 * schedulePeriod.duration }}
             ></li>
           )
         )}
