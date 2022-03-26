@@ -46,14 +46,16 @@ const ScheduleRow = ({
             <li
               key={schedulePeriod.periodStart}
               className="container-secondary flex flex-col rounded-xl px-4 py-2 leading-snug"
-              title={schedulePeriod.subject.name[locale].name}
               style={{ width: 112 * schedulePeriod.duration }}
             >
-              <p className="max-lines-1 font-display text-xl font-medium">
+              <span
+                className="max-lines-1 font-display text-xl font-medium"
+                title={schedulePeriod.subject.name[locale].name}
+              >
                 {schedulePeriod.subject.name[locale].name}
-              </p>
+              </span>
               {schedulePeriod.subject.teachers.length > 0 && (
-                <p className="max-lines-1 text-base">
+                <span className="max-lines-1 text-base">
                   {
                     // Show the first teacher’s first name in user locale
                     schedulePeriod.subject.teachers[0].name[locale].firstName
@@ -72,7 +74,7 @@ const ScheduleRow = ({
                       </abbr>
                     )
                   }
-                </p>
+                </span>
               )}
             </li>
           ) : (
