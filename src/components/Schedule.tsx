@@ -9,11 +9,7 @@ import {
   ScheduleRow as ScheduleRowType,
 } from "@utils/types/schedule";
 
-interface ScheduleDaysProps {
-  day: ScheduleRowType["day"];
-}
-
-const ScheduleDay = ({ day }: ScheduleDaysProps): JSX.Element => {
+const ScheduleDay = ({ day }: { day: ScheduleRowType["day"] }): JSX.Element => {
   const locale = useRouter().locale;
   const { t } = useTranslation("common");
   const today = new Date();
@@ -30,60 +26,65 @@ const ScheduleDay = ({ day }: ScheduleDaysProps): JSX.Element => {
   );
 };
 
-interface ScheduleRowProps {
+const ScheduleRow = ({
+  scheduleRow,
+}: {
   scheduleRow: ScheduleRowType;
-}
-
-const ScheduleRow = ({ scheduleRow }: ScheduleRowProps): JSX.Element => {
+}): JSX.Element => {
   const locale = useRouter().locale == "th" ? "th" : "en-US";
 
   // TODO: This might need to be rewrote as the way Schedule is represented in the database is finalized
   return (
     <li>
       <ul className="flex flex-row items-stretch gap-2">
-        {scheduleRow.content.map((schedulePeriod) => (
-          <li
-            key={schedulePeriod.periodStart}
-            className="container-secondary flex w-28 flex-col rounded-xl px-4 py-2 leading-snug"
-            title={schedulePeriod.subject.name[locale].name}
-          >
-            <p className="max-lines-1 font-display text-xl font-medium">
-              {schedulePeriod.subject.name[locale].name}
-            </p>
-            {schedulePeriod.subject.teachers.length > 0 && (
-              <p className="text-base">
-                {
-                  // Show the first teacher’s first name in user locale
-                  schedulePeriod.subject.teachers[0].name[locale].firstName
-                }
-                {
-                  // If there are more than one teacher, display +1 and show the remaining teachers on hover
-                  schedulePeriod.subject.teachers.length > 1 && (
-                    <abbr
-                      className="text-secondary opacity-50"
-                      title={schedulePeriod.subject.teachers
-                        .slice(1)
-                        .map((teacher) => teacher.name[locale].firstName)
-                        .join(", ")}
-                    >
-                      +{schedulePeriod.subject.teachers.length - 1}
-                    </abbr>
-                  )
-                }
+        {scheduleRow.content.map((schedulePeriod) =>
+          schedulePeriod.subject ? (
+            <li
+              key={schedulePeriod.periodStart}
+              className="container-secondary flex flex-col rounded-xl px-4 py-2 leading-snug"
+              title={schedulePeriod.subject.name[locale].name}
+              style={{ width: 100 * schedulePeriod.duration }}
+            >
+              <p className="max-lines-1 font-display text-xl font-medium">
+                {schedulePeriod.subject.name[locale].name}
               </p>
-            )}
-          </li>
-        ))}
+              {schedulePeriod.subject.teachers.length > 0 && (
+                <p className="text-base">
+                  {
+                    // Show the first teacher’s first name in user locale
+                    schedulePeriod.subject.teachers[0].name[locale].firstName
+                  }
+                  {
+                    // If there are more than one teacher, display +1 and show the remaining teachers on hover
+                    schedulePeriod.subject.teachers.length > 1 && (
+                      <abbr
+                        className="text-secondary opacity-50"
+                        title={schedulePeriod.subject.teachers
+                          .slice(1)
+                          .map((teacher) => teacher.name[locale].firstName)
+                          .join(", ")}
+                      >
+                        +{schedulePeriod.subject.teachers.length - 1}
+                      </abbr>
+                    )
+                  }
+                </p>
+              )}
+            </li>
+          ) : (
+            <li
+              key={schedulePeriod.periodStart}
+              className="w-28 rounded-xl outline-offset-[-2px] outline-outline"
+              style={{ width: 100 * schedulePeriod.duration }}
+            ></li>
+          )
+        )}
       </ul>
     </li>
   );
 };
 
-interface ScheduleProps {
-  schedule: ScheduleType;
-}
-
-const Schedule = ({ schedule }: ScheduleProps): JSX.Element => {
+const Schedule = ({ schedule }: { schedule: ScheduleType }): JSX.Element => {
   const { t } = useTranslation("schedule");
 
   return (

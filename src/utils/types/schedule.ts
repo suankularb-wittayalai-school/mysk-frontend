@@ -11,6 +11,6 @@ export type ScheduleRow = {
 
 export type SchedulePeriod = {
   periodStart: number;
-  periodEnd: number;
-  subject: Subject;
+  duration: number;
+  subject?: Subject;
 }

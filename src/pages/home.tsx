@@ -440,7 +440,7 @@ const ClassSection = (): JSX.Element => {
         content: [
           {
             periodStart: 1,
-            periodEnd: 1,
+            duration: 1,
             subject: {
               name: {
                 "en-US": { name: "English" },
@@ -479,6 +479,10 @@ const ClassSection = (): JSX.Element => {
                 },
               },
             },
+          },
+          {
+            periodStart: 2,
+            duration: 1,
           },
         ],
       },
