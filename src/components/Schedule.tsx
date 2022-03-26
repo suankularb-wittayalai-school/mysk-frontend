@@ -53,7 +53,7 @@ const ScheduleRow = ({
                 {schedulePeriod.subject.name[locale].name}
               </p>
               {schedulePeriod.subject.teachers.length > 0 && (
-                <p className="text-base">
+                <p className="max-lines-1 text-base">
                   {
                     // Show the first teacher’s first name in user locale
                     schedulePeriod.subject.teachers[0].name[locale].firstName
