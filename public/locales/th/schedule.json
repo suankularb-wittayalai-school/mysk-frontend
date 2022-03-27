@@ -9,6 +9,14 @@
       "edit": "แก้ไข"
     }
   },
+  "subjectList": {
+    "table": {
+      "code": "รหัสวิชา",
+      "name": "ชื่อวิชา",
+      "teachers": "ครูผู้สอน",
+      "ggcCode": "Class Code"
+    }
+  },
   "dialog": {
     "add": {
       "title": "เพิ่มคาบสอน",

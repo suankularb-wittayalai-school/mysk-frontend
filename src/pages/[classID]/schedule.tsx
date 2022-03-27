@@ -2,7 +2,7 @@
 import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useTranslation } from "next-i18next";
+import { Trans, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useState } from "react";
 
@@ -12,10 +12,13 @@ import {
   Dialog,
   DialogSection,
   Dropdown,
+  Header,
   KeyboardInput,
   MaterialIcon,
   RegularLayout,
+  Search,
   Section,
+  Table,
   Title,
 } from "@suankularb-components/react";
 
@@ -29,6 +32,7 @@ import { Schedule as ScheduleType } from "@utils/types/schedule";
 
 // Backend
 import { addPeriodtoSchedule } from "@utils/backend/schedule";
+import Image from "next/image";
 
 const AddPeriod = ({ show, onClose }: DialogProps): JSX.Element => {
   const { t } = useTranslation(["schedule", "common"]);
@@ -182,6 +186,45 @@ const ScheduleSection = ({
   );
 };
 
+const SubjectListSection = (): JSX.Element => {
+  const { t } = useTranslation("schedule");
+
+  return (
+    <Section>
+      <div className="layout-grid-cols-3--header">
+        <div className="[grid-area:header]">
+          <Header
+            text={t("subjectList.title")}
+            icon={<MaterialIcon icon="collections_bookmark" allowCustomSize />}
+          />
+        </div>
+        <Search
+          placeholder={t("subjectList.search")}
+          className="[grid-area:search]"
+        />
+      </div>
+      <Table>
+        <thead>
+          <tr>
+            <th>{t("subjectList.table.code")}</th>
+            <th>{t("subjectList.table.name")}</th>
+            <th>{t("subjectList.table.teachers")}</th>
+            <th>{t("subjectList.table.ggcCode")}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </Table>
+    </Section>
+  );
+};
+
 const Subjects: NextPage<{ schedule: ScheduleType }> = ({ schedule }) => {
   const { t } = useTranslation("schedule");
   const [showAddPeriod, setShowAddPeriod] = useState<boolean>(false);
@@ -202,6 +245,7 @@ const Subjects: NextPage<{ schedule: ScheduleType }> = ({ schedule }) => {
           schedule={schedule}
           setShowAddPeriod={setShowAddPeriod}
         />
+        <SubjectListSection />
       </RegularLayout>
       <AddPeriod show={showAddPeriod} onClose={() => setShowAddPeriod(false)} />
     </>

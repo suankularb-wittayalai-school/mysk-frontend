@@ -9,6 +9,14 @@
       "edit": "Edit"
     }
   },
+  "subjectList": {
+    "table": {
+      "code": "Subject Code",
+      "name": "Subject Name",
+      "teachers": "Teachers",
+      "ggcCode": "Class Code"
+    }
+  },
   "dialog": {
     "add": {
       "title": "Add subject period",
