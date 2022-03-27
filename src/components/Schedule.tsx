@@ -40,49 +40,59 @@ const ScheduleRow = ({
   // TODO: This might need to be rewrote as the way Schedule is represented in the database is finalized
   return (
     <li>
-      <ul className="flex flex-row items-stretch gap-2">
+      <ul className="relative h-[3.75rem]">
         {scheduleRow.content.map((schedulePeriod) =>
           schedulePeriod.subject ? (
             <li
               key={schedulePeriod.periodStart}
-              className="container-secondary flex flex-col rounded-xl px-4 py-2 leading-snug"
-              style={{ width: 112 * schedulePeriod.duration }}
+              className="absolute px-1"
+              style={{
+                width: 112 * schedulePeriod.duration,
+                left: 112 * (schedulePeriod.periodStart - 1),
+              }}
             >
-              <span
-                className="max-lines-1 font-display text-xl font-medium"
-                title={schedulePeriod.subject.name[locale].name}
-              >
-                {schedulePeriod.subject.name[locale].name}
-              </span>
-              {schedulePeriod.subject.teachers.length > 0 && (
-                <span className="max-lines-1 text-base">
-                  {
-                    // Show the first teacher’s first name in user locale
-                    schedulePeriod.subject.teachers[0].name[locale].firstName
-                  }
-                  {
-                    // If there are more than one teacher, display +1 and show the remaining teachers on hover
-                    schedulePeriod.subject.teachers.length > 1 && (
-                      <abbr
-                        className="text-secondary opacity-50"
-                        title={schedulePeriod.subject.teachers
-                          .slice(1)
-                          .map((teacher) => teacher.name[locale].firstName)
-                          .join(", ")}
-                      >
-                        +{schedulePeriod.subject.teachers.length - 1}
-                      </abbr>
-                    )
-                  }
+              <div className="container-secondary flex h-[3.75rem] flex-col rounded-xl px-4 py-2 leading-snug">
+                <span
+                  className="max-lines-1 font-display text-xl font-medium"
+                  title={schedulePeriod.subject.name[locale].name}
+                >
+                  {schedulePeriod.subject.name[locale].name}
                 </span>
-              )}
+                {schedulePeriod.subject.teachers.length > 0 && (
+                  <span className="max-lines-1 text-base">
+                    {
+                      // Show the first teacher’s first name in user locale
+                      schedulePeriod.subject.teachers[0].name[locale].firstName
+                    }
+                    {
+                      // If there are more than one teacher, display +1 and show the remaining teachers on hover
+                      schedulePeriod.subject.teachers.length > 1 && (
+                        <abbr
+                          className="text-secondary opacity-50"
+                          title={schedulePeriod.subject.teachers
+                            .slice(1)
+                            .map((teacher) => teacher.name[locale].firstName)
+                            .join(", ")}
+                        >
+                          +{schedulePeriod.subject.teachers.length - 1}
+                        </abbr>
+                      )
+                    }
+                  </span>
+                )}
+              </div>
             </li>
           ) : (
             <li
               key={schedulePeriod.periodStart}
-              className="w-28 rounded-xl outline-offset-[-2px] outline-outline"
-              style={{ width: 112 * schedulePeriod.duration }}
-            ></li>
+              className="absolute px-1"
+              style={{
+                width: 112 * schedulePeriod.duration,
+                left: 112 * (schedulePeriod.periodStart - 1),
+              }}
+            >
+              <div className="h-[3.75rem] w-full rounded-xl outline-offset-[-2px] outline-outline" />
+            </li>
           )
         )}
       </ul>
