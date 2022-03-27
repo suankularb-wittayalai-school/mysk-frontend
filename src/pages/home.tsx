@@ -448,36 +448,18 @@ const ClassSection = (): JSX.Element => {
               },
               teachers: [
                 {
-                  id: 1,
-                  role: "teacher",
-                  prefix: "mister",
                   name: {
                     "en-US": {
-                      firstName: "John",
-                      middleName: "Peter",
-                      lastName: "Smith",
+                      firstName: "Thanthapatra",
+                      lastName: "Bunchuay",
                     },
                     th: {
-                      firstName: "จอห์น",
-                      middleName: "ปีเตอร์",
-                      lastName: "สมิธ",
+                      firstName: "ธันฐภัทร",
+                      lastName: "บุญช่วย",
                     },
                   },
-                  subjectsInCharge: [],
                 },
               ],
-              subjectSubgroup: {
-                name: {
-                  "en-US": "English",
-                  th: "ภาษาอังกฤษ",
-                },
-                subjectGroup: {
-                  name: {
-                    "en-US": "Foreign Languages",
-                    th: "ภาษาต่างประเทศ",
-                  },
-                },
-              },
             },
           },
           {

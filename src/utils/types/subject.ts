@@ -25,14 +25,6 @@ export type Subject = {
   subjectSubgroup: SubjectSubgroup;
 };
 
-export type SubjectMini = {
-  name: {
-    "en-US": SubjectName;
-    th: SubjectName;
-  };
-  subjectSubgroup: SubjectSubgroup;
-}
-
 export type SubjectName = {
   name: string;
   shortName?: string;

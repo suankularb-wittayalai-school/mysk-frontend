@@ -1,8 +1,10 @@
 // Modules
 import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useState } from "react";
 
 // SK Components
 import {
@@ -21,10 +23,9 @@ import {
 import Schedule from "@components/Schedule";
 
 // Types
-import { Schedule as ScheduleType } from "@utils/types/schedule";
 import { DialogProps } from "@utils/types/common";
-import { useState } from "react";
-import { useRouter } from "next/router";
+import { Schedule as ScheduleType } from "@utils/types/schedule";
+import { Subject } from "@utils/types/subject";
 
 const AddPeriodDialog = ({ show, onClose }: DialogProps): JSX.Element => {
   const { t } = useTranslation(["schedule", "common"]);
@@ -91,7 +92,7 @@ const AddPeriodDialog = ({ show, onClose }: DialogProps): JSX.Element => {
           onChange={() => {}}
           attr={{
             min: 1,
-            max: 10
+            max: 10,
           }}
         />
         <KeyboardInput
@@ -101,7 +102,7 @@ const AddPeriodDialog = ({ show, onClose }: DialogProps): JSX.Element => {
           onChange={() => {}}
           attr={{
             min: 1,
-            max: 10
+            max: 10,
           }}
         />
       </DialogSection>
@@ -176,9 +177,6 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
               },
               teachers: [
                 {
-                  id: 8,
-                  role: "teacher",
-                  prefix: "mister",
                   name: {
                     "en-US": {
                       firstName: "Thanthapatra",
@@ -189,21 +187,8 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
                       lastName: "บุญช่วย",
                     },
                   },
-                  subjectsInCharge: [],
-                },
-              ],
-              subjectSubgroup: {
-                name: {
-                  "en-US": "Science",
-                  th: "วิทยาศาสตร์",
-                },
-                subjectGroup: {
-                  name: {
-                    "en-US": "Science and Technology",
-                    th: "วิทยาศาสตร์และเทคโนโลยี",
-                  },
-                },
-              },
+                }
+              ]
             },
           },
         ],
