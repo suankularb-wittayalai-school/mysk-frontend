@@ -6,8 +6,10 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 // SK Components
 import {
+  Button,
   MaterialIcon,
   RegularLayout,
+  Section,
   Title,
 } from "@suankularb-components/react";
 
@@ -31,7 +33,17 @@ const Subjects: NextPage<{ schedule: ScheduleType }> = ({ schedule }) => {
         />
       }
     >
-      <Schedule schedule={schedule} />
+      <Section>
+        <Schedule schedule={schedule} />
+        <div className="flex flex-row items-center justify-end gap-2">
+          <Button name={t("schedule.action.edit")} type="outlined" />
+          <Button
+            name={t("schedule.action.add")}
+            type="filled"
+            icon={<MaterialIcon icon="add" />}
+          />
+        </div>
+      </Section>
     </RegularLayout>
   );
 };

@@ -2,5 +2,11 @@
   "title": {
     "student": "ตารางเรียน",
     "teacher": "ตารางสอน"
+  },
+  "schedule": {
+    "action": {
+      "add": "Add period",
+      "edit": "Edit"
+    }
   }
 }
