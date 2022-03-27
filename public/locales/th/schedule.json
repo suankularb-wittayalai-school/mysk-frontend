@@ -5,8 +5,8 @@
   },
   "schedule": {
     "action": {
-      "add": "Add period",
-      "edit": "Edit"
+      "add": "เพิ่มคาบสอน",
+      "edit": "แก้ไข"
     }
   }
 }
