@@ -157,6 +157,31 @@ const AddPeriod = ({ show, onClose }: DialogProps): JSX.Element => {
   );
 };
 
+const ScheduleSection = ({
+  schedule,
+  setShowAddPeriod,
+}: {
+  schedule: ScheduleType;
+  setShowAddPeriod: Function;
+}): JSX.Element => {
+  const { t } = useTranslation("schedule");
+
+  return (
+    <Section>
+      <Schedule schedule={schedule} />
+      <div className="flex flex-row items-center justify-end gap-2">
+        <Button name={t("schedule.action.edit")} type="outlined" />
+        <Button
+          name={t("schedule.action.add")}
+          type="filled"
+          icon={<MaterialIcon icon="add" />}
+          onClick={() => setShowAddPeriod(true)}
+        />
+      </div>
+    </Section>
+  );
+};
+
 const Subjects: NextPage<{ schedule: ScheduleType }> = ({ schedule }) => {
   const { t } = useTranslation("schedule");
   const [showAddPeriod, setShowAddPeriod] = useState<boolean>(false);
@@ -173,18 +198,10 @@ const Subjects: NextPage<{ schedule: ScheduleType }> = ({ schedule }) => {
           />
         }
       >
-        <Section>
-          <Schedule schedule={schedule} />
-          <div className="flex flex-row items-center justify-end gap-2">
-            <Button name={t("schedule.action.edit")} type="outlined" />
-            <Button
-              name={t("schedule.action.add")}
-              type="filled"
-              icon={<MaterialIcon icon="add" />}
-              onClick={() => setShowAddPeriod(true)}
-            />
-          </div>
-        </Section>
+        <ScheduleSection
+          schedule={schedule}
+          setShowAddPeriod={setShowAddPeriod}
+        />
       </RegularLayout>
       <AddPeriod show={showAddPeriod} onClose={() => setShowAddPeriod(false)} />
     </>
