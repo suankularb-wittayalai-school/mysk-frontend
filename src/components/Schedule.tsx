@@ -100,18 +100,26 @@ const ScheduleRow = ({
   );
 };
 
-const Schedule = ({ schedule }: { schedule: ScheduleType }): JSX.Element => {
+const Schedule = ({
+  schedule,
+  noScroll,
+  className,
+}: {
+  schedule: ScheduleType;
+  noScroll?: boolean;
+  className?: string;
+}): JSX.Element => {
   const { t } = useTranslation("schedule");
 
   return (
-    <div className="flex flex-row gap-5">
-      <div className="flex flex-col gap-2 py-1">
+    <div className={`flex flex-row gap-5 !px-0`}>
+      <div className="flex flex-col gap-2 py-1 pl-4 sm:pl-0">
         {schedule.content.map((scheduleRow) => (
           <ScheduleDay key={scheduleRow.day} day={scheduleRow.day} />
         ))}
       </div>
-      <div className="scroll-h-0 grow overflow-x-auto">
-        <ul className="flex w-fit flex-col gap-2 py-1 pl-1">
+      <div className={noScroll ? "grow" : "scroll-w-0 grow overflow-x-auto"}>
+        <ul className="flex flex-col gap-2 py-1 pl-1 pr-4 sm:pr-0">
           {schedule.content.map((scheduleRow) => (
             <ScheduleRow key={scheduleRow.day} scheduleRow={scheduleRow} />
           ))}

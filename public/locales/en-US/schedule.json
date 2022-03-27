@@ -8,5 +8,21 @@
       "add": "Add period",
       "edit": "Edit"
     }
+  },
+  "dialog": {
+    "add": {
+      "title": "Add subject period",
+      "form": {
+        "title": "Period information",
+        "subject": "Subject",
+        "day": "Day",
+        "periodStart": "Starts at period",
+        "duration": "Period duration"
+      },
+      "action": {
+        "cancel": "Cancel",
+        "save": "Save"
+      }
+    }
   }
 }

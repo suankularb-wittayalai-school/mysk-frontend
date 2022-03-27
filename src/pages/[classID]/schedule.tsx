@@ -7,6 +7,10 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 // SK Components
 import {
   Button,
+  Dialog,
+  DialogSection,
+  Dropdown,
+  KeyboardInput,
   MaterialIcon,
   RegularLayout,
   Section,
@@ -18,33 +22,127 @@ import Schedule from "@components/Schedule";
 
 // Types
 import { Schedule as ScheduleType } from "@utils/types/schedule";
+import { DialogProps } from "@utils/types/common";
+import { useState } from "react";
+import { useRouter } from "next/router";
+
+const AddPeriodDialog = ({ show, onClose }: DialogProps): JSX.Element => {
+  const { t } = useTranslation(["schedule", "common"]);
+  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+
+  return (
+    <Dialog
+      type="large"
+      label="add-period"
+      title={t("dialog.add.title")}
+      actions={[
+        { name: t("dialog.add.action.cancel"), type: "close" },
+        { name: t("dialog.add.action.save"), type: "submit" },
+      ]}
+      show={show}
+      onClose={() => onClose()}
+      onSubmit={() => onClose()}
+    >
+      <DialogSection name={t("dialog.add.form.title")} isDoubleColumn>
+        <Dropdown
+          name="subject"
+          label={t("dialog.add.form.subject")}
+          options={[
+            {
+              value: 15,
+              label: {
+                "en-US": "English 1",
+                th: "ภาษาอังกฤษ 1",
+              }[locale],
+            },
+          ]}
+          onChange={() => {}}
+        />
+        <Dropdown
+          name="day"
+          label={t("dialog.add.form.day")}
+          options={[
+            {
+              value: 1,
+              label: t("datetime.day.1", { ns: "common" }),
+            },
+            {
+              value: 2,
+              label: t("datetime.day.2", { ns: "common" }),
+            },
+            {
+              value: 3,
+              label: t("datetime.day.3", { ns: "common" }),
+            },
+            {
+              value: 4,
+              label: t("datetime.day.4", { ns: "common" }),
+            },
+            {
+              value: 5,
+              label: t("datetime.day.5", { ns: "common" }),
+            },
+          ]}
+        />
+        <KeyboardInput
+          name="period-start"
+          type="number"
+          label={t("dialog.add.form.periodStart")}
+          onChange={() => {}}
+          attr={{
+            min: 1,
+            max: 10
+          }}
+        />
+        <KeyboardInput
+          name="duration"
+          type="number"
+          label={t("dialog.add.form.duration")}
+          onChange={() => {}}
+          attr={{
+            min: 1,
+            max: 10
+          }}
+        />
+      </DialogSection>
+    </Dialog>
+  );
+};
 
 const Subjects: NextPage<{ schedule: ScheduleType }> = ({ schedule }) => {
   const { t } = useTranslation("schedule");
+  const [showAddPeriod, setShowAddPeriod] = useState<boolean>(false);
 
   return (
-    <RegularLayout
-      Title={
-        <Title
-          name={{ title: t("title.student") }}
-          pageIcon={<MaterialIcon icon="dashboard" />}
-          backGoesTo="/home"
-          LinkElement={Link}
-        />
-      }
-    >
-      <Section>
-        <Schedule schedule={schedule} />
-        <div className="flex flex-row items-center justify-end gap-2">
-          <Button name={t("schedule.action.edit")} type="outlined" />
-          <Button
-            name={t("schedule.action.add")}
-            type="filled"
-            icon={<MaterialIcon icon="add" />}
+    <>
+      <RegularLayout
+        Title={
+          <Title
+            name={{ title: t("title.student") }}
+            pageIcon={<MaterialIcon icon="dashboard" />}
+            backGoesTo="/home"
+            LinkElement={Link}
           />
-        </div>
-      </Section>
-    </RegularLayout>
+        }
+      >
+        <Section>
+          <Schedule schedule={schedule} />
+          <div className="flex flex-row items-center justify-end gap-2">
+            <Button name={t("schedule.action.edit")} type="outlined" />
+            <Button
+              name={t("schedule.action.add")}
+              type="filled"
+              icon={<MaterialIcon icon="add" />}
+              onClick={() => setShowAddPeriod(true)}
+            />
+          </div>
+        </Section>
+      </RegularLayout>
+      <AddPeriodDialog
+        show={showAddPeriod}
+        onClose={() => setShowAddPeriod(false)}
+      />
+    </>
   );
 };
 
