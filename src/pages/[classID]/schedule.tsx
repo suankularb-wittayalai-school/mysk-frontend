@@ -37,8 +37,8 @@ const AddPeriod = ({ show, onClose }: DialogProps): JSX.Element => {
 
   // Form control
   const [form, setForm] = useState({
-    subject: -1,
-    day: "",
+    subject: 1,
+    day: "1",
     periodStart: "",
     duration: "",
   });
@@ -47,12 +47,13 @@ const AddPeriod = ({ show, onClose }: DialogProps): JSX.Element => {
     const periodStart = parseInt(form.periodStart);
     const duration = parseInt(form.duration);
     let formData = new FormData();
+    console.log("validating");
 
     // Validates
-    if (form.subject < 0) return;
-    if (!form.day) return;
-    if (periodStart < 0 || periodStart > 10) return;
-    if (duration < 1 || duration > 10) return;
+    if (form.subject < 0) return false;
+    if (!form.day) return false;
+    if (periodStart < 0 || periodStart > 10) return false;
+    if (duration < 1 || duration > 10) return false;
 
     // Appends to form data
     formData.append("subject", form.subject.toString());
@@ -62,6 +63,8 @@ const AddPeriod = ({ show, onClose }: DialogProps): JSX.Element => {
 
     // Send
     addPeriodtoSchedule(formData);
+
+    return true;
   }
 
   return (
@@ -76,10 +79,7 @@ const AddPeriod = ({ show, onClose }: DialogProps): JSX.Element => {
         ]}
         show={show}
         onClose={() => setShowDiscard(true)}
-        onSubmit={() => {
-          onClose();
-          validateAndSend();
-        }}
+        onSubmit={() => validateAndSend() && onClose()}
       >
         <DialogSection name={t("dialog.add.form.title")} isDoubleColumn>
           <Dropdown
@@ -87,7 +87,7 @@ const AddPeriod = ({ show, onClose }: DialogProps): JSX.Element => {
             label={t("dialog.add.form.subject")}
             options={[
               {
-                value: 15,
+                value: 1,
                 label: {
                   "en-US": "English 1",
                   th: "ภาษาอังกฤษ 1",
