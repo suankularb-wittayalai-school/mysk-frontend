@@ -33,6 +33,8 @@ import { Schedule as ScheduleType } from "@utils/types/schedule";
 // Backend
 import { addPeriodtoSchedule } from "@utils/backend/schedule";
 import Image from "next/image";
+import { SubjectListItem } from "@utils/types/subject";
+import { nameJoiner } from "@utils/helpers/name";
 
 const AddPeriod = ({ show, onClose }: DialogProps): JSX.Element => {
   const { t } = useTranslation(["schedule", "common"]);
@@ -186,8 +188,13 @@ const ScheduleSection = ({
   );
 };
 
-const SubjectListSection = (): JSX.Element => {
+const SubjectListSection = ({
+  subjectList,
+}: {
+  subjectList: Array<SubjectListItem>;
+}): JSX.Element => {
   const { t } = useTranslation("schedule");
+  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
 
   return (
     <Section>
@@ -213,19 +220,35 @@ const SubjectListSection = (): JSX.Element => {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
+          {subjectList.map((subjectListItem) => (
+            <tr key={subjectListItem.id}>
+              <td>{subjectListItem.subject.code[locale]}</td>
+              <td className="!text-left">
+                {subjectListItem.subject.name[locale].name}
+              </td>
+              <td>
+                {subjectListItem.teachers.length > 0 &&
+                  nameJoiner(locale, subjectListItem.teachers[0].name)}
+              </td>
+              <td>
+                {subjectListItem.ggcCode && (
+                  <a href={subjectListItem.ggcLink}>
+                    {subjectListItem.ggcCode}
+                  </a>
+                )}
+              </td>
+            </tr>
+          ))}
         </tbody>
       </Table>
     </Section>
   );
 };
 
-const Subjects: NextPage<{ schedule: ScheduleType }> = ({ schedule }) => {
+const Subjects: NextPage<{
+  schedule: ScheduleType;
+  subjectList: Array<SubjectListItem>;
+}> = ({ schedule, subjectList }) => {
   const { t } = useTranslation("schedule");
   const [showAddPeriod, setShowAddPeriod] = useState<boolean>(false);
 
@@ -245,7 +268,7 @@ const Subjects: NextPage<{ schedule: ScheduleType }> = ({ schedule }) => {
           schedule={schedule}
           setShowAddPeriod={setShowAddPeriod}
         />
-        <SubjectListSection />
+        <SubjectListSection subjectList={subjectList} />
       </RegularLayout>
       <AddPeriod show={showAddPeriod} onClose={() => setShowAddPeriod(false)} />
     </>
@@ -316,6 +339,19 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
       },
     ],
   };
+  const subjectList: Array<SubjectListItem> = [
+    {
+      id: 8,
+      subject: {
+        code: { "en-US": "MA31152", th: "ค31152" },
+        name: {
+          "en-US": { name: "Fundamental Mathematics 2" },
+          th: { name: "คณิตศาสตร์พื้นฐาน 2 (EP)" },
+        },
+      },
+      teachers: [],
+    },
+  ];
 
   return {
     props: {
@@ -324,6 +360,7 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
         "schedule",
       ])),
       schedule,
+      subjectList,
     },
   };
 };

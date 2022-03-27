@@ -16,13 +16,29 @@ export type SubjectSubgroup = {
 };
 
 export type Subject = {
-  // TODO: Add more properties when the schema is completed
+  id: number;
+  code: {
+    "en-US": string;
+    th: string;
+  };
   name: {
     "en-US": SubjectName;
     th: SubjectName;
   };
   teachers: Array<Teacher>;
   subjectSubgroup: SubjectSubgroup;
+};
+
+export type SubjectListItem = {
+  id: number;
+  subject: {
+    code: Subject["code"];
+    name: Subject["name"];
+  };
+  teachers: Array<Teacher>;
+  ggcCode?: string;
+  ggcLink?: string;
+  ggMeetLink?: string;
 };
 
 export type SubjectName = {

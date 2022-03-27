@@ -10,6 +10,8 @@
     }
   },
   "subjectList": {
+    "title": "Subject list",
+    "search": "Search subjects",
     "table": {
       "code": "Subject Code",
       "name": "Subject Name",
