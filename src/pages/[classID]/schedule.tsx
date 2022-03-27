@@ -25,11 +25,42 @@ import Schedule from "@components/Schedule";
 // Types
 import { DialogProps } from "@utils/types/common";
 import { Schedule as ScheduleType } from "@utils/types/schedule";
-import { Subject } from "@utils/types/subject";
+
+// Backend
+import { addPeriodtoSchedule } from "@utils/backend/schedule";
 
 const AddPeriodDialog = ({ show, onClose }: DialogProps): JSX.Element => {
   const { t } = useTranslation(["schedule", "common"]);
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+
+  // Form control
+  const [form, setForm] = useState({
+    subject: -1,
+    day: "",
+    periodStart: "",
+    duration: "",
+  });
+
+  function validateAndSend() {
+    const periodStart = parseInt(form.periodStart);
+    const duration = parseInt(form.duration);
+    let formData = new FormData();
+
+    // Validates
+    if (form.subject < 0) return;
+    if (!form.day) return;
+    if (periodStart < 0 || periodStart > 10) return;
+    if (duration < 1 || duration > 10) return;
+
+    // Appends to form data
+    formData.append("subject", form.subject.toString());
+    formData.append("day", form.day);
+    formData.append("period-start", form.periodStart);
+    formData.append("duration", form.duration);
+
+    // Send
+    addPeriodtoSchedule(formData);
+  }
 
   return (
     <Dialog
@@ -57,39 +88,40 @@ const AddPeriodDialog = ({ show, onClose }: DialogProps): JSX.Element => {
               }[locale],
             },
           ]}
-          onChange={() => {}}
+          onChange={(e: number) => setForm({ ...form, subject: e })}
         />
         <Dropdown
           name="day"
           label={t("dialog.add.form.day")}
           options={[
             {
-              value: 1,
+              value: "1",
               label: t("datetime.day.1", { ns: "common" }),
             },
             {
-              value: 2,
+              value: "2",
               label: t("datetime.day.2", { ns: "common" }),
             },
             {
-              value: 3,
+              value: "3",
               label: t("datetime.day.3", { ns: "common" }),
             },
             {
-              value: 4,
+              value: "4",
               label: t("datetime.day.4", { ns: "common" }),
             },
             {
-              value: 5,
+              value: "5",
               label: t("datetime.day.5", { ns: "common" }),
             },
           ]}
+          onChange={(e: string) => setForm({ ...form, day: e })}
         />
         <KeyboardInput
           name="period-start"
           type="number"
           label={t("dialog.add.form.periodStart")}
-          onChange={() => {}}
+          onChange={(e: string) => setForm({ ...form, periodStart: e })}
           attr={{
             min: 1,
             max: 10,
@@ -99,7 +131,7 @@ const AddPeriodDialog = ({ show, onClose }: DialogProps): JSX.Element => {
           name="duration"
           type="number"
           label={t("dialog.add.form.duration")}
-          onChange={() => {}}
+          onChange={(e: string) => setForm({ ...form, duration: e })}
           attr={{
             min: 1,
             max: 10,
@@ -187,8 +219,8 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
                       lastName: "บุญช่วย",
                     },
                   },
-                }
-              ]
+                },
+              ],
             },
           },
         ],
