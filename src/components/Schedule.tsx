@@ -37,7 +37,6 @@ const ScheduleRow = ({
 }): JSX.Element => {
   const locale = useRouter().locale == "th" ? "th" : "en-US";
 
-  // TODO: This might need to be rewrote as the way Schedule is represented in the database is finalized
   return (
     <li>
       <ul className="relative h-[3.75rem]">
@@ -56,7 +55,10 @@ const ScheduleRow = ({
                   className="max-lines-1 font-display text-xl font-medium"
                   title={schedulePeriod.subject.name[locale].name}
                 >
-                  {schedulePeriod.subject.name[locale].name}
+                  {schedulePeriod.duration < 2
+                    ? schedulePeriod.subject.name[locale].shortName ||
+                      schedulePeriod.subject.name[locale].name
+                    : schedulePeriod.subject.name[locale].name}
                 </span>
                 {schedulePeriod.subject.teachers.length > 0 && (
                   <span className="max-lines-1 text-base">
@@ -103,31 +105,25 @@ const ScheduleRow = ({
 const Schedule = ({
   schedule,
   noScroll,
-  className,
 }: {
   schedule: ScheduleType;
   noScroll?: boolean;
-  className?: string;
-}): JSX.Element => {
-  const { t } = useTranslation("schedule");
-
-  return (
-    <div className={`flex flex-row gap-5 !px-0`}>
-      <div className="flex flex-col gap-2 py-1 pl-4 sm:pl-0">
-        {schedule.content.map((scheduleRow) => (
-          <ScheduleDay key={scheduleRow.day} day={scheduleRow.day} />
-        ))}
-      </div>
-      <div className={noScroll ? "grow" : "scroll-w-0 grow overflow-x-auto"}>
-        <ul className="flex flex-col gap-2 py-1 pl-1 pr-4 sm:pr-0">
-          {schedule.content.map((scheduleRow) => (
-            <ScheduleRow key={scheduleRow.day} scheduleRow={scheduleRow} />
-          ))}
-        </ul>
-      </div>
+}): JSX.Element => (
+  <div className="flex flex-row gap-5 !px-0">
+    <div className="flex flex-col gap-2 py-1 pl-4 sm:pl-0">
+      {schedule.content.map((scheduleRow) => (
+        <ScheduleDay key={scheduleRow.day} day={scheduleRow.day} />
+      ))}
     </div>
-  );
-};
+    <div className={noScroll ? "grow" : "scroll-w-0 grow overflow-x-auto"}>
+      <ul className="flex flex-col gap-2 py-1 pl-1 pr-4 sm:pr-0">
+        {schedule.content.map((scheduleRow) => (
+          <ScheduleRow key={scheduleRow.day} scheduleRow={scheduleRow} />
+        ))}
+      </ul>
+    </div>
+  </div>
+);
 
 export default Schedule;
 export { ScheduleDay as ScheduleDays, ScheduleRow };
