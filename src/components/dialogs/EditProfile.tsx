@@ -165,7 +165,6 @@ const EditProfileDialog = ({
         }}
       >
         <DialogSection name={t("profile.name.title")} isDoubleColumn>
-          {/* FIXME: Add `defaultValue` when it is added to React SK Components */}
           <Dropdown
             name="prefix"
             label={t("profile.name.prefix.label")}
@@ -181,6 +180,7 @@ const EditProfileDialog = ({
                     { value: "mister", label: t("profile.name.prefix.mister") },
                   ]
             }
+            defaultValue={user.prefix}
             onChange={(e: Person["prefix"]) => setForm({ ...form, prefix: e })}
           />
           <KeyboardInput
