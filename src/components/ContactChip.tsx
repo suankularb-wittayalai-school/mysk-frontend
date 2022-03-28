@@ -18,7 +18,12 @@ const ContactChip = ({
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
 
   return (
-    <a href={contact.url} target="_blank" rel="noreferrer">
+    <a
+      aria-labelledby={`contact-${contact.id}`}
+      href={contact.url}
+      target="_blank"
+      rel="noreferrer"
+    >
       <Card
         type="horizontal"
         appearance="tonal"
@@ -51,7 +56,9 @@ const ContactChip = ({
               )}
             </div>
           }
-          title={<span>{contact.name[locale]}</span>}
+          title={
+            <span id={`contact-${contact.id}`}>{contact.name[locale]}</span>
+          }
           end={
             contact.includes ? (
               <div className="flex flex-row-reverse">
