@@ -1,9 +1,11 @@
 // Modules
-import { GetStaticPaths, GetStaticProps, NextPage } from "next";
+import { GetServerSideProps, NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
+
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+
 import { useState } from "react";
 
 // SK Components
@@ -337,7 +339,10 @@ const Subjects: NextPage<{
                     // Remove the old Periods that overlap this new Period
                     .filter(
                       (schedulePeriod) =>
-                        schedulePeriod.periodStart + schedulePeriod.duration - 1 < periodStart ||
+                        schedulePeriod.periodStart +
+                          schedulePeriod.duration -
+                          1 <
+                          periodStart ||
                         schedulePeriod.periodStart >= periodStart + duration
                     )
                     // Append the new Period
@@ -367,14 +372,10 @@ const Subjects: NextPage<{
   );
 };
 
-export const getStaticPaths: GetStaticPaths<{ classID: string }> = async () => {
-  return {
-    paths: [],
-    fallback: "blocking",
-  };
-};
-
-export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  params,
+}) => {
   const schedule: ScheduleType = {
     content: [
       {
@@ -526,7 +527,7 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
 
   return {
     props: {
-      ...(await serverSideTranslations(locale == "en-US" ? "en-US" : "th", [
+      ...(await serverSideTranslations(locale as string, [
         "common",
         "schedule",
       ])),
