@@ -14,7 +14,6 @@ import {
   Dropdown,
   Header,
   KeyboardInput,
-  LinkButton,
   MaterialIcon,
   RegularLayout,
   Search,
@@ -26,18 +25,29 @@ import {
 // Components
 import Schedule from "@components/Schedule";
 import DiscardDraft from "@components/dialogs/DiscardDraft";
+import BrandIcon from "@components/icons/BrandIcon";
 
 // Types
 import { DialogProps } from "@utils/types/common";
-import { Schedule as ScheduleType } from "@utils/types/schedule";
+import {
+  Schedule as ScheduleType,
+  SchedulePeriod as SchedulePeriodType,
+} from "@utils/types/schedule";
 
 // Backend
 import { addPeriodtoSchedule } from "@utils/backend/schedule";
 import { SubjectListItem } from "@utils/types/subject";
 import { nameJoiner } from "@utils/helpers/name";
-import BrandIcon from "@components/icons/BrandIcon";
 
-const AddPeriod = ({ show, onClose }: DialogProps): JSX.Element => {
+interface AddPeriodProps extends DialogProps {
+  onSubmit: (formData: FormData) => void;
+}
+
+const AddPeriod = ({
+  show,
+  onClose,
+  onSubmit,
+}: AddPeriodProps): JSX.Element => {
   const { t } = useTranslation(["schedule", "common"]);
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
   const [showDiscard, setShowDiscard] = useState<boolean>(false);
@@ -47,14 +57,13 @@ const AddPeriod = ({ show, onClose }: DialogProps): JSX.Element => {
     subject: 1,
     day: "1",
     periodStart: "",
-    duration: "",
+    duration: "1",
   });
 
   function validateAndSend() {
     const periodStart = parseInt(form.periodStart);
     const duration = parseInt(form.duration);
     let formData = new FormData();
-    console.log("validating");
 
     // Validates
     if (form.subject < 0) return false;
@@ -69,6 +78,7 @@ const AddPeriod = ({ show, onClose }: DialogProps): JSX.Element => {
     formData.append("duration", form.duration);
 
     // Send
+    onSubmit(formData);
     addPeriodtoSchedule(formData);
 
     return true;
@@ -128,6 +138,7 @@ const AddPeriod = ({ show, onClose }: DialogProps): JSX.Element => {
                 label: t("datetime.day.5", { ns: "common" }),
               },
             ]}
+            defaultValue="1"
             onChange={(e: string) => setForm({ ...form, day: e })}
           />
           <KeyboardInput
@@ -144,6 +155,7 @@ const AddPeriod = ({ show, onClose }: DialogProps): JSX.Element => {
             name="duration"
             type="number"
             label={t("dialog.add.form.duration")}
+            defaultValue="1"
             onChange={(e: string) => setForm({ ...form, duration: e })}
             attr={{
               min: 1,
@@ -278,8 +290,9 @@ const SubjectListSection = ({
 const Subjects: NextPage<{
   schedule: ScheduleType;
   subjectList: Array<SubjectListItem>;
-}> = ({ schedule, subjectList }) => {
+}> = ({ schedule: fetchedSchedule, subjectList }) => {
   const { t } = useTranslation("schedule");
+  const [schedule, setSchedule] = useState<ScheduleType>(fetchedSchedule);
   const [showAddPeriod, setShowAddPeriod] = useState<boolean>(false);
 
   return (
@@ -300,7 +313,63 @@ const Subjects: NextPage<{
         />
         <SubjectListSection subjectList={subjectList} />
       </RegularLayout>
-      <AddPeriod show={showAddPeriod} onClose={() => setShowAddPeriod(false)} />
+      <AddPeriod
+        show={showAddPeriod}
+        onClose={() => setShowAddPeriod(false)}
+        onSubmit={(formData: FormData) => {
+          const day = parseInt(formData.get("day")?.toString() || "-1");
+          const periodStart = parseInt(
+            formData.get("period-start")?.toString() || "-1"
+          );
+
+          setSchedule({
+            content: schedule.content.map((scheduleRow) =>
+              scheduleRow.day == day
+                ? {
+                    ...scheduleRow,
+                    content: scheduleRow.content.find(
+                      (schedulePeriod) =>
+                        periodStart == schedulePeriod.periodStart
+                    )
+                      ? scheduleRow.content.map(
+                          (schedulePeriod): SchedulePeriodType =>
+                            periodStart == schedulePeriod.periodStart
+                              ? {
+                                  periodStart,
+                                  duration: parseInt(
+                                    formData.get("duration")?.toString() || "-1"
+                                  ),
+                                  subject: {
+                                    name: {
+                                      "en-US": { name: "New Period" },
+                                      th: { name: "คาบสอนใหม่" },
+                                    },
+                                    teachers: [],
+                                  },
+                                }
+                              : schedulePeriod
+                        )
+                      : scheduleRow.content.concat([
+                          {
+                            periodStart,
+                            duration: parseInt(
+                              formData.get("duration")?.toString() || "-1"
+                            ),
+                            subject: {
+                              name: {
+                                "en-US": { name: "New Period" },
+                                th: { name: "คาบสอนใหม่" },
+                              },
+                              teachers: [],
+                            },
+                          },
+                        ]),
+                  }
+                : scheduleRow
+            ),
+          });
+        }}
+      />
     </>
   );
 };
