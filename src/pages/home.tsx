@@ -27,7 +27,6 @@ import {
   Title,
   XScrollContent,
   LinkButton,
-  Chip,
 } from "@suankularb-components/react";
 
 // Components
