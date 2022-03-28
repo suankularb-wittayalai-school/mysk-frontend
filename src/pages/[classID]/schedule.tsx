@@ -337,7 +337,7 @@ const Subjects: NextPage<{
                     // Remove the old Periods that overlap this new Period
                     .filter(
                       (schedulePeriod) =>
-                        schedulePeriod.periodStart < periodStart &&
+                        schedulePeriod.periodStart < periodStart ||
                         schedulePeriod.periodStart >= periodStart + duration
                     )
                     // Append the new Period
