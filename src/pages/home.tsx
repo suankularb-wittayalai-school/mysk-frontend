@@ -30,6 +30,7 @@ import {
 } from "@suankularb-components/react";
 
 // Components
+import ProfilePicture from "@components/ProfilePicture";
 import Schedule from "@components/Schedule";
 import TeacherCard from "@components/TeacherCard";
 import ChangePassword from "@components/dialogs/ChangePassword";
@@ -40,7 +41,6 @@ import LogOutDialog from "@components/dialogs/LogOut";
 import { NewsList } from "@utils/types/news";
 import { Student, Teacher } from "@utils/types/person";
 import { Schedule as ScheduleType } from "@utils/types/schedule";
-import ProfilePicture from "@components/ProfilePicture";
 
 const UserActions = ({
   setshowChangePassword,
@@ -94,7 +94,6 @@ const UserSection = ({
   setShowLogOut: Function;
 }): JSX.Element => {
   const locale = useRouter().locale == "th" ? "th" : "en-US";
-  const { t } = useTranslation(["dashboard", "common"]);
 
   // Dummybase
   const user: Student | Teacher = {

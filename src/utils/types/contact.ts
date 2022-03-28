@@ -4,7 +4,15 @@ export type Contact = {
     "en-US": string;
     th: string;
   };
-  via: "facebook" | "line" | "discord" | "email";
+  via:
+    | "phone"
+    | "email"
+    | "facebook"
+    | "line"
+    | "instagram"
+    | "website"
+    | "discord"
+    | "other";
   includes?: {
     students: boolean;
     parents: boolean;

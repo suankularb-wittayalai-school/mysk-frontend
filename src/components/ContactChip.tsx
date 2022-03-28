@@ -33,18 +33,30 @@ const ContactChip = ({
         <CardHeader
           icon={
             <div className="relative aspect-square w-6 text-primary">
-              {contact.via == "line" ? (
-                <Image
-                  src="/images/social/line.webp"
-                  layout="fill"
-                  alt="LINE"
-                />
+              {contact.via == "phone" ? (
+                <MaterialIcon icon="call" />
+              ) : contact.via == "email" ? (
+                <MaterialIcon icon="mail" />
               ) : contact.via == "facebook" ? (
                 <Image
                   src="/images/social/facebook.webp"
                   layout="fill"
                   alt="Facebook"
                 />
+              ) : contact.via == "line" ? (
+                <Image
+                  src="/images/social/line.webp"
+                  layout="fill"
+                  alt="LINE"
+                />
+              ) : contact.via == "instagram" ? (
+                <Image
+                  src="/images/social/instagram.webp"
+                  layout="fill"
+                  alt="Instagram"
+                />
+              ) : contact.via == "website" ? (
+                <MaterialIcon icon="public" />
               ) : contact.via == "discord" ? (
                 <Image
                   src="/images/social/discord.webp"
@@ -52,7 +64,7 @@ const ContactChip = ({
                   alt="Discord"
                 />
               ) : (
-                <MaterialIcon icon="mail" />
+                <MaterialIcon icon="contacts" />
               )}
             </div>
           }
