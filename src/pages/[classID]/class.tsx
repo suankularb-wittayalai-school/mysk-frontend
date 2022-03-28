@@ -1,5 +1,5 @@
 // Modules
-import { GetStaticPaths, GetStaticProps, NextPage } from "next";
+import { GetServerSideProps, GetStaticPaths, GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -166,14 +166,7 @@ const Class: NextPage<{ classItem: ClassType }> = ({ classItem }) => {
   );
 };
 
-export const getStaticPaths: GetStaticPaths<{ classID: string }> = async () => {
-  return {
-    paths: [],
-    fallback: "blocking",
-  };
-};
-
-export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
+export const getServerSideProps: GetServerSideProps = async ({ locale, params }) => {
   // TODO: Fetch class here
   const classItem: ClassType = {
     id: 405,
@@ -415,7 +408,7 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
 
   return {
     props: {
-      ...(await serverSideTranslations(locale == "en-US" ? "en-US" : "th", [
+      ...(await serverSideTranslations(locale as string, [
         "common",
         "class",
         "teacher",
