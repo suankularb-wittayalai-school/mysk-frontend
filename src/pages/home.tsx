@@ -41,6 +41,7 @@ import LogOutDialog from "@components/dialogs/LogOut";
 import { NewsList } from "@utils/types/news";
 import { Student, Teacher } from "@utils/types/person";
 import { Schedule as ScheduleType } from "@utils/types/schedule";
+import ProfilePicture from "@components/ProfilePicture";
 
 const UserActions = ({
   setshowChangePassword,
@@ -117,12 +118,8 @@ const UserSection = ({
         {/* Profile picture section */}
         <div>
           {/* Profile picture */}
-          <div className="container-tertiary relative aspect-square w-full overflow-hidden rounded-xl sm:rounded-2xl">
-            <Image
-              src={user.profile ? user.profile : "/images/common/avatar.svg"}
-              layout="fill"
-              alt={t("user.profileAlt")}
-            />
+          <div className="aspect-square overflow-hidden rounded-xl sm:rounded-2xl">
+            <ProfilePicture src={user.profile} />
           </div>
         </div>
 
@@ -178,7 +175,7 @@ const UserSection = ({
                         className="text-error"
                       />
                     }
-                    className="!p-2 !gap-2"
+                    className="!gap-2 !p-2"
                   />
                 </Card>
               </a>
