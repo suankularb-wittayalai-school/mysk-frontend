@@ -120,7 +120,7 @@ const UserSection = ({
       <Section>
         <div className="grid grid-cols-[1fr_3fr] items-stretch gap-4 sm:gap-6 md:grid-cols-[1fr_5fr]">
           <div>
-            <div className="container-tertiary relative aspect-square w-full overflow-hidden rounded-4xl sm:rounded-8xl">
+            <div className="container-tertiary rounded-4xl sm:rounded-8xl relative aspect-square w-full overflow-hidden">
               <Image
                 src={user.profile ? user.profile : "/images/common/avatar.svg"}
                 layout="fill"
@@ -142,7 +142,7 @@ const UserSection = ({
               </div>
               {/* FIXME: Replace the following element with `Chip` when you can use a JSX element as `name` */}
               <button
-                className="container-error has-action--tertiary hidden w-fit flex-row items-center gap-1 rounded-xl p-2
+                className="container-error has-action--tertiary hidden w-fit flex-row items-center gap-1 rounded p-2
                   hover:shadow focus:shadow-none sm:flex"
               >
                 <MaterialIcon
@@ -327,7 +327,7 @@ const NewsSection = (): JSX.Element => {
       />
       {filteredNews.length == 0 ? (
         <ul className="px-4">
-          <li className="bg-surface-1 grid h-[13.75rem] place-content-center rounded-xl text-center text-on-surface">
+          <li className="grid h-[13.75rem] place-content-center rounded-xl bg-surface-1 text-center text-on-surface">
             {t("news.noRelevantNews")}
           </li>
         </ul>
@@ -525,6 +525,11 @@ const ClassAdvisorsCard = (): JSX.Element => {
       profile: "/images/dummybase/taradol.webp",
       subjectsInCharge: [
         {
+          id: 8,
+          code: {
+            "en-US": "ส31152",
+            th: "SOC31152",
+          },
           name: {
             "en-US": {
               name: "Social Studies 2 (World)",
@@ -704,7 +709,7 @@ const TeachersSection = (): JSX.Element => {
         </div>
         {teachers.length == 0 ? (
           <div
-            className="bg-surface-1 mx-4 grid place-items-center rounded-xl p-8 text-center text-on-surface-variant
+            className="mx-4 grid place-items-center rounded-xl bg-surface-1 p-8 text-center text-on-surface-variant
               sm:mx-0 md:col-span-3"
           >
             <p>{t("teachers.noTeachers")}</p>
