@@ -115,7 +115,7 @@ const UserSection = ({
     <Section>
       <div className="grid grid-cols-[1fr_3fr] items-stretch gap-4 sm:gap-6 md:grid-cols-[1fr_5fr]">
         <div>
-          <div className="container-tertiary rounded-4xl sm:rounded-8xl relative aspect-square w-full overflow-hidden">
+          <div className="container-tertiary relative aspect-square w-full overflow-hidden rounded-xl sm:rounded-2xl">
             <Image
               src={user.profile ? user.profile : "/images/common/avatar.svg"}
               layout="fill"
@@ -136,7 +136,7 @@ const UserSection = ({
               </p>
             </div>
             <Link href="/notifications">
-              <a>
+              <a className="hidden sm:block">
                 <Card
                   type="horizontal"
                   appearance="tonal"
