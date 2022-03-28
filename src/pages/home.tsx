@@ -112,91 +112,84 @@ const UserSection = ({
   const notifCount = 1;
 
   return (
-    <>
-      <Head>
-        <title>
-          {t("title")} - {t("brand.name", { ns: "common" })}
-        </title>
-      </Head>
-      <Section>
-        <div className="grid grid-cols-[1fr_3fr] items-stretch gap-4 sm:gap-6 md:grid-cols-[1fr_5fr]">
-          <div>
-            <div className="container-tertiary rounded-4xl sm:rounded-8xl relative aspect-square w-full overflow-hidden">
-              <Image
-                src={user.profile ? user.profile : "/images/common/avatar.svg"}
-                layout="fill"
-                alt={t("user.profileAlt")}
-              />
-            </div>
-          </div>
-          <div className="flex flex-col gap-2">
-            <div className="flex flex-grow flex-col gap-2">
-              <div className="flex flex-col">
-                <h2 className="max-lines-1 break-all font-display text-4xl font-bold">
-                  {user.name[locale].firstName} {user.name[locale].lastName}
-                </h2>
-                <p className="font-display text-xl">
-                  <Trans i18nKey="user.classAndNo" ns="dashboard">
-                    M.{{ class: user.class }} No.{{ classNo: user.classNo }}
-                  </Trans>
-                </p>
-              </div>
-              <Link href="/notifications">
-                <a>
-                  <Card
-                    type="horizontal"
-                    appearance="tonal"
-                    hasAction
-                    className="container-error has-action--error !w-fit"
-                  >
-                    <CardHeader
-                      icon={
-                        <MaterialIcon
-                          icon={
-                            notifCount > 0
-                              ? "notifications_active"
-                              : "notifications"
-                          }
-                          className="text-error"
-                        />
-                      }
-                      title={
-                        <Trans
-                          i18nKey="user.hasNotifications"
-                          ns="dashboard"
-                          count={notifCount}
-                        >
-                          You have {{ notifCount }} notifications.
-                        </Trans>
-                      }
-                      end={
-                        <MaterialIcon
-                          icon="arrow_forward"
-                          className="text-error"
-                        />
-                      }
-                      className="!p-2"
-                    />
-                  </Card>
-                </a>
-              </Link>
-            </div>
-            <UserActions
-              className="hidden md:flex"
-              setshowChangePassword={setShowChangePassword}
-              setShowEditProfile={setShowEditProfile}
-              setShowLogOut={setShowLogOut}
+    <Section>
+      <div className="grid grid-cols-[1fr_3fr] items-stretch gap-4 sm:gap-6 md:grid-cols-[1fr_5fr]">
+        <div>
+          <div className="container-tertiary rounded-4xl sm:rounded-8xl relative aspect-square w-full overflow-hidden">
+            <Image
+              src={user.profile ? user.profile : "/images/common/avatar.svg"}
+              layout="fill"
+              alt={t("user.profileAlt")}
             />
           </div>
         </div>
-        <UserActions
-          className="flex md:hidden"
-          setshowChangePassword={setShowChangePassword}
-          setShowEditProfile={setShowEditProfile}
-          setShowLogOut={setShowLogOut}
-        />
-      </Section>
-    </>
+        <div className="flex flex-col gap-2">
+          <div className="flex flex-grow flex-col gap-2">
+            <div className="flex flex-col">
+              <h2 className="max-lines-1 break-all font-display text-4xl font-bold">
+                {user.name[locale].firstName} {user.name[locale].lastName}
+              </h2>
+              <p className="font-display text-xl">
+                <Trans i18nKey="user.classAndNo" ns="dashboard">
+                  M.{{ class: user.class }} No.{{ classNo: user.classNo }}
+                </Trans>
+              </p>
+            </div>
+            <Link href="/notifications">
+              <a>
+                <Card
+                  type="horizontal"
+                  appearance="tonal"
+                  hasAction
+                  className="container-error has-action--error !w-fit"
+                >
+                  <CardHeader
+                    icon={
+                      <MaterialIcon
+                        icon={
+                          notifCount > 0
+                            ? "notifications_active"
+                            : "notifications"
+                        }
+                        className="text-error"
+                      />
+                    }
+                    title={
+                      <Trans
+                        i18nKey="user.hasNotifications"
+                        ns="dashboard"
+                        count={notifCount}
+                      >
+                        You have {{ notifCount }} notifications.
+                      </Trans>
+                    }
+                    end={
+                      <MaterialIcon
+                        icon="arrow_forward"
+                        className="text-error"
+                      />
+                    }
+                    className="!p-2"
+                  />
+                </Card>
+              </a>
+            </Link>
+          </div>
+          <UserActions
+            className="hidden md:flex"
+            setshowChangePassword={setShowChangePassword}
+            setShowEditProfile={setShowEditProfile}
+            setShowLogOut={setShowLogOut}
+          />
+        </div>
+      </div>
+      <UserActions
+        className="flex md:hidden"
+        setshowChangePassword={setShowChangePassword}
+        setShowEditProfile={setShowEditProfile}
+        setShowLogOut={setShowLogOut}
+      />
+    </Section>
   );
 };
 
@@ -783,6 +776,13 @@ const Home: NextPage = () => {
 
   return (
     <>
+      {/* Title */}
+      <Head>
+        <title>
+          {t("title")} - {t("brand.name", { ns: "common" })}
+        </title>
+      </Head>
+
       {/* Content */}
       <RegularLayout
         Title={
