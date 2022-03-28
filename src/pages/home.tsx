@@ -27,6 +27,7 @@ import {
   Title,
   XScrollContent,
   LinkButton,
+  Chip,
 } from "@suankularb-components/react";
 
 // Components
@@ -140,28 +141,45 @@ const UserSection = ({
                   </Trans>
                 </p>
               </div>
-              {/* FIXME: Replace the following element with `Chip` when you can use a JSX element as `name` */}
-              <button
-                className="container-error has-action--tertiary hidden w-fit flex-row items-center gap-1 rounded p-2
-                  hover:shadow focus:shadow-none sm:flex"
-              >
-                <MaterialIcon
-                  icon={
-                    notifCount > 0 ? "notifications_active" : "notifications"
-                  }
-                  className="text-error"
-                />
-                <p>
-                  <Trans
-                    i18nKey="user.hasNotifications"
-                    ns="dashboard"
-                    count={notifCount}
+              <Link href="/notifications">
+                <a>
+                  <Card
+                    type="horizontal"
+                    appearance="tonal"
+                    hasAction
+                    className="container-error has-action--error !w-fit"
                   >
-                    You have {{ notifCount }} notifications.
-                  </Trans>
-                </p>
-                <MaterialIcon icon="arrow_forward" className="text-error" />
-              </button>
+                    <CardHeader
+                      icon={
+                        <MaterialIcon
+                          icon={
+                            notifCount > 0
+                              ? "notifications_active"
+                              : "notifications"
+                          }
+                          className="text-error"
+                        />
+                      }
+                      title={
+                        <Trans
+                          i18nKey="user.hasNotifications"
+                          ns="dashboard"
+                          count={notifCount}
+                        >
+                          You have {{ notifCount }} notifications.
+                        </Trans>
+                      }
+                      end={
+                        <MaterialIcon
+                          icon="arrow_forward"
+                          className="text-error"
+                        />
+                      }
+                      className="!p-2"
+                    />
+                  </Card>
+                </a>
+              </Link>
             </div>
             <UserActions
               className="hidden md:flex"
@@ -525,11 +543,6 @@ const ClassAdvisorsCard = (): JSX.Element => {
       profile: "/images/dummybase/taradol.webp",
       subjectsInCharge: [
         {
-          id: 8,
-          code: {
-            "en-US": "ส31152",
-            th: "SOC31152",
-          },
           name: {
             "en-US": {
               name: "Social Studies 2 (World)",
