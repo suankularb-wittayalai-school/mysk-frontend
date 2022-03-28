@@ -230,9 +230,14 @@ const SubjectListSection = ({
                   {subjectListItem.teachers.length > 0 &&
                     nameJoiner(locale, subjectListItem.teachers[0].name)}
                 </td>
-                <td>
+                <td className="!p-0">
                   {subjectListItem.ggcCode && (
-                    <a href={subjectListItem.ggcLink}>
+                    <a
+                      className="has-action table__cell block"
+                      href={subjectListItem.ggcLink}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
                       {subjectListItem.ggcCode}
                     </a>
                   )}
@@ -350,7 +355,41 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
           th: { name: "คณิตศาสตร์พื้นฐาน 2 (EP)" },
         },
       },
-      teachers: [],
+      teachers: [
+        {
+          id: 9,
+          role: "teacher",
+          prefix: "mister",
+          name: {
+            "en-US": { firstName: "Kritchapon", lastName: "Boonpoonmee" },
+            th: { firstName: "กฤชพล", lastName: "บุญพูลมี" },
+          },
+          subjectsInCharge: [
+            {
+              id: 8,
+              code: { "en-US": "MA31152", th: "ค31152" },
+              name: {
+                "en-US": { name: "Fundamental Mathematics 2" },
+                th: { name: "คณิตศาสตร์พื้นฐาน 2 (EP)" },
+              },
+              subjectSubgroup: {
+                name: {
+                  "en-US": "Mathematics",
+                  th: "คณิตศาสตร์",
+                },
+                subjectGroup: {
+                  name: {
+                    "en-US": "Mathematics",
+                    th: "คณิตศาสตร์",
+                  },
+                },
+              },
+            },
+          ],
+        },
+      ],
+      ggcCode: "y53ezt7",
+      ggcLink: "https://classroom.google.com/c/NDIyMTc0ODc5NzQw",
     },
   ];
 
