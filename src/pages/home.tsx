@@ -511,6 +511,11 @@ const ClassCounselorsCard = (): JSX.Element => {
       profile: "/images/dummybase/taradol.webp",
       subjectsInCharge: [
         {
+          id: 25,
+          code: {
+            "en-US": "SOC31152",
+            th: "ส31152",
+          },
           name: {
             "en-US": {
               name: "Social Studies 2 (World)",
