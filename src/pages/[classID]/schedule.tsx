@@ -14,6 +14,7 @@ import {
   Dropdown,
   Header,
   KeyboardInput,
+  LinkButton,
   MaterialIcon,
   RegularLayout,
   Search,
@@ -34,6 +35,7 @@ import { Schedule as ScheduleType } from "@utils/types/schedule";
 import { addPeriodtoSchedule } from "@utils/backend/schedule";
 import { SubjectListItem } from "@utils/types/subject";
 import { nameJoiner } from "@utils/helpers/name";
+import BrandIcon from "@components/icons/BrandIcon";
 
 const AddPeriod = ({ show, onClose }: DialogProps): JSX.Element => {
   const { t } = useTranslation(["schedule", "common"]);
@@ -217,30 +219,52 @@ const SubjectListSection = ({
               <th>{t("subjectList.table.name")}</th>
               <th>{t("subjectList.table.teachers")}</th>
               <th>{t("subjectList.table.ggcCode")}</th>
+              <th />
             </tr>
           </thead>
           <tbody>
             {subjectList.map((subjectListItem) => (
               <tr key={subjectListItem.id}>
                 <td>{subjectListItem.subject.code[locale]}</td>
-                <td className="!text-left">
+                <td className="w-2/5 !text-left">
                   {subjectListItem.subject.name[locale].name}
                 </td>
-                <td>
+                <td className="!text-left">
                   {subjectListItem.teachers.length > 0 &&
                     nameJoiner(locale, subjectListItem.teachers[0].name)}
                 </td>
-                <td className="!p-0">
-                  {subjectListItem.ggcCode && (
-                    <a
-                      className="has-action table__cell block"
-                      href={subjectListItem.ggcLink}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      {subjectListItem.ggcCode}
-                    </a>
-                  )}
+                <td>{subjectListItem.ggcCode}</td>
+                <td>
+                  <div className="flex flex-row justify-center gap-2">
+                    {subjectListItem.ggcLink && (
+                      <a
+                        href={subjectListItem.ggcLink}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <Button
+                          label={t("subjectList.table.action.copyCode")}
+                          type="text"
+                          iconOnly
+                          icon={<BrandIcon icon="gg-classroom" />}
+                        />
+                      </a>
+                    )}
+                    {subjectListItem.ggMeetLink && (
+                      <a
+                        href={subjectListItem.ggMeetLink}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <Button
+                          label={t("subjectList.table.action.copyCode")}
+                          type="text"
+                          iconOnly
+                          icon={<BrandIcon icon="gg-meet" />}
+                        />
+                      </a>
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}
@@ -390,6 +414,51 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
       ],
       ggcCode: "y53ezt7",
       ggcLink: "https://classroom.google.com/c/NDIyMTc0ODc5NzQw",
+    },
+    {
+      id: 17,
+      subject: {
+        code: { "en-US": "SCI31205", th: "ว31205" },
+        name: {
+          "en-US": { name: "Physics 2" },
+          th: { name: "ฟิสิกส์ 2 (EP)" },
+        },
+      },
+      teachers: [
+        {
+          id: 6,
+          role: "teacher",
+          prefix: "mister",
+          name: {
+            "en-US": { firstName: "Niruth", lastName: "Prombutr" },
+            th: { firstName: "นิรุทธ์", lastName: "พรมบุตร" },
+          },
+          subjectsInCharge: [
+            {
+              id: 8,
+              code: { "en-US": "SCI31205", th: "ว31205" },
+              name: {
+                "en-US": { name: "Physics 2" },
+                th: { name: "ฟิสิกส์ 2 (EP)" },
+              },
+              subjectSubgroup: {
+                name: {
+                  "en-US": "Science",
+                  th: "วิทยาศาสตร์",
+                },
+                subjectGroup: {
+                  name: {
+                    "en-US": "Science and Technology",
+                    th: "วิทยาศาสตร์และเทคโนโลยี",
+                  },
+                },
+              },
+            },
+          ],
+        },
+      ],
+      ggcLink: "https://classroom.google.com/c/MzQ4MTUyOTI4NjE0",
+      ggMeetLink: "https://meet.google.com/xoe-dkpg-gjr",
     },
   ];
 
