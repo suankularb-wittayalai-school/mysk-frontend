@@ -94,25 +94,29 @@ const EditProfileDialog = ({
     },
   ];
 
-  // prettier-ignore
   function validateAndSend() {
     let formData = new FormData();
 
-    if (form.thFirstName)
-      formData.append("th-first-name", form.thFirstName);
-    if (form.thMiddleName)
-      formData.append("th-middle-name", form.thMiddleName);
-    if (form.thLastName)
-      formData.append("th-last-name", form.thLastName);
+    // Validates
+    if (!["master", "mister", "miss", "missus"].includes(form.prefix))
+      return false;
+    if (!form.thFirstName) return false;
+    if (!form.thLastName) return false;
+    if (!form.enFirstName) return false;
+    if (!form.enLastName) return false;
 
-    if (form.enFirstName)
-      formData.append("en-first-name", form.enFirstName);
-    if (form.enMiddleName)
-      formData.append("en-middle-name", form.enMiddleName);
-    if (form.enLastName)
-      formData.append("en-last-name", form.enLastName);
+    // Appends to form data
+    formData.append("th-first-name", form.thFirstName);
+    if (form.thMiddleName) formData.append("th-middle-name", form.thMiddleName);
+    formData.append("th-last-name", form.thLastName);
 
+    formData.append("en-first-name", form.enFirstName);
+    if (form.enMiddleName) formData.append("en-middle-name", form.enMiddleName);
+    formData.append("en-last-name", form.enLastName);
+
+    // Sends
     editProfile(formData);
+    return true;
   }
 
   return (
@@ -159,13 +163,9 @@ const EditProfileDialog = ({
         ]}
         show={show}
         onClose={() => setShowDiscard(true)}
-        onSubmit={() => {
-          validateAndSend();
-          onClose();
-        }}
+        onSubmit={() => validateAndSend() && onClose()}
       >
         <DialogSection name={t("profile.name.title")} isDoubleColumn>
-          {/* FIXME: Add `defaultValue` when it is added to React SK Components */}
           <Dropdown
             name="prefix"
             label={t("profile.name.prefix.label")}
@@ -181,6 +181,7 @@ const EditProfileDialog = ({
                     { value: "mister", label: t("profile.name.prefix.mister") },
                   ]
             }
+            defaultValue={user.prefix}
             onChange={(e: Person["prefix"]) => setForm({ ...form, prefix: e })}
           />
           <KeyboardInput

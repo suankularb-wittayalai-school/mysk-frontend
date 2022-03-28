@@ -1,5 +1,7 @@
 // Modules
+import Link from "next/link";
 import { useRouter } from "next/router";
+import { useTranslation } from "next-i18next";
 
 // SK Components
 import {
@@ -9,10 +11,14 @@ import {
   MaterialIcon,
 } from "@suankularb-components/react";
 
+// Components
+import ProfilePicture from "@components/ProfilePicture";
+
+// Helpers
+import { nameJoiner } from "@utils/helpers/name";
+
 // Types
 import { Teacher } from "@utils/types/person";
-import { useTranslation } from "next-i18next";
-import ProfilePicture from "./ProfilePicture";
 
 interface TeacherCardProps {
   teacher: Teacher;
@@ -20,6 +26,7 @@ interface TeacherCardProps {
   hasArrow?: boolean;
   appearance?: "outlined" | "tonal";
   hasAction?: boolean;
+  className?: string;
 }
 
 const TeacherCard = ({
@@ -28,27 +35,26 @@ const TeacherCard = ({
   hasArrow,
   appearance,
   hasAction,
+  className,
 }: TeacherCardProps) => {
   const locale = useRouter().locale == "th" ? "th" : "en-US";
   const { t } = useTranslation(["teachers", "common"]);
 
-  // (@SiravitPhokeed) I love how hilariously overengineered this is
-  const teacherName = [
-    teacher.name[locale].firstName,
-    teacher.name[locale].middleName,
-    teacher.name[locale].lastName,
-  ]
-    .filter((namePart) => namePart)
-    .join(" ");
+  const teacherName = nameJoiner(locale, teacher.name);
 
   return (
     <Card
       type="horizontal"
       appearance={appearance || "outlined"}
       hasAction={hasAction}
+      className={className}
     >
       {/* FIXME: When Card Media is added to React SK Components, change this */}
-      <div className="card__media container-tertiary m-[2px]">
+      <div
+        className={`card__media container-tertiary ${
+          appearance == "outlined" || appearance == undefined ? "m-[2px]" : ""
+        }`}
+      >
         <ProfilePicture src={teacher.profile} />
       </div>
       <CardHeader
@@ -66,7 +72,7 @@ const TeacherCard = ({
               <div className="flex w-fit flex-row gap-1 pr-1">
                 <MaterialIcon icon="mail" className="text-primary" />
               </div>
-              <span className="pl-1">
+              <span className="max-lines-1 pl-1">
                 {teacher.subjectsInCharge.length == 0
                   ? t("noSubjectGroup")
                   : teacher.subjectsInCharge[0].subjectSubgroup.name[locale]}
@@ -87,6 +93,7 @@ const TeacherCard = ({
                 icon={<MaterialIcon icon="arrow_forward" />}
                 iconOnly
                 url={`/teacher/${teacher.id}`}
+                LinkElement={Link}
               />
             </div>
           ) : undefined
