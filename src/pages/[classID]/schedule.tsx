@@ -2,7 +2,7 @@
 import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Trans, useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useState } from "react";
 
@@ -32,7 +32,6 @@ import { Schedule as ScheduleType } from "@utils/types/schedule";
 
 // Backend
 import { addPeriodtoSchedule } from "@utils/backend/schedule";
-import Image from "next/image";
 import { SubjectListItem } from "@utils/types/subject";
 import { nameJoiner } from "@utils/helpers/name";
 
@@ -210,37 +209,39 @@ const SubjectListSection = ({
           className="[grid-area:search]"
         />
       </div>
-      <Table>
-        <thead>
-          <tr>
-            <th>{t("subjectList.table.code")}</th>
-            <th>{t("subjectList.table.name")}</th>
-            <th>{t("subjectList.table.teachers")}</th>
-            <th>{t("subjectList.table.ggcCode")}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {subjectList.map((subjectListItem) => (
-            <tr key={subjectListItem.id}>
-              <td>{subjectListItem.subject.code[locale]}</td>
-              <td className="!text-left">
-                {subjectListItem.subject.name[locale].name}
-              </td>
-              <td>
-                {subjectListItem.teachers.length > 0 &&
-                  nameJoiner(locale, subjectListItem.teachers[0].name)}
-              </td>
-              <td>
-                {subjectListItem.ggcCode && (
-                  <a href={subjectListItem.ggcLink}>
-                    {subjectListItem.ggcCode}
-                  </a>
-                )}
-              </td>
+      <div>
+        <Table>
+          <thead>
+            <tr>
+              <th>{t("subjectList.table.code")}</th>
+              <th>{t("subjectList.table.name")}</th>
+              <th>{t("subjectList.table.teachers")}</th>
+              <th>{t("subjectList.table.ggcCode")}</th>
             </tr>
-          ))}
-        </tbody>
-      </Table>
+          </thead>
+          <tbody>
+            {subjectList.map((subjectListItem) => (
+              <tr key={subjectListItem.id}>
+                <td>{subjectListItem.subject.code[locale]}</td>
+                <td className="!text-left">
+                  {subjectListItem.subject.name[locale].name}
+                </td>
+                <td>
+                  {subjectListItem.teachers.length > 0 &&
+                    nameJoiner(locale, subjectListItem.teachers[0].name)}
+                </td>
+                <td>
+                  {subjectListItem.ggcCode && (
+                    <a href={subjectListItem.ggcLink}>
+                      {subjectListItem.ggcCode}
+                    </a>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </div>
     </Section>
   );
 };
