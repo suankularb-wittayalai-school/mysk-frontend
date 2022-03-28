@@ -114,7 +114,9 @@ const UserSection = ({
   return (
     <Section>
       <div className="grid grid-cols-[1fr_3fr] items-stretch gap-4 sm:gap-6 md:grid-cols-[1fr_5fr]">
+        {/* Profile picture section */}
         <div>
+          {/* Profile picture */}
           <div className="container-tertiary relative aspect-square w-full overflow-hidden rounded-xl sm:rounded-2xl">
             <Image
               src={user.profile ? user.profile : "/images/common/avatar.svg"}
@@ -123,18 +125,25 @@ const UserSection = ({
             />
           </div>
         </div>
+
+        {/* Content section */}
         <div className="flex flex-col gap-2">
           <div className="flex flex-grow flex-col gap-2">
             <div className="flex flex-col">
+              {/* Name */}
               <h2 className="max-lines-1 break-all font-display text-4xl font-bold">
                 {user.name[locale].firstName} {user.name[locale].lastName}
               </h2>
+
+              {/* Class and number */}
               <p className="font-display text-xl">
                 <Trans i18nKey="user.classAndNo" ns="dashboard">
                   M.{{ class: user.class }} No.{{ classNo: user.classNo }}
                 </Trans>
               </p>
             </div>
+
+            {/* Notification chip */}
             <Link href="/notifications">
               <a className="hidden sm:block">
                 <Card
