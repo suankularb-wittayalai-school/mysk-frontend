@@ -321,52 +321,45 @@ const Subjects: NextPage<{
           const periodStart = parseInt(
             formData.get("period-start")?.toString() || "-1"
           );
+          const duration = parseInt(
+            formData.get("duration")?.toString() || "-1"
+          );
 
           setSchedule({
-            content: schedule.content.map((scheduleRow) =>
-              scheduleRow.day == day
-                ? {
-                    ...scheduleRow,
-                    content: scheduleRow.content.find(
+            content: schedule.content.map((scheduleRow) => {
+              if (scheduleRow.day == day) {
+                // Replace the Period with the `periodStart` in question
+                return {
+                  // Keep Day the same
+                  ...scheduleRow,
+
+                  content: scheduleRow.content
+                    // Remove the old Periods that overlap this new Period
+                    .filter(
                       (schedulePeriod) =>
-                        periodStart == schedulePeriod.periodStart
+                        schedulePeriod.periodStart < periodStart &&
+                        schedulePeriod.periodStart >= periodStart + duration
                     )
-                      ? scheduleRow.content.map(
-                          (schedulePeriod): SchedulePeriodType =>
-                            periodStart == schedulePeriod.periodStart
-                              ? {
-                                  periodStart,
-                                  duration: parseInt(
-                                    formData.get("duration")?.toString() || "-1"
-                                  ),
-                                  subject: {
-                                    name: {
-                                      "en-US": { name: "New Period" },
-                                      th: { name: "คาบสอนใหม่" },
-                                    },
-                                    teachers: [],
-                                  },
-                                }
-                              : schedulePeriod
-                        )
-                      : scheduleRow.content.concat([
-                          {
-                            periodStart,
-                            duration: parseInt(
-                              formData.get("duration")?.toString() || "-1"
-                            ),
-                            subject: {
-                              name: {
-                                "en-US": { name: "New Period" },
-                                th: { name: "คาบสอนใหม่" },
-                              },
-                              teachers: [],
-                            },
+                    // Append the new Period
+                    .concat([
+                      {
+                        periodStart,
+                        duration,
+                        // TODO: Fetch this
+                        subject: {
+                          name: {
+                            "en-US": { name: "New Period" },
+                            th: { name: "คาบสอนใหม่" },
                           },
-                        ]),
-                  }
-                : scheduleRow
-            ),
+                          teachers: [],
+                        },
+                      },
+                    ]),
+                };
+              } else {
+                return scheduleRow;
+              }
+            }),
           });
         }}
       />
