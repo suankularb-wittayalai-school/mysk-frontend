@@ -767,7 +767,7 @@ const TeachersSection = (): JSX.Element => {
 
 // Page
 const Home: NextPage = () => {
-  const { t } = useTranslation("common");
+  const { t } = useTranslation(["dashboard", "common"]);
 
   // Dialog controls
   const [showChangePassword, setShowChangePassword] = useState<boolean>(false);
@@ -787,7 +787,7 @@ const Home: NextPage = () => {
       <RegularLayout
         Title={
           <Title
-            name={{ title: t("brand.name") }}
+            name={{ title: t("brand.name", { ns: "common" }) }}
             pageIcon={<MaterialIcon icon="home" />}
             backGoesTo="/"
             LinkElement={Link}
