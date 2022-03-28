@@ -178,7 +178,7 @@ const UserSection = ({
                         className="text-error"
                       />
                     }
-                    className="!p-2"
+                    className="!p-2 !gap-2"
                   />
                 </Card>
               </a>
