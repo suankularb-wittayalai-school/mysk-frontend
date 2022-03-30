@@ -256,7 +256,7 @@ const SubjectListSection = ({
         />
       </div>
       <div>
-        <Table>
+        <Table width={820}>
           <thead>
             <tr>
               <th className="w-1/12">{t("subjectList.table.code")}</th>
