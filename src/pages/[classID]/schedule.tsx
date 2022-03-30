@@ -195,7 +195,11 @@ const ScheduleSection = ({
       <Schedule schedule={schedule} role="teacher" />
       {role == "teacher" && (
         <div className="flex flex-row items-center justify-end gap-2">
-          <Button name={t("schedule.action.edit")} type="outlined" />
+          <Button
+            name={t("schedule.action.edit")}
+            type="outlined"
+            onClick={() => setShowAddPeriod(true)}
+          />
           <Button
             name={t("schedule.action.add")}
             type="filled"

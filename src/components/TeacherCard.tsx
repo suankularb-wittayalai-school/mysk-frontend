@@ -1,5 +1,6 @@
 // Modules
 import { useRouter } from "next/router";
+import { useTranslation } from "next-i18next";
 
 // SK Components
 import {
@@ -9,10 +10,11 @@ import {
   MaterialIcon,
 } from "@suankularb-components/react";
 
+// Components
+import ProfilePicture from "@components/ProfilePicture";
+
 // Types
 import { Teacher } from "@utils/types/person";
-import { useTranslation } from "next-i18next";
-import ProfilePicture from "./ProfilePicture";
 
 interface TeacherCardProps {
   teacher: Teacher;
