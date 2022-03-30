@@ -1,0 +1,17 @@
+{
+  "title": "ม.{{className}}",
+  "classAdvisors": {
+    "title": "ครูที่ปรึกษา"
+  },
+  "classContacts": {
+    "title": "ช่องทางติดต่อ"
+  },
+  "studentList": {
+    "title": "รายชื่อนักเรียน",
+    "searchStudents": "ค้นหาชื่อนักเรียน",
+    "table": {
+      "classNo": "เลขที่",
+      "name": "ชื่อ-นามสกุล"
+    }
+  }
+}

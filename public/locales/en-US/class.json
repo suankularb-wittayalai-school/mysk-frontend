@@ -1,0 +1,17 @@
+{
+  "title": "M.{{className}}",
+  "classAdvisors": {
+    "title": "Class advisors"
+  },
+  "classContacts": {
+    "title": "Class contacts"
+  },
+  "studentList": {
+    "title": "Student list",
+    "searchStudents": "Search students",
+    "table": {
+      "classNo": "Class №",
+      "name": "Name"
+    }
+  }
+}

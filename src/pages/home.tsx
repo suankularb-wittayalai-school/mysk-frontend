@@ -30,6 +30,7 @@ import {
 } from "@suankularb-components/react";
 
 // Components
+import ProfilePicture from "@components/ProfilePicture";
 import Schedule from "@components/Schedule";
 import TeacherCard from "@components/TeacherCard";
 import ChangePassword from "@components/dialogs/ChangePassword";
@@ -93,7 +94,6 @@ const UserSection = ({
   setShowLogOut: Function;
 }): JSX.Element => {
   const locale = useRouter().locale == "th" ? "th" : "en-US";
-  const { t } = useTranslation(["dashboard", "common"]);
 
   // Dummybase
   const user: Student | Teacher = {
@@ -111,74 +111,89 @@ const UserSection = ({
   const notifCount = 1;
 
   return (
-    <>
-      <Head>
-        <title>
-          {t("title")} - {t("brand.name", { ns: "common" })}
-        </title>
-      </Head>
-      <Section>
-        <div className="grid grid-cols-[1fr_3fr] items-stretch gap-4 sm:gap-6 md:grid-cols-[1fr_5fr]">
-          <div>
-            <div className="container-tertiary relative aspect-square w-full overflow-hidden rounded-4xl sm:rounded-8xl">
-              <Image
-                src={user.profile ? user.profile : "/images/common/avatar.svg"}
-                layout="fill"
-                alt={t("user.profileAlt")}
-              />
-            </div>
-          </div>
-          <div className="flex flex-col gap-2">
-            <div className="flex flex-grow flex-col gap-2">
-              <div className="flex flex-col">
-                <h2 className="max-lines-1 break-all font-display text-4xl font-bold">
-                  {user.name[locale].firstName} {user.name[locale].lastName}
-                </h2>
-                <p className="font-display text-xl">
-                  <Trans i18nKey="user.classAndNo" ns="dashboard">
-                    M.{{ class: user.class }} No.{{ classNo: user.classNo }}
-                  </Trans>
-                </p>
-              </div>
-              {/* FIXME: Replace the following element with `Chip` when you can use a JSX element as `name` */}
-              <button
-                className="container-error has-action--tertiary hidden w-fit flex-row items-center gap-1 rounded-xl p-2
-                  hover:shadow focus:shadow-none sm:flex"
-              >
-                <MaterialIcon
-                  icon={
-                    notifCount > 0 ? "notifications_active" : "notifications"
-                  }
-                  className="text-error"
-                />
-                <p>
-                  <Trans
-                    i18nKey="user.hasNotifications"
-                    ns="dashboard"
-                    count={notifCount}
-                  >
-                    You have {{ notifCount }} notifications.
-                  </Trans>
-                </p>
-                <MaterialIcon icon="arrow_forward" className="text-error" />
-              </button>
-            </div>
-            <UserActions
-              className="hidden md:flex"
-              setshowChangePassword={setShowChangePassword}
-              setShowEditProfile={setShowEditProfile}
-              setShowLogOut={setShowLogOut}
-            />
+    <Section>
+      <div className="grid grid-cols-[1fr_3fr] items-stretch gap-4 sm:gap-6 md:grid-cols-[1fr_5fr]">
+        {/* Profile picture section */}
+        <div>
+          {/* Profile picture */}
+          <div className="aspect-square overflow-hidden rounded-xl sm:rounded-2xl">
+            <ProfilePicture src={user.profile} />
           </div>
         </div>
-        <UserActions
-          className="flex md:hidden"
-          setshowChangePassword={setShowChangePassword}
-          setShowEditProfile={setShowEditProfile}
-          setShowLogOut={setShowLogOut}
-        />
-      </Section>
-    </>
+
+        {/* Content section */}
+        <div className="flex flex-col gap-2">
+          <div className="flex flex-grow flex-col gap-2">
+            <div className="flex flex-col">
+              {/* Name */}
+              <h2 className="max-lines-1 break-all font-display text-4xl font-bold">
+                {user.name[locale].firstName} {user.name[locale].lastName}
+              </h2>
+
+              {/* Class and number */}
+              <p className="font-display text-xl">
+                <Trans i18nKey="user.classAndNo" ns="dashboard">
+                  M.{{ class: user.class }} No.{{ classNo: user.classNo }}
+                </Trans>
+              </p>
+            </div>
+
+            {/* Notification chip */}
+            <Link href="/notifications">
+              <a className="hidden sm:block">
+                <Card
+                  type="horizontal"
+                  appearance="tonal"
+                  hasAction
+                  className="container-error has-action--error !w-fit"
+                >
+                  <CardHeader
+                    icon={
+                      <MaterialIcon
+                        icon={
+                          notifCount > 0
+                            ? "notifications_active"
+                            : "notifications"
+                        }
+                        className="text-error"
+                      />
+                    }
+                    title={
+                      <Trans
+                        i18nKey="user.hasNotifications"
+                        ns="dashboard"
+                        count={notifCount}
+                      >
+                        You have {{ notifCount }} notifications.
+                      </Trans>
+                    }
+                    end={
+                      <MaterialIcon
+                        icon="arrow_forward"
+                        className="text-error"
+                      />
+                    }
+                    className="!gap-2 !p-2"
+                  />
+                </Card>
+              </a>
+            </Link>
+          </div>
+          <UserActions
+            className="hidden md:flex"
+            setshowChangePassword={setShowChangePassword}
+            setShowEditProfile={setShowEditProfile}
+            setShowLogOut={setShowLogOut}
+          />
+        </div>
+      </div>
+      <UserActions
+        className="flex md:hidden"
+        setshowChangePassword={setShowChangePassword}
+        setShowEditProfile={setShowEditProfile}
+        setShowLogOut={setShowLogOut}
+      />
+    </Section>
   );
 };
 
@@ -327,7 +342,7 @@ const NewsSection = (): JSX.Element => {
       />
       {filteredNews.length == 0 ? (
         <ul className="px-4">
-          <li className="bg-surface-1 grid h-[13.75rem] place-content-center rounded-xl text-center text-on-surface">
+          <li className="grid h-[13.75rem] place-content-center rounded-xl bg-surface-1 text-center text-on-surface">
             {t("news.noRelevantNews")}
           </li>
         </ul>
@@ -496,7 +511,7 @@ const ClassSection = (): JSX.Element => {
   );
 };
 
-const ClassCounselorsCard = (): JSX.Element => {
+const ClassAdvisorsCard = (): JSX.Element => {
   const locale = useRouter().locale == "th" ? "th" : "en-US";
   const { t } = useTranslation(["dashboard", "common"]);
   const classAdvisors: Array<Teacher> = [
@@ -691,11 +706,11 @@ const TeachersSection = (): JSX.Element => {
       />
       <div className="flex flex-col justify-start gap-3 !px-0 sm:grid sm:grid-cols-2 md:grid-cols-4">
         <div className="px-4 sm:px-0">
-          <ClassCounselorsCard />
+          <ClassAdvisorsCard />
         </div>
         {teachers.length == 0 ? (
           <div
-            className="bg-surface-1 mx-4 grid place-items-center rounded-xl p-8 text-center text-on-surface-variant
+            className="mx-4 grid place-items-center rounded-xl bg-surface-1 p-8 text-center text-on-surface-variant
               sm:mx-0 md:col-span-3"
           >
             <p>{t("teachers.noTeachers")}</p>
@@ -747,7 +762,7 @@ const TeachersSection = (): JSX.Element => {
 
 // Page
 const Home: NextPage = () => {
-  const { t } = useTranslation("common");
+  const { t } = useTranslation(["dashboard", "common"]);
 
   // Dialog controls
   const [showChangePassword, setShowChangePassword] = useState<boolean>(false);
@@ -756,11 +771,18 @@ const Home: NextPage = () => {
 
   return (
     <>
+      {/* Title */}
+      <Head>
+        <title>
+          {t("title")} - {t("brand.name", { ns: "common" })}
+        </title>
+      </Head>
+
       {/* Content */}
       <RegularLayout
         Title={
           <Title
-            name={{ title: t("brand.name") }}
+            name={{ title: t("brand.name", { ns: "common" }) }}
             pageIcon={<MaterialIcon icon="home" />}
             backGoesTo={() => setShowLogOut(true)}
             LinkElement={Link}
