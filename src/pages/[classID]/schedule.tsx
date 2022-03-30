@@ -222,7 +222,8 @@ const SubjectListSection = ({
   useEffect(() => {
     setFilterredList(
       query
-        ? subjectList.filter(
+        ? // Filter Subject List by code, name, and teacher
+          subjectList.filter(
             (subjectListItem) =>
               subjectListItem.subject.code[locale].includes(query) ||
               subjectListItem.subject.name[locale].name.includes(query) ||
@@ -230,7 +231,8 @@ const SubjectListSection = ({
                 query
               )
           )
-        : subjectList
+        : // If the query is empty, show the normal unfilterred Subject List
+          subjectList
     );
   }, [subjectList, locale, query]);
 
@@ -253,18 +255,18 @@ const SubjectListSection = ({
         <Table>
           <thead>
             <tr>
-              <th>{t("subjectList.table.code")}</th>
-              <th>{t("subjectList.table.name")}</th>
-              <th>{t("subjectList.table.teachers")}</th>
-              <th>{t("subjectList.table.ggcCode")}</th>
-              <th />
+              <th className="w-1/12">{t("subjectList.table.code")}</th>
+              <th className="w-1/3">{t("subjectList.table.name")}</th>
+              <th className="w-1/6">{t("subjectList.table.teachers")}</th>
+              <th className="w-1/6">{t("subjectList.table.ggcCode")}</th>
+              <th className="w-1/12" />
             </tr>
           </thead>
           <tbody>
             {filterredList.map((subjectListItem) => (
               <tr key={subjectListItem.id}>
                 <td>{subjectListItem.subject.code[locale]}</td>
-                <td className="w-2/5 !text-left">
+                <td className="!text-left">
                   {subjectListItem.subject.name[locale].name}
                 </td>
                 <td className="!text-left">
