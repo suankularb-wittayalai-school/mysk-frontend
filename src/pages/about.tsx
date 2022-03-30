@@ -4,11 +4,11 @@ import Link from "next/link";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 // SK Components
-import { ListLayout, Title } from "@suankularb-components/react";
+import { RegularLayout, Title } from "@suankularb-components/react";
 
 // Page
 const Developers: NextPage = (): JSX.Element => (
-  <ListLayout
+  <RegularLayout
     Title={
       <Title
         name={{ title: "" }}
@@ -21,7 +21,7 @@ const Developers: NextPage = (): JSX.Element => (
     }
   >
     <p>TODO</p>
-    </ListLayout>
+  </RegularLayout>
 );
 
 export const getStaticProps = async ({ locale }: { locale: string }) => ({

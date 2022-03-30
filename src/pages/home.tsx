@@ -492,7 +492,7 @@ const ClassSection = (): JSX.Element => {
         icon={<MaterialIcon icon="groups" allowCustomSize={true} />}
         text={t("class.title")}
       />
-      <Schedule schedule={schedule} />
+      <Schedule schedule={schedule} role="student" />
       <div className="flex flex-row flex-wrap items-center justify-end gap-2">
         <LinkButton
           name={t("class.action.seeSchedule")}

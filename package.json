@@ -9,8 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@suankularb-components/css": "^2.3.1",
-    "@suankularb-components/react": "^2.3.2",
+    "@suankularb-components/css": "^2.4.0",
+    "@suankularb-components/react": "^2.4.0",
     "date-fns": "^2.28.0",
     "framer-motion": "^6.2.8",
     "next": "^12.1.1",
