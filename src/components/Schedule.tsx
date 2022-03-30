@@ -42,6 +42,8 @@ const ScheduleRow = ({
 }): JSX.Element => {
   const locale = useRouter().locale == "th" ? "th" : "en-US";
   const { t } = useTranslation("common");
+  
+  const periodWidth = 112;
 
   return (
     <li aria-label={t(`datetime.day.${scheduleRow.day}`)}>
@@ -51,8 +53,8 @@ const ScheduleRow = ({
             key={schedulePeriod.periodStart}
             className="absolute px-1"
             style={{
-              width: 112 * schedulePeriod.duration,
-              left: 112 * (schedulePeriod.periodStart - 1),
+              width: periodWidth * schedulePeriod.duration,
+              left: periodWidth * (schedulePeriod.periodStart - 1),
             }}
             initial={{ scale: 0.8, y: 20, opacity: 0 }}
             animate={{ scale: 1, y: 0, opacity: 1 }}
@@ -118,7 +120,7 @@ const Schedule = ({
         <ScheduleDay key={scheduleRow.day} day={scheduleRow.day} />
       ))}
     </div>
-    <div className={noScroll ? "grow" : "scroll-w-0 grow overflow-x-auto"}>
+    <div className={noScroll ? "grow" : "scroll-w-0 scroll-desktop grow overflow-x-auto"}>
       <AnimatePresence initial={false}>
         <ul className="flex flex-col gap-2 py-1 pl-1 pr-4 sm:pr-0">
           {schedule.content.map((scheduleRow) => (

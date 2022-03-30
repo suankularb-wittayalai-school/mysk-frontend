@@ -1,5 +1,5 @@
 // Modules
-import { isPast, isThisYear } from "date-fns";
+import { getDay, isPast, isThisYear } from "date-fns";
 
 import { NextPage } from "next";
 import Head from "next/head";
@@ -451,15 +451,22 @@ const ClassSection = (): JSX.Element => {
   const schedule: ScheduleType = {
     content: [
       {
-        day: 1,
+        day: getDay(new Date()),
         content: [
+          { periodStart: 1, duration: 1 },
           {
-            periodStart: 1,
+            periodStart: 2,
             duration: 1,
             subject: {
               name: {
-                "en-US": { name: "English" },
-                th: { name: "ภาษาอังกฤษ" },
+                "en-US": {
+                  name: "Chemistry",
+                  shortName: "Chem",
+                },
+                th: {
+                  name: "เคมี",
+                  shortName: "เคมี",
+                },
               },
               teachers: [
                 {
@@ -476,10 +483,6 @@ const ClassSection = (): JSX.Element => {
                 },
               ],
             },
-          },
-          {
-            periodStart: 2,
-            duration: 1,
           },
         ],
       },
@@ -514,6 +517,7 @@ const ClassSection = (): JSX.Element => {
 const ClassAdvisorsCard = (): JSX.Element => {
   const locale = useRouter().locale == "th" ? "th" : "en-US";
   const { t } = useTranslation(["dashboard", "common"]);
+  
   const classAdvisors: Array<Teacher> = [
     {
       id: 2,
