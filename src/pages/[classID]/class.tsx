@@ -106,7 +106,7 @@ const StudentListSection = ({
         />
       </div>
       <div>
-        <Table>
+        <Table width={320}>
           <thead>
             <tr>
               <th className="w-24">{t("studentList.table.classNo")}</th>

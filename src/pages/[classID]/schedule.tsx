@@ -328,6 +328,52 @@ const Subjects: NextPage<{
   const [schedule, setSchedule] = useState<ScheduleType>(fetchedSchedule);
   const [showAddPeriod, setShowAddPeriod] = useState<boolean>(false);
 
+  function addSchedulePeriod(formData: FormData) {
+    const day = parseInt(formData.get("day")?.toString() || "-1");
+    const periodStart = parseInt(
+      formData.get("period-start")?.toString() || "-1"
+    );
+    const duration = parseInt(formData.get("duration")?.toString() || "-1");
+
+    setSchedule({
+      content: schedule.content.map((scheduleRow) => {
+        if (scheduleRow.day == day) {
+          // Replace the Period with the `periodStart` in question
+          return {
+            // Keep Day the same
+            ...scheduleRow,
+
+            content: scheduleRow.content
+              // Remove the old Periods that overlap this new Period
+              .filter(
+                (schedulePeriod) =>
+                  schedulePeriod.periodStart + schedulePeriod.duration - 1 <
+                    periodStart ||
+                  schedulePeriod.periodStart >= periodStart + duration
+              )
+              // Append the new Period
+              .concat([
+                {
+                  periodStart,
+                  duration,
+                  // TODO: Fetch this
+                  subject: {
+                    name: {
+                      "en-US": { name: "New Period" },
+                      th: { name: "คาบสอนใหม่" },
+                    },
+                    teachers: [],
+                  },
+                },
+              ]),
+          };
+        } else {
+          return scheduleRow;
+        }
+      }),
+    });
+  }
+
   return (
     <>
       <RegularLayout
@@ -350,55 +396,7 @@ const Subjects: NextPage<{
       <AddPeriod
         show={showAddPeriod}
         onClose={() => setShowAddPeriod(false)}
-        onSubmit={(formData: FormData) => {
-          const day = parseInt(formData.get("day")?.toString() || "-1");
-          const periodStart = parseInt(
-            formData.get("period-start")?.toString() || "-1"
-          );
-          const duration = parseInt(
-            formData.get("duration")?.toString() || "-1"
-          );
-
-          setSchedule({
-            content: schedule.content.map((scheduleRow) => {
-              if (scheduleRow.day == day) {
-                // Replace the Period with the `periodStart` in question
-                return {
-                  // Keep Day the same
-                  ...scheduleRow,
-
-                  content: scheduleRow.content
-                    // Remove the old Periods that overlap this new Period
-                    .filter(
-                      (schedulePeriod) =>
-                        schedulePeriod.periodStart +
-                          schedulePeriod.duration -
-                          1 <
-                          periodStart ||
-                        schedulePeriod.periodStart >= periodStart + duration
-                    )
-                    // Append the new Period
-                    .concat([
-                      {
-                        periodStart,
-                        duration,
-                        // TODO: Fetch this
-                        subject: {
-                          name: {
-                            "en-US": { name: "New Period" },
-                            th: { name: "คาบสอนใหม่" },
-                          },
-                          teachers: [],
-                        },
-                      },
-                    ]),
-                };
-              } else {
-                return scheduleRow;
-              }
-            }),
-          });
-        }}
+        onSubmit={(formData: FormData) => addSchedulePeriod(formData)}
       />
     </>
   );
