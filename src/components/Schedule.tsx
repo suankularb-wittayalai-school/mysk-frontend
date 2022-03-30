@@ -42,7 +42,7 @@ const ScheduleRow = ({
 }): JSX.Element => {
   const locale = useRouter().locale == "th" ? "th" : "en-US";
   const { t } = useTranslation("common");
-  
+
   const periodWidth = 112;
 
   return (
@@ -114,13 +114,13 @@ const Schedule = ({
   role: Role;
   noScroll?: boolean;
 }): JSX.Element => (
-  <div className="flex flex-row gap-5 !px-0">
+  <div className="scroll-w-0 scroll-desktop flex flex-row gap-5 overflow-x-auto !px-0 sm:overflow-x-visible">
     <div aria-hidden className="flex flex-col gap-2 py-1 pl-4 sm:pl-0">
       {schedule.content.map((scheduleRow) => (
         <ScheduleDay key={scheduleRow.day} day={scheduleRow.day} />
       ))}
     </div>
-    <div className={noScroll ? "grow" : "scroll-w-0 scroll-desktop grow overflow-x-auto"}>
+    <div className={noScroll ? "grow" : "scroll-w-0 grow sm:overflow-x-auto"}>
       <AnimatePresence initial={false}>
         <ul className="flex flex-col gap-2 py-1 pl-1 pr-4 sm:pr-0">
           {schedule.content.map((scheduleRow) => (
