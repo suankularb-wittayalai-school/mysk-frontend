@@ -41,9 +41,10 @@ const ScheduleRow = ({
   scheduleRow: ScheduleRowType;
 }): JSX.Element => {
   const locale = useRouter().locale == "th" ? "th" : "en-US";
+  const { t } = useTranslation("common");
 
   return (
-    <li>
+    <li aria-label={t(`datetime.day.${scheduleRow.day}`)}>
       <ul className="relative h-[3.75rem]">
         {scheduleRow.content.map((schedulePeriod) => (
           <motion.li
@@ -112,7 +113,7 @@ const Schedule = ({
   noScroll?: boolean;
 }): JSX.Element => (
   <div className="flex flex-row gap-5 !px-0">
-    <div className="flex flex-col gap-2 py-1 pl-4 sm:pl-0">
+    <div aria-hidden className="flex flex-col gap-2 py-1 pl-4 sm:pl-0">
       {schedule.content.map((scheduleRow) => (
         <ScheduleDay key={scheduleRow.day} day={scheduleRow.day} />
       ))}
