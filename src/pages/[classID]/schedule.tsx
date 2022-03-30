@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // SK Components
 import {
@@ -215,6 +215,24 @@ const SubjectListSection = ({
 }): JSX.Element => {
   const { t } = useTranslation("schedule");
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const [filterredList, setFilterredList] =
+    useState<Array<SubjectListItem>>(subjectList);
+  const [query, setQuery] = useState<string>("");
+
+  useEffect(() => {
+    setFilterredList(
+      query
+        ? subjectList.filter(
+            (subjectListItem) =>
+              subjectListItem.subject.code[locale].includes(query) ||
+              subjectListItem.subject.name[locale].name.includes(query) ||
+              nameJoiner(locale, subjectListItem.teachers[0].name).includes(
+                query
+              )
+          )
+        : subjectList
+    );
+  }, [subjectList, locale, query]);
 
   return (
     <Section>
@@ -227,6 +245,7 @@ const SubjectListSection = ({
         </div>
         <Search
           placeholder={t("subjectList.search")}
+          onChange={(e: string) => setQuery(e)}
           className="[grid-area:search]"
         />
       </div>
@@ -242,7 +261,7 @@ const SubjectListSection = ({
             </tr>
           </thead>
           <tbody>
-            {subjectList.map((subjectListItem) => (
+            {filterredList.map((subjectListItem) => (
               <tr key={subjectListItem.id}>
                 <td>{subjectListItem.subject.code[locale]}</td>
                 <td className="w-2/5 !text-left">
