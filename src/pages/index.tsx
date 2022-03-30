@@ -1,14 +1,14 @@
 // Modules
 import { useState } from "react";
 
+import type { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
-import { useTranslation, Trans } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
-import type { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
+
+import { useTranslation, Trans } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 // SK Components
 import {
@@ -290,9 +290,9 @@ const Landing: NextPage = () => {
   );
 };
 
-export const getStaticProps = async ({ locale }: { locale: string }) => ({
+export const getStaticProps: GetStaticProps = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(locale, ["common", "landing"])),
+    ...(await serverSideTranslations(locale as string, ["common", "landing"])),
   },
 });
 

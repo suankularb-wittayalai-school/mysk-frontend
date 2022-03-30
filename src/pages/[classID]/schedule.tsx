@@ -31,10 +31,8 @@ import BrandIcon from "@components/icons/BrandIcon";
 
 // Types
 import { DialogProps } from "@utils/types/common";
-import {
-  Schedule as ScheduleType,
-  SchedulePeriod as SchedulePeriodType,
-} from "@utils/types/schedule";
+import { Role } from "@utils/types/person";
+import { Schedule as ScheduleType } from "@utils/types/schedule";
 
 // Backend
 import { addPeriodtoSchedule } from "@utils/backend/schedule";
@@ -63,6 +61,9 @@ const AddPeriod = ({
   });
 
   function validateAndSend() {
+    // Pre-parse validation
+    if (!form.periodStart) return false;
+
     const periodStart = parseInt(form.periodStart);
     const duration = parseInt(form.duration);
     let formData = new FormData();
@@ -179,9 +180,11 @@ const AddPeriod = ({
 };
 
 const ScheduleSection = ({
+  role,
   schedule,
   setShowAddPeriod,
 }: {
+  role: Role;
   schedule: ScheduleType;
   setShowAddPeriod: Function;
 }): JSX.Element => {
@@ -189,16 +192,18 @@ const ScheduleSection = ({
 
   return (
     <Section>
-      <Schedule schedule={schedule} />
-      <div className="flex flex-row items-center justify-end gap-2">
-        <Button name={t("schedule.action.edit")} type="outlined" />
-        <Button
-          name={t("schedule.action.add")}
-          type="filled"
-          icon={<MaterialIcon icon="add" />}
-          onClick={() => setShowAddPeriod(true)}
-        />
-      </div>
+      <Schedule schedule={schedule} role="teacher" />
+      {role == "teacher" && (
+        <div className="flex flex-row items-center justify-end gap-2">
+          <Button name={t("schedule.action.edit")} type="outlined" />
+          <Button
+            name={t("schedule.action.add")}
+            type="filled"
+            icon={<MaterialIcon icon="add" />}
+            onClick={() => setShowAddPeriod(true)}
+          />
+        </div>
+      )}
     </Section>
   );
 };
@@ -290,9 +295,10 @@ const SubjectListSection = ({
 };
 
 const Subjects: NextPage<{
+  role: Role;
   schedule: ScheduleType;
   subjectList: Array<SubjectListItem>;
-}> = ({ schedule: fetchedSchedule, subjectList }) => {
+}> = ({ role, schedule: fetchedSchedule, subjectList }) => {
   const { t } = useTranslation("schedule");
   const [schedule, setSchedule] = useState<ScheduleType>(fetchedSchedule);
   const [showAddPeriod, setShowAddPeriod] = useState<boolean>(false);
@@ -310,6 +316,7 @@ const Subjects: NextPage<{
         }
       >
         <ScheduleSection
+          role={role}
           schedule={schedule}
           setShowAddPeriod={setShowAddPeriod}
         />
@@ -376,6 +383,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   locale,
   params,
 }) => {
+  const role: Role = "teacher";
   const schedule: ScheduleType = {
     content: [
       {
@@ -531,6 +539,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         "common",
         "schedule",
       ])),
+      role,
       schedule,
       subjectList,
     },

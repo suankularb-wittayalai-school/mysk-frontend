@@ -762,7 +762,7 @@ const Home: NextPage = () => {
           <Title
             name={{ title: t("brand.name") }}
             pageIcon={<MaterialIcon icon="home" />}
-            backGoesTo="/"
+            backGoesTo={() => setShowLogOut(true)}
             LinkElement={Link}
             className="sm:!hidden"
           />

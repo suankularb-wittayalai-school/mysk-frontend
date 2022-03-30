@@ -17,6 +17,8 @@ export type PersonName = {
   nickname?: string;
 };
 
+export type Role = "student" | "teacher";
+
 export type Student = Person & {
   // TODO: Add more properties when the schema is completed
   role: "student";

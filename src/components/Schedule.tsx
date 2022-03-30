@@ -5,6 +5,7 @@ import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
 // Types
+import { Role } from "@utils/types/person";
 import {
   Schedule as ScheduleType,
   ScheduleRow as ScheduleRowType,
@@ -103,9 +104,11 @@ const ScheduleRow = ({
 
 const Schedule = ({
   schedule,
+  role,
   noScroll,
 }: {
   schedule: ScheduleType;
+  role: Role;
   noScroll?: boolean;
 }): JSX.Element => (
   <div className="flex flex-row gap-5 !px-0">
