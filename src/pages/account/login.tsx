@@ -1,5 +1,5 @@
 // Modules
-import type { NextPage } from "next";
+import type { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -89,9 +89,9 @@ const Login: NextPage = (): JSX.Element => {
   );
 };
 
-export const getStaticProps = async ({ locale }: { locale: string }) => ({
+export const getStaticProps: GetStaticProps = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(locale, ["common", "account"])),
+    ...(await serverSideTranslations(locale as string, ["common", "account"])),
   },
 });
 
