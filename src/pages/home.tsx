@@ -456,7 +456,7 @@ const ClassAdvisorsCard = (): JSX.Element => {
         className="font-display"
       />
       <div
-        className={`overflow-x-hidden rounded-b-2xl ${
+        className={`overflow-x-hidden rounded-b-xl ${
           classAdvisors.length > 2
             ? "aspect-[2/1] overflow-y-auto"
             : "overflow-y-hidden"
