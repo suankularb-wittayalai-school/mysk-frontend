@@ -162,7 +162,7 @@ const NewsCard = ({
         className="font-display"
       />
       {showChips && (
-        <div className="mx-[2px] overflow-x-auto px-[calc(1rem-2px)]">
+        <div className="mx-[2px] overflow-x-auto py-1 px-[calc(1rem-2px)]">
           <NewsChipList newsItem={newsItem} />
         </div>
       )}
@@ -181,7 +181,6 @@ const NewsCard = ({
           type={btnType || "filled"}
           url={`/${newsItem.type}/${newsItem.id}`}
           LinkElement={Link}
-          // className="container-secondary"
         />
       </CardActions>
     </Card>
