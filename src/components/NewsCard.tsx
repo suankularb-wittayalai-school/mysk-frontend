@@ -78,17 +78,27 @@ const NewsChipList = ({ newsItem }: { newsItem: NewsItem }): JSX.Element => {
       {
         // Due date
         (newsItem.type == "form" || newsItem.type == "payment") &&
-          newsItem.dueDate && (
+          newsItem.dueDate &&
+          (isPast(newsItem.dueDate) ? (
+            <Chip
+              name={formatDistanceToNowStrict(newsItem.dueDate, {
+                addSuffix: true,
+                locale: locale == "en-US" ? enUS : th,
+              })}
+              leadingIcon={
+                <MaterialIcon icon="calendar_today" className="text-error" />
+              }
+              selected
+              className="!bg-error-container !text-on-error-container"
+            />
+          ) : (
             <Chip
               name={
-                <Trans i18nKey="itemDue.pastDueBy" ns="news">
+                <Trans i18nKey="itemDue.dueWithin" ns="news">
                   {{
                     dueDate: newsItem.dueDate.toLocaleDateString(locale, {
                       month: "short",
                       day: "numeric",
-                    }),
-                    timePast: formatDistanceToNowStrict(newsItem.dueDate, {
-                      locale: locale == "en-US" ? enUS : th,
                     }),
                   }}
                 </Trans>
@@ -97,7 +107,7 @@ const NewsChipList = ({ newsItem }: { newsItem: NewsItem }): JSX.Element => {
                 <MaterialIcon icon="calendar_today" className="text-primary" />
               }
             />
-          )
+          ))
       }
     </ChipList>
   );
@@ -146,7 +156,7 @@ const NewsCard = ({
         }
         end={
           newsItem.type != "news" ? (
-            <NewsStatus newsItem={newsItem} />
+            <div><NewsStatus newsItem={newsItem} /></div>
           ) : undefined
         }
         className="font-display"
