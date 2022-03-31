@@ -55,6 +55,20 @@ const NewsChipList = ({ newsItem }: { newsItem: NewsItem }): JSX.Element => {
   return (
     <ChipList noWrap>
       {
+        // Payment
+        newsItem.type == "payment" && newsItem.amount && (
+          <Chip
+            name={newsItem.amount.toLocaleString(locale, {
+              style: "currency",
+              currency: "THB",
+            })}
+            leadingIcon={
+              <MaterialIcon icon="payments" className="text-primary" />
+            }
+          />
+        )
+      }
+      {
         // Frequency
         newsItem.type == "form" &&
           // Once
@@ -68,7 +82,7 @@ const NewsChipList = ({ newsItem }: { newsItem: NewsItem }): JSX.Element => {
           ) : (
             // Repeated
             <Chip
-              name={t(`itemsFrequency.${newsItem.frequency || "repeating"}`)}
+              name={t(`itemFrequency.${newsItem.frequency || "repeating"}`)}
               leadingIcon={
                 <MaterialIcon icon="repeat" className="text-primary" />
               }
@@ -156,12 +170,14 @@ const NewsCard = ({
         }
         end={
           newsItem.type != "news" ? (
-            <div><NewsStatus newsItem={newsItem} /></div>
+            <div>
+              <NewsStatus newsItem={newsItem} />
+            </div>
           ) : undefined
         }
         className="font-display"
       />
-      {showChips && (
+      {showChips && newsItem.type != "news" && (
         <div className="mx-[2px] overflow-x-auto py-1 px-[calc(1rem-2px)]">
           <NewsChipList newsItem={newsItem} />
         </div>

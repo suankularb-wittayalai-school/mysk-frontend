@@ -125,11 +125,11 @@ const NewsPage: NextPage<{ news: NewsListNoDate }> = ({
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   const news: NewsList = [
     {
-      id: 7,
+      id: 8,
       type: "form",
       frequency: "once",
       postDate: new Date(2022, 2, 20),
-      dueDate: new Date(2022, 2, 6),
+      dueDate: new Date(2022, 4, 9),
       done: false,
       content: {
         "en-US": {
@@ -144,7 +144,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
       },
     },
     {
-      id: 6,
+      id: 7,
       type: "form",
       frequency: "once",
       postDate: new Date(2022, 1, 1),
@@ -164,9 +164,32 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
       },
     },
     {
+      id: 6,
+      type: "form",
+      frequency: "weekly",
+      postDate: new Date(2022, 0, 8),
+      dueDate: new Date(2022, 2, 31),
+      done: true,
+      content: {
+        "en-US": {
+          title: "Classes Feedback",
+          supportingText:
+            "Before every Monday, all students must test for COVID-19 via RT-PCR, ATK, or other trusted methods and submit \
+            their readings here.",
+        },
+        th: {
+          title: "บันทึกผลการตรวจโควิด-19",
+          supportingText:
+            "ก่อนทุกวันจันทร์ ให้นักเรียนถ่ายรูปผลการตรวจการหาเชื้อโควิด-19 ผ่าน RT-CPR ATK หรือวิธีอื่นๆ",
+        },
+      },
+    },
+    {
       id: 5,
       type: "payment",
       postDate: new Date(2022, 0, 7),
+      dueDate: new Date(2022, 1, 7),
+      amount: 40000.0,
       done: true,
       content: {
         "en-US": {
@@ -193,7 +216,64 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
         th: {
           title: "ประกาศเกียรติคุณ",
           supportingText:
-            "ประกาศเกียรติคุณโรงเรียนสวนกุหลาบวิทยาลัย ประจปีการศึกษา 2563",
+            "ประกาศเกียรติคุณโรงเรียนสวนกุหลาบวิทยาลัย ประจำปีการศึกษา 2563",
+        },
+      },
+    },
+    {
+      id: 3,
+      type: "form",
+      frequency: "weekly",
+      postDate: new Date(2020, 3, 14),
+      dueDate: new Date(2020, 3, 21),
+      done: true,
+      content: {
+        "en-US": {
+          title: "Online Learning Readiness",
+          supportingText:
+            "To effectively provide means of study online to the most students possible, please do this form.",
+        },
+        th: {
+          title: "ความพร้อมการเรียนออนไลน์",
+          supportingText:
+            "เพื่อให้จัดการเรียนการสอนผ่านระบบออนไลน์ได้อย่างเหมาะสมและครอบคลุมนักเรียนทั้งหมด จึงขอให้นักเรียนตอบแบบสอบถามนี้อย่างซื่อสัตย์",
+        },
+      },
+    },
+    {
+      id: 2,
+      type: "news",
+      postDate: new Date(2020, 4, 12),
+      image: "/images/dummybase/sk-teaching-practice.webp",
+      content: {
+        "en-US": {
+          title: "SK Teaching Practice",
+          supportingText:
+            "The stories we’re about to tell might seem small, but can go a long way in creating an enjoyable \
+            environment for teachers and students alike.",
+        },
+        th: {
+          title: "การบริหารจัดการชั้นเรียน",
+          supportingText:
+            "เรื่องที่พวกเราจะเล่านั้น เป็นเพียงประเด็นเล็กๆ ที่ใช้บริหารจัดการชั้นเรียนได้อยู่หมัด มันดึงความสนใจของเด็กน้อยจากมือถือได้ \
+            แถมมีเสียงหัวเราะเกิดขึ้นในชั้นเรียน นักเรียนได้ค้นคว้าได้ทดลอง ได้ฝึกปฏิบัติ",
+        },
+      },
+    },
+    {
+      id: 1,
+      type: "news",
+      postDate: new Date(2020, 1, 21),
+      content: {
+        "en-US": {
+          title: "2020 Pre-Test Results",
+          supportingText:
+            "The results are here! This time, we are ordering the scores with percentile order (P^r), which to put simply",
+        },
+        th: {
+          title: "ประกาศผลการทดสอบ Pre-Test",
+          supportingText:
+            "ผลการตรวจกระดาษคำตอบครั้งนี้ มีการจัดลำดับที่เป็นลำดับเปอร์เซ็นไทล์ (P^r) กล่าวคือ ลำดับที่ได้จะสะท้อน",
         },
       },
     },
@@ -206,7 +286,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
       // (@SiravitPhokeed)
       // Apparently NextJS doesn’t serialize Date when in development
       // It does in production, though.
-      // So I guess I’ll keep this woukaround, well, around…
+      // So I guess I’ll keep this workaround, well, around…
       news: news.map((newsItem) => ({
         ...newsItem,
         postDate: newsItem.postDate.getTime(),
