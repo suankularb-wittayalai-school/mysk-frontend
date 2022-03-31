@@ -28,22 +28,6 @@
       }
     },
     "noRelevantNews": "We couldn’t find any relevant news.",
-    "itemType": {
-      "form": "Form",
-      "news": "News",
-      "payment": "Payment"
-    },
-    "itemAction": {
-      "form": {
-        "do": "Do form",
-        "edit": "Edit form"
-      },
-      "news": "Read more",
-      "payment": {
-        "do": "Pay",
-        "edit": "See payment"
-      }
-    },
     "action": {
       "seeAll": "See all"
     }
