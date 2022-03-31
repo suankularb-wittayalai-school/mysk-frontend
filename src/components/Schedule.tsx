@@ -18,6 +18,7 @@ import { animationTransition } from "@utils/animations/config";
 
 // Helpers
 import { isInPeriod } from "@utils/helpers/schedule";
+import { useEffect, useState } from "react";
 
 const ScheduleDay = ({ day }: { day: ScheduleRowType["day"] }): JSX.Element => {
   const locale = useRouter().locale;
@@ -48,8 +49,13 @@ const ScheduleRow = ({
   const locale = useRouter().locale == "th" ? "th" : "en-US";
   const { t } = useTranslation("common");
 
+  const [now, setNow] = useState<Date>(new Date());
   const day = setDay(new Date(), scheduleRow.day);
-  const now = new Date();
+
+  // Updates `now` every 5 seconds
+  useEffect(() => {
+    setInterval(() => setNow(new Date()), 5000);
+  }, []);
 
   const periodWidth = 112;
 
