@@ -10,6 +10,8 @@ import {
   CardActions,
   CardHeader,
   CardSupportingText,
+  Chip,
+  ChipList,
   LinkButton,
   MaterialIcon,
 } from "@suankularb-components/react";
@@ -17,7 +19,65 @@ import {
 // Types
 import { NewsItem } from "@utils/types/news";
 
-const NewsCard = ({ newsItem }: { newsItem: NewsItem }): JSX.Element => {
+const NewsChipList = ({ newsItem }: { newsItem: NewsItem }): JSX.Element => {
+  const { t } = useTranslation("news");
+  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+
+  return (
+    <ChipList>
+      {
+        // Frequency
+        newsItem.type == "form" &&
+          // Once
+          (newsItem.frequency == "once" ? (
+            <Chip
+              name="ทำครั้งเดียว"
+              leadingIcon={
+                <MaterialIcon icon="looks_one" className="text-primary" />
+              }
+            />
+          ) : (
+            // Repeated
+            <Chip
+              name={
+                newsItem.frequency == "weekly"
+                  ? "ทำทุกสัปดาห์"
+                  : newsItem.frequency == "monthly"
+                  ? "ทำทุกเดือน"
+                  : "ทำหลายครั้ง"
+              }
+              leadingIcon={
+                <MaterialIcon icon="repeat" className="text-primary" />
+              }
+            />
+          ))
+      }
+      {
+        // Due date
+        (newsItem.type == "form" || newsItem.type == "payment") &&
+          newsItem.dueDate && (
+            <Chip
+              name={newsItem.dueDate.toLocaleDateString(locale, {
+                month: "short",
+                day: "numeric",
+              })}
+              leadingIcon={
+                <MaterialIcon icon="calendar_today" className="text-primary" />
+              }
+            />
+          )
+      }
+    </ChipList>
+  );
+};
+
+const NewsCard = ({
+  newsItem,
+  showChips,
+}: {
+  newsItem: NewsItem;
+  showChips?: boolean;
+}): JSX.Element => {
   const { t } = useTranslation("news");
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
 
@@ -61,7 +121,7 @@ const NewsCard = ({ newsItem }: { newsItem: NewsItem }): JSX.Element => {
                     isPast(newsItem.dueDate)
                   ? "bg-error text-on-error"
                   : "container-tertiary"
-              } grid aspect-square w-10 place-content-center rounded-xl`}
+              } grid aspect-square w-10 place-content-center rounded-lg`}
             >
               {newsItem.done ? (
                 <MaterialIcon icon="done" />
@@ -73,6 +133,11 @@ const NewsCard = ({ newsItem }: { newsItem: NewsItem }): JSX.Element => {
         }
         className="font-display"
       />
+      {showChips && (
+        <div className="px-4">
+          <NewsChipList newsItem={newsItem} />
+        </div>
+      )}
       <CardSupportingText>
         <p className="max-lines-2">
           {newsItem.content[locale == "en-US" ? "en-US" : "th"].supportingText}

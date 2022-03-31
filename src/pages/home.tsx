@@ -1,7 +1,7 @@
 // Modules
-import { getDay, isPast, isThisYear } from "date-fns";
+import { getDay } from "date-fns";
 
-import { NextPage } from "next";
+import { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
@@ -17,8 +17,6 @@ import {
   Button,
   Card,
   CardHeader,
-  CardSupportingText,
-  CardActions,
   ChipFilterList,
   Header,
   MaterialIcon,
@@ -201,7 +199,6 @@ const UserSection = ({
 
 const NewsSection = (): JSX.Element => {
   const { t } = useTranslation("dashboard");
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
   const news: NewsList = [
     {
       id: 7,
@@ -716,11 +713,12 @@ const Home: NextPage = () => {
   );
 };
 
-export const getStaticProps = async ({ locale }: { locale: string }) => ({
+export const getStaticProps: GetStaticProps = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(locale, [
+    ...(await serverSideTranslations(locale as string, [
       "common",
       "account",
+      "news",
       "dashboard",
     ])),
   },
