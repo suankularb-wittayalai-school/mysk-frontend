@@ -276,7 +276,10 @@ const NewsSection = (): JSX.Element => {
   const [filteredNews, setFilteredNews] = useState<NewsList>(news);
 
   useEffect(
-    () => filterNews(news, newsFilter, (newNews: NewsList) => setFilteredNews(newNews)),
+    () =>
+      filterNews(news, newsFilter, (newNews: NewsList) =>
+        setFilteredNews(newNews)
+      ),
 
     // Adding `news` as a dependency causes an inifinie loop
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -604,14 +607,14 @@ const TeachersSection = (): JSX.Element => {
           </div>
         ) : (
           <div
-            className="scroll-w-0 h-full overflow-x-auto
-            sm:relative sm:overflow-y-scroll
-            md:static md:col-span-3 md:overflow-y-visible"
+            className="scroll-w-0 scroll-desktop h-full overflow-x-auto
+              sm:relative sm:overflow-y-scroll
+              md:static md:col-span-3 md:overflow-y-visible"
           >
             <ul
-              className="flex h-full w-fit flex-row gap-3
-              px-4 sm:absolute sm:top-0 sm:w-full sm:grid-rows-2 sm:flex-col
-              sm:px-0 md:static md:grid md:grid-cols-9 md:pr-0"
+              className="flex h-full w-fit flex-row gap-3 px-4
+                sm:absolute sm:top-0 sm:w-full sm:grid-rows-2 sm:flex-col sm:pl-0 sm:pr-2
+                md:static md:grid md:grid-cols-9 md:pr-0"
             >
               {teachers.map((teacher, index) => (
                 <li
