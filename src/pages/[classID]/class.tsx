@@ -1,5 +1,5 @@
 // Modules
-import { GetServerSideProps, GetStaticPaths, GetStaticProps, NextPage } from "next";
+import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -106,7 +106,7 @@ const StudentListSection = ({
         />
       </div>
       <div>
-        <Table>
+        <Table width={320}>
           <thead>
             <tr>
               <th className="w-24">{t("studentList.table.classNo")}</th>
@@ -258,6 +258,11 @@ export const getServerSideProps: GetServerSideProps = async ({ locale, params })
         profile: "/images/dummybase/taradol.webp",
         subjectsInCharge: [
           {
+            id: 8,
+            code: {
+              "en-US": "SOC31152",
+              th: "ส31152"
+            },
             name: {
               "en-US": {
                 name: "Social Studies 2 (World)",
@@ -284,6 +289,11 @@ export const getServerSideProps: GetServerSideProps = async ({ locale, params })
         profile: "/images/dummybase/mattana.webp",
         subjectsInCharge: [
           {
+            id: 2,
+            code: {
+              "en-US": "ENG31252",
+              th: "อ31252"
+            },
             name: {
               "en-US": {
                 name: "Communication 2",

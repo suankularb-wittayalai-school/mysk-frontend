@@ -1,5 +1,5 @@
 // Modules
-import { isPast, isThisYear } from "date-fns";
+import { getDay, isPast, isThisYear } from "date-fns";
 
 import { NextPage } from "next";
 import Head from "next/head";
@@ -451,48 +451,37 @@ const ClassSection = (): JSX.Element => {
   const schedule: ScheduleType = {
     content: [
       {
-        day: 1,
+        day: getDay(new Date()),
         content: [
+          { periodStart: 1, duration: 1 },
           {
-            periodStart: 1,
-            periodEnd: 1,
+            periodStart: 2,
+            duration: 1,
             subject: {
               name: {
-                "en-US": { name: "English" },
-                th: { name: "ภาษาอังกฤษ" },
+                "en-US": {
+                  name: "Chemistry",
+                  shortName: "Chem",
+                },
+                th: {
+                  name: "เคมี",
+                  shortName: "เคมี",
+                },
               },
               teachers: [
                 {
-                  id: 1,
-                  role: "teacher",
-                  prefix: "mister",
                   name: {
                     "en-US": {
-                      firstName: "John",
-                      middleName: "Peter",
-                      lastName: "Smith",
+                      firstName: "Thanthapatra",
+                      lastName: "Bunchuay",
                     },
                     th: {
-                      firstName: "จอห์น",
-                      middleName: "ปีเตอร์",
-                      lastName: "สมิธ",
+                      firstName: "ธันฐภัทร",
+                      lastName: "บุญช่วย",
                     },
                   },
-                  subjectsInCharge: [],
                 },
               ],
-              subjectSubgroup: {
-                name: {
-                  "en-US": "English",
-                  th: "ภาษาอังกฤษ",
-                },
-                subjectGroup: {
-                  name: {
-                    "en-US": "Foreign Languages",
-                    th: "ภาษาต่างประเทศ",
-                  },
-                },
-              },
             },
           },
         ],
@@ -506,7 +495,7 @@ const ClassSection = (): JSX.Element => {
         icon={<MaterialIcon icon="groups" allowCustomSize={true} />}
         text={t("class.title")}
       />
-      <Schedule schedule={schedule} />
+      <Schedule schedule={schedule} role="student" />
       <div className="flex flex-row flex-wrap items-center justify-end gap-2">
         <LinkButton
           name={t("class.action.seeSchedule")}
@@ -528,6 +517,7 @@ const ClassSection = (): JSX.Element => {
 const ClassAdvisorsCard = (): JSX.Element => {
   const locale = useRouter().locale == "th" ? "th" : "en-US";
   const { t } = useTranslation(["dashboard", "common"]);
+  
   const classAdvisors: Array<Teacher> = [
     {
       id: 2,
@@ -540,6 +530,11 @@ const ClassAdvisorsCard = (): JSX.Element => {
       profile: "/images/dummybase/taradol.webp",
       subjectsInCharge: [
         {
+          id: 25,
+          code: {
+            "en-US": "SOC31152",
+            th: "ส31152",
+          },
           name: {
             "en-US": {
               name: "Social Studies 2 (World)",
@@ -793,7 +788,7 @@ const Home: NextPage = () => {
           <Title
             name={{ title: t("brand.name", { ns: "common" }) }}
             pageIcon={<MaterialIcon icon="home" />}
-            backGoesTo="/"
+            backGoesTo={() => setShowLogOut(true)}
             LinkElement={Link}
             className="sm:!hidden"
           />

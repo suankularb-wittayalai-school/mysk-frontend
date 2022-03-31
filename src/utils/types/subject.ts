@@ -16,7 +16,11 @@ export type SubjectSubgroup = {
 };
 
 export type Subject = {
-  // TODO: Add more properties when the schema is completed
+  id: number;
+  code: {
+    "en-US": string;
+    th: string;
+  };
   name: {
     "en-US": SubjectName;
     th: SubjectName;
@@ -25,13 +29,17 @@ export type Subject = {
   subjectSubgroup: SubjectSubgroup;
 };
 
-export type SubjectMini = {
-  name: {
-    "en-US": SubjectName;
-    th: SubjectName;
+export type SubjectListItem = {
+  id: number;
+  subject: {
+    code: Subject["code"];
+    name: Subject["name"];
   };
-  subjectSubgroup: SubjectSubgroup;
-}
+  teachers: Array<Teacher>;
+  ggcCode?: string;
+  ggcLink?: string;
+  ggMeetLink?: string;
+};
 
 export type SubjectName = {
   name: string;

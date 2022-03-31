@@ -1,0 +1,38 @@
+{
+  "title": {
+    "student": "ตารางเรียน",
+    "teacher": "ตารางสอน"
+  },
+  "schedule": {
+    "action": {
+      "add": "เพิ่มคาบสอน",
+      "edit": "แก้ไข"
+    }
+  },
+  "subjectList": {
+    "title": "รายชื่อวิชา",
+    "search": "ค้นหาวิชา",
+    "table": {
+      "code": "รหัสวิชา",
+      "name": "ชื่อวิชา",
+      "teachers": "ครูผู้สอน",
+      "ggcCode": "Class Code"
+    }
+  },
+  "dialog": {
+    "add": {
+      "title": "เพิ่มคาบสอน",
+      "form": {
+        "title": "ข้อมูลคาบ",
+        "subject": "วิชาที่สอนในคาบนี้",
+        "day": "วัน",
+        "periodStart": "เริ่มที่คาบ",
+        "duration": "ความยาวคาบ"
+      },
+      "action": {
+        "cancel": "ยกเลิก",
+        "save": "บันทึก"
+      }
+    }
+  }
+}

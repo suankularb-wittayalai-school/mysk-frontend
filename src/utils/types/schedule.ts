@@ -1,3 +1,4 @@
+import { Teacher } from "./person";
 import { Subject } from "./subject";
 
 export type Schedule = {
@@ -11,6 +12,11 @@ export type ScheduleRow = {
 
 export type SchedulePeriod = {
   periodStart: number;
-  periodEnd: number;
-  subject: Subject;
-}
+  duration: number;
+  subject?: {
+    name: Subject["name"];
+    teachers: Array<{
+      name: Teacher["name"];
+    }>;
+  };
+};
