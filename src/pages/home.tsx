@@ -311,7 +311,7 @@ const NewsSection = (): JSX.Element => {
       ) : (
         <XScrollContent>
           {filteredNews.map((newsItem) => (
-            <li key={`${newsItem.type}-${newsItem.id}`}>
+            <li key={newsItem.id}>
               <NewsCard newsItem={newsItem} />
             </li>
           ))}

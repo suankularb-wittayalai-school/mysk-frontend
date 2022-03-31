@@ -2,12 +2,13 @@
 import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
-import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { useEffect, useState } from "react";
+
+import Masonry from "react-masonry-css";
 
 // SK Components
 import {
@@ -17,17 +18,66 @@ import {
   Title,
 } from "@suankularb-components/react";
 
+// Components
+import NewsCard from "@components/NewsCard";
+
 // Types
-import { NewsList } from "@utils/types/news";
+import { NewsItemType, NewsList } from "@utils/types/news";
+
+// Helpers
 import { filterNews } from "@utils/helpers/filter-news";
 
-const NewsMasonry = (): JSX.Element => <div></div>;
+const NewsFilter = ({
+  setNewsFilter,
+}: {
+  setNewsFilter: (newFilter: Array<NewsItemType>) => void;
+}): JSX.Element => {
+  const { t } = useTranslation("news");
+  return (
+    <ChipFilterList
+      choices={[
+        { id: "news", name: t("filter.news") },
+        { id: "form", name: t("filter.forms") },
+        { id: "payment", name: t("filter.payments") },
+        [
+          { id: "not-done", name: t("filter.amountDone.notDone") },
+          { id: "done", name: t("filter.amountDone.done") },
+        ],
+      ]}
+      onChange={(newFilter: Array<NewsItemType>) => setNewsFilter(newFilter)}
+      scrollable={true}
+    />
+  );
+};
+
+const NewsMasonry = ({ news }: { news: NewsList }): JSX.Element => (
+  <Masonry
+    role="feed"
+    breakpointCols={{
+      default: 3,
+      905: 2,
+      600: 1,
+    }}
+    className="flex flex-row gap-4 sm:gap-6"
+    columnClassName="flex flex-col gap-4 sm:gap-6"
+  >
+    {news
+      .map((newsItem) => ({
+        ...newsItem,
+        postDate: new Date(newsItem.postDate),
+      }))
+      .map((newsItem, index) => (
+        <article key={newsItem.id} aria-posinset={index} aria-setsize={-1}>
+          <NewsCard newsItem={newsItem} showChips />
+        </article>
+      ))}
+  </Masonry>
+);
 
 // Page
 const NewsPage: NextPage<{ news: NewsList }> = ({ news }): JSX.Element => {
   const { t } = useTranslation(["news", "common"]);
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
-  const [newsFilter, setNewsFilter] = useState<Array<string>>([]);
+  const [newsFilter, setNewsFilter] = useState<Array<NewsItemType>>([]);
   const [filteredNews, setFilteredNews] = useState<NewsList>(news);
 
   useEffect(
@@ -58,20 +108,8 @@ const NewsPage: NextPage<{ news: NewsList }> = ({ news }): JSX.Element => {
         }
       >
         <Section>
-          <ChipFilterList
-            choices={[
-              { id: "news", name: t("filter.news") },
-              { id: "form", name: t("filter.forms") },
-              { id: "payment", name: t("filter.payments") },
-              [
-                { id: "not-done", name: t("filter.amountDone.notDone") },
-                { id: "done", name: t("filter.amountDone.done") },
-              ],
-            ]}
-            onChange={(newFilter: Array<string>) => setNewsFilter(newFilter)}
-            scrollable={true}
-          />
-          <NewsMasonry />
+          <NewsFilter setNewsFilter={setNewsFilter} />
+          <NewsMasonry news={filteredNews} />
         </Section>
       </RegularLayout>
     </>
@@ -161,7 +199,10 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
       // Apparently NextJS doesn’t serialize Date when in development
       // It does in production, though.
       // So I guess I’ll keep this woukaround, well, around…
-      news: JSON.parse(JSON.stringify(news)),
+      news: news.map((newsItem) => ({
+        ...newsItem,
+        postDate: newsItem.postDate.getTime(),
+      })),
     },
   };
 };

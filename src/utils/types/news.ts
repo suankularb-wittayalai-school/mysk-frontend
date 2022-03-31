@@ -2,6 +2,8 @@ export type NewsList = Array<NewsItem>;
 
 export type NewsItem = NewsItemNews | NewsItemForm | NewsItemPayment;
 
+export type NewsItemType = "news" | "form" | "payment";
+
 type NewsItemCommon = {
   id: number;
   postDate: Date;
