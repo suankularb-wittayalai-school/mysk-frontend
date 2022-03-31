@@ -106,7 +106,7 @@ const NewsPage: NextPage<{ news: NewsListNoDate }> = ({
               // TODO: When Title line height is fixed, add this back
               // subtitle: t("title.subtitle"),
             }}
-            pageIcon="person"
+            pageIcon="newspaper"
             backGoesTo="/"
             LinkElement={Link}
             key="title"
