@@ -1,8 +1,15 @@
 // Modules
-import { isPast, isThisYear } from "date-fns";
+import {
+  formatDistanceToNow,
+  formatDistanceToNowStrict,
+  isPast,
+  isThisYear,
+} from "date-fns";
+import { enUS, th } from "date-fns/locale";
+
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useTranslation } from "next-i18next";
+import { Trans, useTranslation } from "next-i18next";
 
 // SK Components
 import {
@@ -46,7 +53,7 @@ const NewsChipList = ({ newsItem }: { newsItem: NewsItem }): JSX.Element => {
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
 
   return (
-    <ChipList>
+    <ChipList noWrap>
       {
         // Frequency
         newsItem.type == "form" &&
@@ -73,10 +80,19 @@ const NewsChipList = ({ newsItem }: { newsItem: NewsItem }): JSX.Element => {
         (newsItem.type == "form" || newsItem.type == "payment") &&
           newsItem.dueDate && (
             <Chip
-              name={newsItem.dueDate.toLocaleDateString(locale, {
-                month: "short",
-                day: "numeric",
-              })}
+              name={
+                <Trans i18nKey="itemDue.pastDueBy" ns="news">
+                  {{
+                    dueDate: newsItem.dueDate.toLocaleDateString(locale, {
+                      month: "short",
+                      day: "numeric",
+                    }),
+                    timePast: formatDistanceToNowStrict(newsItem.dueDate, {
+                      locale: locale == "en-US" ? enUS : th,
+                    }),
+                  }}
+                </Trans>
+              }
               leadingIcon={
                 <MaterialIcon icon="calendar_today" className="text-primary" />
               }
@@ -136,7 +152,7 @@ const NewsCard = ({
         className="font-display"
       />
       {showChips && (
-        <div className="px-4">
+        <div className="mx-[2px] overflow-x-auto px-[calc(1rem-2px)]">
           <NewsChipList newsItem={newsItem} />
         </div>
       )}

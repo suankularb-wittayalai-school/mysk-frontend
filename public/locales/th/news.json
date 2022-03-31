@@ -27,6 +27,10 @@
     "monthly": "ทำทุกเดือน",
     "repeating": "ทำหลายครั้ง"
   },
+  "itemDue": {
+    "dueWithin": "ภายใน {{dueDate}}",
+    "pastDueBy": "{{timePast}}ที่แล้ว"
+  },
   "itemAction": {
     "form": {
       "do": "ทำแบบสอบถาม",

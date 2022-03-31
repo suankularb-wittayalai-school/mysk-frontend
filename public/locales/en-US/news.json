@@ -27,6 +27,10 @@
     "monthly": "Monthly",
     "repeating": "Repeating"
   },
+  "itemDue": {
+    "dueWithin": "Due within {{dueDate}}",
+    "pastDueBy": "Past due by {{timePast}}"
+  },
   "itemAction": {
     "form": {
       "do": "Do form",
