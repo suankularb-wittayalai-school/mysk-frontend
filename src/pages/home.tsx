@@ -312,7 +312,7 @@ const NewsSection = (): JSX.Element => {
         <XScrollContent>
           {filteredNews.map((newsItem) => (
             <li key={newsItem.id}>
-              <NewsCard newsItem={newsItem} />
+              <NewsCard newsItem={newsItem} btnType="tonal" />
             </li>
           ))}
         </XScrollContent>

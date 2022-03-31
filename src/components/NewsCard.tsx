@@ -90,9 +90,11 @@ const NewsChipList = ({ newsItem }: { newsItem: NewsItem }): JSX.Element => {
 const NewsCard = ({
   newsItem,
   showChips,
+  btnType,
 }: {
   newsItem: NewsItem;
   showChips?: boolean;
+  btnType?: "filled" | "outlined" | "text" | "tonal";
 }): JSX.Element => {
   const { t } = useTranslation("news");
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
@@ -102,11 +104,11 @@ const NewsCard = ({
       <CardHeader
         icon={
           newsItem.type == "form" ? (
-            <MaterialIcon icon="edit" />
+            <MaterialIcon icon="edit" className="text-secondary" />
           ) : newsItem.type == "payment" ? (
-            <MaterialIcon icon="account_balance" />
+            <MaterialIcon icon="account_balance" className="text-secondary" />
           ) : (
-            <MaterialIcon icon="information" />
+            <MaterialIcon icon="information" className="text-secondary" />
           )
         }
         title={
@@ -150,10 +152,10 @@ const NewsCard = ({
               newsItem.type != "news" ? `.${newsItem.done ? "edit" : "do"}` : ""
             }`
           )}
-          type="filled"
+          type={btnType || "filled"}
           url={`/${newsItem.type}/${newsItem.id}`}
           LinkElement={Link}
-          className="container-secondary"
+          // className="container-secondary"
         />
       </CardActions>
     </Card>
