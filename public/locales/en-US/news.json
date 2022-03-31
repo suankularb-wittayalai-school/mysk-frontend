@@ -20,6 +20,13 @@
     "news": "News",
     "payment": "Payment"
   },
+  "itemFrequency": {
+    "once": "Once",
+    "daily": "Daily",
+    "weekly": "Weekly",
+    "monthly": "Monthly",
+    "repeating": "Repeating"
+  },
   "itemAction": {
     "form": {
       "do": "Do form",

@@ -19,6 +19,28 @@ import {
 // Types
 import { NewsItem } from "@utils/types/news";
 
+const NewsStatus = ({ newsItem }: { newsItem: NewsItem }): JSX.Element => {
+  return (
+    <div
+      className={`${
+        newsItem.done
+          ? "container-primary"
+          : (newsItem.type == "form" || newsItem.type == "payment") &&
+            newsItem.dueDate &&
+            isPast(newsItem.dueDate)
+          ? "bg-error text-on-error"
+          : "container-tertiary"
+      } grid aspect-square w-10 place-content-center rounded-lg`}
+    >
+      {newsItem.done ? (
+        <MaterialIcon icon="done" />
+      ) : (
+        <MaterialIcon icon="close" />
+      )}
+    </div>
+  );
+};
+
 const NewsChipList = ({ newsItem }: { newsItem: NewsItem }): JSX.Element => {
   const { t } = useTranslation("news");
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
@@ -31,7 +53,7 @@ const NewsChipList = ({ newsItem }: { newsItem: NewsItem }): JSX.Element => {
           // Once
           (newsItem.frequency == "once" ? (
             <Chip
-              name="ทำครั้งเดียว"
+              name={t(`itemFrequency.once`)}
               leadingIcon={
                 <MaterialIcon icon="looks_one" className="text-primary" />
               }
@@ -39,13 +61,7 @@ const NewsChipList = ({ newsItem }: { newsItem: NewsItem }): JSX.Element => {
           ) : (
             // Repeated
             <Chip
-              name={
-                newsItem.frequency == "weekly"
-                  ? "ทำทุกสัปดาห์"
-                  : newsItem.frequency == "monthly"
-                  ? "ทำทุกเดือน"
-                  : "ทำหลายครั้ง"
-              }
+              name={t(`itemsFrequency.${newsItem.frequency || "repeating"}`)}
               leadingIcon={
                 <MaterialIcon icon="repeat" className="text-primary" />
               }
@@ -112,23 +128,7 @@ const NewsCard = ({
         }
         end={
           newsItem.type != "news" ? (
-            <div
-              className={`${
-                newsItem.done
-                  ? "container-primary"
-                  : (newsItem.type == "form" || newsItem.type == "payment") &&
-                    newsItem.dueDate &&
-                    isPast(newsItem.dueDate)
-                  ? "bg-error text-on-error"
-                  : "container-tertiary"
-              } grid aspect-square w-10 place-content-center rounded-lg`}
-            >
-              {newsItem.done ? (
-                <MaterialIcon icon="done" />
-              ) : (
-                <MaterialIcon icon="close" />
-              )}
-            </div>
+            <NewsStatus newsItem={newsItem} />
           ) : undefined
         }
         className="font-display"
