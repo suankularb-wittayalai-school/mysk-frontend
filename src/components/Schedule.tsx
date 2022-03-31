@@ -1,6 +1,8 @@
 // Modules
-import { intervalToDuration, isWithinInterval, setDay } from "date-fns";
+import { setDay } from "date-fns";
+
 import { AnimatePresence, motion } from "framer-motion";
+
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
@@ -13,7 +15,9 @@ import {
 
 // Animations
 import { animationTransition } from "@utils/animations/config";
-import { periodTimes } from "@utils/helpers/schedule";
+
+// Helpers
+import { isInPeriod } from "@utils/helpers/schedule";
 
 const ScheduleDay = ({ day }: { day: ScheduleRowType["day"] }): JSX.Element => {
   const locale = useRouter().locale;
@@ -68,32 +72,12 @@ const ScheduleRow = ({
             {schedulePeriod.subject ? (
               <div
                 className={`flex h-[3.75rem] flex-col rounded-lg px-4 py-2 leading-snug ${
-                  isWithinInterval(now, {
-                    start: new Date(
-                      day.setHours(
-                        periodTimes[schedulePeriod.periodStart].hours,
-                        periodTimes[schedulePeriod.periodStart].min,
-                        0,
-                        0
-                      )
-                    ),
-                    end: new Date(
-                      day.setHours(
-                        periodTimes[
-                          schedulePeriod.periodStart +
-                            schedulePeriod.duration -
-                            1
-                        ].hours,
-                        periodTimes[
-                          schedulePeriod.periodStart +
-                            schedulePeriod.duration -
-                            1
-                        ].min,
-                        0,
-                        0
-                      )
-                    ),
-                  })
+                  isInPeriod(
+                    now,
+                    day,
+                    schedulePeriod.periodStart,
+                    schedulePeriod.duration
+                  )
                     ? "container-tertiary shadow"
                     : "container-secondary"
                 }`}
@@ -131,7 +115,18 @@ const ScheduleRow = ({
                 )}
               </div>
             ) : (
-              <div className="h-[3.75rem] w-full rounded-lg outline-offset-[-2px] outline-outline" />
+              <div
+                className={`h-[3.75rem] w-full rounded-lg ${
+                  isInPeriod(
+                    now,
+                    day,
+                    schedulePeriod.periodStart,
+                    schedulePeriod.duration
+                  )
+                    ? "outline-4 outline-offset-[-4px] outline-secondary"
+                    : "outline-2 outline-offset-[-2px] outline-outline"
+                }`}
+              />
             )}
           </motion.li>
         ))}
