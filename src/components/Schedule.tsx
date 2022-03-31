@@ -62,7 +62,7 @@ const ScheduleRow = ({
             transition={animationTransition}
           >
             {schedulePeriod.subject ? (
-              <div className="container-secondary flex h-[3.75rem] flex-col rounded-xl px-4 py-2 leading-snug">
+              <div className="container-secondary flex h-[3.75rem] flex-col rounded-lg px-4 py-2 leading-snug">
                 <span
                   className="max-lines-1 font-display text-xl font-medium"
                   title={schedulePeriod.subject.name[locale].name}
@@ -96,7 +96,7 @@ const ScheduleRow = ({
                 )}
               </div>
             ) : (
-              <div className="h-[3.75rem] w-full rounded-xl outline-offset-[-2px] outline-outline" />
+              <div className="h-[3.75rem] w-full rounded-lg outline-offset-[-2px] outline-outline" />
             )}
           </motion.li>
         ))}
