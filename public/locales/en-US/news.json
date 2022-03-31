@@ -1,0 +1,18 @@
+{
+  "title": {
+    "title": "News",
+    "subtitle": "and Forms"
+  },
+  "filter": {
+    "forms": "Forms",
+    "news": "News",
+    "payments": "Payments",
+    "amountDone": {
+      "notDone": "Not done",
+      "done": "Done",
+      "fewDone": "Few done",
+      "mostDone": "Most done",
+      "allDone": "All done"
+    }
+  }
+}

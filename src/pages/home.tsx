@@ -41,6 +41,7 @@ import LogOutDialog from "@components/dialogs/LogOut";
 import { NewsList } from "@utils/types/news";
 import { Student, Teacher } from "@utils/types/person";
 import { Schedule as ScheduleType } from "@utils/types/schedule";
+import { filterNews } from "@utils/helpers/filter-news";
 
 const UserActions = ({
   setshowChangePassword,
@@ -198,6 +199,7 @@ const UserSection = ({
 };
 
 const NewsSection = (): JSX.Element => {
+  const { t } = useTranslation("dashboard");
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
   const news: NewsList = [
     {
@@ -274,47 +276,9 @@ const NewsSection = (): JSX.Element => {
   ];
   const [newsFilter, setNewsFilter] = useState<Array<string>>([]);
   const [filteredNews, setFilteredNews] = useState<NewsList>(news);
-  const { t } = useTranslation("dashboard");
 
   useEffect(
-    () => {
-      // Reset filtered news if all filters are deselected
-      if (newsFilter.length == 0) {
-        setFilteredNews(news);
-
-        // Handles done
-      } else if (
-        newsFilter.includes("not-done") ||
-        newsFilter.includes("done")
-      ) {
-        if (newsFilter.length > 1) {
-          setFilteredNews(
-            news.filter(
-              (newsItem) =>
-                newsFilter.includes(newsItem.type) &&
-                (newsFilter.includes("done")
-                  ? newsItem.done
-                  : newsItem.done == false)
-            )
-          );
-        } else {
-          setFilteredNews(
-            news.filter((newsItem) =>
-              newsFilter.includes("done")
-                ? newsItem.done
-                : newsItem.done == false
-            )
-          );
-        }
-      }
-
-      // Handles types
-      else {
-        setFilteredNews(
-          news.filter((newsItem) => newsFilter.includes(newsItem.type))
-        );
-      }
-    },
+    () => filterNews(news, newsFilter, (newNews) => setFilteredNews(newNews)),
 
     // Adding `news` as a dependency causes an inifinie loop
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -517,7 +481,7 @@ const ClassSection = (): JSX.Element => {
 const ClassAdvisorsCard = (): JSX.Element => {
   const locale = useRouter().locale == "th" ? "th" : "en-US";
   const { t } = useTranslation(["dashboard", "common"]);
-  
+
   const classAdvisors: Array<Teacher> = [
     {
       id: 2,
