@@ -276,7 +276,7 @@ const NewsSection = (): JSX.Element => {
   const [filteredNews, setFilteredNews] = useState<NewsList>(news);
 
   useEffect(
-    () => filterNews(news, newsFilter, (newNews) => setFilteredNews(newNews)),
+    () => filterNews(news, newsFilter, (newNews: NewsList) => setFilteredNews(newNews)),
 
     // Adding `news` as a dependency causes an inifinie loop
     // eslint-disable-next-line react-hooks/exhaustive-deps

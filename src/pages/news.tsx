@@ -22,7 +22,7 @@ import {
 import NewsCard from "@components/NewsCard";
 
 // Types
-import { NewsItemType, NewsList } from "@utils/types/news";
+import { NewsItemType, NewsList, NewsListNoDate } from "@utils/types/news";
 
 // Helpers
 import { filterNews } from "@utils/helpers/filter-news";
@@ -50,7 +50,7 @@ const NewsFilter = ({
   );
 };
 
-const NewsMasonry = ({ news }: { news: NewsList }): JSX.Element => (
+const NewsMasonry = ({ news }: { news: NewsListNoDate }): JSX.Element => (
   <Masonry
     role="feed"
     breakpointCols={{
@@ -65,6 +65,7 @@ const NewsMasonry = ({ news }: { news: NewsList }): JSX.Element => (
       .map((newsItem) => ({
         ...newsItem,
         postDate: new Date(newsItem.postDate),
+        dueDate: newsItem.dueDate ? new Date(newsItem.dueDate) : undefined,
       }))
       .map((newsItem, index) => (
         <article key={newsItem.id} aria-posinset={index} aria-setsize={-1}>
@@ -75,13 +76,18 @@ const NewsMasonry = ({ news }: { news: NewsList }): JSX.Element => (
 );
 
 // Page
-const NewsPage: NextPage<{ news: NewsList }> = ({ news }): JSX.Element => {
+const NewsPage: NextPage<{ news: NewsListNoDate }> = ({
+  news,
+}): JSX.Element => {
   const { t } = useTranslation(["news", "common"]);
   const [newsFilter, setNewsFilter] = useState<Array<NewsItemType>>([]);
-  const [filteredNews, setFilteredNews] = useState<NewsList>(news);
+  const [filteredNews, setFilteredNews] = useState<NewsListNoDate>(news);
 
   useEffect(
-    () => filterNews(news, newsFilter, (newNews) => setFilteredNews(newNews)),
+    () =>
+      filterNews(news, newsFilter, (newNews: NewsListNoDate) =>
+        setFilteredNews(newNews)
+      ),
     [news, newsFilter]
   );
 
@@ -123,6 +129,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
       type: "form",
       frequency: "once",
       postDate: new Date(2022, 2, 20),
+      dueDate: new Date(2022, 2, 6),
       done: false,
       content: {
         "en-US": {
@@ -140,7 +147,8 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
       id: 6,
       type: "form",
       frequency: "once",
-      postDate: new Date(2022, 2, 20),
+      postDate: new Date(2022, 1, 1),
+      dueDate: new Date(2022, 1, 28),
       done: true,
       content: {
         "en-US": {
@@ -202,6 +210,12 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
       news: news.map((newsItem) => ({
         ...newsItem,
         postDate: newsItem.postDate.getTime(),
+        dueDate:
+          newsItem.type == "form" || newsItem.type == "payment"
+            ? newsItem.dueDate
+              ? newsItem.dueDate.getTime()
+              : null
+            : null,
       })),
     },
   };

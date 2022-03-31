@@ -1,6 +1,11 @@
 export type NewsList = Array<NewsItem>;
+export type NewsListNoDate = Array<NewsItemNoDate>;
 
 export type NewsItem = NewsItemNews | NewsItemForm | NewsItemPayment;
+export type NewsItemNoDate = NewsItem & {
+  postDate: number;
+  dueDate?: number;
+}
 
 export type NewsItemType = "news" | "form" | "payment";
 

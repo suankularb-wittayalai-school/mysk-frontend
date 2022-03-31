@@ -1,9 +1,21 @@
-import { NewsList } from "@utils/types/news";
+import { NewsList, NewsListNoDate } from "@utils/types/news";
 
 export function filterNews(
   news: NewsList,
   newsFilter: Array<string>,
   setFilteredNews: (newNews: NewsList) => void
+): void;
+
+export function filterNews(
+  news: NewsListNoDate,
+  newsFilter: Array<string>,
+  setFilteredNews: (newNews: NewsListNoDate) => void
+): void;
+
+export function filterNews(
+  news: NewsList | NewsListNoDate,
+  newsFilter: Array<string>,
+  setFilteredNews: any
 ) {
   // Reset filtered news if all filters are deselected
   if (newsFilter.length == 0) {
