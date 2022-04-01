@@ -1,5 +1,6 @@
 import { Teacher } from "./person";
 
+// Subject Group
 export type SubjectGroup = {
   name: {
     "en-US": string;
@@ -15,6 +16,7 @@ export type SubjectSubgroup = {
   subjectGroup: SubjectGroup;
 };
 
+// Subject
 export type Subject = {
   id: number;
   code: {
@@ -29,6 +31,13 @@ export type Subject = {
   subjectSubgroup: SubjectSubgroup;
 };
 
+export type SubjectNameAndCode = {
+  id: Subject["id"];
+  code: Subject["code"];
+  name: Subject["name"];
+};
+
+// Subject List Item
 export type SubjectListItem = {
   id: number;
   subject: {

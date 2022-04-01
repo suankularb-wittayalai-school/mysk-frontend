@@ -1,5 +1,6 @@
 // Modules
 import { GetServerSideProps, NextPage } from "next";
+import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
@@ -29,7 +30,8 @@ const SubjectDetails: NextPage<{ subject: Subject }> = ({ subject }) => {
             subtitle: subject.code[locale],
           }}
           pageIcon={<MaterialIcon icon="school" />}
-          backGoesTo="/home"
+          backGoesTo="/subjects/teaching"
+          LinkElement={Link}
         />
       }
     >

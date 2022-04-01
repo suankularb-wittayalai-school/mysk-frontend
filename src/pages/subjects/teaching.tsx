@@ -15,7 +15,15 @@ import {
   Title,
 } from "@suankularb-components/react";
 
-const SubjectsTeaching: NextPage = () => {
+// Components
+import SubjectCard from "@components/SubjectCard";
+
+// Types
+import { SubjectNameAndCode } from "@utils/types/subject";
+
+const SubjectsTeaching: NextPage<{ subjects: Array<SubjectNameAndCode> }> = ({
+  subjects,
+}) => {
   const { t } = useTranslation("subjects");
 
   return (
@@ -45,15 +53,37 @@ const SubjectsTeaching: NextPage = () => {
             />
           </div>
         </div>
+        <div className="layout-grid-cols-3">
+          {subjects.map((subject) => (
+            <SubjectCard key={subject.id} subject={subject} />
+          ))}
+        </div>
       </Section>
     </RegularLayout>
   );
 };
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale as string, ["common", "subjects"])),
-  },
-});
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
+  const subjects: Array<SubjectNameAndCode> = [
+    {
+      id: 26,
+      code: { "en-US": "ENG32102", th: "อ32102" },
+      name: {
+        "en-US": { name: "English 4" },
+        th: { name: "ภาษาอังกฤษ 4" },
+      },
+    }
+  ];
+
+  return {
+    props: {
+      ...(await serverSideTranslations(locale as string, [
+        "common",
+        "subjects",
+      ])),
+      subjects,
+    },
+  };
+};
 
 export default SubjectsTeaching;

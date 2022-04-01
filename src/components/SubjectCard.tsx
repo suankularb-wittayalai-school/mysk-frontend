@@ -12,12 +12,12 @@ import {
 } from "@suankularb-components/react";
 
 // Types
-import { Subject } from "@utils/types/subject";
+import { SubjectNameAndCode } from "@utils/types/subject";
 
 const SubjectCard = ({
   subject,
 }: {
-  subject: { id: Subject["id"]; code: Subject["code"]; name: Subject["name"] };
+  subject: SubjectNameAndCode;
 }): JSX.Element => {
   const { t } = useTranslation("subjects");
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
@@ -32,7 +32,7 @@ const SubjectCard = ({
             label={t("teaching.subjects.seeDetails")}
             type="tonal"
             iconOnly
-            icon={<MaterialIcon icon="arrow_right" />}
+            icon={<MaterialIcon icon="arrow_forward" />}
             url={`/subjects/${subject.id}`}
             LinkElement={Link}
           />
@@ -41,3 +41,5 @@ const SubjectCard = ({
     </Card>
   );
 };
+
+export default SubjectCard;
