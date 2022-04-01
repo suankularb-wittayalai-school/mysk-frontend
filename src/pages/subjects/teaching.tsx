@@ -41,7 +41,7 @@ const SubjectsTeaching: NextPage<{ subjects: Array<SubjectNameAndCode> }> = ({
         <h2 className="sr-only">{t("teaching.subjects.title")}</h2>
         <div className="layout-grid-cols-3">
           <Search placeholder={t("teaching.subjects.search")} />
-          <div className="col-span-2 flex flex-row items-end justify-end gap-2">
+          <div className="flex flex-row flex-wrap items-center justify-end gap-2 sm:items-end md:col-span-2">
             <Button
               name={t("teaching.subjects.action.add")}
               type="tonal"
