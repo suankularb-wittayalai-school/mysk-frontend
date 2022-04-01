@@ -493,18 +493,17 @@ const ClassAdvisorsCard = (): JSX.Element => {
                   </span>
                 </h4>
                 {/* Go to Teacher button */}
-                <Link href={`/teacher/${teacher.id}`}>
-                  <a
-                    aria-label={t("seeDetails", { ns: "common" })}
-                    className="btn btn--filled container-secondary !p-1 text-2xl"
-                  >
-                    <MaterialIcon
-                      icon="arrow_forward"
-                      allowCustomSize={true}
-                      className="!block"
-                    />
-                  </a>
-                </Link>
+                <div>
+                  <LinkButton
+                    type="tonal"
+                    label={t("seeDetails", { ns: "common" })}
+                    iconOnly
+                    icon={<MaterialIcon icon="arrow_forward" />}
+                    url={`/teacher/${teacher.id}`}
+                    LinkElement={Link}
+                    className="!w-8 !h-8"
+                  />
+                </div>
               </div>
             </div>
           ))}
