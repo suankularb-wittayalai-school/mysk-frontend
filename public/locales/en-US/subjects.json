@@ -2,6 +2,7 @@
   "teaching": {
     "title": "Subjects you teach",
     "subjects": {
+      "title": "Subjects you teach",
       "search": "Search subjects",
       "action": {
         "add": "Add subject",

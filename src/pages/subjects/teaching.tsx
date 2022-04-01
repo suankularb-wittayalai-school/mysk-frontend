@@ -38,6 +38,7 @@ const SubjectsTeaching: NextPage<{ subjects: Array<SubjectNameAndCode> }> = ({
       }
     >
       <Section>
+        <h2 className="sr-only">{t("teaching.subjects.title")}</h2>
         <div className="layout-grid-cols-3">
           <Search placeholder={t("teaching.subjects.search")} />
           <div className="col-span-2 flex flex-row items-end justify-end gap-2">
