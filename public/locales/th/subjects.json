@@ -2,6 +2,7 @@
   "teaching": {
     "title": "วิชาที่สอน",
     "subjects": {
+      "search": "ค้นหาวิชาที่สอน",
       "action": {
         "add": "เพิ่มวิชา",
         "seeSchedule": "ดูตารางสอน"

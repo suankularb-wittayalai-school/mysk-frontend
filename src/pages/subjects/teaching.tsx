@@ -30,7 +30,7 @@ const SubjectsTeaching: NextPage = () => {
     >
       <Section>
         <div className="layout-grid-cols-3">
-          <Search />
+          <Search placeholder={t("teaching.subjects.search")} />
           <div className="col-span-2 flex flex-row items-end justify-end gap-2">
             <Button
               name={t("teaching.subjects.action.add")}
