@@ -1,6 +1,7 @@
 // Modules
-import { GetStaticProps, NextPage } from "next";
+import { GetServerSideProps, NextPage } from "next";
 import Link from "next/link";
+
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
@@ -63,8 +64,27 @@ const SubjectsTeaching: NextPage<{ subjects: Array<SubjectNameAndCode> }> = ({
   );
 };
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  params,
+}) => {
   const subjects: Array<SubjectNameAndCode> = [
+    {
+      id: 8,
+      code: { "en-US": "I21202", th: "I21202" },
+      name: {
+        "en-US": { name: "Communication and Presentation" },
+        th: { name: "การสื่อสารและการนำเสนอ" },
+      },
+    },
+    {
+      id: 19,
+      code: { "en-US": "ENG20218", th: "อ20218" },
+      name: {
+        "en-US": { name: "Reading 6" },
+        th: { name: "การอ่าน 6" },
+      },
+    },
     {
       id: 26,
       code: { "en-US": "ENG32102", th: "อ32102" },
@@ -72,7 +92,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         "en-US": { name: "English 4" },
         th: { name: "ภาษาอังกฤษ 4" },
       },
-    }
+    },
   ];
 
   return {

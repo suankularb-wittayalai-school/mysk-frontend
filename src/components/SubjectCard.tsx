@@ -25,8 +25,12 @@ const SubjectCard = ({
   return (
     <Card type="horizontal" appearance="outlined">
       <CardHeader
-        title={<h3>{subject.name[locale].name}</h3>}
-        label={<h3>{subject.code[locale]}</h3>}
+        title={
+          <h3 className="font-display text-lg font-bold">
+            {subject.name[locale].name}
+          </h3>
+        }
+        label={<span>{subject.code[locale]}</span>}
         end={
           <LinkButton
             label={t("teaching.subjects.seeDetails")}
