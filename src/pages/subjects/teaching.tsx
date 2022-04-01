@@ -1,12 +1,16 @@
 // Modules
 import { GetStaticProps, NextPage } from "next";
+import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 // SK Components
 import {
+  Button,
+  LinkButton,
   MaterialIcon,
   RegularLayout,
+  Search,
   Section,
   Title,
 } from "@suankularb-components/react";
@@ -24,7 +28,24 @@ const SubjectsTeaching: NextPage = () => {
         />
       }
     >
-      <Section>TODO</Section>
+      <Section>
+        <div className="layout-grid-cols-3">
+          <Search />
+          <div className="col-span-2 flex flex-row items-end justify-end gap-2">
+            <Button
+              name={t("teaching.subjects.action.add")}
+              type="tonal"
+              onClick={() => {}}
+            />
+            <LinkButton
+              name={t("teaching.subjects.action.seeSchedule")}
+              type="filled"
+              url="/t/1/schedule"
+              LinkElement={Link}
+            />
+          </div>
+        </div>
+      </Section>
     </RegularLayout>
   );
 };

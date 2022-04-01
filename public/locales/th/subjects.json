@@ -1,5 +1,11 @@
 {
   "teaching": {
-    "title": "วิชาที่สอน"
+    "title": "วิชาที่สอน",
+    "subjects": {
+      "action": {
+        "add": "เพิ่มวิชา",
+        "seeSchedule": "ดูตารางสอน"
+      }
+    }
   }
 }
