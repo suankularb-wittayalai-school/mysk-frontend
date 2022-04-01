@@ -180,7 +180,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
         th: {
           title: "บันทึกผลการตรวจโควิด-19",
           supportingText:
-            "ก่อนทุกวันจันทร์ ให้นักเรียนถ่ายรูปผลการตรวจการหาเชื้อโควิด-19 ผ่าน RT-CPR ATK หรือวิธีอื่นๆ",
+            "ก่อนทุกวันจันทร์ ให้นักเรียนถ่ายรูปผลการตรวจการหาเชื้อโควิด-19 ผ่าน RT-PCR ATK หรือวิธีอื่นๆ",
         },
       },
     },
@@ -189,7 +189,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
       type: "payment",
       postDate: new Date(2022, 0, 7),
       dueDate: new Date(2022, 1, 7),
-      amount: 40000.0,
+      amount: 40000.00,
       done: true,
       content: {
         "en-US": {
@@ -223,10 +223,10 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
     {
       id: 3,
       type: "form",
-      frequency: "weekly",
+      frequency: "once",
       postDate: new Date(2020, 3, 14),
       dueDate: new Date(2020, 3, 21),
-      done: true,
+      done: false,
       content: {
         "en-US": {
           title: "Online Learning Readiness",
