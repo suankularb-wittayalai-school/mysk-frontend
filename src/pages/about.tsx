@@ -1,5 +1,5 @@
 // Modules
-import type { NextPage } from "next";
+import type { GetStaticProps, NextPage } from "next";
 import Link from "next/link";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
@@ -24,9 +24,9 @@ const Developers: NextPage = (): JSX.Element => (
   </RegularLayout>
 );
 
-export const getStaticProps = async ({ locale }: { locale: string }) => ({
+export const getStaticProps: GetStaticProps = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(locale, ["common", "about"])),
+    ...(await serverSideTranslations(locale as string, ["common", "about"])),
   },
 });
 

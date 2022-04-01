@@ -1,7 +1,7 @@
 // Modules
-import { getDay, isPast, isThisYear } from "date-fns";
+import { getDay } from "date-fns";
 
-import { NextPage } from "next";
+import { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
@@ -17,8 +17,6 @@ import {
   Button,
   Card,
   CardHeader,
-  CardSupportingText,
-  CardActions,
   ChipFilterList,
   Header,
   MaterialIcon,
@@ -41,6 +39,8 @@ import LogOutDialog from "@components/dialogs/LogOut";
 import { NewsList } from "@utils/types/news";
 import { Student, Teacher } from "@utils/types/person";
 import { Schedule as ScheduleType } from "@utils/types/schedule";
+import { filterNews } from "@utils/helpers/filter-news";
+import NewsCard from "@components/NewsCard";
 
 const UserActions = ({
   setshowChangePassword,
@@ -198,7 +198,7 @@ const UserSection = ({
 };
 
 const NewsSection = (): JSX.Element => {
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const { t } = useTranslation("dashboard");
   const news: NewsList = [
     {
       id: 7,
@@ -267,54 +267,19 @@ const NewsSection = (): JSX.Element => {
         th: {
           title: "ประกาศเกียรติคุณ",
           supportingText:
-            "ประกาศเกียรติคุณโรงเรียนสวนกุหลาบวิทยาลัย ประจปีการศึกษา 2563",
+            "ประกาศเกียรติคุณโรงเรียนสวนกุหลาบวิทยาลัย ประจำปีการศึกษา 2563",
         },
       },
     },
   ];
   const [newsFilter, setNewsFilter] = useState<Array<string>>([]);
   const [filteredNews, setFilteredNews] = useState<NewsList>(news);
-  const { t } = useTranslation("dashboard");
 
   useEffect(
-    () => {
-      // Reset filtered news if all filters are deselected
-      if (newsFilter.length == 0) {
-        setFilteredNews(news);
-
-        // Handles done
-      } else if (
-        newsFilter.includes("not-done") ||
-        newsFilter.includes("done")
-      ) {
-        if (newsFilter.length > 1) {
-          setFilteredNews(
-            news.filter(
-              (newsItem) =>
-                newsFilter.includes(newsItem.type) &&
-                (newsFilter.includes("done")
-                  ? newsItem.done
-                  : newsItem.done == false)
-            )
-          );
-        } else {
-          setFilteredNews(
-            news.filter((newsItem) =>
-              newsFilter.includes("done")
-                ? newsItem.done
-                : newsItem.done == false
-            )
-          );
-        }
-      }
-
-      // Handles types
-      else {
-        setFilteredNews(
-          news.filter((newsItem) => newsFilter.includes(newsItem.type))
-        );
-      }
-    },
+    () =>
+      filterNews(news, newsFilter, (newNews: NewsList) =>
+        setFilteredNews(newNews)
+      ),
 
     // Adding `news` as a dependency causes an inifinie loop
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -349,87 +314,8 @@ const NewsSection = (): JSX.Element => {
       ) : (
         <XScrollContent>
           {filteredNews.map((newsItem) => (
-            <li key={`${newsItem.type}-${newsItem.id}`}>
-              <Card type="stacked" appearance="outlined">
-                <CardHeader
-                  icon={
-                    newsItem.type == "form" ? (
-                      <MaterialIcon icon="edit" />
-                    ) : newsItem.type == "payment" ? (
-                      <MaterialIcon icon="account_balance" />
-                    ) : (
-                      <MaterialIcon icon="information" />
-                    )
-                  }
-                  title={
-                    <h3 className="text-lg font-medium">
-                      {newsItem.content[locale].title}
-                    </h3>
-                  }
-                  label={
-                    <div className="flex divide-x divide-outline">
-                      <span className="pr-2">
-                        {t(`news.itemType.${newsItem.type}`)}
-                      </span>
-                      <time className="pl-2 text-outline">
-                        {newsItem.postDate.toLocaleDateString(locale, {
-                          year: isThisYear(newsItem.postDate)
-                            ? undefined
-                            : "numeric",
-                          month: "short",
-                          day: "numeric",
-                        })}
-                      </time>
-                    </div>
-                  }
-                  end={
-                    newsItem.type != "news" ? (
-                      <div
-                        className={`${
-                          newsItem.done
-                            ? "container-primary"
-                            : (newsItem.type == "form" ||
-                                newsItem.type == "payment") &&
-                              newsItem.dueDate &&
-                              isPast(newsItem.dueDate)
-                            ? "bg-error text-on-error"
-                            : "container-tertiary"
-                        } grid aspect-square w-10 place-content-center rounded-xl`}
-                      >
-                        {newsItem.done ? (
-                          <MaterialIcon icon="done" />
-                        ) : (
-                          <MaterialIcon icon="close" />
-                        )}
-                      </div>
-                    ) : undefined
-                  }
-                  className="font-display"
-                />
-                <CardSupportingText>
-                  <p className="max-lines-2">
-                    {
-                      newsItem.content[locale == "en-US" ? "en-US" : "th"]
-                        .supportingText
-                    }
-                  </p>
-                </CardSupportingText>
-                <CardActions>
-                  <LinkButton
-                    name={t(
-                      `news.itemAction.${newsItem.type}${
-                        newsItem.type != "news"
-                          ? `.${newsItem.done ? "edit" : "do"}`
-                          : ""
-                      }`
-                    )}
-                    type="filled"
-                    url={`/${newsItem.type}/${newsItem.id}`}
-                    LinkElement={Link}
-                    className="container-secondary"
-                  />
-                </CardActions>
-              </Card>
+            <li key={newsItem.id}>
+              <NewsCard newsItem={newsItem} btnType="tonal" />
             </li>
           ))}
         </XScrollContent>
@@ -517,7 +403,7 @@ const ClassSection = (): JSX.Element => {
 const ClassAdvisorsCard = (): JSX.Element => {
   const locale = useRouter().locale == "th" ? "th" : "en-US";
   const { t } = useTranslation(["dashboard", "common"]);
-  
+
   const classAdvisors: Array<Teacher> = [
     {
       id: 2,
@@ -573,7 +459,7 @@ const ClassAdvisorsCard = (): JSX.Element => {
         className="font-display"
       />
       <div
-        className={`overflow-x-hidden rounded-b-2xl ${
+        className={`overflow-x-hidden rounded-b-xl ${
           classAdvisors.length > 2
             ? "aspect-[2/1] overflow-y-auto"
             : "overflow-y-hidden"
@@ -721,14 +607,14 @@ const TeachersSection = (): JSX.Element => {
           </div>
         ) : (
           <div
-            className="scroll-w-0 h-full overflow-x-auto
-            sm:relative sm:overflow-y-scroll
-            md:static md:col-span-3 md:overflow-y-visible"
+            className="scroll-w-0 scroll-desktop h-full overflow-x-auto
+              sm:relative sm:overflow-y-scroll
+              md:static md:col-span-3 md:overflow-y-visible"
           >
             <ul
-              className="flex h-full w-fit flex-row gap-3
-              px-4 sm:absolute sm:top-0 sm:w-full sm:grid-rows-2 sm:flex-col
-              sm:px-0 md:static md:grid md:grid-cols-9 md:pr-0"
+              className="flex h-full w-fit flex-row gap-3 px-4
+                sm:absolute sm:top-0 sm:w-full sm:grid-rows-2 sm:flex-col sm:pl-0 sm:pr-2
+                md:static md:grid md:grid-cols-9 md:pr-0"
             >
               {teachers.map((teacher, index) => (
                 <li
@@ -830,11 +716,12 @@ const Home: NextPage = () => {
   );
 };
 
-export const getStaticProps = async ({ locale }: { locale: string }) => ({
+export const getStaticProps: GetStaticProps = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(locale, [
+    ...(await serverSideTranslations(locale as string, [
       "common",
       "account",
+      "news",
       "dashboard",
     ])),
   },

@@ -1,6 +1,8 @@
 // Modules
 import { setDay } from "date-fns";
+
 import { AnimatePresence, motion } from "framer-motion";
+
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
@@ -13,6 +15,10 @@ import {
 
 // Animations
 import { animationTransition } from "@utils/animations/config";
+
+// Helpers
+import { isInPeriod } from "@utils/helpers/schedule";
+import { useEffect, useState } from "react";
 
 const ScheduleDay = ({ day }: { day: ScheduleRowType["day"] }): JSX.Element => {
   const locale = useRouter().locale;
@@ -43,6 +49,14 @@ const ScheduleRow = ({
   const locale = useRouter().locale == "th" ? "th" : "en-US";
   const { t } = useTranslation("common");
 
+  const [now, setNow] = useState<Date>(new Date());
+  const day = setDay(new Date(), scheduleRow.day);
+
+  // Updates `now` every 5 seconds
+  useEffect(() => {
+    setInterval(() => setNow(new Date()), 5000);
+  }, []);
+
   const periodWidth = 112;
 
   return (
@@ -62,7 +76,18 @@ const ScheduleRow = ({
             transition={animationTransition}
           >
             {schedulePeriod.subject ? (
-              <div className="container-secondary flex h-[3.75rem] flex-col rounded-xl px-4 py-2 leading-snug">
+              <div
+                className={`flex h-[3.75rem] flex-col rounded-lg px-4 py-2 leading-snug ${
+                  isInPeriod(
+                    now,
+                    day,
+                    schedulePeriod.periodStart,
+                    schedulePeriod.duration
+                  )
+                    ? "container-tertiary shadow"
+                    : "container-secondary"
+                }`}
+              >
                 <span
                   className="max-lines-1 font-display text-xl font-medium"
                   title={schedulePeriod.subject.name[locale].name}
@@ -96,7 +121,18 @@ const ScheduleRow = ({
                 )}
               </div>
             ) : (
-              <div className="h-[3.75rem] w-full rounded-xl outline-offset-[-2px] outline-outline" />
+              <div
+                className={`h-[3.75rem] w-full rounded-lg ${
+                  isInPeriod(
+                    now,
+                    day,
+                    schedulePeriod.periodStart,
+                    schedulePeriod.duration
+                  )
+                    ? "outline-4 outline-offset-[-4px] outline-secondary"
+                    : "outline-2 outline-offset-[-2px] outline-outline"
+                }`}
+              />
             )}
           </motion.li>
         ))}
@@ -120,7 +156,11 @@ const Schedule = ({
         <ScheduleDay key={scheduleRow.day} day={scheduleRow.day} />
       ))}
     </div>
-    <div className={noScroll ? "grow" : "scroll-w-0 scroll-desktop grow sm:overflow-x-auto"}>
+    <div
+      className={
+        noScroll ? "grow" : "scroll-w-0 scroll-desktop grow sm:overflow-x-auto"
+      }
+    >
       <AnimatePresence initial={false}>
         <ul className="flex flex-col gap-2 py-1 pl-1 pr-4 sm:pr-0">
           {schedule.content.map((scheduleRow) => (

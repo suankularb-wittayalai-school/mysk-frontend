@@ -256,13 +256,13 @@ const SubjectListSection = ({
         />
       </div>
       <div>
-        <Table width={820}>
+        <Table width={720}>
           <thead>
             <tr>
               <th className="w-1/12">{t("subjectList.table.code")}</th>
-              <th className="w-1/3">{t("subjectList.table.name")}</th>
-              <th className="w-1/6">{t("subjectList.table.teachers")}</th>
-              <th className="w-1/6">{t("subjectList.table.ggcCode")}</th>
+              <th className="w-5/12">{t("subjectList.table.name")}</th>
+              <th className="w-3/12">{t("subjectList.table.teachers")}</th>
+              <th className="w-2/12">{t("subjectList.table.ggcCode")}</th>
               <th className="w-1/12" />
             </tr>
           </thead>

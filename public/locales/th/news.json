@@ -1,0 +1,45 @@
+{
+  "title": {
+    "title": "ข่าวสาร",
+    "subtitle": "และแบบสอบถาม"
+  },
+  "filter": {
+    "forms": "แบบสอบถาม",
+    "news": "ข่าวสาร",
+    "payments": "การชำระเงิน",
+    "amountDone": {
+      "notDone": "ยังไม่ได้ทำ",
+      "done": "ทำแล้ว",
+      "fewDone": "นักเรียนทำน้อย",
+      "mostDone": "นักเรียนทำมาก",
+      "allDone": "นักเรียนทุกคนทำแล้ว"
+    }
+  },
+  "itemType": {
+    "form": "แบบสอบถาม",
+    "news": "ข่าวสาร",
+    "payment": "การชำระเงิน"
+  },
+  "itemFrequency": {
+    "once": "ทำครั้งเดียว",
+    "daily": "ทำทุกวัน",
+    "weekly": "ทำทุกสัปดาห์",
+    "monthly": "ทำทุกเดือน",
+    "repeating": "ทำหลายครั้ง"
+  },
+  "itemDue": {
+    "dueWithin": "ภายใน {{dueDate}}",
+    "pastDueBy": "{{timePast}}ที่แล้ว"
+  },
+  "itemAction": {
+    "form": {
+      "do": "ทำแบบสอบถาม",
+      "edit": "แก้ไขแบบสอบถาม"
+    },
+    "news": "อ่านเพิ่มเติม",
+    "payment": {
+      "do": "ชำระเงิน",
+      "edit": "ดูการชำระเงิน"
+    }
+  }
+}

@@ -1,10 +1,12 @@
 // Modules
-import type { NextPage } from "next";
+import type { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
+
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+
 import { FormEvent, useState } from "react";
 
 // SK Components
@@ -13,15 +15,33 @@ import {
   RegularLayout,
   Title,
 } from "@suankularb-components/react";
+import { logIn } from "@utils/backend/account";
 
-/**
- * Form for logging in
- */
 const LoginForm = () => {
   const { t } = useTranslation("account");
-  const [userID, setUserID] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [form, setForm] = useState<{
+    userID: string;
+    password: string;
+  }>({
+    userID: "",
+    password: "",
+  });
   const router = useRouter();
+
+  function validateAndSend() {
+    let formData: FormData = new FormData();
+
+    // Validates
+    if (form.userID.length != 5) return;
+    if (!form.password) return;
+
+    // Appends to form data
+    formData.append("user-id", form.userID)
+    formData.append("password", form.password)
+
+    // Sends and redirects
+    if (logIn(formData)) router.push("/home");
+  }
 
   return (
     <div className="flex flex-col items-center">
@@ -33,25 +53,21 @@ const LoginForm = () => {
           name="user-id"
           type="text"
           label={t("form.userID")}
-          onChange={(currentValue: string) => {
-            setUserID(currentValue);
-          }}
+          onChange={(e: string) => setForm({ ...form, userID: e })}
           className="w-full"
         />
         <KeyboardInput
           name="password"
           type="password"
           label={t("form.password")}
-          onChange={(currentValue: string) => {
-            setPassword(currentValue);
-          }}
+          onChange={(e: string) => setForm({ ...form, password: e })}
           className="w-full"
         />
         <div className="flex flex-row flex-wrap items-center justify-end gap-2">
           <Link href="/account/forgot-password">
             <a className="btn--text">{t("action.forgotPassword")}</a>
           </Link>
-          <button className="btn--filled" onClick={() => router.push("/home")}>
+          <button className="btn--filled" onClick={() => validateAndSend()}>
             {t("action.logIn")}
           </button>
         </div>
@@ -89,9 +105,9 @@ const Login: NextPage = (): JSX.Element => {
   );
 };
 
-export const getStaticProps = async ({ locale }: { locale: string }) => ({
+export const getStaticProps: GetStaticProps = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(locale, ["common", "account"])),
+    ...(await serverSideTranslations(locale as string, ["common", "account"])),
   },
 });
 

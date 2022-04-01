@@ -13,7 +13,7 @@
     "title": "Subject list",
     "search": "Search subjects",
     "table": {
-      "code": "Subject Code",
+      "code": "S. Code",
       "name": "Subject Name",
       "teachers": "Teachers",
       "ggcCode": "Class Code"
