@@ -77,19 +77,19 @@ const ContactChip = ({
                 {contact.includes.teachers && (
                   <MaterialIcon
                     icon="school"
-                    className="-ml-2.5 text-secondary"
+                    className="-ml-2 text-secondary text-stroke text-stroke-0.25 text-stroke-surface-1"
                   />
                 )}
                 {contact.includes.parents && (
                   <MaterialIcon
                     icon="escalator_warning"
-                    className="-ml-2.5 text-primary"
+                    className="-ml-2 text-primary text-stroke text-stroke-0.25 text-stroke-surface-1"
                   />
                 )}
                 {contact.includes.students && (
                   <MaterialIcon
                     icon="groups"
-                    className="-ml-2.5 text-primary"
+                    className="-ml-2 text-primary text-stroke text-stroke-0.25 text-stroke-surface-1"
                   />
                 )}
               </div>
