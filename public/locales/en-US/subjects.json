@@ -21,15 +21,23 @@
     "table": {
       "date": "Date",
       "topic": "Topic(s)",
-      "medium": "Medium",
+      "medium": {
+        "title": "Medium",
+        "meet": "Live online class",
+        "preRecorded": "Pre-recorded video",
+        "material": "Self-study material",
+        "assignment": "Assignments",
+        "onSite": "On-site"
+      },
       "participationLevel": "Participation level",
       "action": {
-        "seeEvidence" : "See evidence",
-        "seeDetails" : "See details"
+        "seeEvidence": "See evidence",
+        "seeDetails": "See details"
       }
     }
   },
   "substituteAssignments": {
-    "title": "Subsitute assignments"
+    "title": "Subsitute assignments",
+    "supportingText": "You can assign your students assignments in substitution for each live online class here."
   }
 }

@@ -37,6 +37,11 @@ export type SubjectNameAndCode = {
   name: Subject["name"];
 };
 
+export type SubjectName = {
+  name: string;
+  shortName?: string;
+};
+
 // Subject List Item
 export type SubjectListItem = {
   id: number;
@@ -50,7 +55,18 @@ export type SubjectListItem = {
   ggMeetLink?: string;
 };
 
-export type SubjectName = {
-  name: string;
-  shortName?: string;
+// Period Log
+export type PeriodLog = {
+  id: number;
+  date: Date;
+  topic: string;
+  mediums: Array<PeriodMedium>;
+  participationLevel: 1 | 2 | 3 | 4 | 5;
 };
+
+export type PeriodMedium =
+  | "meet"
+  | "pre-recorded"
+  | "material"
+  | "assignment"
+  | "on-site";
