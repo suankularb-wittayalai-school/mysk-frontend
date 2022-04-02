@@ -9,5 +9,14 @@
         "seeSchedule": "See schedule"
       }
     }
+  },
+  "details": {
+    "title": "Subject details"
+  },
+  "periodLogs": {
+    "title": "Period logs"
+  },
+  "substituteAssignments": {
+    "title": "Subsitute Assignments"
   }
 }

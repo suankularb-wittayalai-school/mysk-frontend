@@ -8,14 +8,72 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 // SK Components
 import {
+  Chip,
+  ChipList,
+  Header,
   MaterialIcon,
   RegularLayout,
   Section,
+  Table,
   Title,
 } from "@suankularb-components/react";
 
 // Types
 import { Subject } from "@utils/types/subject";
+
+const DetailsSection = (): JSX.Element => {
+  const { t } = useTranslation("subjects");
+
+  return (
+    <Section>
+      <Header
+        icon={<MaterialIcon icon="information" allowCustomSize />}
+        text={t("details.title")}
+      />
+      <section className="flex flex-col gap-2">
+        <h3 className="font-display text-xl">{t("details.classes.title")}</h3>
+        <ChipList>
+          <Chip name="M.506" />
+        </ChipList>
+      </section>
+    </Section>
+  );
+};
+
+const PeriodLogsSection = (): JSX.Element => {
+  const { t } = useTranslation("subjects");
+
+  return (
+    <Section>
+      <Header
+        icon={<MaterialIcon icon="assignment_turned_in" allowCustomSize />}
+        text={t("periodLogs.title")}
+      />
+      <Table>
+        <thead>
+          <tr></tr>
+        </thead>
+        <tbody>
+          <tr></tr>
+        </tbody>
+      </Table>
+    </Section>
+  );
+};
+
+const SubstituteAssignmentsSection = (): JSX.Element => {
+  const { t } = useTranslation("subjects");
+
+  return (
+    <Section>
+      <Header
+        icon={<MaterialIcon icon="swap_horizontal_circle" allowCustomSize />}
+        text={t("substituteAssignments.title")}
+      />
+      <p>{t("substituteAssignments.supportingText")}</p>
+    </Section>
+  );
+};
 
 const SubjectDetails: NextPage<{ subject: Subject }> = ({ subject }) => {
   const { t } = useTranslation("subjects");
@@ -35,7 +93,9 @@ const SubjectDetails: NextPage<{ subject: Subject }> = ({ subject }) => {
         />
       }
     >
-      <Section>TODO</Section>
+      <DetailsSection />
+      <PeriodLogsSection />
+      <SubstituteAssignmentsSection />
     </RegularLayout>
   );
 };

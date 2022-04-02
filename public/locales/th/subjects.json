@@ -9,5 +9,14 @@
         "seeSchedule": "ดูตารางสอน"
       }
     }
+  },
+  "details": {
+    "title": "รายละเอียดรายวิชา"
+  },
+  "periodLogs": {
+    "title": "รายงานผลปฏิบัติงานสอน"
+  },
+  "substituteAssignments": {
+    "title": "การมอบหมายงานชดเชยเวลาเรียน"
   }
 }
