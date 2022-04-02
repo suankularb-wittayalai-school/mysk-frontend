@@ -11,12 +11,25 @@
     }
   },
   "details": {
-    "title": "Subject details"
+    "title": "Subject details",
+    "classes": {
+      "title": "Classes learning this subject"
+    }
   },
   "periodLogs": {
-    "title": "Period logs"
+    "title": "Period logs",
+    "table": {
+      "date": "Date",
+      "topic": "Topic(s)",
+      "medium": "Medium",
+      "participationLevel": "Participation level",
+      "action": {
+        "seeEvidence" : "See evidence",
+        "seeDetails" : "See details"
+      }
+    }
   },
   "substituteAssignments": {
-    "title": "Subsitute Assignments"
+    "title": "Subsitute assignments"
   }
 }

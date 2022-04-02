@@ -8,6 +8,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 // SK Components
 import {
+  Button,
   Chip,
   ChipList,
   Header,
@@ -42,6 +43,7 @@ const DetailsSection = (): JSX.Element => {
 
 const PeriodLogsSection = (): JSX.Element => {
   const { t } = useTranslation("subjects");
+  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
 
   return (
     <Section>
@@ -49,14 +51,61 @@ const PeriodLogsSection = (): JSX.Element => {
         icon={<MaterialIcon icon="assignment_turned_in" allowCustomSize />}
         text={t("periodLogs.title")}
       />
-      <Table>
-        <thead>
-          <tr></tr>
-        </thead>
-        <tbody>
-          <tr></tr>
-        </tbody>
-      </Table>
+      <div>
+        <Table width={1020}>
+          <thead>
+            <tr>
+              <th className="w-2/12">{t("periodLogs.table.date")}</th>
+              <th className="w-4/12">{t("periodLogs.table.topic")}</th>
+              <th className="w-3/12">{t("periodLogs.table.medium")}</th>
+              <th className="w-2/12">
+                {t("periodLogs.table.participationLevel")}
+              </th>
+              <th className="w-1/12" />
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                {new Date().toLocaleDateString(locale, {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                })}
+              </td>
+              <td className="!text-left">Future Perfect Tense</td>
+              <td>
+                <div className="flex flex-row flex-wrap justify-center gap-2">
+                  {<MaterialIcon icon="videocam" className="!inline text-primary" />}
+                  <span>
+                    Pre-recorded material{" "}
+                    <abbr title="Reee" className="font-light text-outline">
+                      +1
+                    </abbr>
+                  </span>
+                </div>
+              </td>
+              <td></td>
+              <td>
+                <div className="flex flex-row justify-center gap-2">
+                  <Button
+                    label={t("periodLogs.table.action.seeEvidence")}
+                    type="text"
+                    iconOnly
+                    icon={<MaterialIcon icon="photo" />}
+                  />
+                  <Button
+                    label={t("periodLogs.table.action.seeDetails")}
+                    type="text"
+                    iconOnly
+                    icon={<MaterialIcon icon="drafts" />}
+                  />
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </Table>
+      </div>
     </Section>
   );
 };
