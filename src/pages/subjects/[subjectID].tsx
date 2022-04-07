@@ -35,17 +35,18 @@ const AddClassDialog = ({
   show,
   onClose,
 }: DialogProps & { onSubmit: Function }): JSX.Element => {
+  const { t } = useTranslation("subjects");
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
 
   return (
     <Dialog
       type="regular"
       label="add-class"
-      title="Add class"
+      title={t("details.dialog.addClass.title")}
       supportingText=""
       actions={[
-        { name: "Cancel", type: "close" },
-        { name: "Add class", type: "submit" },
+        { name: t("details.dialog.addClass.action.cancel"), type: "close" },
+        { name: t("details.dialog.addClass.action.add"), type: "submit" },
       ]}
       show={show}
       onClose={() => onClose()}
@@ -54,7 +55,7 @@ const AddClassDialog = ({
       <DialogSection name="">
         <Dropdown
           name="class"
-          label="Class"
+          label={t("details.dialog.addClass.class")}
           options={[
             {
               value: 509,
