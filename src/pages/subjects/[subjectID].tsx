@@ -26,6 +26,7 @@ import {
   RegularLayout,
   Section,
   Table,
+  TextArea,
   Title,
   XScrollContent,
 } from "@suankularb-components/react";
@@ -274,10 +275,12 @@ const PeriodLogsSection = ({
 const SubstituteAssignmentsSection = ({
   substAsgn,
   setShowAssgDetails,
+  setShowEditAsgn,
   setActiveAsgn,
 }: {
   substAsgn: Array<SubstituteAssignment>;
   setShowAssgDetails: Function;
+  setShowEditAsgn: Function;
   setActiveAsgn: Function;
 }): JSX.Element => {
   const { t } = useTranslation("subjects");
@@ -313,7 +316,14 @@ const SubstituteAssignmentsSection = ({
                 <p className="max-lines-2">{assignment.desc[locale]}</p>
               </CardSupportingText>
               <CardActions>
-                <Button type="text" label={t("substAsgn.action.editAsgn")} />
+                <Button
+                  type="text"
+                  label={t("substAsgn.action.editAsgn")}
+                  onClick={() => {
+                    setShowEditAsgn(true);
+                    setActiveAsgn(assignment);
+                  }}
+                />
                 <Button
                   type="tonal"
                   label={t("substAsgn.action.seeDetails")}
@@ -375,6 +385,66 @@ const AssignmentDetailsDialog = ({
   );
 };
 
+const EditAssignmentDialog = ({
+  show,
+  onClose,
+  assignment,
+}: DialogProps & { assignment: SubstituteAssignment }): JSX.Element => {
+  const { t } = useTranslation("subjects");
+  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const [showAddClass, setShowAddClass] = useState<boolean>(false);
+
+  return (
+    <>
+      <Dialog
+        type="large"
+        label="edit-asgn"
+        title={t("substAsgn.dialog.editAsgn.title")}
+        actions={[
+          { name: t("substAsgn.dialog.editAsgn.action.cancel"), type: "close" },
+          { name: t("substAsgn.dialog.editAsgn.action.save"), type: "submit" },
+        ]}
+        show={show}
+        onClose={() => onClose()}
+        onSubmit={() => onClose()}
+      >
+        <DialogSection
+          name={t("substAsgn.dialog.asgnDetails.subject")}
+          isDoubleColumn
+        >
+          <Dropdown
+            name="subject"
+            label={t("substAsgn.dialog.asgnDetails.subject")}
+            options={[]}
+          />
+        </DialogSection>
+        <DialogSection name={t("substAsgn.dialog.asgnDetails.desc")}>
+          <TextArea
+            name="desc"
+            label={t("substAsgn.dialog.asgnDetails.desc")}
+            onChange={() => {}}
+          />
+        </DialogSection>
+        <DialogSection name={t("substAsgn.dialog.asgnDetails.assignedClasses")}>
+          <ChipInputList
+            list={assignment.classes.map((classItem) => ({
+              id: classItem.id.toString(),
+              name: classItem.name[locale],
+            }))}
+            onChange={() => {}}
+            onAdd={() => setShowAddClass(true)}
+          />
+        </DialogSection>
+      </Dialog>
+      <AddClassDialog
+        show={showAddClass}
+        onClose={() => setShowAddClass(false)}
+        onSubmit={() => setShowAddClass(false)}
+      />
+    </>
+  );
+};
+
 // Page
 const SubjectDetails: NextPage<{
   subject: Subject;
@@ -386,6 +456,7 @@ const SubjectDetails: NextPage<{
   const [showAdd, setShowAdd] = useState<boolean>(false);
 
   const [showAsgnDetails, setShowAsgnDetails] = useState<boolean>(false);
+  const [showEditAsgn, setShowEditAsgn] = useState<boolean>(false);
   const [activeAsgn, setActiveAsgn] = useState<SubstituteAssignment>();
 
   return (
@@ -411,20 +482,30 @@ const SubjectDetails: NextPage<{
         <SubstituteAssignmentsSection
           substAsgn={substAsgn}
           setShowAssgDetails={setShowAsgnDetails}
+          setShowEditAsgn={setShowEditAsgn}
           setActiveAsgn={setActiveAsgn}
         />
       </RegularLayout>
+
+      {/* Dialogs */}
       <AddClassDialog
         show={showAdd}
         onClose={() => setShowAdd(false)}
         onSubmit={() => {}}
       />
       {activeAsgn && (
-        <AssignmentDetailsDialog
-          show={showAsgnDetails}
-          onClose={() => setShowAsgnDetails(false)}
-          assignment={activeAsgn}
-        />
+        <>
+          <AssignmentDetailsDialog
+            show={showAsgnDetails}
+            onClose={() => setShowAsgnDetails(false)}
+            assignment={activeAsgn}
+          />
+          <EditAssignmentDialog
+            show={showEditAsgn}
+            onClose={() => setShowEditAsgn(false)}
+            assignment={activeAsgn}
+          />
+        </>
       )}
     </>
   );

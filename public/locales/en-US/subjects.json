@@ -58,7 +58,13 @@
           "close": "Close"
         }
       },
-      "editAsgn": {}
+      "editAsgn": {
+        "title": "Edit assignment",
+        "action": {
+          "cancel": "Cancel",
+          "save": "Save"
+        }
+      }
     },
     "action": {
       "seeDetails": "See details",
