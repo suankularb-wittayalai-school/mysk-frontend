@@ -274,9 +274,11 @@ const PeriodLogsSection = ({
 const SubstituteAssignmentsSection = ({
   substAsgn,
   setShowAssgDetails,
+  setActiveAsgn,
 }: {
   substAsgn: Array<SubstituteAssignment>;
   setShowAssgDetails: Function;
+  setActiveAsgn: Function;
 }): JSX.Element => {
   const { t } = useTranslation("subjects");
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
@@ -315,7 +317,10 @@ const SubstituteAssignmentsSection = ({
                 <Button
                   type="tonal"
                   label={t("substAsgn.action.seeDetails")}
-                  onClick={() => setShowAssgDetails(true)}
+                  onClick={() => {
+                    setShowAssgDetails(true);
+                    setActiveAsgn(assignment);
+                  }}
                 />
               </CardActions>
             </Card>
@@ -380,7 +385,8 @@ const SubjectDetails: NextPage<{
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
   const [showAdd, setShowAdd] = useState<boolean>(false);
 
-  const [showAssgDetails, setShowAssgDetails] = useState<boolean>(false);
+  const [showAsgnDetails, setShowAsgnDetails] = useState<boolean>(false);
+  const [activeAsgn, setActiveAsgn] = useState<SubstituteAssignment>();
 
   return (
     <>
@@ -404,7 +410,8 @@ const SubjectDetails: NextPage<{
         <PeriodLogsSection periodLogs={periodLogs} />
         <SubstituteAssignmentsSection
           substAsgn={substAsgn}
-          setShowAssgDetails={setShowAssgDetails}
+          setShowAssgDetails={setShowAsgnDetails}
+          setActiveAsgn={setActiveAsgn}
         />
       </RegularLayout>
       <AddClassDialog
@@ -412,11 +419,13 @@ const SubjectDetails: NextPage<{
         onClose={() => setShowAdd(false)}
         onSubmit={() => {}}
       />
-      <AssignmentDetailsDialog
-        show={showAssgDetails}
-        onClose={() => setShowAssgDetails(false)}
-        assignment={substAsgn[0]}
-      />
+      {activeAsgn && (
+        <AssignmentDetailsDialog
+          show={showAsgnDetails}
+          onClose={() => setShowAsgnDetails(false)}
+          assignment={activeAsgn}
+        />
+      )}
     </>
   );
 };
