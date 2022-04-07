@@ -33,7 +33,7 @@ const SubjectCard = ({
         label={<span>{subject.code[locale]}</span>}
         end={
           <LinkButton
-            label={t("teaching.subjects.seeDetails")}
+            name={t("teaching.subjects.seeDetails")}
             type="tonal"
             iconOnly
             icon={<MaterialIcon icon="arrow_forward" />}

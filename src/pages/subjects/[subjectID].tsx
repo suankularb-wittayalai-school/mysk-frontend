@@ -182,13 +182,13 @@ const PeriodLogsSection = ({
                 <td>
                   <div className="flex flex-row justify-center gap-2">
                     <Button
-                      label={t("periodLogs.table.action.seeEvidence")}
+                      name={t("periodLogs.table.action.seeEvidence")}
                       type="text"
                       iconOnly
                       icon={<MaterialIcon icon="photo" />}
                     />
                     <Button
-                      label={t("periodLogs.table.action.seeDetails")}
+                      name={t("periodLogs.table.action.seeDetails")}
                       type="text"
                       iconOnly
                       icon={<MaterialIcon icon="drafts" />}

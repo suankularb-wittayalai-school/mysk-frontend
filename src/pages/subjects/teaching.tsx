@@ -43,12 +43,12 @@ const SubjectsTeaching: NextPage<{ subjects: Array<SubjectWNameAndCode> }> = ({
           <Search placeholder={t("teaching.subjects.search")} />
           <div className="flex flex-row flex-wrap items-center justify-end gap-2 sm:items-end md:col-span-2">
             <Button
-              name={t("teaching.subjects.action.add")}
+              label={t("teaching.subjects.action.add")}
               type="tonal"
               onClick={() => {}}
             />
             <LinkButton
-              name={t("teaching.subjects.action.seeSchedule")}
+              label={t("teaching.subjects.action.seeSchedule")}
               type="filled"
               url="/t/1/schedule"
               LinkElement={Link}

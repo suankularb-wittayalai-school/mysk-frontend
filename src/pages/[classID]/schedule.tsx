@@ -196,12 +196,12 @@ const ScheduleSection = ({
       {role == "teacher" && (
         <div className="flex flex-row items-center justify-end gap-2">
           <Button
-            name={t("schedule.action.edit")}
+            label={t("schedule.action.edit")}
             type="outlined"
             onClick={() => setShowAddPeriod(true)}
           />
           <Button
-            name={t("schedule.action.add")}
+            label={t("schedule.action.add")}
             type="filled"
             icon={<MaterialIcon icon="add" />}
             onClick={() => setShowAddPeriod(true)}
@@ -287,7 +287,7 @@ const SubjectListSection = ({
                         rel="noreferrer"
                       >
                         <Button
-                          label={t("subjectList.table.action.copyCode")}
+                          name={t("subjectList.table.action.copyCode")}
                           type="text"
                           iconOnly
                           icon={<BrandIcon icon="gg-classroom" />}
@@ -301,7 +301,7 @@ const SubjectListSection = ({
                         rel="noreferrer"
                       >
                         <Button
-                          label={t("subjectList.table.action.copyCode")}
+                          name={t("subjectList.table.action.copyCode")}
                           type="text"
                           iconOnly
                           icon={<BrandIcon icon="gg-meet" />}

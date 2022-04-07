@@ -202,7 +202,7 @@ const LandingBanner = (): JSX.Element => {
         <div className="flex flex-col items-center gap-2 sm:items-start">
           <div className="flex flex-row flex-wrap justify-center gap-4">
             <LinkButton
-              name={t("login")}
+              label={t("login")}
               type="filled"
               icon={<MaterialIcon icon="login" />}
               url="/account/login"
@@ -210,7 +210,7 @@ const LandingBanner = (): JSX.Element => {
               className="has-action--tertiary !bg-tertiary-container !text-tertiary"
             />
             <LinkButton
-              name={t("help")}
+              label={t("help")}
               type="outlined"
               url="/help"
               LinkElement={Link}
