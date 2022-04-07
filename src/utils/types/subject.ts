@@ -1,3 +1,4 @@
+import { ClassWName } from "./class";
 import { Teacher } from "./person";
 
 // Subject Group
@@ -70,3 +71,17 @@ export type PeriodMedium =
   | "material"
   | "assignment"
   | "on-site";
+
+// Substitue Assignment
+export type SubstituteAssignment = {
+  id: number;
+  name: {
+    "en-US": string;
+    th: string;
+  };
+  desc: {
+    "en-US": string;
+    th: string;
+  };
+  classes: Array<ClassWName>;
+};

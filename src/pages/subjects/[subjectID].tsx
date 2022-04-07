@@ -11,7 +11,13 @@ import { useState } from "react";
 // SK Components
 import {
   Button,
+  Card,
+  CardActions,
+  CardHeader,
+  CardSupportingText,
+  Chip,
   ChipInputList,
+  ChipList,
   Dialog,
   DialogSection,
   Dropdown,
@@ -21,13 +27,19 @@ import {
   Section,
   Table,
   Title,
+  XScrollContent,
 } from "@suankularb-components/react";
 
 // Components
 import Sentiment from "@components/Sentiment";
 
 // Types
-import { PeriodLog, PeriodMedium, Subject } from "@utils/types/subject";
+import {
+  PeriodLog,
+  PeriodMedium,
+  Subject,
+  SubstituteAssignment,
+} from "@utils/types/subject";
 import { ClassWName } from "@utils/types/class";
 import { DialogProps } from "@utils/types/common";
 
@@ -250,8 +262,13 @@ const PeriodLogsSection = ({
   );
 };
 
-const SubstituteAssignmentsSection = (): JSX.Element => {
+const SubstituteAssignmentsSection = ({
+  substituteAssignments,
+}: {
+  substituteAssignments: Array<SubstituteAssignment>;
+}): JSX.Element => {
   const { t } = useTranslation("subjects");
+  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
 
   return (
     <Section>
@@ -260,6 +277,35 @@ const SubstituteAssignmentsSection = (): JSX.Element => {
         text={t("substituteAssignments.title")}
       />
       <p>{t("substituteAssignments.supportingText")}</p>
+      <XScrollContent>
+        {substituteAssignments.map((assignment) => (
+          <li key={assignment.id}>
+            <Card type="stacked">
+              <CardHeader
+                title={
+                  <h3 className="text-lg font-medium">
+                    {assignment.name[locale]}
+                  </h3>
+                }
+              />
+              <div className="mx-[2px] scroll-w-0 overflow-x-auto py-1 px-[calc(1rem-2px)]">
+                <ChipList noWrap>
+                  {assignment.classes.map((classItem) => (
+                    <Chip key={classItem.id} name={classItem.name[locale]} />
+                  ))}
+                </ChipList>
+              </div>
+              <CardSupportingText>
+                <p className="max-lines-2">{assignment.desc[locale]}</p>
+              </CardSupportingText>
+              <CardActions>
+                <Button type="text" label="Edit" />
+                <Button type="tonal" label="See details" />
+              </CardActions>
+            </Card>
+          </li>
+        ))}
+      </XScrollContent>
     </Section>
   );
 };
@@ -268,7 +314,8 @@ const SubjectDetails: NextPage<{
   subject: Subject;
   classesLearningThis: Array<ClassWName>;
   periodLogs: Array<PeriodLog>;
-}> = ({ subject, classesLearningThis, periodLogs }) => {
+  substituteAssignments: Array<SubstituteAssignment>;
+}> = ({ subject, classesLearningThis, periodLogs, substituteAssignments }) => {
   const { t } = useTranslation("subjects");
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
   const [showAdd, setShowAdd] = useState<boolean>(false);
@@ -293,7 +340,9 @@ const SubjectDetails: NextPage<{
           setShowAdd={setShowAdd}
         />
         <PeriodLogsSection periodLogs={periodLogs} />
-        <SubstituteAssignmentsSection />
+        <SubstituteAssignmentsSection
+          substituteAssignments={substituteAssignments}
+        />
       </RegularLayout>
       <AddClassDialog
         show={showAdd}
@@ -397,6 +446,71 @@ export const getServerSideProps: GetServerSideProps = async ({
       participationLevel: 5,
     },
   ];
+  const substituteAssignments: Array<SubstituteAssignment> = [
+    {
+      id: 0,
+      name: {
+        "en-US": "Environmental Leaflet",
+        th: "Environmental Leaflet",
+      },
+      desc: {
+        "en-US":
+          "Create a leaflet about the environment, discussing the enovironmental problems with pictures.",
+        th: "จัดทำใบปลิวเรื่องสิ่งแวดล้อม โดยในชิ้นงานจะต้องประกอบด้วยรูปภาพที่แสดงถึงปัญหาสิ่งแวดล้อม",
+      },
+      classes: [
+        {
+          id: 506,
+          name: {
+            "en-US": "M.506",
+            th: "ม.506",
+          },
+        },
+        {
+          id: 507,
+          name: {
+            "en-US": "M.507",
+            th: "ม.507",
+          },
+        },
+        {
+          id: 508,
+          name: {
+            "en-US": "M.508",
+            th: "ม.508",
+          },
+        },
+        {
+          id: 510,
+          name: {
+            "en-US": "M.510",
+            th: "ม.510",
+          },
+        },
+        {
+          id: 511,
+          name: {
+            "en-US": "M.511",
+            th: "ม.511",
+          },
+        },
+        {
+          id: 512,
+          name: {
+            "en-US": "M.512",
+            th: "ม.512",
+          },
+        },
+        {
+          id: 513,
+          name: {
+            "en-US": "M.513",
+            th: "ม.513",
+          },
+        },
+      ],
+    },
+  ];
 
   return {
     props: {
@@ -410,6 +524,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         ...periodLog,
         date: periodLog.date.getTime(),
       })),
+      substituteAssignments,
     },
   };
 };
