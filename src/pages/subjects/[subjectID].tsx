@@ -12,6 +12,9 @@ import { useState } from "react";
 import {
   Button,
   ChipInputList,
+  Dialog,
+  DialogSection,
+  Dropdown,
   Header,
   MaterialIcon,
   RegularLayout,
@@ -26,11 +29,53 @@ import Sentiment from "@components/Sentiment";
 // Types
 import { PeriodLog, PeriodMedium, Subject } from "@utils/types/subject";
 import { ClassWName } from "@utils/types/class";
+import { DialogProps } from "@utils/types/common";
+
+const AddClassDialog = ({
+  show,
+  onClose,
+}: DialogProps & { onSubmit: Function }): JSX.Element => {
+  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+
+  return (
+    <Dialog
+      type="regular"
+      label="add-class"
+      title="Add class"
+      supportingText=""
+      actions={[
+        { name: "Cancel", type: "close" },
+        { name: "Add class", type: "submit" },
+      ]}
+      show={show}
+      onClose={() => onClose()}
+      onSubmit={() => onClose()}
+    >
+      <DialogSection name="">
+        <Dropdown
+          name="class"
+          label="Class"
+          options={[
+            {
+              value: 509,
+              label: {
+                "en-US": "M.509",
+                th: "ม.509",
+              }[locale],
+            },
+          ]}
+        />
+      </DialogSection>
+    </Dialog>
+  );
+};
 
 const DetailsSection = ({
   classesLearningThis: orignialClassesLearningThis,
+  setShowAdd,
 }: {
   classesLearningThis: Array<ClassWName>;
+  setShowAdd: Function;
 }): JSX.Element => {
   const { t } = useTranslation("subjects");
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
@@ -57,7 +102,7 @@ const DetailsSection = ({
         <ChipInputList
           list={classesLearningThis}
           onChange={(newList) => setClassesLearningThis(newList)}
-          onAdd={() => {}}
+          onAdd={() => setShowAdd(true)}
         />
       </section>
     </Section>
@@ -225,25 +270,36 @@ const SubjectDetails: NextPage<{
 }> = ({ subject, classesLearningThis, periodLogs }) => {
   const { t } = useTranslation("subjects");
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const [showAdd, setShowAdd] = useState<boolean>(false);
 
   return (
-    <RegularLayout
-      Title={
-        <Title
-          name={{
-            title: subject.name[locale].name,
-            subtitle: subject.code[locale],
-          }}
-          pageIcon={<MaterialIcon icon="school" />}
-          backGoesTo="/subjects/teaching"
-          LinkElement={Link}
+    <>
+      <RegularLayout
+        Title={
+          <Title
+            name={{
+              title: subject.name[locale].name,
+              subtitle: subject.code[locale],
+            }}
+            pageIcon={<MaterialIcon icon="school" />}
+            backGoesTo="/subjects/teaching"
+            LinkElement={Link}
+          />
+        }
+      >
+        <DetailsSection
+          classesLearningThis={classesLearningThis}
+          setShowAdd={setShowAdd}
         />
-      }
-    >
-      <DetailsSection classesLearningThis={classesLearningThis} />
-      <PeriodLogsSection periodLogs={periodLogs} />
-      <SubstituteAssignmentsSection />
-    </RegularLayout>
+        <PeriodLogsSection periodLogs={periodLogs} />
+        <SubstituteAssignmentsSection />
+      </RegularLayout>
+      <AddClassDialog
+        show={showAdd}
+        onClose={() => setShowAdd(false)}
+        onSubmit={() => {}}
+      />
+    </>
   );
 };
 
