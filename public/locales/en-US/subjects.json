@@ -46,8 +46,25 @@
       }
     }
   },
-  "substituteAssignments": {
+  "substAsgn": {
     "title": "Subsitute assignments",
-    "supportingText": "You can assign your students assignments in substitution for each live online class here."
+    "supportingText": "You can assign your students assignments in substitution for each live online class here.",
+    "dialog": {
+      "asgnDetails": {
+        "subject": "Subject",
+        "desc": "Description",
+        "assignedClasses": "Assigned classes",
+        "action": {
+          "close": "Close"
+        }
+      },
+      "editAsgn": {}
+    },
+    "action": {
+      "seeDetails": "See details",
+      "editAsgn":  "Edit",
+      "addAsgn": "Add assignment",
+      "seeAll": "See all"
+    }
   }
 }

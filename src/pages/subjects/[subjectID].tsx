@@ -272,10 +272,10 @@ const PeriodLogsSection = ({
 
 // Main
 const SubstituteAssignmentsSection = ({
-  substituteAssignments,
+  substAsgn,
   setShowAssgDetails,
 }: {
-  substituteAssignments: Array<SubstituteAssignment>;
+  substAsgn: Array<SubstituteAssignment>;
   setShowAssgDetails: Function;
 }): JSX.Element => {
   const { t } = useTranslation("subjects");
@@ -285,11 +285,11 @@ const SubstituteAssignmentsSection = ({
     <Section>
       <Header
         icon={<MaterialIcon icon="swap_horizontal_circle" allowCustomSize />}
-        text={t("substituteAssignments.title")}
+        text={t("substAsgn.title")}
       />
-      <p>{t("substituteAssignments.supportingText")}</p>
+      <p>{t("substAsgn.supportingText")}</p>
       <XScrollContent>
-        {substituteAssignments.map((assignment) => (
+        {substAsgn.map((assignment) => (
           <li key={assignment.id}>
             <Card type="stacked">
               <CardHeader
@@ -311,10 +311,10 @@ const SubstituteAssignmentsSection = ({
                 <p className="max-lines-2">{assignment.desc[locale]}</p>
               </CardSupportingText>
               <CardActions>
-                <Button type="text" label="Edit" />
+                <Button type="text" label={t("substAsgn.action.editAsgn")} />
                 <Button
                   type="tonal"
-                  label="See details"
+                  label={t("substAsgn.action.seeDetails")}
                   onClick={() => setShowAssgDetails(true)}
                 />
               </CardActions>
@@ -322,9 +322,9 @@ const SubstituteAssignmentsSection = ({
           </li>
         ))}
       </XScrollContent>
-      <div className="flex flex-row items-center justify-end gap-2">
-        <Button type="outlined" label="See all" />
-        <Button type="filled" label="Add assignment" />
+      <div className="flex flex-row flex-wrap items-center justify-end gap-2">
+        <Button type="outlined" label={t("substAsgn.action.seeAll")} />
+        <Button type="filled" label={t("substAsgn.action.addAsgn")} />
       </div>
     </Section>
   );
@@ -336,29 +336,30 @@ const AssignmentDetailsDialog = ({
   onClose,
   assignment,
 }: DialogProps & { assignment: SubstituteAssignment }): JSX.Element => {
+  const { t } = useTranslation("subjects");
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
 
   return (
     <Dialog
       type="large"
-      label=""
+      label="asgn-details"
       title={assignment.name[locale]}
       actions={[{ name: "Done", type: "close" }]}
       show={show}
       onClose={() => onClose()}
     >
-      <DialogSection name="Subject">
+      <DialogSection name={t("substAsgn.dialog.asgnDetails.subject")}>
         <p>
           {assignment.subject.code[locale]}{" "}
           {assignment.subject.name[locale].name}
         </p>
       </DialogSection>
-      <DialogSection name="Description">
+      <DialogSection name={t("substAsgn.dialog.asgnDetails.desc")}>
         <div className="markdown">
           <ReactMarkdown>{assignment.desc[locale]}</ReactMarkdown>
         </div>
       </DialogSection>
-      <DialogSection name="Assigned classes">
+      <DialogSection name={t("substAsgn.dialog.asgnDetails.assignedClasses")}>
         <ChipList>
           {assignment.classes.map((classItem) => (
             <Chip key={classItem.id} name={classItem.name[locale]} />
@@ -374,8 +375,8 @@ const SubjectDetails: NextPage<{
   subject: Subject;
   classesLearningThis: Array<ClassWName>;
   periodLogs: Array<PeriodLog>;
-  substituteAssignments: Array<SubstituteAssignment>;
-}> = ({ subject, classesLearningThis, periodLogs, substituteAssignments }) => {
+  substAsgn: Array<SubstituteAssignment>;
+}> = ({ subject, classesLearningThis, periodLogs, substAsgn }) => {
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
   const [showAdd, setShowAdd] = useState<boolean>(false);
 
@@ -402,7 +403,7 @@ const SubjectDetails: NextPage<{
         />
         <PeriodLogsSection periodLogs={periodLogs} />
         <SubstituteAssignmentsSection
-          substituteAssignments={substituteAssignments}
+          substAsgn={substAsgn}
           setShowAssgDetails={setShowAssgDetails}
         />
       </RegularLayout>
@@ -414,7 +415,7 @@ const SubjectDetails: NextPage<{
       <AssignmentDetailsDialog
         show={showAssgDetails}
         onClose={() => setShowAssgDetails(false)}
-        assignment={substituteAssignments[0]}
+        assignment={substAsgn[0]}
       />
     </>
   );
@@ -513,7 +514,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       participationLevel: 5,
     },
   ];
-  const substituteAssignments: Array<SubstituteAssignment> = [
+  const substAsgn: Array<SubstituteAssignment> = [
     {
       id: 0,
       name: {
@@ -602,7 +603,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         ...periodLog,
         date: periodLog.date.getTime(),
       })),
-      substituteAssignments,
+      substAsgn,
     },
   };
 };
