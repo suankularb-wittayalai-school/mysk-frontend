@@ -42,7 +42,51 @@ import {
 } from "@utils/types/subject";
 import { ClassWName } from "@utils/types/class";
 import { DialogProps } from "@utils/types/common";
+import ReactMarkdown from "react-markdown";
 
+// Details Section
+
+// Main
+const DetailsSection = ({
+  classesLearningThis: orignialClassesLearningThis,
+  setShowAdd,
+}: {
+  classesLearningThis: Array<ClassWName>;
+  setShowAdd: Function;
+}): JSX.Element => {
+  const { t } = useTranslation("subjects");
+  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const [classesLearningThis, setClassesLearningThis] = useState<
+    Array<{
+      id: string;
+      name: string | JSX.Element;
+    }>
+  >(
+    orignialClassesLearningThis.map((classItem) => ({
+      id: classItem.id.toString(),
+      name: classItem.name[locale],
+    }))
+  );
+
+  return (
+    <Section>
+      <Header
+        icon={<MaterialIcon icon="info" allowCustomSize />}
+        text={t("details.title")}
+      />
+      <section className="flex flex-col gap-2">
+        <h3 className="font-display text-xl">{t("details.classes.title")}</h3>
+        <ChipInputList
+          list={classesLearningThis}
+          onChange={(newList) => setClassesLearningThis(newList)}
+          onAdd={() => setShowAdd(true)}
+        />
+      </section>
+    </Section>
+  );
+};
+
+// Components
 const AddClassDialog = ({
   show,
   onClose,
@@ -83,45 +127,7 @@ const AddClassDialog = ({
   );
 };
 
-const DetailsSection = ({
-  classesLearningThis: orignialClassesLearningThis,
-  setShowAdd,
-}: {
-  classesLearningThis: Array<ClassWName>;
-  setShowAdd: Function;
-}): JSX.Element => {
-  const { t } = useTranslation("subjects");
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
-  const [classesLearningThis, setClassesLearningThis] = useState<
-    Array<{
-      id: string;
-      name: string | JSX.Element;
-    }>
-  >(
-    orignialClassesLearningThis.map((classItem) => ({
-      id: classItem.id.toString(),
-      name: classItem.name[locale],
-    }))
-  );
-
-  return (
-    <Section>
-      <Header
-        icon={<MaterialIcon icon="info" allowCustomSize />}
-        text={t("details.title")}
-      />
-      <section className="flex flex-col gap-2">
-        <h3 className="font-display text-xl">{t("details.classes.title")}</h3>
-        <ChipInputList
-          list={classesLearningThis}
-          onChange={(newList) => setClassesLearningThis(newList)}
-          onAdd={() => setShowAdd(true)}
-        />
-      </section>
-    </Section>
-  );
-};
-
+// Period Logs Section
 const PeriodLogsSection = ({
   periodLogs,
 }: {
@@ -262,10 +268,15 @@ const PeriodLogsSection = ({
   );
 };
 
+// Substitute Assignments Section
+
+// Main
 const SubstituteAssignmentsSection = ({
   substituteAssignments,
+  setShowAssgDetails,
 }: {
   substituteAssignments: Array<SubstituteAssignment>;
+  setShowAssgDetails: Function;
 }): JSX.Element => {
   const { t } = useTranslation("subjects");
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
@@ -287,6 +298,7 @@ const SubstituteAssignmentsSection = ({
                     {assignment.name[locale]}
                   </h3>
                 }
+                className="font-display"
               />
               <div className="scroll-w-0 mx-[2px] overflow-x-auto py-1 px-[calc(1rem-2px)]">
                 <ChipList noWrap>
@@ -300,7 +312,11 @@ const SubstituteAssignmentsSection = ({
               </CardSupportingText>
               <CardActions>
                 <Button type="text" label="Edit" />
-                <Button type="tonal" label="See details" />
+                <Button
+                  type="tonal"
+                  label="See details"
+                  onClick={() => setShowAssgDetails(true)}
+                />
               </CardActions>
             </Card>
           </li>
@@ -314,15 +330,56 @@ const SubstituteAssignmentsSection = ({
   );
 };
 
+// Components
+const AssignmentDetailsDialog = ({
+  show,
+  onClose,
+  assignment,
+}: DialogProps & { assignment: SubstituteAssignment }): JSX.Element => {
+  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+
+  return (
+    <Dialog
+      type="large"
+      label=""
+      title={assignment.name[locale]}
+      actions={[{ name: "Done", type: "close" }]}
+      show={show}
+      onClose={() => onClose()}
+    >
+      <DialogSection name="Subject">
+        <p>
+          {assignment.subject.code[locale]}{" "}
+          {assignment.subject.name[locale].name}
+        </p>
+      </DialogSection>
+      <DialogSection name="Description">
+        <div className="markdown">
+          <ReactMarkdown>{assignment.desc[locale]}</ReactMarkdown>
+        </div>
+      </DialogSection>
+      <DialogSection name="Assigned classes">
+        <ChipList>
+          {assignment.classes.map((classItem) => (
+            <Chip key={classItem.id} name={classItem.name[locale]} />
+          ))}
+        </ChipList>
+      </DialogSection>
+    </Dialog>
+  );
+};
+
+// Page
 const SubjectDetails: NextPage<{
   subject: Subject;
   classesLearningThis: Array<ClassWName>;
   periodLogs: Array<PeriodLog>;
   substituteAssignments: Array<SubstituteAssignment>;
 }> = ({ subject, classesLearningThis, periodLogs, substituteAssignments }) => {
-  const { t } = useTranslation("subjects");
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
   const [showAdd, setShowAdd] = useState<boolean>(false);
+
+  const [showAssgDetails, setShowAssgDetails] = useState<boolean>(false);
 
   return (
     <>
@@ -346,12 +403,18 @@ const SubjectDetails: NextPage<{
         <PeriodLogsSection periodLogs={periodLogs} />
         <SubstituteAssignmentsSection
           substituteAssignments={substituteAssignments}
+          setShowAssgDetails={setShowAssgDetails}
         />
       </RegularLayout>
       <AddClassDialog
         show={showAdd}
         onClose={() => setShowAdd(false)}
         onSubmit={() => {}}
+      />
+      <AssignmentDetailsDialog
+        show={showAssgDetails}
+        onClose={() => setShowAssgDetails(false)}
+        assignment={substituteAssignments[0]}
       />
     </>
   );
@@ -459,8 +522,8 @@ export const getServerSideProps: GetServerSideProps = async ({
       },
       desc: {
         "en-US":
-          "Create a leaflet about the environment, discussing the enovironmental problems with pictures.",
-        th: "จัดทำใบปลิวเรื่องสิ่งแวดล้อม โดยในชิ้นงานจะต้องประกอบด้วยรูปภาพที่แสดงถึงปัญหาสิ่งแวดล้อม",
+          "Make a leaflet on the environment. The assignment must consist of:\n1) A picture representing the selected environmental problem; and\n2) Quotes to campaign or solve environmental problems.\n\nPeriod 1 = Choose environmental issues, think of quotes, and come up with ideas for visual presentations.\n\nPeriod 2 = Use the data planned in the first period made into a real piece.",
+        th: "จัดทำใบปลิวเรื่องสิ่งแวดล้อม โดยในชิ้นงานจะต้องประกอบด้วย\n1) รูปภาพที่แสดงถึงปัญหาสิ่งแวดล้อมที่เลือก และ\n2) คำคมเพื่อรณรงค์หรือแก้ไขปัญหาสิ่งแวดล้อมนั้น\n\nชดเชยครั้งที่ 1 = เลือกปัญหาสิ่งแวดล้อม คิดคำคม และหาไอเดียการนำเสนอภาพ\n\nชดเชยครั้งที่ 2 = นำข้อมูลที่วางแผนไว้ในคาบแรก จัดทำเป็นชิ้นงานจริง",
       },
       classes: [
         {
@@ -513,6 +576,17 @@ export const getServerSideProps: GetServerSideProps = async ({
           },
         },
       ],
+      subject: {
+        id: 84,
+        code: {
+          "en-US": "ENG32101",
+          th: "อ32101",
+        },
+        name: {
+          "en-US": { name: "English 3" },
+          th: { name: "ภาษาอังกฤษ 3" },
+        },
+      },
     },
   ];
 

@@ -84,4 +84,5 @@ export type SubstituteAssignment = {
     th: string;
   };
   classes: Array<ClassWName>;
+  subject: SubjectWNameAndCode;
 };
