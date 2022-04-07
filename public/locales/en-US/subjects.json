@@ -60,6 +60,13 @@
       },
       "editAsgn": {
         "title": "Edit assignment",
+        "subject": "Subject",
+        "desc": {
+          "title": "Description",
+          "th": "Local description (Thai)",
+          "en": "English description"
+        },
+        "assignedClasses": "Assigned classes",
         "action": {
           "cancel": "Cancel",
           "save": "Save"
@@ -68,7 +75,7 @@
     },
     "action": {
       "seeDetails": "See details",
-      "editAsgn":  "Edit",
+      "editAsgn": "Edit",
       "addAsgn": "Add assignment",
       "seeAll": "See all"
     }

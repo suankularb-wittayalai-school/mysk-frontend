@@ -409,20 +409,28 @@ const EditAssignmentDialog = ({
         onSubmit={() => onClose()}
       >
         <DialogSection
-          name={t("substAsgn.dialog.asgnDetails.subject")}
+          name={t("substAsgn.dialog.editAsgn.subject")}
           isDoubleColumn
         >
           <Dropdown
             name="subject"
-            label={t("substAsgn.dialog.asgnDetails.subject")}
+            label={t("substAsgn.dialog.editAsgn.subject")}
             options={[]}
+            defaultValue={assignment.subject.id}
           />
         </DialogSection>
-        <DialogSection name={t("substAsgn.dialog.asgnDetails.desc")}>
+        <DialogSection name={t("substAsgn.dialog.editAsgn.desc.title")}>
           <TextArea
-            name="desc"
-            label={t("substAsgn.dialog.asgnDetails.desc")}
+            name="th-desc"
+            label={t("substAsgn.dialog.editAsgn.desc.th")}
             onChange={() => {}}
+            defaultValue={assignment.desc.th}
+          />
+          <TextArea
+            name="en-desc"
+            label={t("substAsgn.dialog.editAsgn.desc.en")}
+            onChange={() => {}}
+            defaultValue={assignment.desc["en-US"]}
           />
         </DialogSection>
         <DialogSection name={t("substAsgn.dialog.asgnDetails.assignedClasses")}>
