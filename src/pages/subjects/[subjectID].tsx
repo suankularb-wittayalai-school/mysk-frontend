@@ -288,7 +288,7 @@ const SubstituteAssignmentsSection = ({
                   </h3>
                 }
               />
-              <div className="mx-[2px] scroll-w-0 overflow-x-auto py-1 px-[calc(1rem-2px)]">
+              <div className="scroll-w-0 mx-[2px] overflow-x-auto py-1 px-[calc(1rem-2px)]">
                 <ChipList noWrap>
                   {assignment.classes.map((classItem) => (
                     <Chip key={classItem.id} name={classItem.name[locale]} />
@@ -306,6 +306,10 @@ const SubstituteAssignmentsSection = ({
           </li>
         ))}
       </XScrollContent>
+      <div className="flex flex-row items-center justify-end gap-2">
+        <Button type="outlined" label="See all" />
+        <Button type="filled" label="Add assignment" />
+      </div>
     </Section>
   );
 };
