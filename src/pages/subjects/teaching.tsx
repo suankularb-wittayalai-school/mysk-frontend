@@ -20,9 +20,9 @@ import {
 import SubjectCard from "@components/SubjectCard";
 
 // Types
-import { SubjectNameAndCode } from "@utils/types/subject";
+import { SubjectWNameAndCode } from "@utils/types/subject";
 
-const SubjectsTeaching: NextPage<{ subjects: Array<SubjectNameAndCode> }> = ({
+const SubjectsTeaching: NextPage<{ subjects: Array<SubjectWNameAndCode> }> = ({
   subjects,
 }) => {
   const { t } = useTranslation("subjects");
@@ -69,7 +69,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   locale,
   params,
 }) => {
-  const subjects: Array<SubjectNameAndCode> = [
+  const subjects: Array<SubjectWNameAndCode> = [
     {
       id: 8,
       code: { "en-US": "I21202", th: "I21202" },

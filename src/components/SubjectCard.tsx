@@ -12,12 +12,12 @@ import {
 } from "@suankularb-components/react";
 
 // Types
-import { SubjectNameAndCode } from "@utils/types/subject";
+import { SubjectWNameAndCode } from "@utils/types/subject";
 
 const SubjectCard = ({
   subject,
 }: {
-  subject: SubjectNameAndCode;
+  subject: SubjectWNameAndCode;
 }): JSX.Element => {
   const { t } = useTranslation("subjects");
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";

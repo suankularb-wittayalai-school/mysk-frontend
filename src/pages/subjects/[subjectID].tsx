@@ -6,11 +6,12 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
+import { useState } from "react";
+
 // SK Components
 import {
   Button,
-  Chip,
-  ChipList,
+  ChipInputList,
   Header,
   MaterialIcon,
   RegularLayout,
@@ -24,9 +25,26 @@ import Sentiment from "@components/Sentiment";
 
 // Types
 import { PeriodLog, PeriodMedium, Subject } from "@utils/types/subject";
+import { ClassWName } from "@utils/types/class";
 
-const DetailsSection = (): JSX.Element => {
+const DetailsSection = ({
+  classesLearningThis: orignialClassesLearningThis,
+}: {
+  classesLearningThis: Array<ClassWName>;
+}): JSX.Element => {
   const { t } = useTranslation("subjects");
+  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const [classesLearningThis, setClassesLearningThis] = useState<
+    Array<{
+      id: string;
+      name: string | JSX.Element;
+    }>
+  >(
+    orignialClassesLearningThis.map((classItem) => ({
+      id: classItem.id.toString(),
+      name: classItem.name[locale],
+    }))
+  );
 
   return (
     <Section>
@@ -36,9 +54,11 @@ const DetailsSection = (): JSX.Element => {
       />
       <section className="flex flex-col gap-2">
         <h3 className="font-display text-xl">{t("details.classes.title")}</h3>
-        <ChipList>
-          <Chip name="M.506" />
-        </ChipList>
+        <ChipInputList
+          list={classesLearningThis}
+          onChange={(newList) => setClassesLearningThis(newList)}
+          onAdd={() => {}}
+        />
       </section>
     </Section>
   );
@@ -200,8 +220,9 @@ const SubstituteAssignmentsSection = (): JSX.Element => {
 
 const SubjectDetails: NextPage<{
   subject: Subject;
+  classesLearningThis: Array<ClassWName>;
   periodLogs: Array<PeriodLog>;
-}> = ({ subject, periodLogs }) => {
+}> = ({ subject, classesLearningThis, periodLogs }) => {
   const { t } = useTranslation("subjects");
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
 
@@ -219,7 +240,7 @@ const SubjectDetails: NextPage<{
         />
       }
     >
-      <DetailsSection />
+      <DetailsSection classesLearningThis={classesLearningThis} />
       <PeriodLogsSection periodLogs={periodLogs} />
       <SubstituteAssignmentsSection />
     </RegularLayout>
@@ -245,6 +266,57 @@ export const getServerSideProps: GetServerSideProps = async ({
       },
     },
   };
+  const classesLearningThis: Array<ClassWName> = [
+    {
+      id: 506,
+      name: {
+        "en-US": "M.506",
+        th: "ม.506",
+      },
+    },
+    {
+      id: 507,
+      name: {
+        "en-US": "M.507",
+        th: "ม.507",
+      },
+    },
+    {
+      id: 508,
+      name: {
+        "en-US": "M.508",
+        th: "ม.508",
+      },
+    },
+    {
+      id: 510,
+      name: {
+        "en-US": "M.510",
+        th: "ม.510",
+      },
+    },
+    {
+      id: 511,
+      name: {
+        "en-US": "M.511",
+        th: "ม.511",
+      },
+    },
+    {
+      id: 512,
+      name: {
+        "en-US": "M.512",
+        th: "ม.512",
+      },
+    },
+    {
+      id: 513,
+      name: {
+        "en-US": "M.513",
+        th: "ม.513",
+      },
+    },
+  ];
   const periodLogs: Array<PeriodLog> = [
     {
       id: 1,
@@ -276,6 +348,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         "subjects",
       ])),
       subject,
+      classesLearningThis,
       periodLogs: periodLogs.map((periodLog) => ({
         ...periodLog,
         date: periodLog.date.getTime(),

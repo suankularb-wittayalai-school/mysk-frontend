@@ -31,7 +31,7 @@ export type Subject = {
   subjectSubgroup: SubjectSubgroup;
 };
 
-export type SubjectNameAndCode = {
+export type SubjectWNameAndCode = {
   id: Subject["id"];
   code: Subject["code"];
   name: Subject["name"];
