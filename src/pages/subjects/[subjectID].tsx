@@ -7,6 +7,7 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { useState } from "react";
+import ReactMarkdown from "react-markdown";
 
 // SK Components
 import {
@@ -39,11 +40,11 @@ import {
   PeriodLog,
   PeriodMedium,
   Subject,
+  SubjectWNameAndCode,
   SubstituteAssignment,
 } from "@utils/types/subject";
 import { ClassWName } from "@utils/types/class";
 import { DialogProps } from "@utils/types/common";
-import ReactMarkdown from "react-markdown";
 
 // Details Section
 
@@ -390,9 +391,11 @@ const EditAssignmentDialog = ({
   onClose,
   onSubmit,
   assignment,
+  allSubjects,
 }: DialogProps & {
   onSubmit: Function;
   assignment: SubstituteAssignment;
+  allSubjects: Array<SubjectWNameAndCode>;
 }): JSX.Element => {
   const { t } = useTranslation("subjects");
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
@@ -440,7 +443,11 @@ const EditAssignmentDialog = ({
           <Dropdown
             name="subject"
             label={t("substAsgn.dialog.editAsgn.subject")}
-            options={[]}
+            options={allSubjects.map((subject) => ({
+              value: subject.id,
+              label: subject.name[locale].name,
+            }))}
+            onChange={(e: number) => setForm({ ...form, subject: e })}
             defaultValue={form.subject}
           />
         </DialogSection>
@@ -481,7 +488,8 @@ const SubjectDetails: NextPage<{
   classesLearningThis: Array<ClassWName>;
   periodLogs: Array<PeriodLog>;
   substAsgn: Array<SubstituteAssignment>;
-}> = ({ subject, classesLearningThis, periodLogs, substAsgn }) => {
+  allSubjects: Array<SubjectWNameAndCode>;
+}> = ({ subject, classesLearningThis, periodLogs, substAsgn, allSubjects }) => {
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
   const [showAdd, setShowAdd] = useState<boolean>(false);
 
@@ -536,6 +544,7 @@ const SubjectDetails: NextPage<{
             // TODO: Refetch subst asgns here ↓
             onSubmit={() => setShowAsgnDetails(false)}
             assignment={activeAsgn}
+            allSubjects={allSubjects}
           />
         </>
       )}
@@ -700,15 +709,38 @@ export const getServerSideProps: GetServerSideProps = async ({
         },
       ],
       subject: {
-        id: 84,
-        code: {
-          "en-US": "ENG32101",
-          th: "อ32101",
-        },
+        id: 26,
+        code: { "en-US": "ENG32102", th: "อ32102" },
         name: {
-          "en-US": { name: "English 3" },
-          th: { name: "ภาษาอังกฤษ 3" },
+          "en-US": { name: "English 4" },
+          th: { name: "ภาษาอังกฤษ 4" },
         },
+      },
+    },
+  ];
+  const allSubjects: Array<SubjectWNameAndCode> = [
+    {
+      id: 8,
+      code: { "en-US": "I21202", th: "I21202" },
+      name: {
+        "en-US": { name: "Communication and Presentation" },
+        th: { name: "การสื่อสารและการนำเสนอ" },
+      },
+    },
+    {
+      id: 19,
+      code: { "en-US": "ENG20218", th: "อ20218" },
+      name: {
+        "en-US": { name: "Reading 6" },
+        th: { name: "การอ่าน 6" },
+      },
+    },
+    {
+      id: 26,
+      code: { "en-US": "ENG32102", th: "อ32102" },
+      name: {
+        "en-US": { name: "English 4" },
+        th: { name: "ภาษาอังกฤษ 4" },
       },
     },
   ];
@@ -726,6 +758,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         date: periodLog.date.getTime(),
       })),
       substAsgn,
+      allSubjects,
     },
   };
 };
