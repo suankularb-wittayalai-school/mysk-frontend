@@ -388,11 +388,36 @@ const AssignmentDetailsDialog = ({
 const EditAssignmentDialog = ({
   show,
   onClose,
+  onSubmit,
   assignment,
-}: DialogProps & { assignment: SubstituteAssignment }): JSX.Element => {
+}: DialogProps & {
+  onSubmit: Function;
+  assignment: SubstituteAssignment;
+}): JSX.Element => {
   const { t } = useTranslation("subjects");
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
   const [showAddClass, setShowAddClass] = useState<boolean>(false);
+
+  // Form control
+  const [form, setForm] = useState<{
+    subject: number;
+    enDesc: string;
+    thDesc: string;
+    assignedClases: Array<{
+      id: string;
+      name: string | JSX.Element;
+    }>;
+  }>({
+    subject: assignment.subject.id,
+    enDesc: assignment.desc["en-US"],
+    thDesc: assignment.desc.th,
+    assignedClases: assignment.classes.map((classItem) => ({
+      id: classItem.id.toString(),
+      name: classItem.name[locale],
+    })),
+  });
+
+  // TODO: Form validation isn’t here yet!
 
   return (
     <>
@@ -406,7 +431,7 @@ const EditAssignmentDialog = ({
         ]}
         show={show}
         onClose={() => onClose()}
-        onSubmit={() => onClose()}
+        onSubmit={() => onSubmit()}
       >
         <DialogSection
           name={t("substAsgn.dialog.editAsgn.subject")}
@@ -416,7 +441,7 @@ const EditAssignmentDialog = ({
             name="subject"
             label={t("substAsgn.dialog.editAsgn.subject")}
             options={[]}
-            defaultValue={assignment.subject.id}
+            defaultValue={form.subject}
           />
         </DialogSection>
         <DialogSection name={t("substAsgn.dialog.editAsgn.desc.title")}>
@@ -424,22 +449,19 @@ const EditAssignmentDialog = ({
             name="th-desc"
             label={t("substAsgn.dialog.editAsgn.desc.th")}
             onChange={() => {}}
-            defaultValue={assignment.desc.th}
+            defaultValue={form.thDesc}
           />
           <TextArea
             name="en-desc"
             label={t("substAsgn.dialog.editAsgn.desc.en")}
             onChange={() => {}}
-            defaultValue={assignment.desc["en-US"]}
+            defaultValue={form.enDesc}
           />
         </DialogSection>
         <DialogSection name={t("substAsgn.dialog.asgnDetails.assignedClasses")}>
           <ChipInputList
-            list={assignment.classes.map((classItem) => ({
-              id: classItem.id.toString(),
-              name: classItem.name[locale],
-            }))}
-            onChange={() => {}}
+            list={form.assignedClases}
+            onChange={(e) => setForm({ ...form, assignedClases: e })}
             onAdd={() => setShowAddClass(true)}
           />
         </DialogSection>
@@ -511,6 +533,8 @@ const SubjectDetails: NextPage<{
           <EditAssignmentDialog
             show={showEditAsgn}
             onClose={() => setShowEditAsgn(false)}
+            // TODO: Refetch subst asgns here ↓
+            onSubmit={() => setShowAsgnDetails(false)}
             assignment={activeAsgn}
           />
         </>
