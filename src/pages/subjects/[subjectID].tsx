@@ -420,7 +420,13 @@ const EditAssignmentDialog = ({
     })),
   });
 
-  // TODO: Form validation isn’t here yet!
+  function validateAndSend() {
+    let formData = new FormData();
+    
+    // TODO: Form validation isn’t here yet!
+
+    return true;
+  }
 
   return (
     <>
@@ -434,7 +440,7 @@ const EditAssignmentDialog = ({
         ]}
         show={show}
         onClose={() => onClose()}
-        onSubmit={() => onSubmit()}
+        onSubmit={() => validateAndSend() && onSubmit()}
       >
         <DialogSection
           name={t("substAsgn.dialog.editAsgn.subject")}
