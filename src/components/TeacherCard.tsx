@@ -88,7 +88,7 @@ const TeacherCard = ({
           hasArrow ? (
             <div>
               <LinkButton
-                label={t("see-details", { ns: "common" })}
+                name={t("see-details", { ns: "common" })}
                 type="tonal"
                 icon={<MaterialIcon icon="arrow_forward" />}
                 iconOnly

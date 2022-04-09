@@ -11,3 +11,8 @@ export type Class = {
   contacts: Array<Contact>;
   students: Array<Student>;
 };
+
+export type ClassWName = {
+  id: Class["id"];
+  name: Class["name"];
+}

@@ -1,0 +1,83 @@
+{
+  "teaching": {
+    "title": "Subjects you teach",
+    "subjects": {
+      "title": "Subjects you teach",
+      "search": "Search subjects",
+      "action": {
+        "add": "Add subject",
+        "seeSchedule": "See schedule"
+      }
+    }
+  },
+  "details": {
+    "title": "Subject details",
+    "classes": {
+      "title": "Classes learning this subject"
+    },
+    "dialog": {
+      "addClass": {
+        "title": "Add class",
+        "class": "Class",
+        "action": {
+          "add": "Add class",
+          "cancel": "Cancel"
+        }
+      }
+    }
+  },
+  "periodLogs": {
+    "title": "Period logs",
+    "table": {
+      "date": "Date",
+      "topic": "Topic(s)",
+      "medium": {
+        "title": "Medium",
+        "meet": "Live online class",
+        "preRecorded": "Pre-recorded video",
+        "material": "Self-study material",
+        "assignment": "Assignments",
+        "onSite": "On-site"
+      },
+      "participationLevel": "Participation level",
+      "action": {
+        "seeEvidence": "See evidence",
+        "seeDetails": "See details"
+      }
+    }
+  },
+  "substAsgn": {
+    "title": "Subsitute assignments",
+    "supportingText": "You can assign your students assignments in substitution for each live online class here.",
+    "dialog": {
+      "asgnDetails": {
+        "subject": "Subject",
+        "desc": "Description",
+        "assignedClasses": "Assigned classes",
+        "action": {
+          "close": "Close"
+        }
+      },
+      "editAsgn": {
+        "title": "Edit assignment",
+        "subject": "Subject",
+        "desc": {
+          "title": "Description",
+          "th": "Local description (Thai)",
+          "en": "English description"
+        },
+        "assignedClasses": "Assigned classes",
+        "action": {
+          "cancel": "Cancel",
+          "save": "Save"
+        }
+      }
+    },
+    "action": {
+      "seeDetails": "See details",
+      "editAsgn": "Edit",
+      "addAsgn": "Add assignment",
+      "seeAll": "See all"
+    }
+  }
+}

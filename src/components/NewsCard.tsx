@@ -189,7 +189,7 @@ const NewsCard = ({
       </CardSupportingText>
       <CardActions>
         <LinkButton
-          name={t(
+          label={t(
             `itemAction.${newsItem.type}${
               newsItem.type != "news" ? `.${newsItem.done ? "edit" : "do"}` : ""
             }`

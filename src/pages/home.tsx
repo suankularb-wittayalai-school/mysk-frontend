@@ -62,19 +62,19 @@ const UserActions = ({
       }`}
     >
       <Button
-        name={t("user.action.changePassword")}
+        label={t("user.action.changePassword")}
         type="text"
         onClick={() => setshowChangePassword(true)}
         className="!hidden sm:!flex"
       />
       <Button
-        name={t("user.action.requestEdit")}
+        label={t("user.action.requestEdit")}
         type="outlined"
         icon={<MaterialIcon icon="edit" />}
         onClick={() => setShowEditProfile(true)}
       />
       <Button
-        name={t("user.action.logOut")}
+        label={t("user.action.logOut")}
         type="filled"
         icon={<MaterialIcon icon="logout" />}
         onClick={() => setShowLogOut(true)}
@@ -322,7 +322,7 @@ const NewsSection = (): JSX.Element => {
       )}
       <div className="flex flex-row items-center justify-end gap-2">
         <LinkButton
-          name={t("news.action.seeAll")}
+          label={t("news.action.seeAll")}
           type="filled"
           url="/news"
           LinkElement={Link}
@@ -384,13 +384,13 @@ const ClassSection = (): JSX.Element => {
       <Schedule schedule={schedule} role="student" />
       <div className="flex flex-row flex-wrap items-center justify-end gap-2">
         <LinkButton
-          name={t("class.action.seeSchedule")}
+          label={t("class.action.seeSchedule")}
           type="outlined"
           url="/405/schedule"
           LinkElement={Link}
         />
         <LinkButton
-          name={t("class.action.seeClassDetail")}
+          label={t("class.action.seeClassDetail")}
           type="filled"
           url="/405/class"
           LinkElement={Link}
@@ -493,18 +493,17 @@ const ClassAdvisorsCard = (): JSX.Element => {
                   </span>
                 </h4>
                 {/* Go to Teacher button */}
-                <Link href={`/teacher/${teacher.id}`}>
-                  <a
-                    aria-label={t("seeDetails", { ns: "common" })}
-                    className="btn btn--filled container-secondary !p-1 text-2xl"
-                  >
-                    <MaterialIcon
-                      icon="arrow_forward"
-                      allowCustomSize={true}
-                      className="!block"
-                    />
-                  </a>
-                </Link>
+                <div>
+                  <LinkButton
+                    type="tonal"
+                    name={t("seeDetails", { ns: "common" })}
+                    iconOnly
+                    icon={<MaterialIcon icon="arrow_forward" />}
+                    url={`/teacher/${teacher.id}`}
+                    LinkElement={Link}
+                    className="!w-8 !h-8"
+                  />
+                </div>
               </div>
             </div>
           ))}
@@ -640,7 +639,7 @@ const TeachersSection = (): JSX.Element => {
       </div>
       <div className="flex flex-row items-center justify-end gap-2">
         <LinkButton
-          name={t("teachers.action.seeAll")}
+          label={t("teachers.action.seeAll")}
           type="filled"
           url="/teachers"
           LinkElement={Link}
