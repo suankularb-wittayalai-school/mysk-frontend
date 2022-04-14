@@ -650,7 +650,7 @@ const TeachersSection = (): JSX.Element => {
 };
 
 // Page
-const Home: NextPage = () => {
+const StudentHome: NextPage = () => {
   const { t } = useTranslation(["dashboard", "common"]);
 
   // Dialog controls
@@ -726,4 +726,4 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => ({
   },
 });
 
-export default Home;
+export default StudentHome;

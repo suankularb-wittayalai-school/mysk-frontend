@@ -45,6 +45,7 @@ import {
 } from "@utils/types/subject";
 import { ClassWName } from "@utils/types/class";
 import { DialogProps } from "@utils/types/common";
+import Head from "next/head";
 
 // Details Section
 
@@ -515,6 +516,7 @@ const SubjectDetails: NextPage<{
   substAsgn: Array<SubstituteAssignment>;
   allSubjects: Array<SubjectWNameAndCode>;
 }> = ({ subject, classesLearningThis, periodLogs, substAsgn, allSubjects }) => {
+  const { t } = useTranslation(["subjects", "common"]);
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
   const [showAdd, setShowAdd] = useState<boolean>(false);
 
@@ -525,6 +527,11 @@ const SubjectDetails: NextPage<{
 
   return (
     <>
+      <Head>
+        <title>
+          {t("title")} - {t("brand.name", { ns: "common" })}
+        </title>
+      </Head>
       <RegularLayout
         Title={
           <Title
