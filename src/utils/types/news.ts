@@ -1,13 +1,18 @@
 export type NewsList = Array<NewsItem>;
 export type NewsListNoDate = Array<NewsItemNoDate>;
 
-export type NewsItem = NewsItemNews | NewsItemForm | NewsItemPayment;
+export type NewsItem =
+  | NewsItemNews
+  | NewsItemStats
+  | NewsItemForm
+  | NewsItemPayment;
+
 export type NewsItemNoDate = NewsItem & {
   postDate: number;
   dueDate?: number;
-}
+};
 
-export type NewsItemType = "news" | "form" | "payment";
+export type NewsItemType = "news" | "stats" | "form" | "payment";
 
 type NewsItemCommon = {
   id: number;
@@ -22,6 +27,10 @@ type NewsItemCommon = {
 
 export interface NewsItemNews extends NewsItemCommon {
   type: "news";
+}
+
+export interface NewsItemStats extends NewsItemCommon {
+  type: "stats";
 }
 
 export interface NewsItemForm extends NewsItemCommon {

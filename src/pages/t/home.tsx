@@ -7,15 +7,20 @@ import { useState } from "react";
 import { RegularLayout } from "@suankularb-components/react";
 
 // Components
-import UserSection from "@components/home-sections/UserSection";
 import ChangePassword from "@components/dialogs/ChangePassword";
 import EditProfileDialog from "@components/dialogs/EditProfile";
 import LogOutDialog from "@components/dialogs/LogOut";
+import NewsSection from "@components/home-sections/NewsSection";
+import UserSection from "@components/home-sections/UserSection";
 
 // Types
 import { Teacher } from "@utils/types/person";
+import { NewsList } from "@utils/types/news";
 
-const TeacherHome: NextPage<{ user: Teacher }> = ({ user }) => {
+const TeacherHome: NextPage<{ user: Teacher; news: NewsList }> = ({
+  user,
+  news,
+}) => {
   const [showChangePassword, setShowChangePassword] = useState<boolean>(false);
   const [showEditProfile, setShowEditProfile] = useState<boolean>(false);
   const [showLogOut, setShowLogOut] = useState<boolean>(false);
@@ -28,6 +33,12 @@ const TeacherHome: NextPage<{ user: Teacher }> = ({ user }) => {
           setShowChangePassword={setShowChangePassword}
           setShowEditProfile={setShowEditProfile}
           setShowLogOut={setShowLogOut}
+        />
+        <NewsSection
+          news={news.map((newsItem) => ({
+            ...newsItem,
+            postDate: new Date(newsItem.postDate),
+          }))}
         />
       </RegularLayout>
 
@@ -101,6 +112,25 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
       },
     ],
   };
+  const news: NewsList = [
+    {
+      id: 12,
+      type: "stats",
+      postDate: new Date(2020, 0, 3),
+      content: {
+        "en-US": {
+          title: "COVID-19 Vaccination",
+          supportingText:
+            "On the vaccination of all Suankularb students, including the number and the brand recieved.",
+        },
+        th: {
+          title: "การรับวัคซีน COVID-19",
+          supportingText:
+            "การรวบรวมข้อมูลตัวเลขของนักเรียนโรงเรียนสวนกุหลาบวิทยาลัยที่ได้รับวัคซีนป้องกัน COVID-19",
+        },
+      },
+    },
+  ];
 
   return {
     props: {
@@ -111,6 +141,14 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         "dashboard",
       ])),
       user,
+      // (@SiravitPhokeed)
+      // Apparently NextJS doesn’t serialize Date when in development
+      // It does in production, though.
+      // So I guess I’ll keep this workaround, well, around…
+      news: news.map((newsItem) => ({
+        ...newsItem,
+        postDate: newsItem.postDate.getTime(),
+      })),
     },
   };
 };
