@@ -360,7 +360,9 @@ const AssignmentDetailsDialog = ({
       type="large"
       label="asgn-details"
       title={assignment.name[locale]}
-      actions={[{ name: "Done", type: "close" }]}
+      actions={[
+        { name: t("substAsgn.dialog.asgnDetails.action.close"), type: "close" },
+      ]}
       show={show}
       onClose={() => onClose()}
     >
@@ -422,7 +424,7 @@ const EditAssignmentDialog = ({
 
   function validateAndSend() {
     let formData = new FormData();
-    
+
     // TODO: Form validation isn’t here yet!
 
     return true;
