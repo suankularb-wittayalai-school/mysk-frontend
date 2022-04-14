@@ -3,9 +3,7 @@ import { getDay } from "date-fns";
 
 import { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
-import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -14,285 +12,33 @@ import { useState } from "react";
 
 // SK Components
 import {
-  Card,
-  CardHeader,
-  Header,
   MaterialIcon,
   RegularLayout,
-  Section,
   Title,
-  LinkButton,
 } from "@suankularb-components/react";
 
 // Components
-import TeacherCard from "@components/TeacherCard";
 import ChangePassword from "@components/dialogs/ChangePassword";
 import EditProfileDialog from "@components/dialogs/EditProfile";
 import LogOutDialog from "@components/dialogs/LogOut";
 import UserSection from "@components/home-sections/UserSection";
 import NewsSection from "@components/home-sections/NewsSection";
 import StudentClassSection from "@components/home-sections/StudentClass";
+import TeachersSection from "@components/home-sections/TeachersSection";
 
 // Types
 import { NewsList } from "@utils/types/news";
 import { Student, Teacher } from "@utils/types/person";
 import { Schedule } from "@utils/types/schedule";
 
-const ClassAdvisorsCard = (): JSX.Element => {
-  const locale = useRouter().locale == "th" ? "th" : "en-US";
-  const { t } = useTranslation(["dashboard", "common"]);
-
-  const classAdvisors: Array<Teacher> = [
-    {
-      id: 2,
-      role: "teacher",
-      prefix: "mister",
-      name: {
-        "en-US": { firstName: "Taradol", lastName: "Ranarintr" },
-        th: { firstName: "ธราดล", lastName: "รานรินทร์" },
-      },
-      profile: "/images/dummybase/taradol.webp",
-      subjectsInCharge: [
-        {
-          id: 25,
-          code: {
-            "en-US": "SOC31152",
-            th: "ส31152",
-          },
-          name: {
-            "en-US": {
-              name: "Social Studies 2 (World)",
-            },
-            th: { name: "สังคมศึกษา 2 (พลโลก)" },
-          },
-          subjectSubgroup: {
-            name: { "en-US": "Social Studies", th: "สังคมศึกษา" },
-            subjectGroup: {
-              name: { "en-US": "Social Studies", th: "สังคมศึกษา" },
-            },
-          },
-        },
-      ],
-    },
-    {
-      id: 3,
-      role: "teacher",
-      prefix: "missus",
-      name: {
-        "en-US": { firstName: "Mattana", lastName: "Tatanyang" },
-        th: { firstName: "มัทนา", lastName: "ต๊ะตันยาง" },
-      },
-      profile: "/images/dummybase/mattana.webp",
-      subjectsInCharge: [],
-    },
-  ];
-
-  return (
-    <Card type="stacked" className="h-fit">
-      <CardHeader
-        icon={<MaterialIcon icon="group" />}
-        title={
-          <h3 className="text-lg font-medium">{t("teachers.classAdvisors")}</h3>
-        }
-        className="font-display"
-      />
-      <div
-        className={`overflow-x-hidden rounded-b-xl ${
-          classAdvisors.length > 2
-            ? "aspect-[2/1] overflow-y-auto"
-            : "overflow-y-hidden"
-        }`}
-      >
-        <div className="grid grid-cols-2 p-[2px]">
-          {/* Loop through the array of Class Advisors */}
-          {classAdvisors.map((teacher) => (
-            <div
-              key={teacher.id}
-              className="relative aspect-square bg-tertiary-container"
-            >
-              {/* Photo */}
-              {teacher.profile && (
-                <Image src={teacher.profile} layout="fill" alt="" />
-              )}
-
-              {/* Name bar */}
-              <div
-                className="absolute bottom-0 flex w-full flex-row items-center justify-between
-                  gap-2 bg-[#c1c7cecc] p-2 text-on-surface-variant backdrop-blur-sm dark:bg-[#41484dcc]"
-              >
-                {/* Name */}
-                <h4 className="flex flex-col font-display font-medium leading-none">
-                  <span className="max-lines-1 text-lg">
-                    {teacher.name[locale].firstName}{" "}
-                    {(teacher.name[locale].middleName || "")[0]}
-                  </span>
-                  <span className="max-lines-1 text-base">
-                    {teacher.name[locale].lastName}
-                  </span>
-                </h4>
-                {/* Go to Teacher button */}
-                <div>
-                  <LinkButton
-                    type="tonal"
-                    name={t("seeDetails", { ns: "common" })}
-                    iconOnly
-                    icon={<MaterialIcon icon="arrow_forward" />}
-                    url={`/teacher/${teacher.id}`}
-                    LinkElement={Link}
-                    className="!h-8 !w-8"
-                  />
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </Card>
-  );
-};
-
-const TeachersSection = (): JSX.Element => {
-  const { t } = useTranslation("dashboard");
-  const teachers: Array<Teacher> = [
-    {
-      id: 0,
-      role: "teacher",
-      prefix: "mister",
-      name: {
-        "en-US": {
-          firstName: "Taradol",
-          lastName: "Ranarintr",
-        },
-        th: {
-          firstName: "ธราดล",
-          lastName: "รานรินทร์",
-        },
-      },
-      profile: "/images/dummybase/taradol.webp",
-      subjectsInCharge: [],
-    },
-    {
-      id: 1,
-      role: "teacher",
-      prefix: "mister",
-      name: {
-        "en-US": {
-          firstName: "Thanakorn",
-          lastName: "Atjanawat",
-        },
-        th: {
-          firstName: "ธนกร",
-          lastName: "อรรจนาวัฒน์",
-        },
-      },
-      profile: "/images/dummybase/thanakorn.webp",
-      subjectsInCharge: [],
-    },
-    {
-      id: 2,
-      role: "teacher",
-      prefix: "missus",
-      name: {
-        "en-US": {
-          firstName: "Mattana",
-          lastName: "Tatanyang",
-        },
-        th: {
-          firstName: "มัทนา",
-          lastName: "ต๊ะตันยาง",
-        },
-      },
-      profile: "/images/dummybase/mattana.webp",
-      subjectsInCharge: [],
-    },
-    {
-      id: 3,
-      role: "teacher",
-      prefix: "mister",
-      name: {
-        "en-US": {
-          firstName: "John",
-          middleName: "Peter",
-          lastName: "Smith",
-        },
-        th: {
-          firstName: "จอห์น",
-          middleName: "ปีเตอร์",
-          lastName: "สมิธ",
-        },
-      },
-      subjectsInCharge: [],
-    },
-  ];
-
-  return (
-    <Section>
-      <Header
-        icon={<MaterialIcon icon="school" allowCustomSize={true} />}
-        text={t("teachers.title")}
-      />
-      <div className="flex flex-col justify-start gap-3 !px-0 sm:grid sm:grid-cols-2 md:grid-cols-4">
-        <div className="px-4 sm:px-0">
-          <ClassAdvisorsCard />
-        </div>
-        {teachers.length == 0 ? (
-          <div
-            className="mx-4 grid place-items-center rounded-xl bg-surface-1 p-8 text-center text-on-surface-variant
-              sm:mx-0 md:col-span-3"
-          >
-            <p>{t("teachers.noTeachers")}</p>
-          </div>
-        ) : (
-          <div
-            className="scroll-w-0 scroll-desktop h-full overflow-x-auto
-              sm:relative sm:overflow-y-scroll
-              md:static md:col-span-3 md:overflow-y-visible"
-          >
-            <ul
-              className="flex h-full w-fit flex-row gap-3 px-4
-                sm:absolute sm:top-0 sm:w-full sm:grid-rows-2 sm:flex-col sm:pl-0 sm:pr-2
-                md:static md:grid md:grid-cols-9 md:pr-0"
-            >
-              {teachers.map((teacher, index) => (
-                <li
-                  key={teacher.id}
-                  className={`w-80 sm:w-full md:col-span-3 ${
-                    index == 0
-                      ? "md:col-start-1"
-                      : index == 1
-                      ? "md:col-start-5"
-                      : index == 2
-                      ? "md:col-start-3"
-                      : index == 3
-                      ? "md:col-start-7"
-                      : "md:hidden"
-                  }`}
-                >
-                  <TeacherCard teacher={teacher} hasArrow />
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
-      <div className="flex flex-row items-center justify-end gap-2">
-        <LinkButton
-          label={t("teachers.action.seeAll")}
-          type="filled"
-          url="/teachers"
-          LinkElement={Link}
-        />
-      </div>
-    </Section>
-  );
-};
-
 // Page
 const StudentHome: NextPage<{
   user: Student | Teacher;
   news: NewsList;
   schedule: Schedule;
-}> = ({ user, news, schedule }) => {
+  teachers: Array<Teacher>;
+  classAdvisors: Array<Teacher>;
+}> = ({ user, news, schedule, teachers, classAdvisors }) => {
   const { t } = useTranslation(["dashboard", "common"]);
 
   // Dialog controls
@@ -327,9 +73,14 @@ const StudentHome: NextPage<{
           setShowEditProfile={setShowEditProfile}
           setShowLogOut={setShowLogOut}
         />
-        <NewsSection news={news} />
+        <NewsSection
+          news={news.map((newsItem) => ({
+            ...newsItem,
+            postDate: new Date(newsItem.postDate),
+          }))}
+        />
         <StudentClassSection schedule={schedule} />
-        <TeachersSection />
+        <TeachersSection teachers={teachers} classAdvisors={classAdvisors} />
       </RegularLayout>
 
       {/* Dialogs */}
@@ -473,6 +224,121 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
       },
     ],
   };
+  const teachers: Array<Teacher> = [
+    {
+      id: 0,
+      role: "teacher",
+      prefix: "mister",
+      name: {
+        "en-US": {
+          firstName: "Taradol",
+          lastName: "Ranarintr",
+        },
+        th: {
+          firstName: "ธราดล",
+          lastName: "รานรินทร์",
+        },
+      },
+      profile: "/images/dummybase/taradol.webp",
+      subjectsInCharge: [],
+    },
+    {
+      id: 1,
+      role: "teacher",
+      prefix: "mister",
+      name: {
+        "en-US": {
+          firstName: "Thanakorn",
+          lastName: "Atjanawat",
+        },
+        th: {
+          firstName: "ธนกร",
+          lastName: "อรรจนาวัฒน์",
+        },
+      },
+      profile: "/images/dummybase/thanakorn.webp",
+      subjectsInCharge: [],
+    },
+    {
+      id: 2,
+      role: "teacher",
+      prefix: "missus",
+      name: {
+        "en-US": {
+          firstName: "Mattana",
+          lastName: "Tatanyang",
+        },
+        th: {
+          firstName: "มัทนา",
+          lastName: "ต๊ะตันยาง",
+        },
+      },
+      profile: "/images/dummybase/mattana.webp",
+      subjectsInCharge: [],
+    },
+    {
+      id: 3,
+      role: "teacher",
+      prefix: "mister",
+      name: {
+        "en-US": {
+          firstName: "John",
+          middleName: "Peter",
+          lastName: "Smith",
+        },
+        th: {
+          firstName: "จอห์น",
+          middleName: "ปีเตอร์",
+          lastName: "สมิธ",
+        },
+      },
+      subjectsInCharge: [],
+    },
+  ];
+  const classAdvisors: Array<Teacher> = [
+    {
+      id: 2,
+      role: "teacher",
+      prefix: "mister",
+      name: {
+        "en-US": { firstName: "Taradol", lastName: "Ranarintr" },
+        th: { firstName: "ธราดล", lastName: "รานรินทร์" },
+      },
+      profile: "/images/dummybase/taradol.webp",
+      subjectsInCharge: [
+        {
+          id: 25,
+          code: {
+            "en-US": "SOC31152",
+            th: "ส31152",
+          },
+          name: {
+            "en-US": {
+              name: "Social Studies 2 (World)",
+            },
+            th: { name: "สังคมศึกษา 2 (พลโลก)" },
+          },
+          subjectSubgroup: {
+            name: { "en-US": "Social Studies", th: "สังคมศึกษา" },
+            subjectGroup: {
+              name: { "en-US": "Social Studies", th: "สังคมศึกษา" },
+            },
+          },
+        },
+      ],
+    },
+    {
+      id: 3,
+      role: "teacher",
+      prefix: "missus",
+      name: {
+        "en-US": { firstName: "Mattana", lastName: "Tatanyang" },
+        th: { firstName: "มัทนา", lastName: "ต๊ะตันยาง" },
+      },
+      profile: "/images/dummybase/mattana.webp",
+      subjectsInCharge: [],
+    },
+  ];
 
   return {
     props: {
@@ -483,8 +349,17 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         "dashboard",
       ])),
       user,
-      news,
+      // (@SiravitPhokeed)
+      // Apparently NextJS doesn’t serialize Date when in development
+      // It does in production, though.
+      // So I guess I’ll keep this workaround, well, around…
+      news: news.map((newsItem) => ({
+        ...newsItem,
+        postDate: newsItem.postDate.getTime(),
+      })),
       schedule,
+      teachers,
+      classAdvisors,
     },
   };
 };
