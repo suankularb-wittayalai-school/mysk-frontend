@@ -106,7 +106,7 @@ const NewsPage: NextPage<{ news: NewsListNoDate }> = ({
               subtitle: t("title.subtitle"),
             }}
             pageIcon="newspaper"
-            backGoesTo="/home"
+            backGoesTo="/s/home"
             LinkElement={Link}
             key="title"
           />
