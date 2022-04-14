@@ -112,7 +112,7 @@ const App = ({ Component, pageProps }: AppProps) => {
             inactive: <MaterialIcon icon="dashboard" type="outlined" />,
             active: <MaterialIcon icon="dashboard" type="filled" />,
           },
-          url: "/t/509/schedule",
+          url: "/t/schedule",
         },
         {
           name: t("navigation.subjects"),
