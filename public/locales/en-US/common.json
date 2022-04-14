@@ -9,9 +9,11 @@
     "login": "Log in",
     "about": "About",
     "schedule": "Schedule",
+    "subjects": "Subjects",
     "class": "Class",
     "teachers": "Teachers",
-    "news": "News"
+    "news": "News",
+    "admin": "Admin"
   },
   "name": {
     "prefix": {
