@@ -10,107 +10,33 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 // SK Components
 import {
   Card,
   CardHeader,
-  ChipFilterList,
   Header,
   MaterialIcon,
   RegularLayout,
   Section,
   Title,
-  XScrollContent,
   LinkButton,
 } from "@suankularb-components/react";
 
 // Components
-import NewsCard from "@components/NewsCard";
-import Schedule from "@components/Schedule";
 import TeacherCard from "@components/TeacherCard";
 import ChangePassword from "@components/dialogs/ChangePassword";
 import EditProfileDialog from "@components/dialogs/EditProfile";
 import LogOutDialog from "@components/dialogs/LogOut";
 import UserSection from "@components/home-sections/UserSection";
+import NewsSection from "@components/home-sections/NewsSection";
+import StudentClassSection from "@components/home-sections/StudentClass";
 
 // Types
 import { NewsList } from "@utils/types/news";
 import { Student, Teacher } from "@utils/types/person";
-import { Schedule as ScheduleType } from "@utils/types/schedule";
-
-// Helpers
-import { filterNews } from "@utils/helpers/filter-news";
-import NewsSection from "@components/home-sections/NewsSection";
-
-const ClassSection = (): JSX.Element => {
-  const { t } = useTranslation("dashboard");
-  const schedule: ScheduleType = {
-    content: [
-      {
-        day: getDay(new Date()),
-        content: [
-          { periodStart: 1, duration: 1 },
-          {
-            periodStart: 2,
-            duration: 1,
-            subject: {
-              name: {
-                "en-US": {
-                  name: "Chemistry",
-                  shortName: "Chem",
-                },
-                th: {
-                  name: "เคมี",
-                  shortName: "เคมี",
-                },
-              },
-              teachers: [
-                {
-                  name: {
-                    "en-US": {
-                      firstName: "Thanthapatra",
-                      lastName: "Bunchuay",
-                    },
-                    th: {
-                      firstName: "ธันฐภัทร",
-                      lastName: "บุญช่วย",
-                    },
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    ],
-  };
-
-  return (
-    <Section>
-      <Header
-        icon={<MaterialIcon icon="groups" allowCustomSize={true} />}
-        text={t("class.title")}
-      />
-      <Schedule schedule={schedule} role="student" />
-      <div className="flex flex-row flex-wrap items-center justify-end gap-2">
-        <LinkButton
-          label={t("class.action.seeSchedule")}
-          type="outlined"
-          url="/405/schedule"
-          LinkElement={Link}
-        />
-        <LinkButton
-          label={t("class.action.seeClassDetail")}
-          type="filled"
-          url="/405/class"
-          LinkElement={Link}
-        />
-      </div>
-    </Section>
-  );
-};
+import { Schedule } from "@utils/types/schedule";
 
 const ClassAdvisorsCard = (): JSX.Element => {
   const locale = useRouter().locale == "th" ? "th" : "en-US";
@@ -362,10 +288,11 @@ const TeachersSection = (): JSX.Element => {
 };
 
 // Page
-const StudentHome: NextPage<{ user: Student | Teacher; news: NewsList }> = ({
-  user,
-  news,
-}) => {
+const StudentHome: NextPage<{
+  user: Student | Teacher;
+  news: NewsList;
+  schedule: Schedule;
+}> = ({ user, news, schedule }) => {
   const { t } = useTranslation(["dashboard", "common"]);
 
   // Dialog controls
@@ -401,7 +328,7 @@ const StudentHome: NextPage<{ user: Student | Teacher; news: NewsList }> = ({
           setShowLogOut={setShowLogOut}
         />
         <NewsSection news={news} />
-        <ClassSection />
+        <StudentClassSection schedule={schedule} />
         <TeachersSection />
       </RegularLayout>
 
@@ -506,6 +433,46 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
       },
     },
   ];
+  const schedule: Schedule = {
+    content: [
+      {
+        day: getDay(new Date()),
+        content: [
+          { periodStart: 1, duration: 1 },
+          {
+            periodStart: 2,
+            duration: 1,
+            subject: {
+              name: {
+                "en-US": {
+                  name: "Chemistry",
+                  shortName: "Chem",
+                },
+                th: {
+                  name: "เคมี",
+                  shortName: "เคมี",
+                },
+              },
+              teachers: [
+                {
+                  name: {
+                    "en-US": {
+                      firstName: "Thanthapatra",
+                      lastName: "Bunchuay",
+                    },
+                    th: {
+                      firstName: "ธันฐภัทร",
+                      lastName: "บุญช่วย",
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    ],
+  };
 
   return {
     props: {
@@ -517,6 +484,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
       ])),
       user,
       news,
+      schedule,
     },
   };
 };
