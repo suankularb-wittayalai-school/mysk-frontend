@@ -33,6 +33,7 @@ import TeacherCard from "@components/TeacherCard";
 import ChangePassword from "@components/dialogs/ChangePassword";
 import EditProfileDialog from "@components/dialogs/EditProfile";
 import LogOutDialog from "@components/dialogs/LogOut";
+import UserSection from "@components/home-sections/UserSection";
 
 // Types
 import { NewsList } from "@utils/types/news";
@@ -41,142 +42,7 @@ import { Schedule as ScheduleType } from "@utils/types/schedule";
 
 // Helpers
 import { filterNews } from "@utils/helpers/filter-news";
-import UserSection from "@components/home-sections/UserSection";
-
-const NewsSection = (): JSX.Element => {
-  const { t } = useTranslation("dashboard");
-  const news: NewsList = [
-    {
-      id: 7,
-      type: "form",
-      frequency: "once",
-      postDate: new Date(2022, 2, 20),
-      done: false,
-      content: {
-        "en-US": {
-          title: "Student Information",
-          supportingText:
-            "Edit and confirm your student information on the Data Management Center (DMC)",
-        },
-        th: {
-          title: "ข้อมูลนักเรียนรายบุคคล",
-          supportingText: "ตรวจสอบและยืนยันข้อมูลนักเรียนรายบุคคล (DMC)",
-        },
-      },
-    },
-    {
-      id: 6,
-      type: "form",
-      frequency: "once",
-      postDate: new Date(2022, 2, 20),
-      done: true,
-      content: {
-        "en-US": {
-          title: "Classes Feedback",
-          supportingText:
-            "All personal information will be kept as a secret. For EPlus+ students, give feedback through co-teachers.",
-        },
-        th: {
-          title: "การจัดการเรียนการสอนออนไลน์",
-          supportingText:
-            "ข้อมูลส่วนบุคคลของนักเรียนจะถูกเก็บไว้เป็นความลับ สำหรับโครงการ EPlus+ ให้ประเมินผ่าน co-teacher",
-        },
-      },
-    },
-    {
-      id: 5,
-      type: "payment",
-      postDate: new Date(2022, 0, 7),
-      done: true,
-      content: {
-        "en-US": {
-          title: "School Maintainance Payment",
-          supportingText:
-            "Enter the School ICT system to help contribute to the maintenance of our school.",
-        },
-        th: {
-          title: "การชำระเงินบำรุงการศึกษา",
-          supportingText: "เข้าระบบ School ICT เพื่อชําระเงินบํารุงการศึกษา",
-        },
-      },
-    },
-    {
-      id: 4,
-      type: "news",
-      postDate: new Date(2021, 8, 16),
-      content: {
-        "en-US": {
-          title: "Certificates Announcement",
-          supportingText:
-            "Announcement of the 2020 Suankularb Wittayalai winners of certificates.",
-        },
-        th: {
-          title: "ประกาศเกียรติคุณ",
-          supportingText:
-            "ประกาศเกียรติคุณโรงเรียนสวนกุหลาบวิทยาลัย ประจำปีการศึกษา 2563",
-        },
-      },
-    },
-  ];
-  const [newsFilter, setNewsFilter] = useState<Array<string>>([]);
-  const [filteredNews, setFilteredNews] = useState<NewsList>(news);
-
-  useEffect(
-    () =>
-      filterNews(news, newsFilter, (newNews: NewsList) =>
-        setFilteredNews(newNews)
-      ),
-
-    // Adding `news` as a dependency causes an inifinie loop
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [newsFilter]
-  );
-
-  return (
-    <Section>
-      <Header
-        icon={<MaterialIcon icon="newspaper" allowCustomSize={true} />}
-        text={t("news.title")}
-      />
-      <ChipFilterList
-        choices={[
-          { id: "news", name: t("news.filter.news") },
-          { id: "form", name: t("news.filter.forms") },
-          { id: "payment", name: t("news.filter.payments") },
-          [
-            { id: "not-done", name: t("news.filter.amountDone.notDone") },
-            { id: "done", name: t("news.filter.amountDone.done") },
-          ],
-        ]}
-        onChange={(newFilter: Array<string>) => setNewsFilter(newFilter)}
-        scrollable={true}
-      />
-      {filteredNews.length == 0 ? (
-        <ul className="px-4">
-          <li className="grid h-[13.75rem] place-content-center rounded-xl bg-surface-1 text-center text-on-surface">
-            {t("news.noRelevantNews")}
-          </li>
-        </ul>
-      ) : (
-        <XScrollContent>
-          {filteredNews.map((newsItem) => (
-            <li key={newsItem.id}>
-              <NewsCard newsItem={newsItem} btnType="tonal" />
-            </li>
-          ))}
-        </XScrollContent>
-      )}
-      <div className="flex flex-row items-center justify-end gap-2">
-        <LinkButton
-          label={t("news.action.seeAll")}
-          type="filled"
-          url="/news"
-          LinkElement={Link}
-        />
-      </div>
-    </Section>
-  );
-};
+import NewsSection from "@components/home-sections/NewsSection";
 
 const ClassSection = (): JSX.Element => {
   const { t } = useTranslation("dashboard");
@@ -496,7 +362,10 @@ const TeachersSection = (): JSX.Element => {
 };
 
 // Page
-const StudentHome: NextPage<{ user: Student | Teacher }> = ({ user }) => {
+const StudentHome: NextPage<{ user: Student | Teacher; news: NewsList }> = ({
+  user,
+  news,
+}) => {
   const { t } = useTranslation(["dashboard", "common"]);
 
   // Dialog controls
@@ -531,7 +400,7 @@ const StudentHome: NextPage<{ user: Student | Teacher }> = ({ user }) => {
           setShowEditProfile={setShowEditProfile}
           setShowLogOut={setShowLogOut}
         />
-        <NewsSection />
+        <NewsSection news={news} />
         <ClassSection />
         <TeachersSection />
       </RegularLayout>
@@ -564,6 +433,79 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
     class: "405",
     classNo: 11,
   };
+  const news: NewsList = [
+    {
+      id: 7,
+      type: "form",
+      frequency: "once",
+      postDate: new Date(2022, 2, 20),
+      done: false,
+      content: {
+        "en-US": {
+          title: "Student Information",
+          supportingText:
+            "Edit and confirm your student information on the Data Management Center (DMC)",
+        },
+        th: {
+          title: "ข้อมูลนักเรียนรายบุคคล",
+          supportingText: "ตรวจสอบและยืนยันข้อมูลนักเรียนรายบุคคล (DMC)",
+        },
+      },
+    },
+    {
+      id: 6,
+      type: "form",
+      frequency: "once",
+      postDate: new Date(2022, 2, 20),
+      done: true,
+      content: {
+        "en-US": {
+          title: "Classes Feedback",
+          supportingText:
+            "All personal information will be kept as a secret. For EPlus+ students, give feedback through co-teachers.",
+        },
+        th: {
+          title: "การจัดการเรียนการสอนออนไลน์",
+          supportingText:
+            "ข้อมูลส่วนบุคคลของนักเรียนจะถูกเก็บไว้เป็นความลับ สำหรับโครงการ EPlus+ ให้ประเมินผ่าน co-teacher",
+        },
+      },
+    },
+    {
+      id: 5,
+      type: "payment",
+      postDate: new Date(2022, 0, 7),
+      done: true,
+      content: {
+        "en-US": {
+          title: "School Maintainance Payment",
+          supportingText:
+            "Enter the School ICT system to help contribute to the maintenance of our school.",
+        },
+        th: {
+          title: "การชำระเงินบำรุงการศึกษา",
+          supportingText: "เข้าระบบ School ICT เพื่อชําระเงินบํารุงการศึกษา",
+        },
+      },
+    },
+    {
+      id: 4,
+      type: "news",
+      postDate: new Date(2021, 8, 16),
+      content: {
+        "en-US": {
+          title: "Certificates Announcement",
+          supportingText:
+            "Announcement of the 2020 Suankularb Wittayalai winners of certificates.",
+        },
+        th: {
+          title: "ประกาศเกียรติคุณ",
+          supportingText:
+            "ประกาศเกียรติคุณโรงเรียนสวนกุหลาบวิทยาลัย ประจำปีการศึกษา 2563",
+        },
+      },
+    },
+  ];
 
   return {
     props: {
@@ -574,6 +516,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         "dashboard",
       ])),
       user,
+      news,
     },
   };
 };
