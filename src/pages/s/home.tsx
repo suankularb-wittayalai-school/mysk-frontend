@@ -78,6 +78,7 @@ const StudentHome: NextPage<{
             ...newsItem,
             postDate: new Date(newsItem.postDate),
           }))}
+          showFilters
         />
         <StudentClassSection schedule={schedule} />
         <TeachersSection teachers={teachers} classAdvisors={classAdvisors} />
