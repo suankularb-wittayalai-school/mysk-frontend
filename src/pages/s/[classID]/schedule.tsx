@@ -167,7 +167,7 @@ const StudentSchedule: NextPage<{
           <Title
             name={{ title: t("title.student") }}
             pageIcon={<MaterialIcon icon="dashboard" />}
-            backGoesTo="/home"
+            backGoesTo="/s/home"
             LinkElement={Link}
           />
         }

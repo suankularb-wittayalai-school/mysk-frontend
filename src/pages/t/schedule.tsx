@@ -1,5 +1,6 @@
 // Modules
 import { GetServerSideProps, NextPage } from "next";
+import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
@@ -17,6 +18,7 @@ import {
   MaterialIcon,
   RegularLayout,
   Section,
+  Title,
 } from "@suankularb-components/react";
 
 // Components
@@ -223,7 +225,13 @@ const TeacherSchedule: NextPage<{ schedule: ScheduleType }> = ({
 
   return (
     <>
-      <RegularLayout>
+      <RegularLayout Title={
+          <Title
+            name={{ title: t("title.student") }}
+            pageIcon={<MaterialIcon icon="dashboard" />}
+            backGoesTo="/t/home"
+            LinkElement={Link}
+          />}>
         <Section>
           <Schedule schedule={schedule} role="teacher" />
           <div className="flex flex-row items-center justify-end gap-2">
