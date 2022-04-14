@@ -16,7 +16,7 @@ import Schedule from "@components/Schedule";
 // Types
 import { Schedule as ScheduleType } from "@utils/types/schedule";
 
-const StudentClassSection = ({
+const SubjectsSection = ({
   schedule,
 }: {
   schedule: ScheduleType;
@@ -26,21 +26,21 @@ const StudentClassSection = ({
   return (
     <Section>
       <Header
-        icon={<MaterialIcon icon="groups" allowCustomSize={true} />}
-        text={t("class.title")}
+        icon={<MaterialIcon icon="school" allowCustomSize={true} />}
+        text={t("subjects.title")}
       />
-      <Schedule schedule={schedule} role="student" />
+      <Schedule schedule={schedule} role="teacher" />
       <div className="flex flex-row flex-wrap items-center justify-end gap-2">
         <LinkButton
-          label={t("class.action.seeSchedule")}
+          label={t("subjects.action.seeSchedule")}
           type="outlined"
-          url="/s/405/schedule"
+          url="/t/schedule"
           LinkElement={Link}
         />
         <LinkButton
-          label={t("class.action.seeClassDetail")}
+          label={t("subjects.action.seeSubjects")}
           type="filled"
-          url="/s/405/class"
+          url="/t/subjects/teaching"
           LinkElement={Link}
         />
       </div>
@@ -48,4 +48,4 @@ const StudentClassSection = ({
   );
 };
 
-export default StudentClassSection;
+export default SubjectsSection;

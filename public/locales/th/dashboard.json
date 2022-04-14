@@ -13,6 +13,13 @@
       "changePassword": "เปลี่ยนรหัสผ่าน"
     }
   },
+  "subjects": {
+    "title": "วิชาที่สอน",
+    "action": {
+      "seeSchedule": "ดูตารางเรียน",
+      "seeSubjects": "ดูวิชาที่สอน"
+    }
+  },
   "news": {
     "title": "ข่าวสาร",
     "filter": {

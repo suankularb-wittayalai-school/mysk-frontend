@@ -1,4 +1,6 @@
 // Modules
+import { getDay } from "date-fns";
+
 import { GetStaticProps, NextPage } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useState } from "react";
@@ -11,16 +13,19 @@ import ChangePassword from "@components/dialogs/ChangePassword";
 import EditProfileDialog from "@components/dialogs/EditProfile";
 import LogOutDialog from "@components/dialogs/LogOut";
 import NewsSection from "@components/home-sections/NewsSection";
+import SubjectsSection from "@components/home-sections/SubjectsSection";
 import UserSection from "@components/home-sections/UserSection";
 
 // Types
 import { Teacher } from "@utils/types/person";
 import { NewsList } from "@utils/types/news";
+import { Schedule } from "@utils/types/schedule";
 
-const TeacherHome: NextPage<{ user: Teacher; news: NewsList }> = ({
-  user,
-  news,
-}) => {
+const TeacherHome: NextPage<{
+  user: Teacher;
+  schedule: Schedule;
+  news: NewsList;
+}> = ({ user, schedule, news }) => {
   const [showChangePassword, setShowChangePassword] = useState<boolean>(false);
   const [showEditProfile, setShowEditProfile] = useState<boolean>(false);
   const [showLogOut, setShowLogOut] = useState<boolean>(false);
@@ -34,6 +39,7 @@ const TeacherHome: NextPage<{ user: Teacher; news: NewsList }> = ({
           setShowEditProfile={setShowEditProfile}
           setShowLogOut={setShowLogOut}
         />
+        <SubjectsSection schedule={schedule} />
         <NewsSection
           news={news.map((newsItem) => ({
             ...newsItem,
@@ -131,6 +137,14 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
       },
     },
   ];
+  const schedule: Schedule = {
+    content: [
+      {
+        day: getDay(new Date()),
+        content: [],
+      },
+    ],
+  };
 
   return {
     props: {
@@ -149,6 +163,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         ...newsItem,
         postDate: newsItem.postDate.getTime(),
       })),
+      schedule,
     },
   };
 };

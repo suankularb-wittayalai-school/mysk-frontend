@@ -13,6 +13,13 @@
       "changePassword": "Change password"
     }
   },
+  "subjects": {
+    "title": "Subjects you teach",
+    "action": {
+      "seeSchedule": "See schedule",
+      "seeSubjects": "See subjects you teach"
+    }
+  },
   "news": {
     "title": "News",
     "filter": {
