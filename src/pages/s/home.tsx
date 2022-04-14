@@ -7,14 +7,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { Trans, useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { useEffect, useState } from "react";
 
 // SK Components
 import {
-  Button,
   Card,
   CardHeader,
   ChipFilterList,
@@ -28,7 +27,7 @@ import {
 } from "@suankularb-components/react";
 
 // Components
-import ProfilePicture from "@components/ProfilePicture";
+import NewsCard from "@components/NewsCard";
 import Schedule from "@components/Schedule";
 import TeacherCard from "@components/TeacherCard";
 import ChangePassword from "@components/dialogs/ChangePassword";
@@ -39,163 +38,10 @@ import LogOutDialog from "@components/dialogs/LogOut";
 import { NewsList } from "@utils/types/news";
 import { Student, Teacher } from "@utils/types/person";
 import { Schedule as ScheduleType } from "@utils/types/schedule";
+
+// Helpers
 import { filterNews } from "@utils/helpers/filter-news";
-import NewsCard from "@components/NewsCard";
-
-const UserActions = ({
-  setshowChangePassword,
-  setShowEditProfile,
-  setShowLogOut,
-  className,
-}: {
-  setshowChangePassword: Function;
-  setShowEditProfile: Function;
-  setShowLogOut: Function;
-  className?: string;
-}): JSX.Element => {
-  const { t } = useTranslation("dashboard");
-
-  return (
-    <div
-      className={`flex-row flex-wrap items-center justify-end gap-2 ${
-        className || "flex"
-      }`}
-    >
-      <Button
-        label={t("user.action.changePassword")}
-        type="text"
-        onClick={() => setshowChangePassword(true)}
-        className="!hidden sm:!flex"
-      />
-      <Button
-        label={t("user.action.requestEdit")}
-        type="outlined"
-        icon={<MaterialIcon icon="edit" />}
-        onClick={() => setShowEditProfile(true)}
-      />
-      <Button
-        label={t("user.action.logOut")}
-        type="filled"
-        icon={<MaterialIcon icon="logout" />}
-        onClick={() => setShowLogOut(true)}
-        className="!bg-error !text-on-error"
-      />
-    </div>
-  );
-};
-
-const UserSection = ({
-  setShowChangePassword,
-  setShowEditProfile,
-  setShowLogOut,
-}: {
-  setShowChangePassword: Function;
-  setShowEditProfile: Function;
-  setShowLogOut: Function;
-}): JSX.Element => {
-  const locale = useRouter().locale == "th" ? "th" : "en-US";
-
-  // Dummybase
-  const user: Student | Teacher = {
-    id: 9,
-    role: "student",
-    prefix: "mister",
-    name: {
-      "en-US": { firstName: "Sadudee", lastName: "Theparree" },
-      th: { firstName: "สดุดี", lastName: "เทพอารีย์" },
-    },
-    profile: "/images/dummybase/sadudee.webp",
-    class: "405",
-    classNo: 11,
-  };
-  const notifCount = 1;
-
-  return (
-    <Section>
-      <div className="grid grid-cols-[1fr_3fr] items-stretch gap-4 sm:gap-6 md:grid-cols-[1fr_5fr]">
-        {/* Profile picture section */}
-        <div>
-          {/* Profile picture */}
-          <div className="aspect-square overflow-hidden rounded-xl sm:rounded-2xl">
-            <ProfilePicture src={user.profile} />
-          </div>
-        </div>
-
-        {/* Content section */}
-        <div className="flex flex-col gap-2">
-          <div className="flex flex-grow flex-col gap-2">
-            <div className="flex flex-col">
-              {/* Name */}
-              <h2 className="max-lines-1 break-all font-display text-4xl font-bold">
-                {user.name[locale].firstName} {user.name[locale].lastName}
-              </h2>
-
-              {/* Class and number */}
-              <p className="font-display text-xl">
-                <Trans i18nKey="user.classAndNo" ns="dashboard">
-                  M.{{ class: user.class }} No.{{ classNo: user.classNo }}
-                </Trans>
-              </p>
-            </div>
-
-            {/* Notification chip */}
-            <Link href="/notifications">
-              <a className="hidden sm:block">
-                <Card
-                  type="horizontal"
-                  appearance="tonal"
-                  hasAction
-                  className="container-error has-action--error !w-fit"
-                >
-                  <CardHeader
-                    icon={
-                      <MaterialIcon
-                        icon={
-                          notifCount > 0
-                            ? "notifications_active"
-                            : "notifications"
-                        }
-                        className="text-error"
-                      />
-                    }
-                    title={
-                      <Trans
-                        i18nKey="user.hasNotifications"
-                        ns="dashboard"
-                        count={notifCount}
-                      >
-                        You have {{ notifCount }} notifications.
-                      </Trans>
-                    }
-                    end={
-                      <MaterialIcon
-                        icon="arrow_forward"
-                        className="text-error"
-                      />
-                    }
-                    className="!gap-2 !p-2"
-                  />
-                </Card>
-              </a>
-            </Link>
-          </div>
-          <UserActions
-            className="hidden md:flex"
-            setshowChangePassword={setShowChangePassword}
-            setShowEditProfile={setShowEditProfile}
-            setShowLogOut={setShowLogOut}
-          />
-        </div>
-      </div>
-      <UserActions
-        className="flex md:hidden"
-        setshowChangePassword={setShowChangePassword}
-        setShowEditProfile={setShowEditProfile}
-        setShowLogOut={setShowLogOut}
-      />
-    </Section>
-  );
-};
+import UserSection from "@components/home-sections/UserSection";
 
 const NewsSection = (): JSX.Element => {
   const { t } = useTranslation("dashboard");
@@ -501,7 +347,7 @@ const ClassAdvisorsCard = (): JSX.Element => {
                     icon={<MaterialIcon icon="arrow_forward" />}
                     url={`/teacher/${teacher.id}`}
                     LinkElement={Link}
-                    className="!w-8 !h-8"
+                    className="!h-8 !w-8"
                   />
                 </div>
               </div>
@@ -650,7 +496,7 @@ const TeachersSection = (): JSX.Element => {
 };
 
 // Page
-const StudentHome: NextPage = () => {
+const StudentHome: NextPage<{ user: Student | Teacher }> = ({ user }) => {
   const { t } = useTranslation(["dashboard", "common"]);
 
   // Dialog controls
@@ -680,6 +526,7 @@ const StudentHome: NextPage = () => {
         }
       >
         <UserSection
+          user={user}
           setShowChangePassword={setShowChangePassword}
           setShowEditProfile={setShowEditProfile}
           setShowLogOut={setShowLogOut}
@@ -695,18 +542,7 @@ const StudentHome: NextPage = () => {
         onClose={() => setShowChangePassword(false)}
       />
       <EditProfileDialog
-        user={{
-          id: 9,
-          role: "student",
-          prefix: "mister",
-          name: {
-            "en-US": { firstName: "Sadudee", lastName: "Theparree" },
-            th: { firstName: "สดุดี", lastName: "เทพอารีย์" },
-          },
-          profile: "/images/dummybase/sadudee.webp",
-          class: "405",
-          classNo: 11,
-        }}
+        user={user}
         show={showEditProfile}
         onClose={() => setShowEditProfile(false)}
       />
@@ -715,15 +551,31 @@ const StudentHome: NextPage = () => {
   );
 };
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale as string, [
-      "common",
-      "account",
-      "news",
-      "dashboard",
-    ])),
-  },
-});
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
+  const user: Student = {
+    id: 9,
+    role: "student",
+    prefix: "mister",
+    name: {
+      "en-US": { firstName: "Sadudee", lastName: "Theparree" },
+      th: { firstName: "สดุดี", lastName: "เทพอารีย์" },
+    },
+    profile: "/images/dummybase/sadudee.webp",
+    class: "405",
+    classNo: 11,
+  };
+
+  return {
+    props: {
+      ...(await serverSideTranslations(locale as string, [
+        "common",
+        "account",
+        "news",
+        "dashboard",
+      ])),
+      user,
+    },
+  };
+};
 
 export default StudentHome;
