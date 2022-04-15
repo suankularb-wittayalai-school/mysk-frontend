@@ -25,29 +25,44 @@ type NewsItemCommon = {
   };
 };
 
-export interface NewsItemNews extends NewsItemCommon {
+export type NewsItemNews = NewsItemCommon & {
   type: "news";
-}
+};
 
-export interface NewsItemStats extends NewsItemCommon {
+export type NewsItemStats = NewsItemCommon & {
   type: "stats";
-}
+};
 
-export interface NewsItemForm extends NewsItemCommon {
+export type NewsItemForm = NewsItemCommon & {
   type: "form";
   frequency?: "once" | "weekly" | "monthly";
   dueDate?: Date;
   done: boolean;
-}
+};
 
-export interface NewsItemPayment extends NewsItemCommon {
+export type NewsItemPayment = NewsItemCommon & {
   type: "payment";
   amount?: number;
   dueDate?: Date;
   done: boolean;
-}
+};
 
 export type NewsContent = {
   title: string;
   supportingText: string;
+};
+
+export type StudentForm = {
+  id: number;
+  type: "form" | "payment";
+  postDate: Date;
+  percentDone: number;
+  content: {
+    "en-US"?: {
+      title: string;
+    };
+    th: {
+      title: string;
+    };
+  };
 };

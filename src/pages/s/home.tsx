@@ -241,6 +241,13 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         },
       },
       profile: "/images/dummybase/taradol.webp",
+      classAdvisorAt: {
+        id: 405,
+        name: {
+          "en-US": "M.405",
+          th: "ม.405",
+        },
+      },
       subjectsInCharge: [],
     },
     {
@@ -258,6 +265,13 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         },
       },
       profile: "/images/dummybase/thanakorn.webp",
+      classAdvisorAt: {
+        id: 404,
+        name: {
+          "en-US": "M.040",
+          th: "ม.404",
+        },
+      },
       subjectsInCharge: [],
     },
     {
@@ -275,6 +289,13 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         },
       },
       profile: "/images/dummybase/mattana.webp",
+      classAdvisorAt: {
+        id: 405,
+        name: {
+          "en-US": "M.405",
+          th: "ม.405",
+        },
+      },
       subjectsInCharge: [],
     },
     {
@@ -306,6 +327,13 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         th: { firstName: "ธราดล", lastName: "รานรินทร์" },
       },
       profile: "/images/dummybase/taradol.webp",
+      classAdvisorAt: {
+        id: 405,
+        name: {
+          "en-US": "M.405",
+          th: "ม.405",
+        },
+      },
       subjectsInCharge: [
         {
           id: 25,
@@ -337,6 +365,13 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         th: { firstName: "มัทนา", lastName: "ต๊ะตันยาง" },
       },
       profile: "/images/dummybase/mattana.webp",
+      classAdvisorAt: {
+        id: 405,
+        name: {
+          "en-US": "M.405",
+          th: "ม.405",
+        },
+      },
       subjectsInCharge: [],
     },
   ];

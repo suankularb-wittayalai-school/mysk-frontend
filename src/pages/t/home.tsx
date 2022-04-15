@@ -18,14 +18,16 @@ import UserSection from "@components/home-sections/UserSection";
 
 // Types
 import { Teacher } from "@utils/types/person";
-import { NewsList } from "@utils/types/news";
+import { NewsList, StudentForm } from "@utils/types/news";
 import { Schedule } from "@utils/types/schedule";
+import TeacherClassSection from "@components/home-sections/TeacherClassSection";
 
 const TeacherHome: NextPage<{
   user: Teacher;
   schedule: Schedule;
+  studentForms: Array<StudentForm>;
   news: NewsList;
-}> = ({ user, schedule, news }) => {
+}> = ({ user, schedule, studentForms, news }) => {
   const [showChangePassword, setShowChangePassword] = useState<boolean>(false);
   const [showEditProfile, setShowEditProfile] = useState<boolean>(false);
   const [showLogOut, setShowLogOut] = useState<boolean>(false);
@@ -40,6 +42,12 @@ const TeacherHome: NextPage<{
           setShowLogOut={setShowLogOut}
         />
         <SubjectsSection schedule={schedule} />
+        <TeacherClassSection
+          studentForms={studentForms.map((newsItem) => ({
+            ...newsItem,
+            postDate: new Date(newsItem.postDate),
+          }))}
+        />
         <NewsSection
           news={news.map((newsItem) => ({
             ...newsItem,
@@ -78,7 +86,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
       name: {
         "en-US": "M.509",
         th: "ม.509",
-      }
+      },
     },
     subjectsInCharge: [
       {
@@ -125,6 +133,36 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
       },
     ],
   };
+  const studentForms: Array<StudentForm> = [
+    {
+      id: 5,
+      type: "payment",
+      postDate: new Date(2022, 0, 7),
+      percentDone: 43,
+      content: {
+        "en-US": {
+          title: "School Maintainance Payment",
+        },
+        th: {
+          title: "การชำระเงินบำรุงการศึกษา",
+        },
+      },
+    },
+    {
+      id: 3,
+      type: "form",
+      postDate: new Date(2020, 3, 14),
+      percentDone: 96,
+      content: {
+        "en-US": {
+          title: "Online Learning Readiness",
+        },
+        th: {
+          title: "ความพร้อมการเรียนออนไลน์",
+        },
+      },
+    },
+  ];
   const news: NewsList = [
     {
       id: 12,
@@ -166,6 +204,10 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
       // Apparently NextJS doesn’t serialize Date when in development
       // It does in production, though.
       // So I guess I’ll keep this workaround, well, around…
+      studentForms: studentForms.map((newsItem) => ({
+        ...newsItem,
+        postDate: newsItem.postDate.getTime(),
+      })),
       news: news.map((newsItem) => ({
         ...newsItem,
         postDate: newsItem.postDate.getTime(),

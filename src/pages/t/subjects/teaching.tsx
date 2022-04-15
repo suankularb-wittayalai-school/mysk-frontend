@@ -34,6 +34,7 @@ const SubjectsTeaching: NextPage<{ subjects: Array<SubjectWNameAndCode> }> = ({
           name={{ title: t("teaching.title") }}
           pageIcon={<MaterialIcon icon="school" />}
           backGoesTo="/t/home"
+          LinkElement={Link}
         />
       }
     >
