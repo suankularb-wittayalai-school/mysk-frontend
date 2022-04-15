@@ -138,7 +138,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
       id: 5,
       type: "payment",
       postDate: new Date(2022, 0, 7),
-      percentDone: 43,
+      percentDone: 3,
       content: {
         "en-US": {
           title: "School Maintainance Payment",

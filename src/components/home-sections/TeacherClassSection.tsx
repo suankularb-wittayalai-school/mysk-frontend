@@ -51,7 +51,15 @@ const StudentFormCard = ({ form }: { form: StudentForm }): JSX.Element => {
         // Completion and link
         end={
           <div className="flex flex-row items-center gap-2">
-            <div className="container-tertiary rounded-lg py-2 px-3 font-sans font-bold">
+            <div
+              className={`rounded-lg py-2 px-3 font-sans font-bold ${
+                form.percentDone < 25
+                  ? "error"
+                  : form.percentDone < 50
+                  ? "container-tertiary"
+                  : "container-primary"
+              }`}
+            >
               {form.percentDone}%
             </div>
             <LinkButton
@@ -59,7 +67,7 @@ const StudentFormCard = ({ form }: { form: StudentForm }): JSX.Element => {
               type="tonal"
               iconOnly
               icon={<MaterialIcon icon="arrow_forward" />}
-              url={`/${form.type}/${form.id}`}
+              url={`/t/${form.type}/${form.id}`}
               LinkElement={Link}
             />
           </div>
