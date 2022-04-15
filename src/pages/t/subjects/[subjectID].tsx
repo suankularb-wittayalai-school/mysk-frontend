@@ -1,5 +1,6 @@
 // Modules
 import { GetServerSideProps, NextPage } from "next";
+import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -277,11 +278,13 @@ const SubstituteAssignmentsSection = ({
   substAsgn,
   setShowAssgDetails,
   setShowEditAsgn,
+  setShowAddAsgn,
   setActiveAsgn,
 }: {
   substAsgn: Array<SubstituteAssignment>;
   setShowAssgDetails: Function;
   setShowEditAsgn: Function;
+  setShowAddAsgn: Function;
   setActiveAsgn: Function;
 }): JSX.Element => {
   const { t } = useTranslation("subjects");
@@ -340,7 +343,11 @@ const SubstituteAssignmentsSection = ({
       </XScrollContent>
       <div className="flex flex-row flex-wrap items-center justify-end gap-2">
         <Button type="outlined" label={t("substAsgn.action.seeAll")} />
-        <Button type="filled" label={t("substAsgn.action.addAsgn")} />
+        <Button
+          type="filled"
+          label={t("substAsgn.action.addAsgn")}
+          onClick={() => setShowAddAsgn(true)}
+        />
       </div>
     </Section>
   );
@@ -360,7 +367,9 @@ const AssignmentDetailsDialog = ({
       type="large"
       label="asgn-details"
       title={assignment.name[locale]}
-      actions={[{ name: "Done", type: "close" }]}
+      actions={[
+        { name: t("substAsgn.dialog.asgnDetails.action.close"), type: "close" },
+      ]}
       show={show}
       onClose={() => onClose()}
     >
@@ -390,11 +399,13 @@ const EditAssignmentDialog = ({
   show,
   onClose,
   onSubmit,
+  mode,
   assignment,
   allSubjects,
 }: DialogProps & {
   onSubmit: Function;
-  assignment: SubstituteAssignment;
+  mode: "add" | "edit";
+  assignment?: SubstituteAssignment;
   allSubjects: Array<SubjectWNameAndCode>;
 }): JSX.Element => {
   const { t } = useTranslation("subjects");
@@ -410,19 +421,28 @@ const EditAssignmentDialog = ({
       id: string;
       name: string | JSX.Element;
     }>;
-  }>({
-    subject: assignment.subject.id,
-    enDesc: assignment.desc["en-US"],
-    thDesc: assignment.desc.th,
-    assignedClases: assignment.classes.map((classItem) => ({
-      id: classItem.id.toString(),
-      name: classItem.name[locale],
-    })),
-  });
+  }>(
+    mode == "edit" && assignment
+      ? {
+          subject: assignment.subject.id,
+          enDesc: assignment.desc["en-US"],
+          thDesc: assignment.desc.th,
+          assignedClases: assignment.classes.map((classItem) => ({
+            id: classItem.id.toString(),
+            name: classItem.name[locale],
+          })),
+        }
+      : {
+          subject: allSubjects[0].id,
+          enDesc: "",
+          thDesc: "",
+          assignedClases: [],
+        }
+  );
 
   function validateAndSend() {
     let formData = new FormData();
-    
+
     // TODO: Form validation isn’t here yet!
 
     return true;
@@ -433,7 +453,7 @@ const EditAssignmentDialog = ({
       <Dialog
         type="large"
         label="edit-asgn"
-        title={t("substAsgn.dialog.editAsgn.title")}
+        title={t(`substAsgn.dialog.editAsgn.title.${mode}`)}
         actions={[
           { name: t("substAsgn.dialog.editAsgn.action.cancel"), type: "close" },
           { name: t("substAsgn.dialog.editAsgn.action.save"), type: "submit" },
@@ -496,15 +516,22 @@ const SubjectDetails: NextPage<{
   substAsgn: Array<SubstituteAssignment>;
   allSubjects: Array<SubjectWNameAndCode>;
 }> = ({ subject, classesLearningThis, periodLogs, substAsgn, allSubjects }) => {
+  const { t } = useTranslation(["subjects", "common"]);
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
   const [showAdd, setShowAdd] = useState<boolean>(false);
 
   const [showAsgnDetails, setShowAsgnDetails] = useState<boolean>(false);
   const [showEditAsgn, setShowEditAsgn] = useState<boolean>(false);
+  const [showAddAsgn, setShowAddAsgn] = useState<boolean>(false);
   const [activeAsgn, setActiveAsgn] = useState<SubstituteAssignment>();
 
   return (
     <>
+      <Head>
+        <title>
+          {t("title")} - {t("brand.name", { ns: "common" })}
+        </title>
+      </Head>
       <RegularLayout
         Title={
           <Title
@@ -513,7 +540,7 @@ const SubjectDetails: NextPage<{
               subtitle: subject.code[locale],
             }}
             pageIcon={<MaterialIcon icon="school" />}
-            backGoesTo="/subjects/teaching"
+            backGoesTo="/t/subjects/teaching"
             LinkElement={Link}
           />
         }
@@ -527,6 +554,7 @@ const SubjectDetails: NextPage<{
           substAsgn={substAsgn}
           setShowAssgDetails={setShowAsgnDetails}
           setShowEditAsgn={setShowEditAsgn}
+          setShowAddAsgn={setShowAddAsgn}
           setActiveAsgn={setActiveAsgn}
         />
       </RegularLayout>
@@ -548,12 +576,21 @@ const SubjectDetails: NextPage<{
             show={showEditAsgn}
             onClose={() => setShowEditAsgn(false)}
             // TODO: Refetch subst asgns here ↓
-            onSubmit={() => setShowAsgnDetails(false)}
+            onSubmit={() => setShowEditAsgn(false)}
+            mode="edit"
             assignment={activeAsgn}
             allSubjects={allSubjects}
           />
         </>
       )}
+      <EditAssignmentDialog
+        show={showAddAsgn}
+        onClose={() => setShowAddAsgn(false)}
+        // TODO: Refetch subst asgns here ↓
+        onSubmit={() => setShowAddAsgn(false)}
+        mode="add"
+        allSubjects={allSubjects}
+      />
     </>
   );
 };

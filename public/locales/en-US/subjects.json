@@ -59,7 +59,10 @@
         }
       },
       "editAsgn": {
-        "title": "Edit assignment",
+        "title": {
+          "add": "Add assignment",
+          "edit": "Edit assignment"
+        },
         "subject": "Subject",
         "desc": {
           "title": "Description",

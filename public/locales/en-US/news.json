@@ -17,6 +17,7 @@
   },
   "itemType": {
     "form": "Form",
+    "stats": "Statistics",
     "news": "News",
     "payment": "Payment"
   },
@@ -32,11 +33,12 @@
     "pastDueBy": "Past due by {{timePast}}"
   },
   "itemAction": {
+    "news": "Read more",
+    "stats": "Read more",
     "form": {
       "do": "Do form",
       "edit": "Edit form"
     },
-    "news": "Read more",
     "payment": {
       "do": "Pay",
       "edit": "See payment"

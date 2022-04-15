@@ -1,5 +1,10 @@
 export function logIn(formData: FormData) {
-  return true;
+  // Temporary
+  console.log(formData.get("user-id")?.toString().includes("skt"));
+  if (formData.get("user-id")?.toString().includes("skt")) {
+    return { role: "teacher" };
+  }
+  return { role: "student" };
 }
 
 export function logOut() {}

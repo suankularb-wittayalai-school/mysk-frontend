@@ -3,6 +3,7 @@
   "user": {
     "profileAlt": "A picture of you",
     "classAndNo": "M.{{class}} No. {{classNo}}",
+    "subjectAndClass": "Teacher in {{subjectGroup}}<br>Class advisor at {{classAdvisorAt}}",
     "hasNotifications_zero": "No notifications",
     "hasNotifications_one": "1 notification",
     "hasNotifications_other": "{{notifCount}} notifications",
@@ -11,6 +12,13 @@
       "edit": "Edit profile",
       "requestEdit": "Request profile edit",
       "changePassword": "Change password"
+    }
+  },
+  "subjects": {
+    "title": "Subjects you teach",
+    "action": {
+      "seeSchedule": "See schedule",
+      "seeSubjects": "See subjects"
     }
   },
   "news": {
@@ -34,6 +42,7 @@
   },
   "class": {
     "title": "Class",
+    "noRelevantForms": "We couldn’t find any relevant forms.",
     "action": {
       "seeSchedule": "See schedule",
       "seeClassDetail": "See class detail"

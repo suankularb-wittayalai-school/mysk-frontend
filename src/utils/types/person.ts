@@ -1,3 +1,4 @@
+import { ClassWName } from "./class";
 import { Subject } from "./subject";
 
 export type Person = {
@@ -29,6 +30,7 @@ export type Student = Person & {
 export type Teacher = Person & {
   // TODO: Add more properties when the schema is completed
   role: "teacher";
+  classAdvisorAt?: ClassWName;
   subjectsInCharge: Array<{
     id: Subject["id"];
     code: Subject["code"];

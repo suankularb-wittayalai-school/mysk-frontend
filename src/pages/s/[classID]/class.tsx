@@ -153,7 +153,7 @@ const Class: NextPage<{ classItem: ClassType }> = ({ classItem }) => {
           <Title
             name={{ title: classItem.name[locale] }}
             pageIcon={<MaterialIcon icon="groups" />}
-            backGoesTo="/home"
+            backGoesTo="/s/home"
             LinkElement={Link}
           />
         }

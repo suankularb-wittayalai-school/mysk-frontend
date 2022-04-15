@@ -15,10 +15,16 @@ import {
   RegularLayout,
   Title,
 } from "@suankularb-components/react";
+
+// Utils
 import { logIn } from "@utils/backend/account";
+import { Role } from "@utils/types/person";
 
 const LoginForm = () => {
   const { t } = useTranslation("account");
+  const router = useRouter();
+
+  // Form control
   const [form, setForm] = useState<{
     userID: string;
     password: string;
@@ -26,21 +32,23 @@ const LoginForm = () => {
     userID: "",
     password: "",
   });
-  const router = useRouter();
 
   function validateAndSend() {
     let formData: FormData = new FormData();
 
     // Validates
-    if (form.userID.length != 5) return;
+    if (!form.userID) return;
     if (!form.password) return;
 
     // Appends to form data
-    formData.append("user-id", form.userID)
-    formData.append("password", form.password)
+    formData.append("user-id", form.userID);
+    formData.append("password", form.password);
 
     // Sends and redirects
-    if (logIn(formData)) router.push("/home");
+    const role: Role = logIn(formData).role as Role;
+    console.log(role)
+    if (role == "student") router.push("/s/home");
+    else if (role == "teacher") router.push("/t/home");
   }
 
   return (

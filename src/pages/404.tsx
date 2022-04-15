@@ -17,7 +17,7 @@ const NotFound: NextPage = () => {
         <Title
           name={{ title: t("verboseCode.404") }}
           pageIcon="sentiment_very_dissatisfied"
-          backGoesTo="/home"
+          backGoesTo="/s/home"
           LinkElement={Link}
         />
       }

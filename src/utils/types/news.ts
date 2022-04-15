@@ -1,13 +1,18 @@
 export type NewsList = Array<NewsItem>;
 export type NewsListNoDate = Array<NewsItemNoDate>;
 
-export type NewsItem = NewsItemNews | NewsItemForm | NewsItemPayment;
+export type NewsItem =
+  | NewsItemNews
+  | NewsItemStats
+  | NewsItemForm
+  | NewsItemPayment;
+
 export type NewsItemNoDate = NewsItem & {
   postDate: number;
   dueDate?: number;
-}
+};
 
-export type NewsItemType = "news" | "form" | "payment";
+export type NewsItemType = "news" | "stats" | "form" | "payment";
 
 type NewsItemCommon = {
   id: number;
@@ -20,25 +25,44 @@ type NewsItemCommon = {
   };
 };
 
-export interface NewsItemNews extends NewsItemCommon {
+export type NewsItemNews = NewsItemCommon & {
   type: "news";
-}
+};
 
-export interface NewsItemForm extends NewsItemCommon {
+export type NewsItemStats = NewsItemCommon & {
+  type: "stats";
+};
+
+export type NewsItemForm = NewsItemCommon & {
   type: "form";
   frequency?: "once" | "weekly" | "monthly";
   dueDate?: Date;
   done: boolean;
-}
+};
 
-export interface NewsItemPayment extends NewsItemCommon {
+export type NewsItemPayment = NewsItemCommon & {
   type: "payment";
   amount?: number;
   dueDate?: Date;
   done: boolean;
-}
+};
 
 export type NewsContent = {
   title: string;
   supportingText: string;
+};
+
+export type StudentForm = {
+  id: number;
+  type: "form" | "payment";
+  postDate: Date;
+  percentDone: number;
+  content: {
+    "en-US"?: {
+      title: string;
+    };
+    th: {
+      title: string;
+    };
+  };
 };
