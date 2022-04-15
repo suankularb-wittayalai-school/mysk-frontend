@@ -98,18 +98,28 @@ const UserSection = ({
               </h2>
 
               {/* Class and number */}
-              {user.role == "student" && (
-                <p className="font-display text-xl">
+              <p className="font-display text-xl">
+                {user.role == "teacher" ? (
+                  <Trans i18nKey="user.subjectAndClass" ns="dashboard">
+                    Teacher in {{
+                      subjectGroup:
+                        user.subjectsInCharge[0].subjectSubgroup.subjectGroup
+                          .name[locale],
+                    }}
+                    <br />
+                    Class advisor at {{ classAdvisorAt: user.classAdvisorAt.name[locale] }}
+                  </Trans>
+                ) : (
                   <Trans i18nKey="user.classAndNo" ns="dashboard">
                     M.{{ class: user.class }} No.{{ classNo: user.classNo }}
                   </Trans>
-                </p>
-              )}
+                )}
+              </p>
             </div>
 
             {/* Notification chip */}
             <Link href="/notifications">
-              <a className="hidden sm:block w-fit">
+              <a className="hidden w-fit sm:block">
                 <Card
                   type="horizontal"
                   appearance="tonal"

@@ -73,6 +73,13 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
       th: { firstName: "อติพล", lastName: "สุกฤษฎานนท์" },
     },
     profile: "/images/dummybase/atipol.webp",
+    classAdvisorAt: {
+      id: 509,
+      name: {
+        "en-US": "M.509",
+        th: "ม.509",
+      }
+    },
     subjectsInCharge: [
       {
         id: 8,
@@ -84,7 +91,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         subjectSubgroup: {
           name: { "en-US": "English", th: "ภาษาอังกฤษ" },
           subjectGroup: {
-            name: { "en-US": "Foreign Language", th: "ภาษาต่างประเทศ" },
+            name: { "en-US": "Foreign Languages", th: "ภาษาต่างประเทศ" },
           },
         },
       },
