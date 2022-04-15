@@ -2,11 +2,15 @@
 import { getDay } from "date-fns";
 
 import { GetStaticProps, NextPage } from "next";
+import Link from "next/link";
+
+import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+
 import { useState } from "react";
 
 // SK Components
-import { RegularLayout } from "@suankularb-components/react";
+import { MaterialIcon, RegularLayout, Title } from "@suankularb-components/react";
 
 // Components
 import ChangePassword from "@components/dialogs/ChangePassword";
@@ -14,13 +18,13 @@ import EditProfileDialog from "@components/dialogs/EditProfile";
 import LogOutDialog from "@components/dialogs/LogOut";
 import NewsSection from "@components/home-sections/NewsSection";
 import SubjectsSection from "@components/home-sections/SubjectsSection";
+import TeacherClassSection from "@components/home-sections/TeacherClassSection";
 import UserSection from "@components/home-sections/UserSection";
 
 // Types
-import { Teacher } from "@utils/types/person";
 import { NewsList, StudentForm } from "@utils/types/news";
+import { Teacher } from "@utils/types/person";
 import { Schedule } from "@utils/types/schedule";
-import TeacherClassSection from "@components/home-sections/TeacherClassSection";
 
 const TeacherHome: NextPage<{
   user: Teacher;
@@ -28,13 +32,24 @@ const TeacherHome: NextPage<{
   studentForms: Array<StudentForm>;
   news: NewsList;
 }> = ({ user, schedule, studentForms, news }) => {
+  const { t } = useTranslation("common");
   const [showChangePassword, setShowChangePassword] = useState<boolean>(false);
   const [showEditProfile, setShowEditProfile] = useState<boolean>(false);
   const [showLogOut, setShowLogOut] = useState<boolean>(false);
 
   return (
     <>
-      <RegularLayout>
+      <RegularLayout
+        Title={
+          <Title
+            name={{ title: t("brand.name") }}
+            pageIcon={<MaterialIcon icon="home" />}
+            backGoesTo={() => setShowLogOut(true)}
+            LinkElement={Link}
+            className="sm:!hidden"
+          />
+        }
+      >
         <UserSection
           user={user}
           setShowChangePassword={setShowChangePassword}
