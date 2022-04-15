@@ -1,5 +1,6 @@
 // Modules
 import { GetServerSideProps, NextPage } from "next";
+import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -45,7 +46,6 @@ import {
 } from "@utils/types/subject";
 import { ClassWName } from "@utils/types/class";
 import { DialogProps } from "@utils/types/common";
-import Head from "next/head";
 
 // Details Section
 
@@ -540,7 +540,7 @@ const SubjectDetails: NextPage<{
               subtitle: subject.code[locale],
             }}
             pageIcon={<MaterialIcon icon="school" />}
-            backGoesTo="/subjects/teaching"
+            backGoesTo="/t/subjects/teaching"
             LinkElement={Link}
           />
         }

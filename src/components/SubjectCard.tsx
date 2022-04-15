@@ -37,7 +37,7 @@ const SubjectCard = ({
             type="tonal"
             iconOnly
             icon={<MaterialIcon icon="arrow_forward" />}
-            url={`/subjects/${subject.id}`}
+            url={`/t/subjects/${subject.id}`}
             LinkElement={Link}
           />
         }
