@@ -89,7 +89,48 @@ const TeacherClassSection = ({
 
   useEffect(
     () => {
-      // TODO: Filter forms here
+      // Reset filtered news if all filters are deselected
+      if (newsFilter.length == 0) {
+        setFilteredNews(forms);
+      
+      // Handles done
+      } else if (
+        newsFilter.includes("few-done") ||
+        newsFilter.includes("most-done") ||
+        newsFilter.includes("all-done")
+      ) {
+        if (newsFilter.length > 1) {
+          setFilteredNews(
+            forms.filter(
+              (newsItem) =>
+                newsFilter.includes(newsItem.type) &&
+                (newsFilter.includes("few-done")
+                  ? newsItem.percentDone < 25
+                  : newsFilter.includes("most-done")
+                  ? newsItem.percentDone >= 25 && newsItem.percentDone < 50
+                  : newsFilter.includes("all-done") &&
+                    newsItem.percentDone >= 50)
+            )
+          );
+        } else {
+          setFilteredNews(
+            forms.filter((newsItem) =>
+              newsFilter.includes("few-done")
+                ? newsItem.percentDone < 25
+                : newsFilter.includes("most-done")
+                ? newsItem.percentDone >= 25 && newsItem.percentDone < 50
+                : newsFilter.includes("all-done") && newsItem.percentDone >= 50
+            )
+          );
+        }
+      }
+
+      // Handles types
+      else {
+        setFilteredNews(
+          forms.filter((newsItem) => newsFilter.includes(newsItem.type))
+        );
+      }
     },
 
     // Adding `forms` as a dependency causes an inifinie loop
@@ -118,8 +159,11 @@ const TeacherClassSection = ({
       />
       {filteredNews.length == 0 ? (
         <ul className="px-4">
-          <li className="grid h-[13.75rem] place-content-center rounded-xl bg-surface-1 text-center text-on-surface">
-            {t("news.noRelevantNews")}
+          <li
+            className="grid h-[4.8125rem] place-content-center rounded-xl
+              bg-surface-1 text-center text-on-surface"
+          >
+            {t("class.noRelevantForms")}
           </li>
         </ul>
       ) : (

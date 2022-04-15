@@ -42,6 +42,7 @@
   },
   "class": {
     "title": "ห้องเรียน",
+    "noRelevantForms": "ไม่มีผลลัพธ์ที่เกี่ยวข้อง",
     "action": {
       "seeSchedule": "ดูตารางเรียน",
       "seeClassDetail": "ดูรายละเอียดห้องเรียน"

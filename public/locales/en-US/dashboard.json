@@ -18,7 +18,7 @@
     "title": "Subjects you teach",
     "action": {
       "seeSchedule": "See schedule",
-      "seeSubjects": "See subjects you teach"
+      "seeSubjects": "See subjects"
     }
   },
   "news": {
@@ -42,6 +42,7 @@
   },
   "class": {
     "title": "Class",
+    "noRelevantForms": "We couldn’t find any relevant forms.",
     "action": {
       "seeSchedule": "See schedule",
       "seeClassDetail": "See class detail"
