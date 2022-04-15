@@ -100,8 +100,8 @@ const TeacherClassSection = ({
   return (
     <Section>
       <Header
-        icon={<MaterialIcon icon="newspaper" allowCustomSize={true} />}
-        text={t("news.title")}
+        icon={<MaterialIcon icon="groups" allowCustomSize={true} />}
+        text={t("class.title")}
       />
       <ChipFilterList
         choices={[
@@ -133,7 +133,7 @@ const TeacherClassSection = ({
       )}
       <div className="flex flex-row items-center justify-end gap-2">
         <LinkButton
-          label={t("news.action.seeAll")}
+          label={t("class.action.seeClassDetail")}
           type="filled"
           url="/news"
           LinkElement={Link}
