@@ -22,12 +22,59 @@ import { StudentForm } from "@utils/types/news";
 // Helpers
 import { useRouter } from "next/router";
 
+const StudentFormCard = ({ form }: { form: StudentForm }): JSX.Element => {
+  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const { t } = useTranslation("news");
+
+  return (
+    <Card type="horizontal">
+      <CardHeader
+        // Title
+        title={
+          <h3 className="text-lg font-bold">
+            {form.content[locale]?.title || form.content.th.title}
+          </h3>
+        }
+        // Type and post date
+        label={
+          <div className="flex divide-x divide-outline">
+            <span className="pr-2">{t(`itemType.${form.type}`)}</span>
+            <time className="pl-2 text-outline">
+              {form.postDate.toLocaleDateString(locale, {
+                year: isThisYear(form.postDate) ? undefined : "numeric",
+                month: "short",
+                day: "numeric",
+              })}
+            </time>
+          </div>
+        }
+        // Completion and link
+        end={
+          <div className="flex flex-row items-center gap-2">
+            <div className="container-tertiary rounded-lg py-2 px-3 font-sans font-bold">
+              {form.percentDone}%
+            </div>
+            <LinkButton
+              name={t("action.seeDetails")}
+              type="tonal"
+              iconOnly
+              icon={<MaterialIcon icon="arrow_forward" />}
+              url={`/${form.type}/${form.id}`}
+              LinkElement={Link}
+            />
+          </div>
+        }
+        className="font-display"
+      />
+    </Card>
+  );
+};
+
 const TeacherClassSection = ({
   studentForms: forms,
 }: {
   studentForms: Array<StudentForm>;
 }): JSX.Element => {
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
   const { t } = useTranslation(["dashboard", "news"]);
   const [newsFilter, setNewsFilter] = useState<Array<string>>([]);
   const [filteredNews, setFilteredNews] = useState<Array<StudentForm>>(forms);
@@ -69,53 +116,9 @@ const TeacherClassSection = ({
         </ul>
       ) : (
         <XScrollContent>
-          {filteredNews.map((newsItem) => (
-            <li key={newsItem.id}>
-              <Card type="horizontal">
-                <CardHeader
-                  // Title
-                  title={
-                    <h3 className="text-lg font-bold">
-                      {newsItem.content[locale]?.title ||
-                        newsItem.content.th.title}
-                    </h3>
-                  }
-                  // Type and post date
-                  label={
-                    <div className="flex divide-x divide-outline">
-                      <span className="pr-2">
-                        {t(`itemType.${newsItem.type}`, { ns: "news" })}
-                      </span>
-                      <time className="pl-2 text-outline">
-                        {newsItem.postDate.toLocaleDateString(locale, {
-                          year: isThisYear(newsItem.postDate)
-                            ? undefined
-                            : "numeric",
-                          month: "short",
-                          day: "numeric",
-                        })}
-                      </time>
-                    </div>
-                  }
-                  // Completion and link
-                  end={
-                    <div className="flex flex-row items-center gap-2">
-                      <div className="container-tertiary rounded-lg py-2 px-3 font-sans font-bold">
-                        {newsItem.percentDone}%
-                      </div>
-                      <LinkButton
-                        name={t("action.seeDetails", { ns: "news" })}
-                        type="tonal"
-                        iconOnly
-                        icon={<MaterialIcon icon="arrow_forward" />}
-                        url={`/${newsItem.type}/${newsItem.id}`}
-                        LinkElement={Link}
-                      />
-                    </div>
-                  }
-                  className="font-display"
-                />
-              </Card>
+          {filteredNews.map((form) => (
+            <li key={form.id}>
+              <StudentFormCard form={form} />
             </li>
           ))}
         </XScrollContent>
