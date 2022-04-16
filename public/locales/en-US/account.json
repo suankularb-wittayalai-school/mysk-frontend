@@ -10,7 +10,7 @@
   },
   "profile": {
     "name": {
-      "title": "Local Name (Thai)",
+      "title": "Local name (Thai)",
       "prefix": {
         "label": "Prefix",
         "master": "เด็กชาย (Master)",
@@ -23,10 +23,16 @@
       "lastName": "Last name"
     },
     "enName": {
-      "title": "English Name",
+      "title": "English name",
       "firstName": "English first name",
       "middleName": "English middle name",
       "lastName": "English last name"
+    },
+    "class": {
+      "title": "Class",
+      "studentID": "Student ID",
+      "class": "Class",
+      "classNo": "Class №"
     },
     "role": {
       "title": "Role",

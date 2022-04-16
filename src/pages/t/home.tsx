@@ -2,6 +2,7 @@
 import { getDay } from "date-fns";
 
 import { GetStaticProps, NextPage } from "next";
+import Head from "next/head";
 import Link from "next/link";
 
 import { useTranslation } from "next-i18next";
@@ -10,7 +11,11 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useState } from "react";
 
 // SK Components
-import { MaterialIcon, RegularLayout, Title } from "@suankularb-components/react";
+import {
+  MaterialIcon,
+  RegularLayout,
+  Title,
+} from "@suankularb-components/react";
 
 // Components
 import ChangePassword from "@components/dialogs/ChangePassword";
@@ -39,6 +44,9 @@ const TeacherHome: NextPage<{
 
   return (
     <>
+      <Head>
+        <title>{t("brand.name", { ns: "common" })}</title>
+      </Head>
       <RegularLayout
         Title={
           <Title

@@ -13,6 +13,18 @@
         "edit": "Edit student"
       }
     },
+    "dialog": {
+      "editStudent": {
+        "title": {
+          "add": "Add student",
+          "edit": "Edit student"
+        },
+        "action": {
+          "cancel": "Cancel",
+          "save": "Save"
+        }
+      }
+    },
     "action": {
       "seeAll": "See all",
       "addStudent": "Add student"

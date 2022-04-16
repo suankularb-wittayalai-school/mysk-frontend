@@ -1,9 +1,13 @@
 // Modules
 import { GetStaticProps, NextPage } from "next";
+import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+
+import { useState } from "react";
 
 // SK Components
 import {
@@ -18,17 +22,23 @@ import {
   Title,
 } from "@suankularb-components/react";
 
+// Components
+import EditStudentDialog from "@components/dialogs/EditStudent";
+
 // Types
 import { Student } from "@utils/types/person";
 
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
-import { useRouter } from "next/router";
 
 const StudentSection = ({
   someStudents,
+  setShowEdit,
+  setEditingStudent,
 }: {
   someStudents: Array<Student>;
+  setShowEdit: Function;
+  setEditingStudent: Function;
 }): JSX.Element => {
   const { t } = useTranslation("admin");
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
@@ -93,6 +103,10 @@ const StudentSection = ({
                       type="text"
                       iconOnly
                       icon={<MaterialIcon icon="edit" />}
+                      onClick={() => {
+                        setShowEdit(true);
+                        setEditingStudent(student);
+                      }}
                     />
                   </div>
                 </td>
@@ -102,7 +116,6 @@ const StudentSection = ({
         </Table>
       </div>
       <div className="flex flex-row items-center justify-end gap-2">
-        <Button type="outlined" label={t("studentList.action.addStudent")} />
         <LinkButton
           type="filled"
           label={t("studentList.action.seeAll")}
@@ -117,21 +130,41 @@ const StudentSection = ({
 const Admin: NextPage<{ someStudents: Array<Student> }> = ({
   someStudents,
 }) => {
-  const { t } = useTranslation("admin");
+  const { t } = useTranslation(["admin", "common"]);
+
+  const [showEdit, setShowEdit] = useState<boolean>(false);
+  const [editingStudent, setEditingStudent] = useState<Student>();
 
   return (
-    <RegularLayout
-      Title={
-        <Title
-          name={{ title: "Admin" }}
-          pageIcon={<MaterialIcon icon="security" />}
-          backGoesTo="/t/home"
-          LinkElement={Link}
+    <>
+      <Head>
+        <title>
+          {t("title")} - {t("brand.name", { ns: "common" })}
+        </title>
+      </Head>
+      <RegularLayout
+        Title={
+          <Title
+            name={{ title: t("title") }}
+            pageIcon={<MaterialIcon icon="security" />}
+            backGoesTo="/t/home"
+            LinkElement={Link}
+          />
+        }
+      >
+        <StudentSection
+          someStudents={someStudents}
+          setShowEdit={setShowEdit}
+          setEditingStudent={setEditingStudent}
         />
-      }
-    >
-      <StudentSection someStudents={someStudents} />
-    </RegularLayout>
+      </RegularLayout>
+      <EditStudentDialog
+        show={showEdit}
+        onClose={() => setShowEdit(false)}
+        mode="edit"
+        student={editingStudent}
+      />
+    </>
   );
 };
 
@@ -241,7 +274,11 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
 
   return {
     props: {
-      ...(await serverSideTranslations(locale as string, ["common", "admin"])),
+      ...(await serverSideTranslations(locale as string, [
+        "common",
+        "admin",
+        "account",
+      ])),
       someStudents,
     },
   };
