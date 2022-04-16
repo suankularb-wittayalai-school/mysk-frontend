@@ -39,19 +39,22 @@ const StudentSection = ({
         <div className="[grid-area:header]">
           <Header
             icon={<MaterialIcon icon="groups" allowCustomSize />}
-            text="Student list"
+            text={t("studentList.title")}
           />
         </div>
-        <Search placeholder="Search student" className="[grid-area:search]" />
+        <Search
+          placeholder={t("studentList.searchStudents")}
+          className="[grid-area:search]"
+        />
       </div>
       <div>
-        <Table width={640}>
+        <Table width={800}>
           <thead>
             <tr>
-              <th className="w-1/12">ID</th>
-              <th className="w-1/12">Class</th>
-              <th className="w-1/12">Class No</th>
-              <th className="w-5/12">Name</th>
+              <th className="w-1/12">{t("studentList.table.id")}</th>
+              <th className="w-1/12">{t("studentList.table.class")}</th>
+              <th className="w-1/12">{t("studentList.table.classNo")}</th>
+              <th className="w-5/12">{t("studentList.table.name")}</th>
               <th className="w-1/12" />
             </tr>
           </thead>
@@ -74,16 +77,19 @@ const StudentSection = ({
                 <td>
                   <div className="flex flex-row justify-center gap-2">
                     <Button
+                      name={t("studentList.table.action.copy")}
                       type="text"
                       iconOnly
                       icon={<MaterialIcon icon="content_copy" />}
                       onClick={() =>
-                        navigator.clipboard.writeText(
+                        navigator.clipboard?.writeText(
                           nameJoiner(locale, student.name)
                         )
                       }
+                      className="!hidden sm:!block"
                     />
                     <Button
+                      name={t("studentList.table.action.edit")}
                       type="text"
                       iconOnly
                       icon={<MaterialIcon icon="edit" />}
@@ -96,10 +102,10 @@ const StudentSection = ({
         </Table>
       </div>
       <div className="flex flex-row items-center justify-end gap-2">
-        <Button type="outlined" label="Add student" />
+        <Button type="outlined" label={t("studentList.action.addStudent")} />
         <LinkButton
           type="filled"
-          label="See all"
+          label={t("studentList.action.seeAll")}
           url="/t/admin/students"
           LinkElement={Link}
         />
