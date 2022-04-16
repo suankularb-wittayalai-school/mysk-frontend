@@ -31,7 +31,7 @@ const StudentFormCard = ({ form }: { form: StudentForm }): JSX.Element => {
       <CardHeader
         // Title
         title={
-          <h3 className="text-lg font-bold">
+          <h3 className="text-lg font-bold break-all">
             {form.content[locale]?.title || form.content.th.title}
           </h3>
         }

@@ -109,7 +109,14 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
       th: { firstName: "สดุดี", lastName: "เทพอารีย์" },
     },
     profile: "/images/dummybase/sadudee.webp",
-    class: "405",
+    studentID: "56572",
+    class: {
+      id: 405,
+      name: {
+        "en-US": "M.405",
+        th: "ม.405",
+      },
+    },
     classNo: 11,
   };
   const news: NewsList = [

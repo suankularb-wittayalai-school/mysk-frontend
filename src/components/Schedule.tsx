@@ -101,7 +101,9 @@ const ScheduleRow = ({
                   <span className="max-lines-1 text-base">
                     {
                       // Show the first teacher’s first name in user locale
-                      schedulePeriod.subject.teachers[0].name[locale].firstName
+                      schedulePeriod.subject.teachers[0].name[locale]
+                        ?.firstName ||
+                        schedulePeriod.subject.teachers[0].name.th.firstName
                     }
                     {
                       // If there are more than one teacher, display +1 and show the remaining teachers on hover
@@ -110,7 +112,11 @@ const ScheduleRow = ({
                           className="text-secondary opacity-50"
                           title={schedulePeriod.subject.teachers
                             .slice(1)
-                            .map((teacher) => teacher.name[locale].firstName)
+                            .map(
+                              (teacher) =>
+                                teacher.name[locale]?.firstName ||
+                                teacher.name.th.firstName
+                            )
                             .join(", ")}
                         >
                           +{schedulePeriod.subject.teachers.length - 1}
