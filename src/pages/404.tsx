@@ -1,6 +1,6 @@
 // Modules
 import type { GetStaticProps, NextPage } from "next";
-import Link from "next/link";
+
 import { Trans, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
@@ -17,8 +17,7 @@ const NotFound: NextPage = () => {
         <Title
           name={{ title: t("verboseCode.404") }}
           pageIcon="sentiment_very_dissatisfied"
-          backGoesTo="/s/home"
-          LinkElement={Link}
+          backGoesTo={() => history.back()}
         />
       }
       className="font-display"
