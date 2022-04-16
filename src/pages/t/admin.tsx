@@ -18,8 +18,20 @@ import {
   Title,
 } from "@suankularb-components/react";
 
-const StudentSection = (): JSX.Element => {
+// Types
+import { Student } from "@utils/types/person";
+
+// Helpers
+import { nameJoiner } from "@utils/helpers/name";
+import { useRouter } from "next/router";
+
+const StudentSection = ({
+  someStudents,
+}: {
+  someStudents: Array<Student>;
+}): JSX.Element => {
   const { t } = useTranslation("admin");
+  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
 
   return (
     <Section>
@@ -35,24 +47,51 @@ const StudentSection = (): JSX.Element => {
       <Table>
         <thead>
           <tr>
-            <th></th>
+            <th className="w-1/12">ID</th>
+            <th className="w-1/12">Class</th>
+            <th className="w-1/12">Class No</th>
+            <th className="w-5/12">Name</th>
+            <th className="w-1/12" />
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td></td>
-          </tr>
+          {someStudents.map((student) => (
+            <tr key={student.id}>
+              <td>55000</td>
+              <td>{student.class}</td>
+              <td>{student.classNo}</td>
+              <td className="!text-left">
+                {nameJoiner(locale, student.name, student.prefix)}
+              </td>
+              <td>
+                <div className="flex flex-row justify-center gap-2">
+                  <Button
+                    type="text"
+                    iconOnly
+                    icon={<MaterialIcon icon="content_copy" />}
+                  />
+                  <Button
+                    type="text"
+                    iconOnly
+                    icon={<MaterialIcon icon="edit" />}
+                  />
+                </div>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </Table>
       <div className="flex flex-row items-center justify-end gap-2">
-        <Button type="outlined" />
-        <LinkButton type="filled" url="/t/admin/students" LinkElement={Link} />
+        <Button type="outlined" label="Add student" />
+        <LinkButton type="filled" label="See all" url="/t/admin/students" LinkElement={Link} />
       </div>
     </Section>
   );
 };
 
-const Admin: NextPage = () => {
+const Admin: NextPage<{ someStudents: Array<Student> }> = ({
+  someStudents,
+}) => {
   const { t } = useTranslation("admin");
 
   return (
@@ -66,15 +105,18 @@ const Admin: NextPage = () => {
         />
       }
     >
-      <StudentSection />
+      <StudentSection someStudents={someStudents} />
     </RegularLayout>
   );
 };
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
+  const someStudents: Array<Student> = [];
+
   return {
     props: {
       ...(await serverSideTranslations(locale as string, ["common", "admin"])),
+      someStudents,
     },
   };
 };
