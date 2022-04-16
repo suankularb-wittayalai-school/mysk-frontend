@@ -77,6 +77,11 @@ const StudentSection = ({
                       type="text"
                       iconOnly
                       icon={<MaterialIcon icon="content_copy" />}
+                      onClick={() =>
+                        navigator.clipboard.writeText(
+                          nameJoiner(locale, student.name)
+                        )
+                      }
                     />
                     <Button
                       type="text"
