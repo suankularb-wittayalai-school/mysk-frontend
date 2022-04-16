@@ -136,7 +136,7 @@ const App = ({ Component, pageProps }: AppProps) => {
             inactive: <MaterialIcon icon="security" type="outlined" />,
             active: <MaterialIcon icon="security" type="filled" />,
           },
-          url: "/admin",
+          url: "/t/admin",
         },
       ];
 
