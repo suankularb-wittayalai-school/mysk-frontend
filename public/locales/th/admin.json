@@ -41,7 +41,7 @@
   },
   "schedule": {
     "title": "เรียกดูตารางสอน",
-    "teacherID": "เลขประจำตัวอาจารย์",
+    "gradeItem": "ม.{{grade}}",
     "action": {
       "seeSchedule": "ดูตารางสอน"
     }

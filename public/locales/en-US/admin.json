@@ -41,7 +41,7 @@
   },
   "schedule": {
     "title": "Schedule lookup",
-    "teacherID": "Teacher ID",
+    "gradeItem": "M.{{grade}}",
     "action": {
       "seeSchedule": "See schedule"
     }

@@ -4,7 +4,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { useTranslation } from "next-i18next";
+import { Trans, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { useState } from "react";
@@ -12,6 +12,8 @@ import { useState } from "react";
 // SK Components
 import {
   Button,
+  Chip,
+  ChipList,
   Header,
   KeyboardInput,
   LinkButton,
@@ -31,6 +33,7 @@ import TeacherTable from "@components/tables/TeacherTable";
 // Types
 import { Student, Teacher } from "@utils/types/person";
 import { ClassWName } from "@utils/types/class";
+import { range } from "@utils/helpers/array";
 
 const StudentSection = ({
   someStudents,
@@ -129,8 +132,6 @@ const TeacherSection = ({
 
 const ScheduleSection = (): JSX.Element => {
   const { t } = useTranslation("admin");
-  const router = useRouter();
-  const [teacherID, setTeacherID] = useState<string>("");
 
   return (
     <Section>
@@ -138,33 +139,21 @@ const ScheduleSection = (): JSX.Element => {
         icon={<MaterialIcon icon="dashboard" allowCustomSize />}
         text={t("schedule.title")}
       />
-      <div>
-        <div className="flex flex-col items-center p-4">
-          <form
-            className="section w-full sm:w-1/2 md:w-1/3"
-            onSubmit={(e) => e.preventDefault()}
-          >
-            <KeyboardInput
-              name="teacher-id"
-              type="text"
-              label={t("schedule.teacherID")}
-              onChange={(e: string) => setTeacherID(e)}
-            />
-            <div className="flex flex-row items-center justify-end gap-2">
-              <Button
-                label={t("schedule.action.seeSchedule")}
-                type="filled"
-                onClick={() =>
-                  // Validates
-                  teacherID.includes("skt") &&
-                  // Redirects
-                  router.push(`/t/${teacherID}/schedule`)
+      <ChipList>
+        {range(6).map((grade) => (
+          <Link key={grade} href={`/t/admin/schedule/${grade + 1}`}>
+            <a>
+              <Chip
+                name={
+                  <Trans i18nKey="schedule.gradeItem" ns="admin">
+                    M.{{ grade: grade + 1 }}
+                  </Trans>
                 }
               />
-            </div>
-          </form>
-        </div>
-      </div>
+            </a>
+          </Link>
+        ))}
+      </ChipList>
     </Section>
   );
 };
