@@ -32,6 +32,8 @@ const Developers: NextPage<{ students: Array<Student> }> = ({
   const { t } = useTranslation("admin");
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
 
+  const [showAdd, setShowAdd] = useState<boolean>(false);
+
   const [showEdit, setShowEdit] = useState<boolean>(false);
   const [editingStudent, setEditingStudent] = useState<Student>();
 
@@ -52,7 +54,11 @@ const Developers: NextPage<{ students: Array<Student> }> = ({
           <div className="layout-grid-cols-3">
             <Search placeholder="ค้นหานักเรียน" />
             <div className="col-span-2 flex flex-row items-end justify-end gap-2">
-              <Button label="เพิ่มนักเรียน" type="filled" />
+              <Button
+                label="เพิ่มนักเรียน"
+                type="filled"
+                onClick={() => setShowAdd(true)}
+              />
             </div>
           </div>
           <StudentTable
@@ -69,6 +75,13 @@ const Developers: NextPage<{ students: Array<Student> }> = ({
         onSubmit={() => setShowEdit(false)}
         mode="edit"
         student={editingStudent}
+      />
+      <EditStudentDialog
+        show={showAdd}
+        onClose={() => setShowAdd(false)}
+        // TODO: Refetch students here ↓
+        onSubmit={() => setShowAdd(false)}
+        mode="add"
       />
     </>
   );
