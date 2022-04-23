@@ -1,18 +1,16 @@
 // Modules
-import { GetServerSideProps, NextPage } from "next";
-import Head from "next/head";
+import type { GetServerSideProps, GetStaticProps, NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useTranslation } from "next-i18next";
 
 import { useState } from "react";
 
 // SK Components
 import {
-  Header,
-  LinkButton,
+  Button,
   MaterialIcon,
   RegularLayout,
   Search,
@@ -21,95 +19,54 @@ import {
 } from "@suankularb-components/react";
 
 // Components
-import EditStudentDialog from "@components/dialogs/EditStudent";
 import StudentTable from "@components/tables/StudentTable";
 
 // Types
 import { Student } from "@utils/types/person";
+import EditStudentDialog from "@components/dialogs/EditStudent";
 
-const StudentSection = ({
-  someStudents,
-  setShowEdit,
-  setEditingStudent,
-}: {
-  someStudents: Array<Student>;
-  setShowEdit: (value: boolean) => void;
-  setEditingStudent: (student: Student) => void;
+// Page
+const Developers: NextPage<{ students: Array<Student> }> = ({
+  students,
 }): JSX.Element => {
   const { t } = useTranslation("admin");
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
-
-  return (
-    <Section>
-      <div className="layout-grid-cols-3--header">
-        <div className="[grid-area:header]">
-          <Header
-            icon={<MaterialIcon icon="groups" allowCustomSize />}
-            text={t("studentList.title")}
-          />
-        </div>
-        <Search
-          placeholder={t("studentList.searchStudents")}
-          className="[grid-area:search]"
-        />
-      </div>
-      <div>
-        <StudentTable
-          students={someStudents}
-          setShowEdit={setShowEdit}
-          setEditingStudent={setEditingStudent}
-        />
-      </div>
-      <div className="flex flex-row items-center justify-end gap-2">
-        <LinkButton
-          type="filled"
-          label={t("studentList.action.seeAll")}
-          url="/t/admin/students"
-          LinkElement={Link}
-        />
-      </div>
-    </Section>
-  );
-};
-
-const Admin: NextPage<{ someStudents: Array<Student> }> = ({
-  someStudents,
-}) => {
-  const { t } = useTranslation(["admin", "common"]);
 
   const [showEdit, setShowEdit] = useState<boolean>(false);
   const [editingStudent, setEditingStudent] = useState<Student>();
 
   return (
     <>
-      <Head>
-        <title>
-          {t("title")} - {t("brand.name", { ns: "common" })}
-        </title>
-      </Head>
       <RegularLayout
         Title={
           <Title
-            name={{ title: t("title") }}
-            pageIcon={<MaterialIcon icon="security" />}
-            backGoesTo="/t/home"
+            name={{ title: "รายชื่อนักเรียน" }}
+            pageIcon={<MaterialIcon icon="groups" />}
+            backGoesTo="/t/admin"
             LinkElement={Link}
+            key="title"
           />
         }
       >
-        <StudentSection
-          someStudents={someStudents}
-          setShowEdit={setShowEdit}
-          setEditingStudent={setEditingStudent}
-        />
+        <Section>
+          <div className="layout-grid-cols-3">
+            <Search placeholder="ค้นหานักเรียน" />
+            <div className="col-span-2 flex flex-row items-end justify-end gap-2">
+              <Button label="เพิ่มนักเรียน" type="filled" />
+            </div>
+          </div>
+          <StudentTable
+            students={students}
+            setShowEdit={setShowEdit}
+            setEditingStudent={setEditingStudent}
+          />
+        </Section>
       </RegularLayout>
       <EditStudentDialog
         show={showEdit}
         onClose={() => setShowEdit(false)}
-        onSubmit={() => {
-          setShowEdit(false);
-          // Re-fetch here
-        }}
+        // TODO: Refetch students here ↓
+        onSubmit={() => setShowEdit(false)}
         mode="edit"
         student={editingStudent}
       />
@@ -118,7 +75,7 @@ const Admin: NextPage<{ someStudents: Array<Student> }> = ({
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
-  const someStudents: Array<Student> = [
+  const students: Array<Student> = [
     {
       id: 985,
       prefix: "master",
@@ -228,9 +185,9 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
         "admin",
         "account",
       ])),
-      someStudents,
+      students,
     },
   };
 };
 
-export default Admin;
+export default Developers;
