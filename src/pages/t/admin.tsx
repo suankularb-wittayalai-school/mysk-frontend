@@ -21,21 +21,24 @@ import {
 } from "@suankularb-components/react";
 
 // Components
+import ConfirmDelete from "@components/dialogs/ConfirmDelete";
 import EditPersonDialog from "@components/dialogs/EditPerson";
 import StudentTable from "@components/tables/StudentTable";
+import TeacherTable from "@components/tables/TeacherTable";
 
 // Types
 import { Student, Teacher } from "@utils/types/person";
-import TeacherTable from "@components/tables/TeacherTable";
 
 const StudentSection = ({
   someStudents,
   setShowEdit,
   setEditingPerson,
+  setShowConfDelStudent,
 }: {
   someStudents: Array<Student>;
   setShowEdit: (value: boolean) => void;
   setEditingPerson: (student: Student) => void;
+  setShowConfDelStudent: (value: boolean) => void;
 }): JSX.Element => {
   const { t } = useTranslation("admin");
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
@@ -59,6 +62,7 @@ const StudentSection = ({
           students={someStudents}
           setShowEdit={setShowEdit}
           setEditingPerson={setEditingPerson}
+          setShowConfDelStudent={setShowConfDelStudent}
         />
       </div>
       <div className="flex flex-row items-center justify-end gap-2">
@@ -77,13 +81,14 @@ const TeacherSection = ({
   someTeachers,
   setShowEdit,
   setEditingPerson,
+  setShowConfDelTeacher,
 }: {
   someTeachers: Array<Teacher>;
   setShowEdit: (value: boolean) => void;
   setEditingPerson: (teacher: Teacher) => void;
+  setShowConfDelTeacher: (value: boolean) => void;
 }): JSX.Element => {
   const { t } = useTranslation("admin");
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
 
   return (
     <Section>
@@ -104,6 +109,7 @@ const TeacherSection = ({
           teachers={someTeachers}
           setShowEdit={setShowEdit}
           setEditingPerson={setEditingPerson}
+          setShowConfDelTeacher={setShowConfDelTeacher}
         />
       </div>
       <div className="flex flex-row items-center justify-end gap-2">
@@ -124,8 +130,13 @@ const Admin: NextPage<{
 }> = ({ someStudents, someTeachers }) => {
   const { t } = useTranslation(["admin", "common"]);
 
+  // Edit Person dialog
   const [showEdit, setShowEdit] = useState<boolean>(false);
   const [editingPerson, setEditingPerson] = useState<Student | Teacher>();
+
+  // Confirm Delete dialogs
+  const [showConfDelStudent, setShowConfDelStudent] = useState<boolean>(false);
+  const [showConfDelTeacher, setShowConfDelTeacher] = useState<boolean>(false);
 
   return (
     <>
@@ -148,11 +159,13 @@ const Admin: NextPage<{
           someStudents={someStudents}
           setShowEdit={setShowEdit}
           setEditingPerson={setEditingPerson}
+          setShowConfDelStudent={setShowConfDelStudent}
         />
         <TeacherSection
           someTeachers={someTeachers}
           setShowEdit={setShowEdit}
           setEditingPerson={setEditingPerson}
+          setShowConfDelTeacher={setShowConfDelTeacher}
         />
       </RegularLayout>
       <EditPersonDialog
@@ -162,6 +175,18 @@ const Admin: NextPage<{
         onSubmit={() => setShowEdit(false)}
         mode="edit"
         person={editingPerson}
+      />
+      <ConfirmDelete
+        show={showConfDelStudent}
+        onClose={() => setShowConfDelStudent(false)}
+        // TODO: Refetch students here ↓
+        onSubmit={() => setShowConfDelStudent(false)}
+      />
+      <ConfirmDelete
+        show={showConfDelTeacher}
+        onClose={() => setShowConfDelTeacher(false)}
+        // TODO: Refetch students here ↓
+        onSubmit={() => setShowConfDelTeacher(false)}
       />
     </>
   );

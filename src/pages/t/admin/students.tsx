@@ -18,6 +18,7 @@ import {
 } from "@suankularb-components/react";
 
 // Components
+import ConfirmDelete from "@components/dialogs/ConfirmDelete";
 import EditPersonDialog from "@components/dialogs/EditPerson";
 import StudentTable from "@components/tables/StudentTable";
 
@@ -31,9 +32,11 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
   const { t } = useTranslation("admin");
 
   const [showAdd, setShowAdd] = useState<boolean>(false);
-
+  
   const [showEdit, setShowEdit] = useState<boolean>(false);
   const [editingPerson, setEditingPerson] = useState<Student>();
+
+  const [showConfDel, setShowConfDel] = useState<boolean>(false);
 
   return (
     <>
@@ -64,6 +67,7 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
             students={allStudents}
             setShowEdit={setShowEdit}
             setEditingPerson={setEditingPerson}
+            setShowConfDelStudent={setShowConfDel}
           />
         </Section>
       </RegularLayout>
@@ -83,6 +87,11 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
         // TODO: Refetch students here ↓
         onSubmit={() => setShowAdd(false)}
         mode="add"
+      />
+      <ConfirmDelete
+        show={showConfDel}
+        onClose={() => setShowConfDel(false)}
+        onSubmit={() => setShowConfDel(false)}
       />
     </>
   );

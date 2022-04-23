@@ -15,10 +15,12 @@ const StudentTable = ({
   students,
   setShowEdit,
   setEditingPerson,
+  setShowConfDelStudent,
 }: {
   students: Array<Student>;
   setShowEdit: (value: boolean) => void;
   setEditingPerson: (student: Student) => void;
+  setShowConfDelStudent: (value: boolean) => void;
 }): JSX.Element => {
   const { t } = useTranslation("admin");
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
@@ -27,11 +29,11 @@ const StudentTable = ({
     <Table width={800}>
       <thead>
         <tr>
-          <th className="w-1/12">{t("studentList.table.id")}</th>
+          <th className="w-2/12">{t("studentList.table.id")}</th>
           <th className="w-1/12">{t("studentList.table.class")}</th>
           <th className="w-1/12">{t("studentList.table.classNo")}</th>
-          <th className="w-5/12">{t("studentList.table.name")}</th>
-          <th className="w-1/12" />
+          <th className="w-6/12">{t("studentList.table.name")}</th>
+          <th className="w-2/12" />
         </tr>
       </thead>
       <tbody>
@@ -73,6 +75,13 @@ const StudentTable = ({
                     setShowEdit(true);
                     setEditingPerson(student);
                   }}
+                />
+                <Button
+                  type="text"
+                  iconOnly
+                  icon={<MaterialIcon icon="delete" />}
+                  isDangerous
+                  onClick={() => setShowConfDelStudent(true)}
                 />
               </div>
             </td>
