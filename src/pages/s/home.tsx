@@ -19,7 +19,7 @@ import {
 
 // Components
 import ChangePassword from "@components/dialogs/ChangePassword";
-import EditProfileDialog from "@components/dialogs/EditProfile";
+import EditSelfDialog from "@components/dialogs/EditSelf";
 import LogOutDialog from "@components/dialogs/LogOut";
 import UserSection from "@components/home-sections/UserSection";
 import NewsSection from "@components/home-sections/NewsSection";
@@ -89,7 +89,7 @@ const StudentHome: NextPage<{
         show={showChangePassword}
         onClose={() => setShowChangePassword(false)}
       />
-      <EditProfileDialog
+      <EditSelfDialog
         user={user}
         show={showEditProfile}
         onClose={() => setShowEditProfile(false)}

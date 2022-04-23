@@ -30,7 +30,7 @@ interface EditProfileDialogProps extends DialogProps {
   setShowDiscard?: Function;
 }
 
-const EditProfileDialog = ({
+const EditSelfDialog = ({
   user,
   show,
   onClose,
@@ -266,4 +266,4 @@ const EditProfileDialog = ({
   );
 };
 
-export default EditProfileDialog;
+export default EditSelfDialog;

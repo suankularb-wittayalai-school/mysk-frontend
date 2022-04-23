@@ -18,7 +18,7 @@ import {
 } from "@suankularb-components/react";
 
 // Components
-import EditStudentDialog from "@components/dialogs/EditStudent";
+import EditPersonDialog from "@components/dialogs/EditPerson";
 import StudentTable from "@components/tables/StudentTable";
 
 // Types
@@ -69,7 +69,7 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
       </RegularLayout>
 
       {/* Dialogs */}
-      <EditStudentDialog
+      <EditPersonDialog
         show={showEdit}
         onClose={() => setShowEdit(false)}
         // TODO: Refetch students here ↓
@@ -77,7 +77,7 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
         mode="edit"
         student={editingStudent}
       />
-      <EditStudentDialog
+      <EditPersonDialog
         show={showAdd}
         onClose={() => setShowAdd(false)}
         // TODO: Refetch students here ↓

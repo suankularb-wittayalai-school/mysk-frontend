@@ -21,7 +21,7 @@ import {
 } from "@suankularb-components/react";
 
 // Components
-import EditStudentDialog from "@components/dialogs/EditStudent";
+import EditPersonDialog from "@components/dialogs/EditPerson";
 import StudentTable from "@components/tables/StudentTable";
 
 // Types
@@ -103,7 +103,7 @@ const Admin: NextPage<{ someStudents: Array<Student> }> = ({
           setEditingStudent={setEditingStudent}
         />
       </RegularLayout>
-      <EditStudentDialog
+      <EditPersonDialog
         show={showEdit}
         onClose={() => setShowEdit(false)}
         onSubmit={() => {

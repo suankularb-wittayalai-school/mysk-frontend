@@ -15,7 +15,7 @@ import {
 import { DialogProps } from "@utils/types/common";
 import { Student } from "@utils/types/person";
 
-const EditStudentDialog = ({
+const EditPersonDialog = ({
   show,
   onClose,
   onSubmit,
@@ -221,4 +221,4 @@ const EditStudentDialog = ({
   );
 };
 
-export default EditStudentDialog;
+export default EditPersonDialog;
