@@ -38,5 +38,12 @@
       "name": "ชื่อ-นามสกุล",
       "classAdvisorAt": "ครูที่ปรึกษา"
     }
+  },
+  "schedule": {
+    "title": "เรียกดูตารางสอน",
+    "teacherID": "เลขประจำตัวอาจารย์",
+    "action": {
+      "seeSchedule": "ดูตารางสอน"
+    }
   }
 }

@@ -11,7 +11,9 @@ import { useState } from "react";
 
 // SK Components
 import {
+  Button,
   Header,
+  KeyboardInput,
   LinkButton,
   MaterialIcon,
   RegularLayout,
@@ -28,6 +30,7 @@ import TeacherTable from "@components/tables/TeacherTable";
 
 // Types
 import { Student, Teacher } from "@utils/types/person";
+import { ClassWName } from "@utils/types/class";
 
 const StudentSection = ({
   someStudents,
@@ -124,6 +127,48 @@ const TeacherSection = ({
   );
 };
 
+const ScheduleSection = (): JSX.Element => {
+  const { t } = useTranslation("admin");
+  const router = useRouter();
+  const [teacherID, setTeacherID] = useState<string>("");
+
+  return (
+    <Section>
+      <Header
+        icon={<MaterialIcon icon="dashboard" allowCustomSize />}
+        text={t("schedule.title")}
+      />
+      <div>
+        <div className="flex flex-col items-center p-4">
+          <form
+            className="section w-full sm:w-1/2 md:w-1/3"
+            onSubmit={(e) => e.preventDefault()}
+          >
+            <KeyboardInput
+              name="teacher-id"
+              type="text"
+              label={t("schedule.teacherID")}
+              onChange={(e: string) => setTeacherID(e)}
+            />
+            <div className="flex flex-row items-center justify-end gap-2">
+              <Button
+                label={t("schedule.action.seeSchedule")}
+                type="filled"
+                onClick={() =>
+                  // Validates
+                  teacherID.includes("skt") &&
+                  // Redirects
+                  router.push(`/t/${teacherID}/schedule`)
+                }
+              />
+            </div>
+          </form>
+        </div>
+      </div>
+    </Section>
+  );
+};
+
 const Admin: NextPage<{
   someStudents: Array<Student>;
   someTeachers: Array<Teacher>;
@@ -167,6 +212,7 @@ const Admin: NextPage<{
           setEditingPerson={setEditingPerson}
           setShowConfDelTeacher={setShowConfDelTeacher}
         />
+        <ScheduleSection />
       </RegularLayout>
       <EditPersonDialog
         show={showEdit}

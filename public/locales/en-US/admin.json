@@ -38,5 +38,12 @@
       "name": "Name",
       "classAdvisorAt": "Class advisor at"
     }
+  },
+  "schedule": {
+    "title": "Schedule lookup",
+    "teacherID": "Teacher ID",
+    "action": {
+      "seeSchedule": "See schedule"
+    }
   }
 }
