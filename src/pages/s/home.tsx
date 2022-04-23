@@ -248,6 +248,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         },
       },
       profile: "/images/dummybase/taradol.webp",
+      teacherID: "skt184",
       classAdvisorAt: {
         id: 405,
         name: {
@@ -272,6 +273,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         },
       },
       profile: "/images/dummybase/thanakorn.webp",
+      teacherID: "skt416",
       classAdvisorAt: {
         id: 404,
         name: {
@@ -296,6 +298,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         },
       },
       profile: "/images/dummybase/mattana.webp",
+      teacherID: "skt812",
       classAdvisorAt: {
         id: 405,
         name: {
@@ -321,6 +324,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
           lastName: "สมิธ",
         },
       },
+      teacherID: "skt8966",
       subjectsInCharge: [],
     },
   ];
@@ -334,6 +338,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         th: { firstName: "ธราดล", lastName: "รานรินทร์" },
       },
       profile: "/images/dummybase/taradol.webp",
+      teacherID: "skt551",
       classAdvisorAt: {
         id: 405,
         name: {
@@ -372,6 +377,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         th: { firstName: "มัทนา", lastName: "ต๊ะตันยาง" },
       },
       profile: "/images/dummybase/mattana.webp",
+      teacherID: "skt196",
       classAdvisorAt: {
         id: 405,
         name: {

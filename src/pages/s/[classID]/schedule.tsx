@@ -258,6 +258,7 @@ export const getServerSideProps: GetServerSideProps = async ({
             "en-US": { firstName: "Kritchapon", lastName: "Boonpoonmee" },
             th: { firstName: "กฤชพล", lastName: "บุญพูลมี" },
           },
+          teacherID: "skt6985",
           subjectsInCharge: [
             {
               id: 8,
@@ -303,6 +304,7 @@ export const getServerSideProps: GetServerSideProps = async ({
             "en-US": { firstName: "Niruth", lastName: "Prombutr" },
             th: { firstName: "นิรุทธ์", lastName: "พรมบุตร" },
           },
+          teacherID: "skt644",
           subjectsInCharge: [
             {
               id: 8,

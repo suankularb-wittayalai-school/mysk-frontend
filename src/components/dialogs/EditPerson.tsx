@@ -13,36 +13,36 @@ import {
 
 // Types
 import { DialogProps } from "@utils/types/common";
-import { Student } from "@utils/types/person";
+import { Student, Teacher } from "@utils/types/person";
 
 const EditPersonDialog = ({
   show,
   onClose,
   onSubmit,
   mode,
-  student,
+  person,
 }: DialogProps & {
   onSubmit: Function;
   mode: "add" | "edit";
-  student?: Student;
+  person?: Student | Teacher;
 }): JSX.Element => {
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
-  const { t } = useTranslation(["account", "admin", "common"]);
+  const { t } = useTranslation(["account", "admin"]);
 
   // Form control
   const [form, setForm] = useState(
-    mode == "edit" && student
+    mode == "edit" && person
       ? {
-          prefix: student.prefix,
-          thFirstName: student.name.th.firstName,
-          thMiddleName: student.name.th.middleName,
-          thLastName: student.name.th.lastName,
-          enFirstName: student.name["en-US"]?.firstName || "",
-          enMiddleName: student.name["en-US"]?.middleName || "",
-          enLastName: student.name["en-US"]?.lastName || "",
-          studentID: student.studentID,
-          class: student.class.id,
-          classNo: student.classNo.toString(),
+          prefix: person.prefix,
+          thFirstName: person.name.th.firstName,
+          thMiddleName: person.name.th.middleName,
+          thLastName: person.name.th.lastName,
+          enFirstName: person.name["en-US"]?.firstName || "",
+          enMiddleName: person.name["en-US"]?.middleName || "",
+          enLastName: person.name["en-US"]?.lastName || "",
+          studentID: person.role == "student" ? person.studentID : "",
+          class: person.role == "student" ? person.class.id : "",
+          classNo: person.role == "student" ? person.classNo.toString() : "",
         }
       : {
           prefix: "",
@@ -114,45 +114,43 @@ const EditPersonDialog = ({
           options={[
             {
               value: "master",
-              label: t("name.prefix.master", { ns: "common" }),
+              label: t("profile.name.prefix.master"),
             },
             {
               value: "mister",
-              label: t("name.prefix.mister", { ns: "common" }),
+              label: t("profile.name.prefix.mister"),
             },
             {
               value: "miss",
-              label: t("name.prefix.miss", { ns: "common" }),
+              label: t("profile.name.prefix.miss"),
             },
             {
               value: "missus",
-              label: t("name.prefix.missus", { ns: "common" }),
+              label: t("profile.name.prefix.missus"),
             },
           ]}
-          defaultValue={student?.prefix}
+          defaultValue={person?.prefix}
           onChange={(e: Student["prefix"]) => setForm({ ...form, prefix: e })}
         />
         <KeyboardInput
           name="th-first-name"
           type="text"
           label={t("profile.name.firstName")}
-          defaultValue={mode == "edit" ? student?.name.th.firstName : undefined}
+          defaultValue={mode == "edit" ? person?.name.th.firstName : undefined}
           onChange={(e: string) => setForm({ ...form, thFirstName: e })}
         />
         <KeyboardInput
           name="th-middle-name"
           type="text"
           label={t("profile.name.middleName")}
-          defaultValue={
-            mode == "edit" ? student?.name.th.middleName : undefined
-          }
+          defaultValue={mode == "edit" ? person?.name.th.middleName : undefined}
           onChange={(e: string) => setForm({ ...form, thMiddleName: e })}
         />
         <KeyboardInput
           name="th-last-name"
           type="text"
           label={t("profile.name.lastName")}
-          defaultValue={mode == "edit" ? student?.name.th.lastName : undefined}
+          defaultValue={mode == "edit" ? person?.name.th.lastName : undefined}
           onChange={(e: string) => setForm({ ...form, thLastName: e })}
         />
       </DialogSection>
@@ -164,7 +162,7 @@ const EditPersonDialog = ({
           type="text"
           label={t("profile.enName.firstName")}
           defaultValue={
-            mode == "edit" ? student?.name["en-US"]?.firstName : undefined
+            mode == "edit" ? person?.name["en-US"]?.firstName : undefined
           }
           onChange={(e: string) => setForm({ ...form, enFirstName: e })}
         />
@@ -173,7 +171,7 @@ const EditPersonDialog = ({
           type="text"
           label={t("profile.enName.middleName")}
           defaultValue={
-            mode == "edit" ? student?.name["en-US"]?.middleName : undefined
+            mode == "edit" ? person?.name["en-US"]?.middleName : undefined
           }
           onChange={(e: string) => setForm({ ...form, enMiddleName: e })}
         />
@@ -182,14 +180,23 @@ const EditPersonDialog = ({
           type="text"
           label={t("profile.enName.lastName")}
           defaultValue={
-            mode == "edit" ? student?.name["en-US"]?.lastName : undefined
+            mode == "edit" ? person?.name["en-US"]?.lastName : undefined
           }
           onChange={(e: string) => setForm({ ...form, enLastName: e })}
         />
       </DialogSection>
 
-      {/* School information */}
+      {/* Role */}
       <DialogSection name={t("profile.class.title")} isDoubleColumn>
+        <Dropdown
+          name="role"
+          label={t("profile.role.role.label")}
+          options={[
+            { value: "student", label: t("profile.role.role.student") },
+            { value: "teacher", label: t("profile.role.role.teacher") },
+          ]}
+          defaultValue={person?.role}
+        />
         <KeyboardInput
           name="student-id"
           type="text"
@@ -203,7 +210,9 @@ const EditPersonDialog = ({
             value: classItem.id,
             label: classItem.name[locale],
           }))}
-          defaultValue={student?.class.id}
+          defaultValue={
+            person?.role == "student" ? person?.class.id : undefined
+          }
           onChange={(e: number) => setForm({ ...form, class: e })}
         />
         <KeyboardInput

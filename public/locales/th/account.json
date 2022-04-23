@@ -36,6 +36,11 @@
     },
     "role": {
       "title": "หน้าที่",
+      "role": {
+        "label": "ประเภทผู้ใช้",
+        "student": "นักเรียน",
+        "teacher": "อาจารย์"
+      },
       "subjectGroup": "กลุ่มสาระการเรียนรู้",
       "classCounselorAt": "ครูที่ปรึกษา"
     }

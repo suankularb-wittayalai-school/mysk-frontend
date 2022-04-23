@@ -256,6 +256,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale, params })
           th: { firstName: "ธราดล", lastName: "รานรินทร์" },
         },
         profile: "/images/dummybase/taradol.webp",
+        teacherID: "skt551",
         subjectsInCharge: [
           {
             id: 8,
@@ -287,6 +288,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale, params })
           th: { firstName: "มัทนา", lastName: "ต๊ะตันยาง" },
         },
         profile: "/images/dummybase/mattana.webp",
+        teacherID: "skt196",
         subjectsInCharge: [
           {
             id: 2,

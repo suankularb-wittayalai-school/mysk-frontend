@@ -29,5 +29,14 @@
       "seeAll": "ดูทั้งหมด",
       "addStudent": "เพิ่มนักเรียน"
     }
+  },
+  "teacherList": {
+    "title": "รายชื่ออาจารย์",
+    "searchTeachers": "ค้นหาอาจารย์",
+    "table": {
+      "id": "เลขอาจารย์",
+      "name": "ชื่อ-นามสกุล",
+      "classAdvisorAt": "ครูที่ปรึกษา"
+    }
   }
 }

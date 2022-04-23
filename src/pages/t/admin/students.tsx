@@ -33,7 +33,7 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
   const [showAdd, setShowAdd] = useState<boolean>(false);
 
   const [showEdit, setShowEdit] = useState<boolean>(false);
-  const [editingStudent, setEditingStudent] = useState<Student>();
+  const [editingPerson, setEditingPerson] = useState<Student>();
 
   return (
     <>
@@ -63,7 +63,7 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
           <StudentTable
             students={allStudents}
             setShowEdit={setShowEdit}
-            setEditingStudent={setEditingStudent}
+            setEditingPerson={setEditingPerson}
           />
         </Section>
       </RegularLayout>
@@ -75,7 +75,7 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
         // TODO: Refetch students here ↓
         onSubmit={() => setShowEdit(false)}
         mode="edit"
-        student={editingStudent}
+        person={editingPerson}
       />
       <EditPersonDialog
         show={showAdd}

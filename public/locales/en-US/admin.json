@@ -29,5 +29,14 @@
       "seeAll": "See all",
       "addStudent": "Add student"
     }
+  },
+  "teacherList": {
+    "title": "Teacher list",
+    "searchTeachers": "Search teachers",
+    "table": {
+      "id": "ID",
+      "name": "Name",
+      "classAdvisorAt": "Class advisor at"
+    }
   }
 }

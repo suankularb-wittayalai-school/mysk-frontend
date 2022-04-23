@@ -36,6 +36,11 @@
     },
     "role": {
       "title": "Role",
+      "role": {
+        "label": "Role",
+        "student": "Student",
+        "teacher": "Teacher"
+      },
       "subjectGroup": "Subject group",
       "classCounselorAt": "Class counselor at"
     }

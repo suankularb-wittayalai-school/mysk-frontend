@@ -6,19 +6,19 @@ import { useTranslation } from "next-i18next";
 import { Button, MaterialIcon, Table } from "@suankularb-components/react";
 
 // Types
-import { Student } from "@utils/types/person";
+import { Teacher } from "@utils/types/person";
 
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
 
-const StudentTable = ({
-  students,
+const TeacherTable = ({
+  teachers,
   setShowEdit,
   setEditingPerson,
 }: {
-  students: Array<Student>;
+  teachers: Array<Teacher>;
   setShowEdit: (value: boolean) => void;
-  setEditingPerson: (student: Student) => void;
+  setEditingPerson: (teacher: Teacher) => void;
 }): JSX.Element => {
   const { t } = useTranslation("admin");
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
@@ -27,27 +27,42 @@ const StudentTable = ({
     <Table width={800}>
       <thead>
         <tr>
-          <th className="w-1/12">{t("studentList.table.id")}</th>
-          <th className="w-1/12">{t("studentList.table.class")}</th>
-          <th className="w-1/12">{t("studentList.table.classNo")}</th>
-          <th className="w-5/12">{t("studentList.table.name")}</th>
+          <th className="w-1/12">{t("teacherList.table.id")}</th>
+          <th className="w-6/12">{t("teacherList.table.name")}</th>
+          <th className="w-2/12">{t("teacherList.table.classAdvisorAt")}</th>
           <th className="w-1/12" />
         </tr>
       </thead>
       <tbody>
-        {students.map((student) => (
-          <tr key={student.id}>
-            <td>{student.studentID}</td>
-            <td>{student.class.name[locale] || student.class.name.th}</td>
-            <td>{student.classNo}</td>
+        {teachers.map((teacher) => (
+          <tr key={teacher.id}>
+            <td>{teacher.teacherID}</td>
             <td className="!text-left">
               {nameJoiner(
                 locale,
-                student.name,
-                t(`name.prefix.${student.prefix}`, { ns: "common" }),
+                teacher.name,
+                t(`name.prefix.${teacher.prefix}`, { ns: "common" }),
                 {
                   prefix: true,
                 }
+              )}
+            </td>
+            <td>
+              {teacher.classAdvisorAt ? (
+                teacher.classAdvisorAt?.name[locale] ||
+                teacher.classAdvisorAt?.name.th
+              ) : (
+                <div className="grid place-content-center">
+                  <Button
+                    icon={<MaterialIcon icon="add" />}
+                    iconOnly
+                    type="text"
+                    onClick={() => {
+                      setShowEdit(true);
+                      setEditingPerson(teacher);
+                    }}
+                  />
+                </div>
               )}
             </td>
             <td>
@@ -59,7 +74,7 @@ const StudentTable = ({
                   icon={<MaterialIcon icon="content_copy" />}
                   onClick={() =>
                     navigator.clipboard?.writeText(
-                      nameJoiner(locale, student.name)
+                      nameJoiner(locale, teacher.name)
                     )
                   }
                   className="!hidden sm:!block"
@@ -71,7 +86,7 @@ const StudentTable = ({
                   icon={<MaterialIcon icon="edit" />}
                   onClick={() => {
                     setShowEdit(true);
-                    setEditingPerson(student);
+                    setEditingPerson(teacher);
                   }}
                 />
               </div>
@@ -83,4 +98,4 @@ const StudentTable = ({
   );
 };
 
-export default StudentTable;
+export default TeacherTable;

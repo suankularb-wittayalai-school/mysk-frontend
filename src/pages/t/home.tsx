@@ -104,6 +104,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
       th: { firstName: "อติพล", lastName: "สุกฤษฎานนท์" },
     },
     profile: "/images/dummybase/atipol.webp",
+    teacherID: "skt420",
     classAdvisorAt: {
       id: 509,
       name: {

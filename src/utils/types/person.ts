@@ -32,6 +32,7 @@ export type Student = Person & {
 export type Teacher = Person & {
   // TODO: Add more properties when the schema is completed
   role: "teacher";
+  teacherID: string;
   classAdvisorAt?: ClassWName;
   subjectsInCharge: Array<{
     id: Subject["id"];
