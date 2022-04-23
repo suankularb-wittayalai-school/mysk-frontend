@@ -122,7 +122,7 @@ const TeacherSection = ({
         <LinkButton
           type="filled"
           label={t("studentList.action.seeAll")}
-          url="/t/admin/students"
+          url="/t/admin/teachers"
           LinkElement={Link}
         />
       </div>

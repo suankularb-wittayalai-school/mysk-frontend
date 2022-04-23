@@ -126,19 +126,19 @@ const EditPersonDialog = ({
     <Dialog
       type="large"
       label={mode == "add" ? "add-student" : "edit-student"}
-      title={t(`studentList.dialog.editStudent.title.${mode}`, { ns: "admin" })}
+      title={t(`dialog.editStudent.title.${mode}`, { ns: "admin" })}
       show={show}
       onClose={onClose}
       onSubmit={() => validateAndSend() && onSubmit()}
       actions={[
         {
-          name: t("studentList.dialog.editStudent.action.cancel", {
+          name: t("dialog.editStudent.action.cancel", {
             ns: "admin",
           }),
           type: "close",
         },
         {
-          name: t("studentList.dialog.editStudent.action.save", {
+          name: t("dialog.editStudent.action.save", {
             ns: "admin",
           }),
           type: "submit",

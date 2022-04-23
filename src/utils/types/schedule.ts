@@ -1,7 +1,9 @@
+import { ClassWName } from "./class";
 import { Teacher } from "./person";
 import { Subject } from "./subject";
 
 export type Schedule = {
+  class: ClassWName;
   content: Array<ScheduleRow>;
 };
 

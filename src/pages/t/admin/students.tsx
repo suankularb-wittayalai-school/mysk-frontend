@@ -91,6 +91,7 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
       <ConfirmDelete
         show={showConfDel}
         onClose={() => setShowConfDel(false)}
+        // TODO: Refetch teachers here ↓
         onSubmit={() => setShowConfDel(false)}
       />
     </>

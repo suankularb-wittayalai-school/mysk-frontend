@@ -13,18 +13,6 @@
         "edit": "แก้ไขนักเรียน"
       }
     },
-    "dialog": {
-      "editStudent": {
-        "title": {
-          "add": "เพิ่มนักเรียน",
-          "edit": "แก้ไขนักเรียน"
-        },
-        "action": {
-          "cancel": "ยกเลิก",
-          "save": "บันทึก"
-        }
-      }
-    },
     "action": {
       "seeAll": "ดูทั้งหมด",
       "addStudent": "เพิ่มนักเรียน"
@@ -37,6 +25,9 @@
       "id": "เลขอาจารย์",
       "name": "ชื่อ-นามสกุล",
       "classAdvisorAt": "ครูที่ปรึกษา"
+    },
+    "action": {
+      "addTeacher": "เพิ่มอาจารย์"
     }
   },
   "schedule": {
@@ -44,6 +35,18 @@
     "gradeItem": "ม.{{grade}}",
     "action": {
       "seeSchedule": "ดูตารางสอน"
+    }
+  },
+  "dialog": {
+    "editStudent": {
+      "title": {
+        "add": "เพิ่มผู้ใช้",
+        "edit": "แก้ไขผู้ใช้"
+      },
+      "action": {
+        "cancel": "ยกเลิก",
+        "save": "บันทึก"
+      }
     }
   }
 }

@@ -13,18 +13,6 @@
         "edit": "Edit student"
       }
     },
-    "dialog": {
-      "editStudent": {
-        "title": {
-          "add": "Add student",
-          "edit": "Edit student"
-        },
-        "action": {
-          "cancel": "Cancel",
-          "save": "Save"
-        }
-      }
-    },
     "action": {
       "seeAll": "See all",
       "addStudent": "Add student"
@@ -37,6 +25,9 @@
       "id": "ID",
       "name": "Name",
       "classAdvisorAt": "Class advisor at"
+    },
+    "action": {
+      "addTeacher": "Add teacher"
     }
   },
   "schedule": {
@@ -44,6 +35,18 @@
     "gradeItem": "M.{{grade}}",
     "action": {
       "seeSchedule": "See schedule"
+    }
+  },
+  "dialog": {
+    "editStudent": {
+      "title": {
+        "add": "Add user",
+        "edit": "Edit user"
+      },
+      "action": {
+        "cancel": "Cancel",
+        "save": "Save"
+      }
     }
   }
 }
