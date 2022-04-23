@@ -161,6 +161,10 @@ const Admin: NextPage<{ someStudents: Array<Student> }> = ({
       <EditStudentDialog
         show={showEdit}
         onClose={() => setShowEdit(false)}
+        onSubmit={() => {
+          setShowEdit(false);
+          // Re-fetch here
+        }}
         mode="edit"
         student={editingStudent}
       />

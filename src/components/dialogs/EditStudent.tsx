@@ -1,5 +1,7 @@
 // Modules
+import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
+import { useState } from "react";
 
 // SK Components
 import {
@@ -12,16 +14,49 @@ import {
 // Types
 import { DialogProps } from "@utils/types/common";
 import { Student } from "@utils/types/person";
-import { useRouter } from "next/router";
 
 const EditStudentDialog = ({
   show,
   onClose,
+  onSubmit,
   mode,
   student,
-}: DialogProps & { mode: "add" | "edit"; student?: Student }): JSX.Element => {
+}: DialogProps & {
+  onSubmit: Function;
+  mode: "add" | "edit";
+  student?: Student;
+}): JSX.Element => {
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
   const { t } = useTranslation(["account", "admin", "common"]);
+
+  // Form control
+  const [form, setForm] = useState(
+    mode == "edit" && student
+      ? {
+          prefix: student.prefix,
+          thFirstName: student.name.th.firstName,
+          thMiddleName: student.name.th.middleName,
+          thLastName: student.name.th.lastName,
+          enFirstName: student.name["en-US"]?.firstName || "",
+          enMiddleName: student.name["en-US"]?.middleName || "",
+          enLastName: student.name["en-US"]?.lastName || "",
+          studentID: student.studentID,
+          class: student.class.id,
+          classNo: student.classNo.toString(),
+        }
+      : {
+          prefix: "",
+          thFirstName: "",
+          thMiddleName: "",
+          thLastName: "",
+          enFirstName: "",
+          enMiddleName: "",
+          enLastName: "",
+          studentID: "",
+          class: 0,
+          classNo: "",
+        }
+  );
 
   // Dummybase
   const classes = [
@@ -34,6 +69,20 @@ const EditStudentDialog = ({
     },
   ];
 
+  function validateAndSend() {
+    if (!form.classNo) return false;
+    const classNo = parseInt(form.classNo);
+
+    if (!form.prefix) return false;
+    if (!form.thFirstName) return false;
+    if (!form.thLastName) return false;
+    if (form.studentID.length != 5) return false;
+    if (!form.class) return false;
+    if (classNo < 1 || classNo > 50) return false;
+
+    return true;
+  }
+
   return (
     <Dialog
       type="large"
@@ -41,6 +90,7 @@ const EditStudentDialog = ({
       title={t(`studentList.dialog.editStudent.title.${mode}`, { ns: "admin" })}
       show={show}
       onClose={onClose}
+      onSubmit={() => validateAndSend() && onSubmit()}
       actions={[
         {
           name: t("studentList.dialog.editStudent.action.cancel", {
@@ -79,24 +129,31 @@ const EditStudentDialog = ({
               label: t("name.prefix.missus", { ns: "common" }),
             },
           ]}
+          defaultValue={student?.prefix}
+          onChange={(e: Student["prefix"]) => setForm({ ...form, prefix: e })}
         />
         <KeyboardInput
           name="th-first-name"
           type="text"
           label={t("profile.name.firstName")}
-          onChange={() => {}}
+          defaultValue={mode == "edit" ? student?.name.th.firstName : undefined}
+          onChange={(e: string) => setForm({ ...form, thFirstName: e })}
         />
         <KeyboardInput
           name="th-middle-name"
           type="text"
           label={t("profile.name.middleName")}
-          onChange={() => {}}
+          defaultValue={
+            mode == "edit" ? student?.name.th.middleName : undefined
+          }
+          onChange={(e: string) => setForm({ ...form, thMiddleName: e })}
         />
         <KeyboardInput
           name="th-last-name"
           type="text"
           label={t("profile.name.lastName")}
-          onChange={() => {}}
+          defaultValue={mode == "edit" ? student?.name.th.lastName : undefined}
+          onChange={(e: string) => setForm({ ...form, thLastName: e })}
         />
       </DialogSection>
 
@@ -106,19 +163,28 @@ const EditStudentDialog = ({
           name="en-first-name"
           type="text"
           label={t("profile.enName.firstName")}
-          onChange={() => {}}
+          defaultValue={
+            mode == "edit" ? student?.name["en-US"]?.firstName : undefined
+          }
+          onChange={(e: string) => setForm({ ...form, enFirstName: e })}
         />
         <KeyboardInput
           name="en-middle-name"
           type="text"
           label={t("profile.enName.middleName")}
-          onChange={() => {}}
+          defaultValue={
+            mode == "edit" ? student?.name["en-US"]?.middleName : undefined
+          }
+          onChange={(e: string) => setForm({ ...form, enMiddleName: e })}
         />
         <KeyboardInput
           name="en-last-name"
           type="text"
           label={t("profile.enName.lastName")}
-          onChange={() => {}}
+          defaultValue={
+            mode == "edit" ? student?.name["en-US"]?.lastName : undefined
+          }
+          onChange={(e: string) => setForm({ ...form, enLastName: e })}
         />
       </DialogSection>
 
@@ -128,7 +194,7 @@ const EditStudentDialog = ({
           name="student-id"
           type="text"
           label={t("profile.class.studentID")}
-          onChange={() => {}}
+          onChange={(e: string) => setForm({ ...form, studentID: e })}
         />
         <Dropdown
           name="class"
@@ -137,6 +203,8 @@ const EditStudentDialog = ({
             value: classItem.id,
             label: classItem.name[locale],
           }))}
+          defaultValue={student?.class.id}
+          onChange={(e: number) => setForm({ ...form, class: e })}
         />
         <KeyboardInput
           name="class-no"
@@ -146,7 +214,7 @@ const EditStudentDialog = ({
             min: 1,
             max: 50,
           }}
-          onChange={() => {}}
+          onChange={(e: string) => setForm({ ...form, classNo: e })}
         />
       </DialogSection>
     </Dialog>

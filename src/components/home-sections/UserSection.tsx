@@ -116,7 +116,7 @@ const UserSection = ({
                   </Trans>
                 ) : (
                   <Trans i18nKey="user.classAndNo" ns="dashboard">
-                    M.{{ class: user.class }} No.{{ classNo: user.classNo }}
+                    {{ class: user.class.name[locale] }} No.{{ classNo: user.classNo }}
                   </Trans>
                 )}
               </p>
