@@ -13,17 +13,19 @@ import {
 
 // Types
 import { DialogProps } from "@utils/types/common";
-import { Student, Teacher } from "@utils/types/person";
+import { Role, Student, Teacher } from "@utils/types/person";
 
 const EditPersonDialog = ({
   show,
   onClose,
   onSubmit,
   mode,
+  userRole,
   person,
 }: DialogProps & {
   onSubmit: Function;
   mode: "add" | "edit";
+  userRole?: Role;
   person?: Student | Teacher;
 }): JSX.Element => {
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
@@ -45,6 +47,11 @@ const EditPersonDialog = ({
     subjectGroup: 0,
     classAdvisorAt: 0,
   });
+
+  useEffect(
+    () => userRole && setForm((form) => ({ ...form, role: userRole })),
+    [userRole]
+  );
 
   useEffect(() => {
     if (mode == "edit" && person)
@@ -226,7 +233,7 @@ const EditPersonDialog = ({
       </DialogSection>
 
       {/* Role */}
-      <DialogSection name={t("profile.class.title")} isDoubleColumn>
+      <DialogSection name={t("profile.role.title")} isDoubleColumn>
         <Dropdown
           name="role"
           label={t("profile.role.role.label")}
@@ -234,7 +241,13 @@ const EditPersonDialog = ({
             { value: "student", label: t("profile.role.role.student") },
             { value: "teacher", label: t("profile.role.role.teacher") },
           ]}
-          defaultValue={person?.role}
+          defaultValue={
+            mode == "edit"
+              ? // Use role from user if editing
+                person?.role
+              : // Use role from props if adding
+                userRole
+          }
           onChange={(e: "student" | "teacher") => setForm({ ...form, role: e })}
         />
         {form.role == "student" ? (

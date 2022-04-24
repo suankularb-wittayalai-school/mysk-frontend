@@ -97,6 +97,7 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
         // TODO: Refetch students here ↓
         onSubmit={() => setShowAdd(false)}
         mode="add"
+        userRole="student"
       />
       <ConfirmDelete
         show={showConfDel}
