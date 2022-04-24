@@ -2,8 +2,8 @@
 import type { GetServerSideProps, NextPage } from "next";
 import Link from "next/link";
 
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { useState } from "react";
 
@@ -20,10 +20,11 @@ import {
 // Components
 import ConfirmDelete from "@components/dialogs/ConfirmDelete";
 import EditPersonDialog from "@components/dialogs/EditPerson";
+import TeacherTable from "@components/tables/TeacherTable";
 
 // Types
 import { Teacher } from "@utils/types/person";
-import TeacherTable from "@components/tables/TeacherTable";
+import Head from "next/head";
 
 // Page
 const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
@@ -40,6 +41,15 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
 
   return (
     <>
+      {/* Head */}
+      <Head>
+        <title>
+          {t("teacherList.title")}
+          {" - "}
+          {t("brand.name", { ns: "common" })}
+        </title>
+      </Head>
+
       {/* Page */}
       <RegularLayout
         Title={

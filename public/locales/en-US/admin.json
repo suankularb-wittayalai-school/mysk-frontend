@@ -33,6 +33,10 @@
   "schedule": {
     "title": "Schedule lookup",
     "gradeItem": "M.{{grade}}",
+    "grade": {
+      "tabTitle": "M.{{grade}} schedules",
+      "pageTitle": "Schedule list"
+    },
     "action": {
       "seeSchedule": "See schedule"
     }

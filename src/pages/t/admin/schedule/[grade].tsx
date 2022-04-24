@@ -19,7 +19,8 @@ import Schedule from "@components/Schedule";
 // Types
 import { Schedule as ScheduleType } from "@utils/types/schedule";
 import { useRouter } from "next/router";
-import { Trans } from "next-i18next";
+import { Trans, useTranslation } from "next-i18next";
+import Head from "next/head";
 
 const ScheduleSection = ({
   schedule,
@@ -42,27 +43,38 @@ const ScheduleSection = ({
 const SchedulesThisGrade: NextPage<{
   grade: number;
   schedulesThisGrade: Array<ScheduleType>;
-}> = ({ grade, schedulesThisGrade }) => (
-  <RegularLayout
-    Title={<Title
-      name={{
-        title: "Schedule list",
-        // TODO: Uncomment this when `subtitle` accepts Element
-        // subtitle: (
-        //   <Trans i18nKey="schedule.gradeItem" ns="admin">
-        //     M.{{ grade }}
-        //   </Trans>
-        // ),
-      }}
-      pageIcon={<MaterialIcon icon="dashboard" />}
-      backGoesTo="/t/admin"
-      LinkElement={Link} />}
-  >
-    {schedulesThisGrade.map((schedule) => (
-      <ScheduleSection key={schedule.class.id} schedule={schedule} />
-    ))}
-  </RegularLayout>
-);
+}> = ({ grade, schedulesThisGrade }) => {
+  const { t } = useTranslation(["admin", "common"]);
+
+  return (
+    <>
+      <Head>
+        <title>
+          {t("schedule.grade.tabTitle", { grade })}
+          {" - "}
+          {t("brand.name", { ns: "common" })}
+        </title>
+      </Head>
+      <RegularLayout
+        Title={
+          <Title
+            name={{
+              title: t("schedule.grade.pageTitle"),
+              subtitle: t("schedule.gradeItem", { grade })
+            }}
+            pageIcon={<MaterialIcon icon="dashboard" />}
+            backGoesTo="/t/admin"
+            LinkElement={Link}
+          />
+        }
+      >
+        {schedulesThisGrade.map((schedule) => (
+          <ScheduleSection key={schedule.class.id} schedule={schedule} />
+        ))}
+      </RegularLayout>
+    </>
+  );
+};
 
 export const getServerSideProps: GetServerSideProps = async ({
   locale,

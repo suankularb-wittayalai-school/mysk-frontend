@@ -31,10 +31,14 @@
     }
   },
   "schedule": {
-    "title": "เรียกดูตารางสอน",
+    "title": "เรียกดูตารางเรียน",
     "gradeItem": "ม.{{grade}}",
+    "grade": {
+      "tabTitle": "ตารางเรียน ม.{{grade}}",
+      "pageTitle": "รายตารางเรียน"
+    },
     "action": {
-      "seeSchedule": "ดูตารางสอน"
+      "seeSchedule": "ดูตารางเรียน"
     }
   },
   "dialog": {

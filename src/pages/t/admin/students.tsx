@@ -24,6 +24,7 @@ import StudentTable from "@components/tables/StudentTable";
 
 // Types
 import { Student } from "@utils/types/person";
+import Head from "next/head";
 
 // Page
 const Students: NextPage<{ allStudents: Array<Student> }> = ({
@@ -32,7 +33,7 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
   const { t } = useTranslation("admin");
 
   const [showAdd, setShowAdd] = useState<boolean>(false);
-  
+
   const [showEdit, setShowEdit] = useState<boolean>(false);
   const [editingPerson, setEditingPerson] = useState<Student>();
 
@@ -40,6 +41,15 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
 
   return (
     <>
+      {/* Head */}
+      <Head>
+        <title>
+          {t("studentList.title")}
+          {" - "}
+          {t("brand.name", { ns: "common" })}
+        </title>
+      </Head>
+
       {/* Page */}
       <RegularLayout
         Title={
