@@ -182,12 +182,18 @@ const PeriodLogsSection = ({
 
                 {/* Medium */}
                 <td>
-                  <PeriodLogMedium mediums={periodLog.mediums} />
+                  <PeriodLogMedium
+                    mediums={periodLog.mediums}
+                    className="justify-center"
+                  />
                 </td>
 
                 {/* Sentiment */}
                 <td>
-                  <Sentiment level={periodLog.participationLevel} />
+                  <Sentiment
+                    level={periodLog.participationLevel}
+                    className="justify-center"
+                  />
                 </td>
 
                 {/* Actions */}
@@ -254,7 +260,7 @@ const PeriodLogMedium = ({
 
   return (
     <div
-      className={`flex flex-row flex-wrap items-center justify-center gap-2 ${
+      className={`flex flex-row flex-wrap items-center gap-2 ${
         className || ""
       }`}
     >
@@ -311,7 +317,17 @@ const PeriodLogDetailsDialog = ({
       actions={[{ name: "Close", type: "close" }]}
       show={show}
       onClose={onClose}
-    ></Dialog>
+    >
+      <DialogSection name={t("periodLogs.table.topic")}>
+        <p>{periodLog.topic}</p>
+      </DialogSection>
+      <DialogSection name={t("periodLogs.table.medium.title")}>
+        <PeriodLogMedium mediums={periodLog.mediums} />
+      </DialogSection>
+      <DialogSection name={t("periodLogs.table.participationLevel")}>
+        <Sentiment level={periodLog.participationLevel} />
+      </DialogSection>
+    </Dialog>
   );
 };
 

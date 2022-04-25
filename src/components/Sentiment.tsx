@@ -1,8 +1,14 @@
 // SK Components
 import { MaterialIcon } from "@suankularb-components/react";
 
-const Sentiment = ({ level }: { level: number }): JSX.Element => (
-  <div className="flex flex-row items-center justify-center gap-2">
+const Sentiment = ({
+  level,
+  className,
+}: {
+  level: number;
+  className?: string;
+}): JSX.Element => (
+  <div className={`flex flex-row items-center gap-2 ${className || ""}`}>
     {level == 1 ? (
       <>
         <MaterialIcon
