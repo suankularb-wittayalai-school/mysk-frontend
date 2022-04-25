@@ -51,6 +51,12 @@
         "cancel": "Cancel",
         "delete": "Delete"
       }
+    },
+    "image": {
+      "title": "Image",
+      "action": {
+        "close": "Close"
+      }
     }
   }
 }

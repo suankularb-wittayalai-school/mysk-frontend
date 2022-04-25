@@ -46,6 +46,7 @@ import {
 } from "@utils/types/subject";
 import { ClassWName } from "@utils/types/class";
 import { DialogProps } from "@utils/types/common";
+import ImageDialog from "@components/dialogs/Image";
 
 // Details Section
 
@@ -133,8 +134,14 @@ const AddClassDialog = ({
 // Period Logs Section
 const PeriodLogsSection = ({
   periodLogs,
+  setLogEvidence,
+  setShowLogDetails,
+  setActiveLog,
 }: {
   periodLogs: Array<PeriodLog>;
+  setLogEvidence: (value: { show: boolean; activeEvidence?: string }) => void;
+  setShowLogDetails: (value: boolean) => void;
+  setActiveLog: (value: PeriodLog) => void;
 }): JSX.Element => {
   const { t } = useTranslation("subjects");
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
@@ -253,12 +260,22 @@ const PeriodLogsSection = ({
                       type="text"
                       iconOnly
                       icon={<MaterialIcon icon="photo" />}
+                      onClick={() =>
+                        setLogEvidence({
+                          show: true,
+                          activeEvidence: periodLog.evidence,
+                        })
+                      }
                     />
                     <Button
                       name={t("periodLogs.table.action.seeDetails")}
                       type="text"
                       iconOnly
                       icon={<MaterialIcon icon="drafts" />}
+                      onClick={() => {
+                        setShowLogDetails(true);
+                        setActiveLog(periodLog);
+                      }}
                     />
                   </div>
                 </td>
@@ -520,6 +537,14 @@ const SubjectDetails: NextPage<{
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
   const [showAdd, setShowAdd] = useState<boolean>(false);
 
+  const [logEvidence, setLogEvidence] = useState<{
+    show: boolean;
+    activeEvidence?: string;
+  }>({ show: false });
+
+  const [showLogDetails, setShowLogDetails] = useState<boolean>(false);
+  const [activeLog, setActiveLog] = useState<PeriodLog>();
+
   const [showAsgnDetails, setShowAsgnDetails] = useState<boolean>(false);
   const [showEditAsgn, setShowEditAsgn] = useState<boolean>(false);
   const [showAddAsgn, setShowAddAsgn] = useState<boolean>(false);
@@ -549,7 +574,12 @@ const SubjectDetails: NextPage<{
           classesLearningThis={classesLearningThis}
           setShowAdd={setShowAdd}
         />
-        <PeriodLogsSection periodLogs={periodLogs} />
+        <PeriodLogsSection
+          periodLogs={periodLogs}
+          setLogEvidence={setLogEvidence}
+          setShowLogDetails={setShowLogDetails}
+          setActiveLog={setActiveLog}
+        />
         <SubstituteAssignmentsSection
           substAsgn={substAsgn}
           setShowAssgDetails={setShowAsgnDetails}
@@ -565,6 +595,14 @@ const SubjectDetails: NextPage<{
         onClose={() => setShowAdd(false)}
         onSubmit={() => {}}
       />
+      {logEvidence.activeEvidence && (
+        <ImageDialog
+          show={logEvidence.show}
+          onClose={() => setLogEvidence({ ...logEvidence, show: false })}
+          src={logEvidence.activeEvidence}
+          className="aspect-[16/9]"
+        />
+      )}
       {activeAsgn && (
         <>
           <AssignmentDetailsDialog
@@ -672,6 +710,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       topic: "Forces of nature (Reading)",
       mediums: ["pre-recorded"],
       participationLevel: 5,
+      evidence: "/images/dummybase/zoom-screenshot.webp",
     },
     {
       id: 2,
@@ -679,6 +718,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       topic: "Vocabulary Practice (The weather)",
       mediums: ["meet", "material"],
       participationLevel: 3,
+      evidence: "/images/dummybase/zoom-screenshot.webp",
     },
     {
       id: 3,
@@ -686,6 +726,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       topic: "Grammar in use (Modals)",
       mediums: ["meet"],
       participationLevel: 5,
+      evidence: "/images/dummybase/zoom-screenshot.webp",
     },
   ];
   const substAsgn: Array<SubstituteAssignment> = [
