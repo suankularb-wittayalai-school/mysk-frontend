@@ -132,38 +132,19 @@ const AddClassDialog = ({
 };
 
 // Period Logs Section
+
+// Main
 const PeriodLogsSection = ({
   periodLogs,
   setLogEvidence,
-  setShowLogDetails,
-  setActiveLog,
+  setLogDetails,
 }: {
   periodLogs: Array<PeriodLog>;
-  setLogEvidence: (value: { show: boolean; activeEvidence?: string }) => void;
-  setShowLogDetails: (value: boolean) => void;
-  setActiveLog: (value: PeriodLog) => void;
+  setLogEvidence: (value: { show: boolean; evidence?: string }) => void;
+  setLogDetails: (value: { show: boolean; periodLog?: PeriodLog }) => void;
 }): JSX.Element => {
   const { t } = useTranslation("subjects");
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
-
-  // Component specific utilities
-  function tMedium(medium: PeriodMedium) {
-    return t(
-      `periodLogs.table.medium.${
-        medium == "meet"
-          ? "meet"
-          : medium == "pre-recorded"
-          ? "preRecorded"
-          : medium == "material"
-          ? "material"
-          : medium == "assignment"
-          ? "assignment"
-          : medium == "on-site"
-          ? "onSite"
-          : undefined
-      }`
-    );
-  }
 
   return (
     <Section>
@@ -201,50 +182,7 @@ const PeriodLogsSection = ({
 
                 {/* Medium */}
                 <td>
-                  <div className="flex flex-row flex-wrap items-center justify-center gap-2">
-                    {/* Icon */}
-                    {periodLog.mediums.length > 0 &&
-                      (periodLog.mediums[0] == "meet" ? (
-                        <MaterialIcon
-                          icon="videocam"
-                          className="text-primary"
-                        />
-                      ) : periodLog.mediums[0] == "pre-recorded" ? (
-                        <MaterialIcon
-                          icon="ondemand_video"
-                          className="text-primary"
-                        />
-                      ) : periodLog.mediums[0] == "material" ? (
-                        <MaterialIcon icon="style" className="text-primary" />
-                      ) : periodLog.mediums[0] == "assignment" ? (
-                        <MaterialIcon
-                          icon="assignment"
-                          className="text-primary"
-                        />
-                      ) : periodLog.mediums[0] == "on-site" ? (
-                        <MaterialIcon
-                          icon="apartment"
-                          className="text-primary"
-                        />
-                      ) : undefined)}
-
-                    {/* Text */}
-                    <span>
-                      {periodLog.mediums.length > 0 &&
-                        tMedium(periodLog.mediums[0])}{" "}
-                      {periodLog.mediums.length > 1 && (
-                        <abbr
-                          title={periodLog.mediums
-                            .slice(1)
-                            .map((medium) => tMedium(medium))
-                            .join(", ")}
-                          className="font-light text-outline"
-                        >
-                          +{periodLog.mediums.length - 1}
-                        </abbr>
-                      )}
-                    </span>
-                  </div>
+                  <PeriodLogMedium mediums={periodLog.mediums} />
                 </td>
 
                 {/* Sentiment */}
@@ -263,7 +201,7 @@ const PeriodLogsSection = ({
                       onClick={() =>
                         setLogEvidence({
                           show: true,
-                          activeEvidence: periodLog.evidence,
+                          evidence: periodLog.evidence,
                         })
                       }
                     />
@@ -272,10 +210,7 @@ const PeriodLogsSection = ({
                       type="text"
                       iconOnly
                       icon={<MaterialIcon icon="drafts" />}
-                      onClick={() => {
-                        setShowLogDetails(true);
-                        setActiveLog(periodLog);
-                      }}
+                      onClick={() => setLogDetails({ show: true, periodLog })}
                     />
                   </div>
                 </td>
@@ -285,6 +220,98 @@ const PeriodLogsSection = ({
         </Table>
       </div>
     </Section>
+  );
+};
+
+// Components
+const PeriodLogMedium = ({
+  mediums,
+  className,
+}: {
+  mediums: Array<PeriodMedium>;
+  className?: string;
+}) => {
+  const { t } = useTranslation("subjects");
+
+  // Component specific utilities
+  function tMedium(medium: PeriodMedium) {
+    return t(
+      `periodLogs.table.medium.${
+        medium == "meet"
+          ? "meet"
+          : medium == "pre-recorded"
+          ? "preRecorded"
+          : medium == "material"
+          ? "material"
+          : medium == "assignment"
+          ? "assignment"
+          : medium == "on-site"
+          ? "onSite"
+          : undefined
+      }`
+    );
+  }
+
+  return (
+    <div
+      className={`flex flex-row flex-wrap items-center justify-center gap-2 ${
+        className || ""
+      }`}
+    >
+      {/* Icon */}
+      {mediums.length > 0 &&
+        (mediums[0] == "meet" ? (
+          <MaterialIcon icon="videocam" className="text-primary" />
+        ) : mediums[0] == "pre-recorded" ? (
+          <MaterialIcon icon="ondemand_video" className="text-primary" />
+        ) : mediums[0] == "material" ? (
+          <MaterialIcon icon="style" className="text-primary" />
+        ) : mediums[0] == "assignment" ? (
+          <MaterialIcon icon="assignment" className="text-primary" />
+        ) : mediums[0] == "on-site" ? (
+          <MaterialIcon icon="apartment" className="text-primary" />
+        ) : undefined)}
+
+      {/* Text */}
+      <span>
+        {mediums.length > 0 && tMedium(mediums[0])}{" "}
+        {mediums.length > 1 && (
+          <abbr
+            title={mediums
+              .slice(1)
+              .map((medium) => tMedium(medium))
+              .join(", ")}
+            className="font-light text-outline"
+          >
+            +{mediums.length - 1}
+          </abbr>
+        )}
+      </span>
+    </div>
+  );
+};
+
+const PeriodLogDetailsDialog = ({
+  show,
+  onClose,
+  periodLog,
+}: DialogProps & { periodLog: PeriodLog }) => {
+  const { t } = useTranslation("subjects");
+  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+
+  return (
+    <Dialog
+      type="large"
+      label="period-log"
+      title={new Date(periodLog.date).toLocaleDateString(locale, {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })}
+      actions={[{ name: "Close", type: "close" }]}
+      show={show}
+      onClose={onClose}
+    ></Dialog>
   );
 };
 
@@ -539,11 +566,13 @@ const SubjectDetails: NextPage<{
 
   const [logEvidence, setLogEvidence] = useState<{
     show: boolean;
-    activeEvidence?: string;
+    evidence?: string;
   }>({ show: false });
 
-  const [showLogDetails, setShowLogDetails] = useState<boolean>(false);
-  const [activeLog, setActiveLog] = useState<PeriodLog>();
+  const [logDetails, setLogDetails] = useState<{
+    show: boolean;
+    periodLog?: PeriodLog;
+  }>({ show: false });
 
   const [showAsgnDetails, setShowAsgnDetails] = useState<boolean>(false);
   const [showEditAsgn, setShowEditAsgn] = useState<boolean>(false);
@@ -577,8 +606,7 @@ const SubjectDetails: NextPage<{
         <PeriodLogsSection
           periodLogs={periodLogs}
           setLogEvidence={setLogEvidence}
-          setShowLogDetails={setShowLogDetails}
-          setActiveLog={setActiveLog}
+          setLogDetails={setLogDetails}
         />
         <SubstituteAssignmentsSection
           substAsgn={substAsgn}
@@ -595,12 +623,19 @@ const SubjectDetails: NextPage<{
         onClose={() => setShowAdd(false)}
         onSubmit={() => {}}
       />
-      {logEvidence.activeEvidence && (
+      {logEvidence.evidence && (
         <ImageDialog
           show={logEvidence.show}
           onClose={() => setLogEvidence({ ...logEvidence, show: false })}
-          src={logEvidence.activeEvidence}
+          src={logEvidence.evidence}
           className="aspect-[16/9]"
+        />
+      )}
+      {logDetails.periodLog && (
+        <PeriodLogDetailsDialog
+          show={logDetails.show}
+          onClose={() => setLogDetails({ ...logDetails, show: false })}
+          periodLog={logDetails.periodLog}
         />
       )}
       {activeAsgn && (
