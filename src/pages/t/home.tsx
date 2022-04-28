@@ -29,11 +29,11 @@ import UserSection from "@components/home-sections/UserSection";
 // Types
 import { NewsList, StudentForm } from "@utils/types/news";
 import { Teacher } from "@utils/types/person";
-import { Schedule } from "@utils/types/schedule";
+import { StudentSchedule } from "@utils/types/schedule";
 
 const TeacherHome: NextPage<{
   user: Teacher;
-  schedule: Schedule;
+  schedule: StudentSchedule;
   studentForms: Array<StudentForm>;
   news: NewsList;
 }> = ({ user, schedule, studentForms, news }) => {
@@ -206,7 +206,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
       },
     },
   ];
-  const schedule: Schedule = {
+  const schedule: StudentSchedule = {
     content: [
       {
         day: getDay(new Date()),

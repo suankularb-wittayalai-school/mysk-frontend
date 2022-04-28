@@ -26,25 +26,21 @@ import BrandIcon from "@components/icons/BrandIcon";
 
 // Types
 import { Role } from "@utils/types/person";
-import { Schedule as ScheduleType } from "@utils/types/schedule";
-
-// Backend
+import { StudentSchedule } from "@utils/types/schedule";
 import { SubjectListItem } from "@utils/types/subject";
+
+// Helpers
 import { nameJoiner } from "@utils/helpers/name";
 
 const ScheduleSection = ({
   schedule,
 }: {
-  schedule: ScheduleType;
-}): JSX.Element => {
-  const { t } = useTranslation("schedule");
-
-  return (
-    <Section>
-      <Schedule schedule={schedule} role="teacher" />
-    </Section>
-  );
-};
+  schedule: StudentSchedule;
+}): JSX.Element => (
+  <Section>
+    <Schedule schedule={schedule} role="student" />
+  </Section>
+);
 
 const SubjectListSection = ({
   subjectList,
@@ -155,7 +151,7 @@ const SubjectListSection = ({
 
 const StudentSchedule: NextPage<{
   role: Role;
-  schedule: ScheduleType;
+  schedule: StudentSchedule;
   subjectList: Array<SubjectListItem>;
 }> = ({ schedule, subjectList }) => {
   const { t } = useTranslation("schedule");
@@ -183,7 +179,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   locale,
   params,
 }) => {
-  const schedule: ScheduleType = {
+  const schedule: StudentSchedule = {
     content: [
       {
         day: 1,

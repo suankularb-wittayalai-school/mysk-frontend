@@ -27,7 +27,7 @@ import DiscardDraft from "@components/dialogs/DiscardDraft";
 
 // Types
 import { DialogProps } from "@utils/types/common";
-import { Schedule as ScheduleType } from "@utils/types/schedule";
+import { StudentSchedule as ScheduleType } from "@utils/types/schedule";
 
 // Backend
 import { addPeriodtoSchedule } from "@utils/backend/schedule";
@@ -185,6 +185,7 @@ const TeacherSchedule: NextPage<{ schedule: ScheduleType }> = ({
     const duration = parseInt(formData.get("duration")?.toString() || "-1");
 
     setSchedule({
+      ...schedule,
       content: schedule.content.map((scheduleRow) => {
         if (scheduleRow.day == day) {
           // Replace the Period with the `periodStart` in question
@@ -225,13 +226,16 @@ const TeacherSchedule: NextPage<{ schedule: ScheduleType }> = ({
 
   return (
     <>
-      <RegularLayout Title={
+      <RegularLayout
+        Title={
           <Title
             name={{ title: t("title.student") }}
             pageIcon={<MaterialIcon icon="dashboard" />}
             backGoesTo="/t/home"
             LinkElement={Link}
-          />}>
+          />
+        }
+      >
         <Section>
           <Schedule schedule={schedule} role="teacher" />
           <div className="flex flex-row items-center justify-end gap-2">

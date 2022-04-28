@@ -17,7 +17,7 @@ import {
 import Schedule from "@components/Schedule";
 
 // Types
-import { Schedule as ScheduleType } from "@utils/types/schedule";
+import { StudentSchedule as ScheduleType } from "@utils/types/schedule";
 import { useRouter } from "next/router";
 import { Trans, useTranslation } from "next-i18next";
 import Head from "next/head";

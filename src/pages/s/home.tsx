@@ -29,13 +29,13 @@ import TeachersSection from "@components/home-sections/TeachersSection";
 // Types
 import { NewsList } from "@utils/types/news";
 import { Student, Teacher } from "@utils/types/person";
-import { Schedule } from "@utils/types/schedule";
+import { StudentSchedule } from "@utils/types/schedule";
 
 // Page
 const StudentHome: NextPage<{
   user: Student | Teacher;
   news: NewsList;
-  schedule: Schedule;
+  schedule: StudentSchedule;
   teachers: Array<Teacher>;
   classAdvisors: Array<Teacher>;
 }> = ({ user, news, schedule, teachers, classAdvisors }) => {
@@ -192,7 +192,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
       },
     },
   ];
-  const schedule: Schedule = {
+  const schedule: StudentSchedule = {
     content: [
       {
         day: getDay(new Date()),
