@@ -11,7 +11,7 @@ import {
 } from "@suankularb-components/react";
 
 // Components
-import Schedule from "@components/Schedule";
+import Schedule from "@components/schedule/Schedule";
 
 // Types
 import { StudentSchedule as ScheduleType } from "@utils/types/schedule";

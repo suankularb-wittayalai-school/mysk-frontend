@@ -1,86 +1,17 @@
 // Modules
-import { Day, setDay } from "date-fns";
-
-import { AnimatePresence, motion } from "framer-motion";
-
-import { useTranslation } from "next-i18next";
+import { motion } from "framer-motion";
 import { useRouter } from "next/router";
 
 // Types
 import { Role, Teacher } from "@utils/types/person";
-import {
-  StudentSchedule as ScheduleType,
-  SchedulePeriod as SchedulePeriodType,
-  ScheduleRow as ScheduleRowType,
-} from "@utils/types/schedule";
+import { SchedulePeriod as SchedulePeriodType } from "@utils/types/schedule";
 
 // Animations
 import { animationTransition } from "@utils/animations/config";
 
 // Helpers
 import { isInPeriod } from "@utils/helpers/schedule";
-import { useEffect, useState } from "react";
 import { Subject } from "@utils/types/subject";
-
-// Day section
-const ScheduleDay = ({ day }: { day: ScheduleRowType["day"] }): JSX.Element => {
-  const locale = useRouter().locale;
-  const { t } = useTranslation("common");
-  const today = new Date();
-
-  return (
-    <div className="container-primary flex w-40 flex-col rounded-xl px-4 py-2 leading-snug">
-      <p className="font-display text-xl font-medium">
-        {t(`datetime.day.${day}`)}
-      </p>
-      <time className="text-base">
-        {setDay(today, day).toLocaleDateString(locale, {
-          day: "numeric",
-          month: "short",
-          year: "numeric",
-        })}
-      </time>
-    </div>
-  );
-};
-
-// Content section
-const ScheduleRow = ({
-  scheduleRow,
-  role,
-}: {
-  scheduleRow: ScheduleRowType;
-  role: Role;
-}): JSX.Element => {
-  const { t } = useTranslation("common");
-
-  const [now, setNow] = useState<Date>(new Date());
-  const day = setDay(new Date(), scheduleRow.day);
-
-  // Updates `now` every 5 seconds
-  useEffect(() => {
-    setInterval(() => setNow(new Date()), 5000);
-  }, []);
-
-  const periodWidth = 112;
-
-  return (
-    <li aria-label={t(`datetime.day.${scheduleRow.day}`)}>
-      <ul className="relative h-[3.75rem]">
-        {scheduleRow.content.map((schedulePeriod) => (
-          <SchedulePeriod
-            key={schedulePeriod.periodStart}
-            schedulePeriod={schedulePeriod}
-            now={now}
-            day={day}
-            periodWidth={periodWidth}
-            role={role}
-          />
-        ))}
-      </ul>
-    </li>
-  );
-};
 
 const SchedulePeriod = ({
   schedulePeriod,
@@ -217,41 +148,4 @@ const TeacherTeachingList = ({
   );
 };
 
-// Main component
-const Schedule = ({
-  schedule,
-  role,
-  noScroll,
-}: {
-  schedule: ScheduleType;
-  role: Role;
-  noScroll?: boolean;
-}): JSX.Element => (
-  <div className="scroll-w-0 flex flex-row gap-5 overflow-x-auto !px-0 sm:overflow-x-visible">
-    <div aria-hidden className="flex flex-col gap-2 py-1 pl-4 sm:pl-0">
-      {schedule.content.map((scheduleRow) => (
-        <ScheduleDay key={scheduleRow.day} day={scheduleRow.day} />
-      ))}
-    </div>
-    <div
-      className={
-        noScroll ? "grow" : "scroll-w-0 scroll-desktop grow sm:overflow-x-auto"
-      }
-    >
-      <AnimatePresence initial={false}>
-        <ul className="flex flex-col gap-2 py-1 pl-1 pr-4 sm:pr-0">
-          {schedule.content.map((scheduleRow) => (
-            <ScheduleRow
-              key={scheduleRow.day}
-              scheduleRow={scheduleRow}
-              role={role}
-            />
-          ))}
-        </ul>
-      </AnimatePresence>
-    </div>
-  </div>
-);
-
-export default Schedule;
-export { ScheduleDay as ScheduleDays, ScheduleRow };
+export default SchedulePeriod;
