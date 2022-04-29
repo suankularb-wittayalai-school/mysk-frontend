@@ -42,7 +42,10 @@
         "teacher": "อาจารย์"
       },
       "subjectGroup": "กลุ่มสาระการเรียนรู้",
-      "classCounselorAt": "ครูที่ปรึกษา"
+      "classAdvisorAt": {
+        "label": "ครูที่ปรึกษา",
+        "none": "ไม่เป็นครูที่ปรึกษา"
+      }
     }
   },
   "dialog": {

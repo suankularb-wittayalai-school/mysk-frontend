@@ -241,11 +241,18 @@ const EditSelfDialog = ({
             />
             <Dropdown
               name="class-counselor-at"
-              label={t("profile.role.classCounselorAt")}
-              options={classes.map((classItem) => ({
-                value: classItem.id,
-                label: classItem.name[locale],
-              }))}
+              label={t("profile.role.classAdvisorAt.label")}
+              options={[
+                {
+                  value: 0,
+                  label: t("profile.role.classAdvisorAt.none"),
+                },
+              ].concat(
+                classes.map((classItem) => ({
+                  value: classItem.id,
+                  label: classItem.name[locale],
+                }))
+              )}
             />
           </DialogSection>
         )}

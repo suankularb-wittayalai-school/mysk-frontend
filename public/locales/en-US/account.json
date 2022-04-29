@@ -42,7 +42,10 @@
         "teacher": "Teacher"
       },
       "subjectGroup": "Subject group",
-      "classCounselorAt": "Class counselor at"
+      "classAdvisorAt": {
+        "label": "Class advisor at",
+        "none": "Not an advisor"
+      }
     }
   },
   "dialog": {
