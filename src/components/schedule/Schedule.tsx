@@ -12,7 +12,7 @@ import ScheduleRow from "@components/schedule/ScheduleRow";
 // Types
 import { Role } from "@utils/types/person";
 import {
-  StudentSchedule as ScheduleType,
+  StudentSchedule as StudentSchedule,
   ScheduleRow as ScheduleRowType,
 } from "@utils/types/schedule";
 
@@ -44,7 +44,7 @@ const Schedule = ({
   role,
   noScroll,
 }: {
-  schedule: ScheduleType;
+  schedule: StudentSchedule;
   role: Role;
   noScroll?: boolean;
 }): JSX.Element => (

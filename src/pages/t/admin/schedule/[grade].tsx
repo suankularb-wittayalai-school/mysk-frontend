@@ -1,7 +1,10 @@
 // Modules
 import { GetServerSideProps, NextPage } from "next";
+import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
+import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 // SK Components
@@ -17,15 +20,12 @@ import {
 import Schedule from "@components/schedule/Schedule";
 
 // Types
-import { StudentSchedule as ScheduleType } from "@utils/types/schedule";
-import { useRouter } from "next/router";
-import { Trans, useTranslation } from "next-i18next";
-import Head from "next/head";
+import { StudentSchedule } from "@utils/types/schedule";
 
 const ScheduleSection = ({
   schedule,
 }: {
-  schedule: ScheduleType;
+  schedule: StudentSchedule;
 }): JSX.Element => {
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
 
@@ -33,7 +33,13 @@ const ScheduleSection = ({
     <Section>
       <Header
         icon={<MaterialIcon icon="subdirectory_arrow_right" allowCustomSize />}
-        text={schedule.class.name[locale] || schedule.class.name.th}
+        text={
+          // FIXME: Schedule class should be required
+          // Temporary solution, awaiting response from @JimmyTempest
+          schedule.class
+            ? schedule.class.name[locale] || schedule.class.name.th
+            : ""
+        }
       />
       <Schedule schedule={schedule} role="student" />
     </Section>
@@ -42,7 +48,7 @@ const ScheduleSection = ({
 
 const SchedulesThisGrade: NextPage<{
   grade: number;
-  schedulesThisGrade: Array<ScheduleType>;
+  schedulesThisGrade: Array<StudentSchedule>;
 }> = ({ grade, schedulesThisGrade }) => {
   const { t } = useTranslation(["admin", "common"]);
 
@@ -60,7 +66,7 @@ const SchedulesThisGrade: NextPage<{
           <Title
             name={{
               title: t("schedule.grade.pageTitle"),
-              subtitle: t("schedule.gradeItem", { grade })
+              subtitle: t("schedule.gradeItem", { grade }),
             }}
             pageIcon={<MaterialIcon icon="dashboard" />}
             backGoesTo="/t/admin"
@@ -69,7 +75,7 @@ const SchedulesThisGrade: NextPage<{
         }
       >
         {schedulesThisGrade.map((schedule) => (
-          <ScheduleSection key={schedule.class.id} schedule={schedule} />
+          <ScheduleSection key={schedule.class?.id} schedule={schedule} />
         ))}
       </RegularLayout>
     </>
@@ -81,7 +87,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   params,
 }) => {
   const grade = params?.grade;
-  const schedulesThisGrade: Array<ScheduleType> = [
+  const schedulesThisGrade: Array<StudentSchedule> = [
     {
       class: {
         id: 501,

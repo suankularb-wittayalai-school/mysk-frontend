@@ -27,7 +27,7 @@ import DiscardDraft from "@components/dialogs/DiscardDraft";
 
 // Types
 import { DialogProps } from "@utils/types/common";
-import { StudentSchedule as ScheduleType } from "@utils/types/schedule";
+import { StudentSchedule } from "@utils/types/schedule";
 
 // Backend
 import { addPeriodtoSchedule } from "@utils/backend/schedule";
@@ -170,11 +170,11 @@ const AddPeriod = ({
   );
 };
 
-const TeacherSchedule: NextPage<{ schedule: ScheduleType }> = ({
+const TeacherSchedule: NextPage<{ schedule: StudentSchedule }> = ({
   schedule: fetchedSchedule,
 }) => {
   const { t } = useTranslation("schedule");
-  const [schedule, setSchedule] = useState<ScheduleType>(fetchedSchedule);
+  const [schedule, setSchedule] = useState<StudentSchedule>(fetchedSchedule);
   const [showAddPeriod, setShowAddPeriod] = useState<boolean>(false);
 
   function addSchedulePeriod(formData: FormData) {
@@ -266,7 +266,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   locale,
   params,
 }) => {
-  const schedule: ScheduleType = {
+  const schedule: StudentSchedule = {
     content: [
       {
         day: 1,

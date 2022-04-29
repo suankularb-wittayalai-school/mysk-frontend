@@ -4,7 +4,9 @@ import { Teacher } from "./person";
 import { Subject } from "./subject";
 
 export type StudentSchedule = {
-  class: ClassWName;
+  // FIXME: Schedule class should be required
+  // Temporary solution, awaiting response from @JimmyTempest
+  class?: ClassWName;
   content: Array<ScheduleRow>;
 };
 
