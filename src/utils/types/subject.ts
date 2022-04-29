@@ -63,6 +63,7 @@ export type PeriodLog = {
   topic: string;
   mediums: Array<PeriodMedium>;
   participationLevel: 1 | 2 | 3 | 4 | 5;
+  evidence: string;
 };
 
 export type PeriodMedium =

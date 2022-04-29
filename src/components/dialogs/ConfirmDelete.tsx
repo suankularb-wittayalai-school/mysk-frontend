@@ -11,7 +11,7 @@ interface DiscordDraftProps extends DialogProps {
   onSubmit: Function;
 }
 
-const DiscardDraft = ({
+const ConfirmDelete = ({
   show,
   onClose,
   onSubmit,
@@ -21,16 +21,16 @@ const DiscardDraft = ({
   return (
     <Dialog
       type="regular"
-      label="discard-draft"
-      title={t("dialog.discardDraft.title")}
-      supportingText={t("dialog.discardDraft.supportingText")}
+      label="confirm-delete"
+      title={t("dialog.confirmDelete.title")}
+      supportingText={t("dialog.confirmDelete.supportingText")}
       actions={[
         {
-          name: t("dialog.discardDraft.action.continue"),
+          name: t("dialog.confirmDelete.action.cancel"),
           type: "close",
         },
         {
-          name: t("dialog.discardDraft.action.discard"),
+          name: t("dialog.confirmDelete.action.delete"),
           type: "submit",
           isDangerous: true,
         },
@@ -42,4 +42,4 @@ const DiscardDraft = ({
   );
 };
 
-export default DiscardDraft;
+export default ConfirmDelete;

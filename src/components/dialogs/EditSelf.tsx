@@ -30,7 +30,7 @@ interface EditProfileDialogProps extends DialogProps {
   setShowDiscard?: Function;
 }
 
-const EditProfileDialog = ({
+const EditSelfDialog = ({
   user,
   show,
   onClose,
@@ -48,9 +48,9 @@ const EditProfileDialog = ({
     thFirstName: user.name.th.firstName,
     thMiddleName: user.name.th.middleName,
     thLastName: user.name.th.lastName,
-    enFirstName: user.name["en-US"].firstName,
-    enMiddleName: user.name["en-US"].middleName,
-    enLastName: user.name["en-US"].lastName,
+    enFirstName: user.name["en-US"]?.firstName || "",
+    enMiddleName: user.name["en-US"]?.middleName || "",
+    enLastName: user.name["en-US"]?.lastName || "",
   });
 
   // Dummybase
@@ -211,21 +211,21 @@ const EditProfileDialog = ({
             name="en-first-name"
             type="text"
             label={t("profile.enName.firstName")}
-            defaultValue={user.name["en-US"].firstName}
+            defaultValue={user.name["en-US"]?.firstName || ""}
             onChange={(e: string) => setForm({ ...form, thFirstName: e })}
           />
           <KeyboardInput
             name="en-middle-name"
             type="text"
             label={t("profile.enName.middleName")}
-            defaultValue={user.name["en-US"].middleName}
+            defaultValue={user.name["en-US"]?.middleName || ""}
             onChange={(e: string) => setForm({ ...form, thMiddleName: e })}
           />
           <KeyboardInput
             name="en-last-name"
             type="text"
             label={t("profile.enName.lastName")}
-            defaultValue={user.name["en-US"].lastName}
+            defaultValue={user.name["en-US"]?.lastName || ""}
             onChange={(e: string) => setForm({ ...form, thLastName: e })}
           />
         </DialogSection>
@@ -241,11 +241,18 @@ const EditProfileDialog = ({
             />
             <Dropdown
               name="class-counselor-at"
-              label={t("profile.role.classCounselorAt")}
-              options={classes.map((classItem) => ({
-                value: classItem.id,
-                label: classItem.name[locale],
-              }))}
+              label={t("profile.role.classAdvisorAt.label")}
+              options={[
+                {
+                  value: 0,
+                  label: t("profile.role.classAdvisorAt.none"),
+                },
+              ].concat(
+                classes.map((classItem) => ({
+                  value: classItem.id,
+                  label: classItem.name[locale],
+                }))
+              )}
             />
           </DialogSection>
         )}
@@ -266,4 +273,4 @@ const EditProfileDialog = ({
   );
 };
 
-export default EditProfileDialog;
+export default EditSelfDialog;

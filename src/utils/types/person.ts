@@ -4,8 +4,9 @@ import { Subject } from "./subject";
 export type Person = {
   id: number;
   prefix: "master" | "mister" | "miss" | "missus";
+  role: Role;
   name: {
-    "en-US": PersonName;
+    "en-US"?: PersonName;
     th: PersonName;
   };
   profile?: string;
@@ -23,13 +24,15 @@ export type Role = "student" | "teacher";
 export type Student = Person & {
   // TODO: Add more properties when the schema is completed
   role: "student";
-  class: string;
+  studentID: string;
+  class: ClassWName;
   classNo: number;
 };
 
 export type Teacher = Person & {
   // TODO: Add more properties when the schema is completed
   role: "teacher";
+  teacherID: string;
   classAdvisorAt?: ClassWName;
   subjectsInCharge: Array<{
     id: Subject["id"];

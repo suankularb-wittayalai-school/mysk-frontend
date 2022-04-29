@@ -2,6 +2,7 @@
 import { getDay } from "date-fns";
 
 import { GetStaticProps, NextPage } from "next";
+import Head from "next/head";
 import Link from "next/link";
 
 import { useTranslation } from "next-i18next";
@@ -10,11 +11,15 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useState } from "react";
 
 // SK Components
-import { MaterialIcon, RegularLayout, Title } from "@suankularb-components/react";
+import {
+  MaterialIcon,
+  RegularLayout,
+  Title,
+} from "@suankularb-components/react";
 
 // Components
 import ChangePassword from "@components/dialogs/ChangePassword";
-import EditProfileDialog from "@components/dialogs/EditProfile";
+import EditSelfDialog from "@components/dialogs/EditSelf";
 import LogOutDialog from "@components/dialogs/LogOut";
 import NewsSection from "@components/home-sections/NewsSection";
 import SubjectsSection from "@components/home-sections/SubjectsSection";
@@ -24,11 +29,11 @@ import UserSection from "@components/home-sections/UserSection";
 // Types
 import { NewsList, StudentForm } from "@utils/types/news";
 import { Teacher } from "@utils/types/person";
-import { Schedule } from "@utils/types/schedule";
+import { StudentSchedule } from "@utils/types/schedule";
 
 const TeacherHome: NextPage<{
   user: Teacher;
-  schedule: Schedule;
+  schedule: StudentSchedule;
   studentForms: Array<StudentForm>;
   news: NewsList;
 }> = ({ user, schedule, studentForms, news }) => {
@@ -39,6 +44,9 @@ const TeacherHome: NextPage<{
 
   return (
     <>
+      <Head>
+        <title>{t("brand.name", { ns: "common" })}</title>
+      </Head>
       <RegularLayout
         Title={
           <Title
@@ -76,7 +84,7 @@ const TeacherHome: NextPage<{
         show={showChangePassword}
         onClose={() => setShowChangePassword(false)}
       />
-      <EditProfileDialog
+      <EditSelfDialog
         user={user}
         show={showEditProfile}
         onClose={() => setShowEditProfile(false)}
@@ -96,6 +104,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
       th: { firstName: "อติพล", lastName: "สุกฤษฎานนท์" },
     },
     profile: "/images/dummybase/atipol.webp",
+    teacherID: "skt420",
     classAdvisorAt: {
       id: 509,
       name: {
@@ -197,7 +206,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
       },
     },
   ];
-  const schedule: Schedule = {
+  const schedule: StudentSchedule = {
     content: [
       {
         day: getDay(new Date()),

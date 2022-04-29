@@ -18,6 +18,7 @@ import ProfilePicture from "@components/ProfilePicture";
 
 // Types
 import { Student, Teacher } from "@utils/types/person";
+import { nameJoiner } from "@utils/helpers/name";
 
 const UserActions = ({
   setshowChangePassword,
@@ -94,24 +95,28 @@ const UserSection = ({
             <div className="flex flex-col">
               {/* Name */}
               <h2 className="max-lines-1 break-all font-display text-4xl font-bold">
-                {user.name[locale].firstName} {user.name[locale].lastName}
+                {nameJoiner(locale, user.name)}
               </h2>
 
               {/* Class and number */}
               <p className="font-display text-xl">
                 {user.role == "teacher" ? (
                   <Trans i18nKey="user.subjectAndClass" ns="dashboard">
-                    Teacher in {{
+                    Teacher in{" "}
+                    {{
                       subjectGroup:
                         user.subjectsInCharge[0].subjectSubgroup.subjectGroup
                           .name[locale],
                     }}
                     <br />
-                    Class advisor at {{ classAdvisorAt: user.classAdvisorAt.name[locale] }}
+                    Class advisor at{" "}
+                    {{
+                      classAdvisorAt: user.classAdvisorAt?.name[locale] || "",
+                    }}
                   </Trans>
                 ) : (
                   <Trans i18nKey="user.classAndNo" ns="dashboard">
-                    M.{{ class: user.class }} No.{{ classNo: user.classNo }}
+                    {{ class: user.class.name[locale] }} No.{{ classNo: user.classNo }}
                   </Trans>
                 )}
               </p>

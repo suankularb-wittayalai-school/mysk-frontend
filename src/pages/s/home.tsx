@@ -19,7 +19,7 @@ import {
 
 // Components
 import ChangePassword from "@components/dialogs/ChangePassword";
-import EditProfileDialog from "@components/dialogs/EditProfile";
+import EditSelfDialog from "@components/dialogs/EditSelf";
 import LogOutDialog from "@components/dialogs/LogOut";
 import UserSection from "@components/home-sections/UserSection";
 import NewsSection from "@components/home-sections/NewsSection";
@@ -29,13 +29,13 @@ import TeachersSection from "@components/home-sections/TeachersSection";
 // Types
 import { NewsList } from "@utils/types/news";
 import { Student, Teacher } from "@utils/types/person";
-import { Schedule } from "@utils/types/schedule";
+import { StudentSchedule } from "@utils/types/schedule";
 
 // Page
 const StudentHome: NextPage<{
   user: Student | Teacher;
   news: NewsList;
-  schedule: Schedule;
+  schedule: StudentSchedule;
   teachers: Array<Teacher>;
   classAdvisors: Array<Teacher>;
 }> = ({ user, news, schedule, teachers, classAdvisors }) => {
@@ -89,7 +89,7 @@ const StudentHome: NextPage<{
         show={showChangePassword}
         onClose={() => setShowChangePassword(false)}
       />
-      <EditProfileDialog
+      <EditSelfDialog
         user={user}
         show={showEditProfile}
         onClose={() => setShowEditProfile(false)}
@@ -109,7 +109,14 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
       th: { firstName: "สดุดี", lastName: "เทพอารีย์" },
     },
     profile: "/images/dummybase/sadudee.webp",
-    class: "405",
+    studentID: "56572",
+    class: {
+      id: 405,
+      name: {
+        "en-US": "M.405",
+        th: "ม.405",
+      },
+    },
     classNo: 11,
   };
   const news: NewsList = [
@@ -185,7 +192,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
       },
     },
   ];
-  const schedule: Schedule = {
+  const schedule: StudentSchedule = {
     content: [
       {
         day: getDay(new Date()),
@@ -241,6 +248,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         },
       },
       profile: "/images/dummybase/taradol.webp",
+      teacherID: "skt184",
       classAdvisorAt: {
         id: 405,
         name: {
@@ -265,6 +273,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         },
       },
       profile: "/images/dummybase/thanakorn.webp",
+      teacherID: "skt416",
       classAdvisorAt: {
         id: 404,
         name: {
@@ -289,6 +298,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         },
       },
       profile: "/images/dummybase/mattana.webp",
+      teacherID: "skt812",
       classAdvisorAt: {
         id: 405,
         name: {
@@ -314,6 +324,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
           lastName: "สมิธ",
         },
       },
+      teacherID: "skt8966",
       subjectsInCharge: [],
     },
   ];
@@ -327,6 +338,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         th: { firstName: "ธราดล", lastName: "รานรินทร์" },
       },
       profile: "/images/dummybase/taradol.webp",
+      teacherID: "skt551",
       classAdvisorAt: {
         id: 405,
         name: {
@@ -365,6 +377,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         th: { firstName: "มัทนา", lastName: "ต๊ะตันยาง" },
       },
       profile: "/images/dummybase/mattana.webp",
+      teacherID: "skt196",
       classAdvisorAt: {
         id: 405,
         name: {

@@ -256,6 +256,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale, params })
           th: { firstName: "ธราดล", lastName: "รานรินทร์" },
         },
         profile: "/images/dummybase/taradol.webp",
+        teacherID: "skt551",
         subjectsInCharge: [
           {
             id: 8,
@@ -287,6 +288,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale, params })
           th: { firstName: "มัทนา", lastName: "ต๊ะตันยาง" },
         },
         profile: "/images/dummybase/mattana.webp",
+        teacherID: "skt196",
         subjectsInCharge: [
           {
             id: 2,
@@ -325,7 +327,14 @@ export const getServerSideProps: GetServerSideProps = async ({ locale, params })
             lastName: "พุฒพันธ์",
           },
         },
-        class: "405",
+        studentID: "56522",
+        class: {
+          id: 405,
+          name: {
+            "en-US": "M.405",
+            th: "ม.405",
+          }
+        },
         classNo: 1,
       },
       {
@@ -342,7 +351,14 @@ export const getServerSideProps: GetServerSideProps = async ({ locale, params })
             lastName: "อยู่พัฒนวงศ์",
           },
         },
-        class: "405",
+        studentID: "56523",
+        class: {
+          id: 405,
+          name: {
+            "en-US": "M.405",
+            th: "ม.405",
+          }
+        },
         classNo: 2,
       },
       {
@@ -359,7 +375,14 @@ export const getServerSideProps: GetServerSideProps = async ({ locale, params })
             lastName: "ชาญชัยรุจิรา",
           },
         },
-        class: "405",
+        studentID: "56525",
+        class: {
+          id: 405,
+          name: {
+            "en-US": "M.405",
+            th: "ม.405",
+          }
+        },
         classNo: 3,
       },
       {
@@ -376,7 +399,14 @@ export const getServerSideProps: GetServerSideProps = async ({ locale, params })
             lastName: "ทัศนโกศล",
           },
         },
-        class: "405",
+        studentID: "56535",
+        class: {
+          id: 405,
+          name: {
+            "en-US": "M.405",
+            th: "ม.405",
+          }
+        },
         classNo: 4,
       },
       {
@@ -393,7 +423,14 @@ export const getServerSideProps: GetServerSideProps = async ({ locale, params })
             lastName: "วรกิตติพันธ์",
           },
         },
-        class: "405",
+        studentID: "56540",
+        class: {
+          id: 405,
+          name: {
+            "en-US": "M.405",
+            th: "ม.405",
+          }
+        },
         classNo: 5,
       },
       {
@@ -410,7 +447,14 @@ export const getServerSideProps: GetServerSideProps = async ({ locale, params })
             lastName: "บุญโชคเจริญศรี",
           },
         },
-        class: "405",
+        studentID: "56542",
+        class: {
+          id: 405,
+          name: {
+            "en-US": "M.405",
+            th: "ม.405",
+          }
+        },
         classNo: 6,
       },
     ],
