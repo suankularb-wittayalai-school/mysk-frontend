@@ -197,7 +197,7 @@ const NewsCard = ({
             }`
           )}
           type={btnType || "filled"}
-          url={`/${newsItem.type}/${newsItem.id}`}
+          url={`/s/${newsItem.type}/${newsItem.id}`}
           LinkElement={Link}
         />
       </CardActions>
