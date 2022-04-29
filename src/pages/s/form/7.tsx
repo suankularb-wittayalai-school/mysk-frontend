@@ -1,3 +1,4 @@
+import NewsBanner from "@components/news/NewsBanner";
 import NewsWrapper from "@components/news/NewsPage";
 import { GetStaticProps, NextPage } from "next";
 import { useTranslation } from "next-i18next";
@@ -15,7 +16,19 @@ const StudentFeedback: NextPage = () => {
       }}
       type="form"
     >
-      <p>TODO</p>
+      <NewsBanner
+        content={{
+          title: {
+            "en-US": "Online classes feedback",
+            th: "การจัดการเรียนการสอนออนไลน์",
+          },
+          subtitle: {
+            "en-US": "For the first half of Semester 2/2021",
+            th: "ช่วงก่อนสอบกลางภาคเรียนที่ 2 ปีการศึกษา 2564",
+          },
+        }}
+        banner="/images/dummybase/classes-feedback.webp"
+      />
     </NewsWrapper>
   );
 };

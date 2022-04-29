@@ -43,7 +43,6 @@ const NewsWrapper = ({
           LinkElement={Link}
         />
       }
-      className="font-display"
     >
       {children}
     </RegularLayout>
