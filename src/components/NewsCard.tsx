@@ -1,15 +1,10 @@
 // Modules
-import {
-  formatDistanceToNow,
-  formatDistanceToNowStrict,
-  isPast,
-  isThisYear,
-} from "date-fns";
-import { enUS, th } from "date-fns/locale";
+import { isPast, isThisYear } from "date-fns";
 
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Trans, useTranslation } from "next-i18next";
+
+import { useTranslation } from "next-i18next";
 
 // SK Components
 import {
@@ -17,11 +12,12 @@ import {
   CardActions,
   CardHeader,
   CardSupportingText,
-  Chip,
-  ChipList,
   LinkButton,
   MaterialIcon,
 } from "@suankularb-components/react";
+
+// Components
+import NewsChipList from "@components/news/NewsChipList";
 
 // Types
 import { NewsItem } from "@utils/types/news";
@@ -48,85 +44,6 @@ const NewsStatus = ({ newsItem }: { newsItem: NewsItem }): JSX.Element => {
   );
 };
 
-const NewsChipList = ({ newsItem }: { newsItem: NewsItem }): JSX.Element => {
-  const { t } = useTranslation("news");
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
-
-  return (
-    <ChipList noWrap>
-      {
-        // Payment
-        newsItem.type == "payment" && newsItem.amount && (
-          <Chip
-            name={newsItem.amount.toLocaleString(locale, {
-              style: "currency",
-              currency: "THB",
-            })}
-            leadingIcon={
-              <MaterialIcon icon="payments" className="text-primary" />
-            }
-          />
-        )
-      }
-      {
-        // Frequency
-        newsItem.type == "form" &&
-          // Once
-          (newsItem.frequency == "once" ? (
-            <Chip
-              name={t(`itemFrequency.once`)}
-              leadingIcon={
-                <MaterialIcon icon="looks_one" className="text-primary" />
-              }
-            />
-          ) : (
-            // Repeated
-            <Chip
-              name={t(`itemFrequency.${newsItem.frequency || "repeating"}`)}
-              leadingIcon={
-                <MaterialIcon icon="repeat" className="text-primary" />
-              }
-            />
-          ))
-      }
-      {
-        // Due date
-        (newsItem.type == "form" || newsItem.type == "payment") &&
-          newsItem.dueDate &&
-          (isPast(newsItem.dueDate) ? (
-            <Chip
-              name={formatDistanceToNowStrict(newsItem.dueDate, {
-                addSuffix: true,
-                locale: locale == "en-US" ? enUS : th,
-              })}
-              leadingIcon={
-                <MaterialIcon icon="calendar_today" className="text-error" />
-              }
-              selected
-              className="!bg-error-container !text-on-error-container"
-            />
-          ) : (
-            <Chip
-              name={
-                <Trans i18nKey="itemDue.dueWithin" ns="news">
-                  {{
-                    dueDate: newsItem.dueDate.toLocaleDateString(locale, {
-                      month: "short",
-                      day: "numeric",
-                    }),
-                  }}
-                </Trans>
-              }
-              leadingIcon={
-                <MaterialIcon icon="calendar_today" className="text-primary" />
-              }
-            />
-          ))
-      }
-    </ChipList>
-  );
-};
-
 const NewsCard = ({
   newsItem,
   showChips,
@@ -137,7 +54,7 @@ const NewsCard = ({
   btnType?: "filled" | "outlined" | "text" | "tonal";
 }): JSX.Element => {
   const { t } = useTranslation("news");
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const locale = useRouter().locale as "en-US" | "th";
 
   return (
     <Card type="stacked" appearance="outlined">
@@ -179,13 +96,25 @@ const NewsCard = ({
       />
       {showChips && newsItem.type != "news" && (
         <div className="mx-[2px] overflow-x-auto py-1 px-[calc(1rem-2px)]">
-          <NewsChipList newsItem={newsItem} />
+          <NewsChipList
+            newsMeta={{
+              frequency:
+                newsItem.type == "form" ? newsItem.frequency : undefined,
+              amount: newsItem.type == "payment" ? newsItem.amount : undefined,
+              dueDate:
+                newsItem.type == "form" || newsItem.type == "payment"
+                  ? newsItem.dueDate
+                  : undefined,
+              done:
+                newsItem.type == "form" || newsItem.type == "payment"
+                  ? newsItem.done
+                  : undefined,
+            }}
+          />
         </div>
       )}
       <CardSupportingText>
-        <p className="max-lines-2">
-          {newsItem.content[locale == "en-US" ? "en-US" : "th"].supportingText}
-        </p>
+        <p className="max-lines-2">{newsItem.content[locale].supportingText}</p>
       </CardSupportingText>
       <CardActions>
         <LinkButton

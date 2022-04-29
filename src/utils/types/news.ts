@@ -52,6 +52,13 @@ export type NewsContent = {
   supportingText: string;
 };
 
+export type NewsMetadata = {
+  frequency?: "once" | "weekly" | "monthly";
+  amount?: number;
+  dueDate?: Date;
+  done?: boolean;
+}
+
 export type StudentForm = {
   id: number;
   type: "form" | "payment";
