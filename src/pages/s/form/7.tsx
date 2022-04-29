@@ -26,6 +26,9 @@ const StudentFeedback: NextPage = () => {
             "en-US": "For the first half of Semester 2/2021",
             th: "ช่วงก่อนสอบกลางภาคเรียนที่ 2 ปีการศึกษา 2564",
           },
+          frequency: "once",
+          dueDate: new Date(2022, 1, 28),
+          done: false,
         }}
         banner="/images/dummybase/classes-feedback.webp"
       />

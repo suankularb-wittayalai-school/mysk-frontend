@@ -1,11 +1,18 @@
+// Modules
 import Image from "next/image";
 import { useRouter } from "next/router";
+
+// Components
+import NewsChipList from "@components/news/NewsChipList";
+
+// Types
+import { NewsMetadata } from "@utils/types/news";
 
 const NewsBanner = ({
   content,
   banner,
 }: {
-  content: {
+  content: NewsMetadata & {
     title: { "en-US"?: string; th: string };
     subtitle?: { "en-US"?: string; th: string };
   };
@@ -22,11 +29,21 @@ const NewsBanner = ({
           </div>
         </div>
       )}
-      <div className="font-display">
-        <h2 className="text-3xl font-bold">{content.title[locale]}</h2>
-        {content.subtitle && (
-          <p className="text-xl">{content.subtitle[locale]}</p>
-        )}
+      <div className="flex flex-col gap-4">
+        <div className="font-display">
+          <h2 className="text-3xl font-bold">{content.title[locale]}</h2>
+          {content.subtitle && (
+            <p className="text-xl">{content.subtitle[locale]}</p>
+          )}
+        </div>
+        <NewsChipList
+          newsMeta={{
+            frequency: content.frequency,
+            amount: content.amount,
+            dueDate: content.dueDate,
+            done: content.done,
+          }}
+        />
       </div>
     </section>
   );
