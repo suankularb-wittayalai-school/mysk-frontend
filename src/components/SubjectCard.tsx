@@ -20,7 +20,7 @@ const SubjectCard = ({
   subject: SubjectWNameAndCode;
 }): JSX.Element => {
   const { t } = useTranslation("subjects");
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const locale = useRouter().locale as "en-US" | "th";
 
   return (
     <Card type="horizontal" appearance="outlined">

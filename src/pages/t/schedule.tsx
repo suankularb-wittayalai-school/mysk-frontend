@@ -40,7 +40,7 @@ const AddPeriod = ({
   onSubmit: (formData: FormData) => void;
 }): JSX.Element => {
   const { t } = useTranslation(["schedule", "common"]);
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const locale = useRouter().locale as "en-US" | "th";
   const [showDiscard, setShowDiscard] = useState<boolean>(false);
 
   // Form control

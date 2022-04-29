@@ -18,7 +18,7 @@ const NewsChipList = ({
   newsMeta: NewsMetadata;
 }): JSX.Element => {
   const { t } = useTranslation("news");
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const locale = useRouter().locale as "en-US" | "th";
 
   return (
     <ChipList noWrap>

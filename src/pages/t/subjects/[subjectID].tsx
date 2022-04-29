@@ -58,7 +58,7 @@ const DetailsSection = ({
   setShowAdd: Function;
 }): JSX.Element => {
   const { t } = useTranslation("subjects");
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const locale = useRouter().locale as "en-US" | "th";
   const [classesLearningThis, setClassesLearningThis] = useState<
     Array<{
       id: string;
@@ -95,7 +95,7 @@ const AddClassDialog = ({
   onClose,
 }: DialogProps & { onSubmit: Function }): JSX.Element => {
   const { t } = useTranslation("subjects");
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const locale = useRouter().locale as "en-US" | "th";
 
   return (
     <Dialog
@@ -137,7 +137,7 @@ const PeriodLogsSection = ({
   periodLogs: Array<PeriodLog>;
 }): JSX.Element => {
   const { t } = useTranslation("subjects");
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const locale = useRouter().locale as "en-US" | "th";
 
   // Component specific utilities
   function tMedium(medium: PeriodMedium) {
@@ -288,7 +288,7 @@ const SubstituteAssignmentsSection = ({
   setActiveAsgn: Function;
 }): JSX.Element => {
   const { t } = useTranslation("subjects");
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const locale = useRouter().locale as "en-US" | "th";
 
   return (
     <Section>
@@ -360,7 +360,7 @@ const AssignmentDetailsDialog = ({
   assignment,
 }: DialogProps & { assignment: SubstituteAssignment }): JSX.Element => {
   const { t } = useTranslation("subjects");
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const locale = useRouter().locale as "en-US" | "th";
 
   return (
     <Dialog
@@ -409,7 +409,7 @@ const EditAssignmentDialog = ({
   allSubjects: Array<SubjectWNameAndCode>;
 }): JSX.Element => {
   const { t } = useTranslation("subjects");
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const locale = useRouter().locale as "en-US" | "th";
   const [showAddClass, setShowAddClass] = useState<boolean>(false);
 
   // Form control
@@ -517,7 +517,7 @@ const SubjectDetails: NextPage<{
   allSubjects: Array<SubjectWNameAndCode>;
 }> = ({ subject, classesLearningThis, periodLogs, substAsgn, allSubjects }) => {
   const { t } = useTranslation(["subjects", "common"]);
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const locale = useRouter().locale as "en-US" | "th";
   const [showAdd, setShowAdd] = useState<boolean>(false);
 
   const [showAsgnDetails, setShowAsgnDetails] = useState<boolean>(false);

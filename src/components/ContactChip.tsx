@@ -15,7 +15,7 @@ const ContactChip = ({
   contact: Contact;
   className?: string;
 }): JSX.Element => {
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const locale = useRouter().locale as "en-US" | "th";
 
   return (
     <a
