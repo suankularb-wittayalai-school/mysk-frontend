@@ -17,6 +17,9 @@ import {
   Title,
 } from "@suankularb-components/react";
 
+// Supabase client
+import { supabase } from "@utils/supabaseClient";
+
 // Components
 import ConfirmDelete from "@components/dialogs/ConfirmDelete";
 import EditPersonDialog from "@components/dialogs/EditPerson";
@@ -112,23 +115,68 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   // (@SiravitPhokeed) Not in the mood to do all the dummybase.
   // Just pretend there are more teachers here.
-  const allTeachers: Array<Teacher> = [
-    {
-      id: 0,
+  // (@Jimmy-Tempest) I've acknowledged that.
+  // const allTeachers: Array<Teacher> = [
+  //   {
+  //     id: 0,
+  //     role: "teacher",
+  //     prefix: "Mr.",
+  //     name: {
+  //       "en-US": {
+  //         firstName: "Taradol",
+  //         lastName: "Ranarintr",
+  //       },
+  //       th: {
+  //         firstName: "ธราดล",
+  //         lastName: "รานรินทร์",
+  //       },
+  //     },
+  //     profile: "/images/dummybase/taradol.webp",
+  //     teacherID: "skt551",
+  //     classAdvisorAt: {
+  //       id: 405,
+  //       name: {
+  //         "en-US": "M.405",
+  //         th: "ม.405",
+  //       },
+  //     },
+  //     citizen_id: "1234567890123",
+  //     birthdate: "1995-01-01",
+  //     subjectsInCharge: [],
+  //   }
+  // ];
+  const { data, error } = await supabase
+    .from("teacher")
+    .select("id, teacher_id, people:person(*), SubjectGroup:subject_group(*)");
+
+  if (error) {
+    console.error(error);
+    return { props: { allTeachers: [] } };
+  }
+
+  if (!data) {
+    return { props: { allTeachers: [] } };
+  }
+  // console.log(data);
+
+  const allTeachers = data.map((teacher) => {
+    const formatted: Teacher = {
+      id: teacher.id,
       role: "teacher",
-      prefix: "Mr.",
+      prefix: teacher.people.prefix_en,
       name: {
         "en-US": {
-          firstName: "Taradol",
-          lastName: "Ranarintr",
+          firstName: teacher.people.first_name_en,
+          lastName: teacher.people.last_name_en,
         },
         th: {
-          firstName: "ธราดล",
-          lastName: "รานรินทร์",
+          firstName: teacher.people.first_name_th,
+          lastName: teacher.people.last_name_th,
         },
       },
-      profile: "/images/dummybase/taradol.webp",
-      teacherID: "skt551",
+      profile: teacher.people.profile,
+      teacherID: teacher.teacher_id,
+      // TODO: Class advisor at
       classAdvisorAt: {
         id: 405,
         name: {
@@ -136,86 +184,13 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
           th: "ม.405",
         },
       },
-      citizen_id: "1234567890123",
-      birthdate: "1995-01-01",
+      citizen_id: teacher.people.citizen_id,
+      birthdate: teacher.people.birthdate,
+      // TODO: Subjects in charge
       subjectsInCharge: [],
-    },
-    {
-      id: 1,
-      role: "teacher",
-      prefix: "Mr.",
-      name: {
-        "en-US": {
-          firstName: "Thanakorn",
-          lastName: "Atjanawat",
-        },
-        th: {
-          firstName: "ธนกร",
-          lastName: "อรรจนาวัฒน์",
-        },
-      },
-      profile: "/images/dummybase/thanakorn.webp",
-      teacherID: "skt416",
-      classAdvisorAt: {
-        id: 404,
-        name: {
-          "en-US": "M.404",
-          th: "ม.404",
-        },
-      },
-      citizen_id: "1234567890123",
-      birthdate: "1995-01-01",
-      subjectsInCharge: [],
-    },
-    {
-      id: 2,
-      role: "teacher",
-      prefix: "Miss.",
-      name: {
-        "en-US": {
-          firstName: "Mattana",
-          lastName: "Tatanyang",
-        },
-        th: {
-          firstName: "มัทนา",
-          lastName: "ต๊ะตันยาง",
-        },
-      },
-      profile: "/images/dummybase/mattana.webp",
-      teacherID: "skt196",
-      birthdate: "1995-01-01",
-      citizen_id: "1234567890123",
-      classAdvisorAt: {
-        id: 405,
-        name: {
-          "en-US": "M.405",
-          th: "ม.405",
-        },
-      },
-      subjectsInCharge: [],
-    },
-    {
-      id: 3,
-      role: "teacher",
-      prefix: "Mr.",
-      name: {
-        "en-US": {
-          firstName: "John",
-          middleName: "Peter",
-          lastName: "Smith",
-        },
-        th: {
-          firstName: "จอห์น",
-          middleName: "ปีเตอร์",
-          lastName: "สมิธ",
-        },
-      },
-      teacherID: "skt8966",
-      subjectsInCharge: [],
-      citizen_id: "1234567890123",
-      birthdate: "1995-01-01",
-    },
-  ];
+    };
+    return formatted;
+  });
 
   return {
     props: {
