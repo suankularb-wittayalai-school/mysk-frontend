@@ -292,11 +292,11 @@ const EditPersonDialog = ({
             },
             {
               value: "Mrs.",
-              label: t("profile.name.prefix.miss"),
+              label: t("profile.name.prefix.missus"),
             },
             {
               value: "Miss.",
-              label: t("profile.name.prefix.missus"),
+              label: t("profile.name.prefix.miss"),
             },
           ]}
           defaultValue={person?.prefix}
