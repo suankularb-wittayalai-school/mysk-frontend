@@ -3,13 +3,15 @@ import { Subject } from "./subject";
 
 export type Person = {
   id: number;
-  prefix: "master" | "mister" | "miss" | "missus";
+  prefix: "Master" | "Mr." | "Mrs." | "Miss.";
   role: Role;
   name: {
     "en-US"?: PersonName;
     th: PersonName;
   };
   profile?: string;
+  citizen_id: string;
+  birthdate: string;
 };
 
 export type PersonName = {

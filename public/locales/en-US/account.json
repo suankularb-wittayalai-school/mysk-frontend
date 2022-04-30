@@ -46,6 +46,11 @@
         "label": "Class advisor at",
         "none": "Not an advisor"
       }
+    },
+    "general": {
+      "title": "General Information",
+      "citizenID": "Citizen ID",
+      "birthdate": "Birth date"
     }
   },
   "dialog": {

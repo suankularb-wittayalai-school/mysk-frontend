@@ -3,17 +3,28 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
 
+// Supabase client
+import { supabase } from "@utils/supabaseClient";
+
 // SK Components
 import {
   Dialog,
   DialogSection,
   Dropdown,
   KeyboardInput,
+  NativeInput,
 } from "@suankularb-components/react";
 
 // Types
 import { DialogProps } from "@utils/types/common";
 import { Role, Student, Teacher } from "@utils/types/person";
+
+const PREFIXMAP = {
+  Master: "เด็กชาย",
+  "Mr.": "นาย",
+  "Mrs.": "นาง",
+  "Miss.": "นางสาว",
+};
 
 const EditPersonDialog = ({
   show,
@@ -33,7 +44,7 @@ const EditPersonDialog = ({
 
   // Form control
   const [form, setForm] = useState({
-    prefix: "",
+    prefix: "master",
     thFirstName: "",
     thMiddleName: "",
     thLastName: "",
@@ -41,6 +52,8 @@ const EditPersonDialog = ({
     enMiddleName: "",
     enLastName: "",
     studentID: "",
+    citizen_id: "",
+    birthdate: "",
     role: "student",
     class: 0,
     classNo: "",
@@ -67,6 +80,8 @@ const EditPersonDialog = ({
         role: person.role,
         class: person.role == "student" ? person.class.id : 0,
         classNo: person.role == "student" ? person.classNo.toString() : "",
+        citizen_id: person.citizen_id,
+        birthdate: person.birthdate,
         // TODO: Use data from `person` once `subjectGroup` exists on type `Teacher`
         subjectGroup: 0,
         classAdvisorAt:
@@ -123,10 +138,35 @@ const EditPersonDialog = ({
     if (!form.thFirstName) return false;
     if (!form.thLastName) return false;
     if (form.studentID.length != 5) return false;
-    if (!form.class) return false;
-    if (classNo < 1 || classNo > 50) return false;
+    // if (!form.class) return false;
+    if (classNo < 1 || classNo > 75) return false;
 
     return true;
+  }
+
+  async function handleAdd() {
+    if (!validateAndSend()) return;
+
+    console.log(form);
+    if (mode == "add") {
+      const { data, error } = await supabase.from<any>("people").insert({
+        prefix_th: PREFIXMAP[form.prefix as keyof typeof PREFIXMAP],
+        prefix_en: form.prefix,
+        first_name_th: form.thFirstName,
+        middle_name_th: form.thMiddleName,
+        last_name_th: form.thLastName,
+        first_name_en: form.enFirstName,
+        middle_name_en: form.enMiddleName,
+        last_name_en: form.enLastName,
+        birthdate: form.birthdate,
+        citizen_id: form.citizen_id,
+      });
+      if (error) {
+        console.log(error);
+      }
+    }
+
+    onSubmit();
   }
 
   return (
@@ -136,7 +176,7 @@ const EditPersonDialog = ({
       title={t(`dialog.editStudent.title.${mode}`, { ns: "admin" })}
       show={show}
       onClose={onClose}
-      onSubmit={() => validateAndSend() && onSubmit()}
+      onSubmit={() => handleAdd()}
       actions={[
         {
           name: t("dialog.editStudent.action.cancel", {
@@ -159,19 +199,19 @@ const EditPersonDialog = ({
           label={t("profile.name.prefix.label")}
           options={[
             {
-              value: "master",
+              value: "Master",
               label: t("profile.name.prefix.master"),
             },
             {
-              value: "mister",
+              value: "Mr.",
               label: t("profile.name.prefix.mister"),
             },
             {
-              value: "miss",
+              value: "Mrs.",
               label: t("profile.name.prefix.miss"),
             },
             {
-              value: "missus",
+              value: "Miss.",
               label: t("profile.name.prefix.missus"),
             },
           ]}
@@ -229,6 +269,24 @@ const EditPersonDialog = ({
             mode == "edit" ? person?.name["en-US"]?.lastName : undefined
           }
           onChange={(e: string) => setForm({ ...form, enLastName: e })}
+        />
+      </DialogSection>
+
+      {/* General Information */}
+      <DialogSection name={t("profile.general.title")}>
+        <KeyboardInput
+          name="citizen-id"
+          type="text"
+          label={t("profile.general.citizenID")}
+          defaultValue={mode == "edit" ? person?.citizen_id : undefined}
+          onChange={(e: string) => setForm({ ...form, citizen_id: e })}
+        />
+        <NativeInput
+          name="birthdate"
+          type="date"
+          label={t("profile.general.birthdate")}
+          defaultValue={mode == "edit" ? person?.birthdate : undefined}
+          onChange={(e: string) => setForm({ ...form, birthdate: e })}
         />
       </DialogSection>
 

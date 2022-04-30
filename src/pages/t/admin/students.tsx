@@ -7,6 +7,9 @@ import { useTranslation } from "next-i18next";
 
 import { useState } from "react";
 
+// Supabase client
+// import { supabase } from "@utils/supabaseConfig";
+
 // SK Components
 import {
   Button,
@@ -113,7 +116,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   const allStudents: Array<Student> = [
     {
       id: 985,
-      prefix: "master",
+      prefix: "Master",
       role: "student",
       name: {
         th: {
@@ -129,11 +132,13 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
           th: "ม.101",
         },
       },
+      citizen_id: "1234567890123",
+      birthdate: "2020-01-01",
       classNo: 1,
     },
     {
       id: 986,
-      prefix: "master",
+      prefix: "Master",
       role: "student",
       name: {
         th: {
@@ -149,11 +154,13 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
           th: "ม.101",
         },
       },
+      citizen_id: "1234567890124",
+      birthdate: "2020-01-01",
       classNo: 2,
     },
     {
       id: 987,
-      prefix: "master",
+      prefix: "Master",
       role: "student",
       name: {
         th: {
@@ -169,11 +176,13 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
           th: "ม.101",
         },
       },
+      citizen_id: "1234567890125",
+      birthdate: "2020-01-01",
       classNo: 3,
     },
     {
       id: 988,
-      prefix: "master",
+      prefix: "Master",
       role: "student",
       name: {
         th: {
@@ -189,11 +198,13 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
           th: "ม.101",
         },
       },
+      citizen_id: "1234567890126",
+      birthdate: "2020-01-01",
       classNo: 4,
     },
     {
       id: 989,
-      prefix: "master",
+      prefix: "Master",
       role: "student",
       name: {
         th: {
@@ -209,11 +220,13 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
           th: "ม.101",
         },
       },
+      citizen_id: "1234567890127",
+      birthdate: "2020-01-01",
       classNo: 5,
     },
     {
       id: 990,
-      prefix: "master",
+      prefix: "Master",
       role: "student",
       name: {
         th: {
@@ -229,11 +242,13 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
           th: "ม.101",
         },
       },
+      citizen_id: "1234567890128",
+      birthdate: "2020-01-01",
       classNo: 6,
     },
     {
       id: 991,
-      prefix: "master",
+      prefix: "Master",
       role: "student",
       name: {
         th: {
@@ -249,11 +264,13 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
           th: "ม.101",
         },
       },
+      citizen_id: "1234567890129",
+      birthdate: "2020-01-01",
       classNo: 7,
     },
     {
       id: 992,
-      prefix: "master",
+      prefix: "Master",
       role: "student",
       name: {
         th: {
@@ -269,11 +286,13 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
           th: "ม.101",
         },
       },
+      citizen_id: "1234567890130",
+      birthdate: "2020-01-01",
       classNo: 8,
     },
     {
       id: 993,
-      prefix: "master",
+      prefix: "Master",
       role: "student",
       name: {
         th: {
@@ -289,11 +308,13 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
           th: "ม.101",
         },
       },
+      citizen_id: "1234567890131",
+      birthdate: "2020-01-01",
       classNo: 9,
     },
     {
       id: 994,
-      prefix: "master",
+      prefix: "Master",
       role: "student",
       name: {
         th: {
@@ -309,6 +330,8 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
           th: "ม.101",
         },
       },
+      citizen_id: "1234567890132",
+      birthdate: "2020-01-01",
       classNo: 10,
     },
   ];
