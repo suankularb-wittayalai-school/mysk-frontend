@@ -112,7 +112,6 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
       <EditPersonDialog
         show={showAdd}
         onClose={() => setShowAdd(false)}
-        // TODO: Refetch teachers here ↓
         onSubmit={() => {
           setShowAdd(false);
           router.replace(router.asPath);
@@ -123,7 +122,6 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
       <ConfirmDelete
         show={showConfDel}
         onClose={() => setShowConfDel(false)}
-        // TODO: Refetch teachers here ↓
         onSubmit={() => handleDelete()}
       />
     </>
