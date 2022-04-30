@@ -19,7 +19,7 @@ import {
 import { DialogProps } from "@utils/types/common";
 import { Role, Student, Teacher } from "@utils/types/person";
 
-const PREFIXMAP = {
+const PrefixMap = {
   Master: "เด็กชาย",
   "Mr.": "นาย",
   "Mrs.": "นาง",
@@ -155,7 +155,7 @@ const EditPersonDialog = ({
     // console.log(form);
     if (mode == "add") {
       const { data, error } = await supabase.from<any>("people").insert({
-        prefix_th: PREFIXMAP[form.prefix as keyof typeof PREFIXMAP],
+        prefix_th: PrefixMap[form.prefix as keyof typeof PrefixMap],
         prefix_en: form.prefix,
         first_name_th: form.thFirstName,
         middle_name_th: form.thMiddleName,
@@ -208,7 +208,7 @@ const EditPersonDialog = ({
       const { data: data2, error: error2 } = await supabase
         .from<any>("people")
         .update({
-          prefix_th: PREFIXMAP[form.prefix as keyof typeof PREFIXMAP],
+          prefix_th: PrefixMap[form.prefix as keyof typeof PrefixMap],
           prefix_en: form.prefix,
           first_name_th: form.thFirstName,
           middle_name_th: form.thMiddleName,
