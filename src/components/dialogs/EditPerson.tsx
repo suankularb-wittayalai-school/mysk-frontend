@@ -297,7 +297,7 @@ const EditPersonDialog = ({
       </DialogSection>
 
       {/* General Information */}
-      <DialogSection name={t("profile.general.title")}>
+      <DialogSection name={t("profile.general.title")} isDoubleColumn>
         <KeyboardInput
           name="citizen-id"
           type="text"
@@ -378,6 +378,9 @@ const EditPersonDialog = ({
                 label: subjectGroup.name[locale],
               }))}
               onChange={(e: number) => setForm({ ...form, subjectGroup: e })}
+              defaultValue={
+                person?.role == "teacher" ? person?.subject_group.id : undefined
+              }
             />
             <Dropdown
               name="class-counselor-at"

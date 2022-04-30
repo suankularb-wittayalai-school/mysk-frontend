@@ -1,6 +1,7 @@
 // Modules
 import type { GetServerSideProps, NextPage } from "next";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -34,6 +35,7 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
   allTeachers,
 }): JSX.Element => {
   const { t } = useTranslation("admin");
+  const router = useRouter();
 
   const [showAdd, setShowAdd] = useState<boolean>(false);
 
@@ -41,6 +43,16 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
   const [editingPerson, setEditingPerson] = useState<Teacher>();
 
   const [showConfDel, setShowConfDel] = useState<boolean>(false);
+
+  async function handleDelete() {
+    // console.log(editingPerson);
+    if (!editingPerson) {
+      return;
+    }
+    await supabase.from("teacher").delete().match({ id: editingPerson.id });
+    setShowConfDel(false);
+    router.replace(router.asPath);
+  }
 
   return (
     <>
@@ -98,7 +110,10 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
         show={showAdd}
         onClose={() => setShowAdd(false)}
         // TODO: Refetch teachers here ↓
-        onSubmit={() => setShowAdd(false)}
+        onSubmit={() => {
+          setShowAdd(false);
+          router.replace(router.asPath);
+        }}
         mode="add"
         userRole="teacher"
       />
@@ -106,45 +121,13 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
         show={showConfDel}
         onClose={() => setShowConfDel(false)}
         // TODO: Refetch teachers here ↓
-        onSubmit={() => setShowConfDel(false)}
+        onSubmit={() => handleDelete()}
       />
     </>
   );
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
-  // (@SiravitPhokeed) Not in the mood to do all the dummybase.
-  // Just pretend there are more teachers here.
-  // (@Jimmy-Tempest) I've acknowledged that.
-  // const allTeachers: Array<Teacher> = [
-  //   {
-  //     id: 0,
-  //     role: "teacher",
-  //     prefix: "Mr.",
-  //     name: {
-  //       "en-US": {
-  //         firstName: "Taradol",
-  //         lastName: "Ranarintr",
-  //       },
-  //       th: {
-  //         firstName: "ธราดล",
-  //         lastName: "รานรินทร์",
-  //       },
-  //     },
-  //     profile: "/images/dummybase/taradol.webp",
-  //     teacherID: "skt551",
-  //     classAdvisorAt: {
-  //       id: 405,
-  //       name: {
-  //         "en-US": "M.405",
-  //         th: "ม.405",
-  //       },
-  //     },
-  //     citizen_id: "1234567890123",
-  //     birthdate: "1995-01-01",
-  //     subjectsInCharge: [],
-  //   }
-  // ];
   const { data, error } = await supabase
     .from("teacher")
     .select("id, teacher_id, people:person(*), SubjectGroup:subject_group(*)");
@@ -189,10 +172,10 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
       // TODO: Subjects in charge
       subjectsInCharge: [],
       subject_group: {
-        id: teacher.subject_group.id,
+        id: teacher.SubjectGroup.id,
         name: {
-          "en-US": teacher.subject_group.name_en,
-          th: teacher.subject_group.name_th,
+          "en-US": teacher.SubjectGroup.name_en,
+          th: teacher.SubjectGroup.name_th,
         },
       },
     };
