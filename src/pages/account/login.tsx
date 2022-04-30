@@ -9,6 +9,9 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { FormEvent, useState } from "react";
 
+// Supabase imports
+import { supabase } from "@utils/supabaseClient";
+
 // SK Components
 import {
   KeyboardInput,
@@ -17,8 +20,8 @@ import {
 } from "@suankularb-components/react";
 
 // Utils
-import { logIn } from "@utils/backend/account";
-import { Role } from "@utils/types/person";
+// import { logIn } from "@utils/backend/account";
+// import { Role } from "@utils/types/person";
 
 const LoginForm = () => {
   const { t } = useTranslation("account");
@@ -33,22 +36,27 @@ const LoginForm = () => {
     password: "",
   });
 
-  function validateAndSend() {
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault();
     let formData: FormData = new FormData();
 
     // Validates
     if (!form.userID) return;
     if (!form.password) return;
 
-    // Appends to form data
-    formData.append("user-id", form.userID);
-    formData.append("password", form.password);
-
     // Sends and redirects
-    const role: Role = logIn(formData).role as Role;
-    console.log(role)
-    if (role == "student") router.push("/s/home");
-    else if (role == "teacher") router.push("/t/home");
+    const { user, session, error } = await supabase.auth.signIn({
+      email: form.userID,
+      password: form.password,
+    });
+
+    if (error) {
+      console.log(error);
+      return;
+    }
+
+    if (user?.user_metadata.role == "student") router.push("/s/home");
+    else if (user?.user_metadata.role == "teacher") router.push("/t/home");
   }
 
   return (
@@ -75,7 +83,7 @@ const LoginForm = () => {
           <Link href="/account/forgot-password">
             <a className="btn--text">{t("action.forgotPassword")}</a>
           </Link>
-          <button className="btn--filled" onClick={() => validateAndSend()}>
+          <button className="btn--filled" onClick={(e) => handleSubmit(e)}>
             {t("action.logIn")}
           </button>
         </div>
