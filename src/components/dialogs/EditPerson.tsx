@@ -61,8 +61,6 @@ const EditPersonDialog = ({
     subjectGroup: 0,
     classAdvisorAt: 0,
   });
-
-  const [edittingPerson, setEdittingPerson] = useState<Student | Teacher>();
   const [subjectGroups, setSubjectGroups] = useState<
     Array<{ id: number; name: { [key: string]: string } }>
   >([]);
@@ -99,7 +97,6 @@ const EditPersonDialog = ({
 
   useEffect(() => {
     if (mode == "edit" && person) {
-      setEdittingPerson(person);
       setForm({
         prefix: person.prefix,
         thFirstName: person.name.th.firstName,
@@ -196,7 +193,7 @@ const EditPersonDialog = ({
       const { data, error } = await supabase
         .from<any>("people")
         .select("id")
-        .match({ citizen_id: edittingPerson?.citizen_id });
+        .match({ citizen_id: person?.citizen_id });
       // console.log(data);
       if (error) {
         console.error(error);
@@ -229,17 +226,17 @@ const EditPersonDialog = ({
       if (!data2) {
         return;
       }
-      if (form.role == "student") {
+      if (form.role == "student" && person?.role == "student") {
         const { data: data3, error: error3 } = await supabase
           .from<any>("student")
           .update({
             std_id: form.studentID.trim(),
           })
-          .match({ person: personID });
+          .match({ person: personID, std_id: person.studentID });
         if (error3) {
           console.error(error3);
         }
-      } else if (form.role == "teacher" && edittingPerson?.role == "teacher") {
+      } else if (form.role == "teacher" && person?.role == "teacher") {
         const { data: data3, error: error3 } = await supabase
           .from<any>("teacher")
           .update({
@@ -247,7 +244,7 @@ const EditPersonDialog = ({
             // class_advisor_at: form.classAdvisorAt,
             teacher_id: form.teacherID.trim(),
           })
-          .match({ person: personID });
+          .match({ person: personID, teacher_id: person.teacherID });
         if (error3) {
           console.log(error3);
         }
@@ -402,6 +399,11 @@ const EditPersonDialog = ({
               type="text"
               label={t("profile.class.studentID")}
               onChange={(e: string) => setForm({ ...form, studentID: e })}
+              defaultValue={
+                mode == "edit" && person?.role == "student"
+                  ? person?.studentID
+                  : undefined
+              }
             />
             <Dropdown
               name="class"
