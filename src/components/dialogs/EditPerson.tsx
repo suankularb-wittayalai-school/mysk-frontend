@@ -62,6 +62,7 @@ const EditPersonDialog = ({
     classAdvisorAt: 0,
   });
 
+  const [edittingPerson, setEdittingPerson] = useState<Student | Teacher>();
   const [subjectGroups, setSubjectGroups] = useState<
     Array<{ id: number; name: { [key: string]: string } }>
   >([]);
@@ -97,7 +98,8 @@ const EditPersonDialog = ({
   );
 
   useEffect(() => {
-    if (mode == "edit" && person)
+    if (mode == "edit" && person) {
+      setEdittingPerson(person);
       setForm({
         prefix: person.prefix,
         thFirstName: person.name.th.firstName,
@@ -118,6 +120,7 @@ const EditPersonDialog = ({
         classAdvisorAt:
           person.role == "teacher" ? person.classAdvisorAt?.id || 0 : 0,
       });
+    }
   }, [mode, person]);
 
   // Dummybase
@@ -188,8 +191,68 @@ const EditPersonDialog = ({
           }
         }
       }
-    }
+    } else if (mode == "edit") {
+      // get id of the person
+      const { data, error } = await supabase
+        .from<any>("people")
+        .select("id")
+        .match({ citizen_id: edittingPerson?.citizen_id });
+      // console.log(data);
+      if (error) {
+        console.error(error);
+      }
+      if (!data) {
+        return;
+      }
 
+      const personID: number = data[0].id;
+
+      // update person
+      const { data: data2, error: error2 } = await supabase
+        .from<any>("people")
+        .update({
+          prefix_th: PREFIXMAP[form.prefix as keyof typeof PREFIXMAP],
+          prefix_en: form.prefix,
+          first_name_th: form.thFirstName,
+          middle_name_th: form.thMiddleName,
+          last_name_th: form.thLastName,
+          first_name_en: form.enFirstName,
+          middle_name_en: form.enMiddleName,
+          last_name_en: form.enLastName,
+          birthdate: form.birthdate,
+          citizen_id: form.citizen_id,
+        })
+        .match({ id: personID });
+      if (error2) {
+        console.error(error2);
+      }
+      if (!data2) {
+        return;
+      }
+      if (form.role == "student") {
+        const { data: data3, error: error3 } = await supabase
+          .from<any>("student")
+          .update({
+            std_id: form.studentID.trim(),
+          })
+          .match({ person: personID });
+        if (error3) {
+          console.error(error3);
+        }
+      } else if (form.role == "teacher" && edittingPerson?.role == "teacher") {
+        const { data: data3, error: error3 } = await supabase
+          .from<any>("teacher")
+          .update({
+            subject_group: form.subjectGroup,
+            // class_advisor_at: form.classAdvisorAt,
+            teacher_id: form.teacherID.trim(),
+          })
+          .match({ person: personID });
+        if (error3) {
+          console.log(error3);
+        }
+      }
+    }
     onSubmit();
   }
 

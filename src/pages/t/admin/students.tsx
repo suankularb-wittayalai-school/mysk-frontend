@@ -103,7 +103,10 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
         show={showEdit}
         onClose={() => setShowEdit(false)}
         // TODO: Refetch students here ↓
-        onSubmit={() => setShowEdit(false)}
+        onSubmit={() => {
+          setShowEdit(false);
+          router.replace(router.asPath);
+        }}
         mode="edit"
         person={editingPerson}
       />
