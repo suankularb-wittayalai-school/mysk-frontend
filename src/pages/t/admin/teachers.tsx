@@ -188,6 +188,13 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
       birthdate: teacher.people.birthdate,
       // TODO: Subjects in charge
       subjectsInCharge: [],
+      subject_group: {
+        id: teacher.subject_group.id,
+        name: {
+          "en-US": teacher.subject_group.name_en,
+          th: teacher.subject_group.name_th,
+        },
+      },
     };
     return formatted;
   });

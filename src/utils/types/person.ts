@@ -1,5 +1,5 @@
 import { ClassWName } from "./class";
-import { Subject } from "./subject";
+import { Subject, SubjectGroup } from "./subject";
 
 export type Person = {
   id: number;
@@ -42,4 +42,5 @@ export type Teacher = Person & {
     name: Subject["name"];
     subjectSubgroup: Subject["subjectSubgroup"];
   }>;
+  subject_group: SubjectGroup;
 };

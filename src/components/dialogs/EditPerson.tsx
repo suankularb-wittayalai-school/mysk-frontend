@@ -114,7 +114,7 @@ const EditPersonDialog = ({
         citizen_id: person.citizen_id,
         birthdate: person.birthdate,
         // TODO: Use data from `person` once `subjectGroup` exists on type `Teacher`
-        subjectGroup: 0,
+        subjectGroup: person.role == "teacher" ? person.subject_group.id : 0,
         classAdvisorAt:
           person.role == "teacher" ? person.classAdvisorAt?.id || 0 : 0,
       });
