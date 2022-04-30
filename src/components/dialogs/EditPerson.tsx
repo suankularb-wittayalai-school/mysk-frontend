@@ -44,7 +44,7 @@ const EditPersonDialog = ({
 
   // Form control
   const [form, setForm] = useState({
-    prefix: "master",
+    prefix: "Master",
     thFirstName: "",
     thMiddleName: "",
     thLastName: "",
@@ -52,6 +52,7 @@ const EditPersonDialog = ({
     enMiddleName: "",
     enLastName: "",
     studentID: "",
+    teacherID: "",
     citizen_id: "",
     birthdate: "",
     role: "student",
@@ -60,6 +61,35 @@ const EditPersonDialog = ({
     subjectGroup: 0,
     classAdvisorAt: 0,
   });
+
+  const [subjectGroups, setSubjectGroups] = useState<
+    Array<{ id: number; name: { [key: string]: string } }>
+  >([]);
+
+  useEffect(() => {
+    supabase
+      .from("SubjectGroup")
+      .select("*")
+      .then((res: any) => {
+        if (res.error) {
+          console.error(res.error);
+        }
+
+        if (!res.data) {
+          return;
+        }
+
+        let data = res.data.map(
+          (group: { id: number; name_th: string; name_en: string }) => {
+            return {
+              id: group.id,
+              name: { th: group.name_th, "en-US": group.name_en },
+            };
+          }
+        );
+        setSubjectGroups(data);
+      });
+  }, []);
 
   useEffect(
     () => userRole && setForm((form) => ({ ...form, role: userRole })),
@@ -77,6 +107,7 @@ const EditPersonDialog = ({
         enMiddleName: person.name["en-US"]?.middleName || "",
         enLastName: person.name["en-US"]?.lastName || "",
         studentID: person.role == "student" ? person.studentID : "",
+        teacherID: person.role == "teacher" ? person.teacherID : "",
         role: person.role,
         class: person.role == "student" ? person.class.id : 0,
         classNo: person.role == "student" ? person.classNo.toString() : "",
@@ -90,36 +121,6 @@ const EditPersonDialog = ({
   }, [mode, person]);
 
   // Dummybase
-  const subjectGroups = [
-    {
-      id: 0,
-      name: {
-        "en-US": "Science and Technology",
-        th: "วิทยาศาสตร์และเทคโนโลยี",
-      },
-    },
-    {
-      id: 1,
-      name: {
-        "en-US": "Mathematics",
-        th: "คณิตศาสตร์",
-      },
-    },
-    {
-      id: 2,
-      name: {
-        "en-US": "Foreign Language",
-        th: "ภาษาต่างประเทศ",
-      },
-    },
-    {
-      id: 3,
-      name: {
-        "en-US": "Thai",
-        th: "ภาษาไทย",
-      },
-    },
-  ];
   const classes = [
     {
       id: 509,
@@ -131,15 +132,19 @@ const EditPersonDialog = ({
   ];
 
   function validateAndSend() {
-    if (!form.classNo) return false;
-    const classNo = parseInt(form.classNo);
+    if (!form.classNo && form.role == "student") {
+      return false;
+    } else {
+      const classNo = parseInt(form.classNo);
+      if (classNo < 1 || classNo > 75) return false;
+    }
 
     if (!form.prefix) return false;
     if (!form.thFirstName) return false;
     if (!form.thLastName) return false;
-    if (form.studentID.length != 5) return false;
+    if (form.studentID.length != 5 && form.role == "student") return false;
+    if (form.teacherID.length < 4 && form.role == "teacher") return false;
     // if (!form.class) return false;
-    if (classNo < 1 || classNo > 75) return false;
 
     return true;
   }
@@ -170,17 +175,18 @@ const EditPersonDialog = ({
             person: data[0]?.id,
             std_id: form.studentID.trim(),
           });
-
           // TODO: add student to class
+        } else if (form.role == "teacher") {
+          const res = await supabase.from<any>("teacher").insert({
+            person: data[0]?.id,
+            subject_group: form.subjectGroup,
+            // class_advisor_at: form.classAdvisorAt,
+            teacher_id: form.teacherID.trim(),
+          });
+          if (res.error) {
+            console.error(res.error);
+          }
         }
-
-        // else if (form.role == "teacher") {
-        //   await supabase.from<any>("teacher").insert({
-        //     person: data[0]?.id,
-        //     subject_group: form.subjectGroup,
-        //     class_advisor_at: form.classAdvisorAt,
-        //   });
-        // }
       }
     }
 
@@ -393,6 +399,15 @@ const EditPersonDialog = ({
                   : undefined
               }
               onChange={(e: number) => setForm({ ...form, classAdvisorAt: e })}
+            />
+            <KeyboardInput
+              name="teacher-id"
+              type="text"
+              label={t("profile.role.teacherID")}
+              onChange={(e: string) => setForm({ ...form, teacherID: e })}
+              defaultValue={
+                person?.role == "teacher" ? person?.teacherID : undefined
+              }
             />
           </>
         )}

@@ -116,7 +116,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
     {
       id: 0,
       role: "teacher",
-      prefix: "mister",
+      prefix: "Mr.",
       name: {
         "en-US": {
           firstName: "Taradol",
@@ -136,12 +136,14 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
           th: "ม.405",
         },
       },
+      citizen_id: "1234567890123",
+      birthdate: "1995-01-01",
       subjectsInCharge: [],
     },
     {
       id: 1,
       role: "teacher",
-      prefix: "mister",
+      prefix: "Mr.",
       name: {
         "en-US": {
           firstName: "Thanakorn",
@@ -161,12 +163,14 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
           th: "ม.404",
         },
       },
+      citizen_id: "1234567890123",
+      birthdate: "1995-01-01",
       subjectsInCharge: [],
     },
     {
       id: 2,
       role: "teacher",
-      prefix: "missus",
+      prefix: "Miss.",
       name: {
         "en-US": {
           firstName: "Mattana",
@@ -179,6 +183,8 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
       },
       profile: "/images/dummybase/mattana.webp",
       teacherID: "skt196",
+      birthdate: "1995-01-01",
+      citizen_id: "1234567890123",
       classAdvisorAt: {
         id: 405,
         name: {
@@ -191,7 +197,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
     {
       id: 3,
       role: "teacher",
-      prefix: "mister",
+      prefix: "Mr.",
       name: {
         "en-US": {
           firstName: "John",
@@ -206,6 +212,8 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
       },
       teacherID: "skt8966",
       subjectsInCharge: [],
+      citizen_id: "1234567890123",
+      birthdate: "1995-01-01",
     },
   ];
 
