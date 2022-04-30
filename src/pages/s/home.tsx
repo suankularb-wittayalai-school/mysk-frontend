@@ -116,6 +116,8 @@ const StudentHome: NextPage<{
               contacts: [],
             });
           });
+      } else if (session.user?.user_metadata.role == "teacher") {
+        router.push("/t/home");
       }
     }
   }, [session]);
@@ -129,6 +131,7 @@ const StudentHome: NextPage<{
 
   return (
     <>
+      {/* {user?.role != "student" && router.push("/t/home")} */}
       {/* {console.log(session)} */}
       {/* Title */}
       <Head>

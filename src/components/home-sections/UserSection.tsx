@@ -104,9 +104,7 @@ const UserSection = ({
                   <Trans i18nKey="user.subjectAndClass" ns="dashboard">
                     Teacher in{" "}
                     {{
-                      subjectGroup:
-                        user.subjectsInCharge[0].subjectSubgroup.subjectGroup
-                          .name[locale],
+                      subjectGroup: user.subject_group.name[locale],
                     }}
                     <br />
                     Class advisor at{" "}
@@ -116,7 +114,8 @@ const UserSection = ({
                   </Trans>
                 ) : (
                   <Trans i18nKey="user.classAndNo" ns="dashboard">
-                    {{ class: user.class.name[locale] }} No.{{ classNo: user.classNo }}
+                    {{ class: user.class.name[locale] }} No.
+                    {{ classNo: user.classNo }}
                   </Trans>
                 )}
               </p>
