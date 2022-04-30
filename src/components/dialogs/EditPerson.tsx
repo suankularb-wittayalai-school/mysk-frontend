@@ -3,17 +3,28 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
 
+// Supabase client
+import { supabase } from "@utils/supabaseClient";
+
 // SK Components
 import {
   Dialog,
   DialogSection,
   Dropdown,
   KeyboardInput,
+  NativeInput,
 } from "@suankularb-components/react";
 
 // Types
 import { DialogProps } from "@utils/types/common";
 import { Role, Student, Teacher } from "@utils/types/person";
+
+const prefixMap = {
+  Master: "เด็กชาย",
+  "Mr.": "นาย",
+  "Mrs.": "นาง",
+  "Miss.": "นางสาว",
+};
 
 const EditPersonDialog = ({
   show,
@@ -33,7 +44,7 @@ const EditPersonDialog = ({
 
   // Form control
   const [form, setForm] = useState({
-    prefix: "",
+    prefix: "Master",
     thFirstName: "",
     thMiddleName: "",
     thLastName: "",
@@ -41,12 +52,43 @@ const EditPersonDialog = ({
     enMiddleName: "",
     enLastName: "",
     studentID: "",
+    teacherID: "",
+    citizen_id: "",
+    birthdate: "",
     role: "student",
     class: 0,
     classNo: "",
     subjectGroup: 0,
     classAdvisorAt: 0,
   });
+  const [subjectGroups, setSubjectGroups] = useState<
+    Array<{ id: number; name: { [key: string]: string } }>
+  >([]);
+
+  useEffect(() => {
+    supabase
+      .from("SubjectGroup")
+      .select("*")
+      .then((res: any) => {
+        if (res.error) {
+          console.error(res.error);
+        }
+
+        if (!res.data) {
+          return;
+        }
+
+        let data = res.data.map(
+          (group: { id: number; name_th: string; name_en: string }) => {
+            return {
+              id: group.id,
+              name: { th: group.name_th, "en-US": group.name_en },
+            };
+          }
+        );
+        setSubjectGroups(data);
+      });
+  }, []);
 
   useEffect(
     () => userRole && setForm((form) => ({ ...form, role: userRole })),
@@ -54,7 +96,7 @@ const EditPersonDialog = ({
   );
 
   useEffect(() => {
-    if (mode == "edit" && person)
+    if (mode == "edit" && person) {
       setForm({
         prefix: person.prefix,
         thFirstName: person.name.th.firstName,
@@ -64,47 +106,21 @@ const EditPersonDialog = ({
         enMiddleName: person.name["en-US"]?.middleName || "",
         enLastName: person.name["en-US"]?.lastName || "",
         studentID: person.role == "student" ? person.studentID : "",
+        teacherID: person.role == "teacher" ? person.teacherID : "",
         role: person.role,
         class: person.role == "student" ? person.class.id : 0,
         classNo: person.role == "student" ? person.classNo.toString() : "",
+        citizen_id: person.citizen_id,
+        birthdate: person.birthdate,
         // TODO: Use data from `person` once `subjectGroup` exists on type `Teacher`
-        subjectGroup: 0,
+        subjectGroup: person.role == "teacher" ? person.subject_group.id : 0,
         classAdvisorAt:
           person.role == "teacher" ? person.classAdvisorAt?.id || 0 : 0,
       });
+    }
   }, [mode, person]);
 
   // Dummybase
-  const subjectGroups = [
-    {
-      id: 0,
-      name: {
-        "en-US": "Science and Technology",
-        th: "วิทยาศาสตร์และเทคโนโลยี",
-      },
-    },
-    {
-      id: 1,
-      name: {
-        "en-US": "Mathematics",
-        th: "คณิตศาสตร์",
-      },
-    },
-    {
-      id: 2,
-      name: {
-        "en-US": "Foreign Language",
-        th: "ภาษาต่างประเทศ",
-      },
-    },
-    {
-      id: 3,
-      name: {
-        "en-US": "Thai",
-        th: "ภาษาไทย",
-      },
-    },
-  ];
   const classes = [
     {
       id: 509,
@@ -116,17 +132,125 @@ const EditPersonDialog = ({
   ];
 
   function validateAndSend() {
-    if (!form.classNo) return false;
-    const classNo = parseInt(form.classNo);
+    if (!form.classNo && form.role == "student") {
+      return false;
+    } else {
+      const classNo = parseInt(form.classNo);
+      if (classNo < 1 || classNo > 75) return false;
+    }
 
     if (!form.prefix) return false;
     if (!form.thFirstName) return false;
     if (!form.thLastName) return false;
-    if (form.studentID.length != 5) return false;
-    if (!form.class) return false;
-    if (classNo < 1 || classNo > 50) return false;
+    if (form.studentID.length != 5 && form.role == "student") return false;
+    if (form.teacherID.length < 4 && form.role == "teacher") return false;
+    // if (!form.class) return false;
 
     return true;
+  }
+
+  async function handleAdd() {
+    if (!validateAndSend()) return;
+
+    // console.log(form);
+    if (mode == "add") {
+      const { data, error } = await supabase.from<any>("people").insert({
+        prefix_th: prefixMap[form.prefix as keyof typeof prefixMap],
+        prefix_en: form.prefix,
+        first_name_th: form.thFirstName,
+        middle_name_th: form.thMiddleName,
+        last_name_th: form.thLastName,
+        first_name_en: form.enFirstName,
+        middle_name_en: form.enMiddleName,
+        last_name_en: form.enLastName,
+        birthdate: form.birthdate,
+        citizen_id: form.citizen_id,
+      });
+      if (error) {
+        console.log(error);
+      }
+      if (data) {
+        if (form.role == "student") {
+          await supabase.from<any>("student").insert({
+            person: data[0]?.id,
+            std_id: form.studentID.trim(),
+          });
+          // TODO: add student to class
+        } else if (form.role == "teacher") {
+          const res = await supabase.from<any>("teacher").insert({
+            person: data[0]?.id,
+            subject_group: form.subjectGroup,
+            // class_advisor_at: form.classAdvisorAt,
+            teacher_id: form.teacherID.trim(),
+          });
+          if (res.error) {
+            console.error(res.error);
+          }
+        }
+      }
+    } else if (mode == "edit") {
+      // get id of the person
+      const { data, error } = await supabase
+        .from<any>("people")
+        .select("id")
+        .match({ citizen_id: person?.citizen_id });
+      // console.log(data);
+      if (error) {
+        console.error(error);
+      }
+      if (!data) {
+        return;
+      }
+
+      const personID: number = data[0].id;
+
+      // update person
+      const { data: data2, error: error2 } = await supabase
+        .from<any>("people")
+        .update({
+          prefix_th: prefixMap[form.prefix as keyof typeof prefixMap],
+          prefix_en: form.prefix,
+          first_name_th: form.thFirstName,
+          middle_name_th: form.thMiddleName,
+          last_name_th: form.thLastName,
+          first_name_en: form.enFirstName,
+          middle_name_en: form.enMiddleName,
+          last_name_en: form.enLastName,
+          birthdate: form.birthdate,
+          citizen_id: form.citizen_id,
+        })
+        .match({ id: personID });
+      if (error2) {
+        console.error(error2);
+      }
+      if (!data2) {
+        return;
+      }
+      if (form.role == "student" && person?.role == "student") {
+        const { data: data3, error: error3 } = await supabase
+          .from<any>("student")
+          .update({
+            std_id: form.studentID.trim(),
+          })
+          .match({ person: personID, std_id: person.studentID });
+        if (error3) {
+          console.error(error3);
+        }
+      } else if (form.role == "teacher" && person?.role == "teacher") {
+        const { data: data3, error: error3 } = await supabase
+          .from<any>("teacher")
+          .update({
+            subject_group: form.subjectGroup,
+            // class_advisor_at: form.classAdvisorAt,
+            teacher_id: form.teacherID.trim(),
+          })
+          .match({ person: personID, teacher_id: person.teacherID });
+        if (error3) {
+          console.log(error3);
+        }
+      }
+    }
+    onSubmit();
   }
 
   return (
@@ -136,7 +260,7 @@ const EditPersonDialog = ({
       title={t(`dialog.editStudent.title.${mode}`, { ns: "admin" })}
       show={show}
       onClose={onClose}
-      onSubmit={() => validateAndSend() && onSubmit()}
+      onSubmit={() => handleAdd()}
       actions={[
         {
           name: t("dialog.editStudent.action.cancel", {
@@ -159,20 +283,20 @@ const EditPersonDialog = ({
           label={t("profile.name.prefix.label")}
           options={[
             {
-              value: "master",
+              value: "Master",
               label: t("profile.name.prefix.master"),
             },
             {
-              value: "mister",
+              value: "Mr.",
               label: t("profile.name.prefix.mister"),
             },
             {
-              value: "miss",
-              label: t("profile.name.prefix.miss"),
+              value: "Mrs.",
+              label: t("profile.name.prefix.missus"),
             },
             {
-              value: "missus",
-              label: t("profile.name.prefix.missus"),
+              value: "Miss.",
+              label: t("profile.name.prefix.miss"),
             },
           ]}
           defaultValue={person?.prefix}
@@ -232,6 +356,24 @@ const EditPersonDialog = ({
         />
       </DialogSection>
 
+      {/* General Information */}
+      <DialogSection name={t("profile.general.title")} isDoubleColumn>
+        <KeyboardInput
+          name="citizen-id"
+          type="text"
+          label={t("profile.general.citizenID")}
+          defaultValue={mode == "edit" ? person?.citizen_id : undefined}
+          onChange={(e: string) => setForm({ ...form, citizen_id: e })}
+        />
+        <NativeInput
+          name="birthdate"
+          type="date"
+          label={t("profile.general.birthdate")}
+          defaultValue={mode == "edit" ? person?.birthdate : undefined}
+          onChange={(e: string) => setForm({ ...form, birthdate: e })}
+        />
+      </DialogSection>
+
       {/* Role */}
       <DialogSection name={t("profile.role.title")} isDoubleColumn>
         <Dropdown
@@ -257,6 +399,11 @@ const EditPersonDialog = ({
               type="text"
               label={t("profile.class.studentID")}
               onChange={(e: string) => setForm({ ...form, studentID: e })}
+              defaultValue={
+                mode == "edit" && person?.role == "student"
+                  ? person?.studentID
+                  : undefined
+              }
             />
             <Dropdown
               name="class"
@@ -296,6 +443,9 @@ const EditPersonDialog = ({
                 label: subjectGroup.name[locale],
               }))}
               onChange={(e: number) => setForm({ ...form, subjectGroup: e })}
+              defaultValue={
+                person?.role == "teacher" ? person?.subject_group.id : undefined
+              }
             />
             <Dropdown
               name="class-counselor-at"
@@ -317,6 +467,15 @@ const EditPersonDialog = ({
                   : undefined
               }
               onChange={(e: number) => setForm({ ...form, classAdvisorAt: e })}
+            />
+            <KeyboardInput
+              name="teacher-id"
+              type="text"
+              label={t("profile.role.teacherID")}
+              onChange={(e: string) => setForm({ ...form, teacherID: e })}
+              defaultValue={
+                person?.role == "teacher" ? person?.teacherID : undefined
+              }
             />
           </>
         )}

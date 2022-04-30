@@ -1,15 +1,17 @@
 import { ClassWName } from "./class";
-import { Subject } from "./subject";
+import { Subject, SubjectGroup } from "./subject";
 
 export type Person = {
   id: number;
-  prefix: "master" | "mister" | "miss" | "missus";
+  prefix: "Master" | "Mr." | "Mrs." | "Miss.";
   role: Role;
   name: {
     "en-US"?: PersonName;
     th: PersonName;
   };
   profile?: string;
+  citizen_id: string;
+  birthdate: string;
 };
 
 export type PersonName = {
@@ -40,4 +42,5 @@ export type Teacher = Person & {
     name: Subject["name"];
     subjectSubgroup: Subject["subjectSubgroup"];
   }>;
+  subject_group: SubjectGroup;
 };

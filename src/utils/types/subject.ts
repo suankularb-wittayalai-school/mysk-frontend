@@ -3,6 +3,7 @@ import { Teacher } from "./person";
 
 // Subject Group
 export type SubjectGroup = {
+  id: number;
   name: {
     "en-US": string;
     th: string;

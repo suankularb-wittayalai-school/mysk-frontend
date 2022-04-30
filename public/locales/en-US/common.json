@@ -17,10 +17,10 @@
   },
   "name": {
     "prefix": {
-      "master": "Master ",
-      "mister": "Mr. ",
-      "miss": "Miss ",
-      "missus": "Mrs. "
+      "Master": "Master ",
+      "Mr.": "Mr. ",
+      "Miss.": "Miss ",
+      "Mrs.": "Mrs. "
     }
   },
   "datetime": {

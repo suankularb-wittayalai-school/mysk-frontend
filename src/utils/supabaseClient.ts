@@ -8,4 +8,13 @@ if (!supabaseUrl || !supabaseAnonKey) {
     throw new Error('Missing supabase config')
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+const option = {
+    schema: "public",
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: true
+}
+
+// console.log(`supabaseUrl: ${supabaseUrl}`)
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, option)
