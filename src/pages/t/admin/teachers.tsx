@@ -179,6 +179,8 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
           th: teacher.SubjectGroup.name_th,
         },
       },
+      // TODO: Fetch contact
+      contacts: [],
     };
     return formatted;
   });

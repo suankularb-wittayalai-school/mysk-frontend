@@ -60,6 +60,7 @@ const EditPersonDialog = ({
     classNo: "",
     subjectGroup: 0,
     classAdvisorAt: 0,
+    email: "",
   });
   const [subjectGroups, setSubjectGroups] = useState<
     Array<{ id: number; name: { [key: string]: string } }>
@@ -116,6 +117,8 @@ const EditPersonDialog = ({
         subjectGroup: person.role == "teacher" ? person.subject_group.id : 0,
         classAdvisorAt:
           person.role == "teacher" ? person.classAdvisorAt?.id || 0 : 0,
+        email: person.contacts.filter((contact) => contact.type == "Email")[0]
+          .value,
       });
     }
   }, [mode, person]);

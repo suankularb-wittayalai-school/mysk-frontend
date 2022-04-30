@@ -177,6 +177,10 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
 
       // TODO: Get classNo
       classNo: 1,
+
+      // TODO: Get contacts
+      contacts: [],
+
     };
 
     return formatted;
