@@ -164,6 +164,22 @@ const EditPersonDialog = ({
       if (error) {
         console.log(error);
       }
+      if (data) {
+        if (form.role == "student") {
+          await supabase.from<any>("student").insert({
+            person: data[0]?.id,
+            std_id: form.studentID.trim(),
+          });
+        }
+
+        // else if (form.role == "teacher") {
+        //   await supabase.from<any>("teacher").insert({
+        //     person: data[0]?.id,
+        //     subject_group: form.subjectGroup,
+        //     class_advisor_at: form.classAdvisorAt,
+        //   });
+        // }
+      }
     }
 
     onSubmit();

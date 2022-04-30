@@ -13,10 +13,10 @@
       "title": "Local name (Thai)",
       "prefix": {
         "label": "Prefix",
-        "master": "เด็กชาย (Master)",
-        "mister": "นาย (Mister)",
-        "miss": "นางสาว (Miss)",
-        "missus": "นาง (Missus)"
+        "Master": "เด็กชาย (Master)",
+        "Mr.": "นาย (Mister)",
+        "Mrs.": "นางสาว (Miss)",
+        "Miss.": "นาง (Missus)"
       },
       "firstName": "First name",
       "middleName": "Middle name",
