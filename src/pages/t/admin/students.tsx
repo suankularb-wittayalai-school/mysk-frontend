@@ -1,6 +1,7 @@
 // Modules
 import type { GetServerSideProps, NextPage } from "next";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
@@ -8,7 +9,7 @@ import { useTranslation } from "next-i18next";
 import { useState } from "react";
 
 // Supabase client
-// import { supabase } from "@utils/supabaseConfig";
+import { supabase } from "@utils/supabaseClient";
 
 // SK Components
 import {
@@ -34,6 +35,7 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
   allStudents,
 }): JSX.Element => {
   const { t } = useTranslation("admin");
+  const router = useRouter();
 
   const [showAdd, setShowAdd] = useState<boolean>(false);
 
@@ -98,7 +100,10 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
         show={showAdd}
         onClose={() => setShowAdd(false)}
         // TODO: Refetch students here ↓
-        onSubmit={() => setShowAdd(false)}
+        onSubmit={() => {
+          setShowAdd(false);
+          router.replace(router.asPath);
+        }}
         mode="add"
         userRole="student"
       />
@@ -113,18 +118,64 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
-  const allStudents: Array<Student> = [
-    {
-      id: 985,
-      prefix: "Master",
+  // const allStudents: Array<Student> = [
+  //   {
+  //     id: 985,
+  //     prefix: "Master",
+  //     role: "student",
+  //     name: {
+  //       th: {
+  //         firstName: "ธนา",
+  //         lastName: "สัจจะธนาพร",
+  //       },
+  //     },
+  //     studentID: "58268",
+  //     class: {
+  //       id: 101,
+  //       name: {
+  //         "en-US": "M.101",
+  //         th: "ม.101",
+  //       },
+  //     },
+  //     citizen_id: "1234567890123",
+  //     birthdate: "2020-01-01",
+  //     classNo: 1,
+  //   },
+  // ];
+
+  const { data, error } = await supabase
+    .from("student")
+    .select(`id, std_id, people:person(*)`);
+
+  if (error) {
+    console.error(error);
+  }
+
+  // console.log(data);
+
+  if (!data) {
+    return { props: { allStudents: [] } };
+  }
+
+  const allStudents = data.map((student) => {
+    // delete student.people.id;
+    const formatted: Student = {
+      id: student.id,
+      prefix: student.people.prefix_en,
       role: "student",
       name: {
         th: {
-          firstName: "ธนา",
-          lastName: "สัจจะธนาพร",
+          firstName: student.people.first_name_th,
+          lastName: student.people.last_name_th,
+        },
+        "en-US": {
+          firstName: student.people.first_name_en,
+          lastName: student.people.last_name_en,
         },
       },
-      studentID: "58268",
+      studentID: student.std_id,
+
+      // TODO: Get class
       class: {
         id: 101,
         name: {
@@ -132,209 +183,15 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
           th: "ม.101",
         },
       },
-      citizen_id: "1234567890123",
-      birthdate: "2020-01-01",
+      citizen_id: student.people.citizen_id,
+      birthdate: student.people.birthdate,
+
+      // TODO: Get classNo
       classNo: 1,
-    },
-    {
-      id: 986,
-      prefix: "Master",
-      role: "student",
-      name: {
-        th: {
-          firstName: "กวินภพ",
-          lastName: "ดิษสุนรัตน์",
-        },
-      },
-      studentID: "58269",
-      class: {
-        id: 101,
-        name: {
-          "en-US": "M.101",
-          th: "ม.101",
-        },
-      },
-      citizen_id: "1234567890124",
-      birthdate: "2020-01-01",
-      classNo: 2,
-    },
-    {
-      id: 987,
-      prefix: "Master",
-      role: "student",
-      name: {
-        th: {
-          firstName: "ณฐกร",
-          lastName: "ศรีปรางค์",
-        },
-      },
-      studentID: "58270",
-      class: {
-        id: 101,
-        name: {
-          "en-US": "M.101",
-          th: "ม.101",
-        },
-      },
-      citizen_id: "1234567890125",
-      birthdate: "2020-01-01",
-      classNo: 3,
-    },
-    {
-      id: 988,
-      prefix: "Master",
-      role: "student",
-      name: {
-        th: {
-          firstName: "เจตนิพิฐ",
-          lastName: "เลาหเรืองรองกุล",
-        },
-      },
-      studentID: "58271",
-      class: {
-        id: 101,
-        name: {
-          "en-US": "M.101",
-          th: "ม.101",
-        },
-      },
-      citizen_id: "1234567890126",
-      birthdate: "2020-01-01",
-      classNo: 4,
-    },
-    {
-      id: 989,
-      prefix: "Master",
-      role: "student",
-      name: {
-        th: {
-          firstName: "พิริยกร",
-          lastName: "เจริญธรรมรักษา",
-        },
-      },
-      studentID: "58272",
-      class: {
-        id: 101,
-        name: {
-          "en-US": "M.101",
-          th: "ม.101",
-        },
-      },
-      citizen_id: "1234567890127",
-      birthdate: "2020-01-01",
-      classNo: 5,
-    },
-    {
-      id: 990,
-      prefix: "Master",
-      role: "student",
-      name: {
-        th: {
-          firstName: "ธนากวินพร",
-          lastName: "ดิษปรางค์รัตน์",
-        },
-      },
-      studentID: "58273",
-      class: {
-        id: 101,
-        name: {
-          "en-US": "M.101",
-          th: "ม.101",
-        },
-      },
-      citizen_id: "1234567890128",
-      birthdate: "2020-01-01",
-      classNo: 6,
-    },
-    {
-      id: 991,
-      prefix: "Master",
-      role: "student",
-      name: {
-        th: {
-          firstName: "เจตนิพิฐ",
-          lastName: "เลาหเรืองรองกุล",
-        },
-      },
-      studentID: "58274",
-      class: {
-        id: 101,
-        name: {
-          "en-US": "M.101",
-          th: "ม.101",
-        },
-      },
-      citizen_id: "1234567890129",
-      birthdate: "2020-01-01",
-      classNo: 7,
-    },
-    {
-      id: 992,
-      prefix: "Master",
-      role: "student",
-      name: {
-        th: {
-          firstName: "เรืองรองกุล",
-          lastName: "สัจจะธนาพร",
-        },
-      },
-      studentID: "58275",
-      class: {
-        id: 101,
-        name: {
-          "en-US": "M.101",
-          th: "ม.101",
-        },
-      },
-      citizen_id: "1234567890130",
-      birthdate: "2020-01-01",
-      classNo: 8,
-    },
-    {
-      id: 993,
-      prefix: "Master",
-      role: "student",
-      name: {
-        th: {
-          firstName: "เจริญธรรม",
-          lastName: "ศรีปรางค์",
-        },
-      },
-      studentID: "58276",
-      class: {
-        id: 101,
-        name: {
-          "en-US": "M.101",
-          th: "ม.101",
-        },
-      },
-      citizen_id: "1234567890131",
-      birthdate: "2020-01-01",
-      classNo: 9,
-    },
-    {
-      id: 994,
-      prefix: "Master",
-      role: "student",
-      name: {
-        th: {
-          firstName: "เจตนิพิฐ",
-          lastName: "ปรางค์รัตน์",
-        },
-      },
-      studentID: "58277",
-      class: {
-        id: 101,
-        name: {
-          "en-US": "M.101",
-          th: "ม.101",
-        },
-      },
-      citizen_id: "1234567890132",
-      birthdate: "2020-01-01",
-      classNo: 10,
-    },
-  ];
+    };
+
+    return formatted;
+  });
 
   return {
     props: {

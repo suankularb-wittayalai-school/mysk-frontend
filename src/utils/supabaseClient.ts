@@ -15,6 +15,6 @@ const option = {
     detectSessionInUrl: true
 }
 
-console.log(`supabaseUrl: ${supabaseUrl}`)
+// console.log(`supabaseUrl: ${supabaseUrl}`)
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, option)

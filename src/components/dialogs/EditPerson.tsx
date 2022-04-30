@@ -147,7 +147,7 @@ const EditPersonDialog = ({
   async function handleAdd() {
     if (!validateAndSend()) return;
 
-    console.log(form);
+    // console.log(form);
     if (mode == "add") {
       const { data, error } = await supabase.from<any>("people").insert({
         prefix_th: PREFIXMAP[form.prefix as keyof typeof PREFIXMAP],
@@ -170,6 +170,8 @@ const EditPersonDialog = ({
             person: data[0]?.id,
             std_id: form.studentID.trim(),
           });
+
+          // TODO: add student to class
         }
 
         // else if (form.role == "teacher") {
