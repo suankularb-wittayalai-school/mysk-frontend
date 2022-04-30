@@ -44,6 +44,17 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
 
   const [showConfDel, setShowConfDel] = useState<boolean>(false);
 
+  async function handleDelete() {
+    // console.log(editingPerson);
+    if (!editingPerson) {
+      return;
+    }
+
+    await supabase.from("student").delete().match({ id: editingPerson.id });
+    setShowConfDel(false);
+    router.replace(router.asPath);
+  }
+
   return (
     <>
       {/* Head */}
@@ -111,38 +122,13 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
         show={showConfDel}
         onClose={() => setShowConfDel(false)}
         // TODO: Refetch teachers here ↓
-        onSubmit={() => setShowConfDel(false)}
+        onSubmit={() => handleDelete()}
       />
     </>
   );
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
-  // const allStudents: Array<Student> = [
-  //   {
-  //     id: 985,
-  //     prefix: "Master",
-  //     role: "student",
-  //     name: {
-  //       th: {
-  //         firstName: "ธนา",
-  //         lastName: "สัจจะธนาพร",
-  //       },
-  //     },
-  //     studentID: "58268",
-  //     class: {
-  //       id: 101,
-  //       name: {
-  //         "en-US": "M.101",
-  //         th: "ม.101",
-  //       },
-  //     },
-  //     citizen_id: "1234567890123",
-  //     birthdate: "2020-01-01",
-  //     classNo: 1,
-  //   },
-  // ];
-
   const { data, error } = await supabase
     .from("student")
     .select(`id, std_id, people:person(*)`);

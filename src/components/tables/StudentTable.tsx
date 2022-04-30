@@ -81,7 +81,10 @@ const StudentTable = ({
                   iconOnly
                   icon={<MaterialIcon icon="delete" />}
                   isDangerous
-                  onClick={() => setShowConfDelStudent(true)}
+                  onClick={() => {
+                    setShowConfDelStudent(true);
+                    setEditingPerson(student);
+                  }}
                 />
               </div>
             </td>
