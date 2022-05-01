@@ -35,6 +35,8 @@ import { Student, Teacher } from "@utils/types/person";
 import { StudentSchedule } from "@utils/types/schedule";
 import { Session } from "@supabase/supabase-js";
 import { useRouter } from "next/router";
+import { StudentDB } from "@utils/types/database/person";
+import { db2student } from "@utils/backend/database";
 
 // Page
 const StudentHome: NextPage<{
@@ -71,7 +73,7 @@ const StudentHome: NextPage<{
     if (session) {
       if (session.user?.user_metadata.role == "student") {
         supabase
-          .from("student")
+          .from<StudentDB>("student")
           .select("id, std_id, people:person(*)")
           .eq("id", session.user?.user_metadata.student)
           .single()
@@ -81,39 +83,10 @@ const StudentHome: NextPage<{
               return;
             }
 
-            const student = res.data;
-            setUser({
-              id: student.id,
-              prefix: student.people.prefix_en,
-              role: "student",
-              name: {
-                th: {
-                  firstName: student.people.first_name_th,
-                  lastName: student.people.last_name_th,
-                },
-                "en-US": {
-                  firstName: student.people.first_name_en,
-                  lastName: student.people.last_name_en,
-                },
-              },
-              studentID: student.std_id,
-
-              // TODO: Get class
-              class: {
-                id: 48,
-                name: {
-                  "en-US": "M.505",
-                  th: "ม.505",
-                },
-              },
-              citizen_id: student.people.citizen_id,
-              birthdate: student.people.birthdate,
-
-              // TODO: Get classNo
-              classNo: 12,
-
-              // TODO: Get contacts
-              contacts: [],
+            // const student = ;
+            // setUser(student);
+            db2student(res.data).then((student) => {
+              setUser(student);
             });
           });
       } else if (session.user?.user_metadata.role == "teacher") {

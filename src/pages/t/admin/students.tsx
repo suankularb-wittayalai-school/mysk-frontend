@@ -150,7 +150,9 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
     return { props: { allStudents: [] } };
   }
 
-  const allStudents = data.map((student) => db2student(student));
+  const allStudents: Student[] = await Promise.all(
+    data.map(async (student) => await db2student(student))
+  );
 
   return {
     props: {

@@ -2,7 +2,7 @@ import { StudentDB } from "@utils/types/database/person";
 import { Student } from "@utils/types/person";
 
 
-export function db2student(student: StudentDB): Student {
+export async function db2student(student: StudentDB): Promise<Student> {
     return {
         id: student.id,
         prefix: student.people.prefix_en,
