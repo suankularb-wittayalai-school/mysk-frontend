@@ -34,6 +34,14 @@ import TeacherTable from "@components/tables/TeacherTable";
 import { Student, Teacher } from "@utils/types/person";
 import { ClassWName } from "@utils/types/class";
 import { range } from "@utils/helpers/array";
+import { supabase } from "@utils/supabaseClient";
+import {
+  StudentDB,
+  StudentTable as StudentTableType,
+  TeacherDB,
+  TeacherTable as TeacherTableType,
+} from "@utils/types/database/person";
+import { db2student, db2teacher } from "@utils/backend/database";
 
 const StudentSection = ({
   someStudents,
@@ -203,6 +211,7 @@ const Admin: NextPage<{
         />
         <ScheduleSection />
       </RegularLayout>
+      // FIXME: This should not be here
       <EditPersonDialog
         show={showEdit}
         onClose={() => setShowEdit(false)}
@@ -228,204 +237,29 @@ const Admin: NextPage<{
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
-  const someStudents: Array<Student> = [
-    {
-      id: 985,
-      prefix: "master",
-      role: "student",
-      name: {
-        th: {
-          firstName: "ธนา",
-          lastName: "สัจจะธนาพร",
-        },
-      },
-      studentID: "58268",
-      class: {
-        id: 101,
-        name: {
-          "en-US": "M.101",
-          th: "ม.101",
-        },
-      },
-      classNo: 1,
-    },
-    {
-      id: 986,
-      prefix: "master",
-      role: "student",
-      name: {
-        th: {
-          firstName: "กวินภพ",
-          lastName: "ดิษสุนรัตน์",
-        },
-      },
-      studentID: "58269",
-      class: {
-        id: 101,
-        name: {
-          "en-US": "M.101",
-          th: "ม.101",
-        },
-      },
-      classNo: 2,
-    },
-    {
-      id: 987,
-      prefix: "master",
-      role: "student",
-      name: {
-        th: {
-          firstName: "ณฐกร",
-          lastName: "ศรีปรางค์",
-        },
-      },
-      studentID: "58270",
-      class: {
-        id: 101,
-        name: {
-          "en-US": "M.101",
-          th: "ม.101",
-        },
-      },
-      classNo: 3,
-    },
-    {
-      id: 988,
-      prefix: "master",
-      role: "student",
-      name: {
-        th: {
-          firstName: "เจตนิพิฐ",
-          lastName: "เลาหเรืองรองกุล",
-        },
-      },
-      studentID: "58271",
-      class: {
-        id: 101,
-        name: {
-          "en-US": "M.101",
-          th: "ม.101",
-        },
-      },
-      classNo: 4,
-    },
-    {
-      id: 988,
-      prefix: "master",
-      role: "student",
-      name: {
-        th: {
-          firstName: "พิริยกร",
-          lastName: "เจริญธรรมรักษา",
-        },
-      },
-      studentID: "58272",
-      class: {
-        id: 101,
-        name: {
-          "en-US": "M.101",
-          th: "ม.101",
-        },
-      },
-      classNo: 5,
-    },
-  ];
-  const someTeachers: Array<Teacher> = [
-    {
-      id: 0,
-      role: "teacher",
-      prefix: "mister",
-      name: {
-        "en-US": {
-          firstName: "Taradol",
-          lastName: "Ranarintr",
-        },
-        th: {
-          firstName: "ธราดล",
-          lastName: "รานรินทร์",
-        },
-      },
-      profile: "/images/dummybase/taradol.webp",
-      teacherID: "skt551",
-      classAdvisorAt: {
-        id: 405,
-        name: {
-          "en-US": "M.405",
-          th: "ม.405",
-        },
-      },
-      subjectsInCharge: [],
-    },
-    {
-      id: 1,
-      role: "teacher",
-      prefix: "mister",
-      name: {
-        "en-US": {
-          firstName: "Thanakorn",
-          lastName: "Atjanawat",
-        },
-        th: {
-          firstName: "ธนกร",
-          lastName: "อรรจนาวัฒน์",
-        },
-      },
-      profile: "/images/dummybase/thanakorn.webp",
-      teacherID: "skt416",
-      classAdvisorAt: {
-        id: 404,
-        name: {
-          "en-US": "M.404",
-          th: "ม.404",
-        },
-      },
-      subjectsInCharge: [],
-    },
-    {
-      id: 2,
-      role: "teacher",
-      prefix: "missus",
-      name: {
-        "en-US": {
-          firstName: "Mattana",
-          lastName: "Tatanyang",
-        },
-        th: {
-          firstName: "มัทนา",
-          lastName: "ต๊ะตันยาง",
-        },
-      },
-      profile: "/images/dummybase/mattana.webp",
-      teacherID: "skt196",
-      classAdvisorAt: {
-        id: 405,
-        name: {
-          "en-US": "M.405",
-          th: "ม.405",
-        },
-      },
-      subjectsInCharge: [],
-    },
-    {
-      id: 3,
-      role: "teacher",
-      prefix: "mister",
-      name: {
-        "en-US": {
-          firstName: "John",
-          middleName: "Peter",
-          lastName: "Smith",
-        },
-        th: {
-          firstName: "จอห์น",
-          middleName: "ปีเตอร์",
-          lastName: "สมิธ",
-        },
-      },
-      teacherID: "skt8966",
-      subjectsInCharge: [],
-    },
-  ];
+  const { data: students, error: studentSelectingError } = await supabase
+    .from<StudentDB>("student")
+    .select("id, std_id, people:person(*)")
+    .limit(5);
+  const { data: teachers, error: teacherSelectingError } = await supabase
+    .from<TeacherDB>("teacher")
+    .select("id, teacher_id, people:person(*), SubjectGroup:subject_group(*)")
+    .limit(5);
+
+  let someStudents: Array<Student> = [];
+  let someTeachers: Array<Teacher> = [];
+
+  if (!studentSelectingError && students) {
+    someStudents = await Promise.all(
+      students.map(async (student) => await db2student(student))
+    );
+  }
+
+  if (!teacherSelectingError && teachers) {
+    someTeachers = await Promise.all(
+      teachers.map(async (teacher) => await db2teacher(teacher))
+    );
+  }
 
   return {
     props: {
