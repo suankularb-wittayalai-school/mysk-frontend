@@ -4,11 +4,15 @@ import { getDay } from "date-fns";
 import { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+// Supabase imports
+import { supabase } from "@utils/supabaseClient";
 
 // SK Components
 import {
@@ -30,17 +34,103 @@ import UserSection from "@components/home-sections/UserSection";
 import { NewsList, StudentForm } from "@utils/types/news";
 import { Teacher } from "@utils/types/person";
 import { StudentSchedule } from "@utils/types/schedule";
+import { Session } from "@supabase/supabase-js";
 
 const TeacherHome: NextPage<{
-  user: Teacher;
+  // user: Teacher;
   schedule: StudentSchedule;
   studentForms: Array<StudentForm>;
   news: NewsList;
-}> = ({ user, schedule, studentForms, news }) => {
+}> = ({ schedule, studentForms, news }) => {
   const { t } = useTranslation("common");
+  const router = useRouter();
   const [showChangePassword, setShowChangePassword] = useState<boolean>(false);
   const [showEditProfile, setShowEditProfile] = useState<boolean>(false);
   const [showLogOut, setShowLogOut] = useState<boolean>(false);
+  const [user, setUser] = useState<Teacher | null>(null);
+
+  const [session, setSession] = useState<null | Session>(null);
+
+  useEffect(() => {
+    if (!supabase.auth.session()) {
+      router.push("/");
+    }
+
+    setSession(supabase.auth.session());
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (session) {
+      if (session.user?.user_metadata.role == "teacher") {
+        supabase
+          .from("teacher")
+          .select(
+            "id, teacher_id, people:person(*), SubjectGroup:subject_group(*)"
+          )
+          .eq("id", session.user?.user_metadata.teacher)
+          .single()
+          .then((res) => {
+            if (res.error || !res.data) {
+              console.log(res.error);
+              return;
+            }
+
+            const teacher = res.data;
+            setUser({
+              id: teacher.id,
+              role: "teacher",
+              prefix: teacher.people.prefix_en,
+              name: {
+                "en-US": {
+                  firstName: teacher.people.first_name_en,
+                  lastName: teacher.people.last_name_en,
+                },
+                th: {
+                  firstName: teacher.people.first_name_th,
+                  lastName: teacher.people.last_name_th,
+                },
+              },
+              profile: teacher.people.profile,
+              teacherID: teacher.teacher_id,
+              // TODO: Class advisor at
+              classAdvisorAt: {
+                id: 405,
+                name: {
+                  "en-US": "M.405",
+                  th: "ม.405",
+                },
+              },
+              citizen_id: teacher.people.citizen_id,
+              birthdate: teacher.people.birthdate,
+              // TODO: Subjects in charge
+              subjectsInCharge: [],
+              subject_group: {
+                id: teacher.SubjectGroup.id,
+                name: {
+                  "en-US": teacher.SubjectGroup.name_en,
+                  th: teacher.SubjectGroup.name_th,
+                },
+              },
+              // TODO: Fetch contact
+              contacts: [],
+            });
+          });
+      } else if (session.user?.user_metadata.role == "student") {
+        router.push("/s/home");
+      }
+    }
+  }, [session]);
+
+  async function handleLogout() {
+    await supabase.auth.signOut();
+    router.push("/");
+  }
+
+  if (!user) return <></>;
 
   return (
     <>
@@ -89,7 +179,13 @@ const TeacherHome: NextPage<{
         show={showEditProfile}
         onClose={() => setShowEditProfile(false)}
       />
-      <LogOutDialog show={showLogOut} onClose={() => setShowLogOut(false)} />
+      <LogOutDialog
+        show={showLogOut}
+        onClose={() => {
+          handleLogout();
+          setShowLogOut(false);
+        }}
+      />
     </>
   );
 };

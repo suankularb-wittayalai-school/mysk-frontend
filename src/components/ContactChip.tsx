@@ -20,7 +20,7 @@ const ContactChip = ({
   return (
     <a
       aria-labelledby={`contact-${contact.id}`}
-      href={contact.url}
+      href={contact.value}
       target="_blank"
       rel="noreferrer"
     >
@@ -33,31 +33,31 @@ const ContactChip = ({
         <CardHeader
           icon={
             <div className="relative aspect-square w-6 text-primary">
-              {contact.via == "phone" ? (
+              {contact.type == "phone" ? (
                 <MaterialIcon icon="call" />
-              ) : contact.via == "email" ? (
+              ) : contact.type == "email" ? (
                 <MaterialIcon icon="mail" />
-              ) : contact.via == "facebook" ? (
+              ) : contact.type == "facebook" ? (
                 <Image
                   src="/images/social/facebook.webp"
                   layout="fill"
                   alt="Facebook"
                 />
-              ) : contact.via == "line" ? (
+              ) : contact.type == "line" ? (
                 <Image
                   src="/images/social/line.webp"
                   layout="fill"
                   alt="LINE"
                 />
-              ) : contact.via == "instagram" ? (
+              ) : contact.type == "instagram" ? (
                 <Image
                   src="/images/social/instagram.webp"
                   layout="fill"
                   alt="Instagram"
                 />
-              ) : contact.via == "website" ? (
+              ) : contact.type == "website" ? (
                 <MaterialIcon icon="public" />
-              ) : contact.via == "discord" ? (
+              ) : contact.type == "discord" ? (
                 <Image
                   src="/images/social/discord.webp"
                   layout="fill"

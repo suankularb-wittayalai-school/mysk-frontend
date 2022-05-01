@@ -8,7 +8,7 @@ import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // SK Components
 import {
@@ -16,6 +16,9 @@ import {
   RegularLayout,
   Title,
 } from "@suankularb-components/react";
+
+// Supabase imports
+import { supabase } from "@utils/supabaseClient";
 
 // Components
 import ChangePassword from "@components/dialogs/ChangePassword";
@@ -30,24 +33,106 @@ import TeachersSection from "@components/home-sections/TeachersSection";
 import { NewsList } from "@utils/types/news";
 import { Student, Teacher } from "@utils/types/person";
 import { StudentSchedule } from "@utils/types/schedule";
+import { Session } from "@supabase/supabase-js";
+import { useRouter } from "next/router";
 
 // Page
 const StudentHome: NextPage<{
-  user: Student | Teacher;
+  // user: Student | Teacher;
   news: NewsList;
   schedule: StudentSchedule;
   teachers: Array<Teacher>;
   classAdvisors: Array<Teacher>;
-}> = ({ user, news, schedule, teachers, classAdvisors }) => {
+}> = ({ news, schedule, teachers, classAdvisors }) => {
   const { t } = useTranslation(["dashboard", "common"]);
+  const router = useRouter();
 
   // Dialog controls
   const [showChangePassword, setShowChangePassword] = useState<boolean>(false);
   const [showEditProfile, setShowEditProfile] = useState<boolean>(false);
   const [showLogOut, setShowLogOut] = useState<boolean>(false);
+  const [user, setUser] = useState<Student | Teacher | null>(null);
+
+  const [session, setSession] = useState<null | Session>(null);
+
+  useEffect(() => {
+    if (!supabase.auth.session()) {
+      router.push("/");
+    }
+
+    setSession(supabase.auth.session());
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (session) {
+      if (session.user?.user_metadata.role == "student") {
+        supabase
+          .from("student")
+          .select("id, std_id, people:person(*)")
+          .eq("id", session.user?.user_metadata.student)
+          .single()
+          .then((res) => {
+            if (res.error || !res.data) {
+              console.log(res.error);
+              return;
+            }
+
+            const student = res.data;
+            setUser({
+              id: student.id,
+              prefix: student.people.prefix_en,
+              role: "student",
+              name: {
+                th: {
+                  firstName: student.people.first_name_th,
+                  lastName: student.people.last_name_th,
+                },
+                "en-US": {
+                  firstName: student.people.first_name_en,
+                  lastName: student.people.last_name_en,
+                },
+              },
+              studentID: student.std_id,
+
+              // TODO: Get class
+              class: {
+                id: 48,
+                name: {
+                  "en-US": "M.505",
+                  th: "ม.505",
+                },
+              },
+              citizen_id: student.people.citizen_id,
+              birthdate: student.people.birthdate,
+
+              // TODO: Get classNo
+              classNo: 12,
+
+              // TODO: Get contacts
+              contacts: [],
+            });
+          });
+      } else if (session.user?.user_metadata.role == "teacher") {
+        router.push("/t/home");
+      }
+    }
+  }, [session]);
+
+  async function handleLogout() {
+    await supabase.auth.signOut();
+    router.push("/");
+  }
+
+  if (!user) return <></>;
 
   return (
     <>
+      {/* {user?.role != "student" && router.push("/t/home")} */}
+      {/* {console.log(session)} */}
       {/* Title */}
       <Head>
         <title>
@@ -94,7 +179,13 @@ const StudentHome: NextPage<{
         show={showEditProfile}
         onClose={() => setShowEditProfile(false)}
       />
-      <LogOutDialog show={showLogOut} onClose={() => setShowLogOut(false)} />
+      <LogOutDialog
+        show={showLogOut}
+        onClose={() => {
+          handleLogout();
+          setShowLogOut(false);
+        }}
+      />
     </>
   );
 };
@@ -397,7 +488,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         "news",
         "dashboard",
       ])),
-      user,
+      // user,
       // (@SiravitPhokeed)
       // Apparently NextJS doesn’t serialize Date when in development
       // It does in production, though.

@@ -60,6 +60,7 @@ const EditPersonDialog = ({
     classNo: "",
     subjectGroup: 0,
     classAdvisorAt: 0,
+    email: "",
   });
   const [subjectGroups, setSubjectGroups] = useState<
     Array<{ id: number; name: { [key: string]: string } }>
@@ -116,6 +117,8 @@ const EditPersonDialog = ({
         subjectGroup: person.role == "teacher" ? person.subject_group.id : 0,
         classAdvisorAt:
           person.role == "teacher" ? person.classAdvisorAt?.id || 0 : 0,
+        email: person.contacts.filter((contact) => contact.type == "Email")[0]
+          ?.value,
       });
     }
   }, [mode, person]);
@@ -171,10 +174,32 @@ const EditPersonDialog = ({
       }
       if (data) {
         if (form.role == "student") {
-          await supabase.from<any>("student").insert({
-            person: data[0]?.id,
-            std_id: form.studentID.trim(),
-          });
+          const { data: student, error: error2 } = await supabase
+            .from<any>("student")
+            .insert({
+              person: data[0]?.id,
+              std_id: form.studentID.trim(),
+            });
+          if (error2) {
+            console.log(error2);
+          }
+          if (!student) {
+            return;
+          }
+          // register an account for the student
+          await supabase.auth.signUp(
+            {
+              email: form.email,
+              password: form.birthdate.split("-").join(""),
+            },
+            {
+              data: {
+                student: student[0]?.id,
+                role: "student",
+              },
+            }
+          );
+
           // TODO: add student to class
         } else if (form.role == "teacher") {
           const res = await supabase.from<any>("teacher").insert({
@@ -186,6 +211,23 @@ const EditPersonDialog = ({
           if (res.error) {
             console.error(res.error);
           }
+          if (!res.data) {
+            return;
+          }
+
+          // register an account for the teacher
+          await supabase.auth.signUp(
+            {
+              email: form.email,
+              password: form.birthdate.split("-").join(""),
+            },
+            {
+              data: {
+                teacher: res.data[0]?.id,
+                role: "teacher",
+              },
+            }
+          );
         }
       }
     } else if (mode == "edit") {
@@ -371,6 +413,17 @@ const EditPersonDialog = ({
           label={t("profile.general.birthdate")}
           defaultValue={mode == "edit" ? person?.birthdate : undefined}
           onChange={(e: string) => setForm({ ...form, birthdate: e })}
+        />
+        <KeyboardInput
+          name="email"
+          type="email"
+          label={t("profile.general.email")}
+          defaultValue={
+            mode == "edit"
+              ? person?.contacts?.filter((c) => c.type == "Email")[0]?.value
+              : undefined
+          }
+          onChange={(e: string) => setForm({ ...form, email: e })}
         />
       </DialogSection>
 

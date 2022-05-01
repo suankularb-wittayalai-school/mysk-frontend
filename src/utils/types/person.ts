@@ -1,4 +1,5 @@
 import { ClassWName } from "./class";
+import { Contact } from "./contact";
 import { Subject, SubjectGroup } from "./subject";
 
 export type Person = {
@@ -12,6 +13,7 @@ export type Person = {
   profile?: string;
   citizen_id: string;
   birthdate: string;
+  contacts: Contact[];
 };
 
 export type PersonName = {
