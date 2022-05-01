@@ -29,7 +29,8 @@ import StudentTable from "@components/tables/StudentTable";
 
 // Types
 import { Student } from "@utils/types/person";
-import { StudentDB } from "@utils/types/database/person";
+import { PersonTable, StudentDB } from "@utils/types/database/person";
+import { StudentTable as StudentTableType } from "@utils/types/database/person";
 
 // Helper function
 import { db2student } from "@utils/backend/database";
@@ -54,7 +55,42 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
       return;
     }
 
-    await supabase.from("student").delete().match({ id: editingPerson.id });
+    const { data: deleting, error: selectingError } = await supabase
+      .from<StudentTableType>("student")
+      .select("*")
+      .match({ id: editingPerson.id })
+      .limit(1);
+
+    if (selectingError || !deleting) {
+      console.error(selectingError);
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from<StudentTableType>("student")
+      .delete()
+      .match({ id: deleting[0].id });
+    if (error || !data) {
+      console.error(error);
+      return;
+    }
+
+    console.log(deleting);
+
+    // delete the person of the student
+    const { data: person, error: personDeletingError } = await supabase
+      .from<PersonTable>("people")
+      .delete()
+      .match({ id: deleting[0].person });
+
+    if (personDeletingError || !person) {
+      console.error(personDeletingError);
+      return;
+    }
+
+    console.log(person);
+
+
     setShowConfDel(false);
     router.replace(router.asPath);
   }
