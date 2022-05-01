@@ -30,7 +30,11 @@ import TeacherTable from "@components/tables/TeacherTable";
 import { Teacher } from "@utils/types/person";
 import Head from "next/head";
 import { db2teacher } from "@utils/backend/database";
-import { TeacherDB } from "@utils/types/database/person";
+import {
+  PersonTable,
+  TeacherDB,
+  TeacherTable as TeacherTableType,
+} from "@utils/types/database/person";
 
 // Page
 const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
@@ -51,7 +55,32 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
     if (!editingPerson) {
       return;
     }
-    await supabase.from("teacher").delete().match({ id: editingPerson.id });
+
+    const {
+      data: deletingTeacher,
+      error: teacherDeletingError,
+    } = await supabase
+      .from<TeacherTableType>("teacher")
+      .delete()
+      .match({ id: editingPerson.id });
+    if (teacherDeletingError || !deletingTeacher) {
+      console.error(teacherDeletingError);
+      return;
+    }
+
+    // delete the person related to the teacher
+    const {
+      data: deletingPerson,
+      error: personDeletingError,
+    } = await supabase
+      .from<PersonTable>("people")
+      .delete()
+      .match({ id: deletingTeacher[0].person });
+    if (personDeletingError || !deletingPerson) {
+      console.error(personDeletingError);
+      return;
+    }
+
     setShowConfDel(false);
     router.replace(router.asPath);
   }
