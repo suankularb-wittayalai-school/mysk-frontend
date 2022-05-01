@@ -32,3 +32,18 @@ export interface TeacherDB {
     teacher_id: string;
     SubjectGroup: SubjectGroupDB;
 }
+
+export interface StudentTable {
+    id: number;
+    created_at: string;
+    std_id: string;
+    person: number;
+}
+
+export interface TeacherTable {
+    id: number;
+    created_at: string;
+    person: number;
+    teacher_id: string;
+    subject_group: number;
+}
