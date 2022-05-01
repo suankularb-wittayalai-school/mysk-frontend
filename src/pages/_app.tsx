@@ -52,7 +52,7 @@ const App = ({ Component, pageProps }: AppProps) => {
         "/s/home",
         "/s/405/schedule",
         "/s/405/class",
-        "/s/teachers",
+        "/s/405/teachers",
         "news",
       ].includes(router.asPath)
     ? [
@@ -86,7 +86,7 @@ const App = ({ Component, pageProps }: AppProps) => {
             inactive: <MaterialIcon icon="school" type="outlined" />,
             active: <MaterialIcon icon="school" type="filled" />,
           },
-          url: "/s/teachers",
+          url: "/s/405/teachers",
         },
         {
           name: t("navigation.news"),
