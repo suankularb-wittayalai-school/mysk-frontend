@@ -4,13 +4,6 @@ import { PersonDB, StudentTable } from "@utils/types/database/person";
 import { Student } from "@utils/types/person";
 import { createPerson } from "./person";
 
-const prefixMap = {
-    Master: "เด็กชาย",
-    "Mr.": "นาย",
-    "Mrs.": "นาง",
-    "Miss.": "นางสาว",
-};
-
 
 export async function createStudent(student: Student, email: string): Promise<{ data: StudentTable[] | null; error: PostgrestError | null }> {
     const { data: person, error: personCreationError } = await createPerson(student);

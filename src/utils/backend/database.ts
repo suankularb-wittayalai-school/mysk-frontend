@@ -65,8 +65,6 @@ export async function db2teacher(teacher: TeacherDB): Promise<Teacher> {
         },
         citizen_id: teacher.people.citizen_id,
         birthdate: teacher.people.birthdate,
-        // TODO: Subjects in charge
-        subjectsInCharge: [],
         subject_group: {
             id: teacher.SubjectGroup.id,
             name: {

@@ -38,11 +38,5 @@ export type Teacher = Person & {
   role: "teacher";
   teacherID: string;
   classAdvisorAt?: ClassWName;
-  subjectsInCharge: Array<{
-    id: Subject["id"];
-    code: Subject["code"];
-    name: Subject["name"];
-    subjectSubgroup: Subject["subjectSubgroup"];
-  }>;
   subject_group: SubjectGroup;
 };
