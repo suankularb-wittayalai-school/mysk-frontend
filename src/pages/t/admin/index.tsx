@@ -211,7 +211,7 @@ const Admin: NextPage<{
         />
         <ScheduleSection />
       </RegularLayout>
-      // FIXME: This should not be here
+      {/* // FIXME: This should not be here */}
       <EditPersonDialog
         show={showEdit}
         onClose={() => setShowEdit(false)}
