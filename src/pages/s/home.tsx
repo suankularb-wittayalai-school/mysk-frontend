@@ -83,8 +83,6 @@ const StudentHome: NextPage<{
               return;
             }
 
-            // const student = ;
-            // setUser(student);
             db2student(res.data).then((student) => {
               setUser(student);
             });

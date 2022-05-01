@@ -1,4 +1,5 @@
 import { ContactDB } from './contact';
+import { SubjectGroupDB } from './subject';
 
 export interface PersonDB {
     id: number;
@@ -24,3 +25,10 @@ export interface StudentDB {
     people: PersonDB;
 }
 
+export interface TeacherDB {
+    id: number;
+    created_at: string;
+    people: PersonDB;
+    teacher_id: string;
+    SubjectGroup: SubjectGroupDB[];
+}
