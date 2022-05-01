@@ -21,6 +21,6 @@ export interface StudentDB {
     id: number;
     created_at: string;
     std_id: string;
-    person: PersonDB;
+    people: PersonDB;
 }
 

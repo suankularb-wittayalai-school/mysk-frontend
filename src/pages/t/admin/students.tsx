@@ -2,6 +2,7 @@
 import type { GetServerSideProps, NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import Head from "next/head";
 
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
@@ -28,7 +29,10 @@ import StudentTable from "@components/tables/StudentTable";
 
 // Types
 import { Student } from "@utils/types/person";
-import Head from "next/head";
+import { StudentDB } from "@utils/types/database/person";
+
+// Helper function
+import { db2student } from "@utils/backend/database";
 
 // Page
 const Students: NextPage<{ allStudents: Array<Student> }> = ({
@@ -133,7 +137,7 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   const { data, error } = await supabase
-    .from("student")
+    .from<StudentDB>("student")
     .select(`id, std_id, people:person(*)`);
 
   if (error) {
@@ -146,44 +150,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
     return { props: { allStudents: [] } };
   }
 
-  const allStudents = data.map((student) => {
-    // delete student.people.id;
-    const formatted: Student = {
-      id: student.id,
-      prefix: student.people.prefix_en,
-      role: "student",
-      name: {
-        th: {
-          firstName: student.people.first_name_th,
-          lastName: student.people.last_name_th,
-        },
-        "en-US": {
-          firstName: student.people.first_name_en,
-          lastName: student.people.last_name_en,
-        },
-      },
-      studentID: student.std_id,
-
-      // TODO: Get class
-      class: {
-        id: 101,
-        name: {
-          "en-US": "M.101",
-          th: "ม.101",
-        },
-      },
-      citizen_id: student.people.citizen_id,
-      birthdate: student.people.birthdate,
-
-      // TODO: Get classNo
-      classNo: 1,
-
-      // TODO: Get contacts
-      contacts: [],
-    };
-
-    return formatted;
-  });
+  const allStudents = data.map((student) => db2student(student));
 
   return {
     props: {
