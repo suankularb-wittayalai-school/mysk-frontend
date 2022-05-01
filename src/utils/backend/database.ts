@@ -1,5 +1,5 @@
-import { StudentDB } from "@utils/types/database/person";
-import { Student } from "@utils/types/person";
+import { StudentDB, TeacherDB } from "@utils/types/database/person";
+import { Student, Teacher } from "@utils/types/person";
 
 
 export async function db2student(student: StudentDB): Promise<Student> {
@@ -36,4 +36,45 @@ export async function db2student(student: StudentDB): Promise<Student> {
         // TODO: Get contacts
         contacts: [],
     }
+}
+
+export async function db2teacher(teacher: TeacherDB): Promise<Teacher> {
+    return {
+        id: teacher.id,
+        role: "teacher",
+        prefix: teacher.people.prefix_en,
+        name: {
+            "en-US": {
+                firstName: teacher.people.first_name_en ? teacher.people.first_name_en : "",
+                lastName: teacher.people.last_name_en ? teacher.people.last_name_en : "",
+            },
+            th: {
+                firstName: teacher.people.first_name_th,
+                lastName: teacher.people.last_name_th,
+            },
+        },
+        profile: teacher.people.profile,
+        teacherID: teacher.teacher_id,
+        // TODO: Class advisor at
+        classAdvisorAt: {
+            id: 405,
+            name: {
+                "en-US": "M.405",
+                th: "ม.405",
+            },
+        },
+        citizen_id: teacher.people.citizen_id,
+        birthdate: teacher.people.birthdate,
+        // TODO: Subjects in charge
+        subjectsInCharge: [],
+        subject_group: {
+            id: teacher.SubjectGroup.id,
+            name: {
+                "en-US": teacher.SubjectGroup.name_en,
+                th: teacher.SubjectGroup.name_th,
+            },
+        },
+        // TODO: Fetch contact
+        contacts: [],
+    };
 }

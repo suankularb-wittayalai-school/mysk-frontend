@@ -30,5 +30,5 @@ export interface TeacherDB {
     created_at: string;
     people: PersonDB;
     teacher_id: string;
-    SubjectGroup: SubjectGroupDB[];
+    SubjectGroup: SubjectGroupDB;
 }
