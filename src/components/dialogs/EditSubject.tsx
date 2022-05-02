@@ -271,31 +271,33 @@ const EditSubjectDialog = ({
             name="subject-group"
             label="Subject group"
             options={subjectGroups.map((subjectGroup) => ({
-              value: subjectGroup,
+              value: subjectGroup.id,
               label: subjectGroup.name[locale],
             }))}
-            onChange={(e: SubjectGroup) =>
+            onChange={(e: number) =>
               setForm({
                 ...form,
-                subjectGroup: e,
+                subjectGroup: subjectGroups.filter(
+                  (subjectGroup) => subjectGroup.id == e
+                )[0],
               })
             }
-            defaultValue={form.subjectGroup}
+            defaultValue={form.subjectGroup?.id}
           />
           <Dropdown
             name="type"
             label="Subject type"
-            options={subjectTypes.map((type) => ({
-              value: type,
+            options={subjectTypes.map((type, index) => ({
+              value: index,
               label: type[locale],
             }))}
-            onChange={(e: { th: SubjectTypeTH; "en-US": SubjectTypeEN }) =>
+            onChange={(e: number) =>
               setForm({
                 ...form,
-                type: e,
+                type: subjectTypes[e],
               })
             }
-            defaultValue={form.type}
+            defaultValue={mode === "add" ? 0 : subjectTypes.indexOf(form.type)}
           />
         </DialogSection>
         <DialogSection name="personnel" title="Personnel" isDoubleColumn>

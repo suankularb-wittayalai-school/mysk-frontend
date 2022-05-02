@@ -54,7 +54,7 @@ export async function createSubject(
       year: subject.year,
       semester: subject.semester,
       group: subject.subjectGroup.id,
-      // syllabus: subject.syllabus,
+      syllabus: `${subject.code.th}/syllabus.pdf`,
       credit: subject.credit,
       teachers: subject.teachers.map((teacher) => teacher.id),
       coTeachers: subject.coTeachers?.map((teacher) => teacher.id),
