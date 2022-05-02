@@ -4,6 +4,7 @@ import { getDay } from "date-fns";
 import { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -33,8 +34,14 @@ import TeachersSection from "@components/home-sections/TeachersSection";
 import { NewsList } from "@utils/types/news";
 import { Student, Teacher } from "@utils/types/person";
 import { StudentSchedule } from "@utils/types/schedule";
+import { StudentDB } from "@utils/types/database/person";
+
+// External Types
 import { Session } from "@supabase/supabase-js";
-import { useRouter } from "next/router";
+
+// Helper functions
+import { db2student } from "@utils/backend/database";
+import { useSession } from "@utils/hooks/auth";
 
 // Page
 const StudentHome: NextPage<{
@@ -53,25 +60,13 @@ const StudentHome: NextPage<{
   const [showLogOut, setShowLogOut] = useState<boolean>(false);
   const [user, setUser] = useState<Student | Teacher | null>(null);
 
-  const [session, setSession] = useState<null | Session>(null);
-
-  useEffect(() => {
-    if (!supabase.auth.session()) {
-      router.push("/");
-    }
-
-    setSession(supabase.auth.session());
-
-    supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-  }, []);
+  const session = useSession();
 
   useEffect(() => {
     if (session) {
       if (session.user?.user_metadata.role == "student") {
         supabase
-          .from("student")
+          .from<StudentDB>("student")
           .select("id, std_id, people:person(*)")
           .eq("id", session.user?.user_metadata.student)
           .single()
@@ -81,39 +76,8 @@ const StudentHome: NextPage<{
               return;
             }
 
-            const student = res.data;
-            setUser({
-              id: student.id,
-              prefix: student.people.prefix_en,
-              role: "student",
-              name: {
-                th: {
-                  firstName: student.people.first_name_th,
-                  lastName: student.people.last_name_th,
-                },
-                "en-US": {
-                  firstName: student.people.first_name_en,
-                  lastName: student.people.last_name_en,
-                },
-              },
-              studentID: student.std_id,
-
-              // TODO: Get class
-              class: {
-                id: 48,
-                name: {
-                  "en-US": "M.505",
-                  th: "ม.505",
-                },
-              },
-              citizen_id: student.people.citizen_id,
-              birthdate: student.people.birthdate,
-
-              // TODO: Get classNo
-              classNo: 12,
-
-              // TODO: Get contacts
-              contacts: [],
+            db2student(res.data).then((student) => {
+              setUser(student);
             });
           });
       } else if (session.user?.user_metadata.role == "teacher") {

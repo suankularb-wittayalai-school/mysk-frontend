@@ -29,6 +29,12 @@ import TeacherTable from "@components/tables/TeacherTable";
 // Types
 import { Teacher } from "@utils/types/person";
 import Head from "next/head";
+import { db2teacher } from "@utils/backend/database";
+import {
+  PersonTable,
+  TeacherDB,
+  TeacherTable as TeacherTableType,
+} from "@utils/types/database/person";
 
 // Page
 const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
@@ -49,7 +55,32 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
     if (!editingPerson) {
       return;
     }
-    await supabase.from("teacher").delete().match({ id: editingPerson.id });
+
+    const {
+      data: deletingTeacher,
+      error: teacherDeletingError,
+    } = await supabase
+      .from<TeacherTableType>("teacher")
+      .delete()
+      .match({ id: editingPerson.id });
+    if (teacherDeletingError || !deletingTeacher) {
+      console.error(teacherDeletingError);
+      return;
+    }
+
+    // delete the person related to the teacher
+    const {
+      data: deletingPerson,
+      error: personDeletingError,
+    } = await supabase
+      .from<PersonTable>("people")
+      .delete()
+      .match({ id: deletingTeacher[0].person });
+    if (personDeletingError || !deletingPerson) {
+      console.error(personDeletingError);
+      return;
+    }
+
     setShowConfDel(false);
     router.replace(router.asPath);
   }
@@ -130,7 +161,7 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   const { data, error } = await supabase
-    .from("teacher")
+    .from<TeacherDB>("teacher")
     .select("id, teacher_id, people:person(*), SubjectGroup:subject_group(*)");
 
   if (error) {
@@ -143,47 +174,9 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   }
   // console.log(data);
 
-  const allTeachers = data.map((teacher) => {
-    const formatted: Teacher = {
-      id: teacher.id,
-      role: "teacher",
-      prefix: teacher.people.prefix_en,
-      name: {
-        "en-US": {
-          firstName: teacher.people.first_name_en,
-          lastName: teacher.people.last_name_en,
-        },
-        th: {
-          firstName: teacher.people.first_name_th,
-          lastName: teacher.people.last_name_th,
-        },
-      },
-      profile: teacher.people.profile,
-      teacherID: teacher.teacher_id,
-      // TODO: Class advisor at
-      classAdvisorAt: {
-        id: 405,
-        name: {
-          "en-US": "M.405",
-          th: "ม.405",
-        },
-      },
-      citizen_id: teacher.people.citizen_id,
-      birthdate: teacher.people.birthdate,
-      // TODO: Subjects in charge
-      subjectsInCharge: [],
-      subject_group: {
-        id: teacher.SubjectGroup.id,
-        name: {
-          "en-US": teacher.SubjectGroup.name_en,
-          th: teacher.SubjectGroup.name_th,
-        },
-      },
-      // TODO: Fetch contact
-      contacts: [],
-    };
-    return formatted;
-  });
+  const allTeachers: Teacher[] = await Promise.all(
+    data.map(async (student) => await db2teacher(student))
+  );
 
   return {
     props: {

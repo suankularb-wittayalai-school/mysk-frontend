@@ -2,9 +2,11 @@ import { ClassWName } from "./class";
 import { Contact } from "./contact";
 import { Subject, SubjectGroup } from "./subject";
 
+export type Prefix = "Master" | "Mr." | "Mrs." | "Miss."
+
 export type Person = {
   id: number;
-  prefix: "Master" | "Mr." | "Mrs." | "Miss.";
+  prefix: Prefix;
   role: Role;
   name: {
     "en-US"?: PersonName;
@@ -38,11 +40,5 @@ export type Teacher = Person & {
   role: "teacher";
   teacherID: string;
   classAdvisorAt?: ClassWName;
-  subjectsInCharge: Array<{
-    id: Subject["id"];
-    code: Subject["code"];
-    name: Subject["name"];
-    subjectSubgroup: Subject["subjectSubgroup"];
-  }>;
   subject_group: SubjectGroup;
 };

@@ -17,7 +17,17 @@ import {
 
 // Types
 import { DialogProps } from "@utils/types/common";
-import { Role, Student, Teacher } from "@utils/types/person";
+import { Prefix, Role, Student, Teacher } from "@utils/types/person";
+import {
+  PersonDB,
+  StudentTable,
+  TeacherDB,
+  TeacherTable,
+} from "@utils/types/database/person";
+
+// Helper functions
+import { createStudent } from "@utils/backend/person/student";
+import { createTeacher } from "@utils/backend/person/teacher";
 
 const prefixMap = {
   Master: "เด็กชาย",
@@ -157,101 +167,133 @@ const EditPersonDialog = ({
 
     // console.log(form);
     if (mode == "add") {
-      const { data, error } = await supabase.from<any>("people").insert({
-        prefix_th: prefixMap[form.prefix as keyof typeof prefixMap],
-        prefix_en: form.prefix,
-        first_name_th: form.thFirstName,
-        middle_name_th: form.thMiddleName,
-        last_name_th: form.thLastName,
-        first_name_en: form.enFirstName,
-        middle_name_en: form.enMiddleName,
-        last_name_en: form.enLastName,
-        birthdate: form.birthdate,
-        citizen_id: form.citizen_id,
-      });
-      if (error) {
-        console.log(error);
+      if (form.role == "student") {
+        const { data, error } = await createStudent(
+          {
+            id: 0,
+            prefix: form.prefix as Prefix,
+            name: {
+              th: {
+                firstName: form.thFirstName,
+                middleName: form.thMiddleName,
+                lastName: form.thLastName,
+              },
+              "en-US": {
+                firstName: form.enFirstName,
+                middleName: form.enMiddleName,
+                lastName: form.enLastName,
+              },
+            },
+            studentID: form.studentID,
+            citizen_id: form.citizen_id,
+            birthdate: form.birthdate,
+            role: "student",
+            classNo: parseInt(form.classNo),
+            class: {
+              id: form.class,
+              name: {
+                "en-US": "",
+                th: "",
+              },
+            },
+            contacts: [
+              {
+                id: 1,
+                type: "Email",
+                value: form.email,
+                name: {
+                  "en-US": "School Email",
+                  th: "School Email",
+                },
+              },
+            ],
+          },
+          form.email
+        );
+        if (error) {
+          console.error(error);
+          return;
+        }
       }
-      if (data) {
-        if (form.role == "student") {
-          const { data: student, error: error2 } = await supabase
-            .from<any>("student")
-            .insert({
-              person: data[0]?.id,
-              std_id: form.studentID.trim(),
-            });
-          if (error2) {
-            console.log(error2);
-          }
-          if (!student) {
-            return;
-          }
-          // register an account for the student
-          await supabase.auth.signUp(
-            {
-              email: form.email,
-              password: form.birthdate.split("-").join(""),
-            },
-            {
-              data: {
-                student: student[0]?.id,
-                role: "student",
+      // TODO: add student to class
+      else if (form.role == "teacher") {
+        const { data, error } = await createTeacher(
+          {
+            id: 0,
+            prefix: form.prefix as "Mr." | "Mrs." | "Miss." | "Master",
+            name: {
+              th: {
+                firstName: form.thFirstName,
+                middleName: form.thMiddleName,
+                lastName: form.thLastName,
               },
-            }
-          );
-
-          // TODO: add student to class
-        } else if (form.role == "teacher") {
-          const res = await supabase.from<any>("teacher").insert({
-            person: data[0]?.id,
-            subject_group: form.subjectGroup,
-            // class_advisor_at: form.classAdvisorAt,
-            teacher_id: form.teacherID.trim(),
-          });
-          if (res.error) {
-            console.error(res.error);
-          }
-          if (!res.data) {
-            return;
-          }
-
-          // register an account for the teacher
-          await supabase.auth.signUp(
-            {
-              email: form.email,
-              password: form.birthdate.split("-").join(""),
-            },
-            {
-              data: {
-                teacher: res.data[0]?.id,
-                role: "teacher",
+              "en-US": {
+                firstName: form.enFirstName,
+                middleName: form.enMiddleName,
+                lastName: form.enLastName,
               },
-            }
-          );
+            },
+            teacherID: form.teacherID,
+            citizen_id: form.citizen_id,
+            birthdate: form.birthdate,
+            role: "teacher",
+            subject_group: {
+              id: form.subjectGroup,
+              name: {
+                "en-US": "",
+                th: "",
+              },
+            },
+            classAdvisorAt: {
+              id: form.classAdvisorAt,
+              name: {
+                "en-US": "",
+                th: "",
+              },
+            },
+            contacts: [
+              {
+                id: 1,
+                type: "Email",
+                value: form.email,
+                name: {
+                  "en-US": "School Email",
+                  th: "School Email",
+                },
+              },
+            ],
+          },
+          form.email
+        );
+        if (error) {
+          console.error(error);
+          return;
         }
       }
     } else if (mode == "edit") {
       // get id of the person
       const { data, error } = await supabase
-        .from<any>("people")
+        .from<PersonDB>("people")
         .select("id")
         .match({ citizen_id: person?.citizen_id });
       // console.log(data);
-      if (error) {
+      if (error || !data) {
         console.error(error);
-      }
-      if (!data) {
         return;
       }
 
       const personID: number = data[0].id;
 
       // update person
-      const { data: data2, error: error2 } = await supabase
-        .from<any>("people")
+      const { data: updatedPerson, error: updatePersonError } = await supabase
+        .from<PersonDB>("people")
         .update({
-          prefix_th: prefixMap[form.prefix as keyof typeof prefixMap],
-          prefix_en: form.prefix,
+          prefix_th: prefixMap[form.prefix as keyof typeof prefixMap] as
+            | "นาย"
+            | "นาง"
+            | "นางสาว"
+            | "เด็กชาย",
+          prefix_en: form.prefix as "Mr." | "Mrs." | "Miss." | "Master",
           first_name_th: form.thFirstName,
           middle_name_th: form.thMiddleName,
           last_name_th: form.thLastName,
@@ -262,33 +304,36 @@ const EditPersonDialog = ({
           citizen_id: form.citizen_id,
         })
         .match({ id: personID });
-      if (error2) {
-        console.error(error2);
-      }
-      if (!data2) {
+      if (updatePersonError || !updatedPerson) {
+        console.error(updatePersonError);
         return;
       }
+
       if (form.role == "student" && person?.role == "student") {
-        const { data: data3, error: error3 } = await supabase
-          .from<any>("student")
+        const { data: student, error: studentUpdateError } = await supabase
+          .from<StudentTable>("student")
           .update({
             std_id: form.studentID.trim(),
           })
           .match({ person: personID, std_id: person.studentID });
-        if (error3) {
-          console.error(error3);
+        if (studentUpdateError || !student) {
+          console.error(studentUpdateError);
         }
+
+        // if (form.email){
+        //   await supabase.auth.update({});
+        // }
       } else if (form.role == "teacher" && person?.role == "teacher") {
-        const { data: data3, error: error3 } = await supabase
-          .from<any>("teacher")
+        const { data: teacher, error: teacherUpdateError } = await supabase
+          .from<TeacherTable>("teacher")
           .update({
             subject_group: form.subjectGroup,
             // class_advisor_at: form.classAdvisorAt,
             teacher_id: form.teacherID.trim(),
           })
           .match({ person: personID, teacher_id: person.teacherID });
-        if (error3) {
-          console.log(error3);
+        if (teacherUpdateError) {
+          console.error(teacherUpdateError);
         }
       }
     }

@@ -36,6 +36,11 @@ import { Teacher } from "@utils/types/person";
 import { StudentSchedule } from "@utils/types/schedule";
 import { Session } from "@supabase/supabase-js";
 
+// helper function
+import { db2teacher } from "@utils/backend/database";
+import { TeacherDB } from "@utils/types/database/person";
+import { useSession } from "@utils/hooks/auth";
+
 const TeacherHome: NextPage<{
   // user: Teacher;
   schedule: StudentSchedule;
@@ -49,25 +54,14 @@ const TeacherHome: NextPage<{
   const [showLogOut, setShowLogOut] = useState<boolean>(false);
   const [user, setUser] = useState<Teacher | null>(null);
 
-  const [session, setSession] = useState<null | Session>(null);
+  const session = useSession();
 
-  useEffect(() => {
-    if (!supabase.auth.session()) {
-      router.push("/");
-    }
-
-    setSession(supabase.auth.session());
-
-    supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-  }, []);
 
   useEffect(() => {
     if (session) {
       if (session.user?.user_metadata.role == "teacher") {
         supabase
-          .from("teacher")
+          .from<TeacherDB>("teacher")
           .select(
             "id, teacher_id, people:person(*), SubjectGroup:subject_group(*)"
           )
@@ -79,44 +73,8 @@ const TeacherHome: NextPage<{
               return;
             }
 
-            const teacher = res.data;
-            setUser({
-              id: teacher.id,
-              role: "teacher",
-              prefix: teacher.people.prefix_en,
-              name: {
-                "en-US": {
-                  firstName: teacher.people.first_name_en,
-                  lastName: teacher.people.last_name_en,
-                },
-                th: {
-                  firstName: teacher.people.first_name_th,
-                  lastName: teacher.people.last_name_th,
-                },
-              },
-              profile: teacher.people.profile,
-              teacherID: teacher.teacher_id,
-              // TODO: Class advisor at
-              classAdvisorAt: {
-                id: 405,
-                name: {
-                  "en-US": "M.405",
-                  th: "ม.405",
-                },
-              },
-              citizen_id: teacher.people.citizen_id,
-              birthdate: teacher.people.birthdate,
-              // TODO: Subjects in charge
-              subjectsInCharge: [],
-              subject_group: {
-                id: teacher.SubjectGroup.id,
-                name: {
-                  "en-US": teacher.SubjectGroup.name_en,
-                  th: teacher.SubjectGroup.name_th,
-                },
-              },
-              // TODO: Fetch contact
-              contacts: [],
+            db2teacher(res.data).then((teacher) => {
+              setUser(teacher);
             });
           });
       } else if (session.user?.user_metadata.role == "student") {
@@ -191,68 +149,6 @@ const TeacherHome: NextPage<{
 };
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
-  const user: Teacher = {
-    id: 31,
-    role: "teacher",
-    prefix: "mister",
-    name: {
-      "en-US": { firstName: "Atipol", lastName: "Sukrisadanon" },
-      th: { firstName: "อติพล", lastName: "สุกฤษฎานนท์" },
-    },
-    profile: "/images/dummybase/atipol.webp",
-    teacherID: "skt420",
-    classAdvisorAt: {
-      id: 509,
-      name: {
-        "en-US": "M.509",
-        th: "ม.509",
-      },
-    },
-    subjectsInCharge: [
-      {
-        id: 8,
-        code: { "en-US": "I21202", th: "I21202" },
-        name: {
-          "en-US": { name: "Communication and Presentation" },
-          th: { name: "การสื่อสารและการนำเสนอ" },
-        },
-        subjectSubgroup: {
-          name: { "en-US": "English", th: "ภาษาอังกฤษ" },
-          subjectGroup: {
-            name: { "en-US": "Foreign Languages", th: "ภาษาต่างประเทศ" },
-          },
-        },
-      },
-      {
-        id: 19,
-        code: { "en-US": "ENG20218", th: "อ20218" },
-        name: {
-          "en-US": { name: "Reading 6" },
-          th: { name: "การอ่าน 6" },
-        },
-        subjectSubgroup: {
-          name: { "en-US": "English", th: "ภาษาอังกฤษ" },
-          subjectGroup: {
-            name: { "en-US": "Foreign Language", th: "ภาษาต่างประเทศ" },
-          },
-        },
-      },
-      {
-        id: 26,
-        code: { "en-US": "ENG32102", th: "อ32102" },
-        name: {
-          "en-US": { name: "English 4" },
-          th: { name: "ภาษาอังกฤษ 4" },
-        },
-        subjectSubgroup: {
-          name: { "en-US": "English", th: "ภาษาอังกฤษ" },
-          subjectGroup: {
-            name: { "en-US": "Foreign Language", th: "ภาษาต่างประเทศ" },
-          },
-        },
-      },
-    ],
-  };
   const studentForms: Array<StudentForm> = [
     {
       id: 5,
@@ -319,7 +215,6 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         "news",
         "dashboard",
       ])),
-      user,
       // (@SiravitPhokeed)
       // Apparently NextJS doesn’t serialize Date when in development
       // It does in production, though.
