@@ -17,13 +17,15 @@ import {
 
 // Types
 import { DialogProps } from "@utils/types/common";
-import { Role, Student, Teacher } from "@utils/types/person";
+import { Prefix, Role, Student, Teacher } from "@utils/types/person";
 import {
   PersonDB,
   StudentTable,
   TeacherDB,
   TeacherTable,
 } from "@utils/types/database/person";
+
+// Helper functions
 import { createStudent } from "@utils/backend/person/student";
 import { createTeacher } from "@utils/backend/person/teacher";
 
@@ -169,7 +171,7 @@ const EditPersonDialog = ({
         const { data, error } = await createStudent(
           {
             id: 0,
-            prefix: form.prefix as "Mr." | "Mrs." | "Miss." | "Master",
+            prefix: form.prefix as Prefix,
             name: {
               th: {
                 firstName: form.thFirstName,

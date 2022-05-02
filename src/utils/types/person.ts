@@ -2,9 +2,11 @@ import { ClassWName } from "./class";
 import { Contact } from "./contact";
 import { Subject, SubjectGroup } from "./subject";
 
+export type Prefix = "Master" | "Mr." | "Mrs." | "Miss."
+
 export type Person = {
   id: number;
-  prefix: "Master" | "Mr." | "Mrs." | "Miss.";
+  prefix: Prefix;
   role: Role;
   name: {
     "en-US"?: PersonName;

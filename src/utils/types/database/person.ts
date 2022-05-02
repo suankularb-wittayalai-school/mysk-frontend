@@ -1,11 +1,13 @@
+import { Prefix } from '../person';
 import { ContactDB } from './contact';
 import { SubjectGroupDB } from './subject';
 
+export type PrefixTH = "เด็กชาย" | "นาย" | "นาง" | "นางสาว"
 export interface PersonDB {
     id: number;
     created_at: string;
-    prefix_en: "Master" | "Mr." | "Mrs." | "Miss.";
-    prefix_th: "เด็กชาย" | "นาย" | "นาง" | "นางสาว";
+    prefix_en: Prefix;
+    prefix_th: PrefixTH;
     first_name_th: string;
     last_name_th: string;
     middle_name_th?: string;
@@ -36,8 +38,8 @@ export interface TeacherDB {
 export interface PersonTable {
     id: number;
     created_at: string;
-    prefix_en: "Master" | "Mr." | "Mrs." | "Miss.";
-    prefix_th: "เด็กชาย" | "นาย" | "นาง" | "นางสาว";
+    prefix_en: Prefix;
+    prefix_th: PrefixTH;
     first_name_th: string;
     last_name_th: string;
     middle_name_th?: string;
