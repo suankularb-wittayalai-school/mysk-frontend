@@ -41,6 +41,7 @@ import { Session } from "@supabase/supabase-js";
 
 // Helper functions
 import { db2student } from "@utils/backend/database";
+import { useSession } from "@utils/hooks/auth";
 
 // Page
 const StudentHome: NextPage<{
@@ -59,19 +60,7 @@ const StudentHome: NextPage<{
   const [showLogOut, setShowLogOut] = useState<boolean>(false);
   const [user, setUser] = useState<Student | Teacher | null>(null);
 
-  const [session, setSession] = useState<null | Session>(null);
-
-  useEffect(() => {
-    if (!supabase.auth.session()) {
-      router.push("/");
-    }
-
-    setSession(supabase.auth.session());
-
-    supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-  }, []);
+  const session = useSession();
 
   useEffect(() => {
     if (session) {
