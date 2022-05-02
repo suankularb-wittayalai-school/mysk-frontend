@@ -41,17 +41,17 @@ export async function createTeacher(
   }
 
   // register an account for the teacher
-  await supabase.auth.signUp(
-    {
-      email: email,
-      password: teacher.birthdate.split("-").join(""),
+  await fetch("/api/account/teacher", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
     },
-    {
-      data: {
-        teacher: createdTeacher[0]?.id,
-        role: "teacher",
-      },
-    }
-  );
+    body: JSON.stringify({
+      email,
+      password: teacher.birthdate.split("-").join(""),
+      id: createdTeacher[0]?.id,
+    }),
+  });
+
   return { data: createdTeacher, error: null };
 }

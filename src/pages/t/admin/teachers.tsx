@@ -66,7 +66,7 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
         teacher: number;
       }>("users")
       .select("id")
-      .match({ student: editingPerson.id })
+      .match({ teacher: editingPerson.id })
       .limit(1);
 
     // console.log(userid, editingPerson);

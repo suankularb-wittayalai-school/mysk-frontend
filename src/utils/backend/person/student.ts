@@ -45,7 +45,7 @@ export async function createStudent(
     }),
   });
 
-  console.log(await res.json());
+  // console.log(await res.json());
 
   return { data: createdStudent, error: null };
 }
