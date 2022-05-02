@@ -39,7 +39,7 @@ export async function createSubject(
   }
 
   const { data: createdSubject, error: subjectCreationError } = await supabase
-    .from<SubjectTable>("subjects")
+    .from<SubjectTable>("subject")
     .insert({
       name_th: subject.name.th.name,
       name_en: subject.name["en-US"].name,

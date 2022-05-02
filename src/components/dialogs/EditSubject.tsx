@@ -29,6 +29,7 @@ import {
 import { Teacher } from "@utils/types/person";
 import { useSubjectGroupOption } from "@utils/hooks/subject";
 import { nameJoiner } from "@utils/helpers/name";
+import { createSubject } from "@utils/backend/subject/subject";
 
 const EditSubjectDialog = ({
   show,
@@ -124,9 +125,24 @@ const EditSubjectDialog = ({
     }
   }, [mode, subjectGroups]);
 
+  async function handleSubmit() {
+    if (mode == "add") {
+      const { data, error } = await createSubject(form);
+      if (error) {
+        console.error(error);
+      }
+      if (!data) {
+        return;
+      }
+    }
+    // else if (mode == "edit") {
+    //   await onSubmit();
+    // }
+    onSubmit();
+  }
+
   return (
     <>
-      {/* {console.log(form)} */}
       <Dialog
         type="large"
         label="edit-subject"
@@ -137,7 +153,7 @@ const EditSubjectDialog = ({
         ]}
         show={show}
         onClose={() => setShowDiscard(true)}
-        onSubmit={onSubmit}
+        onSubmit={handleSubmit}
       >
         <DialogSection name="name-th" title="Local name (Thai)" isDoubleColumn>
           <KeyboardInput
