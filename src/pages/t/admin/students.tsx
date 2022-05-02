@@ -28,7 +28,7 @@ import EditPersonDialog from "@components/dialogs/EditPerson";
 import StudentTable from "@components/tables/StudentTable";
 
 // Types
-import { Student } from "@utils/types/person";
+import { Role, Student } from "@utils/types/person";
 import { PersonTable, StudentDB } from "@utils/types/database/person";
 import { StudentTable as StudentTableType } from "@utils/types/database/person";
 
@@ -55,6 +55,24 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
       return;
     }
 
+    const { data: userid, error: selectingError } = await supabase
+      .from<{
+        id: string;
+        email: string;
+        role: Role;
+        student: number;
+        teacher: number;
+      }>("users")
+      .select("id")
+      .match({ student: editingPerson.id })
+      .limit(1);
+
+    // console.log(userid, editingPerson);
+
+    if (selectingError || userid.length == 0) {
+      return;
+    }
+
     const { data: deleting, error } = await supabase
       .from<StudentTableType>("student")
       .delete()
@@ -63,8 +81,6 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
       console.error(error);
       return;
     }
-
-    // console.log(deleting);
 
     // delete the person of the student
     const { data: person, error: personDeletingError } = await supabase
@@ -76,6 +92,17 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
       console.error(personDeletingError);
       return;
     }
+
+    // delete account of the student
+    await fetch(`/api/account/student`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: userid[0].id,
+      }),
+    });
 
     // console.log(person);
 

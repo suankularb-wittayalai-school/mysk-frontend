@@ -1,9 +1,9 @@
 import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const supabaseServiceRole = process.env.SUPABASE_SERVICE_ROLE;
 
-if (!supabaseUrl || !supabaseAnonKey) {
+if (!supabaseUrl || !supabaseServiceRole) {
   throw new Error("Missing supabase config");
 }
 
@@ -14,6 +14,9 @@ const option = {
   detectSessionInUrl: true,
 };
 
-// console.log(`supabaseUrl: ${supabaseUrl}`)
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, option);
+// supabase client for backend
+export const supabaseBackend = createClient(
+  supabaseUrl,
+  supabaseServiceRole,
+  option
+);

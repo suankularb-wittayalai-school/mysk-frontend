@@ -1,5 +1,6 @@
 // Modules
 import type { GetServerSideProps, NextPage } from "next";
+import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -26,10 +27,11 @@ import ConfirmDelete from "@components/dialogs/ConfirmDelete";
 import EditPersonDialog from "@components/dialogs/EditPerson";
 import TeacherTable from "@components/tables/TeacherTable";
 
+// Backend
+import { db2teacher } from "@utils/backend/database";
+
 // Types
 import { Teacher } from "@utils/types/person";
-import Head from "next/head";
-import { db2teacher } from "@utils/backend/database";
 import {
   PersonTable,
   TeacherDB,
@@ -132,7 +134,6 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
       <EditPersonDialog
         show={showEdit}
         onClose={() => setShowEdit(false)}
-        // TODO: Refetch teachers here ↓
         onSubmit={() => {
           setShowEdit(false);
           router.replace(router.asPath);

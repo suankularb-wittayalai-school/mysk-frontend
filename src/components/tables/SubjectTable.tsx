@@ -12,13 +12,18 @@ import TeacherTeachingList from "@components/TeacherTeachingList";
 import { Subject } from "@utils/types/subject";
 
 // Helpers
-import { nameJoiner } from "@utils/helpers/name";
 import { getLocaleYear } from "@utils/helpers/date";
 
 const SubjectTable = ({
   subjects,
+  setShowEdit,
+  setEditingSubject,
+  setShowConfDelSubject,
 }: {
   subjects: Array<Subject>;
+  setShowEdit?: (value: boolean) => void;
+  setEditingSubject?: (subject: Subject) => void;
+  setShowConfDelSubject?: (value: boolean) => void;
 }): JSX.Element => {
   const { t } = useTranslation("admin");
   const locale = useRouter().locale as "en-US" | "th";
@@ -32,7 +37,9 @@ const SubjectTable = ({
           <th className="w-2/12">{t("subjectList.table.teachers")}</th>
           <th className="w-1/12">{t("subjectList.table.year")}</th>
           <th className="w-1/12">{t("subjectList.table.semester")}</th>
-          <th className="w-2/12" />
+          {setShowEdit && setEditingSubject && setShowConfDelSubject && (
+            <th className="w-2/12" />
+          )}
         </tr>
       </thead>
       <tbody>
@@ -47,25 +54,33 @@ const SubjectTable = ({
             </td>
             <td>{getLocaleYear(locale, subject.year)}</td>
             <td>{subject.semester}</td>
-            <td>
-              <div className="flex flex-row justify-center gap-2">
-                <Button
-                  name={t("subjectList.table.action.edit")}
-                  type="text"
-                  iconOnly
-                  icon={<MaterialIcon icon="edit" />}
-                  onClick={() => {}}
-                />
-                <Button
-                  name={t("subjectList.table.action.delete")}
-                  type="text"
-                  iconOnly
-                  icon={<MaterialIcon icon="delete" />}
-                  isDangerous
-                  onClick={() => {}}
-                />
-              </div>
-            </td>
+            {setShowEdit && setEditingSubject && setShowConfDelSubject && (
+              <td>
+                <div className="flex flex-row justify-center gap-2">
+                  <Button
+                    name={t("subjectList.table.action.edit")}
+                    type="text"
+                    iconOnly
+                    icon={<MaterialIcon icon="edit" />}
+                    onClick={() => {
+                      setEditingSubject(subject);
+                      setShowEdit(true);
+                    }}
+                  />
+                  <Button
+                    name={t("subjectList.table.action.delete")}
+                    type="text"
+                    iconOnly
+                    icon={<MaterialIcon icon="delete" />}
+                    isDangerous
+                    onClick={() => {
+                      setEditingSubject(subject);
+                      setShowConfDelSubject(true);
+                    }}
+                  />
+                </div>
+              </td>
+            )}
           </tr>
         ))}
       </tbody>

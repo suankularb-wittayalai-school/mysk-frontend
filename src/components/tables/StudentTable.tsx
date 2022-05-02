@@ -18,12 +18,12 @@ const StudentTable = ({
   setShowConfDelStudent,
 }: {
   students: Array<Student>;
-  setShowEdit: (value: boolean) => void;
-  setEditingPerson: (student: Student) => void;
-  setShowConfDelStudent: (value: boolean) => void;
+  setShowEdit?: (value: boolean) => void;
+  setEditingPerson?: (student: Student) => void;
+  setShowConfDelStudent?: (value: boolean) => void;
 }): JSX.Element => {
   const { t } = useTranslation("admin");
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const locale = useRouter().locale as "en-US" | "th";
 
   return (
     <Table width={800}>
@@ -33,7 +33,9 @@ const StudentTable = ({
           <th className="w-1/12">{t("studentList.table.class")}</th>
           <th className="w-1/12">{t("studentList.table.classNo")}</th>
           <th className="w-6/12">{t("studentList.table.name")}</th>
-          <th className="w-2/12" />
+          {setShowEdit && setEditingPerson && setShowConfDelStudent && (
+            <th className="w-2/12" />
+          )}
         </tr>
       </thead>
       <tbody>
@@ -52,42 +54,44 @@ const StudentTable = ({
                 }
               )}
             </td>
-            <td>
-              <div className="flex flex-row justify-center gap-2">
-                <Button
-                  name={t("studentList.table.action.copy")}
-                  type="text"
-                  iconOnly
-                  icon={<MaterialIcon icon="content_copy" />}
-                  onClick={() =>
-                    navigator.clipboard?.writeText(
-                      nameJoiner(locale, student.name)
-                    )
-                  }
-                  className="!hidden sm:!block"
-                />
-                <Button
-                  name={t("studentList.table.action.edit")}
-                  type="text"
-                  iconOnly
-                  icon={<MaterialIcon icon="edit" />}
-                  onClick={() => {
-                    setShowEdit(true);
-                    setEditingPerson(student);
-                  }}
-                />
-                <Button
-                  type="text"
-                  iconOnly
-                  icon={<MaterialIcon icon="delete" />}
-                  isDangerous
-                  onClick={() => {
-                    setShowConfDelStudent(true);
-                    setEditingPerson(student);
-                  }}
-                />
-              </div>
-            </td>
+            {setShowEdit && setEditingPerson && setShowConfDelStudent && (
+              <td>
+                <div className="flex flex-row justify-center gap-2">
+                  <Button
+                    name={t("studentList.table.action.copy")}
+                    type="text"
+                    iconOnly
+                    icon={<MaterialIcon icon="content_copy" />}
+                    onClick={() =>
+                      navigator.clipboard?.writeText(
+                        nameJoiner(locale, student.name)
+                      )
+                    }
+                    className="!hidden sm:!block"
+                  />
+                  <Button
+                    name={t("studentList.table.action.edit")}
+                    type="text"
+                    iconOnly
+                    icon={<MaterialIcon icon="edit" />}
+                    onClick={() => {
+                      setShowEdit(true);
+                      setEditingPerson(student);
+                    }}
+                  />
+                  <Button
+                    type="text"
+                    iconOnly
+                    icon={<MaterialIcon icon="delete" />}
+                    isDangerous
+                    onClick={() => {
+                      setShowConfDelStudent(true);
+                      setEditingPerson(student);
+                    }}
+                  />
+                </div>
+              </td>
+            )}
           </tr>
         ))}
       </tbody>

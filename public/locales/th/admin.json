@@ -31,7 +31,7 @@
     }
   },
   "subjectList": {
-    "title": "รายวิชา",
+    "title": "รายชื่อวิชา",
     "searchSubjects": "ค้นหาวิชา",
     "table": {
       "code": "รหัสวิชา",

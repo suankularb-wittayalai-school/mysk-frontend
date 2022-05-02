@@ -40,6 +40,7 @@ import {
   TeacherDB,
   TeacherTable as TeacherTableType,
 } from "@utils/types/database/person";
+import { Subject } from "@utils/types/subject";
 
 // Supabase
 import { supabase } from "@utils/supabaseClient";
@@ -52,14 +53,8 @@ import { db2student, db2teacher } from "@utils/backend/database";
 
 const StudentSection = ({
   someStudents,
-  setShowEdit,
-  setEditingPerson,
-  setShowConfDelStudent,
 }: {
   someStudents: Array<Student>;
-  setShowEdit: (value: boolean) => void;
-  setEditingPerson: (student: Student) => void;
-  setShowConfDelStudent: (value: boolean) => void;
 }): JSX.Element => {
   const { t } = useTranslation("admin");
   const locale = useRouter().locale as "en-US" | "th";
@@ -79,12 +74,7 @@ const StudentSection = ({
         />
       </div>
       <div>
-        <StudentTable
-          students={someStudents}
-          setShowEdit={setShowEdit}
-          setEditingPerson={setEditingPerson}
-          setShowConfDelStudent={setShowConfDelStudent}
-        />
+        <StudentTable students={someStudents} />
       </div>
       <div className="flex flex-row items-center justify-end gap-2">
         <LinkButton
@@ -100,14 +90,8 @@ const StudentSection = ({
 
 const TeacherSection = ({
   someTeachers,
-  setShowEdit,
-  setEditingPerson,
-  setShowConfDelTeacher,
 }: {
   someTeachers: Array<Teacher>;
-  setShowEdit: (value: boolean) => void;
-  setEditingPerson: (teacher: Teacher) => void;
-  setShowConfDelTeacher: (value: boolean) => void;
 }): JSX.Element => {
   const { t } = useTranslation("admin");
 
@@ -123,12 +107,7 @@ const TeacherSection = ({
         <Search placeholder={t("teacherList.searchTeachers")} />
       </div>
       <div>
-        <TeacherTable
-          teachers={someTeachers}
-          setShowEdit={setShowEdit}
-          setEditingPerson={setEditingPerson}
-          setShowConfDelTeacher={setShowConfDelTeacher}
-        />
+        <TeacherTable teachers={someTeachers} />
       </div>
       <div className="flex flex-row items-center justify-end gap-2">
         <LinkButton
@@ -142,7 +121,7 @@ const TeacherSection = ({
   );
 };
 
-const SubjectSection = () => {
+const SubjectSection = ({ someSubjects }: { someSubjects: Subject[] }) => {
   const { t } = useTranslation("admin");
 
   return (
@@ -157,32 +136,7 @@ const SubjectSection = () => {
         <Search placeholder={t("subjectList.searchSubjects")} />
       </div>
       <div>
-        <SubjectTable
-          subjects={[
-            {
-              id: 1,
-              code: {
-                "en-US": "MA11234",
-                th: "ค11234",
-              },
-              name: {
-                "en-US": { name: "Math" },
-                th: { name: "คณุต" },
-              },
-              teachers: [],
-              coTeachers: [],
-              subjectSubgroup: {
-                name: { "en-US": "Mathematics", th: "คณิตศาสตร์" },
-                subjectGroup: {
-                  id: 8,
-                  name: { "en-US": "Mathematics", th: "คณิตศาสตร์" },
-                },
-              },
-              year: 2022,
-              semester: 1,
-            },
-          ]}
-        />
+        <SubjectTable subjects={someSubjects} />
       </div>
       <div className="flex flex-row items-center justify-end gap-2">
         <LinkButton
@@ -209,13 +163,7 @@ const ScheduleSection = (): JSX.Element => {
         {range(6).map((grade) => (
           <Link key={grade} href={`/t/admin/schedule/${grade + 1}`}>
             <a>
-              <Chip
-                name={
-                  <Trans i18nKey="schedule.gradeItem" ns="admin">
-                    M.{{ grade: grade + 1 }}
-                  </Trans>
-                }
-              />
+              <Chip name={t("schedule.gradeItem", { grade: grade + 1 })} />
             </a>
           </Link>
         ))}
@@ -225,18 +173,11 @@ const ScheduleSection = (): JSX.Element => {
 };
 
 const Admin: NextPage<{
-  someStudents: Array<Student>;
-  someTeachers: Array<Teacher>;
-}> = ({ someStudents, someTeachers }) => {
+  someStudents: Student[];
+  someTeachers: Teacher[];
+  someSubjects: Subject[];
+}> = ({ someStudents, someTeachers, someSubjects }) => {
   const { t } = useTranslation(["admin", "common"]);
-
-  // Edit Person dialog
-  const [showEdit, setShowEdit] = useState<boolean>(false);
-  const [editingPerson, setEditingPerson] = useState<Student | Teacher>();
-
-  // Confirm Delete dialogs
-  const [showConfDelStudent, setShowConfDelStudent] = useState<boolean>(false);
-  const [showConfDelTeacher, setShowConfDelTeacher] = useState<boolean>(false);
 
   return (
     <>
@@ -255,43 +196,11 @@ const Admin: NextPage<{
           />
         }
       >
-        <StudentSection
-          someStudents={someStudents}
-          setShowEdit={setShowEdit}
-          setEditingPerson={setEditingPerson}
-          setShowConfDelStudent={setShowConfDelStudent}
-        />
-        <TeacherSection
-          someTeachers={someTeachers}
-          setShowEdit={setShowEdit}
-          setEditingPerson={setEditingPerson}
-          setShowConfDelTeacher={setShowConfDelTeacher}
-        />
-        <SubjectSection />
+        <StudentSection someStudents={someStudents} />
+        <TeacherSection someTeachers={someTeachers} />
+        <SubjectSection someSubjects={someSubjects} />
         <ScheduleSection />
       </RegularLayout>
-
-      {/* // FIXME: This should not be here */}
-      <EditPersonDialog
-        show={showEdit}
-        onClose={() => setShowEdit(false)}
-        // TODO: Refetch students here ↓
-        onSubmit={() => setShowEdit(false)}
-        mode="edit"
-        person={editingPerson}
-      />
-      <ConfirmDelete
-        show={showConfDelStudent}
-        onClose={() => setShowConfDelStudent(false)}
-        // TODO: Refetch students here ↓
-        onSubmit={() => setShowConfDelStudent(false)}
-      />
-      <ConfirmDelete
-        show={showConfDelTeacher}
-        onClose={() => setShowConfDelTeacher(false)}
-        // TODO: Refetch students here ↓
-        onSubmit={() => setShowConfDelTeacher(false)}
-      />
     </>
   );
 };
@@ -321,6 +230,29 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
     );
   }
 
+  // Dummybase
+  const someSubjects = [
+    {
+      id: 1,
+      code: {
+        "en-US": "MA11234",
+        th: "ค11234",
+      },
+      name: {
+        "en-US": { name: "Math" },
+        th: { name: "คณุต" },
+      },
+      teachers: [],
+      coTeachers: [],
+      subjectGroup: {
+        id: 8,
+        name: { "en-US": "Mathematics", th: "คณิตศาสตร์" },
+      },
+      year: 2022,
+      semester: 1,
+    },
+  ];
+
   return {
     props: {
       ...(await serverSideTranslations(locale as string, [
@@ -330,6 +262,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
       ])),
       someStudents,
       someTeachers,
+      someSubjects,
     },
   };
 };

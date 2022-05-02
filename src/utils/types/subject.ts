@@ -30,10 +30,10 @@ export type Subject = {
     th: SubjectName;
   };
   teachers: Teacher[];
-  coTeachers: Teacher[];
-  subjectSubgroup: SubjectSubgroup;
+  coTeachers?: Teacher[];
+  subjectGroup: SubjectGroup;
   year: number;
-  semester: number;
+  semester: 1 | 2;
 };
 
 export type SubjectWNameAndCode = {

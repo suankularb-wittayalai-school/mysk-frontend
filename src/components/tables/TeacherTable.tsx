@@ -18,12 +18,12 @@ const TeacherTable = ({
   setShowConfDelTeacher,
 }: {
   teachers: Array<Teacher>;
-  setShowEdit: (value: boolean) => void;
-  setEditingPerson: (teacher: Teacher) => void;
-  setShowConfDelTeacher: (value: boolean) => void;
+  setShowEdit?: (value: boolean) => void;
+  setEditingPerson?: (teacher: Teacher) => void;
+  setShowConfDelTeacher?: (value: boolean) => void;
 }): JSX.Element => {
   const { t } = useTranslation("admin");
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const locale = useRouter().locale as "en-US" | "th";
 
   return (
     <Table width={800}>
@@ -32,7 +32,9 @@ const TeacherTable = ({
           <th className="w-2/12">{t("teacherList.table.id")}</th>
           <th className="w-6/12">{t("teacherList.table.name")}</th>
           <th className="w-2/12">{t("teacherList.table.classAdvisorAt")}</th>
-          <th className="w-2/12" />
+          {setShowEdit && setEditingPerson && setShowConfDelTeacher && (
+            <th className="w-2/12" />
+          )}
         </tr>
       </thead>
       <tbody>
@@ -50,59 +52,63 @@ const TeacherTable = ({
               )}
             </td>
             <td>
-              {teacher.classAdvisorAt ? (
-                teacher.classAdvisorAt?.name[locale] ||
-                teacher.classAdvisorAt?.name.th
-              ) : (
-                <div className="grid place-content-center">
+              {teacher.classAdvisorAt
+                ? teacher.classAdvisorAt?.name[locale] ||
+                  teacher.classAdvisorAt?.name.th
+                : setShowEdit &&
+                  setEditingPerson &&
+                  setShowConfDelTeacher && (
+                    <div className="grid place-content-center">
+                      <Button
+                        icon={<MaterialIcon icon="add" />}
+                        iconOnly
+                        type="text"
+                        onClick={() => {
+                          setShowEdit(true);
+                          setEditingPerson(teacher);
+                        }}
+                      />
+                    </div>
+                  )}
+            </td>
+            {setShowEdit && setEditingPerson && setShowConfDelTeacher && (
+              <td>
+                <div className="flex flex-row justify-center gap-2">
                   <Button
-                    icon={<MaterialIcon icon="add" />}
-                    iconOnly
+                    name={t("studentList.table.action.copy")}
                     type="text"
+                    iconOnly
+                    icon={<MaterialIcon icon="content_copy" />}
+                    onClick={() =>
+                      navigator.clipboard?.writeText(
+                        nameJoiner(locale, teacher.name)
+                      )
+                    }
+                    className="!hidden sm:!block"
+                  />
+                  <Button
+                    name={t("studentList.table.action.edit")}
+                    type="text"
+                    iconOnly
+                    icon={<MaterialIcon icon="edit" />}
                     onClick={() => {
                       setShowEdit(true);
                       setEditingPerson(teacher);
                     }}
                   />
+                  <Button
+                    type="text"
+                    iconOnly
+                    icon={<MaterialIcon icon="delete" />}
+                    isDangerous
+                    onClick={() => {
+                      setShowConfDelTeacher(true);
+                      setEditingPerson(teacher);
+                    }}
+                  />
                 </div>
-              )}
-            </td>
-            <td>
-              <div className="flex flex-row justify-center gap-2">
-                <Button
-                  name={t("studentList.table.action.copy")}
-                  type="text"
-                  iconOnly
-                  icon={<MaterialIcon icon="content_copy" />}
-                  onClick={() =>
-                    navigator.clipboard?.writeText(
-                      nameJoiner(locale, teacher.name)
-                    )
-                  }
-                  className="!hidden sm:!block"
-                />
-                <Button
-                  name={t("studentList.table.action.edit")}
-                  type="text"
-                  iconOnly
-                  icon={<MaterialIcon icon="edit" />}
-                  onClick={() => {
-                    setShowEdit(true);
-                    setEditingPerson(teacher);
-                  }}
-                />
-                <Button
-                  type="text"
-                  iconOnly
-                  icon={<MaterialIcon icon="delete" />}
-                  isDangerous
-                  onClick={() => {
-                    setShowConfDelTeacher(true);
-                    setEditingPerson(teacher);
-                  }}
-                />
-              </div>
-            </td>
+              </td>
+            )}
           </tr>
         ))}
       </tbody>
