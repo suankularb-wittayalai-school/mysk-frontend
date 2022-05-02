@@ -38,6 +38,8 @@ export type Subject = {
   subjectGroup: SubjectGroup;
   year: number;
   semester: 1 | 2;
+  syllabus: string | File | null;
+  credit: number;
 };
 
 export type SubjectWNameAndCode = {

@@ -94,6 +94,7 @@ const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
         show={showEdit}
         onClose={() => setShowEdit(false)}
         onSubmit={() => setShowEdit(false)}
+        subject={editingSubject}
         mode="edit"
       />
       <ConfirmDelete
@@ -125,6 +126,8 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
       },
       year: 2022,
       semester: 1,
+      credit: 3,
+      syllabus: "https://www.google.com",
     },
   ];
 
