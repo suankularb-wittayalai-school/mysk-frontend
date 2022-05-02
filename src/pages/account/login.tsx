@@ -9,9 +9,6 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { FormEvent, useState } from "react";
 
-// Supabase imports
-import { supabase } from "@utils/supabaseClient";
-
 // SK Components
 import {
   KeyboardInput,
@@ -19,9 +16,8 @@ import {
   Title,
 } from "@suankularb-components/react";
 
-// Utils
-// import { logIn } from "@utils/backend/account";
-// import { Role } from "@utils/types/person";
+// Supabase
+import { supabase } from "@utils/supabaseClient";
 
 const LoginForm = () => {
   const { t } = useTranslation("account");

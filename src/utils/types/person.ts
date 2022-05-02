@@ -2,7 +2,7 @@ import { ClassWName } from "./class";
 import { Contact } from "./contact";
 import { Subject, SubjectGroup } from "./subject";
 
-export type Prefix = "Master" | "Mr." | "Mrs." | "Miss."
+export type Prefix = "Master" | "Mr." | "Mrs." | "Miss.";
 
 export type Person = {
   id: number;
@@ -13,7 +13,7 @@ export type Person = {
     th: PersonName;
   };
   profile?: string;
-  citizen_id: string;
+  citizenID: string;
   birthdate: string;
   contacts: Contact[];
 };
@@ -40,5 +40,5 @@ export type Teacher = Person & {
   role: "teacher";
   teacherID: string;
   classAdvisorAt?: ClassWName;
-  subject_group: SubjectGroup;
+  subjectGroup: SubjectGroup;
 };

@@ -29,8 +29,11 @@ export type Subject = {
     "en-US": SubjectName;
     th: SubjectName;
   };
-  teachers: Array<Teacher>;
+  teachers: Teacher[];
+  coTeachers: Teacher[];
   subjectSubgroup: SubjectSubgroup;
+  year: number;
+  semester: number;
 };
 
 export type SubjectWNameAndCode = {

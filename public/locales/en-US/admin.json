@@ -30,6 +30,22 @@
       "addTeacher": "Add teacher"
     }
   },
+  "subjectList": {
+    "title": "Subject list",
+    "searchSubjects": "Search subjects",
+    "table": {
+      "code": "Subject code",
+      "name": "Subject name",
+      "teachers": "Teachers",
+      "year": "A. year",
+      "semester": "Semester"
+    },
+    "action": {
+      "seeDetails": "See details",
+      "edit": "Edit",
+      "delete": "Delete"
+    }
+  },
   "schedule": {
     "title": "Schedule lookup",
     "gradeItem": "M.{{grade}}",

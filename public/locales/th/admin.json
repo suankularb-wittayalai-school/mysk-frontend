@@ -30,6 +30,22 @@
       "addTeacher": "เพิ่มอาจารย์"
     }
   },
+  "subjectList": {
+    "title": "รายวิชา",
+    "searchSubjects": "ค้นหาวิชา",
+    "table": {
+      "code": "รหัสวิชา",
+      "name": "ชื่อวิชา",
+      "teachers": "อาจารย์ผู้สอน",
+      "year": "ปีกศษ.",
+      "semester": "ภาคเรียน"
+    },
+    "action": {
+      "seeDetails": "อ่านเพิ่มเติม",
+      "edit": "แก้ไข",
+      "delete": "ลบทิ้ง"
+    }
+  },
   "schedule": {
     "title": "เรียกดูตารางเรียน",
     "gradeItem": "ม.{{grade}}",

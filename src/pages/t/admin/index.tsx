@@ -28,19 +28,26 @@ import {
 import ConfirmDelete from "@components/dialogs/ConfirmDelete";
 import EditPersonDialog from "@components/dialogs/EditPerson";
 import StudentTable from "@components/tables/StudentTable";
+import SubjectTable from "@components/tables/SubjectTable";
 import TeacherTable from "@components/tables/TeacherTable";
 
 // Types
 import { Student, Teacher } from "@utils/types/person";
 import { ClassWName } from "@utils/types/class";
-import { range } from "@utils/helpers/array";
-import { supabase } from "@utils/supabaseClient";
 import {
   StudentDB,
   StudentTable as StudentTableType,
   TeacherDB,
   TeacherTable as TeacherTableType,
 } from "@utils/types/database/person";
+
+// Supabase
+import { supabase } from "@utils/supabaseClient";
+
+// Helpers
+import { range } from "@utils/helpers/array";
+
+// Backend
 import { db2student, db2teacher } from "@utils/backend/database";
 
 const StudentSection = ({
@@ -55,7 +62,7 @@ const StudentSection = ({
   setShowConfDelStudent: (value: boolean) => void;
 }): JSX.Element => {
   const { t } = useTranslation("admin");
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const locale = useRouter().locale as "en-US" | "th";
 
   return (
     <Section>
@@ -106,17 +113,14 @@ const TeacherSection = ({
 
   return (
     <Section>
-      <div className="layout-grid-cols-3--header">
-        <div className="[grid-area:header]">
+      <div className="layout-grid-cols-3">
+        <div className="col-span-2">
           <Header
             icon={<MaterialIcon icon="group" allowCustomSize />}
             text={t("teacherList.title")}
           />
         </div>
-        <Search
-          placeholder={t("teacherList.searchTeachers")}
-          className="[grid-area:search]"
-        />
+        <Search placeholder={t("teacherList.searchTeachers")} />
       </div>
       <div>
         <TeacherTable
@@ -131,6 +135,60 @@ const TeacherSection = ({
           type="filled"
           label={t("studentList.action.seeAll")}
           url="/t/admin/teachers"
+          LinkElement={Link}
+        />
+      </div>
+    </Section>
+  );
+};
+
+const SubjectSection = () => {
+  const { t } = useTranslation("admin");
+
+  return (
+    <Section>
+      <div className="layout-grid-cols-3">
+        <div className="col-span-2">
+          <Header
+            icon={<MaterialIcon icon="group" allowCustomSize />}
+            text={t("subjectList.title")}
+          />
+        </div>
+        <Search placeholder={t("subjectList.searchSubjects")} />
+      </div>
+      <div>
+        <SubjectTable
+          subjects={[
+            {
+              id: 1,
+              code: {
+                "en-US": "MA11234",
+                th: "ค11234",
+              },
+              name: {
+                "en-US": { name: "Math" },
+                th: { name: "คณุต" },
+              },
+              teachers: [],
+              coTeachers: [],
+              subjectSubgroup: {
+                name: { "en-US": "Mathematics", th: "คณิตศาสตร์" },
+                subjectGroup: {
+                  id: 8,
+                  name: { "en-US": "Mathematics", th: "คณิตศาสตร์" },
+                },
+              },
+              year: 2022,
+              semester: 1,
+            },
+          ]}
+        />
+      </div>
+      <div className="flex flex-row items-center justify-end gap-2">
+        <LinkButton
+          type="filled"
+          label={t("studentList.action.seeAll")}
+          url="/t/admin/subjects"
           LinkElement={Link}
         />
       </div>
@@ -209,8 +267,10 @@ const Admin: NextPage<{
           setEditingPerson={setEditingPerson}
           setShowConfDelTeacher={setShowConfDelTeacher}
         />
+        <SubjectSection />
         <ScheduleSection />
       </RegularLayout>
+
       {/* // FIXME: This should not be here */}
       <EditPersonDialog
         show={showEdit}

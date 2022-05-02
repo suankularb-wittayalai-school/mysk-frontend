@@ -5,14 +5,14 @@ export type Contact = {
     th: string;
   };
   type:
-  | "Phone"
-  | "Email"
-  | "Facebook"
-  | "Line"
-  | "Instagram"
-  | "Website"
-  | "Discord"
-  | "Other";
+    | "Phone"
+    | "Email"
+    | "Facebook"
+    | "Line"
+    | "Instagram"
+    | "Website"
+    | "Discord"
+    | "Other";
   includes?: {
     students: boolean;
     parents: boolean;
