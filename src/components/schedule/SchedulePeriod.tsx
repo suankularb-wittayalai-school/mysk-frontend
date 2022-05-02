@@ -40,11 +40,11 @@ const SchedulePeriod = ({
 
   return (
     <motion.li
-      key={schedulePeriod.periodStart}
+      key={schedulePeriod.startTime}
       className="absolute px-1"
       style={{
         width: periodWidth * schedulePeriod.duration,
-        left: periodWidth * (schedulePeriod.periodStart - 1),
+        left: periodWidth * (schedulePeriod.startTime - 1),
       }}
       initial={{ scale: 0.8, y: 20, opacity: 0 }}
       animate={{ scale: 1, y: 0, opacity: 1 }}
@@ -58,7 +58,7 @@ const SchedulePeriod = ({
             isInPeriod(
               now,
               day,
-              schedulePeriod.periodStart,
+              schedulePeriod.startTime,
               schedulePeriod.duration
             )
               ? "container-tertiary shadow"
@@ -103,7 +103,7 @@ const SchedulePeriod = ({
             isInPeriod(
               now,
               day,
-              schedulePeriod.periodStart,
+              schedulePeriod.startTime,
               schedulePeriod.duration
             )
               ? "outline-4 outline-offset-[-4px] outline-secondary"

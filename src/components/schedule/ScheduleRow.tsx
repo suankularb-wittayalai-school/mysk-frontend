@@ -34,7 +34,7 @@ const ScheduleRow = ({
       <ul className="relative h-[3.75rem]">
         {scheduleRow.content.map((schedulePeriod) => (
           <SchedulePeriod
-            key={schedulePeriod.periodStart}
+            key={schedulePeriod.startTime}
             schedulePeriod={schedulePeriod}
             now={now}
             day={day}

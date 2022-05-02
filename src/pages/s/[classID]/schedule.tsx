@@ -49,8 +49,9 @@ const SubjectListSection = ({
 }): JSX.Element => {
   const { t } = useTranslation("schedule");
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
-  const [filterredList, setFilterredList] =
-    useState<Array<SubjectListItem>>(subjectList);
+  const [filterredList, setFilterredList] = useState<Array<SubjectListItem>>(
+    subjectList
+  );
   const [query, setQuery] = useState<string>("");
 
   useEffect(() => {
@@ -184,9 +185,9 @@ export const getServerSideProps: GetServerSideProps = async ({
       {
         day: 1,
         content: [
-          { periodStart: 1, duration: 1 },
+          { startTime: 1, duration: 1 },
           {
-            periodStart: 2,
+            startTime: 2,
             duration: 1,
             subject: {
               name: {

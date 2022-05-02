@@ -158,7 +158,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
   const user: Student = {
     id: 9,
     role: "student",
-    prefix: "mister",
+    prefix: "Mr.",
     name: {
       "en-US": { firstName: "Sadudee", lastName: "Theparree" },
       th: { firstName: "สดุดี", lastName: "เทพอารีย์" },
@@ -252,9 +252,9 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
       {
         day: getDay(new Date()),
         content: [
-          { periodStart: 1, duration: 1 },
+          { startTime: 1, duration: 1 },
           {
-            periodStart: 2,
+            startTime: 2,
             duration: 1,
             subject: {
               name: {

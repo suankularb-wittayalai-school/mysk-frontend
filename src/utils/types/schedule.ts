@@ -16,12 +16,12 @@ export type ScheduleRow = {
 };
 
 export type SchedulePeriod = {
-  periodStart: number;
+  startTime: number;
   duration: number;
   subject?: {
     name: Subject["name"];
-    teachers: Array<{
-      name: Teacher["name"];
-    }>;
+    teacher: Teacher;
+    coTeachers?: Teacher[];
   };
+  room: string; // which physical room that subject is taught in (Ex. 1214, 4306)
 };
