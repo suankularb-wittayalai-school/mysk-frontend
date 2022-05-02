@@ -12,6 +12,7 @@ import {
   CardList,
   ListLayout,
   ListSection,
+  MainSection,
   MaterialIcon,
   RegularLayout,
   Section,
@@ -19,6 +20,8 @@ import {
 } from "@suankularb-components/react";
 import { TeachersList } from "@utils/types/teachers";
 import TeacherCard from "@components/TeacherCard";
+import { useState } from "react";
+import { nameJoiner } from "@utils/helpers/name";
 
 // Page
 const Teachers: NextPage = (): JSX.Element => {
@@ -133,12 +136,33 @@ const Teachers: NextPage = (): JSX.Element => {
                   },
                 },
               },
+              {
+                id: 4,
+                code: {
+                  "en-US": "SCI42069",
+                  th: "ว42069",
+                },
+                name: {
+                  "en-US": {
+                    name: "Additional Science",
+                  },
+                  th: { name: "วิทยาศาสตร์เพิ่มเติม" },
+                },
+                subjectSubgroup: {
+                  name: { "en-US": "Science", th: "วิทยาศาสตร์" },
+                  subjectGroup: {
+                    name: { "en-US": "Science", th: "วิทยาศาสตร์" },
+                  },
+                },
+              },
             ],
           },
         },
       ],
     },
   ];
+
+  const [showMain, setShowMain] = useState(teacherList[0].content[0].content);
 
   return (
     <ListLayout
@@ -160,8 +184,7 @@ const Teachers: NextPage = (): JSX.Element => {
               <button
                 onClick={() => {
                   onClick();
-                  // setPolicy(Parties[0].policy);
-                  // setMainType("policy");
+                  setShowMain(content);
                 }}
                 className="!w-full"
               >
@@ -184,7 +207,50 @@ const Teachers: NextPage = (): JSX.Element => {
           onChange={() => {}}
         />
       </ListSection>
-      <p>TODO</p>
+      <MainSection>
+        <Section className="!font-display">
+          <h2 className="text-4xl font-bold">
+            {nameJoiner(locale, showMain.name)}
+          </h2>
+          <p className="text-2xl">
+            {showMain.subjectsInCharge[0].subjectSubgroup.name[locale]}
+          </p>
+          <Section>
+            <h3 className="text-3xl font-bold">{t("contacts")}</h3>
+          </Section>
+          <Section>
+            <h3 className="text-3xl font-bold">{t("subjects")}</h3>
+            <ul className="!flex flex-col gap-2">
+              {showMain.subjectsInCharge.map((subjects) => (
+                <li>
+                  <Card type="horizontal">
+                    <CardHeader
+                      icon={
+                        <MaterialIcon
+                          icon={
+                            subjects.subjectSubgroup.name["en-US"] === "Science"
+                              ? "biotech"
+                              : subjects.subjectSubgroup.name["en-US"] ===
+                                "Mathematics"
+                              ? "calculate"
+                              : "circle"
+                          }
+                        />
+                      }
+                      title={
+                        <div className="!flex gap-4">
+                          <p>{subjects.code[locale]}</p>
+                          <p className="font-medium">{subjects.name[locale].name}</p>
+                        </div>
+                      }
+                    />
+                  </Card>
+                </li>
+              ))}
+            </ul>
+          </Section>
+        </Section>
+      </MainSection>
     </ListLayout>
   );
 };
