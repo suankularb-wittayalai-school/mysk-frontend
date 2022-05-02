@@ -18,6 +18,18 @@ export type SubjectSubgroup = {
   subjectGroup: SubjectGroup;
 };
 
+export type SubjectTypeTH =
+  | "รายวิชาพื้นฐาน"
+  | "รายวิชาเพิ่มเติม"
+  | "รายวิชาเลือก"
+  | "กิจกรรมพัฒนาผู้เรียน";
+
+export type SubjectTypeEN =
+  | "Core Courses"
+  | "Elective Courses"
+  | "Additional Courses"
+  | "Learner’s Development Activities";
+
 // Subject
 export type Subject = {
   id: number;
@@ -28,6 +40,10 @@ export type Subject = {
   name: {
     "en-US": SubjectName;
     th: SubjectName;
+  };
+  type: {
+    "en-US": SubjectTypeEN;
+    th: SubjectTypeTH;
   };
   description?: {
     "en-US": string;

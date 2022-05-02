@@ -12,7 +12,7 @@ const AddTeacherDialog = ({
   show,
   onClose,
 }: DialogProps & { onSubmit: Function }): JSX.Element => {
-  const { t } = useTranslation("subjects");
+  const { t } = useTranslation("common");
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
 
   return (
@@ -20,6 +20,7 @@ const AddTeacherDialog = ({
       type="regular"
       label="add-teacher"
       title={t("dialog.addTeacher.title")}
+      supportingText={t("dialog.addTeacher.supportingText")}
       actions={[
         { name: t("dialog.addTeacher.action.cancel"), type: "close" },
         { name: t("dialog.addTeacher.action.add"), type: "submit" },

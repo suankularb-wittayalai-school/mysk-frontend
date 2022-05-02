@@ -1,20 +1,12 @@
+import { SubjectTypeTH, SubjectTypeEN } from "@utils/types/subject";
+import { TeacherDB } from "./person";
+
 export interface SubjectGroupDB {
   id: number;
   created_at: string;
   name_th: string;
   name_en: string;
 }
-
-export type subject_type_th =
-  | "รายวิชาพื้นฐาน"
-  | "รายวิชาเพิ่มเติม"
-  | "รายวิชาเลือก"
-  | "กิจกรรมพัฒนาผู้เรียน";
-export type subject_type_en =
-  | "Core Courses"
-  | "Elective Courses"
-  | "Additional Courses"
-  | "Learner’s Development Activities";
 
 export interface SubjectDB {
   id: number;
@@ -23,8 +15,8 @@ export interface SubjectDB {
   name_en: string;
   code_th: string;
   code_en: string;
-  type_th: subject_type_th;
-  type_en: subject_type_en;
+  type_th: SubjectTypeTH;
+  type_en: SubjectTypeEN;
   credit: number;
   description_th: string;
   description_en: string;
@@ -32,6 +24,8 @@ export interface SubjectDB {
   semester: number;
   group: SubjectGroupDB;
   syllabus: string;
+  teachers: TeacherDB[];
+  coTeachers?: TeacherDB[];
 }
 
 export interface SubjectTable {
@@ -41,8 +35,8 @@ export interface SubjectTable {
   name_en: string;
   code_th: string;
   code_en: string;
-  type_th: subject_type_th;
-  type_en: subject_type_en;
+  type_th: SubjectTypeTH;
+  type_en: SubjectTypeEN;
   credit: number;
   description_th: string;
   description_en: string;
@@ -50,4 +44,8 @@ export interface SubjectTable {
   semester: number;
   group: number;
   syllabus: string;
+  short_name_th: string;
+  short_name_en: string;
+  teachers: number[];
+  coTeachers?: number[];
 }

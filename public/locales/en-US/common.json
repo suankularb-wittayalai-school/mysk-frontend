@@ -36,12 +36,14 @@
   },
   "seeDetails": "See details",
   "dialog": {
-    "discardDraft": {
-      "title": "Discard draft?",
-      "supportingText": "All changes will be deleted.",
+    "addTeacher": {
+      "title": "เพิ่มอาจารย์",
+      "supportingText": "เลือกกลุ่มสาระการเรียนรู้เพื่อกรองอาจารย์ตามกลุ่มสาระการเรียนรู้",
+      "subjectGroup": "กลุ่มสาระการเรียนรู้",
+      "teacher": "อาจารย์",
       "action": {
-        "continue": "Continue editing",
-        "discard": "Discard"
+        "cancel": "ยกเลิก",
+        "add": "เพิ่ม"
       }
     },
     "confirmDelete": {
@@ -50,6 +52,14 @@
       "action": {
         "cancel": "Cancel",
         "delete": "Delete"
+      }
+    },
+    "discardDraft": {
+      "title": "Discard draft?",
+      "supportingText": "All changes will be deleted.",
+      "action": {
+        "continue": "Continue editing",
+        "discard": "Discard"
       }
     },
     "image": {

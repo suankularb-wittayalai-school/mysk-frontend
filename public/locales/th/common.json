@@ -36,12 +36,14 @@
   },
   "seeDetails": "ดูรายละเอียด",
   "dialog": {
-    "discardDraft": {
-      "title": "ยกเลิกการแก้ไขหรือไม่",
-      "supportingText": "หากยกเลิก ข้อมูลที่จะแก้ไขทั้งหมดจะถูกลบ",
+    "addTeacher": {
+      "title": "Add teacher",
+      "supportingText": "Select a subject group to filter teachers by their subject group.",
+      "subjectGroup": "Subject group",
+      "teacher": "Teacher to add",
       "action": {
-        "discard": "ลบการแก้ไข",
-        "continue": "แก้ไขต่อ"
+        "cancel": "Cancel",
+        "add": "Add"
       }
     },
     "confirmDelete": {
@@ -50,6 +52,14 @@
       "action": {
         "cancel": "ยกเลิก",
         "delete": "ยืนยันการลบ"
+      }
+    },
+    "discardDraft": {
+      "title": "ยกเลิกการแก้ไขหรือไม่",
+      "supportingText": "หากยกเลิก ข้อมูลที่จะแก้ไขทั้งหมดจะถูกลบ",
+      "action": {
+        "discard": "ลบการแก้ไข",
+        "continue": "แก้ไขต่อ"
       }
     },
     "image": {
