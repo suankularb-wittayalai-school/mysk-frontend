@@ -1,27 +1,37 @@
 // Modules
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
+import { useState } from "react";
 
 // SK Components
 import { Dialog, DialogSection, Dropdown } from "@suankularb-components/react";
 
 // Types
 import { DialogProps } from "@utils/types/common";
+import { Teacher } from "@utils/types/person";
+
+// Helpers
+import { nameJoiner } from "@utils/helpers/name";
+
+// Hooks
 import { useSubjectGroupOption } from "@utils/hooks/subject";
 import { useTeacherOption } from "@utils/hooks/teacher";
-import { nameJoiner } from "@utils/helpers/name";
-import { useState } from "react";
 
 const AddTeacherDialog = ({
   show,
   onClose,
   onSubmit,
-}: DialogProps & { onSubmit: Function }): JSX.Element => {
+}: DialogProps & { onSubmit: (teacher: Teacher) => void }): JSX.Element => {
   const { t } = useTranslation("common");
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+
+  const subjectGroups = useSubjectGroupOption();
   const [selectedGroup, setSelectedGroup] = useState<number>(1);
-  const SubjectGroups = useSubjectGroupOption();
+
   const teachers = useTeacherOption(selectedGroup);
+  const [selectedTeacher, setSelectedTeacher] = useState<number | null>(
+    teachers.length > 0 ? teachers[0].id : null
+  );
 
   return (
     <Dialog
@@ -34,20 +44,29 @@ const AddTeacherDialog = ({
         { name: t("dialog.addTeacher.action.add"), type: "submit" },
       ]}
       show={show}
-      onClose={() => onClose()}
-      onSubmit={() => onSubmit()}
+      onClose={() => {
+        onClose();
+        // console.log("close");
+      }}
+      onSubmit={() =>
+        selectedTeacher &&
+        onSubmit(
+          teachers.find((teacher) => selectedTeacher == teacher.id) as Teacher
+        )
+      }
     >
-      {console.log(teachers, selectedGroup)}
+      {/* {console.log(teachers, selectedGroup)} */}
       <DialogSection>
         <Dropdown
           name="subject-group"
           label={t("dialog.addTeacher.subjectGroup")}
-          options={SubjectGroups.map((group) => ({
+          options={subjectGroups.map((group) => ({
             value: group.id,
             label: group.name[locale],
           }))}
           onChange={(e: number) => setSelectedGroup(e)}
         />
+        {/* {console.log(selectedTeacher, selectedGroup)} */}
         <Dropdown
           name="teacher"
           label={t("dialog.addTeacher.teacher")}
@@ -55,6 +74,7 @@ const AddTeacherDialog = ({
             value: teacher.id,
             label: nameJoiner(locale, teacher.name),
           }))}
+          onChange={(e: number) => setSelectedTeacher(e)}
         />
       </DialogSection>
     </Dialog>

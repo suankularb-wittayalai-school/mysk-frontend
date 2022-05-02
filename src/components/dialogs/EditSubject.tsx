@@ -28,6 +28,7 @@ import {
 } from "@utils/types/subject";
 import { Teacher } from "@utils/types/person";
 import { useSubjectGroupOption } from "@utils/hooks/subject";
+import { nameJoiner } from "@utils/helpers/name";
 
 const EditSubjectDialog = ({
   show,
@@ -43,8 +44,11 @@ const EditSubjectDialog = ({
   const { t } = useTranslation("subjects");
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
 
+  // Dialogs
   const [showDiscard, setShowDiscard] = useState<boolean>(false);
   const [showAddTeacher, setShowAddTeacher] = useState<boolean>(false);
+  const [showAddCoTeacher, setShowAddCoTeacher] = useState<boolean>(false);
+
   const subjectGroups = useSubjectGroupOption();
   const subjectTypes: { th: SubjectTypeTH; "en-US": SubjectTypeEN }[] = [
     { th: "รายวิชาพื้นฐาน", "en-US": "Core Courses" },
@@ -317,25 +321,39 @@ const EditSubjectDialog = ({
             <ChipInputList
               list={chipLists.teachers}
               onAdd={() => setShowAddTeacher(true)}
-              onChange={(newList) =>
+              onChange={(newList) => {
                 setChipLists({
                   ...chipLists,
                   teachers: newList as { id: string; name: string }[],
-                })
-              }
+                });
+                setForm({
+                  ...form,
+                  teachers: form.teachers.filter((teacher) => {
+                    teacher.id in newList.map(({ id }) => id);
+                  }),
+                });
+              }}
             />
           </div>
           <div className="flex flex-col gap-2">
             <p className="font-display">Co-teachers</p>
             <ChipInputList
               list={chipLists.coTeachers}
-              onAdd={() => setShowAddTeacher(true)}
-              onChange={(newList) =>
+              onAdd={() => setShowAddCoTeacher(true)}
+              onChange={(newList) => {
                 setChipLists({
                   ...chipLists,
                   coTeachers: newList as { id: string; name: string }[],
-                })
-              }
+                });
+                setForm({
+                  ...form,
+                  coTeachers: form.coTeachers
+                    ? form.coTeachers.filter((coTeacher) => {
+                        coTeacher.id in newList.map(({ id }) => id);
+                      })
+                    : [],
+                });
+              }}
             />
           </div>
         </DialogSection>
@@ -352,10 +370,49 @@ const EditSubjectDialog = ({
       />
       <AddTeacherDialog
         show={showAddTeacher}
-        onClose={() => setShowAddTeacher(false)}
-        onSubmit={() => {
+        onClose={() => {
           setShowAddTeacher(false);
-          // TODO: Add to Chip List
+          // console.log("hi");
+        }}
+        onSubmit={(teacher) => {
+          setShowAddTeacher(false);
+          setChipLists({
+            ...chipLists,
+            teachers: [
+              ...chipLists.teachers,
+              {
+                id: teacher.id.toString(),
+                name: nameJoiner(locale, teacher.name),
+              },
+            ],
+          });
+          setForm({
+            ...form,
+            teachers: [...form.teachers, teacher],
+          });
+        }}
+      />
+      <AddTeacherDialog
+        show={showAddCoTeacher}
+        onClose={() => setShowAddCoTeacher(false)}
+        onSubmit={(teacher) => {
+          setShowAddCoTeacher(false);
+          setChipLists({
+            ...chipLists,
+            coTeachers: [
+              ...chipLists.coTeachers,
+              {
+                id: teacher.id.toString(),
+                name: nameJoiner(locale, teacher.name),
+              },
+            ],
+          });
+          setForm({
+            ...form,
+            coTeachers: form.coTeachers
+              ? [...form.coTeachers, teacher]
+              : [teacher],
+          });
         }}
       />
     </>
