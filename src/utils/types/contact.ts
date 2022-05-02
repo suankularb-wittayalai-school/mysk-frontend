@@ -18,5 +18,5 @@ export type Contact = {
     parents: boolean;
     teachers: boolean;
   };
-  url: string;
+  value: string;
 };

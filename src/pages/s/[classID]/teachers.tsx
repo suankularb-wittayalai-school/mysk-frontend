@@ -22,6 +22,8 @@ import { TeachersList } from "@utils/types/teachers";
 import TeacherCard from "@components/TeacherCard";
 import { useState } from "react";
 import { nameJoiner } from "@utils/helpers/name";
+import ContactChip from "@components/ContactChip";
+import ProfilePicture from "@components/ProfilePicture";
 
 // Page
 const Teachers: NextPage = (): JSX.Element => {
@@ -64,6 +66,17 @@ const Teachers: NextPage = (): JSX.Element => {
                 },
               },
             ],
+            contacts: [
+              {
+                id: 1,
+                name: {
+                  "en-US": "xx_กฤชพล_บุญพูลมี_xx",
+                  th: "xx_กฤชพล_บุญพูลมี_xx",
+                },
+                via: "facebook",
+                value: "",
+              },
+            ],
           },
         },
         {
@@ -98,6 +111,17 @@ const Teachers: NextPage = (): JSX.Element => {
                 },
               },
             ],
+            contacts: [
+              {
+                id: 2,
+                name: {
+                  "en-US": "xx_Krissada_Krissy_xx",
+                  th: "xx_Krissada_Krissy_xx",
+                },
+                via: "facebook",
+                value: "",
+              },
+            ],
           },
         },
       ],
@@ -116,6 +140,13 @@ const Teachers: NextPage = (): JSX.Element => {
             },
             profile: "/images/dummybase/thanakorn.webp",
             role: "teacher",
+            classAdvisorAt: {
+              id: 1,
+              name: {
+                "en-US": "M.405",
+                th: "ม.405",
+              },
+            },
             subjectsInCharge: [
               {
                 id: 3,
@@ -156,6 +187,35 @@ const Teachers: NextPage = (): JSX.Element => {
                 },
               },
             ],
+            contacts: [
+              {
+                id: 3,
+                name: {
+                  "en-US": "xx_ธนกร_อรรจนาวัฒน์_xx",
+                  th: "xx_ธนกร_อรรจนาวัฒน์_xx",
+                },
+                via: "facebook",
+                value: "",
+              },
+              {
+                id: 4,
+                name: {
+                  "en-US": "ธนกร_อรรจนาวัฒน์xd",
+                  th: "ธนกร_อรรจนาวัฒน์xd",
+                },
+                via: "line",
+                value: "",
+              },
+              {
+                id: 5,
+                name: {
+                  "en-US": "Thanacord",
+                  th: "Thanacord",
+                },
+                via: "discord",
+                value: "",
+              },
+            ],
           },
         },
       ],
@@ -163,6 +223,18 @@ const Teachers: NextPage = (): JSX.Element => {
   ];
 
   const [showMain, setShowMain] = useState(teacherList[0].content[0].content);
+
+  showMain.contacts.sort(function (a, b) {
+    if (a.via < b.via) {
+      return -1;
+    }
+    if (a.via > b.via) {
+      return 1;
+    }
+
+    // names must be equal
+    return 0;
+  });
 
   return (
     <ListLayout
@@ -188,13 +260,6 @@ const Teachers: NextPage = (): JSX.Element => {
                 }}
                 className="!w-full"
               >
-                {/* <Card
-                  type="horizontal"
-                  className={className}
-                  appearance="tonal"
-                >
-                  <CardHeader title={content.name} />
-                </Card> */}
                 <TeacherCard
                   key={content.id}
                   teacher={content}
@@ -208,15 +273,46 @@ const Teachers: NextPage = (): JSX.Element => {
         />
       </ListSection>
       <MainSection>
-        <Section className="!font-display">
-          <h2 className="text-4xl font-bold">
-            {nameJoiner(locale, showMain.name)}
-          </h2>
-          <p className="text-2xl">
-            {showMain.subjectsInCharge[0].subjectSubgroup.name[locale]}
-          </p>
+        <Section className="!flex !flex-col !gap-4 !font-display">
+          <Section>
+            <div className="!sm:gap-6 !md:grid-cols-[1fr_5fr] grid !grid-cols-[1fr_3fr] items-stretch !gap-4">
+              <div className="aspect-square overflow-hidden rounded-xl sm:rounded-2xl">
+                <ProfilePicture src={showMain.profile} />
+              </div>
+              <div className="!flex !flex-col !justify-between">
+                <div>
+                  <h2 className="text-4xl font-bold">
+                    {nameJoiner(locale, showMain.name)}
+                  </h2>
+                  <p className="text-2xl font-medium">
+                    {showMain.subjectsInCharge[0].subjectSubgroup.name[locale]}
+                  </p>
+                </div>
+                <div>
+                  {showMain.classAdvisorAt ? (
+                    <p className="text-2xl font-medium">
+                      {t("advisor", {
+                        className: showMain.classAdvisorAt.name[locale],
+                      })}
+                    </p>
+                  ) : (
+                    <></>
+                  )}
+                </div>
+              </div>
+            </div>
+          </Section>
           <Section>
             <h3 className="text-3xl font-bold">{t("contacts")}</h3>
+            <ul className="layout-grid-cols-2">
+              {showMain.contacts.map((contact) => (
+                <ContactChip
+                  key={contact.id}
+                  contact={contact}
+                  className="!w-initial"
+                />
+              ))}
+            </ul>
           </Section>
           <Section>
             <h3 className="text-3xl font-bold">{t("subjects")}</h3>
@@ -240,7 +336,9 @@ const Teachers: NextPage = (): JSX.Element => {
                       title={
                         <div className="!flex gap-4">
                           <p>{subjects.code[locale]}</p>
-                          <p className="font-medium">{subjects.name[locale].name}</p>
+                          <p className="font-medium">
+                            {subjects.name[locale].name}
+                          </p>
                         </div>
                       }
                     />

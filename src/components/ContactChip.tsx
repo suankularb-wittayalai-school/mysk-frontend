@@ -18,12 +18,6 @@ const ContactChip = ({
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
 
   return (
-    <a
-      aria-labelledby={`contact-${contact.id}`}
-      href={contact.url}
-      target="_blank"
-      rel="noreferrer"
-    >
       <Card
         type="horizontal"
         appearance="tonal"
@@ -98,7 +92,6 @@ const ContactChip = ({
           className="bg-surface-1 !p-2"
         />
       </Card>
-    </a>
   );
 };
 
