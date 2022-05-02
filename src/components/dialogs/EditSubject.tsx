@@ -1,6 +1,8 @@
 // Modules
-import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { useTranslation } from "next-i18next";
+import { useEffect, useState } from "react";
+
 // SK Components
 import {
   ChipInputList,
@@ -38,6 +40,7 @@ const EditSubjectDialog = ({
   mode: "add" | "edit";
   subject?: Subject;
 }): JSX.Element => {
+  const { t } = useTranslation("subjects");
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
 
   const [showDiscard, setShowDiscard] = useState<boolean>(false);
@@ -89,6 +92,14 @@ const EditSubjectDialog = ({
       th: "รายวิชาพื้นฐาน",
       "en-US": "Core Courses",
     },
+  });
+
+  const [chipLists, setChipLists] = useState<{
+    teachers: { id: string; name: string }[];
+    coTeachers: { id: string; name: string }[];
+  }>({
+    teachers: [],
+    coTeachers: [],
   });
 
   useEffect(() => {
@@ -303,11 +314,29 @@ const EditSubjectDialog = ({
         <DialogSection name="personnel" title="Personnel" isDoubleColumn>
           <div className="flex flex-col gap-2">
             <p className="font-display">Teachers</p>
-            <ChipInputList list={[]} onAdd={() => setShowAddTeacher(true)} />
+            <ChipInputList
+              list={chipLists.teachers}
+              onAdd={() => setShowAddTeacher(true)}
+              onChange={(newList) =>
+                setChipLists({
+                  ...chipLists,
+                  teachers: newList as { id: string; name: string }[],
+                })
+              }
+            />
           </div>
           <div className="flex flex-col gap-2">
             <p className="font-display">Co-teachers</p>
-            <ChipInputList list={[]} onAdd={() => setShowAddTeacher(true)} />
+            <ChipInputList
+              list={chipLists.coTeachers}
+              onAdd={() => setShowAddTeacher(true)}
+              onChange={(newList) =>
+                setChipLists({
+                  ...chipLists,
+                  coTeachers: newList as { id: string; name: string }[],
+                })
+              }
+            />
           </div>
         </DialogSection>
       </Dialog>

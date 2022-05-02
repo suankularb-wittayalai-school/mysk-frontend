@@ -37,13 +37,13 @@
   "seeDetails": "See details",
   "dialog": {
     "addTeacher": {
-      "title": "เพิ่มอาจารย์",
-      "supportingText": "เลือกกลุ่มสาระการเรียนรู้เพื่อกรองอาจารย์ตามกลุ่มสาระการเรียนรู้",
-      "subjectGroup": "กลุ่มสาระการเรียนรู้",
-      "teacher": "อาจารย์",
+      "title": "Add teacher",
+      "supportingText": "Select a subject group to filter teachers by their subject group.",
+      "subjectGroup": "Subject group",
+      "teacher": "Teacher to add",
       "action": {
-        "cancel": "ยกเลิก",
-        "add": "เพิ่ม"
+        "cancel": "Cancel",
+        "add": "Add"
       }
     },
     "confirmDelete": {
