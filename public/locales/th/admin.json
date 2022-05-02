@@ -38,12 +38,15 @@
       "name": "ชื่อวิชา",
       "teachers": "อาจารย์ผู้สอน",
       "year": "ปีกศษ.",
-      "semester": "ภาคเรียน"
+      "semester": "ภาคเรียน",
+      "action": {
+        "seeDetails": "อ่านเพิ่มเติม",
+        "edit": "แก้ไข",
+        "delete": "ลบทิ้ง"
+      }
     },
     "action": {
-      "seeDetails": "อ่านเพิ่มเติม",
-      "edit": "แก้ไข",
-      "delete": "ลบทิ้ง"
+      "addSubject": "เพิ่มวิชา"
     }
   },
   "schedule": {

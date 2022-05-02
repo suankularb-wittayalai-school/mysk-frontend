@@ -19,10 +19,10 @@ const AddTeacherDialog = ({
     <Dialog
       type="regular"
       label="add-teacher"
-      title={t("details.dialog.addClass.title")}
+      title={t("dialog.addTeacher.title")}
       actions={[
-        { name: t("details.dialog.addClass.action.cancel"), type: "close" },
-        { name: t("details.dialog.addClass.action.add"), type: "submit" },
+        { name: t("dialog.addTeacher.action.cancel"), type: "close" },
+        { name: t("dialog.addTeacher.action.add"), type: "submit" },
       ]}
       show={show}
       onClose={() => onClose()}
@@ -37,15 +37,7 @@ const AddTeacherDialog = ({
         <Dropdown
           name="teacher"
           label={t("dialog.addTeacher.teacher")}
-          options={[
-            {
-              value: 509,
-              label: {
-                "en-US": "M.509",
-                th: "ม.509",
-              }[locale],
-            },
-          ]}
+          options={[]}
         />
       </DialogSection>
     </Dialog>

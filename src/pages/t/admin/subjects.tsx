@@ -45,7 +45,7 @@ const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
       {/* Head */}
       <Head>
         <title>
-          {t("teacherList.title")}
+          {t("subjectList.title")}
           {" - "}
           {t("brand.name", { ns: "common" })}
         </title>
@@ -55,7 +55,7 @@ const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
       <RegularLayout
         Title={
           <Title
-            name={{ title: t("teacherList.title") }}
+            name={{ title: t("subjectList.title") }}
             pageIcon={<MaterialIcon icon="groups" />}
             backGoesTo="/t/admin"
             LinkElement={Link}
@@ -65,10 +65,10 @@ const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
       >
         <Section>
           <div className="layout-grid-cols-3">
-            <Search placeholder={t("teacherList.searchTeachers")} />
+            <Search placeholder={t("subjectList.searchSubjects")} />
             <div className="col-span-2 flex flex-row items-end justify-end gap-2">
               <Button
-                label={t("teacherList.action.addTeacher")}
+                label={t("subjectList.action.addSubject")}
                 type="filled"
                 onClick={() => setShowAdd(true)}
               />

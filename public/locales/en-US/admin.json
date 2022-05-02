@@ -38,12 +38,15 @@
       "name": "Subject name",
       "teachers": "Teachers",
       "year": "A. year",
-      "semester": "Semester"
+      "semester": "Semester",
+      "action": {
+        "seeDetails": "See details",
+        "edit": "Edit",
+        "delete": "Delete"
+      }
     },
     "action": {
-      "seeDetails": "See details",
-      "edit": "Edit",
-      "delete": "Delete"
+      "addSubject": "Add subject"
     }
   },
   "schedule": {
