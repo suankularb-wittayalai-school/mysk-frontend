@@ -1,24 +1,11 @@
-export interface SubjectsGroup {
-  id: number;
-  subjects: Subject[];
+import { Teacher } from "./person";
+
+export interface TeachersList {
+  groupName: string;
+  content: Content[];
 }
 
-export interface Subject {
+export interface Content {
   id: number;
-  name: string;
-  member: Teacher[];
-}
-
-export interface Teacher {
-  id: number;
-  name: string;
-  classes: number;
-  contacts: Contact[];
-}
-
-export interface Contact {
-  id: number;
-  type: "Line" | "Facebook" | "Phone" | "Mail" | "Address" | "Instagram" | "Youtube" | "Discord" | "Twitter" | "Website";
-  value: string;
-  name: string;
+  content: Teacher;
 }
