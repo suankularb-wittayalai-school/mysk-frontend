@@ -31,7 +31,7 @@ import TeacherTable from "@components/tables/TeacherTable";
 import { db2teacher } from "@utils/backend/database";
 
 // Types
-import { Teacher } from "@utils/types/person";
+import { Role, Teacher } from "@utils/types/person";
 import {
   PersonTable,
   TeacherDB,
@@ -55,6 +55,23 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
   async function handleDelete() {
     // console.log(editingPerson);
     if (!editingPerson) {
+      return;
+    }
+    const { data: userid, error: selectingError } = await supabase
+      .from<{
+        id: string;
+        email: string;
+        role: Role;
+        student: number;
+        teacher: number;
+      }>("users")
+      .select("id")
+      .match({ student: editingPerson.id })
+      .limit(1);
+
+    // console.log(userid, editingPerson);
+
+    if (selectingError || userid.length == 0) {
       return;
     }
 
@@ -82,6 +99,17 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
       console.error(personDeletingError);
       return;
     }
+
+    // delete account of the teacher
+    await fetch(`/api/account`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: userid[0].id,
+      }),
+    });
 
     setShowConfDel(false);
     router.replace(router.asPath);

@@ -94,7 +94,7 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
     }
 
     // delete account of the student
-    await fetch(`/api/account/student`, {
+    await fetch(`/api/account`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

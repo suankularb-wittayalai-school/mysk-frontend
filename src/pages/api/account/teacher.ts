@@ -5,14 +5,14 @@ import { NextApiHandler } from "next";
 import { supabaseBackend } from "@utils/supabaseBackend";
 
 const handler: NextApiHandler = async (req, res) => {
-  // if method is post then create new student account
+  // if method is post then create new teacher account
   if (req.method === "POST") {
     const { data: user, error } = await supabaseBackend.auth.api.createUser({
       email: req.body.email,
       password: req.body.password,
       user_metadata: {
-        role: "student",
-        student: req.body.id,
+        role: "teacher",
+        teacher: req.body.id,
       },
       email_confirm: true,
     });
