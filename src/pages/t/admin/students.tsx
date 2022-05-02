@@ -55,27 +55,16 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
       return;
     }
 
-    const { data: deleting, error: selectingError } = await supabase
-      .from<StudentTableType>("student")
-      .select("*")
-      .match({ id: editingPerson.id })
-      .limit(1);
-
-    if (selectingError || !deleting) {
-      console.error(selectingError);
-      return;
-    }
-
-    const { data, error } = await supabase
+    const { data: deleting, error } = await supabase
       .from<StudentTableType>("student")
       .delete()
-      .match({ id: deleting[0].id });
-    if (error || !data) {
+      .match({ id: editingPerson.id });
+    if (error || !deleting) {
       console.error(error);
       return;
     }
 
-    console.log(deleting);
+    // console.log(deleting);
 
     // delete the person of the student
     const { data: person, error: personDeletingError } = await supabase
@@ -88,8 +77,7 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
       return;
     }
 
-    console.log(person);
-
+    // console.log(person);
 
     setShowConfDel(false);
     router.replace(router.asPath);
