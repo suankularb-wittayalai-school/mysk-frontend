@@ -1,5 +1,7 @@
 import { StudentDB, TeacherDB } from "@utils/types/database/person";
+import { SubjectDB } from "@utils/types/database/subject";
 import { Student, Teacher } from "@utils/types/person";
+import { Subject } from "@utils/types/subject";
 
 export async function db2student(student: StudentDB): Promise<Student> {
   return {
@@ -81,5 +83,48 @@ export async function db2teacher(teacher: TeacherDB): Promise<Teacher> {
     },
     // TODO: Fetch contact
     contacts: [],
+  };
+}
+
+export async function db2Subject(subject: SubjectDB): Promise<Subject> {
+  return {
+    id: subject.id,
+    name: {
+      "en-US": {
+        name: subject.name_en,
+        shortName: subject.short_name_en,
+      },
+      th: {
+        name: subject.name_th,
+        shortName: subject.short_name_th,
+      },
+    },
+    code: {
+      "en-US": subject.code_en,
+      th: subject.code_th,
+    },
+    type: {
+      "en-US": subject.type_en,
+      th: subject.type_th,
+    },
+    credit: subject.credit,
+    description: {
+      "en-US": subject.description_en,
+      th: subject.description_th,
+    },
+    year: subject.year,
+    semester: subject.semester,
+    subjectGroup: {
+      id: subject.group.id,
+      name: {
+        "en-US": subject.group.name_en,
+        th: subject.group.name_th,
+      },
+    },
+    syllabus: subject.syllabus,
+    // teachers: subject.teachers.map(teacher => teacher.id),
+    teachers: [],
+    // coTeachers: subject.coTeachers.map(teacher => teacher.id),
+    coTeachers: [],
   };
 }
