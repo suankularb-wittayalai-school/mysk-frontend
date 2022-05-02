@@ -41,7 +41,7 @@ import { Session } from "@supabase/supabase-js";
 
 // Helper functions
 import { db2student } from "@utils/backend/database";
-import { useSession } from "@utils/hooks/auth";
+import { useSession, useStudentAccount } from "@utils/hooks/auth";
 
 // Page
 const StudentHome: NextPage<{
@@ -58,33 +58,7 @@ const StudentHome: NextPage<{
   const [showChangePassword, setShowChangePassword] = useState<boolean>(false);
   const [showEditProfile, setShowEditProfile] = useState<boolean>(false);
   const [showLogOut, setShowLogOut] = useState<boolean>(false);
-  const [user, setUser] = useState<Student | Teacher | null>(null);
-
-  const session = useSession();
-
-  useEffect(() => {
-    if (session) {
-      if (session.user?.user_metadata.role == "student") {
-        supabase
-          .from<StudentDB>("student")
-          .select("id, std_id, people:person(*)")
-          .eq("id", session.user?.user_metadata.student)
-          .single()
-          .then((res) => {
-            if (res.error || !res.data) {
-              console.log(res.error);
-              return;
-            }
-
-            db2student(res.data).then((student) => {
-              setUser(student);
-            });
-          });
-      } else if (session.user?.user_metadata.role == "teacher") {
-        router.push("/t/home");
-      }
-    }
-  }, [session]);
+  const user = useStudentAccount();
 
   async function handleLogout() {
     await supabase.auth.signOut();
