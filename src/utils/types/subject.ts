@@ -29,6 +29,10 @@ export type Subject = {
     "en-US": SubjectName;
     th: SubjectName;
   };
+  description?: {
+    "en-US": string;
+    th: string;
+  };
   teachers: Teacher[];
   coTeachers?: Teacher[];
   subjectGroup: SubjectGroup;

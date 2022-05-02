@@ -28,6 +28,7 @@ import {
 // Helper functions
 import { createStudent } from "@utils/backend/person/student";
 import { createTeacher } from "@utils/backend/person/teacher";
+import { useSubjectGroupOption } from "@utils/hooks/subject";
 
 const prefixMap = {
   Master: "เด็กชาย",
@@ -72,34 +73,7 @@ const EditPersonDialog = ({
     classAdvisorAt: 0,
     email: "",
   });
-  const [subjectGroups, setSubjectGroups] = useState<
-    Array<{ id: number; name: { [key: string]: string } }>
-  >([]);
-
-  useEffect(() => {
-    supabase
-      .from("SubjectGroup")
-      .select("*")
-      .then((res: any) => {
-        if (res.error) {
-          console.error(res.error);
-        }
-
-        if (!res.data) {
-          return;
-        }
-
-        let data = res.data.map(
-          (group: { id: number; name_th: string; name_en: string }) => {
-            return {
-              id: group.id,
-              name: { th: group.name_th, "en-US": group.name_en },
-            };
-          }
-        );
-        setSubjectGroups(data);
-      });
-  }, []);
+  const subjectGroups = useSubjectGroupOption();
 
   useEffect(
     () => userRole && setForm((form) => ({ ...form, role: userRole })),
