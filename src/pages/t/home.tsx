@@ -159,68 +159,6 @@ const TeacherHome: NextPage<{
 };
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
-  const user: Teacher = {
-    id: 31,
-    role: "teacher",
-    prefix: "mister",
-    name: {
-      "en-US": { firstName: "Atipol", lastName: "Sukrisadanon" },
-      th: { firstName: "อติพล", lastName: "สุกฤษฎานนท์" },
-    },
-    profile: "/images/dummybase/atipol.webp",
-    teacherID: "skt420",
-    classAdvisorAt: {
-      id: 509,
-      name: {
-        "en-US": "M.509",
-        th: "ม.509",
-      },
-    },
-    subjectsInCharge: [
-      {
-        id: 8,
-        code: { "en-US": "I21202", th: "I21202" },
-        name: {
-          "en-US": { name: "Communication and Presentation" },
-          th: { name: "การสื่อสารและการนำเสนอ" },
-        },
-        subjectSubgroup: {
-          name: { "en-US": "English", th: "ภาษาอังกฤษ" },
-          subjectGroup: {
-            name: { "en-US": "Foreign Languages", th: "ภาษาต่างประเทศ" },
-          },
-        },
-      },
-      {
-        id: 19,
-        code: { "en-US": "ENG20218", th: "อ20218" },
-        name: {
-          "en-US": { name: "Reading 6" },
-          th: { name: "การอ่าน 6" },
-        },
-        subjectSubgroup: {
-          name: { "en-US": "English", th: "ภาษาอังกฤษ" },
-          subjectGroup: {
-            name: { "en-US": "Foreign Language", th: "ภาษาต่างประเทศ" },
-          },
-        },
-      },
-      {
-        id: 26,
-        code: { "en-US": "ENG32102", th: "อ32102" },
-        name: {
-          "en-US": { name: "English 4" },
-          th: { name: "ภาษาอังกฤษ 4" },
-        },
-        subjectSubgroup: {
-          name: { "en-US": "English", th: "ภาษาอังกฤษ" },
-          subjectGroup: {
-            name: { "en-US": "Foreign Language", th: "ภาษาต่างประเทศ" },
-          },
-        },
-      },
-    ],
-  };
   const studentForms: Array<StudentForm> = [
     {
       id: 5,
@@ -287,7 +225,6 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         "news",
         "dashboard",
       ])),
-      user,
       // (@SiravitPhokeed)
       // Apparently NextJS doesn’t serialize Date when in development
       // It does in production, though.

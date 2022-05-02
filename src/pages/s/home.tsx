@@ -4,6 +4,7 @@ import { getDay } from "date-fns";
 import { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -33,9 +34,12 @@ import TeachersSection from "@components/home-sections/TeachersSection";
 import { NewsList } from "@utils/types/news";
 import { Student, Teacher } from "@utils/types/person";
 import { StudentSchedule } from "@utils/types/schedule";
-import { Session } from "@supabase/supabase-js";
-import { useRouter } from "next/router";
 import { StudentDB } from "@utils/types/database/person";
+
+// External Types
+import { Session } from "@supabase/supabase-js";
+
+// Helper functions
 import { db2student } from "@utils/backend/database";
 
 // Page
