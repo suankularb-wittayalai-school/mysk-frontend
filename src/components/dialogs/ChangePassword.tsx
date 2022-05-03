@@ -17,6 +17,7 @@ import { DialogProps } from "@utils/types/common";
 
 // Backend
 import { changePassword } from "@utils/backend/account";
+import { useSession } from "@utils/hooks/auth";
 
 interface ChangePasswordProps extends DialogProps {
   setShowDiscard?: Function;
@@ -29,10 +30,13 @@ const ChangePassword = ({
   const { t } = useTranslation("account");
   const [showDiscard, setShowDiscard] = useState<boolean>(false);
   const [form, setForm] = useState({
+    email: "",
     originalPassword: "",
     newPassword: "",
     confirmNewPassword: "",
   });
+
+  const session = useSession();
 
   function validateAndSend() {
     let formData = new FormData();
@@ -42,11 +46,12 @@ const ChangePassword = ({
     if (form.newPassword == form.confirmNewPassword)
       formData.append("new-password", form.newPassword);
 
-    changePassword(formData);
+    changePassword(formData, session);
   }
 
   return (
     <>
+      {/* {console.log(session)} */}
       <Dialog
         type="regular"
         label="change-password"
@@ -64,9 +69,9 @@ const ChangePassword = ({
         }}
       >
         <DialogSection>
-          <form>
+          <div>
             <KeyboardInput
-              name="original-password"
+              name="old-password"
               type="password"
               label={t("dialog.changePassword.originalPwd")}
               onChange={(e: string) =>
@@ -87,7 +92,7 @@ const ChangePassword = ({
                 setForm({ ...form, confirmNewPassword: e })
               }
             />
-          </form>
+          </div>
         </DialogSection>
       </Dialog>
       <DiscardDraft

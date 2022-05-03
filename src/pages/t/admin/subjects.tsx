@@ -104,12 +104,14 @@ const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
               />
             </div>
           </div>
-          <SubjectTable
-            subjects={allSubjects}
-            setShowEdit={setShowEdit}
-            setEditingSubject={setEditingSubject}
-            setShowConfDelSubject={setShowConfDel}
-          />
+          <div>
+            <SubjectTable
+              subjects={allSubjects}
+              setShowEdit={setShowEdit}
+              setEditingSubject={setEditingSubject}
+              setShowConfDelSubject={setShowConfDel}
+            />
+          </div>
         </Section>
       </RegularLayout>
 
@@ -147,8 +149,6 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
     .from<SubjectTableType>("subject")
     .select("*");
 
-  // console.log(subjects);
-
   if (subjectSelectingError) {
     console.error(subjectSelectingError);
   }
@@ -163,7 +163,6 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   const allSubjects: Subject[] = await Promise.all(
     subjects.map(async (subject) => await db2Subject(subject))
   );
-  // console.log(allSubjects[1].teachers[0].contacts);
 
   return {
     props: {
