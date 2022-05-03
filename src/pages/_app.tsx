@@ -9,6 +9,7 @@ import { ComponentType, ReactElement, ReactNode } from "react";
 // Styles
 import "@styles/global.css";
 
+
 // Components
 import Layout from "@components/Layout";
 
