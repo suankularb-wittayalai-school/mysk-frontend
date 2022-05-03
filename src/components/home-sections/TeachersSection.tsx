@@ -20,6 +20,7 @@ import TeacherCard from "@components/TeacherCard";
 
 // Types
 import { Teacher } from "@utils/types/person";
+import { nameJoiner } from "@utils/helpers/name";
 
 const ClassAdvisorsCard = ({
   classAdvisors,
@@ -65,11 +66,16 @@ const ClassAdvisorsCard = ({
                 {/* Name */}
                 <h4 className="flex flex-col font-display font-medium leading-none">
                   <span className="max-lines-1 text-lg">
-                    {teacher.name[locale].firstName}{" "}
-                    {(teacher.name[locale].middleName || "")[0]}
+                    {teacher.name[locale]?.firstName ||
+                      teacher.name.th.firstName}{" "}
+                    {
+                      (teacher.name[locale]?.middleName ||
+                        teacher.name.th.middleName ||
+                        "")[0]
+                    }
                   </span>
                   <span className="max-lines-1 text-base">
-                    {teacher.name[locale].lastName}
+                    {teacher.name[locale]?.lastName || teacher.name.th.lastName}
                   </span>
                 </h4>
                 {/* Go to Teacher button */}

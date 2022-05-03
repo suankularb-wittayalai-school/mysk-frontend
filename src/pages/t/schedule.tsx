@@ -22,12 +22,12 @@ import {
 } from "@suankularb-components/react";
 
 // Components
-import Schedule from "@components/Schedule";
+import Schedule from "@components/schedule/Schedule";
 import DiscardDraft from "@components/dialogs/DiscardDraft";
 
 // Types
 import { DialogProps } from "@utils/types/common";
-import { Schedule as ScheduleType } from "@utils/types/schedule";
+import { StudentSchedule } from "@utils/types/schedule";
 
 // Backend
 import { addPeriodtoSchedule } from "@utils/backend/schedule";
@@ -170,11 +170,11 @@ const AddPeriod = ({
   );
 };
 
-const TeacherSchedule: NextPage<{ schedule: ScheduleType }> = ({
+const TeacherSchedule: NextPage<{ schedule: StudentSchedule }> = ({
   schedule: fetchedSchedule,
 }) => {
   const { t } = useTranslation("schedule");
-  const [schedule, setSchedule] = useState<ScheduleType>(fetchedSchedule);
+  const [schedule, setSchedule] = useState<StudentSchedule>(fetchedSchedule);
   const [showAddPeriod, setShowAddPeriod] = useState<boolean>(false);
 
   function addSchedulePeriod(formData: FormData) {
@@ -185,6 +185,7 @@ const TeacherSchedule: NextPage<{ schedule: ScheduleType }> = ({
     const duration = parseInt(formData.get("duration")?.toString() || "-1");
 
     setSchedule({
+      ...schedule,
       content: schedule.content.map((scheduleRow) => {
         if (scheduleRow.day == day) {
           // Replace the Period with the `periodStart` in question
@@ -225,13 +226,16 @@ const TeacherSchedule: NextPage<{ schedule: ScheduleType }> = ({
 
   return (
     <>
-      <RegularLayout Title={
+      <RegularLayout
+        Title={
           <Title
             name={{ title: t("title.student") }}
             pageIcon={<MaterialIcon icon="dashboard" />}
             backGoesTo="/t/home"
             LinkElement={Link}
-          />}>
+          />
+        }
+      >
         <Section>
           <Schedule schedule={schedule} role="teacher" />
           <div className="flex flex-row items-center justify-end gap-2">
@@ -262,7 +266,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   locale,
   params,
 }) => {
-  const schedule: ScheduleType = {
+  const schedule: StudentSchedule = {
     content: [
       {
         day: 1,

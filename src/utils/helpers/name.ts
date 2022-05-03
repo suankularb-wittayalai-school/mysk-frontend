@@ -16,13 +16,13 @@ export function nameJoiner(
       options.prefix ? prefix : undefined,
       [
         options.firstName == true || options.firstName == undefined
-          ? name[locale].firstName
+          ? name[locale]?.firstName || name.th.firstName
           : undefined,
         options.middleName == true || options.middleName == undefined
-          ? name[locale].middleName
+          ? name[locale]?.middleName || name.th.middleName
           : undefined,
         options.lastName == true || options.lastName == undefined
-          ? name[locale].lastName
+          ? name[locale]?.lastName || name.th.lastName
           : undefined,
       ]
         .filter((item) => item != undefined)
@@ -32,9 +32,9 @@ export function nameJoiner(
       .join("");
   else
     return [
-      name[locale].firstName,
-      name[locale].middleName,
-      name[locale].lastName,
+      name[locale]?.firstName || name.th.firstName,
+      name[locale]?.middleName || name.th.middleName,
+      name[locale]?.lastName || name.th.lastName,
     ]
       .filter((item) => item != undefined)
       .join(" ");

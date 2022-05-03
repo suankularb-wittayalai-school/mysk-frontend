@@ -4,11 +4,12 @@ import { getDay } from "date-fns";
 import { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // SK Components
 import {
@@ -17,9 +18,12 @@ import {
   Title,
 } from "@suankularb-components/react";
 
+// Supabase imports
+import { supabase } from "@utils/supabaseClient";
+
 // Components
 import ChangePassword from "@components/dialogs/ChangePassword";
-import EditProfileDialog from "@components/dialogs/EditProfile";
+import EditSelfDialog from "@components/dialogs/EditSelf";
 import LogOutDialog from "@components/dialogs/LogOut";
 import UserSection from "@components/home-sections/UserSection";
 import NewsSection from "@components/home-sections/NewsSection";
@@ -29,25 +33,70 @@ import TeachersSection from "@components/home-sections/TeachersSection";
 // Types
 import { NewsList } from "@utils/types/news";
 import { Student, Teacher } from "@utils/types/person";
-import { Schedule } from "@utils/types/schedule";
+import { StudentSchedule } from "@utils/types/schedule";
+import { StudentDB } from "@utils/types/database/person";
+
+// External Types
+import { Session } from "@supabase/supabase-js";
+
+// Helper functions
+import { db2student } from "@utils/backend/database";
+import { useSession } from "@utils/hooks/auth";
 
 // Page
 const StudentHome: NextPage<{
-  user: Student | Teacher;
+  // user: Student | Teacher;
   news: NewsList;
-  schedule: Schedule;
+  schedule: StudentSchedule;
   teachers: Array<Teacher>;
   classAdvisors: Array<Teacher>;
-}> = ({ user, news, schedule, teachers, classAdvisors }) => {
+}> = ({ news, schedule, teachers, classAdvisors }) => {
   const { t } = useTranslation(["dashboard", "common"]);
+  const router = useRouter();
 
   // Dialog controls
   const [showChangePassword, setShowChangePassword] = useState<boolean>(false);
   const [showEditProfile, setShowEditProfile] = useState<boolean>(false);
   const [showLogOut, setShowLogOut] = useState<boolean>(false);
+  const [user, setUser] = useState<Student | Teacher | null>(null);
+
+  const session = useSession();
+
+  useEffect(() => {
+    if (session) {
+      if (session.user?.user_metadata.role == "student") {
+        supabase
+          .from<StudentDB>("student")
+          .select("id, std_id, people:person(*)")
+          .eq("id", session.user?.user_metadata.student)
+          .single()
+          .then((res) => {
+            if (res.error || !res.data) {
+              console.log(res.error);
+              return;
+            }
+
+            db2student(res.data).then((student) => {
+              setUser(student);
+            });
+          });
+      } else if (session.user?.user_metadata.role == "teacher") {
+        router.push("/t/home");
+      }
+    }
+  }, [session]);
+
+  async function handleLogout() {
+    await supabase.auth.signOut();
+    router.push("/");
+  }
+
+  if (!user) return <></>;
 
   return (
     <>
+      {/* {user?.role != "student" && router.push("/t/home")} */}
+      {/* {console.log(session)} */}
       {/* Title */}
       <Head>
         <title>
@@ -89,12 +138,18 @@ const StudentHome: NextPage<{
         show={showChangePassword}
         onClose={() => setShowChangePassword(false)}
       />
-      <EditProfileDialog
+      <EditSelfDialog
         user={user}
         show={showEditProfile}
         onClose={() => setShowEditProfile(false)}
       />
-      <LogOutDialog show={showLogOut} onClose={() => setShowLogOut(false)} />
+      <LogOutDialog
+        show={showLogOut}
+        onClose={() => {
+          handleLogout();
+          setShowLogOut(false);
+        }}
+      />
     </>
   );
 };
@@ -109,7 +164,14 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
       th: { firstName: "สดุดี", lastName: "เทพอารีย์" },
     },
     profile: "/images/dummybase/sadudee.webp",
-    class: "405",
+    studentID: "56572",
+    class: {
+      id: 405,
+      name: {
+        "en-US": "M.405",
+        th: "ม.405",
+      },
+    },
     classNo: 11,
   };
   const news: NewsList = [
@@ -185,7 +247,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
       },
     },
   ];
-  const schedule: Schedule = {
+  const schedule: StudentSchedule = {
     content: [
       {
         day: getDay(new Date()),
@@ -241,6 +303,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         },
       },
       profile: "/images/dummybase/taradol.webp",
+      teacherID: "skt184",
       classAdvisorAt: {
         id: 405,
         name: {
@@ -265,6 +328,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         },
       },
       profile: "/images/dummybase/thanakorn.webp",
+      teacherID: "skt416",
       classAdvisorAt: {
         id: 404,
         name: {
@@ -289,6 +353,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         },
       },
       profile: "/images/dummybase/mattana.webp",
+      teacherID: "skt812",
       classAdvisorAt: {
         id: 405,
         name: {
@@ -314,6 +379,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
           lastName: "สมิธ",
         },
       },
+      teacherID: "skt8966",
       subjectsInCharge: [],
     },
   ];
@@ -327,6 +393,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         th: { firstName: "ธราดล", lastName: "รานรินทร์" },
       },
       profile: "/images/dummybase/taradol.webp",
+      teacherID: "skt551",
       classAdvisorAt: {
         id: 405,
         name: {
@@ -365,6 +432,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         th: { firstName: "มัทนา", lastName: "ต๊ะตันยาง" },
       },
       profile: "/images/dummybase/mattana.webp",
+      teacherID: "skt196",
       classAdvisorAt: {
         id: 405,
         name: {
@@ -384,7 +452,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         "news",
         "dashboard",
       ])),
-      user,
+      // user,
       // (@SiravitPhokeed)
       // Apparently NextJS doesn’t serialize Date when in development
       // It does in production, though.

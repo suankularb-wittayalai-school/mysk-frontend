@@ -23,11 +23,14 @@ const LogOutDialog = ({ show, onClose }: DialogProps): JSX.Element => {
       supportingText={t("dialog.logOut.supportingText")}
       actions={[
         {
+          name: t("dialog.logOut.action.back"),
+          type: "close",
+        },
+        {
           name: t("dialog.logOut.action.logOut"),
           type: "submit",
           isDangerous: true,
         },
-        { name: t("dialog.logOut.action.back"), type: "close" },
       ]}
       show={show}
       onClose={() => onClose()}

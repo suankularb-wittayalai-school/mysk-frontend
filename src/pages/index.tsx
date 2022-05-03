@@ -19,6 +19,9 @@ import {
   MaterialIcon,
 } from "@suankularb-components/react";
 
+// Components
+import Layout from "@components/Layout";
+
 // Types
 import { NewsItem, NewsList } from "@utils/types/news";
 
@@ -36,7 +39,7 @@ const LandingFeed = ({
       aria-label={t("news.title")}
       className="fixed bottom-[6rem] right-2 w-[calc(100vw-1rem)] rounded-xl
         bg-[#fbfcff88] text-on-surface backdrop-blur-xl dark:bg-[#191c1e88]
-        sm:bottom-2 sm:w-[22.5rem] md:absolute md:right-4 md:top-4 md:h-[calc(100vh-6.5rem)]"
+        sm:bottom-2 sm:w-[22.5rem] md:absolute md:right-4 md:bottom-4 md:h-[calc(100vh-6.5rem)]"
     >
       <Card
         type="stacked"
@@ -163,7 +166,7 @@ const LandingBanner = (): JSX.Element => {
   const { t } = useTranslation(["landing", "common"]);
 
   return (
-    <header className="h-full bg-[url('/images/landing.webp')] bg-cover bg-left font-display sm:min-h-[calc(100vh-4.5rem)]">
+    <header className="h-full font-display sm:min-h-[calc(100vh-4.5rem)]">
       {/* Vignette layer */}
       <div
         className="flex h-full flex-col items-center gap-16 bg-gradient-to-b
@@ -227,17 +230,15 @@ const LandingBanner = (): JSX.Element => {
 };
 
 // Page
-const Landing: NextPage = () => {
+export default function Landing() {
   const { t } = useTranslation(["landing", "common"]);
 
   return (
     <>
       <Head>
-        <title>
-          {t("brand.name", { ns: "common" })}
-        </title>
+        <title>{t("brand.name", { ns: "common" })}</title>
       </Head>
-      <div className="h-full sm:relative">
+      <div className="h-screen bg-[url('/images/landing.webp')] bg-cover bg-left">
         <LandingBanner />
         <LandingFeed
           feed={{
@@ -288,12 +289,14 @@ const Landing: NextPage = () => {
       </div>
     </>
   );
-};
+}
+
+Landing.getLayout = (page: NextPage): JSX.Element => (
+  <Layout transparentNav>{page}</Layout>
+);
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => ({
   props: {
     ...(await serverSideTranslations(locale as string, ["common", "landing"])),
   },
 });
-
-export default Landing;

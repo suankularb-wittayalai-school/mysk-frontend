@@ -26,13 +26,13 @@ const DiscardDraft = ({
       supportingText={t("dialog.discardDraft.supportingText")}
       actions={[
         {
+          name: t("dialog.discardDraft.action.continue"),
+          type: "close",
+        },
+        {
           name: t("dialog.discardDraft.action.discard"),
           type: "submit",
           isDangerous: true,
-        },
-        {
-          name: t("dialog.discardDraft.action.continue"),
-          type: "close",
         },
       ]}
       show={show}

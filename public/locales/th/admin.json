@@ -1,0 +1,56 @@
+{
+  "title": "แอดมิน",
+  "studentList": {
+    "title": "รายชื่อนักเรียน",
+    "searchStudents": "ค้นหานักเรียน",
+    "table": {
+      "id": "เลขนักเรียน",
+      "class": "ห้อง",
+      "classNo": "เลขที่ห้อง",
+      "name": "ชื่อ-นามสกุล",
+      "action": {
+        "copy": "ตัดลอกชื่อนักเรียน",
+        "edit": "แก้ไขนักเรียน"
+      }
+    },
+    "action": {
+      "seeAll": "ดูทั้งหมด",
+      "addStudent": "เพิ่มนักเรียน"
+    }
+  },
+  "teacherList": {
+    "title": "รายชื่ออาจารย์",
+    "searchTeachers": "ค้นหาอาจารย์",
+    "table": {
+      "id": "เลขอาจารย์",
+      "name": "ชื่อ-นามสกุล",
+      "classAdvisorAt": "ครูที่ปรึกษา"
+    },
+    "action": {
+      "addTeacher": "เพิ่มอาจารย์"
+    }
+  },
+  "schedule": {
+    "title": "เรียกดูตารางเรียน",
+    "gradeItem": "ม.{{grade}}",
+    "grade": {
+      "tabTitle": "ตารางเรียน ม.{{grade}}",
+      "pageTitle": "รายตารางเรียน"
+    },
+    "action": {
+      "seeSchedule": "ดูตารางเรียน"
+    }
+  },
+  "dialog": {
+    "editStudent": {
+      "title": {
+        "add": "เพิ่มผู้ใช้",
+        "edit": "แก้ไขผู้ใช้"
+      },
+      "action": {
+        "cancel": "ยกเลิก",
+        "save": "บันทึก"
+      }
+    }
+  }
+}

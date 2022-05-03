@@ -2,19 +2,28 @@
 import { getDay } from "date-fns";
 
 import { GetStaticProps, NextPage } from "next";
+import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+// Supabase imports
+import { supabase } from "@utils/supabaseClient";
 
 // SK Components
-import { MaterialIcon, RegularLayout, Title } from "@suankularb-components/react";
+import {
+  MaterialIcon,
+  RegularLayout,
+  Title,
+} from "@suankularb-components/react";
 
 // Components
 import ChangePassword from "@components/dialogs/ChangePassword";
-import EditProfileDialog from "@components/dialogs/EditProfile";
+import EditSelfDialog from "@components/dialogs/EditSelf";
 import LogOutDialog from "@components/dialogs/LogOut";
 import NewsSection from "@components/home-sections/NewsSection";
 import SubjectsSection from "@components/home-sections/SubjectsSection";
@@ -24,21 +33,68 @@ import UserSection from "@components/home-sections/UserSection";
 // Types
 import { NewsList, StudentForm } from "@utils/types/news";
 import { Teacher } from "@utils/types/person";
-import { Schedule } from "@utils/types/schedule";
+import { StudentSchedule } from "@utils/types/schedule";
+import { Session } from "@supabase/supabase-js";
+
+// helper function
+import { db2teacher } from "@utils/backend/database";
+import { TeacherDB } from "@utils/types/database/person";
+import { useSession } from "@utils/hooks/auth";
 
 const TeacherHome: NextPage<{
-  user: Teacher;
-  schedule: Schedule;
+  // user: Teacher;
+  schedule: StudentSchedule;
   studentForms: Array<StudentForm>;
   news: NewsList;
-}> = ({ user, schedule, studentForms, news }) => {
+}> = ({ schedule, studentForms, news }) => {
   const { t } = useTranslation("common");
+  const router = useRouter();
   const [showChangePassword, setShowChangePassword] = useState<boolean>(false);
   const [showEditProfile, setShowEditProfile] = useState<boolean>(false);
   const [showLogOut, setShowLogOut] = useState<boolean>(false);
+  const [user, setUser] = useState<Teacher | null>(null);
+
+  const session = useSession();
+
+
+  useEffect(() => {
+    if (session) {
+      if (session.user?.user_metadata.role == "teacher") {
+        supabase
+          .from<TeacherDB>("teacher")
+          .select(
+            "id, teacher_id, people:person(*), SubjectGroup:subject_group(*)"
+          )
+          .eq("id", session.user?.user_metadata.teacher)
+          .single()
+          .then((res) => {
+            if (res.error || !res.data) {
+              console.log(res.error);
+              return;
+            }
+
+            db2teacher(res.data).then((teacher) => {
+              setUser(teacher);
+            });
+          });
+      } else if (session.user?.user_metadata.role == "student") {
+        router.push("/s/home");
+      }
+    }
+  }, [session]);
+
+  async function handleLogout() {
+    await supabase.auth.signOut();
+    router.push("/");
+  }
+
+  if (!user) return <></>;
 
   return (
     <>
+      <Head>
+        <title>{t("brand.name", { ns: "common" })}</title>
+      </Head>
       <RegularLayout
         Title={
           <Title
@@ -76,78 +132,23 @@ const TeacherHome: NextPage<{
         show={showChangePassword}
         onClose={() => setShowChangePassword(false)}
       />
-      <EditProfileDialog
+      <EditSelfDialog
         user={user}
         show={showEditProfile}
         onClose={() => setShowEditProfile(false)}
       />
-      <LogOutDialog show={showLogOut} onClose={() => setShowLogOut(false)} />
+      <LogOutDialog
+        show={showLogOut}
+        onClose={() => {
+          handleLogout();
+          setShowLogOut(false);
+        }}
+      />
     </>
   );
 };
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
-  const user: Teacher = {
-    id: 31,
-    role: "teacher",
-    prefix: "mister",
-    name: {
-      "en-US": { firstName: "Atipol", lastName: "Sukrisadanon" },
-      th: { firstName: "อติพล", lastName: "สุกฤษฎานนท์" },
-    },
-    profile: "/images/dummybase/atipol.webp",
-    classAdvisorAt: {
-      id: 509,
-      name: {
-        "en-US": "M.509",
-        th: "ม.509",
-      },
-    },
-    subjectsInCharge: [
-      {
-        id: 8,
-        code: { "en-US": "I21202", th: "I21202" },
-        name: {
-          "en-US": { name: "Communication and Presentation" },
-          th: { name: "การสื่อสารและการนำเสนอ" },
-        },
-        subjectSubgroup: {
-          name: { "en-US": "English", th: "ภาษาอังกฤษ" },
-          subjectGroup: {
-            name: { "en-US": "Foreign Languages", th: "ภาษาต่างประเทศ" },
-          },
-        },
-      },
-      {
-        id: 19,
-        code: { "en-US": "ENG20218", th: "อ20218" },
-        name: {
-          "en-US": { name: "Reading 6" },
-          th: { name: "การอ่าน 6" },
-        },
-        subjectSubgroup: {
-          name: { "en-US": "English", th: "ภาษาอังกฤษ" },
-          subjectGroup: {
-            name: { "en-US": "Foreign Language", th: "ภาษาต่างประเทศ" },
-          },
-        },
-      },
-      {
-        id: 26,
-        code: { "en-US": "ENG32102", th: "อ32102" },
-        name: {
-          "en-US": { name: "English 4" },
-          th: { name: "ภาษาอังกฤษ 4" },
-        },
-        subjectSubgroup: {
-          name: { "en-US": "English", th: "ภาษาอังกฤษ" },
-          subjectGroup: {
-            name: { "en-US": "Foreign Language", th: "ภาษาต่างประเทศ" },
-          },
-        },
-      },
-    ],
-  };
   const studentForms: Array<StudentForm> = [
     {
       id: 5,
@@ -197,7 +198,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
       },
     },
   ];
-  const schedule: Schedule = {
+  const schedule: StudentSchedule = {
     content: [
       {
         day: getDay(new Date()),
@@ -214,7 +215,6 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         "news",
         "dashboard",
       ])),
-      user,
       // (@SiravitPhokeed)
       // Apparently NextJS doesn’t serialize Date when in development
       // It does in production, though.

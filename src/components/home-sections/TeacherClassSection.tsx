@@ -1,7 +1,11 @@
 // Modules
 import { isThisYear } from "date-fns";
+
 import Link from "next/link";
+import { useRouter } from "next/router";
+
 import { useTranslation } from "next-i18next";
+
 import { useEffect, useState } from "react";
 
 // SK Components
@@ -19,9 +23,6 @@ import {
 // Types
 import { StudentForm } from "@utils/types/news";
 
-// Helpers
-import { useRouter } from "next/router";
-
 const StudentFormCard = ({ form }: { form: StudentForm }): JSX.Element => {
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
   const { t } = useTranslation("news");
@@ -31,7 +32,7 @@ const StudentFormCard = ({ form }: { form: StudentForm }): JSX.Element => {
       <CardHeader
         // Title
         title={
-          <h3 className="text-lg font-bold">
+          <h3 className="text-lg font-bold break-all">
             {form.content[locale]?.title || form.content.th.title}
           </h3>
         }
@@ -179,7 +180,7 @@ const TeacherClassSection = ({
         <LinkButton
           label={t("class.action.seeClassDetail")}
           type="filled"
-          url="/news"
+          url="/t/509/class"
           LinkElement={Link}
         />
       </div>
