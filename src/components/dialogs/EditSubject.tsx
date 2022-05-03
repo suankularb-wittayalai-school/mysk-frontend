@@ -148,7 +148,14 @@ const EditSubjectDialog = ({
             .from("syllabus")
             .download(subject.syllabus)
             .then((res) => {
-              if (res.error) console.error(res.error);
+              if (res.error) {
+                console.error(res.error);
+                setForm({
+                  ...form,
+                  ...subject,
+                  syllabus: null,
+                });
+              }
 
               if (res.data)
                 setForm({
