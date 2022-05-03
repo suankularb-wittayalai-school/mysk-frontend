@@ -5,6 +5,9 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 
+// External Libraries
+import { useState } from "react";
+
 // SK Components
 import {
   Card,
@@ -14,16 +17,20 @@ import {
   ListSection,
   MainSection,
   MaterialIcon,
-  RegularLayout,
   Section,
   Title,
 } from "@suankularb-components/react";
-import { TeachersList } from "@utils/types/teachers";
-import TeacherCard from "@components/TeacherCard";
-import { useState } from "react";
-import { nameJoiner } from "@utils/helpers/name";
+
+// Components
 import ContactChip from "@components/ContactChip";
 import ProfilePicture from "@components/ProfilePicture";
+import TeacherCard from "@components/TeacherCard";
+
+// Utils
+import { nameJoiner } from "@utils/helpers/name";
+
+// Types
+import { TeachersList } from "@utils/types/teachers";
 
 // Page
 const Teachers: NextPage = (): JSX.Element => {
