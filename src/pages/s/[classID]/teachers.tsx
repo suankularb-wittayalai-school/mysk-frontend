@@ -224,17 +224,7 @@ const Teachers: NextPage = (): JSX.Element => {
 
   const [showMain, setShowMain] = useState(teacherList[0].content[0].content);
 
-  showMain.contacts.sort(function (a, b) {
-    if (a.via < b.via) {
-      return -1;
-    }
-    if (a.via > b.via) {
-      return 1;
-    }
-
-    // names must be equal
-    return 0;
-  });
+  showMain.contacts.sort((a, b) => a.via < b.via ? -1 : a.via > b.via ? 1 : 0)
 
   return (
     <ListLayout
