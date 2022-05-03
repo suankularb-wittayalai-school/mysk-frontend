@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@suankularb-components/css": "^2.4.1",
-    "@suankularb-components/react": "^2.4.1",
+    "@suankularb-components/react": "^2.4.3",
     "@supabase/supabase-js": "^1.35.2",
     "date-fns": "^2.28.0",
     "framer-motion": "^6.2.8",
