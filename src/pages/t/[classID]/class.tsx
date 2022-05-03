@@ -5,10 +5,14 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { isThisYear } from "date-fns";
 
 // SK Components
 import {
   Button,
+  Card,
+  CardHeader,
+  ChipFilterList,
   Header,
   LinkButton,
   MaterialIcon,
@@ -17,7 +21,11 @@ import {
   Section,
   Table,
   Title,
+  XScrollContent,
 } from "@suankularb-components/react";
+
+// External Libraries
+import { useEffect, useState } from "react";
 
 // Components
 import ContactChip from "@components/ContactChip";
@@ -30,6 +38,165 @@ import { nameJoiner } from "@utils/helpers/name";
 import { Class as ClassType } from "@utils/types/class";
 import { Contact } from "@utils/types/contact";
 import { Student, Teacher } from "@utils/types/person";
+import { StudentForm } from "@utils/types/news";
+
+const StudentFormCard = ({ form }: { form: StudentForm }): JSX.Element => {
+  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const { t } = useTranslation("news");
+
+  return (
+    <Card type="horizontal">
+      <CardHeader
+        // Title
+        title={
+          <h3 className="text-lg font-bold break-all">
+            {form.content[locale]?.title || form.content.th.title}
+          </h3>
+        }
+        // Type and post date
+        label={
+          <div className="flex divide-x divide-outline">
+            <span className="pr-2">{t(`itemType.${form.type}`)}</span>
+            <time className="pl-2 text-outline">
+              {form.postDate.toLocaleDateString(locale, {
+                year: isThisYear(form.postDate) ? undefined : "numeric",
+                month: "short",
+                day: "numeric",
+              })}
+            </time>
+          </div>
+        }
+        // Completion and link
+        end={
+          <div className="flex flex-row items-center gap-2">
+            <div
+              className={`rounded-lg py-2 px-3 font-sans font-bold ${
+                form.percentDone < 25
+                  ? "error"
+                  : form.percentDone < 50
+                  ? "container-tertiary"
+                  : "container-primary"
+              }`}
+            >
+              {form.percentDone}%
+            </div>
+            <LinkButton
+              name={t("action.seeDetails")}
+              type="tonal"
+              iconOnly
+              icon={<MaterialIcon icon="arrow_forward" />}
+              url={`/t/${form.type}/${form.id}`}
+              LinkElement={Link}
+            />
+          </div>
+        }
+        className="font-display"
+      />
+    </Card>
+  );
+};
+
+const FormSection = ({
+  studentForms: forms,
+}: {
+  studentForms: Array<StudentForm>;
+}): JSX.Element => {
+  const { t } = useTranslation(["dashboard", "news"]);
+  const [newsFilter, setNewsFilter] = useState<Array<string>>([]);
+  const [filteredNews, setFilteredNews] = useState<Array<StudentForm>>(forms);
+  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+
+  useEffect(
+    () => {
+      // Reset filtered news if all filters are deselected
+      if (newsFilter.length == 0) {
+        setFilteredNews(forms);
+      
+      // Handles done
+      } else if (
+        newsFilter.includes("few-done") ||
+        newsFilter.includes("most-done") ||
+        newsFilter.includes("all-done")
+      ) {
+        if (newsFilter.length > 1) {
+          setFilteredNews(
+            forms.filter(
+              (newsItem) =>
+                newsFilter.includes(newsItem.type) &&
+                (newsFilter.includes("few-done")
+                  ? newsItem.percentDone < 25
+                  : newsFilter.includes("most-done")
+                  ? newsItem.percentDone >= 25 && newsItem.percentDone < 50
+                  : newsFilter.includes("all-done") &&
+                    newsItem.percentDone >= 50)
+            )
+          );
+        } else {
+          setFilteredNews(
+            forms.filter((newsItem) =>
+              newsFilter.includes("few-done")
+                ? newsItem.percentDone < 25
+                : newsFilter.includes("most-done")
+                ? newsItem.percentDone >= 25 && newsItem.percentDone < 50
+                : newsFilter.includes("all-done") && newsItem.percentDone >= 50
+            )
+          );
+        }
+      }
+
+      // Handles types
+      else {
+        setFilteredNews(
+          forms.filter((newsItem) => newsFilter.includes(newsItem.type))
+        );
+      }
+    },
+
+    // Adding `forms` as a dependency causes an inifinie loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [newsFilter]
+  );
+
+  return (
+    <Section>
+      <Header
+        icon={<MaterialIcon icon="groups" allowCustomSize={true} />}
+        text={locale === "th" ? "การทำแบบสำรวจของนักเรียน" : "Student Forms"}
+      />
+      <ChipFilterList
+        choices={[
+          { id: "form", name: t("news.filter.forms") },
+          { id: "payment", name: t("news.filter.payments") },
+          [
+            { id: "few-done", name: t("news.filter.amountDone.fewDone") },
+            { id: "most-done", name: t("news.filter.amountDone.mostDone") },
+            { id: "all-done", name: t("news.filter.amountDone.allDone") },
+          ],
+        ]}
+        onChange={(newFilter: Array<string>) => setNewsFilter(newFilter)}
+        scrollable={true}
+      />
+      {filteredNews.length == 0 ? (
+        <ul className="px-4">
+          <li
+            className="grid h-[4.8125rem] place-content-center rounded-xl
+              bg-surface-1 text-center text-on-surface"
+          >
+            {t("class.noRelevantForms")}
+          </li>
+        </ul>
+      ) : (
+        <XScrollContent>
+          {filteredNews.map((form) => (
+            <li key={form.id}>
+              <StudentFormCard form={form} />
+            </li>
+          ))}
+        </XScrollContent>
+      )}
+    </Section>
+  );
+};
 
 const ClassAdvisorsSection = ({
   classAdvisors,
@@ -156,7 +323,7 @@ const StudentListSection = ({
 };
 
 // Page
-const Class: NextPage<{ classItem: ClassType }> = ({ classItem }) => {
+const Class: NextPage<{ classItem: ClassType; studentForms: Array<StudentForm>; }> = ({ classItem, studentForms }) => {
   const { t } = useTranslation("common");
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
 
@@ -177,6 +344,12 @@ const Class: NextPage<{ classItem: ClassType }> = ({ classItem }) => {
           />
         }
       >
+        <FormSection
+          studentForms={studentForms.map((newsItem) => ({
+            ...newsItem,
+            postDate: new Date(newsItem.postDate),
+          }))}
+        />
         <ClassAdvisorsSection classAdvisors={classItem.classAdvisors} />
         <ContactSection contacts={classItem.contacts} />
         <StudentListSection students={classItem.students} />
@@ -482,14 +655,52 @@ export const getServerSideProps: GetServerSideProps = async ({
     ],
   };
 
+  const studentForms: Array<StudentForm> = [
+    {
+      id: 5,
+      type: "payment",
+      postDate: new Date(2022, 0, 7),
+      percentDone: 3,
+      content: {
+        "en-US": {
+          title: "School Maintainance Payment",
+        },
+        th: {
+          title: "การชำระเงินบำรุงการศึกษา",
+        },
+      },
+    },
+    {
+      id: 3,
+      type: "form",
+      postDate: new Date(2020, 3, 14),
+      percentDone: 96,
+      content: {
+        "en-US": {
+          title: "Online Learning Readiness",
+        },
+        th: {
+          title: "ความพร้อมการเรียนออนไลน์",
+        },
+      },
+    },
+  ];
+
   return {
     props: {
       ...(await serverSideTranslations(locale as string, [
+        "account",
+        "news",
+        "dashboard",
         "common",
         "class",
         "teacher",
       ])),
       classItem,
+      studentForms: studentForms.map((newsItem) => ({
+        ...newsItem,
+        postDate: newsItem.postDate.getTime(),
+      })),
     },
   };
 };

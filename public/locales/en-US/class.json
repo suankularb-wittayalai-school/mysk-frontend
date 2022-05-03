@@ -15,6 +15,18 @@
       "classNo": "Class №",
       "name": "Name"
     },
-    "printList": "พิมพ์ใบรายช์่อ"
+    "printList": "Print list"
+  },
+  "studentForms": {
+    "title": "Student Forms",
+    "filter": {
+      "forms": "Forms",
+      "payments": "Payments",
+      "amountDone": {
+        "fewDone": "Few done",
+        "mostDone": "Most done",
+        "allDone": "All done"
+      }
+    }
   }
 }
