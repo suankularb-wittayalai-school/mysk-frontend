@@ -290,14 +290,12 @@ const Teachers: NextPage = (): JSX.Element => {
                   </p>
                 </div>
                 <div>
-                  {mainContent.classAdvisorAt ? (
+                  {mainContent.classAdvisorAt && (
                     <p className="text-2xl font-medium">
                       {t("advisor", {
                         className: mainContent.classAdvisorAt.name[locale],
                       })}
                     </p>
-                  ) : (
-                    <></>
                   )}
                 </div>
               </div>
