@@ -62,6 +62,8 @@ const EditSubjectDialog = ({
   // Form control
   const [form, setForm] = useState<Subject>({
     id: 0,
+
+    // Name
     name: {
       "en-US": {
         name: "",
@@ -76,12 +78,18 @@ const EditSubjectDialog = ({
       "en-US": "",
       th: "",
     },
+
+    // Description
     description: {
       "en-US": "",
       th: "",
     },
+
+    // Personnel
     teachers: [],
     coTeachers: [],
+
+    // Category
     subjectGroup: {
       id: 0,
       name: {
@@ -89,15 +97,17 @@ const EditSubjectDialog = ({
         th: "",
       },
     },
-    // set to 2 if month it after october but before march
-    semester: new Date().getMonth() < 3 && new Date().getMonth() > 8 ? 2 : 1,
-    year: new Date().getFullYear(),
-    credit: 0,
-    syllabus: null,
     type: {
       th: "รายวิชาพื้นฐาน",
       "en-US": "Core Courses",
     },
+
+    // School
+    year: new Date().getFullYear(),
+    // Set to 2 if the current month is after October but before March
+    semester: new Date().getMonth() < 3 && new Date().getMonth() > 8 ? 2 : 1,
+    credit: 0,
+    syllabus: null,
   });
 
   const [chipLists, setChipLists] = useState<{
@@ -108,12 +118,18 @@ const EditSubjectDialog = ({
     coTeachers: [],
   });
 
+  // Populate the form control with data if mode is edit
   useEffect(() => {
     if (mode == "edit" || subject) {
       setForm({
         ...form,
         ...subject,
       });
+    }
+  }, [mode, subject]);
+
+  useEffect(() => {
+    if (mode == "edit") {
       if (form.teachers.length > 0) {
         setChipLists({
           ...chipLists,
@@ -134,9 +150,8 @@ const EditSubjectDialog = ({
         });
       }
 
-      if (subject?.syllabus) {
+      if (form.syllabus && form.syllabus !== "") {
         if (typeof form.syllabus === "string") {
-          // console.log("hi");
           supabase.storage
             .from("syllabus")
             .download(form.syllabus)
@@ -154,7 +169,7 @@ const EditSubjectDialog = ({
         }
       }
     }
-  }, [mode, subject]);
+  }, [mode, form]);
 
   useEffect(() => {
     if (mode == "add") {
@@ -183,7 +198,6 @@ const EditSubjectDialog = ({
 
   return (
     <>
-      {/* {console.log(form, subject)} */}
       <Dialog
         type="large"
         label="edit-subject"
@@ -196,7 +210,14 @@ const EditSubjectDialog = ({
         onClose={() => setShowDiscard(true)}
         onSubmit={handleSubmit}
       >
-        <DialogSection name="name-th" title="Local name (Thai)" isDoubleColumn>
+        {/* {console.log(form)} */}
+        {/* Thai name */}
+        <DialogSection
+          name="name-th"
+          title="Local name (Thai)"
+          isDoubleColumn
+          hasNoGap
+        >
           <KeyboardInput
             name="code-th"
             type="text"
@@ -235,7 +256,14 @@ const EditSubjectDialog = ({
             defaultValue={form.name.th.shortName}
           />
         </DialogSection>
-        <DialogSection name="name-en" title="English name" isDoubleColumn>
+
+        {/* English name */}
+        <DialogSection
+          name="name-en"
+          title="English name"
+          isDoubleColumn
+          hasNoGap
+        >
           <KeyboardInput
             name="code-en"
             type="text"
@@ -277,6 +305,8 @@ const EditSubjectDialog = ({
             defaultValue={form.name["en-US"].shortName}
           />
         </DialogSection>
+
+        {/* Description */}
         <DialogSection name="desc" title="Description">
           <TextArea
             name="desc-th"
@@ -305,7 +335,9 @@ const EditSubjectDialog = ({
             defaultValue={form.description ? form.description["en-US"] : ""}
           />
         </DialogSection>
-        <DialogSection name="school" title="School" isDoubleColumn>
+
+        {/* School */}
+        <DialogSection name="school" title="School" isDoubleColumn hasNoGap>
           <KeyboardInput
             name="year"
             type="number"
@@ -336,9 +368,16 @@ const EditSubjectDialog = ({
             label="Syllabus"
             onChange={(e: File) => setForm({ ...form, syllabus: e })}
             attr={{ accept: ".pdf" }}
+            defaultValue={
+              typeof form.syllabus !== "string" && form.syllabus
+                ? form.syllabus
+                : undefined
+            }
           />
         </DialogSection>
-        <DialogSection name="category" title="Category" isDoubleColumn>
+
+        {/* Category */}
+        <DialogSection name="category" title="Category" isDoubleColumn hasNoGap>
           <Dropdown
             name="subject-group"
             label="Subject group"
@@ -376,7 +415,14 @@ const EditSubjectDialog = ({
             }
           />
         </DialogSection>
-        <DialogSection name="personnel" title="Personnel" isDoubleColumn>
+
+        {/* Personnel */}
+        <DialogSection
+          name="personnel"
+          title="Personnel"
+          isDoubleColumn
+          hasNoGap
+        >
           <div className="flex flex-col gap-2">
             <p className="font-display">Teachers</p>
             <ChipInputList
@@ -420,7 +466,7 @@ const EditSubjectDialog = ({
         </DialogSection>
       </Dialog>
 
-      {/* Dialog */}
+      {/* Dialogs */}
       <DiscardDraft
         show={showDiscard}
         onClose={() => setShowDiscard(false)}
@@ -431,12 +477,11 @@ const EditSubjectDialog = ({
       />
       <AddTeacherDialog
         show={showAddTeacher}
-        onClose={() => {
-          setShowAddTeacher(false);
-          // console.log("hi");
-        }}
+        onClose={() => setShowAddTeacher(false)}
         onSubmit={(teacher) => {
+          // Close the dialog
           setShowAddTeacher(false);
+          // Update the chip list
           setChipLists({
             ...chipLists,
             teachers: [
@@ -447,6 +492,7 @@ const EditSubjectDialog = ({
               },
             ],
           });
+          // Update the form control
           setForm({
             ...form,
             teachers: [...form.teachers, teacher],
@@ -457,7 +503,9 @@ const EditSubjectDialog = ({
         show={showAddCoTeacher}
         onClose={() => setShowAddCoTeacher(false)}
         onSubmit={(teacher) => {
+          // Close the dialog
           setShowAddCoTeacher(false);
+          // Update the chip list
           setChipLists({
             ...chipLists,
             coTeachers: [
@@ -468,6 +516,7 @@ const EditSubjectDialog = ({
               },
             ],
           });
+          // Update the form control
           setForm({
             ...form,
             coTeachers: form.coTeachers

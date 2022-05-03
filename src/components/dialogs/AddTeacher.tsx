@@ -1,7 +1,7 @@
 // Modules
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // SK Components
 import { Dialog, DialogSection, Dropdown } from "@suankularb-components/react";
@@ -33,6 +33,11 @@ const AddTeacherDialog = ({
     teachers.length > 0 ? teachers[0].id : null
   );
 
+  useEffect(
+    () => setSelectedTeacher(teachers.length > 0 ? teachers[0].id : null),
+    [selectedGroup]
+  );
+
   return (
     <Dialog
       type="regular"
@@ -44,10 +49,7 @@ const AddTeacherDialog = ({
         { name: t("dialog.addTeacher.action.add"), type: "submit" },
       ]}
       show={show}
-      onClose={() => {
-        onClose();
-        // console.log("close");
-      }}
+      onClose={() => onClose()}
       onSubmit={() =>
         selectedTeacher &&
         onSubmit(
@@ -55,7 +57,6 @@ const AddTeacherDialog = ({
         )
       }
     >
-      {/* {console.log(teachers, selectedGroup)} */}
       <DialogSection>
         <Dropdown
           name="subject-group"
@@ -66,7 +67,6 @@ const AddTeacherDialog = ({
           }))}
           onChange={(e: number) => setSelectedGroup(e)}
         />
-        {/* {console.log(selectedTeacher, selectedGroup)} */}
         <Dropdown
           name="teacher"
           label={t("dialog.addTeacher.teacher")}
