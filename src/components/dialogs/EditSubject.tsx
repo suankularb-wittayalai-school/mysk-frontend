@@ -52,7 +52,7 @@ const EditSubjectDialog = ({
   subject?: Subject;
 }): JSX.Element => {
   const { t } = useTranslation(["subjects", "admin"]);
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const locale = useRouter().locale as "en-US" | "th";
 
   // Dialogs
   const [showDiscard, setShowDiscard] = useState<boolean>(false);
@@ -68,7 +68,7 @@ const EditSubjectDialog = ({
   ];
 
   // Form control
-  const [form, setForm] = useState<Subject>({
+  const defaultForm: Subject = {
     id: 0,
 
     // Name
@@ -116,17 +116,25 @@ const EditSubjectDialog = ({
     semester: new Date().getMonth() < 3 && new Date().getMonth() > 8 ? 2 : 1,
     credit: 0,
     syllabus: null,
-  });
+  };
 
-  const [chipLists, setChipLists] = useState<{
+  const [form, setForm] = useState<Subject>(defaultForm);
+
+  // Chip List control
+  type ChipListsType = {
     teachers: { id: string; name: string }[];
     coTeachers: { id: string; name: string }[];
-  }>({
+  };
+
+  const defaultChipLists: ChipListsType = {
     teachers: [],
     coTeachers: [],
-  });
+  };
+
+  const [chipLists, setChipLists] = useState<ChipListsType>(defaultChipLists);
 
   // Populate the form control with data if mode is edit
+  // Resets form control if mode is add
   useEffect(() => {
     if (mode == "edit" || subject) {
       setForm({
@@ -152,9 +160,13 @@ const EditSubjectDialog = ({
             });
         }
       }
+    } else if (mode == "add") {
+      setForm(defaultForm);
     }
-  }, [mode, subject]);
+  }, [show, mode, subject]);
 
+  // Populate the Chip List control with data if mode is edit
+  // Resets Chip List control if mode is add
   useEffect(() => {
     if (mode == "edit") {
       if (form.teachers.length > 0) {
@@ -176,8 +188,10 @@ const EditSubjectDialog = ({
           })),
         });
       }
+    } else if (mode == "add") {
+      setChipLists(defaultChipLists);
     }
-  }, [mode, form]);
+  }, [show, mode, form]);
 
   useEffect(() => {
     if (mode == "add") {
@@ -256,7 +270,7 @@ const EditSubjectDialog = ({
           <KeyboardInput
             name="short-name-th"
             type="text"
-            label="Short name"
+            label={t("item.name.shortName")}
             helperMsg="Shown for short periods in Schedule."
             onChange={(e) =>
               setForm({
@@ -274,14 +288,14 @@ const EditSubjectDialog = ({
         {/* English name */}
         <DialogSection
           name="name-en"
-          title="English name"
+          title={t("item.enName.title")}
           isDoubleColumn
           hasNoGap
         >
           <KeyboardInput
             name="code-en"
             type="text"
-            label="English code"
+            label={t("item.enName.code")}
             onChange={(e) =>
               setForm({ ...form, code: { ...form.code, "en-US": e } })
             }
@@ -290,7 +304,7 @@ const EditSubjectDialog = ({
           <KeyboardInput
             name="name-en"
             type="text"
-            label="English name"
+            label={t("item.enName.name")}
             onChange={(e) =>
               setForm({
                 ...form,
@@ -305,7 +319,7 @@ const EditSubjectDialog = ({
           <KeyboardInput
             name="short-name-en"
             type="text"
-            label="English short name"
+            label={t("item.enName.shortName")}
             helperMsg="Shown for short periods in Schedule."
             onChange={(e) =>
               setForm({
@@ -321,45 +335,52 @@ const EditSubjectDialog = ({
         </DialogSection>
 
         {/* Description */}
-        <DialogSection name="desc" title="Description">
-          <TextArea
-            name="desc-th"
-            label="Local description (Thai)"
-            onChange={(e) =>
-              setForm({
-                ...form,
-                description: form.description
-                  ? { ...form.description, th: e }
-                  : undefined,
-              })
-            }
-            defaultValue={form.description?.th}
-          />
-          <TextArea
-            name="desc-en"
-            label="English description"
-            onChange={(e) =>
-              setForm({
-                ...form,
-                description: form.description
-                  ? { ...form.description, "en-US": e }
-                  : undefined,
-              })
-            }
-            defaultValue={form.description ? form.description["en-US"] : ""}
-          />
+        <DialogSection name="desc" title={t("item.desc.title")}>
+          <div>
+            <TextArea
+              name="desc-th"
+              label={t("item.desc.thDesc")}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  description: form.description
+                    ? { ...form.description, th: e }
+                    : undefined,
+                })
+              }
+              defaultValue={form.description?.th}
+            />
+            <TextArea
+              name="desc-en"
+              label={t("item.desc.enDesc")}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  description: form.description
+                    ? { ...form.description, "en-US": e }
+                    : undefined,
+                })
+              }
+              defaultValue={form.description ? form.description["en-US"] : ""}
+            />
+          </div>
         </DialogSection>
 
         {/* School */}
-        <DialogSection name="school" title="School" isDoubleColumn hasNoGap>
+        <DialogSection
+          name="school"
+          title={t("item.school.title")}
+          isDoubleColumn
+          hasNoGap
+        >
           <KeyboardInput
             name="year"
             type="number"
-            label="Academic year"
-            helperMsg="In Buddhist Era (BE)."
+            label={t("item.school.year")}
+            useAutoMsg
             onChange={(e) => setForm({ ...form, year: Number(e) })}
             defaultValue={form.year}
-            attr={{ min: 2005 }}
+            attr={{ min: locale == "en-US" ? 2005 : 2550 }}
           />
           <KeyboardInput
             name="semester"
@@ -383,11 +404,12 @@ const EditSubjectDialog = ({
             onChange={(e: File) => setForm({ ...form, syllabus: e })}
             attr={{ accept: ".pdf" }}
             defaultValue={
-              typeof form.syllabus !== "string" && form.syllabus
+              form.syllabus && typeof form.syllabus !== "string"
                 ? form.syllabus
                 : undefined
             }
           />
+          {/* {console.log(form.syllabus)} */}
         </DialogSection>
 
         {/* Category */}
