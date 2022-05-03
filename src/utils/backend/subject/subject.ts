@@ -21,10 +21,14 @@ export async function createSubject(
   if (subject.syllabus) {
     const { data: syllabus, error: uploadingError } = await supabase.storage
       .from("syllabus")
-      .upload(`${subject.code.th}/syllabus.pdf`, subject.syllabus, {
-        cacheControl: "3600",
-        upsert: false,
-      });
+      .upload(
+        `${subject.year}/${subject.code.th}/syllabus.pdf`,
+        subject.syllabus,
+        {
+          cacheControl: "3600",
+          upsert: false,
+        }
+      );
     if (uploadingError) {
       return {
         data: null,
@@ -54,7 +58,7 @@ export async function createSubject(
       year: subject.year,
       semester: subject.semester,
       group: subject.subjectGroup.id,
-      syllabus: `${subject.code.th}/syllabus.pdf`,
+      syllabus: `${subject.year}/${subject.code.th}/syllabus.pdf`,
       credit: subject.credit,
       teachers: subject.teachers.map((teacher) => teacher.id),
       coTeachers: subject.coTeachers?.map((teacher) => teacher.id),

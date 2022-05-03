@@ -26,6 +26,12 @@ import SubjectTable from "@components/tables/SubjectTable";
 
 // Types
 import { Subject } from "@utils/types/subject";
+import { supabase } from "@utils/supabaseClient";
+import {
+  SubjectDB,
+  SubjectTable as SubjectTableType,
+} from "@utils/types/database/subject";
+import { db2Subject } from "@utils/backend/database";
 
 const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
   const { t } = useTranslation(["admin", "common"]);
@@ -107,29 +113,27 @@ const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
-  const allSubjects: Subject[] = [
-    {
-      id: 1,
-      code: {
-        "en-US": "MA11234",
-        th: "ค11234",
+  const { data: subjects, error: subjectSelectingError } = await supabase
+    .from<SubjectTableType>("subject")
+    .select("*");
+
+  // console.log(subjects);
+
+  if (subjectSelectingError) {
+    console.error(subjectSelectingError);
+  }
+  if (!subjects) {
+    return {
+      props: {
+        allSubjects: [],
       },
-      name: {
-        "en-US": { name: "Math" },
-        th: { name: "คณุต" },
-      },
-      teachers: [],
-      coTeachers: [],
-      subjectGroup: {
-        id: 8,
-        name: { "en-US": "Mathematics", th: "คณิตศาสตร์" },
-      },
-      year: 2022,
-      semester: 1,
-      credit: 3,
-      syllabus: "https://www.google.com",
-    },
-  ];
+    };
+  }
+
+  const allSubjects: Subject[] = await Promise.all(
+    subjects.map(async (subject) => await db2Subject(subject))
+  );
+  // console.log(allSubjects[1].teachers[0].contacts);
 
   return {
     props: {
