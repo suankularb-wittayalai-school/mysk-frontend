@@ -238,28 +238,40 @@ const EditSubjectDialog = ({
 
     if (mode == "add") {
       const { data, error } = await createSubject(form);
-      if (error) console.error(error);
-      if (!data) return;
+      if (error) {
+        console.error(error);
+        setLoading(false);
+      }
+      if (!data) {
+        setLoading(false);
+        return;
+      }
     } else if (mode == "edit") {
       const { data, error } = await editSubject(form);
-      if (error) console.error(error);
-      if (!data) return;
+      if (error) {
+        console.error(error);
+        setLoading(false);
+      }
+      if (!data) {
+        setLoading(false);
+        return;
+      }
     }
     onSubmit();
+
+    setLoading(false);
   }
 
-  // useEffect(() =>
-  //   console.log({
-  //     loading,
-  //     validate: validate(),
-  //     disabled: !validate() || loading,
-  //   })
-  // );
+  useEffect(() =>
+    console.log({
+      loading,
+      validate: validate(),
+      disabled: !validate() || loading,
+    })
+  );
 
   return (
     <>
-      {/* {console.log({ loading, disabled: !validate() || loading })} */}
-      {/* {console.log(form.syllabus)} */}
       <Dialog
         type="large"
         label={mode == "edit" ? "edit-subject" : "add-subject"}
@@ -277,10 +289,7 @@ const EditSubjectDialog = ({
         ]}
         show={show}
         onClose={() => setShowDiscard(true)}
-        onSubmit={() => {
-          console.log("submit");
-          handleSubmit();
-        }}
+        onSubmit={() => handleSubmit()}
       >
         {/* Thai name */}
         <DialogSection
