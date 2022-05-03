@@ -62,6 +62,8 @@ export async function createSubject(
       credit: subject.credit,
       teachers: subject.teachers.map((teacher) => teacher.id),
       coTeachers: subject.coTeachers?.map((teacher) => teacher.id),
+      short_name_en: subject.name["en-US"].shortName,
+      short_name_th: subject.name.th.shortName,
     });
   if (subjectCreationError || !subject) {
     console.error(subjectCreationError);

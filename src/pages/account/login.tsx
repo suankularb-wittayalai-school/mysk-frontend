@@ -61,20 +61,26 @@ const LoginForm = () => {
         className="section w-full sm:w-1/2 md:w-1/3"
         onSubmit={(e: FormEvent) => e.preventDefault()}
       >
-        <KeyboardInput
-          name="user-id"
-          type="text"
-          label={t("form.userID")}
-          onChange={(e: string) => setForm({ ...form, userID: e })}
-          className="w-full"
-        />
-        <KeyboardInput
-          name="password"
-          type="password"
-          label={t("form.password")}
-          onChange={(e: string) => setForm({ ...form, password: e })}
-          className="w-full"
-        />
+        <div>
+          <KeyboardInput
+            name="user-id"
+            type="email"
+            label={t("form.email")}
+            helperMsg="Use your school email."
+            // errorMsg="Invalid email."
+            useAutoMsg
+            onChange={(e: string) => setForm({ ...form, userID: e })}
+            className="w-full"
+          />
+          <KeyboardInput
+            name="password"
+            type="password"
+            label={t("form.password")}
+            helperMsg="Default is birthday in YYYYMMDD (in AD), i.e. 20040512"
+            onChange={(e: string) => setForm({ ...form, password: e })}
+            className="w-full"
+          />
+        </div>
         <div className="flex flex-row flex-wrap items-center justify-end gap-2">
           <Link href="/account/forgot-password">
             <a className="btn--text">{t("action.forgotPassword")}</a>

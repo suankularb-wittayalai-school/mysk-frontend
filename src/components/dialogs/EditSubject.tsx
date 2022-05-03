@@ -113,6 +113,26 @@ const EditSubjectDialog = ({
         ...form,
         ...subject,
       });
+
+      if (subject?.teachers) {
+        setChipLists({
+          ...chipLists,
+          teachers: subject.teachers.map((teacher: Teacher) => ({
+            id: teacher.id.toString(),
+            name: teacher.name[locale]?.firstName ?? teacher.name.th.firstName,
+          })),
+        });
+      }
+
+      if (subject?.coTeachers) {
+        setChipLists({
+          ...chipLists,
+          coTeachers: subject.coTeachers.map((teacher: Teacher) => ({
+            id: teacher.id.toString(),
+            name: teacher.name[locale]?.firstName ?? teacher.name.th.firstName,
+          })),
+        });
+      }
     }
   }, [mode, subject]);
 
@@ -328,7 +348,11 @@ const EditSubjectDialog = ({
                 type: subjectTypes[e],
               })
             }
-            defaultValue={mode === "add" ? 0 : subjectTypes.indexOf(form.type)}
+            defaultValue={
+              mode === "add"
+                ? 0
+                : subjectTypes.findIndex((type) => type.th === form.type.th)
+            }
           />
         </DialogSection>
         <DialogSection name="personnel" title="Personnel" isDoubleColumn>
