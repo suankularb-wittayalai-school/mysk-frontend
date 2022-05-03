@@ -44,7 +44,31 @@ const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
 
   const [showConfDel, setShowConfDel] = useState<boolean>(false);
 
-  function handleDelete() {}
+  async function handleDelete() {
+    // console.log(editingSubject);
+    // delete the syllabus if it exists
+    if (editingSubject?.syllabus) {
+      const {
+        data: syllabus,
+        error: syllabusError,
+      } = await supabase.storage
+        .from("syllabus")
+        .remove([editingSubject.syllabus.toString()]);
+      if (syllabusError) {
+        console.error(syllabusError);
+      }
+    }
+    // delete the subject
+    const { data, error } = await supabase
+      .from("subject")
+      .delete()
+      .match({ id: editingSubject?.id });
+    if (error) {
+      console.error(error);
+    }
+    setShowConfDel(false);
+    router.replace(router.asPath);
+  }
 
   return (
     <>
@@ -93,13 +117,19 @@ const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
       <EditSubjectDialog
         show={showAdd}
         onClose={() => setShowAdd(false)}
-        onSubmit={() => setShowAdd(false)}
+        onSubmit={() => {
+          setShowAdd(false);
+          router.replace(router.asPath);
+        }}
         mode="add"
       />
       <EditSubjectDialog
         show={showEdit}
         onClose={() => setShowEdit(false)}
-        onSubmit={() => setShowEdit(false)}
+        onSubmit={() => {
+          setShowAdd(false);
+          router.replace(router.asPath);
+        }}
         subject={editingSubject}
         mode="edit"
       />
