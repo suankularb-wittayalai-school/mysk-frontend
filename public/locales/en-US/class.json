@@ -1,10 +1,12 @@
 {
   "title": "M.{{className}}",
   "classAdvisors": {
-    "title": "Class advisors"
+    "title": "Class advisors",
+    "addAdvisors": "Add advisor"
   },
   "classContacts": {
-    "title": "Class contacts"
+    "title": "Class contacts",
+    "addClassContacts": "Add contacts"
   },
   "studentList": {
     "title": "Student list",
@@ -12,6 +14,7 @@
     "table": {
       "classNo": "Class №",
       "name": "Name"
-    }
+    },
+    "printList": "พิมพ์ใบรายช์่อ"
   }
 }

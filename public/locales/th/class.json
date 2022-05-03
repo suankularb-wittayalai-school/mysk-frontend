@@ -1,10 +1,12 @@
 {
   "title": "ม.{{className}}",
   "classAdvisors": {
-    "title": "ครูที่ปรึกษา"
+    "title": "ครูที่ปรึกษา",
+    "addAdvisors": "เพิ่มครูที่ปรึกษา"
   },
   "classContacts": {
-    "title": "ช่องทางติดต่อ"
+    "title": "ช่องทางติดต่อ",
+    "addClassContacts": "เพิ่มช่องทางติดต่อ"
   },
   "studentList": {
     "title": "รายชื่อนักเรียน",
@@ -12,6 +14,7 @@
     "table": {
       "classNo": "เลขที่",
       "name": "ชื่อ-นามสกุล"
-    }
+    },
+    "printList": "พิมพ์ใบรายช์่อ"
   }
 }
