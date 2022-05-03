@@ -18,17 +18,19 @@
       "enDesc": "English description"
     },
     "school": {
-      "title": "",
+      "title": "School",
       "year": "Academic year",
       "semester": "Semester",
       "credit": "Credit",
       "syllabus": "Syllabus"
     },
     "category": {
+      "title": "Category",
       "subjectGroup": "Subject group",
       "subjectType": "Subject type"
     },
     "personnel": {
+      "title": "Personnel",
       "teachers": "Teachers",
       "coTeachers": "Co-teachers"
     }

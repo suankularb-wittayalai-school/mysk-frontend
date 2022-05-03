@@ -34,7 +34,7 @@ const LoginForm = () => {
   });
 
   // Loading
-  const [loading, setLoading] = useReducer(() => true, false);
+  const [loading, toggleLoading] = useReducer(() => true, false);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -44,8 +44,8 @@ const LoginForm = () => {
     if (!form.email) return;
     if (!form.password) return;
 
-    // Set loading
-    setLoading();
+    // Signals loading
+    toggleLoading();
 
     // Sends and redirects
     const { user, session, error } = await supabase.auth.signIn({
@@ -55,6 +55,7 @@ const LoginForm = () => {
 
     if (error) {
       console.log(error);
+      toggleLoading();
       return;
     }
 

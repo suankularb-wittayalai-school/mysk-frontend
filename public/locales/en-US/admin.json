@@ -70,6 +70,16 @@
         "cancel": "Cancel",
         "save": "Save"
       }
+    },
+    "editSubject": {
+      "title": {
+        "add": "Add subject",
+        "edit": "Edit subject"
+      },
+      "action": {
+        "cancel": "Cancel",
+        "save": "Save"
+      }
     }
   }
 }

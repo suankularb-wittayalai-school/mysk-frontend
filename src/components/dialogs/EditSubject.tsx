@@ -18,6 +18,18 @@ import {
 import AddTeacherDialog from "@components/dialogs/AddTeacher";
 import DiscardDraft from "@components/dialogs/DiscardDraft";
 
+// Backend
+import { createSubject, editSubject } from "@utils/backend/subject/subject";
+
+// Helpers
+import { nameJoiner } from "@utils/helpers/name";
+
+// Hooks
+import { useSubjectGroupOption } from "@utils/hooks/subject";
+
+// Supabase
+import { supabase } from "@utils/supabaseClient";
+
 // Types
 import { DialogProps } from "@utils/types/common";
 import {
@@ -27,10 +39,6 @@ import {
   SubjectTypeTH,
 } from "@utils/types/subject";
 import { Teacher } from "@utils/types/person";
-import { useSubjectGroupOption } from "@utils/hooks/subject";
-import { nameJoiner } from "@utils/helpers/name";
-import { createSubject } from "@utils/backend/subject/subject";
-import { supabase } from "@utils/supabaseClient";
 
 const EditSubjectDialog = ({
   show,
@@ -43,7 +51,7 @@ const EditSubjectDialog = ({
   mode: "add" | "edit";
   subject?: Subject;
 }): JSX.Element => {
-  const { t } = useTranslation("subjects");
+  const { t } = useTranslation(["subjects", "admin"]);
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
 
   // Dialogs
@@ -125,6 +133,25 @@ const EditSubjectDialog = ({
         ...form,
         ...subject,
       });
+      if (subject?.syllabus && subject.syllabus !== "") {
+        if (typeof subject.syllabus === "string") {
+          supabase.storage
+            .from("syllabus")
+            .download(subject.syllabus)
+            .then((res) => {
+              if (res.error) console.error(res.error);
+
+              if (res.data)
+                setForm({
+                  ...form,
+                  ...subject,
+                  syllabus: new File([res.data], "syllabus", {
+                    type: "application/pdf",
+                  }),
+                });
+            });
+        }
+      }
     }
   }, [mode, subject]);
 
@@ -149,25 +176,6 @@ const EditSubjectDialog = ({
           })),
         });
       }
-
-      if (form.syllabus && form.syllabus !== "") {
-        if (typeof form.syllabus === "string") {
-          supabase.storage
-            .from("syllabus")
-            .download(form.syllabus)
-            .then((res) => {
-              if (res.error) console.error(res.error);
-
-              if (res.data)
-                setForm({
-                  ...form,
-                  syllabus: new File([res.data], "syllabus", {
-                    type: "application/pdf",
-                  }),
-                });
-            });
-        }
-      }
     }
   }, [mode, form]);
 
@@ -180,19 +188,20 @@ const EditSubjectDialog = ({
     }
   }, [mode, subjectGroups]);
 
+  // Form validation
+  function validate() {}
+
+  // Form submission
   async function handleSubmit() {
     if (mode == "add") {
       const { data, error } = await createSubject(form);
-      if (error) {
-        console.error(error);
-      }
-      if (!data) {
-        return;
-      }
+      if (error) console.error(error);
+      if (!data) return;
+    } else if (mode == "edit") {
+      const { data, error } = await editSubject(form);
+      if (error) console.error(error);
+      if (!data) return;
     }
-    // else if (mode == "edit") {
-    //   await onSubmit();
-    // }
     onSubmit();
   }
 
@@ -200,28 +209,33 @@ const EditSubjectDialog = ({
     <>
       <Dialog
         type="large"
-        label="edit-subject"
-        title="Edit subject"
+        label={mode == "edit" ? "edit-subject" : "add-subject"}
+        title={t(`dialog.editSubject.title.${mode}`, { ns: "admin" })}
         actions={[
-          { name: "Cancel", type: "close" },
-          { name: "Save", type: "submit" },
+          {
+            name: t("dialog.editSubject.action.cancel", { ns: "admin" }),
+            type: "close",
+          },
+          {
+            name: t("dialog.editSubject.action.save", { ns: "admin" }),
+            type: "submit",
+          },
         ]}
         show={show}
         onClose={() => setShowDiscard(true)}
         onSubmit={handleSubmit}
       >
-        {/* {console.log(form)} */}
         {/* Thai name */}
         <DialogSection
           name="name-th"
-          title="Local name (Thai)"
+          title={t("item.name.title")}
           isDoubleColumn
           hasNoGap
         >
           <KeyboardInput
             name="code-th"
             type="text"
-            label="Code"
+            label={t("item.name.code")}
             onChange={(e) =>
               setForm({ ...form, code: { ...form.code, th: e } })
             }
@@ -230,7 +244,7 @@ const EditSubjectDialog = ({
           <KeyboardInput
             name="name-th"
             type="text"
-            label="Full name"
+            label={t("item.name.name")}
             onChange={(e) =>
               setForm({
                 ...form,

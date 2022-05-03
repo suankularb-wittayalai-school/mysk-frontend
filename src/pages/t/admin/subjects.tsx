@@ -129,7 +129,7 @@ const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
         show={showEdit}
         onClose={() => setShowEdit(false)}
         onSubmit={() => {
-          setShowAdd(false);
+          setShowEdit(false);
           router.replace(router.asPath);
         }}
         subject={editingSubject}
