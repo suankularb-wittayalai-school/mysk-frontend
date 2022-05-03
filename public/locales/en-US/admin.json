@@ -1,0 +1,56 @@
+{
+  "title": "Admin panel",
+  "studentList": {
+    "title": "Student list",
+    "searchStudents": "Search students",
+    "table": {
+      "id": "ID",
+      "class": "Class",
+      "classNo": "Class №",
+      "name": "Name",
+      "action": {
+        "copy": "Copy name to clipboard",
+        "edit": "Edit student"
+      }
+    },
+    "action": {
+      "seeAll": "See all",
+      "addStudent": "Add student"
+    }
+  },
+  "teacherList": {
+    "title": "Teacher list",
+    "searchTeachers": "Search teachers",
+    "table": {
+      "id": "ID",
+      "name": "Name",
+      "classAdvisorAt": "Class advisor at"
+    },
+    "action": {
+      "addTeacher": "Add teacher"
+    }
+  },
+  "schedule": {
+    "title": "Schedule lookup",
+    "gradeItem": "M.{{grade}}",
+    "grade": {
+      "tabTitle": "M.{{grade}} schedules",
+      "pageTitle": "Schedule list"
+    },
+    "action": {
+      "seeSchedule": "See schedule"
+    }
+  },
+  "dialog": {
+    "editStudent": {
+      "title": {
+        "add": "Add user",
+        "edit": "Edit user"
+      },
+      "action": {
+        "cancel": "Cancel",
+        "save": "Save"
+      }
+    }
+  }
+}

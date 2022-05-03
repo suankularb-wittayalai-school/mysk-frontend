@@ -17,10 +17,10 @@
   },
   "name": {
     "prefix": {
-      "master": "Master",
-      "mister": "Mr. ",
-      "miss": "Miss ",
-      "missus": "Mrs. "
+      "Master": "Master ",
+      "Mr.": "Mr. ",
+      "Miss.": "Miss ",
+      "Mrs.": "Mrs. "
     }
   },
   "datetime": {
@@ -40,8 +40,22 @@
       "title": "Discard draft?",
       "supportingText": "All changes will be deleted.",
       "action": {
-        "discard": "Discard",
-        "continue": "Continue editing"
+        "continue": "Continue editing",
+        "discard": "Discard"
+      }
+    },
+    "confirmDelete": {
+      "title": "Delete this item?",
+      "supportingText": "This action cannot be undone.",
+      "action": {
+        "cancel": "Cancel",
+        "delete": "Delete"
+      }
+    },
+    "image": {
+      "title": "Image",
+      "action": {
+        "close": "Close"
       }
     }
   }

@@ -46,6 +46,7 @@ import {
 } from "@utils/types/subject";
 import { ClassWName } from "@utils/types/class";
 import { DialogProps } from "@utils/types/common";
+import ImageDialog from "@components/dialogs/Image";
 
 // Details Section
 
@@ -131,32 +132,19 @@ const AddClassDialog = ({
 };
 
 // Period Logs Section
+
+// Main
 const PeriodLogsSection = ({
   periodLogs,
+  setLogEvidence,
+  setLogDetails,
 }: {
   periodLogs: Array<PeriodLog>;
+  setLogEvidence: (value: { show: boolean; evidence?: string }) => void;
+  setLogDetails: (value: { show: boolean; periodLog?: PeriodLog }) => void;
 }): JSX.Element => {
   const { t } = useTranslation("subjects");
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
-
-  // Component specific utilities
-  function tMedium(medium: PeriodMedium) {
-    return t(
-      `periodLogs.table.medium.${
-        medium == "meet"
-          ? "meet"
-          : medium == "pre-recorded"
-          ? "preRecorded"
-          : medium == "material"
-          ? "material"
-          : medium == "assignment"
-          ? "assignment"
-          : medium == "on-site"
-          ? "onSite"
-          : undefined
-      }`
-    );
-  }
 
   return (
     <Section>
@@ -194,55 +182,18 @@ const PeriodLogsSection = ({
 
                 {/* Medium */}
                 <td>
-                  <div className="flex flex-row flex-wrap items-center justify-center gap-2">
-                    {/* Icon */}
-                    {periodLog.mediums.length > 0 &&
-                      (periodLog.mediums[0] == "meet" ? (
-                        <MaterialIcon
-                          icon="videocam"
-                          className="text-primary"
-                        />
-                      ) : periodLog.mediums[0] == "pre-recorded" ? (
-                        <MaterialIcon
-                          icon="ondemand_video"
-                          className="text-primary"
-                        />
-                      ) : periodLog.mediums[0] == "material" ? (
-                        <MaterialIcon icon="style" className="text-primary" />
-                      ) : periodLog.mediums[0] == "assignment" ? (
-                        <MaterialIcon
-                          icon="assignment"
-                          className="text-primary"
-                        />
-                      ) : periodLog.mediums[0] == "on-site" ? (
-                        <MaterialIcon
-                          icon="apartment"
-                          className="text-primary"
-                        />
-                      ) : undefined)}
-
-                    {/* Text */}
-                    <span>
-                      {periodLog.mediums.length > 0 &&
-                        tMedium(periodLog.mediums[0])}{" "}
-                      {periodLog.mediums.length > 1 && (
-                        <abbr
-                          title={periodLog.mediums
-                            .slice(1)
-                            .map((medium) => tMedium(medium))
-                            .join(", ")}
-                          className="font-light text-outline"
-                        >
-                          +{periodLog.mediums.length - 1}
-                        </abbr>
-                      )}
-                    </span>
-                  </div>
+                  <PeriodLogMedium
+                    mediums={periodLog.mediums}
+                    className="justify-center"
+                  />
                 </td>
 
                 {/* Sentiment */}
                 <td>
-                  <Sentiment level={periodLog.participationLevel} />
+                  <Sentiment
+                    level={periodLog.participationLevel}
+                    className="justify-center"
+                  />
                 </td>
 
                 {/* Actions */}
@@ -253,12 +204,19 @@ const PeriodLogsSection = ({
                       type="text"
                       iconOnly
                       icon={<MaterialIcon icon="photo" />}
+                      onClick={() =>
+                        setLogEvidence({
+                          show: true,
+                          evidence: periodLog.evidence,
+                        })
+                      }
                     />
                     <Button
                       name={t("periodLogs.table.action.seeDetails")}
                       type="text"
                       iconOnly
                       icon={<MaterialIcon icon="drafts" />}
+                      onClick={() => setLogDetails({ show: true, periodLog })}
                     />
                   </div>
                 </td>
@@ -268,6 +226,108 @@ const PeriodLogsSection = ({
         </Table>
       </div>
     </Section>
+  );
+};
+
+// Components
+const PeriodLogMedium = ({
+  mediums,
+  className,
+}: {
+  mediums: Array<PeriodMedium>;
+  className?: string;
+}) => {
+  const { t } = useTranslation("subjects");
+
+  // Component specific utilities
+  function tMedium(medium: PeriodMedium) {
+    return t(
+      `periodLogs.table.medium.${
+        medium == "meet"
+          ? "meet"
+          : medium == "pre-recorded"
+          ? "preRecorded"
+          : medium == "material"
+          ? "material"
+          : medium == "assignment"
+          ? "assignment"
+          : medium == "on-site"
+          ? "onSite"
+          : undefined
+      }`
+    );
+  }
+
+  return (
+    <div
+      className={`flex flex-row flex-wrap items-center gap-2 ${
+        className || ""
+      }`}
+    >
+      {/* Icon */}
+      {mediums.length > 0 &&
+        (mediums[0] == "meet" ? (
+          <MaterialIcon icon="videocam" className="text-primary" />
+        ) : mediums[0] == "pre-recorded" ? (
+          <MaterialIcon icon="ondemand_video" className="text-primary" />
+        ) : mediums[0] == "material" ? (
+          <MaterialIcon icon="style" className="text-primary" />
+        ) : mediums[0] == "assignment" ? (
+          <MaterialIcon icon="assignment" className="text-primary" />
+        ) : mediums[0] == "on-site" ? (
+          <MaterialIcon icon="apartment" className="text-primary" />
+        ) : undefined)}
+
+      {/* Text */}
+      <span>
+        {mediums.length > 0 && tMedium(mediums[0])}{" "}
+        {mediums.length > 1 && (
+          <abbr
+            title={mediums
+              .slice(1)
+              .map((medium) => tMedium(medium))
+              .join(", ")}
+            className="font-light text-outline"
+          >
+            +{mediums.length - 1}
+          </abbr>
+        )}
+      </span>
+    </div>
+  );
+};
+
+const PeriodLogDetailsDialog = ({
+  show,
+  onClose,
+  periodLog,
+}: DialogProps & { periodLog: PeriodLog }) => {
+  const { t } = useTranslation("subjects");
+  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+
+  return (
+    <Dialog
+      type="large"
+      label="period-log"
+      title={new Date(periodLog.date).toLocaleDateString(locale, {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })}
+      actions={[{ name: "Close", type: "close" }]}
+      show={show}
+      onClose={onClose}
+    >
+      <DialogSection name={t("periodLogs.table.topic")}>
+        <p>{periodLog.topic}</p>
+      </DialogSection>
+      <DialogSection name={t("periodLogs.table.medium.title")}>
+        <PeriodLogMedium mediums={periodLog.mediums} />
+      </DialogSection>
+      <DialogSection name={t("periodLogs.table.participationLevel")}>
+        <Sentiment level={periodLog.participationLevel} />
+      </DialogSection>
+    </Dialog>
   );
 };
 
@@ -520,6 +580,16 @@ const SubjectDetails: NextPage<{
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
   const [showAdd, setShowAdd] = useState<boolean>(false);
 
+  const [logEvidence, setLogEvidence] = useState<{
+    show: boolean;
+    evidence?: string;
+  }>({ show: false });
+
+  const [logDetails, setLogDetails] = useState<{
+    show: boolean;
+    periodLog?: PeriodLog;
+  }>({ show: false });
+
   const [showAsgnDetails, setShowAsgnDetails] = useState<boolean>(false);
   const [showEditAsgn, setShowEditAsgn] = useState<boolean>(false);
   const [showAddAsgn, setShowAddAsgn] = useState<boolean>(false);
@@ -549,7 +619,11 @@ const SubjectDetails: NextPage<{
           classesLearningThis={classesLearningThis}
           setShowAdd={setShowAdd}
         />
-        <PeriodLogsSection periodLogs={periodLogs} />
+        <PeriodLogsSection
+          periodLogs={periodLogs}
+          setLogEvidence={setLogEvidence}
+          setLogDetails={setLogDetails}
+        />
         <SubstituteAssignmentsSection
           substAsgn={substAsgn}
           setShowAssgDetails={setShowAsgnDetails}
@@ -565,6 +639,21 @@ const SubjectDetails: NextPage<{
         onClose={() => setShowAdd(false)}
         onSubmit={() => {}}
       />
+      {logEvidence.evidence && (
+        <ImageDialog
+          show={logEvidence.show}
+          onClose={() => setLogEvidence({ ...logEvidence, show: false })}
+          src={logEvidence.evidence}
+          className="aspect-[16/9]"
+        />
+      )}
+      {logDetails.periodLog && (
+        <PeriodLogDetailsDialog
+          show={logDetails.show}
+          onClose={() => setLogDetails({ ...logDetails, show: false })}
+          periodLog={logDetails.periodLog}
+        />
+      )}
       {activeAsgn && (
         <>
           <AssignmentDetailsDialog
@@ -672,6 +761,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       topic: "Forces of nature (Reading)",
       mediums: ["pre-recorded"],
       participationLevel: 5,
+      evidence: "/images/dummybase/zoom-screenshot.webp",
     },
     {
       id: 2,
@@ -679,6 +769,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       topic: "Vocabulary Practice (The weather)",
       mediums: ["meet", "material"],
       participationLevel: 3,
+      evidence: "/images/dummybase/zoom-screenshot.webp",
     },
     {
       id: 3,
@@ -686,6 +777,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       topic: "Grammar in use (Modals)",
       mediums: ["meet"],
       participationLevel: 5,
+      evidence: "/images/dummybase/zoom-screenshot.webp",
     },
   ];
   const substAsgn: Array<SubstituteAssignment> = [

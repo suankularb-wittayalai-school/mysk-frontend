@@ -21,30 +21,26 @@ import {
 } from "@suankularb-components/react";
 
 // Components
-import Schedule from "@components/Schedule";
+import Schedule from "@components/schedule/Schedule";
 import BrandIcon from "@components/icons/BrandIcon";
 
 // Types
 import { Role } from "@utils/types/person";
-import { Schedule as ScheduleType } from "@utils/types/schedule";
-
-// Backend
+import { StudentSchedule } from "@utils/types/schedule";
 import { SubjectListItem } from "@utils/types/subject";
+
+// Helpers
 import { nameJoiner } from "@utils/helpers/name";
 
 const ScheduleSection = ({
   schedule,
 }: {
-  schedule: ScheduleType;
-}): JSX.Element => {
-  const { t } = useTranslation("schedule");
-
-  return (
-    <Section>
-      <Schedule schedule={schedule} role="teacher" />
-    </Section>
-  );
-};
+  schedule: StudentSchedule;
+}): JSX.Element => (
+  <Section>
+    <Schedule schedule={schedule} role="student" />
+  </Section>
+);
 
 const SubjectListSection = ({
   subjectList,
@@ -155,7 +151,7 @@ const SubjectListSection = ({
 
 const StudentSchedule: NextPage<{
   role: Role;
-  schedule: ScheduleType;
+  schedule: StudentSchedule;
   subjectList: Array<SubjectListItem>;
 }> = ({ schedule, subjectList }) => {
   const { t } = useTranslation("schedule");
@@ -183,7 +179,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   locale,
   params,
 }) => {
-  const schedule: ScheduleType = {
+  const schedule: StudentSchedule = {
     content: [
       {
         day: 1,
@@ -258,6 +254,7 @@ export const getServerSideProps: GetServerSideProps = async ({
             "en-US": { firstName: "Kritchapon", lastName: "Boonpoonmee" },
             th: { firstName: "กฤชพล", lastName: "บุญพูลมี" },
           },
+          teacherID: "skt6985",
           subjectsInCharge: [
             {
               id: 8,
@@ -303,6 +300,7 @@ export const getServerSideProps: GetServerSideProps = async ({
             "en-US": { firstName: "Niruth", lastName: "Prombutr" },
             th: { firstName: "นิรุทธ์", lastName: "พรมบุตร" },
           },
+          teacherID: "skt644",
           subjectsInCharge: [
             {
               id: 8,

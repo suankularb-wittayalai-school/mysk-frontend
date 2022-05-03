@@ -28,10 +28,29 @@
       "middleName": "ชื่อกลางภาษาอังกฤษ",
       "lastName": "นามสกุลภาษาอังกฤษ"
     },
+    "class": {
+      "title": "ห้องเรียน",
+      "studentID": "เลขประจำตัวนักเรียน",
+      "class": "ห้องเรียน",
+      "classNo": "เลขที่ห้อง"
+    },
     "role": {
       "title": "หน้าที่",
+      "role": {
+        "label": "ประเภทผู้ใช้",
+        "student": "นักเรียน",
+        "teacher": "อาจารย์"
+      },
       "subjectGroup": "กลุ่มสาระการเรียนรู้",
-      "classCounselorAt": "ครูที่ปรึกษา"
+      "classAdvisorAt": {
+        "label": "ครูที่ปรึกษา",
+        "none": "ไม่เป็นครูที่ปรึกษา"
+      }
+    },
+    "general": {
+      "title": "ข้อมูลทั่วไป",
+      "citizenID": "เลขประจำตัวประชาชน",
+      "birthDate": "วันเกิด"
     }
   },
   "dialog": {
