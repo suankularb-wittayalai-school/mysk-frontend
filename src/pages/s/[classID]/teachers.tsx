@@ -222,9 +222,15 @@ const Teachers: NextPage = (): JSX.Element => {
     },
   ];
 
-  const [showMain, setShowMain] = useState(teacherList[0].content[0].content);
+  const [mainContent, setMainContent] = useState(
+    teacherList[0].content[0].content
+  );
 
-  showMain.contacts.sort((a, b) => a.via < b.via ? -1 : a.via > b.via ? 1 : 0)
+  const [showMain, setShowMain] = useState(false);
+
+  mainContent.contacts.sort((a, b) =>
+    a.via < b.via ? -1 : a.via > b.via ? 1 : 0
+  );
 
   return (
     <ListLayout
@@ -233,7 +239,7 @@ const Teachers: NextPage = (): JSX.Element => {
         <Title
           name={{ title: t("title") }}
           pageIcon={<MaterialIcon icon="school" />}
-          backGoesTo="/account/login"
+          backGoesTo={showMain ? () => setShowMain(false) : "/account/login"}
           LinkElement={Link}
         />
       }
@@ -246,7 +252,8 @@ const Teachers: NextPage = (): JSX.Element => {
               <button
                 onClick={() => {
                   onClick();
-                  setShowMain(content);
+                  setShowMain(true);
+                  setMainContent(content);
                 }}
                 className="!w-full"
               >
@@ -267,22 +274,26 @@ const Teachers: NextPage = (): JSX.Element => {
           <Section>
             <div className="!sm:gap-6 !md:grid-cols-[1fr_5fr] grid !grid-cols-[1fr_3fr] items-stretch !gap-4">
               <div className="aspect-square overflow-hidden rounded-xl sm:rounded-2xl">
-                <ProfilePicture src={showMain.profile} />
+                <ProfilePicture src={mainContent.profile} />
               </div>
               <div className="!flex !flex-col !justify-between">
                 <div>
                   <h2 className="text-4xl font-bold">
-                    {nameJoiner(locale, showMain.name)}
+                    {nameJoiner(locale, mainContent.name)}
                   </h2>
                   <p className="text-2xl font-medium">
-                    {showMain.subjectsInCharge[0].subjectSubgroup.name[locale]}
+                    {
+                      mainContent.subjectsInCharge[0].subjectSubgroup.name[
+                        locale
+                      ]
+                    }
                   </p>
                 </div>
                 <div>
-                  {showMain.classAdvisorAt ? (
+                  {mainContent.classAdvisorAt ? (
                     <p className="text-2xl font-medium">
                       {t("advisor", {
-                        className: showMain.classAdvisorAt.name[locale],
+                        className: mainContent.classAdvisorAt.name[locale],
                       })}
                     </p>
                   ) : (
@@ -295,7 +306,7 @@ const Teachers: NextPage = (): JSX.Element => {
           <Section>
             <h3 className="text-3xl font-bold">{t("contacts")}</h3>
             <ul className="layout-grid-cols-2">
-              {showMain.contacts.map((contact) => (
+              {mainContent.contacts.map((contact) => (
                 <ContactChip
                   key={contact.id}
                   contact={contact}
@@ -307,7 +318,7 @@ const Teachers: NextPage = (): JSX.Element => {
           <Section>
             <h3 className="text-3xl font-bold">{t("subjects")}</h3>
             <ul className="!flex flex-col gap-2">
-              {showMain.subjectsInCharge.map((subjects) => (
+              {mainContent.subjectsInCharge.map((subjects) => (
                 <li>
                   <Card type="horizontal">
                     <CardHeader
