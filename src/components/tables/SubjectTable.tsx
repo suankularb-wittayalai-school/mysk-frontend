@@ -13,6 +13,7 @@ import { Subject } from "@utils/types/subject";
 
 // Helpers
 import { getLocaleYear } from "@utils/helpers/date";
+import { nameJoiner } from "@utils/helpers/name";
 
 const SubjectTable = ({
   subjects,
@@ -50,7 +51,30 @@ const SubjectTable = ({
               {subject.name[locale].name ?? subject.name.th.name}
             </td>
             <td className="!text-left">
-              <TeacherTeachingList teachers={subject.teachers} />
+              {subject.teachers.length > 0 &&
+                nameJoiner(locale, subject.teachers[0].name)}
+              {((subject.coTeachers && subject.coTeachers.length > 0) ||
+                subject.teachers.length > 1) && (
+                <abbr
+                  className="text-surface-variant"
+                  title={subject.teachers
+                    // Start from the 2nd teacher in teachers
+                    .slice(1)
+                    // Join with co-teachers
+                    .concat(subject.coTeachers || [])
+                    // Format the name
+                    .map((teacher) => nameJoiner(locale, teacher.name))
+                    // Format the list
+                    .join(", ")}
+                >
+                  {`
+                  +${
+                    subject.teachers.length -
+                    1 +
+                    (subject.coTeachers?.length || 0)
+                  }`}
+                </abbr>
+              )}
             </td>
             <td>{getLocaleYear(locale, subject.year)}</td>
             <td>{subject.semester}</td>

@@ -133,9 +133,8 @@ const EditSubjectDialog = ({
 
   const [chipLists, setChipLists] = useState<ChipListsType>(defaultChipLists);
 
-  // Populate the form control with data if mode is edit
-  // Resets form control if mode is add
   useEffect(() => {
+    // Populate the form control with data if mode is edit
     if (mode == "edit" || subject) {
       setForm({
         ...form,
@@ -160,35 +159,32 @@ const EditSubjectDialog = ({
             });
         }
       }
-    } else if (mode == "add") {
+    }
+    // Resets form control if mode is add
+    else if (mode == "add") {
       setForm(defaultForm);
     }
   }, [show, mode, subject]);
 
-  // Populate the Chip List control with data if mode is edit
-  // Resets Chip List control if mode is add
   useEffect(() => {
-    if (mode == "edit") {
-      if (form.teachers.length > 0) {
-        setChipLists({
-          ...chipLists,
-          teachers: form.teachers.map((teacher: Teacher) => ({
-            id: teacher.id.toString(),
-            name: teacher.name[locale]?.firstName ?? teacher.name.th.firstName,
-          })),
-        });
-      }
+    // Populate the Chip List control with data if mode is edit
+    if (mode == "edit" && subject) {
+      setChipLists({
+        teachers: subject.teachers.map((teacher) => ({
+          id: teacher.id.toString(),
+          name: nameJoiner(locale, teacher.name),
+        })),
+        coTeachers: subject.coTeachers
+          ? subject.coTeachers.map((coTeacher) => ({
+              id: coTeacher.id.toString(),
+              name: nameJoiner(locale, coTeacher.name),
+            }))
+          : [],
+      });
+    }
 
-      if (form.coTeachers && form.coTeachers.length > 0) {
-        setChipLists({
-          ...chipLists,
-          coTeachers: form.coTeachers.map((teacher: Teacher) => ({
-            id: teacher.id.toString(),
-            name: teacher.name[locale]?.firstName ?? teacher.name.th.firstName,
-          })),
-        });
-      }
-    } else if (mode == "add") {
+    // Resets Chip List control if mode is add
+    else if (mode == "add") {
       setChipLists(defaultChipLists);
     }
   }, [show, mode, form]);
@@ -221,6 +217,8 @@ const EditSubjectDialog = ({
 
   return (
     <>
+      {/* {console.log("teachers", form.teachers)}
+      {console.log("chipLists", chipLists.teachers)} */}
       <Dialog
         type="large"
         label={mode == "edit" ? "edit-subject" : "add-subject"}
