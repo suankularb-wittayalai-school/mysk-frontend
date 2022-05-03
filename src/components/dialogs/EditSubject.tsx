@@ -30,6 +30,7 @@ import { Teacher } from "@utils/types/person";
 import { useSubjectGroupOption } from "@utils/hooks/subject";
 import { nameJoiner } from "@utils/helpers/name";
 import { createSubject } from "@utils/backend/subject/subject";
+import { supabase } from "@utils/supabaseClient";
 
 const EditSubjectDialog = ({
   show,
@@ -113,25 +114,44 @@ const EditSubjectDialog = ({
         ...form,
         ...subject,
       });
-
-      if (subject?.teachers) {
+      if (form.teachers.length > 0) {
         setChipLists({
           ...chipLists,
-          teachers: subject.teachers.map((teacher: Teacher) => ({
+          teachers: form.teachers.map((teacher: Teacher) => ({
             id: teacher.id.toString(),
             name: teacher.name[locale]?.firstName ?? teacher.name.th.firstName,
           })),
         });
       }
 
-      if (subject?.coTeachers) {
+      if (form.coTeachers && form.coTeachers.length > 0) {
         setChipLists({
           ...chipLists,
-          coTeachers: subject.coTeachers.map((teacher: Teacher) => ({
+          coTeachers: form.coTeachers.map((teacher: Teacher) => ({
             id: teacher.id.toString(),
             name: teacher.name[locale]?.firstName ?? teacher.name.th.firstName,
           })),
         });
+      }
+
+      if (subject?.syllabus) {
+        if (typeof form.syllabus === "string") {
+          // console.log("hi");
+          supabase.storage
+            .from("syllabus")
+            .download(form.syllabus)
+            .then((res) => {
+              if (res.error) console.error(res.error);
+
+              if (res.data)
+                setForm({
+                  ...form,
+                  syllabus: new File([res.data], "syllabus", {
+                    type: "application/pdf",
+                  }),
+                });
+            });
+        }
       }
     }
   }, [mode, subject]);
@@ -163,6 +183,7 @@ const EditSubjectDialog = ({
 
   return (
     <>
+      {/* {console.log(form, subject)} */}
       <Dialog
         type="large"
         label="edit-subject"
