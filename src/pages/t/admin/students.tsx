@@ -33,7 +33,7 @@ import { PersonTable, StudentDB } from "@utils/types/database/person";
 import { StudentTable as StudentTableType } from "@utils/types/database/person";
 
 // Helper function
-import { db2student } from "@utils/backend/database";
+import { db2Student } from "@utils/backend/database";
 
 // Page
 const Students: NextPage<{ allStudents: Array<Student> }> = ({
@@ -202,7 +202,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   }
 
   const allStudents: Student[] = await Promise.all(
-    data.map(async (student) => await db2student(student))
+    data.map(async (student) => await db2Student(student))
   );
 
   return {

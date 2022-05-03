@@ -28,7 +28,7 @@ import EditPersonDialog from "@components/dialogs/EditPerson";
 import TeacherTable from "@components/tables/TeacherTable";
 
 // Backend
-import { db2teacher } from "@utils/backend/database";
+import { db2Teacher } from "@utils/backend/database";
 
 // Types
 import { Role, Teacher } from "@utils/types/person";
@@ -204,7 +204,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   // console.log(data);
 
   const allTeachers: Teacher[] = await Promise.all(
-    data.map(async (student) => await db2teacher(student))
+    data.map(async (student) => await db2Teacher(student))
   );
 
   return {

@@ -2,7 +2,7 @@ import { supabase } from "@utils/supabaseClient";
 import { useState, useEffect } from "react";
 import { Teacher } from "@utils/types/person";
 import { TeacherDB, TeacherTable } from "@utils/types/database/person";
-import { db2teacher } from "@utils/backend/database";
+import { db2Teacher } from "@utils/backend/database";
 
 export function useTeacherOption(subjectGroupId: number) {
   const [teachers, setTeachers] = useState<Array<Teacher>>([]);
@@ -22,7 +22,7 @@ export function useTeacherOption(subjectGroupId: number) {
         }
 
         Promise.all(
-          res.data.map(async (teacher: TeacherDB) => await db2teacher(teacher))
+          res.data.map(async (teacher: TeacherDB) => await db2Teacher(teacher))
         ).then((teachers) => {
           setTeachers(teachers);
         });

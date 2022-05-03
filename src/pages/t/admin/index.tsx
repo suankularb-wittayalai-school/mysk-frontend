@@ -41,6 +41,10 @@ import {
   TeacherTable as TeacherTableType,
 } from "@utils/types/database/person";
 import { Subject } from "@utils/types/subject";
+import {
+  SubjectDB,
+  SubjectTable as SubjectTableType,
+} from "@utils/types/database/subject";
 
 // Supabase
 import { supabase } from "@utils/supabaseClient";
@@ -49,7 +53,7 @@ import { supabase } from "@utils/supabaseClient";
 import { range } from "@utils/helpers/array";
 
 // Backend
-import { db2student, db2teacher } from "@utils/backend/database";
+import { db2Student, db2Subject, db2Teacher } from "@utils/backend/database";
 
 const StudentSection = ({
   someStudents,
@@ -214,44 +218,32 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
     .from<TeacherDB>("teacher")
     .select("id, teacher_id, people:person(*), SubjectGroup:subject_group(*)")
     .limit(5);
+  const { data: subjects, error: subjectSelectingError } = await supabase
+    .from<SubjectTableType>("subject")
+    .select("*")
+    .limit(5);
 
   let someStudents: Array<Student> = [];
   let someTeachers: Array<Teacher> = [];
+  let someSubjects: Array<Subject> = [];
 
   if (!studentSelectingError && students) {
     someStudents = await Promise.all(
-      students.map(async (student) => await db2student(student))
+      students.map(async (student) => await db2Student(student))
     );
   }
 
   if (!teacherSelectingError && teachers) {
     someTeachers = await Promise.all(
-      teachers.map(async (teacher) => await db2teacher(teacher))
+      teachers.map(async (teacher) => await db2Teacher(teacher))
     );
   }
 
-  // Dummybase
-  const someSubjects = [
-    {
-      id: 1,
-      code: {
-        "en-US": "MA11234",
-        th: "ค11234",
-      },
-      name: {
-        "en-US": { name: "Math" },
-        th: { name: "คณุต" },
-      },
-      teachers: [],
-      coTeachers: [],
-      subjectGroup: {
-        id: 8,
-        name: { "en-US": "Mathematics", th: "คณิตศาสตร์" },
-      },
-      year: 2022,
-      semester: 1,
-    },
-  ];
+  if (!subjectSelectingError && subjects) {
+    someSubjects = await Promise.all(
+      subjects.map(async (subject) => await db2Subject(subject))
+    );
+  }
 
   return {
     props: {

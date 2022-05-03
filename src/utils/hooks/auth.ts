@@ -6,7 +6,7 @@ import { Session } from "@supabase/supabase-js";
 import { supabase } from "@utils/supabaseClient";
 import { Student, Teacher } from "@utils/types/person";
 import { StudentDB, TeacherDB } from "@utils/types/database/person";
-import { db2student, db2teacher } from "@utils/backend/database";
+import { db2Student, db2Teacher } from "@utils/backend/database";
 
 export function useSession() {
   const [session, setSession] = useState<null | Session>(null);
@@ -45,7 +45,7 @@ export function useStudentAccount() {
               return;
             }
 
-            db2student(res.data).then((student) => {
+            db2Student(res.data).then((student) => {
               setUser(student);
             });
           });
@@ -78,7 +78,7 @@ export function useTeacherAccount() {
               return;
             }
 
-            db2teacher(res.data).then((teacher) => {
+            db2Teacher(res.data).then((teacher) => {
               setUser(teacher);
             });
           });

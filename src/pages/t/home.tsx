@@ -37,7 +37,7 @@ import { StudentSchedule } from "@utils/types/schedule";
 import { Session } from "@supabase/supabase-js";
 
 // helper function
-import { db2teacher } from "@utils/backend/database";
+import { db2Teacher } from "@utils/backend/database";
 import { TeacherDB } from "@utils/types/database/person";
 import { useSession, useTeacherAccount } from "@utils/hooks/auth";
 

@@ -10,7 +10,7 @@ import {
 import { Student, Teacher } from "@utils/types/person";
 import { Subject } from "@utils/types/subject";
 
-export function db2contact(contact: ContactDB): Contact {
+export function db2Contact(contact: ContactDB): Contact {
   return {
     id: contact.id,
     name: {
@@ -22,7 +22,7 @@ export function db2contact(contact: ContactDB): Contact {
   };
 }
 
-export async function db2student(student: StudentDB): Promise<Student> {
+export async function db2Student(student: StudentDB): Promise<Student> {
   return {
     id: student.id,
     prefix: student.people.prefix_en,
@@ -62,7 +62,7 @@ export async function db2student(student: StudentDB): Promise<Student> {
   };
 }
 
-export async function db2teacher(teacher: TeacherDB): Promise<Teacher> {
+export async function db2Teacher(teacher: TeacherDB): Promise<Teacher> {
   const formatted: Teacher = {
     id: teacher.id,
     role: "teacher",
@@ -113,7 +113,7 @@ export async function db2teacher(teacher: TeacherDB): Promise<Teacher> {
     console.error(contactError);
   }
   if (contacts) {
-    formatted.contacts = contacts.map(db2contact);
+    formatted.contacts = contacts.map(db2Contact);
   }
 
   return formatted;
@@ -191,7 +191,7 @@ export async function db2Subject(subject: SubjectTable): Promise<Subject> {
   if (teachers) {
     formatted.teachers = await Promise.all(
       teachers.map(async (teacher) => {
-        return await db2teacher(teacher);
+        return await db2Teacher(teacher);
       })
     );
   }
@@ -207,7 +207,7 @@ export async function db2Subject(subject: SubjectTable): Promise<Subject> {
   if (coTeachers) {
     formatted.coTeachers = await Promise.all(
       coTeachers.map(async (teacher) => {
-        return await db2teacher(teacher);
+        return await db2Teacher(teacher);
       })
     );
   }
