@@ -7,10 +7,11 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useReducer, useState } from "react";
 
 // SK Components
 import {
+  FormButton,
   KeyboardInput,
   RegularLayout,
   Title,
@@ -25,24 +26,30 @@ const LoginForm = () => {
 
   // Form control
   const [form, setForm] = useState<{
-    userID: string;
+    email: string;
     password: string;
   }>({
-    userID: "",
+    email: "",
     password: "",
   });
+
+  // Loading
+  const [loading, setLoading] = useReducer(() => true, false);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     let formData: FormData = new FormData();
 
     // Validates
-    if (!form.userID) return;
+    if (!form.email) return;
     if (!form.password) return;
+
+    // Set loading
+    setLoading();
 
     // Sends and redirects
     const { user, session, error } = await supabase.auth.signIn({
-      email: form.userID,
+      email: form.email,
       password: form.password,
     });
 
@@ -59,24 +66,24 @@ const LoginForm = () => {
     <div className="flex flex-col items-center">
       <form
         className="section w-full sm:w-1/2 md:w-1/3"
-        onSubmit={(e: FormEvent) => e.preventDefault()}
+        onSubmit={(e: FormEvent) => handleSubmit(e)}
       >
         <div>
           <KeyboardInput
             name="user-id"
             type="email"
             label={t("form.email")}
-            helperMsg="Use your school email."
-            // errorMsg="Invalid email."
+            helperMsg={t("form.email_helper")}
+            errorMsg={t("form.email_error")}
             useAutoMsg
-            onChange={(e: string) => setForm({ ...form, userID: e })}
+            onChange={(e: string) => setForm({ ...form, email: e })}
             className="w-full"
           />
           <KeyboardInput
             name="password"
             type="password"
             label={t("form.password")}
-            helperMsg="Default is birthday in YYYYMMDD (in AD), i.e. 20040512"
+            helperMsg={t("form.password_helper")}
             onChange={(e: string) => setForm({ ...form, password: e })}
             className="w-full"
           />
@@ -85,9 +92,12 @@ const LoginForm = () => {
           <Link href="/account/forgot-password">
             <a className="btn--text">{t("action.forgotPassword")}</a>
           </Link>
-          <button className="btn--filled" onClick={(e) => handleSubmit(e)}>
-            {t("action.logIn")}
-          </button>
+          <FormButton
+            label={t("action.logIn")}
+            type="submit"
+            appearance="filled"
+            disabled={loading}
+          />
         </div>
       </form>
     </div>

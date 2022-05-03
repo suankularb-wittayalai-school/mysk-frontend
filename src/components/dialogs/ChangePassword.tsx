@@ -63,9 +63,8 @@ const ChangePassword = ({
           onClose();
         }}
       >
-        {/* FIXME: Once `name` is no longer necessary, remove it */}
-        <form>
-          <DialogSection name="">
+        <DialogSection>
+          <form>
             <KeyboardInput
               name="original-password"
               type="password"
@@ -88,8 +87,8 @@ const ChangePassword = ({
                 setForm({ ...form, confirmNewPassword: e })
               }
             />
-          </DialogSection>
-        </form>
+          </form>
+        </DialogSection>
       </Dialog>
       <DiscardDraft
         show={showDiscard}

@@ -69,8 +69,6 @@ const StudentHome: NextPage<{
 
   return (
     <>
-      {/* {user?.role != "student" && router.push("/t/home")} */}
-      {/* {console.log(session)} */}
       {/* Title */}
       <Head>
         <title>
