@@ -51,7 +51,7 @@ const EditSubjectDialog = ({
   mode: "add" | "edit";
   subject?: Subject;
 }): JSX.Element => {
-  const { t } = useTranslation(["subjects", "admin"]);
+  const { t } = useTranslation(["subjects", "common", "admin"]);
   const locale = useRouter().locale as "en-US" | "th";
 
   // Dialogs
@@ -66,6 +66,8 @@ const EditSubjectDialog = ({
     { th: "กิจกรรมพัฒนาผู้เรียน", "en-US": "Learner’s Development Activities" },
     { th: "รายวิชาเลือก", "en-US": "Elective Courses" },
   ];
+
+  const [loading, setLoading] = useState<boolean>(false);
 
   // Form control
   const defaultForm: Subject = {
@@ -187,7 +189,7 @@ const EditSubjectDialog = ({
     else if (mode == "add") {
       setChipLists(defaultChipLists);
     }
-  }, [show, mode, form]);
+  }, [show, mode]);
 
   useEffect(() => {
     if (mode == "add") {
@@ -199,10 +201,34 @@ const EditSubjectDialog = ({
   }, [mode, subjectGroups]);
 
   // Form validation
-  function validate() {}
+  function validate() {
+    // Name
+    if (form.name.th.name.length == 0 || form.name["en-US"].name.length == 0)
+      return false;
+    // Code
+    if (form.code.th.length == 0 || form.code["en-US"].length == 0)
+      return false;
+    // Personnel
+    if (chipLists.teachers.length == 0) return false;
+    // Category
+    if (form.subjectGroup.id == 0) return false;
+    // School
+    if (form.year == 0) return false;
+    if ((form.semester as number) == 0) return false;
+    if (form.credit == 0) return false;
+
+    return true;
+  }
 
   // Form submission
   async function handleSubmit() {
+    setLoading(true);
+
+    if (!validate()) {
+      setLoading(false);
+      return;
+    }
+
     if (mode == "add") {
       const { data, error } = await createSubject(form);
       if (error) console.error(error);
@@ -215,10 +241,18 @@ const EditSubjectDialog = ({
     onSubmit();
   }
 
+  // useEffect(() =>
+  //   console.log({
+  //     loading,
+  //     validate: validate(),
+  //     disabled: !validate() || loading,
+  //   })
+  // );
+
   return (
     <>
-      {/* {console.log("teachers", form.teachers)}
-      {console.log("chipLists", chipLists.teachers)} */}
+      {/* {console.log({ loading, disabled: !validate() || loading })} */}
+      {/* {console.log(form.syllabus)} */}
       <Dialog
         type="large"
         label={mode == "edit" ? "edit-subject" : "add-subject"}
@@ -231,11 +265,15 @@ const EditSubjectDialog = ({
           {
             name: t("dialog.editSubject.action.save", { ns: "admin" }),
             type: "submit",
+            disabled: !validate() || loading,
           },
         ]}
         show={show}
         onClose={() => setShowDiscard(true)}
-        onSubmit={handleSubmit}
+        onSubmit={() => {
+          console.log("submit");
+          handleSubmit();
+        }}
       >
         {/* Thai name */}
         <DialogSection
@@ -269,7 +307,7 @@ const EditSubjectDialog = ({
             name="short-name-th"
             type="text"
             label={t("item.name.shortName")}
-            helperMsg="Shown for short periods in Schedule."
+            helperMsg={t("item.name.shortName_helper")}
             onChange={(e) =>
               setForm({
                 ...form,
@@ -318,7 +356,7 @@ const EditSubjectDialog = ({
             name="short-name-en"
             type="text"
             label={t("item.enName.shortName")}
-            helperMsg="Shown for short periods in Schedule."
+            helperMsg={t("item.name.shortName_helper")}
             onChange={(e) =>
               setForm({
                 ...form,
@@ -375,15 +413,14 @@ const EditSubjectDialog = ({
             name="year"
             type="number"
             label={t("item.school.year")}
-            useAutoMsg
             onChange={(e) => setForm({ ...form, year: Number(e) })}
             defaultValue={form.year}
-            attr={{ min: locale == "en-US" ? 2005 : 2550 }}
+            attr={{ minLength: 2005 }}
           />
           <KeyboardInput
             name="semester"
             type="number"
-            label="Semester"
+            label={t("item.school.semester")}
             onChange={(e) => setForm({ ...form, semester: Number(e) as 1 | 2 })}
             defaultValue={form.semester}
             attr={{ min: 1, max: 2 }}
@@ -391,30 +428,35 @@ const EditSubjectDialog = ({
           <KeyboardInput
             name="credit"
             type="number"
-            label="Credit"
+            label={t("item.school.credit")}
             onChange={(e) => setForm({ ...form, credit: Number(e) })}
             attr={{ min: 0, step: 0.5 }}
             defaultValue={form.credit}
           />
           <FileInput
             name="syllabus"
-            label="Syllabus"
+            label={t("item.school.syllabus")}
+            noneAttachedMsg={t("input.none.noFilesAttached", { ns: "common" })}
             onChange={(e: File) => setForm({ ...form, syllabus: e })}
-            attr={{ accept: ".pdf" }}
+            attr={{ accept: "application/pdf" }}
             defaultValue={
               form.syllabus && typeof form.syllabus !== "string"
                 ? form.syllabus
                 : undefined
             }
           />
-          {/* {console.log(form.syllabus)} */}
         </DialogSection>
 
         {/* Category */}
-        <DialogSection name="category" title="Category" isDoubleColumn hasNoGap>
+        <DialogSection
+          name="category"
+          title={t("item.category.title")}
+          isDoubleColumn
+          hasNoGap
+        >
           <Dropdown
             name="subject-group"
-            label="Subject group"
+            label={t("item.category.subjectGroup")}
             options={subjectGroups.map((subjectGroup) => ({
               value: subjectGroup.id,
               label: subjectGroup.name[locale],
@@ -431,7 +473,7 @@ const EditSubjectDialog = ({
           />
           <Dropdown
             name="type"
-            label="Subject type"
+            label={t("item.category.subjectType")}
             options={subjectTypes.map((type, index) => ({
               value: index,
               label: type[locale],
@@ -453,12 +495,12 @@ const EditSubjectDialog = ({
         {/* Personnel */}
         <DialogSection
           name="personnel"
-          title="Personnel"
+          title={t("item.personnel.title")}
           isDoubleColumn
           hasNoGap
         >
           <div className="flex flex-col gap-2">
-            <p className="font-display">Teachers</p>
+            <h3 className="!text-base">{t("item.personnel.teachers")}</h3>
             <ChipInputList
               list={chipLists.teachers}
               onAdd={() => setShowAddTeacher(true)}
@@ -477,7 +519,7 @@ const EditSubjectDialog = ({
             />
           </div>
           <div className="flex flex-col gap-2">
-            <p className="font-display">Co-teachers</p>
+            <h3 className="!text-base">{t("item.personnel.coTeachers")}</h3>
             <ChipInputList
               list={chipLists.coTeachers}
               onAdd={() => setShowAddCoTeacher(true)}

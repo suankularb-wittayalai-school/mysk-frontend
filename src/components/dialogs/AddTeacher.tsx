@@ -57,7 +57,7 @@ const AddTeacherDialog = ({
         )
       }
     >
-      <DialogSection>
+      <DialogSection hasNoGap>
         <Dropdown
           name="subject-group"
           label={t("dialog.addTeacher.subjectGroup")}
@@ -74,6 +74,7 @@ const AddTeacherDialog = ({
             value: teacher.id,
             label: nameJoiner(locale, teacher.name),
           }))}
+          noOptionsText={t("dialog.addTeacher.noTeachers")}
           onChange={(e: number) => setSelectedTeacher(e)}
         />
       </DialogSection>

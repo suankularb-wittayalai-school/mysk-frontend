@@ -4,7 +4,8 @@
       "title": "Local name (Thai)",
       "code": "Subject code",
       "name": "Full name",
-      "shortName": "Short name"
+      "shortName": "Short name",
+      "shortName_helper": "Shown for short periods in Schedule."
     },
     "enName": {
       "title": "English name",
@@ -20,6 +21,7 @@
     "school": {
       "title": "School",
       "year": "Academic year",
+      "year_helper": "In Anno Domini (AD).",
       "semester": "Semester",
       "credit": "Credit",
       "syllabus": "Syllabus"

@@ -133,7 +133,7 @@ const SubjectSection = ({ someSubjects }: { someSubjects: Subject[] }) => {
       <div className="layout-grid-cols-3">
         <div className="col-span-2">
           <Header
-            icon={<MaterialIcon icon="group" allowCustomSize />}
+            icon={<MaterialIcon icon="school" allowCustomSize />}
             text={t("subjectList.title")}
           />
         </div>

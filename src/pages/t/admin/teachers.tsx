@@ -131,7 +131,7 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
         Title={
           <Title
             name={{ title: t("teacherList.title") }}
-            pageIcon={<MaterialIcon icon="groups" />}
+            pageIcon={<MaterialIcon icon="group" />}
             backGoesTo="/t/admin"
             LinkElement={Link}
             key="title"
