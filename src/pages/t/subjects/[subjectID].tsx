@@ -59,7 +59,7 @@ const DetailsSection = ({
   setShowAdd: Function;
 }): JSX.Element => {
   const { t } = useTranslation("subjects");
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const locale = useRouter().locale as "en-US" | "th";
   const [classesLearningThis, setClassesLearningThis] = useState<
     Array<{
       id: string;
@@ -96,7 +96,7 @@ const AddClassDialog = ({
   onClose,
 }: DialogProps & { onSubmit: Function }): JSX.Element => {
   const { t } = useTranslation("subjects");
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const locale = useRouter().locale as "en-US" | "th";
 
   return (
     <Dialog
@@ -144,7 +144,7 @@ const PeriodLogsSection = ({
   setLogDetails: (value: { show: boolean; periodLog?: PeriodLog }) => void;
 }): JSX.Element => {
   const { t } = useTranslation("subjects");
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const locale = useRouter().locale as "en-US" | "th";
 
   return (
     <Section>
@@ -303,7 +303,7 @@ const PeriodLogDetailsDialog = ({
   periodLog,
 }: DialogProps & { periodLog: PeriodLog }) => {
   const { t } = useTranslation("subjects");
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const locale = useRouter().locale as "en-US" | "th";
 
   return (
     <Dialog
@@ -348,7 +348,7 @@ const SubstituteAssignmentsSection = ({
   setActiveAsgn: Function;
 }): JSX.Element => {
   const { t } = useTranslation("subjects");
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const locale = useRouter().locale as "en-US" | "th";
 
   return (
     <Section>
@@ -420,7 +420,7 @@ const AssignmentDetailsDialog = ({
   assignment,
 }: DialogProps & { assignment: SubstituteAssignment }): JSX.Element => {
   const { t } = useTranslation("subjects");
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const locale = useRouter().locale as "en-US" | "th";
 
   return (
     <Dialog
@@ -469,7 +469,7 @@ const EditAssignmentDialog = ({
   allSubjects: Array<SubjectWNameAndCode>;
 }): JSX.Element => {
   const { t } = useTranslation("subjects");
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const locale = useRouter().locale as "en-US" | "th";
   const [showAddClass, setShowAddClass] = useState<boolean>(false);
 
   // Form control
@@ -577,7 +577,7 @@ const SubjectDetails: NextPage<{
   allSubjects: Array<SubjectWNameAndCode>;
 }> = ({ subject, classesLearningThis, periodLogs, substAsgn, allSubjects }) => {
   const { t } = useTranslation(["subjects", "common"]);
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const locale = useRouter().locale as "en-US" | "th";
   const [showAdd, setShowAdd] = useState<boolean>(false);
 
   const [logEvidence, setLogEvidence] = useState<{
@@ -790,7 +790,8 @@ export const getServerSideProps: GetServerSideProps = async ({
       desc: {
         "en-US":
           "Make a leaflet on the environment. The assignment must consist of:\n1) A picture representing the selected environmental problem; and\n2) Quotes to campaign or solve environmental problems.\n\nPeriod 1 = Choose environmental issues, think of quotes, and come up with ideas for visual presentations.\n\nPeriod 2 = Use the data planned in the first period made into a real piece.",
-        th: "จัดทำใบปลิวเรื่องสิ่งแวดล้อม โดยในชิ้นงานจะต้องประกอบด้วย\n1) รูปภาพที่แสดงถึงปัญหาสิ่งแวดล้อมที่เลือก และ\n2) คำคมเพื่อรณรงค์หรือแก้ไขปัญหาสิ่งแวดล้อมนั้น\n\nชดเชยครั้งที่ 1 = เลือกปัญหาสิ่งแวดล้อม คิดคำคม และหาไอเดียการนำเสนอภาพ\n\nชดเชยครั้งที่ 2 = นำข้อมูลที่วางแผนไว้ในคาบแรก จัดทำเป็นชิ้นงานจริง",
+        th:
+          "จัดทำใบปลิวเรื่องสิ่งแวดล้อม โดยในชิ้นงานจะต้องประกอบด้วย\n1) รูปภาพที่แสดงถึงปัญหาสิ่งแวดล้อมที่เลือก และ\n2) คำคมเพื่อรณรงค์หรือแก้ไขปัญหาสิ่งแวดล้อมนั้น\n\nชดเชยครั้งที่ 1 = เลือกปัญหาสิ่งแวดล้อม คิดคำคม และหาไอเดียการนำเสนอภาพ\n\nชดเชยครั้งที่ 2 = นำข้อมูลที่วางแผนไว้ในคาบแรก จัดทำเป็นชิ้นงานจริง",
       },
       classes: [
         {

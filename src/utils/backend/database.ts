@@ -1,5 +1,7 @@
 import { supabase } from "@utils/supabaseClient";
+import { Class } from "@utils/types/class";
 import { Contact } from "@utils/types/contact";
+import { ClassroomDB } from "@utils/types/database/class";
 import { ContactDB } from "@utils/types/database/contact";
 import { StudentDB, TeacherDB } from "@utils/types/database/person";
 import {
@@ -23,7 +25,7 @@ export function db2Contact(contact: ContactDB): Contact {
 }
 
 export async function db2Student(student: StudentDB): Promise<Student> {
-  return {
+  const formatted: Student = {
     id: student.id,
     prefix: student.people.prefix_en,
     role: "student",
@@ -60,6 +62,20 @@ export async function db2Student(student: StudentDB): Promise<Student> {
     // TODO: Get contacts
     contacts: [],
   };
+
+  const { data: contacts, error: contactError } = await supabase
+    .from<ContactDB>("contact")
+    .select("*")
+    .in("id", student.people.contacts ? student.people.contacts : []);
+
+  if (contactError) {
+    console.error(contactError);
+  }
+  if (contacts) {
+    formatted.contacts = contacts.map(db2Contact);
+  }
+
+  return formatted;
 }
 
 export async function db2Teacher(teacher: TeacherDB): Promise<Teacher> {
@@ -210,6 +226,73 @@ export async function db2Subject(subject: SubjectTable): Promise<Subject> {
         return await db2Teacher(teacher);
       })
     );
+  }
+
+  return formatted;
+}
+
+export async function db2Class(classDB: ClassroomDB): Promise<Class> {
+  const formatted: Class = {
+    id: classDB.id,
+    name: {
+      "en-US": `M. ${classDB.number}`,
+      th: `ม. ${classDB.number}`,
+    },
+    classAdvisors: [],
+    students: [],
+    subjects: [],
+    contacts: [],
+    year: classDB.year,
+    semester: classDB.semester as 1 | 2,
+    schedule: {
+      content: [],
+    },
+  };
+
+  if (classDB.advisors) {
+    const { data: classAdvisor, error: classAdvisorError } = await supabase
+      .from<TeacherDB>("teacher")
+      .select("id, teacher_id, people:person(*), SubjectGroup:subject_group(*)")
+      .in("id", classDB.advisors);
+
+    if (classAdvisorError) {
+      console.error(classAdvisorError);
+    }
+    if (classAdvisor) {
+      formatted.classAdvisors = await Promise.all(
+        classAdvisor.map(async (teacher) => await db2Teacher(teacher))
+      );
+    }
+  }
+
+  if (classDB.students) {
+    const { data: students, error: studentsError } = await supabase
+      .from<StudentDB>("student")
+      .select("id, std_id, people:person(*)")
+      .in("id", classDB.students);
+
+    if (studentsError) {
+      console.error(studentsError);
+    }
+    if (students) {
+      formatted.students = await Promise.all(
+        students.map(async (student) => await db2Student(student))
+      );
+    }
+  }
+
+  if (classDB.contacts) {
+    const { data: contacts, error: contactError } = await supabase
+      .from<ContactDB>("contact")
+      .select("*")
+      .in("id", classDB.contacts);
+
+    if (contactError) {
+      console.error(contactError);
+    }
+    if (contacts) {
+      formatted.contacts = contacts.map(db2Contact);
+    }
   }
 
   return formatted;

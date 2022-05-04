@@ -1,5 +1,6 @@
 {
   "title": "M.{{className}}",
+  "item": {},
   "classAdvisors": {
     "title": "Class advisors",
     "addAdvisors": "Add advisor"

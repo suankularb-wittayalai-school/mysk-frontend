@@ -50,7 +50,7 @@ const NewsStatus = ({ newsItem }: { newsItem: NewsItem }): JSX.Element => {
 
 const NewsChipList = ({ newsItem }: { newsItem: NewsItem }): JSX.Element => {
   const { t } = useTranslation("news");
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const locale = useRouter().locale as "en-US" | "th";
 
   return (
     <ChipList noWrap>
@@ -137,7 +137,7 @@ const NewsCard = ({
   btnType?: "filled" | "outlined" | "text" | "tonal";
 }): JSX.Element => {
   const { t } = useTranslation("news");
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const locale = useRouter().locale as "en-US" | "th";
 
   return (
     <Card type="stacked" appearance="outlined">

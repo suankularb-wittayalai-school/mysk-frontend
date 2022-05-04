@@ -262,14 +262,6 @@ const EditSubjectDialog = ({
     setLoading(false);
   }
 
-  useEffect(() =>
-    console.log({
-      loading,
-      validate: validate(),
-      disabled: !validate() || loading,
-    })
-  );
-
   return (
     <>
       <Dialog
@@ -306,6 +298,7 @@ const EditSubjectDialog = ({
               setForm({ ...form, code: { ...form.code, th: e } })
             }
             defaultValue={form.code.th}
+            attr={{ pattern: "[\u0E00-\u0E7FA-Z]\\d{5}" }}
           />
           <KeyboardInput
             name="name-th"
@@ -352,6 +345,7 @@ const EditSubjectDialog = ({
               setForm({ ...form, code: { ...form.code, "en-US": e } })
             }
             defaultValue={form.code["en-US"]}
+            attr={{ pattern: "[A-Z]{1,3}\\d{5}" }}
           />
           <KeyboardInput
             name="name-en"

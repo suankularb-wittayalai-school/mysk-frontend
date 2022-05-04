@@ -24,7 +24,7 @@ import {
 import { StudentForm } from "@utils/types/news";
 
 const StudentFormCard = ({ form }: { form: StudentForm }): JSX.Element => {
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const locale = useRouter().locale as "en-US" | "th";
   const { t } = useTranslation("news");
 
   return (
@@ -93,8 +93,8 @@ const TeacherClassSection = ({
       // Reset filtered news if all filters are deselected
       if (newsFilter.length == 0) {
         setFilteredNews(forms);
-      
-      // Handles done
+
+        // Handles done
       } else if (
         newsFilter.includes("few-done") ||
         newsFilter.includes("most-done") ||

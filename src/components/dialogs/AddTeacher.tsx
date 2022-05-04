@@ -23,7 +23,7 @@ const AddTeacherDialog = ({
   onSubmit,
 }: DialogProps & { onSubmit: (teacher: Teacher) => void }): JSX.Element => {
   const { t } = useTranslation("common");
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const locale = useRouter().locale as "en-US" | "th";
 
   const subjectGroups = useSubjectGroupOption();
   const [selectedGroup, setSelectedGroup] = useState<number>(1);

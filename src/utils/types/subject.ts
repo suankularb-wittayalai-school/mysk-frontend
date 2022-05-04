@@ -77,6 +77,7 @@ export type SubjectListItem = {
     name: Subject["name"];
   };
   teachers: Array<Teacher>;
+  coTeachers?: Array<Teacher>;
   ggcCode?: string;
   ggcLink?: string;
   ggMeetLink?: string;

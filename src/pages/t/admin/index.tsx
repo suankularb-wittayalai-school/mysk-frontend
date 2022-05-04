@@ -25,26 +25,17 @@ import {
 } from "@suankularb-components/react";
 
 // Components
-import ConfirmDelete from "@components/dialogs/ConfirmDelete";
-import EditPersonDialog from "@components/dialogs/EditPerson";
+import ClassTable from "@components/tables/ClassTable";
 import StudentTable from "@components/tables/StudentTable";
 import SubjectTable from "@components/tables/SubjectTable";
 import TeacherTable from "@components/tables/TeacherTable";
 
 // Types
 import { Student, Teacher } from "@utils/types/person";
-import { ClassWName } from "@utils/types/class";
-import {
-  StudentDB,
-  StudentTable as StudentTableType,
-  TeacherDB,
-  TeacherTable as TeacherTableType,
-} from "@utils/types/database/person";
+import { Class } from "@utils/types/class";
+import { StudentDB, TeacherDB } from "@utils/types/database/person";
 import { Subject } from "@utils/types/subject";
-import {
-  SubjectDB,
-  SubjectTable as SubjectTableType,
-} from "@utils/types/database/subject";
+import { SubjectTable as SubjectTableType } from "@utils/types/database/subject";
 
 // Supabase
 import { supabase } from "@utils/supabaseClient";
@@ -154,6 +145,35 @@ const SubjectSection = ({ someSubjects }: { someSubjects: Subject[] }) => {
   );
 };
 
+const ClassSection = ({ someClasses }: { someClasses: Class[] }) => {
+  const { t } = useTranslation("admin");
+
+  return (
+    <Section>
+      <div className="layout-grid-cols-3">
+        <div className="col-span-2">
+          <Header
+            icon={<MaterialIcon icon="meeting_room" allowCustomSize />}
+            text={t("classList.title")}
+          />
+        </div>
+        <Search placeholder={t("classList.searchClasses")} />
+      </div>
+      <div>
+        <ClassTable classes={someClasses} />
+      </div>
+      <div className="flex flex-row items-center justify-end gap-2">
+        <LinkButton
+          type="filled"
+          label={t("classList.action.seeAll")}
+          url="/t/admin/classes"
+          LinkElement={Link}
+        />
+      </div>
+    </Section>
+  );
+};
+
 const ScheduleSection = (): JSX.Element => {
   const { t } = useTranslation("admin");
 
@@ -180,7 +200,8 @@ const Admin: NextPage<{
   someStudents: Student[];
   someTeachers: Teacher[];
   someSubjects: Subject[];
-}> = ({ someStudents, someTeachers, someSubjects }) => {
+  someClasses: Class[];
+}> = ({ someStudents, someTeachers, someSubjects, someClasses }) => {
   const { t } = useTranslation(["admin", "common"]);
 
   return (
@@ -203,6 +224,7 @@ const Admin: NextPage<{
         <StudentSection someStudents={someStudents} />
         <TeacherSection someTeachers={someTeachers} />
         <SubjectSection someSubjects={someSubjects} />
+        <ClassSection someClasses={someClasses} />
         <ScheduleSection />
       </RegularLayout>
     </>
@@ -226,6 +248,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   let someStudents: Array<Student> = [];
   let someTeachers: Array<Teacher> = [];
   let someSubjects: Array<Subject> = [];
+  let someClasses: Array<Subject> = [];
 
   if (!studentSelectingError && students) {
     someStudents = await Promise.all(
@@ -255,6 +278,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
       someStudents,
       someTeachers,
       someSubjects,
+      someClasses,
     },
   };
 };

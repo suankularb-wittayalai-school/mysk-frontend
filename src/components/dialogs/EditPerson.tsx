@@ -25,7 +25,7 @@ import {
   TeacherTable,
 } from "@utils/types/database/person";
 
-// Helper functions
+// Helper
 import { createStudent } from "@utils/backend/person/student";
 import { createTeacher } from "@utils/backend/person/teacher";
 import { useSubjectGroupOption } from "@utils/hooks/subject";
@@ -50,7 +50,7 @@ const EditPersonDialog = ({
   userRole?: Role;
   person?: Student | Teacher;
 }): JSX.Element => {
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const locale = useRouter().locale as "en-US" | "th";
   const { t } = useTranslation(["account", "admin"]);
 
   // Form control

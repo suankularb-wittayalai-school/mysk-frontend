@@ -41,7 +41,7 @@ import { Student, Teacher } from "@utils/types/person";
 import { StudentForm } from "@utils/types/news";
 
 const StudentFormCard = ({ form }: { form: StudentForm }): JSX.Element => {
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const locale = useRouter().locale as "en-US" | "th";
   const { t } = useTranslation("news");
 
   return (
@@ -104,15 +104,15 @@ const FormSection = ({
   const { t } = useTranslation(["dashboard", "news", "class"]);
   const [newsFilter, setNewsFilter] = useState<Array<string>>([]);
   const [filteredNews, setFilteredNews] = useState<Array<StudentForm>>(forms);
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const locale = useRouter().locale as "en-US" | "th";
 
   useEffect(
     () => {
       // Reset filtered news if all filters are deselected
       if (newsFilter.length == 0) {
         setFilteredNews(forms);
-      
-      // Handles done
+
+        // Handles done
       } else if (
         newsFilter.includes("few-done") ||
         newsFilter.includes("most-done") ||
@@ -222,10 +222,7 @@ const ClassAdvisorsSection = ({
         ))}
       </div>
       <div className="flex flex-row flex-wrap items-center justify-end gap-2">
-        <Button
-          label={t("classAdvisors.addAdvisors")}
-          type="filled"
-        />
+        <Button label={t("classAdvisors.addAdvisors")} type="filled" />
       </div>
     </Section>
   );
@@ -254,10 +251,7 @@ const ContactSection = ({
         ))}
       </div>
       <div className="flex flex-row flex-wrap items-center justify-end gap-2">
-        <Button
-          label={t("classContacts.addClassContacts")}
-          type="filled"
-        />
+        <Button label={t("classContacts.addClassContacts")} type="filled" />
       </div>
     </Section>
   );
@@ -313,19 +307,19 @@ const StudentListSection = ({
         </Table>
       </div>
       <div className="flex flex-row flex-wrap items-center justify-end gap-2">
-        <Button
-          label={t("studentList.printList")}
-          type="filled"
-        />
+        <Button label={t("studentList.printList")} type="filled" />
       </div>
     </Section>
   );
 };
 
 // Page
-const Class: NextPage<{ classItem: ClassType; studentForms: Array<StudentForm>; }> = ({ classItem, studentForms }) => {
+const Class: NextPage<{
+  classItem: ClassType;
+  studentForms: Array<StudentForm>;
+}> = ({ classItem, studentForms }) => {
   const { t } = useTranslation("common");
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const locale = useRouter().locale as "en-US" | "th";
 
   return (
     <>
