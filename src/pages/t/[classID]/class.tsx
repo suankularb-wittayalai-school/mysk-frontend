@@ -101,7 +101,7 @@ const FormSection = ({
 }: {
   studentForms: Array<StudentForm>;
 }): JSX.Element => {
-  const { t } = useTranslation(["dashboard", "news"]);
+  const { t } = useTranslation(["dashboard", "news", "class"]);
   const [newsFilter, setNewsFilter] = useState<Array<string>>([]);
   const [filteredNews, setFilteredNews] = useState<Array<StudentForm>>(forms);
   const locale = useRouter().locale == "en-US" ? "en-US" : "th";
@@ -161,7 +161,7 @@ const FormSection = ({
     <Section>
       <Header
         icon={<MaterialIcon icon="groups" allowCustomSize={true} />}
-        text={locale === "th" ? "การทำแบบสำรวจของนักเรียน" : "Student Forms"}
+        text={t("studentForms.title", { ns: "class" })}
       />
       <ChipFilterList
         choices={[
