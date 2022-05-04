@@ -24,7 +24,7 @@ export async function createClassroom(
   }
 
   const { data: schedule, error: scheduleError } = await supabase
-    .from<ScheduleTable>("Schedule")
+    .from<ScheduleTable>("schedule")
     .insert({
       schedule_rows: [],
       year: classroom.year,
@@ -44,7 +44,7 @@ export async function createClassroom(
   const { data: createdClass, error: classCreationError } = await supabase
     .from<ClassroomTable>("classroom")
     .insert({
-      number: classroom.name.th.split(" ")[1],
+      number: classroom.number,
       year: classroom.year,
       contacts: contactIds as number[],
       semester: classroom.semester,

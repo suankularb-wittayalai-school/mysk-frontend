@@ -44,6 +44,7 @@
         "student": "Student",
         "teacher": "Teacher"
       },
+      "teacherID": "Teacher ID",
       "subjectGroup": "Subject group",
       "classAdvisorAt": {
         "label": "Class advisor at",
@@ -53,7 +54,8 @@
     "general": {
       "title": "General Information",
       "citizenID": "Citizen ID",
-      "birthdate": "Birth date"
+      "birthDate": "Birth date",
+      "email": "School email"
     }
   },
   "dialog": {

@@ -42,7 +42,7 @@ const StudentTable = ({
         {students.map((student) => (
           <tr key={student.id}>
             <td>{student.studentID}</td>
-            <td>{student.class.name[locale] || student.class.name.th}</td>
+            <td>{student.class.number}</td>
             <td>{student.classNo}</td>
             <td className="!text-left">
               {nameJoiner(

@@ -46,10 +46,9 @@ const EditClassDialog = ({
 
   // Form control
   const [form, setForm] = useState({
-    nameTH: "",
-    nameEN: "",
-    year: 0,
-    semester: 0,
+    number: 101,
+    year: new Date().getFullYear(),
+    semester: new Date().getMonth() < 3 && new Date().getMonth() > 8 ? 1 : 2,
     students: [],
     advisors: [],
     contacts: [],
@@ -58,10 +57,10 @@ const EditClassDialog = ({
   useEffect(() => {
     if (mode == "edit" && classItem) {
       setForm({
-        nameTH: classItem.name.th,
-        nameEN: classItem.name["en-US"],
-        year: 0,
-        semester: 0,
+        number: 101,
+        year: new Date().getFullYear(),
+        semester:
+          new Date().getMonth() < 3 && new Date().getMonth() > 8 ? 1 : 2,
         students: [],
         advisors: [],
         contacts: [],
@@ -77,10 +76,7 @@ const EditClassDialog = ({
   async function handleAdd() {
     const classroom: Class = {
       id: 0, // this need to be something else when editting
-      name: {
-        th: form.nameTH,
-        "en-US": form.nameEN,
-      },
+      number: form.number,
       year: form.year,
       semester: form.semester as 1 | 2,
       students: form.students,
@@ -135,42 +131,39 @@ const EditClassDialog = ({
           },
         ]}
       >
-        {/* Name */}
-        <DialogSection name="name" title="Name" isDoubleColumn hasNoGap>
+        {/* School */}
+        <DialogSection name="school" title="School" isDoubleColumn hasNoGap>
           <KeyboardInput
             name="name-th"
             type="text"
-            label="Local name (Thai)"
-            helperMsg="i.e. ม.408"
-            onChange={(e: string) => setForm({ ...form, nameTH: e })}
-            defaultValue={form.nameTH}
+            label="Name"
+            helperMsg="Must be 3-digit, i.e. 408."
+            errorMsg="Invalid. Should be 3-digit, i.e. 408."
+            useAutoMsg
+            onChange={(e: string) => setForm({ ...form, number: Number(e) })}
+            defaultValue={classItem ? classItem.number : 101}
+            attr={{ pattern: "[1-6][0-1][1-5]" }}
           />
-          <KeyboardInput
-            name="name-en"
-            type="text"
-            label="English name"
-            helperMsg="i.e. M.408"
-            onChange={(e: string) => setForm({ ...form, nameEN: e })}
-            defaultValue={form.nameEN}
-          />
-        </DialogSection>
-
-        {/* School */}
-        <DialogSection name="school" title="School" isDoubleColumn hasNoGap>
           <KeyboardInput
             name="year"
             type="number"
             label="Academic year"
             onChange={(e: string) => setForm({ ...form, year: Number(e) })}
-            defaultValue={form.year}
-            attr={{ minLength: 2005 }}
+            defaultValue={classItem ? classItem.year : new Date().getFullYear()}
+            attr={{ min: 2005 }}
           />
           <KeyboardInput
             name="name-en"
-            type="text"
+            type="number"
             label="Semester"
-            onChange={(e: string) => setForm({ ...form, nameEN: e })}
-            defaultValue={form.semester}
+            onChange={(e: string) => setForm({ ...form, semester: Number(e) })}
+            defaultValue={
+              classItem
+                ? classItem.semester
+                : new Date().getMonth() < 3 && new Date().getMonth() > 8
+                ? 2
+                : 1
+            }
             attr={{ min: 1, max: 2 }}
           />
         </DialogSection>

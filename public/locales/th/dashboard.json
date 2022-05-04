@@ -2,8 +2,8 @@
   "title": "หน้าหลัก",
   "user": {
     "profileAlt": "รูปของคุณ",
-    "classAndNo": "{{class}} เลขที่ {{classNo}}",
-    "subjectAndClass": "กลุ่มสาระการเรียนรู้{{subjectGroup}}<br>ครูที่ปรึกษา {{classAdvisorAt}}",
+    "classAndNo": "ม.{{class}} เลขที่ {{classNo}}",
+    "subjectAndClass": "กลุ่มสาระการเรียนรู้{{subjectGroup}}<br>ครูที่ปรึกษา ม.{{classAdvisorAt}}",
     "hasNotifications_zero": "ไม่มีการแจ้งเตือน",
     "hasNotifications_one": "มีการแจ้งเตือน 1 รายการ",
     "hasNotifications_other": "มีการแจ้งเตือน {{notifCount}} รายการ",

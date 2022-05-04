@@ -116,7 +116,7 @@ const EditSubjectDialog = ({
     year: new Date().getFullYear(),
     // Set to 2 if the current month is after October but before March
     semester: new Date().getMonth() < 3 && new Date().getMonth() > 8 ? 2 : 1,
-    credit: 0,
+    credit: 0.5,
     syllabus: null,
   };
 
@@ -436,7 +436,7 @@ const EditSubjectDialog = ({
             type="number"
             label={t("item.school.year")}
             onChange={(e) => setForm({ ...form, year: Number(e) })}
-            defaultValue={subject?.year}
+            defaultValue={subject ? subject.year : new Date().getFullYear()}
             attr={{ minLength: 2005 }}
           />
           <KeyboardInput
@@ -444,7 +444,13 @@ const EditSubjectDialog = ({
             type="number"
             label={t("item.school.semester")}
             onChange={(e) => setForm({ ...form, semester: Number(e) as 1 | 2 })}
-            defaultValue={subject?.semester}
+            defaultValue={
+              subject
+                ? subject.semester
+                : new Date().getMonth() < 3 && new Date().getMonth() > 8
+                ? 2
+                : 1
+            }
             attr={{ min: 1, max: 2 }}
           />
           <KeyboardInput
@@ -452,8 +458,8 @@ const EditSubjectDialog = ({
             type="number"
             label={t("item.school.credit")}
             onChange={(e) => setForm({ ...form, credit: Number(e) })}
-            attr={{ min: 0, step: 0.5 }}
-            defaultValue={subject?.credit}
+            attr={{ min: 0.5, step: 0.5 }}
+            defaultValue={subject ? subject.credit : 0.5}
           />
           {/* {subject?.syllabus && <span>Syllabus Exist</span>} */}
           <FileInput

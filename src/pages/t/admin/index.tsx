@@ -44,7 +44,13 @@ import { supabase } from "@utils/supabaseClient";
 import { range } from "@utils/helpers/array";
 
 // Backend
-import { db2Student, db2Subject, db2Teacher } from "@utils/backend/database";
+import {
+  db2Class,
+  db2Student,
+  db2Subject,
+  db2Teacher,
+} from "@utils/backend/database";
+import { ClassroomDB } from "@utils/types/database/class";
 
 const StudentSection = ({
   someStudents,
@@ -244,11 +250,16 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
     .from<SubjectTableType>("subject")
     .select("*")
     .limit(5);
+  const { data: classes, error: classSelectingError } = await supabase
+    .from<ClassroomDB>("classroom")
+    .select("*, schedule:schedule(*)")
+    .order("number", { ascending: true })
+    .limit(5);
 
   let someStudents: Array<Student> = [];
   let someTeachers: Array<Teacher> = [];
   let someSubjects: Array<Subject> = [];
-  let someClasses: Array<Subject> = [];
+  let someClasses: Array<Class> = [];
 
   if (!studentSelectingError && students) {
     someStudents = await Promise.all(
@@ -265,6 +276,12 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   if (!subjectSelectingError && subjects) {
     someSubjects = await Promise.all(
       subjects.map(async (subject) => await db2Subject(subject))
+    );
+  }
+
+  if (!classSelectingError && classes) {
+    someClasses = await Promise.all(
+      classes.map(async (classroom) => await db2Class(classroom))
     );
   }
 

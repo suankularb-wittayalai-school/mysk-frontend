@@ -54,8 +54,6 @@ const TeacherHome: NextPage<{
   const [showLogOut, setShowLogOut] = useState<boolean>(false);
   const user = useTeacherAccount();
 
-  // const session = useSession();
-
   async function handleLogout() {
     await supabase.auth.signOut();
     router.push("/");

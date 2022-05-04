@@ -23,7 +23,7 @@ const ContactChip = ({
   return (
     <Card type="horizontal" appearance="tonal" hasAction className={className}>
       <CardHeader
-        icon={<ContactIcon icon={contact.type} />}
+        icon={<ContactIcon icon={contact.type} width={24} />}
         title={<span id={`contact-${contact.id}`}>{contact.name[locale]}</span>}
         end={
           contact.includes ? (

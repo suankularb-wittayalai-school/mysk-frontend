@@ -1,4 +1,4 @@
-import { ClassWName } from "./class";
+import { ClassWNumber } from "./class";
 import { Contact } from "./contact";
 import { Subject, SubjectGroup } from "./subject";
 
@@ -31,7 +31,7 @@ export type Student = Person & {
   // TODO: Add more properties when the schema is completed
   role: "student";
   studentID: string;
-  class: ClassWName;
+  class: ClassWNumber;
   classNo: number;
 };
 
@@ -39,6 +39,6 @@ export type Teacher = Person & {
   // TODO: Add more properties when the schema is completed
   role: "teacher";
   teacherID: string;
-  classAdvisorAt?: ClassWName;
+  classAdvisorAt?: ClassWNumber;
   subjectGroup: SubjectGroup;
 };

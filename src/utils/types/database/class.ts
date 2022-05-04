@@ -6,7 +6,7 @@ import { SubjectTable } from "./subject";
 export interface ClassroomDB {
   id: number;
   created_at: string;
-  number: string;
+  number: number;
   year: number;
   semester: number;
   students: number[];
@@ -19,7 +19,7 @@ export interface ClassroomDB {
 export interface ClassroomTable {
   id: number;
   created_at: string;
-  number: string;
+  number: number;
   year: number;
   semester: number;
   students: number[];

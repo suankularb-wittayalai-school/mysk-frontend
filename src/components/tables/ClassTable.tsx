@@ -29,10 +29,10 @@ const ClassTable = ({
     <Table width={800}>
       <thead>
         <tr>
-          <th className="w-6/12">Name</th>
-          <th className="w-2/12">Advisors</th>
-          <th className="w-1/12">A. year</th>
-          <th className="w-1/12">Semester</th>
+          <th className="w-6/12">{t("classList.table.name")}</th>
+          <th className="w-2/12">{t("classList.table.advisor")}</th>
+          <th className="w-1/12">{t("classList.table.year")}</th>
+          <th className="w-1/12">{t("classList.table.semester")}</th>
           {setShowEdit && setEditingClass && setShowConfDel && (
             <th className="w-1/12" />
           )}
@@ -41,15 +41,18 @@ const ClassTable = ({
       <tbody>
         {classes.map((classItem) => (
           <tr key={classItem.id}>
-            <td>{classItem.name[locale] ?? classItem.name.th}</td>
-            <td>
+            <td className="!text-left">
+              {t("class", { ns: "common", number: classItem.number })}
+            </td>
+            <td className="!text-left">
               {classItem.classAdvisors.length > 0 &&
                 nameJoiner(locale, classItem.classAdvisors[0].name)}
               <abbr
                 className="text-surface-variant"
                 title={classItem.classAdvisors.slice(1).join(", ")}
               >
-                +{classItem.classAdvisors.length - 1}
+                {classItem.classAdvisors.length > 2 &&
+                  `+${classItem.classAdvisors.length - 1}`}
               </abbr>
             </td>
             <td>{classItem.year}</td>

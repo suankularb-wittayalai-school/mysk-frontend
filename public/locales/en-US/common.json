@@ -23,13 +23,14 @@
       "Mrs.": "Mrs. "
     }
   },
+  "class": "M.{{number}}",
   "contact": {
     "phone": "Phone",
     "email": "Email",
+    "website": "Website",
     "facebook": "Facebook",
     "line": "LINE",
     "instagram": "Instagram",
-    "website": "Website",
     "discord": "Discord",
     "other": "Other"
   },
@@ -52,6 +53,17 @@
   },
   "seeDetails": "See details",
   "dialog": {
+    "addContact": {
+      "title": "Add contact",
+      "nameTH": "Local name (Thai)",
+      "nameEN": "English name",
+      "value": "Value",
+      "includes": {},
+      "action": {
+        "cancel": "Cancel",
+        "add": "Add"
+      }
+    },
     "addTeacher": {
       "title": "Add teacher",
       "supportingText": "Select a subject group to filter teachers by their subject group.",

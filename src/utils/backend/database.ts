@@ -48,10 +48,7 @@ export async function db2Student(student: StudentDB): Promise<Student> {
     // TODO: Get class
     class: {
       id: 101,
-      name: {
-        "en-US": "M.101",
-        th: "ม.101",
-      },
+      number: 101,
     },
     citizenID: student.people.citizen_id,
     birthdate: student.people.birthdate,
@@ -102,10 +99,7 @@ export async function db2Teacher(teacher: TeacherDB): Promise<Teacher> {
     // TODO: Class advisor at
     classAdvisorAt: {
       id: 405,
-      name: {
-        "en-US": "M.405",
-        th: "ม.405",
-      },
+      number: 405,
     },
     citizenID: teacher.people.citizen_id,
     birthdate: teacher.people.birthdate,
@@ -234,10 +228,7 @@ export async function db2Subject(subject: SubjectTable): Promise<Subject> {
 export async function db2Class(classDB: ClassroomDB): Promise<Class> {
   const formatted: Class = {
     id: classDB.id,
-    name: {
-      "en-US": `M. ${classDB.number}`,
-      th: `ม. ${classDB.number}`,
-    },
+    number: classDB.number,
     classAdvisors: [],
     students: [],
     subjects: [],

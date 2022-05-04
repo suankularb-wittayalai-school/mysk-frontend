@@ -44,6 +44,7 @@
         "student": "นักเรียน",
         "teacher": "อาจารย์"
       },
+      "teacherID": "เลขประจำตัวอาจารย์",
       "subjectGroup": "กลุ่มสาระการเรียนรู้",
       "classAdvisorAt": {
         "label": "ครูที่ปรึกษา",
@@ -53,7 +54,8 @@
     "general": {
       "title": "ข้อมูลทั่วไป",
       "citizenID": "เลขประจำตัวประชาชน",
-      "birthDate": "วันเกิด"
+      "birthDate": "วันเกิด",
+      "email": "อีเมลโรงเรียน"
     }
   },
   "dialog": {

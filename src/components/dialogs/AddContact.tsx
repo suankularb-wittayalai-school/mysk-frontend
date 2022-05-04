@@ -34,10 +34,10 @@ const AddContactDialog = ({
   const meansOfContact: ContactVia[] = [
     "Phone",
     "Email",
+    "Website",
     "Facebook",
     "Line",
     "Instagram",
-    "Website",
     "Discord",
     "Other",
   ];
@@ -66,7 +66,6 @@ const AddContactDialog = ({
       type="large"
       label="add-contact"
       title={t("dialog.addContact.title")}
-      supportingText={t("dialog.addContact.supportingText")}
       actions={[
         { name: t("dialog.addContact.action.cancel"), type: "close" },
         {
@@ -85,16 +84,20 @@ const AddContactDialog = ({
           label={t("dialog.addContact.type")}
           options={meansOfContact.map((type) => ({
             value: type,
-            label: (
-              <div className="flex flex-row items-center gap-2">
-                <ContactIcon icon={type} width={16} />
-                <span>
-                  {t(`contact.${type.toLowerCase()}`, {
-                    ns: "common",
-                  })}
-                </span>
-              </div>
-            ),
+            label: t(`contact.${type.toLowerCase()}`, {
+              ns: "common",
+            }),
+            // FIXME: Allow JSX Element label please we need this
+            // label: (
+            //   <div className="flex flex-row items-center gap-2">
+            //     <ContactIcon icon={type} width={16} />
+            //     <span>
+            //       {t(`contact.${type.toLowerCase()}`, {
+            //         ns: "common",
+            //       })}
+            //     </span>
+            //   </div>
+            // ),
           }))}
           onChange={(e: string) =>
             setContact({

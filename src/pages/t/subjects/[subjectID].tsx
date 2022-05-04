@@ -44,7 +44,7 @@ import {
   SubjectWNameAndCode,
   SubstituteAssignment,
 } from "@utils/types/subject";
-import { ClassWName } from "@utils/types/class";
+import { ClassWNumber } from "@utils/types/class";
 import { DialogProps } from "@utils/types/common";
 import ImageDialog from "@components/dialogs/Image";
 
@@ -55,7 +55,7 @@ const DetailsSection = ({
   classesLearningThis: orignialClassesLearningThis,
   setShowAdd,
 }: {
-  classesLearningThis: Array<ClassWName>;
+  classesLearningThis: Array<ClassWNumber>;
   setShowAdd: Function;
 }): JSX.Element => {
   const { t } = useTranslation("subjects");
@@ -571,7 +571,7 @@ const EditAssignmentDialog = ({
 // Page
 const SubjectDetails: NextPage<{
   subject: Subject;
-  classesLearningThis: Array<ClassWName>;
+  classesLearningThis: Array<ClassWNumber>;
   periodLogs: Array<PeriodLog>;
   substAsgn: Array<SubstituteAssignment>;
   allSubjects: Array<SubjectWNameAndCode>;
@@ -703,7 +703,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       },
     },
   };
-  const classesLearningThis: Array<ClassWName> = [
+  const classesLearningThis: Array<ClassWNumber> = [
     {
       id: 506,
       name: {

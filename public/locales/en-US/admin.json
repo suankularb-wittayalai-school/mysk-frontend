@@ -49,6 +49,23 @@
       "addSubject": "Add subject"
     }
   },
+  "classList": {
+    "title": "Class list",
+    "searchClasses": "Search classes",
+    "table": {
+      "name": "Name",
+      "advisor": "Class advisors",
+      "year": "A. year",
+      "semester": "Semester",
+      "action": {
+        "edit": "Edit",
+        "delete": "Delete"
+      }
+    },
+    "action": {
+      "addClass": "Add class"
+    }
+  },
   "schedule": {
     "title": "Schedule lookup",
     "gradeItem": "M.{{grade}}",
@@ -75,6 +92,16 @@
       "title": {
         "add": "Add subject",
         "edit": "Edit subject"
+      },
+      "action": {
+        "cancel": "Cancel",
+        "save": "Save"
+      }
+    },
+    "editClass": {
+      "title": {
+        "add": "Add class",
+        "edit": "Edit class"
       },
       "action": {
         "cancel": "Cancel",

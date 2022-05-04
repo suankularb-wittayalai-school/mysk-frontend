@@ -23,13 +23,14 @@
       "Mrs.": "นาง"
     }
   },
+  "class": "ม.{{number}}",
   "contact": {
     "phone": "โทรศัพท์",
     "email": "อีเมล",
+    "website": "เว็บไซต์",
     "facebook": "Facebook",
     "line": "LINE",
     "instagram": "Instagram",
-    "website": "เว็บไซต์",
     "discord": "Discord",
     "other": "อื่นๆ"
   },
@@ -52,6 +53,18 @@
   },
   "seeDetails": "ดูรายละเอียด",
   "dialog": {
+    "addContact": {
+      "title": "เพิ่มช่องทางการติดต่อ",
+      "nameTH": "ป้ายกำกับการติดต่อ",
+      "nameEN": "ป้ายกำกับการติดต่อภาษาอังกฤษ",
+      "value": "ชื่อ/ID การติดต่อ",
+      "value_helper": "จะหาบัญชีการติดต่อนี้อย่างไร",
+      "includes": {},
+      "action": {
+        "cancel": "Cancel",
+        "add": "Add"
+      }
+    },
     "addTeacher": {
       "title": "เพิ่มอาจารย์",
       "supportingText": "เลือกกลุ่มสาระการเรียนรู้เพื่อกรองอาจารย์ตามกลุ่มสาระการเรียนรู้",
