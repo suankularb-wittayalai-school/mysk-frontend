@@ -80,7 +80,9 @@ const AddStudentDialog = ({
       </DialogSection>
       <DialogSection hasNoGap>
         <div>
-          <h3 className="!text-base">Search result</h3>
+          <h3 className="!text-base">
+            {t("dialog.addStudent.searchResult.title")}
+          </h3>
           <p>
             {student
               ? nameJoiner(
@@ -89,7 +91,7 @@ const AddStudentDialog = ({
                   t(`name.prefix.${student.prefix}`),
                   { prefix: true }
                 )
-              : "No students with this ID."}
+              : t("dialog.addStudent.searchResult.notFound")}
           </p>
         </div>
       </DialogSection>
