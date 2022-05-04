@@ -1,7 +1,7 @@
 // Modules
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
-import { useEffect, useState } from "react";
+import { InputHTMLAttributes, useEffect, useState } from "react";
 
 // SK Components
 import {
@@ -38,6 +38,45 @@ const AddContactDialog = ({
     "Discord",
     "Other",
   ];
+
+  const contactValuesMap: {
+    [key in ContactVia]: {
+      type: "number" | "tel" | "email" | "url" | "text";
+      attr?: InputHTMLAttributes<HTMLInputElement>;
+      helperMsg?: string;
+    };
+  } = {
+    Phone: {
+      type: "tel",
+      attr: { pattern: "\\d{9,10}" },
+    },
+    Email: {
+      type: "email",
+    },
+    Website: {
+      type: "url",
+    },
+    Facebook: {
+      type: "text",
+    },
+    Line: {
+      type: "text",
+      attr: { minLength: 10, maxLength: 10 },
+      helperMsg: t("dialog.addContact.value.line_helper"),
+    },
+    Instagram: {
+      type: "text",
+      attr: { pattern: "(?:(?:[\\w][\\.]{0,1})*[\\w]){1,29}" },
+    },
+    Discord: {
+      type: "text",
+      attr: { pattern: "[a-zA-Z0-9]{8}" },
+      helperMsg: t("dialog.addContact.value.discord_helper"),
+    },
+    Other: {
+      type: "text",
+    },
+  };
 
   // Form control
   const [contact, setContact] = useState<{
@@ -132,6 +171,16 @@ const AddContactDialog = ({
           }
         />
         <KeyboardInput
+          name="value"
+          type={contactValuesMap[contact.type].type}
+          label={t(`dialog.addContact.value.${contact.type.toLowerCase()}`)}
+          helperMsg={contactValuesMap[contact.type].helperMsg}
+          errorMsg={t("dialog.addContact.value_error")}
+          useAutoMsg
+          onChange={(e) => setContact({ ...contact, value: e })}
+          attr={contactValuesMap[contact.type].attr}
+        />
+        <KeyboardInput
           name="name-th"
           type="text"
           label={t("dialog.addContact.nameTH")}
@@ -146,12 +195,6 @@ const AddContactDialog = ({
           onChange={(e) =>
             setContact({ ...contact, name: { ...contact.name, "en-US": e } })
           }
-        />
-        <KeyboardInput
-          name="value"
-          type="text"
-          label={t("dialog.addContact.value")}
-          onChange={(e) => setContact({ ...contact, value: e })}
         />
 
         {isGroup && (
