@@ -60,10 +60,16 @@
       "nameEN": "ป้ายกำกับการติดต่อภาษาอังกฤษ",
       "value": "ชื่อ/ID การติดต่อ",
       "value_helper": "จะหาบัญชีการติดต่อนี้อย่างไร",
-      "includes": {},
+      "includes": {
+        "title": "กลุ่มที่อนุญาตให้เข้าถึง",
+        "students": "นักเรียน",
+        "teachers": "อาจารย์",
+        "parents": "ผู้ปกครอง",
+        "other": "อื่นๆ"
+      },
       "action": {
-        "cancel": "Cancel",
-        "add": "Add"
+        "cancel": "ยกเลิก",
+        "add": "เพิ่ม"
       }
     },
     "addStudent": {

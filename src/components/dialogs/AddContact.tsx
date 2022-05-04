@@ -151,16 +151,19 @@ const AddContactDialog = ({
           name="value"
           type="text"
           label={t("dialog.addContact.value")}
-          helperMsg="How to find this account."
           onChange={(e) => setContact({ ...contact, value: e })}
         />
+
         {isGroup && (
-          <div>
+          <div className="flex flex-col gap-2">
             {/* (@SiravitPhokeed) We definitely need SK Components™ for this,
                 this looks pretty dumb tbh. */}
-            <h3 className="!text-base">Includes</h3>
+            <h3 className="!text-base">
+              {t("dialog.addContact.includes.title")}
+            </h3>
             <div className="grid grid-cols-2">
               <div className="flex flex-row gap-2">
+                {/* Students */}
                 <input
                   type="checkbox"
                   id="includes-1"
@@ -176,8 +179,12 @@ const AddContactDialog = ({
                     })
                   }
                 />
-                <label htmlFor="includes-1">Students</label>
+                <label htmlFor="includes-1">
+                  {t("dialog.addContact.includes.students")}
+                </label>
               </div>
+
+              {/* Parents */}
               <div className="flex flex-row gap-2">
                 <input
                   type="checkbox"
@@ -194,7 +201,9 @@ const AddContactDialog = ({
                     })
                   }
                 />
-                <label htmlFor="includes-2">Teachers</label>
+                <label htmlFor="includes-2">
+                  {t("dialog.addContact.includes.parents")}
+                </label>
               </div>
               <div className="flex flex-row gap-2">
                 <input
@@ -212,11 +221,15 @@ const AddContactDialog = ({
                     })
                   }
                 />
-                <label htmlFor="includes-3">Parents</label>
+                <label htmlFor="includes-3">
+                  {t("dialog.addContact.includes.teachers")}
+                </label>
               </div>
               <div className="flex flex-row gap-2">
                 <input type="checkbox" id="includes-4" name="includes-4" />
-                <label htmlFor="includes-4">Other</label>
+                <label htmlFor="includes-4">
+                  {t("dialog.addContact.includes.other")}
+                </label>
               </div>
             </div>
           </div>

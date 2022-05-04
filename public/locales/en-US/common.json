@@ -56,10 +56,16 @@
     "addContact": {
       "title": "Add contact",
       "type": "Platform",
-      "nameTH": "Local name (Thai)",
-      "nameEN": "English name",
+      "nameTH": "Thai contact label",
+      "nameEN": "English contact label",
       "value": "Value",
-      "includes": {},
+      "includes": {
+        "title": "Includes",
+        "students": "Students",
+        "teachers": "Teachers",
+        "parents": "Parents",
+        "other": "Other"
+      },
       "action": {
         "cancel": "Cancel",
         "add": "Add"
