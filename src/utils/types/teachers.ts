@@ -1,11 +1,9 @@
 import { Teacher } from "./person";
 
-export interface TeachersList {
+export interface TeachersListGroup {
   groupName: string;
-  content: TeacherListContent[];
-};
-
-export interface TeacherListContent {
-  id: number;
-  content: Teacher;
-};
+  content: {
+    id: number;
+    content: Teacher;
+  }[];
+}

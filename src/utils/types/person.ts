@@ -1,6 +1,6 @@
 import { ClassWNumber } from "./class";
 import { Contact } from "./contact";
-import { Subject, SubjectGroup } from "./subject";
+import { Subject, SubjectGroup, SubjectWNameAndCode } from "./subject";
 
 export type Prefix = "Master" | "Mr." | "Mrs." | "Miss.";
 
@@ -41,4 +41,5 @@ export type Teacher = Person & {
   teacherID: string;
   classAdvisorAt?: ClassWNumber;
   subjectGroup: SubjectGroup;
+  subjectsInCharge?: SubjectWNameAndCode[];
 };

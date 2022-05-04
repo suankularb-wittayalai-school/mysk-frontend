@@ -112,6 +112,7 @@ export async function db2Teacher(teacher: TeacherDB): Promise<Teacher> {
     },
     // TODO: Fetch contact
     contacts: [],
+    subjectsInCharge: [],
   };
 
   const { data: contacts, error: contactError } = await supabase
