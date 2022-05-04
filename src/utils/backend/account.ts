@@ -1,18 +1,7 @@
 import { Session } from "@supabase/supabase-js";
 import { supabase } from "@utils/supabaseClient";
 
-export function logIn(formData: FormData) {
-  // Temporary
-  console.log(formData.get("user-id")?.toString().includes("skt"));
-  if (formData.get("user-id")?.toString().includes("skt")) {
-    return { role: "teacher" };
-  }
-  return { role: "student" };
-}
-
-export function logOut() {}
-
-export function editProfile(formData: FormData, email: string) {}
+export function editProfile(formData: FormData) {}
 
 export async function changePassword(
   formData: FormData,

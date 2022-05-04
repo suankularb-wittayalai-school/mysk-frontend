@@ -145,6 +145,8 @@ const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
+  let allSubjects: Subject[] = [];
+
   const { data: subjects, error: subjectSelectingError } = await supabase
     .from<SubjectTableType>("subject")
     .select("*");
@@ -152,17 +154,12 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   if (subjectSelectingError) {
     console.error(subjectSelectingError);
   }
-  if (!subjects) {
-    return {
-      props: {
-        allSubjects: [],
-      },
-    };
-  }
 
-  const allSubjects: Subject[] = await Promise.all(
-    subjects.map(async (subject) => await db2Subject(subject))
-  );
+  if (subjects) {
+    allSubjects = await Promise.all(
+      subjects.map(async (subject) => await db2Subject(subject))
+    );
+  }
 
   return {
     props: {

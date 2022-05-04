@@ -35,7 +35,7 @@ const AddTeacherDialog = ({
 
   useEffect(
     () => setSelectedTeacher(teachers.length > 0 ? teachers[0].id : null),
-    [selectedGroup]
+    [teachers, selectedGroup]
   );
 
   return (
