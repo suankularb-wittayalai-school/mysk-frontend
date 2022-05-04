@@ -22,27 +22,27 @@ const ContactChip = ({
       <CardHeader
         icon={
           <div className="relative aspect-square w-6 text-primary">
-            {contact.type == "phone" ? (
+            {contact.type == "Phone" ? (
               <MaterialIcon icon="call" />
-            ) : contact.type == "email" ? (
+            ) : contact.type == "Email" ? (
               <MaterialIcon icon="mail" />
-            ) : contact.type == "facebook" ? (
+            ) : contact.type == "Facebook" ? (
               <Image
                 src="/images/social/facebook.webp"
                 layout="fill"
                 alt="Facebook"
               />
-            ) : contact.type == "line" ? (
+            ) : contact.type == "Line" ? (
               <Image src="/images/social/line.webp" layout="fill" alt="LINE" />
-            ) : contact.type == "instagram" ? (
+            ) : contact.type == "Instagram" ? (
               <Image
                 src="/images/social/instagram.webp"
                 layout="fill"
                 alt="Instagram"
               />
-            ) : contact.type == "website" ? (
+            ) : contact.type == "Website" ? (
               <MaterialIcon icon="public" />
-            ) : contact.type == "discord" ? (
+            ) : contact.type == "Discord" ? (
               <Image
                 src="/images/social/discord.webp"
                 layout="fill"

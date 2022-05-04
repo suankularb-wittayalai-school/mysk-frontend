@@ -22,6 +22,7 @@ import DiscardDraft from "@components/dialogs/DiscardDraft";
 // Types
 import { Class } from "@utils/types/class";
 import { DialogProps } from "@utils/types/common";
+import { createClassroom } from "@utils/backend/classroom/classroom";
 
 const EditClassDialog = ({
   show,
@@ -72,10 +73,35 @@ const EditClassDialog = ({
   }
 
   async function handleAdd() {
+    const classroom: Class = {
+      id: 0, // this need to be something else when editting
+      name: {
+        th: form.nameTH,
+        "en-US": form.nameEN,
+      },
+      year: form.year,
+      semester: form.semester as 1 | 2,
+      students: form.students,
+      classAdvisors: form.advisors,
+      contacts: form.contacts,
+      schedule: {
+        content: [], // this need to be something else when editting
+      },
+      subjects: [], // this need to be something else when editting
+    };
+
     if (!validate()) return;
 
     if (mode == "add") {
-      // TODO
+      const {
+        data: createdClass,
+        error: classCreationError,
+      } = await createClassroom(classroom);
+
+      if (classCreationError) {
+        console.error(classCreationError);
+        return;
+      }
     } else if (mode == "edit") {
       // TODO
     }
