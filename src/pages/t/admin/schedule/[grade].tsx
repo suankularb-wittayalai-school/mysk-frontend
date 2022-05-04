@@ -27,19 +27,14 @@ const ScheduleSection = ({
 }: {
   schedule: StudentSchedule;
 }): JSX.Element => {
+  const { t } = useTranslation("common");
   const locale = useRouter().locale as "en-US" | "th";
 
   return (
     <Section>
       <Header
         icon={<MaterialIcon icon="subdirectory_arrow_right" allowCustomSize />}
-        text={
-          // FIXME: Schedule class should be required
-          // Temporary solution, awaiting response from @JimmyTempest
-          schedule.class
-            ? schedule.class.name[locale] || schedule.class.name.th
-            : ""
-        }
+        text={t("grade", { number: schedule.class?.number || 100 })}
       />
       <Schedule schedule={schedule} role="student" />
     </Section>
@@ -87,56 +82,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   params,
 }) => {
   const grade = params?.grade;
-  const schedulesThisGrade: Array<StudentSchedule> = [
-    {
-      class: {
-        id: 501,
-        name: {
-          "en-US": "M.501",
-          th: "ม.501",
-        },
-      },
-      content: [
-        { day: 1, content: [] },
-        { day: 2, content: [] },
-        { day: 3, content: [] },
-        { day: 4, content: [] },
-        { day: 5, content: [] },
-      ],
-    },
-    {
-      class: {
-        id: 502,
-        name: {
-          "en-US": "M.502",
-          th: "ม.502",
-        },
-      },
-      content: [
-        { day: 1, content: [] },
-        { day: 2, content: [] },
-        { day: 3, content: [] },
-        { day: 4, content: [] },
-        { day: 5, content: [] },
-      ],
-    },
-    {
-      class: {
-        id: 503,
-        name: {
-          "en-US": "M.503",
-          th: "ม.503",
-        },
-      },
-      content: [
-        { day: 1, content: [] },
-        { day: 2, content: [] },
-        { day: 3, content: [] },
-        { day: 4, content: [] },
-        { day: 5, content: [] },
-      ],
-    },
-  ];
+  const schedulesThisGrade: Array<StudentSchedule> = [];
 
   return {
     props: {

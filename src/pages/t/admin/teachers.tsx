@@ -53,7 +53,6 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
   const [showConfDel, setShowConfDel] = useState<boolean>(false);
 
   async function handleDelete() {
-    // console.log(editingPerson);
     if (!editingPerson) {
       return;
     }
@@ -66,12 +65,19 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
         teacher: number;
       }>("users")
       .select("id")
-      .match({ teacher: editingPerson.id })
-      .limit(1);
+      .match({ student: editingPerson.id })
+      .limit(1)
+      .single();
 
     // console.log(userid, editingPerson);
 
-    if (selectingError || userid.length == 0) {
+    if (selectingError) {
+      console.error(selectingError);
+      return;
+    }
+
+    if (!userid) {
+      console.error("No user found");
       return;
     }
 
@@ -107,7 +113,7 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        id: userid[0].id,
+        id: userid.id,
       }),
     });
 

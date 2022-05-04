@@ -58,7 +58,7 @@ const DetailsSection = ({
   classesLearningThis: Array<ClassWNumber>;
   setShowAdd: Function;
 }): JSX.Element => {
-  const { t } = useTranslation("subjects");
+  const { t } = useTranslation(["subjects", "common"]);
   const locale = useRouter().locale as "en-US" | "th";
   const [classesLearningThis, setClassesLearningThis] = useState<
     Array<{
@@ -68,7 +68,7 @@ const DetailsSection = ({
   >(
     orignialClassesLearningThis.map((classItem) => ({
       id: classItem.id.toString(),
-      name: classItem.name[locale],
+      name: t("grade", { ns: "common", number: classItem.number }),
     }))
   );
 
@@ -347,7 +347,7 @@ const SubstituteAssignmentsSection = ({
   setShowAddAsgn: Function;
   setActiveAsgn: Function;
 }): JSX.Element => {
-  const { t } = useTranslation("subjects");
+  const { t } = useTranslation(["subjects", "common"]);
   const locale = useRouter().locale as "en-US" | "th";
 
   return (
@@ -372,7 +372,13 @@ const SubstituteAssignmentsSection = ({
               <div className="scroll-w-0 mx-[2px] overflow-x-auto py-1 px-[calc(1rem-2px)]">
                 <ChipList noWrap>
                   {assignment.classes.map((classItem) => (
-                    <Chip key={classItem.id} name={classItem.name[locale]} />
+                    <Chip
+                      key={classItem.id}
+                      name={t("grade", {
+                        ns: "common",
+                        number: classItem.number,
+                      })}
+                    />
                   ))}
                 </ChipList>
               </div>
@@ -419,7 +425,7 @@ const AssignmentDetailsDialog = ({
   onClose,
   assignment,
 }: DialogProps & { assignment: SubstituteAssignment }): JSX.Element => {
-  const { t } = useTranslation("subjects");
+  const { t } = useTranslation(["subjects", "common"]);
   const locale = useRouter().locale as "en-US" | "th";
 
   return (
@@ -447,7 +453,10 @@ const AssignmentDetailsDialog = ({
       <DialogSection name={t("substAsgn.dialog.asgnDetails.assignedClasses")}>
         <ChipList>
           {assignment.classes.map((classItem) => (
-            <Chip key={classItem.id} name={classItem.name[locale]} />
+            <Chip
+              key={classItem.id}
+              name={t("grade", { ns: "common", number: classItem.number })}
+            />
           ))}
         </ChipList>
       </DialogSection>
@@ -468,7 +477,7 @@ const EditAssignmentDialog = ({
   assignment?: SubstituteAssignment;
   allSubjects: Array<SubjectWNameAndCode>;
 }): JSX.Element => {
-  const { t } = useTranslation("subjects");
+  const { t } = useTranslation(["subjects", "common"]);
   const locale = useRouter().locale as "en-US" | "th";
   const [showAddClass, setShowAddClass] = useState<boolean>(false);
 
@@ -489,7 +498,7 @@ const EditAssignmentDialog = ({
           thDesc: assignment.desc.th,
           assignedClases: assignment.classes.map((classItem) => ({
             id: classItem.id.toString(),
-            name: classItem.name[locale],
+            name: t("grade", { ns: "common", number: classItem.number }),
           })),
         }
       : {
@@ -696,190 +705,23 @@ export const getServerSideProps: GetServerSideProps = async ({
       th: { name: "ภาษาอังกฤษ 4" },
     },
     teachers: [],
-    subjectSubgroup: {
-      name: { "en-US": "English", th: "ภาษาอังกฤษ" },
-      subjectGroup: {
-        name: { "en-US": "Foreign Language", th: "ภาษาต่างประเทศ" },
-      },
+    type: {
+      "en-US": "Core Courses",
+      th: "รายวิชาพื้นฐาน",
+    },
+    credit: 1,
+    year: 2022,
+    semester: 1,
+    syllabus: null,
+    subjectGroup: {
+      id: 1,
+      name: { "en-US": "ENG", th: "อ" },
     },
   };
-  const classesLearningThis: Array<ClassWNumber> = [
-    {
-      id: 506,
-      name: {
-        "en-US": "M.506",
-        th: "ม.506",
-      },
-    },
-    {
-      id: 507,
-      name: {
-        "en-US": "M.507",
-        th: "ม.507",
-      },
-    },
-    {
-      id: 508,
-      name: {
-        "en-US": "M.508",
-        th: "ม.508",
-      },
-    },
-    {
-      id: 510,
-      name: {
-        "en-US": "M.510",
-        th: "ม.510",
-      },
-    },
-    {
-      id: 511,
-      name: {
-        "en-US": "M.511",
-        th: "ม.511",
-      },
-    },
-    {
-      id: 512,
-      name: {
-        "en-US": "M.512",
-        th: "ม.512",
-      },
-    },
-    {
-      id: 513,
-      name: {
-        "en-US": "M.513",
-        th: "ม.513",
-      },
-    },
-  ];
-  const periodLogs: Array<PeriodLog> = [
-    {
-      id: 1,
-      date: new Date(2022, 1, 22),
-      topic: "Forces of nature (Reading)",
-      mediums: ["pre-recorded"],
-      participationLevel: 5,
-      evidence: "/images/dummybase/zoom-screenshot.webp",
-    },
-    {
-      id: 2,
-      date: new Date(2022, 1, 20),
-      topic: "Vocabulary Practice (The weather)",
-      mediums: ["meet", "material"],
-      participationLevel: 3,
-      evidence: "/images/dummybase/zoom-screenshot.webp",
-    },
-    {
-      id: 3,
-      date: new Date(2022, 1, 15),
-      topic: "Grammar in use (Modals)",
-      mediums: ["meet"],
-      participationLevel: 5,
-      evidence: "/images/dummybase/zoom-screenshot.webp",
-    },
-  ];
-  const substAsgn: Array<SubstituteAssignment> = [
-    {
-      id: 0,
-      name: {
-        "en-US": "Environmental Leaflet",
-        th: "Environmental Leaflet",
-      },
-      desc: {
-        "en-US":
-          "Make a leaflet on the environment. The assignment must consist of:\n1) A picture representing the selected environmental problem; and\n2) Quotes to campaign or solve environmental problems.\n\nPeriod 1 = Choose environmental issues, think of quotes, and come up with ideas for visual presentations.\n\nPeriod 2 = Use the data planned in the first period made into a real piece.",
-        th:
-          "จัดทำใบปลิวเรื่องสิ่งแวดล้อม โดยในชิ้นงานจะต้องประกอบด้วย\n1) รูปภาพที่แสดงถึงปัญหาสิ่งแวดล้อมที่เลือก และ\n2) คำคมเพื่อรณรงค์หรือแก้ไขปัญหาสิ่งแวดล้อมนั้น\n\nชดเชยครั้งที่ 1 = เลือกปัญหาสิ่งแวดล้อม คิดคำคม และหาไอเดียการนำเสนอภาพ\n\nชดเชยครั้งที่ 2 = นำข้อมูลที่วางแผนไว้ในคาบแรก จัดทำเป็นชิ้นงานจริง",
-      },
-      classes: [
-        {
-          id: 506,
-          name: {
-            "en-US": "M.506",
-            th: "ม.506",
-          },
-        },
-        {
-          id: 507,
-          name: {
-            "en-US": "M.507",
-            th: "ม.507",
-          },
-        },
-        {
-          id: 508,
-          name: {
-            "en-US": "M.508",
-            th: "ม.508",
-          },
-        },
-        {
-          id: 510,
-          name: {
-            "en-US": "M.510",
-            th: "ม.510",
-          },
-        },
-        {
-          id: 511,
-          name: {
-            "en-US": "M.511",
-            th: "ม.511",
-          },
-        },
-        {
-          id: 512,
-          name: {
-            "en-US": "M.512",
-            th: "ม.512",
-          },
-        },
-        {
-          id: 513,
-          name: {
-            "en-US": "M.513",
-            th: "ม.513",
-          },
-        },
-      ],
-      subject: {
-        id: 26,
-        code: { "en-US": "ENG32102", th: "อ32102" },
-        name: {
-          "en-US": { name: "English 4" },
-          th: { name: "ภาษาอังกฤษ 4" },
-        },
-      },
-    },
-  ];
-  const allSubjects: Array<SubjectWNameAndCode> = [
-    {
-      id: 8,
-      code: { "en-US": "I21202", th: "I21202" },
-      name: {
-        "en-US": { name: "Communication and Presentation" },
-        th: { name: "การสื่อสารและการนำเสนอ" },
-      },
-    },
-    {
-      id: 19,
-      code: { "en-US": "ENG20218", th: "อ20218" },
-      name: {
-        "en-US": { name: "Reading 6" },
-        th: { name: "การอ่าน 6" },
-      },
-    },
-    {
-      id: 26,
-      code: { "en-US": "ENG32102", th: "อ32102" },
-      name: {
-        "en-US": { name: "English 4" },
-        th: { name: "ภาษาอังกฤษ 4" },
-      },
-    },
-  ];
+  const classesLearningThis: Array<ClassWNumber> = [];
+  const substAsgn: Array<SubstituteAssignment> = [];
+  const allSubjects: Array<SubjectWNameAndCode> = [];
+  const periodLogs: Array<PeriodLog> = [];
 
   return {
     props: {

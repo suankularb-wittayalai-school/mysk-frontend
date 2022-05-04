@@ -30,7 +30,7 @@ export async function createTeacher(
       // class_advisor_at: form.classAdvisorAt,
       teacher_id: teacher.teacherID.trim(),
     });
-  if (teacherCreationError || !teacher) {
+  if (teacherCreationError || !createdTeacher) {
     console.error(teacherCreationError);
     // delete the created person
     await supabase

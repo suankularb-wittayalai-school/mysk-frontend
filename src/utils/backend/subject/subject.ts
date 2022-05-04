@@ -40,7 +40,7 @@ export async function createSubject(
       short_name_en: subject.name["en-US"].shortName,
       short_name_th: subject.name.th.shortName,
     });
-  if (subjectCreationError || !subject) {
+  if (subjectCreationError || !createdSubject) {
     console.error(subjectCreationError);
     return { data: null, error: subjectCreationError };
   }
