@@ -29,7 +29,7 @@ import ClassTable from "@components/tables/ClassTable";
 
 // Types
 import { Class } from "@utils/types/class";
-import { ClassroomDB } from "@utils/types/database/class";
+import { ClassroomDB, ClassroomTable } from "@utils/types/database/class";
 import { db2Class } from "@utils/backend/database";
 
 // Page
@@ -46,7 +46,23 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
 
   const [showConfDel, setShowConfDel] = useState<boolean>(false);
 
-  async function handleDelete() {}
+  async function handleDelete() {
+    const { data: classData, error: classError } = await supabase
+      .from<ClassroomTable>("classroom")
+      .delete()
+      .match({ id: editingClass?.id });
+    if (classError) {
+      console.error(classError);
+    }
+
+    const { data: schedule, error: scheduleError } = await supabase
+      .from("schedule")
+      .delete()
+      .match({ id: editingClass?.schedule.id });
+    if (scheduleError) {
+      console.error(scheduleError);
+    }
+  }
 
   return (
     <>
@@ -134,7 +150,6 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
     .from<ClassroomDB>("classroom")
     .select("*, schedule:schedule(*)")
     .order("number", { ascending: true });
-
 
   if (error) {
     console.error(error);

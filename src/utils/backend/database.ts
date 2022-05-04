@@ -237,6 +237,7 @@ export async function db2Class(classDB: ClassroomDB): Promise<Class> {
     year: classDB.year,
     semester: classDB.semester as 1 | 2,
     schedule: {
+      id: classDB.schedule?.id ? classDB.schedule.id : 0,
       content: [],
     },
   };

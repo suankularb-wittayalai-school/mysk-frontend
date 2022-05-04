@@ -95,6 +95,7 @@ const EditClassDialog = ({
       classAdvisors: form.advisors,
       contacts: form.contacts,
       schedule: {
+        id: 0,
         content: [], // this need to be something else when editting
       },
       subjects: [], // this need to be something else when editting
