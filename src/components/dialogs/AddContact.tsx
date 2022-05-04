@@ -11,9 +11,6 @@ import {
   KeyboardInput,
 } from "@suankularb-components/react";
 
-// Components
-import ContactIcon from "@components/icons/ContactIcon";
-
 // Types
 import { DialogProps } from "@utils/types/common";
 import { Contact, ContactVia } from "@utils/types/contact";
@@ -43,18 +40,43 @@ const AddContactDialog = ({
   ];
 
   // Form control
-  const defaultContact: Contact = {
+  const [contact, setContact] = useState<{
+    id: number;
+    name: { "en-US": string; th: string };
+    type: ContactVia;
+    value: string;
+    includes: {
+      students: boolean;
+      teachers: boolean;
+      parents: boolean;
+    };
+  }>({
     id: 0,
-    name: {
-      "en-US": "",
-      th: "",
-    },
+    name: { "en-US": "", th: "" },
     type: "Phone",
     value: "",
-  };
-  const [contact, setContact] = useState<Contact>(defaultContact);
+    includes: {
+      students: false,
+      teachers: false,
+      parents: false,
+    },
+  });
 
-  useEffect(() => setContact(defaultContact), [show]);
+  useEffect(
+    () =>
+      setContact({
+        id: 0,
+        name: { "en-US": "", th: "" },
+        type: "Phone",
+        value: "",
+        includes: {
+          students: false,
+          teachers: false,
+          parents: false,
+        },
+      }),
+    [show]
+  );
 
   function validate(): boolean {
     if (!contact.name.th) return false;
@@ -143,17 +165,14 @@ const AddContactDialog = ({
                   type="checkbox"
                   id="includes-1"
                   name="includes-1"
-                  checked={contact.includes?.students}
+                  checked={contact.includes.students}
                   onChange={(e) =>
                     setContact({
                       ...contact,
-                      includes: contact.includes
-                        ? { ...contact.includes, students: e.target.checked }
-                        : {
-                            students: e.target.checked,
-                            teachers: false,
-                            parents: false,
-                          },
+                      includes: {
+                        ...contact.includes,
+                        students: e.target.checked,
+                      },
                     })
                   }
                 />
@@ -164,17 +183,14 @@ const AddContactDialog = ({
                   type="checkbox"
                   id="includes-2"
                   name="includes-2"
-                  checked={contact.includes?.parents}
+                  checked={contact.includes.parents}
                   onChange={(e) =>
                     setContact({
                       ...contact,
-                      includes: contact.includes
-                        ? { ...contact.includes, parents: e.target.checked }
-                        : {
-                            students: false,
-                            teachers: e.target.checked,
-                            parents: false,
-                          },
+                      includes: {
+                        ...contact.includes,
+                        parents: e.target.checked,
+                      },
                     })
                   }
                 />
@@ -185,17 +201,14 @@ const AddContactDialog = ({
                   type="checkbox"
                   id="includes-3"
                   name="includes-3"
-                  checked={contact.includes?.teachers}
+                  checked={contact.includes.teachers}
                   onChange={(e) =>
                     setContact({
                       ...contact,
-                      includes: contact.includes
-                        ? { ...contact.includes, teachers: e.target.checked }
-                        : {
-                            students: false,
-                            teachers: false,
-                            parents: e.target.checked,
-                          },
+                      includes: {
+                        ...contact.includes,
+                        teachers: e.target.checked,
+                      },
                     })
                   }
                 />

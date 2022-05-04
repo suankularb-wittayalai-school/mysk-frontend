@@ -82,7 +82,11 @@ const EditClassDialog = ({
   }, [mode, classItem]);
 
   function validate(): boolean {
-    // TODO
+    if (!form.number || !form.number.toString().match(/[1-6][0-1][1-9]/))
+      return false;
+    if (form.year < 2005) return false;
+    if (![1, 2].includes(form.semester)) return false;
+    
     return true;
   }
 
@@ -105,10 +109,8 @@ const EditClassDialog = ({
     if (!validate()) return;
 
     if (mode == "add") {
-      const {
-        data: createdClass,
-        error: classCreationError,
-      } = await createClassroom(classroom);
+      const { data: createdClass, error: classCreationError } =
+        await createClassroom(classroom);
 
       if (classCreationError) {
         console.error(classCreationError);
@@ -153,15 +155,16 @@ const EditClassDialog = ({
               ns: "admin",
             }),
             type: "submit",
+            disabled: !validate(),
           },
         ]}
       >
         {/* School */}
         <DialogSection name="school" title="School" isDoubleColumn hasNoGap>
           <KeyboardInput
-            name="name-th"
+            name="number"
             type="text"
-            label="Name"
+            label="Class number"
             helperMsg="Must be 3-digit, i.e. 408."
             errorMsg="Invalid. Should be 3-digit, i.e. 408."
             useAutoMsg

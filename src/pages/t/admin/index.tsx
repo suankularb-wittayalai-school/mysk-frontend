@@ -113,7 +113,7 @@ const TeacherSection = ({
       <div className="flex flex-row items-center justify-end gap-2">
         <LinkButton
           type="filled"
-          label={t("studentList.action.seeAll")}
+          label={t("teacherList.action.seeAll")}
           url="/t/admin/teachers"
           LinkElement={Link}
         />
@@ -142,7 +142,7 @@ const SubjectSection = ({ someSubjects }: { someSubjects: Subject[] }) => {
       <div className="flex flex-row items-center justify-end gap-2">
         <LinkButton
           type="filled"
-          label={t("studentList.action.seeAll")}
+          label={t("subjectList.action.seeAll")}
           url="/t/admin/subjects"
           LinkElement={Link}
         />

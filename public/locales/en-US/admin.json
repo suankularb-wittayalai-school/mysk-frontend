@@ -27,6 +27,7 @@
       "classAdvisorAt": "Class advisor at"
     },
     "action": {
+      "seeAll": "See all",
       "addTeacher": "Add teacher"
     }
   },
@@ -46,6 +47,7 @@
       }
     },
     "action": {
+      "seeAll": "See all",
       "addSubject": "Add subject"
     }
   },
@@ -63,6 +65,7 @@
       }
     },
     "action": {
+      "seeAll": "See all",
       "addClass": "Add class"
     }
   },
