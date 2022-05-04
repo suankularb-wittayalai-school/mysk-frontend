@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 
 // External Libraries
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // SK Components
 import {
@@ -31,6 +31,7 @@ import { nameJoiner } from "@utils/helpers/name";
 
 // Types
 import { TeachersListGroup } from "@utils/types/teachers";
+import { Teacher } from "@utils/types/person";
 
 // Page
 const Teachers: NextPage = (): JSX.Element => {
@@ -39,15 +40,15 @@ const Teachers: NextPage = (): JSX.Element => {
 
   const teacherList: TeachersListGroup[] = [];
 
-  const [mainContent, setMainContent] = useState(
-    teacherList[0].content[0].content
-  );
+  const [mainContent, setMainContent] = useState<Teacher | null>(null);
 
   const [showMain, setShowMain] = useState(false);
 
-  mainContent.contacts.sort((a, b) =>
-    a.type < b.type ? -1 : a.type > b.type ? 1 : 0
-  );
+  useEffect(() => {
+    if (teacherList.length > 0) {
+      setMainContent(teacherList[0].content[0].content);
+    }
+  }, [teacherList]);
 
   return (
     <ListLayout
@@ -90,20 +91,22 @@ const Teachers: NextPage = (): JSX.Element => {
         <Section className="!flex !flex-col !gap-4 !font-display">
           <Section>
             <div className="!sm:gap-6 !md:grid-cols-[1fr_5fr] grid !grid-cols-[1fr_3fr] items-stretch !gap-4">
-              <div className="aspect-square overflow-hidden rounded-xl sm:rounded-2xl">
-                <ProfilePicture src={mainContent.profile} />
-              </div>
+              {mainContent?.profile && (
+                <div className="aspect-square overflow-hidden rounded-xl sm:rounded-2xl">
+                  <ProfilePicture src={mainContent.profile} />
+                </div>
+              )}
               <div className="!flex !flex-col !justify-between">
                 <div>
                   <h2 className="text-4xl font-bold">
-                    {nameJoiner(locale, mainContent.name)}
+                    {mainContent ? nameJoiner(locale, mainContent.name) : ""}
                   </h2>
                   <p className="text-2xl font-medium">
-                    {mainContent.subjectGroup.name[locale]}
+                    {mainContent?.subjectGroup.name[locale]}
                   </p>
                 </div>
                 <div>
-                  {mainContent.classAdvisorAt && (
+                  {mainContent?.classAdvisorAt && (
                     <p className="text-2xl font-medium">
                       {t("advisor", {
                         className: mainContent.classAdvisorAt.number,
@@ -114,19 +117,25 @@ const Teachers: NextPage = (): JSX.Element => {
               </div>
             </div>
           </Section>
-          <Section>
-            <h3 className="text-3xl font-bold">{t("contacts")}</h3>
-            <ul className="layout-grid-cols-2">
-              {mainContent.contacts.map((contact) => (
-                <ContactChip
-                  key={contact.id}
-                  contact={contact}
-                  className="!w-initial"
-                />
-              ))}
-            </ul>
-          </Section>
-          {mainContent.subjectsInCharge &&
+          {mainContent?.contacts && (
+            <Section>
+              <h3 className="text-3xl font-bold">{t("contacts")}</h3>
+              <ul className="layout-grid-cols-2">
+                {mainContent.contacts
+                  .sort((a, b) =>
+                    a.type < b.type ? -1 : a.type > b.type ? 1 : 0
+                  )
+                  .map((contact) => (
+                    <ContactChip
+                      key={contact.id}
+                      contact={contact}
+                      className="!w-initial"
+                    />
+                  ))}
+              </ul>
+            </Section>
+          )}
+          {mainContent?.subjectsInCharge &&
             mainContent.subjectsInCharge.length > 1 && (
               <Section>
                 <h3 className="text-3xl font-bold">{t("subjects")}</h3>
