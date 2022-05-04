@@ -55,6 +55,7 @@
   "dialog": {
     "addContact": {
       "title": "Add contact",
+      "type": "Platform",
       "nameTH": "Local name (Thai)",
       "nameEN": "English name",
       "value": "Value",

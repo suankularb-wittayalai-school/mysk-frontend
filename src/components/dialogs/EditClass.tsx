@@ -16,14 +16,18 @@ import {
 } from "@suankularb-components/react";
 
 // Components
+import AddContactDialog from "@components/dialogs/AddContact";
 import AddTeacherDialog from "@components/dialogs/AddTeacher";
 import DiscardDraft from "@components/dialogs/DiscardDraft";
 
 // Types
 import { Class } from "@utils/types/class";
-import { DialogProps } from "@utils/types/common";
+import { ChipInputListItem, DialogProps } from "@utils/types/common";
+import { Contact } from "@utils/types/contact";
+import { Student, Teacher } from "@utils/types/person";
+
+// Backend
 import { createClassroom } from "@utils/backend/classroom/classroom";
-import AddContactDialog from "./AddContact";
 
 const EditClassDialog = ({
   show,
@@ -41,11 +45,19 @@ const EditClassDialog = ({
 
   // Dialog control
   const [showAddTeacher, setShowAddTeacher] = useState<boolean>(false);
+  const [showAddStudent, setShowAddStudent] = useState<boolean>(false);
   const [showAddContact, setShowAddContact] = useState<boolean>(false);
   const [showDiscard, setShowDiscard] = useState<boolean>(false);
 
   // Form control
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<{
+    number: number;
+    year: number;
+    semester: 1 | 2;
+    students: Student[];
+    advisors: Teacher[];
+    contacts: Contact[];
+  }>({
     number: 101,
     year: new Date().getFullYear(),
     semester: new Date().getMonth() < 3 && new Date().getMonth() > 8 ? 1 : 2,
@@ -107,6 +119,17 @@ const EditClassDialog = ({
     onSubmit();
   }
 
+  // Chip List control
+  const [chipLists, setChipLists] = useState<{
+    classAdvisors: ChipInputListItem[];
+    students: ChipInputListItem[];
+    contacts: ChipInputListItem[];
+  }>({
+    classAdvisors: [],
+    students: [],
+    contacts: [],
+  });
+
   return (
     <>
       <Dialog
@@ -142,7 +165,7 @@ const EditClassDialog = ({
             useAutoMsg
             onChange={(e: string) => setForm({ ...form, number: Number(e) })}
             defaultValue={classItem ? classItem.number : 101}
-            attr={{ pattern: "[1-6][0-1][1-5]" }}
+            attr={{ pattern: "[1-6][0-1][1-9]" }}
           />
           <KeyboardInput
             name="year"
@@ -156,7 +179,9 @@ const EditClassDialog = ({
             name="name-en"
             type="number"
             label="Semester"
-            onChange={(e: string) => setForm({ ...form, semester: Number(e) })}
+            onChange={(e: string) =>
+              setForm({ ...form, semester: Number(e) as 1 | 2 })
+            }
             defaultValue={
               classItem
                 ? classItem.semester
@@ -173,14 +198,40 @@ const EditClassDialog = ({
           <div className="flex flex-col gap-2">
             <h3 className="!text-base">Class advisors</h3>
             <ChipInputList
-              list={[]}
+              list={chipLists.classAdvisors}
               onAdd={() => setShowAddTeacher(true)}
-              onChange={() => {}}
+              onChange={(newList) => {
+                setChipLists({
+                  ...chipLists,
+                  classAdvisors: newList as ChipInputListItem[],
+                });
+                setForm({
+                  ...form,
+                  advisors: form.advisors.filter((teacher) => {
+                    teacher.id in newList.map(({ id }) => id);
+                  }),
+                });
+              }}
             />
           </div>
           <div className="flex flex-col gap-2">
             <h3 className="!text-base">Students</h3>
-            <ChipInputList list={[]} onAdd={() => {}} onChange={() => {}} />
+            <ChipInputList
+              list={chipLists.students}
+              onAdd={() => setShowAddStudent(true)}
+              onChange={(newList) => {
+                setChipLists({
+                  ...chipLists,
+                  students: newList as ChipInputListItem[],
+                });
+                setForm({
+                  ...form,
+                  students: form.students.filter((student) => {
+                    student.id in newList.map(({ id }) => id);
+                  }),
+                });
+              }}
+            />
           </div>
         </DialogSection>
 
@@ -189,9 +240,20 @@ const EditClassDialog = ({
           <div className="flex flex-col gap-2">
             <h3 className="!text-base">Contacts</h3>
             <ChipInputList
-              list={[]}
+              list={chipLists.contacts}
               onAdd={() => setShowAddContact(true)}
-              onChange={() => {}}
+              onChange={(newList) => {
+                setChipLists({
+                  ...chipLists,
+                  contacts: newList as ChipInputListItem[],
+                });
+                setForm({
+                  ...form,
+                  contacts: form.contacts.filter((contact) => {
+                    contact.id in newList.map(({ id }) => id);
+                  }),
+                });
+              }}
             />
           </div>
         </DialogSection>
@@ -209,9 +271,19 @@ const EditClassDialog = ({
       <AddContactDialog
         show={showAddContact}
         onClose={() => setShowAddContact(false)}
-        onSubmit={() => {
+        onSubmit={(contact) => {
           setShowAddContact(false);
-          // TODO
+          setForm({ ...form, contacts: [...form.contacts, contact] });
+          setChipLists({
+            ...chipLists,
+            contacts: [
+              ...chipLists.contacts,
+              {
+                id: new Date().toISOString(),
+                name: contact.name[locale] || contact.name.th,
+              },
+            ],
+          });
         }}
         isGroup
       />

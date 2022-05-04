@@ -43,7 +43,7 @@ const AddContactDialog = ({
   ];
 
   // Form control
-  const [contact, setContact] = useState<Contact>({
+  const defaultContact: Contact = {
     id: 0,
     name: {
       "en-US": "",
@@ -51,11 +51,14 @@ const AddContactDialog = ({
     },
     type: "Phone",
     value: "",
-  });
+  };
+  const [contact, setContact] = useState<Contact>(defaultContact);
+
+  useEffect(() => setContact(defaultContact), [show]);
 
   function validate(): boolean {
     if (!contact.name.th) return false;
-    if (meansOfContact.includes(contact.type)) return false;
+    if (!meansOfContact.includes(contact.type)) return false;
     if (!contact.value) return false;
 
     return true;
@@ -110,20 +113,24 @@ const AddContactDialog = ({
           name="name-th"
           type="text"
           label={t("dialog.addContact.nameTH")}
-          onChange={() => {}}
+          onChange={(e) =>
+            setContact({ ...contact, name: { ...contact.name, th: e } })
+          }
         />
         <KeyboardInput
           name="name-en"
           type="text"
           label={t("dialog.addContact.nameEN")}
-          onChange={() => {}}
+          onChange={(e) =>
+            setContact({ ...contact, name: { ...contact.name, "en-US": e } })
+          }
         />
         <KeyboardInput
           name="value"
           type="text"
           label={t("dialog.addContact.value")}
           helperMsg="How to find this account."
-          onChange={() => {}}
+          onChange={(e) => setContact({ ...contact, value: e })}
         />
         {isGroup && (
           <div>
@@ -132,15 +139,66 @@ const AddContactDialog = ({
             <h3 className="!text-base">Includes</h3>
             <div className="grid grid-cols-2">
               <div className="flex flex-row gap-2">
-                <input type="checkbox" id="includes-1" name="includes-1" />
+                <input
+                  type="checkbox"
+                  id="includes-1"
+                  name="includes-1"
+                  checked={contact.includes?.students}
+                  onChange={(e) =>
+                    setContact({
+                      ...contact,
+                      includes: contact.includes
+                        ? { ...contact.includes, students: e.target.checked }
+                        : {
+                            students: e.target.checked,
+                            teachers: false,
+                            parents: false,
+                          },
+                    })
+                  }
+                />
                 <label htmlFor="includes-1">Students</label>
               </div>
               <div className="flex flex-row gap-2">
-                <input type="checkbox" id="includes-2" name="includes-2" />
+                <input
+                  type="checkbox"
+                  id="includes-2"
+                  name="includes-2"
+                  checked={contact.includes?.parents}
+                  onChange={(e) =>
+                    setContact({
+                      ...contact,
+                      includes: contact.includes
+                        ? { ...contact.includes, parents: e.target.checked }
+                        : {
+                            students: false,
+                            teachers: e.target.checked,
+                            parents: false,
+                          },
+                    })
+                  }
+                />
                 <label htmlFor="includes-2">Teachers</label>
               </div>
               <div className="flex flex-row gap-2">
-                <input type="checkbox" id="includes-3" name="includes-3" />
+                <input
+                  type="checkbox"
+                  id="includes-3"
+                  name="includes-3"
+                  checked={contact.includes?.teachers}
+                  onChange={(e) =>
+                    setContact({
+                      ...contact,
+                      includes: contact.includes
+                        ? { ...contact.includes, teachers: e.target.checked }
+                        : {
+                            students: false,
+                            teachers: false,
+                            parents: e.target.checked,
+                          },
+                    })
+                  }
+                />
                 <label htmlFor="includes-3">Parents</label>
               </div>
               <div className="flex flex-row gap-2">

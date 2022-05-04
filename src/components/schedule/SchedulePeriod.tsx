@@ -37,7 +37,7 @@ const SchedulePeriod = ({
     subjectName: Subject["name"]
   ) {
     return duration < 2
-      ? subjectName[locale].shortName ?? subjectName[locale].name
+      ? subjectName[locale].shortName || subjectName[locale].name
       : subjectName[locale].name;
   }
 

@@ -31,7 +31,7 @@ import { useSubjectGroupOption } from "@utils/hooks/subject";
 import { supabase } from "@utils/supabaseClient";
 
 // Types
-import { DialogProps } from "@utils/types/common";
+import { ChipInputListItem, DialogProps } from "@utils/types/common";
 import {
   Subject,
   SubjectGroup,
@@ -124,8 +124,8 @@ const EditSubjectDialog = ({
 
   // Chip List control
   type ChipListsType = {
-    teachers: { id: string; name: string }[];
-    coTeachers: { id: string; name: string }[];
+    teachers: ChipInputListItem[];
+    coTeachers: ChipInputListItem[];
   };
 
   const defaultChipLists: ChipListsType = {
@@ -437,7 +437,7 @@ const EditSubjectDialog = ({
             label={t("item.school.year")}
             onChange={(e) => setForm({ ...form, year: Number(e) })}
             defaultValue={subject ? subject.year : new Date().getFullYear()}
-            attr={{ minLength: 2005 }}
+            attr={{ min: 2005 }}
           />
           <KeyboardInput
             name="semester"
@@ -461,7 +461,6 @@ const EditSubjectDialog = ({
             attr={{ min: 0.5, step: 0.5 }}
             defaultValue={subject ? subject.credit : 0.5}
           />
-          {/* {subject?.syllabus && <span>Syllabus Exist</span>} */}
           <FileInput
             name="syllabus"
             label={t("item.school.syllabus")}
@@ -532,7 +531,7 @@ const EditSubjectDialog = ({
               onChange={(newList) => {
                 setChipLists({
                   ...chipLists,
-                  teachers: newList as { id: string; name: string }[],
+                  teachers: newList as ChipInputListItem[],
                 });
                 setForm({
                   ...form,
