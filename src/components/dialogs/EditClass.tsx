@@ -29,6 +29,7 @@ import { Student, Teacher } from "@utils/types/person";
 
 // Backend
 import { createClassroom } from "@utils/backend/classroom/classroom";
+import { nameJoiner } from "@utils/helpers/name";
 
 const EditClassDialog = ({
   show,
@@ -56,14 +57,14 @@ const EditClassDialog = ({
     year: number;
     semester: 1 | 2;
     students: Student[];
-    advisors: Teacher[];
+    classAdvisors: Teacher[];
     contacts: Contact[];
   }>({
     number: 101,
     year: new Date().getFullYear(),
     semester: new Date().getMonth() < 3 && new Date().getMonth() > 8 ? 1 : 2,
     students: [],
-    advisors: [],
+    classAdvisors: [],
     contacts: [],
   });
 
@@ -75,7 +76,7 @@ const EditClassDialog = ({
         semester:
           new Date().getMonth() < 3 && new Date().getMonth() > 8 ? 1 : 2,
         students: [],
-        advisors: [],
+        classAdvisors: [],
         contacts: [],
       });
     }
@@ -86,7 +87,7 @@ const EditClassDialog = ({
       return false;
     if (form.year < 2005) return false;
     if (![1, 2].includes(form.semester)) return false;
-    
+
     return true;
   }
 
@@ -95,9 +96,9 @@ const EditClassDialog = ({
       id: 0, // this need to be something else when editting
       number: form.number,
       year: form.year,
-      semester: form.semester as 1 | 2,
+      semester: form.semester,
       students: form.students,
-      classAdvisors: form.advisors,
+      classAdvisors: form.classAdvisors,
       contacts: form.contacts,
       schedule: {
         id: 0,
@@ -212,7 +213,7 @@ const EditClassDialog = ({
                 });
                 setForm({
                   ...form,
-                  advisors: form.advisors.filter((teacher) => {
+                  classAdvisors: form.classAdvisors.filter((teacher) => {
                     teacher.id in newList.map(({ id }) => id);
                   }),
                 });
@@ -268,17 +269,37 @@ const EditClassDialog = ({
       <AddTeacherDialog
         show={showAddTeacher}
         onClose={() => setShowAddTeacher(false)}
-        onSubmit={() => {
+        onSubmit={(teacher) => {
           setShowAddTeacher(false);
-          // TODO
+          setForm({ ...form, classAdvisors: [...form.classAdvisors, teacher] });
+          setChipLists({
+            ...chipLists,
+            classAdvisors: [
+              ...chipLists.classAdvisors,
+              {
+                id: teacher.id.toString(),
+                name: nameJoiner(locale, teacher.name),
+              },
+            ],
+          });
         }}
       />
       <AddStudentDialog
         show={showAddStudent}
         onClose={() => setShowAddStudent(false)}
-        onSubmit={() => {
+        onSubmit={(student) => {
           setShowAddStudent(false);
-          // TODO
+          setForm({ ...form, students: [...form.students, student] });
+          setChipLists({
+            ...chipLists,
+            students: [
+              ...chipLists.students,
+              {
+                id: student.id.toString(),
+                name: nameJoiner(locale, student.name),
+              },
+            ],
+          });
         }}
       />
       <AddContactDialog

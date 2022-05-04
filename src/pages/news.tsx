@@ -188,7 +188,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
       type: "payment",
       postDate: new Date(2022, 0, 7),
       dueDate: new Date(2022, 1, 7),
-      amount: 40000.00,
+      amount: 40000.0,
       done: true,
       content: {
         "en-US": {

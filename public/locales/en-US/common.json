@@ -65,6 +65,19 @@
         "add": "Add"
       }
     },
+    "addStudent": {
+      "title": "Add student",
+      "supportingText": "Search the student to add with their student ID.",
+      "studentID": "Student ID",
+      "searchResult": {
+        "title": "Search result",
+        "notFound": "No students with this ID."
+      },
+      "action": {
+        "cancel": "Cancel",
+        "add": "Add"
+      }
+    },
     "addTeacher": {
       "title": "Add teacher",
       "supportingText": "Select a subject group to filter teachers by their subject group.",

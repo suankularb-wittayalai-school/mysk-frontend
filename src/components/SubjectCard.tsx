@@ -26,7 +26,7 @@ const SubjectCard = ({
     <Card type="horizontal" appearance="outlined">
       <CardHeader
         title={
-          <h3 className="font-display text-lg font-bold break-all">
+          <h3 className="break-all font-display text-lg font-bold">
             {subject.name[locale].name}
           </h3>
         }
