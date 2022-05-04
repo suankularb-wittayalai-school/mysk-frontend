@@ -17,6 +17,7 @@ import {
 
 // Components
 import AddContactDialog from "@components/dialogs/AddContact";
+import AddStudentDialog from "@components/dialogs/AddStudent";
 import AddTeacherDialog from "@components/dialogs/AddTeacher";
 import DiscardDraft from "@components/dialogs/DiscardDraft";
 
@@ -266,6 +267,14 @@ const EditClassDialog = ({
         onClose={() => setShowAddTeacher(false)}
         onSubmit={() => {
           setShowAddTeacher(false);
+          // TODO
+        }}
+      />
+      <AddStudentDialog
+        show={showAddStudent}
+        onClose={() => setShowAddStudent(false)}
+        onSubmit={() => {
+          setShowAddStudent(false);
           // TODO
         }}
       />
