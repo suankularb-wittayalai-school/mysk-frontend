@@ -23,6 +23,7 @@ import DiscardDraft from "@components/dialogs/DiscardDraft";
 import { Class } from "@utils/types/class";
 import { DialogProps } from "@utils/types/common";
 import { createClassroom } from "@utils/backend/classroom/classroom";
+import AddContactDialog from "./AddContact";
 
 const EditClassDialog = ({
   show,
@@ -40,6 +41,7 @@ const EditClassDialog = ({
 
   // Dialog control
   const [showAddTeacher, setShowAddTeacher] = useState<boolean>(false);
+  const [showAddContact, setShowAddContact] = useState<boolean>(false);
   const [showDiscard, setShowDiscard] = useState<boolean>(false);
 
   // Form control
@@ -193,7 +195,11 @@ const EditClassDialog = ({
         <DialogSection name="contacts" title="Contacts" hasNoGap>
           <div className="flex flex-col gap-2">
             <h3 className="!text-base">Contacts</h3>
-            <ChipInputList list={[]} onAdd={() => {}} onChange={() => {}} />
+            <ChipInputList
+              list={[]}
+              onAdd={() => setShowAddContact(true)}
+              onChange={() => {}}
+            />
           </div>
         </DialogSection>
       </Dialog>
@@ -206,6 +212,15 @@ const EditClassDialog = ({
           setShowAddTeacher(false);
           // TODO
         }}
+      />
+      <AddContactDialog
+        show={showAddContact}
+        onClose={() => setShowAddContact(false)}
+        onSubmit={() => {
+          setShowAddContact(false);
+          // TODO
+        }}
+        isGroup
       />
       <DiscardDraft
         show={showDiscard}

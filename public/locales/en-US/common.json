@@ -23,6 +23,16 @@
       "Mrs.": "Mrs. "
     }
   },
+  "contact": {
+    "phone": "Phone",
+    "email": "Email",
+    "facebook": "Facebook",
+    "line": "LINE",
+    "instagram": "Instagram",
+    "website": "Website",
+    "discord": "Discord",
+    "other": "Other"
+  },
   "datetime": {
     "day": {
       "0": "Sunday",

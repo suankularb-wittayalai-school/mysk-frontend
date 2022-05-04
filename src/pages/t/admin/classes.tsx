@@ -29,6 +29,8 @@ import ClassTable from "@components/tables/ClassTable";
 
 // Types
 import { Class } from "@utils/types/class";
+import { ClassroomDB } from "@utils/types/database/class";
+import { db2Class } from "@utils/backend/database";
 
 // Page
 const Classes: NextPage<{ allClasses: Class[] }> = ({
@@ -126,7 +128,23 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
-  const allClasses: Class[] = [];
+  let allClasses: Class[] = [];
+
+  const { data: classes, error } = await supabase
+    .from<ClassroomDB>("classroom")
+    .select("*, schedule:schedule(*)");
+
+  if (error) {
+    console.error(error);
+  }
+
+  if (classes) {
+    allClasses = await Promise.all(
+      classes.map(async (classItem) => await db2Class(classItem))
+    );
+  }
+
+  // console.log(allClasses);
 
   return {
     props: {

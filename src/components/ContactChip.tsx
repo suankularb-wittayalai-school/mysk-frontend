@@ -5,6 +5,9 @@ import { useRouter } from "next/router";
 // SK Components
 import { Card, CardHeader, MaterialIcon } from "@suankularb-components/react";
 
+// Components
+import ContactIcon from "@components/icons/ContactIcon";
+
 // Types
 import { Contact } from "@utils/types/contact";
 
@@ -20,39 +23,7 @@ const ContactChip = ({
   return (
     <Card type="horizontal" appearance="tonal" hasAction className={className}>
       <CardHeader
-        icon={
-          <div className="relative aspect-square w-6 text-primary">
-            {contact.type == "Phone" ? (
-              <MaterialIcon icon="call" />
-            ) : contact.type == "Email" ? (
-              <MaterialIcon icon="mail" />
-            ) : contact.type == "Facebook" ? (
-              <Image
-                src="/images/social/facebook.webp"
-                layout="fill"
-                alt="Facebook"
-              />
-            ) : contact.type == "Line" ? (
-              <Image src="/images/social/line.webp" layout="fill" alt="LINE" />
-            ) : contact.type == "Instagram" ? (
-              <Image
-                src="/images/social/instagram.webp"
-                layout="fill"
-                alt="Instagram"
-              />
-            ) : contact.type == "Website" ? (
-              <MaterialIcon icon="public" />
-            ) : contact.type == "Discord" ? (
-              <Image
-                src="/images/social/discord.webp"
-                layout="fill"
-                alt="Discord"
-              />
-            ) : (
-              <MaterialIcon icon="contacts" />
-            )}
-          </div>
-        }
+        icon={<ContactIcon icon={contact.type} />}
         title={<span id={`contact-${contact.id}`}>{contact.name[locale]}</span>}
         end={
           contact.includes ? (

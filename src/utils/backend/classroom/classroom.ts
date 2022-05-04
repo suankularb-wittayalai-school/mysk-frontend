@@ -42,7 +42,7 @@ export async function createClassroom(
     .filter((id) => id !== undefined || id !== null);
 
   const { data: createdClass, error: classCreationError } = await supabase
-    .from<ClassroomTable>("Classroom")
+    .from<ClassroomTable>("classroom")
     .insert({
       number: classroom.name.th.split(" ")[1],
       year: classroom.year,

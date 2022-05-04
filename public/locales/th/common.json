@@ -23,6 +23,16 @@
       "Mrs.": "นาง"
     }
   },
+  "contact": {
+    "phone": "โทรศัพท์",
+    "email": "อีเมล",
+    "facebook": "Facebook",
+    "line": "LINE",
+    "instagram": "Instagram",
+    "website": "เว็บไซต์",
+    "discord": "Discord",
+    "other": "อื่นๆ"
+  },
   "datetime": {
     "day": {
       "0": "วันอาทิตย์",

@@ -8,6 +8,9 @@ import { Button, MaterialIcon, Table } from "@suankularb-components/react";
 // Types
 import { Class } from "@utils/types/class";
 
+// Helpers
+import { nameJoiner } from "@utils/helpers/name";
+
 const ClassTable = ({
   classes,
   setShowEdit,
@@ -36,9 +39,21 @@ const ClassTable = ({
         </tr>
       </thead>
       <tbody>
-        {classes.map((student) => (
-          <tr key={student.id}>
-            <td></td>
+        {classes.map((classItem) => (
+          <tr key={classItem.id}>
+            <td>{classItem.name[locale] ?? classItem.name.th}</td>
+            <td>
+              {classItem.classAdvisors.length > 0 &&
+                nameJoiner(locale, classItem.classAdvisors[0].name)}
+              <abbr
+                className="text-surface-variant"
+                title={classItem.classAdvisors.slice(1).join(", ")}
+              >
+                +{classItem.classAdvisors.length - 1}
+              </abbr>
+            </td>
+            <td>{classItem.year}</td>
+            <td>{classItem.semester}</td>
             {setShowEdit && setEditingClass && setShowConfDel && (
               <td>
                 <div className="flex flex-row justify-center gap-2">
@@ -49,7 +64,7 @@ const ClassTable = ({
                     icon={<MaterialIcon icon="edit" />}
                     onClick={() => {
                       setShowEdit(true);
-                      setEditingClass(student);
+                      setEditingClass(classItem);
                     }}
                   />
                   <Button
@@ -59,7 +74,7 @@ const ClassTable = ({
                     isDangerous
                     onClick={() => {
                       setShowConfDel(true);
-                      setEditingClass(student);
+                      setEditingClass(classItem);
                     }}
                   />
                 </div>

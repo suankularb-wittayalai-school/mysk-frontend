@@ -134,6 +134,7 @@ const EditSubjectDialog = ({
   };
 
   const [chipLists, setChipLists] = useState<ChipListsType>(defaultChipLists);
+  const [syllabus, setSyllabus] = useState<File | null>(null);
 
   useEffect(() => {
     // Populate the form control with data if mode is edit
@@ -142,38 +143,47 @@ const EditSubjectDialog = ({
         ...form,
         ...subject,
       });
-      if (subject?.syllabus && subject.syllabus !== "") {
-        if (typeof subject.syllabus === "string") {
-          supabase.storage
-            .from("syllabus")
-            .download(subject.syllabus)
-            .then((res) => {
-              if (res.error) {
-                console.error(res.error);
-                setForm({
-                  ...form,
-                  ...subject,
-                  syllabus: null,
-                });
-              }
-
-              if (res.data)
-                setForm({
-                  ...form,
-                  ...subject,
-                  syllabus: new File([res.data], "syllabus", {
-                    type: "application/pdf",
-                  }),
-                });
-            });
-        }
-      }
     }
     // Resets form control if mode is add
     else if (mode == "add") {
       setForm(defaultForm);
     }
   }, [show, mode, subject]);
+
+  useEffect(() => {
+    if (subject?.syllabus && subject.syllabus !== "") {
+      if (typeof subject.syllabus === "string") {
+        supabase.storage
+          .from("syllabus")
+          .download(subject.syllabus)
+          .then((res) => {
+            if (res.error) {
+              console.error(res.error);
+              setForm({
+                ...form,
+                ...subject,
+                syllabus: null,
+              });
+            }
+
+            if (res.data) {
+              setSyllabus(
+                new File([res.data], "syllabus", {
+                  type: "application/pdf",
+                })
+              );
+              setForm({
+                ...form,
+                ...subject,
+                syllabus: new File([res.data], "syllabus", {
+                  type: "application/pdf",
+                }),
+              });
+            }
+          });
+      }
+    }
+  }, [subject]);
 
   useEffect(() => {
     // Populate the Chip List control with data if mode is edit
@@ -297,7 +307,7 @@ const EditSubjectDialog = ({
             onChange={(e) =>
               setForm({ ...form, code: { ...form.code, th: e } })
             }
-            defaultValue={form.code.th}
+            defaultValue={subject?.code.th}
             attr={{ pattern: "[\u0E00-\u0E7FA-Z]\\d{5}" }}
           />
           <KeyboardInput
@@ -310,7 +320,7 @@ const EditSubjectDialog = ({
                 name: { ...form.name, th: { ...form.name.th, name: e } },
               })
             }
-            defaultValue={form.name.th.name}
+            defaultValue={subject?.name.th.name}
           />
           <KeyboardInput
             name="short-name-th"
@@ -326,7 +336,7 @@ const EditSubjectDialog = ({
                 },
               })
             }
-            defaultValue={form.name.th.shortName}
+            defaultValue={subject?.name.th.shortName}
           />
         </DialogSection>
 
@@ -344,7 +354,7 @@ const EditSubjectDialog = ({
             onChange={(e) =>
               setForm({ ...form, code: { ...form.code, "en-US": e } })
             }
-            defaultValue={form.code["en-US"]}
+            defaultValue={subject?.code["en-US"]}
             attr={{ pattern: "[A-Z]{1,3}\\d{5}" }}
           />
           <KeyboardInput
@@ -360,7 +370,7 @@ const EditSubjectDialog = ({
                 },
               })
             }
-            defaultValue={form.name["en-US"].name}
+            defaultValue={subject?.name["en-US"].name}
           />
           <KeyboardInput
             name="short-name-en"
@@ -376,7 +386,7 @@ const EditSubjectDialog = ({
                 },
               })
             }
-            defaultValue={form.name["en-US"].shortName}
+            defaultValue={subject?.name["en-US"].shortName}
           />
         </DialogSection>
 
@@ -394,7 +404,7 @@ const EditSubjectDialog = ({
                     : undefined,
                 })
               }
-              defaultValue={form.description?.th}
+              defaultValue={subject?.description?.th}
             />
             <TextArea
               name="desc-en"
@@ -407,7 +417,9 @@ const EditSubjectDialog = ({
                     : undefined,
                 })
               }
-              defaultValue={form.description ? form.description["en-US"] : ""}
+              defaultValue={
+                subject?.description ? subject?.description["en-US"] : ""
+              }
             />
           </div>
         </DialogSection>
@@ -424,7 +436,7 @@ const EditSubjectDialog = ({
             type="number"
             label={t("item.school.year")}
             onChange={(e) => setForm({ ...form, year: Number(e) })}
-            defaultValue={form.year}
+            defaultValue={subject?.year}
             attr={{ minLength: 2005 }}
           />
           <KeyboardInput
@@ -432,7 +444,7 @@ const EditSubjectDialog = ({
             type="number"
             label={t("item.school.semester")}
             onChange={(e) => setForm({ ...form, semester: Number(e) as 1 | 2 })}
-            defaultValue={form.semester}
+            defaultValue={subject?.semester}
             attr={{ min: 1, max: 2 }}
           />
           <KeyboardInput
@@ -441,19 +453,16 @@ const EditSubjectDialog = ({
             label={t("item.school.credit")}
             onChange={(e) => setForm({ ...form, credit: Number(e) })}
             attr={{ min: 0, step: 0.5 }}
-            defaultValue={form.credit}
+            defaultValue={subject?.credit}
           />
+          {/* {subject?.syllabus && <span>Syllabus Exist</span>} */}
           <FileInput
             name="syllabus"
             label={t("item.school.syllabus")}
             noneAttachedMsg={t("input.none.noFilesAttached", { ns: "common" })}
             onChange={(e: File) => setForm({ ...form, syllabus: e })}
             attr={{ accept: "application/pdf" }}
-            defaultValue={
-              form.syllabus && typeof form.syllabus !== "string"
-                ? form.syllabus
-                : undefined
-            }
+            defaultValue={syllabus ? syllabus : undefined}
           />
         </DialogSection>
 
@@ -479,7 +488,7 @@ const EditSubjectDialog = ({
                 )[0],
               })
             }
-            defaultValue={form.subjectGroup?.id}
+            defaultValue={subject?.subjectGroup?.id}
           />
           <Dropdown
             name="type"
@@ -497,7 +506,7 @@ const EditSubjectDialog = ({
             defaultValue={
               mode === "add"
                 ? 0
-                : subjectTypes.findIndex((type) => type.th === form.type.th)
+                : subjectTypes.findIndex((type) => type.th === subject?.type.th)
             }
           />
         </DialogSection>
