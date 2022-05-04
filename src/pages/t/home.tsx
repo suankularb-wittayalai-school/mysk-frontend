@@ -37,9 +37,9 @@ import { StudentSchedule } from "@utils/types/schedule";
 import { Session } from "@supabase/supabase-js";
 
 // helper function
-import { db2teacher } from "@utils/backend/database";
+import { db2Teacher } from "@utils/backend/database";
 import { TeacherDB } from "@utils/types/database/person";
-import { useSession } from "@utils/hooks/auth";
+import { useSession, useTeacherAccount } from "@utils/hooks/auth";
 
 const TeacherHome: NextPage<{
   // user: Teacher;
@@ -52,36 +52,9 @@ const TeacherHome: NextPage<{
   const [showChangePassword, setShowChangePassword] = useState<boolean>(false);
   const [showEditProfile, setShowEditProfile] = useState<boolean>(false);
   const [showLogOut, setShowLogOut] = useState<boolean>(false);
-  const [user, setUser] = useState<Teacher | null>(null);
+  const user = useTeacherAccount();
 
-  const session = useSession();
-
-
-  useEffect(() => {
-    if (session) {
-      if (session.user?.user_metadata.role == "teacher") {
-        supabase
-          .from<TeacherDB>("teacher")
-          .select(
-            "id, teacher_id, people:person(*), SubjectGroup:subject_group(*)"
-          )
-          .eq("id", session.user?.user_metadata.teacher)
-          .single()
-          .then((res) => {
-            if (res.error || !res.data) {
-              console.log(res.error);
-              return;
-            }
-
-            db2teacher(res.data).then((teacher) => {
-              setUser(teacher);
-            });
-          });
-      } else if (session.user?.user_metadata.role == "student") {
-        router.push("/s/home");
-      }
-    }
-  }, [session]);
+  // const session = useSession();
 
   async function handleLogout() {
     await supabase.auth.signOut();

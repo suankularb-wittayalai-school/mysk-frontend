@@ -1,4 +1,42 @@
 {
+  "item": {
+    "name": {
+      "title": "Local name (Thai)",
+      "code": "Subject code",
+      "name": "Full name",
+      "shortName": "Short name",
+      "shortName_helper": "Shown for short periods in Schedule."
+    },
+    "enName": {
+      "title": "English name",
+      "code": "Subject code",
+      "name": "Full name",
+      "shortName": "Short name"
+    },
+    "desc": {
+      "title": "Description",
+      "thDesc": "Local description (Thai)",
+      "enDesc": "English description"
+    },
+    "school": {
+      "title": "School",
+      "year": "Academic year",
+      "year_helper": "In Anno Domini (AD).",
+      "semester": "Semester",
+      "credit": "Credit",
+      "syllabus": "Syllabus"
+    },
+    "category": {
+      "title": "Category",
+      "subjectGroup": "Subject group",
+      "subjectType": "Subject type"
+    },
+    "personnel": {
+      "title": "Personnel",
+      "teachers": "Teachers",
+      "coTeachers": "Co-teachers"
+    }
+  },
   "teaching": {
     "title": "Subjects you teach",
     "subjects": {

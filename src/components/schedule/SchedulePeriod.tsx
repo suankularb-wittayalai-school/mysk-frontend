@@ -2,6 +2,9 @@
 import { motion } from "framer-motion";
 import { useRouter } from "next/router";
 
+// Components
+import TeacherTeachingList from "@components/TeacherTeachingList";
+
 // Types
 import { Role, Teacher } from "@utils/types/person";
 import { SchedulePeriod as SchedulePeriodType } from "@utils/types/schedule";
@@ -40,11 +43,11 @@ const SchedulePeriod = ({
 
   return (
     <motion.li
-      key={schedulePeriod.periodStart}
+      key={schedulePeriod.startTime}
       className="absolute px-1"
       style={{
         width: periodWidth * schedulePeriod.duration,
-        left: periodWidth * (schedulePeriod.periodStart - 1),
+        left: periodWidth * (schedulePeriod.startTime - 1),
       }}
       initial={{ scale: 0.8, y: 20, opacity: 0 }}
       animate={{ scale: 1, y: 0, opacity: 1 }}
@@ -58,7 +61,7 @@ const SchedulePeriod = ({
             isInPeriod(
               now,
               day,
-              schedulePeriod.periodStart,
+              schedulePeriod.startTime,
               schedulePeriod.duration
             )
               ? "container-tertiary shadow"
@@ -103,7 +106,7 @@ const SchedulePeriod = ({
             isInPeriod(
               now,
               day,
-              schedulePeriod.periodStart,
+              schedulePeriod.startTime,
               schedulePeriod.duration
             )
               ? "outline-4 outline-offset-[-4px] outline-secondary"
@@ -112,39 +115,6 @@ const SchedulePeriod = ({
         />
       )}
     </motion.li>
-  );
-};
-
-const TeacherTeachingList = ({
-  teachers,
-}: {
-  teachers: { name: Teacher["name"] }[];
-}) => {
-  const locale = useRouter().locale == "th" ? "th" : "en-US";
-
-  return (
-    <span className="max-lines-1 text-base">
-      {teachers.length > 0 &&
-        // Show the first teacher’s first name in user locale
-        (teachers[0].name[locale]?.firstName || teachers[0].name.th.firstName)}
-      {
-        // If there are more than one teacher, display +1 and show the remaining teachers on hover
-        teachers.length > 1 && (
-          <abbr
-            className="text-secondary opacity-50"
-            title={teachers
-              .slice(1)
-              .map(
-                (teacher) =>
-                  teacher.name[locale]?.firstName || teacher.name.th.firstName
-              )
-              .join(", ")}
-          >
-            +{teachers.length - 1}
-          </abbr>
-        )
-      }
-    </span>
   );
 };
 

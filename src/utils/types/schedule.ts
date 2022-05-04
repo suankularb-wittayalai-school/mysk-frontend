@@ -7,21 +7,22 @@ export type StudentSchedule = {
   // FIXME: Schedule class should be required
   // Temporary solution, awaiting response from @JimmyTempest
   class?: ClassWName;
-  content: Array<ScheduleRow>;
+  content: ScheduleRow[];
 };
 
 export type ScheduleRow = {
   day: Day;
-  content: Array<SchedulePeriod>;
+  content: SchedulePeriod[];
 };
 
 export type SchedulePeriod = {
-  periodStart: number;
+  startTime: number;
   duration: number;
   subject?: {
     name: Subject["name"];
-    teachers: Array<{
-      name: Teacher["name"];
-    }>;
+    teachers: Teacher[];
+    coTeachers?: Teacher[];
   };
+  // Physical room wherein this Subject is taught (Ex. 1214, 4306)
+  room: string;
 };

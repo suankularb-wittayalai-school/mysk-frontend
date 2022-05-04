@@ -33,6 +33,8 @@ const UserActions = ({
 }): JSX.Element => {
   const { t } = useTranslation("dashboard");
 
+  // (@SiravitPhokeed) Edit Self is temporary disabled.
+
   return (
     <div
       className={`flex-row flex-wrap items-center justify-end gap-2 ${
@@ -43,13 +45,15 @@ const UserActions = ({
         label={t("user.action.changePassword")}
         type="text"
         onClick={() => setshowChangePassword(true)}
-        className="!hidden sm:!flex"
+        // className="!hidden sm:!flex"
       />
       <Button
         label={t("user.action.requestEdit")}
         type="outlined"
         icon={<MaterialIcon icon="edit" />}
+        disabled
         onClick={() => setShowEditProfile(true)}
+        className="!hidden sm:!flex"
       />
       <Button
         label={t("user.action.logOut")}
@@ -104,7 +108,7 @@ const UserSection = ({
                   <Trans i18nKey="user.subjectAndClass" ns="dashboard">
                     Teacher in{" "}
                     {{
-                      subjectGroup: user.subject_group.name[locale],
+                      subjectGroup: user.subjectGroup.name[locale],
                     }}
                     <br />
                     Class advisor at{" "}

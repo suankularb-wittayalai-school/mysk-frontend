@@ -30,6 +30,25 @@
       "addTeacher": "Add teacher"
     }
   },
+  "subjectList": {
+    "title": "Subject list",
+    "searchSubjects": "Search subjects",
+    "table": {
+      "code": "Subject code",
+      "name": "Subject name",
+      "teachers": "Teachers",
+      "year": "A. year",
+      "semester": "Semester",
+      "action": {
+        "seeDetails": "See details",
+        "edit": "Edit",
+        "delete": "Delete"
+      }
+    },
+    "action": {
+      "addSubject": "Add subject"
+    }
+  },
   "schedule": {
     "title": "Schedule lookup",
     "gradeItem": "M.{{grade}}",
@@ -46,6 +65,16 @@
       "title": {
         "add": "Add user",
         "edit": "Edit user"
+      },
+      "action": {
+        "cancel": "Cancel",
+        "save": "Save"
+      }
+    },
+    "editSubject": {
+      "title": {
+        "add": "Add subject",
+        "edit": "Edit subject"
       },
       "action": {
         "cancel": "Cancel",

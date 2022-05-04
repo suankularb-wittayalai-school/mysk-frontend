@@ -34,14 +34,23 @@
       "6": "Saturday"
     }
   },
+  "input": {
+    "none": {
+      "noFilesAttached": "No files attached"
+    },
+    "error": {}
+  },
   "seeDetails": "See details",
   "dialog": {
-    "discardDraft": {
-      "title": "Discard draft?",
-      "supportingText": "All changes will be deleted.",
+    "addTeacher": {
+      "title": "Add teacher",
+      "supportingText": "Select a subject group to filter teachers by their subject group.",
+      "subjectGroup": "Subject group",
+      "teacher": "Teacher to add",
+      "noTeachers": "No teachers",
       "action": {
-        "continue": "Continue editing",
-        "discard": "Discard"
+        "cancel": "Cancel",
+        "add": "Add"
       }
     },
     "confirmDelete": {
@@ -50,6 +59,14 @@
       "action": {
         "cancel": "Cancel",
         "delete": "Delete"
+      }
+    },
+    "discardDraft": {
+      "title": "Discard draft?",
+      "supportingText": "All changes will be deleted.",
+      "action": {
+        "continue": "Continue editing",
+        "discard": "Discard"
       }
     },
     "image": {

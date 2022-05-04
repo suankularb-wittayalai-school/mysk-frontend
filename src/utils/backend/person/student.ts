@@ -4,43 +4,48 @@ import { PersonDB, StudentTable } from "@utils/types/database/person";
 import { Student } from "@utils/types/person";
 import { createPerson } from "./person";
 
+export async function createStudent(
+  student: Student,
+  email: string
+): Promise<{ data: StudentTable[] | null; error: PostgrestError | null }> {
+  const { data: person, error: personCreationError } = await createPerson(
+    student
+  );
+  if (personCreationError || !person) {
+    console.error(personCreationError);
+    return { data: null, error: personCreationError };
+  }
 
-export async function createStudent(student: Student, email: string): Promise<{ data: StudentTable[] | null; error: PostgrestError | null }> {
-    const { data: person, error: personCreationError } = await createPerson(student);
-    if (personCreationError || !person) {
-        console.error(personCreationError);
-        return { data: null, error: personCreationError };
-    }
-
-    const {
-        data: createdStudent,
-        error: studentCreationError,
-    } = await supabase.from<StudentTable>("student").insert({
-        person: person[0]?.id,
-        std_id: student.studentID.trim(),
+  const { data: createdStudent, error: studentCreationError } = await supabase
+    .from<StudentTable>("student")
+    .insert({
+      person: person[0]?.id,
+      std_id: student.studentID.trim(),
     });
-    if (studentCreationError || !student) {
-        console.error(studentCreationError);
-        // delete the created person
-        await supabase
-            .from<PersonDB>("people")
-            .delete()
-            .match({ id: person[0]?.id });
-        return { data: null, error: studentCreationError };
-    }
-    // register an account for the student
-    await supabase.auth.signUp(
-        {
-            email: email,
-            password: student.birthdate.split("-").join(""),
-        },
-        {
-            data: {
-                student: createdStudent[0]?.id,
-                role: "student",
-            },
-        }
-    );
+  if (studentCreationError || !student) {
+    console.error(studentCreationError);
+    // delete the created person
+    await supabase
+      .from<PersonDB>("people")
+      .delete()
+      .match({ id: person[0]?.id });
+    return { data: null, error: studentCreationError };
+  }
 
-    return { data: createdStudent, error: null };
+  // register an account for the student
+  const res = await fetch("/api/account/student", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      email,
+      password: student.birthdate.split("-").join(""),
+      id: createdStudent[0]?.id,
+    }),
+  });
+
+  // console.log(await res.json());
+
+  return { data: createdStudent, error: null };
 }

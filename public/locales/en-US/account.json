@@ -1,8 +1,11 @@
 {
   "title": "Log in",
   "form": {
-    "userID": "Student/Teacher ID",
-    "password": "Password"
+    "email": "School email",
+    "email_helper": "Your school email ends with “sk.ac.th”.",
+    "email_error": "Invalid email. Must end with “sk.ac.th”.",
+    "password": "Password",
+    "password_helper": "Default is birthday in YYYYMMDD (in AD), i.e. 20040512"
   },
   "action": {
     "forgotPassword": "Forgot password",

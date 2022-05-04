@@ -197,14 +197,14 @@ const TeacherSchedule: NextPage<{ schedule: StudentSchedule }> = ({
               // Remove the old Periods that overlap this new Period
               .filter(
                 (schedulePeriod) =>
-                  schedulePeriod.periodStart + schedulePeriod.duration - 1 <
+                  schedulePeriod.startTime + schedulePeriod.duration - 1 <
                     periodStart ||
-                  schedulePeriod.periodStart >= periodStart + duration
+                  schedulePeriod.startTime >= periodStart + duration
               )
               // Append the new Period
               .concat([
                 {
-                  periodStart,
+                  startTime: periodStart,
                   duration,
                   // TODO: Fetch this
                   subject: {
@@ -271,9 +271,9 @@ export const getServerSideProps: GetServerSideProps = async ({
       {
         day: 1,
         content: [
-          { periodStart: 1, duration: 1 },
+          { startTime: 1, duration: 1 },
           {
-            periodStart: 2,
+            startTime: 2,
             duration: 1,
             subject: {
               name: {

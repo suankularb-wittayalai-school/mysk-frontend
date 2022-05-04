@@ -18,6 +18,18 @@ export type SubjectSubgroup = {
   subjectGroup: SubjectGroup;
 };
 
+export type SubjectTypeTH =
+  | "รายวิชาพื้นฐาน"
+  | "รายวิชาเพิ่มเติม"
+  | "รายวิชาเลือก"
+  | "กิจกรรมพัฒนาผู้เรียน";
+
+export type SubjectTypeEN =
+  | "Core Courses"
+  | "Elective Courses"
+  | "Additional Courses"
+  | "Learner’s Development Activities";
+
 // Subject
 export type Subject = {
   id: number;
@@ -29,8 +41,21 @@ export type Subject = {
     "en-US": SubjectName;
     th: SubjectName;
   };
-  teachers: Array<Teacher>;
-  subjectSubgroup: SubjectSubgroup;
+  type: {
+    "en-US": SubjectTypeEN;
+    th: SubjectTypeTH;
+  };
+  description?: {
+    "en-US": string;
+    th: string;
+  };
+  teachers: Teacher[];
+  coTeachers?: Teacher[];
+  subjectGroup: SubjectGroup;
+  year: number;
+  semester: 1 | 2;
+  syllabus: string | File | null;
+  credit: number;
 };
 
 export type SubjectWNameAndCode = {

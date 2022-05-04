@@ -28,6 +28,7 @@ import {
 // Helper functions
 import { createStudent } from "@utils/backend/person/student";
 import { createTeacher } from "@utils/backend/person/teacher";
+import { useSubjectGroupOption } from "@utils/hooks/subject";
 
 const prefixMap = {
   Master: "เด็กชาย",
@@ -72,34 +73,7 @@ const EditPersonDialog = ({
     classAdvisorAt: 0,
     email: "",
   });
-  const [subjectGroups, setSubjectGroups] = useState<
-    Array<{ id: number; name: { [key: string]: string } }>
-  >([]);
-
-  useEffect(() => {
-    supabase
-      .from("SubjectGroup")
-      .select("*")
-      .then((res: any) => {
-        if (res.error) {
-          console.error(res.error);
-        }
-
-        if (!res.data) {
-          return;
-        }
-
-        let data = res.data.map(
-          (group: { id: number; name_th: string; name_en: string }) => {
-            return {
-              id: group.id,
-              name: { th: group.name_th, "en-US": group.name_en },
-            };
-          }
-        );
-        setSubjectGroups(data);
-      });
-  }, []);
+  const subjectGroups = useSubjectGroupOption();
 
   useEffect(
     () => userRole && setForm((form) => ({ ...form, role: userRole })),
@@ -121,10 +95,10 @@ const EditPersonDialog = ({
         role: person.role,
         class: person.role == "student" ? person.class.id : 0,
         classNo: person.role == "student" ? person.classNo.toString() : "",
-        citizen_id: person.citizen_id,
+        citizen_id: person.citizenID,
         birthdate: person.birthdate,
         // TODO: Use data from `person` once `subjectGroup` exists on type `Teacher`
-        subjectGroup: person.role == "teacher" ? person.subject_group.id : 0,
+        subjectGroup: person.role == "teacher" ? person.subjectGroup.id : 0,
         classAdvisorAt:
           person.role == "teacher" ? person.classAdvisorAt?.id || 0 : 0,
         email: person.contacts.filter((contact) => contact.type == "Email")[0]
@@ -185,7 +159,7 @@ const EditPersonDialog = ({
               },
             },
             studentID: form.studentID,
-            citizen_id: form.citizen_id,
+            citizenID: form.citizen_id,
             birthdate: form.birthdate,
             role: "student",
             classNo: parseInt(form.classNo),
@@ -234,10 +208,10 @@ const EditPersonDialog = ({
               },
             },
             teacherID: form.teacherID,
-            citizen_id: form.citizen_id,
+            citizenID: form.citizen_id,
             birthdate: form.birthdate,
             role: "teacher",
-            subject_group: {
+            subjectGroup: {
               id: form.subjectGroup,
               name: {
                 "en-US": "",
@@ -275,7 +249,7 @@ const EditPersonDialog = ({
       const { data, error } = await supabase
         .from<PersonDB>("people")
         .select("id")
-        .match({ citizen_id: person?.citizen_id });
+        .match({ citizen_id: person?.citizenID });
       // console.log(data);
       if (error || !data) {
         console.error(error);
@@ -449,7 +423,7 @@ const EditPersonDialog = ({
           name="citizen-id"
           type="text"
           label={t("profile.general.citizenID")}
-          defaultValue={mode == "edit" ? person?.citizen_id : undefined}
+          defaultValue={mode == "edit" ? person?.citizenID : undefined}
           onChange={(e: string) => setForm({ ...form, citizen_id: e })}
         />
         <NativeInput
@@ -542,7 +516,7 @@ const EditPersonDialog = ({
               }))}
               onChange={(e: number) => setForm({ ...form, subjectGroup: e })}
               defaultValue={
-                person?.role == "teacher" ? person?.subject_group.id : undefined
+                person?.role == "teacher" ? person?.subjectGroup.id : undefined
               }
             />
             <Dropdown

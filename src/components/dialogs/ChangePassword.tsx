@@ -17,6 +17,7 @@ import { DialogProps } from "@utils/types/common";
 
 // Backend
 import { changePassword } from "@utils/backend/account";
+import { useSession } from "@utils/hooks/auth";
 
 interface ChangePasswordProps extends DialogProps {
   setShowDiscard?: Function;
@@ -34,7 +35,18 @@ const ChangePassword = ({
     confirmNewPassword: "",
   });
 
+  const session = useSession();
+
+  function validate() {
+    if (!form.newPassword || form.newPassword.length < 8) return;
+    if (!form.confirmNewPassword || form.confirmNewPassword.length < 8) return;
+    if (form.newPassword != form.confirmNewPassword) return;
+    return true;
+  }
+
   function validateAndSend() {
+    if (!validate) return;
+
     let formData = new FormData();
 
     if (form.originalPassword)
@@ -42,7 +54,7 @@ const ChangePassword = ({
     if (form.newPassword == form.confirmNewPassword)
       formData.append("new-password", form.newPassword);
 
-    changePassword(formData);
+    changePassword(formData, session);
   }
 
   return (
@@ -54,7 +66,11 @@ const ChangePassword = ({
         supportingText={t("dialog.changePassword.supportingText")}
         actions={[
           { name: t("dialog.changePassword.action.cancel"), type: "close" },
-          { name: t("dialog.changePassword.action.save"), type: "submit" },
+          {
+            name: t("dialog.changePassword.action.save"),
+            type: "submit",
+            disabled: !validate(),
+          },
         ]}
         show={show}
         onClose={() => setShowDiscard(true)}
@@ -63,33 +79,34 @@ const ChangePassword = ({
           onClose();
         }}
       >
-        {/* FIXME: Once `name` is no longer necessary, remove it */}
-        <form>
-          <DialogSection name="">
-            <KeyboardInput
-              name="original-password"
-              type="password"
-              label={t("dialog.changePassword.originalPwd")}
-              onChange={(e: string) =>
-                setForm({ ...form, originalPassword: e })
-              }
-            />
-            <KeyboardInput
-              name="new-password"
-              type="password"
-              label={t("dialog.changePassword.newPwd")}
-              onChange={(e: string) => setForm({ ...form, newPassword: e })}
-            />
-            <KeyboardInput
-              name="confirm-new-password"
-              type="password"
-              label={t("dialog.changePassword.confirmNewPwd")}
-              onChange={(e: string) =>
-                setForm({ ...form, confirmNewPassword: e })
-              }
-            />
-          </DialogSection>
-        </form>
+        <DialogSection hasNoGap>
+          <KeyboardInput
+            name="old-password"
+            type="password"
+            label={t("dialog.changePassword.originalPwd")}
+            onChange={(e: string) => setForm({ ...form, originalPassword: e })}
+          />
+          <KeyboardInput
+            name="new-password"
+            type="password"
+            label={t("dialog.changePassword.newPwd")}
+            errorMsg="Lengthen to at least 8 characters."
+            useAutoMsg
+            onChange={(e: string) => setForm({ ...form, newPassword: e })}
+            attr={{ minLength: 8 }}
+          />
+          <KeyboardInput
+            name="confirm-new-password"
+            type="password"
+            label={t("dialog.changePassword.confirmNewPwd")}
+            errorMsg="Lengthen to at least 8 characters."
+            useAutoMsg
+            onChange={(e: string) =>
+              setForm({ ...form, confirmNewPassword: e })
+            }
+            attr={{ minLength: 8 }}
+          />
+        </DialogSection>
       </Dialog>
       <DiscardDraft
         show={showDiscard}

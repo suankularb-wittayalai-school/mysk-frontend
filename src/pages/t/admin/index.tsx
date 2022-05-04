@@ -28,34 +28,40 @@ import {
 import ConfirmDelete from "@components/dialogs/ConfirmDelete";
 import EditPersonDialog from "@components/dialogs/EditPerson";
 import StudentTable from "@components/tables/StudentTable";
+import SubjectTable from "@components/tables/SubjectTable";
 import TeacherTable from "@components/tables/TeacherTable";
 
 // Types
 import { Student, Teacher } from "@utils/types/person";
 import { ClassWName } from "@utils/types/class";
-import { range } from "@utils/helpers/array";
-import { supabase } from "@utils/supabaseClient";
 import {
   StudentDB,
   StudentTable as StudentTableType,
   TeacherDB,
   TeacherTable as TeacherTableType,
 } from "@utils/types/database/person";
-import { db2student, db2teacher } from "@utils/backend/database";
+import { Subject } from "@utils/types/subject";
+import {
+  SubjectDB,
+  SubjectTable as SubjectTableType,
+} from "@utils/types/database/subject";
+
+// Supabase
+import { supabase } from "@utils/supabaseClient";
+
+// Helpers
+import { range } from "@utils/helpers/array";
+
+// Backend
+import { db2Student, db2Subject, db2Teacher } from "@utils/backend/database";
 
 const StudentSection = ({
   someStudents,
-  setShowEdit,
-  setEditingPerson,
-  setShowConfDelStudent,
 }: {
   someStudents: Array<Student>;
-  setShowEdit: (value: boolean) => void;
-  setEditingPerson: (student: Student) => void;
-  setShowConfDelStudent: (value: boolean) => void;
 }): JSX.Element => {
   const { t } = useTranslation("admin");
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const locale = useRouter().locale as "en-US" | "th";
 
   return (
     <Section>
@@ -72,12 +78,7 @@ const StudentSection = ({
         />
       </div>
       <div>
-        <StudentTable
-          students={someStudents}
-          setShowEdit={setShowEdit}
-          setEditingPerson={setEditingPerson}
-          setShowConfDelStudent={setShowConfDelStudent}
-        />
+        <StudentTable students={someStudents} />
       </div>
       <div className="flex flex-row items-center justify-end gap-2">
         <LinkButton
@@ -93,44 +94,59 @@ const StudentSection = ({
 
 const TeacherSection = ({
   someTeachers,
-  setShowEdit,
-  setEditingPerson,
-  setShowConfDelTeacher,
 }: {
   someTeachers: Array<Teacher>;
-  setShowEdit: (value: boolean) => void;
-  setEditingPerson: (teacher: Teacher) => void;
-  setShowConfDelTeacher: (value: boolean) => void;
 }): JSX.Element => {
   const { t } = useTranslation("admin");
 
   return (
     <Section>
-      <div className="layout-grid-cols-3--header">
-        <div className="[grid-area:header]">
+      <div className="layout-grid-cols-3">
+        <div className="col-span-2">
           <Header
             icon={<MaterialIcon icon="group" allowCustomSize />}
             text={t("teacherList.title")}
           />
         </div>
-        <Search
-          placeholder={t("teacherList.searchTeachers")}
-          className="[grid-area:search]"
-        />
+        <Search placeholder={t("teacherList.searchTeachers")} />
       </div>
       <div>
-        <TeacherTable
-          teachers={someTeachers}
-          setShowEdit={setShowEdit}
-          setEditingPerson={setEditingPerson}
-          setShowConfDelTeacher={setShowConfDelTeacher}
-        />
+        <TeacherTable teachers={someTeachers} />
       </div>
       <div className="flex flex-row items-center justify-end gap-2">
         <LinkButton
           type="filled"
           label={t("studentList.action.seeAll")}
           url="/t/admin/teachers"
+          LinkElement={Link}
+        />
+      </div>
+    </Section>
+  );
+};
+
+const SubjectSection = ({ someSubjects }: { someSubjects: Subject[] }) => {
+  const { t } = useTranslation("admin");
+
+  return (
+    <Section>
+      <div className="layout-grid-cols-3">
+        <div className="col-span-2">
+          <Header
+            icon={<MaterialIcon icon="school" allowCustomSize />}
+            text={t("subjectList.title")}
+          />
+        </div>
+        <Search placeholder={t("subjectList.searchSubjects")} />
+      </div>
+      <div>
+        <SubjectTable subjects={someSubjects} />
+      </div>
+      <div className="flex flex-row items-center justify-end gap-2">
+        <LinkButton
+          type="filled"
+          label={t("studentList.action.seeAll")}
+          url="/t/admin/subjects"
           LinkElement={Link}
         />
       </div>
@@ -151,13 +167,7 @@ const ScheduleSection = (): JSX.Element => {
         {range(6).map((grade) => (
           <Link key={grade} href={`/t/admin/schedule/${grade + 1}`}>
             <a>
-              <Chip
-                name={
-                  <Trans i18nKey="schedule.gradeItem" ns="admin">
-                    M.{{ grade: grade + 1 }}
-                  </Trans>
-                }
-              />
+              <Chip name={t("schedule.gradeItem", { grade: grade + 1 })} />
             </a>
           </Link>
         ))}
@@ -167,18 +177,11 @@ const ScheduleSection = (): JSX.Element => {
 };
 
 const Admin: NextPage<{
-  someStudents: Array<Student>;
-  someTeachers: Array<Teacher>;
-}> = ({ someStudents, someTeachers }) => {
+  someStudents: Student[];
+  someTeachers: Teacher[];
+  someSubjects: Subject[];
+}> = ({ someStudents, someTeachers, someSubjects }) => {
   const { t } = useTranslation(["admin", "common"]);
-
-  // Edit Person dialog
-  const [showEdit, setShowEdit] = useState<boolean>(false);
-  const [editingPerson, setEditingPerson] = useState<Student | Teacher>();
-
-  // Confirm Delete dialogs
-  const [showConfDelStudent, setShowConfDelStudent] = useState<boolean>(false);
-  const [showConfDelTeacher, setShowConfDelTeacher] = useState<boolean>(false);
 
   return (
     <>
@@ -197,41 +200,11 @@ const Admin: NextPage<{
           />
         }
       >
-        <StudentSection
-          someStudents={someStudents}
-          setShowEdit={setShowEdit}
-          setEditingPerson={setEditingPerson}
-          setShowConfDelStudent={setShowConfDelStudent}
-        />
-        <TeacherSection
-          someTeachers={someTeachers}
-          setShowEdit={setShowEdit}
-          setEditingPerson={setEditingPerson}
-          setShowConfDelTeacher={setShowConfDelTeacher}
-        />
+        <StudentSection someStudents={someStudents} />
+        <TeacherSection someTeachers={someTeachers} />
+        <SubjectSection someSubjects={someSubjects} />
         <ScheduleSection />
       </RegularLayout>
-      {/* // FIXME: This should not be here */}
-      <EditPersonDialog
-        show={showEdit}
-        onClose={() => setShowEdit(false)}
-        // TODO: Refetch students here ↓
-        onSubmit={() => setShowEdit(false)}
-        mode="edit"
-        person={editingPerson}
-      />
-      <ConfirmDelete
-        show={showConfDelStudent}
-        onClose={() => setShowConfDelStudent(false)}
-        // TODO: Refetch students here ↓
-        onSubmit={() => setShowConfDelStudent(false)}
-      />
-      <ConfirmDelete
-        show={showConfDelTeacher}
-        onClose={() => setShowConfDelTeacher(false)}
-        // TODO: Refetch students here ↓
-        onSubmit={() => setShowConfDelTeacher(false)}
-      />
     </>
   );
 };
@@ -245,19 +218,30 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
     .from<TeacherDB>("teacher")
     .select("id, teacher_id, people:person(*), SubjectGroup:subject_group(*)")
     .limit(5);
+  const { data: subjects, error: subjectSelectingError } = await supabase
+    .from<SubjectTableType>("subject")
+    .select("*")
+    .limit(5);
 
   let someStudents: Array<Student> = [];
   let someTeachers: Array<Teacher> = [];
+  let someSubjects: Array<Subject> = [];
 
   if (!studentSelectingError && students) {
     someStudents = await Promise.all(
-      students.map(async (student) => await db2student(student))
+      students.map(async (student) => await db2Student(student))
     );
   }
 
   if (!teacherSelectingError && teachers) {
     someTeachers = await Promise.all(
-      teachers.map(async (teacher) => await db2teacher(teacher))
+      teachers.map(async (teacher) => await db2Teacher(teacher))
+    );
+  }
+
+  if (!subjectSelectingError && subjects) {
+    someSubjects = await Promise.all(
+      subjects.map(async (subject) => await db2Subject(subject))
     );
   }
 
@@ -270,6 +254,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
       ])),
       someStudents,
       someTeachers,
+      someSubjects,
     },
   };
 };

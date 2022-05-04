@@ -7,21 +7,18 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { FormEvent, useState } from "react";
-
-// Supabase imports
-import { supabase } from "@utils/supabaseClient";
+import { FormEvent, useReducer, useState } from "react";
 
 // SK Components
 import {
+  FormButton,
   KeyboardInput,
   RegularLayout,
   Title,
 } from "@suankularb-components/react";
 
-// Utils
-// import { logIn } from "@utils/backend/account";
-// import { Role } from "@utils/types/person";
+// Supabase
+import { supabase } from "@utils/supabaseClient";
 
 const LoginForm = () => {
   const { t } = useTranslation("account");
@@ -29,29 +26,36 @@ const LoginForm = () => {
 
   // Form control
   const [form, setForm] = useState<{
-    userID: string;
+    email: string;
     password: string;
   }>({
-    userID: "",
+    email: "",
     password: "",
   });
+
+  // Loading
+  const [loading, toggleLoading] = useReducer(() => true, false);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     let formData: FormData = new FormData();
 
     // Validates
-    if (!form.userID) return;
+    if (!form.email) return;
     if (!form.password) return;
+
+    // Signals loading
+    toggleLoading();
 
     // Sends and redirects
     const { user, session, error } = await supabase.auth.signIn({
-      email: form.userID,
+      email: form.email,
       password: form.password,
     });
 
     if (error) {
       console.log(error);
+      toggleLoading();
       return;
     }
 
@@ -63,29 +67,38 @@ const LoginForm = () => {
     <div className="flex flex-col items-center">
       <form
         className="section w-full sm:w-1/2 md:w-1/3"
-        onSubmit={(e: FormEvent) => e.preventDefault()}
+        onSubmit={(e: FormEvent) => handleSubmit(e)}
       >
-        <KeyboardInput
-          name="user-id"
-          type="text"
-          label={t("form.userID")}
-          onChange={(e: string) => setForm({ ...form, userID: e })}
-          className="w-full"
-        />
-        <KeyboardInput
-          name="password"
-          type="password"
-          label={t("form.password")}
-          onChange={(e: string) => setForm({ ...form, password: e })}
-          className="w-full"
-        />
+        <div>
+          <KeyboardInput
+            name="user-id"
+            type="email"
+            label={t("form.email")}
+            helperMsg={t("form.email_helper")}
+            errorMsg={t("form.email_error")}
+            useAutoMsg
+            onChange={(e: string) => setForm({ ...form, email: e })}
+            className="w-full"
+          />
+          <KeyboardInput
+            name="password"
+            type="password"
+            label={t("form.password")}
+            helperMsg={t("form.password_helper")}
+            onChange={(e: string) => setForm({ ...form, password: e })}
+            className="w-full"
+          />
+        </div>
         <div className="flex flex-row flex-wrap items-center justify-end gap-2">
           <Link href="/account/forgot-password">
             <a className="btn--text">{t("action.forgotPassword")}</a>
           </Link>
-          <button className="btn--filled" onClick={(e) => handleSubmit(e)}>
-            {t("action.logIn")}
-          </button>
+          <FormButton
+            label={t("action.logIn")}
+            type="submit"
+            appearance="filled"
+            disabled={loading}
+          />
         </div>
       </form>
     </div>

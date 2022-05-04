@@ -40,8 +40,8 @@ import { StudentDB } from "@utils/types/database/person";
 import { Session } from "@supabase/supabase-js";
 
 // Helper functions
-import { db2student } from "@utils/backend/database";
-import { useSession } from "@utils/hooks/auth";
+import { db2Student } from "@utils/backend/database";
+import { useSession, useStudentAccount } from "@utils/hooks/auth";
 
 // Page
 const StudentHome: NextPage<{
@@ -58,33 +58,7 @@ const StudentHome: NextPage<{
   const [showChangePassword, setShowChangePassword] = useState<boolean>(false);
   const [showEditProfile, setShowEditProfile] = useState<boolean>(false);
   const [showLogOut, setShowLogOut] = useState<boolean>(false);
-  const [user, setUser] = useState<Student | Teacher | null>(null);
-
-  const session = useSession();
-
-  useEffect(() => {
-    if (session) {
-      if (session.user?.user_metadata.role == "student") {
-        supabase
-          .from<StudentDB>("student")
-          .select("id, std_id, people:person(*)")
-          .eq("id", session.user?.user_metadata.student)
-          .single()
-          .then((res) => {
-            if (res.error || !res.data) {
-              console.log(res.error);
-              return;
-            }
-
-            db2student(res.data).then((student) => {
-              setUser(student);
-            });
-          });
-      } else if (session.user?.user_metadata.role == "teacher") {
-        router.push("/t/home");
-      }
-    }
-  }, [session]);
+  const user = useStudentAccount();
 
   async function handleLogout() {
     await supabase.auth.signOut();
@@ -95,8 +69,6 @@ const StudentHome: NextPage<{
 
   return (
     <>
-      {/* {user?.role != "student" && router.push("/t/home")} */}
-      {/* {console.log(session)} */}
       {/* Title */}
       <Head>
         <title>
@@ -155,25 +127,6 @@ const StudentHome: NextPage<{
 };
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
-  const user: Student = {
-    id: 9,
-    role: "student",
-    prefix: "mister",
-    name: {
-      "en-US": { firstName: "Sadudee", lastName: "Theparree" },
-      th: { firstName: "สดุดี", lastName: "เทพอารีย์" },
-    },
-    profile: "/images/dummybase/sadudee.webp",
-    studentID: "56572",
-    class: {
-      id: 405,
-      name: {
-        "en-US": "M.405",
-        th: "ม.405",
-      },
-    },
-    classNo: 11,
-  };
   const news: NewsList = [
     {
       id: 7,
@@ -252,9 +205,9 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
       {
         day: getDay(new Date()),
         content: [
-          { periodStart: 1, duration: 1 },
+          { startTime: 1, duration: 1 },
           {
-            periodStart: 2,
+            startTime: 2,
             duration: 1,
             subject: {
               name: {

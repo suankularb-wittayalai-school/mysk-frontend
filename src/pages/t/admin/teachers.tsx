@@ -1,5 +1,6 @@
 // Modules
 import type { GetServerSideProps, NextPage } from "next";
+import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -26,10 +27,11 @@ import ConfirmDelete from "@components/dialogs/ConfirmDelete";
 import EditPersonDialog from "@components/dialogs/EditPerson";
 import TeacherTable from "@components/tables/TeacherTable";
 
+// Backend
+import { db2Teacher } from "@utils/backend/database";
+
 // Types
-import { Teacher } from "@utils/types/person";
-import Head from "next/head";
-import { db2teacher } from "@utils/backend/database";
+import { Role, Teacher } from "@utils/types/person";
 import {
   PersonTable,
   TeacherDB,
@@ -53,6 +55,23 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
   async function handleDelete() {
     // console.log(editingPerson);
     if (!editingPerson) {
+      return;
+    }
+    const { data: userid, error: selectingError } = await supabase
+      .from<{
+        id: string;
+        email: string;
+        role: Role;
+        student: number;
+        teacher: number;
+      }>("users")
+      .select("id")
+      .match({ teacher: editingPerson.id })
+      .limit(1);
+
+    // console.log(userid, editingPerson);
+
+    if (selectingError || userid.length == 0) {
       return;
     }
 
@@ -81,6 +100,17 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
       return;
     }
 
+    // delete account of the teacher
+    await fetch(`/api/account`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: userid[0].id,
+      }),
+    });
+
     setShowConfDel(false);
     router.replace(router.asPath);
   }
@@ -101,7 +131,7 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
         Title={
           <Title
             name={{ title: t("teacherList.title") }}
-            pageIcon={<MaterialIcon icon="groups" />}
+            pageIcon={<MaterialIcon icon="group" />}
             backGoesTo="/t/admin"
             LinkElement={Link}
             key="title"
@@ -132,7 +162,6 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
       <EditPersonDialog
         show={showEdit}
         onClose={() => setShowEdit(false)}
-        // TODO: Refetch teachers here ↓
         onSubmit={() => {
           setShowEdit(false);
           router.replace(router.asPath);
@@ -175,7 +204,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   // console.log(data);
 
   const allTeachers: Teacher[] = await Promise.all(
-    data.map(async (student) => await db2teacher(student))
+    data.map(async (student) => await db2Teacher(student))
   );
 
   return {
