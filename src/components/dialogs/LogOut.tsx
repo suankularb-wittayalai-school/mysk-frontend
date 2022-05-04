@@ -1,6 +1,7 @@
 // Modules
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
+import { useState } from "react";
 
 // SK Components
 import { Dialog } from "@suankularb-components/react";
@@ -8,12 +9,14 @@ import { Dialog } from "@suankularb-components/react";
 // Types
 import { DialogProps } from "@utils/types/common";
 
-// Backend
-import { logOut } from "@utils/backend/account";
+// Supabase
+import { supabase } from "@utils/supabaseClient";
 
 const LogOutDialog = ({ show, onClose }: DialogProps): JSX.Element => {
   const { t } = useTranslation("account");
   const router = useRouter();
+
+  const [loading, setLoading] = useState<boolean>(false);
 
   return (
     <Dialog
@@ -29,14 +32,16 @@ const LogOutDialog = ({ show, onClose }: DialogProps): JSX.Element => {
         {
           name: t("dialog.logOut.action.logOut"),
           type: "submit",
+          disabled: loading,
           isDangerous: true,
         },
       ]}
       show={show}
       onClose={() => onClose()}
       onSubmit={async () => {
+        setLoading(true);
+        await supabase.auth.signOut();
         onClose();
-        logOut();
         router.push("/");
       }}
     ></Dialog>

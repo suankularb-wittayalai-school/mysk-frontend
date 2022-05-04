@@ -108,13 +108,7 @@ const TeacherHome: NextPage<{
         show={showEditProfile}
         onClose={() => setShowEditProfile(false)}
       />
-      <LogOutDialog
-        show={showLogOut}
-        onClose={() => {
-          handleLogout();
-          setShowLogOut(false);
-        }}
-      />
+      <LogOutDialog show={showLogOut} onClose={() => setShowLogOut(false)} />
     </>
   );
 };
