@@ -13,5 +13,18 @@ export interface ClassroomDB {
   advisors: number[];
   schedule: ScheduleTable | null;
   contacts: number[];
-  subjects: SubjectTable[];
+  subjects: number[];
+}
+
+export interface ClassroomTable {
+  id: number;
+  created_at: string;
+  number: string;
+  year: number;
+  semester: number;
+  students: number[];
+  advisors: number[];
+  schedule: number | null;
+  contacts: number[];
+  subjects: number[];
 }
