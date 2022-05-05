@@ -36,7 +36,7 @@ const EditSelfDialog = ({
   onClose,
 }: EditProfileDialogProps): JSX.Element => {
   const { t } = useTranslation("account");
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const locale = useRouter().locale as "en-US" | "th";
 
   // Dialog control
   const [showChangePassword, setShowChangePassword] = useState<boolean>(false);

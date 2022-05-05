@@ -1,4 +1,4 @@
-import { ClassWName } from "./class";
+import { ClassWNumber } from "./class";
 import { Teacher } from "./person";
 
 // Subject Group
@@ -77,6 +77,7 @@ export type SubjectListItem = {
     name: Subject["name"];
   };
   teachers: Array<Teacher>;
+  coTeachers?: Array<Teacher>;
   ggcCode?: string;
   ggcLink?: string;
   ggMeetLink?: string;
@@ -110,6 +111,6 @@ export type SubstituteAssignment = {
     "en-US": string;
     th: string;
   };
-  classes: Array<ClassWName>;
+  classes: Array<ClassWNumber>;
   subject: SubjectWNameAndCode;
 };

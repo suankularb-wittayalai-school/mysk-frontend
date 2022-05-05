@@ -90,7 +90,7 @@ const ChangePassword = ({
             name="new-password"
             type="password"
             label={t("dialog.changePassword.newPwd")}
-            errorMsg="Lengthen to at least 8 characters."
+            errorMsg={t("dialog.changePassword.newPwd_error")}
             useAutoMsg
             onChange={(e: string) => setForm({ ...form, newPassword: e })}
             attr={{ minLength: 8 }}
@@ -99,7 +99,7 @@ const ChangePassword = ({
             name="confirm-new-password"
             type="password"
             label={t("dialog.changePassword.confirmNewPwd")}
-            errorMsg="Lengthen to at least 8 characters."
+            errorMsg={t("dialog.changePassword.newPwd_error")}
             useAutoMsg
             onChange={(e: string) =>
               setForm({ ...form, confirmNewPassword: e })

@@ -6,6 +6,10 @@
   * {
     @apply outline-none transition-colors;
   }
+
+  html {
+    accent-color: var(--primary);
+  }
 }
 
 @layer components {

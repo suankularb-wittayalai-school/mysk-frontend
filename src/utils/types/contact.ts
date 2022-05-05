@@ -4,15 +4,7 @@ export type Contact = {
     "en-US": string;
     th: string;
   };
-  type:
-    | "Phone"
-    | "Email"
-    | "Facebook"
-    | "Line"
-    | "Instagram"
-    | "Website"
-    | "Discord"
-    | "Other";
+  type: ContactVia;
   includes?: {
     students: boolean;
     parents: boolean;
@@ -20,3 +12,13 @@ export type Contact = {
   };
   value: string;
 };
+
+export type ContactVia =
+  | "Phone"
+  | "Email"
+  | "Facebook"
+  | "Line"
+  | "Instagram"
+  | "Website"
+  | "Discord"
+  | "Other";

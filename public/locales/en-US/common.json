@@ -23,6 +23,17 @@
       "Mrs.": "Mrs. "
     }
   },
+  "class": "M.{{number}}",
+  "contact": {
+    "phone": "Phone",
+    "email": "Email",
+    "website": "Website",
+    "facebook": "Facebook",
+    "line": "LINE",
+    "instagram": "Instagram",
+    "discord": "Discord",
+    "other": "Other"
+  },
   "datetime": {
     "day": {
       "0": "Sunday",
@@ -42,6 +53,49 @@
   },
   "seeDetails": "See details",
   "dialog": {
+    "addContact": {
+      "title": "Add contact",
+      "type": "Platform",
+      "nameTH": "Thai contact label",
+      "nameEN": "English contact label",
+      "value": {
+        "phone": "Phone number",
+        "email": "Email address",
+        "website": "URL",
+        "facebook": "Facebook name",
+        "line": "LINE ID/invite code",
+        "line_helper": "10-digit code at end of invite link.",
+        "instagram": "Instagram username",
+        "discord": "Discord invite code",
+        "discord_helper": "8-digit code at end of invite link.",
+        "other": "Value"
+      },
+      "value_error": "Invalid value.",
+      "includes": {
+        "title": "Includes",
+        "students": "Students",
+        "teachers": "Teachers",
+        "parents": "Parents",
+        "other": "Other"
+      },
+      "action": {
+        "cancel": "Cancel",
+        "add": "Add"
+      }
+    },
+    "addStudent": {
+      "title": "Add student",
+      "supportingText": "Search the student to add with their student ID.",
+      "studentID": "Student ID",
+      "searchResult": {
+        "title": "Search result",
+        "notFound": "No students with this ID."
+      },
+      "action": {
+        "cancel": "Cancel",
+        "add": "Add"
+      }
+    },
     "addTeacher": {
       "title": "Add teacher",
       "supportingText": "Select a subject group to filter teachers by their subject group.",

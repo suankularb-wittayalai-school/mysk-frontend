@@ -3,8 +3,10 @@ import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
+
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+
 import { isThisYear } from "date-fns";
 
 // SK Components
@@ -41,7 +43,7 @@ import { Student, Teacher } from "@utils/types/person";
 import { StudentForm } from "@utils/types/news";
 
 const StudentFormCard = ({ form }: { form: StudentForm }): JSX.Element => {
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const locale = useRouter().locale as "en-US" | "th";
   const { t } = useTranslation("news");
 
   return (
@@ -49,7 +51,7 @@ const StudentFormCard = ({ form }: { form: StudentForm }): JSX.Element => {
       <CardHeader
         // Title
         title={
-          <h3 className="text-lg font-bold break-all">
+          <h3 className="break-all text-lg font-bold">
             {form.content[locale]?.title || form.content.th.title}
           </h3>
         }
@@ -104,15 +106,15 @@ const FormSection = ({
   const { t } = useTranslation(["dashboard", "news", "class"]);
   const [newsFilter, setNewsFilter] = useState<Array<string>>([]);
   const [filteredNews, setFilteredNews] = useState<Array<StudentForm>>(forms);
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const locale = useRouter().locale as "en-US" | "th";
 
   useEffect(
     () => {
       // Reset filtered news if all filters are deselected
       if (newsFilter.length == 0) {
         setFilteredNews(forms);
-      
-      // Handles done
+
+        // Handles done
       } else if (
         newsFilter.includes("few-done") ||
         newsFilter.includes("most-done") ||
@@ -222,10 +224,7 @@ const ClassAdvisorsSection = ({
         ))}
       </div>
       <div className="flex flex-row flex-wrap items-center justify-end gap-2">
-        <Button
-          label={t("classAdvisors.addAdvisors")}
-          type="filled"
-        />
+        <Button label={t("classAdvisors.addAdvisors")} type="filled" />
       </div>
     </Section>
   );
@@ -254,10 +253,7 @@ const ContactSection = ({
         ))}
       </div>
       <div className="flex flex-row flex-wrap items-center justify-end gap-2">
-        <Button
-          label={t("classContacts.addClassContacts")}
-          type="filled"
-        />
+        <Button label={t("classContacts.addClassContacts")} type="filled" />
       </div>
     </Section>
   );
@@ -313,31 +309,30 @@ const StudentListSection = ({
         </Table>
       </div>
       <div className="flex flex-row flex-wrap items-center justify-end gap-2">
-        <Button
-          label={t("studentList.printList")}
-          type="filled"
-        />
+        <Button label={t("studentList.printList")} type="filled" />
       </div>
     </Section>
   );
 };
 
 // Page
-const Class: NextPage<{ classItem: ClassType; studentForms: Array<StudentForm>; }> = ({ classItem, studentForms }) => {
+const Class: NextPage<{
+  classItem: ClassType;
+  studentForms: Array<StudentForm>;
+}> = ({ classItem, studentForms }) => {
   const { t } = useTranslation("common");
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
 
   return (
     <>
       <Head>
         <title>
-          {classItem.name[locale]} - {t("brand.name")}
+          {t("class", { number: classItem.number })} - {t("brand.name")}
         </title>
       </Head>
       <RegularLayout
         Title={
           <Title
-            name={{ title: classItem.name[locale] }}
+            name={{ title: t("class", { number: classItem.number }) }}
             pageIcon={<MaterialIcon icon="groups" />}
             backGoesTo="/s/home"
             LinkElement={Link}
@@ -364,327 +359,21 @@ export const getServerSideProps: GetServerSideProps = async ({
 }) => {
   // TODO: Fetch class here
   const classItem: ClassType = {
-    id: 405,
-    name: {
-      "en-US": "M.405",
-      th: "ม.405",
+    id: 2,
+    number: 405,
+    contacts: [],
+    classAdvisors: [],
+    students: [],
+    year: 2022,
+    semester: 2,
+    schedule: {
+      id: 0,
+      content: [],
     },
-    contacts: [
-      {
-        id: 15,
-        type: "line",
-        name: {
-          "en-US": "Students only",
-          th: "กลุ่มนักเรียน",
-        },
-        includes: {
-          students: true,
-          parents: false,
-          teachers: false,
-        },
-        value: "https://line.me/R/ti/g/aOslRIgnDj",
-      },
-      {
-        id: 16,
-        type: "discord",
-        name: {
-          "en-US": "Students only",
-          th: "กลุ่มนักเรียน",
-        },
-        includes: {
-          students: true,
-          parents: false,
-          teachers: false,
-        },
-        value: "https://discord.gg/BEsTtp",
-      },
-      {
-        id: 17,
-        type: "line",
-        name: {
-          "en-US": "Students and teachers",
-          th: "กลุ่มนักเรียนกับอาจารย์",
-        },
-        includes: {
-          students: true,
-          parents: false,
-          teachers: true,
-        },
-        value: "https://line.me/R/ti/g/aOslRIgnDj",
-      },
-      {
-        id: 17,
-        type: "line",
-        name: {
-          "en-US": "Whole class",
-          th: "กลุ่มรวมห้อง",
-        },
-        includes: {
-          students: true,
-          parents: true,
-          teachers: true,
-        },
-        value: "https://line.me/R/ti/g/aOslRIgnDj",
-      },
-      {
-        id: 18,
-        type: "line",
-        name: {
-          "en-US": "M.4 EPlus+",
-          th: "กลุ่ม EPlus+ ม.4",
-        },
-        includes: {
-          students: true,
-          parents: true,
-          teachers: true,
-        },
-        value: "https://line.me/R/ti/g/aOslRIgnDj",
-      },
-    ],
-    classAdvisors: [
-      {
-        id: 2,
-        role: "teacher",
-        prefix: "mister",
-        name: {
-          "en-US": { firstName: "Taradol", lastName: "Ranarintr" },
-          th: { firstName: "ธราดล", lastName: "รานรินทร์" },
-        },
-        profile: "/images/dummybase/taradol.webp",
-        teacherID: "skt551",
-        subjectsInCharge: [
-          {
-            id: 8,
-            code: {
-              "en-US": "SOC31152",
-              th: "ส31152",
-            },
-            name: {
-              "en-US": {
-                name: "Social Studies 2 (World)",
-              },
-              th: { name: "สังคมศึกษา 2 (พลโลก)" },
-            },
-            subjectSubgroup: {
-              name: { "en-US": "Social Studies", th: "สังคมศึกษา" },
-              subjectGroup: {
-                name: { "en-US": "Social Studies", th: "สังคมศึกษา" },
-              },
-            },
-          },
-        ],
-      },
-      {
-        id: 3,
-        role: "teacher",
-        prefix: "missus",
-        name: {
-          "en-US": { firstName: "Mattana", lastName: "Tatanyang" },
-          th: { firstName: "มัทนา", lastName: "ต๊ะตันยาง" },
-        },
-        profile: "/images/dummybase/mattana.webp",
-        teacherID: "skt196",
-        subjectsInCharge: [
-          {
-            id: 2,
-            code: {
-              "en-US": "ENG31252",
-              th: "อ31252",
-            },
-            name: {
-              "en-US": {
-                name: "Communication 2",
-              },
-              th: { name: "ภาษาอังกฤษเพื่อการสื่อสาร 2" },
-            },
-            subjectSubgroup: {
-              name: { "en-US": "English", th: "ภาษาอังกฤษ" },
-              subjectGroup: {
-                name: { "en-US": "Foreign Language", th: "ภาษาต่างประเทศ" },
-              },
-            },
-          },
-        ],
-      },
-    ],
-    students: [
-      {
-        id: 248,
-        role: "student",
-        prefix: "mister",
-        name: {
-          "en-US": {
-            firstName: "Paniti",
-            lastName: "Putpan",
-          },
-          th: {
-            firstName: "ปณิธิ",
-            lastName: "พุฒพันธ์",
-          },
-        },
-        studentID: "56522",
-        class: {
-          id: 405,
-          name: {
-            "en-US": "M.405",
-            th: "ม.405",
-          },
-        },
-        classNo: 1,
-      },
-      {
-        id: 249,
-        role: "student",
-        prefix: "mister",
-        name: {
-          "en-US": {
-            firstName: "Chayatawn",
-            lastName: "Yupattanawong",
-          },
-          th: {
-            firstName: "ชยธร",
-            lastName: "อยู่พัฒนวงศ์",
-          },
-        },
-        studentID: "56523",
-        class: {
-          id: 405,
-          name: {
-            "en-US": "M.405",
-            th: "ม.405",
-          },
-        },
-        classNo: 2,
-      },
-      {
-        id: 250,
-        role: "student",
-        prefix: "miss",
-        name: {
-          "en-US": {
-            firstName: "Tanvin",
-            lastName: "Chanchairujira",
-          },
-          th: {
-            firstName: "ธันวิน",
-            lastName: "ชาญชัยรุจิรา",
-          },
-        },
-        studentID: "56525",
-        class: {
-          id: 405,
-          name: {
-            "en-US": "M.405",
-            th: "ม.405",
-          },
-        },
-        classNo: 3,
-      },
-      {
-        id: 251,
-        role: "student",
-        prefix: "mister",
-        name: {
-          "en-US": {
-            firstName: "Thas",
-            lastName: "Thasanakosol",
-          },
-          th: {
-            firstName: "ธรรศ",
-            lastName: "ทัศนโกศล",
-          },
-        },
-        studentID: "56535",
-        class: {
-          id: 405,
-          name: {
-            "en-US": "M.405",
-            th: "ม.405",
-          },
-        },
-        classNo: 4,
-      },
-      {
-        id: 252,
-        role: "student",
-        prefix: "mister",
-        name: {
-          "en-US": {
-            firstName: "Katakorn",
-            lastName: "Worakittiphan",
-          },
-          th: {
-            firstName: "กตกร",
-            lastName: "วรกิตติพันธ์",
-          },
-        },
-        studentID: "56540",
-        class: {
-          id: 405,
-          name: {
-            "en-US": "M.405",
-            th: "ม.405",
-          },
-        },
-        classNo: 5,
-      },
-      {
-        id: 253,
-        role: "student",
-        prefix: "mister",
-        name: {
-          "en-US": {
-            firstName: "Rojravee",
-            lastName: "Boonchokcharoensri",
-          },
-          th: {
-            firstName: "โรจน์รวี",
-            lastName: "บุญโชคเจริญศรี",
-          },
-        },
-        studentID: "56542",
-        class: {
-          id: 405,
-          name: {
-            "en-US": "M.405",
-            th: "ม.405",
-          },
-        },
-        classNo: 6,
-      },
-    ],
+    subjects: [],
   };
 
-  const studentForms: Array<StudentForm> = [
-    {
-      id: 5,
-      type: "payment",
-      postDate: new Date(2022, 0, 7),
-      percentDone: 3,
-      content: {
-        "en-US": {
-          title: "School Maintainance Payment",
-        },
-        th: {
-          title: "การชำระเงินบำรุงการศึกษา",
-        },
-      },
-    },
-    {
-      id: 3,
-      type: "form",
-      postDate: new Date(2020, 3, 14),
-      percentDone: 96,
-      content: {
-        "en-US": {
-          title: "Online Learning Readiness",
-        },
-        th: {
-          title: "ความพร้อมการเรียนออนไลน์",
-        },
-      },
-    },
-  ];
+  const studentForms: Array<StudentForm> = [];
 
   return {
     props: {

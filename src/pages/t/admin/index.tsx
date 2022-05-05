@@ -25,26 +25,17 @@ import {
 } from "@suankularb-components/react";
 
 // Components
-import ConfirmDelete from "@components/dialogs/ConfirmDelete";
-import EditPersonDialog from "@components/dialogs/EditPerson";
+import ClassTable from "@components/tables/ClassTable";
 import StudentTable from "@components/tables/StudentTable";
 import SubjectTable from "@components/tables/SubjectTable";
 import TeacherTable from "@components/tables/TeacherTable";
 
 // Types
 import { Student, Teacher } from "@utils/types/person";
-import { ClassWName } from "@utils/types/class";
-import {
-  StudentDB,
-  StudentTable as StudentTableType,
-  TeacherDB,
-  TeacherTable as TeacherTableType,
-} from "@utils/types/database/person";
+import { Class } from "@utils/types/class";
+import { StudentDB, TeacherDB } from "@utils/types/database/person";
 import { Subject } from "@utils/types/subject";
-import {
-  SubjectDB,
-  SubjectTable as SubjectTableType,
-} from "@utils/types/database/subject";
+import { SubjectTable as SubjectTableType } from "@utils/types/database/subject";
 
 // Supabase
 import { supabase } from "@utils/supabaseClient";
@@ -53,7 +44,13 @@ import { supabase } from "@utils/supabaseClient";
 import { range } from "@utils/helpers/array";
 
 // Backend
-import { db2Student, db2Subject, db2Teacher } from "@utils/backend/database";
+import {
+  db2Class,
+  db2Student,
+  db2Subject,
+  db2Teacher,
+} from "@utils/backend/database";
+import { ClassroomDB } from "@utils/types/database/class";
 
 const StudentSection = ({
   someStudents,
@@ -116,7 +113,7 @@ const TeacherSection = ({
       <div className="flex flex-row items-center justify-end gap-2">
         <LinkButton
           type="filled"
-          label={t("studentList.action.seeAll")}
+          label={t("teacherList.action.seeAll")}
           url="/t/admin/teachers"
           LinkElement={Link}
         />
@@ -145,8 +142,37 @@ const SubjectSection = ({ someSubjects }: { someSubjects: Subject[] }) => {
       <div className="flex flex-row items-center justify-end gap-2">
         <LinkButton
           type="filled"
-          label={t("studentList.action.seeAll")}
+          label={t("subjectList.action.seeAll")}
           url="/t/admin/subjects"
+          LinkElement={Link}
+        />
+      </div>
+    </Section>
+  );
+};
+
+const ClassSection = ({ someClasses }: { someClasses: Class[] }) => {
+  const { t } = useTranslation("admin");
+
+  return (
+    <Section>
+      <div className="layout-grid-cols-3">
+        <div className="col-span-2">
+          <Header
+            icon={<MaterialIcon icon="meeting_room" allowCustomSize />}
+            text={t("classList.title")}
+          />
+        </div>
+        <Search placeholder={t("classList.searchClasses")} />
+      </div>
+      <div>
+        <ClassTable classes={someClasses} />
+      </div>
+      <div className="flex flex-row items-center justify-end gap-2">
+        <LinkButton
+          type="filled"
+          label={t("classList.action.seeAll")}
+          url="/t/admin/classes"
           LinkElement={Link}
         />
       </div>
@@ -180,7 +206,8 @@ const Admin: NextPage<{
   someStudents: Student[];
   someTeachers: Teacher[];
   someSubjects: Subject[];
-}> = ({ someStudents, someTeachers, someSubjects }) => {
+  someClasses: Class[];
+}> = ({ someStudents, someTeachers, someSubjects, someClasses }) => {
   const { t } = useTranslation(["admin", "common"]);
 
   return (
@@ -203,6 +230,7 @@ const Admin: NextPage<{
         <StudentSection someStudents={someStudents} />
         <TeacherSection someTeachers={someTeachers} />
         <SubjectSection someSubjects={someSubjects} />
+        <ClassSection someClasses={someClasses} />
         <ScheduleSection />
       </RegularLayout>
     </>
@@ -222,10 +250,16 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
     .from<SubjectTableType>("subject")
     .select("*")
     .limit(5);
+  const { data: classes, error: classSelectingError } = await supabase
+    .from<ClassroomDB>("classroom")
+    .select("*, schedule:schedule(*)")
+    .order("number", { ascending: true })
+    .limit(5);
 
   let someStudents: Array<Student> = [];
   let someTeachers: Array<Teacher> = [];
   let someSubjects: Array<Subject> = [];
+  let someClasses: Array<Class> = [];
 
   if (!studentSelectingError && students) {
     someStudents = await Promise.all(
@@ -245,6 +279,12 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
     );
   }
 
+  if (!classSelectingError && classes) {
+    someClasses = await Promise.all(
+      classes.map(async (classroom) => await db2Class(classroom))
+    );
+  }
+
   return {
     props: {
       ...(await serverSideTranslations(locale as string, [
@@ -255,6 +295,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
       someStudents,
       someTeachers,
       someSubjects,
+      someClasses,
     },
   };
 };

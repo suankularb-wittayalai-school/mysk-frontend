@@ -2,8 +2,8 @@
   "title": "Home",
   "user": {
     "profileAlt": "A picture of you",
-    "classAndNo": "{{class}} No. {{classNo}}",
-    "subjectAndClass": "Teacher in {{subjectGroup}}<br>Class advisor at {{classAdvisorAt}}",
+    "classAndNo": "M.{{class}} No. {{classNo}}",
+    "subjectAndClass": "Teacher in {{subjectGroup}}<br>Class advisor at M.{{classAdvisorAt}}",
     "hasNotifications_zero": "No notifications",
     "hasNotifications_one": "1 notification",
     "hasNotifications_other": "{{notifCount}} notifications",

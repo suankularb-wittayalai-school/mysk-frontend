@@ -1,12 +1,13 @@
 import { Day } from "date-fns";
-import { ClassWName } from "./class";
+import { ClassWNumber } from "./class";
 import { Teacher } from "./person";
 import { Subject } from "./subject";
 
 export type StudentSchedule = {
   // FIXME: Schedule class should be required
   // Temporary solution, awaiting response from @JimmyTempest
-  class?: ClassWName;
+  id: number;
+  class?: ClassWNumber;
   content: ScheduleRow[];
 };
 

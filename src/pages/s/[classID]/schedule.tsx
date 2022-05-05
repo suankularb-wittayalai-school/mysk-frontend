@@ -48,10 +48,9 @@ const SubjectListSection = ({
   subjectList: Array<SubjectListItem>;
 }): JSX.Element => {
   const { t } = useTranslation("schedule");
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
-  const [filterredList, setFilterredList] = useState<Array<SubjectListItem>>(
-    subjectList
-  );
+  const locale = useRouter().locale as "en-US" | "th";
+  const [filterredList, setFilterredList] =
+    useState<Array<SubjectListItem>>(subjectList);
   const [query, setQuery] = useState<string>("");
 
   useEffect(() => {
@@ -181,155 +180,16 @@ export const getServerSideProps: GetServerSideProps = async ({
   params,
 }) => {
   const schedule: StudentSchedule = {
+    id: 0,
     content: [
-      {
-        day: 1,
-        content: [
-          { startTime: 1, duration: 1 },
-          {
-            startTime: 2,
-            duration: 1,
-            subject: {
-              name: {
-                "en-US": {
-                  name: "Chemistry",
-                  shortName: "Chem",
-                },
-                th: {
-                  name: "เคมี",
-                  shortName: "เคมี",
-                },
-              },
-              teachers: [
-                {
-                  name: {
-                    "en-US": {
-                      firstName: "Thanthapatra",
-                      lastName: "Bunchuay",
-                    },
-                    th: {
-                      firstName: "ธันฐภัทร",
-                      lastName: "บุญช่วย",
-                    },
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-      {
-        day: 2,
-        content: [],
-      },
-      {
-        day: 3,
-        content: [],
-      },
-      {
-        day: 4,
-        content: [],
-      },
-      {
-        day: 5,
-        content: [],
-      },
+      { day: 1, content: [] },
+      { day: 2, content: [] },
+      { day: 3, content: [] },
+      { day: 4, content: [] },
+      { day: 5, content: [] },
     ],
   };
-  const subjectList: Array<SubjectListItem> = [
-    {
-      id: 8,
-      subject: {
-        code: { "en-US": "MA31152", th: "ค31152" },
-        name: {
-          "en-US": { name: "Fundamental Mathematics 2" },
-          th: { name: "คณิตศาสตร์พื้นฐาน 2 (EP)" },
-        },
-      },
-      teachers: [
-        {
-          id: 9,
-          role: "teacher",
-          prefix: "mister",
-          name: {
-            "en-US": { firstName: "Kritchapon", lastName: "Boonpoonmee" },
-            th: { firstName: "กฤชพล", lastName: "บุญพูลมี" },
-          },
-          teacherID: "skt6985",
-          subjectsInCharge: [
-            {
-              id: 8,
-              code: { "en-US": "MA31152", th: "ค31152" },
-              name: {
-                "en-US": { name: "Fundamental Mathematics 2" },
-                th: { name: "คณิตศาสตร์พื้นฐาน 2 (EP)" },
-              },
-              subjectSubgroup: {
-                name: {
-                  "en-US": "Mathematics",
-                  th: "คณิตศาสตร์",
-                },
-                subjectGroup: {
-                  name: {
-                    "en-US": "Mathematics",
-                    th: "คณิตศาสตร์",
-                  },
-                },
-              },
-            },
-          ],
-        },
-      ],
-      ggcCode: "y53ezt7",
-      ggcLink: "https://classroom.google.com/c/NDIyMTc0ODc5NzQw",
-    },
-    {
-      id: 17,
-      subject: {
-        code: { "en-US": "SCI31205", th: "ว31205" },
-        name: {
-          "en-US": { name: "Physics 2" },
-          th: { name: "ฟิสิกส์ 2 (EP)" },
-        },
-      },
-      teachers: [
-        {
-          id: 6,
-          role: "teacher",
-          prefix: "mister",
-          name: {
-            "en-US": { firstName: "Niruth", lastName: "Prombutr" },
-            th: { firstName: "นิรุทธ์", lastName: "พรมบุตร" },
-          },
-          teacherID: "skt644",
-          subjectsInCharge: [
-            {
-              id: 8,
-              code: { "en-US": "SCI31205", th: "ว31205" },
-              name: {
-                "en-US": { name: "Physics 2" },
-                th: { name: "ฟิสิกส์ 2 (EP)" },
-              },
-              subjectSubgroup: {
-                name: {
-                  "en-US": "Science",
-                  th: "วิทยาศาสตร์",
-                },
-                subjectGroup: {
-                  name: {
-                    "en-US": "Science and Technology",
-                    th: "วิทยาศาสตร์และเทคโนโลยี",
-                  },
-                },
-              },
-            },
-          ],
-        },
-      ],
-      ggcLink: "https://classroom.google.com/c/MzQ4MTUyOTI4NjE0",
-      ggMeetLink: "https://meet.google.com/xoe-dkpg-gjr",
-    },
-  ];
+  const subjectList: Array<SubjectListItem> = [];
 
   return {
     props: {

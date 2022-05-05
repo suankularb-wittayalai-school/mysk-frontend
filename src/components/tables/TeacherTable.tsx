@@ -53,8 +53,7 @@ const TeacherTable = ({
             </td>
             <td>
               {teacher.classAdvisorAt
-                ? teacher.classAdvisorAt?.name[locale] ||
-                  teacher.classAdvisorAt?.name.th
+                ? teacher.classAdvisorAt?.number
                 : setShowEdit &&
                   setEditingPerson &&
                   setShowConfDelTeacher && (

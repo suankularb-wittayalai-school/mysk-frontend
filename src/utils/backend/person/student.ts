@@ -22,7 +22,7 @@ export async function createStudent(
       person: person[0]?.id,
       std_id: student.studentID.trim(),
     });
-  if (studentCreationError || !student) {
+  if (studentCreationError || !createdStudent) {
     console.error(studentCreationError);
     // delete the created person
     await supabase

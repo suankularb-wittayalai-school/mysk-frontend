@@ -65,11 +65,18 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
       }>("users")
       .select("id")
       .match({ student: editingPerson.id })
-      .limit(1);
+      .limit(1)
+      .single();
 
     // console.log(userid, editingPerson);
 
-    if (selectingError || userid.length == 0) {
+    if (selectingError) {
+      console.error(selectingError);
+      return;
+    }
+
+    if (!userid) {
+      console.error("No user found");
       return;
     }
 
@@ -100,7 +107,7 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        id: userid[0].id,
+        id: userid.id,
       }),
     });
 

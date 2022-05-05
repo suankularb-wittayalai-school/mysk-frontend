@@ -77,7 +77,8 @@ const UserSection = ({
   setShowEditProfile: Function;
   setShowLogOut: Function;
 }): JSX.Element => {
-  const locale = useRouter().locale == "th" ? "th" : "en-US";
+  const { t } = useTranslation("dashboard");
+  const locale = useRouter().locale as "en-US" | "th";
 
   // Dummybase
   const notifCount = 1;
@@ -111,16 +112,16 @@ const UserSection = ({
                       subjectGroup: user.subjectGroup.name[locale],
                     }}
                     <br />
-                    Class advisor at{" "}
+                    Class advisor at M.{" "}
                     {{
-                      classAdvisorAt: user.classAdvisorAt?.name[locale] || "",
+                      classAdvisorAt: user.classAdvisorAt?.number,
                     }}
                   </Trans>
                 ) : (
-                  <Trans i18nKey="user.classAndNo" ns="dashboard">
-                    {{ class: user.class.name[locale] }} No.
-                    {{ classNo: user.classNo }}
-                  </Trans>
+                  t("user.classAndNo", {
+                    class: user.class.number,
+                    classNo: user.classNo,
+                  })
                 )}
               </p>
             </div>

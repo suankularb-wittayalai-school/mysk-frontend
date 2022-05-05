@@ -73,9 +73,7 @@ const TeacherCard = ({
                 <MaterialIcon icon="mail" className="text-primary" />
               </div>
               <span className="max-lines-1 pl-1">
-                {teacher.subjectsInCharge.length == 0
-                  ? t("noSubjectGroup")
-                  : teacher.subjectsInCharge[0].subjectSubgroup.name[locale]}
+                {teacher.subjectGroup.name[locale]}
               </span>
             </div>
           ) : (

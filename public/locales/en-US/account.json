@@ -44,6 +44,7 @@
         "student": "Student",
         "teacher": "Teacher"
       },
+      "teacherID": "Teacher ID",
       "subjectGroup": "Subject group",
       "classAdvisorAt": {
         "label": "Class advisor at",
@@ -53,7 +54,8 @@
     "general": {
       "title": "General Information",
       "citizenID": "Citizen ID",
-      "birthdate": "Birth date"
+      "birthDate": "Birth date",
+      "email": "School email"
     }
   },
   "dialog": {
@@ -62,6 +64,7 @@
       "supportingText": "If you are still using the default password, changing it is highly recommended.",
       "originalPwd": "Current password",
       "newPwd": "New password",
+      "newPwd_error": "Lengthen to at least 8 characters.",
       "confirmNewPwd": "Confirm new password",
       "action": {
         "cancel": "Cancel",

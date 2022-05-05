@@ -60,11 +60,6 @@ const StudentHome: NextPage<{
   const [showLogOut, setShowLogOut] = useState<boolean>(false);
   const user = useStudentAccount();
 
-  async function handleLogout() {
-    await supabase.auth.signOut();
-    router.push("/");
-  }
-
   if (!user) return <></>;
 
   return (
@@ -115,287 +110,24 @@ const StudentHome: NextPage<{
         show={showEditProfile}
         onClose={() => setShowEditProfile(false)}
       />
-      <LogOutDialog
-        show={showLogOut}
-        onClose={() => {
-          handleLogout();
-          setShowLogOut(false);
-        }}
-      />
+      <LogOutDialog show={showLogOut} onClose={() => setShowLogOut(false)} />
     </>
   );
 };
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
-  const news: NewsList = [
-    {
-      id: 7,
-      type: "form",
-      frequency: "once",
-      postDate: new Date(2022, 2, 20),
-      done: false,
-      content: {
-        "en-US": {
-          title: "Student Information",
-          supportingText:
-            "Edit and confirm your student information on the Data Management Center (DMC)",
-        },
-        th: {
-          title: "ข้อมูลนักเรียนรายบุคคล",
-          supportingText: "ตรวจสอบและยืนยันข้อมูลนักเรียนรายบุคคล (DMC)",
-        },
-      },
-    },
-    {
-      id: 6,
-      type: "form",
-      frequency: "once",
-      postDate: new Date(2022, 2, 20),
-      done: true,
-      content: {
-        "en-US": {
-          title: "Classes Feedback",
-          supportingText:
-            "All personal information will be kept as a secret. For EPlus+ students, give feedback through co-teachers.",
-        },
-        th: {
-          title: "การจัดการเรียนการสอนออนไลน์",
-          supportingText:
-            "ข้อมูลส่วนบุคคลของนักเรียนจะถูกเก็บไว้เป็นความลับ สำหรับโครงการ EPlus+ ให้ประเมินผ่าน co-teacher",
-        },
-      },
-    },
-    {
-      id: 5,
-      type: "payment",
-      postDate: new Date(2022, 0, 7),
-      done: true,
-      content: {
-        "en-US": {
-          title: "School Maintainance Payment",
-          supportingText:
-            "Enter the School ICT system to help contribute to the maintenance of our school.",
-        },
-        th: {
-          title: "การชำระเงินบำรุงการศึกษา",
-          supportingText: "เข้าระบบ School ICT เพื่อชําระเงินบํารุงการศึกษา",
-        },
-      },
-    },
-    {
-      id: 4,
-      type: "news",
-      postDate: new Date(2021, 8, 16),
-      content: {
-        "en-US": {
-          title: "Certificates Announcement",
-          supportingText:
-            "Announcement of the 2020 Suankularb Wittayalai winners of certificates.",
-        },
-        th: {
-          title: "ประกาศเกียรติคุณ",
-          supportingText:
-            "ประกาศเกียรติคุณโรงเรียนสวนกุหลาบวิทยาลัย ประจำปีการศึกษา 2563",
-        },
-      },
-    },
-  ];
+  const news: NewsList = [];
   const schedule: StudentSchedule = {
+    id: 0,
     content: [
       {
         day: getDay(new Date()),
-        content: [
-          { startTime: 1, duration: 1 },
-          {
-            startTime: 2,
-            duration: 1,
-            subject: {
-              name: {
-                "en-US": {
-                  name: "Chemistry",
-                  shortName: "Chem",
-                },
-                th: {
-                  name: "เคมี",
-                  shortName: "เคมี",
-                },
-              },
-              teachers: [
-                {
-                  name: {
-                    "en-US": {
-                      firstName: "Thanthapatra",
-                      lastName: "Bunchuay",
-                    },
-                    th: {
-                      firstName: "ธันฐภัทร",
-                      lastName: "บุญช่วย",
-                    },
-                  },
-                },
-              ],
-            },
-          },
-        ],
+        content: [],
       },
     ],
   };
-  const teachers: Array<Teacher> = [
-    {
-      id: 0,
-      role: "teacher",
-      prefix: "mister",
-      name: {
-        "en-US": {
-          firstName: "Taradol",
-          lastName: "Ranarintr",
-        },
-        th: {
-          firstName: "ธราดล",
-          lastName: "รานรินทร์",
-        },
-      },
-      profile: "/images/dummybase/taradol.webp",
-      teacherID: "skt184",
-      classAdvisorAt: {
-        id: 405,
-        name: {
-          "en-US": "M.405",
-          th: "ม.405",
-        },
-      },
-      subjectsInCharge: [],
-    },
-    {
-      id: 1,
-      role: "teacher",
-      prefix: "mister",
-      name: {
-        "en-US": {
-          firstName: "Thanakorn",
-          lastName: "Atjanawat",
-        },
-        th: {
-          firstName: "ธนกร",
-          lastName: "อรรจนาวัฒน์",
-        },
-      },
-      profile: "/images/dummybase/thanakorn.webp",
-      teacherID: "skt416",
-      classAdvisorAt: {
-        id: 404,
-        name: {
-          "en-US": "M.040",
-          th: "ม.404",
-        },
-      },
-      subjectsInCharge: [],
-    },
-    {
-      id: 2,
-      role: "teacher",
-      prefix: "missus",
-      name: {
-        "en-US": {
-          firstName: "Mattana",
-          lastName: "Tatanyang",
-        },
-        th: {
-          firstName: "มัทนา",
-          lastName: "ต๊ะตันยาง",
-        },
-      },
-      profile: "/images/dummybase/mattana.webp",
-      teacherID: "skt812",
-      classAdvisorAt: {
-        id: 405,
-        name: {
-          "en-US": "M.405",
-          th: "ม.405",
-        },
-      },
-      subjectsInCharge: [],
-    },
-    {
-      id: 3,
-      role: "teacher",
-      prefix: "mister",
-      name: {
-        "en-US": {
-          firstName: "John",
-          middleName: "Peter",
-          lastName: "Smith",
-        },
-        th: {
-          firstName: "จอห์น",
-          middleName: "ปีเตอร์",
-          lastName: "สมิธ",
-        },
-      },
-      teacherID: "skt8966",
-      subjectsInCharge: [],
-    },
-  ];
-  const classAdvisors: Array<Teacher> = [
-    {
-      id: 2,
-      role: "teacher",
-      prefix: "mister",
-      name: {
-        "en-US": { firstName: "Taradol", lastName: "Ranarintr" },
-        th: { firstName: "ธราดล", lastName: "รานรินทร์" },
-      },
-      profile: "/images/dummybase/taradol.webp",
-      teacherID: "skt551",
-      classAdvisorAt: {
-        id: 405,
-        name: {
-          "en-US": "M.405",
-          th: "ม.405",
-        },
-      },
-      subjectsInCharge: [
-        {
-          id: 25,
-          code: {
-            "en-US": "SOC31152",
-            th: "ส31152",
-          },
-          name: {
-            "en-US": {
-              name: "Social Studies 2 (World)",
-            },
-            th: { name: "สังคมศึกษา 2 (พลโลก)" },
-          },
-          subjectSubgroup: {
-            name: { "en-US": "Social Studies", th: "สังคมศึกษา" },
-            subjectGroup: {
-              name: { "en-US": "Social Studies", th: "สังคมศึกษา" },
-            },
-          },
-        },
-      ],
-    },
-    {
-      id: 3,
-      role: "teacher",
-      prefix: "missus",
-      name: {
-        "en-US": { firstName: "Mattana", lastName: "Tatanyang" },
-        th: { firstName: "มัทนา", lastName: "ต๊ะตันยาง" },
-      },
-      profile: "/images/dummybase/mattana.webp",
-      teacherID: "skt196",
-      classAdvisorAt: {
-        id: 405,
-        name: {
-          "en-US": "M.405",
-          th: "ม.405",
-        },
-      },
-      subjectsInCharge: [],
-    },
-  ];
+  const teachers: Array<Teacher> = [];
+  const classAdvisors: Array<Teacher> = [];
 
   return {
     props: {

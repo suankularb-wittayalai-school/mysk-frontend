@@ -25,7 +25,7 @@ import {
   TeacherTable,
 } from "@utils/types/database/person";
 
-// Helper functions
+// Helper
 import { createStudent } from "@utils/backend/person/student";
 import { createTeacher } from "@utils/backend/person/teacher";
 import { useSubjectGroupOption } from "@utils/hooks/subject";
@@ -50,7 +50,7 @@ const EditPersonDialog = ({
   userRole?: Role;
   person?: Student | Teacher;
 }): JSX.Element => {
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const locale = useRouter().locale as "en-US" | "th";
   const { t } = useTranslation(["account", "admin"]);
 
   // Form control
@@ -64,22 +64,21 @@ const EditPersonDialog = ({
     enLastName: "",
     studentID: "",
     teacherID: "",
-    citizen_id: "",
+    citizenID: "",
     birthdate: "",
     role: "student",
-    class: 0,
-    classNo: "",
     subjectGroup: 0,
-    classAdvisorAt: 0,
     email: "",
   });
   const subjectGroups = useSubjectGroupOption();
 
+  // Set the role dropdown to the role of the user
   useEffect(
     () => userRole && setForm((form) => ({ ...form, role: userRole })),
     [userRole]
   );
 
+  // Populate the form control with data if mode is edit
   useEffect(() => {
     if (mode == "edit" && person) {
       setForm({
@@ -93,14 +92,9 @@ const EditPersonDialog = ({
         studentID: person.role == "student" ? person.studentID : "",
         teacherID: person.role == "teacher" ? person.teacherID : "",
         role: person.role,
-        class: person.role == "student" ? person.class.id : 0,
-        classNo: person.role == "student" ? person.classNo.toString() : "",
-        citizen_id: person.citizenID,
+        citizenID: person.citizenID,
         birthdate: person.birthdate,
-        // TODO: Use data from `person` once `subjectGroup` exists on type `Teacher`
         subjectGroup: person.role == "teacher" ? person.subjectGroup.id : 0,
-        classAdvisorAt:
-          person.role == "teacher" ? person.classAdvisorAt?.id || 0 : 0,
         email: person.contacts.filter((contact) => contact.type == "Email")[0]
           ?.value,
       });
@@ -118,26 +112,18 @@ const EditPersonDialog = ({
     },
   ];
 
-  function validateAndSend() {
-    if (!form.classNo && form.role == "student") {
-      return false;
-    } else {
-      const classNo = parseInt(form.classNo);
-      if (classNo < 1 || classNo > 75) return false;
-    }
-
+  function validate(): boolean {
     if (!form.prefix) return false;
     if (!form.thFirstName) return false;
     if (!form.thLastName) return false;
-    if (form.studentID.length != 5 && form.role == "student") return false;
-    if (form.teacherID.length < 4 && form.role == "teacher") return false;
-    // if (!form.class) return false;
+    if (form.role == "student" && form.studentID.length != 5) return false;
+    if (form.role == "teacher" && form.teacherID.length < 4) return false;
 
     return true;
   }
 
   async function handleAdd() {
-    if (!validateAndSend()) return;
+    if (!validate()) return;
 
     // console.log(form);
     if (mode == "add") {
@@ -159,16 +145,13 @@ const EditPersonDialog = ({
               },
             },
             studentID: form.studentID,
-            citizenID: form.citizen_id,
+            citizenID: form.citizenID,
             birthdate: form.birthdate,
             role: "student",
-            classNo: parseInt(form.classNo),
+            classNo: 0,
             class: {
-              id: form.class,
-              name: {
-                "en-US": "",
-                th: "",
-              },
+              id: 0,
+              number: 0,
             },
             contacts: [
               {
@@ -208,7 +191,7 @@ const EditPersonDialog = ({
               },
             },
             teacherID: form.teacherID,
-            citizenID: form.citizen_id,
+            citizenID: form.citizenID,
             birthdate: form.birthdate,
             role: "teacher",
             subjectGroup: {
@@ -219,11 +202,8 @@ const EditPersonDialog = ({
               },
             },
             classAdvisorAt: {
-              id: form.classAdvisorAt,
-              name: {
-                "en-US": "",
-                th: "",
-              },
+              id: 0,
+              number: 0,
             },
             contacts: [
               {
@@ -250,7 +230,6 @@ const EditPersonDialog = ({
         .from<PersonDB>("people")
         .select("id")
         .match({ citizen_id: person?.citizenID });
-      // console.log(data);
       if (error || !data) {
         console.error(error);
         return;
@@ -275,7 +254,7 @@ const EditPersonDialog = ({
           middle_name_en: form.enMiddleName,
           last_name_en: form.enLastName,
           birthdate: form.birthdate,
-          citizen_id: form.citizen_id,
+          citizen_id: form.citizenID,
         })
         .match({ id: personID });
       if (updatePersonError || !updatedPerson) {
@@ -293,10 +272,6 @@ const EditPersonDialog = ({
         if (studentUpdateError || !student) {
           console.error(studentUpdateError);
         }
-
-        // if (form.email){
-        //   await supabase.auth.update({});
-        // }
       } else if (form.role == "teacher" && person?.role == "teacher") {
         const { data: teacher, error: teacherUpdateError } = await supabase
           .from<TeacherTable>("teacher")
@@ -334,11 +309,17 @@ const EditPersonDialog = ({
             ns: "admin",
           }),
           type: "submit",
+          disabled: !validate(),
         },
       ]}
     >
       {/* Local name */}
-      <DialogSection name={t("profile.name.title")} isDoubleColumn>
+      <DialogSection
+        name="name"
+        title={t("profile.name.title")}
+        isDoubleColumn
+        hasNoGap
+      >
         <Dropdown
           name="prefix"
           label={t("profile.name.prefix.label")}
@@ -387,7 +368,12 @@ const EditPersonDialog = ({
       </DialogSection>
 
       {/* English name */}
-      <DialogSection name={t("profile.enName.title")} isDoubleColumn>
+      <DialogSection
+        name="en-name"
+        title={t("profile.enName.title")}
+        isDoubleColumn
+        hasNoGap
+      >
         <KeyboardInput
           name="en-first-name"
           type="text"
@@ -418,18 +404,23 @@ const EditPersonDialog = ({
       </DialogSection>
 
       {/* General Information */}
-      <DialogSection name={t("profile.general.title")} isDoubleColumn>
+      <DialogSection
+        name="general"
+        title={t("profile.general.title")}
+        isDoubleColumn
+        hasNoGap
+      >
         <KeyboardInput
           name="citizen-id"
           type="text"
           label={t("profile.general.citizenID")}
           defaultValue={mode == "edit" ? person?.citizenID : undefined}
-          onChange={(e: string) => setForm({ ...form, citizen_id: e })}
+          onChange={(e: string) => setForm({ ...form, citizenID: e })}
         />
         <NativeInput
-          name="birthdate"
+          name="birth-date"
           type="date"
-          label={t("profile.general.birthdate")}
+          label={t("profile.general.birthDate")}
           defaultValue={mode == "edit" ? person?.birthdate : undefined}
           onChange={(e: string) => setForm({ ...form, birthdate: e })}
         />
@@ -447,7 +438,12 @@ const EditPersonDialog = ({
       </DialogSection>
 
       {/* Role */}
-      <DialogSection name={t("profile.role.title")} isDoubleColumn>
+      <DialogSection
+        name="role"
+        title={t("profile.role.title")}
+        isDoubleColumn
+        hasNoGap
+      >
         <Dropdown
           name="role"
           label={t("profile.role.role.label")}
@@ -477,36 +473,18 @@ const EditPersonDialog = ({
                   : undefined
               }
             />
-            <Dropdown
-              name="class"
-              label={t("profile.class.class")}
-              options={classes.map((classItem) => ({
-                value: classItem.id,
-                label: classItem.name[locale],
-              }))}
-              defaultValue={
-                person?.role == "student" ? person?.class.id : undefined
-              }
-              onChange={(e: number) => setForm({ ...form, class: e })}
-            />
-            <KeyboardInput
-              name="class-no"
-              type="number"
-              label={t("profile.class.classNo")}
-              attr={{
-                min: 1,
-                max: 50,
-              }}
-              defaultValue={
-                person?.role == "student"
-                  ? person?.classNo.toString()
-                  : undefined
-              }
-              onChange={(e: string) => setForm({ ...form, classNo: e })}
-            />
           </>
         ) : (
           <>
+            <KeyboardInput
+              name="teacher-id"
+              type="text"
+              label={t("profile.role.teacherID")}
+              onChange={(e: string) => setForm({ ...form, teacherID: e })}
+              defaultValue={
+                person?.role == "teacher" ? person?.teacherID : undefined
+              }
+            />
             <Dropdown
               name="subject-group"
               label={t("profile.role.subjectGroup")}
@@ -517,36 +495,6 @@ const EditPersonDialog = ({
               onChange={(e: number) => setForm({ ...form, subjectGroup: e })}
               defaultValue={
                 person?.role == "teacher" ? person?.subjectGroup.id : undefined
-              }
-            />
-            <Dropdown
-              name="class-counselor-at"
-              label={t("profile.role.classAdvisorAt.label")}
-              options={[
-                {
-                  value: 0,
-                  label: t("profile.role.classAdvisorAt.none"),
-                },
-              ].concat(
-                classes.map((classItem) => ({
-                  value: classItem.id,
-                  label: classItem.name[locale],
-                }))
-              )}
-              defaultValue={
-                person?.role == "teacher"
-                  ? person.classAdvisorAt?.id
-                  : undefined
-              }
-              onChange={(e: number) => setForm({ ...form, classAdvisorAt: e })}
-            />
-            <KeyboardInput
-              name="teacher-id"
-              type="text"
-              label={t("profile.role.teacherID")}
-              onChange={(e: string) => setForm({ ...form, teacherID: e })}
-              defaultValue={
-                person?.role == "teacher" ? person?.teacherID : undefined
               }
             />
           </>

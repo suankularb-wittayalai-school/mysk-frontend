@@ -40,7 +40,7 @@ const AddPeriod = ({
   onSubmit: (formData: FormData) => void;
 }): JSX.Element => {
   const { t } = useTranslation(["schedule", "common"]);
-  const locale = useRouter().locale == "en-US" ? "en-US" : "th";
+  const locale = useRouter().locale as "en-US" | "th";
   const [showDiscard, setShowDiscard] = useState<boolean>(false);
 
   // Form control
@@ -174,55 +174,9 @@ const TeacherSchedule: NextPage<{ schedule: StudentSchedule }> = ({
   schedule: fetchedSchedule,
 }) => {
   const { t } = useTranslation("schedule");
+  const router = useRouter();
   const [schedule, setSchedule] = useState<StudentSchedule>(fetchedSchedule);
   const [showAddPeriod, setShowAddPeriod] = useState<boolean>(false);
-
-  function addSchedulePeriod(formData: FormData) {
-    const day = parseInt(formData.get("day")?.toString() || "-1");
-    const periodStart = parseInt(
-      formData.get("period-start")?.toString() || "-1"
-    );
-    const duration = parseInt(formData.get("duration")?.toString() || "-1");
-
-    setSchedule({
-      ...schedule,
-      content: schedule.content.map((scheduleRow) => {
-        if (scheduleRow.day == day) {
-          // Replace the Period with the `periodStart` in question
-          return {
-            // Keep Day the same
-            ...scheduleRow,
-
-            content: scheduleRow.content
-              // Remove the old Periods that overlap this new Period
-              .filter(
-                (schedulePeriod) =>
-                  schedulePeriod.startTime + schedulePeriod.duration - 1 <
-                    periodStart ||
-                  schedulePeriod.startTime >= periodStart + duration
-              )
-              // Append the new Period
-              .concat([
-                {
-                  startTime: periodStart,
-                  duration,
-                  // TODO: Fetch this
-                  subject: {
-                    name: {
-                      "en-US": { name: "New Period" },
-                      th: { name: "คาบสอนใหม่" },
-                    },
-                    teachers: [],
-                  },
-                },
-              ]),
-          };
-        } else {
-          return scheduleRow;
-        }
-      }),
-    });
-  }
 
   return (
     <>
@@ -256,7 +210,10 @@ const TeacherSchedule: NextPage<{ schedule: StudentSchedule }> = ({
       <AddPeriod
         show={showAddPeriod}
         onClose={() => setShowAddPeriod(false)}
-        onSubmit={(formData: FormData) => addSchedulePeriod(formData)}
+        onSubmit={(formData: FormData) => {
+          // TODO: Send and refresh
+          router.push(router.asPath);
+        }}
       />
     </>
   );
@@ -267,42 +224,11 @@ export const getServerSideProps: GetServerSideProps = async ({
   params,
 }) => {
   const schedule: StudentSchedule = {
+    id: 0,
     content: [
       {
         day: 1,
-        content: [
-          { startTime: 1, duration: 1 },
-          {
-            startTime: 2,
-            duration: 1,
-            subject: {
-              name: {
-                "en-US": {
-                  name: "Chemistry",
-                  shortName: "Chem",
-                },
-                th: {
-                  name: "เคมี",
-                  shortName: "เคมี",
-                },
-              },
-              teachers: [
-                {
-                  name: {
-                    "en-US": {
-                      firstName: "Thanthapatra",
-                      lastName: "Bunchuay",
-                    },
-                    th: {
-                      firstName: "ธันฐภัทร",
-                      lastName: "บุญช่วย",
-                    },
-                  },
-                },
-              ],
-            },
-          },
-        ],
+        content: [],
       },
       {
         day: 2,

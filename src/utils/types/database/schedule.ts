@@ -42,17 +42,17 @@ export interface ScheduleRowTable {
 }
 
 export interface ScheduleDB {
-    id: number;
-    created_at: string;
-    schedule_rows: ScheduleRowDB[];
-    year: number;
-    semester: number;
+  id: number;
+  created_at: string;
+  schedule_rows: ScheduleRowDB[];
+  year: number;
+  semester: number;
 }
 
 export interface ScheduleTable {
-    id: number;
-    created_at: string;
-    schedule_rows: number[];
-    year: number;
-    semester: number;
+  id: number;
+  created_at: string;
+  schedule_rows: number[];
+  year: number;
+  semester: number;
 }

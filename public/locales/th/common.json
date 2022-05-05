@@ -23,6 +23,17 @@
       "Mrs.": "นาง"
     }
   },
+  "class": "ม.{{number}}",
+  "contact": {
+    "phone": "โทรศัพท์",
+    "email": "อีเมล",
+    "website": "เว็บไซต์",
+    "facebook": "Facebook",
+    "line": "LINE",
+    "instagram": "Instagram",
+    "discord": "Discord",
+    "other": "อื่นๆ"
+  },
   "datetime": {
     "day": {
       "0": "วันอาทิตย์",
@@ -42,6 +53,49 @@
   },
   "seeDetails": "ดูรายละเอียด",
   "dialog": {
+    "addContact": {
+      "title": "เพิ่มช่องทางการติดต่อ",
+      "type": "แพลตฟอร์ม",
+      "nameTH": "ป้ายกำกับการติดต่อ",
+      "nameEN": "ป้ายกำกับการติดต่อภาษาอังกฤษ",
+      "value": {
+        "phone": "เบอร์โทรศัพท์",
+        "email": "ที่อยู่อีเมล",
+        "website": "URL",
+        "facebook": "ชื่อ Facebook",
+        "line": "รหัสเชิญเข้ากลุ่ม/LINE ID",
+        "line_helper": "รหัส 10 หลักอยู่ท้ายลิงก์เชิญ",
+        "instagram": "ชื่อผู้ใช้ Instagram",
+        "discord": "รหัสเชิญเข้า Discord",
+        "discord_helper": "รหัส 8 หลักอยู่ท้ายลิงก์เชิญ",
+        "other": "ชื่อ/ID ติดต่อ"
+      },
+      "value_error": "ค่าไม่ถูกต้อง",
+      "includes": {
+        "title": "กลุ่มที่อนุญาตให้เข้าถึง",
+        "students": "นักเรียน",
+        "teachers": "อาจารย์",
+        "parents": "ผู้ปกครอง",
+        "other": "อื่นๆ"
+      },
+      "action": {
+        "cancel": "ยกเลิก",
+        "add": "เพิ่ม"
+      }
+    },
+    "addStudent": {
+      "title": "เพิ่มนักเรียน",
+      "supportingText": "ค้นหานักเรียนที่จะเพิ่มโดยใส่เลขประจำตัวนักเรียน",
+      "studentID": "เลขประจำตัวนักเรียน",
+      "searchResult": {
+        "title": "ผลลัพธ์การค้นหา",
+        "notFound": "ไม่พบนักเรียนที่มีเลขประจำตัวนี้"
+      },
+      "action": {
+        "cancel": "ยกเลิก",
+        "add": "เพิ่ม"
+      }
+    },
     "addTeacher": {
       "title": "เพิ่มอาจารย์",
       "supportingText": "เลือกกลุ่มสาระการเรียนรู้เพื่อกรองอาจารย์ตามกลุ่มสาระการเรียนรู้",

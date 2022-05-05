@@ -53,7 +53,6 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
   const [showConfDel, setShowConfDel] = useState<boolean>(false);
 
   async function handleDelete() {
-    // console.log(editingPerson);
     if (!editingPerson) {
       return;
     }
@@ -66,32 +65,34 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
         teacher: number;
       }>("users")
       .select("id")
-      .match({ teacher: editingPerson.id })
-      .limit(1);
+      .match({ student: editingPerson.id })
+      .limit(1)
+      .single();
 
     // console.log(userid, editingPerson);
 
-    if (selectingError || userid.length == 0) {
+    if (selectingError) {
+      console.error(selectingError);
       return;
     }
 
-    const {
-      data: deletingTeacher,
-      error: teacherDeletingError,
-    } = await supabase
-      .from<TeacherTableType>("teacher")
-      .delete()
-      .match({ id: editingPerson.id });
+    if (!userid) {
+      console.error("No user found");
+      return;
+    }
+
+    const { data: deletingTeacher, error: teacherDeletingError } =
+      await supabase
+        .from<TeacherTableType>("teacher")
+        .delete()
+        .match({ id: editingPerson.id });
     if (teacherDeletingError || !deletingTeacher) {
       console.error(teacherDeletingError);
       return;
     }
 
     // delete the person related to the teacher
-    const {
-      data: deletingPerson,
-      error: personDeletingError,
-    } = await supabase
+    const { data: deletingPerson, error: personDeletingError } = await supabase
       .from<PersonTable>("people")
       .delete()
       .match({ id: deletingTeacher[0].person });
@@ -107,7 +108,7 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        id: userid[0].id,
+        id: userid.id,
       }),
     });
 

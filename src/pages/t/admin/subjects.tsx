@@ -48,10 +48,7 @@ const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
     // console.log(editingSubject);
     // delete the syllabus if it exists
     if (editingSubject?.syllabus) {
-      const {
-        data: syllabus,
-        error: syllabusError,
-      } = await supabase.storage
+      const { data: syllabus, error: syllabusError } = await supabase.storage
         .from("syllabus")
         .remove([editingSubject.syllabus.toString()]);
       if (syllabusError) {
@@ -86,7 +83,7 @@ const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
         Title={
           <Title
             name={{ title: t("subjectList.title") }}
-            pageIcon={<MaterialIcon icon="scho" />}
+            pageIcon={<MaterialIcon icon="school" />}
             backGoesTo="/t/admin"
             LinkElement={Link}
             key="title"

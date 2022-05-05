@@ -54,8 +54,6 @@ const TeacherHome: NextPage<{
   const [showLogOut, setShowLogOut] = useState<boolean>(false);
   const user = useTeacherAccount();
 
-  // const session = useSession();
-
   async function handleLogout() {
     await supabase.auth.signOut();
     router.push("/");
@@ -110,13 +108,7 @@ const TeacherHome: NextPage<{
         show={showEditProfile}
         onClose={() => setShowEditProfile(false)}
       />
-      <LogOutDialog
-        show={showLogOut}
-        onClose={() => {
-          handleLogout();
-          setShowLogOut(false);
-        }}
-      />
+      <LogOutDialog show={showLogOut} onClose={() => setShowLogOut(false)} />
     </>
   );
 };
@@ -172,6 +164,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
     },
   ];
   const schedule: StudentSchedule = {
+    id: 0,
     content: [
       {
         day: getDay(new Date()),

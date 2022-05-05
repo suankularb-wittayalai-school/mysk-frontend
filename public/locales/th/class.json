@@ -1,5 +1,24 @@
 {
   "title": "ม.{{className}}",
+  "item": {
+    "school": {
+      "title": "โรงเรียน",
+      "classNo": "เลขห้องเรียน",
+      "classNo_helper": "ต้องมี 3 หลัก เช่น 408",
+      "classNo_error": "ไม่ถูกต้อง ต้องมี 3 หลัก เช่น 408",
+      "year": "ปีการศึกษา",
+      "semester": "ภาคเรียน"
+    },
+    "people": {
+      "title": "บุคคล",
+      "classAdvisors": "อาจารย์ที่ปรึกษา",
+      "students": "นักเรียน"
+    },
+    "contacts": {
+      "title": "ช่องทางการติดต่อ",
+      "contacts": "ช่องทางการติดต่อ"
+    }
+  },
   "classAdvisors": {
     "title": "ครูที่ปรึกษา",
     "addAdvisors": "เพิ่มครูที่ปรึกษา"
