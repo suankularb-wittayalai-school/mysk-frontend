@@ -318,6 +318,11 @@ const EditClassDialog = ({
             contacts: [
               ...chipLists.contacts,
               {
+                // (@SiravitPhokeed)
+                // The current timestamp is used as the ID for Input Chip List
+                // as other options would have been too slow/complicated.
+                // Using ID from the database would require that this Contact
+                // is already on the database, which it shouldn’t be.
                 id: new Date().toISOString(),
                 name: contact.name[locale] || contact.name.th,
               },
