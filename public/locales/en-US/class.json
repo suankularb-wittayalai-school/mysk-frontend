@@ -1,6 +1,24 @@
 {
   "title": "M.{{className}}",
-  "item": {},
+  "item": {
+    "school": {
+      "title": "School",
+      "classNo": "Class number",
+      "classNo_helper": "Must be 3-digit, i.e. 408.",
+      "classNo_error": "Invalid. Should be 3-digit, i.e. 408.",
+      "year": "Academic year",
+      "semester": "Semester"
+    },
+    "people": {
+      "title": "People",
+      "classAdvisors": "Class advisors",
+      "students": "Students"
+    },
+    "contacts": {
+      "title": "Contacts",
+      "contacts": "Contacts"
+    }
+  },
   "classAdvisors": {
     "title": "Class advisors",
     "addAdvisors": "Add advisor"

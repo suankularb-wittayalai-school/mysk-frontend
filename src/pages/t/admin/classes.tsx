@@ -122,7 +122,6 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
       <EditClassDialog
         show={showAdd}
         onClose={() => setShowAdd(false)}
-        // TODO: Refetch classes here ↓
         onSubmit={() => {
           setShowAdd(false);
           router.replace(router.asPath);
@@ -132,7 +131,6 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
       <ConfirmDelete
         show={showConfDel}
         onClose={() => setShowConfDel(false)}
-        // TODO: Refetch classes here ↓
         onSubmit={() => {
           setShowConfDel(false);
           handleDelete();
@@ -169,6 +167,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
         "common",
         "admin",
         "account",
+        "class",
       ])),
       allClasses,
     },

@@ -3,16 +3,12 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
 
-// Supabase client
-import { supabase } from "@utils/supabaseClient";
-
 // SK Components
 import {
   ChipInputList,
   Dialog,
   DialogSection,
   KeyboardInput,
-  NativeInput,
 } from "@suankularb-components/react";
 
 // Components
@@ -161,13 +157,18 @@ const EditClassDialog = ({
         ]}
       >
         {/* School */}
-        <DialogSection name="school" title="School" isDoubleColumn hasNoGap>
+        <DialogSection
+          name="school"
+          title={t("item.school.title")}
+          isDoubleColumn
+          hasNoGap
+        >
           <KeyboardInput
             name="number"
             type="text"
-            label="Class number"
-            helperMsg="Must be 3-digit, i.e. 408."
-            errorMsg="Invalid. Should be 3-digit, i.e. 408."
+            label={t("item.school.classNo")}
+            helperMsg={t("item.school.classNo_helper")}
+            errorMsg={t("item.school.classNo_error")}
             useAutoMsg
             onChange={(e: string) => setForm({ ...form, number: Number(e) })}
             defaultValue={classItem ? classItem.number : 101}
@@ -176,7 +177,7 @@ const EditClassDialog = ({
           <KeyboardInput
             name="year"
             type="number"
-            label="Academic year"
+            label={t("item.school.year")}
             onChange={(e: string) => setForm({ ...form, year: Number(e) })}
             defaultValue={classItem ? classItem.year : new Date().getFullYear()}
             attr={{ min: 2005 }}
@@ -184,7 +185,7 @@ const EditClassDialog = ({
           <KeyboardInput
             name="name-en"
             type="number"
-            label="Semester"
+            label={t("item.school.semester")}
             onChange={(e: string) =>
               setForm({ ...form, semester: Number(e) as 1 | 2 })
             }
@@ -200,9 +201,9 @@ const EditClassDialog = ({
         </DialogSection>
 
         {/* Personnel */}
-        <DialogSection name="personnel" title="Personnel" hasNoGap>
+        <DialogSection name="people" title={t("item.people.title")} hasNoGap>
           <div className="flex flex-col gap-2">
-            <h3 className="!text-base">Class advisors</h3>
+            <h3 className="!text-base">{t("item.people.classAdvisors")}</h3>
             <ChipInputList
               list={chipLists.classAdvisors}
               onAdd={() => setShowAddTeacher(true)}
@@ -221,7 +222,7 @@ const EditClassDialog = ({
             />
           </div>
           <div className="flex flex-col gap-2">
-            <h3 className="!text-base">Students</h3>
+            <h3 className="!text-base">{t("item.people.students")}</h3>
             <ChipInputList
               list={chipLists.students}
               onAdd={() => setShowAddStudent(true)}
@@ -242,9 +243,13 @@ const EditClassDialog = ({
         </DialogSection>
 
         {/* Personnel */}
-        <DialogSection name="contacts" title="Contacts" hasNoGap>
+        <DialogSection
+          name="contacts"
+          title={t("item.contacts.title")}
+          hasNoGap
+        >
           <div className="flex flex-col gap-2">
-            <h3 className="!text-base">Contacts</h3>
+            <h3 className="!text-base">{t("item.contacts.contacts")}</h3>
             <ChipInputList
               list={chipLists.contacts}
               onAdd={() => setShowAddContact(true)}
