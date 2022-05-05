@@ -180,6 +180,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     year: 2022,
     semester: 2,
     schedule: {
+      id: 0,
       content: [],
     },
     subjects: [],

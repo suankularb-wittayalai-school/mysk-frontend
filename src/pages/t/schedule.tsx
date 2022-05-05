@@ -224,6 +224,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   params,
 }) => {
   const schedule: StudentSchedule = {
+    id: 0,
     content: [
       {
         day: 1,

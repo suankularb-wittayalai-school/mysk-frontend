@@ -118,6 +118,7 @@ const StudentHome: NextPage<{
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
   const news: NewsList = [];
   const schedule: StudentSchedule = {
+    id: 0,
     content: [
       {
         day: getDay(new Date()),
