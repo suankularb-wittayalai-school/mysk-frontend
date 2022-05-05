@@ -10,6 +10,7 @@ import { Class } from "@utils/types/class";
 
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
+import { getLocaleYear } from "@utils/helpers/date";
 
 const ClassTable = ({
   classes,
@@ -41,9 +42,12 @@ const ClassTable = ({
       <tbody>
         {classes.map((classItem) => (
           <tr key={classItem.id}>
+            {/* Class number */}
             <td className="!text-left">
               {t("class", { ns: "common", number: classItem.number })}
             </td>
+
+            {/* Class advisors */}
             <td className="!text-left">
               {classItem.classAdvisors.length > 0 &&
                 nameJoiner(locale, classItem.classAdvisors[0].name)}
@@ -55,8 +59,14 @@ const ClassTable = ({
                   `+${classItem.classAdvisors.length - 1}`}
               </abbr>
             </td>
-            <td>{classItem.year}</td>
+
+            {/* Academic year */}
+            <td>{getLocaleYear(locale, classItem.year)}</td>
+
+            {/* Semester */}
             <td>{classItem.semester}</td>
+
+            {/* Actions */}
             {setShowEdit && setEditingClass && setShowConfDel && (
               <td>
                 <div className="flex flex-row justify-center gap-2">
