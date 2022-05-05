@@ -64,6 +64,7 @@
       "supportingText": "If you are still using the default password, changing it is highly recommended.",
       "originalPwd": "Current password",
       "newPwd": "New password",
+      "newPwd_error": "Lengthen to at least 8 characters.",
       "confirmNewPwd": "Confirm new password",
       "action": {
         "cancel": "Cancel",
