@@ -72,13 +72,11 @@ const AddStudentDialog = ({
       <DialogSection hasNoGap>
         <KeyboardInput
           name="student-id"
-          type="text"
+          type="number"
           label={t("dialog.addStudent.studentID")}
           onChange={(e) => setStudentID(e)}
-          attr={{ minLength: 5, maxLength: 5 }}
+          attr={{ min: 10000, max: 99999 }}
         />
-      </DialogSection>
-      <DialogSection hasNoGap>
         <div>
           <h3 className="!text-base">
             {t("dialog.addStudent.searchResult.title")}
