@@ -111,7 +111,6 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
       <EditClassDialog
         show={showEdit}
         onClose={() => setShowEdit(false)}
-        // TODO: Refetch classes here ↓
         onSubmit={() => {
           setShowEdit(false);
           router.replace(router.asPath);

@@ -63,8 +63,9 @@ const ClassTable = ({
                   <Button
                     name={t("classList.table.action.edit")}
                     type="text"
-                    iconOnly
                     icon={<MaterialIcon icon="edit" />}
+                    iconOnly
+                    disabled
                     onClick={() => {
                       setShowEdit(true);
                       setEditingClass(classItem);
@@ -72,8 +73,8 @@ const ClassTable = ({
                   />
                   <Button
                     type="text"
-                    iconOnly
                     icon={<MaterialIcon icon="delete" />}
+                    iconOnly
                     isDangerous
                     onClick={() => {
                       setShowConfDel(true);
