@@ -1,5 +1,5 @@
 // Modules
-import { useTranslation } from "next-i18next";
+import { Trans, useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
 
 // SK Components
@@ -26,9 +26,7 @@ const GenerateClassesDialog = ({
 
   // Form control
   const [numGrades, setNumGrades] = useState<number>(6);
-  const [numClasses, setNumClasses] = useState<Array<number>>(
-    range(6).fill(0)
-  );
+  const [numClasses, setNumClasses] = useState<Array<number>>(range(6).fill(0));
 
   // We are checking for the length of `numClasses` so as to preserve data inside `numClasses`
   // when changing the number of grades
@@ -41,10 +39,7 @@ const GenerateClassesDialog = ({
           : // Else, add the missing grades
             // (Nothing will happen if the grades are already equal since we would just
             // concatenate an empty array)
-            [
-              ...numClasses,
-              ...range(numGrades - numClasses.length).fill(0),
-            ]
+            [...numClasses, ...range(numGrades - numClasses.length).fill(0)]
       ),
     [numGrades]
   );
@@ -55,12 +50,12 @@ const GenerateClassesDialog = ({
     <Dialog
       type="large"
       label="generate-classes"
-      title="Generate classes"
-      supportingText="Automatically generate a whole academic year of classes with this tool."
+      title={t("dialog.generateClasses.title")}
+      supportingText={t("dialog.generateClasses.supportingText")}
       show={show}
       actions={[
-        { name: "Cancel", type: "close" },
-        { name: "Generate", type: "submit" },
+        { name: t("dialog.generateClasses.action.cancel"), type: "close" },
+        { name: t("dialog.generateClasses.action.generate"), type: "submit" },
       ]}
       onClose={onClose}
       onSubmit={onSubmit}
@@ -70,7 +65,7 @@ const GenerateClassesDialog = ({
         <KeyboardInput
           name="num-grades"
           type="number"
-          label="Number of grades"
+          label={t("dialog.generateClasses.numGrades")}
           onChange={(e) => setNumGrades(Number(e))}
           defaultValue={6}
           attr={{ min: 1, max: 12 }}
@@ -78,15 +73,26 @@ const GenerateClassesDialog = ({
       </DialogSection>
 
       {/* Number of classes per grade */}
-      <DialogSection name="num-classes" title="Classes per grade">
+      <DialogSection
+        name="num-classes"
+        title={t("dialog.generateClasses.numClasses.title")}
+      >
         {/* Instructions */}
         <p>
-          Enter the amount of classes you would like in each grade. For example,
-          if you want the classes{" "}
-          <code className="rounded-sm bg-surface-2 py-1 px-2">
-            M.101, M.102, M.103
-          </code>
-          , enter “3” inside the field labeled “M.1”.
+          <Trans
+            i18nKey="dialog.generateClasses.numClasses.instructions"
+            ns="admin"
+          >
+            Enter the amount of classes you would like in each grade. For
+            example, if you want the classes
+            <span
+              className="rounded-t-sm border-b-2 border-inverse-surface bg-surface-2
+                py-1 px-2 font-display text-on-surface"
+            >
+              M.101, M.102, M.103
+            </span>
+            , enter “3” inside the field labeled “M.1”.
+          </Trans>
         </p>
 
         {/* Inputs */}
@@ -100,7 +106,9 @@ const GenerateClassesDialog = ({
                 key={grade}
                 name={`m-${grade + 1}`}
                 type="number"
-                label={t("class", { ns: "common", number: grade + 1 })}
+                label={t("dialog.generateClasses.numClasses.input", {
+                  grade: grade + 1,
+                })}
                 onChange={(e) => {
                   const parsedE = Number(e);
                   setNumClasses(
@@ -128,7 +136,9 @@ const GenerateClassesDialog = ({
           numClasses.filter((numClassesInGrade) => numClassesInGrade).length !=
             0 && (
             <div className="flex flex-col gap-2">
-              <h3 className="!text-base">Preview</h3>
+              <h3 className="!text-base">
+                {t("dialog.generateClasses.preview")}
+              </h3>
               <div className="sm:h-24 sm:resize-y sm:overflow-y-scroll">
                 <ChipList>
                   {

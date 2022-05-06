@@ -103,8 +103,7 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
                   onClick={() => setShowImport(true)}
                 />
                 <Button
-                  // label={t("classList.action.generate")}
-                  label="Generate"
+                  label={t("classList.action.generate")}
                   type="outlined"
                   icon={<MaterialIcon icon="auto_awesome" />}
                   onClick={() => setShowGenerate(true)}
