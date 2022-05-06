@@ -122,7 +122,8 @@
       "columns": {
         "title": "Columns",
         "info": "You can import a CSV file to the MySK database. Please ensure that the columns in your CSV file match the following exactly.",
-        "optionalNote": "<0>Note:</0> <1></1> means optional."
+        "optionalNote": "<0>Note:</0> <1></1> means optional.",
+        "noColumns": "No column data."
       },
       "upload": {
         "title": "Upload file",
