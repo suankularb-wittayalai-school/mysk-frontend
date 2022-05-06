@@ -137,22 +137,36 @@ const Layout = ({
     if (session) {
       if (session.user?.user_metadata?.role === "student") {
         setNavItems(studentNavItem);
+        // append admin nav item if user is admin
+        if (session.user?.user_metadata?.isAdmin) {
+          setNavItems([
+            ...studentNavItem,
+            {
+              name: t("navigation.admin"),
+              icon: {
+                inactive: <MaterialIcon icon="security" type="outlined" />,
+                active: <MaterialIcon icon="security" type="filled" />,
+              },
+              url: "/t/admin",
+            },
+          ]);
+        }
       } else if (session.user?.user_metadata?.role === "teacher") {
         setNavItems(teacherNavItem);
-      }
-
-      if (session.user?.user_metadata?.isAdmin) {
-        setNavItems([
-          ...navItems,
-          {
-            name: t("navigation.admin"),
-            icon: {
-              inactive: <MaterialIcon icon="security" type="outlined" />,
-              active: <MaterialIcon icon="security" type="filled" />,
+        // append admin nav item if user is admin
+        if (session.user?.user_metadata?.isAdmin) {
+          setNavItems([
+            ...teacherNavItem,
+            {
+              name: t("navigation.admin"),
+              icon: {
+                inactive: <MaterialIcon icon="security" type="outlined" />,
+                active: <MaterialIcon icon="security" type="filled" />,
+              },
+              url: "/t/admin",
             },
-            url: "/t/admin",
-          },
-        ]);
+          ]);
+        }
       }
     }
   }, [session]);
