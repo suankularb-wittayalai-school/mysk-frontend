@@ -9,7 +9,7 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 // Supabase imports
 import { supabase } from "@utils/supabaseClient";
@@ -32,17 +32,12 @@ import UserSection from "@components/home-sections/UserSection";
 
 // Types
 import { NewsList, StudentForm } from "@utils/types/news";
-import { Teacher } from "@utils/types/person";
 import { StudentSchedule } from "@utils/types/schedule";
-import { Session } from "@supabase/supabase-js";
 
-// helper function
-import { db2Teacher } from "@utils/backend/database";
-import { TeacherDB } from "@utils/types/database/person";
-import { useSession, useTeacherAccount } from "@utils/hooks/auth";
+// Hooks
+import { useTeacherAccount } from "@utils/hooks/auth";
 
 const TeacherHome: NextPage<{
-  // user: Teacher;
   schedule: StudentSchedule;
   studentForms: Array<StudentForm>;
   news: NewsList;
