@@ -146,46 +146,46 @@ const GenerateClassesDialog = ({
             );
           })}
         </div>
-
-        {/* Preview */}
-        {
-          // Only show the preview if `numClasses` is an array filled with 0s.
-          // The check works because 0 is falsy, and thus an array filled with 0s would become an empty
-          // array whose length is 0.
-          numClasses.filter((numClassesInGrade) => numClassesInGrade).length !=
-            0 && (
-            <div className="flex flex-col gap-2">
-              <h3 className="!text-base">
-                {t("dialog.generateClasses.preview")}
-              </h3>
-              <div className="sm:h-24 sm:resize-y sm:overflow-y-scroll">
-                <ChipList>
-                  {
-                    // Loops through `numClasses`, where the value is the number of classes
-                    // and the index is the grade (counting from zero)
-                    numClasses.map((value, index) =>
-                      range(value).map((classSuffix) => {
-                        const classNumber = `${index + 1}${(classSuffix + 1)
-                          .toString()
-                          .padStart(2, "0")}`;
-                        return (
-                          <Chip
-                            key={classNumber}
-                            name={t("class", {
-                              ns: "common",
-                              number: classNumber,
-                            })}
-                          />
-                        );
-                      })
-                    )
-                  }
-                </ChipList>
-              </div>
-            </div>
-          )
-        }
       </DialogSection>
+
+      {/* Preview */}
+      {
+        // Only show the preview if `numClasses` is an array filled with 0s.
+        // The check works because 0 is falsy, and thus an array filled with 0s would become an empty
+        // array whose length is 0.
+        numClasses.filter((numClassesInGrade) => numClassesInGrade).length !=
+          0 && (
+          <DialogSection
+            name="preview"
+            title={t("dialog.generateClasses.preview")}
+          >
+            <div className="sm:h-24 sm:resize-y sm:overflow-y-scroll">
+              <ChipList>
+                {
+                  // Loops through `numClasses`, where the value is the number of classes
+                  // and the index is the grade (counting from zero)
+                  numClasses.map((value, index) =>
+                    range(value).map((classSuffix) => {
+                      const classNumber = `${index + 1}${(classSuffix + 1)
+                        .toString()
+                        .padStart(2, "0")}`;
+                      return (
+                        <Chip
+                          key={classNumber}
+                          name={t("class", {
+                            ns: "common",
+                            number: classNumber,
+                          })}
+                        />
+                      );
+                    })
+                  )
+                }
+              </ChipList>
+            </div>
+          </DialogSection>
+        )
+      }
     </Dialog>
   );
 };

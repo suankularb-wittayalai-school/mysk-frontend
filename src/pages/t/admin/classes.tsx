@@ -26,6 +26,7 @@ import {
 import ClassTable from "@components/tables/ClassTable";
 import ConfirmDelete from "@components/dialogs/ConfirmDelete";
 import EditClassDialog from "@components/dialogs/EditClass";
+import GenerateClassesDialog from "@components/dialogs/GenerateClasses";
 import ImportDataDialog from "@components/dialogs/ImportData";
 
 // Backend
@@ -34,7 +35,6 @@ import { db2Class } from "@utils/backend/database";
 // Types
 import { Class } from "@utils/types/class";
 import { ClassroomDB, ClassroomTable } from "@utils/types/database/class";
-import GenerateClassesDialog from "@components/dialogs/GenerateClasses";
 
 // Page
 const Classes: NextPage<{ allClasses: Class[] }> = ({
@@ -96,7 +96,10 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
           <div className="layout-grid-cols-3">
             <Search placeholder={t("classList.searchClasses")} />
             <div className="flex flex-row items-end md:col-span-2">
-              <div className="flex w-full flex-row items-center justify-end gap-2">
+              <div
+                className="flex w-full flex-row flex-wrap items-center justify-end
+                  gap-2 sm:flex-nowrap"
+              >
                 <Button
                   label={t("common.action.import")}
                   type="text"
