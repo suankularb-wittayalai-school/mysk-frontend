@@ -154,12 +154,14 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
               />
             </div>
           </div>
-          <StudentTable
-            students={allStudents}
-            setShowEdit={setShowEdit}
-            setEditingPerson={setEditingPerson}
-            setShowConfDelStudent={setShowConfDel}
-          />
+          <div>
+            <StudentTable
+              students={allStudents}
+              setShowEdit={setShowEdit}
+              setEditingPerson={setEditingPerson}
+              setShowConfDelStudent={setShowConfDel}
+            />
+          </div>
         </Section>
       </RegularLayout>
 
@@ -171,7 +173,20 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
           setShowImport(false);
           router.replace(router.asPath);
         }}
-        columns={[]}
+        columns={[
+          { name: "prefix_th", type: '"เด็กชาย" | "นาย" | "นาง" | "นางสาว"' },
+          { name: "prefix_en", type: '"Master" | "Mr." | "Mrs." | "Miss."' },
+          { name: "first_name_th", type: "text" },
+          { name: "first_name_en", type: "text" },
+          { name: "middle_name_th", type: "text", optional: true },
+          { name: "middle_name_en", type: "text", optional: true },
+          { name: "last_name_th", type: "text" },
+          { name: "last_name_en", type: "text" },
+          { name: "birthdate", type: "date (YYYY-MM-DD) (in AD)" },
+          { name: "citizen_id", type: "text (13-digit)" },
+          { name: "student_id", type: "text (5-digit)" },
+          { name: "email", type: "email" },
+        ]}
       />
       <EditPersonDialog
         show={showEdit}

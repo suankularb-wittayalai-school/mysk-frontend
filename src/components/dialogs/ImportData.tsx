@@ -33,7 +33,10 @@ const ImportDataDialog = ({
       <DialogSection name="info">
         <h2 className="sr-only">Columns</h2>
         <p>Please ensure your data has these columns:</p>
-        <div className="h-32 resize-y overflow-y-scroll rounded-t-sm border-b-2 bg-surface-2 p-2 text-on-surface">
+        <div
+          className="h-32 resize-y overflow-y-scroll rounded-t-sm
+            border-b-2 border-inverse-surface bg-surface-2 p-2 text-on-surface"
+        >
           <div className="flex flex-col leading-snug">
             {columns.length > 0
               ? columns.map((column) => (
