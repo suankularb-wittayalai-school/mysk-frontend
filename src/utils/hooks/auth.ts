@@ -8,10 +8,12 @@ import { Student, Teacher } from "@utils/types/person";
 import { StudentDB, TeacherDB } from "@utils/types/database/person";
 import { db2Student, db2Teacher } from "@utils/backend/database";
 
-export function useSession(
-  loginRequired: boolean = false,
-  adminOnly: boolean = false
-) {
+interface UseSessionOption {
+  loginRequired?: boolean;
+  adminOnly?: boolean;
+}
+
+export function useSession(option?: UseSessionOption) {
   const [session, setSession] = useState<null | Session>(null);
   const router = useRouter();
 
@@ -28,27 +30,27 @@ export function useSession(
   }, []);
 
   useEffect(() => {
-    if (session && !session.user && loginRequired) router.push("/");
-  }, [session, loginRequired, router]);
-
-  useEffect(() => {
-    if (
-      session &&
-      session.user &&
-      adminOnly &&
-      !session.user.user_metadata.isAdmin
-    )
-      router.push("/");
-  }, [session, adminOnly, router]);
+    if (session) {
+      if (option?.loginRequired && !session.user) {
+        router.push("/");
+      }
+      if (
+        session.user &&
+        option?.adminOnly &&
+        !session.user.user_metadata.isAdmin
+      ) {
+        router.push("/");
+      }
+    }
+  }, [session, option, router]);
 
   return session;
 }
 
 export function useStudentAccount(
-  loginRequired: boolean = false,
-  adminOnly: boolean = false
+  option?: UseSessionOption
 ): [Student | null, Session | null] {
-  const session = useSession(loginRequired, adminOnly);
+  const session = useSession(option);
   const router = useRouter();
   const [user, setUser] = useState<Student | null>(null);
 
@@ -79,10 +81,9 @@ export function useStudentAccount(
 }
 
 export function useTeacherAccount(
-  loginRequired: boolean = false,
-  adminOnly: boolean = false
+  option?: UseSessionOption
 ): [Teacher | null, Session | null] {
-  const session = useSession(loginRequired, adminOnly);
+  const session = useSession(option);
   const router = useRouter();
   const [user, setUser] = useState<Teacher | null>(null);
 

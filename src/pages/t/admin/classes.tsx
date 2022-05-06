@@ -47,7 +47,7 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
 
   const [showConfDel, setShowConfDel] = useState<boolean>(false);
 
-  const session = useSession(true, true);
+  const session = useSession({ loginRequired: true, adminOnly: true });
 
   async function handleDelete() {
     const { data: classData, error: classError } = await supabase

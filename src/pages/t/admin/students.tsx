@@ -49,7 +49,7 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
   const [editingPerson, setEditingPerson] = useState<Student>();
 
   const [showConfDel, setShowConfDel] = useState<boolean>(false);
-  const session = useSession(true, true);
+  const session = useSession({ loginRequired: true, adminOnly: true });
 
   async function handleDelete() {
     // console.log(editingPerson);

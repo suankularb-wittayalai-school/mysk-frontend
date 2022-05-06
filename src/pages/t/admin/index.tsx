@@ -210,7 +210,7 @@ const Admin: NextPage<{
   someClasses: Class[];
 }> = ({ someStudents, someTeachers, someSubjects, someClasses }) => {
   const { t } = useTranslation(["admin", "common"]);
-  const session = useSession(true, true);
+  const session = useSession({ loginRequired: true, adminOnly: true });
 
   return (
     <>
