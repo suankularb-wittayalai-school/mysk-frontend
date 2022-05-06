@@ -45,9 +45,10 @@ export function useSession(
 }
 
 export function useStudentAccount(
-  loginRequired: boolean = false
+  loginRequired: boolean = false,
+  adminOnly: boolean = false
 ): [Student | null, Session | null] {
-  const session = useSession(loginRequired);
+  const session = useSession(loginRequired, adminOnly);
   const router = useRouter();
   const [user, setUser] = useState<Student | null>(null);
 
@@ -78,9 +79,10 @@ export function useStudentAccount(
 }
 
 export function useTeacherAccount(
-  loginRequired: boolean = false
+  loginRequired: boolean = false,
+  adminOnly: boolean = false
 ): [Teacher | null, Session | null] {
-  const session = useSession(loginRequired);
+  const session = useSession(loginRequired, adminOnly);
   const router = useRouter();
   const [user, setUser] = useState<Teacher | null>(null);
 
