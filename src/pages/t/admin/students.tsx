@@ -9,7 +9,7 @@ import { useTranslation } from "next-i18next";
 
 import { useState } from "react";
 
-// Supabase client
+// Supabase
 import { supabase } from "@utils/supabaseClient";
 
 // SK Components
@@ -27,13 +27,13 @@ import ConfirmDelete from "@components/dialogs/ConfirmDelete";
 import EditPersonDialog from "@components/dialogs/EditPerson";
 import StudentTable from "@components/tables/StudentTable";
 
+// Backend
+import { db2Student } from "@utils/backend/database";
+
 // Types
 import { Role, Student } from "@utils/types/person";
 import { PersonTable, StudentDB } from "@utils/types/database/person";
 import { StudentTable as StudentTableType } from "@utils/types/database/person";
-
-// Helper function
-import { db2Student } from "@utils/backend/database";
 
 // Page
 const Students: NextPage<{ allStudents: Array<Student> }> = ({
@@ -50,10 +50,7 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
   const [showConfDel, setShowConfDel] = useState<boolean>(false);
 
   async function handleDelete() {
-    // console.log(editingPerson);
-    if (!editingPerson) {
-      return;
-    }
+    if (!editingPerson) return;
 
     const { data: userid, error: selectingError } = await supabase
       .from<{
@@ -67,8 +64,6 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
       .match({ student: editingPerson.id })
       .limit(1)
       .single();
-
-    // console.log(userid, editingPerson);
 
     if (selectingError) {
       console.error(selectingError);
@@ -89,7 +84,7 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
       return;
     }
 
-    // delete the person of the student
+    // Delete the person of the student
     const { data: person, error: personDeletingError } = await supabase
       .from<PersonTable>("people")
       .delete()
@@ -100,7 +95,7 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
       return;
     }
 
-    // delete account of the student
+    // Delete account of the student
     await fetch(`/api/account`, {
       method: "DELETE",
       headers: {
@@ -110,8 +105,6 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
         id: userid.id,
       }),
     });
-
-    // console.log(person);
 
     setShowConfDel(false);
     router.replace(router.asPath);
@@ -164,7 +157,6 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
       <EditPersonDialog
         show={showEdit}
         onClose={() => setShowEdit(false)}
-        // TODO: Refetch students here ↓
         onSubmit={() => {
           setShowEdit(false);
           router.replace(router.asPath);
@@ -175,7 +167,6 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
       <EditPersonDialog
         show={showAdd}
         onClose={() => setShowAdd(false)}
-        // TODO: Refetch students here ↓
         onSubmit={() => {
           setShowAdd(false);
           router.replace(router.asPath);
@@ -186,7 +177,6 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
       <ConfirmDelete
         show={showConfDel}
         onClose={() => setShowConfDel(false)}
-        // TODO: Refetch teachers here ↓
         onSubmit={() => handleDelete()}
       />
     </>

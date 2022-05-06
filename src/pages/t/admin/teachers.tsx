@@ -53,9 +53,8 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
   const [showConfDel, setShowConfDel] = useState<boolean>(false);
 
   async function handleDelete() {
-    if (!editingPerson) {
-      return;
-    }
+    if (!editingPerson) return;
+
     const { data: userid, error: selectingError } = await supabase
       .from<{
         id: string;
@@ -68,8 +67,6 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
       .match({ student: editingPerson.id })
       .limit(1)
       .single();
-
-    // console.log(userid, editingPerson);
 
     if (selectingError) {
       console.error(selectingError);
@@ -91,7 +88,7 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
       return;
     }
 
-    // delete the person related to the teacher
+    // Delete the person related to the teacher
     const { data: deletingPerson, error: personDeletingError } = await supabase
       .from<PersonTable>("people")
       .delete()
@@ -101,7 +98,7 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
       return;
     }
 
-    // delete account of the teacher
+    // Delete account of the teacher
     await fetch(`/api/account`, {
       method: "DELETE",
       headers: {

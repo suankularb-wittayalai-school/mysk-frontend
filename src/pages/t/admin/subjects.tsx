@@ -24,14 +24,15 @@ import ConfirmDelete from "@components/dialogs/ConfirmDelete";
 import EditSubjectDialog from "@components/dialogs/EditSubject";
 import SubjectTable from "@components/tables/SubjectTable";
 
+// Backend
+import { db2Subject } from "@utils/backend/database";
+
+// Supabase
+import { supabase } from "@utils/supabaseClient";
+
 // Types
 import { Subject } from "@utils/types/subject";
-import { supabase } from "@utils/supabaseClient";
-import {
-  SubjectDB,
-  SubjectTable as SubjectTableType,
-} from "@utils/types/database/subject";
-import { db2Subject } from "@utils/backend/database";
+import { SubjectTable as SubjectTableType } from "@utils/types/database/subject";
 
 const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
   const { t } = useTranslation(["admin", "common"]);
@@ -45,8 +46,7 @@ const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
   const [showConfDel, setShowConfDel] = useState<boolean>(false);
 
   async function handleDelete() {
-    // console.log(editingSubject);
-    // delete the syllabus if it exists
+    // Delete the syllabus if it exists
     if (editingSubject?.syllabus) {
       const { data: syllabus, error: syllabusError } = await supabase.storage
         .from("syllabus")
@@ -55,7 +55,7 @@ const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
         console.error(syllabusError);
       }
     }
-    // delete the subject
+    // Delete the subject
     const { data, error } = await supabase
       .from("subject")
       .delete()
