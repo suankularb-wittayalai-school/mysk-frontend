@@ -27,7 +27,7 @@ const GenerateClassesDialog = ({
   // Form control
   const [numGrades, setNumGrades] = useState<number>(6);
   const [numClasses, setNumClasses] = useState<Array<number>>(
-    range(6).map(() => 0)
+    range(6).fill(0)
   );
 
   // We are checking for the length of `numClasses` so as to preserve data inside `numClasses`
@@ -43,13 +43,13 @@ const GenerateClassesDialog = ({
             // concatenate an empty array)
             [
               ...numClasses,
-              ...range(numGrades - numClasses.length).map(() => 0),
+              ...range(numGrades - numClasses.length).fill(0),
             ]
       ),
     [numGrades]
   );
 
-  useEffect(() => setNumClasses(range(6).map(() => 0)), [show]);
+  useEffect(() => setNumClasses(range(6).fill(0)), [show]);
 
   return (
     <Dialog
