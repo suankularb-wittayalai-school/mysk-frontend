@@ -34,6 +34,7 @@ import { db2Student } from "@utils/backend/database";
 import { Role, Student } from "@utils/types/person";
 import { PersonTable, StudentDB } from "@utils/types/database/person";
 import { StudentTable as StudentTableType } from "@utils/types/database/person";
+import ImportDataDialog from "@components/dialogs/ImportData";
 
 // Page
 const Students: NextPage<{ allStudents: Array<Student> }> = ({
@@ -43,6 +44,7 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
   const router = useRouter();
 
   const [showAdd, setShowAdd] = useState<boolean>(false);
+  const [showImport, setShowImport] = useState<boolean>(false);
 
   const [showEdit, setShowEdit] = useState<boolean>(false);
   const [editingPerson, setEditingPerson] = useState<Student>();
@@ -138,8 +140,16 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
             <Search placeholder={t("studentList.searchStudents")} />
             <div className="col-span-2 flex flex-row items-end justify-end gap-2">
               <Button
+                // label={t("common.action.importData")}
+                label={"Import data"}
+                type="outlined"
+                icon={<MaterialIcon icon="file_upload" />}
+                onClick={() => setShowImport(true)}
+              />
+              <Button
                 label={t("studentList.action.addStudent")}
                 type="filled"
+                icon={<MaterialIcon icon="add" />}
                 onClick={() => setShowAdd(true)}
               />
             </div>
@@ -154,6 +164,14 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
       </RegularLayout>
 
       {/* Dialogs */}
+      <ImportDataDialog
+        show={showImport}
+        onClose={() => setShowImport(false)}
+        onSubmit={() => {
+          setShowImport(false);
+          router.replace(router.asPath);
+        }}
+      />
       <EditPersonDialog
         show={showEdit}
         onClose={() => setShowEdit(false)}
