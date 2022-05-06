@@ -93,7 +93,7 @@ const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
         <Section>
           <div className="layout-grid-cols-3">
             <Search placeholder={t("subjectList.searchSubjects")} />
-            <div className="col-span-2 flex flex-row items-end justify-end gap-2">
+            <div className="md:col-span-2 flex flex-row items-end justify-end gap-2">
               <Button
                 label={t("subjectList.action.addSubject")}
                 type="filled"

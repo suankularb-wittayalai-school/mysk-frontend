@@ -37,6 +37,7 @@ import {
   TeacherDB,
   TeacherTable as TeacherTableType,
 } from "@utils/types/database/person";
+import ImportDataDialog from "@components/dialogs/ImportData";
 
 // Page
 const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
@@ -46,11 +47,11 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
   const router = useRouter();
 
   const [showAdd, setShowAdd] = useState<boolean>(false);
+  const [showImport, setShowImport] = useState<boolean>(false);
+  const [showConfDel, setShowConfDel] = useState<boolean>(false);
 
   const [showEdit, setShowEdit] = useState<boolean>(false);
   const [editingPerson, setEditingPerson] = useState<Teacher>();
-
-  const [showConfDel, setShowConfDel] = useState<boolean>(false);
 
   async function handleDelete() {
     if (!editingPerson) return;
@@ -139,10 +140,17 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
         <Section>
           <div className="layout-grid-cols-3">
             <Search placeholder={t("teacherList.searchTeachers")} />
-            <div className="col-span-2 flex flex-row items-end justify-end gap-2">
+            <div className="flex flex-row items-end justify-end gap-2 md:col-span-2">
+              <Button
+                label={t("common.action.import")}
+                type="outlined"
+                icon={<MaterialIcon icon="file_upload" />}
+                onClick={() => setShowImport(true)}
+              />
               <Button
                 label={t("teacherList.action.addTeacher")}
                 type="filled"
+                icon={<MaterialIcon icon="add" />}
                 onClick={() => setShowAdd(true)}
               />
             </div>
@@ -157,6 +165,30 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
       </RegularLayout>
 
       {/* Dialogs */}
+      <ImportDataDialog
+        show={showImport}
+        onClose={() => setShowImport(false)}
+        onSubmit={() => {
+          setShowImport(false);
+          router.replace(router.asPath);
+        }}
+        // prettier-ignore
+        columns={[
+          { name: "prefix_th", type: '"เด็กชาย" | "นาย" | "นาง" | "นางสาว"' },
+          { name: "prefix_en", type: '"Master" | "Mr." | "Mrs." | "Miss."' },
+          { name: "first_name_th", type: "text" },
+          { name: "first_name_en", type: "text" },
+          { name: "middle_name_th", type: "text", optional: true },
+          { name: "middle_name_en", type: "text", optional: true },
+          { name: "last_name_th", type: "text" },
+          { name: "last_name_en", type: "text" },
+          { name: "birthdate", type: "date (YYYY-MM-DD) (in AD)" },
+          { name: "citizen_id", type: "numeric (13-digit)" },
+          { name: "teacher_id", type: "text" },
+          { name: "subject_group", type: '"วิทยาศาสตร์" | "คณิตศาสตร์" | "ภาษาต่างประเทศ" | "ภาษาไทย" | "สุขศึกษาและพลศึกษา" | "การงานอาชีพและเทคโนโลยี" | "ศิลปะ" | "สังคมศึกษา ศาสนา และวัฒนธรรม" | "การศึกษาค้นคว้าด้วยตนเอง"' },
+          { name: "email", type: "email" },
+        ]}
+      />
       <EditPersonDialog
         show={showEdit}
         onClose={() => setShowEdit(false)}

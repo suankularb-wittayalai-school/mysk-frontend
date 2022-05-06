@@ -45,11 +45,10 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
 
   const [showAdd, setShowAdd] = useState<boolean>(false);
   const [showImport, setShowImport] = useState<boolean>(false);
+  const [showConfDel, setShowConfDel] = useState<boolean>(false);
 
   const [showEdit, setShowEdit] = useState<boolean>(false);
   const [editingPerson, setEditingPerson] = useState<Student>();
-
-  const [showConfDel, setShowConfDel] = useState<boolean>(false);
 
   async function handleDelete() {
     if (!editingPerson) return;
@@ -182,8 +181,9 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
           { name: "last_name_th", type: "text" },
           { name: "last_name_en", type: "text" },
           { name: "birthdate", type: "date (YYYY-MM-DD) (in AD)" },
-          { name: "citizen_id", type: "text (13-digit)" },
-          { name: "student_id", type: "text (5-digit)" },
+          { name: "citizen_id", type: "numeric (13-digit)" },
+          { name: "student_id", type: "numeric (5-digit)" },
+          { name: "class_number", type: "numeric (3-digit)" },
           { name: "email", type: "email" },
         ]}
       />

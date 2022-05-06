@@ -82,16 +82,21 @@ const ImportDataDialog = ({
             border-b-2 border-inverse-surface bg-surface-2
             p-2 text-on-surface sm:h-40"
         >
-          <div>
+          <div className="flex flex-col gap-1">
             {columns.length > 0
               ? columns.map((column) => (
-                  <div
-                    key={column.name}
-                    className="flex flex-row items-center gap-1"
-                  >
-                    {column.optional && <OptionalIcon />}
-                    <h3 className="inline !text-base">{column.name}:</h3>
-                    <span className="text-sm">{column.type}</span>
+                  <div key={column.name} className="flex flex-row items-center gap-1">
+                    {column.optional && (
+                      <OptionalIcon />
+                    )}
+                    <div className="leading-none">
+                      <h3 className="inline align-middle !text-base">
+                        {column.name}{": "}
+                      </h3>
+                      <span className="align-middle text-sm">
+                        {column.type}
+                      </span>
+                    </div>
                   </div>
                 ))
               : "No column data. Please use your code senses."}

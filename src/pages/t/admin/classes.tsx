@@ -90,7 +90,7 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
         <Section>
           <div className="layout-grid-cols-3">
             <Search placeholder={t("classList.searchClasses")} />
-            <div className="col-span-2 flex flex-row items-end justify-end gap-2">
+            <div className="md:col-span-2 flex flex-row items-end justify-end gap-2">
               <Button
                 label={t("classList.action.addClass")}
                 type="filled"
