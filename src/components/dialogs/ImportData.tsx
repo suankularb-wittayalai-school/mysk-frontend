@@ -1,5 +1,10 @@
 // SK Components
-import { Dialog, DialogSection, FileInput } from "@suankularb-components/react";
+import {
+  Dialog,
+  DialogSection,
+  FileInput,
+  MaterialIcon,
+} from "@suankularb-components/react";
 
 // Types
 import { DialogProps } from "@utils/types/common";
@@ -32,27 +37,35 @@ const ImportDataDialog = ({
     >
       <DialogSection name="info">
         <h2 className="sr-only">Columns</h2>
-        <p>Please ensure your data has these columns:</p>
+        <p>
+          You can import a CSV file to the MySK database. Please ensure that the
+          columns in your CSV file match the following exactly.
+        </p>
+        <p className="flex flex-row flex-wrap items-center gap-x-1">
+          <span className="font-display">Note:</span>
+          <div className="text-xl text-tertiary">
+            <MaterialIcon icon="help_outline" allowCustomSize />
+          </div>
+          means optional.
+        </p>
         <div
-          className="h-32 resize-y overflow-y-scroll rounded-t-sm
-            border-b-2 border-inverse-surface bg-surface-2 p-2 text-on-surface"
+          className="mb-4 h-72 resize-y overflow-y-scroll rounded-t-sm
+            border-b-2 border-inverse-surface bg-surface-2
+            p-2 text-on-surface sm:h-40"
         >
-          <div className="flex flex-col leading-snug">
+          <div>
             {columns.length > 0
               ? columns.map((column) => (
                   <div
                     key={column.name}
-                    className={
-                      column.optional ? "text-on-surface-variant" : undefined
-                    }
+                    className="flex flex-row items-center gap-1"
                   >
-                    <h3 className="inline !text-base">
-                      {column.name}
-                      {column.optional && (
-                        <span className="text-tertiary">?</span>
-                      )}
-                      {": "}
-                    </h3>
+                    {column.optional && (
+                      <div className="text-xl text-tertiary">
+                        <MaterialIcon icon="help_outline" allowCustomSize />
+                      </div>
+                    )}
+                    <h3 className="inline !text-base">{column.name}:</h3>
                     <span className="text-sm">{column.type}</span>
                   </div>
                 ))
@@ -61,14 +74,9 @@ const ImportDataDialog = ({
         </div>
       </DialogSection>
 
-      <DialogSection name="upload" title="Upload" className="!gap-2">
+      <DialogSection name="upload" title="Upload file">
         <div className="sm:grid sm:grid-cols-2 sm:gap-x-6">
-          <FileInput
-            name="file"
-            label="File"
-            helperMsg="Accepts CSV."
-            attr={{ accept: ".csv" }}
-          />
+          <FileInput name="file" label="File" attr={{ accept: ".csv" }} />
         </div>
       </DialogSection>
     </Dialog>
