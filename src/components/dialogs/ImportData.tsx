@@ -8,7 +8,15 @@ const ImportDataDialog = ({
   show,
   onClose,
   onSubmit,
-}: DialogProps & { onSubmit: () => void }): JSX.Element => {
+  columns,
+}: DialogProps & {
+  onSubmit: () => void;
+  columns: {
+    name: string;
+    type: string;
+    optional?: boolean;
+  }[];
+}): JSX.Element => {
   return (
     <Dialog
       type="large"
@@ -27,48 +35,21 @@ const ImportDataDialog = ({
         <p>Please ensure your data has these columns:</p>
         <div className="h-32 resize-y overflow-y-scroll rounded-t-sm border-b-2 bg-surface-2 p-2 text-on-surface">
           <div className="flex flex-col leading-snug">
-            <div>
-              <h3 className="inline !text-base">prefix_en: </h3>
-              <span className="text-sm">
-                &quot;Master&quot; | &quot;Mr.&quot; | &quot;Mrs.&quot; |
-                &quot;Miss.&quot;
-              </span>
-            </div>
-            <div>
-              <h3 className="inline !text-base">prefix_th: </h3>
-              <span className="text-sm">
-                &quot;เด็กชาย&quot; | &quot;นาย&quot; | &quot;นาง&quot; |
-                &quot;นางสาว&quot;
-              </span>
-            </div>
-            <div>
-              <h3 className="inline !text-base">first_name_th: </h3>
-              <span className="text-sm">text</span>
-            </div>
-            <div>
-              <h3 className="inline !text-base">first_name_en: </h3>
-              <span className="text-sm">text</span>
-            </div>
-            <div className="text-on-surface-variant">
-              <h3 className="inline !text-base">
-                middle_name_en<span className="text-tertiary">?</span>:{" "}
-              </h3>
-              <span className="text-sm">text</span>
-            </div>
-            <div className="text-on-surface-variant">
-              <h3 className="inline !text-base">
-                middle_name_en<span className="text-tertiary">?</span>:{" "}
-              </h3>
-              <span className="text-sm">text</span>
-            </div>
-            <div>
-              <h3 className="inline !text-base">last_name_en: </h3>
-              <span className="text-sm">text</span>
-            </div>
-            <div>
-              <h3 className="inline !text-base">last_name_en: </h3>
-              <span className="text-sm">text</span>
-            </div>
+            {columns.length > 0 ? columns.map((column) => (
+              <div
+                key={column.name}
+                className={
+                  column.optional ? "text-on-surface-variant" : undefined
+                }
+              >
+                <h3 className="inline !text-base">
+                  {column.name}
+                  {column.optional && <span className="text-tertiary">?</span>}
+                  {": "}
+                </h3>
+                <span className="text-sm">{column.type}</span>
+              </div>
+            )) : "No column data. Please use your code senses."}
           </div>
         </div>
       </DialogSection>

@@ -16,6 +16,7 @@ export type Person = {
   citizenID: string;
   birthdate: string;
   contacts: Contact[];
+  isAdmin?: boolean;
 };
 
 export type PersonName = {

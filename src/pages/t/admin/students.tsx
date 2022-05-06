@@ -171,6 +171,7 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
           setShowImport(false);
           router.replace(router.asPath);
         }}
+        columns={[]}
       />
       <EditPersonDialog
         show={showEdit}
