@@ -35,37 +35,38 @@ const ImportDataDialog = ({
         <p>Please ensure your data has these columns:</p>
         <div className="h-32 resize-y overflow-y-scroll rounded-t-sm border-b-2 bg-surface-2 p-2 text-on-surface">
           <div className="flex flex-col leading-snug">
-            {columns.length > 0 ? columns.map((column) => (
-              <div
-                key={column.name}
-                className={
-                  column.optional ? "text-on-surface-variant" : undefined
-                }
-              >
-                <h3 className="inline !text-base">
-                  {column.name}
-                  {column.optional && <span className="text-tertiary">?</span>}
-                  {": "}
-                </h3>
-                <span className="text-sm">{column.type}</span>
-              </div>
-            )) : "No column data. Please use your code senses."}
+            {columns.length > 0
+              ? columns.map((column) => (
+                  <div
+                    key={column.name}
+                    className={
+                      column.optional ? "text-on-surface-variant" : undefined
+                    }
+                  >
+                    <h3 className="inline !text-base">
+                      {column.name}
+                      {column.optional && (
+                        <span className="text-tertiary">?</span>
+                      )}
+                      {": "}
+                    </h3>
+                    <span className="text-sm">{column.type}</span>
+                  </div>
+                ))
+              : "No column data. Please use your code senses."}
           </div>
         </div>
       </DialogSection>
 
-      <DialogSection
-        name="upload"
-        title="Upload"
-        isDoubleColumn
-        className="!gap-2"
-      >
-        <FileInput
-          name="file"
-          label="File"
-          helperMsg="Accepts CSV."
-          attr={{ accept: ".csv" }}
-        />
+      <DialogSection name="upload" title="Upload" className="!gap-2">
+        <div className="sm:grid sm:grid-cols-2 sm:gap-x-6">
+          <FileInput
+            name="file"
+            label="File"
+            helperMsg="Accepts CSV."
+            attr={{ accept: ".csv" }}
+          />
+        </div>
       </DialogSection>
     </Dialog>
   );

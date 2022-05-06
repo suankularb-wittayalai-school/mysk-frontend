@@ -28,12 +28,12 @@ class MySKDocument extends Document {
           <meta name="msapplication-TileColor" content="#2b5797" />
           <meta
             name="theme-color"
-            content="#e7f0f6"
+            content="#dfebf3"
             media="(prefers-color-scheme: light)"
           />
           <meta
             name="theme-color"
-            content="#1e2529"
+            content="#243037"
             media="(prefers-color-scheme: dark)"
           />
         </Head>
