@@ -51,6 +51,7 @@ import {
   db2Teacher,
 } from "@utils/backend/database";
 import { ClassroomDB } from "@utils/types/database/class";
+import { useSession } from "@utils/hooks/auth";
 
 const StudentSection = ({
   someStudents,
@@ -209,6 +210,7 @@ const Admin: NextPage<{
   someClasses: Class[];
 }> = ({ someStudents, someTeachers, someSubjects, someClasses }) => {
   const { t } = useTranslation(["admin", "common"]);
+  const session = useSession(true, true);
 
   return (
     <>

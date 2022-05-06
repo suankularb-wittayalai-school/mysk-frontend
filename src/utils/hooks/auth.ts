@@ -8,7 +8,10 @@ import { Student, Teacher } from "@utils/types/person";
 import { StudentDB, TeacherDB } from "@utils/types/database/person";
 import { db2Student, db2Teacher } from "@utils/backend/database";
 
-export function useSession(loginRequired: boolean = false) {
+export function useSession(
+  loginRequired: boolean = false,
+  adminOnly: boolean = false
+) {
   const [session, setSession] = useState<null | Session>(null);
   const router = useRouter();
 
@@ -25,8 +28,18 @@ export function useSession(loginRequired: boolean = false) {
   }, []);
 
   useEffect(() => {
-    if (session && loginRequired && !session.user) router.push("/");
+    if (session && !session.user && loginRequired) router.push("/");
   }, [session, loginRequired, router]);
+
+  useEffect(() => {
+    if (
+      session &&
+      session.user &&
+      adminOnly &&
+      !session.user.user_metadata.isAdmin
+    )
+      router.push("/");
+  }, [session, adminOnly, router]);
 
   return session;
 }
