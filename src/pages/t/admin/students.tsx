@@ -173,7 +173,6 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
         }}
         columns={[
           { name: "prefix_th", type: '"เด็กชาย" | "นาย" | "นาง" | "นางสาว"' },
-          { name: "prefix_en", type: '"Master" | "Mr." | "Mrs." | "Miss."' },
           { name: "first_name_th", type: "text" },
           { name: "first_name_en", type: "text" },
           { name: "middle_name_th", type: "text", optional: true },
