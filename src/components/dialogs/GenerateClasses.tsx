@@ -33,18 +33,30 @@ const GenerateClassesDialog = ({
   useEffect(
     () =>
       setNumClasses((numClasses) =>
-        // If there are more grades in `numClasses` than we want, remove the extra grades
-        numClasses.length < numGrades
+        // Remove all grades if `numGrades` is less than 1
+        numGrades < 1
+          ? []
+          : // If there are more grades in `numClasses` than we want, remove the extra grades
+          numGrades < numClasses.length
           ? numClasses.splice(-1 * numGrades)
           : // Else, add the missing grades
             // (Nothing will happen if the grades are already equal since we would just
             // concatenate an empty array)
-            [...numClasses, ...range(numGrades - numClasses.length).fill(0)]
+            numClasses.concat(range(numGrades - numClasses.length).fill(0))
       ),
     [numGrades]
   );
 
+  // Form reset
   useEffect(() => setNumClasses(range(6).fill(0)), [show]);
+
+  function validate(): boolean {
+    if (numGrades < 0 || numGrades > 12) return false;
+    if (numClasses.filter((value) => value < 1 || value > 15).length)
+      return false;
+
+    return true;
+  }
 
   return (
     <Dialog
@@ -54,8 +66,15 @@ const GenerateClassesDialog = ({
       supportingText={t("dialog.generateClasses.supportingText")}
       show={show}
       actions={[
-        { name: t("dialog.generateClasses.action.cancel"), type: "close" },
-        { name: t("dialog.generateClasses.action.generate"), type: "submit" },
+        {
+          name: t("dialog.generateClasses.action.cancel"),
+          type: "close",
+        },
+        {
+          name: t("dialog.generateClasses.action.generate"),
+          type: "submit",
+          disabled: !validate(),
+        },
       ]}
       onClose={onClose}
       onSubmit={onSubmit}
