@@ -5,7 +5,7 @@ import { Subject } from "./subject";
 
 export type StudentSchedule = {
   // FIXME: Schedule class should be required
-  // Temporary solution, awaiting response from @JimmyTempest
+  // Temporary solution, awaiting response from @Jimmy-Tempest
   id: number;
   class?: ClassWNumber;
   content: ScheduleRow[];

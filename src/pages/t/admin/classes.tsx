@@ -9,7 +9,7 @@ import { useTranslation } from "next-i18next";
 
 import { useState } from "react";
 
-// Supabase client
+// Supabase
 import { supabase } from "@utils/supabaseClient";
 
 // SK Components
@@ -23,15 +23,18 @@ import {
 } from "@suankularb-components/react";
 
 // Components
+import ClassTable from "@components/tables/ClassTable";
 import ConfirmDelete from "@components/dialogs/ConfirmDelete";
 import EditClassDialog from "@components/dialogs/EditClass";
-import ClassTable from "@components/tables/ClassTable";
+import ImportDataDialog from "@components/dialogs/ImportData";
+
+// Backend
+import { db2Class } from "@utils/backend/database";
 
 // Types
 import { Class } from "@utils/types/class";
 import { ClassroomDB, ClassroomTable } from "@utils/types/database/class";
-import { db2Class } from "@utils/backend/database";
-import ImportDataDialog from "@components/dialogs/ImportData";
+import GenerateClassesDialog from "@components/dialogs/GenerateClasses";
 
 // Page
 const Classes: NextPage<{ allClasses: Class[] }> = ({
@@ -41,6 +44,7 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
   const router = useRouter();
 
   const [showAdd, setShowAdd] = useState<boolean>(false);
+  const [showGenerate, setShowGenerate] = useState<boolean>(false);
   const [showImport, setShowImport] = useState<boolean>(false);
   const [showConfDel, setShowConfDel] = useState<boolean>(false);
 
@@ -91,27 +95,37 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
         <Section>
           <div className="layout-grid-cols-3">
             <Search placeholder={t("classList.searchClasses")} />
-            <div className="flex flex-row items-end justify-end gap-2 md:col-span-2">
-              <Button
-                label={t("common.action.import")}
-                type="outlined"
-                icon={<MaterialIcon icon="file_upload" />}
-                onClick={() => setShowImport(true)}
-              />
-              <Button
-                label={t("classList.action.addClass")}
-                type="filled"
-                icon={<MaterialIcon icon="add" />}
-                onClick={() => setShowAdd(true)}
-              />
+            <div className="flex flex-row items-end md:col-span-2">
+              <div className="flex w-full flex-row items-center justify-end gap-2">
+                <Button
+                  label={t("common.action.import")}
+                  type="text"
+                  onClick={() => setShowImport(true)}
+                />
+                <Button
+                  // label={t("classList.action.generate")}
+                  label="Generate"
+                  type="outlined"
+                  icon={<MaterialIcon icon="auto_awesome" />}
+                  onClick={() => setShowGenerate(true)}
+                />
+                <Button
+                  label={t("classList.action.addClass")}
+                  type="filled"
+                  icon={<MaterialIcon icon="add" />}
+                  onClick={() => setShowAdd(true)}
+                />
+              </div>
             </div>
           </div>
-          <ClassTable
-            classes={allClasses}
-            setShowEdit={setShowEdit}
-            setEditingClass={setEditingClass}
-            setShowConfDel={setShowConfDel}
-          />
+          <div>
+            <ClassTable
+              classes={allClasses}
+              setShowEdit={setShowEdit}
+              setEditingClass={setEditingClass}
+              setShowConfDel={setShowConfDel}
+            />
+          </div>
         </Section>
       </RegularLayout>
 
@@ -128,6 +142,14 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
           { name: "year", type: "number (in AD)" },
           { name: "semester", type: "1 | 2" },
         ]}
+      />
+      <GenerateClassesDialog
+        show={showGenerate}
+        onClose={() => setShowGenerate(false)}
+        onSubmit={() => {
+          setShowGenerate(false);
+          router.replace(router.asPath);
+        }}
       />
       <EditClassDialog
         show={showEdit}
@@ -169,17 +191,13 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
     .select("*, schedule:schedule(*)")
     .order("number", { ascending: true });
 
-  if (error) {
-    console.error(error);
-  }
+  if (error) console.error(error);
 
   if (classes) {
     allClasses = await Promise.all(
       classes.map(async (classItem) => await db2Class(classItem))
     );
   }
-
-  // console.log(allClasses);
 
   return {
     props: {

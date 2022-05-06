@@ -12,21 +12,16 @@ import {
 // Components
 import DiscardDraft from "@components/dialogs/DiscardDraft";
 
+// Backend
+import { changePassword } from "@utils/backend/account";
+
 // Types
 import { DialogProps } from "@utils/types/common";
 
-// Backend
-import { changePassword } from "@utils/backend/account";
+// Hooks
 import { useSession } from "@utils/hooks/auth";
 
-interface ChangePasswordProps extends DialogProps {
-  setShowDiscard?: Function;
-}
-
-const ChangePassword = ({
-  show,
-  onClose,
-}: ChangePasswordProps): JSX.Element => {
+const ChangePassword = ({ show, onClose }: DialogProps): JSX.Element => {
   const { t } = useTranslation("account");
   const [showDiscard, setShowDiscard] = useState<boolean>(false);
   const [form, setForm] = useState({
