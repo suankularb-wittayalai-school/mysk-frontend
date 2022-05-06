@@ -31,6 +31,7 @@ import ClassTable from "@components/tables/ClassTable";
 import { Class } from "@utils/types/class";
 import { ClassroomDB, ClassroomTable } from "@utils/types/database/class";
 import { db2Class } from "@utils/backend/database";
+import ImportDataDialog from "@components/dialogs/ImportData";
 
 // Page
 const Classes: NextPage<{ allClasses: Class[] }> = ({
@@ -40,11 +41,11 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
   const router = useRouter();
 
   const [showAdd, setShowAdd] = useState<boolean>(false);
+  const [showImport, setShowImport] = useState<boolean>(false);
+  const [showConfDel, setShowConfDel] = useState<boolean>(false);
 
   const [showEdit, setShowEdit] = useState<boolean>(false);
   const [editingClass, setEditingClass] = useState<Class>();
-
-  const [showConfDel, setShowConfDel] = useState<boolean>(false);
 
   async function handleDelete() {
     const { data: classData, error: classError } = await supabase
@@ -90,10 +91,17 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
         <Section>
           <div className="layout-grid-cols-3">
             <Search placeholder={t("classList.searchClasses")} />
-            <div className="md:col-span-2 flex flex-row items-end justify-end gap-2">
+            <div className="flex flex-row items-end justify-end gap-2 md:col-span-2">
+              <Button
+                label={t("common.action.import")}
+                type="outlined"
+                icon={<MaterialIcon icon="file_upload" />}
+                onClick={() => setShowImport(true)}
+              />
               <Button
                 label={t("classList.action.addClass")}
                 type="filled"
+                icon={<MaterialIcon icon="add" />}
                 onClick={() => setShowAdd(true)}
               />
             </div>
@@ -108,6 +116,19 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
       </RegularLayout>
 
       {/* Dialogs */}
+      <ImportDataDialog
+        show={showImport}
+        onClose={() => setShowImport(false)}
+        onSubmit={() => {
+          setShowImport(false);
+          router.replace(router.asPath);
+        }}
+        columns={[
+          { name: "number", type: "numeric (3-digit)" },
+          { name: "year", type: "number (in AD)" },
+          { name: "semester", type: "1 | 2" },
+        ]}
+      />
       <EditClassDialog
         show={showEdit}
         onClose={() => setShowEdit(false)}
