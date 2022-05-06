@@ -13,6 +13,7 @@ const handler: NextApiHandler = async (req, res) => {
       user_metadata: {
         role: "teacher",
         teacher: req.body.id,
+        isAdmin: req.body.isAdmin ? req.body.isAdmin : false,
       },
       email_confirm: true,
     });
