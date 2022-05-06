@@ -37,6 +37,7 @@ import {
   TeacherDB,
   TeacherTable as TeacherTableType,
 } from "@utils/types/database/person";
+import { useSession } from "@utils/hooks/auth";
 
 // Page
 const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
@@ -51,6 +52,7 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
   const [editingPerson, setEditingPerson] = useState<Teacher>();
 
   const [showConfDel, setShowConfDel] = useState<boolean>(false);
+  const session = useSession(true, true);
 
   async function handleDelete() {
     if (!editingPerson) {

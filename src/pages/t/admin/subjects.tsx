@@ -32,6 +32,7 @@ import {
   SubjectTable as SubjectTableType,
 } from "@utils/types/database/subject";
 import { db2Subject } from "@utils/backend/database";
+import { useSession } from "@utils/hooks/auth";
 
 const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
   const { t } = useTranslation(["admin", "common"]);
@@ -43,12 +44,16 @@ const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
   const [editingSubject, setEditingSubject] = useState<Subject>();
 
   const [showConfDel, setShowConfDel] = useState<boolean>(false);
+  const session = useSession(true, true);
 
   async function handleDelete() {
     // console.log(editingSubject);
     // delete the syllabus if it exists
     if (editingSubject?.syllabus) {
-      const { data: syllabus, error: syllabusError } = await supabase.storage
+      const {
+        data: syllabus,
+        error: syllabusError,
+      } = await supabase.storage
         .from("syllabus")
         .remove([editingSubject.syllabus.toString()]);
       if (syllabusError) {

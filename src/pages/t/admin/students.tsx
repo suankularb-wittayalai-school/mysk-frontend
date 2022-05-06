@@ -34,6 +34,7 @@ import { StudentTable as StudentTableType } from "@utils/types/database/person";
 
 // Helper function
 import { db2Student } from "@utils/backend/database";
+import { useSession } from "@utils/hooks/auth";
 
 // Page
 const Students: NextPage<{ allStudents: Array<Student> }> = ({
@@ -48,6 +49,7 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
   const [editingPerson, setEditingPerson] = useState<Student>();
 
   const [showConfDel, setShowConfDel] = useState<boolean>(false);
+  const session = useSession(true, true);
 
   async function handleDelete() {
     // console.log(editingPerson);
