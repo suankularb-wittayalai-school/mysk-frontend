@@ -1,5 +1,5 @@
 // Modules
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import type { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
@@ -24,6 +24,7 @@ import Layout from "@components/Layout";
 
 // Types
 import { NewsItem, NewsList } from "@utils/types/news";
+import { useSession } from "@utils/hooks/auth";
 
 // News
 const LandingFeed = ({
@@ -33,6 +34,19 @@ const LandingFeed = ({
 }): JSX.Element => {
   const [fullscreen, setFullScreen] = useState<boolean>(false);
   const { t } = useTranslation("landing");
+  const router = useRouter();
+
+  const session = useSession();
+
+  useEffect(() => {
+    if (session?.user) {
+      if (session.user.user_metadata.role === "student") {
+        router.push("/s/home");
+      } else if (session.user.user_metadata.role === "teacher") {
+        router.push("/t/home");
+      }
+    }
+  }, [session, router]);
 
   return (
     <section

@@ -50,6 +50,7 @@ export async function createTeacher(
       email,
       password: teacher.birthdate.split("-").join(""),
       id: createdTeacher[0]?.id,
+      // isAdmin: true,
     }),
   });
 
