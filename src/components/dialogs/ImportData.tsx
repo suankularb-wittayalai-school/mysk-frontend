@@ -8,6 +8,7 @@ import {
 
 // Types
 import { DialogProps } from "@utils/types/common";
+import { useEffect, useState } from "react";
 
 const ImportDataDialog = ({
   show,
@@ -22,6 +23,20 @@ const ImportDataDialog = ({
     optional?: boolean;
   }[];
 }): JSX.Element => {
+  const [csvFile, setCSVFile] = useState<File | null>();
+
+  function validate(): boolean {
+    // Check if file exists
+    if (!csvFile) return false;
+
+    // Check if file type is CSV
+    if (!csvFile.name.match(/.csv$/)) return false;
+
+    return true;
+  }
+
+  useEffect(() => setCSVFile(null), [show]);
+
   return (
     <Dialog
       type="large"
@@ -29,13 +44,13 @@ const ImportDataDialog = ({
       title="Import data"
       actions={[
         { name: "Cancel", type: "close" },
-        { name: "Import", type: "submit" },
+        { name: "Import", type: "submit", disabled: !validate() },
       ]}
       show={show}
       onClose={onClose}
       onSubmit={onSubmit}
     >
-      <DialogSection name="info">
+      <DialogSection name="columns">
         <h2 className="sr-only">Columns</h2>
         <p>
           You can import a CSV file to the MySK database. Please ensure that the
@@ -76,7 +91,12 @@ const ImportDataDialog = ({
 
       <DialogSection name="upload" title="Upload file">
         <div className="sm:grid sm:grid-cols-2 sm:gap-x-6">
-          <FileInput name="file" label="File" attr={{ accept: ".csv" }} />
+          <FileInput
+            name="file"
+            label="File"
+            onChange={(e) => setCSVFile(e)}
+            attr={{ accept: ".csv, text/csv" }}
+          />
         </div>
       </DialogSection>
     </Dialog>

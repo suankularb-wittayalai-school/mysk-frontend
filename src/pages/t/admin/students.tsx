@@ -138,7 +138,7 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
         <Section>
           <div className="layout-grid-cols-3">
             <Search placeholder={t("studentList.searchStudents")} />
-            <div className="col-span-2 flex flex-row items-end justify-end gap-2">
+            <div className="flex flex-row items-end justify-end gap-2 md:col-span-2">
               <Button
                 // label={t("common.action.importData")}
                 label={"Import data"}
