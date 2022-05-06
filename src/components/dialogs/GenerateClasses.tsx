@@ -65,6 +65,7 @@ const GenerateClassesDialog = ({
       onClose={onClose}
       onSubmit={onSubmit}
     >
+      {/* Number of grades */}
       <DialogSection name="num-grades" isDoubleColumn>
         <KeyboardInput
           name="num-grades"
@@ -72,9 +73,12 @@ const GenerateClassesDialog = ({
           label="Number of grades"
           onChange={(e) => setNumGrades(Number(e))}
           defaultValue={6}
+          attr={{ min: 1, max: 12 }}
         />
       </DialogSection>
-      <DialogSection name="num-classes">
+
+      {/* Number of classes per grade */}
+      <DialogSection name="num-classes" title="Classes per grade">
         {/* Instructions */}
         <p>
           Enter the amount of classes you would like in each grade. For example,
@@ -87,7 +91,10 @@ const GenerateClassesDialog = ({
 
         {/* Inputs */}
         <div className="grid grid-cols-2 gap-x-6">
-          {range(numGrades).map((grade) => {
+          {range(
+            // Limit number of inputs shown for performance reasons
+            numGrades > 12 ? 12 : numGrades
+          ).map((grade) => {
             return (
               <KeyboardInput
                 key={grade}
@@ -95,12 +102,19 @@ const GenerateClassesDialog = ({
                 type="number"
                 label={t("class", { ns: "common", number: grade + 1 })}
                 onChange={(e) => {
+                  const parsedE = Number(e);
                   setNumClasses(
                     numClasses.map((numClassesInGrade, index) =>
-                      index == grade ? Number(e) : numClassesInGrade
+                      index == grade
+                        ? // Limit number of classes shown for performance reasons
+                          parsedE > 15
+                          ? 15
+                          : parsedE
+                        : numClassesInGrade
                     )
                   );
                 }}
+                attr={{ min: 1, max: 15 }}
               />
             );
           })}
