@@ -1,3 +1,8 @@
+// Modules
+import { useTranslation } from "next-i18next";
+import { useEffect, useState } from "react";
+
+// SK Components
 import {
   Chip,
   ChipList,
@@ -5,10 +10,12 @@ import {
   DialogSection,
   KeyboardInput,
 } from "@suankularb-components/react";
+
+// Helpers
 import { range } from "@utils/helpers/array";
+
+// Types
 import { DialogProps } from "@utils/types/common";
-import { useTranslation } from "next-i18next";
-import { useEffect, useState } from "react";
 
 const GenerateClassesDialog = ({
   show,
@@ -23,13 +30,12 @@ const GenerateClassesDialog = ({
     range(6).map(() => 0)
   );
 
-  // (@SiravitPhokeed)
-  // We are checking for the length of numClasses so as to preserve data inside numClasses
+  // We are checking for the length of `numClasses` so as to preserve data inside `numClasses`
   // when changing the number of grades
   useEffect(
     () =>
       setNumClasses((numClasses) =>
-        // If there are more grades in numClasses than we want, remove the extra grades
+        // If there are more grades in `numClasses` than we want, remove the extra grades
         numClasses.length < numGrades
           ? numClasses.splice(-1 * numGrades)
           : // Else, add the missing grades
@@ -69,6 +75,7 @@ const GenerateClassesDialog = ({
         />
       </DialogSection>
       <DialogSection name="num-classes">
+        {/* Instructions */}
         <p>
           Enter the amount of classes you would like in each grade. For example,
           if you want the classes{" "}
@@ -77,6 +84,8 @@ const GenerateClassesDialog = ({
           </code>
           , enter “3” inside the field labeled “M.1”.
         </p>
+
+        {/* Inputs */}
         <div className="grid grid-cols-2 gap-x-6">
           {range(numGrades).map((grade) => {
             return (
@@ -96,26 +105,43 @@ const GenerateClassesDialog = ({
             );
           })}
         </div>
-        <div className="flex flex-col gap-2">
-          <h3 className="!text-base">Preview</h3>
-          <div className="sm:h-24 sm:resize-y sm:overflow-y-scroll">
-            <ChipList>
-              {numClasses.map((numClassesInGrade, index) =>
-                range(numClassesInGrade).map((classSuffix) => {
-                  const classNumber = `${index + 1}${(classSuffix + 1)
-                    .toString()
-                    .padStart(2, "0")}`;
-                  return (
-                    <Chip
-                      key={classNumber}
-                      name={t("class", { ns: "common", number: classNumber })}
-                    />
-                  );
-                })
-              )}
-            </ChipList>
-          </div>
-        </div>
+
+        {/* Preview */}
+        {
+          // Only show the preview if `numClasses` is an array filled with 0s.
+          // The check works because 0 is falsy, and thus an array filled with 0s would become an empty
+          // array whose length is 0.
+          numClasses.filter((numClassesInGrade) => numClassesInGrade).length !=
+            0 && (
+            <div className="flex flex-col gap-2">
+              <h3 className="!text-base">Preview</h3>
+              <div className="sm:h-24 sm:resize-y sm:overflow-y-scroll">
+                <ChipList>
+                  {
+                    // Loops through `numClasses`, where the value is the number of classes
+                    // and the index is the grade (counting from zero)
+                    numClasses.map((value, index) =>
+                      range(value).map((classSuffix) => {
+                        const classNumber = `${index + 1}${(classSuffix + 1)
+                          .toString()
+                          .padStart(2, "0")}`;
+                        return (
+                          <Chip
+                            key={classNumber}
+                            name={t("class", {
+                              ns: "common",
+                              number: classNumber,
+                            })}
+                          />
+                        );
+                      })
+                    )
+                  }
+                </ChipList>
+              </div>
+            </div>
+          )
+        }
       </DialogSection>
     </Dialog>
   );
