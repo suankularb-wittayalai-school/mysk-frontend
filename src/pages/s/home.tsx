@@ -58,7 +58,7 @@ const StudentHome: NextPage<{
   const [showChangePassword, setShowChangePassword] = useState<boolean>(false);
   const [showEditProfile, setShowEditProfile] = useState<boolean>(false);
   const [showLogOut, setShowLogOut] = useState<boolean>(false);
-  const [user, session] = useStudentAccount();
+  const [user, session] = useStudentAccount(true);
 
   if (!user) return <></>;
 

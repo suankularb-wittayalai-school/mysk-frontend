@@ -8,7 +8,7 @@ import { Student, Teacher } from "@utils/types/person";
 import { StudentDB, TeacherDB } from "@utils/types/database/person";
 import { db2Student, db2Teacher } from "@utils/backend/database";
 
-export function useSession() {
+export function useSession(loginRequired: boolean = false) {
   const [session, setSession] = useState<null | Session>(null);
   const router = useRouter();
 
@@ -23,11 +23,18 @@ export function useSession() {
       setSession(session);
     });
   }, []);
+
+  useEffect(() => {
+    if (session && loginRequired && !session.user) router.push("/");
+  }, [session, loginRequired, router]);
+
   return session;
 }
 
-export function useStudentAccount(): [Student | null, Session | null] {
-  const session = useSession();
+export function useStudentAccount(
+  loginRequired: boolean = false
+): [Student | null, Session | null] {
+  const session = useSession(loginRequired);
   const router = useRouter();
   const [user, setUser] = useState<Student | null>(null);
 
@@ -57,8 +64,10 @@ export function useStudentAccount(): [Student | null, Session | null] {
   return [user, session];
 }
 
-export function useTeacherAccount(): [Teacher | null, Session | null] {
-  const session = useSession();
+export function useTeacherAccount(
+  loginRequired: boolean = false
+): [Teacher | null, Session | null] {
+  const session = useSession(loginRequired);
   const router = useRouter();
   const [user, setUser] = useState<Teacher | null>(null);
 

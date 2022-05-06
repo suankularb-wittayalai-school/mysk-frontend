@@ -169,7 +169,7 @@ const Layout = ({
         }
       }
     }
-  }, [session]);
+  }, [session, router]);
 
   return (
     <AnimatePresence
