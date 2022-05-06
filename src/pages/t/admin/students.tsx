@@ -140,8 +140,7 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
             <Search placeholder={t("studentList.searchStudents")} />
             <div className="flex flex-row items-end justify-end gap-2 md:col-span-2">
               <Button
-                // label={t("common.action.importData")}
-                label={"Import data"}
+                label={t("common.action.import")}
                 type="outlined"
                 icon={<MaterialIcon icon="file_upload" />}
                 onClick={() => setShowImport(true)}

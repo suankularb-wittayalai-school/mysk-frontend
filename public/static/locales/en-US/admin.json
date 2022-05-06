@@ -80,6 +80,12 @@
       "seeSchedule": "See schedule"
     }
   },
+  "common": {
+    "action": {
+      "import": "Import data",
+      "seeAll": "See all"
+    }
+  },
   "dialog": {
     "editStudent": {
       "title": {
@@ -109,6 +115,22 @@
       "action": {
         "cancel": "Cancel",
         "save": "Save"
+      }
+    },
+    "importData": {
+      "title": "Import data",
+      "columns": {
+        "title": "Columns",
+        "info": "You can import a CSV file to the MySK database. Please ensure that the columns in your CSV file match the following exactly.",
+        "optionalNote": "<0>Note:</0> <1></1> means optional."
+      },
+      "upload": {
+        "title": "Upload file",
+        "file": "File"
+      },
+      "action": {
+        "cancel": "Cancel",
+        "import": "Import"
       }
     }
   }

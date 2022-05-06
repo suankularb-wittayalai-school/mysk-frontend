@@ -1,3 +1,7 @@
+// Modules
+import { Trans, useTranslation } from "next-i18next";
+import { useEffect, useState } from "react";
+
 // SK Components
 import {
   Dialog,
@@ -8,7 +12,12 @@ import {
 
 // Types
 import { DialogProps } from "@utils/types/common";
-import { useEffect, useState } from "react";
+
+const OptionalIcon = () => (
+  <div className="text-xl text-tertiary">
+    <MaterialIcon icon="help_outline" allowCustomSize />
+  </div>
+);
 
 const ImportDataDialog = ({
   show,
@@ -23,6 +32,7 @@ const ImportDataDialog = ({
     optional?: boolean;
   }[];
 }): JSX.Element => {
+  const { t } = useTranslation(["admin", "common"]);
   const [csvFile, setCSVFile] = useState<File | null>();
 
   function validate(): boolean {
@@ -41,27 +51,31 @@ const ImportDataDialog = ({
     <Dialog
       type="large"
       label="import-data"
-      title="Import data"
+      title={t("dialog.importData.title")}
       actions={[
-        { name: "Cancel", type: "close" },
-        { name: "Import", type: "submit", disabled: !validate() },
+        {
+          name: t("dialog.importData.action.cancel"),
+          type: "close",
+        },
+        {
+          name: t("dialog.importData.action.import"),
+          type: "submit",
+          disabled: !validate(),
+        },
       ]}
       show={show}
       onClose={onClose}
       onSubmit={onSubmit}
     >
       <DialogSection name="columns">
-        <h2 className="sr-only">Columns</h2>
-        <p>
-          You can import a CSV file to the MySK database. Please ensure that the
-          columns in your CSV file match the following exactly.
-        </p>
+        <h2 className="sr-only">{t("dialog.importData.columns.title")}</h2>
+        <p>{t("dialog.importData.columns.info")}</p>
         <p className="flex flex-row flex-wrap items-center gap-x-1">
-          <span className="font-display">Note:</span>
-          <div className="text-xl text-tertiary">
-            <MaterialIcon icon="help_outline" allowCustomSize />
-          </div>
-          means optional.
+          <Trans i18nKey="dialog.importData.columns.optionalNote" ns="admin">
+            <span className="font-display">Note:</span>
+            <OptionalIcon />
+            means optional.
+          </Trans>
         </p>
         <div
           className="mb-4 h-72 resize-y overflow-y-scroll rounded-t-sm
@@ -75,11 +89,7 @@ const ImportDataDialog = ({
                     key={column.name}
                     className="flex flex-row items-center gap-1"
                   >
-                    {column.optional && (
-                      <div className="text-xl text-tertiary">
-                        <MaterialIcon icon="help_outline" allowCustomSize />
-                      </div>
-                    )}
+                    {column.optional && <OptionalIcon />}
                     <h3 className="inline !text-base">{column.name}:</h3>
                     <span className="text-sm">{column.type}</span>
                   </div>
@@ -89,11 +99,12 @@ const ImportDataDialog = ({
         </div>
       </DialogSection>
 
-      <DialogSection name="upload" title="Upload file">
+      <DialogSection name="upload" title={t("dialog.importData.upload.title")}>
         <div className="sm:grid sm:grid-cols-2 sm:gap-x-6">
           <FileInput
             name="file"
-            label="File"
+            label={t("dialog.importData.upload.file")}
+            noneAttachedMsg={t("input.none.noFilesAttached", { ns: "common" })}
             onChange={(e) => setCSVFile(e)}
             attr={{ accept: ".csv, text/csv" }}
           />
