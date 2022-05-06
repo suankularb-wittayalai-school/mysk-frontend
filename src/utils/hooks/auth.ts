@@ -26,7 +26,7 @@ export function useSession() {
   return session;
 }
 
-export function useStudentAccount() {
+export function useStudentAccount(): [Student | null, Session | null] {
   const session = useSession();
   const router = useRouter();
   const [user, setUser] = useState<Student | null>(null);
@@ -54,10 +54,10 @@ export function useStudentAccount() {
       }
     }
   }, [session]);
-  return user;
+  return [user, session];
 }
 
-export function useTeacherAccount() {
+export function useTeacherAccount(): [Teacher | null, Session | null] {
   const session = useSession();
   const router = useRouter();
   const [user, setUser] = useState<Teacher | null>(null);
@@ -87,5 +87,5 @@ export function useTeacherAccount() {
       }
     }
   }, [session]);
-  return user;
+  return [user, session];
 }
