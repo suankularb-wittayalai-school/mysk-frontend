@@ -159,7 +159,7 @@ const GenerateClassesDialog = ({
             name="preview"
             title={t("dialog.generateClasses.preview")}
           >
-            <div className="sm:h-24 sm:resize-y sm:overflow-y-scroll">
+            <div className="sm:h-24 sm:resize-y sm:overflow-y-scroll sm:pr-2">
               <ChipList>
                 {
                   // Loops through `numClasses`, where the value is the number of classes
