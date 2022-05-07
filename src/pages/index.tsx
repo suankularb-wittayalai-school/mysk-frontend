@@ -24,6 +24,8 @@ import Layout from "@components/Layout";
 
 // Types
 import { NewsItem, NewsList } from "@utils/types/news";
+
+// Hooks
 import { useSession } from "@utils/hooks/auth";
 
 // News
@@ -180,64 +182,63 @@ const LandingBanner = (): JSX.Element => {
   const { t } = useTranslation(["landing", "common"]);
 
   return (
-    <header className="h-full font-display sm:min-h-[calc(100vh-4.5rem)]">
-      {/* Vignette layer */}
+    <header
+      className="flex h-full flex-col items-center gap-16 p-8 font-display
+        sm:items-start"
+    >
       <div
-        className="flex h-full flex-col items-center gap-16 bg-gradient-to-b
-          from-[#00000033] via-transparent to-[#00000033] px-8 py-16
-          dark:from-[#00000099] dark:via-[#00000066] dark:to-[#00000099]
-          sm:min-h-[calc(100vh-4.5rem)] sm:items-start sm:bg-gradient-to-r sm:px-16"
+        className="flex flex-col items-center text-center
+          sm:flex-row sm:gap-8 sm:text-left"
       >
-        <div className="flex flex-col items-center text-center sm:flex-row sm:gap-8 sm:text-left">
-          {/* Logo */}
-          <div className="relative h-40 w-40">
-            <Image
-              alt="โลโก้ดอกไม้สีชมพู มีตัวอักษร MySK อยู่ตรงกลาง"
-              layout="fill"
-              priority={true}
-              src={"/images/branding/logo-white.webp"}
-            />
-          </div>
-
-          {/* Text */}
-          <div className="w-96 font-display leading-tight text-white">
-            <h1 className="text-9xl font-bold">
-              <Trans i18nKey="brand.nameWithAccent" ns="common">
-                My
-                <span className="text-secondary-container dark:text-secondary">
-                  SK
-                </span>
-              </Trans>
-            </h1>
-            <p className="text-4xl font-light">
-              {t("brand.school", { ns: "common" })}
-            </p>
-          </div>
+        {/* Logo */}
+        <div className="relative h-40 w-40">
+          <Image
+            // TODO: Translate this please
+            alt="โลโก้ดอกไม้สีชมพู มีตัวอักษร MySK อยู่ตรงกลาง"
+            layout="fill"
+            priority={true}
+            src={"/images/branding/logo-white.webp"}
+          />
         </div>
 
-        {/* Actions */}
-        <div className="flex flex-col items-center gap-2 sm:items-start">
-          <div className="flex flex-row flex-wrap items-center gap-4">
-            <LinkButton
-              label={t("login")}
-              type="filled"
-              icon={<MaterialIcon icon="login" />}
-              url="/account/login"
-              LinkElement={Link}
-              className="has-action--tertiary !bg-tertiary-container !text-tertiary"
-            />
-            <LinkButton
-              label={t("help")}
-              type="outlined"
-              url="/help"
-              LinkElement={Link}
-              className="!bg-transparent !text-tertiary-container !outline-tertiary-container
+        {/* Text */}
+        <div className="w-96 font-display leading-tight text-white">
+          <h1 className="text-9xl font-bold">
+            <Trans i18nKey="brand.nameWithAccent" ns="common">
+              My
+              <span className="text-secondary-container dark:text-secondary">
+                SK
+              </span>
+            </Trans>
+          </h1>
+          <p className="text-4xl font-light">
+            {t("brand.school", { ns: "common" })}
+          </p>
+        </div>
+      </div>
+
+      {/* Actions */}
+      <div className="flex flex-col items-center gap-2 sm:items-start">
+        <div className="flex flex-row flex-wrap items-center gap-4">
+          <LinkButton
+            label={t("login")}
+            type="filled"
+            icon={<MaterialIcon icon="login" />}
+            url="/account/login"
+            LinkElement={Link}
+            className="has-action--tertiary !bg-tertiary-container !text-tertiary"
+          />
+          <LinkButton
+            label={t("help")}
+            type="outlined"
+            url="/help"
+            LinkElement={Link}
+            className="!bg-transparent !text-tertiary-container !outline-tertiary-container
                 hover:!bg-tertiary-translucent-08 focus:!bg-tertiary-translucent-12
                 focus-visible:!bg-tertiary dark:!text-tertiary dark:!outline-tertiary"
-            />
-          </div>
-          <ChangeLanguageButton />
+          />
         </div>
+        <ChangeLanguageButton />
       </div>
     </header>
   );
@@ -253,53 +254,60 @@ export default function Landing() {
         <title>{t("brand.name", { ns: "common" })}</title>
       </Head>
       <div className="h-screen bg-[url('/images/landing.png')] bg-cover bg-left">
-        <LandingBanner />
-        <LandingFeed
-          feed={{
-            lastUpdated: new Date(),
-            content: [
-              {
-                id: 4,
-                type: "news",
-                postDate: new Date(2021, 8, 16),
-                image: "/images/dummybase/certificates-announcement.webp",
-                content: {
-                  "en-US": {
-                    title: "Certificates Announcement",
-                    supportingText:
-                      "Announcement of the 2020 Suankularb Wittayalai winners of certificates.",
-                  },
-                  th: {
-                    title: "ประกาศเกียรติคุณ",
-                    supportingText:
-                      "ประกาศเกียรติคุณโรงเรียนสวนกุหลาบวิทยาลัย ประจำปีการศึกษา 2563",
-                  },
-                },
-              },
-              {
-                id: 1,
-                type: "news",
-                postDate: new Date(2020, 4, 12),
-                image: "/images/dummybase/sk-teaching-practice.webp",
-                content: {
-                  "en-US": {
-                    title: "SK Teaching Practice",
-                    supportingText:
-                      "The stories we’re about to tell might seem small, but can go a long way in creating an enjoyable \
-                  environment for teachers and students alike.",
-                  },
-                  th: {
-                    title: "การบริหารจัดการชั้นเรียน",
-                    supportingText:
-                      "เรื่องที่พวกเราจะเล่านั้น เป็นเพียงประเด็นเล็กๆ ที่ใช้บริหารจัดการชั้นเรียนได้อยู่หมัด มันดึงความสนใจของเด็กน้อยจากมือถือได้ \
-                  แถมมีเสียงหัวเราะเกิดขึ้นในชั้นเรียน นักเรียนได้ค้นคว้าได้ทดลอง ได้ฝึกปฏิบัติ กิจกรรมเหล่านี้ส่งเสริมให้นักเรียนเกิดทักษะการคิดและแลกเปลี่ยนเรียนรู้ร่วมกัน \
-                  ทำให้นักเรียนมีความสุขสนุกสนานในการเรียนและเกิดทักษะการรวบรวมข้อมูล คิดอย่างเป็นระบบสร้างเป็นองค์ความรู้ที่ยั่งยืนได้อย่างแท้จริง",
+        <div
+          className="h-full bg-gradient-to-b
+            from-[#00000033] via-transparent to-[#00000033] 
+            dark:from-[#00000099] dark:via-[#00000066] dark:to-[#00000099]
+            sm:bg-gradient-to-r"
+        >
+          <LandingBanner />
+          <LandingFeed
+            feed={{
+              lastUpdated: new Date(),
+              content: [
+                {
+                  id: 4,
+                  type: "news",
+                  postDate: new Date(2021, 8, 16),
+                  image: "/images/dummybase/certificates-announcement.webp",
+                  content: {
+                    "en-US": {
+                      title: "Certificates Announcement",
+                      supportingText:
+                        "Announcement of the 2020 Suankularb Wittayalai winners of certificates.",
+                    },
+                    th: {
+                      title: "ประกาศเกียรติคุณ",
+                      supportingText:
+                        "ประกาศเกียรติคุณโรงเรียนสวนกุหลาบวิทยาลัย ประจำปีการศึกษา 2563",
+                    },
                   },
                 },
-              },
-            ],
-          }}
-        />
+                {
+                  id: 1,
+                  type: "news",
+                  postDate: new Date(2020, 4, 12),
+                  image: "/images/dummybase/sk-teaching-practice.webp",
+                  content: {
+                    "en-US": {
+                      title: "SK Teaching Practice",
+                      supportingText:
+                        "The stories we’re about to tell might seem small, but can go a long way in creating an enjoyable \
+                    environment for teachers and students alike.",
+                    },
+                    th: {
+                      title: "การบริหารจัดการชั้นเรียน",
+                      supportingText:
+                        "เรื่องที่พวกเราจะเล่านั้น เป็นเพียงประเด็นเล็กๆ ที่ใช้บริหารจัดการชั้นเรียนได้อยู่หมัด มันดึงความสนใจของเด็กน้อยจากมือถือได้ \
+                    แถมมีเสียงหัวเราะเกิดขึ้นในชั้นเรียน นักเรียนได้ค้นคว้าได้ทดลอง ได้ฝึกปฏิบัติ กิจกรรมเหล่านี้ส่งเสริมให้นักเรียนเกิดทักษะการคิดและแลกเปลี่ยนเรียนรู้ร่วมกัน \
+                    ทำให้นักเรียนมีความสุขสนุกสนานในการเรียนและเกิดทักษะการรวบรวมข้อมูล คิดอย่างเป็นระบบสร้างเป็นองค์ความรู้ที่ยั่งยืนได้อย่างแท้จริง",
+                    },
+                  },
+                },
+              ],
+            }}
+          />
+        </div>
       </div>
     </>
   );
