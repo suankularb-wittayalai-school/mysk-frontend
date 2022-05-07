@@ -82,7 +82,7 @@ const ImportDataDialog = ({
             border-b-2 border-inverse-surface bg-surface-2
             p-2 text-on-surface sm:h-40"
         >
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1" translate="no">
             {columns.length > 0
               ? columns.map((column) => (
                   <div
