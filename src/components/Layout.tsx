@@ -25,7 +25,7 @@ const Layout = ({
   const router = useRouter();
   const { t } = useTranslation();
 
-  const [navItems, setNavItems] = useState([
+  const defaultNavItem = [
     {
       name: t("navigation.home"),
       icon: {
@@ -50,11 +50,12 @@ const Layout = ({
       },
       url: "/about",
     },
-  ]);
+  ];
+
+  const [navItems, setNavItems] = useState(defaultNavItem);
 
   const session = useSession();
 
-  // TODO: When logging in does become a thing, change this to a more sane implementation
   const studentNavItem = [
     {
       name: t("navigation.home"),
@@ -167,7 +168,11 @@ const Layout = ({
             },
           ]);
         }
+      } else {
+        setNavItems(defaultNavItem);
       }
+    } else {
+      setNavItems(defaultNavItem);
     }
   }, [session, router]);
 
