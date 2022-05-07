@@ -252,7 +252,7 @@ export default function Landing() {
       <Head>
         <title>{t("brand.name", { ns: "common" })}</title>
       </Head>
-      <div className="h-screen bg-[url('/images/landing.webp')] bg-cover bg-left">
+      <div className="h-screen bg-[url('/images/landing.png')] bg-cover bg-left">
         <LandingBanner />
         <LandingFeed
           feed={{
