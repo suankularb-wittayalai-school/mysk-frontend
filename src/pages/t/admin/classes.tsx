@@ -182,8 +182,7 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
         onClose={() => setShowConfDel(false)}
         onSubmit={() => {
           setShowConfDel(false);
-          handleDelete();
-          router.replace(router.asPath);
+          handleDelete().then(() => router.replace(router.asPath));
         }}
       />
     </>
