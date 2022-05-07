@@ -217,7 +217,7 @@ const LandingBanner = (): JSX.Element => {
 
         {/* Actions */}
         <div className="flex flex-col items-center gap-2 sm:items-start">
-          <div className="flex flex-row flex-wrap justify-center gap-4">
+          <div className="flex flex-row flex-wrap items-center gap-4">
             <LinkButton
               label={t("login")}
               type="filled"

@@ -4,18 +4,14 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { Trans, useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
-import { useState } from "react";
 
 // SK Components
 import {
-  Button,
   Chip,
   ChipList,
   Header,
-  KeyboardInput,
   LinkButton,
   MaterialIcon,
   RegularLayout,
@@ -81,7 +77,7 @@ const StudentSection = ({
       <div className="flex flex-row items-center justify-end gap-2">
         <LinkButton
           type="filled"
-          label={t("studentList.action.seeAll")}
+          label={t("common.action.seeAll")}
           url="/t/admin/students"
           LinkElement={Link}
         />
@@ -100,7 +96,7 @@ const TeacherSection = ({
   return (
     <Section>
       <div className="layout-grid-cols-3">
-        <div className="col-span-2">
+        <div className="md:col-span-2">
           <Header
             icon={<MaterialIcon icon="group" allowCustomSize />}
             text={t("teacherList.title")}
@@ -129,7 +125,7 @@ const SubjectSection = ({ someSubjects }: { someSubjects: Subject[] }) => {
   return (
     <Section>
       <div className="layout-grid-cols-3">
-        <div className="col-span-2">
+        <div className="md:col-span-2">
           <Header
             icon={<MaterialIcon icon="school" allowCustomSize />}
             text={t("subjectList.title")}
@@ -143,7 +139,7 @@ const SubjectSection = ({ someSubjects }: { someSubjects: Subject[] }) => {
       <div className="flex flex-row items-center justify-end gap-2">
         <LinkButton
           type="filled"
-          label={t("subjectList.action.seeAll")}
+          label={t("common.action.seeAll")}
           url="/t/admin/subjects"
           LinkElement={Link}
         />
@@ -158,7 +154,7 @@ const ClassSection = ({ someClasses }: { someClasses: Class[] }) => {
   return (
     <Section>
       <div className="layout-grid-cols-3">
-        <div className="col-span-2">
+        <div className="md:col-span-2">
           <Header
             icon={<MaterialIcon icon="meeting_room" allowCustomSize />}
             text={t("classList.title")}
@@ -172,7 +168,7 @@ const ClassSection = ({ someClasses }: { someClasses: Class[] }) => {
       <div className="flex flex-row items-center justify-end gap-2">
         <LinkButton
           type="filled"
-          label={t("classList.action.seeAll")}
+          label={t("common.action.seeAll")}
           url="/t/admin/classes"
           LinkElement={Link}
         />

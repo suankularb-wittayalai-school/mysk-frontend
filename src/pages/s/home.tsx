@@ -9,7 +9,7 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 // SK Components
 import {
@@ -17,9 +17,6 @@ import {
   RegularLayout,
   Title,
 } from "@suankularb-components/react";
-
-// Supabase imports
-import { supabase } from "@utils/supabaseClient";
 
 // Components
 import ChangePassword from "@components/dialogs/ChangePassword";
@@ -32,20 +29,14 @@ import TeachersSection from "@components/home-sections/TeachersSection";
 
 // Types
 import { NewsList } from "@utils/types/news";
-import { Student, Teacher } from "@utils/types/person";
+import { Teacher } from "@utils/types/person";
 import { StudentSchedule } from "@utils/types/schedule";
-import { StudentDB } from "@utils/types/database/person";
 
-// External Types
-import { Session } from "@supabase/supabase-js";
-
-// Helper functions
-import { db2Student } from "@utils/backend/database";
-import { useSession, useStudentAccount } from "@utils/hooks/auth";
+// Helpers
+import { useStudentAccount } from "@utils/hooks/auth";
 
 // Page
 const StudentHome: NextPage<{
-  // user: Student | Teacher;
   news: NewsList;
   schedule: StudentSchedule;
   teachers: Array<Teacher>;
@@ -137,11 +128,13 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         "news",
         "dashboard",
       ])),
-      // user,
+
       // (@SiravitPhokeed)
       // Apparently NextJS doesn’t serialize Date when in development
       // It does in production, though.
-      // So I guess I’ll keep this workaround, well, around…
+      // ---
+      // Update: this isn’t a problem anymore as Supabase sends in
+      // dates as a string, which NextJS can deal with.
       news: news.map((newsItem) => ({
         ...newsItem,
         postDate: newsItem.postDate.getTime(),

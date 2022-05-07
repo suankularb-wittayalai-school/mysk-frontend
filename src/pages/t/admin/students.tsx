@@ -9,9 +9,6 @@ import { useTranslation } from "next-i18next";
 
 import { useState } from "react";
 
-// Supabase client
-import { supabase } from "@utils/supabaseClient";
-
 // SK Components
 import {
   Button,
@@ -25,15 +22,21 @@ import {
 // Components
 import ConfirmDelete from "@components/dialogs/ConfirmDelete";
 import EditPersonDialog from "@components/dialogs/EditPerson";
+import ImportDataDialog from "@components/dialogs/ImportData";
 import StudentTable from "@components/tables/StudentTable";
+
+// Backend
+import { db2Student } from "@utils/backend/database";
+
+// Supabase
+import { supabase } from "@utils/supabaseClient";
 
 // Types
 import { Role, Student } from "@utils/types/person";
 import { PersonTable, StudentDB } from "@utils/types/database/person";
 import { StudentTable as StudentTableType } from "@utils/types/database/person";
 
-// Helper function
-import { db2Student } from "@utils/backend/database";
+// Hooks
 import { useSession } from "@utils/hooks/auth";
 
 // Page
@@ -44,18 +47,16 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
   const router = useRouter();
 
   const [showAdd, setShowAdd] = useState<boolean>(false);
+  const [showImport, setShowImport] = useState<boolean>(false);
+  const [showConfDel, setShowConfDel] = useState<boolean>(false);
 
   const [showEdit, setShowEdit] = useState<boolean>(false);
   const [editingPerson, setEditingPerson] = useState<Student>();
 
-  const [showConfDel, setShowConfDel] = useState<boolean>(false);
   const session = useSession({ loginRequired: true, adminOnly: true });
 
   async function handleDelete() {
-    // console.log(editingPerson);
-    if (!editingPerson) {
-      return;
-    }
+    if (!editingPerson) return;
 
     const { data: userid, error: selectingError } = await supabase
       .from<{
@@ -69,8 +70,6 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
       .match({ student: editingPerson.id })
       .limit(1)
       .single();
-
-    // console.log(userid, editingPerson);
 
     if (selectingError) {
       console.error(selectingError);
@@ -91,7 +90,7 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
       return;
     }
 
-    // delete the person of the student
+    // Delete the person of the student
     const { data: person, error: personDeletingError } = await supabase
       .from<PersonTable>("people")
       .delete()
@@ -102,7 +101,7 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
       return;
     }
 
-    // delete account of the student
+    // Delete account of the student
     await fetch(`/api/account`, {
       method: "DELETE",
       headers: {
@@ -112,8 +111,6 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
         id: userid.id,
       }),
     });
-
-    // console.log(person);
 
     setShowConfDel(false);
     router.replace(router.asPath);
@@ -145,28 +142,58 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
         <Section>
           <div className="layout-grid-cols-3">
             <Search placeholder={t("studentList.searchStudents")} />
-            <div className="col-span-2 flex flex-row items-end justify-end gap-2">
+            <div className="flex flex-row items-end justify-end gap-2 md:col-span-2">
+              <Button
+                label={t("common.action.import")}
+                type="outlined"
+                icon={<MaterialIcon icon="file_upload" />}
+                onClick={() => setShowImport(true)}
+              />
               <Button
                 label={t("studentList.action.addStudent")}
                 type="filled"
+                icon={<MaterialIcon icon="add" />}
                 onClick={() => setShowAdd(true)}
               />
             </div>
           </div>
-          <StudentTable
-            students={allStudents}
-            setShowEdit={setShowEdit}
-            setEditingPerson={setEditingPerson}
-            setShowConfDelStudent={setShowConfDel}
-          />
+          <div>
+            <StudentTable
+              students={allStudents}
+              setShowEdit={setShowEdit}
+              setEditingPerson={setEditingPerson}
+              setShowConfDelStudent={setShowConfDel}
+            />
+          </div>
         </Section>
       </RegularLayout>
 
       {/* Dialogs */}
+      <ImportDataDialog
+        show={showImport}
+        onClose={() => setShowImport(false)}
+        onSubmit={() => {
+          setShowImport(false);
+          router.replace(router.asPath);
+        }}
+        columns={[
+          { name: "prefix_th", type: '"เด็กชาย" | "นาย" | "นาง" | "นางสาว"' },
+          { name: "first_name_th", type: "text" },
+          { name: "first_name_en", type: "text" },
+          { name: "middle_name_th", type: "text", optional: true },
+          { name: "middle_name_en", type: "text", optional: true },
+          { name: "last_name_th", type: "text" },
+          { name: "last_name_en", type: "text" },
+          { name: "birthdate", type: "date (YYYY-MM-DD) (in AD)" },
+          { name: "citizen_id", type: "numeric (13-digit)" },
+          { name: "student_id", type: "numeric (5-digit)" },
+          { name: "class_number", type: "numeric (3-digit)" },
+          { name: "email", type: "email" },
+        ]}
+      />
       <EditPersonDialog
         show={showEdit}
         onClose={() => setShowEdit(false)}
-        // TODO: Refetch students here ↓
         onSubmit={() => {
           setShowEdit(false);
           router.replace(router.asPath);
@@ -177,7 +204,6 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
       <EditPersonDialog
         show={showAdd}
         onClose={() => setShowAdd(false)}
-        // TODO: Refetch students here ↓
         onSubmit={() => {
           setShowAdd(false);
           router.replace(router.asPath);
@@ -188,7 +214,6 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
       <ConfirmDelete
         show={showConfDel}
         onClose={() => setShowConfDel(false)}
-        // TODO: Refetch teachers here ↓
         onSubmit={() => handleDelete()}
       />
     </>

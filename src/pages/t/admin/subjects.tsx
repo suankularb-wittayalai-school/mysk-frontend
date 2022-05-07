@@ -24,14 +24,21 @@ import ConfirmDelete from "@components/dialogs/ConfirmDelete";
 import EditSubjectDialog from "@components/dialogs/EditSubject";
 import SubjectTable from "@components/tables/SubjectTable";
 
+// Backend
+import { db2Subject } from "@utils/backend/database";
+
+// Supabase
+import { supabase } from "@utils/supabaseClient";
+
 // Types
 import { Subject } from "@utils/types/subject";
-import { supabase } from "@utils/supabaseClient";
+import ImportDataDialog from "@components/dialogs/ImportData";
 import {
   SubjectDB,
   SubjectTable as SubjectTableType,
 } from "@utils/types/database/subject";
-import { db2Subject } from "@utils/backend/database";
+
+// Hooks
 import { useSession } from "@utils/hooks/auth";
 
 const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
@@ -39,16 +46,16 @@ const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
   const router = useRouter();
 
   const [showAdd, setShowAdd] = useState<boolean>(false);
+  const [showImport, setShowImport] = useState<boolean>(false);
+  const [showConfDel, setShowConfDel] = useState<boolean>(false);
 
   const [showEdit, setShowEdit] = useState<boolean>(false);
   const [editingSubject, setEditingSubject] = useState<Subject>();
 
-  const [showConfDel, setShowConfDel] = useState<boolean>(false);
   const session = useSession({ loginRequired: true, adminOnly: true });
 
   async function handleDelete() {
-    // console.log(editingSubject);
-    // delete the syllabus if it exists
+    // Delete the syllabus if it exists
     if (editingSubject?.syllabus) {
       const {
         data: syllabus,
@@ -60,7 +67,7 @@ const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
         console.error(syllabusError);
       }
     }
-    // delete the subject
+    // Delete the subject
     const { data, error } = await supabase
       .from("subject")
       .delete()
@@ -98,10 +105,17 @@ const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
         <Section>
           <div className="layout-grid-cols-3">
             <Search placeholder={t("subjectList.searchSubjects")} />
-            <div className="col-span-2 flex flex-row items-end justify-end gap-2">
+            <div className="flex flex-row items-end justify-end gap-2 md:col-span-2">
+              <Button
+                label={t("common.action.import")}
+                type="outlined"
+                icon={<MaterialIcon icon="file_upload" />}
+                onClick={() => setShowImport(true)}
+              />
               <Button
                 label={t("subjectList.action.addSubject")}
                 type="filled"
+                icon={<MaterialIcon icon="add" />}
                 onClick={() => setShowAdd(true)}
               />
             </div>
@@ -118,6 +132,29 @@ const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
       </RegularLayout>
 
       {/* Dialogs */}
+      <ImportDataDialog
+        show={showImport}
+        onClose={() => setShowImport(false)}
+        onSubmit={() => {
+          setShowImport(false);
+          router.replace(router.asPath);
+        }}
+        // prettier-ignore
+        columns={[
+          { name: "name_th", type: "text" },
+          { name: "name_en", type: "text" },
+          { name: "short_name_th", type: "text", optional: true },
+          { name: "short_name_en", type: "text", optional: true },
+          { name: "code_th", type: "text" },
+          { name: "code_en", type: "text" },
+          { name: "type", type: '"รายวิชาพื้นฐาน" | "รายวิชาเพิ่มเติม" | "รายวิชาเลือก" | "กิจกรรมพัฒนาผู้เรียน"' },
+          { name: "credit", type: "numeric" },
+          { name: "description_th", type: "numeric", optional: true },
+          { name: "description_en", type: "numeric", optional: true },
+          { name: "year", type: "number (in AD)" },
+          { name: "semester", type: "1 | 2" },
+        ]}
+      />
       <EditSubjectDialog
         show={showAdd}
         onClose={() => setShowAdd(false)}

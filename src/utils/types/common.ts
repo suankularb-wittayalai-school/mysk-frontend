@@ -1,6 +1,6 @@
 export interface DialogProps {
   show: boolean;
-  onClose: Function;
+  onClose: () => void;
 }
 
 export type ChipInputListItem = {

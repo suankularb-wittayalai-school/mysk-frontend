@@ -37,6 +37,9 @@ import {
   TeacherDB,
   TeacherTable as TeacherTableType,
 } from "@utils/types/database/person";
+import ImportDataDialog from "@components/dialogs/ImportData";
+
+// Hooks
 import { useSession } from "@utils/hooks/auth";
 
 // Page
@@ -47,17 +50,18 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
   const router = useRouter();
 
   const [showAdd, setShowAdd] = useState<boolean>(false);
+  const [showImport, setShowImport] = useState<boolean>(false);
+  const [showConfDel, setShowConfDel] = useState<boolean>(false);
 
   const [showEdit, setShowEdit] = useState<boolean>(false);
   const [editingPerson, setEditingPerson] = useState<Teacher>();
 
-  const [showConfDel, setShowConfDel] = useState<boolean>(false);
   const session = useSession({ loginRequired: true, adminOnly: true });
-
+  
+  
   async function handleDelete() {
-    if (!editingPerson) {
-      return;
-    }
+    if (!editingPerson) return;
+
     const { data: userid, error: selectingError } = await supabase
       .from<{
         id: string;
@@ -70,8 +74,6 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
       .match({ teacher: editingPerson.id })
       .limit(1)
       .single();
-
-    // console.log(userid, editingPerson);
 
     if (selectingError) {
       console.error(selectingError);
@@ -94,7 +96,6 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
       console.error(teacherDeletingError);
       return;
     }
-
     // delete the person related to the teacher
     const {
       data: deletingPerson,
@@ -108,7 +109,7 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
       return;
     }
 
-    // delete account of the teacher
+    // Delete account of the teacher
     await fetch(`/api/account`, {
       method: "DELETE",
       headers: {
@@ -149,10 +150,17 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
         <Section>
           <div className="layout-grid-cols-3">
             <Search placeholder={t("teacherList.searchTeachers")} />
-            <div className="col-span-2 flex flex-row items-end justify-end gap-2">
+            <div className="flex flex-row items-end justify-end gap-2 md:col-span-2">
+              <Button
+                label={t("common.action.import")}
+                type="outlined"
+                icon={<MaterialIcon icon="file_upload" />}
+                onClick={() => setShowImport(true)}
+              />
               <Button
                 label={t("teacherList.action.addTeacher")}
                 type="filled"
+                icon={<MaterialIcon icon="add" />}
                 onClick={() => setShowAdd(true)}
               />
             </div>
@@ -167,6 +175,29 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
       </RegularLayout>
 
       {/* Dialogs */}
+      <ImportDataDialog
+        show={showImport}
+        onClose={() => setShowImport(false)}
+        onSubmit={() => {
+          setShowImport(false);
+          router.replace(router.asPath);
+        }}
+        // prettier-ignore
+        columns={[
+          { name: "prefix", type: '"เด็กชาย" | "นาย" | "นาง" | "นางสาว"' },
+          { name: "first_name_th", type: "text" },
+          { name: "first_name_en", type: "text" },
+          { name: "middle_name_th", type: "text", optional: true },
+          { name: "middle_name_en", type: "text", optional: true },
+          { name: "last_name_th", type: "text" },
+          { name: "last_name_en", type: "text" },
+          { name: "birthdate", type: "date (YYYY-MM-DD) (in AD)" },
+          { name: "citizen_id", type: "numeric (13-digit)" },
+          { name: "teacher_id", type: "text" },
+          { name: "subject_group", type: '"วิทยาศาสตร์" | "คณิตศาสตร์" | "ภาษาต่างประเทศ" | "ภาษาไทย" | "สุขศึกษาและพลศึกษา" | "การงานอาชีพและเทคโนโลยี" | "ศิลปะ" | "สังคมศึกษา ศาสนา และวัฒนธรรม" | "การศึกษาค้นคว้าด้วยตนเอง"' },
+          { name: "email", type: "email" },
+        ]}
+      />
       <EditPersonDialog
         show={showEdit}
         onClose={() => setShowEdit(false)}

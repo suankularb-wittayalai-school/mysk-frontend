@@ -66,7 +66,8 @@
     },
     "action": {
       "seeAll": "See all",
-      "addClass": "Add class"
+      "addClass": "Add class",
+      "generate": "Generate"
     }
   },
   "schedule": {
@@ -78,6 +79,12 @@
     },
     "action": {
       "seeSchedule": "See schedule"
+    }
+  },
+  "common": {
+    "action": {
+      "import": "Import data",
+      "seeAll": "See all"
     }
   },
   "dialog": {
@@ -109,6 +116,38 @@
       "action": {
         "cancel": "Cancel",
         "save": "Save"
+      }
+    },
+    "importData": {
+      "title": "Import data",
+      "columns": {
+        "title": "Columns",
+        "info": "You can import a CSV file to the MySK database. Please ensure that the columns in your CSV file match the following exactly.",
+        "optionalNote": "<0>Note:</0> <1></1> means optional.",
+        "noColumns": "No column data."
+      },
+      "upload": {
+        "title": "Upload file",
+        "file": "File"
+      },
+      "action": {
+        "cancel": "Cancel",
+        "import": "Import"
+      }
+    },
+    "generateClasses": {
+      "title": "Generate classes",
+      "supportingText": "Automatically generate a whole academic year of classes with this tool.",
+      "numGrades": "Number of grades",
+      "numClasses": {
+        "title": "Classes per grade",
+        "instructions": "Enter the amount of classes you would like in each grade. For example, if you want the classes <1>M.101, M.102, M.103</1>, enter “3” inside the field labeled “Num. of classes in M.1”.",
+        "input": "Num. classes in M.{{grade}}"
+      },
+      "preview": "Preview",
+      "action": {
+        "cancel": "Cancel",
+        "generate": "Generate"
       }
     }
   }

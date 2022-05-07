@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { FormEvent, useReducer, useState } from "react";
+import { FormEvent, useState } from "react";
 
 // SK Components
 import {
@@ -36,16 +36,21 @@ const LoginForm = () => {
   // Loading
   const [loading, setLoading] = useState<boolean>(false);
 
+  function validate(): boolean {
+    if (!form.email) return false;
+    if (!form.password) return false;
+
+    return true;
+  }
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    let formData: FormData = new FormData();
-
-    // Validates
-    if (!form.email) return;
-    if (!form.password) return;
 
     // Signals loading
     setLoading(true);
+
+    // Validates
+    if (!validate()) return;
 
     // Sends and redirects
     const { user, session, error } = await supabase.auth.signIn({
@@ -78,7 +83,6 @@ const LoginForm = () => {
             errorMsg={t("form.email_error")}
             useAutoMsg
             onChange={(e: string) => setForm({ ...form, email: e })}
-            className="w-full"
           />
           <KeyboardInput
             name="password"
@@ -86,7 +90,6 @@ const LoginForm = () => {
             label={t("form.password")}
             helperMsg={t("form.password_helper")}
             onChange={(e: string) => setForm({ ...form, password: e })}
-            className="w-full"
           />
         </div>
         <div className="flex flex-row flex-wrap items-center justify-end gap-2">
@@ -97,7 +100,7 @@ const LoginForm = () => {
             label={t("action.logIn")}
             type="submit"
             appearance="filled"
-            disabled={loading}
+            disabled={!validate() || loading}
           />
         </div>
       </form>

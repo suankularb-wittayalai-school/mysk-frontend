@@ -21,7 +21,6 @@ import { Prefix, Role, Student, Teacher } from "@utils/types/person";
 import {
   PersonDB,
   StudentTable,
-  TeacherDB,
   TeacherTable,
 } from "@utils/types/database/person";
 
@@ -69,6 +68,7 @@ const EditPersonDialog = ({
     role: "student",
     subjectGroup: 0,
     email: "",
+    isAdmin: false,
   });
   const subjectGroups = useSubjectGroupOption();
 
@@ -84,11 +84,11 @@ const EditPersonDialog = ({
       setForm({
         prefix: person.prefix,
         thFirstName: person.name.th.firstName,
-        thMiddleName: person.name.th.middleName || "",
+        thMiddleName: person.name.th.middleName ?? "",
         thLastName: person.name.th.lastName,
-        enFirstName: person.name["en-US"]?.firstName || "",
-        enMiddleName: person.name["en-US"]?.middleName || "",
-        enLastName: person.name["en-US"]?.lastName || "",
+        enFirstName: person.name["en-US"]?.firstName ?? "",
+        enMiddleName: person.name["en-US"]?.middleName ?? "",
+        enLastName: person.name["en-US"]?.lastName ?? "",
         studentID: person.role == "student" ? person.studentID : "",
         teacherID: person.role == "teacher" ? person.teacherID : "",
         role: person.role,
@@ -97,6 +97,7 @@ const EditPersonDialog = ({
         subjectGroup: person.role == "teacher" ? person.subjectGroup.id : 0,
         email: person.contacts.filter((contact) => contact.type == "Email")[0]
           ?.value,
+        isAdmin: person.isAdmin ?? false,
       });
     }
   }, [mode, person]);
@@ -125,7 +126,6 @@ const EditPersonDialog = ({
   async function handleAdd() {
     if (!validate()) return;
 
-    // console.log(form);
     if (mode == "add") {
       if (form.role == "student") {
         const { data, error } = await createStudent(
@@ -193,6 +193,7 @@ const EditPersonDialog = ({
             teacherID: form.teacherID,
             citizenID: form.citizenID,
             birthdate: form.birthdate,
+            isAdmin: form.isAdmin,
             role: "teacher",
             subjectGroup: {
               id: form.subjectGroup,
@@ -225,7 +226,7 @@ const EditPersonDialog = ({
         }
       }
     } else if (mode == "edit") {
-      // get id of the person
+      // Get ID of the person
       const { data, error } = await supabase
         .from<PersonDB>("people")
         .select("id")
@@ -237,7 +238,7 @@ const EditPersonDialog = ({
 
       const personID: number = data[0].id;
 
-      // update person
+      // Update person
       const { data: updatedPerson, error: updatePersonError } = await supabase
         .from<PersonDB>("people")
         .update({
@@ -277,7 +278,6 @@ const EditPersonDialog = ({
           .from<TeacherTable>("teacher")
           .update({
             subject_group: form.subjectGroup,
-            // class_advisor_at: form.classAdvisorAt,
             teacher_id: form.teacherID.trim(),
           })
           .match({ person: personID, teacher_id: person.teacherID });
@@ -499,6 +499,16 @@ const EditPersonDialog = ({
             />
           </>
         )}
+        <div className="flex flex-row gap-2">
+          <input
+            id="is-admin"
+            name="is-admin"
+            type="checkbox"
+            onChange={(e) => setForm({ ...form, isAdmin: e.target.checked })}
+            checked={form.isAdmin}
+          />
+          <label htmlFor="is-admin">{t("profile.role.isAdmin")}</label>
+        </div>
       </DialogSection>
     </Dialog>
   );
