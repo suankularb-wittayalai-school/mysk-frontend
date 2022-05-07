@@ -6,7 +6,8 @@ import { createPerson } from "./person";
 
 export async function createStudent(
   student: Student,
-  email: string
+  email: string,
+  isAdmin: boolean = false
 ): Promise<{ data: StudentTable[] | null; error: PostgrestError | null }> {
   const { data: person, error: personCreationError } = await createPerson(
     student
@@ -42,6 +43,7 @@ export async function createStudent(
       email,
       password: student.birthdate.split("-").join(""),
       id: createdStudent[0]?.id,
+      isAdmin,
     }),
   });
 
