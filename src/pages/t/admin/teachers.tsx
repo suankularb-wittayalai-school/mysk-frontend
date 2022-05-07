@@ -39,6 +39,9 @@ import {
 } from "@utils/types/database/person";
 import ImportDataDialog from "@components/dialogs/ImportData";
 
+// Hooks
+import { useSession } from "@utils/hooks/auth";
+
 // Page
 const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
   allTeachers,
@@ -53,6 +56,9 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
   const [showEdit, setShowEdit] = useState<boolean>(false);
   const [editingPerson, setEditingPerson] = useState<Teacher>();
 
+  const session = useSession({ loginRequired: true, adminOnly: true });
+  
+  
   async function handleDelete() {
     if (!editingPerson) return;
 
@@ -65,7 +71,7 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
         teacher: number;
       }>("users")
       .select("id")
-      .match({ student: editingPerson.id })
+      .match({ teacher: editingPerson.id })
       .limit(1)
       .single();
 
@@ -79,18 +85,22 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
       return;
     }
 
-    const { data: deletingTeacher, error: teacherDeletingError } =
-      await supabase
-        .from<TeacherTableType>("teacher")
-        .delete()
-        .match({ id: editingPerson.id });
+    const {
+      data: deletingTeacher,
+      error: teacherDeletingError,
+    } = await supabase
+      .from<TeacherTableType>("teacher")
+      .delete()
+      .match({ id: editingPerson.id });
     if (teacherDeletingError || !deletingTeacher) {
       console.error(teacherDeletingError);
       return;
     }
-
-    // Delete the person related to the teacher
-    const { data: deletingPerson, error: personDeletingError } = await supabase
+    // delete the person related to the teacher
+    const {
+      data: deletingPerson,
+      error: personDeletingError,
+    } = await supabase
       .from<PersonTable>("people")
       .delete()
       .match({ id: deletingTeacher[0].person });

@@ -8,7 +8,12 @@ import { Student, Teacher } from "@utils/types/person";
 import { StudentDB, TeacherDB } from "@utils/types/database/person";
 import { db2Student, db2Teacher } from "@utils/backend/database";
 
-export function useSession() {
+interface UseSessionOption {
+  loginRequired?: boolean;
+  adminOnly?: boolean;
+}
+
+export function useSession(option?: UseSessionOption) {
   const [session, setSession] = useState<null | Session>(null);
   const router = useRouter();
 
@@ -23,11 +28,29 @@ export function useSession() {
       setSession(session);
     });
   }, []);
+
+  useEffect(() => {
+    if (session) {
+      if (option?.loginRequired && !session.user) {
+        router.push("/");
+      }
+      if (
+        session.user &&
+        option?.adminOnly &&
+        !session.user.user_metadata.isAdmin
+      ) {
+        router.push("/");
+      }
+    }
+  }, [session, option, router]);
+
   return session;
 }
 
-export function useStudentAccount() {
-  const session = useSession();
+export function useStudentAccount(
+  option?: UseSessionOption
+): [Student | null, Session | null] {
+  const session = useSession(option);
   const router = useRouter();
   const [user, setUser] = useState<Student | null>(null);
 
@@ -54,11 +77,13 @@ export function useStudentAccount() {
       }
     }
   }, [session]);
-  return user;
+  return [user, session];
 }
 
-export function useTeacherAccount() {
-  const session = useSession();
+export function useTeacherAccount(
+  option?: UseSessionOption
+): [Teacher | null, Session | null] {
+  const session = useSession(option);
   const router = useRouter();
   const [user, setUser] = useState<Teacher | null>(null);
 
@@ -87,5 +112,5 @@ export function useTeacherAccount() {
       }
     }
   }, [session]);
-  return user;
+  return [user, session];
 }

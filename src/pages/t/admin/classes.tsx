@@ -36,6 +36,9 @@ import { db2Class } from "@utils/backend/database";
 import { Class } from "@utils/types/class";
 import { ClassroomDB, ClassroomTable } from "@utils/types/database/class";
 
+// Hooks
+import { useSession } from "@utils/hooks/auth";
+
 // Page
 const Classes: NextPage<{ allClasses: Class[] }> = ({
   allClasses,
@@ -50,6 +53,8 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
 
   const [showEdit, setShowEdit] = useState<boolean>(false);
   const [editingClass, setEditingClass] = useState<Class>();
+
+  const session = useSession({ loginRequired: true, adminOnly: true });
 
   async function handleDelete() {
     const { data: classData, error: classError } = await supabase

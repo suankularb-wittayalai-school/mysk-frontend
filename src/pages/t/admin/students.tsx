@@ -36,6 +36,10 @@ import { PersonTable, StudentDB } from "@utils/types/database/person";
 import { StudentTable as StudentTableType } from "@utils/types/database/person";
 import ImportDataDialog from "@components/dialogs/ImportData";
 
+// Helper function
+import { db2Student } from "@utils/backend/database";
+import { useSession } from "@utils/hooks/auth";
+
 // Page
 const Students: NextPage<{ allStudents: Array<Student> }> = ({
   allStudents,
@@ -49,6 +53,8 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
 
   const [showEdit, setShowEdit] = useState<boolean>(false);
   const [editingPerson, setEditingPerson] = useState<Student>();
+
+  const session = useSession({ loginRequired: true, adminOnly: true });
 
   async function handleDelete() {
     if (!editingPerson) return;

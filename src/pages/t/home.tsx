@@ -47,7 +47,7 @@ const TeacherHome: NextPage<{
   const [showChangePassword, setShowChangePassword] = useState<boolean>(false);
   const [showEditProfile, setShowEditProfile] = useState<boolean>(false);
   const [showLogOut, setShowLogOut] = useState<boolean>(false);
-  const user = useTeacherAccount();
+  const [user, session] = useTeacherAccount({ loginRequired: true });
 
   async function handleLogout() {
     await supabase.auth.signOut();

@@ -6,13 +6,14 @@ import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 
 // SK Components
 import { MaterialIcon, PageLayout } from "@suankularb-components/react";
 
 // Animations
 import { fromUpToDown } from "@utils/animations/slide";
+import { useSession } from "@utils/hooks/auth";
 
 const Layout = ({
   transparentNav,
@@ -24,125 +25,151 @@ const Layout = ({
   const router = useRouter();
   const { t } = useTranslation();
 
+  const [navItems, setNavItems] = useState([
+    {
+      name: t("navigation.home"),
+      icon: {
+        inactive: <MaterialIcon icon="home" type="outlined" />,
+        active: <MaterialIcon icon="home" type="filled" />,
+      },
+      url: "/",
+    },
+    {
+      name: t("navigation.login"),
+      icon: {
+        inactive: <MaterialIcon icon="login" type="outlined" />,
+        active: <MaterialIcon icon="login" type="filled" />,
+      },
+      url: "/account/login",
+    },
+    {
+      name: t("navigation.about"),
+      icon: {
+        inactive: <MaterialIcon icon="information" type="outlined" />,
+        active: <MaterialIcon icon="information" type="filled" />,
+      },
+      url: "/about",
+    },
+  ]);
+
+  const session = useSession();
+
   // TODO: When logging in does become a thing, change this to a more sane implementation
-  const navItems = ["/", "/account/login", "/about"].includes(router.asPath)
-    ? [
-        {
-          name: t("navigation.home"),
-          icon: {
-            inactive: <MaterialIcon icon="home" type="outlined" />,
-            active: <MaterialIcon icon="home" type="filled" />,
-          },
-          url: "/",
-        },
-        {
-          name: t("navigation.login"),
-          icon: {
-            inactive: <MaterialIcon icon="login" type="outlined" />,
-            active: <MaterialIcon icon="login" type="filled" />,
-          },
-          url: "/account/login",
-        },
-        {
-          name: t("navigation.about"),
-          icon: {
-            inactive: <MaterialIcon icon="information" type="outlined" />,
-            active: <MaterialIcon icon="information" type="filled" />,
-          },
-          url: "/about",
-        },
-      ]
-    : [
-        "/s/home",
-        "/s/405/schedule",
-        "/s/405/class",
-        "/s/teachers",
-        "news",
-      ].includes(router.asPath)
-    ? [
-        {
-          name: t("navigation.home"),
-          icon: {
-            inactive: <MaterialIcon icon="home" type="outlined" />,
-            active: <MaterialIcon icon="home" type="filled" />,
-          },
-          url: "/s/home",
-        },
-        {
-          name: t("navigation.schedule"),
-          icon: {
-            inactive: <MaterialIcon icon="dashboard" type="outlined" />,
-            active: <MaterialIcon icon="dashboard" type="filled" />,
-          },
-          url: "/s/405/schedule",
-        },
-        {
-          name: t("navigation.class"),
-          icon: {
-            inactive: <MaterialIcon icon="groups" type="outlined" />,
-            active: <MaterialIcon icon="groups" type="filled" />,
-          },
-          url: "/s/405/class",
-        },
-        {
-          name: t("navigation.teachers"),
-          icon: {
-            inactive: <MaterialIcon icon="school" type="outlined" />,
-            active: <MaterialIcon icon="school" type="filled" />,
-          },
-          url: "/s/teachers",
-        },
-        {
-          name: t("navigation.news"),
-          icon: {
-            inactive: <MaterialIcon icon="newspaper" type="outlined" />,
-            active: <MaterialIcon icon="newspaper" type="filled" />,
-          },
-          url: "/news",
-        },
-      ]
-    : [
-        {
-          name: t("navigation.home"),
-          icon: {
-            inactive: <MaterialIcon icon="home" type="outlined" />,
-            active: <MaterialIcon icon="home" type="filled" />,
-          },
-          url: "/t/home",
-        },
-        {
-          name: t("navigation.schedule"),
-          icon: {
-            inactive: <MaterialIcon icon="dashboard" type="outlined" />,
-            active: <MaterialIcon icon="dashboard" type="filled" />,
-          },
-          url: "/t/schedule",
-        },
-        {
-          name: t("navigation.subjects"),
-          icon: {
-            inactive: <MaterialIcon icon="school" type="outlined" />,
-            active: <MaterialIcon icon="school" type="filled" />,
-          },
-          url: "/t/subjects/teaching",
-        },
-        {
-          name: t("navigation.class"),
-          icon: {
-            inactive: <MaterialIcon icon="groups" type="outlined" />,
-            active: <MaterialIcon icon="groups" type="filled" />,
-          },
-          url: "/t/509/class",
-        },
-        {
-          name: t("navigation.admin"),
-          icon: {
-            inactive: <MaterialIcon icon="security" type="outlined" />,
-            active: <MaterialIcon icon="security" type="filled" />,
-          },
-          url: "/t/admin",
-        },
-      ];
+  const studentNavItem = [
+    {
+      name: t("navigation.home"),
+      icon: {
+        inactive: <MaterialIcon icon="home" type="outlined" />,
+        active: <MaterialIcon icon="home" type="filled" />,
+      },
+      url: "/s/home",
+    },
+    {
+      name: t("navigation.schedule"),
+      icon: {
+        inactive: <MaterialIcon icon="dashboard" type="outlined" />,
+        active: <MaterialIcon icon="dashboard" type="filled" />,
+      },
+      url: "/s/405/schedule",
+    },
+    {
+      name: t("navigation.class"),
+      icon: {
+        inactive: <MaterialIcon icon="groups" type="outlined" />,
+        active: <MaterialIcon icon="groups" type="filled" />,
+      },
+      url: "/s/405/class",
+    },
+    {
+      name: t("navigation.teachers"),
+      icon: {
+        inactive: <MaterialIcon icon="school" type="outlined" />,
+        active: <MaterialIcon icon="school" type="filled" />,
+      },
+      url: "/s/teachers",
+    },
+    {
+      name: t("navigation.news"),
+      icon: {
+        inactive: <MaterialIcon icon="newspaper" type="outlined" />,
+        active: <MaterialIcon icon="newspaper" type="filled" />,
+      },
+      url: "/news",
+    },
+  ];
+
+  const teacherNavItem = [
+    {
+      name: t("navigation.home"),
+      icon: {
+        inactive: <MaterialIcon icon="home" type="outlined" />,
+        active: <MaterialIcon icon="home" type="filled" />,
+      },
+      url: "/t/home",
+    },
+    {
+      name: t("navigation.schedule"),
+      icon: {
+        inactive: <MaterialIcon icon="dashboard" type="outlined" />,
+        active: <MaterialIcon icon="dashboard" type="filled" />,
+      },
+      url: "/t/schedule",
+    },
+    {
+      name: t("navigation.subjects"),
+      icon: {
+        inactive: <MaterialIcon icon="school" type="outlined" />,
+        active: <MaterialIcon icon="school" type="filled" />,
+      },
+      url: "/t/subjects/teaching",
+    },
+    {
+      name: t("navigation.class"),
+      icon: {
+        inactive: <MaterialIcon icon="groups" type="outlined" />,
+        active: <MaterialIcon icon="groups" type="filled" />,
+      },
+      url: "/t/509/class",
+    },
+  ];
+
+  useEffect(() => {
+    if (session) {
+      if (session.user?.user_metadata?.role === "student") {
+        setNavItems(studentNavItem);
+        // append admin nav item if user is admin
+        if (session.user?.user_metadata?.isAdmin) {
+          setNavItems([
+            ...studentNavItem,
+            {
+              name: t("navigation.admin"),
+              icon: {
+                inactive: <MaterialIcon icon="security" type="outlined" />,
+                active: <MaterialIcon icon="security" type="filled" />,
+              },
+              url: "/t/admin",
+            },
+          ]);
+        }
+      } else if (session.user?.user_metadata?.role === "teacher") {
+        setNavItems(teacherNavItem);
+        // append admin nav item if user is admin
+        if (session.user?.user_metadata?.isAdmin) {
+          setNavItems([
+            ...teacherNavItem,
+            {
+              name: t("navigation.admin"),
+              icon: {
+                inactive: <MaterialIcon icon="security" type="outlined" />,
+                active: <MaterialIcon icon="security" type="filled" />,
+              },
+              url: "/t/admin",
+            },
+          ]);
+        }
+      }
+    }
+  }, [session, router]);
 
   return (
     <AnimatePresence
