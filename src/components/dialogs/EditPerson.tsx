@@ -84,11 +84,11 @@ const EditPersonDialog = ({
       setForm({
         prefix: person.prefix,
         thFirstName: person.name.th.firstName,
-        thMiddleName: person.name.th.middleName || "",
+        thMiddleName: person.name.th.middleName ?? "",
         thLastName: person.name.th.lastName,
-        enFirstName: person.name["en-US"]?.firstName || "",
-        enMiddleName: person.name["en-US"]?.middleName || "",
-        enLastName: person.name["en-US"]?.lastName || "",
+        enFirstName: person.name["en-US"]?.firstName ?? "",
+        enMiddleName: person.name["en-US"]?.middleName ?? "",
+        enLastName: person.name["en-US"]?.lastName ?? "",
         studentID: person.role == "student" ? person.studentID : "",
         teacherID: person.role == "teacher" ? person.teacherID : "",
         role: person.role,
@@ -97,7 +97,7 @@ const EditPersonDialog = ({
         subjectGroup: person.role == "teacher" ? person.subjectGroup.id : 0,
         email: person.contacts.filter((contact) => contact.type == "Email")[0]
           ?.value,
-        isAdmin: person.isAdmin || false,
+        isAdmin: person.isAdmin ?? false,
       });
     }
   }, [mode, person]);
