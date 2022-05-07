@@ -9,9 +9,6 @@ import { useTranslation } from "next-i18next";
 
 import { useState } from "react";
 
-// Supabase
-import { supabase } from "@utils/supabaseClient";
-
 // SK Components
 import {
   Button,
@@ -25,19 +22,21 @@ import {
 // Components
 import ConfirmDelete from "@components/dialogs/ConfirmDelete";
 import EditPersonDialog from "@components/dialogs/EditPerson";
+import ImportDataDialog from "@components/dialogs/ImportData";
 import StudentTable from "@components/tables/StudentTable";
 
 // Backend
 import { db2Student } from "@utils/backend/database";
 
+// Supabase
+import { supabase } from "@utils/supabaseClient";
+
 // Types
 import { Role, Student } from "@utils/types/person";
 import { PersonTable, StudentDB } from "@utils/types/database/person";
 import { StudentTable as StudentTableType } from "@utils/types/database/person";
-import ImportDataDialog from "@components/dialogs/ImportData";
 
-// Helper function
-import { db2Student } from "@utils/backend/database";
+// Hooks
 import { useSession } from "@utils/hooks/auth";
 
 // Page
