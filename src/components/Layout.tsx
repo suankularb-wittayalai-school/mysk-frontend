@@ -16,7 +16,10 @@ import {
 } from "@suankularb-components/react";
 
 // Animations
+import { animationEase } from "@utils/animations/config";
 import { fromUpToDown } from "@utils/animations/slide";
+
+// Hooks
 import { useSession } from "@utils/hooks/auth";
 
 const Layout = ({
@@ -181,7 +184,15 @@ const Layout = ({
               isTransparent
               className="sm:!absolute sm:top-0"
             />
-            <div>{children}</div>
+            <motion.div
+              initial="hidden"
+              animate="enter"
+              exit="exit"
+              variants={fromUpToDown}
+              transition={{ duration: 0.25, ease: animationEase }}
+            >
+              {children}
+            </motion.div>
           </div>
         ) : (
           // Use the normal Page Layout if the Navigation is normal
@@ -196,7 +207,7 @@ const Layout = ({
               animate="enter"
               exit="exit"
               variants={fromUpToDown}
-              transition={{ duration: 0.25, ease: "easeInOut" }}
+              transition={{ duration: 0.25, ease: animationEase }}
               className="flex flex-grow flex-col overflow-auto"
             >
               {children}
