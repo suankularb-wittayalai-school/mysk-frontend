@@ -58,8 +58,7 @@ const Layout = ({
 
   const session = useSession();
 
-  // TODO: When logging in does become a thing, change this to a more sane implementation
-  const studentNavItem = [
+  const studentNav = [
     {
       name: t("navigation.home"),
       icon: {
@@ -92,17 +91,8 @@ const Layout = ({
       },
       url: "/s/teachers",
     },
-    {
-      name: t("navigation.news"),
-      icon: {
-        inactive: <MaterialIcon icon="newspaper" type="outlined" />,
-        active: <MaterialIcon icon="newspaper" type="filled" />,
-      },
-      url: "/news",
-    },
   ];
-
-  const teacherNavItem = [
+  const teacherNav = [
     {
       name: t("navigation.home"),
       icon: {
@@ -136,41 +126,39 @@ const Layout = ({
       url: "/t/509/class",
     },
   ];
+  const adminNavItem = {
+    name: t("navigation.admin"),
+    icon: {
+      inactive: <MaterialIcon icon="security" type="outlined" />,
+      active: <MaterialIcon icon="security" type="filled" />,
+    },
+    url: "/t/admin",
+  };
 
   useEffect(() => {
     if (session) {
+      const isAdmin = session.user?.user_metadata?.isAdmin;
+
+      // Decide the Navigation the user is going to see based on their role
+      // Append the Admin Nav Item to the Navigation if the user is an admin
       if (session.user?.user_metadata?.role === "student") {
-        setNavItems(studentNavItem);
-        // append admin nav item if user is admin
-        if (session.user?.user_metadata?.isAdmin) {
-          setNavItems([
-            ...studentNavItem,
-            {
-              name: t("navigation.admin"),
-              icon: {
-                inactive: <MaterialIcon icon="security" type="outlined" />,
-                active: <MaterialIcon icon="security" type="filled" />,
-              },
-              url: "/t/admin",
-            },
-          ]);
-        }
+        setNavItems(
+          isAdmin
+            ? [...studentNav, adminNavItem]
+            : [
+                ...studentNav,
+                {
+                  name: t("navigation.news"),
+                  icon: {
+                    inactive: <MaterialIcon icon="newspaper" type="outlined" />,
+                    active: <MaterialIcon icon="newspaper" type="filled" />,
+                  },
+                  url: "/news",
+                },
+              ]
+        );
       } else if (session.user?.user_metadata?.role === "teacher") {
-        setNavItems(teacherNavItem);
-        // append admin nav item if user is admin
-        if (session.user?.user_metadata?.isAdmin) {
-          setNavItems([
-            ...teacherNavItem,
-            {
-              name: t("navigation.admin"),
-              icon: {
-                inactive: <MaterialIcon icon="security" type="outlined" />,
-                active: <MaterialIcon icon="security" type="filled" />,
-              },
-              url: "/t/admin",
-            },
-          ]);
-        }
+        setNavItems(isAdmin ? [...teacherNav, adminNavItem] : teacherNav);
       }
     }
   }, [session, router]);
@@ -183,6 +171,7 @@ const Layout = ({
     >
       <div className="overflow-hidden bg-background">
         {navIsTransparent ? (
+          // Fills the page with children if the Navigation is transparent
           <div>
             <Navigation
               key={router.route}
@@ -195,6 +184,7 @@ const Layout = ({
             <div>{children}</div>
           </div>
         ) : (
+          // Use the normal Page Layout if the Navigation is normal
           <PageLayout
             key={router.route}
             currentPath={router.asPath}
