@@ -169,7 +169,7 @@ const ChangeLanguageButton = () => {
   // A temporary component is created with CSS rather than React SK Components to avoid this issue
   return (
     <Link href="/" locale={useRouter().locale == "en-US" ? "th" : "en-US"}>
-      <a className="btn--text btn--has-icon !text-tertiary-container dark:!text-tertiary">
+      <a className="btn--text btn--has-icon !text-tertiary-container">
         <MaterialIcon icon="translate" />
         <span>{t("changeLang")}</span>
       </a>
@@ -197,7 +197,7 @@ const LandingBanner = (): JSX.Element => {
             alt="โลโก้ดอกไม้สีชมพู มีตัวอักษร MySK อยู่ตรงกลาง"
             layout="fill"
             priority={true}
-            src={"/images/branding/logo-white.webp"}
+            src="/images/branding/logo-white.webp"
           />
         </div>
 
@@ -206,9 +206,7 @@ const LandingBanner = (): JSX.Element => {
           <h1 className="text-9xl font-bold">
             <Trans i18nKey="brand.nameWithAccent" ns="common">
               My
-              <span className="text-secondary-container dark:text-secondary">
-                SK
-              </span>
+              <span className="dark text-secondary">SK</span>
             </Trans>
           </h1>
           <p className="text-4xl font-light">
@@ -218,7 +216,7 @@ const LandingBanner = (): JSX.Element => {
       </div>
 
       {/* Actions */}
-      <div className="flex flex-col items-center gap-2 sm:items-start">
+      <div className="light flex flex-col items-center gap-2 sm:items-start">
         <div className="flex flex-row flex-wrap items-center gap-4">
           <LinkButton
             label={t("login")}
@@ -233,9 +231,9 @@ const LandingBanner = (): JSX.Element => {
             type="outlined"
             url="/help"
             LinkElement={Link}
-            className="!bg-transparent !text-tertiary-container !outline-tertiary-container
-                hover:!bg-tertiary-translucent-08 focus:!bg-tertiary-translucent-12
-                focus-visible:!bg-tertiary dark:!text-tertiary dark:!outline-tertiary"
+            className="!bg-transparent !text-tertiary-container
+              !outline-tertiary-container hover:!bg-tertiary-translucent-08
+              focus:!bg-tertiary-translucent-12 focus-visible:!bg-tertiary"
           />
         </div>
         <ChangeLanguageButton />
@@ -253,12 +251,12 @@ export default function Landing() {
       <Head>
         <title>{t("brand.name", { ns: "common" })}</title>
       </Head>
-      <div className="h-screen bg-[url('/images/landing.png')] bg-cover bg-left">
+      <div className="h-screen bg-[url('/images/landing.png')] bg-cover bg-bottom sm:bg-center">
         <div
           className="h-full bg-gradient-to-b
             from-[#00000033] via-transparent to-[#00000033] 
             dark:from-[#00000099] dark:via-[#00000066] dark:to-[#00000099]
-            sm:bg-gradient-to-r"
+            sm:bg-gradient-to-r sm:pt-[4.5rem]"
         >
           <LandingBanner />
           <LandingFeed
@@ -314,7 +312,7 @@ export default function Landing() {
 }
 
 Landing.getLayout = (page: NextPage): JSX.Element => (
-  <Layout transparentNav>{page}</Layout>
+  <Layout navIsTransparent>{page}</Layout>
 );
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => ({

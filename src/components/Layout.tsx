@@ -9,17 +9,21 @@ import { useTranslation } from "next-i18next";
 import { ReactNode, useEffect, useState } from "react";
 
 // SK Components
-import { MaterialIcon, PageLayout } from "@suankularb-components/react";
+import {
+  MaterialIcon,
+  Navigation,
+  PageLayout,
+} from "@suankularb-components/react";
 
 // Animations
 import { fromUpToDown } from "@utils/animations/slide";
 import { useSession } from "@utils/hooks/auth";
 
 const Layout = ({
-  transparentNav,
+  navIsTransparent,
   children,
 }: {
-  transparentNav?: boolean;
+  navIsTransparent?: boolean;
   children: ReactNode;
 }): JSX.Element => {
   const router = useRouter();
@@ -178,23 +182,37 @@ const Layout = ({
       onExitComplete={() => window.scrollTo(0, 0)}
     >
       <div className="overflow-hidden bg-background">
-        <PageLayout
-          key={router.route}
-          currentPath={router.asPath}
-          navItems={navItems}
-          LinkElement={Link}
-        >
-          <motion.div
-            initial="hidden"
-            animate="enter"
-            exit="exit"
-            variants={fromUpToDown}
-            transition={{ duration: 0.25, ease: "easeInOut" }}
-            className="flex flex-grow flex-col overflow-auto"
+        {navIsTransparent ? (
+          <div>
+            <Navigation
+              key={router.route}
+              currentPath={router.asPath}
+              navItems={navItems}
+              LinkElement={Link}
+              isTransparent
+              className="sm:!absolute sm:top-0"
+            />
+            <div>{children}</div>
+          </div>
+        ) : (
+          <PageLayout
+            key={router.route}
+            currentPath={router.asPath}
+            navItems={navItems}
+            LinkElement={Link}
           >
-            {children}
-          </motion.div>
-        </PageLayout>
+            <motion.div
+              initial="hidden"
+              animate="enter"
+              exit="exit"
+              variants={fromUpToDown}
+              transition={{ duration: 0.25, ease: "easeInOut" }}
+              className="flex flex-grow flex-col overflow-auto"
+            >
+              {children}
+            </motion.div>
+          </PageLayout>
+        )}
       </div>
     </AnimatePresence>
   );
