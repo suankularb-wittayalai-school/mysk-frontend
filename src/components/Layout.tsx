@@ -9,17 +9,24 @@ import { useTranslation } from "next-i18next";
 import { ReactNode, useEffect, useState } from "react";
 
 // SK Components
-import { MaterialIcon, PageLayout } from "@suankularb-components/react";
+import {
+  MaterialIcon,
+  Navigation,
+  PageLayout,
+} from "@suankularb-components/react";
 
 // Animations
+import { animationEase } from "@utils/animations/config";
 import { fromUpToDown } from "@utils/animations/slide";
+
+// Hooks
 import { useSession } from "@utils/hooks/auth";
 
 const Layout = ({
-  transparentNav,
+  navIsTransparent,
   children,
 }: {
-  transparentNav?: boolean;
+  navIsTransparent?: boolean;
   children: ReactNode;
 }): JSX.Element => {
   const router = useRouter();
@@ -54,8 +61,7 @@ const Layout = ({
 
   const session = useSession();
 
-  // TODO: When logging in does become a thing, change this to a more sane implementation
-  const studentNavItem = [
+  const studentNav = [
     {
       name: t("navigation.home"),
       icon: {
@@ -88,17 +94,8 @@ const Layout = ({
       },
       url: "/s/teachers",
     },
-    {
-      name: t("navigation.news"),
-      icon: {
-        inactive: <MaterialIcon icon="newspaper" type="outlined" />,
-        active: <MaterialIcon icon="newspaper" type="filled" />,
-      },
-      url: "/news",
-    },
   ];
-
-  const teacherNavItem = [
+  const teacherNav = [
     {
       name: t("navigation.home"),
       icon: {
@@ -132,41 +129,39 @@ const Layout = ({
       url: "/t/509/class",
     },
   ];
+  const adminNavItem = {
+    name: t("navigation.admin"),
+    icon: {
+      inactive: <MaterialIcon icon="security" type="outlined" />,
+      active: <MaterialIcon icon="security" type="filled" />,
+    },
+    url: "/t/admin",
+  };
 
   useEffect(() => {
     if (session) {
+      const isAdmin = session.user?.user_metadata?.isAdmin;
+
+      // Decide the Navigation the user is going to see based on their role
+      // Append the Admin Nav Item to the Navigation if the user is an admin
       if (session.user?.user_metadata?.role === "student") {
-        setNavItems(studentNavItem);
-        // append admin nav item if user is admin
-        if (session.user?.user_metadata?.isAdmin) {
-          setNavItems([
-            ...studentNavItem,
-            {
-              name: t("navigation.admin"),
-              icon: {
-                inactive: <MaterialIcon icon="security" type="outlined" />,
-                active: <MaterialIcon icon="security" type="filled" />,
-              },
-              url: "/t/admin",
-            },
-          ]);
-        }
+        setNavItems(
+          isAdmin
+            ? [...studentNav, adminNavItem]
+            : [
+                ...studentNav,
+                {
+                  name: t("navigation.news"),
+                  icon: {
+                    inactive: <MaterialIcon icon="newspaper" type="outlined" />,
+                    active: <MaterialIcon icon="newspaper" type="filled" />,
+                  },
+                  url: "/news",
+                },
+              ]
+        );
       } else if (session.user?.user_metadata?.role === "teacher") {
-        setNavItems(teacherNavItem);
-        // append admin nav item if user is admin
-        if (session.user?.user_metadata?.isAdmin) {
-          setNavItems([
-            ...teacherNavItem,
-            {
-              name: t("navigation.admin"),
-              icon: {
-                inactive: <MaterialIcon icon="security" type="outlined" />,
-                active: <MaterialIcon icon="security" type="filled" />,
-              },
-              url: "/t/admin",
-            },
-          ]);
-        }
+        setNavItems(isAdmin ? [...teacherNav, adminNavItem] : teacherNav);
       }
     }
   }, [session, router]);
@@ -178,23 +173,47 @@ const Layout = ({
       onExitComplete={() => window.scrollTo(0, 0)}
     >
       <div className="overflow-hidden bg-background">
-        <PageLayout
-          key={router.route}
-          currentPath={router.asPath}
-          navItems={navItems}
-          LinkElement={Link}
-        >
-          <motion.div
-            initial="hidden"
-            animate="enter"
-            exit="exit"
-            variants={fromUpToDown}
-            transition={{ duration: 0.25, ease: "easeInOut" }}
-            className="flex flex-grow flex-col overflow-auto"
+        {navIsTransparent ? (
+          // Fills the page with children if the Navigation is transparent
+          <div>
+            <Navigation
+              key={router.route}
+              currentPath={router.asPath}
+              navItems={navItems}
+              LinkElement={Link}
+              isTransparent
+              className="sm:!absolute sm:top-0"
+            />
+            <motion.div
+              initial="hidden"
+              animate="enter"
+              exit="exit"
+              variants={fromUpToDown}
+              transition={{ duration: 0.25, ease: animationEase }}
+            >
+              {children}
+            </motion.div>
+          </div>
+        ) : (
+          // Use the normal Page Layout if the Navigation is normal
+          <PageLayout
+            key={router.route}
+            currentPath={router.asPath}
+            navItems={navItems}
+            LinkElement={Link}
           >
-            {children}
-          </motion.div>
-        </PageLayout>
+            <motion.div
+              initial="hidden"
+              animate="enter"
+              exit="exit"
+              variants={fromUpToDown}
+              transition={{ duration: 0.25, ease: animationEase }}
+              className="flex flex-grow flex-col overflow-auto"
+            >
+              {children}
+            </motion.div>
+          </PageLayout>
+        )}
       </div>
     </AnimatePresence>
   );
