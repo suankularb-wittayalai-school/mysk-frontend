@@ -2,7 +2,8 @@
   "brand": {
     "name": "MySK",
     "nameWithAccent": "My<1>SK</1>",
-    "school": "Suankularb Wittayalai School"
+    "school": "Suankularb Wittayalai School",
+    "logoAlt": "The logo of MySK: pink and blue rose with the text MySK as its core."
   },
   "navigation": {
     "home": "Home",

@@ -104,7 +104,7 @@ const LandingFeed = ({
           />
         </button>
         <div
-          className="h-full grow overflow-y-auto transition-[height]"
+          className="overflow-y-auto transition-[height]"
           style={{ height: fullscreen ? window.innerHeight - 172 : 0 }}
         >
           <ul className="flex flex-col">
@@ -166,8 +166,7 @@ const LandingBanner = (): JSX.Element => {
         {/* Logo */}
         <div className="relative h-40 w-40">
           <Image
-            // TODO: Translate this please
-            alt="โลโก้ดอกไม้สีชมพู มีตัวอักษร MySK อยู่ตรงกลาง"
+            alt={t("brand.logoAlt", { ns: "common" })}
             layout="fill"
             priority={true}
             src="/images/branding/logo-white.webp"
