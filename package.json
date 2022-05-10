@@ -9,8 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@suankularb-components/css": "^2.4.5",
-    "@suankularb-components/react": "^2.4.9",
+    "@suankularb-components/css": "^2.5.1",
+    "@suankularb-components/react": "^2.5.0",
     "@supabase/supabase-js": "^1.35.2",
     "csv": "^6.0.5",
     "csv-parse": "^5.0.4",
