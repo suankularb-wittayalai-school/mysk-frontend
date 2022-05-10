@@ -41,7 +41,7 @@ import { useSession } from "@utils/hooks/auth";
 import { createStudent } from "@utils/backend/person/student";
 
 interface ImportedData {
-  prefix_th: "เด็กชาย" | "นาย" | "นาง" | "นางสาว";
+  prefix: "เด็กชาย" | "นาย" | "นาง" | "นางสาว";
   first_name_th: string;
   first_name_en: string;
   middle_name_th?: string;
@@ -60,7 +60,7 @@ const prefixMap = {
   นาย: "Mr.",
   นาง: "Mrs.",
   นางสาว: "Miss.",
-};
+} as const;
 
 // Page
 const Students: NextPage<{ allStudents: Array<Student> }> = ({
@@ -159,9 +159,7 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
           birthdate: student.birthdate,
           citizenID: student.citizen_id.toString(),
           studentID: student.student_id.toString(),
-          prefix: prefixMap[
-            student.prefix_th as keyof typeof prefixMap
-          ] as Prefix,
+          prefix: prefixMap[student.prefix] as Prefix,
           role: "student",
           contacts: [],
           class: {
@@ -246,7 +244,7 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
           });
         }}
         columns={[
-          { name: "prefix_th", type: '"เด็กชาย" | "นาย" | "นาง" | "นางสาว"' },
+          { name: "prefix", type: '"เด็กชาย" | "นาย" | "นาง" | "นางสาว"' },
           { name: "first_name_th", type: "text" },
           { name: "first_name_en", type: "text" },
           { name: "middle_name_th", type: "text", optional: true },
