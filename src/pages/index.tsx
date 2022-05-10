@@ -53,9 +53,10 @@ const LandingFeed = ({
   return (
     <section
       aria-label={t("news.title")}
-      className="fixed bottom-[6rem] right-2 w-[calc(100vw-1rem)] rounded-xl
-        bg-[#fbfcff88] text-on-surface backdrop-blur-xl dark:bg-[#191c1e88]
-        sm:bottom-2 sm:w-[22.5rem] md:absolute md:right-4 md:bottom-4 md:h-[calc(100vh-6.5rem)]"
+      className="shadow-1 fixed bottom-[6rem] right-2 w-[calc(100vw-1rem)]
+        rounded-xl bg-[#fbfcff88] text-on-surface backdrop-blur-xl
+        dark:bg-[#191c1e88] sm:bottom-2 sm:w-[22.5rem]
+        md:absolute md:right-4 md:bottom-4 md:h-[calc(100vh-6.5rem)]"
     >
       <Card
         type="stacked"
@@ -103,11 +104,8 @@ const LandingFeed = ({
           />
         </button>
         <div
-          className={`grow overflow-y-auto transition-[height] md:h-full ${
-            fullscreen
-              ? "h-[calc(100vh-14.5rem)] sm:h-[calc(100vh-16rem)]"
-              : "h-0"
-          }`}
+          className="h-full grow overflow-y-auto transition-[height]"
+          style={{ height: fullscreen ? window.innerHeight - 172 : 0 }}
         >
           <ul className="flex flex-col">
             {feed.content.map((feedItem) => (
@@ -213,7 +211,7 @@ const LandingBanner = (): JSX.Element => {
         </div>
 
         {/* Change language */}
-        <Link href="/" locale={locale}>
+        <Link href="/" locale={locale == "en-US" ? "th" : "en-US"}>
           <a className="flex flex-row items-center gap-2 text-base text-tertiary-container">
             <MaterialIcon icon="translate" />
             <span>{t("changeLang")}</span>
