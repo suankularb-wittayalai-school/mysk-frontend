@@ -34,6 +34,7 @@ const ImportDataDialog = ({
 }): JSX.Element => {
   const { t } = useTranslation(["admin", "common"]);
   const [csvFile, setCSVFile] = useState<File | null>();
+  const [hasHeader, setHasHeader] = useState<boolean>(true);
 
   function validate(): boolean {
     // Check if file exists
@@ -108,13 +109,27 @@ const ImportDataDialog = ({
 
       <DialogSection name="upload" title={t("dialog.importData.upload.title")}>
         <div className="sm:grid sm:grid-cols-2 sm:gap-x-6">
-          <FileInput
-            name="file"
-            label={t("dialog.importData.upload.file")}
-            noneAttachedMsg={t("input.none.noFilesAttached", { ns: "common" })}
-            onChange={(e) => setCSVFile(e)}
-            attr={{ accept: ".csv, text/csv" }}
-          />
+          <div>
+            <FileInput
+              name="file"
+              label={t("dialog.importData.upload.file")}
+              noneAttachedMsg={t("input.none.noFilesAttached", {
+                ns: "common",
+              })}
+              onChange={(e) => setCSVFile(e)}
+              attr={{ accept: ".csv, text/csv" }}
+            />
+            <div className="flex flex-row gap-2">
+              <input
+                id="has-header"
+                name="has-header"
+                type="checkbox"
+                onChange={(e) => setHasHeader(e.target.checked)}
+                checked={hasHeader}
+              />
+              <label htmlFor="has-header">This file has a header row</label>
+            </div>
+          </div>
         </div>
       </DialogSection>
     </Dialog>
