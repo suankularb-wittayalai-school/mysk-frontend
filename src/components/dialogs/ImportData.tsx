@@ -77,6 +77,7 @@ const ImportDataDialog = ({
         cast: true,
         relax_column_count: true,
         trim: true,
+        from: hasHeader ? 2 : 1,
       },
       (err, result) => {
         if (err) {
