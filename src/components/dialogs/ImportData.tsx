@@ -1,4 +1,5 @@
 // Modules
+import { parse } from "csv-parse";
 import { Trans, useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
 
@@ -12,7 +13,6 @@ import {
 
 // Types
 import { DialogProps } from "@utils/types/common";
-import { parse } from "csv-parse";
 
 const OptionalIcon = () => (
   <div className="text-xl text-tertiary">
@@ -34,13 +34,16 @@ const ImportDataDialog = ({
   }[];
 }): JSX.Element => {
   const { t } = useTranslation(["admin", "common"]);
+
   const [csvFile, setCSVFile] = useState<File | null>();
   const [csvData, setCSVData] = useState<any[]>();
+  const [hasHeader, setHasHeader] = useState<boolean>(true);
 
   function validate(): boolean {
     // Check if file exists
     if (!csvFile) return false;
-    // Check if file content exists
+
+    // Check if file has content
     if (!csvData) return false;
 
     // Check if file type is CSV
@@ -50,10 +53,7 @@ const ImportDataDialog = ({
   }
 
   async function parseCSV() {
-    // if (!validate()) return;
     if (!csvFile) return;
-
-    // console.log("hi");
 
     const fileContent: string | ArrayBuffer = await new Promise(
       (resolve, reject) => {
@@ -77,6 +77,7 @@ const ImportDataDialog = ({
         cast: true,
         relax_column_count: true,
         trim: true,
+        from: hasHeader ? 2 : 1,
       },
       (err, result) => {
         if (err) {
@@ -95,10 +96,7 @@ const ImportDataDialog = ({
   useEffect(() => setCSVFile(null), [show]);
 
   useEffect(() => {
-    if (csvFile) {
-      // console.log("hi");
-      parseCSV();
-    }
+    if (csvFile) parseCSV();
   }, [csvFile]);
 
   return (
@@ -163,13 +161,27 @@ const ImportDataDialog = ({
 
       <DialogSection name="upload" title={t("dialog.importData.upload.title")}>
         <div className="sm:grid sm:grid-cols-2 sm:gap-x-6">
-          <FileInput
-            name="file"
-            label={t("dialog.importData.upload.file")}
-            noneAttachedMsg={t("input.none.noFilesAttached", { ns: "common" })}
-            onChange={(e) => setCSVFile(e)}
-            attr={{ accept: ".csv, text/csv" }}
-          />
+          <div>
+            <FileInput
+              name="file"
+              label={t("dialog.importData.upload.file")}
+              noneAttachedMsg={t("input.none.noFilesAttached", {
+                ns: "common",
+              })}
+              onChange={(e) => setCSVFile(e)}
+              attr={{ accept: ".csv, text/csv" }}
+            />
+            <div className="flex flex-row gap-2">
+              <input
+                id="has-header"
+                name="has-header"
+                type="checkbox"
+                onChange={(e) => setHasHeader(e.target.checked)}
+                checked={hasHeader}
+              />
+              <label htmlFor="has-header">This file has a header row</label>
+            </div>
+          </div>
         </div>
       </DialogSection>
     </Dialog>

@@ -128,7 +128,8 @@
       },
       "upload": {
         "title": "Upload file",
-        "file": "File"
+        "file": "File",
+        "hasHeader": "This file has a header row"
       },
       "action": {
         "cancel": "Cancel",

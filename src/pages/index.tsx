@@ -34,11 +34,11 @@ const LandingFeed = ({
 }: {
   feed: { lastUpdated: Date; content: NewsList };
 }): JSX.Element => {
-  const [fullscreen, setFullScreen] = useState<boolean>(false);
   const { t } = useTranslation("landing");
   const router = useRouter();
-
   const session = useSession();
+
+  const [fullscreen, setFullScreen] = useState<boolean>(false);
 
   useEffect(() => {
     if (session?.user) {
@@ -53,9 +53,10 @@ const LandingFeed = ({
   return (
     <section
       aria-label={t("news.title")}
-      className="fixed bottom-[6rem] right-2 w-[calc(100vw-1rem)] rounded-xl
-        bg-[#fbfcff88] text-on-surface backdrop-blur-xl dark:bg-[#191c1e88]
-        sm:bottom-2 sm:w-[22.5rem] md:absolute md:right-4 md:bottom-4 md:h-[calc(100vh-6.5rem)]"
+      className="shadow-1 fixed bottom-[6rem] right-2 w-[calc(100vw-1rem)]
+        rounded-xl bg-[#fbfcff88] text-on-surface backdrop-blur-xl
+        dark:bg-[#191c1e88] sm:bottom-2 sm:w-[22.5rem]
+        md:absolute md:right-4 md:bottom-4 md:h-[calc(100vh-6.5rem)]"
     >
       <Card
         type="stacked"
@@ -103,11 +104,8 @@ const LandingFeed = ({
           />
         </button>
         <div
-          className={`grow overflow-y-auto transition-[height] md:h-full ${
-            fullscreen
-              ? "h-[calc(100vh-14.5rem)] sm:h-[calc(100vh-16rem)]"
-              : "h-0"
-          }`}
+          className="overflow-y-auto transition-[height]"
+          style={{ height: fullscreen ? window.innerHeight - 172 : 0 }}
         >
           <ul className="flex flex-col">
             {feed.content.map((feedItem) => (
@@ -151,35 +149,10 @@ const LandingFeedItem = ({ feedItem }: { feedItem: NewsItem }): JSX.Element => {
   );
 };
 
-const ChangeLanguageButton = () => {
-  const { t } = useTranslation("landing");
-
-  // FIXME: This is broken right now because of bad component library code
-  // return (
-  //   <Link href="/" locale={useRouter().locale == "en-US" ? "th" : "en-US"}>
-  //     <Button
-  //       name={t("changeLang")}
-  //       type="text"
-  //       icon={<MaterialIcon icon="translate" />}
-  //       className="!text-tertiary-container dark:!text-tertiary"
-  //     />
-  //   </Link>
-  // );
-
-  // A temporary component is created with CSS rather than React SK Components to avoid this issue
-  return (
-    <Link href="/" locale={useRouter().locale == "en-US" ? "th" : "en-US"}>
-      <a className="btn--text btn--has-icon !text-tertiary-container">
-        <MaterialIcon icon="translate" />
-        <span>{t("changeLang")}</span>
-      </a>
-    </Link>
-  );
-};
-
 // Banner
 const LandingBanner = (): JSX.Element => {
   const { t } = useTranslation(["landing", "common"]);
+  const locale = useRouter().locale as "en-US" | "th";
 
   return (
     <header
@@ -193,8 +166,7 @@ const LandingBanner = (): JSX.Element => {
         {/* Logo */}
         <div className="relative h-40 w-40">
           <Image
-            // TODO: Translate this please
-            alt="โลโก้ดอกไม้สีชมพู มีตัวอักษร MySK อยู่ตรงกลาง"
+            alt={t("brand.logoAlt", { ns: "common" })}
             layout="fill"
             priority={true}
             src="/images/branding/logo-white.webp"
@@ -216,8 +188,8 @@ const LandingBanner = (): JSX.Element => {
       </div>
 
       {/* Actions */}
-      <div className="light flex flex-col items-center gap-2 sm:items-start">
-        <div className="flex flex-row flex-wrap items-center gap-4">
+      <div className="light flex flex-col items-center gap-4 sm:items-start">
+        <div className="flex flex-row flex-wrap items-center gap-2">
           <LinkButton
             label={t("login")}
             type="filled"
@@ -236,7 +208,14 @@ const LandingBanner = (): JSX.Element => {
               focus:!bg-tertiary-translucent-12 focus-visible:!bg-tertiary"
           />
         </div>
-        <ChangeLanguageButton />
+
+        {/* Change language */}
+        <Link href="/" locale={locale == "en-US" ? "th" : "en-US"}>
+          <a className="flex flex-row items-center gap-2 text-base text-tertiary-container">
+            <MaterialIcon icon="translate" />
+            <span>{t("changeLang")}</span>
+          </a>
+        </Link>
       </div>
     </header>
   );
