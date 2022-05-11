@@ -31,7 +31,7 @@ import TeacherTable from "@components/tables/TeacherTable";
 import { db2Teacher } from "@utils/backend/database";
 
 // Types
-import { Role, Teacher } from "@utils/types/person";
+import { Prefix, Role, Teacher } from "@utils/types/person";
 import {
   PersonTable,
   TeacherDB,
@@ -41,6 +41,50 @@ import ImportDataDialog from "@components/dialogs/ImportData";
 
 // Hooks
 import { useSession } from "@utils/hooks/auth";
+import { createTeacher } from "@utils/backend/person/teacher";
+
+interface ImportedData {
+  prefix: "เด็กชาย" | "นาย" | "นาง" | "นางสาว";
+  first_name_th: string;
+  first_name_en: string;
+  middle_name_th?: string;
+  middle_name_en?: string;
+  last_name_th: string;
+  last_name_en: string;
+  birthdate: string;
+  citizen_id: number;
+  teacher_id: string;
+  subject_group:
+    | "วิทยาศาสตร์"
+    | "คณิตศาสตร์"
+    | "ภาษาต่างประเทศ"
+    | "ภาษาไทย"
+    | "สุขศึกษาและพลศึกษา"
+    | "การงานอาชีพและเทคโนโลยี"
+    | "ศิลปะ"
+    | "สังคมศึกษา ศาสนา และวัฒนธรรม"
+    | "การศึกษาค้นคว้าด้วยตนเอง";
+  email: string;
+}
+
+const subjectGroupMap = {
+  วิทยาศาสตร์: 1,
+  คณิตศาสตร์: 2,
+  ภาษาต่างประเทศ: 3,
+  ภาษาไทย: 4,
+  สุขศึกษาและพลศึกษา: 5,
+  การงานอาชีพและเทคโนโลยี: 6,
+  ศิลปะ: 7,
+  "สังคมศึกษา ศาสนา และวัฒนธรรม": 8,
+  การศึกษาค้นคว้าด้วยตนเอง: 9,
+} as const;
+
+const prefixMap = {
+  เด็กชาย: "Master.",
+  นาย: "Mr.",
+  นาง: "Mrs.",
+  นางสาว: "Miss.",
+} as const;
 
 // Page
 const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
@@ -57,8 +101,7 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
   const [editingPerson, setEditingPerson] = useState<Teacher>();
 
   const session = useSession({ loginRequired: true, adminOnly: true });
-  
-  
+
   async function handleDelete() {
     if (!editingPerson) return;
 
@@ -124,6 +167,49 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
     router.replace(router.asPath);
   }
 
+  async function handleImport(data: ImportedData[]) {
+    const teachers: Array<{ person: Teacher; email: string }> = data.map(
+      (teacher) => {
+        const person: Teacher = {
+          id: 0,
+          name: {
+            th: {
+              firstName: teacher.first_name_th,
+              middleName: teacher.middle_name_th,
+              lastName: teacher.last_name_th,
+            },
+            "en-US": {
+              firstName: teacher.first_name_en,
+              middleName: teacher.middle_name_en,
+              lastName: teacher.last_name_en,
+            },
+          },
+          birthdate: teacher.birthdate,
+          citizenID: teacher.citizen_id.toString(),
+          teacherID: teacher.teacher_id.toString(),
+          prefix: prefixMap[teacher.prefix] as Prefix,
+          role: "teacher",
+          contacts: [],
+          subjectGroup: {
+            id: subjectGroupMap[teacher.subject_group],
+            name: {
+              th: teacher.subject_group,
+              "en-US": teacher.subject_group,
+            },
+          },
+        };
+        const email = teacher.email;
+        return { person, email };
+      }
+    );
+
+    await Promise.all(
+      teachers.map(
+        async (teacher) => await createTeacher(teacher.person, teacher.email)
+      )
+    );
+  }
+
   return (
     <>
       {/* Head */}
@@ -178,9 +264,12 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
       <ImportDataDialog
         show={showImport}
         onClose={() => setShowImport(false)}
-        onSubmit={() => {
-          setShowImport(false);
-          router.replace(router.asPath);
+        onSubmit={(e: ImportedData[]) => {
+          // console.log(e);
+          handleImport(e).then(() => {
+            setShowImport(false);
+            router.replace(router.asPath);
+          });
         }}
         // prettier-ignore
         columns={[
