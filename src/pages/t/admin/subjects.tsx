@@ -40,6 +40,55 @@ import {
 
 // Hooks
 import { useSession } from "@utils/hooks/auth";
+import { createSubject } from "@utils/backend/subject/subject";
+
+interface ImportedSubject {
+  name_th: string;
+  name_en: string;
+  short_name_th?: string;
+  short_name_en?: string;
+  code_th: string;
+  code_en: string;
+  type:
+    | "รายวิชาพื้นฐาน"
+    | "รายวิชาเพิ่มเติม"
+    | "รายวิชาเลือก"
+    | "กิจกรรมพัฒนาผู้เรียน";
+  group:
+    | "วิทยาศาสตร์"
+    | "คณิตศาสตร์"
+    | "ภาษาต่างประเทศ"
+    | "ภาษาไทย"
+    | "สุขศึกษาและพลศึกษา"
+    | "การงานอาชีพและเทคโนโลยี"
+    | "ศิลปะ"
+    | "สังคมศึกษา ศาสนา และวัฒนธรรม"
+    | "การศึกษาค้นคว้าด้วยตนเอง";
+  credit: number;
+  description_th?: string;
+  description_en?: string;
+  year: number;
+  semester: 1 | 2;
+}
+
+const subjectGroupMap = {
+  วิทยาศาสตร์: 1,
+  คณิตศาสตร์: 2,
+  ภาษาต่างประเทศ: 3,
+  ภาษาไทย: 4,
+  สุขศึกษาและพลศึกษา: 5,
+  การงานอาชีพและเทคโนโลยี: 6,
+  ศิลปะ: 7,
+  "สังคมศึกษา ศาสนา และวัฒนธรรม": 8,
+  การศึกษาค้นคว้าด้วยตนเอง: 9,
+} as const;
+
+const subjectTypeMap = {
+  รายวิชาพื้นฐาน: "Core Courses",
+  รายวิชาเพิ่มเติม: "Additional Courses",
+  รายวิชาเลือก: "Elective Courses",
+  กิจกรรมพัฒนาผู้เรียน: "Learner’s Development Activities",
+} as const;
 
 const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
   const { t } = useTranslation(["admin", "common"]);
@@ -77,6 +126,50 @@ const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
     }
     setShowConfDel(false);
     router.replace(router.asPath);
+  }
+
+  async function handleImport(data: ImportedSubject[]) {
+    const subjects: Subject[] = data.map((subject) => ({
+      id: 0,
+      code: {
+        th: subject.code_th,
+        "en-US": subject.code_en,
+      },
+      name: {
+        th: {
+          name: subject.name_th,
+          shortName: subject.short_name_th,
+        },
+        "en-US": {
+          name: subject.name_en,
+          shortName: subject.short_name_en,
+        },
+      },
+      type: {
+        th: subject.type,
+        "en-US": subjectTypeMap[subject.type],
+      },
+      subjectGroup: {
+        id: subjectGroupMap[subject.group],
+        name: {
+          th: subject.group,
+          "en-US": subject.group,
+        },
+      },
+      credit: subject.credit,
+      description: {
+        th: subject.description_th ? subject.description_th : "",
+        "en-US": subject.description_en ? subject.description_en : "",
+      },
+      year: subject.year,
+      semester: subject.semester,
+      syllabus: null,
+      teachers: [],
+    }));
+
+    await Promise.all(
+      subjects.map(async (subject) => await createSubject(subject))
+    );
   }
 
   return (
@@ -135,9 +228,14 @@ const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
       <ImportDataDialog
         show={showImport}
         onClose={() => setShowImport(false)}
-        onSubmit={() => {
-          setShowImport(false);
-          router.replace(router.asPath);
+        onSubmit={(e: ImportedSubject[]) => {
+          handleImport(e).then(() => {
+            setShowImport(false);
+            router.replace(router.asPath);
+          });
+          // console.log(e);
+          // setShowImport(false);
+          // router.replace(router.asPath);
         }}
         // prettier-ignore
         columns={[
@@ -148,6 +246,7 @@ const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
           { name: "code_th", type: "text" },
           { name: "code_en", type: "text" },
           { name: "type", type: '"รายวิชาพื้นฐาน" | "รายวิชาเพิ่มเติม" | "รายวิชาเลือก" | "กิจกรรมพัฒนาผู้เรียน"' },
+          { name: "group", type: '"วิทยาศาสตร์" | "คณิตศาสตร์" | "ภาษาต่างประเทศ" | "ภาษาไทย" | "สุขศึกษาและพลศึกษา" | "การงานอาชีพและเทคโนโลยี" | "ศิลปะ" | "สังคมศึกษา ศาสนา และวัฒนธรรม" | "การศึกษาค้นคว้าด้วยตนเอง"'  },
           { name: "credit", type: "numeric" },
           { name: "description_th", type: "numeric", optional: true },
           { name: "description_en", type: "numeric", optional: true },

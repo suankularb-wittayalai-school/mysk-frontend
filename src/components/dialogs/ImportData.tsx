@@ -1,4 +1,5 @@
 // Modules
+import { parse } from "csv-parse";
 import { Trans, useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
 
@@ -25,7 +26,7 @@ const ImportDataDialog = ({
   onSubmit,
   columns,
 }: DialogProps & {
-  onSubmit: () => void;
+  onSubmit: (e: any) => void;
   columns: {
     name: string;
     type: string;
@@ -33,12 +34,17 @@ const ImportDataDialog = ({
   }[];
 }): JSX.Element => {
   const { t } = useTranslation(["admin", "common"]);
+
   const [csvFile, setCSVFile] = useState<File | null>();
+  const [csvData, setCSVData] = useState<any[]>();
   const [hasHeader, setHasHeader] = useState<boolean>(true);
 
   function validate(): boolean {
     // Check if file exists
     if (!csvFile) return false;
+
+    // Check if file has content
+    if (!csvData) return false;
 
     // Check if file type is CSV
     if (!csvFile.name.match(/.csv$/)) return false;
@@ -46,7 +52,51 @@ const ImportDataDialog = ({
     return true;
   }
 
+  async function parseCSV() {
+    if (!csvFile) return;
+
+    const fileContent: string | ArrayBuffer = await new Promise(
+      (resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) =>
+          e.target?.result ? resolve(e.target.result) : reject();
+        reader.onerror = (e) => reject(e);
+        reader.readAsText(csvFile);
+      }
+    );
+
+    if (!fileContent) return;
+    if (typeof fileContent !== "string") return;
+
+    parse(
+      fileContent,
+      {
+        columns: columns.map((c) => c.name),
+        delimiter: ",",
+        skip_empty_lines: true,
+        cast: true,
+        relax_column_count: true,
+        trim: true,
+      },
+      (err, result) => {
+        if (err) {
+          console.error(err);
+          return;
+        } else if (!result) {
+          console.error("No data");
+          return;
+        }
+
+        setCSVData(result);
+      }
+    );
+  }
+
   useEffect(() => setCSVFile(null), [show]);
+
+  useEffect(() => {
+    if (csvFile) parseCSV();
+  }, [csvFile]);
 
   return (
     <Dialog
@@ -66,8 +116,9 @@ const ImportDataDialog = ({
       ]}
       show={show}
       onClose={onClose}
-      onSubmit={onSubmit}
+      onSubmit={() => onSubmit(csvData)}
     >
+      {/* {console.log({ csvFile, csvData })} */}
       <DialogSection name="columns">
         <h2 className="sr-only">{t("dialog.importData.columns.title")}</h2>
         <p>{t("dialog.importData.columns.info")}</p>

@@ -38,6 +38,7 @@ import { ClassroomDB, ClassroomTable } from "@utils/types/database/class";
 
 // Hooks
 import { useSession } from "@utils/hooks/auth";
+import { createClassroom } from "@utils/backend/classroom/classroom";
 
 // Page
 const Classes: NextPage<{ allClasses: Class[] }> = ({
@@ -72,6 +73,29 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
     if (scheduleError) {
       console.error(scheduleError);
     }
+  }
+
+  async function handleImport(
+    classes: { number: number; year: number; semester: number }[]
+  ) {
+    const classesToImport: Class[] = classes.map((classData) => ({
+      id: 0,
+      number: classData.number,
+      year: classData.year,
+      semester: classData.semester as 1 | 2,
+      students: [],
+      classAdvisors: [],
+      schedule: {
+        id: 0,
+        content: [],
+      },
+      contacts: [],
+      subjects: [],
+    }));
+
+    await Promise.all(
+      classesToImport.map(async (classItem) => await createClassroom(classItem))
+    );
   }
 
   return (
@@ -140,9 +164,13 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
       <ImportDataDialog
         show={showImport}
         onClose={() => setShowImport(false)}
-        onSubmit={() => {
-          setShowImport(false);
-          router.replace(router.asPath);
+        onSubmit={(e: { number: number; year: number; semester: number }[]) => {
+          console.log(e);
+
+          handleImport(e).then(() => {
+            setShowImport(false);
+            router.replace(router.asPath);
+          });
         }}
         columns={[
           { name: "number", type: "numeric (3-digit)" },
@@ -182,8 +210,7 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
         onClose={() => setShowConfDel(false)}
         onSubmit={() => {
           setShowConfDel(false);
-          handleDelete();
-          router.replace(router.asPath);
+          handleDelete().then(() => router.replace(router.asPath));
         }}
       />
     </>

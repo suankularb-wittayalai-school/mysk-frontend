@@ -13,7 +13,8 @@ import { createPerson } from "./person";
 
 export async function createTeacher(
   teacher: Teacher,
-  email: string
+  email: string,
+  isAdmin: boolean = false
 ): Promise<{ data: TeacherTable[] | null; error: PostgrestError | null }> {
   const { data: person, error: personCreationError } = await createPerson(
     teacher
@@ -50,7 +51,7 @@ export async function createTeacher(
       email,
       password: teacher.birthdate.split("-").join(""),
       id: createdTeacher[0]?.id,
-      // isAdmin: true,
+      isAdmin,
     }),
   });
 

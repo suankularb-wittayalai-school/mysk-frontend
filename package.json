@@ -12,6 +12,8 @@
     "@suankularb-components/css": "^2.5.1",
     "@suankularb-components/react": "^2.5.0",
     "@supabase/supabase-js": "^1.35.2",
+    "csv": "^6.0.5",
+    "csv-parse": "^5.0.4",
     "date-fns": "^2.28.0",
     "framer-motion": "^6.2.8",
     "next": "^12.1.1",

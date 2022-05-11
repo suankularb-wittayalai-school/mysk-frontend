@@ -16,6 +16,9 @@ import { range } from "@utils/helpers/array";
 
 // Types
 import { DialogProps } from "@utils/types/common";
+import { ClassroomTable } from "@utils/types/database/class";
+import { Class } from "@utils/types/class";
+import { createClassroom } from "@utils/backend/classroom/classroom";
 
 const GenerateClassesDialog = ({
   show,
@@ -58,6 +61,45 @@ const GenerateClassesDialog = ({
     return true;
   }
 
+  async function handleSubmit() {
+    if (!validate()) {
+      return;
+    }
+
+    // create range of class for each year based on numClasses and numGrades and flatten it to an array
+    const classes: Class[] = range(numGrades)
+      .map((grade, index) => {
+        const classesForGrade: Class[] = range(numClasses[index]).map(
+          (classNum) => ({
+            id: 0,
+            number: (index + 1) * 100 + (classNum + 1),
+            year: new Date().getFullYear(),
+            semester:
+              new Date().getMonth() < 3 && new Date().getMonth() > 8 ? 1 : 2,
+            students: [],
+            classAdvisors: [],
+            schedule: {
+              id: 0,
+              content: [],
+            },
+            contacts: [],
+            subjects: [],
+          })
+        );
+        return classesForGrade;
+      })
+      .flat();
+
+    // console.log(classes);
+    // classes.forEach(async (classItem) => await createClassroom(classItem))
+
+    await Promise.all(
+      classes.map(async (classItem) => await createClassroom(classItem))
+    );
+
+    onSubmit();
+  }
+
   return (
     <Dialog
       type="large"
@@ -77,7 +119,7 @@ const GenerateClassesDialog = ({
         },
       ]}
       onClose={onClose}
-      onSubmit={onSubmit}
+      onSubmit={handleSubmit}
     >
       {/* Number of grades */}
       <DialogSection name="num-grades" isDoubleColumn>

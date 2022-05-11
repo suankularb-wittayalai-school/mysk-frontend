@@ -165,7 +165,8 @@ const EditPersonDialog = ({
               },
             ],
           },
-          form.email
+          form.email,
+          form.isAdmin
         );
         if (error) {
           console.error(error);
@@ -218,7 +219,8 @@ const EditPersonDialog = ({
               },
             ],
           },
-          form.email
+          form.email,
+          form.isAdmin
         );
         if (error) {
           console.error(error);

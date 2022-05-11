@@ -32,7 +32,7 @@ const Layout = ({
   const router = useRouter();
   const { t } = useTranslation();
 
-  const [navItems, setNavItems] = useState([
+  const defaultNavItem = [
     {
       name: t("navigation.home"),
       icon: {
@@ -57,7 +57,9 @@ const Layout = ({
       },
       url: "/about",
     },
-  ]);
+  ];
+
+  const [navItems, setNavItems] = useState(defaultNavItem);
 
   const session = useSession();
 
@@ -163,6 +165,8 @@ const Layout = ({
       } else if (session.user?.user_metadata?.role === "teacher") {
         setNavItems(isAdmin ? [...teacherNav, adminNavItem] : teacherNav);
       }
+    } else {
+      setNavItems(defaultNavItem);
     }
   }, [session, router]);
 
