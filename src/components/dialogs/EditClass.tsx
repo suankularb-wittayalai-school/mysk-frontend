@@ -92,7 +92,7 @@ const EditClassDialog = ({
   }
 
   async function handleAdd() {
-    console.log(classItem);
+    // console.log(classItem);
 
     const classroom: Class = {
       id: classItem?.id || 0,
@@ -146,6 +146,25 @@ const EditClassDialog = ({
     students: [],
     contacts: [],
   });
+
+  useEffect(() => {
+    if (mode == "edit" && classItem) {
+      setChipLists({
+        classAdvisors: classItem.classAdvisors.map((teacher) => ({
+          id: teacher.id.toString(),
+          name: nameJoiner(locale, teacher.name),
+        })),
+        students: classItem.students.map((student) => ({
+          id: student.id.toString(),
+          name: nameJoiner(locale, student.name),
+        })),
+        contacts: classItem.contacts.map((contact) => ({
+          id: contact.id.toString(),
+          name: contact.name[locale],
+        })),
+      });
+    }
+  }, [mode, classItem]);
 
   return (
     <>
