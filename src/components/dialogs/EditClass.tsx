@@ -24,7 +24,10 @@ import { Contact } from "@utils/types/contact";
 import { Student, Teacher } from "@utils/types/person";
 
 // Backend
-import { createClassroom } from "@utils/backend/classroom/classroom";
+import {
+  createClassroom,
+  updateClassroom,
+} from "@utils/backend/classroom/classroom";
 import { nameJoiner } from "@utils/helpers/name";
 
 const EditClassDialog = ({
@@ -67,18 +70,19 @@ const EditClassDialog = ({
   useEffect(() => {
     if (mode == "edit" && classItem) {
       setForm({
-        number: 101,
-        year: new Date().getFullYear(),
-        semester:
-          new Date().getMonth() < 3 && new Date().getMonth() > 8 ? 1 : 2,
-        students: [],
-        classAdvisors: [],
-        contacts: [],
+        number: classItem.number,
+        year: classItem.year,
+        semester: classItem.semester,
+        students: classItem.students,
+        classAdvisors: classItem.classAdvisors,
+        contacts: classItem.contacts,
       });
     }
   }, [mode, classItem]);
 
   function validate(): boolean {
+    // console.log(form);
+
     if (!form.number || !form.number.toString().match(/[1-6][0-1][1-9]/))
       return false;
     if (form.year < 2005) return false;
@@ -88,8 +92,10 @@ const EditClassDialog = ({
   }
 
   async function handleAdd() {
+    // console.log(classItem);
+
     const classroom: Class = {
-      id: 0, // this need to be something else when editting
+      id: classItem?.id || 0,
       number: form.number,
       year: form.year,
       semester: form.semester,
@@ -97,7 +103,7 @@ const EditClassDialog = ({
       classAdvisors: form.classAdvisors,
       contacts: form.contacts,
       schedule: {
-        id: 0,
+        id: classItem?.schedule.id || 0,
         content: [], // this need to be something else when editting
       },
       subjects: [], // this need to be something else when editting
@@ -106,15 +112,25 @@ const EditClassDialog = ({
     if (!validate()) return;
 
     if (mode == "add") {
-      const { data: createdClass, error: classCreationError } =
-        await createClassroom(classroom);
+      const {
+        data: createdClass,
+        error: classCreationError,
+      } = await createClassroom(classroom);
 
       if (classCreationError) {
         console.error(classCreationError);
         return;
       }
     } else if (mode == "edit") {
-      // TODO
+      const {
+        data: updatedClass,
+        error: classUpdateError,
+      } = await updateClassroom(classroom);
+
+      if (classUpdateError) {
+        console.error(classUpdateError);
+        return;
+      }
     }
 
     onSubmit();
@@ -130,6 +146,25 @@ const EditClassDialog = ({
     students: [],
     contacts: [],
   });
+
+  useEffect(() => {
+    if (mode == "edit" && classItem) {
+      setChipLists({
+        classAdvisors: classItem.classAdvisors.map((teacher) => ({
+          id: teacher.id.toString(),
+          name: nameJoiner(locale, teacher.name),
+        })),
+        students: classItem.students.map((student) => ({
+          id: student.id.toString(),
+          name: nameJoiner(locale, student.name),
+        })),
+        contacts: classItem.contacts.map((contact) => ({
+          id: contact.id.toString(),
+          name: contact.name[locale],
+        })),
+      });
+    }
+  }, [mode, classItem]);
 
   return (
     <>

@@ -165,7 +165,7 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
         show={showImport}
         onClose={() => setShowImport(false)}
         onSubmit={(e: { number: number; year: number; semester: number }[]) => {
-          console.log(e);
+          // console.log(e);
 
           handleImport(e).then(() => {
             setShowImport(false);

@@ -75,7 +75,6 @@ const ClassTable = ({
                     type="text"
                     icon={<MaterialIcon icon="edit" />}
                     iconOnly
-                    disabled
                     onClick={() => {
                       setShowEdit(true);
                       setEditingClass(classItem);
