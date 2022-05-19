@@ -64,9 +64,27 @@ const ConnectSubjectDialog = ({
   });
 
   function validate(): boolean {
+    // Search subject via code
     if (!subject) return false;
     if (!(form.classroom && form.classroom.match(/[1-6][0-1][1-9]/)))
       return false;
+
+    // Class access
+    if (form.ggcCode?.length != 5 && form.ggcCode?.length != 6) return false;
+    if (
+      form.ggcLink &&
+      !form.ggcLink.match(/https:\/\/classroom.google.com\/c\/[a-zA-Z0-9]{16}/)
+    )
+      return false;
+    if (form.ggMeetLink) {
+      try {
+        new URL(form.ggMeetLink);
+      } catch (_) {
+        return false;
+      }
+    }
+
+    // Personnel
     if (form.teachers.length == 0) return false;
 
     return true;
@@ -142,12 +160,16 @@ const ConnectSubjectDialog = ({
         </DialogSection>
 
         {/* Class access */}
-        <DialogSection name="class-access" title="Class access" hasNoGap>
+        <DialogSection
+          name="class-access"
+          title={t("dialog.connectSubject.classAccess.title")}
+          hasNoGap
+        >
           <KeyboardInput
             name="ggc-code"
             type="text"
-            label="Google Classroom code"
-            errorMsg="Invalid. Should be 6-digit or 7-digit."
+            label={t("dialog.connectSubject.classAccess.ggcCode")}
+            errorMsg={t("dialog.connectSubject.classAccess.ggcCode_error")}
             useAutoMsg
             onChange={(e) => setForm({ ...form, ggcCode: e })}
             attr={{ pattern: "[a-z0-9]{6,7}" }}
@@ -155,8 +177,8 @@ const ConnectSubjectDialog = ({
           <KeyboardInput
             name="ggc-link"
             type="url"
-            label="Google Classroom link"
-            errorMsg="Invalid. Must be a full Classroom link."
+            label={t("dialog.connectSubject.classAccess.ggcLink")}
+            errorMsg={t("dialog.connectSubject.classAccess.ggcLink_error")}
             useAutoMsg
             onChange={(e) => setForm({ ...form, ggcLink: e })}
             attr={{ pattern: "https://classroom.google.com/c/[a-zA-Z0-9]{16}" }}
@@ -164,8 +186,8 @@ const ConnectSubjectDialog = ({
           <KeyboardInput
             name="ggc-meet"
             type="url"
-            label="Google Meet link"
-            errorMsg="Invalid. Must be a full Meet link."
+            label={t("dialog.connectSubject.classAccess.ggMeetLink")}
+            errorMsg={t("dialog.connectSubject.classAccess.ggMeetLink_error")}
             useAutoMsg
             onChange={(e) => setForm({ ...form, ggMeetLink: e })}
           />

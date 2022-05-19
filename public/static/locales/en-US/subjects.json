@@ -139,7 +139,15 @@
         "class_helper": "The class you’re teaching this subject to.",
         "class_error": "Invalid. Should be 3-digit, i.e. 408."
       },
-      "classAccess": {},
+      "classAccess": {
+        "title": "Class access",
+        "ggcCode": "Google Classroom code",
+        "ggcCode_error": "Invalid. Should be 6-digit or 7-digit.",
+        "ggcLink": "Google Classroom link",
+        "ggcLink_error": "Invalid. Must be a full Classroom link.",
+        "ggMeetLink": "Google Meet link",
+        "ggMeetLink_error": "Invalid. Must be a full Meet link."
+      },
       "personnel": {},
       "action": {
         "cancel": "Cancel",
