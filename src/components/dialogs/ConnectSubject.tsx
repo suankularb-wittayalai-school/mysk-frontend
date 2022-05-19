@@ -40,19 +40,14 @@ const ConnectSubjectDialog = ({
 
   // Form control
   const [form, setForm] = useState<{
-    subject: {
-      code: Subject["code"];
-      name: Subject["name"];
-    } | null;
-    classroom: number;
+    classroom: string;
     teachers: Array<Teacher>;
     coTeachers?: Array<Teacher>;
     ggcCode?: string;
     ggcLink?: string;
     ggMeetLink?: string;
   }>({
-    subject: null,
-    classroom: 0,
+    classroom: "",
     teachers: [],
     coTeachers: [],
   });
@@ -69,6 +64,11 @@ const ConnectSubjectDialog = ({
   });
 
   function validate(): boolean {
+    if (!subject) return false;
+    if (!(form.classroom && form.classroom.match(/[1-6][0-1][1-9]/)))
+      return false;
+    if (form.teachers.length == 0) return false;
+
     return true;
   }
 
@@ -125,7 +125,7 @@ const ConnectSubjectDialog = ({
             helperMsg="The class you’re teaching this subject to."
             errorMsg="Invalid. Should be 3-digit, i.e. 408."
             useAutoMsg
-            onChange={(e) => setForm({ ...form, classroom: Number(e) })}
+            onChange={(e) => setForm({ ...form, classroom: e })}
             attr={{ pattern: "[1-6][0-1][1-9]" }}
           />
         </DialogSection>
