@@ -34,6 +34,7 @@ import {
 } from "@suankularb-components/react";
 
 // Components
+import ImageDialog from "@components/dialogs/Image";
 import Sentiment from "@components/Sentiment";
 
 // Types
@@ -46,7 +47,6 @@ import {
 } from "@utils/types/subject";
 import { ClassWNumber } from "@utils/types/class";
 import { DialogProps } from "@utils/types/common";
-import ImageDialog from "@components/dialogs/Image";
 
 // Details Section
 
@@ -502,7 +502,7 @@ const EditAssignmentDialog = ({
           })),
         }
       : {
-          subject: allSubjects[0].id,
+          subject: allSubjects.length == 0 ? 0 : allSubjects[0].id,
           enDesc: "",
           thDesc: "",
           assignedClases: [],

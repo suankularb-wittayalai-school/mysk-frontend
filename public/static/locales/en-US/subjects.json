@@ -120,5 +120,14 @@
       "addAsgn": "Add assignment",
       "seeAll": "See all"
     }
+  },
+  "dialog": {
+    "connectSubject": {
+      "title": "Add subject",
+      "action": {
+        "cancel": "Cancel",
+        "save": "Save"
+      }
+    }
   }
 }

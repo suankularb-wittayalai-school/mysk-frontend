@@ -3,6 +3,10 @@ export interface DialogProps {
   onClose: () => void;
 }
 
+export interface SubmittableDialogProps extends DialogProps {
+  onSubmit: () => void;
+}
+
 export type ChipInputListItem = {
   id: string;
   name: string;
