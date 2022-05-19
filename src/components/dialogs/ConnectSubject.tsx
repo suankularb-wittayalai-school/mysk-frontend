@@ -76,7 +76,7 @@ const ConnectSubjectDialog = ({
     <>
       <Dialog
         type="large"
-        label="connect-subject"
+        label="add-subject"
         title={t("dialog.connectSubject.title")}
         supportingText={t("dialog.connectSubject.supportingText")}
         actions={[
@@ -85,7 +85,7 @@ const ConnectSubjectDialog = ({
             type: "close",
           },
           {
-            name: t("dialog.connectSubject.action.save"),
+            name: t("dialog.connectSubject.action.connect"),
             type: "submit",
             disabled: !validate(),
           },
@@ -98,8 +98,8 @@ const ConnectSubjectDialog = ({
 
         {/* Connect subject */}
         <DialogSection
-          name="subject"
-          title="Connect subject"
+          name="connect-subject"
+          title={t("dialog.connectSubject.connectSubject.title")}
           isDoubleColumn
           hasNoGap
         >
@@ -107,23 +107,34 @@ const ConnectSubjectDialog = ({
           <KeyboardInput
             name="subject-code"
             type="text"
-            label="Subject code"
-            helperMsg="Search for the subject with its code."
+            label={t("dialog.connectSubject.connectSubject.subjectCode")}
+            helperMsg={t(
+              "dialog.connectSubject.connectSubject.subjectCode_helper"
+            )}
+            errorMsg={t(
+              "dialog.connectSubject.connectSubject.subjectCode_error"
+            )}
+            useAutoMsg
             onChange={(e) => setSubjectCode(e)}
-            attr={{ pattern: "[\u0E00-\u0E7FA-Z]\\d{5}" }}
+            attr={{ pattern: "[\u0E00-\u0E7FA-Z]\\d{5}|[A-Z]{1,3}\\d{5}" }}
           />
           <div>
-            <h3 className="!text-base">Result</h3>
-            <p>{subject?.name || "No subject with this code."}</p>
+            <h3 className="!text-base">
+              {t("dialog.connectSubject.connectSubject.searchResult.title")}
+            </h3>
+            <p>
+              {subject?.name ||
+                t("dialog.connectSubject.connectSubject.searchResult.notFound")}
+            </p>
           </div>
 
           {/* Class */}
           <KeyboardInput
             name="class"
             type="text"
-            label="Class"
-            helperMsg="The class you’re teaching this subject to."
-            errorMsg="Invalid. Should be 3-digit, i.e. 408."
+            label={t("dialog.connectSubject.connectSubject.class")}
+            helperMsg={t("dialog.connectSubject.connectSubject.class_helper")}
+            errorMsg={t("dialog.connectSubject.connectSubject.class_error")}
             useAutoMsg
             onChange={(e) => setForm({ ...form, classroom: e })}
             attr={{ pattern: "[1-6][0-1][1-9]" }}
@@ -163,7 +174,7 @@ const ConnectSubjectDialog = ({
         {/* Personnel */}
         <DialogSection
           name="personnel"
-          title="Personnel"
+          title={t("item.personnel.title")}
           isDoubleColumn
           hasNoGap
         >
