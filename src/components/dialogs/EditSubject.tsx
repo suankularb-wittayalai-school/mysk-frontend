@@ -32,13 +32,7 @@ import { supabase } from "@utils/supabaseClient";
 
 // Types
 import { ChipInputListItem, DialogProps } from "@utils/types/common";
-import {
-  Subject,
-  SubjectGroup,
-  SubjectTypeEN,
-  SubjectTypeTH,
-} from "@utils/types/subject";
-import { Teacher } from "@utils/types/person";
+import { Subject, SubjectTypeEN, SubjectTypeTH } from "@utils/types/subject";
 
 const EditSubjectDialog = ({
   show,
@@ -128,12 +122,10 @@ const EditSubjectDialog = ({
     coTeachers: ChipInputListItem[];
   };
 
-  const defaultChipLists: ChipListsType = {
+  const [chipLists, setChipLists] = useState<ChipListsType>({
     teachers: [],
     coTeachers: [],
-  };
-
-  const [chipLists, setChipLists] = useState<ChipListsType>(defaultChipLists);
+  });
   const [syllabus, setSyllabus] = useState<File | null>(null);
 
   useEffect(() => {
@@ -204,7 +196,10 @@ const EditSubjectDialog = ({
 
     // Resets Chip List control if mode is add
     else if (mode == "add") {
-      setChipLists(defaultChipLists);
+      setChipLists({
+        teachers: [],
+        coTeachers: [],
+      });
     }
   }, [show, mode]);
 
