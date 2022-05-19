@@ -20,6 +20,7 @@ import { nameJoiner } from "@utils/helpers/name";
 // Types
 import { ChipInputListItem, SubmittableDialogProps } from "@utils/types/common";
 import { Teacher } from "@utils/types/person";
+import { Subject, SubjectListItem } from "@utils/types/subject";
 
 const ConnectSubjectDialog = ({
   show,
@@ -33,11 +34,25 @@ const ConnectSubjectDialog = ({
   const [showAddTeacher, setShowAddTeacher] = useState<boolean>(false);
   const [showAddCoTeacher, setShowAddCoTeacher] = useState<boolean>(false);
 
+  // Search subject via code
+  const [subjectCode, setSubjectCode] = useState<string>("");
+  const [subject, setSubject] = useState<Subject | null>(null);
+
   // Form control
   const [form, setForm] = useState<{
-    teachers: Teacher[];
-    coTeachers: Teacher[];
+    subject: {
+      code: Subject["code"];
+      name: Subject["name"];
+    } | null;
+    classroom: number;
+    teachers: Array<Teacher>;
+    coTeachers?: Array<Teacher>;
+    ggcCode?: string;
+    ggcLink?: string;
+    ggMeetLink?: string;
   }>({
+    subject: null,
+    classroom: 0,
     teachers: [],
     coTeachers: [],
   });
@@ -80,6 +95,7 @@ const ConnectSubjectDialog = ({
         onSubmit={onSubmit}
       >
         <p>{t("dialog.connectSubject.note")}</p>
+
         {/* Connect subject */}
         <DialogSection
           name="subject"
@@ -87,18 +103,21 @@ const ConnectSubjectDialog = ({
           isDoubleColumn
           hasNoGap
         >
+          {/* Search subject via code */}
           <KeyboardInput
             name="subject-code"
             type="text"
             label="Subject code"
             helperMsg="Search for the subject with its code."
-            onChange={() => {}}
+            onChange={(e) => setSubjectCode(e)}
             attr={{ pattern: "[\u0E00-\u0E7FA-Z]\\d{5}" }}
           />
           <div>
             <h3 className="!text-base">Result</h3>
-            <p>Communication and Presentation</p>
+            <p>{subject?.name || "No subject with this code."}</p>
           </div>
+
+          {/* Class */}
           <KeyboardInput
             name="class"
             type="text"
@@ -106,10 +125,11 @@ const ConnectSubjectDialog = ({
             helperMsg="The class you’re teaching this subject to."
             errorMsg="Invalid. Should be 3-digit, i.e. 408."
             useAutoMsg
-            onChange={() => {}}
+            onChange={(e) => setForm({ ...form, classroom: Number(e) })}
             attr={{ pattern: "[1-6][0-1][1-9]" }}
           />
         </DialogSection>
+
         {/* Class access */}
         <DialogSection name="class-access" title="Class access" hasNoGap>
           <KeyboardInput
@@ -118,7 +138,7 @@ const ConnectSubjectDialog = ({
             label="Google Classroom code"
             errorMsg="Invalid. Should be 6-digit or 7-digit."
             useAutoMsg
-            onChange={() => {}}
+            onChange={(e) => setForm({ ...form, ggcCode: e })}
             attr={{ pattern: "[a-z0-9]{6,7}" }}
           />
           <KeyboardInput
@@ -127,7 +147,7 @@ const ConnectSubjectDialog = ({
             label="Google Classroom link"
             errorMsg="Invalid. Must be a full Classroom link."
             useAutoMsg
-            onChange={() => {}}
+            onChange={(e) => setForm({ ...form, ggcLink: e })}
             attr={{ pattern: "https://classroom.google.com/c/[a-zA-Z0-9]{16}" }}
           />
           <KeyboardInput
@@ -136,7 +156,7 @@ const ConnectSubjectDialog = ({
             label="Google Meet link"
             errorMsg="Invalid. Must be a full Meet link."
             useAutoMsg
-            onChange={() => {}}
+            onChange={(e) => setForm({ ...form, ggMeetLink: e })}
           />
         </DialogSection>
 
@@ -189,7 +209,8 @@ const ConnectSubjectDialog = ({
           </div>
         </DialogSection>
       </Dialog>
-      // Dialogs
+
+      {/* Dialog */}
       <AddTeacherDialog
         show={showAddTeacher}
         onClose={() => setShowAddTeacher(false)}
