@@ -11,14 +11,15 @@ import {
   KeyboardInput,
 } from "@suankularb-components/react";
 
+// Backend
+import { createClassroom } from "@utils/backend/classroom/classroom";
+
 // Helpers
 import { range } from "@utils/helpers/array";
 
 // Types
 import { DialogProps } from "@utils/types/common";
-import { ClassroomTable } from "@utils/types/database/class";
 import { Class } from "@utils/types/class";
-import { createClassroom } from "@utils/backend/classroom/classroom";
 
 const GenerateClassesDialog = ({
   show,
@@ -89,9 +90,6 @@ const GenerateClassesDialog = ({
         return classesForGrade;
       })
       .flat();
-
-    // console.log(classes);
-    // classes.forEach(async (classItem) => await createClassroom(classItem))
 
     await Promise.all(
       classes.map(async (classItem) => await createClassroom(classItem))

@@ -124,6 +124,8 @@
   "dialog": {
     "connectSubject": {
       "title": "Add subject",
+      "supportingText": "Information like the Google Classroom code and the Google Meet link is unique to each class, which is why you must connect the subjects you teach to the classes you teach that subject to individually.",
+      "note": "This page (once you exit this dialog) only shows the subjects you teach, however.",
       "action": {
         "cancel": "Cancel",
         "save": "Save"
