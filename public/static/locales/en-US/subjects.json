@@ -122,6 +122,22 @@
     }
   },
   "dialog": {
+    "addSubject": {
+      "title": "Add subject",
+      "supportingText": "Search for a subject to add with its subject code, and assign the classes you will teach this subject to.",
+      "subjectCode": "Subject code",
+      "subjectCode_helper": "Search for the subject with its code.",
+      "subjectCode_error": "Invalid.",
+      "searchResult": {
+        "title": "Search result",
+        "notFound": "No subjects with this subject code."
+      },
+      "addClasses": "Add classes",
+      "action": {
+        "cancel": "Cancel",
+        "add": "Add"
+      }
+    },
     "connectSubject": {
       "title": "Add subject",
       "supportingText": "Information like the Google Classroom code and the Google Meet link is unique to each class, which is why you must connect the subjects you teach to the classes you teach that subject to individually.",

@@ -23,12 +23,13 @@ import SubjectCard from "@components/SubjectCard";
 // Types
 import { SubjectWNameAndCode } from "@utils/types/subject";
 import { useState } from "react";
+import AddSubjectDialog from "@components/dialogs/AddSubject";
 
 const SubjectsTeaching: NextPage<{ subjects: Array<SubjectWNameAndCode> }> = ({
   subjects,
 }) => {
   const { t } = useTranslation("subjects");
-  const [showConnect, setShowConnect] = useState<boolean>(false);
+  const [showAdd, setShowAdd] = useState<boolean>(false);
   
   return (
     <>
@@ -50,7 +51,7 @@ const SubjectsTeaching: NextPage<{ subjects: Array<SubjectWNameAndCode> }> = ({
               <Button
                 label={t("teaching.subjects.action.add")}
                 type="tonal"
-                onClick={() => setShowConnect(true)}
+                onClick={() => setShowAdd(true)}
               />
               <LinkButton
                 label={t("teaching.subjects.action.seeSchedule")}
@@ -67,10 +68,10 @@ const SubjectsTeaching: NextPage<{ subjects: Array<SubjectWNameAndCode> }> = ({
           </div>
         </Section>
       </RegularLayout>
-      <ConnectSubjectDialog
-        show={showConnect}
-        onClose={() => setShowConnect(false)}
-        onSubmit={() => setShowConnect(false)}
+      <AddSubjectDialog
+        show={showAdd}
+        onClose={() => setShowAdd(false)}
+        onSubmit={() => setShowAdd(false)}
       />
     </>
   );
