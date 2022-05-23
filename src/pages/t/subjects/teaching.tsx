@@ -56,7 +56,7 @@ const SubjectsTeaching: NextPage<{ subjects: Array<SubjectWNameAndCode> }> = ({
               <LinkButton
                 label={t("teaching.subjects.action.seeSchedule")}
                 type="filled"
-                url="/t/1/schedule"
+                url="/t/schedule"
                 LinkElement={Link}
               />
             </div>

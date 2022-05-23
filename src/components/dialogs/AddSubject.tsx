@@ -14,6 +14,7 @@ import {
 // Types
 import { Subject } from "@utils/types/subject";
 import { DialogProps } from "@utils/types/common";
+import AddClassDialog from "./AddClass";
 
 const AddSubjectDialog = ({
   show,
@@ -25,6 +26,8 @@ const AddSubjectDialog = ({
 
   const [subjectCode, setSubjectCode] = useState<string>("");
   const [subject, setSubject] = useState<Subject | null>(null);
+
+  const [showAddClass, setShowAddClass] = useState<boolean>(false);
 
   // (@SiravitPhokeed)
   // From our perspective, this dialog is the “Generate RoomSubjects” dialog,
@@ -39,49 +42,60 @@ const AddSubjectDialog = ({
   useEffect(() => setSubject(null), [show]);
 
   return (
-    <Dialog
-      type="regular"
-      label="add-student"
-      title={t("dialog.addSubject.title")}
-      supportingText={t("dialog.addSubject.supportingText")}
-      actions={[
-        { name: t("dialog.addSubject.action.cancel"), type: "close" },
-        { name: t("dialog.addSubject.action.add"), type: "submit" },
-      ]}
-      show={show}
-      onClose={() => onClose()}
-      onSubmit={() => subject && onSubmit(subject)}
-    >
-      <DialogSection
-        name="subject"
-        title={t("dialog.addSubject.searchSubject")}
-        hasNoGap
+    <>
+      <Dialog
+        type="regular"
+        label="add-student"
+        title={t("dialog.addSubject.title")}
+        supportingText={t("dialog.addSubject.supportingText")}
+        actions={[
+          { name: t("dialog.addSubject.action.cancel"), type: "close" },
+          { name: t("dialog.addSubject.action.add"), type: "submit" },
+        ]}
+        show={show}
+        onClose={() => onClose()}
+        onSubmit={() => subject && onSubmit(subject)}
       >
-        <KeyboardInput
-          name="subject-code"
-          type="text"
-          label={t("dialog.addSubject.subjectCode")}
-          helperMsg={t("dialog.addSubject.subjectCode_helper")}
-          errorMsg={t("dialog.addSubject.subjectCode_error")}
-          useAutoMsg
-          onChange={(e) => setSubjectCode(e)}
-          attr={{ pattern: "[\u0E00-\u0E7FA-Z]\\d{5}|[A-Z]{1,3}\\d{5}" }}
-        />
-        <div>
-          <h3 className="!text-base">
-            {t("dialog.addSubject.searchResult.title")}
-          </h3>
-          <p>
-            {subject
-              ? subject.name[locale]
-              : t("dialog.addSubject.searchResult.notFound")}
-          </p>
-        </div>
-      </DialogSection>
-      <DialogSection name="classes" title={t("dialog.addSubject.addClasses")}>
-        <ChipInputList list={[]} onChange={() => {}} onAdd={() => {}} />
-      </DialogSection>
-    </Dialog>
+        <DialogSection
+          name="subject"
+          title={t("dialog.addSubject.searchSubject")}
+          hasNoGap
+        >
+          <KeyboardInput
+            name="subject-code"
+            type="text"
+            label={t("dialog.addSubject.subjectCode")}
+            helperMsg={t("dialog.addSubject.subjectCode_helper")}
+            errorMsg={t("dialog.addSubject.subjectCode_error")}
+            useAutoMsg
+            onChange={(e) => setSubjectCode(e)}
+            attr={{ pattern: "[\u0E00-\u0E7FA-Z]\\d{5}|[A-Z]{1,3}\\d{5}" }}
+          />
+          <div>
+            <h3 className="!text-base">
+              {t("dialog.addSubject.searchResult.title")}
+            </h3>
+            <p>
+              {subject
+                ? subject.name[locale]
+                : t("dialog.addSubject.searchResult.notFound")}
+            </p>
+          </div>
+        </DialogSection>
+        <DialogSection name="classes" title={t("dialog.addSubject.addClasses")}>
+          <ChipInputList
+            list={[]}
+            onChange={() => {}}
+            onAdd={() => setShowAddClass(true)}
+          />
+        </DialogSection>
+      </Dialog>
+      <AddClassDialog
+        show={showAddClass}
+        onClose={() => setShowAddClass(false)}
+        onSubmit={() => setShowAddClass(false)}
+      />
+    </>
   );
 };
 

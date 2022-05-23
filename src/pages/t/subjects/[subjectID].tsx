@@ -47,10 +47,9 @@ import {
 } from "@utils/types/subject";
 import { ClassWNumber } from "@utils/types/class";
 import { DialogProps } from "@utils/types/common";
+import AddClassDialog from "@components/dialogs/AddClass";
 
 // Details Section
-
-// Main
 const DetailsSection = ({
   classesLearningThis: orignialClassesLearningThis,
   setShowAdd,
@@ -87,47 +86,6 @@ const DetailsSection = ({
         />
       </section>
     </Section>
-  );
-};
-
-// Components
-const AddClassDialog = ({
-  show,
-  onClose,
-}: DialogProps & { onSubmit: Function }): JSX.Element => {
-  const { t } = useTranslation("subjects");
-  const locale = useRouter().locale as "en-US" | "th";
-
-  return (
-    <Dialog
-      type="regular"
-      label="add-class"
-      title={t("details.dialog.addClass.title")}
-      supportingText=""
-      actions={[
-        { name: t("details.dialog.addClass.action.cancel"), type: "close" },
-        { name: t("details.dialog.addClass.action.add"), type: "submit" },
-      ]}
-      show={show}
-      onClose={() => onClose()}
-      onSubmit={() => onClose()}
-    >
-      <DialogSection name="">
-        <Dropdown
-          name="class"
-          label={t("details.dialog.addClass.class")}
-          options={[
-            {
-              value: 509,
-              label: {
-                "en-US": "M.509",
-                th: "ม.509",
-              }[locale],
-            },
-          ]}
-        />
-      </DialogSection>
-    </Dialog>
   );
 };
 

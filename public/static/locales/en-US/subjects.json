@@ -52,16 +52,6 @@
     "title": "Subject details",
     "classes": {
       "title": "Classes learning this subject"
-    },
-    "dialog": {
-      "addClass": {
-        "title": "Add class",
-        "class": "Class",
-        "action": {
-          "add": "Add class",
-          "cancel": "Cancel"
-        }
-      }
     }
   },
   "periodLogs": {
@@ -125,6 +115,7 @@
     "addSubject": {
       "title": "Add subject",
       "supportingText": "Search for a subject to add with its subject code, and assign the classes you will teach this subject to.",
+      "searchSubject": "Search subject",
       "subjectCode": "Subject code",
       "subjectCode_helper": "Search for the subject with its code.",
       "subjectCode_error": "Invalid.",
