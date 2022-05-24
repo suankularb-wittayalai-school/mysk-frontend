@@ -24,6 +24,7 @@ import {
   DialogSection,
   Dropdown,
   Header,
+  LinkButton,
   MaterialIcon,
   RegularLayout,
   Section,
@@ -34,7 +35,9 @@ import {
 } from "@suankularb-components/react";
 
 // Components
+import AddClassDialog from "@components/dialogs/AddClass";
 import ImageDialog from "@components/dialogs/Image";
+import BrandIcon from "@components/icons/BrandIcon";
 import Sentiment from "@components/Sentiment";
 
 // Types
@@ -45,31 +48,11 @@ import {
   SubjectWNameAndCode,
   SubstituteAssignment,
 } from "@utils/types/subject";
-import { ClassWNumber } from "@utils/types/class";
 import { DialogProps } from "@utils/types/common";
-import AddClassDialog from "@components/dialogs/AddClass";
 
 // Details Section
-const DetailsSection = ({
-  classesLearningThis: orignialClassesLearningThis,
-  setShowAdd,
-}: {
-  classesLearningThis: Array<ClassWNumber>;
-  setShowAdd: Function;
-}): JSX.Element => {
+const DetailsSection = (): JSX.Element => {
   const { t } = useTranslation(["subjects", "common"]);
-  const locale = useRouter().locale as "en-US" | "th";
-  const [classesLearningThis, setClassesLearningThis] = useState<
-    Array<{
-      id: string;
-      name: string | JSX.Element;
-    }>
-  >(
-    orignialClassesLearningThis.map((classItem) => ({
-      id: classItem.id.toString(),
-      name: t("grade", { ns: "common", number: classItem.number }),
-    }))
-  );
 
   return (
     <Section>
@@ -77,14 +60,60 @@ const DetailsSection = ({
         icon={<MaterialIcon icon="info" allowCustomSize />}
         text={t("details.title")}
       />
-      <section className="flex flex-col gap-2">
-        <h3 className="font-display text-xl">{t("details.classes.title")}</h3>
-        <ChipInputList
-          list={classesLearningThis}
-          onChange={(newList) => setClassesLearningThis(newList)}
-          onAdd={() => setShowAdd(true)}
-        />
-      </section>
+      <div>
+        <Table width={720}>
+          <thead>
+            <tr>
+              <th className="w-2/12">Class</th>
+              <th className="w-2/12">GGC Code</th>
+              <th className="w-3/12">Teachers</th>
+              <th className="w-3/12">Co-teachers</th>
+              <th className="w-2/12"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>M.505</td>
+              <td>zb3yp6i</td>
+              <td className="!text-left">Atipol Sukrisadanon, SK TD</td>
+              <td className="!text-left">John Smith</td>
+              <td>
+                <div className="flex flex-row flex-wrap justify-center gap-2">
+                  <LinkButton
+                    name="Edit"
+                    type="text"
+                    icon={<BrandIcon icon="gg-classroom" />}
+                    url=""
+                    iconOnly
+                    disabled
+                  />
+                  <LinkButton
+                    name="Edit"
+                    type="text"
+                    icon={<BrandIcon icon="gg-meet" />}
+                    iconOnly
+                  />
+                  <Button
+                    name="Edit"
+                    type="text"
+                    icon={<MaterialIcon icon="edit" />}
+                    iconOnly
+                    onClick={() => {}}
+                  />
+                  <Button
+                    name="Delete"
+                    type="text"
+                    icon={<MaterialIcon icon="delete" />}
+                    iconOnly
+                    isDangerous
+                    onClick={() => {}}
+                  />
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </Table>
+      </div>
     </Section>
   );
 };
@@ -534,14 +563,12 @@ const EditAssignmentDialog = ({
 // Page
 const SubjectDetails: NextPage<{
   subject: Subject;
-  classesLearningThis: Array<ClassWNumber>;
   periodLogs: Array<PeriodLog>;
   substAsgn: Array<SubstituteAssignment>;
   allSubjects: Array<SubjectWNameAndCode>;
-}> = ({ subject, classesLearningThis, periodLogs, substAsgn, allSubjects }) => {
+}> = ({ subject, periodLogs, substAsgn, allSubjects }) => {
   const { t } = useTranslation(["subjects", "common"]);
   const locale = useRouter().locale as "en-US" | "th";
-  const [showAdd, setShowAdd] = useState<boolean>(false);
 
   const [logEvidence, setLogEvidence] = useState<{
     show: boolean;
@@ -578,10 +605,7 @@ const SubjectDetails: NextPage<{
           />
         }
       >
-        <DetailsSection
-          classesLearningThis={classesLearningThis}
-          setShowAdd={setShowAdd}
-        />
+        <DetailsSection />
         <PeriodLogsSection
           periodLogs={periodLogs}
           setLogEvidence={setLogEvidence}
@@ -597,11 +621,6 @@ const SubjectDetails: NextPage<{
       </RegularLayout>
 
       {/* Dialogs */}
-      <AddClassDialog
-        show={showAdd}
-        onClose={() => setShowAdd(false)}
-        onSubmit={() => {}}
-      />
       {logEvidence.evidence && (
         <ImageDialog
           show={logEvidence.show}
@@ -672,7 +691,6 @@ export const getServerSideProps: GetServerSideProps = async ({
       name: { "en-US": "ENG", th: "อ" },
     },
   };
-  const classesLearningThis: Array<ClassWNumber> = [];
   const substAsgn: Array<SubstituteAssignment> = [];
   const allSubjects: Array<SubjectWNameAndCode> = [];
   const periodLogs: Array<PeriodLog> = [];
@@ -684,7 +702,6 @@ export const getServerSideProps: GetServerSideProps = async ({
         "subjects",
       ])),
       subject,
-      classesLearningThis,
       periodLogs: periodLogs.map((periodLog) => ({
         ...periodLog,
         date: periodLog.date.getTime(),

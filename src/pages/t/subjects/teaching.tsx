@@ -17,13 +17,12 @@ import {
 } from "@suankularb-components/react";
 
 // Components
-import ConnectSubjectDialog from "@components/dialogs/ConnectSubject";
+import AddSubjectDialog from "@components/dialogs/AddSubject";
 import SubjectCard from "@components/SubjectCard";
 
 // Types
 import { SubjectWNameAndCode } from "@utils/types/subject";
 import { useState } from "react";
-import AddSubjectDialog from "@components/dialogs/AddSubject";
 
 const SubjectsTeaching: NextPage<{ subjects: Array<SubjectWNameAndCode> }> = ({
   subjects,
@@ -50,7 +49,7 @@ const SubjectsTeaching: NextPage<{ subjects: Array<SubjectWNameAndCode> }> = ({
             <div className="flex flex-row flex-wrap items-center justify-end gap-2 sm:items-end md:col-span-2">
               <Button
                 label={t("teaching.subjects.action.add")}
-                type="tonal"
+                type="outlined"
                 onClick={() => setShowAdd(true)}
               />
               <LinkButton
