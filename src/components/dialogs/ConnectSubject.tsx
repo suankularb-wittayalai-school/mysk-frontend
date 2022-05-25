@@ -1,7 +1,7 @@
 // Modules
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // SK Components
 import {
@@ -26,17 +26,20 @@ const ConnectSubjectDialog = ({
   show,
   onClose,
   onSubmit,
-}: SubmittableDialogProps) => {
+  mode,
+  subject,
+  subjectRoom,
+}: SubmittableDialogProps & {
+  mode: "add" | "edit";
+  subject: Subject;
+  subjectRoom?: SubjectListItem;
+}) => {
   const { t } = useTranslation("subjects");
   const locale = useRouter().locale as "en-US" | "th";
 
   // Dialogs
   const [showAddTeacher, setShowAddTeacher] = useState<boolean>(false);
   const [showAddCoTeacher, setShowAddCoTeacher] = useState<boolean>(false);
-
-  // Search subject via code
-  const [subjectCode, setSubjectCode] = useState<string>("");
-  const [subject, setSubject] = useState<Subject | null>(null);
 
   // Form control
   const [form, setForm] = useState<{
@@ -63,6 +66,42 @@ const ConnectSubjectDialog = ({
     coTeachers: [],
   });
 
+  useEffect(() => {
+    // Populate the form control with data if mode is edit
+    if (mode == "edit" && subjectRoom) {
+      setForm({
+        classroom: subjectRoom.classroom.number.toString(),
+        teachers: subjectRoom.teachers,
+        coTeachers: subjectRoom.coTeachers || [],
+      });
+      setChipLists({
+        teachers: subjectRoom.teachers.map((teacher) => ({
+          id: teacher.id.toString(),
+          name: teacher.name[locale]?.firstName || teacher.name.th.firstName,
+        })),
+        coTeachers: subjectRoom.coTeachers
+          ? subjectRoom.coTeachers.map((coTeacher) => ({
+              id: coTeacher.id.toString(),
+              name:
+                coTeacher.name[locale]?.firstName ||
+                coTeacher.name.th.firstName,
+            }))
+          : [],
+      });
+      // Resets form control if mode is add
+    } else {
+      setForm({
+        classroom: "",
+        teachers: [],
+        coTeachers: [],
+      });
+      setChipLists({
+        teachers: [],
+        coTeachers: [],
+      });
+    }
+  }, [show, mode, subjectRoom, locale]);
+
   function validate(): boolean {
     // Search subject via code
     if (!subject) return false;
@@ -70,7 +109,8 @@ const ConnectSubjectDialog = ({
       return false;
 
     // Class access
-    if (form.ggcCode?.length != 5 && form.ggcCode?.length != 6) return false;
+    if (form.ggcCode && (form.ggcCode.length < 6 || form.ggcCode.length > 7))
+      return false;
     if (
       form.ggcLink &&
       !form.ggcLink.match(/https:\/\/classroom.google.com\/c\/[a-zA-Z0-9]{16}/)
@@ -95,7 +135,7 @@ const ConnectSubjectDialog = ({
       <Dialog
         type="large"
         label="add-subject"
-        title={t("dialog.connectSubject.title")}
+        title={t(`dialog.connectSubject.title.${mode}`)}
         supportingText={t("dialog.connectSubject.supportingText")}
         actions={[
           {
@@ -103,7 +143,7 @@ const ConnectSubjectDialog = ({
             type: "close",
           },
           {
-            name: t("dialog.connectSubject.action.connect"),
+            name: t("dialog.connectSubject.action.save"),
             type: "submit",
             disabled: !validate(),
           },
@@ -112,8 +152,6 @@ const ConnectSubjectDialog = ({
         onClose={onClose}
         onSubmit={onSubmit}
       >
-        <p>{t("dialog.connectSubject.note")}</p>
-
         {/* Connect subject */}
         <DialogSection
           name="connect-subject"
@@ -121,7 +159,6 @@ const ConnectSubjectDialog = ({
           isDoubleColumn
           hasNoGap
         >
-          {/* Search subject via code */}
           <KeyboardInput
             name="subject-code"
             type="text"
@@ -129,24 +166,10 @@ const ConnectSubjectDialog = ({
             helperMsg={t(
               "dialog.connectSubject.connectSubject.subjectCode_helper"
             )}
-            errorMsg={t(
-              "dialog.connectSubject.connectSubject.subjectCode_error"
-            )}
-            useAutoMsg
-            onChange={(e) => setSubjectCode(e)}
-            attr={{ pattern: "[\u0E00-\u0E7FA-Z]\\d{5}|[A-Z]{1,3}\\d{5}" }}
+            onChange={() => {}}
+            defaultValue={subject.code[locale] || subject.code.th}
+            attr={{ disabled: true }}
           />
-          <div>
-            <h3 className="!text-base">
-              {t("dialog.connectSubject.connectSubject.searchResult.title")}
-            </h3>
-            <p>
-              {subject?.name ||
-                t("dialog.connectSubject.connectSubject.searchResult.notFound")}
-            </p>
-          </div>
-
-          {/* Class */}
           <KeyboardInput
             name="class"
             type="text"
@@ -155,6 +178,9 @@ const ConnectSubjectDialog = ({
             errorMsg={t("dialog.connectSubject.connectSubject.class_error")}
             useAutoMsg
             onChange={(e) => setForm({ ...form, classroom: e })}
+            defaultValue={
+              subjectRoom ? subjectRoom.classroom.number : undefined
+            }
             attr={{ pattern: "[1-6][0-1][1-9]" }}
           />
         </DialogSection>
@@ -172,6 +198,7 @@ const ConnectSubjectDialog = ({
             errorMsg={t("dialog.connectSubject.classAccess.ggcCode_error")}
             useAutoMsg
             onChange={(e) => setForm({ ...form, ggcCode: e })}
+            defaultValue={subjectRoom ? subjectRoom.ggcCode : undefined}
             attr={{ pattern: "[a-z0-9]{6,7}" }}
           />
           <KeyboardInput
@@ -181,6 +208,7 @@ const ConnectSubjectDialog = ({
             errorMsg={t("dialog.connectSubject.classAccess.ggcLink_error")}
             useAutoMsg
             onChange={(e) => setForm({ ...form, ggcLink: e })}
+            defaultValue={subjectRoom ? subjectRoom.ggcLink : undefined}
             attr={{ pattern: "https://classroom.google.com/c/[a-zA-Z0-9]{16}" }}
           />
           <KeyboardInput
@@ -190,6 +218,7 @@ const ConnectSubjectDialog = ({
             errorMsg={t("dialog.connectSubject.classAccess.ggMeetLink_error")}
             useAutoMsg
             onChange={(e) => setForm({ ...form, ggMeetLink: e })}
+            defaultValue={subjectRoom ? subjectRoom.ggMeetLink : undefined}
           />
         </DialogSection>
 

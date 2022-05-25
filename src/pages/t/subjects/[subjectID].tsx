@@ -51,14 +51,22 @@ import {
   SubstituteAssignment,
 } from "@utils/types/subject";
 import { DialogProps } from "@utils/types/common";
+import ConnectSubjectDialog from "@components/dialogs/ConnectSubject";
 
 // Details Section
 const DetailsSection = ({
   description,
   subjectRooms,
+  setShowAddConnection,
+  setEditConnection,
 }: {
   description?: string;
   subjectRooms: SubjectListItem[];
+  setShowAddConnection: (value: boolean) => void;
+  setEditConnection: (value: {
+    show: boolean;
+    connection?: SubjectListItem;
+  }) => void;
 }): JSX.Element => {
   const { t } = useTranslation(["subjects", "common"]);
   const locale = useRouter().locale as "en-US" | "th";
@@ -143,7 +151,12 @@ const DetailsSection = ({
                       type="text"
                       icon={<MaterialIcon icon="edit" />}
                       iconOnly
-                      onClick={() => {}}
+                      onClick={() =>
+                        setEditConnection({
+                          show: true,
+                          connection: subjectRoom,
+                        })
+                      }
                     />
                     <Button
                       name={t("details.table.action.delete")}
@@ -160,6 +173,15 @@ const DetailsSection = ({
           </tbody>
         </Table>
       </div>
+
+      <div className="flex flex-row flex-wrap items-center justify-end gap-2">
+        <Button
+          type="tonal"
+          label={t("details.action.addConnection")}
+          icon={<MaterialIcon icon="link" />}
+          onClick={() => setShowAddConnection(true)}
+        />
+      </div>
     </Section>
   );
 };
@@ -168,10 +190,12 @@ const DetailsSection = ({
 
 // Main
 const PeriodLogsSection = ({
+  subjectID,
   periodLogs,
   setLogEvidence,
   setLogDetails,
 }: {
+  subjectID: number;
   periodLogs: Array<PeriodLog>;
   setLogEvidence: (value: { show: boolean; evidence?: string }) => void;
   setLogDetails: (value: { show: boolean; periodLog?: PeriodLog }) => void;
@@ -257,6 +281,18 @@ const PeriodLogsSection = ({
             ))}
           </tbody>
         </Table>
+      </div>
+      <div className="flex flex-row flex-wrap items-center justify-end gap-2">
+        <LinkButton
+          type="outlined"
+          label={t("periodLogs.action.seeAll")}
+          url={`/t/subjects/${subjectID}/period-logs`}
+        />
+        <Button
+          type="filled"
+          label={t("periodLogs.action.logAPeriod")}
+          icon={<MaterialIcon icon="add" />}
+        />
       </div>
     </Section>
   );
@@ -368,12 +404,14 @@ const PeriodLogDetailsDialog = ({
 
 // Main
 const SubstituteAssignmentsSection = ({
+  subjectID,
   substAsgn,
   setShowAssgDetails,
   setShowEditAsgn,
   setShowAddAsgn,
   setActiveAsgn,
 }: {
+  subjectID: number;
   substAsgn: Array<SubstituteAssignment>;
   setShowAssgDetails: Function;
   setShowEditAsgn: Function;
@@ -441,10 +479,15 @@ const SubstituteAssignmentsSection = ({
         ))}
       </XScrollContent>
       <div className="flex flex-row flex-wrap items-center justify-end gap-2">
-        <Button type="outlined" label={t("substAsgn.action.seeAll")} />
+        <LinkButton
+          type="outlined"
+          label={t("substAsgn.action.seeAll")}
+          url={`/t/subjects/${subjectID}/substitute-assignments`}
+        />
         <Button
           type="filled"
           label={t("substAsgn.action.addAsgn")}
+          icon={<MaterialIcon icon="add" />}
           onClick={() => setShowAddAsgn(true)}
         />
       </div>
@@ -615,8 +658,19 @@ const SubjectDetails: NextPage<{
   allSubjects: SubjectWNameAndCode[];
 }> = ({ subject, subjectRooms, periodLogs, substAsgn, allSubjects }) => {
   const { t } = useTranslation(["subjects", "common"]);
-  const locale = useRouter().locale as "en-US" | "th";
+  const router = useRouter();
+  const locale = router.locale as "en-US" | "th";
 
+  // Dialogs
+
+  // Subject details
+  const [showAddConnection, setShowAddConnection] = useState<boolean>(false);
+  const [editConnection, setEditConnection] = useState<{
+    show: boolean;
+    connection?: SubjectListItem;
+  }>({ show: false });
+
+  // Period logs
   const [logEvidence, setLogEvidence] = useState<{
     show: boolean;
     evidence?: string;
@@ -627,6 +681,7 @@ const SubjectDetails: NextPage<{
     periodLog?: PeriodLog;
   }>({ show: false });
 
+  // Substitute assignments
   const [showAsgnDetails, setShowAsgnDetails] = useState<boolean>(false);
   const [showEditAsgn, setShowEditAsgn] = useState<boolean>(false);
   const [showAddAsgn, setShowAddAsgn] = useState<boolean>(false);
@@ -636,7 +691,9 @@ const SubjectDetails: NextPage<{
     <>
       <Head>
         <title>
-          {t("title")} - {t("brand.name", { ns: "common" })}
+          {subject.name[locale].name || subject.name.th.name}
+          {" - "}
+          {t("brand.name", { ns: "common" })}
         </title>
       </Head>
       <RegularLayout
@@ -659,13 +716,17 @@ const SubjectDetails: NextPage<{
               : undefined
           }
           subjectRooms={subjectRooms}
+          setShowAddConnection={setShowAddConnection}
+          setEditConnection={setEditConnection}
         />
         <PeriodLogsSection
+          subjectID={subject.id}
           periodLogs={periodLogs}
           setLogEvidence={setLogEvidence}
           setLogDetails={setLogDetails}
         />
         <SubstituteAssignmentsSection
+          subjectID={subject.id}
           substAsgn={substAsgn}
           setShowAssgDetails={setShowAsgnDetails}
           setShowEditAsgn={setShowEditAsgn}
@@ -700,8 +761,10 @@ const SubjectDetails: NextPage<{
           <EditAssignmentDialog
             show={showEditAsgn}
             onClose={() => setShowEditAsgn(false)}
-            // TODO: Refetch subst asgns here ↓
-            onSubmit={() => setShowEditAsgn(false)}
+            onSubmit={() => {
+              setShowEditAsgn(false);
+              router.replace(router.asPath);
+            }}
             mode="edit"
             assignment={activeAsgn}
             allSubjects={allSubjects}
@@ -711,10 +774,27 @@ const SubjectDetails: NextPage<{
       <EditAssignmentDialog
         show={showAddAsgn}
         onClose={() => setShowAddAsgn(false)}
-        // TODO: Refetch subst asgns here ↓
-        onSubmit={() => setShowAddAsgn(false)}
+        onSubmit={() => {
+          setShowAddAsgn(false);
+          router.replace(router.asPath);
+        }}
         mode="add"
         allSubjects={allSubjects}
+      />
+      <ConnectSubjectDialog
+        show={showAddConnection}
+        onClose={() => setShowAddConnection(false)}
+        onSubmit={() => setShowAddConnection(false)}
+        mode="add"
+        subject={subject}
+      />
+      <ConnectSubjectDialog
+        show={editConnection.show}
+        onClose={() => setEditConnection({ show: false })}
+        onSubmit={() => setEditConnection({ show: false })}
+        mode="edit"
+        subject={subject}
+        subjectRoom={editConnection.connection}
       />
     </>
   );

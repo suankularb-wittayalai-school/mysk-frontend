@@ -3,6 +3,8 @@ import { useRouter } from "next/router";
 
 // Types
 import { Teacher } from "@utils/types/person";
+
+// Helpers
 import { nameJoiner } from "@utils/helpers/name";
 
 const TeacherTeachingList = ({
