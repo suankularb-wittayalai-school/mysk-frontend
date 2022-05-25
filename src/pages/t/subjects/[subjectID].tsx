@@ -45,14 +45,24 @@ import {
   PeriodLog,
   PeriodMedium,
   Subject,
+  SubjectListItem,
   SubjectWNameAndCode,
   SubstituteAssignment,
 } from "@utils/types/subject";
 import { DialogProps } from "@utils/types/common";
+import { nameJoiner } from "@utils/helpers/name";
+import TeacherTeachingList from "@components/TeacherTeachingList";
 
 // Details Section
-const DetailsSection = (): JSX.Element => {
+const DetailsSection = ({
+  description,
+  subjectRooms,
+}: {
+  description?: string;
+  subjectRooms: SubjectListItem[];
+}): JSX.Element => {
   const { t } = useTranslation(["subjects", "common"]);
+  const locale = useRouter().locale as "en-US" | "th";
 
   return (
     <Section>
@@ -60,6 +70,11 @@ const DetailsSection = (): JSX.Element => {
         icon={<MaterialIcon icon="info" allowCustomSize />}
         text={t("details.title")}
       />
+
+      {/* Subject desciption */}
+      {description && <p>{description}</p>}
+
+      {/* Subject-classroom connections */}
       <div>
         <Table width={720}>
           <thead>
@@ -72,46 +87,77 @@ const DetailsSection = (): JSX.Element => {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>M.505</td>
-              <td>zb3yp6i</td>
-              <td className="!text-left">Atipol Sukrisadanon, SK TD</td>
-              <td className="!text-left">John Smith</td>
-              <td>
-                <div className="flex flex-row flex-wrap justify-center gap-2">
-                  <LinkButton
-                    name="Edit"
-                    type="text"
-                    icon={<BrandIcon icon="gg-classroom" />}
-                    url=""
-                    iconOnly
-                    disabled
+            {subjectRooms.map((subjectRoom) => (
+              <tr key={subjectRoom.id}>
+                {/* Class */}
+                <td>
+                  {t("class", {
+                    ns: "common",
+                    number: subjectRoom.classroom.number,
+                  })}
+                </td>
+
+                {/* GGC Code */}
+                <td className="font-mono">{subjectRoom.ggcCode}</td>
+
+                {/* Teachers */}
+                <td className="!text-left">
+                  <TeacherTeachingList
+                    teachers={subjectRoom.teachers}
+                    useFullName
                   />
-                  <LinkButton
-                    name="Edit"
-                    type="text"
-                    icon={<BrandIcon icon="gg-meet" />}
-                    url=""
-                    iconOnly
-                  />
-                  <Button
-                    name="Edit"
-                    type="text"
-                    icon={<MaterialIcon icon="edit" />}
-                    iconOnly
-                    onClick={() => {}}
-                  />
-                  <Button
-                    name="Delete"
-                    type="text"
-                    icon={<MaterialIcon icon="delete" />}
-                    iconOnly
-                    isDangerous
-                    onClick={() => {}}
-                  />
-                </div>
-              </td>
-            </tr>
+                </td>
+
+                {/* Co-teachers */}
+                <td className="!text-left">
+                  {subjectRoom.coTeachers && (
+                    <TeacherTeachingList
+                      teachers={subjectRoom.coTeachers}
+                      useFullName
+                    />
+                  )}
+                </td>
+
+                {/* Actions */}
+                <td>
+                  <div className="flex flex-row flex-wrap justify-center gap-2">
+                    <LinkButton
+                      name="Edit"
+                      type="text"
+                      icon={<BrandIcon icon="gg-classroom" />}
+                      url={
+                        subjectRoom.ggcLink || "https://classroom.google.com/"
+                      }
+                      iconOnly
+                      disabled={!subjectRoom.ggcLink}
+                    />
+                    <LinkButton
+                      name="Edit"
+                      type="text"
+                      icon={<BrandIcon icon="gg-meet" />}
+                      url={subjectRoom.ggcLink || "https://meet.google.com/"}
+                      iconOnly
+                      disabled={!subjectRoom.ggMeetLink}
+                    />
+                    <Button
+                      name="Edit"
+                      type="text"
+                      icon={<MaterialIcon icon="edit" />}
+                      iconOnly
+                      onClick={() => {}}
+                    />
+                    <Button
+                      name="Delete"
+                      type="text"
+                      icon={<MaterialIcon icon="delete" />}
+                      iconOnly
+                      isDangerous
+                      onClick={() => {}}
+                    />
+                  </div>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </Table>
       </div>
@@ -564,10 +610,11 @@ const EditAssignmentDialog = ({
 // Page
 const SubjectDetails: NextPage<{
   subject: Subject;
-  periodLogs: Array<PeriodLog>;
-  substAsgn: Array<SubstituteAssignment>;
-  allSubjects: Array<SubjectWNameAndCode>;
-}> = ({ subject, periodLogs, substAsgn, allSubjects }) => {
+  subjectRooms: SubjectListItem[];
+  periodLogs: PeriodLog[];
+  substAsgn: SubstituteAssignment[];
+  allSubjects: SubjectWNameAndCode[];
+}> = ({ subject, subjectRooms, periodLogs, substAsgn, allSubjects }) => {
   const { t } = useTranslation(["subjects", "common"]);
   const locale = useRouter().locale as "en-US" | "th";
 
@@ -606,7 +653,14 @@ const SubjectDetails: NextPage<{
           />
         }
       >
-        <DetailsSection />
+        <DetailsSection
+          description={
+            subject.description
+              ? subject.description[locale] || subject.description.th
+              : undefined
+          }
+          subjectRooms={subjectRooms}
+        />
         <PeriodLogsSection
           periodLogs={periodLogs}
           setLogEvidence={setLogEvidence}
@@ -692,9 +746,65 @@ export const getServerSideProps: GetServerSideProps = async ({
       name: { "en-US": "ENG", th: "อ" },
     },
   };
-  const substAsgn: Array<SubstituteAssignment> = [];
-  const allSubjects: Array<SubjectWNameAndCode> = [];
-  const periodLogs: Array<PeriodLog> = [];
+  const subjectRooms: SubjectListItem[] = [
+    {
+      id: 8,
+      subject: {
+        code: { "en-US": "ENG32102", th: "อ32102" },
+        name: {
+          "en-US": { name: "English 4" },
+          th: { name: "ภาษาอังกฤษ 4" },
+        },
+      },
+      classroom: { id: 0, number: 105 },
+      teachers: [
+        {
+          id: 9,
+          role: "teacher",
+          prefix: "Mr.",
+          name: {
+            "en-US": { firstName: "Kritchapon", lastName: "Boonpoonmee" },
+            th: { firstName: "กฤชพล", lastName: "บุญพูลมี" },
+          },
+          teacherID: "",
+          citizenID: "",
+          birthdate: "",
+          contacts: [],
+          subjectGroup: {
+            id: 6,
+            name: {
+              "en-US": "Mathematics",
+              th: "คณิตศาสตร์",
+            },
+          },
+        },
+        {
+          id: 6,
+          role: "teacher",
+          prefix: "Mr.",
+          name: {
+            "en-US": { firstName: "Niruth", lastName: "Prombutr" },
+            th: { firstName: "นิรุทธ์", lastName: "พรมบุตร" },
+          },
+          teacherID: "",
+          citizenID: "",
+          birthdate: "",
+          contacts: [],
+          subjectGroup: {
+            id: 1,
+            name: {
+              "en-US": "Science and Technology",
+              th: "วิทยาศาสตร์และเทคโนโลยี",
+            },
+          },
+        },
+      ],
+      ggcCode: "zb3yp6i",
+    },
+  ];
+  const substAsgn: SubstituteAssignment[] = [];
+  const allSubjects: SubjectWNameAndCode[] = [];
+  const periodLogs: PeriodLog[] = [];
 
   return {
     props: {
@@ -703,6 +813,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         "subjects",
       ])),
       subject,
+      subjectRooms,
       periodLogs: periodLogs.map((periodLog) => ({
         ...periodLog,
         date: periodLog.date.getTime(),
