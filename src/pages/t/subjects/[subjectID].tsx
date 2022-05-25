@@ -39,6 +39,7 @@ import AddClassDialog from "@components/dialogs/AddClass";
 import ImageDialog from "@components/dialogs/Image";
 import BrandIcon from "@components/icons/BrandIcon";
 import Sentiment from "@components/Sentiment";
+import TeacherTeachingList from "@components/TeacherTeachingList";
 
 // Types
 import {
@@ -50,8 +51,6 @@ import {
   SubstituteAssignment,
 } from "@utils/types/subject";
 import { DialogProps } from "@utils/types/common";
-import { nameJoiner } from "@utils/helpers/name";
-import TeacherTeachingList from "@components/TeacherTeachingList";
 
 // Details Section
 const DetailsSection = ({
@@ -79,10 +78,10 @@ const DetailsSection = ({
         <Table width={720}>
           <thead>
             <tr>
-              <th className="w-2/12">Class</th>
-              <th className="w-2/12">GGC Code</th>
-              <th className="w-3/12">Teachers</th>
-              <th className="w-3/12">Co-teachers</th>
+              <th className="w-2/12">{t("details.table.class")}</th>
+              <th className="w-2/12">{t("details.table.ggcCode")}</th>
+              <th className="w-3/12">{t("details.table.teachers")}</th>
+              <th className="w-3/12">{t("details.table.coTeachers")}</th>
               <th className="w-2/12"></th>
             </tr>
           </thead>
@@ -122,7 +121,7 @@ const DetailsSection = ({
                 <td>
                   <div className="flex flex-row flex-wrap justify-center gap-2">
                     <LinkButton
-                      name="Edit"
+                      name={t("details.table.action.ggcLink")}
                       type="text"
                       icon={<BrandIcon icon="gg-classroom" />}
                       url={
@@ -132,7 +131,7 @@ const DetailsSection = ({
                       disabled={!subjectRoom.ggcLink}
                     />
                     <LinkButton
-                      name="Edit"
+                      name={t("details.table.action.ggMeetLink")}
                       type="text"
                       icon={<BrandIcon icon="gg-meet" />}
                       url={subjectRoom.ggcLink || "https://meet.google.com/"}
@@ -140,14 +139,14 @@ const DetailsSection = ({
                       disabled={!subjectRoom.ggMeetLink}
                     />
                     <Button
-                      name="Edit"
+                      name={t("details.table.action.edit")}
                       type="text"
                       icon={<MaterialIcon icon="edit" />}
                       iconOnly
                       onClick={() => {}}
                     />
                     <Button
-                      name="Delete"
+                      name={t("details.table.action.delete")}
                       type="text"
                       icon={<MaterialIcon icon="delete" />}
                       iconOnly

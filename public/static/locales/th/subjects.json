@@ -51,8 +51,17 @@
   },
   "details": {
     "title": "รายละเอียดรายวิชา",
-    "classes": {
-      "title": "ห้องเรียนที่สอน"
+    "table": {
+      "class": "ห้องเรียน",
+      "ggcCode": "รหัสเข้า GGC",
+      "teachers": "อาจารย์ผู้สอน",
+      "coTeachers": "โคทีชเชอร์",
+      "action": {
+        "ggcLink": "เข้า Google Classroom",
+        "ggMeetLink": "เข้า Google Meet",
+        "edit": "แก้ไข",
+        "delete": "ลบ"
+      }
     }
   },
   "periodLogs": {

@@ -51,8 +51,17 @@
   },
   "details": {
     "title": "Subject details",
-    "classes": {
-      "title": "Classes learning this subject"
+    "table": {
+      "class": "Class",
+      "ggcCode": "GGC Code",
+      "teachers": "Teachers",
+      "coTeachers": "Co-teachers",
+      "action": {
+        "ggcLink": "Go to Google Classroom",
+        "ggMeetLink": "Join Google Meet",
+        "edit": "Edit",
+        "delete": "Delete"
+      }
     }
   },
   "periodLogs": {

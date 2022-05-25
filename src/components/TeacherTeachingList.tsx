@@ -7,15 +7,19 @@ import { nameJoiner } from "@utils/helpers/name";
 
 const TeacherTeachingList = ({
   teachers,
+  truncate,
   useFullName,
 }: {
   teachers: { name: Teacher["name"] }[];
+  truncate?: boolean;
   useFullName?: boolean;
 }) => {
   const locale = useRouter().locale == "th" ? "th" : "en-US";
 
   return (
-    <span className="max-lines-1 text-base">
+    <span
+      className={`text-base ${truncate ? "overflow-ellipse break-all" : ""}`}
+    >
       {teachers.length > 0 &&
         // Show the first teacher’s name in user locale
         (useFullName
