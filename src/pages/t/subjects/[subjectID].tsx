@@ -36,6 +36,7 @@ import {
 
 // Components
 import AddClassDialog from "@components/dialogs/AddClass";
+import ConnectSubjectDialog from "@components/dialogs/ConnectSubject";
 import ImageDialog from "@components/dialogs/Image";
 import BrandIcon from "@components/icons/BrandIcon";
 import Sentiment from "@components/Sentiment";
@@ -51,7 +52,7 @@ import {
   SubstituteAssignment,
 } from "@utils/types/subject";
 import { DialogProps } from "@utils/types/common";
-import ConnectSubjectDialog from "@components/dialogs/ConnectSubject";
+import ConfirmDelete from "@components/dialogs/ConfirmDelete";
 
 // Details Section
 const DetailsSection = ({
@@ -59,11 +60,16 @@ const DetailsSection = ({
   subjectRooms,
   setShowAddConnection,
   setEditConnection,
+  setDeleteConnection,
 }: {
   description?: string;
   subjectRooms: SubjectListItem[];
   setShowAddConnection: (value: boolean) => void;
   setEditConnection: (value: {
+    show: boolean;
+    connection?: SubjectListItem;
+  }) => void;
+  setDeleteConnection: (value: {
     show: boolean;
     connection?: SubjectListItem;
   }) => void;
@@ -128,6 +134,7 @@ const DetailsSection = ({
                 {/* Actions */}
                 <td>
                   <div className="flex flex-row flex-wrap justify-center gap-2">
+                    {/* Go to Google Classroom */}
                     <LinkButton
                       name={t("details.table.action.ggcLink")}
                       type="text"
@@ -138,6 +145,7 @@ const DetailsSection = ({
                       iconOnly
                       disabled={!subjectRoom.ggcLink}
                     />
+                    {/* Go to Google Meet */}
                     <LinkButton
                       name={t("details.table.action.ggMeetLink")}
                       type="text"
@@ -146,6 +154,7 @@ const DetailsSection = ({
                       iconOnly
                       disabled={!subjectRoom.ggMeetLink}
                     />
+                    {/* Edit this connection */}
                     <Button
                       name={t("details.table.action.edit")}
                       type="text"
@@ -158,13 +167,19 @@ const DetailsSection = ({
                         })
                       }
                     />
+                    {/* Delete this connection */}
                     <Button
                       name={t("details.table.action.delete")}
                       type="text"
                       icon={<MaterialIcon icon="delete" />}
                       iconOnly
                       isDangerous
-                      onClick={() => {}}
+                      onClick={() =>
+                        setDeleteConnection({
+                          show: true,
+                          connection: subjectRoom,
+                        })
+                      }
                     />
                   </div>
                 </td>
@@ -669,6 +684,10 @@ const SubjectDetails: NextPage<{
     show: boolean;
     connection?: SubjectListItem;
   }>({ show: false });
+  const [deleteConnection, setDeleteConnection] = useState<{
+    show: boolean;
+    connection?: SubjectListItem;
+  }>({ show: false });
 
   // Period logs
   const [logEvidence, setLogEvidence] = useState<{
@@ -718,6 +737,7 @@ const SubjectDetails: NextPage<{
           subjectRooms={subjectRooms}
           setShowAddConnection={setShowAddConnection}
           setEditConnection={setEditConnection}
+          setDeleteConnection={setDeleteConnection}
         />
         <PeriodLogsSection
           subjectID={subject.id}
@@ -736,6 +756,29 @@ const SubjectDetails: NextPage<{
       </RegularLayout>
 
       {/* Dialogs */}
+      <ConnectSubjectDialog
+        show={showAddConnection}
+        onClose={() => setShowAddConnection(false)}
+        onSubmit={() => setShowAddConnection(false)}
+        mode="add"
+        subject={subject}
+      />
+      <ConnectSubjectDialog
+        show={editConnection.show}
+        onClose={() => setEditConnection({ show: false })}
+        onSubmit={() => setEditConnection({ show: false })}
+        mode="edit"
+        subject={subject}
+        subjectRoom={editConnection.connection}
+      />
+      <ConfirmDelete
+        show={deleteConnection.show}
+        onClose={() => setDeleteConnection({ show: false })}
+        onSubmit={() => {
+          setDeleteConnection({ show: false });
+          router.replace(router.asPath);
+        }}
+      />
       {logEvidence.evidence && (
         <ImageDialog
           show={logEvidence.show}
@@ -780,21 +823,6 @@ const SubjectDetails: NextPage<{
         }}
         mode="add"
         allSubjects={allSubjects}
-      />
-      <ConnectSubjectDialog
-        show={showAddConnection}
-        onClose={() => setShowAddConnection(false)}
-        onSubmit={() => setShowAddConnection(false)}
-        mode="add"
-        subject={subject}
-      />
-      <ConnectSubjectDialog
-        show={editConnection.show}
-        onClose={() => setEditConnection({ show: false })}
-        onSubmit={() => setEditConnection({ show: false })}
-        mode="edit"
-        subject={subject}
-        subjectRoom={editConnection.connection}
       />
     </>
   );
