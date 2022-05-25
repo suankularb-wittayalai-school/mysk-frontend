@@ -91,6 +91,7 @@ const DetailsSection = (): JSX.Element => {
                     name="Edit"
                     type="text"
                     icon={<BrandIcon icon="gg-meet" />}
+                    url=""
                     iconOnly
                   />
                   <Button

@@ -44,7 +44,8 @@
       "search": "Search subjects",
       "action": {
         "add": "Add subject",
-        "seeSchedule": "See schedule"
+        "seeSchedule": "See schedule",
+        "seeDetails": "See details"
       }
     }
   },

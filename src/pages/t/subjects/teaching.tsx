@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
+import { useState } from "react";
+
 // SK Components
 import {
   Button,
@@ -22,14 +24,14 @@ import SubjectCard from "@components/SubjectCard";
 
 // Types
 import { SubjectWNameAndCode } from "@utils/types/subject";
-import { useState } from "react";
+import { ClassWNumber } from "@utils/types/class";
 
-const SubjectsTeaching: NextPage<{ subjects: Array<SubjectWNameAndCode> }> = ({
-  subjects,
-}) => {
+const SubjectsTeaching: NextPage<{
+  subjects: (SubjectWNameAndCode & { classes: ClassWNumber[] })[];
+}> = ({ subjects }) => {
   const { t } = useTranslation("subjects");
   const [showAdd, setShowAdd] = useState<boolean>(false);
-  
+
   return (
     <>
       <RegularLayout
@@ -80,7 +82,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   locale,
   params,
 }) => {
-  const subjects: Array<SubjectWNameAndCode> = [
+  const subjects: (SubjectWNameAndCode & { classes: ClassWNumber[] })[] = [
     {
       id: 8,
       code: { "en-US": "I21202", th: "I21202" },
@@ -88,6 +90,10 @@ export const getServerSideProps: GetServerSideProps = async ({
         "en-US": { name: "Communication and Presentation" },
         th: { name: "การสื่อสารและการนำเสนอ" },
       },
+      classes: [
+        { id: 5, number: 105 },
+        { id: 6, number: 106 },
+      ],
     },
     {
       id: 19,
@@ -96,6 +102,10 @@ export const getServerSideProps: GetServerSideProps = async ({
         "en-US": { name: "Reading 6" },
         th: { name: "การอ่าน 6" },
       },
+      classes: [
+        { id: 21, number: 205 },
+        { id: 22, number: 206 },
+      ],
     },
     {
       id: 26,
@@ -104,6 +114,12 @@ export const getServerSideProps: GetServerSideProps = async ({
         "en-US": { name: "English 4" },
         th: { name: "ภาษาอังกฤษ 4" },
       },
+      classes: [
+        { id: 35, number: 501 },
+        { id: 36, number: 502 },
+        { id: 37, number: 503 },
+        { id: 38, number: 504 },
+      ],
     },
   ];
 
