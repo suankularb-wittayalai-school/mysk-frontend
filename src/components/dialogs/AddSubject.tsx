@@ -15,6 +15,9 @@ import {
 import { Subject } from "@utils/types/subject";
 import { DialogProps } from "@utils/types/common";
 import AddClassDialog from "./AddClass";
+import { supabase } from "@utils/supabaseClient";
+import { SubjectTable } from "@utils/types/database/subject";
+import { db2Subject } from "@utils/backend/database";
 
 const AddSubjectDialog = ({
   show,
@@ -34,9 +37,34 @@ const AddSubjectDialog = ({
   // but I feel that’s a bit too complicated for the layman to understand so I
   // abstracted it away as adding a subject to Subjects You Teach.
   // This way they actually recieve obvious feedback as well.
+  // (@Jimmy-Tempest)
+  // Very cool.
 
   useEffect(() => {
     // Search for subject
+    if (subjectCode.length >= 6) {
+      supabase
+        .from<SubjectTable>("subject")
+        .select("*")
+        .match(
+          locale === "en-US"
+            ? { code_en: subjectCode }
+            : { code_th: subjectCode }
+        )
+        .limit(1)
+        .single()
+        .then((res) => {
+          if (res.data) {
+            db2Subject(res.data).then((subject) => {
+              setSubject(subject);
+            });
+          } else {
+            console.error(res.error);
+
+            setSubject(null);
+          }
+        });
+    }
   }, [subjectCode]);
 
   useEffect(() => setSubject(null), [show]);
@@ -77,7 +105,7 @@ const AddSubjectDialog = ({
             </h3>
             <p>
               {subject
-                ? subject.name[locale]
+                ? subject.name[locale].name
                 : t("dialog.addSubject.searchResult.notFound")}
             </p>
           </div>
