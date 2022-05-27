@@ -11,6 +11,7 @@ import {
 } from "@utils/types/database/subject";
 import { Student, Teacher } from "@utils/types/person";
 import { Subject } from "@utils/types/subject";
+import { m } from "framer-motion";
 
 export function db2Contact(contact: ContactDB): Contact {
   return {
@@ -125,6 +126,37 @@ export async function db2Teacher(teacher: TeacherDB): Promise<Teacher> {
   }
   if (contacts) {
     formatted.contacts = contacts.map(db2Contact);
+  }
+
+  // get subjects in charge
+  const { data: subjects, error: subjectError } = await supabase
+    .from<SubjectTable>("subject")
+    .select("*")
+    .contains("teachers", [teacher.id]);
+
+  if (subjectError) {
+    console.error(subjectError);
+  }
+  if (subjects) {
+    formatted.subjectsInCharge = subjects.map((subject) => {
+      return {
+        id: subject.id,
+        code: {
+          "en-US": subject.code_en,
+          th: subject.code_th,
+        },
+        name: {
+          "en-US": {
+            name: subject.name_en,
+            shortName: subject.short_name_en,
+          },
+          th: {
+            name: subject.name_th,
+            shortName: subject.short_name_th,
+          },
+        },
+      };
+    });
   }
 
   return formatted;

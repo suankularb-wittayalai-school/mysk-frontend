@@ -63,3 +63,15 @@ export interface RoomSubjectTable {
   ggc_link: string;
   gg_meeting_link: string;
 }
+
+export interface RoomSubjectDB {
+  id: number;
+  created_at: string;
+  subject: SubjectTable;
+  class: number;
+  teacher: number[];
+  coTeacher?: number[];
+  ggc_code: string;
+  ggc_link: string;
+  gg_meeting_link: string;
+}

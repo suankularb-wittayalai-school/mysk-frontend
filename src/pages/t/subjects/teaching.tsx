@@ -23,9 +23,16 @@ import AddSubjectDialog from "@components/dialogs/AddSubject";
 import SubjectCard from "@components/SubjectCard";
 
 // Types
-import { SubjectWNameAndCode } from "@utils/types/subject";
+import { Subject, SubjectWNameAndCode } from "@utils/types/subject";
 import { ClassWNumber } from "@utils/types/class";
 import { useTeacherAccount } from "@utils/hooks/auth";
+import { supabase } from "@utils/supabaseClient";
+import {
+  RoomSubjectDB,
+  RoomSubjectTable,
+  SubjectDB,
+} from "@utils/types/database/subject";
+import { db2Subject } from "@utils/backend/database";
 
 const SubjectsTeaching: NextPage = () => {
   const { t } = useTranslation("subjects");
@@ -36,6 +43,19 @@ const SubjectsTeaching: NextPage = () => {
   const [subjects, setSubjects] = useState<
     (SubjectWNameAndCode & { classes: ClassWNumber[] })[]
   >([]);
+
+  useEffect(() => {
+    if (teacher) {
+      // console.log(teacher.id);
+
+      supabase
+        .from<RoomSubjectDB>("RoomSubject")
+        .select("*, subject:subject(*)")
+        // .in("subject", teacher.subjectsInCharge?.map((s) => s.id) ?? [])
+        .contains("teacher", [teacher.id])
+        .then((res) => {});
+    }
+  }, [teacher]);
 
   return (
     <>
