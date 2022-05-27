@@ -11,12 +11,44 @@ import {
 
 // Types
 import { DialogProps } from "@utils/types/common";
+import { Class } from "@utils/types/class";
+import { useEffect, useState } from "react";
+import { supabase } from "@utils/supabaseClient";
+import { ClassroomDB } from "@utils/types/database/class";
+import { getCurrentAcedemicYear } from "@utils/helpers/date";
+import { db2Class } from "@utils/backend/database";
 
 const AddClassDialog = ({
   show,
   onClose,
-}: DialogProps & { onSubmit: Function }): JSX.Element => {
+  onSubmit,
+}: DialogProps & { onSubmit: (classroom: Class) => void }): JSX.Element => {
   const { t } = useTranslation("common");
+
+  // Hooks
+  const [classroomNumber, setClassroomNumber] = useState<string>("");
+  const [classroom, setClassroom] = useState<Class | null>(null);
+
+  useEffect(() => {
+    if (classroomNumber.match(/[1-6][0-1][1-9]/)) {
+      supabase
+        .from<ClassroomDB>("classroom")
+        .select("*, schedule:schedule(*)")
+        .match({ number: classroomNumber, year: getCurrentAcedemicYear() })
+        .limit(1)
+        .single()
+        .then((res) => {
+          if (res.data) {
+            db2Class(res.data).then((classroom) => {
+              setClassroom(classroom);
+            });
+          } else {
+            console.error(res.error);
+            setClassroom(null);
+          }
+        });
+    }
+  }, [classroomNumber]);
 
   return (
     <Dialog
@@ -29,7 +61,7 @@ const AddClassDialog = ({
       ]}
       show={show}
       onClose={() => onClose()}
-      onSubmit={() => onClose()}
+      onSubmit={() => (classroom ? onSubmit(classroom) : null)}
     >
       <DialogSection name="input">
         <KeyboardInput
@@ -39,7 +71,7 @@ const AddClassDialog = ({
           helperMsg={t("dialog.addClass.class_helper")}
           errorMsg={t("dialog.addClass.class_error")}
           useAutoMsg
-          onChange={() => {}}
+          onChange={(e) => setClassroomNumber(e)}
           attr={{ pattern: "[1-6][0-1][1-9]" }}
         />
       </DialogSection>

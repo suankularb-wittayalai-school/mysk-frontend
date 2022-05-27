@@ -13,7 +13,7 @@ import {
 
 // Types
 import { Subject } from "@utils/types/subject";
-import { DialogProps } from "@utils/types/common";
+import { ChipInputListItem, DialogProps } from "@utils/types/common";
 import AddClassDialog from "./AddClass";
 import { supabase } from "@utils/supabaseClient";
 import { SubjectTable } from "@utils/types/database/subject";
@@ -29,6 +29,7 @@ const AddSubjectDialog = ({
 
   const [subjectCode, setSubjectCode] = useState<string>("");
   const [subject, setSubject] = useState<Subject | null>(null);
+  const [classChipList, setClassChipList] = useState<ChipInputListItem[]>([]);
 
   const [showAddClass, setShowAddClass] = useState<boolean>(false);
 
@@ -112,8 +113,10 @@ const AddSubjectDialog = ({
         </DialogSection>
         <DialogSection name="classes" title={t("dialog.addSubject.addClasses")}>
           <ChipInputList
-            list={[]}
-            onChange={() => {}}
+            list={classChipList}
+            onChange={(newList) => {
+              setClassChipList(newList as ChipInputListItem[]);
+            }}
             onAdd={() => setShowAddClass(true)}
           />
         </DialogSection>
@@ -121,7 +124,13 @@ const AddSubjectDialog = ({
       <AddClassDialog
         show={showAddClass}
         onClose={() => setShowAddClass(false)}
-        onSubmit={() => setShowAddClass(false)}
+        onSubmit={(classroom) => {
+          setClassChipList([
+            ...classChipList,
+            { id: classroom.id.toString(), name: classroom.number.toString() },
+          ]);
+          setShowAddClass(false);
+        }}
       />
     </>
   );
