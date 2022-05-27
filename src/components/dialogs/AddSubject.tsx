@@ -16,8 +16,9 @@ import { Subject } from "@utils/types/subject";
 import { ChipInputListItem, DialogProps } from "@utils/types/common";
 import AddClassDialog from "./AddClass";
 import { supabase } from "@utils/supabaseClient";
-import { SubjectTable } from "@utils/types/database/subject";
+import { RoomSubjectTable, SubjectTable } from "@utils/types/database/subject";
 import { db2Subject } from "@utils/backend/database";
+import { useTeacherAccount } from "@utils/hooks/auth";
 
 const AddSubjectDialog = ({
   show,
@@ -33,6 +34,8 @@ const AddSubjectDialog = ({
 
   const [showAddClass, setShowAddClass] = useState<boolean>(false);
 
+  const [teacher, session] = useTeacherAccount();
+
   // (@SiravitPhokeed)
   // From our perspective, this dialog is the “Generate RoomSubjects” dialog,
   // but I feel that’s a bit too complicated for the layman to understand so I
@@ -40,6 +43,54 @@ const AddSubjectDialog = ({
   // This way they actually recieve obvious feedback as well.
   // (@Jimmy-Tempest)
   // Very cool.
+
+  function validate(): boolean {
+    if (!teacher) return false;
+
+    if (!subject) return false;
+
+    if (classChipList.length === 0) return false;
+
+    return true;
+  }
+
+  async function handleSubmit() {
+    if (!validate()) return;
+    if (!teacher) return;
+    if (!subject) return;
+
+    const classroomList = classChipList.map((item) => item.id);
+
+    // check if any of these classrooms already exist
+    const { data, error } = await supabase
+      .from<RoomSubjectTable>("RoomSubject")
+      .select("*")
+      .in("class", classroomList)
+      .contains("teacher", [teacher.id])
+      .eq("subject", subject.id);
+
+    // console.log(data);
+    if (error) {
+      console.error(error);
+      return;
+    }
+    // TODO: update this to add new teacher the new RoomSubject table
+    if (data.length > 0) {
+      onClose();
+      return;
+    }
+
+    // add new RoomSubject
+    classroomList.map(async (classroom) => {
+      await supabase.from<RoomSubjectTable>("RoomSubject").insert({
+        class: Number(classroom),
+        subject: subject.id,
+        teacher: [teacher.id],
+      });
+    });
+
+    onSubmit(subject);
+  }
 
   useEffect(() => {
     // Search for subject
@@ -68,7 +119,10 @@ const AddSubjectDialog = ({
     }
   }, [subjectCode]);
 
-  useEffect(() => setSubject(null), [show]);
+  useEffect(() => {
+    setSubject(null);
+    setClassChipList([]);
+  }, [show]);
 
   return (
     <>
@@ -83,7 +137,7 @@ const AddSubjectDialog = ({
         ]}
         show={show}
         onClose={() => onClose()}
-        onSubmit={() => subject && onSubmit(subject)}
+        onSubmit={() => subject && handleSubmit()}
       >
         <DialogSection
           name="subject"

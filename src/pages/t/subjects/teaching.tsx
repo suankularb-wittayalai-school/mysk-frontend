@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // SK Components
 import {
@@ -25,12 +25,17 @@ import SubjectCard from "@components/SubjectCard";
 // Types
 import { SubjectWNameAndCode } from "@utils/types/subject";
 import { ClassWNumber } from "@utils/types/class";
+import { useTeacherAccount } from "@utils/hooks/auth";
 
-const SubjectsTeaching: NextPage<{
-  subjects: (SubjectWNameAndCode & { classes: ClassWNumber[] })[];
-}> = ({ subjects }) => {
+const SubjectsTeaching: NextPage = () => {
   const { t } = useTranslation("subjects");
   const [showAdd, setShowAdd] = useState<boolean>(false);
+
+  const [teacher, session] = useTeacherAccount();
+
+  const [subjects, setSubjects] = useState<
+    (SubjectWNameAndCode & { classes: ClassWNumber[] })[]
+  >([]);
 
   return (
     <>

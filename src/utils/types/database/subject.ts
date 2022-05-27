@@ -51,3 +51,15 @@ export interface SubjectTable {
   teachers: number[];
   coTeachers?: number[];
 }
+
+export interface RoomSubjectTable {
+  id: number;
+  created_at: string;
+  subject: number;
+  class: number;
+  teacher: number[];
+  coTeacher?: number[];
+  ggc_code: string;
+  ggc_link: string;
+  gg_meeting_link: string;
+}
