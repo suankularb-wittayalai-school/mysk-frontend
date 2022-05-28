@@ -54,8 +54,12 @@ import {
 import { DialogProps } from "@utils/types/common";
 import ConfirmDelete from "@components/dialogs/ConfirmDelete";
 import { supabase } from "@utils/supabaseClient";
-import { SubjectDB, SubjectTable } from "@utils/types/database/subject";
-import { db2Subject } from "@utils/backend/database";
+import {
+  RoomSubjectDB,
+  SubjectDB,
+  SubjectTable,
+} from "@utils/types/database/subject";
+import { db2Subject, db2SubjectListItem } from "@utils/backend/database";
 
 // Details Section
 const DetailsSection = ({
@@ -842,71 +846,27 @@ export const getServerSideProps: GetServerSideProps = async ({
     .limit(1)
     .single();
 
+  const { data: roomSubjects, error: roomSubjectsError } = await supabase
+    .from<RoomSubjectDB>("RoomSubject")
+    .select("*, subject:subject(*), classroom:class(*)")
+    .eq("subject", params?.subjectID as string);
+
   if (dbSubjectError) {
     console.error(dbSubjectError);
+  }
+  if (roomSubjectsError) {
+    console.error(roomSubjectsError);
   }
 
   const subject: Subject | undefined = dbSubject
     ? await db2Subject(dbSubject)
     : undefined;
 
+  const subjectRooms: SubjectListItem[] = roomSubjects
+    ? await Promise.all(roomSubjects.map(db2SubjectListItem))
+    : [];
 
-  const subjectRooms: SubjectListItem[] = [
-    {
-      id: 8,
-      subject: {
-        code: { "en-US": "ENG32102", th: "อ32102" },
-        name: {
-          "en-US": { name: "English 4" },
-          th: { name: "ภาษาอังกฤษ 4" },
-        },
-      },
-      classroom: { id: 0, number: 105 },
-      teachers: [
-        {
-          id: 9,
-          role: "teacher",
-          prefix: "Mr.",
-          name: {
-            "en-US": { firstName: "Kritchapon", lastName: "Boonpoonmee" },
-            th: { firstName: "กฤชพล", lastName: "บุญพูลมี" },
-          },
-          teacherID: "",
-          citizenID: "",
-          birthdate: "",
-          contacts: [],
-          subjectGroup: {
-            id: 6,
-            name: {
-              "en-US": "Mathematics",
-              th: "คณิตศาสตร์",
-            },
-          },
-        },
-        {
-          id: 6,
-          role: "teacher",
-          prefix: "Mr.",
-          name: {
-            "en-US": { firstName: "Niruth", lastName: "Prombutr" },
-            th: { firstName: "นิรุทธ์", lastName: "พรมบุตร" },
-          },
-          teacherID: "",
-          citizenID: "",
-          birthdate: "",
-          contacts: [],
-          subjectGroup: {
-            id: 1,
-            name: {
-              "en-US": "Science and Technology",
-              th: "วิทยาศาสตร์และเทคโนโลยี",
-            },
-          },
-        },
-      ],
-      ggcCode: "zb3yp6i",
-    },
-  ];
+  // console.log(subjectRooms);
   const substAsgn: SubstituteAssignment[] = [];
   const allSubjects: SubjectWNameAndCode[] = [];
   const periodLogs: PeriodLog[] = [];

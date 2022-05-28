@@ -5,12 +5,13 @@ import { ClassroomDB } from "@utils/types/database/class";
 import { ContactDB } from "@utils/types/database/contact";
 import { StudentDB, TeacherDB } from "@utils/types/database/person";
 import {
+  RoomSubjectDB,
   SubjectDB,
   SubjectGroupDB,
   SubjectTable,
 } from "@utils/types/database/subject";
 import { Student, Teacher } from "@utils/types/person";
-import { Subject } from "@utils/types/subject";
+import { Subject, SubjectListItem } from "@utils/types/subject";
 import { m } from "framer-motion";
 
 export function db2Contact(contact: ContactDB): Contact {
@@ -317,6 +318,71 @@ export async function db2Class(classDB: ClassroomDB): Promise<Class> {
     }
     if (contacts) {
       formatted.contacts = contacts.map(db2Contact);
+    }
+  }
+
+  return formatted;
+}
+
+export async function db2SubjectListItem(roomSubject: RoomSubjectDB) {
+  const formatted: SubjectListItem = {
+    id: roomSubject.id,
+    subject: {
+      code: {
+        "en-US": roomSubject.subject.code_en,
+        th: roomSubject.subject.code_th,
+      },
+      name: {
+        "en-US": {
+          name: roomSubject.subject.name_en,
+          shortName: roomSubject.subject.short_name_en,
+        },
+        th: {
+          name: roomSubject.subject.name_th,
+          shortName: roomSubject.subject.short_name_th,
+        },
+      },
+    },
+    classroom: {
+      id: roomSubject.classroom.id,
+      number: roomSubject.classroom.number,
+    },
+    teachers: [],
+    coTeachers: [],
+    ggMeetLink: roomSubject.gg_meeting_link ? roomSubject.gg_meeting_link : "",
+    ggcCode: roomSubject.ggc_code ? roomSubject.ggc_code : "",
+    ggcLink: roomSubject.ggc_link ? roomSubject.ggc_link : "",
+  };
+
+  if (roomSubject.teacher) {
+    const { data: teachers, error: teachersError } = await supabase
+      .from<TeacherDB>("teacher")
+      .select("id, teacher_id, people:person(*), SubjectGroup:subject_group(*)")
+      .in("id", roomSubject.teacher);
+
+    if (teachersError) {
+      console.error(teachersError);
+    }
+    if (teachers) {
+      formatted.teachers = await Promise.all(
+        teachers.map(async (teacher) => await db2Teacher(teacher))
+      );
+    }
+  }
+
+  if (roomSubject.coTeacher) {
+    const { data: coTeachers, error: coTeachersError } = await supabase
+      .from<TeacherDB>("teacher")
+      .select("id, teacher_id, people:person(*), SubjectGroup:subject_group(*)")
+      .in("id", roomSubject.coTeacher);
+
+    if (coTeachersError) {
+      console.error(coTeachersError);
+    }
+    if (coTeachers) {
+      formatted.coTeachers = await Promise.all(
+        coTeachers.map(async (teacher) => await db2Teacher(teacher))
+      );
     }
   }
 
