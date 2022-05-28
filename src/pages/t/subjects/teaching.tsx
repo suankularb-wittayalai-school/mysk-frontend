@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 
 // SK Components
 import {
@@ -37,6 +37,8 @@ import { db2Subject } from "@utils/backend/database";
 const SubjectsTeaching: NextPage = () => {
   const { t } = useTranslation("subjects");
   const [showAdd, setShowAdd] = useState<boolean>(false);
+  // set a variable to toggle fetching
+  const [fetch, toggleFetch] = useReducer((state: boolean) => !state, false);
 
   const [teacher, session] = useTeacherAccount({ loginRequired: true });
 
@@ -93,7 +95,7 @@ const SubjectsTeaching: NextPage = () => {
     if (teacher) {
       getSubjects().then((subjects) => setSubjects(subjects));
     }
-  }, [teacher]);
+  }, [teacher, fetch]);
 
   return (
     <>
@@ -135,7 +137,10 @@ const SubjectsTeaching: NextPage = () => {
       <AddSubjectDialog
         show={showAdd}
         onClose={() => setShowAdd(false)}
-        onSubmit={() => setShowAdd(false)}
+        onSubmit={() => {
+          setShowAdd(false);
+          toggleFetch();
+        }}
       />
     </>
   );
