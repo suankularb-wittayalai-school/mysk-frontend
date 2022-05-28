@@ -1,4 +1,5 @@
 import { SubjectTypeTH, SubjectTypeEN } from "@utils/types/subject";
+import { ClassroomTable } from "./class";
 import { TeacherDB } from "./person";
 
 export interface SubjectGroupDB {
@@ -68,7 +69,7 @@ export interface RoomSubjectDB {
   id: number;
   created_at: string;
   subject: SubjectTable;
-  class: number;
+  classroom: ClassroomTable;
   teacher: number[];
   coTeacher?: number[];
   ggc_code: string;

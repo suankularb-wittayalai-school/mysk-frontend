@@ -38,22 +38,60 @@ const SubjectsTeaching: NextPage = () => {
   const { t } = useTranslation("subjects");
   const [showAdd, setShowAdd] = useState<boolean>(false);
 
-  const [teacher, session] = useTeacherAccount();
+  const [teacher, session] = useTeacherAccount({ loginRequired: true });
 
   const [subjects, setSubjects] = useState<
     (SubjectWNameAndCode & { classes: ClassWNumber[] })[]
   >([]);
 
+  async function getSubjects() {
+    if (!teacher) return [];
+
+    const { data: roomSubjects, error } = await supabase
+      .from<RoomSubjectDB>("RoomSubject")
+      .select("*, subject:subject(*), classroom:class(*)")
+      // .in("subject", teacher.subjectsInCharge?.map((s) => s.id) ?? [])
+      .contains("teacher", [teacher.id]);
+
+    if (error) {
+      console.error(error);
+      return [];
+    }
+
+    const subjects: (SubjectWNameAndCode & {
+      classes: ClassWNumber[];
+    })[] = await Promise.all(
+      roomSubjects.map(async (rs) => {
+        const fullSubject = await db2Subject(rs.subject);
+        const subject: SubjectWNameAndCode & { classes: ClassWNumber[] } = {
+          id: fullSubject.id,
+          name: fullSubject.name,
+          code: fullSubject.code,
+          classes: [],
+        };
+        subject.classes = [
+          { id: rs.classroom.id, number: rs.classroom.number },
+        ];
+        return subject;
+      })
+    );
+    // merge classes array of subjects with same id
+    const subjectsWithClasses = subjects.reduce((acc, subject) => {
+      const existing = acc.find((s) => s.id === subject.id);
+      if (existing) {
+        existing.classes = [...existing.classes, ...subject.classes];
+      } else {
+        acc.push(subject);
+      }
+      return acc;
+    }, [] as (SubjectWNameAndCode & { classes: ClassWNumber[] })[]);
+    // console.log(subjectsWithClasses);
+    return subjectsWithClasses;
+  }
+
   useEffect(() => {
     if (teacher) {
-      // console.log(teacher.id);
-
-      supabase
-        .from<RoomSubjectDB>("RoomSubject")
-        .select("*, subject:subject(*)")
-        // .in("subject", teacher.subjectsInCharge?.map((s) => s.id) ?? [])
-        .contains("teacher", [teacher.id])
-        .then((res) => {});
+      getSubjects().then((subjects) => setSubjects(subjects));
     }
   }, [teacher]);
 
