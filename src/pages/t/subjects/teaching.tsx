@@ -145,54 +145,12 @@ export const getServerSideProps: GetServerSideProps = async ({
   locale,
   params,
 }) => {
-  const subjects: (SubjectWNameAndCode & { classes: ClassWNumber[] })[] = [
-    {
-      id: 8,
-      code: { "en-US": "I21202", th: "I21202" },
-      name: {
-        "en-US": { name: "Communication and Presentation" },
-        th: { name: "การสื่อสารและการนำเสนอ" },
-      },
-      classes: [
-        { id: 5, number: 105 },
-        { id: 6, number: 106 },
-      ],
-    },
-    {
-      id: 19,
-      code: { "en-US": "ENG20218", th: "อ20218" },
-      name: {
-        "en-US": { name: "Reading 6" },
-        th: { name: "การอ่าน 6" },
-      },
-      classes: [
-        { id: 21, number: 205 },
-        { id: 22, number: 206 },
-      ],
-    },
-    {
-      id: 26,
-      code: { "en-US": "ENG32102", th: "อ32102" },
-      name: {
-        "en-US": { name: "English 4" },
-        th: { name: "ภาษาอังกฤษ 4" },
-      },
-      classes: [
-        { id: 35, number: 501 },
-        { id: 36, number: 502 },
-        { id: 37, number: 503 },
-        { id: 38, number: 504 },
-      ],
-    },
-  ];
-
   return {
     props: {
       ...(await serverSideTranslations(locale as string, [
         "common",
         "subjects",
       ])),
-      subjects,
     },
   };
 };

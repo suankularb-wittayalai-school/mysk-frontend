@@ -53,6 +53,9 @@ import {
 } from "@utils/types/subject";
 import { DialogProps } from "@utils/types/common";
 import ConfirmDelete from "@components/dialogs/ConfirmDelete";
+import { supabase } from "@utils/supabaseClient";
+import { SubjectDB, SubjectTable } from "@utils/types/database/subject";
+import { db2Subject } from "@utils/backend/database";
 
 // Details Section
 const DetailsSection = ({
@@ -832,27 +835,22 @@ export const getServerSideProps: GetServerSideProps = async ({
   locale,
   params,
 }) => {
-  const subject: Subject = {
-    id: 26,
-    code: { "en-US": "ENG32102", th: "อ32102" },
-    name: {
-      "en-US": { name: "English 4" },
-      th: { name: "ภาษาอังกฤษ 4" },
-    },
-    teachers: [],
-    type: {
-      "en-US": "Core Courses",
-      th: "รายวิชาพื้นฐาน",
-    },
-    credit: 1,
-    year: 2022,
-    semester: 1,
-    syllabus: null,
-    subjectGroup: {
-      id: 1,
-      name: { "en-US": "ENG", th: "อ" },
-    },
-  };
+  const { data: dbSubject, error: dbSubjectError } = await supabase
+    .from<SubjectTable>("subject")
+    .select("*")
+    .match({ id: params?.subjectID })
+    .limit(1)
+    .single();
+
+  if (dbSubjectError) {
+    console.error(dbSubjectError);
+  }
+
+  const subject: Subject | undefined = dbSubject
+    ? await db2Subject(dbSubject)
+    : undefined;
+
+
   const subjectRooms: SubjectListItem[] = [
     {
       id: 8,
