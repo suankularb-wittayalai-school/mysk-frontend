@@ -1,27 +1,27 @@
 // Modules
 import type { GetStaticProps, NextPage } from "next";
+import Head from "next/head";
 import Link from "next/link";
-import Image from "next/image";
+import { useRouter } from "next/router";
+
+import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 // SK Components
 import {
-  Chip,
   Header,
-  LinkButton,
   MaterialIcon,
   RegularLayout,
   Section,
   Title,
 } from "@suankularb-components/react";
 
-// Types
-import { Contact, ContactVia } from "@utils/types/contact";
-import ProfilePicture from "@components/ProfilePicture";
-import { useRouter } from "next/router";
-import Head from "next/head";
-import { useTranslation } from "next-i18next";
+// Components
 import ContactIcon from "@components/icons/ContactIcon";
+import ProfilePicture from "@components/ProfilePicture";
+
+// Types
+import { ContactVia } from "@utils/types/contact";
 
 const DevelopersBanner = (): JSX.Element => (
   <Section>
