@@ -6,13 +6,11 @@ import { ContactDB } from "@utils/types/database/contact";
 import { StudentDB, TeacherDB } from "@utils/types/database/person";
 import {
   RoomSubjectDB,
-  SubjectDB,
   SubjectGroupDB,
   SubjectTable,
 } from "@utils/types/database/subject";
 import { Student, Teacher } from "@utils/types/person";
 import { Subject, SubjectListItem } from "@utils/types/subject";
-import { m } from "framer-motion";
 
 export function db2Contact(contact: ContactDB): Contact {
   return {

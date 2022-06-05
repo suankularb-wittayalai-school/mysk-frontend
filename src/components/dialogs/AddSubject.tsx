@@ -11,14 +11,22 @@ import {
   KeyboardInput,
 } from "@suankularb-components/react";
 
-// Types
-import { Subject } from "@utils/types/subject";
-import { ChipInputListItem, DialogProps } from "@utils/types/common";
-import AddClassDialog from "./AddClass";
-import { supabase } from "@utils/supabaseClient";
-import { RoomSubjectTable, SubjectTable } from "@utils/types/database/subject";
+// Components
+import AddClassDialog from "@components/dialogs/AddClass";
+
+// Backend
 import { db2Subject } from "@utils/backend/database";
+
+// Hooks
 import { useTeacherAccount } from "@utils/hooks/auth";
+
+// Types
+import { RoomSubjectTable, SubjectTable } from "@utils/types/database/subject";
+import { ChipInputListItem, DialogProps } from "@utils/types/common";
+import { Subject } from "@utils/types/subject";
+
+// Supabase
+import { supabase } from "@utils/supabaseClient";
 
 const AddSubjectDialog = ({
   show,
@@ -41,14 +49,13 @@ const AddSubjectDialog = ({
   // but I feel that’s a bit too complicated for the layman to understand so I
   // abstracted it away as adding a subject to Subjects You Teach.
   // This way they actually recieve obvious feedback as well.
+
   // (@Jimmy-Tempest)
   // Very cool.
 
   function validate(): boolean {
     if (!teacher) return false;
-
     if (!subject) return false;
-
     if (classChipList.length === 0) return false;
 
     return true;
