@@ -8,11 +8,17 @@
   }
 
   html {
-    accent-color: var(--primary);
+    @apply [accent-color:var(--primary)];
   }
 }
 
 @layer components {
+  .link {
+    @apply font-bold text-primary underline decoration-primary decoration-2 underline-offset-4 transition-[text-decoration-color]
+      hover:decoration-tertiary hover:transition-none
+      focus-visible:decoration-tertiary focus-visible:transition-none;
+  }
+
   .markdown p,
   .markdown ul,
   .markdown ol {
