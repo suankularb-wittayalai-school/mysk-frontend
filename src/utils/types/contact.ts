@@ -21,4 +21,5 @@ export type ContactVia =
   | "Instagram"
   | "Website"
   | "Discord"
+  | "GitHub"
   | "Other";

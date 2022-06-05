@@ -19,6 +19,9 @@ import {
 import { Contact, ContactVia } from "@utils/types/contact";
 import ProfilePicture from "@components/ProfilePicture";
 import { useRouter } from "next/router";
+import Head from "next/head";
+import { useTranslation } from "next-i18next";
+import ContactIcon from "@components/icons/ContactIcon";
 
 const DevelopersBanner = (): JSX.Element => (
   <Section>
@@ -70,6 +73,7 @@ const DevelopersBanner = (): JSX.Element => (
             </ul>
           </section>
         </div>
+
         {/* Image */}
         <div></div>
       </div>
@@ -85,20 +89,19 @@ const ContactDevelopers = (): JSX.Element => (
     />
     <p>
       Found issues with the website? Contact the developers in the field you are
-      having trouble with below. Alternatively, if you know what you’re doing,
-      consider{" "}
+      having trouble with below. Alternatively, check out{" "}
       <a
         className="link"
         href="https://github.com/suankularb-wittayalai-school"
         target="_blank"
         rel="noreferrer"
       >
-        joining the Contributors team
+        our GitHub organization
       </a>
-      !
+      .
     </p>
-    <ContactList
-      contacts={[
+    <PeopleList
+      people={[
         {
           name: {
             th: "เต็มภูมิ ลีลาเจริญ",
@@ -114,15 +117,70 @@ const ContactDevelopers = (): JSX.Element => (
               "en-US": "Backend developer",
             },
           ],
-          contacts: [],
+          contacts: [
+            { type: "Email", url: "mailto:tempoom.lee@student.sk.ac.th" },
+            { type: "GitHub", url: "https://github.com/orgs/suankularb-wittayalai-school/people/Temp9699" },
+          ],
         },
         {
           name: {
             th: "สดุดี เทพอารีย์",
             "en-US": "Sadudee Theparree",
           },
-          jobDescs: [],
-          contacts: [],
+          jobDescs: [
+            {
+              th: "ผู้พัฒนาฐานเว็บไซต์",
+              "en-US": "Frontend developer",
+            },
+          ],
+          contacts: [
+            { type: "Email", url: "mailto:sadudee.the@student.sk.ac.th" },
+            { type: "GitHub", url: "https://github.com/orgs/suankularb-wittayalai-school/people/IHasDiabetes" },
+            { type: "Website", url: "https://imsad.dev" },
+          ],
+        },
+        {
+          name: {
+            th: "สมัชญ์ วัฒนพรมงคล",
+            "en-US": "Smart Wattanapornmongkol",
+          },
+          jobDescs: [
+            {
+              th: "นักออกแบบสถาปัตยกรรมฐานข้อมูล",
+              "en-US": "Database architecture engineer",
+            },
+            {
+              th: "ผู้พัฒนาฐานข้อมูล",
+              "en-US": "Backend developer",
+            },
+          ],
+          contacts: [
+            { type: "Email", url: "mailto:smart.wat@student.sk.ac.th" },
+            { type: "GitHub", url: "https://github.com/orgs/suankularb-wittayalai-school/people/Jimmy-Tempest" },
+            { type: "Website", url: "https://smartwatt.me" },
+          ],
+        },
+        {
+          name: {
+            th: "ศิรวิทย์ โพธิ์ขีด",
+            "en-US": "Siravit Phokeed",
+          },
+          jobDescs: [
+            {
+              th: "นักออกแบบเว็บไซต์",
+              "en-US": "UI/UX designer",
+            },
+            {
+              th: "ผู้พัฒนาฐานเว็บไซต์",
+              "en-US": "Frontend developer",
+            },
+          ],
+          contacts: [
+            { type: "Email", url: "mailto:siravit.pho@student.sk.ac.th" },
+            { type: "Line", url: "https://line.me/ti/p/~siravitphokeed-sk" },
+            { type: "GitHub", url: "https://github.com/orgs/suankularb-wittayalai-school/people/SiravitPhokeed" },
+            { type: "Website", url: "https://siravit-p.vercel.app" },
+          ],
         },
       ]}
     />
@@ -139,8 +197,8 @@ const ContactAdvisors = (): JSX.Element => (
       For more sensitive questions and concerns, please contact our advisors
       instead.
     </p>
-    <ContactList
-      contacts={[
+    <PeopleList
+      people={[
         {
           name: {
             th: "สุพรรณี สุพีรัตน์",
@@ -152,7 +210,7 @@ const ContactAdvisors = (): JSX.Element => (
               "en-US": "Advisor",
             },
           ],
-          contacts: [],
+          contacts: [{ type: "Email", url: "mailto:supannee@sk.ac.th" }],
         },
         {
           name: {
@@ -165,40 +223,58 @@ const ContactAdvisors = (): JSX.Element => (
               "en-US": "Advisor",
             },
           ],
-          contacts: [],
+          contacts: [
+            { type: "Email", url: "mailto:atipol.suk@sk.ac.th" },
+            { type: "Line", url: "https://line.me/ti/p/~zsakez" },
+            { type: "Phone", url: "tel:+66614166498" },
+          ],
         },
       ]}
     />
   </Section>
 );
 
-const ContactList = ({
-  contacts,
+const PeopleList = ({
+  people,
 }: {
-  contacts: {
+  people: {
     name: { th: string; "en-US"?: string };
     jobDescs: { th: string; "en-US"?: string }[];
-    contacts: { type: ContactVia; value: string }[];
+    contacts: { type: ContactVia; url: string }[];
   }[];
 }): JSX.Element => {
   const locale = useRouter().locale as "en-US" | "th";
 
   return (
-    <ul className="layout-grid-cols-3 my-4">
-      {contacts.map((contact) => (
-        <li key={contact.name.th} className="grid grid-cols-4 gap-x-6">
-          <div className="overflow-hidden rounded-xl">
-            <ProfilePicture />
+    <ul className="layout-grid-cols-3 sm:my-4">
+      {people.map((person) => (
+        <li key={person.name.th} className="grid grid-cols-4 gap-x-6">
+          <div>
+            <div className="overflow-hidden rounded-xl">
+              <ProfilePicture />
+            </div>
           </div>
           <div className="col-span-3">
             <h3 className="break-all font-display text-xl font-bold leading-snug">
-              {contact.name[locale] || contact.name.th}
+              {person.name[locale] || person.name.th}
             </h3>
             <ul>
-              {contact.jobDescs.map((jobDesc) => (
+              {person.jobDescs.map((jobDesc) => (
                 <li key={jobDesc.th}>{jobDesc[locale] || jobDesc.th}</li>
               ))}
             </ul>
+            <div className="mt-2 flex w-fit flex-row gap-1 pr-1">
+              {person.contacts.map((contact) => (
+                <a
+                  key={contact.url}
+                  href={contact.url}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <ContactIcon icon={contact.type} />
+                </a>
+              ))}
+            </div>
           </div>
         </li>
       ))}
@@ -207,23 +283,31 @@ const ContactList = ({
 };
 
 // Page
-const Developers: NextPage = (): JSX.Element => (
-  <RegularLayout
-    Title={
-      <Title
-        name={{ title: "About developers" }}
-        pageIcon="information"
-        backGoesTo="/account/login"
-        LinkElement={Link}
-        key="title"
-      />
-    }
-  >
-    <DevelopersBanner />
-    <ContactDevelopers />
-    <ContactAdvisors />
-  </RegularLayout>
-);
+const Developers: NextPage = (): JSX.Element => {
+  const { t } = useTranslation(["about", "common"]);
+
+  return (
+    <>
+      <Head>
+        <title>About developers - {t("brand.name", { ns: "common" })}</title>
+      </Head>
+      <RegularLayout
+        Title={
+          <Title
+            name={{ title: "About developers" }}
+            pageIcon="information"
+            backGoesTo="/account/login"
+            LinkElement={Link}
+          />
+        }
+      >
+        <DevelopersBanner />
+        <ContactDevelopers />
+        <ContactAdvisors />
+      </RegularLayout>
+    </>
+  );
+};
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => ({
   props: {

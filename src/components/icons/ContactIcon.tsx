@@ -16,7 +16,7 @@ const ContactIcon = ({
 }): JSX.Element => (
   <div
     className="relative aspect-square text-primary"
-    style={{ width, height: width, fontSize: width || 24 }}
+    style={{ width: width || 24, height: width || 24, fontSize: width || 24 }}
   >
     {icon == "Phone" ? (
       <MaterialIcon icon="call" allowCustomSize />
@@ -36,6 +36,8 @@ const ContactIcon = ({
       <MaterialIcon icon="public" allowCustomSize />
     ) : icon == "Discord" ? (
       <Image src="/images/social/discord.webp" layout="fill" alt="Discord" />
+    ) : icon == "GitHub" ? (
+      <Image src="/images/social/github.webp" layout="fill" alt="GitHub" />
     ) : (
       <MaterialIcon icon="contacts" allowCustomSize />
     )}
