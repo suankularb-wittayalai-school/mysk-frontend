@@ -1,6 +1,7 @@
 // Modules
 import type { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -26,7 +27,7 @@ import { ContactVia } from "@utils/types/contact";
 const DevelopersBanner = (): JSX.Element => (
   <Section>
     <div>
-      <div className="container-secondary layout-grid-cols-2 rounded-2xl">
+      <div className="container-secondary flex flex-col gap-x-6 overflow-hidden rounded-2xl sm:grid-cols-2 md:grid">
         {/* Text */}
         <div className="m-4 flex flex-col gap-4">
           {/* Title */}
@@ -55,7 +56,7 @@ const DevelopersBanner = (): JSX.Element => (
             <h3 className="font-display text-xl font-medium leading-snug">
               Development led by
             </h3>
-            <ul className="flex flex-col gap-x-6 font-sans md:grid md:grid-cols-2">
+            <ul className="flex flex-col gap-x-6 font-sans sm:grid sm:grid-cols-2">
               <li>Tempoom Leelacharoen</li>
               <li>Sadudee Theparree</li>
               <li>Smart Wattanapornmongkol</li>
@@ -67,15 +68,22 @@ const DevelopersBanner = (): JSX.Element => (
             <h3 className="font-display text-xl font-medium leading-snug">
               With advice from
             </h3>
-            <ul className="flex flex-col gap-x-6 font-sans md:grid md:grid-cols-2">
-              <li>Supannee Supeerat</li>
+            <ul className="flex flex-col gap-x-6 font-sans sm:grid sm:grid-cols-2">
+              <li>Supannee Supeerath</li>
               <li>Atipol Sukrisadanon</li>
             </ul>
           </section>
         </div>
 
         {/* Image */}
-        <div></div>
+        <div className="flex flex-row items-end justify-center sm:justify-end md:justify-center sm:px-6">
+          <Image
+            src="/images/core-team.png"
+            height={256}
+            width={433.5}
+            alt="A group photo of the SK Core Team."
+          />
+        </div>
       </div>
     </div>
   </Section>
@@ -105,7 +113,7 @@ const ContactDevelopers = (): JSX.Element => (
         {
           name: {
             th: "เต็มภูมิ ลีลาเจริญ",
-            "en-US": "Tempoom Leelacharoen",
+            "en-US": "Tempoom Leela­charoen",
           },
           jobDescs: [
             {
@@ -119,7 +127,10 @@ const ContactDevelopers = (): JSX.Element => (
           ],
           contacts: [
             { type: "Email", url: "mailto:tempoom.lee@student.sk.ac.th" },
-            { type: "GitHub", url: "https://github.com/orgs/suankularb-wittayalai-school/people/Temp9699" },
+            {
+              type: "GitHub",
+              url: "https://github.com/orgs/suankularb-wittayalai-school/people/Temp9699",
+            },
           ],
         },
         {
@@ -135,14 +146,17 @@ const ContactDevelopers = (): JSX.Element => (
           ],
           contacts: [
             { type: "Email", url: "mailto:sadudee.the@student.sk.ac.th" },
-            { type: "GitHub", url: "https://github.com/orgs/suankularb-wittayalai-school/people/IHasDiabetes" },
+            {
+              type: "GitHub",
+              url: "https://github.com/orgs/suankularb-wittayalai-school/people/IHasDiabetes",
+            },
             { type: "Website", url: "https://imsad.dev" },
           ],
         },
         {
           name: {
             th: "สมัชญ์ วัฒนพรมงคล",
-            "en-US": "Smart Wattanapornmongkol",
+            "en-US": "Smart Wattana­porn­mongkol",
           },
           jobDescs: [
             {
@@ -156,7 +170,10 @@ const ContactDevelopers = (): JSX.Element => (
           ],
           contacts: [
             { type: "Email", url: "mailto:smart.wat@student.sk.ac.th" },
-            { type: "GitHub", url: "https://github.com/orgs/suankularb-wittayalai-school/people/Jimmy-Tempest" },
+            {
+              type: "GitHub",
+              url: "https://github.com/orgs/suankularb-wittayalai-school/people/Jimmy-Tempest",
+            },
             { type: "Website", url: "https://smartwatt.me" },
           ],
         },
@@ -178,7 +195,10 @@ const ContactDevelopers = (): JSX.Element => (
           contacts: [
             { type: "Email", url: "mailto:siravit.pho@student.sk.ac.th" },
             { type: "Line", url: "https://line.me/ti/p/~siravitphokeed-sk" },
-            { type: "GitHub", url: "https://github.com/orgs/suankularb-wittayalai-school/people/SiravitPhokeed" },
+            {
+              type: "GitHub",
+              url: "https://github.com/orgs/suankularb-wittayalai-school/people/SiravitPhokeed",
+            },
             { type: "Website", url: "https://siravit-p.vercel.app" },
           ],
         },
@@ -202,7 +222,7 @@ const ContactAdvisors = (): JSX.Element => (
         {
           name: {
             th: "สุพรรณี สุพีรัตน์",
-            "en-US": "Supannee Supeerat",
+            "en-US": "Supannee Supeerath",
           },
           jobDescs: [
             {
@@ -255,7 +275,7 @@ const PeopleList = ({
             </div>
           </div>
           <div className="col-span-3">
-            <h3 className="break-all font-display text-xl font-bold leading-snug">
+            <h3 className="font-display text-xl font-bold leading-snug">
               {person.name[locale] || person.name.th}
             </h3>
             <ul>
@@ -263,7 +283,7 @@ const PeopleList = ({
                 <li key={jobDesc.th}>{jobDesc[locale] || jobDesc.th}</li>
               ))}
             </ul>
-            <div className="mt-2 flex w-fit flex-row gap-1 pr-1">
+            <div className="my-2 flex w-fit flex-row gap-1 pr-1">
               {person.contacts.map((contact) => (
                 <a
                   key={contact.url}
