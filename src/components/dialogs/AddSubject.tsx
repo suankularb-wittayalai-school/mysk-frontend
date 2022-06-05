@@ -75,7 +75,7 @@ const AddSubjectDialog = ({
       return;
     }
     // TODO: update this to add new teacher the new RoomSubject table
-    if (data.length > 0) {
+    if (data && data.length > 0) {
       onClose();
       return;
     }

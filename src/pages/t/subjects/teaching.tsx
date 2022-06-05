@@ -55,7 +55,7 @@ const SubjectsTeaching: NextPage = () => {
       // .in("subject", teacher.subjectsInCharge?.map((s) => s.id) ?? [])
       .contains("teacher", [teacher.id]);
 
-    if (error) {
+    if (error || !roomSubjects) {
       console.error(error);
       return [];
     }
