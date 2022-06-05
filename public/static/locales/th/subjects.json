@@ -44,24 +44,27 @@
       "search": "ค้นหาวิชาที่สอน",
       "action": {
         "add": "เพิ่มวิชา",
-        "seeSchedule": "ดูตารางสอน"
+        "seeSchedule": "ดูตารางสอน",
+        "seeDetails": "ดูรายละเอียด"
       }
     }
   },
   "details": {
     "title": "รายละเอียดรายวิชา",
-    "classes": {
-      "title": "ห้องเรียนที่สอน"
-    },
-    "dialog": {
-      "addClass": {
-        "title": "เพิ่มห้องเรียนที่สอน",
-        "class": "ห้องเรียน",
-        "action": {
-          "add": "เพิ่มห้องเรียน",
-          "cancel": "ยกเลิก"
-        }
+    "table": {
+      "class": "ห้องเรียน",
+      "ggcCode": "รหัสเข้า GGC",
+      "teachers": "อาจารย์ผู้สอน",
+      "coTeachers": "โคทีชเชอร์",
+      "action": {
+        "ggcLink": "เข้า Google Classroom",
+        "ggMeetLink": "เข้า Google Meet",
+        "edit": "แก้ไข",
+        "delete": "ลบ"
       }
+    },
+    "action": {
+      "addConnection": "เชื่อมต่อห้องเรียน"
     }
   },
   "periodLogs": {
@@ -82,6 +85,10 @@
         "seeEvidence": "ดูหลักฐานการเรียนการสอน",
         "seeDetails": "อ่านรายละเอียดเพิ่มเติม"
       }
+    },
+    "action": {
+      "seeAll": "ดูทั้งหมด",
+      "logAPeriod": "รายงานคาบ"
     }
   },
   "substAsgn": {
@@ -119,6 +126,57 @@
       "editAsgn": "แก้ไข",
       "addAsgn": "เพิ่มการมอบหมาย",
       "seeAll": "ดูทั้งหมด"
+    }
+  },
+  "dialog": {
+    "addSubject": {
+      "title": "เพิ่มวิชา",
+      "supportingText": "ค้นหาวิชาที่ต้องการจะเพิ่มด้วยรหัสวิชา แล้วเพิ่มห้องเรียนที่จะเรียนวิชานี้กับอาจารย์",
+      "searchSubject": "ค้นหาวิชา",
+      "subjectCode": "รหัสวิชา",
+      "subjectCode_helper": "ค้นหาวิชาที่จะเชื่อมต่อด้วยรหัสวิชา",
+      "subjectCode_error": "ไม่ถูกต้อง",
+      "searchResult": {
+        "title": "ผลลัพธ์การค้นหา",
+        "notFound": "ไม่พบวิชาที่มีรหัสวิชานี้"
+      },
+      "addClasses": "เพิ่มห้องที่เรียน",
+      "action": {
+        "cancel": "ยกเลิก",
+        "add": "เพิ่ม"
+      }
+    },
+    "connectSubject": {
+      "title": {
+        "add": "เชื่อมต่อห้องเรียนสู่วิชา",
+        "edit": "แก้ไขการเชื่อมต่อ"
+      },
+      "supportingText": "ข้อมูลบางอย่างเช่นรหัสเข้า Google Classroom หรือลิงก์เข้า Google Meet สำหรับวิชาใดวิชาหนึ่ง จะแตกต่างกันระหว่างห้องเรียน ดังนั้น ขอให้อาจารย์เชื่อมต่อแต่ละวิชากับแต่ละห้องที่จะเรียนวิชานั้น",
+      "connectSubject": {
+        "title": "เชื่อมต่อวิชากับห้องเรียน",
+        "subjectCode": "รหัสวิชา",
+        "subjectCode_helper": "ค้นหาวิชาที่จะเชื่อมต่อด้วยรหัสวิชา",
+        "class": "ห้องเรียน",
+        "class_helper": "ห้องเรียนที่จะเรียนวิชานี้",
+        "class_error": "ไม่ถูกต้อง ต้องมี 3 หลัก เช่น 408"
+      },
+      "classAccess": {
+        "title": "การเข้าถึงวิชา",
+        "ggcCode": "รหัสเข้า Google Classroom",
+        "ggcCode_error": "ไม่ถูกต้อง ต้องเป็นรหัส 6-7 หลัก.",
+        "ggcLink": "ลิงก์เข้า Google Classroom",
+        "ggcLink_error": "ไม่ถูกต้อง ต้อวเป็นลิงก์ Google Classroom แบบเต็ม",
+        "ggMeetLink": "ลิงก์เข้า Google Meet",
+        "ggMeetLink_error": "ไม่ถูกต้อง ต้อวเป็นลิงก์ Google Meet แบบเต็ม."
+      },
+      "personnel": {
+        "teachers": "อาจารย์",
+        "coTeachers": "โคทีชเชอร์"
+      },
+      "action": {
+        "cancel": "ยกเลิก",
+        "save": "บันทึก"
+      }
     }
   }
 }

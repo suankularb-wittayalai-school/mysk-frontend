@@ -25,10 +25,14 @@ import { supabase } from "@utils/supabaseClient";
 // Components
 import ConfirmDelete from "@components/dialogs/ConfirmDelete";
 import EditPersonDialog from "@components/dialogs/EditPerson";
+import ImportDataDialog from "@components/dialogs/ImportData";
 import TeacherTable from "@components/tables/TeacherTable";
 
 // Backend
 import { db2Teacher } from "@utils/backend/database";
+
+// Backend
+import { createTeacher } from "@utils/backend/person/teacher";
 
 // Types
 import { Prefix, Role, Teacher } from "@utils/types/person";
@@ -37,11 +41,9 @@ import {
   TeacherDB,
   TeacherTable as TeacherTableType,
 } from "@utils/types/database/person";
-import ImportDataDialog from "@components/dialogs/ImportData";
 
 // Hooks
 import { useSession } from "@utils/hooks/auth";
-import { createTeacher } from "@utils/backend/person/teacher";
 
 interface ImportedData {
   prefix: "เด็กชาย" | "นาย" | "นาง" | "นางสาว";
@@ -251,12 +253,14 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
               />
             </div>
           </div>
-          <TeacherTable
-            teachers={allTeachers}
-            setShowEdit={setShowEdit}
-            setEditingPerson={setEditingPerson}
-            setShowConfDelTeacher={setShowConfDel}
-          />
+          <div>
+            <TeacherTable
+              teachers={allTeachers}
+              setShowEdit={setShowEdit}
+              setEditingPerson={setEditingPerson}
+              setShowConfDelTeacher={setShowConfDel}
+            />
+          </div>
         </Section>
       </RegularLayout>
 

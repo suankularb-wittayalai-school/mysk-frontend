@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@suankularb-components/css": "^2.5.1",
+    "@suankularb-components/css": "^2.6.0",
     "@suankularb-components/react": "^2.5.0",
     "@supabase/supabase-js": "^1.35.2",
     "csv": "^6.0.5",

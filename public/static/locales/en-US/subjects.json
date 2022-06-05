@@ -44,24 +44,27 @@
       "search": "Search subjects",
       "action": {
         "add": "Add subject",
-        "seeSchedule": "See schedule"
+        "seeSchedule": "See schedule",
+        "seeDetails": "See details"
       }
     }
   },
   "details": {
     "title": "Subject details",
-    "classes": {
-      "title": "Classes learning this subject"
-    },
-    "dialog": {
-      "addClass": {
-        "title": "Add class",
-        "class": "Class",
-        "action": {
-          "add": "Add class",
-          "cancel": "Cancel"
-        }
+    "table": {
+      "class": "Class",
+      "ggcCode": "GGC Code",
+      "teachers": "Teachers",
+      "coTeachers": "Co-teachers",
+      "action": {
+        "ggcLink": "Go to Google Classroom",
+        "ggMeetLink": "Join Google Meet",
+        "edit": "Edit",
+        "delete": "Delete"
       }
+    },
+    "action": {
+      "addConnection": "Connect class"
     }
   },
   "periodLogs": {
@@ -82,6 +85,10 @@
         "seeEvidence": "See evidence",
         "seeDetails": "See details"
       }
+    },
+    "action": {
+      "seeAll": "See all",
+      "logAPeriod": "Log a period"
     }
   },
   "substAsgn": {
@@ -119,6 +126,57 @@
       "editAsgn": "Edit",
       "addAsgn": "Add assignment",
       "seeAll": "See all"
+    }
+  },
+  "dialog": {
+    "addSubject": {
+      "title": "Add subject",
+      "supportingText": "Search for a subject to add with its subject code, and assign the classes you will teach this subject to.",
+      "searchSubject": "Search subject",
+      "subjectCode": "Subject code",
+      "subjectCode_helper": "Search for the subject with its code.",
+      "subjectCode_error": "Invalid.",
+      "searchResult": {
+        "title": "Search result",
+        "notFound": "No subjects with this subject code."
+      },
+      "addClasses": "Add classes",
+      "action": {
+        "cancel": "Cancel",
+        "add": "Add"
+      }
+    },
+    "connectSubject": {
+      "title": {
+        "add": "Connect class to subject",
+        "edit": "Edit connection"
+      },
+      "supportingText": "Information like the Google Classroom code and the Google Meet link is unique to each class, which is why you must connect the subjects you teach to the classes you teach that subject to individually.",
+      "connectSubject": {
+        "title": "Connect class",
+        "subjectCode": "Subject code",
+        "subjectCode_helper": "Search for the subject with its code.",
+        "class": "Class",
+        "class_helper": "The class you’re teaching this subject to.",
+        "class_error": "Invalid. Should be 3-digit, i.e. 408."
+      },
+      "classAccess": {
+        "title": "Class access",
+        "ggcCode": "Google Classroom code",
+        "ggcCode_error": "Invalid. Should be 6-digit or 7-digit.",
+        "ggcLink": "Google Classroom link",
+        "ggcLink_error": "Invalid. Must be a full Classroom link.",
+        "ggMeetLink": "Google Meet link",
+        "ggMeetLink_error": "Invalid. Must be a full Meet link."
+      },
+      "personnel": {
+        "teachers": "Teachers",
+        "coTeachers": "Co-teachers"
+      },
+      "action": {
+        "cancel": "Cancel",
+        "save": "Save"
+      }
     }
   }
 }

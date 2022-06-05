@@ -119,7 +119,6 @@ const ImportDataDialog = ({
       onClose={onClose}
       onSubmit={() => onSubmit(csvData)}
     >
-      {/* {console.log({ csvFile, csvData })} */}
       <DialogSection name="columns">
         <h2 className="sr-only">{t("dialog.importData.columns.title")}</h2>
         <p>{t("dialog.importData.columns.info")}</p>
@@ -179,7 +178,9 @@ const ImportDataDialog = ({
                 onChange={(e) => setHasHeader(e.target.checked)}
                 checked={hasHeader}
               />
-              <label htmlFor="has-header">This file has a header row</label>
+              <label htmlFor="has-header">
+                {t("dialog.importData.upload.hasHeader")}
+              </label>
             </div>
           </div>
         </div>

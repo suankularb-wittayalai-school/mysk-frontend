@@ -84,6 +84,16 @@
         "add": "Add"
       }
     },
+    "addClass": {
+      "title": "Add class",
+      "class": "Class",
+      "class_helper": "Should be 3-digit, i.e. 408.",
+      "class_error": "Invalid. Should be 3-digit, i.e. 408.",
+      "action": {
+        "add": "Add",
+        "cancel": "Cancel"
+      }
+    },
     "addStudent": {
       "title": "Add student",
       "supportingText": "Search the student to add with their student ID.",

@@ -10,19 +10,19 @@ import {
   KeyboardInput,
 } from "@suankularb-components/react";
 
-// Types
-import { DialogProps } from "@utils/types/common";
-import { Student } from "@utils/types/person";
+// Backend
+import { db2Student } from "@utils/backend/database";
 
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
 
-// Hooks
-import { useSubjectGroupOption } from "@utils/hooks/subject";
-import { useTeacherOption } from "@utils/hooks/teacher";
+// Supabase
 import { supabase } from "@utils/supabaseClient";
+
+// Types
+import { DialogProps } from "@utils/types/common";
 import { StudentDB } from "@utils/types/database/person";
-import { db2Student } from "@utils/backend/database";
+import { Student } from "@utils/types/person";
 
 const AddStudentDialog = ({
   show,

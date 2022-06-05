@@ -76,6 +76,7 @@ export type SubjectListItem = {
     code: Subject["code"];
     name: Subject["name"];
   };
+  classroom: ClassWNumber;
   teachers: Array<Teacher>;
   coTeachers?: Array<Teacher>;
   ggcCode?: string;

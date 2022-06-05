@@ -4,18 +4,30 @@ import { useRouter } from "next/router";
 // Types
 import { Teacher } from "@utils/types/person";
 
+// Helpers
+import { nameJoiner } from "@utils/helpers/name";
+
 const TeacherTeachingList = ({
   teachers,
+  truncate,
+  useFullName,
 }: {
   teachers: { name: Teacher["name"] }[];
+  truncate?: boolean;
+  useFullName?: boolean;
 }) => {
   const locale = useRouter().locale == "th" ? "th" : "en-US";
 
   return (
-    <span className="max-lines-1 text-base">
+    <span
+      className={`text-base ${truncate ? "overflow-ellipse break-all" : ""}`}
+    >
       {teachers.length > 0 &&
-        // Show the first teacher’s first name in user locale
-        (teachers[0].name[locale]?.firstName || teachers[0].name.th.firstName)}
+        // Show the first teacher’s name in user locale
+        (useFullName
+          ? nameJoiner(locale, teachers[0].name)
+          : teachers[0].name[locale]?.firstName ||
+            teachers[0].name.th.firstName)}
       {
         // If there are more than one teacher, display +1 and show the remaining teachers on hover
         teachers.length > 1 && (
@@ -23,9 +35,10 @@ const TeacherTeachingList = ({
             className="text-secondary opacity-50"
             title={teachers
               .slice(1)
-              .map(
-                (teacher) =>
-                  teacher.name[locale]?.firstName || teacher.name.th.firstName
+              .map((teacher) =>
+                useFullName
+                  ? nameJoiner(locale, teacher.name)
+                  : teacher.name[locale]?.firstName || teacher.name.th.firstName
               )
               .join(", ")}
           >

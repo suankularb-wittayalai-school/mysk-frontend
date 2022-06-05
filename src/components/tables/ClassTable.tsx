@@ -53,9 +53,12 @@ const ClassTable = ({
                 nameJoiner(locale, classItem.classAdvisors[0].name)}
               <abbr
                 className="text-surface-variant"
-                title={classItem.classAdvisors.slice(1).join(", ")}
+                title={classItem.classAdvisors
+                  .slice(1)
+                  .map((teacher) => nameJoiner(locale, teacher.name))
+                  .join(", ")}
               >
-                {classItem.classAdvisors.length > 2 &&
+                {classItem.classAdvisors.length > 1 &&
                   `+${classItem.classAdvisors.length - 1}`}
               </abbr>
             </td>

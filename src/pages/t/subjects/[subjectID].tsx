@@ -24,6 +24,7 @@ import {
   DialogSection,
   Dropdown,
   Header,
+  LinkButton,
   MaterialIcon,
   RegularLayout,
   Section,
@@ -34,43 +35,54 @@ import {
 } from "@suankularb-components/react";
 
 // Components
+import AddClassDialog from "@components/dialogs/AddClass";
+import ConnectSubjectDialog from "@components/dialogs/ConnectSubject";
+import ImageDialog from "@components/dialogs/Image";
+import BrandIcon from "@components/icons/BrandIcon";
 import Sentiment from "@components/Sentiment";
+import TeacherTeachingList from "@components/TeacherTeachingList";
 
 // Types
 import {
   PeriodLog,
   PeriodMedium,
   Subject,
+  SubjectListItem,
   SubjectWNameAndCode,
   SubstituteAssignment,
 } from "@utils/types/subject";
-import { ClassWNumber } from "@utils/types/class";
 import { DialogProps } from "@utils/types/common";
-import ImageDialog from "@components/dialogs/Image";
+import ConfirmDelete from "@components/dialogs/ConfirmDelete";
+import { supabase } from "@utils/supabaseClient";
+import {
+  RoomSubjectDB,
+  SubjectDB,
+  SubjectTable,
+} from "@utils/types/database/subject";
+import { db2Subject, db2SubjectListItem } from "@utils/backend/database";
 
 // Details Section
-
-// Main
 const DetailsSection = ({
-  classesLearningThis: orignialClassesLearningThis,
-  setShowAdd,
+  description,
+  subjectRooms,
+  setShowAddConnection,
+  setEditConnection,
+  setDeleteConnection,
 }: {
-  classesLearningThis: Array<ClassWNumber>;
-  setShowAdd: Function;
+  description?: string;
+  subjectRooms: SubjectListItem[];
+  setShowAddConnection: (value: boolean) => void;
+  setEditConnection: (value: {
+    show: boolean;
+    connection?: SubjectListItem;
+  }) => void;
+  setDeleteConnection: (value: {
+    show: boolean;
+    connection?: SubjectListItem;
+  }) => void;
 }): JSX.Element => {
   const { t } = useTranslation(["subjects", "common"]);
   const locale = useRouter().locale as "en-US" | "th";
-  const [classesLearningThis, setClassesLearningThis] = useState<
-    Array<{
-      id: string;
-      name: string | JSX.Element;
-    }>
-  >(
-    orignialClassesLearningThis.map((classItem) => ({
-      id: classItem.id.toString(),
-      name: t("grade", { ns: "common", number: classItem.number }),
-    }))
-  );
 
   return (
     <Section>
@@ -78,56 +90,121 @@ const DetailsSection = ({
         icon={<MaterialIcon icon="info" allowCustomSize />}
         text={t("details.title")}
       />
-      <section className="flex flex-col gap-2">
-        <h3 className="font-display text-xl">{t("details.classes.title")}</h3>
-        <ChipInputList
-          list={classesLearningThis}
-          onChange={(newList) => setClassesLearningThis(newList)}
-          onAdd={() => setShowAdd(true)}
+
+      {/* Subject desciption */}
+      {description && <p>{description}</p>}
+
+      {/* Subject-classroom connections */}
+      <div>
+        <Table width={720}>
+          <thead>
+            <tr>
+              <th className="w-2/12">{t("details.table.class")}</th>
+              <th className="w-2/12">{t("details.table.ggcCode")}</th>
+              <th className="w-3/12">{t("details.table.teachers")}</th>
+              <th className="w-3/12">{t("details.table.coTeachers")}</th>
+              <th className="w-2/12"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {subjectRooms.map((subjectRoom) => (
+              <tr key={subjectRoom.id}>
+                {/* Class */}
+                <td>
+                  {t("class", {
+                    ns: "common",
+                    number: subjectRoom.classroom.number,
+                  })}
+                </td>
+
+                {/* GGC Code */}
+                <td className="font-mono">{subjectRoom.ggcCode}</td>
+
+                {/* Teachers */}
+                <td className="!text-left">
+                  <TeacherTeachingList
+                    teachers={subjectRoom.teachers}
+                    useFullName
+                  />
+                </td>
+
+                {/* Co-teachers */}
+                <td className="!text-left">
+                  {subjectRoom.coTeachers && (
+                    <TeacherTeachingList
+                      teachers={subjectRoom.coTeachers}
+                      useFullName
+                    />
+                  )}
+                </td>
+
+                {/* Actions */}
+                <td>
+                  <div className="flex flex-row flex-wrap justify-center gap-2">
+                    {/* Go to Google Classroom */}
+                    <LinkButton
+                      name={t("details.table.action.ggcLink")}
+                      type="text"
+                      icon={<BrandIcon icon="gg-classroom" />}
+                      url={
+                        subjectRoom.ggcLink || "https://classroom.google.com/"
+                      }
+                      iconOnly
+                      disabled={!subjectRoom.ggcLink}
+                    />
+                    {/* Go to Google Meet */}
+                    <LinkButton
+                      name={t("details.table.action.ggMeetLink")}
+                      type="text"
+                      icon={<BrandIcon icon="gg-meet" />}
+                      url={subjectRoom.ggcLink || "https://meet.google.com/"}
+                      iconOnly
+                      disabled={!subjectRoom.ggMeetLink}
+                    />
+                    {/* Edit this connection */}
+                    <Button
+                      name={t("details.table.action.edit")}
+                      type="text"
+                      icon={<MaterialIcon icon="edit" />}
+                      iconOnly
+                      onClick={() =>
+                        setEditConnection({
+                          show: true,
+                          connection: subjectRoom,
+                        })
+                      }
+                    />
+                    {/* Delete this connection */}
+                    <Button
+                      name={t("details.table.action.delete")}
+                      type="text"
+                      icon={<MaterialIcon icon="delete" />}
+                      iconOnly
+                      isDangerous
+                      onClick={() =>
+                        setDeleteConnection({
+                          show: true,
+                          connection: subjectRoom,
+                        })
+                      }
+                    />
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </div>
+
+      <div className="flex flex-row flex-wrap items-center justify-end gap-2">
+        <Button
+          type="tonal"
+          label={t("details.action.addConnection")}
+          icon={<MaterialIcon icon="link" />}
+          onClick={() => setShowAddConnection(true)}
         />
-      </section>
+      </div>
     </Section>
-  );
-};
-
-// Components
-const AddClassDialog = ({
-  show,
-  onClose,
-}: DialogProps & { onSubmit: Function }): JSX.Element => {
-  const { t } = useTranslation("subjects");
-  const locale = useRouter().locale as "en-US" | "th";
-
-  return (
-    <Dialog
-      type="regular"
-      label="add-class"
-      title={t("details.dialog.addClass.title")}
-      supportingText=""
-      actions={[
-        { name: t("details.dialog.addClass.action.cancel"), type: "close" },
-        { name: t("details.dialog.addClass.action.add"), type: "submit" },
-      ]}
-      show={show}
-      onClose={() => onClose()}
-      onSubmit={() => onClose()}
-    >
-      <DialogSection name="">
-        <Dropdown
-          name="class"
-          label={t("details.dialog.addClass.class")}
-          options={[
-            {
-              value: 509,
-              label: {
-                "en-US": "M.509",
-                th: "ม.509",
-              }[locale],
-            },
-          ]}
-        />
-      </DialogSection>
-    </Dialog>
   );
 };
 
@@ -135,10 +212,12 @@ const AddClassDialog = ({
 
 // Main
 const PeriodLogsSection = ({
+  subjectID,
   periodLogs,
   setLogEvidence,
   setLogDetails,
 }: {
+  subjectID: number;
   periodLogs: Array<PeriodLog>;
   setLogEvidence: (value: { show: boolean; evidence?: string }) => void;
   setLogDetails: (value: { show: boolean; periodLog?: PeriodLog }) => void;
@@ -224,6 +303,18 @@ const PeriodLogsSection = ({
             ))}
           </tbody>
         </Table>
+      </div>
+      <div className="flex flex-row flex-wrap items-center justify-end gap-2">
+        <LinkButton
+          type="outlined"
+          label={t("periodLogs.action.seeAll")}
+          url={`/t/subjects/${subjectID}/period-logs`}
+        />
+        <Button
+          type="filled"
+          label={t("periodLogs.action.logAPeriod")}
+          icon={<MaterialIcon icon="add" />}
+        />
       </div>
     </Section>
   );
@@ -335,12 +426,14 @@ const PeriodLogDetailsDialog = ({
 
 // Main
 const SubstituteAssignmentsSection = ({
+  subjectID,
   substAsgn,
   setShowAssgDetails,
   setShowEditAsgn,
   setShowAddAsgn,
   setActiveAsgn,
 }: {
+  subjectID: number;
   substAsgn: Array<SubstituteAssignment>;
   setShowAssgDetails: Function;
   setShowEditAsgn: Function;
@@ -408,10 +501,15 @@ const SubstituteAssignmentsSection = ({
         ))}
       </XScrollContent>
       <div className="flex flex-row flex-wrap items-center justify-end gap-2">
-        <Button type="outlined" label={t("substAsgn.action.seeAll")} />
+        <LinkButton
+          type="outlined"
+          label={t("substAsgn.action.seeAll")}
+          url={`/t/subjects/${subjectID}/substitute-assignments`}
+        />
         <Button
           type="filled"
           label={t("substAsgn.action.addAsgn")}
+          icon={<MaterialIcon icon="add" />}
           onClick={() => setShowAddAsgn(true)}
         />
       </div>
@@ -502,18 +600,14 @@ const EditAssignmentDialog = ({
           })),
         }
       : {
-          subject: allSubjects[0].id,
+          subject: allSubjects.length == 0 ? 0 : allSubjects[0].id,
           enDesc: "",
           thDesc: "",
           assignedClases: [],
         }
   );
 
-  function validateAndSend() {
-    let formData = new FormData();
-
-    // TODO: Form validation isn’t here yet!
-
+  function validate(): boolean {
     return true;
   }
 
@@ -529,7 +623,7 @@ const EditAssignmentDialog = ({
         ]}
         show={show}
         onClose={() => onClose()}
-        onSubmit={() => validateAndSend() && onSubmit()}
+        onSubmit={() => onSubmit()}
       >
         <DialogSection
           name={t("substAsgn.dialog.editAsgn.subject")}
@@ -580,15 +674,29 @@ const EditAssignmentDialog = ({
 // Page
 const SubjectDetails: NextPage<{
   subject: Subject;
-  classesLearningThis: Array<ClassWNumber>;
-  periodLogs: Array<PeriodLog>;
-  substAsgn: Array<SubstituteAssignment>;
-  allSubjects: Array<SubjectWNameAndCode>;
-}> = ({ subject, classesLearningThis, periodLogs, substAsgn, allSubjects }) => {
+  subjectRooms: SubjectListItem[];
+  periodLogs: PeriodLog[];
+  substAsgn: SubstituteAssignment[];
+  allSubjects: SubjectWNameAndCode[];
+}> = ({ subject, subjectRooms, periodLogs, substAsgn, allSubjects }) => {
   const { t } = useTranslation(["subjects", "common"]);
-  const locale = useRouter().locale as "en-US" | "th";
-  const [showAdd, setShowAdd] = useState<boolean>(false);
+  const router = useRouter();
+  const locale = router.locale as "en-US" | "th";
 
+  // Dialogs
+
+  // Subject details
+  const [showAddConnection, setShowAddConnection] = useState<boolean>(false);
+  const [editConnection, setEditConnection] = useState<{
+    show: boolean;
+    connection?: SubjectListItem;
+  }>({ show: false });
+  const [deleteConnection, setDeleteConnection] = useState<{
+    show: boolean;
+    connection?: SubjectListItem;
+  }>({ show: false });
+
+  // Period logs
   const [logEvidence, setLogEvidence] = useState<{
     show: boolean;
     evidence?: string;
@@ -599,6 +707,7 @@ const SubjectDetails: NextPage<{
     periodLog?: PeriodLog;
   }>({ show: false });
 
+  // Substitute assignments
   const [showAsgnDetails, setShowAsgnDetails] = useState<boolean>(false);
   const [showEditAsgn, setShowEditAsgn] = useState<boolean>(false);
   const [showAddAsgn, setShowAddAsgn] = useState<boolean>(false);
@@ -608,7 +717,9 @@ const SubjectDetails: NextPage<{
     <>
       <Head>
         <title>
-          {t("title")} - {t("brand.name", { ns: "common" })}
+          {subject.name[locale].name || subject.name.th.name}
+          {" - "}
+          {t("brand.name", { ns: "common" })}
         </title>
       </Head>
       <RegularLayout
@@ -625,15 +736,24 @@ const SubjectDetails: NextPage<{
         }
       >
         <DetailsSection
-          classesLearningThis={classesLearningThis}
-          setShowAdd={setShowAdd}
+          description={
+            subject.description
+              ? subject.description[locale] || subject.description.th
+              : undefined
+          }
+          subjectRooms={subjectRooms}
+          setShowAddConnection={setShowAddConnection}
+          setEditConnection={setEditConnection}
+          setDeleteConnection={setDeleteConnection}
         />
         <PeriodLogsSection
+          subjectID={subject.id}
           periodLogs={periodLogs}
           setLogEvidence={setLogEvidence}
           setLogDetails={setLogDetails}
         />
         <SubstituteAssignmentsSection
+          subjectID={subject.id}
           substAsgn={substAsgn}
           setShowAssgDetails={setShowAsgnDetails}
           setShowEditAsgn={setShowEditAsgn}
@@ -643,10 +763,28 @@ const SubjectDetails: NextPage<{
       </RegularLayout>
 
       {/* Dialogs */}
-      <AddClassDialog
-        show={showAdd}
-        onClose={() => setShowAdd(false)}
-        onSubmit={() => {}}
+      <ConnectSubjectDialog
+        show={showAddConnection}
+        onClose={() => setShowAddConnection(false)}
+        onSubmit={() => setShowAddConnection(false)}
+        mode="add"
+        subject={subject}
+      />
+      <ConnectSubjectDialog
+        show={editConnection.show}
+        onClose={() => setEditConnection({ show: false })}
+        onSubmit={() => setEditConnection({ show: false })}
+        mode="edit"
+        subject={subject}
+        subjectRoom={editConnection.connection}
+      />
+      <ConfirmDelete
+        show={deleteConnection.show}
+        onClose={() => setDeleteConnection({ show: false })}
+        onSubmit={() => {
+          setDeleteConnection({ show: false });
+          router.replace(router.asPath);
+        }}
       />
       {logEvidence.evidence && (
         <ImageDialog
@@ -673,8 +811,10 @@ const SubjectDetails: NextPage<{
           <EditAssignmentDialog
             show={showEditAsgn}
             onClose={() => setShowEditAsgn(false)}
-            // TODO: Refetch subst asgns here ↓
-            onSubmit={() => setShowEditAsgn(false)}
+            onSubmit={() => {
+              setShowEditAsgn(false);
+              router.replace(router.asPath);
+            }}
             mode="edit"
             assignment={activeAsgn}
             allSubjects={allSubjects}
@@ -684,8 +824,10 @@ const SubjectDetails: NextPage<{
       <EditAssignmentDialog
         show={showAddAsgn}
         onClose={() => setShowAddAsgn(false)}
-        // TODO: Refetch subst asgns here ↓
-        onSubmit={() => setShowAddAsgn(false)}
+        onSubmit={() => {
+          setShowAddAsgn(false);
+          router.replace(router.asPath);
+        }}
         mode="add"
         allSubjects={allSubjects}
       />
@@ -697,31 +839,37 @@ export const getServerSideProps: GetServerSideProps = async ({
   locale,
   params,
 }) => {
-  const subject: Subject = {
-    id: 26,
-    code: { "en-US": "ENG32102", th: "อ32102" },
-    name: {
-      "en-US": { name: "English 4" },
-      th: { name: "ภาษาอังกฤษ 4" },
-    },
-    teachers: [],
-    type: {
-      "en-US": "Core Courses",
-      th: "รายวิชาพื้นฐาน",
-    },
-    credit: 1,
-    year: 2022,
-    semester: 1,
-    syllabus: null,
-    subjectGroup: {
-      id: 1,
-      name: { "en-US": "ENG", th: "อ" },
-    },
-  };
-  const classesLearningThis: Array<ClassWNumber> = [];
-  const substAsgn: Array<SubstituteAssignment> = [];
-  const allSubjects: Array<SubjectWNameAndCode> = [];
-  const periodLogs: Array<PeriodLog> = [];
+  const { data: dbSubject, error: dbSubjectError } = await supabase
+    .from<SubjectTable>("subject")
+    .select("*")
+    .match({ id: params?.subjectID })
+    .limit(1)
+    .single();
+
+  const { data: roomSubjects, error: roomSubjectsError } = await supabase
+    .from<RoomSubjectDB>("RoomSubject")
+    .select("*, subject:subject(*), classroom:class(*)")
+    .eq("subject", params?.subjectID as string);
+
+  if (dbSubjectError) {
+    console.error(dbSubjectError);
+  }
+  if (roomSubjectsError) {
+    console.error(roomSubjectsError);
+  }
+
+  const subject: Subject | undefined = dbSubject
+    ? await db2Subject(dbSubject)
+    : undefined;
+
+  const subjectRooms: SubjectListItem[] = roomSubjects
+    ? await Promise.all(roomSubjects.map(db2SubjectListItem))
+    : [];
+
+  // console.log(subjectRooms);
+  const substAsgn: SubstituteAssignment[] = [];
+  const allSubjects: SubjectWNameAndCode[] = [];
+  const periodLogs: PeriodLog[] = [];
 
   return {
     props: {
@@ -730,7 +878,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         "subjects",
       ])),
       subject,
-      classesLearningThis,
+      subjectRooms,
       periodLogs: periodLogs.map((periodLog) => ({
         ...periodLog,
         date: periodLog.date.getTime(),
