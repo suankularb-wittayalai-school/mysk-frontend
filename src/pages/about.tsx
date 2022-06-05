@@ -76,7 +76,7 @@ const DevelopersBanner = (): JSX.Element => (
         </div>
 
         {/* Image */}
-        <div className="flex flex-row items-end justify-center sm:justify-end md:justify-center sm:px-6">
+        <div className="flex flex-row items-end justify-center sm:justify-end sm:px-6 md:justify-center">
           <Image
             src="/images/core-team.png"
             height={256}
@@ -115,6 +115,7 @@ const ContactDevelopers = (): JSX.Element => (
             th: "เต็มภูมิ ลีลาเจริญ",
             "en-US": "Tempoom Leela­charoen",
           },
+          profile: "/images/developers/tempoom.png",
           jobDescs: [
             {
               th: "วิศวกรประกันคุณภาพ",
@@ -138,6 +139,7 @@ const ContactDevelopers = (): JSX.Element => (
             th: "สดุดี เทพอารีย์",
             "en-US": "Sadudee Theparree",
           },
+          profile: "/images/developers/sadudee.png",
           jobDescs: [
             {
               th: "ผู้พัฒนาฐานเว็บไซต์",
@@ -158,6 +160,7 @@ const ContactDevelopers = (): JSX.Element => (
             th: "สมัชญ์ วัฒนพรมงคล",
             "en-US": "Smart Wattana­porn­mongkol",
           },
+          profile: "/images/developers/smart.png",
           jobDescs: [
             {
               th: "นักออกแบบสถาปัตยกรรมฐานข้อมูล",
@@ -182,6 +185,7 @@ const ContactDevelopers = (): JSX.Element => (
             th: "ศิรวิทย์ โพธิ์ขีด",
             "en-US": "Siravit Phokeed",
           },
+          profile: "/images/developers/siravit.png",
           jobDescs: [
             {
               th: "นักออกแบบเว็บไซต์",
@@ -259,6 +263,7 @@ const PeopleList = ({
 }: {
   people: {
     name: { th: string; "en-US"?: string };
+    profile?: string;
     jobDescs: { th: string; "en-US"?: string }[];
     contacts: { type: ContactVia; url: string }[];
   }[];
@@ -270,8 +275,8 @@ const PeopleList = ({
       {people.map((person) => (
         <li key={person.name.th} className="grid grid-cols-4 gap-x-6">
           <div>
-            <div className="overflow-hidden rounded-xl">
-              <ProfilePicture />
+            <div className="aspect-square w-full overflow-hidden rounded-xl">
+              <ProfilePicture src={person.profile} />
             </div>
           </div>
           <div className="col-span-3">
