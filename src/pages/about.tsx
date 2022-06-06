@@ -76,7 +76,10 @@ const DevelopersBanner = (): JSX.Element => (
         </div>
 
         {/* Image */}
-        <div className="flex flex-row items-end justify-center sm:justify-end sm:px-6 md:justify-center">
+        <div
+          className="flex flex-row items-end justify-center
+            sm:justify-end sm:px-6 md:mt-8 md:justify-center"
+        >
           <Image
             src="/images/core-team.png"
             height={256}
@@ -198,7 +201,6 @@ const ContactDevelopers = (): JSX.Element => (
           ],
           contacts: [
             { type: "Email", url: "mailto:siravit.pho@student.sk.ac.th" },
-            { type: "Line", url: "https://line.me/ti/p/~siravitphokeed-sk" },
             {
               type: "GitHub",
               url: "https://github.com/orgs/suankularb-wittayalai-school/people/SiravitPhokeed",
@@ -208,6 +210,9 @@ const ContactDevelopers = (): JSX.Element => (
         },
       ]}
     />
+    <p className="sm:text-right">
+      …with a massive thank you to our contributors on GitHub!
+    </p>
   </Section>
 );
 
