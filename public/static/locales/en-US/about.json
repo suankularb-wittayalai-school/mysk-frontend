@@ -6,5 +6,9 @@
     "ledBy": "Development led by",
     "adviceFrom": "With advice from",
     "groupPhotoAlt": "A group photo of the SK Core Team."
+  },
+  "contactDevs": {
+    "title": "Contact developers",
+    "supportingText": "Found issues with the website? Contact the developers in the field you are having trouble with below. Alternatively, check out <2>our GitHub organization</2>."
   }
 }

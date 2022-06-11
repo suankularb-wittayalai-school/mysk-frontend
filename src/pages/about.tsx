@@ -120,129 +120,132 @@ const DevelopersBanner = ({
   );
 };
 
-const ContactDevelopers = (): JSX.Element => (
-  <Section>
-    <Header
-      icon={<MaterialIcon icon="badge" allowCustomSize />}
-      text="Contact developers"
-    />
-    <p>
-      Found issues with the website? Contact the developers in the field you are
-      having trouble with below. Alternatively, check out{" "}
-      <a
-        className="link"
-        href="https://github.com/suankularb-wittayalai-school"
-        target="_blank"
-        rel="noreferrer"
-      >
-        our GitHub organization
-      </a>
-      .
-    </p>
-    <PeopleList
-      people={[
-        {
-          name: {
-            th: "เต็มภูมิ ลีลาเจริญ",
-            "en-US": "Tempoom Leela­charoen",
+const ContactDevelopers = (): JSX.Element => {
+  const { t } = useTranslation("about");
+
+  return (
+    <Section>
+      <Header
+        icon={<MaterialIcon icon="badge" allowCustomSize />}
+        text={t("contactDevs.title")}
+      />
+      <p>
+        <Trans i18nKey="contactDevs.supportingText" ns="about">
+          Found issues with the website? Contact the developers in the field you
+          are having trouble with below. Alternatively, check out{" "}
+          <a
+            className="link"
+            href="https://github.com/suankularb-wittayalai-school"
+            target="_blank"
+            rel="noreferrer"
+          >
+            our GitHub organization
+          </a>
+          .
+        </Trans>
+      </p>
+      <PeopleList
+        people={[
+          {
+            name: {
+              th: "เต็มภูมิ ลีลาเจริญ",
+              "en-US": "Tempoom Leela­charoen",
+            },
+            profile: "/images/developers/tempoom.png",
+            jobDescs: [
+              {
+                th: "วิศวกรประกันคุณภาพ",
+                "en-US": "Quality assurance engineer",
+              },
+              {
+                th: "ผู้พัฒนาฐานข้อมูล",
+                "en-US": "Backend developer",
+              },
+            ],
+            contacts: [
+              { type: "Email", url: "mailto:tempoom.lee@student.sk.ac.th" },
+              {
+                type: "GitHub",
+                url: "https://github.com/orgs/suankularb-wittayalai-school/people/Temp9699",
+              },
+            ],
           },
-          profile: "/images/developers/tempoom.png",
-          jobDescs: [
-            {
-              th: "วิศวกรประกันคุณภาพ",
-              "en-US": "Quality assurance engineer",
+          {
+            name: {
+              th: "สดุดี เทพอารีย์",
+              "en-US": "Sadudee Theparree",
             },
-            {
-              th: "ผู้พัฒนาฐานข้อมูล",
-              "en-US": "Backend developer",
-            },
-          ],
-          contacts: [
-            { type: "Email", url: "mailto:tempoom.lee@student.sk.ac.th" },
-            {
-              type: "GitHub",
-              url: "https://github.com/orgs/suankularb-wittayalai-school/people/Temp9699",
-            },
-          ],
-        },
-        {
-          name: {
-            th: "สดุดี เทพอารีย์",
-            "en-US": "Sadudee Theparree",
+            profile: "/images/developers/sadudee.png",
+            jobDescs: [
+              {
+                th: "ผู้พัฒนาฐานเว็บไซต์",
+                "en-US": "Frontend developer",
+              },
+            ],
+            contacts: [
+              { type: "Email", url: "mailto:sadudee.the@student.sk.ac.th" },
+              {
+                type: "GitHub",
+                url: "https://github.com/orgs/suankularb-wittayalai-school/people/IHasDiabetes",
+              },
+              { type: "Website", url: "https://imsad.dev" },
+            ],
           },
-          profile: "/images/developers/sadudee.png",
-          jobDescs: [
-            {
-              th: "ผู้พัฒนาฐานเว็บไซต์",
-              "en-US": "Frontend developer",
+          {
+            name: {
+              th: "สมัชญ์ วัฒนพรมงคล",
+              "en-US": "Smart Wattana­porn­mongkol",
             },
-          ],
-          contacts: [
-            { type: "Email", url: "mailto:sadudee.the@student.sk.ac.th" },
-            {
-              type: "GitHub",
-              url: "https://github.com/orgs/suankularb-wittayalai-school/people/IHasDiabetes",
-            },
-            { type: "Website", url: "https://imsad.dev" },
-          ],
-        },
-        {
-          name: {
-            th: "สมัชญ์ วัฒนพรมงคล",
-            "en-US": "Smart Wattana­porn­mongkol",
+            profile: "/images/developers/smart.png",
+            jobDescs: [
+              {
+                th: "นักออกแบบสถาปัตยกรรมฐานข้อมูล",
+                "en-US": "Database architecture engineer",
+              },
+              {
+                th: "ผู้พัฒนาฐานข้อมูล",
+                "en-US": "Backend developer",
+              },
+            ],
+            contacts: [
+              { type: "Email", url: "mailto:smart.wat@student.sk.ac.th" },
+              {
+                type: "GitHub",
+                url: "https://github.com/orgs/suankularb-wittayalai-school/people/Jimmy-Tempest",
+              },
+              { type: "Website", url: "https://smartwatt.me" },
+            ],
           },
-          profile: "/images/developers/smart.png",
-          jobDescs: [
-            {
-              th: "นักออกแบบสถาปัตยกรรมฐานข้อมูล",
-              "en-US": "Database architecture engineer",
+          {
+            name: {
+              th: "ศิรวิทย์ โพธิ์ขีด",
+              "en-US": "Siravit Phokeed",
             },
-            {
-              th: "ผู้พัฒนาฐานข้อมูล",
-              "en-US": "Backend developer",
-            },
-          ],
-          contacts: [
-            { type: "Email", url: "mailto:smart.wat@student.sk.ac.th" },
-            {
-              type: "GitHub",
-              url: "https://github.com/orgs/suankularb-wittayalai-school/people/Jimmy-Tempest",
-            },
-            { type: "Website", url: "https://smartwatt.me" },
-          ],
-        },
-        {
-          name: {
-            th: "ศิรวิทย์ โพธิ์ขีด",
-            "en-US": "Siravit Phokeed",
+            profile: "/images/developers/siravit.png",
+            jobDescs: [
+              {
+                th: "นักออกแบบเว็บไซต์",
+                "en-US": "UI/UX designer",
+              },
+              {
+                th: "ผู้พัฒนาฐานเว็บไซต์",
+                "en-US": "Frontend developer",
+              },
+            ],
+            contacts: [
+              { type: "Email", url: "mailto:siravit.pho@student.sk.ac.th" },
+              {
+                type: "GitHub",
+                url: "https://github.com/orgs/suankularb-wittayalai-school/people/SiravitPhokeed",
+              },
+              { type: "Website", url: "https://siravit-p.vercel.app" },
+            ],
           },
-          profile: "/images/developers/siravit.png",
-          jobDescs: [
-            {
-              th: "นักออกแบบเว็บไซต์",
-              "en-US": "UI/UX designer",
-            },
-            {
-              th: "ผู้พัฒนาฐานเว็บไซต์",
-              "en-US": "Frontend developer",
-            },
-          ],
-          contacts: [
-            { type: "Email", url: "mailto:siravit.pho@student.sk.ac.th" },
-            {
-              type: "GitHub",
-              url: "https://github.com/orgs/suankularb-wittayalai-school/people/SiravitPhokeed",
-            },
-            { type: "Website", url: "https://siravit-p.vercel.app" },
-          ],
-        },
-      ]}
-    />
-    <p className="sm:text-center">
-      The development team also thanks our contributors on GitHub!
-    </p>
-  </Section>
-);
+        ]}
+      />
+    </Section>
+  );
+};
 
 const ContactAdvisors = (): JSX.Element => (
   <Section>
