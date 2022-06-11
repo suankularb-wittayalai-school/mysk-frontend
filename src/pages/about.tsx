@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { useTranslation } from "next-i18next";
+import { Trans, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 // SK Components
@@ -24,73 +24,93 @@ import ProfilePicture from "@components/ProfilePicture";
 // Types
 import { ContactVia } from "@utils/types/contact";
 
-const DevelopersBanner = (): JSX.Element => (
-  <Section>
-    <div>
-      <div className="container-secondary flex flex-col gap-x-6 overflow-hidden rounded-2xl sm:grid-cols-2 md:grid">
-        {/* Text */}
-        <div className="m-4 flex flex-col gap-4">
-          {/* Title */}
-          <section className="flex flex-col gap-2 font-display leading-none">
-            <p className="text-lg">The 2022 version of MySK is maintained by</p>
-            <p className="text-4xl font-medium">
-              Suankularb{" "}
-              <span
-                className="bg-gradient-to-br from-primary to-tertiary font-extrabold text-tertiary
-                  [-webkit-background-clip:text] [-webkit-text-fill-color:transparent]"
-              >
-                Tech
-              </span>
-              nology and{" "}
-              <span
-                className="bg-gradient-to-br from-tertiary to-primary font-extrabold text-tertiary
-                  [-webkit-background-clip:text] [-webkit-text-fill-color:transparent]"
-              >
-                Dev
-              </span>
-              elopment Club
-            </p>
-          </section>
-          {/* Development led by */}
-          <section>
-            <h3 className="font-display text-xl font-medium leading-snug">
-              Development led by
-            </h3>
-            <ul className="flex flex-col gap-x-6 font-sans sm:grid sm:grid-cols-2">
-              <li>Tempoom Leelacharoen</li>
-              <li>Sadudee Theparree</li>
-              <li>Smart Wattanapornmongkol</li>
-              <li>Siravit Phokeed</li>
-            </ul>
-          </section>
-          {/* With advice from */}
-          <section>
-            <h3 className="font-display text-xl font-medium leading-snug">
-              With advice from
-            </h3>
-            <ul className="flex flex-col gap-x-6 font-sans sm:grid sm:grid-cols-2">
-              <li>Supannee Supeerath</li>
-              <li>Atipol Sukrisadanon</li>
-            </ul>
-          </section>
-        </div>
+const DevelopersBanner = (): JSX.Element => {
+  const { t } = useTranslation("about");
 
-        {/* Image */}
-        <div
-          className="flex flex-row items-end justify-center
+  return (
+    <Section>
+      <div>
+        <div className="container-secondary flex flex-col gap-x-6 overflow-hidden rounded-2xl sm:grid-cols-2 md:grid">
+          {/* Text */}
+          <div className="m-4 flex flex-col gap-4">
+            {/* Title */}
+            <section className="flex flex-col gap-2 font-display leading-none">
+              <p className="text-lg">{t("banner.leading")}</p>
+              <p className="text-4xl font-medium">
+                <Trans i18nKey="banner.title" ns="about">
+                  Suankularb{" "}
+                  <span
+                    className="bg-gradient-to-br from-primary to-tertiary font-extrabold text-tertiary
+                    [-webkit-background-clip:text] [-webkit-text-fill-color:transparent]"
+                  >
+                    Tech
+                  </span>
+                  nology and{" "}
+                  <span
+                    className="bg-gradient-to-br from-tertiary to-primary font-extrabold text-tertiary
+                    [-webkit-background-clip:text] [-webkit-text-fill-color:transparent]"
+                  >
+                    Dev
+                  </span>
+                  elopment Club
+                </Trans>
+              </p>
+            </section>
+
+            {/* Development led by */}
+            <section aria-labelledby="led-by">
+              <h3
+                id="led-by"
+                className="font-display text-xl font-medium leading-snug"
+              >
+                {t("banner.ledBy")}
+              </h3>
+              <ul
+                aria-labelledby="led-by"
+                className="flex flex-col gap-x-6 font-sans sm:grid sm:grid-cols-2"
+              >
+                <li>Tempoom Leelacharoen</li>
+                <li>Sadudee Theparree</li>
+                <li>Smart Wattanapornmongkol</li>
+                <li>Siravit Phokeed</li>
+              </ul>
+            </section>
+
+            {/* With advice from */}
+            <section aria-labelledby="advice-from">
+              <h3
+                id="advice-from"
+                className="font-display text-xl font-medium leading-snug"
+              >
+                {t("banner.adviceFrom")}
+              </h3>
+              <ul
+                aria-labelledby="advice-from"
+                className="flex flex-col gap-x-6 font-sans sm:grid sm:grid-cols-2"
+              >
+                <li>Supannee Supeerath</li>
+                <li>Atipol Sukrisadanon</li>
+              </ul>
+            </section>
+          </div>
+
+          {/* Image */}
+          <div
+            className="flex flex-row items-end justify-center
             sm:justify-end sm:px-6 md:mt-8 md:justify-center"
-        >
-          <Image
-            src="/images/core-team.png"
-            height={256}
-            width={433.5}
-            alt="A group photo of the SK Core Team."
-          />
+          >
+            <Image
+              src="/images/core-team.png"
+              height={256}
+              width={433.5}
+              alt={t("banner.groupPhotoAlt")}
+            />
+          </div>
         </div>
       </div>
-    </div>
-  </Section>
-);
+    </Section>
+  );
+};
 
 const ContactDevelopers = (): JSX.Element => (
   <Section>
@@ -210,8 +230,8 @@ const ContactDevelopers = (): JSX.Element => (
         },
       ]}
     />
-    <p className="sm:text-right">
-      …with a massive thank you to our contributors on GitHub!
+    <p className="sm:text-center">
+      The development team also thanks our contributors on GitHub!
     </p>
   </Section>
 );
@@ -319,12 +339,16 @@ const Developers: NextPage = (): JSX.Element => {
   return (
     <>
       <Head>
-        <title>About developers - {t("brand.name", { ns: "common" })}</title>
+        <title>
+          {t("title")}
+          {" - "}
+          {t("brand.name", { ns: "common" })}
+        </title>
       </Head>
       <RegularLayout
         Title={
           <Title
-            name={{ title: "About developers" }}
+            name={{ title: t("title") }}
             pageIcon="information"
             backGoesTo="/account/login"
             LinkElement={Link}
