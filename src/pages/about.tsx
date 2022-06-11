@@ -25,6 +25,14 @@ import ProfilePicture from "@components/ProfilePicture";
 import { MultiLangString } from "@utils/types/common";
 import { ContactVia } from "@utils/types/contact";
 
+type PeopleListType = {
+  name: { th: string; "en-US"?: string };
+  profile?: string;
+  jobDescs: { th: string; "en-US"?: string }[];
+  contacts: { type: ContactVia; url: string }[];
+}[];
+
+// Sections
 const DevelopersBanner = ({
   coreTeam,
   advisors,
@@ -120,7 +128,11 @@ const DevelopersBanner = ({
   );
 };
 
-const ContactDevelopers = (): JSX.Element => {
+const ContactDevelopers = ({
+  developerList,
+}: {
+  developerList: PeopleListType;
+}): JSX.Element => {
   const { t } = useTranslation("about");
 
   return (
@@ -144,167 +156,32 @@ const ContactDevelopers = (): JSX.Element => {
           .
         </Trans>
       </p>
-      <PeopleList
-        people={[
-          {
-            name: {
-              th: "เต็มภูมิ ลีลาเจริญ",
-              "en-US": "Tempoom Leela­charoen",
-            },
-            profile: "/images/developers/tempoom.png",
-            jobDescs: [
-              {
-                th: "วิศวกรประกันคุณภาพ",
-                "en-US": "Quality assurance engineer",
-              },
-              {
-                th: "ผู้พัฒนาฐานข้อมูล",
-                "en-US": "Backend developer",
-              },
-            ],
-            contacts: [
-              { type: "Email", url: "mailto:tempoom.lee@student.sk.ac.th" },
-              {
-                type: "GitHub",
-                url: "https://github.com/orgs/suankularb-wittayalai-school/people/Temp9699",
-              },
-            ],
-          },
-          {
-            name: {
-              th: "สดุดี เทพอารีย์",
-              "en-US": "Sadudee Theparree",
-            },
-            profile: "/images/developers/sadudee.png",
-            jobDescs: [
-              {
-                th: "ผู้พัฒนาฐานเว็บไซต์",
-                "en-US": "Frontend developer",
-              },
-            ],
-            contacts: [
-              { type: "Email", url: "mailto:sadudee.the@student.sk.ac.th" },
-              {
-                type: "GitHub",
-                url: "https://github.com/orgs/suankularb-wittayalai-school/people/IHasDiabetes",
-              },
-              { type: "Website", url: "https://imsad.dev" },
-            ],
-          },
-          {
-            name: {
-              th: "สมัชญ์ วัฒนพรมงคล",
-              "en-US": "Smart Wattana­porn­mongkol",
-            },
-            profile: "/images/developers/smart.png",
-            jobDescs: [
-              {
-                th: "นักออกแบบสถาปัตยกรรมฐานข้อมูล",
-                "en-US": "Database architecture engineer",
-              },
-              {
-                th: "ผู้พัฒนาฐานข้อมูล",
-                "en-US": "Backend developer",
-              },
-            ],
-            contacts: [
-              { type: "Email", url: "mailto:smart.wat@student.sk.ac.th" },
-              {
-                type: "GitHub",
-                url: "https://github.com/orgs/suankularb-wittayalai-school/people/Jimmy-Tempest",
-              },
-              { type: "Website", url: "https://smartwatt.me" },
-            ],
-          },
-          {
-            name: {
-              th: "ศิรวิทย์ โพธิ์ขีด",
-              "en-US": "Siravit Phokeed",
-            },
-            profile: "/images/developers/siravit.png",
-            jobDescs: [
-              {
-                th: "นักออกแบบเว็บไซต์",
-                "en-US": "UI/UX designer",
-              },
-              {
-                th: "ผู้พัฒนาฐานเว็บไซต์",
-                "en-US": "Frontend developer",
-              },
-            ],
-            contacts: [
-              { type: "Email", url: "mailto:siravit.pho@student.sk.ac.th" },
-              {
-                type: "GitHub",
-                url: "https://github.com/orgs/suankularb-wittayalai-school/people/SiravitPhokeed",
-              },
-              { type: "Website", url: "https://siravit-p.vercel.app" },
-            ],
-          },
-        ]}
-      />
+      <PeopleList people={developerList} />
     </Section>
   );
 };
 
-const ContactAdvisors = (): JSX.Element => {
+const ContactAdvisors = ({
+  advisorList,
+}: {
+  advisorList: PeopleListType;
+}): JSX.Element => {
   const { t } = useTranslation("about");
 
   return (
     <Section>
       <Header
         icon={<MaterialIcon icon="supervised_user_circle" allowCustomSize />}
-        text={t("contactAdvisors.title")} />
-      <p>
-        {t("contactAdvisors.supportingText")}
-      </p>
-      <PeopleList
-        people={[
-          {
-            name: {
-              th: "สุพรรณี สุพีรัตน์",
-              "en-US": "Supannee Supeerath",
-            },
-            jobDescs: [
-              {
-                th: "ที่ปรึกษา",
-                "en-US": "Advisor",
-              },
-            ],
-            contacts: [{ type: "Email", url: "mailto:supannee@sk.ac.th" }],
-          },
-          {
-            name: {
-              th: "อติพล สุกฤษฎานนท์",
-              "en-US": "Atipol Sukrisadanon",
-            },
-            jobDescs: [
-              {
-                th: "ที่ปรึกษา",
-                "en-US": "Advisor",
-              },
-            ],
-            contacts: [
-              { type: "Email", url: "mailto:atipol.suk@sk.ac.th" },
-              { type: "Line", url: "https://line.me/ti/p/~zsakez" },
-              { type: "Phone", url: "tel:+66614166498" },
-            ],
-          },
-        ]} />
+        text={t("contactAdvisors.title")}
+      />
+      <p>{t("contactAdvisors.supportingText")}</p>
+      <PeopleList people={advisorList} />
     </Section>
   );
 };
 
-const PeopleList = ({
-  people,
-}: {
-  people: {
-    name: { th: string; "en-US"?: string };
-    profile?: string;
-    jobDescs: { th: string; "en-US"?: string }[];
-    contacts: { type: ContactVia; url: string }[];
-  }[];
-}): JSX.Element => {
+// Components
+const PeopleList = ({ people }: { people: PeopleListType }): JSX.Element => {
   const locale = useRouter().locale as "en-US" | "th";
 
   return (
@@ -348,6 +225,165 @@ const PeopleList = ({
 const Developers: NextPage = (): JSX.Element => {
   const { t } = useTranslation(["about", "common"]);
 
+  // People list
+  const coreTeam: MultiLangString[] = [
+    {
+      th: "เต็มภูมิ ลีลาเจริญ",
+      "en-US": "Tempoom Leela­charoen",
+    },
+    {
+      th: "สดุดี เทพอารีย์",
+      "en-US": "Sadudee Theparree",
+    },
+    {
+      th: "สมัชญ์ วัฒนพรมงคล",
+      "en-US": "Smart Wattana­porn­mongkol",
+    },
+    {
+      th: "ศิรวิทย์ โพธิ์ขีด",
+      "en-US": "Siravit Phokeed",
+    },
+  ];
+  const advisorNames: MultiLangString[] = [
+    {
+      th: "อาจารย์สุพรรณี สุพีรัตน์",
+      "en-US": "T. Supannee Supeerath",
+    },
+    {
+      th: "อาจารย์อติพล สุกฤษฎานนท์",
+      "en-US": "T. Atipol Sukrisadanon",
+    },
+  ];
+  const developerList: PeopleListType = [
+    {
+      name: {
+        th: "เต็มภูมิ ลีลาเจริญ",
+        "en-US": "Tempoom Leela­charoen",
+      },
+      profile: "/images/developers/tempoom.png",
+      jobDescs: [
+        {
+          th: "วิศวกรประกันคุณภาพ",
+          "en-US": "Quality assurance engineer",
+        },
+        {
+          th: "ผู้พัฒนาฐานข้อมูล",
+          "en-US": "Backend developer",
+        },
+      ],
+      contacts: [
+        { type: "Email", url: "mailto:tempoom.lee@student.sk.ac.th" },
+        {
+          type: "GitHub",
+          url: "https://github.com/orgs/suankularb-wittayalai-school/people/Temp9699",
+        },
+      ],
+    },
+    {
+      name: {
+        th: "สดุดี เทพอารีย์",
+        "en-US": "Sadudee Theparree",
+      },
+      profile: "/images/developers/sadudee.png",
+      jobDescs: [
+        {
+          th: "ผู้พัฒนาฐานเว็บไซต์",
+          "en-US": "Frontend developer",
+        },
+      ],
+      contacts: [
+        { type: "Email", url: "mailto:sadudee.the@student.sk.ac.th" },
+        {
+          type: "GitHub",
+          url: "https://github.com/orgs/suankularb-wittayalai-school/people/IHasDiabetes",
+        },
+        { type: "Website", url: "https://imsad.dev" },
+      ],
+    },
+    {
+      name: {
+        th: "สมัชญ์ วัฒนพรมงคล",
+        "en-US": "Smart Wattana­porn­mongkol",
+      },
+      profile: "/images/developers/smart.png",
+      jobDescs: [
+        {
+          th: "นักออกแบบสถาปัตยกรรมฐานข้อมูล",
+          "en-US": "Database architecture engineer",
+        },
+        {
+          th: "ผู้พัฒนาฐานข้อมูล",
+          "en-US": "Backend developer",
+        },
+      ],
+      contacts: [
+        { type: "Email", url: "mailto:smart.wat@student.sk.ac.th" },
+        {
+          type: "GitHub",
+          url: "https://github.com/orgs/suankularb-wittayalai-school/people/Jimmy-Tempest",
+        },
+        { type: "Website", url: "https://smartwatt.me" },
+      ],
+    },
+    {
+      name: {
+        th: "ศิรวิทย์ โพธิ์ขีด",
+        "en-US": "Siravit Phokeed",
+      },
+      profile: "/images/developers/siravit.png",
+      jobDescs: [
+        {
+          th: "นักออกแบบเว็บไซต์",
+          "en-US": "UI/UX designer",
+        },
+        {
+          th: "ผู้พัฒนาฐานเว็บไซต์",
+          "en-US": "Frontend developer",
+        },
+      ],
+      contacts: [
+        { type: "Email", url: "mailto:siravit.pho@student.sk.ac.th" },
+        {
+          type: "GitHub",
+          url: "https://github.com/orgs/suankularb-wittayalai-school/people/SiravitPhokeed",
+        },
+        { type: "Website", url: "https://siravit-p.vercel.app" },
+      ],
+    },
+  ];
+  const advisorList: PeopleListType = [
+    {
+      name: {
+        th: "สุพรรณี สุพีรัตน์",
+        "en-US": "Supannee Supeerath",
+      },
+      jobDescs: [
+        {
+          th: "ที่ปรึกษา",
+          "en-US": "Advisor",
+        },
+      ],
+      contacts: [{ type: "Email", url: "mailto:supannee@sk.ac.th" }],
+    },
+    {
+      name: {
+        th: "อติพล สุกฤษฎานนท์",
+        "en-US": "Atipol Sukrisadanon",
+      },
+      jobDescs: [
+        {
+          th: "ที่ปรึกษา",
+          "en-US": "Advisor",
+        },
+      ],
+      contacts: [
+        { type: "Email", url: "mailto:atipol.suk@sk.ac.th" },
+        { type: "Line", url: "https://line.me/ti/p/~zsakez" },
+        { type: "Phone", url: "tel:+66614166498" },
+      ],
+    },
+  ];
+
   return (
     <>
       <Head>
@@ -367,38 +403,9 @@ const Developers: NextPage = (): JSX.Element => {
           />
         }
       >
-        <DevelopersBanner
-          coreTeam={[
-            {
-              th: "เต็มภูมิ ลีลาเจริญ",
-              "en-US": "Tempoom Leela­charoen",
-            },
-            {
-              th: "สดุดี เทพอารีย์",
-              "en-US": "Sadudee Theparree",
-            },
-            {
-              th: "สมัชญ์ วัฒนพรมงคล",
-              "en-US": "Smart Wattana­porn­mongkol",
-            },
-            {
-              th: "ศิรวิทย์ โพธิ์ขีด",
-              "en-US": "Siravit Phokeed",
-            },
-          ]}
-          advisors={[
-            {
-              th: "อาจารย์สุพรรณี สุพีรัตน์",
-              "en-US": "T. Supannee Supeerath",
-            },
-            {
-              th: "อาจารย์อติพล สุกฤษฎานนท์",
-              "en-US": "T. Atipol Sukrisadanon",
-            },
-          ]}
-        />
-        <ContactDevelopers />
-        <ContactAdvisors />
+        <DevelopersBanner coreTeam={coreTeam} advisors={advisorNames} />
+        <ContactDevelopers developerList={developerList} />
+        <ContactAdvisors advisorList={advisorList} />
       </RegularLayout>
     </>
   );
