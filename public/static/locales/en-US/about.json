@@ -10,5 +10,9 @@
   "contactDevs": {
     "title": "Contact developers",
     "supportingText": "Found issues with the website? Contact the developers in the field you are having trouble with below. Alternatively, check out <2>our GitHub organization</2>."
+  },
+  "contactAdvisors": {
+    "title": "Contact advisors",
+    "supportingText": "For more sensitive questions and concerns, please contact our advisors instead."
   }
 }

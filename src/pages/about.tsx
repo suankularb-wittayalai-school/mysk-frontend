@@ -247,52 +247,53 @@ const ContactDevelopers = (): JSX.Element => {
   );
 };
 
-const ContactAdvisors = (): JSX.Element => (
-  <Section>
-    <Header
-      icon={<MaterialIcon icon="supervised_user_circle" allowCustomSize />}
-      text="Contact advisors"
-    />
-    <p>
-      For more sensitive questions and concerns, please contact our advisors
-      instead.
-    </p>
-    <PeopleList
-      people={[
-        {
-          name: {
-            th: "สุพรรณี สุพีรัตน์",
-            "en-US": "Supannee Supeerath",
-          },
-          jobDescs: [
-            {
-              th: "ที่ปรึกษา",
-              "en-US": "Advisor",
+const ContactAdvisors = (): JSX.Element => {
+  const { t } = useTranslation("about");
+
+  return (
+    <Section>
+      <Header
+        icon={<MaterialIcon icon="supervised_user_circle" allowCustomSize />}
+        text={t("contactAdvisors.title")} />
+      <p>
+        {t("contactAdvisors.supportingText")}
+      </p>
+      <PeopleList
+        people={[
+          {
+            name: {
+              th: "สุพรรณี สุพีรัตน์",
+              "en-US": "Supannee Supeerath",
             },
-          ],
-          contacts: [{ type: "Email", url: "mailto:supannee@sk.ac.th" }],
-        },
-        {
-          name: {
-            th: "อติพล สุกฤษฎานนท์",
-            "en-US": "Atipol Sukrisadanon",
+            jobDescs: [
+              {
+                th: "ที่ปรึกษา",
+                "en-US": "Advisor",
+              },
+            ],
+            contacts: [{ type: "Email", url: "mailto:supannee@sk.ac.th" }],
           },
-          jobDescs: [
-            {
-              th: "ที่ปรึกษา",
-              "en-US": "Advisor",
+          {
+            name: {
+              th: "อติพล สุกฤษฎานนท์",
+              "en-US": "Atipol Sukrisadanon",
             },
-          ],
-          contacts: [
-            { type: "Email", url: "mailto:atipol.suk@sk.ac.th" },
-            { type: "Line", url: "https://line.me/ti/p/~zsakez" },
-            { type: "Phone", url: "tel:+66614166498" },
-          ],
-        },
-      ]}
-    />
-  </Section>
-);
+            jobDescs: [
+              {
+                th: "ที่ปรึกษา",
+                "en-US": "Advisor",
+              },
+            ],
+            contacts: [
+              { type: "Email", url: "mailto:atipol.suk@sk.ac.th" },
+              { type: "Line", url: "https://line.me/ti/p/~zsakez" },
+              { type: "Phone", url: "tel:+66614166498" },
+            ],
+          },
+        ]} />
+    </Section>
+  );
+};
 
 const PeopleList = ({
   people,
