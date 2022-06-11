@@ -14,5 +14,10 @@
   "contactAdvisors": {
     "title": "Contact advisors",
     "supportingText": "For more sensitive questions and concerns, please contact our advisors instead."
+  },
+  "contribute": {
+    "title": "Contributing to MySK",
+    "supportingText": "MySK is an open source project, which means that anyone, including you, can contribute. If you plan to contribute to MySK, check us out on <2>GitHub</2>, <5>developer Discord</5>, and our <8>club Facebook page</8>.",
+    "contributorsList": "We are grateful for all of our amazing contributors listed below, this website would not be possible without them! Check them out:"
   }
 }

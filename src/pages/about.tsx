@@ -187,43 +187,44 @@ const ContributeSection = () => {
     <Section>
       <Header
         icon={<MaterialIcon icon="waving_hand" allowCustomSize />}
-        // text={t("contribute.title")}
-        text="Contributing to MySK"
+        text={t("contribute.title")}
       />
       <p>
-        MySK is an open source project, which means that anyone, including you,
-        can contribute. If you plan to contribute to MySK, check us out on{" "}
-        <a
-          className="link"
-          href="https://github.com/suankularb-wittayalai-school"
-          target="_blank"
-          rel="noreferrer"
-        >
-          GitHub
-        </a>
-        ,{" "}
-        <a
-          className="link"
-          href="https://discord.gg/nEPPqx7kK2"
-          target="_blank"
-          rel="noreferrer"
-        >
-          developer Discord
-        </a>
-        , and our{" "}
-        <a
-          className="link"
-          href="https://www.facebook.com/SKTechDev"
-          target="_blank"
-          rel="noreferrer"
-        >
-          club Facebook page
-        </a>
-        .
+        <Trans i18nKey="contribute.supportingText" ns="about">
+          MySK is an open source project, which means that anyone, including
+          you, can contribute. If you plan to contribute to MySK, check us out
+          on{" "}
+          <a
+            className="link"
+            href="https://github.com/suankularb-wittayalai-school"
+            target="_blank"
+            rel="noreferrer"
+          >
+            GitHub
+          </a>
+          ,{" "}
+          <a
+            className="link"
+            href="https://discord.gg/nEPPqx7kK2"
+            target="_blank"
+            rel="noreferrer"
+          >
+            developer Discord
+          </a>
+          , and our{" "}
+          <a
+            className="link"
+            href="https://www.facebook.com/SKTechDev"
+            target="_blank"
+            rel="noreferrer"
+          >
+            club Facebook page
+          </a>
+          .
+        </Trans>
       </p>
       <p>
-        We are grateful for all of our amazing contributors listed below, this
-        website would not be possible without them! Check them out:
+        {t("contribute.contributorsList")}
       </p>
       <ul className="layout-grid-cols-6">
         <li>
