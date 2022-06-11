@@ -95,8 +95,9 @@ const DevelopersBanner = ({
                 aria-labelledby="advice-from"
                 className="flex flex-col gap-x-6 font-sans sm:grid sm:grid-cols-2"
               >
-                <li>Supannee Supeerath</li>
-                <li>Atipol Sukrisadanon</li>
+                {advisors.map((advisor) => (
+                  <li key={advisor.th}>{advisor[locale]}</li>
+                ))}
               </ul>
             </section>
           </div>
@@ -381,7 +382,16 @@ const Developers: NextPage = (): JSX.Element => {
               "en-US": "Siravit Phokeed",
             },
           ]}
-          advisors={[]}
+          advisors={[
+            {
+              th: "อาจารย์สุพรรณี สุพีรัตน์",
+              "en-US": "T. Supannee Supeerath",
+            },
+            {
+              th: "อาจารย์อติพล สุกฤษฎานนท์",
+              "en-US": "T. Atipol Sukrisadanon",
+            },
+          ]}
         />
         <ContactDevelopers />
         <ContactAdvisors />
