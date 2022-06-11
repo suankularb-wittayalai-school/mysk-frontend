@@ -22,10 +22,18 @@ import ContactIcon from "@components/icons/ContactIcon";
 import ProfilePicture from "@components/ProfilePicture";
 
 // Types
+import { MultiLangString } from "@utils/types/common";
 import { ContactVia } from "@utils/types/contact";
 
-const DevelopersBanner = (): JSX.Element => {
+const DevelopersBanner = ({
+  coreTeam,
+  advisors,
+}: {
+  coreTeam: MultiLangString[];
+  advisors: MultiLangString[];
+}): JSX.Element => {
   const { t } = useTranslation("about");
+  const locale = useRouter().locale as "en-US" | "th";
 
   return (
     <Section>
@@ -69,10 +77,9 @@ const DevelopersBanner = (): JSX.Element => {
                 aria-labelledby="led-by"
                 className="flex flex-col gap-x-6 font-sans sm:grid sm:grid-cols-2"
               >
-                <li>Tempoom Leelacharoen</li>
-                <li>Sadudee Theparree</li>
-                <li>Smart Wattanapornmongkol</li>
-                <li>Siravit Phokeed</li>
+                {coreTeam.map((developer) => (
+                  <li key={developer.th}>{developer[locale]}</li>
+                ))}
               </ul>
             </section>
 
@@ -355,7 +362,27 @@ const Developers: NextPage = (): JSX.Element => {
           />
         }
       >
-        <DevelopersBanner />
+        <DevelopersBanner
+          coreTeam={[
+            {
+              th: "เต็มภูมิ ลีลาเจริญ",
+              "en-US": "Tempoom Leela­charoen",
+            },
+            {
+              th: "สดุดี เทพอารีย์",
+              "en-US": "Sadudee Theparree",
+            },
+            {
+              th: "สมัชญ์ วัฒนพรมงคล",
+              "en-US": "Smart Wattana­porn­mongkol",
+            },
+            {
+              th: "ศิรวิทย์ โพธิ์ขีด",
+              "en-US": "Siravit Phokeed",
+            },
+          ]}
+          advisors={[]}
+        />
         <ContactDevelopers />
         <ContactAdvisors />
       </RegularLayout>
