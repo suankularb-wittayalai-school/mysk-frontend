@@ -16,8 +16,8 @@
     "supportingText": "สำหรับคำถามและข้อกังวลที่มีคสามละเอียดอ่อน ขออณุญาติให้ติดต่ออาจารย์ที่ปรึกษาของเราแทน"
   },
   "contribute": {
-    "title": "Contributing to MySK",
-    "supportingText": "MySK is an open source project, which means that anyone, including you, can contribute. If you plan to contribute to MySK, check us out on <2>GitHub</2>, <5>developer Discord</5>, and our <8>club Facebook page</8>.",
-    "contributorsList": "We are grateful for all of our amazing contributors listed below, this website would not be possible without them! Check them out:"
+    "title": "ร่วมการพัฒนา MySK",
+    "supportingText": "MySK เป็นโปรเจ็ค open source ซึ่งหมายความว่าทุกคนสามารถมาช่วยเราพัฒนาระบบได้ หากสนใจในการช่วยพัฒนา สามารถติดต่อเราได้ทาง<2>องค์กร GitHub</2> <5>Discord ผู้พัฒนา</5> และ<8>เพจ Facebook ของชุมนุมเรา</8>",
+    "contributorsList": "ผู้พัฒนาขอขอบคุณผู้มีส่วนร่วมในการพัฒนา MySK เว็บไซต์นี้ไม่อาจเกิดขึ้นได้หากเราไม่มีทุกคนที่ได้เขียนไว้ข้างล่างนี้"
   }
 }
