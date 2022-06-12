@@ -330,7 +330,7 @@ const Developers: NextPage = (): JSX.Element => {
         th: "เต็มภูมิ ลีลาเจริญ",
         "en-US": "Tempoom Leela­charoen",
       },
-      profile: "/images/developers/tempoom.png",
+      profile: "/images/developers/tempoom.webp",
       jobDescs: [
         {
           th: "วิศวกรประกันคุณภาพ",
@@ -354,7 +354,7 @@ const Developers: NextPage = (): JSX.Element => {
         th: "สดุดี เทพอารีย์",
         "en-US": "Sadudee Theparree",
       },
-      profile: "/images/developers/sadudee.png",
+      profile: "/images/developers/sadudee.webp",
       jobDescs: [
         {
           th: "ผู้พัฒนาฐานเว็บไซต์",
@@ -375,7 +375,7 @@ const Developers: NextPage = (): JSX.Element => {
         th: "สมัชญ์ วัฒนพรมงคล",
         "en-US": "Smart Wattana­porn­mongkol",
       },
-      profile: "/images/developers/smart.png",
+      profile: "/images/developers/smart.webp",
       jobDescs: [
         {
           th: "นักออกแบบสถาปัตยกรรมฐานข้อมูล",
@@ -400,7 +400,7 @@ const Developers: NextPage = (): JSX.Element => {
         th: "ศิรวิทย์ โพธิ์ขีด",
         "en-US": "Siravit Phokeed",
       },
-      profile: "/images/developers/siravit.png",
+      profile: "/images/developers/siravit.webp",
       jobDescs: [
         {
           th: "นักออกแบบเว็บไซต์",
@@ -427,7 +427,7 @@ const Developers: NextPage = (): JSX.Element => {
         th: "สุพรรณี สุพีรัตน์",
         "en-US": "Supannee Supeerath",
       },
-      profile: "/images/developers/supannee.png",
+      profile: "/images/developers/supannee.webp",
       jobDescs: [
         {
           th: "ที่ปรึกษา",
@@ -444,7 +444,7 @@ const Developers: NextPage = (): JSX.Element => {
         th: "อติพล สุกฤษฎานนท์",
         "en-US": "Atipol Sukrisadanon",
       },
-      profile: "/images/developers/atipol.png",
+      profile: "/images/developers/atipol.webp",
       jobDescs: [
         {
           th: "ที่ปรึกษา",
