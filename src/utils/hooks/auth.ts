@@ -19,7 +19,7 @@ export function useSession(option?: UseSessionOption) {
 
   useEffect(() => {
     if (!supabase.auth.session()) {
-      router.push("/");
+      setSession(null)
     }
 
     setSession(supabase.auth.session());
@@ -27,7 +27,7 @@ export function useSession(option?: UseSessionOption) {
     supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
     });
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     if (session) {
