@@ -186,7 +186,7 @@ const ContributeSection = () => {
   return (
     <Section>
       <Header
-        icon={<MaterialIcon icon="waving_hand" allowCustomSize />}
+        icon={<MaterialIcon icon="handshake" allowCustomSize />}
         text={t("contribute.title")}
       />
       <p>
@@ -223,9 +223,7 @@ const ContributeSection = () => {
           .
         </Trans>
       </p>
-      <p>
-        {t("contribute.contributorsList")}
-      </p>
+      <p>{t("contribute.contributorsList")}</p>
       <ul className="layout-grid-cols-6">
         <li>
           <a
@@ -429,19 +427,24 @@ const Developers: NextPage = (): JSX.Element => {
         th: "สุพรรณี สุพีรัตน์",
         "en-US": "Supannee Supeerath",
       },
+      profile: "/images/developers/supannee.png",
       jobDescs: [
         {
           th: "ที่ปรึกษา",
           "en-US": "Advisor",
         },
       ],
-      contacts: [{ type: "Email", url: "mailto:supannee@sk.ac.th" }],
+      contacts: [
+        { type: "Email", url: "mailto:supannee@sk.ac.th" },
+        { type: "Phone", url: "tel:+66898821951" },
+      ],
     },
     {
       name: {
         th: "อติพล สุกฤษฎานนท์",
         "en-US": "Atipol Sukrisadanon",
       },
+      profile: "/images/developers/atipol.png",
       jobDescs: [
         {
           th: "ที่ปรึกษา",
