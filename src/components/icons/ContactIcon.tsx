@@ -11,7 +11,7 @@ const ContactIcon = ({
   icon,
   width,
 }: {
-  icon: ContactVia;
+  icon: ContactVia | "GitHub";
   width?: number;
 }): JSX.Element => (
   <div

@@ -29,7 +29,7 @@ type PeopleListType = {
   name: { th: string; "en-US"?: string };
   profile?: string;
   jobDescs: { th: string; "en-US"?: string }[];
-  contacts: { type: ContactVia; url: string }[];
+  contacts: { type: ContactVia | "GitHub"; url: string }[];
 }[];
 
 // Sections
