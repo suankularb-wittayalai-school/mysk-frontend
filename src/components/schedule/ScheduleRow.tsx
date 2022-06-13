@@ -8,14 +8,37 @@ import SchedulePeriod from "@components/schedule/SchedulePeriod";
 
 // Types
 import { Role } from "@utils/types/person";
-import { ScheduleRow as ScheduleRowType } from "@utils/types/schedule";
+import {
+  ScheduleRow as ScheduleRowType,
+  SchedulePeriod as SchedulePeriodType,
+} from "@utils/types/schedule";
 
 const ScheduleRow = ({
   scheduleRow,
   role,
+  setAddPeriod,
+  setEditPeriod,
 }: {
   scheduleRow: ScheduleRowType;
   role: Role;
+  setAddPeriod?: ({
+    show,
+    day,
+    startTime,
+  }: {
+    show: boolean;
+    day: Day;
+    startTime: number;
+  }) => void;
+  setEditPeriod?: ({
+    show,
+    day,
+    schedulePeriod,
+  }: {
+    show: boolean;
+    day: Day;
+    schedulePeriod: SchedulePeriodType;
+  }) => void;
 }): JSX.Element => {
   const { t } = useTranslation("common");
 
@@ -40,6 +63,8 @@ const ScheduleRow = ({
             day={day}
             periodWidth={periodWidth}
             role={role}
+            setAddPeriod={setAddPeriod}
+            setEditPeriod={setEditPeriod}
           />
         ))}
       </ul>

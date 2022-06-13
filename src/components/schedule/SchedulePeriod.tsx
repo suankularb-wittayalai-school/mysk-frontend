@@ -2,6 +2,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
+import { useState } from "react";
 
 // SK Components
 import { MaterialIcon } from "@suankularb-components/react";
@@ -19,15 +20,28 @@ import { animationTransition } from "@utils/animations/config";
 
 // Helpers
 import { isInPeriod } from "@utils/helpers/schedule";
-import { useReducer, useState } from "react";
 
 // Empty Schedule Period
 const EmptySchedulePeriod = ({
   isInSession,
-  role
+  day,
+  startTime,
+  role,
+  setAddPeriod,
 }: {
   isInSession: boolean;
+  day: Day;
+  startTime: number;
   role: Role;
+  setAddPeriod?: ({
+    show,
+    day,
+    startTime,
+  }: {
+    show: boolean;
+    day: Day;
+    startTime: number;
+  }) => void;
 }): JSX.Element =>
   role == "teacher" ? (
     <button
@@ -38,6 +52,11 @@ const EmptySchedulePeriod = ({
             ? "outline-4 outline-offset-[-4px] outline-secondary"
             : "outline-2 outline-offset-[-2px] outline-outline"
         }`}
+      onClick={
+        setAddPeriod
+          ? () => setAddPeriod({ show: true, day, startTime })
+          : undefined
+      }
     >
       <MaterialIcon
         icon="add"
@@ -60,12 +79,24 @@ const EmptySchedulePeriod = ({
 // Subject Schedule Period
 const SubjectSchedulePeriod = ({
   isInSession,
+  day,
   schedulePeriod,
   role,
+  setEditPeriod,
 }: {
   isInSession: boolean;
+  day: Day;
   schedulePeriod: SchedulePeriodType;
   role: Role;
+  setEditPeriod?: ({
+    show,
+    day,
+    schedulePeriod,
+  }: {
+    show: boolean;
+    day: Day;
+    schedulePeriod: SchedulePeriodType;
+  }) => void;
 }): JSX.Element => {
   const { t } = useTranslation("common");
   const locale = useRouter().locale as "en-US" | "th";
@@ -108,7 +139,15 @@ const SubjectSchedulePeriod = ({
       onBlur={() => setShowMenu(false)}
     >
       {role == "teacher" && (
-        <AnimatePresence>{showMenu && <PeriodHoverMenu />}</AnimatePresence>
+        <AnimatePresence>
+          {showMenu && (
+            <PeriodHoverMenu
+              day={day}
+              schedulePeriod={schedulePeriod}
+              setEditPeriod={setEditPeriod}
+            />
+          )}
+        </AnimatePresence>
       )}
       <div className="flex flex-col px-4 py-2">
         {role == "teacher" ? (
@@ -156,7 +195,23 @@ const SubjectSchedulePeriod = ({
   );
 };
 
-const PeriodHoverMenu = (): JSX.Element => {
+const PeriodHoverMenu = ({
+  day,
+  schedulePeriod,
+  setEditPeriod,
+}: {
+  day: Day;
+  schedulePeriod: SchedulePeriodType;
+  setEditPeriod?: ({
+    show,
+    day,
+    schedulePeriod,
+  }: {
+    show: boolean;
+    day: Day;
+    schedulePeriod: SchedulePeriodType;
+  }) => void;
+}): JSX.Element => {
   return (
     <motion.div
       className="pointer-events-none absolute h-full w-full
@@ -171,6 +226,11 @@ const PeriodHoverMenu = (): JSX.Element => {
         <button
           className="primary pointer-events-auto absolute top-0 left-1/2
             w-fit rounded-full p-1 text-xl shadow"
+          onClick={
+            setEditPeriod
+              ? () => setEditPeriod({ show: true, day, schedulePeriod })
+              : undefined
+          }
         >
           <MaterialIcon icon="edit" allowCustomSize />
         </button>
@@ -202,12 +262,32 @@ const SchedulePeriod = ({
   day,
   periodWidth,
   role,
+  setAddPeriod,
+  setEditPeriod,
 }: {
   schedulePeriod: SchedulePeriodType;
   now: Date;
   day: Date;
   periodWidth: number;
   role: Role;
+  setAddPeriod?: ({
+    show,
+    day,
+    startTime,
+  }: {
+    show: boolean;
+    day: Day;
+    startTime: number;
+  }) => void;
+  setEditPeriod?: ({
+    show,
+    day,
+    schedulePeriod,
+  }: {
+    show: boolean;
+    day: Day;
+    schedulePeriod: SchedulePeriodType;
+  }) => void;
 }): JSX.Element => (
   <motion.li
     key={schedulePeriod.startTime}
@@ -231,7 +311,9 @@ const SchedulePeriod = ({
           schedulePeriod.duration
         )}
         schedulePeriod={schedulePeriod}
+        day={day.getDay() as Day}
         role={role}
+        setEditPeriod={setEditPeriod}
       />
     ) : (
       // Empty period
@@ -242,7 +324,10 @@ const SchedulePeriod = ({
           schedulePeriod.startTime,
           schedulePeriod.duration
         )}
+        day={day.getDay() as Day}
+        startTime={schedulePeriod.startTime}
         role={role}
+        setAddPeriod={setAddPeriod}
       />
     )}
   </motion.li>

@@ -22,7 +22,10 @@ import EditPeriod from "@components/dialogs/EditPeriod";
 import Schedule from "@components/schedule/Schedule";
 
 // Types
-import { Schedule as ScheduleType } from "@utils/types/schedule";
+import {
+  Schedule as ScheduleType,
+  SchedulePeriod,
+} from "@utils/types/schedule";
 
 const TeacherSchedule: NextPage<{ schedule: ScheduleType }> = ({
   schedule: fetchedSchedule,
@@ -32,8 +35,16 @@ const TeacherSchedule: NextPage<{ schedule: ScheduleType }> = ({
   const [schedule, setSchedule] = useState<ScheduleType>(fetchedSchedule);
 
   // Dialog control
-  const [showAddPeriod, setShowAddPeriod] = useState<boolean>(false);
-  const [showEditPeriod, setShowEditPeriod] = useState<boolean>(false);
+  const [addPeriod, setAddPeriod] = useState<{
+    show: boolean;
+    day: Day;
+    startTime: number;
+  }>({ show: false, day: 1, startTime: 1 });
+  const [editPeriod, setEditPeriod] = useState<{
+    show: boolean;
+    day: Day;
+    schedulePeriod: SchedulePeriod;
+  }>({ show: false, day: 1, schedulePeriod: { startTime: 1, duration: 1 } });
 
   return (
     <>
@@ -48,33 +59,42 @@ const TeacherSchedule: NextPage<{ schedule: ScheduleType }> = ({
         }
       >
         <Section>
-          <Schedule schedule={schedule} role="teacher" />
+          <Schedule
+            schedule={schedule}
+            role="teacher"
+            setAddPeriod={setAddPeriod}
+            setEditPeriod={setEditPeriod}
+          />
           <div className="flex flex-row items-center justify-end gap-2">
             <Button
               label={t("schedule.action.add")}
               type="filled"
               icon={<MaterialIcon icon="add" />}
-              onClick={() => setShowAddPeriod(true)}
+              onClick={() => setAddPeriod({ show: true, day: 1, startTime: 1 })}
             />
           </div>
         </Section>
       </RegularLayout>
       <EditPeriod
-        show={showAddPeriod}
-        onClose={() => setShowAddPeriod(false)}
-        onSubmit={(formData: FormData) => {
+        show={addPeriod.show}
+        onClose={() => setAddPeriod({ ...addPeriod, show: false })}
+        onSubmit={() => {
           // TODO: Send and refresh
           router.push(router.asPath);
         }}
+        day={addPeriod.day}
+        schedulePeriod={{ startTime: addPeriod.startTime, duration: 1 }}
         mode="add"
       />
       <EditPeriod
-        show={showEditPeriod}
-        onClose={() => setShowEditPeriod(false)}
-        onSubmit={(formData: FormData) => {
+        show={editPeriod.show}
+        onClose={() => setEditPeriod({ ...editPeriod, show: false })}
+        onSubmit={() => {
           // TODO: Send and refresh
           router.push(router.asPath);
         }}
+        day={editPeriod.day}
+        schedulePeriod={editPeriod.schedulePeriod}
         mode="edit"
       />
     </>

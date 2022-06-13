@@ -1,9 +1,7 @@
 // Modules
 import { useRouter } from "next/router";
-
 import { useTranslation } from "next-i18next";
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // SK Components
 import {
@@ -20,69 +18,81 @@ import DiscardDraft from "@components/dialogs/DiscardDraft";
 import { DialogProps } from "@utils/types/common";
 
 // Backend
-import { addPeriodtoSchedule } from "@utils/backend/schedule";
+import { SchedulePeriod } from "@utils/types/schedule";
 
 const EditPeriod = ({
   show,
   onClose,
   onSubmit,
   mode,
+  day,
+  schedulePeriod,
 }: DialogProps & {
   onSubmit: (formData: FormData) => void;
   mode: "add" | "edit";
+  day: Day;
+  schedulePeriod: SchedulePeriod;
 }): JSX.Element => {
   const { t } = useTranslation(["schedule", "common"]);
   const locale = useRouter().locale as "en-US" | "th";
+
+  // Dialog control
   const [showDiscard, setShowDiscard] = useState<boolean>(false);
 
   // Form control
-  const [form, setForm] = useState({
-    subject: 1,
-    day: "1",
-    periodStart: "",
-    duration: "1",
+  const [form, setForm] = useState<{
+    subject: number;
+    day: number;
+    startTime: number;
+    duration: number;
+  }>({
+    subject: 0,
+    day,
+    startTime: schedulePeriod.startTime,
+    duration: schedulePeriod.duration,
   });
 
-  function validateAndSend() {
-    // Pre-parse validation
-    if (!form.periodStart) return false;
+  useEffect(() => {
+    setForm({
+      subject: 0,
+      day,
+      startTime: schedulePeriod.startTime,
+      duration: schedulePeriod.duration,
+    });
+  }, [show, day, schedulePeriod]);
 
-    const periodStart = parseInt(form.periodStart);
-    const duration = parseInt(form.duration);
-    let formData = new FormData();
-
-    // Validates
-    if (form.subject < 0) return false;
+  // Form validation
+  function validate() {
+    if (!form.startTime) return false;
+    if (!form.subject) return false;
     if (!form.day) return false;
-    if (periodStart < 0 || periodStart > 10) return false;
-    if (duration < 1 || duration > 10) return false;
-
-    // Appends to form data
-    formData.append("subject", form.subject.toString());
-    formData.append("day", form.day);
-    formData.append("period-start", form.periodStart);
-    formData.append("duration", form.duration);
-
-    // Send
-    onSubmit(formData);
-    addPeriodtoSchedule(formData);
+    if (form.startTime < 0 || form.startTime > 10) return false;
+    if (form.duration < 1 || form.duration > 10) return false;
 
     return true;
+  }
+
+  // Form submission
+  function handleSubmit() {
+    if (!validate()) return;
   }
 
   return (
     <>
       <Dialog
         type="regular"
-        label="add-period"
-        title={t("dialog.add.title")}
+        label={`${mode}-period`}
+        title={t(`dialog.add.title.${mode}`)}
         actions={[
           { name: t("dialog.add.action.cancel"), type: "close" },
           { name: t("dialog.add.action.save"), type: "submit" },
         ]}
         show={show}
         onClose={() => setShowDiscard(true)}
-        onSubmit={() => validateAndSend() && onClose()}
+        onSubmit={() => {
+          handleSubmit();
+          onClose();
+        }}
       >
         <DialogSection name={t("dialog.add.form.title")} hasNoGap>
           <Dropdown
@@ -104,34 +114,35 @@ const EditPeriod = ({
             label={t("dialog.add.form.day")}
             options={[
               {
-                value: "1",
+                value: 1,
                 label: t("datetime.day.1", { ns: "common" }),
               },
               {
-                value: "2",
+                value: 2,
                 label: t("datetime.day.2", { ns: "common" }),
               },
               {
-                value: "3",
+                value: 3,
                 label: t("datetime.day.3", { ns: "common" }),
               },
               {
-                value: "4",
+                value: 4,
                 label: t("datetime.day.4", { ns: "common" }),
               },
               {
-                value: "5",
+                value: 5,
                 label: t("datetime.day.5", { ns: "common" }),
               },
             ]}
-            defaultValue="1"
-            onChange={(e: string) => setForm({ ...form, day: e })}
+            defaultValue={day}
+            onChange={(e: string) => setForm({ ...form, day: Number(e) })}
           />
           <KeyboardInput
             name="period-start"
             type="number"
             label={t("dialog.add.form.periodStart")}
-            onChange={(e: string) => setForm({ ...form, periodStart: e })}
+            defaultValue={schedulePeriod.startTime}
+            onChange={(e: string) => setForm({ ...form, startTime: Number(e) })}
             attr={{
               min: 1,
               max: 10,
@@ -141,8 +152,8 @@ const EditPeriod = ({
             name="duration"
             type="number"
             label={t("dialog.add.form.duration")}
-            defaultValue="1"
-            onChange={(e: string) => setForm({ ...form, duration: e })}
+            defaultValue={schedulePeriod.duration}
+            onChange={(e: string) => setForm({ ...form, duration: Number(e) })}
             attr={{
               min: 1,
               max: 10,

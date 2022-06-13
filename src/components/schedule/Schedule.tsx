@@ -13,6 +13,7 @@ import ScheduleRow from "@components/schedule/ScheduleRow";
 import { Role } from "@utils/types/person";
 import {
   Schedule as Schedule,
+  SchedulePeriod,
   ScheduleRow as ScheduleRowType,
 } from "@utils/types/schedule";
 
@@ -43,10 +44,30 @@ const Schedule = ({
   schedule,
   role,
   noScroll,
+  setAddPeriod,
+  setEditPeriod,
 }: {
   schedule: Schedule;
   role: Role;
   noScroll?: boolean;
+  setAddPeriod?: ({
+    show,
+    day,
+    startTime,
+  }: {
+    show: boolean;
+    day: Day;
+    startTime: number;
+  }) => void;
+  setEditPeriod?: ({
+    show,
+    day,
+    schedulePeriod,
+  }: {
+    show: boolean;
+    day: Day;
+    schedulePeriod: SchedulePeriod;
+  }) => void;
 }): JSX.Element => (
   <div className="scroll-w-0 flex flex-row gap-5 overflow-x-auto !px-0 sm:overflow-x-visible">
     <div aria-hidden className="flex flex-col gap-2 pt-4 pb-2 pl-4 sm:pl-0">
@@ -66,6 +87,8 @@ const Schedule = ({
               key={scheduleRow.day}
               scheduleRow={scheduleRow}
               role={role}
+              setAddPeriod={setAddPeriod}
+              setEditPeriod={setEditPeriod}
             />
           ))}
         </ul>
