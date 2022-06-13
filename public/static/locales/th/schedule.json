@@ -20,6 +20,17 @@
     }
   },
   "dialog": {
+    "addPeriod": {
+      "title": "เพิ่มการสอน",
+      "form": {
+        "title": "ข้อมูลคาบ",
+        "subject": "วิชาที่สอนในคาบนี้"
+      },
+      "action": {
+        "cancel": "ยกเลิก",
+        "save": "เพิ่ม"
+      }
+    },
     "editPeriod": {
       "title": {
         "add": "เพิ่มคาบสอน",

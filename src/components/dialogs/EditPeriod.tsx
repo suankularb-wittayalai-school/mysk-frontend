@@ -31,7 +31,7 @@ const EditPeriod = ({
   day,
   schedulePeriod,
 }: DialogProps & {
-  onSubmit: (formData: FormData) => void;
+  onSubmit: () => void;
   mode: "add" | "edit";
   day: Day;
   schedulePeriod: SchedulePeriod;
@@ -66,7 +66,7 @@ const EditPeriod = ({
   }, [show, day, schedulePeriod]);
 
   // Form validation
-  function validate() {
+  function validate(): boolean {
     if (!form.startTime) return false;
     if (!form.subject) return false;
     if (!form.day) return false;
@@ -109,15 +109,6 @@ const EditPeriod = ({
                     label: (subject.name[locale] || subject.name.th).name,
                   }))
                 : []
-              /*[
-                {
-                  value: 1,
-                  label: {
-                    "en-US": "English 1",
-                    th: "ภาษาอังกฤษ 1",
-                  }[locale],
-                },
-              ]*/
             }
             defaultValue={schedulePeriod.subject?.id}
             onChange={(e: number) => setForm({ ...form, subject: e })}

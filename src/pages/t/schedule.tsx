@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useState } from "react";
+import { useReducer, useState } from "react";
 
 // SK Components
 import {
@@ -26,6 +26,7 @@ import {
   Schedule as ScheduleType,
   SchedulePeriod,
 } from "@utils/types/schedule";
+import AddPeriodDialog from "@components/dialogs/AddPeriod";
 
 const TeacherSchedule: NextPage<{ schedule: ScheduleType }> = ({
   schedule: fetchedSchedule,
@@ -35,11 +36,17 @@ const TeacherSchedule: NextPage<{ schedule: ScheduleType }> = ({
   const [schedule, setSchedule] = useState<ScheduleType>(fetchedSchedule);
 
   // Dialog control
-  const [addPeriod, setAddPeriod] = useState<{
+  const [addSubjectToPeriod, setAddSubjectToPeriod] = useState<{
     show: boolean;
     day: Day;
     startTime: number;
   }>({ show: false, day: 1, startTime: 1 });
+
+  const [addPeriod, toggleAddPeriod] = useReducer(
+    (state: boolean) => !state,
+    false
+  );
+
   const [editPeriod, setEditPeriod] = useState<{
     show: boolean;
     day: Day;
@@ -62,7 +69,7 @@ const TeacherSchedule: NextPage<{ schedule: ScheduleType }> = ({
           <Schedule
             schedule={schedule}
             role="teacher"
-            setAddPeriod={setAddPeriod}
+            setAddPeriod={setAddSubjectToPeriod}
             setEditPeriod={setEditPeriod}
           />
           <div className="flex flex-row items-center justify-end gap-2">
@@ -70,29 +77,38 @@ const TeacherSchedule: NextPage<{ schedule: ScheduleType }> = ({
               label={t("schedule.action.add")}
               type="filled"
               icon={<MaterialIcon icon="add" />}
-              onClick={() => setAddPeriod({ show: true, day: 1, startTime: 1 })}
+              onClick={() => toggleAddPeriod()}
             />
           </div>
         </Section>
       </RegularLayout>
-      <EditPeriod
-        show={addPeriod.show}
-        onClose={() => setAddPeriod({ ...addPeriod, show: false })}
-        onSubmit={() => {
-          // TODO: Send and refresh
-          router.push(router.asPath);
+      <AddPeriodDialog
+        show={addSubjectToPeriod.show}
+        onClose={() =>
+          setAddSubjectToPeriod({ ...addSubjectToPeriod, show: false })
+        }
+        onSubmit={() => router.push(router.asPath)}
+        day={addSubjectToPeriod.day}
+        schedulePeriod={{
+          startTime: addSubjectToPeriod.startTime,
+          duration: 1,
         }}
-        day={addPeriod.day}
-        schedulePeriod={{ startTime: addPeriod.startTime, duration: 1 }}
+      />
+      <EditPeriod
+        show={addPeriod}
+        onClose={() => toggleAddPeriod()}
+        onSubmit={() => router.push(router.asPath)}
+        day={1}
+        schedulePeriod={{
+          startTime: 1,
+          duration: 1,
+        }}
         mode="add"
       />
       <EditPeriod
         show={editPeriod.show}
         onClose={() => setEditPeriod({ ...editPeriod, show: false })}
-        onSubmit={() => {
-          // TODO: Send and refresh
-          router.push(router.asPath);
-        }}
+        onSubmit={() => router.push(router.asPath)}
         day={editPeriod.day}
         schedulePeriod={editPeriod.schedulePeriod}
         mode="edit"
