@@ -14,12 +14,12 @@ import {
 import Schedule from "@components/schedule/Schedule";
 
 // Types
-import { StudentSchedule } from "@utils/types/schedule";
+import { Schedule } from "@utils/types/schedule";
 
 const SubjectsSection = ({
   schedule,
 }: {
-  schedule: StudentSchedule;
+  schedule: Schedule;
 }): JSX.Element => {
   const { t } = useTranslation("dashboard");
 

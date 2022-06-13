@@ -3,7 +3,7 @@ import { ClassWNumber } from "./class";
 import { Teacher } from "./person";
 import { Subject } from "./subject";
 
-export type StudentSchedule = {
+export type Schedule = {
   id: number;
   content: ScheduleRow[];
 };
@@ -21,6 +21,7 @@ export type SchedulePeriod = {
     teachers: Teacher[];
     coTeachers?: Teacher[];
   };
+  // The class taking this Subject
   class?: ClassWNumber;
   // Physical room wherein this Subject is taught (Ex. 1214, 4306)
   room?: string;

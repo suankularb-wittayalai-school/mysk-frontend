@@ -30,7 +30,7 @@ import TeachersSection from "@components/home-sections/TeachersSection";
 // Types
 import { NewsList } from "@utils/types/news";
 import { Teacher } from "@utils/types/person";
-import { StudentSchedule } from "@utils/types/schedule";
+import { Schedule } from "@utils/types/schedule";
 
 // Helpers
 import { useStudentAccount } from "@utils/hooks/auth";
@@ -38,7 +38,7 @@ import { useStudentAccount } from "@utils/hooks/auth";
 // Page
 const StudentHome: NextPage<{
   news: NewsList;
-  schedule: StudentSchedule;
+  schedule: Schedule;
   teachers: Array<Teacher>;
   classAdvisors: Array<Teacher>;
 }> = ({ news, schedule, teachers, classAdvisors }) => {
@@ -108,7 +108,7 @@ const StudentHome: NextPage<{
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
   const news: NewsList = [];
-  const schedule: StudentSchedule = {
+  const schedule: Schedule = {
     id: 0,
     content: [
       {

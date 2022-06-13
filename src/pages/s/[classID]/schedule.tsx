@@ -21,12 +21,12 @@ import {
 } from "@suankularb-components/react";
 
 // Components
-import Schedule from "@components/schedule/Schedule";
+import StudentSchedule from "@components/schedule/Schedule";
 import BrandIcon from "@components/icons/BrandIcon";
 
 // Types
 import { Role } from "@utils/types/person";
-import { StudentSchedule } from "@utils/types/schedule";
+import { Schedule as ScheduleType } from "@utils/types/schedule";
 import { SubjectListItem } from "@utils/types/subject";
 
 // Helpers
@@ -35,10 +35,10 @@ import { nameJoiner } from "@utils/helpers/name";
 const ScheduleSection = ({
   schedule,
 }: {
-  schedule: StudentSchedule;
+  schedule: ScheduleType;
 }): JSX.Element => (
   <Section>
-    <Schedule schedule={schedule} role="student" />
+    <StudentSchedule schedule={schedule} role="student" />
   </Section>
 );
 
@@ -151,7 +151,7 @@ const SubjectListSection = ({
 
 const StudentSchedule: NextPage<{
   role: Role;
-  schedule: StudentSchedule;
+  schedule: ScheduleType;
   subjectList: Array<SubjectListItem>;
 }> = ({ schedule, subjectList }) => {
   const { t } = useTranslation("schedule");
@@ -179,7 +179,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   locale,
   params,
 }) => {
-  const schedule: StudentSchedule = {
+  const schedule: ScheduleType = {
     id: 0,
     content: [
       { day: 1, content: [] },

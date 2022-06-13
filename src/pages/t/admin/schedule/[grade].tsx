@@ -20,12 +20,12 @@ import {
 import Schedule from "@components/schedule/Schedule";
 
 // Types
-import { StudentSchedule } from "@utils/types/schedule";
+import { Schedule } from "@utils/types/schedule";
 
 const ScheduleSection = ({
   schedule,
 }: {
-  schedule: StudentSchedule;
+  schedule: Schedule;
 }): JSX.Element => {
   const { t } = useTranslation("common");
   const locale = useRouter().locale as "en-US" | "th";
@@ -43,7 +43,7 @@ const ScheduleSection = ({
 
 const SchedulesThisGrade: NextPage<{
   grade: number;
-  schedulesThisGrade: Array<StudentSchedule>;
+  schedulesThisGrade: Array<Schedule>;
 }> = ({ grade, schedulesThisGrade }) => {
   const { t } = useTranslation(["admin", "common"]);
 
@@ -82,7 +82,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   params,
 }) => {
   const grade = params?.grade;
-  const schedulesThisGrade: Array<StudentSchedule> = [];
+  const schedulesThisGrade: Array<Schedule> = [];
 
   return {
     props: {

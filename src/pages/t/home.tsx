@@ -32,13 +32,13 @@ import UserSection from "@components/home-sections/UserSection";
 
 // Types
 import { NewsList, StudentForm } from "@utils/types/news";
-import { StudentSchedule } from "@utils/types/schedule";
+import { Schedule } from "@utils/types/schedule";
 
 // Hooks
 import { useTeacherAccount } from "@utils/hooks/auth";
 
 const TeacherHome: NextPage<{
-  schedule: StudentSchedule;
+  schedule: Schedule;
   studentForms: Array<StudentForm>;
   news: NewsList;
 }> = ({ schedule, studentForms, news }) => {
@@ -158,7 +158,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
       },
     },
   ];
-  const schedule: StudentSchedule = {
+  const schedule: Schedule = {
     id: 0,
     content: [
       {

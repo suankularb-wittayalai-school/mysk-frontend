@@ -150,7 +150,7 @@ const PeriodHoverMenu = (): JSX.Element => {
   return (
     <motion.div
       className="pointer-events-none absolute h-full w-full
-        rounded-lg bg-on-primary-translucent-12 outline-offset-0 outline-primary"
+        rounded-lg bg-secondary-translucent-12 outline-offset-0 outline-primary"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
