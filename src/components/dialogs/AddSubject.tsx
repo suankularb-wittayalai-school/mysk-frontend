@@ -167,7 +167,7 @@ const AddSubjectDialog = ({
             </h3>
             <p>
               {subject
-                ? subject.name[locale].name
+                ? (subject.name[locale] || subject.name.th).name
                 : t("dialog.addSubject.searchResult.notFound")}
             </p>
           </div>

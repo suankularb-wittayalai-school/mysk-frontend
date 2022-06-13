@@ -32,7 +32,12 @@ import { supabase } from "@utils/supabaseClient";
 
 // Types
 import { ChipInputListItem, DialogProps } from "@utils/types/common";
-import { Subject, SubjectTypeEN, SubjectTypeTH } from "@utils/types/subject";
+import {
+  Subject,
+  SubjectName,
+  SubjectTypeEN,
+  SubjectTypeTH,
+} from "@utils/types/subject";
 
 const EditSubjectDialog = ({
   show,
@@ -62,6 +67,11 @@ const EditSubjectDialog = ({
   ];
 
   const [loading, setLoading] = useState<boolean>(false);
+
+  // (@SiravitPhokeed)
+  // Looking back at this code… this doesn’t look very good, does it?
+  // Not sure I feel using a type like this for form control anymore, causes a lot
+  // of problems when I made English name optional.
 
   // Form control
   const defaultForm: Subject = {
@@ -215,7 +225,10 @@ const EditSubjectDialog = ({
   // Form validation
   function validate() {
     // Name
-    if (form.name.th.name.length == 0 || form.name["en-US"].name.length == 0)
+    if (
+      form.name.th.name.length == 0 ||
+      (form.name["en-US"] as SubjectName).name.length == 0
+    )
       return false;
     // Code
     if (form.code.th.length == 0 || form.code["en-US"].length == 0)
@@ -365,7 +378,7 @@ const EditSubjectDialog = ({
                 },
               })
             }
-            defaultValue={subject?.name["en-US"].name}
+            defaultValue={subject?.name["en-US"]?.name || ""}
           />
           <KeyboardInput
             name="short-name-en"
@@ -377,11 +390,11 @@ const EditSubjectDialog = ({
                 ...form,
                 name: {
                   ...form.name,
-                  "en-US": { ...form.name["en-US"], shortName: e },
+                  "en-US": { ...(form.name["en-US"] as SubjectName), shortName: e },
                 },
               })
             }
-            defaultValue={subject?.name["en-US"].shortName}
+            defaultValue={subject?.name["en-US"]?.shortName || ""}
           />
         </DialogSection>
 

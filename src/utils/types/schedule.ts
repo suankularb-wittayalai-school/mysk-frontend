@@ -5,6 +5,7 @@ import { Subject } from "./subject";
 
 export type Schedule = {
   id: number;
+  class?: ClassWNumber;
   content: ScheduleRow[];
 };
 

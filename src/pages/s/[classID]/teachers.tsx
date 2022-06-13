@@ -159,7 +159,7 @@ const Teachers: NextPage = (): JSX.Element => {
                             <div className="!flex gap-4">
                               <p>{subject.code[locale]}</p>
                               <p className="font-medium">
-                                {subject.name[locale].name}
+                                {(subject.name[locale] || subject.name.th).name}
                               </p>
                             </div>
                           }

@@ -122,19 +122,13 @@ const DetailsSection = ({
 
                 {/* Teachers */}
                 <td className="!text-left">
-                  <HoverList
-                    people={subjectRoom.teachers}
-                    useFullName
-                  />
+                  <HoverList people={subjectRoom.teachers} useFullName />
                 </td>
 
                 {/* Co-teachers */}
                 <td className="!text-left">
                   {subjectRoom.coTeachers && (
-                    <HoverList
-                      people={subjectRoom.coTeachers}
-                      useFullName
-                    />
+                    <HoverList people={subjectRoom.coTeachers} useFullName />
                   )}
                 </td>
 
@@ -540,7 +534,7 @@ const AssignmentDetailsDialog = ({
       <DialogSection name={t("substAsgn.dialog.asgnDetails.subject")}>
         <p>
           {assignment.subject.code[locale]}{" "}
-          {assignment.subject.name[locale].name}
+          {(assignment.subject.name[locale] || assignment.subject.name.th).name}
         </p>
       </DialogSection>
       <DialogSection name={t("substAsgn.dialog.asgnDetails.desc")}>
@@ -634,7 +628,7 @@ const EditAssignmentDialog = ({
             label={t("substAsgn.dialog.editAsgn.subject")}
             options={allSubjects.map((subject) => ({
               value: subject.id,
-              label: subject.name[locale].name,
+              label: (subject.name[locale] || subject.name.th).name,
             }))}
             onChange={(e: number) => setForm({ ...form, subject: e })}
             defaultValue={form.subject}
@@ -717,7 +711,7 @@ const SubjectDetails: NextPage<{
     <>
       <Head>
         <title>
-          {subject.name[locale].name || subject.name.th.name}
+          {(subject.name[locale] || subject.name.th).name}
           {" - "}
           {t("brand.name", { ns: "common" })}
         </title>
@@ -726,7 +720,7 @@ const SubjectDetails: NextPage<{
         Title={
           <Title
             name={{
-              title: subject.name[locale].name,
+              title: (subject.name[locale] || subject.name.th).name,
               subtitle: subject.code[locale],
             }}
             pageIcon={<MaterialIcon icon="school" />}

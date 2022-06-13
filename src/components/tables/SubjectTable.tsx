@@ -48,7 +48,7 @@ const SubjectTable = ({
           <tr key={subject.id}>
             <td>{subject.code[locale] || subject.code.th}</td>
             <td className="!text-left">
-              {subject.name[locale].name || subject.name.th.name}
+              {subject.name[locale]?.name || subject.name.th.name}
             </td>
             <td className="!text-left">
               {subject.teachers.length > 0 &&
