@@ -93,8 +93,11 @@ const SubjectSchedulePeriod = ({
       className={`relative h-[3.75rem] rounded-lg leading-snug ${
         isInSession ? "container-tertiary shadow" : "container-secondary"
       } ${showMenu ? "z-20" : ""}`}
+      // Mouse support
       onMouseOver={() => toggleShowMenu()}
       onMouseOut={() => toggleShowMenu()}
+      // Touch support
+      onTouchEnd={() => toggleShowMenu()}
     >
       <AnimatePresence>{showMenu && <PeriodHoverMenu />}</AnimatePresence>
       <div className="flex flex-col px-4 py-2">
@@ -147,7 +150,7 @@ const PeriodHoverMenu = (): JSX.Element => {
   return (
     <motion.div
       className="absolute h-full w-full rounded-lg
-        bg-on-primary-translucent-12 outline-primary outline-offset-0"
+        bg-on-primary-translucent-12 outline-offset-0 outline-primary"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
