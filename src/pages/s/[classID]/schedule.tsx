@@ -21,7 +21,7 @@ import {
 } from "@suankularb-components/react";
 
 // Components
-import StudentSchedule from "@components/schedule/Schedule";
+import Schedule from "@components/schedule/Schedule";
 import BrandIcon from "@components/icons/BrandIcon";
 
 // Types
@@ -38,7 +38,7 @@ const ScheduleSection = ({
   schedule: ScheduleType;
 }): JSX.Element => (
   <Section>
-    <StudentSchedule schedule={schedule} role="student" />
+    <Schedule schedule={schedule} role="student" />
   </Section>
 );
 
@@ -60,7 +60,10 @@ const SubjectListSection = ({
           subjectList.filter(
             (subjectListItem) =>
               subjectListItem.subject.code[locale].includes(query) ||
-              subjectListItem.subject.name[locale].name.includes(query) ||
+              (
+                subjectListItem.subject.name[locale] ||
+                subjectListItem.subject.name.th
+              ).name.includes(query) ||
               nameJoiner(locale, subjectListItem.teachers[0].name).includes(
                 query
               )
@@ -101,7 +104,8 @@ const SubjectListSection = ({
               <tr key={subjectListItem.id}>
                 <td>{subjectListItem.subject.code[locale]}</td>
                 <td className="!text-left">
-                  {subjectListItem.subject.name[locale].name}
+                  {subjectListItem.subject.name[locale]?.name ||
+                    subjectListItem.subject.name.th.name}
                 </td>
                 <td className="!text-left">
                   {subjectListItem.teachers.length > 0 &&

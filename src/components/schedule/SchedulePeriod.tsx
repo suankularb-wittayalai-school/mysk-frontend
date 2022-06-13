@@ -24,10 +24,12 @@ import { useReducer } from "react";
 // Empty Schedule Period
 const EmptySchedulePeriod = ({
   isInSession,
+  role
 }: {
   isInSession: boolean;
-}): JSX.Element => {
-  return (
+  role: Role;
+}): JSX.Element =>
+  role == "teacher" ? (
     <button
       className={`group grid h-[3.75rem] w-full place-items-center rounded-lg text-4xl transition-[outline-color]
         hover:bg-primary-translucent-08 hover:outline-primary
@@ -45,8 +47,15 @@ const EmptySchedulePeriod = ({
           group-focus:scale-100 group-focus:opacity-100"
       />
     </button>
+  ) : (
+    <div
+      className={`h-[3.75rem] w-full rounded-lg ${
+        isInSession
+          ? "outline-4 outline-offset-[-4px] outline-secondary"
+          : "outline-2 outline-offset-[-2px] outline-outline"
+      }`}
+    />
   );
-};
 
 // Subject Schedule Period
 const SubjectSchedulePeriod = ({
@@ -72,13 +81,13 @@ const SubjectSchedulePeriod = ({
     subjectName: Subject["name"]
   ) {
     return duration < 2
-      ? // Short name
+      ? // If short period, use short name
         subjectName[locale]?.shortName ||
           subjectName.th.shortName ||
           // If no short name, use name
           subjectName[locale]?.name ||
           subjectName.th.name
-      : // Use name my default
+      : // If long period, use name
         subjectName[locale]?.name || subjectName.th.name;
   }
 
@@ -99,7 +108,9 @@ const SubjectSchedulePeriod = ({
       // Touch support
       onTouchEnd={() => toggleShowMenu()}
     >
-      <AnimatePresence>{showMenu && <PeriodHoverMenu />}</AnimatePresence>
+      {role == "teacher" && (
+        <AnimatePresence>{showMenu && <PeriodHoverMenu />}</AnimatePresence>
+      )}
       <div className="flex flex-col px-4 py-2">
         {role == "teacher" ? (
           <>
@@ -232,6 +243,7 @@ const SchedulePeriod = ({
           schedulePeriod.startTime,
           schedulePeriod.duration
         )}
+        role={role}
       />
     )}
   </motion.li>
