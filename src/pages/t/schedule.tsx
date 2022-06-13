@@ -238,11 +238,27 @@ export const getServerSideProps: GetServerSideProps = async ({
             },
             class: { id: 45, number: 206 },
           },
-          { startTime: 2, duration: 1 },
+          {
+            startTime: 2,
+            duration: 1,
+            subject: {
+              name: { th: { name: "ภาษาอังกฤษ 3" } },
+              teachers: [],
+            },
+            class: { id: 61, number: 506 },
+          },
           { startTime: 3, duration: 1 },
           { startTime: 4, duration: 1 },
           { startTime: 5, duration: 1 },
-          { startTime: 6, duration: 1 },
+          {
+            startTime: 6,
+            duration: 1,
+            subject: {
+              name: { th: { name: "ภาษาอังกฤษ 3" } },
+              teachers: [],
+            },
+            class: { id: 59, number: 502 },
+          },
           { startTime: 7, duration: 1 },
           { startTime: 8, duration: 1 },
           { startTime: 9, duration: 1 },
@@ -253,8 +269,15 @@ export const getServerSideProps: GetServerSideProps = async ({
         day: 2,
         content: [
           { startTime: 1, duration: 1 },
-          { startTime: 2, duration: 1 },
-          { startTime: 3, duration: 1 },
+          {
+            startTime: 2,
+            duration: 2,
+            subject: {
+              name: { th: { name: "การศึกษาค้นคว้าและสร้างองค์ความรู้" } },
+              teachers: [],
+            },
+            class: { id: 6, number: 106 },
+          },
           { startTime: 4, duration: 1 },
           { startTime: 5, duration: 1 },
           { startTime: 6, duration: 1 },

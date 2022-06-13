@@ -49,7 +49,7 @@ const Schedule = ({
   noScroll?: boolean;
 }): JSX.Element => (
   <div className="scroll-w-0 flex flex-row gap-5 overflow-x-auto !px-0 sm:overflow-x-visible">
-    <div aria-hidden className="flex flex-col gap-2 py-1 pl-4 sm:pl-0">
+    <div aria-hidden className="flex flex-col gap-2 pt-4 pb-2 pl-4 sm:pl-0">
       {schedule.content.map((scheduleRow) => (
         <ScheduleDay key={scheduleRow.day} day={scheduleRow.day} />
       ))}
@@ -60,7 +60,7 @@ const Schedule = ({
       }
     >
       <AnimatePresence initial={false}>
-        <ul className="flex flex-col gap-2 py-1 pl-1 pr-4 sm:pr-0">
+        <ul className="flex flex-col gap-2 pt-4 pb-2 pl-1 pr-4 sm:pr-0">
           {schedule.content.map((scheduleRow) => (
             <ScheduleRow
               key={scheduleRow.day}

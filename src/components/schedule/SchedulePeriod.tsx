@@ -1,6 +1,7 @@
 // Modules
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
+import { useTranslation } from "next-i18next";
 
 // SK Components
 import { MaterialIcon } from "@suankularb-components/react";
@@ -11,16 +12,21 @@ import HoverList from "@components/HoverList";
 // Types
 import { Role, Teacher } from "@utils/types/person";
 import { SchedulePeriod as SchedulePeriodType } from "@utils/types/schedule";
+import { Subject } from "@utils/types/subject";
 
 // Animations
 import { animationTransition } from "@utils/animations/config";
 
 // Helpers
 import { isInPeriod } from "@utils/helpers/schedule";
-import { Subject } from "@utils/types/subject";
-import { useTranslation } from "next-i18next";
+import { useReducer } from "react";
 
-const EmptySchedulePeriod = ({ isInSession }: { isInSession: boolean }) => {
+// Empty Schedule Period
+const EmptySchedulePeriod = ({
+  isInSession,
+}: {
+  isInSession: boolean;
+}): JSX.Element => {
   return (
     <button
       className={`group grid h-[3.75rem] w-full place-items-center rounded-lg text-4xl transition-[outline-color]
@@ -42,6 +48,7 @@ const EmptySchedulePeriod = ({ isInSession }: { isInSession: boolean }) => {
   );
 };
 
+// Subject Schedule Period
 const SubjectSchedulePeriod = ({
   isInSession,
   schedulePeriod,
@@ -53,6 +60,11 @@ const SubjectSchedulePeriod = ({
 }): JSX.Element => {
   const { t } = useTranslation("common");
   const locale = useRouter().locale as "en-US" | "th";
+
+  const [showMenu, toggleShowMenu] = useReducer(
+    (state: boolean) => !state,
+    false
+  );
 
   // Component-specific utils
   function getSubjectName(
@@ -78,52 +90,102 @@ const SubjectSchedulePeriod = ({
 
   return (
     <div
-      className={`flex h-[3.75rem] flex-col rounded-lg px-4 py-2 leading-snug ${
+      className={`relative h-[3.75rem] rounded-lg leading-snug ${
         isInSession ? "container-tertiary shadow" : "container-secondary"
-      }`}
+      } ${showMenu ? "z-20" : ""}`}
+      onMouseOver={() => toggleShowMenu()}
+      onMouseOut={() => toggleShowMenu()}
     >
-      {role == "teacher" ? (
-        <>
-          <span className="truncate font-display text-xl font-medium">
-            {schedulePeriod.class &&
-              t("class", { number: schedulePeriod.class.number })}
-          </span>
-          <span
-            className="truncate text-base"
-            title={
-              (schedulePeriod.subject as MinifiedSubject).name[locale]?.name ||
-              (schedulePeriod.subject as MinifiedSubject).name.th.name
-            }
-          >
-            {getSubjectName(
-              schedulePeriod.duration,
-              (schedulePeriod.subject as MinifiedSubject).name
-            )}
-          </span>
-        </>
-      ) : (
-        <>
-          <span
-            className="truncate font-display text-xl font-medium"
-            title={
-              (schedulePeriod.subject as MinifiedSubject).name[locale]?.name ||
-              (schedulePeriod.subject as MinifiedSubject).name.th.name
-            }
-          >
-            {getSubjectName(
-              schedulePeriod.duration,
-              (schedulePeriod.subject as MinifiedSubject).name
-            )}
-          </span>
-          <HoverList
-            people={(schedulePeriod.subject as MinifiedSubject).teachers}
-          />
-        </>
-      )}
+      <AnimatePresence>{showMenu && <PeriodHoverMenu />}</AnimatePresence>
+      <div className="flex flex-col px-4 py-2">
+        {role == "teacher" ? (
+          <>
+            <span className="truncate font-display text-xl font-medium">
+              {schedulePeriod.class &&
+                t("class", { number: schedulePeriod.class.number })}
+            </span>
+            <span
+              className="truncate text-base"
+              title={
+                (schedulePeriod.subject as MinifiedSubject).name[locale]
+                  ?.name ||
+                (schedulePeriod.subject as MinifiedSubject).name.th.name
+              }
+            >
+              {getSubjectName(
+                schedulePeriod.duration,
+                (schedulePeriod.subject as MinifiedSubject).name
+              )}
+            </span>
+          </>
+        ) : (
+          <>
+            <span
+              className="truncate font-display text-xl font-medium"
+              title={
+                (schedulePeriod.subject as MinifiedSubject).name[locale]
+                  ?.name ||
+                (schedulePeriod.subject as MinifiedSubject).name.th.name
+              }
+            >
+              {getSubjectName(
+                schedulePeriod.duration,
+                (schedulePeriod.subject as MinifiedSubject).name
+              )}
+            </span>
+            <HoverList
+              people={(schedulePeriod.subject as MinifiedSubject).teachers}
+            />
+          </>
+        )}
+      </div>
     </div>
   );
 };
 
+const PeriodHoverMenu = (): JSX.Element => {
+  return (
+    <motion.div
+      className="absolute h-full w-full rounded-lg
+        bg-on-primary-translucent-12 outline-primary outline-offset-0"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={animationTransition}
+    >
+      <div
+        className="relative h-full w-full
+          -translate-x-3.5 -translate-y-3.5"
+      >
+        {/* Edit button */}
+        <button
+          className="primary absolute top-0 left-1/2 w-fit
+            rounded-full p-1 text-xl shadow"
+        >
+          <MaterialIcon icon="edit" allowCustomSize />
+        </button>
+
+        {/* Drag handle */}
+        <button
+          className="surface absolute top-1/2 left-0
+            w-fit cursor-grab rounded-full p-1 text-xl shadow"
+        >
+          <MaterialIcon icon="drag_indicator" allowCustomSize />
+        </button>
+
+        {/* Resize handle */}
+        <button
+          className="surface absolute top-1/2 left-full
+            w-fit cursor-ew-resize rounded-full p-1 text-xl shadow"
+        >
+          <MaterialIcon icon="last_page" allowCustomSize />
+        </button>
+      </div>
+    </motion.div>
+  );
+};
+
+// Schedule Period
 const SchedulePeriod = ({
   schedulePeriod,
   now,
