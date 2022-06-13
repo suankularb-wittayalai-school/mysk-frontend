@@ -7,7 +7,7 @@ import { Teacher } from "@utils/types/person";
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
 
-const TeacherTeachingList = ({
+const HoverList = ({
   teachers,
   truncate,
   useFullName,
@@ -50,4 +50,4 @@ const TeacherTeachingList = ({
   );
 };
 
-export default TeacherTeachingList;
+export default HoverList;

@@ -6,7 +6,7 @@ import { useTranslation } from "next-i18next";
 import { Button, MaterialIcon, Table } from "@suankularb-components/react";
 
 // Components
-import TeacherTeachingList from "@components/TeacherTeachingList";
+import HoverList from "@components/HoverList";
 
 // Types
 import { Subject } from "@utils/types/subject";

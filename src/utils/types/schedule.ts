@@ -4,10 +4,7 @@ import { Teacher } from "./person";
 import { Subject } from "./subject";
 
 export type StudentSchedule = {
-  // FIXME: Schedule class should be required
-  // Temporary solution, awaiting response from @Jimmy-Tempest
   id: number;
-  class?: ClassWNumber;
   content: ScheduleRow[];
 };
 
@@ -24,6 +21,7 @@ export type SchedulePeriod = {
     teachers: Teacher[];
     coTeachers?: Teacher[];
   };
+  class?: ClassWNumber;
   // Physical room wherein this Subject is taught (Ex. 1214, 4306)
   room: string;
 };

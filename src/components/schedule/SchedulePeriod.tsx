@@ -3,10 +3,10 @@ import { motion } from "framer-motion";
 import { useRouter } from "next/router";
 
 // Components
-import TeacherTeachingList from "@components/TeacherTeachingList";
+import HoverList from "@components/HoverList";
 
 // Types
-import { Role, Teacher } from "@utils/types/person";
+import { Role } from "@utils/types/person";
 import { SchedulePeriod as SchedulePeriodType } from "@utils/types/schedule";
 
 // Animations
@@ -95,7 +95,7 @@ const SchedulePeriod = ({
                   schedulePeriod.subject.name
                 )}
               </span>
-              <TeacherTeachingList teachers={schedulePeriod.subject.teachers} />
+              <HoverList teachers={schedulePeriod.subject.teachers} />
             </>
           )}
         </div>

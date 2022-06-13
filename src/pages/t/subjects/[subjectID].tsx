@@ -40,7 +40,7 @@ import ConnectSubjectDialog from "@components/dialogs/ConnectSubject";
 import ImageDialog from "@components/dialogs/Image";
 import BrandIcon from "@components/icons/BrandIcon";
 import Sentiment from "@components/Sentiment";
-import TeacherTeachingList from "@components/TeacherTeachingList";
+import HoverList from "@components/HoverList";
 
 // Types
 import {
@@ -122,7 +122,7 @@ const DetailsSection = ({
 
                 {/* Teachers */}
                 <td className="!text-left">
-                  <TeacherTeachingList
+                  <HoverList
                     teachers={subjectRoom.teachers}
                     useFullName
                   />
@@ -131,7 +131,7 @@ const DetailsSection = ({
                 {/* Co-teachers */}
                 <td className="!text-left">
                   {subjectRoom.coTeachers && (
-                    <TeacherTeachingList
+                    <HoverList
                       teachers={subjectRoom.coTeachers}
                       useFullName
                     />
