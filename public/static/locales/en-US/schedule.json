@@ -20,8 +20,11 @@
     }
   },
   "dialog": {
-    "add": {
-      "title": "Add subject period",
+    "editPeriod": {
+      "title": {
+        "add": "Add subject period",
+        "edit": "Edit subject period"
+      },
       "form": {
         "title": "Period information",
         "subject": "Subject",

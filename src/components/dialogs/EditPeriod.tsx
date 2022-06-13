@@ -14,11 +14,14 @@ import {
 // Components
 import DiscardDraft from "@components/dialogs/DiscardDraft";
 
-// Types
-import { DialogProps } from "@utils/types/common";
-
 // Backend
 import { SchedulePeriod } from "@utils/types/schedule";
+
+// Hookes
+import { useTeacherAccount } from "@utils/hooks/auth";
+
+// Types
+import { DialogProps } from "@utils/types/common";
 
 const EditPeriod = ({
   show,
@@ -35,6 +38,7 @@ const EditPeriod = ({
 }): JSX.Element => {
   const { t } = useTranslation(["schedule", "common"]);
   const locale = useRouter().locale as "en-US" | "th";
+  const [teacher] = useTeacherAccount();
 
   // Dialog control
   const [showDiscard, setShowDiscard] = useState<boolean>(false);
@@ -82,10 +86,10 @@ const EditPeriod = ({
       <Dialog
         type="regular"
         label={`${mode}-period`}
-        title={t(`dialog.add.title.${mode}`)}
+        title={t(`dialog.editPeriod.title.${mode}`)}
         actions={[
-          { name: t("dialog.add.action.cancel"), type: "close" },
-          { name: t("dialog.add.action.save"), type: "submit" },
+          { name: t("dialog.editPeriod.action.cancel"), type: "close" },
+          { name: t("dialog.editPeriod.action.save"), type: "submit" },
         ]}
         show={show}
         onClose={() => setShowDiscard(true)}
@@ -94,25 +98,33 @@ const EditPeriod = ({
           onClose();
         }}
       >
-        <DialogSection name={t("dialog.add.form.title")} hasNoGap>
+        <DialogSection name={t("dialog.editPeriod.form.title")} hasNoGap>
           <Dropdown
             name="subject"
-            label={t("dialog.add.form.subject")}
-            options={[
-              {
-                value: 1,
-                label: {
-                  "en-US": "English 1",
-                  th: "ภาษาอังกฤษ 1",
-                }[locale],
-              },
-            ]}
+            label={t("dialog.editPeriod.form.subject")}
+            options={
+              teacher?.subjectsInCharge
+                ? teacher.subjectsInCharge.map((subject) => ({
+                    value: subject.id,
+                    label: (subject.name[locale] || subject.name.th).name,
+                  }))
+                : []
+              /*[
+                {
+                  value: 1,
+                  label: {
+                    "en-US": "English 1",
+                    th: "ภาษาอังกฤษ 1",
+                  }[locale],
+                },
+              ]*/
+            }
             defaultValue={schedulePeriod.subject?.id}
             onChange={(e: number) => setForm({ ...form, subject: e })}
           />
           <Dropdown
             name="day"
-            label={t("dialog.add.form.day")}
+            label={t("dialog.editPeriod.form.day")}
             options={[
               {
                 value: 1,
@@ -141,7 +153,7 @@ const EditPeriod = ({
           <KeyboardInput
             name="period-start"
             type="number"
-            label={t("dialog.add.form.periodStart")}
+            label={t("dialog.editPeriod.form.periodStart")}
             defaultValue={schedulePeriod.startTime}
             onChange={(e: string) => setForm({ ...form, startTime: Number(e) })}
             attr={{
@@ -152,7 +164,7 @@ const EditPeriod = ({
           <KeyboardInput
             name="duration"
             type="number"
-            label={t("dialog.add.form.duration")}
+            label={t("dialog.editPeriod.form.duration")}
             defaultValue={schedulePeriod.duration}
             onChange={(e: string) => setForm({ ...form, duration: Number(e) })}
             attr={{
