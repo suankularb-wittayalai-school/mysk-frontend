@@ -38,7 +38,7 @@ export type Subject = {
     th: string;
   };
   name: {
-    "en-US": SubjectName;
+    "en-US"?: SubjectName;
     th: SubjectName;
   };
   type: {

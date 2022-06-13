@@ -229,7 +229,15 @@ export const getServerSideProps: GetServerSideProps = async ({
       {
         day: 1,
         content: [
-          { startTime: 1, duration: 1 },
+          {
+            startTime: 1,
+            duration: 1,
+            subject: {
+              name: { th: { name: "การอ่าน-การเขียน 3 (EP)" } },
+              teachers: [],
+            },
+            class: { id: 45, number: 206 },
+          },
           { startTime: 2, duration: 1 },
           { startTime: 3, duration: 1 },
           { startTime: 4, duration: 1 },
