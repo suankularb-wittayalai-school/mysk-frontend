@@ -149,8 +149,8 @@ const SubjectSchedulePeriod = ({
 const PeriodHoverMenu = (): JSX.Element => {
   return (
     <motion.div
-      className="absolute h-full w-full rounded-lg
-        bg-on-primary-translucent-12 outline-offset-0 outline-primary"
+      className="pointer-events-none absolute h-full w-full
+        rounded-lg bg-on-primary-translucent-12 outline-offset-0 outline-primary"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -162,15 +162,15 @@ const PeriodHoverMenu = (): JSX.Element => {
       >
         {/* Edit button */}
         <button
-          className="primary absolute top-0 left-1/2 w-fit
-            rounded-full p-1 text-xl shadow"
+          className="primary pointer-events-auto absolute top-0 left-1/2
+            w-fit rounded-full p-1 text-xl shadow"
         >
           <MaterialIcon icon="edit" allowCustomSize />
         </button>
 
         {/* Drag handle */}
         <button
-          className="surface absolute top-1/2 left-0
+          className="surface pointer-events-auto absolute top-1/2 left-0
             w-fit cursor-grab rounded-full p-1 text-xl shadow"
         >
           <MaterialIcon icon="drag_indicator" allowCustomSize />
@@ -178,7 +178,7 @@ const PeriodHoverMenu = (): JSX.Element => {
 
         {/* Resize handle */}
         <button
-          className="surface absolute top-1/2 left-full
+          className="surface pointer-events-auto absolute top-1/2 left-full
             w-fit cursor-ew-resize rounded-full p-1 text-xl shadow"
         >
           <MaterialIcon icon="last_page" allowCustomSize />
