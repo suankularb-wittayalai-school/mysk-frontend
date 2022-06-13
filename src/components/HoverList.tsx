@@ -2,17 +2,17 @@
 import { useRouter } from "next/router";
 
 // Types
-import { Teacher } from "@utils/types/person";
+import { Person } from "@utils/types/person";
 
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
 
 const HoverList = ({
-  teachers,
+  people,
   truncate,
   useFullName,
 }: {
-  teachers: { name: Teacher["name"] }[];
+  people: { name: Person["name"] }[];
   truncate?: boolean;
   useFullName?: boolean;
 }) => {
@@ -22,27 +22,26 @@ const HoverList = ({
     <span
       className={`text-base ${truncate ? "overflow-ellipse break-all" : ""}`}
     >
-      {teachers.length > 0 &&
-        // Show the first teacher’s name in user locale
+      {people.length > 0 &&
+        // Show the first person’s name in user locale
         (useFullName
-          ? nameJoiner(locale, teachers[0].name)
-          : teachers[0].name[locale]?.firstName ||
-            teachers[0].name.th.firstName)}
+          ? nameJoiner(locale, people[0].name)
+          : people[0].name[locale]?.firstName || people[0].name.th.firstName)}
       {
-        // If there are more than one teacher, display +1 and show the remaining teachers on hover
-        teachers.length > 1 && (
+        // If there are more than one person, display +1 and show the remaining people on hover
+        people.length > 1 && (
           <abbr
             className="text-secondary opacity-50"
-            title={teachers
+            title={people
               .slice(1)
-              .map((teacher) =>
+              .map((person) =>
                 useFullName
-                  ? nameJoiner(locale, teacher.name)
-                  : teacher.name[locale]?.firstName || teacher.name.th.firstName
+                  ? nameJoiner(locale, person.name)
+                  : person.name[locale]?.firstName || person.name.th.firstName
               )
               .join(", ")}
           >
-            +{teachers.length - 1}
+            +{people.length - 1}
           </abbr>
         )
       }

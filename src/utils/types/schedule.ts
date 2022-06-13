@@ -23,5 +23,5 @@ export type SchedulePeriod = {
   };
   class?: ClassWNumber;
   // Physical room wherein this Subject is taught (Ex. 1214, 4306)
-  room: string;
+  room?: string;
 };

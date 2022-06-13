@@ -228,7 +228,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     content: [
       {
         day: 1,
-        content: [],
+        content: [{ startTime: 1, duration: 1 }],
       },
       {
         day: 2,

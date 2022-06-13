@@ -123,7 +123,7 @@ const DetailsSection = ({
                 {/* Teachers */}
                 <td className="!text-left">
                   <HoverList
-                    teachers={subjectRoom.teachers}
+                    people={subjectRoom.teachers}
                     useFullName
                   />
                 </td>
@@ -132,7 +132,7 @@ const DetailsSection = ({
                 <td className="!text-left">
                   {subjectRoom.coTeachers && (
                     <HoverList
-                      teachers={subjectRoom.coTeachers}
+                      people={subjectRoom.coTeachers}
                       useFullName
                     />
                   )}

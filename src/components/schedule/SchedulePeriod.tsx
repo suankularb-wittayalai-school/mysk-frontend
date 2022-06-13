@@ -16,6 +16,18 @@ import { animationTransition } from "@utils/animations/config";
 import { isInPeriod } from "@utils/helpers/schedule";
 import { Subject } from "@utils/types/subject";
 
+const EmptySchedulePeriod = ({ isInSession }: { isInSession: boolean }) => {
+  return (
+    <div
+      className={`h-[3.75rem] w-full rounded-lg ${
+        isInSession
+          ? "outline-4 outline-offset-[-4px] outline-secondary"
+          : "outline-2 outline-offset-[-2px] outline-outline"
+      }`}
+    />
+  );
+};
+
 const SchedulePeriod = ({
   schedulePeriod,
   now,
@@ -95,23 +107,19 @@ const SchedulePeriod = ({
                   schedulePeriod.subject.name
                 )}
               </span>
-              <HoverList teachers={schedulePeriod.subject.teachers} />
+              <HoverList people={schedulePeriod.subject.teachers} />
             </>
           )}
         </div>
       ) : (
         // Empty period
-        <div
-          className={`h-[3.75rem] w-full rounded-lg ${
-            isInPeriod(
-              now,
-              day,
-              schedulePeriod.startTime,
-              schedulePeriod.duration
-            )
-              ? "outline-4 outline-offset-[-4px] outline-secondary"
-              : "outline-2 outline-offset-[-2px] outline-outline"
-          }`}
+        <EmptySchedulePeriod
+          isInSession={isInPeriod(
+            now,
+            day,
+            schedulePeriod.startTime,
+            schedulePeriod.duration
+          )}
         />
       )}
     </motion.li>
