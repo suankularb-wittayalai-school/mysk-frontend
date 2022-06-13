@@ -156,10 +156,7 @@ const PeriodHoverMenu = (): JSX.Element => {
       exit={{ opacity: 0 }}
       transition={animationTransition}
     >
-      <div
-        className="relative h-full w-full
-          -translate-x-3.5 -translate-y-3.5"
-      >
+      <div className="relative h-full w-full -translate-x-3.5 -translate-y-3.5">
         {/* Edit button */}
         <button
           className="primary pointer-events-auto absolute top-0 left-1/2
@@ -181,7 +178,7 @@ const PeriodHoverMenu = (): JSX.Element => {
           className="surface pointer-events-auto absolute top-1/2 left-full
             w-fit cursor-ew-resize rounded-full p-1 text-xl shadow"
         >
-          <MaterialIcon icon="last_page" allowCustomSize />
+          <MaterialIcon icon="straighten" allowCustomSize />
         </button>
       </div>
     </motion.div>
