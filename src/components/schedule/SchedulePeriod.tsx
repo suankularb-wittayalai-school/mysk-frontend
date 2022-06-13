@@ -19,7 +19,7 @@ import { animationTransition } from "@utils/animations/config";
 
 // Helpers
 import { isInPeriod } from "@utils/helpers/schedule";
-import { useReducer } from "react";
+import { useReducer, useState } from "react";
 
 // Empty Schedule Period
 const EmptySchedulePeriod = ({
@@ -70,10 +70,7 @@ const SubjectSchedulePeriod = ({
   const { t } = useTranslation("common");
   const locale = useRouter().locale as "en-US" | "th";
 
-  const [showMenu, toggleShowMenu] = useReducer(
-    (state: boolean) => !state,
-    false
-  );
+  const [showMenu, setShowMenu] = useState<boolean>(false);
 
   // Component-specific utils
   function getSubjectName(
@@ -102,11 +99,13 @@ const SubjectSchedulePeriod = ({
       className={`relative h-[3.75rem] rounded-lg leading-snug ${
         isInSession ? "container-tertiary shadow" : "container-secondary"
       } ${showMenu ? "z-20" : ""}`}
+      tabIndex={0}
       // Mouse support
-      onMouseOver={() => toggleShowMenu()}
-      onMouseOut={() => toggleShowMenu()}
-      // Touch support
-      onTouchEnd={() => toggleShowMenu()}
+      onMouseOver={() => setShowMenu(true)}
+      onMouseOut={() => setShowMenu(false)}
+      // Keyboard/touch support
+      onFocus={() => setShowMenu(true)}
+      onBlur={() => setShowMenu(false)}
     >
       {role == "teacher" && (
         <AnimatePresence>{showMenu && <PeriodHoverMenu />}</AnimatePresence>
