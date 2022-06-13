@@ -18,6 +18,7 @@ export type SchedulePeriod = {
   startTime: number;
   duration: number;
   subject?: {
+    id: Subject["id"];
     name: Subject["name"];
     teachers: Teacher[];
     coTeachers?: Teacher[];

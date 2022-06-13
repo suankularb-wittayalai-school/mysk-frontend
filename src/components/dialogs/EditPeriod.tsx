@@ -54,7 +54,7 @@ const EditPeriod = ({
 
   useEffect(() => {
     setForm({
-      subject: 0,
+      subject: schedulePeriod.subject?.id || 0,
       day,
       startTime: schedulePeriod.startTime,
       duration: schedulePeriod.duration,
@@ -107,6 +107,7 @@ const EditPeriod = ({
                 }[locale],
               },
             ]}
+            defaultValue={schedulePeriod.subject?.id}
             onChange={(e: number) => setForm({ ...form, subject: e })}
           />
           <Dropdown

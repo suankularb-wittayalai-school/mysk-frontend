@@ -115,6 +115,7 @@ export const getServerSideProps: GetServerSideProps = async ({
             startTime: 1,
             duration: 1,
             subject: {
+              id: 16,
               name: { th: { name: "การอ่าน-การเขียน 3 (EP)" } },
               teachers: [],
             },
@@ -124,6 +125,7 @@ export const getServerSideProps: GetServerSideProps = async ({
             startTime: 2,
             duration: 1,
             subject: {
+              id: 1,
               name: { th: { name: "ภาษาอังกฤษ 3" } },
               teachers: [],
             },
@@ -136,6 +138,7 @@ export const getServerSideProps: GetServerSideProps = async ({
             startTime: 6,
             duration: 1,
             subject: {
+              id: 1,
               name: { th: { name: "ภาษาอังกฤษ 3" } },
               teachers: [],
             },
@@ -155,6 +158,7 @@ export const getServerSideProps: GetServerSideProps = async ({
             startTime: 2,
             duration: 2,
             subject: {
+              id: 5,
               name: { th: { name: "การศึกษาค้นคว้าและสร้างองค์ความรู้" } },
               teachers: [],
             },
