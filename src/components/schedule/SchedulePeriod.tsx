@@ -15,16 +15,34 @@ import { animationTransition } from "@utils/animations/config";
 // Helpers
 import { isInPeriod } from "@utils/helpers/schedule";
 import { Subject } from "@utils/types/subject";
+import { Button, MaterialIcon } from "@suankularb-components/react";
 
 const EmptySchedulePeriod = ({ isInSession }: { isInSession: boolean }) => {
   return (
-    <div
-      className={`h-[3.75rem] w-full rounded-lg ${
-        isInSession
-          ? "outline-4 outline-offset-[-4px] outline-secondary"
-          : "outline-2 outline-offset-[-2px] outline-outline"
-      }`}
-    />
+    <button
+      className={`group grid h-[3.75rem] w-full place-items-center rounded-lg text-4xl transition-[outline-color]
+          hover:bg-primary-translucent-08 hover:outline-primary
+          focus:bg-primary-translucent-12 focus:outline-primary ${
+            isInSession
+              ? "outline-4 outline-offset-[-4px] outline-secondary"
+              : "outline-2 outline-offset-[-2px] outline-outline"
+          }`}
+    >
+      <MaterialIcon
+        icon="add"
+        allowCustomSize
+        className="scale-90 text-primary opacity-0 transition-all
+            group-hover:scale-100 group-hover:opacity-100
+            group-focus:scale-100 group-focus:opacity-100"
+      />
+      {/* <div
+        className="scale-90 opacity-0 transition-all
+          group-hover:scale-100 group-hover:opacity-100
+          group-focus:scale-100 group-focus:opacity-100"
+      >
+        <Button name="Add period here" type="filled" icon={<MaterialIcon icon="add" />} iconOnly />
+      </div> */}
+    </button>
   );
 };
 
