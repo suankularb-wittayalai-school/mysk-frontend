@@ -22,25 +22,22 @@ import {
 // Components
 import ConfirmDelete from "@components/dialogs/ConfirmDelete";
 import EditSubjectDialog from "@components/dialogs/EditSubject";
+import ImportDataDialog from "@components/dialogs/ImportData";
 import SubjectTable from "@components/tables/SubjectTable";
 
 // Backend
 import { db2Subject } from "@utils/backend/database";
+import { createSubject } from "@utils/backend/subject/subject";
 
 // Supabase
 import { supabase } from "@utils/supabaseClient";
 
 // Types
 import { Subject } from "@utils/types/subject";
-import ImportDataDialog from "@components/dialogs/ImportData";
-import {
-  SubjectDB,
-  SubjectTable as SubjectTableType,
-} from "@utils/types/database/subject";
+import { SubjectTable as SubjectTableType } from "@utils/types/database/subject";
 
 // Hooks
 import { useSession } from "@utils/hooks/auth";
-import { createSubject } from "@utils/backend/subject/subject";
 
 interface ImportedSubject {
   name_th: string;
@@ -106,10 +103,7 @@ const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
   async function handleDelete() {
     // Delete the syllabus if it exists
     if (editingSubject?.syllabus) {
-      const {
-        data: syllabus,
-        error: syllabusError,
-      } = await supabase.storage
+      const { data: syllabus, error: syllabusError } = await supabase.storage
         .from("syllabus")
         .remove([editingSubject.syllabus.toString()]);
       if (syllabusError) {

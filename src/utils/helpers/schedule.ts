@@ -1,4 +1,6 @@
 import { isWithinInterval } from "date-fns";
+import { range } from "@utils/helpers/array";
+import { Schedule } from "@utils/types/schedule";
 
 export const periodTimes = [
   { hours: 8, min: 30 },
@@ -39,4 +41,24 @@ export function isInPeriod(
       )
     ),
   });
+}
+
+export function createEmptySchedule(startDay: Day, endDay?: Day): Schedule {
+  return {
+    content: range(endDay ? endDay - startDay + 1 : startDay).map((day) => ({
+      day: (day + startDay) as Day,
+      content: [
+        { startTime: 1, duration: 1 },
+        { startTime: 2, duration: 1 },
+        { startTime: 3, duration: 1 },
+        { startTime: 4, duration: 1 },
+        { startTime: 5, duration: 1 },
+        { startTime: 6, duration: 1 },
+        { startTime: 7, duration: 1 },
+        { startTime: 8, duration: 1 },
+        { startTime: 9, duration: 1 },
+        { startTime: 10, duration: 1 },
+      ],
+    })),
+  };
 }

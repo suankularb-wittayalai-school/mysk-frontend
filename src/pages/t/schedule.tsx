@@ -1,12 +1,12 @@
 // Modules
-import { GetServerSideProps, NextPage } from "next";
+import { GetStaticProps, NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useReducer, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 
 // SK Components
 import {
@@ -18,7 +18,8 @@ import {
 } from "@suankularb-components/react";
 
 // Components
-import EditPeriod from "@components/dialogs/EditPeriod";
+import AddPeriodDialog from "@components/dialogs/AddPeriod";
+import EditPeriodDialog from "@components/dialogs/EditPeriod";
 import Schedule from "@components/schedule/Schedule";
 
 // Types
@@ -26,14 +27,25 @@ import {
   Schedule as ScheduleType,
   SchedulePeriod,
 } from "@utils/types/schedule";
-import AddPeriodDialog from "@components/dialogs/AddPeriod";
+import { useTeacherAccount } from "@utils/hooks/auth";
+import { getSchedule } from "@utils/backend/schedule";
+import { createEmptySchedule } from "@utils/helpers/schedule";
 
-const TeacherSchedule: NextPage<{ schedule: ScheduleType }> = ({
-  schedule: fetchedSchedule,
-}) => {
+const TeacherSchedule: NextPage = () => {
   const { t } = useTranslation("schedule");
   const router = useRouter();
-  const [schedule, setSchedule] = useState<ScheduleType>(fetchedSchedule);
+  const [teacher] = useTeacherAccount();
+
+  // Data fetch
+  const [schedule, setSchedule] = useState<ScheduleType>(
+    createEmptySchedule(1, 5)
+  );
+
+  useEffect(() => {
+    const fetchAndSetSchedule = async () =>
+      teacher && setSchedule(await getSchedule("teacher", teacher.id));
+    fetchAndSetSchedule();
+  }, [teacher]);
 
   // Dialog control
   const [addSubjectToPeriod, setAddSubjectToPeriod] = useState<{
@@ -94,7 +106,7 @@ const TeacherSchedule: NextPage<{ schedule: ScheduleType }> = ({
           duration: 1,
         }}
       />
-      <EditPeriod
+      <EditPeriodDialog
         show={addPeriod}
         onClose={() => toggleAddPeriod()}
         onSubmit={() => router.push(router.asPath)}
@@ -105,7 +117,7 @@ const TeacherSchedule: NextPage<{ schedule: ScheduleType }> = ({
         }}
         mode="add"
       />
-      <EditPeriod
+      <EditPeriodDialog
         show={editPeriod.show}
         onClose={() => setEditPeriod({ ...editPeriod, show: false })}
         onSubmit={() => router.push(router.asPath)}
@@ -117,133 +129,13 @@ const TeacherSchedule: NextPage<{ schedule: ScheduleType }> = ({
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  params,
-}) => {
-  const schedule: ScheduleType = {
-    id: 0,
-    content: [
-      {
-        day: 1,
-        content: [
-          {
-            startTime: 1,
-            duration: 1,
-            subject: {
-              id: 16,
-              name: { th: { name: "การอ่าน-การเขียน 3 (EP)" } },
-              teachers: [],
-            },
-            class: { id: 45, number: 206 },
-          },
-          {
-            startTime: 2,
-            duration: 1,
-            subject: {
-              id: 1,
-              name: { th: { name: "ภาษาอังกฤษ 3" } },
-              teachers: [],
-            },
-            class: { id: 61, number: 506 },
-          },
-          { startTime: 3, duration: 1 },
-          { startTime: 4, duration: 1 },
-          { startTime: 5, duration: 1 },
-          {
-            startTime: 6,
-            duration: 1,
-            subject: {
-              id: 1,
-              name: { th: { name: "ภาษาอังกฤษ 3" } },
-              teachers: [],
-            },
-            class: { id: 59, number: 502 },
-          },
-          { startTime: 7, duration: 1 },
-          { startTime: 8, duration: 1 },
-          { startTime: 9, duration: 1 },
-          { startTime: 10, duration: 1 },
-        ],
-      },
-      {
-        day: 2,
-        content: [
-          { startTime: 1, duration: 1 },
-          {
-            startTime: 2,
-            duration: 2,
-            subject: {
-              id: 5,
-              name: { th: { name: "การศึกษาค้นคว้าและสร้างองค์ความรู้" } },
-              teachers: [],
-            },
-            class: { id: 6, number: 106 },
-          },
-          { startTime: 4, duration: 1 },
-          { startTime: 5, duration: 1 },
-          { startTime: 6, duration: 1 },
-          { startTime: 7, duration: 1 },
-          { startTime: 8, duration: 1 },
-          { startTime: 9, duration: 1 },
-          { startTime: 10, duration: 1 },
-        ],
-      },
-      {
-        day: 3,
-        content: [
-          { startTime: 1, duration: 1 },
-          { startTime: 2, duration: 1 },
-          { startTime: 3, duration: 1 },
-          { startTime: 4, duration: 1 },
-          { startTime: 5, duration: 1 },
-          { startTime: 6, duration: 1 },
-          { startTime: 7, duration: 1 },
-          { startTime: 8, duration: 1 },
-          { startTime: 9, duration: 1 },
-          { startTime: 10, duration: 1 },
-        ],
-      },
-      {
-        day: 4,
-        content: [
-          { startTime: 1, duration: 1 },
-          { startTime: 2, duration: 1 },
-          { startTime: 3, duration: 1 },
-          { startTime: 4, duration: 1 },
-          { startTime: 5, duration: 1 },
-          { startTime: 6, duration: 1 },
-          { startTime: 7, duration: 1 },
-          { startTime: 8, duration: 1 },
-          { startTime: 9, duration: 1 },
-          { startTime: 10, duration: 1 },
-        ],
-      },
-      {
-        day: 5,
-        content: [
-          { startTime: 1, duration: 1 },
-          { startTime: 2, duration: 1 },
-          { startTime: 3, duration: 1 },
-          { startTime: 4, duration: 1 },
-          { startTime: 5, duration: 1 },
-          { startTime: 6, duration: 1 },
-          { startTime: 7, duration: 1 },
-          { startTime: 8, duration: 1 },
-          { startTime: 9, duration: 1 },
-          { startTime: 10, duration: 1 },
-        ],
-      },
-    ],
-  };
-
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
   return {
     props: {
       ...(await serverSideTranslations(locale as string, [
         "common",
         "schedule",
       ])),
-      schedule,
     },
   };
 };
