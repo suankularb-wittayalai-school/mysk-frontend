@@ -1,7 +1,7 @@
 // Modules
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // SK Components
 import {
@@ -47,6 +47,8 @@ const AddPeriodDialog = ({
     room: "",
   });
 
+  useEffect(() => setForm({ subjectID: 0, room: "" }), [show]);
+
   // Form validation
   function validate(): boolean {
     if (!form.subjectID) return false;
@@ -81,7 +83,7 @@ const AddPeriodDialog = ({
       onClose={() => onClose()}
       onSubmit={() => {
         handleSubmit();
-        onClose();
+        onSubmit();
       }}
     >
       <DialogSection name={t("dialog.editPeriod.form.title")} hasNoGap>

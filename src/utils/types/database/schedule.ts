@@ -1,15 +1,17 @@
+import { ClassWNumber } from "../class";
 import { TeacherDB } from "./person";
-import { SubjectDB } from "./subject";
+import { SubjectTable } from "./subject";
 
 export type ScheduleItemDB = {
   id: number;
   created_at: string;
-  subject: SubjectDB;
+  subject: SubjectTable;
   teacher: TeacherDB;
   coteachers?: TeacherDB[];
   day: number;
   start_time: number;
   duration: number;
+  classroom: ClassWNumber;
   room: string;
 };
 
@@ -22,5 +24,6 @@ export type ScheduleItemTable = {
   day: number;
   start_time: number;
   duration: number;
+  classroom: number;
   room: string;
 };

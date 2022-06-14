@@ -1,12 +1,18 @@
 import { PostgrestError } from "@supabase/supabase-js";
-import { createEmptySchedule } from "@utils/helpers/schedule";
+import {
+  arePeriodsOverlapping,
+  createEmptySchedule,
+} from "@utils/helpers/schedule";
 import { supabase } from "@utils/supabaseClient";
+import { ClassWNumber } from "@utils/types/class";
+import { ClassroomDB } from "@utils/types/database/class";
 import {
   ScheduleItemDB,
   ScheduleItemTable,
 } from "@utils/types/database/schedule";
 import { Role } from "@utils/types/person";
 import { Schedule, SchedulePeriod } from "@utils/types/schedule";
+import { db2Subject } from "./database";
 
 /**
  * Construct a Schedule from Schedule Items from the student’s perspective
@@ -35,7 +41,9 @@ export async function getSchedule(role: Role, id: number): Promise<Schedule> {
   // Fetch data from Supabase
   const { data, error } = await supabase
     .from<ScheduleItemDB>("schedule_items")
-    .select("*, subject:subject(*), teacher:teacher(*), classroom:classroom(*)")
+    .select(
+      "*, subject:subject(*), teacher:teacher(*), classroom:classroom(id,number)"
+    )
     .match(
       role == "teacher"
         ? // Match teacher if role is teacher
@@ -49,8 +57,49 @@ export async function getSchedule(role: Role, id: number): Promise<Schedule> {
     console.error(error);
     return schedule;
   }
+  // Add Supabase data to empty schedule
+  for (let scheduleItem of data) {
+    // Remove overlapping periods from resulting Schedule
+    schedule = {
+      ...schedule,
+      // For each row
+      content: schedule.content.map((scheduleRow) => ({
+        ...scheduleRow,
+        content:
+          // For each period
+          scheduleRow.content.filter(
+            (schedulePeriod) =>
+              // Check for overlap
+              !arePeriodsOverlapping(
+                {
+                  day: scheduleRow.day,
+                  startTime: schedulePeriod.startTime,
+                  duration: schedulePeriod.duration,
+                },
+                {
+                  day: scheduleItem.day as Day,
+                  startTime: scheduleItem.start_time,
+                  duration: scheduleItem.duration,
+                }
+              )
+          ),
+      })),
+    };
 
-  // TODO: Add Supabase data to empty schedule
+    schedule.content[
+      schedule.content.findIndex(
+        (scheduleRow) => scheduleItem.day == scheduleRow.day
+      )
+    ].content.push({
+      startTime: scheduleItem.start_time,
+      duration: scheduleItem.duration,
+      subject: await db2Subject(scheduleItem.subject),
+      class: scheduleItem.classroom,
+      room: scheduleItem.room,
+    });
+  }
+
+  console.log({ schedule });
 
   return schedule;
 }

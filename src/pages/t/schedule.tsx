@@ -26,7 +26,7 @@ import Schedule from "@components/schedule/Schedule";
 import { getSchedule } from "@utils/backend/schedule";
 
 // Helpers
-import { createEmptySchedule } from "@utils/helpers/schedule";
+import { range } from "@utils/helpers/array";
 
 // Hooks
 import { useTeacherAccount } from "@utils/hooks/auth";
@@ -43,15 +43,23 @@ const TeacherSchedule: NextPage = () => {
   const [teacher] = useTeacherAccount();
 
   // Data fetch
-  const [schedule, setSchedule] = useState<ScheduleType>(
-    createEmptySchedule(1, 5)
+  const [fetched, toggleFetched] = useReducer(
+    (state: boolean) => !state,
+    false
   );
+  const [schedule, setSchedule] = useState<ScheduleType>({
+    content: range(5).map((day) => ({ day: (day + 1) as Day, content: [] })),
+  });
 
   useEffect(() => {
-    const fetchAndSetSchedule = async () =>
-      teacher && setSchedule(await getSchedule("teacher", teacher.id));
+    const fetchAndSetSchedule = async () => {
+      if (!fetched && teacher) {
+        setSchedule(await getSchedule("teacher", teacher.id));
+        toggleFetched();
+      }
+    }
     fetchAndSetSchedule();
-  }, [teacher]);
+  }, [fetched, teacher]);
 
   // Dialog control
   const [addSubjectToPeriod, setAddSubjectToPeriod] = useState<{
@@ -109,7 +117,10 @@ const TeacherSchedule: NextPage = () => {
         onClose={() =>
           setAddSubjectToPeriod({ ...addSubjectToPeriod, show: false })
         }
-        onSubmit={() => router.push(router.asPath)}
+        onSubmit={() => {
+          setAddSubjectToPeriod({ ...addSubjectToPeriod, show: false });
+          toggleFetched();
+        }}
         day={addSubjectToPeriod.day}
         schedulePeriod={{
           startTime: addSubjectToPeriod.startTime,
@@ -119,7 +130,10 @@ const TeacherSchedule: NextPage = () => {
       <EditPeriodDialog
         show={addPeriod}
         onClose={() => toggleAddPeriod()}
-        onSubmit={() => router.push(router.asPath)}
+        onSubmit={() => {
+          toggleAddPeriod();
+          toggleFetched();
+        }}
         day={1}
         schedulePeriod={{
           startTime: 1,
@@ -130,7 +144,10 @@ const TeacherSchedule: NextPage = () => {
       <EditPeriodDialog
         show={editPeriod.show}
         onClose={() => setEditPeriod({ ...editPeriod, show: false })}
-        onSubmit={() => router.push(router.asPath)}
+        onSubmit={() => {
+          setEditPeriod({ ...editPeriod, show: false });
+          toggleFetched();
+        }}
         day={editPeriod.day}
         schedulePeriod={editPeriod.schedulePeriod}
         mode="edit"
