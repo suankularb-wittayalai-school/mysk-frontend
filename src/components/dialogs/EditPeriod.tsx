@@ -31,7 +31,7 @@ const EditPeriod = ({
   day,
   schedulePeriod,
 }: DialogProps & {
-  onSubmit: () => void;
+  onSubmit: (day: number, schedulePeriod: SchedulePeriod) => void;
   mode: "add" | "edit";
   day: Day;
   schedulePeriod: SchedulePeriod;
@@ -46,11 +46,13 @@ const EditPeriod = ({
   // Form control
   const [form, setForm] = useState<{
     subject: number;
+    room: string;
     day: number;
     startTime: number;
     duration: number;
   }>({
     subject: teacher?.subjectsInCharge ? teacher.subjectsInCharge[0].id : 0,
+    room: "",
     day,
     startTime: schedulePeriod.startTime,
     duration: schedulePeriod.duration,
@@ -61,6 +63,7 @@ const EditPeriod = ({
       subject:
         schedulePeriod.subject?.id ||
         (teacher?.subjectsInCharge ? teacher.subjectsInCharge[0].id : 0),
+      room: schedulePeriod.room || "",
       day,
       startTime: schedulePeriod.startTime,
       duration: schedulePeriod.duration,
@@ -121,6 +124,12 @@ const EditPeriod = ({
             }
             defaultValue={schedulePeriod.subject?.id}
             onChange={(e: number) => setForm({ ...form, subject: e })}
+          />
+          <KeyboardInput
+            name="room"
+            type="text"
+            label={t("dialog.editPeriod.form.room")}
+            onChange={(e: string) => setForm({ ...form, room: e })}
           />
           <Dropdown
             name="day"

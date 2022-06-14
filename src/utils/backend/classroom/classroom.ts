@@ -2,7 +2,6 @@ import { PostgrestError } from "@supabase/supabase-js";
 import { supabase } from "@utils/supabaseClient";
 import { Class } from "@utils/types/class";
 import { ClassroomTable } from "@utils/types/database/class";
-import { ContactDB } from "@utils/types/database/contact";
 import { ScheduleTable } from "@utils/types/database/schedule";
 import { createContact, updateContact } from "../contact";
 
@@ -51,7 +50,6 @@ export async function createClassroom(
       semester: classroom.semester,
       advisors: classroom.classAdvisors.map((advisor) => advisor.id),
       students: classroom.students.map((student) => student.id),
-      schedule: schedule[0].id,
       subjects: [],
     });
   if (classCreationError || !createdClass) {
@@ -95,7 +93,6 @@ export async function updateClassroom(
       semester: classroom.semester,
       advisors: classroom.classAdvisors.map((advisor) => advisor.id),
       students: classroom.students.map((student) => student.id),
-      schedule: classroom.schedule.id,
       subjects: [],
     })
     .match({ id: classroom.id });

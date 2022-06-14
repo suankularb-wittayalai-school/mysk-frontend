@@ -39,6 +39,7 @@
       "form": {
         "title": "Period information",
         "subject": "Subject",
+        "room": "Physical room",
         "day": "Day",
         "periodStart": "Starts at period",
         "duration": "Period duration"

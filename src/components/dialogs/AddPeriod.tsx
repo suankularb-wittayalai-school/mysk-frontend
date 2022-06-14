@@ -4,7 +4,12 @@ import { useTranslation } from "next-i18next";
 import { useState } from "react";
 
 // SK Components
-import { Dialog, DialogSection, Dropdown } from "@suankularb-components/react";
+import {
+  Dialog,
+  DialogSection,
+  Dropdown,
+  KeyboardInput,
+} from "@suankularb-components/react";
 
 // Components
 
@@ -16,6 +21,7 @@ import { useTeacherAccount } from "@utils/hooks/auth";
 
 // Types
 import { DialogProps } from "@utils/types/common";
+import { addPeriodtoSchedule } from "@utils/backend/schedule";
 
 const AddPeriodDialog = ({
   show,
@@ -33,17 +39,26 @@ const AddPeriodDialog = ({
   const [teacher] = useTeacherAccount();
 
   // Form control
-  const [subject, setSubject] = useState<number>(0);
+  const [form, setForm] = useState<{
+    subjectID: number;
+    room: string;
+  }>({
+    subjectID: 0,
+    room: "",
+  });
 
   // Form validation
   function validate(): boolean {
-    if (!subject) return false;
-
+    if (!form.subjectID) return false;
     return true;
   }
 
   // Form submission
-  function handleSubmit() {}
+  function handleSubmit() {
+    schedulePeriod.room = form.room;
+    if (teacher)
+      addPeriodtoSchedule(day, schedulePeriod, form.subjectID, teacher.id);
+  }
 
   // Dialog display
   return (
@@ -69,10 +84,10 @@ const AddPeriodDialog = ({
         onClose();
       }}
     >
-      <DialogSection name={t("dialog.addPeriod.form.title")} hasNoGap>
+      <DialogSection name={t("dialog.editPeriod.form.title")} hasNoGap>
         <Dropdown
           name="subject"
-          label={t("dialog.addPeriod.form.subject")}
+          label={t("dialog.editPeriod.form.subject")}
           options={
             teacher?.subjectsInCharge
               ? teacher.subjectsInCharge.map((subject) => ({
@@ -82,7 +97,13 @@ const AddPeriodDialog = ({
               : []
           }
           defaultValue={schedulePeriod.subject?.id}
-          onChange={(e: number) => setSubject(e)}
+          onChange={(e: number) => setForm({ ...form, subjectID: e })}
+        />
+        <KeyboardInput
+          name="room"
+          type="text"
+          label={t("dialog.editPeriod.form.room")}
+          onChange={(e: string) => setForm({ ...form, room: e })}
         />
       </DialogSection>
     </Dialog>

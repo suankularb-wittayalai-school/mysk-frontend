@@ -11,7 +11,6 @@ export interface ClassroomDB {
   semester: number;
   students: number[];
   advisors: number[];
-  schedule: ScheduleTable | null;
   contacts: number[];
   subjects: number[];
 }
@@ -24,7 +23,6 @@ export interface ClassroomTable {
   semester: number;
   students: number[];
   advisors: number[];
-  schedule: number | null;
   contacts: number[];
   subjects: number[];
 }
