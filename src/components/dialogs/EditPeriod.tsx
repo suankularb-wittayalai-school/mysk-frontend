@@ -50,7 +50,7 @@ const EditPeriod = ({
     startTime: number;
     duration: number;
   }>({
-    subject: 0,
+    subject: teacher?.subjectsInCharge ? teacher.subjectsInCharge[0].id : 0,
     day,
     startTime: schedulePeriod.startTime,
     duration: schedulePeriod.duration,
@@ -58,12 +58,14 @@ const EditPeriod = ({
 
   useEffect(() => {
     setForm({
-      subject: schedulePeriod.subject?.id || 0,
+      subject:
+        schedulePeriod.subject?.id ||
+        (teacher?.subjectsInCharge ? teacher.subjectsInCharge[0].id : 0),
       day,
       startTime: schedulePeriod.startTime,
       duration: schedulePeriod.duration,
     });
-  }, [show, day, schedulePeriod]);
+  }, [show, day, schedulePeriod, teacher]);
 
   // Form validation
   function validate(): boolean {
@@ -88,8 +90,15 @@ const EditPeriod = ({
         label={`${mode}-period`}
         title={t(`dialog.editPeriod.title.${mode}`)}
         actions={[
-          { name: t("dialog.editPeriod.action.cancel"), type: "close" },
-          { name: t("dialog.editPeriod.action.save"), type: "submit" },
+          {
+            name: t("dialog.editPeriod.action.cancel"),
+            type: "close",
+          },
+          {
+            name: t("dialog.editPeriod.action.save"),
+            type: "submit",
+            disabled: !validate(),
+          },
         ]}
         show={show}
         onClose={() => setShowDiscard(true)}

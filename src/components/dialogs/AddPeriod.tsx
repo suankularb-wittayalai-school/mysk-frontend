@@ -1,18 +1,12 @@
 // Modules
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 // SK Components
-import {
-  Dialog,
-  DialogSection,
-  Dropdown,
-  KeyboardInput,
-} from "@suankularb-components/react";
+import { Dialog, DialogSection, Dropdown } from "@suankularb-components/react";
 
 // Components
-import DiscardDraft from "@components/dialogs/DiscardDraft";
 
 // Backend
 import { SchedulePeriod } from "@utils/types/schedule";
@@ -43,6 +37,8 @@ const AddPeriodDialog = ({
 
   // Form validation
   function validate(): boolean {
+    if (!subject) return false;
+
     return true;
   }
 
@@ -56,7 +52,10 @@ const AddPeriodDialog = ({
       label="add-subject-to-period"
       title={t("dialog.addPeriod.title")}
       actions={[
-        { name: t("dialog.addPeriod.action.cancel"), type: "close" },
+        {
+          name: t("dialog.addPeriod.action.cancel"),
+          type: "close",
+        },
         {
           name: t("dialog.addPeriod.action.save"),
           type: "submit",
