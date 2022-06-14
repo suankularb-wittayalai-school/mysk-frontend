@@ -57,7 +57,7 @@ const TeacherSchedule: NextPage = () => {
         setSchedule(await getSchedule("teacher", teacher.id));
         toggleFetched();
       }
-    }
+    };
     fetchAndSetSchedule();
   }, [fetched, teacher]);
 

@@ -4,8 +4,6 @@ import {
   createEmptySchedule,
 } from "@utils/helpers/schedule";
 import { supabase } from "@utils/supabaseClient";
-import { ClassWNumber } from "@utils/types/class";
-import { ClassroomDB } from "@utils/types/database/class";
 import {
   ScheduleItemDB,
   ScheduleItemTable,
@@ -57,40 +55,37 @@ export async function getSchedule(role: Role, id: number): Promise<Schedule> {
     console.error(error);
     return schedule;
   }
+
   // Add Supabase data to empty schedule
   for (let scheduleItem of data) {
-    // Remove overlapping periods from resulting Schedule
-    schedule = {
-      ...schedule,
-      // For each row
-      content: schedule.content.map((scheduleRow) => ({
-        ...scheduleRow,
-        content:
-          // For each period
-          scheduleRow.content.filter(
-            (schedulePeriod) =>
-              // Check for overlap
-              !arePeriodsOverlapping(
-                {
-                  day: scheduleRow.day,
-                  startTime: schedulePeriod.startTime,
-                  duration: schedulePeriod.duration,
-                },
-                {
-                  day: scheduleItem.day as Day,
-                  startTime: scheduleItem.start_time,
-                  duration: scheduleItem.duration,
-                }
-              )
-          ),
-      })),
-    };
+    // Find the index of the row we want to manipulate
+    const scheduleRowIndex = schedule.content.findIndex(
+      (scheduleRow) => scheduleItem.day == scheduleRow.day
+    );
 
-    schedule.content[
-      schedule.content.findIndex(
-        (scheduleRow) => scheduleItem.day == scheduleRow.day
-      )
-    ].content.push({
+    console.log({ scheduleRowIndex });
+
+    // Remove overlapping periods from resulting Schedule
+    schedule.content[scheduleRowIndex].content = schedule.content[
+      scheduleRowIndex
+    ].content.filter((schedulePeriod) =>
+      // Check for overlap
+      {
+        return !arePeriodsOverlapping(
+          {
+            startTime: schedulePeriod.startTime,
+            duration: schedulePeriod.duration,
+          },
+          {
+            startTime: scheduleItem.start_time,
+            duration: scheduleItem.duration,
+          }
+        );
+      }
+    );
+
+    // Now with space to add it in, add the period to resulting Schedule
+    schedule.content[scheduleRowIndex].content.push({
       startTime: scheduleItem.start_time,
       duration: scheduleItem.duration,
       subject: await db2Subject(scheduleItem.subject),
@@ -98,8 +93,6 @@ export async function getSchedule(role: Role, id: number): Promise<Schedule> {
       room: scheduleItem.room,
     });
   }
-
-  console.log({ schedule });
 
   return schedule;
 }

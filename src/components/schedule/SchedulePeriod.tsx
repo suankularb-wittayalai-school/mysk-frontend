@@ -290,7 +290,7 @@ const SchedulePeriod = ({
   }) => void;
 }): JSX.Element => (
   <motion.li
-    key={schedulePeriod.startTime}
+    key={`${day.getDay()}-${schedulePeriod.startTime}`}
     className="absolute px-1"
     style={{
       width: periodWidth * schedulePeriod.duration,
