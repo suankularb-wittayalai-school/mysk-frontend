@@ -22,14 +22,20 @@ import AddPeriodDialog from "@components/dialogs/AddPeriod";
 import EditPeriodDialog from "@components/dialogs/EditPeriod";
 import Schedule from "@components/schedule/Schedule";
 
+// Backend
+import { getSchedule } from "@utils/backend/schedule";
+
+// Helpers
+import { createEmptySchedule } from "@utils/helpers/schedule";
+
+// Hooks
+import { useTeacherAccount } from "@utils/hooks/auth";
+
 // Types
 import {
   Schedule as ScheduleType,
   SchedulePeriod,
 } from "@utils/types/schedule";
-import { useTeacherAccount } from "@utils/hooks/auth";
-import { getSchedule } from "@utils/backend/schedule";
-import { createEmptySchedule } from "@utils/helpers/schedule";
 
 const TeacherSchedule: NextPage = () => {
   const { t } = useTranslation("schedule");
@@ -65,8 +71,10 @@ const TeacherSchedule: NextPage = () => {
     schedulePeriod: SchedulePeriod;
   }>({ show: false, day: 1, schedulePeriod: { startTime: 1, duration: 1 } });
 
+  // Component display
   return (
     <>
+      {/* Component */}
       <RegularLayout
         Title={
           <Title
@@ -94,6 +102,8 @@ const TeacherSchedule: NextPage = () => {
           </div>
         </Section>
       </RegularLayout>
+
+      {/* Dialogs */}
       <AddPeriodDialog
         show={addSubjectToPeriod.show}
         onClose={() =>
