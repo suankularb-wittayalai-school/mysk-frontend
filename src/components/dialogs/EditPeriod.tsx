@@ -12,7 +12,8 @@ import {
 } from "@suankularb-components/react";
 
 // Backend
-import { addPeriodtoSchedule } from "@utils/backend/schedule";
+import { addPeriodtoSchedule } from "@utils/backend/schedule/schedule";
+import { getRoomsEnrolledInSubject } from "@utils/backend/subject/roomSubject";
 
 // Helpers
 import { range } from "@utils/helpers/array";
@@ -21,8 +22,12 @@ import { range } from "@utils/helpers/array";
 import { useTeacherAccount } from "@utils/hooks/auth";
 
 // Types
+import { ClassWNumber } from "@utils/types/class";
 import { SubmittableDialogProps } from "@utils/types/common";
 import { SchedulePeriod } from "@utils/types/schedule";
+
+// Miscellaneous
+import { classPattern, roomPattern } from "@utils/patterns";
 
 const EditPeriod = ({
   show,
@@ -45,49 +50,73 @@ const EditPeriod = ({
   // Form control
   const [form, setForm] = useState<{
     subject: number;
-    class: number;
+    classID: number;
     room: string;
     day: number;
     startTime: number;
     duration: number;
   }>({
     subject: teacher?.subjectsInCharge ? teacher.subjectsInCharge[0].id : 0,
-    class: 0,
+    classID: 0,
     room: "",
     day: 0,
     startTime: 0,
     duration: 0,
   });
 
+  // Classes
+  const [classes, setClasses] = useState<ClassWNumber[]>([]);
   useEffect(() => {
-    if (mode == "edit" || canEditStartTime)
+    const fetchClasses = async () =>
+      setClasses((await getRoomsEnrolledInSubject(form.subject)).data || []);
+    fetchClasses();
+  }, [form.subject]);
+
+  useEffect(() => {
+    // Populate form with data if editing
+    if (mode == "edit" || !canEditStartTime)
       setForm({
         subject:
           schedulePeriod?.subject?.id ||
           (teacher?.subjectsInCharge ? teacher.subjectsInCharge[0].id : 0),
-        class: schedulePeriod?.class?.number || 0,
+        classID:
+          schedulePeriod?.class?.number ||
+          (classes.length > 0 ? classes[0].id : 0),
         room: schedulePeriod?.room || "",
         day: day || 0,
         startTime: schedulePeriod?.startTime || 0,
-        duration: schedulePeriod?.duration || 0,
+        duration: 1,
       });
+    // Populate form with day-time data if adding from Schedule
+    else if (!canEditStartTime)
+      setForm({
+        subject: teacher?.subjectsInCharge ? teacher.subjectsInCharge[0].id : 0,
+        classID: classes.length > 0 ? classes[0].id : 0,
+        room: "",
+        day: day || 0,
+        startTime: schedulePeriod?.startTime || 0,
+        duration: 1,
+      });
+    // Reset the form
     else
       setForm({
         subject: teacher?.subjectsInCharge ? teacher.subjectsInCharge[0].id : 0,
-        class: 0,
+        classID: classes.length > 0 ? classes[0].id : 0,
         room: "",
         day: 0,
         startTime: 0,
         duration: 0,
       });
-  }, [canEditStartTime, day, mode, schedulePeriod, teacher]);
+  }, [show]);
 
   // Form validation
   function validate(): boolean {
-    if (!form.startTime) return false;
     if (!form.subject) return false;
+    if (!form.classID) return false;
+    if (!form.room) return false;
+
     if (!form.day) return false;
-    if (form.startTime < 0 || form.startTime > 10) return false;
+    if (form.startTime < 1 || form.startTime > 10) return false;
     if (form.duration < 1 || form.duration > 10) return false;
 
     return true;
@@ -142,12 +171,17 @@ const EditPeriod = ({
           onChange={(e: number) => setForm({ ...form, subject: e })}
         />
 
-        {/* Room */}
-        <KeyboardInput
-          name="room"
-          type="text"
-          label={t("dialog.editPeriod.form.room")}
-          onChange={(e: string) => setForm({ ...form, room: e })}
+        {/* Class */}
+        <Dropdown
+          name="class"
+          label={t("dialog.editPeriod.form.class")}
+          options={classes
+            .map((classroom) => ({
+              value: classroom.id,
+              label: t("class", { ns: "common", number: classroom.number }),
+            }))
+            .sort((a, b) => a.label.localeCompare(b.label))}
+          onChange={(e: number) => setForm({ ...form, classID: e })}
         />
 
         {/* Room */}
@@ -156,9 +190,9 @@ const EditPeriod = ({
           type="text"
           label={t("dialog.editPeriod.form.room")}
           onChange={(e: string) => setForm({ ...form, room: e })}
+          attr={{ pattern: roomPattern }}
         />
 
-        {/* Start day and time */}
         {canEditStartTime && (
           <>
             {/* Day */}
@@ -184,28 +218,20 @@ const EditPeriod = ({
               onChange={(e: string) =>
                 setForm({ ...form, startTime: Number(e) })
               }
-              attr={{
-                min: 1,
-                max: 10,
-              }}
-            />
-            <KeyboardInput
-              name="duration"
-              type="number"
-              label={t("dialog.editPeriod.form.duration")}
-              defaultValue={
-                mode == "edit" ? schedulePeriod?.duration : undefined
-              }
-              onChange={(e: string) =>
-                setForm({ ...form, duration: Number(e) })
-              }
-              attr={{
-                min: 1,
-                max: 10,
-              }}
+              attr={{ min: 1, max: 10 }}
             />
           </>
         )}
+
+        {/* Duration */}
+        <KeyboardInput
+          name="duration"
+          type="number"
+          label={t("dialog.editPeriod.form.duration")}
+          defaultValue={mode == "edit" ? schedulePeriod?.duration : 1}
+          onChange={(e: string) => setForm({ ...form, duration: Number(e) })}
+          attr={{ min: 1, max: 10 }}
+        />
       </DialogSection>
     </Dialog>
   );

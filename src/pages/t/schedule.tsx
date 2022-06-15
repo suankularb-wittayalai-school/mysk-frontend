@@ -22,7 +22,7 @@ import EditPeriodDialog from "@components/dialogs/EditPeriod";
 import Schedule from "@components/schedule/Schedule";
 
 // Backend
-import { getSchedule } from "@utils/backend/schedule";
+import { getSchedule } from "@utils/backend/schedule/schedule";
 
 // Helpers
 import { range } from "@utils/helpers/array";
@@ -38,7 +38,6 @@ import {
 
 const TeacherSchedule: NextPage = () => {
   const { t } = useTranslation("schedule");
-  const router = useRouter();
   const [teacher] = useTeacherAccount();
 
   // Data fetch
@@ -111,6 +110,8 @@ const TeacherSchedule: NextPage = () => {
       </RegularLayout>
 
       {/* Dialogs */}
+
+      {/* Add from Schedule */}
       <EditPeriodDialog
         show={addSubjectToPeriod.show}
         onClose={() =>
@@ -127,6 +128,8 @@ const TeacherSchedule: NextPage = () => {
         }}
         mode="add"
       />
+
+      {/* Add from Button */}
       <EditPeriodDialog
         show={addPeriod}
         onClose={() => toggleAddPeriod()}
@@ -137,6 +140,8 @@ const TeacherSchedule: NextPage = () => {
         mode="add"
         canEditStartTime
       />
+
+      {/* Edit Period */}
       <EditPeriodDialog
         show={editPeriod.show}
         onClose={() => setEditPeriod({ ...editPeriod, show: false })}

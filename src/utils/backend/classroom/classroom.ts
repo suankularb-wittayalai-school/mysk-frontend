@@ -2,7 +2,6 @@ import { PostgrestError } from "@supabase/supabase-js";
 import { supabase } from "@utils/supabaseClient";
 import { Class } from "@utils/types/class";
 import { ClassroomTable } from "@utils/types/database/class";
-import { ScheduleTable } from "@utils/types/database/schedule";
 import { createContact, updateContact } from "../contact";
 
 export async function createClassroom(
@@ -21,19 +20,6 @@ export async function createClassroom(
     } else {
       throw new Error("Unknown error");
     }
-  }
-
-  const { data: schedule, error: scheduleError } = await supabase
-    .from<ScheduleTable>("schedule")
-    .insert({
-      schedule_rows: [],
-      year: classroom.year,
-      semester: classroom.semester,
-    });
-
-  if (scheduleError || !schedule) {
-    console.error(scheduleError);
-    return { data: null, error: scheduleError };
   }
 
   // map the created contact to id

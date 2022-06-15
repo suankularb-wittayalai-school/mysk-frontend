@@ -1,5 +1,4 @@
 // Modules
-import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 
 import { useEffect, useState } from "react";
@@ -24,6 +23,9 @@ import { supabase } from "@utils/supabaseClient";
 import { ClassroomDB } from "@utils/types/database/class";
 import { Class } from "@utils/types/class";
 import { DialogProps } from "@utils/types/common";
+
+// Miscellaneous
+import { classPattern } from "@utils/patterns";
 
 const AddClassDialog = ({
   show,
@@ -79,7 +81,7 @@ const AddClassDialog = ({
           errorMsg={t("dialog.addClass.class_error")}
           useAutoMsg
           onChange={(e) => setClassroomNumber(e)}
-          attr={{ pattern: "[1-6][0-1][1-9]" }}
+          attr={{ pattern: classPattern }}
         />
       </DialogSection>
     </Dialog>

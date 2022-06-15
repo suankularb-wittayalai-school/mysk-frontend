@@ -39,6 +39,9 @@ import {
   SubjectTypeTH,
 } from "@utils/types/subject";
 
+// Miscellaneous
+import { subjectCodeENPattern, subjectCodeTHPattern } from "@utils/patterns";
+
 const EditSubjectDialog = ({
   show,
   onClose,
@@ -316,7 +319,7 @@ const EditSubjectDialog = ({
               setForm({ ...form, code: { ...form.code, th: e } })
             }
             defaultValue={subject?.code.th}
-            attr={{ pattern: "[\u0E00-\u0E7FA-Z]\\d{5}" }}
+            attr={{ pattern: subjectCodeTHPattern }}
           />
           <KeyboardInput
             name="name-th"
@@ -363,7 +366,7 @@ const EditSubjectDialog = ({
               setForm({ ...form, code: { ...form.code, "en-US": e } })
             }
             defaultValue={subject?.code["en-US"]}
-            attr={{ pattern: "[A-Z]{1,3}\\d{5}" }}
+            attr={{ pattern: subjectCodeENPattern }}
           />
           <KeyboardInput
             name="name-en"
@@ -390,7 +393,10 @@ const EditSubjectDialog = ({
                 ...form,
                 name: {
                   ...form.name,
-                  "en-US": { ...(form.name["en-US"] as SubjectName), shortName: e },
+                  "en-US": {
+                    ...(form.name["en-US"] as SubjectName),
+                    shortName: e,
+                  },
                 },
               })
             }

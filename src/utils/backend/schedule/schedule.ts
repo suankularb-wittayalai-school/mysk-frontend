@@ -4,13 +4,14 @@ import {
   createEmptySchedule,
 } from "@utils/helpers/schedule";
 import { supabase } from "@utils/supabaseClient";
+import { ClassroomTable } from "@utils/types/database/class";
 import {
   ScheduleItemDB,
   ScheduleItemTable,
 } from "@utils/types/database/schedule";
 import { Role } from "@utils/types/person";
 import { Schedule, SchedulePeriod } from "@utils/types/schedule";
-import { db2Subject } from "./database";
+import { db2Subject } from "../database";
 
 /**
  * Construct a Schedule from Schedule Items from the student’s perspective
@@ -103,7 +104,7 @@ export async function getSchedule(role: Role, id: number): Promise<Schedule> {
 export async function addPeriodtoSchedule(
   form: {
     subject: number;
-    class: number;
+    classID: number;
     room: string;
     day: number;
     startTime: number;
@@ -111,11 +112,12 @@ export async function addPeriodtoSchedule(
   },
   teacherID: number
 ): Promise<{ data: ScheduleItemTable[] | null; error: PostgrestError | null }> {
+
   const { data, error } = await supabase
     .from<ScheduleItemTable>("schedule_items")
     .insert({
       subject: form.subject,
-      classroom: form.class,
+      classroom: form.classID,
       room: form.room,
       teacher: teacherID,
       day: form.day,

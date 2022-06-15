@@ -20,17 +20,6 @@
     }
   },
   "dialog": {
-    "addPeriod": {
-      "title": "Add subject period",
-      "form": {
-        "title": "Period information",
-        "subject": "Subject"
-      },
-      "action": {
-        "cancel": "Cancel",
-        "save": "Add"
-      }
-    },
     "editPeriod": {
       "title": {
         "add": "Add subject period",
@@ -39,6 +28,7 @@
       "form": {
         "title": "Period information",
         "subject": "Subject",
+        "class": "Class",
         "room": "Physical room",
         "day": "Day",
         "periodStart": "Starts at period",
