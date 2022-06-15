@@ -11,17 +11,18 @@ import {
   KeyboardInput,
 } from "@suankularb-components/react";
 
-// Components
-import DiscardDraft from "@components/dialogs/DiscardDraft";
-
 // Backend
-import { SchedulePeriod } from "@utils/types/schedule";
+import { addPeriodtoSchedule } from "@utils/backend/schedule";
 
-// Hookes
+// Helpers
+import { range } from "@utils/helpers/array";
+
+// Hooks
 import { useTeacherAccount } from "@utils/hooks/auth";
 
 // Types
-import { DialogProps } from "@utils/types/common";
+import { SubmittableDialogProps } from "@utils/types/common";
+import { SchedulePeriod } from "@utils/types/schedule";
 
 const EditPeriod = ({
   show,
@@ -30,11 +31,12 @@ const EditPeriod = ({
   mode,
   day,
   schedulePeriod,
-}: DialogProps & {
-  onSubmit: (day: number, schedulePeriod: SchedulePeriod) => void;
+  canEditStartTime,
+}: SubmittableDialogProps & {
   mode: "add" | "edit";
-  day: Day;
-  schedulePeriod: SchedulePeriod;
+  day?: Day;
+  schedulePeriod?: SchedulePeriod;
+  canEditStartTime?: boolean;
 }): JSX.Element => {
   const { t } = useTranslation(["schedule", "common"]);
   const locale = useRouter().locale as "en-US" | "th";
@@ -46,29 +48,42 @@ const EditPeriod = ({
   // Form control
   const [form, setForm] = useState<{
     subject: number;
+    class: number;
     room: string;
     day: number;
     startTime: number;
     duration: number;
   }>({
     subject: teacher?.subjectsInCharge ? teacher.subjectsInCharge[0].id : 0,
+    class: 0,
     room: "",
-    day,
-    startTime: schedulePeriod.startTime,
-    duration: schedulePeriod.duration,
+    day: 0,
+    startTime: 0,
+    duration: 0,
   });
 
   useEffect(() => {
-    setForm({
-      subject:
-        schedulePeriod.subject?.id ||
-        (teacher?.subjectsInCharge ? teacher.subjectsInCharge[0].id : 0),
-      room: schedulePeriod.room || "",
-      day,
-      startTime: schedulePeriod.startTime,
-      duration: schedulePeriod.duration,
-    });
-  }, [show, day, schedulePeriod, teacher]);
+    if (mode == "edit" || canEditStartTime)
+      setForm({
+        subject:
+          schedulePeriod?.subject?.id ||
+          (teacher?.subjectsInCharge ? teacher.subjectsInCharge[0].id : 0),
+        class: schedulePeriod?.class?.number || 0,
+        room: schedulePeriod?.room || "",
+        day: day || 0,
+        startTime: schedulePeriod?.startTime || 0,
+        duration: schedulePeriod?.duration || 0,
+      });
+    else
+      setForm({
+        subject: teacher?.subjectsInCharge ? teacher.subjectsInCharge[0].id : 0,
+        class: 0,
+        room: "",
+        day: 0,
+        startTime: 0,
+        duration: 0,
+      });
+  }, [canEditStartTime, day, mode, schedulePeriod, teacher]);
 
   // Form validation
   function validate(): boolean {
@@ -84,114 +99,108 @@ const EditPeriod = ({
   // Form submission
   function handleSubmit() {
     if (!validate()) return;
+
+    if (teacher) {
+      if (mode == "add")
+        addPeriodtoSchedule(
+          form.day,
+          { startTime: form.startTime, duration: form.duration },
+          form.subject,
+          teacher.id
+        );
+    }
   }
 
   return (
-    <>
-      <Dialog
-        type="regular"
-        label={`${mode}-period`}
-        title={t(`dialog.editPeriod.title.${mode}`)}
-        actions={[
-          {
-            name: t("dialog.editPeriod.action.cancel"),
-            type: "close",
-          },
-          {
-            name: t("dialog.editPeriod.action.save"),
-            type: "submit",
-            disabled: !validate(),
-          },
-        ]}
-        show={show}
-        onClose={() => setShowDiscard(true)}
-        onSubmit={() => {
-          handleSubmit();
-          onClose();
-        }}
-      >
-        <DialogSection name={t("dialog.editPeriod.form.title")} hasNoGap>
-          <Dropdown
-            name="subject"
-            label={t("dialog.editPeriod.form.subject")}
-            options={
-              teacher?.subjectsInCharge
-                ? teacher.subjectsInCharge.map((subject) => ({
-                    value: subject.id,
-                    label: (subject.name[locale] || subject.name.th).name,
-                  }))
-                : []
-            }
-            defaultValue={schedulePeriod.subject?.id}
-            onChange={(e: number) => setForm({ ...form, subject: e })}
-          />
-          <KeyboardInput
-            name="room"
-            type="text"
-            label={t("dialog.editPeriod.form.room")}
-            onChange={(e: string) => setForm({ ...form, room: e })}
-          />
-          <Dropdown
-            name="day"
-            label={t("dialog.editPeriod.form.day")}
-            options={[
-              {
-                value: 1,
-                label: t("datetime.day.1", { ns: "common" }),
-              },
-              {
-                value: 2,
-                label: t("datetime.day.2", { ns: "common" }),
-              },
-              {
-                value: 3,
-                label: t("datetime.day.3", { ns: "common" }),
-              },
-              {
-                value: 4,
-                label: t("datetime.day.4", { ns: "common" }),
-              },
-              {
-                value: 5,
-                label: t("datetime.day.5", { ns: "common" }),
-              },
-            ]}
-            defaultValue={day}
-            onChange={(e: string) => setForm({ ...form, day: Number(e) })}
-          />
-          <KeyboardInput
-            name="period-start"
-            type="number"
-            label={t("dialog.editPeriod.form.periodStart")}
-            defaultValue={schedulePeriod.startTime}
-            onChange={(e: string) => setForm({ ...form, startTime: Number(e) })}
-            attr={{
-              min: 1,
-              max: 10,
-            }}
-          />
-          <KeyboardInput
-            name="duration"
-            type="number"
-            label={t("dialog.editPeriod.form.duration")}
-            defaultValue={schedulePeriod.duration}
-            onChange={(e: string) => setForm({ ...form, duration: Number(e) })}
-            attr={{
-              min: 1,
-              max: 10,
-            }}
-          />
-        </DialogSection>
-      </Dialog>
-      <DiscardDraft
-        show={showDiscard}
-        onClose={() => setShowDiscard(false)}
-        onSubmit={() => {
-          setShowDiscard(false);
-          onClose();
-        }}
-      />
-    </>
+    <Dialog
+      type="regular"
+      label={`${mode}-period`}
+      title={t(`dialog.editPeriod.title.${mode}`)}
+      actions={[
+        {
+          name: t("dialog.editPeriod.action.cancel"),
+          type: "close",
+        },
+        {
+          name: t("dialog.editPeriod.action.save"),
+          type: "submit",
+          disabled: !validate(),
+        },
+      ]}
+      show={show}
+      onClose={() => onClose()}
+      onSubmit={() => {
+        handleSubmit();
+        onSubmit();
+      }}
+    >
+      <DialogSection name={t("dialog.editPeriod.form.title")} hasNoGap>
+        <Dropdown
+          name="subject"
+          label={t("dialog.editPeriod.form.subject")}
+          options={
+            teacher?.subjectsInCharge
+              ? teacher.subjectsInCharge.map((subject) => ({
+                  value: subject.id,
+                  label: (subject.name[locale] || subject.name.th).name,
+                }))
+              : []
+          }
+          defaultValue={mode == "edit" ? schedulePeriod?.subject?.id : 0}
+          onChange={(e: number) => setForm({ ...form, subject: e })}
+        />
+        <KeyboardInput
+          name="room"
+          type="text"
+          label={t("dialog.editPeriod.form.room")}
+          onChange={(e: string) => setForm({ ...form, room: e })}
+        />
+        {canEditStartTime && (
+          <>
+            <Dropdown
+              name="day"
+              label={t("dialog.editPeriod.form.day")}
+              options={range(5).map((day) => ({
+                value: day + 1,
+                label: t(`datetime.day.${day + 1}`, { ns: "common" }),
+              }))}
+              defaultValue={day}
+              onChange={(e: string) => setForm({ ...form, day: Number(e) })}
+            />
+            <KeyboardInput
+              name="period-start"
+              type="number"
+              label={t("dialog.editPeriod.form.periodStart")}
+              defaultValue={
+                mode == "edit" ? schedulePeriod?.startTime : undefined
+              }
+              onChange={(e: string) =>
+                setForm({ ...form, startTime: Number(e) })
+              }
+              attr={{
+                min: 1,
+                max: 10,
+              }}
+            />
+            <KeyboardInput
+              name="duration"
+              type="number"
+              label={t("dialog.editPeriod.form.duration")}
+              defaultValue={
+                mode == "edit" ? schedulePeriod?.duration : undefined
+              }
+              onChange={(e: string) =>
+                setForm({ ...form, duration: Number(e) })
+              }
+              attr={{
+                min: 1,
+                max: 10,
+              }}
+            />
+          </>
+        )}
+      </DialogSection>
+    </Dialog>
   );
 };
 

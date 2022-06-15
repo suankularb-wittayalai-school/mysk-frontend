@@ -238,7 +238,7 @@ const PeriodHoverMenu = ({
         {/* Drag handle */}
         <button
           className="surface pointer-events-auto absolute top-1/2 left-0
-            w-fit cursor-grab rounded-full p-1 text-xl shadow"
+            w-fit cursor-move rounded-full p-1 text-xl shadow"
         >
           <MaterialIcon icon="drag_indicator" allowCustomSize />
         </button>

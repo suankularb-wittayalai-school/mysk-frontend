@@ -63,8 +63,6 @@ export async function getSchedule(role: Role, id: number): Promise<Schedule> {
       (scheduleRow) => scheduleItem.day == scheduleRow.day
     );
 
-    console.log({ scheduleRowIndex });
-
     // Remove overlapping periods from resulting Schedule
     schedule.content[scheduleRowIndex].content = schedule.content[
       scheduleRowIndex

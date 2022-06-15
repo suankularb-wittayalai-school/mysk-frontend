@@ -18,7 +18,6 @@ import {
 } from "@suankularb-components/react";
 
 // Components
-import AddPeriodDialog from "@components/dialogs/AddPeriod";
 import EditPeriodDialog from "@components/dialogs/EditPeriod";
 import Schedule from "@components/schedule/Schedule";
 
@@ -112,7 +111,7 @@ const TeacherSchedule: NextPage = () => {
       </RegularLayout>
 
       {/* Dialogs */}
-      <AddPeriodDialog
+      <EditPeriodDialog
         show={addSubjectToPeriod.show}
         onClose={() =>
           setAddSubjectToPeriod({ ...addSubjectToPeriod, show: false })
@@ -126,6 +125,7 @@ const TeacherSchedule: NextPage = () => {
           startTime: addSubjectToPeriod.startTime,
           duration: 1,
         }}
+        mode="add"
       />
       <EditPeriodDialog
         show={addPeriod}
@@ -134,12 +134,8 @@ const TeacherSchedule: NextPage = () => {
           toggleAddPeriod();
           toggleFetched();
         }}
-        day={1}
-        schedulePeriod={{
-          startTime: 1,
-          duration: 1,
-        }}
         mode="add"
+        canEditStartTime
       />
       <EditPeriodDialog
         show={editPeriod.show}
@@ -151,6 +147,7 @@ const TeacherSchedule: NextPage = () => {
         day={editPeriod.day}
         schedulePeriod={editPeriod.schedulePeriod}
         mode="edit"
+        canEditStartTime
       />
     </>
   );
