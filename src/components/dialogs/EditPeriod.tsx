@@ -12,7 +12,10 @@ import {
 } from "@suankularb-components/react";
 
 // Backend
-import { addPeriodtoSchedule } from "@utils/backend/schedule/schedule";
+import {
+  createScheduleItem,
+  editScheduleItem,
+} from "@utils/backend/schedule/schedule";
 import { getRoomsEnrolledInSubject } from "@utils/backend/subject/roomSubject";
 
 // Helpers
@@ -27,7 +30,7 @@ import { SubmittableDialogProps } from "@utils/types/common";
 import { SchedulePeriod } from "@utils/types/schedule";
 
 // Miscellaneous
-import { classPattern, roomPattern } from "@utils/patterns";
+import { roomPattern } from "@utils/patterns";
 
 const EditPeriod = ({
   show,
@@ -127,7 +130,10 @@ const EditPeriod = ({
     if (!validate()) return;
 
     if (teacher) {
-      if (mode == "add") addPeriodtoSchedule(form, teacher.id);
+      if (mode == "add") createScheduleItem(form, teacher.id);
+      else if (mode == "edit")
+        if (schedulePeriod?.id) editScheduleItem(form, schedulePeriod.id);
+        else console.error("Cannot push edit, Schedule Period is missing Supabase ID.");
     }
   }
 

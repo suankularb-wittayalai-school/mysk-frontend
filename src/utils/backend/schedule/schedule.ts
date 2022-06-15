@@ -85,6 +85,7 @@ export async function getSchedule(role: Role, id: number): Promise<Schedule> {
 
     // Now with space to add it in, add the period to resulting Schedule
     schedule.content[scheduleRowIndex].content.push({
+      id: scheduleItem.id,
       startTime: scheduleItem.start_time,
       duration: scheduleItem.duration,
       subject: await db2Subject(scheduleItem.subject),
@@ -101,7 +102,7 @@ export async function getSchedule(role: Role, id: number): Promise<Schedule> {
  * @param form Edit Period dialog form
  * @param teacherID The Supabase ID of the Teacher teaching this Schedule Period
  */
-export async function addPeriodtoSchedule(
+export async function createScheduleItem(
   form: {
     subject: number;
     classID: number;
@@ -112,7 +113,6 @@ export async function addPeriodtoSchedule(
   },
   teacherID: number
 ): Promise<{ data: ScheduleItemTable[] | null; error: PostgrestError | null }> {
-
   const { data, error } = await supabase
     .from<ScheduleItemTable>("schedule_items")
     .insert({
@@ -124,6 +124,42 @@ export async function addPeriodtoSchedule(
       start_time: form.startTime,
       duration: form.duration,
     });
+
+  if (error || !data) {
+    console.error(error);
+    return { data: null, error };
+  }
+
+  return { data, error: null };
+}
+
+export async function editScheduleItem(
+  form: {
+    subject: number;
+    classID: number;
+    room: string;
+    day: number;
+    startTime: number;
+    duration: number;
+  },
+  id: number
+): Promise<{
+  data: ScheduleItemTable[] | null;
+  error: PostgrestError | null;
+}> {
+  console.log({ form, id });
+
+  const { data, error } = await supabase
+    .from<ScheduleItemTable>("schedule_items")
+    .update({
+      subject: form.subject,
+      classroom: form.classID,
+      room: form.room,
+      day: form.day,
+      start_time: form.startTime,
+      duration: form.duration,
+    })
+    .match({ id });
 
   if (error || !data) {
     console.error(error);

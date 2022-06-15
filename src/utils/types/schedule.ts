@@ -14,6 +14,7 @@ export type ScheduleRow = {
 };
 
 export type SchedulePeriod = {
+  id?: number;
   startTime: number;
   duration: number;
   subject?: {
