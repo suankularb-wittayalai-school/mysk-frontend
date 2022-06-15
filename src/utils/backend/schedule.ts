@@ -97,26 +97,30 @@ export async function getSchedule(role: Role, id: number): Promise<Schedule> {
 
 /**
  * Insert a Schedule Item
- * @param day The day this Schedule Period is in
- * @param schedulePeriod Frontend-side Schedule Period
- * @param subjectID The Supabase ID of the Subject taught in this Schedule Period
+ * @param form Edit Period dialog form
  * @param teacherID The Supabase ID of the Teacher teaching this Schedule Period
  */
 export async function addPeriodtoSchedule(
-  day: number,
-  schedulePeriod: SchedulePeriod,
-  subjectID: number,
+  form: {
+    subject: number;
+    class: number;
+    room: string;
+    day: number;
+    startTime: number;
+    duration: number;
+  },
   teacherID: number
 ): Promise<{ data: ScheduleItemTable[] | null; error: PostgrestError | null }> {
   const { data, error } = await supabase
     .from<ScheduleItemTable>("schedule_items")
     .insert({
-      subject: subjectID,
+      subject: form.subject,
+      classroom: form.class,
+      room: form.room,
       teacher: teacherID,
-      day,
-      start_time: schedulePeriod.startTime,
-      duration: schedulePeriod.duration,
-      room: schedulePeriod.room,
+      day: form.day,
+      start_time: form.startTime,
+      duration: form.duration,
     });
 
   if (error || !data) {

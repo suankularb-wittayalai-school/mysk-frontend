@@ -42,9 +42,6 @@ const EditPeriod = ({
   const locale = useRouter().locale as "en-US" | "th";
   const [teacher] = useTeacherAccount();
 
-  // Dialog control
-  const [showDiscard, setShowDiscard] = useState<boolean>(false);
-
   // Form control
   const [form, setForm] = useState<{
     subject: number;
@@ -101,13 +98,7 @@ const EditPeriod = ({
     if (!validate()) return;
 
     if (teacher) {
-      if (mode == "add")
-        addPeriodtoSchedule(
-          form.day,
-          { startTime: form.startTime, duration: form.duration },
-          form.subject,
-          teacher.id
-        );
+      if (mode == "add") addPeriodtoSchedule(form, teacher.id);
     }
   }
 
@@ -135,6 +126,7 @@ const EditPeriod = ({
       }}
     >
       <DialogSection name={t("dialog.editPeriod.form.title")} hasNoGap>
+        {/* Subject */}
         <Dropdown
           name="subject"
           label={t("dialog.editPeriod.form.subject")}
@@ -149,14 +141,27 @@ const EditPeriod = ({
           defaultValue={mode == "edit" ? schedulePeriod?.subject?.id : 0}
           onChange={(e: number) => setForm({ ...form, subject: e })}
         />
+
+        {/* Room */}
         <KeyboardInput
           name="room"
           type="text"
           label={t("dialog.editPeriod.form.room")}
           onChange={(e: string) => setForm({ ...form, room: e })}
         />
+
+        {/* Room */}
+        <KeyboardInput
+          name="room"
+          type="text"
+          label={t("dialog.editPeriod.form.room")}
+          onChange={(e: string) => setForm({ ...form, room: e })}
+        />
+
+        {/* Start day and time */}
         {canEditStartTime && (
           <>
+            {/* Day */}
             <Dropdown
               name="day"
               label={t("dialog.editPeriod.form.day")}
@@ -167,6 +172,8 @@ const EditPeriod = ({
               defaultValue={day}
               onChange={(e: string) => setForm({ ...form, day: Number(e) })}
             />
+
+            {/* Start time */}
             <KeyboardInput
               name="period-start"
               type="number"
