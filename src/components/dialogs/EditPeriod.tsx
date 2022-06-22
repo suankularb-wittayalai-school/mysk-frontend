@@ -133,7 +133,10 @@ const EditPeriod = ({
       if (mode == "add") createScheduleItem(form, teacher.id);
       else if (mode == "edit")
         if (schedulePeriod?.id) editScheduleItem(form, schedulePeriod.id);
-        else console.error("Cannot push edit, Schedule Period is missing Supabase ID.");
+        else
+          console.error(
+            "Cannot push edit, Schedule Period is missing Supabase ID."
+          );
     }
   }
 
@@ -187,6 +190,7 @@ const EditPeriod = ({
               label: t("class", { ns: "common", number: classroom.number }),
             }))
             .sort((a, b) => a.label.localeCompare(b.label))}
+          defaultValue={mode == "edit" ? schedulePeriod?.class?.id : undefined}
           onChange={(e: number) => setForm({ ...form, classID: e })}
         />
 
@@ -195,6 +199,7 @@ const EditPeriod = ({
           name="room"
           type="text"
           label={t("dialog.editPeriod.form.room")}
+          defaultValue={mode == "edit" ? schedulePeriod?.room : undefined}
           onChange={(e: string) => setForm({ ...form, room: e })}
           attr={{ pattern: roomPattern }}
         />
