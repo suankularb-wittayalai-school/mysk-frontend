@@ -20,6 +20,7 @@ import { animationTransition } from "@utils/animations/config";
 
 // Helpers
 import { isInPeriod } from "@utils/helpers/schedule";
+import { editScheduleItemDuration } from "@utils/backend/schedule/schedule";
 
 // Empty Schedule Period
 const EmptySchedulePeriod = ({
@@ -352,18 +353,38 @@ const PeriodHoverMenu = ({
               className="absolute top-0 left-0 h-[3.75rem] cursor-ew-resize rounded-lg bg-tertiary-translucent-12 sm:bg-transparent"
               style={{ width: (10 - schedulePeriod.startTime + 1) * 112 }}
               onMouseMove={(e) => setCursor({ x: e.clientX, y: e.clientY })}
-              onMouseUp={() => {
+              onMouseUp={async () => {
                 setListeningCursor(false);
-                router.replace(router.asPath);
+                if (schedulePeriod.id) {
+                  await editScheduleItemDuration(
+                    findNumPeriodsFromCursor(
+                      schedulePeriod.duration,
+                      cursorStart.x,
+                      cursor.x
+                    ),
+                    schedulePeriod.id
+                  );
+                  router.replace(router.asPath);
+                }
               }}
               onTouchEnd={(e) => {
                 setCursor({
                   x: (e.touches[0] || e.changedTouches[0]).pageX,
                   y: (e.touches[0] || e.changedTouches[0]).pageY,
                 });
-                setTimeout(() => {
+                setTimeout(async () => {
                   setListeningCursor(false);
-                  router.replace(router.asPath);
+                  if (schedulePeriod.id) {
+                    editScheduleItemDuration(
+                      findNumPeriodsFromCursor(
+                        schedulePeriod.duration,
+                        cursorStart.x,
+                        cursor.x
+                      ),
+                      schedulePeriod.id
+                    );
+                    router.replace(router.asPath);
+                  }
                 }, 2000);
               }}
             />

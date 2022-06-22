@@ -167,6 +167,28 @@ export async function editScheduleItem(
   return { data, error: null };
 }
 
+export async function editScheduleItemDuration(
+  duration: number,
+  id: number
+): Promise<{
+  data: ScheduleItemTable[] | null;
+  error: PostgrestError | null;
+}> {
+  const { data, error } = await supabase
+    .from<ScheduleItemTable>("schedule_items")
+    .update({ duration })
+    .match({ id });
+
+  console.log(data);
+
+  if (error || !data) {
+    console.error(error);
+    return { data: null, error };
+  }
+
+  return { data, error: null };
+}
+
 export async function deleteScheduleItem(id: number): Promise<{
   data: ScheduleItemTable[] | null;
   error: PostgrestError | null;
