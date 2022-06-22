@@ -101,7 +101,7 @@ const SubjectSchedulePeriod = ({
   const { t } = useTranslation("common");
   const locale = useRouter().locale as "en-US" | "th";
 
-  const [showMenu, setShowMenu] = useState<boolean>(false);
+  const [showMenu, setShowMenu] = useState<boolean>(true);
 
   // Component-specific utils
   function getSubjectName(
@@ -221,32 +221,42 @@ const PeriodHoverMenu = ({
       exit={{ opacity: 0 }}
       transition={animationTransition}
     >
-      <div className="relative h-full w-full -translate-x-3.5 -translate-y-3.5">
-        {/* Edit button */}
-        <button
-          className="primary pointer-events-auto absolute top-0 left-1/2
-            w-fit rounded-full p-1 text-xl shadow"
-          onClick={
-            setEditPeriod
-              ? () => setEditPeriod({ show: true, day, schedulePeriod })
-              : undefined
-          }
-        >
-          <MaterialIcon icon="edit" allowCustomSize />
-        </button>
+      <div className="relative h-full w-full">
+        {/* Edit/delete group */}
+        <div className="surface absolute top-0 left-1/2 flex w-fit -translate-x-1/2 -translate-y-1/2 flex-row gap-0.5 overflow-hidden rounded-full">
+          {/* Edit button */}
+          <button
+            className="primary pointer-events-auto p-1 text-xl shadow"
+            onClick={
+              setEditPeriod
+                ? () => setEditPeriod({ show: true, day, schedulePeriod })
+                : undefined
+            }
+          >
+            <MaterialIcon icon="edit" allowCustomSize />
+          </button>
+
+          {/* Delete button */}
+          <button
+            className="error pointer-events-auto p-1 text-xl shadow"
+            onClick={setEditPeriod ? () => {} : undefined}
+          >
+            <MaterialIcon icon="delete" allowCustomSize />
+          </button>
+        </div>
 
         {/* Drag handle */}
         <button
-          className="surface pointer-events-auto absolute top-1/2 left-0
-            w-fit cursor-move rounded-full p-1 text-xl shadow"
+          className="surface pointer-events-auto absolute top-1/2 left-0 w-fit
+           -translate-x-1/2 -translate-y-1/2 cursor-move rounded-full p-1 text-xl shadow"
         >
           <MaterialIcon icon="drag_indicator" allowCustomSize />
         </button>
 
         {/* Resize handle */}
         <button
-          className="surface pointer-events-auto absolute top-1/2 left-full
-            w-fit cursor-ew-resize rounded-full p-1 text-xl shadow"
+          className="surface pointer-events-auto absolute top-1/2 left-full w-fit
+            -translate-x-1/2 -translate-y-1/2 cursor-ew-resize rounded-full p-1 text-xl shadow"
         >
           <MaterialIcon icon="straighten" allowCustomSize />
         </button>
