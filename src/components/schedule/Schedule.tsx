@@ -46,7 +46,7 @@ const Schedule = ({
   noScroll,
   setAddPeriod,
   setEditPeriod,
-  setDeletePeriod
+  setDeletePeriod,
 }: {
   schedule: Schedule;
   role: Role;

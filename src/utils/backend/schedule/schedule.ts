@@ -147,8 +147,6 @@ export async function editScheduleItem(
   data: ScheduleItemTable[] | null;
   error: PostgrestError | null;
 }> {
-  console.log({ form, id });
-
   const { data, error } = await supabase
     .from<ScheduleItemTable>("schedule_items")
     .update({
@@ -159,6 +157,23 @@ export async function editScheduleItem(
       start_time: form.startTime,
       duration: form.duration,
     })
+    .match({ id });
+
+  if (error || !data) {
+    console.error(error);
+    return { data: null, error };
+  }
+
+  return { data, error: null };
+}
+
+export async function deleteScheduleItem(id: number): Promise<{
+  data: ScheduleItemTable[] | null;
+  error: PostgrestError | null;
+}> {
+  const { data, error } = await supabase
+    .from<ScheduleItemTable>("schedule_items")
+    .delete()
     .match({ id });
 
   if (error || !data) {

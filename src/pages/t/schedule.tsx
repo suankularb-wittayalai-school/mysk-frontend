@@ -23,7 +23,10 @@ import EditPeriodDialog from "@components/dialogs/EditPeriod";
 import Schedule from "@components/schedule/Schedule";
 
 // Backend
-import { getSchedule } from "@utils/backend/schedule/schedule";
+import {
+  deleteScheduleItem,
+  getSchedule,
+} from "@utils/backend/schedule/schedule";
 
 // Helpers
 import { range } from "@utils/helpers/array";
@@ -39,13 +42,13 @@ import {
 
 const TeacherSchedule: NextPage = () => {
   const { t } = useTranslation("schedule");
-  const router = useRouter();
   const [teacher] = useTeacherAccount();
 
   // Data fetch
-  const [schedule, setSchedule] = useState<ScheduleType>({
+  const plhSchedule = {
     content: range(5).map((day) => ({ day: (day + 1) as Day, content: [] })),
-  });
+  };
+  const [schedule, setSchedule] = useState<ScheduleType>(plhSchedule);
   const [fetched, toggleFetched] = useReducer(
     (state: boolean) => !state,
     false
@@ -58,7 +61,6 @@ const TeacherSchedule: NextPage = () => {
         toggleFetched();
       }
     };
-    console.log("ree");
     fetchAndSetSchedule();
   }, [fetched, teacher]);
 
@@ -170,6 +172,7 @@ const TeacherSchedule: NextPage = () => {
         onClose={() => setDeletePeriod({ ...deletePeriod, show: false })}
         onSubmit={() => {
           setDeletePeriod({ ...deletePeriod, show: false });
+          deleteScheduleItem(deletePeriod.periodID);
           toggleFetched();
         }}
       />
