@@ -83,6 +83,7 @@ const SubjectSchedulePeriod = ({
   schedulePeriod,
   role,
   setEditPeriod,
+  setDeletePeriod,
 }: {
   isInSession: boolean;
   day: Day;
@@ -97,11 +98,18 @@ const SubjectSchedulePeriod = ({
     day: Day;
     schedulePeriod: SchedulePeriodType;
   }) => void;
+  setDeletePeriod?: ({
+    show,
+    periodID,
+  }: {
+    show: boolean;
+    periodID: number;
+  }) => void;
 }): JSX.Element => {
   const { t } = useTranslation("common");
   const locale = useRouter().locale as "en-US" | "th";
 
-  const [showMenu, setShowMenu] = useState<boolean>(true);
+  const [showMenu, setShowMenu] = useState<boolean>(false);
 
   // Component-specific utils
   function getSubjectName(
@@ -145,6 +153,7 @@ const SubjectSchedulePeriod = ({
               day={day}
               schedulePeriod={schedulePeriod}
               setEditPeriod={setEditPeriod}
+              setDeletePeriod={setDeletePeriod}
             />
           )}
         </AnimatePresence>
@@ -199,6 +208,7 @@ const PeriodHoverMenu = ({
   day,
   schedulePeriod,
   setEditPeriod,
+  setDeletePeriod,
 }: {
   day: Day;
   schedulePeriod: SchedulePeriodType;
@@ -211,11 +221,18 @@ const PeriodHoverMenu = ({
     day: Day;
     schedulePeriod: SchedulePeriodType;
   }) => void;
+  setDeletePeriod?: ({
+    show,
+    periodID,
+  }: {
+    show: boolean;
+    periodID: number;
+  }) => void;
 }): JSX.Element => {
   return (
     <motion.div
-      className="pointer-events-none absolute h-full w-full
-        rounded-lg bg-secondary-translucent-12 outline-offset-0 outline-primary"
+      className="pointer-events-none absolute h-full w-full rounded-lg bg-secondary-translucent-12
+        outline-offset-0 outline-primary"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -223,7 +240,10 @@ const PeriodHoverMenu = ({
     >
       <div className="relative h-full w-full">
         {/* Edit/delete group */}
-        <div className="surface absolute top-0 left-1/2 flex w-fit -translate-x-1/2 -translate-y-1/2 flex-row gap-0.5 overflow-hidden rounded-full">
+        <div
+          className="surface absolute top-0 left-1/2 flex w-fit -translate-x-1/2 -translate-y-1/2 flex-row gap-0.5
+          overflow-hidden rounded-full"
+        >
           {/* Edit button */}
           <button
             className="primary pointer-events-auto p-1 text-xl shadow"
@@ -239,7 +259,15 @@ const PeriodHoverMenu = ({
           {/* Delete button */}
           <button
             className="error pointer-events-auto p-1 text-xl shadow"
-            onClick={setEditPeriod ? () => {} : undefined}
+            onClick={
+              setDeletePeriod
+                ? () =>
+                    setDeletePeriod({
+                      show: true,
+                      periodID: schedulePeriod.id || 0,
+                    })
+                : undefined
+            }
           >
             <MaterialIcon icon="delete" allowCustomSize />
           </button>
@@ -274,6 +302,7 @@ const SchedulePeriod = ({
   role,
   setAddPeriod,
   setEditPeriod,
+  setDeletePeriod,
 }: {
   schedulePeriod: SchedulePeriodType;
   now: Date;
@@ -297,6 +326,13 @@ const SchedulePeriod = ({
     show: boolean;
     day: Day;
     schedulePeriod: SchedulePeriodType;
+  }) => void;
+  setDeletePeriod?: ({
+    show,
+    periodID,
+  }: {
+    show: boolean;
+    periodID: number;
   }) => void;
 }): JSX.Element => (
   <motion.li
@@ -324,6 +360,7 @@ const SchedulePeriod = ({
         day={day.getDay() as Day}
         role={role}
         setEditPeriod={setEditPeriod}
+        setDeletePeriod={setDeletePeriod}
       />
     ) : (
       // Empty period

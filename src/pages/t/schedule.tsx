@@ -18,6 +18,7 @@ import {
 } from "@suankularb-components/react";
 
 // Components
+import ConfirmDelete from "@components/dialogs/ConfirmDelete";
 import EditPeriodDialog from "@components/dialogs/EditPeriod";
 import Schedule from "@components/schedule/Schedule";
 
@@ -38,16 +39,17 @@ import {
 
 const TeacherSchedule: NextPage = () => {
   const { t } = useTranslation("schedule");
+  const router = useRouter();
   const [teacher] = useTeacherAccount();
 
   // Data fetch
+  const [schedule, setSchedule] = useState<ScheduleType>({
+    content: range(5).map((day) => ({ day: (day + 1) as Day, content: [] })),
+  });
   const [fetched, toggleFetched] = useReducer(
     (state: boolean) => !state,
     false
   );
-  const [schedule, setSchedule] = useState<ScheduleType>({
-    content: range(5).map((day) => ({ day: (day + 1) as Day, content: [] })),
-  });
 
   useEffect(() => {
     const fetchAndSetSchedule = async () => {
@@ -56,6 +58,7 @@ const TeacherSchedule: NextPage = () => {
         toggleFetched();
       }
     };
+    console.log("ree");
     fetchAndSetSchedule();
   }, [fetched, teacher]);
 
@@ -77,6 +80,11 @@ const TeacherSchedule: NextPage = () => {
     schedulePeriod: SchedulePeriod;
   }>({ show: false, day: 1, schedulePeriod: { startTime: 1, duration: 1 } });
 
+  const [deletePeriod, setDeletePeriod] = useState<{
+    show: boolean;
+    periodID: number;
+  }>({ show: false, periodID: 0 });
+
   // Component display
   return (
     <>
@@ -97,6 +105,7 @@ const TeacherSchedule: NextPage = () => {
             role="teacher"
             setAddPeriod={setAddSubjectToPeriod}
             setEditPeriod={setEditPeriod}
+            setDeletePeriod={setDeletePeriod}
           />
           <div className="flex flex-row items-center justify-end gap-2">
             <Button
@@ -153,6 +162,16 @@ const TeacherSchedule: NextPage = () => {
         schedulePeriod={editPeriod.schedulePeriod}
         mode="edit"
         canEditStartTime
+      />
+
+      {/* Discard */}
+      <ConfirmDelete
+        show={deletePeriod.show}
+        onClose={() => setDeletePeriod({ ...deletePeriod, show: false })}
+        onSubmit={() => {
+          setDeletePeriod({ ...deletePeriod, show: false });
+          toggleFetched();
+        }}
       />
     </>
   );

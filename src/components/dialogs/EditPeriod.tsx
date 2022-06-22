@@ -87,7 +87,7 @@ const EditPeriod = ({
         room: schedulePeriod?.room || "",
         day: day || 0,
         startTime: schedulePeriod?.startTime || 0,
-        duration: 1,
+        duration: schedulePeriod?.duration || 1,
       });
     // Populate form with day-time data if adding from Schedule
     else if (!canEditStartTime)

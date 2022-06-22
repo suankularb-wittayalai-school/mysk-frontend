@@ -18,6 +18,7 @@ const ScheduleRow = ({
   role,
   setAddPeriod,
   setEditPeriod,
+  setDeletePeriod,
 }: {
   scheduleRow: ScheduleRowType;
   role: Role;
@@ -38,6 +39,13 @@ const ScheduleRow = ({
     show: boolean;
     day: Day;
     schedulePeriod: SchedulePeriodType;
+  }) => void;
+  setDeletePeriod?: ({
+    show,
+    periodID,
+  }: {
+    show: boolean;
+    periodID: number;
   }) => void;
 }): JSX.Element => {
   const { t } = useTranslation("common");
@@ -65,6 +73,7 @@ const ScheduleRow = ({
             role={role}
             setAddPeriod={setAddPeriod}
             setEditPeriod={setEditPeriod}
+            setDeletePeriod={setDeletePeriod}
           />
         ))}
       </ul>
