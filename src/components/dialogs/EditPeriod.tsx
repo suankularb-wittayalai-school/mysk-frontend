@@ -83,8 +83,7 @@ const EditPeriod = ({
           schedulePeriod?.subject?.id ||
           (teacher?.subjectsInCharge ? teacher.subjectsInCharge[0].id : 0),
         classID:
-          schedulePeriod?.class?.number ||
-          (classes.length > 0 ? classes[0].id : 0),
+          schedulePeriod?.class?.id || (classes.length > 0 ? classes[0].id : 0),
         room: schedulePeriod?.room || "",
         day: day || 0,
         startTime: schedulePeriod?.startTime || 0,
