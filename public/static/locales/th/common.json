@@ -48,7 +48,8 @@
   },
   "input": {
     "none": {
-      "noFilesAttached": "ยังไม่มีไฟล์ที่ถูกเลือก"
+      "noFilesAttached": "ยังไม่มีไฟล์ที่ถูกเลือก",
+      "noOptions": "ไม่มีรายการให้เลือก"
     },
     "error": {}
   },

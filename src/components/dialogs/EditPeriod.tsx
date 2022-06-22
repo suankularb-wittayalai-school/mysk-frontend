@@ -175,6 +175,7 @@ const EditPeriod = ({
                 }))
               : []
           }
+          noOptionsText={t("input.none.noOptions", { ns: "common" })}
           defaultValue={mode == "edit" ? schedulePeriod?.subject?.id : 0}
           onChange={(e: number) => setForm({ ...form, subject: e })}
         />
@@ -189,6 +190,7 @@ const EditPeriod = ({
               label: t("class", { ns: "common", number: classroom.number }),
             }))
             .sort((a, b) => a.label.localeCompare(b.label))}
+          noOptionsText={t("input.none.noOptions", { ns: "common" })}
           defaultValue={mode == "edit" ? schedulePeriod?.class?.id : undefined}
           onChange={(e: number) => setForm({ ...form, classID: e })}
         />
