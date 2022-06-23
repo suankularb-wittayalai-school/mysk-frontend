@@ -47,6 +47,7 @@ const Schedule = ({
   setAddPeriod,
   setEditPeriod,
   setDeletePeriod,
+  toggleFetched,
 }: {
   schedule: Schedule;
   role: Role;
@@ -76,6 +77,7 @@ const Schedule = ({
     show: boolean;
     periodID: number;
   }) => void;
+  toggleFetched?: () => void;
 }): JSX.Element => (
   <div className="scroll-w-0 flex flex-row gap-5 overflow-x-auto !px-0 sm:overflow-x-visible">
     <div aria-hidden className="flex flex-col gap-2 pt-4 pb-2 pl-4 sm:pl-0">
@@ -98,6 +100,7 @@ const Schedule = ({
               setAddPeriod={setAddPeriod}
               setEditPeriod={setEditPeriod}
               setDeletePeriod={setDeletePeriod}
+              toggleFetched={toggleFetched}
             />
           ))}
         </ul>

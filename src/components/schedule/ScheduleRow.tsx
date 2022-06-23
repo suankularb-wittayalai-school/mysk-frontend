@@ -19,6 +19,7 @@ const ScheduleRow = ({
   setAddPeriod,
   setEditPeriod,
   setDeletePeriod,
+  toggleFetched,
 }: {
   scheduleRow: ScheduleRowType;
   role: Role;
@@ -47,6 +48,7 @@ const ScheduleRow = ({
     show: boolean;
     periodID: number;
   }) => void;
+  toggleFetched?: () => void;
 }): JSX.Element => {
   const { t } = useTranslation("common");
 
@@ -74,6 +76,7 @@ const ScheduleRow = ({
             setAddPeriod={setAddPeriod}
             setEditPeriod={setEditPeriod}
             setDeletePeriod={setDeletePeriod}
+            toggleFetched={toggleFetched}
           />
         ))}
       </ul>

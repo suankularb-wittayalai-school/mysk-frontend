@@ -108,6 +108,7 @@ const TeacherSchedule: NextPage = () => {
             setAddPeriod={setAddSubjectToPeriod}
             setEditPeriod={setEditPeriod}
             setDeletePeriod={setDeletePeriod}
+            toggleFetched={toggleFetched}
           />
           <div className="flex flex-row items-center justify-end gap-2">
             <Button
@@ -166,7 +167,7 @@ const TeacherSchedule: NextPage = () => {
         canEditStartTime
       />
 
-      {/* Discard */}
+      {/* Confirm delete */}
       <ConfirmDelete
         show={deletePeriod.show}
         onClose={() => setDeletePeriod({ ...deletePeriod, show: false })}

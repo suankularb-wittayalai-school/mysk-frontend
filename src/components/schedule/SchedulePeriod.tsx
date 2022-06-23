@@ -85,6 +85,7 @@ const SubjectSchedulePeriod = ({
   role,
   setEditPeriod,
   setDeletePeriod,
+  toggleFetched,
 }: {
   isInSession: boolean;
   day: Day;
@@ -106,6 +107,7 @@ const SubjectSchedulePeriod = ({
     show: boolean;
     periodID: number;
   }) => void;
+  toggleFetched?: () => void;
 }): JSX.Element => {
   const { t } = useTranslation("common");
   const locale = useRouter().locale as "en-US" | "th";
@@ -154,6 +156,7 @@ const SubjectSchedulePeriod = ({
           schedulePeriod={schedulePeriod}
           setEditPeriod={setEditPeriod}
           setDeletePeriod={setDeletePeriod}
+          toggleFetched={toggleFetched}
         />
       )}
       <div className="flex flex-col px-4 py-2">
@@ -206,6 +209,7 @@ const PeriodHoverMenu = ({
   show: givenShow,
   day,
   schedulePeriod,
+  toggleFetched,
   setEditPeriod,
   setDeletePeriod,
 }: {
@@ -228,9 +232,8 @@ const PeriodHoverMenu = ({
     show: boolean;
     periodID: number;
   }) => void;
+  toggleFetched?: () => void;
 }): JSX.Element => {
-  const router = useRouter();
-
   const [listeningCursor, setListeningCursor] = useState<boolean>(false);
   const [cursorStart, setCursorStart] = useState<{ x: number; y: number }>({
     x: 0,
@@ -350,7 +353,7 @@ const PeriodHoverMenu = ({
 
             {/* Detection area */}
             <div
-              className="absolute top-0 left-0 h-[3.75rem] cursor-ew-resize rounded-lg bg-tertiary-translucent-12 sm:bg-transparent"
+              className="absolute top-0 left-0 h-[3.75rem] cursor-ew-resize rounded-lg bg-tertiary-translucent-12 sm:opacity-0"
               style={{ width: (10 - schedulePeriod.startTime + 1) * 112 }}
               onMouseMove={(e) => setCursor({ x: e.clientX, y: e.clientY })}
               onMouseUp={async () => {
@@ -364,7 +367,7 @@ const PeriodHoverMenu = ({
                     ),
                     schedulePeriod.id
                   );
-                  router.replace(router.asPath);
+                  if (toggleFetched) toggleFetched();
                 }
               }}
               onTouchEnd={(e) => {
@@ -383,7 +386,7 @@ const PeriodHoverMenu = ({
                       ),
                       schedulePeriod.id
                     );
-                    router.replace(router.asPath);
+                    if (toggleFetched) toggleFetched();
                   }
                 }, 2000);
               }}
@@ -405,6 +408,7 @@ const SchedulePeriod = ({
   setAddPeriod,
   setEditPeriod,
   setDeletePeriod,
+  toggleFetched,
 }: {
   schedulePeriod: SchedulePeriodType;
   now: Date;
@@ -436,10 +440,11 @@ const SchedulePeriod = ({
     show: boolean;
     periodID: number;
   }) => void;
+  toggleFetched?: () => void;
 }): JSX.Element => (
   <motion.li
     key={`${day.getDay()}-${schedulePeriod.startTime}`}
-    className="absolute px-1"
+    className="absolute px-1 transition-[width]"
     style={{
       width: periodWidth * schedulePeriod.duration,
       left: periodWidth * (schedulePeriod.startTime - 1),
@@ -463,6 +468,7 @@ const SchedulePeriod = ({
         role={role}
         setEditPeriod={setEditPeriod}
         setDeletePeriod={setDeletePeriod}
+        toggleFetched={toggleFetched}
       />
     ) : (
       // Empty period
