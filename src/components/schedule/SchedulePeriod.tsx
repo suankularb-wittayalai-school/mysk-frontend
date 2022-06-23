@@ -58,6 +58,11 @@ const EmptySchedulePeriod = ({
           ? () => setAddPeriod({ show: true, day, startTime })
           : undefined
       }
+      onDragOver={(e) => e.preventDefault()}
+      onDrop={(e) => {
+        console.log({ periodID: Number(e.dataTransfer.getData("text")) });
+        e.dataTransfer.clearData();
+      }}
     >
       <MaterialIcon
         icon="add"
@@ -113,6 +118,7 @@ const SubjectSchedulePeriod = ({
   const locale = useRouter().locale as "en-US" | "th";
 
   const [showMenu, setShowMenu] = useState<boolean>(false);
+  const [dragging, setDragging] = useState<boolean>(false);
 
   // Component-specific utils
   function getSubjectName(
@@ -148,6 +154,14 @@ const SubjectSchedulePeriod = ({
       // Keyboard/touch support
       onFocus={() => setShowMenu(true)}
       onBlur={() => setShowMenu(false)}
+      // Drag support
+      draggable={dragging}
+      onDragStart={(e) =>
+        e.dataTransfer.setData(
+          "text/plain",
+          (schedulePeriod.id as number).toString()
+        )
+      }
     >
       {role == "teacher" && (
         <PeriodHoverMenu
@@ -157,6 +171,7 @@ const SubjectSchedulePeriod = ({
           setEditPeriod={setEditPeriod}
           setDeletePeriod={setDeletePeriod}
           toggleFetched={toggleFetched}
+          setDragging={setDragging}
         />
       )}
       <div className="flex flex-col px-4 py-2">
@@ -209,9 +224,10 @@ const PeriodHoverMenu = ({
   show: givenShow,
   day,
   schedulePeriod,
-  toggleFetched,
   setEditPeriod,
   setDeletePeriod,
+  toggleFetched,
+  setDragging,
 }: {
   show: boolean;
   day: Day;
@@ -233,6 +249,7 @@ const PeriodHoverMenu = ({
     periodID: number;
   }) => void;
   toggleFetched?: () => void;
+  setDragging: (value: boolean) => void;
 }): JSX.Element => {
   const [listeningCursor, setListeningCursor] = useState<boolean>(false);
   const [cursorStart, setCursorStart] = useState<{ x: number; y: number }>({
@@ -243,6 +260,7 @@ const PeriodHoverMenu = ({
     x: 0,
     y: 0,
   });
+
   const [show, setShow] = useState<boolean>(givenShow);
 
   useEffect(() => setShow(givenShow), [givenShow]);
@@ -306,7 +324,8 @@ const PeriodHoverMenu = ({
               {/* Drag handle */}
               <button
                 className="surface pointer-events-auto absolute top-1/2 left-0 w-fit
-                -translate-x-1/2 -translate-y-1/2 cursor-move rounded-full p-1 text-xl shadow"
+                  -translate-x-1/2 -translate-y-1/2 cursor-move rounded-full p-1 text-xl shadow"
+                onMouseDown={() => setDragging(true)}
               >
                 <MaterialIcon icon="drag_indicator" allowCustomSize />
               </button>
