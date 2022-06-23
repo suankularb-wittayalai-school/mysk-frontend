@@ -4,6 +4,12 @@
     "teacher": "Schedule"
   },
   "schedule": {
+    "hoverMenu": {
+      "edit": "Edit this period",
+      "delete": "Delete this period",
+      "move": "Drag to move period",
+      "extend": "Drag to extend/shorten period"
+    },
     "action": {
       "add": "Add period",
       "edit": "Edit"

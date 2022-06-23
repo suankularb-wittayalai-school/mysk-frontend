@@ -24,6 +24,7 @@ import {
   editScheduleItemDuration,
   moveScheduleItem,
 } from "@utils/backend/schedule/schedule";
+import { isTouchDevice } from "@utils/helpers/browser";
 
 // Empty Schedule Period
 const EmptySchedulePeriod = ({
@@ -97,9 +98,7 @@ const EmptySchedulePeriod = ({
     return (
       <div
         className={`h-[3.75rem] w-full rounded-lg ${
-          isInSession
-            ? "outline-4 outline-offset-[-4px] outline-secondary"
-            : "outline-2 outline-offset-[-2px] outline-outline"
+          isInSession ? "border-4 border-secondary" : "border-2 border-outline"
         }`}
       />
     );
@@ -279,6 +278,8 @@ const PeriodHoverMenu = ({
   toggleFetched?: () => void;
   setDragging: (value: boolean) => void;
 }): JSX.Element => {
+  const { t } = useTranslation("schedule");
+
   const [listeningCursor, setListeningCursor] = useState<boolean>(false);
   const [cursorStart, setCursorStart] = useState<{ x: number; y: number }>({
     x: 0,
@@ -310,7 +311,7 @@ const PeriodHoverMenu = ({
         {show && (
           <motion.div
             className="pointer-events-none absolute z-30 h-full w-full rounded-lg
-              bg-secondary-translucent-12 outline-offset-0 outline-primary"
+              border-2 border-primary bg-secondary-translucent-12"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -345,7 +346,7 @@ const PeriodHoverMenu = ({
                 {/* Edit button */}
                 <button
                   className="primary pointer-events-auto p-1 text-xl shadow"
-                  title="Edit this period"
+                  title={t("schedule.hoverMenu.edit")}
                   onClick={
                     setEditPeriod
                       ? () => setEditPeriod({ show: true, day, schedulePeriod })
@@ -377,7 +378,7 @@ const PeriodHoverMenu = ({
               <button
                 className="surface pointer-events-auto absolute top-1/2 left-0 hidden w-fit -translate-x-1/2
                   -translate-y-1/2 cursor-move rounded-full p-1 text-xl shadow sm:block"
-                title="Drag to move period"
+                title={t("schedule.hoverMenu.move")}
                 onMouseDown={() => setDragging(true)}
               >
                 <MaterialIcon icon="drag_indicator" allowCustomSize />
@@ -387,7 +388,7 @@ const PeriodHoverMenu = ({
               <button
                 className="surface pointer-events-auto absolute top-1/2 left-full w-fit
                   -translate-x-1/2 -translate-y-1/2 cursor-ew-resize rounded-full p-1 text-xl shadow"
-                title="Drag to extend/shorten period"
+                title={t("schedule.hoverMenu.extend")}
                 onMouseDown={(e) => {
                   setDisableTutorial(false);
                   setListeningCursor(true);
@@ -432,38 +433,27 @@ const PeriodHoverMenu = ({
               style={{ width: (10 - schedulePeriod.startTime + 1) * 112 }}
               onMouseMove={(e) => setCursor({ x: e.clientX, y: e.clientY })}
               onMouseUp={async () => {
-                if (navigator.maxTouchPoints < 1) {
-                  setListeningCursor(false);
-                  if (schedulePeriod.id) {
-                    await editScheduleItemDuration(
-                      findNumPeriodsFromCursor(
-                        schedulePeriod.duration,
-                        cursorStart.x,
-                        cursor.x
-                      ),
-                      schedulePeriod.id
-                    );
-                    if (toggleFetched) toggleFetched();
-                  }
-                }
-              }}
-              onTouchEnd={(e) => {
-                const cursorX = (e.touches[0] || e.changedTouches[0]).pageX;
-                setTimeout(async () => {
-                  setListeningCursor(false);
-                  if (schedulePeriod.id) {
-                    await editScheduleItemDuration(
-                      findNumPeriodsFromCursor(
-                        schedulePeriod.duration,
-                        cursorStart.x,
-                        cursorX
-                      ),
-                      schedulePeriod.id
-                    );
+                // Show Indicator for 2 seconds after touch if touch device
+                if (isTouchDevice())
+                  setTimeout(() => {
+                    setListeningCursor(false);
                     setDisableTutorial(true);
-                    if (toggleFetched) toggleFetched();
-                  }
-                }, 2000);
+                  }, 2000);
+                // Else, hide it immediately
+                else setListeningCursor(false);
+
+                // Send new duration to Supabase then re-fetch
+                if (schedulePeriod.id) {
+                  await editScheduleItemDuration(
+                    findNumPeriodsFromCursor(
+                      schedulePeriod.duration,
+                      cursorStart.x,
+                      cursor.x
+                    ),
+                    schedulePeriod.id
+                  );
+                  if (toggleFetched) toggleFetched();
+                }
               }}
             />
           </>
