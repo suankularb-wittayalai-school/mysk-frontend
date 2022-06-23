@@ -253,7 +253,7 @@ const PeriodHoverMenu = ({
     xStart: number,
     xEnd: number
   ): number {
-    return initial + Math.floor((xEnd - xStart) / 112);
+    return initial + Math.floor((xEnd - xStart + 40) / 112);
   }
 
   return (
