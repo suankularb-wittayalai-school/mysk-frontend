@@ -271,8 +271,8 @@ const PeriodHoverMenu = ({
             <div className="relative h-full w-full">
               {/* Edit/delete group */}
               <div
-                className="surface absolute top-0 left-1/2 flex w-fit -translate-x-1/2 -translate-y-1/2 flex-row gap-0.5
-                overflow-hidden rounded-full"
+                className="surface absolute top-0 left-1/2 flex w-fit -translate-x-1/2 -translate-y-1/2
+                  flex-row gap-0.5 overflow-hidden rounded-full"
               >
                 {/* Edit button */}
                 <button

@@ -39,6 +39,7 @@ import {
   Schedule as ScheduleType,
   SchedulePeriod,
 } from "@utils/types/schedule";
+import Head from "next/head";
 
 const TeacherSchedule: NextPage = () => {
   const { t } = useTranslation("schedule");
@@ -90,11 +91,19 @@ const TeacherSchedule: NextPage = () => {
   // Component display
   return (
     <>
+      <Head>
+        <title>
+          {t("title.teacher")}
+          {" - "}
+          {t("brand.name", { ns: "common" })}
+        </title>
+      </Head>
+
       {/* Component */}
       <RegularLayout
         Title={
           <Title
-            name={{ title: t("title.student") }}
+            name={{ title: t("title.teacher") }}
             pageIcon={<MaterialIcon icon="dashboard" />}
             backGoesTo="/t/home"
             LinkElement={Link}
