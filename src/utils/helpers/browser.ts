@@ -1,3 +1,3 @@
-export function isTouchDevice() {
-  return "ontouchstart" in window || navigator.maxTouchPoints > 0;
+export function isTouchDevice(): boolean {
+  return window.matchMedia("(pointer: coarse)").matches;
 }
