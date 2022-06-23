@@ -289,6 +289,8 @@ const PeriodHoverMenu = ({
     y: 0,
   });
 
+  const [disableTutorial, setDisableTutorial] = useState<boolean>(false);
+
   const [show, setShow] = useState<boolean>(givenShow);
 
   useEffect(() => setShow(givenShow), [givenShow]);
@@ -315,6 +317,26 @@ const PeriodHoverMenu = ({
             transition={animationTransition}
           >
             <div className="relative h-full w-full">
+              {/* Helper message */}
+              {!disableTutorial && (
+                <motion.p
+                  className="tertiary absolute bottom-1 left-1 flex h-6 w-fit items-center gap-1 whitespace-nowrap rounded-full
+                  px-2 font-sans font-medium shadow sm:hidden"
+                  initial={{ scale: 0.8, y: 20, opacity: 0 }}
+                  animate={{ scale: 1, y: 0, opacity: 1 }}
+                  exit={{ scale: 0.8, y: 20, opacity: 0 }}
+                  transition={animationTransition}
+                >
+                  {!listeningCursor ? (
+                    <>
+                      Tap <MaterialIcon icon="straighten" /> to extend period
+                    </>
+                  ) : (
+                    <>Tap right edge of new duration</>
+                  )}
+                </motion.p>
+              )}
+
               {/* Edit/delete group */}
               <div
                 className="surface absolute top-0 left-1/2 flex w-fit -translate-x-1/2 -translate-y-1/2
@@ -363,6 +385,7 @@ const PeriodHoverMenu = ({
                 className="surface pointer-events-auto absolute top-1/2 left-full w-fit
                   -translate-x-1/2 -translate-y-1/2 cursor-ew-resize rounded-full p-1 text-xl shadow"
                 onMouseDown={(e) => {
+                  setDisableTutorial(false);
                   setListeningCursor(true);
                   setCursorStart({ x: e.clientX, y: e.clientY });
                   setCursor({ x: e.clientX, y: e.clientY });
@@ -374,6 +397,7 @@ const PeriodHoverMenu = ({
           </motion.div>
         )}
       </AnimatePresence>
+
       <AnimatePresence>
         {listeningCursor && (
           <>
@@ -404,28 +428,10 @@ const PeriodHoverMenu = ({
               style={{ width: (10 - schedulePeriod.startTime + 1) * 112 }}
               onMouseMove={(e) => setCursor({ x: e.clientX, y: e.clientY })}
               onMouseUp={async () => {
-                setListeningCursor(false);
-                if (schedulePeriod.id) {
-                  await editScheduleItemDuration(
-                    findNumPeriodsFromCursor(
-                      schedulePeriod.duration,
-                      cursorStart.x,
-                      cursor.x
-                    ),
-                    schedulePeriod.id
-                  );
-                  if (toggleFetched) toggleFetched();
-                }
-              }}
-              onTouchEnd={(e) => {
-                setCursor({
-                  x: (e.touches[0] || e.changedTouches[0]).pageX,
-                  y: (e.touches[0] || e.changedTouches[0]).pageY,
-                });
-                setTimeout(async () => {
+                if (navigator.maxTouchPoints < 1) {
                   setListeningCursor(false);
                   if (schedulePeriod.id) {
-                    editScheduleItemDuration(
+                    await editScheduleItemDuration(
                       findNumPeriodsFromCursor(
                         schedulePeriod.duration,
                         cursorStart.x,
@@ -433,6 +439,24 @@ const PeriodHoverMenu = ({
                       ),
                       schedulePeriod.id
                     );
+                    if (toggleFetched) toggleFetched();
+                  }
+                }
+              }}
+              onTouchEnd={(e) => {
+                const cursorX = (e.touches[0] || e.changedTouches[0]).pageX;
+                setTimeout(async () => {
+                  setListeningCursor(false);
+                  if (schedulePeriod.id) {
+                    await editScheduleItemDuration(
+                      findNumPeriodsFromCursor(
+                        schedulePeriod.duration,
+                        cursorStart.x,
+                        cursorX
+                      ),
+                      schedulePeriod.id
+                    );
+                    setDisableTutorial(true);
                     if (toggleFetched) toggleFetched();
                   }
                 }, 2000);
