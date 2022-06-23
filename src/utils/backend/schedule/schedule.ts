@@ -176,8 +176,6 @@ export async function moveScheduleItem(
     .update({ day: newTime.day, start_time: newTime.startTime })
     .match({ id });
 
-  console.log({ data, error });
-
   if (error || !data) {
     console.error(error);
     return { data: null, error };

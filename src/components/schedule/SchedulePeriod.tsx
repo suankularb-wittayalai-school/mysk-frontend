@@ -345,6 +345,7 @@ const PeriodHoverMenu = ({
                 {/* Edit button */}
                 <button
                   className="primary pointer-events-auto p-1 text-xl shadow"
+                  title="Edit this period"
                   onClick={
                     setEditPeriod
                       ? () => setEditPeriod({ show: true, day, schedulePeriod })
@@ -357,6 +358,7 @@ const PeriodHoverMenu = ({
                 {/* Delete button */}
                 <button
                   className="error pointer-events-auto p-1 text-xl shadow"
+                  title="Delete this period"
                   onClick={
                     setDeletePeriod
                       ? () =>
@@ -375,6 +377,7 @@ const PeriodHoverMenu = ({
               <button
                 className="surface pointer-events-auto absolute top-1/2 left-0 hidden w-fit -translate-x-1/2
                   -translate-y-1/2 cursor-move rounded-full p-1 text-xl shadow sm:block"
+                title="Drag to move period"
                 onMouseDown={() => setDragging(true)}
               >
                 <MaterialIcon icon="drag_indicator" allowCustomSize />
@@ -384,6 +387,7 @@ const PeriodHoverMenu = ({
               <button
                 className="surface pointer-events-auto absolute top-1/2 left-full w-fit
                   -translate-x-1/2 -translate-y-1/2 cursor-ew-resize rounded-full p-1 text-xl shadow"
+                title="Drag to extend/shorten period"
                 onMouseDown={(e) => {
                   setDisableTutorial(false);
                   setListeningCursor(true);
