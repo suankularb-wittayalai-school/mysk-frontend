@@ -11,7 +11,7 @@ export async function getRoomsEnrolledInSubject(
     .select("classroom:class(id, number)")
     .match({ subject: subjectID });
 
-  if (error) {
+  if (error || !data) {
     console.error(error);
     return { data: null, error };
   }

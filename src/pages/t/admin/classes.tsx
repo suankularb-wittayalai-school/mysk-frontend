@@ -65,14 +65,6 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
     if (classError) {
       console.error(classError);
     }
-
-    const { data: schedule, error: scheduleError } = await supabase
-      .from("schedule")
-      .delete()
-      .match({ id: editingClass?.schedule.id });
-    if (scheduleError) {
-      console.error(scheduleError);
-    }
   }
 
   async function handleImport(

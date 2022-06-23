@@ -184,7 +184,6 @@ export const getServerSideProps: GetServerSideProps = async ({
   params,
 }) => {
   const schedule: ScheduleType = {
-    id: 0,
     content: [
       { day: 1, content: [] },
       { day: 2, content: [] },

@@ -159,7 +159,6 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
     },
   ];
   const schedule: Schedule = {
-    id: 0,
     content: [
       {
         day: getDay(new Date()),
