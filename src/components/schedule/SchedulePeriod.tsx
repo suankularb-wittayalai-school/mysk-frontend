@@ -20,7 +20,10 @@ import { animationTransition } from "@utils/animations/config";
 
 // Helpers
 import { isInPeriod } from "@utils/helpers/schedule";
-import { editScheduleItemDuration } from "@utils/backend/schedule/schedule";
+import {
+  editScheduleItemDuration,
+  moveScheduleItem,
+} from "@utils/backend/schedule/schedule";
 
 // Empty Schedule Period
 const EmptySchedulePeriod = ({
@@ -29,6 +32,7 @@ const EmptySchedulePeriod = ({
   startTime,
   role,
   setAddPeriod,
+  toggleFetched,
 }: {
   isInSession: boolean;
   day: Day;
@@ -43,6 +47,7 @@ const EmptySchedulePeriod = ({
     day: Day;
     startTime: number;
   }) => void;
+  toggleFetched?: () => void;
 }): JSX.Element => {
   const [processing, setProcessing] = useState<boolean>(false);
 
@@ -69,10 +74,14 @@ const EmptySchedulePeriod = ({
           e.preventDefault();
           e.dataTransfer.dropEffect = "move";
         }}
-        onDrop={(e) => {
+        onDrop={async (e) => {
           setProcessing(true);
-          console.log({ periodID: Number(e.dataTransfer.getData("text")) });
+          await moveScheduleItem(
+            { day, startTime },
+            Number(e.dataTransfer.getData("text"))
+          );
           e.dataTransfer.clearData();
+          if (toggleFetched) toggleFetched();
         }}
       >
         <MaterialIcon
@@ -342,11 +351,9 @@ const PeriodHoverMenu = ({
 
               {/* Drag handle */}
               <button
-                className="surface pointer-events-auto absolute top-1/2 left-0 w-fit
-                  -translate-x-1/2 -translate-y-1/2 cursor-move rounded-full p-1 text-xl shadow"
-                onMouseDown={() => {
-                  setDragging(true);
-                }}
+                className="surface pointer-events-auto absolute top-1/2 left-0 hidden w-fit -translate-x-1/2
+                  -translate-y-1/2 cursor-move rounded-full p-1 text-xl shadow sm:block"
+                onMouseDown={() => setDragging(true)}
               >
                 <MaterialIcon icon="drag_indicator" allowCustomSize />
               </button>
@@ -523,6 +530,7 @@ const SchedulePeriod = ({
         startTime={schedulePeriod.startTime}
         role={role}
         setAddPeriod={setAddPeriod}
+        toggleFetched={toggleFetched}
       />
     )}
   </motion.li>

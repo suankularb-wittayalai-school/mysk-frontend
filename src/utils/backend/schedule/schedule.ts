@@ -167,6 +167,25 @@ export async function editScheduleItem(
   return { data, error: null };
 }
 
+export async function moveScheduleItem(
+  newTime: { day: Day; startTime: number },
+  id: number
+) {
+  const { data, error } = await supabase
+    .from<ScheduleItemTable>("schedule_items")
+    .update({ day: newTime.day, start_time: newTime.startTime })
+    .match({ id });
+
+  console.log({ data, error });
+
+  if (error || !data) {
+    console.error(error);
+    return { data: null, error };
+  }
+
+  return { data, error: null };
+}
+
 export async function editScheduleItemDuration(
   duration: number,
   id: number
@@ -178,8 +197,6 @@ export async function editScheduleItemDuration(
     .from<ScheduleItemTable>("schedule_items")
     .update({ duration })
     .match({ id });
-
-  console.log(data);
 
   if (error || !data) {
     console.error(error);
