@@ -43,44 +43,58 @@ const EmptySchedulePeriod = ({
     day: Day;
     startTime: number;
   }) => void;
-}): JSX.Element =>
-  role == "teacher" ? (
-    <button
-      className={`group grid h-[3.75rem] w-full place-items-center rounded-lg text-4xl transition-[outline-color]
-        hover:bg-primary-translucent-08 hover:outline-primary
-        focus:bg-primary-translucent-12 focus:outline-primary ${
+}): JSX.Element => {
+  const [processing, setProcessing] = useState<boolean>(false);
+
+  if (role == "teacher")
+    return (
+      <button
+        className={`grid h-[3.75rem] w-full place-items-center rounded-lg text-4xl transition-[border-color]
+         ${
+           processing
+             ? "border-4 border-secondary bg-secondary-translucent-12"
+             : `group hover:border-primary hover:bg-primary-translucent-08
+                focus:border-primary focus:bg-primary-translucent-12 ${
+                  isInSession
+                    ? "border-4 border-secondary"
+                    : "border-2 border-outline"
+                }`
+         }`}
+        onClick={
+          setAddPeriod
+            ? () => setAddPeriod({ show: true, day, startTime })
+            : undefined
+        }
+        onDragOver={(e) => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = "move";
+        }}
+        onDrop={(e) => {
+          setProcessing(true);
+          console.log({ periodID: Number(e.dataTransfer.getData("text")) });
+          e.dataTransfer.clearData();
+        }}
+      >
+        <MaterialIcon
+          icon="add"
+          allowCustomSize
+          className="scale-90 text-primary opacity-0 transition-all
+          group-hover:scale-100 group-hover:opacity-100
+          group-focus:scale-100 group-focus:opacity-100"
+        />
+      </button>
+    );
+  else
+    return (
+      <div
+        className={`h-[3.75rem] w-full rounded-lg ${
           isInSession
             ? "outline-4 outline-offset-[-4px] outline-secondary"
             : "outline-2 outline-offset-[-2px] outline-outline"
         }`}
-      onClick={
-        setAddPeriod
-          ? () => setAddPeriod({ show: true, day, startTime })
-          : undefined
-      }
-      onDragOver={(e) => e.preventDefault()}
-      onDrop={(e) => {
-        console.log({ periodID: Number(e.dataTransfer.getData("text")) });
-        e.dataTransfer.clearData();
-      }}
-    >
-      <MaterialIcon
-        icon="add"
-        allowCustomSize
-        className="scale-90 text-primary opacity-0 transition-all
-          group-hover:scale-100 group-hover:opacity-100
-          group-focus:scale-100 group-focus:opacity-100"
       />
-    </button>
-  ) : (
-    <div
-      className={`h-[3.75rem] w-full rounded-lg ${
-        isInSession
-          ? "outline-4 outline-offset-[-4px] outline-secondary"
-          : "outline-2 outline-offset-[-2px] outline-outline"
-      }`}
-    />
-  );
+    );
+};
 
 // Subject Schedule Period
 const SubjectSchedulePeriod = ({
@@ -144,7 +158,7 @@ const SubjectSchedulePeriod = ({
 
   return (
     <div
-      className={`relative h-[3.75rem] rounded-lg leading-snug ${
+      className={`relative h-[3.75rem] cursor-auto rounded-lg leading-snug ${
         isInSession ? "container-tertiary shadow" : "container-secondary"
       } ${showMenu ? "z-20" : ""}`}
       tabIndex={0}
@@ -162,6 +176,11 @@ const SubjectSchedulePeriod = ({
           (schedulePeriod.id as number).toString()
         )
       }
+      onDragOver={(e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "none";
+      }}
+      onDrop={() => setDragging(false)}
     >
       {role == "teacher" && (
         <PeriodHoverMenu
@@ -325,7 +344,9 @@ const PeriodHoverMenu = ({
               <button
                 className="surface pointer-events-auto absolute top-1/2 left-0 w-fit
                   -translate-x-1/2 -translate-y-1/2 cursor-move rounded-full p-1 text-xl shadow"
-                onMouseDown={() => setDragging(true)}
+                onMouseDown={() => {
+                  setDragging(true);
+                }}
               >
                 <MaterialIcon icon="drag_indicator" allowCustomSize />
               </button>
