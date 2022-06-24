@@ -35,6 +35,7 @@ const EmptySchedulePeriod = ({
   day,
   startTime,
   role,
+  allowEdit,
   setAddPeriod,
   toggleFetched,
 }: {
@@ -42,6 +43,7 @@ const EmptySchedulePeriod = ({
   day: Day;
   startTime: number;
   role: Role;
+  allowEdit?: boolean;
   setAddPeriod?: ({
     show,
     day,
@@ -55,7 +57,7 @@ const EmptySchedulePeriod = ({
 }): JSX.Element => {
   const [processing, setProcessing] = useState<boolean>(false);
 
-  if (role == "teacher")
+  if (role == "teacher" && allowEdit)
     return (
       <button
         className={`grid h-[3.75rem] w-full place-items-center rounded-lg text-4xl transition-[border-color]
@@ -562,6 +564,7 @@ const SchedulePeriod = ({
         day={day.getDay() as Day}
         startTime={schedulePeriod.startTime}
         role={role}
+        allowEdit={allowEdit}
         setAddPeriod={setAddPeriod}
         toggleFetched={toggleFetched}
       />
