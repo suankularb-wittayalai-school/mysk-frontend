@@ -11,6 +11,10 @@
       "move": "Drag to move period",
       "extend": "Drag to extend/shorten period"
     },
+    "extendGuide": {
+      "initial": "Tap <1></1> to extend period",
+      "tapToExtend": "Tap right edge to extend to"
+    },
     "action": {
       "add": "Add period",
       "edit": "Edit"
