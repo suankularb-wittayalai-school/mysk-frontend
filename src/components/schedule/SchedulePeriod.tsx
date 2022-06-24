@@ -192,8 +192,8 @@ const SubjectSchedulePeriod = ({
       onDragOver={(e) => {
         e.preventDefault();
         e.dataTransfer.dropEffect = "none";
+        setDragging(false);
       }}
-      onDrop={() => setDragging(false)}
     >
       {role == "teacher" && allowEdit && (
         <PeriodHoverMenu
