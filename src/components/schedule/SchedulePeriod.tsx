@@ -1,7 +1,7 @@
 // Modules
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
-import { useTranslation } from "next-i18next";
+import { Trans, useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
 
 // SK Components
@@ -9,6 +9,12 @@ import { MaterialIcon } from "@suankularb-components/react";
 
 // Components
 import HoverList from "@components/HoverList";
+
+// Backend
+import {
+  editScheduleItemDuration,
+  moveScheduleItem,
+} from "@utils/backend/schedule/schedule";
 
 // Types
 import { Role, Teacher } from "@utils/types/person";
@@ -19,12 +25,8 @@ import { Subject } from "@utils/types/subject";
 import { animationTransition } from "@utils/animations/config";
 
 // Helpers
-import { isInPeriod } from "@utils/helpers/schedule";
-import {
-  editScheduleItemDuration,
-  moveScheduleItem,
-} from "@utils/backend/schedule/schedule";
 import { isTouchDevice } from "@utils/helpers/browser";
+import { isInPeriod } from "@utils/helpers/schedule";
 
 // Empty Schedule Period
 const EmptySchedulePeriod = ({
@@ -329,11 +331,14 @@ const PeriodHoverMenu = ({
                   transition={animationTransition}
                 >
                   {!listeningCursor ? (
-                    <>
+                    <Trans
+                      i18nKey="schedule.extendGuide.initial"
+                      ns="schedule"
+                    >
                       Tap <MaterialIcon icon="straighten" /> to extend period
-                    </>
+                    </Trans>
                   ) : (
-                    <>Tap right edge of new duration</>
+                    t("schedule.extendGuide.tapToExtend")
                   )}
                 </motion.p>
               )}
