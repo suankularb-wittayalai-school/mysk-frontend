@@ -363,11 +363,12 @@ const PeriodHoverMenu = ({
               {/* Edit/delete group */}
               <div
                 className="surface absolute top-0 left-1/2 flex w-fit -translate-x-1/2 -translate-y-1/2
-                  flex-row gap-0.5 overflow-hidden rounded-full"
+                  flex-row gap-0.5 overflow-hidden rounded-full border-2 border-surface shadow"
               >
                 {/* Edit button */}
                 <button
-                  className="primary pointer-events-auto p-1 text-xl shadow"
+                  className="primary pointer-events-auto p-1 text-xl shadow transition-[opacity]
+                    hover:opacity-95 hover:transition-none focus:opacity-95 focus:transition-none"
                   title={t("schedule.hoverMenu.edit")}
                   onClick={
                     setEditPeriod
@@ -380,8 +381,9 @@ const PeriodHoverMenu = ({
 
                 {/* Delete button */}
                 <button
-                  className="error pointer-events-auto p-1 text-xl shadow"
-                  title="Delete this period"
+                  className="error pointer-events-auto p-1 text-xl shadow transition-[opacity]
+                    hover:opacity-95 hover:transition-none focus:opacity-95 focus:transition-none"
+                  title={t("schedule.hoverMenu.delete")}
                   onClick={
                     setDeletePeriod
                       ? () =>

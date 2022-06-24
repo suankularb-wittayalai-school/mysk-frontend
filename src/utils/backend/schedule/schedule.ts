@@ -211,17 +211,16 @@ export async function moveScheduleItem(
 ) {
   // Check overlap
   if (await isOverlappingExistingItems(newDay, newSchedulePeriod, teacherID))
-  return {
-    data: null,
-    error: {
-      message:
-        "new period duration causes it to overlap with other relevant periods",
-      details: "",
-      hint: "",
-      code: "",
-    },
-  };
-
+    return {
+      data: null,
+      error: {
+        message:
+          "new period duration causes it to overlap with other relevant periods",
+        details: "",
+        hint: "",
+        code: "",
+      },
+    };
 
   const { data, error } = await supabase
     .from<ScheduleItemTable>("schedule_items")
