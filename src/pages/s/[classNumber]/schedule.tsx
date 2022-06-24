@@ -32,6 +32,7 @@ import { SubjectListItem } from "@utils/types/subject";
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
 import { getSchedule } from "@utils/backend/schedule/schedule";
+import Head from "next/head";
 
 const ScheduleSection = ({
   schedule,
@@ -155,18 +156,28 @@ const SubjectListSection = ({
 };
 
 const StudentSchedule: NextPage<{
-  role: Role;
+  classNumber: number;
   schedule: ScheduleType;
   subjectList: Array<SubjectListItem>;
-}> = ({ schedule, subjectList }) => {
-  const { t } = useTranslation("schedule");
+}> = ({ classNumber, schedule, subjectList }) => {
+  const { t } = useTranslation(["schedule", "common"]);
 
   return (
     <>
+      <Head>
+        <title>
+          {t("title.studentWithClass", { number: classNumber })}
+          {" - "}
+          {t("brand.name", { ns: "common" })}
+        </title>
+      </Head>
       <RegularLayout
         Title={
           <Title
-            name={{ title: t("title.student") }}
+            name={{
+              title: t("title.student"),
+              subtitle: t("class", { ns: "common", number: classNumber }),
+            }}
             pageIcon={<MaterialIcon icon="dashboard" />}
             backGoesTo="/s/home"
             LinkElement={Link}
@@ -204,6 +215,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         "common",
         "schedule",
       ])),
+      classNumber: params?.classNumber,
       schedule,
       subjectList,
     },

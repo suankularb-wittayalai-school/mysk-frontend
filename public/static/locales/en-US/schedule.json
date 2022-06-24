@@ -1,6 +1,7 @@
 {
   "title": {
     "student": "Schedule",
+    "studentWithClass": "M.{{number}} schedule",
     "teacher": "Schedule"
   },
   "schedule": {

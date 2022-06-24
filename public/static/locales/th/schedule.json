@@ -1,6 +1,7 @@
 {
   "title": {
     "student": "ตารางเรียน",
+    "studentWithClass": "ตารางเรียน ม.{{number}}",
     "teacher": "ตารางสอน"
   },
   "schedule": {
