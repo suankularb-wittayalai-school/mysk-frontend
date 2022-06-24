@@ -42,7 +42,7 @@ const AddClassDialog = ({
     if (classroomNumber.match(/[1-6][0-1][1-9]/)) {
       supabase
         .from<ClassroomDB>("classroom")
-        .select("*, schedule:schedule(*)")
+        .select("*")
         .match({ number: classroomNumber, year: getCurrentAcedemicYear() })
         .limit(1)
         .single()

@@ -58,6 +58,7 @@ const EmptySchedulePeriod = ({
   toggleFetched?: () => void;
 }): JSX.Element => {
   const [processing, setProcessing] = useState<boolean>(false);
+  const [teacher] = useTeacherAccount();
 
   if (role == "teacher" && allowEdit)
     return (
@@ -84,10 +85,17 @@ const EmptySchedulePeriod = ({
         }}
         onDrop={async (e) => {
           setProcessing(true);
-          await moveScheduleItem(
-            { day, startTime },
-            Number(e.dataTransfer.getData("text"))
-          );
+          if (teacher)
+            await moveScheduleItem(
+              day,
+              {
+                ...(JSON.parse(
+                  e.dataTransfer.getData("text")
+                ) as SchedulePeriodType),
+                startTime,
+              },
+              teacher.id
+            );
           e.dataTransfer.clearData();
           if (toggleFetched) toggleFetched();
         }}
@@ -190,7 +198,11 @@ const SubjectSchedulePeriod = ({
       onDragStart={(e) =>
         e.dataTransfer.setData(
           "text/plain",
-          (schedulePeriod.id as number).toString()
+          JSON.stringify({
+            id: schedulePeriod.id,
+            duration: schedulePeriod.duration,
+            class: schedulePeriod.class,
+          })
         )
       }
       onDragOver={(e) => {

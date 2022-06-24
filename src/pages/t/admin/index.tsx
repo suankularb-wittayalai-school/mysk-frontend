@@ -250,7 +250,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
     .limit(5);
   const { data: classes, error: classSelectingError } = await supabase
     .from<ClassroomDB>("classroom")
-    .select("*, schedule:schedule(*)")
+    .select("*")
     .order("number", { ascending: true })
     .limit(5);
 

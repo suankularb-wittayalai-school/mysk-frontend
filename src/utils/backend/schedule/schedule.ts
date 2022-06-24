@@ -205,13 +205,28 @@ export async function editScheduleItem(
 }
 
 export async function moveScheduleItem(
-  newTime: { day: Day; startTime: number },
-  id: number
+  newDay: Day,
+  newSchedulePeriod: SchedulePeriod,
+  teacherID: number
 ) {
+  // Check overlap
+  if (await isOverlappingExistingItems(newDay, newSchedulePeriod, teacherID))
+  return {
+    data: null,
+    error: {
+      message:
+        "new period duration causes it to overlap with other relevant periods",
+      details: "",
+      hint: "",
+      code: "",
+    },
+  };
+
+
   const { data, error } = await supabase
     .from<ScheduleItemTable>("schedule_items")
-    .update({ day: newTime.day, start_time: newTime.startTime })
-    .match({ id });
+    .update({ day: newDay, start_time: newSchedulePeriod.startTime })
+    .match({ id: newSchedulePeriod.id });
 
   if (error || !data) {
     console.error(error);
