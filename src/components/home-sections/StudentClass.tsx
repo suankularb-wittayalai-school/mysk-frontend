@@ -34,13 +34,13 @@ const StudentClassSection = ({
         <LinkButton
           label={t("class.action.seeSchedule")}
           type="outlined"
-          url="/s/405/schedule"
+          url="/s/504/schedule"
           LinkElement={Link}
         />
         <LinkButton
           label={t("class.action.seeClassDetail")}
           type="filled"
-          url="/s/405/class"
+          url="/s/504/class"
           LinkElement={Link}
         />
       </div>

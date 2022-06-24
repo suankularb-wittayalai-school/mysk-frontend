@@ -1,17 +1,27 @@
+// Modules
 import { PostgrestError } from "@supabase/supabase-js";
+
+// Backend
+import { db2Subject } from "@utils/backend/database";
+import { isOverlappingExistingItems } from "@utils/backend/schedule/utils";
+
+// Helpers
 import {
   arePeriodsOverlapping,
   createEmptySchedule,
 } from "@utils/helpers/schedule";
+
+// Supabase
 import { supabase } from "@utils/supabaseClient";
-import { ClassroomDB, ClassroomTable } from "@utils/types/database/class";
+
+// Types
+import { ClassroomTable } from "@utils/types/database/class";
 import {
   ScheduleItemDB,
   ScheduleItemTable,
 } from "@utils/types/database/schedule";
 import { Role } from "@utils/types/person";
 import { Schedule, SchedulePeriod } from "@utils/types/schedule";
-import { db2Subject } from "../database";
 
 /**
  * Construct a Schedule from Schedule Items from the student’s perspective
@@ -212,11 +222,9 @@ export async function moveScheduleItem(
 }
 
 export async function editScheduleItemDuration(
-  day: number,
+  day: Day,
   schedulePeriod: SchedulePeriod,
-  classID: number,
-  teacherID: number,
-  id: number
+  teacherID: number
 ): Promise<{
   data: ScheduleItemTable[] | null;
   error: PostgrestError | null;
@@ -225,66 +233,28 @@ export async function editScheduleItemDuration(
   if (schedulePeriod.duration < 1) schedulePeriod.duration = 1;
   else if (schedulePeriod.duration > 10) schedulePeriod.duration = 10;
 
-  // Get the Schedule Items of that class or taught by this teacher in that day
-  const { data: itemsSameClass, error: itemsSameClassError } = await supabase
-    .from<ScheduleItemTable>("schedule_items")
-    .select("id, start_time, duration")
-    .match({ classroom: classID, day });
+  if (await isOverlappingExistingItems(day, schedulePeriod, teacherID))
+    return {
+      data: null,
+      error: {
+        message:
+          "new period duration causes it to overlap with other relevant periods",
+        details: "",
+        hint: "",
+        code: "",
+      },
+    };
 
-  if (itemsSameClassError || !itemsSameClass) {
-    console.error(itemsSameClassError);
-    return { data: null, error: itemsSameClassError };
-  }
-
-  const { data: itemsSameTeacher, error: itemsSameTeacherError } =
-    await supabase
-      .from<ScheduleItemTable>("schedule_items")
-      .select("id, start_time, duration")
-      .match({ teacher: teacherID, day });
-
-  if (itemsSameTeacherError || !itemsSameTeacher) {
-    console.error(itemsSameClassError);
-    return { data: null, error: itemsSameClassError };
-  }
-
-  // Check for overlap
-  const exisitingItems = itemsSameClass.concat(itemsSameTeacher);
-
-  for (let item of exisitingItems) {
-    if (
-      item.id != id &&
-      arePeriodsOverlapping(
-        {
-          startTime: schedulePeriod.startTime,
-          duration: schedulePeriod.duration,
-        },
-        {
-          startTime: item.start_time,
-          duration: item.duration,
-        }
-      )
-    ) {
-      console.error(
-        "new period duration causes it to overlap with other relevant periods"
-      );
-      return {
-        data: null,
-        error: {
-          message:
-            "new period duration causes it to overlap with other relevant periods",
-          details: "",
-          hint: "",
-          code: "",
-        },
-      };
-    }
-  }
-
-  // TODO: If overlap, end the function; if not, push the update
+  // If overlap, end the function; if not, push the update
   const { data, error } = await supabase
     .from<ScheduleItemTable>("schedule_items")
     .update({ duration: schedulePeriod.duration })
-    .match({ id });
+    .match({ id: schedulePeriod.id });
+
+  if (error || !data) {
+    console.error(error);
+    return { data: null, error };
+  }
 
   return { data, error: null };
 }

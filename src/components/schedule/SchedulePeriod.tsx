@@ -10,24 +10,26 @@ import { MaterialIcon } from "@suankularb-components/react";
 // Components
 import HoverList from "@components/HoverList";
 
+// Animations
+import { animationTransition } from "@utils/animations/config";
+
 // Backend
 import {
   editScheduleItemDuration,
   moveScheduleItem,
 } from "@utils/backend/schedule/schedule";
 
+// Helpers
+import { isTouchDevice } from "@utils/helpers/browser";
+import { isInPeriod } from "@utils/helpers/schedule";
+
+// Hooks
+import { useTeacherAccount } from "@utils/hooks/auth";
+
 // Types
 import { Role, Teacher } from "@utils/types/person";
 import { SchedulePeriod as SchedulePeriodType } from "@utils/types/schedule";
 import { Subject } from "@utils/types/subject";
-
-// Animations
-import { animationTransition } from "@utils/animations/config";
-
-// Helpers
-import { isTouchDevice } from "@utils/helpers/browser";
-import { isInPeriod } from "@utils/helpers/schedule";
-import { useTeacherAccount } from "@utils/hooks/auth";
 
 // Empty Schedule Period
 const EmptySchedulePeriod = ({
@@ -455,16 +457,14 @@ const PeriodHoverMenu = ({
                   await editScheduleItemDuration(
                     day,
                     {
-                      startTime: schedulePeriod.startTime,
+                      ...schedulePeriod,
                       duration: findNumPeriodsFromCursor(
                         schedulePeriod.duration,
                         cursorStart.x,
                         cursor.x
                       ),
                     },
-                    schedulePeriod.class?.id,
-                    teacher?.id,
-                    schedulePeriod.id
+                    teacher?.id
                   );
                   if (toggleFetched) toggleFetched();
                 }
