@@ -222,12 +222,8 @@ export async function editScheduleItemDuration(
   error: PostgrestError | null;
 }> {
   // Cap duration
-  if (schedulePeriod.duration < 1) {
-    schedulePeriod.duration = 1;
-  }
-  if (schedulePeriod.duration > 10) {
-    schedulePeriod.duration = 10;
-  }
+  if (schedulePeriod.duration < 1) schedulePeriod.duration = 1;
+  else if (schedulePeriod.duration > 10) schedulePeriod.duration = 10;
 
   // Get the Schedule Items of that class or taught by this teacher in that day
   const { data: itemsSameClass, error: itemsSameClassError } = await supabase

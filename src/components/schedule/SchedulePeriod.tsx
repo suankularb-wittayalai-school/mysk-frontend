@@ -113,6 +113,7 @@ const SubjectSchedulePeriod = ({
   day,
   schedulePeriod,
   role,
+  allowEdit,
   setEditPeriod,
   setDeletePeriod,
   toggleFetched,
@@ -121,6 +122,7 @@ const SubjectSchedulePeriod = ({
   day: Day;
   schedulePeriod: SchedulePeriodType;
   role: Role;
+  allowEdit?: boolean;
   setEditPeriod?: ({
     show,
     day,
@@ -193,7 +195,7 @@ const SubjectSchedulePeriod = ({
       }}
       onDrop={() => setDragging(false)}
     >
-      {role == "teacher" && (
+      {role == "teacher" && allowEdit && (
         <PeriodHoverMenu
           show={showMenu}
           day={day}
@@ -480,6 +482,7 @@ const SchedulePeriod = ({
   day,
   periodWidth,
   role,
+  allowEdit,
   setAddPeriod,
   setEditPeriod,
   setDeletePeriod,
@@ -490,6 +493,7 @@ const SchedulePeriod = ({
   day: Date;
   periodWidth: number;
   role: Role;
+  allowEdit?: boolean;
   setAddPeriod?: ({
     show,
     day,
@@ -541,6 +545,7 @@ const SchedulePeriod = ({
         schedulePeriod={schedulePeriod}
         day={day.getDay() as Day}
         role={role}
+        allowEdit={allowEdit}
         setEditPeriod={setEditPeriod}
         setDeletePeriod={setDeletePeriod}
         toggleFetched={toggleFetched}

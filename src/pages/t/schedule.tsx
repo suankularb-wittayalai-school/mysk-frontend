@@ -114,6 +114,7 @@ const TeacherSchedule: NextPage = () => {
           <Schedule
             schedule={schedule}
             role="teacher"
+            allowEdit
             setAddPeriod={setAddSubjectToPeriod}
             setEditPeriod={setEditPeriod}
             setDeletePeriod={setDeletePeriod}

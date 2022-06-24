@@ -16,6 +16,7 @@ import {
 const ScheduleRow = ({
   scheduleRow,
   role,
+  allowEdit,
   setAddPeriod,
   setEditPeriod,
   setDeletePeriod,
@@ -23,6 +24,7 @@ const ScheduleRow = ({
 }: {
   scheduleRow: ScheduleRowType;
   role: Role;
+  allowEdit?: boolean;
   setAddPeriod?: ({
     show,
     day,
@@ -73,6 +75,7 @@ const ScheduleRow = ({
             day={day}
             periodWidth={periodWidth}
             role={role}
+            allowEdit={allowEdit}
             setAddPeriod={setAddPeriod}
             setEditPeriod={setEditPeriod}
             setDeletePeriod={setDeletePeriod}

@@ -44,6 +44,7 @@ const Schedule = ({
   schedule,
   role,
   noScroll,
+  allowEdit,
   setAddPeriod,
   setEditPeriod,
   setDeletePeriod,
@@ -52,6 +53,7 @@ const Schedule = ({
   schedule: Schedule;
   role: Role;
   noScroll?: boolean;
+  allowEdit?: boolean;
   setAddPeriod?: ({
     show,
     day,
@@ -97,6 +99,7 @@ const Schedule = ({
               key={scheduleRow.day}
               scheduleRow={scheduleRow}
               role={role}
+              allowEdit={allowEdit}
               setAddPeriod={setAddPeriod}
               setEditPeriod={setEditPeriod}
               setDeletePeriod={setDeletePeriod}
