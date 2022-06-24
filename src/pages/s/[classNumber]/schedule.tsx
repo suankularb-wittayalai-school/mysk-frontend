@@ -31,6 +31,7 @@ import { SubjectListItem } from "@utils/types/subject";
 
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
+import { getSchedule } from "@utils/backend/schedule/schedule";
 
 const ScheduleSection = ({
   schedule,
@@ -183,7 +184,10 @@ export const getServerSideProps: GetServerSideProps = async ({
   locale,
   params,
 }) => {
-  const schedule: ScheduleType = {
+  const schedule: ScheduleType = (await getSchedule(
+    "student",
+    Number(params?.classNumber)
+  )) || {
     content: [
       { day: 1, content: [] },
       { day: 2, content: [] },

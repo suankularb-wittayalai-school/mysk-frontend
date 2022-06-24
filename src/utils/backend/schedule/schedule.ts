@@ -4,13 +4,13 @@ import {
   createEmptySchedule,
 } from "@utils/helpers/schedule";
 import { supabase } from "@utils/supabaseClient";
-import { ClassroomTable } from "@utils/types/database/class";
+import { ClassroomDB, ClassroomTable } from "@utils/types/database/class";
 import {
   ScheduleItemDB,
   ScheduleItemTable,
 } from "@utils/types/database/schedule";
 import { Role } from "@utils/types/person";
-import { Schedule, SchedulePeriod } from "@utils/types/schedule";
+import { Schedule } from "@utils/types/schedule";
 import { db2Subject } from "../database";
 
 /**
@@ -37,6 +37,22 @@ export async function getSchedule(role: Role, id: number): Promise<Schedule> {
   // Schedule filled with empty periods
   let schedule = createEmptySchedule(1, 5);
 
+  // Find classID if role is student
+  let classID = 0;
+  if (role == "student") {
+    const { data: classroom, error: classroomError } = await supabase
+      .from<ClassroomTable>("classroom")
+      .select("id, number")
+      .match({ number: id })
+      .limit(1)
+      .single();
+    if (classroomError || !classroom) {
+      console.error(classroomError);
+      return schedule;
+    }
+    classID = classroom.id;
+  }
+
   // Fetch data from Supabase
   const { data, error } = await supabase
     .from<ScheduleItemDB>("schedule_items")
@@ -48,7 +64,7 @@ export async function getSchedule(role: Role, id: number): Promise<Schedule> {
         ? // Match teacher if role is teacher
           { teacher: id }
         : // Match classroom if role is student
-          { classroom: id }
+          { classroom: classID }
     );
 
   // Return an empty Schedule if fetch failed
