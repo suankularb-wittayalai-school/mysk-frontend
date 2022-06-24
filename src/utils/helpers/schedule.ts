@@ -70,7 +70,7 @@ export function arePeriodsOverlapping(
 
 export function createEmptySchedule(startDay: Day, endDay?: Day): Schedule {
   return {
-    content: range(endDay ? endDay - startDay + 1 : startDay).map((day) => ({
+    content: range(endDay ? endDay - startDay + 1 : 1).map((day) => ({
       day: (day + startDay) as Day,
       content: [
         { startTime: 1, duration: 1 },

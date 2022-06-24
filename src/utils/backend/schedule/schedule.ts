@@ -10,7 +10,7 @@ import {
   ScheduleItemTable,
 } from "@utils/types/database/schedule";
 import { Role } from "@utils/types/person";
-import { Schedule } from "@utils/types/schedule";
+import { Schedule, SchedulePeriod } from "@utils/types/schedule";
 import { db2Subject } from "../database";
 
 /**
@@ -20,7 +20,8 @@ import { db2Subject } from "../database";
  */
 export async function getSchedule(
   role: "student",
-  classID: number
+  classID: number,
+  day?: Day
 ): Promise<Schedule>;
 
 /**
@@ -30,12 +31,18 @@ export async function getSchedule(
  */
 export async function getSchedule(
   role: "teacher",
-  teacherID: number
+  teacherID: number,
+  day?: Day
 ): Promise<Schedule>;
 
-export async function getSchedule(role: Role, id: number): Promise<Schedule> {
+export async function getSchedule(
+  role: Role,
+  id: number,
+  day?: Day
+): Promise<Schedule> {
   // Schedule filled with empty periods
-  let schedule = createEmptySchedule(1, 5);
+  let schedule =
+    day == undefined ? createEmptySchedule(1, 5) : createEmptySchedule(day);
 
   // Find classID if role is student
   let classID = 0;
@@ -62,9 +69,13 @@ export async function getSchedule(role: Role, id: number): Promise<Schedule> {
     .match(
       role == "teacher"
         ? // Match teacher if role is teacher
-          { teacher: id }
+          day == undefined
+          ? { teacher: id }
+          : { teacher: id, day }
         : // Match classroom if role is student
-          { classroom: classID }
+        day == undefined
+        ? { classroom: classID }
+        : { classroom: classID, day }
     );
 
   // Return an empty Schedule if fetch failed
@@ -201,21 +212,83 @@ export async function moveScheduleItem(
 }
 
 export async function editScheduleItemDuration(
-  duration: number,
+  day: number,
+  schedulePeriod: SchedulePeriod,
+  classID: number,
+  teacherID: number,
   id: number
 ): Promise<{
   data: ScheduleItemTable[] | null;
   error: PostgrestError | null;
 }> {
+  // Cap duration
+  if (schedulePeriod.duration < 1) {
+    schedulePeriod.duration = 1;
+  }
+  if (schedulePeriod.duration > 10) {
+    schedulePeriod.duration = 10;
+  }
+
+  // Get the Schedule Items of that class or taught by this teacher in that day
+  const { data: itemsSameClass, error: itemsSameClassError } = await supabase
+    .from<ScheduleItemTable>("schedule_items")
+    .select("id, start_time, duration")
+    .match({ classroom: classID, day });
+
+  if (itemsSameClassError || !itemsSameClass) {
+    console.error(itemsSameClassError);
+    return { data: null, error: itemsSameClassError };
+  }
+
+  const { data: itemsSameTeacher, error: itemsSameTeacherError } =
+    await supabase
+      .from<ScheduleItemTable>("schedule_items")
+      .select("id, start_time, duration")
+      .match({ teacher: teacherID, day });
+
+  if (itemsSameTeacherError || !itemsSameTeacher) {
+    console.error(itemsSameClassError);
+    return { data: null, error: itemsSameClassError };
+  }
+
+  // Check for overlap
+  const exisitingItems = itemsSameClass.concat(itemsSameTeacher);
+
+  for (let item of exisitingItems) {
+    if (
+      item.id != id &&
+      arePeriodsOverlapping(
+        {
+          startTime: schedulePeriod.startTime,
+          duration: schedulePeriod.duration,
+        },
+        {
+          startTime: item.start_time,
+          duration: item.duration,
+        }
+      )
+    ) {
+      console.error(
+        "new period duration causes it to overlap with other relevant periods"
+      );
+      return {
+        data: null,
+        error: {
+          message:
+            "new period duration causes it to overlap with other relevant periods",
+          details: "",
+          hint: "",
+          code: "",
+        },
+      };
+    }
+  }
+
+  // TODO: If overlap, end the function; if not, push the update
   const { data, error } = await supabase
     .from<ScheduleItemTable>("schedule_items")
-    .update({ duration })
+    .update({ duration: schedulePeriod.duration })
     .match({ id });
-
-  if (error || !data) {
-    console.error(error);
-    return { data: null, error };
-  }
 
   return { data, error: null };
 }

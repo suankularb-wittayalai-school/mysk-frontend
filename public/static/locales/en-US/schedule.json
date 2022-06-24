@@ -27,7 +27,11 @@
       "code": "S. Code",
       "name": "Subject Name",
       "teachers": "Teachers",
-      "ggcCode": "Class Code"
+      "ggcCode": "Class Code",
+      "action": {
+        "ggcLink": "Google Classroom link",
+        "ggMeetLink": "Online meeting link"
+      }
     }
   },
   "dialog": {

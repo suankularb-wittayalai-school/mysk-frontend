@@ -841,7 +841,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     .single();
 
   const { data: roomSubjects, error: roomSubjectsError } = await supabase
-    .from<RoomSubjectDB>("RoomSubject")
+    .from<RoomSubjectDB>("room_subjects")
     .select("*, subject:subject(*), classroom:class(*)")
     .eq("subject", params?.subjectID as string);
 

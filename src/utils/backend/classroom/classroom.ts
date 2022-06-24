@@ -88,3 +88,19 @@ export async function updateClassroom(
   }
   return { data: updatedClass, error: null };
 }
+
+export async function getClassIDFromNumber(number: number): Promise<number> {
+  const { data, error } = await supabase
+    .from<ClassroomTable>("classroom")
+    .select("id")
+    .match({ number })
+    .limit(1)
+    .single();
+
+  if (error || !data) {
+    console.error(error);
+    return 0;
+  }
+
+  return data.id;
+}

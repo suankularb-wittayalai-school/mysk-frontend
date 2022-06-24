@@ -27,7 +27,11 @@
       "code": "รหัสวิชา",
       "name": "ชื่อวิชา",
       "teachers": "ครูผู้สอน",
-      "ggcCode": "Class Code"
+      "ggcCode": "Class Code",
+      "action": {
+        "ggcLink": "ลิงก์เข้า Google Classroom",
+        "ggMeetLink": "ลิงก์เข้า Google Meet"
+      }
     }
   },
   "dialog": {

@@ -1,5 +1,6 @@
 // Modules
 import { GetServerSideProps, NextPage } from "next";
+import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -24,15 +25,17 @@ import {
 import Schedule from "@components/schedule/Schedule";
 import BrandIcon from "@components/icons/BrandIcon";
 
+// Backend
+import { getClassIDFromNumber } from "@utils/backend/classroom/classroom";
+import { getSchedule } from "@utils/backend/schedule/schedule";
+import { getSubjectList } from "@utils/backend/subject/roomSubject";
+
 // Types
-import { Role } from "@utils/types/person";
 import { Schedule as ScheduleType } from "@utils/types/schedule";
 import { SubjectListItem } from "@utils/types/subject";
 
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
-import { getSchedule } from "@utils/backend/schedule/schedule";
-import Head from "next/head";
 
 const ScheduleSection = ({
   schedule,
@@ -123,7 +126,7 @@ const SubjectListSection = ({
                         rel="noreferrer"
                       >
                         <Button
-                          name={t("subjectList.table.action.copyCode")}
+                          name={t("subjectList.table.action.ggcLink")}
                           type="text"
                           iconOnly
                           icon={<BrandIcon icon="gg-classroom" />}
@@ -137,7 +140,7 @@ const SubjectListSection = ({
                         rel="noreferrer"
                       >
                         <Button
-                          name={t("subjectList.table.action.copyCode")}
+                          name={t("subjectList.table.action.ggMeetLink")}
                           type="text"
                           iconOnly
                           icon={<BrandIcon icon="gg-meet" />}
@@ -158,7 +161,7 @@ const SubjectListSection = ({
 const StudentSchedule: NextPage<{
   classNumber: number;
   schedule: ScheduleType;
-  subjectList: Array<SubjectListItem>;
+  subjectList: SubjectListItem[];
 }> = ({ classNumber, schedule, subjectList }) => {
   const { t } = useTranslation(["schedule", "common"]);
 
@@ -207,7 +210,11 @@ export const getServerSideProps: GetServerSideProps = async ({
       { day: 5, content: [] },
     ],
   };
-  const subjectList: Array<SubjectListItem> = [];
+  const subjectList: SubjectListItem[] = (
+    await getSubjectList(
+      await getClassIDFromNumber(Number(params?.classNumber))
+    )
+  ).data;
 
   return {
     props: {

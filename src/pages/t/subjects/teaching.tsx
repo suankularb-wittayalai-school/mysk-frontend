@@ -52,7 +52,7 @@ const SubjectsTeaching: NextPage = () => {
     if (!teacher) return [];
 
     const { data: roomSubjects, error } = await supabase
-      .from<RoomSubjectDB>("RoomSubject")
+      .from<RoomSubjectDB>("room_subjects")
       .select("*, subject:subject(*), classroom:class(*)")
       // .in("subject", teacher.subjectsInCharge?.map((s) => s.id) ?? [])
       .contains("teacher", [teacher.id]);

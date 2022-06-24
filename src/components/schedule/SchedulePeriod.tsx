@@ -27,6 +27,7 @@ import { animationTransition } from "@utils/animations/config";
 // Helpers
 import { isTouchDevice } from "@utils/helpers/browser";
 import { isInPeriod } from "@utils/helpers/schedule";
+import { useTeacherAccount } from "@utils/hooks/auth";
 
 // Empty Schedule Period
 const EmptySchedulePeriod = ({
@@ -281,6 +282,7 @@ const PeriodHoverMenu = ({
   setDragging: (value: boolean) => void;
 }): JSX.Element => {
   const { t } = useTranslation("schedule");
+  const [teacher] = useTeacherAccount();
 
   const [listeningCursor, setListeningCursor] = useState<boolean>(false);
   const [cursorStart, setCursorStart] = useState<{ x: number; y: number }>({
@@ -331,10 +333,7 @@ const PeriodHoverMenu = ({
                   transition={animationTransition}
                 >
                   {!listeningCursor ? (
-                    <Trans
-                      i18nKey="schedule.extendGuide.initial"
-                      ns="schedule"
-                    >
+                    <Trans i18nKey="schedule.extendGuide.initial" ns="schedule">
                       Tap <MaterialIcon icon="straighten" /> to extend period
                     </Trans>
                   ) : (
@@ -448,13 +447,19 @@ const PeriodHoverMenu = ({
                 else setListeningCursor(false);
 
                 // Send new duration to Supabase then re-fetch
-                if (schedulePeriod.id) {
+                if (teacher && schedulePeriod.id && schedulePeriod.class) {
                   await editScheduleItemDuration(
-                    findNumPeriodsFromCursor(
-                      schedulePeriod.duration,
-                      cursorStart.x,
-                      cursor.x
-                    ),
+                    day,
+                    {
+                      startTime: schedulePeriod.startTime,
+                      duration: findNumPeriodsFromCursor(
+                        schedulePeriod.duration,
+                        cursorStart.x,
+                        cursor.x
+                      ),
+                    },
+                    schedulePeriod.class?.id,
+                    teacher?.id,
                     schedulePeriod.id
                   );
                   if (toggleFetched) toggleFetched();

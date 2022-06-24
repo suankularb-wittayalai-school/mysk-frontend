@@ -1,18 +1,16 @@
 // Modules
 import { getDay } from "date-fns";
 
+import { AnimatePresence, motion } from "framer-motion";
+
 import { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
-import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useState } from "react";
-
-// Supabase imports
-import { supabase } from "@utils/supabaseClient";
+import { useEffect, useState } from "react";
 
 // SK Components
 import {
@@ -30,81 +28,105 @@ import SubjectsSection from "@components/home-sections/SubjectsSection";
 import TeacherClassSection from "@components/home-sections/TeacherClassSection";
 import UserSection from "@components/home-sections/UserSection";
 
+// Animations
+import { animationTransition } from "@utils/animations/config";
+import { fromUpToDown } from "@utils/animations/slide";
+
 // Types
 import { NewsList, StudentForm } from "@utils/types/news";
 import { Schedule } from "@utils/types/schedule";
 
 // Hooks
 import { useTeacherAccount } from "@utils/hooks/auth";
+import { getSchedule } from "@utils/backend/schedule/schedule";
 
 const TeacherHome: NextPage<{
-  schedule: Schedule;
   studentForms: Array<StudentForm>;
   news: NewsList;
-}> = ({ schedule, studentForms, news }) => {
+}> = ({ studentForms, news }) => {
   const { t } = useTranslation("common");
-  const router = useRouter();
+  const [user] = useTeacherAccount({ loginRequired: true });
+
+  const day = new Date().getDay() as Day;
+  const [schedule, setSchedule] = useState<Schedule>({
+    content: [{ day, content: [] }],
+  });
+  useEffect(() => {
+    const fetchAndSetSchedule = async () =>
+      user && setSchedule(await getSchedule("teacher", user.id, day));
+    fetchAndSetSchedule();
+  }, [user]);
+
+  // Dialog control
   const [showChangePassword, setShowChangePassword] = useState<boolean>(false);
   const [showEditProfile, setShowEditProfile] = useState<boolean>(false);
   const [showLogOut, setShowLogOut] = useState<boolean>(false);
-  const [user, session] = useTeacherAccount({ loginRequired: true });
-
-  async function handleLogout() {
-    await supabase.auth.signOut();
-    router.push("/");
-  }
-
-  if (!user) return <></>;
 
   return (
-    <>
-      <Head>
-        <title>{t("brand.name", { ns: "common" })}</title>
-      </Head>
-      <RegularLayout
-        Title={
-          <Title
-            name={{ title: t("brand.name") }}
-            pageIcon={<MaterialIcon icon="home" />}
-            backGoesTo={() => setShowLogOut(true)}
-            LinkElement={Link}
-            className="sm:!hidden"
-          />
-        }
-      >
-        <UserSection
-          user={user}
-          setShowChangePassword={setShowChangePassword}
-          setShowEditProfile={setShowEditProfile}
-          setShowLogOut={setShowLogOut}
-        />
-        <SubjectsSection schedule={schedule} />
-        <TeacherClassSection
-          studentForms={studentForms.map((newsItem) => ({
-            ...newsItem,
-            postDate: new Date(newsItem.postDate),
-          }))}
-        />
-        <NewsSection
-          news={news.map((newsItem) => ({
-            ...newsItem,
-            postDate: new Date(newsItem.postDate),
-          }))}
-        />
-      </RegularLayout>
+    <AnimatePresence>
+      {user && (
+        <>
+          <Head>
+            <title>{t("brand.name", { ns: "common" })}</title>
+          </Head>
 
-      {/* Dialogs */}
-      <ChangePassword
-        show={showChangePassword}
-        onClose={() => setShowChangePassword(false)}
-      />
-      <EditSelfDialog
-        user={user}
-        show={showEditProfile}
-        onClose={() => setShowEditProfile(false)}
-      />
-      <LogOutDialog show={showLogOut} onClose={() => setShowLogOut(false)} />
-    </>
+          <motion.div
+            initial="hidden"
+            animate="enter"
+            exit="exit"
+            variants={fromUpToDown}
+            transition={animationTransition}
+          >
+            <RegularLayout
+              Title={
+                <Title
+                  name={{ title: t("brand.name") }}
+                  pageIcon={<MaterialIcon icon="home" />}
+                  backGoesTo={() => setShowLogOut(true)}
+                  LinkElement={Link}
+                  className="sm:!hidden"
+                />
+              }
+            >
+              <UserSection
+                user={user}
+                setShowChangePassword={setShowChangePassword}
+                setShowEditProfile={setShowEditProfile}
+                setShowLogOut={setShowLogOut}
+              />
+              <SubjectsSection schedule={schedule} />
+              <TeacherClassSection
+                studentForms={studentForms.map((newsItem) => ({
+                  ...newsItem,
+                  postDate: new Date(newsItem.postDate),
+                }))}
+              />
+              <NewsSection
+                news={news.map((newsItem) => ({
+                  ...newsItem,
+                  postDate: new Date(newsItem.postDate),
+                }))}
+              />
+            </RegularLayout>
+          </motion.div>
+
+          {/* Dialogs */}
+          <ChangePassword
+            show={showChangePassword}
+            onClose={() => setShowChangePassword(false)}
+          />
+          <EditSelfDialog
+            user={user}
+            show={showEditProfile}
+            onClose={() => setShowEditProfile(false)}
+          />
+          <LogOutDialog
+            show={showLogOut}
+            onClose={() => setShowLogOut(false)}
+          />
+        </>
+      )}
+    </AnimatePresence>
   );
 };
 
@@ -158,14 +180,6 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
       },
     },
   ];
-  const schedule: Schedule = {
-    content: [
-      {
-        day: getDay(new Date()),
-        content: [],
-      },
-    ],
-  };
 
   return {
     props: {
@@ -187,7 +201,6 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         ...newsItem,
         postDate: newsItem.postDate.getTime(),
       })),
-      schedule,
     },
   };
 };
