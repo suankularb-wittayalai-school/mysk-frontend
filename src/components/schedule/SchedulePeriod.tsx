@@ -467,32 +467,38 @@ const PeriodHoverMenu = ({
               className="absolute top-0 left-0 h-[3.75rem] cursor-ew-resize rounded-lg bg-tertiary-translucent-12 sm:opacity-0"
               style={{ width: (10 - schedulePeriod.startTime + 1) * 112 }}
               onMouseMove={(e) => setCursor({ x: e.clientX, y: e.clientY })}
-              onMouseUp={async () => {
-                // Show Indicator for 2 seconds after touch if touch device
+              onMouseUp={() => {
+                // Show Indicator for 1 second after touch if touch device
                 if (isTouchDevice())
                   setTimeout(() => {
                     setListeningCursor(false);
                     setDisableTutorial(true);
-                  }, 2000);
+                  }, 1000);
                 // Else, hide it immediately
                 else setListeningCursor(false);
 
                 // Send new duration to Supabase then re-fetch
-                if (teacher && schedulePeriod.id && schedulePeriod.class) {
-                  await editScheduleItemDuration(
-                    day,
-                    {
-                      ...schedulePeriod,
-                      duration: findNumPeriodsFromCursor(
-                        schedulePeriod.duration,
-                        cursorStart.x,
-                        cursor.x
-                      ),
-                    },
-                    teacher?.id
-                  );
-                  if (toggleFetched) toggleFetched();
-                }
+                setTimeout(
+                  async () => {
+                    if (teacher && schedulePeriod.id && schedulePeriod.class) {
+                      await editScheduleItemDuration(
+                        day,
+                        {
+                          ...schedulePeriod,
+                          duration: findNumPeriodsFromCursor(
+                            schedulePeriod.duration,
+                            cursorStart.x,
+                            cursor.x
+                          ),
+                        },
+                        teacher?.id
+                      );
+                      if (toggleFetched) toggleFetched();
+                    }
+                  },
+                  // Delay the fetch if touch device
+                  isTouchDevice() ? 1000 : 0
+                );
               }}
             />
           </>

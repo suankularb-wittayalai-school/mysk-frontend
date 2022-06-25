@@ -2,7 +2,7 @@
 import { PostgrestError } from "@supabase/supabase-js";
 
 // Backend
-import { db2Subject } from "@utils/backend/database";
+import { db2SchedulePeriod, db2Subject } from "@utils/backend/database";
 import { isOverlappingExistingItems } from "@utils/backend/schedule/utils";
 
 // Helpers
@@ -50,6 +50,7 @@ export async function getSchedule(
   id: number,
   day?: Day
 ): Promise<Schedule> {
+  console.time("scheduleConstruct")
   // Schedule filled with empty periods
   let schedule =
     day == undefined ? createEmptySchedule(1, 5) : createEmptySchedule(day);
@@ -121,15 +122,21 @@ export async function getSchedule(
     );
 
     // Now with space to add it in, add the period to resulting Schedule
-    schedule.content[scheduleRowIndex].content.push({
-      id: scheduleItem.id,
-      startTime: scheduleItem.start_time,
-      duration: scheduleItem.duration,
-      subject: await db2Subject(scheduleItem.subject),
-      class: scheduleItem.classroom,
-      room: scheduleItem.room,
-    });
+    schedule.content[scheduleRowIndex].content.push(
+      await db2SchedulePeriod(scheduleItem, "teacher")
+    );
+
+    // schedule.content[scheduleRowIndex].content.push({
+    //   id: scheduleItem.id,
+    //   startTime: scheduleItem.start_time,
+    //   duration: scheduleItem.duration,
+    //   subject: await db2Subject(scheduleItem.subject),
+    //   class: scheduleItem.classroom,
+    //   room: scheduleItem.room,
+    // });
+
   }
+  console.timeEnd("scheduleConstruct");
 
   return schedule;
 }
