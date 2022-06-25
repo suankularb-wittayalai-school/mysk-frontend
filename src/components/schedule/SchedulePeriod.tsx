@@ -547,12 +547,13 @@ const SchedulePeriod = ({
   toggleFetched?: () => void;
 }): JSX.Element => (
   <motion.li
-    key={`${day.getDay()}-${schedulePeriod.startTime}`}
+    key={schedulePeriod.id || `${day.getDay()}-${schedulePeriod.startTime}`}
     className="absolute px-1 transition-[width]"
     style={{
       width: periodWidth * schedulePeriod.duration,
       left: periodWidth * (schedulePeriod.startTime - 1),
     }}
+    layoutId={schedulePeriod.subject ? `sp-${schedulePeriod.id}` : undefined}
     initial={{ scale: 0.8, y: 20, opacity: 0 }}
     animate={{ scale: 1, y: 0, opacity: 1 }}
     exit={{ scale: 0.8, y: 20, opacity: 0 }}

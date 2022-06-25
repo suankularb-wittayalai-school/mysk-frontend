@@ -1,7 +1,7 @@
 // Modules
 import { setDay } from "date-fns";
 
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, AnimateSharedLayout } from "framer-motion";
 
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
@@ -92,22 +92,24 @@ const Schedule = ({
         noScroll ? "grow" : "scroll-w-0 scroll-desktop grow sm:overflow-x-auto"
       }
     >
-      <AnimatePresence initial={false}>
-        <ul className="flex flex-col gap-2 pt-4 pb-2 pl-1 pr-4 sm:pr-0">
-          {schedule.content.map((scheduleRow) => (
-            <ScheduleRow
-              key={scheduleRow.day}
-              scheduleRow={scheduleRow}
-              role={role}
-              allowEdit={allowEdit}
-              setAddPeriod={setAddPeriod}
-              setEditPeriod={setEditPeriod}
-              setDeletePeriod={setDeletePeriod}
-              toggleFetched={toggleFetched}
-            />
-          ))}
-        </ul>
-      </AnimatePresence>
+      <AnimateSharedLayout>
+        <AnimatePresence initial={false}>
+          <ul className="flex flex-col gap-2 pt-4 pb-2 pl-1 pr-4 sm:pr-0">
+            {schedule.content.map((scheduleRow) => (
+              <ScheduleRow
+                key={scheduleRow.day}
+                scheduleRow={scheduleRow}
+                role={role}
+                allowEdit={allowEdit}
+                setAddPeriod={setAddPeriod}
+                setEditPeriod={setEditPeriod}
+                setDeletePeriod={setDeletePeriod}
+                toggleFetched={toggleFetched}
+              />
+            ))}
+          </ul>
+        </AnimatePresence>
+      </AnimateSharedLayout>
     </div>
   </div>
 );
