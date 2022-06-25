@@ -57,14 +57,54 @@ const EmptySchedulePeriod = ({
   }) => void;
   toggleFetched?: () => void;
 }): JSX.Element => {
+  if (role == "teacher" && allowEdit)
+    return (
+      <AddableEmptySchedulePeriod
+        isInSession={isInSession}
+        day={day}
+        startTime={startTime}
+        setAddPeriod={setAddPeriod}
+        toggleFetched={toggleFetched}
+      />
+    );
+  else
+    return (
+      <div
+        className={`h-[3.75rem] w-full rounded-lg ${
+          isInSession ? "border-4 border-secondary" : "border-2 border-outline"
+        }`}
+      />
+    );
+};
+
+const AddableEmptySchedulePeriod = ({
+  isInSession,
+  day,
+  startTime,
+  setAddPeriod,
+  toggleFetched,
+}: {
+  isInSession: boolean;
+  day: Day;
+  startTime: number;
+  setAddPeriod?: ({
+    show,
+    day,
+    startTime,
+  }: {
+    show: boolean;
+    day: Day;
+    startTime: number;
+  }) => void;
+  toggleFetched?: () => void;
+}): JSX.Element => {
   const { t } = useTranslation("schedule");
   const [processing, setProcessing] = useState<boolean>(false);
   const [teacher] = useTeacherAccount();
 
-  if (role == "teacher" && allowEdit)
-    return (
-      <button
-        className={`grid h-[3.75rem] w-full place-items-center rounded-lg text-4xl transition-[border-color]
+  return (
+    <button
+      className={`grid h-[3.75rem] w-full place-items-center rounded-lg text-4xl transition-[border-color]
          ${
            processing
              ? "border-4 border-secondary bg-secondary-translucent-12"
@@ -75,50 +115,42 @@ const EmptySchedulePeriod = ({
                     : "border-2 border-outline"
                 }`
          }`}
-        title={t("schedule.hoverMenu.add")}
-        onClick={
-          setAddPeriod
-            ? () => setAddPeriod({ show: true, day, startTime })
-            : undefined
-        }
-        onDragOver={(e) => {
-          e.preventDefault();
-          e.dataTransfer.dropEffect = "move";
-        }}
-        onDrop={async (e) => {
-          setProcessing(true);
-          if (teacher)
-            await moveScheduleItem(
-              day,
-              {
-                ...(JSON.parse(
-                  e.dataTransfer.getData("text")
-                ) as SchedulePeriodType),
-                startTime,
-              },
-              teacher.id
-            );
-          e.dataTransfer.clearData();
-          if (toggleFetched) toggleFetched();
-        }}
-      >
-        <MaterialIcon
-          icon="add"
-          allowCustomSize
-          className="scale-90 text-primary opacity-0 transition-all
+      title={t("schedule.hoverMenu.add")}
+      onClick={
+        setAddPeriod
+          ? () => setAddPeriod({ show: true, day, startTime })
+          : undefined
+      }
+      onDragOver={(e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
+      }}
+      onDrop={async (e) => {
+        setProcessing(true);
+        if (teacher)
+          await moveScheduleItem(
+            day,
+            {
+              ...(JSON.parse(
+                e.dataTransfer.getData("text")
+              ) as SchedulePeriodType),
+              startTime,
+            },
+            teacher.id
+          );
+        e.dataTransfer.clearData();
+        if (toggleFetched) toggleFetched();
+      }}
+    >
+      <MaterialIcon
+        icon="add"
+        allowCustomSize
+        className="scale-90 text-primary opacity-0 transition-all
           group-hover:scale-100 group-hover:opacity-100
           group-focus:scale-100 group-focus:opacity-100"
-        />
-      </button>
-    );
-  else
-    return (
-      <div
-        className={`h-[3.75rem] w-full rounded-lg ${
-          isInSession ? "border-4 border-secondary" : "border-2 border-outline"
-        }`}
       />
-    );
+    </button>
+  );
 };
 
 // Subject Schedule Period
@@ -315,10 +347,11 @@ const PeriodHoverMenu = ({
   });
 
   const [disableTutorial, setDisableTutorial] = useState<boolean>(false);
-
   const [show, setShow] = useState<boolean>(givenShow);
-
   useEffect(() => setShow(givenShow), [givenShow]);
+  useEffect(() => {
+    if (!show) setDisableTutorial(false);
+  }, [show]);
 
   // Component-specific utils
   function findNumPeriodsFromCursor(
@@ -347,9 +380,9 @@ const PeriodHoverMenu = ({
                 <motion.p
                   className="inverse-surface absolute bottom-1 left-1 flex h-6 w-fit items-center gap-1
                     whitespace-nowrap rounded-md px-2 font-sans font-medium shadow"
-                  initial={{ scale: 0.8, y: 20, opacity: 0 }}
+                  initial={{ scale: 0.9, y: 5, opacity: 0 }}
                   animate={{ scale: 1, y: 0, opacity: 1 }}
-                  exit={{ scale: 0.8, y: 20, opacity: 0 }}
+                  exit={{ scale: 0.9, y: 5, opacity: 0 }}
                   transition={animationTransition}
                 >
                   {!listeningCursor ? (
@@ -414,14 +447,14 @@ const PeriodHoverMenu = ({
 
               {/* Resize handle */}
               <button
-                className={`surface pointer-events-auto absolute top-1/2 left-full w-fit
+                className={`surface pointer-events-auto absolute left-full w-fit
                   -translate-x-1/2 -translate-y-1/2 cursor-ew-resize rounded-full p-1 text-xl shadow
-                  transition-[opacity] ${
-                    schedulePeriod.duration < 1 &&
+                  transition-[opacity,top] ${
                     isTouchDevice() &&
+                    schedulePeriod.duration < 2 &&
                     !disableTutorial
-                      ? "opacity-80"
-                      : "opacity-100"
+                      ? "top-0"
+                      : "top-1/2"
                   }`}
                 title={t("schedule.hoverMenu.extend")}
                 onMouseDown={(e) => {
@@ -463,9 +496,17 @@ const PeriodHoverMenu = ({
             />
 
             {/* Detection area */}
-            <div
-              className="absolute top-0 left-0 h-[3.75rem] cursor-ew-resize rounded-lg bg-tertiary-translucent-12 sm:opacity-0"
+            <motion.div
+              className={`absolute top-0 left-0 h-[3.75rem] cursor-ew-resize rounded-lg ${
+                isTouchDevice()
+                  ? "border-4 border-tertiary-translucent-12 bg-tertiary-translucent-08"
+                  : "opacity-0"
+              }`}
               style={{ width: (10 - schedulePeriod.startTime + 1) * 112 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={animationTransition}
               onMouseMove={(e) => setCursor({ x: e.clientX, y: e.clientY })}
               onMouseUp={() => {
                 // Show Indicator for 1 second after touch if touch device

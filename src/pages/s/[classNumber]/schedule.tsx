@@ -64,24 +64,28 @@ const SubjectListSection = ({
         ? // Filter Subject List by code, name, and teacher
           subjectList.filter(
             (subjectListItem) =>
-              subjectListItem.subject.code[locale].includes(query) ||
+              subjectListItem.subject.code[locale]
+                .toLowerCase()
+                .includes(query) ||
               (
                 subjectListItem.subject.name[locale] ||
                 subjectListItem.subject.name.th
-              ).name.includes(query) ||
-              nameJoiner(locale, subjectListItem.teachers[0].name).includes(
-                query
-              )
+              ).name
+                .toLowerCase()
+                .includes(query) ||
+              nameJoiner(locale, subjectListItem.teachers[0].name)
+                .toLowerCase()
+                .includes(query)
           )
         : // If the query is empty, show the normal unfilterred Subject List
           subjectList
     );
-  }, [subjectList, locale, query]);
+  }, [query]);
 
   return (
     <Section>
       <div className="layout-grid-cols-3--header">
-        <div className="[grid-area:header]">
+        <div className="sm:col-span-2">
           <Header
             text={t("subjectList.title")}
             icon={<MaterialIcon icon="collections_bookmark" allowCustomSize />}
@@ -89,8 +93,7 @@ const SubjectListSection = ({
         </div>
         <Search
           placeholder={t("subjectList.search")}
-          onChange={(e: string) => setQuery(e)}
-          className="[grid-area:search]"
+          onChange={(e: string) => setQuery(e.toLowerCase())}
         />
       </div>
       <div>

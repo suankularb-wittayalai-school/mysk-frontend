@@ -122,6 +122,14 @@ const TeacherSchedule: NextPage = () => {
           />
           <div className="flex flex-row items-center justify-end gap-2">
             <Button
+              name={t("schedule.action.sync")}
+              type="outlined"
+              icon={<MaterialIcon icon="sync" />}
+              iconOnly
+              disabled={!fetched}
+              onClick={() => toggleFetched()}
+            />
+            <Button
               label={t("schedule.action.add")}
               type="filled"
               icon={<MaterialIcon icon="add" />}

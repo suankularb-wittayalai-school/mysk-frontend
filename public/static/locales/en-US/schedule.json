@@ -17,8 +17,8 @@
       "tapToExtend": "Tap right edge to extend to"
     },
     "action": {
-      "add": "Add period",
-      "edit": "Edit"
+      "sync": "Sync with server",
+      "add": "Add period"
     }
   },
   "subjectList": {

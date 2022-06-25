@@ -125,16 +125,16 @@ const EditPeriod = ({
   }
 
   // Form submission
-  function handleSubmit() {
+  async function handleSubmit() {
     if (!validate()) return;
 
     if (teacher) {
-      if (mode == "add") createScheduleItem(form, teacher.id);
+      if (mode == "add") await createScheduleItem(form, teacher.id);
       else if (mode == "edit")
-        if (schedulePeriod?.id) editScheduleItem(form, schedulePeriod.id);
+        if (schedulePeriod?.id) await editScheduleItem(form, schedulePeriod.id);
         else
           console.error(
-            "Cannot push edit, Schedule Period is missing Supabase ID."
+            "cannot push edit, Schedule Period is missing Supabase ID"
           );
     }
   }
@@ -157,8 +157,8 @@ const EditPeriod = ({
       ]}
       show={show}
       onClose={() => onClose()}
-      onSubmit={() => {
-        handleSubmit();
+      onSubmit={async () => {
+        await handleSubmit();
         onSubmit();
       }}
     >
