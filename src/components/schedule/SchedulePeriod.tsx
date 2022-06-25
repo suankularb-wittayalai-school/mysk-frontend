@@ -341,10 +341,10 @@ const PeriodHoverMenu = ({
           >
             <div className="relative h-full w-full">
               {/* Helper message */}
-              {!disableTutorial && (
+              {isTouchDevice() && !disableTutorial && (
                 <motion.p
-                  className="tertiary absolute bottom-1 left-1 flex h-6 w-fit items-center gap-1 whitespace-nowrap rounded-full
-                  px-2 font-sans font-medium shadow sm:hidden"
+                  className="inverse-surface absolute bottom-1 left-1 flex h-6 w-fit items-center gap-1
+                    whitespace-nowrap rounded-md px-2 font-sans font-medium shadow"
                   initial={{ scale: 0.8, y: 20, opacity: 0 }}
                   animate={{ scale: 1, y: 0, opacity: 1 }}
                   exit={{ scale: 0.8, y: 20, opacity: 0 }}
@@ -362,12 +362,12 @@ const PeriodHoverMenu = ({
 
               {/* Edit/delete group */}
               <div
-                className="surface absolute top-0 left-1/2 flex w-fit -translate-x-1/2 -translate-y-1/2
-                  flex-row gap-0.5 overflow-hidden rounded-full border-2 border-surface shadow"
+                className="absolute top-0 left-1/2 flex w-fit -translate-x-1/2 -translate-y-1/2 flex-row
+                  gap-0.5 overflow-hidden rounded-full border-2 border-surface bg-surface shadow"
               >
                 {/* Edit button */}
                 <button
-                  className="primary pointer-events-auto p-1 text-xl shadow transition-[opacity]
+                  className="primary pointer-events-auto p-1 text-xl transition-[opacity]
                     hover:opacity-95 hover:transition-none focus:opacity-95 focus:transition-none"
                   title={t("schedule.hoverMenu.edit")}
                   onClick={
@@ -381,7 +381,7 @@ const PeriodHoverMenu = ({
 
                 {/* Delete button */}
                 <button
-                  className="error pointer-events-auto p-1 text-xl shadow transition-[opacity]
+                  className="error pointer-events-auto p-1 text-xl transition-[opacity]
                     hover:opacity-95 hover:transition-none focus:opacity-95 focus:transition-none"
                   title={t("schedule.hoverMenu.delete")}
                   onClick={
@@ -399,19 +399,28 @@ const PeriodHoverMenu = ({
               </div>
 
               {/* Drag handle */}
-              <button
-                className="surface pointer-events-auto absolute top-1/2 left-0 hidden w-fit -translate-x-1/2
-                  -translate-y-1/2 cursor-move rounded-full p-1 text-xl shadow sm:block"
-                title={t("schedule.hoverMenu.move")}
-                onMouseDown={() => setDragging(true)}
-              >
-                <MaterialIcon icon="drag_indicator" allowCustomSize />
-              </button>
+              {!isTouchDevice() && (
+                <button
+                  className="surface pointer-events-auto absolute top-1/2 left-0 w-fit -translate-x-1/2
+                    -translate-y-1/2 cursor-move rounded-full p-1 text-xl shadow"
+                  title={t("schedule.hoverMenu.move")}
+                  onMouseDown={() => setDragging(true)}
+                >
+                  <MaterialIcon icon="drag_indicator" allowCustomSize />
+                </button>
+              )}
 
               {/* Resize handle */}
               <button
-                className="surface pointer-events-auto absolute top-1/2 left-full w-fit
-                  -translate-x-1/2 -translate-y-1/2 cursor-ew-resize rounded-full p-1 text-xl shadow"
+                className={`surface pointer-events-auto absolute top-1/2 left-full w-fit
+                  -translate-x-1/2 -translate-y-1/2 cursor-ew-resize rounded-full p-1 text-xl shadow
+                  transition-[opacity] ${
+                    schedulePeriod.duration < 1 &&
+                    isTouchDevice() &&
+                    !disableTutorial
+                      ? "opacity-80"
+                      : "opacity-100"
+                  }`}
                 title={t("schedule.hoverMenu.extend")}
                 onMouseDown={(e) => {
                   setDisableTutorial(false);
