@@ -189,9 +189,9 @@ const TeacherSchedule: NextPage = () => {
       <ConfirmDelete
         show={deletePeriod.show}
         onClose={() => setDeletePeriod({ ...deletePeriod, show: false })}
-        onSubmit={() => {
+        onSubmit={async () => {
           setDeletePeriod({ ...deletePeriod, show: false });
-          deleteScheduleItem(deletePeriod.periodID);
+          await deleteScheduleItem(deletePeriod.periodID);
           toggleFetched();
         }}
       />
