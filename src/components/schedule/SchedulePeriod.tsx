@@ -57,6 +57,7 @@ const EmptySchedulePeriod = ({
   }) => void;
   toggleFetched?: () => void;
 }): JSX.Element => {
+  const { t } = useTranslation("schedule");
   const [processing, setProcessing] = useState<boolean>(false);
   const [teacher] = useTeacherAccount();
 
@@ -74,6 +75,7 @@ const EmptySchedulePeriod = ({
                     : "border-2 border-outline"
                 }`
          }`}
+        title={t("schedule.hoverMenu.add")}
         onClick={
           setAddPeriod
             ? () => setAddPeriod({ show: true, day, startTime })
@@ -547,7 +549,11 @@ const SchedulePeriod = ({
   toggleFetched?: () => void;
 }): JSX.Element => (
   <motion.li
-    key={schedulePeriod.id || `${day.getDay()}-${schedulePeriod.startTime}`}
+    key={
+      schedulePeriod.subject
+        ? `sp-${schedulePeriod.id}`
+        : `sp-${day.getDay()}-${schedulePeriod.startTime}`
+    }
     className="absolute px-1 transition-[width]"
     style={{
       width: periodWidth * schedulePeriod.duration,

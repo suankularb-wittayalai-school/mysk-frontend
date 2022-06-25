@@ -6,6 +6,7 @@
   },
   "schedule": {
     "hoverMenu": {
+      "add": "Add period here",
       "edit": "Edit this period",
       "delete": "Delete this period",
       "move": "Drag to move period",
