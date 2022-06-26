@@ -14,18 +14,21 @@ import {
 // Components
 import AddTeacherDialog from "@components/dialogs/AddTeacher";
 
+// Hooks
+import { useTeacherAccount } from "@utils/hooks/auth";
+
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
+import { getCurrentAcedemicYear } from "@utils/helpers/date";
 
 // Types
 import { ChipInputListItem, SubmittableDialogProps } from "@utils/types/common";
 import { Teacher } from "@utils/types/person";
 import { Subject, SubjectListItem } from "@utils/types/subject";
-import { supabase } from "@utils/supabaseClient";
-import { ClassroomTable } from "@utils/types/database/class";
-import { getCurrentAcedemicYear } from "@utils/helpers/date";
-import { useTeacherAccount } from "@utils/hooks/auth";
 import { RoomSubjectTable } from "@utils/types/database/subject";
+
+// Supabase
+import { supabase } from "@utils/supabaseClient";
 
 const ConnectSubjectDialog = ({
   show,
