@@ -1,3 +1,4 @@
+import { getCurrentAcedemicYear } from "@utils/helpers/date";
 import { supabase } from "@utils/supabaseClient";
 import { Class } from "@utils/types/class";
 import { Contact } from "@utils/types/contact";
@@ -46,19 +47,15 @@ export async function db2Student(student: StudentDB): Promise<Student> {
       },
     },
     studentID: student.std_id,
-
-    // TODO: Get class
     class: {
-      id: 101,
-      number: 101,
+      id: 0,
+      number: 0,
     },
     citizenID: student.people.citizen_id,
     birthdate: student.people.birthdate,
 
     // TODO: Get classNo
     classNo: 1,
-
-    // TODO: Get contacts
     contacts: [],
   };
 
@@ -72,6 +69,23 @@ export async function db2Student(student: StudentDB): Promise<Student> {
   }
   if (contacts) {
     formatted.contacts = contacts.map(db2Contact);
+  }
+
+  const { data: classes, error: classError } = await supabase
+    .from<{ id: number; number: number; students: number[] }>("classroom")
+    .select("id, number, students")
+    .match({ year: getCurrentAcedemicYear() })
+    .contains("students", [student.id])
+    .limit(1)
+    .single();
+  if (classError) {
+    console.error(classError);
+  }
+  if (classes) {
+    formatted.class = {
+      id: classes.id,
+      number: classes.number,
+    };
   }
 
   return formatted;
@@ -98,10 +112,9 @@ export async function db2Teacher(teacher: TeacherDB): Promise<Teacher> {
     },
     profile: teacher.people.profile,
     teacherID: teacher.teacher_id,
-    // TODO: Class advisor at
     classAdvisorAt: {
-      id: 405,
-      number: 405,
+      id: 0,
+      number: 0,
     },
     citizenID: teacher.people.citizen_id,
     birthdate: teacher.people.birthdate,
@@ -112,7 +125,6 @@ export async function db2Teacher(teacher: TeacherDB): Promise<Teacher> {
         th: teacher.SubjectGroup.name_th,
       },
     },
-    // TODO: Fetch contact
     contacts: [],
     subjectsInCharge: [],
   };
@@ -127,6 +139,23 @@ export async function db2Teacher(teacher: TeacherDB): Promise<Teacher> {
   }
   if (contacts) {
     formatted.contacts = contacts.map(db2Contact);
+  }
+
+  const { data: classes, error: classError } = await supabase
+    .from<{ id: number; number: number; advisors: number[] }>("classroom")
+    .select("id, number, advisors")
+    .match({ year: getCurrentAcedemicYear() })
+    .contains("advisors", [teacher.id])
+    .limit(1)
+    .single();
+  if (classError) {
+    console.error(classError);
+  }
+  if (classes) {
+    formatted.classAdvisorAt = {
+      id: classes.id,
+      number: classes.number,
+    };
   }
 
   // get subjects in charge
