@@ -228,7 +228,7 @@ const ConnectSubjectDialog = ({
         return;
       }
       // TODO: show a snackbar saying subject for the class does not exist
-      if (roomSubjects.length == 0 || !roomSubjects) {
+      if (roomSubjects?.length == 0 || !roomSubjects) {
         onClose();
         return;
       }
