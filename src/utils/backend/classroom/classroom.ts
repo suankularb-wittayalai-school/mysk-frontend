@@ -2,8 +2,6 @@ import { PostgrestError } from "@supabase/supabase-js";
 import { supabase } from "@utils/supabaseClient";
 import { Class } from "@utils/types/class";
 import { ClassroomTable } from "@utils/types/database/class";
-import { ContactDB } from "@utils/types/database/contact";
-import { ScheduleTable } from "@utils/types/database/schedule";
 import { createContact, updateContact } from "../contact";
 
 export async function createClassroom(
@@ -24,19 +22,6 @@ export async function createClassroom(
     }
   }
 
-  const { data: schedule, error: scheduleError } = await supabase
-    .from<ScheduleTable>("schedule")
-    .insert({
-      schedule_rows: [],
-      year: classroom.year,
-      semester: classroom.semester,
-    });
-
-  if (scheduleError || !schedule) {
-    console.error(scheduleError);
-    return { data: null, error: scheduleError };
-  }
-
   // map the created contact to id
   const contactIds = contacts
     .map((contact) => contact.data?.[0]?.id)
@@ -51,7 +36,6 @@ export async function createClassroom(
       semester: classroom.semester,
       advisors: classroom.classAdvisors.map((advisor) => advisor.id),
       students: classroom.students.map((student) => student.id),
-      schedule: schedule[0].id,
       subjects: [],
     });
   if (classCreationError || !createdClass) {
@@ -95,7 +79,6 @@ export async function updateClassroom(
       semester: classroom.semester,
       advisors: classroom.classAdvisors.map((advisor) => advisor.id),
       students: classroom.students.map((student) => student.id),
-      schedule: classroom.schedule.id,
       subjects: [],
     })
     .match({ id: classroom.id });
@@ -104,4 +87,20 @@ export async function updateClassroom(
     return { data: null, error: classUpdateError };
   }
   return { data: updatedClass, error: null };
+}
+
+export async function getClassIDFromNumber(number: number): Promise<number> {
+  const { data, error } = await supabase
+    .from<ClassroomTable>("classroom")
+    .select("id")
+    .match({ number })
+    .limit(1)
+    .single();
+
+  if (error || !data) {
+    console.error(error);
+    return 0;
+  }
+
+  return data.id;
 }

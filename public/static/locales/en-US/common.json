@@ -48,7 +48,8 @@
   },
   "input": {
     "none": {
-      "noFilesAttached": "No files attached"
+      "noFilesAttached": "No files attached",
+      "noOptions": "No options"
     },
     "error": {}
   },

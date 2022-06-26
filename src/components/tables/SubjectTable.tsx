@@ -6,7 +6,7 @@ import { useTranslation } from "next-i18next";
 import { Button, MaterialIcon, Table } from "@suankularb-components/react";
 
 // Components
-import TeacherTeachingList from "@components/TeacherTeachingList";
+import HoverList from "@components/HoverList";
 
 // Types
 import { Subject } from "@utils/types/subject";
@@ -48,7 +48,7 @@ const SubjectTable = ({
           <tr key={subject.id}>
             <td>{subject.code[locale] || subject.code.th}</td>
             <td className="!text-left">
-              {subject.name[locale].name || subject.name.th.name}
+              {subject.name[locale]?.name || subject.name.th.name}
             </td>
             <td className="!text-left">
               {subject.teachers.length > 0 &&

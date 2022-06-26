@@ -1,7 +1,7 @@
 import { supabase } from "@utils/supabaseClient";
 import { useState, useEffect } from "react";
 import { Teacher } from "@utils/types/person";
-import { TeacherDB, TeacherTable } from "@utils/types/database/person";
+import { TeacherDB } from "@utils/types/database/person";
 import { db2Teacher } from "@utils/backend/database";
 
 export function useTeacherOption(subjectGroupId: number) {

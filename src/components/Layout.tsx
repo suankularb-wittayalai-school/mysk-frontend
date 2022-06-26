@@ -78,7 +78,7 @@ const Layout = ({
         inactive: <MaterialIcon icon="dashboard" type="outlined" />,
         active: <MaterialIcon icon="dashboard" type="filled" />,
       },
-      url: "/s/405/schedule",
+      url: "/s/504/schedule",
     },
     {
       name: t("navigation.class"),
@@ -86,7 +86,7 @@ const Layout = ({
         inactive: <MaterialIcon icon="groups" type="outlined" />,
         active: <MaterialIcon icon="groups" type="filled" />,
       },
-      url: "/s/405/class",
+      url: "/s/504/class",
     },
     {
       name: t("navigation.teachers"),
@@ -94,7 +94,7 @@ const Layout = ({
         inactive: <MaterialIcon icon="school" type="outlined" />,
         active: <MaterialIcon icon="school" type="filled" />,
       },
-      url: "/s/teachers",
+      url: "/s/504/teachers",
     },
   ];
   const teacherNav = [

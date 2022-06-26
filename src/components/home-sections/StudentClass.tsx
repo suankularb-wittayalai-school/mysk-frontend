@@ -14,12 +14,12 @@ import {
 import Schedule from "@components/schedule/Schedule";
 
 // Types
-import { StudentSchedule } from "@utils/types/schedule";
+import { Schedule as ScheduleType } from "@utils/types/schedule";
 
 const StudentClassSection = ({
   schedule,
 }: {
-  schedule: StudentSchedule;
+  schedule: ScheduleType;
 }): JSX.Element => {
   const { t } = useTranslation("dashboard");
 
@@ -34,13 +34,13 @@ const StudentClassSection = ({
         <LinkButton
           label={t("class.action.seeSchedule")}
           type="outlined"
-          url="/s/405/schedule"
+          url="/s/504/schedule"
           LinkElement={Link}
         />
         <LinkButton
           label={t("class.action.seeClassDetail")}
           type="filled"
-          url="/s/405/class"
+          url="/s/504/class"
           LinkElement={Link}
         />
       </div>

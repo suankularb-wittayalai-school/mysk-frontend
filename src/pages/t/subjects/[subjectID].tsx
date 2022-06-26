@@ -40,7 +40,7 @@ import ConnectSubjectDialog from "@components/dialogs/ConnectSubject";
 import ImageDialog from "@components/dialogs/Image";
 import BrandIcon from "@components/icons/BrandIcon";
 import Sentiment from "@components/Sentiment";
-import TeacherTeachingList from "@components/TeacherTeachingList";
+import HoverList from "@components/HoverList";
 
 // Types
 import {
@@ -122,19 +122,13 @@ const DetailsSection = ({
 
                 {/* Teachers */}
                 <td className="!text-left">
-                  <TeacherTeachingList
-                    teachers={subjectRoom.teachers}
-                    useFullName
-                  />
+                  <HoverList people={subjectRoom.teachers} useFullName />
                 </td>
 
                 {/* Co-teachers */}
                 <td className="!text-left">
                   {subjectRoom.coTeachers && (
-                    <TeacherTeachingList
-                      teachers={subjectRoom.coTeachers}
-                      useFullName
-                    />
+                    <HoverList people={subjectRoom.coTeachers} useFullName />
                   )}
                 </td>
 
@@ -540,7 +534,7 @@ const AssignmentDetailsDialog = ({
       <DialogSection name={t("substAsgn.dialog.asgnDetails.subject")}>
         <p>
           {assignment.subject.code[locale]}{" "}
-          {assignment.subject.name[locale].name}
+          {(assignment.subject.name[locale] || assignment.subject.name.th).name}
         </p>
       </DialogSection>
       <DialogSection name={t("substAsgn.dialog.asgnDetails.desc")}>
@@ -634,7 +628,7 @@ const EditAssignmentDialog = ({
             label={t("substAsgn.dialog.editAsgn.subject")}
             options={allSubjects.map((subject) => ({
               value: subject.id,
-              label: subject.name[locale].name,
+              label: (subject.name[locale] || subject.name.th).name,
             }))}
             onChange={(e: number) => setForm({ ...form, subject: e })}
             defaultValue={form.subject}
@@ -717,7 +711,7 @@ const SubjectDetails: NextPage<{
     <>
       <Head>
         <title>
-          {subject.name[locale].name || subject.name.th.name}
+          {(subject.name[locale] || subject.name.th).name}
           {" - "}
           {t("brand.name", { ns: "common" })}
         </title>
@@ -726,7 +720,7 @@ const SubjectDetails: NextPage<{
         Title={
           <Title
             name={{
-              title: subject.name[locale].name,
+              title: (subject.name[locale] || subject.name.th).name,
               subtitle: subject.code[locale],
             }}
             pageIcon={<MaterialIcon icon="school" />}
@@ -847,7 +841,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     .single();
 
   const { data: roomSubjects, error: roomSubjectsError } = await supabase
-    .from<RoomSubjectDB>("RoomSubject")
+    .from<RoomSubjectDB>("room_subjects")
     .select("*, subject:subject(*), classroom:class(*)")
     .eq("subject", params?.subjectID as string);
 

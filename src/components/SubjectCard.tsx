@@ -30,7 +30,7 @@ const SubjectCard = ({
       <CardHeader
         title={
           <h3 className="break-all font-display text-lg font-bold">
-            {subject.name[locale].name}
+            {(subject.name[locale] || subject.name.th).name}
           </h3>
         }
         label={<span>{subject.code[locale]}</span>}

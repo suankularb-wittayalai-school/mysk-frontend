@@ -19,7 +19,7 @@ export function useSession(option?: UseSessionOption) {
 
   useEffect(() => {
     if (!supabase.auth.session()) {
-      setSession(null)
+      setSession(null);
     }
 
     setSession(supabase.auth.session());

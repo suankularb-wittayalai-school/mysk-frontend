@@ -1,12 +1,24 @@
 {
   "title": {
     "student": "ตารางเรียน",
+    "studentWithClass": "ตารางเรียน ม.{{number}}",
     "teacher": "ตารางสอน"
   },
   "schedule": {
+    "hoverMenu": {
+      "add": "เพิ่มคาบสอนที่นี่",
+      "edit": "แก้ไขคาบนี้",
+      "delete": "ลบคาบนี้ทิ้ง",
+      "move": "คลิกค้างแล้วลากเพื่อแก้เวลาเรียน",
+      "extend": "คลิกค้างแล้วลากเพื่อแก้ความยาว"
+    },
+    "extendGuide": {
+      "initial": "แตะ <1></1> เพื่อแก้ความยาวคาบนี้",
+      "tapToExtend": "แตะจุดที่จะให้ขอบขวาของคาบอยู่"
+    },
     "action": {
-      "add": "เพิ่มคาบสอน",
-      "edit": "แก้ไข"
+      "sync": "ซิงค์กับเซิร์ฟเวอร์",
+      "add": "เพิ่มคาบสอน"
     }
   },
   "subjectList": {
@@ -16,15 +28,24 @@
       "code": "รหัสวิชา",
       "name": "ชื่อวิชา",
       "teachers": "ครูผู้สอน",
-      "ggcCode": "Class Code"
+      "ggcCode": "Class Code",
+      "action": {
+        "ggcLink": "ลิงก์เข้า Google Classroom",
+        "ggMeetLink": "ลิงก์เข้า Google Meet"
+      }
     }
   },
   "dialog": {
-    "add": {
-      "title": "เพิ่มคาบสอน",
+    "editPeriod": {
+      "title": {
+        "add": "เพิ่มคาบสอน",
+        "edit": "แก้ไขคาบสอน"
+      },
       "form": {
         "title": "ข้อมูลคาบ",
+        "class": "ห้องที่เรียนวิชานี้",
         "subject": "วิชาที่สอนในคาบนี้",
+        "room": "รหัสห้องที่เรียนใน",
         "day": "วัน",
         "periodStart": "เริ่มที่คาบ",
         "duration": "ความยาวคาบ"

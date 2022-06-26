@@ -3,10 +3,7 @@ import { ClassWNumber } from "./class";
 import { Teacher } from "./person";
 import { Subject } from "./subject";
 
-export type StudentSchedule = {
-  // FIXME: Schedule class should be required
-  // Temporary solution, awaiting response from @Jimmy-Tempest
-  id: number;
+export type Schedule = {
   class?: ClassWNumber;
   content: ScheduleRow[];
 };
@@ -17,13 +14,17 @@ export type ScheduleRow = {
 };
 
 export type SchedulePeriod = {
+  id?: number;
   startTime: number;
   duration: number;
   subject?: {
+    id: Subject["id"];
     name: Subject["name"];
     teachers: Teacher[];
     coTeachers?: Teacher[];
   };
+  // The class taking this Subject
+  class?: ClassWNumber;
   // Physical room wherein this Subject is taught (Ex. 1214, 4306)
-  room: string;
+  room?: string;
 };

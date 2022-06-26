@@ -65,14 +65,6 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
     if (classError) {
       console.error(classError);
     }
-
-    const { data: schedule, error: scheduleError } = await supabase
-      .from("schedule")
-      .delete()
-      .match({ id: editingClass?.schedule.id });
-    if (scheduleError) {
-      console.error(scheduleError);
-    }
   }
 
   async function handleImport(
@@ -222,7 +214,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
 
   const { data: classes, error } = await supabase
     .from<ClassroomDB>("classroom")
-    .select("*, schedule:schedule(*)")
+    .select("*")
     .order("number", { ascending: true });
 
   if (error) console.error(error);

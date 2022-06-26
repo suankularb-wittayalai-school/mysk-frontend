@@ -1,12 +1,24 @@
 {
   "title": {
     "student": "Schedule",
+    "studentWithClass": "M.{{number}} schedule",
     "teacher": "Schedule"
   },
   "schedule": {
+    "hoverMenu": {
+      "add": "Add period here",
+      "edit": "Edit this period",
+      "delete": "Delete this period",
+      "move": "Drag to move period",
+      "extend": "Drag to extend/shorten period"
+    },
+    "extendGuide": {
+      "initial": "Tap <1></1> to extend period",
+      "tapToExtend": "Tap right edge to extend to"
+    },
     "action": {
-      "add": "Add period",
-      "edit": "Edit"
+      "sync": "Sync with server",
+      "add": "Add period"
     }
   },
   "subjectList": {
@@ -16,15 +28,24 @@
       "code": "S. Code",
       "name": "Subject Name",
       "teachers": "Teachers",
-      "ggcCode": "Class Code"
+      "ggcCode": "Class Code",
+      "action": {
+        "ggcLink": "Google Classroom link",
+        "ggMeetLink": "Online meeting link"
+      }
     }
   },
   "dialog": {
-    "add": {
-      "title": "Add subject period",
+    "editPeriod": {
+      "title": {
+        "add": "Add subject period",
+        "edit": "Edit subject period"
+      },
       "form": {
         "title": "Period information",
         "subject": "Subject",
+        "class": "Class",
+        "room": "Physical room",
         "day": "Day",
         "periodStart": "Starts at period",
         "duration": "Period duration"

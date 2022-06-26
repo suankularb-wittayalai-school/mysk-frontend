@@ -1,20 +1,16 @@
 // Modules
-import { GetServerSideProps, NextPage } from "next";
+import { GetStaticProps, NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 
 // SK Components
 import {
   Button,
-  Dialog,
-  DialogSection,
-  Dropdown,
-  KeyboardInput,
   MaterialIcon,
   RegularLayout,
   Section,
@@ -22,168 +18,92 @@ import {
 } from "@suankularb-components/react";
 
 // Components
+import ConfirmDelete from "@components/dialogs/ConfirmDelete";
+import EditPeriodDialog from "@components/dialogs/EditPeriod";
 import Schedule from "@components/schedule/Schedule";
-import DiscardDraft from "@components/dialogs/DiscardDraft";
-
-// Types
-import { DialogProps } from "@utils/types/common";
-import { StudentSchedule } from "@utils/types/schedule";
 
 // Backend
-import { addPeriodtoSchedule } from "@utils/backend/schedule";
+import {
+  deleteScheduleItem,
+  getSchedule,
+} from "@utils/backend/schedule/schedule";
 
-const AddPeriod = ({
-  show,
-  onClose,
-  onSubmit,
-}: DialogProps & {
-  onSubmit: (formData: FormData) => void;
-}): JSX.Element => {
-  const { t } = useTranslation(["schedule", "common"]);
-  const locale = useRouter().locale as "en-US" | "th";
-  const [showDiscard, setShowDiscard] = useState<boolean>(false);
+// Helpers
+import { range } from "@utils/helpers/array";
 
-  // Form control
-  const [form, setForm] = useState({
-    subject: 1,
-    day: "1",
-    periodStart: "",
-    duration: "1",
-  });
+// Hooks
+import { useTeacherAccount } from "@utils/hooks/auth";
 
-  function validateAndSend() {
-    // Pre-parse validation
-    if (!form.periodStart) return false;
+// Types
+import {
+  Schedule as ScheduleType,
+  SchedulePeriod,
+} from "@utils/types/schedule";
+import Head from "next/head";
 
-    const periodStart = parseInt(form.periodStart);
-    const duration = parseInt(form.duration);
-    let formData = new FormData();
-
-    // Validates
-    if (form.subject < 0) return false;
-    if (!form.day) return false;
-    if (periodStart < 0 || periodStart > 10) return false;
-    if (duration < 1 || duration > 10) return false;
-
-    // Appends to form data
-    formData.append("subject", form.subject.toString());
-    formData.append("day", form.day);
-    formData.append("period-start", form.periodStart);
-    formData.append("duration", form.duration);
-
-    // Send
-    onSubmit(formData);
-    addPeriodtoSchedule(formData);
-
-    return true;
-  }
-
-  return (
-    <>
-      <Dialog
-        type="large"
-        label="add-period"
-        title={t("dialog.add.title")}
-        actions={[
-          { name: t("dialog.add.action.cancel"), type: "close" },
-          { name: t("dialog.add.action.save"), type: "submit" },
-        ]}
-        show={show}
-        onClose={() => setShowDiscard(true)}
-        onSubmit={() => validateAndSend() && onClose()}
-      >
-        <DialogSection name={t("dialog.add.form.title")} isDoubleColumn>
-          <Dropdown
-            name="subject"
-            label={t("dialog.add.form.subject")}
-            options={[
-              {
-                value: 1,
-                label: {
-                  "en-US": "English 1",
-                  th: "ภาษาอังกฤษ 1",
-                }[locale],
-              },
-            ]}
-            onChange={(e: number) => setForm({ ...form, subject: e })}
-          />
-          <Dropdown
-            name="day"
-            label={t("dialog.add.form.day")}
-            options={[
-              {
-                value: "1",
-                label: t("datetime.day.1", { ns: "common" }),
-              },
-              {
-                value: "2",
-                label: t("datetime.day.2", { ns: "common" }),
-              },
-              {
-                value: "3",
-                label: t("datetime.day.3", { ns: "common" }),
-              },
-              {
-                value: "4",
-                label: t("datetime.day.4", { ns: "common" }),
-              },
-              {
-                value: "5",
-                label: t("datetime.day.5", { ns: "common" }),
-              },
-            ]}
-            defaultValue="1"
-            onChange={(e: string) => setForm({ ...form, day: e })}
-          />
-          <KeyboardInput
-            name="period-start"
-            type="number"
-            label={t("dialog.add.form.periodStart")}
-            onChange={(e: string) => setForm({ ...form, periodStart: e })}
-            attr={{
-              min: 1,
-              max: 10,
-            }}
-          />
-          <KeyboardInput
-            name="duration"
-            type="number"
-            label={t("dialog.add.form.duration")}
-            defaultValue="1"
-            onChange={(e: string) => setForm({ ...form, duration: e })}
-            attr={{
-              min: 1,
-              max: 10,
-            }}
-          />
-        </DialogSection>
-      </Dialog>
-      <DiscardDraft
-        show={showDiscard}
-        onClose={() => setShowDiscard(false)}
-        onSubmit={() => {
-          setShowDiscard(false);
-          onClose();
-        }}
-      />
-    </>
-  );
-};
-
-const TeacherSchedule: NextPage<{ schedule: StudentSchedule }> = ({
-  schedule: fetchedSchedule,
-}) => {
+const TeacherSchedule: NextPage = () => {
   const { t } = useTranslation("schedule");
-  const router = useRouter();
-  const [schedule, setSchedule] = useState<StudentSchedule>(fetchedSchedule);
-  const [showAddPeriod, setShowAddPeriod] = useState<boolean>(false);
+  const [teacher] = useTeacherAccount();
 
+  // Data fetch
+  const plhSchedule = {
+    content: range(5).map((day) => ({ day: (day + 1) as Day, content: [] })),
+  };
+  const [schedule, setSchedule] = useState<ScheduleType>(plhSchedule);
+  const [fetched, toggleFetched] = useReducer(
+    (state: boolean) => !state,
+    false
+  );
+
+  useEffect(() => {
+    const fetchAndSetSchedule = async () => {
+      if (!fetched && teacher) {
+        setSchedule(await getSchedule("teacher", teacher.id));
+        toggleFetched();
+      }
+    };
+    fetchAndSetSchedule();
+  }, [fetched, teacher]);
+
+  // Dialog control
+  const [addSubjectToPeriod, setAddSubjectToPeriod] = useState<{
+    show: boolean;
+    day: Day;
+    startTime: number;
+  }>({ show: false, day: 1, startTime: 1 });
+
+  const [addPeriod, toggleAddPeriod] = useReducer(
+    (state: boolean) => !state,
+    false
+  );
+
+  const [editPeriod, setEditPeriod] = useState<{
+    show: boolean;
+    day: Day;
+    schedulePeriod: SchedulePeriod;
+  }>({ show: false, day: 1, schedulePeriod: { startTime: 1, duration: 1 } });
+
+  const [deletePeriod, setDeletePeriod] = useState<{
+    show: boolean;
+    periodID: number;
+  }>({ show: false, periodID: 0 });
+
+  // Component display
   return (
     <>
+      <Head>
+        <title>
+          {t("title.teacher")}
+          {" - "}
+          {t("brand.name", { ns: "common" })}
+        </title>
+      </Head>
+
+      {/* Component */}
       <RegularLayout
         Title={
           <Title
-            name={{ title: t("title.student") }}
+            name={{ title: t("title.teacher") }}
             pageIcon={<MaterialIcon icon="dashboard" />}
             backGoesTo="/t/home"
             LinkElement={Link}
@@ -191,71 +111,101 @@ const TeacherSchedule: NextPage<{ schedule: StudentSchedule }> = ({
         }
       >
         <Section>
-          <Schedule schedule={schedule} role="teacher" />
+          <Schedule
+            schedule={schedule}
+            role="teacher"
+            allowEdit
+            setAddPeriod={setAddSubjectToPeriod}
+            setEditPeriod={setEditPeriod}
+            setDeletePeriod={setDeletePeriod}
+            toggleFetched={toggleFetched}
+          />
           <div className="flex flex-row items-center justify-end gap-2">
             <Button
-              label={t("schedule.action.edit")}
+              name={t("schedule.action.sync")}
               type="outlined"
-              onClick={() => setShowAddPeriod(true)}
+              icon={<MaterialIcon icon="sync" />}
+              iconOnly
+              disabled={!fetched}
+              onClick={() => toggleFetched()}
             />
             <Button
               label={t("schedule.action.add")}
               type="filled"
               icon={<MaterialIcon icon="add" />}
-              onClick={() => setShowAddPeriod(true)}
+              onClick={() => toggleAddPeriod()}
             />
           </div>
         </Section>
       </RegularLayout>
-      <AddPeriod
-        show={showAddPeriod}
-        onClose={() => setShowAddPeriod(false)}
-        onSubmit={(formData: FormData) => {
-          // TODO: Send and refresh
-          router.push(router.asPath);
+
+      {/* Dialogs */}
+
+      {/* Add from Schedule */}
+      <EditPeriodDialog
+        show={addSubjectToPeriod.show}
+        onClose={() =>
+          setAddSubjectToPeriod({ ...addSubjectToPeriod, show: false })
+        }
+        onSubmit={() => {
+          setAddSubjectToPeriod({ ...addSubjectToPeriod, show: false });
+          toggleFetched();
+        }}
+        day={addSubjectToPeriod.day}
+        schedulePeriod={{
+          startTime: addSubjectToPeriod.startTime,
+          duration: 1,
+        }}
+        mode="add"
+      />
+
+      {/* Add from Button */}
+      <EditPeriodDialog
+        show={addPeriod}
+        onClose={() => toggleAddPeriod()}
+        onSubmit={() => {
+          toggleAddPeriod();
+          toggleFetched();
+        }}
+        mode="add"
+        canEditStartTime
+      />
+
+      {/* Edit Period */}
+      <EditPeriodDialog
+        show={editPeriod.show}
+        onClose={() => setEditPeriod({ ...editPeriod, show: false })}
+        onSubmit={() => {
+          setEditPeriod({ ...editPeriod, show: false });
+          toggleFetched();
+        }}
+        day={editPeriod.day}
+        schedulePeriod={editPeriod.schedulePeriod}
+        mode="edit"
+        canEditStartTime
+      />
+
+      {/* Confirm delete */}
+      <ConfirmDelete
+        show={deletePeriod.show}
+        onClose={() => setDeletePeriod({ ...deletePeriod, show: false })}
+        onSubmit={async () => {
+          setDeletePeriod({ ...deletePeriod, show: false });
+          await deleteScheduleItem(deletePeriod.periodID);
+          toggleFetched();
         }}
       />
     </>
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  params,
-}) => {
-  const schedule: StudentSchedule = {
-    id: 0,
-    content: [
-      {
-        day: 1,
-        content: [],
-      },
-      {
-        day: 2,
-        content: [],
-      },
-      {
-        day: 3,
-        content: [],
-      },
-      {
-        day: 4,
-        content: [],
-      },
-      {
-        day: 5,
-        content: [],
-      },
-    ],
-  };
-
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
   return {
     props: {
       ...(await serverSideTranslations(locale as string, [
         "common",
         "schedule",
       ])),
-      schedule,
     },
   };
 };

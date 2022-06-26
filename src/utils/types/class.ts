@@ -1,6 +1,5 @@
 import { Contact } from "./contact";
 import { Student, Teacher } from "./person";
-import { StudentSchedule } from "./schedule";
 import { SubjectListItem } from "./subject";
 
 export type Class = {
@@ -11,7 +10,6 @@ export type Class = {
   students: Array<Student>;
   year: number;
   semester: 1 | 2;
-  schedule: StudentSchedule;
   subjects: SubjectListItem[];
 };
 

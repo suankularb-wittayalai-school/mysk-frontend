@@ -1,7 +1,7 @@
 import { PostgrestError } from "@supabase/supabase-js";
 import { supabase } from "@utils/supabaseClient";
 import { SubjectTable } from "@utils/types/database/subject";
-import { Subject } from "@utils/types/subject";
+import { Subject, SubjectName } from "@utils/types/subject";
 
 export async function createSubject(
   subject: Subject
@@ -22,7 +22,7 @@ export async function createSubject(
     .from<SubjectTable>("subject")
     .insert({
       name_th: subject.name.th.name,
-      name_en: subject.name["en-US"].name,
+      name_en: (subject.name["en-US"] as SubjectName).name,
       code_th: subject.code.th,
       code_en: subject.code["en-US"],
       type_th: subject.type.th,
@@ -37,7 +37,7 @@ export async function createSubject(
       credit: subject.credit,
       teachers: subject.teachers.map((teacher) => teacher.id),
       coTeachers: subject.coTeachers?.map((teacher) => teacher.id),
-      short_name_en: subject.name["en-US"].shortName,
+      short_name_en: (subject.name["en-US"] as SubjectName).shortName,
       short_name_th: subject.name.th.shortName,
     });
   if (subjectCreationError || !createdSubject) {
@@ -115,7 +115,7 @@ export async function editSubject(
     .from<SubjectTable>("subject")
     .update({
       name_th: subject.name.th.name,
-      name_en: subject.name["en-US"].name,
+      name_en: (subject.name["en-US"] as SubjectName).name,
       code_th: subject.code.th,
       code_en: subject.code["en-US"],
       type_th: subject.type.th,
@@ -131,7 +131,7 @@ export async function editSubject(
       credit: subject.credit,
       teachers: subject.teachers.map((teacher) => teacher.id),
       coTeachers: subject.coTeachers?.map((teacher) => teacher.id),
-      short_name_en: subject.name["en-US"].shortName,
+      short_name_en: (subject.name["en-US"] as SubjectName).shortName,
       short_name_th: subject.name.th.shortName,
     })
     .match({ id: subject.id });

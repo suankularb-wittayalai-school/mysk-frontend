@@ -1,5 +1,4 @@
 // Modules
-import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 
 import { useEffect, useState } from "react";
@@ -25,6 +24,9 @@ import { ClassroomDB } from "@utils/types/database/class";
 import { Class } from "@utils/types/class";
 import { DialogProps } from "@utils/types/common";
 
+// Miscellaneous
+import { classPattern } from "@utils/patterns";
+
 const AddClassDialog = ({
   show,
   onClose,
@@ -40,7 +42,7 @@ const AddClassDialog = ({
     if (classroomNumber.match(/[1-6][0-1][1-9]/)) {
       supabase
         .from<ClassroomDB>("classroom")
-        .select("*, schedule:schedule(*)")
+        .select("*")
         .match({ number: classroomNumber, year: getCurrentAcedemicYear() })
         .limit(1)
         .single()
@@ -79,7 +81,7 @@ const AddClassDialog = ({
           errorMsg={t("dialog.addClass.class_error")}
           useAutoMsg
           onChange={(e) => setClassroomNumber(e)}
-          attr={{ pattern: "[1-6][0-1][1-9]" }}
+          attr={{ pattern: classPattern }}
         />
       </DialogSection>
     </Dialog>

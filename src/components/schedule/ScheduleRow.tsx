@@ -8,14 +8,49 @@ import SchedulePeriod from "@components/schedule/SchedulePeriod";
 
 // Types
 import { Role } from "@utils/types/person";
-import { ScheduleRow as ScheduleRowType } from "@utils/types/schedule";
+import {
+  ScheduleRow as ScheduleRowType,
+  SchedulePeriod as SchedulePeriodType,
+} from "@utils/types/schedule";
 
 const ScheduleRow = ({
   scheduleRow,
   role,
+  allowEdit,
+  setAddPeriod,
+  setEditPeriod,
+  setDeletePeriod,
+  toggleFetched,
 }: {
   scheduleRow: ScheduleRowType;
   role: Role;
+  allowEdit?: boolean;
+  setAddPeriod?: ({
+    show,
+    day,
+    startTime,
+  }: {
+    show: boolean;
+    day: Day;
+    startTime: number;
+  }) => void;
+  setEditPeriod?: ({
+    show,
+    day,
+    schedulePeriod,
+  }: {
+    show: boolean;
+    day: Day;
+    schedulePeriod: SchedulePeriodType;
+  }) => void;
+  setDeletePeriod?: ({
+    show,
+    periodID,
+  }: {
+    show: boolean;
+    periodID: number;
+  }) => void;
+  toggleFetched?: () => void;
 }): JSX.Element => {
   const { t } = useTranslation("common");
 
@@ -34,12 +69,17 @@ const ScheduleRow = ({
       <ul className="relative h-[3.75rem]">
         {scheduleRow.content.map((schedulePeriod) => (
           <SchedulePeriod
-            key={schedulePeriod.startTime}
+            key={`${scheduleRow.day}-${schedulePeriod.startTime}`}
             schedulePeriod={schedulePeriod}
             now={now}
             day={day}
             periodWidth={periodWidth}
             role={role}
+            allowEdit={allowEdit}
+            setAddPeriod={setAddPeriod}
+            setEditPeriod={setEditPeriod}
+            setDeletePeriod={setDeletePeriod}
+            toggleFetched={toggleFetched}
           />
         ))}
       </ul>

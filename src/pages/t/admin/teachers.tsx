@@ -130,22 +130,17 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
       return;
     }
 
-    const {
-      data: deletingTeacher,
-      error: teacherDeletingError,
-    } = await supabase
-      .from<TeacherTableType>("teacher")
-      .delete()
-      .match({ id: editingPerson.id });
+    const { data: deletingTeacher, error: teacherDeletingError } =
+      await supabase
+        .from<TeacherTableType>("teacher")
+        .delete()
+        .match({ id: editingPerson.id });
     if (teacherDeletingError || !deletingTeacher) {
       console.error(teacherDeletingError);
       return;
     }
     // delete the person related to the teacher
-    const {
-      data: deletingPerson,
-      error: personDeletingError,
-    } = await supabase
+    const { data: deletingPerson, error: personDeletingError } = await supabase
       .from<PersonTable>("people")
       .delete()
       .match({ id: deletingTeacher[0].person });

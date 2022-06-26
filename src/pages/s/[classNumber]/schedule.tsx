@@ -1,5 +1,6 @@
 // Modules
 import { GetServerSideProps, NextPage } from "next";
+import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -24,9 +25,13 @@ import {
 import Schedule from "@components/schedule/Schedule";
 import BrandIcon from "@components/icons/BrandIcon";
 
+// Backend
+import { getClassIDFromNumber } from "@utils/backend/classroom/classroom";
+import { getSchedule } from "@utils/backend/schedule/schedule";
+import { getSubjectList } from "@utils/backend/subject/roomSubject";
+
 // Types
-import { Role } from "@utils/types/person";
-import { StudentSchedule } from "@utils/types/schedule";
+import { Schedule as ScheduleType } from "@utils/types/schedule";
 import { SubjectListItem } from "@utils/types/subject";
 
 // Helpers
@@ -35,7 +40,7 @@ import { nameJoiner } from "@utils/helpers/name";
 const ScheduleSection = ({
   schedule,
 }: {
-  schedule: StudentSchedule;
+  schedule: ScheduleType;
 }): JSX.Element => (
   <Section>
     <Schedule schedule={schedule} role="student" />
@@ -59,21 +64,28 @@ const SubjectListSection = ({
         ? // Filter Subject List by code, name, and teacher
           subjectList.filter(
             (subjectListItem) =>
-              subjectListItem.subject.code[locale].includes(query) ||
-              subjectListItem.subject.name[locale].name.includes(query) ||
-              nameJoiner(locale, subjectListItem.teachers[0].name).includes(
-                query
-              )
+              subjectListItem.subject.code[locale]
+                .toLowerCase()
+                .includes(query) ||
+              (
+                subjectListItem.subject.name[locale] ||
+                subjectListItem.subject.name.th
+              ).name
+                .toLowerCase()
+                .includes(query) ||
+              nameJoiner(locale, subjectListItem.teachers[0].name)
+                .toLowerCase()
+                .includes(query)
           )
         : // If the query is empty, show the normal unfilterred Subject List
           subjectList
     );
-  }, [subjectList, locale, query]);
+  }, [query]);
 
   return (
     <Section>
       <div className="layout-grid-cols-3--header">
-        <div className="[grid-area:header]">
+        <div className="sm:col-span-2">
           <Header
             text={t("subjectList.title")}
             icon={<MaterialIcon icon="collections_bookmark" allowCustomSize />}
@@ -81,8 +93,7 @@ const SubjectListSection = ({
         </div>
         <Search
           placeholder={t("subjectList.search")}
-          onChange={(e: string) => setQuery(e)}
-          className="[grid-area:search]"
+          onChange={(e: string) => setQuery(e.toLowerCase())}
         />
       </div>
       <div>
@@ -101,7 +112,8 @@ const SubjectListSection = ({
               <tr key={subjectListItem.id}>
                 <td>{subjectListItem.subject.code[locale]}</td>
                 <td className="!text-left">
-                  {subjectListItem.subject.name[locale].name}
+                  {subjectListItem.subject.name[locale]?.name ||
+                    subjectListItem.subject.name.th.name}
                 </td>
                 <td className="!text-left">
                   {subjectListItem.teachers.length > 0 &&
@@ -117,7 +129,7 @@ const SubjectListSection = ({
                         rel="noreferrer"
                       >
                         <Button
-                          name={t("subjectList.table.action.copyCode")}
+                          name={t("subjectList.table.action.ggcLink")}
                           type="text"
                           iconOnly
                           icon={<BrandIcon icon="gg-classroom" />}
@@ -131,7 +143,7 @@ const SubjectListSection = ({
                         rel="noreferrer"
                       >
                         <Button
-                          name={t("subjectList.table.action.copyCode")}
+                          name={t("subjectList.table.action.ggMeetLink")}
                           type="text"
                           iconOnly
                           icon={<BrandIcon icon="gg-meet" />}
@@ -150,18 +162,28 @@ const SubjectListSection = ({
 };
 
 const StudentSchedule: NextPage<{
-  role: Role;
-  schedule: StudentSchedule;
-  subjectList: Array<SubjectListItem>;
-}> = ({ schedule, subjectList }) => {
-  const { t } = useTranslation("schedule");
+  classNumber: number;
+  schedule: ScheduleType;
+  subjectList: SubjectListItem[];
+}> = ({ classNumber, schedule, subjectList }) => {
+  const { t } = useTranslation(["schedule", "common"]);
 
   return (
     <>
+      <Head>
+        <title>
+          {t("title.studentWithClass", { number: classNumber })}
+          {" - "}
+          {t("brand.name", { ns: "common" })}
+        </title>
+      </Head>
       <RegularLayout
         Title={
           <Title
-            name={{ title: t("title.student") }}
+            name={{
+              title: t("title.student"),
+              subtitle: t("class", { ns: "common", number: classNumber }),
+            }}
             pageIcon={<MaterialIcon icon="dashboard" />}
             backGoesTo="/s/home"
             LinkElement={Link}
@@ -179,8 +201,10 @@ export const getServerSideProps: GetServerSideProps = async ({
   locale,
   params,
 }) => {
-  const schedule: StudentSchedule = {
-    id: 0,
+  const schedule: ScheduleType = (await getSchedule(
+    "student",
+    Number(params?.classNumber)
+  )) || {
     content: [
       { day: 1, content: [] },
       { day: 2, content: [] },
@@ -189,7 +213,11 @@ export const getServerSideProps: GetServerSideProps = async ({
       { day: 5, content: [] },
     ],
   };
-  const subjectList: Array<SubjectListItem> = [];
+  const subjectList: SubjectListItem[] = (
+    await getSubjectList(
+      await getClassIDFromNumber(Number(params?.classNumber))
+    )
+  ).data;
 
   return {
     props: {
@@ -197,6 +225,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         "common",
         "schedule",
       ])),
+      classNumber: params?.classNumber,
       schedule,
       subjectList,
     },

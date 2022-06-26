@@ -5,17 +5,13 @@ import { useTranslation } from "next-i18next";
 import { Dialog } from "@suankularb-components/react";
 
 // Types
-import { DialogProps } from "@utils/types/common";
-
-interface DiscordDraftProps extends DialogProps {
-  onSubmit: Function;
-}
+import { SubmittableDialogProps } from "@utils/types/common";
 
 const DiscardDraft = ({
   show,
   onClose,
   onSubmit,
-}: DiscordDraftProps): JSX.Element => {
+}: SubmittableDialogProps): JSX.Element => {
   const { t } = useTranslation("common");
 
   return (

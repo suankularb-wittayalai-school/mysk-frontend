@@ -102,30 +102,22 @@ const EditClassDialog = ({
       students: form.students,
       classAdvisors: form.classAdvisors,
       contacts: form.contacts,
-      schedule: {
-        id: classItem?.schedule.id || 0,
-        content: [], // this need to be something else when editting
-      },
       subjects: [], // this need to be something else when editting
     };
 
     if (!validate()) return;
 
     if (mode == "add") {
-      const {
-        data: createdClass,
-        error: classCreationError,
-      } = await createClassroom(classroom);
+      const { data: createdClass, error: classCreationError } =
+        await createClassroom(classroom);
 
       if (classCreationError) {
         console.error(classCreationError);
         return;
       }
     } else if (mode == "edit") {
-      const {
-        data: updatedClass,
-        error: classUpdateError,
-      } = await updateClassroom(classroom);
+      const { data: updatedClass, error: classUpdateError } =
+        await updateClassroom(classroom);
 
       if (classUpdateError) {
         console.error(classUpdateError);

@@ -70,7 +70,7 @@ const AddSubjectDialog = ({
 
     // check if any of these classrooms already exist
     const { data, error } = await supabase
-      .from<RoomSubjectTable>("RoomSubject")
+      .from<RoomSubjectTable>("room_subjects")
       .select("*")
       .in("class", classroomList)
       .contains("teacher", [teacher.id])
@@ -89,7 +89,7 @@ const AddSubjectDialog = ({
 
     // add new RoomSubject
     classroomList.map(async (classroom) => {
-      await supabase.from<RoomSubjectTable>("RoomSubject").insert({
+      await supabase.from<RoomSubjectTable>("room_subjects").insert({
         class: Number(classroom),
         subject: subject.id,
         teacher: [teacher.id],
@@ -167,7 +167,7 @@ const AddSubjectDialog = ({
             </h3>
             <p>
               {subject
-                ? subject.name[locale].name
+                ? (subject.name[locale] || subject.name.th).name
                 : t("dialog.addSubject.searchResult.notFound")}
             </p>
           </div>
