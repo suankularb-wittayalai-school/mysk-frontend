@@ -37,12 +37,14 @@ const SubjectCard = ({
       />
       <div className="mx-[2px] overflow-x-auto py-1 px-[calc(1rem-2px)]">
         <ChipList noWrap>
-          {subject.classes.map((classItem) => (
-            <Chip
-              key={classItem.id}
-              name={t("class", { ns: "common", number: classItem.number })}
-            />
-          ))}
+          {subject.classes
+            .sort((a, b) => a.number - b.number)
+            .map((classItem) => (
+              <Chip
+                key={classItem.id}
+                name={t("class", { ns: "common", number: classItem.number })}
+              />
+            ))}
         </ChipList>
       </div>
       <CardActions>

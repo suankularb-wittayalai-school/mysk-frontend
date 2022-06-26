@@ -1,7 +1,7 @@
 // Modules
 import { GetStaticProps, NextPage } from "next";
+import Head from "next/head";
 import Link from "next/link";
-import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -39,7 +39,6 @@ import {
   Schedule as ScheduleType,
   SchedulePeriod,
 } from "@utils/types/schedule";
-import Head from "next/head";
 
 const TeacherSchedule: NextPage = () => {
   const { t } = useTranslation("schedule");
@@ -105,7 +104,7 @@ const TeacherSchedule: NextPage = () => {
           <Title
             name={{ title: t("title.teacher") }}
             pageIcon={<MaterialIcon icon="dashboard" />}
-            backGoesTo="/t/home"
+            backGoesTo="/t/subjects/teaching"
             LinkElement={Link}
           />
         }

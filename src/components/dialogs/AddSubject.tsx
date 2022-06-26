@@ -8,22 +8,19 @@ import {
   ChipInputList,
   Dialog,
   DialogSection,
-  KeyboardInput,
+  Dropdown,
 } from "@suankularb-components/react";
 
 // Components
 import AddClassDialog from "@components/dialogs/AddClass";
 
-// Backend
-import { db2Subject } from "@utils/backend/database";
-
 // Hooks
 import { useTeacherAccount } from "@utils/hooks/auth";
 
 // Types
-import { RoomSubjectTable, SubjectTable } from "@utils/types/database/subject";
 import { ChipInputListItem, DialogProps } from "@utils/types/common";
-import { Subject } from "@utils/types/subject";
+import { RoomSubjectTable } from "@utils/types/database/subject";
+import { Teacher } from "@utils/types/person";
 
 // Supabase
 import { supabase } from "@utils/supabaseClient";
@@ -32,17 +29,16 @@ const AddSubjectDialog = ({
   show,
   onClose,
   onSubmit,
-}: DialogProps & { onSubmit: (student: Subject) => void }): JSX.Element => {
+}: DialogProps & { onSubmit: () => void }): JSX.Element => {
   const { t } = useTranslation("subjects");
   const locale = useRouter().locale as "en-US" | "th";
 
-  const [subjectCode, setSubjectCode] = useState<string>("");
-  const [subject, setSubject] = useState<Subject | null>(null);
+  const [subjectID, setSubjectID] = useState<number>(0);
   const [classChipList, setClassChipList] = useState<ChipInputListItem[]>([]);
 
   const [showAddClass, setShowAddClass] = useState<boolean>(false);
 
-  const [teacher, session] = useTeacherAccount();
+  const [teacher] = useTeacherAccount();
 
   // (@SiravitPhokeed)
   // From our perspective, this dialog is the “Generate RoomSubjects” dialog,
@@ -55,7 +51,7 @@ const AddSubjectDialog = ({
 
   function validate(): boolean {
     if (!teacher) return false;
-    if (!subject) return false;
+    if (!subjectID) return false;
     if (classChipList.length === 0) return false;
 
     return true;
@@ -63,18 +59,16 @@ const AddSubjectDialog = ({
 
   async function handleSubmit() {
     if (!validate()) return;
-    if (!teacher) return;
-    if (!subject) return;
 
     const classroomList = classChipList.map((item) => item.id);
 
-    // check if any of these classrooms already exist
+    // Check if any of these classrooms already exist
     const { data, error } = await supabase
       .from<RoomSubjectTable>("room_subjects")
       .select("*")
       .in("class", classroomList)
-      .contains("teacher", [teacher.id])
-      .eq("subject", subject.id);
+      .contains("teacher", [(teacher as Teacher).id])
+      .eq("subject", subjectID);
 
     // console.log(data);
     if (error) {
@@ -87,47 +81,20 @@ const AddSubjectDialog = ({
       return;
     }
 
-    // add new RoomSubject
+    // Add new RoomSubject
     classroomList.map(async (classroom) => {
       await supabase.from<RoomSubjectTable>("room_subjects").insert({
         class: Number(classroom),
-        subject: subject.id,
-        teacher: [teacher.id],
+        subject: subjectID,
+        teacher: [(teacher as Teacher).id],
       });
     });
 
-    onSubmit(subject);
+    onSubmit();
   }
 
   useEffect(() => {
-    // Search for subject
-    if (subjectCode.length >= 6) {
-      supabase
-        .from<SubjectTable>("subject")
-        .select("*")
-        .match(
-          locale === "en-US"
-            ? { code_en: subjectCode }
-            : { code_th: subjectCode }
-        )
-        .limit(1)
-        .single()
-        .then((res) => {
-          if (res.data) {
-            db2Subject(res.data).then((subject) => {
-              setSubject(subject);
-            });
-          } else {
-            console.error(res.error);
-
-            setSubject(null);
-          }
-        });
-    }
-  }, [subjectCode]);
-
-  useEffect(() => {
-    setSubject(null);
+    setSubjectID(0);
     setClassChipList([]);
   }, [show]);
 
@@ -144,35 +111,23 @@ const AddSubjectDialog = ({
         ]}
         show={show}
         onClose={() => onClose()}
-        onSubmit={() => subject && handleSubmit()}
+        onSubmit={() => handleSubmit()}
       >
-        <DialogSection
-          name="subject"
-          title={t("dialog.addSubject.searchSubject")}
-          hasNoGap
-        >
-          <KeyboardInput
-            name="subject-code"
-            type="text"
-            label={t("dialog.addSubject.subjectCode")}
-            helperMsg={t("dialog.addSubject.subjectCode_helper")}
-            errorMsg={t("dialog.addSubject.subjectCode_error")}
-            useAutoMsg
-            onChange={(e) => setSubjectCode(e)}
-            attr={{ pattern: "[\u0E00-\u0E7FA-Z]\\d{5}|[A-Z]{1,3}\\d{5}" }}
+        <DialogSection hasNoGap>
+          <Dropdown
+            name="subject"
+            label={t("dialog.addSubject.subject")}
+            options={
+              teacher?.subjectsInCharge?.map((subject) => ({
+                value: subject.id,
+                label: (subject.name[locale] || subject.name.th).name,
+              })) || []
+            }
+            onChange={(e: number) => setSubjectID(e)}
           />
-          <div>
-            <h3 className="!text-base">
-              {t("dialog.addSubject.searchResult.title")}
-            </h3>
-            <p>
-              {subject
-                ? (subject.name[locale] || subject.name.th).name
-                : t("dialog.addSubject.searchResult.notFound")}
-            </p>
-          </div>
-        </DialogSection>
-        <DialogSection name="classes" title={t("dialog.addSubject.addClasses")}>
+          <h3 className="mb-1 !text-base">
+            {t("dialog.addSubject.addClasses")}
+          </h3>
           <ChipInputList
             list={classChipList}
             onChange={(newList) => {
@@ -188,7 +143,10 @@ const AddSubjectDialog = ({
         onSubmit={(classroom) => {
           setClassChipList([
             ...classChipList,
-            { id: classroom.id.toString(), name: classroom.number.toString() },
+            {
+              id: classroom.id.toString(),
+              name: t("class", { ns: "common", number: classroom.number }),
+            },
           ]);
           setShowAddClass(false);
         }}

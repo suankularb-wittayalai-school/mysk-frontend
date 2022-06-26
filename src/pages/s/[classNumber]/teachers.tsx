@@ -1,9 +1,10 @@
 // Modules
 import type { GetServerSideProps, NextPage } from "next";
 import Link from "next/link";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
+
 import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 // External Libraries
 import { useEffect, useState } from "react";
@@ -90,13 +91,13 @@ const Teachers: NextPage = (): JSX.Element => {
       <MainSection>
         <Section className="!flex !flex-col !gap-4 !font-display">
           <Section>
-            <div className="!sm:gap-6 !md:grid-cols-[1fr_5fr] grid !grid-cols-[1fr_3fr] items-stretch !gap-4">
+            <div className="sm:gap-6 md:grid-cols-[1fr_5fr] grid grid-cols-[1fr_3fr] items-stretch gap-4">
               {mainContent?.profile && (
                 <div className="aspect-square overflow-hidden rounded-xl sm:rounded-2xl">
                   <ProfilePicture src={mainContent.profile} />
                 </div>
               )}
-              <div className="!flex !flex-col !justify-between">
+              <div className="flex flex-col justify-between">
                 <div>
                   <h2 className="text-4xl font-bold">
                     {mainContent ? nameJoiner(locale, mainContent.name) : ""}
@@ -139,7 +140,7 @@ const Teachers: NextPage = (): JSX.Element => {
             mainContent.subjectsInCharge.length > 1 && (
               <Section>
                 <h3 className="text-3xl font-bold">{t("subjects")}</h3>
-                <ul className="!flex flex-col gap-2">
+                <ul className="flex flex-col gap-2">
                   {mainContent.subjectsInCharge.map((subject) => (
                     <li key={subject.id}>
                       <Card type="horizontal">
@@ -156,7 +157,7 @@ const Teachers: NextPage = (): JSX.Element => {
                             />
                           }
                           title={
-                            <div className="!flex gap-4">
+                            <div className="flex gap-4">
                               <p>{subject.code[locale]}</p>
                               <p className="font-medium">
                                 {(subject.name[locale] || subject.name.th).name}

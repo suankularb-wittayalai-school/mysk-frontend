@@ -131,15 +131,8 @@
   "dialog": {
     "addSubject": {
       "title": "Add subject",
-      "supportingText": "Search for a subject to add with its subject code, and assign the classes you will teach this subject to.",
-      "searchSubject": "Search subject",
-      "subjectCode": "Subject code",
-      "subjectCode_helper": "Search for the subject with its code.",
-      "subjectCode_error": "Invalid.",
-      "searchResult": {
-        "title": "Search result",
-        "notFound": "No subjects with this subject code."
-      },
+      "supportingText": "Select a subject, then assign the classes you will teach this subject to.",
+      "subject": "Subject",
       "addClasses": "Add classes",
       "action": {
         "cancel": "Cancel",
