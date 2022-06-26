@@ -760,7 +760,10 @@ const SubjectDetails: NextPage<{
       <ConnectSubjectDialog
         show={showAddConnection}
         onClose={() => setShowAddConnection(false)}
-        onSubmit={() => setShowAddConnection(false)}
+        onSubmit={() => {
+          router.replace(router.asPath);
+          setShowAddConnection(false);
+        }}
         mode="add"
         subject={subject}
       />

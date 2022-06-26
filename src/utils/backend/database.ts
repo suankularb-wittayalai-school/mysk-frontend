@@ -412,7 +412,7 @@ export async function db2SubjectListItem(roomSubject: RoomSubjectDB) {
     },
     teachers: [],
     coTeachers: [],
-    ggMeetLink: roomSubject.gg_meeting_link ? roomSubject.gg_meeting_link : "",
+    ggMeetLink: roomSubject.gg_meet_link ? roomSubject.gg_meet_link : "",
     ggcCode: roomSubject.ggc_code ? roomSubject.ggc_code : "",
     ggcLink: roomSubject.ggc_link ? roomSubject.ggc_link : "",
   };
@@ -433,11 +433,11 @@ export async function db2SubjectListItem(roomSubject: RoomSubjectDB) {
     }
   }
 
-  if (roomSubject.coTeacher) {
+  if (roomSubject.coteacher) {
     const { data: coTeachers, error: coTeachersError } = await supabase
       .from<TeacherDB>("teacher")
       .select("id, teacher_id, people:person(*), SubjectGroup:subject_group(*)")
-      .in("id", roomSubject.coTeacher);
+      .in("id", roomSubject.coteacher);
 
     if (coTeachersError) {
       console.error(coTeachersError);

@@ -21,6 +21,11 @@ import { nameJoiner } from "@utils/helpers/name";
 import { ChipInputListItem, SubmittableDialogProps } from "@utils/types/common";
 import { Teacher } from "@utils/types/person";
 import { Subject, SubjectListItem } from "@utils/types/subject";
+import { supabase } from "@utils/supabaseClient";
+import { ClassroomTable } from "@utils/types/database/class";
+import { getCurrentAcedemicYear } from "@utils/helpers/date";
+import { useTeacherAccount } from "@utils/hooks/auth";
+import { RoomSubjectTable } from "@utils/types/database/subject";
 
 const ConnectSubjectDialog = ({
   show,
@@ -36,6 +41,7 @@ const ConnectSubjectDialog = ({
 }) => {
   const { t } = useTranslation("subjects");
   const locale = useRouter().locale as "en-US" | "th";
+  const [user, session] = useTeacherAccount({ loginRequired: true });
 
   // Dialogs
   const [showAddTeacher, setShowAddTeacher] = useState<boolean>(false);
@@ -89,6 +95,22 @@ const ConnectSubjectDialog = ({
           : [],
       });
       // Resets form control if mode is add
+    }
+    if (mode == "add" && user && session) {
+      setForm({
+        classroom: "",
+        teachers: [user],
+        coTeachers: [],
+      });
+      setChipLists({
+        teachers: [
+          {
+            id: user.id.toString(),
+            name: user.name[locale]?.firstName || user.name.th.firstName,
+          },
+        ],
+        coTeachers: [],
+      });
     } else {
       setForm({
         classroom: "",
@@ -100,7 +122,7 @@ const ConnectSubjectDialog = ({
         coTeachers: [],
       });
     }
-  }, [show, mode, subjectRoom, locale]);
+  }, [show, mode, subjectRoom, locale, user, session]);
 
   function validate(): boolean {
     // Search subject via code
@@ -130,6 +152,46 @@ const ConnectSubjectDialog = ({
     return true;
   }
 
+  async function handleSubmit() {
+    if (!validate()) return;
+
+    const {
+      data: classroom,
+      error: classroomSelectionError,
+    } = await supabase
+      .from<{ id: number }>("classroom")
+      .select("id")
+      .match({ number: form.classroom, year: getCurrentAcedemicYear() })
+      .limit(1)
+      .single();
+
+    // console.log(classroom);
+    if (!classroom || classroomSelectionError) {
+      console.error(classroomSelectionError);
+      return;
+    }
+
+    if (mode == "add") {
+      const { data, error } = await supabase
+        .from<RoomSubjectTable>("room_subjects")
+        .insert({
+          class: classroom.id,
+          subject: subject.id,
+          teacher: form.teachers.map((teacher) => teacher.id),
+          coteacher: form.coTeachers
+            ? form.coTeachers.map((coTeacher) => coTeacher.id)
+            : [],
+          ggc_code: form.ggcCode ?? "",
+          gg_meet_link: form.ggMeetLink ?? "",
+          ggc_link: form.ggcLink ?? "",
+        });
+
+      if (error) console.error(error);
+    }
+
+    onSubmit();
+  }
+
   return (
     <>
       <Dialog
@@ -150,7 +212,7 @@ const ConnectSubjectDialog = ({
         ]}
         show={show}
         onClose={onClose}
-        onSubmit={onSubmit}
+        onSubmit={handleSubmit}
       >
         {/* Connect subject */}
         <DialogSection
