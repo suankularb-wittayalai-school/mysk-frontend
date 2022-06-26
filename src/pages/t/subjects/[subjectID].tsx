@@ -146,6 +146,9 @@ const DetailsSection = ({
                       }
                       iconOnly
                       disabled={!subjectRoom.ggcLink}
+                      attr={{
+                        target: "_blank",
+                      }}
                     />
                     {/* Go to Google Meet */}
                     <LinkButton
@@ -155,6 +158,9 @@ const DetailsSection = ({
                       url={subjectRoom.ggMeetLink || "https://meet.google.com/"}
                       iconOnly
                       disabled={!subjectRoom.ggMeetLink}
+                      attr={{
+                        target: "_blank",
+                      }}
                     />
                     {/* Edit this connection */}
                     <Button
@@ -712,7 +718,7 @@ const SubjectDetails: NextPage<{
     await supabase.from<RoomSubjectTable>("room_subjects").delete().match({
       id: deleteConnection.connection?.id,
     });
-    console.log(deleteConnection.connection);
+    // console.log(deleteConnection.connection);
   }
 
   return (
