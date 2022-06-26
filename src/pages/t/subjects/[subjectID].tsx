@@ -795,11 +795,10 @@ const SubjectDetails: NextPage<{
       <ConfirmDelete
         show={deleteConnection.show}
         onClose={() => setDeleteConnection({ show: false })}
-        onSubmit={() => {
-          handleDelete().then(() => {
-            setDeleteConnection({ show: false });
-            router.replace(router.asPath);
-          });
+        onSubmit={async () => {
+          await handleDelete();
+          setDeleteConnection({ show: false });
+          router.replace(router.asPath);
         }}
       />
       {logEvidence.evidence && (
