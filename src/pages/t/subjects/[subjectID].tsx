@@ -56,6 +56,7 @@ import ConfirmDelete from "@components/dialogs/ConfirmDelete";
 import { supabase } from "@utils/supabaseClient";
 import {
   RoomSubjectDB,
+  RoomSubjectTable,
   SubjectDB,
   SubjectTable,
 } from "@utils/types/database/subject";
@@ -707,6 +708,13 @@ const SubjectDetails: NextPage<{
   const [showAddAsgn, setShowAddAsgn] = useState<boolean>(false);
   const [activeAsgn, setActiveAsgn] = useState<SubstituteAssignment>();
 
+  async function handleDelete() {
+    await supabase.from<RoomSubjectTable>("room_subjects").delete().match({
+      id: deleteConnection.connection?.id,
+    });
+    console.log(deleteConnection.connection);
+  }
+
   return (
     <>
       <Head>
@@ -782,8 +790,10 @@ const SubjectDetails: NextPage<{
         show={deleteConnection.show}
         onClose={() => setDeleteConnection({ show: false })}
         onSubmit={() => {
-          setDeleteConnection({ show: false });
-          router.replace(router.asPath);
+          handleDelete().then(() => {
+            setDeleteConnection({ show: false });
+            router.replace(router.asPath);
+          });
         }}
       />
       {logEvidence.evidence && (
