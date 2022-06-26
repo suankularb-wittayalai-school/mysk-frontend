@@ -172,6 +172,27 @@ const ConnectSubjectDialog = ({
     }
 
     if (mode == "add") {
+      const {
+        data: roomSubjects,
+        error: roomSubjectsSelectionError,
+      } = await supabase
+        .from<RoomSubjectTable>("room_subjects")
+        .select("*")
+        .eq("class", classroom.id)
+        .contains("teacher", [user?.id])
+        .eq("subject", subject.id);
+
+      // console.log(data);
+      if (roomSubjectsSelectionError) {
+        console.error(roomSubjectsSelectionError);
+        return;
+      }
+      // TODO: show a snackbar saying subject for the class already exist
+      if (roomSubjects && roomSubjects.length > 0) {
+        onClose();
+        return;
+      }
+
       const { data, error } = await supabase
         .from<RoomSubjectTable>("room_subjects")
         .insert({
