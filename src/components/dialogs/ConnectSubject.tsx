@@ -79,6 +79,9 @@ const ConnectSubjectDialog = ({
         classroom: subjectRoom.classroom.number.toString(),
         teachers: subjectRoom.teachers,
         coTeachers: subjectRoom.coTeachers || [],
+        ggcCode: subjectRoom.ggcCode,
+        ggcLink: subjectRoom.ggcLink,
+        ggMeetLink: subjectRoom.ggMeetLink,
       });
       setChipLists({
         teachers: subjectRoom.teachers.map((teacher) => ({
@@ -95,8 +98,7 @@ const ConnectSubjectDialog = ({
           : [],
       });
       // Resets form control if mode is add
-    }
-    if (mode == "add" && user && session) {
+    } else if (mode == "add" && user && session) {
       setForm({
         classroom: "",
         teachers: [user],
@@ -206,6 +208,45 @@ const ConnectSubjectDialog = ({
           gg_meet_link: form.ggMeetLink ?? "",
           ggc_link: form.ggcLink ?? "",
         });
+
+      if (error) console.error(error);
+    }
+    if (mode == "edit") {
+      const {
+        data: roomSubjects,
+        error: roomSubjectsSelectionError,
+      } = await supabase
+        .from<RoomSubjectTable>("room_subjects")
+        .select("*")
+        .eq("class", classroom.id)
+        .contains("teacher", [user?.id])
+        .eq("subject", subject.id);
+
+      // console.log(data);
+      if (roomSubjectsSelectionError) {
+        console.error(roomSubjectsSelectionError);
+        return;
+      }
+      // TODO: show a snackbar saying subject for the class does not exist
+      if (roomSubjects.length == 0 || !roomSubjects) {
+        onClose();
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from<RoomSubjectTable>("room_subjects")
+        .update({
+          class: classroom.id,
+          subject: subject.id,
+          teacher: form.teachers.map((teacher) => teacher.id),
+          coteacher: form.coTeachers
+            ? form.coTeachers.map((coTeacher) => coTeacher.id)
+            : [],
+          ggc_code: form.ggcCode ?? "",
+          gg_meet_link: form.ggMeetLink ?? "",
+          ggc_link: form.ggcLink ?? "",
+        })
+        .match({ id: subjectRoom?.id });
 
       if (error) console.error(error);
     }

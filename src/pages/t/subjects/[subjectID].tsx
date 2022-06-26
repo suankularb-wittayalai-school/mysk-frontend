@@ -151,7 +151,7 @@ const DetailsSection = ({
                       name={t("details.table.action.ggMeetLink")}
                       type="text"
                       icon={<BrandIcon icon="gg-meet" />}
-                      url={subjectRoom.ggcLink || "https://meet.google.com/"}
+                      url={subjectRoom.ggMeetLink || "https://meet.google.com/"}
                       iconOnly
                       disabled={!subjectRoom.ggMeetLink}
                     />
@@ -770,7 +770,10 @@ const SubjectDetails: NextPage<{
       <ConnectSubjectDialog
         show={editConnection.show}
         onClose={() => setEditConnection({ show: false })}
-        onSubmit={() => setEditConnection({ show: false })}
+        onSubmit={() => {
+          router.replace(router.asPath);
+          setEditConnection({ show: false });
+        }}
         mode="edit"
         subject={subject}
         subjectRoom={editConnection.connection}
@@ -862,6 +865,14 @@ export const getServerSideProps: GetServerSideProps = async ({
   const subjectRooms: SubjectListItem[] = roomSubjects
     ? await Promise.all(roomSubjects.map(db2SubjectListItem))
     : [];
+
+  subjectRooms.sort((a, b) => {
+    const aNumber = a.classroom.number;
+    const bNumber = b.classroom.number;
+    if (aNumber < bNumber) return -1;
+    if (aNumber > bNumber) return 1;
+    return 0;
+  });
 
   // console.log(subjectRooms);
   const substAsgn: SubstituteAssignment[] = [];
