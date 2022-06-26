@@ -35,6 +35,7 @@ import { supabase } from "@utils/supabaseClient";
 import { SubjectWNameAndCode } from "@utils/types/subject";
 import { ClassWNumber } from "@utils/types/class";
 import { RoomSubjectDB } from "@utils/types/database/subject";
+import Head from "next/head";
 
 const SubjectsTeaching: NextPage = () => {
   const { t } = useTranslation("subjects");
@@ -101,6 +102,13 @@ const SubjectsTeaching: NextPage = () => {
 
   return (
     <>
+      <Head>
+        <title>
+          {t("teaching.title")}
+          {" - "}
+          {t("brand.name", { ns: "common" })}
+        </title>
+      </Head>
       <RegularLayout
         Title={
           <Title

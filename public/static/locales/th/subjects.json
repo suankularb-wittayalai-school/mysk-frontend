@@ -131,11 +131,8 @@
   "dialog": {
     "addSubject": {
       "title": "เพิ่มวิชา",
-      "supportingText": "ค้นหาวิชาที่ต้องการจะเพิ่มด้วยรหัสวิชา แล้วเพิ่มห้องเรียนที่จะเรียนวิชานี้กับอาจารย์",
-      "searchSubject": "ค้นหาวิชา",
-      "subjectCode": "รหัสวิชา",
-      "subjectCode_helper": "ค้นหาวิชาที่จะเชื่อมต่อด้วยรหัสวิชา",
-      "subjectCode_error": "ไม่ถูกต้อง",
+      "supportingText": "เลือกวิชาที่ต้องการจะเพิ่ม แล้วเพิ่มห้องเรียนที่จะเรียนวิชานี้กับอาจารย์",
+      "subject": "รหัสวิชา",
       "searchResult": {
         "title": "ผลลัพธ์การค้นหา",
         "notFound": "ไม่พบวิชาที่มีรหัสวิชานี้"
@@ -165,9 +162,9 @@
         "ggcCode": "รหัสเข้า Google Classroom",
         "ggcCode_error": "ไม่ถูกต้อง ต้องเป็นรหัส 6-7 หลัก.",
         "ggcLink": "ลิงก์เข้า Google Classroom",
-        "ggcLink_error": "ไม่ถูกต้อง ต้อวเป็นลิงก์ Google Classroom แบบเต็ม",
+        "ggcLink_error": "ไม่ถูกต้อง ต้องเป็นลิงก์ Google Classroom แบบเต็ม",
         "ggMeetLink": "ลิงก์เข้า Google Meet",
-        "ggMeetLink_error": "ไม่ถูกต้อง ต้อวเป็นลิงก์ Google Meet แบบเต็ม."
+        "ggMeetLink_error": "ไม่ถูกต้อง ต้องเป็นลิงก์ Google Meet แบบเต็ม."
       },
       "personnel": {
         "teachers": "อาจารย์",
