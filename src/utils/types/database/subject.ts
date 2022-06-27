@@ -59,10 +59,10 @@ export interface RoomSubjectTable {
   subject: number;
   class: number;
   teacher: number[];
-  coTeacher?: number[];
+  coteacher?: number[];
   ggc_code: string;
   ggc_link: string;
-  gg_meeting_link: string;
+  gg_meet_link: string;
 }
 
 export interface RoomSubjectDB {
@@ -71,8 +71,8 @@ export interface RoomSubjectDB {
   subject: SubjectTable;
   classroom: ClassroomTable;
   teacher: number[];
-  coTeacher?: number[];
+  coteacher?: number[];
   ggc_code: string;
   ggc_link: string;
-  gg_meeting_link: string;
+  gg_meet_link: string;
 }
