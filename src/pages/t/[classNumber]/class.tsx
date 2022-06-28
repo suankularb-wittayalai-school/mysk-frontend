@@ -328,10 +328,8 @@ const StudentListSection = ({
         <Table width={320}>
           <thead>
             <tr>
-              <th className="w-24 print:w-16">
-                {t("studentList.table.classNo")}
-              </th>
-              <th className="print:w-6/12">{t("studentList.table.name")}</th>
+              <th className="w-24">{t("studentList.table.classNo")}</th>
+              <th className="print:w-5/12">{t("studentList.table.name")}</th>
               {/* Empty columns for print */}
               <th className="hidden print:table-cell">&nbsp;</th>
               <th className="hidden print:table-cell">&nbsp;</th>
