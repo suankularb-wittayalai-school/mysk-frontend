@@ -75,6 +75,8 @@ export function useStudentAccount(
       } else if (session.user?.user_metadata.role == "teacher") {
         router.push("/t/home");
       }
+    } else {
+      router.push("/");
     }
   }, [session]);
   return [user, session];
@@ -110,6 +112,8 @@ export function useTeacherAccount(
       } else if (session.user?.user_metadata.role == "student") {
         router.push("/s/home");
       }
+    } else {
+      router.push("/");
     }
   }, [session]);
   return [user, session];

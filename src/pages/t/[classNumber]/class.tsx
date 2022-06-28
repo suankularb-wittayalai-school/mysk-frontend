@@ -61,6 +61,7 @@ import { Class as ClassType } from "@utils/types/class";
 import { Contact } from "@utils/types/contact";
 import { Student, Teacher } from "@utils/types/person";
 import { StudentForm } from "@utils/types/news";
+import { createContact } from "@utils/backend/contact";
 
 const StudentFormCard = ({ form }: { form: StudentForm }): JSX.Element => {
   const locale = useRouter().locale as "en-US" | "th";
@@ -399,10 +400,9 @@ const Class: NextPage<{
   // Disallow editing if user is not an advisor to this class
   const [teacher] = useTeacherAccount({ loginRequired: true });
   const [isAdvisor, setIsAdvisor] = useState<boolean>(false);
-  useEffect(
-    () => setIsAdvisor(teacher?.classAdvisorAt?.id == classItem.id),
-    [teacher]
-  );
+  useEffect(() => setIsAdvisor(teacher?.classAdvisorAt?.id == classItem.id), [
+    teacher,
+  ]);
 
   useEffect(() => {
     if (!classItem.id) router.push("/t/home");
@@ -462,9 +462,21 @@ const Class: NextPage<{
         show={showAddContact}
         onClose={() => toggleShowAddContact()}
         onSubmit={async (contact) => {
-          toggleShowAddContact();
-          await addContactToClassroom(contact.id, classItem.id);
+          // console.log(contact);
+          const {
+            data: createdContact,
+            error: contactCreationError,
+          } = await createContact(contact);
+
+          if (!createdContact || createdContact.length == 0) return;
+          if (contactCreationError) {
+            console.error(contactCreationError);
+            return;
+          }
+
+          await addContactToClassroom(createdContact[0].id, classItem.id);
           router.replace(router.asPath);
+          toggleShowAddContact();
         }}
         isGroup
       />

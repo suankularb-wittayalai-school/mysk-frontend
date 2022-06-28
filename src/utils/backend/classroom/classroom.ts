@@ -143,22 +143,40 @@ export async function addContactToClassroom(
   contactID: number,
   classID: number
 ): Promise<{ data: ClassroomTable | null; error: PostgrestError | null }> {
-  // TODO
-  return { data: null, error: null };
+  const { data: classroom, error: classroomSelectionError } = await supabase
+    .from<{ contacts: number[]; number: number; year: number }>("classroom")
+    .select("contacts, number, year")
+    .match({ id: classID })
+    .limit(1)
+    .single();
+
+  if (!classroom || classroomSelectionError) {
+    return { data: null, error: classroomSelectionError };
+  }
+
+  const { data: updatedClassroom, error: classroomUpdatingError } =
+    await supabase
+      .from<ClassroomTable>("classroom")
+      .update({ contacts: [...classroom.contacts, contactID] })
+      .eq("id", classID)
+      .single();
+  // UPDATE contacts value ... WHERE id = ?;
+
+  return { data: updatedClassroom, error: classroomUpdatingError };
 }
 
 export async function getClassIDFromNumber(number: number): Promise<number> {
-  const { data, error } = await supabase
+  const { data: classroom, error: classroomSelectionError } = await supabase
     .from<ClassroomTable>("classroom")
     .select("id")
     .match({ number })
     .limit(1)
     .single();
 
-  if (error || !data) {
-    console.error(error);
+  if (classroomSelectionError || !classroom) {
+    console.error(classroomSelectionError);
     return 0;
   }
 
-  return data.id;
+  return classroom.id;
 }
