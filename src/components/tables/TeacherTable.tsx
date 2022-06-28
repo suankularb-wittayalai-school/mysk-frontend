@@ -52,8 +52,11 @@ const TeacherTable = ({
               )}
             </td>
             <td>
-              {teacher.classAdvisorAt
-                ? teacher.classAdvisorAt?.number
+              {teacher.classAdvisorAt?.number
+                ? t("class", {
+                    ns: "common",
+                    number: teacher.classAdvisorAt?.number,
+                  })
                 : setShowEdit &&
                   setEditingPerson &&
                   setShowConfDelTeacher && (
