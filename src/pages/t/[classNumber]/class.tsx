@@ -1,4 +1,6 @@
-// Modules
+// External libraries
+import { isThisYear } from "date-fns";
+
 import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
@@ -7,7 +9,15 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { isThisYear } from "date-fns";
+import {
+  MutableRefObject,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
+
+import ReactToPrint from "react-to-print";
 
 // SK Components
 import {
@@ -26,26 +36,31 @@ import {
   XScrollContent,
 } from "@suankularb-components/react";
 
-// External Libraries
-import { useEffect, useState } from "react";
-
 // Components
+import AddContactDialog from "@components/dialogs/AddContact";
+import AddTeacherDialog from "@components/dialogs/AddTeacher";
 import ContactChip from "@components/ContactChip";
+import PrintHeader from "@components/PrintHeader";
 import TeacherCard from "@components/TeacherCard";
+
+// Backend
+import {
+  addAdvisorToClassroom,
+  addContactToClassroom,
+  getClassroom,
+} from "@utils/backend/classroom/classroom";
 
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
+
+// Hooks
+import { useTeacherAccount } from "@utils/hooks/auth";
 
 // Types
 import { Class as ClassType } from "@utils/types/class";
 import { Contact } from "@utils/types/contact";
 import { Student, Teacher } from "@utils/types/person";
 import { StudentForm } from "@utils/types/news";
-import { supabase } from "@utils/supabaseClient";
-import { getCurrentAcedemicYear } from "@utils/helpers/date";
-import { ClassroomDB } from "@utils/types/database/class";
-import { db2Class } from "@utils/backend/database";
-import { useTeacherAccount } from "@utils/hooks/auth";
 
 const StudentFormCard = ({ form }: { form: StudentForm }): JSX.Element => {
   const locale = useRouter().locale as "en-US" | "th";
@@ -207,15 +222,19 @@ const FormSection = ({
 
 const ClassAdvisorsSection = ({
   classAdvisors,
+  toggleShowAdd,
+  allowEdit,
 }: {
   classAdvisors: Array<Teacher>;
+  toggleShowAdd: () => void;
+  allowEdit?: boolean;
 }): JSX.Element => {
   const { t } = useTranslation("class");
 
   return (
     <Section labelledBy="class-advisors">
       <Header
-        icon={<MaterialIcon icon="group" />}
+        icon={<MaterialIcon icon="group" allowCustomSize />}
         text={t("classAdvisors.title")}
       />
       <div className="layout-grid-cols-3 !w-full !flex-col">
@@ -229,7 +248,13 @@ const ClassAdvisorsSection = ({
         ))}
       </div>
       <div className="flex flex-row flex-wrap items-center justify-end gap-2">
-        <Button label={t("classAdvisors.addAdvisors")} type="filled" />
+        <Button
+          label={t("classAdvisors.addAdvisors")}
+          type="tonal"
+          icon={<MaterialIcon icon="person_add_alt_1" />}
+          disabled={!allowEdit}
+          onClick={() => toggleShowAdd()}
+        />
       </div>
     </Section>
   );
@@ -237,15 +262,19 @@ const ClassAdvisorsSection = ({
 
 const ContactSection = ({
   contacts,
+  toggleShowAdd,
+  allowEdit,
 }: {
   contacts: Array<Contact>;
+  toggleShowAdd: () => void;
+  allowEdit?: boolean;
 }): JSX.Element => {
   const { t } = useTranslation("class");
 
   return (
     <Section labelledBy="class-contacts">
       <Header
-        icon={<MaterialIcon icon="contacts" />}
+        icon={<MaterialIcon icon="contacts" allowCustomSize />}
         text={t("classContacts.title")}
       />
       <div className="layout-grid-cols-3 !w-full !flex-col">
@@ -258,7 +287,13 @@ const ContactSection = ({
         ))}
       </div>
       <div className="flex flex-row flex-wrap items-center justify-end gap-2">
-        <Button label={t("classContacts.addClassContacts")} type="filled" />
+        <Button
+          label={t("classContacts.addClassContacts")}
+          type="tonal"
+          icon={<MaterialIcon icon="add" />}
+          disabled={!allowEdit}
+          onClick={() => toggleShowAdd()}
+        />
       </div>
     </Section>
   );
@@ -266,32 +301,41 @@ const ContactSection = ({
 
 const StudentListSection = ({
   students,
+  classNumber,
 }: {
-  students: Array<Student>;
+  students: Student[];
+  classNumber: number;
 }): JSX.Element => {
   const { t } = useTranslation(["class", "common"]);
   const locale = useRouter().locale == "th" ? "th" : "en-US";
+  const tableRef: MutableRefObject<any> = useRef(null);
 
   return (
     <Section labelledBy="student-list">
-      <div className="layout-grid-cols-3--header items-start">
-        <div className="[grid-area:header]">
+      <div className="layout-grid-cols-3 items-start">
+        <div className="md:col-span-2">
           <Header
-            icon={<MaterialIcon icon="groups" />}
+            icon={<MaterialIcon icon="groups" allowCustomSize />}
             text={t("studentList.title")}
           />
         </div>
-        <Search
-          placeholder={t("studentList.searchStudents")}
-          className="[grid-area:search]"
-        />
+        <Search placeholder={t("studentList.searchStudents")} />
       </div>
-      <div>
+      <div ref={tableRef} className="print:p-12">
+        <PrintHeader
+          title={t("class", { ns: "common", number: classNumber })}
+        />
         <Table width={320}>
           <thead>
             <tr>
               <th className="w-24">{t("studentList.table.classNo")}</th>
-              <th>{t("studentList.table.name")}</th>
+              <th className="print:w-5/12">{t("studentList.table.name")}</th>
+              {/* Empty columns for print */}
+              <th className="hidden print:table-cell">&nbsp;</th>
+              <th className="hidden print:table-cell">&nbsp;</th>
+              <th className="hidden print:table-cell">&nbsp;</th>
+              <th className="hidden print:table-cell">&nbsp;</th>
+              <th className="hidden print:table-cell">&nbsp;</th>
             </tr>
           </thead>
           <tbody>
@@ -308,13 +352,28 @@ const StudentListSection = ({
                     }
                   )}
                 </td>
+                {/* Empty columns for print */}
+                <td className="hidden print:table-cell" />
+                <td className="hidden print:table-cell" />
+                <td className="hidden print:table-cell" />
+                <td className="hidden print:table-cell" />
+                <td className="hidden print:table-cell" />
               </tr>
             ))}
           </tbody>
         </Table>
       </div>
       <div className="flex flex-row flex-wrap items-center justify-end gap-2">
-        <Button label={t("studentList.printList")} type="filled" />
+        <ReactToPrint
+          content={() => tableRef.current}
+          trigger={() => (
+            <Button
+              label={t("studentList.printList")}
+              type="filled"
+              icon={<MaterialIcon icon="printer" />}
+            />
+          )}
+        />
       </div>
     </Section>
   );
@@ -325,8 +384,29 @@ const Class: NextPage<{
   classItem: ClassType;
   studentForms: Array<StudentForm>;
 }> = ({ classItem, studentForms }) => {
+  const router = useRouter();
   const { t } = useTranslation("common");
-  useTeacherAccount({ loginRequired: true });
+
+  const [showAddTeacher, toggleShowAddTeacher] = useReducer(
+    (state: boolean) => !state,
+    false
+  );
+  const [showAddContact, toggleShowAddContact] = useReducer(
+    (state: boolean) => !state,
+    false
+  );
+
+  // Disallow editing if user is not an advisor to this class
+  const [teacher] = useTeacherAccount({ loginRequired: true });
+  const [isAdvisor, setIsAdvisor] = useState<boolean>(false);
+  useEffect(
+    () => setIsAdvisor(teacher?.classAdvisorAt?.id == classItem.id),
+    [teacher]
+  );
+
+  useEffect(() => {
+    if (!classItem.id) router.push("/t/home");
+  }, []);
 
   return (
     <>
@@ -335,6 +415,7 @@ const Class: NextPage<{
           {t("class", { number: classItem.number })} - {t("brand.name")}
         </title>
       </Head>
+
       <RegularLayout
         Title={
           <Title
@@ -351,10 +432,42 @@ const Class: NextPage<{
             postDate: new Date(newsItem.postDate),
           }))}
         />
-        <ClassAdvisorsSection classAdvisors={classItem.classAdvisors} />
-        <ContactSection contacts={classItem.contacts} />
-        <StudentListSection students={classItem.students} />
+        <ClassAdvisorsSection
+          classAdvisors={classItem.classAdvisors}
+          toggleShowAdd={toggleShowAddTeacher}
+          allowEdit={isAdvisor}
+        />
+        <ContactSection
+          contacts={classItem.contacts}
+          toggleShowAdd={toggleShowAddContact}
+          allowEdit={isAdvisor}
+        />
+        <StudentListSection
+          students={classItem.students}
+          classNumber={classItem.number}
+        />
       </RegularLayout>
+
+      {/* Dialogs */}
+      <AddTeacherDialog
+        show={showAddTeacher}
+        onClose={() => toggleShowAddTeacher()}
+        onSubmit={async (teacher) => {
+          toggleShowAddTeacher();
+          await addAdvisorToClassroom(teacher.id, classItem.id);
+          router.replace(router.asPath);
+        }}
+      />
+      <AddContactDialog
+        show={showAddContact}
+        onClose={() => toggleShowAddContact()}
+        onSubmit={async (contact) => {
+          toggleShowAddContact();
+          await addContactToClassroom(contact.id, classItem.id);
+          router.replace(router.asPath);
+        }}
+        isGroup
+      />
     </>
   );
 };
@@ -362,49 +475,19 @@ const Class: NextPage<{
 export const getServerSideProps: GetServerSideProps = async ({
   locale,
   params,
-}) => {
-  // TODO: Fetch class here
-  let classItem: ClassType = {
-    id: 0,
-    number: 0,
-    classAdvisors: [],
-    contacts: [],
-    students: [],
-    year: getCurrentAcedemicYear(),
-    semester: 1,
-    subjects: [],
-  };
-  const {
-    data: classroom,
-    error: classroomSelectionError,
-  } = await supabase
-    .from<ClassroomDB>("classroom")
-    .select("*")
-    .match({ number: params?.classID, year: getCurrentAcedemicYear() })
-    .limit(1)
-    .single();
-
-  const studentForms: Array<StudentForm> = [];
-
-  if (classroom) classItem = await db2Class(classroom);
-
-  return {
-    props: {
-      ...(await serverSideTranslations(locale as string, [
-        "account",
-        "news",
-        "dashboard",
-        "common",
-        "class",
-        "teacher",
-      ])),
-      classItem,
-      studentForms: studentForms.map((newsItem) => ({
-        ...newsItem,
-        postDate: newsItem.postDate.getTime(),
-      })),
-    },
-  };
-};
+}) => ({
+  props: {
+    ...(await serverSideTranslations(locale as string, [
+      "account",
+      "news",
+      "dashboard",
+      "common",
+      "class",
+      "teacher",
+    ])),
+    classItem: await getClassroom(Number(params?.classNumber)),
+    studentForms: [],
+  },
+});
 
 export default Class;

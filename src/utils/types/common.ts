@@ -1,3 +1,5 @@
+export type LangCode = "th" | "en-US";
+
 export type MultiLangString = {
   th: string;
   "en-US"?: string;

@@ -128,7 +128,7 @@ const Layout = ({
         inactive: <MaterialIcon icon="groups" type="outlined" />,
         active: <MaterialIcon icon="groups" type="filled" />,
       },
-      url: "/t/509/class",
+      url: "/t/202/class",
     },
   ];
   const adminNavItem = {

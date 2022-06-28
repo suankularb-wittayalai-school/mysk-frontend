@@ -169,7 +169,7 @@ const LandingBanner = (): JSX.Element => {
             alt={t("brand.logoAlt", { ns: "common" })}
             layout="fill"
             priority={true}
-            src="/images/branding/logo-white.webp"
+            src="/images/branding/logo-white.svg"
           />
         </div>
 
