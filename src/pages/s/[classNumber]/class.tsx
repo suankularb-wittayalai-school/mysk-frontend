@@ -36,6 +36,7 @@ import {
   getCurrentSemester,
 } from "@utils/helpers/date";
 import { useStudentAccount } from "@utils/hooks/auth";
+import { getClassroom } from "@utils/backend/classroom/classroom";
 
 const ClassAdvisorsSection = ({
   classAdvisors,
@@ -147,7 +148,7 @@ const StudentListSection = ({
 // Page
 const Class: NextPage<{ classItem: ClassType }> = ({ classItem }) => {
   const { t } = useTranslation("common");
-  const locale = useRouter().locale as "en-US" | "th";
+
   useStudentAccount({ loginRequired: true });
 
   return (
@@ -178,39 +179,15 @@ const Class: NextPage<{ classItem: ClassType }> = ({ classItem }) => {
 export const getServerSideProps: GetServerSideProps = async ({
   locale,
   params,
-}) => {
-  let classItem: ClassType = {
-    id: 0,
-    number: 0,
-    classAdvisors: [],
-    contacts: [],
-    students: [],
-    year: getCurrentAcedemicYear(),
-    semester: 1,
-    subjects: [],
-  };
-  const {
-    data: classroom,
-    error: classroomSelectionError,
-  } = await supabase
-    .from<ClassroomDB>("classroom")
-    .select("*")
-    .match({ number: params?.classNumber, year: getCurrentAcedemicYear() })
-    .limit(1)
-    .single();
-
-  if (classroom) classItem = await db2Class(classroom);
-
-  return {
-    props: {
-      ...(await serverSideTranslations(locale as string, [
-        "common",
-        "class",
-        "teacher",
-      ])),
-      classItem,
-    },
-  };
-};
+}) => ({
+  props: {
+    ...(await serverSideTranslations(locale as string, [
+      "common",
+      "class",
+      "teacher",
+    ])),
+    classItem: await getClassroom(Number(params?.classNumber)),
+  },
+});
 
 export default Class;

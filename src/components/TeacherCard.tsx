@@ -50,11 +50,7 @@ const TeacherCard = ({
       className={className}
     >
       {/* FIXME: When Card Media is added to React SK Components, change this */}
-      <div
-        className={`card__media container-tertiary ${
-          appearance == "outlined" || appearance == undefined ? "m-[2px]" : ""
-        }`}
-      >
+      <div className="card__media">
         <ProfilePicture src={teacher.profile} />
       </div>
       <CardHeader
