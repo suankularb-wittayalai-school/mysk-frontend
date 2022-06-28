@@ -453,9 +453,9 @@ const Class: NextPage<{
         show={showAddTeacher}
         onClose={() => toggleShowAddTeacher()}
         onSubmit={async (teacher) => {
-          toggleShowAddTeacher();
           await addAdvisorToClassroom(teacher.id, classItem.id);
           router.replace(router.asPath);
+          toggleShowAddTeacher();
         }}
       />
       <AddContactDialog

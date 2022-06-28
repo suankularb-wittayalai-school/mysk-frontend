@@ -135,8 +135,26 @@ export async function addAdvisorToClassroom(
   teacherID: number,
   classID: number
 ): Promise<{ data: ClassroomTable | null; error: PostgrestError | null }> {
-  // TODO
-  return { data: null, error: null };
+  const { data: classroom, error: classroomSelectionError } = await supabase
+    .from<{ advisors: number[]; number: number; year: number }>("classroom")
+    .select("advisors, number, year")
+    .match({ id: classID, year: getCurrentAcedemicYear() })
+    .limit(1)
+    .single();
+
+  if (!classroom || classroomSelectionError) {
+    return { data: null, error: classroomSelectionError };
+  }
+
+  const { data: updatedClassroom, error: classroomUpdatingError } =
+    await supabase
+      .from<ClassroomTable>("classroom")
+      .update({ advisors: [...classroom.advisors, teacherID] })
+      .eq("id", classID)
+      .single();
+  // UPDATE contacts value ... WHERE id = ?;
+
+  return { data: updatedClassroom, error: classroomUpdatingError };
 }
 
 export async function addContactToClassroom(
@@ -146,7 +164,7 @@ export async function addContactToClassroom(
   const { data: classroom, error: classroomSelectionError } = await supabase
     .from<{ contacts: number[]; number: number; year: number }>("classroom")
     .select("contacts, number, year")
-    .match({ id: classID })
+    .match({ id: classID, year: getCurrentAcedemicYear() })
     .limit(1)
     .single();
 
