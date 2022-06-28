@@ -41,6 +41,10 @@ import { Class as ClassType } from "@utils/types/class";
 import { Contact } from "@utils/types/contact";
 import { Student, Teacher } from "@utils/types/person";
 import { StudentForm } from "@utils/types/news";
+import { supabase } from "@utils/supabaseClient";
+import { getCurrentAcedemicYear } from "@utils/helpers/date";
+import { ClassroomDB } from "@utils/types/database/class";
+import { db2Class } from "@utils/backend/database";
 
 const StudentFormCard = ({ form }: { form: StudentForm }): JSX.Element => {
   const locale = useRouter().locale as "en-US" | "th";
@@ -358,18 +362,29 @@ export const getServerSideProps: GetServerSideProps = async ({
   params,
 }) => {
   // TODO: Fetch class here
-  const classItem: ClassType = {
-    id: 2,
-    number: 405,
-    contacts: [],
+  let classItem: ClassType = {
+    id: 0,
+    number: 0,
     classAdvisors: [],
+    contacts: [],
     students: [],
-    year: 2022,
-    semester: 2,
+    year: getCurrentAcedemicYear(),
+    semester: 1,
     subjects: [],
   };
+  const {
+    data: classroom,
+    error: classroomSelectionError,
+  } = await supabase
+    .from<ClassroomDB>("classroom")
+    .select("*")
+    .match({ number: params?.classID, year: getCurrentAcedemicYear() })
+    .limit(1)
+    .single();
 
   const studentForms: Array<StudentForm> = [];
+
+  if (classroom) classItem = await db2Class(classroom);
 
   return {
     props: {

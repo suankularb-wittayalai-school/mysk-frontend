@@ -28,6 +28,13 @@ import { nameJoiner } from "@utils/helpers/name";
 import { Class as ClassType } from "@utils/types/class";
 import { Contact } from "@utils/types/contact";
 import { Student, Teacher } from "@utils/types/person";
+import { supabase } from "@utils/supabaseClient";
+import { ClassroomDB, ClassroomTable } from "@utils/types/database/class";
+import { db2Class } from "@utils/backend/database";
+import {
+  getCurrentAcedemicYear,
+  getCurrentSemester,
+} from "@utils/helpers/date";
 
 const ClassAdvisorsSection = ({
   classAdvisors,
@@ -170,17 +177,27 @@ export const getServerSideProps: GetServerSideProps = async ({
   locale,
   params,
 }) => {
-  // TODO: Fetch class here
-  const classItem: ClassType = {
-    id: 2,
-    number: 405,
-    contacts: [],
+  let classItem: ClassType = {
+    id: 0,
+    number: 0,
     classAdvisors: [],
+    contacts: [],
     students: [],
-    year: 2022,
-    semester: 2,
+    year: getCurrentAcedemicYear(),
+    semester: 1,
     subjects: [],
   };
+  const {
+    data: classroom,
+    error: classroomSelectionError,
+  } = await supabase
+    .from<ClassroomDB>("classroom")
+    .select("*")
+    .match({ number: params?.classNumber, year: getCurrentAcedemicYear() })
+    .limit(1)
+    .single();
+
+  if (classroom) classItem = await db2Class(classroom);
 
   return {
     props: {

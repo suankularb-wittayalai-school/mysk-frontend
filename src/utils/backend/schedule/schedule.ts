@@ -126,7 +126,7 @@ export async function getSchedule(
       await db2SchedulePeriod(scheduleItem, role)
     );
   }
-  console.timeEnd("scheduleConstruct");
+  // console.timeEnd("scheduleConstruct");
 
   return schedule;
 }
