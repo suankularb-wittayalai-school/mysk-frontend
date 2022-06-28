@@ -37,9 +37,11 @@ import {
 } from "@suankularb-components/react";
 
 // Components
-import ContactChip from "@components/ContactChip";
-import TeacherCard from "@components/TeacherCard";
+import AddContactDialog from "@components/dialogs/AddContact";
 import AddTeacherDialog from "@components/dialogs/AddTeacher";
+import ContactChip from "@components/ContactChip";
+import PrintHeader from "@components/PrintHeader";
+import TeacherCard from "@components/TeacherCard";
 
 // Backend
 import {
@@ -59,8 +61,6 @@ import { Class as ClassType } from "@utils/types/class";
 import { Contact } from "@utils/types/contact";
 import { Student, Teacher } from "@utils/types/person";
 import { StudentForm } from "@utils/types/news";
-import AddContactDialog from "@components/dialogs/AddContact";
-import PrintHeader from "@components/PrintHeader";
 
 const StudentFormCard = ({ form }: { form: StudentForm }): JSX.Element => {
   const locale = useRouter().locale as "en-US" | "th";
@@ -223,9 +223,11 @@ const FormSection = ({
 const ClassAdvisorsSection = ({
   classAdvisors,
   toggleShowAdd,
+  allowEdit,
 }: {
   classAdvisors: Array<Teacher>;
   toggleShowAdd: () => void;
+  allowEdit?: boolean;
 }): JSX.Element => {
   const { t } = useTranslation("class");
 
@@ -250,6 +252,7 @@ const ClassAdvisorsSection = ({
           label={t("classAdvisors.addAdvisors")}
           type="tonal"
           icon={<MaterialIcon icon="person_add_alt_1" />}
+          disabled={!allowEdit}
           onClick={() => toggleShowAdd()}
         />
       </div>
@@ -260,9 +263,11 @@ const ClassAdvisorsSection = ({
 const ContactSection = ({
   contacts,
   toggleShowAdd,
+  allowEdit,
 }: {
   contacts: Array<Contact>;
   toggleShowAdd: () => void;
+  allowEdit?: boolean;
 }): JSX.Element => {
   const { t } = useTranslation("class");
 
@@ -286,6 +291,7 @@ const ContactSection = ({
           label={t("classContacts.addClassContacts")}
           type="tonal"
           icon={<MaterialIcon icon="add" />}
+          disabled={!allowEdit}
           onClick={() => toggleShowAdd()}
         />
       </div>
@@ -392,7 +398,13 @@ const Class: NextPage<{
     false
   );
 
-  useTeacherAccount({ loginRequired: true });
+  // Disallow editing if user is not an advisor to this class
+  const [teacher] = useTeacherAccount({ loginRequired: true });
+  const [isAdvisor, setIsAdvisor] = useState<boolean>(false);
+  useEffect(
+    () => setIsAdvisor(teacher?.classAdvisorAt?.id == classItem.id),
+    [teacher]
+  );
 
   return (
     <>
@@ -421,10 +433,12 @@ const Class: NextPage<{
         <ClassAdvisorsSection
           classAdvisors={classItem.classAdvisors}
           toggleShowAdd={toggleShowAddTeacher}
+          allowEdit={isAdvisor}
         />
         <ContactSection
           contacts={classItem.contacts}
           toggleShowAdd={toggleShowAddContact}
+          allowEdit={isAdvisor}
         />
         <StudentListSection
           students={classItem.students}
@@ -470,10 +484,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       "teacher",
     ])),
     classItem: await getClassroom(Number(params?.classNumber)),
-    studentForms: ([] as StudentForm[]).map((newsItem) => ({
-      ...newsItem,
-      postDate: newsItem.postDate.getTime(),
-    })),
+    studentForms: [],
   },
 });
 
