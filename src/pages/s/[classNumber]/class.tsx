@@ -35,6 +35,7 @@ import {
   getCurrentAcedemicYear,
   getCurrentSemester,
 } from "@utils/helpers/date";
+import { useStudentAccount } from "@utils/hooks/auth";
 
 const ClassAdvisorsSection = ({
   classAdvisors,
@@ -147,6 +148,7 @@ const StudentListSection = ({
 const Class: NextPage<{ classItem: ClassType }> = ({ classItem }) => {
   const { t } = useTranslation("common");
   const locale = useRouter().locale as "en-US" | "th";
+  useStudentAccount({ loginRequired: true });
 
   return (
     <>

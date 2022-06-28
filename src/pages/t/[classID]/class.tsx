@@ -45,6 +45,7 @@ import { supabase } from "@utils/supabaseClient";
 import { getCurrentAcedemicYear } from "@utils/helpers/date";
 import { ClassroomDB } from "@utils/types/database/class";
 import { db2Class } from "@utils/backend/database";
+import { useTeacherAccount } from "@utils/hooks/auth";
 
 const StudentFormCard = ({ form }: { form: StudentForm }): JSX.Element => {
   const locale = useRouter().locale as "en-US" | "th";
@@ -325,6 +326,7 @@ const Class: NextPage<{
   studentForms: Array<StudentForm>;
 }> = ({ classItem, studentForms }) => {
   const { t } = useTranslation("common");
+  useTeacherAccount({ loginRequired: true });
 
   return (
     <>
