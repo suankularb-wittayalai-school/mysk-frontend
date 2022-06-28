@@ -51,7 +51,6 @@ export async function getSchedule(
   id: number,
   day?: Day
 ): Promise<Schedule> {
-  console.time("scheduleConstruct");
   // Schedule filled with empty periods
   let schedule =
     day == undefined ? createEmptySchedule(1, 5) : createEmptySchedule(day);

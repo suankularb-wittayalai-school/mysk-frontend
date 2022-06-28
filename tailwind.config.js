@@ -67,8 +67,8 @@ module.exports = {
         "9xl": "4rem",
       },
       fontFamily: {
-        display: ["var(--font-display)"],
-        sans: ["var(--font-sans)"],
+        display: ["-apple-system-headline", "var(--font-display)"],
+        sans: ["-apple-system", "var(--font-sans)"],
       },
       borderRadius: {
         none: "0",
