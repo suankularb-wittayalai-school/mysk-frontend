@@ -25,7 +25,7 @@ const ContactChip = ({
     <a
       href={getContactURL(contact.type, contact.value)}
       target="_blank"
-      rel="noreferer"
+      rel="noreferrer"
     >
       <Card
         type="horizontal"
