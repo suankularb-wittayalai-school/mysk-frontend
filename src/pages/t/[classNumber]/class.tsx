@@ -347,7 +347,9 @@ const Class: NextPage<{
   classItem: ClassType;
   studentForms: Array<StudentForm>;
 }> = ({ classItem, studentForms }) => {
+  const router = useRouter();
   const { t } = useTranslation("common");
+
   const [showAddTeacher, toggleShowAddTeacher] = useReducer(
     (state: boolean) => !state,
     false
@@ -398,17 +400,19 @@ const Class: NextPage<{
       <AddTeacherDialog
         show={showAddTeacher}
         onClose={() => toggleShowAddTeacher()}
-        onSubmit={(teacher) => {
+        onSubmit={async (teacher) => {
           toggleShowAddTeacher();
-          addAdvisorToClassroom(teacher.id, classItem.id);
+          await addAdvisorToClassroom(teacher.id, classItem.id);
+          router.replace(router.asPath);
         }}
       />
       <AddContactDialog
         show={showAddContact}
         onClose={() => toggleShowAddContact()}
-        onSubmit={(contact) => {
+        onSubmit={async (contact) => {
           toggleShowAddContact();
-          addContactToClassroom(contact.id, classItem.id);
+          await addContactToClassroom(contact.id, classItem.id);
+          router.replace(router.asPath);
         }}
         isGroup
       />
