@@ -1,4 +1,6 @@
-// Modules
+// External libraries
+import { isThisYear } from "date-fns";
+
 import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
@@ -7,7 +9,15 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { isThisYear } from "date-fns";
+import {
+  MutableRefObject,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
+
+import ReactToPrint from "react-to-print";
 
 // SK Components
 import {
@@ -25,9 +35,6 @@ import {
   Title,
   XScrollContent,
 } from "@suankularb-components/react";
-
-// External Libraries
-import { useEffect, useReducer, useState } from "react";
 
 // Components
 import ContactChip from "@components/ContactChip";
@@ -53,6 +60,7 @@ import { Contact } from "@utils/types/contact";
 import { Student, Teacher } from "@utils/types/person";
 import { StudentForm } from "@utils/types/news";
 import AddContactDialog from "@components/dialogs/AddContact";
+import PrintHeader from "@components/PrintHeader";
 
 const StudentFormCard = ({ form }: { form: StudentForm }): JSX.Element => {
   const locale = useRouter().locale as "en-US" | "th";
@@ -287,11 +295,14 @@ const ContactSection = ({
 
 const StudentListSection = ({
   students,
+  classNumber,
 }: {
   students: Student[];
+  classNumber: number;
 }): JSX.Element => {
   const { t } = useTranslation(["class", "common"]);
   const locale = useRouter().locale == "th" ? "th" : "en-US";
+  const tableRef: MutableRefObject<any> = useRef(null);
 
   return (
     <Section labelledBy="student-list">
@@ -304,12 +315,23 @@ const StudentListSection = ({
         </div>
         <Search placeholder={t("studentList.searchStudents")} />
       </div>
-      <div>
+      <div ref={tableRef} className="print:p-12">
+        <PrintHeader
+          title={t("class", { ns: "common", number: classNumber })}
+        />
         <Table width={320}>
           <thead>
             <tr>
-              <th className="w-24">{t("studentList.table.classNo")}</th>
-              <th>{t("studentList.table.name")}</th>
+              <th className="w-24 print:w-16">
+                {t("studentList.table.classNo")}
+              </th>
+              <th className="print:w-6/12">{t("studentList.table.name")}</th>
+              {/* Empty columns for print */}
+              <th className="hidden print:table-cell">&nbsp;</th>
+              <th className="hidden print:table-cell">&nbsp;</th>
+              <th className="hidden print:table-cell">&nbsp;</th>
+              <th className="hidden print:table-cell">&nbsp;</th>
+              <th className="hidden print:table-cell">&nbsp;</th>
             </tr>
           </thead>
           <tbody>
@@ -326,16 +348,27 @@ const StudentListSection = ({
                     }
                   )}
                 </td>
+                {/* Empty columns for print */}
+                <td className="hidden print:table-cell" />
+                <td className="hidden print:table-cell" />
+                <td className="hidden print:table-cell" />
+                <td className="hidden print:table-cell" />
+                <td className="hidden print:table-cell" />
               </tr>
             ))}
           </tbody>
         </Table>
       </div>
       <div className="flex flex-row flex-wrap items-center justify-end gap-2">
-        <Button
-          label={t("studentList.printList")}
-          type="filled"
-          icon={<MaterialIcon icon="printer" />}
+        <ReactToPrint
+          content={() => tableRef.current}
+          trigger={() => (
+            <Button
+              label={t("studentList.printList")}
+              type="filled"
+              icon={<MaterialIcon icon="printer" />}
+            />
+          )}
         />
       </div>
     </Section>
@@ -393,7 +426,10 @@ const Class: NextPage<{
           contacts={classItem.contacts}
           toggleShowAdd={toggleShowAddContact}
         />
-        <StudentListSection students={classItem.students} />
+        <StudentListSection
+          students={classItem.students}
+          classNumber={classItem.number}
+        />
       </RegularLayout>
 
       {/* Dialogs */}
