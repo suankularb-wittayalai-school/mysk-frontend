@@ -19,6 +19,7 @@ import { nameJoiner } from "@utils/helpers/name";
 
 // Types
 import { Teacher } from "@utils/types/person";
+import ContactIconList from "./ContactIconList";
 
 interface TeacherCardProps {
   teacher: Teacher;
@@ -65,17 +66,13 @@ const TeacherCard = ({
         label={
           hasSubjectSubgroup ? (
             <div className="!flex flex-row items-center divide-x divide-outline">
-              <div className="flex w-fit flex-row gap-1 pr-1">
-                <MaterialIcon icon="mail" className="text-primary" />
-              </div>
+              <ContactIconList contacts={teacher.contacts} />
               <span className="max-lines-1 pl-1">
                 {teacher.subjectGroup.name[locale]}
               </span>
             </div>
           ) : (
-            <div className="flex w-fit flex-row gap-1 pr-1">
-              <MaterialIcon icon="mail" className="text-primary" />
-            </div>
+            <ContactIconList contacts={teacher.contacts} />
           )
         }
         end={
