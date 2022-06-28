@@ -22,9 +22,7 @@ import ContactChip from "@components/ContactChip";
 import TeacherCard from "@components/TeacherCard";
 
 // Backend
-import {
-  getClassroom,
-} from "@utils/backend/classroom/classroom";
+import { getClassroom } from "@utils/backend/classroom/classroom";
 
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
