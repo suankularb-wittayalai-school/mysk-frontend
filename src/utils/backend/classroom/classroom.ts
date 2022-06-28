@@ -131,6 +131,22 @@ export async function updateClassroom(
   return { data: updatedClass, error: null };
 }
 
+export async function addAdvisorToClassroom(
+  teacherID: number,
+  classID: number
+): Promise<{ data: ClassroomTable | null; error: PostgrestError | null }> {
+  // TODO
+  return { data: null, error: null };
+}
+
+export async function addContactToClassroom(
+  contactID: number,
+  classID: number
+): Promise<{ data: ClassroomTable | null; error: PostgrestError | null }> {
+  // TODO
+  return { data: null, error: null };
+}
+
 export async function getClassIDFromNumber(number: number): Promise<number> {
   const { data, error } = await supabase
     .from<ClassroomTable>("classroom")

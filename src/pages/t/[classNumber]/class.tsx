@@ -27,25 +27,32 @@ import {
 } from "@suankularb-components/react";
 
 // External Libraries
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 
 // Components
 import ContactChip from "@components/ContactChip";
 import TeacherCard from "@components/TeacherCard";
+import AddTeacherDialog from "@components/dialogs/AddTeacher";
+
+// Backend
+import {
+  addAdvisorToClassroom,
+  addContactToClassroom,
+  getClassroom,
+} from "@utils/backend/classroom/classroom";
 
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
+
+// Hooks
+import { useTeacherAccount } from "@utils/hooks/auth";
 
 // Types
 import { Class as ClassType } from "@utils/types/class";
 import { Contact } from "@utils/types/contact";
 import { Student, Teacher } from "@utils/types/person";
 import { StudentForm } from "@utils/types/news";
-import { supabase } from "@utils/supabaseClient";
-import { getCurrentAcedemicYear } from "@utils/helpers/date";
-import { ClassroomDB } from "@utils/types/database/class";
-import { db2Class } from "@utils/backend/database";
-import { useTeacherAccount } from "@utils/hooks/auth";
+import AddContactDialog from "@components/dialogs/AddContact";
 
 const StudentFormCard = ({ form }: { form: StudentForm }): JSX.Element => {
   const locale = useRouter().locale as "en-US" | "th";
@@ -207,8 +214,10 @@ const FormSection = ({
 
 const ClassAdvisorsSection = ({
   classAdvisors,
+  toggleShowAdd,
 }: {
   classAdvisors: Array<Teacher>;
+  toggleShowAdd: () => void;
 }): JSX.Element => {
   const { t } = useTranslation("class");
 
@@ -229,7 +238,12 @@ const ClassAdvisorsSection = ({
         ))}
       </div>
       <div className="flex flex-row flex-wrap items-center justify-end gap-2">
-        <Button label={t("classAdvisors.addAdvisors")} type="filled" />
+        <Button
+          label={t("classAdvisors.addAdvisors")}
+          type="tonal"
+          icon={<MaterialIcon icon="person_add_alt_1" />}
+          onClick={() => toggleShowAdd()}
+        />
       </div>
     </Section>
   );
@@ -237,8 +251,10 @@ const ClassAdvisorsSection = ({
 
 const ContactSection = ({
   contacts,
+  toggleShowAdd,
 }: {
   contacts: Array<Contact>;
+  toggleShowAdd: () => void;
 }): JSX.Element => {
   const { t } = useTranslation("class");
 
@@ -258,7 +274,12 @@ const ContactSection = ({
         ))}
       </div>
       <div className="flex flex-row flex-wrap items-center justify-end gap-2">
-        <Button label={t("classContacts.addClassContacts")} type="filled" />
+        <Button
+          label={t("classContacts.addClassContacts")}
+          type="tonal"
+          icon={<MaterialIcon icon="add" />}
+          onClick={() => toggleShowAdd()}
+        />
       </div>
     </Section>
   );
@@ -267,24 +288,21 @@ const ContactSection = ({
 const StudentListSection = ({
   students,
 }: {
-  students: Array<Student>;
+  students: Student[];
 }): JSX.Element => {
   const { t } = useTranslation(["class", "common"]);
   const locale = useRouter().locale == "th" ? "th" : "en-US";
 
   return (
     <Section labelledBy="student-list">
-      <div className="layout-grid-cols-3--header items-start">
-        <div className="[grid-area:header]">
+      <div className="layout-grid-cols-3 items-start">
+        <div className="md:col-span-2">
           <Header
             icon={<MaterialIcon icon="groups" />}
             text={t("studentList.title")}
           />
         </div>
-        <Search
-          placeholder={t("studentList.searchStudents")}
-          className="[grid-area:search]"
-        />
+        <Search placeholder={t("studentList.searchStudents")} />
       </div>
       <div>
         <Table width={320}>
@@ -314,7 +332,11 @@ const StudentListSection = ({
         </Table>
       </div>
       <div className="flex flex-row flex-wrap items-center justify-end gap-2">
-        <Button label={t("studentList.printList")} type="filled" />
+        <Button
+          label={t("studentList.printList")}
+          type="filled"
+          icon={<MaterialIcon icon="printer" />}
+        />
       </div>
     </Section>
   );
@@ -326,6 +348,15 @@ const Class: NextPage<{
   studentForms: Array<StudentForm>;
 }> = ({ classItem, studentForms }) => {
   const { t } = useTranslation("common");
+  const [showAddTeacher, toggleShowAddTeacher] = useReducer(
+    (state: boolean) => !state,
+    false
+  );
+  const [showAddContact, toggleShowAddContact] = useReducer(
+    (state: boolean) => !state,
+    false
+  );
+
   useTeacherAccount({ loginRequired: true });
 
   return (
@@ -335,6 +366,7 @@ const Class: NextPage<{
           {t("class", { number: classItem.number })} - {t("brand.name")}
         </title>
       </Head>
+
       <RegularLayout
         Title={
           <Title
@@ -351,10 +383,35 @@ const Class: NextPage<{
             postDate: new Date(newsItem.postDate),
           }))}
         />
-        <ClassAdvisorsSection classAdvisors={classItem.classAdvisors} />
-        <ContactSection contacts={classItem.contacts} />
+        <ClassAdvisorsSection
+          classAdvisors={classItem.classAdvisors}
+          toggleShowAdd={toggleShowAddTeacher}
+        />
+        <ContactSection
+          contacts={classItem.contacts}
+          toggleShowAdd={toggleShowAddContact}
+        />
         <StudentListSection students={classItem.students} />
       </RegularLayout>
+
+      {/* Dialogs */}
+      <AddTeacherDialog
+        show={showAddTeacher}
+        onClose={() => toggleShowAddTeacher()}
+        onSubmit={(teacher) => {
+          toggleShowAddTeacher();
+          addAdvisorToClassroom(teacher.id, classItem.id);
+        }}
+      />
+      <AddContactDialog
+        show={showAddContact}
+        onClose={() => toggleShowAddContact()}
+        onSubmit={(contact) => {
+          toggleShowAddContact();
+          addContactToClassroom(contact.id, classItem.id);
+        }}
+        isGroup
+      />
     </>
   );
 };
@@ -362,49 +419,22 @@ const Class: NextPage<{
 export const getServerSideProps: GetServerSideProps = async ({
   locale,
   params,
-}) => {
-  // TODO: Fetch class here
-  let classItem: ClassType = {
-    id: 0,
-    number: 0,
-    classAdvisors: [],
-    contacts: [],
-    students: [],
-    year: getCurrentAcedemicYear(),
-    semester: 1,
-    subjects: [],
-  };
-  const {
-    data: classroom,
-    error: classroomSelectionError,
-  } = await supabase
-    .from<ClassroomDB>("classroom")
-    .select("*")
-    .match({ number: params?.classID, year: getCurrentAcedemicYear() })
-    .limit(1)
-    .single();
-
-  const studentForms: Array<StudentForm> = [];
-
-  if (classroom) classItem = await db2Class(classroom);
-
-  return {
-    props: {
-      ...(await serverSideTranslations(locale as string, [
-        "account",
-        "news",
-        "dashboard",
-        "common",
-        "class",
-        "teacher",
-      ])),
-      classItem,
-      studentForms: studentForms.map((newsItem) => ({
-        ...newsItem,
-        postDate: newsItem.postDate.getTime(),
-      })),
-    },
-  };
-};
+}) => ({
+  props: {
+    ...(await serverSideTranslations(locale as string, [
+      "account",
+      "news",
+      "dashboard",
+      "common",
+      "class",
+      "teacher",
+    ])),
+    classItem: await getClassroom(Number(params?.classNumber)),
+    studentForms: ([] as StudentForm[]).map((newsItem) => ({
+      ...newsItem,
+      postDate: newsItem.postDate.getTime(),
+    })),
+  },
+});
 
 export default Class;

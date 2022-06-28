@@ -21,22 +21,21 @@ import {
 import ContactChip from "@components/ContactChip";
 import TeacherCard from "@components/TeacherCard";
 
+// Backend
+import {
+  getClassroom,
+} from "@utils/backend/classroom/classroom";
+
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
+
+// Hooks
+import { useStudentAccount } from "@utils/hooks/auth";
 
 // Types
 import { Class as ClassType } from "@utils/types/class";
 import { Contact } from "@utils/types/contact";
 import { Student, Teacher } from "@utils/types/person";
-import { supabase } from "@utils/supabaseClient";
-import { ClassroomDB, ClassroomTable } from "@utils/types/database/class";
-import { db2Class } from "@utils/backend/database";
-import {
-  getCurrentAcedemicYear,
-  getCurrentSemester,
-} from "@utils/helpers/date";
-import { useStudentAccount } from "@utils/hooks/auth";
-import { getClassroom } from "@utils/backend/classroom/classroom";
 
 const ClassAdvisorsSection = ({
   classAdvisors,
@@ -148,7 +147,6 @@ const StudentListSection = ({
 // Page
 const Class: NextPage<{ classItem: ClassType }> = ({ classItem }) => {
   const { t } = useTranslation("common");
-
   useStudentAccount({ loginRequired: true });
 
   return (
