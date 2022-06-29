@@ -160,10 +160,7 @@ const ConnectSubjectDialog = ({
   async function handleSubmit() {
     if (!validate()) return;
 
-    const {
-      data: classroom,
-      error: classroomSelectionError,
-    } = await supabase
+    const { data: classroom, error: classroomSelectionError } = await supabase
       .from<{ id: number }>("classroom")
       .select("id")
       .match({ number: form.classroom, year: getCurrentAcedemicYear() })
@@ -177,15 +174,13 @@ const ConnectSubjectDialog = ({
     }
 
     if (mode == "add") {
-      const {
-        data: roomSubjects,
-        error: roomSubjectsSelectionError,
-      } = await supabase
-        .from<RoomSubjectTable>("room_subjects")
-        .select("*")
-        .eq("class", classroom.id)
-        .contains("teacher", [user?.id])
-        .eq("subject", subject.id);
+      const { data: roomSubjects, error: roomSubjectsSelectionError } =
+        await supabase
+          .from<RoomSubjectTable>("room_subjects")
+          .select("*")
+          .eq("class", classroom.id)
+          .contains("teacher", [user?.id])
+          .eq("subject", subject.id);
 
       // console.log(data);
       if (roomSubjectsSelectionError) {
@@ -215,15 +210,13 @@ const ConnectSubjectDialog = ({
       if (error) console.error(error);
     }
     if (mode == "edit") {
-      const {
-        data: roomSubjects,
-        error: roomSubjectsSelectionError,
-      } = await supabase
-        .from<RoomSubjectTable>("room_subjects")
-        .select("*")
-        .eq("class", classroom.id)
-        .contains("teacher", [user?.id])
-        .eq("subject", subject.id);
+      const { data: roomSubjects, error: roomSubjectsSelectionError } =
+        await supabase
+          .from<RoomSubjectTable>("room_subjects")
+          .select("*")
+          .eq("class", classroom.id)
+          .contains("teacher", [user?.id])
+          .eq("subject", subject.id);
 
       // console.log(data);
       if (roomSubjectsSelectionError) {

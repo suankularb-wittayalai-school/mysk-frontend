@@ -81,7 +81,7 @@ const UserSection = ({
   const locale = useRouter().locale as "en-US" | "th";
 
   // Dummybase
-  const notifCount = 1;
+  const notifCount = 0;
 
   return (
     <Section>

@@ -9,7 +9,7 @@ export type Class = {
   contacts: Array<Contact>;
   students: Array<Student>;
   year: number;
-  semester: 1 | 2;
+  semester: 1 | 2; // TODO: we dont need this
   subjects: SubjectListItem[];
 };
 

@@ -203,7 +203,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 }) => {
   const schedule: ScheduleType = (await getSchedule(
     "student",
-    Number(params?.classNumber)
+    await getClassIDFromNumber(Number(params?.classNumber))
   )) || {
     content: [
       { day: 1, content: [] },

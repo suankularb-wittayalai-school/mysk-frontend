@@ -27,6 +27,17 @@ const AddContactDialog = ({
   const { t } = useTranslation("common");
   const locale = useRouter().locale as "en-US" | "th";
 
+  // Types
+  type ContactIncludesObj = {
+    students: boolean;
+    teachers: boolean;
+    parents: boolean;
+    other: boolean;
+  };
+
+  type ContactIncludes = "students" | "teachers" | "parents" | "other";
+  type ContactIncludesStrict = "students" | "teachers" | "parents";
+
   // Constants
   const meansOfContact: ContactVia[] = [
     "Phone",
@@ -88,6 +99,7 @@ const AddContactDialog = ({
       students: boolean;
       teachers: boolean;
       parents: boolean;
+      other: boolean;
     };
   }>({
     id: 0,
@@ -98,6 +110,7 @@ const AddContactDialog = ({
       students: false,
       teachers: false,
       parents: false,
+      other: false,
     },
   });
 
@@ -112,10 +125,66 @@ const AddContactDialog = ({
           students: false,
           teachers: false,
           parents: false,
+          other: false,
         },
       }),
     [show]
   );
+
+  // useEffect(
+  //   () => console.log(getDefaultLabel(contact.includes, locale)),
+  //   [contact.includes]
+  // );
+
+  // Utils
+  // TODO: This cannot be used yet because updating KeyboardInput’s value is not yet supported
+  function getDefaultLabel(
+    includes: ContactIncludesObj,
+    locale: "en-US" | "th"
+  ): string {
+    const includesArray = (Object.keys(includes) as ContactIncludes[]).filter(
+      (key) => includes[key as ContactIncludes] && key != "other"
+    );
+    const numGroups = includesArray.length;
+
+    if (numGroups == 0) return "";
+
+    // For Thai label
+    let groupTypeMap = {
+      students: "นักเรียน",
+      teachers: "อาจารย์",
+      parents: "ผู้ปกครอง",
+    };
+
+    // For English label
+    if (locale == "en-US") {
+      groupTypeMap = {
+        students: "Students",
+        teachers: "Teachers",
+        parents: "Parents",
+      };
+    }
+
+    // (@SiravitPhokeed)
+    // This should not use the translation files because both locales must be
+    // available, no matter the user locale.
+    // Doesn’t really matter right now though, we can’t use it. :(
+
+    // FIXME: Use an object instead
+    return t(
+      `dialog.addContact.labelDefault.${
+        numGroups == 1 ? "one" : numGroups == 2 ? "two" : "three"
+      }${includes.other ? "_public" : ""}`,
+      numGroups == 1
+        ? { type1: groupTypeMap[includesArray[0] as ContactIncludesStrict] }
+        : numGroups == 2
+        ? {
+            type1: groupTypeMap[includesArray[0] as ContactIncludesStrict],
+            type2: groupTypeMap[includesArray[1] as ContactIncludesStrict],
+          }
+        : undefined
+    );
+  }
 
   function validate(): boolean {
     if (!contact.name.th) return false;
@@ -269,7 +338,21 @@ const AddContactDialog = ({
                 </label>
               </div>
               <div className="flex flex-row gap-2">
-                <input type="checkbox" id="includes-4" name="includes-4" />
+                <input
+                  type="checkbox"
+                  id="includes-4"
+                  name="includes-4"
+                  checked={contact.includes.other}
+                  onChange={(e) =>
+                    setContact({
+                      ...contact,
+                      includes: {
+                        ...contact.includes,
+                        other: e.target.checked,
+                      },
+                    })
+                  }
+                />
                 <label htmlFor="includes-4">
                   {t("dialog.addContact.includes.other")}
                 </label>

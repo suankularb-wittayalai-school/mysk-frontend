@@ -1,8 +1,9 @@
-// Modules
+// External libraries
 import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
+
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
@@ -21,8 +22,14 @@ import {
 import ContactChip from "@components/ContactChip";
 import TeacherCard from "@components/TeacherCard";
 
+// Backend
+import { getClassroom } from "@utils/backend/classroom/classroom";
+
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
+
+// Hooks
+import { useStudentAccount } from "@utils/hooks/auth";
 
 // Types
 import { Class as ClassType } from "@utils/types/class";
@@ -139,7 +146,7 @@ const StudentListSection = ({
 // Page
 const Class: NextPage<{ classItem: ClassType }> = ({ classItem }) => {
   const { t } = useTranslation("common");
-  const locale = useRouter().locale as "en-US" | "th";
+  useStudentAccount({ loginRequired: true });
 
   return (
     <>
@@ -169,29 +176,15 @@ const Class: NextPage<{ classItem: ClassType }> = ({ classItem }) => {
 export const getServerSideProps: GetServerSideProps = async ({
   locale,
   params,
-}) => {
-  // TODO: Fetch class here
-  const classItem: ClassType = {
-    id: 2,
-    number: 405,
-    contacts: [],
-    classAdvisors: [],
-    students: [],
-    year: 2022,
-    semester: 2,
-    subjects: [],
-  };
-
-  return {
-    props: {
-      ...(await serverSideTranslations(locale as string, [
-        "common",
-        "class",
-        "teacher",
-      ])),
-      classItem,
-    },
-  };
-};
+}) => ({
+  props: {
+    ...(await serverSideTranslations(locale as string, [
+      "common",
+      "class",
+      "teacher",
+    ])),
+    classItem: await getClassroom(Number(params?.classNumber)),
+  },
+});
 
 export default Class;

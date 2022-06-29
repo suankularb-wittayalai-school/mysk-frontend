@@ -91,7 +91,7 @@ const Teachers: NextPage = (): JSX.Element => {
       <MainSection>
         <Section className="!flex !flex-col !gap-4 !font-display">
           <Section>
-            <div className="sm:gap-6 md:grid-cols-[1fr_5fr] grid grid-cols-[1fr_3fr] items-stretch gap-4">
+            <div className="grid grid-cols-[1fr_3fr] items-stretch gap-4 sm:gap-6 md:grid-cols-[1fr_5fr]">
               {mainContent?.profile && (
                 <div className="aspect-square overflow-hidden rounded-xl sm:rounded-2xl">
                   <ProfilePicture src={mainContent.profile} />

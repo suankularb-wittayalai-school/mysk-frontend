@@ -35,6 +35,7 @@ module.exports = {
         "on-background": "var(--on-background)",
         surface: "var(--surface)",
         "on-surface": "var(--on-surface)",
+        "on-surface-translucent-38": "var(--on-surface-translucent-38)",
         "surface-variant": "var(--surface-variant)",
         "on-surface-variant": "var(--on-surface-variant)",
         outline: "var(--outline)",
@@ -66,8 +67,8 @@ module.exports = {
         "9xl": "4rem",
       },
       fontFamily: {
-        display: ["var(--font-display)"],
-        sans: ["var(--font-sans)"],
+        display: ["-apple-system-headline", "var(--font-display)"],
+        sans: ["-apple-system", "var(--font-sans)"],
       },
       borderRadius: {
         none: "0",
