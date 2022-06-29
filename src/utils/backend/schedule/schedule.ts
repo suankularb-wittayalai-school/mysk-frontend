@@ -2,7 +2,7 @@
 import { PostgrestError } from "@supabase/supabase-js";
 
 // Backend
-import { db2SchedulePeriod, db2Subject } from "@utils/backend/database";
+import { db2SchedulePeriod } from "@utils/backend/database";
 import { isOverlappingExistingItems } from "@utils/backend/schedule/utils";
 
 // Helpers
@@ -15,14 +15,12 @@ import {
 import { supabase } from "@utils/supabaseClient";
 
 // Types
-import { ClassroomTable } from "@utils/types/database/class";
 import {
   ScheduleItemDB,
   ScheduleItemTable,
 } from "@utils/types/database/schedule";
 import { Role } from "@utils/types/person";
 import { Schedule, SchedulePeriod } from "@utils/types/schedule";
-import { getClassIDFromNumber } from "../classroom/classroom";
 
 /**
  * Construct a Schedule from Schedule Items from the student’s perspective

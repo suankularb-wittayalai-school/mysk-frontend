@@ -8,12 +8,12 @@ import { MaterialIcon } from "@suankularb-components/react";
 import ContactIcon from "@components/icons/ContactIcon";
 
 // Helpers
+import { getContactURL } from "@utils/helpers/contact";
 import { getLocaleString } from "@utils/helpers/i18n";
 
 // Types
 import { LangCode } from "@utils/types/common";
 import { Contact } from "@utils/types/contact";
-import { getContactURL } from "@utils/helpers/contact";
 
 const ContactIconList = ({
   contacts,

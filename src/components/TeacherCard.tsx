@@ -12,6 +12,7 @@ import {
 } from "@suankularb-components/react";
 
 // Components
+import ContactIconList from "@components/ContactIconList";
 import ProfilePicture from "@components/ProfilePicture";
 
 // Helpers
@@ -19,7 +20,6 @@ import { nameJoiner } from "@utils/helpers/name";
 
 // Types
 import { Teacher } from "@utils/types/person";
-import ContactIconList from "./ContactIconList";
 
 interface TeacherCardProps {
   teacher: Teacher;

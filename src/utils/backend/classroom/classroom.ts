@@ -152,7 +152,6 @@ export async function addAdvisorToClassroom(
       .update({ advisors: [...classroom.advisors, teacherID] })
       .eq("id", classID)
       .single();
-  // UPDATE contacts value ... WHERE id = ?;
 
   return { data: updatedClassroom, error: classroomUpdatingError };
 }

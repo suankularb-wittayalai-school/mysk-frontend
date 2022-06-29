@@ -49,6 +49,7 @@ import {
   addContactToClassroom,
   getClassroom,
 } from "@utils/backend/classroom/classroom";
+import { createContact } from "@utils/backend/contact";
 
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
@@ -61,7 +62,6 @@ import { Class as ClassType } from "@utils/types/class";
 import { Contact } from "@utils/types/contact";
 import { Student, Teacher } from "@utils/types/person";
 import { StudentForm } from "@utils/types/news";
-import { createContact } from "@utils/backend/contact";
 
 const StudentFormCard = ({ form }: { form: StudentForm }): JSX.Element => {
   const locale = useRouter().locale as "en-US" | "th";
