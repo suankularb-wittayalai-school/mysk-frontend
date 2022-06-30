@@ -4,6 +4,7 @@ import { Class } from "@utils/types/class";
 import { Contact } from "@utils/types/contact";
 import { ClassroomDB } from "@utils/types/database/class";
 import { ContactDB } from "@utils/types/database/contact";
+import { InfoDB } from "@utils/types/database/news";
 import { StudentDB, TeacherDB } from "@utils/types/database/person";
 import { ScheduleItemDB } from "@utils/types/database/schedule";
 import {
@@ -11,6 +12,11 @@ import {
   SubjectGroupDB,
   SubjectTable,
 } from "@utils/types/database/subject";
+import {
+  NewsItemInfo,
+  NewsItemInfoNoDate,
+  NewsItemNoDate,
+} from "@utils/types/news";
 import { Role, Student, Teacher } from "@utils/types/person";
 import { SchedulePeriod } from "@utils/types/schedule";
 import { Subject, SubjectListItem } from "@utils/types/subject";
@@ -24,6 +30,28 @@ export function db2Contact(contact: ContactDB): Contact {
     },
     value: contact.value,
     type: contact.type,
+  };
+}
+
+export function dbInfo2News(info: InfoDB): NewsItemInfoNoDate {
+  console.log({ title: info.parent });
+
+  return {
+    id: info.id,
+    type: "info",
+    postDate: info.created_at,
+    image: info.parent.image || "",
+    done: false,
+    content: {
+      title: {
+        "en-US": info.parent.title_en || "",
+        th: info.parent.title_th,
+      },
+      description: {
+        "en-US": info.parent.description_en || "",
+        th: info.parent.description_th,
+      },
+    },
   };
 }
 

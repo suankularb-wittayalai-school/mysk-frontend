@@ -22,12 +22,15 @@ import {
 // Components
 import Layout from "@components/Layout";
 
+// Backend
+import { getInfos, getLandingFeed } from "@utils/backend/news/info";
+
 // Types
 import { LangCode } from "@utils/types/common";
-import { NewsContent, NewsItem, NewsList } from "@utils/types/news";
+import { NewsItem, NewsList } from "@utils/types/news";
 
 // Helpers
-import { getLocaleObj } from "@utils/helpers/i18n";
+import { getLocaleString } from "@utils/helpers/i18n";
 
 // Hooks
 import { useSession } from "@utils/hooks/auth";
@@ -99,23 +102,18 @@ const LandingFeedItem = ({ feedItem }: { feedItem: NewsItem }): JSX.Element => {
                 src={feedItem.image}
                 layout="fill"
                 objectFit="cover"
-                alt={
-                  (getLocaleObj(feedItem.content, locale) as NewsContent).title
-                }
+                alt={getLocaleString(feedItem.content.title, locale)}
               />
             ) : (
-              (getLocaleObj(feedItem.content, locale) as NewsContent).title
+              getLocaleString(feedItem.content.title, locale)
             )}
           </div>
           <div className="flex flex-col gap-1">
             <h3 className="max-lines-2 font-display text-2xl font-bold leading-none">
-              {(getLocaleObj(feedItem.content, locale) as NewsContent).title}
+              {getLocaleString(feedItem.content.title, locale)}
             </h3>
             <p className="max-lines-5 leading-tight">
-              {
-                (getLocaleObj(feedItem.content, locale) as NewsContent)
-                  .supportingText
-              }
+              {getLocaleString(feedItem.content.description, locale)}
             </p>
           </div>
         </a>
@@ -230,57 +228,12 @@ Landing.getLayout = (page: NextPage): JSX.Element => (
   <Layout navIsTransparent>{page}</Layout>
 );
 
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
-  const feed: Feed = {
-    lastUpdated: new Date(2022, 4, 9),
-    content: [
-      {
-        id: 4,
-        type: "news",
-        postDate: new Date(2021, 8, 16),
-        content: {
-          "en-US": {
-            title: "Certificates Announcement",
-            supportingText:
-              "Announcement of the 2020 Suankularb Wittayalai winners of certificates.",
-          },
-          th: {
-            title: "ประกาศเกียรติคุณ",
-            supportingText:
-              "ประกาศเกียรติคุณโรงเรียนสวนกุหลาบวิทยาลัย ประจำปีการศึกษา 2563",
-          },
-        },
-      },
-      {
-        id: 2,
-        type: "news",
-        postDate: new Date(2020, 4, 12),
-        image: "/images/dummybase/sk-teaching-practice.webp",
-        content: {
-          "en-US": {
-            title: "SK Teaching Practice",
-            supportingText:
-              "The stories we’re about to tell might seem small, but can go a long way in creating an enjoyable \
-            environment for teachers and students alike.",
-          },
-          th: {
-            title: "การบริหารจัดการชั้นเรียน",
-            supportingText:
-              "เรื่องที่พวกเราจะเล่านั้น เป็นเพียงประเด็นเล็กๆ ที่ใช้บริหารจัดการชั้นเรียนได้อยู่หมัด มันดึงความสนใจของเด็กน้อยจากมือถือได้ \
-            แถมมีเสียงหัวเราะเกิดขึ้นในชั้นเรียน นักเรียนได้ค้นคว้าได้ทดลอง ได้ฝึกปฏิบัติ",
-          },
-        },
-      },
-    ],
-  };
-
-  return {
-    props: {
-      ...(await serverSideTranslations(locale as string, [
-        "common",
-        "landing",
-      ])),
-      feed,
-    },
-  };
-};
+export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
+  props: {
+    ...(await serverSideTranslations(locale as string, [
+      "common",
+      "landing",
+    ])),
+    feed: await getLandingFeed(),
+  },
+});
