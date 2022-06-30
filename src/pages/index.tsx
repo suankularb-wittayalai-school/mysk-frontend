@@ -40,7 +40,7 @@ const LandingFeed = ({ feed }: { feed: Feed }): JSX.Element => {
   return (
     <section
       aria-label={t("news.title")}
-      className="!p-0 backdrop-blur-sm sm:rounded-xl sm:shadow md:shadow-none"
+      className="mt-16 !p-0 backdrop-blur-sm sm:mt-0 sm:rounded-xl sm:shadow md:shadow-none"
     >
       <CardHeader
         icon={<MaterialIcon icon="newspaper" className="text-on-surface" />}
@@ -106,7 +106,7 @@ const LandingFeedItem = ({ feedItem }: { feedItem: NewsItem }): JSX.Element => {
             )}
           </div>
           <div className="flex flex-col gap-1">
-            <h3 className="font-display text-2xl font-bold leading-none">
+            <h3 className="max-lines-2 font-display text-2xl font-bold leading-none">
               {(getLocaleString(feedItem.content, locale) as NewsContent).title}
             </h3>
             <p className="max-lines-5 leading-tight">
@@ -128,8 +128,8 @@ const LandingBanner = (): JSX.Element => {
   const locale = useRouter().locale as "en-US" | "th";
 
   return (
-    <header className="flex flex-col gap-6 font-display">
-      <h2 className="text-[10rem] font-bold leading-none">
+    <header className="flex flex-col gap-2 font-display sm:gap-6">
+      <h2 className="text-[7rem] font-bold leading-none sm:text-[10rem]">
         <Trans i18nKey="brand.nameWithAccent" ns="common">
           My
           <span className="dark:text-[#FF80C3]">
@@ -142,8 +142,8 @@ const LandingBanner = (): JSX.Element => {
         </Trans>
       </h2>
       <div className="flex flex-col gap-2">
-        <div className="flex flex-row items-center gap-x-6 leading-tight">
-          <div className="relative aspect-square h-28">
+        <div className="flex flex-row items-center gap-2 leading-tight sm:gap-6">
+          <div className="relative aspect-square h-24 sm:h-28">
             <Image
               src="/images/branding/logo-white.svg"
               layout="fill"
@@ -151,7 +151,7 @@ const LandingBanner = (): JSX.Element => {
               alt={t("brand.logoAlt", { ns: "common" })}
             />
           </div>
-          <p className="text-3xl">
+          <p className="text-xl sm:text-3xl">
             <Trans i18nKey="brand.slogan" ns="common">
               Education management
               <br />
