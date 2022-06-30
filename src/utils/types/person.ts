@@ -19,6 +19,11 @@ export type Person = {
   isAdmin?: boolean;
 };
 
+export type PersonWName = {
+  id: Person["id"];
+  name: Person["name"];
+};
+
 export type PersonName = {
   firstName: string;
   middleName?: string;

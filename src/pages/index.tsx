@@ -1,7 +1,7 @@
 // Modules
 import { useEffect } from "react";
 
-import type { GetStaticProps, NextPage } from "next";
+import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
@@ -230,7 +230,7 @@ Landing.getLayout = (page: NextPage): JSX.Element => (
   <Layout navIsTransparent>{page}</Layout>
 );
 
-export const getServerSideProps: GetStaticProps = async ({ locale }) => {
+export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   const feed: Feed = {
     lastUpdated: new Date(2022, 4, 9),
     content: [
