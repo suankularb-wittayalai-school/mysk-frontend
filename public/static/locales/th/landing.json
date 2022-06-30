@@ -5,6 +5,6 @@
   "news": {
     "title": "ข่าวสารสวนกุหลาบ",
     "lastUpdated": "ล่าสุด {{lastUpdated}}",
-    "expand": "ดูทั้งหมด"
+    "reachedEnd": "ไม่มีข่าวสารอื่นๆ แล้ว"
   }
 }

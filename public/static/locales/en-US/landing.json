@@ -5,6 +5,6 @@
   "news": {
     "title": "Suankularb News",
     "lastUpdated": "Last updated {{lastUpdated}}",
-    "expand": "Expand"
+    "reachedEnd": "You’ve reached the end."
   }
 }

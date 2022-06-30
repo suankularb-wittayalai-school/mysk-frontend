@@ -1,5 +1,5 @@
 // Modules
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import type { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
@@ -13,7 +13,6 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 // SK Components
 import {
   Button,
-  Card,
   CardHeader,
   LinkButton,
   MaterialIcon,
@@ -24,38 +23,55 @@ import {
 import Layout from "@components/Layout";
 
 // Types
-import { NewsContent, NewsItem, NewsList } from "@utils/types/news";
+import { LangCode } from "@utils/types/common";
+import { NewsContent, NewsItem, NewsListNoDate } from "@utils/types/news";
 
 // Hooks
 import { useSession } from "@utils/hooks/auth";
 import { getLocaleString } from "@utils/helpers/i18n";
-import { LangCode } from "@utils/types/common";
 
 // Page-specific types
-type Feed = { lastUpdated: Date; content: NewsList };
+type Feed = { lastUpdated: number; content: NewsListNoDate };
 
 // News
 const LandingFeed = ({ feed }: { feed: Feed }): JSX.Element => {
   const { t } = useTranslation("landing");
-  const router = useRouter();
-  const session = useSession();
-
-  const [fullscreen, setFullScreen] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (session?.user) {
-      if (session.user.user_metadata.role === "student") router.push("/s/home");
-      else if (session.user.user_metadata.role === "teacher")
-        router.push("/t/home");
-    }
-  }, [session, router]);
 
   return (
-    <section aria-label={t("news.title")} className="overflow-y-auto">
+    <section
+      aria-label={t("news.title")}
+      className="!p-0 backdrop-blur-sm sm:rounded-xl sm:shadow md:shadow-none"
+    >
+      <CardHeader
+        icon={<MaterialIcon icon="newspaper" className="text-on-surface" />}
+        title={
+          <h2 className="font-display text-lg font-medium">
+            {t("news.title")}
+          </h2>
+        }
+        label={
+          <p className="font-display">
+            <Trans i18nKey="news.lastUpdated" ns="landing">
+              {{
+                lastUpdated: new Date(feed.lastUpdated).toLocaleDateString(
+                  useRouter().locale,
+                  { year: "numeric", month: "long", day: "numeric" }
+                ),
+              }}
+            </Trans>
+          </p>
+        }
+      />
       <ul className="flex flex-col">
         {feed.content.map((feedItem) => (
           <LandingFeedItem key={feedItem.id} feedItem={feedItem} />
         ))}
+        <li
+          className="container-secondary mt-6 py-4 px-6
+            text-center font-display text-lg font-medium sm:hidden"
+        >
+          {t("news.reachedEnd")}
+        </li>
       </ul>
     </section>
   );
@@ -67,7 +83,10 @@ const LandingFeedItem = ({ feedItem }: { feedItem: NewsItem }): JSX.Element => {
   return (
     <li key={feedItem.id}>
       <Link href={`/news/${feedItem.id}`}>
-        <a className="has-action relative grid grid-cols-2 gap-x-6 overflow-hidden rounded-xl p-2">
+        <a
+          className="has-action relative grid grid-cols-2 gap-x-6 overflow-hidden p-2
+            md:rounded-xl"
+        >
           <div
             className="surface relative grid h-full min-h-[8rem] w-full place-items-center
               overflow-hidden rounded-xl bg-cover p-4 text-center font-medium"
@@ -173,7 +192,17 @@ const LandingBanner = (): JSX.Element => {
 
 // Page
 export default function Landing({ feed }: { feed: Feed }) {
+  const router = useRouter();
+  const session = useSession();
   const { t } = useTranslation(["landing", "common"]);
+
+  useEffect(() => {
+    if (session?.user) {
+      if (session.user.user_metadata.role === "student") router.push("/s/home");
+      else if (session.user.user_metadata.role === "teacher")
+        router.push("/t/home");
+    }
+  }, [session, router]);
 
   return (
     <>
@@ -182,7 +211,7 @@ export default function Landing({ feed }: { feed: Feed }) {
       </Head>
       <div
         className="min-h-screen bg-[url('/images/landing.webp')]
-          bg-cover bg-fixed bg-bottom pt-[4.5rem] text-on-surface"
+          bg-cover bg-fixed bg-bottom text-on-surface sm:pt-[4.5rem]"
       >
         <RegularLayout>
           <div className="flex flex-col gap-y-6 md:grid md:grid-cols-2 md:gap-x-6">
