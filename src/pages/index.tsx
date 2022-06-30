@@ -17,23 +17,24 @@ import {
   CardHeader,
   LinkButton,
   MaterialIcon,
+  RegularLayout,
 } from "@suankularb-components/react";
 
 // Components
 import Layout from "@components/Layout";
 
 // Types
-import { NewsItem, NewsList } from "@utils/types/news";
+import { NewsContent, NewsItem, NewsList } from "@utils/types/news";
 
 // Hooks
 import { useSession } from "@utils/hooks/auth";
+import { getLocaleString } from "@utils/helpers/i18n";
+
+// Page-specific types
+type Feed = { lastUpdated: Date; content: NewsList };
 
 // News
-const LandingFeed = ({
-  feed,
-}: {
-  feed: { lastUpdated: Date; content: NewsList };
-}): JSX.Element => {
+const LandingFeed = ({ feed }: { feed: Feed }): JSX.Element => {
   const { t } = useTranslation("landing");
   const router = useRouter();
   const session = useSession();
@@ -42,78 +43,22 @@ const LandingFeed = ({
 
   useEffect(() => {
     if (session?.user) {
-      if (session.user.user_metadata.role === "student") {
-        router.push("/s/home");
-      } else if (session.user.user_metadata.role === "teacher") {
+      if (session.user.user_metadata.role === "student") router.push("/s/home");
+      else if (session.user.user_metadata.role === "teacher")
         router.push("/t/home");
-      }
     }
   }, [session, router]);
 
   return (
     <section
       aria-label={t("news.title")}
-      className="shadow-1 fixed bottom-[6rem] right-2 w-[calc(100vw-1rem)]
-        rounded-xl bg-[#fbfcff88] text-on-surface backdrop-blur-xl
-        dark:bg-[#191c1e88] sm:bottom-2 sm:w-[22.5rem]
-        md:absolute md:right-4 md:bottom-4 md:h-[calc(100vh-6.5rem)]"
+      className="overflow-y-auto text-on-surface"
     >
-      <Card
-        type="stacked"
-        appearance="tonal"
-        className="h-full !bg-transparent"
-      >
-        <button
-          aria-label={t("news.expand")}
-          onClick={() => setFullScreen(!fullscreen)}
-          className="has-action relative text-left"
-        >
-          <CardHeader
-            icon="newspaper"
-            title={
-              <h2 className="font-display text-lg font-medium">
-                {t("news.title")}
-              </h2>
-            }
-            label={
-              <p className="font-display">
-                <Trans i18nKey="news.lastUpdated" ns="landing">
-                  {{
-                    lastUpdated: feed.lastUpdated.toLocaleDateString(
-                      useRouter().locale,
-                      { year: "numeric", month: "long", day: "numeric" }
-                    ),
-                  }}
-                </Trans>
-              </p>
-            }
-            end={
-              <Button
-                type="text"
-                iconOnly
-                icon={
-                  fullscreen ? (
-                    <MaterialIcon icon="expand_more" />
-                  ) : (
-                    <MaterialIcon icon="expand_less" />
-                  )
-                }
-                className="md:!hidden"
-              />
-            }
-          />
-        </button>
-        <div
-          className="overflow-y-auto transition-[height]"
-          style={{ height: fullscreen ? window.innerHeight - 172 : 0 }}
-        >
-          <ul className="flex flex-col">
-            {feed.content.map((feedItem) => (
-              <LandingFeedItem key={feedItem.id} feedItem={feedItem} />
-            ))}
-          </ul>
-        </div>
-      </Card>
+      <ul className="flex flex-col">
+        {feed.content.map((feedItem) => (
+          <LandingFeedItem key={feedItem.id} feedItem={feedItem} />
+        ))}
+      </ul>
     </section>
   );
 };
@@ -124,23 +69,28 @@ const LandingFeedItem = ({ feedItem }: { feedItem: NewsItem }): JSX.Element => {
   return (
     <li key={feedItem.id}>
       <Link href={`/news/${feedItem.id}`}>
-        <a className="has-action relative flex flex-col">
+        <a className="has-action relative flex flex-row gap-x-6 overflow-hidden rounded-2xl p-2">
           <div
-            className="surface grid h-48 w-full place-items-center bg-cover text-center"
+            className="surface grid aspect-square h-32 place-items-center rounded-2xl bg-cover text-center
+              font-medium sm:aspect-[2/1]"
             style={{
               backgroundImage: feedItem.image
                 ? `url('${feedItem.image}')`
                 : "none",
             }}
           >
-            {!feedItem.image && feedItem.content[locale].title}
+            {!feedItem.image &&
+              (getLocaleString(feedItem.content, locale) as NewsContent).title}
           </div>
-          <div className="flex flex-col p-4">
-            <h3 className="font-display text-lg font-bold">
-              {feedItem.content[locale].title}
+          <div className="flex flex-col">
+            <h3 className="font-display text-2xl font-bold">
+              {(getLocaleString(feedItem.content, locale) as NewsContent).title}
             </h3>
             <p className="max-lines-2">
-              {feedItem.content[locale].supportingText}
+              {
+                (getLocaleString(feedItem.content, locale) as NewsContent)
+                  .supportingText
+              }
             </p>
           </div>
         </a>
@@ -154,75 +104,11 @@ const LandingBanner = (): JSX.Element => {
   const { t } = useTranslation(["landing", "common"]);
   const locale = useRouter().locale as "en-US" | "th";
 
-  return (
-    <header
-      className="flex h-full flex-col items-center gap-16 p-8 font-display
-        sm:items-start"
-    >
-      <div
-        className="flex flex-col items-center text-center
-          sm:flex-row sm:gap-8 sm:text-left"
-      >
-        {/* Logo */}
-        <div className="relative h-40 w-40">
-          <Image
-            alt={t("brand.logoAlt", { ns: "common" })}
-            layout="fill"
-            priority={true}
-            src="/images/branding/logo-white.svg"
-          />
-        </div>
-
-        {/* Text */}
-        <div className="w-96 font-display leading-tight text-white">
-          <h1 className="text-9xl font-bold">
-            <Trans i18nKey="brand.nameWithAccent" ns="common">
-              My
-              <span className="dark text-secondary">SK</span>
-            </Trans>
-          </h1>
-          <p className="text-4xl font-light">
-            {t("brand.school", { ns: "common" })}
-          </p>
-        </div>
-      </div>
-
-      {/* Actions */}
-      <div className="light flex flex-col items-center gap-4 sm:items-start">
-        <div className="flex flex-row flex-wrap items-center gap-2">
-          <LinkButton
-            label={t("login")}
-            type="filled"
-            icon={<MaterialIcon icon="login" />}
-            url="/account/login"
-            LinkElement={Link}
-            className="has-action--tertiary !bg-tertiary-container !text-tertiary"
-          />
-          <LinkButton
-            label={t("help")}
-            type="outlined"
-            url="/help"
-            LinkElement={Link}
-            className="!bg-transparent !text-tertiary-container
-              !outline-tertiary-container hover:!bg-tertiary-translucent-08
-              focus:!bg-tertiary-translucent-12 focus-visible:!bg-tertiary"
-          />
-        </div>
-
-        {/* Change language */}
-        <Link href="/" locale={locale == "en-US" ? "th" : "en-US"}>
-          <a className="flex flex-row items-center gap-2 text-base text-tertiary-container">
-            <MaterialIcon icon="translate" />
-            <span>{t("changeLang")}</span>
-          </a>
-        </Link>
-      </div>
-    </header>
-  );
+  return <header className=""></header>;
 };
 
 // Page
-export default function Landing() {
+export default function Landing({ feed }: { feed: Feed }) {
   const { t } = useTranslation(["landing", "common"]);
 
   return (
@@ -230,18 +116,13 @@ export default function Landing() {
       <Head>
         <title>{t("brand.name", { ns: "common" })}</title>
       </Head>
-      <div className="h-screen bg-[url('/images/landing.png')] bg-cover bg-bottom sm:bg-center">
-        <div
-          className="h-full bg-gradient-to-b
-            from-[#00000033] via-transparent to-[#00000033] 
-            dark:from-[#00000099] dark:via-[#00000066] dark:to-[#00000099]
-            sm:bg-gradient-to-r sm:pt-[4.5rem]"
-        >
-          <LandingBanner />
-          <LandingFeed
-            feed={{ lastUpdated: new Date(2022, 4, 9), content: [] }}
-          />
-        </div>
+      <div className="min-h-screen bg-[url('/images/landing.png')] bg-cover bg-fixed bg-bottom pt-[4.5rem]">
+        <RegularLayout>
+          <div className="layout-grid-cols-2">
+            <LandingBanner />
+            <LandingFeed feed={feed} />
+          </div>
+        </RegularLayout>
       </div>
     </>
   );
@@ -251,8 +132,57 @@ Landing.getLayout = (page: NextPage): JSX.Element => (
   <Layout navIsTransparent>{page}</Layout>
 );
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale as string, ["common", "landing"])),
-  },
-});
+export const getServerSideProps: GetStaticProps = async ({ locale }) => {
+  const feed: Feed = {
+    lastUpdated: new Date(2022, 4, 9).getTime(),
+    content: [
+      {
+        id: 4,
+        type: "news",
+        postDate: new Date(2021, 8, 16).getTime(),
+        content: {
+          "en-US": {
+            title: "Certificates Announcement",
+            supportingText:
+              "Announcement of the 2020 Suankularb Wittayalai winners of certificates.",
+          },
+          th: {
+            title: "ประกาศเกียรติคุณ",
+            supportingText:
+              "ประกาศเกียรติคุณโรงเรียนสวนกุหลาบวิทยาลัย ประจำปีการศึกษา 2563",
+          },
+        },
+      },
+      {
+        id: 2,
+        type: "news",
+        postDate: new Date(2020, 4, 12).getTime(),
+        image: "/images/dummybase/sk-teaching-practice.webp",
+        content: {
+          "en-US": {
+            title: "SK Teaching Practice",
+            supportingText:
+              "The stories we’re about to tell might seem small, but can go a long way in creating an enjoyable \
+            environment for teachers and students alike.",
+          },
+          th: {
+            title: "การบริหารจัดการชั้นเรียน",
+            supportingText:
+              "เรื่องที่พวกเราจะเล่านั้น เป็นเพียงประเด็นเล็กๆ ที่ใช้บริหารจัดการชั้นเรียนได้อยู่หมัด มันดึงความสนใจของเด็กน้อยจากมือถือได้ \
+            แถมมีเสียงหัวเราะเกิดขึ้นในชั้นเรียน นักเรียนได้ค้นคว้าได้ทดลอง ได้ฝึกปฏิบัติ",
+          },
+        },
+      },
+    ],
+  };
+
+  return {
+    props: {
+      ...(await serverSideTranslations(locale as string, [
+        "common",
+        "landing",
+      ])),
+      feed,
+    },
+  };
+};
