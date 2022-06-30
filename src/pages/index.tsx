@@ -51,10 +51,7 @@ const LandingFeed = ({ feed }: { feed: Feed }): JSX.Element => {
   }, [session, router]);
 
   return (
-    <section
-      aria-label={t("news.title")}
-      className="overflow-y-auto text-on-surface"
-    >
+    <section aria-label={t("news.title")} className="overflow-y-auto">
       <ul className="flex flex-col">
         {feed.content.map((feedItem) => (
           <LandingFeedItem key={feedItem.id} feedItem={feedItem} />
@@ -70,10 +67,10 @@ const LandingFeedItem = ({ feedItem }: { feedItem: NewsItem }): JSX.Element => {
   return (
     <li key={feedItem.id}>
       <Link href={`/news/${feedItem.id}`}>
-        <a className="has-action relative grid grid-cols-2 gap-x-6 overflow-hidden rounded-2xl p-2">
+        <a className="has-action relative grid grid-cols-2 gap-x-6 overflow-hidden rounded-xl p-2">
           <div
-            className="surface relative grid h-full min-h-[8rem] w-full place-items-center overflow-hidden
-              rounded-2xl bg-cover p-4 text-center font-medium"
+            className="surface relative grid h-full min-h-[8rem] w-full place-items-center
+              overflow-hidden rounded-xl bg-cover p-4 text-center font-medium"
           >
             {feedItem.image ? (
               <Image
@@ -112,19 +109,64 @@ const LandingBanner = (): JSX.Element => {
   const locale = useRouter().locale as "en-US" | "th";
 
   return (
-    <header className="flex flex-col">
-      <h2 className="font-display text-[10rem] font-bold leading-none text-on-surface">
+    <header className="flex flex-col gap-6 font-display">
+      <h2 className="text-[10rem] font-bold leading-none">
         <Trans i18nKey="brand.nameWithAccent" ns="common">
           My
-          <span className="text-[#FF80C3]">
+          <span className="dark:text-[#FF80C3]">
             {/* (@SiravitPhokeed)
                 This color is `secondary70` in the Figma palette, but not the Tailwind palette.
-                Should we add these kinds of color?
+                Should we add it (and others like it)?
               */}
             SK
           </span>
         </Trans>
       </h2>
+      <div className="flex flex-col gap-2">
+        <div className="flex flex-row items-center gap-x-6 leading-tight">
+          <div className="relative aspect-square h-28">
+            <Image
+              src="/images/branding/logo-white.svg"
+              layout="fill"
+              priority
+              alt={t("brand.logoAlt", { ns: "common" })}
+            />
+          </div>
+          <p className="text-3xl">
+            <Trans i18nKey="brand.slogan" ns="common">
+              Education management
+              <br />
+              Suankularb Wittayalai School
+            </Trans>
+          </p>
+        </div>
+        <div className="flex flex-row flex-wrap items-center gap-2">
+          <LinkButton
+            label={t("login")}
+            type="filled"
+            icon={<MaterialIcon icon="login" />}
+            url="/account/login"
+            LinkElement={Link}
+            className="has-action--tertiary !bg-tertiary !text-on-tertiary"
+          />
+          <LinkButton
+            label={t("help")}
+            type="tonal"
+            url="/help"
+            LinkElement={Link}
+          />
+          <Link href="/" locale={locale == "en-US" ? "th" : "en-US"}>
+            <a title={t("changeLang")}>
+              <Button
+                type="outlined"
+                icon={<MaterialIcon icon="translate" />}
+                iconOnly
+                attr={{ "aria-hidden": true }}
+              />
+            </a>
+          </Link>
+        </div>
+      </div>
     </header>
   );
 };
@@ -139,8 +181,8 @@ export default function Landing({ feed }: { feed: Feed }) {
         <title>{t("brand.name", { ns: "common" })}</title>
       </Head>
       <div
-        className="min-h-screen bg-[url('/images/landing.png')]
-          bg-cover bg-fixed bg-bottom pt-[4.5rem]"
+        className="min-h-screen bg-[url('/images/landing.webp')]
+          bg-cover bg-fixed bg-bottom pt-[4.5rem] text-on-surface"
       >
         <RegularLayout>
           <div className="flex flex-col gap-y-6 md:grid md:grid-cols-2 md:gap-x-6">

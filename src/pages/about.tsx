@@ -116,10 +116,11 @@ const DevelopersBanner = ({
             sm:justify-end sm:px-6 md:mt-8 md:justify-center"
           >
             <Image
-              src="/images/core-team.png"
+              src="/images/core-team.webp"
               height={256}
               width={433.5}
               alt={t("banner.groupPhotoAlt")}
+              priority
             />
           </div>
         </div>
