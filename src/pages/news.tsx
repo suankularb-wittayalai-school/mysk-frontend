@@ -22,7 +22,7 @@ import {
 import NewsCard from "@components/NewsCard";
 
 // Types
-import { NewsItemType, NewsList, NewsListNoDate } from "@utils/types/news";
+import { NewsItemType, NewsList, NewsList } from "@utils/types/news";
 
 // Helpers
 import { filterNews } from "@utils/helpers/filter-news";
@@ -50,7 +50,7 @@ const NewsFilter = ({
   );
 };
 
-const NewsMasonry = ({ news }: { news: NewsListNoDate }): JSX.Element => (
+const NewsMasonry = ({ news }: { news: NewsList }): JSX.Element => (
   <Masonry
     role="feed"
     breakpointCols={{
@@ -76,16 +76,16 @@ const NewsMasonry = ({ news }: { news: NewsListNoDate }): JSX.Element => (
 );
 
 // Page
-const NewsPage: NextPage<{ news: NewsListNoDate }> = ({
+const NewsPage: NextPage<{ news: NewsList }> = ({
   news,
 }): JSX.Element => {
   const { t } = useTranslation(["news", "common"]);
   const [newsFilter, setNewsFilter] = useState<Array<NewsItemType>>([]);
-  const [filteredNews, setFilteredNews] = useState<NewsListNoDate>(news);
+  const [filteredNews, setFilteredNews] = useState<NewsList>(news);
 
   useEffect(
     () =>
-      filterNews(news, newsFilter, (newNews: NewsListNoDate) =>
+      filterNews(news, newsFilter, (newNews: NewsList) =>
         setFilteredNews(newNews)
       ),
     [news, newsFilter]

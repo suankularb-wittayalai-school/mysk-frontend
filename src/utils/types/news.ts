@@ -1,5 +1,4 @@
 export type NewsList = Array<NewsItem>;
-export type NewsListNoDate = Array<NewsItemNoDate>;
 
 export type NewsItem =
   | NewsItemNews
@@ -7,16 +6,11 @@ export type NewsItem =
   | NewsItemForm
   | NewsItemPayment;
 
-export type NewsItemNoDate = NewsItem & {
-  postDate: number;
-  dueDate?: number;
-};
-
 export type NewsItemType = "news" | "stats" | "form" | "payment";
 
 type NewsItemCommon = {
   id: number;
-  postDate: Date;
+  postDate: number;
   image?: string;
   done?: boolean;
   content: {
@@ -36,14 +30,14 @@ export type NewsItemStats = NewsItemCommon & {
 export type NewsItemForm = NewsItemCommon & {
   type: "form";
   frequency?: "once" | "weekly" | "monthly";
-  dueDate?: Date;
+  dueDate?: number;
   done: boolean;
 };
 
 export type NewsItemPayment = NewsItemCommon & {
   type: "payment";
   amount?: number;
-  dueDate?: Date;
+  dueDate?: number;
   done: boolean;
 };
 

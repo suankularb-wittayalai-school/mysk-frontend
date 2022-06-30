@@ -1,4 +1,4 @@
-import { NewsList, NewsListNoDate } from "@utils/types/news";
+import { NewsList, NewsList } from "@utils/types/news";
 
 export function filterNews(
   news: NewsList,
@@ -7,13 +7,13 @@ export function filterNews(
 ): void;
 
 export function filterNews(
-  news: NewsListNoDate,
+  news: NewsList,
   newsFilter: Array<string>,
-  setFilteredNews: (newNews: NewsListNoDate) => void
+  setFilteredNews: (newNews: NewsList) => void
 ): void;
 
 export function filterNews(
-  news: NewsList | NewsListNoDate,
+  news: NewsList | NewsList,
   newsFilter: Array<string>,
   setFilteredNews: any
 ) {

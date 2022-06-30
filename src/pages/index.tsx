@@ -24,14 +24,16 @@ import Layout from "@components/Layout";
 
 // Types
 import { LangCode } from "@utils/types/common";
-import { NewsContent, NewsItem, NewsListNoDate } from "@utils/types/news";
+import { NewsContent, NewsItem, NewsList } from "@utils/types/news";
+
+// Helpers
+import { getLocaleString } from "@utils/helpers/i18n";
 
 // Hooks
 import { useSession } from "@utils/hooks/auth";
-import { getLocaleString } from "@utils/helpers/i18n";
 
 // Page-specific types
-type Feed = { lastUpdated: number; content: NewsListNoDate };
+type Feed = { lastUpdated: number; content: NewsList };
 
 // News
 const LandingFeed = ({ feed }: { feed: Feed }): JSX.Element => {
@@ -40,7 +42,8 @@ const LandingFeed = ({ feed }: { feed: Feed }): JSX.Element => {
   return (
     <section
       aria-label={t("news.title")}
-      className="mt-16 !p-0 backdrop-blur-sm sm:mt-0 sm:rounded-xl sm:shadow md:shadow-none"
+      className="mt-16 !p-0 backdrop-blur-sm sm:mt-0 sm:rounded-xl sm:bg-[#fbfcff88] sm:shadow
+        sm:backdrop-blur-lg sm:dark:bg-[#191c1e88] md:bg-transparent md:shadow-none md:backdrop-blur-sm"
     >
       <CardHeader
         icon={<MaterialIcon icon="newspaper" className="text-on-surface" />}
@@ -132,10 +135,10 @@ const LandingBanner = (): JSX.Element => {
       <h2 className="text-[7rem] font-bold leading-none sm:text-[10rem]">
         <Trans i18nKey="brand.nameWithAccent" ns="common">
           My
-          <span className="dark:text-[#FF80C3]">
+          <span className="text-[#8B005A] dark:text-[#FF80C3]">
             {/* (@SiravitPhokeed)
-                This color is `secondary70` in the Figma palette, but not the Tailwind palette.
-                Should we add it (and others like it)?
+                These colors are `secondary70` and `secondary30` in the Figma palette, but not
+                the Tailwind palette. Should we add them (and others like them)?
               */}
             SK
           </span>
@@ -143,7 +146,7 @@ const LandingBanner = (): JSX.Element => {
       </h2>
       <div className="flex flex-col gap-2">
         <div className="flex flex-row items-center gap-2 leading-tight sm:gap-6">
-          <div className="relative aspect-square h-24 sm:h-28">
+          <div className="relative aspect-square h-24 drop-shadow sm:h-28">
             <Image
               src="/images/branding/logo-white.svg"
               layout="fill"
@@ -210,8 +213,8 @@ export default function Landing({ feed }: { feed: Feed }) {
         <title>{t("brand.name", { ns: "common" })}</title>
       </Head>
       <div
-        className="min-h-screen bg-[url('/images/landing.webp')]
-          bg-cover bg-fixed bg-bottom text-on-surface sm:pt-[4.5rem]"
+        className="min-h-screen bg-[url('/images/landing-light.png')] bg-cover
+          bg-fixed bg-bottom text-on-surface dark:bg-[url('/images/landing-dark.webp')] sm:pt-[4.5rem]"
       >
         <RegularLayout>
           <div className="flex flex-col gap-y-6 md:grid md:grid-cols-2 md:gap-x-6">
