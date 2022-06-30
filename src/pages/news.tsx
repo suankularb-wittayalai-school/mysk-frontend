@@ -22,7 +22,7 @@ import {
 import NewsCard from "@components/NewsCard";
 
 // Types
-import { NewsItemType, NewsList, NewsList } from "@utils/types/news";
+import { NewsItemType, NewsList, NewsListNoDate } from "@utils/types/news";
 
 // Helpers
 import { filterNews } from "@utils/helpers/filter-news";
@@ -65,7 +65,10 @@ const NewsMasonry = ({ news }: { news: NewsList }): JSX.Element => (
       .map((newsItem) => ({
         ...newsItem,
         postDate: new Date(newsItem.postDate),
-        dueDate: newsItem.dueDate ? new Date(newsItem.dueDate) : undefined,
+        dueDate:
+          newsItem.type == "form" || newsItem.type == "payment"
+            ? newsItem.dueDate
+            : undefined,
       }))
       .map((newsItem, index) => (
         <article key={newsItem.id} aria-posinset={index} aria-setsize={-1}>
@@ -76,7 +79,7 @@ const NewsMasonry = ({ news }: { news: NewsList }): JSX.Element => (
 );
 
 // Page
-const NewsPage: NextPage<{ news: NewsList }> = ({
+const NewsPage: NextPage<{ news: NewsListNoDate }> = ({
   news,
 }): JSX.Element => {
   const { t } = useTranslation(["news", "common"]);

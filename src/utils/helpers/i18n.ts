@@ -1,8 +1,15 @@
 import { LangCode, MultiLangObj, MultiLangString } from "@utils/types/common";
 
 export function getLocaleString(
-  multiLangString: MultiLangString | MultiLangObj,
+  multiLangString: MultiLangString,
   locale: LangCode
-): string | {} {
+): string {
+  return multiLangString[locale] || multiLangString.th;
+}
+
+export function getLocaleObj(
+  multiLangString: MultiLangObj,
+  locale: LangCode
+): {} {
   return multiLangString[locale] || multiLangString.th;
 }

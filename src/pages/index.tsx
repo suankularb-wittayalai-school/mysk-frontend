@@ -27,13 +27,13 @@ import { LangCode } from "@utils/types/common";
 import { NewsContent, NewsItem, NewsList } from "@utils/types/news";
 
 // Helpers
-import { getLocaleString } from "@utils/helpers/i18n";
+import { getLocaleObj } from "@utils/helpers/i18n";
 
 // Hooks
 import { useSession } from "@utils/hooks/auth";
 
 // Page-specific types
-type Feed = { lastUpdated: number; content: NewsList };
+type Feed = { lastUpdated: Date; content: NewsList };
 
 // News
 const LandingFeed = ({ feed }: { feed: Feed }): JSX.Element => {
@@ -100,21 +100,20 @@ const LandingFeedItem = ({ feedItem }: { feedItem: NewsItem }): JSX.Element => {
                 layout="fill"
                 objectFit="cover"
                 alt={
-                  (getLocaleString(feedItem.content, locale) as NewsContent)
-                    .title
+                  (getLocaleObj(feedItem.content, locale) as NewsContent).title
                 }
               />
             ) : (
-              (getLocaleString(feedItem.content, locale) as NewsContent).title
+              (getLocaleObj(feedItem.content, locale) as NewsContent).title
             )}
           </div>
           <div className="flex flex-col gap-1">
             <h3 className="max-lines-2 font-display text-2xl font-bold leading-none">
-              {(getLocaleString(feedItem.content, locale) as NewsContent).title}
+              {(getLocaleObj(feedItem.content, locale) as NewsContent).title}
             </h3>
             <p className="max-lines-5 leading-tight">
               {
-                (getLocaleString(feedItem.content, locale) as NewsContent)
+                (getLocaleObj(feedItem.content, locale) as NewsContent)
                   .supportingText
               }
             </p>
@@ -233,12 +232,12 @@ Landing.getLayout = (page: NextPage): JSX.Element => (
 
 export const getServerSideProps: GetStaticProps = async ({ locale }) => {
   const feed: Feed = {
-    lastUpdated: new Date(2022, 4, 9).getTime(),
+    lastUpdated: new Date(2022, 4, 9),
     content: [
       {
         id: 4,
         type: "news",
-        postDate: new Date(2021, 8, 16).getTime(),
+        postDate: new Date(2021, 8, 16),
         content: {
           "en-US": {
             title: "Certificates Announcement",
@@ -255,7 +254,7 @@ export const getServerSideProps: GetStaticProps = async ({ locale }) => {
       {
         id: 2,
         type: "news",
-        postDate: new Date(2020, 4, 12).getTime(),
+        postDate: new Date(2020, 4, 12),
         image: "/images/dummybase/sk-teaching-practice.webp",
         content: {
           "en-US": {
