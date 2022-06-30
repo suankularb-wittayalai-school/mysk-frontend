@@ -29,6 +29,7 @@ import { NewsContent, NewsItem, NewsList } from "@utils/types/news";
 // Hooks
 import { useSession } from "@utils/hooks/auth";
 import { getLocaleString } from "@utils/helpers/i18n";
+import { LangCode } from "@utils/types/common";
 
 // Page-specific types
 type Feed = { lastUpdated: Date; content: NewsList };
@@ -64,29 +65,35 @@ const LandingFeed = ({ feed }: { feed: Feed }): JSX.Element => {
 };
 
 const LandingFeedItem = ({ feedItem }: { feedItem: NewsItem }): JSX.Element => {
-  const locale = useRouter().locale as "en-US" | "th";
+  const locale = useRouter().locale as LangCode;
 
   return (
     <li key={feedItem.id}>
       <Link href={`/news/${feedItem.id}`}>
-        <a className="has-action relative flex flex-row gap-x-6 overflow-hidden rounded-2xl p-2">
+        <a className="has-action relative grid grid-cols-2 gap-x-6 overflow-hidden rounded-2xl p-2">
           <div
-            className="surface grid aspect-square h-32 place-items-center rounded-2xl bg-cover text-center
-              font-medium sm:aspect-[2/1]"
-            style={{
-              backgroundImage: feedItem.image
-                ? `url('${feedItem.image}')`
-                : "none",
-            }}
+            className="surface relative grid h-full min-h-[8rem] w-full place-items-center overflow-hidden
+              rounded-2xl bg-cover p-4 text-center font-medium"
           >
-            {!feedItem.image &&
-              (getLocaleString(feedItem.content, locale) as NewsContent).title}
+            {feedItem.image ? (
+              <Image
+                src={feedItem.image}
+                layout="fill"
+                objectFit="cover"
+                alt={
+                  (getLocaleString(feedItem.content, locale) as NewsContent)
+                    .title
+                }
+              />
+            ) : (
+              (getLocaleString(feedItem.content, locale) as NewsContent).title
+            )}
           </div>
-          <div className="flex flex-col">
-            <h3 className="font-display text-2xl font-bold">
+          <div className="flex flex-col gap-1">
+            <h3 className="font-display text-2xl font-bold leading-none">
               {(getLocaleString(feedItem.content, locale) as NewsContent).title}
             </h3>
-            <p className="max-lines-2">
+            <p className="max-lines-5 leading-tight">
               {
                 (getLocaleString(feedItem.content, locale) as NewsContent)
                   .supportingText
@@ -104,7 +111,22 @@ const LandingBanner = (): JSX.Element => {
   const { t } = useTranslation(["landing", "common"]);
   const locale = useRouter().locale as "en-US" | "th";
 
-  return <header className=""></header>;
+  return (
+    <header className="flex flex-col">
+      <h2 className="font-display text-[10rem] font-bold leading-none text-on-surface">
+        <Trans i18nKey="brand.nameWithAccent" ns="common">
+          My
+          <span className="text-[#FF80C3]">
+            {/* (@SiravitPhokeed)
+                This color is `secondary70` in the Figma palette, but not the Tailwind palette.
+                Should we add these kinds of color?
+              */}
+            SK
+          </span>
+        </Trans>
+      </h2>
+    </header>
+  );
 };
 
 // Page
@@ -116,9 +138,12 @@ export default function Landing({ feed }: { feed: Feed }) {
       <Head>
         <title>{t("brand.name", { ns: "common" })}</title>
       </Head>
-      <div className="min-h-screen bg-[url('/images/landing.png')] bg-cover bg-fixed bg-bottom pt-[4.5rem]">
+      <div
+        className="min-h-screen bg-[url('/images/landing.png')]
+          bg-cover bg-fixed bg-bottom pt-[4.5rem]"
+      >
         <RegularLayout>
-          <div className="layout-grid-cols-2">
+          <div className="flex flex-col gap-y-6 md:grid md:grid-cols-2 md:gap-x-6">
             <LandingBanner />
             <LandingFeed feed={feed} />
           </div>
