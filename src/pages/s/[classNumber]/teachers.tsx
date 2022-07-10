@@ -27,12 +27,16 @@ import ContactChip from "@components/ContactChip";
 import ProfilePicture from "@components/ProfilePicture";
 import TeacherCard from "@components/TeacherCard";
 
-// Utils
-import { nameJoiner } from "@utils/helpers/name";
+// Backend
+import { getTeacherList } from "@utils/backend/person/teacher";
+import { getClassIDFromNumber } from "@utils/backend/classroom/classroom";
 
 // Types
 import { TeachersListGroup } from "@utils/types/teachers";
 import { Teacher } from "@utils/types/person";
+
+// Utils
+import { nameJoiner } from "@utils/helpers/name";
 
 // Page
 const Teachers: NextPage = (): JSX.Element => {
@@ -91,7 +95,7 @@ const Teachers: NextPage = (): JSX.Element => {
       <MainSection>
         <Section className="!flex !flex-col !gap-4 !font-display">
           <Section>
-            <div className="sm:gap-6 md:grid-cols-[1fr_5fr] grid grid-cols-[1fr_3fr] items-stretch gap-4">
+            <div className="grid grid-cols-[1fr_3fr] items-stretch gap-4 sm:gap-6 md:grid-cols-[1fr_5fr]">
               {mainContent?.profile && (
                 <div className="aspect-square overflow-hidden rounded-xl sm:rounded-2xl">
                   <ProfilePicture src={mainContent.profile} />
@@ -177,10 +181,24 @@ const Teachers: NextPage = (): JSX.Element => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale as string, ["common", "teacher"])),
-  },
-});
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  params,
+}) => {
+  const teachers = await getTeacherList(
+    await getClassIDFromNumber(Number(params?.classNumber))
+  );
+
+  console.log(teachers);
+
+  return {
+    props: {
+      ...(await serverSideTranslations(locale as string, [
+        "common",
+        "teacher",
+      ])),
+    },
+  };
+};
 
 export default Teachers;

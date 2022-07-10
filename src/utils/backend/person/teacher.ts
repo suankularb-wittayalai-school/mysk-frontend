@@ -5,7 +5,12 @@ import { PostgrestError } from "@supabase/supabase-js";
 import { supabase } from "@utils/supabaseClient";
 
 // Types
-import { PersonDB, TeacherTable } from "@utils/types/database/person";
+import {
+  PersonDB,
+  TeacherDB,
+  TeacherTable,
+} from "@utils/types/database/person";
+import { RoomSubjectDB } from "@utils/types/database/subject";
 import { Teacher } from "@utils/types/person";
 
 // Backend
@@ -56,4 +61,46 @@ export async function createTeacher(
   });
 
   return { data: createdTeacher, error: null };
+}
+
+// https://supabase.com/docs/reference/javascript/select
+
+export async function getTeacherList(classID: number) {
+  // Get the teachers of all subjectRooms where class matches
+  const { data: roomSubjects, error: roomSubjectsError } = await supabase
+    .from<RoomSubjectDB>("room_subjects")
+    .select("teacher")
+    .match({ class: classID });
+  if (roomSubjectsError || !roomSubjects) {
+    console.error(roomSubjectsError);
+    return [];
+  }
+
+  // Map array of teacher IDs into array of teachers (fetch teacher in map)
+  const teachers: TeacherDB[] = await Promise.all(
+    // 2. Flatten the arrays into an array of teacher IDs
+    ([] as number[]).concat
+      .apply(
+        [],
+        // 1. Map into array of array of teacher IDs
+        roomSubjects.map((roomSubject) => roomSubject.teacher)
+      )
+      // 3. Fetch teacher data for each teacher
+      .map(async () => {
+        // TODO: Get teacher from ID (select only id, name, contacts, subject group)
+        const { data, error } = await supabase
+          .from<TeacherDB>("teacher")
+          .select(
+            "id, people:person(first_name_en, last_name_en, contacts), Subjectgroup:subject_group(name_en)"
+          );
+        if (error || !data) {
+          console.error(error);
+          return null;
+        }
+        return data;
+      })
+      .filter((teacher) => teacher)
+  );
+
+  return teachers;
 }
