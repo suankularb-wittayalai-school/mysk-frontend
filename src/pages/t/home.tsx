@@ -170,15 +170,14 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
       type: "stats",
       postDate: new Date(2020, 0, 3),
       content: {
-        "en-US": {
-          title: "COVID-19 Vaccination",
-          supportingText:
-            "On the vaccination of all Suankularb students, including the number and the brand recieved.",
+        title: {
+          "en-US": "COVID-19 Vaccination",
+          th: "การรับวัคซีน COVID-19",
         },
-        th: {
-          title: "การรับวัคซีน COVID-19",
-          supportingText:
-            "การรวบรวมข้อมูลตัวเลขของนักเรียนโรงเรียนสวนกุหลาบวิทยาลัยที่ได้รับวัคซีนป้องกัน COVID-19",
+        description: {
+          "en-US":
+            "On the vaccination of all Suankularb students, including the number and the brand recieved.",
+          th: "การรวบรวมข้อมูลตัวเลขของนักเรียนโรงเรียนสวนกุหลาบวิทยาลัยที่ได้รับวัคซีนป้องกัน COVID-19",
         },
       },
     },
