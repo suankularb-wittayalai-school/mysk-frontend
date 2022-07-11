@@ -13,6 +13,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 // // SK Components
 // import {
 //   ChipFilterList,
+//   MaterialIcon,
 //   RegularLayout,
 //   Section,
 //   Title,
@@ -108,7 +109,7 @@ const NewsPage: NextPage<{ news: NewsListNoDate }> = ({
                title: t("title.title"),
                subtitle: t("title.subtitle"),
              }}
-             pageIcon="newspaper"
+             pageIcon={<MaterialIcon title="newspaper" />}
              backGoesTo="/s/home"
              LinkElement={Link}
              key="title"

@@ -34,8 +34,6 @@ export function db2Contact(contact: ContactDB): Contact {
 }
 
 export function dbInfo2News(info: InfoDB): NewsItemInfoNoDate {
-  console.log({ title: info.parent });
-
   return {
     id: info.id,
     type: "info",

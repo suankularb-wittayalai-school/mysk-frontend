@@ -473,7 +473,7 @@ const Developers: NextPage = (): JSX.Element => {
         Title={
           <Title
             name={{ title: t("title") }}
-            pageIcon="information"
+            pageIcon={<MaterialIcon icon="info" />}
             backGoesTo="/account/login"
             LinkElement={Link}
           />

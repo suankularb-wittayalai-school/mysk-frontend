@@ -45,8 +45,8 @@ const LandingFeed = ({ feed }: { feed: Feed }): JSX.Element => {
   return (
     <section
       aria-label={t("news.title")}
-      className="mt-16 !p-0 backdrop-blur-sm sm:mt-0 sm:rounded-xl sm:bg-[#fbfcff88] sm:shadow
-        sm:backdrop-blur-lg sm:dark:bg-[#191c1e88] md:bg-transparent md:shadow-none md:backdrop-blur-sm"
+      className="mt-16 !p-0 backdrop-blur-sm sm:mt-0 sm:rounded-xl sm:backdrop-blur-lg
+        md:shadow-none md:backdrop-blur-sm"
     >
       <CardHeader
         icon={<MaterialIcon icon="newspaper" className="text-on-surface" />}
@@ -230,10 +230,7 @@ Landing.getLayout = (page: NextPage): JSX.Element => (
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(locale as string, [
-      "common",
-      "landing",
-    ])),
+    ...(await serverSideTranslations(locale as string, ["common", "landing"])),
     feed: await getLandingFeed(),
   },
 });
