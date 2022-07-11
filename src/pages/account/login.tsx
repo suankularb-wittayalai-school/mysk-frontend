@@ -20,6 +20,7 @@ import {
 
 // Supabase
 import { supabase } from "@utils/supabaseClient";
+import { createTitleStr } from "@utils/helpers/title";
 
 const LoginForm = () => {
   const { t } = useTranslation("account");
@@ -111,9 +112,7 @@ const Login: NextPage = (): JSX.Element => {
   return (
     <>
       <Head>
-        <title>
-          {t("title")} - {t("brand.name", { ns: "common" })}
-        </title>
+        <title>{createTitleStr(t("title"), t)}</title>
       </Head>
       <RegularLayout
         Title={

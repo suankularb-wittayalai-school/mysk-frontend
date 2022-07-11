@@ -26,6 +26,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { NewsItemType, NewsList, NewsListNoDate } from "@utils/types/news";
 
 // // Helpers
+import { createTitleStr } from "@utils/helpers/title";
 // import { filterNews } from "@utils/helpers/filter-news";
 
 // const NewsFilter = ({
@@ -98,11 +99,9 @@ const NewsPage: NextPage<{ news: NewsListNoDate }> = ({
   return (
     <>
       <Head>
-        <title>
-          {t("title.title")} - {t("brand.name", { ns: "common" })}
-        </title>
+        <title>{createTitleStr(t("title.title"), t)}</title>
       </Head>
-{/*        <RegularLayout
+       {/* <RegularLayout
          Title={
            <Title
              name={{

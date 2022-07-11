@@ -21,6 +21,9 @@ import {
 import ContactIcon from "@components/icons/ContactIcon";
 import ProfilePicture from "@components/ProfilePicture";
 
+// Helpers
+import { createTitleStr } from "@utils/helpers/title";
+
 // Types
 import { MultiLangString } from "@utils/types/common";
 import { ContactVia } from "@utils/types/contact";
@@ -463,11 +466,7 @@ const Developers: NextPage = (): JSX.Element => {
   return (
     <>
       <Head>
-        <title>
-          {t("title")}
-          {" - "}
-          {t("brand.name", { ns: "common" })}
-        </title>
+        <title>{createTitleStr(t("title"), t)}</title>
       </Head>
       <RegularLayout
         Title={

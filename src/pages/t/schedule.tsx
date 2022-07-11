@@ -30,6 +30,7 @@ import {
 
 // Helpers
 import { range } from "@utils/helpers/array";
+import { createTitleStr } from "@utils/helpers/title";
 
 // Hooks
 import { useTeacherAccount } from "@utils/hooks/auth";
@@ -92,9 +93,7 @@ const TeacherSchedule: NextPage = () => {
     <>
       <Head>
         <title>
-          {t("title.teacher")}
-          {" - "}
-          {t("brand.name", { ns: "common" })}
+          {createTitleStr(t("title.teacher"), t)}
         </title>
       </Head>
 

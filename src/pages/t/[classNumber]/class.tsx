@@ -53,6 +53,7 @@ import { createContact } from "@utils/backend/contact";
 
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
+import { createTitleStr } from "@utils/helpers/title";
 
 // Hooks
 import { useTeacherAccount } from "@utils/hooks/auth";
@@ -400,9 +401,10 @@ const Class: NextPage<{
   // Disallow editing if user is not an advisor to this class
   const [teacher] = useTeacherAccount({ loginRequired: true });
   const [isAdvisor, setIsAdvisor] = useState<boolean>(false);
-  useEffect(() => setIsAdvisor(teacher?.classAdvisorAt?.id == classItem.id), [
-    teacher,
-  ]);
+  useEffect(
+    () => setIsAdvisor(teacher?.classAdvisorAt?.id == classItem.id),
+    [teacher]
+  );
 
   useEffect(() => {
     if (!classItem.id) router.push("/t/home");
@@ -412,7 +414,7 @@ const Class: NextPage<{
     <>
       <Head>
         <title>
-          {t("class", { number: classItem.number })} - {t("brand.name")}
+          {createTitleStr(t("class", { number: classItem.number }), t)}
         </title>
       </Head>
 
@@ -463,10 +465,8 @@ const Class: NextPage<{
         onClose={() => toggleShowAddContact()}
         onSubmit={async (contact) => {
           // console.log(contact);
-          const {
-            data: createdContact,
-            error: contactCreationError,
-          } = await createContact(contact);
+          const { data: createdContact, error: contactCreationError } =
+            await createContact(contact);
 
           if (!createdContact || createdContact.length == 0) return;
           if (contactCreationError) {

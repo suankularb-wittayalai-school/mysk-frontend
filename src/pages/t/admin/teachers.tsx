@@ -42,6 +42,9 @@ import {
   TeacherTable as TeacherTableType,
 } from "@utils/types/database/person";
 
+// Helpers
+import { createTitleStr } from "@utils/helpers/title";
+
 // Hooks
 import { useSession } from "@utils/hooks/auth";
 
@@ -211,11 +214,7 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
     <>
       {/* Head */}
       <Head>
-        <title>
-          {t("teacherList.title")}
-          {" - "}
-          {t("brand.name", { ns: "common" })}
-        </title>
+        <title>{createTitleStr(t("teacherList.title"), t)}</title>
       </Head>
 
       {/* Page */}

@@ -1,5 +1,6 @@
 // Modules
 import { GetServerSideProps, NextPage } from "next";
+import Head from "next/head";
 import Link from "next/link";
 
 import { useTranslation } from "next-i18next";
@@ -35,7 +36,9 @@ import { supabase } from "@utils/supabaseClient";
 import { SubjectWNameAndCode } from "@utils/types/subject";
 import { ClassWNumber } from "@utils/types/class";
 import { RoomSubjectDB } from "@utils/types/database/subject";
-import Head from "next/head";
+
+// Helpers
+import { createTitleStr } from "@utils/helpers/title";
 
 const SubjectsTeaching: NextPage = () => {
   const { t } = useTranslation("subjects");
@@ -103,11 +106,7 @@ const SubjectsTeaching: NextPage = () => {
   return (
     <>
       <Head>
-        <title>
-          {t("teaching.title")}
-          {" - "}
-          {t("brand.name", { ns: "common" })}
-        </title>
+        <title>{createTitleStr(t("teaching.title"), t)}</title>
       </Head>
       <RegularLayout
         Title={

@@ -36,6 +36,9 @@ import { supabase } from "@utils/supabaseClient";
 import { Subject } from "@utils/types/subject";
 import { SubjectTable as SubjectTableType } from "@utils/types/database/subject";
 
+// Helpers
+import { createTitleStr } from "@utils/helpers/title";
+
 // Hooks
 import { useSession } from "@utils/hooks/auth";
 
@@ -170,11 +173,7 @@ const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
     <>
       {/* Head */}
       <Head>
-        <title>
-          {t("subjectList.title")}
-          {" - "}
-          {t("brand.name", { ns: "common" })}
-        </title>
+        <title>{createTitleStr(t("subjectList.title"), t)}</title>
       </Head>
 
       {/* Page */}
