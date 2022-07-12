@@ -37,6 +37,7 @@ import {
 // Components
 import AddClassDialog from "@components/dialogs/AddClass";
 import ConnectSubjectDialog from "@components/dialogs/ConnectSubject";
+import ConfirmDelete from "@components/dialogs/ConfirmDelete";
 import ImageDialog from "@components/dialogs/Image";
 import BrandIcon from "@components/icons/BrandIcon";
 import Sentiment from "@components/Sentiment";
@@ -52,15 +53,20 @@ import {
   SubstituteAssignment,
 } from "@utils/types/subject";
 import { DialogProps } from "@utils/types/common";
-import ConfirmDelete from "@components/dialogs/ConfirmDelete";
-import { supabase } from "@utils/supabaseClient";
 import {
   RoomSubjectDB,
   RoomSubjectTable,
-  SubjectDB,
   SubjectTable,
 } from "@utils/types/database/subject";
+
+// Backend
 import { db2Subject, db2SubjectListItem } from "@utils/backend/database";
+
+// Supbase
+import { supabase } from "@utils/supabaseClient";
+
+// Helpers
+import { createTitleStr } from "@utils/helpers/title";
 
 // Details Section
 const DetailsSection = ({
@@ -725,9 +731,7 @@ const SubjectDetails: NextPage<{
     <>
       <Head>
         <title>
-          {(subject.name[locale] || subject.name.th).name}
-          {" - "}
-          {t("brand.name", { ns: "common" })}
+          {createTitleStr((subject.name[locale] || subject.name.th).name, t)}
         </title>
       </Head>
       <RegularLayout

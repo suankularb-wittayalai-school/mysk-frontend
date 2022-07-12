@@ -13,32 +13,29 @@ import { FormEvent, useState } from "react";
 import {
   FormButton,
   KeyboardInput,
+  MaterialIcon,
   RegularLayout,
   Title,
 } from "@suankularb-components/react";
 
 // Supabase
 import { supabase } from "@utils/supabaseClient";
+import { createTitleStr } from "@utils/helpers/title";
 
 const LoginForm = () => {
   const { t } = useTranslation("account");
   const router = useRouter();
 
   // Form control
-  const [form, setForm] = useState<{
-    email: string;
-    password: string;
-  }>({
-    email: "",
-    password: "",
-  });
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
 
   // Loading
   const [loading, setLoading] = useState<boolean>(false);
 
   function validate(): boolean {
-    if (!form.email) return false;
-    if (!form.password) return false;
+    if (!email) return false;
+    if (!password) return false;
 
     return true;
   }
@@ -54,8 +51,8 @@ const LoginForm = () => {
 
     // Sends and redirects
     const { user, session, error } = await supabase.auth.signIn({
-      email: form.email,
-      password: form.password,
+      email,
+      password,
     });
 
     if (error) {
@@ -82,14 +79,14 @@ const LoginForm = () => {
             helperMsg={t("form.email_helper")}
             errorMsg={t("form.email_error")}
             useAutoMsg
-            onChange={(e: string) => setForm({ ...form, email: e })}
+            onChange={(e: string) => setEmail(e)}
           />
           <KeyboardInput
             name="password"
             type="password"
             label={t("form.password")}
             helperMsg={t("form.password_helper")}
-            onChange={(e: string) => setForm({ ...form, password: e })}
+            onChange={(e: string) => setPassword(e)}
           />
         </div>
         <div className="flex flex-row flex-wrap items-center justify-end gap-2">
@@ -115,15 +112,13 @@ const Login: NextPage = (): JSX.Element => {
   return (
     <>
       <Head>
-        <title>
-          {t("title")} - {t("brand.name", { ns: "common" })}
-        </title>
+        <title>{createTitleStr(t("title"), t)}</title>
       </Head>
       <RegularLayout
         Title={
           <Title
             name={{ title: t("title") }}
-            pageIcon="person"
+            pageIcon={<MaterialIcon icon="person" />}
             backGoesTo="/"
             LinkElement={Link}
             className="sm:none"

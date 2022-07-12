@@ -22,6 +22,9 @@ import Schedule from "@components/schedule/Schedule";
 // Types
 import { Schedule as ScheduleType } from "@utils/types/schedule";
 
+// Helpers
+import { createTitleStr } from "@utils/helpers/title";
+
 const ScheduleSection = ({
   schedule,
 }: {
@@ -51,9 +54,7 @@ const SchedulesThisGrade: NextPage<{
     <>
       <Head>
         <title>
-          {t("schedule.grade.tabTitle", { grade })}
-          {" - "}
-          {t("brand.name", { ns: "common" })}
+          {createTitleStr(t("schedule.grade.tabTitle", { grade }), t)}
         </title>
       </Head>
       <RegularLayout

@@ -5,7 +5,11 @@ import { Trans, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 // SK Components
-import { RegularLayout, Title } from "@suankularb-components/react";
+import {
+  MaterialIcon,
+  RegularLayout,
+  Title,
+} from "@suankularb-components/react";
 
 // Page
 const NotFound: NextPage = () => {
@@ -16,7 +20,7 @@ const NotFound: NextPage = () => {
       Title={
         <Title
           name={{ title: t("verboseCode.404") }}
-          pageIcon="sentiment_very_dissatisfied"
+          pageIcon={<MaterialIcon icon="sentiment_very_dissatisfied" />}
           backGoesTo={() => history.back()}
         />
       }

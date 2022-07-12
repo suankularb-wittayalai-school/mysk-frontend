@@ -27,6 +27,7 @@ import { getClassroom } from "@utils/backend/classroom/classroom";
 
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
+import { createTitleStr } from "@utils/helpers/title";
 
 // Hooks
 import { useStudentAccount } from "@utils/hooks/auth";
@@ -152,7 +153,7 @@ const Class: NextPage<{ classItem: ClassType }> = ({ classItem }) => {
     <>
       <Head>
         <title>
-          {t("class", { number: classItem.number })} - {t("brand.name")}
+          {createTitleStr(t("class", { number: classItem.number }), t)}
         </title>
       </Head>
       <RegularLayout

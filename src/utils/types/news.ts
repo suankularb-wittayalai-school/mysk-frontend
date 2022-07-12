@@ -1,18 +1,20 @@
+import { MultiLangString } from "./common";
+
 export type NewsList = Array<NewsItem>;
 export type NewsListNoDate = Array<NewsItemNoDate>;
 
 export type NewsItem =
-  | NewsItemNews
+  | NewsItemInfo
   | NewsItemStats
   | NewsItemForm
   | NewsItemPayment;
 
-export type NewsItemNoDate = NewsItem & {
+export type NewsItemNoDate = Omit<NewsItem, "postDate" | "dueDate"> & {
   postDate: number;
   dueDate?: number;
 };
 
-export type NewsItemType = "news" | "stats" | "form" | "payment";
+export type NewsItemType = "info" | "stats" | "form" | "payment";
 
 type NewsItemCommon = {
   id: number;
@@ -20,13 +22,13 @@ type NewsItemCommon = {
   image?: string;
   done?: boolean;
   content: {
-    "en-US": NewsContent;
-    th: NewsContent;
+    title: MultiLangString;
+    description: MultiLangString;
   };
 };
 
-export type NewsItemNews = NewsItemCommon & {
-  type: "news";
+export type NewsItemInfo = NewsItemCommon & {
+  type: "info";
 };
 
 export type NewsItemStats = NewsItemCommon & {
@@ -47,9 +49,9 @@ export type NewsItemPayment = NewsItemCommon & {
   done: boolean;
 };
 
-export type NewsContent = {
-  title: string;
-  supportingText: string;
+export type NewsItemInfoNoDate = Omit<NewsItemInfo, "postDate" | "dueDate"> & {
+  postDate: string;
+  dueDate?: string;
 };
 
 export type StudentForm = {

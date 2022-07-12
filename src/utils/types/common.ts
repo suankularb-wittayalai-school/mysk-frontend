@@ -5,6 +5,11 @@ export type MultiLangString = {
   "en-US"?: string;
 };
 
+export type MultiLangObj = {
+  th: {};
+  "en-US"?: {};
+};
+
 export type ForcedMultiLangString = {
   th: string;
   "en-US": string;

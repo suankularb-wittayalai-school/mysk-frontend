@@ -39,6 +39,7 @@ import { StudentTable as StudentTableType } from "@utils/types/database/person";
 // Hooks
 import { useSession } from "@utils/hooks/auth";
 import { createStudent } from "@utils/backend/person/student";
+import { createTitleStr } from "@utils/helpers/title";
 
 interface ImportedData {
   prefix: "เด็กชาย" | "นาย" | "นาง" | "นางสาว";
@@ -184,11 +185,8 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
     <>
       {/* Head */}
       <Head>
-        <title>
-          {t("studentList.title")}
-          {" - "}
-          {t("brand.name", { ns: "common" })}
-        </title>
+        {" "}
+        <title>{createTitleStr(t("studentList.title"), t)}</title>
       </Head>
 
       {/* Page */}

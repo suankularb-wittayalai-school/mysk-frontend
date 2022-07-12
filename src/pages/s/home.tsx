@@ -39,6 +39,9 @@ import { Teacher } from "@utils/types/person";
 import { Schedule } from "@utils/types/schedule";
 
 // Helpers
+import { createTitleStr } from "@utils/helpers/title";
+
+// Hooks
 import { useStudentAccount } from "@utils/hooks/auth";
 
 // Page
@@ -61,9 +64,7 @@ const StudentHome: NextPage<{
     <>
       {/* Title */}
       <Head>
-        <title>
-          {t("title")} - {t("brand.name", { ns: "common" })}
-        </title>
+        <title>{createTitleStr(t("title"), t)}</title>
       </Head>
       <AnimatePresence>
         {user && (
