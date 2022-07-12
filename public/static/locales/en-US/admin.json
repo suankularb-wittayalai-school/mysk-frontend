@@ -1,5 +1,14 @@
 {
   "title": "Admin panel",
+  "database": {
+    "title": "Database",
+    "table": {
+      "student": "Students",
+      "teacher": "Teachers",
+      "subject": "Subjects",
+      "classroom": "Classrooms"
+    }
+  },
   "studentList": {
     "title": "Student list",
     "searchStudents": "Search students",

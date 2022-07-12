@@ -1,5 +1,14 @@
 {
   "title": "แอดมิน",
+  "database": {
+    "title": "ฐานข้อมูล",
+    "table": {
+      "student": "นักเรียน",
+      "teacher": "อาจารย์",
+      "subject": "วิชา",
+      "classroom": "ห้องเรียน"
+    }
+  },
   "studentList": {
     "title": "รายชื่อนักเรียน",
     "searchStudents": "ค้นหานักเรียน",
