@@ -87,8 +87,12 @@
     },
     "add": {
       "title": "Create an article",
-      "action": {
-        "startCreate": "Start creating"
+      "instructions": "Choose the type you’re going to write.",
+      "typeDesc": {
+        "info": "Updates and information",
+        "stats": "Present collected data",
+        "form": "Collect student data",
+        "payment": "Streamline student payments"
       }
     },
     "edit": {

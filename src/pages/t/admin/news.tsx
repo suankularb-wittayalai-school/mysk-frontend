@@ -12,6 +12,9 @@ import { useQuery } from "react-query";
 
 // SK Components
 import {
+  Actions,
+  Card,
+  CardHeader,
   Header,
   MaterialIcon,
   RegularLayout,
@@ -20,6 +23,7 @@ import {
 } from "@suankularb-components/react";
 
 // Components
+import NewsIcon from "@components/icons/NewsIcon";
 import NewsFeed from "@components/news/NewsFeed";
 
 // Backend
@@ -33,11 +37,12 @@ import { createTitleStr } from "@utils/helpers/title";
 
 // Types
 import { LangCode } from "@utils/types/common";
-import { NewsList } from "@utils/types/news";
+import { NewsItemType, NewsList } from "@utils/types/news";
 
 // Components
 const AddSection = (): JSX.Element => {
-  const { t } = useTranslation("admin");
+  const { t } = useTranslation(["admin", "news"]);
+  const newsTypes: NewsItemType[] = ["info", "stats", "form", "payment"];
 
   return (
     <Section>
@@ -45,6 +50,22 @@ const AddSection = (): JSX.Element => {
         icon={<MaterialIcon icon="add_circle" allowCustomSize />}
         text={t("news.add.title")}
       />
+      <div className="layout-grid-cols-3">
+        {newsTypes.map((newsType) => (
+          <Link key={newsType} href={`/t/admin/news/create/${newsType}`}>
+            <a>
+              <Card type="horizontal" appearance="outlined" hasAction>
+                <CardHeader
+                  icon={<NewsIcon type={newsType} />}
+                  title={<h3>{t(`itemType.${newsType}`, { ns: "news" })}</h3>}
+                  label={t(`news.add.typeDesc.${newsType}`)}
+                  end={<MaterialIcon icon="arrow_forward" />}
+                />
+              </Card>
+            </a>
+          </Link>
+        ))}
+      </div>
     </Section>
   );
 };

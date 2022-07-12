@@ -24,6 +24,7 @@ import { NewsItem, NewsItemType } from "@utils/types/news";
 
 // Helpers
 import { getLocaleString } from "@utils/helpers/i18n";
+import NewsIcon from "@components/icons/NewsIcon";
 
 const NewsStatus = ({ newsItem }: { newsItem: NewsItem }): JSX.Element => {
   return (
@@ -143,15 +144,7 @@ const NewsCard = ({
   return (
     <Card type="stacked" appearance="outlined">
       <CardHeader
-        icon={
-          newsItem.type == "form" ? (
-            <MaterialIcon icon="edit" className="text-secondary" />
-          ) : newsItem.type == "payment" ? (
-            <MaterialIcon icon="account_balance" className="text-secondary" />
-          ) : (
-            <MaterialIcon icon="information" className="text-secondary" />
-          )
-        }
+        icon={<NewsIcon type={newsItem.type} className="text-secondary" />}
         title={
           <h3 className="text-lg font-medium">
             {getLocaleString(newsItem.content.title, locale)}
