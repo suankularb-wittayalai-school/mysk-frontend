@@ -8,11 +8,10 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { useEffect, useState } from "react";
 
-import Masonry from "react-masonry-css";
+import { useQuery } from "react-query";
 
 // SK Components
 import {
-  ChipFilterList,
   MaterialIcon,
   RegularLayout,
   Section,
@@ -20,51 +19,37 @@ import {
 } from "@suankularb-components/react";
 
 // Components
-import NewsCard from "@components/news/NewsCard";
+import NewsFeed from "@components/news/NewsFeed";
+import NewsFilter from "@components/news/NewsFilter";
+
+// Backend
+import { getNewsFeed } from "@utils/backend/news";
 
 // Types
-import { NewsItemType, NewsList, NewsListNoDate } from "@utils/types/news";
+import { LangCode } from "@utils/types/common";
+import { NewsItemType, NewsList } from "@utils/types/news";
 
-// // Helpers
+// Helpers
 import { createTitleStr } from "@utils/helpers/title";
-import NewsFeed from "@components/news/NewsFeed";
 import { replaceNumberInNewsWithDate } from "@utils/helpers/news";
-import { getLandingFeed } from "@utils/backend/news/info";
-
-const NewsFilter = ({
-  setNewsFilter,
-}: {
-  setNewsFilter: (newFilter: Array<NewsItemType>) => void;
-}): JSX.Element => {
-  const { t } = useTranslation("news");
-  return (
-    <ChipFilterList
-      choices={[
-        { id: "info", name: t("filter.info") },
-        { id: "form", name: t("filter.forms") },
-        { id: "payment", name: t("filter.payments") },
-        [
-          { id: "not-done", name: t("filter.amountDone.notDone") },
-          { id: "done", name: t("filter.amountDone.done") },
-        ],
-      ]}
-      onChange={(newFilter: Array<NewsItemType>) => setNewsFilter(newFilter)}
-      scrollable={true}
-    />
-  );
-};
 
 // Page
-const NewsPage: NextPage<{ news: NewsListNoDate }> = ({
-  news,
-}): JSX.Element => {
+const NewsPage: NextPage = (): JSX.Element => {
   const { t } = useTranslation(["news", "common"]);
-  const [newsFilter, setNewsFilter] = useState<Array<NewsItemType>>([]);
-  const [filteredNews, setFilteredNews] = useState<NewsList>(
-    news
-      .map((newsItem) => replaceNumberInNewsWithDate(newsItem))
-      .filter((newsItem) => newsItem) as NewsList
-  );
+
+  const { data } = useQuery("feed", () => getNewsFeed("student"));
+
+  const [newsFilter, setNewsFilter] = useState<NewsItemType[]>([]);
+  const [filteredNews, setFilteredNews] = useState<NewsList>([]);
+
+  useEffect(() => {
+    if (data)
+      setFilteredNews(
+        data
+          .map((newsItem) => replaceNumberInNewsWithDate(newsItem))
+          .filter((newsItem) => newsItem) as NewsList
+      );
+  }, [data]);
 
   return (
     <>
@@ -81,7 +66,6 @@ const NewsPage: NextPage<{ news: NewsListNoDate }> = ({
             pageIcon={<MaterialIcon icon="newspaper" />}
             backGoesTo="/s/home"
             LinkElement={Link}
-            key="title"
           />
         }
       >
@@ -97,8 +81,7 @@ const NewsPage: NextPage<{ news: NewsListNoDate }> = ({
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   return {
     props: {
-      ...(await serverSideTranslations(locale as string, ["common", "news"])),
-      news: (await getLandingFeed()).content,  // Temporary
+      ...(await serverSideTranslations(locale as LangCode, ["common", "news"])),
     },
   };
 };

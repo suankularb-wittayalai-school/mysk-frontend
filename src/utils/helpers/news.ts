@@ -20,8 +20,8 @@ export function replaceNumberInNewsWithDate(
         NewsItemForm | NewsItemPayment,
         "postDate" | "dueDate"
       > & {
-        postDate: number;
-        dueDate?: number;
+        postDate: string;
+        dueDate?: string;
       }),
       postDate: new Date(newsItemNoDate.postDate),
       dueDate: newsItemNoDate.dueDate

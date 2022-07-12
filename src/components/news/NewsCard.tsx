@@ -169,7 +169,7 @@ const NewsCard = ({
           </div>
         }
         end={
-          ["news", "stats"].includes(newsItem.type) ? undefined : (
+          ["info", "stats"].includes(newsItem.type) ? undefined : (
             <div>
               <NewsStatus newsItem={newsItem} />
             </div>
@@ -191,7 +191,7 @@ const NewsCard = ({
         <LinkButton
           label={t(
             `itemAction.${newsItem.type}${
-              (["info", "stats"] as NewsItemType[]).includes(newsItem.type)
+              ["info", "stats"].includes(newsItem.type)
                 ? ""
                 : `.${newsItem.done ? "edit" : "do"}`
             }`

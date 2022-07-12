@@ -10,8 +10,8 @@ export type NewsItem =
   | NewsItemPayment;
 
 export type NewsItemNoDate = Omit<NewsItem, "postDate" | "dueDate"> & {
-  postDate: number;
-  dueDate?: number;
+  postDate: string;
+  dueDate?: string;
 };
 
 export type NewsItemType = "info" | "stats" | "form" | "payment";
@@ -49,7 +49,23 @@ export type NewsItemPayment = NewsItemCommon & {
   done: boolean;
 };
 
-export type NewsItemInfoNoDate = Omit<NewsItemInfo, "postDate" | "dueDate"> & {
+export type NewsItemInfoNoDate = Omit<NewsItemInfo, "postDate"> & {
+  postDate: string;
+};
+
+export type NewsItemStatsNoDate = Omit<NewsItemStats, "postDate"> & {
+  postDate: string;
+};
+
+export type NewsItemFormNoDate = Omit<NewsItemForm, "postDate" | "dueDate"> & {
+  postDate: string;
+  dueDate?: string;
+};
+
+export type NewsItemPaymentNoDate = Omit<
+  NewsItemPayment,
+  "postDate" | "dueDate"
+> & {
   postDate: string;
   dueDate?: string;
 };
