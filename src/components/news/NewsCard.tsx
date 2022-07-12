@@ -8,6 +8,7 @@ import { Trans, useTranslation } from "next-i18next";
 
 // SK Components
 import {
+  Button,
   Card,
   CardActions,
   CardHeader,
@@ -188,18 +189,27 @@ const NewsCard = ({
         </p>
       </CardSupportingText>
       <CardActions>
-        <LinkButton
-          label={t(
-            `itemAction.${newsItem.type}${
-              ["info", "stats"].includes(newsItem.type)
-                ? ""
-                : `.${newsItem.done ? "edit" : "do"}`
-            }`
-          )}
-          type={btnType || "filled"}
-          url={`/${newsItem.type}/${newsItem.id}`}
-          LinkElement={Link}
-        />
+        {editable ? (
+          <LinkButton
+            label={t("itemAction.edit")}
+            type="filled"
+            url={`/news/edit/${newsItem.type}/${newsItem.id}`}
+            LinkElement={Link}
+          />
+        ) : (
+          <LinkButton
+            label={t(
+              `itemAction.${newsItem.type}${
+                ["info", "stats"].includes(newsItem.type)
+                  ? ""
+                  : `.${newsItem.done ? "edit" : "do"}`
+              }`
+            )}
+            type={btnType || "filled"}
+            url={`/${newsItem.type}/${newsItem.id}`}
+            LinkElement={Link}
+          />
+        )}
       </CardActions>
     </Card>
   );

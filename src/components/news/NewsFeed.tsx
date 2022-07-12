@@ -23,11 +23,7 @@ const NewsFeed = ({
       <AnimatePresence>
         <Masonry
           role="feed"
-          breakpointCols={{
-            default: 3,
-            905: 2,
-            600: 1,
-          }}
+          breakpointCols={{ default: 3, 905: 2, 600: 1 }}
           className="flex flex-row gap-4 sm:gap-6"
           columnClassName="flex flex-col gap-4 sm:gap-6"
         >

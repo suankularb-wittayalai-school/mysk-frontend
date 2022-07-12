@@ -6,6 +6,10 @@ import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
+import { useState } from "react";
+
+import { useQuery } from "react-query";
+
 // SK Components
 import {
   MaterialIcon,
@@ -14,15 +18,26 @@ import {
   Title,
 } from "@suankularb-components/react";
 
+// Components
+import NewsFeed from "@components/news/NewsFeed";
+
+// Backend
+import { getNewsFeed } from "@utils/backend/news";
+
+// Helpers
+import { replaceNumberInNewsWithDate } from "@utils/helpers/news";
+
 // Supabase
 import { createTitleStr } from "@utils/helpers/title";
 
 // Types
 import { LangCode } from "@utils/types/common";
+import { NewsList } from "@utils/types/news";
 
 // Page
 const AdminNews: NextPage = (): JSX.Element => {
   const { t } = useTranslation(["admin", "news", "common"]);
+  const { data } = useQuery("feed", () => getNewsFeed("admin"));
 
   return (
     <>
@@ -42,8 +57,18 @@ const AdminNews: NextPage = (): JSX.Element => {
           />
         }
       >
+        <p>{t("news.instructions")}</p>
         <Section>
-          <p>TODO</p>
+          <NewsFeed
+            news={
+              data
+                ? (data
+                    .map((newsItem) => replaceNumberInNewsWithDate(newsItem))
+                    .filter((newsItem) => newsItem) as NewsList)
+                : []
+            }
+            isForAdmin
+          />
         </Section>
       </RegularLayout>
     </>
@@ -52,7 +77,11 @@ const AdminNews: NextPage = (): JSX.Element => {
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(locale as LangCode, ["common", "admin", "news"])),
+    ...(await serverSideTranslations(locale as LangCode, [
+      "common",
+      "admin",
+      "news",
+    ])),
   },
 });
 

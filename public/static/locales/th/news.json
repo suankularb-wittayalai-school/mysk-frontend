@@ -33,6 +33,7 @@
     "pastDueBy": "{{timePast}}ที่แล้ว"
   },
   "itemAction": {
+    "edit": "แก้ไข",
     "info": "อ่านเพิ่มเติม",
     "stats": "อ่านเพิ่มเติม",
     "form": {

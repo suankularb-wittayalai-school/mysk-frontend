@@ -33,6 +33,7 @@
     "pastDueBy": "Past due by {{timePast}}"
   },
   "itemAction": {
+    "edit": "Edit",
     "info": "Read more",
     "stats": "Read more",
     "form": {
