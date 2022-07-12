@@ -111,6 +111,13 @@
       "seeSchedule": "See schedule"
     }
   },
+  "articleEditor": {
+    "title": {
+      "add": "Create",
+      "edit": "Edit",
+      "subtitle": "Article editor"
+    }
+  },
   "common": {
     "action": {
       "import": "Import data",
