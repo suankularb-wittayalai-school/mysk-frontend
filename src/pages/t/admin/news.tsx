@@ -12,6 +12,7 @@ import { useQuery } from "react-query";
 
 // SK Components
 import {
+  Header,
   MaterialIcon,
   RegularLayout,
   Section,
@@ -34,10 +35,48 @@ import { createTitleStr } from "@utils/helpers/title";
 import { LangCode } from "@utils/types/common";
 import { NewsList } from "@utils/types/news";
 
+// Components
+const AddSection = (): JSX.Element => {
+  const { t } = useTranslation("admin");
+
+  return (
+    <Section>
+      <Header
+        icon={<MaterialIcon icon="add_circle" allowCustomSize />}
+        text={t("news.add.title")}
+      />
+    </Section>
+  );
+};
+
+const EditSection = (): JSX.Element => {
+  const { t } = useTranslation("admin");
+  const { data } = useQuery("feed", () => getNewsFeed("admin"));
+
+  return (
+    <Section>
+      <Header
+        icon={<MaterialIcon icon="edit_note" allowCustomSize />}
+        text={t("news.edit.title")}
+      />
+      <p>{t("news.edit.instructions")}</p>
+      <NewsFeed
+        news={
+          data
+            ? (data
+                .map((newsItem) => replaceNumberInNewsWithDate(newsItem))
+                .filter((newsItem) => newsItem) as NewsList)
+            : []
+        }
+        isForAdmin
+      />
+    </Section>
+  );
+};
+
 // Page
 const AdminNews: NextPage = (): JSX.Element => {
   const { t } = useTranslation(["admin", "news", "common"]);
-  const { data } = useQuery("feed", () => getNewsFeed("admin"));
 
   return (
     <>
@@ -57,19 +96,8 @@ const AdminNews: NextPage = (): JSX.Element => {
           />
         }
       >
-        <p>{t("news.instructions")}</p>
-        <Section>
-          <NewsFeed
-            news={
-              data
-                ? (data
-                    .map((newsItem) => replaceNumberInNewsWithDate(newsItem))
-                    .filter((newsItem) => newsItem) as NewsList)
-                : []
-            }
-            isForAdmin
-          />
-        </Section>
+        <AddSection />
+        <EditSection />
       </RegularLayout>
     </>
   );
