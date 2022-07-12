@@ -197,3 +197,16 @@ export async function getClassIDFromNumber(number: number): Promise<number> {
 
   return classroom.id;
 }
+
+export async function getAllClassNumbers(): Promise<number[]> {
+  const { data: classrooms, error: classroomsError } = await supabase
+    .from<ClassroomTable>("classroom")
+    .select("number");
+
+  if (classroomsError || !classrooms) {
+    console.error(classroomsError);
+    return [];
+  }
+
+  return classrooms.map((classroom) => classroom.number);
+}
