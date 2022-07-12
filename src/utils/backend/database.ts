@@ -323,7 +323,6 @@ export async function db2Class(classDB: ClassroomDB): Promise<Class> {
     subjects: [],
     contacts: [],
     year: classDB.year,
-    semester: classDB.semester as 1 | 2,
   };
 
   if (classDB.advisors) {

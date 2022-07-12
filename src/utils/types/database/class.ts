@@ -3,7 +3,6 @@ export interface ClassroomDB {
   created_at: string;
   number: number;
   year: number;
-  semester: number;
   students: number[];
   advisors: number[];
   contacts: number[];
@@ -15,7 +14,6 @@ export interface ClassroomTable {
   created_at: string;
   number: number;
   year: number;
-  semester: number;
   students: number[];
   advisors: number[];
   contacts: number[];

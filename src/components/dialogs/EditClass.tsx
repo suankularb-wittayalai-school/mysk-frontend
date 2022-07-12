@@ -54,14 +54,12 @@ const EditClassDialog = ({
   const [form, setForm] = useState<{
     number: number;
     year: number;
-    semester: 1 | 2;
     students: Student[];
     classAdvisors: Teacher[];
     contacts: Contact[];
   }>({
     number: 101,
     year: new Date().getFullYear(),
-    semester: new Date().getMonth() < 3 && new Date().getMonth() > 8 ? 1 : 2,
     students: [],
     classAdvisors: [],
     contacts: [],
@@ -72,7 +70,6 @@ const EditClassDialog = ({
       setForm({
         number: classItem.number,
         year: classItem.year,
-        semester: classItem.semester,
         students: classItem.students,
         classAdvisors: classItem.classAdvisors,
         contacts: classItem.contacts,
@@ -86,7 +83,6 @@ const EditClassDialog = ({
     if (!form.number || !form.number.toString().match(/[1-6][0-1][1-9]/))
       return false;
     if (form.year < 2005) return false;
-    if (![1, 2].includes(form.semester)) return false;
 
     return true;
   }
@@ -98,7 +94,6 @@ const EditClassDialog = ({
       id: classItem?.id || 0,
       number: form.number,
       year: form.year,
-      semester: form.semester,
       students: form.students,
       classAdvisors: form.classAdvisors,
       contacts: form.contacts,
@@ -116,7 +111,7 @@ const EditClassDialog = ({
         return;
       }
     } else if (mode == "edit") {
-      const { data: updatedClass, error: classUpdateError } =
+      const { data: _, error: classUpdateError } =
         await updateClassroom(classroom);
 
       if (classUpdateError) {
@@ -208,22 +203,6 @@ const EditClassDialog = ({
             onChange={(e: string) => setForm({ ...form, year: Number(e) })}
             defaultValue={classItem ? classItem.year : new Date().getFullYear()}
             attr={{ min: 2005 }}
-          />
-          <KeyboardInput
-            name="name-en"
-            type="number"
-            label={t("item.school.semester")}
-            onChange={(e: string) =>
-              setForm({ ...form, semester: Number(e) as 1 | 2 })
-            }
-            defaultValue={
-              classItem
-                ? classItem.semester
-                : new Date().getMonth() < 3 && new Date().getMonth() > 8
-                ? 2
-                : 1
-            }
-            attr={{ min: 1, max: 2 }}
           />
         </DialogSection>
 

@@ -75,8 +75,6 @@ const GenerateClassesDialog = ({
             id: 0,
             number: (index + 1) * 100 + (classNum + 1),
             year: new Date().getFullYear(),
-            semester:
-              new Date().getMonth() < 3 && new Date().getMonth() > 8 ? 1 : 2,
             students: [],
             classAdvisors: [],
             schedule: {

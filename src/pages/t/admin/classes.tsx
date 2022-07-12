@@ -56,10 +56,10 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
   const [showEdit, setShowEdit] = useState<boolean>(false);
   const [editingClass, setEditingClass] = useState<Class>();
 
-  const session = useSession({ loginRequired: true, adminOnly: true });
+  const _ = useSession({ loginRequired: true, adminOnly: true });
 
   async function handleDelete() {
-    const { data: classData, error: classError } = await supabase
+    const { data: _, error: classError } = await supabase
       .from<ClassroomTable>("classroom")
       .delete()
       .match({ id: editingClass?.id });
@@ -68,14 +68,11 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
     }
   }
 
-  async function handleImport(
-    classes: { number: number; year: number; semester: number }[]
-  ) {
+  async function handleImport(classes: { number: number; year: number }[]) {
     const classesToImport: Class[] = classes.map((classData) => ({
       id: 0,
       number: classData.number,
       year: classData.year,
-      semester: classData.semester as 1 | 2,
       students: [],
       classAdvisors: [],
       schedule: {
@@ -164,7 +161,6 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
         columns={[
           { name: "number", type: "numeric (3-digit)" },
           { name: "year", type: "number (in AD)" },
-          { name: "semester", type: "1 | 2" },
         ]}
       />
       <GenerateClassesDialog

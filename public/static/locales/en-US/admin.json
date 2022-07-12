@@ -58,7 +58,6 @@
       "name": "Name",
       "advisor": "Class advisors",
       "year": "A. year",
-      "semester": "Semester",
       "action": {
         "edit": "Edit",
         "delete": "Delete"

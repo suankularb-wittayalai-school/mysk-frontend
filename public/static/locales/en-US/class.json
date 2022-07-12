@@ -7,7 +7,6 @@
       "classNo_helper": "Must be 3-digit, i.e. 408.",
       "classNo_error": "Invalid. Should be 3-digit, i.e. 408.",
       "year": "Academic year",
-      "semester": "Semester"
     },
     "people": {
       "title": "People",

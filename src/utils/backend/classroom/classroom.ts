@@ -46,7 +46,6 @@ export async function createClassroom(
       number: classroom.number,
       year: classroom.year,
       contacts: contactIds as number[],
-      semester: classroom.semester,
       advisors: classroom.classAdvisors.map((advisor) => advisor.id),
       students: classroom.students.map((student) => student.id),
       subjects: [],
@@ -66,7 +65,6 @@ export async function getClassroom(number: number): Promise<Class> {
     contacts: [],
     students: [],
     year: getCurrentAcedemicYear(),
-    semester: 1,
     subjects: [],
   };
 
@@ -118,7 +116,6 @@ export async function updateClassroom(
       number: classroom.number,
       year: classroom.year,
       contacts: contactIDs,
-      semester: classroom.semester,
       advisors: classroom.classAdvisors.map((advisor) => advisor.id),
       students: classroom.students.map((student) => student.id),
       subjects: [],
@@ -177,7 +174,6 @@ export async function addContactToClassroom(
       .update({ contacts: [...classroom.contacts, contactID] })
       .eq("id", classID)
       .single();
-  // UPDATE contacts value ... WHERE id = ?;
 
   return { data: updatedClassroom, error: classroomUpdatingError };
 }
