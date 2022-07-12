@@ -5,7 +5,7 @@
   },
   "filter": {
     "forms": "Forms",
-    "news": "News",
+    "info": "Info",
     "payments": "Payments",
     "amountDone": {
       "notDone": "Not done",
@@ -18,7 +18,7 @@
   "itemType": {
     "form": "Form",
     "stats": "Statistics",
-    "news": "News",
+    "info": "Info",
     "payment": "Payment"
   },
   "itemFrequency": {
@@ -33,7 +33,7 @@
     "pastDueBy": "Past due by {{timePast}}"
   },
   "itemAction": {
-    "news": "Read more",
+    "info": "Read more",
     "stats": "Read more",
     "form": {
       "do": "Do form",

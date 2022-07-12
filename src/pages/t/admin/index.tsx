@@ -49,6 +49,11 @@ const DatabaseSection = (): JSX.Element => {
       name: "classroom",
       url: "/t/admin/classes",
     },
+    {
+      icon: <MaterialIcon icon="newspaper" />,
+      name: "news",
+      url: "/t/admin/news",
+    },
   ];
 
   return (

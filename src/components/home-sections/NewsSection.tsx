@@ -14,7 +14,7 @@ import {
 } from "@suankularb-components/react";
 
 // Components
-import NewsCard from "@components/NewsCard";
+import NewsCard from "@components/news/NewsCard";
 
 // Types
 import { NewsList } from "@utils/types/news";

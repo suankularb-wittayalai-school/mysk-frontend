@@ -1,9 +1,11 @@
+// Converters
+import { dbInfo2News } from "@utils/backend/database";
+
 // Supabase
 import { supabase } from "@utils/supabaseClient";
 
 // Types
 import { InfoDB } from "@utils/types/database/news";
-import { dbInfo2News } from "../database";
 
 export async function getLandingFeed() {
   const infos = await getInfos();

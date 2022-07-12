@@ -6,7 +6,8 @@
       "student": "Students",
       "teacher": "Teachers",
       "subject": "Subjects",
-      "classroom": "Classrooms"
+      "classroom": "Classes",
+      "news": "News"
     }
   },
   "studentList": {
@@ -76,6 +77,13 @@
       "seeAll": "See all",
       "addClass": "Add class",
       "generate": "Generate"
+    }
+  },
+  "news": {
+    "title": {
+      "full": "News for admins",
+      "title": "News and forms",
+      "subtitle": "for administrators"
     }
   },
   "schedule": {

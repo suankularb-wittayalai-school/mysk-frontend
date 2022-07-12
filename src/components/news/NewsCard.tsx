@@ -19,7 +19,7 @@ import {
 } from "@suankularb-components/react";
 
 // Types
-import { NewsItem } from "@utils/types/news";
+import { NewsItem, NewsItemType } from "@utils/types/news";
 
 // Helpers
 import { getLocaleString } from "@utils/helpers/i18n";
@@ -127,10 +127,12 @@ const NewsChipList = ({ newsItem }: { newsItem: NewsItem }): JSX.Element => {
 
 const NewsCard = ({
   newsItem,
+  editable,
   showChips,
   btnType,
 }: {
   newsItem: NewsItem;
+  editable?: boolean;
   showChips?: boolean;
   btnType?: "filled" | "outlined" | "text" | "tonal";
 }): JSX.Element => {
@@ -189,7 +191,7 @@ const NewsCard = ({
         <LinkButton
           label={t(
             `itemAction.${newsItem.type}${
-              ["news", "stats"].includes(newsItem.type)
+              (["info", "stats"] as NewsItemType[]).includes(newsItem.type)
                 ? ""
                 : `.${newsItem.done ? "edit" : "do"}`
             }`
