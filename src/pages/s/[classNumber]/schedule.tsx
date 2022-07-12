@@ -208,9 +208,12 @@ const StudentSchedule: NextPage<{
 };
 
 export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
+  const classNumber = await getClassIDFromNumber(Number(params?.classNumber));
+  if (!classNumber) return { notFound: true };
+
   const schedule: ScheduleType = (await getSchedule(
     "student",
-    await getClassIDFromNumber(Number(params?.classNumber))
+    classNumber
   )) || {
     content: [
       { day: 1, content: [] },
@@ -232,6 +235,7 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
         "common",
         "schedule",
       ])),
+      revalidate: 300,
       classNumber: params?.classNumber,
       schedule,
       subjectList,
