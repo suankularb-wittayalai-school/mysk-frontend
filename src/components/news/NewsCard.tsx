@@ -186,7 +186,7 @@ const NewsCard = ({
           <LinkButton
             label={t("itemAction.edit")}
             type="filled"
-            url={`/news/edit/${newsItem.type}/${newsItem.id}`}
+            url={`/t/admin/news/edit/${newsItem.type}/${newsItem.id}`}
             LinkElement={Link}
           />
         ) : (
@@ -199,7 +199,7 @@ const NewsCard = ({
               }`
             )}
             type={btnType || "filled"}
-            url={`/${newsItem.type}/${newsItem.id}`}
+            url={`/news/${newsItem.type}/${newsItem.id}`}
             LinkElement={Link}
           />
         )}

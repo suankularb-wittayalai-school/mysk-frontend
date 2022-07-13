@@ -28,3 +28,15 @@ export type ChipInputListItem = {
   id: string;
   name: string;
 };
+
+export type WaitingSnackbar = {
+  id: string;
+  text: string;
+  action?:
+    | {
+        label: string;
+        onClick: () => void;
+      }
+    | undefined;
+  isStacked?: boolean | undefined;
+};

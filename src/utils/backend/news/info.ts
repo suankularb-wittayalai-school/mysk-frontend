@@ -1,11 +1,12 @@
 // Converters
+import { PostgrestError } from "@supabase/supabase-js";
 import { dbInfo2News } from "@utils/backend/database";
 
 // Supabase
 import { supabase } from "@utils/supabaseClient";
 
 // Types
-import { InfoDB } from "@utils/types/database/news";
+import { InfoDB, InfoTable, NewsTable } from "@utils/types/database/news";
 
 export async function getLandingFeed() {
   const infos = await getInfos();
@@ -30,4 +31,44 @@ export async function getInfos() {
   }
 
   return data.map(dbInfo2News);
+}
+
+export async function createInfo(form: {
+  titleTH: string;
+  titleEN: string;
+  descTH: string;
+  descEN: string;
+  bodyTH: string;
+  bodyEN: string;
+  oldURL: string;
+}): Promise<{ data: InfoTable[]; error: PostgrestError | null }> {
+  const { data: news, error: newsError } = await supabase
+    .from<NewsTable>("news")
+    .insert({
+      title_th: form.titleTH,
+      title_en: form.titleEN,
+      description_th: form.descTH,
+      description_en: form.descEN,
+      old_url: form.oldURL,
+    });
+
+  if (newsError || !news[0].id) {
+    console.error(newsError);
+    return { data: [], error: newsError };
+  }
+
+  const { data: info, error: infoError } = await supabase
+    .from<InfoTable>("infos")
+    .insert({
+      body_th: form.bodyTH,
+      body_en: form.bodyEN,
+      parent: news[0].id,
+    });
+
+  if (infoError || !info) {
+    console.error(infoError);
+    return { data: [], error: infoError };
+  }
+
+  return { data: info, error: null };
 }

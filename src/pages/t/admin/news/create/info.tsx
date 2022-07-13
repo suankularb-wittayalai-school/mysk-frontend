@@ -24,6 +24,7 @@ import {
   MaterialIcon,
   RegularLayout,
   Section,
+  SnackbarManager,
   TextArea,
   Title,
 } from "@suankularb-components/react";
@@ -31,11 +32,14 @@ import {
 // Animations
 import { animationTransition } from "@utils/animations/config";
 
+// Backend
+import { createInfo } from "@utils/backend/news/info";
+
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
 
 // Types
-import { LangCode } from "@utils/types/common";
+import { LangCode, WaitingSnackbar } from "@utils/types/common";
 
 type Form = {
   titleTH: string;
@@ -106,6 +110,7 @@ const WriteSection = ({
   desc,
   body,
   setBody,
+  publish,
   allowEdit,
   allowPublish,
 }: {
@@ -113,6 +118,7 @@ const WriteSection = ({
   desc: string;
   body: string;
   setBody: (e: string) => void;
+  publish: () => void;
   allowEdit?: boolean;
   allowPublish?: boolean;
 }): JSX.Element => {
@@ -199,6 +205,7 @@ const WriteSection = ({
           type="filled"
           icon={<MaterialIcon icon="publish" />}
           disabled={allowPublish}
+          onClick={publish}
         />
       </Actions>
     </Section>
@@ -208,6 +215,7 @@ const WriteSection = ({
 // Page
 const CreateInfo: NextPage = (): JSX.Element => {
   const { t } = useTranslation("admin");
+  const [snbQueue, setSnbQueue] = useState<WaitingSnackbar[]>([]);
 
   // Form control
   const [form, setForm] = useState<Form>({
@@ -233,6 +241,21 @@ const CreateInfo: NextPage = (): JSX.Element => {
     if (!form.bodyTH) return false;
 
     return true;
+  }
+
+  // Publish articl
+  async function publish() {
+    const { data, error } = await createInfo(form);
+    if (error)
+      setSnbQueue([
+        ...snbQueue,
+        { id: "publish-error", text: `Error: ${error.message}` },
+      ]);
+    else if (data)
+      setSnbQueue([
+        ...snbQueue,
+        { id: "publish-success", text: "Article successfully published." },
+      ]);
   }
 
   return (
@@ -261,8 +284,10 @@ const CreateInfo: NextPage = (): JSX.Element => {
           setBody={(e) => setForm({ ...form, bodyTH: e })}
           allowEdit={!validateConfig()}
           allowPublish={!validate()}
+          publish={publish}
         />
       </RegularLayout>
+      <SnackbarManager queue={snbQueue} setQueue={setSnbQueue} />
     </>
   );
 };
