@@ -35,14 +35,11 @@ import { getClassIDFromNumber } from "@utils/backend/classroom/classroom";
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
 import { createTitleStr } from "@utils/helpers/title";
+import { SubjectGroup } from "@utils/types/subject";
 
 // Types
 import { TeachersListGroup } from "@utils/types/teachers";
 import { Teacher } from "@utils/types/person";
-
-// Utils
-import { nameJoiner } from "@utils/helpers/name";
-import { SubjectGroup } from "@utils/types/subject";
 
 // Page
 const Teachers: NextPage<{ teacherList: TeachersListGroup[] }> = ({
