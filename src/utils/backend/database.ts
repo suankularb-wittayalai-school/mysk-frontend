@@ -12,11 +12,7 @@ import {
   SubjectGroupDB,
   SubjectTable,
 } from "@utils/types/database/subject";
-import {
-  NewsItemInfo,
-  NewsItemInfoNoDate,
-  NewsItemNoDate,
-} from "@utils/types/news";
+import { NewsItemInfoNoDate } from "@utils/types/news";
 import { Role, Student, Teacher } from "@utils/types/person";
 import { SchedulePeriod } from "@utils/types/schedule";
 import { Subject, SubjectListItem } from "@utils/types/subject";
@@ -48,6 +44,10 @@ export function dbInfo2News(info: InfoDB): NewsItemInfoNoDate {
       description: {
         "en-US": info.parent.description_en || "",
         th: info.parent.description_th,
+      },
+      body: {
+        "en-US": info.body_en || "",
+        th: info.body_th,
       },
     },
   };

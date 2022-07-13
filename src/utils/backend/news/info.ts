@@ -6,7 +6,12 @@ import { dbInfo2News } from "@utils/backend/database";
 import { supabase } from "@utils/supabaseClient";
 
 // Types
-import { InfoDB, InfoTable, NewsTable } from "@utils/types/database/news";
+import {
+  InfoDB,
+  InfoTable,
+  NewsDB,
+  NewsTable,
+} from "@utils/types/database/news";
 
 export async function getLandingFeed() {
   const infos = await getInfos();
@@ -31,6 +36,24 @@ export async function getInfos() {
   }
 
   return data.map(dbInfo2News);
+}
+
+export async function getInfo(id: number) {
+  const { data, error } = await supabase
+    .from<InfoDB>("infos")
+    .select(
+      "*, parent:news(title_th, title_en, description_th, description_en, image, old_url)"
+    )
+    .match({ id })
+    .limit(1)
+    .single();
+
+  if (error || !data) {
+    console.error(error);
+    return null;
+  }
+
+  return dbInfo2News(data);
 }
 
 export async function createInfo(form: {

@@ -16,6 +16,9 @@ import {
   Title,
 } from "@suankularb-components/react";
 
+// Backend
+import { getInfo } from "@utils/backend/news/info";
+
 // Components
 import ArtcleEditor from "@components/news/ArticleEditor";
 
@@ -24,9 +27,12 @@ import { createTitleStr } from "@utils/helpers/title";
 
 // Types
 import { LangCode, WaitingSnackbar } from "@utils/types/common";
+import { NewsItemInfoNoDate } from "@utils/types/news";
 
 // Page
-const EditInfo: NextPage = (): JSX.Element => {
+const EditInfo: NextPage<{ existingData: NewsItemInfoNoDate }> = ({
+  existingData,
+}): JSX.Element => {
   const { t } = useTranslation("admin");
   const [snbQueue, setSnbQueue] = useState<WaitingSnackbar[]>([]);
 
@@ -49,6 +55,7 @@ const EditInfo: NextPage = (): JSX.Element => {
         }
       >
         <ArtcleEditor
+          existingData={existingData}
           addToSnbQueue={(newSnb) => setSnbQueue([...snbQueue, newSnb])}
         />
       </RegularLayout>
@@ -57,10 +64,24 @@ const EditInfo: NextPage = (): JSX.Element => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale as LangCode, ["common", "admin"])),
-  },
-});
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  params,
+}) => {
+  if (!params?.infoID) return { notFound: true };
+
+  const existingData = await getInfo(Number(params.infoID));
+  if (!existingData) return { notFound: true };
+  
+  return {
+    props: {
+      ...(await serverSideTranslations(locale as LangCode, [
+        "common",
+        "admin",
+      ])),
+      existingData,
+    },
+  };
+};
 
 export default EditInfo;

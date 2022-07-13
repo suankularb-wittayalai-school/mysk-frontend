@@ -24,7 +24,9 @@ type NewsItemCommon = {
   content: {
     title: MultiLangString;
     description: MultiLangString;
+    body: MultiLangString;
   };
+  oldURL?: string;
 };
 
 export type NewsItemInfo = NewsItemCommon & {

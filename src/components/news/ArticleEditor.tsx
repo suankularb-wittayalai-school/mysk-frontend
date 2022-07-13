@@ -8,7 +8,7 @@ import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import ReactMarkdown from "react-markdown";
 import gfm from "remark-gfm";
@@ -39,7 +39,13 @@ import { createInfo } from "@utils/backend/news/info";
 import { createTitleStr } from "@utils/helpers/title";
 
 // Types
-import { LangCode, WaitingSnackbar } from "@utils/types/common";
+import {
+  LangCode,
+  MultiLangString,
+  WaitingSnackbar,
+} from "@utils/types/common";
+import { InfoDB } from "@utils/types/database/news";
+import { NewsItemInfoNoDate } from "@utils/types/news";
 
 type Form = {
   titleTH: string;
@@ -52,9 +58,11 @@ type Form = {
 };
 
 const ConfigSection = ({
+  existingData,
   form,
   setForm,
 }: {
+  existingData?: NewsItemInfoNoDate;
   form: Form;
   setForm: (form: Form) => void;
 }): JSX.Element => {
@@ -73,12 +81,14 @@ const ConfigSection = ({
             type="text"
             label={t("articleEditor.config.titleTH")}
             onChange={(e) => setForm({ ...form, titleTH: e })}
+            defaultValue={existingData?.content.title.th}
           />
           <KeyboardInput
             name="title-en"
             type="text"
             label={t("articleEditor.config.titleEN")}
             onChange={(e) => setForm({ ...form, titleEN: e })}
+            defaultValue={existingData?.content.title["en-US"]}
           />
           <KeyboardInput
             name="old-url"
@@ -86,6 +96,7 @@ const ConfigSection = ({
             label={t("articleEditor.config.oldURL")}
             helperMsg={t("articleEditor.config.oldURL_helper")}
             onChange={(e) => setForm({ ...form, oldURL: e })}
+            defaultValue={existingData?.oldURL}
           />
         </div>
         <div className="layout-grid-cols-2 !gap-y-0">
@@ -93,11 +104,13 @@ const ConfigSection = ({
             name="desc-th"
             label={t("articleEditor.config.descTH")}
             onChange={(e) => setForm({ ...form, descTH: e })}
+            defaultValue={existingData?.content.description.th}
           />
           <TextArea
             name="desc-en"
             label={t("articleEditor.config.descEN")}
             onChange={(e) => setForm({ ...form, descEN: e })}
+            defaultValue={existingData?.content.description["en-US"]}
           />
         </div>
       </div>
@@ -106,6 +119,7 @@ const ConfigSection = ({
 };
 
 const WriteSection = ({
+  existingBody,
   title,
   desc,
   body,
@@ -114,6 +128,7 @@ const WriteSection = ({
   allowEdit,
   allowPublish,
 }: {
+  existingBody?: MultiLangString;
   title: string;
   desc: string;
   body: string;
@@ -174,6 +189,7 @@ const WriteSection = ({
             name="markdown"
             label={t("articleEditor.write.editorPlh")}
             onChange={(e) => setBody(e)}
+            defaultValue={existingBody?.th}
           />
         </section>
 
@@ -182,7 +198,7 @@ const WriteSection = ({
           role="document"
           className="markdown h-fit rounded-lg border-outline !p-4"
         >
-          <h1 className="m-0">{title}</h1>
+          <h1 className="mb-2">{title}</h1>
           <p className="mt-0 !font-display !text-lg">{desc}</p>
           {body ? (
             <ReactMarkdown remarkPlugins={[gfm]}>{body}</ReactMarkdown>
@@ -213,8 +229,10 @@ const WriteSection = ({
 };
 
 const ArtcleEditor = ({
+  existingData,
   addToSnbQueue,
 }: {
+  existingData?: NewsItemInfoNoDate;
   addToSnbQueue?: (newSnb: WaitingSnackbar) => void;
 }): JSX.Element => {
   // Form control
@@ -227,6 +245,19 @@ const ArtcleEditor = ({
     bodyEN: "",
     oldURL: "",
   });
+
+  useEffect(() => {
+    if (existingData)
+      setForm({
+        titleTH: existingData.content.title.th,
+        titleEN: existingData.content.title["en-US"] || "",
+        descTH: existingData.content.description.th,
+        descEN: existingData.content.description["en-US"] || "",
+        bodyTH: existingData.content.body.th,
+        bodyEN: existingData.content.body["en-US"] || "",
+        oldURL: existingData.oldURL || "",
+      });
+  }, [existingData]);
 
   // Validation
   function validateConfig(): boolean {
@@ -258,8 +289,13 @@ const ArtcleEditor = ({
 
   return (
     <>
-      <ConfigSection form={form} setForm={setForm} />
+      <ConfigSection
+        existingData={existingData}
+        form={form}
+        setForm={setForm}
+      />
       <WriteSection
+        existingBody={existingData?.content.body}
         title={form.titleTH}
         desc={form.descTH}
         body={form.bodyTH}
