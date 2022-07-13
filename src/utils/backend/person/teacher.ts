@@ -12,6 +12,7 @@ import {
 } from "@utils/types/database/person";
 import { RoomSubjectDB } from "@utils/types/database/subject";
 import { Teacher } from "@utils/types/person";
+import { db2Teacher } from "../database";
 
 // Backend
 import { createPerson } from "./person";
@@ -65,7 +66,7 @@ export async function createTeacher(
 
 // https://supabase.com/docs/reference/javascript/select
 
-export async function getTeacherList(classID: number) {
+export async function getTeacherList(classID: number): Promise<Teacher[]> {
   // Get the teachers of all subjectRooms where class matches
   const { data: roomSubjects, error: roomSubjectsError } = await supabase
     .from<RoomSubjectDB>("room_subjects")
@@ -77,30 +78,40 @@ export async function getTeacherList(classID: number) {
   }
 
   // Map array of teacher IDs into array of teachers (fetch teacher in map)
-  const teachers: TeacherDB[] = await Promise.all(
+  const selected_teachers: (TeacherDB | null)[] = await Promise.all(
     // 2. Flatten the arrays into an array of teacher IDs
-    ([] as number[]).concat
-      .apply(
-        [],
-        // 1. Map into array of array of teacher IDs
-        roomSubjects.map((roomSubject) => roomSubject.teacher)
-      )
+    roomSubjects
+      .map((roomSubject) => roomSubject.teacher)
+      .flat()
+      // remove duplicates
+      .filter((id, index, self) => self.indexOf(id) === index)
       // 3. Fetch teacher data for each teacher
-      .map(async () => {
+      .map(async (teacher_id) => {
         // TODO: Get teacher from ID (select only id, name, contacts, subject group)
         const { data, error } = await supabase
           .from<TeacherDB>("teacher")
-          .select(
-            "id, people:person(first_name_en, last_name_en, contacts), Subjectgroup:subject_group(name_en)"
-          );
+          .select("* ,people:person(*), SubjectGroup:subject_group(*)")
+          .match({ id: teacher_id })
+          .limit(1)
+          .single();
         if (error || !data) {
           console.error(error);
           return null;
         }
         return data;
       })
-      .filter((teacher) => teacher)
   );
+  const teachers: TeacherDB[] = selected_teachers.filter(
+    (teacher) => teacher !== null
+  ) as TeacherDB[];
 
-  return teachers;
+  // console.log(
+  //   roomSubjects
+  //     .map((roomSubject) => roomSubject.teacher)
+  //     .filter((id, index, self) => self.indexOf(id) === index)
+  // );
+
+  return await Promise.all(
+    teachers.map(async (teacher) => await db2Teacher(teacher))
+  );
 }

@@ -37,13 +37,16 @@ import { Teacher } from "@utils/types/person";
 
 // Utils
 import { nameJoiner } from "@utils/helpers/name";
+import { SubjectGroup } from "@utils/types/subject";
 
 // Page
-const Teachers: NextPage = (): JSX.Element => {
+const Teachers: NextPage<{ teacherList: TeachersListGroup[] }> = ({
+  teacherList,
+}): JSX.Element => {
   const { t } = useTranslation(["teacher", "common"]);
   const locale = useRouter().locale == "th" ? "th" : "en-US";
 
-  const teacherList: TeachersListGroup[] = [];
+  // const teacherList: TeachersListGroup[] = [];
 
   const [mainContent, setMainContent] = useState<Teacher | null>(null);
 
@@ -189,7 +192,28 @@ export const getServerSideProps: GetServerSideProps = async ({
     await getClassIDFromNumber(Number(params?.classNumber))
   );
 
-  console.log(teachers);
+  const subjectGroups: string[] = teachers
+    .map((teacher) =>
+      locale
+        ? teacher.subjectGroup.name[locale as keyof SubjectGroup["name"]]
+        : teacher.subjectGroup.name.th
+    )
+    .filter((value, index, self) => self.indexOf(value) === index);
+
+  const teacherList: TeachersListGroup[] = subjectGroups.map(
+    (subjectGroup) => ({
+      groupName: subjectGroup,
+      content: teachers
+        .filter((teacher) =>
+          locale
+            ? teacher.subjectGroup.name[
+                locale as keyof SubjectGroup["name"]
+              ] === subjectGroup
+            : teacher.subjectGroup.name.th === subjectGroup
+        )
+        .map((teacher) => ({ content: teacher, id: teacher.id })),
+    })
+  );
 
   return {
     props: {
@@ -197,6 +221,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         "common",
         "teacher",
       ])),
+      teacherList,
     },
   };
 };
