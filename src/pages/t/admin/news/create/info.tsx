@@ -32,6 +32,8 @@ import { createTitleStr } from "@utils/helpers/title";
 import { LangCode } from "@utils/types/common";
 
 const ConfigSection = (): JSX.Element => {
+  const { t } = useTranslation("admin");
+
   const [form, setForm] = useState({
     titleTH: "",
     titleEN: "",
@@ -44,39 +46,39 @@ const ConfigSection = (): JSX.Element => {
     <Section>
       <Header
         icon={<MaterialIcon icon="settings" allowCustomSize />}
-        text="Configure"
+        text={t("articleEditor.config.title")}
       />
       <div>
         <div className="layout-grid-cols-3 !gap-y-0">
           <KeyboardInput
             name="title-th"
             type="text"
-            label="Local title (Thai)"
+            label={t("articleEditor.config.titleTH")}
             onChange={(e) => setForm({ ...form, titleTH: e })}
           />
           <KeyboardInput
             name="title-en"
             type="text"
-            label="English title"
+            label={t("articleEditor.config.titleEN")}
             onChange={(e) => setForm({ ...form, titleEN: e })}
           />
           <KeyboardInput
             name="old-url"
             type="url"
-            label="Link in legacy MySK"
-            helperMsg="If this page exists in legacy MySK, link to it."
+            label={t("articleEditor.config.oldURL")}
+            helperMsg={t("articleEditor.config.oldURL_helper")}
             onChange={(e) => setForm({ ...form, oldURL: e })}
           />
         </div>
         <div className="layout-grid-cols-2 !gap-y-0">
           <TextArea
             name="desc-th"
-            label="Local description (Thai)"
+            label={t("articleEditor.config.descEN")}
             onChange={(e) => setForm({ ...form, descTH: e })}
           />
           <TextArea
             name="desc-en"
-            label="English description"
+            label={t("articleEditor.config.descEN")}
             onChange={(e) => setForm({ ...form, descEN: e })}
           />
         </div>
@@ -86,7 +88,8 @@ const ConfigSection = (): JSX.Element => {
 };
 
 const WriteSection = (): JSX.Element => {
-  const [pageMarkdown, setPageMarkdown] = useState<string>("");
+  const { t } = useTranslation("admin");
+  const [body, setBody] = useState<string>("");
 
   return (
     <Section>
@@ -105,36 +108,40 @@ const WriteSection = (): JSX.Element => {
           >
             <Card type="horizontal" appearance="tonal" hasAction>
               <CardHeader
-                title={<h3 id="markdown-how-to">Markdown how-to</h3>}
-                label="Read the guide on how to write in Markdown"
+                title={
+                  <h3 id="markdown-how-to">
+                    {t("articleEditor.write.howTo.title")}
+                  </h3>
+                }
+                label={t("articleEditor.write.howTo.supportingText")}
                 end={<MaterialIcon icon="open_in_new" />}
               />
             </Card>
           </a>
           <TextArea
             name="markdown"
-            label="Markdown"
-            onChange={(e) => setPageMarkdown(e)}
+            label={t("articleEditor.write.editorPlh")}
+            onChange={(e) => setBody(e)}
           />
         </section>
 
         {/* Preview */}
         <section className="markdown h-fit rounded-lg border-outline !p-4">
-          {pageMarkdown ? (
-            <ReactMarkdown>{pageMarkdown}</ReactMarkdown>
+          {body ? (
+            <ReactMarkdown>{body}</ReactMarkdown>
           ) : (
-            <p className="text-center">Start typing to see the preview.</p>
+            <p className="text-center">{t("articleEditor.write.previewPlh")}</p>
           )}
         </section>
       </div>
       <Actions>
         <Button
-          label="Save"
+          label={t("articleEditor.write.action.save")}
           type="outlined"
           icon={<MaterialIcon icon="save" />}
         />
         <Button
-          label="Publish"
+          label={t("articleEditor.write.action.publish")}
           type="filled"
           icon={<MaterialIcon icon="publish" />}
         />
@@ -146,6 +153,7 @@ const WriteSection = (): JSX.Element => {
 // Page
 const CreateInfo: NextPage = (): JSX.Element => {
   const { t } = useTranslation("admin");
+
   return (
     <>
       <Head>

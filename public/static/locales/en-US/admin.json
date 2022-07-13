@@ -116,6 +116,28 @@
       "add": "Create",
       "edit": "Edit",
       "subtitle": "Article editor"
+    },
+    "config": {
+      "title": "Configure",
+      "titleTH": "Local title (Thai)",
+      "titleEN": "English title",
+      "descTH": "Local description (Thai)",
+      "descEN": "English description",
+      "oldURL": "Link in legacy MySK",
+      "oldURL_helper": "If this page exists in legacy MySK, link to it."
+    },
+    "write": {
+      "title": "Write",
+      "howTo": {
+        "title": "Markdown how-to",
+        "supportingText": "Read the guide on how to write in Markdown."
+      },
+      "editorPlh": "Markdown",
+      "previewPlh": "Start typing to see the preview.",
+      "action": {
+        "save": "Save",
+        "publish": "Publish"
+      }
     }
   },
   "common": {
