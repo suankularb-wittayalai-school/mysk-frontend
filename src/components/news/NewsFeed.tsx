@@ -14,9 +14,11 @@ import { NewsList } from "@utils/types/news";
 const NewsFeed = ({
   news,
   isForAdmin,
+  btnType,
 }: {
   news: NewsList;
   isForAdmin?: boolean;
+  btnType?: "filled" | "tonal" | "text" | "outlined";
 }): JSX.Element => (
   <section role="feed">
     <LayoutGroup>
@@ -47,7 +49,12 @@ const NewsFeed = ({
                 layoutId={[newsItem.type, newsItem.id].join("-")}
                 transition={animationTransition}
               >
-                <NewsCard newsItem={newsItem} editable={isForAdmin} showChips />
+                <NewsCard
+                  newsItem={newsItem}
+                  editable={isForAdmin}
+                  btnType={btnType || "filled"}
+                  showChips
+                />
               </motion.article>
             ))}
         </Masonry>

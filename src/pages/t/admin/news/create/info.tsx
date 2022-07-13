@@ -243,7 +243,7 @@ const CreateInfo: NextPage = (): JSX.Element => {
     return true;
   }
 
-  // Publish articl
+  // Publish article
   async function publish() {
     const { data, error } = await createInfo(form);
     if (error)

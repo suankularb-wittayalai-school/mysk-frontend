@@ -88,6 +88,7 @@ const EditSection = (): JSX.Element => {
             : []
         }
         isForAdmin
+        btnType="tonal"
       />
     </Section>
   );
