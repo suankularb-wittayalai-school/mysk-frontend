@@ -6,13 +6,11 @@ import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useState } from "react";
 
 import { useQuery } from "react-query";
 
 // SK Components
 import {
-  Actions,
   Card,
   CardHeader,
   Header,
