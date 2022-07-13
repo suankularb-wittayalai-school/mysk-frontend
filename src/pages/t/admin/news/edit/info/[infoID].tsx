@@ -1,5 +1,5 @@
 // Modules
-import type { GetStaticProps, NextPage } from "next";
+import type { GetServerSideProps, GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 
@@ -7,7 +7,6 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { useState } from "react";
-
 
 // SK Components
 import {
@@ -27,7 +26,7 @@ import { createTitleStr } from "@utils/helpers/title";
 import { LangCode, WaitingSnackbar } from "@utils/types/common";
 
 // Page
-const CreateInfo: NextPage = (): JSX.Element => {
+const EditInfo: NextPage = (): JSX.Element => {
   const { t } = useTranslation("admin");
   const [snbQueue, setSnbQueue] = useState<WaitingSnackbar[]>([]);
 
@@ -40,7 +39,7 @@ const CreateInfo: NextPage = (): JSX.Element => {
         Title={
           <Title
             name={{
-              title: t("articleEditor.title.add"),
+              title: t("articleEditor.title.edit"),
               subtitle: t("articleEditor.title.subtitle"),
             }}
             pageIcon={<MaterialIcon icon="edit_square" />}
@@ -58,10 +57,10 @@ const CreateInfo: NextPage = (): JSX.Element => {
   );
 };
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => ({
+export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
   props: {
     ...(await serverSideTranslations(locale as LangCode, ["common", "admin"])),
   },
 });
 
-export default CreateInfo;
+export default EditInfo;
