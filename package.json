@@ -24,6 +24,7 @@
     "react-masonry-css": "^1.0.16",
     "react-query": "^3.39.1",
     "react-to-print": "^2.14.7",
+    "remark-gfm": "^3.0.1",
     "sharp": "^0.30.5"
   },
   "devDependencies": {

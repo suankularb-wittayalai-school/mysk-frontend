@@ -11,6 +11,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useState } from "react";
 
 import ReactMarkdown from "react-markdown";
+import gfm from "remark-gfm";
 
 // SK Components
 import {
@@ -178,7 +179,7 @@ const WriteSection = ({
           <h1 className="m-0">{title}</h1>
           <p className="mt-0 !font-display !text-lg">{desc}</p>
           {body ? (
-            <ReactMarkdown>{body}</ReactMarkdown>
+            <ReactMarkdown remarkPlugins={[gfm]}>{body}</ReactMarkdown>
           ) : (
             <p className="container-surface-variant rounded p-4 text-center">
               {t("articleEditor.write.previewPlh")}
