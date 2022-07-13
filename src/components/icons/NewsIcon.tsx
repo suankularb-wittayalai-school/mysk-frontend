@@ -8,7 +8,10 @@ const NewsIcon = ({
   type: NewsItemType;
   className?: string;
 }): JSX.Element => {
-  if (type == "form") return <MaterialIcon icon="edit" className={className} />;
+  if (type == "stats")
+    return <MaterialIcon icon="monitoring" className={className} />;
+  else if (type == "form")
+    return <MaterialIcon icon="edit" className={className} />;
   else if (type == "payment")
     return <MaterialIcon icon="account_balance" className={className} />;
   else return <MaterialIcon icon="information" className={className} />;
