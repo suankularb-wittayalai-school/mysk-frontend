@@ -253,8 +253,8 @@ const ArtcleEditor = ({
         titleEN: existingData.content.title["en-US"] || "",
         descTH: existingData.content.description.th,
         descEN: existingData.content.description["en-US"] || "",
-        bodyTH: existingData.content.body.th,
-        bodyEN: existingData.content.body["en-US"] || "",
+        bodyTH: existingData.content.body?.th || "",
+        bodyEN: existingData.content.body?.["en-US"] || "",
         oldURL: existingData.oldURL || "",
       });
   }, [existingData]);

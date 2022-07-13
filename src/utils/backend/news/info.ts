@@ -73,9 +73,11 @@ export async function createInfo(form: {
       description_th: form.descTH,
       description_en: form.descEN,
       old_url: form.oldURL,
-    });
+    })
+    .limit(1)
+    .single();
 
-  if (newsError || !news[0].id) {
+  if (newsError || !news) {
     console.error(newsError);
     return { data: [], error: newsError };
   }
@@ -85,7 +87,7 @@ export async function createInfo(form: {
     .insert({
       body_th: form.bodyTH,
       body_en: form.bodyEN,
-      parent: news[0].id,
+      parent: news.id,
     });
 
   if (infoError || !info) {

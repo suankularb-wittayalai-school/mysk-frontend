@@ -24,7 +24,7 @@ type NewsItemCommon = {
   content: {
     title: MultiLangString;
     description: MultiLangString;
-    body: MultiLangString;
+    body?: MultiLangString;
   };
   oldURL?: string;
 };
