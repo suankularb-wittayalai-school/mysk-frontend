@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import ReactMarkdown from "react-markdown";
 
@@ -30,17 +30,27 @@ import { createTitleStr } from "@utils/helpers/title";
 
 // Types
 import { LangCode } from "@utils/types/common";
+import { AnimatePresence, motion } from "framer-motion";
+import { animationTransition } from "@utils/animations/config";
 
-const ConfigSection = (): JSX.Element => {
+type Form = {
+  titleTH: string;
+  titleEN: string;
+  descTH: string;
+  descEN: string;
+  bodyTH: string;
+  bodyEN: string;
+  oldURL: string;
+};
+
+const ConfigSection = ({
+  form,
+  setForm,
+}: {
+  form: Form;
+  setForm: (form: Form) => void;
+}): JSX.Element => {
   const { t } = useTranslation("admin");
-
-  const [form, setForm] = useState({
-    titleTH: "",
-    titleEN: "",
-    descTH: "",
-    descEN: "",
-    oldURL: "",
-  });
 
   return (
     <Section>
@@ -73,7 +83,7 @@ const ConfigSection = (): JSX.Element => {
         <div className="layout-grid-cols-2 !gap-y-0">
           <TextArea
             name="desc-th"
-            label={t("articleEditor.config.descEN")}
+            label={t("articleEditor.config.descTH")}
             onChange={(e) => setForm({ ...form, descTH: e })}
           />
           <TextArea
@@ -87,12 +97,40 @@ const ConfigSection = (): JSX.Element => {
   );
 };
 
-const WriteSection = (): JSX.Element => {
+const WriteSection = ({
+  body,
+  setBody,
+  allowEdit,
+  allowPublish,
+}: {
+  body: string;
+  setBody: (e: string) => void;
+  allowEdit?: boolean;
+  allowPublish?: boolean;
+}): JSX.Element => {
   const { t } = useTranslation("admin");
-  const [body, setBody] = useState<string>("");
 
   return (
-    <Section>
+    <Section className="relative">
+      <AnimatePresence>
+        {allowEdit && (
+          <motion.div
+            className="absolute -top-4 -left-4 z-20 flex h-[calc(100%+2rem)] w-[calc(100%+2rem)]
+              flex-col items-center justify-center gap-6 rounded-xl text-center text-lg backdrop-blur-xl"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={animationTransition}
+          >
+            <MaterialIcon
+              icon="front_hand"
+              allowCustomSize
+              className="!text-9xl text-on-surface-variant"
+            />
+            <p>{t("articleEditor.write.editNotAllowed")}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <Header
         icon={<MaterialIcon icon="edit_square" allowCustomSize />}
         text={t("articleEditor.write.title")}
@@ -139,11 +177,13 @@ const WriteSection = (): JSX.Element => {
           label={t("articleEditor.write.action.save")}
           type="outlined"
           icon={<MaterialIcon icon="save" />}
+          disabled={allowPublish}
         />
         <Button
           label={t("articleEditor.write.action.publish")}
           type="filled"
           icon={<MaterialIcon icon="publish" />}
+          disabled={allowPublish}
         />
       </Actions>
     </Section>
@@ -153,6 +193,32 @@ const WriteSection = (): JSX.Element => {
 // Page
 const CreateInfo: NextPage = (): JSX.Element => {
   const { t } = useTranslation("admin");
+
+  // Form control
+  const [form, setForm] = useState<Form>({
+    titleTH: "",
+    titleEN: "",
+    descTH: "",
+    descEN: "",
+    bodyTH: "",
+    bodyEN: "",
+    oldURL: "",
+  });
+
+  // Validation
+  function validateConfig(): boolean {
+    if (!form.titleTH) return false;
+    if (!form.descTH) return false;
+
+    return true;
+  }
+
+  function validate(): boolean {
+    if (!validateConfig) return false;
+    if (!form.bodyTH) return false;
+
+    return true;
+  }
 
   return (
     <>
@@ -172,8 +238,13 @@ const CreateInfo: NextPage = (): JSX.Element => {
           />
         }
       >
-        <ConfigSection />
-        <WriteSection />
+        <ConfigSection form={form} setForm={setForm} />
+        <WriteSection
+          body={form.bodyTH}
+          setBody={(e) => setForm({ ...form, bodyTH: e })}
+          allowEdit={!validateConfig()}
+          allowPublish={!validate()}
+        />
       </RegularLayout>
     </>
   );

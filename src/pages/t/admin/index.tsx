@@ -10,8 +10,6 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import {
   Card,
   CardHeader,
-  Chip,
-  ChipList,
   Header,
   MaterialIcon,
   RegularLayout,
