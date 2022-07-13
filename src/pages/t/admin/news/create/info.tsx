@@ -1,4 +1,6 @@
 // Modules
+import { AnimatePresence, motion } from "framer-motion";
+
 import type { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
@@ -6,7 +8,7 @@ import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import ReactMarkdown from "react-markdown";
 
@@ -25,13 +27,14 @@ import {
   Title,
 } from "@suankularb-components/react";
 
+// Animations
+import { animationTransition } from "@utils/animations/config";
+
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
 
 // Types
 import { LangCode } from "@utils/types/common";
-import { AnimatePresence, motion } from "framer-motion";
-import { animationTransition } from "@utils/animations/config";
 
 type Form = {
   titleTH: string;
@@ -98,11 +101,15 @@ const ConfigSection = ({
 };
 
 const WriteSection = ({
+  title,
+  desc,
   body,
   setBody,
   allowEdit,
   allowPublish,
 }: {
+  title: string;
+  desc: string;
   body: string;
   setBody: (e: string) => void;
   allowEdit?: boolean;
@@ -116,7 +123,7 @@ const WriteSection = ({
         {allowEdit && (
           <motion.div
             className="absolute -top-4 -left-4 z-20 flex h-[calc(100%+2rem)] w-[calc(100%+2rem)]
-              flex-col items-center justify-center gap-6 rounded-xl text-center text-lg backdrop-blur-xl"
+              flex-col items-center justify-center gap-6 rounded-xl !p-6 text-center text-lg backdrop-blur-xl"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -164,11 +171,18 @@ const WriteSection = ({
         </section>
 
         {/* Preview */}
-        <section className="markdown h-fit rounded-lg border-outline !p-4">
+        <section
+          role="document"
+          className="markdown h-fit rounded-lg border-outline !p-4"
+        >
+          <h1 className="m-0">{title}</h1>
+          <p className="mt-0 !font-display !text-lg">{desc}</p>
           {body ? (
             <ReactMarkdown>{body}</ReactMarkdown>
           ) : (
-            <p className="text-center">{t("articleEditor.write.previewPlh")}</p>
+            <p className="container-surface-variant rounded p-4 text-center">
+              {t("articleEditor.write.previewPlh")}
+            </p>
           )}
         </section>
       </div>
@@ -240,6 +254,8 @@ const CreateInfo: NextPage = (): JSX.Element => {
       >
         <ConfigSection form={form} setForm={setForm} />
         <WriteSection
+          title={form.titleTH}
+          desc={form.descTH}
           body={form.bodyTH}
           setBody={(e) => setForm({ ...form, bodyTH: e })}
           allowEdit={!validateConfig()}
