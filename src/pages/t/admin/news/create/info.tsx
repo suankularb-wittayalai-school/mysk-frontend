@@ -95,7 +95,7 @@ const WriteSection = (): JSX.Element => {
     <Section>
       <Header
         icon={<MaterialIcon icon="edit_square" allowCustomSize />}
-        text="Write"
+        text={t("articleEditor.write.title")}
       />
       <div className="layout-grid-cols-2 !flex-col-reverse !gap-y-4">
         {/* Text area */}

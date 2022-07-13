@@ -23,6 +23,7 @@
 
   .markdown {
     @apply prose font-sans text-on-background prose-headings:font-display
-      dark:prose-invert;
+      prose-h5:text-on-primary-container prose-h6:text-on-primary-container
+      prose-h6:font-sans dark:prose-invert;
   }
 }
