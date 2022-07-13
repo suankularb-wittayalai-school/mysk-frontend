@@ -37,6 +37,7 @@ import {
 // Components
 import AddClassDialog from "@components/dialogs/AddClass";
 import ConnectSubjectDialog from "@components/dialogs/ConnectSubject";
+import ConfirmDelete from "@components/dialogs/ConfirmDelete";
 import ImageDialog from "@components/dialogs/Image";
 import BrandIcon from "@components/icons/BrandIcon";
 import Sentiment from "@components/Sentiment";
@@ -52,14 +53,20 @@ import {
   SubstituteAssignment,
 } from "@utils/types/subject";
 import { DialogProps } from "@utils/types/common";
-import ConfirmDelete from "@components/dialogs/ConfirmDelete";
-import { supabase } from "@utils/supabaseClient";
 import {
   RoomSubjectDB,
-  SubjectDB,
+  RoomSubjectTable,
   SubjectTable,
 } from "@utils/types/database/subject";
+
+// Backend
 import { db2Subject, db2SubjectListItem } from "@utils/backend/database";
+
+// Supbase
+import { supabase } from "@utils/supabaseClient";
+
+// Helpers
+import { createTitleStr } from "@utils/helpers/title";
 
 // Details Section
 const DetailsSection = ({
@@ -145,15 +152,21 @@ const DetailsSection = ({
                       }
                       iconOnly
                       disabled={!subjectRoom.ggcLink}
+                      attr={{
+                        target: "_blank",
+                      }}
                     />
                     {/* Go to Google Meet */}
                     <LinkButton
                       name={t("details.table.action.ggMeetLink")}
                       type="text"
                       icon={<BrandIcon icon="gg-meet" />}
-                      url={subjectRoom.ggcLink || "https://meet.google.com/"}
+                      url={subjectRoom.ggMeetLink || "https://meet.google.com/"}
                       iconOnly
                       disabled={!subjectRoom.ggMeetLink}
+                      attr={{
+                        target: "_blank",
+                      }}
                     />
                     {/* Edit this connection */}
                     <Button
@@ -707,13 +720,18 @@ const SubjectDetails: NextPage<{
   const [showAddAsgn, setShowAddAsgn] = useState<boolean>(false);
   const [activeAsgn, setActiveAsgn] = useState<SubstituteAssignment>();
 
+  async function handleDelete() {
+    await supabase.from<RoomSubjectTable>("room_subjects").delete().match({
+      id: deleteConnection.connection?.id,
+    });
+    // console.log(deleteConnection.connection);
+  }
+
   return (
     <>
       <Head>
         <title>
-          {(subject.name[locale] || subject.name.th).name}
-          {" - "}
-          {t("brand.name", { ns: "common" })}
+          {createTitleStr((subject.name[locale] || subject.name.th).name, t)}
         </title>
       </Head>
       <RegularLayout
@@ -760,14 +778,20 @@ const SubjectDetails: NextPage<{
       <ConnectSubjectDialog
         show={showAddConnection}
         onClose={() => setShowAddConnection(false)}
-        onSubmit={() => setShowAddConnection(false)}
+        onSubmit={() => {
+          router.replace(router.asPath);
+          setShowAddConnection(false);
+        }}
         mode="add"
         subject={subject}
       />
       <ConnectSubjectDialog
         show={editConnection.show}
         onClose={() => setEditConnection({ show: false })}
-        onSubmit={() => setEditConnection({ show: false })}
+        onSubmit={() => {
+          router.replace(router.asPath);
+          setEditConnection({ show: false });
+        }}
         mode="edit"
         subject={subject}
         subjectRoom={editConnection.connection}
@@ -775,7 +799,8 @@ const SubjectDetails: NextPage<{
       <ConfirmDelete
         show={deleteConnection.show}
         onClose={() => setDeleteConnection({ show: false })}
-        onSubmit={() => {
+        onSubmit={async () => {
+          await handleDelete();
           setDeleteConnection({ show: false });
           router.replace(router.asPath);
         }}
@@ -859,6 +884,14 @@ export const getServerSideProps: GetServerSideProps = async ({
   const subjectRooms: SubjectListItem[] = roomSubjects
     ? await Promise.all(roomSubjects.map(db2SubjectListItem))
     : [];
+
+  subjectRooms.sort((a, b) => {
+    const aNumber = a.classroom.number;
+    const bNumber = b.classroom.number;
+    if (aNumber < bNumber) return -1;
+    if (aNumber > bNumber) return 1;
+    return 0;
+  });
 
   // console.log(subjectRooms);
   const substAsgn: SubstituteAssignment[] = [];

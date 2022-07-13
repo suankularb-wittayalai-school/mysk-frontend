@@ -39,6 +39,9 @@ import { Teacher } from "@utils/types/person";
 import { Schedule } from "@utils/types/schedule";
 
 // Helpers
+import { createTitleStr } from "@utils/helpers/title";
+
+// Hooks
 import { useStudentAccount } from "@utils/hooks/auth";
 
 // Page
@@ -58,72 +61,71 @@ const StudentHome: NextPage<{
   const [user] = useStudentAccount({ loginRequired: true });
 
   return (
-    <AnimatePresence>
-      {user && (
-        <>
-          {/* Title */}
-          <Head>
-            <title>
-              {t("title")} - {t("brand.name", { ns: "common" })}
-            </title>
-          </Head>
-
-          {/* Content */}
-          <motion.div
-            initial="hidden"
-            animate="enter"
-            exit="exit"
-            variants={fromUpToDown}
-            transition={animationTransition}
-          >
-            <RegularLayout
-              Title={
-                <Title
-                  name={{ title: t("brand.name", { ns: "common" }) }}
-                  pageIcon={<MaterialIcon icon="home" />}
-                  backGoesTo={() => setShowLogOut(true)}
-                  LinkElement={Link}
-                  className="sm:!hidden"
-                />
-              }
+    <>
+      {/* Title */}
+      <Head>
+        <title>{createTitleStr(t("title"), t)}</title>
+      </Head>
+      <AnimatePresence>
+        {user && (
+          <>
+            {/* Content */}
+            <motion.div
+              initial="hidden"
+              animate="enter"
+              exit="exit"
+              variants={fromUpToDown}
+              transition={animationTransition}
             >
-              <UserSection
-                user={user}
-                setShowChangePassword={setShowChangePassword}
-                setShowEditProfile={setShowEditProfile}
-                setShowLogOut={setShowLogOut}
-              />
-              <NewsSection
-                news={news.map((newsItem) => ({
-                  ...newsItem,
-                  postDate: new Date(newsItem.postDate),
-                }))}
-                showFilters
-              />
-              <StudentClassSection schedule={schedule} />
-              <TeachersSection
-                teachers={teachers}
-                classAdvisors={classAdvisors}
-              />
-            </RegularLayout>
-          </motion.div>
-          {/* Dialogs */}
-          <ChangePassword
-            show={showChangePassword}
-            onClose={() => setShowChangePassword(false)}
-          />
-          <EditSelfDialog
-            user={user}
-            show={showEditProfile}
-            onClose={() => setShowEditProfile(false)}
-          />
-          <LogOutDialog
-            show={showLogOut}
-            onClose={() => setShowLogOut(false)}
-          />
-        </>
-      )}
-    </AnimatePresence>
+              <RegularLayout
+                Title={
+                  <Title
+                    name={{ title: t("brand.name", { ns: "common" }) }}
+                    pageIcon={<MaterialIcon icon="home" />}
+                    backGoesTo={() => setShowLogOut(true)}
+                    LinkElement={Link}
+                    className="sm:!hidden"
+                  />
+                }
+              >
+                <UserSection
+                  user={user}
+                  setShowChangePassword={setShowChangePassword}
+                  setShowEditProfile={setShowEditProfile}
+                  setShowLogOut={setShowLogOut}
+                />
+                <NewsSection
+                  news={news.map((newsItem) => ({
+                    ...newsItem,
+                    postDate: new Date(newsItem.postDate),
+                  }))}
+                  showFilters
+                />
+                <StudentClassSection schedule={schedule} />
+                <TeachersSection
+                  teachers={teachers}
+                  classAdvisors={classAdvisors}
+                />
+              </RegularLayout>
+            </motion.div>
+            {/* Dialogs */}
+            <ChangePassword
+              show={showChangePassword}
+              onClose={() => setShowChangePassword(false)}
+            />
+            <EditSelfDialog
+              user={user}
+              show={showEditProfile}
+              onClose={() => setShowEditProfile(false)}
+            />
+            <LogOutDialog
+              show={showLogOut}
+              onClose={() => setShowLogOut(false)}
+            />
+          </>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 

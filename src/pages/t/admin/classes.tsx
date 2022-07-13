@@ -39,6 +39,7 @@ import { ClassroomDB, ClassroomTable } from "@utils/types/database/class";
 // Hooks
 import { useSession } from "@utils/hooks/auth";
 import { createClassroom } from "@utils/backend/classroom/classroom";
+import { createTitleStr } from "@utils/helpers/title";
 
 // Page
 const Classes: NextPage<{ allClasses: Class[] }> = ({
@@ -94,11 +95,7 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
     <>
       {/* Head */}
       <Head>
-        <title>
-          {t("classList.title")}
-          {" - "}
-          {t("brand.name", { ns: "common" })}
-        </title>
+        <title>{createTitleStr(t("classList.title"), t)}</title>
       </Head>
 
       {/* Page */}

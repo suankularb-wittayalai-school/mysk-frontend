@@ -36,6 +36,7 @@ import { SubjectListItem } from "@utils/types/subject";
 
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
+import { createTitleStr } from "@utils/helpers/title";
 
 const ScheduleSection = ({
   schedule,
@@ -172,9 +173,10 @@ const StudentSchedule: NextPage<{
     <>
       <Head>
         <title>
-          {t("title.studentWithClass", { number: classNumber })}
-          {" - "}
-          {t("brand.name", { ns: "common" })}
+          {createTitleStr(
+            t("title.studentWithClass", { number: classNumber }),
+            t
+          )}
         </title>
       </Head>
       <RegularLayout
@@ -203,7 +205,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 }) => {
   const schedule: ScheduleType = (await getSchedule(
     "student",
-    Number(params?.classNumber)
+    await getClassIDFromNumber(Number(params?.classNumber))
   )) || {
     content: [
       { day: 1, content: [] },

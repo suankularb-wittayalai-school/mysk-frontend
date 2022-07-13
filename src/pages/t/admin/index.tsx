@@ -36,9 +36,6 @@ import { SubjectTable as SubjectTableType } from "@utils/types/database/subject"
 // Supabase
 import { supabase } from "@utils/supabaseClient";
 
-// Helpers
-import { range } from "@utils/helpers/array";
-
 // Backend
 import {
   db2Class,
@@ -47,6 +44,12 @@ import {
   db2Teacher,
 } from "@utils/backend/database";
 import { ClassroomDB } from "@utils/types/database/class";
+
+// Helpers
+import { range } from "@utils/helpers/array";
+import { createTitleStr } from "@utils/helpers/title";
+
+// Hooks
 import { useSession } from "@utils/hooks/auth";
 
 const StudentSection = ({
@@ -211,9 +214,7 @@ const Admin: NextPage<{
   return (
     <>
       <Head>
-        <title>
-          {t("title")} - {t("brand.name", { ns: "common" })}
-        </title>
+        <title>{createTitleStr(t("title"), t)}</title>
       </Head>
       <RegularLayout
         Title={

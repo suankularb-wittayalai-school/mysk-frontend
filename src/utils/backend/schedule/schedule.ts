@@ -2,7 +2,7 @@
 import { PostgrestError } from "@supabase/supabase-js";
 
 // Backend
-import { db2SchedulePeriod, db2Subject } from "@utils/backend/database";
+import { db2SchedulePeriod } from "@utils/backend/database";
 import { isOverlappingExistingItems } from "@utils/backend/schedule/utils";
 
 // Helpers
@@ -15,7 +15,6 @@ import {
 import { supabase } from "@utils/supabaseClient";
 
 // Types
-import { ClassroomTable } from "@utils/types/database/class";
 import {
   ScheduleItemDB,
   ScheduleItemTable,
@@ -50,26 +49,9 @@ export async function getSchedule(
   id: number,
   day?: Day
 ): Promise<Schedule> {
-  console.time("scheduleConstruct");
   // Schedule filled with empty periods
   let schedule =
     day == undefined ? createEmptySchedule(1, 5) : createEmptySchedule(day);
-
-  // Find classID if role is student
-  let classID = 0;
-  if (role == "student") {
-    const { data: classroom, error: classroomError } = await supabase
-      .from<ClassroomTable>("classroom")
-      .select("id, number")
-      .match({ number: id })
-      .limit(1)
-      .single();
-    if (classroomError || !classroom) {
-      console.error(classroomError);
-      return schedule;
-    }
-    classID = classroom.id;
-  }
 
   // Fetch data from Supabase
   const { data, error } = await supabase
@@ -85,8 +67,8 @@ export async function getSchedule(
           : { teacher: id, day }
         : // Match classroom if role is student
         day == undefined
-        ? { classroom: classID }
-        : { classroom: classID, day }
+        ? { classroom: id }
+        : { classroom: id, day }
     );
 
   // Return an empty Schedule if fetch failed
@@ -126,7 +108,6 @@ export async function getSchedule(
       await db2SchedulePeriod(scheduleItem, role)
     );
   }
-  console.timeEnd("scheduleConstruct");
 
   return schedule;
 }

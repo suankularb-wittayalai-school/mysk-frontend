@@ -1,10 +1,5 @@
 // Modules
-import {
-  formatDistanceToNow,
-  formatDistanceToNowStrict,
-  isPast,
-  isThisYear,
-} from "date-fns";
+import { formatDistanceToNowStrict, isPast, isThisYear } from "date-fns";
 import { enUS, th } from "date-fns/locale";
 
 import Link from "next/link";
@@ -25,6 +20,9 @@ import {
 
 // Types
 import { NewsItem } from "@utils/types/news";
+
+// Helpers
+import { getLocaleString } from "@utils/helpers/i18n";
 
 const NewsStatus = ({ newsItem }: { newsItem: NewsItem }): JSX.Element => {
   return (
@@ -153,7 +151,7 @@ const NewsCard = ({
         }
         title={
           <h3 className="text-lg font-medium">
-            {newsItem.content[locale].title}
+            {getLocaleString(newsItem.content.title, locale)}
           </h3>
         }
         label={
@@ -177,14 +175,14 @@ const NewsCard = ({
         }
         className="font-display"
       />
-      {showChips && newsItem.type != "news" && (
+      {showChips && newsItem.type != "info" && (
         <div className="mx-[2px] overflow-x-auto py-1 px-[calc(1rem-2px)]">
           <NewsChipList newsItem={newsItem} />
         </div>
       )}
       <CardSupportingText>
         <p className="max-lines-2">
-          {newsItem.content[locale == "en-US" ? "en-US" : "th"].supportingText}
+          {getLocaleString(newsItem.content.description, locale)}
         </p>
       </CardSupportingText>
       <CardActions>

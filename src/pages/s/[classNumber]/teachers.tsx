@@ -1,5 +1,6 @@
 // Modules
 import type { GetServerSideProps, NextPage } from "next";
+import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -31,6 +32,10 @@ import TeacherCard from "@components/TeacherCard";
 import { getTeacherList } from "@utils/backend/person/teacher";
 import { getClassIDFromNumber } from "@utils/backend/classroom/classroom";
 
+// Helpers
+import { nameJoiner } from "@utils/helpers/name";
+import { createTitleStr } from "@utils/helpers/title";
+
 // Types
 import { TeachersListGroup } from "@utils/types/teachers";
 import { Teacher } from "@utils/types/person";
@@ -59,128 +64,136 @@ const Teachers: NextPage<{ teacherList: TeachersListGroup[] }> = ({
   }, [teacherList]);
 
   return (
-    <ListLayout
-      show={true}
-      Title={
-        <Title
-          name={{ title: t("title") }}
-          pageIcon={<MaterialIcon icon="school" />}
-          backGoesTo={showMain ? () => setShowMain(false) : "/account/login"}
-          LinkElement={Link}
-        />
-      }
-    >
-      <ListSection>
-        <CardList
-          listGroups={teacherList}
-          ListItem={({ content, className, onClick, id }) => {
-            return (
-              <button
-                onClick={() => {
-                  onClick();
-                  setShowMain(true);
-                  setMainContent(content);
-                }}
-                className="!w-full"
-              >
-                <TeacherCard
-                  key={content.id}
-                  teacher={content}
-                  hasSubjectSubgroup
-                  className={className}
-                />
-              </button>
-            );
-          }}
-          onChange={() => {}}
-        />
-      </ListSection>
-      <MainSection>
-        <Section className="!flex !flex-col !gap-4 !font-display">
-          <Section>
-            <div className="grid grid-cols-[1fr_3fr] items-stretch gap-4 sm:gap-6 md:grid-cols-[1fr_5fr]">
-              {mainContent?.profile && (
-                <div className="aspect-square overflow-hidden rounded-xl sm:rounded-2xl">
-                  <ProfilePicture src={mainContent.profile} />
-                </div>
-              )}
-              <div className="flex flex-col justify-between">
-                <div>
-                  <h2 className="text-4xl font-bold">
-                    {mainContent ? nameJoiner(locale, mainContent.name) : ""}
-                  </h2>
-                  <p className="text-2xl font-medium">
-                    {mainContent?.subjectGroup.name[locale]}
-                  </p>
-                </div>
-                <div>
-                  {mainContent?.classAdvisorAt && (
+    <>
+      <Head>
+        <title>{createTitleStr(t("title"), t)}</title>
+      </Head>
+      <ListLayout
+        show={true}
+        Title={
+          <Title
+            name={{ title: t("title") }}
+            pageIcon={<MaterialIcon icon="school" />}
+            backGoesTo={showMain ? () => setShowMain(false) : "/account/login"}
+            LinkElement={Link}
+          />
+        }
+      >
+        <ListSection>
+          <CardList
+            listGroups={teacherList}
+            ListItem={({ content, className, onClick, id }) => {
+              return (
+                <button
+                  onClick={() => {
+                    onClick();
+                    setShowMain(true);
+                    setMainContent(content);
+                  }}
+                  className="!w-full"
+                >
+                  <TeacherCard
+                    key={content.id}
+                    teacher={content}
+                    hasSubjectSubgroup
+                    className={className}
+                  />
+                </button>
+              );
+            }}
+            onChange={() => {}}
+          />
+        </ListSection>
+        <MainSection>
+          <Section className="!flex !flex-col !gap-4 !font-display">
+            <Section>
+              <div className="grid grid-cols-[1fr_3fr] items-stretch gap-4 sm:gap-6 md:grid-cols-[1fr_5fr]">
+                {mainContent?.profile && (
+                  <div className="aspect-square overflow-hidden rounded-xl sm:rounded-2xl">
+                    <ProfilePicture src={mainContent.profile} />
+                  </div>
+                )}
+                <div className="flex flex-col justify-between">
+                  <div>
+                    <h2 className="text-4xl font-bold">
+                      {mainContent ? nameJoiner(locale, mainContent.name) : ""}
+                    </h2>
                     <p className="text-2xl font-medium">
-                      {t("advisor", {
-                        className: mainContent.classAdvisorAt.number,
-                      })}
+                      {mainContent?.subjectGroup.name[locale]}
                     </p>
-                  )}
+                  </div>
+                  <div>
+                    {mainContent?.classAdvisorAt && (
+                      <p className="text-2xl font-medium">
+                        {t("advisor", {
+                          className: mainContent.classAdvisorAt.number,
+                        })}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          </Section>
-          {mainContent?.contacts && (
-            <Section>
-              <h3 className="text-3xl font-bold">{t("contacts")}</h3>
-              <ul className="layout-grid-cols-2">
-                {mainContent.contacts
-                  .sort((a, b) =>
-                    a.type < b.type ? -1 : a.type > b.type ? 1 : 0
-                  )
-                  .map((contact) => (
-                    <ContactChip
-                      key={contact.id}
-                      contact={contact}
-                      className="!w-initial"
-                    />
-                  ))}
-              </ul>
             </Section>
-          )}
-          {mainContent?.subjectsInCharge &&
-            mainContent.subjectsInCharge.length > 1 && (
+            {mainContent?.contacts && (
               <Section>
-                <h3 className="text-3xl font-bold">{t("subjects")}</h3>
-                <ul className="flex flex-col gap-2">
-                  {mainContent.subjectsInCharge.map((subject) => (
-                    <li key={subject.id}>
-                      <Card type="horizontal">
-                        <CardHeader
-                          icon={
-                            <MaterialIcon
-                              icon={
-                                subject.code.th[0] === "ว"
-                                  ? "biotech"
-                                  : subject.code.th[0] === "ค"
-                                  ? "calculate"
-                                  : "circle"
-                              }
-                            />
-                          }
-                          title={
-                            <div className="flex gap-4">
-                              <p>{subject.code[locale]}</p>
-                              <p className="font-medium">
-                                {(subject.name[locale] || subject.name.th).name}
-                              </p>
-                            </div>
-                          }
-                        />
-                      </Card>
-                    </li>
-                  ))}
+                <h3 className="text-3xl font-bold">{t("contacts")}</h3>
+                <ul className="layout-grid-cols-2">
+                  {mainContent.contacts
+                    .sort((a, b) =>
+                      a.type < b.type ? -1 : a.type > b.type ? 1 : 0
+                    )
+                    .map((contact) => (
+                      <ContactChip
+                        key={contact.id}
+                        contact={contact}
+                        className="!w-initial"
+                      />
+                    ))}
                 </ul>
               </Section>
             )}
-        </Section>
-      </MainSection>
-    </ListLayout>
+            {mainContent?.subjectsInCharge &&
+              mainContent.subjectsInCharge.length > 1 && (
+                <Section>
+                  <h3 className="text-3xl font-bold">{t("subjects")}</h3>
+                  <ul className="flex flex-col gap-2">
+                    {mainContent.subjectsInCharge.map((subject) => (
+                      <li key={subject.id}>
+                        <Card type="horizontal">
+                          <CardHeader
+                            icon={
+                              <MaterialIcon
+                                icon={
+                                  subject.code.th[0] === "ว"
+                                    ? "biotech"
+                                    : subject.code.th[0] === "ค"
+                                    ? "calculate"
+                                    : "circle"
+                                }
+                              />
+                            }
+                            title={
+                              <div className="flex gap-4">
+                                <p>{subject.code[locale]}</p>
+                                <p className="font-medium">
+                                  {
+                                    (subject.name[locale] || subject.name.th)
+                                      .name
+                                  }
+                                </p>
+                              </div>
+                            }
+                          />
+                        </Card>
+                      </li>
+                    ))}
+                  </ul>
+                </Section>
+              )}
+          </Section>
+        </MainSection>
+      </ListLayout>
+    </>
   );
 };
 

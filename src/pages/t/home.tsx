@@ -32,13 +32,15 @@ import UserSection from "@components/home-sections/UserSection";
 import { animationTransition } from "@utils/animations/config";
 import { fromUpToDown } from "@utils/animations/slide";
 
+// Backend
+import { getSchedule } from "@utils/backend/schedule/schedule";
+
 // Types
 import { NewsList, StudentForm } from "@utils/types/news";
 import { Schedule } from "@utils/types/schedule";
 
 // Hooks
 import { useTeacherAccount } from "@utils/hooks/auth";
-import { getSchedule } from "@utils/backend/schedule/schedule";
 
 const TeacherHome: NextPage<{
   studentForms: Array<StudentForm>;
@@ -63,70 +65,71 @@ const TeacherHome: NextPage<{
   const [showLogOut, setShowLogOut] = useState<boolean>(false);
 
   return (
-    <AnimatePresence>
-      {user && (
-        <>
-          <Head>
-            <title>{t("brand.name", { ns: "common" })}</title>
-          </Head>
-
-          <motion.div
-            initial="hidden"
-            animate="enter"
-            exit="exit"
-            variants={fromUpToDown}
-            transition={animationTransition}
-          >
-            <RegularLayout
-              Title={
-                <Title
-                  name={{ title: t("brand.name") }}
-                  pageIcon={<MaterialIcon icon="home" />}
-                  backGoesTo={() => setShowLogOut(true)}
-                  LinkElement={Link}
-                  className="sm:!hidden"
-                />
-              }
+    <>
+      <Head>
+        <title>{t("brand.name", { ns: "common" })}</title>
+      </Head>
+      <AnimatePresence>
+        {user && (
+          <>
+            <motion.div
+              initial="hidden"
+              animate="enter"
+              exit="exit"
+              variants={fromUpToDown}
+              transition={animationTransition}
             >
-              <UserSection
-                user={user}
-                setShowChangePassword={setShowChangePassword}
-                setShowEditProfile={setShowEditProfile}
-                setShowLogOut={setShowLogOut}
-              />
-              <SubjectsSection schedule={schedule} />
-              <TeacherClassSection
-                studentForms={studentForms.map((newsItem) => ({
-                  ...newsItem,
-                  postDate: new Date(newsItem.postDate),
-                }))}
-              />
-              <NewsSection
-                news={news.map((newsItem) => ({
-                  ...newsItem,
-                  postDate: new Date(newsItem.postDate),
-                }))}
-              />
-            </RegularLayout>
-          </motion.div>
+              <RegularLayout
+                Title={
+                  <Title
+                    name={{ title: t("brand.name") }}
+                    pageIcon={<MaterialIcon icon="home" />}
+                    backGoesTo={() => setShowLogOut(true)}
+                    LinkElement={Link}
+                    className="sm:!hidden"
+                  />
+                }
+              >
+                <UserSection
+                  user={user}
+                  setShowChangePassword={setShowChangePassword}
+                  setShowEditProfile={setShowEditProfile}
+                  setShowLogOut={setShowLogOut}
+                />
+                <SubjectsSection schedule={schedule} />
+                <TeacherClassSection
+                  studentForms={studentForms.map((newsItem) => ({
+                    ...newsItem,
+                    postDate: new Date(newsItem.postDate),
+                  }))}
+                />
+                <NewsSection
+                  news={news.map((newsItem) => ({
+                    ...newsItem,
+                    postDate: new Date(newsItem.postDate),
+                  }))}
+                />
+              </RegularLayout>
+            </motion.div>
 
-          {/* Dialogs */}
-          <ChangePassword
-            show={showChangePassword}
-            onClose={() => setShowChangePassword(false)}
-          />
-          <EditSelfDialog
-            user={user}
-            show={showEditProfile}
-            onClose={() => setShowEditProfile(false)}
-          />
-          <LogOutDialog
-            show={showLogOut}
-            onClose={() => setShowLogOut(false)}
-          />
-        </>
-      )}
-    </AnimatePresence>
+            {/* Dialogs */}
+            <ChangePassword
+              show={showChangePassword}
+              onClose={() => setShowChangePassword(false)}
+            />
+            <EditSelfDialog
+              user={user}
+              show={showEditProfile}
+              onClose={() => setShowEditProfile(false)}
+            />
+            <LogOutDialog
+              show={showLogOut}
+              onClose={() => setShowLogOut(false)}
+            />
+          </>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 
@@ -167,15 +170,14 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
       type: "stats",
       postDate: new Date(2020, 0, 3),
       content: {
-        "en-US": {
-          title: "COVID-19 Vaccination",
-          supportingText:
-            "On the vaccination of all Suankularb students, including the number and the brand recieved.",
+        title: {
+          "en-US": "COVID-19 Vaccination",
+          th: "การรับวัคซีน COVID-19",
         },
-        th: {
-          title: "การรับวัคซีน COVID-19",
-          supportingText:
-            "การรวบรวมข้อมูลตัวเลขของนักเรียนโรงเรียนสวนกุหลาบวิทยาลัยที่ได้รับวัคซีนป้องกัน COVID-19",
+        description: {
+          "en-US":
+            "On the vaccination of all Suankularb students, including the number and the brand recieved.",
+          th: "การรวบรวมข้อมูลตัวเลขของนักเรียนโรงเรียนสวนกุหลาบวิทยาลัยที่ได้รับวัคซีนป้องกัน COVID-19",
         },
       },
     },

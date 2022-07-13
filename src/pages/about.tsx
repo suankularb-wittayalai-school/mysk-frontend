@@ -21,6 +21,9 @@ import {
 import ContactIcon from "@components/icons/ContactIcon";
 import ProfilePicture from "@components/ProfilePicture";
 
+// Helpers
+import { createTitleStr } from "@utils/helpers/title";
+
 // Types
 import { MultiLangString } from "@utils/types/common";
 import { ContactVia } from "@utils/types/contact";
@@ -116,10 +119,11 @@ const DevelopersBanner = ({
             sm:justify-end sm:px-6 md:mt-8 md:justify-center"
           >
             <Image
-              src="/images/core-team.png"
+              src="/images/core-team.webp"
               height={256}
               width={433.5}
               alt={t("banner.groupPhotoAlt")}
+              priority
             />
           </div>
         </div>
@@ -228,7 +232,7 @@ const ContributeSection = () => {
         <li>
           <a
             className="link"
-            href="https://www.facebook.com/SKTechDev"
+            href="https://ccsleep.net/"
             target="_blank"
             rel="noreferrer"
           >
@@ -462,17 +466,13 @@ const Developers: NextPage = (): JSX.Element => {
   return (
     <>
       <Head>
-        <title>
-          {t("title")}
-          {" - "}
-          {t("brand.name", { ns: "common" })}
-        </title>
+        <title>{createTitleStr(t("title"), t)}</title>
       </Head>
       <RegularLayout
         Title={
           <Title
             name={{ title: t("title") }}
-            pageIcon="information"
+            pageIcon={<MaterialIcon icon="info" />}
             backGoesTo="/account/login"
             LinkElement={Link}
           />

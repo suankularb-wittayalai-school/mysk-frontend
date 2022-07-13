@@ -19,9 +19,6 @@ import NewsCard from "@components/NewsCard";
 // Types
 import { NewsList } from "@utils/types/news";
 
-// Helpers
-import { filterNews } from "@utils/helpers/filter-news";
-
 const NewsSection = ({
   news,
   showFilters,
@@ -32,17 +29,6 @@ const NewsSection = ({
   const { t } = useTranslation("dashboard");
   const [newsFilter, setNewsFilter] = useState<Array<string>>([]);
   const [filteredNews, setFilteredNews] = useState<NewsList>(news);
-
-  useEffect(
-    () =>
-      filterNews(news, newsFilter, (newNews: NewsList) =>
-        setFilteredNews(newNews)
-      ),
-
-    // Adding `news` as a dependency causes an inifinie loop
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [newsFilter]
-  );
 
   return (
     <Section>

@@ -1,8 +1,10 @@
+import { getCurrentAcedemicYear } from "@utils/helpers/date";
 import { supabase } from "@utils/supabaseClient";
 import { Class } from "@utils/types/class";
 import { Contact } from "@utils/types/contact";
 import { ClassroomDB } from "@utils/types/database/class";
 import { ContactDB } from "@utils/types/database/contact";
+import { InfoDB } from "@utils/types/database/news";
 import { StudentDB, TeacherDB } from "@utils/types/database/person";
 import { ScheduleItemDB } from "@utils/types/database/schedule";
 import {
@@ -10,6 +12,11 @@ import {
   SubjectGroupDB,
   SubjectTable,
 } from "@utils/types/database/subject";
+import {
+  NewsItemInfo,
+  NewsItemInfoNoDate,
+  NewsItemNoDate,
+} from "@utils/types/news";
 import { Role, Student, Teacher } from "@utils/types/person";
 import { SchedulePeriod } from "@utils/types/schedule";
 import { Subject, SubjectListItem } from "@utils/types/subject";
@@ -23,6 +30,26 @@ export function db2Contact(contact: ContactDB): Contact {
     },
     value: contact.value,
     type: contact.type,
+  };
+}
+
+export function dbInfo2News(info: InfoDB): NewsItemInfoNoDate {
+  return {
+    id: info.id,
+    type: "info",
+    postDate: info.created_at,
+    image: info.parent.image || "",
+    done: false,
+    content: {
+      title: {
+        "en-US": info.parent.title_en || "",
+        th: info.parent.title_th,
+      },
+      description: {
+        "en-US": info.parent.description_en || "",
+        th: info.parent.description_th,
+      },
+    },
   };
 }
 
@@ -46,19 +73,15 @@ export async function db2Student(student: StudentDB): Promise<Student> {
       },
     },
     studentID: student.std_id,
-
-    // TODO: Get class
     class: {
-      id: 101,
-      number: 101,
+      id: 0,
+      number: 0,
     },
     citizenID: student.people.citizen_id,
     birthdate: student.people.birthdate,
 
     // TODO: Get classNo
     classNo: 1,
-
-    // TODO: Get contacts
     contacts: [],
   };
 
@@ -72,6 +95,23 @@ export async function db2Student(student: StudentDB): Promise<Student> {
   }
   if (contacts) {
     formatted.contacts = contacts.map(db2Contact);
+  }
+
+  const { data: classes, error: classError } = await supabase
+    .from<{ id: number; number: number; students: number[] }>("classroom")
+    .select("id, number, students")
+    .match({ year: getCurrentAcedemicYear() })
+    .contains("students", [student.id])
+    .limit(1)
+    .single();
+  if (classError) {
+    console.error(classError);
+  }
+  if (classes) {
+    formatted.class = {
+      id: classes.id,
+      number: classes.number,
+    };
   }
 
   return formatted;
@@ -98,10 +138,9 @@ export async function db2Teacher(teacher: TeacherDB): Promise<Teacher> {
     },
     profile: teacher.people.profile,
     teacherID: teacher.teacher_id,
-    // TODO: Class advisor at
     classAdvisorAt: {
-      id: 405,
-      number: 405,
+      id: 0,
+      number: 0,
     },
     citizenID: teacher.people.citizen_id,
     birthdate: teacher.people.birthdate,
@@ -112,7 +151,6 @@ export async function db2Teacher(teacher: TeacherDB): Promise<Teacher> {
         th: teacher.SubjectGroup.name_th,
       },
     },
-    // TODO: Fetch contact
     contacts: [],
     subjectsInCharge: [],
   };
@@ -127,6 +165,23 @@ export async function db2Teacher(teacher: TeacherDB): Promise<Teacher> {
   }
   if (contacts) {
     formatted.contacts = contacts.map(db2Contact);
+  }
+
+  const { data: classes, error: classError } = await supabase
+    .from<{ id: number; number: number; advisors: number[] }>("classroom")
+    .select("id, number, advisors")
+    .match({ year: getCurrentAcedemicYear() })
+    .contains("advisors", [teacher.id])
+    .limit(1)
+    .single();
+  if (classError) {
+    console.error(classError);
+  }
+  if (classes) {
+    formatted.classAdvisorAt = {
+      id: classes.id,
+      number: classes.number,
+    };
   }
 
   // get subjects in charge
@@ -412,7 +467,7 @@ export async function db2SubjectListItem(roomSubject: RoomSubjectDB) {
     },
     teachers: [],
     coTeachers: [],
-    ggMeetLink: roomSubject.gg_meeting_link ? roomSubject.gg_meeting_link : "",
+    ggMeetLink: roomSubject.gg_meet_link ? roomSubject.gg_meet_link : "",
     ggcCode: roomSubject.ggc_code ? roomSubject.ggc_code : "",
     ggcLink: roomSubject.ggc_link ? roomSubject.ggc_link : "",
   };
@@ -433,11 +488,11 @@ export async function db2SubjectListItem(roomSubject: RoomSubjectDB) {
     }
   }
 
-  if (roomSubject.coTeacher) {
+  if (roomSubject.coteacher) {
     const { data: coTeachers, error: coTeachersError } = await supabase
       .from<TeacherDB>("teacher")
       .select("id, teacher_id, people:person(*), SubjectGroup:subject_group(*)")
-      .in("id", roomSubject.coTeacher);
+      .in("id", roomSubject.coteacher);
 
     if (coTeachersError) {
       console.error(coTeachersError);

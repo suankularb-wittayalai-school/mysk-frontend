@@ -12,6 +12,7 @@ import {
 } from "@suankularb-components/react";
 
 // Components
+import ContactIconList from "@components/ContactIconList";
 import ProfilePicture from "@components/ProfilePicture";
 
 // Helpers
@@ -50,11 +51,7 @@ const TeacherCard = ({
       className={className}
     >
       {/* FIXME: When Card Media is added to React SK Components, change this */}
-      <div
-        className={`card__media container-tertiary ${
-          appearance == "outlined" || appearance == undefined ? "m-[2px]" : ""
-        }`}
-      >
+      <div className="card__media">
         <ProfilePicture src={teacher.profile} />
       </div>
       <CardHeader
@@ -69,17 +66,13 @@ const TeacherCard = ({
         label={
           hasSubjectSubgroup ? (
             <div className="!flex flex-row items-center divide-x divide-outline">
-              <div className="flex w-fit flex-row gap-1 pr-1">
-                <MaterialIcon icon="mail" className="text-primary" />
-              </div>
+              <ContactIconList contacts={teacher.contacts} />
               <span className="max-lines-1 pl-1">
                 {teacher.subjectGroup.name[locale]}
               </span>
             </div>
           ) : (
-            <div className="flex w-fit flex-row gap-1 pr-1">
-              <MaterialIcon icon="mail" className="text-primary" />
-            </div>
+            <ContactIconList contacts={teacher.contacts} />
           )
         }
         end={
