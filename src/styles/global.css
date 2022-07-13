@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: "Material Symbols Outlined";
+  font-style: normal;
+  src: url(../../public/fonts/material-symbols.ttf) format("truetype");
+}
+
 @layer base {
   * {
     @apply outline-none transition-colors;
@@ -23,7 +29,7 @@
 
   .markdown {
     @apply prose font-sans text-on-background prose-headings:font-display
-      prose-h5:text-on-primary-container prose-h6:text-on-primary-container
-      prose-h6:font-sans dark:prose-invert;
+      prose-h5:text-on-primary-container prose-h6:font-sans
+      prose-h6:text-on-primary-container dark:prose-invert;
   }
 }
