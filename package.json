@@ -9,6 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@fontsource/inter": "^4.5.11",
+    "@fontsource/noto-sans-thai": "^4.5.9",
+    "@fontsource/sarabun": "^4.5.8",
+    "@fontsource/sora": "^4.5.8",
     "@suankularb-components/css": "^2.7.4",
     "@suankularb-components/react": "^2.6.2",
     "@supabase/supabase-js": "^1.35.2",

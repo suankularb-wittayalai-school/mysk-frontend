@@ -36,18 +36,6 @@ export default function Document() {
           content="#243037"
           media="(prefers-color-scheme: dark)"
         />
-
-        {/* Fonts */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="true"
-        />
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=Noto+Sans+Thai:wght@300..700&family=Sarabun:wght@300..700&family=Sora:wght@300..700&display=swap"
-        />
       </Head>
       <body>
         <Main />

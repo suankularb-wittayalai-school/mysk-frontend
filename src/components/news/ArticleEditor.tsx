@@ -181,6 +181,7 @@ const WriteSection = ({
 
         {/* Text area */}
         <section className="flex flex-col gap-2">
+          {/* Link to Markdown Cheat Sheet */}
           <a
             aria-labelledby="markdown-how-to"
             href="/help/guide/admin/news#markdown"
@@ -199,6 +200,8 @@ const WriteSection = ({
               />
             </Card>
           </a>
+
+          {/* Markdown editor */}
           <TextArea
             name="markdown"
             label={t("articleEditor.write.editorPlh")}
@@ -218,7 +221,7 @@ const WriteSection = ({
         {/* Preview */}
         <section
           role="document"
-          className="markdown h-fit rounded-lg border-outline !p-4"
+          className="markdown h-fit rounded-lg border-outline !p-4 transition-[height]"
         >
           <h1 className="mb-2">
             {form[lang == "en-US" ? "titleEN" : "titleTH"]}
