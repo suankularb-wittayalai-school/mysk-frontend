@@ -28,20 +28,27 @@ import ContactChip from "@components/ContactChip";
 import ProfilePicture from "@components/ProfilePicture";
 import TeacherCard from "@components/TeacherCard";
 
+// Backend
+import { getTeacherList } from "@utils/backend/person/teacher";
+import { getClassIDFromNumber } from "@utils/backend/classroom/classroom";
+
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
 import { createTitleStr } from "@utils/helpers/title";
+import { SubjectGroup } from "@utils/types/subject";
 
 // Types
 import { TeachersListGroup } from "@utils/types/teachers";
 import { Teacher } from "@utils/types/person";
 
 // Page
-const Teachers: NextPage = (): JSX.Element => {
+const Teachers: NextPage<{ teacherList: TeachersListGroup[] }> = ({
+  teacherList,
+}): JSX.Element => {
   const { t } = useTranslation(["teacher", "common"]);
   const locale = useRouter().locale == "th" ? "th" : "en-US";
 
-  const teacherList: TeachersListGroup[] = [];
+  // const teacherList: TeachersListGroup[] = [];
 
   const [mainContent, setMainContent] = useState<Teacher | null>(null);
 
@@ -87,6 +94,7 @@ const Teachers: NextPage = (): JSX.Element => {
                     teacher={content}
                     hasSubjectSubgroup
                     className={className}
+                    appearance="tonal"
                   />
                 </button>
               );
@@ -98,11 +106,9 @@ const Teachers: NextPage = (): JSX.Element => {
           <Section className="!flex !flex-col !gap-4 !font-display">
             <Section>
               <div className="grid grid-cols-[1fr_3fr] items-stretch gap-4 sm:gap-6 md:grid-cols-[1fr_5fr]">
-                {mainContent?.profile && (
-                  <div className="aspect-square overflow-hidden rounded-xl sm:rounded-2xl">
-                    <ProfilePicture src={mainContent.profile} />
-                  </div>
-                )}
+                <div className="aspect-square overflow-hidden rounded-xl sm:rounded-2xl">
+                  <ProfilePicture src={mainContent?.profile} />
+                </div>
                 <div className="flex flex-col justify-between">
                   <div>
                     <h2 className="text-4xl font-bold">
@@ -124,7 +130,7 @@ const Teachers: NextPage = (): JSX.Element => {
                 </div>
               </div>
             </Section>
-            {mainContent?.contacts && (
+            {mainContent?.contacts && mainContent.contacts.length > 0 && (
               <Section>
                 <h3 className="text-3xl font-bold">{t("contacts")}</h3>
                 <ul className="layout-grid-cols-2">
@@ -149,7 +155,11 @@ const Teachers: NextPage = (): JSX.Element => {
                   <ul className="flex flex-col gap-2">
                     {mainContent.subjectsInCharge.map((subject) => (
                       <li key={subject.id}>
-                        <Card type="horizontal">
+                        <Card
+                          type="horizontal"
+                          appearance="tonal"
+                          className="bg-surface-2"
+                        >
                           <CardHeader
                             icon={
                               <MaterialIcon
@@ -163,14 +173,14 @@ const Teachers: NextPage = (): JSX.Element => {
                               />
                             }
                             title={
-                              <div className="flex gap-4">
-                                <p>{subject.code[locale]}</p>
-                                <p className="font-medium">
+                              <div className="!flex gap-4">
+                                <span>{subject.code[locale]}</span>
+                                <span className="font-medium">
                                   {
                                     (subject.name[locale] || subject.name.th)
                                       .name
                                   }
-                                </p>
+                                </span>
                               </div>
                             }
                           />
@@ -187,10 +197,46 @@ const Teachers: NextPage = (): JSX.Element => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale as string, ["common", "teacher"])),
-  },
-});
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  params,
+}) => {
+  const teachers = await getTeacherList(
+    await getClassIDFromNumber(Number(params?.classNumber))
+  );
+
+  const subjectGroups: string[] = teachers
+    .map((teacher) =>
+      locale
+        ? teacher.subjectGroup.name[locale as keyof SubjectGroup["name"]]
+        : teacher.subjectGroup.name.th
+    )
+    .filter((value, index, self) => self.indexOf(value) === index);
+
+  const teacherList: TeachersListGroup[] = subjectGroups.map(
+    (subjectGroup) => ({
+      groupName: subjectGroup,
+      content: teachers
+        .filter((teacher) =>
+          locale
+            ? teacher.subjectGroup.name[
+                locale as keyof SubjectGroup["name"]
+              ] === subjectGroup
+            : teacher.subjectGroup.name.th === subjectGroup
+        )
+        .map((teacher) => ({ content: teacher, id: teacher.id })),
+    })
+  );
+
+  return {
+    props: {
+      ...(await serverSideTranslations(locale as string, [
+        "common",
+        "teacher",
+      ])),
+      teacherList,
+    },
+  };
+};
 
 export default Teachers;
