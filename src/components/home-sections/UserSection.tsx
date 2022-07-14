@@ -127,45 +127,37 @@ const UserSection = ({
             </div>
 
             {/* Notification chip */}
-            <Link href="/notifications">
-              <a className="hidden w-fit sm:block">
-                <Card
-                  type="horizontal"
-                  appearance="tonal"
-                  hasAction
-                  className="container-error has-action--error !w-fit"
-                >
-                  <CardHeader
-                    icon={
-                      <MaterialIcon
-                        icon={
-                          notifCount > 0
-                            ? "notifications_active"
-                            : "notifications"
-                        }
-                        className="text-error"
-                      />
-                    }
-                    title={
-                      <Trans
-                        i18nKey="user.hasNotifications"
-                        ns="dashboard"
-                        count={notifCount}
-                      >
-                        You have {{ notifCount }} notifications.
-                      </Trans>
-                    }
-                    end={
-                      <MaterialIcon
-                        icon="arrow_forward"
-                        className="text-error"
-                      />
-                    }
-                    className="!gap-2 !p-2"
-                  />
-                </Card>
-              </a>
-            </Link>
+            <button className="hidden w-fit sm:block">
+              <Card
+                type="horizontal"
+                appearance="tonal"
+                hasAction
+                className="!w-fit"
+              >
+                <CardHeader
+                  icon={
+                    <MaterialIcon
+                      icon={
+                        notifCount > 0
+                          ? "notifications_active"
+                          : "notifications"
+                      }
+                    />
+                  }
+                  title={
+                    <Trans
+                      i18nKey="user.hasNotifications"
+                      ns="dashboard"
+                      count={notifCount}
+                    >
+                      You have {{ notifCount }} notifications.
+                    </Trans>
+                  }
+                  end={<MaterialIcon icon="arrow_forward" />}
+                  className="!gap-2 !p-2"
+                />
+              </Card>
+            </button>
           </div>
           <UserActions
             className="hidden md:flex"

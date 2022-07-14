@@ -176,49 +176,43 @@ const Layout = ({
       initial={false}
       onExitComplete={() => window.scrollTo(0, 0)}
     >
-      <div className="overflow-hidden bg-background">
-        {navIsTransparent ? (
-          // Fills the page with children if the Navigation is transparent
-          <div>
-            <Navigation
-              key={router.route}
-              currentPath={router.asPath}
-              navItems={navItems}
-              LinkElement={Link}
-              isTransparent
-              className="sm:!absolute sm:top-0"
-            />
-            <motion.div
-              initial="hidden"
-              animate="enter"
-              exit="exit"
-              variants={fromUpToDown}
-              transition={{ duration: 0.25, ease: animationEase }}
-            >
-              {children}
-            </motion.div>
-          </div>
-        ) : (
-          // Use the normal Page Layout if the Navigation is normal
-          <PageLayout
-            key={router.route}
+      {navIsTransparent ? (
+        // Fills the page with children if the Navigation is transparent
+        <>
+          <Navigation
             currentPath={router.asPath}
             navItems={navItems}
             LinkElement={Link}
+            isTransparent
+          />
+          <motion.div
+            key={router.route}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25, ease: animationEase }}
           >
-            <motion.div
-              initial="hidden"
-              animate="enter"
-              exit="exit"
-              variants={fromUpToDown}
-              transition={{ duration: 0.25, ease: animationEase }}
-              className="flex flex-grow flex-col overflow-auto"
-            >
-              {children}
-            </motion.div>
-          </PageLayout>
-        )}
-      </div>
+            {children}
+          </motion.div>
+        </>
+      ) : (
+        // Use the normal Page Layout if the Navigation is normal
+        <PageLayout
+          currentPath={router.asPath}
+          navItems={navItems}
+          LinkElement={Link}
+        >
+          <motion.div
+            key={router.route}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25, ease: animationEase }}
+          >
+            {children}
+          </motion.div>
+        </PageLayout>
+      )}
     </AnimatePresence>
   );
 };

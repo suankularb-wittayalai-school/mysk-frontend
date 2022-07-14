@@ -1,5 +1,4 @@
 // Modules
-import { getDay } from "date-fns";
 
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -30,7 +29,6 @@ import UserSection from "@components/home-sections/UserSection";
 
 // Animations
 import { animationTransition } from "@utils/animations/config";
-import { fromUpToDown } from "@utils/animations/slide";
 
 // Backend
 import { getSchedule } from "@utils/backend/schedule/schedule";
@@ -73,10 +71,9 @@ const TeacherHome: NextPage<{
         {user && (
           <>
             <motion.div
-              initial="hidden"
-              animate="enter"
-              exit="exit"
-              variants={fromUpToDown}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               transition={animationTransition}
             >
               <RegularLayout

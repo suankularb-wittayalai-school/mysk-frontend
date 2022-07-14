@@ -37,7 +37,7 @@ export default function Document() {
           media="(prefers-color-scheme: dark)"
         />
       </Head>
-      <body>
+      <body className="bg-background">
         <Main />
         <NextScript />
       </body>
