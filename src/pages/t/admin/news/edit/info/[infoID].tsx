@@ -20,7 +20,7 @@ import {
 import { getInfo } from "@utils/backend/news/info";
 
 // Components
-import ArtcleEditor from "@components/news/ArticleEditor";
+import ArticleEditor from "@components/news/ArticleEditor";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
@@ -54,7 +54,8 @@ const EditInfo: NextPage<{ existingData: NewsItemInfoNoDate }> = ({
           />
         }
       >
-        <ArtcleEditor
+        <ArticleEditor
+          mode="edit"
           existingData={existingData}
           addToSnbQueue={(newSnb) => setSnbQueue([...snbQueue, newSnb])}
         />
@@ -72,7 +73,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   const existingData = await getInfo(Number(params.infoID));
   if (!existingData) return { notFound: true };
-  
+
   return {
     props: {
       ...(await serverSideTranslations(locale as LangCode, [

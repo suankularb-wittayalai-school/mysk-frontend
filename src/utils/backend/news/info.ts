@@ -92,3 +92,47 @@ export async function createInfo(form: {
 
   return { data: info, error: null };
 }
+
+export async function updateInfo(
+  id: number,
+  form: {
+    titleTH: string;
+    titleEN: string;
+    descTH: string;
+    descEN: string;
+    bodyTH: string;
+    bodyEN: string;
+    oldURL: string;
+  }
+): Promise<{ data: InfoTable[]; error: PostgrestError | null }> {
+  const { data: updatedInfo, error: updatedInfoError } = await supabase
+    .from<InfoTable>("infos")
+    .update({
+      body_th: form.bodyTH,
+      body_en: form.bodyEN,
+    })
+    .match({ id });
+
+  if (updatedInfoError || !updatedInfo || updatedInfo.length < 1) {
+    console.error(updatedInfoError);
+    return { data: [], error: updatedInfoError };
+  }
+
+  const { data: updatedNews, error: updatedNewsError } = await supabase
+    .from<NewsTable>("news")
+    .update({
+      title_th: form.titleTH,
+      title_en: form.titleEN,
+      description_th: form.descTH,
+      description_en: form.descEN,
+      old_url: form.oldURL,
+    })
+    .match({ id: updatedInfo[0].parent });
+
+  if (updatedNewsError || !updatedNews) {
+    console.error(updatedNewsError);
+    return { data: [], error: updatedNewsError };
+  }
+
+  return { data: updatedInfo, error: null };
+}

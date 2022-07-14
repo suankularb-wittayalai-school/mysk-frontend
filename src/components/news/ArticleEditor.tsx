@@ -34,7 +34,7 @@ import {
 import { animationTransition } from "@utils/animations/config";
 
 // Backend
-import { createInfo } from "@utils/backend/news/info";
+import { createInfo, updateInfo } from "@utils/backend/news/info";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
@@ -48,6 +48,8 @@ import {
 import { InfoDB } from "@utils/types/database/news";
 import { NewsItemInfoNoDate } from "@utils/types/news";
 import BlockingPane from "@components/BlockingPane";
+import { PostgrestError } from "@supabase/supabase-js";
+import { useRouter } from "next/router";
 
 type Form = {
   titleTH: string;
@@ -257,13 +259,18 @@ const WriteSection = ({
   );
 };
 
-const ArtcleEditor = ({
+const ArticleEditor = ({
+  mode,
   existingData,
   addToSnbQueue,
 }: {
+  mode: "add" | "edit";
   existingData?: NewsItemInfoNoDate;
   addToSnbQueue?: (newSnb: WaitingSnackbar) => void;
 }): JSX.Element => {
+  const router = useRouter();
+  const { t } = useTranslation("common");
+
   // Form control
   const [form, setForm] = useState<Form>({
     titleTH: "",
@@ -310,17 +317,27 @@ const ArtcleEditor = ({
     return true;
   }
 
+  // Publishing feedback
+  function showPublishingFeedback(data: any, error: PostgrestError | null) {
+    if (addToSnbQueue) {
+      if (error)
+        addToSnbQueue({
+          id: "publish-error",
+          text: t("error", { errorMsg: error.message }),
+        });
+      else if (data) router.push("/t/admin/news");
+    }
+  }
+
   // Publish article
   async function publish() {
-    const { data, error } = await createInfo(form);
-    if (addToSnbQueue)
-      if (error)
-        addToSnbQueue({ id: "publish-error", text: `Error: ${error.message}` });
-      else if (data)
-        addToSnbQueue({
-          id: "publish-success",
-          text: "Article successfully published.",
-        });
+    if (mode == "add") {
+      const { data, error } = await createInfo(form);
+      showPublishingFeedback(data, error);
+    } else if (mode == "edit" && existingData) {
+      const { data, error } = await updateInfo(existingData.id, form);
+      showPublishingFeedback(data, error);
+    }
   }
 
   return (
@@ -343,4 +360,4 @@ const ArtcleEditor = ({
   );
 };
 
-export default ArtcleEditor;
+export default ArticleEditor;

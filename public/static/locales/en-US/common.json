@@ -55,6 +55,7 @@
     },
     "error": {}
   },
+  "error": "Error: {{errorMsg}}",
   "seeDetails": "See details",
   "dialog": {
     "addContact": {

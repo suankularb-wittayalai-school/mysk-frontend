@@ -55,6 +55,7 @@
     },
     "error": {}
   },
+  "error": "ข้อผิดพลาด: {{errorMsg}}",
   "seeDetails": "ดูรายละเอียด",
   "dialog": {
     "addContact": {

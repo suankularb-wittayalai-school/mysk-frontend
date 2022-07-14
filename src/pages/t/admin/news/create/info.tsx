@@ -17,7 +17,7 @@ import {
 } from "@suankularb-components/react";
 
 // Components
-import ArtcleEditor from "@components/news/ArticleEditor";
+import ArticleEditor from "@components/news/ArticleEditor";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
@@ -48,7 +48,8 @@ const CreateInfo: NextPage = (): JSX.Element => {
           />
         }
       >
-        <ArtcleEditor
+        <ArticleEditor
+          mode="add"
           addToSnbQueue={(newSnb) => setSnbQueue([...snbQueue, newSnb])}
         />
       </RegularLayout>
