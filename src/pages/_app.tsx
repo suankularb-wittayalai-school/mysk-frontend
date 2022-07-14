@@ -23,7 +23,10 @@ import "@fontsource/noto-sans-thai/300.css";
 import "@fontsource/noto-sans-thai/400.css";
 import "@fontsource/noto-sans-thai/500.css";
 import "@fontsource/noto-sans-thai/700.css";
+import "@fontsource/sarabun/300.css";
 import "@fontsource/sarabun/400.css";
+import "@fontsource/sarabun/500.css";
+import "@fontsource/sarabun/700.css";
 
 // Styles
 import "@styles/global.css";
