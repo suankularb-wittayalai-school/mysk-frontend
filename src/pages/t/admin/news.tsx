@@ -70,7 +70,7 @@ const AddSection = (): JSX.Element => {
 
 const EditSection = (): JSX.Element => {
   const { t } = useTranslation("admin");
-  const { data } = useQuery("feed", () => getNewsFeed("admin"));
+  const { data } = useQuery("admin-feed", () => getNewsFeed("admin"));
 
   return (
     <Section>

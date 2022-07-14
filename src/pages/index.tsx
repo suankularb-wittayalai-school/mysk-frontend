@@ -88,7 +88,7 @@ const LandingFeedItem = ({ feedItem }: { feedItem: NewsItem }): JSX.Element => {
 
   return (
     <li key={feedItem.id}>
-      <Link href={`/news/${feedItem.id}`}>
+      <Link href={`/news/info/${feedItem.id}`}>
         <a
           className="has-action relative grid grid-cols-2 gap-x-6 overflow-hidden p-2
             md:rounded-xl"
@@ -112,7 +112,7 @@ const LandingFeedItem = ({ feedItem }: { feedItem: NewsItem }): JSX.Element => {
             <h3 className="max-lines-2 font-display text-2xl font-bold leading-none">
               {getLocaleString(feedItem.content.title, locale)}
             </h3>
-            <p className="max-lines-5 leading-tight">
+            <p className="max-lines-2 leading-tight">
               {getLocaleString(feedItem.content.description, locale)}
             </p>
           </div>

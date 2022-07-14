@@ -33,6 +33,17 @@ export async function getInfos() {
   return data.map(dbInfo2News);
 }
 
+export async function getAllInfoIDs(): Promise<number[]> {
+  const { data, error } = await supabase.from<InfoDB>("infos").select("id");
+
+  if (error || !data) {
+    console.error(error);
+    return [];
+  }
+
+  return data.map((info) => info.id);
+}
+
 export async function getInfo(id: number) {
   const { data, error } = await supabase
     .from<InfoDB>("infos")
