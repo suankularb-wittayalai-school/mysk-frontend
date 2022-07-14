@@ -79,15 +79,15 @@ export async function getTeacherList(classID: number): Promise<Teacher[]> {
 
   // Map array of teacher IDs into array of teachers (fetch teacher in map)
   const selected_teachers: (TeacherDB | null)[] = await Promise.all(
-    // 2. Flatten the arrays into an array of teacher IDs
+    // Flatten the arrays into an array of teacher IDs
     roomSubjects
       .map((roomSubject) => roomSubject.teacher)
       .flat()
-      // remove duplicates
+      // Remove duplicates
       .filter((id, index, self) => self.indexOf(id) === index)
-      // 3. Fetch teacher data for each teacher
+      // Fetch teacher data for each teacher
       .map(async (teacher_id) => {
-        // TODO: Get teacher from ID (select only id, name, contacts, subject group)
+        // Get teacher from ID
         const { data, error } = await supabase
           .from<TeacherDB>("teacher")
           .select("* ,people:person(*), SubjectGroup:subject_group(*)")
