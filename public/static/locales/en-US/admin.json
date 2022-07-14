@@ -123,6 +123,8 @@
       "titleEN": "English title",
       "descTH": "Local description (Thai)",
       "descEN": "English description",
+      "image": "Banner image",
+      "image_helper": "5:1 desktop, 16:9 mobile",
       "oldURL": "Link in legacy MySK",
       "oldURL_helper": "If this page exists in legacy MySK, link to it.",
       "action": {

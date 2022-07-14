@@ -20,6 +20,7 @@ import {
   Card,
   CardHeader,
   ChipRadioGroup,
+  FileInput,
   Header,
   KeyboardInput,
   MaterialIcon,
@@ -74,7 +75,7 @@ const ConfigSection = ({
   setForm: (form: Form) => void;
   onClickDelete?: () => void;
 }): JSX.Element => {
-  const { t } = useTranslation("admin");
+  const { t } = useTranslation(["admin", "common"]);
 
   return (
     <Section>
@@ -98,7 +99,7 @@ const ConfigSection = ({
         </Actions>
       </div>
       <div>
-        <div className="layout-grid-cols-3 !gap-y-0">
+        <div className="layout-grid-cols-4 !gap-y-0">
           <KeyboardInput
             name="title-th"
             type="text"
@@ -112,6 +113,13 @@ const ConfigSection = ({
             label={t("articleEditor.config.titleEN")}
             onChange={(e) => setForm({ ...form, titleEN: e })}
             defaultValue={existingData?.content.title["en-US"]}
+          />
+          <FileInput
+            name="image"
+            label={t("articleEditor.config.image")}
+            helperMsg={t("articleEditor.config.image_helper")}
+            noneAttachedMsg={t("input.none.noFilesAttached", { ns: "common" })}
+            attr={{ accept: "image/*" }}
           />
           <KeyboardInput
             name="old-url"

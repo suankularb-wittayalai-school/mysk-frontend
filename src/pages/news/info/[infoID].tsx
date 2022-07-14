@@ -36,15 +36,15 @@ const InfoPage: NextPage<{ info: NewsItemInfoNoDate }> = ({ info }) => {
       }
     >
       <div
-        className="container-surface-variant relative aspect-video w-full p-2 text-right shadow
-          sm:aspect-[5/1] sm:rounded-xl"
+        className="container-surface-variant relative aspect-video w-full
+          overflow-hidden text-right shadow sm:aspect-[5/1] sm:rounded-xl"
       >
         {info.image ? (
           <Image src={info.image} layout="fill" objectFit="cover" alt="" />
         ) : (
-          <span className="font-display text-8xl font-light leading-none opacity-30">
+          <p className="m-4 !p-0 font-display text-8xl font-light leading-none opacity-30">
             {getLocaleString(info.content.title, locale)}
-          </span>
+          </p>
         )}
       </div>
       <Section className="font-display">
