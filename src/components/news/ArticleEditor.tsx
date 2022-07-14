@@ -19,6 +19,7 @@ import {
   Button,
   Card,
   CardHeader,
+  ChipRadioGroup,
   Header,
   KeyboardInput,
   MaterialIcon,
@@ -46,6 +47,7 @@ import {
 } from "@utils/types/common";
 import { InfoDB } from "@utils/types/database/news";
 import { NewsItemInfoNoDate } from "@utils/types/news";
+import BlockingPane from "@components/BlockingPane";
 
 type Form = {
   titleTH: string;
@@ -120,51 +122,63 @@ const ConfigSection = ({
 
 const WriteSection = ({
   existingBody,
-  title,
-  desc,
-  body,
-  setBody,
+  form,
+  setBody: setExtBody,
   publish,
   allowEdit,
+  allowEditEN,
   allowPublish,
 }: {
   existingBody?: MultiLangString;
-  title: string;
-  desc: string;
-  body: string;
-  setBody: (e: string) => void;
+  form: Omit<Form, "bodyTH" | "bodyEN" | "oldURL">;
+  setBody: (form: { th: string; "en-US": string }) => void;
   publish: () => void;
   allowEdit?: boolean;
+  allowEditEN?: boolean;
   allowPublish?: boolean;
 }): JSX.Element => {
   const { t } = useTranslation("admin");
+  const [lang, setLang] = useState<LangCode>("th");
+  const [body, setBody] = useState<{ th: string; "en-US": string }>({
+    th: "",
+    "en-US": "",
+  });
+
+  useEffect(() => setExtBody(body), [body]);
 
   return (
     <Section className="relative">
-      <AnimatePresence>
-        {allowEdit && (
-          <motion.div
-            className="absolute -top-4 -left-4 z-20 flex h-[calc(100%+2rem)] w-[calc(100%+2rem)]
-              flex-col items-center justify-center gap-6 rounded-xl !p-6 text-center text-lg backdrop-blur-xl"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={animationTransition}
-          >
-            <MaterialIcon
-              icon="front_hand"
-              allowCustomSize
-              className="!text-9xl text-on-surface-variant"
-            />
-            <p>{t("articleEditor.write.editNotAllowed")}</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Block editing if not configured */}
+      <BlockingPane
+        icon={<MaterialIcon icon="front_hand" allowCustomSize />}
+        text={t("articleEditor.write.editNotAllowed")}
+        show={!allowEdit}
+      />
+
+      {/* Header */}
       <Header
         icon={<MaterialIcon icon="edit_square" allowCustomSize />}
         text={t("articleEditor.write.title")}
       />
-      <div className="layout-grid-cols-2 !flex-col-reverse !gap-y-4">
+
+      {/* Choose language */}
+      <ChipRadioGroup
+        choices={[
+          { id: "th", name: "ภาษาไทย" },
+          { id: "en-US", name: "English" },
+        ]}
+        onChange={setLang}
+        value={lang}
+      />
+
+      <div className="layout-grid-cols-2 relative !flex-col-reverse !gap-y-4">
+        {/* Block editing English if not configured */}
+        <BlockingPane
+          icon={<MaterialIcon icon="translate" allowCustomSize />}
+          text={t("articleEditor.write.enEditNotAllowed")}
+          show={lang == "en-US" && allowEdit && !allowEditEN}
+        />
+
         {/* Text area */}
         <section className="flex flex-col gap-2">
           <a
@@ -188,7 +202,15 @@ const WriteSection = ({
           <TextArea
             name="markdown"
             label={t("articleEditor.write.editorPlh")}
-            onChange={(e) => setBody(e)}
+            onChange={(e) =>
+              setBody(
+                lang == "en-US"
+                  ? // Change English version if editing English
+                    { ...body, "en-US": e }
+                  : // Change Thai version if editing Thai
+                    { ...body, th: e }
+              )
+            }
             defaultValue={existingBody?.th}
           />
         </section>
@@ -198,10 +220,14 @@ const WriteSection = ({
           role="document"
           className="markdown h-fit rounded-lg border-outline !p-4"
         >
-          <h1 className="mb-2">{title}</h1>
-          <p className="mt-0 !font-display !text-lg">{desc}</p>
+          <h1 className="mb-2">
+            {form[lang == "en-US" ? "titleEN" : "titleTH"]}
+          </h1>
+          <p className="mt-0 !font-display !text-lg">
+            {form[lang == "en-US" ? "descEN" : "descTH"]}
+          </p>
           {body ? (
-            <ReactMarkdown remarkPlugins={[gfm]}>{body}</ReactMarkdown>
+            <ReactMarkdown remarkPlugins={[gfm]}>{body[lang]}</ReactMarkdown>
           ) : (
             <p className="container-surface-variant rounded p-4 text-center">
               {t("articleEditor.write.previewPlh")}
@@ -214,13 +240,13 @@ const WriteSection = ({
           label={t("articleEditor.write.action.save")}
           type="outlined"
           icon={<MaterialIcon icon="save" />}
-          disabled={allowPublish}
+          disabled={!allowPublish}
         />
         <Button
           label={t("articleEditor.write.action.publish")}
           type="filled"
           icon={<MaterialIcon icon="publish" />}
-          disabled={allowPublish}
+          disabled={!allowPublish}
           onClick={publish}
         />
       </Actions>
@@ -267,6 +293,13 @@ const ArtcleEditor = ({
     return true;
   }
 
+  function evalAllowEditEN(): boolean {
+    if (!form.titleEN) return false;
+    if (!form.descEN) return false;
+
+    return true;
+  }
+
   function validate(): boolean {
     if (!validateConfig) return false;
     if (!form.bodyTH) return false;
@@ -296,12 +329,11 @@ const ArtcleEditor = ({
       />
       <WriteSection
         existingBody={existingData?.content.body}
-        title={form.titleTH}
-        desc={form.descTH}
-        body={form.bodyTH}
-        setBody={(e) => setForm({ ...form, bodyTH: e })}
-        allowEdit={!validateConfig()}
-        allowPublish={!validate()}
+        form={form}
+        setBody={(e) => setForm({ ...form, bodyTH: e.th, bodyEN: e["en-US"] })}
+        allowEdit={validateConfig()}
+        allowEditEN={evalAllowEditEN()}
+        allowPublish={validate()}
         publish={publish}
       />
     </>

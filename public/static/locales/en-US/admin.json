@@ -129,6 +129,7 @@
     "write": {
       "title": "Write",
       "editNotAllowed": "Finish configuring this article before editing.",
+      "enEditNotAllowed": "Missing configurations for the English version.",
       "howTo": {
         "title": "Markdown how-to",
         "supportingText": "Read the guide on how to write in Markdown."

@@ -6,12 +6,7 @@ import { dbInfo2News } from "@utils/backend/database";
 import { supabase } from "@utils/supabaseClient";
 
 // Types
-import {
-  InfoDB,
-  InfoTable,
-  NewsDB,
-  NewsTable,
-} from "@utils/types/database/news";
+import { InfoDB, InfoTable, NewsTable } from "@utils/types/database/news";
 
 export async function getLandingFeed() {
   const infos = await getInfos();
