@@ -4,6 +4,7 @@ import { Class } from "@utils/types/class";
 import { Contact } from "@utils/types/contact";
 import { ClassroomDB } from "@utils/types/database/class";
 import { ContactDB } from "@utils/types/database/contact";
+import { FormQuestionsTable, FormTable } from "@utils/types/database/form";
 import { InfoDB } from "@utils/types/database/news";
 import { StudentDB, TeacherDB } from "@utils/types/database/person";
 import { ScheduleItemDB } from "@utils/types/database/schedule";
@@ -12,6 +13,7 @@ import {
   SubjectGroupDB,
   SubjectTable,
 } from "@utils/types/database/subject";
+import { Form, FormField } from "@utils/types/form";
 import { NewsItemInfoNoDate } from "@utils/types/news";
 import { Role, Student, Teacher } from "@utils/types/person";
 import { SchedulePeriod } from "@utils/types/schedule";
@@ -501,6 +503,56 @@ export async function db2SubjectListItem(roomSubject: RoomSubjectDB) {
         coTeachers.map(async (teacher) => await db2Teacher(teacher))
       );
     }
+  }
+
+  return formatted;
+}
+
+export function db2Field(field: FormQuestionsTable) {
+  const formatted: FormField = {
+    id: field.id,
+    label: {
+      "en-US": field.label_en,
+      th: field.label_th,
+    },
+    type: field.type,
+    required: field.required,
+    options: field.options ? field.options : [],
+    range: {
+      start: field.range_start,
+      end: field.range_end,
+    },
+  };
+  return formatted;
+}
+
+export async function db2Form(form: FormTable) {
+  const formatted: Form = {
+    id: form.id,
+    name: {
+      "en-US": form.name_en,
+      th: form.name_th,
+    },
+    description: {
+      "en-US": form.description_en,
+      th: form.description_th,
+    },
+    fields: [],
+    due_date: form.due_date,
+    students_done: [],
+    frequency: form.frequency,
+  };
+
+  const { data: fields, error: fieldsError } = await supabase
+    .from<FormQuestionsTable>("form_questions")
+    .select("*")
+    .eq("form", form.id);
+
+  if (fieldsError) {
+    console.error(fieldsError);
+  }
+  if (fields) {
+    formatted.fields = fields.map(db2Field);
   }
 
   return formatted;

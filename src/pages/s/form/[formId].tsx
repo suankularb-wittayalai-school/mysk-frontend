@@ -6,26 +6,30 @@ import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { GoogleForm, googleFormsToJson } from "react-google-forms-hooks";
 import { useEffect, useState } from "react";
 
+// Type
+import { Form } from "@utils/types/form";
+import { getForm } from "@utils/backend/news/form";
+
 const FormPage: NextPage = () => {
-    const { t } = useTranslation(["class", "common"]);
-    const locale = useRouter().locale == "th" ? "th" : "en-US";
+  const { t } = useTranslation(["class", "common"]);
+  const locale = useRouter().locale == "th" ? "th" : "en-US";
 
-    return <div>FormPage</div>;
-}
-
+  return <div>FormPage</div>;
+};
 
 export const getServerSideProps: GetServerSideProps = async ({
-    locale,
-    params,
-  }) => ({
+  locale,
+  params,
+}) => {
+  const form: Form | null = await getForm(Number(params?.formId));
+
+  return {
     props: {
-      ...(await serverSideTranslations(locale as string, [
-        "common"
-      ])),
+      ...(await serverSideTranslations(locale as string, ["common"])),
     },
-  });
-  
-  export default FormPage;
+  };
+};
+
+export default FormPage;

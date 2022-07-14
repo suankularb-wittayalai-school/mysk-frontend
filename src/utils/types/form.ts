@@ -1,4 +1,5 @@
 import { MultiLangString } from "./common";
+import { Student } from "./person";
 
 // create type form_type_enum as enum('short_answer', 'paragraph', 'multiple_choice', 'check_box', 'dropdown', 'file', 'date', 'time', 'scale');
 export type FieldType =
@@ -30,6 +31,6 @@ export interface Form {
   description: MultiLangString;
   fields: FormField[];
   due_date: Date;
-  students_done: number;
+  students_done: Student[];
   frequency: "once" | "weekly" | "monthly" | "unspecified";
 }
