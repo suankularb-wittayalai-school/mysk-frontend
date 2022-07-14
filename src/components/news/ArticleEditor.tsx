@@ -8,7 +8,7 @@ import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 
 import ReactMarkdown from "react-markdown";
 import gfm from "remark-gfm";
@@ -34,7 +34,7 @@ import {
 import { animationTransition } from "@utils/animations/config";
 
 // Backend
-import { createInfo, updateInfo } from "@utils/backend/news/info";
+import { createInfo, deleteInfo, updateInfo } from "@utils/backend/news/info";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
@@ -50,6 +50,8 @@ import { NewsItemInfoNoDate } from "@utils/types/news";
 import BlockingPane from "@components/BlockingPane";
 import { PostgrestError } from "@supabase/supabase-js";
 import { useRouter } from "next/router";
+import DiscardDraft from "@components/dialogs/DiscardDraft";
+import ConfirmDelete from "@components/dialogs/ConfirmDelete";
 
 type Form = {
   titleTH: string;
@@ -65,19 +67,36 @@ const ConfigSection = ({
   existingData,
   form,
   setForm,
+  onClickDelete,
 }: {
   existingData?: NewsItemInfoNoDate;
   form: Form;
   setForm: (form: Form) => void;
+  onClickDelete?: () => void;
 }): JSX.Element => {
   const { t } = useTranslation("admin");
 
   return (
     <Section>
-      <Header
-        icon={<MaterialIcon icon="settings" allowCustomSize />}
-        text={t("articleEditor.config.title")}
-      />
+      <div className="layout-grid-cols-3">
+        <div className="md:col-span-2">
+          <Header
+            icon={<MaterialIcon icon="settings" allowCustomSize />}
+            text={t("articleEditor.config.title")}
+          />
+        </div>
+        <Actions>
+          {onClickDelete && (
+            <Button
+              label={t("articleEditor.config.action.delete")}
+              type="tonal"
+              icon={<MaterialIcon icon="delete" />}
+              onClick={onClickDelete}
+              isDangerous
+            />
+          )}
+        </Actions>
+      </div>
       <div>
         <div className="layout-grid-cols-3 !gap-y-0">
           <KeyboardInput
@@ -271,6 +290,12 @@ const ArticleEditor = ({
   const router = useRouter();
   const { t } = useTranslation("common");
 
+  // Dialog control
+  const [showDelete, toggleShowDelete] = useReducer(
+    (state: boolean) => !state,
+    false
+  );
+
   // Form control
   const [form, setForm] = useState<Form>({
     titleTH: "",
@@ -330,7 +355,7 @@ const ArticleEditor = ({
   }
 
   // Publish article
-  async function publish() {
+  async function handlePublish() {
     if (mode == "add") {
       const { data, error } = await createInfo(form);
       showPublishingFeedback(data, error);
@@ -340,12 +365,31 @@ const ArticleEditor = ({
     }
   }
 
+  // Delete article
+  async function handleDelete() {
+    if (existingData) {
+      const error = await deleteInfo(existingData.id);
+      if (addToSnbQueue && error)
+        addToSnbQueue({
+          id: "delete-error",
+          text: t("error", { errorMsg: error.message }),
+        });
+      else {
+        toggleShowDelete();
+        router.push("/t/admin/news");
+      }
+    }
+  }
+
   return (
     <>
       <ConfigSection
         existingData={existingData}
         form={form}
         setForm={setForm}
+        onClickDelete={
+          mode == "edit" && existingData ? toggleShowDelete : undefined
+        }
       />
       <WriteSection
         existingBody={existingData?.content.body}
@@ -354,7 +398,14 @@ const ArticleEditor = ({
         allowEdit={validateConfig()}
         allowEditEN={evalAllowEditEN()}
         allowPublish={validate()}
-        publish={publish}
+        publish={handlePublish}
+      />
+
+      {/* Dialogs */}
+      <ConfirmDelete
+        show={showDelete}
+        onClose={toggleShowDelete}
+        onSubmit={handleDelete}
       />
     </>
   );

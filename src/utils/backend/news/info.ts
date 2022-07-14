@@ -136,3 +136,27 @@ export async function updateInfo(
 
   return { data: updatedInfo, error: null };
 }
+
+export async function deleteInfo(id: number): Promise<PostgrestError | null> {
+  const { data: info, error: infoError } = await supabase
+    .from<InfoTable>("infos")
+    .delete({ returning: "representation" })
+    .match({ id });
+
+  if (infoError || !info || info.length < 1) {
+    console.error(infoError);
+    return infoError;
+  }
+
+  const { error: newsError } = await supabase
+    .from<NewsTable>("news")
+    .delete()
+    .match({ id: info[0].parent });
+
+  if (newsError) {
+    console.error(newsError);
+    return newsError;
+  }
+
+  return null;
+}

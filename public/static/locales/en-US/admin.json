@@ -124,7 +124,10 @@
       "descTH": "Local description (Thai)",
       "descEN": "English description",
       "oldURL": "Link in legacy MySK",
-      "oldURL_helper": "If this page exists in legacy MySK, link to it."
+      "oldURL_helper": "If this page exists in legacy MySK, link to it.",
+      "action": {
+        "delete": "Delete article"
+      }
     },
     "write": {
       "title": "Write",
