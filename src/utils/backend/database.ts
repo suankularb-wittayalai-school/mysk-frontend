@@ -555,5 +555,21 @@ export async function db2Form(form: FormTable) {
     formatted.fields = fields.map(db2Field);
   }
 
+  if (form.students_done) {
+    const { data: students, error: studentsError } = await supabase
+      .from<StudentDB>("student")
+      .select("id, student_id, people:person(*), Class:class(*)")
+      .in("id", form.students_done);
+
+    if (studentsError) {
+      console.error(studentsError);
+    }
+    if (students) {
+      formatted.students_done = await Promise.all(
+        students.map(async (student) => await db2Student(student))
+      );
+    }
+  }
+
   return formatted;
 }

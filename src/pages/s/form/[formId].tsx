@@ -12,10 +12,12 @@ import { useEffect, useState } from "react";
 import { Form } from "@utils/types/form";
 import { getForm } from "@utils/backend/news/form";
 
-const FormPage: NextPage = () => {
+const FormPage: NextPage<{ form: Form | null }> = ({ form }) => {
   const { t } = useTranslation(["class", "common"]);
   const locale = useRouter().locale == "th" ? "th" : "en-US";
+  //   console.log(form);
 
+  // TODO: render form
   return <div>FormPage</div>;
 };
 
@@ -28,6 +30,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   return {
     props: {
       ...(await serverSideTranslations(locale as string, ["common"])),
+      form,
     },
   };
 };

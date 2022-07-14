@@ -9,7 +9,7 @@ export interface FormTable {
   description_en: string;
   parent: number;
   due_date: Date;
-  students_done: number;
+  students_done: number[];
   frequency: "once" | "weekly" | "monthly" | "unspecified";
 }
 
