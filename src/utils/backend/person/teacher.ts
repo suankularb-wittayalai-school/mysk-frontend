@@ -12,9 +12,9 @@ import {
 } from "@utils/types/database/person";
 import { RoomSubjectDB } from "@utils/types/database/subject";
 import { Teacher } from "@utils/types/person";
-import { db2Teacher } from "../database";
 
 // Backend
+import { db2Teacher } from "../database";
 import { createPerson } from "./person";
 
 export async function createTeacher(
