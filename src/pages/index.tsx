@@ -51,7 +51,7 @@ const LandingFeed = ({ feed }: { feed: Feed }): JSX.Element => {
     <section
       aria-label={t("news.title")}
       className="mt-16 !p-0 backdrop-blur-sm sm:mt-0 sm:rounded-xl sm:backdrop-blur-lg
-        md:shadow-none md:backdrop-blur-sm"
+        md:shadow-none md:backdrop-blur-md"
     >
       <CardHeader
         icon={<MaterialIcon icon="newspaper" className="text-on-surface" />}
