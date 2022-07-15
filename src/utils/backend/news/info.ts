@@ -63,6 +63,7 @@ export async function getInfo(id: number) {
 }
 
 export async function uploadImage(
+  mode: "add" | "edit",
   newsID: number,
   image: File
 ): Promise<{ error: Partial<PostgrestError> | null }> {
@@ -70,16 +71,30 @@ export async function uploadImage(
     .split(".")
     .pop()}`;
 
-  const { error: imageError } = await supabase.storage
-    .from("news")
-    .upload(fileName, image, {
-      cacheControl: "3600",
-      upsert: false,
-    });
+  if (mode == "add") {
+    const { error: imageError } = await supabase.storage
+      .from("news")
+      .upload(fileName, image, {
+        cacheControl: "3600",
+        upsert: false,
+      });
 
-  if (imageError) {
-    console.error(imageError);
-    return { error: { message: imageError.message } };
+    if (imageError) {
+      console.error(imageError);
+      return { error: { message: imageError.message } };
+    }
+  } else if (mode == "edit") {
+    const { error: imageError } = await supabase.storage
+      .from("news")
+      .update(fileName, image, {
+        cacheControl: "3600",
+        upsert: false,
+      });
+
+    if (imageError) {
+      console.error(imageError);
+      return { error: { message: imageError.message } };
+    }
   }
 
   const { data: newsWImage, error: newsWImageError } = await supabase
@@ -124,7 +139,7 @@ export async function createInfo(form: {
 
   // Upload image
   if (form.image) {
-    const { error: imageError } = await uploadImage(news.id, form.image);
+    const { error: imageError } = await uploadImage("add", news.id, form.image);
     if (imageError) return { data: [], error: imageError };
   }
 
@@ -153,9 +168,10 @@ export async function updateInfo(
     descEN: string;
     bodyTH: string;
     bodyEN: string;
+    image: File | null;
     oldURL: string;
   }
-): Promise<{ data: InfoTable[]; error: PostgrestError | null }> {
+): Promise<{ data: InfoTable[]; error: Partial<PostgrestError | null> }> {
   const { data: updatedInfo, error: updatedInfoError } = await supabase
     .from<InfoTable>("infos")
     .update({
@@ -180,9 +196,18 @@ export async function updateInfo(
     })
     .match({ id: updatedInfo[0].parent });
 
-  if (updatedNewsError || !updatedNews) {
+  if (updatedNewsError || !updatedNews || updatedNews.length < 0) {
     console.error(updatedNewsError);
     return { data: [], error: updatedNewsError };
+  }
+
+  if (form.image) {
+    const { error: imageError } = await uploadImage(
+      updatedNews[0].image ? "edit" : "add",
+      id,
+      form.image
+    );
+    if (imageError) return { data: [], error: imageError };
   }
 
   return { data: updatedInfo, error: null };

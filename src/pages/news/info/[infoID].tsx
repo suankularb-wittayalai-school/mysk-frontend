@@ -13,7 +13,6 @@ import {
   Actions,
   LinkButton,
   MaterialIcon,
-  Noticebar,
   NoticebarManager,
   Section,
   Title,
@@ -23,10 +22,7 @@ import {
 import Markdown from "@components/Markdown";
 
 // Animations
-import {
-  animationTransition,
-  enterPageTransition,
-} from "@utils/animations/config";
+import { enterPageTransition } from "@utils/animations/config";
 
 // Backend
 import { getAllInfoIDs, getInfo } from "@utils/backend/news/info";
@@ -58,29 +54,27 @@ const InfoPage: NextPage<{ info: NewsItemInfoNoDate }> = ({ info }) => {
         LinkElement={Link}
       />
       <div className="content-layout__content !gap-y-0">
-        <Section className="mb-8">
-          {/* Notify the user that the page is not translated.
+        {locale == "en-US" && (
+          <Section className="mb-8">
+            {/* Notify the user that the page is not translated.
               This part is not translated because only English language users will
               see this.
             */}
-          <NoticebarManager
-            id="info-ntb"
-            noticebars={
-              locale == "en-US"
-                ? [
-                    {
-                      id: "no-translation",
-                      type: "info",
-                      icon: <MaterialIcon icon="translate" />,
-                      message:
-                        "This article has no or incomplete English translation.",
-                      actions: [],
-                    },
-                  ]
-                : []
-            }
-          />
-        </Section>
+            <NoticebarManager
+              id="info-ntb"
+              noticebars={[
+                {
+                  id: "no-translation",
+                  type: "info",
+                  icon: <MaterialIcon icon="translate" />,
+                  message:
+                    "This article has no or incomplete English translation.",
+                  actions: [],
+                },
+              ]}
+            />
+          </Section>
+        )}
 
         {/* This part will animate from News Card/Landing Feed Item. */}
         <motion.section
@@ -91,7 +85,7 @@ const InfoPage: NextPage<{ info: NewsItemInfoNoDate }> = ({ info }) => {
           {/* Banner image */}
           <div
             className="container-surface-variant relative aspect-video w-full
-              overflow-hidden text-right shadow sm:aspect-[5/1] sm:rounded-xl"
+              overflow-hidden text-right shadow sm:rounded-xl md:aspect-[5/1]"
           >
             {info.image ? (
               <Image src={info.image} layout="fill" objectFit="cover" alt="" />

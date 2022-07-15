@@ -103,7 +103,7 @@ const ConfigSection = ({
             label={t("articleEditor.config.image")}
             helperMsg={t("articleEditor.config.image_helper")}
             noneAttachedMsg={t(
-              form.image
+              existingData?.image
                 ? "input.none.noNewFilesAttached"
                 : "input.none.noFilesAttached",
               { ns: "common" }
