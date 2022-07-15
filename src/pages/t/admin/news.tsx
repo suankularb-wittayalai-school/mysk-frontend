@@ -6,7 +6,6 @@ import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-
 import { useQuery } from "react-query";
 
 // SK Components
@@ -79,6 +78,9 @@ const EditSection = (): JSX.Element => {
         text={t("news.edit.title")}
       />
       <p>{t("news.edit.instructions")}</p>
+      <p>
+        <strong className="text-tertiary">{t("news.edit.cacheWarning")}</strong>
+      </p>
       <NewsFeed
         news={
           data

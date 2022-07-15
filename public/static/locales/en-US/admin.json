@@ -97,7 +97,8 @@
     },
     "edit": {
       "title": "Edit an article",
-      "instructions": "Scroll down to find the article/form you want to edit, then click “Edit.” That will bring you to the article editor where you can edit the Markdown of an article, or Google Forms where you can edit the fields of a form."
+      "instructions": "Scroll down to find the article/form you want to edit, then click “Edit.” That will bring you to the article editor where you can edit the Markdown of an article, or Google Forms where you can edit the fields of a form.",
+      "cacheWarning": "Please note that it may take up to 5 minutes for your edit to be visible to the public."
     }
   },
   "schedule": {
