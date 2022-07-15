@@ -62,6 +62,39 @@ export async function getInfo(id: number) {
   return dbInfo2News(data);
 }
 
+export async function uploadImage(
+  newsID: number,
+  image: File
+): Promise<{ error: Partial<PostgrestError> | null }> {
+  const fileName: string = `info/${newsID}/banner.${image.name
+    .split(".")
+    .pop()}`;
+
+  const { error: imageError } = await supabase.storage
+    .from("news")
+    .upload(fileName, image, {
+      cacheControl: "3600",
+      upsert: false,
+    });
+
+  if (imageError) {
+    console.error(imageError);
+    return { error: { message: imageError.message } };
+  }
+
+  const { data: newsWImage, error: newsWImageError } = await supabase
+    .from<NewsTable>("news")
+    .update({ image: fileName })
+    .match({ id: newsID });
+
+  if (newsWImageError || !newsWImage) {
+    console.error(newsWImageError);
+    return { error: newsWImageError };
+  }
+
+  return { error: null };
+}
+
 export async function createInfo(form: {
   titleTH: string;
   titleEN: string;
@@ -69,8 +102,9 @@ export async function createInfo(form: {
   descEN: string;
   bodyTH: string;
   bodyEN: string;
+  image: File | null;
   oldURL: string;
-}): Promise<{ data: InfoTable[]; error: PostgrestError | null }> {
+}): Promise<{ data: InfoTable[]; error: Partial<PostgrestError> | null }> {
   const { data: news, error: newsError } = await supabase
     .from<NewsTable>("news")
     .insert({
@@ -86,6 +120,12 @@ export async function createInfo(form: {
   if (newsError || !news) {
     console.error(newsError);
     return { data: [], error: newsError };
+  }
+
+  // Upload image
+  if (form.image) {
+    const { error: imageError } = await uploadImage(news.id, form.image);
+    if (imageError) return { data: [], error: imageError };
   }
 
   const { data: info, error: infoError } = await supabase

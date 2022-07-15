@@ -44,6 +44,7 @@ type Form = {
   descEN: string;
   bodyTH: string;
   bodyEN: string;
+  image: File | null;
   oldURL: string;
 };
 
@@ -101,7 +102,13 @@ const ConfigSection = ({
             name="image"
             label={t("articleEditor.config.image")}
             helperMsg={t("articleEditor.config.image_helper")}
-            noneAttachedMsg={t("input.none.noFilesAttached", { ns: "common" })}
+            noneAttachedMsg={t(
+              form.image
+                ? "input.none.noNewFilesAttached"
+                : "input.none.noFilesAttached",
+              { ns: "common" }
+            )}
+            onChange={(e) => setForm({ ...form, image: e })}
             attr={{ accept: "image/*" }}
           />
           <KeyboardInput
@@ -142,7 +149,7 @@ const WriteSection = ({
   allowPublish,
 }: {
   existingBody?: MultiLangString;
-  form: Omit<Form, "bodyTH" | "bodyEN" | "oldURL">;
+  form: Omit<Form, "bodyTH" | "bodyEN" | "image" | "oldURL">;
   setBody: (form: { th: string; "en-US": string }) => void;
   publish: () => void;
   allowEdit?: boolean;
@@ -300,6 +307,7 @@ const ArticleEditor = ({
     descEN: "",
     bodyTH: "",
     bodyEN: "",
+    image: null,
     oldURL: "",
   });
 
@@ -312,6 +320,7 @@ const ArticleEditor = ({
         descEN: existingData.content.description["en-US"] || "",
         bodyTH: existingData.content.body?.th || "",
         bodyEN: existingData.content.body?.["en-US"] || "",
+        image: null,
         oldURL: existingData.oldURL || "",
       });
   }, [existingData]);
@@ -339,12 +348,15 @@ const ArticleEditor = ({
   }
 
   // Publishing feedback
-  function showPublishingFeedback(data: any, error: PostgrestError | null) {
+  function showPublishingFeedback(
+    data: any,
+    error: Partial<PostgrestError> | null
+  ) {
     if (addToSnbQueue) {
       if (error)
         addToSnbQueue({
           id: "publish-error",
-          text: t("error", { errorMsg: error.message }),
+          text: t("error", { errorMsg: error.message || "unkown error" }),
         });
       else if (data) router.push("/t/admin/news");
     }

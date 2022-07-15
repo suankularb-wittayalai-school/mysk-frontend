@@ -1,5 +1,5 @@
 // Modules
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -171,49 +171,51 @@ const Layout = ({
   }, [session, router]);
 
   return (
-    <AnimatePresence
-      exitBeforeEnter
-      initial={false}
-      onExitComplete={() => window.scrollTo(0, 0)}
-    >
-      {navIsTransparent ? (
-        // Fills the page with children if the Navigation is transparent
-        <>
-          <Navigation
+    <LayoutGroup>
+      <AnimatePresence
+        exitBeforeEnter
+        initial={false}
+        onExitComplete={() => window.scrollTo(0, 0)}
+      >
+        {navIsTransparent ? (
+          // Fills the page with children if the Navigation is transparent
+          <>
+            <Navigation
+              currentPath={router.asPath}
+              navItems={navItems}
+              LinkElement={Link}
+              isTransparent
+            />
+            <motion.div
+              key={router.route}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25, ease: animationEase }}
+            >
+              {children}
+            </motion.div>
+          </>
+        ) : (
+          // Use the normal Page Layout if the Navigation is normal
+          <PageLayout
             currentPath={router.asPath}
             navItems={navItems}
             LinkElement={Link}
-            isTransparent
-          />
-          <motion.div
-            key={router.route}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25, ease: animationEase }}
           >
-            {children}
-          </motion.div>
-        </>
-      ) : (
-        // Use the normal Page Layout if the Navigation is normal
-        <PageLayout
-          currentPath={router.asPath}
-          navItems={navItems}
-          LinkElement={Link}
-        >
-          <motion.div
-            key={router.route}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25, ease: animationEase }}
-          >
-            {children}
-          </motion.div>
-        </PageLayout>
-      )}
-    </AnimatePresence>
+            <motion.div
+              key={router.route}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25, ease: animationEase }}
+            >
+              {children}
+            </motion.div>
+          </PageLayout>
+        )}
+      </AnimatePresence>
+    </LayoutGroup>
   );
 };
 

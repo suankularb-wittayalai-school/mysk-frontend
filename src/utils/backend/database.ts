@@ -34,7 +34,9 @@ export function dbInfo2News(info: InfoDB): NewsItemInfoNoDate {
     id: info.id,
     type: "info",
     postDate: info.created_at,
-    image: info.parent.image || "",
+    image: info.parent.image
+      ? `https://ykqqepbodqjhiwfjcvxe.supabase.co/storage/v1/object/public/news/${info.parent.image}`
+      : "",
     done: false,
     content: {
       title: {

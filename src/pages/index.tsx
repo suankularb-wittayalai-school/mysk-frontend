@@ -34,6 +34,7 @@ import { getLocaleString } from "@utils/helpers/i18n";
 
 // Hooks
 import { useSession } from "@utils/hooks/auth";
+import { motion } from "framer-motion";
 
 // Page-specific types
 type Feed = { lastUpdated: Date; content: NewsList };
@@ -87,12 +88,9 @@ const LandingFeedItem = ({ feedItem }: { feedItem: NewsItem }): JSX.Element => {
   const locale = useRouter().locale as LangCode;
 
   return (
-    <li key={feedItem.id}>
+    <motion.li key={feedItem.id} layoutId={`news-${feedItem.id}`}>
       <Link href={`/news/info/${feedItem.id}`}>
-        <a
-          className="has-action relative grid grid-cols-2 gap-x-6 overflow-hidden p-2
-            md:rounded-xl"
-        >
+        <a className="has-action relative grid grid-cols-2 gap-x-6 p-2 md:before:rounded-xl">
           <div
             className="surface relative grid h-full min-h-[8rem] w-full place-items-center
               overflow-hidden rounded-xl bg-cover p-4 text-center font-medium"
@@ -118,7 +116,7 @@ const LandingFeedItem = ({ feedItem }: { feedItem: NewsItem }): JSX.Element => {
           </div>
         </a>
       </Link>
-    </li>
+    </motion.li>
   );
 };
 
