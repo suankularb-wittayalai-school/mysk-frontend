@@ -13,6 +13,9 @@ import {
   Actions,
   LinkButton,
   MaterialIcon,
+  Noticebar,
+  NoticebarManager,
+  Section,
   Title,
 } from "@suankularb-components/react";
 
@@ -20,7 +23,10 @@ import {
 import Markdown from "@components/Markdown";
 
 // Animations
-import { animationTransition, enterPageTransition } from "@utils/animations/config";
+import {
+  animationTransition,
+  enterPageTransition,
+} from "@utils/animations/config";
 
 // Backend
 import { getAllInfoIDs, getInfo } from "@utils/backend/news/info";
@@ -40,20 +46,45 @@ const InfoPage: NextPage<{ info: NewsItemInfoNoDate }> = ({ info }) => {
   const session = useSession();
 
   return (
+    // We’re not using ReSKComs in parts of this page here as it has poor support for
+    // Framer Motion’s layout animations.
     <main className="content-layout">
       <Title
         name={{
           title: getLocaleString(info.content.title, locale),
-          subtitle: "บทความ",
         }}
         pageIcon={<MaterialIcon icon="info" />}
         backGoesTo={session ? "/news" : "/"}
         LinkElement={Link}
       />
       <div className="content-layout__content !gap-y-0">
-        {/* This part will animate from News Card/Landing Feed Item */}
+        <Section className="mb-8">
+          {/* Notify the user that the page is not translated.
+              This part is not translated because only English language users will
+              see this.
+            */}
+          <NoticebarManager
+            id="info-ntb"
+            noticebars={
+              locale == "en-US"
+                ? [
+                    {
+                      id: "no-translation",
+                      type: "info",
+                      icon: <MaterialIcon icon="translate" />,
+                      message:
+                        "This article has no or incomplete English translation.",
+                      actions: [],
+                    },
+                  ]
+                : []
+            }
+          />
+        </Section>
+
+        {/* This part will animate from News Card/Landing Feed Item. */}
         <motion.section
-          className="flex flex-col gap-y-8"
+          className="section"
           layoutId={`news-info-${info.id}`}
           transition={enterPageTransition}
         >
@@ -79,8 +110,9 @@ const InfoPage: NextPage<{ info: NewsItemInfoNoDate }> = ({ info }) => {
             <motion.p className="text-lg">
               {getLocaleString(info.content.description, locale)}
             </motion.p>
+
             {session?.user?.user_metadata.isAdmin && (
-              <Actions>
+              <Actions className="my-2">
                 <LinkButton
                   label="Edit article"
                   type="tonal"
