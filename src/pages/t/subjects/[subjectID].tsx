@@ -8,7 +8,6 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { useState } from "react";
-import ReactMarkdown from "react-markdown";
 
 // SK Components
 import {
@@ -40,8 +39,9 @@ import ConnectSubjectDialog from "@components/dialogs/ConnectSubject";
 import ConfirmDelete from "@components/dialogs/ConfirmDelete";
 import ImageDialog from "@components/dialogs/Image";
 import BrandIcon from "@components/icons/BrandIcon";
-import Sentiment from "@components/Sentiment";
 import HoverList from "@components/HoverList";
+import Markdown from "@components/Markdown";
+import Sentiment from "@components/Sentiment";
 
 // Types
 import {
@@ -551,9 +551,7 @@ const AssignmentDetailsDialog = ({
         </p>
       </DialogSection>
       <DialogSection name={t("substAsgn.dialog.asgnDetails.desc")}>
-        <div className="markdown">
-          <ReactMarkdown>{assignment.desc[locale]}</ReactMarkdown>
-        </div>
+        <Markdown>{assignment.desc[locale]}</Markdown>
       </DialogSection>
       <DialogSection name={t("substAsgn.dialog.asgnDetails.assignedClasses")}>
         <ChipList>

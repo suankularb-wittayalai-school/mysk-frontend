@@ -1,21 +1,36 @@
+// Modules
+import { GetStaticPaths, GetStaticProps, NextPage } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/router";
+
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+
+// SK Components
 import {
+  Actions,
+  LinkButton,
   MaterialIcon,
   RegularLayout,
   Section,
   Title,
 } from "@suankularb-components/react";
+
+// Components
+import Markdown from "@components/Markdown";
+
+// Backend
 import { getAllInfoIDs, getInfo } from "@utils/backend/news/info";
+
+// Helpers
 import { getLocaleString } from "@utils/helpers/i18n";
+
+// Hookes
 import { useSession } from "@utils/hooks/auth";
+
+// Types
 import { LangCode } from "@utils/types/common";
 import { NewsItemInfoNoDate } from "@utils/types/news";
-import { GetStaticPaths, GetStaticProps, NextPage } from "next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import ReactMarkdown from "react-markdown";
-import gfm from "remark-gfm";
 
 const InfoPage: NextPage<{ info: NewsItemInfoNoDate }> = ({ info }) => {
   const locale = useRouter().locale as LangCode;
@@ -54,10 +69,19 @@ const InfoPage: NextPage<{ info: NewsItemInfoNoDate }> = ({ info }) => {
         <p className="text-lg">
           {getLocaleString(info.content.description, locale)}
         </p>
+        {session?.user?.user_metadata.isAdmin && (
+          <Actions>
+            <LinkButton
+              label="Edit article"
+              type="tonal"
+              icon={<MaterialIcon icon="edit" />}
+              url={`/t/admin/news/edit/info/${info.id}`}
+              LinkElement={Link}
+            />
+          </Actions>
+        )}
         {info.content.body && (
-          <ReactMarkdown remarkPlugins={[gfm]} className="markdown">
-            {getLocaleString(info.content.body, locale)}
-          </ReactMarkdown>
+          <Markdown>{getLocaleString(info.content.body, locale)}</Markdown>
         )}
       </Section>
     </RegularLayout>

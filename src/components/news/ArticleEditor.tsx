@@ -1,17 +1,7 @@
 // Modules
-import { AnimatePresence, motion } from "framer-motion";
-
-import type { GetStaticProps, NextPage } from "next";
-import Head from "next/head";
-import Link from "next/link";
-
+import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
 import { useEffect, useReducer, useState } from "react";
-
-import ReactMarkdown from "react-markdown";
-import gfm from "remark-gfm";
 
 // SK Components
 import {
@@ -24,21 +14,17 @@ import {
   Header,
   KeyboardInput,
   MaterialIcon,
-  RegularLayout,
   Section,
-  SnackbarManager,
   TextArea,
-  Title,
 } from "@suankularb-components/react";
 
-// Animations
-import { animationTransition } from "@utils/animations/config";
+// Components
+import BlockingPane from "@components/BlockingPane";
+import Markdown from "@components/Markdown";
+import ConfirmDelete from "@components/dialogs/ConfirmDelete";
 
 // Backend
 import { createInfo, deleteInfo, updateInfo } from "@utils/backend/news/info";
-
-// Helpers
-import { createTitleStr } from "@utils/helpers/title";
 
 // Types
 import {
@@ -46,13 +32,10 @@ import {
   MultiLangString,
   WaitingSnackbar,
 } from "@utils/types/common";
-import { InfoDB } from "@utils/types/database/news";
 import { NewsItemInfoNoDate } from "@utils/types/news";
-import BlockingPane from "@components/BlockingPane";
+
+// Supabase
 import { PostgrestError } from "@supabase/supabase-js";
-import { useRouter } from "next/router";
-import DiscardDraft from "@components/dialogs/DiscardDraft";
-import ConfirmDelete from "@components/dialogs/ConfirmDelete";
 
 type Form = {
   titleTH: string;
@@ -200,7 +183,8 @@ const WriteSection = ({
         value={lang}
       />
 
-      <div className="layout-grid-cols-2 relative !flex-col-reverse !gap-y-4">
+      {/* We don’t use `layout-grid-cols` here because otherwise Table would stretch the Preview side */}
+      <div className="relative flex flex-col-reverse gap-y-4 gap-x-4 sm:flex-row md:gap-x-6">
         {/* Block editing English if not configured */}
         <BlockingPane
           icon={<MaterialIcon icon="translate" allowCustomSize />}
@@ -209,7 +193,10 @@ const WriteSection = ({
         />
 
         {/* Text area */}
-        <section className="flex flex-col gap-2">
+        <section
+          className="flex flex-col gap-2
+            sm:w-[calc(50%-0.5rem)] md:w-[calc(50%-0.75rem)]"
+        >
           {/* Link to Markdown Cheat Sheet */}
           <a
             aria-labelledby="markdown-how-to"
@@ -250,7 +237,8 @@ const WriteSection = ({
         {/* Preview */}
         <section
           role="document"
-          className="markdown h-fit rounded-lg border-outline !p-4 transition-[height]"
+          className="markdown h-fit rounded-lg border-outline !p-4 transition-[height]
+            sm:w-[calc(50%-0.5rem)] md:w-[calc(50%-0.75rem)]"
         >
           <h1 className="mb-2">
             {form[lang == "en-US" ? "titleEN" : "titleTH"]}
@@ -259,7 +247,7 @@ const WriteSection = ({
             {form[lang == "en-US" ? "descEN" : "descTH"]}
           </p>
           {body ? (
-            <ReactMarkdown remarkPlugins={[gfm]}>{body[lang]}</ReactMarkdown>
+            <Markdown noStyles>{body[lang]}</Markdown>
           ) : (
             <p className="container-surface-variant rounded p-4 text-center">
               {t("articleEditor.write.previewPlh")}
