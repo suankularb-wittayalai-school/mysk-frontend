@@ -1,4 +1,6 @@
 // Modules
+import { motion } from "framer-motion";
+
 import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -11,13 +13,14 @@ import {
   Actions,
   LinkButton,
   MaterialIcon,
-  RegularLayout,
-  Section,
   Title,
 } from "@suankularb-components/react";
 
 // Components
 import Markdown from "@components/Markdown";
+
+// Animations
+import { animationTransition, enterPageTransition } from "@utils/animations/config";
 
 // Backend
 import { getAllInfoIDs, getInfo } from "@utils/backend/news/info";
@@ -31,7 +34,6 @@ import { useSession } from "@utils/hooks/auth";
 // Types
 import { LangCode } from "@utils/types/common";
 import { NewsItemInfoNoDate } from "@utils/types/news";
-import { motion } from "framer-motion";
 
 const InfoPage: NextPage<{ info: NewsItemInfoNoDate }> = ({ info }) => {
   const locale = useRouter().locale as LangCode;
@@ -52,7 +54,8 @@ const InfoPage: NextPage<{ info: NewsItemInfoNoDate }> = ({ info }) => {
         {/* This part will animate from News Card/Landing Feed Item */}
         <motion.section
           className="flex flex-col gap-y-8"
-          layoutId={`news-${info.id}`}
+          layoutId={`news-info-${info.id}`}
+          transition={enterPageTransition}
         >
           {/* Banner image */}
           <div

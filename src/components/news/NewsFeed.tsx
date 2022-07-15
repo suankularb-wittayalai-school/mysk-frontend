@@ -46,7 +46,7 @@ const NewsFeed = ({
                 initial={{ scale: 0.8, y: 20, opacity: 0 }}
                 animate={{ scale: 1, y: 0, opacity: 1 }}
                 exit={{ scale: 0.8, y: 20, opacity: 0 }}
-                layoutId={[newsItem.type, newsItem.id].join("-")}
+                layoutId={["news", newsItem.type, newsItem.id].join("-")}
                 transition={animationTransition}
               >
                 <NewsCard

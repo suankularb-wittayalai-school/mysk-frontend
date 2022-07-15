@@ -1,5 +1,5 @@
 // Modules
-import { useEffect } from "react";
+import { motion } from "framer-motion";
 
 import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
@@ -9,6 +9,8 @@ import { useRouter } from "next/router";
 
 import { useTranslation, Trans } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+
+import { useEffect } from "react";
 
 // SK Components
 import {
@@ -22,8 +24,11 @@ import {
 // Components
 import Layout from "@components/Layout";
 
+// Animations
+import { animationTransition } from "@utils/animations/config";
+
 // Backend
-import { getInfos, getLandingFeed } from "@utils/backend/news/info";
+import { getLandingFeed } from "@utils/backend/news/info";
 
 // Types
 import { LangCode } from "@utils/types/common";
@@ -34,7 +39,6 @@ import { getLocaleString } from "@utils/helpers/i18n";
 
 // Hooks
 import { useSession } from "@utils/hooks/auth";
-import { motion } from "framer-motion";
 
 // Page-specific types
 type Feed = { lastUpdated: Date; content: NewsList };
@@ -88,7 +92,11 @@ const LandingFeedItem = ({ feedItem }: { feedItem: NewsItem }): JSX.Element => {
   const locale = useRouter().locale as LangCode;
 
   return (
-    <motion.li key={feedItem.id} layoutId={`news-${feedItem.id}`}>
+    <motion.li
+      key={feedItem.id}
+      layoutId={`news-info-${feedItem.id}`}
+      transition={animationTransition}
+    >
       <Link href={`/news/info/${feedItem.id}`}>
         <a className="has-action relative grid grid-cols-2 gap-x-6 p-2 md:before:rounded-xl">
           <div

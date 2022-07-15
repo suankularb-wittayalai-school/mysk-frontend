@@ -6,5 +6,11 @@ export const animationEase: Tween["ease"] = [0.4, 0, 0.2, 1];
 export const animationTransition: Tween = {
   type: "tween",
   duration: animationSpeed,
-  ease: [0.4, 0, 0.2, 1],
+  ease: animationEase,
+};
+
+export const enterPageTransition: Tween = {
+  type: "tween",
+  duration: 0.3,
+  ease: animationEase,
 };
