@@ -1,5 +1,5 @@
 // Modules
-import type { GetStaticProps, NextPage } from "next";
+import type { GetServerSideProps, GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -20,10 +20,13 @@ import {
 
 // Supabase
 import { supabase } from "@utils/supabaseClient";
+
+// Helpers
 import { createTitleStr } from "@utils/helpers/title";
 
-const LoginForm = () => {
-  const { t } = useTranslation("account");
+// Page
+const Login: NextPage = () => {
+  const { t } = useTranslation(["account", "common"]);
   const router = useRouter();
 
   // Form control
@@ -49,65 +52,29 @@ const LoginForm = () => {
     // Validates
     if (!validate()) return;
 
-    // Sends and redirects
-    const { user, session, error } = await supabase.auth.signIn({
-      email,
-      password,
+    // Sends
+    const { user, error } = await supabase.auth.signIn({ email, password });
+
+    // Set cookie
+    await fetch("/api/account/auth-cookie", {
+      method: "POST",
+      body: JSON.stringify({
+        event: user ? "SIGNED_IN" : "SIGNED_OUT",
+        session: supabase.auth.session(),
+      }),
     });
 
+    // Log error
     if (error) {
       console.log(error);
       setLoading(false);
       return;
     }
 
+    // Redirects user
     if (user?.user_metadata.role == "student") router.push("/s/home");
     else if (user?.user_metadata.role == "teacher") router.push("/t/home");
   }
-
-  return (
-    <div className="flex flex-col items-center">
-      <form
-        className="section w-full sm:w-1/2 md:w-1/3"
-        onSubmit={(e: FormEvent) => handleSubmit(e)}
-      >
-        <div>
-          <KeyboardInput
-            name="user-id"
-            type="email"
-            label={t("form.email")}
-            helperMsg={t("form.email_helper")}
-            errorMsg={t("form.email_error")}
-            useAutoMsg
-            onChange={(e: string) => setEmail(e)}
-          />
-          <KeyboardInput
-            name="password"
-            type="password"
-            label={t("form.password")}
-            helperMsg={t("form.password_helper")}
-            onChange={(e: string) => setPassword(e)}
-          />
-        </div>
-        <div className="flex flex-row flex-wrap items-center justify-end gap-2">
-          <Link href="/account/forgot-password">
-            <a className="btn--text">{t("action.forgotPassword")}</a>
-          </Link>
-          <FormButton
-            label={t("action.logIn")}
-            type="submit"
-            appearance="filled"
-            disabled={!validate() || loading}
-          />
-        </div>
-      </form>
-    </div>
-  );
-};
-
-// Page
-const Login: NextPage = (): JSX.Element => {
-  const { t } = useTranslation(["account", "common"]);
 
   return (
     <>
@@ -126,16 +93,56 @@ const Login: NextPage = (): JSX.Element => {
           />
         }
       >
-        <LoginForm />
+        <div className="flex flex-col items-center">
+          <form
+            className="section w-full sm:w-1/2 md:w-1/3"
+            onSubmit={(e: FormEvent) => handleSubmit(e)}
+          >
+            <div>
+              <KeyboardInput
+                name="user-id"
+                type="email"
+                label={t("form.email")}
+                helperMsg={t("form.email_helper")}
+                errorMsg={t("form.email_error")}
+                useAutoMsg
+                onChange={(e: string) => setEmail(e)}
+              />
+              <KeyboardInput
+                name="password"
+                type="password"
+                label={t("form.password")}
+                helperMsg={t("form.password_helper")}
+                onChange={(e: string) => setPassword(e)}
+              />
+            </div>
+            <div className="flex flex-row flex-wrap items-center justify-end gap-2">
+              <Link href="/account/forgot-password">
+                <a className="btn--text">{t("action.forgotPassword")}</a>
+              </Link>
+              <FormButton
+                label={t("action.logIn")}
+                type="submit"
+                appearance="filled"
+                disabled={!validate() || loading}
+              />
+            </div>
+          </form>
+        </div>
       </RegularLayout>
     </>
   );
 };
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale as string, ["common", "account"])),
-  },
-});
+export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale as string, [
+        "common",
+        "account",
+      ])),
+    },
+  };
+};
 
 export default Login;
