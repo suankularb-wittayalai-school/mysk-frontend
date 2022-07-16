@@ -5,7 +5,6 @@ import { NextApiHandler } from "next";
 import { supabase } from "@utils/supabaseClient";
 
 const handler: NextApiHandler = async (req, res) => {
-  req.body = JSON.parse(req.body);
   supabase.auth.api.setAuthCookie(req, res);
 };
 

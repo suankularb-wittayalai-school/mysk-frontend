@@ -1,6 +1,6 @@
 import { ClassWNumber } from "./class";
 import { Contact } from "./contact";
-import { Subject, SubjectGroup, SubjectWNameAndCode } from "./subject";
+import { SubjectGroup, SubjectWNameAndCode } from "./subject";
 
 export type Prefix = "Master" | "Mr." | "Mrs." | "Miss.";
 

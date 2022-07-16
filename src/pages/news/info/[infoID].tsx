@@ -54,27 +54,32 @@ const InfoPage: NextPage<{ info: NewsItemInfoNoDate }> = ({ info }) => {
         LinkElement={Link}
       />
       <div className="content-layout__content !gap-y-0">
-        {locale == "en-US" && (
-          <Section className="mb-8">
-            {/* Notify the user that the page is not translated.
+        {locale == "en-US" &&
+          !(
+            info.content.title["en-US"] &&
+            info.content.description["en-US"] &&
+            info.content.body?.["en-US"]
+          ) && (
+            <Section className="mb-8">
+              {/* Notify the user that the page is not translated.
               This part is not translated because only English language users will
               see this.
             */}
-            <NoticebarManager
-              id="info-ntb"
-              noticebars={[
-                {
-                  id: "no-translation",
-                  type: "info",
-                  icon: <MaterialIcon icon="translate" />,
-                  message:
-                    "This article has no or incomplete English translation.",
-                  actions: [],
-                },
-              ]}
-            />
-          </Section>
-        )}
+              <NoticebarManager
+                id="info-ntb"
+                noticebars={[
+                  {
+                    id: "no-translation",
+                    type: "info",
+                    icon: <MaterialIcon icon="translate" />,
+                    message:
+                      "This article has incomplete to no English translation. We aplogize for the inconvenience.",
+                    actions: [],
+                  },
+                ]}
+              />
+            </Section>
+          )}
 
         {/* This part will animate from News Card/Landing Feed Item. */}
         <motion.section

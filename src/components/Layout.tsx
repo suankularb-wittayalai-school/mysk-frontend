@@ -17,22 +17,28 @@ import {
 
 // Animations
 import { animationEase } from "@utils/animations/config";
-import { fromUpToDown } from "@utils/animations/slide";
 
 // Hooks
 import { useSession } from "@utils/hooks/auth";
 
+// Types
+import { Role } from "@utils/types/person";
+
 const Layout = ({
+  role,
+  isAdmin,
   navIsTransparent,
   children,
 }: {
+  role: "public" | Role;
+  isAdmin?: boolean;
   navIsTransparent?: boolean;
   children: ReactNode;
 }): JSX.Element => {
   const router = useRouter();
   const { t } = useTranslation();
 
-  const defaultNavItem = [
+  const defaultNav = [
     {
       name: t("navigation.home"),
       icon: {
@@ -59,9 +65,7 @@ const Layout = ({
     },
   ];
 
-  const [navItems, setNavItems] = useState(defaultNavItem);
-
-  const session = useSession();
+  const [navItems, setNavItems] = useState(defaultNav);
 
   const studentNav = [
     {
@@ -131,6 +135,14 @@ const Layout = ({
       url: "/t/202/class",
     },
   ];
+  const newsNavItem = {
+    name: t("navigation.news"),
+    icon: {
+      inactive: <MaterialIcon icon="newspaper" type="outlined" />,
+      active: <MaterialIcon icon="newspaper" type="filled" />,
+    },
+    url: "/news",
+  };
   const adminNavItem = {
     name: t("navigation.admin"),
     icon: {
@@ -141,34 +153,20 @@ const Layout = ({
   };
 
   useEffect(() => {
-    if (session) {
-      const isAdmin = session.user?.user_metadata?.isAdmin;
-
-      // Decide the Navigation the user is going to see based on their role
-      // Append the Admin Nav Item to the Navigation if the user is an admin
-      if (session.user?.user_metadata?.role === "student") {
-        setNavItems(
-          isAdmin
-            ? [...studentNav, adminNavItem]
-            : [
-                ...studentNav,
-                {
-                  name: t("navigation.news"),
-                  icon: {
-                    inactive: <MaterialIcon icon="newspaper" type="outlined" />,
-                    active: <MaterialIcon icon="newspaper" type="filled" />,
-                  },
-                  url: "/news",
-                },
-              ]
-        );
-      } else if (session.user?.user_metadata?.role === "teacher") {
-        setNavItems(isAdmin ? [...teacherNav, adminNavItem] : teacherNav);
-      }
+    // Decide the Navigation the user is going to see based on their role
+    // Append the Admin Nav Item to the Navigation if the user is an admin
+    if (role == "student") {
+      setNavItems(
+        isAdmin ? [...studentNav, adminNavItem] : [...studentNav, newsNavItem]
+      );
+    } else if (role == "teacher") {
+      setNavItems(
+        isAdmin ? [...teacherNav, adminNavItem] : [...teacherNav, newsNavItem]
+      );
     } else {
-      setNavItems(defaultNavItem);
+      setNavItems(defaultNav);
     }
-  }, [session, router]);
+  }, [role, isAdmin]);
 
   return (
     <LayoutGroup>

@@ -5,7 +5,13 @@ import Head from "next/head";
 
 import { appWithTranslation } from "next-i18next";
 
-import { ComponentType, ReactElement, ReactNode, useState } from "react";
+import {
+  ComponentType,
+  ReactElement,
+  ReactNode,
+  useEffect,
+  useState,
+} from "react";
 
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
@@ -33,6 +39,9 @@ import "@styles/global.css";
 
 // Components
 import Layout from "@components/Layout";
+import { supabase } from "@utils/supabaseClient";
+import { Role } from "@utils/types/person";
+import { useRouter } from "next/router";
 
 const App = ({
   Component,
@@ -42,10 +51,53 @@ const App = ({
     getLayout?: (page: ReactElement) => ReactNode;
   };
 }) => {
+  // Query client
   const [queryClient] = useState(() => new QueryClient());
 
-  // Use the layout defined at the page level, if available
-  const getLayout = Component.getLayout ?? ((page) => <Layout>{page}</Layout>);
+  // Authentication
+  const router = useRouter();
+
+  // States for Navigation
+  const [role, setRole] = useState<"public" | Role>("public");
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+
+  // Listen for auth state change
+  useEffect(() => {
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        // Cookie
+        await fetch(`/api/account/cookie`, {
+          method: "POST",
+          headers: new Headers({ "Content-Type": "application/json" }),
+          credentials: "same-origin",
+          body: JSON.stringify({ event, session }),
+        });
+
+        // Role
+        const role = session?.user?.user_metadata.role as Role;
+        setRole(role);
+        if (event == "SIGNED_IN") {
+          if (role == "student") router.push("/s/home");
+          else if (role == "teacher") router.push("/t/home");
+        } else if (event == "SIGNED_OUT") router.push("/");
+
+        // Admin
+        setIsAdmin(session?.user?.user_metadata.isAdmin as boolean);
+      }
+    );
+    return () => authListener?.unsubscribe();
+  }, []);
+
+  // Layout
+  // Use the layout defined at the page level, if available.
+  // Otherwise, use the default Layout.
+  const getLayout =
+    Component.getLayout ??
+    ((page) => (
+      <Layout role={role} isAdmin={isAdmin}>
+        {page}
+      </Layout>
+    ));
 
   return (
     <QueryClientProvider client={queryClient}>

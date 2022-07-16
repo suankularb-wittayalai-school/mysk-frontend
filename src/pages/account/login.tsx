@@ -53,27 +53,7 @@ const Login: NextPage = () => {
     if (!validate()) return;
 
     // Sends
-    const { user, error } = await supabase.auth.signIn({ email, password });
-
-    // Set cookie
-    await fetch("/api/account/auth-cookie", {
-      method: "POST",
-      body: JSON.stringify({
-        event: user ? "SIGNED_IN" : "SIGNED_OUT",
-        session: supabase.auth.session(),
-      }),
-    });
-
-    // Log error
-    if (error) {
-      console.log(error);
-      setLoading(false);
-      return;
-    }
-
-    // Redirects user
-    if (user?.user_metadata.role == "student") router.push("/s/home");
-    else if (user?.user_metadata.role == "teacher") router.push("/t/home");
+    await supabase.auth.signIn({ email, password });
   }
 
   return (
