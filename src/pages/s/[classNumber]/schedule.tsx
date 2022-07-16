@@ -235,11 +235,11 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
         "common",
         "schedule",
       ])),
-      revalidate: 300,
       classNumber: params?.classNumber,
       schedule,
       subjectList,
     },
+    revalidate: 300,
   };
 };
 

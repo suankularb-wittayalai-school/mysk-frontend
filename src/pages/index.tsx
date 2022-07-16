@@ -231,7 +231,9 @@ export default function Landing({ feed }: { feed: Feed }) {
 }
 
 Landing.getLayout = (page: NextPage): JSX.Element => (
-  <Layout navIsTransparent>{page}</Layout>
+  <Layout role="public" navIsTransparent>
+    {page}
+  </Layout>
 );
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({

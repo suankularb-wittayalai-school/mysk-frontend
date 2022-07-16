@@ -62,9 +62,9 @@ const InfoPage: NextPage<{ info: NewsItemInfoNoDate }> = ({ info }) => {
           ) && (
             <Section className="mb-8">
               {/* Notify the user that the page is not translated.
-              This part is not translated because only English language users will
-              see this.
-            */}
+                This part is not translated because only English language users will
+                see this.
+              */}
               <NoticebarManager
                 id="info-ntb"
                 noticebars={[
@@ -81,7 +81,7 @@ const InfoPage: NextPage<{ info: NewsItemInfoNoDate }> = ({ info }) => {
             </Section>
           )}
 
-        {/* This part will animate from News Card/Landing Feed Item. */}
+        {/* This part will animate from News Card and Landing Feed Item. */}
         <motion.section
           className="section"
           layoutId={`news-info-${info.id}`}
@@ -145,9 +145,9 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
         "common",
         "schedule",
       ])),
-      revalidate: 300,
       info,
     },
+    revalidate: 300,
   };
 };
 
