@@ -14,6 +14,7 @@ import {
   FileInput,
   Header,
   KeyboardInput,
+  LinkButton,
   MaterialIcon,
   Section,
   TextArea,
@@ -243,67 +244,82 @@ const WriteSection = ({
           </a>
 
           {/* Markdown editor */}
-          <div className="container-primary overflow-x-auto overflow-y-hidden rounded-lg">
-            <div className="flex flex-row divide-x divide-primary p-2">
-              <div className="flex flex-row gap-1 pr-2">
-                <Button
-                  type="text"
-                  icon={<MaterialIcon icon="format_bold" />}
-                  iconOnly
-                />
-                <Button
-                  type="text"
-                  icon={<MaterialIcon icon="format_italic" />}
-                  iconOnly
-                />
-                <Button
-                  type="text"
-                  icon={<MaterialIcon icon="format_underlined" />}
-                  iconOnly
-                />
-              </div>
-              <div className="flex flex-row gap-1 px-2">
-                <Button
-                  type="text"
-                  icon={<MaterialIcon icon="format_quote" />}
-                  iconOnly
-                />
-                <Button
-                  type="text"
-                  icon={<MaterialIcon icon="code" />}
-                  iconOnly
-                />
-              </div>
-              <div className="flex flex-row gap-1 px-2">
-                <Button
-                  type="text"
-                  icon={<MaterialIcon icon="format_list_bulleted" />}
-                  iconOnly
-                />
-                <Button
-                  type="text"
-                  icon={<MaterialIcon icon="format_list_numbered" />}
-                  iconOnly
-                />
-              </div>
-              <div className="flex flex-row gap-1 px-2">
-                <Button
-                  type="text"
-                  icon={<MaterialIcon icon="add_photo_alternate" />}
-                  iconOnly
-                  onClick={toggleShowAddImage}
-                />
-                <Button
-                  type="text"
-                  icon={<MaterialIcon icon="add_link" />}
-                  iconOnly
-                />
-              </div>
-              <div className="flex flex-row gap-1 pl-2">
-                <Button
+          <div className="container-surface-variant overflow-x-auto overflow-y-hidden rounded-lg">
+            <div className="flex flex-row divide-x divide-outline py-2">
+              {(
+                [
+                  [
+                    {
+                      title: "Bold",
+                      icon: <MaterialIcon icon="format_bold" />,
+                    },
+                    {
+                      title: "Italic",
+                      icon: <MaterialIcon icon="format_italic" />,
+                    },
+                    {
+                      title: "Underlined",
+                      icon: <MaterialIcon icon="format_underlined" />,
+                    },
+                  ],
+                  [
+                    {
+                      title: "Quote",
+                      icon: <MaterialIcon icon="format_quote" />,
+                    },
+                    {
+                      title: "Code",
+                      icon: <MaterialIcon icon="code" />,
+                    },
+                  ],
+                  [
+                    {
+                      title: "Bulleted list",
+                      icon: <MaterialIcon icon="format_list_bulleted" />,
+                    },
+                    {
+                      title: "Numbered list",
+                      icon: <MaterialIcon icon="format_list_numbered" />,
+                    },
+                  ],
+                  [
+                    {
+                      title: "Add photo",
+                      icon: <MaterialIcon icon="add_photo_alternate" />,
+                      onClick: existingBody ? toggleShowAddImage : undefined,
+                    },
+                    {
+                      title: "Add link",
+                      icon: <MaterialIcon icon="add_link" />,
+                    },
+                  ],
+                ] as {
+                  title: string;
+                  icon: JSX.Element;
+                  onClick?: () => void;
+                }[][]
+              ).map((group, idx) => (
+                <div key={idx} className="flex flex-row gap-1 px-2">
+                  {group.map((item) => (
+                    <Button
+                      key={item.title}
+                      type="text"
+                      name={item.title}
+                      icon={item.icon}
+                      iconOnly
+                      disabled={!item.onClick}
+                      onClick={item.onClick}
+                    />
+                  ))}
+                </div>
+              ))}
+              <div className="px-2">
+                <LinkButton
                   type="text"
                   icon={<MaterialIcon icon="help" />}
                   iconOnly
+                  url="https://www.markdownguide.org/basic-syntax/"
+                  attr={{ target: "_blank", rel: "noreferrer" }}
                 />
               </div>
             </div>
@@ -525,7 +541,7 @@ const ArticleEditor = ({
       <AddImageToNewsDialog
         show={showAddImage}
         onClose={toggleShowAddImage}
-        newsType="info"
+        fileDestination={`/info/${existingData?.id}`}
       />
       <ConfirmDelete
         show={showDelete}

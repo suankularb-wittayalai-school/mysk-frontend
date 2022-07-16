@@ -17,13 +17,12 @@ import { supabase } from "@utils/supabaseClient";
 
 // Types
 import { DialogProps } from "@utils/types/common";
-import { NewsItemType } from "@utils/types/news";
 
 const AddImageToNewsDialog = ({
   show,
   onClose,
-  newsType,
-}: DialogProps & { newsType: NewsItemType }): JSX.Element => {
+  fileDestination,
+}: DialogProps & { fileDestination: string }): JSX.Element => {
   const { t } = useTranslation("admin");
   const [image, setImage] = useState<File | null>(null);
   const [fileDir, setFileDir] = useState<string>("");
@@ -31,7 +30,7 @@ const AddImageToNewsDialog = ({
   async function uploadImage() {
     if (!image) return;
 
-    const fileName: string = `${newsType}/img-${new Date().toISOString()}.${image.name
+    const fileName: string = `${fileDestination}/img-${new Date().toISOString()}.${image.name
       .split(".")
       .pop()}`;
     const { error } = await supabase.storage
@@ -80,7 +79,7 @@ const AddImageToNewsDialog = ({
             Copy the below and paste it where you want your image to be placed
             in the Markdown field.
           </p>
-          <code className="break-all">
+          <code className="container-surface break-all rounded-lg p-2">
             {`![image](https://ykqqepbodqjhiwfjcvxe.supabase.co/storage/v1/object/public/news/${fileDir})`}
           </code>
         </DialogSection>

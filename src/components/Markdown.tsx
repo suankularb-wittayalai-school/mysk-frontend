@@ -18,10 +18,12 @@ const Markdown = ({
       remarkPlugins={[gfm]}
       components={{
         img: ({ src, alt }) => (
-          <div className="relative h-96 w-full overflow-hidden rounded-lg bg-surface-1">
-            {src && (
-              <Image src={src} layout="fill" objectFit="contain" alt={alt} />
-            )}
+          <div className="flex flex-row justify-center w-full">
+            <div className="relative aspect-video w-full max-w-[36rem] overflow-hidden rounded-xl bg-surface-1">
+              {src && (
+                <Image src={src} layout="fill" objectFit="contain" alt={alt} />
+              )}
+            </div>
           </div>
         ),
         table: ({ children }) => (
