@@ -56,11 +56,6 @@ const App = ({
 
   // Authentication
   const router = useRouter();
-
-  // States for Navigation
-  const [role, setRole] = useState<"public" | Role>("public");
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
-
   // Listen for auth state change
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
@@ -73,16 +68,12 @@ const App = ({
           body: JSON.stringify({ event, session }),
         });
 
-        // Role
+        // Redirect
         const role = session?.user?.user_metadata.role as Role;
-        setRole(role);
         if (event == "SIGNED_IN") {
           if (role == "student") router.push("/s/home");
           else if (role == "teacher") router.push("/t/home");
         } else if (event == "SIGNED_OUT") router.push("/");
-
-        // Admin
-        setIsAdmin(session?.user?.user_metadata.isAdmin as boolean);
       }
     );
     return () => authListener?.unsubscribe();
@@ -91,13 +82,7 @@ const App = ({
   // Layout
   // Use the layout defined at the page level, if available.
   // Otherwise, use the default Layout.
-  const getLayout =
-    Component.getLayout ??
-    ((page) => (
-      <Layout role={role} isAdmin={isAdmin}>
-        {page}
-      </Layout>
-    ));
+  const getLayout = Component.getLayout ?? ((page) => <Layout>{page}</Layout>);
 
   return (
     <QueryClientProvider client={queryClient}>

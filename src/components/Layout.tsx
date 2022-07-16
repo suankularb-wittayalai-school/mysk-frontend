@@ -21,21 +21,15 @@ import { animationEase } from "@utils/animations/config";
 // Hooks
 import { useSession } from "@utils/hooks/auth";
 
-// Types
-import { Role } from "@utils/types/person";
-
 const Layout = ({
-  role,
-  isAdmin,
   navIsTransparent,
   children,
 }: {
-  role: "public" | Role;
-  isAdmin?: boolean;
   navIsTransparent?: boolean;
   children: ReactNode;
 }): JSX.Element => {
   const router = useRouter();
+  const session = useSession();
   const { t } = useTranslation();
 
   const defaultNav = [
@@ -153,20 +147,17 @@ const Layout = ({
   };
 
   useEffect(() => {
+    const role = session?.user?.user_metadata.role;
+    const isAdmin = session?.user?.user_metadata.isAdmin;
+
     // Decide the Navigation the user is going to see based on their role
     // Append the Admin Nav Item to the Navigation if the user is an admin
-    if (role == "student") {
-      setNavItems(
-        isAdmin ? [...studentNav, adminNavItem] : [...studentNav, newsNavItem]
-      );
-    } else if (role == "teacher") {
-      setNavItems(
-        isAdmin ? [...teacherNav, adminNavItem] : [...teacherNav, newsNavItem]
-      );
-    } else {
-      setNavItems(defaultNav);
-    }
-  }, [role, isAdmin]);
+    if (role == "student")
+      setNavItems([...studentNav, isAdmin ? adminNavItem : newsNavItem]);
+    else if (role == "teacher")
+      setNavItems([...teacherNav, isAdmin ? adminNavItem : newsNavItem]);
+    else setNavItems(defaultNav);
+  }, [session]);
 
   return (
     <LayoutGroup>
