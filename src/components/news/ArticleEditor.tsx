@@ -2,6 +2,7 @@
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { useEffect, useReducer, useState } from "react";
+import SimpleMdeReact from "react-simplemde-editor";
 
 // SK Components
 import {
@@ -36,6 +37,9 @@ import { NewsItemInfoNoDate } from "@utils/types/news";
 
 // Supabase
 import { PostgrestError } from "@supabase/supabase-js";
+import { AnimatePresence, motion } from "framer-motion";
+import { animationTransition } from "@utils/animations/config";
+import AddImageToNewsDialog from "@components/dialogs/AddImageToNews";
 
 type Form = {
   titleTH: string;
@@ -144,6 +148,7 @@ const WriteSection = ({
   form,
   setBody: setExtBody,
   publish,
+  toggleShowAddImage,
   allowEdit,
   allowEditEN,
   allowPublish,
@@ -152,17 +157,29 @@ const WriteSection = ({
   form: Omit<Form, "bodyTH" | "bodyEN" | "image" | "oldURL">;
   setBody: (form: { th: string; "en-US": string }) => void;
   publish: () => void;
+  toggleShowAddImage?: () => void;
   allowEdit?: boolean;
   allowEditEN?: boolean;
   allowPublish?: boolean;
 }): JSX.Element => {
   const { t } = useTranslation("admin");
   const [lang, setLang] = useState<LangCode>("th");
+
   const [body, setBody] = useState<{ th: string; "en-US": string }>({
     th: "",
     "en-US": "",
   });
 
+  // Incoming
+  useEffect(() => {
+    if (existingBody)
+      setBody({
+        th: existingBody.th,
+        "en-US": existingBody["en-US"] || "",
+      });
+  }, [existingBody]);
+
+  // Outgoing
   useEffect(() => setExtBody(body), [body]);
 
   return (
@@ -187,6 +204,7 @@ const WriteSection = ({
           { id: "en-US", name: "English" },
         ]}
         onChange={setLang}
+        required
         value={lang}
       />
 
@@ -225,20 +243,109 @@ const WriteSection = ({
           </a>
 
           {/* Markdown editor */}
-          <TextArea
-            name="markdown"
-            label={t("articleEditor.write.editorPlh")}
-            onChange={(e) =>
-              setBody(
-                lang == "en-US"
-                  ? // Change English version if editing English
-                    { ...body, "en-US": e }
-                  : // Change Thai version if editing Thai
-                    { ...body, th: e }
-              )
+          <div className="container-primary overflow-x-auto overflow-y-hidden rounded-lg">
+            <div className="flex flex-row divide-x divide-primary p-2">
+              <div className="flex flex-row gap-1 pr-2">
+                <Button
+                  type="text"
+                  icon={<MaterialIcon icon="format_bold" />}
+                  iconOnly
+                />
+                <Button
+                  type="text"
+                  icon={<MaterialIcon icon="format_italic" />}
+                  iconOnly
+                />
+                <Button
+                  type="text"
+                  icon={<MaterialIcon icon="format_underlined" />}
+                  iconOnly
+                />
+              </div>
+              <div className="flex flex-row gap-1 px-2">
+                <Button
+                  type="text"
+                  icon={<MaterialIcon icon="format_quote" />}
+                  iconOnly
+                />
+                <Button
+                  type="text"
+                  icon={<MaterialIcon icon="code" />}
+                  iconOnly
+                />
+              </div>
+              <div className="flex flex-row gap-1 px-2">
+                <Button
+                  type="text"
+                  icon={<MaterialIcon icon="format_list_bulleted" />}
+                  iconOnly
+                />
+                <Button
+                  type="text"
+                  icon={<MaterialIcon icon="format_list_numbered" />}
+                  iconOnly
+                />
+              </div>
+              <div className="flex flex-row gap-1 px-2">
+                <Button
+                  type="text"
+                  icon={<MaterialIcon icon="add_photo_alternate" />}
+                  iconOnly
+                  onClick={toggleShowAddImage}
+                />
+                <Button
+                  type="text"
+                  icon={<MaterialIcon icon="add_link" />}
+                  iconOnly
+                />
+              </div>
+              <div className="flex flex-row gap-1 pl-2">
+                <Button
+                  type="text"
+                  icon={<MaterialIcon icon="help" />}
+                  iconOnly
+                />
+              </div>
+            </div>
+          </div>
+
+          <AnimatePresence exitBeforeEnter initial={false}>
+            {
+              // Will not render until body is populated (if editing)
+              (!existingBody || !(body.th == "")) &&
+                (lang == "en-US" ? (
+                  <motion.div
+                    key="markdown-en"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={animationTransition}
+                  >
+                    <TextArea
+                      name="markdown-en"
+                      label={t("articleEditor.write.editorPlh")}
+                      onChange={(e) => setBody({ ...body, "en-US": e })}
+                      defaultValue={body["en-US"]}
+                    />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="markdown-th"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={animationTransition}
+                  >
+                    <TextArea
+                      name="markdown-th"
+                      label={t("articleEditor.write.editorPlh")}
+                      onChange={(e) => setBody({ ...body, th: e })}
+                      defaultValue={body.th}
+                    />
+                  </motion.div>
+                ))
             }
-            defaultValue={existingBody?.th}
-          />
+          </AnimatePresence>
         </section>
 
         {/* Preview */}
@@ -294,6 +401,10 @@ const ArticleEditor = ({
   const { t } = useTranslation("common");
 
   // Dialog control
+  const [showAddImage, toggleShowAddImage] = useReducer(
+    (state: boolean) => !state,
+    false
+  );
   const [showDelete, toggleShowDelete] = useReducer(
     (state: boolean) => !state,
     false
@@ -403,6 +514,7 @@ const ArticleEditor = ({
         existingBody={existingData?.content.body}
         form={form}
         setBody={(e) => setForm({ ...form, bodyTH: e.th, bodyEN: e["en-US"] })}
+        toggleShowAddImage={toggleShowAddImage}
         allowEdit={validateConfig()}
         allowEditEN={evalAllowEditEN()}
         allowPublish={validate()}
@@ -410,6 +522,11 @@ const ArticleEditor = ({
       />
 
       {/* Dialogs */}
+      <AddImageToNewsDialog
+        show={showAddImage}
+        onClose={toggleShowAddImage}
+        newsType="info"
+      />
       <ConfirmDelete
         show={showDelete}
         onClose={toggleShowDelete}

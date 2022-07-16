@@ -62,7 +62,7 @@ export async function getInfo(id: number) {
   return dbInfo2News(data);
 }
 
-export async function uploadImage(
+export async function uploadBanner(
   mode: "add" | "edit",
   newsID: number,
   image: File
@@ -139,7 +139,7 @@ export async function createInfo(form: {
 
   // Upload image
   if (form.image) {
-    const { error: imageError } = await uploadImage("add", news.id, form.image);
+    const { error: imageError } = await uploadBanner("add", news.id, form.image);
     if (imageError) return { data: [], error: imageError };
   }
 
@@ -202,7 +202,7 @@ export async function updateInfo(
   }
 
   if (form.image) {
-    const { error: imageError } = await uploadImage(
+    const { error: imageError } = await uploadBanner(
       updatedNews[0].image ? "edit" : "add",
       id,
       form.image
