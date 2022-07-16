@@ -31,10 +31,8 @@ import SubjectCard from "@components/SubjectCard";
 import { animationTransition } from "@utils/animations/config";
 
 // Backend
+import { getTeacherIDFromReq } from "@utils/backend/person/teacher";
 import { getTeachingSubjects } from "@utils/backend/subject/subject";
-
-// Supabase
-import { supabase } from "@utils/supabaseClient";
 
 // Types
 import { SubjectWNameAndCode } from "@utils/types/subject";
@@ -42,6 +40,7 @@ import { ClassWNumber } from "@utils/types/class";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
+import { protectPageFor } from "@utils/helpers/route";
 
 const SubjectsTeaching: NextPage<{ teacherID: number }> = ({ teacherID }) => {
   const { t } = useTranslation("subjects");
@@ -123,12 +122,8 @@ export const getServerSideProps: GetServerSideProps = async ({
   locale,
   req,
 }) => {
-  const { user, error } = await supabase.auth.api.getUserByCookie(req);
-
-  if (error || !user) {
-    console.error(error);
-    return { props: {}, redirect: { destination: "/", permanent: false } };
-  }
+  const redirect = await protectPageFor("teacher", req);
+  if (redirect) return redirect;
 
   return {
     props: {
@@ -136,7 +131,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         "common",
         "subjects",
       ])),
-      teacherID: user.user_metadata.teacher,
+      teacherID: await getTeacherIDFromReq(req),
     },
   };
 };

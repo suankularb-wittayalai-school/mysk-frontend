@@ -43,7 +43,7 @@ import {
 
 const TeacherSchedule: NextPage = () => {
   const { t } = useTranslation("schedule");
-  const [teacher] = useTeacherAccount();
+  const [teacher] = useTeacherAccount({ loginRequired: true });
 
   // Data fetch
   const plhSchedule = {
@@ -92,9 +92,7 @@ const TeacherSchedule: NextPage = () => {
   return (
     <>
       <Head>
-        <title>
-          {createTitleStr(t("title.teacher"), t)}
-        </title>
+        <title>{createTitleStr(t("title.teacher"), t)}</title>
       </Head>
 
       {/* Component */}

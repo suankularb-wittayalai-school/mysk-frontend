@@ -30,6 +30,7 @@ import TeacherCard from "@components/TeacherCard";
 
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
+import { protectPageFor } from "@utils/helpers/route";
 import { createTitleStr } from "@utils/helpers/title";
 
 // Types
@@ -44,7 +45,6 @@ const Teachers: NextPage = (): JSX.Element => {
   const teacherList: TeachersListGroup[] = [];
 
   const [mainContent, setMainContent] = useState<Teacher | null>(null);
-
   const [showMain, setShowMain] = useState(false);
 
   useEffect(() => {
@@ -187,10 +187,21 @@ const Teachers: NextPage = (): JSX.Element => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale as string, ["common", "teacher"])),
-  },
-});
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  req,
+}) => {
+  const redirect = await protectPageFor("admin", req);
+  if (redirect) return redirect;
+
+  return {
+    props: {
+      ...(await serverSideTranslations(locale as string, [
+        "common",
+        "teacher",
+      ])),
+    },
+  };
+};
 
 export default Teachers;

@@ -29,6 +29,9 @@ import { getNewsFeed } from "@utils/backend/news";
 // Helpers
 import { replaceNumberInNewsWithDate } from "@utils/helpers/news";
 
+// Hooks
+import { useProtectPageFor } from "@utils/hooks/protect";
+
 // Supabase
 import { createTitleStr } from "@utils/helpers/title";
 
@@ -99,6 +102,7 @@ const EditSection = (): JSX.Element => {
 // Page
 const AdminNews: NextPage = (): JSX.Element => {
   const { t } = useTranslation(["admin", "news", "common"]);
+  useProtectPageFor("admin");
 
   return (
     <>

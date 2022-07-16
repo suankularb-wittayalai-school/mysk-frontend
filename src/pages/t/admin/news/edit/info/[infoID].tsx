@@ -1,5 +1,5 @@
 // Modules
-import type { GetServerSideProps, GetStaticProps, NextPage } from "next";
+import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 
@@ -24,6 +24,7 @@ import ArticleEditor from "@components/news/ArticleEditor";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
+import { protectPageFor } from "@utils/helpers/route";
 
 // Types
 import { LangCode, WaitingSnackbar } from "@utils/types/common";
@@ -68,7 +69,11 @@ const EditInfo: NextPage<{ existingData: NewsItemInfoNoDate }> = ({
 export const getServerSideProps: GetServerSideProps = async ({
   locale,
   params,
+  req,
 }) => {
+  const redirect = await protectPageFor("admin", req);
+  if (redirect) return redirect;
+  
   if (!params?.infoID) return { notFound: true };
 
   const existingData = await getInfo(Number(params.infoID));

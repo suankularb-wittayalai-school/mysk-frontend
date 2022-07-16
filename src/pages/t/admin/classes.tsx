@@ -36,10 +36,12 @@ import { db2Class } from "@utils/backend/database";
 import { Class } from "@utils/types/class";
 import { ClassroomDB, ClassroomTable } from "@utils/types/database/class";
 
-// Hooks
-import { useSession } from "@utils/hooks/auth";
-import { createClassroom } from "@utils/backend/classroom/classroom";
+// Helpers
+import { protectPageFor } from "@utils/helpers/route";
 import { createTitleStr } from "@utils/helpers/title";
+
+// Hooks
+import { createClassroom } from "@utils/backend/classroom/classroom";
 
 // Page
 const Classes: NextPage<{ allClasses: Class[] }> = ({
@@ -55,8 +57,6 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
 
   const [showEdit, setShowEdit] = useState<boolean>(false);
   const [editingClass, setEditingClass] = useState<Class>();
-
-  const _ = useSession({ loginRequired: true, adminOnly: true });
 
   async function handleDelete() {
     const { data: _, error: classError } = await supabase
@@ -202,7 +202,13 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  req,
+}) => {
+  const redirect = await protectPageFor("teacher", req);
+  if (redirect) return redirect;
+
   let allClasses: Class[] = [];
 
   const { data: classes, error } = await supabase

@@ -41,6 +41,7 @@ import { createTitleStr } from "@utils/helpers/title";
 
 // Hooks
 import { useStudentAccount } from "@utils/hooks/auth";
+import { useProtectPageFor } from "@utils/hooks/protect";
 
 // Page
 const StudentHome: NextPage<{
@@ -50,6 +51,7 @@ const StudentHome: NextPage<{
   classAdvisors: Array<Teacher>;
 }> = ({ news, schedule, teachers, classAdvisors }) => {
   const { t } = useTranslation(["dashboard", "common"]);
+  useProtectPageFor("student");
 
   // Dialog controls
   const [showChangePassword, setShowChangePassword] = useState<boolean>(false);

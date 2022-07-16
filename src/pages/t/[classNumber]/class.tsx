@@ -53,6 +53,7 @@ import { createContact } from "@utils/backend/contact";
 
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
+import { protectPageFor } from "@utils/helpers/route";
 import { createTitleStr } from "@utils/helpers/title";
 
 // Hooks
@@ -487,19 +488,25 @@ const Class: NextPage<{
 export const getServerSideProps: GetServerSideProps = async ({
   locale,
   params,
-}) => ({
-  props: {
-    ...(await serverSideTranslations(locale as string, [
-      "account",
-      "news",
-      "dashboard",
-      "common",
-      "class",
-      "teacher",
-    ])),
-    classItem: await getClassroom(Number(params?.classNumber)),
-    studentForms: [],
-  },
-});
+  req,
+}) => {
+  const redirect = await protectPageFor("teacher", req);
+  if (redirect) return redirect;
+
+  return {
+    props: {
+      ...(await serverSideTranslations(locale as string, [
+        "account",
+        "news",
+        "dashboard",
+        "common",
+        "class",
+        "teacher",
+      ])),
+      classItem: await getClassroom(Number(params?.classNumber)),
+      studentForms: [],
+    },
+  };
+};
 
 export default Class;

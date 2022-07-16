@@ -43,6 +43,7 @@ import {
 } from "@utils/types/database/person";
 
 // Helpers
+import { protectPageFor } from "@utils/helpers/route";
 import { createTitleStr } from "@utils/helpers/title";
 
 // Hooks
@@ -314,7 +315,13 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  req,
+}) => {
+  const redirect = await protectPageFor("admin", req);
+  if (redirect) return redirect;
+  
   const { data, error } = await supabase
     .from<TeacherDB>("teacher")
     .select("id, teacher_id, people:person(*), SubjectGroup:subject_group(*)");
