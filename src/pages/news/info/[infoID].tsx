@@ -3,9 +3,11 @@ import { motion } from "framer-motion";
 
 import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import Image from "next/image";
+import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
+import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 // SK Components
@@ -37,8 +39,6 @@ import { useSession } from "@utils/hooks/auth";
 import { LangCode } from "@utils/types/common";
 import { NewsItemInfoNoDate } from "@utils/types/news";
 import { createTitleStr } from "@utils/helpers/title";
-import Head from "next/head";
-import { useTranslation } from "next-i18next";
 
 const InfoPage: NextPage<{ info: NewsItemInfoNoDate }> = ({ info }) => {
   const locale = useRouter().locale as LangCode;
@@ -48,7 +48,9 @@ const InfoPage: NextPage<{ info: NewsItemInfoNoDate }> = ({ info }) => {
   return (
     <>
       <Head>
-        <title>{createTitleStr(getLocaleString(info.content.title, locale), t)}</title>
+        <title>
+          {createTitleStr(getLocaleString(info.content.title, locale), t)}
+        </title>
       </Head>
 
       {/* We’re not using ReSKComs in parts of this page here as it has poor
@@ -156,10 +158,7 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
 
   return {
     props: {
-      ...(await serverSideTranslations(locale as string, [
-        "common",
-        "schedule",
-      ])),
+      ...(await serverSideTranslations(locale as LangCode, ["common"])),
       info,
     },
     revalidate: 300,
