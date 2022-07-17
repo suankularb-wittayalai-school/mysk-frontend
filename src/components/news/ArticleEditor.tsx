@@ -1,8 +1,13 @@
 // Modules
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
-import { useEffect, useReducer, useState } from "react";
-import SimpleMdeReact from "react-simplemde-editor";
+import {
+  MutableRefObject,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
 
 // SK Components
 import {
@@ -23,6 +28,7 @@ import {
 // Components
 import BlockingPane from "@components/BlockingPane";
 import Markdown from "@components/Markdown";
+import AddImageToNewsDialog from "@components/dialogs/AddImageToNews";
 import ConfirmDelete from "@components/dialogs/ConfirmDelete";
 
 // Backend
@@ -36,11 +42,11 @@ import {
 } from "@utils/types/common";
 import { NewsItemInfoNoDate } from "@utils/types/news";
 
+// Helpers
+import { addAtIndex, wrapPartOfArray } from "@utils/helpers/array";
+
 // Supabase
 import { PostgrestError } from "@supabase/supabase-js";
-import { AnimatePresence, motion } from "framer-motion";
-import { animationTransition } from "@utils/animations/config";
-import AddImageToNewsDialog from "@components/dialogs/AddImageToNews";
 
 type Form = {
   titleTH: string;
@@ -183,6 +189,120 @@ const WriteSection = ({
   // Outgoing
   useEffect(() => setExtBody(body), [body]);
 
+  // Toolbar
+  const textAreaRef: MutableRefObject<HTMLTextAreaElement | null> =
+    useRef(null);
+
+  function wrapSelectionWith(symbol: string) {
+    if (!textAreaRef.current) return;
+
+    setBody({
+      ...body,
+      [lang]: wrapPartOfArray(
+        body[lang].split(""),
+        textAreaRef.current.selectionStart,
+        textAreaRef.current.selectionEnd,
+        symbol
+      ).join(""),
+    });
+  }
+
+  function insertAtCursor(symbol: string) {
+    if (!textAreaRef.current) return;
+    const currentCursorPos = textAreaRef.current.selectionStart;
+
+    setBody({
+      ...body,
+      [lang]: addAtIndex(body[lang].split(""), currentCursorPos, symbol).join(
+        ""
+      ),
+    });
+  }
+
+  const toolbarOptions: {
+    title: string;
+    icon: JSX.Element;
+    onClick?: () => void;
+  }[][] = [
+    [
+      {
+        title: "Bold",
+        icon: <MaterialIcon icon="format_bold" />,
+        onClick: () => wrapSelectionWith("**"),
+      },
+      {
+        title: "Italic",
+        icon: <MaterialIcon icon="format_italic" />,
+        onClick: () => wrapSelectionWith("*"),
+      },
+      {
+        title: "Strikethrough",
+        icon: <MaterialIcon icon="format_strikethrough" />,
+        onClick: () => wrapSelectionWith("~~"),
+      },
+      {
+        title: "Code",
+        icon: <MaterialIcon icon="code" />,
+        onClick: () => wrapSelectionWith("`"),
+      },
+      {
+        title: "Headings",
+        icon: <MaterialIcon icon="format_size" />,
+        onClick: () => {
+          if (!textAreaRef.current) return;
+          const currentStart = body[lang][textAreaRef.current?.selectionStart];
+          if (currentStart == "#") insertAtCursor("#");
+          else if (currentStart == "\n") insertAtCursor("\n\n## ");
+          else insertAtCursor("## ");
+        },
+      },
+    ],
+    [
+      {
+        title: "Quote",
+        icon: <MaterialIcon icon="format_quote" />,
+        onClick: () => insertAtCursor("\n\n> "),
+      },
+      {
+        title: "Code block",
+        icon: <MaterialIcon icon="data_array" />,
+        onClick: () => insertAtCursor("\n\n```\n\n```"),
+      },
+      {
+        title: "Code block",
+        icon: <MaterialIcon icon="table" />,
+        onClick: () =>
+          insertAtCursor(
+            "\n\n| A1 | B1 | C1 |\n| --- | --- | --- |\n| A2 | B2 | C2 |\n| A3 | B3 | C3 |"
+          ),
+      },
+    ],
+    [
+      {
+        title: "Bulleted list",
+        icon: <MaterialIcon icon="format_list_bulleted" />,
+        onClick: () => insertAtCursor("\n\n- \n- \n- "),
+      },
+      {
+        title: "Numbered list",
+        icon: <MaterialIcon icon="format_list_numbered" />,
+        onClick: () => insertAtCursor("\n\n1) \n2) \n3) "),
+      },
+    ],
+    [
+      {
+        title: "Photo",
+        icon: <MaterialIcon icon="photo" />,
+        onClick: existingBody ? toggleShowAddImage : undefined,
+      },
+      {
+        title: "Link",
+        icon: <MaterialIcon icon="link" />,
+        onClick: () => insertAtCursor("[Link](https://)"),
+      },
+    ],
+  ];
+
   return (
     <Section className="relative">
       {/* Block editing if not configured */}
@@ -246,59 +366,7 @@ const WriteSection = ({
           {/* Markdown editor */}
           <div className="container-surface-variant overflow-x-auto overflow-y-hidden rounded-lg">
             <div className="flex flex-row divide-x divide-outline py-2">
-              {(
-                [
-                  [
-                    {
-                      title: "Bold",
-                      icon: <MaterialIcon icon="format_bold" />,
-                    },
-                    {
-                      title: "Italic",
-                      icon: <MaterialIcon icon="format_italic" />,
-                    },
-                    {
-                      title: "Underlined",
-                      icon: <MaterialIcon icon="format_underlined" />,
-                    },
-                  ],
-                  [
-                    {
-                      title: "Quote",
-                      icon: <MaterialIcon icon="format_quote" />,
-                    },
-                    {
-                      title: "Code",
-                      icon: <MaterialIcon icon="code" />,
-                    },
-                  ],
-                  [
-                    {
-                      title: "Bulleted list",
-                      icon: <MaterialIcon icon="format_list_bulleted" />,
-                    },
-                    {
-                      title: "Numbered list",
-                      icon: <MaterialIcon icon="format_list_numbered" />,
-                    },
-                  ],
-                  [
-                    {
-                      title: "Add photo",
-                      icon: <MaterialIcon icon="add_photo_alternate" />,
-                      onClick: existingBody ? toggleShowAddImage : undefined,
-                    },
-                    {
-                      title: "Add link",
-                      icon: <MaterialIcon icon="add_link" />,
-                    },
-                  ],
-                ] as {
-                  title: string;
-                  icon: JSX.Element;
-                  onClick?: () => void;
-                }[][]
-              ).map((group, idx) => (
+              {toolbarOptions.map((group, idx) => (
                 <div key={idx} className="flex flex-row gap-1 px-2">
                   {group.map((item) => (
                     <Button
@@ -309,6 +377,9 @@ const WriteSection = ({
                       iconOnly
                       disabled={!item.onClick}
                       onClick={item.onClick}
+                      className={
+                        item.onClick ? "!text-on-surface-variant" : undefined
+                      }
                     />
                   ))}
                 </div>
@@ -319,49 +390,27 @@ const WriteSection = ({
                   icon={<MaterialIcon icon="help" />}
                   iconOnly
                   url="https://www.markdownguide.org/basic-syntax/"
+                  className="!text-on-surface-variant"
                   attr={{ target: "_blank", rel: "noreferrer" }}
                 />
               </div>
             </div>
           </div>
 
-          <AnimatePresence exitBeforeEnter initial={false}>
-            {
-              // Will not render until body is populated (if editing)
-              (!existingBody || !(body.th == "")) &&
-                (lang == "en-US" ? (
-                  <motion.div
-                    key="markdown-en"
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={animationTransition}
-                  >
-                    <TextArea
-                      name="markdown-en"
-                      label={t("articleEditor.write.editorPlh")}
-                      onChange={(e) => setBody({ ...body, "en-US": e })}
-                      defaultValue={body["en-US"]}
-                    />
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="markdown-th"
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={animationTransition}
-                  >
-                    <TextArea
-                      name="markdown-th"
-                      label={t("articleEditor.write.editorPlh")}
-                      onChange={(e) => setBody({ ...body, th: e })}
-                      defaultValue={body.th}
-                    />
-                  </motion.div>
-                ))
-            }
-          </AnimatePresence>
+          <div className="input textarea">
+            <textarea
+              key={`markdown-${lang}`}
+              ref={textAreaRef}
+              id="markdown"
+              name="markdown"
+              placeholder="Markdown"
+              value={body[lang]}
+              onChange={(e) => setBody({ ...body, [lang]: e.target.value })}
+            />
+            <label className="input__placeholder" htmlFor="markdown">
+              {t("articleEditor.write.editorPlh")}
+            </label>
+          </div>
         </section>
 
         {/* Preview */}
@@ -538,20 +587,22 @@ const ArticleEditor = ({
       />
 
       {/* Dialogs */}
-      <AddImageToNewsDialog
-        show={showAddImage}
-        onClose={toggleShowAddImage}
-        fileDestination={
-          existingData
-            ? `/${existingData.type}/${existingData.id}`
-            : "/uncategorized"
-        }
-      />
-      <ConfirmDelete
-        show={showDelete}
-        onClose={toggleShowDelete}
-        onSubmit={handleDelete}
-      />
+      <div>
+        <AddImageToNewsDialog
+          show={showAddImage}
+          onClose={toggleShowAddImage}
+          fileDestination={
+            existingData
+              ? `/${existingData.type}/${existingData.id}`
+              : "/uncategorized"
+          }
+        />
+        <ConfirmDelete
+          show={showDelete}
+          onClose={toggleShowDelete}
+          onSubmit={handleDelete}
+        />
+      </div>
     </>
   );
 };

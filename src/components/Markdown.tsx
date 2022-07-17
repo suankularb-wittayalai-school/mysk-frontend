@@ -5,7 +5,6 @@ import gfm from "remark-gfm";
 
 // SK Components
 import { Table } from "@suankularb-components/react";
-import { motion } from "framer-motion";
 
 const Markdown = ({
   noStyles,
@@ -19,10 +18,7 @@ const Markdown = ({
       remarkPlugins={[gfm]}
       components={{
         img: ({ src, alt }) => (
-          <motion.div
-            className="flex w-full flex-row justify-center"
-            layoutId={src}
-          >
+          <div className="flex w-full flex-row justify-center">
             <div
               className="relative aspect-video w-screen max-w-[36rem] overflow-hidden
                 rounded-xl bg-surface-1"
@@ -33,11 +29,11 @@ const Markdown = ({
                 <Image src={src} layout="fill" objectFit="contain" alt={alt} />
               )}
             </div>
-          </motion.div>
+          </div>
         ),
 
         table: ({ children }) => (
-          <Table type="outlined" width={640} className="not-prose">
+          <Table type="outlined" width={640} className="not-prose my-5">
             {children}
           </Table>
         ),
