@@ -46,7 +46,7 @@ const EditInfo: NextPage<{ existingData: NewsItemInfoNoDate }> = ({
         Title={
           <Title
             name={{
-              title: t("articleEditor.title.edit"),
+              title: t("articleEditor.title.title.edit.info"),
               subtitle: t("articleEditor.title.subtitle"),
             }}
             pageIcon={<MaterialIcon icon="edit_square" />}

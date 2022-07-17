@@ -31,7 +31,6 @@ import { LangCode, WaitingSnackbar } from "@utils/types/common";
 
 // Page
 const CreateInfo: NextPage = (): JSX.Element => {
-  const router = useRouter();
   const { t } = useTranslation("admin");
   const [snbQueue, setSnbQueue] = useState<WaitingSnackbar[]>([]);
 
@@ -46,7 +45,7 @@ const CreateInfo: NextPage = (): JSX.Element => {
         Title={
           <Title
             name={{
-              title: t("articleEditor.title.add"),
+              title: t("articleEditor.title.title.add.info"),
               subtitle: t("articleEditor.title.subtitle"),
             }}
             pageIcon={<MaterialIcon icon="edit_square" />}

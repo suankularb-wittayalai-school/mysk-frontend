@@ -53,7 +53,7 @@ const AddImageToNewsDialog = ({
       title="Add image"
       actions={[{ name: t("Done"), type: "close" }]}
       show={show}
-      onClose={() => onClose()}
+      onClose={onClose}
     >
       <DialogSection name="upload">
         <div className="flex flex-row items-center gap-2">

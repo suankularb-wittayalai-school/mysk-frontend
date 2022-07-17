@@ -114,8 +114,20 @@
   },
   "articleEditor": {
     "title": {
-      "add": "Create",
-      "edit": "Edit",
+      "title": {
+        "add": {
+          "info": "Create info article",
+          "stats": "Create statistics article",
+          "form": "Create form",
+          "payment": "Create payment form"
+        },
+        "edit": {
+          "info": "Edit info article",
+          "stats": "Edit statistics article",
+          "form": "Edit form",
+          "payment": "Edit payment form"
+        }
+      },
       "subtitle": "Article editor"
     },
     "config": {

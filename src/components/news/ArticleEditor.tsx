@@ -541,7 +541,11 @@ const ArticleEditor = ({
       <AddImageToNewsDialog
         show={showAddImage}
         onClose={toggleShowAddImage}
-        fileDestination={`/info/${existingData?.id}`}
+        fileDestination={
+          existingData
+            ? `/${existingData.type}/${existingData.id}`
+            : "/uncategorized"
+        }
       />
       <ConfirmDelete
         show={showDelete}
