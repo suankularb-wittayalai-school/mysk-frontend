@@ -364,7 +364,12 @@ const WriteSection = ({
           </a>
 
           {/* Markdown editor */}
-          <div className="container-surface-variant overflow-x-auto overflow-y-hidden rounded-lg">
+
+          {/* Toolbar */}
+          <div
+            className="container-surface-variant scroll-desktop
+              overflow-x-auto overflow-y-hidden rounded-lg"
+          >
             <div className="flex flex-row divide-x divide-outline py-2">
               {toolbarOptions.map((group, idx) => (
                 <div key={idx} className="flex flex-row gap-1 px-2">
@@ -397,6 +402,7 @@ const WriteSection = ({
             </div>
           </div>
 
+          {/* Text area */}
           <div className="input textarea">
             <textarea
               key={`markdown-${lang}`}
