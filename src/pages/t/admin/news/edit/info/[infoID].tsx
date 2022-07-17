@@ -40,7 +40,9 @@ const EditInfo: NextPage<{ existingData: NewsItemInfoNoDate }> = ({
   return (
     <>
       <Head>
-        <title>{createTitleStr(t("title"), t)}</title>
+        <title>
+          {createTitleStr(t("articleEditor.title.title.edit.info"), t)}
+        </title>
       </Head>
       <RegularLayout
         Title={
@@ -73,7 +75,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 }) => {
   const redirect = await protectPageFor("admin", req);
   if (redirect) return redirect;
-  
+
   if (!params?.infoID) return { notFound: true };
 
   const existingData = await getInfo(Number(params.infoID));

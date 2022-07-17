@@ -39,7 +39,9 @@ const CreateInfo: NextPage = (): JSX.Element => {
   return (
     <>
       <Head>
-        <title>{createTitleStr(t("title"), t)}</title>
+        <title>
+          {createTitleStr(t("articleEditor.title.title.add.info"), t)}
+        </title>
       </Head>
       <RegularLayout
         Title={
