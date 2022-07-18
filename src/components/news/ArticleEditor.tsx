@@ -226,27 +226,27 @@ const WriteSection = ({
   }[][] = [
     [
       {
-        title: "Bold",
+        title: t("articleEditor.write.toolbar.bold"),
         icon: <MaterialIcon icon="format_bold" />,
         onClick: () => wrapSelectionWith("**"),
       },
       {
-        title: "Italic",
+        title: t("articleEditor.write.toolbar.italic"),
         icon: <MaterialIcon icon="format_italic" />,
         onClick: () => wrapSelectionWith("*"),
       },
       {
-        title: "Strikethrough",
+        title: t("articleEditor.write.toolbar.strikethrough"),
         icon: <MaterialIcon icon="format_strikethrough" />,
         onClick: () => wrapSelectionWith("~~"),
       },
       {
-        title: "Code",
+        title: t("articleEditor.write.toolbar.code"),
         icon: <MaterialIcon icon="code" />,
         onClick: () => wrapSelectionWith("`"),
       },
       {
-        title: "Headings",
+        title: t("articleEditor.write.toolbar.headings"),
         icon: <MaterialIcon icon="format_size" />,
         onClick: () => {
           if (!textAreaRef.current) return;
@@ -259,17 +259,17 @@ const WriteSection = ({
     ],
     [
       {
-        title: "Quote",
+        title: t("articleEditor.write.toolbar.quote"),
         icon: <MaterialIcon icon="format_quote" />,
         onClick: () => insertAtCursor("\n\n> "),
       },
       {
-        title: "Code block",
+        title: t("articleEditor.write.toolbar.codeblock"),
         icon: <MaterialIcon icon="data_array" />,
         onClick: () => insertAtCursor("\n\n```\n\n```"),
       },
       {
-        title: "Code block",
+        title: t("articleEditor.write.toolbar.table"),
         icon: <MaterialIcon icon="table" />,
         onClick: () =>
           insertAtCursor(
@@ -279,24 +279,24 @@ const WriteSection = ({
     ],
     [
       {
-        title: "Bulleted list",
+        title: t("articleEditor.write.toolbar.ul"),
         icon: <MaterialIcon icon="format_list_bulleted" />,
         onClick: () => insertAtCursor("\n\n- \n- \n- "),
       },
       {
-        title: "Numbered list",
+        title: t("articleEditor.write.toolbar.ol"),
         icon: <MaterialIcon icon="format_list_numbered" />,
         onClick: () => insertAtCursor("\n\n1) \n2) \n3) "),
       },
     ],
     [
       {
-        title: "Photo",
+        title: t("articleEditor.write.toolbar.photo"),
         icon: <MaterialIcon icon="photo" />,
         onClick: existingBody ? toggleShowAddImage : undefined,
       },
       {
-        title: "Link",
+        title: t("articleEditor.write.toolbar.link"),
         icon: <MaterialIcon icon="link" />,
         onClick: () => insertAtCursor("[Link](https://)"),
       },
@@ -343,28 +343,6 @@ const WriteSection = ({
           className="flex flex-col gap-2
             sm:w-[calc(50%-0.5rem)] md:w-[calc(50%-0.75rem)]"
         >
-          {/* Link to Markdown Cheat Sheet */}
-          <a
-            aria-labelledby="markdown-how-to"
-            href="/help/guide/admin/news#markdown"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <Card type="horizontal" appearance="tonal" hasAction>
-              <CardHeader
-                title={
-                  <h3 id="markdown-how-to">
-                    {t("articleEditor.write.howTo.title")}
-                  </h3>
-                }
-                label={t("articleEditor.write.howTo.supportingText")}
-                end={<MaterialIcon icon="open_in_new" />}
-              />
-            </Card>
-          </a>
-
-          {/* Markdown editor */}
-
           {/* Toolbar */}
           <div
             className="container-surface-variant scroll-desktop
@@ -391,6 +369,7 @@ const WriteSection = ({
               ))}
               <div className="px-2">
                 <LinkButton
+                  name={t("articleEditor.write.toolbar.learnMD")}
                   type="text"
                   icon={<MaterialIcon icon="help" />}
                   iconOnly

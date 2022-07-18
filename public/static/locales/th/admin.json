@@ -152,6 +152,21 @@
         "title": "คู่มือ Markdown",
         "supportingText": "อ่านคู่มือวิธีการเขียนใน Markdown"
       },
+      "toolbar": {
+        "bold": "ตัวหนา",
+        "italic": "ตัวเอียง",
+        "strikethrough": "ขีดฆ่า",
+        "code": "โค้ดในบรรทัด",
+        "headings": "หัวเรื่อง",
+        "quote": "คำอ้างอิง",
+        "codeblock": "บล็อกโค้ด",
+        "table": "ตาราง",
+        "ul": "รายการไม่มีอันดับ",
+        "ol": "รายการมีอันดับ",
+        "photo": "รูปภาพ",
+        "link": "ลิงค์",
+        "learnMD": "เรียนรู้ Markdown"
+      },
       "editorPlh": "เนื้อหา Markdown",
       "previewPlh": "จะเห็นตัวอย่างสดเมื่อเริ่มพิมพ์",
       "action": {

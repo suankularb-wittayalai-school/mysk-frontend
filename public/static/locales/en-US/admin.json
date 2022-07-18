@@ -152,6 +152,21 @@
         "title": "Markdown how-to",
         "supportingText": "Read the guide on how to write in Markdown."
       },
+      "toolbar": {
+        "bold": "Bold",
+        "italic": "Italic",
+        "strikethrough": "Strikethrough",
+        "code": "Inline code",
+        "headings": "Headings",
+        "quote": "Quote block",
+        "codeblock": "Code block",
+        "table": "Table",
+        "ul": "Bulleted list",
+        "ol": "Numbered list",
+        "photo": "Photo",
+        "link": "Link",
+        "learnMD": "Learn Markdown"
+      },
       "editorPlh": "Markdown",
       "previewPlh": "Start typing to see the preview.",
       "action": {
