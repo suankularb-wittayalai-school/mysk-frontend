@@ -96,7 +96,7 @@ const EditInfo: NextPage<{ existingData: NewsItemInfoNoDate }> = ({
           onFormChange={(incForm) => setForm({ ...form, ...incForm })}
         />
         <PublishArticle
-          handlePublish={updateInfo(existingData.id, form)}
+          handlePublish={async () => await updateInfo(existingData.id, form)}
           allowPublish={validate()}
         />
       </RegularLayout>

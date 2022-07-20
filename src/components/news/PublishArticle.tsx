@@ -21,7 +21,10 @@ export const PublishArticle = ({
   allowPublish,
   addToSnbQueue,
 }: {
-  handlePublish: Promise<{ data: any; error: Partial<PostgrestError> | null }>;
+  handlePublish: () => Promise<{
+    data: any;
+    error: Partial<PostgrestError> | null;
+  }>;
   allowPublish: boolean;
   addToSnbQueue?: (newSnb: WaitingSnackbar) => void;
 }): JSX.Element => {
@@ -31,7 +34,7 @@ export const PublishArticle = ({
 
   async function handlePublish() {
     toggleLoading();
-    const { data, error } = await handlePublishExt;
+    const { data, error } = await handlePublishExt();
     if (error) {
       if (addToSnbQueue) {
         addToSnbQueue({

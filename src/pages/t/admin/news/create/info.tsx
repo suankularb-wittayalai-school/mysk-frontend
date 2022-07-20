@@ -95,10 +95,13 @@ const CreateInfo: NextPage = (): JSX.Element => {
       >
         <ArticleEditor
           mode="add"
-          onFormChange={(incForm) => setForm({ ...form, ...incForm })}
+          onFormChange={(incForm) => {
+            setForm({ ...form, ...incForm });
+            console.log(form);
+          }}
         />
         <PublishArticle
-          handlePublish={createInfo(form)}
+          handlePublish={async () => await createInfo(form)}
           allowPublish={validate()}
         />
       </RegularLayout>
