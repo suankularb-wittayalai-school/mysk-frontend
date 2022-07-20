@@ -30,6 +30,8 @@
   .markdown {
     @apply prose max-w-none font-sans text-base text-on-background
       prose-headings:font-display prose-h5:text-on-primary-container
-      prose-h6:font-sans prose-h6:text-on-primary-container dark:prose-invert;
+      prose-h6:font-sans prose-h6:text-on-primary-container
+      prose-li:marker:font-display prose-li:marker:text-outline
+      dark:prose-invert;
   }
 }
