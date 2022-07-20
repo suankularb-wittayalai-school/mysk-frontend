@@ -13,8 +13,6 @@ import {
 import {
   Actions,
   Button,
-  Card,
-  CardHeader,
   ChipRadioGroup,
   FileInput,
   Header,
@@ -32,7 +30,7 @@ import AddImageToNewsDialog from "@components/dialogs/AddImageToNews";
 import ConfirmDelete from "@components/dialogs/ConfirmDelete";
 
 // Backend
-import { createInfo, deleteInfo, updateInfo } from "@utils/backend/news/info";
+import { deleteInfo } from "@utils/backend/news/info";
 
 // Types
 import {
@@ -44,9 +42,6 @@ import { NewsItemInfoNoDate } from "@utils/types/news";
 
 // Helpers
 import { addAtIndex, wrapPartOfArray } from "@utils/helpers/array";
-
-// Supabase
-import { PostgrestError } from "@supabase/supabase-js";
 
 type Form = {
   titleTH: string;
