@@ -523,22 +523,20 @@ const ArticleEditor = ({
       />
 
       {/* Dialogs */}
-      <div>
-        <AddImageToNewsDialog
-          show={showAddImage}
-          onClose={toggleShowAddImage}
-          fileDestination={
-            existingData
-              ? `/${existingData.type}/${existingData.id}`
-              : "/uncategorized"
-          }
-        />
-        <ConfirmDelete
-          show={showDelete}
-          onClose={toggleShowDelete}
-          onSubmit={handleDelete}
-        />
-      </div>
+      <AddImageToNewsDialog
+        show={showAddImage}
+        onClose={toggleShowAddImage}
+        fileDestination={
+          existingData
+            ? `/${existingData.type}/${existingData.id}`
+            : "/uncategorized"
+        }
+      />
+      <ConfirmDelete
+        show={showDelete}
+        onClose={toggleShowDelete}
+        onSubmit={handleDelete}
+      />
     </>
   );
 };
