@@ -20,6 +20,9 @@ import {
 // Components
 import ArticleEditor from "@components/news/ArticleEditor";
 
+// Backend
+import { createInfo } from "@utils/backend/news/info";
+
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
 
@@ -31,6 +34,7 @@ import { LangCode, WaitingSnackbar } from "@utils/types/common";
 
 // Page
 const CreateInfo: NextPage = (): JSX.Element => {
+  const router = useRouter();
   const { t } = useTranslation("admin");
   const [snbQueue, setSnbQueue] = useState<WaitingSnackbar[]>([]);
 
@@ -58,7 +62,20 @@ const CreateInfo: NextPage = (): JSX.Element => {
       >
         <ArticleEditor
           mode="add"
-          addToSnbQueue={(newSnb) => setSnbQueue([...snbQueue, newSnb])}
+          handlePublish={async (form) => {
+            const { data, error } = await createInfo(form);
+            if (error)
+              setSnbQueue([
+                ...snbQueue,
+                {
+                  id: "publish-error",
+                  text: t("error", {
+                    errorMsg: error.message || "unknown error",
+                  }),
+                },
+              ]);
+            else if (data) router.push("/t/admin/news");
+          }}
         />
       </RegularLayout>
       <SnackbarManager queue={snbQueue} setQueue={setSnbQueue} />

@@ -2,6 +2,7 @@
 import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -17,7 +18,7 @@ import {
 } from "@suankularb-components/react";
 
 // Backend
-import { getInfo } from "@utils/backend/news/info";
+import { getInfo, updateInfo } from "@utils/backend/news/info";
 
 // Components
 import ArticleEditor from "@components/news/ArticleEditor";
@@ -34,6 +35,7 @@ import { NewsItemInfoNoDate } from "@utils/types/news";
 const EditInfo: NextPage<{ existingData: NewsItemInfoNoDate }> = ({
   existingData,
 }): JSX.Element => {
+  const router = useRouter();
   const { t } = useTranslation("admin");
   const [snbQueue, setSnbQueue] = useState<WaitingSnackbar[]>([]);
 
@@ -60,7 +62,20 @@ const EditInfo: NextPage<{ existingData: NewsItemInfoNoDate }> = ({
         <ArticleEditor
           mode="edit"
           existingData={existingData}
-          addToSnbQueue={(newSnb) => setSnbQueue([...snbQueue, newSnb])}
+          handlePublish={async (form) => {
+            const { data, error } = await updateInfo(existingData.id, form);
+            if (error)
+              setSnbQueue([
+                ...snbQueue,
+                {
+                  id: "publish-error",
+                  text: t("error", {
+                    errorMsg: error.message || "unknown error",
+                  }),
+                },
+              ]);
+            else if (data) router.push("/t/admin/news");
+          }}
         />
       </RegularLayout>
       <SnackbarManager queue={snbQueue} setQueue={setSnbQueue} />

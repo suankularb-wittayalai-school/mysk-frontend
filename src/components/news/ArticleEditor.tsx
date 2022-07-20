@@ -437,10 +437,12 @@ const WriteSection = ({
 const ArticleEditor = ({
   mode,
   existingData,
+  handlePublish,
   addToSnbQueue,
 }: {
   mode: "add" | "edit";
   existingData?: NewsItemInfoNoDate;
+  handlePublish: (form: Form) => void;
   addToSnbQueue?: (newSnb: WaitingSnackbar) => void;
 }): JSX.Element => {
   const router = useRouter();
@@ -504,32 +506,6 @@ const ArticleEditor = ({
     return true;
   }
 
-  // Publishing feedback
-  function showPublishingFeedback(
-    data: any,
-    error: Partial<PostgrestError> | null
-  ) {
-    if (addToSnbQueue) {
-      if (error)
-        addToSnbQueue({
-          id: "publish-error",
-          text: t("error", { errorMsg: error.message || "unkown error" }),
-        });
-      else if (data) router.push("/t/admin/news");
-    }
-  }
-
-  // Publish article
-  async function handlePublish() {
-    if (mode == "add") {
-      const { data, error } = await createInfo(form);
-      showPublishingFeedback(data, error);
-    } else if (mode == "edit" && existingData) {
-      const { data, error } = await updateInfo(existingData.id, form);
-      showPublishingFeedback(data, error);
-    }
-  }
-
   // Delete article
   async function handleDelete() {
     if (existingData) {
@@ -564,7 +540,7 @@ const ArticleEditor = ({
         allowEdit={validateConfig()}
         allowEditEN={evalAllowEditEN()}
         allowPublish={validate()}
-        publish={handlePublish}
+        publish={() => handlePublish(form)}
       />
 
       {/* Dialogs */}
