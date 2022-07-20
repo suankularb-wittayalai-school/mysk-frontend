@@ -338,7 +338,7 @@ const WriteSection = ({
           show={lang == "en-US" && allowEdit && !allowEditEN}
         />
 
-        {/* Text area */}
+        {/* Editor */}
         <section
           className="flex flex-col gap-2
             sm:w-[calc(50%-0.5rem)] md:w-[calc(50%-0.75rem)]"
@@ -391,6 +391,7 @@ const WriteSection = ({
               placeholder="Markdown"
               value={body[lang]}
               onChange={(e) => setBody({ ...body, [lang]: e.target.value })}
+              style={{ height: 420 }}
             />
             <label className="input__placeholder" htmlFor="markdown">
               {t("articleEditor.write.editorPlh")}
@@ -419,6 +420,7 @@ const WriteSection = ({
           )}
         </section>
       </div>
+
       <Actions>
         <Button
           label={t("articleEditor.write.action.publish")}
