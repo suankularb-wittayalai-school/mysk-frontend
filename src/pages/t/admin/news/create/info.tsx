@@ -11,6 +11,8 @@ import { useState } from "react";
 
 // SK Components
 import {
+  Actions,
+  Button,
   MaterialIcon,
   RegularLayout,
   SnackbarManager,
@@ -31,14 +33,45 @@ import { useProtectPageFor } from "@utils/hooks/protect";
 
 // Types
 import { LangCode, WaitingSnackbar } from "@utils/types/common";
+import { PublishArticle } from "@components/news/PublishArticle";
 
 // Page
 const CreateInfo: NextPage = (): JSX.Element => {
-  const router = useRouter();
   const { t } = useTranslation("admin");
-  const [snbQueue, setSnbQueue] = useState<WaitingSnackbar[]>([]);
 
   useProtectPageFor("admin");
+
+  // Form control
+  const [form, setForm] = useState<{
+    titleTH: string;
+    titleEN: string;
+    descTH: string;
+    descEN: string;
+    bodyTH: string;
+    bodyEN: string;
+    image: File | null;
+    oldURL: string;
+  }>({
+    titleTH: "",
+    titleEN: "",
+    descTH: "",
+    descEN: "",
+    bodyTH: "",
+    bodyEN: "",
+    image: null,
+    oldURL: "",
+  });
+
+  function validate(): boolean {
+    if (!form.titleTH) return false;
+    if (!form.descTH) return false;
+    if (!form.bodyTH) return false;
+
+    return true;
+  }
+
+  // Snackbar control
+  const [snbQueue, setSnbQueue] = useState<WaitingSnackbar[]>([]);
 
   return (
     <>
@@ -62,20 +95,11 @@ const CreateInfo: NextPage = (): JSX.Element => {
       >
         <ArticleEditor
           mode="add"
-          handlePublish={async (form) => {
-            const { data, error } = await createInfo(form);
-            if (error)
-              setSnbQueue([
-                ...snbQueue,
-                {
-                  id: "publish-error",
-                  text: t("error", {
-                    errorMsg: error.message || "unknown error",
-                  }),
-                },
-              ]);
-            else if (data) router.push("/t/admin/news");
-          }}
+          onFormChange={(incForm) => setForm({ ...form, ...incForm })}
+        />
+        <PublishArticle
+          handlePublish={createInfo(form)}
+          allowPublish={validate()}
         />
       </RegularLayout>
       <SnackbarManager queue={snbQueue} setQueue={setSnbQueue} />

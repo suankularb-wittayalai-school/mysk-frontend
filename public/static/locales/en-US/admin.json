@@ -168,10 +168,14 @@
         "learnMD": "Learn Markdown"
       },
       "editorPlh": "Markdown",
-      "previewPlh": "Start typing to see the preview.",
+      "previewPlh": "Start typing to see the preview."
+    },
+    "attach": {},
+    "publish": {
+      "title": "Publish",
+      "supportingText": "Ready to let everyone see the changes you’ve made? Please note that it may take up to 5 minutes for your edit to be visible to the public.",
       "action": {
-        "save": "Save",
-        "publish": "Publish"
+        "pushToPublic": "Push to public"
       }
     }
   },

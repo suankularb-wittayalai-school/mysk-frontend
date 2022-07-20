@@ -154,20 +154,16 @@ const WriteSection = ({
   existingBody,
   form,
   setBody: setExtBody,
-  publish,
   toggleShowAddImage,
   allowEdit,
   allowEditEN,
-  allowPublish,
 }: {
   existingBody?: MultiLangString;
   form: Omit<Form, "bodyTH" | "bodyEN" | "image" | "oldURL">;
   setBody: (form: { th: string; "en-US": string }) => void;
-  publish: () => void;
   toggleShowAddImage?: () => void;
   allowEdit?: boolean;
   allowEditEN?: boolean;
-  allowPublish?: boolean;
 }): JSX.Element => {
   const { t } = useTranslation("admin");
   const [lang, setLang] = useState<LangCode>("th");
@@ -420,16 +416,6 @@ const WriteSection = ({
           )}
         </section>
       </div>
-
-      <Actions>
-        <Button
-          label={t("articleEditor.write.action.publish")}
-          type="filled"
-          icon={<MaterialIcon icon="publish" />}
-          disabled={!allowPublish}
-          onClick={publish}
-        />
-      </Actions>
     </Section>
   );
 };
@@ -437,12 +423,12 @@ const WriteSection = ({
 const ArticleEditor = ({
   mode,
   existingData,
-  handlePublish,
+  onFormChange: setFormExt,
   addToSnbQueue,
 }: {
   mode: "add" | "edit";
   existingData?: NewsItemInfoNoDate;
-  handlePublish: (form: Form) => void;
+  onFormChange: (form: Form) => void;
   addToSnbQueue?: (newSnb: WaitingSnackbar) => void;
 }): JSX.Element => {
   const router = useRouter();
@@ -470,6 +456,8 @@ const ArticleEditor = ({
     oldURL: "",
   });
 
+  useEffect(() => setFormExt(form), [form]);
+
   useEffect(() => {
     if (existingData)
       setForm({
@@ -495,13 +483,6 @@ const ArticleEditor = ({
   function evalAllowEditEN(): boolean {
     if (!form.titleEN) return false;
     if (!form.descEN) return false;
-
-    return true;
-  }
-
-  function validate(): boolean {
-    if (!validateConfig) return false;
-    if (!form.bodyTH) return false;
 
     return true;
   }
@@ -539,8 +520,6 @@ const ArticleEditor = ({
         toggleShowAddImage={toggleShowAddImage}
         allowEdit={validateConfig()}
         allowEditEN={evalAllowEditEN()}
-        allowPublish={validate()}
-        publish={() => handlePublish(form)}
       />
 
       {/* Dialogs */}
