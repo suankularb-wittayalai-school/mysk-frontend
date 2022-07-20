@@ -421,12 +421,6 @@ const WriteSection = ({
       </div>
       <Actions>
         <Button
-          label={t("articleEditor.write.action.save")}
-          type="outlined"
-          icon={<MaterialIcon icon="save" />}
-          disabled={!allowPublish}
-        />
-        <Button
           label={t("articleEditor.write.action.publish")}
           type="filled"
           icon={<MaterialIcon icon="publish" />}
