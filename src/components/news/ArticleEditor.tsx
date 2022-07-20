@@ -282,7 +282,7 @@ const WriteSection = ({
       {
         title: t("articleEditor.write.toolbar.ol"),
         icon: <MaterialIcon icon="format_list_numbered" />,
-        onClick: () => insertAtCursor("\n\n1) \n2) \n3) "),
+        onClick: () => insertAtCursor("\n\n1. \n2. \n3. "),
       },
     ],
     [
