@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // SK Components
 import {
@@ -34,6 +34,7 @@ import { useProtectPageFor } from "@utils/hooks/protect";
 
 // Types
 import { LangCode, WaitingSnackbar } from "@utils/types/common";
+import ArticleWrite from "@components/news/ArticleWrite";
 
 // Page
 const CreateInfo: NextPage = (): JSX.Element => {
@@ -93,9 +94,19 @@ const CreateInfo: NextPage = (): JSX.Element => {
           />
         }
       >
+        {/* (`inc` for “incoming”) */}
         <ArticleConfig
           mode="add"
           onFormChange={(incForm) => setForm({ ...form, ...incForm })}
+        />
+        <ArticleWrite
+          form={{
+            titleTH: form.titleTH,
+            titleEN: form.titleEN,
+            descTH: form.descTH,
+            descEN: form.descEN,
+          }}
+          setBody={(incBody) => setForm({ ...form, ...incBody })}
         />
         <ArticlePublish
           handlePublish={async () => await createInfo(form)}

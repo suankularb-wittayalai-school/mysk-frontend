@@ -22,7 +22,7 @@ import { getInfo, updateInfo } from "@utils/backend/news/info";
 
 // Components
 import ArticleConfig from "@components/news/ArticleConfig";
-import { ArticlePublish } from "@components/news/ArticlePublish";
+import ArticlePublish from "@components/news/ArticlePublish";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
@@ -31,6 +31,7 @@ import { protectPageFor } from "@utils/helpers/route";
 // Types
 import { LangCode, WaitingSnackbar } from "@utils/types/common";
 import { NewsItemInfoNoDate } from "@utils/types/news";
+import ArticleWrite from "@components/news/ArticleWrite";
 
 // Page
 const EditInfo: NextPage<{ existingData: NewsItemInfoNoDate }> = ({
@@ -94,6 +95,16 @@ const EditInfo: NextPage<{ existingData: NewsItemInfoNoDate }> = ({
           mode="edit"
           existingData={existingData}
           onFormChange={(incForm) => setForm({ ...form, ...incForm })}
+        />
+        <ArticleWrite
+          existingBody={existingData.content.body}
+          form={{
+            titleTH: form.titleTH,
+            titleEN: form.titleEN,
+            descTH: form.descTH,
+            descEN: form.descEN,
+          }}
+          setBody={(incBody) => setForm({ ...form, ...incBody })}
         />
         <ArticlePublish
           handlePublish={async () => await updateInfo(existingData.id, form)}

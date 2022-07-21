@@ -48,8 +48,6 @@ type Form = {
   titleEN: string;
   descTH: string;
   descEN: string;
-  bodyTH: string;
-  bodyEN: string;
   image: File | null;
   oldURL: string;
 };
@@ -427,7 +425,7 @@ const ArticleConfig = ({
   addToSnbQueue?: (newSnb: WaitingSnackbar) => void;
 }): JSX.Element => {
   const router = useRouter();
-  const { t } = useTranslation("common");
+  const { t } = useTranslation(["admin", "common"]);
 
   // Dialog control
   const [showAddImage, toggleShowAddImage] = useReducer(
@@ -445,8 +443,6 @@ const ArticleConfig = ({
     titleEN: "",
     descTH: "",
     descEN: "",
-    bodyTH: "",
-    bodyEN: "",
     image: null,
     oldURL: "",
   });
@@ -454,33 +450,16 @@ const ArticleConfig = ({
   useEffect(() => setFormExt(form), [form]);
 
   useEffect(() => {
-    if (existingData)
+    if (mode == "edit" && existingData)
       setForm({
         titleTH: existingData.content.title.th,
         titleEN: existingData.content.title["en-US"] || "",
         descTH: existingData.content.description.th,
         descEN: existingData.content.description["en-US"] || "",
-        bodyTH: existingData.content.body?.th || "",
-        bodyEN: existingData.content.body?.["en-US"] || "",
         image: null,
         oldURL: existingData.oldURL || "",
       });
   }, [existingData]);
-
-  // Validation
-  function validateConfig(): boolean {
-    if (!form.titleTH) return false;
-    if (!form.descTH) return false;
-
-    return true;
-  }
-
-  function evalAllowEditEN(): boolean {
-    if (!form.titleEN) return false;
-    if (!form.descEN) return false;
-
-    return true;
-  }
 
   // Delete article
   async function handleDelete() {
@@ -500,22 +479,80 @@ const ArticleConfig = ({
 
   return (
     <>
-      <ConfigSection
-        existingData={existingData}
-        form={form}
-        setForm={setForm}
-        onClickDelete={
-          mode == "edit" && existingData ? toggleShowDelete : undefined
-        }
-      />
-      <WriteSection
-        existingBody={existingData?.content.body}
-        form={form}
-        setBody={(e) => setForm({ ...form, bodyTH: e.th, bodyEN: e["en-US"] })}
-        toggleShowAddImage={toggleShowAddImage}
-        allowEdit={validateConfig()}
-        allowEditEN={evalAllowEditEN()}
-      />
+      <Section>
+        <div className="layout-grid-cols-3">
+          <div className="md:col-span-2">
+            <Header
+              icon={<MaterialIcon icon="settings" allowCustomSize />}
+              text={t("articleEditor.config.title")}
+            />
+          </div>
+          <Actions>
+            {mode == "edit" && (
+              <Button
+                label={t("articleEditor.config.action.delete")}
+                type="tonal"
+                icon={<MaterialIcon icon="delete" />}
+                onClick={handleDelete}
+                isDangerous
+              />
+            )}
+          </Actions>
+        </div>
+        <div>
+          <div className="layout-grid-cols-4 !gap-y-0">
+            <KeyboardInput
+              name="title-th"
+              type="text"
+              label={t("articleEditor.config.titleTH")}
+              onChange={(e) => setForm({ ...form, titleTH: e })}
+              defaultValue={existingData?.content.title.th}
+            />
+            <KeyboardInput
+              name="title-en"
+              type="text"
+              label={t("articleEditor.config.titleEN")}
+              onChange={(e) => setForm({ ...form, titleEN: e })}
+              defaultValue={existingData?.content.title["en-US"]}
+            />
+            <FileInput
+              name="image"
+              label={t("articleEditor.config.image")}
+              helperMsg={t("articleEditor.config.image_helper")}
+              noneAttachedMsg={t(
+                existingData?.image
+                  ? "input.none.noNewFilesAttached"
+                  : "input.none.noFilesAttached",
+                { ns: "common" }
+              )}
+              onChange={(e) => setForm({ ...form, image: e })}
+              attr={{ accept: "image/*" }}
+            />
+            <KeyboardInput
+              name="old-url"
+              type="url"
+              label={t("articleEditor.config.oldURL")}
+              helperMsg={t("articleEditor.config.oldURL_helper")}
+              onChange={(e) => setForm({ ...form, oldURL: e })}
+              defaultValue={existingData?.oldURL}
+            />
+          </div>
+          <div className="layout-grid-cols-2 !gap-y-0">
+            <TextArea
+              name="desc-th"
+              label={t("articleEditor.config.descTH")}
+              onChange={(e) => setForm({ ...form, descTH: e })}
+              defaultValue={existingData?.content.description.th}
+            />
+            <TextArea
+              name="desc-en"
+              label={t("articleEditor.config.descEN")}
+              onChange={(e) => setForm({ ...form, descEN: e })}
+              defaultValue={existingData?.content.description["en-US"]}
+            />
+          </div>
+        </div>
+      </Section>
 
       {/* Dialogs */}
       <AddImageToNewsDialog
