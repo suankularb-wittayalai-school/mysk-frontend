@@ -33,7 +33,11 @@ const Markdown = ({
         ),
 
         table: ({ children }) => (
-          <Table type="outlined" width={640} className="not-prose my-5">
+          <Table
+            type="outlined"
+            width={640}
+            className={noStyles ? undefined : "not-prose my-5"}
+          >
             {children}
           </Table>
         ),
