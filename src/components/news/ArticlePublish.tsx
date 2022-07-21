@@ -16,7 +16,7 @@ import {
 // Types
 import { WaitingSnackbar } from "@utils/types/common";
 
-export const PublishArticle = ({
+const ArticlePublish = ({
   handlePublish: handlePublishExt,
   allowPublish,
   addToSnbQueue,
@@ -64,3 +64,5 @@ export const PublishArticle = ({
     </Section>
   );
 };
+
+export default ArticlePublish;

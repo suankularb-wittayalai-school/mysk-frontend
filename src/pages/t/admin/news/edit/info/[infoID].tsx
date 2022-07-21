@@ -21,8 +21,8 @@ import {
 import { getInfo, updateInfo } from "@utils/backend/news/info";
 
 // Components
-import ArticleEditor from "@components/news/ArticleEditor";
-import { PublishArticle } from "@components/news/PublishArticle";
+import ArticleConfig from "@components/news/ArticleConfig";
+import { ArticlePublish } from "@components/news/ArticlePublish";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
@@ -90,12 +90,12 @@ const EditInfo: NextPage<{ existingData: NewsItemInfoNoDate }> = ({
           />
         }
       >
-        <ArticleEditor
+        <ArticleConfig
           mode="edit"
           existingData={existingData}
           onFormChange={(incForm) => setForm({ ...form, ...incForm })}
         />
-        <PublishArticle
+        <ArticlePublish
           handlePublish={async () => await updateInfo(existingData.id, form)}
           allowPublish={validate()}
         />

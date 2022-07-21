@@ -2,7 +2,6 @@
 import type { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
-import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -11,10 +10,7 @@ import { useState } from "react";
 
 // SK Components
 import {
-  Actions,
-  Button,
   Card,
-  CardActions,
   CardHeader,
   CardSupportingText,
   FileInput,
@@ -22,7 +18,6 @@ import {
   KeyboardInput,
   LayoutGridCols,
   MaterialIcon,
-  NoticebarManager,
   RegularLayout,
   Section,
   SnackbarManager,
@@ -31,7 +26,9 @@ import {
 } from "@suankularb-components/react";
 
 // Components
-import ArticleEditor from "@components/news/ArticleEditor";
+import ArticleConfig from "@components/news/ArticleConfig";
+import ArticlePublish from "@components/news/ArticlePublish";
+import Markdown from "@components/Markdown";
 
 // Backend
 import { createInfo } from "@utils/backend/news/info";
@@ -44,9 +41,6 @@ import { useProtectPageFor } from "@utils/hooks/protect";
 
 // Types
 import { LangCode, WaitingSnackbar } from "@utils/types/common";
-import { PublishArticle } from "@components/news/PublishArticle";
-import ReactMarkdown from "react-markdown";
-import Markdown from "@components/Markdown";
 
 // Page
 const CreateStats: NextPage = (): JSX.Element => {
@@ -116,7 +110,7 @@ const CreateStats: NextPage = (): JSX.Element => {
             COVID-19 vaccination numbers.
           </p>
         </Section>
-        <ArticleEditor
+        <ArticleConfig
           mode="add"
           onFormChange={(incForm) => setForm({ ...form, ...incForm })}
         />
@@ -177,7 +171,7 @@ const CreateStats: NextPage = (): JSX.Element => {
             </Card>
           </LayoutGridCols>
         </Section>
-        <PublishArticle
+        <ArticlePublish
           handlePublish={async () => await createInfo(form)}
           allowPublish={validate()}
         />

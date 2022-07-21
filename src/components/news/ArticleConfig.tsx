@@ -415,7 +415,7 @@ const WriteSection = ({
   );
 };
 
-const ArticleEditor = ({
+const ArticleConfig = ({
   mode,
   existingData,
   onFormChange: setFormExt,
@@ -536,4 +536,4 @@ const ArticleEditor = ({
   );
 };
 
-export default ArticleEditor;
+export default ArticleConfig;

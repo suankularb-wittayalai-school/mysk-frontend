@@ -20,7 +20,8 @@ import {
 } from "@suankularb-components/react";
 
 // Components
-import ArticleEditor from "@components/news/ArticleEditor";
+import ArticleConfig from "@components/news/ArticleConfig";
+import ArticlePublish from "@components/news/ArticlePublish";
 
 // Backend
 import { createInfo } from "@utils/backend/news/info";
@@ -33,7 +34,6 @@ import { useProtectPageFor } from "@utils/hooks/protect";
 
 // Types
 import { LangCode, WaitingSnackbar } from "@utils/types/common";
-import { PublishArticle } from "@components/news/PublishArticle";
 
 // Page
 const CreateInfo: NextPage = (): JSX.Element => {
@@ -93,11 +93,11 @@ const CreateInfo: NextPage = (): JSX.Element => {
           />
         }
       >
-        <ArticleEditor
+        <ArticleConfig
           mode="add"
           onFormChange={(incForm) => setForm({ ...form, ...incForm })}
         />
-        <PublishArticle
+        <ArticlePublish
           handlePublish={async () => await createInfo(form)}
           allowPublish={validate()}
         />
