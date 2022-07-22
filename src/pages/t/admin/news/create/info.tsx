@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // SK Components
 import {
@@ -72,6 +72,8 @@ const CreateInfo: NextPage = (): JSX.Element => {
   // Snackbar control
   const [snbQueue, setSnbQueue] = useState<WaitingSnackbar[]>([]);
 
+  useEffect(() => console.log(form), [form]);
+
   return (
     <>
       <Head>
@@ -107,7 +109,9 @@ const CreateInfo: NextPage = (): JSX.Element => {
             descTH: form.descTH,
             descEN: form.descEN,
           }}
-          setBody={(incBody) => setForm({ ...form, ...incBody })}
+          setBody={(incBody) =>
+            setForm({ ...form, bodyTH: incBody.th, bodyEN: incBody["en-US"] })
+          }
         />
         <ArticlePublish
           handlePublish={async () => await createInfo(form)}

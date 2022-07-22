@@ -139,7 +139,11 @@ export async function createInfo(form: {
 
   // Upload image
   if (form.image) {
-    const { error: imageError } = await uploadBanner("add", news.id, form.image);
+    const { error: imageError } = await uploadBanner(
+      "add",
+      news.id,
+      form.image
+    );
     if (imageError) return { data: [], error: imageError };
   }
 

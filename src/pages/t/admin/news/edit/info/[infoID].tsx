@@ -114,7 +114,9 @@ const EditInfo: NextPage<{ existingData: NewsItemInfoNoDate }> = ({
             descTH: form.descTH,
             descEN: form.descEN,
           }}
-          setBody={(incBody) => setForm({ ...form, ...incBody })}
+          setBody={(incBody) =>
+            setForm({ ...form, bodyTH: incBody.th, bodyEN: incBody["en-US"] })
+          }
           toggleShowAddImage={toggleShowAddImage}
         />
         <ArticlePublish
