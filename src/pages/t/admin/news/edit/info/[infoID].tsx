@@ -2,7 +2,6 @@
 import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
-import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -13,6 +12,7 @@ import { useState } from "react";
 import {
   MaterialIcon,
   RegularLayout,
+  Section,
   SnackbarManager,
   Title,
 } from "@suankularb-components/react";
@@ -23,6 +23,7 @@ import { getInfo, updateInfo } from "@utils/backend/news/info";
 // Components
 import ArticleConfig from "@components/news/ArticleConfig";
 import ArticlePublish from "@components/news/ArticlePublish";
+import ArticleWrite from "@components/news/ArticleWrite";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
@@ -31,7 +32,6 @@ import { protectPageFor } from "@utils/helpers/route";
 // Types
 import { LangCode, WaitingSnackbar } from "@utils/types/common";
 import { NewsItemInfoNoDate } from "@utils/types/news";
-import ArticleWrite from "@components/news/ArticleWrite";
 
 // Page
 const EditInfo: NextPage<{ existingData: NewsItemInfoNoDate }> = ({
@@ -91,6 +91,9 @@ const EditInfo: NextPage<{ existingData: NewsItemInfoNoDate }> = ({
           />
         }
       >
+        <Section>
+          <p>{t("articleEditor.typeDesc.stats")}</p>
+        </Section>
         <ArticleConfig
           mode="edit"
           existingData={existingData}

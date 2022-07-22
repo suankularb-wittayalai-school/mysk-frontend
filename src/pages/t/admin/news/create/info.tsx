@@ -2,19 +2,17 @@
 import type { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
-import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 // SK Components
 import {
-  Actions,
-  Button,
   MaterialIcon,
   RegularLayout,
+  Section,
   SnackbarManager,
   Title,
 } from "@suankularb-components/react";
@@ -22,6 +20,7 @@ import {
 // Components
 import ArticleConfig from "@components/news/ArticleConfig";
 import ArticlePublish from "@components/news/ArticlePublish";
+import ArticleWrite from "@components/news/ArticleWrite";
 
 // Backend
 import { createInfo } from "@utils/backend/news/info";
@@ -34,7 +33,6 @@ import { useProtectPageFor } from "@utils/hooks/protect";
 
 // Types
 import { LangCode, WaitingSnackbar } from "@utils/types/common";
-import ArticleWrite from "@components/news/ArticleWrite";
 
 // Page
 const CreateInfo: NextPage = (): JSX.Element => {
@@ -94,6 +92,9 @@ const CreateInfo: NextPage = (): JSX.Element => {
           />
         }
       >
+        <Section>
+          <p>{t("articleEditor.typeDesc.stats")}</p>
+        </Section>
         {/* (`inc` for “incoming”) */}
         <ArticleConfig
           mode="add"

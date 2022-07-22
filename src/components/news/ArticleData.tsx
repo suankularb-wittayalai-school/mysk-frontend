@@ -148,11 +148,13 @@ const CreateTable = (): JSX.Element => {
 };
 
 const ArticleData = (): JSX.Element => {
+  const { t } = useTranslation("admin");
+
   return (
     <Section>
       <Header
         icon={<MaterialIcon icon="table" allowCustomSize />}
-        text="Data"
+        text={t("articleEditor.data.title")}
       />
       <CreateTable />
     </Section>

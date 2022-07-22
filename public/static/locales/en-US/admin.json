@@ -130,6 +130,10 @@
       },
       "subtitle": "Article editor"
     },
+    "typeDesc": {
+      "info": "A general article conveying information, it is meant to only be read and is not interactive. The body of an information article is written in and formatted with Markdown.",
+      "stats": "A statistics article allows you to neatly display data in a table presented to all teachers in the school. Examples include: the number of students and teachers in a school, and the percentage of COVID-19 vaccinations."
+    },
     "config": {
       "title": "Configure",
       "titleTH": "Local title (Thai)",
@@ -171,6 +175,7 @@
       "previewPlh": "Start typing to see the preview."
     },
     "data": {
+      "title": "Data",
       "create": {
         "title": "Create new table",
         "importFile": {
