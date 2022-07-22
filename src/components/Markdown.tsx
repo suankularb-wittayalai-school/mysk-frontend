@@ -36,7 +36,7 @@ const Markdown = ({
           <Table
             type="outlined"
             width={640}
-            className={noStyles ? undefined : "not-prose my-5"}
+            className={noStyles ? "not-prose" : "not-prose my-5"}
           >
             {children}
           </Table>

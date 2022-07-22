@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useState } from "react";
+import { useReducer, useState } from "react";
 
 // SK Components
 import {
@@ -32,6 +32,7 @@ import { protectPageFor } from "@utils/helpers/route";
 // Types
 import { LangCode, WaitingSnackbar } from "@utils/types/common";
 import { NewsItemInfoNoDate } from "@utils/types/news";
+import AddImageToNewsDialog from "@components/dialogs/AddImageToNews";
 
 // Page
 const EditInfo: NextPage<{ existingData: NewsItemInfoNoDate }> = ({
@@ -71,6 +72,12 @@ const EditInfo: NextPage<{ existingData: NewsItemInfoNoDate }> = ({
   // Snackbar control
   const [snbQueue, setSnbQueue] = useState<WaitingSnackbar[]>([]);
 
+  // Dialog control
+  const [showAddImage, toggleShowAddImage] = useReducer(
+    (state: boolean) => !state,
+    false
+  );
+
   return (
     <>
       <Head>
@@ -108,13 +115,23 @@ const EditInfo: NextPage<{ existingData: NewsItemInfoNoDate }> = ({
             descEN: form.descEN,
           }}
           setBody={(incBody) => setForm({ ...form, ...incBody })}
+          toggleShowAddImage={toggleShowAddImage}
         />
         <ArticlePublish
           handlePublish={async () => await updateInfo(existingData.id, form)}
           allowPublish={validate()}
         />
       </RegularLayout>
+
+      {/* Snackbars */}
       <SnackbarManager queue={snbQueue} setQueue={setSnbQueue} />
+
+      {/* Dialogs */}
+      <AddImageToNewsDialog
+        show={showAddImage}
+        onClose={toggleShowAddImage}
+        fileDestination={`info/${existingData.id}`}
+      />
     </>
   );
 };
