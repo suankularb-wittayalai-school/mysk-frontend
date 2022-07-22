@@ -100,8 +100,8 @@ const LandingFeedItem = ({ feedItem }: { feedItem: NewsItem }): JSX.Element => {
       <Link href={`/news/info/${feedItem.id}`}>
         <a className="has-action relative grid grid-cols-2 gap-x-6 p-2 md:before:rounded-xl">
           <div
-            className="relative grid h-full min-h-[8rem] w-full overflow-hidden
-              rounded-xl bg-surface-2 bg-cover text-right font-medium shadow"
+            className="relative h-full min-h-[8rem] w-full overflow-hidden rounded-xl
+              bg-surface-2 bg-cover text-right font-medium shadow"
           >
             {feedItem.image ? (
               <Image
@@ -112,8 +112,8 @@ const LandingFeedItem = ({ feedItem }: { feedItem: NewsItem }): JSX.Element => {
               />
             ) : (
               <p
-                className="m-2 font-display text-5xl font-light leading-none
-                  text-on-surface-variant opacity-30"
+                className="max-lines-2 m-2 overflow-hidden font-display text-5xl font-light
+                  leading-none text-on-surface-variant opacity-30"
               >
                 {getLocaleString(feedItem.content.title, locale)}
               </p>
