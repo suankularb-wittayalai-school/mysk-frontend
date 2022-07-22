@@ -19,6 +19,7 @@ import {
 
 // Components
 import Markdown from "@components/Markdown";
+import { mdTableRegex } from "@utils/patterns";
 
 const CreateTable = (): JSX.Element => {
   // Form control
@@ -79,7 +80,9 @@ const CreateTable = (): JSX.Element => {
                   label="Markdown"
                   onChange={(e) => setForm({ ...form, markdown: e })}
                 />
-                <Markdown noStyles>{""}</Markdown>
+                <Markdown noStyles>
+                  {form.markdown.match(mdTableRegex) ? form.markdown : ""}
+                </Markdown>
               </CardSupportingText>
             </Card>
 
