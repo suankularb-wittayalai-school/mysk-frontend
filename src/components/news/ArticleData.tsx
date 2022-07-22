@@ -1,6 +1,8 @@
 // SK Components
 import {
+  Button,
   Card,
+  CardActions,
   CardHeader,
   CardSupportingText,
   FileInput,
@@ -29,7 +31,7 @@ const ArticleData = (): JSX.Element => {
             title={<h3>Create new table</h3>}
           />
 
-          <CardSupportingText className="!pt-0">
+          <CardSupportingText>
             <LayoutGridCols cols={3}>
               {/* Import spreadsheet */}
               <Card type="stacked" appearance="tonal" className="!bg-surface">
@@ -89,12 +91,22 @@ const ArticleData = (): JSX.Element => {
                     label="Form link"
                     helperMsg="Starts with “https://mysk.school/news/form/”."
                     onChange={() => {}}
-                    attr={{ pattern: "https://mysk.school/news/form/\\d+" }}
+                    attr={{
+                      pattern: "https://mysk.school/news/form/\\d+",
+                      disabled: true,
+                    }}
                   />
                 </CardSupportingText>
               </Card>
             </LayoutGridCols>
           </CardSupportingText>
+          <CardActions>
+            <Button
+              type="filled"
+              icon={<MaterialIcon icon="magic_button" />}
+              label="Create table"
+            />
+          </CardActions>
         </Card>
       </div>
     </Section>
