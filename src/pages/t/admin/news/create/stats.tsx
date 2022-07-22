@@ -106,8 +106,9 @@ const CreateStats: NextPage = (): JSX.Element => {
         <Section>
           <p>
             A statistics article allows you to neatly display data in a table
-            presented to all teachers in the school. An example would be
-            COVID-19 vaccination numbers.
+            presented to all teachers in the school. Examples include: the
+            number of students and teachers in a school, and the percentage of
+            COVID-19 vaccinations.
           </p>
         </Section>
         <ArticleConfig

@@ -170,7 +170,31 @@
       "editorPlh": "Markdown",
       "previewPlh": "Start typing to see the preview."
     },
-    "attach": {},
+    "data": {
+      "create": {
+        "title": "Create new table",
+        "importFile": {
+          "title": "Import spreadsheet",
+          "subtitle": "Display a file as a table",
+          "supportingText": "Use a .csv or a .xlsx file as data to be displayed to the user.",
+          "spreadsheetFile": "Spreadsheet file"
+        },
+        "createMDTable": {
+          "title": "Create Markdown table",
+          "subtitle": "Use the Markdown syntax",
+          "mdTextareaPlh": "Markdown"
+        },
+        "linkForm": {
+          "title": "Link form",
+          "subtitle": "Tally student responses",
+          "supportingText": "Enter the link to the form from which you’d like to tally the student responses. We only support forms made in MySK.",
+          "formLinkPlh": "Form link"
+        },
+        "action": {
+          "create": "Create table"
+        }
+      }
+    },
     "publish": {
       "title": "Publish",
       "supportingText": "Ready to let everyone see the changes you’ve made? Please note that it may take up to 5 minutes for your edit to be visible to the public.",
