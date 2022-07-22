@@ -70,6 +70,9 @@ const CreateTable = (): JSX.Element => {
                   label={t(
                     "articleEditor.data.create.importFile.spreadsheetFile"
                   )}
+                  noneAttachedMsg={t("input.none.noFilesAttached", {
+                    ns: "common",
+                  })}
                   onChange={(e) => setForm({ ...form, spreadsheetFile: e })}
                   attr={{
                     accept:
@@ -123,7 +126,9 @@ const CreateTable = (): JSX.Element => {
                   name="form-link"
                   type="url"
                   label={t("articleEditor.data.create.linkForm.formLink")}
-                  helperMsg="Starts with “https://mysk.school/news/form/”."
+                  helperMsg={t(
+                    "articleEditor.data.create.linkForm.formLink_helper"
+                  )}
                   onChange={(e) => setForm({ ...form, formLink: e })}
                   attr={{
                     pattern: "https://mysk.school/news/form/\\d+",

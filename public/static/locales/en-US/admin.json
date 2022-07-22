@@ -193,7 +193,8 @@
           "title": "Link form",
           "subtitle": "Tally student responses",
           "supportingText": "Enter the link to the form from which you’d like to tally the student responses. We only support forms made in MySK.",
-          "formLinkPlh": "Form link"
+          "formLink": "Form link",
+          "formLink_helper": "Starts with “https://mysk.school/news/form/”."
         },
         "action": {
           "create": "Create table"
