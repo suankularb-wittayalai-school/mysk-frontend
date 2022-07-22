@@ -100,8 +100,8 @@ const LandingFeedItem = ({ feedItem }: { feedItem: NewsItem }): JSX.Element => {
       <Link href={`/news/info/${feedItem.id}`}>
         <a className="has-action relative grid grid-cols-2 gap-x-6 p-2 md:before:rounded-xl">
           <div
-            className="surface relative grid h-full min-h-[8rem] w-full place-items-center
-              overflow-hidden rounded-xl bg-cover p-4 text-center font-medium"
+            className="relative grid h-full min-h-[8rem] w-full overflow-hidden
+              rounded-xl bg-surface-2 bg-cover text-right font-medium shadow"
           >
             {feedItem.image ? (
               <Image
@@ -111,7 +111,12 @@ const LandingFeedItem = ({ feedItem }: { feedItem: NewsItem }): JSX.Element => {
                 alt={getLocaleString(feedItem.content.title, locale)}
               />
             ) : (
-              getLocaleString(feedItem.content.title, locale)
+              <p
+                className="m-2 font-display text-5xl font-light leading-none
+                  text-on-surface-variant opacity-30"
+              >
+                {getLocaleString(feedItem.content.title, locale)}
+              </p>
             )}
           </div>
           <div className="flex flex-col gap-1">
@@ -186,7 +191,7 @@ const LandingBanner = (): JSX.Element => {
                 type="outlined"
                 icon={<MaterialIcon icon="translate" />}
                 iconOnly
-                attr={{ "aria-hidden": true }}
+                attr={{ "aria-hidden": true, tabIndex: -1 }}
               />
             </a>
           </Link>
