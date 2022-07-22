@@ -72,8 +72,6 @@ const CreateInfo: NextPage = (): JSX.Element => {
   // Snackbar control
   const [snbQueue, setSnbQueue] = useState<WaitingSnackbar[]>([]);
 
-  useEffect(() => console.log(form), [form]);
-
   return (
     <>
       <Head>

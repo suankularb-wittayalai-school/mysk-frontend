@@ -493,7 +493,7 @@ const ArticleConfig = ({
                 label={t("articleEditor.config.action.delete")}
                 type="tonal"
                 icon={<MaterialIcon icon="delete" />}
-                onClick={handleDelete}
+                onClick={toggleShowDelete}
                 isDangerous
               />
             )}
