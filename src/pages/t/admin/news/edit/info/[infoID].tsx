@@ -50,14 +50,14 @@ const EditInfo: NextPage<{ existingData: NewsItemInfoNoDate }> = ({
     image: File | null;
     oldURL: string;
   }>({
-    titleTH: "",
-    titleEN: "",
-    descTH: "",
-    descEN: "",
-    bodyTH: "",
-    bodyEN: "",
+    titleTH: existingData.content.title.th,
+    titleEN: existingData.content.title["en-US"] || "",
+    descTH: existingData.content.description.th,
+    descEN: existingData.content.description["en-US"] || "",
+    bodyTH: existingData.content.body?.th || "",
+    bodyEN: existingData.content.body?.["en-US"] || "",
     image: null,
-    oldURL: "",
+    oldURL: existingData.oldURL || "",
   });
 
   function validate(): boolean {
