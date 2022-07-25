@@ -199,12 +199,12 @@ const Teachers: NextPage<{ teacherList: TeachersListGroup[] }> = ({
 
 export const getServerSideProps: GetServerSideProps = async ({
   locale,
+  params,
   req,
 }) => {
   const redirect = await protectPageFor("admin", req);
   if (redirect) return redirect;
-  params,
-}) => {
+
   const teachers = await getTeacherList(
     await getClassIDFromNumber(Number(params?.classNumber))
   );
