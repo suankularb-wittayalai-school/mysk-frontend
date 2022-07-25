@@ -221,8 +221,8 @@ export default function Landing({ feed }: { feed: Feed }) {
         <title>{t("brand.name", { ns: "common" })}</title>
       </Head>
       <div
-        className="min-h-screen bg-[url('/images/landing-light.png')] bg-cover bg-fixed bg-center
-          text-on-surface dark:bg-[url('/images/landing-dark.png')] sm:pt-[4.5rem]"
+        className="min-h-screen bg-[url('/images/landing-light.webp')] bg-cover bg-fixed bg-center
+          text-on-surface dark:bg-[url('/images/landing-dark.webp')] sm:pt-[4.5rem]"
       >
         <RegularLayout>
           <div className="flex flex-col gap-y-6 md:grid md:grid-cols-2 md:gap-x-6">
