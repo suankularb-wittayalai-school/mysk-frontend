@@ -17,18 +17,24 @@ import AddStudentDialog from "@components/dialogs/AddStudent";
 import AddTeacherDialog from "@components/dialogs/AddTeacher";
 import DiscardDraft from "@components/dialogs/DiscardDraft";
 
-// Types
-import { Class } from "@utils/types/class";
-import { ChipInputListItem, DialogProps } from "@utils/types/common";
-import { Contact } from "@utils/types/contact";
-import { Student, Teacher } from "@utils/types/person";
-
 // Backend
 import {
   createClassroom,
   updateClassroom,
 } from "@utils/backend/classroom/classroom";
+
+// Helpers
+import { getCurrentAcedemicYear } from "@utils/helpers/date";
 import { nameJoiner } from "@utils/helpers/name";
+
+// Patterns
+import { classRegex } from "@utils/patterns";
+
+// Types
+import { Class } from "@utils/types/class";
+import { ChipInputListItem, DialogProps } from "@utils/types/common";
+import { Contact } from "@utils/types/contact";
+import { Student, Teacher } from "@utils/types/person";
 
 const EditClassDialog = ({
   show,
@@ -59,7 +65,7 @@ const EditClassDialog = ({
     contacts: Contact[];
   }>({
     number: 101,
-    year: new Date().getFullYear(),
+    year: getCurrentAcedemicYear(),
     students: [],
     classAdvisors: [],
     contacts: [],
@@ -80,7 +86,7 @@ const EditClassDialog = ({
   function validate(): boolean {
     // console.log(form);
 
-    if (!form.number || !form.number.toString().match(/[1-6][0-1][1-9]/))
+    if (!form.number || !form.number.toString().match(classRegex))
       return false;
     if (form.year < 2005) return false;
 
@@ -111,8 +117,9 @@ const EditClassDialog = ({
         return;
       }
     } else if (mode == "edit") {
-      const { data: _, error: classUpdateError } =
-        await updateClassroom(classroom);
+      const { data: _, error: classUpdateError } = await updateClassroom(
+        classroom
+      );
 
       if (classUpdateError) {
         console.error(classUpdateError);

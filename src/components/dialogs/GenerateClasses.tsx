@@ -16,10 +16,11 @@ import { createClassroom } from "@utils/backend/classroom/classroom";
 
 // Helpers
 import { range } from "@utils/helpers/array";
+import { getCurrentAcedemicYear } from "@utils/helpers/date";
 
 // Types
-import { DialogProps } from "@utils/types/common";
 import { Class } from "@utils/types/class";
+import { DialogProps } from "@utils/types/common";
 
 const GenerateClassesDialog = ({
   show,
@@ -74,7 +75,7 @@ const GenerateClassesDialog = ({
           (classNum) => ({
             id: 0,
             number: (index + 1) * 100 + (classNum + 1),
-            year: new Date().getFullYear(),
+            year: getCurrentAcedemicYear(),
             students: [],
             classAdvisors: [],
             schedule: {

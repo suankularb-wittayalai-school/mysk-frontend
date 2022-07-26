@@ -24,7 +24,7 @@ const Markdown = ({
                 rounded-xl bg-surface-1"
             >
               {src?.startsWith(
-                "https://ykqqepbodqjhiwfjcvxe.supabase.co/storage/v1/object/public/"
+                `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/`
               ) && (
                 <Image src={src} layout="fill" objectFit="contain" alt={alt} />
               )}
