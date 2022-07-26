@@ -34,7 +34,7 @@ const Layout = ({
 
   const defaultNav = [
     {
-      name: t("navigation.home"),
+      name: t("navigation.welcome"),
       icon: {
         inactive: <MaterialIcon icon="home" type="outlined" />,
         active: <MaterialIcon icon="home" type="filled" />,
@@ -63,62 +63,46 @@ const Layout = ({
 
   const studentNav = [
     {
-      name: t("navigation.home"),
-      icon: {
-        inactive: <MaterialIcon icon="home" type="outlined" />,
-        active: <MaterialIcon icon="home" type="filled" />,
-      },
-      url: "/s/home",
-    },
-    {
-      name: t("navigation.schedule"),
-      icon: {
-        inactive: <MaterialIcon icon="dashboard" type="outlined" />,
-        active: <MaterialIcon icon="dashboard" type="filled" />,
-      },
-      url: "/s/504/schedule",
-    },
-    {
-      name: t("navigation.class"),
-      icon: {
-        inactive: <MaterialIcon icon="groups" type="outlined" />,
-        active: <MaterialIcon icon="groups" type="filled" />,
-      },
-      url: "/s/504/class",
-    },
-    {
-      name: t("navigation.teachers"),
+      name: t("navigation.learn"),
       icon: {
         inactive: <MaterialIcon icon="school" type="outlined" />,
         active: <MaterialIcon icon="school" type="filled" />,
       },
-      url: "/s/504/teachers",
+      url: "/learn",
+    },
+    {
+      name: t("navigation.people"),
+      icon: {
+        inactive: <MaterialIcon icon="groups" type="outlined" />,
+        active: <MaterialIcon icon="groups" type="filled" />,
+      },
+      url: "/people",
+    },
+    {
+      name: t("navigation.news"),
+      icon: {
+        inactive: <MaterialIcon icon="newspaper" type="outlined" />,
+        active: <MaterialIcon icon="newspaper" type="filled" />,
+      },
+      url: "/news",
+    },
+    {
+      name: t("navigation.me"),
+      icon: {
+        inactive: <MaterialIcon icon="account_circle" type="outlined" />,
+        active: <MaterialIcon icon="account_circle" type="filled" />,
+      },
+      url: "/me",
     },
   ];
   const teacherNav = [
     {
-      name: t("navigation.home"),
-      icon: {
-        inactive: <MaterialIcon icon="home" type="outlined" />,
-        active: <MaterialIcon icon="home" type="filled" />,
-      },
-      url: "/t/home",
-    },
-    {
-      name: t("navigation.schedule"),
-      icon: {
-        inactive: <MaterialIcon icon="dashboard" type="outlined" />,
-        active: <MaterialIcon icon="dashboard" type="filled" />,
-      },
-      url: "/t/schedule",
-    },
-    {
-      name: t("navigation.subjects"),
+      name: t("navigation.teach"),
       icon: {
         inactive: <MaterialIcon icon="school" type="outlined" />,
         active: <MaterialIcon icon="school" type="filled" />,
       },
-      url: "/t/subjects/teaching",
+      url: "/teach",
     },
     {
       name: t("navigation.class"),
@@ -126,36 +110,32 @@ const Layout = ({
         inactive: <MaterialIcon icon="groups" type="outlined" />,
         active: <MaterialIcon icon="groups" type="filled" />,
       },
-      url: "/t/202/class",
+      url: "/class/202",
+    },
+    {
+      name: t("navigation.news"),
+      icon: {
+        inactive: <MaterialIcon icon="newspaper" type="outlined" />,
+        active: <MaterialIcon icon="newspaper" type="filled" />,
+      },
+      url: "/news",
+    },
+    {
+      name: t("navigation.me"),
+      icon: {
+        inactive: <MaterialIcon icon="account_circle" type="outlined" />,
+        active: <MaterialIcon icon="account_circle" type="filled" />,
+      },
+      url: "/me",
     },
   ];
-  const newsNavItem = {
-    name: t("navigation.news"),
-    icon: {
-      inactive: <MaterialIcon icon="newspaper" type="outlined" />,
-      active: <MaterialIcon icon="newspaper" type="filled" />,
-    },
-    url: "/news",
-  };
-  const adminNavItem = {
-    name: t("navigation.admin"),
-    icon: {
-      inactive: <MaterialIcon icon="security" type="outlined" />,
-      active: <MaterialIcon icon="security" type="filled" />,
-    },
-    url: "/t/admin",
-  };
 
   useEffect(() => {
     const role = session?.user?.user_metadata.role;
-    const isAdmin = session?.user?.user_metadata.isAdmin;
 
     // Decide the Navigation the user is going to see based on their role
-    // Append the Admin Nav Item to the Navigation if the user is an admin
-    if (role == "student")
-      setNavItems([...studentNav, isAdmin ? adminNavItem : newsNavItem]);
-    else if (role == "teacher")
-      setNavItems([...teacherNav, isAdmin ? adminNavItem : newsNavItem]);
+    if (role == "student") setNavItems(studentNav);
+    else if (role == "teacher") setNavItems(teacherNav);
     else setNavItems(defaultNav);
   }, [session]);
 
