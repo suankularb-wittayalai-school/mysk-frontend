@@ -1,5 +1,10 @@
 // Modules
-import { GetServerSideProps, NextPage } from "next";
+import {
+  GetServerSideProps,
+  GetStaticPaths,
+  GetStaticProps,
+  NextPage,
+} from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -26,7 +31,10 @@ import Schedule from "@components/schedule/Schedule";
 import BrandIcon from "@components/icons/BrandIcon";
 
 // Backend
-import { getClassIDFromNumber } from "@utils/backend/classroom/classroom";
+import {
+  getAllClassNumbers,
+  getClassIDFromNumber,
+} from "@utils/backend/classroom/classroom";
 import { getSchedule } from "@utils/backend/schedule/schedule";
 import { getSubjectList } from "@utils/backend/subject/roomSubject";
 
@@ -37,6 +45,7 @@ import { SubjectListItem } from "@utils/types/subject";
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
 import { createTitleStr } from "@utils/helpers/title";
+import { useProtectPageFor } from "@utils/hooks/protect";
 
 const ScheduleSection = ({
   schedule,
@@ -168,6 +177,7 @@ const StudentSchedule: NextPage<{
   subjectList: SubjectListItem[];
 }> = ({ classNumber, schedule, subjectList }) => {
   const { t } = useTranslation(["schedule", "common"]);
+  useProtectPageFor("student");
 
   return (
     <>
@@ -199,13 +209,13 @@ const StudentSchedule: NextPage<{
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  params,
-}) => {
+export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
+  const classNumber = await getClassIDFromNumber(Number(params?.classNumber));
+  if (!classNumber) return { notFound: true };
+
   const schedule: ScheduleType = (await getSchedule(
     "student",
-    await getClassIDFromNumber(Number(params?.classNumber))
+    classNumber
   )) || {
     content: [
       { day: 1, content: [] },
@@ -231,6 +241,16 @@ export const getServerSideProps: GetServerSideProps = async ({
       schedule,
       subjectList,
     },
+    revalidate: 300,
+  };
+};
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  return {
+    paths: (await getAllClassNumbers()).map((number) => ({
+      params: { classNumber: number.toString() },
+    })),
+    fallback: "blocking",
   };
 };
 

@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: "Material Symbols Outlined";
+  font-style: normal;
+  src: url(../../public/fonts/material-symbols.woff2) format("woff2");
+}
+
 @layer base {
   * {
     @apply outline-none transition-colors;
@@ -13,42 +19,19 @@
 }
 
 @layer components {
-  .link {
+  .link,
+  .markdown a {
     @apply font-display font-medium text-primary underline decoration-primary decoration-2
       underline-offset-4 transition-[text-decoration-color]
       hover:decoration-tertiary hover:transition-none
       focus-visible:decoration-tertiary focus-visible:transition-none;
   }
 
-  .markdown p,
-  .markdown ul,
-  .markdown ol {
-    margin-top: 0;
-    margin-bottom: 0.5rem;
-  }
-
-  .markdown ul,
-  .markdown ol {
-    padding-left: 2em;
-  }
-
-  .markdown ul {
-    list-style-type: disc;
-  }
-
-  .markdown ol {
-    list-style-type: decimal;
-  }
-
-  .markdown ol ol,
-  .markdown ul ol {
-    list-style-type: lower-roman;
-  }
-
-  .markdown ul ul ol,
-  .markdown ul ol ol,
-  .markdown ol ul ol,
-  .markdown ol ol ol {
-    list-style-type: lower-alpha;
+  .markdown {
+    @apply prose max-w-none font-sans text-base text-on-background
+      prose-headings:font-display prose-h5:text-on-primary-container
+      prose-h6:font-sans prose-h6:text-on-primary-container
+      prose-li:marker:font-display prose-li:marker:text-outline
+      dark:prose-invert;
   }
 }

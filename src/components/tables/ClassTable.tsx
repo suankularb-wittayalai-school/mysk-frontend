@@ -33,7 +33,6 @@ const ClassTable = ({
           <th className="w-6/12">{t("classList.table.name")}</th>
           <th className="w-2/12">{t("classList.table.advisor")}</th>
           <th className="w-1/12">{t("classList.table.year")}</th>
-          <th className="w-1/12">{t("classList.table.semester")}</th>
           {setShowEdit && setEditingClass && setShowConfDel && (
             <th className="w-1/12" />
           )}
@@ -65,9 +64,6 @@ const ClassTable = ({
 
             {/* Academic year */}
             <td>{getLocaleYear(locale, classItem.year)}</td>
-
-            {/* Semester */}
-            <td>{classItem.semester}</td>
 
             {/* Actions */}
             {setShowEdit && setEditingClass && setShowConfDel && (

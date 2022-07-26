@@ -8,7 +8,6 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { useState } from "react";
-import ReactMarkdown from "react-markdown";
 
 // SK Components
 import {
@@ -40,8 +39,9 @@ import ConnectSubjectDialog from "@components/dialogs/ConnectSubject";
 import ConfirmDelete from "@components/dialogs/ConfirmDelete";
 import ImageDialog from "@components/dialogs/Image";
 import BrandIcon from "@components/icons/BrandIcon";
-import Sentiment from "@components/Sentiment";
 import HoverList from "@components/HoverList";
+import Markdown from "@components/Markdown";
+import Sentiment from "@components/Sentiment";
 
 // Types
 import {
@@ -67,6 +67,7 @@ import { supabase } from "@utils/supabaseClient";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
+import { protectPageFor } from "@utils/helpers/route";
 
 // Details Section
 const DetailsSection = ({
@@ -551,9 +552,7 @@ const AssignmentDetailsDialog = ({
         </p>
       </DialogSection>
       <DialogSection name={t("substAsgn.dialog.asgnDetails.desc")}>
-        <div className="markdown">
-          <ReactMarkdown>{assignment.desc[locale]}</ReactMarkdown>
-        </div>
+        <Markdown>{assignment.desc[locale]}</Markdown>
       </DialogSection>
       <DialogSection name={t("substAsgn.dialog.asgnDetails.assignedClasses")}>
         <ChipList>
@@ -857,7 +856,11 @@ const SubjectDetails: NextPage<{
 export const getServerSideProps: GetServerSideProps = async ({
   locale,
   params,
+  req,
 }) => {
+  const redirect = await protectPageFor("teacher", req);
+  if (redirect) return redirect;
+
   const { data: dbSubject, error: dbSubjectError } = await supabase
     .from<SubjectTable>("subject")
     .select("*")

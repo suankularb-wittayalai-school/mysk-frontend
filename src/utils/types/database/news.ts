@@ -38,3 +38,10 @@ export type NewsTable = {
   image?: string;
   old_url?: string;
 };
+
+export type InfoTable = {
+  id: number;
+  body_th: string;
+  body_en?: string;
+  parent: number;
+};

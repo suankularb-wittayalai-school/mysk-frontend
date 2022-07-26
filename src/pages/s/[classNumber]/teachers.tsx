@@ -34,6 +34,7 @@ import { getClassIDFromNumber } from "@utils/backend/classroom/classroom";
 
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
+import { protectPageFor } from "@utils/helpers/route";
 import { createTitleStr } from "@utils/helpers/title";
 import { SubjectGroup } from "@utils/types/subject";
 
@@ -51,7 +52,6 @@ const Teachers: NextPage<{ teacherList: TeachersListGroup[] }> = ({
   // const teacherList: TeachersListGroup[] = [];
 
   const [mainContent, setMainContent] = useState<Teacher | null>(null);
-
   const [showMain, setShowMain] = useState(false);
 
   useEffect(() => {
@@ -200,7 +200,11 @@ const Teachers: NextPage<{ teacherList: TeachersListGroup[] }> = ({
 export const getServerSideProps: GetServerSideProps = async ({
   locale,
   params,
+  req,
 }) => {
+  const redirect = await protectPageFor("admin", req);
+  if (redirect) return redirect;
+
   const teachers = await getTeacherList(
     await getClassIDFromNumber(Number(params?.classNumber))
   );

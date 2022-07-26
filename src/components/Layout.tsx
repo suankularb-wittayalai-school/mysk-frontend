@@ -1,5 +1,5 @@
 // Modules
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -17,7 +17,6 @@ import {
 
 // Animations
 import { animationEase } from "@utils/animations/config";
-import { fromUpToDown } from "@utils/animations/slide";
 
 // Hooks
 import { useSession } from "@utils/hooks/auth";
@@ -30,9 +29,10 @@ const Layout = ({
   children: ReactNode;
 }): JSX.Element => {
   const router = useRouter();
+  const session = useSession();
   const { t } = useTranslation();
 
-  const defaultNavItem = [
+  const defaultNav = [
     {
       name: t("navigation.home"),
       icon: {
@@ -59,9 +59,7 @@ const Layout = ({
     },
   ];
 
-  const [navItems, setNavItems] = useState(defaultNavItem);
-
-  const session = useSession();
+  const [navItems, setNavItems] = useState(defaultNav);
 
   const studentNav = [
     {
@@ -131,6 +129,14 @@ const Layout = ({
       url: "/t/202/class",
     },
   ];
+  const newsNavItem = {
+    name: t("navigation.news"),
+    icon: {
+      inactive: <MaterialIcon icon="newspaper" type="outlined" />,
+      active: <MaterialIcon icon="newspaper" type="filled" />,
+    },
+    url: "/news",
+  };
   const adminNavItem = {
     name: t("navigation.admin"),
     icon: {
@@ -141,85 +147,64 @@ const Layout = ({
   };
 
   useEffect(() => {
-    if (session) {
-      const isAdmin = session.user?.user_metadata?.isAdmin;
+    const role = session?.user?.user_metadata.role;
+    const isAdmin = session?.user?.user_metadata.isAdmin;
 
-      // Decide the Navigation the user is going to see based on their role
-      // Append the Admin Nav Item to the Navigation if the user is an admin
-      if (session.user?.user_metadata?.role === "student") {
-        setNavItems(
-          isAdmin
-            ? [...studentNav, adminNavItem]
-            : [
-                ...studentNav,
-                {
-                  name: t("navigation.news"),
-                  icon: {
-                    inactive: <MaterialIcon icon="newspaper" type="outlined" />,
-                    active: <MaterialIcon icon="newspaper" type="filled" />,
-                  },
-                  url: "/news",
-                },
-              ]
-        );
-      } else if (session.user?.user_metadata?.role === "teacher") {
-        setNavItems(isAdmin ? [...teacherNav, adminNavItem] : teacherNav);
-      }
-    } else {
-      setNavItems(defaultNavItem);
-    }
-  }, [session, router]);
+    // Decide the Navigation the user is going to see based on their role
+    // Append the Admin Nav Item to the Navigation if the user is an admin
+    if (role == "student")
+      setNavItems([...studentNav, isAdmin ? adminNavItem : newsNavItem]);
+    else if (role == "teacher")
+      setNavItems([...teacherNav, isAdmin ? adminNavItem : newsNavItem]);
+    else setNavItems(defaultNav);
+  }, [session]);
 
   return (
-    <AnimatePresence
-      exitBeforeEnter
-      initial={false}
-      onExitComplete={() => window.scrollTo(0, 0)}
-    >
-      <div className="overflow-hidden bg-background">
+    <LayoutGroup>
+      <AnimatePresence
+        exitBeforeEnter
+        initial={false}
+        onExitComplete={() => window.scrollTo(0, 0)}
+      >
         {navIsTransparent ? (
           // Fills the page with children if the Navigation is transparent
-          <div>
+          <>
             <Navigation
-              key={router.route}
               currentPath={router.asPath}
               navItems={navItems}
               LinkElement={Link}
               isTransparent
-              className="sm:!absolute sm:top-0"
             />
             <motion.div
-              initial="hidden"
-              animate="enter"
-              exit="exit"
-              variants={fromUpToDown}
+              key={router.route}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               transition={{ duration: 0.25, ease: animationEase }}
             >
               {children}
             </motion.div>
-          </div>
+          </>
         ) : (
           // Use the normal Page Layout if the Navigation is normal
           <PageLayout
-            key={router.route}
             currentPath={router.asPath}
             navItems={navItems}
             LinkElement={Link}
           >
             <motion.div
-              initial="hidden"
-              animate="enter"
-              exit="exit"
-              variants={fromUpToDown}
+              key={router.route}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               transition={{ duration: 0.25, ease: animationEase }}
-              className="flex flex-grow flex-col overflow-auto"
             >
               {children}
             </motion.div>
           </PageLayout>
         )}
-      </div>
-    </AnimatePresence>
+      </AnimatePresence>
+    </LayoutGroup>
   );
 };
 

@@ -51,10 +51,12 @@
   "input": {
     "none": {
       "noFilesAttached": "ยังไม่มีไฟล์ที่ถูกเลือก",
+      "noNewFilesAttached": "เลือกไฟล์เพื่อเปลี่ยน",
       "noOptions": "ไม่มีรายการให้เลือก"
     },
     "error": {}
   },
+  "error": "ข้อผิดพลาด: {{errorMsg}}",
   "seeDetails": "ดูรายละเอียด",
   "dialog": {
     "addContact": {

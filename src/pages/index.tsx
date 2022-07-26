@@ -1,5 +1,5 @@
 // Modules
-import { useEffect } from "react";
+import { motion } from "framer-motion";
 
 import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
@@ -9,6 +9,8 @@ import { useRouter } from "next/router";
 
 import { useTranslation, Trans } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+
+import { useEffect } from "react";
 
 // SK Components
 import {
@@ -22,8 +24,11 @@ import {
 // Components
 import Layout from "@components/Layout";
 
+// Animations
+import { animationTransition } from "@utils/animations/config";
+
 // Backend
-import { getInfos, getLandingFeed } from "@utils/backend/news/info";
+import { getLandingFeed } from "@utils/backend/news/info";
 
 // Types
 import { LangCode } from "@utils/types/common";
@@ -45,8 +50,8 @@ const LandingFeed = ({ feed }: { feed: Feed }): JSX.Element => {
   return (
     <section
       aria-label={t("news.title")}
-      className="mt-16 !p-0 backdrop-blur-sm sm:mt-0 sm:rounded-xl sm:backdrop-blur-lg
-        md:shadow-none md:backdrop-blur-sm"
+      className="mt-16 bg-[#C5E7FF5E] !p-0 backdrop-blur-md dark:bg-[#004C6D5E]
+        sm:mt-0 sm:rounded-xl"
     >
       <CardHeader
         icon={<MaterialIcon icon="newspaper" className="text-on-surface" />}
@@ -68,7 +73,7 @@ const LandingFeed = ({ feed }: { feed: Feed }): JSX.Element => {
           </p>
         }
       />
-      <ul className="flex flex-col">
+      <ul className="flex flex-col pb-1">
         {feed.content.map((feedItem) => (
           <LandingFeedItem key={feedItem.id} feedItem={feedItem} />
         ))}
@@ -87,15 +92,16 @@ const LandingFeedItem = ({ feedItem }: { feedItem: NewsItem }): JSX.Element => {
   const locale = useRouter().locale as LangCode;
 
   return (
-    <li key={feedItem.id}>
-      <Link href={`/news/${feedItem.id}`}>
-        <a
-          className="has-action relative grid grid-cols-2 gap-x-6 overflow-hidden p-2
-            md:rounded-xl"
-        >
+    <motion.li
+      key={feedItem.id}
+      layoutId={`news-info-${feedItem.id}`}
+      transition={animationTransition}
+    >
+      <Link href={`/news/info/${feedItem.id}`}>
+        <a className="has-action relative grid grid-cols-2 gap-x-6 px-2 py-1">
           <div
-            className="surface relative grid h-full min-h-[8rem] w-full place-items-center
-              overflow-hidden rounded-xl bg-cover p-4 text-center font-medium"
+            className="relative h-full min-h-[8rem] w-full overflow-hidden rounded-xl
+              bg-surface-2 bg-cover text-right font-medium"
           >
             {feedItem.image ? (
               <Image
@@ -105,27 +111,32 @@ const LandingFeedItem = ({ feedItem }: { feedItem: NewsItem }): JSX.Element => {
                 alt={getLocaleString(feedItem.content.title, locale)}
               />
             ) : (
-              getLocaleString(feedItem.content.title, locale)
+              <p
+                className="max-lines-2 m-2 overflow-hidden font-display text-5xl font-light
+                  leading-none text-on-surface-variant opacity-30"
+              >
+                {getLocaleString(feedItem.content.title, locale)}
+              </p>
             )}
           </div>
           <div className="flex flex-col gap-1">
             <h3 className="max-lines-2 font-display text-2xl font-bold leading-none">
               {getLocaleString(feedItem.content.title, locale)}
             </h3>
-            <p className="max-lines-5 leading-tight">
+            <p className="max-lines-2 leading-tight">
               {getLocaleString(feedItem.content.description, locale)}
             </p>
           </div>
         </a>
       </Link>
-    </li>
+    </motion.li>
   );
 };
 
 // Banner
 const LandingBanner = (): JSX.Element => {
   const { t } = useTranslation(["landing", "common"]);
-  const locale = useRouter().locale as "en-US" | "th";
+  const locale = useRouter().locale as LangCode;
 
   return (
     <header className="flex flex-col gap-2 font-display sm:gap-6">
@@ -180,7 +191,7 @@ const LandingBanner = (): JSX.Element => {
                 type="outlined"
                 icon={<MaterialIcon icon="translate" />}
                 iconOnly
-                attr={{ "aria-hidden": true }}
+                attr={{ "aria-hidden": true, tabIndex: -1 }}
               />
             </a>
           </Link>
@@ -210,8 +221,8 @@ export default function Landing({ feed }: { feed: Feed }) {
         <title>{t("brand.name", { ns: "common" })}</title>
       </Head>
       <div
-        className="min-h-screen bg-[url('/images/landing-light.webp')] bg-cover
-          bg-fixed bg-bottom text-on-surface dark:bg-[url('/images/landing-dark.webp')] sm:pt-[4.5rem]"
+        className="min-h-screen bg-[url('/images/landing-light.webp')] bg-cover bg-fixed bg-center
+          text-on-surface dark:bg-[url('/images/landing-dark.webp')] sm:pt-[4.5rem]"
       >
         <RegularLayout>
           <div className="flex flex-col gap-y-6 md:grid md:grid-cols-2 md:gap-x-6">

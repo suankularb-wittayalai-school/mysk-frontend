@@ -38,6 +38,7 @@ import { SubjectTable as SubjectTableType } from "@utils/types/database/subject"
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
+import { protectPageFor } from "@utils/helpers/route";
 
 // Hooks
 import { useSession } from "@utils/hooks/auth";
@@ -226,9 +227,6 @@ const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
             setShowImport(false);
             router.replace(router.asPath);
           });
-          // console.log(e);
-          // setShowImport(false);
-          // router.replace(router.asPath);
         }}
         // prettier-ignore
         columns={[
@@ -239,10 +237,10 @@ const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
           { name: "code_th", type: "text" },
           { name: "code_en", type: "text" },
           { name: "type", type: '"รายวิชาพื้นฐาน" | "รายวิชาเพิ่มเติม" | "รายวิชาเลือก" | "กิจกรรมพัฒนาผู้เรียน"' },
-          { name: "group", type: '"วิทยาศาสตร์" | "คณิตศาสตร์" | "ภาษาต่างประเทศ" | "ภาษาไทย" | "สุขศึกษาและพลศึกษา" | "การงานอาชีพและเทคโนโลยี" | "ศิลปะ" | "สังคมศึกษา ศาสนา และวัฒนธรรม" | "การศึกษาค้นคว้าด้วยตนเอง"'  },
+          { name: "group", type: '"วิทยาศาสตร์" | "คณิตศาสตร์" | "ภาษาต่างประเทศ" | "ภาษาไทย" | "สุขศึกษาและพลศึกษา" | "การงานอาชีพและเทคโนโลยี" | "ศิลปะ" | "สังคมศึกษา ศาสนา และวัฒนธรรม" | "การศึกษาค้นคว้าด้วยตนเอง"' },
           { name: "credit", type: "numeric" },
-          { name: "description_th", type: "numeric", optional: true },
-          { name: "description_en", type: "numeric", optional: true },
+          { name: "description_th", type: "text", optional: true },
+          { name: "description_en", type: "text", optional: true },
           { name: "year", type: "number (in AD)" },
           { name: "semester", type: "1 | 2" },
         ]}
@@ -275,7 +273,13 @@ const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  req,
+}) => {
+  const redirect = await protectPageFor("admin", req);
+  if (redirect) return redirect;
+
   let allSubjects: Subject[] = [];
 
   const { data: subjects, error: subjectSelectingError } = await supabase

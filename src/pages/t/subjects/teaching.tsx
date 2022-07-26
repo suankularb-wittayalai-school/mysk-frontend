@@ -1,4 +1,6 @@
 // Modules
+import { motion } from "framer-motion";
+
 import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
@@ -6,7 +8,9 @@ import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useState } from "react";
+
+import { useQuery, useQueryClient } from "react-query";
 
 // SK Components
 import {
@@ -23,85 +27,36 @@ import {
 import AddSubjectDialog from "@components/dialogs/AddSubject";
 import SubjectCard from "@components/SubjectCard";
 
+// Animations
+import { animationTransition } from "@utils/animations/config";
+
 // Backend
-import { db2Subject } from "@utils/backend/database";
-
-// Hooks
-import { useTeacherAccount } from "@utils/hooks/auth";
-
-// Supabase
-import { supabase } from "@utils/supabaseClient";
+import { getTeacherIDFromReq } from "@utils/backend/person/teacher";
+import { getTeachingSubjects } from "@utils/backend/subject/subject";
 
 // Types
 import { SubjectWNameAndCode } from "@utils/types/subject";
 import { ClassWNumber } from "@utils/types/class";
-import { RoomSubjectDB } from "@utils/types/database/subject";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
+import { protectPageFor } from "@utils/helpers/route";
 
-const SubjectsTeaching: NextPage = () => {
+const SubjectsTeaching: NextPage<{ teacherID: number }> = ({ teacherID }) => {
   const { t } = useTranslation("subjects");
   const [showAdd, setShowAdd] = useState<boolean>(false);
-  // set a variable to toggle fetching
-  const [fetch, toggleFetch] = useReducer((state: boolean) => !state, false);
 
-  const [teacher, session] = useTeacherAccount({ loginRequired: true });
+  const queryClient = useQueryClient();
+  const { data } = useQuery<
+    (SubjectWNameAndCode & { classes: ClassWNumber[] })[]
+  >("feed", () => getTeachingSubjects(teacherID));
 
   const [subjects, setSubjects] = useState<
     (SubjectWNameAndCode & { classes: ClassWNumber[] })[]
   >([]);
-
-  async function getSubjects() {
-    if (!teacher) return [];
-
-    const { data: roomSubjects, error } = await supabase
-      .from<RoomSubjectDB>("room_subjects")
-      .select("*, subject:subject(*), classroom:class(*)")
-      // .in("subject", teacher.subjectsInCharge?.map((s) => s.id) ?? [])
-      .contains("teacher", [teacher.id]);
-
-    if (error || !roomSubjects) {
-      console.error(error);
-      return [];
-    }
-
-    const subjects: (SubjectWNameAndCode & {
-      classes: ClassWNumber[];
-    })[] = await Promise.all(
-      roomSubjects.map(async (rs) => {
-        const fullSubject = await db2Subject(rs.subject);
-        const subject: SubjectWNameAndCode & { classes: ClassWNumber[] } = {
-          id: fullSubject.id,
-          name: fullSubject.name,
-          code: fullSubject.code,
-          classes: [],
-        };
-        subject.classes = [
-          { id: rs.classroom.id, number: rs.classroom.number },
-        ];
-        return subject;
-      })
-    );
-    // merge classes array of subjects with same id
-    const subjectsWithClasses = subjects.reduce((acc, subject) => {
-      const existing = acc.find((s) => s.id === subject.id);
-      if (existing) {
-        existing.classes = [...existing.classes, ...subject.classes];
-      } else {
-        acc.push(subject);
-      }
-      return acc;
-    }, [] as (SubjectWNameAndCode & { classes: ClassWNumber[] })[]);
-    // console.log(subjectsWithClasses);
-    return subjectsWithClasses;
-  }
-
   useEffect(() => {
-    if (teacher) {
-      getSubjects().then((subjects) => setSubjects(subjects));
-    }
-  }, [teacher, fetch]);
+    if (data) setSubjects(data);
+  }, [data]);
 
   return (
     <>
@@ -136,11 +91,19 @@ const SubjectsTeaching: NextPage = () => {
               />
             </div>
           </div>
-          <div className="layout-grid-cols-3">
+          <ul className="layout-grid-cols-3">
             {subjects.map((subject) => (
-              <SubjectCard key={subject.id} subject={subject} />
+              <motion.li
+                key={subject.id}
+                initial={{ scale: 0.8, y: 20, opacity: 0 }}
+                animate={{ scale: 1, y: 0, opacity: 1 }}
+                exit={{ scale: 0.8, y: 20, opacity: 0 }}
+                transition={animationTransition}
+              >
+                <SubjectCard subject={subject} />
+              </motion.li>
             ))}
-          </div>
+          </ul>
         </Section>
       </RegularLayout>
       <AddSubjectDialog
@@ -148,7 +111,7 @@ const SubjectsTeaching: NextPage = () => {
         onClose={() => setShowAdd(false)}
         onSubmit={() => {
           setShowAdd(false);
-          toggleFetch();
+          queryClient.invalidateQueries("subjects");
         }}
       />
     </>
@@ -157,14 +120,18 @@ const SubjectsTeaching: NextPage = () => {
 
 export const getServerSideProps: GetServerSideProps = async ({
   locale,
-  params,
+  req,
 }) => {
+  const redirect = await protectPageFor("teacher", req);
+  if (redirect) return redirect;
+
   return {
     props: {
       ...(await serverSideTranslations(locale as string, [
         "common",
         "subjects",
       ])),
+      teacherID: await getTeacherIDFromReq(req),
     },
   };
 };

@@ -51,10 +51,12 @@
   "input": {
     "none": {
       "noFilesAttached": "No files attached",
+      "noNewFilesAttached": "Attach file to change",
       "noOptions": "No options"
     },
     "error": {}
   },
+  "error": "Error: {{errorMsg}}",
   "seeDetails": "See details",
   "dialog": {
     "addContact": {

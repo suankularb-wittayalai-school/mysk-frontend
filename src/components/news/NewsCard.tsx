@@ -8,6 +8,7 @@ import { Trans, useTranslation } from "next-i18next";
 
 // SK Components
 import {
+  Button,
   Card,
   CardActions,
   CardHeader,
@@ -19,10 +20,11 @@ import {
 } from "@suankularb-components/react";
 
 // Types
-import { NewsItem } from "@utils/types/news";
+import { NewsItem, NewsItemType } from "@utils/types/news";
 
 // Helpers
 import { getLocaleString } from "@utils/helpers/i18n";
+import NewsIcon from "@components/icons/NewsIcon";
 
 const NewsStatus = ({ newsItem }: { newsItem: NewsItem }): JSX.Element => {
   return (
@@ -127,10 +129,12 @@ const NewsChipList = ({ newsItem }: { newsItem: NewsItem }): JSX.Element => {
 
 const NewsCard = ({
   newsItem,
+  editable,
   showChips,
   btnType,
 }: {
   newsItem: NewsItem;
+  editable?: boolean;
   showChips?: boolean;
   btnType?: "filled" | "outlined" | "text" | "tonal";
 }): JSX.Element => {
@@ -140,15 +144,7 @@ const NewsCard = ({
   return (
     <Card type="stacked" appearance="outlined">
       <CardHeader
-        icon={
-          newsItem.type == "form" ? (
-            <MaterialIcon icon="edit" className="text-secondary" />
-          ) : newsItem.type == "payment" ? (
-            <MaterialIcon icon="account_balance" className="text-secondary" />
-          ) : (
-            <MaterialIcon icon="information" className="text-secondary" />
-          )
-        }
+        icon={<NewsIcon type={newsItem.type} className="text-secondary" />}
         title={
           <h3 className="text-lg font-medium">
             {getLocaleString(newsItem.content.title, locale)}
@@ -167,7 +163,7 @@ const NewsCard = ({
           </div>
         }
         end={
-          ["news", "stats"].includes(newsItem.type) ? undefined : (
+          ["info", "stats"].includes(newsItem.type) ? undefined : (
             <div>
               <NewsStatus newsItem={newsItem} />
             </div>
@@ -186,18 +182,27 @@ const NewsCard = ({
         </p>
       </CardSupportingText>
       <CardActions>
-        <LinkButton
-          label={t(
-            `itemAction.${newsItem.type}${
-              ["news", "stats"].includes(newsItem.type)
-                ? ""
-                : `.${newsItem.done ? "edit" : "do"}`
-            }`
-          )}
-          type={btnType || "filled"}
-          url={`/${newsItem.type}/${newsItem.id}`}
-          LinkElement={Link}
-        />
+        {editable ? (
+          <LinkButton
+            label={t("itemAction.edit")}
+            type={btnType || "filled"}
+            url={`/t/admin/news/edit/${newsItem.type}/${newsItem.id}`}
+            LinkElement={Link}
+          />
+        ) : (
+          <LinkButton
+            label={t(
+              `itemAction.${newsItem.type}${
+                ["info", "stats"].includes(newsItem.type)
+                  ? ""
+                  : `.${newsItem.done ? "edit" : "do"}`
+              }`
+            )}
+            type={btnType || "filled"}
+            url={`/news/${newsItem.type}/${newsItem.id}`}
+            LinkElement={Link}
+          />
+        )}
       </CardActions>
     </Card>
   );

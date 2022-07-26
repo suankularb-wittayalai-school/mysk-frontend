@@ -18,31 +18,19 @@ export function useSession(option?: UseSessionOption) {
   const router = useRouter();
 
   useEffect(() => {
-    if (!supabase.auth.session()) {
-      setSession(null);
-    }
-
+    if (!supabase.auth.session()) setSession(null);
     setSession(supabase.auth.session());
-
-    supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
+    supabase.auth.onAuthStateChange((_event, session) => setSession(session));
   }, [router]);
 
   useEffect(() => {
     if (session) {
-      if (option?.loginRequired && !session.user) {
-        router.push("/");
-      }
-      if (
-        session.user &&
-        option?.adminOnly &&
-        !session.user.user_metadata.isAdmin
-      ) {
-        router.push("/");
-      }
+      if (option?.loginRequired && !session?.user)
+        router.push("/account/login");
+      if (option?.adminOnly && !session?.user?.user_metadata.isAdmin)
+        router.push("/account/login");
     }
-  }, [session, option, router]);
+  }, [session]);
 
   return session;
 }
@@ -72,11 +60,9 @@ export function useStudentAccount(
               setUser(student);
             });
           });
-      } else if (session.user?.user_metadata.role == "teacher") {
+      } else if (session.user?.user_metadata.role == "teacher")
         router.push("/t/home");
-      } else {
-        router.push("/");
-      }
+      else router.push("/account/login");
     }
   }, [session]);
   return [user, session];
@@ -109,11 +95,9 @@ export function useTeacherAccount(
               setUser(teacher);
             });
           });
-      } else if (session.user?.user_metadata.role == "student") {
+      } else if (session.user?.user_metadata.role == "student")
         router.push("/s/home");
-      } else {
-        router.push("/");
-      }
+      else router.push("/account/login");
     }
   }, [session]);
   return [user, session];

@@ -12,11 +12,7 @@ import {
   SubjectGroupDB,
   SubjectTable,
 } from "@utils/types/database/subject";
-import {
-  NewsItemInfo,
-  NewsItemInfoNoDate,
-  NewsItemNoDate,
-} from "@utils/types/news";
+import { NewsItemInfoNoDate } from "@utils/types/news";
 import { Role, Student, Teacher } from "@utils/types/person";
 import { SchedulePeriod } from "@utils/types/schedule";
 import { Subject, SubjectListItem } from "@utils/types/subject";
@@ -38,7 +34,9 @@ export function dbInfo2News(info: InfoDB): NewsItemInfoNoDate {
     id: info.id,
     type: "info",
     postDate: info.created_at,
-    image: info.parent.image || "",
+    image: info.parent.image
+      ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/news/${info.parent.image}`
+      : "",
     done: false,
     content: {
       title: {
@@ -48,6 +46,10 @@ export function dbInfo2News(info: InfoDB): NewsItemInfoNoDate {
       description: {
         "en-US": info.parent.description_en || "",
         th: info.parent.description_th,
+      },
+      body: {
+        "en-US": info.body_en || "",
+        th: info.body_th,
       },
     },
   };
@@ -323,7 +325,6 @@ export async function db2Class(classDB: ClassroomDB): Promise<Class> {
     subjects: [],
     contacts: [],
     year: classDB.year,
-    semester: classDB.semester as 1 | 2,
   };
 
   if (classDB.advisors) {

@@ -1,7 +1,7 @@
 // Modules
 import { setDay } from "date-fns";
 
-import { AnimatePresence, AnimateSharedLayout } from "framer-motion";
+import { AnimatePresence, AnimateSharedLayout, LayoutGroup } from "framer-motion";
 
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
@@ -92,7 +92,7 @@ const Schedule = ({
         noScroll ? "grow" : "scroll-w-0 scroll-desktop grow sm:overflow-x-auto"
       }
     >
-      <AnimateSharedLayout>
+      <LayoutGroup>
         <AnimatePresence initial={false}>
           <ul className="flex flex-col gap-2 pt-4 pb-2 pl-1 pr-4 sm:pr-0">
             {schedule.content.map((scheduleRow) => (
@@ -109,7 +109,7 @@ const Schedule = ({
             ))}
           </ul>
         </AnimatePresence>
-      </AnimateSharedLayout>
+      </LayoutGroup>
     </div>
   </div>
 );

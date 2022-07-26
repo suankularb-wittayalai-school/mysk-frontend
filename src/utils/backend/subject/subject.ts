@@ -1,7 +1,69 @@
 import { PostgrestError } from "@supabase/supabase-js";
 import { supabase } from "@utils/supabaseClient";
-import { SubjectTable } from "@utils/types/database/subject";
-import { Subject, SubjectName } from "@utils/types/subject";
+import { ClassWNumber } from "@utils/types/class";
+import { RoomSubjectDB, SubjectTable } from "@utils/types/database/subject";
+import {
+  Subject,
+  SubjectName,
+  SubjectWNameAndCode,
+} from "@utils/types/subject";
+
+export async function getTeachingSubjects(
+  teacherID: number
+): Promise<(SubjectWNameAndCode & { classes: ClassWNumber[] })[]> {
+  const { data: roomSubjects, error } = await supabase
+    .from<RoomSubjectDB>("room_subjects")
+    .select("*, subject:subject(*), classroom:class(*)")
+    .contains("teacher", [teacherID]);
+
+  if (error || !roomSubjects) {
+    console.error(error);
+    return [];
+  }
+
+  const subjects: (SubjectWNameAndCode & {
+    classes: ClassWNumber[];
+  })[] = await Promise.all(
+    roomSubjects.map(async (roomSubject) => {
+      const subject: SubjectWNameAndCode & { classes: ClassWNumber[] } = {
+        id: roomSubject.subject.id,
+        name: {
+          "en-US": {
+            name: roomSubject.subject.name_en,
+            shortName: roomSubject.subject.short_name_en,
+          },
+          th: {
+            name: roomSubject.subject.name_th,
+            shortName: roomSubject.subject.short_name_th,
+          },
+        },
+        code: {
+          "en-US": roomSubject.subject.code_en,
+          th: roomSubject.subject.code_th,
+        },
+        classes: [
+          {
+            id: roomSubject.classroom.id,
+            number: roomSubject.classroom.number,
+          },
+        ],
+      };
+      return subject;
+    })
+  );
+  // merge classes array of subjects with same id
+  const subjectsWithClasses = subjects.reduce((acc, subject) => {
+    const existing = acc.find((s) => s.id === subject.id);
+    if (existing) {
+      existing.classes = [...existing.classes, ...subject.classes];
+    } else {
+      acc.push(subject);
+    }
+    return acc;
+  }, [] as (SubjectWNameAndCode & { classes: ClassWNumber[] })[]);
+
+  return subjectsWithClasses;
+}
 
 export async function createSubject(
   subject: Subject

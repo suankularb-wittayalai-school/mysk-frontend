@@ -6,7 +6,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
-import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -31,7 +30,6 @@ import TeachersSection from "@components/home-sections/TeachersSection";
 
 // Animations
 import { animationTransition } from "@utils/animations/config";
-import { fromUpToDown } from "@utils/animations/slide";
 
 // Types
 import { NewsList } from "@utils/types/news";
@@ -43,6 +41,7 @@ import { createTitleStr } from "@utils/helpers/title";
 
 // Hooks
 import { useStudentAccount } from "@utils/hooks/auth";
+import { useProtectPageFor } from "@utils/hooks/protect";
 
 // Page
 const StudentHome: NextPage<{
@@ -52,7 +51,7 @@ const StudentHome: NextPage<{
   classAdvisors: Array<Teacher>;
 }> = ({ news, schedule, teachers, classAdvisors }) => {
   const { t } = useTranslation(["dashboard", "common"]);
-  const router = useRouter();
+  useProtectPageFor("student");
 
   // Dialog controls
   const [showChangePassword, setShowChangePassword] = useState<boolean>(false);
@@ -71,10 +70,9 @@ const StudentHome: NextPage<{
           <>
             {/* Content */}
             <motion.div
-              initial="hidden"
-              animate="enter"
-              exit="exit"
-              variants={fromUpToDown}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               transition={animationTransition}
             >
               <RegularLayout

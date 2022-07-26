@@ -5,7 +5,7 @@
   },
   "filter": {
     "forms": "แบบสอบถาม",
-    "news": "ข่าวสาร",
+    "info": "บทความ",
     "payments": "การชำระเงิน",
     "amountDone": {
       "notDone": "ยังไม่ได้ทำ",
@@ -18,7 +18,7 @@
   "itemType": {
     "form": "แบบสอบถาม",
     "stats": "สถิติ",
-    "news": "ข่าวสาร",
+    "info": "บทความ",
     "payment": "การชำระเงิน"
   },
   "itemFrequency": {
@@ -33,7 +33,8 @@
     "pastDueBy": "{{timePast}}ที่แล้ว"
   },
   "itemAction": {
-    "news": "อ่านเพิ่มเติม",
+    "edit": "แก้ไข",
+    "info": "อ่านเพิ่มเติม",
     "stats": "อ่านเพิ่มเติม",
     "form": {
       "do": "ทำแบบสอบถาม",
