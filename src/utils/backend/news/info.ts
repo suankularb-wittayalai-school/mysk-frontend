@@ -13,10 +13,10 @@ import { BackendReturn } from "@utils/types/common";
 import { InfoPage, NewsItemInfoNoDate } from "@utils/types/news";
 
 export async function getLandingFeed() {
-  const infos = await getInfos();
+  const { data: infos } = await getInfos();
 
   return {
-    lastUpdated: infos.data[0]?.postDate || "",
+    lastUpdated: infos[0]?.postDate || "",
     content: infos,
   };
 }

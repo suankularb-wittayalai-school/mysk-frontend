@@ -31,6 +31,7 @@ import { getAllInfoIDs, getInfo } from "@utils/backend/news/info";
 
 // Helpers
 import { getLocaleString } from "@utils/helpers/i18n";
+import { createTitleStr } from "@utils/helpers/title";
 
 // Hookes
 import { useSession } from "@utils/hooks/auth";
@@ -38,7 +39,6 @@ import { useSession } from "@utils/hooks/auth";
 // Types
 import { LangCode } from "@utils/types/common";
 import { InfoPage } from "@utils/types/news";
-import { createTitleStr } from "@utils/helpers/title";
 
 const InfoPage: NextPage<{ info: InfoPage }> = ({ info }) => {
   const locale = useRouter().locale as LangCode;
@@ -153,7 +153,7 @@ const InfoPage: NextPage<{ info: InfoPage }> = ({ info }) => {
 };
 
 export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
-  const info = await getInfo(Number(params?.infoID));
+  const { data: info } = await getInfo(Number(params?.infoID));
   if (!info) return { notFound: true };
 
   return {
