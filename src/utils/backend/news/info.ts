@@ -2,7 +2,7 @@
 import { PostgrestError } from "@supabase/supabase-js";
 
 // Converters
-import { db2Info, dbInfo2NewsItem } from "@utils/backend/database";
+import { db2InfoPage, dbInfo2NewsItem } from "@utils/backend/database";
 
 // Supabase
 import { supabase } from "@utils/supabaseClient";
@@ -65,7 +65,7 @@ export async function getInfo(
     return { data: null, error };
   }
 
-  return { data: db2Info(data), error: null };
+  return { data: db2InfoPage(data), error: null };
 }
 
 export async function uploadBanner(

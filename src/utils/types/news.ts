@@ -118,6 +118,8 @@ export interface FormField {
   };
 }
 
-export type FormPage = NewsItemFormNoDate & {
-  fields: FormField[];
+export type FormPage = Omit<NewsItemFormNoDate, "done"> & {
+  content: {
+    fields: FormField[];
+  };
 };

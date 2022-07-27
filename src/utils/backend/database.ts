@@ -4,7 +4,7 @@ import { Class } from "@utils/types/class";
 import { Contact } from "@utils/types/contact";
 import { ClassroomDB } from "@utils/types/database/class";
 import { ContactDB } from "@utils/types/database/contact";
-import { InfoDB } from "@utils/types/database/news";
+import { FormDB, FormQuestionsTable, FormTable, InfoDB } from "@utils/types/database/news";
 import { StudentDB, TeacherDB } from "@utils/types/database/person";
 import { ScheduleItemDB } from "@utils/types/database/schedule";
 import {
@@ -12,11 +12,12 @@ import {
   SubjectGroupDB,
   SubjectTable,
 } from "@utils/types/database/subject";
-import { InfoPage, NewsItemInfoNoDate } from "@utils/types/news";
+import { FormField, FormPage, InfoPage, NewsItemInfoNoDate } from "@utils/types/news";
 import { Role, Student, Teacher } from "@utils/types/person";
 import { SchedulePeriod } from "@utils/types/schedule";
 import { Subject, SubjectListItem } from "@utils/types/subject";
 
+// Contact
 export function db2Contact(contact: ContactDB): Contact {
   return {
     id: contact.id,
@@ -29,6 +30,9 @@ export function db2Contact(contact: ContactDB): Contact {
   };
 }
 
+// News
+
+// Info
 export function dbInfo2NewsItem(info: InfoDB): NewsItemInfoNoDate {
   return {
     id: info.id,
@@ -37,7 +41,6 @@ export function dbInfo2NewsItem(info: InfoDB): NewsItemInfoNoDate {
     image: info.parent.image
       ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/news/${info.parent.image}`
       : "",
-    done: false,
     content: {
       title: {
         "en-US": info.parent.title_en || "",
@@ -51,7 +54,7 @@ export function dbInfo2NewsItem(info: InfoDB): NewsItemInfoNoDate {
   };
 }
 
-export function db2Info(info: InfoDB): InfoPage {
+export function db2InfoPage(info: InfoDB): InfoPage {
   const newsItemInfo = dbInfo2NewsItem(info);
 
   return {
@@ -66,6 +69,63 @@ export function db2Info(info: InfoDB): InfoPage {
   };
 }
 
+// Form
+export function db2Field(field: FormQuestionsTable) {
+  const formatted: FormField = {
+    id: field.id,
+    label: {
+      "en-US": field.label_en,
+      th: field.label_th,
+    },
+    type: field.type,
+    required: field.required,
+    options: field.options ? field.options : [],
+    range: {
+      start: field.range_start,
+      end: field.range_end,
+    },
+  };
+  return formatted;
+}
+
+export async function db2FormPage(form: FormDB) {
+  const formatted: FormPage = {
+    id: form.id,
+    type: "form",
+    postDate: form.created_at,
+    content: {
+      title: {
+        "en-US": form.parent.title_en || "",
+        th: form.parent.title_th,
+      },
+      description: {
+        "en-US": form.parent.description_en || "",
+        th: form.parent.description_th,
+      },
+      fields: [],
+    },
+    dueDate: form.due_date,
+    frequency: form.frequency,
+  };
+
+  const { data: fields, error: fieldsError } = await supabase
+    .from<FormQuestionsTable>("form_questions")
+    .select("*")
+    .eq("form", form.id);
+
+  if (fieldsError) {
+    console.error(fieldsError);
+  }
+  if (fields) {
+    formatted.content.fields = fields.map(db2Field);
+  }
+
+  return formatted;
+}
+
+// People
+
+// Student
 export async function db2Student(student: StudentDB): Promise<Student> {
   const formatted: Student = {
     id: student.id,
@@ -130,6 +190,7 @@ export async function db2Student(student: StudentDB): Promise<Student> {
   return formatted;
 }
 
+// Teacher
 export async function db2Teacher(teacher: TeacherDB): Promise<Teacher> {
   const formatted: Teacher = {
     id: teacher.id,

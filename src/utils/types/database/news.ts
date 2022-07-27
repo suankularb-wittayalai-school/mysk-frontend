@@ -1,5 +1,4 @@
-import { FieldType } from "../news";
-import { PersonWName } from "../person";
+import { FieldType, FormField } from "../news";
 
 export type NewsDB = {
   id: number;
@@ -24,7 +23,8 @@ export type FormDB = {
   id: number;
   created_at: string;
   due_date?: string;
-  students_done: PersonWName[];
+  fields: FormField[];
+  students_done: number[];
   frequency: "once" | "weekly" | "monthly";
   parent: NewsDB;
 };
@@ -47,7 +47,7 @@ export type InfoTable = {
   parent: number;
 };
 
-export type FormTable = Omit<FormDB | "students_done", "parent"> & {
+export type FormTable = Omit<FormDB, "students_done" | "parent"> & {
   students_done: number[];
   parent: number;
 };
