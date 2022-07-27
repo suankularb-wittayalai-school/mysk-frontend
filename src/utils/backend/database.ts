@@ -4,7 +4,12 @@ import { Class } from "@utils/types/class";
 import { Contact } from "@utils/types/contact";
 import { ClassroomDB } from "@utils/types/database/class";
 import { ContactDB } from "@utils/types/database/contact";
-import { FormDB, FormQuestionsTable, FormTable, InfoDB } from "@utils/types/database/news";
+import {
+  FormDB,
+  FormQuestionsTable,
+  FormTable,
+  InfoDB,
+} from "@utils/types/database/news";
 import { StudentDB, TeacherDB } from "@utils/types/database/person";
 import { ScheduleItemDB } from "@utils/types/database/schedule";
 import {
@@ -12,7 +17,13 @@ import {
   SubjectGroupDB,
   SubjectTable,
 } from "@utils/types/database/subject";
-import { FormField, FormPage, InfoPage, NewsItemInfoNoDate } from "@utils/types/news";
+import {
+  FormField,
+  FormPage,
+  InfoPage,
+  NewsItemFormNoDate,
+  NewsItemInfoNoDate,
+} from "@utils/types/news";
 import { Role, Student, Teacher } from "@utils/types/person";
 import { SchedulePeriod } from "@utils/types/schedule";
 import { Subject, SubjectListItem } from "@utils/types/subject";
@@ -70,6 +81,35 @@ export function db2InfoPage(info: InfoDB): InfoPage {
 }
 
 // Form
+export function dbForm2NewsItem(
+  form: FormDB,
+  studentID?: number
+): NewsItemFormNoDate {
+  const formatted: NewsItemFormNoDate = {
+    id: form.id,
+    type: "form",
+    postDate: form.created_at,
+    content: {
+      title: {
+        "en-US": form.parent.title_en || "",
+        th: form.parent.title_th,
+      },
+      description: {
+        "en-US": form.parent.description_en || "",
+        th: form.parent.description_th,
+      },
+    },
+    dueDate: form.due_date,
+    done: studentID
+      ? // (@SiravitPhokeed)
+        // Am I allowed to use `!!`?
+        !!form.students_done.find((student) => studentID == student)
+      : false,
+  };
+
+  return formatted;
+}
+
 export function db2Field(field: FormQuestionsTable) {
   const formatted: FormField = {
     id: field.id,

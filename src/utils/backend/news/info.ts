@@ -10,18 +10,18 @@ import { supabase } from "@utils/supabaseClient";
 // Types
 import { InfoDB, InfoTable, NewsTable } from "@utils/types/database/news";
 import { BackendReturn } from "@utils/types/common";
-import { InfoPage } from "@utils/types/news";
+import { InfoPage, NewsItemInfoNoDate } from "@utils/types/news";
 
 export async function getLandingFeed() {
   const infos = await getInfos();
 
   return {
-    lastUpdated: infos[0]?.postDate || "",
+    lastUpdated: infos.data[0]?.postDate || "",
     content: infos,
   };
 }
 
-export async function getInfos() {
+export async function getInfos(): Promise<BackendReturn<NewsItemInfoNoDate[]>> {
   const { data, error } = await supabase
     .from<InfoDB>("infos")
     .select(
@@ -31,10 +31,10 @@ export async function getInfos() {
 
   if (error || !data) {
     console.error(error);
-    return [];
+    return { data: [], error };
   }
 
-  return data.map(dbInfo2NewsItem);
+  return { data: data.map(dbInfo2NewsItem), error: null };
 }
 
 export async function getAllInfoIDs(): Promise<number[]> {
