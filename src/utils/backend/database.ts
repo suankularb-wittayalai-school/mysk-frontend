@@ -12,7 +12,7 @@ import {
   SubjectGroupDB,
   SubjectTable,
 } from "@utils/types/database/subject";
-import { NewsItemInfoNoDate } from "@utils/types/news";
+import { InfoPage, NewsItemInfoNoDate } from "@utils/types/news";
 import { Role, Student, Teacher } from "@utils/types/person";
 import { SchedulePeriod } from "@utils/types/schedule";
 import { Subject, SubjectListItem } from "@utils/types/subject";
@@ -29,7 +29,7 @@ export function db2Contact(contact: ContactDB): Contact {
   };
 }
 
-export function dbInfo2News(info: InfoDB): NewsItemInfoNoDate {
+export function dbInfo2NewsItem(info: InfoDB): NewsItemInfoNoDate {
   return {
     id: info.id,
     type: "info",
@@ -47,8 +47,19 @@ export function dbInfo2News(info: InfoDB): NewsItemInfoNoDate {
         "en-US": info.parent.description_en || "",
         th: info.parent.description_th,
       },
+    },
+  };
+}
+
+export function db2Info(info: InfoDB): InfoPage {
+  const newsItemInfo = dbInfo2NewsItem(info);
+
+  return {
+    ...newsItemInfo,
+    content: {
+      ...newsItemInfo.content,
       body: {
-        "en-US": info.body_en || "",
+        "en-US": info.body_en,
         th: info.body_th,
       },
     },

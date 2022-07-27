@@ -1,3 +1,5 @@
+import { PostgrestError } from "@supabase/supabase-js";
+
 export type LangCode = "th" | "en-US";
 
 export type MultiLangString = {
@@ -23,6 +25,10 @@ export interface DialogProps {
 export interface SubmittableDialogProps extends DialogProps {
   onSubmit: () => void;
 }
+
+export type BackendReturn<T, U = []> =
+  | { data: T; error: null }
+  | { data: U; error: Partial<PostgrestError> };
 
 export type ChipInputListItem = {
   id: string;

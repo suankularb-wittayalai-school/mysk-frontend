@@ -88,7 +88,7 @@ export type StudentFormItem = {
 };
 
 // Info page
-export type InfoPage = NewsItemInfo & {
+export type InfoPage = NewsItemInfoNoDate & {
   content: {
     body: MultiLangString;
   };
@@ -118,6 +118,6 @@ export interface FormField {
   };
 }
 
-export type FormPage = NewsItemForm & {
+export type FormPage = NewsItemFormNoDate & {
   fields: FormField[];
-}
+};

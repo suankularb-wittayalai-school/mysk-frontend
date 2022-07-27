@@ -1,12 +1,16 @@
-// Converters
+// Modules
 import { PostgrestError } from "@supabase/supabase-js";
-import { dbInfo2News } from "@utils/backend/database";
+
+// Converters
+import { db2Info, dbInfo2NewsItem } from "@utils/backend/database";
 
 // Supabase
 import { supabase } from "@utils/supabaseClient";
 
 // Types
 import { InfoDB, InfoTable, NewsTable } from "@utils/types/database/news";
+import { BackendReturn } from "@utils/types/common";
+import { InfoPage } from "@utils/types/news";
 
 export async function getLandingFeed() {
   const infos = await getInfos();
@@ -30,7 +34,7 @@ export async function getInfos() {
     return [];
   }
 
-  return data.map(dbInfo2News);
+  return data.map(dbInfo2NewsItem);
 }
 
 export async function getAllInfoIDs(): Promise<number[]> {
@@ -44,7 +48,9 @@ export async function getAllInfoIDs(): Promise<number[]> {
   return data.map((info) => info.id);
 }
 
-export async function getInfo(id: number) {
+export async function getInfo(
+  id: number
+): Promise<BackendReturn<InfoPage, null>> {
   const { data, error } = await supabase
     .from<InfoDB>("infos")
     .select(
@@ -56,10 +62,10 @@ export async function getInfo(id: number) {
 
   if (error || !data) {
     console.error(error);
-    return null;
+    return { data: null, error };
   }
 
-  return dbInfo2News(data);
+  return { data: db2Info(data), error: null };
 }
 
 export async function uploadBanner(
@@ -119,7 +125,7 @@ export async function createInfo(form: {
   bodyEN: string;
   image: File | null;
   oldURL: string;
-}): Promise<{ data: InfoTable[]; error: Partial<PostgrestError> | null }> {
+}): Promise<BackendReturn<InfoTable[]>> {
   const { data: news, error: newsError } = await supabase
     .from<NewsTable>("news")
     .insert({
@@ -175,7 +181,7 @@ export async function updateInfo(
     image: File | null;
     oldURL: string;
   }
-): Promise<{ data: InfoTable[]; error: Partial<PostgrestError | null> }> {
+): Promise<BackendReturn<InfoTable[]>> {
   const { data: updatedInfo, error: updatedInfoError } = await supabase
     .from<InfoTable>("infos")
     .update({
@@ -217,7 +223,9 @@ export async function updateInfo(
   return { data: updatedInfo, error: null };
 }
 
-export async function deleteInfo(id: number): Promise<PostgrestError | null> {
+export async function deleteInfo(
+  id: number
+): Promise<{ error: PostgrestError | null }> {
   const { data: info, error: infoError } = await supabase
     .from<InfoTable>("infos")
     .delete({ returning: "representation" })
@@ -225,7 +233,7 @@ export async function deleteInfo(id: number): Promise<PostgrestError | null> {
 
   if (infoError || !info || info.length < 1) {
     console.error(infoError);
-    return infoError;
+    return { error: infoError };
   }
 
   const { error: newsError } = await supabase
@@ -235,8 +243,8 @@ export async function deleteInfo(id: number): Promise<PostgrestError | null> {
 
   if (newsError) {
     console.error(newsError);
-    return newsError;
+    return { error: newsError };
   }
 
-  return null;
+  return { error: null };
 }

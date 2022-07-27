@@ -37,10 +37,10 @@ import { useSession } from "@utils/hooks/auth";
 
 // Types
 import { LangCode } from "@utils/types/common";
-import { NewsItemInfoNoDate } from "@utils/types/news";
+import { InfoPage } from "@utils/types/news";
 import { createTitleStr } from "@utils/helpers/title";
 
-const InfoPage: NextPage<{ info: NewsItemInfoNoDate }> = ({ info }) => {
+const InfoPage: NextPage<{ info: InfoPage }> = ({ info }) => {
   const locale = useRouter().locale as LangCode;
   const { t } = useTranslation("common");
   const session = useSession();
