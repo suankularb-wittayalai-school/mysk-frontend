@@ -21,9 +21,9 @@ import {
 } from "@suankularb-components/react";
 
 // Types
-import { StudentForm } from "@utils/types/news";
+import { StudentFormItem } from "@utils/types/news";
 
-const StudentFormCard = ({ form }: { form: StudentForm }): JSX.Element => {
+const StudentFormCard = ({ form }: { form: StudentFormItem }): JSX.Element => {
   const locale = useRouter().locale as "en-US" | "th";
   const { t } = useTranslation("news");
 
@@ -82,11 +82,11 @@ const StudentFormCard = ({ form }: { form: StudentForm }): JSX.Element => {
 const TeacherClassSection = ({
   studentForms: forms,
 }: {
-  studentForms: Array<StudentForm>;
+  studentForms: Array<StudentFormItem>;
 }): JSX.Element => {
   const { t } = useTranslation(["dashboard", "news"]);
   const [newsFilter, setNewsFilter] = useState<Array<string>>([]);
-  const [filteredNews, setFilteredNews] = useState<Array<StudentForm>>(forms);
+  const [filteredNews, setFilteredNews] = useState<Array<StudentFormItem>>(forms);
 
   useEffect(
     () => {

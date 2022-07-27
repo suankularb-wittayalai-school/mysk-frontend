@@ -34,14 +34,14 @@ import { animationTransition } from "@utils/animations/config";
 import { getSchedule } from "@utils/backend/schedule/schedule";
 
 // Types
-import { NewsList, StudentForm } from "@utils/types/news";
+import { NewsList, StudentFormItem } from "@utils/types/news";
 import { Schedule } from "@utils/types/schedule";
 
 // Hooks
 import { useTeacherAccount } from "@utils/hooks/auth";
 
 const TeacherHome: NextPage<{
-  studentForms: Array<StudentForm>;
+  studentForms: Array<StudentFormItem>;
   news: NewsList;
 }> = ({ studentForms, news }) => {
   const { t } = useTranslation("common");
@@ -131,7 +131,7 @@ const TeacherHome: NextPage<{
 };
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
-  const studentForms: Array<StudentForm> = [
+  const studentForms: Array<StudentFormItem> = [
     {
       id: 5,
       type: "payment",
