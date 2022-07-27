@@ -1,3 +1,4 @@
+import { FieldType } from "../news";
 import { PersonWName } from "../person";
 
 export type NewsDB = {
@@ -44,4 +45,21 @@ export type InfoTable = {
   body_th: string;
   body_en?: string;
   parent: number;
+};
+
+export type FormTable = Omit<FormDB | "students_done", "parent"> & {
+  students_done: number[];
+  parent: number;
+};
+
+export type FormQuestionsTable = {
+  id: number;
+  form: number;
+  label_th: string;
+  label_en?: string;
+  type: FieldType;
+  options: string[];
+  required: boolean;
+  range_start: number;
+  range_end: number;
 };
