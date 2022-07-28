@@ -1,4 +1,6 @@
 // External libraries
+import { FormEvent } from "react";
+
 import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -6,20 +8,7 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-// Components
-import NewsPageWrapper from "@components/news/NewsPageWrapper";
-
-// Backend
-import { getForm } from "@utils/backend/news/form";
-
-// Helpers
-import { getLocaleString } from "@utils/helpers/i18n";
-import { createTitleStr } from "@utils/helpers/title";
-
-// Types
-import { LangCode } from "@utils/types/common";
-import { FormPage as FormPageType } from "@utils/types/news";
-import { protectPageFor } from "@utils/helpers/route";
+// SK Components
 import {
   Actions,
   Checklist,
@@ -33,10 +22,24 @@ import {
   Range,
   TextArea,
 } from "@suankularb-components/react";
-import { FormEvent } from "react";
+
+// Components
+import NewsPageWrapper from "@components/news/NewsPageWrapper";
+
+// Backend
+import { getForm } from "@utils/backend/news/form";
+
+// Helpers
+import { getLocaleString } from "@utils/helpers/i18n";
+import { protectPageFor } from "@utils/helpers/route";
+import { createTitleStr } from "@utils/helpers/title";
+
+// Types
+import { LangCode } from "@utils/types/common";
+import { FormPage as FormPageType } from "@utils/types/news";
 
 const FormPage: NextPage<{ form: FormPageType }> = ({ form }) => {
-  const { t } = useTranslation("common");
+  const { t } = useTranslation(["news", "common"]);
   const locale = useRouter().locale as LangCode;
 
   function handleReset(e: FormEvent) {
@@ -99,6 +102,7 @@ const FormPage: NextPage<{ form: FormPageType }> = ({ form }) => {
                     value: option,
                     label: option,
                   }))}
+                  noOptionsText={t("input.none.noOptions", { ns: "common" })}
                   onChange={() => {}}
                 />
               ) : // File
@@ -107,6 +111,9 @@ const FormPage: NextPage<{ form: FormPageType }> = ({ form }) => {
                   key={field.id}
                   name={getLocaleString(field.label, locale)}
                   label={getLocaleString(field.label, locale)}
+                  noneAttachedMsg={t("input.none.noFilesAttached", {
+                    ns: "common",
+                  })}
                   onChange={() => {}}
                 />
               ) : ["multiple_choice", "check_box", "scale"].includes(
@@ -149,8 +156,16 @@ const FormPage: NextPage<{ form: FormPageType }> = ({ form }) => {
             )}
           </div>
           <Actions className="w-full">
-            <FormButton label="Reset" type="reset" appearance="outlined" />
-            <FormButton label="Submit form" type="submit" appearance="filled" />
+            <FormButton
+              label={t("pageAction.form.reset")}
+              type="reset"
+              appearance="outlined"
+            />
+            <FormButton
+              label={t("pageAction.form.submit")}
+              type="submit"
+              appearance="filled"
+            />
           </Actions>
         </form>
       </NewsPageWrapper>
@@ -173,7 +188,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   return {
     props: {
-      ...(await serverSideTranslations(locale as LangCode, ["common"])),
+      ...(await serverSideTranslations(locale as LangCode, ["common", "news"])),
       form,
     },
   };

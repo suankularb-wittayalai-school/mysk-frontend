@@ -44,5 +44,11 @@
       "do": "Pay",
       "edit": "See payment"
     }
+  },
+  "pageAction": {
+    "form": {
+      "reset": "Reset",
+      "submit": "Submit form"
+    }
   }
 }
