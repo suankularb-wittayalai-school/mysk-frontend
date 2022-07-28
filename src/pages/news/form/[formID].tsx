@@ -24,6 +24,7 @@ import {
   Actions,
   Checklist,
   Dropdown,
+  FileInput,
   FormButton,
   FormElement,
   KeyboardInput,
@@ -98,6 +99,15 @@ const FormPage: NextPage<{ form: FormPageType }> = ({ form }) => {
                     value: option,
                     label: option,
                   }))}
+                  onChange={() => {}}
+                />
+              ) : // File
+              field.type == "file" ? (
+                <FileInput
+                  key={field.id}
+                  name={getLocaleString(field.label, locale)}
+                  label={getLocaleString(field.label, locale)}
+                  onChange={() => {}}
                 />
               ) : ["multiple_choice", "check_box", "scale"].includes(
                   field.type
