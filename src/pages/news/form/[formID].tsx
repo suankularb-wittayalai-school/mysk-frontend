@@ -27,7 +27,7 @@ import {
 import NewsPageWrapper from "@components/news/NewsPageWrapper";
 
 // Backend
-import { getForm } from "@utils/backend/news/form";
+import { getForm, sendForm } from "@utils/backend/news/form";
 
 // Helpers
 import { replaceWhen } from "@utils/helpers/array";
@@ -42,6 +42,7 @@ import { FormField, FormPage as FormPageType } from "@utils/types/news";
 const FormPage: NextPage<{ formPage: FormPageType }> = ({ formPage }) => {
   const { t } = useTranslation(["news", "common"]);
   const locale = useRouter().locale as LangCode;
+  const router = useRouter();
 
   type FormControlField = {
     id: number;
@@ -55,11 +56,13 @@ const FormPage: NextPage<{ formPage: FormPageType }> = ({ formPage }) => {
     (field) => ({
       id: field.id,
       label: getLocaleString(field.label, locale),
-      value: ["short_answer", "paragraph"].includes(field.type)
-        ? ""
-        : field.type == "scale"
-        ? 0
-        : null,
+      value:
+        field.default ||
+        (["short_answer", "paragraph"].includes(field.type)
+          ? ""
+          : field.type == "scale"
+          ? 0
+          : null),
       required: field.required,
     })
   );
@@ -76,6 +79,11 @@ const FormPage: NextPage<{ formPage: FormPageType }> = ({ formPage }) => {
       } as FormControlField)
     );
   }
+
+  function validate(): boolean {
+    return true;
+  }
+
   // (@SiravitPhokeed)
   // This function is, as of now, never called because currently there is no way
   // to control SK Component inputs.
@@ -84,9 +92,17 @@ const FormPage: NextPage<{ formPage: FormPageType }> = ({ formPage }) => {
     setForm(initalForm);
   }
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    console.table(form);
+    
+    if (!validate) return;
+
+    const { error } = await sendForm(
+      form.map((field) => ({ id: field.id, value: field.value }))
+    );
+
+    if (error) return;
+    router.push("/news");
   }
 
   return (

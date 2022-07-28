@@ -1,5 +1,5 @@
 // Types
-import { FormDB } from "@utils/types/database/news";
+import { FormDB, FormQuestionsTable } from "@utils/types/database/news";
 import { BackendReturn } from "@utils/types/common";
 import { FormPage, NewsItemFormNoDate } from "@utils/types/news";
 
@@ -43,4 +43,12 @@ export async function getForm(
   }
 
   return { data: await db2FormPage(data as FormDB), error: null };
+}
+
+export async function sendForm(
+  form: { id: number; value: string | number | string[] | File | null }[]
+): Promise<BackendReturn<FormQuestionsTable[]>> {
+  // TODO: Send form data to Supabase
+
+  return { data: [], error: null };
 }
