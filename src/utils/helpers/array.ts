@@ -1,5 +1,5 @@
 export function range(to: number) {
-  return Array.from({ length: to }, (x, i) => i);
+  return Array.from({ length: to }, (_, i) => i);
 }
 
 export function sumArray(array: number[]) {
@@ -8,6 +8,12 @@ export function sumArray(array: number[]) {
 
 export function addAtIndex(array: any[], index: number, newItem: any) {
   return [...array.slice(0, index), newItem, ...array.slice(index)];
+}
+
+export function replaceWhen(array: any[], filter: (item: any) => boolean, newItem: any) {
+  const index = array.findIndex(filter);
+  if (index != -1) array.splice(index, 1, newItem);
+  return array;
 }
 
 export function wrapPartOfArray(

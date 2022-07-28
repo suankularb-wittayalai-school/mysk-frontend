@@ -157,7 +157,7 @@ export async function db2FormPage(form: FormDB) {
     console.error(fieldsError);
   }
   if (fields) {
-    formatted.content.fields = fields.map(db2Field);
+    formatted.content.fields = fields.map(db2Field).sort((a, b) => a.id - b.id);
   }
 
   return formatted;

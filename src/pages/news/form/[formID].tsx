@@ -1,5 +1,5 @@
 // External libraries
-import { FormEvent } from "react";
+import { FormEvent, useState } from "react";
 
 import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
@@ -30,17 +30,47 @@ import NewsPageWrapper from "@components/news/NewsPageWrapper";
 import { getForm } from "@utils/backend/news/form";
 
 // Helpers
+import { replaceWhen } from "@utils/helpers/array";
 import { getLocaleString } from "@utils/helpers/i18n";
 import { protectPageFor } from "@utils/helpers/route";
 import { createTitleStr } from "@utils/helpers/title";
 
 // Types
 import { LangCode } from "@utils/types/common";
-import { FormPage as FormPageType } from "@utils/types/news";
+import { FormField, FormPage as FormPageType } from "@utils/types/news";
 
-const FormPage: NextPage<{ form: FormPageType }> = ({ form }) => {
+const FormPage: NextPage<{ formPage: FormPageType }> = ({ formPage }) => {
   const { t } = useTranslation(["news", "common"]);
   const locale = useRouter().locale as LangCode;
+
+  type FormControlField = {
+    id: number;
+    label: string;
+    value: string | number | string[] | File | null;
+    required: boolean;
+  };
+
+  // Form control
+  const [form, setForm] = useState<FormControlField[]>(
+    formPage.content.fields.map((field) => ({
+      id: field.id,
+      label: getLocaleString(field.label, locale),
+      value: ["short_answer", "paragraph"].includes(field.type)
+        ? ""
+        : field.type == "scale"
+        ? 0
+        : null,
+      required: field.required,
+    }))
+  );
+
+  function updateForm(newValue: FormControlField["value"], field: FormField) {
+    replaceWhen(form, (item: FormControlField) => field.id == item.id, {
+      label: getLocaleString(field.label, locale),
+      value: newValue,
+      required: field.required,
+    } as FormControlField);
+  }
 
   function handleReset(e: FormEvent) {
     e.preventDefault();
@@ -50,22 +80,21 @@ const FormPage: NextPage<{ form: FormPageType }> = ({ form }) => {
     e.preventDefault();
   }
 
-  // TODO: Render Form
   return (
     <>
       <Head>
         <title>
-          {createTitleStr(getLocaleString(form.content.title, locale), t)}
+          {createTitleStr(getLocaleString(formPage.content.title, locale), t)}
         </title>
       </Head>
-      <NewsPageWrapper news={form}>
+      <NewsPageWrapper news={formPage}>
         <form
           className="mt-12 flex flex-col items-center"
           onReset={handleReset}
           onSubmit={handleSubmit}
         >
           <div className="w-full sm:w-1/2 md:w-1/3">
-            {form.content.fields.map((field) =>
+            {formPage.content.fields.map((field) =>
               // Short answer
               field.type == "short_answer" ? (
                 <KeyboardInput
@@ -73,7 +102,7 @@ const FormPage: NextPage<{ form: FormPageType }> = ({ form }) => {
                   name={getLocaleString(field.label, locale)}
                   type="text"
                   label={getLocaleString(field.label, locale)}
-                  onChange={() => {}}
+                  onChange={(e) => updateForm(e, field)}
                 />
               ) : // Paragraph
               field.type == "paragraph" ? (
@@ -81,7 +110,7 @@ const FormPage: NextPage<{ form: FormPageType }> = ({ form }) => {
                   key={field.id}
                   name={getLocaleString(field.label, locale)}
                   label={getLocaleString(field.label, locale)}
-                  onChange={() => {}}
+                  onChange={(e) => updateForm(e, field)}
                 />
               ) : // Date and time
               ["date", "time"].includes(field.type) ? (
@@ -90,7 +119,7 @@ const FormPage: NextPage<{ form: FormPageType }> = ({ form }) => {
                   name={getLocaleString(field.label, locale)}
                   type={field.type as "date" | "time"}
                   label={getLocaleString(field.label, locale)}
-                  onChange={() => {}}
+                  onChange={(e) => updateForm(e, field)}
                 />
               ) : // Dropdown
               field.type == "dropdown" ? (
@@ -103,7 +132,7 @@ const FormPage: NextPage<{ form: FormPageType }> = ({ form }) => {
                     label: option,
                   }))}
                   noOptionsText={t("input.none.noOptions", { ns: "common" })}
-                  onChange={() => {}}
+                  onChange={(e: string) => updateForm(e, field)}
                 />
               ) : // File
               field.type == "file" ? (
@@ -114,12 +143,12 @@ const FormPage: NextPage<{ form: FormPageType }> = ({ form }) => {
                   noneAttachedMsg={t("input.none.noFilesAttached", {
                     ns: "common",
                   })}
-                  onChange={() => {}}
+                  onChange={(e) => updateForm(e, field)}
                 />
               ) : ["multiple_choice", "check_box", "scale"].includes(
                   field.type
                 ) ? (
-                <FormElement label={getLocaleString(field.label, locale)}>
+                <FormElement label={getLocaleString(field.label, locale)} className="!mb-6">
                   {field.type == "multiple_choice" ? (
                     // Multiple choice
                     <RadioGroup
@@ -129,7 +158,7 @@ const FormPage: NextPage<{ form: FormPageType }> = ({ form }) => {
                         value: option,
                         label: option,
                       }))}
-                      onChange={() => {}}
+                      onChange={(e) => updateForm(e, field)}
                     />
                   ) : field.type == "check_box" ? (
                     // Check boxes
@@ -140,7 +169,7 @@ const FormPage: NextPage<{ form: FormPageType }> = ({ form }) => {
                         value: option,
                         label: option,
                       }))}
-                      onChange={() => {}}
+                      onChange={(e: string[]) => updateForm(e, field)}
                     />
                   ) : field.type == "scale" ? (
                     // Scale
@@ -148,7 +177,7 @@ const FormPage: NextPage<{ form: FormPageType }> = ({ form }) => {
                       name={getLocaleString(field.label, locale)}
                       min={field.range.start}
                       max={field.range.end}
-                      onChange={() => {}}
+                      onChange={(e) => updateForm(e, field)}
                     />
                   ) : null}
                 </FormElement>
@@ -160,6 +189,7 @@ const FormPage: NextPage<{ form: FormPageType }> = ({ form }) => {
               label={t("pageAction.form.reset")}
               type="reset"
               appearance="outlined"
+              disabled
             />
             <FormButton
               label={t("pageAction.form.submit")}
@@ -183,13 +213,13 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   if (!params?.formID) return { notFound: true };
 
-  const { data: form, error } = await getForm(Number(params?.formID));
+  const { data: formPage, error } = await getForm(Number(params?.formID));
   if (error) return { notFound: true };
 
   return {
     props: {
       ...(await serverSideTranslations(locale as LangCode, ["common", "news"])),
-      form,
+      formPage,
     },
   };
 };

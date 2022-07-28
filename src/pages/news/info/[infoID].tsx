@@ -1,31 +1,14 @@
 // External libraries
-import { motion } from "framer-motion";
-
 import { GetStaticPaths, GetStaticProps, NextPage } from "next";
-import Image from "next/image";
 import Head from "next/head";
-import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-// SK Components
-import {
-  Actions,
-  LinkButton,
-  MaterialIcon,
-  NoticebarManager,
-  Section,
-  Title,
-} from "@suankularb-components/react";
-
 // Components
 import Markdown from "@components/Markdown";
 import NewsPageWrapper from "@components/news/NewsPageWrapper";
-
-// Animations
-import { enterPageTransition } from "@utils/animations/config";
 
 // Backend
 import { getAllInfoIDs, getInfo } from "@utils/backend/news/info";
@@ -34,30 +17,28 @@ import { getAllInfoIDs, getInfo } from "@utils/backend/news/info";
 import { getLocaleString } from "@utils/helpers/i18n";
 import { createTitleStr } from "@utils/helpers/title";
 
-// Hooks
-import { useSession } from "@utils/hooks/auth";
-
 // Types
 import { LangCode } from "@utils/types/common";
 import { InfoPage } from "@utils/types/news";
 
-const InfoPage: NextPage<{ info: InfoPage }> = ({ info }) => {
+const InfoPage: NextPage<{ infoPage: InfoPage }> = ({ infoPage }) => {
   const locale = useRouter().locale as LangCode;
   const { t } = useTranslation("common");
-  const session = useSession();
 
   return (
     <>
       <Head>
         <title>
-          {createTitleStr(getLocaleString(info.content.title, locale), t)}
+          {createTitleStr(getLocaleString(infoPage.content.title, locale), t)}
         </title>
       </Head>
 
-      <NewsPageWrapper news={info}>
+      <NewsPageWrapper news={infoPage}>
         <section>
-          {info.content.body && (
-            <Markdown>{getLocaleString(info.content.body, locale)}</Markdown>
+          {infoPage.content.body && (
+            <Markdown>
+              {getLocaleString(infoPage.content.body, locale)}
+            </Markdown>
           )}
         </section>
       </NewsPageWrapper>
@@ -66,13 +47,13 @@ const InfoPage: NextPage<{ info: InfoPage }> = ({ info }) => {
 };
 
 export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
-  const { data: info } = await getInfo(Number(params?.infoID));
-  if (!info) return { notFound: true };
+  const { data: infoPage, error } = await getInfo(Number(params?.infoID));
+  if (error) return { notFound: true };
 
   return {
     props: {
       ...(await serverSideTranslations(locale as LangCode, ["common"])),
-      info,
+      infoPage,
     },
     revalidate: 300,
   };
