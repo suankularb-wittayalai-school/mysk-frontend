@@ -10,10 +10,11 @@ export type NewsItem =
   | NewsItemForm
   | NewsItemPayment;
 
-export type NewsItemNoDate = Omit<NewsItem, "postDate" | "dueDate"> & {
-  postDate: string;
-  dueDate?: string;
-};
+export type NewsItemNoDate =
+| NewsItemInfoNoDate
+| NewsItemStatsNoDate
+| NewsItemFormNoDate
+| NewsItemPaymentNoDate;
 
 export type NewsItemType = "info" | "stats" | "form" | "payment";
 

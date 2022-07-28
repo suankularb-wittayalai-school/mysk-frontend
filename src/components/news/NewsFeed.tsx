@@ -9,20 +9,20 @@ import NewsCard from "@components/news/NewsCard";
 import { animationTransition } from "@utils/animations/config";
 
 // Types
-import { NewsList } from "@utils/types/news";
+import { NewsItemNoDate, NewsListNoDate } from "@utils/types/news";
 
 const NewsFeed = ({
   news,
   isForAdmin,
   btnType,
 }: {
-  news: NewsList;
+  news: NewsItemNoDate[];
   isForAdmin?: boolean;
   btnType?: "filled" | "tonal" | "text" | "outlined";
 }): JSX.Element => (
   <section role="feed">
     <LayoutGroup>
-      <AnimatePresence>
+      <AnimatePresence initial={false}>
         <Masonry
           role="feed"
           breakpointCols={{ default: 3, 905: 2, 600: 1 }}
@@ -50,7 +50,10 @@ const NewsFeed = ({
                 transition={animationTransition}
               >
                 <NewsCard
-                  newsItem={newsItem}
+                  // (@SiravitPhokeed)
+                  // I have no idea what’s wro here so…um…apologies
+                  // for the `any`.
+                  newsItem={newsItem as any}
                   editable={isForAdmin}
                   btnType={btnType || "filled"}
                   showChips

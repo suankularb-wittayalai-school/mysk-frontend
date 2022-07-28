@@ -20,13 +20,17 @@ import {
 } from "@suankularb-components/react";
 
 // Types
-import { NewsItem, NewsItemType } from "@utils/types/news";
+import { NewsItem, NewsItemNoDate } from "@utils/types/news";
 
 // Helpers
 import { getLocaleString } from "@utils/helpers/i18n";
 import NewsIcon from "@components/icons/NewsIcon";
 
-const NewsStatus = ({ newsItem }: { newsItem: NewsItem }): JSX.Element => {
+const NewsStatus = ({
+  newsItem,
+}: {
+  newsItem: NewsItemNoDate;
+}): JSX.Element => {
   return (
     <div
       className={`${
@@ -34,7 +38,7 @@ const NewsStatus = ({ newsItem }: { newsItem: NewsItem }): JSX.Element => {
           ? "container-primary"
           : (newsItem.type == "form" || newsItem.type == "payment") &&
             newsItem.dueDate &&
-            isPast(newsItem.dueDate)
+            isPast(new Date(newsItem.dueDate))
           ? "bg-error text-on-error"
           : "container-tertiary"
       } grid aspect-square w-10 place-content-center rounded-lg`}
@@ -48,7 +52,7 @@ const NewsStatus = ({ newsItem }: { newsItem: NewsItem }): JSX.Element => {
   );
 };
 
-const NewsChipList = ({ newsItem }: { newsItem: NewsItem }): JSX.Element => {
+const NewsChipList = ({ newsItem }: { newsItem: NewsItemNoDate }): JSX.Element => {
   const { t } = useTranslation("news");
   const locale = useRouter().locale as "en-US" | "th";
 
@@ -93,9 +97,9 @@ const NewsChipList = ({ newsItem }: { newsItem: NewsItem }): JSX.Element => {
         // Due date
         (newsItem.type == "form" || newsItem.type == "payment") &&
           newsItem.dueDate &&
-          (isPast(newsItem.dueDate) ? (
+          (isPast(new Date(newsItem.dueDate)) ? (
             <Chip
-              name={formatDistanceToNowStrict(newsItem.dueDate, {
+              name={formatDistanceToNowStrict(new Date(newsItem.dueDate), {
                 addSuffix: true,
                 locale: locale == "en-US" ? enUS : th,
               })}
@@ -110,10 +114,10 @@ const NewsChipList = ({ newsItem }: { newsItem: NewsItem }): JSX.Element => {
               name={
                 <Trans i18nKey="itemDue.dueWithin" ns="news">
                   {{
-                    dueDate: newsItem.dueDate.toLocaleDateString(locale, {
-                      month: "short",
-                      day: "numeric",
-                    }),
+                    dueDate: new Date(newsItem.dueDate).toLocaleDateString(
+                      locale,
+                      { month: "short", day: "numeric" }
+                    ),
                   }}
                 </Trans>
               }
@@ -133,7 +137,7 @@ const NewsCard = ({
   showChips,
   btnType,
 }: {
-  newsItem: NewsItem;
+  newsItem: NewsItemNoDate;
   editable?: boolean;
   showChips?: boolean;
   btnType?: "filled" | "outlined" | "text" | "tonal";
@@ -154,8 +158,10 @@ const NewsCard = ({
           <div className="flex divide-x divide-outline">
             <span className="pr-2">{t(`itemType.${newsItem.type}`)}</span>
             <time className="pl-2 text-outline">
-              {newsItem.postDate.toLocaleDateString(locale, {
-                year: isThisYear(newsItem.postDate) ? undefined : "numeric",
+              {new Date(newsItem.postDate).toLocaleDateString(locale, {
+                year: isThisYear(new Date(newsItem.postDate))
+                  ? undefined
+                  : "numeric",
                 month: "short",
                 day: "numeric",
               })}
