@@ -10,7 +10,11 @@ export function addAtIndex(array: any[], index: number, newItem: any) {
   return [...array.slice(0, index), newItem, ...array.slice(index)];
 }
 
-export function replaceWhen(array: any[], filter: (item: any) => boolean, newItem: any) {
+export function replaceWhen(
+  array: any[],
+  filter: (item: any) => boolean,
+  newItem: any
+) {
   const index = array.findIndex(filter);
   if (index != -1) array.splice(index, 1, newItem);
   return array;

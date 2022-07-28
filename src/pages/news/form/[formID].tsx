@@ -69,6 +69,7 @@ const FormPage: NextPage<{ formPage: FormPageType }> = ({ formPage }) => {
   function updateForm(newValue: FormControlField["value"], field: FormField) {
     setForm(
       replaceWhen(form, (item: FormControlField) => field.id == item.id, {
+        id: field.id,
         label: getLocaleString(field.label, locale),
         value: newValue,
         required: field.required,
@@ -85,6 +86,7 @@ const FormPage: NextPage<{ formPage: FormPageType }> = ({ formPage }) => {
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    console.table(form);
   }
 
   return (
