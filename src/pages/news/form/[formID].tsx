@@ -22,10 +22,14 @@ import { FormPage as FormPageType } from "@utils/types/news";
 import { protectPageFor } from "@utils/helpers/route";
 import {
   Actions,
+  Checklist,
   Dropdown,
   FormButton,
+  FormElement,
   KeyboardInput,
   NativeInput,
+  RadioGroup,
+  Range,
   TextArea,
 } from "@suankularb-components/react";
 import { FormEvent } from "react";
@@ -33,18 +37,6 @@ import { FormEvent } from "react";
 const FormPage: NextPage<{ form: FormPageType }> = ({ form }) => {
   const { t } = useTranslation("common");
   const locale = useRouter().locale as LangCode;
-
-  const fieldTypes = [
-    "short_answer",
-    "paragraph",
-    "multiple_choice",
-    "check_box",
-    "dropdown",
-    "file",
-    "date",
-    "time",
-    "scale",
-  ];
 
   function handleReset(e: FormEvent) {
     e.preventDefault();
@@ -107,6 +99,42 @@ const FormPage: NextPage<{ form: FormPageType }> = ({ form }) => {
                     label: option,
                   }))}
                 />
+              ) : ["multiple_choice", "check_box", "scale"].includes(
+                  field.type
+                ) ? (
+                <FormElement label={getLocaleString(field.label, locale)}>
+                  {field.type == "multiple_choice" ? (
+                    // Multiple choice
+                    <RadioGroup
+                      name={getLocaleString(field.label, locale)}
+                      options={(field.options as string[]).map((option) => ({
+                        id: option,
+                        value: option,
+                        label: option,
+                      }))}
+                      onChange={() => {}}
+                    />
+                  ) : field.type == "check_box" ? (
+                    // Check boxes
+                    <Checklist
+                      name={getLocaleString(field.label, locale)}
+                      options={(field.options as string[]).map((option) => ({
+                        id: option,
+                        value: option,
+                        label: option,
+                      }))}
+                      onChange={() => {}}
+                    />
+                  ) : field.type == "scale" ? (
+                    // Scale
+                    <Range
+                      name={getLocaleString(field.label, locale)}
+                      min={field.range.start}
+                      max={field.range.end}
+                      onChange={() => {}}
+                    />
+                  ) : null}
+                </FormElement>
               ) : null
             )}
           </div>

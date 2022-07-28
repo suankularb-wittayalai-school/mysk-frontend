@@ -14,7 +14,7 @@
     "@fontsource/sarabun": "^4.5.8",
     "@fontsource/sora": "^4.5.8",
     "@suankularb-components/css": "^2.7.4",
-    "@suankularb-components/react": "^2.6.2",
+    "@suankularb-components/react": "^2.8.0",
     "@supabase/supabase-js": "^1.35.2",
     "csv": "^6.0.5",
     "csv-parse": "^5.0.4",
