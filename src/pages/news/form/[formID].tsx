@@ -51,8 +51,8 @@ const FormPage: NextPage<{ formPage: FormPageType }> = ({ formPage }) => {
   };
 
   // Form control
-  const [form, setForm] = useState<FormControlField[]>(
-    formPage.content.fields.map((field) => ({
+  const initalForm: FormControlField[] = formPage.content.fields.map(
+    (field) => ({
       id: field.id,
       label: getLocaleString(field.label, locale),
       value: ["short_answer", "paragraph"].includes(field.type)
@@ -61,19 +61,26 @@ const FormPage: NextPage<{ formPage: FormPageType }> = ({ formPage }) => {
         ? 0
         : null,
       required: field.required,
-    }))
+    })
   );
 
-  function updateForm(newValue: FormControlField["value"], field: FormField) {
-    replaceWhen(form, (item: FormControlField) => field.id == item.id, {
-      label: getLocaleString(field.label, locale),
-      value: newValue,
-      required: field.required,
-    } as FormControlField);
-  }
+  const [form, setForm] = useState<FormControlField[]>(initalForm);
 
+  function updateForm(newValue: FormControlField["value"], field: FormField) {
+    setForm(
+      replaceWhen(form, (item: FormControlField) => field.id == item.id, {
+        label: getLocaleString(field.label, locale),
+        value: newValue,
+        required: field.required,
+      } as FormControlField)
+    );
+  }
+  // (@SiravitPhokeed)
+  // This function is, as of now, never called because currently there is no way
+  // to control SK Component inputs.
   function handleReset(e: FormEvent) {
     e.preventDefault();
+    setForm(initalForm);
   }
 
   function handleSubmit(e: FormEvent) {
@@ -148,7 +155,10 @@ const FormPage: NextPage<{ formPage: FormPageType }> = ({ formPage }) => {
               ) : ["multiple_choice", "check_box", "scale"].includes(
                   field.type
                 ) ? (
-                <FormElement label={getLocaleString(field.label, locale)} className="!mb-6">
+                <FormElement
+                  label={getLocaleString(field.label, locale)}
+                  className="!mb-6"
+                >
                   {field.type == "multiple_choice" ? (
                     // Multiple choice
                     <RadioGroup
@@ -177,6 +187,7 @@ const FormPage: NextPage<{ formPage: FormPageType }> = ({ formPage }) => {
                       name={getLocaleString(field.label, locale)}
                       min={field.range.start}
                       max={field.range.end}
+                      defaultValue={field.range.start}
                       onChange={(e) => updateForm(e, field)}
                     />
                   ) : null}
