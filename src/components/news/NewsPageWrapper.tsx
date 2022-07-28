@@ -54,7 +54,7 @@ const NewsPageWrapper = ({
         {/* This part will animate from News Card and Landing Feed Item. */}
         <motion.section
           className="section"
-          layoutId={`news-info-${news.id}`}
+          layoutId={["news", news.type, news.id].join("-")}
           transition={enterPageTransition}
         >
           {/* Banner image */}
