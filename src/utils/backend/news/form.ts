@@ -30,7 +30,9 @@ export async function getForm(
 ): Promise<BackendReturn<FormPage, null>> {
   const { data, error } = await supabase
     .from<FormDB>("forms")
-    .select("id, created_at, due_date, students_done, frequency, parent")
+    .select(
+      "id, created_at, due_date, students_done, frequency, parent:news(title_th, title_en, description_th, description_en, image, old_url)"
+    )
     .match({ id: formID })
     .limit(1)
     .single();

@@ -18,10 +18,8 @@ const FormPage: NextPage<{ form: FormPageType }> = ({ form }) => {
   const { t } = useTranslation("common");
   const locale = useRouter().locale as LangCode;
 
-  console.log(form);
-
   // TODO: Render Form
-  return <div>Form page</div>;
+  return <div>{JSON.stringify(form)}</div>;
 };
 
 export const getServerSideProps: GetServerSideProps = async ({
