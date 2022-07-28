@@ -1,5 +1,5 @@
 // External libraries
-import { FormEvent, useState } from "react";
+import { useState } from "react";
 
 import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
@@ -11,10 +11,10 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 // SK Components
 import {
   Actions,
+  Button,
   Checklist,
   Dropdown,
   FileInput,
-  FormButton,
   FormElement,
   KeyboardInput,
   NativeInput,
@@ -30,7 +30,6 @@ import NewsPageWrapper from "@components/news/NewsPageWrapper";
 import { getForm, sendForm } from "@utils/backend/news/form";
 
 // Helpers
-import { replaceWhen } from "@utils/helpers/array";
 import { getLocaleString } from "@utils/helpers/i18n";
 import { protectPageFor } from "@utils/helpers/route";
 import { createTitleStr } from "@utils/helpers/title";
@@ -46,16 +45,14 @@ const FormPage: NextPage<{ formPage: FormPageType }> = ({ formPage }) => {
 
   type FormControlField = {
     id: number;
-    label: string;
     value: string | number | string[] | File | null;
     required: boolean;
   };
 
   // Form control
-  const initalForm: FormControlField[] = formPage.content.fields.map(
-    (field) => ({
+  const [form, setForm] = useState<FormControlField[]>(
+    formPage.content.fields.map((field) => ({
       id: field.id,
-      label: getLocaleString(field.label, locale),
       value:
         field.default ||
         (["short_answer", "paragraph"].includes(field.type)
@@ -64,37 +61,25 @@ const FormPage: NextPage<{ formPage: FormPageType }> = ({ formPage }) => {
           ? 0
           : null),
       required: field.required,
-    })
+    }))
   );
-
-  const [form, setForm] = useState<FormControlField[]>(initalForm);
 
   function updateForm(newValue: FormControlField["value"], field: FormField) {
     setForm(
-      replaceWhen(form, (item: FormControlField) => field.id == item.id, {
-        id: field.id,
-        label: getLocaleString(field.label, locale),
-        value: newValue,
-        required: field.required,
-      } as FormControlField)
+      form.map((item) => {
+        if (field.id == item.id)
+          return { id: field.id, value: newValue, required: field.required };
+        return item;
+      })
     );
   }
 
   function validate(): boolean {
+    if (form.find((field) => field.required && !field.value)) return false;
     return true;
   }
 
-  // (@SiravitPhokeed)
-  // This function is, as of now, never called because currently there is no way
-  // to control SK Component inputs.
-  function handleReset(e: FormEvent) {
-    e.preventDefault();
-    setForm(initalForm);
-  }
-
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    
+  async function handleSubmit() {
     if (!validate) return;
 
     const { error } = await sendForm(
@@ -113,11 +98,7 @@ const FormPage: NextPage<{ formPage: FormPageType }> = ({ formPage }) => {
         </title>
       </Head>
       <NewsPageWrapper news={formPage}>
-        <form
-          className="mt-12 flex flex-col items-center"
-          onReset={handleReset}
-          onSubmit={handleSubmit}
-        >
+        <section className="mt-12 flex flex-col items-center">
           <div className="w-full sm:w-1/2 md:w-1/3">
             {formPage.content.fields.map((field) =>
               // Short answer
@@ -220,19 +201,14 @@ const FormPage: NextPage<{ formPage: FormPageType }> = ({ formPage }) => {
             )}
           </div>
           <Actions className="w-full">
-            <FormButton
-              label={t("pageAction.form.reset")}
-              type="reset"
-              appearance="outlined"
-              disabled
-            />
-            <FormButton
+            <Button
               label={t("pageAction.form.submit")}
-              type="submit"
-              appearance="filled"
+              type="filled"
+              onClick={handleSubmit}
+              disabled={!validate()}
             />
           </Actions>
-        </form>
+        </section>
       </NewsPageWrapper>
     </>
   );
