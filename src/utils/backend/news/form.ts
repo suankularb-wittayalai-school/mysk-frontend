@@ -37,10 +37,10 @@ export async function getForm(
     .limit(1)
     .single();
 
-  if (error || !data) {
+  if (error) {
     console.error(error);
-    return { data: null, error };
+    return { data: null, error: error };
   }
 
-  return { data: await db2FormPage(data), error: null };
+  return { data: await db2FormPage(data as FormDB), error: null };
 }

@@ -32,7 +32,7 @@ import TeachersSection from "@components/home-sections/TeachersSection";
 import { animationTransition } from "@utils/animations/config";
 
 // Types
-import { NewsList } from "@utils/types/news";
+import { NewsListNoDate } from "@utils/types/news";
 import { Teacher } from "@utils/types/person";
 import { Schedule } from "@utils/types/schedule";
 
@@ -45,7 +45,7 @@ import { useProtectPageFor } from "@utils/hooks/protect";
 
 // Page
 const StudentHome: NextPage<{
-  news: NewsList;
+  news: NewsListNoDate;
   schedule: Schedule;
   teachers: Array<Teacher>;
   classAdvisors: Array<Teacher>;
@@ -92,13 +92,7 @@ const StudentHome: NextPage<{
                   setShowEditProfile={setShowEditProfile}
                   setShowLogOut={setShowLogOut}
                 />
-                <NewsSection
-                  news={news.map((newsItem) => ({
-                    ...newsItem,
-                    postDate: new Date(newsItem.postDate),
-                  }))}
-                  showFilters
-                />
+                <NewsSection news={news} showFilters />
                 <StudentClassSection schedule={schedule} />
                 <TeachersSection
                   teachers={teachers}
@@ -128,7 +122,7 @@ const StudentHome: NextPage<{
 };
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
-  const news: NewsList = [];
+  const news: NewsListNoDate = [];
   const schedule: Schedule = {
     content: [
       {
@@ -149,16 +143,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         "dashboard",
       ])),
 
-      // (@SiravitPhokeed)
-      // Apparently NextJS doesn’t serialize Date when in development
-      // It does in production, though.
-      // ---
-      // Update: this isn’t a problem anymore as Supabase sends in
-      // dates as a string, which NextJS can deal with.
-      news: news.map((newsItem) => ({
-        ...newsItem,
-        postDate: newsItem.postDate.getTime(),
-      })),
+      news,
       schedule,
       teachers,
       classAdvisors,

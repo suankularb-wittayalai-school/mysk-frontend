@@ -26,9 +26,6 @@ import NewsFeed from "@components/news/NewsFeed";
 // Backend
 import { getNewsFeed } from "@utils/backend/news";
 
-// Helpers
-import { replaceNumberInNewsWithDate } from "@utils/helpers/news";
-
 // Hooks
 import { useProtectPageFor } from "@utils/hooks/protect";
 
@@ -85,13 +82,7 @@ const EditSection = (): JSX.Element => {
         <strong className="text-tertiary">{t("news.edit.cacheWarning")}</strong>
       </p>
       <NewsFeed
-        news={
-          data
-            ? (data
-                .map((newsItem) => replaceNumberInNewsWithDate(newsItem))
-                .filter((newsItem) => newsItem) as NewsList)
-            : []
-        }
+        news={data?.data || []}
         isForAdmin
         btnType="tonal"
       />

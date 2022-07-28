@@ -34,15 +34,15 @@ import { animationTransition } from "@utils/animations/config";
 import { getSchedule } from "@utils/backend/schedule/schedule";
 
 // Types
-import { NewsList, StudentFormItem } from "@utils/types/news";
+import { NewsList, NewsListNoDate, StudentFormItem } from "@utils/types/news";
 import { Schedule } from "@utils/types/schedule";
 
 // Hooks
 import { useTeacherAccount } from "@utils/hooks/auth";
 
 const TeacherHome: NextPage<{
-  studentForms: Array<StudentFormItem>;
-  news: NewsList;
+  studentForms: StudentFormItem[];
+  news: NewsListNoDate;
 }> = ({ studentForms, news }) => {
   const { t } = useTranslation("common");
   const [user] = useTeacherAccount({ loginRequired: true });
@@ -100,12 +100,7 @@ const TeacherHome: NextPage<{
                     postDate: new Date(newsItem.postDate),
                   }))}
                 />
-                <NewsSection
-                  news={news.map((newsItem) => ({
-                    ...newsItem,
-                    postDate: new Date(newsItem.postDate),
-                  }))}
-                />
+                <NewsSection news={news} />
               </RegularLayout>
             </motion.div>
 
@@ -131,7 +126,7 @@ const TeacherHome: NextPage<{
 };
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
-  const studentForms: Array<StudentFormItem> = [
+  const studentForms: StudentFormItem[] = [
     {
       id: 5,
       type: "payment",
@@ -161,24 +156,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
       },
     },
   ];
-  const news: NewsList = [
-    {
-      id: 12,
-      type: "stats",
-      postDate: new Date(2020, 0, 3),
-      content: {
-        title: {
-          "en-US": "COVID-19 Vaccination",
-          th: "การรับวัคซีน COVID-19",
-        },
-        description: {
-          "en-US":
-            "On the vaccination of all Suankularb students, including the number and the brand recieved.",
-          th: "การรวบรวมข้อมูลตัวเลขของนักเรียนโรงเรียนสวนกุหลาบวิทยาลัยที่ได้รับวัคซีนป้องกัน COVID-19",
-        },
-      },
-    },
-  ];
+  const news: NewsListNoDate = [];
 
   return {
     props: {
@@ -196,10 +174,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         ...newsItem,
         postDate: newsItem.postDate.getTime(),
       })),
-      news: news.map((newsItem) => ({
-        ...newsItem,
-        postDate: newsItem.postDate.getTime(),
-      })),
+      news,
     },
   };
 };

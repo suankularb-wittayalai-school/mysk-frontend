@@ -60,12 +60,12 @@ export async function getInfo(
     .limit(1)
     .single();
 
-  if (error || !data) {
+  if (error) {
     console.error(error);
     return { data: null, error };
   }
 
-  return { data: db2InfoPage(data), error: null };
+  return { data: db2InfoPage(data as InfoDB), error: null };
 }
 
 export async function uploadBanner(
