@@ -62,4 +62,5 @@ export type FormQuestionsTable = {
   required: boolean;
   range_start: number;
   range_end: number;
+  default?: string;
 };

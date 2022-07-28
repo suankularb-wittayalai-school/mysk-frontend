@@ -235,18 +235,12 @@ Landing.getLayout = (page: NextPage): JSX.Element => (
 
 export const getServerSideProps: GetServerSideProps = async ({
   locale,
-  req,
-}) => {
-  const redirect = await protectPageFor("public", req);
-  if (redirect) return redirect;
-
-  return {
-    props: {
-      ...(await serverSideTranslations(locale as string, [
-        "common",
-        "landing",
-      ])),
-      feed: await getLandingFeed(),
-    },
-  };
-};
+}) => ({
+  props: {
+    ...(await serverSideTranslations(locale as string, [
+      "common",
+      "landing",
+    ])),
+    feed: await getLandingFeed(),
+  },
+});

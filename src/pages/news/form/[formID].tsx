@@ -110,6 +110,7 @@ const FormPage: NextPage<{ formPage: FormPageType }> = ({ formPage }) => {
                   type="text"
                   label={getLocaleString(field.label, locale)}
                   onChange={(e) => updateForm(e, field)}
+                  defaultValue={field.default}
                 />
               ) : // Paragraph
               field.type == "paragraph" ? (
@@ -118,6 +119,7 @@ const FormPage: NextPage<{ formPage: FormPageType }> = ({ formPage }) => {
                   name={getLocaleString(field.label, locale)}
                   label={getLocaleString(field.label, locale)}
                   onChange={(e) => updateForm(e, field)}
+                  defaultValue={field.default}
                 />
               ) : // Date and time
               ["date", "time"].includes(field.type) ? (
@@ -127,6 +129,7 @@ const FormPage: NextPage<{ formPage: FormPageType }> = ({ formPage }) => {
                   type={field.type as "date" | "time"}
                   label={getLocaleString(field.label, locale)}
                   onChange={(e) => updateForm(e, field)}
+                  defaultValue={field.default}
                 />
               ) : // Dropdown
               field.type == "dropdown" ? (
@@ -140,6 +143,7 @@ const FormPage: NextPage<{ formPage: FormPageType }> = ({ formPage }) => {
                   }))}
                   noOptionsText={t("input.none.noOptions", { ns: "common" })}
                   onChange={(e: string) => updateForm(e, field)}
+                  defaultValue={field.default}
                 />
               ) : // File
               field.type == "file" ? (
@@ -156,6 +160,7 @@ const FormPage: NextPage<{ formPage: FormPageType }> = ({ formPage }) => {
                   field.type
                 ) ? (
                 <FormElement
+                  key={field.id}
                   label={getLocaleString(field.label, locale)}
                   className="!mb-6"
                 >
@@ -169,6 +174,7 @@ const FormPage: NextPage<{ formPage: FormPageType }> = ({ formPage }) => {
                         label: option,
                       }))}
                       onChange={(e) => updateForm(e, field)}
+                      defaultValue={field.default}
                     />
                   ) : field.type == "check_box" ? (
                     // Check boxes
@@ -187,8 +193,8 @@ const FormPage: NextPage<{ formPage: FormPageType }> = ({ formPage }) => {
                       name={getLocaleString(field.label, locale)}
                       min={field.range.start}
                       max={field.range.end}
-                      defaultValue={field.range.start}
                       onChange={(e) => updateForm(e, field)}
+                      defaultValue={Number(field.default)}
                     />
                   ) : null}
                 </FormElement>

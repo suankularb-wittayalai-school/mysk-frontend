@@ -2,10 +2,12 @@
 
 const { i18n } = require("./next-i18next.config");
 
-module.exports = {
+const nextConfig = {
   reactStrictMode: true,
   images: {
     domains: ["ykqqepbodqjhiwfjcvxe.supabase.co"],
   },
   i18n,
 };
+
+module.exports = nextConfig;

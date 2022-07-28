@@ -117,6 +117,7 @@ export interface FormField {
     start: number;
     end: number;
   };
+  default?: string;
 }
 
 export type FormPage = Omit<NewsItemFormNoDate, "done"> & {

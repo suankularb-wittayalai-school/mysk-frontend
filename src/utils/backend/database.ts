@@ -124,6 +124,7 @@ export function db2Field(field: FormQuestionsTable) {
       start: field.range_start,
       end: field.range_end,
     },
+    default: field.default,
   };
   return formatted;
 }
@@ -153,12 +154,9 @@ export async function db2FormPage(form: FormDB) {
     .select("*")
     .eq("form", form.id);
 
-  if (fieldsError) {
-    console.error(fieldsError);
-  }
-  if (fields) {
+  if (fieldsError) console.error(fieldsError);
+  if (fields)
     formatted.content.fields = fields.map(db2Field).sort((a, b) => a.id - b.id);
-  }
 
   return formatted;
 }

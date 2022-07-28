@@ -60,12 +60,12 @@ const ScheduleSection = ({
 const SubjectListSection = ({
   subjectList,
 }: {
-  subjectList: Array<SubjectListItem>;
+  subjectList: SubjectListItem[];
 }): JSX.Element => {
   const { t } = useTranslation("schedule");
   const locale = useRouter().locale as "en-US" | "th";
   const [filterredList, setFilterredList] =
-    useState<Array<SubjectListItem>>(subjectList);
+    useState<SubjectListItem[]>(subjectList);
   const [query, setQuery] = useState<string>("");
 
   useEffect(() => {
