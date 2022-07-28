@@ -73,9 +73,10 @@ export const getServerSideProps: GetServerSideProps = async ({
   locale,
   req,
 }) => {
-  const userRole =
-    (await supabase.auth.api.getUserByCookie(req)).user?.user_metadata.role ||
-    "public";
+  const userRole = (await supabase.auth.api.getUserByCookie(req)).user
+    ?.user_metadata.role;
+  if (!userRole)
+    return { redirect: { destination: "/account/login", permanent: false } };
   const { data: newsFeed } = await getNewsFeed(userRole);
 
   return {
