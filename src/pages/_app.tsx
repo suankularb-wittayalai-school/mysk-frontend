@@ -46,6 +46,7 @@ import { Role } from "@utils/types/person";
 
 // Supabase
 import { supabase } from "@utils/supabaseClient";
+import { AuthChangeEvent } from "@supabase/supabase-js";
 
 const App = ({
   Component,
@@ -59,11 +60,18 @@ const App = ({
   const [queryClient] = useState(() => new QueryClient());
 
   // Authentication
+  const [authEvent, setAuthEvent] = useState<AuthChangeEvent>("SIGNED_OUT");
   const router = useRouter();
   // Listen for auth state change
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log({ authEvent, event });
+
+        // Only continue if auth state changes
+        if (authEvent != "SIGNED_OUT" && authEvent == event) return;
+        setAuthEvent(event);
+
         // Cookie
         await fetch(`/api/account/cookie`, {
           method: "POST",
