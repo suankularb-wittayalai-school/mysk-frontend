@@ -22,7 +22,6 @@ import { range } from "@utils/helpers/array";
 import { createTitleStr } from "@utils/helpers/title";
 
 // Hooks
-import { useProtectPageFor } from "@utils/hooks/protect";
 
 const DatabaseSection = (): JSX.Element => {
   const { t } = useTranslation("admin");
@@ -124,7 +123,6 @@ const ScheduleSection = (): JSX.Element => {
 
 const Admin: NextPage = () => {
   const { t } = useTranslation(["admin", "common"]);
-  useProtectPageFor("admin");
 
   return (
     <>

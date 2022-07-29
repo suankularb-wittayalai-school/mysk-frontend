@@ -46,18 +46,33 @@ const Login: NextPage = () => {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
 
-    // Signals loading
+    // Signal loading
     setLoading(true);
 
-    // Validates
+    // Validate
     if (!validate()) return;
 
-    // Sends
+    // Send
     const { user } = await supabase.auth.signIn({ email, password });
 
+    // Get user role
     const role = user?.user_metadata.role;
-    if (role == "student") router.push("/s/home");
-    else if (role == "teacher") router.push("/t/home");
+
+    // (@SiravitPhokeed)
+    // Apparently the middleware is too fast. It immediately blocks the redirect the dashboards
+    // because even though the user is authenticated, only the session knows that and the cookie
+    // is in the process of being set. The middleware checks for cookie before the auth cookie
+    // is set, thinks the user is not authenticated, and blocks it.
+    // My crappy solution? Delay the push a bit and give some time for the cookie to be set. I’m
+    // kinda comfortable with this because people with slow internet connections (whom this
+    // wouldn’t work for) would probably have noticed that the Navigation has changed and clicked
+    // “Home” on there instead.
+
+    // Redirect after delay
+    setTimeout(() => {
+      if (role == "student") router.push("/s/home");
+      else if (role == "teacher") router.push("/t/home");
+    }, 10);
   }
 
   return (

@@ -17,7 +17,7 @@ export async function middleware(req: NextRequest) {
   // (@SiravitPhokeed)
   // I’m not using the obvious `supabase.auth.api.getUserByCookie(req)` here
   // because NextJS Middleware is so new that that isn’t supported here yet!
-  // As a workaround, we’re fetching directly from Supabase.
+  // As a workaround, we’re fetching directly from the Supabase API.
 
   // Fetch user from Supabase
   const user = await (
@@ -43,7 +43,7 @@ export async function middleware(req: NextRequest) {
       route.startsWith("/t/admin/")
       ? "admin"
       : // Student pages
-      route.startsWith("/s/")
+      route.startsWith("/s/") || route.startsWith("/news/form/")
       ? "student"
       : // Teacher pages
       route.startsWith("/t/")

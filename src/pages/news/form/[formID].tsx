@@ -31,7 +31,7 @@ import { getForm, sendForm } from "@utils/backend/news/form";
 
 // Helpers
 import { getLocaleString } from "@utils/helpers/i18n";
-import { protectPageFor } from "@utils/helpers/route";
+
 import { createTitleStr } from "@utils/helpers/title";
 
 // Types
@@ -217,11 +217,7 @@ const FormPage: NextPage<{ formPage: FormPageType }> = ({ formPage }) => {
 export const getServerSideProps: GetServerSideProps = async ({
   locale,
   params,
-  req,
 }) => {
-  const redirect = await protectPageFor("student", req);
-  if (redirect) return redirect;
-
   if (!params?.formID) return { notFound: true };
 
   const { data: formPage, error } = await getForm(Number(params?.formID));

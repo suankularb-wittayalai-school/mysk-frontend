@@ -60,13 +60,12 @@ const App = ({
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        if (event == "SIGNED_IN")
-          await fetch(`/api/account/cookie`, {
-            method: "POST",
-            headers: new Headers({ "Content-Type": "application/json" }),
-            credentials: "same-origin",
-            body: JSON.stringify({ event, session }),
-          });
+        await fetch(`/api/account/cookie`, {
+          method: "POST",
+          headers: new Headers({ "Content-Type": "application/json" }),
+          credentials: "same-origin",
+          body: JSON.stringify({ event, session }),
+        });
       }
     );
     return () => authListener?.unsubscribe();
