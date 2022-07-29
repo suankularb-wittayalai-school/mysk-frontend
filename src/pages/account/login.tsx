@@ -53,7 +53,11 @@ const Login: NextPage = () => {
     if (!validate()) return;
 
     // Sends
-    await supabase.auth.signIn({ email, password });
+    const { user } = await supabase.auth.signIn({ email, password });
+
+    const role = user?.user_metadata.role;
+    if (role == "student") router.push("/s/home");
+    else if (role == "teacher") router.push("/t/home");
   }
 
   return (

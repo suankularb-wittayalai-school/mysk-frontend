@@ -40,8 +40,8 @@ import { FormField, FormPage as FormPageType } from "@utils/types/news";
 
 const FormPage: NextPage<{ formPage: FormPageType }> = ({ formPage }) => {
   const { t } = useTranslation(["news", "common"]);
-  const locale = useRouter().locale as LangCode;
   const router = useRouter();
+  const locale = router.locale as LangCode;
 
   type FormControlField = {
     id: number;

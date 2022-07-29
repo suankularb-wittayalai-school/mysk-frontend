@@ -41,6 +41,7 @@ const LogOutDialog = ({ show, onClose }: DialogProps): JSX.Element => {
       onSubmit={async () => {
         setLoading(true);
         await supabase.auth.signOut();
+        router.push("/");
       }}
     ></Dialog>
   );
