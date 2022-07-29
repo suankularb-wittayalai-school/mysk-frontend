@@ -36,29 +36,29 @@ export async function protectPageFor(
   pageRole: "public" | "admin" | Role,
   req: IncomingMessage & { cookies: NextApiRequestCookies }
 ): Promise<GetServerSidePropsResult<{ [key: string]: any }> | void> {
-  // Get the user from the cookie
-  const { user, error } = await supabase.auth.api.getUserByCookie(req);
-  if (error) {
-  if (pageRole == "public") return;
+  // // Get the user from the cookie
+  // const { user, error } = await supabase.auth.api.getUserByCookie(req);
+  // if (error) {
+  // if (pageRole == "public") return;
 
-    return {
-      props: {},
-      redirect: {
-        destination: "/account/login",
-        permanent: false,
-      },
-    };
-  }
+  //   return {
+  //     props: {},
+  //     redirect: {
+  //       destination: "/account/login",
+  //       permanent: false,
+  //     },
+  //   };
+  // }
 
-  const userRole: Role | null = user?.user_metadata?.role;
-  const userIsAdmin: boolean = user?.user_metadata?.isAdmin;
+  // const userRole: Role | null = user?.user_metadata?.role;
+  // const userIsAdmin: boolean = user?.user_metadata?.isAdmin;
 
-  // Set the destination to redirect to (if mismatch)
-  let destination = "/";
-  if (pageRole != "public" && user == null) destination = "/account/login";
-  else if ((pageRole == "admin" && userIsAdmin) || pageRole == userRole) return;
-  else if (userRole == "student") destination = "/s/home";
-  else if (userRole == "teacher") destination = "/t/home";
+  // // Set the destination to redirect to (if mismatch)
+  // let destination = "/";
+  // if (pageRole != "public" && user == null) destination = "/account/login";
+  // else if ((pageRole == "admin" && userIsAdmin) || pageRole == userRole) return;
+  // else if (userRole == "student") destination = "/s/home";
+  // else if (userRole == "teacher") destination = "/t/home";
 
-  return { props: {}, redirect: { destination, permanent: false } };
+  // return { props: {}, redirect: { destination, permanent: false } };
 }
