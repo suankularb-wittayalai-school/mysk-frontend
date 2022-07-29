@@ -63,9 +63,9 @@ import { useTeacherAccount } from "@utils/hooks/auth";
 import { Class as ClassType } from "@utils/types/class";
 import { Contact } from "@utils/types/contact";
 import { Student, Teacher } from "@utils/types/person";
-import { StudentForm } from "@utils/types/news";
+import { StudentFormItem } from "@utils/types/news";
 
-const StudentFormCard = ({ form }: { form: StudentForm }): JSX.Element => {
+const StudentFormCard = ({ form }: { form: StudentFormItem }): JSX.Element => {
   const locale = useRouter().locale as "en-US" | "th";
   const { t } = useTranslation("news");
 
@@ -124,11 +124,11 @@ const StudentFormCard = ({ form }: { form: StudentForm }): JSX.Element => {
 const FormSection = ({
   studentForms: forms,
 }: {
-  studentForms: Array<StudentForm>;
+  studentForms: Array<StudentFormItem>;
 }): JSX.Element => {
   const { t } = useTranslation(["dashboard", "news", "class"]);
   const [newsFilter, setNewsFilter] = useState<Array<string>>([]);
-  const [filteredNews, setFilteredNews] = useState<Array<StudentForm>>(forms);
+  const [filteredNews, setFilteredNews] = useState<Array<StudentFormItem>>(forms);
   const locale = useRouter().locale as "en-US" | "th";
 
   useEffect(
@@ -385,7 +385,7 @@ const StudentListSection = ({
 // Page
 const Class: NextPage<{
   classItem: ClassType;
-  studentForms: Array<StudentForm>;
+  studentForms: Array<StudentFormItem>;
 }> = ({ classItem, studentForms }) => {
   const router = useRouter();
   const { t } = useTranslation("common");

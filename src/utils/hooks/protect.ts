@@ -1,8 +1,17 @@
-import { supabase } from "@utils/supabaseClient";
-import { Role } from "@utils/types/person";
+// External libraries
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
+// Supabase
+import { supabase } from "@utils/supabaseClient";
+
+// Types
+import { Role } from "@utils/types/person";
+
+/**
+ * Redirect if the user role doesn’t match the intended role for the page.
+ * @param pageRole The user must be in this role to visit this page
+ */
 export function useProtectPageFor(pageRole: "public" | "admin" | Role): void {
   const router = useRouter();
 

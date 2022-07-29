@@ -464,7 +464,7 @@ const ArticleConfig = ({
   // Delete article
   async function handleDelete() {
     if (existingData) {
-      const error = await deleteInfo(existingData.id);
+      const { error } = await deleteInfo(existingData.id);
       if (addToSnbQueue && error)
         addToSnbQueue({
           id: "delete-error",

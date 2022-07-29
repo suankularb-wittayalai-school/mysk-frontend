@@ -10,8 +10,6 @@ import { useRouter } from "next/router";
 import { useTranslation, Trans } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useEffect } from "react";
-
 // SK Components
 import {
   Button,
@@ -39,6 +37,8 @@ import { getLocaleString } from "@utils/helpers/i18n";
 
 // Hooks
 import { useSession } from "@utils/hooks/auth";
+import { protectPageFor } from "@utils/helpers/route";
+import { useEffect } from "react";
 
 // Page-specific types
 type Feed = { lastUpdated: Date; content: NewsList };
@@ -46,6 +46,7 @@ type Feed = { lastUpdated: Date; content: NewsList };
 // News
 const LandingFeed = ({ feed }: { feed: Feed }): JSX.Element => {
   const { t } = useTranslation("landing");
+  const locale = useRouter().locale as LangCode;
 
   return (
     <section
@@ -64,10 +65,13 @@ const LandingFeed = ({ feed }: { feed: Feed }): JSX.Element => {
           <p className="font-display">
             <Trans i18nKey="news.lastUpdated" ns="landing">
               {{
-                lastUpdated: new Date(feed.lastUpdated).toLocaleDateString(
-                  useRouter().locale,
-                  { year: "numeric", month: "long", day: "numeric" }
-                ),
+                lastUpdated:
+                  feed.lastUpdated &&
+                  new Date(feed.lastUpdated).toLocaleDateString(locale, {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  }),
               }}
             </Trans>
           </p>
@@ -203,17 +207,7 @@ const LandingBanner = (): JSX.Element => {
 
 // Page
 export default function Landing({ feed }: { feed: Feed }) {
-  const router = useRouter();
-  const session = useSession();
   const { t } = useTranslation(["landing", "common"]);
-
-  useEffect(() => {
-    if (session?.user) {
-      if (session.user.user_metadata.role === "student") router.push("/s/home");
-      else if (session.user.user_metadata.role === "teacher")
-        router.push("/t/home");
-    }
-  }, [session, router]);
 
   return (
     <>
@@ -239,9 +233,14 @@ Landing.getLayout = (page: NextPage): JSX.Element => (
   <Layout navIsTransparent>{page}</Layout>
 );
 
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+}) => ({
   props: {
-    ...(await serverSideTranslations(locale as string, ["common", "landing"])),
+    ...(await serverSideTranslations(locale as string, [
+      "common",
+      "landing",
+    ])),
     feed: await getLandingFeed(),
   },
 });

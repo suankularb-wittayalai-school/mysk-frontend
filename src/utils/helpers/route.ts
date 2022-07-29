@@ -1,4 +1,4 @@
-// Modules
+// External libraries
 import { IncomingMessage } from "http";
 
 import { GetServerSidePropsResult } from "next";
@@ -39,10 +39,14 @@ export async function protectPageFor(
   // Get the user from the cookie
   const { user, error } = await supabase.auth.api.getUserByCookie(req);
   if (error) {
-    console.error(error);
+  if (pageRole == "public") return;
+
     return {
       props: {},
-      redirect: { destination: "/account/login", permanent: false },
+      redirect: {
+        destination: "/account/login",
+        permanent: false,
+      },
     };
   }
 

@@ -202,7 +202,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   params,
   req,
 }) => {
-  const redirect = await protectPageFor("admin", req);
+  const redirect = await protectPageFor("student", req);
   if (redirect) return redirect;
 
   const teachers = await getTeacherList(

@@ -31,11 +31,11 @@ import { protectPageFor } from "@utils/helpers/route";
 
 // Types
 import { LangCode, WaitingSnackbar } from "@utils/types/common";
-import { NewsItemInfoNoDate } from "@utils/types/news";
+import { InfoPage } from "@utils/types/news";
 import AddImageToNewsDialog from "@components/dialogs/AddImageToNews";
 
 // Page
-const EditInfo: NextPage<{ existingData: NewsItemInfoNoDate }> = ({
+const EditInfo: NextPage<{ existingData: InfoPage }> = ({
   existingData,
 }): JSX.Element => {
   const { t } = useTranslation("admin");
@@ -148,7 +148,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   if (!params?.infoID) return { notFound: true };
 
-  const existingData = await getInfo(Number(params.infoID));
+  const { data: existingData } = await getInfo(Number(params.infoID));
   if (!existingData) return { notFound: true };
 
   return {

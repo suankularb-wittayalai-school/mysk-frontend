@@ -17,18 +17,18 @@ import {
 import NewsCard from "@components/news/NewsCard";
 
 // Types
-import { NewsList } from "@utils/types/news";
+import { NewsListNoDate } from "@utils/types/news";
 
 const NewsSection = ({
   news,
   showFilters,
 }: {
-  news: NewsList;
+  news: NewsListNoDate;
   showFilters?: boolean;
 }): JSX.Element => {
   const { t } = useTranslation("dashboard");
   const [newsFilter, setNewsFilter] = useState<Array<string>>([]);
-  const [filteredNews, setFilteredNews] = useState<NewsList>(news);
+  const [filteredNews, setFilteredNews] = useState<NewsListNoDate>(news);
 
   return (
     <Section>
