@@ -14,6 +14,27 @@ import type { NextRequest } from "next/server";
 import { Role } from "@utils/types/person";
 
 export async function middleware(req: NextRequest) {
+  // Get current page protection type
+  const route = req.nextUrl.pathname;
+  const pageRole: Role | "public" | "admin" | "not-protected" =
+    // Public pages
+    ["/", "/account/login", "/about"].includes(route)
+      ? "public"
+      : // Admin pages
+      route.startsWith("/t/admin/")
+      ? "admin"
+      : // Student pages
+      route.startsWith("/s/") || route.startsWith("/news/form/")
+      ? "student"
+      : // Teacher pages
+      route.startsWith("/t/")
+      ? "teacher"
+      : // Fallback (images, icons, manifest, etc.)
+        "not-protected";
+
+  // Ignore page without protection
+  if (pageRole == "not-protected") return NextResponse.next();
+
   // (@SiravitPhokeed)
   // I’m not using the obvious `supabase.auth.api.getUserByCookie(req)` here
   // because NextJS Middleware is so new that that isn’t supported here yet!
@@ -33,31 +54,11 @@ export async function middleware(req: NextRequest) {
   const userRole: Role | "public" = user?.user_metadata?.role || "public";
   const userIsAdmin: boolean = user?.user_metadata?.isAdmin;
 
-  // Get current page protection type
-  const route = req.nextUrl.pathname;
-  const pageRole: Role | "public" | "admin" | "not-protected" =
-    // Public pages
-    ["/", "/account/login", "/about"].includes(route)
-      ? "public"
-      : // Admin pages
-      route.startsWith("/t/admin/")
-      ? "admin"
-      : // Student pages
-      route.startsWith("/s/") || route.startsWith("/news/form/")
-      ? "student"
-      : // Teacher pages
-      route.startsWith("/t/")
-      ? "teacher"
-      : // Fallback (images, icons, manifest, etc.)
-        "not-protected";
-
   // Decide on destination based on user and page protection type
   let destination: string | null = null;
 
-  // Ignore page without protection
-  if (pageRole == "not-protected") return NextResponse.next();
   // Disallow public users from visiting private pages
-  else if (pageRole != "public" && userRole == "public")
+  if (pageRole != "public" && userRole == "public")
     destination = "/account/login";
   // Disallow non-admins from visiting admin pages
   else if ((pageRole == "admin" && userIsAdmin) || pageRole == userRole)

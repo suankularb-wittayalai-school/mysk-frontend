@@ -1,5 +1,17 @@
-import { Session } from "@supabase/supabase-js";
+import { AuthChangeEvent, Session } from "@supabase/supabase-js";
 import { supabase } from "@utils/supabaseClient";
+
+export async function setAuthCookies(
+  event: AuthChangeEvent,
+  session?: Session
+) {
+  await fetch(`/api/account/cookie`, {
+    method: "POST",
+    headers: new Headers({ "Content-Type": "application/json" }),
+    credentials: "same-origin",
+    body: JSON.stringify({ event, session }),
+  });
+}
 
 export function editProfile(formData: FormData) {}
 

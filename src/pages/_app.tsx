@@ -41,10 +41,6 @@ import "@styles/global.css";
 // Components
 import Layout from "@components/Layout";
 
-// Supabase
-import { supabase } from "@utils/supabaseClient";
-import { AuthChangeEvent } from "@supabase/supabase-js";
-
 const App = ({
   Component,
   pageProps,
@@ -55,21 +51,6 @@ const App = ({
 }) => {
   // Query client
   const [queryClient] = useState(() => new QueryClient());
-
-  // Authentication
-  useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        await fetch(`/api/account/cookie`, {
-          method: "POST",
-          headers: new Headers({ "Content-Type": "application/json" }),
-          credentials: "same-origin",
-          body: JSON.stringify({ event, session }),
-        });
-      }
-    );
-    return () => authListener?.unsubscribe();
-  }, []);
 
   // Layout
   // Use the layout defined at the page level, if available.
