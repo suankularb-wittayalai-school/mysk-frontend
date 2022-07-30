@@ -88,6 +88,7 @@ const FormPage: NextPage<{ formPage: FormPageType; personID: number }> = ({
     if (!validate) return;
 
     const { error } = await sendForm(
+      formPage.id,
       form.map((field) => ({ id: field.id, value: field.value })),
       personID
     );
