@@ -1,9 +1,7 @@
 // Modules
 import { getDay } from "date-fns";
 
-import { AnimatePresence, motion } from "framer-motion";
-
-import { GetStaticProps, NextPage } from "next";
+import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 
@@ -28,34 +26,31 @@ import NewsSection from "@components/home-sections/NewsSection";
 import StudentClassSection from "@components/home-sections/StudentClass";
 import TeachersSection from "@components/home-sections/TeachersSection";
 
-// Animations
-import { animationTransition } from "@utils/animations/config";
-
 // Types
 import { NewsListNoDate } from "@utils/types/news";
-import { Teacher } from "@utils/types/person";
+import { Student, Teacher } from "@utils/types/person";
 import { Schedule } from "@utils/types/schedule";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
 
 // Hooks
-import { useStudentAccount } from "@utils/hooks/auth";
+import { getStudentByCookie } from "@utils/backend/person/student";
 
 // Page
 const StudentHome: NextPage<{
+  user: Student;
   news: NewsListNoDate;
   schedule: Schedule;
-  teachers: Array<Teacher>;
-  classAdvisors: Array<Teacher>;
-}> = ({ news, schedule, teachers, classAdvisors }) => {
+  teachers: Teacher[];
+  classAdvisors: Teacher[];
+}> = ({ user, news, schedule, teachers, classAdvisors }) => {
   const { t } = useTranslation(["dashboard", "common"]);
 
   // Dialog controls
   const [showChangePassword, setShowChangePassword] = useState<boolean>(false);
   const [showEditProfile, setShowEditProfile] = useState<boolean>(false);
   const [showLogOut, setShowLogOut] = useState<boolean>(false);
-  const [user] = useStudentAccount({ loginRequired: true });
 
   return (
     <>
@@ -63,63 +58,50 @@ const StudentHome: NextPage<{
       <Head>
         <title>{createTitleStr(t("title"), t)}</title>
       </Head>
-      <AnimatePresence>
-        {user && (
-          <>
-            {/* Content */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={animationTransition}
-            >
-              <RegularLayout
-                Title={
-                  <Title
-                    name={{ title: t("brand.name", { ns: "common" }) }}
-                    pageIcon={<MaterialIcon icon="home" />}
-                    backGoesTo={() => setShowLogOut(true)}
-                    LinkElement={Link}
-                    className="sm:!hidden"
-                  />
-                }
-              >
-                <UserSection
-                  user={user}
-                  setShowChangePassword={setShowChangePassword}
-                  setShowEditProfile={setShowEditProfile}
-                  setShowLogOut={setShowLogOut}
-                />
-                <NewsSection news={news} showFilters />
-                <StudentClassSection schedule={schedule} />
-                <TeachersSection
-                  teachers={teachers}
-                  classAdvisors={classAdvisors}
-                />
-              </RegularLayout>
-            </motion.div>
-            {/* Dialogs */}
-            <ChangePassword
-              show={showChangePassword}
-              onClose={() => setShowChangePassword(false)}
-            />
-            <EditSelfDialog
-              user={user}
-              show={showEditProfile}
-              onClose={() => setShowEditProfile(false)}
-            />
-            <LogOutDialog
-              show={showLogOut}
-              onClose={() => setShowLogOut(false)}
-            />
-          </>
-        )}
-      </AnimatePresence>
+
+      {/* Content */}
+      <RegularLayout
+        Title={
+          <Title
+            name={{ title: t("brand.name", { ns: "common" }) }}
+            pageIcon={<MaterialIcon icon="home" />}
+            backGoesTo={() => setShowLogOut(true)}
+            LinkElement={Link}
+            className="sm:!hidden"
+          />
+        }
+      >
+        <UserSection
+          user={user}
+          setShowChangePassword={setShowChangePassword}
+          setShowEditProfile={setShowEditProfile}
+          setShowLogOut={setShowLogOut}
+        />
+        <NewsSection news={news} showFilters />
+        <StudentClassSection schedule={schedule} />
+        <TeachersSection teachers={teachers} classAdvisors={classAdvisors} />
+      </RegularLayout>
+
+      {/* Dialogs */}
+      <ChangePassword
+        show={showChangePassword}
+        onClose={() => setShowChangePassword(false)}
+      />
+      <EditSelfDialog
+        user={user}
+        show={showEditProfile}
+        onClose={() => setShowEditProfile(false)}
+      />
+      <LogOutDialog show={showLogOut} onClose={() => setShowLogOut(false)} />
     </>
   );
 };
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  req,
+}) => {
+  const { data: user } = await getStudentByCookie(req);
   const news: NewsListNoDate = [];
   const schedule: Schedule = {
     content: [
@@ -140,7 +122,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         "news",
         "dashboard",
       ])),
-
+      user,
       news,
       schedule,
       teachers,
