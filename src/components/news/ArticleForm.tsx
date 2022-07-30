@@ -1,5 +1,5 @@
 // External libraries
-import { AnimatePresence, Reorder } from "framer-motion";
+import { AnimatePresence, LayoutGroup, motion, Reorder } from "framer-motion";
 import { useEffect, useReducer, useState } from "react";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
@@ -232,12 +232,29 @@ const ArticleForm = ({
       <div className="layout-grid-cols-3 flex-col-reverse">
         <FieldList fields={fields} setFields={setFields} />
         {fields.length > 0 && (
-          <Card
-            type="stacked"
-            appearance="outlined"
-            className="h-fit px-3 py-2"
-          >
-            TODO: Preview
+          <Card type="stacked" appearance="outlined" className="h-fit">
+            <CardHeader
+              icon={<MaterialIcon icon="preview" />}
+              title={<h3>Preview</h3>}
+            />
+            <CardSupportingText className="!gap-0">
+              <LayoutGroup>
+                <AnimatePresence>
+                  {fields.map((field) => (
+                    <motion.div
+                      key={field.id}
+                      layoutId={["preview", field.id].join("-")}
+                      initial={{ x: -100, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      exit={{ x: -100, opacity: 0 }}
+                      transition={animationTransition}
+                    >
+                      <FormField field={field} onChange={() => {}} />
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </LayoutGroup>
+            </CardSupportingText>
           </Card>
         )}
       </div>
