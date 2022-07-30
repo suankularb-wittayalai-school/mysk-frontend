@@ -46,9 +46,12 @@ export async function getForm(
 }
 
 export async function sendForm(
-  form: { id: number; value: string | number | string[] | File | null }[]
+  form: { id: number; value: string | number | string[] | File | null }[],
+  sendAs?: number
 ): Promise<BackendReturn<FormQuestionsTable[]>> {
+  console.log(form);
   // TODO: Send form data to Supabase
+  console.log(sendAs);
 
   return { data: [], error: null };
 }
