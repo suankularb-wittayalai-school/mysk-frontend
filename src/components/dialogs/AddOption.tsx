@@ -20,6 +20,12 @@ const AddOptionDialog = ({
   const { t } = useTranslation("admin");
   const [label, setLabel] = useState<string>("");
 
+  function validate(): boolean {
+    if (!label) return false;
+
+    return true;
+  }
+
   return (
     <Dialog
       type="regular"
@@ -27,7 +33,11 @@ const AddOptionDialog = ({
       title={t("dialog.addOption.title")}
       actions={[
         { name: t("dialog.addOption.action.cancel"), type: "close" },
-        { name: t("dialog.addOption.action.add"), type: "submit" },
+        {
+          name: t("dialog.addOption.action.add"),
+          type: "submit",
+          disabled: !validate(),
+        },
       ]}
       show={show}
       onClose={onClose}
