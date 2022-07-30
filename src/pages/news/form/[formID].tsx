@@ -9,19 +9,7 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 // SK Components
-import {
-  Actions,
-  Button,
-  Checklist,
-  Dropdown,
-  FileInput,
-  FormElement,
-  KeyboardInput,
-  NativeInput,
-  RadioGroup,
-  Range,
-  TextArea,
-} from "@suankularb-components/react";
+import { Actions, Button } from "@suankularb-components/react";
 
 // Components
 import NewsPageWrapper from "@components/news/NewsPageWrapper";
@@ -36,7 +24,11 @@ import { createTitleStr } from "@utils/helpers/title";
 
 // Types
 import { LangCode } from "@utils/types/common";
-import { FormField, FormPage as FormPageType } from "@utils/types/news";
+import {
+  FormField as FormFieldType,
+  FormPage as FormPageType,
+} from "@utils/types/news";
+import FormField from "@components/news/FormField";
 
 const FormPage: NextPage<{ formPage: FormPageType }> = ({ formPage }) => {
   const { t } = useTranslation(["news", "common"]);
@@ -64,7 +56,10 @@ const FormPage: NextPage<{ formPage: FormPageType }> = ({ formPage }) => {
     }))
   );
 
-  function updateForm(newValue: FormControlField["value"], field: FormField) {
+  function updateForm(
+    newValue: FormControlField["value"],
+    field: FormFieldType
+  ) {
     setForm(
       form.map((item) => {
         if (field.id == item.id)
@@ -100,105 +95,13 @@ const FormPage: NextPage<{ formPage: FormPageType }> = ({ formPage }) => {
       <NewsPageWrapper news={formPage}>
         <section className="mt-12 flex flex-col items-center">
           <div className="w-full sm:w-1/2 md:w-1/3">
-            {formPage.content.fields.map((field) =>
-              // Short answer
-              field.type == "short_answer" ? (
-                <KeyboardInput
-                  key={field.id}
-                  name={getLocaleString(field.label, locale)}
-                  type="text"
-                  label={getLocaleString(field.label, locale)}
-                  onChange={(e) => updateForm(e, field)}
-                  defaultValue={field.default}
-                />
-              ) : // Paragraph
-              field.type == "paragraph" ? (
-                <TextArea
-                  key={field.id}
-                  name={getLocaleString(field.label, locale)}
-                  label={getLocaleString(field.label, locale)}
-                  onChange={(e) => updateForm(e, field)}
-                  defaultValue={field.default}
-                />
-              ) : // Date and time
-              ["date", "time"].includes(field.type) ? (
-                <NativeInput
-                  key={field.id}
-                  name={getLocaleString(field.label, locale)}
-                  type={field.type as "date" | "time"}
-                  label={getLocaleString(field.label, locale)}
-                  onChange={(e) => updateForm(e, field)}
-                  defaultValue={field.default}
-                />
-              ) : // Dropdown
-              field.type == "dropdown" ? (
-                <Dropdown
-                  key={field.id}
-                  name={getLocaleString(field.label, locale)}
-                  label={getLocaleString(field.label, locale)}
-                  options={(field.options as string[]).map((option) => ({
-                    value: option,
-                    label: option,
-                  }))}
-                  noOptionsText={t("input.none.noOptions", { ns: "common" })}
-                  onChange={(e: string) => updateForm(e, field)}
-                  defaultValue={field.default}
-                />
-              ) : // File
-              field.type == "file" ? (
-                <FileInput
-                  key={field.id}
-                  name={getLocaleString(field.label, locale)}
-                  label={getLocaleString(field.label, locale)}
-                  noneAttachedMsg={t("input.none.noFilesAttached", {
-                    ns: "common",
-                  })}
-                  onChange={(e) => updateForm(e, field)}
-                />
-              ) : ["multiple_choice", "check_box", "scale"].includes(
-                  field.type
-                ) ? (
-                <FormElement
-                  key={field.id}
-                  label={getLocaleString(field.label, locale)}
-                  className="!mb-6"
-                >
-                  {field.type == "multiple_choice" ? (
-                    // Multiple choice
-                    <RadioGroup
-                      name={getLocaleString(field.label, locale)}
-                      options={(field.options as string[]).map((option) => ({
-                        id: option,
-                        value: option,
-                        label: option,
-                      }))}
-                      onChange={(e) => updateForm(e, field)}
-                      defaultValue={field.default}
-                    />
-                  ) : field.type == "check_box" ? (
-                    // Check boxes
-                    <Checklist
-                      name={getLocaleString(field.label, locale)}
-                      options={(field.options as string[]).map((option) => ({
-                        id: option,
-                        value: option,
-                        label: option,
-                      }))}
-                      onChange={(e: string[]) => updateForm(e, field)}
-                    />
-                  ) : field.type == "scale" ? (
-                    // Scale
-                    <Range
-                      name={getLocaleString(field.label, locale)}
-                      min={field.range?.start}
-                      max={field.range?.end}
-                      onChange={(e) => updateForm(e, field)}
-                      defaultValue={Number(field.default)}
-                    />
-                  ) : null}
-                </FormElement>
-              ) : null
-            )}
+            {formPage.content.fields.map((field) => (
+              <FormField
+                key={field.id}
+                field={field}
+                onChange={(e) => updateForm(e, field)}
+              />
+            ))}
           </div>
           <Actions className="w-full">
             <Button
