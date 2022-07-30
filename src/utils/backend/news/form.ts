@@ -55,11 +55,7 @@ export async function sendForm(
   formID: number,
   formAnswer: { id: number; value: string | number | string[] | File | null }[],
   sendAs?: number
-): Promise<
-  BackendReturn<
-    BackendReturn<FormFieldValueTable[] | FormFieldValueTable | null>[]
-  >
-> {
+): Promise<BackendReturn<FormFieldValueTable[]>> {
   // create submission in form_submissions
   const { data, error } = await supabase
     .from<FormSubmissionTable>("form_submissions")
@@ -72,9 +68,14 @@ export async function sendForm(
   }
 
   // save answers to form_field_values
-  const answers = await Promise.all(
-    formAnswer.map((answer) => sendFormAnswer(answer, data.id))
-  );
+  const answers: FormFieldValueTable[] = (
+    await Promise.all(
+      formAnswer.map((answer) => sendFormAnswer(answer, data.id))
+    )
+  )
+    .map((answer) => answer.data)
+    .filter((answer) => answer !== null)
+    .flat() as FormFieldValueTable[];
 
   if (error) {
     console.error(error);
