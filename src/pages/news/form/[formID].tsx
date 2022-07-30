@@ -16,10 +16,10 @@ import NewsPageWrapper from "@components/news/NewsPageWrapper";
 
 // Backend
 import { getForm, sendForm } from "@utils/backend/news/form";
+import { getPersonIDFromReq } from "@utils/backend/person/person";
 
 // Helpers
 import { getLocaleString } from "@utils/helpers/i18n";
-
 import { createTitleStr } from "@utils/helpers/title";
 
 // Types
@@ -30,7 +30,10 @@ import {
 } from "@utils/types/news";
 import FormField from "@components/news/FormField";
 
-const FormPage: NextPage<{ formPage: FormPageType }> = ({ formPage }) => {
+const FormPage: NextPage<{ formPage: FormPageType; personID: number }> = ({
+  formPage,
+  personID,
+}) => {
   const { t } = useTranslation(["news", "common"]);
   const router = useRouter();
   const locale = router.locale as LangCode;
@@ -78,7 +81,9 @@ const FormPage: NextPage<{ formPage: FormPageType }> = ({ formPage }) => {
     if (!validate) return;
 
     const { error } = await sendForm(
-      form.map((field) => ({ id: field.id, value: field.value }))
+      formPage.id,
+      form.map((field) => ({ id: field.id, value: field.value })),
+      personID
     );
 
     if (error) return;
@@ -120,7 +125,10 @@ const FormPage: NextPage<{ formPage: FormPageType }> = ({ formPage }) => {
 export const getServerSideProps: GetServerSideProps = async ({
   locale,
   params,
+  req,
 }) => {
+  const personID = await getPersonIDFromReq(req);
+
   if (!params?.formID) return { notFound: true };
 
   const { data: formPage, error } = await getForm(Number(params?.formID));
@@ -130,6 +138,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     props: {
       ...(await serverSideTranslations(locale as LangCode, ["common", "news"])),
       formPage,
+      personID,
     },
   };
 };
