@@ -76,7 +76,7 @@ export type NewsItemPaymentNoDate = Omit<
 export type StudentFormItem = {
   id: number;
   type: "form" | "payment";
-  postDate: Date;
+  postDate: string;
   percentDone: number;
   content: {
     "en-US"?: {
