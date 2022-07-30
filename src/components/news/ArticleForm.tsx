@@ -22,22 +22,23 @@ import {
 import { animationTransition } from "@utils/animations/config";
 
 // Types
-import { FieldType, FormField } from "@utils/types/news";
+import { FieldType, FormField as FormFieldType } from "@utils/types/news";
 import { LangCode } from "@utils/types/common";
 
 // Helpers
 import { getLocaleString } from "@utils/helpers/i18n";
+import FormField from "./FormField";
 
 const FieldList = ({
   fields,
   setFields,
 }: {
-  fields: FormField[];
-  setFields: (fields: FormField[]) => void;
+  fields: FormFieldType[];
+  setFields: (fields: FormFieldType[]) => void;
 }): JSX.Element => {
   const locale = useRouter().locale as LangCode;
 
-  function updateFieldAttr(id: number, attr: keyof FormField, value: any) {
+  function updateFieldAttr(id: number, attr: keyof FormFieldType, value: any) {
     setFields(
       fields.map((item) => (id == item.id ? { ...item, [attr]: value } : item))
     );
@@ -164,12 +165,18 @@ const FieldList = ({
                       />
                     </>
                   )}
-                  <KeyboardInput
-                    name="default"
-                    type="text"
-                    label="Default value"
+                  <FormField
+                    field={{
+                      ...field,
+                      label: { th: "Default" },
+                      options: field.options || [],
+                    }}
                     onChange={(e) => updateFieldAttr(field.id, "default", e)}
-                    defaultValue={field.default}
+                    className={
+                      ["paragraph", "scale"].includes(field.type)
+                        ? "col-span-2"
+                        : undefined
+                    }
                   />
                 </div>
               </CardSupportingText>
@@ -186,12 +193,12 @@ const ArticleForm = ({
   setFields: setExtFields,
 }: {
   mode: "add" | "edit";
-  setFields: (incFields: Omit<FormField, "id">[]) => void;
+  setFields: (incFields: Omit<FormFieldType, "id">[]) => void;
 }): JSX.Element => {
   const { t } = useTranslation("admin");
 
   // Form control
-  const [fields, setFields] = useState<FormField[]>([]);
+  const [fields, setFields] = useState<FormFieldType[]>([]);
   useEffect(() => setExtFields(fields), [fields]);
 
   // Note: this ID won’t be used in Supabase. This is purely for keeping track of

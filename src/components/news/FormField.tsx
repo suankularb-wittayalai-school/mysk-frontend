@@ -25,9 +25,13 @@ import { FormField as FormFieldType } from "@utils/types/news";
 const FormField = ({
   field,
   onChange,
+  className,
+  style,
 }: {
   field: FormFieldType;
   onChange: (newValue: string | number | string[] | File) => void;
+  className?: string;
+  style?: React.CSSProperties;
 }): JSX.Element => {
   const { t } = useTranslation("common");
   const locale = useRouter().locale as LangCode;
@@ -39,6 +43,8 @@ const FormField = ({
       label={getLocaleString(field.label, locale)}
       onChange={onChange}
       defaultValue={field.default}
+      className={className}
+      style={style}
     />
   ) : // Date and time
   ["date", "time"].includes(field.type) ? (
@@ -49,6 +55,8 @@ const FormField = ({
       label={getLocaleString(field.label, locale)}
       onChange={onChange}
       defaultValue={field.default}
+      className={className}
+      style={style}
     />
   ) : // Dropdown
   field.type == "dropdown" ? (
@@ -63,6 +71,8 @@ const FormField = ({
       noOptionsText={t("input.none.noOptions")}
       onChange={onChange}
       defaultValue={field.default}
+      className={className}
+      style={style}
     />
   ) : // File
   field.type == "file" ? (
@@ -79,7 +89,8 @@ const FormField = ({
     <FormElement
       key={field.id}
       label={getLocaleString(field.label, locale)}
-      className="!mb-6"
+      className={["!mb-6", className].join(" ")}
+      style={style}
     >
       {field.type == "multiple_choice" ? (
         // Multiple choice
@@ -110,6 +121,7 @@ const FormField = ({
           name={getLocaleString(field.label, locale)}
           min={field.range?.start}
           max={field.range?.end}
+          step={1}
           onChange={onChange}
           defaultValue={Number(field.default)}
         />
@@ -124,6 +136,8 @@ const FormField = ({
       label={getLocaleString(field.label, locale)}
       onChange={onChange}
       defaultValue={field.default}
+      className={className}
+      style={style}
     />
   );
 };
