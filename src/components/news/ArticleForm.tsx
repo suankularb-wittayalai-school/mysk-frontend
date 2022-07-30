@@ -9,6 +9,7 @@ import {
   Actions,
   Button,
   Card,
+  CardActions,
   CardHeader,
   CardSupportingText,
   Dropdown,
@@ -165,19 +166,21 @@ const FieldList = ({
                       />
                     </>
                   )}
-                  <FormField
-                    field={{
-                      ...field,
-                      label: { th: "Default" },
-                      options: field.options || [],
-                    }}
-                    onChange={(e) => updateFieldAttr(field.id, "default", e)}
-                    className={
-                      ["paragraph", "scale"].includes(field.type)
-                        ? "col-span-2"
-                        : undefined
-                    }
-                  />
+                  {field.type != "file" && (
+                    <FormField
+                      field={{
+                        ...field,
+                        label: { th: "Default" },
+                        options: field.options || [],
+                      }}
+                      onChange={(e) => updateFieldAttr(field.id, "default", e)}
+                      className={
+                        ["paragraph", "scale"].includes(field.type)
+                          ? "col-span-2"
+                          : undefined
+                      }
+                    />
+                  )}
                 </div>
               </CardSupportingText>
             </Card>
@@ -187,6 +190,36 @@ const FieldList = ({
     </Reorder.Group>
   );
 };
+
+const FormPreview = ({ fields }: { fields: FormFieldType[] }): JSX.Element => (
+  <Card type="stacked" appearance="outlined" className="h-fit">
+    <CardHeader
+      icon={<MaterialIcon icon="preview" />}
+      title={<h3>Preview</h3>}
+    />
+    <CardSupportingText className="!gap-0">
+      <LayoutGroup>
+        <AnimatePresence>
+          {fields.map((field) => (
+            <motion.div
+              key={field.id}
+              layoutId={["preview", field.id].join("-")}
+              initial={{ x: -100, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -100, opacity: 0 }}
+              transition={animationTransition}
+            >
+              <FormField
+                field={{ ...field, options: field.options || [] }}
+                onChange={() => {}}
+              />
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </LayoutGroup>
+    </CardSupportingText>
+  </Card>
+);
 
 const ArticleForm = ({
   mode,
@@ -211,52 +244,23 @@ const ArticleForm = ({
         icon={<MaterialIcon icon="checklist" allowCustomSize />}
         text="Form"
       />
-      <Actions>
-        <Button
-          type="filled"
-          label="Add to list"
-          onClick={() => {
-            setFields([
-              {
-                id: latestID,
-                label: { th: `Test Question ${latestID}` },
-                type: "short_answer",
-                required: false,
-              },
-              ...fields,
-            ]);
-            incrementID();
-          }}
-        />
-      </Actions>
-      <div className="layout-grid-cols-3 flex-col-reverse">
+      <div className="layout-grid-cols-3 !flex-col-reverse">
+        {/* Field list */}
         <FieldList fields={fields} setFields={setFields} />
-        {fields.length > 0 && (
-          <Card type="stacked" appearance="outlined" className="h-fit">
-            <CardHeader
-              icon={<MaterialIcon icon="preview" />}
-              title={<h3>Preview</h3>}
-            />
-            <CardSupportingText className="!gap-0">
-              <LayoutGroup>
-                <AnimatePresence>
-                  {fields.map((field) => (
-                    <motion.div
-                      key={field.id}
-                      layoutId={["preview", field.id].join("-")}
-                      initial={{ x: -100, opacity: 0 }}
-                      animate={{ x: 0, opacity: 1 }}
-                      exit={{ x: -100, opacity: 0 }}
-                      transition={animationTransition}
-                    >
-                      <FormField field={field} onChange={() => {}} />
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-              </LayoutGroup>
-            </CardSupportingText>
-          </Card>
-        )}
+
+        {/* Form preview */}
+        <AnimatePresence>
+          {fields.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={animationTransition}
+            >
+              <FormPreview fields={fields} />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
       <div className="flex flex-col gap-2"></div>
     </Section>
