@@ -28,6 +28,153 @@ import { LangCode } from "@utils/types/common";
 // Helpers
 import { getLocaleString } from "@utils/helpers/i18n";
 
+const FieldList = ({
+  fields,
+  setFields,
+}: {
+  fields: FormField[];
+  setFields: (fields: FormField[]) => void;
+}): JSX.Element => {
+  const locale = useRouter().locale as LangCode;
+
+  function updateFieldAttr(id: number, attr: keyof FormField, value: any) {
+    setFields(
+      fields.map((item) => (id == item.id ? { ...item, [attr]: value } : item))
+    );
+  }
+
+  return (
+    <Reorder.Group
+      axis="y"
+      values={fields}
+      onReorder={setFields}
+      className="flex flex-col gap-2 md:col-span-2"
+    >
+      {fields.map((field) => (
+        <Reorder.Item
+          key={field.id}
+          value={field}
+          initial={{ y: -10, scale: 0.8, opacity: 0 }}
+          animate={{ y: 0, scale: 1, opacity: 1 }}
+          exit={{ y: -10, scale: 0.8, opacity: 0 }}
+          transition={animationTransition}
+          className="cursor-move"
+        >
+          <Card type="stacked" appearance="tonal" className="!overflow-visible">
+            <CardHeader
+              title={<h3>{getLocaleString(field.label, locale)}</h3>}
+              label={<code>{field.type}</code>}
+              end={
+                <Actions>
+                  <Button
+                    type="text"
+                    icon={<MaterialIcon icon="delete" />}
+                    iconOnly
+                    onClick={() =>
+                      setFields(fields.filter((item) => field.id != item.id))
+                    }
+                  />
+                  <MaterialIcon icon="drag_indicator" />
+                </Actions>
+              }
+            />
+            <CardSupportingText>
+              <div className="layout-grid-cols-4 !gap-y-0">
+                {/* Type */}
+                <Dropdown
+                  name="type"
+                  label="Type"
+                  options={
+                    [
+                      { value: "short_answer", label: "Short answer" },
+                      { value: "paragraph", label: "Paragraph" },
+                      {
+                        value: "multiple_choice",
+                        label: "Multiple choice",
+                      },
+                      { value: "check_box", label: "Checkbox list" },
+                      { value: "dropdown", label: "Dropdown" },
+                      { value: "file", label: "File upload" },
+                      { value: "date", label: "Date" },
+                      { value: "time", label: "Time" },
+                      { value: "scale", label: "Scale" },
+                    ] as { value: FieldType; label: string }[]
+                  }
+                  onChange={(e: FieldType) =>
+                    updateFieldAttr(field.id, "type", e)
+                  }
+                  defaultValue={field.type}
+                />
+                {/* Local label (Thai) */}
+                <KeyboardInput
+                  name="label-th"
+                  type="text"
+                  label="Local label (Thai)"
+                  onChange={(e) =>
+                    updateFieldAttr(field.id, "label", {
+                      ...field.label,
+                      th: e,
+                    })
+                  }
+                  defaultValue={field.label.th}
+                />
+                {/* English label */}
+                <KeyboardInput
+                  name="label-en"
+                  type="text"
+                  label="English label"
+                  onChange={(e) =>
+                    updateFieldAttr(field.id, "label", {
+                      ...field.label,
+                      "en-US": e,
+                    })
+                  }
+                  defaultValue={field.label["en-US"]}
+                />
+                {field.type == "scale" && (
+                  <>
+                    <KeyboardInput
+                      name="range-start"
+                      type="number"
+                      label="Range start"
+                      onChange={(e) =>
+                        updateFieldAttr(field.id, "range", {
+                          ...field.range,
+                          start: e,
+                        })
+                      }
+                      defaultValue={field.range?.start}
+                    />
+                    <KeyboardInput
+                      name="range-end"
+                      type="number"
+                      label="Range end"
+                      onChange={(e) =>
+                        updateFieldAttr(field.id, "range", {
+                          ...field.range,
+                          end: e,
+                        })
+                      }
+                      defaultValue={field.range?.end}
+                    />
+                  </>
+                )}
+                <KeyboardInput
+                  name="default"
+                  type="text"
+                  label="Default value"
+                  onChange={(e) => updateFieldAttr(field.id, "default", e)}
+                  defaultValue={field.default}
+                />
+              </div>
+            </CardSupportingText>
+          </Card>
+        </Reorder.Item>
+      ))}
+    </Reorder.Group>
+  );
+};
+
 const ArticleForm = ({
   mode,
   setFields: setExtFields,
@@ -36,7 +183,6 @@ const ArticleForm = ({
   setFields: (incFields: Omit<FormField, "id">[]) => void;
 }): JSX.Element => {
   const { t } = useTranslation("admin");
-  const locale = useRouter().locale as LangCode;
 
   // Form control
   const [fields, setFields] = useState<FormField[]>([]);
@@ -45,12 +191,6 @@ const ArticleForm = ({
   // Note: this ID won’t be used in Supabase. This is purely for keeping track of
   // fields client-side.
   const [latestID, incrementID] = useReducer((value) => value + 1, 0);
-
-  function updateFieldAttr(id: number, attr: keyof FormField, value: any) {
-    setFields(
-      fields.map((item) => (id == item.id ? { ...item, [attr]: value } : item))
-    );
-  }
 
   return (
     <Section>
@@ -77,140 +217,7 @@ const ArticleForm = ({
         />
       </Actions>
       <div className="layout-grid-cols-3 flex-col-reverse">
-        <Reorder.Group
-          axis="y"
-          values={fields}
-          onReorder={setFields}
-          className="flex flex-col gap-2 md:col-span-2"
-        >
-          {fields.map((field) => (
-            <Reorder.Item
-              key={field.id}
-              value={field}
-              initial={{ y: -10, scale: 0.8, opacity: 0 }}
-              animate={{ y: 0, scale: 1, opacity: 1 }}
-              exit={{ y: -10, scale: 0.8, opacity: 0 }}
-              transition={animationTransition}
-              className="cursor-move"
-            >
-              <Card
-                type="stacked"
-                appearance="tonal"
-                className="!overflow-visible"
-              >
-                <CardHeader
-                  title={<h3>{getLocaleString(field.label, locale)}</h3>}
-                  label={<code>{field.type}</code>}
-                  end={
-                    <Actions>
-                      <Button
-                        type="text"
-                        icon={<MaterialIcon icon="delete" />}
-                        iconOnly
-                        onClick={() =>
-                          setFields(
-                            fields.filter((item) => field.id != item.id)
-                          )
-                        }
-                      />
-                      <MaterialIcon icon="drag_indicator" />
-                    </Actions>
-                  }
-                />
-                <CardSupportingText>
-                  <div className="layout-grid-cols-4 !gap-y-0">
-                    {/* Type */}
-                    <Dropdown
-                      name="type"
-                      label="Type"
-                      options={
-                        [
-                          { value: "short_answer", label: "Short answer" },
-                          { value: "paragraph", label: "Paragraph" },
-                          {
-                            value: "multiple_choice",
-                            label: "Multiple choice",
-                          },
-                          { value: "check_box", label: "Checkbox list" },
-                          { value: "dropdown", label: "Dropdown" },
-                          { value: "file", label: "File upload" },
-                          { value: "date", label: "Date" },
-                          { value: "time", label: "Time" },
-                          { value: "scale", label: "Scale" },
-                        ] as { value: FieldType; label: string }[]
-                      }
-                      onChange={(e: FieldType) =>
-                        updateFieldAttr(field.id, "type", e)
-                      }
-                      defaultValue={field.type}
-                    />
-                    {/* Local label (Thai) */}
-                    <KeyboardInput
-                      name="label-th"
-                      type="text"
-                      label="Local label (Thai)"
-                      onChange={(e) =>
-                        updateFieldAttr(field.id, "label", {
-                          ...field.label,
-                          th: e,
-                        })
-                      }
-                      defaultValue={field.label.th}
-                    />
-                    {/* English label */}
-                    <KeyboardInput
-                      name="label-en"
-                      type="text"
-                      label="English label"
-                      onChange={(e) =>
-                        updateFieldAttr(field.id, "label", {
-                          ...field.label,
-                          "en-US": e,
-                        })
-                      }
-                      defaultValue={field.label["en-US"]}
-                    />
-                    {field.type == "scale" && (
-                      <>
-                        <KeyboardInput
-                          name="range-start"
-                          type="number"
-                          label="Range start"
-                          onChange={(e) =>
-                            updateFieldAttr(field.id, "range", {
-                              ...field.range,
-                              start: e,
-                            })
-                          }
-                          defaultValue={field.range?.start}
-                        />
-                        <KeyboardInput
-                          name="range-end"
-                          type="number"
-                          label="Range end"
-                          onChange={(e) =>
-                            updateFieldAttr(field.id, "range", {
-                              ...field.range,
-                              end: e,
-                            })
-                          }
-                          defaultValue={field.range?.end}
-                        />
-                      </>
-                    )}
-                    <KeyboardInput
-                      name="default"
-                      type="text"
-                      label="Default value"
-                      onChange={(e) => updateFieldAttr(field.id, "default", e)}
-                      defaultValue={field.default}
-                    />
-                  </div>
-                </CardSupportingText>
-              </Card>
-            </Reorder.Item>
-          ))}
-        </Reorder.Group>
+        <FieldList fields={fields} setFields={setFields} />
         {fields.length > 0 && (
           <Card
             type="stacked"
