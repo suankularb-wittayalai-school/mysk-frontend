@@ -83,8 +83,10 @@ const StudentFormCard = ({ form }: { form: StudentFormItem }): JSX.Element => {
           <div className="flex divide-x divide-outline">
             <span className="pr-2">{t(`itemType.${form.type}`)}</span>
             <time className="pl-2 text-outline">
-              {form.postDate.toLocaleDateString(locale, {
-                year: isThisYear(form.postDate) ? undefined : "numeric",
+              {new Date(form.postDate).toLocaleDateString(locale, {
+                year: isThisYear(new Date(form.postDate))
+                  ? undefined
+                  : "numeric",
                 month: "short",
                 day: "numeric",
               })}
@@ -430,12 +432,7 @@ const Class: NextPage<{
           />
         }
       >
-        <FormSection
-          studentForms={studentForms.map((newsItem) => ({
-            ...newsItem,
-            postDate: new Date(newsItem.postDate),
-          }))}
-        />
+        <FormSection studentForms={studentForms} />
         <ClassAdvisorsSection
           classAdvisors={classItem.classAdvisors}
           toggleShowAdd={toggleShowAddTeacher}

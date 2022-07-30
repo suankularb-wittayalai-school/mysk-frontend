@@ -43,7 +43,7 @@ export async function getStudentByCookie(
     return { data: null, error: studentError };
   }
 
-  return { data: await db2Student(student), error: null };
+  return { data: await db2Student(student as StudentDB), error: null };
 }
 
 export async function createStudent(

@@ -59,7 +59,7 @@ export async function getTeacherByCookie(
     return { data: null, error: teacherError };
   }
 
-  return { data: await db2Teacher(teacher), error: null };
+  return { data: await db2Teacher(teacher as TeacherDB), error: null };
 }
 
 export async function createTeacher(
