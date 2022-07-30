@@ -64,3 +64,18 @@ export type FormQuestionsTable = {
   range_end: number;
   default?: string;
 };
+
+export type FormSubmissionTable = {
+  id: number;
+  created_at: string;
+  form: number;
+  person: number | null;
+};
+
+export type FormFieldValueTable = {
+  id: number;
+  created_at: string;
+  field: number;
+  value: string;
+  submission: number;
+};

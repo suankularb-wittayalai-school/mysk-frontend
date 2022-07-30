@@ -2,6 +2,8 @@ import { PostgrestError } from "@supabase/supabase-js";
 import { supabase } from "@utils/supabaseClient";
 import { PersonTable } from "@utils/types/database/person";
 import { Person } from "@utils/types/person";
+import { IncomingMessage } from "http";
+import { NextApiRequestCookies } from "next/dist/server/api-utils";
 import { createContact } from "../contact";
 
 const prefixMap = {
@@ -59,4 +61,60 @@ export async function createPerson(
     return { data: null, error: personCreationError };
   }
   return { data: createdPerson, error: null };
+}
+
+export async function getPersonIDFromStudentID(
+  student_id: number
+): Promise<number> {
+  const { data: student, error } = await supabase
+    .from<{ id: number; person: number }>("student")
+    .select("id, person")
+    .match({ id: student_id })
+    .limit(1)
+    .single();
+
+  if (error || !student) {
+    console.error(error);
+    return -1;
+  }
+
+  return student.person;
+}
+
+export async function getPersonIDFromTeacherID(
+  teacher_id: number
+): Promise<number> {
+  const { data: teacher, error } = await supabase
+    .from<{ id: number; person: number }>("teacher")
+    .select("id, person")
+    .match({ id: teacher_id })
+    .limit(1)
+    .single();
+
+  if (error || !teacher) {
+    console.error(error);
+    return -1;
+  }
+
+  return teacher.person;
+}
+
+export async function getPersonIDFromReq(
+  req: IncomingMessage & { cookies: NextApiRequestCookies }
+): Promise<number> {
+  const { user, error } = await supabase.auth.api.getUserByCookie(req);
+
+  if (error || !user) {
+    console.error(error);
+    return 0;
+  }
+
+  const userRole = user?.user_metadata.role;
+
+  const personID =
+    userRole === "student"
+      ? await getPersonIDFromStudentID(user.user_metadata.student)
+      : await getPersonIDFromTeacherID(user.user_metadata.teacher);
+
+  return personID;
 }

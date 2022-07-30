@@ -37,8 +37,13 @@ import { createTitleStr } from "@utils/helpers/title";
 // Types
 import { LangCode } from "@utils/types/common";
 import { FormField, FormPage as FormPageType } from "@utils/types/news";
+import { supabase } from "@utils/supabaseClient";
+import { getPersonIDFromReq } from "@utils/backend/person/person";
 
-const FormPage: NextPage<{ formPage: FormPageType }> = ({ formPage }) => {
+const FormPage: NextPage<{ formPage: FormPageType; personID: number }> = ({
+  formPage,
+  personID,
+}) => {
   const { t } = useTranslation(["news", "common"]);
   const locale = useRouter().locale as LangCode;
   const router = useRouter();
@@ -83,7 +88,9 @@ const FormPage: NextPage<{ formPage: FormPageType }> = ({ formPage }) => {
     if (!validate) return;
 
     const { error } = await sendForm(
-      form.map((field) => ({ id: field.id, value: field.value }))
+      formPage.id,
+      form.map((field) => ({ id: field.id, value: field.value })),
+      personID
     );
 
     if (error) return;
@@ -222,6 +229,8 @@ export const getServerSideProps: GetServerSideProps = async ({
   const redirect = await protectPageFor("student", req);
   if (redirect) return redirect;
 
+  const personID = await getPersonIDFromReq(req);
+
   if (!params?.formID) return { notFound: true };
 
   const { data: formPage, error } = await getForm(Number(params?.formID));
@@ -231,6 +240,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     props: {
       ...(await serverSideTranslations(locale as LangCode, ["common", "news"])),
       formPage,
+      personID,
     },
   };
 };

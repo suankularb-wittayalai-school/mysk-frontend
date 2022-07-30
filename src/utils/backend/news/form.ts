@@ -1,5 +1,10 @@
 // Types
-import { FormDB, FormQuestionsTable } from "@utils/types/database/news";
+import {
+  FormDB,
+  FormFieldValueTable,
+  FormQuestionsTable,
+  FormSubmissionTable,
+} from "@utils/types/database/news";
 import { BackendReturn } from "@utils/types/common";
 import { FormPage, NewsItemFormNoDate } from "@utils/types/news";
 
@@ -8,6 +13,7 @@ import { db2FormPage, dbForm2NewsItem } from "../database";
 
 // Supabase
 import { supabase } from "@utils/supabaseClient";
+import { PostgrestError } from "@supabase/supabase-js";
 
 export async function getForms(): Promise<BackendReturn<NewsItemFormNoDate[]>> {
   const { data, error } = await supabase
@@ -46,9 +52,109 @@ export async function getForm(
 }
 
 export async function sendForm(
-  form: { id: number; value: string | number | string[] | File | null }[]
-): Promise<BackendReturn<FormQuestionsTable[]>> {
-  // TODO: Send form data to Supabase
+  formID: number,
+  formAnswer: { id: number; value: string | number | string[] | File | null }[],
+  sendAs?: number
+): Promise<BackendReturn<FormFieldValueTable[]>> {
+  // create submission in form_submissions
+  const { data, error } = await supabase
+    .from<FormSubmissionTable>("form_submissions")
+    .insert({ form: formID, person: sendAs ?? null })
+    .single();
 
-  return { data: [], error: null };
+  if (error || !data) {
+    console.error(error);
+    return { data: [], error };
+  }
+
+  // save answers to form_field_values
+  const answers: FormFieldValueTable[] = (
+    await Promise.all(
+      formAnswer.map((answer) => sendFormAnswer(answer, data.id))
+    )
+  )
+    .map((answer) => answer.data)
+    .filter((answer) => answer !== null)
+    .flat() as FormFieldValueTable[];
+
+  if (error) {
+    console.error(error);
+    return { data: [], error };
+  }
+
+  return { data: answers, error: null };
+}
+
+async function sendFormAnswer(
+  formAnswer: { id: number; value: string | number | string[] | File | null },
+  submissionID: number
+): Promise<BackendReturn<FormFieldValueTable[] | FormFieldValueTable | null>> {
+  switch (typeof formAnswer.value) {
+    // file, or array
+    case "object":
+      // is file
+      if (formAnswer.value instanceof File) {
+        // Upload file to Supabase and save value as path
+        const { data: uploadedFile, error: uploadingError } =
+          await supabase.storage
+            .from("news")
+            .upload(
+              `form_submissions/${submissionID}/file-${
+                formAnswer.id
+              }.${formAnswer.value.name.split(".").pop()}`,
+              formAnswer.value,
+              {
+                cacheControl: "3600",
+                upsert: false,
+              }
+            );
+        if (uploadingError || !uploadedFile) {
+          console.error(uploadingError);
+          return { data: [], error: uploadingError };
+        }
+        // save value as path
+        const { data, error } = await supabase
+          .from<FormFieldValueTable>("form_field_value")
+          .insert({
+            field: formAnswer.id,
+            value: `form_submissions/${submissionID}/file-${
+              formAnswer.id
+            }.${formAnswer.value.name.split(".").pop()}`,
+            submission: submissionID,
+          });
+        if (error) {
+          console.error(error);
+          return { data: [], error };
+        }
+        return { data, error: null };
+      }
+      // is array
+      if (Array.isArray(formAnswer.value)) {
+        // save each value as separate answer
+        const { data, error } = await supabase
+          .from<FormFieldValueTable>("form_field_value")
+          .insert(
+            formAnswer.value.map((value) => ({
+              field: formAnswer.id,
+              value,
+              submission: submissionID,
+            }))
+          );
+        return { data, error: null };
+      }
+      break;
+    // string, number, boolean
+    default:
+      // Save value as answer in plain text
+      const { data, error } = await supabase
+        .from<FormFieldValueTable>("form_field_value")
+        .insert({
+          field: formAnswer.id,
+          value: formAnswer.value.toString(),
+          submission: submissionID,
+        })
+        .single();
+      return { data, error: null };
+  }
+  return { data: null, error: null };
 }
