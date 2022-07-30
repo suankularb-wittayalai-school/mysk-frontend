@@ -190,8 +190,8 @@ const FormPage: NextPage<{ formPage: FormPageType }> = ({ formPage }) => {
                     // Scale
                     <Range
                       name={getLocaleString(field.label, locale)}
-                      min={field.range.start}
-                      max={field.range.end}
+                      min={field.range?.start}
+                      max={field.range?.end}
                       onChange={(e) => updateForm(e, field)}
                       defaultValue={Number(field.default)}
                     />

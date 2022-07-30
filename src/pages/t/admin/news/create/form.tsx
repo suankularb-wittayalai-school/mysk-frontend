@@ -19,24 +19,21 @@ import {
 
 // Components
 import ArticleConfig from "@components/news/ArticleConfig";
+import ArticleForm from "@components/news/ArticleForm";
 import ArticlePublish from "@components/news/ArticlePublish";
 
 // Backend
-import { createInfo } from "@utils/backend/news/info";
+import { createForm } from "@utils/backend/news/form";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
 
-// Hooks
-
 // Types
 import { LangCode, WaitingSnackbar } from "@utils/types/common";
 import { FormField } from "@utils/types/news";
-import { createForm } from "@utils/backend/news/form";
-import ArticleForm from "@components/news/ArticleForm";
 
 // Page
-const CreateStats: NextPage = (): JSX.Element => {
+const CreateForm: NextPage = (): JSX.Element => {
   const { t } = useTranslation("admin");
 
   // Form control
@@ -61,7 +58,7 @@ const CreateStats: NextPage = (): JSX.Element => {
   function validate(): boolean {
     if (!form.titleTH) return false;
     if (!form.descTH) return false;
-    // if (form.fields.length < 1) return false;
+    if (form.fields.length < 1) return false;
 
     return true;
   }
@@ -116,4 +113,4 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => ({
   },
 });
 
-export default CreateStats;
+export default CreateForm;
