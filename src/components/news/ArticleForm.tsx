@@ -12,7 +12,9 @@ import {
   CardActions,
   CardHeader,
   CardSupportingText,
+  ChipInputList,
   Dropdown,
+  FormElement,
   Header,
   KeyboardInput,
   LayoutGridCols,
@@ -32,6 +34,7 @@ import { LangCode } from "@utils/types/common";
 
 // Helpers
 import { getLocaleString } from "@utils/helpers/i18n";
+import AddOptionDialog from "@components/dialogs/AddOption";
 
 const fieldTypeMap = {
   short_answer: "shortAnswer",
@@ -124,9 +127,11 @@ const AddToForm = ({
 const FieldList = ({
   fields,
   setFields,
+  setAddOption,
 }: {
   fields: FormFieldType[];
   setFields: (fields: FormFieldType[]) => void;
+  setAddOption: (fieldID: number) => void;
 }): JSX.Element => {
   const { t } = useTranslation("admin");
   const locale = useRouter().locale as LangCode;
@@ -208,7 +213,7 @@ const FieldList = ({
                     }
                     defaultValue={field.label["en-US"]}
                   />
-                  {field.type == "scale" && (
+                  {field.type == "scale" ? (
                     <>
                       <KeyboardInput
                         name="range-start"
@@ -235,7 +240,32 @@ const FieldList = ({
                         defaultValue={field.range?.end}
                       />
                     </>
-                  )}
+                  ) : ["multiple_choice", "check_box", "dropdown"].includes(
+                      field.type
+                    ) ? (
+                    <FormElement label="รายการตัวเลือก" className="col-span-2">
+                      <ChipInputList
+                        list={
+                          field.options?.map((option) => ({
+                            id: option,
+                            name: option,
+                          })) || []
+                        }
+                        onChange={(e) =>
+                          updateFieldAttr(
+                            field.id,
+                            "options",
+                            e.map((item) => item.name)
+                          )
+                        }
+                        onAdd={() => setAddOption(field.id)}
+                        addChipOptions={{
+                          type: "filled",
+                          icon: <MaterialIcon icon="add" allowCustomSize />,
+                        }}
+                      />
+                    </FormElement>
+                  ) : null}
                   {field.type != "file" &&
                     (field.type == "scale" ? (
                       <KeyboardInput
@@ -322,35 +352,62 @@ const ArticleForm = ({
   const [fields, setFields] = useState<FormFieldType[]>([]);
   useEffect(() => setExtFields(fields), [fields]);
 
+  // Dialog control
+  const [addOption, setAddOption] = useState<{
+    show: boolean;
+    fieldID: number;
+  }>({ show: false, fieldID: 0 });
+
   return (
-    <Section className="!gap-y-6">
-      <Header
-        icon={<MaterialIcon icon="checklist" allowCustomSize />}
-        text={t("articleEditor.form.title")}
+    <>
+      <Section className="!gap-y-6">
+        <Header
+          icon={<MaterialIcon icon="checklist" allowCustomSize />}
+          text={t("articleEditor.form.title")}
+        />
+
+        <AddToForm addToFields={(field) => setFields([field, ...fields])} />
+
+        <div className="layout-grid-cols-3 !flex-col-reverse">
+          {/* Field list */}
+          <FieldList
+            fields={fields}
+            setFields={setFields}
+            setAddOption={(fieldID) => setAddOption({ show: true, fieldID })}
+          />
+
+          {/* Form preview */}
+          <AnimatePresence>
+            {fields.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={animationTransition}
+              >
+                <FormPreview fields={fields} />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </Section>
+
+      {/* Dialogs */}
+      <AddOptionDialog
+        show={addOption.show}
+        onClose={() => setAddOption({ ...addOption, show: false })}
+        onSubmit={(e) => {
+          setFields(
+            fields.map((field) =>
+              addOption.fieldID == field.id
+                ? { ...field, options: [...(field.options || []), e] }
+                : field
+            )
+          );
+          setAddOption({ ...addOption, show: false });
+        }}
       />
-
-      <AddToForm addToFields={(field) => setFields([field, ...fields])} />
-
-      <div className="layout-grid-cols-3 !flex-col-reverse">
-        {/* Field list */}
-        <FieldList fields={fields} setFields={setFields} />
-
-        {/* Form preview */}
-        <AnimatePresence>
-          {fields.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={animationTransition}
-            >
-              <FormPreview fields={fields} />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-      <div className="flex flex-col gap-2"></div>
-    </Section>
+    </>
   );
 };
 

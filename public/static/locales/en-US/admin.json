@@ -248,6 +248,14 @@
     }
   },
   "dialog": {
+    "addOption": {
+      "title": "Add option",
+      "label": "Option",
+      "action": {
+        "cancel": "Cancel",
+        "add": "Add"
+      }
+    },
     "editStudent": {
       "title": {
         "add": "Add user",

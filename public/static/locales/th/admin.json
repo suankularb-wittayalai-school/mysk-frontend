@@ -248,6 +248,14 @@
     }
   },
   "dialog": {
+    "addOption": {
+      "title": "เพิ่มตัวเลือก",
+      "label": "ตัวเลือก",
+      "action": {
+        "cancel": "ยกเลิก",
+        "add": "เพิ่ม"
+      }
+    },
     "editStudent": {
       "title": {
         "add": "เพิ่มผู้ใช้",
