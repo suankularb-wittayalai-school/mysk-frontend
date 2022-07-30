@@ -201,6 +201,38 @@
         }
       }
     },
+    "form": {
+      "title": "Form",
+      "field": {
+        "shortAnswer": "Short answer",
+        "paragraph": "Paragraph",
+        "multipleChoice": "Multiple choice",
+        "checkBox": "Checkbox list",
+        "dropdown": "Dropdown",
+        "file": "File upload",
+        "date": "Date",
+        "time": "Time",
+        "scale": "Scale"
+      },
+      "add": {
+        "title": "Add to form",
+        "type": "Type",
+        "action": {
+          "add": "Add"
+        }
+      },
+      "list": {
+        "labelTH": "Local label (Thai)",
+        "labelEN": "English label",
+        "rangeStart": "Range start",
+        "rangeEnd": "Range start",
+        "default": "Default",
+        "action": {
+          "delete": "Delete question"
+        }
+      },
+      "preview": "Preview"
+    },
     "publish": {
       "title": "Publish",
       "supportingText": "Ready to let everyone see the changes you’ve made? Please note that it may take up to 5 minutes for your edit to be visible to the public.",

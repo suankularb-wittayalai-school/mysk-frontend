@@ -33,11 +33,24 @@ import { LangCode } from "@utils/types/common";
 // Helpers
 import { getLocaleString } from "@utils/helpers/i18n";
 
+const fieldTypeMap = {
+  short_answer: "shortAnswer",
+  paragraph: "paragraph",
+  multiple_choice: "multipleChoice",
+  check_box: "checkBox",
+  dropdown: "dropdown",
+  file: "file",
+  date: "date",
+  time: "time",
+  scale: "scale",
+};
+
 const AddToForm = ({
   addToFields,
 }: {
   addToFields: (field: FormFieldType) => void;
 }): JSX.Element => {
+  const { t } = useTranslation("admin");
   const locale = useRouter().locale as LangCode;
 
   const [type, setType] = useState<FieldType>("short_answer");
@@ -51,28 +64,28 @@ const AddToForm = ({
       <Card type="stacked" appearance="outlined" className="!overflow-visible">
         <CardHeader
           icon={<MaterialIcon icon="add_circle" />}
-          title={<h3>Add to form</h3>}
+          title={<h3>{t("articleEditor.form.add.title")}</h3>}
         />
         <LayoutGridCols cols={3}>
           <Dropdown
             name="type"
-            label="Type"
-            options={
+            label={t("articleEditor.form.add.type")}
+            options={(
               [
-                { value: "short_answer", label: "Short answer" },
-                { value: "paragraph", label: "Paragraph" },
-                {
-                  value: "multiple_choice",
-                  label: "Multiple choice",
-                },
-                { value: "check_box", label: "Checkbox list" },
-                { value: "dropdown", label: "Dropdown" },
-                { value: "file", label: "File upload" },
-                { value: "date", label: "Date" },
-                { value: "time", label: "Time" },
-                { value: "scale", label: "Scale" },
-              ] as { value: FieldType; label: string }[]
-            }
+                "short_answer",
+                "paragraph",
+                "multiple_choice",
+                "check_box",
+                "dropdown",
+                "file",
+                "date",
+                "time",
+                "scale",
+              ] as FieldType[]
+            ).map((fieldType) => ({
+              value: fieldType,
+              label: t(`articleEditor.form.field.${fieldTypeMap[fieldType]}`),
+            }))}
             onChange={setType}
             className="ml-4 mt-4"
           />
@@ -80,13 +93,13 @@ const AddToForm = ({
         <CardActions className="!pt-0">
           <Button
             type="filled"
-            label="Add to form"
+            label={t("articleEditor.form.add.action.add")}
             onClick={() => {
               addToFields({
                 id: latestID,
                 label: {
-                  th: "คำถาม",
-                  "en-US": locale == "en-US" ? "Question" : undefined,
+                  th: "คำถามที่ไม่มีชื่อ",
+                  "en-US": locale == "en-US" ? "Untitled question" : undefined,
                 },
                 type,
                 required: false,
@@ -115,6 +128,7 @@ const FieldList = ({
   fields: FormFieldType[];
   setFields: (fields: FormFieldType[]) => void;
 }): JSX.Element => {
+  const { t } = useTranslation("admin");
   const locale = useRouter().locale as LangCode;
 
   function updateFieldAttr(id: number, attr: keyof FormFieldType, value: any) {
@@ -148,10 +162,13 @@ const FieldList = ({
             >
               <CardHeader
                 title={<h3>{getLocaleString(field.label, locale)}</h3>}
-                label={<code>{field.type}</code>}
+                label={t(
+                  `articleEditor.form.field.${fieldTypeMap[field.type]}`
+                )}
                 end={
                   <Actions>
                     <Button
+                      name={t("articleEditor.form.list.action.delete")}
                       type="text"
                       icon={<MaterialIcon icon="delete" />}
                       iconOnly
@@ -169,7 +186,7 @@ const FieldList = ({
                   <KeyboardInput
                     name="label-th"
                     type="text"
-                    label="Local label (Thai)"
+                    label={t("articleEditor.form.list.labelTH")}
                     onChange={(e) =>
                       updateFieldAttr(field.id, "label", {
                         ...field.label,
@@ -182,7 +199,7 @@ const FieldList = ({
                   <KeyboardInput
                     name="label-en"
                     type="text"
-                    label="English label"
+                    label={t("articleEditor.form.list.labelEN")}
                     onChange={(e) =>
                       updateFieldAttr(field.id, "label", {
                         ...field.label,
@@ -196,7 +213,7 @@ const FieldList = ({
                       <KeyboardInput
                         name="range-start"
                         type="number"
-                        label="Range start"
+                        label={t("articleEditor.form.list.rangeStart")}
                         onChange={(e) =>
                           updateFieldAttr(field.id, "range", {
                             ...field.range,
@@ -208,7 +225,7 @@ const FieldList = ({
                       <KeyboardInput
                         name="range-end"
                         type="number"
-                        label="Range end"
+                        label={t("articleEditor.form.list.rangeEnd")}
                         onChange={(e) =>
                           updateFieldAttr(field.id, "range", {
                             ...field.range,
@@ -224,7 +241,7 @@ const FieldList = ({
                       <KeyboardInput
                         name="default"
                         type="number"
-                        label="Default"
+                        label={t("articleEditor.form.list.default")}
                         onChange={(e) =>
                           updateFieldAttr(field.id, "default", e)
                         }
@@ -237,7 +254,7 @@ const FieldList = ({
                       <FormField
                         field={{
                           ...field,
-                          label: { th: "Default" },
+                          label: { th: t("articleEditor.form.list.default") },
                           options: field.options || [],
                         }}
                         onChange={(e) =>
@@ -258,35 +275,39 @@ const FieldList = ({
   );
 };
 
-const FormPreview = ({ fields }: { fields: FormFieldType[] }): JSX.Element => (
-  <Card type="stacked" appearance="outlined" className="h-fit">
-    <CardHeader
-      icon={<MaterialIcon icon="preview" />}
-      title={<h3>Preview</h3>}
-    />
-    <CardSupportingText className="!gap-0">
-      <LayoutGroup>
-        <AnimatePresence>
-          {fields.map((field) => (
-            <motion.div
-              key={field.id}
-              layoutId={["preview", field.id].join("-")}
-              initial={{ x: -100, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: -100, opacity: 0 }}
-              transition={animationTransition}
-            >
-              <FormField
-                field={{ ...field, options: field.options || [] }}
-                onChange={() => {}}
-              />
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </LayoutGroup>
-    </CardSupportingText>
-  </Card>
-);
+const FormPreview = ({ fields }: { fields: FormFieldType[] }): JSX.Element => {
+  const { t } = useTranslation("admin");
+
+  return (
+    <Card type="stacked" appearance="outlined" className="h-fit">
+      <CardHeader
+        icon={<MaterialIcon icon="preview" />}
+        title={<h3>{t("articleEditor.form.preview")}</h3>}
+      />
+      <CardSupportingText className="!gap-0">
+        <LayoutGroup>
+          <AnimatePresence>
+            {fields.map((field) => (
+              <motion.div
+                key={field.id}
+                layoutId={["preview", field.id].join("-")}
+                initial={{ x: -100, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: -100, opacity: 0 }}
+                transition={animationTransition}
+              >
+                <FormField
+                  field={{ ...field, options: field.options || [] }}
+                  onChange={() => {}}
+                />
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </LayoutGroup>
+      </CardSupportingText>
+    </Card>
+  );
+};
 
 const ArticleForm = ({
   mode,
@@ -305,7 +326,7 @@ const ArticleForm = ({
     <Section className="!gap-y-6">
       <Header
         icon={<MaterialIcon icon="checklist" allowCustomSize />}
-        text="Form"
+        text={t("articleEditor.form.title")}
       />
 
       <AddToForm addToFields={(field) => setFields([field, ...fields])} />
