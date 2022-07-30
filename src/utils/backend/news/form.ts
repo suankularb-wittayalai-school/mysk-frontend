@@ -55,18 +55,33 @@ export async function sendForm(
   formID: number,
   formAnswer: { id: number; value: string | number | string[] | File | null }[],
   sendAs?: number
-): Promise<BackendReturn<FormQuestionsTable[]>> {
-  // TODO: Send form data to Supabase
-  console.log(formAnswer);
-  console.log(sendAs);
-
+): Promise<
+  BackendReturn<
+    BackendReturn<FormFieldValueTable[] | FormFieldValueTable | null>[]
+  >
+> {
   // create submission in form_submissions
   const { data, error } = await supabase
     .from<FormSubmissionTable>("form_submissions")
     .insert({ form: formID, person: sendAs ?? null })
     .single();
 
-  return { data: [], error: null };
+  if (error || !data) {
+    console.error(error);
+    return { data: [], error };
+  }
+
+  // save answers to form_field_values
+  const answers = await Promise.all(
+    formAnswer.map((answer) => sendFormAnswer(answer, data.id))
+  );
+
+  if (error) {
+    console.error(error);
+    return { data: [], error };
+  }
+
+  return { data: answers, error: null };
 }
 
 async function sendFormAnswer(
@@ -83,8 +98,14 @@ async function sendFormAnswer(
           await supabase.storage
             .from("news")
             .upload(
-              `form_submissions/${submissionID}/${formAnswer.id}/${formAnswer.value.name}`,
-              formAnswer.value
+              `form_submissions/${submissionID}/file-${
+                formAnswer.id
+              }.${formAnswer.value.name.split(".").pop()}`,
+              formAnswer.value,
+              {
+                cacheControl: "3600",
+                upsert: false,
+              }
             );
         if (uploadingError || !uploadedFile) {
           console.error(uploadingError);
@@ -92,12 +113,18 @@ async function sendFormAnswer(
         }
         // save value as path
         const { data, error } = await supabase
-          .from<FormFieldValueTable>("form_field_values")
+          .from<FormFieldValueTable>("form_field_value")
           .insert({
             field: formAnswer.id,
-            value: `form_submissions/${submissionID}/${formAnswer.id}/${formAnswer.value.name}`,
+            value: `form_submissions/${submissionID}/file-${
+              formAnswer.id
+            }.${formAnswer.value.name.split(".").pop()}`,
             submission: submissionID,
           });
+        if (error) {
+          console.error(error);
+          return { data: [], error };
+        }
         return { data, error: null };
       }
       // is array
