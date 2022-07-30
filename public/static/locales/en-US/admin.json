@@ -132,7 +132,8 @@
     },
     "typeDesc": {
       "info": "A general article conveying information, it is meant to only be read and is not interactive. The body of an information article is written in and formatted with Markdown.",
-      "stats": "A statistics article allows you to neatly display data in a table presented to all teachers in the school. Examples include: the number of students and teachers in a school, and the percentage of COVID-19 vaccinations."
+      "stats": "A statistics article allows you to neatly display data in a table presented to all teachers in the school. Examples include: the number of students and teachers in a school, and the percentage of COVID-19 vaccinations.",
+      "form": "A form accepts information from students. You, as an administrator, can create a form here, and a teacher will be able to view the students’ responses on their “Class” page."
     },
     "config": {
       "title": "Configure",
