@@ -1,7 +1,11 @@
 // Types
-import { FormDB, FormQuestionsTable } from "@utils/types/database/news";
+import {
+  FormDB,
+  FormQuestionsTable,
+  FormTable,
+} from "@utils/types/database/news";
 import { BackendReturn } from "@utils/types/common";
-import { FormPage, NewsItemFormNoDate } from "@utils/types/news";
+import { FormField, FormPage, NewsItemFormNoDate } from "@utils/types/news";
 
 // Converters
 import { db2FormPage, dbForm2NewsItem } from "../database";
@@ -51,4 +55,21 @@ export async function sendForm(
   // TODO: Send form data to Supabase
 
   return { data: [], error: null };
+}
+
+export async function createForm(form: {
+  titleTH: string;
+  titleEN: string;
+  descTH: string;
+  descEN: string;
+  image: File | null;
+  oldURL: string;
+  fields: Omit<FormField, "id">[];
+}): Promise<BackendReturn<FormTable, null>> {
+  // TODO: Push created form to Supabase
+
+  return {
+    data: null,
+    error: { message: "this function is not implemented." },
+  };
 }

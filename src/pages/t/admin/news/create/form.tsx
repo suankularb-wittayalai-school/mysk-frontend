@@ -19,7 +19,6 @@ import {
 
 // Components
 import ArticleConfig from "@components/news/ArticleConfig";
-import ArticleData from "@components/news/ArticleData";
 import ArticlePublish from "@components/news/ArticlePublish";
 
 // Backend
@@ -28,13 +27,17 @@ import { createInfo } from "@utils/backend/news/info";
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
 
+// Hooks
+
 // Types
 import { LangCode, WaitingSnackbar } from "@utils/types/common";
+import { FormField } from "@utils/types/news";
+import { createForm } from "@utils/backend/news/form";
+import ArticleForm from "@components/news/ArticleForm";
 
 // Page
 const CreateStats: NextPage = (): JSX.Element => {
   const { t } = useTranslation("admin");
-
 
   // Form control
   const [form, setForm] = useState<{
@@ -42,28 +45,23 @@ const CreateStats: NextPage = (): JSX.Element => {
     titleEN: string;
     descTH: string;
     descEN: string;
-    bodyTH: string;
-    bodyEN: string;
     image: File | null;
     oldURL: string;
-    csvFile: File | null;
+    fields: Omit<FormField, "id">[];
   }>({
     titleTH: "",
     titleEN: "",
     descTH: "",
     descEN: "",
-    bodyTH: "",
-    bodyEN: "",
     image: null,
     oldURL: "",
-    csvFile: null,
+    fields: [],
   });
 
   function validate(): boolean {
     if (!form.titleTH) return false;
     if (!form.descTH) return false;
-    if (!form.bodyTH) return false;
-    if (!form.csvFile) return false;
+    // if (form.fields.length < 1) return false;
 
     return true;
   }
@@ -75,14 +73,14 @@ const CreateStats: NextPage = (): JSX.Element => {
     <>
       <Head>
         <title>
-          {createTitleStr(t("articleEditor.title.title.add.stats"), t)}
+          {createTitleStr(t("articleEditor.title.title.add.form"), t)}
         </title>
       </Head>
       <RegularLayout
         Title={
           <Title
             name={{
-              title: t("articleEditor.title.title.add.stats"),
+              title: t("articleEditor.title.title.add.form"),
               subtitle: t("articleEditor.title.subtitle"),
             }}
             pageIcon={<MaterialIcon icon="edit_square" />}
@@ -92,15 +90,18 @@ const CreateStats: NextPage = (): JSX.Element => {
         }
       >
         <Section>
-          <p>{t("articleEditor.typeDesc.stats")}</p>
+          <p>{t("articleEditor.typeDesc.form")}</p>
         </Section>
         <ArticleConfig
           mode="add"
           onFormChange={(incForm) => setForm({ ...form, ...incForm })}
         />
-        <ArticleData />
+        <ArticleForm
+          mode="add"
+          setFields={(incFields) => setForm({ ...form, fields: incFields })}
+        />
         <ArticlePublish
-          handlePublish={async () => await createInfo(form)}
+          handlePublish={async () => await createForm(form)}
           allowPublish={validate()}
         />
       </RegularLayout>

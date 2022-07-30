@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 // SK Components
 import {
@@ -27,8 +27,6 @@ import { createInfo } from "@utils/backend/news/info";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
-
-// Hooks
 
 // Types
 import { LangCode, WaitingSnackbar } from "@utils/types/common";
