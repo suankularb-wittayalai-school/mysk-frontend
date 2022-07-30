@@ -70,6 +70,6 @@ export async function middleware(req: NextRequest) {
   // Redirect if decided so, continue if not
   // Note: While developing, comment out line 73 if you want to test protected
   // pages via IPv4. Pages using user data will not work, however.
-  // if (destination) return NextResponse.redirect(new URL(destination, req.url));
+  if (destination) return NextResponse.redirect(new URL(destination, req.url));
   return NextResponse.next();
 }
