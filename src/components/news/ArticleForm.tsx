@@ -15,9 +15,13 @@ import {
   Dropdown,
   Header,
   KeyboardInput,
+  LayoutGridCols,
   MaterialIcon,
   Section,
 } from "@suankularb-components/react";
+
+// Components
+import FormField from "@components/news/FormField";
 
 // Animations
 import { animationTransition } from "@utils/animations/config";
@@ -28,7 +32,81 @@ import { LangCode } from "@utils/types/common";
 
 // Helpers
 import { getLocaleString } from "@utils/helpers/i18n";
-import FormField from "./FormField";
+
+const AddToForm = ({
+  addToFields,
+}: {
+  addToFields: (field: FormFieldType) => void;
+}): JSX.Element => {
+  const locale = useRouter().locale as LangCode;
+
+  const [type, setType] = useState<FieldType>("short_answer");
+
+  // Note: this ID won’t be used in Supabase. This is purely for keeping track of
+  // fields client-side.
+  const [latestID, incrementID] = useReducer((value) => value + 1, 0);
+
+  return (
+    <Section>
+      <Card type="stacked" appearance="outlined" className="!overflow-visible">
+        <CardHeader
+          icon={<MaterialIcon icon="add_circle" />}
+          title={<h3>Add to form</h3>}
+        />
+        <LayoutGridCols cols={3}>
+          <Dropdown
+            name="type"
+            label="Type"
+            options={
+              [
+                { value: "short_answer", label: "Short answer" },
+                { value: "paragraph", label: "Paragraph" },
+                {
+                  value: "multiple_choice",
+                  label: "Multiple choice",
+                },
+                { value: "check_box", label: "Checkbox list" },
+                { value: "dropdown", label: "Dropdown" },
+                { value: "file", label: "File upload" },
+                { value: "date", label: "Date" },
+                { value: "time", label: "Time" },
+                { value: "scale", label: "Scale" },
+              ] as { value: FieldType; label: string }[]
+            }
+            onChange={setType}
+            className="ml-4 mt-4"
+          />
+        </LayoutGridCols>
+        <CardActions className="!pt-0">
+          <Button
+            type="filled"
+            label="Add to form"
+            onClick={() => {
+              addToFields({
+                id: latestID,
+                label: {
+                  th: "คำถาม",
+                  "en-US": locale == "en-US" ? "Question" : undefined,
+                },
+                type,
+                required: false,
+                // Have empty array in options if needed
+                options: ["check_box", "dropdown", "multiple_choice"].includes(
+                  type
+                )
+                  ? []
+                  : undefined,
+                // Set default range if needed
+                range: type == "scale" ? { start: 1, end: 5 } : undefined,
+              });
+              incrementID();
+            }}
+          />
+        </CardActions>
+      </Card>
+    </Section>
+  );
+};
 
 const FieldList = ({
   fields,
@@ -87,31 +165,6 @@ const FieldList = ({
               />
               <CardSupportingText>
                 <div className="layout-grid-cols-4 !gap-y-0">
-                  {/* Type */}
-                  <Dropdown
-                    name="type"
-                    label="Type"
-                    options={
-                      [
-                        { value: "short_answer", label: "Short answer" },
-                        { value: "paragraph", label: "Paragraph" },
-                        {
-                          value: "multiple_choice",
-                          label: "Multiple choice",
-                        },
-                        { value: "check_box", label: "Checkbox list" },
-                        { value: "dropdown", label: "Dropdown" },
-                        { value: "file", label: "File upload" },
-                        { value: "date", label: "Date" },
-                        { value: "time", label: "Time" },
-                        { value: "scale", label: "Scale" },
-                      ] as { value: FieldType; label: string }[]
-                    }
-                    onChange={(e: FieldType) =>
-                      updateFieldAttr(field.id, "type", e)
-                    }
-                    defaultValue={field.type}
-                  />
                   {/* Local label (Thai) */}
                   <KeyboardInput
                     name="label-th"
@@ -166,21 +219,35 @@ const FieldList = ({
                       />
                     </>
                   )}
-                  {field.type != "file" && (
-                    <FormField
-                      field={{
-                        ...field,
-                        label: { th: "Default" },
-                        options: field.options || [],
-                      }}
-                      onChange={(e) => updateFieldAttr(field.id, "default", e)}
-                      className={
-                        ["paragraph", "scale"].includes(field.type)
-                          ? "col-span-2"
-                          : undefined
-                      }
-                    />
-                  )}
+                  {field.type != "file" &&
+                    (field.type == "scale" ? (
+                      <KeyboardInput
+                        name="default"
+                        type="number"
+                        label="Default"
+                        onChange={(e) =>
+                          updateFieldAttr(field.id, "default", e)
+                        }
+                        attr={{
+                          min: field.range?.start,
+                          max: field.range?.end,
+                        }}
+                      />
+                    ) : (
+                      <FormField
+                        field={{
+                          ...field,
+                          label: { th: "Default" },
+                          options: field.options || [],
+                        }}
+                        onChange={(e) =>
+                          updateFieldAttr(field.id, "default", e)
+                        }
+                        className={
+                          field.type == "paragraph" ? "col-span-2" : undefined
+                        }
+                      />
+                    ))}
                 </div>
               </CardSupportingText>
             </Card>
@@ -234,16 +301,15 @@ const ArticleForm = ({
   const [fields, setFields] = useState<FormFieldType[]>([]);
   useEffect(() => setExtFields(fields), [fields]);
 
-  // Note: this ID won’t be used in Supabase. This is purely for keeping track of
-  // fields client-side.
-  const [latestID, incrementID] = useReducer((value) => value + 1, 0);
-
   return (
-    <Section>
+    <Section className="!gap-y-6">
       <Header
         icon={<MaterialIcon icon="checklist" allowCustomSize />}
         text="Form"
       />
+
+      <AddToForm addToFields={(field) => setFields([field, ...fields])} />
+
       <div className="layout-grid-cols-3 !flex-col-reverse">
         {/* Field list */}
         <FieldList fields={fields} setFields={setFields} />
