@@ -49,12 +49,12 @@ const FormPage: NextPage<{ formPage: FormPageType; personID: number }> = ({
     formPage.content.fields.map((field) => ({
       id: field.id,
       value:
-        field.default ||
-        (["short_answer", "paragraph"].includes(field.type)
-          ? ""
-          : field.type == "scale"
-          ? 0
-          : null),
+        field.type == "scale"
+          ? field.default
+            ? Number(field.default)
+            : 0
+          : field.default ||
+            (["short_answer", "paragraph"].includes(field.type) ? "" : null),
       required: field.required,
     }))
   );
