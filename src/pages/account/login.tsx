@@ -23,6 +23,7 @@ import { supabase } from "@utils/supabaseClient";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
+import { setAuthCookies } from "@utils/backend/account";
 
 // Page
 const Login: NextPage = () => {
@@ -45,15 +46,13 @@ const Login: NextPage = () => {
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-
-    // Signals loading
     setLoading(true);
-
-    // Validates
     if (!validate()) return;
 
-    // Sends
-    await supabase.auth.signIn({ email, password });
+    const { session } = await supabase.auth.signIn({ email, password });
+    if (!session) return;
+    await setAuthCookies("SIGNED_IN", session);
+    router.reload();
   }
 
   return (

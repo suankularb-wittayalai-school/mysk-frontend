@@ -147,7 +147,6 @@ const StudentListSection = ({
 // Page
 const Class: NextPage<{ classItem: ClassType }> = ({ classItem }) => {
   const { t } = useTranslation("common");
-  useStudentAccount({ loginRequired: true });
 
   return (
     <>

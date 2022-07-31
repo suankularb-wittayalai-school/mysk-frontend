@@ -67,7 +67,7 @@ import { supabase } from "@utils/supabaseClient";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
-import { protectPageFor } from "@utils/helpers/route";
+
 
 // Details Section
 const DetailsSection = ({
@@ -856,11 +856,7 @@ const SubjectDetails: NextPage<{
 export const getServerSideProps: GetServerSideProps = async ({
   locale,
   params,
-  req,
 }) => {
-  const redirect = await protectPageFor("teacher", req);
-  if (redirect) return redirect;
-
   const { data: dbSubject, error: dbSubjectError } = await supabase
     .from<SubjectTable>("subject")
     .select("*")

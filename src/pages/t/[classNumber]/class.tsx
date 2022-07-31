@@ -53,7 +53,7 @@ import { createContact } from "@utils/backend/contact";
 
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
-import { protectPageFor } from "@utils/helpers/route";
+
 import { createTitleStr } from "@utils/helpers/title";
 
 // Hooks
@@ -83,8 +83,10 @@ const StudentFormCard = ({ form }: { form: StudentFormItem }): JSX.Element => {
           <div className="flex divide-x divide-outline">
             <span className="pr-2">{t(`itemType.${form.type}`)}</span>
             <time className="pl-2 text-outline">
-              {form.postDate.toLocaleDateString(locale, {
-                year: isThisYear(form.postDate) ? undefined : "numeric",
+              {new Date(form.postDate).toLocaleDateString(locale, {
+                year: isThisYear(new Date(form.postDate))
+                  ? undefined
+                  : "numeric",
                 month: "short",
                 day: "numeric",
               })}
@@ -128,7 +130,8 @@ const FormSection = ({
 }): JSX.Element => {
   const { t } = useTranslation(["dashboard", "news", "class"]);
   const [newsFilter, setNewsFilter] = useState<Array<string>>([]);
-  const [filteredNews, setFilteredNews] = useState<Array<StudentFormItem>>(forms);
+  const [filteredNews, setFilteredNews] =
+    useState<Array<StudentFormItem>>(forms);
   const locale = useRouter().locale as "en-US" | "th";
 
   useEffect(
@@ -429,12 +432,7 @@ const Class: NextPage<{
           />
         }
       >
-        <FormSection
-          studentForms={studentForms.map((newsItem) => ({
-            ...newsItem,
-            postDate: new Date(newsItem.postDate),
-          }))}
-        />
+        <FormSection studentForms={studentForms} />
         <ClassAdvisorsSection
           classAdvisors={classItem.classAdvisors}
           toggleShowAdd={toggleShowAddTeacher}
@@ -488,25 +486,19 @@ const Class: NextPage<{
 export const getServerSideProps: GetServerSideProps = async ({
   locale,
   params,
-  req,
-}) => {
-  const redirect = await protectPageFor("teacher", req);
-  if (redirect) return redirect;
-
-  return {
-    props: {
-      ...(await serverSideTranslations(locale as string, [
-        "account",
-        "news",
-        "dashboard",
-        "common",
-        "class",
-        "teacher",
-      ])),
-      classItem: await getClassroom(Number(params?.classNumber)),
-      studentForms: [],
-    },
-  };
-};
+}) => ({
+  props: {
+    ...(await serverSideTranslations(locale as string, [
+      "account",
+      "news",
+      "dashboard",
+      "common",
+      "class",
+      "teacher",
+    ])),
+    classItem: await getClassroom(Number(params?.classNumber)),
+    studentForms: [],
+  },
+});
 
 export default Class;

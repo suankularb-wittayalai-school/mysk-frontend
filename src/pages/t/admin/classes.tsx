@@ -37,7 +37,7 @@ import { Class } from "@utils/types/class";
 import { ClassroomDB, ClassroomTable } from "@utils/types/database/class";
 
 // Helpers
-import { protectPageFor } from "@utils/helpers/route";
+
 import { createTitleStr } from "@utils/helpers/title";
 
 // Hooks
@@ -202,13 +202,7 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  req,
-}) => {
-  const redirect = await protectPageFor("teacher", req);
-  if (redirect) return redirect;
-
+export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   let allClasses: Class[] = [];
 
   const { data: classes, error } = await supabase
