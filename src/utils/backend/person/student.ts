@@ -7,6 +7,7 @@ import { supabase } from "@utils/supabaseClient";
 
 // Backend
 import { createPerson } from "@utils/backend/person/person";
+import { db2Student } from "@utils/backend/database";
 
 // Types
 import {
@@ -16,7 +17,6 @@ import {
 } from "@utils/types/database/person";
 import { BackendReturn } from "@utils/types/common";
 import { Student } from "@utils/types/person";
-import { db2Student } from "../database";
 
 export async function getStudentByCookie(
   req: GetServerSidePropsContext["req"]
