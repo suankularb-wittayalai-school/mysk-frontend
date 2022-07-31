@@ -147,6 +147,7 @@ const FormPage: NextPage<{ formPage: FormPageType; personID: number }> = ({
                     value: option,
                     label: option,
                   }))}
+                  placeholder={t("input.none.noneSelected", { ns: "common" })}
                   noOptionsText={t("input.none.noOptions", { ns: "common" })}
                   onChange={(e: string) => updateForm(e, field)}
                   defaultValue={field.default}
@@ -200,7 +201,7 @@ const FormPage: NextPage<{ formPage: FormPageType; personID: number }> = ({
                       min={field.range.start}
                       max={field.range.end}
                       onChange={(e) => updateForm(e, field)}
-                      defaultValue={Number(field.default)}
+                      defaultValue={Number(field.default || 0)}
                     />
                   ) : null}
                 </FormElement>

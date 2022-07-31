@@ -52,7 +52,8 @@
     "none": {
       "noFilesAttached": "No files attached",
       "noNewFilesAttached": "Attach file to change",
-      "noOptions": "No options"
+      "noOptions": "No options",
+      "noneSelected": "Select an option"
     },
     "error": {}
   },

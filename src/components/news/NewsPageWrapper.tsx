@@ -60,12 +60,12 @@ const NewsPageWrapper = ({
           {/* Banner image */}
           <div
             className="container-surface-variant relative aspect-video w-full
-              overflow-hidden text-right shadow sm:rounded-xl md:aspect-[5/1]"
+              overflow-hidden !p-0 text-right shadow sm:rounded-xl md:aspect-[5/1]"
           >
             {news.image ? (
               <Image src={news.image} layout="fill" objectFit="cover" alt="" />
             ) : (
-              <p className="m-4 !p-0 font-display text-8xl font-light leading-none opacity-30">
+              <p className="m-4 font-display text-8xl font-light leading-none opacity-30">
                 {getLocaleString(news.content.title, locale)}
               </p>
             )}
