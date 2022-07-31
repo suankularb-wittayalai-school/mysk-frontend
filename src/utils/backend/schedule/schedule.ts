@@ -121,7 +121,8 @@ export async function getSchedulesOfGrade(
     .from<ClassroomTable>("classroom")
     .select("id, number")
     .lt("number", (grade + 1) * 100)
-    .gt("number", grade * 100);
+    .gt("number", grade * 100)
+    .order("number");
 
   if (classesError) {
     console.error(classesError);
