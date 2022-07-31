@@ -131,7 +131,7 @@ export async function getSchedulesOfGrade(
 
   return {
     data: await Promise.all(
-      classes.map(async (classItem) => ({
+      (classes as ClassroomTable[]).map(async (classItem) => ({
         ...(await getSchedule("student", classItem.id)),
         class: classItem,
       }))
