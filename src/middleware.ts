@@ -44,7 +44,9 @@ export async function middleware(req: NextRequest) {
   const user = await (
     await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/user`, {
       headers: {
-        Authorization: `Bearer ${req.cookies.get("sb-access-token")}`,
+        Authorization: `Bearer ${(
+          req.cookies as unknown as Map<string, string>
+        ).get("sb-access-token")}`,
         APIKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
       },
     })
