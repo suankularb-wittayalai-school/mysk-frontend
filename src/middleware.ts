@@ -32,8 +32,6 @@ export async function middleware(req: NextRequest) {
       : // Fallback (images, icons, manifest, etc.)
         "not-protected";
 
-  console.log({ route });
-
   // Ignore page without protection
   if (pageRole == "not-protected") return NextResponse.next();
 
@@ -80,6 +78,7 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
+    "/",
     "/account/login",
     "/about",
     "/s/:path*",
