@@ -49,7 +49,7 @@ const LandingFeed = ({ feed: extFeed }: { feed: Feed }): JSX.Element => {
   useEffect(() => {
     async function fetchAndSetFeed() {
       const { data, error } = await getLandingFeed();
-      if (!error) setFeed(data);
+      if (!error) setFeed(data as Feed);
     }
     if (!feed) fetchAndSetFeed();
   }, []);
