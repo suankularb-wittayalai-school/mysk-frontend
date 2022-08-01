@@ -10,7 +10,7 @@ import { useRouter } from "next/router";
 import { useTranslation, Trans } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 
 // SK Components
 import {
@@ -32,18 +32,27 @@ import { getLandingFeed } from "@utils/backend/news/info";
 
 // Types
 import { LangCode } from "@utils/types/common";
-import { NewsItem, NewsList } from "@utils/types/news";
+import { NewsItemInfoNoDate } from "@utils/types/news";
 
 // Helpers
 import { getLocaleString } from "@utils/helpers/i18n";
 
 // Page-specific types
-type Feed = { lastUpdated: Date; content: NewsList };
+type Feed = { lastUpdated: string; content: NewsItemInfoNoDate[] };
 
 // News
-const LandingFeed = ({ feed }: { feed: Feed }): JSX.Element => {
+const LandingFeed = ({ feed: extFeed }: { feed: Feed }): JSX.Element => {
   const { t } = useTranslation("landing");
   const locale = useRouter().locale as LangCode;
+
+  const [feed, setFeed] = useState<Feed>(extFeed);
+  useEffect(() => {
+    async function fetchAndSetFeed() {
+      const { data, error } = await getLandingFeed();
+      if (!error) setFeed(data);
+    }
+    if (!feed) fetchAndSetFeed();
+  }, []);
 
   return (
     <section
@@ -89,7 +98,11 @@ const LandingFeed = ({ feed }: { feed: Feed }): JSX.Element => {
   );
 };
 
-const LandingFeedItem = ({ feedItem }: { feedItem: NewsItem }): JSX.Element => {
+const LandingFeedItem = ({
+  feedItem,
+}: {
+  feedItem: NewsItemInfoNoDate;
+}): JSX.Element => {
   const locale = useRouter().locale as LangCode;
 
   return (
