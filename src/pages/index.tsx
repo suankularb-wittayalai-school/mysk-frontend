@@ -41,11 +41,11 @@ import { getLocaleString } from "@utils/helpers/i18n";
 type Feed = { lastUpdated: string; content: NewsItemInfoNoDate[] };
 
 // News
-const LandingFeed = ({ feed: extFeed }: { feed: Feed }): JSX.Element => {
+const LandingFeed = ({ feed: extFeed }: { feed?: Feed }): JSX.Element => {
   const { t } = useTranslation("landing");
   const locale = useRouter().locale as LangCode;
 
-  const [feed, setFeed] = useState<Feed>(extFeed);
+  const [feed, setFeed] = useState<Feed | undefined>(extFeed);
   useEffect(() => {
     async function fetchAndSetFeed() {
       const { data, error } = await getLandingFeed();
@@ -72,7 +72,7 @@ const LandingFeed = ({ feed: extFeed }: { feed: Feed }): JSX.Element => {
             <Trans i18nKey="news.lastUpdated" ns="landing">
               {{
                 lastUpdated:
-                  feed.lastUpdated &&
+                  feed?.lastUpdated &&
                   new Date(feed.lastUpdated).toLocaleDateString(locale, {
                     year: "numeric",
                     month: "long",
@@ -84,7 +84,7 @@ const LandingFeed = ({ feed: extFeed }: { feed: Feed }): JSX.Element => {
         }
       />
       <ul className="flex flex-col pb-1">
-        {feed.content.map((feedItem) => (
+        {feed?.content.map((feedItem) => (
           <LandingFeedItem key={feedItem.id} feedItem={feedItem} />
         ))}
         <li
