@@ -1,7 +1,7 @@
 // Modules
 import { motion } from "framer-motion";
 
-import type { GetServerSideProps, NextPage } from "next";
+import type { GetServerSideProps, GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
@@ -247,10 +247,8 @@ Landing.getLayout = (page: NextPage): JSX.Element => (
   <Layout navIsTransparent>{page}</Layout>
 );
 
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
-  const { data: feed, error } = await getLandingFeed();
-
-  if (error) return { notFound: true };
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
+  const { data: feed } = await getLandingFeed();
 
   return {
     props: {
@@ -260,6 +258,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
       ])),
       feed,
     },
+    revalidate: 300,
   };
 };
 
