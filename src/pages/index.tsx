@@ -232,11 +232,20 @@ Landing.getLayout = (page: NextPage): JSX.Element => (
   <Layout navIsTransparent>{page}</Layout>
 );
 
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale as string, ["common", "landing"])),
-    feed: await getLandingFeed(),
-  },
-});
+export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
+  const { data: feed, error } = await getLandingFeed();
+
+  if (error) return { notFound: true };
+
+  return {
+    props: {
+      ...(await serverSideTranslations(locale as string, [
+        "common",
+        "landing",
+      ])),
+      feed,
+    },
+  };
+};
 
 export default Landing;
