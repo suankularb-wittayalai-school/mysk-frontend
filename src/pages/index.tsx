@@ -10,6 +10,8 @@ import { useRouter } from "next/router";
 import { useTranslation, Trans } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
+import { ReactNode } from "react";
+
 // SK Components
 import {
   Button,
@@ -34,11 +36,6 @@ import { NewsItem, NewsList } from "@utils/types/news";
 
 // Helpers
 import { getLocaleString } from "@utils/helpers/i18n";
-
-// Hooks
-import { useSession } from "@utils/hooks/auth";
-
-import { useEffect } from "react";
 
 // Page-specific types
 type Feed = { lastUpdated: Date; content: NewsList };
@@ -206,7 +203,9 @@ const LandingBanner = (): JSX.Element => {
 };
 
 // Page
-export default function Landing({ feed }: { feed: Feed }) {
+const Landing: NextPage<{ feed: Feed }> & {
+  getLayout?: (page: NextPage) => ReactNode;
+} = ({ feed }) => {
   const { t } = useTranslation(["landing", "common"]);
 
   return (
@@ -227,20 +226,17 @@ export default function Landing({ feed }: { feed: Feed }) {
       </div>
     </>
   );
-}
+};
 
 Landing.getLayout = (page: NextPage): JSX.Element => (
   <Layout navIsTransparent>{page}</Layout>
 );
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-}) => ({
+export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(locale as string, [
-      "common",
-      "landing",
-    ])),
+    ...(await serverSideTranslations(locale as string, ["common", "landing"])),
     feed: await getLandingFeed(),
   },
 });
+
+export default Landing;
