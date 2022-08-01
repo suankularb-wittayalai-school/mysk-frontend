@@ -40,6 +40,7 @@ import { StudentTable as StudentTableType } from "@utils/types/database/person";
 import { useSession } from "@utils/hooks/auth";
 import { createStudent } from "@utils/backend/person/student";
 import { createTitleStr } from "@utils/helpers/title";
+import { protectPageFor } from "@utils/helpers/route";
 
 interface ImportedData {
   prefix: "เด็กชาย" | "นาย" | "นาง" | "นางสาว";
@@ -283,7 +284,13 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  req,
+}) => {
+  const redirect = await protectPageFor("admin", req);
+  if (redirect) return redirect;
+
   const { data, error } = await supabase
     .from<StudentDB>("student")
     .select(`id, std_id, people:person(*)`);

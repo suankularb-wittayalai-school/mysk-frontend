@@ -11,10 +11,10 @@ export type NewsItem =
   | NewsItemPayment;
 
 export type NewsItemNoDate =
-  | NewsItemInfoNoDate
-  | NewsItemStatsNoDate
-  | NewsItemFormNoDate
-  | NewsItemPaymentNoDate;
+| NewsItemInfoNoDate
+| NewsItemStatsNoDate
+| NewsItemFormNoDate
+| NewsItemPaymentNoDate;
 
 export type NewsItemType = "info" | "stats" | "form" | "payment";
 
@@ -76,7 +76,7 @@ export type NewsItemPaymentNoDate = Omit<
 export type StudentFormItem = {
   id: number;
   type: "form" | "payment";
-  postDate: string;
+  postDate: Date;
   percentDone: number;
   content: {
     "en-US"?: {
@@ -107,18 +107,18 @@ export type FieldType =
   | "time"
   | "scale";
 
-export type FormField = {
+export interface FormField {
   id: number;
   label: MultiLangString;
   type: FieldType;
   options?: string[];
   required: boolean;
-  range?: {
+  range: {
     start: number;
     end: number;
   };
   default?: string;
-};
+}
 
 export type FormPage = Omit<NewsItemFormNoDate, "done"> & {
   content: {

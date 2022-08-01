@@ -1,7 +1,8 @@
 // Modules
+
 import { AnimatePresence, motion } from "framer-motion";
 
-import { GetServerSideProps, GetStaticProps, NextPage } from "next";
+import { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 
@@ -33,17 +34,18 @@ import { animationTransition } from "@utils/animations/config";
 import { getSchedule } from "@utils/backend/schedule/schedule";
 
 // Types
-import { NewsListNoDate, StudentFormItem } from "@utils/types/news";
-import { Teacher } from "@utils/types/person";
+import { NewsList, NewsListNoDate, StudentFormItem } from "@utils/types/news";
 import { Schedule } from "@utils/types/schedule";
-import { getTeacherByCookie } from "@utils/backend/person/teacher";
+
+// Hooks
+import { useTeacherAccount } from "@utils/hooks/auth";
 
 const TeacherHome: NextPage<{
-  user: Teacher;
   studentForms: StudentFormItem[];
   news: NewsListNoDate;
-}> = ({ user, studentForms, news }) => {
+}> = ({ studentForms, news }) => {
   const { t } = useTranslation("common");
+  const [user] = useTeacherAccount({ loginRequired: true });
 
   const day = new Date().getDay() as Day;
   const [schedule, setSchedule] = useState<Schedule>({
@@ -51,9 +53,9 @@ const TeacherHome: NextPage<{
   });
   useEffect(() => {
     const fetchAndSetSchedule = async () =>
-      setSchedule(await getSchedule("teacher", user.id, day));
+      user && setSchedule(await getSchedule("teacher", user.id, day));
     fetchAndSetSchedule();
-  }, []);
+  }, [user]);
 
   // Dialog control
   const [showChangePassword, setShowChangePassword] = useState<boolean>(false);
@@ -65,51 +67,95 @@ const TeacherHome: NextPage<{
       <Head>
         <title>{t("brand.name", { ns: "common" })}</title>
       </Head>
+      <AnimatePresence>
+        {user && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={animationTransition}
+            >
+              <RegularLayout
+                Title={
+                  <Title
+                    name={{ title: t("brand.name") }}
+                    pageIcon={<MaterialIcon icon="home" />}
+                    backGoesTo={() => setShowLogOut(true)}
+                    LinkElement={Link}
+                    className="sm:!hidden"
+                  />
+                }
+              >
+                <UserSection
+                  user={user}
+                  setShowChangePassword={setShowChangePassword}
+                  setShowEditProfile={setShowEditProfile}
+                  setShowLogOut={setShowLogOut}
+                />
+                <SubjectsSection schedule={schedule} />
+                <TeacherClassSection
+                  studentForms={studentForms.map((newsItem) => ({
+                    ...newsItem,
+                    postDate: new Date(newsItem.postDate),
+                  }))}
+                />
+                <NewsSection news={news} />
+              </RegularLayout>
+            </motion.div>
 
-      {/* Content */}
-      <RegularLayout
-        Title={
-          <Title
-            name={{ title: t("brand.name") }}
-            pageIcon={<MaterialIcon icon="home" />}
-            backGoesTo={() => setShowLogOut(true)}
-            LinkElement={Link}
-            className="sm:!hidden"
-          />
-        }
-      >
-        <UserSection
-          user={user}
-          setShowChangePassword={setShowChangePassword}
-          setShowEditProfile={setShowEditProfile}
-          setShowLogOut={setShowLogOut}
-        />
-        <SubjectsSection schedule={schedule} />
-        <TeacherClassSection studentForms={studentForms} />
-        <NewsSection news={news} />
-      </RegularLayout>
-
-      {/* Dialogs */}
-      <ChangePassword
-        show={showChangePassword}
-        onClose={() => setShowChangePassword(false)}
-      />
-      <EditSelfDialog
-        user={user}
-        show={showEditProfile}
-        onClose={() => setShowEditProfile(false)}
-      />
-      <LogOutDialog show={showLogOut} onClose={() => setShowLogOut(false)} />
+            {/* Dialogs */}
+            <ChangePassword
+              show={showChangePassword}
+              onClose={() => setShowChangePassword(false)}
+            />
+            <EditSelfDialog
+              user={user}
+              show={showEditProfile}
+              onClose={() => setShowEditProfile(false)}
+            />
+            <LogOutDialog
+              show={showLogOut}
+              onClose={() => setShowLogOut(false)}
+            />
+          </>
+        )}
+      </AnimatePresence>
     </>
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  req,
-}) => {
-  const { data: user } = await getTeacherByCookie(req);
-  const studentForms: StudentFormItem[] = [];
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
+  const studentForms: StudentFormItem[] = [
+    {
+      id: 5,
+      type: "payment",
+      postDate: new Date(2022, 0, 7),
+      percentDone: 3,
+      content: {
+        "en-US": {
+          title: "School Maintainance Payment",
+        },
+        th: {
+          title: "การชำระเงินบำรุงการศึกษา",
+        },
+      },
+    },
+    {
+      id: 3,
+      type: "form",
+      postDate: new Date(2020, 3, 14),
+      percentDone: 96,
+      content: {
+        "en-US": {
+          title: "Online Learning Readiness",
+        },
+        th: {
+          title: "ความพร้อมการเรียนออนไลน์",
+        },
+      },
+    },
+  ];
   const news: NewsListNoDate = [];
 
   return {
@@ -120,8 +166,14 @@ export const getServerSideProps: GetServerSideProps = async ({
         "news",
         "dashboard",
       ])),
-      user,
-      studentForms,
+      // (@SiravitPhokeed)
+      // Apparently NextJS doesn’t serialize Date when in development
+      // It does in production, though.
+      // So I guess I’ll keep this workaround, well, around…
+      studentForms: studentForms.map((newsItem) => ({
+        ...newsItem,
+        postDate: newsItem.postDate.getTime(),
+      })),
       news,
     },
   };

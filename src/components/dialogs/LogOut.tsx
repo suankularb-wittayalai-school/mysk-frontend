@@ -6,9 +6,6 @@ import { useState } from "react";
 // SK Components
 import { Dialog } from "@suankularb-components/react";
 
-// Backend
-import { setAuthCookies } from "@utils/backend/account";
-
 // Types
 import { DialogProps } from "@utils/types/common";
 
@@ -44,8 +41,6 @@ const LogOutDialog = ({ show, onClose }: DialogProps): JSX.Element => {
       onSubmit={async () => {
         setLoading(true);
         await supabase.auth.signOut();
-        await setAuthCookies("SIGNED_OUT");
-        router.reload();
       }}
     ></Dialog>
   );

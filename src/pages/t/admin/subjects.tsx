@@ -38,6 +38,7 @@ import { SubjectTable as SubjectTableType } from "@utils/types/database/subject"
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
+import { protectPageFor } from "@utils/helpers/route";
 
 // Hooks
 import { useSession } from "@utils/hooks/auth";
@@ -272,7 +273,13 @@ const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  req,
+}) => {
+  const redirect = await protectPageFor("admin", req);
+  if (redirect) return redirect;
+
   let allSubjects: Subject[] = [];
 
   const { data: subjects, error: subjectSelectingError } = await supabase

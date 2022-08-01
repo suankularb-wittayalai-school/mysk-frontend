@@ -37,7 +37,7 @@ import { getLocaleString } from "@utils/helpers/i18n";
 
 // Hooks
 import { useSession } from "@utils/hooks/auth";
-
+import { protectPageFor } from "@utils/helpers/route";
 import { useEffect } from "react";
 
 // Page-specific types
