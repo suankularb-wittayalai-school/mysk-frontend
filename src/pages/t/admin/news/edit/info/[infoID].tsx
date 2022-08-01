@@ -27,6 +27,7 @@ import ArticleWrite from "@components/news/ArticleWrite";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
+import { protectPageFor } from "@utils/helpers/route";
 
 // Types
 import { LangCode, WaitingSnackbar } from "@utils/types/common";
@@ -140,7 +141,11 @@ const EditInfo: NextPage<{ existingData: InfoPage }> = ({
 export const getServerSideProps: GetServerSideProps = async ({
   locale,
   params,
+  req,
 }) => {
+  const redirect = await protectPageFor("admin", req);
+  if (redirect) return redirect;
+
   if (!params?.infoID) return { notFound: true };
 
   const { data: existingData } = await getInfo(Number(params.infoID));

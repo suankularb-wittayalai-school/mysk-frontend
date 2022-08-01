@@ -17,9 +17,8 @@ export async function getNewsFeed(
       : role == "teacher"
       ? // Teacher feed includes info, stats
         [...(await getInfos()).data]
-      : role == "student"
-      ? // Student feed includes info, form, payment
-        [...(await getInfos()).data, ...(await getForms()).data]
+      : role == "student" // Student feed includes info, form, payment
+      ? [...(await getInfos()).data, ...(await getForms()).data]
       : [];
 
   return {

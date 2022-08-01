@@ -10,10 +10,18 @@ import { useState } from "react";
 
 // SK Components
 import {
+  Card,
+  CardHeader,
+  CardSupportingText,
+  FileInput,
+  Header,
+  KeyboardInput,
+  LayoutGridCols,
   MaterialIcon,
   RegularLayout,
   Section,
   SnackbarManager,
+  TextArea,
   Title,
 } from "@suankularb-components/react";
 
@@ -28,6 +36,9 @@ import { createInfo } from "@utils/backend/news/info";
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
 
+// Hooks
+import { useProtectPageFor } from "@utils/hooks/protect";
+
 // Types
 import { LangCode, WaitingSnackbar } from "@utils/types/common";
 
@@ -35,6 +46,7 @@ import { LangCode, WaitingSnackbar } from "@utils/types/common";
 const CreateStats: NextPage = (): JSX.Element => {
   const { t } = useTranslation("admin");
 
+  useProtectPageFor("admin");
 
   // Form control
   const [form, setForm] = useState<{

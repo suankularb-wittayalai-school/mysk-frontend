@@ -1,6 +1,7 @@
 // Modules
-import { GetServerSidePropsContext } from "next";
-import { PostgrestError, User } from "@supabase/supabase-js";
+import { IncomingMessage } from "http";
+import { NextApiRequestCookies } from "next/dist/server/api-utils";
+import { PostgrestError } from "@supabase/supabase-js";
 
 // Supabase
 import { supabase } from "@utils/supabaseClient";
@@ -12,17 +13,14 @@ import {
   TeacherTable,
 } from "@utils/types/database/person";
 import { RoomSubjectDB } from "@utils/types/database/subject";
-import { BackendReturn } from "@utils/types/common";
 import { Teacher } from "@utils/types/person";
 
 // Backend
-import { createPerson } from "@utils/backend/person/person";
-
-// Converters
-import { db2Teacher } from "@utils/backend/database";
+import { db2Teacher } from "../database";
+import { createPerson } from "./person";
 
 export async function getTeacherIDFromReq(
-  req: GetServerSidePropsContext["req"]
+  req: IncomingMessage & { cookies: NextApiRequestCookies }
 ): Promise<number> {
   const { user, error } = await supabase.auth.api.getUserByCookie(req);
 
@@ -32,34 +30,6 @@ export async function getTeacherIDFromReq(
   }
 
   return user?.user_metadata.teacher;
-}
-
-export async function getTeacherByCookie(
-  req: GetServerSidePropsContext["req"]
-): Promise<BackendReturn<Teacher, null>> {
-  const { data: user, error: userError } =
-    await supabase.auth.api.getUserByCookie(req);
-
-  if (userError) {
-    console.error(userError);
-    return { data: null, error: userError };
-  }
-
-  if (user?.user_metadata.role != "teacher")
-    return { data: null, error: { message: "user is not a teacher." } };
-
-  const { data: teacher, error: teacherError } = await supabase
-    .from<TeacherDB>("teacher")
-    .select("id, teacher_id, people:person(*), SubjectGroup:subject_group(*)")
-    .eq("id", (user as User).user_metadata?.teacher)
-    .single();
-
-  if (teacherError) {
-    console.error(teacherError);
-    return { data: null, error: teacherError };
-  }
-
-  return { data: await db2Teacher(teacher as TeacherDB), error: null };
 }
 
 export async function createTeacher(

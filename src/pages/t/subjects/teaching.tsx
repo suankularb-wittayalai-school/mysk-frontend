@@ -40,6 +40,7 @@ import { ClassWNumber } from "@utils/types/class";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
+import { protectPageFor } from "@utils/helpers/route";
 
 const SubjectsTeaching: NextPage<{ teacherID: number }> = ({ teacherID }) => {
   const { t } = useTranslation("subjects");
@@ -120,11 +121,19 @@ const SubjectsTeaching: NextPage<{ teacherID: number }> = ({ teacherID }) => {
 export const getServerSideProps: GetServerSideProps = async ({
   locale,
   req,
-}) => ({
-  props: {
-    ...(await serverSideTranslations(locale as string, ["common", "subjects"])),
-    teacherID: await getTeacherIDFromReq(req),
-  },
-});
+}) => {
+  const redirect = await protectPageFor("teacher", req);
+  if (redirect) return redirect;
+
+  return {
+    props: {
+      ...(await serverSideTranslations(locale as string, [
+        "common",
+        "subjects",
+      ])),
+      teacherID: await getTeacherIDFromReq(req),
+    },
+  };
+};
 
 export default SubjectsTeaching;
