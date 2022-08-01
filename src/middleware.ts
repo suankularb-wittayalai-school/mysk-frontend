@@ -84,6 +84,8 @@ export const config = {
     "/about",
     "/s/:path*",
     "/t/:path*",
-    "/news/:path*",
+    "/news/stats/:id",
+    "/news/form/:id",
+    "/news/payment/:id",
   ],
 };

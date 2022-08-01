@@ -68,23 +68,25 @@ const LandingFeed = ({ feed: extFeed }: { feed?: Feed }): JSX.Element => {
           </h2>
         }
         label={
-          <p className="font-display">
-            <Trans i18nKey="news.lastUpdated" ns="landing">
-              {{
-                lastUpdated:
-                  feed?.lastUpdated &&
-                  new Date(feed.lastUpdated).toLocaleDateString(locale, {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  }),
-              }}
-            </Trans>
-          </p>
+          feed ? (
+            <p className="font-display">
+              <Trans i18nKey="news.lastUpdated" ns="landing">
+                {{
+                  lastUpdated:
+                    feed.lastUpdated &&
+                    new Date(feed.lastUpdated).toLocaleDateString(locale, {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    }),
+                }}
+              </Trans>
+            </p>
+          ) : undefined
         }
       />
       <ul className="flex flex-col pb-1">
-        {feed?.content.map((feedItem) => (
+        {(feed?.content || []).map((feedItem) => (
           <LandingFeedItem key={feedItem.id} feedItem={feedItem} />
         ))}
         <li
