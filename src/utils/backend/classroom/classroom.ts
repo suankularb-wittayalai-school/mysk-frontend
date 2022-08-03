@@ -16,6 +16,7 @@ import { supabase } from "@utils/supabaseClient";
 // Types
 import { ClassroomDB, ClassroomTable } from "@utils/types/database/class";
 import { Class } from "@utils/types/class";
+import { BackendReturn } from "@utils/types/common";
 
 export async function createClassroom(
   classroom: Class
@@ -178,7 +179,9 @@ export async function addContactToClassroom(
   return { data: updatedClassroom, error: classroomUpdatingError };
 }
 
-export async function getClassIDFromNumber(number: number): Promise<number> {
+export async function getClassIDFromNumber(
+  number: number
+): Promise<BackendReturn<number, null>> {
   const { data: classroom, error: classroomSelectionError } = await supabase
     .from<ClassroomTable>("classroom")
     .select("id")
@@ -186,12 +189,12 @@ export async function getClassIDFromNumber(number: number): Promise<number> {
     .limit(1)
     .single();
 
-  if (classroomSelectionError || !classroom) {
+  if (classroomSelectionError) {
     console.error(classroomSelectionError);
-    return 0;
+    return { data: null, error: classroomSelectionError };
   }
 
-  return classroom.id;
+  return { data: (classroom as ClassroomTable).id, error: null };
 }
 
 export async function getAllClassNumbers(): Promise<number[]> {
