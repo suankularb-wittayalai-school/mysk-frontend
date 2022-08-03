@@ -209,54 +209,20 @@ const StudentSchedule: NextPage<{
   );
 };
 
-// // export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
-// export const getServerSideProps: GetServerSideProps = async ({
-//   locale,
-//   params,
-// }) => {
-//   const classID = await getClassIDFromNumber(Number(params?.classNumber));
-//   if (!classID) return { notFound: true };
-
-//   const schedule: ScheduleType = await getSchedule("student", classID);
-//   const { data: subjectList } = await getSubjectList(classID);
-
-//   // const schedule: ScheduleType = { content: [] };
-//   // const { data: subjectList } = await getSubjectList(classID);
-
-//   return {
-//     props: {
-//       ...(await serverSideTranslations(locale as LangCode, [
-//         "common",
-//         "schedule",
-//       ])),
-//       classNumber: params?.classNumber,
-//       schedule,
-//       subjectList,
-//     },
-//     // revalidate: 300,
-//   };
-// };
-
-// export const getStaticPaths: GetStaticPaths = async () => {
-//   return {
-//     paths: (await getAllClassNumbers()).map((number) => ({
-//       params: { classNumber: number.toString() },
-//     })),
-//     fallback: "blocking",
-//   };
-// };
-
 export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   const classNumber = Number(params?.classNumber);
-  if (!classNumber) return { notFound: true }
+  if (!classNumber) return { notFound: true };
 
   const { data: classID, error } = await getClassIDFromNumber(
     Number(params?.classNumber)
   );
   if (error) return { notFound: true };
 
-  const schedule: ScheduleType = await getSchedule("student", classID as number);
-  const { data: subjectList } = await getSubjectList(classID as number);
+  const schedule: ScheduleType = { content: [] };
+  const { data: subjectList } = { data: [] };
+
+  // const schedule: ScheduleType = await getSchedule("student", classID as number);
+  // const { data: subjectList } = await getSubjectList(classID as number);
 
   return {
     props: {
