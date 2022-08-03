@@ -1,10 +1,5 @@
 // Modules
-import {
-  GetServerSideProps,
-  GetStaticPaths,
-  GetStaticProps,
-  NextPage,
-} from "next";
+import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -32,10 +27,7 @@ import Schedule from "@components/schedule/Schedule";
 import BrandIcon from "@components/icons/BrandIcon";
 
 // Backend
-import {
-  getAllClassNumbers,
-  getClassIDFromNumber,
-} from "@utils/backend/classroom/classroom";
+import { getClassIDFromNumber } from "@utils/backend/classroom/classroom";
 import { getSchedule } from "@utils/backend/schedule/schedule";
 import { getSubjectList } from "@utils/backend/subject/roomSubject";
 
@@ -209,7 +201,10 @@ const StudentSchedule: NextPage<{
   );
 };
 
-export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  params,
+}) => {
   const classNumber = Number(params?.classNumber);
   if (!classNumber) return { notFound: true };
 
@@ -218,11 +213,11 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   );
   if (error) return { notFound: true };
 
-  const schedule: ScheduleType = { content: [] };
-  const { data: subjectList } = { data: [] };
-
-  // const schedule: ScheduleType = await getSchedule("student", classID as number);
-  // const { data: subjectList } = await getSubjectList(classID as number);
+  const schedule: ScheduleType = await getSchedule(
+    "student",
+    classID as number
+  );
+  const { data: subjectList } = await getSubjectList(classID as number);
 
   return {
     props: {
@@ -234,16 +229,6 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
       schedule,
       subjectList,
     },
-    revalidate: 300,
-  };
-};
-
-export const getStaticPaths: GetStaticPaths = async () => {
-  return {
-    paths: (await getAllClassNumbers()).map((number) => ({
-      params: { classNumber: number.toString() },
-    })),
-    fallback: "blocking",
   };
 };
 
