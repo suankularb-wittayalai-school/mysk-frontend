@@ -255,8 +255,8 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   );
   if (error) return { notFound: true };
 
-  const schedule: ScheduleType = await getSchedule("student", classID);
-  const { data: subjectList } = await getSubjectList(classID);
+  const schedule: ScheduleType = await getSchedule("student", classID as number);
+  const { data: subjectList } = await getSubjectList(classID as number);
 
   return {
     props: {
