@@ -41,18 +41,9 @@ import { getLocaleString } from "@utils/helpers/i18n";
 type Feed = { lastUpdated: string; content: NewsItemInfoNoDate[] };
 
 // News
-const LandingFeed = ({ feed: extFeed }: { feed?: Feed }): JSX.Element => {
+const LandingFeed = ({ feed }: { feed?: Feed }): JSX.Element => {
   const { t } = useTranslation("landing");
   const locale = useRouter().locale as LangCode;
-
-  const [feed, setFeed] = useState<Feed | undefined>(extFeed);
-  useEffect(() => {
-    async function fetchAndSetFeed() {
-      const { data, error } = await getLandingFeed();
-      if (!error) setFeed(data as Feed);
-    }
-    if (!feed) fetchAndSetFeed();
-  }, []);
 
   return (
     <section
