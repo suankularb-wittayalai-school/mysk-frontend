@@ -1,5 +1,5 @@
 // Modules
-import { GetStaticPaths, GetStaticProps, NextPage } from "next";
+import { GetServerSideProps, GetStaticPaths, GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -204,15 +204,16 @@ const StudentSchedule: NextPage<{
   );
 };
 
-export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
+// export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
+export const getServerSideProps: GetServerSideProps = async ({ locale, params }) => {
   const classID = await getClassIDFromNumber(Number(params?.classNumber));
   if (!classID) return { notFound: true };
 
-  // const schedule: ScheduleType = await getSchedule("student", classID);
-  // const { data: subjectList } = await getSubjectList(classID);
-
-  const schedule: ScheduleType = { content: [] };
+  const schedule: ScheduleType = await getSchedule("student", classID);
   const { data: subjectList } = await getSubjectList(classID);
+
+  // const schedule: ScheduleType = { content: [] };
+  // const { data: subjectList } = await getSubjectList(classID);
 
   return {
     props: {
@@ -228,13 +229,13 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   };
 };
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  return {
-    paths: (await getAllClassNumbers()).map((number) => ({
-      params: { classNumber: number.toString() },
-    })),
-    fallback: "blocking",
-  };
-};
+// export const getStaticPaths: GetStaticPaths = async () => {
+//   return {
+//     paths: (await getAllClassNumbers()).map((number) => ({
+//       params: { classNumber: number.toString() },
+//     })),
+//     fallback: "blocking",
+//   };
+// };
 
 export default StudentSchedule;
