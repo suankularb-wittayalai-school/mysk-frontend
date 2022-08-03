@@ -221,7 +221,7 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
       schedule,
       subjectList,
     },
-    revalidate: 300,
+    // revalidate: 300,
   };
 };
 
