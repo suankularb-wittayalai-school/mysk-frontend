@@ -201,9 +201,12 @@ export const getServerSideProps: GetServerSideProps = async ({
   locale,
   params,
 }) => {
-  const teachers = await getTeacherList(
-    await getClassIDFromNumber(Number(params?.classNumber))
+  const { data: classID, error: classIDError } = await getClassIDFromNumber(
+    Number(params?.classNumber)
   );
+  if (classIDError) return { notFound: true };
+
+  const teachers = await getTeacherList(classID);
 
   const subjectGroups: string[] = teachers
     .map((teacher) =>
