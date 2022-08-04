@@ -1,10 +1,5 @@
 // Modules
-import {
-  GetServerSideProps,
-  GetStaticPaths,
-  GetStaticProps,
-  NextPage,
-} from "next";
+import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -18,6 +13,7 @@ import { useEffect, useState } from "react";
 import {
   Button,
   Header,
+  LayoutGridCols,
   MaterialIcon,
   RegularLayout,
   Search,
@@ -31,14 +27,12 @@ import Schedule from "@components/schedule/Schedule";
 import BrandIcon from "@components/icons/BrandIcon";
 
 // Backend
-import {
-  getAllClassNumbers,
-  getClassIDFromNumber,
-} from "@utils/backend/classroom/classroom";
+import { getClassIDFromNumber } from "@utils/backend/classroom/classroom";
 import { getSchedule } from "@utils/backend/schedule/schedule";
 import { getSubjectList } from "@utils/backend/subject/roomSubject";
 
 // Types
+import { LangCode } from "@utils/types/common";
 import { Schedule as ScheduleType } from "@utils/types/schedule";
 import { SubjectListItem } from "@utils/types/subject";
 
@@ -62,7 +56,7 @@ const SubjectListSection = ({
   subjectList: SubjectListItem[];
 }): JSX.Element => {
   const { t } = useTranslation("schedule");
-  const locale = useRouter().locale as "en-US" | "th";
+  const locale = useRouter().locale as LangCode;
   const [filterredList, setFilterredList] =
     useState<SubjectListItem[]>(subjectList);
   const [query, setQuery] = useState<string>("");
@@ -93,8 +87,8 @@ const SubjectListSection = ({
 
   return (
     <Section>
-      <div className="layout-grid-cols-3--header">
-        <div className="sm:col-span-2">
+      <LayoutGridCols cols={3}>
+        <div className="md:col-span-2">
           <Header
             text={t("subjectList.title")}
             icon={<MaterialIcon icon="collections_bookmark" allowCustomSize />}
@@ -104,7 +98,7 @@ const SubjectListSection = ({
           placeholder={t("subjectList.search")}
           onChange={(e: string) => setQuery(e.toLowerCase())}
         />
-      </div>
+      </LayoutGridCols>
       <div>
         <Table width={720}>
           <thead>
@@ -207,48 +201,34 @@ const StudentSchedule: NextPage<{
   );
 };
 
-export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
-  const classNumber = await getClassIDFromNumber(Number(params?.classNumber));
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  params,
+}) => {
+  const classNumber = Number(params?.classNumber);
   if (!classNumber) return { notFound: true };
 
-  const schedule: ScheduleType = (await getSchedule(
+  const { data: classID, error } = await getClassIDFromNumber(
+    Number(params?.classNumber)
+  );
+  if (error) return { notFound: true };
+
+  const schedule: ScheduleType = await getSchedule(
     "student",
-    classNumber
-  )) || {
-    content: [
-      { day: 1, content: [] },
-      { day: 2, content: [] },
-      { day: 3, content: [] },
-      { day: 4, content: [] },
-      { day: 5, content: [] },
-    ],
-  };
-  const subjectList: SubjectListItem[] = (
-    await getSubjectList(
-      await getClassIDFromNumber(Number(params?.classNumber))
-    )
-  ).data;
+    classID as number
+  );
+  const { data: subjectList } = await getSubjectList(classID as number);
 
   return {
     props: {
-      ...(await serverSideTranslations(locale as string, [
+      ...(await serverSideTranslations(locale as LangCode, [
         "common",
         "schedule",
       ])),
-      classNumber: params?.classNumber,
+      classNumber,
       schedule,
       subjectList,
     },
-    revalidate: 300,
-  };
-};
-
-export const getStaticPaths: GetStaticPaths = async () => {
-  return {
-    paths: (await getAllClassNumbers()).map((number) => ({
-      params: { classNumber: number.toString() },
-    })),
-    fallback: "blocking",
   };
 };
 

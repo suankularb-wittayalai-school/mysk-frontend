@@ -75,3 +75,16 @@ export async function middleware(req: NextRequest) {
   if (destination) return NextResponse.redirect(new URL(destination, req.url));
   return NextResponse.next();
 }
+
+export const config = {
+  matcher: [
+    "/",
+    "/account/login",
+    "/about",
+    "/s/:path*",
+    "/t/:path*",
+    "/news/stats/:id",
+    "/news/form/:id",
+    "/news/payment/:id",
+  ],
+};
