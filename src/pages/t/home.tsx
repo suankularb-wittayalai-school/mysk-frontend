@@ -1,5 +1,4 @@
 // Modules
-
 import { AnimatePresence, motion } from "framer-motion";
 
 import { GetStaticProps, NextPage } from "next";

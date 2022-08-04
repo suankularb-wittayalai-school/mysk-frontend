@@ -94,28 +94,13 @@ const EditSelfDialog = ({
     },
   ];
 
-  function validateAndSend() {
-    let formData = new FormData();
-
-    // Validates
-    if (!["master", "mister", "miss", "missus"].includes(form.prefix))
-      return false;
+  function validate(): boolean {
+    if (!["Master", "Mr.", "Mrs.", "Miss."].includes(form.prefix)) return false;
     if (!form.thFirstName) return false;
     if (!form.thLastName) return false;
     if (!form.enFirstName) return false;
     if (!form.enLastName) return false;
 
-    // Appends to form data
-    formData.append("th-first-name", form.thFirstName);
-    if (form.thMiddleName) formData.append("th-middle-name", form.thMiddleName);
-    formData.append("th-last-name", form.thLastName);
-
-    formData.append("en-first-name", form.enFirstName);
-    if (form.enMiddleName) formData.append("en-middle-name", form.enMiddleName);
-    formData.append("en-last-name", form.enLastName);
-
-    // Sends
-    editProfile(formData);
     return true;
   }
 
@@ -163,7 +148,11 @@ const EditSelfDialog = ({
         ]}
         show={show}
         onClose={() => setShowDiscard(true)}
-        onSubmit={() => validateAndSend() && onClose()}
+        onSubmit={async () => {
+          if (!validate()) return;
+          await editProfile(form);
+          onClose();
+        }}
       >
         <DialogSection name={t("profile.name.title")} isDoubleColumn>
           <Dropdown
@@ -172,13 +161,13 @@ const EditSelfDialog = ({
             options={
               user.role == "teacher"
                 ? [
-                    { value: "mister", label: t("profile.name.prefix.mister") },
-                    { value: "miss", label: t("profile.name.prefix.miss") },
-                    { value: "missus", label: t("profile.name.prefix.missus") },
+                    { value: "Mr.", label: t("profile.name.prefix.mister") },
+                    { value: "Miss.", label: t("profile.name.prefix.miss") },
+                    { value: "Mrs.", label: t("profile.name.prefix.missus") },
                   ]
                 : [
-                    { value: "master", label: t("profile.name.prefix.master") },
-                    { value: "mister", label: t("profile.name.prefix.mister") },
+                    { value: "Master", label: t("profile.name.prefix.master") },
+                    { value: "Mr.", label: t("profile.name.prefix.mister") },
                   ]
             }
             defaultValue={user.prefix}

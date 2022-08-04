@@ -88,7 +88,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   const grade = Number(params?.grade);
 
   const { data: schedulesThisGrade, error } = await getSchedulesOfGrade(grade);
-  if (error || schedulesThisGrade.length == 0) return { notFound: true };
+  if (error) return { notFound: true };
 
   return {
     props: {

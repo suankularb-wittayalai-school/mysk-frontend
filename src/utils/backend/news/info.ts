@@ -12,12 +12,22 @@ import { InfoDB, InfoTable, NewsTable } from "@utils/types/database/news";
 import { BackendReturn } from "@utils/types/common";
 import { InfoPage, NewsItemInfoNoDate } from "@utils/types/news";
 
-export async function getLandingFeed() {
-  const { data: infos } = await getInfos();
+export async function getLandingFeed(): Promise<
+  BackendReturn<{ lastUpdated: string; content: NewsItemInfoNoDate[] }, null>
+> {
+  const { data: infos, error: infosError } = await getInfos();
+
+  if (infosError) {
+    console.error(infosError);
+    return { data: null, error: infosError };
+  }
 
   return {
-    lastUpdated: infos[0]?.postDate || "",
-    content: infos,
+    data: {
+      lastUpdated: infos[0]?.postDate || "",
+      content: infos,
+    },
+    error: null,
   };
 }
 

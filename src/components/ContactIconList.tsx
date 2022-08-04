@@ -24,7 +24,7 @@ const ContactIconList = ({
 
   if (contacts.length == 0)
     return (
-      <div className="text-on-surface-translucent-38 pr-1">
+      <div className="pr-1 text-on-surface-translucent-38">
         <MaterialIcon icon="no_accounts" />
       </div>
     );

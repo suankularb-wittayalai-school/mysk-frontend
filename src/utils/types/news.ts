@@ -113,7 +113,7 @@ export interface FormField {
   type: FieldType;
   options?: string[];
   required: boolean;
-  range: {
+  range?: {
     start: number;
     end: number;
   };
