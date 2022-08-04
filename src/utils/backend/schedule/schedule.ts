@@ -13,6 +13,8 @@ import {
 
 // Supabase
 import { supabase } from "@utils/supabaseClient";
+import { BackendReturn } from "@utils/types/common";
+import { ClassroomTable } from "@utils/types/database/class";
 
 // Types
 import {
@@ -110,6 +112,32 @@ export async function getSchedule(
   }
 
   return schedule;
+}
+
+export async function getSchedulesOfGrade(
+  grade: number
+): Promise<BackendReturn<Schedule[]>> {
+  const { data: classes, error: classesError } = await supabase
+    .from<ClassroomTable>("classroom")
+    .select("id, number")
+    .lt("number", (grade + 1) * 100)
+    .gt("number", grade * 100)
+    .order("number");
+
+  if (classesError) {
+    console.error(classesError);
+    return { data: [], error: classesError };
+  }
+
+  return {
+    data: await Promise.all(
+      (classes as ClassroomTable[]).map(async (classItem) => ({
+        ...(await getSchedule("student", classItem.id)),
+        class: classItem,
+      }))
+    ),
+    error: null,
+  };
 }
 
 /**

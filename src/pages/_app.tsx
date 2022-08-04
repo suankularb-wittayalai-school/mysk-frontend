@@ -91,6 +91,21 @@ const App = ({
     return () => authListener?.unsubscribe();
   }, []);
 
+  // Page transition loading
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    router.events.on("routeChangeStart", () => setLoading(true));
+    router.events.on("routeChangeComplete", () => setLoading(false));
+    router.events.on("routeChangeError", () => setLoading(false));
+
+    return () => {
+      router.events.off("routeChangeStart", () => setLoading(true));
+      router.events.off("routeChangeComplete", () => setLoading(false));
+      router.events.off("routeChangeError", () => setLoading(false));
+    };
+  });
+
   // Layout
   // Use the layout defined at the page level, if available.
   // Otherwise, use the default Layout.
@@ -101,6 +116,7 @@ const App = ({
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
+      {loading && <div className="fixed inset-0 z-50 cursor-progress" />}
       {getLayout(<Component {...pageProps} />)}
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
