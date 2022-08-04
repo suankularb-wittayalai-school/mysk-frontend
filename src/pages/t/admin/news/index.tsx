@@ -80,11 +80,7 @@ const EditSection = (): JSX.Element => {
       <p>
         <strong className="text-tertiary">{t("news.edit.cacheWarning")}</strong>
       </p>
-      <NewsFeed
-        news={data?.data || []}
-        isForAdmin
-        btnType="tonal"
-      />
+      <NewsFeed news={data?.data || []} isForAdmin btnType="tonal" />
     </Section>
   );
 };

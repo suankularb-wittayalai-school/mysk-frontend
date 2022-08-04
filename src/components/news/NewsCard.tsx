@@ -8,7 +8,6 @@ import { Trans, useTranslation } from "next-i18next";
 
 // SK Components
 import {
-  Button,
   Card,
   CardActions,
   CardHeader,
@@ -20,7 +19,7 @@ import {
 } from "@suankularb-components/react";
 
 // Types
-import { NewsItem, NewsItemNoDate } from "@utils/types/news";
+import { NewsItemNoDate } from "@utils/types/news";
 
 // Helpers
 import { getLocaleString } from "@utils/helpers/i18n";
@@ -52,7 +51,11 @@ const NewsStatus = ({
   );
 };
 
-const NewsChipList = ({ newsItem }: { newsItem: NewsItemNoDate }): JSX.Element => {
+const NewsChipList = ({
+  newsItem,
+}: {
+  newsItem: NewsItemNoDate;
+}): JSX.Element => {
   const { t } = useTranslation("news");
   const locale = useRouter().locale as "en-US" | "th";
 

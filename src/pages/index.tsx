@@ -1,7 +1,7 @@
 // Modules
 import { motion } from "framer-motion";
 
-import type { GetServerSideProps, GetStaticProps, NextPage } from "next";
+import type { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,7 +10,7 @@ import { useRouter } from "next/router";
 import { useTranslation, Trans } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode } from "react";
 
 // SK Components
 import {

@@ -35,7 +35,6 @@ import { LangCode, WaitingSnackbar } from "@utils/types/common";
 const CreateStats: NextPage = (): JSX.Element => {
   const { t } = useTranslation("admin");
 
-
   // Form control
   const [form, setForm] = useState<{
     titleTH: string;

@@ -68,7 +68,6 @@ import { supabase } from "@utils/supabaseClient";
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
 
-
 // Details Section
 const DetailsSection = ({
   description,

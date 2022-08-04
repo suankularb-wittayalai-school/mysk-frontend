@@ -86,8 +86,7 @@ const EditClassDialog = ({
   function validate(): boolean {
     // console.log(form);
 
-    if (!form.number || !form.number.toString().match(classRegex))
-      return false;
+    if (!form.number || !form.number.toString().match(classRegex)) return false;
     if (form.year < 2005) return false;
 
     return true;

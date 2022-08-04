@@ -1,7 +1,11 @@
 // Modules
 import { setDay } from "date-fns";
 
-import { AnimatePresence, AnimateSharedLayout, LayoutGroup } from "framer-motion";
+import {
+  AnimatePresence,
+  AnimateSharedLayout,
+  LayoutGroup,
+} from "framer-motion";
 
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
