@@ -41,10 +41,8 @@ const StudentFormCard = ({ form }: { form: StudentFormItem }): JSX.Element => {
           <div className="flex divide-x divide-outline">
             <span className="pr-2">{t(`itemType.${form.type}`)}</span>
             <time className="pl-2 text-outline">
-              {new Date(form.postDate).toLocaleDateString(locale, {
-                year: isThisYear(new Date(form.postDate))
-                  ? undefined
-                  : "numeric",
+              {form.postDate.toLocaleDateString(locale, {
+                year: isThisYear(form.postDate) ? undefined : "numeric",
                 month: "short",
                 day: "numeric",
               })}
@@ -88,52 +86,58 @@ const TeacherClassSection = ({
 }): JSX.Element => {
   const { t } = useTranslation(["dashboard", "news"]);
   const [newsFilter, setNewsFilter] = useState<Array<string>>([]);
-  const [filteredNews, setFilteredNews] =
-    useState<Array<StudentFormItem>>(forms);
+  const [filteredNews, setFilteredNews] = useState<Array<StudentFormItem>>(forms);
 
-  useEffect(() => {
-    // Reset filtered news if all filters are deselected
-    if (newsFilter.length == 0) {
-      setFilteredNews(forms);
+  useEffect(
+    () => {
+      // Reset filtered news if all filters are deselected
+      if (newsFilter.length == 0) {
+        setFilteredNews(forms);
 
-      // Handles done
-    } else if (
-      newsFilter.includes("few-done") ||
-      newsFilter.includes("most-done") ||
-      newsFilter.includes("all-done")
-    ) {
-      if (newsFilter.length > 1) {
-        setFilteredNews(
-          forms.filter(
-            (newsItem) =>
-              newsFilter.includes(newsItem.type) &&
-              (newsFilter.includes("few-done")
+        // Handles done
+      } else if (
+        newsFilter.includes("few-done") ||
+        newsFilter.includes("most-done") ||
+        newsFilter.includes("all-done")
+      ) {
+        if (newsFilter.length > 1) {
+          setFilteredNews(
+            forms.filter(
+              (newsItem) =>
+                newsFilter.includes(newsItem.type) &&
+                (newsFilter.includes("few-done")
+                  ? newsItem.percentDone < 25
+                  : newsFilter.includes("most-done")
+                  ? newsItem.percentDone >= 25 && newsItem.percentDone < 50
+                  : newsFilter.includes("all-done") &&
+                    newsItem.percentDone >= 50)
+            )
+          );
+        } else {
+          setFilteredNews(
+            forms.filter((newsItem) =>
+              newsFilter.includes("few-done")
                 ? newsItem.percentDone < 25
                 : newsFilter.includes("most-done")
                 ? newsItem.percentDone >= 25 && newsItem.percentDone < 50
-                : newsFilter.includes("all-done") && newsItem.percentDone >= 50)
-          )
-        );
-      } else {
+                : newsFilter.includes("all-done") && newsItem.percentDone >= 50
+            )
+          );
+        }
+      }
+
+      // Handles types
+      else {
         setFilteredNews(
-          forms.filter((newsItem) =>
-            newsFilter.includes("few-done")
-              ? newsItem.percentDone < 25
-              : newsFilter.includes("most-done")
-              ? newsItem.percentDone >= 25 && newsItem.percentDone < 50
-              : newsFilter.includes("all-done") && newsItem.percentDone >= 50
-          )
+          forms.filter((newsItem) => newsFilter.includes(newsItem.type))
         );
       }
-    }
+    },
 
-    // Handles types
-    else {
-      setFilteredNews(
-        forms.filter((newsItem) => newsFilter.includes(newsItem.type))
-      );
-    }
-  }, [newsFilter]);
+    // Adding `forms` as a dependency causes an inifinie loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [newsFilter]
+  );
 
   return (
     <Section>

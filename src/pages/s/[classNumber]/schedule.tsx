@@ -39,6 +39,7 @@ import { SubjectListItem } from "@utils/types/subject";
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
 import { createTitleStr } from "@utils/helpers/title";
+import { useProtectPageFor } from "@utils/hooks/protect";
 
 const ScheduleSection = ({
   schedule,
@@ -170,6 +171,7 @@ const StudentSchedule: NextPage<{
   subjectList: SubjectListItem[];
 }> = ({ classNumber, schedule, subjectList }) => {
   const { t } = useTranslation(["schedule", "common"]);
+  useProtectPageFor("student");
 
   return (
     <>

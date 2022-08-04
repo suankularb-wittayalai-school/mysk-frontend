@@ -52,7 +52,7 @@ import {
   SubjectWNameAndCode,
   SubstituteAssignment,
 } from "@utils/types/subject";
-import { DialogProps } from "@utils/types/common";
+import { DialogProps, LangCode } from "@utils/types/common";
 import {
   RoomSubjectDB,
   RoomSubjectTable,
@@ -686,9 +686,7 @@ const SubjectDetails: NextPage<{
 }> = ({ subject, subjectRooms, periodLogs, substAsgn, allSubjects }) => {
   const { t } = useTranslation(["subjects", "common"]);
   const router = useRouter();
-  const locale = router.locale as "en-US" | "th";
-
-  // Dialogs
+  const locale = router.locale as LangCode;
 
   // Subject details
   const [showAddConnection, setShowAddConnection] = useState<boolean>(false);
@@ -868,12 +866,8 @@ export const getServerSideProps: GetServerSideProps = async ({
     .select("*, subject:subject(*), classroom:class(*)")
     .eq("subject", params?.subjectID as string);
 
-  if (dbSubjectError) {
-    console.error(dbSubjectError);
-  }
-  if (roomSubjectsError) {
-    console.error(roomSubjectsError);
-  }
+  if (dbSubjectError) console.error(dbSubjectError);
+  if (roomSubjectsError) console.error(roomSubjectsError);
 
   const subject: Subject | undefined = dbSubject
     ? await db2Subject(dbSubject)
@@ -883,15 +877,8 @@ export const getServerSideProps: GetServerSideProps = async ({
     ? await Promise.all(roomSubjects.map(db2SubjectListItem))
     : [];
 
-  subjectRooms.sort((a, b) => {
-    const aNumber = a.classroom.number;
-    const bNumber = b.classroom.number;
-    if (aNumber < bNumber) return -1;
-    if (aNumber > bNumber) return 1;
-    return 0;
-  });
+  subjectRooms.sort((a, b) => b.classroom.number - a.classroom.number);
 
-  // console.log(subjectRooms);
   const substAsgn: SubstituteAssignment[] = [];
   const allSubjects: SubjectWNameAndCode[] = [];
   const periodLogs: PeriodLog[] = [];

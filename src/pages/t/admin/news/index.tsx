@@ -27,6 +27,7 @@ import NewsFeed from "@components/news/NewsFeed";
 import { getNewsFeed } from "@utils/backend/news";
 
 // Hooks
+import { useProtectPageFor } from "@utils/hooks/protect";
 
 // Supabase
 import { createTitleStr } from "@utils/helpers/title";
@@ -88,6 +89,7 @@ const EditSection = (): JSX.Element => {
 // Page
 const AdminNews: NextPage = (): JSX.Element => {
   const { t } = useTranslation(["admin", "news", "common"]);
+  useProtectPageFor("admin");
 
   return (
     <>

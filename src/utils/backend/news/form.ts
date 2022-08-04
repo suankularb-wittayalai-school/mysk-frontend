@@ -2,17 +2,18 @@
 import {
   FormDB,
   FormFieldValueTable,
+  FormQuestionsTable,
   FormSubmissionTable,
-  FormTable,
 } from "@utils/types/database/news";
 import { BackendReturn } from "@utils/types/common";
-import { FormField, FormPage, NewsItemFormNoDate } from "@utils/types/news";
+import { FormPage, NewsItemFormNoDate } from "@utils/types/news";
 
 // Converters
 import { db2FormPage, dbForm2NewsItem } from "../database";
 
 // Supabase
 import { supabase } from "@utils/supabaseClient";
+import { PostgrestError } from "@supabase/supabase-js";
 
 export async function getForms(): Promise<BackendReturn<NewsItemFormNoDate[]>> {
   const { data, error } = await supabase
@@ -156,21 +157,4 @@ async function sendFormAnswer(
       return { data, error: null };
   }
   return { data: null, error: null };
-}
-
-export async function createForm(form: {
-  titleTH: string;
-  titleEN: string;
-  descTH: string;
-  descEN: string;
-  image: File | null;
-  oldURL: string;
-  fields: Omit<FormField, "id">[];
-}): Promise<BackendReturn<FormTable, null>> {
-  // TODO: Push created form to Supabase
-
-  return {
-    data: null,
-    error: { message: "this function is not implemented." },
-  };
 }

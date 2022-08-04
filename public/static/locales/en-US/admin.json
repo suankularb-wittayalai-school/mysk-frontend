@@ -132,8 +132,7 @@
     },
     "typeDesc": {
       "info": "A general article conveying information, it is meant to only be read and is not interactive. The body of an information article is written in and formatted with Markdown.",
-      "stats": "A statistics article allows you to neatly display data in a table presented to all teachers in the school. Examples include: the number of students and teachers in a school, and the percentage of COVID-19 vaccinations.",
-      "form": "A form accepts information from students. You, as an administrator, can create a form here, and a teacher will be able to view the students’ responses on their “Class” page."
+      "stats": "A statistics article allows you to neatly display data in a table presented to all teachers in the school. Examples include: the number of students and teachers in a school, and the percentage of COVID-19 vaccinations."
     },
     "config": {
       "title": "Configure",
@@ -202,38 +201,6 @@
         }
       }
     },
-    "form": {
-      "title": "Form",
-      "field": {
-        "shortAnswer": "Short answer",
-        "paragraph": "Paragraph",
-        "multipleChoice": "Multiple choice",
-        "checkBox": "Checkbox list",
-        "dropdown": "Dropdown",
-        "file": "File upload",
-        "date": "Date",
-        "time": "Time",
-        "scale": "Scale"
-      },
-      "add": {
-        "title": "Add to form",
-        "type": "Type",
-        "action": {
-          "add": "Add"
-        }
-      },
-      "list": {
-        "labelTH": "Local label (Thai)",
-        "labelEN": "English label",
-        "rangeStart": "Range start",
-        "rangeEnd": "Range start",
-        "default": "Default",
-        "action": {
-          "delete": "Delete question"
-        }
-      },
-      "preview": "Preview"
-    },
     "publish": {
       "title": "Publish",
       "supportingText": "Ready to let everyone see the changes you’ve made? Please note that it may take up to 5 minutes for your edit to be visible to the public.",
@@ -249,14 +216,6 @@
     }
   },
   "dialog": {
-    "addOption": {
-      "title": "Add option",
-      "label": "Option",
-      "action": {
-        "cancel": "Cancel",
-        "add": "Add"
-      }
-    },
     "editStudent": {
       "title": {
         "add": "Add user",

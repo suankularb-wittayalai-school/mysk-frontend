@@ -1,50 +1,8 @@
-// External libraries
-import { PostgrestError, User } from "@supabase/supabase-js";
-import { GetServerSidePropsContext } from "next";
-
-// Supabase
+import { PostgrestError } from "@supabase/supabase-js";
 import { supabase } from "@utils/supabaseClient";
-
-// Backend
-import { createPerson } from "@utils/backend/person/person";
-import { db2Student } from "@utils/backend/database";
-
-// Types
-import {
-  PersonDB,
-  StudentDB,
-  StudentTable,
-} from "@utils/types/database/person";
-import { BackendReturn } from "@utils/types/common";
+import { PersonDB, StudentTable } from "@utils/types/database/person";
 import { Student } from "@utils/types/person";
-
-export async function getStudentByCookie(
-  req: GetServerSidePropsContext["req"]
-): Promise<BackendReturn<Student, null>> {
-  const { data: user, error: userError } =
-    await supabase.auth.api.getUserByCookie(req);
-
-  if (userError) {
-    console.error(userError);
-    return { data: null, error: userError };
-  }
-
-  if (user?.user_metadata.role != "student")
-    return { data: null, error: { message: "user is not a student." } };
-
-  const { data: student, error: studentError } = await supabase
-    .from<StudentDB>("student")
-    .select("id, std_id, people:person(*)")
-    .eq("id", (user as User).user_metadata?.student)
-    .single();
-
-  if (studentError) {
-    console.error(studentError);
-    return { data: null, error: studentError };
-  }
-
-  return { data: await db2Student(student as StudentDB), error: null };
-}
+import { createPerson } from "./person";
 
 export async function createStudent(
   student: Student,

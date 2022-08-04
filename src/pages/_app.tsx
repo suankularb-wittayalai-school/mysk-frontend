@@ -41,6 +41,13 @@ import "@styles/global.css";
 // Components
 import Layout from "@components/Layout";
 
+// Types
+import { Role } from "@utils/types/person";
+
+// Supabase
+import { supabase } from "@utils/supabaseClient";
+import { AuthChangeEvent } from "@supabase/supabase-js";
+
 const App = ({
   Component,
   pageProps,
@@ -52,6 +59,53 @@ const App = ({
   // Query client
   const [queryClient] = useState(() => new QueryClient());
 
+  // Authentication
+  const [authEvent, setAuthEvent] = useState<AuthChangeEvent>("SIGNED_OUT");
+  const router = useRouter();
+  // Listen for auth state change
+  useEffect(() => {
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log({ authEvent, event });
+
+        // Only continue if auth state changes
+        if (authEvent != "SIGNED_OUT" && authEvent == event) return;
+        setAuthEvent(event);
+
+        // Cookie
+        await fetch(`/api/account/cookie`, {
+          method: "POST",
+          headers: new Headers({ "Content-Type": "application/json" }),
+          credentials: "same-origin",
+          body: JSON.stringify({ event, session }),
+        });
+
+        // Redirect
+        const role = session?.user?.user_metadata.role as Role;
+        if (event == "SIGNED_IN") {
+          if (role == "student") router.push("/s/home");
+          else if (role == "teacher") router.push("/t/home");
+        } else if (event == "SIGNED_OUT") router.push("/");
+      }
+    );
+    return () => authListener?.unsubscribe();
+  }, []);
+
+  // Page transition loading
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    router.events.on("routeChangeStart", () => setLoading(true));
+    router.events.on("routeChangeComplete", () => setLoading(false));
+    router.events.on("routeChangeError", () => setLoading(false));
+
+    return () => {
+      router.events.off("routeChangeStart", () => setLoading(true));
+      router.events.off("routeChangeComplete", () => setLoading(false));
+      router.events.off("routeChangeError", () => setLoading(false));
+    };
+  });
+
   // Layout
   // Use the layout defined at the page level, if available.
   // Otherwise, use the default Layout.
@@ -62,6 +116,7 @@ const App = ({
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
+      {loading && <div className="fixed inset-0 z-50 cursor-progress" />}
       {getLayout(<Component {...pageProps} />)}
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
