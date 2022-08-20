@@ -169,6 +169,8 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
       }
     );
 
+    // console.log(students);
+
     await Promise.all(
       students.map(
         async (student) => await createStudent(student.person, student.email)
@@ -247,8 +249,8 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
           { name: "birthdate", type: "date (YYYY-MM-DD) (in AD)" },
           { name: "citizen_id", type: "numeric (13-digit)" },
           { name: "student_id", type: "numeric (5-digit)" },
-          { name: "class_number", type: "numeric (3-digit)" },
           { name: "class", type: "number (between 1-60)" },
+          { name: "class_number", type: "numeric (3-digit)" },
           { name: "email", type: "email" },
         ]}
       />

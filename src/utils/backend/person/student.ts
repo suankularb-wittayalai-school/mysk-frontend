@@ -40,7 +40,7 @@ export async function createStudent(
   const password = `${parseInt(student.birthdate.split("-")[2])}${parseInt(
     student.birthdate.split("-")[1]
   )}${year}`;
-  console.log(password);
+  // console.log(password);
   // register an account for the student
   const res = await fetch("/api/account/student", {
     method: "POST",
