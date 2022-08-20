@@ -58,6 +58,31 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
   const [editingClass, setEditingClass] = useState<Class>();
 
   async function handleDelete() {
+    // Delete All schedules of this class
+    const { data, error: deletionError } = await supabase
+      .from("schedule_items")
+      .delete()
+      .match({ classroom: editingClass?.id });
+
+    if (deletionError) {
+      console.error(deletionError);
+      return;
+    }
+
+    // Delete all room_subjects of this class
+    const {
+      data: roomSubjectsData,
+      error: roomSubjectsError,
+    } = await supabase
+      .from("room_subjects")
+      .delete()
+      .match({ class: editingClass?.id });
+
+    if (roomSubjectsError) {
+      console.error(roomSubjectsError);
+      return;
+    }
+
     const { data: _, error: classError } = await supabase
       .from<ClassroomTable>("classroom")
       .delete()

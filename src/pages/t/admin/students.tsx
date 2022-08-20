@@ -51,6 +51,7 @@ interface ImportedData {
   birthdate: string;
   citizen_id: number;
   student_id: number;
+  class: number;
   class_number: number;
   email: string;
 }
@@ -132,9 +133,6 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
         id: userid.id,
       }),
     });
-
-    setShowConfDel(false);
-    router.replace(router.asPath);
   }
 
   async function handleImport(data: ImportedData[]) {
@@ -162,9 +160,9 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
           contacts: [],
           class: {
             id: 0,
-            number: student.class_number,
+            number: student.class,
           },
-          classNo: 0,
+          classNo: student.class_number,
         };
         const email = student.email;
         return { person, email };
@@ -250,6 +248,7 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
           { name: "citizen_id", type: "numeric (13-digit)" },
           { name: "student_id", type: "numeric (5-digit)" },
           { name: "class_number", type: "numeric (3-digit)" },
+          { name: "class", type: "number (between 1-60)" },
           { name: "email", type: "email" },
         ]}
       />
@@ -276,7 +275,14 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
       <ConfirmDelete
         show={showConfDel}
         onClose={() => setShowConfDel(false)}
-        onSubmit={() => handleDelete()}
+        onSubmit={() =>
+          handleDelete()
+            .then(() => {
+              setShowConfDel(false);
+              router.replace(router.asPath);
+            })
+            .catch(console.error)
+        }
       />
     </>
   );

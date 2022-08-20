@@ -1,7 +1,10 @@
 import { PostgrestError } from "@supabase/supabase-js";
+import { getLocaleYear } from "@utils/helpers/date";
 import { supabase } from "@utils/supabaseClient";
+import { ClassroomTable } from "@utils/types/database/class";
 import { PersonDB, StudentTable } from "@utils/types/database/person";
 import { Student } from "@utils/types/person";
+import { getClassroom } from "../classroom/classroom";
 import { createPerson } from "./person";
 
 export async function createStudent(
@@ -32,7 +35,12 @@ export async function createStudent(
       .match({ id: person[0]?.id });
     return { data: null, error: studentCreationError };
   }
-
+  const year = parseInt(student.birthdate.split("-")[0]) + 543;
+  // make default password a ddmmyyyy (yyyy in BE) from yyyy-mm-dd (yyyy in AD)
+  const password = `${parseInt(student.birthdate.split("-")[2])}${parseInt(
+    student.birthdate.split("-")[1]
+  )}${year}`;
+  console.log(password);
   // register an account for the student
   const res = await fetch("/api/account/student", {
     method: "POST",
@@ -41,13 +49,30 @@ export async function createStudent(
     },
     body: JSON.stringify({
       email,
-      password: student.birthdate.split("-").join(""),
+      password: password,
       id: createdStudent[0]?.id,
       isAdmin,
     }),
   });
 
   // console.log(await res.json());
+  // add student to the class
+  const classroom = await getClassroom(student.class.number);
+  if (classroom.id != 0) {
+    const { data: updatedClass, error: classUpdateError } = await supabase
+      .from<ClassroomTable>("classroom")
+      .update({
+        students: [
+          ...classroom.students.map((student) => student.id),
+          createdStudent[0]?.id,
+        ],
+      })
+      .match({ id: classroom.id });
+    if (classUpdateError || !updatedClass) {
+      console.error(classUpdateError);
+      return { data: null, error: classUpdateError };
+    }
+  }
 
   return { data: createdStudent, error: null };
 }
