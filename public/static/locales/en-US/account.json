@@ -23,6 +23,9 @@
       "goToPanel": "Go to Admin Panel"
     }
   },
+  "action": {
+    "logOut": "Log out"
+  },
   "logIn": {
     "title": "Log in",
     "form": {

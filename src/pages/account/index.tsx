@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useState } from "react";
+import { useReducer, useState } from "react";
 
 // SK Components
 import {
@@ -20,6 +20,7 @@ import {
   Dropdown,
   Header,
   KeyboardInput,
+  LayoutGridCols,
   LinkButton,
   MaterialIcon,
   RegularLayout,
@@ -28,6 +29,7 @@ import {
 } from "@suankularb-components/react";
 
 // Components
+import LogOutDialog from "@components/dialogs/LogOut";
 import ProfilePicture from "@components/ProfilePicture";
 
 // Backend
@@ -48,8 +50,10 @@ import { Person, Student, Teacher } from "@utils/types/person";
 
 const BasicInfoSection = ({
   user,
+  toggleShowLogOut,
 }: {
   user: Student | Teacher;
+  toggleShowLogOut: () => void;
 }): JSX.Element => {
   const { t } = useTranslation("account");
   const locale = useRouter().locale as LangCode;
@@ -102,6 +106,15 @@ const BasicInfoSection = ({
               </p>
             </div>
           </div>
+          <Actions>
+            <Button
+              label={t("action.logOut")}
+              type="filled"
+              icon={<MaterialIcon icon="logout" />}
+              onClick={toggleShowLogOut}
+              className="!bg-error !text-on-error"
+            />
+          </Actions>
         </div>
       </div>
     </Section>
@@ -311,6 +324,12 @@ const AdminAvailable = (): JSX.Element => {
 const AccountDetails: NextPage<{ user: Student | Teacher }> = ({ user }) => {
   const { t } = useTranslation("account");
 
+  // Dialog control
+  const [showLogOut, toggleShowLogOut] = useReducer(
+    (value: boolean) => !value,
+    false
+  );
+
   return (
     <>
       <Head>
@@ -328,11 +347,14 @@ const AccountDetails: NextPage<{ user: Student | Teacher }> = ({ user }) => {
           />
         }
       >
-        <BasicInfoSection user={user} />
+        <BasicInfoSection user={user} toggleShowLogOut={toggleShowLogOut} />
         <EditInfoSection user={user} />
         {/* {user.isAdmin && <AdminAvailable />} */}
         <AdminAvailable />
       </RegularLayout>
+
+      {/* Dialogs */}
+      <LogOutDialog show={showLogOut} onClose={toggleShowLogOut} />
     </>
   );
 };
