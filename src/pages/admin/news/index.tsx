@@ -48,7 +48,7 @@ const AddSection = (): JSX.Element => {
       />
       <div className="layout-grid-cols-3">
         {newsTypes.map((newsType) => (
-          <Link key={newsType} href={`/t/admin/news/create/${newsType}`}>
+          <Link key={newsType} href={`/admin/news/create/${newsType}`}>
             <a>
               <Card type="horizontal" appearance="outlined" hasAction>
                 <CardHeader
@@ -102,7 +102,7 @@ const AdminNews: NextPage = (): JSX.Element => {
               subtitle: t("news.title.subtitle"),
             }}
             pageIcon={<MaterialIcon icon="newspaper" />}
-            backGoesTo="/t/admin"
+            backGoesTo="/admin"
             LinkElement={Link}
           />
         }

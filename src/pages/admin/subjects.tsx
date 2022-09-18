@@ -182,7 +182,7 @@ const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
           <Title
             name={{ title: t("subjectList.title") }}
             pageIcon={<MaterialIcon icon="school" />}
-            backGoesTo="/t/admin"
+            backGoesTo="/admin"
             LinkElement={Link}
             key="title"
           />

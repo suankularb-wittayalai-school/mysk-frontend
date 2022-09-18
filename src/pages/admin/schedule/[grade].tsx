@@ -68,7 +68,7 @@ const SchedulesThisGrade: NextPage<{
               subtitle: t("schedule.gradeItem", { grade }),
             }}
             pageIcon={<MaterialIcon icon="dashboard" />}
-            backGoesTo="/t/admin"
+            backGoesTo="/admin"
             LinkElement={Link}
           />
         }

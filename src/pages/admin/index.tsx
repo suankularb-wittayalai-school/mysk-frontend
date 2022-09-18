@@ -27,27 +27,27 @@ const DatabaseSection = (): JSX.Element => {
     {
       icon: <MaterialIcon icon="groups" />,
       name: "student",
-      url: "/t/admin/students",
+      url: "/admin/students",
     },
     {
       icon: <MaterialIcon icon="group" />,
       name: "teacher",
-      url: "/t/admin/teachers",
+      url: "/admin/teachers",
     },
     {
       icon: <MaterialIcon icon="book" />,
       name: "subject",
-      url: "/t/admin/subjects",
+      url: "/admin/subjects",
     },
     {
       icon: <MaterialIcon icon="meeting_room" />,
       name: "classroom",
-      url: "/t/admin/classes",
+      url: "/admin/classes",
     },
     {
       icon: <MaterialIcon icon="newspaper" />,
       name: "news",
-      url: "/t/admin/news",
+      url: "/admin/news",
     },
   ];
 
@@ -97,7 +97,7 @@ const ScheduleSection = (): JSX.Element => {
           <li key={grade} aria-labelledby={`schedule-${grade}`}>
             <Link
               aria-labelledby={`schedule-${grade}`}
-              href={`/t/admin/schedule/${grade + 1}`}
+              href={`/admin/schedule/${grade + 1}`}
             >
               <a>
                 <Card type="horizontal" appearance="outlined" hasAction>

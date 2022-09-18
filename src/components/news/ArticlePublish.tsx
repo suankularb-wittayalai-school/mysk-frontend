@@ -43,7 +43,7 @@ const ArticlePublish = ({
         });
       }
       toggleLoading();
-    } else if (data) router.push("/t/admin/news");
+    } else if (data) router.push("/admin/news");
   }
 
   return (

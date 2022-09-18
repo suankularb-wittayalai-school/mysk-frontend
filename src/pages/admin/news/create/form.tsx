@@ -81,7 +81,7 @@ const CreateForm: NextPage = (): JSX.Element => {
               subtitle: t("articleEditor.title.subtitle"),
             }}
             pageIcon={<MaterialIcon icon="edit_square" />}
-            backGoesTo="/t/admin/news"
+            backGoesTo="/admin/news"
             LinkElement={Link}
           />
         }

@@ -100,7 +100,7 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
           <Title
             name={{ title: t("classList.title") }}
             pageIcon={<MaterialIcon icon="meeting_room" />}
-            backGoesTo="/t/admin"
+            backGoesTo="/admin"
             LinkElement={Link}
             key="title"
           />

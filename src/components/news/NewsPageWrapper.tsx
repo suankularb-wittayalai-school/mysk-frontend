@@ -86,7 +86,7 @@ const NewsPageWrapper = ({
                   label="Edit article"
                   type="tonal"
                   icon={<MaterialIcon icon="edit" />}
-                  url={`/t/admin/news/edit/${news.type}/${news.id}`}
+                  url={`/admin/news/edit/${news.type}/${news.id}`}
                   LinkElement={Link}
                 />
               </Actions>
