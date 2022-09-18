@@ -26,11 +26,7 @@ import NewsFeed from "@components/news/NewsFeed";
 // Backend
 import { getNewsFeed } from "@utils/backend/news";
 
-// Helpers
-import { replaceNumberInNewsWithDate } from "@utils/helpers/news";
-
 // Hooks
-import { useProtectPageFor } from "@utils/hooks/protect";
 
 // Supabase
 import { createTitleStr } from "@utils/helpers/title";
@@ -84,17 +80,7 @@ const EditSection = (): JSX.Element => {
       <p>
         <strong className="text-tertiary">{t("news.edit.cacheWarning")}</strong>
       </p>
-      <NewsFeed
-        news={
-          data
-            ? (data
-                .map((newsItem) => replaceNumberInNewsWithDate(newsItem))
-                .filter((newsItem) => newsItem) as NewsList)
-            : []
-        }
-        isForAdmin
-        btnType="tonal"
-      />
+      <NewsFeed news={data?.data || []} isForAdmin btnType="tonal" />
     </Section>
   );
 };
@@ -102,7 +88,6 @@ const EditSection = (): JSX.Element => {
 // Page
 const AdminNews: NextPage = (): JSX.Element => {
   const { t } = useTranslation(["admin", "news", "common"]);
-  useProtectPageFor("admin");
 
   return (
     <>

@@ -2,7 +2,6 @@
 import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
-import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -19,7 +18,12 @@ import {
 // Component
 import Schedule from "@components/schedule/Schedule";
 
+// Backend
+import { getSchedulesOfGrade } from "@utils/backend/schedule/schedule";
+
 // Types
+import { ClassWNumber } from "@utils/types/class";
+import { LangCode } from "@utils/types/common";
 import { Schedule as ScheduleType } from "@utils/types/schedule";
 
 // Helpers
@@ -31,13 +35,12 @@ const ScheduleSection = ({
   schedule: ScheduleType;
 }): JSX.Element => {
   const { t } = useTranslation("common");
-  const locale = useRouter().locale as "en-US" | "th";
 
   return (
     <Section>
       <Header
         icon={<MaterialIcon icon="subdirectory_arrow_right" allowCustomSize />}
-        text={t("grade", { number: schedule.class?.number || 100 })}
+        text={t("class", { number: (schedule.class as ClassWNumber).number })}
       />
       <Schedule schedule={schedule} role="student" />
     </Section>
@@ -46,7 +49,7 @@ const ScheduleSection = ({
 
 const SchedulesThisGrade: NextPage<{
   grade: number;
-  schedulesThisGrade: Array<ScheduleType>;
+  schedulesThisGrade: ScheduleType[];
 }> = ({ grade, schedulesThisGrade }) => {
   const { t } = useTranslation(["admin", "common"]);
 
@@ -82,12 +85,17 @@ export const getServerSideProps: GetServerSideProps = async ({
   locale,
   params,
 }) => {
-  const grade = params?.grade;
-  const schedulesThisGrade: Array<ScheduleType> = [];
+  const grade = Number(params?.grade);
+
+  const { data: schedulesThisGrade, error } = await getSchedulesOfGrade(grade);
+  if (error) return { notFound: true };
 
   return {
     props: {
-      ...(await serverSideTranslations(locale as string, ["common", "admin"])),
+      ...(await serverSideTranslations(locale as LangCode, [
+        "common",
+        "admin",
+      ])),
       grade,
       schedulesThisGrade,
     },

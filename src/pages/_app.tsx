@@ -1,4 +1,4 @@
-// Modules
+// External libraries
 import { NextPage } from "next";
 import type { AppProps } from "next/app";
 import Head from "next/head";
@@ -58,30 +58,21 @@ const App = ({
   // Query client
   const [queryClient] = useState(() => new QueryClient());
 
-  // Authentication
+  // Page transition loading
   const router = useRouter();
-  // Listen for auth state change
-  useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        // Cookie
-        await fetch(`/api/account/cookie`, {
-          method: "POST",
-          headers: new Headers({ "Content-Type": "application/json" }),
-          credentials: "same-origin",
-          body: JSON.stringify({ event, session }),
-        });
+  const [loading, setLoading] = useState(false);
 
-        // Redirect
-        const role = session?.user?.user_metadata.role as Role;
-        if (event == "SIGNED_IN") {
-          if (role == "student") router.push("/s/home");
-          else if (role == "teacher") router.push("/t/home");
-        } else if (event == "SIGNED_OUT") router.push("/");
-      }
-    );
-    return () => authListener?.unsubscribe();
-  }, []);
+  useEffect(() => {
+    router.events.on("routeChangeStart", () => setLoading(true));
+    router.events.on("routeChangeComplete", () => setLoading(false));
+    router.events.on("routeChangeError", () => setLoading(false));
+
+    return () => {
+      router.events.off("routeChangeStart", () => setLoading(true));
+      router.events.off("routeChangeComplete", () => setLoading(false));
+      router.events.off("routeChangeError", () => setLoading(false));
+    };
+  });
 
   // Layout
   // Use the layout defined at the page level, if available.
@@ -93,6 +84,7 @@ const App = ({
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
+      {loading && <div className="fixed inset-0 z-50 cursor-progress" />}
       {getLayout(<Component {...pageProps} />)}
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>

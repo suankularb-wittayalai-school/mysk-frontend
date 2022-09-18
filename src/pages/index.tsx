@@ -1,7 +1,7 @@
 // Modules
 import { motion } from "framer-motion";
 
-import type { GetServerSideProps, NextPage } from "next";
+import type { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,7 +10,7 @@ import { useRouter } from "next/router";
 import { useTranslation, Trans } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useEffect } from "react";
+import { ReactNode } from "react";
 
 // SK Components
 import {
@@ -32,20 +32,18 @@ import { getLandingFeed } from "@utils/backend/news/info";
 
 // Types
 import { LangCode } from "@utils/types/common";
-import { NewsItem, NewsList } from "@utils/types/news";
+import { NewsItemInfoNoDate } from "@utils/types/news";
 
 // Helpers
 import { getLocaleString } from "@utils/helpers/i18n";
 
-// Hooks
-import { useSession } from "@utils/hooks/auth";
-
 // Page-specific types
-type Feed = { lastUpdated: Date; content: NewsList };
+type Feed = { lastUpdated: string; content: NewsItemInfoNoDate[] };
 
 // News
-const LandingFeed = ({ feed }: { feed: Feed }): JSX.Element => {
+const LandingFeed = ({ feed }: { feed?: Feed }): JSX.Element => {
   const { t } = useTranslation("landing");
+  const locale = useRouter().locale as LangCode;
 
   return (
     <section
@@ -61,20 +59,25 @@ const LandingFeed = ({ feed }: { feed: Feed }): JSX.Element => {
           </h2>
         }
         label={
-          <p className="font-display">
-            <Trans i18nKey="news.lastUpdated" ns="landing">
-              {{
-                lastUpdated: new Date(feed.lastUpdated).toLocaleDateString(
-                  useRouter().locale,
-                  { year: "numeric", month: "long", day: "numeric" }
-                ),
-              }}
-            </Trans>
-          </p>
+          feed ? (
+            <p className="font-display">
+              <Trans i18nKey="news.lastUpdated" ns="landing">
+                {{
+                  lastUpdated:
+                    feed.lastUpdated &&
+                    new Date(feed.lastUpdated).toLocaleDateString(locale, {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    }),
+                }}
+              </Trans>
+            </p>
+          ) : undefined
         }
       />
       <ul className="flex flex-col pb-1">
-        {feed.content.map((feedItem) => (
+        {(feed?.content || []).map((feedItem) => (
           <LandingFeedItem key={feedItem.id} feedItem={feedItem} />
         ))}
         <li
@@ -88,7 +91,11 @@ const LandingFeed = ({ feed }: { feed: Feed }): JSX.Element => {
   );
 };
 
-const LandingFeedItem = ({ feedItem }: { feedItem: NewsItem }): JSX.Element => {
+const LandingFeedItem = ({
+  feedItem,
+}: {
+  feedItem: NewsItemInfoNoDate;
+}): JSX.Element => {
   const locale = useRouter().locale as LangCode;
 
   return (
@@ -202,18 +209,10 @@ const LandingBanner = (): JSX.Element => {
 };
 
 // Page
-export default function Landing({ feed }: { feed: Feed }) {
-  const router = useRouter();
-  const session = useSession();
+const Landing: NextPage<{ feed: Feed }> & {
+  getLayout?: (page: NextPage) => ReactNode;
+} = ({ feed }) => {
   const { t } = useTranslation(["landing", "common"]);
-
-  useEffect(() => {
-    if (session?.user) {
-      if (session.user.user_metadata.role === "student") router.push("/s/home");
-      else if (session.user.user_metadata.role === "teacher")
-        router.push("/t/home");
-    }
-  }, [session, router]);
 
   return (
     <>
@@ -233,15 +232,25 @@ export default function Landing({ feed }: { feed: Feed }) {
       </div>
     </>
   );
-}
+};
 
 Landing.getLayout = (page: NextPage): JSX.Element => (
   <Layout navIsTransparent>{page}</Layout>
 );
 
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale as string, ["common", "landing"])),
-    feed: await getLandingFeed(),
-  },
-});
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
+  const { data: feed } = await getLandingFeed();
+
+  return {
+    props: {
+      ...(await serverSideTranslations(locale as string, [
+        "common",
+        "landing",
+      ])),
+      feed,
+    },
+    revalidate: 300,
+  };
+};
+
+export default Landing;

@@ -1,7 +1,8 @@
 import { MultiLangString } from "./common";
 
-export type NewsList = Array<NewsItem>;
-export type NewsListNoDate = Array<NewsItemNoDate>;
+// Feed
+export type NewsList = NewsItem[];
+export type NewsListNoDate = NewsItemNoDate[];
 
 export type NewsItem =
   | NewsItemInfo
@@ -9,10 +10,11 @@ export type NewsItem =
   | NewsItemForm
   | NewsItemPayment;
 
-export type NewsItemNoDate = Omit<NewsItem, "postDate" | "dueDate"> & {
-  postDate: string;
-  dueDate?: string;
-};
+export type NewsItemNoDate =
+| NewsItemInfoNoDate
+| NewsItemStatsNoDate
+| NewsItemFormNoDate
+| NewsItemPaymentNoDate;
 
 export type NewsItemType = "info" | "stats" | "form" | "payment";
 
@@ -24,7 +26,6 @@ type NewsItemCommon = {
   content: {
     title: MultiLangString;
     description: MultiLangString;
-    body?: MultiLangString;
   };
   oldURL?: string;
 };
@@ -40,14 +41,14 @@ export type NewsItemStats = NewsItemCommon & {
 export type NewsItemForm = NewsItemCommon & {
   type: "form";
   frequency?: "once" | "weekly" | "monthly";
-  dueDate?: Date;
+  dueDate?: string;
   done: boolean;
 };
 
 export type NewsItemPayment = NewsItemCommon & {
   type: "payment";
   amount?: number;
-  dueDate?: Date;
+  dueDate?: string;
   done: boolean;
 };
 
@@ -72,7 +73,7 @@ export type NewsItemPaymentNoDate = Omit<
   dueDate?: string;
 };
 
-export type StudentForm = {
+export type StudentFormItem = {
   id: number;
   type: "form" | "payment";
   postDate: Date;
@@ -84,5 +85,43 @@ export type StudentForm = {
     th: {
       title: string;
     };
+  };
+};
+
+// Info page
+export type InfoPage = NewsItemInfoNoDate & {
+  content: {
+    body: MultiLangString;
+  };
+};
+
+// Form page
+export type FieldType =
+  | "short_answer"
+  | "paragraph"
+  | "multiple_choice"
+  | "check_box"
+  | "dropdown"
+  | "file"
+  | "date"
+  | "time"
+  | "scale";
+
+export interface FormField {
+  id: number;
+  label: MultiLangString;
+  type: FieldType;
+  options?: string[];
+  required: boolean;
+  range?: {
+    start: number;
+    end: number;
+  };
+  default?: string;
+}
+
+export type FormPage = Omit<NewsItemFormNoDate, "done"> & {
+  content: {
+    fields: FormField[];
   };
 };

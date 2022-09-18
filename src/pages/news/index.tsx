@@ -6,9 +6,7 @@ import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useEffect, useState } from "react";
-
-import { useQuery } from "react-query";
+import { useState } from "react";
 
 // SK Components
 import {
@@ -25,31 +23,24 @@ import NewsFilter from "@components/news/NewsFilter";
 // Backend
 import { getNewsFeed } from "@utils/backend/news";
 
-// Types
-import { LangCode } from "@utils/types/common";
-import { NewsItemType, NewsList } from "@utils/types/news";
-
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
-import { replaceNumberInNewsWithDate } from "@utils/helpers/news";
+
+// Supabase
+import { supabase } from "@utils/supabaseClient";
+
+// Types
+import { LangCode } from "@utils/types/common";
+import { NewsItemType, NewsListNoDate } from "@utils/types/news";
 
 // Page
-const NewsPage: NextPage = (): JSX.Element => {
+const NewsPage: NextPage<{ newsFeed: NewsListNoDate }> = ({
+  newsFeed,
+}): JSX.Element => {
   const { t } = useTranslation(["news", "common"]);
 
-  const { data } = useQuery("feed", () => getNewsFeed("student"));
-
   const [newsFilter, setNewsFilter] = useState<NewsItemType[]>([]);
-  const [filteredNews, setFilteredNews] = useState<NewsList>([]);
-
-  useEffect(() => {
-    if (data)
-      setFilteredNews(
-        data
-          .map((newsItem) => replaceNumberInNewsWithDate(newsItem))
-          .filter((newsItem) => newsItem) as NewsList
-      );
-  }, [data]);
+  const [filteredNews, setFilteredNews] = useState<NewsListNoDate>(newsFeed);
 
   return (
     <>
@@ -78,10 +69,20 @@ const NewsPage: NextPage = (): JSX.Element => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  req,
+}) => {
+  const userRole = (await supabase.auth.api.getUserByCookie(req)).user
+    ?.user_metadata.role;
+  if (!userRole)
+    return { redirect: { destination: "/account/login", permanent: false } };
+  const { data: newsFeed } = await getNewsFeed(userRole);
+
   return {
     props: {
       ...(await serverSideTranslations(locale as LangCode, ["common", "news"])),
+      newsFeed,
     },
   };
 };
