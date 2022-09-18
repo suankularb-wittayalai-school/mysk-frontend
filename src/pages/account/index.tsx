@@ -349,8 +349,7 @@ const AccountDetails: NextPage<{ user: Student | Teacher }> = ({ user }) => {
       >
         <BasicInfoSection user={user} toggleShowLogOut={toggleShowLogOut} />
         <EditInfoSection user={user} />
-        {/* {user.isAdmin && <AdminAvailable />} */}
-        <AdminAvailable />
+        {user.isAdmin && <AdminAvailable />}
       </RegularLayout>
 
       {/* Dialogs */}

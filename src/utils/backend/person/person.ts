@@ -4,16 +4,9 @@ import { BackendReturn } from "@utils/types/common";
 import {
   PersonTable,
   StudentDB,
-  StudentTable,
   TeacherDB,
 } from "@utils/types/database/person";
-import {
-  Person,
-  Role,
-  Student,
-  Teacher,
-  UserSectionContent,
-} from "@utils/types/person";
+import { Person, Student, Teacher } from "@utils/types/person";
 import { IncomingMessage } from "http";
 import { NextApiRequestCookies } from "next/dist/server/api-utils";
 import { createContact } from "../contact";
@@ -98,7 +91,10 @@ export async function getUserFromReq(
       return { data: null, error: studentError };
     }
 
-    return { data: await db2Student(student), error: null };
+    return {
+      data: await db2Student(student),
+      error: null,
+    };
   } else if (user?.user_metadata.role == "teacher") {
     const { data: teacher, error: teacherError } = await supabase
       .from<TeacherDB>("teacher")
@@ -111,7 +107,13 @@ export async function getUserFromReq(
       return { data: null, error: teacherError };
     }
 
-    return { data: await db2Teacher(teacher), error: null };
+    return {
+      data: {
+        ...(await db2Teacher(teacher)),
+        isAdmin: user.user_metadata.isAdmin,
+      },
+      error: null,
+    };
   }
 
   return { data: null, error: { message: "invalid role." } };

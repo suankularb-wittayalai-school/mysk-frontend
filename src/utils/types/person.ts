@@ -50,19 +50,3 @@ export type Teacher = Person & {
   subjectGroup: SubjectGroup;
   subjectsInCharge?: SubjectWNameAndCode[];
 };
-
-export type UserSectionContent = {
-  role: Role;
-  firstName: MultiLangString;
-  middleName?: MultiLangString;
-  lastName: MultiLangString;
-} & (
-  | {
-      class: ClassWNumber;
-      classNo: number;
-    }
-  | {
-      classAdvisorAt?: ClassWNumber;
-      subjectGroup: SubjectGroup;
-    }
-);
