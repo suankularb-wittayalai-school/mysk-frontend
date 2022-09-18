@@ -1,5 +1,11 @@
 {
   "title": "About me",
+  "basicInfo": {
+    "profileAlt": "A picture of you",
+    "classAndNo": "M.{{class}} No. {{classNo}}",
+    "subjectGroup": "Teacher in {{subjectGroup}}",
+    "classAdvisorAt": "Class advisor at M.{{classAdvisorAt}}"
+  },
   "logIn": {
     "title": "Log in",
     "form": {
