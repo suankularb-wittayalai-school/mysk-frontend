@@ -11,6 +11,8 @@ import { useState } from "react";
 
 // SK Components
 import {
+  Actions,
+  Button,
   Dropdown,
   Header,
   KeyboardInput,
@@ -139,6 +141,8 @@ const EditInfoSection = ({
         text={t("editInfo.title")}
       />
 
+      {user.role == "student" && <p>{t("editInfo.requestInfo")}</p>}
+
       {/* Local name (Thai) */}
       <section>
         <h3 className="mb-1 font-display text-xl font-bold">
@@ -250,6 +254,16 @@ const EditInfoSection = ({
           </div>
         </section>
       )}
+
+      <Actions>
+        <Button
+          label={t(
+            `editInfo.action.${user.role == "teacher" ? "save" : "sendRequest"}`
+          )}
+          type="filled"
+          disabled={!validate()}
+        />
+      </Actions>
     </Section>
   );
 };
