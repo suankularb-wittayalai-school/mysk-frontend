@@ -285,7 +285,9 @@ export const getServerSideProps: GetServerSideProps = async ({
   locale,
   req,
 }) => {
-  const { data: user } = await getUserFromReq(req);
+  const { data: user, error } = await getUserFromReq(req);
+  if (error)
+    return { redirect: { destination: "/account/login", permanent: false } };
 
   return {
     props: {

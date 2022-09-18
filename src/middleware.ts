@@ -16,13 +16,16 @@ import { Role } from "@utils/types/person";
 export async function middleware(req: NextRequest) {
   // Get current page protection type
   const route = req.nextUrl.pathname;
-  const pageRole: Role | "public" | "admin" | "not-protected" =
+  const pageRole: Role | "public" | "admin" | "user" | "not-protected" =
     // Public pages
     ["/", "/account/login", "/about"].includes(route)
       ? "public"
       : // Admin pages
       route.startsWith("/t/admin/")
       ? "admin"
+      : // User pages
+      route == "/account"
+      ? "user"
       : // Student pages
       route.startsWith("/s/") || route.startsWith("/news/form/")
       ? "student"
@@ -44,9 +47,7 @@ export async function middleware(req: NextRequest) {
   const user = await (
     await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/user`, {
       headers: {
-        Authorization: `Bearer ${(
-          req.cookies as unknown as Map<string, string>
-        ).get("sb-access-token")}`,
+        Authorization: `Bearer ${req.cookies.get("sb-access-token")}`,
         APIKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
       },
     })
