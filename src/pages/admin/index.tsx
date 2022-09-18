@@ -132,7 +132,7 @@ const Admin: NextPage = () => {
           <Title
             name={{ title: t("title") }}
             pageIcon={<MaterialIcon icon="security" />}
-            backGoesTo="/t/home"
+            backGoesTo="/account"
             LinkElement={Link}
           />
         }

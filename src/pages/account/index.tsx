@@ -229,7 +229,7 @@ const EditInfoSection = ({
       </section>
 
       {/* Role */}
-      {user.role == "teacher" && (
+      {user.role == "teacher" && subjectGroups.length > 0 && (
         <section>
           <h3 className="mb-1 font-display text-xl font-bold">
             {t("profile.role.title")}
@@ -242,6 +242,7 @@ const EditInfoSection = ({
                 value: subjectGroup.id,
                 label: subjectGroup.name[locale],
               }))}
+              defaultValue={user.subjectGroup.id}
             />
             <Dropdown
               name="class-counselor-at"
@@ -283,7 +284,7 @@ const AdminAvailable = (): JSX.Element => {
       <div>
         <Card type="stacked" appearance="tonal">
           <CardHeader
-            icon={<MaterialIcon icon="security" />}
+            icon={<MaterialIcon icon="admin_panel_settings" />}
             title={<h3>{t("adminAvailable.title")}</h3>}
             label={t("adminAvailable.subtitle")}
           />
@@ -294,7 +295,8 @@ const AdminAvailable = (): JSX.Element => {
           <CardActions>
             <LinkButton
               label={t("adminAvailable.action.goToPanel")}
-              type="outlined"
+              type="filled"
+              icon={<MaterialIcon icon="admin_panel_settings" />}
               url="/admin"
               LinkElement={Link}
               className="!flex !w-full justify-center sm:!w-fit"

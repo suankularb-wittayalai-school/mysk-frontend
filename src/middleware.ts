@@ -21,7 +21,7 @@ export async function middleware(req: NextRequest) {
     ["/", "/account/login", "/about"].includes(route)
       ? "public"
       : // Admin pages
-      route.startsWith("/t/admin/")
+      route.startsWith("/admin")
       ? "admin"
       : // User pages
       route == "/account"
