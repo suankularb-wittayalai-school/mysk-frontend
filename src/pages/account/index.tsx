@@ -33,11 +33,13 @@ import { getLocaleString } from "@utils/helpers/i18n";
 import { nameJoiner } from "@utils/helpers/name";
 import { createTitleStr } from "@utils/helpers/title";
 
+// Hooks
+import { useSubjectGroupOption } from "@utils/hooks/subject";
+
 // Types
 import { ClassWNumber } from "@utils/types/class";
 import { LangCode } from "@utils/types/common";
 import { Person, Student, Teacher } from "@utils/types/person";
-import { SubjectGroup } from "@utils/types/subject";
 
 const BasicInfoSection = ({
   user,
@@ -120,8 +122,8 @@ const EditInfoSection = ({
     enLastName: user.name["en-US"]?.lastName || "",
   });
 
-  // TODO: Fetch Subject Groups and Classes here
-  const subjectGroups: SubjectGroup[] = [];
+  // TODO: Fetch Classes here
+  const subjectGroups = useSubjectGroupOption();
   const classes: ClassWNumber[] = [];
 
   function validate(): boolean {
