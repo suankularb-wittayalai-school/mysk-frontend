@@ -275,38 +275,36 @@ const EditInfoSection = ({
   );
 };
 
-const AdminAvailable = (): JSX.Element => (
-  <Section>
-    <div>
-      <Card type="stacked" appearance="tonal">
-        <CardHeader
-          icon={<MaterialIcon icon="security" />}
-          title={<h3>Admin available</h3>}
-          label="Learn about admin privileges"
-        />
-        <CardSupportingText>
-          <p>
-            Your account has admin privilege, which means you can view, create,
-            and edit data in the MySK database.
-          </p>
-          <p>
-            Additional privileges include managing news articles and reading
-            logs.
-          </p>
-        </CardSupportingText>
-        <CardActions>
-          <LinkButton
-            label="Go to Admin Panel"
-            type="outlined"
-            url="/admin"
-            LinkElement={Link}
-            className="!flex !w-full justify-center sm:!w-fit"
+const AdminAvailable = (): JSX.Element => {
+  const { t } = useTranslation("account");
+
+  return (
+    <Section>
+      <div>
+        <Card type="stacked" appearance="tonal">
+          <CardHeader
+            icon={<MaterialIcon icon="security" />}
+            title={<h3>{t("adminAvailable.title")}</h3>}
+            label={t("adminAvailable.subtitle")}
           />
-        </CardActions>
-      </Card>
-    </div>
-  </Section>
-);
+          <CardSupportingText>
+            <p>{t("adminAvailable.crudInfo")}</p>
+            <p>{t("adminAvailable.addiPriv")}</p>
+          </CardSupportingText>
+          <CardActions>
+            <LinkButton
+              label={t("adminAvailable.action.goToPanel")}
+              type="outlined"
+              url="/admin"
+              LinkElement={Link}
+              className="!flex !w-full justify-center sm:!w-fit"
+            />
+          </CardActions>
+        </Card>
+      </div>
+    </Section>
+  );
+};
 
 const AccountDetails: NextPage<{ user: Student | Teacher }> = ({ user }) => {
   const { t } = useTranslation("account");

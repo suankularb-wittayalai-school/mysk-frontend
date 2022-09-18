@@ -14,6 +14,15 @@
       "save": "Save"
     }
   },
+  "adminAvailable": {
+    "title": "Admin available",
+    "subtitle": "Learn about admin privileges",
+    "crudInfo": "Your account has admin privilege, which means you can view, create, and edit data in the MySK database.",
+    "addiPriv": "Additional privileges include managing news articles and reading logs.",
+    "action": {
+      "goToPanel": "Go to Admin Panel"
+    }
+  },
   "logIn": {
     "title": "Log in",
     "form": {
