@@ -27,10 +27,11 @@ export async function middleware(req: NextRequest) {
       route == "/account"
       ? "user"
       : // Student pages
-      route.startsWith("/s/") || route.startsWith("/news/form/")
+      route.startsWith("/s/") ||
+        /\/(news\/form\/\d+|class\/\d{3}\/(view|teachers))/.test(route)
       ? "student"
       : // Teacher pages
-      route.startsWith("/t/")
+      route.startsWith("/t/") || /\/class\/\d{3}\/manage/.test(route)
       ? "teacher"
       : // Fallback (images, icons, manifest, etc.)
         "not-protected";
@@ -63,15 +64,22 @@ export async function middleware(req: NextRequest) {
   // Disallow public users from visiting private pages
   if (pageRole != "public" && userRole == "public")
     destination = "/account/login";
-  // Disallow non-admins from visiting admin pages
-  else if ((pageRole == "admin" && userIsAdmin) || pageRole == userRole)
-    return NextResponse.next();
-  // Set destinations for students and teachers in the wrong pages
-  else if (userRole == "student") destination = "/s/home";
-  else if (userRole == "teacher") destination = "/t/home";
+  else if (
+    // Disllow non-admins from visiting admin pages
+    (pageRole == "admin" && !userIsAdmin) ||
+    !(
+      // Allow all users to visit user pages
+      // Allow users with the correct roles
+      (pageRole == "user" || pageRole == userRole)
+    )
+  ) {
+    // Set destinations for students and teachers in the wrong pages
+    if (userRole == "student") destination = "/learn";
+    else if (userRole == "teacher") destination = "/teach";
+  }
 
   // Redirect if decided so, continue if not
-  // Note: While developing, comment out line 73 if you want to test protected
+  // Note: While developing, comment out line 84 if you want to test protected
   // pages via IPv4. Pages using user data will not work, however.
   if (destination) return NextResponse.redirect(new URL(destination, req.url));
   return NextResponse.next();

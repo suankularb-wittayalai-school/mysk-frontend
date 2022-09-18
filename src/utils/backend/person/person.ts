@@ -92,7 +92,7 @@ export async function getUserFromReq(
     }
 
     return {
-      data: await db2Student(student),
+      data: await db2Student(student as StudentDB),
       error: null,
     };
   } else if (user?.user_metadata.role == "teacher") {
@@ -109,7 +109,7 @@ export async function getUserFromReq(
 
     return {
       data: {
-        ...(await db2Teacher(teacher)),
+        ...(await db2Teacher(teacher as TeacherDB)),
         isAdmin: user.user_metadata.isAdmin,
       },
       error: null,
