@@ -7,8 +7,13 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
+import { useState } from "react";
+
 // SK Components
 import {
+  Dropdown,
+  Header,
+  KeyboardInput,
   MaterialIcon,
   RegularLayout,
   Section,
@@ -27,8 +32,10 @@ import { nameJoiner } from "@utils/helpers/name";
 import { createTitleStr } from "@utils/helpers/title";
 
 // Types
+import { ClassWNumber } from "@utils/types/class";
 import { LangCode } from "@utils/types/common";
-import { Student, Teacher } from "@utils/types/person";
+import { Person, Student, Teacher } from "@utils/types/person";
+import { SubjectGroup } from "@utils/types/subject";
 
 const BasicInfoSection = ({
   user,
@@ -63,7 +70,10 @@ const BasicInfoSection = ({
                 {user.role == "teacher" ? (
                   <>
                     {t("basicInfo.subjectGroup", {
-                      subjectGroup: getLocaleString(user.subjectGroup.name, locale),
+                      subjectGroup: getLocaleString(
+                        user.subjectGroup.name,
+                        locale
+                      ),
                     })}
                     {user.classAdvisorAt && (
                       <>
@@ -89,6 +99,161 @@ const BasicInfoSection = ({
   );
 };
 
+const EditInfoSection = ({
+  user,
+}: {
+  user: Student | Teacher;
+}): JSX.Element => {
+  const { t } = useTranslation("account");
+  const locale = useRouter().locale as LangCode;
+
+  // Form control
+  const [form, setForm] = useState({
+    prefix: user.prefix,
+    thFirstName: user.name.th.firstName,
+    thMiddleName: user.name.th.middleName,
+    thLastName: user.name.th.lastName,
+    enFirstName: user.name["en-US"]?.firstName || "",
+    enMiddleName: user.name["en-US"]?.middleName || "",
+    enLastName: user.name["en-US"]?.lastName || "",
+  });
+
+  // TODO: Fetch Subject Groups and Classes here
+  const subjectGroups: SubjectGroup[] = [];
+  const classes: ClassWNumber[] = [];
+
+  function validate(): boolean {
+    if (!["Master", "Mr.", "Mrs.", "Miss."].includes(form.prefix)) return false;
+    if (!form.thFirstName) return false;
+    if (!form.thLastName) return false;
+    if (!form.enFirstName) return false;
+    if (!form.enLastName) return false;
+
+    return true;
+  }
+
+  return (
+    <Section>
+      <Header
+        icon={<MaterialIcon icon="badge" allowCustomSize />}
+        text={t("editInfo.title")}
+      />
+
+      {/* Local name (Thai) */}
+      <section>
+        <h3 className="mb-1 font-display text-xl font-bold">
+          {t("profile.name.title")}
+        </h3>
+        <div className="layout-grid-cols-4 !gap-y-0">
+          <Dropdown
+            name="prefix"
+            label={t("profile.name.prefix.label")}
+            options={
+              user.role == "teacher"
+                ? [
+                    { value: "Mr.", label: t("profile.name.prefix.mister") },
+                    { value: "Miss.", label: t("profile.name.prefix.miss") },
+                    { value: "Mrs.", label: t("profile.name.prefix.missus") },
+                  ]
+                : [
+                    { value: "Master", label: t("profile.name.prefix.master") },
+                    { value: "Mr.", label: t("profile.name.prefix.mister") },
+                  ]
+            }
+            defaultValue={user.prefix}
+            onChange={(e: Person["prefix"]) => setForm({ ...form, prefix: e })}
+          />
+          <KeyboardInput
+            name="th-first-name"
+            type="text"
+            label={t("profile.name.firstName")}
+            defaultValue={user.name.th.firstName}
+            onChange={(e: string) => setForm({ ...form, thFirstName: e })}
+          />
+          <KeyboardInput
+            name="th-middle-name"
+            type="text"
+            label={t("profile.name.middleName")}
+            defaultValue={user.name.th.middleName}
+            onChange={(e: string) => setForm({ ...form, thMiddleName: e })}
+          />
+          <KeyboardInput
+            name="th-last-name"
+            type="text"
+            label={t("profile.name.lastName")}
+            defaultValue={user.name.th.lastName}
+            onChange={(e: string) => setForm({ ...form, thLastName: e })}
+          />
+        </div>
+      </section>
+
+      {/* English name */}
+      <section>
+        <h3 className="mb-1 font-display text-xl font-bold">
+          {t("profile.enName.title")}
+        </h3>
+        <div className="layout-grid-cols-4 !gap-y-0">
+          <KeyboardInput
+            name="en-first-name"
+            type="text"
+            label={t("profile.enName.firstName")}
+            defaultValue={user.name["en-US"]?.firstName || ""}
+            onChange={(e: string) => setForm({ ...form, thFirstName: e })}
+          />
+          <KeyboardInput
+            name="en-middle-name"
+            type="text"
+            label={t("profile.enName.middleName")}
+            defaultValue={user.name["en-US"]?.middleName || ""}
+            onChange={(e: string) => setForm({ ...form, thMiddleName: e })}
+          />
+          <KeyboardInput
+            name="en-last-name"
+            type="text"
+            label={t("profile.enName.lastName")}
+            defaultValue={user.name["en-US"]?.lastName || ""}
+            onChange={(e: string) => setForm({ ...form, thLastName: e })}
+          />
+        </div>
+      </section>
+
+      {/* Role */}
+      {user.role == "teacher" && (
+        <section>
+          <h3 className="mb-1 font-display text-xl font-bold">
+            {t("profile.role.title")}
+          </h3>
+          <div className="layout-grid-cols-4 !gap-y-0">
+            <Dropdown
+              name="subject-group"
+              label={t("profile.role.subjectGroup")}
+              options={subjectGroups.map((subjectGroup) => ({
+                value: subjectGroup.id,
+                label: subjectGroup.name[locale],
+              }))}
+            />
+            <Dropdown
+              name="class-counselor-at"
+              label={t("profile.role.classAdvisorAt.label")}
+              options={[
+                {
+                  value: 0,
+                  label: t("profile.role.classAdvisorAt.none"),
+                },
+              ].concat(
+                classes.map((classItem) => ({
+                  value: classItem.id,
+                  label: t("class", { ns: "common", number: classItem.number }),
+                }))
+              )}
+            />
+          </div>
+        </section>
+      )}
+    </Section>
+  );
+};
+
 const AccountDetails: NextPage<{ user: Student | Teacher }> = ({ user }) => {
   const { t } = useTranslation("account");
 
@@ -110,6 +275,7 @@ const AccountDetails: NextPage<{ user: Student | Teacher }> = ({ user }) => {
         }
       >
         <BasicInfoSection user={user} />
+        <EditInfoSection user={user} />
       </RegularLayout>
     </>
   );

@@ -51,7 +51,7 @@ const UserActions = ({
         label={t("user.action.requestEdit")}
         type="outlined"
         icon={<MaterialIcon icon="edit" />}
-        disabled
+        // disabled
         onClick={() => setShowEditProfile(true)}
         className="!hidden sm:!flex"
       />

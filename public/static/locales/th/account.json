@@ -6,6 +6,13 @@
     "subjectGroup": "กลุ่มสาระการเรียนรู้{{subjectGroup}}",
     "classAdvisorAt": "ครูที่ปรึกษา ม.{{classAdvisorAt}}"
   },
+  "editInfo": {
+    "title": "ข้อมูลส่วนตัว",
+    "action": {
+      "sendRequest": "ส่งคำขอ",
+      "save": "บันทึก"
+    }
+  },
   "logIn": {
     "title": "เข้าสู่ระบบ",
     "form": {

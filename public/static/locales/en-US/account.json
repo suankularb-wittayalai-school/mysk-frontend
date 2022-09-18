@@ -6,6 +6,13 @@
     "subjectGroup": "Teacher in {{subjectGroup}}",
     "classAdvisorAt": "Class advisor at M.{{classAdvisorAt}}"
   },
+  "editInfo": {
+    "title": "Personal information",
+    "action": {
+      "sendRequest": "Send request",
+      "save": "Save"
+    }
+  },
   "logIn": {
     "title": "Log in",
     "form": {
