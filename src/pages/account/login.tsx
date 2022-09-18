@@ -58,12 +58,12 @@ const Login: NextPage = () => {
   return (
     <>
       <Head>
-        <title>{createTitleStr(t("title"), t)}</title>
+        <title>{createTitleStr(t("logIn.title"), t)}</title>
       </Head>
       <RegularLayout
         Title={
           <Title
-            name={{ title: t("title") }}
+            name={{ title: t("logIn.title") }}
             pageIcon={<MaterialIcon icon="person" />}
             backGoesTo="/"
             LinkElement={Link}
@@ -81,26 +81,26 @@ const Login: NextPage = () => {
               <KeyboardInput
                 name="user-id"
                 type="email"
-                label={t("form.email")}
-                helperMsg={t("form.email_helper")}
-                errorMsg={t("form.email_error")}
+                label={t("logIn.form.email")}
+                helperMsg={t("logIn.form.email_helper")}
+                errorMsg={t("logIn.form.email_error")}
                 useAutoMsg
                 onChange={(e: string) => setEmail(e)}
               />
               <KeyboardInput
                 name="password"
                 type="password"
-                label={t("form.password")}
-                helperMsg={t("form.password_helper")}
+                label={t("logIn.form.password")}
+                helperMsg={t("logIn.form.password_helper")}
                 onChange={(e: string) => setPassword(e)}
               />
             </div>
             <div className="flex flex-row flex-wrap items-center justify-end gap-2">
               <Link href="/account/forgot-password">
-                <a className="btn--text">{t("action.forgotPassword")}</a>
+                <a className="btn--text">{t("logIn.action.forgotPassword")}</a>
               </Link>
               <FormButton
-                label={t("action.logIn")}
+                label={t("logIn.action.logIn")}
                 type="submit"
                 appearance="filled"
                 disabled={!validate() || loading}

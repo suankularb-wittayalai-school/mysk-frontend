@@ -92,7 +92,7 @@ const Layout = ({
         inactive: <MaterialIcon icon="account_circle" type="outlined" />,
         active: <MaterialIcon icon="account_circle" type="filled" />,
       },
-      url: "/me",
+      url: "/account",
     },
   ];
   const teacherNav = [
@@ -126,7 +126,7 @@ const Layout = ({
         inactive: <MaterialIcon icon="account_circle" type="outlined" />,
         active: <MaterialIcon icon="account_circle" type="filled" />,
       },
-      url: "/me",
+      url: "/account",
     },
   ];
 
