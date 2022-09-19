@@ -39,6 +39,7 @@
   },
   "studentList": {
     "title": "Student list",
+    "tabTitle": "M.{{classNumber}} student list",
     "searchStudents": "Search students",
     "table": {
       "classNo": "Class №",

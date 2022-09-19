@@ -34,12 +34,12 @@ import { getClassIDFromNumber } from "@utils/backend/classroom/classroom";
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
 import { createTitleStr } from "@utils/helpers/title";
-import { SubjectGroup } from "@utils/types/subject";
 
 // Types
-import { TeachersListGroup } from "@utils/types/teachers";
-import { Teacher } from "@utils/types/person";
 import { LangCode } from "@utils/types/common";
+import { Teacher } from "@utils/types/person";
+import { SubjectGroup } from "@utils/types/subject";
+import { TeachersListGroup } from "@utils/types/teachers";
 
 // Page
 const Teachers: NextPage<{
