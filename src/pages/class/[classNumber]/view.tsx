@@ -47,7 +47,7 @@ const ClassAdvisorsSection = ({
   return (
     <Section labelledBy="class-advisors">
       <Header
-        icon={<MaterialIcon icon="group" />}
+        icon={<MaterialIcon icon="group" allowCustomSize />}
         text={t("classAdvisors.title")}
       />
       <div className="layout-grid-cols-3 !w-full !flex-col">
@@ -75,7 +75,7 @@ const ContactSection = ({
   return (
     <Section labelledBy="class-contacts">
       <Header
-        icon={<MaterialIcon icon="contacts" />}
+        icon={<MaterialIcon icon="contacts" allowCustomSize />}
         text={t("classContacts.title")}
       />
       <div className="layout-grid-cols-3 !w-full !flex-col">
@@ -104,7 +104,7 @@ const StudentListSection = ({
       <div className="layout-grid-cols-3--header items-start">
         <div className="[grid-area:header]">
           <Header
-            icon={<MaterialIcon icon="groups" />}
+            icon={<MaterialIcon icon="groups" allowCustomSize />}
             text={t("studentList.title")}
           />
         </div>
