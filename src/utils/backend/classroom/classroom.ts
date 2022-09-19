@@ -17,6 +17,9 @@ import { supabase } from "@utils/supabaseClient";
 import { ClassroomDB, ClassroomTable } from "@utils/types/database/class";
 import { Class } from "@utils/types/class";
 import { BackendReturn } from "@utils/types/common";
+import { IncomingMessage } from "http";
+import { NextApiRequestCookies } from "next/dist/server/api-utils";
+import { StudentDB } from "@utils/types/database/person";
 
 export async function createClassroom(
   classroom: Class
@@ -190,6 +193,36 @@ export async function addContactToClassroom(
       .single();
 
   return { data: updatedClassroom, error: classroomUpdatingError };
+}
+
+export async function getClassIDFromReq(
+  req: IncomingMessage & { cookies: NextApiRequestCookies }
+): Promise<BackendReturn<number, null>> {
+  const { user, error: userError } = await supabase.auth.api.getUserByCookie(
+    req
+  );
+
+  if (userError) {
+    console.error(userError);
+    return { data: null, error: userError };
+  }
+
+  const studentID: number = user?.user_metadata.student;
+
+  const { data: classItem, error: classError } = await supabase
+    .from<ClassroomDB>("classroom")
+    .select("id, number, students, no_list")
+    .match({ year: getCurrentAcedemicYear() })
+    .contains("students", [studentID])
+    .limit(1)
+    .single();
+
+  if (classError) {
+    console.error(classError);
+    return { data: null, error: classError };
+  }
+
+  return { data: classItem.id, error: null };
 }
 
 export async function getClassIDFromNumber(
