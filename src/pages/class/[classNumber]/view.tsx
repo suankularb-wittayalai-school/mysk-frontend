@@ -39,6 +39,8 @@ import { Contact } from "@utils/types/contact";
 import { Student, Teacher } from "@utils/types/person";
 
 const RelatedPagesSection = ({ classNumber }: { classNumber: number }) => {
+  const { t } = useTranslation("class");
+
   return (
     <Section>
       <LayoutGridCols cols={2}>
@@ -47,8 +49,8 @@ const RelatedPagesSection = ({ classNumber }: { classNumber: number }) => {
             <Card type="horizontal" hasAction>
               <CardHeader
                 icon={<MaterialIcon icon="recent_actors" />}
-                title={<h2>รายชื่ออาจารย์</h2>}
-                label="ดูรายชื่ออาจารย์ที่สอนห้องม.504"
+                title={<h2>{t("links.teacherList.title")}</h2>}
+                label={t("links.teacherList.supportingText", { classNumber })}
                 end={<MaterialIcon icon="arrow_forward" />}
               />
             </Card>
@@ -59,8 +61,8 @@ const RelatedPagesSection = ({ classNumber }: { classNumber: number }) => {
             <Card type="horizontal" hasAction>
               <CardHeader
                 icon={<MaterialIcon icon="groups" />}
-                title={<h2>รายชื่อนักเรียน</h2>}
-                label="ดูรายชื่อนักเรียนห้องม.504"
+                title={<h2>{t("links.studentList.title")}</h2>}
+                label={t("links.studentList.supportingText", { classNumber })}
                 end={<MaterialIcon icon="arrow_forward" />}
               />
             </Card>
@@ -99,11 +101,7 @@ const ClassAdvisorsSection = ({
   );
 };
 
-const ContactSection = ({
-  contacts,
-}: {
-  contacts: Contact[];
-}): JSX.Element => {
+const ContactSection = ({ contacts }: { contacts: Contact[] }): JSX.Element => {
   const { t } = useTranslation("class");
 
   return (

@@ -19,6 +19,16 @@
       "contacts": "ช่องทางการติดต่อ"
     }
   },
+  "links": {
+    "teacherList": {
+      "title": "รายชื่ออาจารย์",
+      "supportingText": "ดูรายชื่ออาจารย์ที่สอนห้องม.{{classNumber}}"
+    },
+    "studentList": {
+      "title": "รายชื่อนักเรียน",
+      "supportingText": "ดูรายชื่อนักเรียนห้องม.{{classNumber}}"
+    }
+  },
   "classAdvisors": {
     "title": "ครูที่ปรึกษา",
     "addAdvisors": "เพิ่มครูที่ปรึกษา"
