@@ -1,4 +1,4 @@
-// Modules
+// External libraries
 import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
@@ -8,6 +8,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 // SK Components
 import {
+  Header,
   MaterialIcon,
   RegularLayout,
   Section,
@@ -56,13 +57,17 @@ const Learn: NextPage<{
         Title={
           <Title
             name={{ title: t("title") }}
-            pageIcon={<MaterialIcon icon="dashboard" />}
+            pageIcon={<MaterialIcon icon="school" />}
             backGoesTo="/s/home"
             LinkElement={Link}
           />
         }
       >
         <Section>
+          <Header
+            icon={<MaterialIcon icon="dashboard" allowCustomSize />}
+            text={t("schedule")}
+          />
           <Schedule schedule={schedule} role="student" />
         </Section>
         <Section>
@@ -88,6 +93,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
         "common",
+        "learn",
         "schedule",
       ])),
       schedule,
