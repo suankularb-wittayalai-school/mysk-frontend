@@ -9,7 +9,10 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 // SK Components
 import {
+  Card,
+  CardHeader,
   Header,
+  LayoutGridCols,
   MaterialIcon,
   RegularLayout,
   Search,
@@ -29,18 +32,47 @@ import { getClassroom } from "@utils/backend/classroom/classroom";
 import { nameJoiner } from "@utils/helpers/name";
 import { createTitleStr } from "@utils/helpers/title";
 
-// Hooks
-import { useStudentAccount } from "@utils/hooks/auth";
-
 // Types
 import { Class as ClassType } from "@utils/types/class";
+import { LangCode } from "@utils/types/common";
 import { Contact } from "@utils/types/contact";
 import { Student, Teacher } from "@utils/types/person";
+
+const RelatedPagesSection = ({ classNumber }: { classNumber: number }) => {
+  return (
+    <Section>
+      <LayoutGridCols cols={2}>
+        <Link href={`/class/${classNumber}/teachers`}>
+          <a>
+            <Card type="horizontal" hasAction>
+              <CardHeader
+                icon={<MaterialIcon icon="recent_actors" />}
+                title={<h2>ดูรายชื่ออาจารย์ที่สอนห้องม.504</h2>}
+                end={<MaterialIcon icon="arrow_forward" />}
+              />
+            </Card>
+          </a>
+        </Link>
+        <Link href={`/class/${classNumber}/students`}>
+          <a>
+            <Card type="horizontal" hasAction>
+              <CardHeader
+                icon={<MaterialIcon icon="groups" />}
+                title={<h2>ดูรายชื่อนักเรียนห้องม.504</h2>}
+                end={<MaterialIcon icon="arrow_forward" />}
+              />
+            </Card>
+          </a>
+        </Link>
+      </LayoutGridCols>
+    </Section>
+  );
+};
 
 const ClassAdvisorsSection = ({
   classAdvisors,
 }: {
-  classAdvisors: Array<Teacher>;
+  classAdvisors: Teacher[];
 }): JSX.Element => {
   const { t } = useTranslation("class");
 
@@ -68,7 +100,7 @@ const ClassAdvisorsSection = ({
 const ContactSection = ({
   contacts,
 }: {
-  contacts: Array<Contact>;
+  contacts: Contact[];
 }): JSX.Element => {
   const { t } = useTranslation("class");
 
@@ -97,7 +129,7 @@ const StudentListSection = ({
   students: Array<Student>;
 }): JSX.Element => {
   const { t } = useTranslation(["class", "common"]);
-  const locale = useRouter().locale == "th" ? "th" : "en-US";
+  const locale = useRouter().locale as LangCode;
 
   return (
     <Section labelledBy="student-list">
@@ -145,9 +177,11 @@ const StudentListSection = ({
 };
 
 // Page
-const Class: NextPage<{ classItem: ClassType }> = ({ classItem }) => {
+const Class: NextPage<{ classNumber: number; classItem: ClassType }> = ({
+  classNumber,
+  classItem,
+}) => {
   const { t } = useTranslation("common");
-  useStudentAccount({ loginRequired: true });
 
   return (
     <>
@@ -166,6 +200,7 @@ const Class: NextPage<{ classItem: ClassType }> = ({ classItem }) => {
           />
         }
       >
+        <RelatedPagesSection classNumber={classNumber} />
         <ClassAdvisorsSection classAdvisors={classItem.classAdvisors} />
         <ContactSection contacts={classItem.contacts} />
         <StudentListSection students={classItem.students} />
@@ -177,15 +212,21 @@ const Class: NextPage<{ classItem: ClassType }> = ({ classItem }) => {
 export const getServerSideProps: GetServerSideProps = async ({
   locale,
   params,
-}) => ({
-  props: {
-    ...(await serverSideTranslations(locale as string, [
-      "common",
-      "class",
-      "teacher",
-    ])),
-    classItem: await getClassroom(Number(params?.classNumber)),
-  },
-});
+}) => {
+  const classNumber = Number(params?.classNumber);
+  const classItem = await getClassroom(classNumber);
+
+  return {
+    props: {
+      ...(await serverSideTranslations(locale as string, [
+        "common",
+        "class",
+        "teacher",
+      ])),
+      classNumber,
+      classItem,
+    },
+  };
+};
 
 export default Class;
