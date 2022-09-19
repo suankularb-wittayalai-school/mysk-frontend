@@ -47,7 +47,8 @@ const RelatedPagesSection = ({ classNumber }: { classNumber: number }) => {
             <Card type="horizontal" hasAction>
               <CardHeader
                 icon={<MaterialIcon icon="recent_actors" />}
-                title={<h2>ดูรายชื่ออาจารย์ที่สอนห้องม.504</h2>}
+                title={<h2>รายชื่ออาจารย์</h2>}
+                label="ดูรายชื่ออาจารย์ที่สอนห้องม.504"
                 end={<MaterialIcon icon="arrow_forward" />}
               />
             </Card>
@@ -58,7 +59,8 @@ const RelatedPagesSection = ({ classNumber }: { classNumber: number }) => {
             <Card type="horizontal" hasAction>
               <CardHeader
                 icon={<MaterialIcon icon="groups" />}
-                title={<h2>ดูรายชื่อนักเรียนห้องม.504</h2>}
+                title={<h2>รายชื่อนักเรียน</h2>}
+                label="ดูรายชื่อนักเรียนห้องม.504"
                 end={<MaterialIcon icon="arrow_forward" />}
               />
             </Card>
