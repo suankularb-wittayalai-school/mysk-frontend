@@ -49,6 +49,12 @@ export async function createClassroom(
       contacts: contactIds as number[],
       advisors: classroom.classAdvisors.map((advisor) => advisor.id),
       students: classroom.students.map((student) => student.id),
+      no_list: [...Array(60)].map((_, index) => {
+        const student = classroom.students.find(
+          (student) => student.classNo === index + 1
+        );
+        return student?.id || 0;
+      }),
       subjects: [],
     });
   if (classCreationError || !createdClass) {
@@ -119,6 +125,13 @@ export async function updateClassroom(
       contacts: contactIDs,
       advisors: classroom.classAdvisors.map((advisor) => advisor.id),
       students: classroom.students.map((student) => student.id),
+      // map no list to be an array of student ids with each id at index class no - 1
+      no_list: [...Array(60)].map((_, index) => {
+        const student = classroom.students.find(
+          (student) => student.classNo === index + 1
+        );
+        return student?.id || 0;
+      }),
       subjects: [],
     })
     .match({ id: classroom.id });

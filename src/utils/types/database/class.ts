@@ -7,6 +7,7 @@ export interface ClassroomDB {
   advisors: number[];
   contacts: number[];
   subjects: number[];
+  no_list: number[];
 }
 
 export interface ClassroomTable {
@@ -18,4 +19,5 @@ export interface ClassroomTable {
   advisors: number[];
   contacts: number[];
   subjects: number[];
+  no_list: number[];
 }
