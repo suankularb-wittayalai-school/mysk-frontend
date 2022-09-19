@@ -19,7 +19,10 @@ import {
 } from "@suankularb-components/react";
 
 // Backend
-import { getClassIDFromNumber } from "@utils/backend/classroom/classroom";
+import {
+  getClassIDFromNumber,
+  getClassStudentList,
+} from "@utils/backend/classroom/classroom";
 
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
@@ -27,9 +30,9 @@ import { createTitleStr } from "@utils/helpers/title";
 
 // Types
 import { LangCode } from "@utils/types/common";
-import { Student } from "@utils/types/person";
+import { StudentListItem } from "@utils/types/person";
 
-const StudentList = ({ students }: { students: Student[] }): JSX.Element => {
+const StudentList = ({ students }: { students: StudentListItem[] }): JSX.Element => {
   const { t } = useTranslation(["class", "common"]);
   const locale = useRouter().locale as LangCode;
 
@@ -64,7 +67,7 @@ const StudentList = ({ students }: { students: Student[] }): JSX.Element => {
   );
 };
 
-const ClassStudents: NextPage<{ classNumber: number; students: Student[] }> = ({
+const ClassStudents: NextPage<{ classNumber: number; students: StudentListItem[] }> = ({
   classNumber,
   students,
 }) => {
@@ -113,7 +116,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   );
   if (classIDError) return { notFound: true };
 
-  const students: Student[] = [];
+  const { data: students } = await getClassStudentList(classID);
 
   return {
     props: {

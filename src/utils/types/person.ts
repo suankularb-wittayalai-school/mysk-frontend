@@ -50,3 +50,13 @@ export type Teacher = Person & {
   subjectGroup: SubjectGroup;
   subjectsInCharge?: SubjectWNameAndCode[];
 };
+
+export type StudentListItem = {
+  id: number;
+  classNo: number;
+  prefix: Prefix;
+  name: {
+    "en-US"?: PersonName;
+    th: PersonName;
+  };
+};

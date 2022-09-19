@@ -1,5 +1,7 @@
-// Modules
+// External libraries
 import { PostgrestError } from "@supabase/supabase-js";
+import { IncomingMessage } from "http";
+import { NextApiRequestCookies } from "next/dist/server/api-utils";
 
 // Backend
 import { createContact, updateContact } from "@utils/backend/contact";
@@ -17,9 +19,7 @@ import { supabase } from "@utils/supabaseClient";
 import { ClassroomDB, ClassroomTable } from "@utils/types/database/class";
 import { Class } from "@utils/types/class";
 import { BackendReturn } from "@utils/types/common";
-import { IncomingMessage } from "http";
-import { NextApiRequestCookies } from "next/dist/server/api-utils";
-import { StudentDB } from "@utils/types/database/person";
+import { StudentListItem } from "@utils/types/person";
 
 export async function createClassroom(
   classroom: Class
@@ -254,4 +254,10 @@ export async function getAllClassNumbers(): Promise<number[]> {
   }
 
   return classrooms.map((classroom) => classroom.number);
+}
+
+export async function getClassStudentList(
+  classID: number
+): Promise<BackendReturn<StudentListItem[]>> {
+  return { data: [], error: { message: "function not implemented." } };
 }
