@@ -209,8 +209,13 @@ export async function db2Student(student: StudentDB): Promise<Student> {
   }
 
   const { data: classes, error: classError } = await supabase
-    .from<{ id: number; number: number; students: number[] }>("classroom")
-    .select("id, number, students")
+    .from<{
+      id: number;
+      number: number;
+      students: number[];
+      no_list: number[];
+    }>("classroom")
+    .select("id, number, students, no_list")
     .match({ year: getCurrentAcedemicYear() })
     .contains("students", [student.id])
     .limit(1)
@@ -223,6 +228,7 @@ export async function db2Student(student: StudentDB): Promise<Student> {
       id: classes.id,
       number: classes.number,
     };
+    formatted.classNo = classes.no_list.indexOf(student.id) + 1;
   }
 
   return formatted;
