@@ -32,16 +32,6 @@ import { SubjectListItem } from "@utils/types/subject";
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
 
-const ScheduleSection = ({
-  schedule,
-}: {
-  schedule: ScheduleType;
-}): JSX.Element => (
-  <Section>
-    <Schedule schedule={schedule} role="student" />
-  </Section>
-);
-
 const Learn: NextPage<{
   schedule: ScheduleType;
   subjectList: SubjectListItem[];
@@ -82,7 +72,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   locale,
   req,
 }) => {
-  const { data: classID, error: classIDError } = await getClassIDFromReq(req);
+  const { data: classID } = await getClassIDFromReq(req);
   const schedule: ScheduleType = await getSchedule(
     "student",
     classID as number
