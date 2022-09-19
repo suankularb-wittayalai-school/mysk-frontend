@@ -6,6 +6,8 @@ import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
+import { useReducer } from "react";
+
 // SK Components
 import {
   Header,
@@ -16,6 +18,7 @@ import {
 } from "@suankularb-components/react";
 
 // Components
+import LogOutDialog from "@components/dialogs/LogOut";
 import Schedule from "@components/schedule/Schedule";
 import SubjectListTable from "@components/tables/SubjectListTable";
 
@@ -38,6 +41,12 @@ const Learn: NextPage<{
 }> = ({ schedule, subjectList }) => {
   const { t } = useTranslation(["learn", "common"]);
 
+  // Dialog control
+  const [showLogOut, toggleShowLogOut] = useReducer(
+    (value: boolean) => !value,
+    false
+  );
+
   return (
     <>
       <Head>
@@ -48,7 +57,7 @@ const Learn: NextPage<{
           <Title
             name={{ title: t("title") }}
             pageIcon={<MaterialIcon icon="school" />}
-            backGoesTo="/s/home"
+            backGoesTo={toggleShowLogOut}
             LinkElement={Link}
           />
         }
@@ -64,6 +73,9 @@ const Learn: NextPage<{
           <SubjectListTable subjectList={subjectList} />
         </Section>
       </RegularLayout>
+
+      {/* Dialogs */}
+      <LogOutDialog show={showLogOut} onClose={toggleShowLogOut} />
     </>
   );
 };
@@ -83,6 +95,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
         "common",
+        "account",
         "learn",
         "schedule",
       ])),
