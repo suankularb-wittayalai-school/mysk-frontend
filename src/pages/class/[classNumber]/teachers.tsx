@@ -1,4 +1,4 @@
-// Modules
+// External libraries
 import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
@@ -7,7 +7,6 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-// External Libraries
 import { useEffect, useState } from "react";
 
 // SK Components
@@ -40,15 +39,15 @@ import { SubjectGroup } from "@utils/types/subject";
 // Types
 import { TeachersListGroup } from "@utils/types/teachers";
 import { Teacher } from "@utils/types/person";
+import { LangCode } from "@utils/types/common";
 
 // Page
-const Teachers: NextPage<{ teacherList: TeachersListGroup[] }> = ({
-  teacherList,
-}): JSX.Element => {
+const Teachers: NextPage<{
+  classNumber: number;
+  teacherList: TeachersListGroup[];
+}> = ({ classNumber, teacherList }): JSX.Element => {
   const { t } = useTranslation(["teacher", "common"]);
-  const locale = useRouter().locale == "th" ? "th" : "en-US";
-
-  // const teacherList: TeachersListGroup[] = [];
+  const locale = useRouter().locale as LangCode;
 
   const [mainContent, setMainContent] = useState<Teacher | null>(null);
   const [showMain, setShowMain] = useState(false);
@@ -65,12 +64,14 @@ const Teachers: NextPage<{ teacherList: TeachersListGroup[] }> = ({
         <title>{createTitleStr(t("title"), t)}</title>
       </Head>
       <ListLayout
-        show={true}
+        show={showMain}
         Title={
           <Title
             name={{ title: t("title") }}
             pageIcon={<MaterialIcon icon="school" />}
-            backGoesTo={showMain ? () => setShowMain(false) : "/account/login"}
+            backGoesTo={
+              showMain ? () => setShowMain(false) : `/class/${classNumber}/view`
+            }
             LinkElement={Link}
           />
         }
@@ -200,8 +201,10 @@ export const getServerSideProps: GetServerSideProps = async ({
   locale,
   params,
 }) => {
+  const classNumber = Number(params?.classNumber);
+
   const { data: classID, error: classIDError } = await getClassIDFromNumber(
-    Number(params?.classNumber)
+    classNumber
   );
   if (classIDError) return { notFound: true };
 
@@ -232,10 +235,11 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   return {
     props: {
-      ...(await serverSideTranslations(locale as string, [
+      ...(await serverSideTranslations(locale as LangCode, [
         "common",
         "teacher",
       ])),
+      classNumber,
       teacherList,
     },
   };

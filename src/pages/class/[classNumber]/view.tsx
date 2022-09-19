@@ -161,7 +161,7 @@ const Class: NextPage<{ classItem: ClassType }> = ({ classItem }) => {
           <Title
             name={{ title: t("class", { number: classItem.number }) }}
             pageIcon={<MaterialIcon icon="groups" />}
-            backGoesTo="/s/home"
+            backGoesTo="/learn"
             LinkElement={Link}
           />
         }
