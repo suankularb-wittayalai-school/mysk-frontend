@@ -39,6 +39,8 @@ import Layout from "@components/Layout";
 
 // Animation
 import { animationEase, animationTransition } from "@utils/animations/config";
+import ErrorBoundary from "@components/error/ErrorBoundary";
+import PageFallback from "@components/error/PageFallback";
 
 const App = ({
   Component,
@@ -94,7 +96,11 @@ const App = ({
       </AnimatePresence>
 
       {/* Main component wrapped with a layout */}
-      {getLayout(<Component {...pageProps} />)}
+      {getLayout(
+        <ErrorBoundary Fallback={PageFallback}>
+          <Component {...pageProps} />
+        </ErrorBoundary>
+      )}
 
       {/* React Query devtools */}
       <ReactQueryDevtools initialIsOpen={false} />

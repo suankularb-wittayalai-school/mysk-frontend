@@ -58,6 +58,14 @@
     "error": {}
   },
   "error": "ข้อผิดพลาด: {{errorMsg}}",
+  "fallback": {
+    "title": "ข้อผิดพลาดฝั่งไคลเอ็นท์",
+    "stack": "ย้อนรอยสแต็ก",
+    "action": {
+      "back": "กลับไปหน้าที่แล้ว",
+      "reload": "ลองอีกครั้ง"
+    }
+  },
   "seeDetails": "ดูรายละเอียด",
   "dialog": {
     "addContact": {

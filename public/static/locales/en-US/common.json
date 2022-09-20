@@ -58,6 +58,14 @@
     "error": {}
   },
   "error": "Error: {{errorMsg}}",
+  "fallback": {
+    "title": "Client-side error",
+    "stack": "Stack trace",
+    "action": {
+      "back": "Back",
+      "reload": "Reload"
+    }
+  },
   "seeDetails": "See details",
   "dialog": {
     "addContact": {
