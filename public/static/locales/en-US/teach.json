@@ -1,0 +1,23 @@
+{
+  "title": "Subjects you teach",
+  "subjects": {
+    "title": "Subjects you teach",
+    "search": "Search subjects",
+    "action": {
+      "add": "Add subject",
+      "seeDetails": "See details"
+    }
+  },
+  "dialog": {
+    "addSubject": {
+      "title": "Add subject",
+      "supportingText": "Select a subject, then assign the classes you will teach this subject to.",
+      "subject": "Subject",
+      "addClasses": "Add classes",
+      "action": {
+        "cancel": "Cancel",
+        "add": "Add"
+      }
+    }
+  }
+}

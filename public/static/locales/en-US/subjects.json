@@ -37,18 +37,6 @@
       "coTeachers": "Co-teachers"
     }
   },
-  "teaching": {
-    "title": "Subjects you teach",
-    "subjects": {
-      "title": "Subjects you teach",
-      "search": "Search subjects",
-      "action": {
-        "add": "Add subject",
-        "seeSchedule": "See schedule",
-        "seeDetails": "See details"
-      }
-    }
-  },
   "details": {
     "title": "Subject details",
     "table": {

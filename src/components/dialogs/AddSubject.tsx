@@ -18,7 +18,7 @@ import AddClassDialog from "@components/dialogs/AddClass";
 import { useTeacherAccount } from "@utils/hooks/auth";
 
 // Types
-import { ChipInputListItem, DialogProps } from "@utils/types/common";
+import { ChipInputListItem, DialogProps, LangCode } from "@utils/types/common";
 import { RoomSubjectTable } from "@utils/types/database/subject";
 import { Teacher } from "@utils/types/person";
 
@@ -30,8 +30,8 @@ const AddSubjectDialog = ({
   onClose,
   onSubmit,
 }: DialogProps & { onSubmit: () => void }): JSX.Element => {
-  const { t } = useTranslation("subjects");
-  const locale = useRouter().locale as "en-US" | "th";
+  const { t } = useTranslation("teach");
+  const locale = useRouter().locale as LangCode;
 
   const [subjectID, setSubjectID] = useState<number>(0);
   const [classChipList, setClassChipList] = useState<ChipInputListItem[]>([]);

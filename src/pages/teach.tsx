@@ -14,7 +14,14 @@ import { useQuery, useQueryClient } from "react-query";
 
 // SK Components
 import {
+  Actions,
   Button,
+  Card,
+  CardActions,
+  CardHeader,
+  CardSupportingText,
+  Header,
+  LayoutGridCols,
   LinkButton,
   MaterialIcon,
   RegularLayout,
@@ -42,7 +49,7 @@ import { ClassWNumber } from "@utils/types/class";
 import { createTitleStr } from "@utils/helpers/title";
 
 const SubjectsTeaching: NextPage<{ teacherID: number }> = ({ teacherID }) => {
-  const { t } = useTranslation("subjects");
+  const { t } = useTranslation("teach");
   const [showAdd, setShowAdd] = useState<boolean>(false);
 
   const queryClient = useQueryClient();
@@ -60,12 +67,12 @@ const SubjectsTeaching: NextPage<{ teacherID: number }> = ({ teacherID }) => {
   return (
     <>
       <Head>
-        <title>{createTitleStr(t("teaching.title"), t)}</title>
+        <title>{createTitleStr(t("title"), t)}</title>
       </Head>
       <RegularLayout
         Title={
           <Title
-            name={{ title: t("teaching.title") }}
+            name={{ title: t("title") }}
             pageIcon={<MaterialIcon icon="school" />}
             backGoesTo="/t/home"
             LinkElement={Link}
@@ -73,36 +80,15 @@ const SubjectsTeaching: NextPage<{ teacherID: number }> = ({ teacherID }) => {
         }
       >
         <Section>
-          <h2 className="sr-only">{t("teaching.subjects.title")}</h2>
-          <div className="layout-grid-cols-3">
-            <Search placeholder={t("teaching.subjects.search")} />
-            <div className="flex flex-row flex-wrap items-center justify-end gap-2 sm:items-end md:col-span-2">
-              <Button
-                label={t("teaching.subjects.action.add")}
-                type="outlined"
-                onClick={() => setShowAdd(true)}
-              />
-              <LinkButton
-                label={t("teaching.subjects.action.seeSchedule")}
-                type="filled"
-                url="/t/schedule"
-                LinkElement={Link}
+          <LayoutGridCols cols={3}>
+            <div className="md:col-span-2">
+              <Header
+                icon={<MaterialIcon icon="library_books" allowCustomSize />}
+                text={t("subjects.title")}
               />
             </div>
-          </div>
-          <ul className="layout-grid-cols-3">
-            {subjects.map((subject) => (
-              <motion.li
-                key={subject.id}
-                initial={{ scale: 0.8, y: 20, opacity: 0 }}
-                animate={{ scale: 1, y: 0, opacity: 1 }}
-                exit={{ scale: 0.8, y: 20, opacity: 0 }}
-                transition={animationTransition}
-              >
-                <SubjectCard subject={subject} />
-              </motion.li>
-            ))}
-          </ul>
+            <Search placeholder={t("subjects.search")} />
+          </LayoutGridCols>
         </Section>
       </RegularLayout>
       <AddSubjectDialog
@@ -122,7 +108,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   req,
 }) => ({
   props: {
-    ...(await serverSideTranslations(locale as string, ["common", "subjects"])),
+    ...(await serverSideTranslations(locale as string, ["common", "teach"])),
     teacherID: await getTeacherIDFromReq(req),
   },
 });
