@@ -1,4 +1,6 @@
 // External libraries
+import { AnimatePresence, motion } from "framer-motion";
+
 import { NextPage } from "next";
 import type { AppProps } from "next/app";
 import Head from "next/head";
@@ -7,7 +9,6 @@ import { useRouter } from "next/router";
 import { appWithTranslation } from "next-i18next";
 
 import {
-  ComponentType,
   ReactElement,
   ReactNode,
   useEffect,
@@ -40,7 +41,8 @@ import "@styles/global.css";
 
 // Components
 import Layout from "@components/Layout";
-import { AnimatePresence, motion } from "framer-motion";
+
+// Animation
 import { animationTransition } from "@utils/animations/config";
 
 const App = ({
