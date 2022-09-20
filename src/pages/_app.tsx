@@ -40,12 +40,8 @@ import "@styles/global.css";
 
 // Components
 import Layout from "@components/Layout";
-
-// Types
-import { Role } from "@utils/types/person";
-
-// Supabase
-import { supabase } from "@utils/supabaseClient";
+import { AnimatePresence, motion } from "framer-motion";
+import { animationTransition } from "@utils/animations/config";
 
 const App = ({
   Component,
@@ -81,11 +77,29 @@ const App = ({
 
   return (
     <QueryClientProvider client={queryClient}>
+      {/* Mark page as responsive */}
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
-      {loading && <div className="fixed inset-0 z-50 cursor-progress" />}
+
+      {/* Dim content during load */}
+      <AnimatePresence>
+        {loading && (
+          <motion.div
+            key="page-load"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={animationTransition}
+            className="fixed inset-0 z-50 cursor-progress bg-[#00000050]"
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Main component wrapped with a layout */}
       {getLayout(<Component {...pageProps} />)}
+
+      {/* React Query devtools */}
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
