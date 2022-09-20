@@ -22,7 +22,6 @@ import {
   CardSupportingText,
   Header,
   LayoutGridCols,
-  LinkButton,
   MaterialIcon,
   RegularLayout,
   Search,
@@ -48,7 +47,7 @@ import { ClassWNumber } from "@utils/types/class";
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
 
-const SubjectsTeaching: NextPage<{ teacherID: number }> = ({ teacherID }) => {
+const Teach: NextPage<{ teacherID: number }> = ({ teacherID }) => {
   const { t } = useTranslation("teach");
   const [showAdd, setShowAdd] = useState<boolean>(false);
 
@@ -89,8 +88,62 @@ const SubjectsTeaching: NextPage<{ teacherID: number }> = ({ teacherID }) => {
             </div>
             <Search placeholder={t("subjects.search")} />
           </LayoutGridCols>
+
+          {subjects.length == 0 ? (
+            // Guide the user on how to add subjects
+            <div>
+              <Card type="stacked" appearance="tonal">
+                <CardHeader
+                  icon={
+                    <MaterialIcon icon="block" className="text-secondary" />
+                  }
+                  title={<h3>{t("subjects.noSubjects.title")}</h3>}
+                  label={t("subjects.noSubjects.subtitle")}
+                />
+                <CardSupportingText>
+                  {t("subjects.noSubjects.supportingText")}
+                </CardSupportingText>
+                <CardActions>
+                  <Button
+                    label={t("subjects.action.add")}
+                    type="filled"
+                    onClick={() => setShowAdd(true)}
+                    className="w-full !text-center sm:w-fit"
+                  />
+                </CardActions>
+              </Card>
+            </div>
+          ) : (
+            // List of subjects the user teaches
+            <>
+              <LayoutGridCols cols={3}>
+                <ul className="contents">
+                  {subjects.map((subject) => (
+                    <motion.li
+                      key={subject.id}
+                      initial={{ scale: 0.8, y: 20, opacity: 0 }}
+                      animate={{ scale: 1, y: 0, opacity: 1 }}
+                      exit={{ scale: 0.8, y: 20, opacity: 0 }}
+                      transition={animationTransition}
+                    >
+                      <SubjectCard subject={subject} />
+                    </motion.li>
+                  ))}
+                </ul>
+              </LayoutGridCols>
+              <Actions>
+                <Button
+                  label={t("subjects.action.add")}
+                  type="outlined"
+                  onClick={() => setShowAdd(true)}
+                />
+              </Actions>
+            </>
+          )}
         </Section>
       </RegularLayout>
+
+      {/* Dialogs */}
       <AddSubjectDialog
         show={showAdd}
         onClose={() => setShowAdd(false)}
@@ -113,4 +166,4 @@ export const getServerSideProps: GetServerSideProps = async ({
   },
 });
 
-export default SubjectsTeaching;
+export default Teach;

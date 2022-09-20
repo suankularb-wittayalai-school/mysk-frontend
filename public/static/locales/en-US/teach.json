@@ -3,6 +3,11 @@
   "subjects": {
     "title": "Subjects you teach",
     "search": "Search subjects",
+    "noSubjects": {
+      "title": "No subjects",
+      "subtitle": "Subject links incomplete",
+      "supportingText": "Administrators have already assigned subjects to you. For them to show up here, you must link those subjects in the classes you teach. Use the “Add subject” button to learn more and link."
+    },
     "action": {
       "add": "Add subject",
       "seeDetails": "See details"

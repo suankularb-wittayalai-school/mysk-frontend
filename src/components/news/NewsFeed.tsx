@@ -31,7 +31,7 @@ const NewsFeed = ({
         >
           {news.map((newsItem, index) => (
             <motion.article
-              key={newsItem.id}
+              key={["news", newsItem.type, newsItem.id].join("-")}
               aria-posinset={index}
               aria-setsize={-1}
               initial={{ scale: 0.8, y: 20, opacity: 0 }}
