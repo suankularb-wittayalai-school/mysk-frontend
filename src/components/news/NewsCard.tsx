@@ -18,12 +18,15 @@ import {
   MaterialIcon,
 } from "@suankularb-components/react";
 
+// Components
+import NewsIcon from "@components/icons/NewsIcon";
+
 // Types
+import { LangCode } from "@utils/types/common";
 import { NewsItemNoDate } from "@utils/types/news";
 
 // Helpers
 import { getLocaleString } from "@utils/helpers/i18n";
-import NewsIcon from "@components/icons/NewsIcon";
 
 const NewsStatus = ({
   newsItem,
@@ -57,7 +60,7 @@ const NewsChipList = ({
   newsItem: NewsItemNoDate;
 }): JSX.Element => {
   const { t } = useTranslation("news");
-  const locale = useRouter().locale as "en-US" | "th";
+  const locale = useRouter().locale as LangCode;
 
   return (
     <ChipList noWrap>
@@ -146,7 +149,7 @@ const NewsCard = ({
   btnType?: "filled" | "outlined" | "text" | "tonal";
 }): JSX.Element => {
   const { t } = useTranslation("news");
-  const locale = useRouter().locale as "en-US" | "th";
+  const locale = useRouter().locale as LangCode;
 
   return (
     <Card type="stacked" appearance="outlined">
@@ -181,7 +184,7 @@ const NewsCard = ({
         className="font-display"
       />
       {showChips && newsItem.type != "info" && (
-        <div className="mx-[2px] overflow-x-auto py-1 px-[calc(1rem-2px)]">
+        <div className="overflow-x-auto py-1 px-4">
           <NewsChipList newsItem={newsItem} />
         </div>
       )}

@@ -36,7 +36,7 @@ const SubjectCard = ({
         }
         label={<span>{subject.code[locale]}</span>}
       />
-      <div className="mx-[2px] overflow-x-auto py-1 px-[calc(1rem-2px)]">
+      <div className="overflow-x-auto py-1 px-4">
         <ChipList noWrap>
           {subject.classes
             .sort((a, b) => a.number - b.number)
