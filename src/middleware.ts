@@ -21,18 +21,20 @@ export async function middleware(req: NextRequest) {
     ["/", "/account/login", "/about"].includes(route)
       ? "public"
       : // Admin pages
-      route.startsWith("/admin")
+      /^\/admin/.test(route)
       ? "admin"
-      : // User pages
-      route == "/account"
-      ? "user"
       : // Student pages
       route.startsWith("/s/") ||
-        /\/(news\/form\/\d+|class\/\d{3}\/(view|teachers))/.test(route)
+        /^\/(learn|news\/form\/\d+|class\/\d{3}\/(view|students|teachers|schedule))/.test(
+          route
+        )
       ? "student"
       : // Teacher pages
-      route.startsWith("/t/") || /\/class\/\d{3}\/manage/.test(route)
+      route.startsWith("/t/") || /^\/(teach|class\/\d{3}\/manage)/.test(route)
       ? "teacher"
+      : // User pages
+      /^\/(news|account)/.test(route)
+      ? "user"
       : // Fallback (images, icons, manifest, etc.)
         "not-protected";
 
