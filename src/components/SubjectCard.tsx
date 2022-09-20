@@ -15,6 +15,7 @@ import {
 
 // Types
 import { ClassWNumber } from "@utils/types/class";
+import { LangCode } from "@utils/types/common";
 import { SubjectWNameAndCode } from "@utils/types/subject";
 
 const SubjectCard = ({
@@ -22,8 +23,8 @@ const SubjectCard = ({
 }: {
   subject: SubjectWNameAndCode & { classes: ClassWNumber[] };
 }): JSX.Element => {
-  const { t } = useTranslation(["subjects", "common"]);
-  const locale = useRouter().locale as "en-US" | "th";
+  const { t } = useTranslation(["teach", "common"]);
+  const locale = useRouter().locale as LangCode;
 
   return (
     <Card type="stacked" appearance="outlined">
@@ -49,9 +50,9 @@ const SubjectCard = ({
       </div>
       <CardActions>
         <LinkButton
-          label={t("teaching.subjects.action.seeDetails")}
+          label={t("subjects.action.seeDetails")}
           type="tonal"
-          url={`/t/subjects/${subject.id}`}
+          url={`/subject/${subject.id}`}
           LinkElement={Link}
         />
       </CardActions>
