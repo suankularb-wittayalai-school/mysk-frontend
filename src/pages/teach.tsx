@@ -8,7 +8,7 @@ import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 
 import { useQuery, useQueryClient } from "react-query";
 
@@ -30,6 +30,7 @@ import {
 } from "@suankularb-components/react";
 
 // Components
+import LogOutDialog from "@components/dialogs/LogOut";
 import AddSubjectDialog from "@components/dialogs/AddSubject";
 import SubjectCard from "@components/SubjectCard";
 
@@ -49,7 +50,16 @@ import { createTitleStr } from "@utils/helpers/title";
 
 const Teach: NextPage<{ teacherID: number }> = ({ teacherID }) => {
   const { t } = useTranslation("teach");
-  const [showAdd, setShowAdd] = useState<boolean>(false);
+
+  // Dialog controls
+  const [showLogOut, toggleShowLogOut] = useReducer(
+    (value: boolean) => !value,
+    false
+  );
+  const [showAdd, toggleShowAdd] = useReducer(
+    (value: boolean) => !value,
+    false
+  );
 
   const queryClient = useQueryClient();
   const { data } = useQuery<
@@ -73,7 +83,7 @@ const Teach: NextPage<{ teacherID: number }> = ({ teacherID }) => {
           <Title
             name={{ title: t("title") }}
             pageIcon={<MaterialIcon icon="school" />}
-            backGoesTo="/t/home"
+            backGoesTo={toggleShowLogOut}
             LinkElement={Link}
           />
         }
@@ -107,7 +117,7 @@ const Teach: NextPage<{ teacherID: number }> = ({ teacherID }) => {
                   <Button
                     label={t("subjects.action.add")}
                     type="filled"
-                    onClick={() => setShowAdd(true)}
+                    onClick={toggleShowAdd}
                     className="w-full !text-center sm:w-fit"
                   />
                 </CardActions>
@@ -135,7 +145,7 @@ const Teach: NextPage<{ teacherID: number }> = ({ teacherID }) => {
                 <Button
                   label={t("subjects.action.add")}
                   type="outlined"
-                  onClick={() => setShowAdd(true)}
+                  onClick={toggleShowAdd}
                 />
               </Actions>
             </>
@@ -144,11 +154,12 @@ const Teach: NextPage<{ teacherID: number }> = ({ teacherID }) => {
       </RegularLayout>
 
       {/* Dialogs */}
+      <LogOutDialog show={showLogOut} onClose={toggleShowLogOut} />
       <AddSubjectDialog
         show={showAdd}
-        onClose={() => setShowAdd(false)}
+        onClose={toggleShowAdd}
         onSubmit={() => {
-          setShowAdd(false);
+          toggleShowAdd();
           queryClient.invalidateQueries("subjects");
         }}
       />
@@ -161,7 +172,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   req,
 }) => ({
   props: {
-    ...(await serverSideTranslations(locale as string, ["common", "teach"])),
+    ...(await serverSideTranslations(locale as string, ["common", "account", "teach"])),
     teacherID: await getTeacherIDFromReq(req),
   },
 });
