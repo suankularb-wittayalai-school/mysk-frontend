@@ -217,6 +217,18 @@ const Landing: NextPage<{ feed: Feed }> & {
   return (
     <>
       <Head>
+        <meta
+          name="theme-color"
+          content="#0068b4"
+          media="(prefers-color-scheme: light)"
+          key="theme-light"
+        />
+        <meta
+          name="theme-color"
+          content="#191d5a"
+          media="(prefers-color-scheme: dark)"
+          key="theme-dark"
+        />
         <title>{t("brand.name", { ns: "common" })}</title>
       </Head>
       <div
