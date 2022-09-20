@@ -8,12 +8,7 @@ import { useRouter } from "next/router";
 
 import { appWithTranslation } from "next-i18next";
 
-import {
-  ReactElement,
-  ReactNode,
-  useEffect,
-  useState,
-} from "react";
+import { ReactElement, ReactNode, useEffect, useState } from "react";
 
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
@@ -43,7 +38,7 @@ import "@styles/global.css";
 import Layout from "@components/Layout";
 
 // Animation
-import { animationTransition } from "@utils/animations/config";
+import { animationEase, animationTransition } from "@utils/animations/config";
 
 const App = ({
   Component,
@@ -92,8 +87,8 @@ const App = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={animationTransition}
-            className="fixed inset-0 z-50 cursor-progress bg-[#00000050]"
+            transition={{ type: "tween", duration: 1.5, ease: animationEase }}
+            className="fixed inset-0 z-50 cursor-progress bg-[#00000020]"
           />
         )}
       </AnimatePresence>
