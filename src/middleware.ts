@@ -1,6 +1,6 @@
 // (@SiravitPhokeed)
 // ESLint is throwing a possibly outdated error on middleware.ts placement.
-// Its advice does not match of that NextJS, and I think you know which is more
+// Its advice does not match that of NextJS, and I think you know which is more
 // important to follow.
 // For now, I’m disabling the rule for this page.
 
@@ -88,10 +88,14 @@ export async function middleware(req: NextRequest) {
 export const config = {
   matcher: [
     "/",
-    "/account/login",
+    "/account/:path",
     "/about",
+    "/learn",
+    "/teach",
+    "/class/:id/:path*",
     "/s/:path*",
     "/t/:path*",
+    "/news",
     "/news/stats/:id",
     "/news/form/:id",
     "/news/payment/:id",
