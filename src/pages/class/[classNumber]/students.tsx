@@ -116,7 +116,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   );
   if (classIDError) return { notFound: true };
 
-  const { data: students } = await getClassStudentList(classID);
+  const { data: students } = await getClassStudentList(classID as number);
 
   return {
     props: {

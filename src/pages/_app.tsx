@@ -91,4 +91,4 @@ const App = ({
   );
 };
 
-export default appWithTranslation(App as ComponentType<AppProps>);
+export default appWithTranslation(App);

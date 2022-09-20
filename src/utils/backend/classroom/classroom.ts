@@ -222,7 +222,7 @@ export async function getClassIDFromReq(
     return { data: null, error: classError };
   }
 
-  return { data: classItem.id, error: null };
+  return { data: (classItem as ClassroomDB).id, error: null };
 }
 
 export async function getClassIDFromNumber(
