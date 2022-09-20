@@ -1,5 +1,11 @@
 {
   "title": "Subjects you teach",
+  "schedule": {
+    "title": "Schedule",
+    "action": {
+      "enterEditMode": "Enter edit mode"
+    }
+  },
   "subjects": {
     "title": "Subjects you teach",
     "search": "Search subjects",

@@ -10,6 +10,7 @@ import { useEffect, useReducer, useState } from "react";
 
 // SK Components
 import {
+  Actions,
   Button,
   MaterialIcon,
   RegularLayout,
@@ -116,7 +117,7 @@ const TeacherSchedule: NextPage = () => {
             setDeletePeriod={setDeletePeriod}
             toggleFetched={toggleFetched}
           />
-          <div className="flex flex-row items-center justify-end gap-2">
+          <Actions>
             <Button
               name={t("schedule.action.sync")}
               type="outlined"
@@ -131,7 +132,7 @@ const TeacherSchedule: NextPage = () => {
               icon={<MaterialIcon icon="add" />}
               onClick={() => toggleAddPeriod()}
             />
-          </div>
+          </Actions>
         </Section>
       </RegularLayout>
 

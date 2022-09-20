@@ -22,6 +22,7 @@ import {
   CardSupportingText,
   Header,
   LayoutGridCols,
+  LinkButton,
   MaterialIcon,
   RegularLayout,
   Search,
@@ -32,6 +33,7 @@ import {
 // Components
 import LogOutDialog from "@components/dialogs/LogOut";
 import AddSubjectDialog from "@components/dialogs/AddSubject";
+import Schedule from "@components/schedule/Schedule";
 import SubjectCard from "@components/SubjectCard";
 
 // Animations
@@ -39,14 +41,42 @@ import { animationTransition } from "@utils/animations/config";
 
 // Backend
 import { getTeacherIDFromReq } from "@utils/backend/person/teacher";
+import { getSchedule } from "@utils/backend/schedule/schedule";
 import { getTeachingSubjects } from "@utils/backend/subject/subject";
 
 // Types
+import { Schedule as ScheduleType } from "@utils/types/schedule";
 import { SubjectWNameAndCode } from "@utils/types/subject";
 import { ClassWNumber } from "@utils/types/class";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
+
+const ScheduleSection = ({
+  schedule,
+}: {
+  schedule: ScheduleType;
+}): JSX.Element => {
+  const { t } = useTranslation("teach");
+
+  return (
+    <Section>
+      <Header
+        icon={<MaterialIcon icon="dashboard" allowCustomSize />}
+        text={t("schedule.title")}
+      />
+      <Schedule schedule={schedule} role="teacher" />
+      <Actions>
+        <LinkButton
+          label={t("schedule.action.enterEditMode")}
+          type="tonal"
+          url="/teach/schedule"
+          LinkElement={Link}
+        />
+      </Actions>
+    </Section>
+  );
+};
 
 const SubjectsYouTeachSection = ({
   subjects,
@@ -122,7 +152,10 @@ const SubjectsYouTeachSection = ({
   );
 };
 
-const Teach: NextPage<{ teacherID: number }> = ({ teacherID }) => {
+const Teach: NextPage<{ teacherID: number; schedule: ScheduleType }> = ({
+  teacherID,
+  schedule,
+}) => {
   const { t } = useTranslation("teach");
 
   // Dialog controls
@@ -163,6 +196,7 @@ const Teach: NextPage<{ teacherID: number }> = ({ teacherID }) => {
           />
         }
       >
+        <ScheduleSection schedule={schedule} />
         <SubjectsYouTeachSection
           subjects={subjects}
           toggleShowAdd={toggleShowAdd}
@@ -186,15 +220,21 @@ const Teach: NextPage<{ teacherID: number }> = ({ teacherID }) => {
 export const getServerSideProps: GetServerSideProps = async ({
   locale,
   req,
-}) => ({
-  props: {
-    ...(await serverSideTranslations(locale as string, [
-      "common",
-      "account",
-      "teach",
-    ])),
-    teacherID: await getTeacherIDFromReq(req),
-  },
-});
+}) => {
+  const teacherID = await getTeacherIDFromReq(req);
+  const schedule = await getSchedule("teacher", teacherID);
+
+  return {
+    props: {
+      ...(await serverSideTranslations(locale as string, [
+        "common",
+        "account",
+        "teach",
+      ])),
+      teacherID,
+      schedule,
+    },
+  };
+};
 
 export default Teach;

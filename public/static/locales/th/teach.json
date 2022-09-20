@@ -1,5 +1,11 @@
 {
   "title": "วิชาที่สอน",
+  "schedule": {
+    "title": "ตารางสอน",
+    "action": {
+      "enterEditMode": "เข้าโหมดแก้ไข"
+    }
+  },
   "subjects": {
     "title": "รายชื่อวิชาที่สอน",
     "search": "ค้นหาวิชาที่สอน",
