@@ -48,6 +48,80 @@ import { ClassWNumber } from "@utils/types/class";
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
 
+const SubjectsYouTeachSection = ({
+  subjects,
+  toggleShowAdd,
+}: {
+  subjects: (SubjectWNameAndCode & { classes: ClassWNumber[] })[];
+  toggleShowAdd: () => void;
+}): JSX.Element => {
+  const { t } = useTranslation("teach");
+
+  return (
+    <Section>
+      <LayoutGridCols cols={3}>
+        <div className="md:col-span-2">
+          <Header
+            icon={<MaterialIcon icon="library_books" allowCustomSize />}
+            text={t("subjects.title")}
+          />
+        </div>
+        <Search placeholder={t("subjects.search")} />
+      </LayoutGridCols>
+
+      {subjects.length == 0 ? (
+        // Guide the user on how to add subjects
+        <div>
+          <Card type="stacked" appearance="tonal">
+            <CardHeader
+              icon={<MaterialIcon icon="block" className="text-secondary" />}
+              title={<h3>{t("subjects.noSubjects.title")}</h3>}
+              label={t("subjects.noSubjects.subtitle")}
+            />
+            <CardSupportingText>
+              {t("subjects.noSubjects.supportingText")}
+            </CardSupportingText>
+            <CardActions>
+              <Button
+                label={t("subjects.action.add")}
+                type="filled"
+                onClick={toggleShowAdd}
+                className="w-full !text-center sm:w-fit"
+              />
+            </CardActions>
+          </Card>
+        </div>
+      ) : (
+        // List of subjects the user teaches
+        <>
+          <LayoutGridCols cols={3}>
+            <ul className="contents">
+              {subjects.map((subject) => (
+                <motion.li
+                  key={subject.id}
+                  initial={{ scale: 0.8, y: 20, opacity: 0 }}
+                  animate={{ scale: 1, y: 0, opacity: 1 }}
+                  exit={{ scale: 0.8, y: 20, opacity: 0 }}
+                  transition={animationTransition}
+                >
+                  <SubjectCard subject={subject} />
+                </motion.li>
+              ))}
+            </ul>
+          </LayoutGridCols>
+          <Actions>
+            <Button
+              label={t("subjects.action.add")}
+              type="outlined"
+              onClick={toggleShowAdd}
+            />
+          </Actions>
+        </>
+      )}
+    </Section>
+  );
+};
+
 const Teach: NextPage<{ teacherID: number }> = ({ teacherID }) => {
   const { t } = useTranslation("teach");
 
@@ -61,6 +135,7 @@ const Teach: NextPage<{ teacherID: number }> = ({ teacherID }) => {
     false
   );
 
+  // Subjects fetch
   const queryClient = useQueryClient();
   const { data } = useQuery<
     (SubjectWNameAndCode & { classes: ClassWNumber[] })[]
@@ -88,69 +163,10 @@ const Teach: NextPage<{ teacherID: number }> = ({ teacherID }) => {
           />
         }
       >
-        <Section>
-          <LayoutGridCols cols={3}>
-            <div className="md:col-span-2">
-              <Header
-                icon={<MaterialIcon icon="library_books" allowCustomSize />}
-                text={t("subjects.title")}
-              />
-            </div>
-            <Search placeholder={t("subjects.search")} />
-          </LayoutGridCols>
-
-          {subjects.length == 0 ? (
-            // Guide the user on how to add subjects
-            <div>
-              <Card type="stacked" appearance="tonal">
-                <CardHeader
-                  icon={
-                    <MaterialIcon icon="block" className="text-secondary" />
-                  }
-                  title={<h3>{t("subjects.noSubjects.title")}</h3>}
-                  label={t("subjects.noSubjects.subtitle")}
-                />
-                <CardSupportingText>
-                  {t("subjects.noSubjects.supportingText")}
-                </CardSupportingText>
-                <CardActions>
-                  <Button
-                    label={t("subjects.action.add")}
-                    type="filled"
-                    onClick={toggleShowAdd}
-                    className="w-full !text-center sm:w-fit"
-                  />
-                </CardActions>
-              </Card>
-            </div>
-          ) : (
-            // List of subjects the user teaches
-            <>
-              <LayoutGridCols cols={3}>
-                <ul className="contents">
-                  {subjects.map((subject) => (
-                    <motion.li
-                      key={subject.id}
-                      initial={{ scale: 0.8, y: 20, opacity: 0 }}
-                      animate={{ scale: 1, y: 0, opacity: 1 }}
-                      exit={{ scale: 0.8, y: 20, opacity: 0 }}
-                      transition={animationTransition}
-                    >
-                      <SubjectCard subject={subject} />
-                    </motion.li>
-                  ))}
-                </ul>
-              </LayoutGridCols>
-              <Actions>
-                <Button
-                  label={t("subjects.action.add")}
-                  type="outlined"
-                  onClick={toggleShowAdd}
-                />
-              </Actions>
-            </>
-          )}
-        </Section>
+        <SubjectsYouTeachSection
+          subjects={subjects}
+          toggleShowAdd={toggleShowAdd}
+        />
       </RegularLayout>
 
       {/* Dialogs */}
@@ -172,7 +188,11 @@ export const getServerSideProps: GetServerSideProps = async ({
   req,
 }) => ({
   props: {
-    ...(await serverSideTranslations(locale as string, ["common", "account", "teach"])),
+    ...(await serverSideTranslations(locale as string, [
+      "common",
+      "account",
+      "teach",
+    ])),
     teacherID: await getTeacherIDFromReq(req),
   },
 });
