@@ -92,7 +92,7 @@ const Teachers: NextPage<{
                   <TeacherCard
                     key={content.id}
                     teacher={content}
-                    hasSubjectSubgroup
+                    hasSubjectGroup
                     className={className}
                     appearance="tonal"
                   />

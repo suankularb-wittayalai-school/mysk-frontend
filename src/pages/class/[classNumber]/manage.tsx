@@ -246,7 +246,7 @@ const ClassAdvisorsSection = ({
           <TeacherCard
             key={classAdvisor.id}
             teacher={classAdvisor}
-            hasSubjectSubgroup
+            hasSubjectGroup
             className="!w-full"
           />
         ))}

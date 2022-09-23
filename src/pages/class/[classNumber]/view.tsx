@@ -81,17 +81,15 @@ const ClassAdvisorsSection = ({
         icon={<MaterialIcon icon="group" allowCustomSize />}
         text={t("classAdvisors.title")}
       />
-      <div className="layout-grid-cols-3 !w-full !flex-col">
+      <LayoutGridCols cols={3}>
         {classAdvisors.map((classAdvisor) => (
           <TeacherCard
             key={classAdvisor.id}
             teacher={classAdvisor}
-            hasSubjectSubgroup
-            hasArrow
-            className="!w-full"
+            hasSubjectGroup
           />
         ))}
-      </div>
+      </LayoutGridCols>
     </Section>
   );
 };

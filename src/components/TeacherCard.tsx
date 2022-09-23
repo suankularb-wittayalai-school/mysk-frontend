@@ -1,14 +1,10 @@
 // Modules
-import Link from "next/link";
 import { useRouter } from "next/router";
-import { useTranslation } from "next-i18next";
 
 // SK Components
 import {
   Card,
   CardHeader,
-  LinkButton,
-  MaterialIcon,
 } from "@suankularb-components/react";
 
 // Components
@@ -16,31 +12,27 @@ import ContactIconList from "@components/ContactIconList";
 import ProfilePicture from "@components/ProfilePicture";
 
 // Helpers
+import { getLocaleString } from "@utils/helpers/i18n";
 import { nameJoiner } from "@utils/helpers/name";
 
 // Types
+import { LangCode } from "@utils/types/common";
 import { Teacher } from "@utils/types/person";
-
-interface TeacherCardProps {
-  teacher: Teacher;
-  hasSubjectSubgroup?: boolean;
-  hasArrow?: boolean;
-  appearance?: "outlined" | "tonal";
-  hasAction?: boolean;
-  className?: string;
-}
 
 const TeacherCard = ({
   teacher,
-  hasSubjectSubgroup,
-  hasArrow,
+  hasSubjectGroup,
   appearance,
   hasAction,
   className,
-}: TeacherCardProps) => {
-  const locale = useRouter().locale == "th" ? "th" : "en-US";
-  const { t } = useTranslation(["teachers", "common"]);
-
+}: {
+  teacher: Teacher;
+  hasSubjectGroup?: boolean;
+  appearance?: "outlined" | "tonal";
+  hasAction?: boolean;
+  className?: string;
+}) => {
+  const locale = useRouter().locale as LangCode;
   const teacherName = nameJoiner(locale, teacher.name);
 
   return (
@@ -64,30 +56,16 @@ const TeacherCard = ({
           </h4>
         }
         label={
-          hasSubjectSubgroup ? (
+          hasSubjectGroup ? (
             <div className="!flex flex-row items-center divide-x divide-outline">
               <ContactIconList contacts={teacher.contacts} />
               <span className="max-lines-1 pl-1">
-                {teacher.subjectGroup.name[locale]}
+                {getLocaleString(teacher.subjectGroup.name, locale)}
               </span>
             </div>
           ) : (
             <ContactIconList contacts={teacher.contacts} />
           )
-        }
-        end={
-          hasArrow ? (
-            <div>
-              <LinkButton
-                name={t("see-details", { ns: "common" })}
-                type="tonal"
-                icon={<MaterialIcon icon="arrow_forward" />}
-                iconOnly
-                url={`/teacher/${teacher.id}`}
-                LinkElement={Link}
-              />
-            </div>
-          ) : undefined
         }
       />
     </Card>
