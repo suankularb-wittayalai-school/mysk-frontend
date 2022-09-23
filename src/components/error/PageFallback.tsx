@@ -14,6 +14,7 @@ import {
   Section,
   Title,
 } from "@suankularb-components/react";
+import ErrorHeader from "./ErrorHeader";
 
 const PageFallback = ({ error }: { error: Error }): JSX.Element => {
   const { t } = useTranslation("common");
@@ -29,25 +30,7 @@ const PageFallback = ({ error }: { error: Error }): JSX.Element => {
         />
       }
     >
-      <Section>
-        <h2 className="font-display text-9xl font-bold text-on-surface-variant">
-          {t("fallback.title")}
-        </h2>
-        <Actions align="left">
-          <Button
-            label={t("fallback.action.back")}
-            type="filled"
-            icon={<MaterialIcon icon="arrow_back" />}
-            onClick={() => history.back()}
-          />
-          <Button
-            label={t("fallback.action.reload")}
-            type="outlined"
-            icon={<MaterialIcon icon="refresh" />}
-            onClick={router.reload}
-          />
-        </Actions>
-      </Section>
+      <ErrorHeader code={t("fallback.title")} />
       <Section>
         <Card type="stacked" appearance="outlined">
           <CardHeader
