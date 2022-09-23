@@ -24,8 +24,7 @@ export async function middleware(req: NextRequest) {
       /^\/admin/.test(route)
       ? "admin"
       : // Student pages
-      route.startsWith("/s/") ||
-        /^\/(learn|news\/form\/\d+|class\/\d{3}\/(view|students|teachers|schedule))/.test(
+      /^\/(learn|news\/form\/\d+|class\/\d{3}\/(view|students|teachers|schedule))/.test(
           route
         )
       ? "student"
@@ -93,9 +92,9 @@ export const config = {
     "/account/:path",
     "/about",
     "/learn",
+    "/learn/:id",
     "/teach",
     "/class/:id/:path*",
-    "/s/:path*",
     "/news",
     "/news/stats/:id",
     "/news/form/:id",
