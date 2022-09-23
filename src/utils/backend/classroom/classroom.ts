@@ -7,7 +7,7 @@ import { NextApiRequestCookies } from "next/dist/server/api-utils";
 import { createContact, updateContact } from "@utils/backend/contact";
 
 // Converters
-import { db2Class } from "@utils/backend/database";
+import { db2Class, db2Student } from "@utils/backend/database";
 
 // Helpers
 import { getCurrentAcedemicYear } from "@utils/helpers/date";
@@ -20,6 +20,7 @@ import { ClassroomDB, ClassroomTable } from "@utils/types/database/class";
 import { Class } from "@utils/types/class";
 import { BackendReturn } from "@utils/types/common";
 import { StudentListItem } from "@utils/types/person";
+import { StudentDB } from "@utils/types/database/person";
 
 export async function createClassroom(
   classroom: Class
@@ -231,7 +232,7 @@ export async function getClassIDFromNumber(
   const { data: classroom, error: classroomSelectionError } = await supabase
     .from<ClassroomTable>("classroom")
     .select("id")
-    .match({ number })
+    .match({ number, year: getCurrentAcedemicYear() })
     .limit(1)
     .single();
 
@@ -259,5 +260,32 @@ export async function getAllClassNumbers(): Promise<number[]> {
 export async function getClassStudentList(
   classID: number
 ): Promise<BackendReturn<StudentListItem[]>> {
-  return { data: [], error: { message: "function not implemented." } };
+  const { data: classItem, error: classError } = await supabase
+    .from<ClassroomDB>("classroom")
+    .select("students")
+    .match({ id: classID, year: getCurrentAcedemicYear() })
+    .limit(1)
+    .single();
+
+  if (classError) {
+    console.error(classError);
+    return { data: [], error: classError };
+  }
+
+  const { data, error } = await supabase
+    .from<StudentDB>("student")
+    .select("id, std_id, people:person(*)")
+    .in("id", classItem.students);
+
+  if (error) {
+    console.error(error);
+    return { data: [], error };
+  }
+
+  return {
+    data: (
+      await Promise.all(data.map(async (student) => await db2Student(student)))
+    ).sort((a, b) => a.classNo - b.classNo),
+    error: null,
+  };
 }

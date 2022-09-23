@@ -89,8 +89,8 @@ const App = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ type: "tween", duration: 1.5, ease: animationEase }}
-            className="fixed inset-0 z-50 cursor-progress bg-[#00000020]"
+            transition={{ type: "tween", duration: 0.3, ease: animationEase }}
+            className="fixed inset-0 z-50 cursor-progress bg-[#00000050]"
           />
         )}
       </AnimatePresence>

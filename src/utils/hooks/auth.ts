@@ -56,7 +56,7 @@ export function useStudentAccount(
               return;
             }
 
-            db2Student(res.data).then((student) => {
+            db2Student(res.data, { contacts: true }).then((student) => {
               setUser(student);
             });
           });
