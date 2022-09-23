@@ -315,7 +315,7 @@ const PeriodLogsSection = ({
         <LinkButton
           type="outlined"
           label={t("periodLogs.action.seeAll")}
-          url={`/t/subjects/${subjectID}/period-logs`}
+          url={`/subjects/${subjectID}/period-logs`}
         />
         <Button
           type="filled"
@@ -511,7 +511,7 @@ const SubstituteAssignmentsSection = ({
         <LinkButton
           type="outlined"
           label={t("substAsgn.action.seeAll")}
-          url={`/t/subjects/${subjectID}/substitute-assignments`}
+          url={`/subjects/${subjectID}/substitute-assignments`}
         />
         <Button
           type="filled"

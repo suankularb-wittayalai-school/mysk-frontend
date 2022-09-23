@@ -30,7 +30,7 @@ export async function middleware(req: NextRequest) {
         )
       ? "student"
       : // Teacher pages
-      route.startsWith("/t/") || /^\/(teach|class\/\d{3}\/manage)/.test(route)
+      /^\/(teach|class\/\d{3}\/manage)/.test(route)
       ? "teacher"
       : // User pages
       /^\/(news|account)/.test(route)
@@ -96,7 +96,6 @@ export const config = {
     "/teach",
     "/class/:id/:path*",
     "/s/:path*",
-    "/t/:path*",
     "/news",
     "/news/stats/:id",
     "/news/form/:id",

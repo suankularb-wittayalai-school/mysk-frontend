@@ -102,7 +102,7 @@ const TeacherSchedule: NextPage = () => {
           <Title
             name={{ title: t("title.teacher") }}
             pageIcon={<MaterialIcon icon="dashboard" />}
-            backGoesTo="/t/subjects/teaching"
+            backGoesTo="/teach"
             LinkElement={Link}
           />
         }

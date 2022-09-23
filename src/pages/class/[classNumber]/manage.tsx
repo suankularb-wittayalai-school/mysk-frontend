@@ -110,7 +110,7 @@ const StudentFormCard = ({ form }: { form: StudentFormItem }): JSX.Element => {
               type="tonal"
               iconOnly
               icon={<MaterialIcon icon="arrow_forward" />}
-              url={`/t/${form.type}/${form.id}`}
+              url={`/${form.type}/${form.id}`}
               LinkElement={Link}
             />
           </div>
