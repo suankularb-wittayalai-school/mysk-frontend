@@ -18,7 +18,7 @@ const ErrorHeader = ({ code, verbose }: { code?: number; verbose: string }) => {
     <Section>
       {code ? (
         <h2 className="font-display text-9xl">
-          <span>{code}: </span>
+          <span className="font-thin">{code}: </span>
           <span className="font-bold">{verbose}</span>
         </h2>
       ) : (
