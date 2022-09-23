@@ -1,10 +1,12 @@
 // Modules
-import { GetServerSideProps, NextPage } from "next";
+import { GetServerSideProps, GetStaticPaths, GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+
+import { useReducer } from "react";
 
 // SK Components
 import {
@@ -15,10 +17,12 @@ import {
 } from "@suankularb-components/react";
 
 // Components
+import LogOutDialog from "@components/dialogs/LogOut";
 import Schedule from "@components/schedule/Schedule";
+import SubjectListTable from "@components/tables/SubjectListTable";
 
 // Backend
-import { getClassIDFromNumber } from "@utils/backend/classroom/classroom";
+import { getAllClassNumbers, getClassIDFromNumber } from "@utils/backend/classroom/classroom";
 import { getSchedule } from "@utils/backend/schedule/schedule";
 import { getSubjectList } from "@utils/backend/subject/roomSubject";
 
@@ -29,34 +33,32 @@ import { SubjectListItem } from "@utils/types/subject";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
-import SubjectListTable from "@components/tables/SubjectListTable";
 
 const StudentSchedule: NextPage<{
-  classNumber: number;
   schedule: ScheduleType;
   subjectList: SubjectListItem[];
-}> = ({ classNumber, schedule, subjectList }) => {
-  const { t } = useTranslation(["schedule", "common"]);
+}> = ({ schedule, subjectList }) => {
+  const { t } = useTranslation("learn");
+
+  // Dialog control
+  const [showLogOut, toggleShowLogOut] = useReducer(
+    (value: boolean) => !value,
+    false
+  );
 
   return (
     <>
       <Head>
-        <title>
-          {createTitleStr(
-            t("title.studentWithClass", { number: classNumber }),
-            t
-          )}
-        </title>
+        <title>{createTitleStr(t("title"), t)}</title>
       </Head>
       <RegularLayout
         Title={
           <Title
             name={{
-              title: t("title.student"),
-              subtitle: t("class", { ns: "common", number: classNumber }),
+              title: t("title"),
             }}
-            pageIcon={<MaterialIcon icon="dashboard" />}
-            backGoesTo="/learn"
+            pageIcon={<MaterialIcon icon="school" />}
+            backGoesTo={toggleShowLogOut}
             LinkElement={Link}
           />
         }
@@ -68,11 +70,14 @@ const StudentSchedule: NextPage<{
           <SubjectListTable subjectList={subjectList} />
         </Section>
       </RegularLayout>
+
+      {/* Dialogs */}
+      <LogOutDialog show={showLogOut} onClose={toggleShowLogOut} />
     </>
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
+export const getStaticProps: GetStaticProps = async ({
   locale,
   params,
 }) => {
@@ -94,13 +99,25 @@ export const getServerSideProps: GetServerSideProps = async ({
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
         "common",
+        "account",
+        "learn",
         "schedule",
       ])),
-      classNumber,
       schedule,
       subjectList,
     },
+    revalidate: 300,
   };
 };
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  return {
+    paths: (await getAllClassNumbers()).map((number) => ({
+      params: { classNumber: number.toString() },
+    })),
+    fallback: "blocking",
+  };
+};
+
 
 export default StudentSchedule;

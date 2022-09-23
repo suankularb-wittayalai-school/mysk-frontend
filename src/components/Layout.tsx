@@ -68,7 +68,7 @@ const Layout = ({
         inactive: <MaterialIcon icon="school" type="outlined" />,
         active: <MaterialIcon icon="school" type="filled" />,
       },
-      url: "/learn",
+      url: "/learn/505",
     },
     {
       name: t("navigation.people"),
@@ -76,7 +76,7 @@ const Layout = ({
         inactive: <MaterialIcon icon="groups" type="outlined" />,
         active: <MaterialIcon icon="groups" type="filled" />,
       },
-      url: "/class/504/view",
+      url: "/class/505/view",
     },
     {
       name: t("navigation.news"),

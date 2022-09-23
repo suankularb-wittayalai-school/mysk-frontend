@@ -196,7 +196,7 @@ export async function addContactToClassroom(
   return { data: updatedClassroom, error: classroomUpdatingError };
 }
 
-export async function getClassIDFromReq(
+export async function getClassNumberFromReq(
   req: IncomingMessage & { cookies: NextApiRequestCookies }
 ): Promise<BackendReturn<number, null>> {
   const { user, error: userError } = await supabase.auth.api.getUserByCookie(
@@ -212,7 +212,7 @@ export async function getClassIDFromReq(
 
   const { data: classItem, error: classError } = await supabase
     .from<ClassroomDB>("classroom")
-    .select("id, number, students, no_list")
+    .select("number")
     .match({ year: getCurrentAcedemicYear() })
     .contains("students", [studentID])
     .limit(1)
@@ -223,7 +223,7 @@ export async function getClassIDFromReq(
     return { data: null, error: classError };
   }
 
-  return { data: (classItem as ClassroomDB).id, error: null };
+  return { data: (classItem as ClassroomDB).number, error: null };
 }
 
 export async function getClassIDFromNumber(
