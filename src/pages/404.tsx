@@ -1,4 +1,4 @@
-// Modules
+// External libraries
 import type { GetStaticProps, NextPage } from "next";
 
 import { useTranslation } from "next-i18next";
@@ -13,6 +13,9 @@ import {
 
 // Components
 import ErrorHeader from "@components/error/ErrorHeader";
+
+// Types
+import { LangCode } from "@utils/types/common";
 
 // Page
 const NotFound: NextPage = () => {
@@ -35,7 +38,7 @@ const NotFound: NextPage = () => {
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(locale as string, ["common", "error"])),
+    ...(await serverSideTranslations(locale as LangCode, ["common", "error"])),
   },
 });
 
