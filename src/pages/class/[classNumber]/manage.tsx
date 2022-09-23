@@ -409,7 +409,7 @@ const Class: NextPage<{
   );
 
   useEffect(() => {
-    if (!classItem.id) router.push("/t/home");
+    if (!classItem.id) router.push("/teach");
   }, []);
 
   return (
@@ -425,7 +425,7 @@ const Class: NextPage<{
           <Title
             name={{ title: t("class", { number: classItem.number }) }}
             pageIcon={<MaterialIcon icon="groups" />}
-            backGoesTo="/s/home"
+            backGoesTo="/learn"
             LinkElement={Link}
           />
         }

@@ -61,7 +61,7 @@ export function useStudentAccount(
             });
           });
       } else if (session.user?.user_metadata.role == "teacher")
-        router.push("/t/home");
+        router.push("/teach");
       else router.push("/account/login");
     }
   }, [session]);
@@ -96,7 +96,7 @@ export function useTeacherAccount(
             });
           });
       } else if (session.user?.user_metadata.role == "student")
-        router.push("/s/home");
+        router.push("/learn");
       else router.push("/account/login");
     }
   }, [session]);

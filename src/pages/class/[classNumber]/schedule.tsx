@@ -56,7 +56,7 @@ const StudentSchedule: NextPage<{
               subtitle: t("class", { ns: "common", number: classNumber }),
             }}
             pageIcon={<MaterialIcon icon="dashboard" />}
-            backGoesTo="/s/home"
+            backGoesTo="/learn"
             LinkElement={Link}
           />
         }
