@@ -84,7 +84,9 @@ const EditPeriod = ({
       setForm({
         subject:
           schedulePeriod?.subject?.id ||
-          (teacher?.subjectsInCharge ? teacher.subjectsInCharge[0].id : 0),
+          (teacher?.subjectsInCharge && teacher.subjectsInCharge.length > 0
+            ? teacher.subjectsInCharge[0].id
+            : 0),
         classID:
           schedulePeriod?.class?.id || (classes.length > 0 ? classes[0].id : 0),
         room: schedulePeriod?.room || "",
