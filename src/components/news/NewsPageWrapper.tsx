@@ -1,11 +1,13 @@
 // External libraries
 import { motion } from "framer-motion";
 
-import { ReactNode } from "react";
-
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
+
+import { useTranslation } from "next-i18next";
+
+import { ReactNode } from "react";
 
 // SK Components
 import {
@@ -36,6 +38,7 @@ const NewsPageWrapper = ({
   children: ReactNode;
 }) => {
   const locale = useRouter().locale as LangCode;
+  const { t } = useTranslation("news");
   const session = useSession();
 
   return (
@@ -81,9 +84,9 @@ const NewsPageWrapper = ({
             </motion.p>
 
             {session?.user?.user_metadata.isAdmin && (
-              <Actions className="my-2">
+              <Actions className="my-4">
                 <LinkButton
-                  label="Edit article"
+                  label={t("pageAction.admin.edit")}
                   type="tonal"
                   icon={<MaterialIcon icon="edit" />}
                   url={`/admin/news/edit/${news.type}/${news.id}`}

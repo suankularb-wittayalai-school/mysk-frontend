@@ -46,6 +46,9 @@
     }
   },
   "pageAction": {
+    "admin": {
+      "edit": "แก้ไขบทความ"
+    },
     "form": {
       "reset": "รีเซต",
       "submit": "ส่งแบบสอบถาม"
