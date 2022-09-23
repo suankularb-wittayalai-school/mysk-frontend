@@ -275,7 +275,7 @@ export async function getClassStudentList(
   const { data, error } = await supabase
     .from<StudentDB>("student")
     .select("id, std_id, people:person(*)")
-    .in("id", classItem.students);
+    .in("id", (classItem as ClassroomDB).students);
 
   if (error) {
     console.error(error);
@@ -284,7 +284,9 @@ export async function getClassStudentList(
 
   return {
     data: (
-      await Promise.all(data.map(async (student) => await db2Student(student)))
+      await Promise.all(
+        (data as StudentDB[]).map(async (student) => await db2Student(student))
+      )
     ).sort((a, b) => a.classNo - b.classNo),
     error: null,
   };

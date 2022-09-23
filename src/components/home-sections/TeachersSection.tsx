@@ -151,7 +151,7 @@ const TeachersSection = ({
                       : "md:hidden"
                   }`}
                 >
-                  <TeacherCard teacher={teacher} hasArrow />
+                  <TeacherCard teacher={teacher} />
                 </li>
               ))}
             </ul>
