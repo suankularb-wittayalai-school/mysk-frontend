@@ -103,10 +103,10 @@ const Teachers: NextPage<{
           />
         </ListSection>
         <MainSection>
-          <Section className="!flex !flex-col !gap-4 !font-display">
+          <Section className="flex flex-col gap-4 font-display">
             <Section>
               <div className="grid grid-cols-[1fr_3fr] items-stretch gap-4 sm:gap-6 md:grid-cols-[1fr_5fr]">
-                <div className="aspect-square overflow-hidden rounded-xl sm:rounded-2xl">
+                <div className="aspect-square overflow-hidden rounded-lg sm:rounded-xl">
                   <ProfilePicture src={mainContent?.profile} />
                 </div>
                 <div className="flex flex-col justify-between">
