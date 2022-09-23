@@ -4,8 +4,6 @@ import { useTranslation } from "next-i18next";
 
 // SK Components
 import {
-  Actions,
-  Button,
   Card,
   CardHeader,
   CardSupportingText,
@@ -14,11 +12,12 @@ import {
   Section,
   Title,
 } from "@suankularb-components/react";
-import ErrorHeader from "./ErrorHeader";
+
+// Components
+import ErrorHeader from "@components/error/ErrorHeader";
 
 const PageFallback = ({ error }: { error: Error }): JSX.Element => {
   const { t } = useTranslation("common");
-  const router = useRouter();
 
   return (
     <RegularLayout
@@ -30,7 +29,7 @@ const PageFallback = ({ error }: { error: Error }): JSX.Element => {
         />
       }
     >
-      <ErrorHeader code={t("fallback.title")} />
+      <ErrorHeader verbose={t("fallback.title")} />
       <Section>
         <Card type="stacked" appearance="outlined">
           <CardHeader

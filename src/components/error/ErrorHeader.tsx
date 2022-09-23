@@ -10,25 +10,21 @@ import {
   Section,
 } from "@suankularb-components/react";
 
-const ErrorHeader = ({
-  code,
-  verbose,
-}: {
-  code: string | number;
-  verbose?: string;
-}) => {
+const ErrorHeader = ({ code, verbose }: { code?: number; verbose: string }) => {
   const { t } = useTranslation("common");
   const router = useRouter();
 
   return (
     <Section>
-      <h2 className="font-display text-9xl font-bold">{code}</h2>
-      {verbose && (
-        <p className="font-display text-4xl font-bold leading-none">
-          {verbose}
-        </p>
+      {code ? (
+        <h2 className="font-display text-9xl">
+          <span>{code}: </span>
+          <span className="font-bold">{verbose}</span>
+        </h2>
+      ) : (
+        <h2 className="font-display text-9xl font-bold">{verbose}</h2>
       )}
-      <Actions align="left" className={verbose ? "mt-4" : undefined}>
+      <Actions align="left">
         <Button
           label={t("fallback.action.back")}
           type="filled"
