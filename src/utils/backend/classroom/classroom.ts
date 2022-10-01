@@ -1,11 +1,13 @@
-// Modules
+// External libraries
 import { PostgrestError } from "@supabase/supabase-js";
+import { IncomingMessage } from "http";
+import { NextApiRequestCookies } from "next/dist/server/api-utils";
 
 // Backend
 import { createContact, updateContact } from "@utils/backend/contact";
 
 // Converters
-import { db2Class } from "@utils/backend/database";
+import { db2Class, db2Student } from "@utils/backend/database";
 
 // Helpers
 import { getCurrentAcedemicYear } from "@utils/helpers/date";
@@ -17,6 +19,8 @@ import { supabase } from "@utils/supabaseClient";
 import { ClassroomDB, ClassroomTable } from "@utils/types/database/class";
 import { Class } from "@utils/types/class";
 import { BackendReturn } from "@utils/types/common";
+import { StudentListItem } from "@utils/types/person";
+import { StudentDB } from "@utils/types/database/person";
 
 export async function createClassroom(
   classroom: Class
@@ -192,13 +196,43 @@ export async function addContactToClassroom(
   return { data: updatedClassroom, error: classroomUpdatingError };
 }
 
+export async function getClassNumberFromReq(
+  req: IncomingMessage & { cookies: NextApiRequestCookies }
+): Promise<BackendReturn<number, null>> {
+  const { user, error: userError } = await supabase.auth.api.getUserByCookie(
+    req
+  );
+
+  if (userError) {
+    console.error(userError);
+    return { data: null, error: userError };
+  }
+
+  const studentID: number = user?.user_metadata.student;
+
+  const { data: classItem, error: classError } = await supabase
+    .from<ClassroomDB>("classroom")
+    .select("number")
+    .match({ year: getCurrentAcedemicYear() })
+    .contains("students", [studentID])
+    .limit(1)
+    .single();
+
+  if (classError) {
+    console.error(classError);
+    return { data: null, error: classError };
+  }
+
+  return { data: (classItem as ClassroomDB).number, error: null };
+}
+
 export async function getClassIDFromNumber(
   number: number
 ): Promise<BackendReturn<number, null>> {
   const { data: classroom, error: classroomSelectionError } = await supabase
     .from<ClassroomTable>("classroom")
     .select("id")
-    .match({ number })
+    .match({ number, year: getCurrentAcedemicYear() })
     .limit(1)
     .single();
 
@@ -221,4 +255,39 @@ export async function getAllClassNumbers(): Promise<number[]> {
   }
 
   return classrooms.map((classroom) => classroom.number);
+}
+
+export async function getClassStudentList(
+  classID: number
+): Promise<BackendReturn<StudentListItem[]>> {
+  const { data: classItem, error: classError } = await supabase
+    .from<ClassroomDB>("classroom")
+    .select("students")
+    .match({ id: classID, year: getCurrentAcedemicYear() })
+    .limit(1)
+    .single();
+
+  if (classError) {
+    console.error(classError);
+    return { data: [], error: classError };
+  }
+
+  const { data, error } = await supabase
+    .from<StudentDB>("student")
+    .select("id, std_id, people:person(*)")
+    .in("id", (classItem as ClassroomDB).students);
+
+  if (error) {
+    console.error(error);
+    return { data: [], error };
+  }
+
+  return {
+    data: (
+      await Promise.all(
+        (data as StudentDB[]).map(async (student) => await db2Student(student))
+      )
+    ).sort((a, b) => a.classNo - b.classNo),
+    error: null,
+  };
 }

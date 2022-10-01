@@ -1,0 +1,34 @@
+{
+  "title": "Subjects you teach",
+  "schedule": {
+    "title": "Schedule",
+    "action": {
+      "enterEditMode": "Enter edit mode"
+    }
+  },
+  "subjects": {
+    "title": "Subjects you teach",
+    "search": "Search subjects",
+    "noSubjects": {
+      "title": "No subjects",
+      "subtitle": "Subject links incomplete",
+      "supportingText": "Administrators have already assigned subjects to you. For them to show up here, you must link those subjects in the classes you teach. Use the “Add subject” button to learn more and link."
+    },
+    "action": {
+      "add": "Add subject",
+      "seeDetails": "See details"
+    }
+  },
+  "dialog": {
+    "addSubject": {
+      "title": "Add subject",
+      "supportingText": "Select a subject, then assign the classes you will teach this subject to.",
+      "subject": "Subject",
+      "addClasses": "Add classes",
+      "action": {
+        "cancel": "Cancel",
+        "add": "Add"
+      }
+    }
+  }
+}

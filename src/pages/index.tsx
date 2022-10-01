@@ -49,7 +49,7 @@ const LandingFeed = ({ feed }: { feed?: Feed }): JSX.Element => {
     <section
       aria-label={t("news.title")}
       className="mt-16 bg-[#C5E7FF5E] !p-0 backdrop-blur-md dark:bg-[#004C6D5E]
-        sm:mt-0 sm:rounded-xl"
+        sm:col-span-2 sm:col-start-2 sm:mt-0 sm:rounded-xl"
     >
       <CardHeader
         icon={<MaterialIcon icon="newspaper" className="text-on-surface" />}
@@ -217,6 +217,18 @@ const Landing: NextPage<{ feed: Feed }> & {
   return (
     <>
       <Head>
+        <meta
+          name="theme-color"
+          content="#0068b4"
+          media="(prefers-color-scheme: light)"
+          key="theme-light"
+        />
+        <meta
+          name="theme-color"
+          content="#191d5a"
+          media="(prefers-color-scheme: dark)"
+          key="theme-dark"
+        />
         <title>{t("brand.name", { ns: "common" })}</title>
       </Head>
       <div
@@ -226,7 +238,9 @@ const Landing: NextPage<{ feed: Feed }> & {
         <RegularLayout>
           <div className="flex flex-col gap-y-6 md:grid md:grid-cols-2 md:gap-x-6">
             <LandingBanner />
-            <LandingFeed feed={feed} />
+            <div className="!px-0 sm:grid sm:grid-cols-3 sm:gap-x-6 md:block">
+              <LandingFeed feed={feed} />
+            </div>
           </div>
         </RegularLayout>
       </div>
@@ -243,7 +257,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
 
   return {
     props: {
-      ...(await serverSideTranslations(locale as string, [
+      ...(await serverSideTranslations(locale as LangCode, [
         "common",
         "landing",
       ])),

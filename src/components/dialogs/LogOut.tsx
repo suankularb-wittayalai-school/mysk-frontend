@@ -40,12 +40,13 @@ const LogOutDialog = ({ show, onClose }: DialogProps): JSX.Element => {
         },
       ]}
       show={show}
-      onClose={() => onClose()}
+      onClose={onClose}
       onSubmit={async () => {
         setLoading(true);
         await supabase.auth.signOut();
-        await setAuthCookies("SIGNED_OUT");
-        router.reload();
+        const cookiesOK = await setAuthCookies("SIGNED_OUT");
+        if (cookiesOK) router.push("/");
+        else setLoading(false);
       }}
     />
   );

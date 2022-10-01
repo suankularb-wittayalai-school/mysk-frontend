@@ -164,7 +164,10 @@ export async function db2FormPage(form: FormDB) {
 // People
 
 // Student
-export async function db2Student(student: StudentDB): Promise<Student> {
+export async function db2Student(
+  student: StudentDB,
+  options?: Partial<{ contacts: boolean }>
+): Promise<Student> {
   const formatted: Student = {
     id: student.id,
     prefix: student.people.prefix_en,
@@ -184,28 +187,21 @@ export async function db2Student(student: StudentDB): Promise<Student> {
       },
     },
     studentID: student.std_id,
-    class: {
-      id: 0,
-      number: 0,
-    },
+    class: { id: 0, number: 0 },
     citizenID: student.people.citizen_id,
     birthdate: student.people.birthdate,
-
-    // TODO: Get classNo
     classNo: 1,
     contacts: [],
   };
 
-  const { data: contacts, error: contactError } = await supabase
-    .from<ContactDB>("contact")
-    .select("*")
-    .in("id", student.people.contacts ? student.people.contacts : []);
+  if (options?.contacts) {
+    const { data: contacts, error: contactError } = await supabase
+      .from<ContactDB>("contact")
+      .select("*")
+      .in("id", student.people.contacts ? student.people.contacts : []);
 
-  if (contactError) {
-    console.error(contactError);
-  }
-  if (contacts) {
-    formatted.contacts = contacts.map(db2Contact);
+    if (contactError) console.error(contactError);
+    if (contacts) formatted.contacts = contacts.map(db2Contact);
   }
 
   const { data: classes, error: classError } = await supabase

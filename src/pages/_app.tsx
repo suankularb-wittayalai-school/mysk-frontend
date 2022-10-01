@@ -1,4 +1,6 @@
 // External libraries
+import { AnimatePresence, motion } from "framer-motion";
+
 import { NextPage } from "next";
 import type { AppProps } from "next/app";
 import Head from "next/head";
@@ -6,13 +8,7 @@ import { useRouter } from "next/router";
 
 import { appWithTranslation } from "next-i18next";
 
-import {
-  ComponentType,
-  ReactElement,
-  ReactNode,
-  useEffect,
-  useState,
-} from "react";
+import { ReactElement, ReactNode, useEffect, useState } from "react";
 
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
@@ -41,11 +37,10 @@ import "@styles/global.css";
 // Components
 import Layout from "@components/Layout";
 
-// Types
-import { Role } from "@utils/types/person";
-
-// Supabase
-import { supabase } from "@utils/supabaseClient";
+// Animation
+import { animationEase, animationTransition } from "@utils/animations/config";
+import ErrorBoundary from "@components/error/ErrorBoundary";
+import PageFallback from "@components/error/PageFallback";
 
 const App = ({
   Component,
@@ -81,14 +76,36 @@ const App = ({
 
   return (
     <QueryClientProvider client={queryClient}>
+      {/* Mark page as responsive */}
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
-      {loading && <div className="fixed inset-0 z-50 cursor-progress" />}
-      {getLayout(<Component {...pageProps} />)}
+
+      {/* Dim content during load */}
+      <AnimatePresence>
+        {loading && (
+          <motion.div
+            key="page-load"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ type: "tween", duration: 0.3, ease: animationEase }}
+            className="fixed inset-0 z-50 cursor-progress bg-[#00000050]"
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Main component wrapped with a layout */}
+      {getLayout(
+        <ErrorBoundary Fallback={PageFallback}>
+          <Component {...pageProps} />
+        </ErrorBoundary>
+      )}
+
+      {/* React Query devtools */}
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 };
 
-export default appWithTranslation(App as ComponentType<AppProps>);
+export default appWithTranslation(App);

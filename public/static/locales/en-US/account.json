@@ -1,15 +1,44 @@
 {
-  "title": "Log in",
-  "form": {
-    "email": "School email",
-    "email_helper": "Your school email ends with “sk.ac.th”.",
-    "email_error": "Invalid email. Must end with “sk.ac.th”.",
-    "password": "Password",
-    "password_helper": "Default is birthday in YYYYMMDD (in AD), i.e. 20040512"
+  "title": "About me",
+  "basicInfo": {
+    "profileAlt": "A picture of you",
+    "classAndNo": "M.{{class}} No. {{classNo}}",
+    "subjectGroup": "Teacher in {{subjectGroup}}",
+    "classAdvisorAt": "Class advisor at M.{{classAdvisorAt}}"
+  },
+  "editInfo": {
+    "title": "Personal information",
+    "requestInfo": "You can request changes to your personal information. Administrators will review your request and approve the changes as they see fit.",
+    "action": {
+      "sendRequest": "Send request",
+      "save": "Save"
+    }
+  },
+  "adminAvailable": {
+    "title": "Admin available",
+    "subtitle": "Learn about admin privileges",
+    "crudInfo": "Your account has admin privilege, which means you can view, create, and edit data in the MySK database.",
+    "addiPriv": "Additional privileges include managing news articles and reading logs.",
+    "action": {
+      "goToPanel": "Go to Admin Panel"
+    }
   },
   "action": {
-    "forgotPassword": "Forgot password",
-    "logIn": "Log in"
+    "logOut": "Log out"
+  },
+  "logIn": {
+    "title": "Log in",
+    "form": {
+      "email": "School email",
+      "email_helper": "Your school email ends with “sk.ac.th”.",
+      "email_error": "Invalid email. Must end with “sk.ac.th”.",
+      "password": "Password",
+      "password_helper": "Default is birthday in YYYYMMDD (in AD), i.e. 20040512"
+    },
+    "action": {
+      "forgotPassword": "Forgot password",
+      "logIn": "Log in"
+    }
   },
   "profile": {
     "name": {

@@ -26,7 +26,7 @@ import { useTeacherAccount } from "@utils/hooks/auth";
 
 // Types
 import { ClassWNumber } from "@utils/types/class";
-import { SubmittableDialogProps } from "@utils/types/common";
+import { LangCode, SubmittableDialogProps } from "@utils/types/common";
 import { SchedulePeriod } from "@utils/types/schedule";
 
 // Miscellaneous
@@ -47,7 +47,7 @@ const EditPeriod = ({
   canEditStartTime?: boolean;
 }): JSX.Element => {
   const { t } = useTranslation(["schedule", "common"]);
-  const locale = useRouter().locale as "en-US" | "th";
+  const locale = useRouter().locale as LangCode;
   const [teacher] = useTeacherAccount();
 
   // Form control
@@ -59,7 +59,10 @@ const EditPeriod = ({
     startTime: number;
     duration: number;
   }>({
-    subject: teacher?.subjectsInCharge ? teacher.subjectsInCharge[0].id : 0,
+    subject:
+      teacher?.subjectsInCharge && teacher.subjectsInCharge.length > 0
+        ? teacher.subjectsInCharge[0].id
+        : 0,
     classID: 0,
     room: "",
     day: 0,
@@ -81,7 +84,9 @@ const EditPeriod = ({
       setForm({
         subject:
           schedulePeriod?.subject?.id ||
-          (teacher?.subjectsInCharge ? teacher.subjectsInCharge[0].id : 0),
+          (teacher?.subjectsInCharge && teacher.subjectsInCharge.length > 0
+            ? teacher.subjectsInCharge[0].id
+            : 0),
         classID:
           schedulePeriod?.class?.id || (classes.length > 0 ? classes[0].id : 0),
         room: schedulePeriod?.room || "",

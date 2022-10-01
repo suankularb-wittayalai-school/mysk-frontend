@@ -30,11 +30,13 @@ export default function Document() {
           name="theme-color"
           content="#dfebf3"
           media="(prefers-color-scheme: light)"
+          key="theme-light"
         />
         <meta
           name="theme-color"
           content="#243037"
           media="(prefers-color-scheme: dark)"
+          key="theme-dark"
         />
       </Head>
       <body className="bg-background">

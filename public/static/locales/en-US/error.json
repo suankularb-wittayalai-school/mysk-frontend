@@ -1,8 +1,6 @@
 {
-  "common": {
-    "ohNo": "Oh no. <1>That’s an error.</1>"
-  },
   "verboseCode": {
-    "404": "Not found"
+    "404": "Not found",
+    "500": "Internal server error"
   }
 }

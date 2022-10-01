@@ -46,6 +46,9 @@
     }
   },
   "pageAction": {
+    "admin": {
+      "edit": "Edit article"
+    },
     "form": {
       "reset": "Reset",
       "submit": "Submit form"

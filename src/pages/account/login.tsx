@@ -24,6 +24,7 @@ import { supabase } from "@utils/supabaseClient";
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
 import { setAuthCookies } from "@utils/backend/account";
+import { LangCode } from "@utils/types/common";
 
 // Page
 const Login: NextPage = () => {
@@ -46,24 +47,42 @@ const Login: NextPage = () => {
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+
+    // Disable Log in Button
     setLoading(true);
+
+    // Validate response
     if (!validate()) return;
 
+    // Log in user in Supabase
     const { session } = await supabase.auth.signIn({ email, password });
-    if (!session) return;
-    await setAuthCookies("SIGNED_IN", session);
-    router.reload();
+    if (!session) {
+      setLoading(false);
+      return;
+    }
+
+    // Set auth cookies
+    const cookiesOK = await setAuthCookies("SIGNED_IN", session);
+
+    // When auth cookies are set, redirect
+    if (cookiesOK) {
+      const role = session.user?.user_metadata.role;
+      if (role == "teacher") router.push("/teach");
+      if (role == "student") router.push("/learn");
+      return;
+    }
+    setLoading(false);
   }
 
   return (
     <>
       <Head>
-        <title>{createTitleStr(t("title"), t)}</title>
+        <title>{createTitleStr(t("logIn.title"), t)}</title>
       </Head>
       <RegularLayout
         Title={
           <Title
-            name={{ title: t("title") }}
+            name={{ title: t("logIn.title") }}
             pageIcon={<MaterialIcon icon="person" />}
             backGoesTo="/"
             LinkElement={Link}
@@ -81,26 +100,26 @@ const Login: NextPage = () => {
               <KeyboardInput
                 name="user-id"
                 type="email"
-                label={t("form.email")}
-                helperMsg={t("form.email_helper")}
-                errorMsg={t("form.email_error")}
+                label={t("logIn.form.email")}
+                helperMsg={t("logIn.form.email_helper")}
+                errorMsg={t("logIn.form.email_error")}
                 useAutoMsg
                 onChange={(e: string) => setEmail(e)}
               />
               <KeyboardInput
                 name="password"
                 type="password"
-                label={t("form.password")}
-                helperMsg={t("form.password_helper")}
+                label={t("logIn.form.password")}
+                helperMsg={t("logIn.form.password_helper")}
                 onChange={(e: string) => setPassword(e)}
               />
             </div>
             <div className="flex flex-row flex-wrap items-center justify-end gap-2">
               <Link href="/account/forgot-password">
-                <a className="btn--text">{t("action.forgotPassword")}</a>
+                <a className="btn--text">{t("logIn.action.forgotPassword")}</a>
               </Link>
               <FormButton
-                label={t("action.logIn")}
+                label={t("logIn.action.logIn")}
                 type="submit"
                 appearance="filled"
                 disabled={!validate() || loading}
@@ -116,7 +135,7 @@ const Login: NextPage = () => {
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   return {
     props: {
-      ...(await serverSideTranslations(locale as string, [
+      ...(await serverSideTranslations(locale as LangCode, [
         "common",
         "account",
       ])),

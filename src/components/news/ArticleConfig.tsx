@@ -472,7 +472,7 @@ const ArticleConfig = ({
         });
       else {
         toggleShowDelete();
-        router.push("/t/admin/news");
+        router.push("/admin/news");
       }
     }
   }

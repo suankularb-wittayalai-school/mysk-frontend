@@ -7,6 +7,7 @@
       "classNo_helper": "Must be 3-digit, i.e. 408.",
       "classNo_error": "Invalid. Should be 3-digit, i.e. 408.",
       "year": "Academic year",
+      "semester": "Semester"
     },
     "people": {
       "title": "People",
@@ -16,6 +17,16 @@
     "contacts": {
       "title": "Contacts",
       "contacts": "Contacts"
+    }
+  },
+  "links": {
+    "teacherList": {
+      "title": "Teacher list",
+      "supportingText": "List of teachers that teach M.{{classNumber}}"
+    },
+    "studentList": {
+      "title": "Student list",
+      "supportingText": "List of students in M.{{classNumber}}"
     }
   },
   "classAdvisors": {
@@ -28,6 +39,7 @@
   },
   "studentList": {
     "title": "Student list",
+    "tabTitle": "M.{{classNumber}} student list",
     "searchStudents": "Search students",
     "table": {
       "classNo": "Class №",

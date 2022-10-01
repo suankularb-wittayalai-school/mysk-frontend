@@ -1,6 +1,6 @@
 // (@SiravitPhokeed)
 // ESLint is throwing a possibly outdated error on middleware.ts placement.
-// Its advice does not match of that NextJS, and I think you know which is more
+// Its advice does not match that of NextJS, and I think you know which is more
 // important to follow.
 // For now, I’m disabling the rule for this page.
 
@@ -16,19 +16,24 @@ import { Role } from "@utils/types/person";
 export async function middleware(req: NextRequest) {
   // Get current page protection type
   const route = req.nextUrl.pathname;
-  const pageRole: Role | "public" | "admin" | "not-protected" =
+  const pageRole: Role | "public" | "admin" | "user" | "not-protected" =
     // Public pages
     ["/", "/account/login", "/about"].includes(route)
       ? "public"
       : // Admin pages
-      route.startsWith("/t/admin/")
+      /^\/admin/.test(route)
       ? "admin"
       : // Student pages
-      route.startsWith("/s/") || route.startsWith("/news/form/")
+      /^\/(learn|news\/form\/\d+|class\/\d{3}\/(view|students|teachers|schedule))/.test(
+          route
+        )
       ? "student"
       : // Teacher pages
-      route.startsWith("/t/")
+      /^\/(teach|class\/\d{3}\/manage)/.test(route)
       ? "teacher"
+      : // User pages
+      /^\/(news|account)/.test(route)
+      ? "user"
       : // Fallback (images, icons, manifest, etc.)
         "not-protected";
 
@@ -44,9 +49,7 @@ export async function middleware(req: NextRequest) {
   const user = await (
     await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/user`, {
       headers: {
-        Authorization: `Bearer ${(
-          req.cookies as unknown as Map<string, string>
-        ).get("sb-access-token")}`,
+        Authorization: `Bearer ${req.cookies.get("sb-access-token")}`,
         APIKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
       },
     })
@@ -62,15 +65,22 @@ export async function middleware(req: NextRequest) {
   // Disallow public users from visiting private pages
   if (pageRole != "public" && userRole == "public")
     destination = "/account/login";
-  // Disallow non-admins from visiting admin pages
-  else if ((pageRole == "admin" && userIsAdmin) || pageRole == userRole)
-    return NextResponse.next();
-  // Set destinations for students and teachers in the wrong pages
-  else if (userRole == "student") destination = "/s/home";
-  else if (userRole == "teacher") destination = "/t/home";
+  else if (
+    // Disllow non-admins from visiting admin pages
+    (pageRole == "admin" && !userIsAdmin) ||
+    !(
+      // Allow all users to visit user pages
+      // Allow users with the correct roles
+      (pageRole == "user" || pageRole == userRole)
+    )
+  ) {
+    // Set destinations for students and teachers in the wrong pages
+    if (userRole == "student") destination = "/learn";
+    else if (userRole == "teacher") destination = "/teach";
+  }
 
   // Redirect if decided so, continue if not
-  // Note: While developing, comment out line 73 if you want to test protected
+  // Note: While developing, comment out line 84 if you want to test protected
   // pages via IPv4. Pages using user data will not work, however.
   if (destination) return NextResponse.redirect(new URL(destination, req.url));
   return NextResponse.next();
@@ -79,10 +89,13 @@ export async function middleware(req: NextRequest) {
 export const config = {
   matcher: [
     "/",
-    "/account/login",
+    "/account/:path",
     "/about",
-    "/s/:path*",
-    "/t/:path*",
+    "/learn",
+    "/learn/:id",
+    "/teach",
+    "/class/:id/:path*",
+    "/news",
     "/news/stats/:id",
     "/news/form/:id",
     "/news/payment/:id",

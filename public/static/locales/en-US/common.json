@@ -8,15 +8,15 @@
     "logoAlt": "The logo of MySK: pink and blue rose with the text MySK as its core."
   },
   "navigation": {
-    "home": "Home",
+    "welcome": "Welcome",
     "login": "Log in",
     "about": "About",
-    "schedule": "Schedule",
-    "subjects": "Subjects",
+    "learn": "Learn",
+    "teach": "Teach",
+    "people": "People",
     "class": "Class",
-    "teachers": "Teachers",
     "news": "News",
-    "admin": "Admin"
+    "me": "Me"
   },
   "name": {
     "prefix": {
@@ -58,6 +58,14 @@
     "error": {}
   },
   "error": "Error: {{errorMsg}}",
+  "fallback": {
+    "title": "Client-side error",
+    "stack": "Stack trace",
+    "action": {
+      "back": "Back",
+      "reload": "Reload"
+    }
+  },
   "seeDetails": "See details",
   "dialog": {
     "addContact": {

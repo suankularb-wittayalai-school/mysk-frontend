@@ -55,7 +55,7 @@ const NewsPage: NextPage<{ newsFeed: NewsListNoDate }> = ({
               subtitle: t("title.subtitle"),
             }}
             pageIcon={<MaterialIcon icon="newspaper" />}
-            backGoesTo="/s/home"
+            backGoesTo="/learn"
             LinkElement={Link}
           />
         }

@@ -1,4 +1,5 @@
 import { ClassWNumber } from "./class";
+import { MultiLangString } from "./common";
 import { Contact } from "./contact";
 import { SubjectGroup, SubjectWNameAndCode } from "./subject";
 
@@ -48,4 +49,14 @@ export type Teacher = Person & {
   classAdvisorAt?: ClassWNumber;
   subjectGroup: SubjectGroup;
   subjectsInCharge?: SubjectWNameAndCode[];
+};
+
+export type StudentListItem = {
+  id: number;
+  classNo: number;
+  prefix: Prefix;
+  name: {
+    "en-US"?: PersonName;
+    th: PersonName;
+  };
 };

@@ -10,7 +10,7 @@
 
 @layer base {
   * {
-    @apply outline-none transition-colors;
+    @apply outline-none;
   }
 
   html {

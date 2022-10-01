@@ -1,10 +1,16 @@
 import { PostgrestError } from "@supabase/supabase-js";
 import { supabase } from "@utils/supabaseClient";
-import { PersonTable } from "@utils/types/database/person";
-import { Person } from "@utils/types/person";
+import { BackendReturn } from "@utils/types/common";
+import {
+  PersonTable,
+  StudentDB,
+  TeacherDB,
+} from "@utils/types/database/person";
+import { Person, Student, Teacher } from "@utils/types/person";
 import { IncomingMessage } from "http";
 import { NextApiRequestCookies } from "next/dist/server/api-utils";
 import { createContact } from "../contact";
+import { db2Student, db2Teacher } from "../database";
 
 const prefixMap = {
   Master: "เด็กชาย",
@@ -63,13 +69,63 @@ export async function createPerson(
   return { data: createdPerson, error: null };
 }
 
+export async function getUserFromReq(
+  req: IncomingMessage & { cookies: NextApiRequestCookies }
+): Promise<BackendReturn<Student | Teacher, null>> {
+  const { user, error } = await supabase.auth.api.getUserByCookie(req);
+
+  if (error) {
+    console.error(error);
+    return { data: null, error };
+  }
+
+  if (user?.user_metadata.role == "student") {
+    const { data: student, error: studentError } = await supabase
+      .from<StudentDB>("student")
+      .select("id, std_id, people:person(*)")
+      .match({ id: user?.user_metadata.student })
+      .single();
+
+    if (studentError) {
+      console.error(studentError);
+      return { data: null, error: studentError };
+    }
+
+    return {
+      data: await db2Student(student as StudentDB),
+      error: null,
+    };
+  } else if (user?.user_metadata.role == "teacher") {
+    const { data: teacher, error: teacherError } = await supabase
+      .from<TeacherDB>("teacher")
+      .select("id, teacher_id, people:person(*), SubjectGroup:subject_group(*)")
+      .match({ id: user?.user_metadata.teacher })
+      .single();
+
+    if (teacherError) {
+      console.error(teacherError);
+      return { data: null, error: teacherError };
+    }
+
+    return {
+      data: {
+        ...(await db2Teacher(teacher as TeacherDB)),
+        isAdmin: user.user_metadata.isAdmin,
+      },
+      error: null,
+    };
+  }
+
+  return { data: null, error: { message: "invalid role." } };
+}
+
 export async function getPersonIDFromStudentID(
-  student_id: number
+  studentID: number
 ): Promise<number> {
   const { data: student, error } = await supabase
     .from<{ id: number; person: number }>("student")
     .select("id, person")
-    .match({ id: student_id })
+    .match({ id: studentID })
     .limit(1)
     .single();
 
@@ -82,12 +138,12 @@ export async function getPersonIDFromStudentID(
 }
 
 export async function getPersonIDFromTeacherID(
-  teacher_id: number
+  teacherID: number
 ): Promise<number> {
   const { data: teacher, error } = await supabase
     .from<{ id: number; person: number }>("teacher")
     .select("id, person")
-    .match({ id: teacher_id })
+    .match({ id: teacherID })
     .limit(1)
     .single();
 

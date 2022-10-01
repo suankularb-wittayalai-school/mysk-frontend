@@ -8,13 +8,14 @@ import { Prefix } from "@utils/types/person";
 export async function setAuthCookies(
   event: AuthChangeEvent,
   session?: Session
-) {
-  await fetch(`/api/account/cookie`, {
+): Promise<boolean> {
+  const { ok } = await fetch(`/api/account/cookie`, {
     method: "POST",
     headers: new Headers({ "Content-Type": "application/json" }),
     credentials: "same-origin",
     body: JSON.stringify({ event, session }),
   });
+  return ok;
 }
 
 export async function editProfile(form: {
