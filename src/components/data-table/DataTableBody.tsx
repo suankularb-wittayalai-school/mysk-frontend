@@ -9,7 +9,7 @@ const DataTableBody = ({
   endRow,
 }: {
   rowModel: RowModel<object>;
-  endRow?: JSX.Element;
+  endRow?: JSX.Element | ((row: object) => JSX.Element);
 }): JSX.Element => {
   return (
     <tbody>
@@ -28,7 +28,7 @@ const DataTableBody = ({
                 </td>
               );
             })}
-            {endRow}
+            {endRow instanceof Function ? endRow(row.original) : endRow}
           </tr>
         );
       })}
