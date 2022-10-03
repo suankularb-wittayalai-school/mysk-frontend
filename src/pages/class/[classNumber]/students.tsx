@@ -11,9 +11,10 @@ import { useEffect, useMemo, useState } from "react";
 
 import {
   ColumnDef,
-  useReactTable,
-  getCoreRowModel,
   flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  useReactTable,
 } from "@tanstack/react-table";
 
 // SK Components
@@ -72,6 +73,7 @@ const StudentList = ({
         accessorKey: "classNo",
         header: t("studentList.table.classNo"),
         thClass: "w-2/12",
+        enableGlobalFilter: false,
       },
       {
         accessorKey: "name",
@@ -87,6 +89,7 @@ const StudentList = ({
     state: { globalFilter },
     onGlobalFilterChange: setGlobalFilter,
     getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     debugTable: true,
     debugHeaders: true,
     debugColumns: false,
