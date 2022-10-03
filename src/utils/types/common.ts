@@ -9,8 +9,8 @@ export type MultiLangString = {
 };
 
 export type MultiLangObj = {
-  th: {};
-  "en-US"?: {};
+  th: object;
+  "en-US"?: object;
 };
 
 export type ForcedMultiLangString = {

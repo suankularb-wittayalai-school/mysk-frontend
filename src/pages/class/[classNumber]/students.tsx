@@ -59,16 +59,20 @@ const StudentList = ({
   useEffect(() => setGlobalFilter(query || ""), [query]);
 
   // Table config
-  const data = students.map((student) => ({
-    id: student.id,
-    classNo: student.classNo,
-    name: nameJoiner(
-      locale,
-      student.name,
-      t(`name.prefix.${student.prefix}`, { ns: "common" }),
-      { prefix: true }
-    ),
-  }));
+  const data = useMemo(
+    () =>
+      students.map((student) => ({
+        id: student.id,
+        classNo: student.classNo,
+        name: nameJoiner(
+          locale,
+          student.name,
+          t(`name.prefix.${student.prefix}`, { ns: "common" }),
+          { prefix: true }
+        ),
+      })),
+    []
+  );
   const columns = useMemo<ColumnDef<object>[]>(
     () => [
       {
