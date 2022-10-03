@@ -71,10 +71,12 @@ const StudentList = ({
       {
         accessorKey: "classNo",
         header: t("studentList.table.classNo"),
+        thClass: "w-2/12",
       },
       {
         accessorKey: "name",
         header: t("studentList.table.name"),
+        tdClass: "!text-left",
       },
     ],
     []
@@ -97,7 +99,16 @@ const StudentList = ({
           {getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <th key={header.id}>
+                <th
+                  key={header.id}
+                  className={
+                    (
+                      header.column.columnDef as ColumnDef<object> & {
+                        thClass: string;
+                      }
+                    ).thClass
+                  }
+                >
                   {flexRender(
                     header.column.columnDef.header,
                     header.getContext()
@@ -113,7 +124,16 @@ const StudentList = ({
               <tr key={row.id}>
                 {row.getVisibleCells().map((cell) => {
                   return (
-                    <td key={cell.id}>
+                    <td
+                      key={cell.id}
+                      className={
+                        (
+                          cell.column.columnDef as ColumnDef<object> & {
+                            tdClass: string;
+                          }
+                        ).tdClass
+                      }
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
