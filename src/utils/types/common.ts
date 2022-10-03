@@ -1,4 +1,5 @@
 import { PostgrestError } from "@supabase/supabase-js";
+import { ColumnDef } from "@tanstack/react-table";
 
 export type LangCode = "th" | "en-US";
 
@@ -29,6 +30,9 @@ export interface SubmittableDialogProps extends DialogProps {
 export type BackendReturn<T, U = []> =
   | { data: T; error: null }
   | { data: U; error: Partial<PostgrestError> };
+
+export type ColumnDefWClasses = ColumnDef<object> &
+  Partial<{ thClass: string; tdClass: string }>;
 
 export type ChipInputListItem = {
   id: string;

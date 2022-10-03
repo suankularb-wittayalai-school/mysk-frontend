@@ -41,6 +41,7 @@ import { createTitleStr } from "@utils/helpers/title";
 // Types
 import { LangCode } from "@utils/types/common";
 import { StudentListItem } from "@utils/types/person";
+import DataTableHeader from "@components/data-table/DataTableHeader";
 
 const StudentList = ({
   students,
@@ -98,29 +99,7 @@ const StudentList = ({
   return (
     <div>
       <Table width={320}>
-        <thead>
-          {getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <th
-                  key={header.id}
-                  className={
-                    (
-                      header.column.columnDef as ColumnDef<object> & {
-                        thClass: string;
-                      }
-                    ).thClass
-                  }
-                >
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext()
-                  )}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
+        <DataTableHeader headerGroups={getHeaderGroups()} />
         <tbody>
           {getRowModel().rows.map((row) => {
             return (
