@@ -1,5 +1,4 @@
 // External libraries
-import { ReactNode } from "react";
 import { flexRender, HeaderGroup } from "@tanstack/react-table";
 
 // Types
@@ -7,10 +6,10 @@ import { ColumnDefWClasses } from "@utils/types/common";
 
 const DataTableHeader = ({
   headerGroups,
-  end,
+  endRow,
 }: {
   headerGroups: HeaderGroup<object>[];
-  end?: ReactNode;
+  endRow?: JSX.Element;
 }): JSX.Element => {
   return (
     <thead>
@@ -24,9 +23,9 @@ const DataTableHeader = ({
               {flexRender(header.column.columnDef.header, header.getContext())}
             </th>
           ))}
+          {endRow}
         </tr>
       ))}
-      {end}
     </thead>
   );
 };

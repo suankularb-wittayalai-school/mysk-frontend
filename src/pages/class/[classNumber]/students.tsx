@@ -42,6 +42,7 @@ import { createTitleStr } from "@utils/helpers/title";
 import { LangCode } from "@utils/types/common";
 import { StudentListItem } from "@utils/types/person";
 import DataTableHeader from "@components/data-table/DataTableHeader";
+import DataTableBody from "@components/data-table/DataTableBody";
 
 const StudentList = ({
   students,
@@ -91,42 +92,13 @@ const StudentList = ({
     onGlobalFilterChange: setGlobalFilter,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    debugTable: true,
-    debugHeaders: true,
-    debugColumns: false,
   });
 
   return (
     <div>
       <Table width={320}>
         <DataTableHeader headerGroups={getHeaderGroups()} />
-        <tbody>
-          {getRowModel().rows.map((row) => {
-            return (
-              <tr key={row.id}>
-                {row.getVisibleCells().map((cell) => {
-                  return (
-                    <td
-                      key={cell.id}
-                      className={
-                        (
-                          cell.column.columnDef as ColumnDef<object> & {
-                            tdClass: string;
-                          }
-                        ).tdClass
-                      }
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </td>
-                  );
-                })}
-              </tr>
-            );
-          })}
-        </tbody>
+        <DataTableBody rowModel={getRowModel()} />
       </Table>
     </div>
   );
