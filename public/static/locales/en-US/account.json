@@ -33,7 +33,7 @@
       "email_helper": "Your school email ends with “sk.ac.th”.",
       "email_error": "Invalid email. Must end with “sk.ac.th”.",
       "password": "Password",
-      "password_helper": "Default is birthday in YYYYMMDD (in AD), i.e. 20040512"
+      "password_helper": "Default is birthday, i.e. 832549 means Feb 8th 2006"
     },
     "action": {
       "forgotPassword": "Forgot password",
