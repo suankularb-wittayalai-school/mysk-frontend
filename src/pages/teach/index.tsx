@@ -220,8 +220,9 @@ const Teach: NextPage<{ teacherID: number; schedule: ScheduleType }> = ({
 export const getServerSideProps: GetServerSideProps = async ({
   locale,
   req,
+  res,
 }) => {
-  const teacherID = await getTeacherIDFromReq(req);
+  const teacherID = await getTeacherIDFromReq(req, res);
   const schedule = await getSchedule("teacher", teacherID);
 
   return {

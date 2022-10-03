@@ -1,6 +1,6 @@
 // External libraries
 import { PostgrestError } from "@supabase/supabase-js";
-import { IncomingMessage } from "http";
+import { IncomingMessage, ServerResponse } from "http";
 import { NextApiRequestCookies } from "next/dist/server/api-utils";
 
 // Backend
@@ -197,10 +197,12 @@ export async function addContactToClassroom(
 }
 
 export async function getClassNumberFromReq(
-  req: IncomingMessage & { cookies: NextApiRequestCookies }
+  req: IncomingMessage & { cookies: NextApiRequestCookies },
+  res?: ServerResponse
 ): Promise<BackendReturn<number, null>> {
   const { user, error: userError } = await supabase.auth.api.getUserByCookie(
-    req
+    req,
+    res
   );
 
   if (userError) {

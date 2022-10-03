@@ -7,7 +7,7 @@ import {
   TeacherDB,
 } from "@utils/types/database/person";
 import { Person, Student, Teacher } from "@utils/types/person";
-import { IncomingMessage } from "http";
+import { IncomingMessage, ServerResponse } from "http";
 import { NextApiRequestCookies } from "next/dist/server/api-utils";
 import { createContact } from "../contact";
 import { db2Student, db2Teacher } from "../database";
@@ -70,9 +70,10 @@ export async function createPerson(
 }
 
 export async function getUserFromReq(
-  req: IncomingMessage & { cookies: NextApiRequestCookies }
+  req: IncomingMessage & { cookies: NextApiRequestCookies },
+  res?: ServerResponse
 ): Promise<BackendReturn<Student | Teacher, null>> {
-  const { user, error } = await supabase.auth.api.getUserByCookie(req);
+  const { user, error } = await supabase.auth.api.getUserByCookie(req, res);
 
   if (error) {
     console.error(error);
@@ -156,9 +157,10 @@ export async function getPersonIDFromTeacherID(
 }
 
 export async function getPersonIDFromReq(
-  req: IncomingMessage & { cookies: NextApiRequestCookies }
+  req: IncomingMessage & { cookies: NextApiRequestCookies },
+  res?: ServerResponse
 ): Promise<number> {
-  const { user, error } = await supabase.auth.api.getUserByCookie(req);
+  const { user, error } = await supabase.auth.api.getUserByCookie(req, res);
 
   if (error || !user) {
     console.error(error);

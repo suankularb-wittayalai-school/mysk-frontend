@@ -1,5 +1,5 @@
 // Modules
-import { IncomingMessage } from "http";
+import { IncomingMessage, ServerResponse } from "http";
 import { NextApiRequestCookies } from "next/dist/server/api-utils";
 import { PostgrestError } from "@supabase/supabase-js";
 
@@ -20,9 +20,10 @@ import { db2Teacher } from "../database";
 import { createPerson } from "./person";
 
 export async function getTeacherIDFromReq(
-  req: IncomingMessage & { cookies: NextApiRequestCookies }
+  req: IncomingMessage & { cookies: NextApiRequestCookies },
+  res?: ServerResponse
 ): Promise<number> {
-  const { user, error } = await supabase.auth.api.getUserByCookie(req);
+  const { user, error } = await supabase.auth.api.getUserByCookie(req, res);
 
   if (error || !user) {
     console.error(error);

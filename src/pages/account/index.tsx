@@ -361,8 +361,9 @@ const AccountDetails: NextPage<{ user: Student | Teacher }> = ({ user }) => {
 export const getServerSideProps: GetServerSideProps = async ({
   locale,
   req,
+  res,
 }) => {
-  const { data: user, error } = await getUserFromReq(req);
+  const { data: user, error } = await getUserFromReq(req, res);
   if (error)
     return { redirect: { destination: "/account/login", permanent: false } };
 

@@ -72,8 +72,9 @@ const NewsPage: NextPage<{ newsFeed: NewsListNoDate }> = ({
 export const getServerSideProps: GetServerSideProps = async ({
   locale,
   req,
+  res,
 }) => {
-  const userRole = (await supabase.auth.api.getUserByCookie(req)).user
+  const userRole = (await supabase.auth.api.getUserByCookie(req, res)).user
     ?.user_metadata.role;
   if (!userRole)
     return { redirect: { destination: "/account/login", permanent: false } };

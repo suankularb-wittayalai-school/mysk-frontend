@@ -126,8 +126,9 @@ export const getServerSideProps: GetServerSideProps = async ({
   locale,
   params,
   req,
+  res,
 }) => {
-  const personID = await getPersonIDFromReq(req);
+  const personID = await getPersonIDFromReq(req, res);
 
   if (!params?.formID) return { notFound: true };
 
