@@ -37,7 +37,7 @@ import { PersonTable, StudentDB } from "@utils/types/database/person";
 import { StudentTable as StudentTableType } from "@utils/types/database/person";
 
 // Hooks
-import { createStudent } from "@utils/backend/person/student";
+import { createStudent, deleteStudent } from "@utils/backend/person/student";
 import { createTitleStr } from "@utils/helpers/title";
 
 interface ImportedData {
@@ -75,67 +75,6 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
 
   const [showEdit, setShowEdit] = useState<boolean>(false);
   const [editingPerson, setEditingPerson] = useState<Student>();
-
-  async function handleDelete() {
-    if (!editingPerson) return;
-
-    const { data: userid, error: selectingError } = await supabase
-      .from<{
-        id: string;
-        email: string;
-        role: Role;
-        student: number;
-        teacher: number;
-      }>("users")
-      .select("id")
-      .match({ student: editingPerson.id })
-      .limit(1)
-      .single();
-
-    if (selectingError) {
-      console.error(selectingError);
-      return;
-    }
-
-    if (!userid) {
-      console.error("No user found");
-      return;
-    }
-
-    const { data: deleting, error } = await supabase
-      .from<StudentTableType>("student")
-      .delete()
-      .match({ id: editingPerson.id });
-    if (error || !deleting) {
-      console.error(error);
-      return;
-    }
-
-    // Delete the person of the student
-    const { data: person, error: personDeletingError } = await supabase
-      .from<PersonTable>("people")
-      .delete()
-      .match({ id: deleting[0].person });
-
-    if (personDeletingError || !person) {
-      console.error(personDeletingError);
-      return;
-    }
-
-    // Delete account of the student
-    await fetch(`/api/account`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        id: userid.id,
-      }),
-    });
-
-    setShowConfDel(false);
-    router.replace(router.asPath);
-  }
 
   async function handleImport(data: ImportedData[]) {
     const students: Array<{ person: Student; email: string }> = data.map(
@@ -231,12 +170,10 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
       <ImportDataDialog
         show={showImport}
         onClose={() => setShowImport(false)}
-        onSubmit={(e: ImportedData[]) => {
-          // console.log(e);
-          handleImport(e).then(() => {
-            setShowImport(false);
-            router.replace(router.asPath);
-          });
+        onSubmit={async (e: ImportedData[]) => {
+          await handleImport(e);
+          setShowImport(false);
+          router.replace(router.asPath);
         }}
         columns={[
           { name: "prefix", type: '"เด็กชาย" | "นาย" | "นาง" | "นางสาว"' },
@@ -276,7 +213,12 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
       <ConfirmDelete
         show={showConfDel}
         onClose={() => setShowConfDel(false)}
-        onSubmit={() => handleDelete()}
+        onSubmit={async () => {
+          if (!editingPerson) return;
+          await deleteStudent(editingPerson.id);
+          setShowConfDel(false);
+          router.replace(router.asPath);
+        }}
       />
     </>
   );
