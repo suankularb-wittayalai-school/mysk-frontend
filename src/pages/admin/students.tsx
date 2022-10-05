@@ -17,6 +17,7 @@ import {
 
 // SK Components
 import {
+  Actions,
   Button,
   MaterialIcon,
   RegularLayout,
@@ -90,7 +91,7 @@ const StudentTable = ({
       {
         accessorKey: "name",
         header: t("studentList.table.name"),
-        thClass: "w-6/12",
+        thClass: "w-5/12",
         tdClass: "!text-left",
       },
     ],
@@ -125,13 +126,13 @@ const StudentTable = ({
     <Table width={800}>
       <DataTableHeader
         headerGroups={getHeaderGroups()}
-        endRow={<th className="w-1/12" />}
+        endRow={<th className="w-2/12" />}
       />
       <DataTableBody
         rowModel={getRowModel()}
         endRow={(row) => (
           <td>
-            <div className="flex flex-row justify-center gap-2">
+            <Actions align="center">
               <Button
                 name={t("studentList.table.action.copy")}
                 type="text"
@@ -160,7 +161,7 @@ const StudentTable = ({
                   toggleShowConfDel();
                 }}
               />
-            </div>
+            </Actions>
           </td>
         )}
       />
@@ -209,7 +210,7 @@ const Students: NextPage<{ students: Student[] }> = ({
               placeholder={t("studentList.searchStudents")}
               onChange={(e) => setQuery(e)}
             />
-            <div className="flex flex-row items-end justify-end gap-2 md:col-span-2">
+            <Actions className="md:col-span-2">
               <Button
                 label={t("common.action.import")}
                 type="outlined"
@@ -222,7 +223,7 @@ const Students: NextPage<{ students: Student[] }> = ({
                 icon={<MaterialIcon icon="add" />}
                 onClick={toggleShowAdd}
               />
-            </div>
+            </Actions>
           </div>
           <div>
             <StudentTable
