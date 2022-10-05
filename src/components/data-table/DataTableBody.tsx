@@ -9,7 +9,7 @@ const DataTableBody = ({
   endRow,
 }: {
   rowModel: RowModel<any>;
-  endRow?: JSX.Element | ((row: object) => JSX.Element);
+  endRow?: JSX.Element | ((row: any) => JSX.Element);
 }): JSX.Element => {
   return (
     <tbody>

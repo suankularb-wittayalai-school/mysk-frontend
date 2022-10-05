@@ -5,7 +5,12 @@ import {
   PersonTable,
   StudentTable,
 } from "@utils/types/database/person";
-import { ImportedStudentData, Prefix, Student } from "@utils/types/person";
+import {
+  ImportedStudentData,
+  Prefix,
+  Role,
+  Student,
+} from "@utils/types/person";
 import { createPerson } from "./person";
 
 const prefixMap = {
@@ -63,11 +68,11 @@ export async function createStudent(
   return { data: createdStudent, error: null };
 }
 
-export async function deleteStudent(studentID: number) {
+export async function deleteStudent(student: Student) {
   const { data: userid, error: selectingError } = await supabase
     .from<User>("users")
     .select("id")
-    .match({ student: studentID })
+    .match({ student: student.id })
     .limit(1)
     .single();
 
@@ -84,7 +89,7 @@ export async function deleteStudent(studentID: number) {
   const { data: deleting, error } = await supabase
     .from<StudentTable>("student")
     .delete()
-    .match({ id: studentID });
+    .match({ id: student.id });
   if (error || !deleting) {
     console.error(error);
     return;

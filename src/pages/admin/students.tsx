@@ -38,23 +38,32 @@ import { db2Student } from "@utils/backend/database";
 import { deleteStudent, importStudents } from "@utils/backend/person/student";
 
 // Helpers
+import { nameJoiner } from "@utils/helpers/name";
 import { createTitleStr } from "@utils/helpers/title";
+
+// Hooks
+import { useToggle } from "@utils/hooks/toggle";
 
 // Supabase
 import { supabase } from "@utils/supabaseClient";
 
 // Types
+import { StudentDB } from "@utils/types/database/person";
 import { LangCode } from "@utils/types/common";
 import { ImportedStudentData, Student } from "@utils/types/person";
-import { StudentDB } from "@utils/types/database/person";
-import { nameJoiner } from "@utils/helpers/name";
 
 const StudentTable = ({
   students,
   query,
+  setEditingIdx,
+  toggleShowEdit,
+  toggleShowConfDel,
 }: {
   students: Student[];
   query?: string;
+  setEditingIdx: (id: number) => void;
+  toggleShowEdit: () => void;
+  toggleShowConfDel: () => void;
 }) => {
   const { t } = useTranslation("admin");
   const locale = useRouter().locale as LangCode;
@@ -64,7 +73,7 @@ const StudentTable = ({
   const columns = useMemo(
     () => [
       {
-        accessorKey: "id",
+        accessorKey: "studentID",
         header: t("studentList.table.id"),
         thClass: "w-2/12",
       },
@@ -89,8 +98,9 @@ const StudentTable = ({
   );
   const data = useMemo(
     () =>
-      students.map((student) => ({
-        id: student.studentID.toString(),
+      students.map((student, idx) => ({
+        idx,
+        studentID: student.studentID.toString(),
         class: student.class.number.toString(),
         classNo: student.classNo.toString(),
         name: nameJoiner(
@@ -119,16 +129,15 @@ const StudentTable = ({
       />
       <DataTableBody
         rowModel={getRowModel()}
-        endRow={
+        endRow={(row) => (
           <td>
-            {" "}
             <div className="flex flex-row justify-center gap-2">
               <Button
                 name={t("studentList.table.action.copy")}
                 type="text"
                 iconOnly
                 icon={<MaterialIcon icon="content_copy" />}
-                onClick={() => {}}
+                onClick={() => navigator.clipboard?.writeText(row.name)}
                 className="!hidden sm:!block"
               />
               <Button
@@ -136,18 +145,24 @@ const StudentTable = ({
                 type="text"
                 iconOnly
                 icon={<MaterialIcon icon="edit" />}
-                onClick={() => {}}
+                onClick={() => {
+                  setEditingIdx(row.idx);
+                  toggleShowEdit();
+                }}
               />
               <Button
                 type="text"
                 iconOnly
                 icon={<MaterialIcon icon="delete" />}
                 isDangerous
-                onClick={() => {}}
+                onClick={() => {
+                  setEditingIdx(row.idx);
+                  toggleShowConfDel();
+                }}
               />
             </div>
           </td>
-        }
+        )}
       />
     </Table>
   );
@@ -162,12 +177,12 @@ const Students: NextPage<{ students: Student[] }> = ({
 
   const [query, setQuery] = useState<string>("");
 
-  const [showAdd, setShowAdd] = useState<boolean>(false);
+  const [showAdd, toggleShowAdd] = useToggle();
   const [showImport, setShowImport] = useState<boolean>(false);
-  const [showConfDel, setShowConfDel] = useState<boolean>(false);
+  const [showConfDel, toggleShowConfDel] = useToggle();
 
-  const [showEdit, setShowEdit] = useState<boolean>(false);
-  const [editingPerson, setEditingPerson] = useState<Student>();
+  const [showEdit, toggleShowEdit] = useToggle();
+  const [editingIdx, setEditingIdx] = useState<number>(-1);
 
   return (
     <>
@@ -205,7 +220,7 @@ const Students: NextPage<{ students: Student[] }> = ({
                 label={t("studentList.action.addStudent")}
                 type="filled"
                 icon={<MaterialIcon icon="add" />}
-                onClick={() => setShowAdd(true)}
+                onClick={toggleShowAdd}
               />
             </div>
           </div>
@@ -213,9 +228,9 @@ const Students: NextPage<{ students: Student[] }> = ({
             <StudentTable
               students={students}
               query={query}
-              // setShowEdit={setShowEdit}
-              // setEditingPerson={setEditingPerson}
-              // setShowConfDelStudent={setShowConfDel}
+              setEditingIdx={setEditingIdx}
+              toggleShowEdit={toggleShowEdit}
+              toggleShowConfDel={toggleShowConfDel}
             />
           </div>
         </Section>
@@ -247,19 +262,19 @@ const Students: NextPage<{ students: Student[] }> = ({
       />
       <EditPersonDialog
         show={showEdit}
-        onClose={() => setShowEdit(false)}
+        onClose={toggleShowEdit}
         onSubmit={() => {
-          setShowEdit(false);
+          toggleShowEdit();
           router.replace(router.asPath);
         }}
         mode="edit"
-        person={editingPerson}
+        person={students[editingIdx]}
       />
       <EditPersonDialog
         show={showAdd}
-        onClose={() => setShowAdd(false)}
+        onClose={toggleShowAdd}
         onSubmit={() => {
-          setShowAdd(false);
+          toggleShowAdd();
           router.replace(router.asPath);
         }}
         mode="add"
@@ -267,11 +282,10 @@ const Students: NextPage<{ students: Student[] }> = ({
       />
       <ConfirmDelete
         show={showConfDel}
-        onClose={() => setShowConfDel(false)}
+        onClose={toggleShowConfDel}
         onSubmit={async () => {
-          if (!editingPerson) return;
-          await deleteStudent(editingPerson.id);
-          setShowConfDel(false);
+          await deleteStudent(students[editingIdx]);
+          toggleShowConfDel();
           router.replace(router.asPath);
         }}
       />
