@@ -8,7 +8,7 @@ const DataTableHeader = ({
   headerGroups,
   endRow,
 }: {
-  headerGroups: HeaderGroup<object>[];
+  headerGroups: HeaderGroup<any>[];
   endRow?: JSX.Element;
 }): JSX.Element => {
   return (
