@@ -60,3 +60,18 @@ export type StudentListItem = {
     th: PersonName;
   };
 };
+
+export type ImportedStudentData = {
+  prefix: "เด็กชาย" | "นาย" | "นาง" | "นางสาว";
+  first_name_th: string;
+  first_name_en: string;
+  middle_name_th?: string;
+  middle_name_en?: string;
+  last_name_th: string;
+  last_name_en: string;
+  birthdate: string;
+  citizen_id: number;
+  student_id: number;
+  class_number: number;
+  email: string;
+}

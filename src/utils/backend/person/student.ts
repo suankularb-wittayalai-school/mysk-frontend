@@ -1,8 +1,19 @@
 import { PostgrestError, User } from "@supabase/supabase-js";
 import { supabase } from "@utils/supabaseClient";
-import { PersonDB, PersonTable, StudentTable } from "@utils/types/database/person";
-import { Student } from "@utils/types/person";
+import {
+  PersonDB,
+  PersonTable,
+  StudentTable,
+} from "@utils/types/database/person";
+import { ImportedStudentData, Prefix, Student } from "@utils/types/person";
 import { createPerson } from "./person";
+
+const prefixMap = {
+  เด็กชาย: "Master.",
+  นาย: "Mr.",
+  นาง: "Mrs.",
+  นางสาว: "Miss.",
+} as const;
 
 export async function createStudent(
   student: Student,
@@ -52,9 +63,7 @@ export async function createStudent(
   return { data: createdStudent, error: null };
 }
 
-export async function deleteStudent(
-  studentID: number
-) {
+export async function deleteStudent(studentID: number) {
   const { data: userid, error: selectingError } = await supabase
     .from<User>("users")
     .select("id")
@@ -102,4 +111,45 @@ export async function deleteStudent(
       id: userid.id,
     }),
   });
+}
+
+export async function importStudents(data: ImportedStudentData[]) {
+  const students: Array<{ person: Student; email: string }> = data.map(
+    (student) => {
+      const person: Student = {
+        id: 0,
+        name: {
+          th: {
+            firstName: student.first_name_th,
+            middleName: student.middle_name_th,
+            lastName: student.last_name_th,
+          },
+          "en-US": {
+            firstName: student.first_name_en,
+            middleName: student.middle_name_en,
+            lastName: student.last_name_en,
+          },
+        },
+        birthdate: student.birthdate,
+        citizenID: student.citizen_id.toString(),
+        studentID: student.student_id.toString(),
+        prefix: prefixMap[student.prefix] as Prefix,
+        role: "student",
+        contacts: [],
+        class: {
+          id: 0,
+          number: student.class_number,
+        },
+        classNo: 0,
+      };
+      const email = student.email;
+      return { person, email };
+    }
+  );
+
+  await Promise.all(
+    students.map(
+      async (student) => await createStudent(student.person, student.email)
+    )
+  );
 }

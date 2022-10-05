@@ -32,35 +32,12 @@ import { db2Student } from "@utils/backend/database";
 import { supabase } from "@utils/supabaseClient";
 
 // Types
-import { Prefix, Role, Student } from "@utils/types/person";
-import { PersonTable, StudentDB } from "@utils/types/database/person";
-import { StudentTable as StudentTableType } from "@utils/types/database/person";
+import { ImportedStudentData, Student } from "@utils/types/person";
+import { StudentDB } from "@utils/types/database/person";
 
 // Hooks
-import { createStudent, deleteStudent } from "@utils/backend/person/student";
+import { deleteStudent, importStudents } from "@utils/backend/person/student";
 import { createTitleStr } from "@utils/helpers/title";
-
-interface ImportedData {
-  prefix: "เด็กชาย" | "นาย" | "นาง" | "นางสาว";
-  first_name_th: string;
-  first_name_en: string;
-  middle_name_th?: string;
-  middle_name_en?: string;
-  last_name_th: string;
-  last_name_en: string;
-  birthdate: string;
-  citizen_id: number;
-  student_id: number;
-  class_number: number;
-  email: string;
-}
-
-const prefixMap = {
-  เด็กชาย: "Master.",
-  นาย: "Mr.",
-  นาง: "Mrs.",
-  นางสาว: "Miss.",
-} as const;
 
 // Page
 const Students: NextPage<{ allStudents: Array<Student> }> = ({
@@ -76,52 +53,10 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
   const [showEdit, setShowEdit] = useState<boolean>(false);
   const [editingPerson, setEditingPerson] = useState<Student>();
 
-  async function handleImport(data: ImportedData[]) {
-    const students: Array<{ person: Student; email: string }> = data.map(
-      (student) => {
-        const person: Student = {
-          id: 0,
-          name: {
-            th: {
-              firstName: student.first_name_th,
-              middleName: student.middle_name_th,
-              lastName: student.last_name_th,
-            },
-            "en-US": {
-              firstName: student.first_name_en,
-              middleName: student.middle_name_en,
-              lastName: student.last_name_en,
-            },
-          },
-          birthdate: student.birthdate,
-          citizenID: student.citizen_id.toString(),
-          studentID: student.student_id.toString(),
-          prefix: prefixMap[student.prefix] as Prefix,
-          role: "student",
-          contacts: [],
-          class: {
-            id: 0,
-            number: student.class_number,
-          },
-          classNo: 0,
-        };
-        const email = student.email;
-        return { person, email };
-      }
-    );
-
-    await Promise.all(
-      students.map(
-        async (student) => await createStudent(student.person, student.email)
-      )
-    );
-  }
-
   return (
     <>
       {/* Head */}
       <Head>
-        {" "}
         <title>{createTitleStr(t("studentList.title"), t)}</title>
       </Head>
 
@@ -170,8 +105,8 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
       <ImportDataDialog
         show={showImport}
         onClose={() => setShowImport(false)}
-        onSubmit={async (e: ImportedData[]) => {
-          await handleImport(e);
+        onSubmit={async (e: ImportedStudentData[]) => {
+          await importStudents(e);
           setShowImport(false);
           router.replace(router.asPath);
         }}
