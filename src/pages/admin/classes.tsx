@@ -7,7 +7,7 @@ import Head from "next/head";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // Supabase
 import { supabase } from "@utils/supabaseClient";
@@ -52,6 +52,11 @@ import { createTitleStr } from "@utils/helpers/title";
 
 // Hooks
 import { useToggle } from "@utils/hooks/toggle";
+import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
+import {
+  animationTransition,
+  enterPageTransition,
+} from "@utils/animations/config";
 
 // Page-specific components
 const GradeSection = ({
@@ -70,63 +75,100 @@ const GradeSection = ({
   const { t } = useTranslation(["admin", "common"]);
   return (
     <Section>
-      <Header
-        icon={<MaterialIcon icon="subdirectory_arrow_right" allowCustomSize />}
-        text={t("class", { ns: "common", number: grade })}
-      />
+      <motion.div layoutId={`grade-${grade}`} transition={animationTransition}>
+        <Header
+          icon={
+            <MaterialIcon icon="subdirectory_arrow_right" allowCustomSize />
+          }
+          text={t("class", { ns: "common", number: grade })}
+        />
+      </motion.div>
       <LayoutGridCols cols={3}>
-        {classes.map((classItem) => (
-          <Card key={classItem.id} type="stacked" appearance="tonal">
-            <CardHeader
-              title={
-                <h3>
-                  {t("class", { ns: "common", number: classItem.number })}
-                </h3>
-              }
-              label={
-                classItem.classAdvisors.length == 0 ? (
-                  <p className="text-outline">
-                    {t("classList.card.noAdvisors")}
-                  </p>
-                ) : (
-                  <HoverList people={classItem.classAdvisors} />
-                )
-              }
-              end={
-                <Actions>
-                  <Button
-                    type="text"
-                    icon={<MaterialIcon icon="delete" />}
-                    iconOnly
-                    isDangerous
-                    onClick={() => {
-                      setEditingClass(classItem);
-                      toggleShowConfDel();
-                    }}
-                  />
-                  <Button
-                    type="text"
-                    icon={<MaterialIcon icon="edit" />}
-                    iconOnly
-                    onClick={() => {
-                      setEditingClass(classItem);
-                      toggleShowEdit();
-                    }}
-                  />
-                </Actions>
-              }
-            />
-          </Card>
-        ))}
+        <motion.ul className="contents">
+          <LayoutGroup>
+            <AnimatePresence>
+              {classes.map((classItem) => (
+                <motion.li
+                  key={classItem.id}
+                  initial={{ scale: 0.8, y: 20, opacity: 0 }}
+                  animate={{ scale: 1, y: 0, opacity: 1 }}
+                  exit={{ scale: 0.8, y: 20, opacity: 0 }}
+                  layoutId={classItem.id.toString()}
+                  transition={animationTransition}
+                >
+                  <Card type="stacked" appearance="tonal">
+                    <CardHeader
+                      title={
+                        <h3>
+                          {t("class", {
+                            ns: "common",
+                            number: classItem.number,
+                          })}
+                        </h3>
+                      }
+                      label={
+                        classItem.classAdvisors.length == 0 ? (
+                          <p className="text-outline">
+                            {t("classList.card.noAdvisors")}
+                          </p>
+                        ) : (
+                          <HoverList people={classItem.classAdvisors} />
+                        )
+                      }
+                      end={
+                        <Actions>
+                          <Button
+                            type="text"
+                            icon={<MaterialIcon icon="delete" />}
+                            iconOnly
+                            isDangerous
+                            onClick={() => {
+                              setEditingClass(classItem);
+                              toggleShowConfDel();
+                            }}
+                          />
+                          <Button
+                            type="text"
+                            icon={<MaterialIcon icon="edit" />}
+                            iconOnly
+                            onClick={() => {
+                              setEditingClass(classItem);
+                              toggleShowEdit();
+                            }}
+                          />
+                        </Actions>
+                      }
+                    />
+                  </Card>
+                </motion.li>
+              ))}
+            </AnimatePresence>
+          </LayoutGroup>
+        </motion.ul>
       </LayoutGridCols>
     </Section>
   );
 };
 
 // Page
-const Classes: NextPage<{ classes: Class[] }> = ({ classes }): JSX.Element => {
+const Classes: NextPage<{ classes: Class[] }> = ({
+  classes: initialClasses,
+}): JSX.Element => {
   const { t } = useTranslation("admin");
   const router = useRouter();
+
+  const [query, setQuery] = useState<string>("");
+  const [classes, setClasses] = useState<Class[]>(initialClasses);
+
+  useEffect(() => {
+    if (query) {
+      setClasses(
+        initialClasses.filter((classItem) =>
+          classItem.number.toString().includes(query)
+        )
+      );
+    } else setClasses(initialClasses);
+  }, [query]);
 
   const [showAdd, toggleShowAdd] = useToggle();
   const [showGenerate, toggleShowGenerate] = useToggle();
@@ -156,7 +198,10 @@ const Classes: NextPage<{ classes: Class[] }> = ({ classes }): JSX.Element => {
       >
         <Section>
           <div className="layout-grid-cols-3">
-            <Search placeholder={t("classList.searchClasses")} />
+            <Search
+              placeholder={t("classList.searchClasses")}
+              onChange={setQuery}
+            />
             <div className="flex flex-row items-end md:col-span-2">
               <div
                 className="flex w-full flex-row flex-wrap items-center justify-end
@@ -184,8 +229,11 @@ const Classes: NextPage<{ classes: Class[] }> = ({ classes }): JSX.Element => {
           </div>
         </Section>
 
-        {range(Math.floor(classes[classes.length - 1].number / 100), 1).map(
-          (grade) => (
+        <LayoutGroup>
+          {range(
+            Math.floor(initialClasses[initialClasses.length - 1].number / 100),
+            1
+          ).map((grade) => (
             <GradeSection
               key={grade}
               grade={grade}
@@ -198,8 +246,8 @@ const Classes: NextPage<{ classes: Class[] }> = ({ classes }): JSX.Element => {
               toggleShowEdit={toggleShowEdit}
               toggleShowConfDel={toggleShowConfDel}
             />
-          )
-        )}
+          ))}
+        </LayoutGroup>
       </RegularLayout>
 
       {/* Dialogs */}
