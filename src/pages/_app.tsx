@@ -36,9 +36,7 @@ import "@styles/global.css";
 
 // Components
 import Layout from "@components/Layout";
-
-// Animation
-import { animationEase, animationTransition } from "@utils/animations/config";
+import PageLoadDim from "@components/PageLoadDim";
 import ErrorBoundary from "@components/error/ErrorBoundary";
 import PageFallback from "@components/error/PageFallback";
 
@@ -53,22 +51,6 @@ const App = ({
   // Query client
   const [queryClient] = useState(() => new QueryClient());
 
-  // Page transition loading
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    router.events.on("routeChangeStart", () => setLoading(true));
-    router.events.on("routeChangeComplete", () => setLoading(false));
-    router.events.on("routeChangeError", () => setLoading(false));
-
-    return () => {
-      router.events.off("routeChangeStart", () => setLoading(true));
-      router.events.off("routeChangeComplete", () => setLoading(false));
-      router.events.off("routeChangeError", () => setLoading(false));
-    };
-  });
-
   // Layout
   // Use the layout defined at the page level, if available.
   // Otherwise, use the default Layout.
@@ -76,33 +58,15 @@ const App = ({
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Mark page as responsive */}
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
-
-      {/* Dim content during load */}
-      <AnimatePresence>
-        {loading && (
-          <motion.div
-            key="page-load"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ type: "tween", duration: 0.3, ease: animationEase }}
-            className="fixed inset-0 z-50 cursor-progress bg-[#00000050]"
-          />
-        )}
-      </AnimatePresence>
-
-      {/* Main component wrapped with a layout */}
+      <PageLoadDim />
       {getLayout(
         <ErrorBoundary Fallback={PageFallback}>
           <Component {...pageProps} />
         </ErrorBoundary>
       )}
-
-      {/* React Query devtools */}
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
