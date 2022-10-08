@@ -7,6 +7,7 @@ import { Button, MaterialIcon, Table } from "@suankularb-components/react";
 
 // Types
 import { Class } from "@utils/types/class";
+import { LangCode } from "@utils/types/common";
 
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
@@ -24,7 +25,7 @@ const ClassTable = ({
   setShowConfDel?: (value: boolean) => void;
 }): JSX.Element => {
   const { t } = useTranslation("admin");
-  const locale = useRouter().locale as "en-US" | "th";
+  const locale = useRouter().locale as LangCode;
 
   return (
     <Table width={800}>

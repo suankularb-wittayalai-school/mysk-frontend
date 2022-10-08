@@ -33,6 +33,7 @@ import { createSubject } from "@utils/backend/subject/subject";
 import { supabase } from "@utils/supabaseClient";
 
 // Types
+import { LangCode } from "@utils/types/common";
 import { Subject } from "@utils/types/subject";
 import { SubjectTable as SubjectTableType } from "@utils/types/database/subject";
 
@@ -292,7 +293,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
 
   return {
     props: {
-      ...(await serverSideTranslations(locale as string, [
+      ...(await serverSideTranslations(locale as LangCode, [
         "common",
         "admin",
         "subjects",

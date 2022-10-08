@@ -188,7 +188,7 @@ const SubjectSchedulePeriod = ({
   toggleFetched?: () => void;
 }): JSX.Element => {
   const { t } = useTranslation("common");
-  const locale = useRouter().locale as "en-US" | "th";
+  const locale = useRouter().locale as LangCode;
 
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const [dragging, setDragging] = useState<boolean>(false);

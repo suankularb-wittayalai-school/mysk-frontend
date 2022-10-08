@@ -6,6 +6,7 @@ import { useTranslation } from "next-i18next";
 import { Button, MaterialIcon, Table } from "@suankularb-components/react";
 
 // Types
+import { LangCode } from "@utils/types/common";
 import { Student } from "@utils/types/person";
 
 // Helpers
@@ -23,7 +24,7 @@ const StudentTable = ({
   setShowConfDelStudent?: (value: boolean) => void;
 }): JSX.Element => {
   const { t } = useTranslation("admin");
-  const locale = useRouter().locale as "en-US" | "th";
+  const locale = useRouter().locale as LangCode;
 
   return (
     <Table width={800}>

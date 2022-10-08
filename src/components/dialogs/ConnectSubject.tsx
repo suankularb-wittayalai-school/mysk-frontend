@@ -22,7 +22,7 @@ import { nameJoiner } from "@utils/helpers/name";
 import { getCurrentAcedemicYear } from "@utils/helpers/date";
 
 // Types
-import { ChipInputListItem, SubmittableDialogProps } from "@utils/types/common";
+import { ChipInputListItem, LangCode, SubmittableDialogProps } from "@utils/types/common";
 import { Teacher } from "@utils/types/person";
 import { Subject, SubjectListItem } from "@utils/types/subject";
 import { RoomSubjectTable } from "@utils/types/database/subject";
@@ -43,7 +43,7 @@ const ConnectSubjectDialog = ({
   subjectRoom?: SubjectListItem;
 }) => {
   const { t } = useTranslation("subjects");
-  const locale = useRouter().locale as "en-US" | "th";
+  const locale = useRouter().locale as LangCode;
   const [user, session] = useTeacherAccount({ loginRequired: true });
 
   // Dialogs

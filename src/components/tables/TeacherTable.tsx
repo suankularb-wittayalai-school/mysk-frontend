@@ -9,6 +9,7 @@ import { Button, MaterialIcon, Table } from "@suankularb-components/react";
 import CopyButton from "@components/CopyButton";
 
 // Types
+import { LangCode } from "@utils/types/common";
 import { Teacher } from "@utils/types/person";
 
 // Helpers
@@ -26,7 +27,7 @@ const TeacherTable = ({
   setShowConfDelTeacher?: (value: boolean) => void;
 }): JSX.Element => {
   const { t } = useTranslation("admin");
-  const locale = useRouter().locale as "en-US" | "th";
+  const locale = useRouter().locale as LangCode;
 
   return (
     <Table width={800}>

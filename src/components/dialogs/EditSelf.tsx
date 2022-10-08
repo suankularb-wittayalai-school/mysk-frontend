@@ -18,25 +18,23 @@ import ChangePassword from "@components/dialogs/ChangePassword";
 import DiscardDraft from "@components/dialogs/DiscardDraft";
 
 // Types
-import { DialogProps } from "@utils/types/common";
+import { DialogProps, LangCode } from "@utils/types/common";
 import { Person, Student, Teacher } from "@utils/types/person";
 
 // Backend
 import { editProfile } from "@utils/backend/account";
 
-interface EditProfileDialogProps extends DialogProps {
-  user: Student | Teacher;
-  setShowChangePassword?: Function;
-  setShowDiscard?: Function;
-}
-
 const EditSelfDialog = ({
   user,
   show,
   onClose,
-}: EditProfileDialogProps): JSX.Element => {
+}: DialogProps & {
+  user: Student | Teacher;
+  setShowChangePassword?: Function;
+  setShowDiscard?: Function;
+}): JSX.Element => {
   const { t } = useTranslation("account");
-  const locale = useRouter().locale as "en-US" | "th";
+  const locale = useRouter().locale as LangCode;
 
   // Dialog control
   const [showChangePassword, setShowChangePassword] = useState<boolean>(false);

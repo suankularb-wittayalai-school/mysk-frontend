@@ -130,7 +130,7 @@ const FormSection = ({
   const [newsFilter, setNewsFilter] = useState<Array<string>>([]);
   const [filteredNews, setFilteredNews] =
     useState<Array<StudentFormItem>>(forms);
-  const locale = useRouter().locale as "en-US" | "th";
+  const locale = useRouter().locale as LangCode;
 
   useEffect(
     () => {
@@ -491,7 +491,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   params,
 }) => ({
   props: {
-    ...(await serverSideTranslations(locale as string, [
+    ...(await serverSideTranslations(locale as LangCode, [
       "account",
       "news",
       "dashboard",

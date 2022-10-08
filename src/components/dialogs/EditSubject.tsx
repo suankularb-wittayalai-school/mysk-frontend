@@ -31,7 +31,7 @@ import { useSubjectGroupOption } from "@utils/hooks/subject";
 import { supabase } from "@utils/supabaseClient";
 
 // Types
-import { ChipInputListItem, DialogProps } from "@utils/types/common";
+import { ChipInputListItem, DialogProps, LangCode } from "@utils/types/common";
 import {
   Subject,
   SubjectName,
@@ -54,7 +54,7 @@ const EditSubjectDialog = ({
   subject?: Subject;
 }): JSX.Element => {
   const { t } = useTranslation(["subjects", "common", "admin"]);
-  const locale = useRouter().locale as "en-US" | "th";
+  const locale = useRouter().locale as LangCode;
 
   // Dialogs
   const [showDiscard, setShowDiscard] = useState<boolean>(false);

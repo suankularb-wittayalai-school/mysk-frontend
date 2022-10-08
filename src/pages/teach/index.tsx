@@ -45,6 +45,7 @@ import { getSchedule } from "@utils/backend/schedule/schedule";
 import { getTeachingSubjects } from "@utils/backend/subject/subject";
 
 // Types
+import { LangCode } from "@utils/types/common";
 import { Schedule as ScheduleType } from "@utils/types/schedule";
 import { SubjectWNameAndCode } from "@utils/types/subject";
 import { ClassWNumber } from "@utils/types/class";
@@ -227,7 +228,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   return {
     props: {
-      ...(await serverSideTranslations(locale as string, [
+      ...(await serverSideTranslations(locale as LangCode, [
         "common",
         "account",
         "teach",

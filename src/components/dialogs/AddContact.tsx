@@ -12,7 +12,7 @@ import {
 } from "@suankularb-components/react";
 
 // Types
-import { DialogProps } from "@utils/types/common";
+import { DialogProps, LangCode } from "@utils/types/common";
 import { Contact, ContactVia } from "@utils/types/contact";
 
 const AddContactDialog = ({
@@ -25,7 +25,7 @@ const AddContactDialog = ({
   isGroup?: boolean;
 }): JSX.Element => {
   const { t } = useTranslation("common");
-  const locale = useRouter().locale as "en-US" | "th";
+  const locale = useRouter().locale as LangCode;
 
   // Types
   type ContactIncludesObj = {

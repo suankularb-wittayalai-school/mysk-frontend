@@ -9,6 +9,7 @@ import { Button, MaterialIcon, Table } from "@suankularb-components/react";
 import HoverList from "@components/HoverList";
 
 // Types
+import { LangCode } from "@utils/types/common";
 import { Subject } from "@utils/types/subject";
 
 // Helpers
@@ -27,7 +28,7 @@ const SubjectTable = ({
   setShowConfDelSubject?: (value: boolean) => void;
 }): JSX.Element => {
   const { t } = useTranslation("admin");
-  const locale = useRouter().locale as "en-US" | "th";
+  const locale = useRouter().locale as LangCode;
 
   return (
     <Table width={800}>

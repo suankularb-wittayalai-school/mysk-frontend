@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { Dialog, DialogSection, Dropdown } from "@suankularb-components/react";
 
 // Types
-import { DialogProps } from "@utils/types/common";
+import { DialogProps, LangCode } from "@utils/types/common";
 import { Teacher } from "@utils/types/person";
 
 // Helpers
@@ -23,7 +23,7 @@ const AddTeacherDialog = ({
   onSubmit,
 }: DialogProps & { onSubmit: (teacher: Teacher) => void }): JSX.Element => {
   const { t } = useTranslation("common");
-  const locale = useRouter().locale as "en-US" | "th";
+  const locale = useRouter().locale as LangCode;
 
   const subjectGroups = useSubjectGroupOption();
   const [selectedGroup, setSelectedGroup] = useState<number>(1);

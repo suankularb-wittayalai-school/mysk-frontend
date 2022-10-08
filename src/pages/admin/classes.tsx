@@ -34,6 +34,7 @@ import { db2Class } from "@utils/backend/database";
 
 // Types
 import { Class } from "@utils/types/class";
+import { LangCode } from "@utils/types/common";
 import { ClassroomDB, ClassroomTable } from "@utils/types/database/class";
 
 // Helpers
@@ -219,7 +220,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
 
   return {
     props: {
-      ...(await serverSideTranslations(locale as string, [
+      ...(await serverSideTranslations(locale as LangCode, [
         "common",
         "admin",
         "account",
