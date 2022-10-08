@@ -35,6 +35,7 @@ export type DataTableColumnDef = ColumnDef<object> &
   Partial<{
     thClass: string;
     tdClass: string;
+    render: (row: any) => JSX.Element;
     noDataMsg: string | JSX.Element;
   }>;
 

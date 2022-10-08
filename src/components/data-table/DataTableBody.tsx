@@ -24,9 +24,24 @@ const DataTableBody = ({
                     (cell.column.columnDef as DataTableColumnDef).tdClass
                   }
                 >
-                  {cell.getValue()
-                    ? flexRender(cell.column.columnDef.cell, cell.getContext())
-                    : (cell.column.columnDef as DataTableColumnDef).noDataMsg}
+                  {
+                    // Check if columnDef provides a custom render function
+                    (cell.column.columnDef as DataTableColumnDef).render
+                      ? // Use custom render function
+                        (
+                          (cell.column.columnDef as DataTableColumnDef)
+                            .render as Function
+                        )(row.original)
+                      : // Check if cell is not empty
+                      cell.getValue()
+                      ? // Render cell normally
+                        flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )
+                      : // (Cell is empty) Show no data message
+                        (cell.column.columnDef as DataTableColumnDef).noDataMsg
+                  }
                 </td>
               );
             })}

@@ -202,7 +202,7 @@ const Students: NextPage<{ students: Student[] }> = ({
           <div className="layout-grid-cols-3">
             <Search
               placeholder={t("studentList.searchStudents")}
-              onChange={(e) => setQuery(e)}
+              onChange={setQuery}
             />
             <Actions className="md:col-span-2">
               <Button

@@ -143,7 +143,7 @@ const EditSubjectDialog = ({
 
   useEffect(() => {
     // Populate the form control with data if mode is edit
-    if (mode == "edit" || subject) {
+    if (mode == "edit" && subject) {
       setForm({
         ...form,
         ...subject,

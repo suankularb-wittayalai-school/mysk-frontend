@@ -10,6 +10,6 @@ export function getLocaleString(
 export function getLocaleObj(
   multiLangString: MultiLangObj,
   locale: LangCode
-): object {
+): any {
   return multiLangString[locale] || multiLangString.th;
 }
