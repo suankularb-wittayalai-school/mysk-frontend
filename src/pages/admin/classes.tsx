@@ -15,6 +15,9 @@ import { supabase } from "@utils/supabaseClient";
 // SK Components
 import {
   Button,
+  Card,
+  CardSupportingText,
+  LayoutGridCols,
   MaterialIcon,
   RegularLayout,
   Search,
@@ -42,24 +45,23 @@ import { createTitleStr } from "@utils/helpers/title";
 
 // Hooks
 import { createClassroom } from "@utils/backend/classroom/classroom";
+import { useToggle } from "@utils/hooks/toggle";
 
 // Page
-const Classes: NextPage<{ allClasses: Class[] }> = ({
-  allClasses,
-}): JSX.Element => {
+const Classes: NextPage<{ classes: Class[] }> = ({ classes }): JSX.Element => {
   const { t } = useTranslation("admin");
   const router = useRouter();
 
-  const [showAdd, setShowAdd] = useState<boolean>(false);
-  const [showGenerate, setShowGenerate] = useState<boolean>(false);
-  const [showImport, setShowImport] = useState<boolean>(false);
-  const [showConfDel, setShowConfDel] = useState<boolean>(false);
+  const [showAdd, toggleShowAdd] = useToggle();
+  const [showGenerate, toggleShowGenerate] = useToggle();
+  const [showImport, toggleShowImport] = useToggle();
+  const [showConfDel, toggleShowConfDel] = useToggle();
 
-  const [showEdit, setShowEdit] = useState<boolean>(false);
+  const [showEdit, toggleShowEdit] = useToggle();
   const [editingClass, setEditingClass] = useState<Class>();
 
   async function handleDelete() {
-    const { data: _, error: classError } = await supabase
+    const { error: classError } = await supabase
       .from<ClassroomTable>("classroom")
       .delete()
       .match({ id: editingClass?.id });
@@ -103,7 +105,6 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
             pageIcon={<MaterialIcon icon="meeting_room" />}
             backGoesTo="/admin"
             LinkElement={Link}
-            key="title"
           />
         }
       >
@@ -118,45 +119,45 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
                 <Button
                   label={t("common.action.import")}
                   type="text"
-                  onClick={() => setShowImport(true)}
+                  onClick={toggleShowImport}
                 />
                 <Button
                   label={t("classList.action.generate")}
                   type="outlined"
                   icon={<MaterialIcon icon="auto_awesome" />}
-                  onClick={() => setShowGenerate(true)}
+                  onClick={toggleShowGenerate}
                 />
                 <Button
                   label={t("classList.action.addClass")}
                   type="filled"
                   icon={<MaterialIcon icon="add" />}
-                  onClick={() => setShowAdd(true)}
+                  onClick={toggleShowAdd}
                 />
               </div>
             </div>
           </div>
-          <div>
-            <ClassTable
-              classes={allClasses}
-              setShowEdit={setShowEdit}
-              setEditingClass={setEditingClass}
-              setShowConfDel={setShowConfDel}
-            />
-          </div>
+          <LayoutGridCols cols={3}>
+            {classes.map((classItem) => (
+              <Card key={classItem.id} type="stacked">
+                <CardSupportingText>
+                  <p>TODO: {classItem.id}</p>
+                </CardSupportingText>
+              </Card>
+            ))}
+          </LayoutGridCols>
         </Section>
       </RegularLayout>
 
       {/* Dialogs */}
       <ImportDataDialog
         show={showImport}
-        onClose={() => setShowImport(false)}
-        onSubmit={(e: { number: number; year: number; semester: number }[]) => {
-          // console.log(e);
-
-          handleImport(e).then(() => {
-            setShowImport(false);
-            router.replace(router.asPath);
-          });
+        onClose={toggleShowImport}
+        onSubmit={async (
+          data: { number: number; year: number; semester: number }[]
+        ) => {
+          await handleImport(data);
+          toggleShowImport();
+          router.replace(router.asPath);
         }}
         columns={[
           { name: "number", type: "numeric (3-digit)" },
@@ -165,17 +166,17 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
       />
       <GenerateClassesDialog
         show={showGenerate}
-        onClose={() => setShowGenerate(false)}
+        onClose={toggleShowGenerate}
         onSubmit={() => {
-          setShowGenerate(false);
+          toggleShowGenerate();
           router.replace(router.asPath);
         }}
       />
       <EditClassDialog
         show={showEdit}
-        onClose={() => setShowEdit(false)}
+        onClose={toggleShowEdit}
         onSubmit={() => {
-          setShowEdit(false);
+          toggleShowEdit();
           router.replace(router.asPath);
         }}
         mode="edit"
@@ -183,19 +184,20 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
       />
       <EditClassDialog
         show={showAdd}
-        onClose={() => setShowAdd(false)}
+        onClose={toggleShowAdd}
         onSubmit={() => {
-          setShowAdd(false);
+          toggleShowAdd();
           router.replace(router.asPath);
         }}
         mode="add"
       />
       <ConfirmDelete
         show={showConfDel}
-        onClose={() => setShowConfDel(false)}
-        onSubmit={() => {
-          setShowConfDel(false);
-          handleDelete().then(() => router.replace(router.asPath));
+        onClose={toggleShowConfDel}
+        onSubmit={async () => {
+          toggleShowConfDel();
+          await handleDelete();
+          router.replace(router.asPath);
         }}
       />
     </>
@@ -203,20 +205,19 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
-  let allClasses: Class[] = [];
+  let classes: Class[] = [];
 
-  const { data: classes, error } = await supabase
+  const { data, error } = await supabase
     .from<ClassroomDB>("classroom")
     .select("*")
     .order("number", { ascending: true });
 
   if (error) console.error(error);
 
-  if (classes) {
-    allClasses = await Promise.all(
-      classes.map(async (classItem) => await db2Class(classItem))
+  if (data)
+    classes = await Promise.all(
+      data.map(async (classItem) => await db2Class(classItem))
     );
-  }
 
   return {
     props: {
@@ -226,7 +227,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
         "account",
         "class",
       ])),
-      allClasses,
+      classes,
     },
   };
 };
