@@ -27,6 +27,7 @@ import { isInPeriod } from "@utils/helpers/schedule";
 import { useTeacherAccount } from "@utils/hooks/auth";
 
 // Types
+import { LangCode } from "@utils/types/common";
 import { Role, Teacher } from "@utils/types/person";
 import { SchedulePeriod as SchedulePeriodType } from "@utils/types/schedule";
 import { Subject } from "@utils/types/subject";
