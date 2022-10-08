@@ -154,5 +154,8 @@
         "close": "Close"
       }
     }
+  },
+  "action": {
+    "copy": "Copy to clipboard"
   }
 }

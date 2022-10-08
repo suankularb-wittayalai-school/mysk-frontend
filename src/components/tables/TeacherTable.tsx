@@ -5,6 +5,9 @@ import { useTranslation } from "next-i18next";
 // SK Components
 import { Button, MaterialIcon, Table } from "@suankularb-components/react";
 
+// Components
+import CopyButton from "@components/CopyButton";
+
 // Types
 import { Teacher } from "@utils/types/person";
 
@@ -76,18 +79,7 @@ const TeacherTable = ({
             {setShowEdit && setEditingPerson && setShowConfDelTeacher && (
               <td>
                 <div className="flex flex-row justify-center gap-2">
-                  <Button
-                    name={t("studentList.table.action.copy")}
-                    type="text"
-                    iconOnly
-                    icon={<MaterialIcon icon="content_copy" />}
-                    onClick={() =>
-                      navigator.clipboard?.writeText(
-                        nameJoiner(locale, teacher.name)
-                      )
-                    }
-                    className="!hidden sm:!block"
-                  />
+                  <CopyButton textToCopy={nameJoiner(locale, teacher.name)} />
                   <Button
                     name={t("studentList.table.action.edit")}
                     type="text"

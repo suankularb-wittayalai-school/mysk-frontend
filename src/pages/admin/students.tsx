@@ -52,6 +52,7 @@ import { supabase } from "@utils/supabaseClient";
 import { StudentDB } from "@utils/types/database/person";
 import { LangCode } from "@utils/types/common";
 import { ImportedStudentData, Student } from "@utils/types/person";
+import CopyButton from "@components/CopyButton";
 
 const StudentTable = ({
   students,
@@ -133,14 +134,7 @@ const StudentTable = ({
         endRow={(row) => (
           <td>
             <Actions align="center">
-              <Button
-                name={t("studentList.table.action.copy")}
-                type="text"
-                iconOnly
-                icon={<MaterialIcon icon="content_copy" />}
-                onClick={() => navigator.clipboard?.writeText(row.name)}
-                className="!hidden sm:!block"
-              />
+              <CopyButton textToCopy={row.name} />
               <Button
                 name={t("studentList.table.action.edit")}
                 type="text"
