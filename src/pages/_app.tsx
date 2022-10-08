@@ -1,14 +1,11 @@
 // External libraries
-import { AnimatePresence, motion } from "framer-motion";
-
 import { NextPage } from "next";
 import type { AppProps } from "next/app";
 import Head from "next/head";
-import { useRouter } from "next/router";
 
 import { appWithTranslation } from "next-i18next";
 
-import { ReactElement, ReactNode, useEffect, useState } from "react";
+import { ReactElement, ReactNode, useState } from "react";
 
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
