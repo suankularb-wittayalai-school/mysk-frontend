@@ -275,18 +275,19 @@ const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   let allSubjects: Subject[] = [];
 
-  const { data: subjects, error: subjectSelectingError } = await supabase
+  const { data, error } = await supabase
     .from<SubjectTableType>("subject")
     .select("*");
 
-  if (subjectSelectingError) {
-    console.error(subjectSelectingError);
-  }
+  if (error) console.error(error);
 
-  if (subjects) {
-    allSubjects = await Promise.all(
-      subjects.map(async (subject) => await db2Subject(subject))
-    );
+  if (data) {
+    allSubjects = (
+      await Promise.all(data.map(async (subject) => await db2Subject(subject)))
+    )
+      .sort((a, b) => (a.code.th < b.code.th ? -1 : 1))
+      .sort((a, b) => a.semester - b.semester)
+      .sort((a, b) => a.year - b.year);
   }
 
   return {
