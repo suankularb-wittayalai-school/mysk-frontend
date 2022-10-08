@@ -9,15 +9,40 @@ import { supabase } from "@utils/supabaseClient";
 // Types
 import {
   PersonDB,
+  PersonTable,
   TeacherDB,
   TeacherTable,
 } from "@utils/types/database/person";
 import { RoomSubjectDB } from "@utils/types/database/subject";
-import { Teacher } from "@utils/types/person";
+import {
+  ImportedTeacherData,
+  Prefix,
+  Role,
+  Teacher,
+} from "@utils/types/person";
 
 // Backend
 import { db2Teacher } from "../database";
 import { createPerson } from "./person";
+
+const subjectGroupMap = {
+  วิทยาศาสตร์: 1,
+  คณิตศาสตร์: 2,
+  ภาษาต่างประเทศ: 3,
+  ภาษาไทย: 4,
+  สุขศึกษาและพลศึกษา: 5,
+  การงานอาชีพและเทคโนโลยี: 6,
+  ศิลปะ: 7,
+  "สังคมศึกษา ศาสนา และวัฒนธรรม": 8,
+  การศึกษาค้นคว้าด้วยตนเอง: 9,
+} as const;
+
+const prefixMap = {
+  เด็กชาย: "Master.",
+  นาย: "Mr.",
+  นาง: "Mrs.",
+  นางสาว: "Miss.",
+} as const;
 
 export async function getTeacherIDFromReq(
   req: IncomingMessage & { cookies: NextApiRequestCookies },
@@ -78,6 +103,103 @@ export async function createTeacher(
   });
 
   return { data: createdTeacher, error: null };
+}
+
+export async function deleteTeacher(teacher: Teacher) {
+  const { data: userid, error: selectingError } = await supabase
+    .from<{
+      id: string;
+      email: string;
+      role: Role;
+      student: number;
+      teacher: number;
+    }>("users")
+    .select("id")
+    .match({ teacher: teacher.id })
+    .limit(1)
+    .single();
+
+  if (selectingError) {
+    console.error(selectingError);
+    return;
+  }
+
+  if (!userid) {
+    console.error("No user found");
+    return;
+  }
+
+  const { data: deletingTeacher, error: teacherDeletingError } = await supabase
+    .from<TeacherTable>("teacher")
+    .delete()
+    .match({ id: teacher.id });
+  if (teacherDeletingError || !deletingTeacher) {
+    console.error(teacherDeletingError);
+    return;
+  }
+  // delete the person related to the teacher
+  const { data: deletingPerson, error: personDeletingError } = await supabase
+    .from<PersonTable>("people")
+    .delete()
+    .match({ id: deletingTeacher[0].person });
+  if (personDeletingError || !deletingPerson) {
+    console.error(personDeletingError);
+    return;
+  }
+
+  // Delete account of the teacher
+  await fetch(`/api/account`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      id: userid.id,
+    }),
+  });
+}
+
+export async function importTeachers(data: ImportedTeacherData[]) {
+  const teachers: Array<{ person: Teacher; email: string }> = data.map(
+    (teacher) => {
+      const person: Teacher = {
+        id: 0,
+        name: {
+          th: {
+            firstName: teacher.first_name_th,
+            middleName: teacher.middle_name_th,
+            lastName: teacher.last_name_th,
+          },
+          "en-US": {
+            firstName: teacher.first_name_en,
+            middleName: teacher.middle_name_en,
+            lastName: teacher.last_name_en,
+          },
+        },
+        birthdate: teacher.birthdate,
+        citizenID: teacher.citizen_id.toString(),
+        teacherID: teacher.teacher_id.toString(),
+        prefix: prefixMap[teacher.prefix] as Prefix,
+        role: "teacher",
+        contacts: [],
+        subjectGroup: {
+          id: subjectGroupMap[teacher.subject_group],
+          name: {
+            th: teacher.subject_group,
+            "en-US": teacher.subject_group,
+          },
+        },
+      };
+      const email = teacher.email;
+      return { person, email };
+    }
+  );
+
+  await Promise.all(
+    teachers.map(
+      async (teacher) => await createTeacher(teacher.person, teacher.email)
+    )
+  );
 }
 
 // https://supabase.com/docs/reference/javascript/select

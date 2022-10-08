@@ -33,6 +33,7 @@ import DataTableBody from "@components/data-table/DataTableBody";
 import ConfirmDelete from "@components/dialogs/ConfirmDelete";
 import EditPersonDialog from "@components/dialogs/EditPerson";
 import ImportDataDialog from "@components/dialogs/ImportData";
+import CopyButton from "@components/CopyButton";
 
 // Backend
 import { db2Student } from "@utils/backend/database";
@@ -52,7 +53,6 @@ import { supabase } from "@utils/supabaseClient";
 import { StudentDB } from "@utils/types/database/person";
 import { LangCode } from "@utils/types/common";
 import { ImportedStudentData, Student } from "@utils/types/person";
-import CopyButton from "@components/CopyButton";
 
 const StudentTable = ({
   students,

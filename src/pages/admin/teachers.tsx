@@ -7,15 +7,17 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 // SK Components
 import {
+  Actions,
   Button,
   MaterialIcon,
   RegularLayout,
   Search,
   Section,
+  Table,
   Title,
 } from "@suankularb-components/react";
 
@@ -26,189 +28,152 @@ import { supabase } from "@utils/supabaseClient";
 import ConfirmDelete from "@components/dialogs/ConfirmDelete";
 import EditPersonDialog from "@components/dialogs/EditPerson";
 import ImportDataDialog from "@components/dialogs/ImportData";
-import TeacherTable from "@components/tables/TeacherTable";
 
 // Backend
 import { db2Teacher } from "@utils/backend/database";
 
 // Backend
-import { createTeacher } from "@utils/backend/person/teacher";
+import { deleteTeacher, importTeachers } from "@utils/backend/person/teacher";
 
 // Types
-import { Prefix, Role, Teacher } from "@utils/types/person";
-import {
-  PersonTable,
-  TeacherDB,
-  TeacherTable as TeacherTableType,
-} from "@utils/types/database/person";
+import { LangCode } from "@utils/types/common";
+import { ImportedTeacherData, Teacher } from "@utils/types/person";
+import { TeacherDB } from "@utils/types/database/person";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
 
 // Hooks
-import { useSession } from "@utils/hooks/auth";
+import { useToggle } from "@utils/hooks/toggle";
+import {
+  getCoreRowModel,
+  getFilteredRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import CopyButton from "@components/CopyButton";
+import DataTableBody from "@components/data-table/DataTableBody";
+import DataTableHeader from "@components/data-table/DataTableHeader";
+import { nameJoiner } from "@utils/helpers/name";
 
-interface ImportedData {
-  prefix: "เด็กชาย" | "นาย" | "นาง" | "นางสาว";
-  first_name_th: string;
-  first_name_en: string;
-  middle_name_th?: string;
-  middle_name_en?: string;
-  last_name_th: string;
-  last_name_en: string;
-  birthdate: string;
-  citizen_id: number;
-  teacher_id: string;
-  subject_group:
-    | "วิทยาศาสตร์"
-    | "คณิตศาสตร์"
-    | "ภาษาต่างประเทศ"
-    | "ภาษาไทย"
-    | "สุขศึกษาและพลศึกษา"
-    | "การงานอาชีพและเทคโนโลยี"
-    | "ศิลปะ"
-    | "สังคมศึกษา ศาสนา และวัฒนธรรม"
-    | "การศึกษาค้นคว้าด้วยตนเอง";
-  email: string;
-}
+// Page-specific components
+const TeacherTable = ({
+  teachers,
+  query,
+  setEditingIdx,
+  toggleShowEdit,
+  toggleShowConfDel,
+}: {
+  teachers: Teacher[];
+  query?: string;
+  setEditingIdx: (id: number) => void;
+  toggleShowEdit: () => void;
+  toggleShowConfDel: () => void;
+}) => {
+  const { t } = useTranslation("admin");
+  const locale = useRouter().locale as LangCode;
 
-const subjectGroupMap = {
-  วิทยาศาสตร์: 1,
-  คณิตศาสตร์: 2,
-  ภาษาต่างประเทศ: 3,
-  ภาษาไทย: 4,
-  สุขศึกษาและพลศึกษา: 5,
-  การงานอาชีพและเทคโนโลยี: 6,
-  ศิลปะ: 7,
-  "สังคมศึกษา ศาสนา และวัฒนธรรม": 8,
-  การศึกษาค้นคว้าด้วยตนเอง: 9,
-} as const;
+  const [globalFilter, setGlobalFilter] = useState<string>("");
+  useEffect(() => setGlobalFilter(query || ""), [query]);
+  const columns = useMemo(
+    () => [
+      {
+        accessorKey: "teacherID",
+        header: t("teacherList.table.id"),
+        thClass: "w-2/12",
+      },
+      {
+        accessorKey: "name",
+        header: t("teacherList.table.name"),
+        thClass: "w-6/12",
+        tdClass: "!text-left",
+      },
+      {
+        accessorKey: "classAdvisorAt",
+        header: t("teacherList.table.classAdvisorAt"),
+        thClass: "w-2/12",
+      },
+    ],
+    []
+  );
+  const data = useMemo(
+    () =>
+      teachers.map((teacher, idx) => ({
+        idx,
+        teacherID: teacher.teacherID.toString(),
+        name: nameJoiner(
+          locale,
+          teacher.name,
+          t(`name.prefix.${teacher.prefix}`, { ns: "common" }),
+          { prefix: true }
+        ),
+        classAdvisorAt: teacher.classAdvisorAt?.number.toString(),
+      })),
+    []
+  );
+  const { getHeaderGroups, getRowModel } = useReactTable({
+    data,
+    columns,
+    state: { globalFilter },
+    onGlobalFilterChange: setGlobalFilter,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+  });
 
-const prefixMap = {
-  เด็กชาย: "Master.",
-  นาย: "Mr.",
-  นาง: "Mrs.",
-  นางสาว: "Miss.",
-} as const;
+  return (
+    <Table width={800}>
+      <DataTableHeader
+        headerGroups={getHeaderGroups()}
+        endRow={<th className="w-2/12" />}
+      />
+      <DataTableBody
+        rowModel={getRowModel()}
+        endRow={(row) => (
+          <td>
+            <Actions align="center">
+              <CopyButton textToCopy={row.name} />
+              <Button
+                name={t("teacherList.table.action.edit")}
+                type="text"
+                iconOnly
+                icon={<MaterialIcon icon="edit" />}
+                onClick={() => {
+                  setEditingIdx(row.idx);
+                  toggleShowEdit();
+                }}
+              />
+              <Button
+                type="text"
+                iconOnly
+                icon={<MaterialIcon icon="delete" />}
+                isDangerous
+                onClick={() => {
+                  setEditingIdx(row.idx);
+                  toggleShowConfDel();
+                }}
+              />
+            </Actions>
+          </td>
+        )}
+      />
+    </Table>
+  );
+};
 
 // Page
-const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
-  allTeachers,
+const Teachers: NextPage<{ teachers: Teacher[] }> = ({
+  teachers,
 }): JSX.Element => {
   const { t } = useTranslation("admin");
   const router = useRouter();
 
-  const [showAdd, setShowAdd] = useState<boolean>(false);
-  const [showImport, setShowImport] = useState<boolean>(false);
-  const [showConfDel, setShowConfDel] = useState<boolean>(false);
+  const [query, setQuery] = useState<string>("");
 
-  const [showEdit, setShowEdit] = useState<boolean>(false);
-  const [editingPerson, setEditingPerson] = useState<Teacher>();
+  const [showAdd, toggleShowAdd] = useToggle();
+  const [showImport, toggleShowImport] = useToggle();
+  const [showConfDel, toggleShowConfDel] = useToggle();
 
-  const session = useSession({ loginRequired: true, adminOnly: true });
-
-  async function handleDelete() {
-    if (!editingPerson) return;
-
-    const { data: userid, error: selectingError } = await supabase
-      .from<{
-        id: string;
-        email: string;
-        role: Role;
-        student: number;
-        teacher: number;
-      }>("users")
-      .select("id")
-      .match({ teacher: editingPerson.id })
-      .limit(1)
-      .single();
-
-    if (selectingError) {
-      console.error(selectingError);
-      return;
-    }
-
-    if (!userid) {
-      console.error("No user found");
-      return;
-    }
-
-    const { data: deletingTeacher, error: teacherDeletingError } =
-      await supabase
-        .from<TeacherTableType>("teacher")
-        .delete()
-        .match({ id: editingPerson.id });
-    if (teacherDeletingError || !deletingTeacher) {
-      console.error(teacherDeletingError);
-      return;
-    }
-    // delete the person related to the teacher
-    const { data: deletingPerson, error: personDeletingError } = await supabase
-      .from<PersonTable>("people")
-      .delete()
-      .match({ id: deletingTeacher[0].person });
-    if (personDeletingError || !deletingPerson) {
-      console.error(personDeletingError);
-      return;
-    }
-
-    // Delete account of the teacher
-    await fetch(`/api/account`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        id: userid.id,
-      }),
-    });
-
-    setShowConfDel(false);
-    router.replace(router.asPath);
-  }
-
-  async function handleImport(data: ImportedData[]) {
-    const teachers: Array<{ person: Teacher; email: string }> = data.map(
-      (teacher) => {
-        const person: Teacher = {
-          id: 0,
-          name: {
-            th: {
-              firstName: teacher.first_name_th,
-              middleName: teacher.middle_name_th,
-              lastName: teacher.last_name_th,
-            },
-            "en-US": {
-              firstName: teacher.first_name_en,
-              middleName: teacher.middle_name_en,
-              lastName: teacher.last_name_en,
-            },
-          },
-          birthdate: teacher.birthdate,
-          citizenID: teacher.citizen_id.toString(),
-          teacherID: teacher.teacher_id.toString(),
-          prefix: prefixMap[teacher.prefix] as Prefix,
-          role: "teacher",
-          contacts: [],
-          subjectGroup: {
-            id: subjectGroupMap[teacher.subject_group],
-            name: {
-              th: teacher.subject_group,
-              "en-US": teacher.subject_group,
-            },
-          },
-        };
-        const email = teacher.email;
-        return { person, email };
-      }
-    );
-
-    await Promise.all(
-      teachers.map(
-        async (teacher) => await createTeacher(teacher.person, teacher.email)
-      )
-    );
-  }
+  const [showEdit, toggleShowEdit] = useToggle();
+  const [editingIdx, setEditingIdx] = useState<number>(-1);
 
   return (
     <>
@@ -231,28 +196,32 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
       >
         <Section>
           <div className="layout-grid-cols-3">
-            <Search placeholder={t("teacherList.searchTeachers")} />
+            <Search
+              placeholder={t("teacherList.searchTeachers")}
+              onChange={setQuery}
+            />
             <div className="flex flex-row items-end justify-end gap-2 md:col-span-2">
               <Button
                 label={t("common.action.import")}
                 type="outlined"
                 icon={<MaterialIcon icon="file_upload" />}
-                onClick={() => setShowImport(true)}
+                onClick={toggleShowImport}
               />
               <Button
                 label={t("teacherList.action.addTeacher")}
                 type="filled"
                 icon={<MaterialIcon icon="add" />}
-                onClick={() => setShowAdd(true)}
+                onClick={toggleShowAdd}
               />
             </div>
           </div>
           <div>
             <TeacherTable
-              teachers={allTeachers}
-              setShowEdit={setShowEdit}
-              setEditingPerson={setEditingPerson}
-              setShowConfDelTeacher={setShowConfDel}
+              teachers={teachers}
+              query={query}
+              setEditingIdx={setEditingIdx}
+              toggleShowEdit={toggleShowEdit}
+              toggleShowConfDel={toggleShowConfDel}
             />
           </div>
         </Section>
@@ -261,13 +230,12 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
       {/* Dialogs */}
       <ImportDataDialog
         show={showImport}
-        onClose={() => setShowImport(false)}
-        onSubmit={(e: ImportedData[]) => {
+        onClose={toggleShowImport}
+        onSubmit={async (e: ImportedTeacherData[]) => {
           // console.log(e);
-          handleImport(e).then(() => {
-            setShowImport(false);
-            router.replace(router.asPath);
-          });
+          await importTeachers(e);
+          toggleShowImport();
+          router.replace(router.asPath);
         }}
         // prettier-ignore
         columns={[
@@ -287,19 +255,19 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
       />
       <EditPersonDialog
         show={showEdit}
-        onClose={() => setShowEdit(false)}
+        onClose={toggleShowEdit}
         onSubmit={() => {
-          setShowEdit(false);
+          toggleShowEdit();
           router.replace(router.asPath);
         }}
         mode="edit"
-        person={editingPerson}
+        person={teachers[editingIdx]}
       />
       <EditPersonDialog
         show={showAdd}
-        onClose={() => setShowAdd(false)}
+        onClose={toggleShowAdd}
         onSubmit={() => {
-          setShowAdd(false);
+          toggleShowAdd();
           router.replace(router.asPath);
         }}
         mode="add"
@@ -307,8 +275,13 @@ const Teachers: NextPage<{ allTeachers: Array<Teacher> }> = ({
       />
       <ConfirmDelete
         show={showConfDel}
-        onClose={() => setShowConfDel(false)}
-        onSubmit={() => handleDelete()}
+        onClose={toggleShowConfDel}
+        onSubmit={async () => {
+          if (editingIdx < 0) return;
+          await deleteTeacher(teachers[editingIdx]);
+          toggleShowConfDel();
+          router.replace(router.asPath);
+        }}
       />
     </>
   );
@@ -321,26 +294,25 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
 
   if (error) {
     console.error(error);
-    return { props: { allTeachers: [] } };
+    return { props: { teachers: [] } };
   }
 
-  if (!data) {
-    return { props: { allTeachers: [] } };
-  }
+  if (!data) return { props: { teachers: [] } };
+
   // console.log(data);
 
-  const allTeachers: Teacher[] = await Promise.all(
+  const teachers: Teacher[] = await Promise.all(
     data.map(async (student) => await db2Teacher(student))
   );
 
   return {
     props: {
-      ...(await serverSideTranslations(locale as string, [
+      ...(await serverSideTranslations(locale as LangCode, [
         "common",
         "admin",
         "account",
       ])),
-      allTeachers,
+      teachers,
     },
   };
 };

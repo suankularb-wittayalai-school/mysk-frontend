@@ -8,7 +8,6 @@ import {
 import {
   ImportedStudentData,
   Prefix,
-  Role,
   Student,
 } from "@utils/types/person";
 import { createPerson } from "./person";

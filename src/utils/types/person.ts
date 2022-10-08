@@ -75,3 +75,27 @@ export type ImportedStudentData = {
   class_number: number;
   email: string;
 }
+
+export type ImportedTeacherData = {
+  prefix: "เด็กชาย" | "นาย" | "นาง" | "นางสาว";
+  first_name_th: string;
+  first_name_en: string;
+  middle_name_th?: string;
+  middle_name_en?: string;
+  last_name_th: string;
+  last_name_en: string;
+  birthdate: string;
+  citizen_id: number;
+  teacher_id: string;
+  subject_group:
+    | "วิทยาศาสตร์"
+    | "คณิตศาสตร์"
+    | "ภาษาต่างประเทศ"
+    | "ภาษาไทย"
+    | "สุขศึกษาและพลศึกษา"
+    | "การงานอาชีพและเทคโนโลยี"
+    | "ศิลปะ"
+    | "สังคมศึกษา ศาสนา และวัฒนธรรม"
+    | "การศึกษาค้นคว้าด้วยตนเอง";
+  email: string;
+}
