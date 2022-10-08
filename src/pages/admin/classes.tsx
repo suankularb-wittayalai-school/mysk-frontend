@@ -14,9 +14,11 @@ import { supabase } from "@utils/supabaseClient";
 
 // SK Components
 import {
+  Actions,
   Button,
   Card,
-  CardSupportingText,
+  CardHeader,
+  Header,
   LayoutGridCols,
   MaterialIcon,
   RegularLayout,
@@ -26,26 +28,100 @@ import {
 } from "@suankularb-components/react";
 
 // Components
-import ClassTable from "@components/tables/ClassTable";
 import ConfirmDelete from "@components/dialogs/ConfirmDelete";
 import EditClassDialog from "@components/dialogs/EditClass";
 import GenerateClassesDialog from "@components/dialogs/GenerateClasses";
 import ImportDataDialog from "@components/dialogs/ImportData";
+import HoverList from "@components/HoverList";
 
 // Backend
+import {
+  deleteClassroom,
+  importClasses,
+} from "@utils/backend/classroom/classroom";
 import { db2Class } from "@utils/backend/database";
 
 // Types
 import { Class } from "@utils/types/class";
 import { LangCode } from "@utils/types/common";
-import { ClassroomDB, ClassroomTable } from "@utils/types/database/class";
+import { ClassroomDB } from "@utils/types/database/class";
 
 // Helpers
+import { range } from "@utils/helpers/array";
 import { createTitleStr } from "@utils/helpers/title";
 
 // Hooks
-import { createClassroom } from "@utils/backend/classroom/classroom";
 import { useToggle } from "@utils/hooks/toggle";
+
+// Page-specific components
+const GradeSection = ({
+  grade,
+  classes,
+  setEditingClass,
+  toggleShowEdit,
+  toggleShowConfDel,
+}: {
+  grade: number;
+  classes: Class[];
+  setEditingClass: (classItem: Class) => void;
+  toggleShowEdit: () => void;
+  toggleShowConfDel: () => void;
+}): JSX.Element => {
+  const { t } = useTranslation(["admin", "common"]);
+  return (
+    <Section>
+      <Header
+        icon={<MaterialIcon icon="subdirectory_arrow_right" allowCustomSize />}
+        text={t("class", { ns: "common", number: grade })}
+      />
+      <LayoutGridCols cols={3}>
+        {classes.map((classItem) => (
+          <Card key={classItem.id} type="stacked" appearance="tonal">
+            <CardHeader
+              title={
+                <h3>
+                  {t("class", { ns: "common", number: classItem.number })}
+                </h3>
+              }
+              label={
+                classItem.classAdvisors.length == 0 ? (
+                  <p className="text-outline">
+                    {t("classList.card.noAdvisors")}
+                  </p>
+                ) : (
+                  <HoverList people={classItem.classAdvisors} />
+                )
+              }
+              end={
+                <Actions>
+                  <Button
+                    type="text"
+                    icon={<MaterialIcon icon="delete" />}
+                    iconOnly
+                    isDangerous
+                    onClick={() => {
+                      setEditingClass(classItem);
+                      toggleShowConfDel();
+                    }}
+                  />
+                  <Button
+                    type="text"
+                    icon={<MaterialIcon icon="edit" />}
+                    iconOnly
+                    onClick={() => {
+                      setEditingClass(classItem);
+                      toggleShowEdit();
+                    }}
+                  />
+                </Actions>
+              }
+            />
+          </Card>
+        ))}
+      </LayoutGridCols>
+    </Section>
+  );
+};
 
 // Page
 const Classes: NextPage<{ classes: Class[] }> = ({ classes }): JSX.Element => {
@@ -59,36 +135,6 @@ const Classes: NextPage<{ classes: Class[] }> = ({ classes }): JSX.Element => {
 
   const [showEdit, toggleShowEdit] = useToggle();
   const [editingClass, setEditingClass] = useState<Class>();
-
-  async function handleDelete() {
-    const { error: classError } = await supabase
-      .from<ClassroomTable>("classroom")
-      .delete()
-      .match({ id: editingClass?.id });
-    if (classError) {
-      console.error(classError);
-    }
-  }
-
-  async function handleImport(classes: { number: number; year: number }[]) {
-    const classesToImport: Class[] = classes.map((classData) => ({
-      id: 0,
-      number: classData.number,
-      year: classData.year,
-      students: [],
-      classAdvisors: [],
-      schedule: {
-        id: 0,
-        content: [],
-      },
-      contacts: [],
-      subjects: [],
-    }));
-
-    await Promise.all(
-      classesToImport.map(async (classItem) => await createClassroom(classItem))
-    );
-  }
 
   return (
     <>
@@ -136,16 +182,24 @@ const Classes: NextPage<{ classes: Class[] }> = ({ classes }): JSX.Element => {
               </div>
             </div>
           </div>
-          <LayoutGridCols cols={3}>
-            {classes.map((classItem) => (
-              <Card key={classItem.id} type="stacked">
-                <CardSupportingText>
-                  <p>TODO: {classItem.id}</p>
-                </CardSupportingText>
-              </Card>
-            ))}
-          </LayoutGridCols>
         </Section>
+
+        {range(Math.floor(classes[classes.length - 1].number / 100), 1).map(
+          (grade) => (
+            <GradeSection
+              key={grade}
+              grade={grade}
+              classes={classes.filter(
+                (classItem) =>
+                  classItem.number > grade * 100 &&
+                  classItem.number < (grade + 1) * 100
+              )}
+              setEditingClass={setEditingClass}
+              toggleShowEdit={toggleShowEdit}
+              toggleShowConfDel={toggleShowConfDel}
+            />
+          )
+        )}
       </RegularLayout>
 
       {/* Dialogs */}
@@ -155,7 +209,7 @@ const Classes: NextPage<{ classes: Class[] }> = ({ classes }): JSX.Element => {
         onSubmit={async (
           data: { number: number; year: number; semester: number }[]
         ) => {
-          await handleImport(data);
+          await importClasses(data);
           toggleShowImport();
           router.replace(router.asPath);
         }}
@@ -196,7 +250,7 @@ const Classes: NextPage<{ classes: Class[] }> = ({ classes }): JSX.Element => {
         onClose={toggleShowConfDel}
         onSubmit={async () => {
           toggleShowConfDel();
-          await handleDelete();
+          if (editingClass) await deleteClassroom(editingClass);
           router.replace(router.asPath);
         }}
       />

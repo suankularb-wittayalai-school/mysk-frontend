@@ -31,7 +31,7 @@ const HoverList = ({
         // If there are more than one person, display +1 and show the remaining people on hover
         people.length > 1 && (
           <abbr
-            className="text-secondary opacity-50"
+            className="text-outline"
             title={people
               .slice(1)
               .map((person) =>

@@ -64,14 +64,8 @@
   "classList": {
     "title": "Class list",
     "searchClasses": "Search classes",
-    "table": {
-      "name": "Name",
-      "advisor": "Class advisors",
-      "year": "A. year",
-      "action": {
-        "edit": "Edit",
-        "delete": "Delete"
-      }
+    "card": {
+      "noAdvisors": "No class advisors"
     },
     "action": {
       "seeAll": "See all",

@@ -17,10 +17,10 @@ import { supabase } from "@utils/supabaseClient";
 
 // Types
 import { ClassroomDB, ClassroomTable } from "@utils/types/database/class";
+import { StudentDB } from "@utils/types/database/person";
 import { Class } from "@utils/types/class";
 import { BackendReturn } from "@utils/types/common";
 import { StudentListItem } from "@utils/types/person";
-import { StudentDB } from "@utils/types/database/person";
 
 export async function createClassroom(
   classroom: Class
@@ -144,6 +144,36 @@ export async function updateClassroom(
     return { data: null, error: classUpdateError };
   }
   return { data: updatedClass, error: null };
+}
+
+export async function deleteClassroom(classItem: Class) {
+  const { error } = await supabase
+    .from<ClassroomTable>("classroom")
+    .delete()
+    .match({ id: classItem.id });
+  if (error) console.error(error);
+}
+
+export async function importClasses(
+  classes: { number: number; year: number }[]
+) {
+  const classesToImport: Class[] = classes.map((classData) => ({
+    id: 0,
+    number: classData.number,
+    year: classData.year,
+    students: [],
+    classAdvisors: [],
+    schedule: {
+      id: 0,
+      content: [],
+    },
+    contacts: [],
+    subjects: [],
+  }));
+
+  await Promise.all(
+    classesToImport.map(async (classItem) => await createClassroom(classItem))
+  );
 }
 
 export async function addAdvisorToClassroom(
