@@ -57,6 +57,7 @@ import {
   animationTransition,
   enterPageTransition,
 } from "@utils/animations/config";
+import { nameJoiner } from "@utils/helpers/name";
 
 // Page-specific components
 const ClassCard = ({
@@ -184,8 +185,20 @@ const Classes: NextPage<{ classes: Class[] }> = ({
   useEffect(() => {
     if (query) {
       setClasses(
-        initialClasses.filter((classItem) =>
-          classItem.number.toString().includes(query)
+        initialClasses.filter(
+          (classItem) =>
+            classItem.number.toString().includes(query) ||
+            classItem.classAdvisors
+              .map((advisor) =>
+                nameJoiner(
+                  router.locale as LangCode,
+                  advisor.name,
+                  t(`name.prefix.${advisor.prefix}`, { ns: "common" }),
+                  { prefix: true }
+                )
+              )
+              .join(" ")
+              .includes(query)
         )
       );
     } else setClasses(initialClasses);
