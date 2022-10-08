@@ -296,9 +296,9 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   if (error) console.error(error);
   if (!data) return { props: { students: [] } };
 
-  const students: Student[] = await Promise.all(
-    data.map(async (student) => await db2Student(student))
-  );
+  const students: Student[] = (
+    await Promise.all(data.map(async (student) => await db2Student(student)))
+  ).sort((a, b) => (a.studentID < b.studentID ? -1 : 1));
 
   return {
     props: {
