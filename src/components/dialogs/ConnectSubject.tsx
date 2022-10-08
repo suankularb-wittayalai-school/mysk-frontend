@@ -22,7 +22,11 @@ import { nameJoiner } from "@utils/helpers/name";
 import { getCurrentAcedemicYear } from "@utils/helpers/date";
 
 // Types
-import { ChipInputListItem, LangCode, SubmittableDialogProps } from "@utils/types/common";
+import {
+  ChipInputListItem,
+  LangCode,
+  SubmittableDialogProps,
+} from "@utils/types/common";
 import { Teacher } from "@utils/types/person";
 import { Subject, SubjectListItem } from "@utils/types/subject";
 import { RoomSubjectTable } from "@utils/types/database/subject";

@@ -18,7 +18,9 @@ const DataTableHeader = ({
           {headerGroup.headers.map((header) => (
             <th
               key={header.id}
-              className={(header.column.columnDef as DataTableColumnDef).thClass}
+              className={
+                (header.column.columnDef as DataTableColumnDef).thClass
+              }
             >
               {flexRender(header.column.columnDef.header, header.getContext())}
             </th>

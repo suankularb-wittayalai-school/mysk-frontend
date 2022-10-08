@@ -22,7 +22,10 @@ import Schedule from "@components/schedule/Schedule";
 import SubjectListTable from "@components/tables/SubjectListTable";
 
 // Backend
-import { getAllClassNumbers, getClassIDFromNumber } from "@utils/backend/classroom/classroom";
+import {
+  getAllClassNumbers,
+  getClassIDFromNumber,
+} from "@utils/backend/classroom/classroom";
 import { getSchedule } from "@utils/backend/schedule/schedule";
 import { getSubjectList } from "@utils/backend/subject/roomSubject";
 
@@ -77,10 +80,7 @@ const StudentSchedule: NextPage<{
   );
 };
 
-export const getStaticProps: GetStaticProps = async ({
-  locale,
-  params,
-}) => {
+export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   const classNumber = Number(params?.classNumber);
   if (!classNumber) return { notFound: true };
 
@@ -118,6 +118,5 @@ export const getStaticPaths: GetStaticPaths = async () => {
     fallback: "blocking",
   };
 };
-
 
 export default StudentSchedule;

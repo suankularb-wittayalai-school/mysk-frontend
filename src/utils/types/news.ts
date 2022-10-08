@@ -11,10 +11,10 @@ export type NewsItem =
   | NewsItemPayment;
 
 export type NewsItemNoDate =
-| NewsItemInfoNoDate
-| NewsItemStatsNoDate
-| NewsItemFormNoDate
-| NewsItemPaymentNoDate;
+  | NewsItemInfoNoDate
+  | NewsItemStatsNoDate
+  | NewsItemFormNoDate
+  | NewsItemPaymentNoDate;
 
 export type NewsItemType = "info" | "stats" | "form" | "payment";
 

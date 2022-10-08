@@ -5,11 +5,7 @@ import {
   PersonTable,
   StudentTable,
 } from "@utils/types/database/person";
-import {
-  ImportedStudentData,
-  Prefix,
-  Student,
-} from "@utils/types/person";
+import { ImportedStudentData, Prefix, Student } from "@utils/types/person";
 import { createPerson } from "./person";
 
 const prefixMap = {

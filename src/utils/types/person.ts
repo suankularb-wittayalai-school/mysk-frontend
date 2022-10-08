@@ -74,7 +74,7 @@ export type ImportedStudentData = {
   student_id: number;
   class_number: number;
   email: string;
-}
+};
 
 export type ImportedTeacherData = {
   prefix: "เด็กชาย" | "นาย" | "นาง" | "นางสาว";
@@ -98,4 +98,4 @@ export type ImportedTeacherData = {
     | "สังคมศึกษา ศาสนา และวัฒนธรรม"
     | "การศึกษาค้นคว้าด้วยตนเอง";
   email: string;
-}
+};
