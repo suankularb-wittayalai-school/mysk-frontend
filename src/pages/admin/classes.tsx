@@ -59,6 +59,65 @@ import {
 } from "@utils/animations/config";
 
 // Page-specific components
+const ClassCard = ({
+  classItem,
+  setEditingClass,
+  toggleShowEdit,
+  toggleShowConfDel,
+}: {
+  classItem: Class;
+  setEditingClass: (classItem: Class) => void;
+  toggleShowEdit: () => void;
+  toggleShowConfDel: () => void;
+}) => {
+  const { t } = useTranslation("admin");
+
+  return (
+    <Card type="stacked" appearance="tonal">
+      <CardHeader
+        title={
+          <h3>
+            {t("class", {
+              ns: "common",
+              number: classItem.number,
+            })}
+          </h3>
+        }
+        label={
+          classItem.classAdvisors.length == 0 ? (
+            <p className="text-outline">{t("classList.card.noAdvisors")}</p>
+          ) : (
+            <HoverList people={classItem.classAdvisors} />
+          )
+        }
+        end={
+          <Actions>
+            <Button
+              type="text"
+              icon={<MaterialIcon icon="delete" />}
+              iconOnly
+              isDangerous
+              onClick={() => {
+                setEditingClass(classItem);
+                toggleShowConfDel();
+              }}
+            />
+            <Button
+              type="text"
+              icon={<MaterialIcon icon="edit" />}
+              iconOnly
+              onClick={() => {
+                setEditingClass(classItem);
+                toggleShowEdit();
+              }}
+            />
+          </Actions>
+        }
+      />
+    </Card>
+  );
+};
+
 const GradeSection = ({
   grade,
   classes,
@@ -72,7 +131,7 @@ const GradeSection = ({
   toggleShowEdit: () => void;
   toggleShowConfDel: () => void;
 }): JSX.Element => {
-  const { t } = useTranslation(["admin", "common"]);
+  const { t } = useTranslation("common");
   return (
     <Section>
       <motion.div layoutId={`grade-${grade}`} transition={animationTransition}>
@@ -80,66 +139,28 @@ const GradeSection = ({
           icon={
             <MaterialIcon icon="subdirectory_arrow_right" allowCustomSize />
           }
-          text={t("class", { ns: "common", number: grade })}
+          text={t("class", { number: grade })}
         />
       </motion.div>
       <LayoutGridCols cols={3}>
         <motion.ul className="contents">
           <LayoutGroup>
-            <AnimatePresence>
+            <AnimatePresence initial={false}>
               {classes.map((classItem) => (
                 <motion.li
                   key={classItem.id}
                   initial={{ scale: 0.8, y: 20, opacity: 0 }}
                   animate={{ scale: 1, y: 0, opacity: 1 }}
                   exit={{ scale: 0.8, y: 20, opacity: 0 }}
-                  layoutId={classItem.id.toString()}
+                  layoutId={`class-${classItem.id}`}
                   transition={animationTransition}
                 >
-                  <Card type="stacked" appearance="tonal">
-                    <CardHeader
-                      title={
-                        <h3>
-                          {t("class", {
-                            ns: "common",
-                            number: classItem.number,
-                          })}
-                        </h3>
-                      }
-                      label={
-                        classItem.classAdvisors.length == 0 ? (
-                          <p className="text-outline">
-                            {t("classList.card.noAdvisors")}
-                          </p>
-                        ) : (
-                          <HoverList people={classItem.classAdvisors} />
-                        )
-                      }
-                      end={
-                        <Actions>
-                          <Button
-                            type="text"
-                            icon={<MaterialIcon icon="delete" />}
-                            iconOnly
-                            isDangerous
-                            onClick={() => {
-                              setEditingClass(classItem);
-                              toggleShowConfDel();
-                            }}
-                          />
-                          <Button
-                            type="text"
-                            icon={<MaterialIcon icon="edit" />}
-                            iconOnly
-                            onClick={() => {
-                              setEditingClass(classItem);
-                              toggleShowEdit();
-                            }}
-                          />
-                        </Actions>
-                      }
-                    />
-                  </Card>
+                  <ClassCard
+                    classItem={classItem}
+                    setEditingClass={setEditingClass}
+                    toggleShowEdit={toggleShowEdit}
+                    toggleShowConfDel={toggleShowConfDel}
+                  />
                 </motion.li>
               ))}
             </AnimatePresence>
