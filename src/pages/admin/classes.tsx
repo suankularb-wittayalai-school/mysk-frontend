@@ -1,4 +1,6 @@
 // Modules
+import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
+
 import type { GetServerSideProps, NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -34,6 +36,9 @@ import GenerateClassesDialog from "@components/dialogs/GenerateClasses";
 import ImportDataDialog from "@components/dialogs/ImportData";
 import HoverList from "@components/HoverList";
 
+// Animations
+import { animationTransition } from "@utils/animations/config";
+
 // Backend
 import {
   deleteClassroom,
@@ -48,16 +53,11 @@ import { ClassroomDB } from "@utils/types/database/class";
 
 // Helpers
 import { range } from "@utils/helpers/array";
+import { nameJoiner } from "@utils/helpers/name";
 import { createTitleStr } from "@utils/helpers/title";
 
 // Hooks
 import { useToggle } from "@utils/hooks/toggle";
-import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
-import {
-  animationTransition,
-  enterPageTransition,
-} from "@utils/animations/config";
-import { nameJoiner } from "@utils/helpers/name";
 
 // Page-specific components
 const ClassCard = ({
