@@ -31,8 +31,12 @@ export type BackendReturn<T, U = []> =
   | { data: T; error: null }
   | { data: U; error: Partial<PostgrestError> };
 
-export type ColumnDefWClasses = ColumnDef<object> &
-  Partial<{ thClass: string; tdClass: string }>;
+export type DataTableColumnDef = ColumnDef<object> &
+  Partial<{
+    thClass: string;
+    tdClass: string;
+    noDataMsg: string | JSX.Element;
+  }>;
 
 export type ChipInputListItem = {
   id: string;

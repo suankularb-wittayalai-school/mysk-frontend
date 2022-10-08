@@ -91,6 +91,16 @@ const TeacherTable = ({
         accessorKey: "classAdvisorAt",
         header: t("teacherList.table.classAdvisorAt"),
         thClass: "w-2/12",
+        noDataMsg: (
+          <div className="grid place-content-center">
+            <Button
+              type="text"
+              icon={<MaterialIcon icon="add" />}
+              iconOnly
+              onClick={toggleShowEdit}
+            />
+          </div>
+        ),
       },
     ],
     []
@@ -106,7 +116,9 @@ const TeacherTable = ({
           t(`name.prefix.${teacher.prefix}`, { ns: "common" }),
           { prefix: true }
         ),
-        classAdvisorAt: teacher.classAdvisorAt?.number.toString(),
+        classAdvisorAt: teacher.classAdvisorAt?.number
+          ? t("class", { ns: "common", number: teacher.classAdvisorAt.number })
+          : "",
       })),
     []
   );

@@ -2,7 +2,7 @@
 import { flexRender, RowModel } from "@tanstack/react-table";
 
 // Types
-import { ColumnDefWClasses } from "@utils/types/common";
+import { DataTableColumnDef } from "@utils/types/common";
 
 const DataTableBody = ({
   rowModel,
@@ -21,10 +21,12 @@ const DataTableBody = ({
                 <td
                   key={cell.id}
                   className={
-                    (cell.column.columnDef as ColumnDefWClasses).tdClass
+                    (cell.column.columnDef as DataTableColumnDef).tdClass
                   }
                 >
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  {cell.getValue()
+                    ? flexRender(cell.column.columnDef.cell, cell.getContext())
+                    : (cell.column.columnDef as DataTableColumnDef).noDataMsg}
                 </td>
               );
             })}
