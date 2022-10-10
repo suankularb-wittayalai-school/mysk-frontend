@@ -7,182 +7,182 @@ import Head from "next/head";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+
+import {
+  getCoreRowModel,
+  getFilteredRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
 
 // SK Components
 import {
+  Actions,
   Button,
   MaterialIcon,
   RegularLayout,
   Search,
   Section,
+  Table,
   Title,
 } from "@suankularb-components/react";
 
 // Components
+import DataTableHeader from "@components/data-table/DataTableHeader";
+import DataTableBody from "@components/data-table/DataTableBody";
 import ConfirmDelete from "@components/dialogs/ConfirmDelete";
 import EditPersonDialog from "@components/dialogs/EditPerson";
 import ImportDataDialog from "@components/dialogs/ImportData";
-import StudentTable from "@components/tables/StudentTable";
+import CopyButton from "@components/CopyButton";
 
 // Backend
 import { db2Student } from "@utils/backend/database";
+import { deleteStudent, importStudents } from "@utils/backend/person/student";
+
+// Helpers
+import { nameJoiner } from "@utils/helpers/name";
+import { createTitleStr } from "@utils/helpers/title";
+
+// Hooks
+import { useToggle } from "@utils/hooks/toggle";
 
 // Supabase
 import { supabase } from "@utils/supabaseClient";
 
 // Types
-import { Prefix, Role, Student } from "@utils/types/person";
-import { PersonTable, StudentDB } from "@utils/types/database/person";
-import { StudentTable as StudentTableType } from "@utils/types/database/person";
+import { StudentDB } from "@utils/types/database/person";
+import { LangCode } from "@utils/types/common";
+import { ImportedStudentData, Student } from "@utils/types/person";
 
-// Hooks
-import { createStudent } from "@utils/backend/person/student";
-import { createTitleStr } from "@utils/helpers/title";
+const StudentTable = ({
+  students,
+  query,
+  setEditingIdx,
+  toggleShowEdit,
+  toggleShowConfDel,
+}: {
+  students: Student[];
+  query?: string;
+  setEditingIdx: (id: number) => void;
+  toggleShowEdit: () => void;
+  toggleShowConfDel: () => void;
+}) => {
+  const { t } = useTranslation("admin");
+  const locale = useRouter().locale as LangCode;
 
-interface ImportedData {
-  prefix: "เด็กชาย" | "นาย" | "นาง" | "นางสาว";
-  first_name_th: string;
-  first_name_en: string;
-  middle_name_th?: string;
-  middle_name_en?: string;
-  last_name_th: string;
-  last_name_en: string;
-  birthdate: string;
-  citizen_id: number;
-  student_id: number;
-  class_number: number;
-  email: string;
-}
+  const [globalFilter, setGlobalFilter] = useState<string>("");
+  useEffect(() => setGlobalFilter(query || ""), [query]);
+  const columns = useMemo(
+    () => [
+      {
+        accessorKey: "studentID",
+        header: t("studentList.table.id"),
+        thClass: "w-2/12",
+      },
+      {
+        accessorKey: "class",
+        header: t("studentList.table.class"),
+        thClass: "w-1/12",
+      },
+      {
+        accessorKey: "classNo",
+        header: t("studentList.table.classNo"),
+        thClass: "w-1/12",
+      },
+      {
+        accessorKey: "name",
+        header: t("studentList.table.name"),
+        thClass: "w-5/12",
+        tdClass: "!text-left",
+      },
+    ],
+    []
+  );
+  const data = useMemo(
+    () =>
+      students.map((student, idx) => ({
+        idx,
+        studentID: student.studentID.toString(),
+        class: student.class.number.toString(),
+        classNo: student.classNo.toString(),
+        name: nameJoiner(
+          locale,
+          student.name,
+          t(`name.prefix.${student.prefix}`, { ns: "common" }),
+          { prefix: true }
+        ),
+      })),
+    []
+  );
+  const { getHeaderGroups, getRowModel } = useReactTable({
+    data,
+    columns,
+    state: { globalFilter },
+    onGlobalFilterChange: setGlobalFilter,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+  });
 
-const prefixMap = {
-  เด็กชาย: "Master.",
-  นาย: "Mr.",
-  นาง: "Mrs.",
-  นางสาว: "Miss.",
-} as const;
+  return (
+    <Table width={800}>
+      <DataTableHeader
+        headerGroups={getHeaderGroups()}
+        endRow={<th className="w-2/12" />}
+      />
+      <DataTableBody
+        rowModel={getRowModel()}
+        endRow={(row) => (
+          <td>
+            <Actions align="center">
+              <CopyButton textToCopy={row.name} />
+              <Button
+                name={t("studentList.table.action.edit")}
+                type="text"
+                iconOnly
+                icon={<MaterialIcon icon="edit" />}
+                onClick={() => {
+                  setEditingIdx(row.idx);
+                  toggleShowEdit();
+                }}
+              />
+              <Button
+                type="text"
+                iconOnly
+                icon={<MaterialIcon icon="delete" />}
+                isDangerous
+                onClick={() => {
+                  setEditingIdx(row.idx);
+                  toggleShowConfDel();
+                }}
+              />
+            </Actions>
+          </td>
+        )}
+      />
+    </Table>
+  );
+};
 
 // Page
-const Students: NextPage<{ allStudents: Array<Student> }> = ({
-  allStudents,
+const Students: NextPage<{ students: Student[] }> = ({
+  students,
 }): JSX.Element => {
   const { t } = useTranslation("admin");
   const router = useRouter();
 
-  const [showAdd, setShowAdd] = useState<boolean>(false);
+  const [query, setQuery] = useState<string>("");
+
+  const [showAdd, toggleShowAdd] = useToggle();
   const [showImport, setShowImport] = useState<boolean>(false);
-  const [showConfDel, setShowConfDel] = useState<boolean>(false);
+  const [showConfDel, toggleShowConfDel] = useToggle();
 
-  const [showEdit, setShowEdit] = useState<boolean>(false);
-  const [editingPerson, setEditingPerson] = useState<Student>();
-
-  async function handleDelete() {
-    if (!editingPerson) return;
-
-    const { data: userid, error: selectingError } = await supabase
-      .from<{
-        id: string;
-        email: string;
-        role: Role;
-        student: number;
-        teacher: number;
-      }>("users")
-      .select("id")
-      .match({ student: editingPerson.id })
-      .limit(1)
-      .single();
-
-    if (selectingError) {
-      console.error(selectingError);
-      return;
-    }
-
-    if (!userid) {
-      console.error("No user found");
-      return;
-    }
-
-    const { data: deleting, error } = await supabase
-      .from<StudentTableType>("student")
-      .delete()
-      .match({ id: editingPerson.id });
-    if (error || !deleting) {
-      console.error(error);
-      return;
-    }
-
-    // Delete the person of the student
-    const { data: person, error: personDeletingError } = await supabase
-      .from<PersonTable>("people")
-      .delete()
-      .match({ id: deleting[0].person });
-
-    if (personDeletingError || !person) {
-      console.error(personDeletingError);
-      return;
-    }
-
-    // Delete account of the student
-    await fetch(`/api/account`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        id: userid.id,
-      }),
-    });
-
-    setShowConfDel(false);
-    router.replace(router.asPath);
-  }
-
-  async function handleImport(data: ImportedData[]) {
-    const students: Array<{ person: Student; email: string }> = data.map(
-      (student) => {
-        const person: Student = {
-          id: 0,
-          name: {
-            th: {
-              firstName: student.first_name_th,
-              middleName: student.middle_name_th,
-              lastName: student.last_name_th,
-            },
-            "en-US": {
-              firstName: student.first_name_en,
-              middleName: student.middle_name_en,
-              lastName: student.last_name_en,
-            },
-          },
-          birthdate: student.birthdate,
-          citizenID: student.citizen_id.toString(),
-          studentID: student.student_id.toString(),
-          prefix: prefixMap[student.prefix] as Prefix,
-          role: "student",
-          contacts: [],
-          class: {
-            id: 0,
-            number: student.class_number,
-          },
-          classNo: 0,
-        };
-        const email = student.email;
-        return { person, email };
-      }
-    );
-
-    await Promise.all(
-      students.map(
-        async (student) => await createStudent(student.person, student.email)
-      )
-    );
-  }
+  const [showEdit, toggleShowEdit] = useToggle();
+  const [editingIdx, setEditingIdx] = useState<number>(-1);
 
   return (
     <>
       {/* Head */}
       <Head>
-        {" "}
         <title>{createTitleStr(t("studentList.title"), t)}</title>
       </Head>
 
@@ -200,8 +200,11 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
       >
         <Section>
           <div className="layout-grid-cols-3">
-            <Search placeholder={t("studentList.searchStudents")} />
-            <div className="flex flex-row items-end justify-end gap-2 md:col-span-2">
+            <Search
+              placeholder={t("studentList.searchStudents")}
+              onChange={setQuery}
+            />
+            <Actions className="md:col-span-2">
               <Button
                 label={t("common.action.import")}
                 type="outlined"
@@ -212,16 +215,17 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
                 label={t("studentList.action.addStudent")}
                 type="filled"
                 icon={<MaterialIcon icon="add" />}
-                onClick={() => setShowAdd(true)}
+                onClick={toggleShowAdd}
               />
-            </div>
+            </Actions>
           </div>
           <div>
             <StudentTable
-              students={allStudents}
-              setShowEdit={setShowEdit}
-              setEditingPerson={setEditingPerson}
-              setShowConfDelStudent={setShowConfDel}
+              students={students}
+              query={query}
+              setEditingIdx={setEditingIdx}
+              toggleShowEdit={toggleShowEdit}
+              toggleShowConfDel={toggleShowConfDel}
             />
           </div>
         </Section>
@@ -231,12 +235,10 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
       <ImportDataDialog
         show={showImport}
         onClose={() => setShowImport(false)}
-        onSubmit={(e: ImportedData[]) => {
-          // console.log(e);
-          handleImport(e).then(() => {
-            setShowImport(false);
-            router.replace(router.asPath);
-          });
+        onSubmit={async (e: ImportedStudentData[]) => {
+          await importStudents(e);
+          setShowImport(false);
+          router.replace(router.asPath);
         }}
         columns={[
           { name: "prefix", type: '"เด็กชาย" | "นาย" | "นาง" | "นางสาว"' },
@@ -255,19 +257,19 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
       />
       <EditPersonDialog
         show={showEdit}
-        onClose={() => setShowEdit(false)}
+        onClose={toggleShowEdit}
         onSubmit={() => {
-          setShowEdit(false);
+          toggleShowEdit();
           router.replace(router.asPath);
         }}
         mode="edit"
-        person={editingPerson}
+        person={students[editingIdx]}
       />
       <EditPersonDialog
         show={showAdd}
-        onClose={() => setShowAdd(false)}
+        onClose={toggleShowAdd}
         onSubmit={() => {
-          setShowAdd(false);
+          toggleShowAdd();
           router.replace(router.asPath);
         }}
         mode="add"
@@ -275,8 +277,12 @@ const Students: NextPage<{ allStudents: Array<Student> }> = ({
       />
       <ConfirmDelete
         show={showConfDel}
-        onClose={() => setShowConfDel(false)}
-        onSubmit={() => handleDelete()}
+        onClose={toggleShowConfDel}
+        onSubmit={async () => {
+          await deleteStudent(students[editingIdx]);
+          toggleShowConfDel();
+          router.replace(router.asPath);
+        }}
       />
     </>
   );
@@ -288,20 +294,20 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
     .select(`id, std_id, people:person(*)`);
 
   if (error) console.error(error);
-  if (!data) return { props: { allStudents: [] } };
+  if (!data) return { props: { students: [] } };
 
-  const allStudents: Student[] = await Promise.all(
-    data.map(async (student) => await db2Student(student))
-  );
+  const students: Student[] = (
+    await Promise.all(data.map(async (student) => await db2Student(student)))
+  ).sort((a, b) => (a.studentID < b.studentID ? -1 : 1));
 
   return {
     props: {
-      ...(await serverSideTranslations(locale as string, [
+      ...(await serverSideTranslations(locale as LangCode, [
         "common",
         "admin",
         "account",
       ])),
-      allStudents,
+      students,
     },
   };
 };

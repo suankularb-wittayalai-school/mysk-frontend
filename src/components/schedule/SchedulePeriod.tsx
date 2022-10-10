@@ -27,6 +27,7 @@ import { isInPeriod } from "@utils/helpers/schedule";
 import { useTeacherAccount } from "@utils/hooks/auth";
 
 // Types
+import { LangCode } from "@utils/types/common";
 import { Role, Teacher } from "@utils/types/person";
 import { SchedulePeriod as SchedulePeriodType } from "@utils/types/schedule";
 import { Subject } from "@utils/types/subject";
@@ -188,7 +189,7 @@ const SubjectSchedulePeriod = ({
   toggleFetched?: () => void;
 }): JSX.Element => {
   const { t } = useTranslation("common");
-  const locale = useRouter().locale as "en-US" | "th";
+  const locale = useRouter().locale as LangCode;
 
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const [dragging, setDragging] = useState<boolean>(false);

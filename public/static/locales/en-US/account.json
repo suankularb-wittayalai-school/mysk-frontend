@@ -14,16 +14,8 @@
       "save": "Save"
     }
   },
-  "adminAvailable": {
-    "title": "Admin available",
-    "subtitle": "Learn about admin privileges",
-    "crudInfo": "Your account has admin privilege, which means you can view, create, and edit data in the MySK database.",
-    "addiPriv": "Additional privileges include managing news articles and reading logs.",
-    "action": {
-      "goToPanel": "Go to Admin Panel"
-    }
-  },
   "action": {
+    "goToAdmin": "Go to Admin Panel",
     "logOut": "Log out"
   },
   "logIn": {
@@ -33,7 +25,7 @@
       "email_helper": "Your school email ends with “sk.ac.th”.",
       "email_error": "Invalid email. Must end with “sk.ac.th”.",
       "password": "Password",
-      "password_helper": "Default is birthday in YYYYMMDD (in AD), i.e. 20040512"
+      "password_helper": "Default is birthday, i.e. 832549 means Feb 8th 2006"
     },
     "action": {
       "forgotPassword": "Forgot password",

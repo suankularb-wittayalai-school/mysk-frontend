@@ -30,6 +30,7 @@ import { createTitleStr } from "@utils/helpers/title";
 
 // Types
 import { Class as ClassType } from "@utils/types/class";
+import { LangCode } from "@utils/types/common";
 import { Contact } from "@utils/types/contact";
 import { Teacher } from "@utils/types/person";
 
@@ -157,7 +158,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   return {
     props: {
-      ...(await serverSideTranslations(locale as string, [
+      ...(await serverSideTranslations(locale as LangCode, [
         "common",
         "class",
         "teacher",

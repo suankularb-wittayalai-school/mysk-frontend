@@ -25,7 +25,7 @@ import ProfilePicture from "@components/ProfilePicture";
 import { createTitleStr } from "@utils/helpers/title";
 
 // Types
-import { MultiLangString } from "@utils/types/common";
+import { LangCode, MultiLangString } from "@utils/types/common";
 import { ContactVia } from "@utils/types/contact";
 
 type PeopleListType = {
@@ -44,7 +44,7 @@ const DevelopersBanner = ({
   advisors: MultiLangString[];
 }): JSX.Element => {
   const { t } = useTranslation("about");
-  const locale = useRouter().locale as "en-US" | "th";
+  const locale = useRouter().locale as LangCode;
 
   return (
     <Section>
@@ -256,7 +256,7 @@ const ContributeSection = () => {
 
 // Components
 const PeopleList = ({ people }: { people: PeopleListType }): JSX.Element => {
-  const locale = useRouter().locale as "en-US" | "th";
+  const locale = useRouter().locale as LangCode;
 
   return (
     <ul className="layout-grid-cols-3 sm:my-4">
@@ -473,7 +473,7 @@ const Developers: NextPage = (): JSX.Element => {
           <Title
             name={{ title: t("title") }}
             pageIcon={<MaterialIcon icon="info" />}
-            backGoesTo="/account/login"
+            backGoesTo="/"
             LinkElement={Link}
           />
         }
@@ -489,7 +489,7 @@ const Developers: NextPage = (): JSX.Element => {
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(locale as string, ["common", "about"])),
+    ...(await serverSideTranslations(locale as LangCode, ["common", "about"])),
   },
 });
 

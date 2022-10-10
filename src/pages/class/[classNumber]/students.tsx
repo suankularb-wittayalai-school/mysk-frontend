@@ -7,6 +7,16 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
+import { useEffect, useMemo, useState } from "react";
+
+import {
+  ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+
 // SK Components
 import {
   LayoutGridCols,
@@ -31,47 +41,81 @@ import { createTitleStr } from "@utils/helpers/title";
 // Types
 import { LangCode } from "@utils/types/common";
 import { StudentListItem } from "@utils/types/person";
+import DataTableHeader from "@components/data-table/DataTableHeader";
+import DataTableBody from "@components/data-table/DataTableBody";
 
-const StudentList = ({ students }: { students: StudentListItem[] }): JSX.Element => {
+const StudentList = ({
+  students,
+  query,
+}: {
+  students: StudentListItem[];
+  query?: string;
+}): JSX.Element => {
   const { t } = useTranslation(["class", "common"]);
   const locale = useRouter().locale as LangCode;
+
+  // Query
+  const [globalFilter, setGlobalFilter] = useState("");
+  useEffect(() => setGlobalFilter(query || ""), [query]);
+
+  // Table config
+  const data = useMemo(
+    () =>
+      students.map((student) => ({
+        id: student.id,
+        classNo: student.classNo,
+        name: nameJoiner(
+          locale,
+          student.name,
+          t(`name.prefix.${student.prefix}`, { ns: "common" }),
+          { prefix: true }
+        ),
+      })),
+    []
+  );
+  const columns = useMemo<ColumnDef<object>[]>(
+    () => [
+      {
+        accessorKey: "classNo",
+        header: t("studentList.table.classNo"),
+        thClass: "w-2/12",
+        enableGlobalFilter: false,
+      },
+      {
+        accessorKey: "name",
+        header: t("studentList.table.name"),
+        tdClass: "!text-left",
+      },
+    ],
+    []
+  );
+  const { getHeaderGroups, getRowModel } = useReactTable({
+    data,
+    columns,
+    state: { globalFilter },
+    onGlobalFilterChange: setGlobalFilter,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+  });
 
   return (
     <div>
       <Table width={320}>
-        <thead>
-          <tr>
-            <th className="w-24">{t("studentList.table.classNo")}</th>
-            <th>{t("studentList.table.name")}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {students.map((student) => (
-            <tr key={student.id}>
-              <td>{student.classNo}</td>
-              <td className="!text-left">
-                {nameJoiner(
-                  locale,
-                  student.name,
-                  t(`name.prefix.${student.prefix}`, { ns: "common" }),
-                  {
-                    prefix: true,
-                  }
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
+        <DataTableHeader headerGroups={getHeaderGroups()} />
+        <DataTableBody rowModel={getRowModel()} />
       </Table>
     </div>
   );
 };
 
-const ClassStudents: NextPage<{ classNumber: number; students: StudentListItem[] }> = ({
-  classNumber,
-  students,
-}) => {
+const ClassStudents: NextPage<{
+  classNumber: number;
+  students: StudentListItem[];
+}> = ({ classNumber, students }) => {
   const { t } = useTranslation("class");
+
+  // Query
+  const [query, setQuery] = useState("");
 
   return (
     <>
@@ -96,9 +140,12 @@ const ClassStudents: NextPage<{ classNumber: number; students: StudentListItem[]
       >
         <Section>
           <LayoutGridCols cols={3}>
-            <Search placeholder={t("studentList.searchStudents")} />
+            <Search
+              placeholder={t("studentList.searchStudents")}
+              onChange={setQuery}
+            />
           </LayoutGridCols>
-          <StudentList students={students} />
+          <StudentList students={students} query={query} />
         </Section>
       </RegularLayout>
     </>

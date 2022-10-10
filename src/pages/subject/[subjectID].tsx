@@ -89,7 +89,7 @@ const DetailsSection = ({
   }) => void;
 }): JSX.Element => {
   const { t } = useTranslation(["subjects", "common"]);
-  const locale = useRouter().locale as "en-US" | "th";
+  const locale = useRouter().locale as LangCode;
 
   return (
     <Section>
@@ -230,7 +230,7 @@ const PeriodLogsSection = ({
   setLogDetails: (value: { show: boolean; periodLog?: PeriodLog }) => void;
 }): JSX.Element => {
   const { t } = useTranslation("subjects");
-  const locale = useRouter().locale as "en-US" | "th";
+  const locale = useRouter().locale as LangCode;
 
   return (
     <Section>
@@ -401,7 +401,7 @@ const PeriodLogDetailsDialog = ({
   periodLog,
 }: DialogProps & { periodLog: PeriodLog }) => {
   const { t } = useTranslation("subjects");
-  const locale = useRouter().locale as "en-US" | "th";
+  const locale = useRouter().locale as LangCode;
 
   return (
     <Dialog
@@ -448,7 +448,7 @@ const SubstituteAssignmentsSection = ({
   setActiveAsgn: Function;
 }): JSX.Element => {
   const { t } = useTranslation(["subjects", "common"]);
-  const locale = useRouter().locale as "en-US" | "th";
+  const locale = useRouter().locale as LangCode;
 
   return (
     <Section>
@@ -531,7 +531,7 @@ const AssignmentDetailsDialog = ({
   assignment,
 }: DialogProps & { assignment: SubstituteAssignment }): JSX.Element => {
   const { t } = useTranslation(["subjects", "common"]);
-  const locale = useRouter().locale as "en-US" | "th";
+  const locale = useRouter().locale as LangCode;
 
   return (
     <Dialog
@@ -581,7 +581,7 @@ const EditAssignmentDialog = ({
   allSubjects: Array<SubjectWNameAndCode>;
 }): JSX.Element => {
   const { t } = useTranslation(["subjects", "common"]);
-  const locale = useRouter().locale as "en-US" | "th";
+  const locale = useRouter().locale as LangCode;
   const [showAddClass, setShowAddClass] = useState<boolean>(false);
 
   // Form control
@@ -885,7 +885,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   return {
     props: {
-      ...(await serverSideTranslations(locale as string, [
+      ...(await serverSideTranslations(locale as LangCode, [
         "common",
         "subjects",
       ])),

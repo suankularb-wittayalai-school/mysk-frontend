@@ -32,7 +32,7 @@ import { classRegex } from "@utils/patterns";
 
 // Types
 import { Class } from "@utils/types/class";
-import { ChipInputListItem, DialogProps } from "@utils/types/common";
+import { ChipInputListItem, DialogProps, LangCode } from "@utils/types/common";
 import { Contact } from "@utils/types/contact";
 import { Student, Teacher } from "@utils/types/person";
 
@@ -47,7 +47,7 @@ const EditClassDialog = ({
   mode: "add" | "edit";
   classItem?: Class;
 }): JSX.Element => {
-  const locale = useRouter().locale as "en-US" | "th";
+  const locale = useRouter().locale as LangCode;
   const { t } = useTranslation(["class", "admin"]);
 
   // Dialog control

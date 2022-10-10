@@ -16,7 +16,7 @@ import {
 } from "@suankularb-components/react";
 
 // Types
-import { DialogProps } from "@utils/types/common";
+import { DialogProps, LangCode } from "@utils/types/common";
 import { Prefix, Role, Student, Teacher } from "@utils/types/person";
 import {
   PersonDB,
@@ -49,7 +49,7 @@ const EditPersonDialog = ({
   userRole?: Role;
   person?: Student | Teacher;
 }): JSX.Element => {
-  const locale = useRouter().locale as "en-US" | "th";
+  const locale = useRouter().locale as LangCode;
   const { t } = useTranslation(["account", "admin"]);
 
   // Form control

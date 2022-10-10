@@ -13,14 +13,9 @@ import { useReducer, useState } from "react";
 import {
   Actions,
   Button,
-  Card,
-  CardActions,
-  CardHeader,
-  CardSupportingText,
   Dropdown,
   Header,
   KeyboardInput,
-  LayoutGridCols,
   LinkButton,
   MaterialIcon,
   RegularLayout,
@@ -107,6 +102,15 @@ const BasicInfoSection = ({
             </div>
           </div>
           <Actions>
+            {user.isAdmin && (
+              <LinkButton
+                label={t("action.goToAdmin")}
+                type="tonal"
+                icon={<MaterialIcon icon="admin_panel_settings" />}
+                url="/admin"
+                LinkElement={Link}
+              />
+            )}
             <Button
               label={t("action.logOut")}
               type="filled"
@@ -289,38 +293,6 @@ const EditInfoSection = ({
   );
 };
 
-const AdminAvailable = (): JSX.Element => {
-  const { t } = useTranslation("account");
-
-  return (
-    <Section>
-      <div>
-        <Card type="stacked" appearance="tonal">
-          <CardHeader
-            icon={<MaterialIcon icon="admin_panel_settings" />}
-            title={<h3>{t("adminAvailable.title")}</h3>}
-            label={t("adminAvailable.subtitle")}
-          />
-          <CardSupportingText>
-            <p>{t("adminAvailable.crudInfo")}</p>
-            <p>{t("adminAvailable.addiPriv")}</p>
-          </CardSupportingText>
-          <CardActions>
-            <LinkButton
-              label={t("adminAvailable.action.goToPanel")}
-              type="filled"
-              icon={<MaterialIcon icon="admin_panel_settings" />}
-              url="/admin"
-              LinkElement={Link}
-              className="!flex !w-full justify-center sm:!w-fit"
-            />
-          </CardActions>
-        </Card>
-      </div>
-    </Section>
-  );
-};
-
 const AccountDetails: NextPage<{ user: Student | Teacher }> = ({ user }) => {
   const { t } = useTranslation("account");
 
@@ -349,7 +321,6 @@ const AccountDetails: NextPage<{ user: Student | Teacher }> = ({ user }) => {
       >
         <BasicInfoSection user={user} toggleShowLogOut={toggleShowLogOut} />
         <EditInfoSection user={user} />
-        {user.isAdmin && <AdminAvailable />}
       </RegularLayout>
 
       {/* Dialogs */}
@@ -361,8 +332,9 @@ const AccountDetails: NextPage<{ user: Student | Teacher }> = ({ user }) => {
 export const getServerSideProps: GetServerSideProps = async ({
   locale,
   req,
+  res,
 }) => {
-  const { data: user, error } = await getUserFromReq(req);
+  const { data: user, error } = await getUserFromReq(req, res);
   if (error)
     return { redirect: { destination: "/account/login", permanent: false } };
 

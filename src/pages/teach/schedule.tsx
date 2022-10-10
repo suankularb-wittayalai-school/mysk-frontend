@@ -37,6 +37,7 @@ import { createTitleStr } from "@utils/helpers/title";
 import { useTeacherAccount } from "@utils/hooks/auth";
 
 // Types
+import { LangCode } from "@utils/types/common";
 import {
   Schedule as ScheduleType,
   SchedulePeriod,
@@ -199,7 +200,7 @@ const TeacherSchedule: NextPage = () => {
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
   return {
     props: {
-      ...(await serverSideTranslations(locale as string, [
+      ...(await serverSideTranslations(locale as LangCode, [
         "common",
         "schedule",
       ])),

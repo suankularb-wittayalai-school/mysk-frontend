@@ -64,14 +64,8 @@
   "classList": {
     "title": "รายชื่อห้องเรียน",
     "searchClasses": "ค้นหาห้องเรียน",
-    "table": {
-      "name": "เลขประจำห้อง",
-      "advisor": "อาจารย์ที่ปรึกษา",
-      "year": "ปีกศษ.",
-      "action": {
-        "edit": "แก้ไข",
-        "delete": "ลบทิ้ง"
-      }
+    "card": {
+      "noAdvisors": "ไม่มีครูที่ปรึกษา"
     },
     "action": {
       "seeAll": "ดูทั้งหมด",

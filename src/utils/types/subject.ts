@@ -101,7 +101,7 @@ export type PeriodMedium =
   | "assignment"
   | "on-site";
 
-// Substitue Assignment
+// Substitute Assignment
 export type SubstituteAssignment = {
   id: number;
   name: {
@@ -114,4 +114,34 @@ export type SubstituteAssignment = {
   };
   classes: Array<ClassWNumber>;
   subject: SubjectWNameAndCode;
+};
+
+// As imported from CSV
+export type ImportedSubjectData = {
+  name_th: string;
+  name_en: string;
+  short_name_th?: string;
+  short_name_en?: string;
+  code_th: string;
+  code_en: string;
+  type:
+    | "รายวิชาพื้นฐาน"
+    | "รายวิชาเพิ่มเติม"
+    | "รายวิชาเลือก"
+    | "กิจกรรมพัฒนาผู้เรียน";
+  group:
+    | "วิทยาศาสตร์"
+    | "คณิตศาสตร์"
+    | "ภาษาต่างประเทศ"
+    | "ภาษาไทย"
+    | "สุขศึกษาและพลศึกษา"
+    | "การงานอาชีพและเทคโนโลยี"
+    | "ศิลปะ"
+    | "สังคมศึกษา ศาสนา และวัฒนธรรม"
+    | "การศึกษาค้นคว้าด้วยตนเอง";
+  credit: number;
+  description_th?: string;
+  description_en?: string;
+  year: number;
+  semester: 1 | 2;
 };

@@ -45,6 +45,7 @@ import { getSchedule } from "@utils/backend/schedule/schedule";
 import { getTeachingSubjects } from "@utils/backend/subject/subject";
 
 // Types
+import { LangCode } from "@utils/types/common";
 import { Schedule as ScheduleType } from "@utils/types/schedule";
 import { SubjectWNameAndCode } from "@utils/types/subject";
 import { ClassWNumber } from "@utils/types/class";
@@ -220,13 +221,14 @@ const Teach: NextPage<{ teacherID: number; schedule: ScheduleType }> = ({
 export const getServerSideProps: GetServerSideProps = async ({
   locale,
   req,
+  res,
 }) => {
-  const teacherID = await getTeacherIDFromReq(req);
+  const teacherID = await getTeacherIDFromReq(req, res);
   const schedule = await getSchedule("teacher", teacherID);
 
   return {
     props: {
-      ...(await serverSideTranslations(locale as string, [
+      ...(await serverSideTranslations(locale as LangCode, [
         "common",
         "account",
         "teach",

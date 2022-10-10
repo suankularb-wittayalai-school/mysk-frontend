@@ -7,167 +7,204 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+
+import {
+  useReactTable,
+  getCoreRowModel,
+  getFilteredRowModel,
+} from "@tanstack/react-table";
 
 // SK Components
 import {
+  Actions,
   Button,
   MaterialIcon,
   RegularLayout,
   Search,
   Section,
+  Table,
   Title,
 } from "@suankularb-components/react";
 
 // Components
+import DataTableBody from "@components/data-table/DataTableBody";
+import DataTableHeader from "@components/data-table/DataTableHeader";
 import ConfirmDelete from "@components/dialogs/ConfirmDelete";
 import EditSubjectDialog from "@components/dialogs/EditSubject";
 import ImportDataDialog from "@components/dialogs/ImportData";
-import SubjectTable from "@components/tables/SubjectTable";
 
 // Backend
 import { db2Subject } from "@utils/backend/database";
-import { createSubject } from "@utils/backend/subject/subject";
+import { deleteSubject, importSubjects } from "@utils/backend/subject/subject";
 
 // Supabase
 import { supabase } from "@utils/supabaseClient";
 
 // Types
-import { Subject } from "@utils/types/subject";
+import { LangCode } from "@utils/types/common";
+import { ImportedSubjectData, Subject } from "@utils/types/subject";
 import { SubjectTable as SubjectTableType } from "@utils/types/database/subject";
 
 // Helpers
+import { getLocaleYear } from "@utils/helpers/date";
+import { getLocaleObj, getLocaleString } from "@utils/helpers/i18n";
 import { createTitleStr } from "@utils/helpers/title";
 
 // Hooks
-import { useSession } from "@utils/hooks/auth";
+import { useToggle } from "@utils/hooks/toggle";
+import { nameJoiner } from "@utils/helpers/name";
 
-interface ImportedSubject {
-  name_th: string;
-  name_en: string;
-  short_name_th?: string;
-  short_name_en?: string;
-  code_th: string;
-  code_en: string;
-  type:
-    | "รายวิชาพื้นฐาน"
-    | "รายวิชาเพิ่มเติม"
-    | "รายวิชาเลือก"
-    | "กิจกรรมพัฒนาผู้เรียน";
-  group:
-    | "วิทยาศาสตร์"
-    | "คณิตศาสตร์"
-    | "ภาษาต่างประเทศ"
-    | "ภาษาไทย"
-    | "สุขศึกษาและพลศึกษา"
-    | "การงานอาชีพและเทคโนโลยี"
-    | "ศิลปะ"
-    | "สังคมศึกษา ศาสนา และวัฒนธรรม"
-    | "การศึกษาค้นคว้าด้วยตนเอง";
-  credit: number;
-  description_th?: string;
-  description_en?: string;
-  year: number;
-  semester: 1 | 2;
-}
+const SubjectTable = ({
+  subjects,
+  query,
+  setEditingIdx,
+  toggleShowEdit,
+  toggleShowConfDel,
+}: {
+  subjects: Subject[];
+  query?: string;
+  setEditingIdx: (id: number) => void;
+  toggleShowEdit: () => void;
+  toggleShowConfDel: () => void;
+}) => {
+  const { t } = useTranslation("admin");
+  const locale = useRouter().locale as LangCode;
 
-const subjectGroupMap = {
-  วิทยาศาสตร์: 1,
-  คณิตศาสตร์: 2,
-  ภาษาต่างประเทศ: 3,
-  ภาษาไทย: 4,
-  สุขศึกษาและพลศึกษา: 5,
-  การงานอาชีพและเทคโนโลยี: 6,
-  ศิลปะ: 7,
-  "สังคมศึกษา ศาสนา และวัฒนธรรม": 8,
-  การศึกษาค้นคว้าด้วยตนเอง: 9,
-} as const;
+  const [globalFilter, setGlobalFilter] = useState<string>("");
+  useEffect(() => setGlobalFilter(query || ""), [query]);
+  const columns = useMemo(
+    () => [
+      {
+        accessorKey: "code",
+        header: t("subjectList.table.code"),
+        thClass: "w-2/12",
+      },
+      {
+        accessorKey: "name",
+        header: t("subjectList.table.name"),
+        thClass: "w-4/12",
+        tdClass: "!text-left",
+      },
+      {
+        accessorKey: "teachers",
+        header: t("subjectList.table.teachers"),
+        thClass: "w-2/12",
+        render: (subject: Subject) => (
+          <>
+            {subject.teachers.length > 0 &&
+              nameJoiner(locale, subject.teachers[0].name)}
+            {((subject.coTeachers && subject.coTeachers.length > 0) ||
+              subject.teachers.length > 1) && (
+              <abbr
+                className="text-surface-variant"
+                title={subject.teachers
+                  // Start from the 2nd teacher in teachers
+                  .slice(1)
+                  // Join with co-teachers
+                  .concat(subject.coTeachers || [])
+                  // Format the name
+                  .map((teacher) => nameJoiner(locale, teacher.name))
+                  // Format the list
+                  .join(", ")}
+              >
+                {`+${
+                  subject.teachers.length -
+                  1 +
+                  (subject.coTeachers?.length || 0)
+                }`}
+              </abbr>
+            )}
+          </>
+        ),
+      },
+      {
+        accessorKey: "year",
+        header: t("subjectList.table.year"),
+        thClass: "w-1/12",
+      },
+      {
+        accessorKey: "semester",
+        header: t("subjectList.table.semester"),
+        thClass: "w-1/12",
+        enableGlobalFilter: false,
+      },
+    ],
+    []
+  );
+  const data = useMemo(
+    () =>
+      subjects.map((subject, idx) => ({
+        idx,
+        code: getLocaleString(subject.code, locale),
+        name: getLocaleObj(subject.name, locale).name,
+        teachers: subject.teachers,
+        coTeachers: subject.coTeachers,
+        year: getLocaleYear(locale, subject.year).toString(),
+        semester: subject.semester,
+      })),
+    []
+  );
+  const { getHeaderGroups, getRowModel } = useReactTable({
+    data,
+    columns,
+    state: { globalFilter },
+    onGlobalFilterChange: setGlobalFilter,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+  });
 
-const subjectTypeMap = {
-  รายวิชาพื้นฐาน: "Core Courses",
-  รายวิชาเพิ่มเติม: "Additional Courses",
-  รายวิชาเลือก: "Elective Courses",
-  กิจกรรมพัฒนาผู้เรียน: "Learner’s Development Activities",
-} as const;
+  return (
+    <Table width={800}>
+      <DataTableHeader
+        headerGroups={getHeaderGroups()}
+        endRow={<th className="w-2/12" />}
+      />
+      <DataTableBody
+        rowModel={getRowModel()}
+        endRow={(row) => (
+          <td>
+            <Actions align="center">
+              <Button
+                name={t("studentList.table.action.edit")}
+                type="text"
+                iconOnly
+                icon={<MaterialIcon icon="edit" />}
+                onClick={() => {
+                  setEditingIdx(row.idx);
+                  toggleShowEdit();
+                }}
+              />
+              <Button
+                type="text"
+                iconOnly
+                icon={<MaterialIcon icon="delete" />}
+                isDangerous
+                onClick={() => {
+                  setEditingIdx(row.idx);
+                  toggleShowConfDel();
+                }}
+              />
+            </Actions>
+          </td>
+        )}
+      />
+    </Table>
+  );
+};
 
-const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
+const Subjects: NextPage<{ subjects: Subject[] }> = ({ subjects }) => {
   const { t } = useTranslation(["admin", "common"]);
   const router = useRouter();
 
-  const [showAdd, setShowAdd] = useState<boolean>(false);
-  const [showImport, setShowImport] = useState<boolean>(false);
-  const [showConfDel, setShowConfDel] = useState<boolean>(false);
+  const [query, setQuery] = useState<string>("");
 
-  const [showEdit, setShowEdit] = useState<boolean>(false);
-  const [editingSubject, setEditingSubject] = useState<Subject>();
+  const [showAdd, toggleShowAdd] = useToggle();
+  const [showImport, toggleShowImport] = useToggle();
+  const [showConfDel, toggleShowConfDel] = useToggle();
 
-  const session = useSession({ loginRequired: true, adminOnly: true });
-
-  async function handleDelete() {
-    // Delete the syllabus if it exists
-    if (editingSubject?.syllabus) {
-      const { data: syllabus, error: syllabusError } = await supabase.storage
-        .from("syllabus")
-        .remove([editingSubject.syllabus.toString()]);
-      if (syllabusError) {
-        console.error(syllabusError);
-      }
-    }
-    // Delete the subject
-    const { data, error } = await supabase
-      .from("subject")
-      .delete()
-      .match({ id: editingSubject?.id });
-    if (error) {
-      console.error(error);
-    }
-    setShowConfDel(false);
-    router.replace(router.asPath);
-  }
-
-  async function handleImport(data: ImportedSubject[]) {
-    const subjects: Subject[] = data.map((subject) => ({
-      id: 0,
-      code: {
-        th: subject.code_th,
-        "en-US": subject.code_en,
-      },
-      name: {
-        th: {
-          name: subject.name_th,
-          shortName: subject.short_name_th,
-        },
-        "en-US": {
-          name: subject.name_en,
-          shortName: subject.short_name_en,
-        },
-      },
-      type: {
-        th: subject.type,
-        "en-US": subjectTypeMap[subject.type],
-      },
-      subjectGroup: {
-        id: subjectGroupMap[subject.group],
-        name: {
-          th: subject.group,
-          "en-US": subject.group,
-        },
-      },
-      credit: subject.credit,
-      description: {
-        th: subject.description_th ? subject.description_th : "",
-        "en-US": subject.description_en ? subject.description_en : "",
-      },
-      year: subject.year,
-      semester: subject.semester,
-      syllabus: null,
-      teachers: [],
-    }));
-
-    await Promise.all(
-      subjects.map(async (subject) => await createSubject(subject))
-    );
-  }
+  const [showEdit, toggleShowEdit] = useToggle();
+  const [editingIdx, setEditingIdx] = useState<number>(-1);
 
   return (
     <>
@@ -184,34 +221,37 @@ const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
             pageIcon={<MaterialIcon icon="school" />}
             backGoesTo="/admin"
             LinkElement={Link}
-            key="title"
           />
         }
       >
         <Section>
           <div className="layout-grid-cols-3">
-            <Search placeholder={t("subjectList.searchSubjects")} />
+            <Search
+              placeholder={t("subjectList.searchSubjects")}
+              onChange={setQuery}
+            />
             <div className="flex flex-row items-end justify-end gap-2 md:col-span-2">
               <Button
                 label={t("common.action.import")}
                 type="outlined"
                 icon={<MaterialIcon icon="file_upload" />}
-                onClick={() => setShowImport(true)}
+                onClick={toggleShowImport}
               />
               <Button
                 label={t("subjectList.action.addSubject")}
                 type="filled"
                 icon={<MaterialIcon icon="add" />}
-                onClick={() => setShowAdd(true)}
+                onClick={toggleShowAdd}
               />
             </div>
           </div>
           <div>
             <SubjectTable
-              subjects={allSubjects}
-              setShowEdit={setShowEdit}
-              setEditingSubject={setEditingSubject}
-              setShowConfDelSubject={setShowConfDel}
+              subjects={subjects}
+              query={query}
+              toggleShowEdit={toggleShowEdit}
+              setEditingIdx={setEditingIdx}
+              toggleShowConfDel={toggleShowConfDel}
             />
           </div>
         </Section>
@@ -220,12 +260,11 @@ const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
       {/* Dialogs */}
       <ImportDataDialog
         show={showImport}
-        onClose={() => setShowImport(false)}
-        onSubmit={(e: ImportedSubject[]) => {
-          handleImport(e).then(() => {
-            setShowImport(false);
-            router.replace(router.asPath);
-          });
+        onClose={toggleShowImport}
+        onSubmit={async (data: ImportedSubjectData[]) => {
+          await importSubjects(data);
+          toggleShowImport();
+          router.replace(router.asPath);
         }}
         // prettier-ignore
         columns={[
@@ -246,57 +285,62 @@ const Subjects: NextPage<{ allSubjects: Subject[] }> = ({ allSubjects }) => {
       />
       <EditSubjectDialog
         show={showAdd}
-        onClose={() => setShowAdd(false)}
+        onClose={toggleShowAdd}
         onSubmit={() => {
-          setShowAdd(false);
+          toggleShowAdd();
           router.replace(router.asPath);
         }}
         mode="add"
       />
       <EditSubjectDialog
         show={showEdit}
-        onClose={() => setShowEdit(false)}
+        onClose={toggleShowEdit}
         onSubmit={() => {
-          setShowEdit(false);
+          toggleShowEdit();
           router.replace(router.asPath);
         }}
-        subject={editingSubject}
+        subject={subjects[editingIdx]}
         mode="edit"
       />
       <ConfirmDelete
         show={showConfDel}
-        onClose={() => setShowConfDel(false)}
-        onSubmit={() => handleDelete()}
+        onClose={toggleShowConfDel}
+        onSubmit={async () => {
+          await deleteSubject(subjects[editingIdx]);
+          toggleShowConfDel();
+          router.replace(router.asPath);
+        }}
       />
     </>
   );
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
-  let allSubjects: Subject[] = [];
+  let subjects: Subject[] = [];
 
-  const { data: subjects, error: subjectSelectingError } = await supabase
+  const { data, error } = await supabase
     .from<SubjectTableType>("subject")
     .select("*");
 
-  if (subjectSelectingError) {
-    console.error(subjectSelectingError);
-  }
+  if (error) console.error(error);
 
-  if (subjects) {
-    allSubjects = await Promise.all(
-      subjects.map(async (subject) => await db2Subject(subject))
-    );
+  if (data) {
+    subjects = (
+      await Promise.all(data.map(async (subject) => await db2Subject(subject)))
+    )
+      .sort((a, b) => (a.code.th < b.code.th ? -1 : 1))
+      .sort((a, b) => a.semester - b.semester)
+      .sort((a, b) => a.year - b.year);
   }
 
   return {
     props: {
-      ...(await serverSideTranslations(locale as string, [
+      ...(await serverSideTranslations(locale as LangCode, [
         "common",
         "admin",
         "subjects",
       ])),
-      allSubjects,
+      subjects,
     },
   };
 };

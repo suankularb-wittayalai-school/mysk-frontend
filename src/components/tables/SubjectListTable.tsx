@@ -1,7 +1,13 @@
-// Modules
+// External libraries
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
+import {
+  ColumnDef,
+  getCoreRowModel,
+  getFilteredRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
 
 // SK Components
 import {
@@ -15,6 +21,8 @@ import {
 } from "@suankularb-components/react";
 
 // Components
+import DataTableBody from "@components/data-table/DataTableBody";
+import DataTableHeader from "@components/data-table/DataTableHeader";
 import BrandIcon from "@components/icons/BrandIcon";
 
 // Types
@@ -23,6 +31,7 @@ import { SubjectListItem } from "@utils/types/subject";
 
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
+import { getLocaleObj, getLocaleString } from "@utils/helpers/i18n";
 
 const SubjectListTable = ({
   subjectList,
@@ -31,33 +40,55 @@ const SubjectListTable = ({
 }): JSX.Element => {
   const { t } = useTranslation("schedule");
   const locale = useRouter().locale as LangCode;
-  const [filterredList, setFilterredList] =
-    useState<SubjectListItem[]>(subjectList);
-  const [query, setQuery] = useState<string>("");
 
-  useEffect(() => {
-    setFilterredList(
-      query
-        ? // Filter Subject List by code, name, and teacher
-          subjectList.filter(
-            (subjectListItem) =>
-              subjectListItem.subject.code[locale]
-                .toLowerCase()
-                .includes(query) ||
-              (
-                subjectListItem.subject.name[locale] ||
-                subjectListItem.subject.name.th
-              ).name
-                .toLowerCase()
-                .includes(query) ||
-              nameJoiner(locale, subjectListItem.teachers[0].name)
-                .toLowerCase()
-                .includes(query)
-          )
-        : // If the query is empty, show the normal unfilterred Subject List
-          subjectList
-    );
-  }, [query]);
+  const [globalFilter, setGlobalFilter] = useState<string>("");
+  const data = useMemo(
+    () =>
+      subjectList.map((subjectListItem) => ({
+        code: getLocaleString(subjectListItem.subject.code, locale),
+        name: (
+          getLocaleObj(subjectListItem.subject.name, locale) as { name: string }
+        ).name,
+        teachers:
+          subjectListItem.teachers.length > 0 &&
+          nameJoiner(locale, subjectListItem.teachers[0].name),
+        ggcCode: subjectListItem.ggcCode,
+      })),
+    []
+  );
+  const columns = useMemo<ColumnDef<object>[]>(
+    () => [
+      {
+        accessorKey: "code",
+        header: t("subjectList.table.code"),
+        thClass: "w-1/12",
+      },
+      {
+        accessorKey: "name",
+        header: t("subjectList.table.name"),
+        thClass: "w-5/12",
+      },
+      {
+        accessorKey: "teachers",
+        header: t("subjectList.table.teachers"),
+        thClass: "w-3/12",
+      },
+      {
+        accessorKey: "ggcCode",
+        header: t("subjectList.table.ggcCode"),
+        thClass: "w-2/12",
+      },
+    ],
+    []
+  );
+  const { getHeaderGroups, getRowModel } = useReactTable({
+    data,
+    columns,
+    state: { globalFilter },
+    onGlobalFilterChange: setGlobalFilter,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+  });
 
   return (
     <Section>
@@ -70,38 +101,27 @@ const SubjectListTable = ({
         </div>
         <Search
           placeholder={t("subjectList.search")}
-          onChange={(e: string) => setQuery(e.toLowerCase())}
+          onChange={(e: string) => setGlobalFilter(e)}
         />
       </LayoutGridCols>
       <div>
         <Table width={720}>
-          <thead>
-            <tr>
-              <th className="w-1/12">{t("subjectList.table.code")}</th>
-              <th className="w-5/12">{t("subjectList.table.name")}</th>
-              <th className="w-3/12">{t("subjectList.table.teachers")}</th>
-              <th className="w-2/12">{t("subjectList.table.ggcCode")}</th>
-              <th className="w-1/12" />
-            </tr>
-          </thead>
-          <tbody>
-            {filterredList.map((subjectListItem) => (
-              <tr key={subjectListItem.id}>
-                <td>{subjectListItem.subject.code[locale]}</td>
-                <td className="!text-left">
-                  {subjectListItem.subject.name[locale]?.name ||
-                    subjectListItem.subject.name.th.name}
-                </td>
-                <td className="!text-left">
-                  {subjectListItem.teachers.length > 0 &&
-                    nameJoiner(locale, subjectListItem.teachers[0].name)}
-                </td>
-                <td>{subjectListItem.ggcCode}</td>
+          <DataTableHeader
+            headerGroups={getHeaderGroups()}
+            endRow={<th className="w-1/12" />}
+          />
+          <DataTableBody
+            rowModel={getRowModel()}
+            endRow={(row) => {
+              const subjectListItem = subjectList.find(
+                (item) => (row as { id: number }).id == item.id
+              );
+              return (
                 <td>
                   <div className="flex flex-row justify-center gap-2">
-                    {subjectListItem.ggcLink && (
+                    {subjectListItem?.ggcLink && (
                       <a
-                        href={subjectListItem.ggcLink}
+                        href={subjectListItem?.ggcLink}
                         target="_blank"
                         rel="noreferrer"
                       >
@@ -113,7 +133,7 @@ const SubjectListTable = ({
                         />
                       </a>
                     )}
-                    {subjectListItem.ggMeetLink && (
+                    {subjectListItem?.ggMeetLink && (
                       <a
                         href={subjectListItem.ggMeetLink}
                         target="_blank"
@@ -129,9 +149,9 @@ const SubjectListTable = ({
                     )}
                   </div>
                 </td>
-              </tr>
-            ))}
-          </tbody>
+              );
+            }}
+          />
         </Table>
       </div>
     </Section>

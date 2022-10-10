@@ -20,7 +20,7 @@ import { nameJoiner } from "@utils/helpers/name";
 import { supabase } from "@utils/supabaseClient";
 
 // Types
-import { DialogProps } from "@utils/types/common";
+import { DialogProps, LangCode } from "@utils/types/common";
 import { StudentDB } from "@utils/types/database/person";
 import { Student } from "@utils/types/person";
 
@@ -30,7 +30,7 @@ const AddStudentDialog = ({
   onSubmit,
 }: DialogProps & { onSubmit: (student: Student) => void }): JSX.Element => {
   const { t } = useTranslation("common");
-  const locale = useRouter().locale as "en-US" | "th";
+  const locale = useRouter().locale as LangCode;
 
   const [studentID, setStudentID] = useState<string>("");
   const [student, setStudent] = useState<Student | null>(null);

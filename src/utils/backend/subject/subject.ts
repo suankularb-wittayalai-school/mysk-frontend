@@ -3,10 +3,91 @@ import { supabase } from "@utils/supabaseClient";
 import { ClassWNumber } from "@utils/types/class";
 import { RoomSubjectDB, SubjectTable } from "@utils/types/database/subject";
 import {
+  ImportedSubjectData,
   Subject,
   SubjectName,
   SubjectWNameAndCode,
 } from "@utils/types/subject";
+
+const subjectGroupMap = {
+  วิทยาศาสตร์: 1,
+  คณิตศาสตร์: 2,
+  ภาษาต่างประเทศ: 3,
+  ภาษาไทย: 4,
+  สุขศึกษาและพลศึกษา: 5,
+  การงานอาชีพและเทคโนโลยี: 6,
+  ศิลปะ: 7,
+  "สังคมศึกษา ศาสนา และวัฒนธรรม": 8,
+  การศึกษาค้นคว้าด้วยตนเอง: 9,
+} as const;
+
+const subjectTypeMap = {
+  รายวิชาพื้นฐาน: "Core Courses",
+  รายวิชาเพิ่มเติม: "Additional Courses",
+  รายวิชาเลือก: "Elective Courses",
+  กิจกรรมพัฒนาผู้เรียน: "Learner’s Development Activities",
+} as const;
+
+export async function deleteSubject(subject: Subject) {
+  // Delete the syllabus if it exists
+  if (subject.syllabus) {
+    const { data: syllabus, error: syllabusError } = await supabase.storage
+      .from("syllabus")
+      .remove([subject.syllabus.toString()]);
+    if (syllabusError) console.error(syllabusError);
+  }
+
+  // Delete the subject
+  const { data, error } = await supabase
+    .from("subject")
+    .delete()
+    .match({ id: subject.id });
+  if (error) console.error(error);
+}
+
+export async function importSubjects(data: ImportedSubjectData[]) {
+  const subjects: Subject[] = data.map((subject) => ({
+    id: 0,
+    code: {
+      th: subject.code_th,
+      "en-US": subject.code_en,
+    },
+    name: {
+      th: {
+        name: subject.name_th,
+        shortName: subject.short_name_th,
+      },
+      "en-US": {
+        name: subject.name_en,
+        shortName: subject.short_name_en,
+      },
+    },
+    type: {
+      th: subject.type,
+      "en-US": subjectTypeMap[subject.type],
+    },
+    subjectGroup: {
+      id: subjectGroupMap[subject.group],
+      name: {
+        th: subject.group,
+        "en-US": subject.group,
+      },
+    },
+    credit: subject.credit,
+    description: {
+      th: subject.description_th ? subject.description_th : "",
+      "en-US": subject.description_en ? subject.description_en : "",
+    },
+    year: subject.year,
+    semester: subject.semester,
+    syllabus: null,
+    teachers: [],
+  }));
+
+  await Promise.all(
+    subjects.map(async (subject) => await createSubject(subject))
+  );
+}
 
 export async function getTeachingSubjects(
   teacherID: number

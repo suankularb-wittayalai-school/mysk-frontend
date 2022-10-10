@@ -31,17 +31,19 @@ const PageFallback = ({ error }: { error: Error }): JSX.Element => {
     >
       <ErrorHeader verbose={t("fallback.title")} />
       <Section>
-        <Card type="stacked" appearance="outlined">
-          <CardHeader
-            icon={<MaterialIcon icon="folder_open" />}
-            title={<h2>{t("fallback.stack")}</h2>}
-          />
-          <CardSupportingText>
-            <code className="font-mono">
-              <pre>{error.stack}</pre>
-            </code>
-          </CardSupportingText>
-        </Card>
+        <div>
+          <Card type="stacked" appearance="outlined">
+            <CardHeader
+              icon={<MaterialIcon icon="folder_open" />}
+              title={<h2>{t("fallback.stack")}</h2>}
+            />
+            <CardSupportingText className="scroll-desktop overflow-x-auto">
+              <code className="font-mono">
+                <pre>{error.stack}</pre>
+              </code>
+            </CardSupportingText>
+          </Card>
+        </div>
       </Section>
     </RegularLayout>
   );

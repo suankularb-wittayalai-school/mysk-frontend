@@ -1,5 +1,4 @@
 // Modules
-import Image from "next/image";
 import { useRouter } from "next/router";
 
 // SK Components
@@ -9,6 +8,7 @@ import { Card, CardHeader, MaterialIcon } from "@suankularb-components/react";
 import ContactIcon from "@components/icons/ContactIcon";
 
 // Types
+import { LangCode } from "@utils/types/common";
 import { Contact } from "@utils/types/contact";
 import { getContactURL } from "@utils/helpers/contact";
 
@@ -19,7 +19,7 @@ const ContactChip = ({
   contact: Contact;
   className?: string;
 }): JSX.Element => {
-  const locale = useRouter().locale as "en-US" | "th";
+  const locale = useRouter().locale as LangCode;
 
   return (
     <a

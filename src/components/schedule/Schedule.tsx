@@ -81,7 +81,7 @@ const Schedule = ({
   }) => void;
   toggleFetched?: () => void;
 }): JSX.Element => (
-  <div className="scroll-w-0 flex flex-row gap-5 overflow-x-auto !px-0 sm:overflow-x-visible">
+  <div className="scroll-w-0 flex flex-row gap-5 overflow-x-auto overflow-y-hidden !px-0 sm:overflow-x-visible">
     <div aria-hidden className="flex flex-col gap-2 pt-4 pb-2 pl-4 sm:pl-0">
       {schedule.content.map((scheduleRow) => (
         <ScheduleDay key={scheduleRow.day} day={scheduleRow.day} />
@@ -89,7 +89,9 @@ const Schedule = ({
     </div>
     <div
       className={
-        noScroll ? "grow" : "scroll-w-0 scroll-desktop grow sm:overflow-x-auto"
+        noScroll
+          ? "grow"
+          : "scroll-w-0 scroll-desktop grow overflow-y-hidden sm:overflow-x-auto"
       }
     >
       <LayoutGroup>

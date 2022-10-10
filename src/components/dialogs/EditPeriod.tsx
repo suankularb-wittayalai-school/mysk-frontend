@@ -107,7 +107,10 @@ const EditPeriod = ({
     // Reset the form
     else
       setForm({
-        subject: teacher?.subjectsInCharge ? teacher.subjectsInCharge[0].id : 0,
+        subject:
+          teacher?.subjectsInCharge && teacher.subjectsInCharge.length > 0
+            ? teacher.subjectsInCharge[0].id
+            : 0,
         classID: classes.length > 0 ? classes[0].id : 0,
         room: "",
         day: 0,

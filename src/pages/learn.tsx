@@ -8,8 +8,8 @@ const Learn: NextPage = () => {
   return null;
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-  const { data: classID } = await getClassNumberFromReq(req);
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const { data: classID } = await getClassNumberFromReq(req, res);
   return { redirect: { destination: `/learn/${classID}`, permanent: false } };
 };
 

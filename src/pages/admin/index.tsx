@@ -17,6 +17,9 @@ import {
   Title,
 } from "@suankularb-components/react";
 
+// Types
+import { LangCode } from "@utils/types/common";
+
 // Helpers
 import { range } from "@utils/helpers/array";
 import { createTitleStr } from "@utils/helpers/title";
@@ -147,7 +150,7 @@ const Admin: NextPage = () => {
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
   return {
     props: {
-      ...(await serverSideTranslations(locale as string, [
+      ...(await serverSideTranslations(locale as LangCode, [
         "common",
         "admin",
         "account",

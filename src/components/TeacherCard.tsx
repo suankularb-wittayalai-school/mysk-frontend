@@ -2,10 +2,7 @@
 import { useRouter } from "next/router";
 
 // SK Components
-import {
-  Card,
-  CardHeader,
-} from "@suankularb-components/react";
+import { Card, CardHeader } from "@suankularb-components/react";
 
 // Components
 import ContactIconList from "@components/ContactIconList";

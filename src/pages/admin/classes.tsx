@@ -1,4 +1,6 @@
 // Modules
+import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
+
 import type { GetServerSideProps, NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -7,14 +9,19 @@ import Head from "next/head";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // Supabase
 import { supabase } from "@utils/supabaseClient";
 
 // SK Components
 import {
+  Actions,
   Button,
+  Card,
+  CardHeader,
+  Header,
+  LayoutGridCols,
   MaterialIcon,
   RegularLayout,
   Search,
@@ -23,69 +30,187 @@ import {
 } from "@suankularb-components/react";
 
 // Components
-import ClassTable from "@components/tables/ClassTable";
 import ConfirmDelete from "@components/dialogs/ConfirmDelete";
 import EditClassDialog from "@components/dialogs/EditClass";
 import GenerateClassesDialog from "@components/dialogs/GenerateClasses";
 import ImportDataDialog from "@components/dialogs/ImportData";
+import HoverList from "@components/HoverList";
+
+// Animations
+import { animationTransition } from "@utils/animations/config";
 
 // Backend
+import {
+  deleteClassroom,
+  importClasses,
+} from "@utils/backend/classroom/classroom";
 import { db2Class } from "@utils/backend/database";
 
 // Types
 import { Class } from "@utils/types/class";
-import { ClassroomDB, ClassroomTable } from "@utils/types/database/class";
+import { LangCode } from "@utils/types/common";
+import { ClassroomDB } from "@utils/types/database/class";
 
 // Helpers
+import { range } from "@utils/helpers/array";
+import { nameJoiner } from "@utils/helpers/name";
 import { createTitleStr } from "@utils/helpers/title";
 
 // Hooks
-import { createClassroom } from "@utils/backend/classroom/classroom";
+import { useToggle } from "@utils/hooks/toggle";
+
+// Page-specific components
+const ClassCard = ({
+  classItem,
+  setEditingClass,
+  toggleShowEdit,
+  toggleShowConfDel,
+}: {
+  classItem: Class;
+  setEditingClass: (classItem: Class) => void;
+  toggleShowEdit: () => void;
+  toggleShowConfDel: () => void;
+}) => {
+  const { t } = useTranslation("admin");
+
+  return (
+    <Card type="stacked" appearance="tonal">
+      <CardHeader
+        title={
+          <h3>
+            {t("class", {
+              ns: "common",
+              number: classItem.number,
+            })}
+          </h3>
+        }
+        label={
+          classItem.classAdvisors.length == 0 ? (
+            <p className="text-outline">{t("classList.card.noAdvisors")}</p>
+          ) : (
+            <HoverList people={classItem.classAdvisors} />
+          )
+        }
+        end={
+          <Actions>
+            <Button
+              type="text"
+              icon={<MaterialIcon icon="delete" />}
+              iconOnly
+              isDangerous
+              onClick={() => {
+                setEditingClass(classItem);
+                toggleShowConfDel();
+              }}
+            />
+            <Button
+              type="text"
+              icon={<MaterialIcon icon="edit" />}
+              iconOnly
+              onClick={() => {
+                setEditingClass(classItem);
+                toggleShowEdit();
+              }}
+            />
+          </Actions>
+        }
+      />
+    </Card>
+  );
+};
+
+const GradeSection = ({
+  grade,
+  classes,
+  setEditingClass,
+  toggleShowEdit,
+  toggleShowConfDel,
+}: {
+  grade: number;
+  classes: Class[];
+  setEditingClass: (classItem: Class) => void;
+  toggleShowEdit: () => void;
+  toggleShowConfDel: () => void;
+}): JSX.Element => {
+  const { t } = useTranslation("common");
+  return (
+    <Section>
+      <motion.div layoutId={`grade-${grade}`} transition={animationTransition}>
+        <Header
+          icon={
+            <MaterialIcon icon="subdirectory_arrow_right" allowCustomSize />
+          }
+          text={t("class", { number: grade })}
+        />
+      </motion.div>
+      <LayoutGridCols cols={3}>
+        <motion.ul className="contents">
+          <LayoutGroup>
+            <AnimatePresence initial={false}>
+              {classes.map((classItem) => (
+                <motion.li
+                  key={classItem.id}
+                  initial={{ scale: 0.8, y: 20, opacity: 0 }}
+                  animate={{ scale: 1, y: 0, opacity: 1 }}
+                  exit={{ scale: 0.8, y: 20, opacity: 0 }}
+                  layoutId={`class-${classItem.id}`}
+                  transition={animationTransition}
+                >
+                  <ClassCard
+                    classItem={classItem}
+                    setEditingClass={setEditingClass}
+                    toggleShowEdit={toggleShowEdit}
+                    toggleShowConfDel={toggleShowConfDel}
+                  />
+                </motion.li>
+              ))}
+            </AnimatePresence>
+          </LayoutGroup>
+        </motion.ul>
+      </LayoutGridCols>
+    </Section>
+  );
+};
 
 // Page
-const Classes: NextPage<{ allClasses: Class[] }> = ({
-  allClasses,
+const Classes: NextPage<{ classes: Class[] }> = ({
+  classes: initialClasses,
 }): JSX.Element => {
   const { t } = useTranslation("admin");
   const router = useRouter();
 
-  const [showAdd, setShowAdd] = useState<boolean>(false);
-  const [showGenerate, setShowGenerate] = useState<boolean>(false);
-  const [showImport, setShowImport] = useState<boolean>(false);
-  const [showConfDel, setShowConfDel] = useState<boolean>(false);
+  const [query, setQuery] = useState<string>("");
+  const [classes, setClasses] = useState<Class[]>(initialClasses);
 
-  const [showEdit, setShowEdit] = useState<boolean>(false);
+  useEffect(() => {
+    if (query) {
+      setClasses(
+        initialClasses.filter(
+          (classItem) =>
+            classItem.number.toString().includes(query) ||
+            classItem.classAdvisors
+              .map((advisor) =>
+                nameJoiner(
+                  router.locale as LangCode,
+                  advisor.name,
+                  t(`name.prefix.${advisor.prefix}`, { ns: "common" }),
+                  { prefix: true }
+                )
+              )
+              .join(" ")
+              .includes(query)
+        )
+      );
+    } else setClasses(initialClasses);
+  }, [query]);
+
+  const [showAdd, toggleShowAdd] = useToggle();
+  const [showGenerate, toggleShowGenerate] = useToggle();
+  const [showImport, toggleShowImport] = useToggle();
+  const [showConfDel, toggleShowConfDel] = useToggle();
+
+  const [showEdit, toggleShowEdit] = useToggle();
   const [editingClass, setEditingClass] = useState<Class>();
-
-  async function handleDelete() {
-    const { data: _, error: classError } = await supabase
-      .from<ClassroomTable>("classroom")
-      .delete()
-      .match({ id: editingClass?.id });
-    if (classError) {
-      console.error(classError);
-    }
-  }
-
-  async function handleImport(classes: { number: number; year: number }[]) {
-    const classesToImport: Class[] = classes.map((classData) => ({
-      id: 0,
-      number: classData.number,
-      year: classData.year,
-      students: [],
-      classAdvisors: [],
-      schedule: {
-        id: 0,
-        content: [],
-      },
-      contacts: [],
-      subjects: [],
-    }));
-
-    await Promise.all(
-      classesToImport.map(async (classItem) => await createClassroom(classItem))
-    );
-  }
 
   return (
     <>
@@ -102,13 +227,15 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
             pageIcon={<MaterialIcon icon="meeting_room" />}
             backGoesTo="/admin"
             LinkElement={Link}
-            key="title"
           />
         }
       >
         <Section>
           <div className="layout-grid-cols-3">
-            <Search placeholder={t("classList.searchClasses")} />
+            <Search
+              placeholder={t("classList.searchClasses")}
+              onChange={setQuery}
+            />
             <div className="flex flex-row items-end md:col-span-2">
               <div
                 className="flex w-full flex-row flex-wrap items-center justify-end
@@ -117,45 +244,56 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
                 <Button
                   label={t("common.action.import")}
                   type="text"
-                  onClick={() => setShowImport(true)}
+                  onClick={toggleShowImport}
                 />
                 <Button
                   label={t("classList.action.generate")}
                   type="outlined"
                   icon={<MaterialIcon icon="auto_awesome" />}
-                  onClick={() => setShowGenerate(true)}
+                  onClick={toggleShowGenerate}
                 />
                 <Button
                   label={t("classList.action.addClass")}
                   type="filled"
                   icon={<MaterialIcon icon="add" />}
-                  onClick={() => setShowAdd(true)}
+                  onClick={toggleShowAdd}
                 />
               </div>
             </div>
           </div>
-          <div>
-            <ClassTable
-              classes={allClasses}
-              setShowEdit={setShowEdit}
-              setEditingClass={setEditingClass}
-              setShowConfDel={setShowConfDel}
-            />
-          </div>
         </Section>
+
+        <LayoutGroup>
+          {range(
+            Math.floor(initialClasses[initialClasses.length - 1].number / 100),
+            1
+          ).map((grade) => (
+            <GradeSection
+              key={grade}
+              grade={grade}
+              classes={classes.filter(
+                (classItem) =>
+                  classItem.number > grade * 100 &&
+                  classItem.number < (grade + 1) * 100
+              )}
+              setEditingClass={setEditingClass}
+              toggleShowEdit={toggleShowEdit}
+              toggleShowConfDel={toggleShowConfDel}
+            />
+          ))}
+        </LayoutGroup>
       </RegularLayout>
 
       {/* Dialogs */}
       <ImportDataDialog
         show={showImport}
-        onClose={() => setShowImport(false)}
-        onSubmit={(e: { number: number; year: number; semester: number }[]) => {
-          // console.log(e);
-
-          handleImport(e).then(() => {
-            setShowImport(false);
-            router.replace(router.asPath);
-          });
+        onClose={toggleShowImport}
+        onSubmit={async (
+          data: { number: number; year: number; semester: number }[]
+        ) => {
+          await importClasses(data);
+          toggleShowImport();
+          router.replace(router.asPath);
         }}
         columns={[
           { name: "number", type: "numeric (3-digit)" },
@@ -164,17 +302,17 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
       />
       <GenerateClassesDialog
         show={showGenerate}
-        onClose={() => setShowGenerate(false)}
+        onClose={toggleShowGenerate}
         onSubmit={() => {
-          setShowGenerate(false);
+          toggleShowGenerate();
           router.replace(router.asPath);
         }}
       />
       <EditClassDialog
         show={showEdit}
-        onClose={() => setShowEdit(false)}
+        onClose={toggleShowEdit}
         onSubmit={() => {
-          setShowEdit(false);
+          toggleShowEdit();
           router.replace(router.asPath);
         }}
         mode="edit"
@@ -182,19 +320,20 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
       />
       <EditClassDialog
         show={showAdd}
-        onClose={() => setShowAdd(false)}
+        onClose={toggleShowAdd}
         onSubmit={() => {
-          setShowAdd(false);
+          toggleShowAdd();
           router.replace(router.asPath);
         }}
         mode="add"
       />
       <ConfirmDelete
         show={showConfDel}
-        onClose={() => setShowConfDel(false)}
-        onSubmit={() => {
-          setShowConfDel(false);
-          handleDelete().then(() => router.replace(router.asPath));
+        onClose={toggleShowConfDel}
+        onSubmit={async () => {
+          toggleShowConfDel();
+          if (editingClass) await deleteClassroom(editingClass);
+          router.replace(router.asPath);
         }}
       />
     </>
@@ -202,30 +341,29 @@ const Classes: NextPage<{ allClasses: Class[] }> = ({
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
-  let allClasses: Class[] = [];
+  let classes: Class[] = [];
 
-  const { data: classes, error } = await supabase
+  const { data, error } = await supabase
     .from<ClassroomDB>("classroom")
     .select("*")
     .order("number", { ascending: true });
 
   if (error) console.error(error);
 
-  if (classes) {
-    allClasses = await Promise.all(
-      classes.map(async (classItem) => await db2Class(classItem))
+  if (data)
+    classes = await Promise.all(
+      data.map(async (classItem) => await db2Class(classItem))
     );
-  }
 
   return {
     props: {
-      ...(await serverSideTranslations(locale as string, [
+      ...(await serverSideTranslations(locale as LangCode, [
         "common",
         "admin",
         "account",
         "class",
       ])),
-      allClasses,
+      classes,
     },
   };
 };
