@@ -28,13 +28,13 @@ const ForgotPasswordDialog: SubmittableDialogComponent = ({
     <Dialog
       type="regular"
       label="forgot-password"
-      title="Reset with password"
+      title={t("dialog.forgotPassword.title")}
       icon={<MaterialIcon icon="email" />}
-      supportingText="To verify your identity, we will send you an email with a link back to MySK."
+      supportingText={t("dialog.forgotPassword.supportingText")}
       show={show}
       actions={[
-        { name: "Cancel", type: "close" },
-        { name: "Send", type: "submit" },
+        { name: t("dialog.forgotPassword.action.cancel"), type: "close" },
+        { name: t("dialog.forgotPassword.action.send"), type: "submit" },
       ]}
       onClose={onClose}
       onSubmit={async () => {

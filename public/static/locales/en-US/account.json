@@ -104,6 +104,14 @@
         "save": "Save"
       }
     },
+    "forgotPassword": {
+      "title": "Reset with password",
+      "supportingText": "To verify your identity, we will send you an email with a link back to MySK. Follow that link to continue the process.",
+      "action": {
+        "cancel": "Cancel",
+        "send": "Send"
+      }
+    },
     "requestEditProfile": {
       "title": "Request profile edit",
       "supportingText": "You can request changes to your personal information. Administrators will review your request and approve the changes as they see fit.",
