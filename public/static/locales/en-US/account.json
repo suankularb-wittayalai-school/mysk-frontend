@@ -32,6 +32,9 @@
       "logIn": "Log in"
     }
   },
+  "forgor": {
+    "title": "Password reset"
+  },
   "profile": {
     "name": {
       "title": "Local name (Thai)",
