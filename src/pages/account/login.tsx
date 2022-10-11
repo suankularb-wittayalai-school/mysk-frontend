@@ -11,6 +11,8 @@ import { FormEvent, useState } from "react";
 
 // SK Components
 import {
+  Actions,
+  Button,
   FormButton,
   KeyboardInput,
   MaterialIcon,
@@ -18,13 +20,23 @@ import {
   Title,
 } from "@suankularb-components/react";
 
+// Components
+import ForgotPasswordDialog from "@components/dialogs/account/ForgotPassword";
+
+// Backend
+import { setAuthCookies } from "@utils/backend/account";
+
 // Supabase
 import { supabase } from "@utils/supabaseClient";
 
+// Types
+import { LangCode } from "@utils/types/common";
+
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
-import { setAuthCookies } from "@utils/backend/account";
-import { LangCode } from "@utils/types/common";
+
+// Hooks
+import { useToggle } from "@utils/hooks/toggle";
 
 // Page
 const Login: NextPage = () => {
@@ -34,6 +46,9 @@ const Login: NextPage = () => {
   // Form control
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+
+  // Dialog control
+  const [showForgot, toggleShowForgot] = useToggle();
 
   // Loading
   const [loading, setLoading] = useState<boolean>(false);
@@ -114,20 +129,32 @@ const Login: NextPage = () => {
                 onChange={(e: string) => setPassword(e)}
               />
             </div>
-            <div className="flex flex-row flex-wrap items-center justify-end gap-2">
-              <Link href="/account/forgot-password">
-                <a className="btn--text">{t("logIn.action.forgotPassword")}</a>
-              </Link>
+            <Actions>
+              <Button
+                label={t("logIn.action.forgotPassword")}
+                type="text"
+                onClick={toggleShowForgot}
+              />
               <FormButton
                 label={t("logIn.action.logIn")}
                 type="submit"
                 appearance="filled"
                 disabled={!validate() || loading}
               />
-            </div>
+            </Actions>
           </form>
         </div>
       </RegularLayout>
+
+      {/* Dialogs */}
+      <ForgotPasswordDialog
+        show={showForgot}
+        onClose={toggleShowForgot}
+        onSubmit={() => {
+          toggleShowForgot();
+          router.push("/");
+        }}
+      />
     </>
   );
 };

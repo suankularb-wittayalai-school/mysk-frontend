@@ -34,13 +34,12 @@
   },
   "forgor": {
     "title": "Password reset",
-    "resetWithEmail": "Reset with email",
     "newPassword": "New password",
+    "supportingText": "Your identity has been verified. Choose a new password and remember it.",
     "form": {
       "password": "Password"
     },
     "action": {
-      "send": "Send",
       "use": "Use"
     }
   },
