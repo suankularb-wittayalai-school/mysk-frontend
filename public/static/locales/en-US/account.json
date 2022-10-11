@@ -33,7 +33,16 @@
     }
   },
   "forgor": {
-    "title": "Password reset"
+    "title": "Password reset",
+    "resetWithEmail": "Reset with email",
+    "newPassword": "New password",
+    "form": {
+      "password": "Password"
+    },
+    "action": {
+      "send": "Send",
+      "use": "Use"
+    }
   },
   "profile": {
     "name": {

@@ -1,5 +1,5 @@
 // Modules
-import type { GetServerSideProps, NextPage } from "next";
+import type { GetServerSideProps, GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
@@ -57,7 +57,7 @@ const EmailSection = ({
     <Section className="mt-7 sm:mt-0">
       <Header
         icon={<MaterialIcon icon="email" allowCustomSize />}
-        text="Reset with email"
+        text={t("forgor.resetWithEmail")}
       />
       <p>
         To verify your identity, we will send you an email with a link back to
@@ -76,13 +76,52 @@ const EmailSection = ({
         />
         <Actions>
           <FormButton
-            label="Send"
+            label={t("forgor.action.send")}
             type="submit"
             appearance="filled"
             disabled={!email || sent}
           />
         </Actions>
       </form>
+    </Section>
+  );
+};
+
+const NewPwdSection = (): JSX.Element => {
+  const { t } = useTranslation("account");
+
+  const [password, setPassword] = useState<string>("");
+
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+  }
+
+  return (
+    <Section>
+      <Header
+        icon={<MaterialIcon icon="password" allowCustomSize />}
+        text={t("forgor.newPassword")}
+      />
+      <LayoutGridCols cols={3}>
+        <form onSubmit={handleSubmit}>
+          <KeyboardInput
+            name="password"
+            type="password"
+            label={t("forgor.form.password")}
+            useAutoMsg
+            onChange={setPassword}
+            attr={{ autoFocus: true }}
+          />
+          <Actions>
+            <FormButton
+              label={t("forgor.action.use")}
+              type="submit"
+              appearance="filled"
+              disabled={!password}
+            />
+          </Actions>
+        </form>
+      </LayoutGridCols>
     </Section>
   );
 };
@@ -119,15 +158,13 @@ const ForgotPassword: NextPage = () => {
           </div>
           <EmailSection toggleSent={toggleSent} />
         </LayoutGridCols>
+        <NewPwdSection />
       </RegularLayout>
     </>
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  query,
-}) => {
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
   return {
     props: {
       ...(await serverSideTranslations(locale as LangCode, [

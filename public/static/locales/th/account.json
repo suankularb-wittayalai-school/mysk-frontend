@@ -33,7 +33,16 @@
     }
   },
   "forgor": {
-    "title": "ลืมรหัสผ่าน"
+    "title": "ลืมรหัสผ่าน",
+    "resetWithEmail": "ใช้อีเมล",
+    "newPassword": "เปลี่ยนรหัสผ่าน",
+    "form": {
+      "password": "รหัสผ่าน"
+    },
+    "action": {
+      "send": "ส่งอีเมล",
+      "use": "ใช้"
+    }
   },
   "profile": {
     "name": {
