@@ -1,11 +1,3 @@
-// (@SiravitPhokeed)
-// ESLint is throwing a possibly outdated error on middleware.ts placement.
-// Its advice does not match that of NextJS, and I think you know which is more
-// important to follow.
-// For now, I’m disabling the rule for this page.
-
-/* eslint-disable @next/next/no-server-import-in-page */
-
 // External libraries
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
