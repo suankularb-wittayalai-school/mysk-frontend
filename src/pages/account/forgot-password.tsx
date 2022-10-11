@@ -63,14 +63,16 @@ const ForgotPassword: NextPage = () => {
         }
       >
         <LayoutGridCols cols={3}>
-          <Image
-            src="/images/graphics/password-reset.png"
-            width={384}
-            height={216}
-            alt="Lock icon hanging on a thread"
-            layout="responsive"
-            className="sm:rounded-2xl"
-          />
+          <div className="!p-0">
+            <Image
+              src="/images/graphics/password-reset.png"
+              width={384}
+              height={216}
+              alt="Lock icon hanging on a thread"
+              layout="responsive"
+              className="sm:rounded-2xl"
+            />
+          </div>
           <Section className="mt-7 sm:mt-0">
             <Header
               icon={<MaterialIcon icon="email" allowCustomSize />}
