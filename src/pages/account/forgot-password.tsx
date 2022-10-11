@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
 // SK Components
 import {
@@ -34,10 +34,16 @@ import { supabase } from "@utils/supabaseClient";
 // Types
 import { LangCode } from "@utils/types/common";
 
-const ForgotPassword: NextPage = () => {
+const EmailSection = ({
+  toggleSent: toggleExtSent,
+}: {
+  toggleSent: () => void;
+}): JSX.Element => {
   const { t } = useTranslation("account");
+
   const [email, setEmail] = useState<string>("");
   const [sent, toggleSent] = useToggle();
+  useEffect(toggleExtSent, [sent]);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -46,6 +52,44 @@ const ForgotPassword: NextPage = () => {
     );
     if (data) toggleSent();
   }
+
+  return (
+    <Section className="mt-7 sm:mt-0">
+      <Header
+        icon={<MaterialIcon icon="email" allowCustomSize />}
+        text="Reset with email"
+      />
+      <p>
+        To verify your identity, we will send you an email with a link back to
+        MySK.
+      </p>
+      <form onSubmit={handleSubmit}>
+        <KeyboardInput
+          name="email"
+          type="email"
+          label={t("logIn.form.email")}
+          helperMsg={t("logIn.form.email_helper")}
+          errorMsg={t("logIn.form.email_error")}
+          useAutoMsg
+          onChange={setEmail}
+          attr={{ autoFocus: true, disabled: sent }}
+        />
+        <Actions>
+          <FormButton
+            label="Send"
+            type="submit"
+            appearance="filled"
+            disabled={!email || sent}
+          />
+        </Actions>
+      </form>
+    </Section>
+  );
+};
+
+const ForgotPassword: NextPage = () => {
+  const { t } = useTranslation("account");
+  const [sent, toggleSent] = useToggle();
 
   return (
     <>
@@ -73,36 +117,7 @@ const ForgotPassword: NextPage = () => {
               className="sm:rounded-2xl"
             />
           </div>
-          <Section className="mt-7 sm:mt-0">
-            <Header
-              icon={<MaterialIcon icon="email" allowCustomSize />}
-              text="Reset with email"
-            />
-            <p>
-              To verify your identity, we will send you an email with a link
-              back to MySK.
-            </p>
-            <form onSubmit={handleSubmit}>
-              <KeyboardInput
-                name="email"
-                type="email"
-                label={t("logIn.form.email")}
-                helperMsg={t("logIn.form.email_helper")}
-                errorMsg={t("logIn.form.email_error")}
-                useAutoMsg
-                onChange={setEmail}
-                attr={{ autoFocus: true, disabled: sent }}
-              />
-              <Actions>
-                <FormButton
-                  label="Send"
-                  type="submit"
-                  appearance="filled"
-                  disabled={!email || sent}
-                />
-              </Actions>
-            </form>
-          </Section>
+          <EmailSection toggleSent={toggleSent} />
         </LayoutGridCols>
       </RegularLayout>
     </>
