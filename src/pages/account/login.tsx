@@ -1,5 +1,5 @@
 // Modules
-import type { GetServerSideProps, NextPage } from "next";
+import type { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
@@ -42,7 +42,7 @@ import { useToggle } from "@utils/hooks/toggle";
 
 // Page
 const Login: NextPage = () => {
-  const { t } = useTranslation(["account", "common"]);
+  const { t } = useTranslation("account");
   const router = useRouter();
 
   // Form control
@@ -171,7 +171,7 @@ const Login: NextPage = () => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
   return {
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
