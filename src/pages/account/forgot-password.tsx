@@ -3,6 +3,7 @@ import type { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -25,16 +26,28 @@ import {
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
 
+// Hooks
+import { useToggle } from "@utils/hooks/toggle";
+
+// Supabase
+import { supabase } from "@utils/supabaseClient";
+
 // Types
 import { LangCode } from "@utils/types/common";
 
 const ForgotPassword: NextPage = () => {
   const { t } = useTranslation("account");
+  const router = useRouter();
 
+  const [loading, toggleLoading] = useToggle();
   const [password, setPassword] = useState<string>("");
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    toggleLoading();
+    const { data } = await supabase.auth.update({ password });
+    if (data) router.push("/account/login");
+    toggleLoading();
   }
 
   return (
@@ -71,7 +84,7 @@ const ForgotPassword: NextPage = () => {
             <p>{t("forgor.supportingText")}</p>
             <form onSubmit={handleSubmit}>
               <KeyboardInput
-                name="password"
+                name="new-password"
                 type="password"
                 label={t("forgor.form.password")}
                 useAutoMsg
@@ -83,7 +96,7 @@ const ForgotPassword: NextPage = () => {
                   label={t("forgor.action.use")}
                   type="submit"
                   appearance="filled"
-                  disabled={!password}
+                  disabled={!password || loading}
                 />
               </Actions>
             </form>
