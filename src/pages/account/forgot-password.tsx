@@ -40,12 +40,21 @@ const ForgotPassword: NextPage = () => {
   const router = useRouter();
 
   const [loading, toggleLoading] = useToggle();
-  const [password, setPassword] = useState<string>("");
+  const [form, setForm] = useState({
+    newPassword: "",
+    confirmNewPassword: "",
+  });
+
+  function validate(): boolean {
+    if (form.newPassword != form.confirmNewPassword) return false;
+    return true;
+  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    if (!validate()) return;
     toggleLoading();
-    const { data } = await supabase.auth.update({ password });
+    const { data } = await supabase.auth.update({ password: form.newPassword });
     if (data) router.push("/account/login");
     toggleLoading();
   }
@@ -66,7 +75,7 @@ const ForgotPassword: NextPage = () => {
         }
       >
         <LayoutGridCols cols={3}>
-          <div className="!p-0">
+          <div className="mb-4 !p-0 sm:mb-0 md:col-span-2">
             <Image
               src="/images/graphics/password-reset.png"
               width={384}
@@ -86,17 +95,27 @@ const ForgotPassword: NextPage = () => {
               <KeyboardInput
                 name="new-password"
                 type="password"
-                label={t("forgor.form.password")}
+                label={t("dialog.changePassword.newPwd")}
+                errorMsg={t("dialog.changePassword.newPwd_error")}
                 useAutoMsg
-                onChange={setPassword}
-                attr={{ autoFocus: true }}
+                onChange={(e) => setForm({ ...form, newPassword: e })}
+                attr={{ minLength: 8 }}
+              />
+              <KeyboardInput
+                name="confirm-new-password"
+                type="password"
+                label={t("dialog.changePassword.confirmNewPwd")}
+                errorMsg={t("dialog.changePassword.newPwd_error")}
+                useAutoMsg
+                onChange={(e) => setForm({ ...form, confirmNewPassword: e })}
+                attr={{ minLength: 8 }}
               />
               <Actions>
                 <FormButton
                   label={t("forgor.action.use")}
                   type="submit"
                   appearance="filled"
-                  disabled={!password || loading}
+                  disabled={!validate() || loading}
                 />
               </Actions>
             </form>
