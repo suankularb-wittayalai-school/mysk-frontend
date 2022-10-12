@@ -71,6 +71,7 @@ const ScheduleSection = ({
         <LinkButton
           label={t("schedule.action.enterEditMode")}
           type="tonal"
+          icon={<MaterialIcon icon="edit" />}
           url="/teach/schedule"
           LinkElement={Link}
         />
