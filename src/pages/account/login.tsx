@@ -147,14 +147,7 @@ const Login: NextPage = () => {
       </RegularLayout>
 
       {/* Dialogs */}
-      <ForgotPasswordDialog
-        show={showForgot}
-        onClose={toggleShowForgot}
-        onSubmit={() => {
-          toggleShowForgot();
-          router.push("/");
-        }}
-      />
+      <ForgotPasswordDialog show={showForgot} onClose={toggleShowForgot} />
     </>
   );
 };

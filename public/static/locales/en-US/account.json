@@ -92,6 +92,13 @@
     }
   },
   "dialog": {
+    "checkEmail": {
+      "title": "Check your email",
+      "supportingText": "An email has been sent to {{email}}. That email contains a link; use it to continue setting your new password.",
+      "action": {
+        "gotIt": "Got it"
+      }
+    },
     "changePassword": {
       "title": "Change password",
       "supportingText": "If you are still using the default password, changing it is highly recommended.",
