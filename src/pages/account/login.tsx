@@ -1,6 +1,7 @@
 // Modules
 import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -15,6 +16,7 @@ import {
   Button,
   FormButton,
   KeyboardInput,
+  LayoutGridCols,
   MaterialIcon,
   RegularLayout,
   Title,
@@ -106,43 +108,56 @@ const Login: NextPage = () => {
           />
         }
       >
-        <div className="flex flex-col items-center">
-          <form
-            className="section w-full sm:w-1/2 md:w-1/3"
-            onSubmit={(e: FormEvent) => handleSubmit(e)}
-          >
-            <div>
-              <KeyboardInput
-                name="user-id"
-                type="email"
-                label={t("logIn.form.email")}
-                helperMsg={t("logIn.form.email_helper")}
-                errorMsg={t("logIn.form.email_error")}
-                useAutoMsg
-                onChange={(e: string) => setEmail(e)}
-              />
-              <KeyboardInput
-                name="password"
-                type="password"
-                label={t("logIn.form.password")}
-                helperMsg={t("logIn.form.password_helper")}
-                onChange={(e: string) => setPassword(e)}
+        <div className="lg:px-[14.28125rem]">
+          <LayoutGridCols cols={2}>
+            <div className="hidden aspect-[3/4] w-full !p-0 sm:block">
+              <Image
+                src="/images/graphics/login.png"
+                width={720}
+                height={960}
+                alt="MySK logo surrounded by various UI elements from the app"
+                layout="responsive"
+                objectFit="contain"
+                className="rounded-2xl"
               />
             </div>
-            <Actions>
-              <Button
-                label={t("logIn.action.forgotPassword")}
-                type="text"
-                onClick={toggleShowForgot}
-              />
-              <FormButton
-                label={t("logIn.action.logIn")}
-                type="submit"
-                appearance="filled"
-                disabled={!validate() || loading}
-              />
-            </Actions>
-          </form>
+            <form
+              className="section"
+              onSubmit={(e: FormEvent) => handleSubmit(e)}
+            >
+              <div>
+                <KeyboardInput
+                  name="user-id"
+                  type="email"
+                  label={t("logIn.form.email")}
+                  helperMsg={t("logIn.form.email_helper")}
+                  errorMsg={t("logIn.form.email_error")}
+                  useAutoMsg
+                  onChange={(e: string) => setEmail(e)}
+                />
+                <KeyboardInput
+                  name="password"
+                  type="password"
+                  label={t("logIn.form.password")}
+                  helperMsg={t("logIn.form.password_helper")}
+                  onChange={(e: string) => setPassword(e)}
+                />
+              </div>
+              <Actions>
+                <Button
+                  label={t("logIn.action.forgotPassword")}
+                  type="text"
+                  onClick={toggleShowForgot}
+                />
+                <FormButton
+                  label={t("logIn.action.logIn")}
+                  type="submit"
+                  appearance="filled"
+                  disabled={!validate() || loading}
+                />
+              </Actions>
+            </form>
+          </LayoutGridCols>
         </div>
       </RegularLayout>
 

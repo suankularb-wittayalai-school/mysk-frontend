@@ -55,11 +55,8 @@ const App = ({
   // Authentication
   const router = useRouter();
   useEffect(() => {
-    supabase.auth.onAuthStateChange((event, session) => {
-      if (event == "PASSWORD_RECOVERY") {
-        console.log(event, session);
-        router.push("/account/forgot-password");
-      }
+    supabase.auth.onAuthStateChange((event) => {
+      if (event == "PASSWORD_RECOVERY") router.push("/account/forgot-password");
     });
   });
 
