@@ -147,7 +147,11 @@ const Login: NextPage = () => {
       </RegularLayout>
 
       {/* Dialogs */}
-      <ForgotPasswordDialog show={showForgot} onClose={toggleShowForgot} />
+      <ForgotPasswordDialog
+        show={showForgot}
+        onClose={toggleShowForgot}
+        inputEmail={email}
+      />
     </>
   );
 };

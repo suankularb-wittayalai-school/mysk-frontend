@@ -21,12 +21,17 @@ import { supabase } from "@utils/supabaseClient";
 // Types
 import { DialogComponent } from "@utils/types/common";
 
-const ForgotPasswordDialog: DialogComponent = ({ show, onClose }) => {
+const ForgotPasswordDialog: DialogComponent<{ inputEmail?: string }> = ({
+  show,
+  onClose,
+  inputEmail,
+}) => {
   const { t } = useTranslation("account");
 
-  const [email, setEmail] = useState<string>("");
+  const [email, setEmail] = useState<string>(inputEmail || "");
 
   const [loading, toggleLoading] = useToggle();
+  console.log(inputEmail);
 
   // Dialog control
   const [showCheckEmail, toggleShowCheckEmail] = useToggle();
@@ -70,6 +75,7 @@ const ForgotPasswordDialog: DialogComponent = ({ show, onClose }) => {
           errorMsg={t("logIn.form.email_error")}
           useAutoMsg
           onChange={setEmail}
+          defaultValue={inputEmail}
         />
       </Dialog>
 
