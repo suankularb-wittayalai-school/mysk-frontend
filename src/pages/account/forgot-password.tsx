@@ -77,7 +77,7 @@ const ForgotPassword: NextPage = () => {
         <LayoutGridCols cols={3}>
           <div className="mb-4 !p-0 sm:mb-0 md:col-span-2">
             <Image
-              src="/images/graphics/password-reset.png"
+              src="/images/graphics/forgot-password.webp"
               width={384}
               height={216}
               alt={t("forgor.graphicAlt")}

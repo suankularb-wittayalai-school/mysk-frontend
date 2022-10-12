@@ -112,7 +112,7 @@ const Login: NextPage = () => {
           <LayoutGridCols cols={2}>
             <div className="hidden aspect-[3/4] w-full !p-0 sm:block">
               <Image
-                src="/images/graphics/login.png"
+                src="/images/graphics/login.webp"
                 width={720}
                 height={960}
                 alt={t("logIn.graphicAlt")}
