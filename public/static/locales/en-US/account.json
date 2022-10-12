@@ -20,6 +20,7 @@
   },
   "logIn": {
     "title": "Log in",
+    "graphicAlt": "MySK logo surrounded by various UI elements from the app",
     "form": {
       "email": "School email",
       "email_helper": "Your school email ends with “sk.ac.th”.",
@@ -36,9 +37,7 @@
     "title": "Password reset",
     "newPassword": "New password",
     "supportingText": "Your identity has been verified. Choose a new password and remember it.",
-    "form": {
-      "password": "Password"
-    },
+    "graphicAlt": "Lock icon hanging on a thread",
     "action": {
       "use": "Use"
     }

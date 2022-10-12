@@ -80,7 +80,7 @@ const ForgotPassword: NextPage = () => {
               src="/images/graphics/password-reset.png"
               width={384}
               height={216}
-              alt="Lock icon hanging on a thread"
+              alt={t("forgor.graphicAlt")}
               layout="responsive"
               className="sm:rounded-2xl"
             />

@@ -115,7 +115,7 @@ const Login: NextPage = () => {
                 src="/images/graphics/login.png"
                 width={720}
                 height={960}
-                alt="MySK logo surrounded by various UI elements from the app"
+                alt={t("logIn.graphicAlt")}
                 layout="responsive"
                 objectFit="contain"
                 className="rounded-2xl"
