@@ -46,6 +46,8 @@ const ForgotPassword: NextPage = () => {
   });
 
   function validate(): boolean {
+    if (form.newPassword.length < 8) return false;
+    if (form.confirmNewPassword.length < 8) return false;
     if (form.newPassword != form.confirmNewPassword) return false;
     return true;
   }
