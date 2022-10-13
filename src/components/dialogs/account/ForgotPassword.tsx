@@ -42,7 +42,7 @@ const ForgotPasswordDialog: DialogComponent<{ inputEmail?: string }> = ({
         type="regular"
         label="forgot-password"
         title={t("dialog.forgotPassword.title")}
-        icon={<MaterialIcon icon="email" />}
+        icon={<MaterialIcon icon="lock_open" />}
         supportingText={t("dialog.forgotPassword.supportingText")}
         show={show}
         actions={[
