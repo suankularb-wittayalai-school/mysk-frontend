@@ -31,7 +31,6 @@ const ForgotPasswordDialog: DialogComponent<{ inputEmail?: string }> = ({
   const [email, setEmail] = useState<string>(inputEmail || "");
 
   const [loading, toggleLoading] = useToggle();
-  console.log(inputEmail);
 
   // Dialog control
   const [showCheckEmail, toggleShowCheckEmail] = useToggle();
