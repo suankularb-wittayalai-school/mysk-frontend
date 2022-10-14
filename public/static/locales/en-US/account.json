@@ -15,6 +15,7 @@
     }
   },
   "action": {
+    "changePassword": "Change password",
     "goToAdmin": "Go to Admin Panel",
     "logOut": "Log out"
   },

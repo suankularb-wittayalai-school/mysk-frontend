@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useReducer, useState } from "react";
+import { useState } from "react";
 
 // SK Components
 import {
@@ -24,6 +24,7 @@ import {
 } from "@suankularb-components/react";
 
 // Components
+import ChangePassword from "@components/dialogs/ChangePassword";
 import LogOutDialog from "@components/dialogs/LogOut";
 import ProfilePicture from "@components/ProfilePicture";
 
@@ -37,6 +38,7 @@ import { createTitleStr } from "@utils/helpers/title";
 
 // Hooks
 import { useSubjectGroupOption } from "@utils/hooks/subject";
+import { useToggle } from "@utils/hooks/toggle";
 
 // Types
 import { ClassWNumber } from "@utils/types/class";
@@ -45,9 +47,11 @@ import { Person, Student, Teacher } from "@utils/types/person";
 
 const BasicInfoSection = ({
   user,
+  toggleShowChangePwd,
   toggleShowLogOut,
 }: {
   user: Student | Teacher;
+  toggleShowChangePwd: () => void;
   toggleShowLogOut: () => void;
 }): JSX.Element => {
   const { t } = useTranslation("account");
@@ -101,26 +105,33 @@ const BasicInfoSection = ({
               </p>
             </div>
           </div>
-          <Actions>
-            {user.isAdmin && (
-              <LinkButton
-                label={t("action.goToAdmin")}
-                type="tonal"
-                icon={<MaterialIcon icon="admin_panel_settings" />}
-                url="/admin"
-                LinkElement={Link}
-              />
-            )}
-            <Button
-              label={t("action.logOut")}
-              type="filled"
-              icon={<MaterialIcon icon="logout" />}
-              onClick={toggleShowLogOut}
-              className="!bg-error !text-on-error"
-            />
-          </Actions>
         </div>
       </div>
+      <Actions className="!grid grid-cols-2 !gap-x-2 !gap-y-4 md:!flex">
+        <Button
+          label={t("action.changePassword")}
+          type="outlined"
+          icon={<MaterialIcon icon="password" />}
+          onClick={toggleShowChangePwd}
+        />
+        <Button
+          label={t("action.logOut")}
+          type="filled"
+          icon={<MaterialIcon icon="logout" />}
+          onClick={toggleShowLogOut}
+          isDangerous
+        />
+        {user.isAdmin && (
+          <LinkButton
+            label={t("action.goToAdmin")}
+            type="filled"
+            icon={<MaterialIcon icon="admin_panel_settings" />}
+            url="/admin"
+            LinkElement={Link}
+            className="col-span-2 md:col-span-1"
+          />
+        )}
+      </Actions>
     </Section>
   );
 };
@@ -297,10 +308,8 @@ const AccountDetails: NextPage<{ user: Student | Teacher }> = ({ user }) => {
   const { t } = useTranslation("account");
 
   // Dialog control
-  const [showLogOut, toggleShowLogOut] = useReducer(
-    (value: boolean) => !value,
-    false
-  );
+  const [showChangePwd, toggleShowChangePwd] = useToggle();
+  const [showLogOut, toggleShowLogOut] = useToggle();
 
   return (
     <>
@@ -319,11 +328,16 @@ const AccountDetails: NextPage<{ user: Student | Teacher }> = ({ user }) => {
           />
         }
       >
-        <BasicInfoSection user={user} toggleShowLogOut={toggleShowLogOut} />
+        <BasicInfoSection
+          user={user}
+          toggleShowChangePwd={toggleShowChangePwd}
+          toggleShowLogOut={toggleShowLogOut}
+        />
         <EditInfoSection user={user} />
       </RegularLayout>
 
       {/* Dialogs */}
+      <ChangePassword show={showChangePwd} onClose={toggleShowChangePwd} />
       <LogOutDialog show={showLogOut} onClose={toggleShowLogOut} />
     </>
   );
