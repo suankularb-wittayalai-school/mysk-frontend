@@ -1,11 +1,3 @@
-// (@SiravitPhokeed)
-// ESLint is throwing a possibly outdated error on middleware.ts placement.
-// Its advice does not match that of NextJS, and I think you know which is more
-// important to follow.
-// For now, I’m disabling the rule for this page.
-
-/* eslint-disable @next/next/no-server-import-in-page */
-
 // External libraries
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
@@ -18,7 +10,9 @@ export async function middleware(req: NextRequest) {
   const route = req.nextUrl.pathname;
   const pageRole: Role | "public" | "admin" | "user" | "not-protected" =
     // Public pages
-    ["/", "/account/login", "/about"].includes(route)
+    ["/", "/account/login", "/account/forgot-password", "/about"].includes(
+      route
+    )
       ? "public"
       : // Admin pages
       /^\/admin/.test(route)
@@ -89,7 +83,8 @@ export async function middleware(req: NextRequest) {
 export const config = {
   matcher: [
     "/",
-    "/account/:path",
+    "/account",
+    "/account/:path*",
     "/about",
     "/learn",
     "/learn/:id",

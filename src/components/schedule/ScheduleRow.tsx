@@ -59,7 +59,8 @@ const ScheduleRow = ({
 
   // Updates `now` every 5 seconds
   useEffect(() => {
-    setInterval(() => setNow(new Date()), 5000);
+    const updateInterval = setInterval(() => setNow(new Date()), 5000);
+    return () => clearInterval(updateInterval);
   }, []);
 
   const periodWidth = 112;

@@ -91,7 +91,7 @@ const Schedule = ({
       className={
         noScroll
           ? "grow"
-          : "scroll-w-0 scroll-desktop grow overflow-y-hidden sm:overflow-x-auto"
+          : "scroll-w-0 scroll-desktop grow overflow-y-clip sm:overflow-x-auto"
       }
     >
       <LayoutGroup>

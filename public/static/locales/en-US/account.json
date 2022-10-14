@@ -15,11 +15,13 @@
     }
   },
   "action": {
+    "changePassword": "Change password",
     "goToAdmin": "Go to Admin Panel",
     "logOut": "Log out"
   },
   "logIn": {
     "title": "Log in",
+    "graphicAlt": "MySK logo surrounded by various UI elements from the app",
     "form": {
       "email": "School email",
       "email_helper": "Your school email ends with “sk.ac.th”.",
@@ -30,6 +32,15 @@
     "action": {
       "forgotPassword": "Forgot password",
       "logIn": "Log in"
+    }
+  },
+  "forgor": {
+    "title": "Password reset",
+    "newPassword": "New password",
+    "supportingText": "Your identity has been verified. Choose a new password and remember it.",
+    "graphicAlt": "Lock icon hanging on a thread",
+    "action": {
+      "use": "Use"
     }
   },
   "profile": {
@@ -81,6 +92,13 @@
     }
   },
   "dialog": {
+    "checkEmail": {
+      "title": "Check your email",
+      "supportingText": "An email has been sent to {{email}}. That email contains a link; use it to continue setting your new password.",
+      "action": {
+        "gotIt": "Got it"
+      }
+    },
     "changePassword": {
       "title": "Change password",
       "supportingText": "If you are still using the default password, changing it is highly recommended.",
@@ -91,6 +109,14 @@
       "action": {
         "cancel": "Cancel",
         "save": "Save"
+      }
+    },
+    "forgotPassword": {
+      "title": "Reset with password",
+      "supportingText": "To verify your identity, we will send you an email with a link back to MySK. Follow that link to continue the process.",
+      "action": {
+        "cancel": "Cancel",
+        "send": "Send"
       }
     },
     "requestEditProfile": {

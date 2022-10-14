@@ -1,5 +1,5 @@
-export const classPattern = "[1-6][0-1][0-9]";
-export const classRegex = /[1-6][0-1][0-9]/;
+export const classPattern = "[1-6](0[1-9]|1[0-9])";
+export const classRegex = /[1-6](0[1-9]|1[0-9])/;
 
 export const roomPattern = "[1-6][1-5]\\d{2}";
 export const roomRegex = /[1-6][1-5]\d{2}/;

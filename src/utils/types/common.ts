@@ -39,6 +39,11 @@ export type DataTableColumnDef = ColumnDef<object> &
     noDataMsg: string | JSX.Element;
   }>;
 
+export type DialogComponent<T = {}> = (props: T & DialogProps) => JSX.Element;
+export type SubmittableDialogComponent<T = {}> = (
+  props: T & SubmittableDialogProps
+) => JSX.Element;
+
 export type ChipInputListItem = {
   id: string;
   name: string;

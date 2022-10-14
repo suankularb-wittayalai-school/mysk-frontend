@@ -2,10 +2,11 @@
 import { NextPage } from "next";
 import type { AppProps } from "next/app";
 import Head from "next/head";
+import { useRouter } from "next/router";
 
 import { appWithTranslation } from "next-i18next";
 
-import { ReactElement, ReactNode, useState } from "react";
+import { ReactElement, ReactNode, useEffect, useState } from "react";
 
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
@@ -37,6 +38,9 @@ import PageLoadDim from "@components/PageLoadDim";
 import ErrorBoundary from "@components/error/ErrorBoundary";
 import PageFallback from "@components/error/PageFallback";
 
+// Supabase
+import { supabase } from "@utils/supabaseClient";
+
 const App = ({
   Component,
   pageProps,
@@ -47,6 +51,14 @@ const App = ({
 }) => {
   // Query client
   const [queryClient] = useState(() => new QueryClient());
+
+  // Authentication
+  const router = useRouter();
+  useEffect(() => {
+    supabase.auth.onAuthStateChange((event) => {
+      if (event == "PASSWORD_RECOVERY") router.push("/account/forgot-password");
+    });
+  });
 
   // Layout
   // Use the layout defined at the page level, if available.

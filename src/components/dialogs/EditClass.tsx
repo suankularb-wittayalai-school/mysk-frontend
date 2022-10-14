@@ -28,7 +28,7 @@ import { getCurrentAcedemicYear } from "@utils/helpers/date";
 import { nameJoiner } from "@utils/helpers/name";
 
 // Patterns
-import { classRegex } from "@utils/patterns";
+import { classPattern, classRegex } from "@utils/patterns";
 
 // Types
 import { Class } from "@utils/types/class";
@@ -200,7 +200,7 @@ const EditClassDialog = ({
             useAutoMsg
             onChange={(e: string) => setForm({ ...form, number: Number(e) })}
             defaultValue={classItem ? classItem.number : 101}
-            attr={{ pattern: "[1-6][0-1][1-9]" }}
+            attr={{ pattern: classPattern }}
           />
           <KeyboardInput
             name="year"
