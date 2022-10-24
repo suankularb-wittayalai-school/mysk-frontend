@@ -1,5 +1,5 @@
 // External libraries
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 import { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
@@ -28,6 +28,9 @@ import {
 
 // Components
 import LogOutDialog from "@components/dialogs/LogOut";
+
+// Animations
+import { animationTransition } from "@utils/animations/config";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
@@ -149,112 +152,119 @@ const DataCheckSection = ({
   });
 
   return (
-    <Section>
-      <Header
-        icon={<MaterialIcon icon="badge" allowCustomSize />}
-        text="ตรวจสอบข้อมูล"
-      />
-
-      {/* Local name (Thai) */}
-      <section>
-        <h3 className="mb-1 font-display text-xl font-bold">
-          {t("profile.name.title", { ns: "account" })}
-        </h3>
-        <div className="layout-grid-cols-4 !gap-y-0">
-          <KeyboardInput
-            name="th-prefix"
-            type="text"
-            label={t("profile.name.prefix.label", { ns: "account" })}
-            onChange={(e) => setForm({ ...form, thPrefix: e })}
-            attr={{ disabled }}
-          />
-          <KeyboardInput
-            name="th-first-name"
-            type="text"
-            label={t("profile.name.firstName", { ns: "account" })}
-            onChange={(e) => setForm({ ...form, thFirstName: e })}
-            attr={{ disabled }}
-          />
-          <KeyboardInput
-            name="th-middle-name"
-            type="text"
-            label={t("profile.name.middleName", { ns: "account" })}
-            onChange={(e) => setForm({ ...form, thMiddleName: e })}
-            attr={{ disabled }}
-          />
-          <KeyboardInput
-            name="th-last-name"
-            type="text"
-            label={t("profile.name.lastName", { ns: "account" })}
-            onChange={(e) => setForm({ ...form, thLastName: e })}
-            attr={{ disabled }}
-          />
-        </div>
-      </section>
-
-      {/* English name */}
-      <section>
-        <h3 className="mb-1 font-display text-xl font-bold">
-          {t("profile.enName.title", { ns: "account" })}
-        </h3>
-        <div className="layout-grid-cols-4 !gap-y-0">
-          <KeyboardInput
-            name="en-prefix"
-            type="text"
-            label={t("profile.enName.prefix", { ns: "account" })}
-            onChange={(e) => setForm({ ...form, thPrefix: e })}
-            attr={{ disabled }}
-          />
-          <KeyboardInput
-            name="en-first-name"
-            type="text"
-            label={t("profile.enName.firstName", { ns: "account" })}
-            onChange={(e) => setForm({ ...form, enFirstName: e })}
-            attr={{ disabled }}
-          />
-          <KeyboardInput
-            name="en-middle-name"
-            type="text"
-            label={t("profile.enName.middleName", { ns: "account" })}
-            onChange={(e) => setForm({ ...form, enMiddleName: e })}
-            attr={{ disabled }}
-          />
-          <KeyboardInput
-            name="en-last-name"
-            type="text"
-            label={t("profile.enName.lastName", { ns: "account" })}
-            onChange={(e) => setForm({ ...form, enLastName: e })}
-            attr={{ disabled }}
-          />
-        </div>
-      </section>
-
-      {/* Role */}
-      <section>
-        <h3 className="mb-1 font-display text-xl font-bold">
-          {t("profile.role.title", { ns: "account" })}
-        </h3>
-        <div className="layout-grid-cols-4 !gap-y-0">
-          <KeyboardInput
-            name="student-id"
-            type="text"
-            label={t("profile.role.studentID", { ns: "account" })}
-            onChange={(e) => setForm({ ...form, studentID: e })}
-            attr={{ disabled }}
-          />
-        </div>
-      </section>
-
-      <Actions>
-        <Button
-          label="บันทึกและไปต่อ"
-          type="filled"
-          icon={<MaterialIcon icon="arrow_downward" />}
-          onClick={incrementStep}
-          disabled={disabled}
+    <motion.div
+      initial={{ scale: 0.8, y: -280, opacity: 0 }}
+      animate={{ scale: 1, y: 0, opacity: 1 }}
+      exit={{ scale: 0.8, y: -280, opacity: 0 }}
+      transition={animationTransition}
+    >
+      <Section>
+        <Header
+          icon={<MaterialIcon icon="badge" allowCustomSize />}
+          text="ตรวจสอบข้อมูล"
         />
-      </Actions>
-    </Section>
+
+        {/* Local name (Thai) */}
+        <section>
+          <h3 className="mb-1 font-display text-xl font-bold">
+            {t("profile.name.title", { ns: "account" })}
+          </h3>
+          <div className="layout-grid-cols-4 !gap-y-0">
+            <KeyboardInput
+              name="th-prefix"
+              type="text"
+              label={t("profile.name.prefix.label", { ns: "account" })}
+              onChange={(e) => setForm({ ...form, thPrefix: e })}
+              attr={{ disabled }}
+            />
+            <KeyboardInput
+              name="th-first-name"
+              type="text"
+              label={t("profile.name.firstName", { ns: "account" })}
+              onChange={(e) => setForm({ ...form, thFirstName: e })}
+              attr={{ disabled }}
+            />
+            <KeyboardInput
+              name="th-middle-name"
+              type="text"
+              label={t("profile.name.middleName", { ns: "account" })}
+              onChange={(e) => setForm({ ...form, thMiddleName: e })}
+              attr={{ disabled }}
+            />
+            <KeyboardInput
+              name="th-last-name"
+              type="text"
+              label={t("profile.name.lastName", { ns: "account" })}
+              onChange={(e) => setForm({ ...form, thLastName: e })}
+              attr={{ disabled }}
+            />
+          </div>
+        </section>
+
+        {/* English name */}
+        <section>
+          <h3 className="mb-1 font-display text-xl font-bold">
+            {t("profile.enName.title", { ns: "account" })}
+          </h3>
+          <div className="layout-grid-cols-4 !gap-y-0">
+            <KeyboardInput
+              name="en-prefix"
+              type="text"
+              label={t("profile.enName.prefix", { ns: "account" })}
+              onChange={(e) => setForm({ ...form, thPrefix: e })}
+              attr={{ disabled }}
+            />
+            <KeyboardInput
+              name="en-first-name"
+              type="text"
+              label={t("profile.enName.firstName", { ns: "account" })}
+              onChange={(e) => setForm({ ...form, enFirstName: e })}
+              attr={{ disabled }}
+            />
+            <KeyboardInput
+              name="en-middle-name"
+              type="text"
+              label={t("profile.enName.middleName", { ns: "account" })}
+              onChange={(e) => setForm({ ...form, enMiddleName: e })}
+              attr={{ disabled }}
+            />
+            <KeyboardInput
+              name="en-last-name"
+              type="text"
+              label={t("profile.enName.lastName", { ns: "account" })}
+              onChange={(e) => setForm({ ...form, enLastName: e })}
+              attr={{ disabled }}
+            />
+          </div>
+        </section>
+
+        {/* Role */}
+        <section>
+          <h3 className="mb-1 font-display text-xl font-bold">
+            {t("profile.role.title", { ns: "account" })}
+          </h3>
+          <div className="layout-grid-cols-4 !gap-y-0">
+            <KeyboardInput
+              name="student-id"
+              type="text"
+              label={t("profile.role.studentID", { ns: "account" })}
+              onChange={(e) => setForm({ ...form, studentID: e })}
+              attr={{ disabled }}
+            />
+          </div>
+        </section>
+
+        <Actions>
+          <Button
+            label="บันทึกและไปต่อ"
+            type="filled"
+            icon={<MaterialIcon icon="arrow_downward" />}
+            onClick={incrementStep}
+            disabled={disabled}
+          />
+        </Actions>
+      </Section>
+    </motion.div>
   );
 };
 
@@ -273,56 +283,65 @@ const NewPasswordSection = ({
   });
 
   return (
-    <Section>
-      <Header
-        icon={<MaterialIcon icon="password" allowCustomSize />}
-        text="สร้างรหัสผ่าน"
-      />
-
-      <p>
-        เพื่อความปลอดภัยของข้อมูลโรงเรียน ให้สร้างรหัสผ่านใหม่สำหรับระบบ MySK
-        โดยการใส่รหัสผ่านใหม่สองครั้ง
-      </p>
-
-      <LayoutGridCols cols={3}>
-        <div className="md:col-start-2">
-          <KeyboardInput
-            name="new-password"
-            type="password"
-            label={t("dialog.changePassword.newPwd", { ns: "account" })}
-            errorMsg={t("dialog.changePassword.newPwd_error", {
-              ns: "account",
-            })}
-            useAutoMsg
-            onChange={(e: string) => setForm({ ...form, newPassword: e })}
-            attr={{ minLength: 8 }}
-          />
-          <KeyboardInput
-            name="confirm-new-password"
-            type="password"
-            label={t("dialog.changePassword.confirmNewPwd", { ns: "account" })}
-            errorMsg={t("dialog.changePassword.newPwd_error", {
-              ns: "account",
-            })}
-            useAutoMsg
-            onChange={(e: string) =>
-              setForm({ ...form, confirmNewPassword: e })
-            }
-            attr={{ minLength: 8 }}
-          />
-        </div>
-      </LayoutGridCols>
-      
-      <Actions>
-        <Button
-          label="สร้างและไปต่อ"
-          type="filled"
-          icon={<MaterialIcon icon="arrow_downward" />}
-          onClick={incrementStep}
-          disabled={disabled}
+    <motion.div
+      initial={{ scale: 0.8, y: -280, opacity: 0 }}
+      animate={{ scale: 1, y: 0, opacity: 1 }}
+      exit={{ scale: 0.8, y: -280, opacity: 0 }}
+      transition={animationTransition}
+    >
+      <Section>
+        <Header
+          icon={<MaterialIcon icon="password" allowCustomSize />}
+          text="สร้างรหัสผ่าน"
         />
-      </Actions>
-    </Section>
+
+        <p>
+          เพื่อความปลอดภัยของข้อมูลโรงเรียน ให้สร้างรหัสผ่านใหม่สำหรับระบบ MySK
+          โดยการใส่รหัสผ่านใหม่สองครั้ง
+        </p>
+
+        <LayoutGridCols cols={6}>
+          <div className="col-span-4 md:col-start-2">
+            <KeyboardInput
+              name="new-password"
+              type="password"
+              label={t("dialog.changePassword.newPwd", { ns: "account" })}
+              errorMsg={t("dialog.changePassword.newPwd_error", {
+                ns: "account",
+              })}
+              useAutoMsg
+              onChange={(e: string) => setForm({ ...form, newPassword: e })}
+              attr={{ minLength: 8 }}
+            />
+            <KeyboardInput
+              name="confirm-new-password"
+              type="password"
+              label={t("dialog.changePassword.confirmNewPwd", {
+                ns: "account",
+              })}
+              errorMsg={t("dialog.changePassword.newPwd_error", {
+                ns: "account",
+              })}
+              useAutoMsg
+              onChange={(e: string) =>
+                setForm({ ...form, confirmNewPassword: e })
+              }
+              attr={{ minLength: 8 }}
+            />
+          </div>
+        </LayoutGridCols>
+
+        <Actions>
+          <Button
+            label="สร้างและไปต่อ"
+            type="filled"
+            icon={<MaterialIcon icon="arrow_forward" />}
+            onClick={incrementStep}
+            disabled={disabled}
+          />
+        </Actions>
+      </Section>
+    </motion.div>
   );
 };
 
@@ -351,27 +370,32 @@ const Welcome: NextPage = () => {
       >
         <AnimatePresence>
           <HeroSection
+            key="hero-section"
             incrementStep={incrementStep}
             toggleShowLogOut={toggleShowLogOut}
             disabled={currStep >= 1}
           />
           {currStep >= 1 && (
             <DataCheckSection
+              key="data-check-section"
               incrementStep={incrementStep}
               disabled={currStep >= 2}
             />
-          )}{" "}
-          {currStep >= 2 && (
-            <NewPasswordSection
-              incrementStep={incrementStep}
-              disabled={currStep >= 3}
-            />
           )}
-          {currStep >= 3 && (
-            <section>
-              <p>TODO</p>
-            </section>
-          )}
+          <LayoutGridCols cols={2}>
+            {currStep >= 2 && (
+              <NewPasswordSection
+                key="new-password-section"
+                incrementStep={incrementStep}
+                disabled={currStep >= 3}
+              />
+            )}
+            {currStep >= 3 && (
+              <section key="done-section">
+                <p>TODO</p>
+              </section>
+            )}
+          </LayoutGridCols>
         </AnimatePresence>
       </RegularLayout>
       <LogOutDialog show={showLogOut} onClose={toggleShowLogOut} />
