@@ -58,6 +58,7 @@
       "lastName": "Last name"
     },
     "enName": {
+      "prefix": "English prefix",
       "title": "English name",
       "firstName": "English first name",
       "middleName": "English middle name",
@@ -70,12 +71,13 @@
       "classNo": "Class №"
     },
     "role": {
-      "title": "Role",
+      "title": "Role within school",
       "role": {
         "label": "Role",
         "student": "Student",
         "teacher": "Teacher"
       },
+      "studentID": "Student ID",
       "teacherID": "Teacher ID",
       "subjectGroup": "Subject group",
       "classAdvisorAt": {

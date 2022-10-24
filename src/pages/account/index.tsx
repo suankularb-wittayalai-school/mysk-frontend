@@ -237,21 +237,21 @@ const EditInfoSection = ({
             type="text"
             label={t("profile.enName.firstName")}
             defaultValue={user.name["en-US"]?.firstName || ""}
-            onChange={(e: string) => setForm({ ...form, thFirstName: e })}
+            onChange={(e: string) => setForm({ ...form, enFirstName: e })}
           />
           <KeyboardInput
             name="en-middle-name"
             type="text"
             label={t("profile.enName.middleName")}
             defaultValue={user.name["en-US"]?.middleName || ""}
-            onChange={(e: string) => setForm({ ...form, thMiddleName: e })}
+            onChange={(e: string) => setForm({ ...form, enMiddleName: e })}
           />
           <KeyboardInput
             name="en-last-name"
             type="text"
             label={t("profile.enName.lastName")}
             defaultValue={user.name["en-US"]?.lastName || ""}
-            onChange={(e: string) => setForm({ ...form, thLastName: e })}
+            onChange={(e: string) => setForm({ ...form, enLastName: e })}
           />
         </div>
       </section>

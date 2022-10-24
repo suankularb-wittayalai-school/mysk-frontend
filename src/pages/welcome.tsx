@@ -6,7 +6,7 @@ import Image from "next/image";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useReducer } from "react";
+import { useReducer, useState } from "react";
 
 // SK Components
 import {
@@ -21,6 +21,7 @@ import {
   Header,
   Actions,
   Button,
+  KeyboardInput,
 } from "@suankularb-components/react";
 
 // Components
@@ -67,8 +68,8 @@ const HeroSection = ({
         </div>
         <p>
           กรุณาตรวจสอบข้อมูลทุกอย่างให้ถูกต้องทุกกรณีก่อนที่จะกดไปขั้นตอนต่อไปทุกขั้นตอน
-          เพราะข้อมูลบางส่วนอาจต้องผ่านกระบวนการ แก้ไขที่ใช้เวลา
-          หรืออาจไม่สามารถแก้ไขได้เลยในอนาคตหากข้อมูลผิดพลาด
+          เพราะข้อมูลบางส่วนอาจต้องผ่านกระบวนการแก้ไขที่ใช้เวลา
+          หรืออาจไม่สามารถแก้ไขได้เลยในอนาคต หากข้อมูลผิดพลาด
         </p>
         <Actions>
           <Button
@@ -88,7 +89,7 @@ const HeroSection = ({
           />
         </Actions>
       </Section>
-      <Section>
+      <Section className="!hidden sm:!flex">
         <Header
           icon={<MaterialIcon icon="checklist" allowCustomSize />}
           text="ขั้นตอนต่อไป"
@@ -120,6 +121,141 @@ const HeroSection = ({
   );
 };
 
+const DataCheckSection = ({
+  incrementStep,
+  disabled,
+}: {
+  incrementStep: () => void;
+  disabled?: boolean;
+}): JSX.Element => {
+  const { t } = useTranslation(["landing", "account"]);
+
+  // Form control
+  const [form, setForm] = useState({
+    thPrefix: "",
+    thFirstName: "",
+    thMiddleName: "",
+    thLastName: "",
+    enPrefix: "",
+    enFirstName: "",
+    enMiddleName: "",
+    enLastName: "",
+    studentID: "",
+    citizenID: "",
+    birthdate: "",
+    email: "",
+  });
+
+  return (
+    <Section>
+      <Header
+        icon={<MaterialIcon icon="badge" allowCustomSize />}
+        text="ตรวจสอบข้อมูล"
+      />
+
+      {/* Local name (Thai) */}
+      <section>
+        <h3 className="mb-1 font-display text-xl font-bold">
+          {t("profile.name.title", { ns: "account" })}
+        </h3>
+        <div className="layout-grid-cols-4 !gap-y-0">
+          <KeyboardInput
+            name="th-prefix"
+            type="text"
+            label={t("profile.name.prefix.label", { ns: "account" })}
+            onChange={(e) => setForm({ ...form, thPrefix: e })}
+            attr={{ disabled }}
+          />
+          <KeyboardInput
+            name="th-first-name"
+            type="text"
+            label={t("profile.name.firstName", { ns: "account" })}
+            onChange={(e) => setForm({ ...form, thFirstName: e })}
+            attr={{ disabled }}
+          />
+          <KeyboardInput
+            name="th-middle-name"
+            type="text"
+            label={t("profile.name.middleName", { ns: "account" })}
+            onChange={(e) => setForm({ ...form, thMiddleName: e })}
+            attr={{ disabled }}
+          />
+          <KeyboardInput
+            name="th-last-name"
+            type="text"
+            label={t("profile.name.lastName", { ns: "account" })}
+            onChange={(e) => setForm({ ...form, thLastName: e })}
+            attr={{ disabled }}
+          />
+        </div>
+      </section>
+
+      {/* English name */}
+      <section>
+        <h3 className="mb-1 font-display text-xl font-bold">
+          {t("profile.enName.title", { ns: "account" })}
+        </h3>
+        <div className="layout-grid-cols-4 !gap-y-0">
+          <KeyboardInput
+            name="en-prefix"
+            type="text"
+            label={t("profile.enName.prefix", { ns: "account" })}
+            onChange={(e) => setForm({ ...form, thPrefix: e })}
+            attr={{ disabled }}
+          />
+          <KeyboardInput
+            name="en-first-name"
+            type="text"
+            label={t("profile.enName.firstName", { ns: "account" })}
+            onChange={(e) => setForm({ ...form, enFirstName: e })}
+            attr={{ disabled }}
+          />
+          <KeyboardInput
+            name="en-middle-name"
+            type="text"
+            label={t("profile.enName.middleName", { ns: "account" })}
+            onChange={(e) => setForm({ ...form, enMiddleName: e })}
+            attr={{ disabled }}
+          />
+          <KeyboardInput
+            name="en-last-name"
+            type="text"
+            label={t("profile.enName.lastName", { ns: "account" })}
+            onChange={(e) => setForm({ ...form, enLastName: e })}
+            attr={{ disabled }}
+          />
+        </div>
+      </section>
+
+      {/* Role */}
+      <section>
+        <h3 className="mb-1 font-display text-xl font-bold">
+          {t("profile.role.title", { ns: "account" })}
+        </h3>
+        <div className="layout-grid-cols-4 !gap-y-0">
+          <KeyboardInput
+            name="student-id"
+            type="text"
+            label={t("profile.role.studentID", { ns: "account" })}
+            onChange={(e) => setForm({ ...form, studentID: e })}
+            attr={{ disabled }}
+          />
+        </div>
+      </section>
+
+      <Actions>
+        <Button
+          label="บันทึกและไปต่อ"
+          type="filled"
+          icon={<MaterialIcon icon="arrow_downward" />}
+          onClick={incrementStep}
+          disabled={disabled}
+        />
+      </Actions>
+    </Section>
+  );
+};
+
 // Page
 const Welcome: NextPage = () => {
   const { t } = useTranslation("landing");
@@ -148,7 +284,13 @@ const Welcome: NextPage = () => {
           toggleShowLogOut={toggleShowLogOut}
           disabled={currStep >= 1}
         />
-        {currStep >= 1 && <section>TODO</section>}
+        {currStep >= 1 && (
+          <DataCheckSection
+            incrementStep={incrementStep}
+            disabled={currStep >= 2}
+          />
+        )}{" "}
+        {currStep >= 2 && <section>TODO</section>}
       </RegularLayout>
       <LogOutDialog show={showLogOut} onClose={toggleShowLogOut} />
     </>
