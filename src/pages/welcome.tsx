@@ -1,4 +1,6 @@
 // External libraries
+import { AnimatePresence } from "framer-motion";
+
 import { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
@@ -256,6 +258,74 @@ const DataCheckSection = ({
   );
 };
 
+const NewPasswordSection = ({
+  incrementStep,
+  disabled,
+}: {
+  incrementStep: () => void;
+  disabled?: boolean;
+}): JSX.Element => {
+  const { t } = useTranslation(["landing", "account"]);
+
+  const [form, setForm] = useState({
+    newPassword: "",
+    confirmNewPassword: "",
+  });
+
+  return (
+    <Section>
+      <Header
+        icon={<MaterialIcon icon="password" allowCustomSize />}
+        text="สร้างรหัสผ่าน"
+      />
+
+      <p>
+        เพื่อความปลอดภัยของข้อมูลโรงเรียน ให้สร้างรหัสผ่านใหม่สำหรับระบบ MySK
+        โดยการใส่รหัสผ่านใหม่สองครั้ง
+      </p>
+
+      <LayoutGridCols cols={3}>
+        <div className="md:col-start-2">
+          <KeyboardInput
+            name="new-password"
+            type="password"
+            label={t("dialog.changePassword.newPwd", { ns: "account" })}
+            errorMsg={t("dialog.changePassword.newPwd_error", {
+              ns: "account",
+            })}
+            useAutoMsg
+            onChange={(e: string) => setForm({ ...form, newPassword: e })}
+            attr={{ minLength: 8 }}
+          />
+          <KeyboardInput
+            name="confirm-new-password"
+            type="password"
+            label={t("dialog.changePassword.confirmNewPwd", { ns: "account" })}
+            errorMsg={t("dialog.changePassword.newPwd_error", {
+              ns: "account",
+            })}
+            useAutoMsg
+            onChange={(e: string) =>
+              setForm({ ...form, confirmNewPassword: e })
+            }
+            attr={{ minLength: 8 }}
+          />
+        </div>
+      </LayoutGridCols>
+      
+      <Actions>
+        <Button
+          label="สร้างและไปต่อ"
+          type="filled"
+          icon={<MaterialIcon icon="arrow_downward" />}
+          onClick={incrementStep}
+          disabled={disabled}
+        />
+      </Actions>
+    </Section>
+  );
+};
+
 // Page
 const Welcome: NextPage = () => {
   const { t } = useTranslation("landing");
@@ -279,18 +349,30 @@ const Welcome: NextPage = () => {
           />
         }
       >
-        <HeroSection
-          incrementStep={incrementStep}
-          toggleShowLogOut={toggleShowLogOut}
-          disabled={currStep >= 1}
-        />
-        {currStep >= 1 && (
-          <DataCheckSection
+        <AnimatePresence>
+          <HeroSection
             incrementStep={incrementStep}
-            disabled={currStep >= 2}
+            toggleShowLogOut={toggleShowLogOut}
+            disabled={currStep >= 1}
           />
-        )}{" "}
-        {currStep >= 2 && <section>TODO</section>}
+          {currStep >= 1 && (
+            <DataCheckSection
+              incrementStep={incrementStep}
+              disabled={currStep >= 2}
+            />
+          )}{" "}
+          {currStep >= 2 && (
+            <NewPasswordSection
+              incrementStep={incrementStep}
+              disabled={currStep >= 3}
+            />
+          )}
+          {currStep >= 3 && (
+            <section>
+              <p>TODO</p>
+            </section>
+          )}
+        </AnimatePresence>
       </RegularLayout>
       <LogOutDialog show={showLogOut} onClose={toggleShowLogOut} />
     </>
