@@ -1,9 +1,10 @@
 // External libraries
 import { AnimatePresence, motion } from "framer-motion";
 
-import { GetStaticProps, NextPage } from "next";
+import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
+import Link from "next/link";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -24,6 +25,8 @@ import {
   Actions,
   Button,
   KeyboardInput,
+  CardActions,
+  LinkButton,
 } from "@suankularb-components/react";
 
 // Components
@@ -311,7 +314,7 @@ const NewPasswordSection = ({
               })}
               useAutoMsg
               onChange={(e: string) => setForm({ ...form, newPassword: e })}
-              attr={{ minLength: 8 }}
+              attr={{ minLength: 8, disabled }}
             />
             <KeyboardInput
               name="confirm-new-password"
@@ -326,7 +329,7 @@ const NewPasswordSection = ({
               onChange={(e: string) =>
                 setForm({ ...form, confirmNewPassword: e })
               }
-              attr={{ minLength: 8 }}
+              attr={{ minLength: 8, disabled }}
             />
           </div>
         </LayoutGridCols>
@@ -340,6 +343,63 @@ const NewPasswordSection = ({
             disabled={disabled}
           />
         </Actions>
+      </Section>
+    </motion.div>
+  );
+};
+
+const DoneSection = (): JSX.Element => {
+  const { t } = useTranslation("landing");
+
+  return (
+    <motion.div
+      initial={{ scale: 0.4, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      exit={{ scale: 0.4, opacity: 0 }}
+      transition={animationTransition}
+    >
+      <Section>
+        <Header
+          icon={<MaterialIcon icon="login" allowCustomSize />}
+          text="เข้าใช้งาน"
+        />
+
+        <LayoutGridCols cols={6}>
+          <Card
+            type="stacked"
+            appearance="tonal"
+            className="col-span-4 md:col-start-2"
+          >
+            {/* FIXME: When Card Media is added to React SK Components, change this */}
+            <div className="card__media relative h-60">
+              <Image
+                src="/images/graphics/login.webp"
+                layout="fill"
+                objectFit="cover"
+                alt=""
+              />
+            </div>
+            <CardSupportingText>
+              <p>
+                ทุกอย่างพร้อมสำหรับการเข้าใช้งานระบบ MySK แล้ว
+                หากมีปัญหาหรือข้อสงสัยใดๆ สามารถไปที่
+                <a href="/help" className="link">
+                  หน้าช่วยเหลือ
+                </a>
+                ได้
+              </p>
+            </CardSupportingText>
+            <CardActions>
+              <LinkButton
+                label="เข้าใช้งาน"
+                type="filled"
+                url="/learn"
+                LinkElement={Link}
+                className="w-full !text-center"
+              />
+            </CardActions>
+          </Card>
+        </LayoutGridCols>
       </Section>
     </motion.div>
   );
@@ -390,11 +450,7 @@ const Welcome: NextPage = () => {
                 disabled={currStep >= 3}
               />
             )}
-            {currStep >= 3 && (
-              <section key="done-section">
-                <p>TODO</p>
-              </section>
-            )}
+            {currStep >= 3 && <DoneSection />}
           </LayoutGridCols>
         </AnimatePresence>
       </RegularLayout>
@@ -403,7 +459,7 @@ const Welcome: NextPage = () => {
   );
 };
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => {
+export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   return {
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
