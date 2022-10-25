@@ -177,7 +177,7 @@ const DataCheckSection = ({
       <Section>
         <Header
           icon={<MaterialIcon icon="badge" allowCustomSize />}
-          text="ตรวจสอบข้อมูล"
+          text={t("welcome.dataCheck.title")}
         />
 
         {/* Local name (Thai) */}
@@ -313,7 +313,7 @@ const DataCheckSection = ({
 
         <Actions>
           <Button
-            label="บันทึกและไปต่อ"
+            label={t("welcome.dataCheck.action.continue")}
             type="filled"
             icon={<MaterialIcon icon="arrow_downward" />}
             onClick={incrementStep}

@@ -39,6 +39,12 @@
         "title": "You’re all set",
         "desc": "Everything is ready for you to start using MySK."
       }
+    },
+    "dataCheck": {
+      "title": "Data check",
+      "action": {
+        "continue": "Save and continue"
+      }
     }
   }
 }
