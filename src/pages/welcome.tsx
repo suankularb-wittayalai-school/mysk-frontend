@@ -43,6 +43,8 @@ import { useToggle } from "@utils/hooks/toggle";
 
 // Types
 import { LangCode } from "@utils/types/common";
+import { getUserFromReq } from "@utils/backend/person/person";
+import { Role, Student, Teacher } from "@utils/types/person";
 
 // Sections
 const HeroSection = ({
@@ -348,7 +350,7 @@ const NewPasswordSection = ({
   );
 };
 
-const DoneSection = (): JSX.Element => {
+const DoneSection = ({ role }: { role: Role }): JSX.Element => {
   const { t } = useTranslation("landing");
 
   return (
@@ -393,7 +395,7 @@ const DoneSection = (): JSX.Element => {
               <LinkButton
                 label="เข้าใช้งาน"
                 type="filled"
-                url="/learn"
+                url={role == "teacher" ? "/teach" : "/learn"}
                 LinkElement={Link}
                 className="w-full !text-center"
               />
@@ -406,7 +408,7 @@ const DoneSection = (): JSX.Element => {
 };
 
 // Page
-const Welcome: NextPage = () => {
+const Welcome: NextPage<{ user: Student | Teacher }> = ({ user }) => {
   const { t } = useTranslation("landing");
 
   const [currStep, incrementStep] = useReducer((value) => value + 1, 0);
@@ -450,7 +452,9 @@ const Welcome: NextPage = () => {
                 disabled={currStep >= 3}
               />
             )}
-            {currStep >= 3 && <DoneSection />}
+            {currStep >= 3 && (
+              <DoneSection key="done-section" role={user.role} />
+            )}
           </LayoutGridCols>
         </AnimatePresence>
       </RegularLayout>
@@ -459,7 +463,15 @@ const Welcome: NextPage = () => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  req,
+  res,
+}) => {
+  const { data: user, error } = await getUserFromReq(req, res);
+  if (error)
+    return { redirect: { destination: "/account/login", permanent: false } };
+
   return {
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
@@ -467,6 +479,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
         "account",
         "landing",
       ])),
+      user,
     },
   };
 };
