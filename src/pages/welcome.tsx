@@ -5,6 +5,7 @@ import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -28,6 +29,7 @@ import {
   CardActions,
   LinkButton,
   NativeInput,
+  Dropdown,
 } from "@suankularb-components/react";
 
 // Components
@@ -38,8 +40,10 @@ import { animationTransition } from "@utils/animations/config";
 
 // Backend
 import { getUserFromReq } from "@utils/backend/person/person";
+import { getSubjectGroups } from "@utils/backend/subject/subjectGroup";
 
 // Helpers
+import { getLocaleString } from "@utils/helpers/i18n";
 import { createTitleStr } from "@utils/helpers/title";
 
 // Hooks
@@ -48,6 +52,7 @@ import { useToggle } from "@utils/hooks/toggle";
 // Types
 import { LangCode } from "@utils/types/common";
 import { Role, Student, Teacher } from "@utils/types/person";
+import { SubjectGroup } from "@utils/types/subject";
 
 // Miscellaneous
 import { citizenIDPattern } from "@utils/patterns";
@@ -142,14 +147,17 @@ const HeroSection = ({
 
 const DataCheckSection = ({
   user,
+  subjectGroups,
   incrementStep,
   disabled,
 }: {
   user: Student | Teacher;
+  subjectGroups: SubjectGroup[];
   incrementStep: () => void;
   disabled?: boolean;
 }): JSX.Element => {
   const { t } = useTranslation(["landing", "account"]);
+  const locale = useRouter().locale as LangCode;
 
   // Form control
   const [form, setForm] = useState({
@@ -162,9 +170,10 @@ const DataCheckSection = ({
     enMiddleName: user.name["en-US"]?.middleName || "",
     enLastName: user.name["en-US"]?.lastName || "",
     studentID: user.role == "student" ? user.studentID : "",
+    teacherID: user.role == "teacher" ? user.teacherID : "",
     citizenID: user.citizenID,
     birthDate: user.birthdate,
-    email: "",
+    subjectGroup: user.role == "teacher" ? user.subjectGroup.id : 0,
   });
 
   return (
@@ -282,13 +291,6 @@ const DataCheckSection = ({
               defaultValue={user.birthdate}
               attr={{ disabled }}
             />
-            <KeyboardInput
-              name="email"
-              type="email"
-              label={t("profile.general.email", { ns: "account" })}
-              onChange={(e) => setForm({ ...form, email: e })}
-              attr={{ disabled }}
-            />
           </div>
         </section>
 
@@ -298,7 +300,30 @@ const DataCheckSection = ({
             {t("profile.role.title", { ns: "account" })}
           </h3>
           <div className="layout-grid-cols-4 !gap-y-0">
-            {user.role == "student" && (
+            {user.role == "teacher" ? (
+              <>
+                <KeyboardInput
+                  name="teacher-id"
+                  type="text"
+                  label={t("profile.role.teacherID", { ns: "account" })}
+                  onChange={(e) => setForm({ ...form, teacherID: e })}
+                  defaultValue={user.teacherID}
+                  attr={{ disabled }}
+                />
+                <Dropdown
+                  name="subject-group"
+                  label={t("profile.role.subjectGroup", { ns: "account" })}
+                  options={subjectGroups.map((subjectGroup) => ({
+                    value: subjectGroup.id,
+                    label: getLocaleString(subjectGroup.name, locale),
+                  }))}
+                  onChange={(e: number) =>
+                    setForm({ ...form, subjectGroup: e })
+                  }
+                  defaultValue={user.subjectGroup.id}
+                />
+              </>
+            ) : (
               <KeyboardInput
                 name="student-id"
                 type="number"
@@ -499,7 +524,10 @@ const DoneSection = ({ role }: { role: Role }): JSX.Element => {
 };
 
 // Page
-const Welcome: NextPage<{ user: Student | Teacher }> = ({ user }) => {
+const Welcome: NextPage<{
+  user: Student | Teacher;
+  subjectGroups: SubjectGroup[];
+}> = ({ user, subjectGroups }) => {
   const { t } = useTranslation("landing");
 
   const [currStep, incrementStep] = useReducer((value) => value + 1, 0);
@@ -533,6 +561,7 @@ const Welcome: NextPage<{ user: Student | Teacher }> = ({ user }) => {
             <DataCheckSection
               key="data-check-section"
               user={user}
+              subjectGroups={subjectGroups}
               incrementStep={incrementStep}
               disabled={currStep >= 2}
             />
@@ -570,6 +599,8 @@ export const getServerSideProps: GetServerSideProps = async ({
   if (error)
     return { redirect: { destination: "/account/login", permanent: false } };
 
+  const { data: subjectGroups } = await getSubjectGroups();
+
   return {
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
@@ -578,6 +609,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         "landing",
       ])),
       user,
+      subjectGroups,
     },
   };
 };
