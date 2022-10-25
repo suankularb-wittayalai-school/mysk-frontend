@@ -27,6 +27,7 @@ import {
   KeyboardInput,
   CardActions,
   LinkButton,
+  NativeInput,
 } from "@suankularb-components/react";
 
 // Components
@@ -34,6 +35,9 @@ import LogOutDialog from "@components/dialogs/LogOut";
 
 // Animations
 import { animationTransition } from "@utils/animations/config";
+
+// Backend
+import { getUserFromReq } from "@utils/backend/person/person";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
@@ -43,15 +47,19 @@ import { useToggle } from "@utils/hooks/toggle";
 
 // Types
 import { LangCode } from "@utils/types/common";
-import { getUserFromReq } from "@utils/backend/person/person";
 import { Role, Student, Teacher } from "@utils/types/person";
+
+// Miscellaneous
+import { citizenIDPattern } from "@utils/patterns";
 
 // Sections
 const HeroSection = ({
+  role,
   incrementStep,
   toggleShowLogOut,
   disabled,
 }: {
+  role: Role;
   incrementStep: () => void;
   toggleShowLogOut: () => void;
   disabled?: boolean;
@@ -132,9 +140,11 @@ const HeroSection = ({
 };
 
 const DataCheckSection = ({
+  user,
   incrementStep,
   disabled,
 }: {
+  user: Student | Teacher;
   incrementStep: () => void;
   disabled?: boolean;
 }): JSX.Element => {
@@ -143,16 +153,16 @@ const DataCheckSection = ({
   // Form control
   const [form, setForm] = useState({
     thPrefix: "",
-    thFirstName: "",
-    thMiddleName: "",
-    thLastName: "",
+    thFirstName: user.name.th.firstName,
+    thMiddleName: user.name.th.middleName || "",
+    thLastName: user.name.th.lastName,
     enPrefix: "",
-    enFirstName: "",
-    enMiddleName: "",
-    enLastName: "",
-    studentID: "",
-    citizenID: "",
-    birthdate: "",
+    enFirstName: user.name["en-US"]?.firstName || "",
+    enMiddleName: user.name["en-US"]?.middleName || "",
+    enLastName: user.name["en-US"]?.lastName || "",
+    studentID: user.role == "student" ? user.studentID : "",
+    citizenID: user.citizenID,
+    birthDate: user.birthdate,
     email: "",
   });
 
@@ -187,6 +197,7 @@ const DataCheckSection = ({
               type="text"
               label={t("profile.name.firstName", { ns: "account" })}
               onChange={(e) => setForm({ ...form, thFirstName: e })}
+              defaultValue={user.name.th.firstName}
               attr={{ disabled }}
             />
             <KeyboardInput
@@ -194,6 +205,7 @@ const DataCheckSection = ({
               type="text"
               label={t("profile.name.middleName", { ns: "account" })}
               onChange={(e) => setForm({ ...form, thMiddleName: e })}
+              defaultValue={user.name.th.middleName}
               attr={{ disabled }}
             />
             <KeyboardInput
@@ -201,6 +213,7 @@ const DataCheckSection = ({
               type="text"
               label={t("profile.name.lastName", { ns: "account" })}
               onChange={(e) => setForm({ ...form, thLastName: e })}
+              defaultValue={user.name.th.lastName}
               attr={{ disabled }}
             />
           </div>
@@ -224,6 +237,7 @@ const DataCheckSection = ({
               type="text"
               label={t("profile.enName.firstName", { ns: "account" })}
               onChange={(e) => setForm({ ...form, enFirstName: e })}
+              defaultValue={user.name["en-US"]?.firstName}
               attr={{ disabled }}
             />
             <KeyboardInput
@@ -231,6 +245,7 @@ const DataCheckSection = ({
               type="text"
               label={t("profile.enName.middleName", { ns: "account" })}
               onChange={(e) => setForm({ ...form, enMiddleName: e })}
+              defaultValue={user.name["en-US"]?.middleName}
               attr={{ disabled }}
             />
             <KeyboardInput
@@ -238,6 +253,39 @@ const DataCheckSection = ({
               type="text"
               label={t("profile.enName.lastName", { ns: "account" })}
               onChange={(e) => setForm({ ...form, enLastName: e })}
+              defaultValue={user.name["en-US"]?.lastName}
+              attr={{ disabled }}
+            />
+          </div>
+        </section>
+
+        {/* General info */}
+        <section>
+          <h3 className="mb-1 font-display text-xl font-bold">
+            {t("profile.general.title", { ns: "account" })}
+          </h3>
+          <div className="layout-grid-cols-4 !gap-y-0">
+            <KeyboardInput
+              name="citizen-id"
+              type="text"
+              label={t("profile.general.citizenID", { ns: "account" })}
+              onChange={(e) => setForm({ ...form, citizenID: e })}
+              defaultValue={user.citizenID}
+              attr={{ pattern: citizenIDPattern, disabled }}
+            />
+            <NativeInput
+              name="birth-date"
+              type="date"
+              label={t("profile.general.birthDate", { ns: "account" })}
+              onChange={(e) => setForm({ ...form, birthDate: e })}
+              defaultValue={user.birthdate}
+              attr={{ disabled }}
+            />
+            <KeyboardInput
+              name="email"
+              type="email"
+              label={t("profile.general.email", { ns: "account" })}
+              onChange={(e) => setForm({ ...form, email: e })}
               attr={{ disabled }}
             />
           </div>
@@ -249,13 +297,16 @@ const DataCheckSection = ({
             {t("profile.role.title", { ns: "account" })}
           </h3>
           <div className="layout-grid-cols-4 !gap-y-0">
-            <KeyboardInput
-              name="student-id"
-              type="text"
-              label={t("profile.role.studentID", { ns: "account" })}
-              onChange={(e) => setForm({ ...form, studentID: e })}
-              attr={{ disabled }}
-            />
+            {user.role == "student" && (
+              <KeyboardInput
+                name="student-id"
+                type="number"
+                label={t("profile.role.studentID", { ns: "account" })}
+                onChange={(e) => setForm({ ...form, studentID: e })}
+                defaultValue={user.studentID}
+                attr={{ min: 10000, max: 99999, disabled }}
+              />
+            )}
           </div>
         </section>
 
@@ -433,6 +484,7 @@ const Welcome: NextPage<{ user: Student | Teacher }> = ({ user }) => {
         <AnimatePresence>
           <HeroSection
             key="hero-section"
+            role={user.role}
             incrementStep={incrementStep}
             toggleShowLogOut={toggleShowLogOut}
             disabled={currStep >= 1}
@@ -440,6 +492,7 @@ const Welcome: NextPage<{ user: Student | Teacher }> = ({ user }) => {
           {currStep >= 1 && (
             <DataCheckSection
               key="data-check-section"
+              user={user}
               incrementStep={incrementStep}
               disabled={currStep >= 2}
             />

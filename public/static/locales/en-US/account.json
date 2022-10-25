@@ -87,7 +87,7 @@
       "isAdmin": "Give administrator permissions"
     },
     "general": {
-      "title": "General Information",
+      "title": "General information",
       "citizenID": "Citizen ID",
       "birthDate": "Birth date",
       "email": "School email"
