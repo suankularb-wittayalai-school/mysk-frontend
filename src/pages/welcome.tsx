@@ -349,13 +349,10 @@ const NewPasswordSection = ({
       <Section>
         <Header
           icon={<MaterialIcon icon="password" allowCustomSize />}
-          text="สร้างรหัสผ่าน"
+          text={t("welcome.newPassword.title")}
         />
 
-        <p>
-          เพื่อความปลอดภัยของข้อมูลโรงเรียน ให้สร้างรหัสผ่านใหม่สำหรับระบบ MySK
-          โดยการใส่รหัสผ่านใหม่สองครั้ง
-        </p>
+        <p>{t("welcome.newPassword.desc")}</p>
 
         <LayoutGridCols cols={6}>
           <div className="col-span-4 md:col-start-2">
@@ -388,7 +385,7 @@ const NewPasswordSection = ({
 
         <Actions>
           <Button
-            label="สร้างและไปต่อ"
+            label={t("welcome.newPassword.action.continue")}
             type="filled"
             icon={
               <MaterialIcon

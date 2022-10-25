@@ -45,6 +45,13 @@
       "action": {
         "continue": "Save and continue"
       }
+    },
+    "newPassword": {
+      "title": "Create password",
+      "desc": "For the security of you and the school’s data, create a new password for MySK. Enter your new password twice to confirm.",
+      "action": {
+        "continue": "Create and continue"
+      }
     }
   }
 }
