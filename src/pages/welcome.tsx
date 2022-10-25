@@ -72,26 +72,19 @@ const HeroSection = ({
         <div>
           <Image
             src="/images/welcome.svg"
-            alt="ลูกศรชี้เข้าโลโก้ MySK"
+            alt={t("welcome.hero.graphicAlt")}
             width={142}
             height={96}
           />
         </div>
         <div className="gap-2 font-display">
-          <h2 className="text-7xl leading-tight">ยินดีต้อนรับสู่ MySK</h2>
-          <p className="text-3xl">
-            ก่อนที่นักเรียนจะเริ่มใช้ระบบ MySK ได้
-            ยังมีบางเรื่องที่ต้องจัดการก่อน
-          </p>
+          <h2 className="text-7xl leading-tight">{t("welcome.hero.title")}</h2>
+          <p className="text-3xl">{t(`welcome.hero.subtitle.${role}`)}</p>
         </div>
-        <p>
-          กรุณาตรวจสอบข้อมูลทุกอย่างให้ถูกต้องทุกกรณีก่อนที่จะกดไปขั้นตอนต่อไปทุกขั้นตอน
-          เพราะข้อมูลบางส่วนอาจต้องผ่านกระบวนการแก้ไขที่ใช้เวลา
-          หรืออาจไม่สามารถแก้ไขได้เลยในอนาคต หากข้อมูลผิดพลาด
-        </p>
-        <Actions>
+        <p>{t("welcome.hero.notice")}</p>
+        <Actions className="mt-2">
           <Button
-            label="ออกจากระบบ"
+            label={t("welcome.hero.action.logOut")}
             type="outlined"
             icon={<MaterialIcon icon="logout" />}
             onClick={toggleShowLogOut}
@@ -99,7 +92,7 @@ const HeroSection = ({
             isDangerous
           />
           <Button
-            label="ไปต่อ"
+            label={t("welcome.hero.action.continue")}
             type="filled"
             icon={<MaterialIcon icon="arrow_downward" />}
             onClick={incrementStep}
@@ -110,30 +103,38 @@ const HeroSection = ({
       <Section className="!hidden sm:!flex">
         <Header
           icon={<MaterialIcon icon="checklist" allowCustomSize />}
-          text="ขั้นตอนต่อไป"
+          text={t("welcome.nextSteps.title")}
         />
         {[
           {
             icon: <MaterialIcon icon="badge" />,
-            title: "ตรวจสอบข้อมูล",
-            desc: "ระบบได้นำเข้าข้อมูลมาจากระบบอื่นๆ ของโรงเรียนแล้ว ในบางกรณี อาจมีข้อมูลที่ไม่ถูกต้องหรือตกหล่น สามารถแก้ไขได้ในขั้นตอนนี้",
+            title: t("welcome.nextSteps.dataCheck.title"),
+            desc: t("welcome.nextSteps.dataCheck.desc"),
           },
           {
             icon: <MaterialIcon icon="password" />,
-            title: "สร้างรหัสผ่าน",
-            desc: "เพื่อความปลอดภัยของข้อมูลโรงเรียน ให้สร้างรหัสผ่านที่ไม่ใช่วันเกิด",
+            title: t("welcome.nextSteps.newPassword.title"),
+            desc: t("welcome.nextSteps.newPassword.desc"),
+          },
+          role == "teacher" && {
+            icon: <MaterialIcon icon="school" />,
+            title: t("welcome.nextSteps.prepareForStudents.title"),
+            desc: t("welcome.nextSteps.prepareForStudents.desc"),
           },
           {
             icon: <MaterialIcon icon="login" />,
-            title: "เข้าใช้งาน",
-            desc: "เริ่มใช้งานระบบ MySK",
+            title: t("welcome.nextSteps.done.title"),
+            desc: t("welcome.nextSteps.done.desc"),
           },
-        ].map((step) => (
-          <Card key={step.title} type="stacked" appearance="tonal">
-            <CardHeader icon={step.icon} title={<h3>{step.title}</h3>} />
-            <CardSupportingText>{step.desc}</CardSupportingText>
-          </Card>
-        ))}
+        ].map(
+          (step) =>
+            step && (
+              <Card key={step.title} type="stacked" appearance="tonal">
+                <CardHeader icon={step.icon} title={<h3>{step.title}</h3>} />
+                <CardSupportingText>{step.desc}</CardSupportingText>
+              </Card>
+            )
+        )}
       </Section>
     </LayoutGridCols>
   );
