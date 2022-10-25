@@ -366,7 +366,7 @@ const NewPasswordSection = ({
                 ns: "account",
               })}
               useAutoMsg
-              onChange={(e: string) => setForm({ ...form, newPassword: e })}
+              onChange={(e) => setForm({ ...form, newPassword: e })}
               attr={{ minLength: 8, disabled }}
             />
             <KeyboardInput
@@ -379,9 +379,7 @@ const NewPasswordSection = ({
                 ns: "account",
               })}
               useAutoMsg
-              onChange={(e: string) =>
-                setForm({ ...form, confirmNewPassword: e })
-              }
+              onChange={(e) => setForm({ ...form, confirmNewPassword: e })}
               attr={{ minLength: 8, disabled }}
             />
           </div>
@@ -391,7 +389,12 @@ const NewPasswordSection = ({
           <Button
             label="สร้างและไปต่อ"
             type="filled"
-            icon={<MaterialIcon icon="arrow_forward" />}
+            icon={
+              <MaterialIcon
+                icon="arrow_downward"
+                className="rotate-0 transition-[transform] sm:-rotate-90"
+              />
+            }
             onClick={incrementStep}
             disabled={disabled}
           />
