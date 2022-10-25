@@ -404,7 +404,7 @@ const NewPasswordSection = ({
   );
 };
 
-const DoneSection = ({ role }: { role: Role }): JSX.Element => {
+const PreparingForStudentsSection = (): JSX.Element => {
   const { t } = useTranslation("landing");
 
   return (
@@ -416,6 +416,41 @@ const DoneSection = ({ role }: { role: Role }): JSX.Element => {
     >
       <Section>
         <Header
+          icon={<MaterialIcon icon="school" allowCustomSize />}
+          text="การเตรียมระบบให้นักเรียน"
+        />
+        <p className="text-tertiary">
+          <strong>สำคัญ: ให้อาจารย์อ่านส่วนนี้ก่อนเข้าใช้งาน</strong>
+        </p>
+        <p>
+          ผู้ดูแลระบบได้มอบหมายวิชาที่อาจารย์ต้องสอนแล้ว
+          แต่ยังไม่ได้เชื่อมต่อห้องเรียนที่อาจารย์สอน
+          หลังจากอาจารย์เสร็จขั้นตอนนี้แล้ว อาจารย์ต้องเตรียมระบบ MySK
+          ในส่วนของท่านให้พร้อมสำหรับนักเรียน
+        </p>
+        <ol className="ml-6 list-decimal marker:font-display marker:text-outline">
+          <li>เชื่อมต่อห้องเรียนที่อาจารย์สอน</li>
+          <li>ในแต่ละวิชา ใส่รายละเอียดเฉพาะห้อง เช่น Google Classroom</li>
+          <li>เพิ่มคาบสอนเข้าตารางสอนของอาจารย์</li>
+        </ol>
+      </Section>
+    </motion.div>
+  );
+};
+
+const DoneSection = ({ role }: { role: Role }): JSX.Element => {
+  const { t } = useTranslation("landing");
+
+  return (
+    <motion.div
+      initial={{ scale: 0.4, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      exit={{ scale: 0.4, opacity: 0 }}
+      transition={animationTransition}
+      className={role == "teacher" ? "col-span-2" : undefined}
+    >
+      <Section>
+        <Header
           icon={<MaterialIcon icon="login" allowCustomSize />}
           text="เข้าใช้งาน"
         />
@@ -424,7 +459,11 @@ const DoneSection = ({ role }: { role: Role }): JSX.Element => {
           <Card
             type="stacked"
             appearance="tonal"
-            className="col-span-4 md:col-start-2"
+            className={
+              role == "teacher"
+                ? "col-span-2 sm:col-start-2 md:col-start-3"
+                : "col-span-4 md:col-start-2"
+            }
           >
             {/* FIXME: When Card Media is added to React SK Components, change this */}
             <div className="card__media relative h-60">
@@ -439,7 +478,7 @@ const DoneSection = ({ role }: { role: Role }): JSX.Element => {
               <p>
                 ทุกอย่างพร้อมสำหรับการเข้าใช้งานระบบ MySK แล้ว
                 หากมีปัญหาหรือข้อสงสัยใดๆ สามารถไปที่
-                <a href="/help" className="link">
+                <a href="/help" target="mysk-help" className="link">
                   หน้าช่วยเหลือ
                 </a>
                 ได้
@@ -509,7 +548,12 @@ const Welcome: NextPage<{ user: Student | Teacher }> = ({ user }) => {
               />
             )}
             {currStep >= 3 && (
-              <DoneSection key="done-section" role={user.role} />
+              <>
+                {user.role == "teacher" && (
+                  <PreparingForStudentsSection key="preparing-for-students-section" />
+                )}
+                <DoneSection key="done-section" role={user.role} />
+              </>
             )}
           </LayoutGridCols>
         </AnimatePresence>
