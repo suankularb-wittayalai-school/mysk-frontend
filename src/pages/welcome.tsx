@@ -566,7 +566,7 @@ const Welcome: NextPage<{
               disabled={currStep >= 2}
             />
           )}
-          <LayoutGridCols cols={2}>
+          <div className="layout-grid-cols-2 !gap-y-[inherit]">
             {currStep >= 2 && (
               <NewPasswordSection
                 key="new-password-section"
@@ -582,7 +582,7 @@ const Welcome: NextPage<{
                 <DoneSection key="done-section" role={user.role} />
               </>
             )}
-          </LayoutGridCols>
+          </div>
         </AnimatePresence>
       </RegularLayout>
       <LogOutDialog show={showLogOut} onClose={toggleShowLogOut} />
