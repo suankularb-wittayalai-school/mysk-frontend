@@ -570,23 +570,23 @@ const Welcome: NextPage<{
               disabled={currStep >= 2}
             />
           )}
-          <div className="layout-grid-cols-2 !gap-y-[inherit]">
-            {currStep >= 2 && (
+          {currStep >= 2 && (
+            <div className="layout-grid-cols-2 !gap-y-[inherit]">
               <NewPasswordSection
                 key="new-password-section"
                 incrementStep={incrementStep}
                 disabled={currStep >= 3}
               />
-            )}
-            {currStep >= 3 && (
-              <>
-                {user.role == "teacher" && (
-                  <PreparingForStudentsSection key="preparing-for-students-section" />
-                )}
-                <DoneSection key="done-section" role={user.role} />
-              </>
-            )}
-          </div>
+              {currStep >= 3 && (
+                <>
+                  {user.role == "teacher" && (
+                    <PreparingForStudentsSection key="preparing-for-students-section" />
+                  )}
+                  <DoneSection key="done-section" role={user.role} />
+                </>
+              )}
+            </div>
+          )}
         </AnimatePresence>
       </RegularLayout>
       <LogOutDialog show={showLogOut} onClose={toggleShowLogOut} />
