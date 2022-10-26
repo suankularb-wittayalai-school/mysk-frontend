@@ -8,6 +8,7 @@
     "reachedEnd": "You’ve reached the end."
   },
   "welcome": {
+    "title": "Welcome",
     "hero": {
       "graphicAlt": "Arrows pointing into MySK from the left",
       "title": "Welcome to MySK",
@@ -55,7 +56,7 @@
     },
     "preparingForStudents": {
       "title": "Prepare for students",
-      "notice": "Teachers: this part is for you. Read this before proceeding.",
+      "notice": "Teachers: this part is important. Read this before proceeding.",
       "desc": "Administrators have already assigned subjects to you, but we still need data on what classes you teach each, whhich you can do after the setup process. Learn how to prepare MySK for your students:",
       "steps": {
         "1": "Connect your subjects to the classes you teach each subject to.",
@@ -65,7 +66,7 @@
     },
     "done": {
       "title": "You’re all set",
-      "desc": "Everything is ready for you to start using MySK. If you have any questions or concerns, visit the <1>Help page</1>.",
+      "desc": "Everything is ready for you to start using MySK. If you have any questions or concerns, visit the <2>help page</2>.",
       "action": {
         "finish": "Finish"
       }

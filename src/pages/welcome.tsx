@@ -528,7 +528,7 @@ const Welcome: NextPage<{
   user: Student | Teacher;
   subjectGroups: SubjectGroup[];
 }> = ({ user, subjectGroups }) => {
-  const { t } = useTranslation("landing");
+  const { t } = useTranslation(["landing", "common"]);
 
   const [currStep, incrementStep] = useReducer((value) => value + 1, 0);
 
@@ -538,12 +538,12 @@ const Welcome: NextPage<{
   return (
     <>
       <Head>
-        <title>{createTitleStr("ยินดีต้อนรับ", t)}</title>
+        <title>{createTitleStr(t("welcome.title"), t)}</title>
       </Head>
       <RegularLayout
         Title={
           <Title
-            name={{ title: "ยินดีต้อนรับ" }}
+            name={{ title: t("welcome.title") }}
             pageIcon={<MaterialIcon icon="waving_hand" />}
             backGoesTo={toggleShowLogOut}
           />
