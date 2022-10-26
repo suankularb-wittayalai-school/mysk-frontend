@@ -184,7 +184,11 @@ const DataCheckSection = ({
       exit={{ scale: 0.8, y: -280, opacity: 0 }}
       transition={animationTransition}
     >
-      <Section>
+      <Section
+        // Bottom Navigation blocks some of the Subject Group options on mobile.
+        // 144px just about show every option.
+        style={{ paddingBottom: user.role == "teacher" && !disabled ? 144 : 0 }}
+      >
         <Header
           icon={<MaterialIcon icon="badge" allowCustomSize />}
           text={t("welcome.dataCheck.title")}
