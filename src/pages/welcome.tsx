@@ -56,6 +56,7 @@ import { SubjectGroup } from "@utils/types/subject";
 
 // Miscellaneous
 import { citizenIDPattern } from "@utils/patterns";
+import { range } from "@utils/helpers/array";
 
 // Sections
 const HeroSection = ({
@@ -440,21 +441,18 @@ const PreparingForStudentsSection = (): JSX.Element => {
       <Section>
         <Header
           icon={<MaterialIcon icon="school" allowCustomSize />}
-          text="การเตรียมระบบให้นักเรียน"
+          text={t("welcome.preparingForStudents.title")}
         />
         <p className="text-tertiary">
-          <strong>สำคัญ: ให้อาจารย์อ่านส่วนนี้ก่อนเข้าใช้งาน</strong>
+          <strong>{t("welcome.preparingForStudents.notice")}</strong>
         </p>
-        <p>
-          ผู้ดูแลระบบได้มอบหมายวิชาที่อาจารย์ต้องสอนแล้ว
-          แต่ยังไม่ได้เชื่อมต่อห้องเรียนที่อาจารย์สอน
-          หลังจากอาจารย์เสร็จขั้นตอนนี้แล้ว อาจารย์ต้องเตรียมระบบ MySK
-          ในส่วนของท่านให้พร้อมสำหรับนักเรียน
-        </p>
+        <p>{t("welcome.preparingForStudents.desc")}</p>
         <ol className="ml-6 list-decimal marker:font-display marker:text-outline">
-          <li>เชื่อมต่อห้องเรียนที่อาจารย์สอน</li>
-          <li>ในแต่ละวิชา ใส่รายละเอียดเฉพาะห้อง เช่น Google Classroom</li>
-          <li>เพิ่มคาบสอนเข้าตารางสอนของอาจารย์</li>
+          {range(3, 1).map((stepNo) => (
+            <li key={`prep-step-${stepNo}`}>
+              {t(`welcome.preparingForStudents.steps.${stepNo}`)}
+            </li>
+          ))}
         </ol>
       </Section>
     </motion.div>

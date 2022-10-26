@@ -52,6 +52,16 @@
       "action": {
         "continue": "Create and continue"
       }
+    },
+    "preparingForStudents": {
+      "title": "Prepare for students",
+      "notice": "Teachers: this part is for you. Read this before proceeding.",
+      "desc": "Administrators have already assigned subjects to you, but we still need data on what classes you teach each, whhich you can do after the setup process. Learn how to prepare MySK for your students:",
+      "steps": {
+        "1": "Connect your subjects to the classes you teach each subject to.",
+        "2": "In each subject, add class-specific details (like Google Classroom codes) for each class.",
+        "3": "Add periods to your Schedule."
+      }
     }
   }
 }
