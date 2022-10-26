@@ -62,6 +62,13 @@
         "2": "In each subject, add class-specific details (like Google Classroom codes) for each class.",
         "3": "Add periods to your Schedule."
       }
+    },
+    "done": {
+      "title": "You’re all set",
+      "desc": "Everything is ready for you to start using MySK. If you have any questions or concerns, visit the <1>Help page</1>.",
+      "action": {
+        "finish": "Finish"
+      }
     }
   }
 }

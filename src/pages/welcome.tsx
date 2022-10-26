@@ -7,7 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { useTranslation } from "next-i18next";
+import { Trans, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { useReducer, useState } from "react";
@@ -473,7 +473,7 @@ const DoneSection = ({ role }: { role: Role }): JSX.Element => {
       <Section>
         <Header
           icon={<MaterialIcon icon="login" allowCustomSize />}
-          text="เข้าใช้งาน"
+          text={t("welcome.done.title")}
         />
 
         <LayoutGridCols cols={6}>
@@ -492,22 +492,24 @@ const DoneSection = ({ role }: { role: Role }): JSX.Element => {
                 src="/images/graphics/login.webp"
                 layout="fill"
                 objectFit="cover"
-                alt=""
+                alt={t("logIn.graphicAlt", { ns: "account" })}
               />
             </div>
             <CardSupportingText>
               <p>
-                ทุกอย่างพร้อมสำหรับการเข้าใช้งานระบบ MySK แล้ว
-                หากมีปัญหาหรือข้อสงสัยใดๆ สามารถไปที่
-                <a href="/help" target="mysk-help" className="link">
-                  หน้าช่วยเหลือ
-                </a>
-                ได้
+                <Trans i18nKey="welcome.done.desc" ns="landing">
+                  Everything is ready for you to start using MySK. If you have
+                  any questions or concerns, visit the{" "}
+                  <a href="/help" target="mysk-help" className="link">
+                    help page
+                  </a>
+                  .
+                </Trans>
               </p>
             </CardSupportingText>
             <CardActions>
               <LinkButton
-                label="เข้าใช้งาน"
+                label={t("welcome.done.action.finish")}
                 type="filled"
                 url={role == "teacher" ? "/teach" : "/learn"}
                 LinkElement={Link}
