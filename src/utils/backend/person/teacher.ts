@@ -62,7 +62,7 @@ export async function createTeacher(
   teacher: Teacher,
   email: string,
   isAdmin: boolean = false
-): Promise<{ data: TeacherTable[] | null; error: PostgrestError | null }> {
+): Promise<{ data: TeacherTable | null; error: PostgrestError | null }> {
   const { data: person, error: personCreationError } = await createPerson(
     teacher
   );
@@ -77,7 +77,8 @@ export async function createTeacher(
       subject_group: teacher.subjectGroup.id,
       // class_advisor_at: form.classAdvisorAt,
       teacher_id: teacher.teacherID.trim(),
-    });
+    })
+    .single();
   if (teacherCreationError || !createdTeacher) {
     console.error(teacherCreationError);
     // delete the created person
@@ -96,8 +97,8 @@ export async function createTeacher(
     },
     body: JSON.stringify({
       email,
-      password: teacher.birthdate.split("-").join(""),
-      id: createdTeacher[0]?.id,
+      password: "mysk2022autumnrelease",
+      id: createdTeacher.id,
       isAdmin,
     }),
   });
