@@ -57,6 +57,7 @@ import { SubjectGroup } from "@utils/types/subject";
 // Miscellaneous
 import { citizenIDPattern } from "@utils/patterns";
 import { range } from "@utils/helpers/array";
+import { supabase } from "@utils/supabaseClient";
 
 // Sections
 const HeroSection = ({
@@ -465,6 +466,7 @@ const PreparingForStudentsSection = (): JSX.Element => {
 
 const DoneSection = ({ role }: { role: Role }): JSX.Element => {
   const { t } = useTranslation("landing");
+  const router = useRouter();
 
   return (
     <motion.div
@@ -512,12 +514,15 @@ const DoneSection = ({ role }: { role: Role }): JSX.Element => {
               </p>
             </CardSupportingText>
             <CardActions>
-              <LinkButton
+              <Button
                 label={t("welcome.done.action.finish")}
                 type="filled"
-                url={role == "teacher" ? "/teach" : "/learn"}
-                LinkElement={Link}
                 className="w-full !text-center"
+                onClick={async () => {
+                  await supabase.auth.update({ data: { onboarded: true } });
+                  if (role == "teacher") router.push("/teach");
+                  else router.push("/learn");
+                }}
               />
             </CardActions>
           </Card>

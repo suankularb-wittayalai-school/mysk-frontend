@@ -49,8 +49,9 @@ export async function middleware(req: NextRequest) {
     })
   ).json();
 
-  // Intepret user metada
+  // Intepret user metadata
   const userRole: Role | "public" = user?.user_metadata?.role || "public";
+  const userIsOnboarded: boolean = user?.user_metadata?.onboarded;
   const userIsAdmin: boolean = user?.user_metadata?.isAdmin;
 
   // Decide on destination based on user and page protection type
@@ -59,8 +60,15 @@ export async function middleware(req: NextRequest) {
   // Disallow public users from visiting private pages
   if (pageRole != "public" && userRole == "public")
     destination = "/account/login";
+
+  // Disallow logged in users who haven’t been onboarded from visiting any
+  // other pages from Welcome
+  else if (userRole != "public" && !userIsOnboarded) destination = "/welcome";
+
   else if (
-    // Disllow non-admins from visiting admin pages
+    // Disallow onboarded users from visiting Welcome
+    (route == "/welcome" && userIsOnboarded) ||
+    // Disallow non-admins from visiting admin pages
     (pageRole == "admin" && !userIsAdmin) ||
     !(
       // Allow all users to visit user pages
@@ -83,6 +91,7 @@ export async function middleware(req: NextRequest) {
 export const config = {
   matcher: [
     "/",
+    "/welcome",
     "/account",
     "/account/:path*",
     "/about",

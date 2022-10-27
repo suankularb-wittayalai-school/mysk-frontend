@@ -202,8 +202,6 @@ export async function importTeachers(data: ImportedTeacherData[]) {
   );
 }
 
-// https://supabase.com/docs/reference/javascript/select
-
 export async function getTeacherList(classID: number): Promise<Teacher[]> {
   // Get the teachers of all subjectRooms where class matches
   const { data: roomSubjects, error: roomSubjectsError } = await supabase
