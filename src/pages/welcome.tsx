@@ -351,7 +351,10 @@ const DataCheckSection = ({
             label={t("welcome.dataCheck.action.continue")}
             type="filled"
             icon={<MaterialIcon icon="arrow_downward" />}
-            onClick={incrementStep}
+            onClick={async () => {
+              // TODO: Update user
+              incrementStep();
+            }}
             disabled={disabled}
           />
         </Actions>
@@ -373,6 +376,14 @@ const NewPasswordSection = ({
     newPassword: "",
     confirmNewPassword: "",
   });
+
+  function validate(): boolean {
+    if (form.newPassword.length < 8) return false;
+    if (form.confirmNewPassword.length < 8) return false;
+    if (form.newPassword != form.confirmNewPassword) return false;
+
+    return true;
+  }
 
   return (
     <motion.div
@@ -428,8 +439,11 @@ const NewPasswordSection = ({
                 className="rotate-0 transition-[transform] sm:-rotate-90"
               />
             }
-            onClick={incrementStep}
-            disabled={disabled}
+            onClick={async () => {
+              // TODO: Change password
+              incrementStep();
+            }}
+            disabled={!validate() || disabled}
           />
         </Actions>
       </Section>
