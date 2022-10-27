@@ -26,15 +26,16 @@ import { db2Teacher } from "../database";
 import { createPerson } from "./person";
 
 const subjectGroupMap = {
-  วิทยาศาสตร์: 1,
+  "วิทยาศาสตร์ และเทคโนโลยี": 1,
   คณิตศาสตร์: 2,
   ภาษาต่างประเทศ: 3,
   ภาษาไทย: 4,
-  สุขศึกษาและพลศึกษา: 5,
-  การงานอาชีพและเทคโนโลยี: 6,
+  "สุขศึกษา และพลศึกษา": 5,
+  การงานอาชีพ: 6,
   ศิลปะ: 7,
   "สังคมศึกษา ศาสนา และวัฒนธรรม": 8,
-  การศึกษาค้นคว้าด้วยตนเอง: 9,
+  กิจกรรมพัฒนาผู้เรียน: 9,
+  อาจารย์พิเศษ: 10,
 } as const;
 
 const prefixMap = {
@@ -149,7 +150,7 @@ export async function deleteTeacher(teacher: Teacher) {
   }
 
   // Delete account of the teacher
-  await fetch(`/api/account`, {
+  const response = await fetch(`/api/account`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -158,6 +159,9 @@ export async function deleteTeacher(teacher: Teacher) {
       id: userid.id,
     }),
   });
+  if (!response.ok) {
+    console.error("Failed to delete account");
+  }
 }
 
 export async function importTeachers(data: ImportedTeacherData[]) {

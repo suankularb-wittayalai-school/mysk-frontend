@@ -288,11 +288,12 @@ const Teachers: NextPage<{ teachers: Teacher[] }> = ({
       <ConfirmDelete
         show={showConfDel}
         onClose={toggleShowConfDel}
-        onSubmit={async () => {
+        onSubmit={() => {
           if (editingIdx < 0) return;
-          await deleteTeacher(teachers[editingIdx]);
-          toggleShowConfDel();
-          router.replace(router.asPath);
+          deleteTeacher(teachers[editingIdx]).then(() => {
+            router.replace(router.asPath);
+            toggleShowConfDel();
+          });
         }}
       />
     </>
@@ -302,7 +303,9 @@ const Teachers: NextPage<{ teachers: Teacher[] }> = ({
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   const { data, error } = await supabase
     .from<TeacherDB>("teacher")
-    .select("id, teacher_id, people:person(*), SubjectGroup:subject_group(*)");
+    .select("id, teacher_id, people:person(*), SubjectGroup:subject_group(*)")
+    .order("subject_group", { ascending: true })
+    .order("id", { ascending: true });
 
   if (error) {
     console.error(error);
