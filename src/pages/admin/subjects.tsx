@@ -320,17 +320,21 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
 
   const { data, error } = await supabase
     .from<SubjectTableType>("subject")
-    .select("*");
+    .select("*")
+    .order("code_th", { ascending: true })
+    .order("group", { ascending: true })
+    .order("semester", { ascending: true })
+    .order("year", { ascending: true });
 
   if (error) console.error(error);
 
   if (data) {
-    subjects = (
-      await Promise.all(data.map(async (subject) => await db2Subject(subject)))
-    )
-      .sort((a, b) => (a.code.th < b.code.th ? -1 : 1))
-      .sort((a, b) => a.semester - b.semester)
-      .sort((a, b) => a.year - b.year);
+    subjects = await Promise.all(
+      data.map(async (subject) => await db2Subject(subject))
+    );
+    // .sort((a, b) => (a.code.th < b.code.th ? -1 : 1))
+    // .sort((a, b) => a.semester - b.semester)
+    // .sort((a, b) => a.year - b.year);
   }
 
   return {
