@@ -163,11 +163,11 @@ const DataCheckSection = ({
 
   // Form control
   const [form, setForm] = useState({
-    thPrefix: user.prefix?.th || "",
+    thPrefix: user.prefix.th,
     thFirstName: user.name.th.firstName,
     thMiddleName: user.name.th.middleName || "",
     thLastName: user.name.th.lastName || "",
-    enPrefix: user.prefix?.["en-US"] || "",
+    enPrefix: user.prefix["en-US"] || "",
     enFirstName: user.name["en-US"]?.firstName || "",
     enMiddleName: user.name["en-US"]?.middleName || "",
     enLastName: user.name["en-US"]?.lastName || "",
@@ -207,7 +207,7 @@ const DataCheckSection = ({
               label={t("profile.name.prefix", { ns: "account" })}
               helperMsg={t("profile.name.prefix_helper", { ns: "account" })}
               onChange={(e) => setForm({ ...form, thPrefix: e })}
-              defaultValue={user.prefix?.th}
+              defaultValue={user.prefix.th}
               attr={{ disabled }}
             />
             <KeyboardInput
@@ -249,7 +249,7 @@ const DataCheckSection = ({
               label={t("profile.enName.prefix", { ns: "account" })}
               helperMsg={t("profile.enName.prefix_helper", { ns: "account" })}
               onChange={(e) => setForm({ ...form, thPrefix: e })}
-              defaultValue={user.prefix?.["en-US"]}
+              defaultValue={user.prefix["en-US"]}
               attr={{ disabled }}
             />
             <KeyboardInput

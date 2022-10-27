@@ -1,18 +1,20 @@
+// Helpers
+import { getLocaleString } from "@utils/helpers/i18n";
+
 // Types
 import { LangCode, MultiLangString } from "@utils/types/common";
 import { Person } from "@utils/types/person";
-import { getLocaleString } from "./i18n";
 
 export function nameJoiner(
   locale: LangCode,
   name: Person["name"],
   prefix?: MultiLangString,
-  options?: {
-    prefix?: boolean;
-    firstName?: boolean;
-    middleName?: boolean;
-    lastName?: boolean;
-  }
+  options?: Partial<{
+    prefix: boolean;
+    firstName: boolean;
+    middleName: boolean;
+    lastName: boolean;
+  }>
 ) {
   if (options)
     return [
