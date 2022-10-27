@@ -84,7 +84,6 @@ const Login: NextPage = () => {
 
     // When auth cookies are set, redirect
     if (cookiesOK) {
-      console.log(session.user?.user_metadata);
       if (!session.user?.user_metadata.onboarded) router.push("/welcome");
 
       const role: Role = session.user?.user_metadata.role;

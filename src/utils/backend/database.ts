@@ -171,6 +171,10 @@ export async function db2Student(
   const formatted: Student = {
     id: student.id,
     prefix: student.people.prefix_en,
+    prefixCustom: {
+      th: student.people.prefix_th,
+      "en-US": student.people.prefix_en,
+    },
     role: "student",
     name: {
       th: {
@@ -236,6 +240,10 @@ export async function db2Teacher(teacher: TeacherDB): Promise<Teacher> {
     id: teacher.id,
     role: "teacher",
     prefix: teacher.people.prefix_en,
+    prefixCustom: {
+      th: teacher.people.prefix_th,
+      "en-US": teacher.people.prefix_en,
+    },
     name: {
       "en-US": {
         firstName: teacher.people.first_name_en

@@ -1,5 +1,5 @@
 import { ClassWNumber } from "./class";
-import { MultiLangString } from "./common";
+import { MultiLangObj, MultiLangString } from "./common";
 import { Contact } from "./contact";
 import { SubjectGroup, SubjectWNameAndCode } from "./subject";
 
@@ -7,12 +7,13 @@ export type Prefix = "Master" | "Mr." | "Mrs." | "Miss.";
 
 export type Person = {
   id: number;
+
+  // `prefixCustom` will replace `prefix`.
   prefix: Prefix;
+  prefixCustom?: MultiLangString;
+
   role: Role;
-  name: {
-    "en-US"?: PersonName;
-    th: PersonName;
-  };
+  name: MultiLangObj<PersonName>;
   profile?: string;
   citizenID: string;
   birthdate: string;
@@ -55,10 +56,7 @@ export type StudentListItem = {
   id: number;
   classNo: number;
   prefix: Prefix;
-  name: {
-    "en-US"?: PersonName;
-    th: PersonName;
-  };
+  name: MultiLangObj<PersonName>;
 };
 
 export type ImportedStudentData = {
