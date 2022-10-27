@@ -46,19 +46,22 @@
   "profile": {
     "name": {
       "title": "Local name (Thai)",
-      "prefix": {
+      "prefixLegacy": {
         "label": "Prefix",
         "Master": "เด็กชาย (Master)",
         "Mr.": "นาย (Mister)",
         "Mrs.": "นางสาว (Miss)",
         "Miss.": "นาง (Missus)"
       },
+      "prefix": "Prefix",
+      "prefix_helper": "เด็กชาย, นาย, นาง, นางสาว, etc.",
       "firstName": "First name",
       "middleName": "Middle name",
       "lastName": "Last name"
     },
     "enName": {
       "prefix": "English prefix",
+      "prefix_helper": "Master, Mr., Mrs., Ms., etc.",
       "title": "English name",
       "firstName": "English first name",
       "middleName": "English middle name",

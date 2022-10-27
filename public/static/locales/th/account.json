@@ -47,19 +47,22 @@
   "profile": {
     "name": {
       "title": "ชื่อจริง",
-      "prefix": {
+      "prefixLegacy": {
         "label": "คำนำหน้า",
         "master": "เด็กชาย",
         "mister": "นาย",
         "miss": "นางสาว",
         "missus": "นาง"
       },
+      "prefix": "คำนำหน้า",
+      "prefix_helper": "เด็กชาย นาย นาง นางสาว ฯลฯ",
       "firstName": "ชื่อ",
       "middleName": "ชื่อกลาง",
       "lastName": "นามสกุล"
     },
     "enName": {
       "prefix": "คำนำหน้าภาษาอังกฤษ",
+      "prefix_helper": "Master Mr. Mrs. Ms. ฯลฯ",
       "title": "ชื่อจริงภาษาอังกฤษ",
       "firstName": "ชื่อภาษาอังกฤษ",
       "middleName": "ชื่อกลางภาษาอังกฤษ",

@@ -43,7 +43,7 @@ import { useToggle } from "@utils/hooks/toggle";
 // Types
 import { ClassWNumber } from "@utils/types/class";
 import { LangCode } from "@utils/types/common";
-import { Person, Student, Teacher } from "@utils/types/person";
+import { Student, Teacher } from "@utils/types/person";
 
 const BasicInfoSection = ({
   user,
@@ -146,10 +146,11 @@ const EditInfoSection = ({
 
   // Form control
   const [form, setForm] = useState({
-    prefix: user.prefixLegacy,
+    thPrefix: user.prefix.th,
     thFirstName: user.name.th.firstName,
     thMiddleName: user.name.th.middleName,
     thLastName: user.name.th.lastName,
+    enPrefix: user.prefix["en-US"] || "",
     enFirstName: user.name["en-US"]?.firstName || "",
     enMiddleName: user.name["en-US"]?.middleName || "",
     enLastName: user.name["en-US"]?.lastName || "",
@@ -160,11 +161,9 @@ const EditInfoSection = ({
   const classes: ClassWNumber[] = [];
 
   function validate(): boolean {
-    if (!["Master", "Mr.", "Mrs.", "Miss."].includes(form.prefix)) return false;
+    if (!form.thPrefix) return false;
     if (!form.thFirstName) return false;
     if (!form.thLastName) return false;
-    if (!form.enFirstName) return false;
-    if (!form.enLastName) return false;
 
     return true;
   }
@@ -184,23 +183,13 @@ const EditInfoSection = ({
           {t("profile.name.title")}
         </h3>
         <div className="layout-grid-cols-4 !gap-y-0">
-          <Dropdown
-            name="prefix"
-            label={t("profile.name.prefix.label")}
-            options={
-              user.role == "teacher"
-                ? [
-                    { value: "Mr.", label: t("profile.name.prefix.mister") },
-                    { value: "Miss.", label: t("profile.name.prefix.miss") },
-                    { value: "Mrs.", label: t("profile.name.prefix.missus") },
-                  ]
-                : [
-                    { value: "Master", label: t("profile.name.prefix.master") },
-                    { value: "Mr.", label: t("profile.name.prefix.mister") },
-                  ]
-            }
-            defaultValue={user.prefixLegacy}
-            onChange={(e: Person["prefixLegacy"]) => setForm({ ...form, prefix: e })}
+          <KeyboardInput
+            name="th-prefix"
+            type="text"
+            label={t("profile.name.prefix")}
+            helperMsg={t("profile.name.prefix_helper")}
+            defaultValue={user.prefix.th}
+            onChange={(e: string) => setForm({ ...form, thPrefix: e })}
           />
           <KeyboardInput
             name="th-first-name"
@@ -232,6 +221,14 @@ const EditInfoSection = ({
           {t("profile.enName.title")}
         </h3>
         <div className="layout-grid-cols-4 !gap-y-0">
+          <KeyboardInput
+            name="en-prefix"
+            type="text"
+            label={t("profile.enName.prefix")}
+            helperMsg={t("profile.enName.prefix_helper")}
+            defaultValue={user.prefix["en-US"]}
+            onChange={(e: string) => setForm({ ...form, enPrefix: e })}
+          />
           <KeyboardInput
             name="en-first-name"
             type="text"
@@ -292,12 +289,14 @@ const EditInfoSection = ({
       )}
 
       <Actions>
+        {/* TODO: Make this button work */}
         <Button
           label={t(
             `editInfo.action.${user.role == "teacher" ? "save" : "sendRequest"}`
           )}
           type="filled"
-          disabled={!validate()}
+          // disabled={!validate()}
+          disabled
         />
       </Actions>
     </Section>

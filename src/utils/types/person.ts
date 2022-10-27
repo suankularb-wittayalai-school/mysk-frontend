@@ -10,7 +10,7 @@ export type Person = {
 
   // TODO: `prefix` should completely replace `prefixLegacy`
   prefixLegacy: Prefix;
-  prefix?: MultiLangString;
+  prefix: MultiLangString;
 
   role: Role;
   name: MultiLangObj<PersonName>;

@@ -204,7 +204,8 @@ const DataCheckSection = ({
             <KeyboardInput
               name="th-prefix"
               type="text"
-              label={t("profile.name.prefix.label", { ns: "account" })}
+              label={t("profile.name.prefix", { ns: "account" })}
+              helperMsg={t("profile.name.prefix_helper", { ns: "account" })}
               onChange={(e) => setForm({ ...form, thPrefix: e })}
               defaultValue={user.prefix?.th}
               attr={{ disabled }}
@@ -246,6 +247,7 @@ const DataCheckSection = ({
               name="en-prefix"
               type="text"
               label={t("profile.enName.prefix", { ns: "account" })}
+              helperMsg={t("profile.enName.prefix_helper", { ns: "account" })}
               onChange={(e) => setForm({ ...form, thPrefix: e })}
               defaultValue={user.prefix?.["en-US"]}
               attr={{ disabled }}

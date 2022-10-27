@@ -118,6 +118,12 @@ export async function importStudents(data: ImportedStudentData[]) {
     (student) => {
       const person: Student = {
         id: 0,
+        prefixLegacy: prefixMap[student.prefix] as Prefix,
+        prefix: {
+          th: student.prefix,
+          "en-US": prefixMap[student.prefix]
+        },
+        role: "student",
         name: {
           th: {
             firstName: student.first_name_th,
@@ -133,8 +139,6 @@ export async function importStudents(data: ImportedStudentData[]) {
         birthdate: student.birthdate,
         citizenID: student.citizen_id.toString(),
         studentID: student.student_id.toString(),
-        prefixLegacy: prefixMap[student.prefix] as Prefix,
-        role: "student",
         contacts: [],
         class: {
           id: 0,
