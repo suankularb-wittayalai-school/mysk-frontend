@@ -60,11 +60,9 @@ export async function middleware(req: NextRequest) {
   // Disallow public users from visiting private pages
   if (pageRole != "public" && userRole == "public")
     destination = "/account/login";
-
   // Disallow logged in users who haven’t been onboarded from visiting any
   // other pages from Welcome
   else if (userRole != "public" && !userIsOnboarded) destination = "/welcome";
-
   else if (
     // Disallow onboarded users from visiting Welcome
     (route == "/welcome" && userIsOnboarded) ||

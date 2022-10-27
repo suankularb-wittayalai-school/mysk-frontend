@@ -440,7 +440,7 @@ const NewPasswordSection = ({
               />
             }
             onClick={async () => {
-              // TODO: Change password
+              await supabase.auth.update({ password: form.newPassword });
               incrementStep();
             }}
             disabled={!validate() || disabled}
