@@ -1,9 +1,12 @@
+// Types
+import { LangCode, MultiLangString } from "@utils/types/common";
 import { Person } from "@utils/types/person";
+import { getLocaleString } from "./i18n";
 
 export function nameJoiner(
-  locale: "en-US" | "th",
+  locale: LangCode,
   name: Person["name"],
-  prefix?: string,
+  prefix?: MultiLangString,
   options?: {
     prefix?: boolean;
     firstName?: boolean;
@@ -13,7 +16,7 @@ export function nameJoiner(
 ) {
   if (options)
     return [
-      options.prefix ? prefix : undefined,
+      options.prefix && prefix ? getLocaleString(prefix, locale) : undefined,
       [
         options.firstName == true || options.firstName == undefined
           ? name[locale]?.firstName || name.th.firstName
@@ -29,7 +32,7 @@ export function nameJoiner(
         .join(" "),
     ]
       .filter((item) => item != undefined)
-      .join("");
+      .join(locale == "en-US" ? " " : "");
   else
     return [
       name[locale]?.firstName || name.th.firstName,

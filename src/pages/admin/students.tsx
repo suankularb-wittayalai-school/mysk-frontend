@@ -108,7 +108,7 @@ const StudentTable = ({
         name: nameJoiner(
           locale,
           student.name,
-          t(`name.prefix.${student.prefix}`, { ns: "common" }),
+          student.prefix,
           { prefix: true }
         ),
       })),

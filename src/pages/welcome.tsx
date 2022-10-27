@@ -163,11 +163,11 @@ const DataCheckSection = ({
 
   // Form control
   const [form, setForm] = useState({
-    thPrefix: user.prefixCustom?.th || "",
+    thPrefix: user.prefix?.th || "",
     thFirstName: user.name.th.firstName,
     thMiddleName: user.name.th.middleName || "",
     thLastName: user.name.th.lastName || "",
-    enPrefix: user.prefixCustom?.["en-US"] || "",
+    enPrefix: user.prefix?.["en-US"] || "",
     enFirstName: user.name["en-US"]?.firstName || "",
     enMiddleName: user.name["en-US"]?.middleName || "",
     enLastName: user.name["en-US"]?.lastName || "",
@@ -206,7 +206,7 @@ const DataCheckSection = ({
               type="text"
               label={t("profile.name.prefix.label", { ns: "account" })}
               onChange={(e) => setForm({ ...form, thPrefix: e })}
-              defaultValue={user.prefixCustom?.th}
+              defaultValue={user.prefix?.th}
               attr={{ disabled }}
             />
             <KeyboardInput
@@ -247,7 +247,7 @@ const DataCheckSection = ({
               type="text"
               label={t("profile.enName.prefix", { ns: "account" })}
               onChange={(e) => setForm({ ...form, thPrefix: e })}
-              defaultValue={user.prefixCustom?.["en-US"]}
+              defaultValue={user.prefix?.["en-US"]}
               attr={{ disabled }}
             />
             <KeyboardInput

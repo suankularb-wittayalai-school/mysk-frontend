@@ -82,7 +82,7 @@ const EditPersonDialog = ({
   useEffect(() => {
     if (mode == "edit" && person) {
       setForm({
-        prefix: person.prefix,
+        prefix: person.prefixLegacy,
         thFirstName: person.name.th.firstName,
         thMiddleName: person.name.th.middleName ?? "",
         thLastName: person.name.th.lastName,
@@ -131,7 +131,7 @@ const EditPersonDialog = ({
         const { data, error } = await createStudent(
           {
             id: 0,
-            prefix: form.prefix as Prefix,
+            prefixLegacy: form.prefix as Prefix,
             name: {
               th: {
                 firstName: form.thFirstName,
@@ -178,7 +178,7 @@ const EditPersonDialog = ({
         const { data, error } = await createTeacher(
           {
             id: 0,
-            prefix: form.prefix as "Mr." | "Mrs." | "Miss." | "Master",
+            prefixLegacy: form.prefix as "Mr." | "Mrs." | "Miss." | "Master",
             name: {
               th: {
                 firstName: form.thFirstName,
@@ -343,8 +343,8 @@ const EditPersonDialog = ({
               label: t("profile.name.prefix.miss"),
             },
           ]}
-          defaultValue={person?.prefix}
-          onChange={(e: Student["prefix"]) => setForm({ ...form, prefix: e })}
+          defaultValue={person?.prefixLegacy}
+          onChange={(e: Student["prefixLegacy"]) => setForm({ ...form, prefix: e })}
         />
         <KeyboardInput
           name="th-first-name"

@@ -133,7 +133,7 @@ export async function importStudents(data: ImportedStudentData[]) {
         birthdate: student.birthdate,
         citizenID: student.citizen_id.toString(),
         studentID: student.student_id.toString(),
-        prefix: prefixMap[student.prefix] as Prefix,
+        prefixLegacy: prefixMap[student.prefix] as Prefix,
         role: "student",
         contacts: [],
         class: {

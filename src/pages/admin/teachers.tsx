@@ -25,6 +25,9 @@ import {
 import { supabase } from "@utils/supabaseClient";
 
 // Components
+import CopyButton from "@components/CopyButton";
+import DataTableBody from "@components/data-table/DataTableBody";
+import DataTableHeader from "@components/data-table/DataTableHeader";
 import ConfirmDelete from "@components/dialogs/ConfirmDelete";
 import EditPersonDialog from "@components/dialogs/EditPerson";
 import ImportDataDialog from "@components/dialogs/ImportData";
@@ -41,6 +44,7 @@ import { ImportedTeacherData, Teacher } from "@utils/types/person";
 import { TeacherDB } from "@utils/types/database/person";
 
 // Helpers
+import { nameJoiner } from "@utils/helpers/name";
 import { createTitleStr } from "@utils/helpers/title";
 
 // Hooks
@@ -50,10 +54,6 @@ import {
   getFilteredRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import CopyButton from "@components/CopyButton";
-import DataTableBody from "@components/data-table/DataTableBody";
-import DataTableHeader from "@components/data-table/DataTableHeader";
-import { nameJoiner } from "@utils/helpers/name";
 
 // Page-specific components
 const TeacherTable = ({
@@ -113,7 +113,7 @@ const TeacherTable = ({
         name: nameJoiner(
           locale,
           teacher.name,
-          t(`name.prefix.${teacher.prefix}`, { ns: "common" }),
+          teacher.prefix,
           { prefix: true }
         ),
         classAdvisorAt: teacher.classAdvisorAt?.number

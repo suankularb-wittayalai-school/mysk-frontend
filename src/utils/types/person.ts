@@ -8,9 +8,9 @@ export type Prefix = "Master" | "Mr." | "Mrs." | "Miss.";
 export type Person = {
   id: number;
 
-  // `prefixCustom` will replace `prefix`.
-  prefix: Prefix;
-  prefixCustom?: MultiLangString;
+  // TODO: `prefix` should completely replace `prefixLegacy`
+  prefixLegacy: Prefix;
+  prefix?: MultiLangString;
 
   role: Role;
   name: MultiLangObj<PersonName>;

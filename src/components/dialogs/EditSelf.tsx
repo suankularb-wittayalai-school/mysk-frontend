@@ -42,7 +42,7 @@ const EditSelfDialog = ({
 
   // Form control
   const [form, setForm] = useState({
-    prefix: user.prefix,
+    prefix: user.prefixLegacy,
     thFirstName: user.name.th.firstName,
     thMiddleName: user.name.th.middleName,
     thLastName: user.name.th.lastName,
@@ -168,8 +168,8 @@ const EditSelfDialog = ({
                     { value: "Mr.", label: t("profile.name.prefix.mister") },
                   ]
             }
-            defaultValue={user.prefix}
-            onChange={(e: Person["prefix"]) => setForm({ ...form, prefix: e })}
+            defaultValue={user.prefixLegacy}
+            onChange={(e: Person["prefixLegacy"]) => setForm({ ...form, prefix: e })}
           />
           <KeyboardInput
             name="th-first-name"

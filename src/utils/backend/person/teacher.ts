@@ -179,7 +179,7 @@ export async function importTeachers(data: ImportedTeacherData[]) {
         birthdate: teacher.birthdate,
         citizenID: teacher.citizen_id.toString(),
         teacherID: teacher.teacher_id.toString(),
-        prefix: prefixMap[teacher.prefix] as Prefix,
+        prefixLegacy: prefixMap[teacher.prefix] as Prefix,
         role: "teacher",
         contacts: [],
         subjectGroup: {
