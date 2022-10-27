@@ -15,26 +15,21 @@ import {
   NativeInput,
 } from "@suankularb-components/react";
 
+// Backend
+import { createStudent } from "@utils/backend/person/student";
+import { createTeacher } from "@utils/backend/person/teacher";
+
 // Types
 import { DialogProps, LangCode } from "@utils/types/common";
-import { Prefix, Role, Student, Teacher } from "@utils/types/person";
+import { Role, Student, Teacher } from "@utils/types/person";
 import {
   PersonDB,
   StudentTable,
   TeacherTable,
 } from "@utils/types/database/person";
 
-// Helper
-import { createStudent } from "@utils/backend/person/student";
-import { createTeacher } from "@utils/backend/person/teacher";
+// Hooks
 import { useSubjectGroupOption } from "@utils/hooks/subject";
-
-const prefixMap = {
-  Master: "เด็กชาย",
-  "Mr.": "นาย",
-  "Mrs.": "นาง",
-  "Miss.": "นางสาว",
-};
 
 const EditPersonDialog = ({
   show,
@@ -133,7 +128,6 @@ const EditPersonDialog = ({
         const { error } = await createStudent(
           {
             id: 0,
-            prefixLegacy: form.enPrefix as Prefix, // temporary
             prefix: {
               th: form.thPrefix,
               "en-US": form.enPrefix,
@@ -184,7 +178,6 @@ const EditPersonDialog = ({
         const { error } = await createTeacher(
           {
             id: 0,
-            prefixLegacy: form.enPrefix as Prefix, // temporary
             prefix: {
               th: form.thPrefix,
               "en-US": form.enPrefix,

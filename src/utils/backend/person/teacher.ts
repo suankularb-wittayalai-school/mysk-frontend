@@ -7,6 +7,7 @@ import { PostgrestError } from "@supabase/supabase-js";
 import { supabase } from "@utils/supabaseClient";
 
 // Types
+import { ImportedTeacherData, Role, Teacher } from "@utils/types/person";
 import {
   PersonDB,
   PersonTable,
@@ -14,16 +15,10 @@ import {
   TeacherTable,
 } from "@utils/types/database/person";
 import { RoomSubjectDB } from "@utils/types/database/subject";
-import {
-  ImportedTeacherData,
-  Prefix,
-  Role,
-  Teacher,
-} from "@utils/types/person";
 
 // Backend
-import { db2Teacher } from "../database";
-import { createPerson } from "./person";
+import { db2Teacher } from "@utils/backend/database";
+import { createPerson } from "@utils/backend/person/person";
 
 const subjectGroupMap = {
   วิทยาศาสตร์: 1,
@@ -164,6 +159,11 @@ export async function importTeachers(data: ImportedTeacherData[]) {
     (teacher) => {
       const person: Teacher = {
         id: 0,
+        prefix: {
+          th: teacher.prefix,
+          "en-US": prefixMap[teacher.prefix],
+        },
+        role: "teacher",
         name: {
           th: {
             firstName: teacher.first_name_th,
@@ -179,8 +179,6 @@ export async function importTeachers(data: ImportedTeacherData[]) {
         birthdate: teacher.birthdate,
         citizenID: teacher.citizen_id.toString(),
         teacherID: teacher.teacher_id.toString(),
-        prefixLegacy: prefixMap[teacher.prefix] as Prefix,
-        role: "teacher",
         contacts: [],
         subjectGroup: {
           id: subjectGroupMap[teacher.subject_group],

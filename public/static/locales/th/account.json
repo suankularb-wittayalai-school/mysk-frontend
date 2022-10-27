@@ -47,13 +47,6 @@
   "profile": {
     "name": {
       "title": "ชื่อจริง",
-      "prefixLegacy": {
-        "label": "คำนำหน้า",
-        "master": "เด็กชาย",
-        "mister": "นาย",
-        "miss": "นางสาว",
-        "missus": "นาง"
-      },
       "prefix": "คำนำหน้า",
       "prefix_helper": "เด็กชาย นาย นาง นางสาว ฯลฯ",
       "firstName": "ชื่อ",

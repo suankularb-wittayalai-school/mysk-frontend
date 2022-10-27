@@ -46,12 +46,8 @@ export async function createPerson(
   const { data: createdPerson, error: personCreationError } = await supabase
     .from<PersonTable>("people")
     .insert({
-      prefix_th: prefixMap[person.prefixLegacy as keyof typeof prefixMap] as
-        | "นาย"
-        | "นาง"
-        | "นางสาว"
-        | "เด็กชาย",
-      prefix_en: person.prefixLegacy as "Mr." | "Mrs." | "Miss." | "Master",
+      prefix_th: person.prefix.th,
+      prefix_en: person.prefix["en-US"],
       first_name_th: person.name.th.firstName,
       middle_name_th: person.name.th.middleName,
       last_name_th: person.name.th.lastName,

@@ -5,7 +5,7 @@ import {
   PersonTable,
   StudentTable,
 } from "@utils/types/database/person";
-import { ImportedStudentData, Prefix, Student } from "@utils/types/person";
+import { ImportedStudentData, Student } from "@utils/types/person";
 import { createPerson } from "./person";
 
 const prefixMap = {
@@ -118,7 +118,6 @@ export async function importStudents(data: ImportedStudentData[]) {
     (student) => {
       const person: Student = {
         id: 0,
-        prefixLegacy: prefixMap[student.prefix] as Prefix,
         prefix: {
           th: student.prefix,
           "en-US": prefixMap[student.prefix]

@@ -3,15 +3,9 @@ import { MultiLangObj, MultiLangString } from "./common";
 import { Contact } from "./contact";
 import { SubjectGroup, SubjectWNameAndCode } from "./subject";
 
-export type Prefix = "Master" | "Mr." | "Mrs." | "Miss.";
-
 export type Person = {
   id: number;
-
-  // TODO: `prefix` should completely replace `prefixLegacy`
-  prefixLegacy: Prefix;
   prefix: MultiLangString;
-
   role: Role;
   name: MultiLangObj<PersonName>;
   profile?: string;
@@ -55,7 +49,7 @@ export type Teacher = Person & {
 export type StudentListItem = {
   id: number;
   classNo: number;
-  prefix: Prefix;
+  prefix: MultiLangString;
   name: MultiLangObj<PersonName>;
 };
 

@@ -46,13 +46,6 @@
   "profile": {
     "name": {
       "title": "Local name (Thai)",
-      "prefixLegacy": {
-        "label": "Prefix",
-        "Master": "เด็กชาย (Master)",
-        "Mr.": "นาย (Mister)",
-        "Mrs.": "นางสาว (Miss)",
-        "Miss.": "นาง (Missus)"
-      },
       "prefix": "Prefix",
       "prefix_helper": "เด็กชาย, นาย, นาง, นางสาว, etc.",
       "firstName": "First name",

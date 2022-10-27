@@ -1,4 +1,3 @@
-import { Prefix } from "../person";
 import { ContactDB } from "./contact";
 import { SubjectGroupDB } from "./subject";
 
