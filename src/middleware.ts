@@ -63,15 +63,21 @@ export async function middleware(req: NextRequest) {
   // Disallow logged in users who haven’t been onboarded from visiting any
   // other pages from Welcome
   else if (userRole != "public" && !userIsOnboarded) destination = "/welcome";
+  // Disallow logged in users from visiting certain pages under certain
+  // circumstances
+  // prettier-ignore
   else if (
-    // Disallow onboarded users from visiting Welcome
-    (route == "/welcome" && userIsOnboarded) ||
-    // Disallow non-admins from visiting admin pages
-    (pageRole == "admin" && !userIsAdmin) ||
     !(
-      // Allow all users to visit user pages
-      // Allow users with the correct roles
-      (pageRole == "user" || pageRole == userRole)
+      (
+        // Allow new users to visit Welcome
+        (route == "/welcome" && !userIsOnboarded) ||
+        // Allow admins to visit admin pages
+        (pageRole == "admin" && userIsAdmin) ||
+        // Allow all users to visit user pages
+        pageRole == "user" ||
+        // Allow users with the correct roles
+        pageRole == userRole
+      )
     )
   ) {
     // Set destinations for students and teachers in the wrong pages
@@ -93,6 +99,7 @@ export const config = {
     "/account",
     "/account/:path*",
     "/about",
+    "/admin/:path*",
     "/learn",
     "/learn/:id",
     "/teach",
