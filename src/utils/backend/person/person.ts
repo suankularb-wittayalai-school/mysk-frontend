@@ -1,19 +1,25 @@
+// External libraries
+import { NextApiRequestCookies } from "next/dist/server/api-utils";
+import { IncomingMessage, ServerResponse } from "http";
 import { PostgrestError } from "@supabase/supabase-js";
+
+// Backend
+import { createContact } from "@utils/backend/contact";
+import { db2Student, db2Teacher } from "@utils/backend/database";
+
+// Supabase
 import { supabase } from "@utils/supabaseClient";
+
+// Types
 import { BackendReturn } from "@utils/types/common";
+import { Person, Student, Teacher } from "@utils/types/person";
 import {
-  PersonDB,
   PersonTable,
   StudentDB,
   StudentTable,
   TeacherDB,
   TeacherTable,
 } from "@utils/types/database/person";
-import { Person, Role, Student, Teacher } from "@utils/types/person";
-import { IncomingMessage, ServerResponse } from "http";
-import { NextApiRequestCookies } from "next/dist/server/api-utils";
-import { createContact } from "../contact";
-import { db2Student, db2Teacher } from "../database";
 
 export async function createPerson(
   person: Person
