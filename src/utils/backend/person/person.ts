@@ -78,7 +78,42 @@ export async function setupPerson(
     subjectGroup: number;
   },
   person: Student | Teacher
-): Promise<BackendReturn<PersonTable[]>> {
+): Promise<BackendReturn<PersonTable, null>> {
+  // Get person ID
+  let personID = 0;
+
+  // Fetch person ID from `student` table if user is a student
+  if (person.role == "student") {
+    const { data: studentPersonID, error: idError } = await supabase
+      .from<StudentTable>("student")
+      .select("person")
+      .match({ id: person.id })
+      .limit(1)
+      .single();
+
+    if (idError) {
+      console.error(idError);
+      return { data: null, error: idError };
+    }
+    personID = studentPersonID.person;
+  }
+
+  // Fetch person ID from `teacher` table if user is a teacher
+  else if (person.role == "teacher") {
+    const { data: teacherPersonID, error: idError } = await supabase
+      .from<TeacherTable>("teacher")
+      .select("person")
+      .match({ id: person.id })
+      .limit(1)
+      .single();
+
+    if (idError) {
+      console.error(idError);
+      return { data: null, error: idError };
+    }
+    personID = teacherPersonID.person;
+  }
+
   // Update person data (`person` table)
   const { data: updPerson, error: personError } = await supabase
     .from<PersonTable>("people")
@@ -94,11 +129,13 @@ export async function setupPerson(
       birthdate: form.birthDate,
       citizen_id: form.citizenID,
     })
-    .match({ id: person.id });
+    .match({ id: personID })
+    .limit(1)
+    .single();
 
   if (personError) {
     console.error(personError);
-    return { data: [], error: personError };
+    return { data: null, error: personError };
   }
 
   // Update role-specific data (`student` or `teacher` table)
@@ -108,13 +145,15 @@ export async function setupPerson(
     const { error } = await supabase
       .from<StudentTable>("student")
       .update({ std_id: form.studentID })
-      .match({ person: person.id, std_id: person.studentID });
+      .match({ id: person.id, std_id: person.studentID })
+      .limit(1)
+      .single();
 
     if (error) {
       console.error(error);
-      return { data: [], error };
+      return { data: null, error };
     }
-    return { data: updPerson as PersonTable[], error: null };
+    return { data: updPerson, error: null };
   }
 
   // Update a teacher’s teacher ID and subject group
@@ -125,19 +164,19 @@ export async function setupPerson(
         teacher_id: form.teacherID,
         subject_group: form.subjectGroup,
       })
-      .match({ person: person.id, teacher_id: person.teacherID });
+      .match({ id: person.id, teacher_id: person.teacherID });
 
     if (error) {
       console.error(error);
-      return { data: [], error };
+      return { data: null, error };
     }
-    return { data: updPerson as PersonTable[], error: null };
+    return { data: updPerson, error: null };
   }
 
   // Invalid role handling
-  const error = { message: "invalid role." }
+  const error = { message: "invalid role." };
   console.error(error);
-  return { data: [], error };
+  return { data: null, error };
 }
 
 export async function getUserFromReq(

@@ -227,7 +227,7 @@ const DataCheckSection = ({
       .map((digit) => Number(digit));
 
     // Citizen ID has valid checksum
-    
+
     // - Checksum is the last digit
     // - Mulitplied sum is calculated from the sum of each digit multiplied by
     //   its index (counting down from 13)
