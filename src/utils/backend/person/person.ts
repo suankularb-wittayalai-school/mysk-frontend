@@ -95,7 +95,7 @@ export async function setupPerson(
       console.error(idError);
       return { data: null, error: idError };
     }
-    personID = studentPersonID.person;
+    personID = (studentPersonID as StudentTable).person;
   }
 
   // Fetch person ID from `teacher` table if user is a teacher
@@ -111,7 +111,7 @@ export async function setupPerson(
       console.error(idError);
       return { data: null, error: idError };
     }
-    personID = teacherPersonID.person;
+    personID = (teacherPersonID as TeacherTable).person;
   }
 
   // Update person data (`person` table)
@@ -153,7 +153,7 @@ export async function setupPerson(
       console.error(error);
       return { data: null, error };
     }
-    return { data: updPerson, error: null };
+    return { data: updPerson as PersonTable, error: null };
   }
 
   // Update a teacher’s teacher ID and subject group
@@ -170,7 +170,7 @@ export async function setupPerson(
       console.error(error);
       return { data: null, error };
     }
-    return { data: updPerson, error: null };
+    return { data: updPerson as PersonTable, error: null };
   }
 
   // Invalid role handling
