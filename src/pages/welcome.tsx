@@ -265,6 +265,8 @@ const DataCheckSection = ({
           text={t("welcome.dataCheck.title")}
         />
 
+        <p>{t("welcome.dataCheck.desc")}</p>
+
         {/* Local name (Thai) */}
         <section>
           <h3 className="mb-1 font-display text-xl font-bold">

@@ -43,6 +43,7 @@
     },
     "dataCheck": {
       "title": "Data check",
+      "desc": "We have imported your data from relevant school departments. This process may introduce some error, including incorrect or missing data. For example, your first name and middle name maybe combined into the first name field, or you’re still listed as “Master” after you have turned 15. You can correct these import errors in this section.",
       "action": {
         "continue": "Save and continue"
       }
