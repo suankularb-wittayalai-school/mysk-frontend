@@ -122,6 +122,7 @@ const Login: NextPage = () => {
                 alt={t("logIn.graphicAlt")}
                 layout="responsive"
                 objectFit="contain"
+                priority
                 className="rounded-2xl"
               />
             </div>
