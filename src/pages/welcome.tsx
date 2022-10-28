@@ -41,7 +41,7 @@ import { getUserFromReq, setupPerson } from "@utils/backend/person/person";
 import { getSubjectGroups } from "@utils/backend/subject/subjectGroup";
 
 // Helpers
-import { range } from "@utils/helpers/array";
+import { range, sumArray } from "@utils/helpers/array";
 import { getLocaleString } from "@utils/helpers/i18n";
 import { createTitleStr } from "@utils/helpers/title";
 
@@ -58,7 +58,11 @@ import { SubjectGroup } from "@utils/types/subject";
 
 // Miscellaneous
 import { prefixMap } from "@utils/maps";
-import { citizenIDPattern } from "@utils/patterns";
+import {
+  citizenIDPattern,
+  citizenIDRegex,
+  studentIDRegex,
+} from "@utils/patterns";
 
 // Sections
 const HeroSection = ({
@@ -188,7 +192,8 @@ const DataCheckSection = ({
     if (!form.thFirstName) return false;
     if (!form.thLastName) return false;
 
-    // If the prefix is not custom, the English translation must match the Thai prefix
+    // If the prefix is not custom, the English translation must match the
+    // Thai prefix
     if (
       Object.keys(prefixMap).includes(form.thPrefix) &&
       form.enPrefix &&
@@ -203,6 +208,40 @@ const DataCheckSection = ({
     if (
       (form.enFirstName || form.enLastName) &&
       (!form.enFirstName || !form.enLastName)
+    )
+      return false;
+
+    // Student ID validation
+    if (
+      user.role == "student" &&
+      (!form.studentID || !studentIDRegex.test(form.studentID))
+    )
+      return false;
+
+    // Citizen ID validation
+
+    // Citizen ID has enough digits
+    if (!form.citizenID || !citizenIDRegex.test(form.citizenID)) return false;
+    const citizenIDDigits = form.citizenID
+      .split("")
+      .map((digit) => Number(digit));
+
+    // Citizen ID has valid checksum
+    
+    // - Checksum is the last digit
+    // - Mulitplied sum is calculated from the sum of each digit multiplied by
+    //   its index (counting down from 13)
+
+    // checksum = 11 - (multiplied sum % 11) % 10
+
+    if (
+      11 -
+        ((sumArray(
+          citizenIDDigits.slice(0, 11).map((digit, idx) => digit * (13 - idx))
+        ) %
+          11) %
+          10) !=
+      citizenIDDigits[12]
     )
       return false;
 
