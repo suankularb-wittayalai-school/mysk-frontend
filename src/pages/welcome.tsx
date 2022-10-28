@@ -185,7 +185,7 @@ const DataCheckSection = ({
     subjectGroup: user.role == "teacher" ? user.subjectGroup.id : 0,
   });
 
-  // Validation
+  // Form validation
   function validate(): boolean {
     // Thai name is required
     if (!form.thPrefix) return false;
@@ -446,11 +446,15 @@ const NewPasswordSection = ({
 }): JSX.Element => {
   const { t } = useTranslation(["landing", "account"]);
 
+  const [loading, toggleLoading] = useToggle();
+
+  // Form control
   const [form, setForm] = useState({
     newPassword: "",
     confirmNewPassword: "",
   });
 
+  // Form validation
   function validate(): boolean {
     if (form.newPassword.length < 8) return false;
     if (form.confirmNewPassword.length < 8) return false;
@@ -514,10 +518,16 @@ const NewPasswordSection = ({
               />
             }
             onClick={async () => {
-              await supabase.auth.update({ password: form.newPassword });
+              toggleLoading();
+              const { error } = await supabase.auth.update({
+                password: form.newPassword,
+              });
+              toggleLoading();
+
+              if (error) return;
               incrementStep();
             }}
-            disabled={!validate() || disabled}
+            disabled={disabled || !validate() || loading}
           />
         </Actions>
       </Section>
@@ -562,9 +572,17 @@ const DoneSection = ({ role }: { role: Role }): JSX.Element => {
 
   return (
     <motion.div
-      initial={{ scale: 0.4, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      exit={{ scale: 0.4, opacity: 0 }}
+      initial={{
+        scale: role == "teacher" ? 0.8 : 0.4,
+        y: role == "teacher" ? -280 : 0,
+        opacity: 0,
+      }}
+      animate={{ scale: 1, y: 0, opacity: 1 }}
+      exit={{
+        scale: role == "teacher" ? 0.8 : 0.4,
+        y: role == "teacher" ? -280 : 0,
+        opacity: 0,
+      }}
       transition={animationTransition}
       className={role == "teacher" ? "col-span-2" : undefined}
     >
@@ -641,6 +659,7 @@ const Welcome: NextPage<{
       <Head>
         <title>{createTitleStr(t("welcome.title"), t)}</title>
       </Head>
+
       <RegularLayout
         Title={
           <Title
@@ -686,6 +705,8 @@ const Welcome: NextPage<{
           )}
         </AnimatePresence>
       </RegularLayout>
+
+      {/* Dialogs */}
       <LogOutDialog show={showLogOut} onClose={toggleShowLogOut} />
     </>
   );
