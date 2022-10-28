@@ -2,22 +2,18 @@ import { PostgrestError } from "@supabase/supabase-js";
 import { supabase } from "@utils/supabaseClient";
 import { BackendReturn } from "@utils/types/common";
 import {
+  PersonDB,
   PersonTable,
   StudentDB,
+  StudentTable,
   TeacherDB,
+  TeacherTable,
 } from "@utils/types/database/person";
-import { Person, Student, Teacher } from "@utils/types/person";
+import { Person, Role, Student, Teacher } from "@utils/types/person";
 import { IncomingMessage, ServerResponse } from "http";
 import { NextApiRequestCookies } from "next/dist/server/api-utils";
 import { createContact } from "../contact";
 import { db2Student, db2Teacher } from "../database";
-
-const prefixMap = {
-  Master: "เด็กชาย",
-  "Mr.": "นาย",
-  "Mrs.": "นาง",
-  "Miss.": "นางสาว",
-};
 
 export async function createPerson(
   person: Person
@@ -63,6 +59,85 @@ export async function createPerson(
     return { data: null, error: personCreationError };
   }
   return { data: createdPerson, error: null };
+}
+
+export async function setupPerson(
+  form: {
+    thPrefix: string;
+    thFirstName: string;
+    thMiddleName: string;
+    thLastName: string;
+    enPrefix: string;
+    enFirstName: string;
+    enMiddleName: string;
+    enLastName: string;
+    studentID: string;
+    teacherID: string;
+    citizenID: string;
+    birthDate: string;
+    subjectGroup: number;
+  },
+  person: Student | Teacher
+): Promise<BackendReturn<PersonTable[]>> {
+  // Update person data (`person` table)
+  const { data: updPerson, error: personError } = await supabase
+    .from<PersonTable>("people")
+    .update({
+      prefix_th: form.thPrefix,
+      first_name_th: form.thFirstName,
+      middle_name_th: form.thMiddleName,
+      last_name_th: form.thLastName,
+      prefix_en: form.enPrefix,
+      first_name_en: form.enFirstName,
+      middle_name_en: form.enMiddleName,
+      last_name_en: form.enLastName,
+      birthdate: form.birthDate,
+      citizen_id: form.citizenID,
+    })
+    .match({ id: person.id });
+
+  if (personError) {
+    console.error(personError);
+    return { data: [], error: personError };
+  }
+
+  // Update role-specific data (`student` or `teacher` table)
+
+  // Update a student’s student ID
+  if (person.role == "student") {
+    const { error } = await supabase
+      .from<StudentTable>("student")
+      .update({ std_id: form.studentID })
+      .match({ person: person.id, std_id: person.studentID });
+
+    if (error) {
+      console.error(error);
+      return { data: [], error };
+    }
+    return { data: updPerson as PersonTable[], error: null };
+  }
+
+  // Update a teacher’s teacher ID and subject group
+  else if (person.role == "teacher") {
+    const { error } = await supabase
+      .from<TeacherTable>("teacher")
+      .update({
+        teacher_id: form.teacherID,
+        subject_group: form.subjectGroup,
+      })
+      .match({ person: person.id, teacher_id: person.teacherID });
+
+    if (error) {
+      console.error(error);
+      return { data: [], error };
+    }
+    return { data: updPerson as PersonTable[], error: null };
+  }
+
+  // Invalid role handling
+  const error = { message: "invalid role." }
+  console.error(error);
+  return { data: [], error };
 }
 
 export async function getUserFromReq(

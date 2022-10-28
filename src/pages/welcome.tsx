@@ -4,7 +4,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { Trans, useTranslation } from "next-i18next";
@@ -27,7 +26,6 @@ import {
   Button,
   KeyboardInput,
   CardActions,
-  LinkButton,
   NativeInput,
   Dropdown,
 } from "@suankularb-components/react";
@@ -39,15 +37,19 @@ import LogOutDialog from "@components/dialogs/LogOut";
 import { animationTransition } from "@utils/animations/config";
 
 // Backend
-import { getUserFromReq } from "@utils/backend/person/person";
+import { getUserFromReq, setupPerson } from "@utils/backend/person/person";
 import { getSubjectGroups } from "@utils/backend/subject/subjectGroup";
 
 // Helpers
+import { range } from "@utils/helpers/array";
 import { getLocaleString } from "@utils/helpers/i18n";
 import { createTitleStr } from "@utils/helpers/title";
 
 // Hooks
 import { useToggle } from "@utils/hooks/toggle";
+
+// Supabase
+import { supabase } from "@utils/supabaseClient";
 
 // Types
 import { LangCode } from "@utils/types/common";
@@ -56,8 +58,6 @@ import { SubjectGroup } from "@utils/types/subject";
 
 // Miscellaneous
 import { citizenIDPattern } from "@utils/patterns";
-import { range } from "@utils/helpers/array";
-import { supabase } from "@utils/supabaseClient";
 
 // Sections
 const HeroSection = ({
@@ -160,6 +160,8 @@ const DataCheckSection = ({
 }): JSX.Element => {
   const { t } = useTranslation(["landing", "account"]);
   const locale = useRouter().locale as LangCode;
+
+  const [loading, toggleLoading] = useToggle();
 
   // Form control
   const [form, setForm] = useState({
@@ -352,10 +354,14 @@ const DataCheckSection = ({
             type="filled"
             icon={<MaterialIcon icon="arrow_downward" />}
             onClick={async () => {
-              // TODO: Update user
+              toggleLoading();
+              const { error } = await setupPerson(form, user);
+              toggleLoading();
+
+              if (error) return;
               incrementStep();
             }}
-            disabled={disabled}
+            disabled={disabled || loading}
           />
         </Actions>
       </Section>
