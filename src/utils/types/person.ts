@@ -29,6 +29,9 @@ export type PersonName = {
 
 export type Role = "student" | "teacher";
 
+export type DefaultTHPrefix = "เด็กชาย" | "นาย" | "นาง" | "นางสาว";
+export type DefaultENPrefix = "Master." | "Mr." | "Mrs." | "Miss.";
+
 export type Student = Person & {
   // TODO: Add more properties when the schema is completed
   role: "student";
@@ -54,7 +57,7 @@ export type StudentListItem = {
 };
 
 export type ImportedStudentData = {
-  prefix: "เด็กชาย" | "นาย" | "นาง" | "นางสาว";
+  prefix: DefaultTHPrefix;
   first_name_th: string;
   first_name_en: string;
   middle_name_th?: string;
@@ -69,7 +72,7 @@ export type ImportedStudentData = {
 };
 
 export type ImportedTeacherData = {
-  prefix: "เด็กชาย" | "นาย" | "นาง" | "นางสาว";
+  prefix: DefaultTHPrefix;
   first_name_th: string;
   first_name_en: string;
   middle_name_th?: string;

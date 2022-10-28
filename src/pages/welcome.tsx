@@ -53,10 +53,11 @@ import { supabase } from "@utils/supabaseClient";
 
 // Types
 import { LangCode } from "@utils/types/common";
-import { Role, Student, Teacher } from "@utils/types/person";
+import { DefaultTHPrefix, Role, Student, Teacher } from "@utils/types/person";
 import { SubjectGroup } from "@utils/types/subject";
 
 // Miscellaneous
+import { prefixMap } from "@utils/maps";
 import { citizenIDPattern } from "@utils/patterns";
 
 // Sections
@@ -180,6 +181,34 @@ const DataCheckSection = ({
     subjectGroup: user.role == "teacher" ? user.subjectGroup.id : 0,
   });
 
+  // Validation
+  function validate(): boolean {
+    // Thai name is required
+    if (!form.thPrefix) return false;
+    if (!form.thFirstName) return false;
+    if (!form.thLastName) return false;
+
+    // If the prefix is not custom, the English translation must match the Thai prefix
+    if (
+      Object.keys(prefixMap).includes(form.thPrefix) &&
+      form.enPrefix &&
+      prefixMap[form.thPrefix as DefaultTHPrefix] != form.enPrefix
+    )
+      return false;
+
+    // If Thai middle name is present, a transliteration must be provided
+    if (form.thMiddleName && !form.enMiddleName) return false;
+
+    // If the user chooses to input English name, it must be complete
+    if (
+      (form.enFirstName || form.enLastName) &&
+      (!form.enFirstName || !form.enLastName)
+    )
+      return false;
+
+    return true;
+  }
+
   return (
     <motion.div
       initial={{ scale: 0.8, y: -280, opacity: 0 }}
@@ -250,7 +279,7 @@ const DataCheckSection = ({
               type="text"
               label={t("profile.enName.prefix", { ns: "account" })}
               helperMsg={t("profile.enName.prefix_helper", { ns: "account" })}
-              onChange={(e) => setForm({ ...form, thPrefix: e })}
+              onChange={(e) => setForm({ ...form, enPrefix: e })}
               defaultValue={user.prefix["en-US"]}
               attr={{ disabled }}
             />
@@ -361,7 +390,7 @@ const DataCheckSection = ({
               if (error) return;
               incrementStep();
             }}
-            disabled={disabled || loading}
+            disabled={disabled || !validate() || loading}
           />
         </Actions>
       </Section>
