@@ -56,24 +56,28 @@ export async function middleware(req: NextRequest) {
 
   // Decide on destination based on user and page protection type
   let destination: string | null = null;
-
+  console.log({ userRole, pageRole, userIsAdmin });
   // Disallow public users from visiting private pages
   if (pageRole != "public" && userRole == "public")
     destination = "/account/login";
   else if (
     // Disllow non-admins from visiting admin pages
-    (pageRole == "admin" && !userIsAdmin) ||
-    !(
-      // Allow all users to visit user pages
-      // Allow users with the correct roles
-      (pageRole == "user" || pageRole == userRole)
-    )
+    pageRole == "admin" &&
+    !userIsAdmin
   ) {
     // Set destinations for students and teachers in the wrong pages
     if (userRole == "student") destination = "/learn";
     else if (userRole == "teacher") destination = "/teach";
   }
-
+  // Allow all users to visit user pages
+  // Allow users with the correct roles
+  else if (!(pageRole == "user" || pageRole == userRole)) {
+    if (pageRole != "admin" || !userIsAdmin) {
+      // Set destinations for students and teachers in the wrong pages
+      if (userRole == "student") destination = "/learn";
+      else if (userRole == "teacher") destination = "/teach";
+    }
+  }
   // Redirect if decided so, continue if not
   // Note: While developing, comment out line 85 if you want to test protected
   // pages via IPv4. Pages using user data will not work, however.
