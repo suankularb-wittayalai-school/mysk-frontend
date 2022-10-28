@@ -30,6 +30,7 @@ export async function middleware(req: NextRequest) {
       ? "user"
       : // Fallback (images, icons, manifest, etc.)
         "not-protected";
+  // console.log(pageRole);
 
   // Ignore page without protection
   if (pageRole == "not-protected") return NextResponse.next();
@@ -86,6 +87,7 @@ export const config = {
     "/account",
     "/account/:path*",
     "/about",
+    "/admin/:path*",
     "/learn",
     "/learn/:id",
     "/teach",

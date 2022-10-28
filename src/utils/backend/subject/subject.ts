@@ -220,17 +220,17 @@ export async function createSubject(
 export async function editSubject(
   subject: Subject
 ): Promise<{ data: SubjectTable[] | null; error: PostgrestError | null }> {
-  if (typeof subject.syllabus === "string") {
-    return {
-      data: null,
-      error: {
-        message: "syllabus must be a buffer",
-        details: "",
-        hint: "",
-        code: "",
-      },
-    };
-  }
+  // if (typeof subject.syllabus === "string") {
+  //   return {
+  //     data: null,
+  //     error: {
+  //       message: "syllabus must be a buffer",
+  //       details: "",
+  //       hint: "",
+  //       code: "",
+  //     },
+  //   };
+  // }
   // console.log(`${subject.id}/syllabus.pdf`, subject.syllabus);
   // console.log(subject.syllabus);
   if (subject.syllabus) {
@@ -242,15 +242,15 @@ export async function editSubject(
       });
     if (uploadingError) {
       console.error(uploadingError);
-      return {
-        data: null,
-        error: {
-          message: "syllabus upload failed",
-          details: "",
-          hint: "",
-          code: "",
-        },
-      };
+      // return {
+      //   data: null,
+      //   error: {
+      //     message: "syllabus upload failed",
+      //     details: "",
+      //     hint: "",
+      //     code: "",
+      //   },
+      // };
     }
     // console.log(syllabus);
   }
