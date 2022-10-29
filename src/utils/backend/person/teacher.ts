@@ -250,13 +250,13 @@ export async function getTeacherList(classID: number): Promise<Teacher[]> {
 }
 
 export async function getClassAdvisorAt(
-  teacherID: number
+  teacherDBID: number
 ): Promise<BackendReturn<ClassWNumber, null>> {
   const { data, error } = await supabase
     .from<{ id: number; number: number; advisors: number[] }>("classroom")
     .select("id, number")
     .match({ year: getCurrentAcedemicYear() })
-    .contains("advisors", [teacherID])
+    .contains("advisors", [teacherDBID])
     .limit(1)
     .single();
 

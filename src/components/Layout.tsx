@@ -26,6 +26,7 @@ import { addAtIndex } from "@utils/helpers/array";
 
 // Hooks
 import { useSession } from "@utils/hooks/auth";
+import { getClassOfStudent } from "@utils/backend/person/student";
 
 const Layout = ({
   navIsTransparent,
@@ -136,12 +137,45 @@ const Layout = ({
       // Decide the Navigation the user is going to see based on their role
 
       // Student Navigation
-      if (role == "student") setNavItems(studentNav);
+      if (role == "student") {
+        const { data: classOfStudent, error } = await getClassOfStudent(
+          session?.user?.user_metadata.student
+        );
+
+        if (error) {
+          console.error(error);
+          setNavItems(studentNav);
+          return;
+        }
+
+        setNavItems(
+          [
+            {
+              name: t("navigation.learn"),
+              icon: {
+                inactive: <MaterialIcon icon="school" type="outlined" />,
+                active: <MaterialIcon icon="school" type="filled" />,
+              },
+              url: `/learn/${classOfStudent.number}`,
+            },
+            {
+              name: t("navigation.people"),
+              icon: {
+                inactive: <MaterialIcon icon="groups" type="outlined" />,
+                active: <MaterialIcon icon="groups" type="filled" />,
+              },
+              url: `/class/${classOfStudent.number}/view`,
+            },
+          ].concat(studentNav)
+        );
+      }
       // Teacher Navigation
       else if (role == "teacher") {
         const { data: classAdvisorAt, error } = await getClassAdvisorAt(
           session?.user?.user_metadata.teacher
         );
+
+        if (error) console.error(error);
 
         if (!classAdvisorAt) setNavItems(teacherNav);
         else
