@@ -10,9 +10,7 @@ export async function middleware(req: NextRequest) {
   const route = req.nextUrl.pathname;
   const pageRole: Role | "public" | "admin" | "user" | "not-protected" =
     // Public pages
-    ["/", "/account/login", "/account/forgot-password", "/about"].includes(
-      route
-    )
+    route == "/" || /^\/(account\/(login|forgot\-password)|about)/.test(route)
       ? "public"
       : // Admin pages
       /^\/admin/.test(route)
@@ -59,13 +57,19 @@ export async function middleware(req: NextRequest) {
   // Disallow public users from visiting private pages
   if (pageRole != "public" && userRole == "public")
     destination = "/account/login";
+  // Disallow logged in users from visiting certain pages under certain
+  // circumstances
+  // prettier-ignore
   else if (
-    // Disllow non-admins from visiting admin pages
-    (pageRole == "admin" && !userIsAdmin) ||
     !(
-      // Allow all users to visit user pages
-      // Allow users with the correct roles
-      (pageRole == "user" || pageRole == userRole)
+      (
+        // Allow admins to visit admin pages
+        (pageRole == "admin" && userIsAdmin) ||
+        // Allow all users to visit user pages
+        pageRole == "user" ||
+        // Allow users with the correct roles
+        pageRole == userRole
+      )
     )
   ) {
     // Set destinations for students and teachers in the wrong pages

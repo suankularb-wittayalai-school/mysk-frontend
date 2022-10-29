@@ -1,12 +1,25 @@
+// External libraries
 import { PostgrestError, User } from "@supabase/supabase-js";
+
+// Backend
+import { createPerson } from "@utils/backend/person/person";
+
+// Helpers
+import { getCurrentAcedemicYear } from "@utils/helpers/date";
+
+// Supabase
 import { supabase } from "@utils/supabaseClient";
+
+// Types
+import { ClassWNumber } from "@utils/types/class";
+import { BackendReturn } from "@utils/types/common";
+import { ImportedStudentData, Prefix, Student } from "@utils/types/person";
+import { ClassroomDB } from "@utils/types/database/class";
 import {
   PersonDB,
   PersonTable,
   StudentTable,
 } from "@utils/types/database/person";
-import { ImportedStudentData, Prefix, Student } from "@utils/types/person";
-import { createPerson } from "./person";
 
 const prefixMap = {
   เด็กชาย: "Master.",
@@ -57,8 +70,6 @@ export async function createStudent(
       isAdmin,
     }),
   });
-
-  // console.log(await res.json());
 
   return { data: createdStudent, error: null };
 }
@@ -152,4 +163,23 @@ export async function importStudents(data: ImportedStudentData[]) {
       async (student) => await createStudent(student.person, student.email)
     )
   );
+}
+
+export async function getClassOfStudent(
+  studentDBID: number
+): Promise<BackendReturn<ClassWNumber, null>> {
+  const { data, error } = await supabase
+    .from<ClassroomDB>("classroom")
+    .select("id, number")
+    .match({ year: getCurrentAcedemicYear() })
+    .contains("students", [studentDBID])
+    .limit(1)
+    .single();
+
+  if (error) {
+    console.error(error);
+    return { data: null, error };
+  }
+
+  return { data: data as ClassWNumber, error: null };
 }
