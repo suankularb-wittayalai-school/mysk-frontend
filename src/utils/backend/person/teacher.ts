@@ -7,6 +7,9 @@ import { PostgrestError } from "@supabase/supabase-js";
 import { db2Teacher } from "../database";
 import { createPerson } from "./person";
 
+// Helpers
+import { getCurrentAcedemicYear } from "@utils/helpers/date";
+
 // Supabase
 import { supabase } from "@utils/supabaseClient";
 
@@ -26,7 +29,7 @@ import {
   TeacherTable,
 } from "@utils/types/database/person";
 import { RoomSubjectDB } from "@utils/types/database/subject";
-import { getCurrentAcedemicYear } from "@utils/helpers/date";
+import { ClassroomDB } from "@utils/types/database/class";
 
 const subjectGroupMap = {
   วิทยาศาสตร์: 1,
@@ -253,7 +256,7 @@ export async function getClassAdvisorAt(
   teacherDBID: number
 ): Promise<BackendReturn<ClassWNumber, null>> {
   const { data, error } = await supabase
-    .from<{ id: number; number: number; advisors: number[] }>("classroom")
+    .from<ClassroomDB>("classroom")
     .select("id, number")
     .match({ year: getCurrentAcedemicYear() })
     .contains("advisors", [teacherDBID])
@@ -265,5 +268,5 @@ export async function getClassAdvisorAt(
     return { data: null, error };
   }
 
-  return { data, error: null };
+  return { data: data as ClassWNumber, error: null };
 }

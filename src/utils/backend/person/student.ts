@@ -181,5 +181,5 @@ export async function getClassOfStudent(
     return { data: null, error };
   }
 
-  return { data, error: null };
+  return { data: data as ClassWNumber, error: null };
 }

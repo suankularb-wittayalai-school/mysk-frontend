@@ -27,6 +27,7 @@ import { addAtIndex } from "@utils/helpers/array";
 // Hooks
 import { useSession } from "@utils/hooks/auth";
 import { getClassOfStudent } from "@utils/backend/person/student";
+import { ClassWNumber } from "@utils/types/class";
 
 const Layout = ({
   navIsTransparent,
@@ -156,7 +157,7 @@ const Layout = ({
                 inactive: <MaterialIcon icon="school" type="outlined" />,
                 active: <MaterialIcon icon="school" type="filled" />,
               },
-              url: `/learn/${classOfStudent.number}`,
+              url: `/learn/${(classOfStudent as ClassWNumber).number}`,
             },
             {
               name: t("navigation.people"),
@@ -164,7 +165,7 @@ const Layout = ({
                 inactive: <MaterialIcon icon="groups" type="outlined" />,
                 active: <MaterialIcon icon="groups" type="filled" />,
               },
-              url: `/class/${classOfStudent.number}/view`,
+              url: `/class/${(classOfStudent as ClassWNumber).number}/view`,
             },
           ].concat(studentNav)
         );
@@ -177,18 +178,21 @@ const Layout = ({
 
         if (error) console.error(error);
 
-        if (!classAdvisorAt) setNavItems(teacherNav);
-        else
-          setNavItems(
-            addAtIndex(teacherNav, 1, {
-              name: t("navigation.class"),
-              icon: {
-                inactive: <MaterialIcon icon="groups" type="outlined" />,
-                active: <MaterialIcon icon="groups" type="filled" />,
-              },
-              url: `/class/${classAdvisorAt.number}/manage`,
-            })
-          );
+        if (!classAdvisorAt) {
+          setNavItems(teacherNav);
+          return;
+        }
+        
+        setNavItems(
+          addAtIndex(teacherNav, 1, {
+            name: t("navigation.class"),
+            icon: {
+              inactive: <MaterialIcon icon="groups" type="outlined" />,
+              active: <MaterialIcon icon="groups" type="filled" />,
+            },
+            url: `/class/${(classAdvisorAt as ClassWNumber).number}/manage`,
+          })
+        );
       } else setNavItems(defaultNav);
     }
 
