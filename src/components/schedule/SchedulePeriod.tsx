@@ -172,7 +172,7 @@ const ElectivePeriod = ({ isInSession }: { isInSession: boolean }) => {
         hover:before:bg-on-primary-translucent-08 hover:before:transition-none`,
         isInSession
           ? "bg-tertiary-translucent-12 text-on-tertiary-container shadow"
-          : "bg-primary-translucent-12 text-on-primary-container",
+          : "bg-surface-2 text-on-surface-variant",
       ].join(" ")}
     >
       <div className="px-4 py-2 transition-[opacity]">
