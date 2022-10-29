@@ -75,52 +75,13 @@ export async function getSchedule(
     );
 
   // Return an empty Schedule if fetch failed
-  if (error || !data) {
+  if (error) {
     console.error(error);
     return schedule;
   }
 
-  console.log("===");
-
-  console.log({ data });
-
   // Add Supabase data to empty schedule
-  // for (let incomingPeriod of data) {
-  //   const processedPeriod = await db2SchedulePeriod(incomingPeriod, role);
-
-  //   // Find the index of the row we want to manipulate
-  //   const scheduleRowIndex = schedule.content.findIndex(
-  //     (scheduleRow) => incomingPeriod.day == scheduleRow.day
-  //   );
-
-  //   // Remove overlapping empty periods from resulting Schedule
-  //   schedule.content[scheduleRowIndex].content = schedule.content[
-  //     scheduleRowIndex
-  //   ].content.filter(
-  //     (schedulePeriod) =>
-  //       // Check for overlap with empty periods
-  //       !(
-  //         schedulePeriod.content.length == 0 &&
-  //         arePeriodsOverlapping(
-  //           {
-  //             startTime: schedulePeriod.startTime,
-  //             duration: schedulePeriod.duration,
-  //           },
-  //           {
-  //             startTime: incomingPeriod.start_time,
-  //             duration: incomingPeriod.duration,
-  //           }
-  //         )
-  //       )
-  //   );
-
-  //   // Now with space to add it in, add the period to resulting Schedule
-  //   schedule.content[scheduleRowIndex].content.push(processedPeriod);
-  // }
-
   for (let incomingPeriod of data) {
-    console.log("---");
-    console.log({ incomingPeriod });
     // Find the index of the row we want to manipulate
     const scheduleRowIndex = schedule.content.findIndex(
       (scheduleRow) => incomingPeriod.day == scheduleRow.day
@@ -130,13 +91,11 @@ export async function getSchedule(
     const periodIndices = range(
       schedule.content[scheduleRowIndex].content.length
     );
-    console.log(schedule.content[scheduleRowIndex].content);
     for (let idx of periodIndices) {
-      console.log("start");
-      console.log({ [idx]: schedule.content[scheduleRowIndex].content });
       const schedulePeriod = schedule.content[scheduleRowIndex].content[idx];
+
+      // If there is no period at this index, skip it
       if (!schedulePeriod) continue;
-      const original = JSON.parse(JSON.stringify(schedulePeriod));
 
       // Ignore other periods (keep as is)
       if (
@@ -155,17 +114,6 @@ export async function getSchedule(
         continue;
       }
 
-      console.table([
-        {
-          startTime: schedulePeriod.startTime,
-          duration: schedulePeriod.duration,
-        },
-        {
-          startTime: incomingPeriod.start_time,
-          duration: incomingPeriod.duration,
-        },
-      ]);
-
       // Determine what to do if the incoming period overlaps with an existing
       // period
       const processedPeriod = await db2SchedulePeriod(incomingPeriod, role);
@@ -173,6 +121,7 @@ export async function getSchedule(
       // Replace empty period
       if (schedulePeriod.content.length == 0) {
         schedule.content[scheduleRowIndex].content[idx] = processedPeriod;
+        // Remove empty periods that is now overlapping the new incoming period
         schedule.content[scheduleRowIndex].content.splice(
           idx + 1,
           incomingPeriod.duration - 1
@@ -188,78 +137,11 @@ export async function getSchedule(
         processedPeriod.content
       );
       schedule.content[scheduleRowIndex].content[idx] = schedulePeriod;
-
-      console.log({
-        current: {
-          id: original.id,
-          startTime: original.startTime,
-          duration: original.duration,
-          contentLength: original.content.length,
-        },
-        incoming: {
-          id: incomingPeriod.id,
-          startTime: incomingPeriod.start_time,
-          duration: incomingPeriod.duration,
-        },
-        schedulePeriod,
-      });
-      console.log("end");
     }
-
-    //   // schedule.content[scheduleRowIndex].content = await Promise.all(
-    //   //   schedule.content[scheduleRowIndex].content.map(async (schedulePeriod) => {
-    //   //     const original = schedulePeriod;
-    //   //     console.log("start");
-
-    //   //     // Ignore other periods (keep as is)
-    //   //     if (
-    //   //       !arePeriodsOverlapping(
-    //   //         {
-    //   //           startTime: schedulePeriod.startTime,
-    //   //           duration: schedulePeriod.duration,
-    //   //         },
-    //   //         {
-    //   //           startTime: incomingPeriod.start_time,
-    //   //           duration: incomingPeriod.duration,
-    //   //         }
-    //   //       )
-    //   //     )
-    //   //       return schedulePeriod;
-
-    //   //     // Determine what to do if the incoming period overlaps with an existing period
-    //   //     const processedPeriod = await db2SchedulePeriod(incomingPeriod, role);
-
-    //   //     // Replace empty period
-    //   //     if (schedulePeriod.content.length == 0) return processedPeriod;
-
-    //   //     // If a period already exists here, just adjust duration and modify the `subjects` array
-    //   //     if (schedulePeriod.duration < incomingPeriod.duration)
-    //   //       schedulePeriod.duration = incomingPeriod.duration;
-    //   //     schedulePeriod.content = schedulePeriod.content.concat(
-    //   //       processedPeriod.content
-    //   //     );
-
-    //   //     console.log({
-    //   //       current: {
-    //   //         id: original.id,
-    //   //         startTime: original.startTime,
-    //   //         duration: original.duration,
-    //   //         contentLength: original.content.length,
-    //   //       },
-    //   //       incoming: {
-    //   //         id: incomingPeriod.id,
-    //   //         startTime: incomingPeriod.start_time,
-    //   //         duration: incomingPeriod.duration,
-    //   //       },
-    //   //       schedulePeriod,
-    //   //     });
-
-    //   //     console.log("end");
-    //   //     return schedulePeriod;
-    //   //   })
-    //   // );
   }
 
+  // Sort the periods to ensure sensible tab order
+  // This has no effect on the visual Schedule
   schedule.content = schedule.content.map((scheduleRow) => ({
     ...scheduleRow,
     content: scheduleRow.content.sort((a, b) => a.startTime - b.startTime),
