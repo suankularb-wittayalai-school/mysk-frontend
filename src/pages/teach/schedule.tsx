@@ -60,7 +60,9 @@ const TeacherSchedule: NextPage = () => {
   useEffect(() => {
     const fetchAndSetSchedule = async () => {
       if (!fetched && teacher) {
-        setSchedule(await getSchedule("teacher", teacher.id));
+        const { data, error } = await getSchedule("teacher", teacher.id);
+        if (error) toggleFetched();
+        setSchedule(data);
         toggleFetched();
       }
     };

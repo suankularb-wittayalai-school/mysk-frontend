@@ -34,7 +34,7 @@ export async function getSchedule(
   role: "student",
   classID: number,
   day?: Day
-): Promise<Schedule>;
+): Promise<BackendReturn<Schedule, Schedule>>;
 
 /**
  * Construct a Teaching Schedule from Schedule Items from the teacher’s perspective
@@ -45,13 +45,13 @@ export async function getSchedule(
   role: "teacher",
   teacherID: number,
   day?: Day
-): Promise<Schedule>;
+): Promise<BackendReturn<Schedule, Schedule>>;
 
 export async function getSchedule(
   role: Role,
   id: number,
   day?: Day
-): Promise<Schedule> {
+): Promise<BackendReturn<Schedule, Schedule>> {
   // Schedule filled with empty periods
   let schedule =
     day == undefined ? createEmptySchedule(1, 5) : createEmptySchedule(day);
@@ -77,7 +77,7 @@ export async function getSchedule(
   // Return an empty Schedule if fetch failed
   if (error) {
     console.error(error);
-    return schedule;
+    return { data: schedule, error };
   }
 
   // Add Supabase data to empty schedule
@@ -109,10 +109,8 @@ export async function getSchedule(
             duration: incomingPeriod.duration,
           }
         )
-      ) {
-        console.log("ignored");
+      )
         continue;
-      }
 
       // Determine what to do if the incoming period overlaps with an existing
       // period
@@ -147,7 +145,7 @@ export async function getSchedule(
     content: scheduleRow.content.sort((a, b) => a.startTime - b.startTime),
   }));
 
-  return schedule;
+  return { data: schedule, error: null };
 }
 
 export async function getSchedulesOfGrade(
@@ -168,7 +166,7 @@ export async function getSchedulesOfGrade(
   return {
     data: await Promise.all(
       (classes as ClassroomTable[]).map(async (classItem) => ({
-        ...(await getSchedule("student", classItem.id)),
+        ...(await getSchedule("student", classItem.id)).data,
         class: classItem,
       }))
     ),

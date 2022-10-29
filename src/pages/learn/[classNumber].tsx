@@ -43,8 +43,6 @@ const StudentSchedule: NextPage<{
 }> = ({ schedule, subjectList }) => {
   const { t } = useTranslation("learn");
 
-  useEffect(() => console.log(schedule), []);
-
   // Dialog control
   const [showLogOut, toggleShowLogOut] = useReducer(
     (value: boolean) => !value,
@@ -91,10 +89,7 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   );
   if (error) return { notFound: true };
 
-  const schedule: ScheduleType = await getSchedule(
-    "student",
-    classID as number
-  );
+  const { data: schedule } = await getSchedule("student", classID as number);
   const { data: subjectList } = await getSubjectList(classID as number);
 
   return {
