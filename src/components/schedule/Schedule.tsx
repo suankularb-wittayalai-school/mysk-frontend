@@ -13,7 +13,7 @@ import ScheduleRow from "@components/schedule/ScheduleRow";
 import { Role } from "@utils/types/person";
 import {
   Schedule as Schedule,
-  SchedulePeriod,
+  PeriodContentItem,
   ScheduleRow as ScheduleRowType,
 } from "@utils/types/schedule";
 
@@ -70,7 +70,7 @@ const Schedule = ({
   }: {
     show: boolean;
     day: Day;
-    schedulePeriod: SchedulePeriod;
+    schedulePeriod: PeriodContentItem;
   }) => void;
   setDeletePeriod?: ({
     show,

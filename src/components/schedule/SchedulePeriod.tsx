@@ -30,7 +30,10 @@ import { useTeacherAccount } from "@utils/hooks/auth";
 // Types
 import { LangCode } from "@utils/types/common";
 import { Role } from "@utils/types/person";
-import { SchedulePeriod as SchedulePeriodType } from "@utils/types/schedule";
+import {
+  SchedulePeriod as SchedulePeriodType,
+  PeriodContentItem,
+} from "@utils/types/schedule";
 import { Subject } from "@utils/types/subject";
 
 // Empty Schedule Period
@@ -135,7 +138,7 @@ const AddableEmptySchedulePeriod = ({
             {
               ...(JSON.parse(
                 e.dataTransfer.getData("text")
-              ) as SchedulePeriodType),
+              ) as PeriodContentItem),
               startTime,
             },
             teacher.id
@@ -207,7 +210,7 @@ const SubjectSchedulePeriod = ({
 }: {
   isInSession: boolean;
   day: Day;
-  schedulePeriod: SchedulePeriodType;
+  schedulePeriod: PeriodContentItem;
   role: Role;
   allowEdit?: boolean;
   setEditPeriod?: ({
@@ -217,7 +220,7 @@ const SubjectSchedulePeriod = ({
   }: {
     show: boolean;
     day: Day;
-    schedulePeriod: SchedulePeriodType;
+    schedulePeriod: PeriodContentItem;
   }) => void;
   setDeletePeriod?: ({
     show,
@@ -300,11 +303,11 @@ const SubjectSchedulePeriod = ({
             </span>
             <span
               className="truncate text-base"
-              title={getLocaleObj(schedulePeriod.subjects[0].name, locale).name}
+              title={getLocaleObj(schedulePeriod.subject.name, locale).name}
             >
               {getSubjectName(
                 schedulePeriod.duration,
-                schedulePeriod.subjects[0].name
+                schedulePeriod.subject.name
               )}
             </span>
           </>
@@ -312,14 +315,14 @@ const SubjectSchedulePeriod = ({
           <>
             <span
               className="truncate font-display text-xl font-medium"
-              title={getLocaleObj(schedulePeriod.subjects[0].name, locale).name}
+              title={getLocaleObj(schedulePeriod.subject.name, locale).name}
             >
               {getSubjectName(
                 schedulePeriod.duration,
-                schedulePeriod.subjects[0].name
+                schedulePeriod.subject.name
               )}
             </span>
-            <HoverList people={schedulePeriod.subjects[0].teachers} />
+            <HoverList people={schedulePeriod.subject.teachers} />
           </>
         )}
       </div>
@@ -338,7 +341,7 @@ const PeriodHoverMenu = ({
 }: {
   show: boolean;
   day: Day;
-  schedulePeriod: SchedulePeriodType;
+  schedulePeriod: PeriodContentItem;
   setEditPeriod?: ({
     show,
     day,
@@ -346,7 +349,7 @@ const PeriodHoverMenu = ({
   }: {
     show: boolean;
     day: Day;
-    schedulePeriod: SchedulePeriodType;
+    schedulePeriod: PeriodContentItem;
   }) => void;
   setDeletePeriod?: ({
     show,
@@ -610,7 +613,7 @@ const SchedulePeriod = ({
   }: {
     show: boolean;
     day: Day;
-    schedulePeriod: SchedulePeriodType;
+    schedulePeriod: PeriodContentItem;
   }) => void;
   setDeletePeriod?: ({
     show,
@@ -624,7 +627,7 @@ const SchedulePeriod = ({
   return (
     <motion.li
       key={
-        schedulePeriod.subjects.length > 0
+        schedulePeriod.content.length > 0
           ? `sp-${schedulePeriod.id}`
           : `sp-${day.getDay()}-${schedulePeriod.startTime}`
       }
@@ -634,7 +637,7 @@ const SchedulePeriod = ({
         left: periodWidth * (schedulePeriod.startTime - 1),
       }}
       layoutId={
-        schedulePeriod.subjects.length > 0
+        schedulePeriod.content.length > 0
           ? `sp-${schedulePeriod.id}`
           : undefined
       }
@@ -643,7 +646,8 @@ const SchedulePeriod = ({
       exit={{ scale: 0.8, y: 20, opacity: 0 }}
       transition={animationTransition}
     >
-      {schedulePeriod.subjects.length > 1 ? (
+      {schedulePeriod.content.length > 1 ? (
+        // Elective period
         <ElectivePeriod
           isInSession={isInPeriod(
             now,
@@ -652,7 +656,7 @@ const SchedulePeriod = ({
             schedulePeriod.duration
           )}
         />
-      ) : schedulePeriod.subjects.length == 1 ? (
+      ) : schedulePeriod.content.length == 1 ? (
         // Filled period
         <SubjectSchedulePeriod
           isInSession={isInPeriod(
@@ -661,7 +665,7 @@ const SchedulePeriod = ({
             schedulePeriod.startTime,
             schedulePeriod.duration
           )}
-          schedulePeriod={schedulePeriod}
+          schedulePeriod={schedulePeriod.content[0]}
           day={day.getDay() as Day}
           role={role}
           allowEdit={allowEdit}

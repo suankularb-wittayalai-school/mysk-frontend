@@ -502,28 +502,33 @@ export async function db2SchedulePeriod(
     id: scheduleItem.id,
     startTime: scheduleItem.start_time,
     duration: scheduleItem.duration,
-    subjects: [
+    content: [
       {
-        id: scheduleItem.subject.id,
-        name: {
-          "en-US": {
-            name: scheduleItem.subject.name_en,
-            shortName: scheduleItem.subject.short_name_en,
+        id: scheduleItem.id,
+        startTime: scheduleItem.start_time,
+        duration: scheduleItem.duration,
+        subject: {
+          id: scheduleItem.subject.id,
+          name: {
+            "en-US": {
+              name: scheduleItem.subject.name_en,
+              shortName: scheduleItem.subject.short_name_en,
+            },
+            th: {
+              name: scheduleItem.subject.name_th,
+              shortName: scheduleItem.subject.short_name_th,
+            },
           },
-          th: {
-            name: scheduleItem.subject.name_th,
-            shortName: scheduleItem.subject.short_name_th,
-          },
+          teachers: [],
+          coTeachers: [],
         },
-        teachers: [],
-        coTeachers: [],
+        class: scheduleItem.classroom,
+        room: scheduleItem.room,
       },
     ],
-    class: scheduleItem.classroom,
-    room: scheduleItem.room,
   };
 
-  if (role == "student" && formatted.subjects) {
+  if (role == "student" && formatted.content.length > 0) {
     const { data: teachers, error: teachersError } = await supabase
       .from<TeacherDB>("teacher")
       .select("id, teacher_id, people:person(*), SubjectGroup:subject_group(*)")
@@ -533,7 +538,7 @@ export async function db2SchedulePeriod(
       console.error(teachersError);
     }
     if (teachers) {
-      formatted.subjects[0].teachers = await Promise.all(
+      formatted.content[0].subject.teachers = await Promise.all(
         teachers.map(async (teacher) => {
           return await db2Teacher(teacher);
         })
@@ -552,7 +557,7 @@ export async function db2SchedulePeriod(
       console.error(coTeachersError);
     }
     if (coTeachers) {
-      formatted.subjects[0].coTeachers = await Promise.all(
+      formatted.content[0].subject.coTeachers = await Promise.all(
         coTeachers.map(async (teacher) => {
           return await db2Teacher(teacher);
         })

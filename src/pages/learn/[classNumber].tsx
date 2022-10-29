@@ -43,6 +43,8 @@ const StudentSchedule: NextPage<{
 }> = ({ schedule, subjectList }) => {
   const { t } = useTranslation("learn");
 
+  useEffect(() => console.log(schedule), []);
+
   // Dialog control
   const [showLogOut, toggleShowLogOut] = useReducer(
     (value: boolean) => !value,

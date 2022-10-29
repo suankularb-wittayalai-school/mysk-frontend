@@ -4,6 +4,7 @@ import { PostgrestError } from "@supabase/supabase-js";
 // Backend
 import { db2SchedulePeriod } from "@utils/backend/database";
 import { isOverlappingExistingItems } from "@utils/backend/schedule/utils";
+import { range } from "@utils/helpers/array";
 
 // Helpers
 import {
@@ -22,7 +23,7 @@ import {
   ScheduleItemTable,
 } from "@utils/types/database/schedule";
 import { Role } from "@utils/types/person";
-import { Schedule, SchedulePeriod } from "@utils/types/schedule";
+import { Schedule, PeriodContentItem } from "@utils/types/schedule";
 
 /**
  * Construct a Schedule from Schedule Items from the student’s perspective
@@ -79,44 +80,184 @@ export async function getSchedule(
     return schedule;
   }
 
+  console.log("===");
+
+  console.log({ data });
+
   // Add Supabase data to empty schedule
-  for (let scheduleItem of data) {
+  // for (let incomingPeriod of data) {
+  //   const processedPeriod = await db2SchedulePeriod(incomingPeriod, role);
+
+  //   // Find the index of the row we want to manipulate
+  //   const scheduleRowIndex = schedule.content.findIndex(
+  //     (scheduleRow) => incomingPeriod.day == scheduleRow.day
+  //   );
+
+  //   // Remove overlapping empty periods from resulting Schedule
+  //   schedule.content[scheduleRowIndex].content = schedule.content[
+  //     scheduleRowIndex
+  //   ].content.filter(
+  //     (schedulePeriod) =>
+  //       // Check for overlap with empty periods
+  //       !(
+  //         schedulePeriod.content.length == 0 &&
+  //         arePeriodsOverlapping(
+  //           {
+  //             startTime: schedulePeriod.startTime,
+  //             duration: schedulePeriod.duration,
+  //           },
+  //           {
+  //             startTime: incomingPeriod.start_time,
+  //             duration: incomingPeriod.duration,
+  //           }
+  //         )
+  //       )
+  //   );
+
+  //   // Now with space to add it in, add the period to resulting Schedule
+  //   schedule.content[scheduleRowIndex].content.push(processedPeriod);
+  // }
+
+  for (let incomingPeriod of data) {
+    console.log("---");
+    console.log({ incomingPeriod });
     // Find the index of the row we want to manipulate
     const scheduleRowIndex = schedule.content.findIndex(
-      (scheduleRow) => scheduleItem.day == scheduleRow.day
+      (scheduleRow) => incomingPeriod.day == scheduleRow.day
     );
 
-    // Remove overlapping periods from resulting Schedule
-    schedule.content[scheduleRowIndex].content = await Promise.all(
-      schedule.content[scheduleRowIndex].content.map(async (schedulePeriod) => {
-        // Ignore other periods (keep as is)
-        if (
-          !arePeriodsOverlapping(
-            {
-              startTime: schedulePeriod.startTime,
-              duration: schedulePeriod.duration,
-            },
-            {
-              startTime: scheduleItem.start_time,
-              duration: scheduleItem.duration,
-            }
-          )
+    // Loop through each exisitng period in this row
+    const periodIndices = range(
+      schedule.content[scheduleRowIndex].content.length
+    );
+    console.log(schedule.content[scheduleRowIndex].content);
+    for (let idx of periodIndices) {
+      console.log("start");
+      console.log({ [idx]: schedule.content[scheduleRowIndex].content });
+      const schedulePeriod = schedule.content[scheduleRowIndex].content[idx];
+      if (!schedulePeriod) continue;
+      const original = JSON.parse(JSON.stringify(schedulePeriod));
+
+      // Ignore other periods (keep as is)
+      if (
+        !arePeriodsOverlapping(
+          {
+            startTime: schedulePeriod.startTime,
+            duration: schedulePeriod.duration,
+          },
+          {
+            startTime: incomingPeriod.start_time,
+            duration: incomingPeriod.duration,
+          }
         )
-          return schedulePeriod;
+      ) {
+        console.log("ignored");
+        continue;
+      }
 
-        const processedPeriod = await db2SchedulePeriod(scheduleItem, role);
+      console.table([
+        {
+          startTime: schedulePeriod.startTime,
+          duration: schedulePeriod.duration,
+        },
+        {
+          startTime: incomingPeriod.start_time,
+          duration: incomingPeriod.duration,
+        },
+      ]);
 
-        // Replace empty period
-        if (schedulePeriod.subjects.length == 0) return processedPeriod;
+      // Determine what to do if the incoming period overlaps with an existing
+      // period
+      const processedPeriod = await db2SchedulePeriod(incomingPeriod, role);
 
-        // If a period already exists here, just modify the `subjects` array
-        schedulePeriod.subjects = schedulePeriod.subjects.concat(
-          processedPeriod.subjects
+      // Replace empty period
+      if (schedulePeriod.content.length == 0) {
+        schedule.content[scheduleRowIndex].content[idx] = processedPeriod;
+        schedule.content[scheduleRowIndex].content.splice(
+          idx + 1,
+          incomingPeriod.duration - 1
         );
+        continue;
+      }
 
-        return schedulePeriod;
-      })
-    );
+      // If a period already exists here, just adjust duration and modify the
+      // `subjects` array
+      if (schedulePeriod.duration < incomingPeriod.duration)
+        schedulePeriod.duration = incomingPeriod.duration;
+      schedulePeriod.content = schedulePeriod.content.concat(
+        processedPeriod.content
+      );
+      schedule.content[scheduleRowIndex].content[idx] = schedulePeriod;
+
+      console.log({
+        current: {
+          id: original.id,
+          startTime: original.startTime,
+          duration: original.duration,
+          contentLength: original.content.length,
+        },
+        incoming: {
+          id: incomingPeriod.id,
+          startTime: incomingPeriod.start_time,
+          duration: incomingPeriod.duration,
+        },
+        schedulePeriod,
+      });
+      console.log("end");
+    }
+
+    //   // schedule.content[scheduleRowIndex].content = await Promise.all(
+    //   //   schedule.content[scheduleRowIndex].content.map(async (schedulePeriod) => {
+    //   //     const original = schedulePeriod;
+    //   //     console.log("start");
+
+    //   //     // Ignore other periods (keep as is)
+    //   //     if (
+    //   //       !arePeriodsOverlapping(
+    //   //         {
+    //   //           startTime: schedulePeriod.startTime,
+    //   //           duration: schedulePeriod.duration,
+    //   //         },
+    //   //         {
+    //   //           startTime: incomingPeriod.start_time,
+    //   //           duration: incomingPeriod.duration,
+    //   //         }
+    //   //       )
+    //   //     )
+    //   //       return schedulePeriod;
+
+    //   //     // Determine what to do if the incoming period overlaps with an existing period
+    //   //     const processedPeriod = await db2SchedulePeriod(incomingPeriod, role);
+
+    //   //     // Replace empty period
+    //   //     if (schedulePeriod.content.length == 0) return processedPeriod;
+
+    //   //     // If a period already exists here, just adjust duration and modify the `subjects` array
+    //   //     if (schedulePeriod.duration < incomingPeriod.duration)
+    //   //       schedulePeriod.duration = incomingPeriod.duration;
+    //   //     schedulePeriod.content = schedulePeriod.content.concat(
+    //   //       processedPeriod.content
+    //   //     );
+
+    //   //     console.log({
+    //   //       current: {
+    //   //         id: original.id,
+    //   //         startTime: original.startTime,
+    //   //         duration: original.duration,
+    //   //         contentLength: original.content.length,
+    //   //       },
+    //   //       incoming: {
+    //   //         id: incomingPeriod.id,
+    //   //         startTime: incomingPeriod.start_time,
+    //   //         duration: incomingPeriod.duration,
+    //   //       },
+    //   //       schedulePeriod,
+    //   //     });
+
+    //   //     console.log("end");
+    //   //     return schedulePeriod;
+    //   //   })
+    //   // );
   }
 
   schedule.content = schedule.content.map((scheduleRow) => ({
@@ -168,7 +309,7 @@ export async function createScheduleItem(
     duration: number;
   },
   teacherID: number
-): Promise<{ data: ScheduleItemTable[] | null; error: PostgrestError | null }> {
+): Promise<BackendReturn<ScheduleItemTable[]>> {
   const { data, error } = await supabase
     .from<ScheduleItemTable>("schedule_items")
     .insert({
@@ -183,7 +324,7 @@ export async function createScheduleItem(
 
   if (error || !data) {
     console.error(error);
-    return { data: null, error };
+    return { data: [], error };
   }
 
   return { data, error: null };
@@ -199,10 +340,7 @@ export async function editScheduleItem(
     duration: number;
   },
   id: number
-): Promise<{
-  data: ScheduleItemTable[] | null;
-  error: PostgrestError | null;
-}> {
+): Promise<BackendReturn<ScheduleItemTable[]>> {
   const { data, error } = await supabase
     .from<ScheduleItemTable>("schedule_items")
     .update({
@@ -217,7 +355,7 @@ export async function editScheduleItem(
 
   if (error || !data) {
     console.error(error);
-    return { data: null, error };
+    return { data: [], error };
   }
 
   return { data, error: null };
@@ -225,19 +363,16 @@ export async function editScheduleItem(
 
 export async function moveScheduleItem(
   newDay: Day,
-  newSchedulePeriod: SchedulePeriod,
+  newSchedulePeriod: PeriodContentItem,
   teacherID: number
-) {
+): Promise<BackendReturn<ScheduleItemTable[]>> {
   // Check overlap
   if (await isOverlappingExistingItems(newDay, newSchedulePeriod, teacherID))
     return {
-      data: null,
+      data: [],
       error: {
         message:
           "new period duration causes it to overlap with other relevant periods",
-        details: "",
-        hint: "",
-        code: "",
       },
     };
 
@@ -248,7 +383,7 @@ export async function moveScheduleItem(
 
   if (error || !data) {
     console.error(error);
-    return { data: null, error };
+    return { data: [], error };
   }
 
   return { data, error: null };
@@ -256,25 +391,19 @@ export async function moveScheduleItem(
 
 export async function editScheduleItemDuration(
   day: Day,
-  schedulePeriod: SchedulePeriod,
+  schedulePeriod: PeriodContentItem,
   teacherID: number
-): Promise<{
-  data: ScheduleItemTable[] | null;
-  error: PostgrestError | null;
-}> {
+): Promise<BackendReturn<ScheduleItemTable[]>> {
   // Cap duration
   if (schedulePeriod.duration < 1) schedulePeriod.duration = 1;
   else if (schedulePeriod.duration > 10) schedulePeriod.duration = 10;
 
   if (await isOverlappingExistingItems(day, schedulePeriod, teacherID))
     return {
-      data: null,
+      data: [],
       error: {
         message:
           "new period duration causes it to overlap with other relevant periods",
-        details: "",
-        hint: "",
-        code: "",
       },
     };
 
@@ -286,7 +415,7 @@ export async function editScheduleItemDuration(
 
   if (error || !data) {
     console.error(error);
-    return { data: null, error };
+    return { data: [], error };
   }
 
   return { data, error: null };

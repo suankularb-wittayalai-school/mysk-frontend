@@ -27,7 +27,7 @@ import { useTeacherAccount } from "@utils/hooks/auth";
 // Types
 import { ClassWNumber } from "@utils/types/class";
 import { LangCode, SubmittableDialogProps } from "@utils/types/common";
-import { SchedulePeriod } from "@utils/types/schedule";
+import { PeriodContentItemOptSubj } from "@utils/types/schedule";
 
 // Miscellaneous
 import { roomPattern } from "@utils/patterns";
@@ -43,7 +43,7 @@ const EditPeriod = ({
 }: SubmittableDialogProps & {
   mode: "add" | "edit";
   day?: Day;
-  schedulePeriod?: SchedulePeriod;
+  schedulePeriod?: PeriodContentItemOptSubj;
   canEditStartTime?: boolean;
 }): JSX.Element => {
   const { t } = useTranslation(["schedule", "common"]);
@@ -83,7 +83,7 @@ const EditPeriod = ({
     if (mode == "edit" || !canEditStartTime)
       setForm({
         subject:
-          schedulePeriod?.subjects?.id ||
+          schedulePeriod?.subject?.id ||
           (teacher?.subjectsInCharge && teacher.subjectsInCharge.length > 0
             ? teacher.subjectsInCharge[0].id
             : 0),
@@ -164,7 +164,7 @@ const EditPeriod = ({
         },
       ]}
       show={show}
-      onClose={() => onClose()}
+      onClose={onClose}
       onSubmit={async () => {
         await handleSubmit();
         onSubmit();
@@ -184,7 +184,7 @@ const EditPeriod = ({
               : []
           }
           noOptionsText={t("input.none.noOptions", { ns: "common" })}
-          defaultValue={mode == "edit" ? schedulePeriod?.subjects?.id : 0}
+          defaultValue={mode == "edit" ? schedulePeriod?.subject?.id : 0}
           onChange={(e: number) => setForm({ ...form, subject: e })}
         />
 
