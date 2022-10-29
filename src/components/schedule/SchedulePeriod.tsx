@@ -156,7 +156,9 @@ const AddableEmptySchedulePeriod = ({
 };
 
 // Multiple Schedule Period
-const MultipleSchedulePeriod = ({ isInSession }: { isInSession: boolean }) => {
+const ElectivePeriod = ({ isInSession }: { isInSession: boolean }) => {
+  const { t } = useTranslation("schedule");
+
   return (
     <button
       className={[
@@ -171,7 +173,7 @@ const MultipleSchedulePeriod = ({ isInSession }: { isInSession: boolean }) => {
       ].join(" ")}
     >
       <div className="px-4 py-2 transition-[opacity]">
-        <span>Many subjects</span>
+        <span>{t("schedule.elective")}</span>
       </div>
       <div
         className="pointer-events-none absolute top-0 z-30 h-full w-full
@@ -642,7 +644,7 @@ const SchedulePeriod = ({
       transition={animationTransition}
     >
       {schedulePeriod.subjects.length > 1 ? (
-        <MultipleSchedulePeriod
+        <ElectivePeriod
           isInSession={isInPeriod(
             now,
             day,

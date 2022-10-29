@@ -5,6 +5,7 @@
     "teacher": "Schedule"
   },
   "schedule": {
+    "elective": "Elective period",
     "hoverMenu": {
       "add": "Add period here",
       "edit": "Edit this period",
