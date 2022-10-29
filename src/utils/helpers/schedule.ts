@@ -72,18 +72,11 @@ export function createEmptySchedule(startDay: Day, endDay?: Day): Schedule {
   return {
     content: range(endDay ? endDay - startDay + 1 : 1).map((day) => ({
       day: (day + startDay) as Day,
-      content: [
-        { startTime: 1, duration: 1 },
-        { startTime: 2, duration: 1 },
-        { startTime: 3, duration: 1 },
-        { startTime: 4, duration: 1 },
-        { startTime: 5, duration: 1 },
-        { startTime: 6, duration: 1 },
-        { startTime: 7, duration: 1 },
-        { startTime: 8, duration: 1 },
-        { startTime: 9, duration: 1 },
-        { startTime: 10, duration: 1 },
-      ],
+      content: range(10, 1).map((startTime) => ({
+        startTime,
+        duration: 1,
+        subjects: [],
+      })),
     })),
   };
 }

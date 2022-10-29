@@ -21,6 +21,7 @@ import {
 
 // Helpers
 import { isTouchDevice } from "@utils/helpers/browser";
+import { getLocaleObj } from "@utils/helpers/i18n";
 import { isInPeriod } from "@utils/helpers/schedule";
 
 // Hooks
@@ -28,7 +29,7 @@ import { useTeacherAccount } from "@utils/hooks/auth";
 
 // Types
 import { LangCode } from "@utils/types/common";
-import { Role, Teacher } from "@utils/types/person";
+import { Role } from "@utils/types/person";
 import { SchedulePeriod as SchedulePeriodType } from "@utils/types/schedule";
 import { Subject } from "@utils/types/subject";
 
@@ -154,6 +155,43 @@ const AddableEmptySchedulePeriod = ({
   );
 };
 
+// Multiple Schedule Period
+const MultipleSchedulePeriod = ({ isInSession }: { isInSession: boolean }) => {
+  return (
+    <button
+      className={[
+        `group relative h-[3.75rem] w-full rounded-lg
+        text-left font-display text-xl font-medium leading-none
+        before:absolute before:inset-0 before:rounded-xl
+        before:transition-[background-color]
+        hover:before:bg-on-primary-translucent-08 hover:before:transition-none`,
+        isInSession
+          ? "bg-tertiary-translucent-12 text-on-tertiary-container shadow"
+          : "bg-primary-translucent-12 text-on-primary-container",
+      ].join(" ")}
+    >
+      <div className="px-4 py-2 transition-[opacity]">
+        <span>Many subjects</span>
+      </div>
+      <div
+        className="pointer-events-none absolute top-0 z-30 h-full w-full
+          rounded-lg border-2 border-primary bg-secondary-translucent-12
+          opacity-0 transition-[opacity] group-hover:opacity-100
+          group-focus:opacity-100"
+      >
+        <div
+          className="primary pointer-events-auto absolute top-0 left-1/2
+            -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-surface
+            p-1 text-xl shadow transition-[opacity] hover:transition-none
+            focus:opacity-95 focus:transition-none"
+        >
+          <MaterialIcon icon="open_in_full" allowCustomSize />
+        </div>
+      </div>
+    </button>
+  );
+};
+
 // Subject Schedule Period
 const SubjectSchedulePeriod = ({
   isInSession,
@@ -210,12 +248,6 @@ const SubjectSchedulePeriod = ({
         subjectName[locale]?.name || subjectName.th.name;
   }
 
-  type MinifiedSubject = {
-    name: Subject["name"];
-    teachers: Teacher[];
-    coTeachers?: Teacher[] | undefined;
-  };
-
   return (
     <div
       className={`relative h-[3.75rem] cursor-auto rounded-lg leading-snug ${
@@ -266,15 +298,11 @@ const SubjectSchedulePeriod = ({
             </span>
             <span
               className="truncate text-base"
-              title={
-                (schedulePeriod.subject as MinifiedSubject).name[locale]
-                  ?.name ||
-                (schedulePeriod.subject as MinifiedSubject).name.th.name
-              }
+              title={getLocaleObj(schedulePeriod.subjects[0].name, locale).name}
             >
               {getSubjectName(
                 schedulePeriod.duration,
-                (schedulePeriod.subject as MinifiedSubject).name
+                schedulePeriod.subjects[0].name
               )}
             </span>
           </>
@@ -282,20 +310,14 @@ const SubjectSchedulePeriod = ({
           <>
             <span
               className="truncate font-display text-xl font-medium"
-              title={
-                (schedulePeriod.subject as MinifiedSubject).name[locale]
-                  ?.name ||
-                (schedulePeriod.subject as MinifiedSubject).name.th.name
-              }
+              title={getLocaleObj(schedulePeriod.subjects[0].name, locale).name}
             >
               {getSubjectName(
                 schedulePeriod.duration,
-                (schedulePeriod.subject as MinifiedSubject).name
+                schedulePeriod.subjects[0].name
               )}
             </span>
-            <HoverList
-              people={(schedulePeriod.subject as MinifiedSubject).teachers}
-            />
+            <HoverList people={schedulePeriod.subjects[0].teachers} />
           </>
         )}
       </div>
@@ -379,8 +401,9 @@ const PeriodHoverMenu = ({
               {/* Helper message */}
               {isTouchDevice() && !disableTutorial && (
                 <motion.p
-                  className="inverse-surface absolute bottom-1 left-1 flex h-6 w-fit items-center gap-1
-                    whitespace-nowrap rounded-md px-2 font-sans font-medium shadow"
+                  className="inverse-surface absolute bottom-1 left-1 flex h-6
+                    w-fit items-center gap-1 whitespace-nowrap rounded-md px-2
+                    font-sans font-medium shadow"
                   initial={{ scale: 0.9, y: 5, opacity: 0 }}
                   animate={{ scale: 1, y: 0, opacity: 1 }}
                   exit={{ scale: 0.9, y: 5, opacity: 0 }}
@@ -595,59 +618,74 @@ const SchedulePeriod = ({
     periodID: number;
   }) => void;
   toggleFetched?: () => void;
-}): JSX.Element => (
-  <motion.li
-    key={
-      schedulePeriod.subject
-        ? `sp-${schedulePeriod.id}`
-        : `sp-${day.getDay()}-${schedulePeriod.startTime}`
-    }
-    className="absolute px-1 transition-[width]"
-    style={{
-      width: periodWidth * schedulePeriod.duration,
-      left: periodWidth * (schedulePeriod.startTime - 1),
-    }}
-    layoutId={schedulePeriod.subject ? `sp-${schedulePeriod.id}` : undefined}
-    initial={{ scale: 0.8, y: 20, opacity: 0 }}
-    animate={{ scale: 1, y: 0, opacity: 1 }}
-    exit={{ scale: 0.8, y: 20, opacity: 0 }}
-    transition={animationTransition}
-  >
-    {schedulePeriod.subject ? (
-      // Filled period
-      <SubjectSchedulePeriod
-        isInSession={isInPeriod(
-          now,
-          day,
-          schedulePeriod.startTime,
-          schedulePeriod.duration
-        )}
-        schedulePeriod={schedulePeriod}
-        day={day.getDay() as Day}
-        role={role}
-        allowEdit={allowEdit}
-        setEditPeriod={setEditPeriod}
-        setDeletePeriod={setDeletePeriod}
-        toggleFetched={toggleFetched}
-      />
-    ) : (
-      // Empty period
-      <EmptySchedulePeriod
-        isInSession={isInPeriod(
-          now,
-          day,
-          schedulePeriod.startTime,
-          schedulePeriod.duration
-        )}
-        day={day.getDay() as Day}
-        startTime={schedulePeriod.startTime}
-        role={role}
-        allowEdit={allowEdit}
-        setAddPeriod={setAddPeriod}
-        toggleFetched={toggleFetched}
-      />
-    )}
-  </motion.li>
-);
+}): JSX.Element => {
+  return (
+    <motion.li
+      key={
+        schedulePeriod.subjects.length > 0
+          ? `sp-${schedulePeriod.id}`
+          : `sp-${day.getDay()}-${schedulePeriod.startTime}`
+      }
+      className="absolute px-1 transition-[width]"
+      style={{
+        width: periodWidth * schedulePeriod.duration,
+        left: periodWidth * (schedulePeriod.startTime - 1),
+      }}
+      layoutId={
+        schedulePeriod.subjects.length > 0
+          ? `sp-${schedulePeriod.id}`
+          : undefined
+      }
+      initial={{ scale: 0.8, y: 20, opacity: 0 }}
+      animate={{ scale: 1, y: 0, opacity: 1 }}
+      exit={{ scale: 0.8, y: 20, opacity: 0 }}
+      transition={animationTransition}
+    >
+      {schedulePeriod.subjects.length > 1 ? (
+        <MultipleSchedulePeriod
+          isInSession={isInPeriod(
+            now,
+            day,
+            schedulePeriod.startTime,
+            schedulePeriod.duration
+          )}
+        />
+      ) : schedulePeriod.subjects.length == 1 ? (
+        // Filled period
+        <SubjectSchedulePeriod
+          isInSession={isInPeriod(
+            now,
+            day,
+            schedulePeriod.startTime,
+            schedulePeriod.duration
+          )}
+          schedulePeriod={schedulePeriod}
+          day={day.getDay() as Day}
+          role={role}
+          allowEdit={allowEdit}
+          setEditPeriod={setEditPeriod}
+          setDeletePeriod={setDeletePeriod}
+          toggleFetched={toggleFetched}
+        />
+      ) : (
+        // Empty period
+        <EmptySchedulePeriod
+          isInSession={isInPeriod(
+            now,
+            day,
+            schedulePeriod.startTime,
+            schedulePeriod.duration
+          )}
+          day={day.getDay() as Day}
+          startTime={schedulePeriod.startTime}
+          role={role}
+          allowEdit={allowEdit}
+          setAddPeriod={setAddPeriod}
+          toggleFetched={toggleFetched}
+        />
+      )}
+    </motion.li>
+  );
+};
 
 export default SchedulePeriod;

@@ -17,12 +17,12 @@ export type SchedulePeriod = {
   id?: number;
   startTime: number;
   duration: number;
-  subject?: {
+  subjects: {
     id: Subject["id"];
     name: Subject["name"];
     teachers: Teacher[];
     coTeachers?: Teacher[];
-  };
+  }[];
   // The class taking this Subject
   class?: ClassWNumber;
   // Physical room wherein this Subject is taught (Ex. 1214, 4306)

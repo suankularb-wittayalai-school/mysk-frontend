@@ -83,7 +83,7 @@ const EditPeriod = ({
     if (mode == "edit" || !canEditStartTime)
       setForm({
         subject:
-          schedulePeriod?.subject?.id ||
+          schedulePeriod?.subjects?.id ||
           (teacher?.subjectsInCharge && teacher.subjectsInCharge.length > 0
             ? teacher.subjectsInCharge[0].id
             : 0),
@@ -184,7 +184,7 @@ const EditPeriod = ({
               : []
           }
           noOptionsText={t("input.none.noOptions", { ns: "common" })}
-          defaultValue={mode == "edit" ? schedulePeriod?.subject?.id : 0}
+          defaultValue={mode == "edit" ? schedulePeriod?.subjects?.id : 0}
           onChange={(e: number) => setForm({ ...form, subject: e })}
         />
 

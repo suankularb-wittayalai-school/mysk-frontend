@@ -738,7 +738,7 @@ const SubjectDetails: NextPage<{
               subtitle: subject.code[locale],
             }}
             pageIcon={<MaterialIcon icon="school" />}
-            backGoesTo="/t/subjects/teaching"
+            backGoesTo="/teach"
             LinkElement={Link}
           />
         }

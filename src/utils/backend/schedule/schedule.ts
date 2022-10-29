@@ -87,29 +87,42 @@ export async function getSchedule(
     );
 
     // Remove overlapping periods from resulting Schedule
-    schedule.content[scheduleRowIndex].content = schedule.content[
-      scheduleRowIndex
-    ].content.filter((schedulePeriod) =>
-      // Check for overlap
-      {
-        return !arePeriodsOverlapping(
-          {
-            startTime: schedulePeriod.startTime,
-            duration: schedulePeriod.duration,
-          },
-          {
-            startTime: scheduleItem.start_time,
-            duration: scheduleItem.duration,
-          }
-        );
-      }
-    );
+    schedule.content[scheduleRowIndex].content = await Promise.all(
+      schedule.content[scheduleRowIndex].content.map(async (schedulePeriod) => {
+        // Ignore other periods (keep as is)
+        if (
+          !arePeriodsOverlapping(
+            {
+              startTime: schedulePeriod.startTime,
+              duration: schedulePeriod.duration,
+            },
+            {
+              startTime: scheduleItem.start_time,
+              duration: scheduleItem.duration,
+            }
+          )
+        )
+          return schedulePeriod;
 
-    // Now with space to add it in, add the period to resulting Schedule
-    schedule.content[scheduleRowIndex].content.push(
-      await db2SchedulePeriod(scheduleItem, role)
+        const processedPeriod = await db2SchedulePeriod(scheduleItem, role);
+
+        // Replace empty period
+        if (schedulePeriod.subjects.length == 0) return processedPeriod;
+
+        // If a period already exists here, just modify the `subjects` array
+        schedulePeriod.subjects = schedulePeriod.subjects.concat(
+          processedPeriod.subjects
+        );
+
+        return schedulePeriod;
+      })
     );
   }
+
+  schedule.content = schedule.content.map((scheduleRow) => ({
+    ...scheduleRow,
+    content: scheduleRow.content.sort((a, b) => a.startTime - b.startTime),
+  }));
 
   return schedule;
 }
