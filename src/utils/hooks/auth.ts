@@ -1,19 +1,25 @@
+// External libraries
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import { Session } from "@supabase/supabase-js";
 
 // Types
-import { Session } from "@supabase/supabase-js";
-import { supabase } from "@utils/supabaseClient";
 import { Student, Teacher } from "@utils/types/person";
 import { StudentDB, TeacherDB } from "@utils/types/database/person";
 import { db2Student, db2Teacher } from "@utils/backend/database";
 
-interface UseSessionOption {
-  loginRequired?: boolean;
-  adminOnly?: boolean;
-}
+// Supabase
+import { supabase } from "@utils/supabaseClient";
 
-export function useSession(option?: UseSessionOption) {
+type UseSessionOption = Partial<{
+  loginRequired: boolean;
+  adminOnly: boolean;
+}>
+
+export function useSession(option?: Partial<{
+  loginRequired: boolean;
+  adminOnly: boolean;
+}>) {
   const [session, setSession] = useState<null | Session>(null);
   const router = useRouter();
 

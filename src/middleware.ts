@@ -10,9 +10,7 @@ export async function middleware(req: NextRequest) {
   const route = req.nextUrl.pathname;
   const pageRole: Role | "public" | "admin" | "user" | "not-protected" =
     // Public pages
-    ["/", "/account/login", "/account/forgot-password", "/about"].includes(
-      route
-    )
+    route == "/" || /^\/(account\/(login|forgot\-password)|about)/.test(route)
       ? "public"
       : // Admin pages
       /^\/admin/.test(route)

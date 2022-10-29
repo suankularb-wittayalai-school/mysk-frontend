@@ -1,13 +1,23 @@
-// Modules
+// External libraries
 import { IncomingMessage, ServerResponse } from "http";
 import { NextApiRequestCookies } from "next/dist/server/api-utils";
 import { PostgrestError } from "@supabase/supabase-js";
+
+// Backend
+import { db2Teacher } from "@utils/backend/database";
+import { createPerson } from "@utils/backend/person/person";
+
+// Helpers
+import { getCurrentAcedemicYear } from "@utils/helpers/date";
 
 // Supabase
 import { supabase } from "@utils/supabaseClient";
 
 // Types
+import { ClassWNumber } from "@utils/types/class";
+import { BackendReturn } from "@utils/types/common";
 import { ImportedTeacherData, Role, Teacher } from "@utils/types/person";
+import { ClassroomDB } from "@utils/types/database/class";
 import {
   PersonDB,
   PersonTable,
@@ -15,10 +25,6 @@ import {
   TeacherTable,
 } from "@utils/types/database/person";
 import { RoomSubjectDB } from "@utils/types/database/subject";
-
-// Backend
-import { db2Teacher } from "@utils/backend/database";
-import { createPerson } from "@utils/backend/person/person";
 
 const subjectGroupMap = {
   วิทยาศาสตร์: 1,
@@ -212,7 +218,7 @@ export async function getTeacherList(classID: number): Promise<Teacher[]> {
   }
 
   // Map array of teacher IDs into array of teachers (fetch teacher in map)
-  const selected_teachers: (TeacherDB | null)[] = await Promise.all(
+  const selectedTeachers: (TeacherDB | null)[] = await Promise.all(
     // Flatten the arrays into an array of teacher IDs
     roomSubjects
       .map((roomSubject) => roomSubject.teacher)
@@ -235,17 +241,30 @@ export async function getTeacherList(classID: number): Promise<Teacher[]> {
         return data;
       })
   );
-  const teachers: TeacherDB[] = selected_teachers.filter(
+  const teachers: TeacherDB[] = selectedTeachers.filter(
     (teacher) => teacher !== null
   ) as TeacherDB[];
-
-  // console.log(
-  //   roomSubjects
-  //     .map((roomSubject) => roomSubject.teacher)
-  //     .filter((id, index, self) => self.indexOf(id) === index)
-  // );
 
   return await Promise.all(
     teachers.map(async (teacher) => await db2Teacher(teacher))
   );
+}
+
+export async function getClassAdvisorAt(
+  teacherDBID: number
+): Promise<BackendReturn<ClassWNumber, null>> {
+  const { data, error } = await supabase
+    .from<ClassroomDB>("classroom")
+    .select("id, number")
+    .match({ year: getCurrentAcedemicYear() })
+    .contains("advisors", [teacherDBID])
+    .limit(1)
+    .single();
+
+  if (error) {
+    console.error(error);
+    return { data: null, error };
+  }
+
+  return { data: data as ClassWNumber, error: null };
 }
