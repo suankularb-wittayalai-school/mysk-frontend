@@ -46,18 +46,15 @@
   "profile": {
     "name": {
       "title": "Local name (Thai)",
-      "prefix": {
-        "label": "Prefix",
-        "Master": "เด็กชาย (Master)",
-        "Mr.": "นาย (Mister)",
-        "Mrs.": "นางสาว (Miss)",
-        "Miss.": "นาง (Missus)"
-      },
+      "prefix": "Prefix",
+      "prefix_helper": "เด็กชาย, นาย, นาง, นางสาว, etc.",
       "firstName": "First name",
       "middleName": "Middle name",
       "lastName": "Last name"
     },
     "enName": {
+      "prefix": "English prefix",
+      "prefix_helper": "Master, Mr., Mrs., Ms., etc.",
       "title": "English name",
       "firstName": "English first name",
       "middleName": "English middle name",
@@ -70,12 +67,13 @@
       "classNo": "Class №"
     },
     "role": {
-      "title": "Role",
+      "title": "Role within school",
       "role": {
         "label": "Role",
         "student": "Student",
         "teacher": "Teacher"
       },
+      "studentID": "Student ID",
       "teacherID": "Teacher ID",
       "subjectGroup": "Subject group",
       "classAdvisorAt": {
@@ -85,7 +83,7 @@
       "isAdmin": "Give administrator permissions"
     },
     "general": {
-      "title": "General Information",
+      "title": "General information",
       "citizenID": "Citizen ID",
       "birthDate": "Birth date",
       "email": "School email"

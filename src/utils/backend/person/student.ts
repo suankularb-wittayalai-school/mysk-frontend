@@ -13,7 +13,7 @@ import { supabase } from "@utils/supabaseClient";
 // Types
 import { ClassWNumber } from "@utils/types/class";
 import { BackendReturn } from "@utils/types/common";
-import { ImportedStudentData, Prefix, Student } from "@utils/types/person";
+import { ImportedStudentData, Student } from "@utils/types/person";
 import { ClassroomDB } from "@utils/types/database/class";
 import {
   PersonDB,
@@ -129,6 +129,11 @@ export async function importStudents(data: ImportedStudentData[]) {
     (student) => {
       const person: Student = {
         id: 0,
+        prefix: {
+          th: student.prefix,
+          "en-US": prefixMap[student.prefix]
+        },
+        role: "student",
         name: {
           th: {
             firstName: student.first_name_th,
@@ -144,8 +149,6 @@ export async function importStudents(data: ImportedStudentData[]) {
         birthdate: student.birthdate,
         citizenID: student.citizen_id.toString(),
         studentID: student.student_id.toString(),
-        prefix: prefixMap[student.prefix] as Prefix,
-        role: "student",
         contacts: [],
         class: {
           id: 0,

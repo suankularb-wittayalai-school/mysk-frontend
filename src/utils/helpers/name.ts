@@ -1,19 +1,24 @@
+// Helpers
+import { getLocaleString } from "@utils/helpers/i18n";
+
+// Types
+import { LangCode, MultiLangString } from "@utils/types/common";
 import { Person } from "@utils/types/person";
 
 export function nameJoiner(
-  locale: "en-US" | "th",
+  locale: LangCode,
   name: Person["name"],
-  prefix?: string,
-  options?: {
-    prefix?: boolean;
-    firstName?: boolean;
-    middleName?: boolean;
-    lastName?: boolean;
-  }
+  prefix?: MultiLangString,
+  options?: Partial<{
+    prefix: boolean;
+    firstName: boolean;
+    middleName: boolean;
+    lastName: boolean;
+  }>
 ) {
   if (options)
     return [
-      options.prefix ? prefix : undefined,
+      options.prefix && prefix ? getLocaleString(prefix, locale) : undefined,
       [
         options.firstName == true || options.firstName == undefined
           ? name[locale]?.firstName || name.th.firstName
@@ -29,7 +34,7 @@ export function nameJoiner(
         .join(" "),
     ]
       .filter((item) => item != undefined)
-      .join("");
+      .join(locale == "en-US" ? " " : "");
   else
     return [
       name[locale]?.firstName || name.th.firstName,

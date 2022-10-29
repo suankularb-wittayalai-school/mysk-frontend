@@ -33,6 +33,7 @@ import { supabase } from "@utils/supabaseClient";
 
 // Types
 import { LangCode } from "@utils/types/common";
+import { Role } from "@utils/types/person";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
@@ -83,11 +84,15 @@ const Login: NextPage = () => {
 
     // When auth cookies are set, redirect
     if (cookiesOK) {
-      const role = session.user?.user_metadata.role;
+      if (!session.user?.user_metadata.onboarded) router.push("/welcome");
+
+      const role: Role = session.user?.user_metadata.role;
       if (role == "teacher") router.push("/teach");
       if (role == "student") router.push("/learn");
+
       return;
     }
+
     setLoading(false);
   }
 
@@ -104,7 +109,6 @@ const Login: NextPage = () => {
             backGoesTo="/"
             LinkElement={Link}
             className="sm:none"
-            key="title"
           />
         }
       >
@@ -118,12 +122,13 @@ const Login: NextPage = () => {
                 alt={t("logIn.graphicAlt")}
                 layout="responsive"
                 objectFit="contain"
+                priority
                 className="rounded-2xl"
               />
             </div>
             <form
               className="section"
-              onSubmit={(e: FormEvent) => handleSubmit(e)}
+              onSubmit={handleSubmit}
             >
               <div>
                 <KeyboardInput

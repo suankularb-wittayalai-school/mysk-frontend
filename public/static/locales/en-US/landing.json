@@ -6,5 +6,71 @@
     "title": "Suankularb News",
     "lastUpdated": "Last updated {{lastUpdated}}",
     "reachedEnd": "You’ve reached the end."
+  },
+  "welcome": {
+    "title": "Welcome",
+    "hero": {
+      "graphicAlt": "Arrows pointing into MySK from the left",
+      "title": "Welcome to MySK",
+      "subtitle": {
+        "student": "You’re almost there. Let’s set a few things up first.",
+        "teacher": "You’re almost there. Let’s set a few things up first."
+      },
+      "notice": "Please ensure all data entered in each section within this page is correct before proceeding to the next one. Parts of the data entered here can take a long time to be later changed, if modification is even possible.",
+      "action": {
+        "logOut": "Log out",
+        "continue": "Continue"
+      }
+    },
+    "nextSteps": {
+      "title": "Coming up",
+      "dataCheck": {
+        "title": "Data check",
+        "desc": "We have imported your data from relevant school departments. This process may introduce some error, so check if it misses anything."
+      },
+      "newPassword": {
+        "title": "Create password",
+        "desc": "For the security of you and the school’s data, create a new password."
+      },
+      "prepareForStudents": {
+        "title": "Prepare for students",
+        "desc": "For teachers, there are a few more things you have to do to make MySK ready for your students. Learn more in this section."
+      },
+      "done": {
+        "title": "You’re all set",
+        "desc": "Everything is ready for you to start using MySK."
+      }
+    },
+    "dataCheck": {
+      "title": "Data check",
+      "desc": "We have imported your data from relevant school departments. This process may introduce some error, including incorrect or missing data. For example, your first name and middle name maybe combined into the first name field, or you’re still listed as “Master” after you have turned 15. You can correct these import errors in this section.",
+      "action": {
+        "continue": "Save and continue"
+      }
+    },
+    "newPassword": {
+      "title": "Create password",
+      "desc": "For the security of you and the school’s data, create a new password for MySK. Enter your new password twice to confirm.",
+      "action": {
+        "continue": "Create and continue"
+      }
+    },
+    "preparingForStudents": {
+      "title": "Prepare for students",
+      "notice": "Teachers: this part is important. Read this before proceeding.",
+      "desc": "Administrators have already assigned subjects to you, but we still need data on what classes you teach each, whhich you can do after the setup process. Learn how to prepare MySK for your students:",
+      "steps": {
+        "1": "Connect your subjects to the classes you teach each subject to.",
+        "2": "In each subject, add class-specific details (like Google Classroom codes) for each class.",
+        "3": "Add periods to your Schedule."
+      }
+    },
+    "done": {
+      "title": "You’re all set",
+      "desc": "Everything is ready for you to start using MySK. If you have any questions or concerns, visit the <2>help page</2>.",
+      "action": {
+        "finish": "Finish"
+      }
+    }
   }
 }

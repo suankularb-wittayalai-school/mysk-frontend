@@ -47,8 +47,9 @@ export async function middleware(req: NextRequest) {
     })
   ).json();
 
-  // Intepret user metada
+  // Intepret user metadata
   const userRole: Role | "public" = user?.user_metadata?.role || "public";
+  const userIsOnboarded: boolean = user?.user_metadata?.onboarded;
   const userIsAdmin: boolean = user?.user_metadata?.isAdmin;
 
   // Decide on destination based on user and page protection type
@@ -57,12 +58,17 @@ export async function middleware(req: NextRequest) {
   // Disallow public users from visiting private pages
   if (pageRole != "public" && userRole == "public")
     destination = "/account/login";
+  // Disallow logged in users who haven’t been onboarded from visiting any
+  // other pages from Welcome
+  else if (userRole != "public" && !userIsOnboarded) destination = "/welcome";
   // Disallow logged in users from visiting certain pages under certain
   // circumstances
   // prettier-ignore
   else if (
     !(
       (
+        // Allow new users to visit Welcome
+        (route == "/welcome" && !userIsOnboarded) ||
         // Allow admins to visit admin pages
         (pageRole == "admin" && userIsAdmin) ||
         // Allow all users to visit user pages
@@ -78,7 +84,7 @@ export async function middleware(req: NextRequest) {
   }
 
   // Redirect if decided so, continue if not
-  // Note: While developing, comment out line 85 if you want to test protected
+  // Note: While developing, comment out line 91 if you want to test protected
   // pages via IPv4. Pages using user data will not work, however.
   if (destination) return NextResponse.redirect(new URL(destination, req.url));
   return NextResponse.next();
@@ -87,9 +93,11 @@ export async function middleware(req: NextRequest) {
 export const config = {
   matcher: [
     "/",
+    "/welcome",
     "/account",
     "/account/:path*",
     "/about",
+    "/admin/:path*",
     "/learn",
     "/learn/:id",
     "/teach",

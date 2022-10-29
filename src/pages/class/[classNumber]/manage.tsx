@@ -350,10 +350,8 @@ const StudentListSection = ({
                   {nameJoiner(
                     locale,
                     student.name,
-                    t(`name.prefix.${student.prefix}`, { ns: "common" }),
-                    {
-                      prefix: true,
-                    }
+                    student.prefix,
+                    { prefix: true }
                   )}
                 </td>
                 {/* Empty columns for print */}
