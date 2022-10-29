@@ -19,6 +19,7 @@ import {
 import { animationEase } from "@utils/animations/config";
 
 // Backend
+import { getClassOfStudent } from "@utils/backend/person/student";
 import { getClassAdvisorAt } from "@utils/backend/person/teacher";
 
 // Helpers
@@ -26,7 +27,8 @@ import { addAtIndex } from "@utils/helpers/array";
 
 // Hooks
 import { useSession } from "@utils/hooks/auth";
-import { getClassOfStudent } from "@utils/backend/person/student";
+
+// Types
 import { ClassWNumber } from "@utils/types/class";
 
 const Layout = ({
