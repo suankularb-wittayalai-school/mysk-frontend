@@ -33,19 +33,22 @@ export async function middleware(req: NextRequest) {
   if (pageRole == "not-protected") return NextResponse.next();
 
   // (@SiravitPhokeed)
-  // I’m not using the obvious `supabase.auth.api.getUserByCookie(req)` here
-  // because NextJS Middleware is so new that that isn’t supported here yet!
+  // I’m not using the Supabase Server Client because that isn’t supported here.
+  // The way we're approaching middleware is very much not intended by Supabase.
   // As a workaround, we’re fetching directly from the Supabase API.
 
   // Fetch user from Supabase
-  const user = await (
-    await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/user`, {
-      headers: {
-        Authorization: `Bearer ${req.cookies.get("sb-access-token")}`,
-        APIKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
-      },
-    })
-  ).json();
+  let user = null;
+  const authCookie = req.cookies.get("supabase-auth-token");
+  if (authCookie)
+    user = await (
+      await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/user`, {
+        headers: {
+          Authorization: `Bearer ${JSON.parse(authCookie).access_token}`,
+          APIKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string,
+        },
+      })
+    ).json();
 
   // Intepret user metadata
   const userRole: Role | "public" = user?.user_metadata?.role || "public";
