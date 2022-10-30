@@ -12,22 +12,30 @@ import SubjectPeriod from "@components/schedule/SubjectPeriod";
 import { animationTransition } from "@utils/animations/config";
 
 // Types
+import { Role } from "@utils/types/person";
 import { SchedulePeriod as SchedulePeriodType } from "@utils/types/schedule";
 
 const ElectivePeriodsReveal = ({
   schedulePeriod,
   periodWidth,
+  day,
+  role,
+  allowEdit,
   toggleShow,
 }: {
   schedulePeriod: SchedulePeriodType;
   periodWidth: number;
+  day: Day;
+  role: Role;
+  allowEdit?: boolean;
   toggleShow: () => void;
 }): JSX.Element => {
   const { t } = useTranslation("schedule");
 
   return (
     <motion.div
-      className="mx-0 w-fit rounded-xl border-2 border-primary bg-surface-2 p-2 text-on-surface-variant"
+      className="mx-0 w-fit rounded-xl border-2 border-primary bg-surface-2 p-2
+        text-on-surface-variant"
       layoutId={`sp-${schedulePeriod.id}-button`}
       transition={animationTransition}
     >
@@ -45,15 +53,14 @@ const ElectivePeriodsReveal = ({
           {schedulePeriod.content.map((item) => (
             <li
               key={item.id}
-              style={{
-                width: periodWidth * schedulePeriod.duration,
-              }}
+              style={{ width: periodWidth * schedulePeriod.duration - 12 }}
             >
               <SubjectPeriod
                 schedulePeriod={item}
                 isInSession={false}
-                day={0}
-                role="student"
+                day={day}
+                role={role}
+                allowEdit={allowEdit}
                 className="shadow"
               />
             </li>

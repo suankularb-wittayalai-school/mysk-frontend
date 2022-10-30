@@ -100,6 +100,9 @@ const SchedulePeriod = ({
           )}
           periodWidth={periodWidth}
           schedulePeriod={schedulePeriod}
+          day={day.getDay() as Day}
+          role={role}
+          allowEdit={allowEdit}
         />
       ) : schedulePeriod.content.length == 1 ? (
         // Filled period

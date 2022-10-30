@@ -15,16 +15,23 @@ import { animationTransition } from "@utils/animations/config";
 import { useToggle } from "@utils/hooks/toggle";
 
 // Types
+import { Role } from "@utils/types/person";
 import { SchedulePeriod } from "@utils/types/schedule";
 
 const ElectivePeriod = ({
   isInSession,
   periodWidth,
   schedulePeriod,
+  day,
+  role,
+  allowEdit,
 }: {
   isInSession: boolean;
   periodWidth: number;
   schedulePeriod: SchedulePeriod;
+  day: Day;
+  role: Role;
+  allowEdit?: boolean;
 }) => {
   const { t } = useTranslation("schedule");
 
@@ -76,8 +83,11 @@ const ElectivePeriod = ({
         </motion.button>
       ) : (
         <ElectivePeriodsReveal
-          schedulePeriod={schedulePeriod}
-          periodWidth={periodWidth}
+        schedulePeriod={schedulePeriod}
+        periodWidth={periodWidth}
+        day={day}
+          role={role}
+          allowEdit={allowEdit}
           toggleShow={toggleShowPeriods}
         />
       )}
