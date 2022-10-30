@@ -1,7 +1,7 @@
 // External libraries
 import { NextApiRequestCookies } from "next/dist/server/api-utils";
 import { IncomingMessage, ServerResponse } from "http";
-import { PostgrestError } from "@supabase/supabase-js";
+import { PostgrestError, User } from "@supabase/supabase-js";
 
 // Backend
 import { createContact } from "@utils/backend/contact";
@@ -196,6 +196,12 @@ export async function getUserFromReq(
     return { data: null, error };
   }
 
+  return getPersonFromUser(user);
+}
+
+export async function getPersonFromUser(
+  user: User
+): Promise<BackendReturn<Student | Teacher, null>> {
   if (user?.user_metadata.role == "student") {
     const { data: student, error: studentError } = await supabase
       .from<StudentDB>("student")
