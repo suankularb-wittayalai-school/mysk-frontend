@@ -99,8 +99,6 @@ const SchedulePeriod = ({
             schedulePeriod.duration
           )}
           schedulePeriod={schedulePeriod}
-          day={day.getDay() as Day}
-          role={role}
         />
       ) : schedulePeriod.content.length == 1 ? (
         // Filled period

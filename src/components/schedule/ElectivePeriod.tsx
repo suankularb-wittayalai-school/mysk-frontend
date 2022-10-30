@@ -1,4 +1,5 @@
 // External libraries
+import { LayoutGroup, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 
 // SK Components
@@ -15,19 +16,13 @@ import { useToggle } from "@utils/hooks/toggle";
 
 // Types
 import { SchedulePeriod } from "@utils/types/schedule";
-import { Role } from "@utils/types/person";
-import { LayoutGroup, motion } from "framer-motion";
 
 const ElectivePeriod = ({
   isInSession,
-  day,
   schedulePeriod,
-  role,
 }: {
   isInSession: boolean;
-  day: Day;
   schedulePeriod: SchedulePeriod;
-  role: Role;
 }) => {
   const { t } = useTranslation("schedule");
 

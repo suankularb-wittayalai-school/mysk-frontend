@@ -1,5 +1,6 @@
 // External libraries
 import { motion } from "framer-motion";
+import { useTranslation } from "next-i18next";
 
 // SK Components
 import { Actions, Button } from "@suankularb-components/react";
@@ -20,6 +21,8 @@ const ElectivePeriodsReveal = ({
   schedulePeriod: SchedulePeriodType;
   toggleShow: () => void;
 }): JSX.Element => {
+  const { t } = useTranslation("schedule");
+
   return (
     <motion.div
       className="mx-0 w-fit rounded-xl border-2 border-primary bg-surface-2 p-2 text-on-surface-variant"
@@ -28,7 +31,7 @@ const ElectivePeriodsReveal = ({
     >
       <div className="flex flex-row gap-2">
         <h1 className="truncate px-2 font-display text-xl font-medium">
-          วิชาเลือก
+          {t("schedule.elective")}
         </h1>
         <ul className="flex flex-row gap-2">
           {schedulePeriod.content.map((item) => (
@@ -45,7 +48,11 @@ const ElectivePeriodsReveal = ({
         </ul>
       </div>
       <Actions className="pt-2">
-        <Button label="ปิดหน้าต่าง" type="text" onClick={toggleShow} />
+        <Button
+          label={t("schedule.electiveReveal.action.close")}
+          type="text"
+          onClick={toggleShow}
+        />
       </Actions>
     </motion.div>
   );
