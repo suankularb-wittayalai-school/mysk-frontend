@@ -27,7 +27,7 @@ import { useTeacherAccount } from "@utils/hooks/auth";
 // Types
 import { ClassWNumber } from "@utils/types/class";
 import { LangCode, SubmittableDialogProps } from "@utils/types/common";
-import { SchedulePeriod } from "@utils/types/schedule";
+import { PeriodContentItemOptSubj } from "@utils/types/schedule";
 
 // Miscellaneous
 import { roomPattern } from "@utils/patterns";
@@ -43,7 +43,7 @@ const EditPeriod = ({
 }: SubmittableDialogProps & {
   mode: "add" | "edit";
   day?: Day;
-  schedulePeriod?: SchedulePeriod;
+  schedulePeriod?: PeriodContentItemOptSubj;
   canEditStartTime?: boolean;
 }): JSX.Element => {
   const { t } = useTranslation(["schedule", "common"]);
@@ -164,7 +164,7 @@ const EditPeriod = ({
         },
       ]}
       show={show}
-      onClose={() => onClose()}
+      onClose={onClose}
       onSubmit={async () => {
         await handleSubmit();
         onSubmit();

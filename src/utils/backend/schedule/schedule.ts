@@ -4,6 +4,7 @@ import { PostgrestError } from "@supabase/supabase-js";
 // Backend
 import { db2SchedulePeriod } from "@utils/backend/database";
 import { isOverlappingExistingItems } from "@utils/backend/schedule/utils";
+import { range } from "@utils/helpers/array";
 
 // Helpers
 import {
@@ -22,7 +23,7 @@ import {
   ScheduleItemTable,
 } from "@utils/types/database/schedule";
 import { Role } from "@utils/types/person";
-import { Schedule, SchedulePeriod } from "@utils/types/schedule";
+import { Schedule, PeriodContentItem } from "@utils/types/schedule";
 
 /**
  * Construct a Schedule from Schedule Items from the student’s perspective
@@ -33,7 +34,7 @@ export async function getSchedule(
   role: "student",
   classID: number,
   day?: Day
-): Promise<Schedule>;
+): Promise<BackendReturn<Schedule, Schedule>>;
 
 /**
  * Construct a Teaching Schedule from Schedule Items from the teacher’s perspective
@@ -44,13 +45,13 @@ export async function getSchedule(
   role: "teacher",
   teacherID: number,
   day?: Day
-): Promise<Schedule>;
+): Promise<BackendReturn<Schedule, Schedule>>;
 
 export async function getSchedule(
   role: Role,
   id: number,
   day?: Day
-): Promise<Schedule> {
+): Promise<BackendReturn<Schedule, Schedule>> {
   // Schedule filled with empty periods
   let schedule =
     day == undefined ? createEmptySchedule(1, 5) : createEmptySchedule(day);
@@ -74,44 +75,77 @@ export async function getSchedule(
     );
 
   // Return an empty Schedule if fetch failed
-  if (error || !data) {
+  if (error) {
     console.error(error);
-    return schedule;
+    return { data: schedule, error };
   }
 
   // Add Supabase data to empty schedule
-  for (let scheduleItem of data) {
+  for (let incomingPeriod of data as ScheduleItemDB[]) {
     // Find the index of the row we want to manipulate
     const scheduleRowIndex = schedule.content.findIndex(
-      (scheduleRow) => scheduleItem.day == scheduleRow.day
+      (scheduleRow) => incomingPeriod.day == scheduleRow.day
     );
 
-    // Remove overlapping periods from resulting Schedule
-    schedule.content[scheduleRowIndex].content = schedule.content[
-      scheduleRowIndex
-    ].content.filter((schedulePeriod) =>
-      // Check for overlap
-      {
-        return !arePeriodsOverlapping(
+    // Loop through each exisitng period in this row
+    const periodIndices = range(
+      schedule.content[scheduleRowIndex].content.length
+    );
+    for (let idx of periodIndices) {
+      const schedulePeriod = schedule.content[scheduleRowIndex].content[idx];
+
+      // If there is no period at this index, skip it
+      if (!schedulePeriod) continue;
+
+      // Ignore other periods (keep as is)
+      if (
+        !arePeriodsOverlapping(
           {
             startTime: schedulePeriod.startTime,
             duration: schedulePeriod.duration,
           },
           {
-            startTime: scheduleItem.start_time,
-            duration: scheduleItem.duration,
+            startTime: incomingPeriod.start_time,
+            duration: incomingPeriod.duration,
           }
-        );
-      }
-    );
+        )
+      )
+        continue;
 
-    // Now with space to add it in, add the period to resulting Schedule
-    schedule.content[scheduleRowIndex].content.push(
-      await db2SchedulePeriod(scheduleItem, role)
-    );
+      // Determine what to do if the incoming period overlaps with an existing
+      // period
+      const processedPeriod = await db2SchedulePeriod(incomingPeriod, role);
+
+      // Replace empty period
+      if (schedulePeriod.content.length == 0) {
+        schedule.content[scheduleRowIndex].content[idx] = processedPeriod;
+        // Remove empty periods that is now overlapping the new incoming period
+        schedule.content[scheduleRowIndex].content.splice(
+          idx + 1,
+          incomingPeriod.duration - 1
+        );
+        continue;
+      }
+
+      // If a period already exists here, just adjust duration and modify the
+      // `subjects` array
+      if (schedulePeriod.duration < incomingPeriod.duration)
+        schedulePeriod.duration = incomingPeriod.duration;
+      schedulePeriod.content = schedulePeriod.content.concat(
+        processedPeriod.content
+      );
+      schedule.content[scheduleRowIndex].content[idx] = schedulePeriod;
+    }
   }
 
-  return schedule;
+  // Sort the periods to ensure sensible tab order
+  // This has no effect on the visual Schedule
+  schedule.content = schedule.content.map((scheduleRow) => ({
+    ...scheduleRow,
+    content: scheduleRow.content.sort((a, b) => a.startTime - b.startTime),
+  }));
+
+  return { data: schedule, error: null };
 }
 
 export async function getSchedulesOfGrade(
@@ -132,7 +166,7 @@ export async function getSchedulesOfGrade(
   return {
     data: await Promise.all(
       (classes as ClassroomTable[]).map(async (classItem) => ({
-        ...(await getSchedule("student", classItem.id)),
+        ...(await getSchedule("student", classItem.id)).data,
         class: classItem,
       }))
     ),
@@ -155,7 +189,7 @@ export async function createScheduleItem(
     duration: number;
   },
   teacherID: number
-): Promise<{ data: ScheduleItemTable[] | null; error: PostgrestError | null }> {
+): Promise<BackendReturn<ScheduleItemTable[]>> {
   const { data, error } = await supabase
     .from<ScheduleItemTable>("schedule_items")
     .insert({
@@ -170,7 +204,7 @@ export async function createScheduleItem(
 
   if (error || !data) {
     console.error(error);
-    return { data: null, error };
+    return { data: [], error };
   }
 
   return { data, error: null };
@@ -186,10 +220,7 @@ export async function editScheduleItem(
     duration: number;
   },
   id: number
-): Promise<{
-  data: ScheduleItemTable[] | null;
-  error: PostgrestError | null;
-}> {
+): Promise<BackendReturn<ScheduleItemTable[]>> {
   const { data, error } = await supabase
     .from<ScheduleItemTable>("schedule_items")
     .update({
@@ -204,7 +235,7 @@ export async function editScheduleItem(
 
   if (error || !data) {
     console.error(error);
-    return { data: null, error };
+    return { data: [], error };
   }
 
   return { data, error: null };
@@ -212,19 +243,16 @@ export async function editScheduleItem(
 
 export async function moveScheduleItem(
   newDay: Day,
-  newSchedulePeriod: SchedulePeriod,
+  newSchedulePeriod: PeriodContentItem,
   teacherID: number
-) {
+): Promise<BackendReturn<ScheduleItemTable[]>> {
   // Check overlap
   if (await isOverlappingExistingItems(newDay, newSchedulePeriod, teacherID))
     return {
-      data: null,
+      data: [],
       error: {
         message:
           "new period duration causes it to overlap with other relevant periods",
-        details: "",
-        hint: "",
-        code: "",
       },
     };
 
@@ -235,7 +263,7 @@ export async function moveScheduleItem(
 
   if (error || !data) {
     console.error(error);
-    return { data: null, error };
+    return { data: [], error };
   }
 
   return { data, error: null };
@@ -243,25 +271,19 @@ export async function moveScheduleItem(
 
 export async function editScheduleItemDuration(
   day: Day,
-  schedulePeriod: SchedulePeriod,
+  schedulePeriod: PeriodContentItem,
   teacherID: number
-): Promise<{
-  data: ScheduleItemTable[] | null;
-  error: PostgrestError | null;
-}> {
+): Promise<BackendReturn<ScheduleItemTable[]>> {
   // Cap duration
   if (schedulePeriod.duration < 1) schedulePeriod.duration = 1;
   else if (schedulePeriod.duration > 10) schedulePeriod.duration = 10;
 
   if (await isOverlappingExistingItems(day, schedulePeriod, teacherID))
     return {
-      data: null,
+      data: [],
       error: {
         message:
           "new period duration causes it to overlap with other relevant periods",
-        details: "",
-        hint: "",
-        code: "",
       },
     };
 
@@ -273,7 +295,7 @@ export async function editScheduleItemDuration(
 
   if (error || !data) {
     console.error(error);
-    return { data: null, error };
+    return { data: [], error };
   }
 
   return { data, error: null };

@@ -13,7 +13,7 @@ import ScheduleRow from "@components/schedule/ScheduleRow";
 import { Role } from "@utils/types/person";
 import {
   Schedule as Schedule,
-  SchedulePeriod,
+  PeriodContentItem,
   ScheduleRow as ScheduleRowType,
 } from "@utils/types/schedule";
 
@@ -70,7 +70,7 @@ const Schedule = ({
   }: {
     show: boolean;
     day: Day;
-    schedulePeriod: SchedulePeriod;
+    schedulePeriod: PeriodContentItem;
   }) => void;
   setDeletePeriod?: ({
     show,
@@ -81,7 +81,10 @@ const Schedule = ({
   }) => void;
   toggleFetched?: () => void;
 }): JSX.Element => (
-  <div className="scroll-w-0 flex flex-row gap-5 overflow-x-auto overflow-y-hidden !px-0 sm:overflow-x-visible">
+  <div
+    className="scroll-w-0 flex flex-row gap-5 overflow-x-auto overflow-y-hidden
+      !px-0 sm:overflow-x-visible"
+  >
     <div aria-hidden className="flex flex-col gap-2 pt-4 pb-2 pl-4 sm:pl-0">
       {schedule.content.map((scheduleRow) => (
         <ScheduleDay key={scheduleRow.day} day={scheduleRow.day} />
