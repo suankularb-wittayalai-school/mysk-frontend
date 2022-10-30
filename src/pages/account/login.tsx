@@ -10,6 +10,8 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { FormEvent, useState } from "react";
 
+import { Session, User, useSupabaseClient } from "@supabase/auth-helpers-react";
+
 // SK Components
 import {
   Actions,
@@ -28,9 +30,6 @@ import ForgotPasswordDialog from "@components/dialogs/account/ForgotPassword";
 // Backend
 import { setAuthCookies } from "@utils/backend/account";
 
-// Supabase
-import { supabase } from "@utils/supabaseClient";
-
 // Types
 import { LangCode } from "@utils/types/common";
 import { Role } from "@utils/types/person";
@@ -40,11 +39,13 @@ import { createTitleStr } from "@utils/helpers/title";
 
 // Hooks
 import { useToggle } from "@utils/hooks/toggle";
+import { schoolEmailRegex } from "@utils/patterns";
 
 // Page
 const Login: NextPage = () => {
   const { t } = useTranslation("account");
   const router = useRouter();
+  const supabase = useSupabaseClient();
 
   // Form control
   const [email, setEmail] = useState<string>("");
@@ -54,10 +55,10 @@ const Login: NextPage = () => {
   const [showForgot, toggleShowForgot] = useToggle();
 
   // Loading
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, toggleLoading] = useToggle();
 
   function validate(): boolean {
-    if (!email) return false;
+    if (!email || !schoolEmailRegex.test(email)) return false;
     if (!password) return false;
 
     return true;
@@ -67,33 +68,28 @@ const Login: NextPage = () => {
     e.preventDefault();
 
     // Disable Log in Button
-    setLoading(true);
+    toggleLoading();
 
     // Validate response
     if (!validate()) return;
 
     // Log in user in Supabase
-    const { session } = await supabase.auth.signIn({ email, password });
-    if (!session) {
-      setLoading(false);
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error) {
+      toggleLoading();
       return;
     }
 
-    // Set auth cookies
-    const cookiesOK = await setAuthCookies("SIGNED_IN", session);
+    // Onboard the user if this is their first log in
+    if (!(data.user as User).user_metadata.onboarded) router.push("/welcome");
 
-    // When auth cookies are set, redirect
-    if (cookiesOK) {
-      if (!session.user?.user_metadata.onboarded) router.push("/welcome");
-
-      const role: Role = session.user?.user_metadata.role;
-      if (role == "teacher") router.push("/teach");
-      if (role == "student") router.push("/learn");
-
-      return;
-    }
-
-    setLoading(false);
+    // Role redirect
+    const role: Role = (data.user as User).user_metadata.role;
+    if (role == "teacher") router.push("/teach");
+    if (role == "student") router.push("/learn");
   }
 
   return (
@@ -126,10 +122,7 @@ const Login: NextPage = () => {
                 className="rounded-2xl"
               />
             </div>
-            <form
-              className="section"
-              onSubmit={handleSubmit}
-            >
+            <form className="section" onSubmit={handleSubmit}>
               <div>
                 <KeyboardInput
                   name="user-id"
@@ -138,14 +131,14 @@ const Login: NextPage = () => {
                   helperMsg={t("logIn.form.email_helper")}
                   errorMsg={t("logIn.form.email_error")}
                   useAutoMsg
-                  onChange={(e: string) => setEmail(e)}
+                  onChange={setEmail}
                 />
                 <KeyboardInput
                   name="password"
                   type="password"
                   label={t("logIn.form.password")}
                   helperMsg={t("logIn.form.password_helper")}
-                  onChange={(e: string) => setPassword(e)}
+                  onChange={setPassword}
                 />
               </div>
               <Actions>

@@ -1,11 +1,13 @@
-// Modules
+// External libraries
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { NextApiHandler } from "next";
 
-// Supabase
-import { supabase } from "@utils/supabaseClient";
-
 const handler: NextApiHandler = async (req, res) => {
-  supabase.auth.api.setAuthCookie(req, res);
+//   const supabase = createServerSupabaseClient({
+//   req,
+//   res,
+// })
+//   supabase.auth.setSession(req, res);
 };
 
 export default handler;

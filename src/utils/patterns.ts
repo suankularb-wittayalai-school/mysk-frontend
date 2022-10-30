@@ -1,3 +1,6 @@
+export const schoolEmailPattern = "((@sk.ac.th)|(@student.sk.ac.th))$";
+export const schoolEmailRegex = /((@sk.ac.th)|(@student.sk.ac.th))$/;
+
 export const classPattern = "[1-6](0[1-9]|1[0-9])";
 export const classRegex = /[1-6](0[1-9]|1[0-9])/;
 

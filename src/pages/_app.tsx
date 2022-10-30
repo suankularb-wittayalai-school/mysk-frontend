@@ -12,7 +12,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 
 import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
-import { SessionContextProvider, Session } from "@supabase/auth-helpers-react";
+import { SessionContextProvider } from "@supabase/auth-helpers-react";
 
 // Fonts
 import "@fontsource/sora/300.css";
