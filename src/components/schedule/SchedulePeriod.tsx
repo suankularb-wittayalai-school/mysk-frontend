@@ -18,6 +18,7 @@ import {
   SchedulePeriod as SchedulePeriodType,
   PeriodContentItem,
 } from "@utils/types/schedule";
+import { useToggle } from "@utils/hooks/toggle";
 
 // Schedule Period
 const SchedulePeriod = ({
@@ -74,6 +75,7 @@ const SchedulePeriod = ({
       }
       className="absolute px-1 transition-[width]"
       style={{
+        zIndex: schedulePeriod.content.length > 1 ? 30 : undefined,
         width: periodWidth * schedulePeriod.duration,
         left: periodWidth * (schedulePeriod.startTime - 1),
       }}
@@ -96,6 +98,9 @@ const SchedulePeriod = ({
             schedulePeriod.startTime,
             schedulePeriod.duration
           )}
+          schedulePeriod={schedulePeriod}
+          day={day.getDay() as Day}
+          role={role}
         />
       ) : schedulePeriod.content.length == 1 ? (
         // Filled period

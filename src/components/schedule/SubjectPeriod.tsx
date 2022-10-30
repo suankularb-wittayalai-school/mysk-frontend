@@ -28,6 +28,7 @@ const SubjectPeriod = ({
   setEditPeriod,
   setDeletePeriod,
   toggleFetched,
+  className,
 }: {
   isInSession: boolean;
   day: Day;
@@ -51,6 +52,7 @@ const SubjectPeriod = ({
     periodID: number;
   }) => void;
   toggleFetched?: () => void;
+  className?: string;
 }): JSX.Element => {
   const { t } = useTranslation("common");
   const locale = useRouter().locale as LangCode;
@@ -76,9 +78,14 @@ const SubjectPeriod = ({
 
   return (
     <div
-      className={`relative h-[3.75rem] cursor-auto rounded-lg leading-snug ${
-        isInSession ? "container-tertiary shadow" : "container-secondary"
-      } ${showMenu ? "z-20" : ""}`}
+      className={[
+        "relative h-[3.75rem] cursor-auto rounded-lg leading-snug",
+        isInSession ? "container-tertiary shadow" : "container-secondary",
+        showMenu ? "z-20" : null,
+        className,
+      ]
+        .filter((className) => className)
+        .join(" ")}
       tabIndex={0}
       // Mouse support
       onMouseOver={() => setShowMenu(true)}
