@@ -52,6 +52,7 @@ import { ClassWNumber } from "@utils/types/class";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
+import { User, withPageAuth } from "@supabase/auth-helpers-nextjs";
 
 const ScheduleSection = ({
   schedule,
@@ -219,26 +220,26 @@ const Teach: NextPage<{ teacherID: number; schedule: ScheduleType }> = ({
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  req,
-  res,
-}) => {
-  const teacherID = await getTeacherIDFromReq(req, res);
-  const { data: schedule } = await getSchedule("teacher", teacherID);
+export const getServerSideProps: GetServerSideProps = withPageAuth({
+  async getServerSideProps({ locale }, supabase) {
+    const { data: user } = await supabase.auth.getUser();
+    const teacherID = user.user?.user_metadata.teacher;
 
-  return {
-    props: {
-      ...(await serverSideTranslations(locale as LangCode, [
-        "common",
-        "account",
-        "teach",
-        "schedule",
-      ])),
-      teacherID,
-      schedule,
-    },
-  };
-};
+    const { data: schedule } = await getSchedule("teacher", teacherID);
+
+    return {
+      props: {
+        ...(await serverSideTranslations(locale as LangCode, [
+          "common",
+          "account",
+          "teach",
+          "schedule",
+        ])),
+        teacherID,
+        schedule,
+      },
+    };
+  },
+});
 
 export default Teach;
