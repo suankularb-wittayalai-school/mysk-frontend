@@ -19,9 +19,11 @@ import { SchedulePeriod } from "@utils/types/schedule";
 
 const ElectivePeriod = ({
   isInSession,
+  periodWidth,
   schedulePeriod,
 }: {
   isInSession: boolean;
+  periodWidth: number;
   schedulePeriod: SchedulePeriod;
 }) => {
   const { t } = useTranslation("schedule");
@@ -69,6 +71,7 @@ const ElectivePeriod = ({
       ) : (
         <ElectivePeriodsReveal
           schedulePeriod={schedulePeriod}
+          periodWidth={periodWidth}
           toggleShow={toggleShowPeriods}
         />
       )}

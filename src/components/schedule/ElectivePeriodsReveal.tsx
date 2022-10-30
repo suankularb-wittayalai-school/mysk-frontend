@@ -16,9 +16,11 @@ import { SchedulePeriod as SchedulePeriodType } from "@utils/types/schedule";
 
 const ElectivePeriodsReveal = ({
   schedulePeriod,
+  periodWidth,
   toggleShow,
 }: {
   schedulePeriod: SchedulePeriodType;
+  periodWidth: number,
   toggleShow: () => void;
 }): JSX.Element => {
   const { t } = useTranslation("schedule");
@@ -35,7 +37,8 @@ const ElectivePeriodsReveal = ({
         </h1>
         <ul className="flex flex-row gap-2">
           {schedulePeriod.content.map((item) => (
-            <li key={item.id}>
+            <li key={item.id} style={{ 
+              width: periodWidth * schedulePeriod.duration, }}>
               <SubjectPeriod
                 schedulePeriod={item}
                 isInSession={false}

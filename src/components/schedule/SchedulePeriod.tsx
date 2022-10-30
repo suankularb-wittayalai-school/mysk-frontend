@@ -98,6 +98,7 @@ const SchedulePeriod = ({
             schedulePeriod.startTime,
             schedulePeriod.duration
           )}
+          periodWidth={periodWidth}
           schedulePeriod={schedulePeriod}
         />
       ) : schedulePeriod.content.length == 1 ? (
