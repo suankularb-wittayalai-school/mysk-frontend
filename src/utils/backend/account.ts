@@ -1,21 +1,5 @@
 // External libraries
-import { AuthChangeEvent, Session, User } from "@supabase/supabase-js";
-
-// Supabase
-import { supabase } from "@utils/supabaseClient";
-
-export async function setAuthCookies(
-  event: AuthChangeEvent,
-  session?: Session
-): Promise<boolean> {
-  const { ok } = await fetch(`/api/account/cookie`, {
-    method: "POST",
-    headers: new Headers({ "Content-Type": "application/json" }),
-    credentials: "same-origin",
-    body: JSON.stringify({ event, session }),
-  });
-  return ok;
-}
+import { User } from "@supabase/supabase-js";
 
 export async function changePassword(
   form: {

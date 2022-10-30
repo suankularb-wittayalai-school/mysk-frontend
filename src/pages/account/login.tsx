@@ -10,7 +10,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { FormEvent, useState } from "react";
 
-import { Session, User, useSupabaseClient } from "@supabase/auth-helpers-react";
+import { User, useSupabaseClient } from "@supabase/auth-helpers-react";
 
 // SK Components
 import {
@@ -27,9 +27,6 @@ import {
 // Components
 import ForgotPasswordDialog from "@components/dialogs/account/ForgotPassword";
 
-// Backend
-import { setAuthCookies } from "@utils/backend/account";
-
 // Types
 import { LangCode } from "@utils/types/common";
 import { Role } from "@utils/types/person";
@@ -39,6 +36,8 @@ import { createTitleStr } from "@utils/helpers/title";
 
 // Hooks
 import { useToggle } from "@utils/hooks/toggle";
+
+// Miscellaneous
 import { schoolEmailRegex } from "@utils/patterns";
 
 // Page
