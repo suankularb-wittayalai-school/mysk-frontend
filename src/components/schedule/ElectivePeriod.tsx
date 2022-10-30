@@ -38,9 +38,10 @@ const ElectivePeriod = ({
           className={[
             `group relative h-[3.75rem] w-full rounded-lg
               text-left font-display text-xl font-medium leading-none
-              before:absolute before:inset-0 before:rounded-xl
-              before:transition-[background-color]
-              hover:before:bg-on-primary-translucent-08 hover:before:transition-none`,
+              before:pointer-events-none before:absolute before:inset-0
+              before:rounded-xl before:transition-[background-color]
+              hover:before:bg-on-primary-translucent-08
+              hover:before:transition-none`,
             isInSession
               ? "bg-tertiary-translucent-12 text-on-tertiary-container shadow"
               : "bg-surface-2 text-on-surface-variant",
@@ -49,8 +50,13 @@ const ElectivePeriod = ({
           layoutId={`sp-${schedulePeriod.id}-button`}
           transition={animationTransition}
         >
-          <div className="px-4 py-2 transition-[opacity]">
-            <span>{t("schedule.elective")}</span>
+          <div className="px-4 py-2">
+            <motion.span
+              layoutId={`sp-${schedulePeriod.id}-header`}
+              transition={animationTransition}
+            >
+              {t("schedule.elective")}
+            </motion.span>
           </div>
           <div
             className="pointer-events-none absolute top-0 z-30 h-full w-full

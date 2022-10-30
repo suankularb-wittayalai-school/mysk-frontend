@@ -20,7 +20,7 @@ const ElectivePeriodsReveal = ({
   toggleShow,
 }: {
   schedulePeriod: SchedulePeriodType;
-  periodWidth: number,
+  periodWidth: number;
   toggleShow: () => void;
 }): JSX.Element => {
   const { t } = useTranslation("schedule");
@@ -32,13 +32,23 @@ const ElectivePeriodsReveal = ({
       transition={animationTransition}
     >
       <div className="flex flex-row gap-2">
-        <h1 className="truncate px-2 font-display text-xl font-medium">
-          {t("schedule.elective")}
-        </h1>
+        <div className="px-2">
+          <motion.h1
+            className="truncate font-display text-xl font-medium"
+            layoutId={`sp-${schedulePeriod.id}-header`}
+            transition={animationTransition}
+          >
+            {t("schedule.elective")}
+          </motion.h1>
+        </div>
         <ul className="flex flex-row gap-2">
           {schedulePeriod.content.map((item) => (
-            <li key={item.id} style={{ 
-              width: periodWidth * schedulePeriod.duration, }}>
+            <li
+              key={item.id}
+              style={{
+                width: periodWidth * schedulePeriod.duration,
+              }}
+            >
               <SubjectPeriod
                 schedulePeriod={item}
                 isInSession={false}
