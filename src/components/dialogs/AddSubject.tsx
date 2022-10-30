@@ -70,7 +70,6 @@ const AddSubjectDialog = ({
       .contains("teacher", [(teacher as Teacher).id])
       .eq("subject", subjectID);
 
-    // console.log(data);
     if (error) {
       console.error(error);
       return;
@@ -97,6 +96,10 @@ const AddSubjectDialog = ({
     setSubjectID(0);
     setClassChipList([]);
   }, [show]);
+
+  useEffect(() => {
+    if (teacher?.subjectsInCharge) setSubjectID(teacher.subjectsInCharge[0].id);
+  }, [teacher]);
 
   return (
     <>

@@ -40,7 +40,7 @@ import { useTeacherAccount } from "@utils/hooks/auth";
 import { LangCode } from "@utils/types/common";
 import {
   Schedule as ScheduleType,
-  SchedulePeriod,
+  PeriodContentItemOptSubj,
 } from "@utils/types/schedule";
 
 const TeacherSchedule: NextPage = () => {
@@ -60,7 +60,9 @@ const TeacherSchedule: NextPage = () => {
   useEffect(() => {
     const fetchAndSetSchedule = async () => {
       if (!fetched && teacher) {
-        setSchedule(await getSchedule("teacher", teacher.id));
+        const { data, error } = await getSchedule("teacher", teacher.id);
+        if (error) toggleFetched();
+        setSchedule(data);
         toggleFetched();
       }
     };
@@ -82,7 +84,7 @@ const TeacherSchedule: NextPage = () => {
   const [editPeriod, setEditPeriod] = useState<{
     show: boolean;
     day: Day;
-    schedulePeriod: SchedulePeriod;
+    schedulePeriod: PeriodContentItemOptSubj;
   }>({ show: false, day: 1, schedulePeriod: { startTime: 1, duration: 1 } });
 
   const [deletePeriod, setDeletePeriod] = useState<{

@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useReducer } from "react";
+import { useEffect, useReducer } from "react";
 
 // SK Components
 import {
@@ -89,10 +89,7 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   );
   if (error) return { notFound: true };
 
-  const schedule: ScheduleType = await getSchedule(
-    "student",
-    classID as number
-  );
+  const { data: schedule } = await getSchedule("student", classID as number);
   const { data: subjectList } = await getSubjectList(classID as number);
 
   return {

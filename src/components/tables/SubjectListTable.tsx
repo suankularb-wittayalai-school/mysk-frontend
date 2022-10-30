@@ -67,11 +67,13 @@ const SubjectListTable = ({
         accessorKey: "name",
         header: t("subjectList.table.name"),
         thClass: "w-5/12",
+        tdClass: "!text-left",
       },
       {
         accessorKey: "teachers",
         header: t("subjectList.table.teachers"),
         thClass: "w-3/12",
+        tdClass: "!text-left",
       },
       {
         accessorKey: "ggcCode",

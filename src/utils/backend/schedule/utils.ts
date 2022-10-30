@@ -5,25 +5,15 @@ import { arePeriodsOverlapping } from "@utils/helpers/schedule";
 import { supabase } from "@utils/supabaseClient";
 
 // Types
+import { PeriodContentItem } from "@utils/types/schedule";
 import { ScheduleItemTable } from "@utils/types/database/schedule";
-import { SchedulePeriod } from "@utils/types/schedule";
 
 export async function isOverlappingExistingItems(
   day: Day,
-  schedulePeriod: SchedulePeriod,
+  schedulePeriod: PeriodContentItem,
   teacherID: number
 ): Promise<boolean> {
-  // Get the Schedule Items of that class or taught by this teacher in that day
-  const { data: itemsSameClass, error: itemsSameClassError } = await supabase
-    .from<ScheduleItemTable>("schedule_items")
-    .select("id, start_time, duration")
-    .match({ classroom: schedulePeriod.class?.id, day });
-
-  if (itemsSameClassError || !itemsSameClass) {
-    console.error(itemsSameClassError);
-    return false;
-  }
-
+  // Get the Schedule Items taught by this teacher in that day
   const { data: itemsSameTeacher, error: itemsSameTeacherError } =
     await supabase
       .from<ScheduleItemTable>("schedule_items")
@@ -31,14 +21,12 @@ export async function isOverlappingExistingItems(
       .match({ teacher: teacherID, day });
 
   if (itemsSameTeacherError || !itemsSameTeacher) {
-    console.error(itemsSameClassError);
+    console.error(itemsSameTeacherError);
     return false;
   }
 
   // Check for overlap
-  const exisitingItems = itemsSameClass.concat(itemsSameTeacher);
-
-  for (let item of exisitingItems) {
+  for (let item of itemsSameTeacher) {
     if (
       item.id != schedulePeriod.id &&
       arePeriodsOverlapping(
