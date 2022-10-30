@@ -56,7 +56,6 @@ export async function middleware(req: NextRequest) {
 
   // Decide on destination based on user and page protection type
   let destination: string | null = null;
-  console.log({ userRole, pageRole, userIsAdmin });
   // Disallow public users from visiting private pages
   if (pageRole != "public" && userRole == "public")
     destination = "/account/login";
