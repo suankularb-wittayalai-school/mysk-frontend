@@ -11,6 +11,9 @@ import { ReactElement, ReactNode, useEffect, useState } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 
+import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { SessionContextProvider, Session } from "@supabase/auth-helpers-react";
+
 // Fonts
 import "@fontsource/sora/300.css";
 import "@fontsource/sora/400.css";
@@ -49,6 +52,9 @@ const App = ({
     getLayout?: (page: ReactElement) => ReactNode;
   };
 }) => {
+  // Supabase client
+  const [supabaseClient] = useState(() => createBrowserSupabaseClient());
+
   // Query client
   const [queryClient] = useState(() => new QueryClient());
 
@@ -66,18 +72,23 @@ const App = ({
   const getLayout = Component.getLayout ?? ((page) => <Layout>{page}</Layout>);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <Head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      </Head>
-      <PageLoadDim />
-      {getLayout(
-        <ErrorBoundary Fallback={PageFallback}>
-          <Component {...pageProps} />
-        </ErrorBoundary>
-      )}
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
+    <SessionContextProvider supabaseClient={supabaseClient}>
+      <QueryClientProvider client={queryClient}>
+        <Head>
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+          />
+        </Head>
+        <PageLoadDim />
+        {getLayout(
+          <ErrorBoundary Fallback={PageFallback}>
+            <Component {...pageProps} />
+          </ErrorBoundary>
+        )}
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
+    </SessionContextProvider>
   );
 };
 

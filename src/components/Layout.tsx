@@ -8,6 +8,8 @@ import { useTranslation } from "next-i18next";
 
 import { ReactNode, useEffect, useState } from "react";
 
+import { useUser } from "@supabase/auth-helpers-react";
+
 // SK Components
 import {
   MaterialIcon,
@@ -25,9 +27,6 @@ import { getClassAdvisorAt } from "@utils/backend/person/teacher";
 // Helpers
 import { addAtIndex } from "@utils/helpers/array";
 
-// Hooks
-import { useSession } from "@utils/hooks/auth";
-
 // Types
 import { ClassWNumber } from "@utils/types/class";
 
@@ -39,7 +38,7 @@ const Layout = ({
   children: ReactNode;
 }): JSX.Element => {
   const router = useRouter();
-  const session = useSession();
+  const user = useUser();
   const { t } = useTranslation();
 
   const defaultNav = [
@@ -72,22 +71,6 @@ const Layout = ({
   const [navItems, setNavItems] = useState(defaultNav);
 
   const studentNav = [
-    // {
-    //   name: t("navigation.learn"),
-    //   icon: {
-    //     inactive: <MaterialIcon icon="school" type="outlined" />,
-    //     active: <MaterialIcon icon="school" type="filled" />,
-    //   },
-    //   url: "/learn/505",
-    // },
-    // {
-    //   name: t("navigation.people"),
-    //   icon: {
-    //     inactive: <MaterialIcon icon="groups" type="outlined" />,
-    //     active: <MaterialIcon icon="groups" type="filled" />,
-    //   },
-    //   url: "/class/505/view",
-    // },
     {
       name: t("navigation.news"),
       icon: {
@@ -135,14 +118,14 @@ const Layout = ({
 
   useEffect(() => {
     async function constructNavigation() {
-      const role = session?.user?.user_metadata.role;
+      const role = user?.user_metadata.role;
 
       // Decide the Navigation the user is going to see based on their role
 
       // Student Navigation
       if (role == "student") {
         const { data: classOfStudent, error } = await getClassOfStudent(
-          session?.user?.user_metadata.student
+          user?.user_metadata.student
         );
 
         if (error) {
@@ -175,7 +158,7 @@ const Layout = ({
       // Teacher Navigation
       else if (role == "teacher") {
         const { data: classAdvisorAt, error } = await getClassAdvisorAt(
-          session?.user?.user_metadata.teacher
+          user?.user_metadata.teacher
         );
 
         if (error) console.error(error);
@@ -184,7 +167,7 @@ const Layout = ({
           setNavItems(teacherNav);
           return;
         }
-        
+
         setNavItems(
           addAtIndex(teacherNav, 1, {
             name: t("navigation.class"),
@@ -199,7 +182,7 @@ const Layout = ({
     }
 
     constructNavigation();
-  }, [session]);
+  }, [user]);
 
   return (
     <LayoutGroup>

@@ -1,5 +1,5 @@
 // External libraries
-import { AuthChangeEvent, Session } from "@supabase/supabase-js";
+import { AuthChangeEvent, Session, User } from "@supabase/supabase-js";
 
 // Supabase
 import { supabase } from "@utils/supabaseClient";
@@ -18,17 +18,18 @@ export async function setAuthCookies(
 }
 
 export async function changePassword(
-  formData: FormData,
-  session: Session | null
+  form: {
+    originalPassword: string;
+    newPassword: string;
+    confirmNewPassword: string;
+  },
+  user: User
 ) {
-  if (!session || !session.user) return false;
+  if (form.originalPassword === form.newPassword) return false;
 
-  if (formData.get("original-password") === formData.get("new-password"))
-    return false;
-
-  const { session: _, error } = await supabase.auth.signIn({
-    email: session.user.email,
-    password: formData.get("original-password") as string,
+  const { error } = await supabase.auth.signIn({
+    email: user.email,
+    password: form.originalPassword,
   });
 
   if (error) {
@@ -37,7 +38,7 @@ export async function changePassword(
   }
 
   const { error: passwordUpdatingError } = await supabase.auth.update({
-    password: formData.get("new-password") as string,
+    password: form.newPassword,
   });
 
   if (passwordUpdatingError) {

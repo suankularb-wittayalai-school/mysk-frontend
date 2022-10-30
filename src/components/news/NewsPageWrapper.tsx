@@ -9,6 +9,8 @@ import { useTranslation } from "next-i18next";
 
 import { ReactNode } from "react";
 
+import { useUser } from "@supabase/auth-helpers-react";
+
 // SK Components
 import {
   Actions,
@@ -23,9 +25,6 @@ import { enterPageTransition } from "@utils/animations/config";
 // Helpers
 import { getLocaleString } from "@utils/helpers/i18n";
 
-// Hooks
-import { useSession } from "@utils/hooks/auth";
-
 // Types
 import { LangCode } from "@utils/types/common";
 import { FormPage, InfoPage } from "@utils/types/news";
@@ -39,7 +38,7 @@ const NewsPageWrapper = ({
 }) => {
   const locale = useRouter().locale as LangCode;
   const { t } = useTranslation("news");
-  const session = useSession();
+  const user = useUser();
 
   return (
     // We’re not using ReSKComs in parts of this page here as it has poor
@@ -50,7 +49,7 @@ const NewsPageWrapper = ({
           title: getLocaleString(news.content.title, locale),
         }}
         pageIcon={<MaterialIcon icon="info" />}
-        backGoesTo={session ? "/news" : "/"}
+        backGoesTo={user ? "/news" : "/"}
         LinkElement={Link}
       />
       <div className="content-layout__content !gap-y-0">
@@ -83,7 +82,7 @@ const NewsPageWrapper = ({
               {getLocaleString(news.content.description, locale)}
             </motion.p>
 
-            {session?.user?.user_metadata.isAdmin && (
+            {user?.user_metadata.isAdmin && (
               <Actions className="my-4">
                 <LinkButton
                   label={t("pageAction.admin.edit")}
