@@ -8,6 +8,8 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { useState } from "react";
 
+import { withPageAuth } from "@supabase/auth-helpers-nextjs";
+
 // SK Components
 import {
   MaterialIcon,
@@ -26,13 +28,9 @@ import { getNewsFeed } from "@utils/backend/news";
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
 
-// Supabase
-import { supabase } from "@utils/supabaseClient";
-
 // Types
 import { LangCode } from "@utils/types/common";
 import { NewsItemType, NewsListNoDate } from "@utils/types/news";
-import { withPageAuth } from "@supabase/auth-helpers-nextjs";
 
 // Page
 const NewsPage: NextPage<{ newsFeed: NewsListNoDate }> = ({
@@ -74,7 +72,7 @@ export const getServerSideProps: GetServerSideProps = withPageAuth({
   async getServerSideProps({ locale }, supabase) {
     const { data: user } = await supabase.auth.getUser();
     const userRole = user.user?.user_metadata.role;
-    
+
     const { data: newsFeed } = await getNewsFeed(userRole);
 
     return {
