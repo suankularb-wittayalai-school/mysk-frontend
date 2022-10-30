@@ -32,6 +32,7 @@ import { supabase } from "@utils/supabaseClient";
 // Types
 import { LangCode } from "@utils/types/common";
 import { NewsItemType, NewsListNoDate } from "@utils/types/news";
+import { withPageAuth } from "@supabase/auth-helpers-nextjs";
 
 // Page
 const NewsPage: NextPage<{ newsFeed: NewsListNoDate }> = ({
@@ -69,23 +70,23 @@ const NewsPage: NextPage<{ newsFeed: NewsListNoDate }> = ({
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  req,
-  res,
-}) => {
-  const userRole = (await supabase.auth.api.getUserByCookie(req, res)).user
-    ?.user_metadata.role;
-  if (!userRole)
-    return { redirect: { destination: "/account/login", permanent: false } };
-  const { data: newsFeed } = await getNewsFeed(userRole);
+export const getServerSideProps: GetServerSideProps = withPageAuth({
+  async getServerSideProps({ locale }, supabase) {
+    const { data: user } = await supabase.auth.getUser();
+    const userRole = user.user?.user_metadata.role;
+    
+    const { data: newsFeed } = await getNewsFeed(userRole);
 
-  return {
-    props: {
-      ...(await serverSideTranslations(locale as LangCode, ["common", "news"])),
-      newsFeed,
-    },
-  };
-};
+    return {
+      props: {
+        ...(await serverSideTranslations(locale as LangCode, [
+          "common",
+          "news",
+        ])),
+        newsFeed,
+      },
+    };
+  },
+});
 
 export default NewsPage;

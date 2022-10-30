@@ -472,7 +472,9 @@ export async function db2Class(classDB: ClassroomDB): Promise<Class> {
     }
     if (students) {
       formatted.students = await Promise.all(
-        students.map(async (student) => await db2Student(student))
+        students.map(
+          async (student) => await db2Student(student, { contacts: false })
+        )
       );
     }
   }
