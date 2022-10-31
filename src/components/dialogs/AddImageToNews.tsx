@@ -80,7 +80,7 @@ const AddImageToNewsDialog = ({
             in the Markdown field.
           </p>
           <code className="container-surface break-all rounded-lg p-2">
-            {`![image](https://ykqqepbodqjhiwfjcvxe.supabase.co/storage/v1/object/public/news/${fileDir})`}
+            {`![image](${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/news/${fileDir})`}
           </code>
         </DialogSection>
       )}
