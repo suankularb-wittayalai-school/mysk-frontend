@@ -1,7 +1,5 @@
 // External libraries
-import { IncomingMessage, ServerResponse } from "http";
-import { NextApiRequestCookies } from "next/dist/server/api-utils";
-import { PostgrestError } from "@supabase/supabase-js";
+import { PostgrestError, User } from "@supabase/supabase-js";
 
 // Backend
 import { db2Teacher } from "@utils/backend/database";
@@ -11,11 +9,11 @@ import { createPerson } from "@utils/backend/person/person";
 import { getCurrentAcedemicYear } from "@utils/helpers/date";
 
 // Supabase
-import { supabase } from "@utils/supabaseClient";
+import { supabase } from "@utils/supabase-client";
 
 // Types
 import { ClassWNumber } from "@utils/types/class";
-import { BackendReturn } from "@utils/types/common";
+import { BackendDataReturn, BackendReturn } from "@utils/types/common";
 import { ImportedTeacherData, Role, Teacher } from "@utils/types/person";
 import { ClassroomDB } from "@utils/types/database/class";
 import {
@@ -25,6 +23,7 @@ import {
   TeacherTable,
 } from "@utils/types/database/person";
 import { RoomSubjectDB } from "@utils/types/database/subject";
+import { Database } from "@utils/types/supabase";
 
 const subjectGroupMap = {
   วิทยาศาสตร์: 1,
@@ -45,76 +44,78 @@ const prefixMap = {
   นางสาว: "Miss.",
 } as const;
 
-export async function getTeacherIDFromReq(
-  req: IncomingMessage & { cookies: NextApiRequestCookies },
-  res?: ServerResponse
-): Promise<number> {
-  const { user, error } = await supabase.auth.api.getUserByCookie(req, res);
+export async function getTeacherFromUser(
+  user: User
+): Promise<BackendDataReturn<Teacher, null>> {
+  const { data, error } = await supabase
+    .from("teacher")
+    .select("*, person(*), subject_group(*)")
+    .match({ id: user.user_metadata.teacher })
+    .single();
 
-  if (error || !user) {
+  if (error) {
     console.error(error);
-    return 0;
+    return { data: null, error };
   }
 
-  return user?.user_metadata.teacher;
+  return {
+    data: {
+      ...(await db2Teacher(data)),
+      isAdmin: user.user_metadata.isAdmin,
+    },
+    error: null,
+  };
 }
 
 export async function createTeacher(
   teacher: Teacher,
   email: string,
   isAdmin: boolean = false
-): Promise<{ data: TeacherTable[] | null; error: PostgrestError | null }> {
+): Promise<BackendReturn> {
   const { data: person, error: personCreationError } = await createPerson(
     teacher
   );
   if (personCreationError || !person) {
     console.error(personCreationError);
-    return { data: null, error: personCreationError };
+    return { error: personCreationError };
   }
   const { data: createdTeacher, error: teacherCreationError } = await supabase
-    .from<TeacherTable>("teacher")
+    .from("teacher")
     .insert({
-      person: person[0]?.id,
+      person: person.id,
       subject_group: teacher.subjectGroup.id,
       // class_advisor_at: form.classAdvisorAt,
       teacher_id: teacher.teacherID.trim(),
-    });
+    })
+    .select("id")
+    .limit(1)
+    .single();
+
   if (teacherCreationError || !createdTeacher) {
     console.error(teacherCreationError);
     // delete the created person
-    await supabase
-      .from<PersonDB>("people")
-      .delete()
-      .match({ id: person[0]?.id });
-    return { data: null, error: teacherCreationError };
+    await supabase.from("people").delete().match({ id: person.id });
+    return { error: teacherCreationError };
   }
 
   // register an account for the teacher
   await fetch("/api/account/teacher", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       email,
       password: teacher.birthdate.split("-").join(""),
-      id: createdTeacher[0]?.id,
+      id: createdTeacher.id,
       isAdmin,
     }),
   });
 
-  return { data: createdTeacher, error: null };
+  return { error: null };
 }
 
 export async function deleteTeacher(teacher: Teacher) {
-  const { data: userid, error: selectingError } = await supabase
-    .from<{
-      id: string;
-      email: string;
-      role: Role;
-      student: number;
-      teacher: number;
-    }>("users")
+  const { data: userID, error: selectingError } = await supabase
+    .from("users")
     .select("id")
     .match({ teacher: teacher.id })
     .limit(1)
@@ -125,24 +126,28 @@ export async function deleteTeacher(teacher: Teacher) {
     return;
   }
 
-  if (!userid) {
+  if (!userID) {
     console.error("No user found");
     return;
   }
 
   const { data: deletingTeacher, error: teacherDeletingError } = await supabase
-    .from<TeacherTable>("teacher")
+    .from("teacher")
     .delete()
-    .match({ id: teacher.id });
+    .match({ id: teacher.id })
+    .select("person")
+    .limit(1)
+    .single();
+
   if (teacherDeletingError || !deletingTeacher) {
     console.error(teacherDeletingError);
     return;
   }
   // delete the person related to the teacher
   const { data: deletingPerson, error: personDeletingError } = await supabase
-    .from<PersonTable>("people")
+    .from("people")
     .delete()
-    .match({ id: deletingTeacher[0].person });
+    .match({ id: deletingTeacher.person });
   if (personDeletingError || !deletingPerson) {
     console.error(personDeletingError);
     return;
@@ -151,12 +156,8 @@ export async function deleteTeacher(teacher: Teacher) {
   // Delete account of the teacher
   await fetch(`/api/account`, {
     method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      id: userid.id,
-    }),
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id: userID.id }),
   });
 }
 
@@ -209,7 +210,7 @@ export async function importTeachers(data: ImportedTeacherData[]) {
 export async function getTeacherList(classID: number): Promise<Teacher[]> {
   // Get the teachers of all subjectRooms where class matches
   const { data: roomSubjects, error: roomSubjectsError } = await supabase
-    .from<RoomSubjectDB>("room_subjects")
+    .from("room_subjects")
     .select("teacher")
     .match({ class: classID });
   if (roomSubjectsError || !roomSubjects) {
@@ -218,7 +219,7 @@ export async function getTeacherList(classID: number): Promise<Teacher[]> {
   }
 
   // Map array of teacher IDs into array of teachers (fetch teacher in map)
-  const selectedTeachers: (TeacherDB | null)[] = await Promise.all(
+  const selectedTeachers = await Promise.all(
     // Flatten the arrays into an array of teacher IDs
     roomSubjects
       .map((roomSubject) => roomSubject.teacher)
@@ -229,32 +230,37 @@ export async function getTeacherList(classID: number): Promise<Teacher[]> {
       .map(async (teacher_id) => {
         // Get teacher from ID
         const { data, error } = await supabase
-          .from<TeacherDB>("teacher")
-          .select("* ,people:person(*), SubjectGroup:subject_group(*)")
+          .from("teacher")
+          .select("* ,person(*), subject_group(*)")
           .match({ id: teacher_id })
           .limit(1)
           .single();
+
         if (error || !data) {
           console.error(error);
           return null;
         }
+
         return data;
       })
   );
-  const teachers: TeacherDB[] = selectedTeachers.filter(
-    (teacher) => teacher !== null
-  ) as TeacherDB[];
+  const teachers = selectedTeachers.filter((teacher) => teacher);
 
   return await Promise.all(
-    teachers.map(async (teacher) => await db2Teacher(teacher))
+    teachers.map(
+      async (teacher) =>
+        await db2Teacher(
+          teacher as Database["public"]["Tables"]["teacher"]["Row"]
+        )
+    )
   );
 }
 
 export async function getClassAdvisorAt(
   teacherDBID: number
-): Promise<BackendReturn<ClassWNumber, null>> {
+): Promise<BackendDataReturn<ClassWNumber, null>> {
   const { data, error } = await supabase
-    .from<ClassroomDB>("classroom")
+    .from("classroom")
     .select("id, number")
     .match({ year: getCurrentAcedemicYear() })
     .contains("advisors", [teacherDBID])

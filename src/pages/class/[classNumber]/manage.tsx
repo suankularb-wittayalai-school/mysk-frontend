@@ -12,12 +12,13 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import {
   MutableRefObject,
   useEffect,
-  useReducer,
   useRef,
   useState,
 } from "react";
 
 import ReactToPrint from "react-to-print";
+
+import { User, withPageAuth } from "@supabase/auth-helpers-nextjs";
 
 // SK Components
 import {
@@ -50,13 +51,14 @@ import {
   getClassroom,
 } from "@utils/backend/classroom/classroom";
 import { createContact } from "@utils/backend/contact";
+import { getTeacherFromUser } from "@utils/backend/person/teacher";
 
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
 import { createTitleStr } from "@utils/helpers/title";
 
 // Hooks
-import { useTeacherAccount } from "@utils/hooks/auth";
+import { useToggle } from "@utils/hooks/toggle";
 
 // Types
 import { Class as ClassType } from "@utils/types/class";
@@ -347,12 +349,9 @@ const StudentListSection = ({
               <tr key={student.id}>
                 <td>{student.classNo}</td>
                 <td className="!text-left">
-                  {nameJoiner(
-                    locale,
-                    student.name,
-                    student.prefix,
-                    { prefix: true }
-                  )}
+                  {nameJoiner(locale, student.name, student.prefix, {
+                    prefix: true,
+                  })}
                 </td>
                 {/* Empty columns for print */}
                 <td className="hidden print:table-cell" />
@@ -384,31 +383,18 @@ const StudentListSection = ({
 // Page
 const Class: NextPage<{
   classItem: ClassType;
-  studentForms: Array<StudentFormItem>;
-}> = ({ classItem, studentForms }) => {
+  studentForms: StudentFormItem[];
+  isAdvisor: boolean;
+}> = ({
+  classItem,
+  studentForms,
+  isAdvisor
+}) => {
   const router = useRouter();
   const { t } = useTranslation("common");
 
-  const [showAddTeacher, toggleShowAddTeacher] = useReducer(
-    (state: boolean) => !state,
-    false
-  );
-  const [showAddContact, toggleShowAddContact] = useReducer(
-    (state: boolean) => !state,
-    false
-  );
-
-  // Disallow editing if user is not an advisor to this class
-  const [teacher] = useTeacherAccount({ loginRequired: true });
-  const [isAdvisor, setIsAdvisor] = useState<boolean>(false);
-  useEffect(
-    () => setIsAdvisor(teacher?.classAdvisorAt?.id == classItem.id),
-    [teacher]
-  );
-
-  useEffect(() => {
-    if (!classItem.id) router.push("/teach");
-  }, []);
+  const [showAddTeacher, toggleShowAddTeacher] = useToggle();
+  const [showAddContact, toggleShowAddContact] = useToggle();
 
   return (
     <>
@@ -453,7 +439,7 @@ const Class: NextPage<{
       {/* Dialogs */}
       <AddTeacherDialog
         show={showAddTeacher}
-        onClose={() => toggleShowAddTeacher()}
+        onClose={toggleShowAddTeacher}
         onSubmit={async (teacher) => {
           await addAdvisorToClassroom(teacher.id, classItem.id);
           router.replace(router.asPath);
@@ -462,7 +448,7 @@ const Class: NextPage<{
       />
       <AddContactDialog
         show={showAddContact}
-        onClose={() => toggleShowAddContact()}
+        onClose={toggleShowAddContact}
         onSubmit={async (contact) => {
           // console.log(contact);
           const { data: createdContact, error: contactCreationError } =
@@ -484,21 +470,33 @@ const Class: NextPage<{
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  params,
-}) => ({
-  props: {
-    ...(await serverSideTranslations(locale as LangCode, [
-      "account",
-      "news",
-      "dashboard",
-      "common",
-      "class",
-      "teacher",
-    ])),
-    classItem: await getClassroom(Number(params?.classNumber)),
-    studentForms: [],
+export const getServerSideProps: GetServerSideProps = withPageAuth({
+  async getServerSideProps({ locale, params }, supabase) {
+    const classItem = await getClassroom(Number(params?.classNumber));
+
+    const studentForms: StudentFormItem[] = [];
+
+    const { data: sbUser } = await supabase.auth.getUser();
+    const { data: teacher } = await getTeacherFromUser(sbUser.user as User);
+    const isAdvisor = teacher
+      ? teacher.classAdvisorAt?.id == classItem.id
+      : false;
+
+    return {
+      props: {
+        ...(await serverSideTranslations(locale as LangCode, [
+          "common",
+          "account",
+          "class",
+          "dashboard",
+          "news",
+          "teacher",
+        ])),
+        classItem,
+        studentForms,
+        isAdvisor,
+      },
+    };
   },
 });
 

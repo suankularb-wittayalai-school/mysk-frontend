@@ -1,22 +1,14 @@
+// Helpers
 import { getCurrentAcedemicYear } from "@utils/helpers/date";
-import { supabase } from "@utils/supabaseClient";
+
+// Supabase
+import { supabase } from "@utils/supabase-client";
+
+// Types
 import { Class } from "@utils/types/class";
+import { OrUndefined } from "@utils/types/common";
 import { Contact } from "@utils/types/contact";
-import { ClassroomDB } from "@utils/types/database/class";
-import { ContactDB } from "@utils/types/database/contact";
-import {
-  FormDB,
-  FormQuestionsTable,
-  FormTable,
-  InfoDB,
-} from "@utils/types/database/news";
-import { StudentDB, TeacherDB } from "@utils/types/database/person";
-import { ScheduleItemDB } from "@utils/types/database/schedule";
-import {
-  RoomSubjectDB,
-  SubjectGroupDB,
-  SubjectTable,
-} from "@utils/types/database/subject";
+import { RoomSubjectDB } from "@utils/types/database/subject";
 import {
   FormField,
   FormPage,
@@ -27,9 +19,12 @@ import {
 import { Role, Student, Teacher } from "@utils/types/person";
 import { SchedulePeriod } from "@utils/types/schedule";
 import { Subject, SubjectListItem } from "@utils/types/subject";
+import { Database } from "@utils/types/supabase";
 
 // Contact
-export function db2Contact(contact: ContactDB): Contact {
+export function db2Contact(
+  contact: Database["public"]["Tables"]["contact"]["Row"]
+): Contact {
   return {
     id: contact.id,
     name: {
@@ -44,7 +39,9 @@ export function db2Contact(contact: ContactDB): Contact {
 // News
 
 // Info
-export function dbInfo2NewsItem(info: InfoDB): NewsItemInfoNoDate {
+export function dbInfo2NewsItem(
+  info: Database["public"]["Tables"]["infos"]["Row"]
+): NewsItemInfoNoDate {
   return {
     id: info.id,
     type: "info",
@@ -65,7 +62,9 @@ export function dbInfo2NewsItem(info: InfoDB): NewsItemInfoNoDate {
   };
 }
 
-export function db2InfoPage(info: InfoDB): InfoPage {
+export function db2InfoPage(
+  info: Database["public"]["Tables"]["infos"]["Row"]
+): InfoPage {
   const newsItemInfo = dbInfo2NewsItem(info);
 
   return {
@@ -82,7 +81,7 @@ export function db2InfoPage(info: InfoDB): InfoPage {
 
 // Form
 export function dbForm2NewsItem(
-  form: FormDB,
+  form: Database["public"]["Tables"]["forms"]["Row"],
   studentID?: number
 ): NewsItemFormNoDate {
   const formatted: NewsItemFormNoDate = {
@@ -99,37 +98,41 @@ export function dbForm2NewsItem(
         th: form.parent.description_th,
       },
     },
-    dueDate: form.due_date,
+    dueDate: form.due_date as OrUndefined<string>,
     done: studentID
-      ? // (@SiravitPhokeed)
-        // Am I allowed to use `!!`?
-        !!form.students_done.find((student) => studentID == student)
+      ? Boolean(
+          (form.students_done || []).find((student) => studentID == student)
+        )
       : false,
   };
 
   return formatted;
 }
 
-export function db2Field(field: FormQuestionsTable) {
+export function db2Field(
+  field: Database["public"]["Tables"]["form_questions"]["Row"]
+) {
   const formatted: FormField = {
     id: field.id,
     label: {
-      "en-US": field.label_en,
+      "en-US": field.label_en as OrUndefined<string>,
       th: field.label_th,
     },
     type: field.type,
     required: field.required,
-    options: field.options ? field.options : [],
+    options: field.options || [],
     range: {
-      start: field.range_start,
-      end: field.range_end,
+      start: field.range_start as number,
+      end: field.range_end as number,
     },
     default: field.default,
   };
   return formatted;
 }
 
-export async function db2FormPage(form: FormDB) {
+export async function db2FormPage(
+  form: Database["public"]["Tables"]["forms"]["Row"]
+) {
   const formatted: FormPage = {
     id: form.id,
     type: "form",
@@ -145,12 +148,12 @@ export async function db2FormPage(form: FormDB) {
       },
       fields: [],
     },
-    dueDate: form.due_date,
-    frequency: form.frequency,
+    dueDate: form.due_date as OrUndefined<string>,
+    frequency: form.frequency as FormPage["frequency"],
   };
 
   const { data: fields, error: fieldsError } = await supabase
-    .from<FormQuestionsTable>("form_questions")
+    .from("form_questions")
     .select("*")
     .eq("form", form.id);
 
@@ -165,55 +168,50 @@ export async function db2FormPage(form: FormDB) {
 
 // Student
 export async function db2Student(
-  student: StudentDB,
+  student: Database["public"]["Tables"]["student"]["Row"],
   options?: Partial<{ contacts: boolean }>
 ): Promise<Student> {
   const formatted: Student = {
     id: student.id,
     prefix: {
-      th: student.people.prefix_th,
-      "en-US": student.people.prefix_en,
+      th: student.person.prefix_th,
+      "en-US": student.person.prefix_en,
     },
     role: "student",
     name: {
       th: {
-        firstName: student.people.first_name_th,
-        lastName: student.people.last_name_th,
+        firstName: student.person.first_name_th,
+        lastName: student.person.last_name_th,
       },
       "en-US": {
-        firstName: student.people.first_name_en
-          ? student.people.first_name_en
+        firstName: student.person.first_name_en
+          ? student.person.first_name_en
           : "",
-        lastName: student.people.last_name_en
-          ? student.people.last_name_en
+        lastName: student.person.last_name_en
+          ? student.person.last_name_en
           : "",
       },
     },
     studentID: student.std_id,
     class: { id: 0, number: 0 },
-    citizenID: student.people.citizen_id,
-    birthdate: student.people.birthdate,
+    citizenID: student.person.citizen_id,
+    birthdate: student.person.birthdate,
     classNo: 1,
     contacts: [],
   };
 
   if (options?.contacts) {
     const { data: contacts, error: contactError } = await supabase
-      .from<ContactDB>("contact")
+      .from("contact")
       .select("*")
-      .in("id", student.people.contacts ? student.people.contacts : []);
+      .in("id", student.person.contacts ? student.person.contacts : []);
 
     if (contactError) console.error(contactError);
     if (contacts) formatted.contacts = contacts.map(db2Contact);
   }
 
   const { data: classes, error: classError } = await supabase
-    .from<{
-      id: number;
-      number: number;
-      students: number[];
-      no_list: number[];
-    }>("classroom")
+    .from("classroom")
     .select("id, number, students, no_list")
     .match({ year: getCurrentAcedemicYear() })
     .contains("students", [student.id])
@@ -234,41 +232,43 @@ export async function db2Student(
 }
 
 // Teacher
-export async function db2Teacher(teacher: TeacherDB): Promise<Teacher> {
+export async function db2Teacher(
+  teacher: Database["public"]["Tables"]["teacher"]["Row"]
+): Promise<Teacher> {
   const formatted: Teacher = {
     id: teacher.id,
     role: "teacher",
     prefix: {
-      th: teacher.people.prefix_th,
-      "en-US": teacher.people.prefix_en,
+      th: teacher.person.prefix_th,
+      "en-US": teacher.person.prefix_en,
     },
     name: {
       "en-US": {
-        firstName: teacher.people.first_name_en
-          ? teacher.people.first_name_en
+        firstName: teacher.person.first_name_en
+          ? teacher.person.first_name_en
           : "",
-        lastName: teacher.people.last_name_en
-          ? teacher.people.last_name_en
+        lastName: teacher.person.last_name_en
+          ? teacher.person.last_name_en
           : "",
       },
       th: {
-        firstName: teacher.people.first_name_th,
-        lastName: teacher.people.last_name_th,
+        firstName: teacher.person.first_name_th,
+        lastName: teacher.person.last_name_th,
       },
     },
-    profile: teacher.people.profile,
+    profile: teacher.person.profile as OrUndefined<string>,
     teacherID: teacher.teacher_id,
     classAdvisorAt: {
       id: 0,
       number: 0,
     },
-    citizenID: teacher.people.citizen_id,
-    birthdate: teacher.people.birthdate,
+    citizenID: teacher.person.citizen_id,
+    birthdate: teacher.person.birthdate,
     subjectGroup: {
-      id: teacher.SubjectGroup.id,
+      id: teacher.subject_group.id,
       name: {
-        "en-US": teacher.SubjectGroup.name_en,
-        th: teacher.SubjectGroup.name_th,
+        "en-US": teacher.subject_group.name_en,
+        th: teacher.subject_group.name_th,
       },
     },
     contacts: [],
@@ -276,9 +276,9 @@ export async function db2Teacher(teacher: TeacherDB): Promise<Teacher> {
   };
 
   const { data: contacts, error: contactError } = await supabase
-    .from<ContactDB>("contact")
+    .from("contact")
     .select("*")
-    .in("id", teacher.people.contacts ? teacher.people.contacts : []);
+    .in("id", teacher.person.contacts ? teacher.person.contacts : []);
 
   if (contactError) {
     console.error(contactError);
@@ -288,7 +288,7 @@ export async function db2Teacher(teacher: TeacherDB): Promise<Teacher> {
   }
 
   const { data: classes, error: classError } = await supabase
-    .from<{ id: number; number: number; advisors: number[] }>("classroom")
+    .from("classroom")
     .select("id, number, advisors")
     .match({ year: getCurrentAcedemicYear() })
     .contains("advisors", [teacher.id])
@@ -306,7 +306,7 @@ export async function db2Teacher(teacher: TeacherDB): Promise<Teacher> {
 
   // get subjects in charge
   const { data: subjects, error: subjectError } = await supabase
-    .from<SubjectTable>("subject")
+    .from("subject")
     .select("*")
     .contains("teachers", [teacher.id]);
 
@@ -314,41 +314,41 @@ export async function db2Teacher(teacher: TeacherDB): Promise<Teacher> {
     console.error(subjectError);
   }
   if (subjects) {
-    formatted.subjectsInCharge = subjects.map((subject) => {
-      return {
-        id: subject.id,
-        code: {
-          "en-US": subject.code_en,
-          th: subject.code_th,
+    formatted.subjectsInCharge = subjects.map((subject) => ({
+      id: subject.id,
+      code: {
+        "en-US": subject.code_en,
+        th: subject.code_th,
+      },
+      name: {
+        "en-US": {
+          name: subject.name_en,
+          shortName: subject.short_name_en as OrUndefined<string>,
         },
-        name: {
-          "en-US": {
-            name: subject.name_en,
-            shortName: subject.short_name_en,
-          },
-          th: {
-            name: subject.name_th,
-            shortName: subject.short_name_th,
-          },
+        th: {
+          name: subject.name_th,
+          shortName: subject.short_name_th as OrUndefined<string>,
         },
-      };
-    });
+      },
+    }));
   }
 
   return formatted;
 }
 
-export async function db2Subject(subject: SubjectTable): Promise<Subject> {
+export async function db2Subject(
+  subject: Database["public"]["Tables"]["subject"]["Row"]
+): Promise<Subject> {
   const formatted: Subject = {
     id: subject.id,
     name: {
       "en-US": {
         name: subject.name_en,
-        shortName: subject.short_name_en,
+        shortName: subject.short_name_en as OrUndefined<string>,
       },
       th: {
         name: subject.name_th,
-        shortName: subject.short_name_th,
+        shortName: subject.short_name_th as OrUndefined<string>,
       },
     },
     code: {
@@ -360,12 +360,15 @@ export async function db2Subject(subject: SubjectTable): Promise<Subject> {
       th: subject.type_th,
     },
     credit: subject.credit,
-    description: {
-      "en-US": subject.description_en,
-      th: subject.description_th,
-    },
+    description:
+      subject.description_en || subject.description_th
+        ? {
+            "en-US": subject.description_en as string,
+            th: subject.description_th as string,
+          }
+        : undefined,
     year: subject.year,
-    semester: subject.semester,
+    semester: subject.semester as 1 | 2,
     subjectGroup: {
       id: 0,
       name: {
@@ -381,7 +384,7 @@ export async function db2Subject(subject: SubjectTable): Promise<Subject> {
   };
 
   const { data: subjectGroup, error: subjectGroupError } = await supabase
-    .from<SubjectGroupDB>("SubjectGroup")
+    .from("SubjectGroup")
     .select("*")
     .match({ id: subject.group })
     .limit(1);
@@ -400,13 +403,14 @@ export async function db2Subject(subject: SubjectTable): Promise<Subject> {
   }
 
   const { data: teachers, error: teachersError } = await supabase
-    .from<TeacherDB>("teacher")
-    .select("id, teacher_id, people:person(*), SubjectGroup:subject_group(*)")
+    .from("teacher")
+    .select("*, person(*), subject_group(*)")
     .in("id", subject.teachers);
 
   if (teachersError) {
     console.error(teachersError);
   }
+
   if (teachers) {
     formatted.teachers = await Promise.all(
       teachers.map(async (teacher) => {
@@ -416,8 +420,8 @@ export async function db2Subject(subject: SubjectTable): Promise<Subject> {
   }
 
   const { data: coTeachers, error: coTeachersError } = await supabase
-    .from<TeacherDB>("teacher")
-    .select("id, teacher_id, people:person(*), SubjectGroup:subject_group(*)")
+    .from("teacher")
+    .select("*, person(*), subject_group(*)")
     .in("id", subject.coTeachers ? subject.coTeachers : []);
 
   if (coTeachersError) {
@@ -434,7 +438,9 @@ export async function db2Subject(subject: SubjectTable): Promise<Subject> {
   return formatted;
 }
 
-export async function db2Class(classDB: ClassroomDB): Promise<Class> {
+export async function db2Class(
+  classDB: Database["public"]["Tables"]["classroom"]["Row"]
+): Promise<Class> {
   const formatted: Class = {
     id: classDB.id,
     number: classDB.number,
@@ -447,13 +453,14 @@ export async function db2Class(classDB: ClassroomDB): Promise<Class> {
 
   if (classDB.advisors) {
     const { data: classAdvisor, error: classAdvisorError } = await supabase
-      .from<TeacherDB>("teacher")
-      .select("id, teacher_id, people:person(*), SubjectGroup:subject_group(*)")
+      .from("teacher")
+      .select("*, person(*), subject_group(*)")
       .in("id", classDB.advisors);
 
     if (classAdvisorError) {
       console.error(classAdvisorError);
     }
+
     if (classAdvisor) {
       formatted.classAdvisors = await Promise.all(
         classAdvisor.map(async (teacher) => await db2Teacher(teacher))
@@ -463,8 +470,8 @@ export async function db2Class(classDB: ClassroomDB): Promise<Class> {
 
   if (classDB.students) {
     const { data: students, error: studentsError } = await supabase
-      .from<StudentDB>("student")
-      .select("id, std_id, people:person(*)")
+      .from("student")
+      .select("*, person(*)")
       .in("id", classDB.students);
 
     if (studentsError) {
@@ -481,7 +488,7 @@ export async function db2Class(classDB: ClassroomDB): Promise<Class> {
 
   if (classDB.contacts) {
     const { data: contacts, error: contactError } = await supabase
-      .from<ContactDB>("contact")
+      .from("contact")
       .select("*")
       .in("id", classDB.contacts);
 
@@ -497,7 +504,7 @@ export async function db2Class(classDB: ClassroomDB): Promise<Class> {
 }
 
 export async function db2SchedulePeriod(
-  scheduleItem: ScheduleItemDB,
+  scheduleItem: Database["public"]["Tables"]["schedule_items"]["Row"],
   role: Role
 ): Promise<SchedulePeriod> {
   const formatted: SchedulePeriod = {
@@ -514,11 +521,13 @@ export async function db2SchedulePeriod(
           name: {
             "en-US": {
               name: scheduleItem.subject.name_en,
-              shortName: scheduleItem.subject.short_name_en,
+              shortName: scheduleItem.subject
+                .short_name_en as OrUndefined<string>,
             },
             th: {
               name: scheduleItem.subject.name_th,
-              shortName: scheduleItem.subject.short_name_th,
+              shortName: scheduleItem.subject
+                .short_name_th as OrUndefined<string>,
             },
           },
           teachers: [],
@@ -532,8 +541,8 @@ export async function db2SchedulePeriod(
 
   if (role == "student" && formatted.content.length > 0) {
     const { data: teachers, error: teachersError } = await supabase
-      .from<TeacherDB>("teacher")
-      .select("id, teacher_id, people:person(*), SubjectGroup:subject_group(*)")
+      .from("teacher")
+      .select("*, person(*), subject_group(*)")
       .in("id", scheduleItem.subject.teachers);
 
     if (teachersError) {
@@ -548,8 +557,8 @@ export async function db2SchedulePeriod(
     }
 
     const { data: coTeachers, error: coTeachersError } = await supabase
-      .from<TeacherDB>("teacher")
-      .select("id, teacher_id, people:person(*), SubjectGroup:subject_group(*)")
+      .from("teacher")
+      .select("*, person(*), subject_group(*)")
       .in(
         "id",
         scheduleItem.subject.coTeachers ? scheduleItem.subject.coTeachers : []
@@ -570,7 +579,9 @@ export async function db2SchedulePeriod(
   return formatted;
 }
 
-export async function db2SubjectListItem(roomSubject: RoomSubjectDB) {
+export async function db2SubjectListItem(
+  roomSubject: Database["public"]["Tables"]["room_subjects"]["Row"]
+) {
   const formatted: SubjectListItem = {
     id: roomSubject.id,
     subject: {
@@ -581,18 +592,15 @@ export async function db2SubjectListItem(roomSubject: RoomSubjectDB) {
       name: {
         "en-US": {
           name: roomSubject.subject.name_en,
-          shortName: roomSubject.subject.short_name_en,
+          shortName: roomSubject.subject.short_name_en as OrUndefined<string>,
         },
         th: {
           name: roomSubject.subject.name_th,
-          shortName: roomSubject.subject.short_name_th,
+          shortName: roomSubject.subject.short_name_th as OrUndefined<string>,
         },
       },
     },
-    classroom: {
-      id: roomSubject.classroom.id,
-      number: roomSubject.classroom.number,
-    },
+    classroom: roomSubject.class,
     teachers: [],
     coTeachers: [],
     ggMeetLink: roomSubject.gg_meet_link ? roomSubject.gg_meet_link : "",
@@ -602,8 +610,8 @@ export async function db2SubjectListItem(roomSubject: RoomSubjectDB) {
 
   if (roomSubject.teacher) {
     const { data: teachers, error: teachersError } = await supabase
-      .from<TeacherDB>("teacher")
-      .select("id, teacher_id, people:person(*), SubjectGroup:subject_group(*)")
+      .from("teacher")
+      .select("*, person(*), subject_group(*)")
       .in("id", roomSubject.teacher);
 
     if (teachersError) {
@@ -618,8 +626,8 @@ export async function db2SubjectListItem(roomSubject: RoomSubjectDB) {
 
   if (roomSubject.coteacher) {
     const { data: coTeachers, error: coTeachersError } = await supabase
-      .from<TeacherDB>("teacher")
-      .select("id, teacher_id, people:person(*), SubjectGroup:subject_group(*)")
+      .from("teacher")
+      .select("*, person(*), subject_group(*)")
       .in("id", roomSubject.coteacher);
 
     if (coTeachersError) {

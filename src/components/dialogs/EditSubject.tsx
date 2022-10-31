@@ -28,7 +28,7 @@ import { nameJoiner } from "@utils/helpers/name";
 import { useSubjectGroupOption } from "@utils/hooks/subject";
 
 // Supabase
-import { supabase } from "@utils/supabaseClient";
+import { supabase } from "@utils/supabase-client";
 
 // Types
 import { ChipInputListItem, DialogProps, LangCode } from "@utils/types/common";

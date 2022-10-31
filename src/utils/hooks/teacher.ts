@@ -1,4 +1,4 @@
-import { supabase } from "@utils/supabaseClient";
+import { supabase } from "@utils/supabase-client";
 import { useState, useEffect } from "react";
 import { Teacher } from "@utils/types/person";
 import { TeacherDB } from "@utils/types/database/person";
@@ -10,7 +10,7 @@ export function useTeacherOption(subjectGroupId: number) {
   useEffect(() => {
     supabase
       .from<TeacherDB>("teacher")
-      .select("id, teacher_id, people:person(*), SubjectGroup:subject_group(*)")
+      .select("id, teacher_id, person(*), subject_group(*)")
       .match({ subject_group: subjectGroupId })
       .then((res) => {
         if (res.error) {

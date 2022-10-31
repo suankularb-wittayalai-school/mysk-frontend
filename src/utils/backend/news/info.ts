@@ -5,15 +5,15 @@ import { PostgrestError } from "@supabase/supabase-js";
 import { db2InfoPage, dbInfo2NewsItem } from "@utils/backend/database";
 
 // Supabase
-import { supabase } from "@utils/supabaseClient";
+import { supabase } from "@utils/supabase-client";
 
 // Types
 import { InfoDB, InfoTable, NewsTable } from "@utils/types/database/news";
-import { BackendReturn } from "@utils/types/common";
+import { BackendDataReturn } from "@utils/types/common";
 import { InfoPage, NewsItemInfoNoDate } from "@utils/types/news";
 
 export async function getLandingFeed(): Promise<
-  BackendReturn<{ lastUpdated: string; content: NewsItemInfoNoDate[] }, null>
+  BackendDataReturn<{ lastUpdated: string; content: NewsItemInfoNoDate[] }, null>
 > {
   const { data: infos, error: infosError } = await getInfos();
 
@@ -31,7 +31,7 @@ export async function getLandingFeed(): Promise<
   };
 }
 
-export async function getInfos(): Promise<BackendReturn<NewsItemInfoNoDate[]>> {
+export async function getInfos(): Promise<BackendDataReturn<NewsItemInfoNoDate[]>> {
   const { data, error } = await supabase
     .from<InfoDB>("infos")
     .select(
@@ -60,7 +60,7 @@ export async function getAllInfoIDs(): Promise<number[]> {
 
 export async function getInfo(
   id: number
-): Promise<BackendReturn<InfoPage, null>> {
+): Promise<BackendDataReturn<InfoPage, null>> {
   const { data, error } = await supabase
     .from<InfoDB>("infos")
     .select(
@@ -135,7 +135,7 @@ export async function createInfo(form: {
   bodyEN: string;
   image: File | null;
   oldURL: string;
-}): Promise<BackendReturn<InfoTable[]>> {
+}): Promise<BackendDataReturn<InfoTable[]>> {
   const { data: news, error: newsError } = await supabase
     .from<NewsTable>("news")
     .insert({
@@ -191,7 +191,7 @@ export async function updateInfo(
     image: File | null;
     oldURL: string;
   }
-): Promise<BackendReturn<InfoTable[]>> {
+): Promise<BackendDataReturn<InfoTable[]>> {
   const { data: updatedInfo, error: updatedInfoError } = await supabase
     .from<InfoTable>("infos")
     .update({

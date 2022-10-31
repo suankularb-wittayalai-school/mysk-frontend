@@ -16,7 +16,7 @@ import CheckEmailDialog from "@components/dialogs/account/CheckEmail";
 import { useToggle } from "@utils/hooks/toggle";
 
 // Supabase
-import { supabase } from "@utils/supabaseClient";
+import { supabase } from "@utils/supabase-client";
 
 // Types
 import { DialogComponent } from "@utils/types/common";
@@ -56,7 +56,7 @@ const ForgotPasswordDialog: DialogComponent<{ inputEmail?: string }> = ({
         onSubmit={async () => {
           if (!email) return;
           toggleLoading();
-          const { data, error } = await supabase.auth.api.resetPasswordForEmail(
+          const { data, error } = await supabase.auth.resetPasswordForEmail(
             email
           );
           if (data) toggleShowCheckEmail();

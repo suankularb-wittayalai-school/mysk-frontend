@@ -5,25 +5,28 @@ import { PostgrestError, User } from "@supabase/supabase-js";
 
 // Backend
 import { createContact } from "@utils/backend/contact";
-import { db2Student, db2Teacher } from "@utils/backend/database";
+import { db2Student } from "@utils/backend/database";
+import { getTeacherFromUser } from "@utils/backend/person/teacher";
 
 // Supabase
-import { supabase } from "@utils/supabaseClient";
+import { supabase } from "@utils/supabase-client";
 
 // Types
-import { BackendReturn } from "@utils/types/common";
+import { BackendDataReturn } from "@utils/types/common";
 import { Person, Student, Teacher } from "@utils/types/person";
 import {
   PersonTable,
   StudentDB,
   StudentTable,
-  TeacherDB,
   TeacherTable,
 } from "@utils/types/database/person";
+import { Database } from "@utils/types/supabase";
 
 export async function createPerson(
   person: Person
-): Promise<{ data: PersonTable[] | null; error: PostgrestError | null }> {
+): Promise<
+  BackendDataReturn<Database["public"]["Tables"]["people"]["Row"], null>
+> {
   // create contacts
   const contacts = await Promise.all(
     person.contacts.map(async (contact) => await createContact(contact))
@@ -35,9 +38,7 @@ export async function createPerson(
     if (error) {
       console.error(error);
       return { data: null, error };
-    } else {
-      throw new Error("Unknown error");
-    }
+    } else throw new Error("Unknown error");
   }
 
   // map the created contact to id
@@ -46,7 +47,7 @@ export async function createPerson(
     .filter((id) => id !== undefined || id !== null);
 
   const { data: createdPerson, error: personCreationError } = await supabase
-    .from<PersonTable>("people")
+    .from("people")
     .insert({
       prefix_th: person.prefix.th,
       prefix_en: person.prefix["en-US"],
@@ -59,11 +60,16 @@ export async function createPerson(
       birthdate: person.birthdate,
       citizen_id: person.citizenID,
       contacts: contactIds as number[],
-    });
-  if (personCreationError || !person) {
+    })
+    .select("*")
+    .limit(1)
+    .single();
+
+  if (personCreationError) {
     console.error(personCreationError);
     return { data: null, error: personCreationError };
   }
+
   return { data: createdPerson, error: null };
 }
 
@@ -84,7 +90,7 @@ export async function setupPerson(
     subjectGroup: number;
   },
   person: Student | Teacher
-): Promise<BackendReturn<PersonTable, null>> {
+): Promise<BackendDataReturn<PersonTable, null>> {
   // Get person ID
   let personID = 0;
 
@@ -188,7 +194,7 @@ export async function setupPerson(
 export async function getUserFromReq(
   req: IncomingMessage & { cookies: NextApiRequestCookies },
   res?: ServerResponse
-): Promise<BackendReturn<Student | Teacher, null>> {
+): Promise<BackendDataReturn<Student | Teacher, null>> {
   const { user, error } = await supabase.auth.api.getUserByCookie(req, res);
 
   if (error) {
@@ -201,11 +207,11 @@ export async function getUserFromReq(
 
 export async function getPersonFromUser(
   user: User
-): Promise<BackendReturn<Student | Teacher, null>> {
+): Promise<BackendDataReturn<Student | Teacher, null>> {
   if (user?.user_metadata.role == "student") {
     const { data: student, error: studentError } = await supabase
       .from<StudentDB>("student")
-      .select("id, std_id, people:person(*)")
+      .select("id, std_id, person(*)")
       .match({ id: user?.user_metadata.student })
       .single();
 
@@ -218,26 +224,8 @@ export async function getPersonFromUser(
       data: await db2Student(student as StudentDB),
       error: null,
     };
-  } else if (user?.user_metadata.role == "teacher") {
-    const { data: teacher, error: teacherError } = await supabase
-      .from<TeacherDB>("teacher")
-      .select("id, teacher_id, people:person(*), SubjectGroup:subject_group(*)")
-      .match({ id: user?.user_metadata.teacher })
-      .single();
-
-    if (teacherError) {
-      console.error(teacherError);
-      return { data: null, error: teacherError };
-    }
-
-    return {
-      data: {
-        ...(await db2Teacher(teacher as TeacherDB)),
-        isAdmin: user.user_metadata.isAdmin,
-      },
-      error: null,
-    };
-  }
+  } else if (user?.user_metadata.role == "teacher")
+    return getTeacherFromUser(user);
 
   return { data: null, error: { message: "invalid role." } };
 }

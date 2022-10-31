@@ -12,7 +12,6 @@ import { animationTransition } from "@utils/animations/config";
 // Types
 import { Role } from "@utils/types/person";
 import { SchedulePeriod } from "@utils/types/schedule";
-import { setgroups } from "process";
 
 const ElectivePeriod = ({
   isInSession,

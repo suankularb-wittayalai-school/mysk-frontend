@@ -49,7 +49,7 @@ import { createTitleStr } from "@utils/helpers/title";
 import { useToggle } from "@utils/hooks/toggle";
 
 // Supabase
-import { supabase } from "@utils/supabaseClient";
+import { supabase } from "@utils/supabase-client";
 
 // Types
 import { LangCode } from "@utils/types/common";

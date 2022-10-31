@@ -12,7 +12,4 @@ export type Class = {
   subjects: SubjectListItem[];
 };
 
-export type ClassWNumber = {
-  id: Class["id"];
-  number: Class["number"];
-};
+export type ClassWNumber = Pick<Class, "id" | "number">;

@@ -1,4 +1,4 @@
-import { supabase } from "@utils/supabaseClient";
+import { supabase } from "@utils/supabase-client";
 import { SubjectGroup } from "@utils/types/subject";
 import { useState, useEffect } from "react";
 

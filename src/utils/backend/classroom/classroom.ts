@@ -13,13 +13,13 @@ import { db2Class, db2Student } from "@utils/backend/database";
 import { getCurrentAcedemicYear } from "@utils/helpers/date";
 
 // Supabase
-import { supabase } from "@utils/supabaseClient";
+import { supabase } from "@utils/supabase-client";
 
 // Types
 import { ClassroomDB, ClassroomTable } from "@utils/types/database/class";
 import { StudentDB } from "@utils/types/database/person";
 import { Class } from "@utils/types/class";
-import { BackendReturn } from "@utils/types/common";
+import { BackendDataReturn } from "@utils/types/common";
 import { StudentListItem } from "@utils/types/person";
 
 export async function createClassroom(
@@ -229,7 +229,7 @@ export async function addContactToClassroom(
 export async function getClassNumberFromReq(
   req: IncomingMessage & { cookies: NextApiRequestCookies },
   res?: ServerResponse
-): Promise<BackendReturn<number, null>> {
+): Promise<BackendDataReturn<number, null>> {
   const { user, error: userError } = await supabase.auth.api.getUserByCookie(
     req,
     res
@@ -260,7 +260,7 @@ export async function getClassNumberFromReq(
 
 export async function getClassIDFromNumber(
   number: number
-): Promise<BackendReturn<number, null>> {
+): Promise<BackendDataReturn<number, null>> {
   const { data: classroom, error: classroomSelectionError } = await supabase
     .from<ClassroomTable>("classroom")
     .select("id")
@@ -291,7 +291,7 @@ export async function getAllClassNumbers(): Promise<number[]> {
 
 export async function getClassStudentList(
   classID: number
-): Promise<BackendReturn<StudentListItem[]>> {
+): Promise<BackendDataReturn<StudentListItem[]>> {
   const { data: classItem, error: classError } = await supabase
     .from<ClassroomDB>("classroom")
     .select("students")
@@ -306,7 +306,7 @@ export async function getClassStudentList(
 
   const { data, error } = await supabase
     .from<StudentDB>("student")
-    .select("id, std_id, people:person(*)")
+    .select("id, std_id, person(*)")
     .in("id", (classItem as ClassroomDB).students);
 
   if (error) {

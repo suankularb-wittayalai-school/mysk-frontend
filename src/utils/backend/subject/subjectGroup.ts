@@ -1,13 +1,13 @@
 // Supabase
-import { supabase } from "@utils/supabaseClient";
+import { supabase } from "@utils/supabase-client";
 
 // Types
-import { BackendReturn } from "@utils/types/common";
+import { BackendDataReturn } from "@utils/types/common";
 import { SubjectGroupDB } from "@utils/types/database/subject";
 import { SubjectGroup } from "@utils/types/subject";
 
 export async function getSubjectGroups(): Promise<
-  BackendReturn<SubjectGroup[]>
+  BackendDataReturn<SubjectGroup[]>
 > {
   const { data, error } = await supabase.from("SubjectGroup").select("*");
   if (error) return { data: [], error };

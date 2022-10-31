@@ -12,6 +12,8 @@ import { useEffect, useReducer, useState } from "react";
 
 import { useQuery, useQueryClient } from "react-query";
 
+import { withPageAuth } from "@supabase/auth-helpers-nextjs";
+
 // SK Components
 import {
   Actions,
@@ -40,7 +42,6 @@ import SubjectCard from "@components/SubjectCard";
 import { animationTransition } from "@utils/animations/config";
 
 // Backend
-import { getTeacherIDFromReq } from "@utils/backend/person/teacher";
 import { getSchedule } from "@utils/backend/schedule/schedule";
 import { getTeachingSubjects } from "@utils/backend/subject/subject";
 
@@ -52,7 +53,6 @@ import { ClassWNumber } from "@utils/types/class";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
-import { User, withPageAuth } from "@supabase/auth-helpers-nextjs";
 
 const ScheduleSection = ({
   schedule,

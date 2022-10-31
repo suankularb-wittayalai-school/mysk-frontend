@@ -14,7 +14,7 @@ import { Teacher } from "@utils/types/person";
 import { TeacherDB } from "@utils/types/database/person";
 
 // Supabase
-import { supabase } from "@utils/supabaseClient";
+import { supabase } from "@utils/supabase-client";
 
 export function useTeacherAccount(): [Teacher | null, User | null] {
   const user = useUser();
@@ -24,7 +24,7 @@ export function useTeacherAccount(): [Teacher | null, User | null] {
     if (!user || user.user_metadata.role != "teacher") return;
     supabase
       .from<TeacherDB>("teacher")
-      .select("id, teacher_id, people:person(*), SubjectGroup:subject_group(*)")
+      .select("id, teacher_id, person(*), subject_group(*)")
       .eq("id", user.user_metadata.teacher)
       .single()
       .then((res) => {

@@ -17,7 +17,7 @@ import { db2Class } from "@utils/backend/database";
 import { getCurrentAcedemicYear } from "@utils/helpers/date";
 
 // Supabase
-import { supabase } from "@utils/supabaseClient";
+import { supabase } from "@utils/supabase-client";
 
 // Types
 import { ClassroomDB } from "@utils/types/database/class";

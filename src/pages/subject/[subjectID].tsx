@@ -63,7 +63,7 @@ import {
 import { db2Subject, db2SubjectListItem } from "@utils/backend/database";
 
 // Supbase
-import { supabase } from "@utils/supabaseClient";
+import { supabase } from "@utils/supabase-client";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
@@ -863,7 +863,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   const { data: roomSubjects, error: roomSubjectsError } = await supabase
     .from<RoomSubjectDB>("room_subjects")
-    .select("*, subject:subject(*), classroom:class(*)")
+    .select("*, subject:subject(*), class(*)")
     .eq("subject", params?.subjectID as string);
 
   if (dbSubjectError) console.error(dbSubjectError);

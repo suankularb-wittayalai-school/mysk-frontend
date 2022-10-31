@@ -2,7 +2,7 @@
 import { arePeriodsOverlapping } from "@utils/helpers/schedule";
 
 // Supabase
-import { supabase } from "@utils/supabaseClient";
+import { supabase } from "@utils/supabase-client";
 
 // Types
 import { PeriodContentItem } from "@utils/types/schedule";

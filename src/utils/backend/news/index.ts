@@ -3,13 +3,13 @@ import { getInfos } from "@utils/backend/news/info";
 import { getForms } from "@utils/backend/news/form";
 
 // Types
-import { BackendReturn } from "@utils/types/common";
+import { BackendDataReturn } from "@utils/types/common";
 import { NewsItemNoDate } from "@utils/types/news";
 import { Role } from "@utils/types/person";
 
 export async function getNewsFeed(
   role: Role | "admin"
-): Promise<BackendReturn<NewsItemNoDate[]>> {
+): Promise<BackendDataReturn<NewsItemNoDate[]>> {
   const unsortedFeed =
     role == "admin"
       ? // Admin feed includes everything

@@ -5,16 +5,16 @@ import {
   FormSubmissionTable,
   FormTable,
 } from "@utils/types/database/news";
-import { BackendReturn } from "@utils/types/common";
+import { BackendDataReturn } from "@utils/types/common";
 import { FormField, FormPage, NewsItemFormNoDate } from "@utils/types/news";
 
 // Converters
 import { db2FormPage, dbForm2NewsItem } from "../database";
 
 // Supabase
-import { supabase } from "@utils/supabaseClient";
+import { supabase } from "@utils/supabase-client";
 
-export async function getForms(): Promise<BackendReturn<NewsItemFormNoDate[]>> {
+export async function getForms(): Promise<BackendDataReturn<NewsItemFormNoDate[]>> {
   const { data, error } = await supabase
     .from<FormDB>("forms")
     .select(
@@ -32,7 +32,7 @@ export async function getForms(): Promise<BackendReturn<NewsItemFormNoDate[]>> {
 
 export async function getForm(
   formID: number
-): Promise<BackendReturn<FormPage, null>> {
+): Promise<BackendDataReturn<FormPage, null>> {
   const { data, error } = await supabase
     .from<FormDB>("forms")
     .select(
@@ -54,7 +54,7 @@ export async function sendForm(
   formID: number,
   formAnswer: { id: number; value: string | number | string[] | File | null }[],
   sendAs?: number
-): Promise<BackendReturn<FormFieldValueTable[]>> {
+): Promise<BackendDataReturn<FormFieldValueTable[]>> {
   // create submission in form_submissions
   const { data, error } = await supabase
     .from<FormSubmissionTable>("form_submissions")
@@ -87,7 +87,7 @@ export async function sendForm(
 async function sendFormAnswer(
   formAnswer: { id: number; value: string | number | string[] | File | null },
   submissionID: number
-): Promise<BackendReturn<FormFieldValueTable[] | FormFieldValueTable | null>> {
+): Promise<BackendDataReturn<FormFieldValueTable[] | FormFieldValueTable | null>> {
   switch (typeof formAnswer.value) {
     // file, or array
     case "object":
@@ -166,7 +166,7 @@ export async function createForm(form: {
   image: File | null;
   oldURL: string;
   fields: Omit<FormField, "id">[];
-}): Promise<BackendReturn<FormTable, null>> {
+}): Promise<BackendDataReturn<FormTable, null>> {
   // TODO: Push created form to Supabase
 
   return {

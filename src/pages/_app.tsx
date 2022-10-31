@@ -41,6 +41,9 @@ import PageLoadDim from "@components/PageLoadDim";
 import ErrorBoundary from "@components/error/ErrorBoundary";
 import PageFallback from "@components/error/PageFallback";
 
+// Types
+import { Database } from "@utils/types/supabase";
+
 const App = ({
   Component,
   pageProps,
@@ -50,7 +53,9 @@ const App = ({
   };
 }) => {
   // Supabase client
-  const [supabaseClient] = useState(() => createBrowserSupabaseClient());
+  const [supabaseClient] = useState(() =>
+    createBrowserSupabaseClient<Database>()
+  );
 
   // Query client
   const [queryClient] = useState(() => new QueryClient());

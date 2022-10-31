@@ -1,7 +1,7 @@
 import { PostgrestError } from "@supabase/supabase-js";
 import { Contact } from "@utils/types/contact";
 import { ContactDB } from "@utils/types/database/contact";
-import { supabase } from "@utils/supabaseClient";
+import { supabase } from "@utils/supabase-client";
 
 export async function createContact(
   contact: Contact

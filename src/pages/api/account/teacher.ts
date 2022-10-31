@@ -2,12 +2,12 @@
 import { NextApiHandler } from "next";
 
 // Backend
-import { supabaseBackend } from "@utils/supabaseBackend";
+import { supabase } from "@utils/supabase-backend";
 
 const handler: NextApiHandler = async (req, res) => {
   // if method is post then create new teacher account
   if (req.method === "POST") {
-    const { data: user, error } = await supabaseBackend.auth.api.createUser({
+    const { data: user, error } = await supabase.auth.admin.createUser({
       email: req.body.email,
       password: req.body.password,
       user_metadata: {

@@ -32,7 +32,7 @@ import { Subject, SubjectListItem } from "@utils/types/subject";
 import { RoomSubjectTable } from "@utils/types/database/subject";
 
 // Supabase
-import { supabase } from "@utils/supabaseClient";
+import { supabase } from "@utils/supabase-client";
 
 const ConnectSubjectDialog = ({
   show,

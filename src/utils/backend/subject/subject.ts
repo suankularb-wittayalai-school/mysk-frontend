@@ -1,5 +1,5 @@
 import { PostgrestError } from "@supabase/supabase-js";
-import { supabase } from "@utils/supabaseClient";
+import { supabase } from "@utils/supabase-client";
 import { ClassWNumber } from "@utils/types/class";
 import { RoomSubjectDB, SubjectTable } from "@utils/types/database/subject";
 import {
@@ -94,7 +94,7 @@ export async function getTeachingSubjects(
 ): Promise<(SubjectWNameAndCode & { classes: ClassWNumber[] })[]> {
   const { data: roomSubjects, error } = await supabase
     .from<RoomSubjectDB>("room_subjects")
-    .select("*, subject:subject(*), classroom:class(*)")
+    .select("*, subject:subject(*), class(*)")
     .contains("teacher", [teacherID]);
 
   if (error || !roomSubjects) {

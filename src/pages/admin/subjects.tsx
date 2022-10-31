@@ -39,7 +39,7 @@ import { db2Subject } from "@utils/backend/database";
 import { deleteSubject, importSubjects } from "@utils/backend/subject/subject";
 
 // Supabase
-import { supabase } from "@utils/supabaseClient";
+import { supabase } from "@utils/supabase-client";
 
 // Types
 import { LangCode } from "@utils/types/common";

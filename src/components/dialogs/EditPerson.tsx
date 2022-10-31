@@ -4,7 +4,7 @@ import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
 
 // Supabase client
-import { supabase } from "@utils/supabaseClient";
+import { supabase } from "@utils/supabase-client";
 
 // SK Components
 import {

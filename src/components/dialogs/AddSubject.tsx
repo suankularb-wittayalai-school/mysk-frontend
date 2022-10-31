@@ -23,7 +23,7 @@ import { RoomSubjectTable } from "@utils/types/database/subject";
 import { Teacher } from "@utils/types/person";
 
 // Supabase
-import { supabase } from "@utils/supabaseClient";
+import { supabase } from "@utils/supabase-client";
 
 const AddSubjectDialog = ({
   show,

@@ -1,5 +1,13 @@
 // External libraries
-import { User } from "@supabase/supabase-js";
+import { createClient, User } from "@supabase/supabase-js";
+
+// Types
+import { Database } from "@utils/types/supabase";
+
+const supabase = createClient<Database>(
+  process.env.NEXT_PUBLIC_SUPABASE_URL as string,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string
+);
 
 export async function changePassword(
   form: {
@@ -9,26 +17,22 @@ export async function changePassword(
   },
   user: User
 ) {
-  if (form.originalPassword === form.newPassword) return false;
-
-  const { error } = await supabase.auth.signIn({
-    email: user.email,
+  const { error: logInError } = await supabase.auth.signInWithPassword({
+    email: user.email as string,
     password: form.originalPassword,
   });
 
-  if (error) {
-    console.error(error);
-    return false;
+  if (logInError) {
+    console.error(logInError);
+    return;
   }
 
-  const { error: passwordUpdatingError } = await supabase.auth.update({
+  const { error: passwordUpdatingError } = await supabase.auth.updateUser({
     password: form.newPassword,
   });
 
   if (passwordUpdatingError) {
     console.error(passwordUpdatingError);
-    return false;
+    return;
   }
-
-  return true;
 }

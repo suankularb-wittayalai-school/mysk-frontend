@@ -8,11 +8,11 @@ import { createPerson } from "@utils/backend/person/person";
 import { getCurrentAcedemicYear } from "@utils/helpers/date";
 
 // Supabase
-import { supabase } from "@utils/supabaseClient";
+import { supabase } from "@utils/supabase-client";
 
 // Types
 import { ClassWNumber } from "@utils/types/class";
-import { BackendReturn } from "@utils/types/common";
+import { BackendDataReturn } from "@utils/types/common";
 import { ImportedStudentData, Student } from "@utils/types/person";
 import { ClassroomDB } from "@utils/types/database/class";
 import {
@@ -170,7 +170,7 @@ export async function importStudents(data: ImportedStudentData[]) {
 
 export async function getClassOfStudent(
   studentDBID: number
-): Promise<BackendReturn<ClassWNumber, null>> {
+): Promise<BackendDataReturn<ClassWNumber, null>> {
   const { data, error } = await supabase
     .from<ClassroomDB>("classroom")
     .select("id, number")

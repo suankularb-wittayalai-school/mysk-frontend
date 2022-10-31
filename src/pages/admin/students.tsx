@@ -47,7 +47,7 @@ import { createTitleStr } from "@utils/helpers/title";
 import { useToggle } from "@utils/hooks/toggle";
 
 // Supabase
-import { supabase } from "@utils/supabaseClient";
+import { supabase } from "@utils/supabase-client";
 
 // Types
 import { StudentDB } from "@utils/types/database/person";
@@ -291,7 +291,7 @@ const Students: NextPage<{ students: Student[] }> = ({
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   const { data, error } = await supabase
     .from<StudentDB>("student")
-    .select(`id, std_id, people:person(*)`);
+    .select(`id, std_id, person(*)`);
 
   if (error) console.error(error);
   if (!data) return { props: { students: [] } };

@@ -22,7 +22,7 @@ import {
 } from "@suankularb-components/react";
 
 // Supabase client
-import { supabase } from "@utils/supabaseClient";
+import { supabase } from "@utils/supabase-client";
 
 // Components
 import CopyButton from "@components/CopyButton";
@@ -302,7 +302,7 @@ const Teachers: NextPage<{ teachers: Teacher[] }> = ({
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   const { data, error } = await supabase
     .from<TeacherDB>("teacher")
-    .select("id, teacher_id, people:person(*), SubjectGroup:subject_group(*)");
+    .select("id, teacher_id, person(*), subject_group(*)");
 
   if (error) {
     console.error(error);

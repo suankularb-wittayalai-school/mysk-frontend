@@ -13,7 +13,7 @@ import {
 } from "@suankularb-components/react";
 
 // Supabase
-import { supabase } from "@utils/supabaseClient";
+import { supabase } from "@utils/supabase-client";
 
 // Types
 import { DialogProps } from "@utils/types/common";

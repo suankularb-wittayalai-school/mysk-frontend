@@ -17,7 +17,7 @@ import { db2Student } from "@utils/backend/database";
 import { nameJoiner } from "@utils/helpers/name";
 
 // Supabase
-import { supabase } from "@utils/supabaseClient";
+import { supabase } from "@utils/supabase-client";
 
 // Types
 import { DialogProps, LangCode } from "@utils/types/common";
@@ -39,7 +39,7 @@ const AddStudentDialog = ({
     if (studentID.length === 5) {
       supabase
         .from<StudentDB>("student")
-        .select("id, std_id, people:person(*)")
+        .select("id, std_id, person(*)")
         .match({ std_id: Number(studentID) })
         .limit(1)
         .single()
