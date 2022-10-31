@@ -91,7 +91,7 @@ const SubjectTable = ({
     fetchPreviousPage,
     hasNextPage,
     hasPreviousPage,
-  } = useInfiniteQuery("subjects", getSubjects, {
+  } = useInfiniteQuery(["subjects", globalFilter], getSubjects, {
     getNextPageParam: (lastPage) => {
       if (lastPage.length < 20) return undefined;
       // get current page number from total count and page size
@@ -180,20 +180,15 @@ const SubjectTable = ({
   const data = useMemo(
     () =>
       tableData
-        ? tableData.pages
-            .flat()
-            .map((subject, idx) => ({
-              idx,
-              code: getLocaleString(subject.code, locale),
-              name: getLocaleObj(subject.name, locale).name,
-              teachers: subject.teachers,
-              coTeachers: subject.coTeachers,
-              year: getLocaleYear(locale, subject.year).toString(),
-              semester: subject.semester,
-            }))
-            .filter((subject) =>
-              subject.name.toLowerCase().includes(globalFilter.toLowerCase())
-            )
+        ? tableData.pages.flat().map((subject, idx) => ({
+            idx,
+            code: getLocaleString(subject.code, locale),
+            name: getLocaleObj(subject.name, locale).name,
+            teachers: subject.teachers,
+            coTeachers: subject.coTeachers,
+            year: getLocaleYear(locale, subject.year).toString(),
+            semester: subject.semester,
+          }))
         : [],
     [tableData, globalFilter]
   );
@@ -207,14 +202,12 @@ const SubjectTable = ({
     getFilteredRowModel: getFilteredRowModel(),
   });
 
-  console.log({ hasNextPage });
-
   return (
     <InfiniteScroll
       dataLength={data.length}
       next={() => {
         if (hasNextPage) fetchNextPage();
-        console.log("next");
+        // console.log("next");
       }}
       hasMore={hasNextPage ?? false}
       loader={<div className="text-center">Loading...</div>}
