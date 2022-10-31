@@ -8,6 +8,7 @@ import {
   SubjectName,
   SubjectWNameAndCode,
 } from "@utils/types/subject";
+import { db2Subject } from "../database";
 
 const subjectGroupMap = {
   "วิทยาศาสตร์ และเทคโนโลยี": 1,
@@ -28,6 +29,43 @@ const subjectTypeMap = {
   รายวิชาเลือก: "Elective Courses",
   กิจกรรมพัฒนาผู้เรียน: "Learner’s Development Activities",
 } as const;
+
+export async function getSubjects({
+  pageParam = 1,
+  pageSize = 20,
+  search = "",
+}: {
+  pageParam?: number;
+  pageSize?: number;
+  search?: string;
+}): Promise<Subject[]> {
+  let subjects: Subject[] = [];
+
+  const { data, error } = await supabase
+    .from<SubjectTable>("subject")
+    .select("*")
+    .order("code_th", { ascending: true })
+    .order("group", { ascending: true })
+    .order("semester", { ascending: true })
+    .order("year", { ascending: true })
+    .range((pageParam - 1) * pageSize, pageParam * pageSize - 1)
+    .filter("name_th", "ilike", `%${search}%`)
+    .filter("name_en", "ilike", `%${search}%`)
+    .filter("code_th", "ilike", `%${search}%`)
+    .filter("code_en", "ilike", `%${search}%`);
+
+  if (error) console.error(error);
+
+  if (data) {
+    subjects = await Promise.all(
+      data.map(async (subject) => await db2Subject(subject))
+    );
+    // .sort((a, b) => (a.code.th < b.code.th ? -1 : 1))
+    // .sort((a, b) => a.semester - b.semester)
+    // .sort((a, b) => a.year - b.year);
+  }
+  return subjects;
+}
 
 export async function deleteSubject(subject: Subject) {
   // Delete the syllabus if it exists

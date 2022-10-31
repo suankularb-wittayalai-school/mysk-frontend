@@ -36,7 +36,11 @@ import ImportDataDialog from "@components/dialogs/ImportData";
 
 // Backend
 import { db2Subject } from "@utils/backend/database";
-import { deleteSubject, importSubjects } from "@utils/backend/subject/subject";
+import {
+  deleteSubject,
+  getSubjects,
+  importSubjects,
+} from "@utils/backend/subject/subject";
 
 // Supabase
 import { supabase } from "@utils/supabaseClient";
@@ -54,6 +58,8 @@ import { createTitleStr } from "@utils/helpers/title";
 // Hooks
 import { useToggle } from "@utils/hooks/toggle";
 import { nameJoiner } from "@utils/helpers/name";
+import { useInfiniteQuery } from "react-query";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 const SubjectTable = ({
   subjects,
@@ -73,6 +79,31 @@ const SubjectTable = ({
 
   const [globalFilter, setGlobalFilter] = useState<string>("");
   useEffect(() => setGlobalFilter(query || ""), [query]);
+
+  const {
+    status,
+    data: tableData,
+    error,
+    isFetching,
+    isFetchingNextPage,
+    isFetchingPreviousPage,
+    fetchNextPage,
+    fetchPreviousPage,
+    hasNextPage,
+    hasPreviousPage,
+  } = useInfiniteQuery("subjects", getSubjects, {
+    getNextPageParam: (lastPage) => {
+      if (lastPage.length < 20) return undefined;
+      // get current page number from total count and page size
+      const currentPage = Math.floor(lastPage.length / 20);
+      return currentPage + 1; // next page number
+    },
+    initialData: {
+      pages: [subjects],
+      pageParams: [undefined],
+    },
+  });
+
   const columns = useMemo(
     () => [
       {
@@ -132,19 +163,41 @@ const SubjectTable = ({
     ],
     []
   );
+  // const data = useMemo(
+  //   () =>
+  //     subjects.map((subject, idx) => ({
+  //       idx,
+  //       code: getLocaleString(subject.code, locale),
+  //       name: getLocaleObj(subject.name, locale).name,
+  //       teachers: subject.teachers,
+  //       coTeachers: subject.coTeachers,
+  //       year: getLocaleYear(locale, subject.year).toString(),
+  //       semester: subject.semester,
+  //     })),
+  //   []
+  // );
+
   const data = useMemo(
     () =>
-      subjects.map((subject, idx) => ({
-        idx,
-        code: getLocaleString(subject.code, locale),
-        name: getLocaleObj(subject.name, locale).name,
-        teachers: subject.teachers,
-        coTeachers: subject.coTeachers,
-        year: getLocaleYear(locale, subject.year).toString(),
-        semester: subject.semester,
-      })),
-    []
+      tableData
+        ? tableData.pages
+            .flat()
+            .map((subject, idx) => ({
+              idx,
+              code: getLocaleString(subject.code, locale),
+              name: getLocaleObj(subject.name, locale).name,
+              teachers: subject.teachers,
+              coTeachers: subject.coTeachers,
+              year: getLocaleYear(locale, subject.year).toString(),
+              semester: subject.semester,
+            }))
+            .filter((subject) =>
+              subject.name.toLowerCase().includes(globalFilter.toLowerCase())
+            )
+        : [],
+    [tableData, globalFilter]
   );
+
   const { getHeaderGroups, getRowModel } = useReactTable({
     data,
     columns,
@@ -154,42 +207,56 @@ const SubjectTable = ({
     getFilteredRowModel: getFilteredRowModel(),
   });
 
+  console.log({ hasNextPage });
+
   return (
-    <Table width={800}>
-      <DataTableHeader
-        headerGroups={getHeaderGroups()}
-        endRow={<th className="w-2/12" />}
-      />
-      <DataTableBody
-        rowModel={getRowModel()}
-        endRow={(row) => (
-          <td>
-            <Actions align="center">
-              <Button
-                name={t("studentList.table.action.edit")}
-                type="text"
-                iconOnly
-                icon={<MaterialIcon icon="edit" />}
-                onClick={() => {
-                  setEditingIdx(row.idx);
-                  toggleShowEdit();
-                }}
-              />
-              <Button
-                type="text"
-                iconOnly
-                icon={<MaterialIcon icon="delete" />}
-                isDangerous
-                onClick={() => {
-                  setEditingIdx(row.idx);
-                  toggleShowConfDel();
-                }}
-              />
-            </Actions>
-          </td>
-        )}
-      />
-    </Table>
+    <InfiniteScroll
+      dataLength={data.length}
+      next={() => {
+        if (hasNextPage) fetchNextPage();
+        console.log("next");
+      }}
+      hasMore={hasNextPage ?? false}
+      loader={<div className="text-center">Loading...</div>}
+    >
+      <Table width={800}>
+        <DataTableHeader
+          headerGroups={getHeaderGroups()}
+          endRow={<th className="w-2/12" />}
+        />
+        <DataTableBody
+          rowModel={getRowModel()}
+          endRow={(row) => (
+            <td>
+              <Actions align="center">
+                <Button
+                  name={t("studentList.table.action.edit")}
+                  type="text"
+                  iconOnly
+                  icon={<MaterialIcon icon="edit" />}
+                  onClick={() => {
+                    setEditingIdx(row.idx);
+                    toggleShowEdit();
+                  }}
+                />
+                <Button
+                  type="text"
+                  iconOnly
+                  icon={<MaterialIcon icon="delete" />}
+                  isDangerous
+                  onClick={() => {
+                    setEditingIdx(row.idx);
+                    toggleShowConfDel();
+                  }}
+                />
+              </Actions>
+            </td>
+          )}
+        />
+      </Table>
+      {/* {isFetching && <div className="text-center">Loading...</div>}
+      {isFetchingNextPage && <div className="text-center">Loading More...</div>} */}
+    </InfiniteScroll>
   );
 };
 
@@ -316,26 +383,31 @@ const Subjects: NextPage<{ subjects: Subject[] }> = ({ subjects }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
-  let subjects: Subject[] = [];
+  // let subjects: Subject[] = [];
 
-  const { data, error } = await supabase
-    .from<SubjectTableType>("subject")
-    .select("*")
-    .order("code_th", { ascending: true })
-    .order("group", { ascending: true })
-    .order("semester", { ascending: true })
-    .order("year", { ascending: true });
+  // const { data, error } = await supabase
+  //   .from<SubjectTableType>("subject")
+  //   .select("*")
+  //   .order("code_th", { ascending: true })
+  //   .order("group", { ascending: true })
+  //   .order("semester", { ascending: true })
+  //   .order("year", { ascending: true });
 
-  if (error) console.error(error);
+  // if (error) console.error(error);
 
-  if (data) {
-    subjects = await Promise.all(
-      data.map(async (subject) => await db2Subject(subject))
-    );
-    // .sort((a, b) => (a.code.th < b.code.th ? -1 : 1))
-    // .sort((a, b) => a.semester - b.semester)
-    // .sort((a, b) => a.year - b.year);
-  }
+  // if (data) {
+  //   subjects = await Promise.all(
+  //     data.map(async (subject) => await db2Subject(subject))
+  //   );
+  //   // .sort((a, b) => (a.code.th < b.code.th ? -1 : 1))
+  //   // .sort((a, b) => a.semester - b.semester)
+  //   // .sort((a, b) => a.year - b.year);
+  // }
+  const subjects = await getSubjects({
+    pageParam: 1,
+    pageSize: 20,
+    search: "",
+  });
 
   return {
     props: {
