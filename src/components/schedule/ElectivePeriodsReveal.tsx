@@ -36,7 +36,6 @@ const ElectivePeriodsReveal = ({
     <motion.div
       className="mx-0 w-fit rounded-xl border-2 border-primary bg-surface-2 p-2
         text-on-surface-variant"
-      // onMouseOut={() => setShow(false)}
       layoutId={`sp-${schedulePeriod.id}-button`}
       transition={animationTransition}
     >

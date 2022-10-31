@@ -1,9 +1,7 @@
 // External libraries
 import { LayoutGroup, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
-
-// SK Components
-import { MaterialIcon } from "@suankularb-components/react";
+import { useState } from "react";
 
 // Components
 import ElectivePeriodsReveal from "@components/schedule/ElectivePeriodsReveal";
@@ -11,13 +9,9 @@ import ElectivePeriodsReveal from "@components/schedule/ElectivePeriodsReveal";
 // Animations
 import { animationTransition } from "@utils/animations/config";
 
-// Hooks
-import { useToggle } from "@utils/hooks/toggle";
-
 // Types
 import { Role } from "@utils/types/person";
 import { SchedulePeriod } from "@utils/types/schedule";
-import { useState } from "react";
 
 const ElectivePeriod = ({
   isInSession,
