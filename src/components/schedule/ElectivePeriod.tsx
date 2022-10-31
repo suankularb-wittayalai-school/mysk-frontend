@@ -17,6 +17,7 @@ import { useToggle } from "@utils/hooks/toggle";
 // Types
 import { Role } from "@utils/types/person";
 import { SchedulePeriod } from "@utils/types/schedule";
+import { useState } from "react";
 
 const ElectivePeriod = ({
   isInSession,
@@ -36,7 +37,7 @@ const ElectivePeriod = ({
   const { t } = useTranslation("schedule");
 
   // Dialog control
-  const [showPeriods, toggleShowPeriods] = useToggle();
+  const [showPeriods, setShowPeriods] = useState<boolean>(false);
 
   return (
     <LayoutGroup>
@@ -44,16 +45,12 @@ const ElectivePeriod = ({
         <motion.button
           className={[
             `group relative h-[3.75rem] w-full rounded-lg
-              text-left font-display text-xl font-medium leading-none
-              before:pointer-events-none before:absolute before:inset-0
-              before:rounded-xl before:transition-[background-color]
-              hover:before:bg-on-primary-translucent-08
-              hover:before:transition-none`,
+              text-left font-display text-xl font-medium leading-none`,
             isInSession
               ? "bg-tertiary-translucent-12 text-on-tertiary-container shadow"
               : "bg-surface-2 text-on-surface-variant",
           ].join(" ")}
-          onClick={toggleShowPeriods}
+          onMouseEnter={() => setShowPeriods(true)}
           layoutId={`sp-${schedulePeriod.id}-button`}
           transition={animationTransition}
         >
@@ -65,30 +62,15 @@ const ElectivePeriod = ({
               {t("schedule.elective")}
             </motion.span>
           </div>
-          <div
-            className="pointer-events-none absolute top-0 z-30 h-full w-full
-              rounded-lg border-2 border-primary bg-secondary-translucent-12
-              opacity-0 transition-[opacity] group-hover:opacity-100
-              group-focus:opacity-100"
-          >
-            <div
-              className="primary pointer-events-auto absolute top-0 left-1/2
-                -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-surface
-                p-1 text-xl shadow transition-[opacity] hover:transition-none
-                focus:opacity-95 focus:transition-none"
-            >
-              <MaterialIcon icon="open_in_full" allowCustomSize />
-            </div>
-          </div>
         </motion.button>
       ) : (
         <ElectivePeriodsReveal
-        schedulePeriod={schedulePeriod}
-        periodWidth={periodWidth}
-        day={day}
+          schedulePeriod={schedulePeriod}
+          periodWidth={periodWidth}
+          day={day}
           role={role}
           allowEdit={allowEdit}
-          toggleShow={toggleShowPeriods}
+          setShow={setShowPeriods}
         />
       )}
     </LayoutGroup>

@@ -21,14 +21,14 @@ const ElectivePeriodsReveal = ({
   day,
   role,
   allowEdit,
-  toggleShow,
+  setShow,
 }: {
   schedulePeriod: SchedulePeriodType;
   periodWidth: number;
   day: Day;
   role: Role;
   allowEdit?: boolean;
-  toggleShow: () => void;
+  setShow: (value: boolean) => void;
 }): JSX.Element => {
   const { t } = useTranslation("schedule");
 
@@ -36,6 +36,7 @@ const ElectivePeriodsReveal = ({
     <motion.div
       className="mx-0 w-fit rounded-xl border-2 border-primary bg-surface-2 p-2
         text-on-surface-variant"
+      // onMouseOut={() => setShow(false)}
       layoutId={`sp-${schedulePeriod.id}-button`}
       transition={animationTransition}
     >
@@ -71,7 +72,7 @@ const ElectivePeriodsReveal = ({
         <Button
           label={t("schedule.electiveReveal.action.close")}
           type="text"
-          onClick={toggleShow}
+          onClick={() => setShow(false)}
         />
       </Actions>
     </motion.div>
