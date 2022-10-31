@@ -51,6 +51,9 @@ const NewsPageWrapper = ({
         <meta property="og:type" content="news" />
         <meta property="og:url" content={`/news/info/${news.id}`} />
         <meta property="og:image" content={news.image} />
+        <meta property="og:description" content={news.content.description[locale]} />
+        <meta property="og:locale" content={locale} />
+        <meta property="og:site_name" content="MySK" />
       </Head>
       <main className="content-layout">
         <Title
