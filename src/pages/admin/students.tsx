@@ -305,14 +305,23 @@ const Students: NextPage<{ students: Student[] }> = ({
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   const { data, error } = await supabase
     .from<StudentDB>("student")
-    .select(`id, std_id, people:person(*)`);
+    .select(`id, std_id, people:person(*)`)
+    .order("std_id", { ascending: false });
 
   if (error) console.error(error);
   if (!data) return { props: { students: [] } };
 
   const students: Student[] = (
     await Promise.all(data.map(async (student) => await db2Student(student)))
-  ).sort((a, b) => (a.studentID < b.studentID ? -1 : 1));
+  )
+    // sort by class then class number
+    .sort((a, b) => {
+      if (a.class === b.class) {
+        // accending order
+        return a.classNo - b.classNo;
+      }
+      return a.class.number - b.class.number;
+    });
 
   return {
     props: {

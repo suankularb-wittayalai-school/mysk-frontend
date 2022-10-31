@@ -203,5 +203,8 @@ export async function importStudents(data: ImportedStudentData[]) {
   // sequentially create students
   for (let i = 0; i < students.length; i++) {
     await createStudent(students[i].person, students[i].email);
+    if (i % 10 === 0) {
+      console.log(i);
+    }
   }
 }
