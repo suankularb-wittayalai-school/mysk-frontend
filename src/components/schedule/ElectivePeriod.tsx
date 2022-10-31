@@ -12,6 +12,7 @@ import { animationTransition } from "@utils/animations/config";
 // Types
 import { Role } from "@utils/types/person";
 import { SchedulePeriod } from "@utils/types/schedule";
+import { setgroups } from "process";
 
 const ElectivePeriod = ({
   isInSession,
@@ -45,6 +46,7 @@ const ElectivePeriod = ({
               : "bg-surface-2 text-on-surface-variant",
           ].join(" ")}
           onMouseEnter={() => setShowPeriods(true)}
+          onClick={() => setShowPeriods(true)}
           layoutId={`sp-${schedulePeriod.id}-button`}
           transition={animationTransition}
         >
