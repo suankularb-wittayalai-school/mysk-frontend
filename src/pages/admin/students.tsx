@@ -205,6 +205,18 @@ const Students: NextPage<{ students: Student[] }> = ({
               onChange={setQuery}
             />
             <Actions className="md:col-span-2">
+              {/* temporary button to delete all existing student */}
+              {/* <Button
+                label="Delete all students"
+                onClick={() => {
+                  // run deleteStudent on all of the entries
+                  students.forEach((student) => {
+                    deleteStudent(student);
+                  });
+                }}
+                type="text"
+                isDangerous
+              /> */}
               <Button
                 label={t("common.action.import")}
                 type="outlined"
@@ -237,6 +249,7 @@ const Students: NextPage<{ students: Student[] }> = ({
         onClose={() => setShowImport(false)}
         onSubmit={async (e: ImportedStudentData[]) => {
           await importStudents(e);
+          // console.log(e);
           setShowImport(false);
           router.replace(router.asPath);
         }}
@@ -251,7 +264,8 @@ const Students: NextPage<{ students: Student[] }> = ({
           { name: "birthdate", type: "date (YYYY-MM-DD) (in AD)" },
           { name: "citizen_id", type: "numeric (13-digit)" },
           { name: "student_id", type: "numeric (5-digit)" },
-          { name: "class_number", type: "numeric (3-digit)" },
+          { name: "class", type: "numeric (3-digit)" },
+          { name: "class_number", type: "number" },
           { name: "email", type: "email" },
         ]}
       />

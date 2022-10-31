@@ -72,6 +72,7 @@ export type ImportedStudentData = {
   birthdate: string;
   citizen_id: number;
   student_id: number;
+  class: number;
   class_number: number;
   email: string;
 };
