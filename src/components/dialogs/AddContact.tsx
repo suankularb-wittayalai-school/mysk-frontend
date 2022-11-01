@@ -1,4 +1,4 @@
-// Modules
+// External libraries
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { InputHTMLAttributes, useEffect, useState } from "react";

@@ -1,4 +1,4 @@
-// Modules
+// External libraries
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";

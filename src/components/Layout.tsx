@@ -1,4 +1,4 @@
-// Modules
+// External libraries
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 
 import Link from "next/link";

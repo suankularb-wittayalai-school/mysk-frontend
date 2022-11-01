@@ -1,4 +1,4 @@
-// Modules
+// External libraries
 import { PostgrestError } from "@supabase/supabase-js";
 
 // Converters

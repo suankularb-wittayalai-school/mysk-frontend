@@ -1,4 +1,4 @@
-// Modules
+// External libraries
 import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";

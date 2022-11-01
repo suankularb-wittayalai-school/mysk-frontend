@@ -1,4 +1,4 @@
-// Modules
+// External libraries
 import { parse } from "csv-parse";
 import { Trans, useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";

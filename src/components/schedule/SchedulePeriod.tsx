@@ -1,4 +1,4 @@
-// Modules
+// External libraries
 import { motion } from "framer-motion";
 
 // Components

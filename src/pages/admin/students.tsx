@@ -1,4 +1,4 @@
-// Modules
+// External libraries
 import type { GetServerSideProps, NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";

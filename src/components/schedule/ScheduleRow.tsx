@@ -1,4 +1,4 @@
-// Modules
+// External libraries
 import { setDay } from "date-fns";
 import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";

@@ -1,4 +1,4 @@
-// Modules
+// External libraries
 import { setDay } from "date-fns";
 
 import { AnimatePresence, LayoutGroup } from "framer-motion";

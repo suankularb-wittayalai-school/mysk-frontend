@@ -1,4 +1,4 @@
-// Modules
+// External libraries
 import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import gfm from "remark-gfm";

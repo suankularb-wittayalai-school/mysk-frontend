@@ -1,4 +1,4 @@
-// Modules
+// External libraries
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useRouter } from "next/router";

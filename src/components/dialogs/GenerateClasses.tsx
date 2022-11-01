@@ -1,4 +1,4 @@
-// Modules
+// External libraries
 import { Trans, useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
 

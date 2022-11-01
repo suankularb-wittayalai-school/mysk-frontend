@@ -1,4 +1,4 @@
-// Modules
+// External libraries
 import { NextApiHandler } from "next";
 
 // Backend
