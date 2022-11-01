@@ -11,7 +11,12 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { User, withPageAuth } from "@supabase/auth-helpers-nextjs";
 
 // SK Components
-import { Actions, Button } from "@suankularb-components/react";
+import {
+  Actions,
+  Button,
+  LayoutGridCols,
+  Section,
+} from "@suankularb-components/react";
 
 // Components
 import FormField from "@components/news/FormField";
@@ -100,16 +105,18 @@ const FormPage: NextPage<{ formPage: FormPageType; personID: number }> = ({
         </title>
       </Head>
       <NewsPageWrapper news={formPage}>
-        <section className="mt-12 flex flex-col items-center">
-          <div className="w-full sm:w-1/2 md:w-1/3">
-            {formPage.content.fields.map((field) => (
-              <FormField
-                key={field.id}
-                field={field}
-                onChange={(e) => updateForm(e, field)}
-              />
-            ))}
-          </div>
+        <Section className="mt-6">
+          <LayoutGridCols cols={3}>
+            <div className="md:col-start-2">
+              {formPage.content.fields.map((field) => (
+                <FormField
+                  key={field.id}
+                  field={field}
+                  onChange={(e) => updateForm(e, field)}
+                />
+              ))}
+            </div>
+          </LayoutGridCols>
           <Actions className="w-full">
             <Button
               label={t("pageAction.form.submit")}
@@ -118,7 +125,7 @@ const FormPage: NextPage<{ formPage: FormPageType; personID: number }> = ({
               disabled={!validate()}
             />
           </Actions>
-        </section>
+        </Section>
       </NewsPageWrapper>
     </>
   );
@@ -128,8 +135,6 @@ export const getServerSideProps: GetServerSideProps = withPageAuth({
   async getServerSideProps({ locale, params }, supabase) {
     const { data: user } = await supabase.auth.getUser();
     const { data: personID } = await getPersonIDFromUser(user.user as User);
-
-    console.log({ personID });
 
     if (!params?.formID) return { notFound: true };
 
