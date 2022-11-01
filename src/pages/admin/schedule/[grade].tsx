@@ -95,6 +95,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       ...(await serverSideTranslations(locale as LangCode, [
         "common",
         "admin",
+        "schedule",
       ])),
       grade,
       schedulesThisGrade,
