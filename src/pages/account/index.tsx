@@ -347,7 +347,7 @@ const AccountDetails: NextPage<{ user: Student | Teacher }> = ({ user }) => {
 export const getServerSideProps: GetServerSideProps = withPageAuth({
   async getServerSideProps({ locale }, supabase) {
     const { data: sbUser } = await supabase.auth.getUser();
-    const { data: user } = await getPersonFromUser(sbUser.user as User);
+    const { data: user } = await getPersonFromUser(supabase, sbUser.user as User);
     return {
       props: {
         ...(await serverSideTranslations(locale as LangCode, [

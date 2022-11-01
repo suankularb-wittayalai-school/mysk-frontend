@@ -8,8 +8,11 @@ import { db2InfoPage, dbInfo2NewsItem } from "@utils/backend/database";
 import { supabase } from "@utils/supabase-client";
 
 // Types
-import { InfoDB, InfoTable, NewsTable } from "@utils/types/database/news";
-import { BackendDataReturn, BackendReturn } from "@utils/types/common";
+import {
+  BackendDataReturn,
+  BackendReturn,
+  DatabaseClient,
+} from "@utils/types/common";
 import { InfoPage, NewsItemInfoNoDate } from "@utils/types/news";
 import { Database } from "@utils/types/supabase";
 
@@ -140,16 +143,19 @@ export async function uploadBanner(
   return { error: null };
 }
 
-export async function createInfo(form: {
-  titleTH: string;
-  titleEN: string;
-  descTH: string;
-  descEN: string;
-  bodyTH: string;
-  bodyEN: string;
-  image: File | null;
-  oldURL: string;
-}): Promise<
+export async function createInfo(
+  supabase: DatabaseClient,
+  form: {
+    titleTH: string;
+    titleEN: string;
+    descTH: string;
+    descEN: string;
+    bodyTH: string;
+    bodyEN: string;
+    image: File | null;
+    oldURL: string;
+  }
+): Promise<
   BackendDataReturn<Database["public"]["Tables"]["infos"]["Row"], null>
 > {
   const { data: news, error: newsError } = await supabase
@@ -203,6 +209,7 @@ export async function createInfo(form: {
 }
 
 export async function updateInfo(
+  supabase: DatabaseClient,
   id: number,
   form: {
     titleTH: string;

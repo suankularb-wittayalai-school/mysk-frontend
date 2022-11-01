@@ -50,8 +50,9 @@ import { useToggle } from "@utils/hooks/toggle";
 import { supabase } from "@utils/supabase-client";
 
 // Types
-import { LangCode } from "@utils/types/common";
+import { DatabaseClient, LangCode } from "@utils/types/common";
 import { ImportedStudentData, Student } from "@utils/types/person";
+import { withPageAuth } from "@supabase/auth-helpers-nextjs";
 
 const StudentTable = ({
   students,
@@ -284,26 +285,34 @@ const Students: NextPage<{ students: Student[] }> = ({
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
-  const { data, error } = await supabase.from("student").select("*, person(*)");
+export const getServerSideProps: GetServerSideProps = withPageAuth({
+  async getServerSideProps({ locale }, supabase) {
+    const { data, error } = await (supabase as DatabaseClient)
+      .from("student")
+      .select("*, person(*)");
 
-  if (error) console.error(error);
-  if (!data) return { props: { students: [] } };
+    if (error) console.error(error);
+    if (!data) return { props: { students: [] } };
 
-  const students: Student[] = (
-    await Promise.all(data.map(async (student) => await db2Student(student)))
-  ).sort((a, b) => (a.studentID < b.studentID ? -1 : 1));
+    const students: Student[] = (
+      await Promise.all(
+        data.map(async (student) => await db2Student(supabase, student))
+      )
+    )
+      .sort((a, b) => a.classNo - b.classNo)
+      .sort((a, b) => a.class.number - b.class.number);
 
-  return {
-    props: {
-      ...(await serverSideTranslations(locale as LangCode, [
-        "common",
-        "admin",
-        "account",
-      ])),
-      students,
-    },
-  };
-};
+    return {
+      props: {
+        ...(await serverSideTranslations(locale as LangCode, [
+          "common",
+          "admin",
+          "account",
+        ])),
+        students,
+      },
+    };
+  },
+});
 
 export default Students;

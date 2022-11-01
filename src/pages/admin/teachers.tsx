@@ -9,6 +9,8 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { useEffect, useMemo, useState } from "react";
 
+import { withPageAuth } from "@supabase/auth-helpers-nextjs";
+
 // SK Components
 import {
   Actions,
@@ -20,9 +22,6 @@ import {
   Table,
   Title,
 } from "@suankularb-components/react";
-
-// Supabase client
-import { supabase } from "@utils/supabase-client";
 
 // Components
 import CopyButton from "@components/CopyButton";
@@ -295,32 +294,32 @@ const Teachers: NextPage<{ teachers: Teacher[] }> = ({
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
-  const { data, error } = await supabase
-    .from("teacher")
-    .select("*, person(*), subject_group(*)");
+export const getServerSideProps: GetServerSideProps = withPageAuth({
+  async getServerSideProps({ locale }, supabase) {
+    const { data, error } = await supabase
+      .from("teacher")
+      .select("*, person(*), subject_group(*)");
 
-  if (error) {
-    console.error(error);
-    return { props: { teachers: [] } };
-  }
+    if (error) {
+      console.error(error);
+      return { props: { teachers: [] } };
+    }
 
-  if (!data) return { props: { teachers: [] } };
+    if (!data) return { props: { teachers: [] } };
 
-  const teachers: Teacher[] = await Promise.all(
-    data.map(async (teacher) => await db2Teacher(teacher))
-  );
+    const teachers: Teacher[] = await Promise.all(data.map(db2Teacher));
 
-  return {
-    props: {
-      ...(await serverSideTranslations(locale as LangCode, [
-        "common",
-        "admin",
-        "account",
-      ])),
-      teachers,
-    },
-  };
-};
+    return {
+      props: {
+        ...(await serverSideTranslations(locale as LangCode, [
+          "common",
+          "admin",
+          "account",
+        ])),
+        teachers,
+      },
+    };
+  },
+});
 
 export default Teachers;

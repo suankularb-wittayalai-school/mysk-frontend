@@ -6,7 +6,7 @@ import { supabase } from "@utils/supabase-client";
 
 // Types
 import { Class } from "@utils/types/class";
-import { OrUndefined } from "@utils/types/common";
+import { OrUndefined, DatabaseClient } from "@utils/types/common";
 import { Contact } from "@utils/types/contact";
 import {
   FormField,
@@ -167,6 +167,7 @@ export async function db2FormPage(
 
 // Student
 export async function db2Student(
+  supabase: DatabaseClient,
   student: Database["public"]["Tables"]["student"]["Row"],
   options?: Partial<{ contacts: boolean }>
 ): Promise<Student> {
@@ -286,20 +287,20 @@ export async function db2Teacher(
     formatted.contacts = contacts.map(db2Contact);
   }
 
-  const { data: classes, error: classError } = await supabase
+  const { data: classItem, error: classError } = await supabase
     .from("classroom")
     .select("id, number, advisors")
     .match({ year: getCurrentAcademicYear() })
     .contains("advisors", [teacher.id])
     .limit(1)
-    .single();
-  if (classError) {
-    console.error(classError);
-  }
-  if (classes) {
+    .maybeSingle();
+
+  if (classError) console.error(classError);
+
+  if (classItem) {
     formatted.classAdvisorAt = {
-      id: classes.id,
-      number: classes.number,
+      id: classItem.id,
+      number: classItem.number,
     };
   }
 
@@ -359,13 +360,10 @@ export async function db2Subject(
       th: subject.type_th,
     },
     credit: subject.credit,
-    description:
-      subject.description_en || subject.description_th
-        ? {
-            "en-US": subject.description_en as string,
-            th: subject.description_th as string,
-          }
-        : undefined,
+    description: {
+      "en-US": subject.description_en || "",
+      th: subject.description_th || "",
+    },
     year: subject.year,
     semester: subject.semester as 1 | 2,
     subjectGroup: {
@@ -438,6 +436,7 @@ export async function db2Subject(
 }
 
 export async function db2Class(
+  supabase: DatabaseClient,
   classDB: Database["public"]["Tables"]["classroom"]["Row"]
 ): Promise<Class> {
   const formatted: Class = {
@@ -479,7 +478,8 @@ export async function db2Class(
     if (students) {
       formatted.students = await Promise.all(
         students.map(
-          async (student) => await db2Student(student, { contacts: false })
+          async (student) =>
+            await db2Student(supabase, student, { contacts: false })
         )
       );
     }

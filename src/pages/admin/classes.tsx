@@ -57,6 +57,7 @@ import { createTitleStr } from "@utils/helpers/title";
 
 // Hooks
 import { useToggle } from "@utils/hooks/toggle";
+import { withPageAuth } from "@supabase/auth-helpers-nextjs";
 
 // Page-specific components
 const ClassCard = ({
@@ -76,12 +77,7 @@ const ClassCard = ({
     <Card type="stacked" appearance="tonal">
       <CardHeader
         title={
-          <h3>
-            {t("class", {
-              ns: "common",
-              number: classItem.number,
-            })}
-          </h3>
+          <h3>{t("class", { ns: "common", number: classItem.number })}</h3>
         }
         label={
           classItem.classAdvisors.length == 0 ? (
@@ -339,29 +335,34 @@ const Classes: NextPage<{ classes: Class[] }> = ({
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
-  let classes: Class[] = [];
+export const getServerSideProps: GetServerSideProps = withPageAuth({
+  async getServerSideProps({ locale }, supabase) {
+    let classes: Class[] = [];
 
-  const { data, error } = await supabase
-    .from("classroom")
-    .select("*")
-    .order("number", { ascending: true });
+    const { data, error } = await supabase
+      .from("classroom")
+      .select("*")
+      .order("number");
 
-  if (error) console.error(error);
+    if (error) console.error(error);
 
-  if (data) classes = await Promise.all(data.map(db2Class));
+    if (data)
+      classes = await Promise.all(
+        data.map(async (classItem) => await db2Class(supabase, classItem))
+      );
 
-  return {
-    props: {
-      ...(await serverSideTranslations(locale as LangCode, [
-        "common",
-        "admin",
-        "account",
-        "class",
-      ])),
-      classes,
-    },
-  };
-};
+    return {
+      props: {
+        ...(await serverSideTranslations(locale as LangCode, [
+          "common",
+          "admin",
+          "account",
+          "class",
+        ])),
+        classes,
+      },
+    };
+  },
+});
 
 export default Classes;

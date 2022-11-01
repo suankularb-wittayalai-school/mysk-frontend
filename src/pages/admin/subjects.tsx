@@ -9,6 +9,8 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { useEffect, useMemo, useState } from "react";
 
+import { withPageAuth } from "@supabase/auth-helpers-nextjs";
+
 import {
   useReactTable,
   getCoreRowModel,
@@ -38,13 +40,9 @@ import ImportDataDialog from "@components/dialogs/ImportData";
 import { db2Subject } from "@utils/backend/database";
 import { deleteSubject, importSubjects } from "@utils/backend/subject/subject";
 
-// Supabase
-import { supabase } from "@utils/supabase-client";
-
 // Types
-import { LangCode } from "@utils/types/common";
+import { DatabaseClient, LangCode } from "@utils/types/common";
 import { ImportedSubjectData, Subject } from "@utils/types/subject";
-import { SubjectTable as SubjectTableType } from "@utils/types/database/subject";
 
 // Helpers
 import { getLocaleYear } from "@utils/helpers/date";
@@ -315,32 +313,32 @@ const Subjects: NextPage<{ subjects: Subject[] }> = ({ subjects }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
-  let subjects: Subject[] = [];
+export const getServerSideProps: GetServerSideProps = withPageAuth({
+  async getServerSideProps({ locale }, supabase) {
+    let subjects: Subject[] = [];
 
-  const { data, error } = await supabase.from("subject").select("*");
+    const { data, error } = await (supabase as DatabaseClient)
+      .from("subject")
+      .select("*")
+      .order("code_th")
+      .order("semester")
+      .order("year");
 
-  if (error) console.error(error);
+    if (error) console.error(error);
 
-  if (data) {
-    subjects = (
-      await Promise.all(data.map(async (subject) => await db2Subject(subject)))
-    )
-      .sort((a, b) => (a.code.th < b.code.th ? -1 : 1))
-      .sort((a, b) => a.semester - b.semester)
-      .sort((a, b) => a.year - b.year);
-  }
+    if (data) subjects = await Promise.all(data.map(db2Subject));
 
-  return {
-    props: {
-      ...(await serverSideTranslations(locale as LangCode, [
-        "common",
-        "admin",
-        "subjects",
-      ])),
-      subjects,
-    },
-  };
-};
+    return {
+      props: {
+        ...(await serverSideTranslations(locale as LangCode, [
+          "common",
+          "admin",
+          "subjects",
+        ])),
+        subjects,
+      },
+    };
+  },
+});
 
 export default Subjects;

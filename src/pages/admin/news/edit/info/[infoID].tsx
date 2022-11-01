@@ -8,6 +8,8 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { useState } from "react";
 
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+
 // SK Components
 import {
   MaterialIcon,
@@ -41,6 +43,7 @@ const EditInfo: NextPage<{ existingData: InfoPage }> = ({
   existingData,
 }): JSX.Element => {
   const { t } = useTranslation("admin");
+  const supabase = useSupabaseClient();
 
   // Form control
   const [form, setForm] = useState<{
@@ -119,7 +122,7 @@ const EditInfo: NextPage<{ existingData: InfoPage }> = ({
           toggleShowAddImage={toggleShowAddImage}
         />
         <ArticlePublish
-          handlePublish={async () => await updateInfo(existingData.id, form)}
+          handlePublish={async () => await updateInfo(supabase, existingData.id, form)}
           allowPublish={validate()}
         />
       </RegularLayout>

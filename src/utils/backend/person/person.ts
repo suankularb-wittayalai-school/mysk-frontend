@@ -10,7 +10,7 @@ import { getTeacherFromUser } from "@utils/backend/person/teacher";
 import { supabase } from "@utils/supabase-client";
 
 // Types
-import { BackendDataReturn } from "@utils/types/common";
+import { BackendDataReturn, DatabaseClient } from "@utils/types/common";
 import { Person, Student, Teacher } from "@utils/types/person";
 import { Database } from "@utils/types/supabase";
 
@@ -190,6 +190,7 @@ export async function setupPerson(
 }
 
 export async function getPersonFromUser(
+  supabase: DatabaseClient,
   user: User
 ): Promise<BackendDataReturn<Student | Teacher, null>> {
   if (user?.user_metadata.role == "student") {
@@ -205,7 +206,7 @@ export async function getPersonFromUser(
       return { data: null, error: studentError };
     }
 
-    return { data: await db2Student(student!), error: null };
+    return { data: await db2Student(supabase, student!), error: null };
   } else if (user?.user_metadata.role == "teacher")
     return getTeacherFromUser(user);
 

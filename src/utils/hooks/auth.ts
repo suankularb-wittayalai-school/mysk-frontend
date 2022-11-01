@@ -11,7 +11,6 @@ import { db2Teacher } from "@utils/backend/database";
 
 // Types
 import { Teacher } from "@utils/types/person";
-import { TeacherDB } from "@utils/types/database/person";
 
 // Supabase
 import { supabase } from "@utils/supabase-client";
