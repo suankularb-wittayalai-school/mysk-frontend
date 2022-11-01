@@ -6,7 +6,7 @@ import { db2Teacher } from "@utils/backend/database";
 import { createPerson } from "@utils/backend/person/person";
 
 // Helpers
-import { getCurrentAcedemicYear } from "@utils/helpers/date";
+import { getCurrentAcademicYear } from "@utils/helpers/date";
 
 // Supabase
 import { supabase } from "@utils/supabase-client";
@@ -236,7 +236,7 @@ export async function getClassAdvisorAt(
   const { data, error } = await supabase
     .from("classroom")
     .select("id, number")
-    .match({ year: getCurrentAcedemicYear() })
+    .match({ year: getCurrentAcademicYear() })
     .contains("advisors", [teacherDBID])
     .limit(1)
     .single();

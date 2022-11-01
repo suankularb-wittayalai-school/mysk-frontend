@@ -14,7 +14,7 @@ import {
 import { db2Class } from "@utils/backend/database";
 
 // Helpers
-import { getCurrentAcedemicYear } from "@utils/helpers/date";
+import { getCurrentAcademicYear } from "@utils/helpers/date";
 
 // Types
 import { Class } from "@utils/types/class";
@@ -40,7 +40,7 @@ const AddClassDialog = ({
       supabase
         .from("classroom")
         .select("*")
-        .match({ number: classroomNumber, year: getCurrentAcedemicYear() })
+        .match({ number: classroomNumber, year: getCurrentAcademicYear() })
         .limit(1)
         .single()
         .then((res) => {

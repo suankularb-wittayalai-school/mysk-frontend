@@ -22,7 +22,7 @@ export function getCurrentSemester(): 1 | 2 {
   else return 2;
 }
 
-export function getCurrentAcedemicYear(): number {
+export function getCurrentAcademicYear(): number {
   const month = new Date().getMonth() + 1;
   const year = new Date().getFullYear();
   if (month <= 3) return year - 1;

@@ -5,7 +5,7 @@ import { PostgrestError, User } from "@supabase/supabase-js";
 import { createPerson } from "@utils/backend/person/person";
 
 // Helpers
-import { getCurrentAcedemicYear } from "@utils/helpers/date";
+import { getCurrentAcademicYear } from "@utils/helpers/date";
 
 // Supabase
 import { supabase } from "@utils/supabase-client";
@@ -176,7 +176,7 @@ export async function getClassOfStudent(
   const { data, error } = await supabase
     .from("classroom")
     .select("id, number")
-    .match({ year: getCurrentAcedemicYear() })
+    .match({ year: getCurrentAcademicYear() })
     .contains("students", [studentDBID])
     .limit(1)
     .single();

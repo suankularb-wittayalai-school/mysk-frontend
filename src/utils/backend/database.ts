@@ -1,5 +1,5 @@
 // Helpers
-import { getCurrentAcedemicYear } from "@utils/helpers/date";
+import { getCurrentAcademicYear } from "@utils/helpers/date";
 
 // Supabase
 import { supabase } from "@utils/supabase-client";
@@ -212,7 +212,7 @@ export async function db2Student(
   const { data: classes, error: classError } = await supabase
     .from("classroom")
     .select("id, number, students, no_list")
-    .match({ year: getCurrentAcedemicYear() })
+    .match({ year: getCurrentAcademicYear() })
     .contains("students", [student.id])
     .limit(1)
     .single();
@@ -289,7 +289,7 @@ export async function db2Teacher(
   const { data: classes, error: classError } = await supabase
     .from("classroom")
     .select("id, number, advisors")
-    .match({ year: getCurrentAcedemicYear() })
+    .match({ year: getCurrentAcademicYear() })
     .contains("advisors", [teacher.id])
     .limit(1)
     .single();

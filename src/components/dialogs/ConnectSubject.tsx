@@ -19,7 +19,7 @@ import AddTeacherDialog from "@components/dialogs/AddTeacher";
 import { useTeacherAccount } from "@utils/hooks/auth";
 
 // Helpers
-import { getCurrentAcedemicYear } from "@utils/helpers/date";
+import { getCurrentAcademicYear } from "@utils/helpers/date";
 import { nameJoiner } from "@utils/helpers/name";
 
 // Types
@@ -165,7 +165,7 @@ const ConnectSubjectDialog = ({
     const { data: classroom, error: classroomSelectionError } = await supabase
       .from("classroom")
       .select("id")
-      .match({ number: form.classroom, year: getCurrentAcedemicYear() })
+      .match({ number: form.classroom, year: getCurrentAcademicYear() })
       .limit(1)
       .single();
 

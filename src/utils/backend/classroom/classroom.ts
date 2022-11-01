@@ -8,7 +8,7 @@ import { createContact, updateContact } from "@utils/backend/contact";
 import { db2Class, db2Student } from "@utils/backend/database";
 
 // Helpers
-import { getCurrentAcedemicYear } from "@utils/helpers/date";
+import { getCurrentAcademicYear } from "@utils/helpers/date";
 
 // Supabase
 import { supabase } from "@utils/supabase-client";
@@ -77,7 +77,7 @@ export async function getClassroom(number: number): Promise<Class> {
     classAdvisors: [],
     contacts: [],
     students: [],
-    year: getCurrentAcedemicYear(),
+    year: getCurrentAcademicYear(),
     subjects: [],
   };
 
@@ -86,7 +86,7 @@ export async function getClassroom(number: number): Promise<Class> {
   const { data, error } = await supabase
     .from("classroom")
     .select("*")
-    .match({ number, year: getCurrentAcedemicYear() })
+    .match({ number, year: getCurrentAcademicYear() })
     .limit(1)
     .single();
 
@@ -191,7 +191,7 @@ export async function addAdvisorToClassroom(
   const { data: classroom, error: classroomSelectionError } = await supabase
     .from("classroom")
     .select("advisors, number, year")
-    .match({ id: classID, year: getCurrentAcedemicYear() })
+    .match({ id: classID, year: getCurrentAcademicYear() })
     .limit(1)
     .single();
 
@@ -228,7 +228,7 @@ export async function addContactToClassroom(
   const { data: classroom, error: classroomSelectionError } = await supabase
     .from("classroom")
     .select("contacts, number, year")
-    .match({ id: classID, year: getCurrentAcedemicYear() })
+    .match({ id: classID, year: getCurrentAcademicYear() })
     .limit(1)
     .single();
 
@@ -263,7 +263,7 @@ export async function getClassNumberFromUser(
   const { data: classItem, error: classError } = await supabase
     .from("classroom")
     .select("number")
-    .match({ year: getCurrentAcedemicYear() })
+    .match({ year: getCurrentAcademicYear() })
     .contains("students", [studentID])
     .limit(1)
     .single();
@@ -282,7 +282,7 @@ export async function getClassIDFromNumber(
   const { data: classroom, error: classroomSelectionError } = await supabase
     .from("classroom")
     .select("id")
-    .match({ number, year: getCurrentAcedemicYear() })
+    .match({ number, year: getCurrentAcademicYear() })
     .limit(1)
     .single();
 
@@ -313,7 +313,7 @@ export async function getClassStudentList(
   const { data: classItem, error: classError } = await supabase
     .from("classroom")
     .select("students")
-    .match({ id: classID, year: getCurrentAcedemicYear() })
+    .match({ id: classID, year: getCurrentAcademicYear() })
     .limit(1)
     .single();
 
