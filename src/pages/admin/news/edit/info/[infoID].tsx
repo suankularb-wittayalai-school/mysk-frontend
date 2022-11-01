@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useReducer, useState } from "react";
+import { useState } from "react";
 
 // SK Components
 import {
@@ -21,6 +21,7 @@ import {
 import { getInfo, updateInfo } from "@utils/backend/news/info";
 
 // Components
+import AddImageToNewsDialog from "@components/dialogs/AddImageToNews";
 import ArticleConfig from "@components/news/ArticleConfig";
 import ArticlePublish from "@components/news/ArticlePublish";
 import ArticleWrite from "@components/news/ArticleWrite";
@@ -28,10 +29,12 @@ import ArticleWrite from "@components/news/ArticleWrite";
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
 
+// Hooks
+import { useToggle } from "@utils/hooks/toggle";
+
 // Types
 import { LangCode, WaitingSnackbar } from "@utils/types/common";
 import { InfoPage } from "@utils/types/news";
-import AddImageToNewsDialog from "@components/dialogs/AddImageToNews";
 
 // Page
 const EditInfo: NextPage<{ existingData: InfoPage }> = ({
@@ -72,10 +75,7 @@ const EditInfo: NextPage<{ existingData: InfoPage }> = ({
   const [snbQueue, setSnbQueue] = useState<WaitingSnackbar[]>([]);
 
   // Dialog control
-  const [showAddImage, toggleShowAddImage] = useReducer(
-    (state: boolean) => !state,
-    false
-  );
+  const [showAddImage, toggleShowAddImage] = useToggle();
 
   return (
     <>

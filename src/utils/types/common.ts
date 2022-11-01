@@ -1,5 +1,6 @@
 import { PostgrestError } from "@supabase/supabase-js";
 import { ColumnDef } from "@tanstack/react-table";
+import { Database } from "./supabase";
 
 export type OrUndefined<T> = T | undefined;
 
@@ -34,6 +35,8 @@ export type BackendReturn = { error: Partial<PostgrestError> | null };
 export type BackendDataReturn<T, U = []> =
   | { data: T; error: null }
   | { data: U; error: Partial<PostgrestError> };
+
+export type Tables = Database["public"]["Tables"];
 
 export type DataTableColumnDef = ColumnDef<object> &
   Partial<{

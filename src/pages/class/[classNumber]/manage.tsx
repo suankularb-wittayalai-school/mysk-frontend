@@ -9,12 +9,7 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import {
-  MutableRefObject,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { MutableRefObject, useEffect, useRef, useState } from "react";
 
 import ReactToPrint from "react-to-print";
 
@@ -62,7 +57,7 @@ import { useToggle } from "@utils/hooks/toggle";
 
 // Types
 import { Class as ClassType } from "@utils/types/class";
-import { LangCode } from "@utils/types/common";
+import { LangCode, Tables } from "@utils/types/common";
 import { Contact } from "@utils/types/contact";
 import { Student, Teacher } from "@utils/types/person";
 import { StudentFormItem } from "@utils/types/news";
@@ -385,11 +380,7 @@ const Class: NextPage<{
   classItem: ClassType;
   studentForms: StudentFormItem[];
   isAdvisor: boolean;
-}> = ({
-  classItem,
-  studentForms,
-  isAdvisor
-}) => {
+}> = ({ classItem, studentForms, isAdvisor }) => {
   const router = useRouter();
   const { t } = useTranslation("common");
 
@@ -450,17 +441,18 @@ const Class: NextPage<{
         show={showAddContact}
         onClose={toggleShowAddContact}
         onSubmit={async (contact) => {
-          // console.log(contact);
           const { data: createdContact, error: contactCreationError } =
             await createContact(contact);
 
-          if (!createdContact || createdContact.length == 0) return;
           if (contactCreationError) {
             console.error(contactCreationError);
             return;
           }
 
-          await addContactToClassroom(createdContact[0].id, classItem.id);
+          await addContactToClassroom(
+            (createdContact as Tables["contact"]["Row"]).id,
+            classItem.id
+          );
           router.replace(router.asPath);
           toggleShowAddContact();
         }}

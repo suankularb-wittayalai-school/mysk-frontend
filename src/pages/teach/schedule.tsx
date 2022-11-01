@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useState } from "react";
 
 // SK Components
 import {
@@ -35,6 +35,7 @@ import { createTitleStr } from "@utils/helpers/title";
 
 // Hooks
 import { useTeacherAccount } from "@utils/hooks/auth";
+import { useToggle } from "@utils/hooks/toggle";
 
 // Types
 import { LangCode } from "@utils/types/common";
@@ -45,17 +46,14 @@ import {
 
 const TeacherSchedule: NextPage = () => {
   const { t } = useTranslation("schedule");
-  const [teacher] = useTeacherAccount({ loginRequired: true });
+  const [teacher] = useTeacherAccount();
 
   // Data fetch
   const plhSchedule = {
     content: range(5).map((day) => ({ day: (day + 1) as Day, content: [] })),
   };
   const [schedule, setSchedule] = useState<ScheduleType>(plhSchedule);
-  const [fetched, toggleFetched] = useReducer(
-    (state: boolean) => !state,
-    false
-  );
+  const [fetched, toggleFetched] = useToggle();
 
   useEffect(() => {
     const fetchAndSetSchedule = async () => {
@@ -76,10 +74,7 @@ const TeacherSchedule: NextPage = () => {
     startTime: number;
   }>({ show: false, day: 1, startTime: 1 });
 
-  const [addPeriod, toggleAddPeriod] = useReducer(
-    (state: boolean) => !state,
-    false
-  );
+  const [addPeriod, toggleAddPeriod] = useToggle();
 
   const [editPeriod, setEditPeriod] = useState<{
     show: boolean;

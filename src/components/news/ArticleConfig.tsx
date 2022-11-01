@@ -1,13 +1,7 @@
 // Modules
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
-import {
-  MutableRefObject,
-  useEffect,
-  useReducer,
-  useRef,
-  useState,
-} from "react";
+import { MutableRefObject, useEffect, useRef, useState } from "react";
 
 // SK Components
 import {
@@ -42,6 +36,9 @@ import { NewsItemInfoNoDate } from "@utils/types/news";
 
 // Helpers
 import { addAtIndex, wrapPartOfArray } from "@utils/helpers/array";
+
+// Hooks
+import { useToggle } from "@utils/hooks/toggle";
 
 type Form = {
   titleTH: string;
@@ -428,14 +425,8 @@ const ArticleConfig = ({
   const { t } = useTranslation(["admin", "common"]);
 
   // Dialog control
-  const [showAddImage, toggleShowAddImage] = useReducer(
-    (state: boolean) => !state,
-    false
-  );
-  const [showDelete, toggleShowDelete] = useReducer(
-    (state: boolean) => !state,
-    false
-  );
+  const [showAddImage, toggleShowAddImage] = useToggle();
+  const [showDelete, toggleShowDelete] = useToggle();
 
   // Form control
   const [form, setForm] = useState<Form>({
