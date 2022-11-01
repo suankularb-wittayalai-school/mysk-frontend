@@ -1,5 +1,10 @@
 // External libraries
-import type { GetServerSideProps, NextPage } from "next";
+import type {
+  GetServerSideProps,
+  GetStaticPaths,
+  GetStaticProps,
+  NextPage,
+} from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -29,7 +34,10 @@ import TeacherCard from "@components/TeacherCard";
 
 // Backend
 import { getTeacherList } from "@utils/backend/person/teacher";
-import { getClassIDFromNumber } from "@utils/backend/classroom/classroom";
+import {
+  getAllClassNumbers,
+  getClassIDFromNumber,
+} from "@utils/backend/classroom/classroom";
 
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
@@ -197,10 +205,7 @@ const Teachers: NextPage<{
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  params,
-}) => {
+export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   const classNumber = Number(params?.classNumber);
 
   const { data: classID, error: classIDError } = await getClassIDFromNumber(
@@ -242,6 +247,16 @@ export const getServerSideProps: GetServerSideProps = async ({
       classNumber,
       teacherList,
     },
+    revalidate: 300,
+  };
+};
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  return {
+    paths: (await getAllClassNumbers()).map((number) => ({
+      params: { classNumber: number.toString() },
+    })),
+    fallback: "blocking",
   };
 };
 

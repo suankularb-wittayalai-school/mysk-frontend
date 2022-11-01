@@ -1,5 +1,5 @@
 // External libraries
-import { GetServerSideProps, NextPage } from "next";
+import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -27,8 +27,13 @@ import {
   Title,
 } from "@suankularb-components/react";
 
+// Components
+import DataTableHeader from "@components/data-table/DataTableHeader";
+import DataTableBody from "@components/data-table/DataTableBody";
+
 // Backend
 import {
+  getAllClassNumbers,
   getClassIDFromNumber,
   getClassStudentList,
 } from "@utils/backend/classroom/classroom";
@@ -40,8 +45,6 @@ import { createTitleStr } from "@utils/helpers/title";
 // Types
 import { LangCode } from "@utils/types/common";
 import { StudentListItem } from "@utils/types/person";
-import DataTableHeader from "@components/data-table/DataTableHeader";
-import DataTableBody from "@components/data-table/DataTableBody";
 
 const StudentList = ({
   students,
@@ -151,10 +154,7 @@ const ClassStudents: NextPage<{
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  params,
-}) => {
+export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   const classNumber = Number(params?.classNumber);
 
   const { data: classID, error: classIDError } = await getClassIDFromNumber(
@@ -173,6 +173,16 @@ export const getServerSideProps: GetServerSideProps = async ({
       classNumber,
       students,
     },
+    revalidate: 300,
+  };
+};
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  return {
+    paths: (await getAllClassNumbers()).map((number) => ({
+      params: { classNumber: number.toString() },
+    })),
+    fallback: "blocking",
   };
 };
 
