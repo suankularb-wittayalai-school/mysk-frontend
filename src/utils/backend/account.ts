@@ -1,13 +1,6 @@
 // External libraries
-import { createClient, User } from "@supabase/supabase-js";
-
-// Types
-import { Database } from "@utils/types/supabase";
-
-const supabase = createClient<Database>(
-  process.env.NEXT_PUBLIC_SUPABASE_URL as string,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string
-);
+import { User } from "@supabase/supabase-js";
+import { supabase } from "@utils/supabase-client";
 
 export async function changePassword(
   form: {

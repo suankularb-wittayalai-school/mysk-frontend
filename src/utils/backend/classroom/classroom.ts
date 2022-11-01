@@ -1,5 +1,5 @@
 // External libraries
-import { PostgrestError } from "@supabase/supabase-js";
+import { PostgrestError, User } from "@supabase/supabase-js";
 import { IncomingMessage, ServerResponse } from "http";
 import { NextApiRequestCookies } from "next/dist/server/api-utils";
 
@@ -16,18 +16,17 @@ import { getCurrentAcedemicYear } from "@utils/helpers/date";
 import { supabase } from "@utils/supabase-client";
 
 // Types
-import { ClassroomDB, ClassroomTable } from "@utils/types/database/class";
-import { StudentDB } from "@utils/types/database/person";
 import { Class } from "@utils/types/class";
 import { BackendDataReturn } from "@utils/types/common";
 import { StudentListItem } from "@utils/types/person";
+import { Database } from "@utils/types/supabase";
 
 export async function createClassroom(
   classroom: Class
-): Promise<{ data: ClassroomTable[] | null; error: PostgrestError | null }> {
-  const contacts = await Promise.all(
-    classroom.contacts.map(async (contact) => await createContact(contact))
-  );
+): Promise<
+  BackendDataReturn<Database["public"]["Tables"]["classroom"]["Row"], null>
+> {
+  const contacts = await Promise.all(classroom.contacts.map(createContact));
 
   // check if any contact creation failed
   if (contacts.some((contact) => contact.error)) {
@@ -42,11 +41,11 @@ export async function createClassroom(
 
   // map the created contact to id
   const contactIds = contacts
-    .map((contact) => contact.data?.[0]?.id)
+    .map((contact) => contact.data?.id)
     .filter((id) => id !== undefined || id !== null);
 
   const { data: createdClass, error: classCreationError } = await supabase
-    .from<ClassroomTable>("classroom")
+    .from("classroom")
     .insert({
       number: classroom.number,
       year: classroom.year,
@@ -60,11 +59,15 @@ export async function createClassroom(
         return student?.id || 0;
       }),
       subjects: [],
-    });
+    })
+    .select("*")
+    .single();
+
   if (classCreationError || !createdClass) {
     console.error(classCreationError);
     return { data: null, error: classCreationError };
   }
+
   return { data: createdClass, error: null };
 }
 
@@ -82,7 +85,7 @@ export async function getClassroom(number: number): Promise<Class> {
   if (!number) return classItem;
 
   const { data, error } = await supabase
-    .from<ClassroomDB>("classroom")
+    .from("classroom")
     .select("*")
     .match({ number, year: getCurrentAcedemicYear() })
     .limit(1)
@@ -98,9 +101,11 @@ export async function getClassroom(number: number): Promise<Class> {
 
 export async function updateClassroom(
   classroom: Class
-): Promise<{ data: ClassroomTable[] | null; error: PostgrestError | null }> {
+): Promise<
+  BackendDataReturn<Database["public"]["Tables"]["classroom"]["Row"], null>
+> {
   const contacts = await Promise.all(
-    classroom.contacts.map(async (contact) => await updateContact(contact))
+    classroom.contacts.map(updateContact)
   ).catch((error) => {
     console.error(error);
     return [];
@@ -118,11 +123,11 @@ export async function updateClassroom(
   }
 
   const contactIDs = contacts
-    .map((contact) => contact.data?.[0]?.id ?? null)
+    .map((contact) => contact.data?.id ?? null)
     .filter((id) => id !== undefined || id !== null) as number[];
 
   const { data: updatedClass, error: classUpdateError } = await supabase
-    .from<ClassroomTable>("classroom")
+    .from("classroom")
     .update({
       number: classroom.number,
       year: classroom.year,
@@ -138,7 +143,9 @@ export async function updateClassroom(
       }),
       subjects: [],
     })
-    .match({ id: classroom.id });
+    .match({ id: classroom.id })
+    .select("*")
+    .single();
   if (classUpdateError || !updatedClass) {
     console.error(classUpdateError);
     return { data: null, error: classUpdateError };
@@ -148,7 +155,7 @@ export async function updateClassroom(
 
 export async function deleteClassroom(classItem: Class) {
   const { error } = await supabase
-    .from<ClassroomTable>("classroom")
+    .from("classroom")
     .delete()
     .match({ id: classItem.id });
   if (error) console.error(error);
@@ -179,34 +186,46 @@ export async function importClasses(
 export async function addAdvisorToClassroom(
   teacherID: number,
   classID: number
-): Promise<{ data: ClassroomTable | null; error: PostgrestError | null }> {
+): Promise<
+  BackendDataReturn<Database["public"]["Tables"]["classroom"]["Row"], null>
+> {
   const { data: classroom, error: classroomSelectionError } = await supabase
-    .from<{ advisors: number[]; number: number; year: number }>("classroom")
+    .from("classroom")
     .select("advisors, number, year")
     .match({ id: classID, year: getCurrentAcedemicYear() })
     .limit(1)
     .single();
 
-  if (!classroom || classroomSelectionError) {
+  if (classroomSelectionError) {
+    console.error(classroomSelectionError);
     return { data: null, error: classroomSelectionError };
   }
 
   const { data: updatedClassroom, error: classroomUpdatingError } =
     await supabase
-      .from<ClassroomTable>("classroom")
+      .from("classroom")
       .update({ advisors: [...classroom.advisors, teacherID] })
       .eq("id", classID)
+      .select("*")
+      .limit(1)
       .single();
 
-  return { data: updatedClassroom, error: classroomUpdatingError };
+  if (classroomUpdatingError) {
+    console.error(classroomUpdatingError);
+    return { data: null, error: classroomUpdatingError };
+  }
+
+  return { data: updatedClassroom, error: null };
 }
 
 export async function addContactToClassroom(
   contactID: number,
   classID: number
-): Promise<{ data: ClassroomTable | null; error: PostgrestError | null }> {
+): Promise<
+  BackendDataReturn<Database["public"]["Tables"]["classroom"]["Row"], null>
+> {
   const { data: classroom, error: classroomSelectionError } = await supabase
-    .from<{ contacts: number[]; number: number; year: number }>("classroom")
+    .from("classroom")
     .select("contacts, number, year")
     .match({ id: classID, year: getCurrentAcedemicYear() })
     .limit(1)
@@ -218,32 +237,28 @@ export async function addContactToClassroom(
 
   const { data: updatedClassroom, error: classroomUpdatingError } =
     await supabase
-      .from<ClassroomTable>("classroom")
+      .from("classroom")
       .update({ contacts: [...classroom.contacts, contactID] })
       .eq("id", classID)
+      .select("*")
+      .limit(1)
       .single();
 
-  return { data: updatedClassroom, error: classroomUpdatingError };
-}
-
-export async function getClassNumberFromReq(
-  req: IncomingMessage & { cookies: NextApiRequestCookies },
-  res?: ServerResponse
-): Promise<BackendDataReturn<number, null>> {
-  const { user, error: userError } = await supabase.auth.api.getUserByCookie(
-    req,
-    res
-  );
-
-  if (userError) {
-    console.error(userError);
-    return { data: null, error: userError };
+  if (classroomUpdatingError) {
+    console.error(classroomUpdatingError);
+    return { data: null, error: classroomUpdatingError };
   }
 
-  const studentID: number = user?.user_metadata.student;
+  return { data: updatedClassroom, error: null };
+}
+
+export async function getClassNumberFromUser(
+  user: User
+): Promise<BackendDataReturn<number, null>> {
+  const studentID: number = user.user_metadata.student;
 
   const { data: classItem, error: classError } = await supabase
-    .from<ClassroomDB>("classroom")
+    .from("classroom")
     .select("number")
     .match({ year: getCurrentAcedemicYear() })
     .contains("students", [studentID])
@@ -255,14 +270,14 @@ export async function getClassNumberFromReq(
     return { data: null, error: classError };
   }
 
-  return { data: (classItem as ClassroomDB).number, error: null };
+  return { data: classItem.number, error: null };
 }
 
 export async function getClassIDFromNumber(
   number: number
 ): Promise<BackendDataReturn<number, null>> {
   const { data: classroom, error: classroomSelectionError } = await supabase
-    .from<ClassroomTable>("classroom")
+    .from("classroom")
     .select("id")
     .match({ number, year: getCurrentAcedemicYear() })
     .limit(1)
@@ -273,12 +288,12 @@ export async function getClassIDFromNumber(
     return { data: null, error: classroomSelectionError };
   }
 
-  return { data: (classroom as ClassroomTable).id, error: null };
+  return { data: classroom.id, error: null };
 }
 
 export async function getAllClassNumbers(): Promise<number[]> {
   const { data: classrooms, error: classroomsError } = await supabase
-    .from<ClassroomTable>("classroom")
+    .from("classroom")
     .select("number");
 
   if (classroomsError || !classrooms) {
@@ -293,7 +308,7 @@ export async function getClassStudentList(
   classID: number
 ): Promise<BackendDataReturn<StudentListItem[]>> {
   const { data: classItem, error: classError } = await supabase
-    .from<ClassroomDB>("classroom")
+    .from("classroom")
     .select("students")
     .match({ id: classID, year: getCurrentAcedemicYear() })
     .limit(1)
@@ -305,9 +320,9 @@ export async function getClassStudentList(
   }
 
   const { data, error } = await supabase
-    .from<StudentDB>("student")
-    .select("id, std_id, person(*)")
-    .in("id", (classItem as ClassroomDB).students);
+    .from("student")
+    .select("*, person(*)")
+    .in("id", classItem.students);
 
   if (error) {
     console.error(error);
@@ -316,9 +331,7 @@ export async function getClassStudentList(
 
   return {
     data: (
-      await Promise.all(
-        (data as StudentDB[]).map(async (student) => await db2Student(student))
-      )
+      await Promise.all(data.map(async (student) => await db2Student(student)))
     ).sort((a, b) => a.classNo - b.classNo),
     error: null,
   };

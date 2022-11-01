@@ -1,13 +1,18 @@
-import { PostgrestError } from "@supabase/supabase-js";
-import { Contact } from "@utils/types/contact";
-import { ContactDB } from "@utils/types/database/contact";
+// Supabase
 import { supabase } from "@utils/supabase-client";
+
+// Types
+import { BackendDataReturn } from "@utils/types/common";
+import { Contact } from "@utils/types/contact";
+import { Database } from "@utils/types/supabase";
 
 export async function createContact(
   contact: Contact
-): Promise<{ data: ContactDB[] | null; error: PostgrestError | null }> {
+): Promise<
+  BackendDataReturn<Database["public"]["Tables"]["contact"]["Row"], null>
+> {
   const { data: createdContact, error: contactCreationError } = await supabase
-    .from<ContactDB>("contact")
+    .from("contact")
     .insert({
       type: contact.type,
       value: contact.value,
@@ -16,8 +21,11 @@ export async function createContact(
       include_students: contact.includes?.students,
       include_parents: contact.includes?.parents,
       include_teachers: contact.includes?.teachers,
-    });
-  if (contactCreationError || !contact) {
+    })
+    .select("*")
+    .single();
+
+  if (contactCreationError) {
     console.error(contactCreationError);
     return { data: null, error: contactCreationError };
   }
@@ -26,9 +34,11 @@ export async function createContact(
 
 export async function updateContact(
   contact: Contact
-): Promise<{ data: ContactDB[] | null; error: PostgrestError | null }> {
+): Promise<
+  BackendDataReturn<Database["public"]["Tables"]["contact"]["Row"], null>
+> {
   const { data: updatedContact, error: contactUpdateError } = await supabase
-    .from<ContactDB>("contact")
+    .from("contact")
     .update({
       type: contact.type,
       value: contact.value,
@@ -38,8 +48,11 @@ export async function updateContact(
       include_parents: contact.includes?.parents,
       include_teachers: contact.includes?.teachers,
     })
-    .match({ id: contact.id });
-  if (contactUpdateError || !updatedContact) {
+    .match({ id: contact.id })
+    .select("*")
+    .single();
+
+  if (contactUpdateError) {
     console.error(contactUpdateError);
     return { data: null, error: contactUpdateError };
   }

@@ -9,11 +9,15 @@ import { supabase } from "@utils/supabase-client";
 
 // Types
 import { InfoDB, InfoTable, NewsTable } from "@utils/types/database/news";
-import { BackendDataReturn } from "@utils/types/common";
+import { BackendDataReturn, BackendReturn } from "@utils/types/common";
 import { InfoPage, NewsItemInfoNoDate } from "@utils/types/news";
+import { Database } from "@utils/types/supabase";
 
 export async function getLandingFeed(): Promise<
-  BackendDataReturn<{ lastUpdated: string; content: NewsItemInfoNoDate[] }, null>
+  BackendDataReturn<
+    { lastUpdated: string; content: NewsItemInfoNoDate[] },
+    null
+  >
 > {
   const { data: infos, error: infosError } = await getInfos();
 
@@ -31,9 +35,11 @@ export async function getLandingFeed(): Promise<
   };
 }
 
-export async function getInfos(): Promise<BackendDataReturn<NewsItemInfoNoDate[]>> {
+export async function getInfos(): Promise<
+  BackendDataReturn<NewsItemInfoNoDate[]>
+> {
   const { data, error } = await supabase
-    .from<InfoDB>("infos")
+    .from("infos")
     .select(
       "*, parent:news(title_th, title_en, description_th, description_en, image, old_url)"
     )
@@ -48,7 +54,7 @@ export async function getInfos(): Promise<BackendDataReturn<NewsItemInfoNoDate[]
 }
 
 export async function getAllInfoIDs(): Promise<number[]> {
-  const { data, error } = await supabase.from<InfoDB>("infos").select("id");
+  const { data, error } = await supabase.from("infos").select("id");
 
   if (error || !data) {
     console.error(error);
@@ -62,7 +68,7 @@ export async function getInfo(
   id: number
 ): Promise<BackendDataReturn<InfoPage, null>> {
   const { data, error } = await supabase
-    .from<InfoDB>("infos")
+    .from("infos")
     .select(
       "*, parent:news(title_th, title_en, description_th, description_en, image, old_url)"
     )
@@ -75,7 +81,7 @@ export async function getInfo(
     return { data: null, error };
   }
 
-  return { data: db2InfoPage(data as InfoDB), error: null };
+  return { data: db2InfoPage(data), error: null };
 }
 
 export async function uploadBanner(
@@ -114,7 +120,7 @@ export async function uploadBanner(
   }
 
   const { data: newsWImage, error: newsWImageError } = await supabase
-    .from<NewsTable>("news")
+    .from("news")
     .update({ image: fileName })
     .match({ id: newsID });
 
@@ -135,9 +141,11 @@ export async function createInfo(form: {
   bodyEN: string;
   image: File | null;
   oldURL: string;
-}): Promise<BackendDataReturn<InfoTable[]>> {
+}): Promise<
+  BackendDataReturn<Database["public"]["Tables"]["infos"]["Row"], null>
+> {
   const { data: news, error: newsError } = await supabase
-    .from<NewsTable>("news")
+    .from("news")
     .insert({
       title_th: form.titleTH,
       title_en: form.titleEN,
@@ -145,12 +153,13 @@ export async function createInfo(form: {
       description_en: form.descEN,
       old_url: form.oldURL,
     })
+    .select("*")
     .limit(1)
     .single();
 
   if (newsError || !news) {
     console.error(newsError);
-    return { data: [], error: newsError };
+    return { data: null, error: newsError };
   }
 
   // Upload image
@@ -160,20 +169,23 @@ export async function createInfo(form: {
       news.id,
       form.image
     );
-    if (imageError) return { data: [], error: imageError };
+    if (imageError) return { data: null, error: imageError };
   }
 
   const { data: info, error: infoError } = await supabase
-    .from<InfoTable>("infos")
+    .from("infos")
     .insert({
       body_th: form.bodyTH,
       body_en: form.bodyEN,
       parent: news.id,
-    });
+    })
+    .select("*, parent(*)")
+    .limit(1)
+    .single();
 
   if (infoError || !info) {
     console.error(infoError);
-    return { data: [], error: infoError };
+    return { data: null, error: infoError };
   }
 
   return { data: info, error: null };
@@ -191,22 +203,27 @@ export async function updateInfo(
     image: File | null;
     oldURL: string;
   }
-): Promise<BackendDataReturn<InfoTable[]>> {
+): Promise<
+  BackendDataReturn<Database["public"]["Tables"]["infos"]["Row"], null>
+> {
   const { data: updatedInfo, error: updatedInfoError } = await supabase
-    .from<InfoTable>("infos")
+    .from("infos")
     .update({
       body_th: form.bodyTH,
       body_en: form.bodyEN,
     })
-    .match({ id });
+    .match({ id })
+    .select("*, parent(*)")
+    .limit(1)
+    .single();
 
-  if (updatedInfoError || !updatedInfo || updatedInfo.length < 1) {
+  if (updatedInfoError) {
     console.error(updatedInfoError);
-    return { data: [], error: updatedInfoError };
+    return { data: null, error: updatedInfoError };
   }
 
   const { data: updatedNews, error: updatedNewsError } = await supabase
-    .from<NewsTable>("news")
+    .from("news")
     .update({
       title_th: form.titleTH,
       title_en: form.titleEN,
@@ -214,42 +231,48 @@ export async function updateInfo(
       description_en: form.descEN,
       old_url: form.oldURL,
     })
-    .match({ id: updatedInfo[0].parent });
+    .match({ id: updatedInfo.parent.id })
+    .select("image")
+    .limit(1)
+    .single();
 
-  if (updatedNewsError || !updatedNews || updatedNews.length < 0) {
+  if (updatedNewsError) {
     console.error(updatedNewsError);
-    return { data: [], error: updatedNewsError };
+    return { data: null, error: updatedNewsError };
   }
 
   if (form.image) {
     const { error: imageError } = await uploadBanner(
-      updatedNews[0].image ? "edit" : "add",
+      updatedNews.image ? "edit" : "add",
       id,
       form.image
     );
-    if (imageError) return { data: [], error: imageError };
+    if (imageError) return { data: null, error: imageError };
   }
 
   return { data: updatedInfo, error: null };
 }
 
-export async function deleteInfo(
-  id: number
-): Promise<{ error: PostgrestError | null }> {
+export async function deleteInfo(id: number): Promise<BackendReturn> {
   const { data: info, error: infoError } = await supabase
-    .from<InfoTable>("infos")
-    .delete({ returning: "representation" })
-    .match({ id });
+    .from("infos")
+    .delete()
+    .match({ id })
+    .select("parent(id)")
+    .limit(1)
+    .single();
 
-  if (infoError || !info || info.length < 1) {
+  if (infoError) {
     console.error(infoError);
     return { error: infoError };
   }
 
   const { error: newsError } = await supabase
-    .from<NewsTable>("news")
+    .from("news")
     .delete()
-    .match({ id: info[0].parent });
+    .match({
+      id: (info.parent as Database["public"]["Tables"]["infos"]["Row"]).id,
+    });
 
   if (newsError) {
     console.error(newsError);

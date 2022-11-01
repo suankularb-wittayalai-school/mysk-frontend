@@ -1,14 +1,15 @@
 // Modules
-import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 // SK Components
 import {
   ChipInputList,
   Dialog,
   DialogSection,
-  KeyboardInput,
+  KeyboardInput
 } from "@suankularb-components/react";
 
 // Components
@@ -18,21 +19,17 @@ import AddTeacherDialog from "@components/dialogs/AddTeacher";
 import { useTeacherAccount } from "@utils/hooks/auth";
 
 // Helpers
-import { nameJoiner } from "@utils/helpers/name";
 import { getCurrentAcedemicYear } from "@utils/helpers/date";
+import { nameJoiner } from "@utils/helpers/name";
 
 // Types
 import {
   ChipInputListItem,
   LangCode,
-  SubmittableDialogProps,
+  SubmittableDialogProps
 } from "@utils/types/common";
 import { Teacher } from "@utils/types/person";
 import { Subject, SubjectListItem } from "@utils/types/subject";
-import { RoomSubjectTable } from "@utils/types/database/subject";
-
-// Supabase
-import { supabase } from "@utils/supabase-client";
 
 const ConnectSubjectDialog = ({
   show,
@@ -47,8 +44,9 @@ const ConnectSubjectDialog = ({
   subjectRoom?: SubjectListItem;
 }) => {
   const { t } = useTranslation("subjects");
+  const supabase = useSupabaseClient();
   const locale = useRouter().locale as LangCode;
-  const [user, session] = useTeacherAccount({ loginRequired: true });
+  const [user, session] = useTeacherAccount();
 
   // Dialogs
   const [showAddTeacher, setShowAddTeacher] = useState<boolean>(false);
@@ -165,7 +163,7 @@ const ConnectSubjectDialog = ({
     if (!validate()) return;
 
     const { data: classroom, error: classroomSelectionError } = await supabase
-      .from<{ id: number }>("classroom")
+      .from("classroom")
       .select("id")
       .match({ number: form.classroom, year: getCurrentAcedemicYear() })
       .limit(1)
@@ -180,7 +178,7 @@ const ConnectSubjectDialog = ({
     if (mode == "add") {
       const { data: roomSubjects, error: roomSubjectsSelectionError } =
         await supabase
-          .from<RoomSubjectTable>("room_subjects")
+          .from("room_subjects")
           .select("*")
           .eq("class", classroom.id)
           .contains("teacher", [user?.id])
@@ -198,7 +196,7 @@ const ConnectSubjectDialog = ({
       }
 
       const { data, error } = await supabase
-        .from<RoomSubjectTable>("room_subjects")
+        .from("room_subjects")
         .insert({
           class: classroom.id,
           subject: subject.id,
@@ -216,7 +214,7 @@ const ConnectSubjectDialog = ({
     if (mode == "edit") {
       const { data: roomSubjects, error: roomSubjectsSelectionError } =
         await supabase
-          .from<RoomSubjectTable>("room_subjects")
+          .from("room_subjects")
           .select("*")
           .eq("class", classroom.id)
           .contains("teacher", [user?.id])
@@ -233,8 +231,8 @@ const ConnectSubjectDialog = ({
         return;
       }
 
-      const { data, error } = await supabase
-        .from<RoomSubjectTable>("room_subjects")
+      const { error } = await supabase
+        .from("room_subjects")
         .update({
           class: classroom.id,
           subject: subject.id,

@@ -10,6 +10,8 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { FormEvent, useState } from "react";
 
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+
 // SK Components
 import {
   Actions,
@@ -29,14 +31,12 @@ import { createTitleStr } from "@utils/helpers/title";
 // Hooks
 import { useToggle } from "@utils/hooks/toggle";
 
-// Supabase
-import { supabase } from "@utils/supabase-client";
-
 // Types
 import { LangCode } from "@utils/types/common";
 
 const ForgotPassword: NextPage = () => {
   const { t } = useTranslation("account");
+  const supabase = useSupabaseClient();
   const router = useRouter();
 
   const [loading, toggleLoading] = useToggle();
@@ -56,7 +56,7 @@ const ForgotPassword: NextPage = () => {
     e.preventDefault();
     if (!validate()) return;
     toggleLoading();
-    const { data } = await supabase.auth.update({ password: form.newPassword });
+    const { data } = await supabase.auth.updateUser({ password: form.newPassword });
     if (data) router.push("/account/login");
     toggleLoading();
   }

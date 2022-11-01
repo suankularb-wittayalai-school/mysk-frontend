@@ -1,13 +1,14 @@
 // Modules
-import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 // SK Components
 import {
   Dialog,
   DialogSection,
-  KeyboardInput,
+  KeyboardInput
 } from "@suankularb-components/react";
 
 // Backend
@@ -16,12 +17,8 @@ import { db2Student } from "@utils/backend/database";
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
 
-// Supabase
-import { supabase } from "@utils/supabase-client";
-
 // Types
 import { DialogProps, LangCode } from "@utils/types/common";
-import { StudentDB } from "@utils/types/database/person";
 import { Student } from "@utils/types/person";
 
 const AddStudentDialog = ({
@@ -30,6 +27,7 @@ const AddStudentDialog = ({
   onSubmit,
 }: DialogProps & { onSubmit: (student: Student) => void }): JSX.Element => {
   const { t } = useTranslation("common");
+  const supabase = useSupabaseClient();
   const locale = useRouter().locale as LangCode;
 
   const [studentID, setStudentID] = useState<string>("");
@@ -38,8 +36,8 @@ const AddStudentDialog = ({
   useEffect(() => {
     if (studentID.length === 5) {
       supabase
-        .from<StudentDB>("student")
-        .select("id, std_id, person(*)")
+        .from("student")
+        .select("*, person(*)")
         .match({ std_id: Number(studentID) })
         .limit(1)
         .single()
@@ -74,7 +72,7 @@ const AddStudentDialog = ({
           name="student-id"
           type="number"
           label={t("dialog.addStudent.studentID")}
-          onChange={(e) => setStudentID(e)}
+          onChange={setStudentID}
           attr={{ min: 10000, max: 99999 }}
         />
         <div>

@@ -1,7 +1,12 @@
+// External libraries
 import { PostgrestError } from "@supabase/supabase-js";
+
+// Supabase
 import { supabase } from "@utils/supabase-client";
+
+// Types
 import { ClassWNumber } from "@utils/types/class";
-import { RoomSubjectDB, SubjectTable } from "@utils/types/database/subject";
+import { SubjectTable } from "@utils/types/database/subject";
 import {
   ImportedSubjectData,
   Subject,
@@ -9,29 +14,18 @@ import {
   SubjectWNameAndCode,
 } from "@utils/types/subject";
 
-const subjectGroupMap = {
-  วิทยาศาสตร์: 1,
-  คณิตศาสตร์: 2,
-  ภาษาต่างประเทศ: 3,
-  ภาษาไทย: 4,
-  สุขศึกษาและพลศึกษา: 5,
-  การงานอาชีพและเทคโนโลยี: 6,
-  ศิลปะ: 7,
-  "สังคมศึกษา ศาสนา และวัฒนธรรม": 8,
-  การศึกษาค้นคว้าด้วยตนเอง: 9,
-} as const;
-
-const subjectTypeMap = {
-  รายวิชาพื้นฐาน: "Core Courses",
-  รายวิชาเพิ่มเติม: "Additional Courses",
-  รายวิชาเลือก: "Elective Courses",
-  กิจกรรมพัฒนาผู้เรียน: "Learner’s Development Activities",
-} as const;
+// Miscelleneous
+import { subjectGroupMap, subjectTypeMap } from "@utils/maps";
+import {
+  BackendDataReturn,
+  BackendReturn,
+  OrUndefined,
+} from "@utils/types/common";
 
 export async function deleteSubject(subject: Subject) {
   // Delete the syllabus if it exists
   if (subject.syllabus) {
-    const { data: syllabus, error: syllabusError } = await supabase.storage
+    const { error: syllabusError } = await supabase.storage
       .from("syllabus")
       .remove([subject.syllabus.toString()]);
     if (syllabusError) console.error(syllabusError);
@@ -93,7 +87,7 @@ export async function getTeachingSubjects(
   teacherID: number
 ): Promise<(SubjectWNameAndCode & { classes: ClassWNumber[] })[]> {
   const { data: roomSubjects, error } = await supabase
-    .from<RoomSubjectDB>("room_subjects")
+    .from("room_subjects")
     .select("*, subject:subject(*), class(*)")
     .contains("teacher", [teacherID]);
 
@@ -111,11 +105,11 @@ export async function getTeachingSubjects(
         name: {
           "en-US": {
             name: roomSubject.subject.name_en,
-            shortName: roomSubject.subject.short_name_en,
+            shortName: roomSubject.subject.short_name_en as OrUndefined<string>,
           },
           th: {
             name: roomSubject.subject.name_th,
-            shortName: roomSubject.subject.short_name_th,
+            shortName: roomSubject.subject.short_name_th as OrUndefined<string>,
           },
         },
         code: {
@@ -124,8 +118,8 @@ export async function getTeachingSubjects(
         },
         classes: [
           {
-            id: roomSubject.classroom.id,
-            number: roomSubject.classroom.number,
+            id: roomSubject.class.id,
+            number: roomSubject.class.number,
           },
         ],
       };
@@ -146,23 +140,13 @@ export async function getTeachingSubjects(
   return subjectsWithClasses;
 }
 
-export async function createSubject(
-  subject: Subject
-): Promise<{ data: SubjectTable[] | null; error: PostgrestError | null }> {
+export async function createSubject(subject: Subject): Promise<BackendReturn> {
   if (typeof subject.syllabus === "string") {
-    return {
-      data: null,
-      error: {
-        message: "syllabus must be a buffer",
-        details: "",
-        hint: "",
-        code: "",
-      },
-    };
+    return { error: { message: "syllabus must be a buffer" } };
   }
 
   const { data: createdSubject, error: subjectCreationError } = await supabase
-    .from<SubjectTable>("subject")
+    .from("subject")
     .insert({
       name_th: subject.name.th.name,
       name_en: (subject.name["en-US"] as SubjectName).name,
@@ -182,58 +166,43 @@ export async function createSubject(
       coTeachers: subject.coTeachers?.map((teacher) => teacher.id),
       short_name_en: (subject.name["en-US"] as SubjectName).shortName,
       short_name_th: subject.name.th.shortName,
-    });
+    })
+    .select("id")
+    .single();
+
   if (subjectCreationError || !createdSubject) {
     console.error(subjectCreationError);
-    return { data: null, error: subjectCreationError };
+    return { error: subjectCreationError };
   }
 
   if (subject.syllabus) {
-    const { data: syllabus, error: uploadingError } = await supabase.storage
+    const { error: uploadingError } = await supabase.storage
       .from("syllabus")
-      .upload(`${createdSubject[0].id}/syllabus.pdf`, subject.syllabus, {
+      .upload(`${createdSubject.id}/syllabus.pdf`, subject.syllabus, {
         cacheControl: "3600",
         upsert: false,
       });
     if (uploadingError) {
-      return {
-        data: null,
-        error: {
-          message: "syllabus upload failed",
-          details: "",
-          hint: "",
-          code: "",
-        },
-      };
+      return { error: { message: "syllabus upload failed" } };
     }
 
     await supabase
-      .from<SubjectTable>("subject")
-      .update({ syllabus: `${createdSubject[0].id}/syllabus.pdf` })
-      .match({ id: createdSubject[0].id });
+      .from("subject")
+      .update({ syllabus: `${createdSubject.id}/syllabus.pdf` })
+      .match({ id: createdSubject.id });
   }
 
-  return { data: createdSubject, error: null };
+  return { error: null };
 }
 
-export async function editSubject(
-  subject: Subject
-): Promise<{ data: SubjectTable[] | null; error: PostgrestError | null }> {
+export async function editSubject(subject: Subject): Promise<BackendReturn> {
   if (typeof subject.syllabus === "string") {
-    return {
-      data: null,
-      error: {
-        message: "syllabus must be a buffer",
-        details: "",
-        hint: "",
-        code: "",
-      },
-    };
+    return { error: { message: "syllabus must be a buffer" } };
   }
   // console.log(`${subject.id}/syllabus.pdf`, subject.syllabus);
 
   if (subject.syllabus) {
-    const { data: syllabus, error: uploadingError } = await supabase.storage
+    const { error: uploadingError } = await supabase.storage
       .from("syllabus")
       .update(`${subject.id}/syllabus.pdf`, subject.syllabus, {
         cacheControl: "3600",
@@ -241,21 +210,13 @@ export async function editSubject(
       });
     if (uploadingError) {
       console.error(uploadingError);
-      return {
-        data: null,
-        error: {
-          message: "syllabus upload failed",
-          details: "",
-          hint: "",
-          code: "",
-        },
-      };
+      return { error: { message: "syllabus upload failed" } };
     }
     // console.log(syllabus);
   }
 
   const { data: editedSubject, error: subjectEditionError } = await supabase
-    .from<SubjectTable>("subject")
+    .from("subject")
     .update({
       name_th: subject.name.th.name,
       name_en: (subject.name["en-US"] as SubjectName).name,
@@ -281,7 +242,7 @@ export async function editSubject(
 
   if (subjectEditionError || !subject) {
     console.error(subjectEditionError);
-    return { data: null, error: subjectEditionError };
+    return { error: subjectEditionError };
   }
-  return { data: editedSubject, error: null };
+  return { error: null };
 }

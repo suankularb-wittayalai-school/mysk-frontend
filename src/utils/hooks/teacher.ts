@@ -9,8 +9,8 @@ export function useTeacherOption(subjectGroupId: number) {
 
   useEffect(() => {
     supabase
-      .from<TeacherDB>("teacher")
-      .select("id, teacher_id, person(*), subject_group(*)")
+      .from("teacher")
+      .select("*, person(*), subject_group(*)")
       .match({ subject_group: subjectGroupId })
       .then((res) => {
         if (res.error) {

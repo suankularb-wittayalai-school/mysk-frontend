@@ -50,7 +50,6 @@ import { useToggle } from "@utils/hooks/toggle";
 import { supabase } from "@utils/supabase-client";
 
 // Types
-import { StudentDB } from "@utils/types/database/person";
 import { LangCode } from "@utils/types/common";
 import { ImportedStudentData, Student } from "@utils/types/person";
 
@@ -105,12 +104,9 @@ const StudentTable = ({
         studentID: student.studentID.toString(),
         class: student.class.number.toString(),
         classNo: student.classNo.toString(),
-        name: nameJoiner(
-          locale,
-          student.name,
-          student.prefix,
-          { prefix: true }
-        ),
+        name: nameJoiner(locale, student.name, student.prefix, {
+          prefix: true,
+        }),
       })),
     []
   );
@@ -289,9 +285,7 @@ const Students: NextPage<{ students: Student[] }> = ({
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
-  const { data, error } = await supabase
-    .from<StudentDB>("student")
-    .select(`id, std_id, person(*)`);
+  const { data, error } = await supabase.from("student").select("*, person(*)");
 
   if (error) console.error(error);
   if (!data) return { props: { students: [] } };

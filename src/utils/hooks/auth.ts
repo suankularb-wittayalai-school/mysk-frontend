@@ -23,8 +23,8 @@ export function useTeacherAccount(): [Teacher | null, User | null] {
   useEffect(() => {
     if (!user || user.user_metadata.role != "teacher") return;
     supabase
-      .from<TeacherDB>("teacher")
-      .select("id, teacher_id, person(*), subject_group(*)")
+      .from("teacher")
+      .select("*, person(*), subject_group(*)")
       .eq("id", user.user_metadata.teacher)
       .single()
       .then((res) => {

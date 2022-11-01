@@ -1,27 +1,39 @@
+// External libraries
 import { PostgrestError } from "@supabase/supabase-js";
+
+// Backend
+import { db2SubjectListItem } from "@utils/backend/database";
+
+// Supabase
 import { supabase } from "@utils/supabase-client";
+
+// Types
 import { ClassWNumber } from "@utils/types/class";
-import { RoomSubjectDB } from "@utils/types/database/subject";
+import { BackendDataReturn } from "@utils/types/common";
 import { SubjectListItem } from "@utils/types/subject";
-import { db2SubjectListItem } from "../database";
+import { Database } from "@utils/types/supabase";
 
 export async function getRoomsEnrolledInSubject(
   subjectID: number
-): Promise<{ data: ClassWNumber[] | null; error: PostgrestError | null }> {
+): Promise<BackendDataReturn<ClassWNumber[]>> {
   const { data, error } = await supabase
-    .from<RoomSubjectDB>("room_subjects")
-    .select("class(id, number)")
+    .from("room_subjects")
+    .select("classroom(id, number)")
     .match({ subject: subjectID });
 
   if (error || !data) {
     console.error(error);
-    return { data: null, error };
+    return { data: [], error };
   }
 
   return {
     data: data.map((roomSubject) => ({
-      id: roomSubject.classroom.id,
-      number: roomSubject.classroom.number,
+      id: (
+        roomSubject.classroom as Database["public"]["Tables"]["classroom"]["Row"]
+      ).id,
+      number: (
+        roomSubject.classroom as Database["public"]["Tables"]["classroom"]["Row"]
+      ).number,
     })),
     error: null,
   };
@@ -31,7 +43,7 @@ export async function getSubjectList(
   classID: number
 ): Promise<{ data: SubjectListItem[]; error: PostgrestError | null }> {
   const { data, error } = await supabase
-    .from<RoomSubjectDB>("room_subjects")
+    .from("room_subjects")
     .select("*, subject:subject(*), class(*)")
     .match({ class: classID });
 

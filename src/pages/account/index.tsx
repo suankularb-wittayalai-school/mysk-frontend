@@ -31,10 +31,7 @@ import LogOutDialog from "@components/dialogs/LogOut";
 import ProfilePicture from "@components/ProfilePicture";
 
 // Backend
-import {
-  getPersonFromUser,
-  getUserFromReq,
-} from "@utils/backend/person/person";
+import { getPersonFromUser } from "@utils/backend/person/person";
 
 // Helpers
 import { getLocaleString } from "@utils/helpers/i18n";

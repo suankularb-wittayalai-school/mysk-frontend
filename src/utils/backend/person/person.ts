@@ -1,7 +1,7 @@
 // External libraries
 import { NextApiRequestCookies } from "next/dist/server/api-utils";
 import { IncomingMessage, ServerResponse } from "http";
-import { PostgrestError, User } from "@supabase/supabase-js";
+import { User } from "@supabase/supabase-js";
 
 // Backend
 import { createContact } from "@utils/backend/contact";
@@ -14,12 +14,6 @@ import { supabase } from "@utils/supabase-client";
 // Types
 import { BackendDataReturn } from "@utils/types/common";
 import { Person, Student, Teacher } from "@utils/types/person";
-import {
-  PersonTable,
-  StudentDB,
-  StudentTable,
-  TeacherTable,
-} from "@utils/types/database/person";
 import { Database } from "@utils/types/supabase";
 
 export async function createPerson(
@@ -43,7 +37,7 @@ export async function createPerson(
 
   // map the created contact to id
   const contactIds = contacts
-    .map((contact) => contact.data?.[0]?.id)
+    .map((contact) => contact.data?.id)
     .filter((id) => id !== undefined || id !== null);
 
   const { data: createdPerson, error: personCreationError } = await supabase
@@ -90,14 +84,16 @@ export async function setupPerson(
     subjectGroup: number;
   },
   person: Student | Teacher
-): Promise<BackendDataReturn<PersonTable, null>> {
+): Promise<
+  BackendDataReturn<Database["public"]["Tables"]["people"]["Row"], null>
+> {
   // Get person ID
   let personID = 0;
 
   // Fetch person ID from `student` table if user is a student
   if (person.role == "student") {
     const { data: studentPersonID, error: idError } = await supabase
-      .from<StudentTable>("student")
+      .from("student")
       .select("person")
       .match({ id: person.id })
       .limit(1)
@@ -107,13 +103,13 @@ export async function setupPerson(
       console.error(idError);
       return { data: null, error: idError };
     }
-    personID = (studentPersonID as StudentTable).person;
+    personID = studentPersonID.person as unknown as number;
   }
 
   // Fetch person ID from `teacher` table if user is a teacher
   else if (person.role == "teacher") {
     const { data: teacherPersonID, error: idError } = await supabase
-      .from<TeacherTable>("teacher")
+      .from("teacher")
       .select("person")
       .match({ id: person.id })
       .limit(1)
@@ -123,12 +119,12 @@ export async function setupPerson(
       console.error(idError);
       return { data: null, error: idError };
     }
-    personID = (teacherPersonID as TeacherTable).person;
+    personID = teacherPersonID.person as unknown as number;
   }
 
   // Update person data (`person` table)
   const { data: updPerson, error: personError } = await supabase
-    .from<PersonTable>("people")
+    .from("people")
     .update({
       prefix_th: form.thPrefix,
       first_name_th: form.thFirstName,
@@ -142,6 +138,7 @@ export async function setupPerson(
       citizen_id: form.citizenID,
     })
     .match({ id: personID })
+    .select("*")
     .limit(1)
     .single();
 
@@ -155,7 +152,7 @@ export async function setupPerson(
   // Update a student’s student ID
   if (person.role == "student") {
     const { error } = await supabase
-      .from<StudentTable>("student")
+      .from("student")
       .update({ std_id: form.studentID })
       .match({ id: person.id, std_id: person.studentID })
       .limit(1)
@@ -165,13 +162,13 @@ export async function setupPerson(
       console.error(error);
       return { data: null, error };
     }
-    return { data: updPerson as PersonTable, error: null };
+    return { data: updPerson, error: null };
   }
 
   // Update a teacher’s teacher ID and subject group
   else if (person.role == "teacher") {
     const { error } = await supabase
-      .from<TeacherTable>("teacher")
+      .from("teacher")
       .update({
         teacher_id: form.teacherID,
         subject_group: form.subjectGroup,
@@ -182,7 +179,7 @@ export async function setupPerson(
       console.error(error);
       return { data: null, error };
     }
-    return { data: updPerson as PersonTable, error: null };
+    return { data: updPerson, error: null };
   }
 
   // Invalid role handling
@@ -191,28 +188,38 @@ export async function setupPerson(
   return { data: null, error };
 }
 
-export async function getUserFromReq(
-  req: IncomingMessage & { cookies: NextApiRequestCookies },
-  res?: ServerResponse
-): Promise<BackendDataReturn<Student | Teacher, null>> {
-  const { user, error } = await supabase.auth.api.getUserByCookie(req, res);
-
-  if (error) {
-    console.error(error);
-    return { data: null, error };
-  }
-
-  return getPersonFromUser(user);
-}
-
 export async function getPersonFromUser(
   user: User
 ): Promise<BackendDataReturn<Student | Teacher, null>> {
   if (user?.user_metadata.role == "student") {
     const { data: student, error: studentError } = await supabase
-      .from<StudentDB>("student")
-      .select("id, std_id, person(*)")
-      .match({ id: user?.user_metadata.student })
+      .from("student")
+      .select("*, person(*)")
+      .match({ id: user.user_metadata.student })
+      .limit(1)
+      .single();
+
+    if (studentError) {
+      console.error(studentError);
+      return { data: null, error: studentError };
+    }
+
+    return { data: await db2Student(student), error: null };
+  } else if (user?.user_metadata.role == "teacher")
+    return getTeacherFromUser(user);
+
+  return { data: null, error: { message: "invalid role." } };
+}
+
+export async function getPersonIDFromUser(
+  user: User
+): Promise<BackendDataReturn<number, null>> {
+  if (user?.user_metadata.role == "student") {
+    const { data: student, error: studentError } = await supabase
+      .from("student")
+      .select("person(id)")
+      .match({ id: user.user_metadata.student })
+      .limit(1)
       .single();
 
     if (studentError) {
@@ -221,68 +228,29 @@ export async function getPersonFromUser(
     }
 
     return {
-      data: await db2Student(student as StudentDB),
+      data: (student.person as Database["public"]["Tables"]["people"]["Row"])
+        .id,
       error: null,
     };
-  } else if (user?.user_metadata.role == "teacher")
-    return getTeacherFromUser(user);
+  } else if (user?.user_metadata.role == "teacher") {
+    const { data: teacher, error: teacherError } = await supabase
+      .from("teacher")
+      .select("person(id)")
+      .match({ id: user.user_metadata.teacher })
+      .limit(1)
+      .single();
+
+    if (teacherError) {
+      console.error(teacherError);
+      return { data: null, error: teacherError };
+    }
+
+    return {
+      data: (teacher.person as Database["public"]["Tables"]["people"]["Row"])
+        .id,
+      error: null,
+    };
+  }
 
   return { data: null, error: { message: "invalid role." } };
-}
-
-export async function getPersonIDFromStudentID(
-  studentID: number
-): Promise<number> {
-  const { data: student, error } = await supabase
-    .from<{ id: number; person: number }>("student")
-    .select("id, person")
-    .match({ id: studentID })
-    .limit(1)
-    .single();
-
-  if (error || !student) {
-    console.error(error);
-    return -1;
-  }
-
-  return student.person;
-}
-
-export async function getPersonIDFromTeacherID(
-  teacherID: number
-): Promise<number> {
-  const { data: teacher, error } = await supabase
-    .from<{ id: number; person: number }>("teacher")
-    .select("id, person")
-    .match({ id: teacherID })
-    .limit(1)
-    .single();
-
-  if (error || !teacher) {
-    console.error(error);
-    return -1;
-  }
-
-  return teacher.person;
-}
-
-export async function getPersonIDFromReq(
-  req: IncomingMessage & { cookies: NextApiRequestCookies },
-  res?: ServerResponse
-): Promise<number> {
-  const { user, error } = await supabase.auth.api.getUserByCookie(req, res);
-
-  if (error || !user) {
-    console.error(error);
-    return 0;
-  }
-
-  const userRole = user?.user_metadata.role;
-
-  const personID =
-    userRole === "student"
-      ? await getPersonIDFromStudentID(user.user_metadata.student)
-      : await getPersonIDFromTeacherID(user.user_metadata.teacher);
-
-  return personID;
 }

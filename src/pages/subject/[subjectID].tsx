@@ -53,11 +53,6 @@ import {
   SubstituteAssignment,
 } from "@utils/types/subject";
 import { DialogProps, LangCode } from "@utils/types/common";
-import {
-  RoomSubjectDB,
-  RoomSubjectTable,
-  SubjectTable,
-} from "@utils/types/database/subject";
 
 // Backend
 import { db2Subject, db2SubjectListItem } from "@utils/backend/database";
@@ -717,9 +712,10 @@ const SubjectDetails: NextPage<{
   const [activeAsgn, setActiveAsgn] = useState<SubstituteAssignment>();
 
   async function handleDelete() {
-    await supabase.from<RoomSubjectTable>("room_subjects").delete().match({
-      id: deleteConnection.connection?.id,
-    });
+    await supabase
+      .from("room_subjects")
+      .delete()
+      .match({ id: deleteConnection.connection?.id });
     // console.log(deleteConnection.connection);
   }
 
@@ -855,14 +851,14 @@ export const getServerSideProps: GetServerSideProps = async ({
   params,
 }) => {
   const { data: dbSubject, error: dbSubjectError } = await supabase
-    .from<SubjectTable>("subject")
+    .from("subject")
     .select("*")
     .match({ id: params?.subjectID })
     .limit(1)
     .single();
 
   const { data: roomSubjects, error: roomSubjectsError } = await supabase
-    .from<RoomSubjectDB>("room_subjects")
+    .from("room_subjects")
     .select("*, subject:subject(*), class(*)")
     .eq("subject", params?.subjectID as string);
 

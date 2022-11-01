@@ -42,7 +42,7 @@ export async function createStudent(
   }
 
   const { data: createdStudent, error: studentCreationError } = await supabase
-    .from<StudentTable>("student")
+    .from("student")
     .insert({
       person: person[0]?.id,
       std_id: student.studentID.trim(),
@@ -93,7 +93,7 @@ export async function deleteStudent(student: Student) {
   }
 
   const { data: deleting, error } = await supabase
-    .from<StudentTable>("student")
+    .from("student")
     .delete()
     .match({ id: student.id });
   if (error || !deleting) {
@@ -103,7 +103,7 @@ export async function deleteStudent(student: Student) {
 
   // Delete the person of the student
   const { data: person, error: personDeletingError } = await supabase
-    .from<PersonTable>("people")
+    .from("people")
     .delete()
     .match({ id: deleting[0].person });
 
@@ -172,7 +172,7 @@ export async function getClassOfStudent(
   studentDBID: number
 ): Promise<BackendDataReturn<ClassWNumber, null>> {
   const { data, error } = await supabase
-    .from<ClassroomDB>("classroom")
+    .from("classroom")
     .select("id, number")
     .match({ year: getCurrentAcedemicYear() })
     .contains("students", [studentDBID])

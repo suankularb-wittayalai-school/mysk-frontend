@@ -41,7 +41,6 @@ import { deleteTeacher, importTeachers } from "@utils/backend/person/teacher";
 // Types
 import { LangCode } from "@utils/types/common";
 import { ImportedTeacherData, Teacher } from "@utils/types/person";
-import { TeacherDB } from "@utils/types/database/person";
 
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
@@ -110,12 +109,9 @@ const TeacherTable = ({
       teachers.map((teacher, idx) => ({
         idx,
         teacherID: teacher.teacherID.toString(),
-        name: nameJoiner(
-          locale,
-          teacher.name,
-          teacher.prefix,
-          { prefix: true }
-        ),
+        name: nameJoiner(locale, teacher.name, teacher.prefix, {
+          prefix: true,
+        }),
         classAdvisorAt: teacher.classAdvisorAt?.number
           ? t("class", { ns: "common", number: teacher.classAdvisorAt.number })
           : "",
@@ -301,8 +297,8 @@ const Teachers: NextPage<{ teachers: Teacher[] }> = ({
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   const { data, error } = await supabase
-    .from<TeacherDB>("teacher")
-    .select("id, teacher_id, person(*), subject_group(*)");
+    .from("teacher")
+    .select("*, person(*), subject_group(*)");
 
   if (error) {
     console.error(error);
@@ -311,10 +307,8 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
 
   if (!data) return { props: { teachers: [] } };
 
-  // console.log(data);
-
   const teachers: Teacher[] = await Promise.all(
-    data.map(async (student) => await db2Teacher(student))
+    data.map(async (teacher) => await db2Teacher(teacher))
   );
 
   return {

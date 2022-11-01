@@ -49,7 +49,6 @@ import { db2Class } from "@utils/backend/database";
 // Types
 import { Class } from "@utils/types/class";
 import { LangCode } from "@utils/types/common";
-import { ClassroomDB } from "@utils/types/database/class";
 
 // Helpers
 import { range } from "@utils/helpers/array";
@@ -344,16 +343,13 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   let classes: Class[] = [];
 
   const { data, error } = await supabase
-    .from<ClassroomDB>("classroom")
+    .from("classroom")
     .select("*")
     .order("number", { ascending: true });
 
   if (error) console.error(error);
 
-  if (data)
-    classes = await Promise.all(
-      data.map(async (classItem) => await db2Class(classItem))
-    );
+  if (data) classes = await Promise.all(data.map(db2Class));
 
   return {
     props: {

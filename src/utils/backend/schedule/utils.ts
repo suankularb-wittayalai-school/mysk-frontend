@@ -6,7 +6,6 @@ import { supabase } from "@utils/supabase-client";
 
 // Types
 import { PeriodContentItem } from "@utils/types/schedule";
-import { ScheduleItemTable } from "@utils/types/database/schedule";
 
 export async function isOverlappingExistingItems(
   day: Day,
@@ -16,7 +15,7 @@ export async function isOverlappingExistingItems(
   // Get the Schedule Items taught by this teacher in that day
   const { data: itemsSameTeacher, error: itemsSameTeacherError } =
     await supabase
-      .from<ScheduleItemTable>("schedule_items")
+      .from("schedule_items")
       .select("id, start_time, duration")
       .match({ teacher: teacherID, day });
 
@@ -41,7 +40,7 @@ export async function isOverlappingExistingItems(
       )
     ) {
       console.error(
-        "new period duration causes it to overlap with other relevant periods"
+        "new period duration causes it to overlap with other relevant periods."
       );
       return true;
     }

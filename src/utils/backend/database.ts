@@ -8,7 +8,6 @@ import { supabase } from "@utils/supabase-client";
 import { Class } from "@utils/types/class";
 import { OrUndefined } from "@utils/types/common";
 import { Contact } from "@utils/types/contact";
-import { RoomSubjectDB } from "@utils/types/database/subject";
 import {
   FormField,
   FormPage,
@@ -175,7 +174,7 @@ export async function db2Student(
     id: student.id,
     prefix: {
       th: student.person.prefix_th,
-      "en-US": student.person.prefix_en,
+      "en-US": student.person.prefix_en as OrUndefined<string>,
     },
     role: "student",
     name: {
@@ -240,7 +239,7 @@ export async function db2Teacher(
     role: "teacher",
     prefix: {
       th: teacher.person.prefix_th,
-      "en-US": teacher.person.prefix_en,
+      "en-US": teacher.person.prefix_en as OrUndefined<string>,
     },
     name: {
       "en-US": {

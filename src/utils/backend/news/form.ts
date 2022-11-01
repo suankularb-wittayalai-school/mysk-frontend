@@ -1,10 +1,5 @@
 // Types
-import {
-  FormDB,
-  FormFieldValueTable,
-  FormSubmissionTable,
-  FormTable,
-} from "@utils/types/database/news";
+import { FormTable } from "@utils/types/database/news";
 import { BackendDataReturn } from "@utils/types/common";
 import { FormField, FormPage, NewsItemFormNoDate } from "@utils/types/news";
 
@@ -13,13 +8,14 @@ import { db2FormPage, dbForm2NewsItem } from "../database";
 
 // Supabase
 import { supabase } from "@utils/supabase-client";
+import { Database } from "@utils/types/supabase";
 
-export async function getForms(): Promise<BackendDataReturn<NewsItemFormNoDate[]>> {
+export async function getForms(): Promise<
+  BackendDataReturn<NewsItemFormNoDate[]>
+> {
   const { data, error } = await supabase
-    .from<FormDB>("forms")
-    .select(
-      "id, created_at, due_date, students_done, frequency, parent:news(title_th, title_en, description_th, description_en, image, old_url)"
-    )
+    .from("forms")
+    .select("*, parent(*)")
     .order("created_at", { ascending: false });
 
   if (error || !data) {
@@ -34,10 +30,8 @@ export async function getForm(
   formID: number
 ): Promise<BackendDataReturn<FormPage, null>> {
   const { data, error } = await supabase
-    .from<FormDB>("forms")
-    .select(
-      "id, created_at, due_date, students_done, frequency, parent:news(title_th, title_en, description_th, description_en, image, old_url)"
-    )
+    .from("forms")
+    .select("*, parent(*)")
     .match({ id: formID })
     .limit(1)
     .single();
@@ -47,18 +41,22 @@ export async function getForm(
     return { data: null, error: error };
   }
 
-  return { data: await db2FormPage(data as FormDB), error: null };
+  return { data: await db2FormPage(data), error: null };
 }
 
 export async function sendForm(
   formID: number,
   formAnswer: { id: number; value: string | number | string[] | File | null }[],
   sendAs?: number
-): Promise<BackendDataReturn<FormFieldValueTable[]>> {
+): Promise<
+  BackendDataReturn<Database["public"]["Tables"]["form_field_value"]["Row"][]>
+> {
   // create submission in form_submissions
   const { data, error } = await supabase
-    .from<FormSubmissionTable>("form_submissions")
+    .from("form_submissions")
     .insert({ form: formID, person: sendAs ?? null })
+    .select("*")
+    .limit(1)
     .single();
 
   if (error || !data) {
@@ -67,14 +65,14 @@ export async function sendForm(
   }
 
   // save answers to form_field_values
-  const answers: FormFieldValueTable[] = (
+  const answers = (
     await Promise.all(
       formAnswer.map((answer) => sendFormAnswer(answer, data.id))
     )
   )
     .map((answer) => answer.data)
     .filter((answer) => answer !== null)
-    .flat() as FormFieldValueTable[];
+    .flat();
 
   if (error) {
     console.error(error);
@@ -87,7 +85,12 @@ export async function sendForm(
 async function sendFormAnswer(
   formAnswer: { id: number; value: string | number | string[] | File | null },
   submissionID: number
-): Promise<BackendDataReturn<FormFieldValueTable[] | FormFieldValueTable | null>> {
+): Promise<
+  BackendDataReturn<
+    | Database["public"]["Tables"]["form_field_value"]["Row"][]
+    | Database["public"]["Tables"]["form_field_value"]["Row"]
+  >
+> {
   switch (typeof formAnswer.value) {
     // file, or array
     case "object":
@@ -113,14 +116,18 @@ async function sendFormAnswer(
         }
         // save value as path
         const { data, error } = await supabase
-          .from<FormFieldValueTable>("form_field_value")
+          .from("form_field_value")
           .insert({
             field: formAnswer.id,
             value: `form_submissions/${submissionID}/file-${
               formAnswer.id
             }.${formAnswer.value.name.split(".").pop()}`,
             submission: submissionID,
-          });
+          })
+          .select("*")
+          .limit(1)
+          .single();
+
         if (error) {
           console.error(error);
           return { data: [], error };
@@ -131,14 +138,23 @@ async function sendFormAnswer(
       if (Array.isArray(formAnswer.value)) {
         // save each value as separate answer
         const { data, error } = await supabase
-          .from<FormFieldValueTable>("form_field_value")
+          .from("form_field_value")
           .insert(
             formAnswer.value.map((value) => ({
               field: formAnswer.id,
               value,
               submission: submissionID,
             }))
-          );
+          )
+          .select("*")
+          .limit(1)
+          .single();
+
+        if (error) {
+          console.error(error);
+          return { data: [], error };
+        }
+
         return { data, error: null };
       }
       break;
@@ -146,16 +162,24 @@ async function sendFormAnswer(
     default:
       // Save value as answer in plain text
       const { data, error } = await supabase
-        .from<FormFieldValueTable>("form_field_value")
+        .from("form_field_value")
         .insert({
           field: formAnswer.id,
           value: formAnswer.value.toString(),
           submission: submissionID,
         })
+        .select("*")
+        .limit(1)
         .single();
+
+      if (error) {
+        console.error(error);
+        return { data: [], error };
+      }
+
       return { data, error: null };
   }
-  return { data: null, error: null };
+  return { data: [], error: null };
 }
 
 export async function createForm(form: {
@@ -171,6 +195,6 @@ export async function createForm(form: {
 
   return {
     data: null,
-    error: { message: "this function is not implemented." },
+    error: { message: "function not implemented." },
   };
 }

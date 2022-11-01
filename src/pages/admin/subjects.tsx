@@ -318,9 +318,7 @@ const Subjects: NextPage<{ subjects: Subject[] }> = ({ subjects }) => {
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   let subjects: Subject[] = [];
 
-  const { data, error } = await supabase
-    .from<SubjectTableType>("subject")
-    .select("*");
+  const { data, error } = await supabase.from("subject").select("*");
 
   if (error) console.error(error);
 

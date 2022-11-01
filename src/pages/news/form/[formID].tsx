@@ -8,15 +8,18 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
+import { User, withPageAuth } from "@supabase/auth-helpers-nextjs";
+
 // SK Components
 import { Actions, Button } from "@suankularb-components/react";
 
 // Components
+import FormField from "@components/news/FormField";
 import NewsPageWrapper from "@components/news/NewsPageWrapper";
 
 // Backend
 import { getForm, sendForm } from "@utils/backend/news/form";
-import { getPersonIDFromReq } from "@utils/backend/person/person";
+import { getPersonIDFromUser } from "@utils/backend/person/person";
 
 // Helpers
 import { getLocaleString } from "@utils/helpers/i18n";
@@ -28,7 +31,12 @@ import {
   FormField as FormFieldType,
   FormPage as FormPageType,
 } from "@utils/types/news";
-import FormField from "@components/news/FormField";
+
+type FormControlField = {
+  id: number;
+  value: string | number | string[] | File | null;
+  required: boolean;
+};
 
 const FormPage: NextPage<{ formPage: FormPageType; personID: number }> = ({
   formPage,
@@ -37,12 +45,6 @@ const FormPage: NextPage<{ formPage: FormPageType; personID: number }> = ({
   const { t } = useTranslation(["news", "common"]);
   const router = useRouter();
   const locale = router.locale as LangCode;
-
-  type FormControlField = {
-    id: number;
-    value: string | number | string[] | File | null;
-    required: boolean;
-  };
 
   // Form control
   const [form, setForm] = useState<FormControlField[]>(
@@ -122,26 +124,29 @@ const FormPage: NextPage<{ formPage: FormPageType; personID: number }> = ({
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  params,
-  req,
-  res,
-}) => {
-  const personID = await getPersonIDFromReq(req, res);
+export const getServerSideProps: GetServerSideProps = withPageAuth({
+  async getServerSideProps({ locale, params }, supabase) {
+    const { data: user } = await supabase.auth.getUser();
+    const { data: personID } = await getPersonIDFromUser(user.user as User);
 
-  if (!params?.formID) return { notFound: true };
+    console.log({ personID });
 
-  const { data: formPage, error } = await getForm(Number(params?.formID));
-  if (error) return { notFound: true };
+    if (!params?.formID) return { notFound: true };
 
-  return {
-    props: {
-      ...(await serverSideTranslations(locale as LangCode, ["common", "news"])),
-      formPage,
-      personID,
-    },
-  };
-};
+    const { data: formPage, error } = await getForm(Number(params?.formID));
+    if (error) return { notFound: true };
+
+    return {
+      props: {
+        ...(await serverSideTranslations(locale as LangCode, [
+          "common",
+          "news",
+        ])),
+        formPage,
+        personID,
+      },
+    };
+  },
+});
 
 export default FormPage;

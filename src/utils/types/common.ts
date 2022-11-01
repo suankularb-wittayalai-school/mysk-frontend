@@ -20,14 +20,14 @@ export type ForcedMultiLangString = {
   "en-US": string;
 };
 
-export interface DialogProps {
+export type DialogProps = {
   show: boolean;
   onClose: () => void;
-}
+};
 
-export interface SubmittableDialogProps extends DialogProps {
-  onSubmit: () => void;
-}
+export type SubmittableDialogProps<T = () => void> = DialogProps & {
+  onSubmit: T;
+};
 
 export type BackendReturn = { error: Partial<PostgrestError> | null };
 
@@ -44,8 +44,8 @@ export type DataTableColumnDef = ColumnDef<object> &
   }>;
 
 export type DialogComponent<T = {}> = (props: T & DialogProps) => JSX.Element;
-export type SubmittableDialogComponent<T = {}> = (
-  props: T & SubmittableDialogProps
+export type SubmittableDialogComponent<T = () => void, U = {}> = (
+  props: U & SubmittableDialogProps<T>
 ) => JSX.Element;
 
 export type ChipInputListItem = {
