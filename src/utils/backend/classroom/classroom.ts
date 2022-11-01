@@ -1,7 +1,5 @@
 // External libraries
-import { PostgrestError, User } from "@supabase/supabase-js";
-import { IncomingMessage, ServerResponse } from "http";
-import { NextApiRequestCookies } from "next/dist/server/api-utils";
+import { User } from "@supabase/supabase-js";
 
 // Backend
 import { createContact, updateContact } from "@utils/backend/contact";

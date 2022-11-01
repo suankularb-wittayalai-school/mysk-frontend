@@ -1,6 +1,4 @@
 // External libraries
-import { NextApiRequestCookies } from "next/dist/server/api-utils";
-import { IncomingMessage, ServerResponse } from "http";
 import { User } from "@supabase/supabase-js";
 
 // Backend
