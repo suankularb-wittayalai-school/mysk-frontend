@@ -8,7 +8,7 @@ import { useTranslation } from "next-i18next";
 
 import { ReactNode, useEffect, useState } from "react";
 
-import { useUser } from "@supabase/auth-helpers-react";
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 
 // SK Components
 import {
@@ -38,6 +38,7 @@ const Layout = ({
   children: ReactNode;
 }): JSX.Element => {
   const router = useRouter();
+  const supabase = useSupabaseClient();
   const user = useUser();
   const { t } = useTranslation();
 
@@ -125,6 +126,7 @@ const Layout = ({
       // Student Navigation
       if (role == "student") {
         const { data: classOfStudent, error } = await getClassOfStudent(
+          supabase,
           user?.user_metadata.student
         );
 
@@ -158,6 +160,7 @@ const Layout = ({
       // Teacher Navigation
       else if (role == "teacher") {
         const { data: classAdvisorAt, error } = await getClassAdvisorAt(
+          supabase,
           user?.user_metadata.teacher
         );
 
