@@ -208,7 +208,7 @@ export async function getPersonFromUser(
 
     return { data: await db2Student(supabase, student!), error: null };
   } else if (user?.user_metadata.role == "teacher")
-    return getTeacherFromUser(user);
+    return getTeacherFromUser(supabase, user);
 
   return { data: null, error: { message: "invalid role." } };
 }

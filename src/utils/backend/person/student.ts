@@ -12,7 +12,7 @@ import { supabase } from "@utils/supabase-client";
 
 // Types
 import { ClassWNumber } from "@utils/types/class";
-import { BackendDataReturn } from "@utils/types/common";
+import { BackendDataReturn, DatabaseClient } from "@utils/types/common";
 import { ImportedStudentData, Student } from "@utils/types/person";
 import { ClassroomDB } from "@utils/types/database/class";
 import {
@@ -171,6 +171,7 @@ export async function importStudents(data: ImportedStudentData[]) {
 }
 
 export async function getClassOfStudent(
+  supabase: DatabaseClient,
   studentDBID: number
 ): Promise<BackendDataReturn<ClassWNumber, null>> {
   const { data, error } = await supabase

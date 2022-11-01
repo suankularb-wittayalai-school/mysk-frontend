@@ -13,14 +13,18 @@ import { supabase } from "@utils/supabase-client";
 
 // Types
 import { ClassWNumber } from "@utils/types/class";
-import { BackendDataReturn, BackendReturn } from "@utils/types/common";
+import {
+  BackendDataReturn,
+  BackendReturn,
+  DatabaseClient,
+} from "@utils/types/common";
 import { ImportedTeacherData, Teacher } from "@utils/types/person";
-import { Database } from "@utils/types/supabase";
 
 // Miscellaneous
 import { prefixMap, subjectGroupMap } from "@utils/maps";
 
 export async function getTeacherFromUser(
+  supabase: DatabaseClient,
   user: User
 ): Promise<BackendDataReturn<Teacher, null>> {
   const { data, error } = await supabase
@@ -231,6 +235,7 @@ export async function getTeacherList(classID: number): Promise<Teacher[]> {
 }
 
 export async function getClassAdvisorAt(
+  supabase: DatabaseClient,
   teacherDBID: number
 ): Promise<BackendDataReturn<ClassWNumber, null>> {
   const { data, error } = await supabase
