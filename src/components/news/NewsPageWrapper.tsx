@@ -49,7 +49,7 @@ const NewsPageWrapper = ({
       <Head>
         <meta property="og:title" content={getLocaleString(news.content.title, locale)} />
         <meta property="og:type" content="news" />
-        <meta property="og:url" content={`/news/info/${news.id}`} />
+        <meta property="og:url" content={`https://beta.mysk.school/news/info/${news.id}`} />
         <meta property="og:image" content={news.image} />
         <meta property="og:description" content={news.content.description[locale]} />
         <meta property="og:locale" content={locale} />
