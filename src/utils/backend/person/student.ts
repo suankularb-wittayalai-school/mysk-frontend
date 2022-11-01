@@ -20,6 +20,7 @@ import {
   PersonTable,
   StudentTable,
 } from "@utils/types/database/person";
+import { Database } from "@utils/types/supabase";
 
 const prefixMap = {
   เด็กชาย: "Master.",
@@ -32,11 +33,14 @@ export async function createStudent(
   student: Student,
   email: string,
   isAdmin: boolean = false
-): Promise<{ data: StudentTable[] | null; error: PostgrestError | null }> {
+): Promise<
+  BackendDataReturn<Database["public"]["Tables"]["student"]["Row"], null>
+> {
   const { data: person, error: personCreationError } = await createPerson(
     student
   );
-  if (personCreationError || !person) {
+
+  if (personCreationError) {
     console.error(personCreationError);
     return { data: null, error: personCreationError };
   }
@@ -44,39 +48,37 @@ export async function createStudent(
   const { data: createdStudent, error: studentCreationError } = await supabase
     .from("student")
     .insert({
-      person: person[0]?.id,
+      person: person!.id,
       std_id: student.studentID.trim(),
-    });
-  if (studentCreationError || !createdStudent) {
+    })
+    .select("*, person(*)")
+    .single();
+
+  if (studentCreationError) {
     console.error(studentCreationError);
-    // delete the created person
-    await supabase
-      .from<PersonDB>("people")
-      .delete()
-      .match({ id: person[0]?.id });
+    // Delete the created person
+    await supabase.from("people").delete().match({ id: person!.id });
     return { data: null, error: studentCreationError };
   }
 
-  // register an account for the student
-  const res = await fetch("/api/account/student", {
+  // Register an account for the student
+  await fetch("/api/account/student", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       email,
       password: student.birthdate.split("-").join(""),
-      id: createdStudent[0]?.id,
+      id: createdStudent!.id,
       isAdmin,
     }),
   });
 
-  return { data: createdStudent, error: null };
+  return { data: createdStudent!, error: null };
 }
 
 export async function deleteStudent(student: Student) {
   const { data: userid, error: selectingError } = await supabase
-    .from<User>("users")
+    .from("users")
     .select("id")
     .match({ student: student.id })
     .limit(1)
@@ -92,22 +94,28 @@ export async function deleteStudent(student: Student) {
     return;
   }
 
-  const { data: deleting, error } = await supabase
+  const { data, error } = await supabase
     .from("student")
     .delete()
-    .match({ id: student.id });
-  if (error || !deleting) {
+    .match({ id: student.id })
+    .select("person(id)")
+    .limit(1)
+    .single();
+
+  if (error) {
     console.error(error);
     return;
   }
 
   // Delete the person of the student
-  const { data: person, error: personDeletingError } = await supabase
+  const { error: personDeletingError } = await supabase
     .from("people")
     .delete()
-    .match({ id: deleting[0].person });
+    .match({
+      id: (data as Database["public"]["Tables"]["student"]["Row"]).person.id,
+    });
 
-  if (personDeletingError || !person) {
+  if (personDeletingError) {
     console.error(personDeletingError);
     return;
   }
@@ -115,51 +123,45 @@ export async function deleteStudent(student: Student) {
   // Delete account of the student
   await fetch(`/api/account`, {
     method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      id: userid.id,
-    }),
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id: userid.id }),
   });
 }
 
 export async function importStudents(data: ImportedStudentData[]) {
-  const students: Array<{ person: Student; email: string }> = data.map(
-    (student) => {
-      const person: Student = {
+  const students: { person: Student; email: string }[] = data.map((student) => {
+    const person: Student = {
+      id: 0,
+      prefix: {
+        th: student.prefix,
+        "en-US": prefixMap[student.prefix],
+      },
+      role: "student",
+      name: {
+        th: {
+          firstName: student.first_name_th,
+          middleName: student.middle_name_th,
+          lastName: student.last_name_th,
+        },
+        "en-US": {
+          firstName: student.first_name_en,
+          middleName: student.middle_name_en,
+          lastName: student.last_name_en,
+        },
+      },
+      birthdate: student.birthdate,
+      citizenID: student.citizen_id.toString(),
+      studentID: student.student_id.toString(),
+      contacts: [],
+      class: {
         id: 0,
-        prefix: {
-          th: student.prefix,
-          "en-US": prefixMap[student.prefix]
-        },
-        role: "student",
-        name: {
-          th: {
-            firstName: student.first_name_th,
-            middleName: student.middle_name_th,
-            lastName: student.last_name_th,
-          },
-          "en-US": {
-            firstName: student.first_name_en,
-            middleName: student.middle_name_en,
-            lastName: student.last_name_en,
-          },
-        },
-        birthdate: student.birthdate,
-        citizenID: student.citizen_id.toString(),
-        studentID: student.student_id.toString(),
-        contacts: [],
-        class: {
-          id: 0,
-          number: student.class_number,
-        },
-        classNo: 0,
-      };
-      const email = student.email;
-      return { person, email };
-    }
-  );
+        number: student.class_number,
+      },
+      classNo: 0,
+    };
+    const email = student.email;
+    return { person, email };
+  });
 
   await Promise.all(
     students.map(
@@ -184,5 +186,5 @@ export async function getClassOfStudent(
     return { data: null, error };
   }
 
-  return { data: data as ClassWNumber, error: null };
+  return { data: data!, error: null };
 }

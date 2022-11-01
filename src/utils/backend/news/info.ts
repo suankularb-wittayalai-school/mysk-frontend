@@ -45,23 +45,28 @@ export async function getInfos(): Promise<
     )
     .order("created_at", { ascending: false });
 
-  if (error || !data) {
+  if (error) {
     console.error(error);
     return { data: [], error };
   }
 
-  return { data: data.map(dbInfo2NewsItem), error: null };
+  return {
+    data: data!.map(dbInfo2NewsItem),
+    error: null,
+  };
 }
 
 export async function getAllInfoIDs(): Promise<number[]> {
   const { data, error } = await supabase.from("infos").select("id");
 
-  if (error || !data) {
+  if (error) {
     console.error(error);
     return [];
   }
 
-  return data.map((info) => info.id);
+  return (data as Database["public"]["Tables"]["infos"]["Row"][]).map(
+    (info) => info.id
+  );
 }
 
 export async function getInfo(
@@ -81,7 +86,10 @@ export async function getInfo(
     return { data: null, error };
   }
 
-  return { data: db2InfoPage(data), error: null };
+  return {
+    data: db2InfoPage(data!),
+    error: null,
+  };
 }
 
 export async function uploadBanner(
@@ -119,12 +127,12 @@ export async function uploadBanner(
     }
   }
 
-  const { data: newsWImage, error: newsWImageError } = await supabase
+  const { error: newsWImageError } = await supabase
     .from("news")
     .update({ image: fileName })
     .match({ id: newsID });
 
-  if (newsWImageError || !newsWImage) {
+  if (newsWImageError) {
     console.error(newsWImageError);
     return { error: newsWImageError };
   }
@@ -157,7 +165,7 @@ export async function createInfo(form: {
     .limit(1)
     .single();
 
-  if (newsError || !news) {
+  if (newsError) {
     console.error(newsError);
     return { data: null, error: newsError };
   }
@@ -166,7 +174,7 @@ export async function createInfo(form: {
   if (form.image) {
     const { error: imageError } = await uploadBanner(
       "add",
-      news.id,
+      (news as Database["public"]["Tables"]["news"]["Row"]).id,
       form.image
     );
     if (imageError) return { data: null, error: imageError };
@@ -177,18 +185,21 @@ export async function createInfo(form: {
     .insert({
       body_th: form.bodyTH,
       body_en: form.bodyEN,
-      parent: news.id,
+      parent: (news as Database["public"]["Tables"]["news"]["Row"]).id,
     })
     .select("*, parent(*)")
     .limit(1)
     .single();
 
-  if (infoError || !info) {
+  if (infoError) {
     console.error(infoError);
     return { data: null, error: infoError };
   }
 
-  return { data: info, error: null };
+  return {
+    data: info!,
+    error: null,
+  };
 }
 
 export async function updateInfo(
@@ -231,7 +242,9 @@ export async function updateInfo(
       description_en: form.descEN,
       old_url: form.oldURL,
     })
-    .match({ id: updatedInfo.parent.id })
+    .match({
+      id: updatedInfo!.parent.id,
+    })
     .select("image")
     .limit(1)
     .single();
@@ -243,14 +256,14 @@ export async function updateInfo(
 
   if (form.image) {
     const { error: imageError } = await uploadBanner(
-      updatedNews.image ? "edit" : "add",
+      updatedNews!.image ? "edit" : "add",
       id,
       form.image
     );
     if (imageError) return { data: null, error: imageError };
   }
 
-  return { data: updatedInfo, error: null };
+  return { data: updatedInfo!, error: null };
 }
 
 export async function deleteInfo(id: number): Promise<BackendReturn> {
@@ -271,7 +284,7 @@ export async function deleteInfo(id: number): Promise<BackendReturn> {
     .from("news")
     .delete()
     .match({
-      id: (info.parent as Database["public"]["Tables"]["infos"]["Row"]).id,
+      id: (info as Database["public"]["Tables"]["infos"]["Row"]).parent.id,
     });
 
   if (newsError) {

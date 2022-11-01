@@ -34,7 +34,7 @@ export async function createPerson(
   }
 
   // map the created contact to id
-  const contactIds = contacts
+  const contactIDs = contacts
     .map((contact) => contact.data?.id)
     .filter((id) => id !== undefined || id !== null);
 
@@ -51,7 +51,7 @@ export async function createPerson(
       last_name_en: person.name["en-US"]?.lastName,
       birthdate: person.birthdate,
       citizen_id: person.citizenID,
-      contacts: contactIds as number[],
+      contacts: contactIDs as number[],
     })
     .select("*")
     .limit(1)
@@ -62,7 +62,10 @@ export async function createPerson(
     return { data: null, error: personCreationError };
   }
 
-  return { data: createdPerson, error: null };
+  return {
+    data: createdPerson as Database["public"]["Tables"]["people"]["Row"],
+    error: null,
+  };
 }
 
 export async function setupPerson(
@@ -101,7 +104,7 @@ export async function setupPerson(
       console.error(idError);
       return { data: null, error: idError };
     }
-    personID = studentPersonID.person as unknown as number;
+    personID = studentPersonID!.person as unknown as number;
   }
 
   // Fetch person ID from `teacher` table if user is a teacher
@@ -117,7 +120,7 @@ export async function setupPerson(
       console.error(idError);
       return { data: null, error: idError };
     }
-    personID = teacherPersonID.person as unknown as number;
+    personID = teacherPersonID!.person as unknown as number;
   }
 
   // Update person data (`person` table)
@@ -160,7 +163,7 @@ export async function setupPerson(
       console.error(error);
       return { data: null, error };
     }
-    return { data: updPerson, error: null };
+    return { data: updPerson!, error: null };
   }
 
   // Update a teacher’s teacher ID and subject group
@@ -177,7 +180,7 @@ export async function setupPerson(
       console.error(error);
       return { data: null, error };
     }
-    return { data: updPerson, error: null };
+    return { data: updPerson!, error: null };
   }
 
   // Invalid role handling
@@ -202,7 +205,7 @@ export async function getPersonFromUser(
       return { data: null, error: studentError };
     }
 
-    return { data: await db2Student(student), error: null };
+    return { data: await db2Student(student!), error: null };
   } else if (user?.user_metadata.role == "teacher")
     return getTeacherFromUser(user);
 
@@ -226,7 +229,7 @@ export async function getPersonIDFromUser(
     }
 
     return {
-      data: (student.person as Database["public"]["Tables"]["people"]["Row"])
+      data: (student as Database["public"]["Tables"]["student"]["Row"]).person
         .id,
       error: null,
     };
@@ -244,7 +247,7 @@ export async function getPersonIDFromUser(
     }
 
     return {
-      data: (teacher.person as Database["public"]["Tables"]["people"]["Row"])
+      data: (teacher as Database["public"]["Tables"]["teacher"]["Row"]).person
         .id,
       error: null,
     };

@@ -1,26 +1,19 @@
-// External libraries
-import { PostgrestError } from "@supabase/supabase-js";
-
 // Supabase
 import { supabase } from "@utils/supabase-client";
 
 // Types
 import { ClassWNumber } from "@utils/types/class";
-import { SubjectTable } from "@utils/types/database/subject";
 import {
   ImportedSubjectData,
   Subject,
   SubjectName,
+  SubjectTypeEN,
   SubjectWNameAndCode,
 } from "@utils/types/subject";
 
 // Miscelleneous
 import { subjectGroupMap, subjectTypeMap } from "@utils/maps";
-import {
-  BackendDataReturn,
-  BackendReturn,
-  OrUndefined,
-} from "@utils/types/common";
+import { BackendReturn, OrUndefined } from "@utils/types/common";
 
 export async function deleteSubject(subject: Subject) {
   // Delete the syllabus if it exists
@@ -32,7 +25,7 @@ export async function deleteSubject(subject: Subject) {
   }
 
   // Delete the subject
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from("subject")
     .delete()
     .match({ id: subject.id });
@@ -58,7 +51,7 @@ export async function importSubjects(data: ImportedSubjectData[]) {
     },
     type: {
       th: subject.type,
-      "en-US": subjectTypeMap[subject.type],
+      "en-US": subjectTypeMap[subject.type] as SubjectTypeEN,
     },
     subjectGroup: {
       id: subjectGroupMap[subject.group],
@@ -78,9 +71,7 @@ export async function importSubjects(data: ImportedSubjectData[]) {
     teachers: [],
   }));
 
-  await Promise.all(
-    subjects.map(async (subject) => await createSubject(subject))
-  );
+  await Promise.all(subjects.map(createSubject));
 }
 
 export async function getTeachingSubjects(
@@ -91,7 +82,7 @@ export async function getTeachingSubjects(
     .select("*, subject:subject(*), class(*)")
     .contains("teacher", [teacherID]);
 
-  if (error || !roomSubjects) {
+  if (error) {
     console.error(error);
     return [];
   }
@@ -99,7 +90,7 @@ export async function getTeachingSubjects(
   const subjects: (SubjectWNameAndCode & {
     classes: ClassWNumber[];
   })[] = await Promise.all(
-    roomSubjects.map(async (roomSubject) => {
+    roomSubjects!.map(async (roomSubject) => {
       const subject: SubjectWNameAndCode & { classes: ClassWNumber[] } = {
         id: roomSubject.subject.id,
         name: {
@@ -170,7 +161,7 @@ export async function createSubject(subject: Subject): Promise<BackendReturn> {
     .select("id")
     .single();
 
-  if (subjectCreationError || !createdSubject) {
+  if (subjectCreationError) {
     console.error(subjectCreationError);
     return { error: subjectCreationError };
   }
@@ -178,18 +169,18 @@ export async function createSubject(subject: Subject): Promise<BackendReturn> {
   if (subject.syllabus) {
     const { error: uploadingError } = await supabase.storage
       .from("syllabus")
-      .upload(`${createdSubject.id}/syllabus.pdf`, subject.syllabus, {
+      .upload(`${createdSubject!.id}/syllabus.pdf`, subject.syllabus, {
         cacheControl: "3600",
         upsert: false,
       });
     if (uploadingError) {
-      return { error: { message: "syllabus upload failed" } };
+      return { error: { message: "syllabus upload failed." } };
     }
 
     await supabase
       .from("subject")
-      .update({ syllabus: `${createdSubject.id}/syllabus.pdf` })
-      .match({ id: createdSubject.id });
+      .update({ syllabus: `${createdSubject!.id}/syllabus.pdf` })
+      .match({ id: createdSubject!.id });
   }
 
   return { error: null };
@@ -215,7 +206,7 @@ export async function editSubject(subject: Subject): Promise<BackendReturn> {
     // console.log(syllabus);
   }
 
-  const { data: editedSubject, error: subjectEditionError } = await supabase
+  const { error: subjectEditionError } = await supabase
     .from("subject")
     .update({
       name_th: subject.name.th.name,
@@ -240,7 +231,7 @@ export async function editSubject(subject: Subject): Promise<BackendReturn> {
     })
     .match({ id: subject.id });
 
-  if (subjectEditionError || !subject) {
+  if (subjectEditionError) {
     console.error(subjectEditionError);
     return { error: subjectEditionError };
   }

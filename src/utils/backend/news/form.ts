@@ -2,13 +2,13 @@
 import { FormTable } from "@utils/types/database/news";
 import { BackendDataReturn } from "@utils/types/common";
 import { FormField, FormPage, NewsItemFormNoDate } from "@utils/types/news";
+import { Database } from "@utils/types/supabase";
 
 // Converters
-import { db2FormPage, dbForm2NewsItem } from "../database";
+import { db2FormPage, dbForm2NewsItem } from "@utils/backend/database";
 
 // Supabase
 import { supabase } from "@utils/supabase-client";
-import { Database } from "@utils/types/supabase";
 
 export async function getForms(): Promise<
   BackendDataReturn<NewsItemFormNoDate[]>
@@ -41,7 +41,10 @@ export async function getForm(
     return { data: null, error: error };
   }
 
-  return { data: await db2FormPage(data), error: null };
+  return {
+    data: await db2FormPage(data!),
+    error: null,
+  };
 }
 
 export async function sendForm(
@@ -64,7 +67,7 @@ export async function sendForm(
     return { data: [], error };
   }
 
-  // save answers to form_field_values
+  // Save answers to form_field_values
   const answers = (
     await Promise.all(
       formAnswer.map((answer) => sendFormAnswer(answer, data.id))
@@ -72,7 +75,7 @@ export async function sendForm(
   )
     .map((answer) => answer.data)
     .filter((answer) => answer !== null)
-    .flat();
+    .flat() as Database["public"]["Tables"]["form_field_value"]["Row"][];
 
   if (error) {
     console.error(error);
@@ -87,8 +90,8 @@ async function sendFormAnswer(
   submissionID: number
 ): Promise<
   BackendDataReturn<
-    | Database["public"]["Tables"]["form_field_value"]["Row"][]
-    | Database["public"]["Tables"]["form_field_value"]["Row"]
+    Database["public"]["Tables"]["form_field_value"]["Row"],
+    null
   >
 > {
   switch (typeof formAnswer.value) {
@@ -97,22 +100,18 @@ async function sendFormAnswer(
       // is file
       if (formAnswer.value instanceof File) {
         // Upload file to Supabase and save value as path
-        const { data: uploadedFile, error: uploadingError } =
-          await supabase.storage
-            .from("news")
-            .upload(
-              `form_submissions/${submissionID}/file-${
-                formAnswer.id
-              }.${formAnswer.value.name.split(".").pop()}`,
-              formAnswer.value,
-              {
-                cacheControl: "3600",
-                upsert: false,
-              }
-            );
-        if (uploadingError || !uploadedFile) {
+        const { error: uploadingError } = await supabase.storage
+          .from("news")
+          .upload(
+            `form_submissions/${submissionID}/file-${
+              formAnswer.id
+            }.${formAnswer.value.name.split(".").pop()}`,
+            formAnswer.value,
+            { cacheControl: "3600", upsert: false }
+          );
+        if (uploadingError) {
           console.error(uploadingError);
-          return { data: [], error: uploadingError };
+          return { data: null, error: uploadingError };
         }
         // save value as path
         const { data, error } = await supabase
@@ -130,9 +129,12 @@ async function sendFormAnswer(
 
         if (error) {
           console.error(error);
-          return { data: [], error };
+          return { data: null, error };
         }
-        return { data, error: null };
+        return {
+          data: data!,
+          error: null,
+        };
       }
       // is array
       if (Array.isArray(formAnswer.value)) {
@@ -152,10 +154,13 @@ async function sendFormAnswer(
 
         if (error) {
           console.error(error);
-          return { data: [], error };
+          return { data: null, error };
         }
 
-        return { data, error: null };
+        return {
+          data: data!,
+          error: null,
+        };
       }
       break;
     // string, number, boolean
@@ -174,12 +179,15 @@ async function sendFormAnswer(
 
       if (error) {
         console.error(error);
-        return { data: [], error };
+        return { data: null, error };
       }
 
-      return { data, error: null };
+      return {
+        data: data!,
+        error: null,
+      };
   }
-  return { data: [], error: null };
+  return { data: null, error: { message: "invalid field type." } };
 }
 
 export async function createForm(form: {

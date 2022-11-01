@@ -57,10 +57,11 @@ import { useToggle } from "@utils/hooks/toggle";
 
 // Types
 import { Class as ClassType } from "@utils/types/class";
-import { LangCode, Tables } from "@utils/types/common";
+import { LangCode } from "@utils/types/common";
 import { Contact } from "@utils/types/contact";
 import { Student, Teacher } from "@utils/types/person";
 import { StudentFormItem } from "@utils/types/news";
+import { Database } from "@utils/types/supabase";
 
 const StudentFormCard = ({ form }: { form: StudentFormItem }): JSX.Element => {
   const locale = useRouter().locale as LangCode;
@@ -450,7 +451,7 @@ const Class: NextPage<{
           }
 
           await addContactToClassroom(
-            (createdContact as Tables["contact"]["Row"]).id,
+            (createdContact as Database["public"]["Tables"]["contact"]["Row"]).id,
             classItem.id
           );
           router.replace(router.asPath);

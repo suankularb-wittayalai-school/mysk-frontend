@@ -36,8 +36,6 @@ export type BackendDataReturn<T, U = []> =
   | { data: T; error: null }
   | { data: U; error: Partial<PostgrestError> };
 
-export type Tables = Database["public"]["Tables"];
-
 export type DataTableColumnDef = ColumnDef<object> &
   Partial<{
     thClass: string;

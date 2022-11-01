@@ -79,7 +79,7 @@ export async function getSchedule(
   }
 
   // Add Supabase data to empty schedule
-  for (let incomingPeriod of data) {
+  for (let incomingPeriod of data!) {
     // Find the index of the row we want to manipulate
     const scheduleRowIndex = schedule.content.findIndex(
       (scheduleRow) => incomingPeriod.day == scheduleRow.day

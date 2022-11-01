@@ -11,7 +11,7 @@ export async function getSubjectGroups(): Promise<
   const { data, error } = await supabase.from("SubjectGroup").select("*");
   if (error) return { data: [], error };
   return {
-    data: (data).map((subjectGroup) => ({
+    data: data!.map((subjectGroup) => ({
       id: subjectGroup.id,
       name: { th: subjectGroup.name_th, "en-US": subjectGroup.name_en },
     })),

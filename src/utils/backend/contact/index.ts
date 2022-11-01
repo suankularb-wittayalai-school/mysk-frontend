@@ -29,7 +29,7 @@ export async function createContact(
     console.error(contactCreationError);
     return { data: null, error: contactCreationError };
   }
-  return { data: createdContact, error: null };
+  return { data: createdContact!, error: null };
 }
 
 export async function updateContact(
@@ -56,5 +56,5 @@ export async function updateContact(
     console.error(contactUpdateError);
     return { data: null, error: contactUpdateError };
   }
-  return { data: updatedContact, error: null };
+  return { data: updatedContact!, error: null };
 }

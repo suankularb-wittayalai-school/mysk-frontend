@@ -59,14 +59,15 @@ export async function createClassroom(
       subjects: [],
     })
     .select("*")
+    .limit(1)
     .single();
 
-  if (classCreationError || !createdClass) {
+  if (classCreationError) {
     console.error(classCreationError);
     return { data: null, error: classCreationError };
   }
 
-  return { data: createdClass, error: null };
+  return { data: createdClass!, error: null };
 }
 
 export async function getClassroom(number: number): Promise<Class> {
@@ -132,7 +133,8 @@ export async function updateClassroom(
       contacts: contactIDs,
       advisors: classroom.classAdvisors.map((advisor) => advisor.id),
       students: classroom.students.map((student) => student.id),
-      // map no list to be an array of student ids with each id at index class no - 1
+      // Map `no_list` to be an array of student IDs with each ID at
+      // index class no - 1
       no_list: [...Array(60)].map((_, index) => {
         const student = classroom.students.find(
           (student) => student.classNo === index + 1
@@ -144,11 +146,12 @@ export async function updateClassroom(
     .match({ id: classroom.id })
     .select("*")
     .single();
-  if (classUpdateError || !updatedClass) {
+
+  if (classUpdateError) {
     console.error(classUpdateError);
     return { data: null, error: classUpdateError };
   }
-  return { data: updatedClass, error: null };
+  return { data: updatedClass!, error: null };
 }
 
 export async function deleteClassroom(classItem: Class) {
@@ -176,9 +179,7 @@ export async function importClasses(
     subjects: [],
   }));
 
-  await Promise.all(
-    classesToImport.map(async (classItem) => await createClassroom(classItem))
-  );
+  await Promise.all(classesToImport.map(createClassroom));
 }
 
 export async function addAdvisorToClassroom(
@@ -202,7 +203,9 @@ export async function addAdvisorToClassroom(
   const { data: updatedClassroom, error: classroomUpdatingError } =
     await supabase
       .from("classroom")
-      .update({ advisors: [...classroom.advisors, teacherID] })
+      .update({
+        advisors: [...classroom!.advisors, teacherID],
+      })
       .eq("id", classID)
       .select("*")
       .limit(1)
@@ -213,7 +216,7 @@ export async function addAdvisorToClassroom(
     return { data: null, error: classroomUpdatingError };
   }
 
-  return { data: updatedClassroom, error: null };
+  return { data: updatedClassroom!, error: null };
 }
 
 export async function addContactToClassroom(
@@ -229,14 +232,16 @@ export async function addContactToClassroom(
     .limit(1)
     .single();
 
-  if (!classroom || classroomSelectionError) {
+  if (classroomSelectionError) {
     return { data: null, error: classroomSelectionError };
   }
 
   const { data: updatedClassroom, error: classroomUpdatingError } =
     await supabase
       .from("classroom")
-      .update({ contacts: [...classroom.contacts, contactID] })
+      .update({
+        contacts: [...classroom!.contacts, contactID],
+      })
       .eq("id", classID)
       .select("*")
       .limit(1)
@@ -247,7 +252,7 @@ export async function addContactToClassroom(
     return { data: null, error: classroomUpdatingError };
   }
 
-  return { data: updatedClassroom, error: null };
+  return { data: updatedClassroom!, error: null };
 }
 
 export async function getClassNumberFromUser(
@@ -268,7 +273,7 @@ export async function getClassNumberFromUser(
     return { data: null, error: classError };
   }
 
-  return { data: classItem.number, error: null };
+  return { data: classItem!.number, error: null };
 }
 
 export async function getClassIDFromNumber(
@@ -286,7 +291,7 @@ export async function getClassIDFromNumber(
     return { data: null, error: classroomSelectionError };
   }
 
-  return { data: classroom.id, error: null };
+  return { data: classroom!.id, error: null };
 }
 
 export async function getAllClassNumbers(): Promise<number[]> {
@@ -294,12 +299,12 @@ export async function getAllClassNumbers(): Promise<number[]> {
     .from("classroom")
     .select("number");
 
-  if (classroomsError || !classrooms) {
+  if (classroomsError) {
     console.error(classroomsError);
     return [];
   }
 
-  return classrooms.map((classroom) => classroom.number);
+  return classrooms!.map((classroom) => classroom.number);
 }
 
 export async function getClassStudentList(
@@ -320,7 +325,7 @@ export async function getClassStudentList(
   const { data, error } = await supabase
     .from("student")
     .select("*, person(*)")
-    .in("id", classItem.students);
+    .in("id", classItem!.students);
 
   if (error) {
     console.error(error);
@@ -329,7 +334,7 @@ export async function getClassStudentList(
 
   return {
     data: (
-      await Promise.all(data.map(async (student) => await db2Student(student)))
+      await Promise.all(data!.map(async (student) => await db2Student(student)))
     ).sort((a, b) => a.classNo - b.classNo),
     error: null,
   };

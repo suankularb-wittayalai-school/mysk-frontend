@@ -1,5 +1,5 @@
 // External libraries
-import { PostgrestError, User } from "@supabase/supabase-js";
+import { User } from "@supabase/supabase-js";
 
 // Backend
 import { db2Teacher } from "@utils/backend/database";
@@ -14,35 +14,11 @@ import { supabase } from "@utils/supabase-client";
 // Types
 import { ClassWNumber } from "@utils/types/class";
 import { BackendDataReturn, BackendReturn } from "@utils/types/common";
-import { ImportedTeacherData, Role, Teacher } from "@utils/types/person";
-import { ClassroomDB } from "@utils/types/database/class";
-import {
-  PersonDB,
-  PersonTable,
-  TeacherDB,
-  TeacherTable,
-} from "@utils/types/database/person";
-import { RoomSubjectDB } from "@utils/types/database/subject";
+import { ImportedTeacherData, Teacher } from "@utils/types/person";
 import { Database } from "@utils/types/supabase";
 
-const subjectGroupMap = {
-  วิทยาศาสตร์: 1,
-  คณิตศาสตร์: 2,
-  ภาษาต่างประเทศ: 3,
-  ภาษาไทย: 4,
-  สุขศึกษาและพลศึกษา: 5,
-  การงานอาชีพและเทคโนโลยี: 6,
-  ศิลปะ: 7,
-  "สังคมศึกษา ศาสนา และวัฒนธรรม": 8,
-  การศึกษาค้นคว้าด้วยตนเอง: 9,
-} as const;
-
-const prefixMap = {
-  เด็กชาย: "Master.",
-  นาย: "Mr.",
-  นาง: "Mrs.",
-  นางสาว: "Miss.",
-} as const;
+// Miscellaneous
+import { prefixMap, subjectGroupMap } from "@utils/maps";
 
 export async function getTeacherFromUser(
   user: User
@@ -60,7 +36,7 @@ export async function getTeacherFromUser(
 
   return {
     data: {
-      ...(await db2Teacher(data)),
+      ...(await db2Teacher(data!)),
       isAdmin: user.user_metadata.isAdmin,
     },
     error: null,
@@ -75,14 +51,16 @@ export async function createTeacher(
   const { data: person, error: personCreationError } = await createPerson(
     teacher
   );
-  if (personCreationError || !person) {
+
+  if (personCreationError) {
     console.error(personCreationError);
     return { error: personCreationError };
   }
+
   const { data: createdTeacher, error: teacherCreationError } = await supabase
     .from("teacher")
     .insert({
-      person: person.id,
+      person: person!.id,
       subject_group: teacher.subjectGroup.id,
       // class_advisor_at: form.classAdvisorAt,
       teacher_id: teacher.teacherID.trim(),
@@ -91,10 +69,10 @@ export async function createTeacher(
     .limit(1)
     .single();
 
-  if (teacherCreationError || !createdTeacher) {
+  if (teacherCreationError) {
     console.error(teacherCreationError);
     // delete the created person
-    await supabase.from("people").delete().match({ id: person.id });
+    await supabase.from("people").delete().match({ id: person!.id });
     return { error: teacherCreationError };
   }
 
@@ -105,7 +83,7 @@ export async function createTeacher(
     body: JSON.stringify({
       email,
       password: teacher.birthdate.split("-").join(""),
-      id: createdTeacher.id,
+      id: createdTeacher!.id,
       isAdmin,
     }),
   });
@@ -139,16 +117,17 @@ export async function deleteTeacher(teacher: Teacher) {
     .limit(1)
     .single();
 
-  if (teacherDeletingError || !deletingTeacher) {
+  if (teacherDeletingError) {
     console.error(teacherDeletingError);
     return;
   }
   // delete the person related to the teacher
-  const { data: deletingPerson, error: personDeletingError } = await supabase
+  const { error: personDeletingError } = await supabase
     .from("people")
     .delete()
-    .match({ id: deletingTeacher.person });
-  if (personDeletingError || !deletingPerson) {
+    .match({ id: deletingTeacher!.person });
+
+  if (personDeletingError) {
     console.error(personDeletingError);
     return;
   }
@@ -213,7 +192,7 @@ export async function getTeacherList(classID: number): Promise<Teacher[]> {
     .from("room_subjects")
     .select("teacher")
     .match({ class: classID });
-  if (roomSubjectsError || !roomSubjects) {
+  if (roomSubjectsError) {
     console.error(roomSubjectsError);
     return [];
   }
@@ -221,7 +200,7 @@ export async function getTeacherList(classID: number): Promise<Teacher[]> {
   // Map array of teacher IDs into array of teachers (fetch teacher in map)
   const selectedTeachers = await Promise.all(
     // Flatten the arrays into an array of teacher IDs
-    roomSubjects
+    roomSubjects!
       .map((roomSubject) => roomSubject.teacher)
       .flat()
       // Remove duplicates
@@ -236,7 +215,7 @@ export async function getTeacherList(classID: number): Promise<Teacher[]> {
           .limit(1)
           .single();
 
-        if (error || !data) {
+        if (error) {
           console.error(error);
           return null;
         }
@@ -247,12 +226,7 @@ export async function getTeacherList(classID: number): Promise<Teacher[]> {
   const teachers = selectedTeachers.filter((teacher) => teacher);
 
   return await Promise.all(
-    teachers.map(
-      async (teacher) =>
-        await db2Teacher(
-          teacher as Database["public"]["Tables"]["teacher"]["Row"]
-        )
-    )
+    teachers.map(async (teacher) => await db2Teacher(teacher!))
   );
 }
 
@@ -272,5 +246,5 @@ export async function getClassAdvisorAt(
     return { data: null, error };
   }
 
-  return { data: data as ClassWNumber, error: null };
+  return { data: data!, error: null };
 }
