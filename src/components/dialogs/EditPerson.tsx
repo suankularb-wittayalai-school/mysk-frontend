@@ -12,7 +12,7 @@ import {
   DialogSection,
   Dropdown,
   KeyboardInput,
-  NativeInput
+  NativeInput,
 } from "@suankularb-components/react";
 
 // Backend

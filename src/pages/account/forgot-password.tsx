@@ -56,7 +56,9 @@ const ForgotPassword: NextPage = () => {
     e.preventDefault();
     if (!validate()) return;
     toggleLoading();
-    const { data } = await supabase.auth.updateUser({ password: form.newPassword });
+    const { data } = await supabase.auth.updateUser({
+      password: form.newPassword,
+    });
     if (data) router.push("/account/login");
     toggleLoading();
   }

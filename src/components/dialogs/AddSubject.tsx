@@ -9,7 +9,7 @@ import {
   ChipInputList,
   Dialog,
   DialogSection,
-  Dropdown
+  Dropdown,
 } from "@suankularb-components/react";
 
 // Components

@@ -9,7 +9,7 @@ import {
   ChipInputList,
   Dialog,
   DialogSection,
-  KeyboardInput
+  KeyboardInput,
 } from "@suankularb-components/react";
 
 // Components
@@ -26,7 +26,7 @@ import { nameJoiner } from "@utils/helpers/name";
 import {
   ChipInputListItem,
   LangCode,
-  SubmittableDialogProps
+  SubmittableDialogProps,
 } from "@utils/types/common";
 import { Teacher } from "@utils/types/person";
 import { Subject, SubjectListItem } from "@utils/types/subject";
@@ -195,19 +195,17 @@ const ConnectSubjectDialog = ({
         return;
       }
 
-      const { data, error } = await supabase
-        .from("room_subjects")
-        .insert({
-          class: classroom.id,
-          subject: subject.id,
-          teacher: form.teachers.map((teacher) => teacher.id),
-          coteacher: form.coTeachers
-            ? form.coTeachers.map((coTeacher) => coTeacher.id)
-            : [],
-          ggc_code: form.ggcCode ?? "",
-          gg_meet_link: form.ggMeetLink ?? "",
-          ggc_link: form.ggcLink ?? "",
-        });
+      const { data, error } = await supabase.from("room_subjects").insert({
+        class: classroom.id,
+        subject: subject.id,
+        teacher: form.teachers.map((teacher) => teacher.id),
+        coteacher: form.coTeachers
+          ? form.coTeachers.map((coTeacher) => coTeacher.id)
+          : [],
+        ggc_code: form.ggcCode ?? "",
+        gg_meet_link: form.ggMeetLink ?? "",
+        ggc_link: form.ggcLink ?? "",
+      });
 
       if (error) console.error(error);
     }

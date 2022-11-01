@@ -8,7 +8,7 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import {
   Dialog,
   DialogSection,
-  KeyboardInput
+  KeyboardInput,
 } from "@suankularb-components/react";
 
 // Backend
@@ -81,12 +81,9 @@ const AddStudentDialog = ({
           </h3>
           <p>
             {student
-              ? nameJoiner(
-                  locale,
-                  student.name,
-                  student.prefix,
-                  { prefix: true }
-                )
+              ? nameJoiner(locale, student.name, student.prefix, {
+                  prefix: true,
+                })
               : t("dialog.addStudent.searchResult.notFound")}
           </p>
         </div>

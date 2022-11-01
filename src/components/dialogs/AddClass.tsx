@@ -7,7 +7,7 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import {
   Dialog,
   DialogSection,
-  KeyboardInput
+  KeyboardInput,
 } from "@suankularb-components/react";
 
 // Backend

@@ -451,7 +451,8 @@ const Class: NextPage<{
           }
 
           await addContactToClassroom(
-            (createdContact as Database["public"]["Tables"]["contact"]["Row"]).id,
+            (createdContact as Database["public"]["Tables"]["contact"]["Row"])
+              .id,
             classItem.id
           );
           router.replace(router.asPath);
