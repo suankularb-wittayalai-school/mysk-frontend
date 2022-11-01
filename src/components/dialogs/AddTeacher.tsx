@@ -15,7 +15,7 @@ import { nameJoiner } from "@utils/helpers/name";
 
 // Hooks
 import { useSubjectGroupOption } from "@utils/hooks/subject";
-import { useTeacherOption } from "@utils/hooks/teacher";
+import { useTeacherOptions } from "@utils/hooks/teacher";
 
 const AddTeacherDialog = ({
   show,
@@ -28,7 +28,7 @@ const AddTeacherDialog = ({
   const subjectGroups = useSubjectGroupOption();
   const [selectedGroup, setSelectedGroup] = useState<number>(1);
 
-  const teachers = useTeacherOption(selectedGroup);
+  const teachers = useTeacherOptions(selectedGroup);
   const [selectedTeacher, setSelectedTeacher] = useState<number | null>(
     teachers.length > 0 ? teachers[0].id : null
   );

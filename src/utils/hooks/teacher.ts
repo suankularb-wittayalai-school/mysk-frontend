@@ -10,7 +10,7 @@ import { supabase } from "@utils/supabase-client";
 // Types
 import { Teacher } from "@utils/types/person";
 
-export function useTeacherOption(subjectGroupId: number) {
+export function useTeacherOptions(subjectGroupId: number) {
   const [teachers, setTeachers] = useState<Array<Teacher>>([]);
 
   useEffect(() => {
@@ -23,9 +23,7 @@ export function useTeacherOption(subjectGroupId: number) {
           console.error(res.error);
         }
         // console.log(res.data);
-        if (!res.data) {
-          return [];
-        }
+        if (!res.data) return [];
 
         Promise.all(res.data.map(db2Teacher)).then((teachers) => {
           setTeachers(teachers);
