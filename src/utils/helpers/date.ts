@@ -1,5 +1,8 @@
+// Types
+import { LangCode } from "@utils/types/common";
+
 export function getLocaleYear(
-  locale: "en-US" | "th",
+  locale: LangCode,
   year: number,
   fromType?: "AD" | "BE"
 ): number {
