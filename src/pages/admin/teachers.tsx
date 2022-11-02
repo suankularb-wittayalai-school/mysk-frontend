@@ -307,7 +307,9 @@ export const getServerSideProps: GetServerSideProps = withPageAuth({
 
     if (!data) return { props: { teachers: [] } };
 
-    const teachers: Teacher[] = await Promise.all(data.map(db2Teacher));
+    const teachers: Teacher[] = await Promise.all(
+      data.map(async (teacher) => await db2Teacher(supabase, teacher))
+    );
 
     return {
       props: {

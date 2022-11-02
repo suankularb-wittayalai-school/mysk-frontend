@@ -8,6 +8,8 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { useState } from "react";
 
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+
 // SK Components
 import {
   MaterialIcon,
@@ -34,6 +36,7 @@ import { LangCode, WaitingSnackbar } from "@utils/types/common";
 // Page
 const CreateStats: NextPage = (): JSX.Element => {
   const { t } = useTranslation("admin");
+  const supabase = useSupabaseClient();
 
   // Form control
   const [form, setForm] = useState<{
@@ -99,7 +102,7 @@ const CreateStats: NextPage = (): JSX.Element => {
         />
         <ArticleData />
         <ArticlePublish
-          handlePublish={async () => await createInfo(form)}
+          handlePublish={async () => await createInfo(supabase, form)}
           allowPublish={validate()}
         />
       </RegularLayout>

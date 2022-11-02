@@ -25,7 +25,9 @@ export function useTeacherOptions(subjectGroupId: number) {
         // console.log(res.data);
         if (!res.data) return [];
 
-        Promise.all(res.data.map(db2Teacher)).then((teachers) => {
+        Promise.all(
+          res.data.map(async (teacher) => await db2Teacher(supabase, teacher))
+        ).then((teachers) => {
           setTeachers(teachers);
         });
       });

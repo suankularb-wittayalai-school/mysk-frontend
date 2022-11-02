@@ -45,7 +45,7 @@ const AddClassDialog = ({
         .single()
         .then((res) => {
           if (res.data) {
-            db2Class(res.data).then((classroom) => {
+            db2Class(supabase, res.data).then((classroom) => {
               setClassroom(classroom);
             });
           } else {
