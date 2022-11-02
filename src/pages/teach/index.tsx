@@ -225,7 +225,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   res,
 }) => {
   const teacherID = await getTeacherIDFromReq(req, res);
-  const schedule = await getSchedule("teacher", teacherID);
+  const { data: schedule } = await getSchedule("teacher", teacherID);
 
   return {
     props: {
@@ -233,6 +233,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         "common",
         "account",
         "teach",
+        "schedule",
       ])),
       teacherID,
       schedule,

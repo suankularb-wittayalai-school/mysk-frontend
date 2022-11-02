@@ -193,7 +193,7 @@ const Classes: NextPage<{ classes: Class[] }> = ({
                 nameJoiner(
                   router.locale as LangCode,
                   advisor.name,
-                  t(`name.prefix.${advisor.prefix}`, { ns: "common" }),
+                  advisor.prefix,
                   { prefix: true }
                 )
               )

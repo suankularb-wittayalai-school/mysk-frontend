@@ -3,7 +3,6 @@ import { AuthChangeEvent, Session } from "@supabase/supabase-js";
 
 // Supabase
 import { supabase } from "@utils/supabaseClient";
-import { Prefix } from "@utils/types/person";
 
 export async function setAuthCookies(
   event: AuthChangeEvent,
@@ -17,16 +16,6 @@ export async function setAuthCookies(
   });
   return ok;
 }
-
-export async function editProfile(form: {
-  prefix: Prefix;
-  thFirstName: string;
-  thMiddleName: string | undefined;
-  thLastName: string;
-  enFirstName: string;
-  enMiddleName: string;
-  enLastName: string;
-}) {}
 
 export async function changePassword(
   formData: FormData,

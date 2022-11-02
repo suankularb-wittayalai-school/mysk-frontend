@@ -5,6 +5,12 @@
     "teacher": "Schedule"
   },
   "schedule": {
+    "elective": "Elective period",
+    "electiveReveal": {
+      "action": {
+        "close": "Close"
+      }
+    },
     "hoverMenu": {
       "add": "Add period here",
       "edit": "Edit this period",

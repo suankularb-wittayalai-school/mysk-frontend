@@ -5,6 +5,12 @@
     "teacher": "ตารางสอน"
   },
   "schedule": {
+    "elective": "วิชาเลือก",
+    "electiveReveal": {
+      "action": {
+        "close": "ปิดหน้าต่าง"
+      }
+    },
     "hoverMenu": {
       "add": "เพิ่มคาบสอนที่นี่",
       "edit": "แก้ไขคาบนี้",

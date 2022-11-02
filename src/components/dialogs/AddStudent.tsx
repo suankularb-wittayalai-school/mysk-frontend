@@ -86,7 +86,7 @@ const AddStudentDialog = ({
               ? nameJoiner(
                   locale,
                   student.name,
-                  t(`name.prefix.${student.prefix}`),
+                  student.prefix,
                   { prefix: true }
                 )
               : t("dialog.addStudent.searchResult.notFound")}

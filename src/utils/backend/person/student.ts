@@ -1,14 +1,25 @@
+// External libraries
 import { PostgrestError, User } from "@supabase/supabase-js";
+
+// Backend
+import { createPerson } from "@utils/backend/person/person";
+
+// Helpers
 import { getCurrentAcedemicYear } from "@utils/helpers/date";
+
+// Supabase
 import { supabase } from "@utils/supabaseClient";
-import { ClassroomTable } from "@utils/types/database/class";
+
+// Types
+import { ClassWNumber } from "@utils/types/class";
+import { BackendReturn } from "@utils/types/common";
+import { ImportedStudentData, Student } from "@utils/types/person";
+import { ClassroomDB, ClassroomTable } from "@utils/types/database/class";
 import {
   PersonDB,
   PersonTable,
   StudentTable,
 } from "@utils/types/database/person";
-import { ImportedStudentData, Prefix, Student } from "@utils/types/person";
-import { createPerson } from "./person";
 
 const prefixMap = {
   เด็กชาย: "Master",
@@ -90,8 +101,6 @@ export async function createStudent(
     }),
   });
 
-  // console.log(await res.json());
-
   return { data: createdStudent, error: null };
 }
 
@@ -161,6 +170,11 @@ export async function importStudents(data: ImportedStudentData[]) {
     (student) => {
       const person: Student = {
         id: 0,
+        prefix: {
+          th: student.prefix,
+          "en-US": prefixMap[student.prefix]
+        },
+        role: "student",
         name: {
           th: {
             firstName: student.first_name_th,
@@ -176,8 +190,6 @@ export async function importStudents(data: ImportedStudentData[]) {
         birthdate: student.birthdate,
         citizenID: student.citizen_id.toString(),
         studentID: student.student_id.toString(),
-        prefix: prefixMap[student.prefix] as Prefix,
-        role: "student",
         contacts: [],
         class: {
           id: 0,
@@ -207,4 +219,23 @@ export async function importStudents(data: ImportedStudentData[]) {
       console.log(i);
     }
   }
+}
+
+export async function getClassOfStudent(
+  studentDBID: number
+): Promise<BackendReturn<ClassWNumber, null>> {
+  const { data, error } = await supabase
+    .from<ClassroomDB>("classroom")
+    .select("id, number")
+    .match({ year: getCurrentAcedemicYear() })
+    .contains("students", [studentDBID])
+    .limit(1)
+    .single();
+
+  if (error) {
+    console.error(error);
+    return { data: null, error };
+  }
+
+  return { data: data as ClassWNumber, error: null };
 }

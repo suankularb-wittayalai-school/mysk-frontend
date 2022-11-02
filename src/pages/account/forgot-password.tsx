@@ -84,6 +84,7 @@ const ForgotPassword: NextPage = () => {
               height={216}
               alt={t("forgor.graphicAlt")}
               layout="responsive"
+              priority
               className="sm:rounded-2xl"
             />
           </div>

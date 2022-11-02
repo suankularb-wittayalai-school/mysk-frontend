@@ -174,7 +174,10 @@ export async function db2Student(
 ): Promise<Student> {
   const formatted: Student = {
     id: student.id,
-    prefix: student.people.prefix_en,
+    prefix: {
+      th: student.people.prefix_th,
+      "en-US": student.people.prefix_en,
+    },
     role: "student",
     name: {
       th: {
@@ -239,7 +242,10 @@ export async function db2Teacher(teacher: TeacherDB): Promise<Teacher> {
   const formatted: Teacher = {
     id: teacher.id,
     role: "teacher",
-    prefix: teacher.people.prefix_en,
+    prefix: {
+      th: teacher.people.prefix_th,
+      "en-US": teacher.people.prefix_en,
+    },
     name: {
       "en-US": {
         firstName: teacher.people.first_name_en
@@ -500,26 +506,33 @@ export async function db2SchedulePeriod(
     id: scheduleItem.id,
     startTime: scheduleItem.start_time,
     duration: scheduleItem.duration,
-    subject: {
-      id: scheduleItem.subject.id,
-      name: {
-        "en-US": {
-          name: scheduleItem.subject.name_en,
-          shortName: scheduleItem.subject.short_name_en,
+    content: [
+      {
+        id: scheduleItem.id,
+        startTime: scheduleItem.start_time,
+        duration: scheduleItem.duration,
+        subject: {
+          id: scheduleItem.subject.id,
+          name: {
+            "en-US": {
+              name: scheduleItem.subject.name_en,
+              shortName: scheduleItem.subject.short_name_en,
+            },
+            th: {
+              name: scheduleItem.subject.name_th,
+              shortName: scheduleItem.subject.short_name_th,
+            },
+          },
+          teachers: [],
+          coTeachers: [],
         },
-        th: {
-          name: scheduleItem.subject.name_th,
-          shortName: scheduleItem.subject.short_name_th,
-        },
+        class: scheduleItem.classroom,
+        room: scheduleItem.room,
       },
-      teachers: [],
-      coTeachers: [],
-    },
-    class: scheduleItem.classroom,
-    room: scheduleItem.room,
+    ],
   };
 
-  if (role == "student" && formatted.subject) {
+  if (role == "student" && formatted.content.length > 0) {
     const { data: teachers, error: teachersError } = await supabase
       .from<TeacherDB>("teacher")
       .select("id, teacher_id, people:person(*), SubjectGroup:subject_group(*)")
@@ -529,7 +542,7 @@ export async function db2SchedulePeriod(
       console.error(teachersError);
     }
     if (teachers) {
-      formatted.subject.teachers = await Promise.all(
+      formatted.content[0].subject.teachers = await Promise.all(
         teachers.map(async (teacher) => {
           return await db2Teacher(teacher);
         })
@@ -548,7 +561,7 @@ export async function db2SchedulePeriod(
       console.error(coTeachersError);
     }
     if (coTeachers) {
-      formatted.subject.coTeachers = await Promise.all(
+      formatted.content[0].subject.coTeachers = await Promise.all(
         coTeachers.map(async (teacher) => {
           return await db2Teacher(teacher);
         })

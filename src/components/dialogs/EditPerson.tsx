@@ -15,26 +15,21 @@ import {
   NativeInput,
 } from "@suankularb-components/react";
 
+// Backend
+import { createStudent } from "@utils/backend/person/student";
+import { createTeacher } from "@utils/backend/person/teacher";
+
 // Types
 import { DialogProps, LangCode } from "@utils/types/common";
-import { Prefix, Role, Student, Teacher } from "@utils/types/person";
+import { Role, Student, Teacher } from "@utils/types/person";
 import {
   PersonDB,
   StudentTable,
   TeacherTable,
 } from "@utils/types/database/person";
 
-// Helper
-import { createStudent } from "@utils/backend/person/student";
-import { createTeacher } from "@utils/backend/person/teacher";
+// Hooks
 import { useSubjectGroupOption } from "@utils/hooks/subject";
-
-const prefixMap = {
-  Master: "เด็กชาย",
-  "Mr.": "นาย",
-  "Mrs.": "นาง",
-  "Miss.": "นางสาว",
-};
 
 const EditPersonDialog = ({
   show,
@@ -54,10 +49,11 @@ const EditPersonDialog = ({
 
   // Form control
   const [form, setForm] = useState({
-    prefix: "Master",
+    thPrefix: "",
     thFirstName: "",
     thMiddleName: "",
     thLastName: "",
+    enPrefix: "",
     enFirstName: "",
     enMiddleName: "",
     enLastName: "",
@@ -82,13 +78,14 @@ const EditPersonDialog = ({
   useEffect(() => {
     if (mode == "edit" && person) {
       setForm({
-        prefix: person.prefix,
+        thPrefix: person.prefix.th,
         thFirstName: person.name.th.firstName,
-        thMiddleName: person.name.th.middleName ?? "",
+        thMiddleName: person.name.th.middleName || "",
         thLastName: person.name.th.lastName,
-        enFirstName: person.name["en-US"]?.firstName ?? "",
-        enMiddleName: person.name["en-US"]?.middleName ?? "",
-        enLastName: person.name["en-US"]?.lastName ?? "",
+        enPrefix: person.prefix["en-US"] || "",
+        enFirstName: person.name["en-US"]?.firstName || "",
+        enMiddleName: person.name["en-US"]?.middleName || "",
+        enLastName: person.name["en-US"]?.lastName || "",
         studentID: person.role == "student" ? person.studentID : "",
         teacherID: person.role == "teacher" ? person.teacherID : "",
         role: person.role,
@@ -114,7 +111,7 @@ const EditPersonDialog = ({
   ];
 
   function validate(): boolean {
-    if (!form.prefix) return false;
+    if (!form.thPrefix) return false;
     if (!form.thFirstName) return false;
     if (!form.thLastName) return false;
     if (form.role == "student" && form.studentID.length != 5) return false;
@@ -128,10 +125,14 @@ const EditPersonDialog = ({
 
     if (mode == "add") {
       if (form.role == "student") {
-        const { data, error } = await createStudent(
+        const { error } = await createStudent(
           {
             id: 0,
-            prefix: form.prefix as Prefix,
+            prefix: {
+              th: form.thPrefix,
+              "en-US": form.enPrefix,
+            },
+            role: "student",
             name: {
               th: {
                 firstName: form.thFirstName,
@@ -147,7 +148,6 @@ const EditPersonDialog = ({
             studentID: form.studentID,
             citizenID: form.citizenID,
             birthdate: form.birthdate,
-            role: "student",
             classNo: 0,
             class: {
               id: 0,
@@ -175,10 +175,14 @@ const EditPersonDialog = ({
       }
       // TODO: add student to class
       else if (form.role == "teacher") {
-        const { data, error } = await createTeacher(
+        const { error } = await createTeacher(
           {
             id: 0,
-            prefix: form.prefix as "Mr." | "Mrs." | "Miss." | "Master",
+            prefix: {
+              th: form.thPrefix,
+              "en-US": form.enPrefix,
+            },
+            role: "teacher",
             name: {
               th: {
                 firstName: form.thFirstName,
@@ -195,7 +199,6 @@ const EditPersonDialog = ({
             citizenID: form.citizenID,
             birthdate: form.birthdate,
             isAdmin: form.isAdmin,
-            role: "teacher",
             subjectGroup: {
               id: form.subjectGroup,
               name: {
@@ -244,15 +247,11 @@ const EditPersonDialog = ({
       const { data: updatedPerson, error: updatePersonError } = await supabase
         .from<PersonDB>("people")
         .update({
-          prefix_th: prefixMap[form.prefix as keyof typeof prefixMap] as
-            | "นาย"
-            | "นาง"
-            | "นางสาว"
-            | "เด็กชาย",
-          prefix_en: form.prefix as "Mr." | "Mrs." | "Miss." | "Master",
+          prefix_th: form.thPrefix,
           first_name_th: form.thFirstName,
           middle_name_th: form.thMiddleName,
           last_name_th: form.thLastName,
+          prefix_en: form.enPrefix,
           first_name_en: form.enFirstName,
           middle_name_en: form.enMiddleName,
           last_name_en: form.enLastName,
@@ -298,18 +297,14 @@ const EditPersonDialog = ({
       title={t(`dialog.editStudent.title.${mode}`, { ns: "admin" })}
       show={show}
       onClose={onClose}
-      onSubmit={() => handleAdd()}
+      onSubmit={handleAdd}
       actions={[
         {
-          name: t("dialog.editStudent.action.cancel", {
-            ns: "admin",
-          }),
+          name: t("dialog.editStudent.action.cancel", { ns: "admin" }),
           type: "close",
         },
         {
-          name: t("dialog.editStudent.action.save", {
-            ns: "admin",
-          }),
+          name: t("dialog.editStudent.action.save", { ns: "admin" }),
           type: "submit",
           disabled: !validate(),
         },
@@ -322,29 +317,13 @@ const EditPersonDialog = ({
         isDoubleColumn
         hasNoGap
       >
-        <Dropdown
-          name="prefix"
-          label={t("profile.name.prefix.label")}
-          options={[
-            {
-              value: "Master",
-              label: t("profile.name.prefix.master"),
-            },
-            {
-              value: "Mr.",
-              label: t("profile.name.prefix.mister"),
-            },
-            {
-              value: "Mrs.",
-              label: t("profile.name.prefix.missus"),
-            },
-            {
-              value: "Miss.",
-              label: t("profile.name.prefix.miss"),
-            },
-          ]}
-          defaultValue={person?.prefix}
-          onChange={(e: Student["prefix"]) => setForm({ ...form, prefix: e })}
+        <KeyboardInput
+          name="th-prefix"
+          type="text"
+          label={t("profile.name.prefix")}
+          helperMsg={t("profile.name.prefix_helper")}
+          defaultValue={mode == "edit" ? person?.prefix.th : undefined}
+          onChange={(e: string) => setForm({ ...form, thPrefix: e })}
         />
         <KeyboardInput
           name="th-first-name"
@@ -376,6 +355,14 @@ const EditPersonDialog = ({
         isDoubleColumn
         hasNoGap
       >
+        <KeyboardInput
+          name="en-prefix"
+          type="text"
+          label={t("profile.enName.prefix")}
+          helperMsg={t("profile.enName.prefix_helper")}
+          defaultValue={mode == "edit" ? person?.prefix["en-US"] : undefined}
+          onChange={(e: string) => setForm({ ...form, enPrefix: e })}
+        />
         <KeyboardInput
           name="en-first-name"
           type="text"

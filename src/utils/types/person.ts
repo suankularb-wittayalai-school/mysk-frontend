@@ -1,18 +1,13 @@
 import { ClassWNumber } from "./class";
-import { MultiLangString } from "./common";
+import { MultiLangObj, MultiLangString } from "./common";
 import { Contact } from "./contact";
 import { SubjectGroup, SubjectWNameAndCode } from "./subject";
 
-export type Prefix = "Master" | "Mr." | "Mrs." | "Miss.";
-
 export type Person = {
   id: number;
-  prefix: Prefix;
+  prefix: MultiLangString;
   role: Role;
-  name: {
-    "en-US"?: PersonName;
-    th: PersonName;
-  };
+  name: MultiLangObj<PersonName>;
   profile?: string;
   citizenID: string;
   birthdate: string;
@@ -34,6 +29,9 @@ export type PersonName = {
 
 export type Role = "student" | "teacher";
 
+export type DefaultTHPrefix = "เด็กชาย" | "นาย" | "นาง" | "นางสาว";
+export type DefaultENPrefix = "Master." | "Mr." | "Mrs." | "Miss.";
+
 export type Student = Person & {
   // TODO: Add more properties when the schema is completed
   role: "student";
@@ -54,15 +52,12 @@ export type Teacher = Person & {
 export type StudentListItem = {
   id: number;
   classNo: number;
-  prefix: Prefix;
-  name: {
-    "en-US"?: PersonName;
-    th: PersonName;
-  };
+  prefix: MultiLangString;
+  name: MultiLangObj<PersonName>;
 };
 
 export type ImportedStudentData = {
-  prefix: "เด็กชาย" | "นาย" | "นาง" | "นางสาว";
+  prefix: DefaultTHPrefix;
   first_name_th: string;
   first_name_en: string;
   middle_name_th?: string;
@@ -78,7 +73,7 @@ export type ImportedStudentData = {
 };
 
 export type ImportedTeacherData = {
-  prefix: "เด็กชาย" | "นาย" | "นาง" | "นางสาว";
+  prefix: DefaultTHPrefix;
   first_name_th: string;
   first_name_en: string;
   middle_name_th?: string;

@@ -47,18 +47,15 @@
   "profile": {
     "name": {
       "title": "ชื่อจริง",
-      "prefix": {
-        "label": "คำนำหน้า",
-        "master": "เด็กชาย",
-        "mister": "นาย",
-        "miss": "นางสาว",
-        "missus": "นาง"
-      },
+      "prefix": "คำนำหน้า",
+      "prefix_helper": "เด็กชาย นาย นาง นางสาว ฯลฯ",
       "firstName": "ชื่อ",
       "middleName": "ชื่อกลาง",
       "lastName": "นามสกุล"
     },
     "enName": {
+      "prefix": "คำนำหน้าภาษาอังกฤษ",
+      "prefix_helper": "Master Mr. Mrs. Ms. ฯลฯ",
       "title": "ชื่อจริงภาษาอังกฤษ",
       "firstName": "ชื่อภาษาอังกฤษ",
       "middleName": "ชื่อกลางภาษาอังกฤษ",
@@ -71,12 +68,13 @@
       "classNo": "เลขที่ห้อง"
     },
     "role": {
-      "title": "หน้าที่",
+      "title": "หน้าที่ภายในโรงเรียน",
       "role": {
         "label": "ประเภทผู้ใช้",
         "student": "นักเรียน",
         "teacher": "อาจารย์"
       },
+      "studentID": "เลขประจำตัวนักเรียน",
       "teacherID": "เลขประจำตัวอาจารย์",
       "subjectGroup": "กลุ่มสาระการเรียนรู้",
       "classAdvisorAt": {
