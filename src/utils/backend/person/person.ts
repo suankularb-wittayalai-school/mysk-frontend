@@ -69,6 +69,7 @@ export async function createPerson(
 }
 
 export async function setupPerson(
+  supabase: DatabaseClient,
   form: {
     thPrefix: string;
     thFirstName: string;
@@ -95,7 +96,7 @@ export async function setupPerson(
   if (person.role == "student") {
     const { data: studentPersonID, error: idError } = await supabase
       .from("student")
-      .select("person")
+      .select("person(id)")
       .match({ id: person.id })
       .limit(1)
       .single();
@@ -104,7 +105,9 @@ export async function setupPerson(
       console.error(idError);
       return { data: null, error: idError };
     }
-    personID = studentPersonID!.person as unknown as number;
+    personID = (
+      studentPersonID!.person as Database["public"]["Tables"]["people"]["Row"]
+    ).id;
   }
 
   // Fetch person ID from `teacher` table if user is a teacher

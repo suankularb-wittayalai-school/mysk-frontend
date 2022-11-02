@@ -164,6 +164,7 @@ const DataCheckSection = ({
   disabled?: boolean;
 }): JSX.Element => {
   const { t } = useTranslation(["landing", "account"]);
+  const supabase = useSupabaseClient();
   const locale = useRouter().locale as LangCode;
 
   const [loading, toggleLoading] = useToggle();
@@ -237,7 +238,7 @@ const DataCheckSection = ({
     if (
       11 -
         ((sumArray(
-          citizenIDDigits.slice(0, 11).map((digit, idx) => digit * (13 - idx))
+          citizenIDDigits.slice(0, 12).map((digit, idx) => digit * (13 - idx))
         ) %
           11) %
           10) !=
@@ -425,7 +426,7 @@ const DataCheckSection = ({
             icon={<MaterialIcon icon="arrow_downward" />}
             onClick={async () => {
               toggleLoading();
-              const { error } = await setupPerson(form, user);
+              const { error } = await setupPerson(supabase, form, user);
               toggleLoading();
 
               if (error) return;
@@ -719,7 +720,10 @@ const Welcome: NextPage<{
 export const getServerSideProps: GetServerSideProps = withPageAuth({
   async getServerSideProps({ locale }, supabase) {
     const { data: user } = await supabase.auth.getUser();
-    const { data: person } = await getPersonFromUser(supabase, user.user as User);
+    const { data: person } = await getPersonFromUser(
+      supabase,
+      user.user as User
+    );
     const { data: subjectGroups } = await getSubjectGroups();
 
     return {
