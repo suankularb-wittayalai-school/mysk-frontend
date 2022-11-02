@@ -93,8 +93,15 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   );
   if (error) return { notFound: true };
 
-  const { data: schedule } = await getSchedule("student", classID as number);
-  const { data: subjectList } = await getSubjectList(classID as number);
+  const { data: schedule } = await getSchedule(
+    supabase,
+    "student",
+    classID as number
+  );
+  const { data: subjectList } = await getSubjectList(
+    supabase,
+    classID as number
+  );
 
   return {
     props: {

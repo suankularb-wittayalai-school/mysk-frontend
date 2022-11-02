@@ -387,7 +387,7 @@ const Class: NextPage<{
 
   const [showAddTeacher, toggleShowAddTeacher] = useToggle();
   const [showAddContact, toggleShowAddContact] = useToggle();
-
+  
   return (
     <>
       <Head>

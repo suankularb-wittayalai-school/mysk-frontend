@@ -259,6 +259,7 @@ export async function addContactToClassroom(
 }
 
 export async function getClassNumberFromUser(
+  supabase: DatabaseClient,
   user: User
 ): Promise<BackendDataReturn<number, null>> {
   const studentID: number = user.user_metadata.student;

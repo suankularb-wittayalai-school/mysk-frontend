@@ -10,7 +10,10 @@ const Learn: NextPage = () => null;
 export const getServerSideProps: GetServerSideProps = withPageAuth({
   async getServerSideProps({ locale }, supabase) {
     const { data: user } = await supabase.auth.getUser();
-    const { data: classID } = await getClassNumberFromUser(user.user as User);
+    const { data: classID } = await getClassNumberFromUser(
+      supabase,
+      user.user as User
+    );
     return {
       redirect: {
         destination: `/${locale}/learn/${classID}`,

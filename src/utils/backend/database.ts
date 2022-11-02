@@ -233,7 +233,9 @@ export async function db2Student(
 
 // Teacher
 export async function db2Teacher(
-  teacher: Database["public"]["Tables"]["teacher"]["Row"]
+  supabase: DatabaseClient,
+  teacher: Database["public"]["Tables"]["teacher"]["Row"],
+  options?: Partial<{ contacts: boolean }>
 ): Promise<Teacher> {
   const formatted: Teacher = {
     id: teacher.id,
@@ -275,16 +277,15 @@ export async function db2Teacher(
     subjectsInCharge: [],
   };
 
-  const { data: contacts, error: contactError } = await supabase
-    .from("contact")
-    .select("*")
-    .in("id", teacher.person.contacts ? teacher.person.contacts : []);
+  if (options?.contacts) {
+    const { data: contacts, error: contactError } = await supabase
+      .from("contact")
+      .select("*")
+      .in("id", teacher.person.contacts ? teacher.person.contacts : []);
 
-  if (contactError) {
-    console.error(contactError);
-  }
-  if (contacts) {
-    formatted.contacts = contacts.map(db2Contact);
+    if (contactError) console.error(contactError);
+
+    if (contacts) formatted.contacts = contacts.map(db2Contact);
   }
 
   const { data: classItem, error: classError } = await supabase
@@ -337,6 +338,7 @@ export async function db2Teacher(
 }
 
 export async function db2Subject(
+  supabase: DatabaseClient,
   subject: Database["public"]["Tables"]["subject"]["Row"]
 ): Promise<Subject> {
   const formatted: Subject = {
@@ -411,7 +413,7 @@ export async function db2Subject(
   if (teachers) {
     formatted.teachers = await Promise.all(
       teachers.map(async (teacher) => {
-        return await db2Teacher(teacher);
+        return await db2Teacher(supabase, teacher);
       })
     );
   }
@@ -427,7 +429,7 @@ export async function db2Subject(
   if (coTeachers) {
     formatted.coTeachers = await Promise.all(
       coTeachers.map(async (teacher) => {
-        return await db2Teacher(teacher);
+        return await db2Teacher(supabase, teacher);
       })
     );
   }
@@ -461,7 +463,7 @@ export async function db2Class(
 
     if (classAdvisor) {
       formatted.classAdvisors = await Promise.all(
-        classAdvisor.map(async (teacher) => await db2Teacher(teacher))
+        classAdvisor.map(async (teacher) => await db2Teacher(supabase, teacher))
       );
     }
   }
@@ -503,6 +505,7 @@ export async function db2Class(
 }
 
 export async function db2SchedulePeriod(
+  supabase: DatabaseClient,
   scheduleItem: Database["public"]["Tables"]["schedule_items"]["Row"],
   role: Role
 ): Promise<SchedulePeriod> {
@@ -549,9 +552,10 @@ export async function db2SchedulePeriod(
     }
     if (teachers) {
       formatted.content[0].subject.teachers = await Promise.all(
-        teachers.map(async (teacher) => {
-          return await db2Teacher(teacher);
-        })
+        teachers.map(
+          async (teacher) =>
+            await db2Teacher(supabase, teacher, { contacts: false })
+        )
       );
     }
 
@@ -569,7 +573,7 @@ export async function db2SchedulePeriod(
     if (coTeachers) {
       formatted.content[0].subject.coTeachers = await Promise.all(
         coTeachers.map(async (teacher) => {
-          return await db2Teacher(teacher);
+          return await db2Teacher(supabase, teacher);
         })
       );
     }
@@ -579,6 +583,7 @@ export async function db2SchedulePeriod(
 }
 
 export async function db2SubjectListItem(
+  supabase: DatabaseClient,
   roomSubject: Database["public"]["Tables"]["room_subjects"]["Row"]
 ) {
   const formatted: SubjectListItem = {
@@ -618,7 +623,7 @@ export async function db2SubjectListItem(
     }
     if (teachers) {
       formatted.teachers = await Promise.all(
-        teachers.map(async (teacher) => await db2Teacher(teacher))
+        teachers.map(async (teacher) => await db2Teacher(supabase, teacher))
       );
     }
   }
@@ -634,7 +639,7 @@ export async function db2SubjectListItem(
     }
     if (coTeachers) {
       formatted.coTeachers = await Promise.all(
-        coTeachers.map(async (teacher) => await db2Teacher(teacher))
+        coTeachers.map(async (teacher) => await db2Teacher(supabase, teacher))
       );
     }
   }

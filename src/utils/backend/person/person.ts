@@ -214,6 +214,7 @@ export async function getPersonFromUser(
 }
 
 export async function getPersonIDFromUser(
+  supabase: DatabaseClient,
   user: User
 ): Promise<BackendDataReturn<number, null>> {
   if (user?.user_metadata.role == "student") {

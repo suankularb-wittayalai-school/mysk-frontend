@@ -53,6 +53,8 @@ import { ClassWNumber } from "@utils/types/class";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
+import { useToggle } from "@utils/hooks/toggle";
+import { useRouter } from "next/router";
 
 const ScheduleSection = ({
   schedule,
@@ -155,34 +157,18 @@ const SubjectsYouTeachSection = ({
   );
 };
 
-const Teach: NextPage<{ teacherID: number; schedule: ScheduleType }> = ({
-  teacherID,
-  schedule,
-}) => {
+const Teach: NextPage<{
+  schedule: ScheduleType;
+  subjects: (SubjectWNameAndCode & {
+    classes: ClassWNumber[];
+  })[];
+}> = ({ schedule, subjects }) => {
   const { t } = useTranslation("teach");
+  const router = useRouter();
 
   // Dialog controls
-  const [showLogOut, toggleShowLogOut] = useReducer(
-    (value: boolean) => !value,
-    false
-  );
-  const [showAdd, toggleShowAdd] = useReducer(
-    (value: boolean) => !value,
-    false
-  );
-
-  // Subjects fetch
-  const queryClient = useQueryClient();
-  const { data } = useQuery<
-    (SubjectWNameAndCode & { classes: ClassWNumber[] })[]
-  >("feed", () => getTeachingSubjects(teacherID));
-
-  const [subjects, setSubjects] = useState<
-    (SubjectWNameAndCode & { classes: ClassWNumber[] })[]
-  >([]);
-  useEffect(() => {
-    if (data) setSubjects(data);
-  }, [data]);
+  const [showLogOut, toggleShowLogOut] = useToggle();
+  const [showAdd, toggleShowAdd] = useToggle();
 
   return (
     <>
@@ -213,7 +199,7 @@ const Teach: NextPage<{ teacherID: number; schedule: ScheduleType }> = ({
         onClose={toggleShowAdd}
         onSubmit={() => {
           toggleShowAdd();
-          queryClient.invalidateQueries("subjects");
+          router.replace(router.asPath);
         }}
       />
     </>
@@ -225,7 +211,13 @@ export const getServerSideProps: GetServerSideProps = withPageAuth({
     const { data: user } = await supabase.auth.getUser();
     const teacherID = user.user?.user_metadata.teacher;
 
-    const { data: schedule } = await getSchedule("teacher", teacherID);
+    const { data: schedule } = await getSchedule(
+      supabase,
+      "teacher",
+      teacherID
+    );
+
+    const { data: subjects } = await getTeachingSubjects(supabase, teacherID);
 
     return {
       props: {
@@ -235,8 +227,8 @@ export const getServerSideProps: GetServerSideProps = withPageAuth({
           "teach",
           "schedule",
         ])),
-        teacherID,
         schedule,
+        subjects,
       },
     };
   },

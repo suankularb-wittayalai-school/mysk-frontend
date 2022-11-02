@@ -719,7 +719,7 @@ const Welcome: NextPage<{
 export const getServerSideProps: GetServerSideProps = withPageAuth({
   async getServerSideProps({ locale }, supabase) {
     const { data: user } = await supabase.auth.getUser();
-    const { data: person } = await getPersonFromUser(user.user as User);
+    const { data: person } = await getPersonFromUser(supabase, user.user as User);
     const { data: subjectGroups } = await getSubjectGroups();
 
     return {

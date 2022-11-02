@@ -1,10 +1,5 @@
 // External libraries
-import type {
-  GetServerSideProps,
-  GetStaticPaths,
-  GetStaticProps,
-  NextPage,
-} from "next";
+import type { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -217,7 +212,7 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   );
   if (classIDError) return { notFound: true };
 
-  const teachers = await getTeacherList(classID as number);
+  const teachers = await getTeacherList(supabase, classID as number);
 
   const subjectGroups: string[] = teachers
     .map((teacher) =>

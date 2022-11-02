@@ -13,7 +13,12 @@ import {
 
 // Miscelleneous
 import { subjectGroupMap, subjectTypeMap } from "@utils/maps";
-import { BackendReturn, OrUndefined } from "@utils/types/common";
+import {
+  BackendDataReturn,
+  BackendReturn,
+  DatabaseClient,
+  OrUndefined,
+} from "@utils/types/common";
 
 export async function deleteSubject(subject: Subject) {
   // Delete the syllabus if it exists
@@ -75,8 +80,11 @@ export async function importSubjects(data: ImportedSubjectData[]) {
 }
 
 export async function getTeachingSubjects(
+  supabase: DatabaseClient,
   teacherID: number
-): Promise<(SubjectWNameAndCode & { classes: ClassWNumber[] })[]> {
+): Promise<
+  BackendDataReturn<(SubjectWNameAndCode & { classes: ClassWNumber[] })[]>
+> {
   const { data: roomSubjects, error } = await supabase
     .from("room_subjects")
     .select("*, subject:subject(*), class(*)")
@@ -84,7 +92,7 @@ export async function getTeachingSubjects(
 
   if (error) {
     console.error(error);
-    return [];
+    return { data: [], error };
   }
 
   const subjects: (SubjectWNameAndCode & {
@@ -128,7 +136,7 @@ export async function getTeachingSubjects(
     return acc;
   }, [] as (SubjectWNameAndCode & { classes: ClassWNumber[] })[]);
 
-  return subjectsWithClasses;
+  return { data: subjectsWithClasses, error: null };
 }
 
 export async function createSubject(subject: Subject): Promise<BackendReturn> {

@@ -43,7 +43,7 @@ const AddStudentDialog = ({
         .single()
         .then((res) => {
           if (res.data) {
-            db2Student(res.data, { contacts: true }).then((student) => {
+            db2Student(supabase, res.data, { contacts: true }).then((student) => {
               setStudent(student);
             });
           }

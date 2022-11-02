@@ -134,7 +134,10 @@ const FormPage: NextPage<{ formPage: FormPageType; personID: number }> = ({
 export const getServerSideProps: GetServerSideProps = withPageAuth({
   async getServerSideProps({ locale, params }, supabase) {
     const { data: user } = await supabase.auth.getUser();
-    const { data: personID } = await getPersonIDFromUser(user.user as User);
+    const { data: personID } = await getPersonIDFromUser(
+      supabase,
+      user.user as User
+    );
 
     if (!params?.formID) return { notFound: true };
 

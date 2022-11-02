@@ -9,11 +9,12 @@ import { supabase } from "@utils/supabase-client";
 
 // Types
 import { ClassWNumber } from "@utils/types/class";
-import { BackendDataReturn } from "@utils/types/common";
+import { BackendDataReturn, DatabaseClient } from "@utils/types/common";
 import { SubjectListItem } from "@utils/types/subject";
 import { Database } from "@utils/types/supabase";
 
 export async function getRoomsEnrolledInSubject(
+  supabase: DatabaseClient,
   subjectID: number
 ): Promise<BackendDataReturn<ClassWNumber[]>> {
   const { data, error } = await supabase
@@ -40,6 +41,7 @@ export async function getRoomsEnrolledInSubject(
 }
 
 export async function getSubjectList(
+  supabase: DatabaseClient,
   classID: number
 ): Promise<{ data: SubjectListItem[]; error: PostgrestError | null }> {
   const { data, error } = await supabase
@@ -54,7 +56,7 @@ export async function getSubjectList(
 
   return {
     data: await Promise.all(
-      data.map(async (roomSubject) => await db2SubjectListItem(roomSubject))
+      data.map(async (roomSubject) => await db2SubjectListItem(supabase, roomSubject))
     ),
     error: null,
   };

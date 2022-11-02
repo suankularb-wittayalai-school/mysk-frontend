@@ -24,6 +24,9 @@ import { range } from "@utils/helpers/array";
 // Hooks
 import { useTeacherAccount } from "@utils/hooks/auth";
 
+// Supabase
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+
 // Types
 import { ClassWNumber } from "@utils/types/class";
 import { LangCode, SubmittableDialogProps } from "@utils/types/common";
@@ -47,6 +50,7 @@ const EditPeriod = ({
   canEditStartTime?: boolean;
 }): JSX.Element => {
   const { t } = useTranslation(["schedule", "common"]);
+  const supabase = useSupabaseClient();
   const locale = useRouter().locale as LangCode;
   const [teacher] = useTeacherAccount();
 
@@ -74,7 +78,9 @@ const EditPeriod = ({
   const [classes, setClasses] = useState<ClassWNumber[]>([]);
   useEffect(() => {
     const fetchClasses = async () =>
-      setClasses((await getRoomsEnrolledInSubject(form.subject)).data || []);
+      setClasses(
+        (await getRoomsEnrolledInSubject(supabase, form.subject)).data || []
+      );
     fetchClasses();
   }, [form.subject]);
 

@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 
 import { useState, useEffect } from "react";
 
-import { useUser } from "@supabase/auth-helpers-react";
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { User } from "@supabase/supabase-js";
 
 // Backend
@@ -12,11 +12,9 @@ import { db2Teacher } from "@utils/backend/database";
 // Types
 import { Teacher } from "@utils/types/person";
 
-// Supabase
-import { supabase } from "@utils/supabase-client";
-
 export function useTeacherAccount(): [Teacher | null, User | null] {
   const user = useUser();
+  const supabase = useSupabaseClient();
   const [teacher, setTeacher] = useState<Teacher | null>(null);
 
   useEffect(() => {
@@ -27,14 +25,12 @@ export function useTeacherAccount(): [Teacher | null, User | null] {
       .eq("id", user.user_metadata.teacher)
       .single()
       .then((res) => {
-        if (res.error || !res.data) {
+        if (res.error) {
           console.log(res.error);
           return;
         }
 
-        db2Teacher(res.data).then((teacher) => {
-          setTeacher(teacher);
-        });
+        db2Teacher(supabase, res.data).then((teacher) => setTeacher(teacher));
       });
   }, [user]);
   return [teacher, user];

@@ -14,7 +14,11 @@ import {
 
 // Supabase
 import { supabase } from "@utils/supabase-client";
-import { BackendDataReturn, BackendReturn } from "@utils/types/common";
+import {
+  BackendDataReturn,
+  BackendReturn,
+  DatabaseClient,
+} from "@utils/types/common";
 import { ClassroomTable } from "@utils/types/database/class";
 
 // Types
@@ -29,6 +33,7 @@ import { Database } from "@utils/types/supabase";
  * @param classID The Supabase ID of the class the user is a part of
  */
 export async function getSchedule(
+  supabase: DatabaseClient,
   role: "student",
   classID: number,
   day?: Day
@@ -40,12 +45,14 @@ export async function getSchedule(
  * @param teacherID The Supabase ID of the user (who should be a Teacher)
  */
 export async function getSchedule(
+  supabase: DatabaseClient,
   role: "teacher",
   teacherID: number,
   day?: Day
 ): Promise<BackendDataReturn<Schedule, Schedule>>;
 
 export async function getSchedule(
+  supabase: DatabaseClient,
   role: Role,
   id: number,
   day?: Day
@@ -112,7 +119,11 @@ export async function getSchedule(
 
       // Determine what to do if the incoming period overlaps with an existing
       // period
-      const processedPeriod = await db2SchedulePeriod(incomingPeriod, role);
+      const processedPeriod = await db2SchedulePeriod(
+        supabase,
+        incomingPeriod,
+        role
+      );
 
       // Replace empty period
       if (schedulePeriod.content.length == 0) {
@@ -147,6 +158,7 @@ export async function getSchedule(
 }
 
 export async function getSchedulesOfGrade(
+  supabase: DatabaseClient,
   grade: number
 ): Promise<BackendDataReturn<Schedule[]>> {
   const { data: classes, error: classesError } = await supabase
@@ -164,7 +176,7 @@ export async function getSchedulesOfGrade(
   return {
     data: await Promise.all(
       (classes as ClassroomTable[]).map(async (classItem) => ({
-        ...(await getSchedule("student", classItem.id)).data,
+        ...(await getSchedule(supabase, "student", classItem.id)).data,
         class: classItem,
       }))
     ),

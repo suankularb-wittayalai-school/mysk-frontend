@@ -40,7 +40,7 @@ export async function getTeacherFromUser(
 
   return {
     data: {
-      ...(await db2Teacher(data!)),
+      ...(await db2Teacher(supabase, data!)),
       isAdmin: user.user_metadata.isAdmin,
     },
     error: null,
@@ -190,7 +190,10 @@ export async function importTeachers(data: ImportedTeacherData[]) {
   );
 }
 
-export async function getTeacherList(classID: number): Promise<Teacher[]> {
+export async function getTeacherList(
+  supabase: DatabaseClient,
+  classID: number
+): Promise<Teacher[]> {
   // Get the teachers of all subjectRooms where class matches
   const { data: roomSubjects, error: roomSubjectsError } = await supabase
     .from("room_subjects")
@@ -230,7 +233,7 @@ export async function getTeacherList(classID: number): Promise<Teacher[]> {
   const teachers = selectedTeachers.filter((teacher) => teacher);
 
   return await Promise.all(
-    teachers.map(async (teacher) => await db2Teacher(teacher!))
+    teachers.map(async (teacher) => await db2Teacher(supabase, teacher!))
   );
 }
 

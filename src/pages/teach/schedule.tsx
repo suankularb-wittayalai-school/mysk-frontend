@@ -37,6 +37,9 @@ import { createTitleStr } from "@utils/helpers/title";
 import { useTeacherAccount } from "@utils/hooks/auth";
 import { useToggle } from "@utils/hooks/toggle";
 
+// Supabase
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+
 // Types
 import { LangCode } from "@utils/types/common";
 import {
@@ -46,11 +49,12 @@ import {
 
 const TeacherSchedule: NextPage = () => {
   const { t } = useTranslation("schedule");
+  const supabase = useSupabaseClient();
   const [teacher] = useTeacherAccount();
 
   // Data fetch
   const plhSchedule = {
-    content: range(5).map((day) => ({ day: (day + 1) as Day, content: [] })),
+    content: range(5, 1).map((day) => ({ day: day as Day, content: [] })),
   };
   const [schedule, setSchedule] = useState<ScheduleType>(plhSchedule);
   const [fetched, toggleFetched] = useToggle();
@@ -58,7 +62,11 @@ const TeacherSchedule: NextPage = () => {
   useEffect(() => {
     const fetchAndSetSchedule = async () => {
       if (!fetched && teacher) {
-        const { data, error } = await getSchedule("teacher", teacher.id);
+        const { data, error } = await getSchedule(
+          supabase,
+          "teacher",
+          teacher.id
+        );
         if (error) toggleFetched();
         setSchedule(data);
         toggleFetched();
