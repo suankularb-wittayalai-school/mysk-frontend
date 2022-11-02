@@ -55,8 +55,8 @@ const ConnectSubjectDialog = ({
   // Form control
   const [form, setForm] = useState<{
     classroom: string;
-    teachers: Array<Teacher>;
-    coTeachers?: Array<Teacher>;
+    teachers: Teacher[];
+    coTeachers?: Teacher[];
     ggcCode?: string;
     ggcLink?: string;
     ggMeetLink?: string;

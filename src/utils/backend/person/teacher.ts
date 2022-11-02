@@ -145,43 +145,41 @@ export async function deleteTeacher(teacher: Teacher) {
 }
 
 export async function importTeachers(data: ImportedTeacherData[]) {
-  const teachers: Array<{ person: Teacher; email: string }> = data.map(
-    (teacher) => {
-      const person: Teacher = {
-        id: 0,
-        prefix: {
-          th: teacher.prefix,
-          "en-US": prefixMap[teacher.prefix],
+  const teachers: { person: Teacher; email: string }[] = data.map((teacher) => {
+    const person: Teacher = {
+      id: 0,
+      prefix: {
+        th: teacher.prefix,
+        "en-US": prefixMap[teacher.prefix],
+      },
+      role: "teacher",
+      name: {
+        th: {
+          firstName: teacher.first_name_th,
+          middleName: teacher.middle_name_th,
+          lastName: teacher.last_name_th,
         },
-        role: "teacher",
+        "en-US": {
+          firstName: teacher.first_name_en,
+          middleName: teacher.middle_name_en,
+          lastName: teacher.last_name_en,
+        },
+      },
+      birthdate: teacher.birthdate,
+      citizenID: teacher.citizen_id.toString(),
+      teacherID: teacher.teacher_id.toString(),
+      contacts: [],
+      subjectGroup: {
+        id: subjectGroupMap[teacher.subject_group],
         name: {
-          th: {
-            firstName: teacher.first_name_th,
-            middleName: teacher.middle_name_th,
-            lastName: teacher.last_name_th,
-          },
-          "en-US": {
-            firstName: teacher.first_name_en,
-            middleName: teacher.middle_name_en,
-            lastName: teacher.last_name_en,
-          },
+          th: teacher.subject_group,
+          "en-US": teacher.subject_group,
         },
-        birthdate: teacher.birthdate,
-        citizenID: teacher.citizen_id.toString(),
-        teacherID: teacher.teacher_id.toString(),
-        contacts: [],
-        subjectGroup: {
-          id: subjectGroupMap[teacher.subject_group],
-          name: {
-            th: teacher.subject_group,
-            "en-US": teacher.subject_group,
-          },
-        },
-      };
-      const email = teacher.email;
-      return { person, email };
-    }
-  );
+      },
+    };
+    const email = teacher.email;
+    return { person, email };
+  });
 
   await Promise.all(
     teachers.map(

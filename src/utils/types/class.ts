@@ -5,9 +5,9 @@ import { SubjectListItem } from "./subject";
 export type Class = {
   id: number;
   number: number;
-  classAdvisors: Array<Teacher>;
-  contacts: Array<Contact>;
-  students: Array<Student>;
+  classAdvisors: Teacher[];
+  contacts: Contact[];
+  students: Student[];
   year: number;
   subjects: SubjectListItem[];
 };

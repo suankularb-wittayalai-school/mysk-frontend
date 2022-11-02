@@ -77,8 +77,8 @@ export type SubjectListItem = {
     name: Subject["name"];
   };
   classroom: ClassWNumber;
-  teachers: Array<Teacher>;
-  coTeachers?: Array<Teacher>;
+  teachers: Teacher[];
+  coTeachers?: Teacher[];
   ggcCode?: string;
   ggcLink?: string;
   ggMeetLink?: string;
@@ -89,7 +89,7 @@ export type PeriodLog = {
   id: number;
   date: Date;
   topic: string;
-  mediums: Array<PeriodMedium>;
+  mediums: PeriodMedium[];
   participationLevel: 1 | 2 | 3 | 4 | 5;
   evidence: string;
 };
@@ -112,7 +112,7 @@ export type SubstituteAssignment = {
     "en-US": string;
     th: string;
   };
-  classes: Array<ClassWNumber>;
+  classes: ClassWNumber[];
   subject: SubjectWNameAndCode;
 };
 

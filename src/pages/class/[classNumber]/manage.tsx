@@ -122,12 +122,11 @@ const StudentFormCard = ({ form }: { form: StudentFormItem }): JSX.Element => {
 const FormSection = ({
   studentForms: forms,
 }: {
-  studentForms: Array<StudentFormItem>;
+  studentForms: StudentFormItem[];
 }): JSX.Element => {
   const { t } = useTranslation(["dashboard", "news", "class"]);
   const [newsFilter, setNewsFilter] = useState<string[]>([]);
-  const [filteredNews, setFilteredNews] =
-    useState<Array<StudentFormItem>>(forms);
+  const [filteredNews, setFilteredNews] = useState<StudentFormItem[]>(forms);
   const locale = useRouter().locale as LangCode;
 
   useEffect(
@@ -197,7 +196,7 @@ const FormSection = ({
             { id: "all-done", name: t("news.filter.amountDone.allDone") },
           ],
         ]}
-        onChange={(newFilter: Array<string>) => setNewsFilter(newFilter)}
+        onChange={(newFilter: string[]) => setNewsFilter(newFilter)}
         scrollable={true}
       />
       {filteredNews.length == 0 ? (
@@ -227,7 +226,7 @@ const ClassAdvisorsSection = ({
   toggleShowAdd,
   allowEdit,
 }: {
-  classAdvisors: Array<Teacher>;
+  classAdvisors: Teacher[];
   toggleShowAdd: () => void;
   allowEdit?: boolean;
 }): JSX.Element => {
@@ -267,7 +266,7 @@ const ContactSection = ({
   toggleShowAdd,
   allowEdit,
 }: {
-  contacts: Array<Contact>;
+  contacts: Contact[];
   toggleShowAdd: () => void;
   allowEdit?: boolean;
 }): JSX.Element => {

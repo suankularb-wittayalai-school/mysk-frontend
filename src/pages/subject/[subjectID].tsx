@@ -222,7 +222,7 @@ const PeriodLogsSection = ({
   setLogDetails,
 }: {
   subjectID: number;
-  periodLogs: Array<PeriodLog>;
+  periodLogs: PeriodLog[];
   setLogEvidence: (value: { show: boolean; evidence?: string }) => void;
   setLogDetails: (value: { show: boolean; periodLog?: PeriodLog }) => void;
 }): JSX.Element => {
@@ -329,7 +329,7 @@ const PeriodLogMedium = ({
   mediums,
   className,
 }: {
-  mediums: Array<PeriodMedium>;
+  mediums: PeriodMedium[];
   className?: string;
 }) => {
   const { t } = useTranslation("subjects");
@@ -438,7 +438,7 @@ const SubstituteAssignmentsSection = ({
   setActiveAsgn,
 }: {
   subjectID: number;
-  substAsgn: Array<SubstituteAssignment>;
+  substAsgn: SubstituteAssignment[];
   setShowAssgDetails: Function;
   setShowEditAsgn: Function;
   setShowAddAsgn: Function;
@@ -575,7 +575,7 @@ const EditAssignmentDialog = ({
   onSubmit: Function;
   mode: "add" | "edit";
   assignment?: SubstituteAssignment;
-  allSubjects: Array<SubjectWNameAndCode>;
+  allSubjects: SubjectWNameAndCode[];
 }): JSX.Element => {
   const { t } = useTranslation(["subjects", "common"]);
   const locale = useRouter().locale as LangCode;
@@ -586,10 +586,7 @@ const EditAssignmentDialog = ({
     subject: number;
     enDesc: string;
     thDesc: string;
-    assignedClases: Array<{
-      id: string;
-      name: string | JSX.Element;
-    }>;
+    assignedClases: { id: string; name: string | JSX.Element }[];
   }>(
     mode == "edit" && assignment
       ? {

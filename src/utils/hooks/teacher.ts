@@ -11,7 +11,7 @@ import { supabase } from "@utils/supabase-client";
 import { Teacher } from "@utils/types/person";
 
 export function useTeacherOptions(subjectGroupId: number) {
-  const [teachers, setTeachers] = useState<Array<Teacher>>([]);
+  const [teachers, setTeachers] = useState<Teacher[]>([]);
 
   useEffect(() => {
     supabase
