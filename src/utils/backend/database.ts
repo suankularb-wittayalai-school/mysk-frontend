@@ -10,7 +10,11 @@ import {
   FormTable,
   InfoDB,
 } from "@utils/types/database/news";
-import { StudentDB, TeacherDB } from "@utils/types/database/person";
+import {
+  FetchedTeacherTable,
+  StudentDB,
+  TeacherDB,
+} from "@utils/types/database/person";
 import { ScheduleItemDB } from "@utils/types/database/schedule";
 import {
   RoomSubjectDB,
