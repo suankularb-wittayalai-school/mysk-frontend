@@ -31,6 +31,9 @@ import {
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
 
+// Supabase
+import { supabase } from "@utils/supabase-backend";
+
 // Types
 import { Class as ClassType } from "@utils/types/class";
 import { LangCode } from "@utils/types/common";
@@ -154,7 +157,7 @@ const Class: NextPage<{ classNumber: number; classItem: ClassType }> = ({
 
 export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   const classNumber = Number(params?.classNumber);
-  const classItem = await getClassroom(classNumber);
+  const classItem = await getClassroom(supabase, classNumber);
 
   return {
     props: {
@@ -172,7 +175,7 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   return {
-    paths: (await getAllClassNumbers()).map((number) => ({
+    paths: (await getAllClassNumbers(supabase)).map((number) => ({
       params: { classNumber: number.toString() },
     })),
     fallback: "blocking",

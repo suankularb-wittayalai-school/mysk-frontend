@@ -15,7 +15,7 @@ import { supabase } from "@utils/supabase-client";
 
 // Types
 import { Class } from "@utils/types/class";
-import { BackendDataReturn } from "@utils/types/common";
+import { BackendDataReturn, DatabaseClient } from "@utils/types/common";
 import { StudentListItem } from "@utils/types/person";
 import { Database } from "@utils/types/supabase";
 
@@ -70,7 +70,10 @@ export async function createClassroom(
   return { data: createdClass!, error: null };
 }
 
-export async function getClassroom(number: number): Promise<Class> {
+export async function getClassroom(
+  supabase: DatabaseClient,
+  number: number
+): Promise<Class> {
   let classItem: Class = {
     id: 0,
     number: 0,
@@ -95,7 +98,7 @@ export async function getClassroom(number: number): Promise<Class> {
     return classItem;
   }
 
-  return await db2Class(data);
+  return await db2Class(supabase, data);
 }
 
 export async function updateClassroom(
@@ -277,6 +280,7 @@ export async function getClassNumberFromUser(
 }
 
 export async function getClassIDFromNumber(
+  supabase: DatabaseClient,
   number: number
 ): Promise<BackendDataReturn<number, null>> {
   const { data: classroom, error: classroomSelectionError } = await supabase
@@ -294,7 +298,9 @@ export async function getClassIDFromNumber(
   return { data: classroom!.id, error: null };
 }
 
-export async function getAllClassNumbers(): Promise<number[]> {
+export async function getAllClassNumbers(
+  supabase: DatabaseClient
+): Promise<number[]> {
   const { data: classrooms, error: classroomsError } = await supabase
     .from("classroom")
     .select("number");
@@ -308,6 +314,7 @@ export async function getAllClassNumbers(): Promise<number[]> {
 }
 
 export async function getClassStudentList(
+  supabase: DatabaseClient,
   classID: number
 ): Promise<BackendDataReturn<StudentListItem[]>> {
   const { data: classItem, error: classError } = await supabase
@@ -334,7 +341,9 @@ export async function getClassStudentList(
 
   return {
     data: (
-      await Promise.all(data!.map(async (student) => await db2Student(student)))
+      await Promise.all(
+        data!.map(async (student) => await db2Student(supabase, student))
+      )
     ).sort((a, b) => a.classNo - b.classNo),
     error: null,
   };

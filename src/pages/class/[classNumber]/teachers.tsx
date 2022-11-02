@@ -43,6 +43,9 @@ import {
 import { nameJoiner } from "@utils/helpers/name";
 import { createTitleStr } from "@utils/helpers/title";
 
+// Supabase
+import { supabase } from "@utils/supabase-backend";
+
 // Types
 import { LangCode } from "@utils/types/common";
 import { Teacher } from "@utils/types/person";
@@ -209,6 +212,7 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   const classNumber = Number(params?.classNumber);
 
   const { data: classID, error: classIDError } = await getClassIDFromNumber(
+    supabase,
     classNumber
   );
   if (classIDError) return { notFound: true };
@@ -253,7 +257,7 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   return {
-    paths: (await getAllClassNumbers()).map((number) => ({
+    paths: (await getAllClassNumbers(supabase)).map((number) => ({
       params: { classNumber: number.toString() },
     })),
     fallback: "blocking",

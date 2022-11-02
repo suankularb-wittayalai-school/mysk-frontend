@@ -294,7 +294,7 @@ const ContactSection = ({
           type="tonal"
           icon={<MaterialIcon icon="add" />}
           disabled={!allowEdit}
-          onClick={() => toggleShowAdd()}
+          onClick={toggleShowAdd}
         />
       </div>
     </Section>
@@ -466,12 +466,15 @@ const Class: NextPage<{
 
 export const getServerSideProps: GetServerSideProps = withPageAuth({
   async getServerSideProps({ locale, params }, supabase) {
-    const classItem = await getClassroom(Number(params?.classNumber));
+    const classItem = await getClassroom(supabase, Number(params?.classNumber));
 
     const studentForms: StudentFormItem[] = [];
 
     const { data: sbUser } = await supabase.auth.getUser();
-    const { data: teacher } = await getTeacherFromUser(sbUser.user as User);
+    const { data: teacher } = await getTeacherFromUser(
+      supabase,
+      sbUser.user as User
+    );
     const isAdvisor = teacher
       ? teacher.classAdvisorAt?.id == classItem.id
       : false;
