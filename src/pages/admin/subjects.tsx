@@ -326,7 +326,10 @@ export const getServerSideProps: GetServerSideProps = withPageAuth({
 
     if (error) console.error(error);
 
-    if (data) subjects = await Promise.all(data.map(db2Subject));
+    if (data)
+      subjects = await Promise.all(
+        data.map(async (subject) => await db2Subject(supabase, subject))
+      );
 
     return {
       props: {

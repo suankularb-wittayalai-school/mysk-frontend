@@ -69,12 +69,9 @@ const StudentList = ({
       students.map((student) => ({
         id: student.id,
         classNo: student.classNo,
-        name: nameJoiner(
-          locale,
-          student.name,
-          t(`name.prefix.${student.prefix}`, { ns: "common" }),
-          { prefix: true }
-        ),
+        name: nameJoiner(locale, student.name, student.prefix, {
+          prefix: true,
+        }),
       })),
     []
   );

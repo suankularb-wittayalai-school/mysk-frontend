@@ -125,7 +125,7 @@ const FormSection = ({
   studentForms: Array<StudentFormItem>;
 }): JSX.Element => {
   const { t } = useTranslation(["dashboard", "news", "class"]);
-  const [newsFilter, setNewsFilter] = useState<Array<string>>([]);
+  const [newsFilter, setNewsFilter] = useState<string[]>([]);
   const [filteredNews, setFilteredNews] =
     useState<Array<StudentFormItem>>(forms);
   const locale = useRouter().locale as LangCode;
@@ -309,8 +309,10 @@ const StudentListSection = ({
   classNumber: number;
 }): JSX.Element => {
   const { t } = useTranslation(["class", "common"]);
-  const locale = useRouter().locale == "th" ? "th" : "en-US";
+  const locale = useRouter().locale as LangCode;
   const tableRef: MutableRefObject<any> = useRef(null);
+
+  const [query, setQuery] = useState<string>("");
 
   return (
     <Section labelledBy="student-list">
@@ -321,7 +323,10 @@ const StudentListSection = ({
             text={t("studentList.title")}
           />
         </div>
-        <Search placeholder={t("studentList.searchStudents")} />
+        <Search
+          placeholder={t("studentList.searchStudents")}
+          onChange={setQuery}
+        />
       </div>
       <div ref={tableRef} className="print:p-12">
         <PrintHeader
@@ -341,22 +346,27 @@ const StudentListSection = ({
             </tr>
           </thead>
           <tbody>
-            {students.map((student) => (
-              <tr key={student.id}>
-                <td>{student.classNo}</td>
-                <td className="!text-left">
-                  {nameJoiner(locale, student.name, student.prefix, {
-                    prefix: true,
-                  })}
-                </td>
-                {/* Empty columns for print */}
-                <td className="hidden print:table-cell" />
-                <td className="hidden print:table-cell" />
-                <td className="hidden print:table-cell" />
-                <td className="hidden print:table-cell" />
-                <td className="hidden print:table-cell" />
-              </tr>
-            ))}
+            {students
+              .map((student) => ({
+                id: student.id,
+                classNo: student.classNo,
+                name: nameJoiner(locale, student.name, student.prefix, {
+                  prefix: true,
+                }),
+              }))
+              .filter((student) => student.name.includes(query))
+              .map((student) => (
+                <tr key={student.id}>
+                  <td>{student.classNo}</td>
+                  <td className="!text-left">{student.name}</td>
+                  {/* Empty columns for print */}
+                  <td className="hidden print:table-cell" />
+                  <td className="hidden print:table-cell" />
+                  <td className="hidden print:table-cell" />
+                  <td className="hidden print:table-cell" />
+                  <td className="hidden print:table-cell" />
+                </tr>
+              ))}
           </tbody>
         </Table>
       </div>
@@ -387,7 +397,7 @@ const Class: NextPage<{
 
   const [showAddTeacher, toggleShowAddTeacher] = useToggle();
   const [showAddContact, toggleShowAddContact] = useToggle();
-  
+
   return (
     <>
       <Head>
