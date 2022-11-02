@@ -235,16 +235,17 @@ const DataCheckSection = ({
     // checksum = 11 - (multiplied sum % 11) % 10
 
     if (
-      11 -
-        ((sumArray(
-          citizenIDDigits.slice(0, 11).map((digit, idx) => digit * (13 - idx))
-        ) %
-          11) %
-          10) !=
-      citizenIDDigits[12]
+      !(
+        11 -
+          ((sumArray(
+            citizenIDDigits.slice(0, 11).map((digit, idx) => digit * (13 - idx))
+          ) %
+            11) %
+            10) !=
+        citizenIDDigits[12]
+      )
     )
       return false;
-
     return true;
   }
 
