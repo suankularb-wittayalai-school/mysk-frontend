@@ -31,9 +31,11 @@ import { createTitleStr } from "@utils/helpers/title";
 // Types
 import { LangCode } from "@utils/types/common";
 import { NewsItemType, NewsListNoDate } from "@utils/types/news";
+import { Role } from "@utils/types/person";
 
 // Page
-const NewsPage: NextPage<{ newsFeed: NewsListNoDate }> = ({
+const NewsPage: NextPage<{ role: Role; newsFeed: NewsListNoDate }> = ({
+  role,
   newsFeed,
 }): JSX.Element => {
   const { t } = useTranslation(["news", "common"]);
@@ -54,13 +56,13 @@ const NewsPage: NextPage<{ newsFeed: NewsListNoDate }> = ({
               subtitle: t("title.subtitle"),
             }}
             pageIcon={<MaterialIcon icon="newspaper" />}
-            backGoesTo="/learn"
+            backGoesTo={role == "teacher" ? "/teach" : "/learn"}
             LinkElement={Link}
           />
         }
       >
         <Section>
-          <NewsFilter setNewsFilter={setNewsFilter} />
+          {/* <NewsFilter setNewsFilter={setNewsFilter} /> */}
           <NewsFeed news={filteredNews} />
         </Section>
       </RegularLayout>
@@ -71,9 +73,9 @@ const NewsPage: NextPage<{ newsFeed: NewsListNoDate }> = ({
 export const getServerSideProps: GetServerSideProps = withPageAuth({
   async getServerSideProps({ locale }, supabase) {
     const { data: user } = await supabase.auth.getUser();
-    const userRole = user.user?.user_metadata.role;
+    const role = user.user?.user_metadata.role;
 
-    const { data: newsFeed } = await getNewsFeed(userRole);
+    const { data: newsFeed } = await getNewsFeed(role);
 
     return {
       props: {
@@ -81,6 +83,7 @@ export const getServerSideProps: GetServerSideProps = withPageAuth({
           "common",
           "news",
         ])),
+        role,
         newsFeed,
       },
     };
