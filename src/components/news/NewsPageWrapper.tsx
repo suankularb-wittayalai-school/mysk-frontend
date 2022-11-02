@@ -1,6 +1,7 @@
 // External libraries
 import { motion } from "framer-motion";
 
+import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -12,14 +13,7 @@ import { ReactNode } from "react";
 import { useUser } from "@supabase/auth-helpers-react";
 
 // SK Components
-import {
-  Actions,
-  FAB,
-  FABLink,
-  LinkButton,
-  MaterialIcon,
-  Title,
-} from "@suankularb-components/react";
+import { FAB, MaterialIcon, Title } from "@suankularb-components/react";
 
 // Animations
 import { enterPageTransition } from "@utils/animations/config";
@@ -40,13 +34,30 @@ const NewsPageWrapper = ({
 }) => {
   const router = useRouter();
   const locale = router.locale as LangCode;
-  const { t } = useTranslation("news");
   const user = useUser();
 
   return (
+    // We’re not using ReSKComs in parts of this page here as it has poor
+    // support for Framer Motion’s layout animations.
     <>
-      {/* We’re not using ReSKComs in parts of this page here as it has poor
-          support for Framer Motion’s layout animations. */}
+      <Head>
+        <meta
+          property="og:title"
+          content={getLocaleString(news.content.title, locale)}
+        />
+        <meta property="og:type" content="news" />
+        <meta
+          property="og:url"
+          content={`https://beta.mysk.school/news/info/${news.id}`}
+        />
+        <meta property="og:image" content={news.image} />
+        <meta
+          property="og:description"
+          content={news.content.description[locale]}
+        />
+        <meta property="og:locale" content={locale} />
+        <meta property="og:site_name" content="MySK" />
+      </Head>
       <main className="content-layout">
         <Title
           name={{
@@ -66,7 +77,7 @@ const NewsPageWrapper = ({
             {/* Banner image */}
             <div
               className="container-surface-variant relative aspect-video w-full
-              overflow-hidden !p-0 text-right shadow sm:rounded-xl md:aspect-[5/1]"
+                overflow-hidden !p-0 text-right shadow sm:rounded-xl md:aspect-[5/1]"
             >
               {news.image ? (
                 <Image

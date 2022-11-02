@@ -245,7 +245,6 @@ const DataCheckSection = ({
       citizenIDDigits[12]
     )
       return false;
-
     return true;
   }
 
