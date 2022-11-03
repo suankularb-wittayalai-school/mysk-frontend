@@ -1,5 +1,4 @@
 // Types
-import { FormTable } from "@utils/types/database/news";
 import { BackendDataReturn } from "@utils/types/common";
 import { FormField, FormPage, NewsItemFormNoDate } from "@utils/types/news";
 import { Database } from "@utils/types/supabase";
@@ -198,7 +197,9 @@ export async function createForm(form: {
   image: File | null;
   oldURL: string;
   fields: Omit<FormField, "id">[];
-}): Promise<BackendDataReturn<FormTable, null>> {
+}): Promise<
+  BackendDataReturn<Database["public"]["Tables"]["forms"]["Row"], null>
+> {
   // TODO: Push created form to Supabase
 
   return {

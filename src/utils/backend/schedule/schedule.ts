@@ -19,13 +19,10 @@ import {
   BackendReturn,
   DatabaseClient,
 } from "@utils/types/common";
-import { ClassroomTable } from "@utils/types/database/class";
 
 // Types
-import { ScheduleItemTable } from "@utils/types/database/schedule";
 import { Role } from "@utils/types/person";
 import { Schedule, PeriodContentItem } from "@utils/types/schedule";
-import { Database } from "@utils/types/supabase";
 
 /**
  * Construct a Schedule from Schedule Items from the student’s perspective
@@ -175,7 +172,7 @@ export async function getSchedulesOfGrade(
 
   return {
     data: await Promise.all(
-      (classes as ClassroomTable[]).map(async (classItem) => ({
+      classes!.map(async (classItem) => ({
         ...(await getSchedule(supabase, "student", classItem.id)).data,
         class: classItem,
       }))

@@ -1,6 +1,3 @@
-// External libraries
-import { PostgrestError, User } from "@supabase/supabase-js";
-
 // Backend
 import { createPerson } from "@utils/backend/person/person";
 
@@ -14,12 +11,6 @@ import { supabase } from "@utils/supabase-client";
 import { ClassWNumber } from "@utils/types/class";
 import { BackendDataReturn, DatabaseClient } from "@utils/types/common";
 import { ImportedStudentData, Student } from "@utils/types/person";
-import { ClassroomDB } from "@utils/types/database/class";
-import {
-  PersonDB,
-  PersonTable,
-  StudentTable,
-} from "@utils/types/database/person";
 import { Database } from "@utils/types/supabase";
 
 const prefixMap = {
