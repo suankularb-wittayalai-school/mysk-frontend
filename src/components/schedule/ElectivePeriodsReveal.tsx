@@ -9,13 +9,16 @@ import { Actions, Button } from "@suankularb-components/react";
 import SubjectPeriod from "@components/schedule/SubjectPeriod";
 
 // Animations
-import { animationTransition } from "@utils/animations/config";
+import { animationSpeed, animationTransition } from "@utils/animations/config";
 
 // Types
 import { Role } from "@utils/types/person";
 import { SchedulePeriod as SchedulePeriodType } from "@utils/types/schedule";
+import { useToggle } from "@utils/hooks/toggle";
+import { useEffect } from "react";
 
 const ElectivePeriodsReveal = ({
+  show,
   schedulePeriod,
   periodWidth,
   day,
@@ -23,6 +26,7 @@ const ElectivePeriodsReveal = ({
   allowEdit,
   setShow,
 }: {
+  show: boolean;
   schedulePeriod: SchedulePeriodType;
   periodWidth: number;
   day: Day;
@@ -32,10 +36,17 @@ const ElectivePeriodsReveal = ({
 }): JSX.Element => {
   const { t } = useTranslation("schedule");
 
+  const [allowClose, toggleAllowClose] = useToggle();
+  useEffect(() => {
+    if (show) setTimeout(toggleAllowClose, animationSpeed);
+    else toggleAllowClose();
+  }, [show]);
+
   return (
     <motion.div
       className="mx-0 w-fit rounded-xl border-2 border-primary bg-surface-2 p-2
         text-on-surface-variant"
+      onMouseLeave={() => allowClose && setShow(false)}
       layoutId={`sp-${schedulePeriod.id}-button`}
       transition={animationTransition}
     >
