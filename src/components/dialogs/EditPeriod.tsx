@@ -143,9 +143,9 @@ const EditPeriod = ({
     if (!validate()) return;
 
     if (teacher) {
-      if (mode == "add") await createScheduleItem(form, teacher.id);
+      if (mode == "add") await createScheduleItem(supabase, form, teacher.id);
       else if (mode == "edit")
-        if (schedulePeriod?.id) await editScheduleItem(form, schedulePeriod.id);
+        if (schedulePeriod?.id) await editScheduleItem(supabase, form, schedulePeriod.id);
         else
           console.error(
             "cannot push edit, Schedule Period is missing Supabase ID"

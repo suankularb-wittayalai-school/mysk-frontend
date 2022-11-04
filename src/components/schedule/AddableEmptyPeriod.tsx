@@ -1,6 +1,7 @@
 // External libraries
 import { useTranslation } from "next-i18next";
 import { useState } from "react";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 // SK Components
 import { MaterialIcon } from "@suankularb-components/react";
@@ -36,6 +37,8 @@ const AddableEmptySchedulePeriod = ({
   toggleFetched?: () => void;
 }): JSX.Element => {
   const { t } = useTranslation("schedule");
+  const supabase = useSupabaseClient();
+
   const [processing, setProcessing] = useState<boolean>(false);
   const [teacher] = useTeacherAccount();
 
@@ -66,6 +69,7 @@ const AddableEmptySchedulePeriod = ({
         setProcessing(true);
         if (teacher)
           await moveScheduleItem(
+            supabase,
             day,
             {
               ...(JSON.parse(

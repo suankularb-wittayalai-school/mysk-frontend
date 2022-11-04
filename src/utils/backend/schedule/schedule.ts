@@ -187,6 +187,7 @@ export async function getSchedulesOfGrade(
  * @param teacherID The Supabase ID of the Teacher teaching this Schedule Period
  */
 export async function createScheduleItem(
+  supabase: DatabaseClient,
   form: {
     subject: number;
     classID: number;
@@ -213,6 +214,7 @@ export async function createScheduleItem(
 }
 
 export async function editScheduleItem(
+  supabase: DatabaseClient,
   form: {
     subject: number;
     classID: number;
@@ -241,6 +243,7 @@ export async function editScheduleItem(
 }
 
 export async function moveScheduleItem(
+  supabase: DatabaseClient,
   newDay: Day,
   newSchedulePeriod: PeriodContentItem,
   teacherID: number
@@ -265,6 +268,7 @@ export async function moveScheduleItem(
 }
 
 export async function editScheduleItemDuration(
+  supabase: DatabaseClient,
   day: Day,
   schedulePeriod: PeriodContentItem,
   teacherID: number

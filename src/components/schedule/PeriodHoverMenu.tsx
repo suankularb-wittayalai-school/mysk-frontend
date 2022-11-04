@@ -2,6 +2,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { Trans, useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 // SK Components
 import { MaterialIcon } from "@suankularb-components/react";
@@ -53,6 +54,7 @@ const PeriodHoverMenu = ({
   setDragging: (value: boolean) => void;
 }): JSX.Element => {
   const { t } = useTranslation("schedule");
+  const supabase = useSupabaseClient();
   const [teacher] = useTeacherAccount();
 
   const [listeningCursor, setListeningCursor] = useState<boolean>(false);
@@ -243,6 +245,7 @@ const PeriodHoverMenu = ({
                   async () => {
                     if (teacher && schedulePeriod.id && schedulePeriod.class) {
                       await editScheduleItemDuration(
+                        supabase,
                         day,
                         {
                           ...schedulePeriod,

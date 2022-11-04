@@ -130,13 +130,13 @@ const TeacherSchedule: NextPage = () => {
               icon={<MaterialIcon icon="sync" />}
               iconOnly
               disabled={!fetched}
-              onClick={() => toggleFetched()}
+              onClick={toggleFetched}
             />
             <Button
               label={t("schedule.action.add")}
               type="filled"
               icon={<MaterialIcon icon="add" />}
-              onClick={() => toggleAddPeriod()}
+              onClick={toggleAddPeriod}
             />
           </Actions>
         </Section>
