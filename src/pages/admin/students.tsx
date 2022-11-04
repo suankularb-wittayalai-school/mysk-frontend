@@ -105,12 +105,9 @@ const StudentTable = ({
         studentID: student.studentID.toString(),
         class: student.class.number.toString(),
         classNo: student.classNo.toString(),
-        name: nameJoiner(
-          locale,
-          student.name,
-          student.prefix,
-          { prefix: true }
-        ),
+        name: nameJoiner(locale, student.name, student.prefix, {
+          prefix: true,
+        }),
       })),
     []
   );
@@ -205,18 +202,6 @@ const Students: NextPage<{ students: Student[] }> = ({
               onChange={setQuery}
             />
             <Actions className="md:col-span-2">
-              {/* temporary button to delete all existing student */}
-              {/* <Button
-                label="Delete all students"
-                onClick={() => {
-                  // run deleteStudent on all of the entries
-                  students.forEach((student) => {
-                    deleteStudent(student);
-                  });
-                }}
-                type="text"
-                isDangerous
-              /> */}
               <Button
                 label={t("common.action.import")}
                 type="outlined"
