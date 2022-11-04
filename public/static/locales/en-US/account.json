@@ -27,7 +27,7 @@
       "email_helper": "Your school email ends with “sk.ac.th”.",
       "email_error": "Invalid email. Must end with “sk.ac.th”.",
       "password": "Password",
-      "password_helper": "Default is \"mysk2022autumnrelease\""
+      "password_helper": "Default is annouced during the assembly or given by the admin."
     },
     "action": {
       "forgotPassword": "Forgot password",
