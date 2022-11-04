@@ -105,12 +105,9 @@ const StudentTable = ({
         studentID: student.studentID.toString(),
         class: student.class.number.toString(),
         classNo: student.classNo.toString(),
-        name: nameJoiner(
-          locale,
-          student.name,
-          student.prefix,
-          { prefix: true }
-        ),
+        name: nameJoiner(locale, student.name, student.prefix, {
+          prefix: true,
+        }),
       })),
     []
   );
@@ -237,6 +234,7 @@ const Students: NextPage<{ students: Student[] }> = ({
         onClose={() => setShowImport(false)}
         onSubmit={async (e: ImportedStudentData[]) => {
           await importStudents(e);
+          // console.log(e);
           setShowImport(false);
           router.replace(router.asPath);
         }}
@@ -251,7 +249,8 @@ const Students: NextPage<{ students: Student[] }> = ({
           { name: "birthdate", type: "date (YYYY-MM-DD) (in AD)" },
           { name: "citizen_id", type: "numeric (13-digit)" },
           { name: "student_id", type: "numeric (5-digit)" },
-          { name: "class_number", type: "numeric (3-digit)" },
+          { name: "class", type: "numeric (3-digit)" },
+          { name: "class_number", type: "number" },
           { name: "email", type: "email" },
         ]}
       />
@@ -291,14 +290,23 @@ const Students: NextPage<{ students: Student[] }> = ({
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   const { data, error } = await supabase
     .from<StudentDB>("student")
-    .select(`id, std_id, people:person(*)`);
+    .select(`id, std_id, people:person(*)`)
+    .order("std_id", { ascending: false });
 
   if (error) console.error(error);
   if (!data) return { props: { students: [] } };
 
   const students: Student[] = (
     await Promise.all(data.map(async (student) => await db2Student(student)))
-  ).sort((a, b) => (a.studentID < b.studentID ? -1 : 1));
+  )
+    // sort by class then class number
+    .sort((a, b) => {
+      if (a.class === b.class) {
+        // accending order
+        return a.classNo - b.classNo;
+      }
+      return a.class.number - b.class.number;
+    });
 
   return {
     props: {

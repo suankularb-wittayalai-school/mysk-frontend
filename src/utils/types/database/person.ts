@@ -64,3 +64,11 @@ export type TeacherTable = {
   teacher_id: string;
   subject_group: number;
 };
+
+export interface FetchedTeacherTable {
+  id: number;
+  created_at: string;
+  people: PersonTable;
+  teacher_id: string;
+  subject_group: SubjectGroupDB;
+};

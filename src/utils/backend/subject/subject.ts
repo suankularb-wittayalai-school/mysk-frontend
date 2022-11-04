@@ -10,15 +10,16 @@ import {
 } from "@utils/types/subject";
 
 const subjectGroupMap = {
-  วิทยาศาสตร์: 1,
+  "วิทยาศาสตร์ และเทคโนโลยี": 1,
   คณิตศาสตร์: 2,
   ภาษาต่างประเทศ: 3,
   ภาษาไทย: 4,
-  สุขศึกษาและพลศึกษา: 5,
-  การงานอาชีพและเทคโนโลยี: 6,
+  "สุขศึกษา และพลศึกษา": 5,
+  การงานอาชีพ: 6,
   ศิลปะ: 7,
   "สังคมศึกษา ศาสนา และวัฒนธรรม": 8,
-  การศึกษาค้นคว้าด้วยตนเอง: 9,
+  กิจกรรมพัฒนาผู้เรียน: 9,
+  อาจารย์พิเศษ: 10,
 } as const;
 
 const subjectTypeMap = {
@@ -219,19 +220,19 @@ export async function createSubject(
 export async function editSubject(
   subject: Subject
 ): Promise<{ data: SubjectTable[] | null; error: PostgrestError | null }> {
-  if (typeof subject.syllabus === "string") {
-    return {
-      data: null,
-      error: {
-        message: "syllabus must be a buffer",
-        details: "",
-        hint: "",
-        code: "",
-      },
-    };
-  }
+  // if (typeof subject.syllabus === "string") {
+  //   return {
+  //     data: null,
+  //     error: {
+  //       message: "syllabus must be a buffer",
+  //       details: "",
+  //       hint: "",
+  //       code: "",
+  //     },
+  //   };
+  // }
   // console.log(`${subject.id}/syllabus.pdf`, subject.syllabus);
-
+  // console.log(subject.syllabus);
   if (subject.syllabus) {
     const { data: syllabus, error: uploadingError } = await supabase.storage
       .from("syllabus")
@@ -241,15 +242,15 @@ export async function editSubject(
       });
     if (uploadingError) {
       console.error(uploadingError);
-      return {
-        data: null,
-        error: {
-          message: "syllabus upload failed",
-          details: "",
-          hint: "",
-          code: "",
-        },
-      };
+      // return {
+      //   data: null,
+      //   error: {
+      //     message: "syllabus upload failed",
+      //     details: "",
+      //     hint: "",
+      //     code: "",
+      //   },
+      // };
     }
     // console.log(syllabus);
   }
@@ -270,7 +271,7 @@ export async function editSubject(
       year: subject.year,
       semester: subject.semester,
       group: subject.subjectGroup.id,
-      syllabus: `${subject.id}/syllabus.pdf`,
+      syllabus: subject.syllabus ? `${subject.id}/syllabus.pdf` : undefined,
       credit: subject.credit,
       teachers: subject.teachers.map((teacher) => teacher.id),
       coTeachers: subject.coTeachers?.map((teacher) => teacher.id),

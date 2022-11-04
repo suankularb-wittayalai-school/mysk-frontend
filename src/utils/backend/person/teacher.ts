@@ -27,15 +27,16 @@ import {
 import { RoomSubjectDB } from "@utils/types/database/subject";
 
 const subjectGroupMap = {
-  วิทยาศาสตร์: 1,
+  "วิทยาศาสตร์ และเทคโนโลยี": 1,
   คณิตศาสตร์: 2,
   ภาษาต่างประเทศ: 3,
   ภาษาไทย: 4,
-  สุขศึกษาและพลศึกษา: 5,
-  การงานอาชีพและเทคโนโลยี: 6,
+  "สุขศึกษา และพลศึกษา": 5,
+  การงานอาชีพ: 6,
   ศิลปะ: 7,
   "สังคมศึกษา ศาสนา และวัฒนธรรม": 8,
-  การศึกษาค้นคว้าด้วยตนเอง: 9,
+  กิจกรรมพัฒนาผู้เรียน: 9,
+  อาจารย์พิเศษ: 10,
 } as const;
 
 const prefixMap = {
@@ -63,7 +64,7 @@ export async function createTeacher(
   teacher: Teacher,
   email: string,
   isAdmin: boolean = false
-): Promise<{ data: TeacherTable[] | null; error: PostgrestError | null }> {
+): Promise<{ data: TeacherTable | null; error: PostgrestError | null }> {
   const { data: person, error: personCreationError } = await createPerson(
     teacher
   );
@@ -78,7 +79,8 @@ export async function createTeacher(
       subject_group: teacher.subjectGroup.id,
       // class_advisor_at: form.classAdvisorAt,
       teacher_id: teacher.teacherID.trim(),
-    });
+    })
+    .single();
   if (teacherCreationError || !createdTeacher) {
     console.error(teacherCreationError);
     // delete the created person
@@ -97,8 +99,7 @@ export async function createTeacher(
     },
     body: JSON.stringify({
       email,
-      password: teacher.birthdate.split("-").join(""),
-      id: createdTeacher[0]?.id,
+      id: createdTeacher.id,
       isAdmin,
     }),
   });
@@ -149,7 +150,7 @@ export async function deleteTeacher(teacher: Teacher) {
   }
 
   // Delete account of the teacher
-  await fetch(`/api/account`, {
+  const response = await fetch(`/api/account`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -158,6 +159,9 @@ export async function deleteTeacher(teacher: Teacher) {
       id: userid.id,
     }),
   });
+  if (!response.ok) {
+    console.error("Failed to delete account");
+  }
 }
 
 export async function importTeachers(data: ImportedTeacherData[]) {

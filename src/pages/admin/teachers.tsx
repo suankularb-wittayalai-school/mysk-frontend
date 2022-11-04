@@ -41,7 +41,7 @@ import { deleteTeacher, importTeachers } from "@utils/backend/person/teacher";
 // Types
 import { LangCode } from "@utils/types/common";
 import { ImportedTeacherData, Teacher } from "@utils/types/person";
-import { TeacherDB } from "@utils/types/database/person";
+import { FetchedTeacherTable, TeacherDB } from "@utils/types/database/person";
 
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
@@ -288,11 +288,12 @@ const Teachers: NextPage<{ teachers: Teacher[] }> = ({
       <ConfirmDelete
         show={showConfDel}
         onClose={toggleShowConfDel}
-        onSubmit={async () => {
+        onSubmit={() => {
           if (editingIdx < 0) return;
-          await deleteTeacher(teachers[editingIdx]);
-          toggleShowConfDel();
-          router.replace(router.asPath);
+          deleteTeacher(teachers[editingIdx]).then(() => {
+            router.replace(router.asPath);
+            toggleShowConfDel();
+          });
         }}
       />
     </>
@@ -301,8 +302,10 @@ const Teachers: NextPage<{ teachers: Teacher[] }> = ({
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   const { data, error } = await supabase
-    .from<TeacherDB>("teacher")
-    .select("id, teacher_id, people:person(*), SubjectGroup:subject_group(*)");
+    .from<FetchedTeacherTable>("teacher")
+    .select("id, teacher_id, people:person(*), subject_group(*)")
+    .order("subject_group", { ascending: true })
+    .order("id", { ascending: true });
 
   if (error) {
     console.error(error);
@@ -314,7 +317,13 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   // console.log(data);
 
   const teachers: Teacher[] = await Promise.all(
-    data.map(async (student) => await db2Teacher(student))
+    data.map(
+      async (teacher) =>
+        await db2Teacher({
+          ...teacher,
+          SubjectGroup: teacher.subject_group,
+        })
+    )
   );
 
   return {
