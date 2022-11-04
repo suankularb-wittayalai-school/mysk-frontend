@@ -57,7 +57,7 @@ export async function createStudent(
   const { data: classData, error: classError } = await supabase
     .from("classroom")
     .select("*")
-    .match({ number: student.class.number })
+    .match({ number: student.class.number, year: getCurrentAcademicYear() })
     .limit(1)
     .single();
   if (classData) {
@@ -66,11 +66,11 @@ export async function createStudent(
     const { data: updatedClass, error: updateClassError } = await supabase
       .from("classroom")
       .update({
-        students: [...classData.students, createdStudent.id],
+        students: [...classData.students, createdStudent!.id],
         // put student at the index of classNo - 1
         no_list: [
           ...classData.no_list.slice(0, student.classNo - 1),
-          createdStudent.id,
+          createdStudent!.id,
           ...classData.no_list.slice(student.classNo),
         ],
       })
