@@ -99,7 +99,6 @@ export async function createTeacher(
     },
     body: JSON.stringify({
       email,
-      password: "mysk2022autumnrelease",
       id: createdTeacher.id,
       isAdmin,
     }),

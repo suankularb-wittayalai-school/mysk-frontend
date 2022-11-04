@@ -95,7 +95,6 @@ export async function createStudent(
     },
     body: JSON.stringify({
       email,
-      password: "mysk2022autumnrelease",
       id: createdStudent.id,
       isAdmin,
     }),
@@ -172,7 +171,7 @@ export async function importStudents(data: ImportedStudentData[]) {
         id: 0,
         prefix: {
           th: student.prefix,
-          "en-US": prefixMap[student.prefix]
+          "en-US": prefixMap[student.prefix],
         },
         role: "student",
         name: {

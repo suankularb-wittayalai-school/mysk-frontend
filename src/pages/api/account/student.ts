@@ -9,7 +9,9 @@ const handler: NextApiHandler = async (req, res) => {
   if (req.method === "POST") {
     const { data: user, error } = await supabaseBackend.auth.api.createUser({
       email: req.body.email,
-      password: req.body.password,
+      password: req.body.password
+        ? req.body.password
+        : process.env.NEW_ACCOUNT_DEFAULT_PASS,
       user_metadata: {
         role: "student",
         student: req.body.id,
