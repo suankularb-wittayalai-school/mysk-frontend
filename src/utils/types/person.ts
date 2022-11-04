@@ -67,6 +67,7 @@ export type ImportedStudentData = {
   birthdate: string;
   citizen_id: number;
   student_id: number;
+  class: number;
   class_number: number;
   email: string;
 };
@@ -83,14 +84,15 @@ export type ImportedTeacherData = {
   citizen_id: number;
   teacher_id: string;
   subject_group:
-    | "วิทยาศาสตร์"
+    | "วิทยาศาสตร์ และเทคโนโลยี"
     | "คณิตศาสตร์"
     | "ภาษาต่างประเทศ"
     | "ภาษาไทย"
-    | "สุขศึกษาและพลศึกษา"
-    | "การงานอาชีพและเทคโนโลยี"
+    | "สุขศึกษา และพลศึกษา"
+    | "การงานอาชีพ"
     | "ศิลปะ"
     | "สังคมศึกษา ศาสนา และวัฒนธรรม"
-    | "การศึกษาค้นคว้าด้วยตนเอง";
+    | "กิจกรรมพัฒนาผู้เรียน"
+    | "อาจารย์พิเศษ";
   email: string;
 };

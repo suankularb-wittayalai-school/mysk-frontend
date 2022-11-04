@@ -1,13 +1,14 @@
 export const subjectGroupMap = Object.freeze({
-  วิทยาศาสตร์: 1,
+  "วิทยาศาสตร์ และเทคโนโลยี": 1,
   คณิตศาสตร์: 2,
   ภาษาต่างประเทศ: 3,
   ภาษาไทย: 4,
-  สุขศึกษาและพลศึกษา: 5,
-  การงานอาชีพและเทคโนโลยี: 6,
+  "สุขศึกษา และพลศึกษา": 5,
+  การงานอาชีพ: 6,
   ศิลปะ: 7,
   "สังคมศึกษา ศาสนา และวัฒนธรรม": 8,
-  การศึกษาค้นคว้าด้วยตนเอง: 9,
+  กิจกรรมพัฒนาผู้เรียน: 9,
+  อาจารย์พิเศษ: 10,
 });
 
 export const subjectTypeMap = Object.freeze({
@@ -18,7 +19,7 @@ export const subjectTypeMap = Object.freeze({
 });
 
 export const prefixMap = Object.freeze({
-  เด็กชาย: "Master.",
+  เด็กชาย: "Master",
   นาย: "Mr.",
   นาง: "Mrs.",
   นางสาว: "Miss.",

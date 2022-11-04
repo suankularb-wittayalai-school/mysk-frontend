@@ -14,7 +14,7 @@ import { ImportedStudentData, Student } from "@utils/types/person";
 import { Database } from "@utils/types/supabase";
 
 const prefixMap = {
-  เด็กชาย: "Master.",
+  เด็กชาย: "Master",
   นาย: "Mr.",
   นาง: "Mrs.",
   นางสาว: "Miss.",
@@ -52,13 +52,41 @@ export async function createStudent(
     return { data: null, error: studentCreationError };
   }
 
+  // add the student to the students array of the class
+  // get the class
+  const { data: classData, error: classError } = await supabase
+    .from("classroom")
+    .select("*")
+    .match({ number: student.class.number })
+    .limit(1)
+    .single();
+  if (classData) {
+    // add the student to the students array of the class
+    // console.log(classData);
+    const { data: updatedClass, error: updateClassError } = await supabase
+      .from("classroom")
+      .update({
+        students: [...classData.students, createdStudent.id],
+        // put student at the index of classNo - 1
+        no_list: [
+          ...classData.no_list.slice(0, student.classNo - 1),
+          createdStudent.id,
+          ...classData.no_list.slice(student.classNo),
+        ],
+      })
+      .match({ number: student.class.number, year: getCurrentAcademicYear() });
+
+    if (updateClassError || !updatedClass) {
+      console.error(updateClassError);
+    }
+  }
+
   // Register an account for the student
   await fetch("/api/account/student", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       email,
-      password: student.birthdate.split("-").join(""),
       id: createdStudent!.id,
       isAdmin,
     }),
@@ -77,12 +105,10 @@ export async function deleteStudent(student: Student) {
 
   if (selectingError) {
     console.error(selectingError);
-    return;
   }
 
   if (!userid) {
     console.error("No user found");
-    return;
   }
 
   const { data, error } = await supabase
@@ -111,11 +137,33 @@ export async function deleteStudent(student: Student) {
     return;
   }
 
+  // get the class of the student
+  const { data: classData, error: classError } = await supabase
+    .from("classroom")
+    .select("*")
+    .match({ number: student.class.number })
+    .limit(1)
+    .maybeSingle();
+
+  // remove the student from the class
+  const { data: classStudent, error: classStudentError } = await supabase
+    .from("classroom")
+    .update({
+      students: classData!.students.filter((id) => id !== student.id),
+      // replace the student id with 0
+      no_list: classData!.no_list.map((id) => (id === student.id ? 0 : id)),
+    })
+    .in("students", [student.id]);
+
+  if (classStudentError || !classStudent) {
+    console.error(classStudentError);
+    return;
+  }
   // Delete account of the student
   await fetch(`/api/account`, {
     method: "DELETE",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id: userid.id }),
+    body: JSON.stringify({ id: userid!.id }),
   });
 }
 
@@ -148,17 +196,22 @@ export async function importStudents(data: ImportedStudentData[]) {
         id: 0,
         number: student.class_number,
       },
-      classNo: 0,
+      classNo: student.class_number,
     };
     const email = student.email;
     return { person, email };
   });
 
-  await Promise.all(
-    students.map(
-      async (student) => await createStudent(student.person, student.email)
-    )
-  );
+  // for (const student of students) {
+  //   await createStudent(student.person, student.email);
+  // }
+  // sequentially create students
+  for (let i = 0; i < students.length; i++) {
+    await createStudent(students[i].person, students[i].email);
+    if (i % 10 === 0) {
+      console.log(i);
+    }
+  }
 }
 
 export async function getClassOfStudent(

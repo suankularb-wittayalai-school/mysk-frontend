@@ -86,7 +86,6 @@ export async function createTeacher(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       email,
-      password: teacher.birthdate.split("-").join(""),
       id: createdTeacher!.id,
       isAdmin,
     }),
@@ -137,11 +136,14 @@ export async function deleteTeacher(teacher: Teacher) {
   }
 
   // Delete account of the teacher
-  await fetch(`/api/account`, {
+  const response = await fetch(`/api/account`, {
     method: "DELETE",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ id: userID.id }),
   });
+  if (!response.ok) {
+    console.error("Failed to delete account");
+  }
 }
 
 export async function importTeachers(data: ImportedTeacherData[]) {

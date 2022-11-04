@@ -199,7 +199,7 @@ export async function editSubject(subject: Subject): Promise<BackendReturn> {
     return { error: { message: "syllabus must be a buffer" } };
   }
   // console.log(`${subject.id}/syllabus.pdf`, subject.syllabus);
-
+  // console.log(subject.syllabus);
   if (subject.syllabus) {
     const { error: uploadingError } = await supabase.storage
       .from("syllabus")
@@ -230,7 +230,7 @@ export async function editSubject(subject: Subject): Promise<BackendReturn> {
       year: subject.year,
       semester: subject.semester,
       group: subject.subjectGroup.id,
-      syllabus: `${subject.id}/syllabus.pdf`,
+      syllabus: subject.syllabus ? `${subject.id}/syllabus.pdf` : undefined,
       credit: subject.credit,
       teachers: subject.teachers.map((teacher) => teacher.id),
       coTeachers: subject.coTeachers?.map((teacher) => teacher.id),

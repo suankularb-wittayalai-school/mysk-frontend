@@ -283,11 +283,12 @@ const Teachers: NextPage<{ teachers: Teacher[] }> = ({
       <ConfirmDelete
         show={showConfDel}
         onClose={toggleShowConfDel}
-        onSubmit={async () => {
+        onSubmit={() => {
           if (editingIdx < 0) return;
-          await deleteTeacher(teachers[editingIdx]);
-          toggleShowConfDel();
-          router.replace(router.asPath);
+          deleteTeacher(teachers[editingIdx]).then(() => {
+            router.replace(router.asPath);
+            toggleShowConfDel();
+          });
         }}
       />
     </>

@@ -156,8 +156,8 @@ const EditSubjectDialog = ({
   }, [show, mode, subject]);
 
   useEffect(() => {
-    if (subject?.syllabus && subject.syllabus !== "") {
-      if (typeof subject.syllabus === "string") {
+    if (subject?.syllabus) {
+      if (typeof subject.syllabus === "string" && subject.syllabus.length > 0) {
         supabase.storage
           .from("syllabus")
           .download(subject.syllabus)
