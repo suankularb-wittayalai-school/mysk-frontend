@@ -90,7 +90,7 @@ const BasicInfoSection = ({
                         locale
                       ),
                     })}
-                    {user.classAdvisorAt?.number && (
+                    {user.classAdvisorAt && (
                       <>
                         <br />
                         {t("basicInfo.classAdvisorAt", {

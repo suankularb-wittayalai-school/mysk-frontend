@@ -41,15 +41,18 @@ import { getLocaleString } from "@utils/helpers/i18n";
 type Feed = { lastUpdated: string; content: NewsItemInfoNoDate[] };
 
 // News
-const LandingFeed = ({ feed }: { feed?: Feed }): JSX.Element => {
+const LandingFeed = ({ feed }: { feed: Feed }): JSX.Element => {
   const { t } = useTranslation("landing");
   const locale = useRouter().locale as LangCode;
 
   return (
     <section
       aria-label={t("news.title")}
-      className="mt-16 bg-[#C5E7FF5E] !p-0 backdrop-blur-md dark:bg-[#004C6D5E]
-        sm:col-span-2 sm:col-start-2 sm:mt-0 sm:rounded-xl sm:!pb-2"
+      className={[
+        `mt-16 bg-[#C5E7FF5E] !p-0 backdrop-blur-md dark:bg-[#004C6D5E]
+        sm:col-span-2 sm:col-start-2 sm:mt-0 sm:rounded-xl`,
+        feed.content.length == 0 ? "sm:!pb-0" : "sm:!pb-2",
+      ].join(" ")}
     >
       <CardHeader
         icon={<MaterialIcon icon="newspaper" className="text-on-surface" />}
@@ -77,7 +80,7 @@ const LandingFeed = ({ feed }: { feed?: Feed }): JSX.Element => {
         }
       />
       {feed && (
-        <div className="overflow-x-auto sm:h-96">
+        <div className="overflow-x-auto sm:max-h-96">
           <ul className="flex flex-col">
             {feed.content.map((feedItem) => (
               <LandingFeedItem key={feedItem.id} feedItem={feedItem} />
