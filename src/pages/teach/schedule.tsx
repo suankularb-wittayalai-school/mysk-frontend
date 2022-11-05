@@ -194,7 +194,7 @@ const TeacherSchedule: NextPage = () => {
         onClose={() => setDeletePeriod({ ...deletePeriod, show: false })}
         onSubmit={async () => {
           setDeletePeriod({ ...deletePeriod, show: false });
-          await deleteScheduleItem(deletePeriod.periodID);
+          await deleteScheduleItem(supabase, deletePeriod.periodID);
           toggleFetched();
         }}
       />

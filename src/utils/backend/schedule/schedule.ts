@@ -1,6 +1,3 @@
-// External libraries
-import { PostgrestError } from "@supabase/supabase-js";
-
 // Backend
 import { db2SchedulePeriod } from "@utils/backend/database";
 import { isOverlappingExistingItems } from "@utils/backend/schedule/utils";
@@ -13,7 +10,6 @@ import {
 } from "@utils/helpers/schedule";
 
 // Supabase
-import { supabase } from "@utils/supabase-client";
 import {
   BackendDataReturn,
   BackendReturn,
@@ -296,7 +292,10 @@ export async function editScheduleItemDuration(
   return { error };
 }
 
-export async function deleteScheduleItem(id: number): Promise<BackendReturn> {
+export async function deleteScheduleItem(
+  supabase: DatabaseClient,
+  id: number
+): Promise<BackendReturn> {
   const { error } = await supabase
     .from("schedule_items")
     .delete()
