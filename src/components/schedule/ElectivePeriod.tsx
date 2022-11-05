@@ -39,12 +39,13 @@ const ElectivePeriod = ({
         <motion.button
           className={[
             `group relative h-[3.75rem] w-full rounded-lg text-left
-              font-display text-xl font-medium leading-none`,
+              align-middle font-display text-xl font-medium leading-none`,
             isInSession
               ? "bg-tertiary-translucent-12 text-on-tertiary-container shadow"
               : "bg-surface-2 text-on-surface-variant",
           ].join(" ")}
           onMouseEnter={() => setShowPeriods(true)}
+          onClick={() => setShowPeriods(true)}
           layoutId={`sp-${schedulePeriod.id}-button`}
           transition={animationTransition}
         >
