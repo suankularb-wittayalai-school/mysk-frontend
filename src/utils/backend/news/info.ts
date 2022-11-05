@@ -273,7 +273,10 @@ export async function updateInfo(
   return { data: updatedInfo!, error: null };
 }
 
-export async function deleteInfo(id: number): Promise<BackendReturn> {
+export async function deleteInfo(
+  supabase: DatabaseClient,
+  id: number
+): Promise<BackendReturn> {
   const { data: info, error: infoError } = await supabase
     .from("infos")
     .delete()
