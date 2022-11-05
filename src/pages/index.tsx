@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 
 import type { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
-import Image from "next/image";
+import Image from "next/future/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -48,8 +48,8 @@ const LandingFeed = ({ feed }: { feed?: Feed }): JSX.Element => {
   return (
     <section
       aria-label={t("news.title")}
-      className="mt-16 bg-[#C5E7FF5E] !p-0 backdrop-blur-md dark:bg-[#004C6D5E]
-        sm:col-span-2 sm:col-start-2 sm:mt-0 sm:rounded-xl"
+      className="mt-16 bg-[#C5E7FF5E] !p-0 !pb-2 backdrop-blur-md
+        dark:bg-[#004C6D5E] sm:col-span-2 sm:col-start-2 sm:mt-0 sm:rounded-xl"
     >
       <CardHeader
         icon={<MaterialIcon icon="newspaper" className="text-on-surface" />}
@@ -76,17 +76,21 @@ const LandingFeed = ({ feed }: { feed?: Feed }): JSX.Element => {
           ) : undefined
         }
       />
-      <ul className="flex flex-col pb-1">
-        {(feed?.content || []).map((feedItem) => (
-          <LandingFeedItem key={feedItem.id} feedItem={feedItem} />
-        ))}
-        <li
-          className="container-secondary mt-6 py-4 px-6
-            text-center font-display text-lg font-medium sm:hidden"
-        >
-          {t("news.reachedEnd")}
-        </li>
-      </ul>
+      {feed && (
+        <div className="overflow-x-auto sm:h-96">
+          <ul className="flex flex-col pb-1">
+            {feed.content.map((feedItem) => (
+              <LandingFeedItem key={feedItem.id} feedItem={feedItem} />
+            ))}
+            <li
+              className="container-secondary mt-6 py-4 px-6
+              text-center font-display text-lg font-medium sm:hidden"
+            >
+              {t("news.reachedEnd")}
+            </li>
+          </ul>
+        </div>
+      )}
     </section>
   );
 };
@@ -113,9 +117,9 @@ const LandingFeedItem = ({
             {feedItem.image ? (
               <Image
                 src={feedItem.image}
-                layout="fill"
-                objectFit="cover"
+                fill
                 alt={getLocaleString(feedItem.content.title, locale)}
+                className="object-cover"
               />
             ) : (
               <p
@@ -168,14 +172,14 @@ const LandingBanner = (): JSX.Element => {
           className="flex flex-row items-center gap-2 leading-tight
             sm:gap-6"
         >
-          <div className="relative aspect-square h-24 drop-shadow sm:h-28">
-            <Image
-              src="/images/branding/logo-white.svg"
-              layout="fill"
-              priority
-              alt={t("brand.logoAlt", { ns: "common" })}
-            />
-          </div>
+          <Image
+            src="/images/branding/logo-white.svg"
+            width={96}
+            height={96}
+            priority
+            alt={t("brand.logoAlt", { ns: "common" })}
+            className="h-24 drop-shadow sm:h-28"
+          />
           <p className="text-xl sm:text-3xl">
             <Trans i18nKey="brand.slogan" ns="common">
               Education management
