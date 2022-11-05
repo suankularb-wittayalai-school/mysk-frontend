@@ -30,10 +30,11 @@ import {
 } from "@suankularb-components/react";
 
 // Components
+import BlockingPane from "@components/BlockingPane";
+import SubjectCard from "@components/SubjectCard";
 import LogOutDialog from "@components/dialogs/LogOut";
 import AddSubjectDialog from "@components/dialogs/AddSubject";
 import Schedule from "@components/schedule/Schedule";
-import SubjectCard from "@components/SubjectCard";
 
 // Animations
 import { animationTransition } from "@utils/animations/config";
@@ -56,13 +57,20 @@ import { useToggle } from "@utils/hooks/toggle";
 
 const ScheduleSection = ({
   schedule,
+  disabled,
 }: {
   schedule: ScheduleType;
+  disabled?: boolean;
 }): JSX.Element => {
   const { t } = useTranslation("teach");
 
   return (
-    <Section>
+    <Section className="relative">
+      <BlockingPane
+        icon={<MaterialIcon icon="block" allowCustomSize />}
+        text={t("schedule.blocked")}
+        show={disabled}
+      />
       <Header
         icon={<MaterialIcon icon="dashboard" allowCustomSize />}
         text={t("schedule.title")}
@@ -75,6 +83,7 @@ const ScheduleSection = ({
           icon={<MaterialIcon icon="edit" />}
           url="/teach/schedule"
           LinkElement={Link}
+          disabled={disabled}
         />
       </Actions>
     </Section>
@@ -183,7 +192,7 @@ const Teach: NextPage<{
           />
         }
       >
-        <ScheduleSection schedule={schedule} />
+        <ScheduleSection schedule={schedule} disabled={subjects.length == 0} />
         <SubjectsYouTeachSection
           subjects={subjects}
           toggleShowAdd={toggleShowAdd}

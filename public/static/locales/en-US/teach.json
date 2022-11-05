@@ -2,6 +2,7 @@
   "title": "Subjects you teach",
   "schedule": {
     "title": "Schedule",
+    "blocked": "To create your schedule, refer to the “Subjects you teach” section below and follow the instructions there.",
     "action": {
       "enterEditMode": "Enter edit mode"
     }
