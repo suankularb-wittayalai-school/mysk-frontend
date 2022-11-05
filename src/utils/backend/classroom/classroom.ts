@@ -74,7 +74,7 @@ export async function createClassroom(
 export async function getClassroom(
   supabase: DatabaseClient,
   number: number
-): Promise<Class> {
+): Promise<BackendDataReturn<Class, null>> {
   let classItem: Class = {
     id: 0,
     number: 0,
@@ -85,8 +85,6 @@ export async function getClassroom(
     subjects: [],
   };
 
-  if (!number) return classItem;
-
   const { data, error } = await supabase
     .from("classroom")
     .select("*")
@@ -94,12 +92,12 @@ export async function getClassroom(
     .limit(1)
     .single();
 
-  if (!data || error) {
+  if (error) {
     console.error(error);
-    return classItem;
+    return { data: null, error };
   }
 
-  return await db2Class(supabase, data);
+  return { data: await db2Class(supabase, data!), error: null };
 }
 
 export async function updateClassroom(
