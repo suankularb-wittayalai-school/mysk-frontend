@@ -101,7 +101,7 @@ const EditInfo: NextPage<{ existingData: InfoPage }> = ({
         }
       >
         <Section>
-          <p>{t("articleEditor.typeDesc.stats")}</p>
+          <p>{t("articleEditor.typeDesc.info")}</p>
         </Section>
         <ArticleConfig
           mode="edit"
