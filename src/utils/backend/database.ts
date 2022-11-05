@@ -481,7 +481,7 @@ export async function db2Class(
       formatted.students = await Promise.all(
         students.map(
           async (student) =>
-            await db2Student(supabase, student, { contacts: false })
+            await db2Student(supabase, student)
         )
       );
     }

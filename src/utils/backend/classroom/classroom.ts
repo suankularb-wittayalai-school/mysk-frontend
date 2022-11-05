@@ -20,6 +20,7 @@ import { StudentListItem } from "@utils/types/person";
 import { Database } from "@utils/types/supabase";
 
 export async function createClassroom(
+  supabase: DatabaseClient,
   classroom: Class
 ): Promise<
   BackendDataReturn<Database["public"]["Tables"]["classroom"]["Row"], null>
@@ -102,6 +103,7 @@ export async function getClassroom(
 }
 
 export async function updateClassroom(
+  supabase: DatabaseClient,
   classroom: Class
 ): Promise<
   BackendDataReturn<Database["public"]["Tables"]["classroom"]["Row"], null>
@@ -157,7 +159,10 @@ export async function updateClassroom(
   return { data: updatedClass!, error: null };
 }
 
-export async function deleteClassroom(classItem: Class) {
+export async function deleteClassroom(
+  supabase: DatabaseClient,
+  classItem: Class
+) {
   const { error } = await supabase
     .from("classroom")
     .delete()
@@ -166,6 +171,7 @@ export async function deleteClassroom(classItem: Class) {
 }
 
 export async function importClasses(
+  supabase: DatabaseClient,
   classes: { number: number; year: number }[]
 ) {
   const classesToImport: Class[] = classes.map((classData) => ({
@@ -182,10 +188,15 @@ export async function importClasses(
     subjects: [],
   }));
 
-  await Promise.all(classesToImport.map(createClassroom));
+  await Promise.all(
+    classesToImport.map(
+      async (classItem) => await createClassroom(supabase, classItem)
+    )
+  );
 }
 
 export async function addAdvisorToClassroom(
+  supabase: DatabaseClient,
   teacherID: number,
   classID: number
 ): Promise<
@@ -223,6 +234,7 @@ export async function addAdvisorToClassroom(
 }
 
 export async function addContactToClassroom(
+  supabase: DatabaseClient,
   contactID: number,
   classID: number
 ): Promise<

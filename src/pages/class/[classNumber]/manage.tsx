@@ -14,6 +14,7 @@ import { MutableRefObject, useEffect, useRef, useState } from "react";
 import ReactToPrint from "react-to-print";
 
 import { User, withPageAuth } from "@supabase/auth-helpers-nextjs";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 // SK Components
 import {
@@ -392,6 +393,7 @@ const Class: NextPage<{
   isAdvisor: boolean;
 }> = ({ classItem, studentForms, isAdvisor }) => {
   const router = useRouter();
+  const supabase = useSupabaseClient();
   const { t } = useTranslation("common");
 
   const [showAddTeacher, toggleShowAddTeacher] = useToggle();
@@ -442,7 +444,7 @@ const Class: NextPage<{
         show={showAddTeacher}
         onClose={toggleShowAddTeacher}
         onSubmit={async (teacher) => {
-          await addAdvisorToClassroom(teacher.id, classItem.id);
+          await addAdvisorToClassroom(supabase, teacher.id, classItem.id);
           router.replace(router.asPath);
           toggleShowAddTeacher();
         }}
@@ -460,6 +462,7 @@ const Class: NextPage<{
           }
 
           await addContactToClassroom(
+            supabase,
             (createdContact as Database["public"]["Tables"]["contact"]["Row"])
               .id,
             classItem.id

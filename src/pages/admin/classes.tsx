@@ -286,7 +286,7 @@ const Classes: NextPage<{ classes: Class[] }> = ({
         onSubmit={async (
           data: { number: number; year: number; semester: number }[]
         ) => {
-          await importClasses(data);
+          await importClasses(supabase, data);
           toggleShowImport();
           router.replace(router.asPath);
         }}
@@ -327,7 +327,7 @@ const Classes: NextPage<{ classes: Class[] }> = ({
         onClose={toggleShowConfDel}
         onSubmit={async () => {
           toggleShowConfDel();
-          if (editingClass) await deleteClassroom(editingClass);
+          if (editingClass) await deleteClassroom(supabase, editingClass);
           router.replace(router.asPath);
         }}
       />
