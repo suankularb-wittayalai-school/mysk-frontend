@@ -13,12 +13,8 @@ import { BackendDataReturn, DatabaseClient } from "@utils/types/common";
 import { ImportedStudentData, Student } from "@utils/types/person";
 import { Database } from "@utils/types/supabase";
 
-const prefixMap = {
-  เด็กชาย: "Master",
-  นาย: "Mr.",
-  นาง: "Mrs.",
-  นางสาว: "Miss.",
-} as const;
+// Miscellaneous
+import { prefixMap } from "@utils/maps";
 
 export async function createStudent(
   student: Student,

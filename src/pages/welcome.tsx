@@ -50,7 +50,7 @@ import { getPersonFromUser, setupPerson } from "@utils/backend/person/person";
 import { getSubjectGroups } from "@utils/backend/subject/subjectGroup";
 
 // Helpers
-import { range, sumArray } from "@utils/helpers/array";
+import { sumArray } from "@utils/helpers/array";
 import { getLocaleString } from "@utils/helpers/i18n";
 import { createTitleStr } from "@utils/helpers/title";
 
