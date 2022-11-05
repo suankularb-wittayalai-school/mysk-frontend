@@ -78,7 +78,7 @@ const LandingFeed = ({ feed }: { feed?: Feed }): JSX.Element => {
       />
       {feed && (
         <div className="overflow-x-auto sm:h-96">
-          <ul className="flex flex-col pb-1">
+          <ul className="flex flex-col">
             {feed.content.map((feedItem) => (
               <LandingFeedItem key={feedItem.id} feedItem={feedItem} />
             ))}
