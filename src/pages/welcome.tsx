@@ -9,7 +9,13 @@ import { useRouter } from "next/router";
 import { Trans, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useReducer, useState } from "react";
+import {
+  MutableRefObject,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
 
 import { User, withPageAuth } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
@@ -37,7 +43,7 @@ import {
 import LogOutDialog from "@components/dialogs/LogOut";
 
 // Animations
-import { animationTransition } from "@utils/animations/config";
+import { animationSpeed, animationTransition } from "@utils/animations/config";
 
 // Backend
 import { getPersonFromUser, setupPerson } from "@utils/backend/person/person";
@@ -156,16 +162,25 @@ const DataCheckSection = ({
   user,
   subjectGroups,
   incrementStep,
+  setRef,
+  canSetRef,
   disabled,
 }: {
   user: Student | Teacher;
   subjectGroups: SubjectGroup[];
   incrementStep: () => void;
+  setRef: (ref: MutableRefObject<any>) => void;
+  canSetRef?: boolean;
   disabled?: boolean;
 }): JSX.Element => {
   const { t } = useTranslation(["landing", "account"]);
   const supabase = useSupabaseClient();
   const locale = useRouter().locale as LangCode;
+
+  const sectionRef = useRef<any>();
+  useEffect(() => {
+    if (canSetRef) setTimeout(() => setRef(sectionRef), animationSpeed);
+  }, [canSetRef]);
 
   const [loading, toggleLoading] = useToggle();
 
@@ -174,7 +189,7 @@ const DataCheckSection = ({
     thPrefix: user.prefix.th,
     thFirstName: user.name.th.firstName,
     thMiddleName: user.name.th.middleName || "",
-    thLastName: user.name.th.lastName || "",
+    thLastName: user.name.th.lastName,
     enPrefix: user.prefix["en-US"] || "",
     enFirstName: user.name["en-US"]?.firstName || "",
     enMiddleName: user.name["en-US"]?.middleName || "",
@@ -254,6 +269,7 @@ const DataCheckSection = ({
       animate={{ scale: 1, y: 0, opacity: 1 }}
       exit={{ scale: 0.8, y: -280, opacity: 0 }}
       transition={animationTransition}
+      ref={sectionRef}
     >
       <Section
         // Bottom Navigation blocks some of the Subject Group options on mobile.
@@ -441,13 +457,22 @@ const DataCheckSection = ({
 
 const NewPasswordSection = ({
   incrementStep,
+  setRef,
+  canSetRef,
   disabled,
 }: {
   incrementStep: () => void;
+  setRef: (ref: MutableRefObject<any>) => void;
+  canSetRef?: boolean;
   disabled?: boolean;
 }): JSX.Element => {
   const supabase = useSupabaseClient();
   const { t } = useTranslation(["landing", "account"]);
+
+  const sectionRef = useRef<any>();
+  useEffect(() => {
+    if (canSetRef) setTimeout(() => setRef(sectionRef), animationSpeed);
+  }, [canSetRef]);
 
   const [loading, toggleLoading] = useToggle();
 
@@ -472,6 +497,7 @@ const NewPasswordSection = ({
       animate={{ scale: 1, y: 0, opacity: 1 }}
       exit={{ scale: 0.8, y: -280, opacity: 0 }}
       transition={animationTransition}
+      ref={sectionRef}
     >
       <Section>
         <Header
@@ -538,41 +564,23 @@ const NewPasswordSection = ({
   );
 };
 
-const PreparingForStudentsSection = (): JSX.Element => {
-  const { t } = useTranslation("landing");
-
-  return (
-    <motion.div
-      initial={{ scale: 0.4, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      exit={{ scale: 0.4, opacity: 0 }}
-      transition={animationTransition}
-    >
-      <Section>
-        <Header
-          icon={<MaterialIcon icon="school" allowCustomSize />}
-          text={t("welcome.preparingForStudents.title")}
-        />
-        <p className="text-tertiary">
-          <strong>{t("welcome.preparingForStudents.notice")}</strong>
-        </p>
-        <p>{t("welcome.preparingForStudents.desc")}</p>
-        <ol className="ml-6 list-decimal marker:font-display marker:text-outline">
-          {range(3, 1).map((stepNo) => (
-            <li key={`prep-step-${stepNo}`}>
-              {t(`welcome.preparingForStudents.steps.${stepNo}`)}
-            </li>
-          ))}
-        </ol>
-      </Section>
-    </motion.div>
-  );
-};
-
-const DoneSection = ({ role }: { role: Role }): JSX.Element => {
+const DoneSection = ({
+  role,
+  setRef,
+  canSetRef,
+}: {
+  role: Role;
+  setRef: (ref: MutableRefObject<any>) => void;
+  canSetRef?: boolean;
+}): JSX.Element => {
   const supabase = useSupabaseClient();
   const { t } = useTranslation("landing");
   const router = useRouter();
+
+  const sectionRef = useRef<any>();
+  useEffect(() => {
+    if (canSetRef) setTimeout(() => setRef(sectionRef), animationSpeed);
+  }, [canSetRef]);
 
   return (
     <motion.div
@@ -588,7 +596,7 @@ const DoneSection = ({ role }: { role: Role }): JSX.Element => {
         opacity: 0,
       }}
       transition={animationTransition}
-      className={role == "teacher" ? "col-span-2" : undefined}
+      ref={sectionRef}
     >
       <Section>
         <Header
@@ -654,6 +662,10 @@ const Welcome: NextPage<{
   const { t } = useTranslation(["landing", "common"]);
 
   const [currStep, incrementStep] = useReducer((value) => value + 1, 0);
+  const [currStepRef, setCurrStepRef] = useState<MutableRefObject<any>>();
+  useEffect(() => {
+    if (currStepRef) currStepRef.current.scrollIntoView();
+  }, [currStepRef]);
 
   // Dialog control
   const [showLogOut, toggleShowLogOut] = useToggle();
@@ -687,6 +699,8 @@ const Welcome: NextPage<{
               user={user}
               subjectGroups={subjectGroups}
               incrementStep={incrementStep}
+              setRef={setCurrStepRef}
+              canSetRef={currStep >= 1}
               disabled={currStep >= 2}
             />
           )}
@@ -695,15 +709,17 @@ const Welcome: NextPage<{
               <NewPasswordSection
                 key="new-password-section"
                 incrementStep={incrementStep}
+                setRef={setCurrStepRef}
+                canSetRef={currStep >= 2}
                 disabled={currStep >= 3}
               />
               {currStep >= 3 && (
-                <>
-                  {user.role == "teacher" && (
-                    <PreparingForStudentsSection key="preparing-for-students-section" />
-                  )}
-                  <DoneSection key="done-section" role={user.role} />
-                </>
+                <DoneSection
+                  key="done-section"
+                  role={user.role}
+                  setRef={setCurrStepRef}
+                  canSetRef={currStep >= 3}
+                />
               )}
             </div>
           )}
