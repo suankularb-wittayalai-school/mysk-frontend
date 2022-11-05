@@ -283,6 +283,8 @@ const PeopleList = ({ people }: { people: PeopleListType }): JSX.Element => {
                   href={contact.url}
                   target="_blank"
                   rel="noreferrer"
+                  className="transition-[transform] hover:scale-110
+                    focus:scale-125"
                 >
                   <ContactIcon icon={contact.type} />
                 </a>
@@ -346,7 +348,10 @@ const Developers: NextPage = (): JSX.Element => {
         },
       ],
       contacts: [
-        { type: "Email", url: "mailto:tempoom.lee@student.sk.ac.th" },
+        {
+          type: "Email",
+          url: "mailto:tempoom.lee@student.sk.ac.th",
+        },
         {
           type: "GitHub",
           url: "https://github.com/orgs/suankularb-wittayalai-school/people/Temp9699",
@@ -369,9 +374,8 @@ const Developers: NextPage = (): JSX.Element => {
         { type: "Email", url: "mailto:sadudee.the@student.sk.ac.th" },
         {
           type: "GitHub",
-          url: "https://github.com/orgs/suankularb-wittayalai-school/people/IHasDiabetes",
+          url: "https://github.com/orgs/suankularb-wittayalai-school/people/ImSadudee",
         },
-        { type: "Website", url: "https://imsad.dev" },
       ],
     },
     {
