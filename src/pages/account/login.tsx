@@ -21,6 +21,7 @@ import {
   LayoutGridCols,
   MaterialIcon,
   RegularLayout,
+  Section,
   Title,
 } from "@suankularb-components/react";
 
@@ -63,9 +64,7 @@ const Login: NextPage = () => {
     return true;
   }
 
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-
+  async function handleSubmit() {
     // Disable Log in Button
     toggleLoading();
 
@@ -121,7 +120,7 @@ const Login: NextPage = () => {
                 className="rounded-2xl"
               />
             </div>
-            <form className="section" onSubmit={handleSubmit}>
+            <Section>
               <div>
                 <KeyboardInput
                   name="user-id"
@@ -146,14 +145,14 @@ const Login: NextPage = () => {
                   type="text"
                   onClick={toggleShowForgot}
                 />
-                <FormButton
+                <Button
                   label={t("logIn.action.logIn")}
-                  type="submit"
-                  appearance="filled"
+                  type="filled"
+                  onClick={handleSubmit}
                   disabled={!validate() || loading}
                 />
               </Actions>
-            </form>
+            </Section>
           </LayoutGridCols>
         </div>
       </RegularLayout>
