@@ -147,20 +147,27 @@ const LandingBanner = (): JSX.Element => {
 
   return (
     <header className="flex flex-col gap-2 font-display sm:gap-6">
-      <h2 className="text-[7rem] font-bold leading-none sm:text-[10rem]">
+      <h2
+        className="text-[7rem] font-bold leading-none tracking-tighter
+          sm:text-[10rem]"
+      >
         <Trans i18nKey="brand.nameWithAccent" ns="common">
           My
           <span className="text-[#8B005A] dark:text-[#FF80C3]">
             {/* (@SiravitPhokeed)
-                These colors are `secondary70` and `secondary30` in the Figma palette, but not
-                the Tailwind palette. Should we add them (and others like them)?
+                These colors are `secondary70` and `secondary30` in the Figma
+                palette, but not the Tailwind palette. Should we add them (and
+                others like them)?
               */}
             SK
           </span>
         </Trans>
       </h2>
       <div className="flex flex-col gap-2">
-        <div className="flex flex-row items-center gap-2 leading-tight sm:gap-6">
+        <div
+          className="flex flex-row items-center gap-2 leading-tight
+            sm:gap-6"
+        >
           <div className="relative aspect-square h-24 drop-shadow sm:h-28">
             <Image
               src="/images/branding/logo-white.svg"
