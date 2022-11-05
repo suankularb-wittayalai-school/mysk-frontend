@@ -1,4 +1,6 @@
 // External libraries
+import { MotionConfig } from "framer-motion";
+
 import { NextPage } from "next";
 import type { AppProps } from "next/app";
 import Head from "next/head";
@@ -85,11 +87,13 @@ const App = ({
           />
         </Head>
         <PageLoadDim />
-        {getLayout(
-          <ErrorBoundary Fallback={PageFallback}>
-            <Component {...pageProps} />
-          </ErrorBoundary>
-        )}
+        <MotionConfig reducedMotion="user">
+          {getLayout(
+            <ErrorBoundary Fallback={PageFallback}>
+              <Component {...pageProps} />
+            </ErrorBoundary>
+          )}
+        </MotionConfig>
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </SessionContextProvider>
