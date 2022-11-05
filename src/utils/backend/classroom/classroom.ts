@@ -10,9 +10,6 @@ import { db2Class, db2Student } from "@utils/backend/database";
 // Helpers
 import { getCurrentAcademicYear } from "@utils/helpers/date";
 
-// Supabase
-import { supabase } from "@utils/supabase-client";
-
 // Types
 import { Class } from "@utils/types/class";
 import { BackendDataReturn, DatabaseClient } from "@utils/types/common";

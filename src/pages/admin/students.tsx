@@ -46,9 +46,6 @@ import { createTitleStr } from "@utils/helpers/title";
 // Hooks
 import { useToggle } from "@utils/hooks/toggle";
 
-// Supabase
-import { supabase } from "@utils/supabase-client";
-
 // Types
 import { DatabaseClient, LangCode } from "@utils/types/common";
 import { ImportedStudentData, Student } from "@utils/types/person";
