@@ -70,7 +70,7 @@ const EditPeriodDialog = ({
     classID: 0,
     room: "",
     day: 1,
-    startTime: 1,
+    startTime: 0,
     duration: 1,
   });
 
@@ -103,7 +103,10 @@ const EditPeriodDialog = ({
     // Populate form with day-time data if adding from Schedule
     else if (!canEditStartTime)
       setForm({
-        subject: teacher?.subjectsInCharge ? teacher.subjectsInCharge[0].id : 0,
+        subject:
+          teacher?.subjectsInCharge && teacher.subjectsInCharge.length > 0
+            ? teacher.subjectsInCharge[0].id
+            : 0,
         classID: classes.length > 0 ? classes[0].id : 0,
         room: "",
         day: day || 0,
