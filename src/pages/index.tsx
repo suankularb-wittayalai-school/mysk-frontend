@@ -48,8 +48,8 @@ const LandingFeed = ({ feed }: { feed?: Feed }): JSX.Element => {
   return (
     <section
       aria-label={t("news.title")}
-      className="mt-16 bg-[#C5E7FF5E] !p-0 !pb-2 backdrop-blur-md
-        dark:bg-[#004C6D5E] sm:col-span-2 sm:col-start-2 sm:mt-0 sm:rounded-xl"
+      className="mt-16 bg-[#C5E7FF5E] !p-0 backdrop-blur-md dark:bg-[#004C6D5E]
+        sm:col-span-2 sm:col-start-2 sm:mt-0 sm:rounded-xl sm:!pb-2"
     >
       <CardHeader
         icon={<MaterialIcon icon="newspaper" className="text-on-surface" />}
