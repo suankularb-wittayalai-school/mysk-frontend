@@ -1,5 +1,5 @@
 // External libraries
-import type { GetServerSideProps, NextPage } from "next";
+import type { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -29,11 +29,17 @@ import TeacherCard from "@components/TeacherCard";
 
 // Backend
 import { getTeacherList } from "@utils/backend/person/teacher";
-import { getClassIDFromNumber } from "@utils/backend/classroom/classroom";
+import {
+  getAllClassNumbers,
+  getClassIDFromNumber,
+} from "@utils/backend/classroom/classroom";
 
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
 import { createTitleStr } from "@utils/helpers/title";
+
+// Supabase
+import { supabase } from "@utils/supabase-backend";
 
 // Types
 import { LangCode } from "@utils/types/common";
@@ -197,18 +203,16 @@ const Teachers: NextPage<{
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  params,
-}) => {
+export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   const classNumber = Number(params?.classNumber);
 
   const { data: classID, error: classIDError } = await getClassIDFromNumber(
+    supabase,
     classNumber
   );
   if (classIDError) return { notFound: true };
 
-  const teachers = await getTeacherList(classID as number);
+  const teachers = await getTeacherList(supabase, classID as number);
 
   const subjectGroups: string[] = teachers
     .map((teacher) =>
@@ -242,6 +246,16 @@ export const getServerSideProps: GetServerSideProps = async ({
       classNumber,
       teacherList,
     },
+    revalidate: 300,
+  };
+};
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  return {
+    paths: (await getAllClassNumbers(supabase)).map((number) => ({
+      params: { classNumber: number.toString() },
+    })),
+    fallback: "blocking",
   };
 };
 

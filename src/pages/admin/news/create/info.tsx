@@ -1,4 +1,4 @@
-// Modules
+// External libraries
 import type { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
@@ -7,6 +7,8 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { useState } from "react";
+
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 // SK Components
 import {
@@ -34,6 +36,7 @@ import { LangCode, WaitingSnackbar } from "@utils/types/common";
 // Page
 const CreateInfo: NextPage = (): JSX.Element => {
   const { t } = useTranslation("admin");
+  const supabase = useSupabaseClient();
 
   // Form control
   const [form, setForm] = useState<{
@@ -107,7 +110,7 @@ const CreateInfo: NextPage = (): JSX.Element => {
           }
         />
         <ArticlePublish
-          handlePublish={async () => await createInfo(form)}
+          handlePublish={async () => await createInfo(supabase, form)}
           allowPublish={validate()}
         />
       </RegularLayout>

@@ -1,6 +1,7 @@
-// Modules
+// External libraries
 import { useTranslation } from "next-i18next";
 import { useState } from "react";
+import { User, useUser } from "@supabase/auth-helpers-react";
 
 // SK Components
 import {
@@ -19,37 +20,29 @@ import { changePassword } from "@utils/backend/account";
 import { DialogProps } from "@utils/types/common";
 
 // Hooks
-import { useSession } from "@utils/hooks/auth";
+import { useToggle } from "@utils/hooks/toggle";
 
 const ChangePassword = ({ show, onClose }: DialogProps): JSX.Element => {
   const { t } = useTranslation("account");
-  const [showDiscard, setShowDiscard] = useState<boolean>(false);
+  const user = useUser() as User;
+
+  const [loading, toggleLoading] = useToggle();
+
+  // Dialog control
+  const [showDiscard, toggleShowDiscard] = useToggle();
+
+  // Form control
   const [form, setForm] = useState({
     originalPassword: "",
     newPassword: "",
     confirmNewPassword: "",
   });
 
-  const session = useSession();
-
   function validate() {
     if (!form.newPassword || form.newPassword.length < 8) return;
     if (!form.confirmNewPassword || form.confirmNewPassword.length < 8) return;
     if (form.newPassword != form.confirmNewPassword) return;
     return true;
-  }
-
-  function validateAndSend() {
-    if (!validate) return;
-
-    let formData = new FormData();
-
-    if (form.originalPassword)
-      formData.append("original-password", form.originalPassword);
-    if (form.newPassword == form.confirmNewPassword)
-      formData.append("new-password", form.newPassword);
-
-    changePassword(formData, session);
   }
 
   return (
@@ -64,13 +57,15 @@ const ChangePassword = ({ show, onClose }: DialogProps): JSX.Element => {
           {
             name: t("dialog.changePassword.action.save"),
             type: "submit",
-            disabled: !validate(),
+            disabled: !validate() || loading,
           },
         ]}
         show={show}
-        onClose={() => setShowDiscard(true)}
-        onSubmit={() => {
-          validateAndSend();
+        onClose={toggleShowDiscard}
+        onSubmit={async () => {
+          toggleLoading();
+          await changePassword(form, user);
+          toggleLoading();
           onClose();
         }}
       >
@@ -103,11 +98,13 @@ const ChangePassword = ({ show, onClose }: DialogProps): JSX.Element => {
           />
         </DialogSection>
       </Dialog>
+
+      {/* Dialogs */}
       <DiscardDraft
         show={showDiscard}
-        onClose={() => setShowDiscard(false)}
+        onClose={toggleShowDiscard}
         onSubmit={() => {
-          setShowDiscard(false);
+          toggleShowDiscard();
           onClose();
         }}
       />

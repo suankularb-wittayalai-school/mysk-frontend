@@ -1,4 +1,4 @@
-// Modules
+// External libraries
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
@@ -28,7 +28,7 @@ import { nameJoiner } from "@utils/helpers/name";
 import { useSubjectGroupOption } from "@utils/hooks/subject";
 
 // Supabase
-import { supabase } from "@utils/supabaseClient";
+import { supabase } from "@utils/supabase-client";
 
 // Types
 import { ChipInputListItem, DialogProps, LangCode } from "@utils/types/common";
@@ -258,28 +258,20 @@ const EditSubjectDialog = ({
     }
 
     if (mode == "add") {
-      const { data, error } = await createSubject(form);
+      const { error } = await createSubject(form);
       if (error) {
-        console.error(error);
-        setLoading(false);
-      }
-      if (!data) {
         setLoading(false);
         return;
       }
     } else if (mode == "edit") {
-      const { data, error } = await editSubject(form);
+      const { error } = await editSubject(form);
       if (error) {
-        console.error(error);
-        setLoading(false);
-      }
-      if (!data) {
         setLoading(false);
         return;
       }
     }
-    onSubmit();
 
+    onSubmit();
     setLoading(false);
   }
 

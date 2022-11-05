@@ -1,7 +1,8 @@
-// Modules
-import { useRouter } from "next/router";
+// External libraries
 import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 // SK Components
 import {
@@ -18,8 +19,8 @@ import AddTeacherDialog from "@components/dialogs/AddTeacher";
 import { useTeacherAccount } from "@utils/hooks/auth";
 
 // Helpers
+import { getCurrentAcademicYear } from "@utils/helpers/date";
 import { nameJoiner } from "@utils/helpers/name";
-import { getCurrentAcedemicYear } from "@utils/helpers/date";
 
 // Types
 import {
@@ -29,10 +30,6 @@ import {
 } from "@utils/types/common";
 import { Teacher } from "@utils/types/person";
 import { Subject, SubjectListItem } from "@utils/types/subject";
-import { RoomSubjectTable } from "@utils/types/database/subject";
-
-// Supabase
-import { supabase } from "@utils/supabaseClient";
 
 const ConnectSubjectDialog = ({
   show,
@@ -47,8 +44,9 @@ const ConnectSubjectDialog = ({
   subjectRoom?: SubjectListItem;
 }) => {
   const { t } = useTranslation("subjects");
+  const supabase = useSupabaseClient();
   const locale = useRouter().locale as LangCode;
-  const [user, session] = useTeacherAccount({ loginRequired: true });
+  const [user, session] = useTeacherAccount();
 
   // Dialogs
   const [showAddTeacher, setShowAddTeacher] = useState<boolean>(false);
@@ -57,8 +55,8 @@ const ConnectSubjectDialog = ({
   // Form control
   const [form, setForm] = useState<{
     classroom: string;
-    teachers: Array<Teacher>;
-    coTeachers?: Array<Teacher>;
+    teachers: Teacher[];
+    coTeachers?: Teacher[];
     ggcCode?: string;
     ggcLink?: string;
     ggMeetLink?: string;
@@ -165,9 +163,9 @@ const ConnectSubjectDialog = ({
     if (!validate()) return;
 
     const { data: classroom, error: classroomSelectionError } = await supabase
-      .from<{ id: number }>("classroom")
+      .from("classroom")
       .select("id")
-      .match({ number: form.classroom, year: getCurrentAcedemicYear() })
+      .match({ number: form.classroom, year: getCurrentAcademicYear() })
       .limit(1)
       .single();
 
@@ -180,7 +178,7 @@ const ConnectSubjectDialog = ({
     if (mode == "add") {
       const { data: roomSubjects, error: roomSubjectsSelectionError } =
         await supabase
-          .from<RoomSubjectTable>("room_subjects")
+          .from("room_subjects")
           .select("*")
           .eq("class", classroom.id)
           .contains("teacher", [user?.id])
@@ -197,26 +195,24 @@ const ConnectSubjectDialog = ({
         return;
       }
 
-      const { data, error } = await supabase
-        .from<RoomSubjectTable>("room_subjects")
-        .insert({
-          class: classroom.id,
-          subject: subject.id,
-          teacher: form.teachers.map((teacher) => teacher.id),
-          coteacher: form.coTeachers
-            ? form.coTeachers.map((coTeacher) => coTeacher.id)
-            : [],
-          ggc_code: form.ggcCode ?? "",
-          gg_meet_link: form.ggMeetLink ?? "",
-          ggc_link: form.ggcLink ?? "",
-        });
+      const { data, error } = await supabase.from("room_subjects").insert({
+        class: classroom.id,
+        subject: subject.id,
+        teacher: form.teachers.map((teacher) => teacher.id),
+        coteacher: form.coTeachers
+          ? form.coTeachers.map((coTeacher) => coTeacher.id)
+          : [],
+        ggc_code: form.ggcCode ?? "",
+        gg_meet_link: form.ggMeetLink ?? "",
+        ggc_link: form.ggcLink ?? "",
+      });
 
       if (error) console.error(error);
     }
     if (mode == "edit") {
       const { data: roomSubjects, error: roomSubjectsSelectionError } =
         await supabase
-          .from<RoomSubjectTable>("room_subjects")
+          .from("room_subjects")
           .select("*")
           .eq("class", classroom.id)
           .contains("teacher", [user?.id])
@@ -233,8 +229,8 @@ const ConnectSubjectDialog = ({
         return;
       }
 
-      const { data, error } = await supabase
-        .from<RoomSubjectTable>("room_subjects")
+      const { error } = await supabase
+        .from("room_subjects")
         .update({
           class: classroom.id,
           subject: subject.id,

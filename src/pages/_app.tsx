@@ -11,6 +11,9 @@ import { ReactElement, ReactNode, useEffect, useState } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 
+import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { SessionContextProvider } from "@supabase/auth-helpers-react";
+
 // Fonts
 import "@fontsource/sora/300.css";
 import "@fontsource/sora/400.css";
@@ -38,8 +41,8 @@ import PageLoadDim from "@components/PageLoadDim";
 import ErrorBoundary from "@components/error/ErrorBoundary";
 import PageFallback from "@components/error/PageFallback";
 
-// Supabase
-import { supabase } from "@utils/supabaseClient";
+// Types
+import { Database } from "@utils/types/supabase";
 
 const App = ({
   Component,
@@ -49,14 +52,21 @@ const App = ({
     getLayout?: (page: ReactElement) => ReactNode;
   };
 }) => {
+  // Supabase client
+  const [supabaseClient] = useState(() =>
+    createBrowserSupabaseClient<Database>()
+  );
+
   // Query client
   const [queryClient] = useState(() => new QueryClient());
 
   // Authentication
   const router = useRouter();
   useEffect(() => {
-    supabase.auth.onAuthStateChange((event) => {
-      if (event == "PASSWORD_RECOVERY") router.push("/account/forgot-password");
+    supabaseClient.auth.onAuthStateChange((event) => {
+      if (event == "SIGNED_OUT") router.push("/");
+      else if (event == "PASSWORD_RECOVERY")
+        router.push("/account/forgot-password");
     });
   });
 
@@ -66,18 +76,23 @@ const App = ({
   const getLayout = Component.getLayout ?? ((page) => <Layout>{page}</Layout>);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <Head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      </Head>
-      <PageLoadDim />
-      {getLayout(
-        <ErrorBoundary Fallback={PageFallback}>
-          <Component {...pageProps} />
-        </ErrorBoundary>
-      )}
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
+    <SessionContextProvider supabaseClient={supabaseClient}>
+      <QueryClientProvider client={queryClient}>
+        <Head>
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+          />
+        </Head>
+        <PageLoadDim />
+        {getLayout(
+          <ErrorBoundary Fallback={PageFallback}>
+            <Component {...pageProps} />
+          </ErrorBoundary>
+        )}
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
+    </SessionContextProvider>
   );
 };
 

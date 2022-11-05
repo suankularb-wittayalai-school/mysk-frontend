@@ -1,7 +1,8 @@
-// Modules
-import { useRouter } from "next/router";
+// External libraries
 import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 // SK Components
 import {
@@ -19,11 +20,7 @@ import { useTeacherAccount } from "@utils/hooks/auth";
 
 // Types
 import { ChipInputListItem, DialogProps, LangCode } from "@utils/types/common";
-import { RoomSubjectTable } from "@utils/types/database/subject";
 import { Teacher } from "@utils/types/person";
-
-// Supabase
-import { supabase } from "@utils/supabaseClient";
 
 const AddSubjectDialog = ({
   show,
@@ -31,6 +28,7 @@ const AddSubjectDialog = ({
   onSubmit,
 }: DialogProps & { onSubmit: () => void }): JSX.Element => {
   const { t } = useTranslation("teach");
+  const supabase = useSupabaseClient();
   const locale = useRouter().locale as LangCode;
 
   const [subjectID, setSubjectID] = useState<number>(0);
@@ -64,7 +62,7 @@ const AddSubjectDialog = ({
 
     // Check if any of these classrooms already exist
     const { data, error } = await supabase
-      .from<RoomSubjectTable>("room_subjects")
+      .from("room_subjects")
       .select("*")
       .in("class", classroomList)
       .contains("teacher", [(teacher as Teacher).id])
@@ -82,7 +80,7 @@ const AddSubjectDialog = ({
 
     // Add new RoomSubject
     classroomList.map(async (classroom) => {
-      await supabase.from<RoomSubjectTable>("room_subjects").insert({
+      await supabase.from("room_subjects").insert({
         class: Number(classroom),
         subject: subjectID,
         teacher: [(teacher as Teacher).id],

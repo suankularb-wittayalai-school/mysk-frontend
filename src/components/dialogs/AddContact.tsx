@@ -1,4 +1,4 @@
-// Modules
+// External libraries
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { InputHTMLAttributes, useEffect, useState } from "react";
@@ -140,7 +140,7 @@ const AddContactDialog = ({
   // TODO: This cannot be used yet because updating KeyboardInput’s value is not yet supported
   function getDefaultLabel(
     includes: ContactIncludesObj,
-    locale: "en-US" | "th"
+    locale: LangCode
   ): string {
     const includesArray = (Object.keys(includes) as ContactIncludes[]).filter(
       (key) => includes[key as ContactIncludes] && key != "other"

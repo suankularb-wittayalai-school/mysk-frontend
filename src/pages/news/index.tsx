@@ -1,4 +1,4 @@
-// // Modules
+// // External libraries
 import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
@@ -7,6 +7,8 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { useState } from "react";
+
+import { withPageAuth } from "@supabase/auth-helpers-nextjs";
 
 // SK Components
 import {
@@ -26,15 +28,14 @@ import { getNewsFeed } from "@utils/backend/news";
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
 
-// Supabase
-import { supabase } from "@utils/supabaseClient";
-
 // Types
 import { LangCode } from "@utils/types/common";
 import { NewsItemType, NewsListNoDate } from "@utils/types/news";
+import { Role } from "@utils/types/person";
 
 // Page
-const NewsPage: NextPage<{ newsFeed: NewsListNoDate }> = ({
+const NewsPage: NextPage<{ role: Role; newsFeed: NewsListNoDate }> = ({
+  role,
   newsFeed,
 }): JSX.Element => {
   const { t } = useTranslation(["news", "common"]);
@@ -55,13 +56,14 @@ const NewsPage: NextPage<{ newsFeed: NewsListNoDate }> = ({
               subtitle: t("title.subtitle"),
             }}
             pageIcon={<MaterialIcon icon="newspaper" />}
-            backGoesTo="/learn"
+            backGoesTo={role == "teacher" ? "/teach" : "/learn"}
             LinkElement={Link}
           />
         }
       >
         <Section>
-          <NewsFilter setNewsFilter={setNewsFilter} />
+          {/* TODO: Make filtering News a reality! */}
+          {/* <NewsFilter setNewsFilter={setNewsFilter} /> */}
           <NewsFeed news={filteredNews} />
         </Section>
       </RegularLayout>
@@ -69,23 +71,24 @@ const NewsPage: NextPage<{ newsFeed: NewsListNoDate }> = ({
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  req,
-  res,
-}) => {
-  const userRole = (await supabase.auth.api.getUserByCookie(req, res)).user
-    ?.user_metadata.role;
-  if (!userRole)
-    return { redirect: { destination: "/account/login", permanent: false } };
-  const { data: newsFeed } = await getNewsFeed(userRole);
+export const getServerSideProps: GetServerSideProps = withPageAuth({
+  async getServerSideProps({ locale }, supabase) {
+    const { data: user } = await supabase.auth.getUser();
+    const role = user.user?.user_metadata.role;
 
-  return {
-    props: {
-      ...(await serverSideTranslations(locale as LangCode, ["common", "news"])),
-      newsFeed,
-    },
-  };
-};
+    const { data: newsFeed } = await getNewsFeed(role);
+
+    return {
+      props: {
+        ...(await serverSideTranslations(locale as LangCode, [
+          "common",
+          "news",
+        ])),
+        role,
+        newsFeed,
+      },
+    };
+  },
+});
 
 export default NewsPage;

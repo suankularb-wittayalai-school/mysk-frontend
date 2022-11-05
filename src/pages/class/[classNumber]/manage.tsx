@@ -9,15 +9,11 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import {
-  MutableRefObject,
-  useEffect,
-  useReducer,
-  useRef,
-  useState,
-} from "react";
+import { MutableRefObject, useEffect, useRef, useState } from "react";
 
 import ReactToPrint from "react-to-print";
+
+import { User, withPageAuth } from "@supabase/auth-helpers-nextjs";
 
 // SK Components
 import {
@@ -50,13 +46,14 @@ import {
   getClassroom,
 } from "@utils/backend/classroom/classroom";
 import { createContact } from "@utils/backend/contact";
+import { getTeacherFromUser } from "@utils/backend/person/teacher";
 
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
 import { createTitleStr } from "@utils/helpers/title";
 
 // Hooks
-import { useTeacherAccount } from "@utils/hooks/auth";
+import { useToggle } from "@utils/hooks/toggle";
 
 // Types
 import { Class as ClassType } from "@utils/types/class";
@@ -64,6 +61,7 @@ import { LangCode } from "@utils/types/common";
 import { Contact } from "@utils/types/contact";
 import { Student, Teacher } from "@utils/types/person";
 import { StudentFormItem } from "@utils/types/news";
+import { Database } from "@utils/types/supabase";
 
 const StudentFormCard = ({ form }: { form: StudentFormItem }): JSX.Element => {
   const locale = useRouter().locale as LangCode;
@@ -124,12 +122,11 @@ const StudentFormCard = ({ form }: { form: StudentFormItem }): JSX.Element => {
 const FormSection = ({
   studentForms: forms,
 }: {
-  studentForms: Array<StudentFormItem>;
+  studentForms: StudentFormItem[];
 }): JSX.Element => {
   const { t } = useTranslation(["dashboard", "news", "class"]);
-  const [newsFilter, setNewsFilter] = useState<Array<string>>([]);
-  const [filteredNews, setFilteredNews] =
-    useState<Array<StudentFormItem>>(forms);
+  const [newsFilter, setNewsFilter] = useState<string[]>([]);
+  const [filteredNews, setFilteredNews] = useState<StudentFormItem[]>(forms);
   const locale = useRouter().locale as LangCode;
 
   useEffect(
@@ -199,7 +196,7 @@ const FormSection = ({
             { id: "all-done", name: t("news.filter.amountDone.allDone") },
           ],
         ]}
-        onChange={(newFilter: Array<string>) => setNewsFilter(newFilter)}
+        onChange={(newFilter: string[]) => setNewsFilter(newFilter)}
         scrollable={true}
       />
       {filteredNews.length == 0 ? (
@@ -229,7 +226,7 @@ const ClassAdvisorsSection = ({
   toggleShowAdd,
   allowEdit,
 }: {
-  classAdvisors: Array<Teacher>;
+  classAdvisors: Teacher[];
   toggleShowAdd: () => void;
   allowEdit?: boolean;
 }): JSX.Element => {
@@ -269,7 +266,7 @@ const ContactSection = ({
   toggleShowAdd,
   allowEdit,
 }: {
-  contacts: Array<Contact>;
+  contacts: Contact[];
   toggleShowAdd: () => void;
   allowEdit?: boolean;
 }): JSX.Element => {
@@ -296,7 +293,7 @@ const ContactSection = ({
           type="tonal"
           icon={<MaterialIcon icon="add" />}
           disabled={!allowEdit}
-          onClick={() => toggleShowAdd()}
+          onClick={toggleShowAdd}
         />
       </div>
     </Section>
@@ -311,8 +308,10 @@ const StudentListSection = ({
   classNumber: number;
 }): JSX.Element => {
   const { t } = useTranslation(["class", "common"]);
-  const locale = useRouter().locale == "th" ? "th" : "en-US";
+  const locale = useRouter().locale as LangCode;
   const tableRef: MutableRefObject<any> = useRef(null);
+
+  const [query, setQuery] = useState<string>("");
 
   return (
     <Section labelledBy="student-list">
@@ -323,7 +322,10 @@ const StudentListSection = ({
             text={t("studentList.title")}
           />
         </div>
-        <Search placeholder={t("studentList.searchStudents")} />
+        <Search
+          placeholder={t("studentList.searchStudents")}
+          onChange={setQuery}
+        />
       </div>
       <div ref={tableRef} className="print:p-12">
         <PrintHeader
@@ -343,25 +345,27 @@ const StudentListSection = ({
             </tr>
           </thead>
           <tbody>
-            {students.map((student) => (
-              <tr key={student.id}>
-                <td>{student.classNo}</td>
-                <td className="!text-left">
-                  {nameJoiner(
-                    locale,
-                    student.name,
-                    student.prefix,
-                    { prefix: true }
-                  )}
-                </td>
-                {/* Empty columns for print */}
-                <td className="hidden print:table-cell" />
-                <td className="hidden print:table-cell" />
-                <td className="hidden print:table-cell" />
-                <td className="hidden print:table-cell" />
-                <td className="hidden print:table-cell" />
-              </tr>
-            ))}
+            {students
+              .map((student) => ({
+                id: student.id,
+                classNo: student.classNo,
+                name: nameJoiner(locale, student.name, student.prefix, {
+                  prefix: true,
+                }),
+              }))
+              .filter((student) => student.name.includes(query))
+              .map((student) => (
+                <tr key={student.id}>
+                  <td>{student.classNo}</td>
+                  <td className="!text-left">{student.name}</td>
+                  {/* Empty columns for print */}
+                  <td className="hidden print:table-cell" />
+                  <td className="hidden print:table-cell" />
+                  <td className="hidden print:table-cell" />
+                  <td className="hidden print:table-cell" />
+                  <td className="hidden print:table-cell" />
+                </tr>
+              ))}
           </tbody>
         </Table>
       </div>
@@ -384,31 +388,14 @@ const StudentListSection = ({
 // Page
 const Class: NextPage<{
   classItem: ClassType;
-  studentForms: Array<StudentFormItem>;
-}> = ({ classItem, studentForms }) => {
+  studentForms: StudentFormItem[];
+  isAdvisor: boolean;
+}> = ({ classItem, studentForms, isAdvisor }) => {
   const router = useRouter();
   const { t } = useTranslation("common");
 
-  const [showAddTeacher, toggleShowAddTeacher] = useReducer(
-    (state: boolean) => !state,
-    false
-  );
-  const [showAddContact, toggleShowAddContact] = useReducer(
-    (state: boolean) => !state,
-    false
-  );
-
-  // Disallow editing if user is not an advisor to this class
-  const [teacher] = useTeacherAccount({ loginRequired: true });
-  const [isAdvisor, setIsAdvisor] = useState<boolean>(false);
-  useEffect(
-    () => setIsAdvisor(teacher?.classAdvisorAt?.id == classItem.id),
-    [teacher]
-  );
-
-  useEffect(() => {
-    if (!classItem.id) router.push("/teach");
-  }, []);
+  const [showAddTeacher, toggleShowAddTeacher] = useToggle();
+  const [showAddContact, toggleShowAddContact] = useToggle();
 
   return (
     <>
@@ -453,7 +440,7 @@ const Class: NextPage<{
       {/* Dialogs */}
       <AddTeacherDialog
         show={showAddTeacher}
-        onClose={() => toggleShowAddTeacher()}
+        onClose={toggleShowAddTeacher}
         onSubmit={async (teacher) => {
           await addAdvisorToClassroom(teacher.id, classItem.id);
           router.replace(router.asPath);
@@ -462,19 +449,21 @@ const Class: NextPage<{
       />
       <AddContactDialog
         show={showAddContact}
-        onClose={() => toggleShowAddContact()}
+        onClose={toggleShowAddContact}
         onSubmit={async (contact) => {
-          // console.log(contact);
           const { data: createdContact, error: contactCreationError } =
             await createContact(contact);
 
-          if (!createdContact || createdContact.length == 0) return;
           if (contactCreationError) {
             console.error(contactCreationError);
             return;
           }
 
-          await addContactToClassroom(createdContact[0].id, classItem.id);
+          await addContactToClassroom(
+            (createdContact as Database["public"]["Tables"]["contact"]["Row"])
+              .id,
+            classItem.id
+          );
           router.replace(router.asPath);
           toggleShowAddContact();
         }}
@@ -484,21 +473,36 @@ const Class: NextPage<{
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  params,
-}) => ({
-  props: {
-    ...(await serverSideTranslations(locale as LangCode, [
-      "account",
-      "news",
-      "dashboard",
-      "common",
-      "class",
-      "teacher",
-    ])),
-    classItem: await getClassroom(Number(params?.classNumber)),
-    studentForms: [],
+export const getServerSideProps: GetServerSideProps = withPageAuth({
+  async getServerSideProps({ locale, params }, supabase) {
+    const classItem = await getClassroom(supabase, Number(params?.classNumber));
+
+    const studentForms: StudentFormItem[] = [];
+
+    const { data: sbUser } = await supabase.auth.getUser();
+    const { data: teacher } = await getTeacherFromUser(
+      supabase,
+      sbUser.user as User
+    );
+    const isAdvisor = teacher
+      ? teacher.classAdvisorAt?.id == classItem.id
+      : false;
+
+    return {
+      props: {
+        ...(await serverSideTranslations(locale as LangCode, [
+          "common",
+          "account",
+          "class",
+          "dashboard",
+          "news",
+          "teacher",
+        ])),
+        classItem,
+        studentForms,
+        isAdvisor,
+      },
+    };
   },
 });
 

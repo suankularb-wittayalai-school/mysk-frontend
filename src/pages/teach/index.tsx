@@ -1,4 +1,4 @@
-// Modules
+// External libraries
 import { motion } from "framer-motion";
 
 import { GetServerSideProps, NextPage } from "next";
@@ -11,6 +11,8 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useEffect, useReducer, useState } from "react";
 
 import { useQuery, useQueryClient } from "react-query";
+
+import { withPageAuth } from "@supabase/auth-helpers-nextjs";
 
 // SK Components
 import {
@@ -40,7 +42,6 @@ import SubjectCard from "@components/SubjectCard";
 import { animationTransition } from "@utils/animations/config";
 
 // Backend
-import { getTeacherIDFromReq } from "@utils/backend/person/teacher";
 import { getSchedule } from "@utils/backend/schedule/schedule";
 import { getTeachingSubjects } from "@utils/backend/subject/subject";
 
@@ -52,6 +53,8 @@ import { ClassWNumber } from "@utils/types/class";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
+import { useToggle } from "@utils/hooks/toggle";
+import { useRouter } from "next/router";
 
 const ScheduleSection = ({
   schedule,
@@ -154,34 +157,18 @@ const SubjectsYouTeachSection = ({
   );
 };
 
-const Teach: NextPage<{ teacherID: number; schedule: ScheduleType }> = ({
-  teacherID,
-  schedule,
-}) => {
+const Teach: NextPage<{
+  schedule: ScheduleType;
+  subjects: (SubjectWNameAndCode & {
+    classes: ClassWNumber[];
+  })[];
+}> = ({ schedule, subjects }) => {
   const { t } = useTranslation("teach");
+  const router = useRouter();
 
   // Dialog controls
-  const [showLogOut, toggleShowLogOut] = useReducer(
-    (value: boolean) => !value,
-    false
-  );
-  const [showAdd, toggleShowAdd] = useReducer(
-    (value: boolean) => !value,
-    false
-  );
-
-  // Subjects fetch
-  const queryClient = useQueryClient();
-  const { data } = useQuery<
-    (SubjectWNameAndCode & { classes: ClassWNumber[] })[]
-  >("feed", () => getTeachingSubjects(teacherID));
-
-  const [subjects, setSubjects] = useState<
-    (SubjectWNameAndCode & { classes: ClassWNumber[] })[]
-  >([]);
-  useEffect(() => {
-    if (data) setSubjects(data);
-  }, [data]);
+  const [showLogOut, toggleShowLogOut] = useToggle();
+  const [showAdd, toggleShowAdd] = useToggle();
 
   return (
     <>
@@ -212,33 +199,39 @@ const Teach: NextPage<{ teacherID: number; schedule: ScheduleType }> = ({
         onClose={toggleShowAdd}
         onSubmit={() => {
           toggleShowAdd();
-          queryClient.invalidateQueries("subjects");
+          router.replace(router.asPath);
         }}
       />
     </>
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  req,
-  res,
-}) => {
-  const teacherID = await getTeacherIDFromReq(req, res);
-  const { data: schedule } = await getSchedule("teacher", teacherID);
+export const getServerSideProps: GetServerSideProps = withPageAuth({
+  async getServerSideProps({ locale }, supabase) {
+    const { data: user } = await supabase.auth.getUser();
+    const teacherID = user.user?.user_metadata.teacher;
 
-  return {
-    props: {
-      ...(await serverSideTranslations(locale as LangCode, [
-        "common",
-        "account",
-        "teach",
-        "schedule",
-      ])),
-      teacherID,
-      schedule,
-    },
-  };
-};
+    const { data: schedule } = await getSchedule(
+      supabase,
+      "teacher",
+      teacherID
+    );
+
+    const { data: subjects } = await getTeachingSubjects(supabase, teacherID);
+
+    return {
+      props: {
+        ...(await serverSideTranslations(locale as LangCode, [
+          "common",
+          "account",
+          "teach",
+          "schedule",
+        ])),
+        schedule,
+        subjects,
+      },
+    };
+  },
+});
 
 export default Teach;

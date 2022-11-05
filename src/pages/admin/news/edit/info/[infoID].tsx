@@ -1,4 +1,4 @@
-// Modules
+// External libraries
 import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
@@ -6,7 +6,9 @@ import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useReducer, useState } from "react";
+import { useState } from "react";
+
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 // SK Components
 import {
@@ -21,6 +23,7 @@ import {
 import { getInfo, updateInfo } from "@utils/backend/news/info";
 
 // Components
+import AddImageToNewsDialog from "@components/dialogs/AddImageToNews";
 import ArticleConfig from "@components/news/ArticleConfig";
 import ArticlePublish from "@components/news/ArticlePublish";
 import ArticleWrite from "@components/news/ArticleWrite";
@@ -28,16 +31,19 @@ import ArticleWrite from "@components/news/ArticleWrite";
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
 
+// Hooks
+import { useToggle } from "@utils/hooks/toggle";
+
 // Types
 import { LangCode, WaitingSnackbar } from "@utils/types/common";
 import { InfoPage } from "@utils/types/news";
-import AddImageToNewsDialog from "@components/dialogs/AddImageToNews";
 
 // Page
 const EditInfo: NextPage<{ existingData: InfoPage }> = ({
   existingData,
 }): JSX.Element => {
   const { t } = useTranslation("admin");
+  const supabase = useSupabaseClient();
 
   // Form control
   const [form, setForm] = useState<{
@@ -72,10 +78,7 @@ const EditInfo: NextPage<{ existingData: InfoPage }> = ({
   const [snbQueue, setSnbQueue] = useState<WaitingSnackbar[]>([]);
 
   // Dialog control
-  const [showAddImage, toggleShowAddImage] = useReducer(
-    (state: boolean) => !state,
-    false
-  );
+  const [showAddImage, toggleShowAddImage] = useToggle();
 
   return (
     <>
@@ -98,7 +101,7 @@ const EditInfo: NextPage<{ existingData: InfoPage }> = ({
         }
       >
         <Section>
-          <p>{t("articleEditor.typeDesc.stats")}</p>
+          <p>{t("articleEditor.typeDesc.info")}</p>
         </Section>
         <ArticleConfig
           mode="edit"
@@ -119,7 +122,7 @@ const EditInfo: NextPage<{ existingData: InfoPage }> = ({
           toggleShowAddImage={toggleShowAddImage}
         />
         <ArticlePublish
-          handlePublish={async () => await updateInfo(existingData.id, form)}
+          handlePublish={async () => await updateInfo(supabase, existingData.id, form)}
           allowPublish={validate()}
         />
       </RegularLayout>

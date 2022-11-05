@@ -7,6 +7,8 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
+import { User, withPageAuth } from "@supabase/auth-helpers-nextjs";
+
 import { useState } from "react";
 
 // SK Components
@@ -29,7 +31,7 @@ import LogOutDialog from "@components/dialogs/LogOut";
 import ProfilePicture from "@components/ProfilePicture";
 
 // Backend
-import { getUserFromReq } from "@utils/backend/person/person";
+import { getPersonFromUser } from "@utils/backend/person/person";
 
 // Helpers
 import { getLocaleString } from "@utils/helpers/i18n";
@@ -332,7 +334,8 @@ const AccountDetails: NextPage<{ user: Student | Teacher }> = ({ user }) => {
           toggleShowChangePwd={toggleShowChangePwd}
           toggleShowLogOut={toggleShowLogOut}
         />
-        <EditInfoSection user={user} />
+        {/* TODO: Edit Info functionality */}
+        {/* <EditInfoSection user={user} /> */}
       </RegularLayout>
 
       {/* Dialogs */}
@@ -342,24 +345,24 @@ const AccountDetails: NextPage<{ user: Student | Teacher }> = ({ user }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  req,
-  res,
-}) => {
-  const { data: user, error } = await getUserFromReq(req, res);
-  if (error)
-    return { redirect: { destination: "/account/login", permanent: false } };
+export const getServerSideProps: GetServerSideProps = withPageAuth({
+  async getServerSideProps({ locale }, supabase) {
+    const { data: sbUser } = await supabase.auth.getUser();
+    const { data: user } = await getPersonFromUser(
+      supabase,
+      sbUser.user as User
+    );
 
-  return {
-    props: {
-      ...(await serverSideTranslations(locale as LangCode, [
-        "common",
-        "account",
-      ])),
-      user,
-    },
-  };
-};
+    return {
+      props: {
+        ...(await serverSideTranslations(locale as LangCode, [
+          "common",
+          "account",
+        ])),
+        user,
+      },
+    };
+  },
+});
 
 export default AccountDetails;

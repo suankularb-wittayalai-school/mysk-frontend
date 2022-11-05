@@ -1,4 +1,4 @@
-// Modules
+// External libraries
 import { PostgrestError } from "@supabase/supabase-js";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";

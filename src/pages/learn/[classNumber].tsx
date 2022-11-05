@@ -1,4 +1,4 @@
-// Modules
+// External libraries
 import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useEffect, useReducer } from "react";
+import { useReducer } from "react";
 
 // SK Components
 import {
@@ -28,6 +28,9 @@ import {
 } from "@utils/backend/classroom/classroom";
 import { getSchedule } from "@utils/backend/schedule/schedule";
 import { getSubjectList } from "@utils/backend/subject/roomSubject";
+
+// Supabase
+import { supabase } from "@utils/supabase-backend";
 
 // Types
 import { LangCode } from "@utils/types/common";
@@ -85,12 +88,20 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   if (!classNumber) return { notFound: true };
 
   const { data: classID, error } = await getClassIDFromNumber(
+    supabase,
     Number(params?.classNumber)
   );
   if (error) return { notFound: true };
 
-  const { data: schedule } = await getSchedule("student", classID as number);
-  const { data: subjectList } = await getSubjectList(classID as number);
+  const { data: schedule } = await getSchedule(
+    supabase,
+    "student",
+    classID as number
+  );
+  const { data: subjectList } = await getSubjectList(
+    supabase,
+    classID as number
+  );
 
   return {
     props: {
@@ -109,7 +120,7 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   return {
-    paths: (await getAllClassNumbers()).map((number) => ({
+    paths: (await getAllClassNumbers(supabase)).map((number) => ({
       params: { classNumber: number.toString() },
     })),
     fallback: "blocking",

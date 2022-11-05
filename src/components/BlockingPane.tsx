@@ -1,4 +1,4 @@
-// Modules
+// External libraries
 import { AnimatePresence, motion } from "framer-motion";
 
 // Animations

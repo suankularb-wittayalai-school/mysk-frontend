@@ -1,10 +1,10 @@
-// Modules
-import { useRouter } from "next/router";
+// External libraries
 import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 // Supabase client
-import { supabase } from "@utils/supabaseClient";
 
 // SK Components
 import {
@@ -22,11 +22,6 @@ import { createTeacher } from "@utils/backend/person/teacher";
 // Types
 import { DialogProps, LangCode } from "@utils/types/common";
 import { Role, Student, Teacher } from "@utils/types/person";
-import {
-  PersonDB,
-  StudentTable,
-  TeacherTable,
-} from "@utils/types/database/person";
 
 // Hooks
 import { useSubjectGroupOption } from "@utils/hooks/subject";
@@ -45,6 +40,7 @@ const EditPersonDialog = ({
   person?: Student | Teacher;
 }): JSX.Element => {
   const locale = useRouter().locale as LangCode;
+  const supabase = useSupabaseClient();
   const { t } = useTranslation(["account", "admin"]);
 
   // Form control
@@ -233,19 +229,21 @@ const EditPersonDialog = ({
     } else if (mode == "edit") {
       // Get ID of the person
       const { data, error } = await supabase
-        .from<PersonDB>("people")
+        .from("people")
         .select("id")
-        .match({ citizen_id: person?.citizenID });
+        .match({ citizen_id: person?.citizenID })
+        .limit(1)
+        .maybeSingle();
       if (error || !data) {
         console.error(error);
         return;
       }
 
-      const personID: number = data[0].id;
+      const personID: number = data?.id;
 
       // Update person
       const { data: updatedPerson, error: updatePersonError } = await supabase
-        .from<PersonDB>("people")
+        .from("people")
         .update({
           prefix_th: form.thPrefix,
           first_name_th: form.thFirstName,
@@ -266,17 +264,15 @@ const EditPersonDialog = ({
 
       if (form.role == "student" && person?.role == "student") {
         const { data: student, error: studentUpdateError } = await supabase
-          .from<StudentTable>("student")
-          .update({
-            std_id: form.studentID.trim(),
-          })
+          .from("student")
+          .update({ std_id: form.studentID.trim() })
           .match({ person: personID, std_id: person.studentID });
         if (studentUpdateError || !student) {
           console.error(studentUpdateError);
         }
       } else if (form.role == "teacher" && person?.role == "teacher") {
-        const { data: teacher, error: teacherUpdateError } = await supabase
-          .from<TeacherTable>("teacher")
+        const { error: teacherUpdateError } = await supabase
+          .from("teacher")
           .update({
             subject_group: form.subjectGroup,
             teacher_id: form.teacherID.trim(),

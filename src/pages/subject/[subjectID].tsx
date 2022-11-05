@@ -1,4 +1,4 @@
-// Modules
+// External libraries
 import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
@@ -8,6 +8,8 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { useState } from "react";
+
+import { withPageAuth } from "@supabase/auth-helpers-nextjs";
 
 // SK Components
 import {
@@ -53,17 +55,12 @@ import {
   SubstituteAssignment,
 } from "@utils/types/subject";
 import { DialogProps, LangCode } from "@utils/types/common";
-import {
-  RoomSubjectDB,
-  RoomSubjectTable,
-  SubjectTable,
-} from "@utils/types/database/subject";
 
 // Backend
 import { db2Subject, db2SubjectListItem } from "@utils/backend/database";
 
 // Supbase
-import { supabase } from "@utils/supabaseClient";
+import { supabase } from "@utils/supabase-client";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
@@ -225,7 +222,7 @@ const PeriodLogsSection = ({
   setLogDetails,
 }: {
   subjectID: number;
-  periodLogs: Array<PeriodLog>;
+  periodLogs: PeriodLog[];
   setLogEvidence: (value: { show: boolean; evidence?: string }) => void;
   setLogDetails: (value: { show: boolean; periodLog?: PeriodLog }) => void;
 }): JSX.Element => {
@@ -332,7 +329,7 @@ const PeriodLogMedium = ({
   mediums,
   className,
 }: {
-  mediums: Array<PeriodMedium>;
+  mediums: PeriodMedium[];
   className?: string;
 }) => {
   const { t } = useTranslation("subjects");
@@ -441,7 +438,7 @@ const SubstituteAssignmentsSection = ({
   setActiveAsgn,
 }: {
   subjectID: number;
-  substAsgn: Array<SubstituteAssignment>;
+  substAsgn: SubstituteAssignment[];
   setShowAssgDetails: Function;
   setShowEditAsgn: Function;
   setShowAddAsgn: Function;
@@ -578,7 +575,7 @@ const EditAssignmentDialog = ({
   onSubmit: Function;
   mode: "add" | "edit";
   assignment?: SubstituteAssignment;
-  allSubjects: Array<SubjectWNameAndCode>;
+  allSubjects: SubjectWNameAndCode[];
 }): JSX.Element => {
   const { t } = useTranslation(["subjects", "common"]);
   const locale = useRouter().locale as LangCode;
@@ -589,10 +586,7 @@ const EditAssignmentDialog = ({
     subject: number;
     enDesc: string;
     thDesc: string;
-    assignedClases: Array<{
-      id: string;
-      name: string | JSX.Element;
-    }>;
+    assignedClases: { id: string; name: string | JSX.Element }[];
   }>(
     mode == "edit" && assignment
       ? {
@@ -717,10 +711,10 @@ const SubjectDetails: NextPage<{
   const [activeAsgn, setActiveAsgn] = useState<SubstituteAssignment>();
 
   async function handleDelete() {
-    await supabase.from<RoomSubjectTable>("room_subjects").delete().match({
-      id: deleteConnection.connection?.id,
-    });
-    // console.log(deleteConnection.connection);
+    await supabase
+      .from("room_subjects")
+      .delete()
+      .match({ id: deleteConnection.connection?.id });
   }
 
   return (
@@ -754,7 +748,7 @@ const SubjectDetails: NextPage<{
           setEditConnection={setEditConnection}
           setDeleteConnection={setDeleteConnection}
         />
-        <PeriodLogsSection
+        {/* <PeriodLogsSection
           subjectID={subject.id}
           periodLogs={periodLogs}
           setLogEvidence={setLogEvidence}
@@ -767,7 +761,7 @@ const SubjectDetails: NextPage<{
           setShowEditAsgn={setShowEditAsgn}
           setShowAddAsgn={setShowAddAsgn}
           setActiveAsgn={setActiveAsgn}
-        />
+        /> */}
       </RegularLayout>
 
       {/* Dialogs */}
@@ -850,55 +844,59 @@ const SubjectDetails: NextPage<{
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  params,
-}) => {
-  const { data: dbSubject, error: dbSubjectError } = await supabase
-    .from<SubjectTable>("subject")
-    .select("*")
-    .match({ id: params?.subjectID })
-    .limit(1)
-    .single();
+export const getServerSideProps: GetServerSideProps = withPageAuth({
+  async getServerSideProps({ locale, params }, supabase) {
+    const { data: dbSubject, error: dbSubjectError } = await supabase
+      .from("subject")
+      .select("*")
+      .match({ id: params?.subjectID })
+      .limit(1)
+      .single();
 
-  const { data: roomSubjects, error: roomSubjectsError } = await supabase
-    .from<RoomSubjectDB>("room_subjects")
-    .select("*, subject:subject(*), classroom:class(*)")
-    .eq("subject", params?.subjectID as string);
+    const { data: roomSubjects, error: roomSubjectsError } = await supabase
+      .from("room_subjects")
+      .select("*, subject:subject(*), class(*)")
+      .eq("subject", params?.subjectID as string);
 
-  if (dbSubjectError) console.error(dbSubjectError);
-  if (roomSubjectsError) console.error(roomSubjectsError);
+    if (dbSubjectError) console.error(dbSubjectError);
+    if (roomSubjectsError) console.error(roomSubjectsError);
 
-  const subject: Subject | undefined = dbSubject
-    ? await db2Subject(dbSubject)
-    : undefined;
+    const subject: Subject | undefined = dbSubject
+      ? await db2Subject(supabase, dbSubject)
+      : undefined;
 
-  const subjectRooms: SubjectListItem[] = roomSubjects
-    ? await Promise.all(roomSubjects.map(db2SubjectListItem))
-    : [];
+    const subjectRooms: SubjectListItem[] = roomSubjects
+      ? await Promise.all(
+          roomSubjects.map(
+            async (roomSubject) =>
+              await db2SubjectListItem(supabase, roomSubject)
+          )
+        )
+      : [];
 
-  subjectRooms.sort((a, b) => b.classroom.number - a.classroom.number);
+    subjectRooms.sort((a, b) => b.classroom.number - a.classroom.number);
 
-  const substAsgn: SubstituteAssignment[] = [];
-  const allSubjects: SubjectWNameAndCode[] = [];
-  const periodLogs: PeriodLog[] = [];
+    const substAsgn: SubstituteAssignment[] = [];
+    const allSubjects: SubjectWNameAndCode[] = [];
+    const periodLogs: PeriodLog[] = [];
 
-  return {
-    props: {
-      ...(await serverSideTranslations(locale as LangCode, [
-        "common",
-        "subjects",
-      ])),
-      subject,
-      subjectRooms,
-      periodLogs: periodLogs.map((periodLog) => ({
-        ...periodLog,
-        date: periodLog.date.getTime(),
-      })),
-      substAsgn,
-      allSubjects,
-    },
-  };
-};
+    return {
+      props: {
+        ...(await serverSideTranslations(locale as LangCode, [
+          "common",
+          "subjects",
+        ])),
+        subject,
+        subjectRooms,
+        periodLogs: periodLogs.map((periodLog) => ({
+          ...periodLog,
+          date: periodLog.date.getTime(),
+        })),
+        substAsgn,
+        allSubjects,
+      },
+    };
+  },
+});
 
 export default SubjectDetails;

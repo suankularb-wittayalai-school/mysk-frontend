@@ -1,49 +1,31 @@
 // External libraries
-import { AuthChangeEvent, Session } from "@supabase/supabase-js";
-
-// Supabase
-import { supabase } from "@utils/supabaseClient";
-
-export async function setAuthCookies(
-  event: AuthChangeEvent,
-  session?: Session
-): Promise<boolean> {
-  const { ok } = await fetch(`/api/account/cookie`, {
-    method: "POST",
-    headers: new Headers({ "Content-Type": "application/json" }),
-    credentials: "same-origin",
-    body: JSON.stringify({ event, session }),
-  });
-  return ok;
-}
+import { User } from "@supabase/supabase-js";
+import { supabase } from "@utils/supabase-client";
 
 export async function changePassword(
-  formData: FormData,
-  session: Session | null
+  form: {
+    originalPassword: string;
+    newPassword: string;
+    confirmNewPassword: string;
+  },
+  user: User
 ) {
-  if (!session || !session.user) return false;
-
-  if (formData.get("original-password") === formData.get("new-password"))
-    return false;
-
-  const { session: _, error } = await supabase.auth.signIn({
-    email: session.user.email,
-    password: formData.get("original-password") as string,
+  const { error: logInError } = await supabase.auth.signInWithPassword({
+    email: user.email as string,
+    password: form.originalPassword,
   });
 
-  if (error) {
-    console.error(error);
-    return false;
+  if (logInError) {
+    console.error(logInError);
+    return;
   }
 
-  const { error: passwordUpdatingError } = await supabase.auth.update({
-    password: formData.get("new-password") as string,
+  const { error: passwordUpdatingError } = await supabase.auth.updateUser({
+    password: form.newPassword,
   });
 
   if (passwordUpdatingError) {
     console.error(passwordUpdatingError);
-    return false;
+    return;
   }
-
-  return true;
 }

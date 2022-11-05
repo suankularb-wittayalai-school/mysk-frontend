@@ -1,6 +1,7 @@
 // External libraries
 import { motion } from "framer-motion";
 
+import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -9,13 +10,10 @@ import { useTranslation } from "next-i18next";
 
 import { ReactNode } from "react";
 
+import { useUser } from "@supabase/auth-helpers-react";
+
 // SK Components
-import {
-  Actions,
-  LinkButton,
-  MaterialIcon,
-  Title,
-} from "@suankularb-components/react";
+import { FAB, MaterialIcon, Title } from "@suankularb-components/react";
 
 // Animations
 import { enterPageTransition } from "@utils/animations/config";
@@ -23,13 +21,9 @@ import { enterPageTransition } from "@utils/animations/config";
 // Helpers
 import { getLocaleString } from "@utils/helpers/i18n";
 
-// Hooks
-import { useSession } from "@utils/hooks/auth";
-
 // Types
 import { LangCode } from "@utils/types/common";
 import { FormPage, InfoPage } from "@utils/types/news";
-import Head from "next/head";
 
 const NewsPageWrapper = ({
   news,
@@ -38,20 +32,29 @@ const NewsPageWrapper = ({
   news: InfoPage | FormPage;
   children: ReactNode;
 }) => {
-  const locale = useRouter().locale as LangCode;
-  const { t } = useTranslation("news");
-  const session = useSession();
+  const router = useRouter();
+  const locale = router.locale as LangCode;
+  const user = useUser();
 
   return (
     // We’re not using ReSKComs in parts of this page here as it has poor
     // support for Framer Motion’s layout animations.
     <>
       <Head>
-        <meta property="og:title" content={getLocaleString(news.content.title, locale)} />
+        <meta
+          property="og:title"
+          content={getLocaleString(news.content.title, locale)}
+        />
         <meta property="og:type" content="news" />
-        <meta property="og:url" content={`https://beta.mysk.school/news/info/${news.id}`} />
+        <meta
+          property="og:url"
+          content={`https://beta.mysk.school/news/info/${news.id}`}
+        />
         <meta property="og:image" content={news.image} />
-        <meta property="og:description" content={news.content.description[locale]} />
+        <meta
+          property="og:description"
+          content={news.content.description[locale]}
+        />
         <meta property="og:locale" content={locale} />
         <meta property="og:site_name" content="MySK" />
       </Head>
@@ -61,7 +64,7 @@ const NewsPageWrapper = ({
             title: getLocaleString(news.content.title, locale),
           }}
           pageIcon={<MaterialIcon icon="info" />}
-          backGoesTo={session ? "/news" : "/"}
+          backGoesTo={user ? "/news" : "/"}
           LinkElement={Link}
         />
         <div className="content-layout__content !gap-y-0">
@@ -77,7 +80,12 @@ const NewsPageWrapper = ({
                 overflow-hidden !p-0 text-right shadow sm:rounded-xl md:aspect-[5/1]"
             >
               {news.image ? (
-                <Image src={news.image} layout="fill" objectFit="cover" alt="" />
+                <Image
+                  src={news.image}
+                  layout="fill"
+                  objectFit="cover"
+                  alt=""
+                />
               ) : (
                 <p className="m-4 font-display text-8xl font-light leading-none opacity-30">
                   {getLocaleString(news.content.title, locale)}
@@ -93,24 +101,21 @@ const NewsPageWrapper = ({
               <motion.p className="text-lg">
                 {getLocaleString(news.content.description, locale)}
               </motion.p>
-
-              {session?.user?.user_metadata.isAdmin && (
-                <Actions className="my-4">
-                  <LinkButton
-                    label={t("pageAction.admin.edit")}
-                    type="tonal"
-                    icon={<MaterialIcon icon="edit" />}
-                    url={`/admin/news/edit/${news.type}/${news.id}`}
-                    LinkElement={Link}
-                  />
-                </Actions>
-              )}
             </div>
           </motion.section>
 
           {children}
         </div>
       </main>
+
+      {user?.user_metadata.isAdmin && (
+        <FAB
+          content={{ type: "normal", icon: <MaterialIcon icon="edit" /> }}
+          onClick={() =>
+            router.push(`/admin/news/edit/${news.type}/${news.id}`)
+          }
+        />
+      )}
     </>
   );
 };

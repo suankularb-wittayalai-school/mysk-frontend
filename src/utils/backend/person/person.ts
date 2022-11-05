@@ -1,29 +1,24 @@
 // External libraries
-import { NextApiRequestCookies } from "next/dist/server/api-utils";
-import { IncomingMessage, ServerResponse } from "http";
-import { PostgrestError } from "@supabase/supabase-js";
+import { User } from "@supabase/supabase-js";
 
 // Backend
 import { createContact } from "@utils/backend/contact";
-import { db2Student, db2Teacher } from "@utils/backend/database";
+import { db2Student } from "@utils/backend/database";
+import { getTeacherFromUser } from "@utils/backend/person/teacher";
 
 // Supabase
-import { supabase } from "@utils/supabaseClient";
+import { supabase } from "@utils/supabase-client";
 
 // Types
-import { BackendReturn } from "@utils/types/common";
+import { BackendDataReturn, DatabaseClient } from "@utils/types/common";
 import { Person, Student, Teacher } from "@utils/types/person";
-import {
-  PersonTable,
-  StudentDB,
-  StudentTable,
-  TeacherDB,
-  TeacherTable,
-} from "@utils/types/database/person";
+import { Database } from "@utils/types/supabase";
 
 export async function createPerson(
   person: Person
-): Promise<{ data: PersonTable[] | null; error: PostgrestError | null }> {
+): Promise<
+  BackendDataReturn<Database["public"]["Tables"]["people"]["Row"], null>
+> {
   // create contacts
   const contacts = await Promise.all(
     person.contacts.map(async (contact) => await createContact(contact))
@@ -35,18 +30,16 @@ export async function createPerson(
     if (error) {
       console.error(error);
       return { data: null, error };
-    } else {
-      throw new Error("Unknown error");
-    }
+    } else throw new Error("Unknown error");
   }
 
   // map the created contact to id
-  const contactIds = contacts
-    .map((contact) => contact.data?.[0]?.id)
+  const contactIDs = contacts
+    .map((contact) => contact.data?.id)
     .filter((id) => id !== undefined || id !== null);
 
   const { data: createdPerson, error: personCreationError } = await supabase
-    .from<PersonTable>("people")
+    .from("people")
     .insert({
       prefix_th: person.prefix.th,
       prefix_en: person.prefix["en-US"],
@@ -58,16 +51,25 @@ export async function createPerson(
       last_name_en: person.name["en-US"]?.lastName,
       birthdate: person.birthdate,
       citizen_id: person.citizenID,
-      contacts: contactIds as number[],
-    });
-  if (personCreationError || !person) {
+      contacts: contactIDs as number[],
+    })
+    .select("*")
+    .limit(1)
+    .single();
+
+  if (personCreationError) {
     console.error(personCreationError);
     return { data: null, error: personCreationError };
   }
-  return { data: createdPerson, error: null };
+
+  return {
+    data: createdPerson as Database["public"]["Tables"]["people"]["Row"],
+    error: null,
+  };
 }
 
 export async function setupPerson(
+  supabase: DatabaseClient,
   form: {
     thPrefix: string;
     thFirstName: string;
@@ -84,15 +86,17 @@ export async function setupPerson(
     subjectGroup: number;
   },
   person: Student | Teacher
-): Promise<BackendReturn<PersonTable, null>> {
+): Promise<
+  BackendDataReturn<Database["public"]["Tables"]["people"]["Row"], null>
+> {
   // Get person ID
   let personID = 0;
 
   // Fetch person ID from `student` table if user is a student
   if (person.role == "student") {
     const { data: studentPersonID, error: idError } = await supabase
-      .from<StudentTable>("student")
-      .select("person")
+      .from("student")
+      .select("person(id)")
       .match({ id: person.id })
       .limit(1)
       .single();
@@ -101,13 +105,15 @@ export async function setupPerson(
       console.error(idError);
       return { data: null, error: idError };
     }
-    personID = (studentPersonID as StudentTable).person;
+    personID = (
+      studentPersonID!.person as Database["public"]["Tables"]["people"]["Row"]
+    ).id;
   }
 
   // Fetch person ID from `teacher` table if user is a teacher
   else if (person.role == "teacher") {
     const { data: teacherPersonID, error: idError } = await supabase
-      .from<TeacherTable>("teacher")
+      .from("teacher")
       .select("person")
       .match({ id: person.id })
       .limit(1)
@@ -117,12 +123,12 @@ export async function setupPerson(
       console.error(idError);
       return { data: null, error: idError };
     }
-    personID = (teacherPersonID as TeacherTable).person;
+    personID = teacherPersonID!.person as unknown as number;
   }
 
   // Update person data (`person` table)
   const { data: updPerson, error: personError } = await supabase
-    .from<PersonTable>("people")
+    .from("people")
     .update({
       prefix_th: form.thPrefix,
       first_name_th: form.thFirstName,
@@ -136,6 +142,7 @@ export async function setupPerson(
       citizen_id: form.citizenID,
     })
     .match({ id: personID })
+    .select("*")
     .limit(1)
     .single();
 
@@ -149,7 +156,7 @@ export async function setupPerson(
   // Update a student’s student ID
   if (person.role == "student") {
     const { error } = await supabase
-      .from<StudentTable>("student")
+      .from("student")
       .update({ std_id: form.studentID })
       .match({ id: person.id, std_id: person.studentID })
       .limit(1)
@@ -159,13 +166,13 @@ export async function setupPerson(
       console.error(error);
       return { data: null, error };
     }
-    return { data: updPerson as PersonTable, error: null };
+    return { data: updPerson!, error: null };
   }
 
   // Update a teacher’s teacher ID and subject group
   else if (person.role == "teacher") {
     const { error } = await supabase
-      .from<TeacherTable>("teacher")
+      .from("teacher")
       .update({
         teacher_id: form.teacherID,
         subject_group: form.subjectGroup,
@@ -176,7 +183,7 @@ export async function setupPerson(
       console.error(error);
       return { data: null, error };
     }
-    return { data: updPerson as PersonTable, error: null };
+    return { data: updPerson!, error: null };
   }
 
   // Invalid role handling
@@ -185,22 +192,40 @@ export async function setupPerson(
   return { data: null, error };
 }
 
-export async function getUserFromReq(
-  req: IncomingMessage & { cookies: NextApiRequestCookies },
-  res?: ServerResponse
-): Promise<BackendReturn<Student | Teacher, null>> {
-  const { user, error } = await supabase.auth.api.getUserByCookie(req, res);
-
-  if (error) {
-    console.error(error);
-    return { data: null, error };
-  }
-
+export async function getPersonFromUser(
+  supabase: DatabaseClient,
+  user: User
+): Promise<BackendDataReturn<Student | Teacher, null>> {
   if (user?.user_metadata.role == "student") {
     const { data: student, error: studentError } = await supabase
-      .from<StudentDB>("student")
-      .select("id, std_id, people:person(*)")
-      .match({ id: user?.user_metadata.student })
+      .from("student")
+      .select("*, person(*)")
+      .match({ id: user.user_metadata.student })
+      .limit(1)
+      .single();
+
+    if (studentError) {
+      console.error(studentError);
+      return { data: null, error: studentError };
+    }
+
+    return { data: await db2Student(supabase, student!), error: null };
+  } else if (user?.user_metadata.role == "teacher")
+    return getTeacherFromUser(supabase, user);
+
+  return { data: null, error: { message: "invalid role." } };
+}
+
+export async function getPersonIDFromUser(
+  supabase: DatabaseClient,
+  user: User
+): Promise<BackendDataReturn<number, null>> {
+  if (user?.user_metadata.role == "student") {
+    const { data: student, error: studentError } = await supabase
+      .from("student")
+      .select("person(id)")
+      .match({ id: user.user_metadata.student })
+      .limit(1)
       .single();
 
     if (studentError) {
@@ -209,14 +234,16 @@ export async function getUserFromReq(
     }
 
     return {
-      data: await db2Student(student as StudentDB),
+      data: (student as Database["public"]["Tables"]["student"]["Row"]).person
+        .id,
       error: null,
     };
   } else if (user?.user_metadata.role == "teacher") {
     const { data: teacher, error: teacherError } = await supabase
-      .from<TeacherDB>("teacher")
-      .select("id, teacher_id, people:person(*), SubjectGroup:subject_group(*)")
-      .match({ id: user?.user_metadata.teacher })
+      .from("teacher")
+      .select("person(id)")
+      .match({ id: user.user_metadata.teacher })
+      .limit(1)
       .single();
 
     if (teacherError) {
@@ -225,70 +252,11 @@ export async function getUserFromReq(
     }
 
     return {
-      data: {
-        ...(await db2Teacher(teacher as TeacherDB)),
-        isAdmin: user.user_metadata.isAdmin,
-      },
+      data: (teacher as Database["public"]["Tables"]["teacher"]["Row"]).person
+        .id,
       error: null,
     };
   }
 
   return { data: null, error: { message: "invalid role." } };
-}
-
-export async function getPersonIDFromStudentID(
-  studentID: number
-): Promise<number> {
-  const { data: student, error } = await supabase
-    .from<{ id: number; person: number }>("student")
-    .select("id, person")
-    .match({ id: studentID })
-    .limit(1)
-    .single();
-
-  if (error || !student) {
-    console.error(error);
-    return -1;
-  }
-
-  return student.person;
-}
-
-export async function getPersonIDFromTeacherID(
-  teacherID: number
-): Promise<number> {
-  const { data: teacher, error } = await supabase
-    .from<{ id: number; person: number }>("teacher")
-    .select("id, person")
-    .match({ id: teacherID })
-    .limit(1)
-    .single();
-
-  if (error || !teacher) {
-    console.error(error);
-    return -1;
-  }
-
-  return teacher.person;
-}
-
-export async function getPersonIDFromReq(
-  req: IncomingMessage & { cookies: NextApiRequestCookies },
-  res?: ServerResponse
-): Promise<number> {
-  const { user, error } = await supabase.auth.api.getUserByCookie(req, res);
-
-  if (error || !user) {
-    console.error(error);
-    return 0;
-  }
-
-  const userRole = user?.user_metadata.role;
-
-  const personID =
-    userRole === "student"
-      ? await getPersonIDFromStudentID(user.user_metadata.student)
-      : await getPersonIDFromTeacherID(user.user_metadata.teacher);
-
-  return personID;
 }

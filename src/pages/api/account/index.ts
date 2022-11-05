@@ -1,14 +1,14 @@
-// Modules
+// External libraries
 import { NextApiHandler } from "next";
 
 // Backend
-import { supabaseBackend } from "@utils/supabaseBackend";
+import { supabase } from "@utils/supabase-backend";
 
 const handler: NextApiHandler = async (req, res) => {
   // if method is delete then delete the account
   if (req.method === "DELETE") {
     const { data: user, error: deletingError } =
-      await supabaseBackend.auth.api.deleteUser(req.body.id);
+      await supabase.auth.admin.deleteUser(req.body.id);
 
     return res.json({ user, deletingError });
   }

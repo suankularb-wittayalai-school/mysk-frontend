@@ -1,7 +1,8 @@
-// Modules
+// External libraries
 import { useRouter } from "next/router";
 
 // Types
+import { LangCode } from "@utils/types/common";
 import { Person } from "@utils/types/person";
 
 // Helpers
@@ -16,7 +17,7 @@ const HoverList = ({
   truncate?: boolean;
   useFullName?: boolean;
 }) => {
-  const locale = useRouter().locale == "th" ? "th" : "en-US";
+  const locale = useRouter().locale as LangCode;
 
   return (
     <span

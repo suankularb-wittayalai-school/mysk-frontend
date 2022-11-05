@@ -11,6 +11,9 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { useReducer, useState } from "react";
 
+import { User, withPageAuth } from "@supabase/auth-helpers-nextjs";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+
 // SK Components
 import {
   RegularLayout,
@@ -37,7 +40,7 @@ import LogOutDialog from "@components/dialogs/LogOut";
 import { animationTransition } from "@utils/animations/config";
 
 // Backend
-import { getUserFromReq, setupPerson } from "@utils/backend/person/person";
+import { getPersonFromUser, setupPerson } from "@utils/backend/person/person";
 import { getSubjectGroups } from "@utils/backend/subject/subjectGroup";
 
 // Helpers
@@ -47,9 +50,6 @@ import { createTitleStr } from "@utils/helpers/title";
 
 // Hooks
 import { useToggle } from "@utils/hooks/toggle";
-
-// Supabase
-import { supabase } from "@utils/supabaseClient";
 
 // Types
 import { LangCode } from "@utils/types/common";
@@ -164,6 +164,7 @@ const DataCheckSection = ({
   disabled?: boolean;
 }): JSX.Element => {
   const { t } = useTranslation(["landing", "account"]);
+  const supabase = useSupabaseClient();
   const locale = useRouter().locale as LangCode;
 
   const [loading, toggleLoading] = useToggle();
@@ -235,15 +236,13 @@ const DataCheckSection = ({
     // checksum = 11 - (multiplied sum % 11) % 10
 
     if (
-      !(
-        11 -
-          ((sumArray(
-            citizenIDDigits.slice(0, 11).map((digit, idx) => digit * (13 - idx))
-          ) %
-            11) %
-            10) !=
-        citizenIDDigits[12]
-      )
+      11 -
+        ((sumArray(
+          citizenIDDigits.slice(0, 12).map((digit, idx) => digit * (13 - idx))
+        ) %
+          11) %
+          10) !=
+      citizenIDDigits[12]
     )
       return false;
     return true;
@@ -426,7 +425,7 @@ const DataCheckSection = ({
             icon={<MaterialIcon icon="arrow_downward" />}
             onClick={async () => {
               toggleLoading();
-              const { error } = await setupPerson(form, user);
+              const { error } = await setupPerson(supabase, form, user);
               toggleLoading();
 
               if (error) return;
@@ -447,6 +446,7 @@ const NewPasswordSection = ({
   incrementStep: () => void;
   disabled?: boolean;
 }): JSX.Element => {
+  const supabase = useSupabaseClient();
   const { t } = useTranslation(["landing", "account"]);
 
   const [loading, toggleLoading] = useToggle();
@@ -522,7 +522,7 @@ const NewPasswordSection = ({
             }
             onClick={async () => {
               toggleLoading();
-              const { error } = await supabase.auth.update({
+              const { error } = await supabase.auth.updateUser({
                 password: form.newPassword,
               });
               toggleLoading();
@@ -570,6 +570,7 @@ const PreparingForStudentsSection = (): JSX.Element => {
 };
 
 const DoneSection = ({ role }: { role: Role }): JSX.Element => {
+  const supabase = useSupabaseClient();
   const { t } = useTranslation("landing");
   const router = useRouter();
 
@@ -632,7 +633,7 @@ const DoneSection = ({ role }: { role: Role }): JSX.Element => {
                 type="filled"
                 className="w-full !text-center"
                 onClick={async () => {
-                  await supabase.auth.update({ data: { onboarded: true } });
+                  await supabase.auth.updateUser({ data: { onboarded: true } });
                   if (role == "teacher") router.push("/teach");
                   else router.push("/learn");
                 }}
@@ -647,9 +648,9 @@ const DoneSection = ({ role }: { role: Role }): JSX.Element => {
 
 // Page
 const Welcome: NextPage<{
-  user: Student | Teacher;
+  person: Student | Teacher;
   subjectGroups: SubjectGroup[];
-}> = ({ user, subjectGroups }) => {
+}> = ({ person: user, subjectGroups }) => {
   const { t } = useTranslation(["landing", "common"]);
 
   const [currStep, incrementStep] = useReducer((value) => value + 1, 0);
@@ -715,28 +716,27 @@ const Welcome: NextPage<{
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  req,
-  res,
-}) => {
-  const { data: user, error } = await getUserFromReq(req, res);
-  if (error)
-    return { redirect: { destination: "/account/login", permanent: false } };
+export const getServerSideProps: GetServerSideProps = withPageAuth({
+  async getServerSideProps({ locale }, supabase) {
+    const { data: user } = await supabase.auth.getUser();
+    const { data: person } = await getPersonFromUser(
+      supabase,
+      user.user as User
+    );
+    const { data: subjectGroups } = await getSubjectGroups();
 
-  const { data: subjectGroups } = await getSubjectGroups();
-
-  return {
-    props: {
-      ...(await serverSideTranslations(locale as LangCode, [
-        "common",
-        "account",
-        "landing",
-      ])),
-      user,
-      subjectGroups,
-    },
-  };
-};
+    return {
+      props: {
+        ...(await serverSideTranslations(locale as LangCode, [
+          "common",
+          "account",
+          "landing",
+        ])),
+        person,
+        subjectGroups,
+      },
+    };
+  },
+});
 
 export default Welcome;

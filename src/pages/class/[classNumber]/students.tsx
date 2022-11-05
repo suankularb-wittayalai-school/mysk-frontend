@@ -1,5 +1,5 @@
 // External libraries
-import { GetServerSideProps, NextPage } from "next";
+import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -11,7 +11,6 @@ import { useEffect, useMemo, useState } from "react";
 
 import {
   ColumnDef,
-  flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   useReactTable,
@@ -28,8 +27,13 @@ import {
   Title,
 } from "@suankularb-components/react";
 
+// Components
+import DataTableHeader from "@components/data-table/DataTableHeader";
+import DataTableBody from "@components/data-table/DataTableBody";
+
 // Backend
 import {
+  getAllClassNumbers,
   getClassIDFromNumber,
   getClassStudentList,
 } from "@utils/backend/classroom/classroom";
@@ -38,11 +42,12 @@ import {
 import { nameJoiner } from "@utils/helpers/name";
 import { createTitleStr } from "@utils/helpers/title";
 
+// Supabase
+import { supabase } from "@utils/supabase-backend";
+
 // Types
 import { LangCode } from "@utils/types/common";
 import { StudentListItem } from "@utils/types/person";
-import DataTableHeader from "@components/data-table/DataTableHeader";
-import DataTableBody from "@components/data-table/DataTableBody";
 
 const StudentList = ({
   students,
@@ -64,12 +69,9 @@ const StudentList = ({
       students.map((student) => ({
         id: student.id,
         classNo: student.classNo,
-        name: nameJoiner(
-          locale,
-          student.name,
-          t(`name.prefix.${student.prefix}`, { ns: "common" }),
-          { prefix: true }
-        ),
+        name: nameJoiner(locale, student.name, student.prefix, {
+          prefix: true,
+        }),
       })),
     []
   );
@@ -152,18 +154,19 @@ const ClassStudents: NextPage<{
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  params,
-}) => {
+export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   const classNumber = Number(params?.classNumber);
 
   const { data: classID, error: classIDError } = await getClassIDFromNumber(
+    supabase,
     classNumber
   );
   if (classIDError) return { notFound: true };
 
-  const { data: students } = await getClassStudentList(classID as number);
+  const { data: students } = await getClassStudentList(
+    supabase,
+    classID as number
+  );
 
   return {
     props: {
@@ -174,6 +177,16 @@ export const getServerSideProps: GetServerSideProps = async ({
       classNumber,
       students,
     },
+    revalidate: 300,
+  };
+};
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  return {
+    paths: (await getAllClassNumbers(supabase)).map((number) => ({
+      params: { classNumber: number.toString() },
+    })),
+    fallback: "blocking",
   };
 };
 

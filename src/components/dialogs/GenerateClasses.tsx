@@ -1,4 +1,4 @@
-// Modules
+// External libraries
 import { Trans, useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
 
@@ -16,7 +16,7 @@ import { createClassroom } from "@utils/backend/classroom/classroom";
 
 // Helpers
 import { range } from "@utils/helpers/array";
-import { getCurrentAcedemicYear } from "@utils/helpers/date";
+import { getCurrentAcademicYear } from "@utils/helpers/date";
 
 // Types
 import { Class } from "@utils/types/class";
@@ -31,7 +31,7 @@ const GenerateClassesDialog = ({
 
   // Form control
   const [numGrades, setNumGrades] = useState<number>(6);
-  const [numClasses, setNumClasses] = useState<Array<number>>(range(6).fill(0));
+  const [numClasses, setNumClasses] = useState<number[]>(range(6).fill(0));
 
   // We are checking for the length of `numClasses` so as to preserve data inside `numClasses`
   // when changing the number of grades
@@ -75,7 +75,7 @@ const GenerateClassesDialog = ({
           (classNum) => ({
             id: 0,
             number: (index + 1) * 100 + (classNum + 1),
-            year: getCurrentAcedemicYear(),
+            year: getCurrentAcademicYear(),
             students: [],
             classAdvisors: [],
             schedule: {

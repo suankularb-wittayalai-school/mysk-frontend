@@ -1,4 +1,4 @@
-// Modules
+// External libraries
 import { formatDistanceToNowStrict, isPast, isThisYear } from "date-fns";
 import { enUS, th } from "date-fns/locale";
 

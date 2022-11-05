@@ -5,14 +5,11 @@ import { SubjectListItem } from "./subject";
 export type Class = {
   id: number;
   number: number;
-  classAdvisors: Array<Teacher>;
-  contacts: Array<Contact>;
-  students: Array<Student>;
+  classAdvisors: Teacher[];
+  contacts: Contact[];
+  students: Student[];
   year: number;
   subjects: SubjectListItem[];
 };
 
-export type ClassWNumber = {
-  id: Class["id"];
-  number: Class["number"];
-};
+export type ClassWNumber = Pick<Class, "id" | "number">;

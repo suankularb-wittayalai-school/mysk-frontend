@@ -1,4 +1,4 @@
-// Modules
+// External libraries
 import { PostgrestError } from "@supabase/supabase-js";
 
 // Backend
@@ -13,15 +13,14 @@ import {
 } from "@utils/helpers/schedule";
 
 // Supabase
-import { supabase } from "@utils/supabaseClient";
-import { BackendReturn } from "@utils/types/common";
-import { ClassroomTable } from "@utils/types/database/class";
+import { supabase } from "@utils/supabase-client";
+import {
+  BackendDataReturn,
+  BackendReturn,
+  DatabaseClient,
+} from "@utils/types/common";
 
 // Types
-import {
-  ScheduleItemDB,
-  ScheduleItemTable,
-} from "@utils/types/database/schedule";
 import { Role } from "@utils/types/person";
 import { Schedule, PeriodContentItem } from "@utils/types/schedule";
 
@@ -31,10 +30,11 @@ import { Schedule, PeriodContentItem } from "@utils/types/schedule";
  * @param classID The Supabase ID of the class the user is a part of
  */
 export async function getSchedule(
+  supabase: DatabaseClient,
   role: "student",
   classID: number,
   day?: Day
-): Promise<BackendReturn<Schedule, Schedule>>;
+): Promise<BackendDataReturn<Schedule, Schedule>>;
 
 /**
  * Construct a Teaching Schedule from Schedule Items from the teacher’s perspective
@@ -42,23 +42,25 @@ export async function getSchedule(
  * @param teacherID The Supabase ID of the user (who should be a Teacher)
  */
 export async function getSchedule(
+  supabase: DatabaseClient,
   role: "teacher",
   teacherID: number,
   day?: Day
-): Promise<BackendReturn<Schedule, Schedule>>;
+): Promise<BackendDataReturn<Schedule, Schedule>>;
 
 export async function getSchedule(
+  supabase: DatabaseClient,
   role: Role,
   id: number,
   day?: Day
-): Promise<BackendReturn<Schedule, Schedule>> {
+): Promise<BackendDataReturn<Schedule, Schedule>> {
   // Schedule filled with empty periods
   let schedule =
     day == undefined ? createEmptySchedule(1, 5) : createEmptySchedule(day);
 
   // Fetch data from Supabase
   const { data, error } = await supabase
-    .from<ScheduleItemDB>("schedule_items")
+    .from("schedule_items")
     .select(
       "*, subject:subject(*), teacher:teacher(*), classroom:classroom(id,number)"
     )
@@ -81,7 +83,7 @@ export async function getSchedule(
   }
 
   // Add Supabase data to empty schedule
-  for (let incomingPeriod of data as ScheduleItemDB[]) {
+  for (let incomingPeriod of data!) {
     // Find the index of the row we want to manipulate
     const scheduleRowIndex = schedule.content.findIndex(
       (scheduleRow) => incomingPeriod.day == scheduleRow.day
@@ -114,7 +116,11 @@ export async function getSchedule(
 
       // Determine what to do if the incoming period overlaps with an existing
       // period
-      const processedPeriod = await db2SchedulePeriod(incomingPeriod, role);
+      const processedPeriod = await db2SchedulePeriod(
+        supabase,
+        incomingPeriod,
+        role
+      );
 
       // Replace empty period
       if (schedulePeriod.content.length == 0) {
@@ -149,10 +155,11 @@ export async function getSchedule(
 }
 
 export async function getSchedulesOfGrade(
+  supabase: DatabaseClient,
   grade: number
-): Promise<BackendReturn<Schedule[]>> {
+): Promise<BackendDataReturn<Schedule[]>> {
   const { data: classes, error: classesError } = await supabase
-    .from<ClassroomTable>("classroom")
+    .from("classroom")
     .select("id, number")
     .lt("number", (grade + 1) * 100)
     .gt("number", grade * 100)
@@ -165,8 +172,8 @@ export async function getSchedulesOfGrade(
 
   return {
     data: await Promise.all(
-      (classes as ClassroomTable[]).map(async (classItem) => ({
-        ...(await getSchedule("student", classItem.id)).data,
+      classes!.map(async (classItem) => ({
+        ...(await getSchedule(supabase, "student", classItem.id)).data,
         class: classItem,
       }))
     ),
@@ -180,6 +187,7 @@ export async function getSchedulesOfGrade(
  * @param teacherID The Supabase ID of the Teacher teaching this Schedule Period
  */
 export async function createScheduleItem(
+  supabase: DatabaseClient,
   form: {
     subject: number;
     classID: number;
@@ -189,28 +197,24 @@ export async function createScheduleItem(
     duration: number;
   },
   teacherID: number
-): Promise<BackendReturn<ScheduleItemTable[]>> {
-  const { data, error } = await supabase
-    .from<ScheduleItemTable>("schedule_items")
-    .insert({
-      subject: form.subject,
-      classroom: form.classID,
-      room: form.room,
-      teacher: teacherID,
-      day: form.day,
-      start_time: form.startTime,
-      duration: form.duration,
-    });
+): Promise<BackendReturn> {
+  const { error } = await supabase.from("schedule_items").insert({
+    subject: form.subject,
+    classroom: form.classID,
+    room: form.room,
+    teacher: teacherID,
+    day: form.day,
+    start_time: form.startTime,
+    duration: form.duration,
+  });
 
-  if (error || !data) {
-    console.error(error);
-    return { data: [], error };
-  }
+  if (error) console.error(error);
 
-  return { data, error: null };
+  return { error };
 }
 
 export async function editScheduleItem(
+  supabase: DatabaseClient,
   form: {
     subject: number;
     classID: number;
@@ -220,9 +224,9 @@ export async function editScheduleItem(
     duration: number;
   },
   id: number
-): Promise<BackendReturn<ScheduleItemTable[]>> {
-  const { data, error } = await supabase
-    .from<ScheduleItemTable>("schedule_items")
+): Promise<BackendReturn> {
+  const { error } = await supabase
+    .from("schedule_items")
     .update({
       subject: form.subject,
       classroom: form.classID,
@@ -233,54 +237,48 @@ export async function editScheduleItem(
     })
     .match({ id });
 
-  if (error || !data) {
-    console.error(error);
-    return { data: [], error };
-  }
+  if (error) console.error(error);
 
-  return { data, error: null };
+  return { error };
 }
 
 export async function moveScheduleItem(
+  supabase: DatabaseClient,
   newDay: Day,
   newSchedulePeriod: PeriodContentItem,
   teacherID: number
-): Promise<BackendReturn<ScheduleItemTable[]>> {
+): Promise<BackendReturn> {
   // Check overlap
   if (await isOverlappingExistingItems(newDay, newSchedulePeriod, teacherID))
     return {
-      data: [],
       error: {
         message:
           "new period duration causes it to overlap with other relevant periods",
       },
     };
 
-  const { data, error } = await supabase
-    .from<ScheduleItemTable>("schedule_items")
+  const { error } = await supabase
+    .from("schedule_items")
     .update({ day: newDay, start_time: newSchedulePeriod.startTime })
     .match({ id: newSchedulePeriod.id });
 
-  if (error || !data) {
-    console.error(error);
-    return { data: [], error };
-  }
+  if (error) console.error(error);
 
-  return { data, error: null };
+  return { error };
 }
 
 export async function editScheduleItemDuration(
+  supabase: DatabaseClient,
   day: Day,
   schedulePeriod: PeriodContentItem,
   teacherID: number
-): Promise<BackendReturn<ScheduleItemTable[]>> {
+): Promise<BackendReturn> {
   // Cap duration
   if (schedulePeriod.duration < 1) schedulePeriod.duration = 1;
   else if (schedulePeriod.duration > 10) schedulePeriod.duration = 10;
 
   if (await isOverlappingExistingItems(day, schedulePeriod, teacherID))
     return {
-      data: [],
       error: {
         message:
           "new period duration causes it to overlap with other relevant periods",
@@ -288,32 +286,23 @@ export async function editScheduleItemDuration(
     };
 
   // If overlap, end the function; if not, push the update
-  const { data, error } = await supabase
-    .from<ScheduleItemTable>("schedule_items")
+  const { error } = await supabase
+    .from("schedule_items")
     .update({ duration: schedulePeriod.duration })
     .match({ id: schedulePeriod.id });
 
-  if (error || !data) {
-    console.error(error);
-    return { data: [], error };
-  }
+  if (error) console.error(error);
 
-  return { data, error: null };
+  return { error };
 }
 
-export async function deleteScheduleItem(id: number): Promise<{
-  data: ScheduleItemTable[] | null;
-  error: PostgrestError | null;
-}> {
-  const { data, error } = await supabase
-    .from<ScheduleItemTable>("schedule_items")
+export async function deleteScheduleItem(id: number): Promise<BackendReturn> {
+  const { error } = await supabase
+    .from("schedule_items")
     .delete()
     .match({ id });
 
-  if (error || !data) {
-    console.error(error);
-    return { data: null, error };
-  }
+  if (error) console.error(error);
 
-  return { data, error: null };
+  return { error };
 }

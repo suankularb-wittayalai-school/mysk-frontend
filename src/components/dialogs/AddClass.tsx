@@ -1,7 +1,7 @@
-// Modules
+// External libraries
 import { useTranslation } from "next-i18next";
-
 import { useEffect, useState } from "react";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 // SK Components
 import {
@@ -14,41 +14,38 @@ import {
 import { db2Class } from "@utils/backend/database";
 
 // Helpers
-import { getCurrentAcedemicYear } from "@utils/helpers/date";
-
-// Supabase
-import { supabase } from "@utils/supabaseClient";
+import { getCurrentAcademicYear } from "@utils/helpers/date";
 
 // Types
-import { ClassroomDB } from "@utils/types/database/class";
 import { Class } from "@utils/types/class";
-import { DialogProps } from "@utils/types/common";
+import { SubmittableDialogProps } from "@utils/types/common";
 
 // Miscellaneous
-import { classPattern } from "@utils/patterns";
+import { classPattern, classRegex } from "@utils/patterns";
 
 const AddClassDialog = ({
   show,
   onClose,
   onSubmit,
-}: DialogProps & { onSubmit: (classroom: Class) => void }): JSX.Element => {
+}: SubmittableDialogProps<(classroom: Class) => void>): JSX.Element => {
   const { t } = useTranslation("common");
+  const supabase = useSupabaseClient();
 
   // Hooks
   const [classroomNumber, setClassroomNumber] = useState<string>("");
   const [classroom, setClassroom] = useState<Class | null>(null);
 
   useEffect(() => {
-    if (classroomNumber.match(/[1-6][0-1][1-9]/)) {
+    if (!classRegex.test(classroomNumber)) {
       supabase
-        .from<ClassroomDB>("classroom")
+        .from("classroom")
         .select("*")
-        .match({ number: classroomNumber, year: getCurrentAcedemicYear() })
+        .match({ number: classroomNumber, year: getCurrentAcademicYear() })
         .limit(1)
         .single()
         .then((res) => {
           if (res.data) {
-            db2Class(res.data).then((classroom) => {
+            db2Class(supabase, res.data).then((classroom) => {
               setClassroom(classroom);
             });
           } else {
@@ -69,7 +66,7 @@ const AddClassDialog = ({
         { name: t("dialog.addClass.action.add"), type: "submit" },
       ]}
       show={show}
-      onClose={() => onClose()}
+      onClose={onClose}
       onSubmit={() => (classroom ? onSubmit(classroom) : null)}
     >
       <DialogSection name="input">

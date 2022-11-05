@@ -1,4 +1,4 @@
-// Modules
+// External libraries
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
@@ -24,6 +24,9 @@ import { range } from "@utils/helpers/array";
 // Hooks
 import { useTeacherAccount } from "@utils/hooks/auth";
 
+// Supabase
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+
 // Types
 import { ClassWNumber } from "@utils/types/class";
 import { LangCode, SubmittableDialogProps } from "@utils/types/common";
@@ -47,6 +50,7 @@ const EditPeriod = ({
   canEditStartTime?: boolean;
 }): JSX.Element => {
   const { t } = useTranslation(["schedule", "common"]);
+  const supabase = useSupabaseClient();
   const locale = useRouter().locale as LangCode;
   const [teacher] = useTeacherAccount();
 
@@ -74,7 +78,9 @@ const EditPeriod = ({
   const [classes, setClasses] = useState<ClassWNumber[]>([]);
   useEffect(() => {
     const fetchClasses = async () =>
-      setClasses((await getRoomsEnrolledInSubject(form.subject)).data || []);
+      setClasses(
+        (await getRoomsEnrolledInSubject(supabase, form.subject)).data || []
+      );
     fetchClasses();
   }, [form.subject]);
 
@@ -137,9 +143,9 @@ const EditPeriod = ({
     if (!validate()) return;
 
     if (teacher) {
-      if (mode == "add") await createScheduleItem(form, teacher.id);
+      if (mode == "add") await createScheduleItem(supabase, form, teacher.id);
       else if (mode == "edit")
-        if (schedulePeriod?.id) await editScheduleItem(form, schedulePeriod.id);
+        if (schedulePeriod?.id) await editScheduleItem(supabase, form, schedulePeriod.id);
         else
           console.error(
             "cannot push edit, Schedule Period is missing Supabase ID"

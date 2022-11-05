@@ -1,4 +1,4 @@
-// Modules
+// External libraries
 import { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useState } from "react";
 
 // SK Components
 import {
@@ -35,6 +35,10 @@ import { createTitleStr } from "@utils/helpers/title";
 
 // Hooks
 import { useTeacherAccount } from "@utils/hooks/auth";
+import { useToggle } from "@utils/hooks/toggle";
+
+// Supabase
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 // Types
 import { LangCode } from "@utils/types/common";
@@ -45,22 +49,24 @@ import {
 
 const TeacherSchedule: NextPage = () => {
   const { t } = useTranslation("schedule");
-  const [teacher] = useTeacherAccount({ loginRequired: true });
+  const supabase = useSupabaseClient();
+  const [teacher] = useTeacherAccount();
 
   // Data fetch
   const plhSchedule = {
-    content: range(5).map((day) => ({ day: (day + 1) as Day, content: [] })),
+    content: range(5, 1).map((day) => ({ day: day as Day, content: [] })),
   };
   const [schedule, setSchedule] = useState<ScheduleType>(plhSchedule);
-  const [fetched, toggleFetched] = useReducer(
-    (state: boolean) => !state,
-    false
-  );
+  const [fetched, toggleFetched] = useToggle();
 
   useEffect(() => {
     const fetchAndSetSchedule = async () => {
       if (!fetched && teacher) {
-        const { data, error } = await getSchedule("teacher", teacher.id);
+        const { data, error } = await getSchedule(
+          supabase,
+          "teacher",
+          teacher.id
+        );
         if (error) toggleFetched();
         setSchedule(data);
         toggleFetched();
@@ -76,10 +82,7 @@ const TeacherSchedule: NextPage = () => {
     startTime: number;
   }>({ show: false, day: 1, startTime: 1 });
 
-  const [addPeriod, toggleAddPeriod] = useReducer(
-    (state: boolean) => !state,
-    false
-  );
+  const [addPeriod, toggleAddPeriod] = useToggle();
 
   const [editPeriod, setEditPeriod] = useState<{
     show: boolean;
@@ -127,13 +130,13 @@ const TeacherSchedule: NextPage = () => {
               icon={<MaterialIcon icon="sync" />}
               iconOnly
               disabled={!fetched}
-              onClick={() => toggleFetched()}
+              onClick={toggleFetched}
             />
             <Button
               label={t("schedule.action.add")}
               type="filled"
               icon={<MaterialIcon icon="add" />}
-              onClick={() => toggleAddPeriod()}
+              onClick={toggleAddPeriod}
             />
           </Actions>
         </Section>

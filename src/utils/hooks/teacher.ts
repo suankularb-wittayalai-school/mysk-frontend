@@ -1,28 +1,32 @@
-import { supabase } from "@utils/supabaseClient";
-import { useState, useEffect } from "react";
-import { Teacher } from "@utils/types/person";
-import { TeacherDB } from "@utils/types/database/person";
+// External libraries
+import { useEffect, useState } from "react";
+
+// Backend
 import { db2Teacher } from "@utils/backend/database";
 
-export function useTeacherOption(subjectGroupId: number) {
-  const [teachers, setTeachers] = useState<Array<Teacher>>([]);
+// Supabase
+import { supabase } from "@utils/supabase-client";
+
+// Types
+import { Teacher } from "@utils/types/person";
+
+export function useTeacherOptions(subjectGroupId: number) {
+  const [teachers, setTeachers] = useState<Teacher[]>([]);
 
   useEffect(() => {
     supabase
-      .from<TeacherDB>("teacher")
-      .select("id, teacher_id, people:person(*), SubjectGroup:subject_group(*)")
+      .from("teacher")
+      .select("*, person(*), subject_group(*)")
       .match({ subject_group: subjectGroupId })
       .then((res) => {
         if (res.error) {
           console.error(res.error);
         }
         // console.log(res.data);
-        if (!res.data) {
-          return [];
-        }
+        if (!res.data) return [];
 
         Promise.all(
-          res.data.map(async (teacher: TeacherDB) => await db2Teacher(teacher))
+          res.data.map(async (teacher) => await db2Teacher(supabase, teacher))
         ).then((teachers) => {
           setTeachers(teachers);
         });

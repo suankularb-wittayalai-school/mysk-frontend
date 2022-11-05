@@ -1,4 +1,4 @@
-// Modules
+// External libraries
 import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
@@ -8,6 +8,8 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { useEffect, useMemo, useState } from "react";
+
+import { withPageAuth } from "@supabase/auth-helpers-nextjs";
 
 // SK Components
 import {
@@ -20,9 +22,6 @@ import {
   Table,
   Title,
 } from "@suankularb-components/react";
-
-// Supabase client
-import { supabase } from "@utils/supabaseClient";
 
 // Components
 import CopyButton from "@components/CopyButton";
@@ -41,7 +40,6 @@ import { deleteTeacher, importTeachers } from "@utils/backend/person/teacher";
 // Types
 import { LangCode } from "@utils/types/common";
 import { ImportedTeacherData, Teacher } from "@utils/types/person";
-import { FetchedTeacherTable, TeacherDB } from "@utils/types/database/person";
 
 // Helpers
 import { nameJoiner } from "@utils/helpers/name";
@@ -110,12 +108,9 @@ const TeacherTable = ({
       teachers.map((teacher, idx) => ({
         idx,
         teacherID: teacher.teacherID.toString(),
-        name: nameJoiner(
-          locale,
-          teacher.name,
-          teacher.prefix,
-          { prefix: true }
-        ),
+        name: nameJoiner(locale, teacher.name, teacher.prefix, {
+          prefix: true,
+        }),
         classAdvisorAt: teacher.classAdvisorAt?.number
           ? t("class", { ns: "common", number: teacher.classAdvisorAt.number })
           : "",
@@ -300,42 +295,34 @@ const Teachers: NextPage<{ teachers: Teacher[] }> = ({
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
-  const { data, error } = await supabase
-    .from<FetchedTeacherTable>("teacher")
-    .select("id, teacher_id, people:person(*), subject_group(*)")
-    .order("subject_group", { ascending: true })
-    .order("id", { ascending: true });
+export const getServerSideProps: GetServerSideProps = withPageAuth({
+  async getServerSideProps({ locale }, supabase) {
+    const { data, error } = await supabase
+      .from("teacher")
+      .select("*, person(*), subject_group(*)");
 
-  if (error) {
-    console.error(error);
-    return { props: { teachers: [] } };
-  }
+    if (error) {
+      console.error(error);
+      return { props: { teachers: [] } };
+    }
 
-  if (!data) return { props: { teachers: [] } };
+    if (!data) return { props: { teachers: [] } };
 
-  // console.log(data);
+    const teachers: Teacher[] = await Promise.all(
+      data.map(async (teacher) => await db2Teacher(supabase, teacher))
+    );
 
-  const teachers: Teacher[] = await Promise.all(
-    data.map(
-      async (teacher) =>
-        await db2Teacher({
-          ...teacher,
-          SubjectGroup: teacher.subject_group,
-        })
-    )
-  );
-
-  return {
-    props: {
-      ...(await serverSideTranslations(locale as LangCode, [
-        "common",
-        "admin",
-        "account",
-      ])),
-      teachers,
-    },
-  };
-};
+    return {
+      props: {
+        ...(await serverSideTranslations(locale as LangCode, [
+          "common",
+          "admin",
+          "account",
+        ])),
+        teachers,
+      },
+    };
+  },
+});
 
 export default Teachers;

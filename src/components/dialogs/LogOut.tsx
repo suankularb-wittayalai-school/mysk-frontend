@@ -1,25 +1,21 @@
-// Modules
-import { useRouter } from "next/router";
+// External libraries
 import { useTranslation } from "next-i18next";
-import { useState } from "react";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 // SK Components
 import { Dialog } from "@suankularb-components/react";
 
-// Backend
-import { setAuthCookies } from "@utils/backend/account";
+// Hooks
+import { useToggle } from "@utils/hooks/toggle";
 
 // Types
 import { DialogProps } from "@utils/types/common";
 
-// Supabase
-import { supabase } from "@utils/supabaseClient";
-
 const LogOutDialog = ({ show, onClose }: DialogProps): JSX.Element => {
   const { t } = useTranslation("account");
-  const router = useRouter();
+  const supabase = useSupabaseClient();
 
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, toggleLoading] = useToggle();
 
   return (
     <Dialog
@@ -42,11 +38,8 @@ const LogOutDialog = ({ show, onClose }: DialogProps): JSX.Element => {
       show={show}
       onClose={onClose}
       onSubmit={async () => {
-        setLoading(true);
+        toggleLoading();
         await supabase.auth.signOut();
-        const cookiesOK = await setAuthCookies("SIGNED_OUT");
-        if (cookiesOK) router.push("/");
-        else setLoading(false);
       }}
     />
   );

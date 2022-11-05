@@ -1,4 +1,4 @@
-// Modules
+// External libraries
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
@@ -24,7 +24,7 @@ import {
 } from "@utils/backend/classroom/classroom";
 
 // Helpers
-import { getCurrentAcedemicYear } from "@utils/helpers/date";
+import { getCurrentAcademicYear } from "@utils/helpers/date";
 import { nameJoiner } from "@utils/helpers/name";
 
 // Patterns
@@ -65,7 +65,7 @@ const EditClassDialog = ({
     contacts: Contact[];
   }>({
     number: 101,
-    year: getCurrentAcedemicYear(),
+    year: getCurrentAcademicYear(),
     students: [],
     classAdvisors: [],
     contacts: [],

@@ -1,4 +1,4 @@
-// Modules
+// External libraries
 import Image from "next/image";
 import { useTranslation } from "next-i18next";
 

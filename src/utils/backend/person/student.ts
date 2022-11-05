@@ -1,25 +1,17 @@
-// External libraries
-import { PostgrestError, User } from "@supabase/supabase-js";
-
 // Backend
 import { createPerson } from "@utils/backend/person/person";
 
 // Helpers
-import { getCurrentAcedemicYear } from "@utils/helpers/date";
+import { getCurrentAcademicYear } from "@utils/helpers/date";
 
 // Supabase
-import { supabase } from "@utils/supabaseClient";
+import { supabase } from "@utils/supabase-client";
 
 // Types
 import { ClassWNumber } from "@utils/types/class";
-import { BackendReturn } from "@utils/types/common";
+import { BackendDataReturn, DatabaseClient } from "@utils/types/common";
 import { ImportedStudentData, Student } from "@utils/types/person";
-import { ClassroomDB, ClassroomTable } from "@utils/types/database/class";
-import {
-  PersonDB,
-  PersonTable,
-  StudentTable,
-} from "@utils/types/database/person";
+import { Database } from "@utils/types/supabase";
 
 const prefixMap = {
   เด็กชาย: "Master",
@@ -32,80 +24,80 @@ export async function createStudent(
   student: Student,
   email: string,
   isAdmin: boolean = false
-): Promise<{ data: StudentTable | null; error: PostgrestError | null }> {
+): Promise<
+  BackendDataReturn<Database["public"]["Tables"]["student"]["Row"], null>
+> {
   const { data: person, error: personCreationError } = await createPerson(
     student
   );
-  if (personCreationError || !person) {
+
+  if (personCreationError) {
     console.error(personCreationError);
     return { data: null, error: personCreationError };
   }
 
   const { data: createdStudent, error: studentCreationError } = await supabase
-    .from<StudentTable>("student")
+    .from("student")
     .insert({
-      person: person[0]?.id,
+      person: person!.id,
       std_id: student.studentID.trim(),
     })
+    .select("*, person(*)")
     .single();
-  if (studentCreationError || !createdStudent) {
+
+  if (studentCreationError) {
     console.error(studentCreationError);
-    // delete the created person
-    await supabase
-      .from<PersonDB>("people")
-      .delete()
-      .match({ id: person[0]?.id });
+    // Delete the created person
+    await supabase.from("people").delete().match({ id: person!.id });
     return { data: null, error: studentCreationError };
   }
 
   // add the student to the students array of the class
   // get the class
   const { data: classData, error: classError } = await supabase
-    .from<ClassroomTable>("classroom")
+    .from("classroom")
     .select("*")
-    .match({ number: student.class.number })
+    .match({ number: student.class.number, year: getCurrentAcademicYear() })
     .limit(1)
     .single();
   if (classData) {
     // add the student to the students array of the class
     // console.log(classData);
     const { data: updatedClass, error: updateClassError } = await supabase
-      .from<ClassroomTable>("classroom")
+      .from("classroom")
       .update({
-        students: [...classData.students, createdStudent.id],
+        students: [...classData.students, createdStudent!.id],
         // put student at the index of classNo - 1
         no_list: [
           ...classData.no_list.slice(0, student.classNo - 1),
-          createdStudent.id,
+          createdStudent!.id,
           ...classData.no_list.slice(student.classNo),
         ],
       })
-      .match({ number: student.class.number, year: getCurrentAcedemicYear() });
+      .match({ number: student.class.number, year: getCurrentAcademicYear() });
 
     if (updateClassError || !updatedClass) {
       console.error(updateClassError);
     }
   }
 
-  // register an account for the student
-  const res = await fetch("/api/account/student", {
+  // Register an account for the student
+  await fetch("/api/account/student", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       email,
-      id: createdStudent.id,
+      id: createdStudent!.id,
       isAdmin,
     }),
   });
 
-  return { data: createdStudent, error: null };
+  return { data: createdStudent!, error: null };
 }
 
 export async function deleteStudent(student: Student) {
   const { data: userid, error: selectingError } = await supabase
-    .from<User>("users")
+    .from("users")
     .select("id")
     .match({ student: student.id })
     .limit(1)
@@ -119,32 +111,47 @@ export async function deleteStudent(student: Student) {
     console.error("No user found");
   }
 
-  const { data: deleting, error } = await supabase
-    .from<StudentTable>("student")
+  const { data, error } = await supabase
+    .from("student")
     .delete()
     .match({ id: student.id })
+    .select("person(id)")
+    .limit(1)
     .single();
-  if (error || !deleting) {
+
+  if (error) {
     console.error(error);
     return;
   }
 
   // Delete the person of the student
-  const { data: person, error: personDeletingError } = await supabase
-    .from<PersonTable>("people")
+  const { error: personDeletingError } = await supabase
+    .from("people")
     .delete()
-    .match({ id: deleting.person });
+    .match({
+      id: (data as Database["public"]["Tables"]["student"]["Row"]).person.id,
+    });
 
-  if (personDeletingError || !person) {
+  if (personDeletingError) {
     console.error(personDeletingError);
     return;
   }
+
+  // get the class of the student
+  const { data: classData, error: classError } = await supabase
+    .from("classroom")
+    .select("*")
+    .match({ number: student.class.number })
+    .limit(1)
+    .maybeSingle();
 
   // remove the student from the class
   const { data: classStudent, error: classStudentError } = await supabase
     .from("classroom")
     .update({
-      students: supabase.rpc("array_remove", ["students", student.id]),
+      students: classData!.students.filter((id) => id !== student.id),
+      // replace the student id with 0
+      no_list: classData!.no_list.map((id) => (id === student.id ? 0 : id)),
     })
     .in("students", [student.id]);
 
@@ -155,58 +162,45 @@ export async function deleteStudent(student: Student) {
   // Delete account of the student
   await fetch(`/api/account`, {
     method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      id: userid?.id,
-    }),
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id: userid!.id }),
   });
 }
 
 export async function importStudents(data: ImportedStudentData[]) {
-  const students: Array<{ person: Student; email: string }> = data.map(
-    (student) => {
-      const person: Student = {
+  const students: { person: Student; email: string }[] = data.map((student) => {
+    const person: Student = {
+      id: 0,
+      prefix: {
+        th: student.prefix,
+        "en-US": prefixMap[student.prefix],
+      },
+      role: "student",
+      name: {
+        th: {
+          firstName: student.first_name_th,
+          middleName: student.middle_name_th,
+          lastName: student.last_name_th,
+        },
+        "en-US": {
+          firstName: student.first_name_en,
+          middleName: student.middle_name_en,
+          lastName: student.last_name_en,
+        },
+      },
+      birthdate: student.birthdate,
+      citizenID: student.citizen_id.toString(),
+      studentID: student.student_id.toString(),
+      contacts: [],
+      class: {
         id: 0,
-        prefix: {
-          th: student.prefix,
-          "en-US": prefixMap[student.prefix],
-        },
-        role: "student",
-        name: {
-          th: {
-            firstName: student.first_name_th,
-            middleName: student.middle_name_th,
-            lastName: student.last_name_th,
-          },
-          "en-US": {
-            firstName: student.first_name_en,
-            middleName: student.middle_name_en,
-            lastName: student.last_name_en,
-          },
-        },
-        birthdate: student.birthdate,
-        citizenID: student.citizen_id.toString(),
-        studentID: student.student_id.toString(),
-        contacts: [],
-        class: {
-          id: 0,
-          number: student.class,
-        },
-        classNo: student.class_number,
-      };
-      const email = student.email;
-      return { person, email };
-    }
-  );
-  // console.log(students);
-
-  // await Promise.all(
-  //   students.map(
-  //     async (student) => await createStudent(student.person, student.email)
-  //   )
-  // );
+        number: student.class_number,
+      },
+      classNo: student.class_number,
+    };
+    const email = student.email;
+    return { person, email };
+  });
 
   // for (const student of students) {
   //   await createStudent(student.person, student.email);
@@ -221,12 +215,13 @@ export async function importStudents(data: ImportedStudentData[]) {
 }
 
 export async function getClassOfStudent(
+  supabase: DatabaseClient,
   studentDBID: number
-): Promise<BackendReturn<ClassWNumber, null>> {
+): Promise<BackendDataReturn<ClassWNumber, null>> {
   const { data, error } = await supabase
-    .from<ClassroomDB>("classroom")
+    .from("classroom")
     .select("id, number")
-    .match({ year: getCurrentAcedemicYear() })
+    .match({ year: getCurrentAcademicYear() })
     .contains("students", [studentDBID])
     .limit(1)
     .single();
@@ -236,5 +231,5 @@ export async function getClassOfStudent(
     return { data: null, error };
   }
 
-  return { data: data as ClassWNumber, error: null };
+  return { data: data!, error: null };
 }

@@ -1,4 +1,4 @@
-// Modules
+// External libraries
 import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
@@ -8,6 +8,8 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { useEffect, useMemo, useState } from "react";
+
+import { withPageAuth } from "@supabase/auth-helpers-nextjs";
 
 import {
   useReactTable,
@@ -38,13 +40,9 @@ import ImportDataDialog from "@components/dialogs/ImportData";
 import { db2Subject } from "@utils/backend/database";
 import { deleteSubject, importSubjects } from "@utils/backend/subject/subject";
 
-// Supabase
-import { supabase } from "@utils/supabaseClient";
-
 // Types
-import { LangCode } from "@utils/types/common";
+import { DatabaseClient, LangCode } from "@utils/types/common";
 import { ImportedSubjectData, Subject } from "@utils/types/subject";
-import { SubjectTable as SubjectTableType } from "@utils/types/database/subject";
 
 // Helpers
 import { getLocaleYear } from "@utils/helpers/date";
@@ -315,38 +313,35 @@ const Subjects: NextPage<{ subjects: Subject[] }> = ({ subjects }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
-  let subjects: Subject[] = [];
+export const getServerSideProps: GetServerSideProps = withPageAuth({
+  async getServerSideProps({ locale }, supabase) {
+    let subjects: Subject[] = [];
 
-  const { data, error } = await supabase
-    .from<SubjectTableType>("subject")
-    .select("*")
-    .order("code_th", { ascending: true })
-    .order("group", { ascending: true })
-    .order("semester", { ascending: true })
-    .order("year", { ascending: true });
+    const { data, error } = await (supabase as DatabaseClient)
+      .from("subject")
+      .select("*")
+      .order("code_th")
+      .order("semester")
+      .order("year");
 
-  if (error) console.error(error);
+    if (error) console.error(error);
 
-  if (data) {
-    subjects = await Promise.all(
-      data.map(async (subject) => await db2Subject(subject))
-    );
-    // .sort((a, b) => (a.code.th < b.code.th ? -1 : 1))
-    // .sort((a, b) => a.semester - b.semester)
-    // .sort((a, b) => a.year - b.year);
-  }
+    if (data)
+      subjects = await Promise.all(
+        data.map(async (subject) => await db2Subject(supabase, subject))
+      );
 
-  return {
-    props: {
-      ...(await serverSideTranslations(locale as LangCode, [
-        "common",
-        "admin",
-        "subjects",
-      ])),
-      subjects,
-    },
-  };
-};
+    return {
+      props: {
+        ...(await serverSideTranslations(locale as LangCode, [
+          "common",
+          "admin",
+          "subjects",
+        ])),
+        subjects,
+      },
+    };
+  },
+});
 
 export default Subjects;
