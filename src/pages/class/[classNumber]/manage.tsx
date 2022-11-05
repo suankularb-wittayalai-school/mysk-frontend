@@ -20,7 +20,6 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import {
   Button,
   Card,
-  CardActions,
   CardHeader,
   CardSupportingText,
   ChipFilterList,
@@ -555,7 +554,7 @@ export const getServerSideProps: GetServerSideProps = withPageAuth({
       sbUser.user as User
     );
     const isAdvisor = teacher
-      ? teacher.classAdvisorAt?.id == classItem.id
+      ? teacher.classAdvisorAt?.id == classItem!.id
       : false;
 
     return {

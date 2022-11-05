@@ -1,6 +1,7 @@
 // External libraries
 import { Trans, useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 // SK Components
 import {
@@ -27,6 +28,7 @@ const GenerateClassesDialog = ({
   onClose,
   onSubmit,
 }: DialogProps & { onSubmit: () => void }): JSX.Element => {
+  const supabase = useSupabaseClient();
   const { t } = useTranslation(["admin", "common"]);
 
   // Form control
@@ -91,7 +93,7 @@ const GenerateClassesDialog = ({
       .flat();
 
     await Promise.all(
-      classes.map(async (classItem) => await createClassroom(classItem))
+      classes.map(async (classItem) => await createClassroom(supabase, classItem))
     );
 
     onSubmit();
