@@ -5,6 +5,7 @@ import { User } from "@supabase/supabase-js";
 import { createContact } from "@utils/backend/contact";
 import { db2Student } from "@utils/backend/database";
 import { getTeacherFromUser } from "@utils/backend/person/teacher";
+import { getCurrentAcademicYear } from "@utils/helpers/date";
 
 // Supabase
 import { supabase } from "@utils/supabase-client";
@@ -84,6 +85,7 @@ export async function setupPerson(
     citizenID: string;
     birthDate: string;
     subjectGroup: number;
+    classAdvisorAt: number;
   },
   person: Student | Teacher
 ): Promise<
@@ -183,6 +185,30 @@ export async function setupPerson(
       console.error(error);
       return { data: null, error };
     }
+
+    // get the classroom that the teacher is an advisor of
+    const { data: classroom, error: classroomError } = await supabase
+      .from("classroom")
+      .select("id, advisors")
+      .match({ number: form.classAdvisorAt, year: getCurrentAcademicYear() })
+      .maybeSingle();
+
+    if (classroomError) {
+      console.error(classroomError);
+      return { data: null, error: classroomError };
+    }
+
+    // Update class advisor
+    const { error: classAdvisorError } = await supabase
+      .from("classroom")
+      .update({ advisors: [...classroom!.advisors, person.id] })
+      .match({ id: classroom!.id });
+
+    if (classAdvisorError) {
+      console.error(classAdvisorError);
+      return { data: null, error: classAdvisorError };
+    }
+
     return { data: updPerson!, error: null };
   }
 

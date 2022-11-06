@@ -184,6 +184,10 @@ const DataCheckSection = ({
     citizenID: user.citizenID,
     birthDate: user.birthdate,
     subjectGroup: user.role == "teacher" ? user.subjectGroup.id : 0,
+    classAdvisorAt:
+      user.role == "teacher" && user.classAdvisorAt
+        ? user.classAdvisorAt.number
+        : 0,
   });
 
   // Form validation
@@ -390,6 +394,21 @@ const DataCheckSection = ({
                   label={t("profile.role.teacherID", { ns: "account" })}
                   onChange={(e) => setForm({ ...form, teacherID: e })}
                   defaultValue={user.teacherID}
+                  attr={{ disabled }}
+                />
+                <KeyboardInput
+                  name="teacher-advisor-at"
+                  type="text"
+                  label={t("profile.role.classAdvisorAt.label", {
+                    ns: "account",
+                  })}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      classAdvisorAt: parseInt(e),
+                    })
+                  }
+                  defaultValue={user.classAdvisorAt?.number}
                   attr={{ disabled }}
                 />
                 <Dropdown
