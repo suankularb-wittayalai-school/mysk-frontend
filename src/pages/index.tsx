@@ -80,7 +80,7 @@ const LandingFeed = ({ feed }: { feed: Feed }): JSX.Element => {
         }
       />
       {feed && (
-        <div className="overflow-x-auto sm:max-h-96">
+        <div className="overflow-y-auto overflow-x-hidden sm:max-h-96">
           <ul className="flex flex-col">
             {feed.content.map((feedItem) => (
               <LandingFeedItem key={feedItem.id} feedItem={feedItem} />
@@ -126,15 +126,19 @@ const LandingFeedItem = ({
               />
             ) : (
               <p
-                className="max-lines-2 m-2 overflow-hidden font-display text-5xl font-light
-                  leading-none text-on-surface-variant opacity-30"
+                className="max-lines-2 m-2 overflow-hidden font-display
+                  text-5xl font-light leading-none text-on-surface-variant
+                  opacity-30"
               >
                 {getLocaleString(feedItem.content.title, locale)}
               </p>
             )}
           </div>
           <div className="flex flex-col gap-1">
-            <h3 className="max-lines-2 font-display text-2xl font-bold leading-none">
+            <h3
+              className="max-lines-2 font-display text-2xl font-bold
+                leading-none"
+            >
               {getLocaleString(feedItem.content.title, locale)}
             </h3>
             <p className="max-lines-2 leading-tight">
@@ -246,8 +250,9 @@ const Landing: NextPage<{ feed: Feed }> & {
         <title>{t("brand.name", { ns: "common" })}</title>
       </Head>
       <div
-        className="min-h-screen bg-[url('/images/landing-light.webp')] bg-cover bg-fixed bg-center
-          text-on-surface dark:bg-[url('/images/landing-dark.webp')] sm:pt-[4.5rem]"
+        className="min-h-screen bg-[url('/images/landing-light.webp')] bg-cover
+          bg-fixed bg-center text-on-surface
+          dark:bg-[url('/images/landing-dark.webp')] sm:pt-[4.5rem]"
       >
         <RegularLayout>
           <div className="flex flex-col gap-y-6 md:grid md:grid-cols-2 md:gap-x-6">
