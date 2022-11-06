@@ -9,6 +9,9 @@ import { useTranslation } from "next-i18next";
 
 import { useEffect, useMemo, useState } from "react";
 
+import { withPageAuth } from "@supabase/auth-helpers-nextjs";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+
 import {
   getCoreRowModel,
   getFilteredRowModel,
@@ -49,7 +52,6 @@ import { useToggle } from "@utils/hooks/toggle";
 // Types
 import { DatabaseClient, LangCode } from "@utils/types/common";
 import { ImportedStudentData, Student } from "@utils/types/person";
-import { withPageAuth } from "@supabase/auth-helpers-nextjs";
 
 const StudentTable = ({
   students,
@@ -161,8 +163,9 @@ const StudentTable = ({
 const Students: NextPage<{ students: Student[] }> = ({
   students,
 }): JSX.Element => {
-  const { t } = useTranslation("admin");
   const router = useRouter();
+  const supabase = useSupabaseClient();
+  const { t } = useTranslation("admin");
 
   const [query, setQuery] = useState<string>("");
 
@@ -229,8 +232,8 @@ const Students: NextPage<{ students: Student[] }> = ({
       <ImportDataDialog
         show={showImport}
         onClose={() => setShowImport(false)}
-        onSubmit={async (e: ImportedStudentData[]) => {
-          await importStudents(e);
+        onSubmit={async (data: ImportedStudentData[]) => {
+          await importStudents(supabase, data);
           // console.log(e);
           setShowImport(false);
           router.replace(router.asPath);
@@ -275,7 +278,7 @@ const Students: NextPage<{ students: Student[] }> = ({
         show={showConfDel}
         onClose={toggleShowConfDel}
         onSubmit={async () => {
-          await deleteStudent(students[editingIdx]);
+          await deleteStudent(supabase, students[editingIdx]);
           toggleShowConfDel();
           router.replace(router.asPath);
         }}
