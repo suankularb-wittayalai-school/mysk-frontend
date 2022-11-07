@@ -12,7 +12,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useReducer, useState } from "react";
 
 import { User, withPageAuth } from "@supabase/auth-helpers-nextjs";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 
 // SK Components
 import {
@@ -166,6 +166,7 @@ const DataCheckSection = ({
 }): JSX.Element => {
   const { t } = useTranslation(["landing", "account"]);
   const supabase = useSupabaseClient();
+  const email = useUser()!.email;
   const locale = useRouter().locale as LangCode;
 
   const [loading, toggleLoading] = useToggle();
@@ -181,9 +182,9 @@ const DataCheckSection = ({
     enMiddleName: user.name["en-US"]?.middleName || "",
     enLastName: user.name["en-US"]?.lastName || "",
     studentID: user.role == "student" ? user.studentID : "",
-    teacherID: user.role == "teacher" ? user.teacherID : "",
     citizenID: user.citizenID,
     birthDate: user.birthdate,
+    email: email || "",
     subjectGroup: user.role == "teacher" ? user.subjectGroup.id : 0,
     classAdvisorAt:
       user.role == "teacher" && user.classAdvisorAt
@@ -216,6 +217,10 @@ const DataCheckSection = ({
       (!form.enFirstName || !form.enLastName)
     )
       return false;
+
+    // General information are required
+    if (!form.birthDate) return false;
+    if (!form.email) return false;
 
     // Student ID validation
     if (
@@ -378,6 +383,14 @@ const DataCheckSection = ({
               defaultValue={user.birthdate}
               attr={{ disabled }}
             />
+            <KeyboardInput
+              name="email"
+              type="text"
+              label={t("profile.general.email", { ns: "account" })}
+              onChange={(e) => setForm({ ...form, email: e })}
+              defaultValue={email}
+              attr={{ disabled }}
+            />
           </div>
         </section>
 
@@ -419,7 +432,7 @@ const DataCheckSection = ({
                     setForm({ ...form, classAdvisorAt: parseInt(e) })
                   }
                   defaultValue={user.classAdvisorAt?.number || ""}
-                  attr={{ disabled, pattern: classPattern }}
+                  attr={{ pattern: classPattern, disabled }}
                 />
               </>
             ) : (

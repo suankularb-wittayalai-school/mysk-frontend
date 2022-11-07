@@ -81,9 +81,9 @@ export async function setupPerson(
     enMiddleName: string;
     enLastName: string;
     studentID: string;
-    teacherID: string;
     citizenID: string;
     birthDate: string;
+    email: string;
     subjectGroup: number;
     classAdvisorAt: number;
   },
@@ -91,6 +91,16 @@ export async function setupPerson(
 ): Promise<
   BackendDataReturn<Database["public"]["Tables"]["people"]["Row"], null>
 > {
+  // Update user’s email
+  const { error: emailError } = await supabase.auth.updateUser({
+    email: form.email,
+  });
+
+  if (emailError) {
+    console.error(emailError);
+    return { data: null, error: emailError };
+  }
+
   // Get person ID
   let personID = 0;
 
@@ -107,6 +117,7 @@ export async function setupPerson(
       console.error(idError);
       return { data: null, error: idError };
     }
+
     personID = (
       studentPersonID!.person as Database["public"]["Tables"]["people"]["Row"]
     ).id;
@@ -171,22 +182,19 @@ export async function setupPerson(
     return { data: updPerson!, error: null };
   }
 
-  // Update a teacher’s teacher ID and subject group
+  // Update a teacher’s subject group and class advisor status
   else if (person.role == "teacher") {
     const { error } = await supabase
       .from("teacher")
-      .update({
-        teacher_id: form.teacherID,
-        subject_group: form.subjectGroup,
-      })
-      .match({ id: person.id, teacher_id: person.teacherID });
+      .update({ subject_group: form.subjectGroup })
+      .match({ id: person.id });
 
     if (error) {
       console.error(error);
       return { data: null, error };
     }
 
-    // get the classroom that the teacher is an advisor of
+    // Get the classroom that the teacher is an advisor of
     const { data: classroom, error: classroomError } = await supabase
       .from("classroom")
       .select("id, advisors")
