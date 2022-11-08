@@ -135,11 +135,6 @@ const HeroSection = ({
             title: t("welcome.nextSteps.newPassword.title"),
             desc: t("welcome.nextSteps.newPassword.desc"),
           },
-          role == "teacher" && {
-            icon: <MaterialIcon icon="school" />,
-            title: t("welcome.nextSteps.prepareForStudents.title"),
-            desc: t("welcome.nextSteps.prepareForStudents.desc"),
-          },
           {
             icon: <MaterialIcon icon="login" />,
             title: t("welcome.nextSteps.done.title"),
