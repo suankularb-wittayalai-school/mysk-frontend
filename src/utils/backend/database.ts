@@ -260,10 +260,6 @@ export async function db2Teacher(
     },
     profile: teacher.person.profile as OrUndefined<string>,
     teacherID: teacher.teacher_id,
-    classAdvisorAt: {
-      id: 0,
-      number: 0,
-    },
     citizenID: teacher.person.citizen_id,
     birthdate: teacher.person.birthdate,
     subjectGroup: {
@@ -481,7 +477,7 @@ export async function db2Class(
       formatted.students = await Promise.all(
         students.map(
           async (student) =>
-            await db2Student(supabase, student, { contacts: false })
+            await db2Student(supabase, student)
         )
       );
     }

@@ -14,14 +14,18 @@ import { MutableRefObject, useEffect, useRef, useState } from "react";
 import ReactToPrint from "react-to-print";
 
 import { User, withPageAuth } from "@supabase/auth-helpers-nextjs";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 // SK Components
 import {
   Button,
   Card,
   CardHeader,
+  CardSupportingText,
   ChipFilterList,
   Header,
+  KeyboardInput,
+  LayoutGridCols,
   LinkButton,
   MaterialIcon,
   RegularLayout,
@@ -62,6 +66,62 @@ import { Contact } from "@utils/types/contact";
 import { Student, Teacher } from "@utils/types/person";
 import { StudentFormItem } from "@utils/types/news";
 import { Database } from "@utils/types/supabase";
+import { classPattern, classRegex } from "@utils/patterns";
+
+const GoToClassSection = ({ number }: { number: number }): JSX.Element => {
+  const router = useRouter();
+  const { t } = useTranslation("class");
+
+  const [loading, toggleLoading] = useToggle();
+
+  const [destinationClass, setDestinationClass] = useState(number.toString());
+
+  function validate(): boolean {
+    if (number.toString() == destinationClass) return false;
+    if (!classRegex.test(destinationClass)) return false;
+
+    return true;
+  }
+
+  return (
+    <section>
+      <LayoutGridCols cols={3}>
+        <Card
+          type="stacked"
+          appearance="tonal"
+          className="sm:col-start-2 md:col-start-3"
+        >
+          <CardSupportingText className="!flex-row">
+            <KeyboardInput
+              name="number"
+              type="text"
+              label={t("goToClass")}
+              helperMsg={t("item.school.classNo_helper")}
+              errorMsg={t("item.school.classNo_error")}
+              useAutoMsg
+              onChange={setDestinationClass}
+              defaultValue={number}
+              className="flex-grow"
+              attr={{ pattern: classPattern }}
+            />
+            <Button
+              name={t("goToClass")}
+              type="outlined"
+              icon={<MaterialIcon icon="arrow_forward" />}
+              iconOnly
+              onClick={async () => {
+                toggleLoading();
+                await router.push(`/class/${destinationClass}/manage`);
+                toggleLoading();
+              }}
+              disabled={!validate() || loading}
+            />
+          </CardSupportingText>
+        </Card>
+      </LayoutGridCols>
+    </section>
+  );
+};
 
 const StudentFormCard = ({ form }: { form: StudentFormItem }): JSX.Element => {
   const locale = useRouter().locale as LangCode;
@@ -392,6 +452,7 @@ const Class: NextPage<{
   isAdvisor: boolean;
 }> = ({ classItem, studentForms, isAdvisor }) => {
   const router = useRouter();
+  const supabase = useSupabaseClient();
   const { t } = useTranslation("common");
 
   const [showAddTeacher, toggleShowAddTeacher] = useToggle();
@@ -408,13 +469,16 @@ const Class: NextPage<{
       <RegularLayout
         Title={
           <Title
-            name={{ title: t("class", { number: classItem.number }) }}
+            name={{
+              title: t("class", { number: classItem.number }),
+            }}
             pageIcon={<MaterialIcon icon="groups" />}
             backGoesTo="/learn"
             LinkElement={Link}
           />
         }
       >
+        <GoToClassSection number={classItem.number} />
         <FormSection
           studentForms={studentForms.map((newsItem) => ({
             ...newsItem,
@@ -442,7 +506,7 @@ const Class: NextPage<{
         show={showAddTeacher}
         onClose={toggleShowAddTeacher}
         onSubmit={async (teacher) => {
-          await addAdvisorToClassroom(teacher.id, classItem.id);
+          await addAdvisorToClassroom(supabase, teacher.id, classItem.id);
           router.replace(router.asPath);
           toggleShowAddTeacher();
         }}
@@ -460,6 +524,7 @@ const Class: NextPage<{
           }
 
           await addContactToClassroom(
+            supabase,
             (createdContact as Database["public"]["Tables"]["contact"]["Row"])
               .id,
             classItem.id
@@ -475,7 +540,11 @@ const Class: NextPage<{
 
 export const getServerSideProps: GetServerSideProps = withPageAuth({
   async getServerSideProps({ locale, params }, supabase) {
-    const classItem = await getClassroom(supabase, Number(params?.classNumber));
+    const { data: classItem, error } = await getClassroom(
+      supabase,
+      Number(params?.classNumber)
+    );
+    if (error) return { notFound: true };
 
     const studentForms: StudentFormItem[] = [];
 
@@ -485,7 +554,7 @@ export const getServerSideProps: GetServerSideProps = withPageAuth({
       sbUser.user as User
     );
     const isAdvisor = teacher
-      ? teacher.classAdvisorAt?.id == classItem.id
+      ? teacher.classAdvisorAt?.id == classItem!.id
       : false;
 
     return {

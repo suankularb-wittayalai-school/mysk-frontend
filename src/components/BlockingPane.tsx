@@ -16,14 +16,18 @@ const BlockingPane = ({
   <AnimatePresence>
     {show && (
       <motion.div
-        className="absolute -top-4 -left-4 z-20 flex h-[calc(100%+2rem)] w-[calc(100%+2rem)]
-          flex-col items-center justify-center gap-6 rounded-xl !p-6 text-center text-lg backdrop-blur-xl"
+        className="absolute z-10 flex h-full w-full flex-col items-center
+          justify-center gap-6 !p-6 text-center text-lg backdrop-blur-lg
+          sm:-top-4 sm:-left-4 sm:h-[calc(100%+2rem)] sm:w-[calc(100%+2rem)]
+          sm:rounded-xl"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={animationTransition}
       >
-        <div className="!text-9xl text-on-surface-variant">{icon}</div>
+        {icon && (
+          <div className="!text-9xl text-on-surface-variant">{icon}</div>
+        )}
         <p>{text}</p>
       </motion.div>
     )}

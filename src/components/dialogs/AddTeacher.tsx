@@ -49,7 +49,7 @@ const AddTeacherDialog = ({
         { name: t("dialog.addTeacher.action.add"), type: "submit" },
       ]}
       show={show}
-      onClose={() => onClose()}
+      onClose={onClose}
       onSubmit={() =>
         selectedTeacher &&
         onSubmit(
@@ -65,7 +65,7 @@ const AddTeacherDialog = ({
             value: group.id,
             label: group.name[locale],
           }))}
-          onChange={(e: number) => setSelectedGroup(e)}
+          onChange={setSelectedGroup}
         />
         <Dropdown
           name="teacher"
@@ -75,7 +75,7 @@ const AddTeacherDialog = ({
             label: nameJoiner(locale, teacher.name),
           }))}
           noOptionsText={t("dialog.addTeacher.noTeachers")}
-          onChange={(e: number) => setSelectedTeacher(e)}
+          onChange={setSelectedTeacher}
         />
       </DialogSection>
     </Dialog>

@@ -90,6 +90,9 @@
       "email": "อีเมลโรงเรียน"
     }
   },
+  "preferences": {
+    "title": "การตั้งค่า"
+  },
   "dialog": {
     "checkEmail": {
       "title": "ส่งอีเมลเรียบร้อย",

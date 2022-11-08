@@ -2,6 +2,7 @@
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 // SK Components
 import {
@@ -47,6 +48,7 @@ const EditClassDialog = ({
   mode: "add" | "edit";
   classItem?: Class;
 }): JSX.Element => {
+  const supabase = useSupabaseClient();
   const locale = useRouter().locale as LangCode;
   const { t } = useTranslation(["class", "admin"]);
 
@@ -109,7 +111,7 @@ const EditClassDialog = ({
 
     if (mode == "add") {
       const { data: createdClass, error: classCreationError } =
-        await createClassroom(classroom);
+        await createClassroom(supabase, classroom);
 
       if (classCreationError) {
         console.error(classCreationError);
@@ -117,6 +119,7 @@ const EditClassDialog = ({
       }
     } else if (mode == "edit") {
       const { data: _, error: classUpdateError } = await updateClassroom(
+        supabase,
         classroom
       );
 

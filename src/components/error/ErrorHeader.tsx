@@ -22,18 +22,20 @@ const ErrorHeader = ({ code, verbose }: { code?: number; verbose: string }) => {
   return (
     <>
       <Head>
-        <title>{createTitleStr([code, verbose].join(": "), t)}</title>
+        <title>
+          {createTitleStr(code ? [code, verbose].join(": ") : verbose, t)}
+        </title>
       </Head>
       <Section>
         {code ? (
-          <h2 className="font-display text-9xl">
+          <h2 className="font-display text-9xl leading-tight">
             <span className="font-thin">{code}: </span>
             <span className="font-bold">{verbose}</span>
           </h2>
         ) : (
           <h2 className="font-display text-9xl font-bold">{verbose}</h2>
         )}
-        <Actions align="left">
+        <Actions align="left" className="mt-6 sm:mt-0">
           <Button
             label={t("fallback.action.back")}
             type="filled"

@@ -16,7 +16,10 @@ import { useUser } from "@supabase/auth-helpers-react";
 import { FAB, MaterialIcon, Title } from "@suankularb-components/react";
 
 // Animations
-import { enterPageTransition } from "@utils/animations/config";
+import {
+  animationTransition,
+  enterPageTransition,
+} from "@utils/animations/config";
 
 // Helpers
 import { getLocaleString } from "@utils/helpers/i18n";
@@ -104,7 +107,13 @@ const NewsPageWrapper = ({
             </div>
           </motion.section>
 
-          {children}
+          <motion.div
+            initial={{ y: -280, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={enterPageTransition}
+          >
+            {children}
+          </motion.div>
         </div>
       </main>
 
