@@ -52,6 +52,7 @@ import {
   getFilteredRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 // Page-specific components
 const TeacherTable = ({
@@ -170,8 +171,9 @@ const TeacherTable = ({
 const Teachers: NextPage<{ teachers: Teacher[] }> = ({
   teachers,
 }): JSX.Element => {
-  const { t } = useTranslation("admin");
   const router = useRouter();
+  const supabase = useSupabaseClient();
+  const { t } = useTranslation("admin");
 
   const [query, setQuery] = useState<string>("");
 
@@ -238,9 +240,9 @@ const Teachers: NextPage<{ teachers: Teacher[] }> = ({
       <ImportDataDialog
         show={showImport}
         onClose={toggleShowImport}
-        onSubmit={async (e: ImportedTeacherData[]) => {
+        onSubmit={async (data: ImportedTeacherData[]) => {
           // console.log(e);
-          await importTeachers(e);
+          await importTeachers(supabase, data);
           toggleShowImport();
           router.replace(router.asPath);
         }}
@@ -283,12 +285,11 @@ const Teachers: NextPage<{ teachers: Teacher[] }> = ({
       <ConfirmDelete
         show={showConfDel}
         onClose={toggleShowConfDel}
-        onSubmit={() => {
+        onSubmit={async () => {
           if (editingIdx < 0) return;
-          deleteTeacher(teachers[editingIdx]).then(() => {
-            router.replace(router.asPath);
-            toggleShowConfDel();
-          });
+          await deleteTeacher(supabase, teachers[editingIdx]);
+          router.replace(router.asPath);
+          toggleShowConfDel();
         }}
       />
     </>

@@ -89,6 +89,9 @@
       "email": "School email"
     }
   },
+  "preferences": {
+    "title": "Preferences"
+  },
   "dialog": {
     "checkEmail": {
       "title": "Check your email",

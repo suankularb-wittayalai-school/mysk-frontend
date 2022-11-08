@@ -10,6 +10,7 @@ import { useReducer } from "react";
 
 // SK Components
 import {
+  Header,
   MaterialIcon,
   RegularLayout,
   Section,
@@ -40,6 +41,9 @@ import { SubjectListItem } from "@utils/types/subject";
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
 
+// Hooks
+import { useToggle } from "@utils/hooks/toggle";
+
 const StudentSchedule: NextPage<{
   schedule: ScheduleType;
   subjectList: SubjectListItem[];
@@ -47,10 +51,7 @@ const StudentSchedule: NextPage<{
   const { t } = useTranslation("learn");
 
   // Dialog control
-  const [showLogOut, toggleShowLogOut] = useReducer(
-    (value: boolean) => !value,
-    false
-  );
+  const [showLogOut, toggleShowLogOut] = useToggle();
 
   return (
     <>
@@ -70,6 +71,10 @@ const StudentSchedule: NextPage<{
         }
       >
         <Section>
+          <Header
+            icon={<MaterialIcon icon="dashboard" allowCustomSize />}
+            text={t("schedule")}
+          />
           <Schedule schedule={schedule} role="student" />
         </Section>
         <Section>

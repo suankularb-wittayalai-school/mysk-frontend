@@ -19,14 +19,18 @@ import AddClassDialog from "@components/dialogs/AddClass";
 import { useTeacherAccount } from "@utils/hooks/auth";
 
 // Types
-import { ChipInputListItem, DialogProps, LangCode } from "@utils/types/common";
+import {
+  ChipInputListItem,
+  LangCode,
+  SubmittableDialogProps,
+} from "@utils/types/common";
 import { Teacher } from "@utils/types/person";
 
 const AddSubjectDialog = ({
   show,
   onClose,
   onSubmit,
-}: DialogProps & { onSubmit: () => void }): JSX.Element => {
+}: SubmittableDialogProps): JSX.Element => {
   const { t } = useTranslation("teach");
   const supabase = useSupabaseClient();
   const locale = useRouter().locale as LangCode;
@@ -111,8 +115,8 @@ const AddSubjectDialog = ({
           { name: t("dialog.addSubject.action.add"), type: "submit" },
         ]}
         show={show}
-        onClose={() => onClose()}
-        onSubmit={() => handleSubmit()}
+        onClose={onClose}
+        onSubmit={handleSubmit}
       >
         <DialogSection hasNoGap>
           <Dropdown
@@ -136,6 +140,10 @@ const AddSubjectDialog = ({
             }}
             onAdd={() => setShowAddClass(true)}
           />
+        </DialogSection>
+        <DialogSection>
+          <p>{t("dialog.addSubject.detailsInfo")}</p>
+          <p>{t("dialog.addSubject.scheduleInfo")}</p>
         </DialogSection>
       </Dialog>
       <AddClassDialog

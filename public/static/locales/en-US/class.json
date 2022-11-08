@@ -1,5 +1,6 @@
 {
   "title": "M.{{className}}",
+  "goToClass": "Go to class number…",
   "item": {
     "school": {
       "title": "School",

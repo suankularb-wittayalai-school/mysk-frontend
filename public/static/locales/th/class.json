@@ -1,5 +1,6 @@
 {
   "title": "ม.{{className}}",
+  "goToClass": "ไปที่ห้อง…",
   "item": {
     "school": {
       "title": "โรงเรียน",

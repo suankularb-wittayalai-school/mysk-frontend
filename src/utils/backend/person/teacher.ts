@@ -48,6 +48,7 @@ export async function getTeacherFromUser(
 }
 
 export async function createTeacher(
+  supabase: DatabaseClient,
   teacher: Teacher,
   email: string,
   isAdmin: boolean = false
@@ -94,7 +95,10 @@ export async function createTeacher(
   return { error: null };
 }
 
-export async function deleteTeacher(teacher: Teacher) {
+export async function deleteTeacher(
+  supabase: DatabaseClient,
+  teacher: Teacher
+) {
   const { data: userID, error: selectingError } = await supabase
     .from("users")
     .select("id")
@@ -146,7 +150,10 @@ export async function deleteTeacher(teacher: Teacher) {
   }
 }
 
-export async function importTeachers(data: ImportedTeacherData[]) {
+export async function importTeachers(
+  supabase: DatabaseClient,
+  data: ImportedTeacherData[]
+) {
   const teachers: { person: Teacher; email: string }[] = data.map((teacher) => {
     const person: Teacher = {
       id: 0,
@@ -185,7 +192,8 @@ export async function importTeachers(data: ImportedTeacherData[]) {
 
   await Promise.all(
     teachers.map(
-      async (teacher) => await createTeacher(teacher.person, teacher.email)
+      async (teacher) =>
+        await createTeacher(supabase, teacher.person, teacher.email)
     )
   );
 }

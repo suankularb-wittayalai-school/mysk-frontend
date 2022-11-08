@@ -4,8 +4,6 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
-// Supabase client
-
 // SK Components
 import {
   Dialog,
@@ -111,6 +109,7 @@ const EditPersonDialog = ({
     if (mode == "add") {
       if (form.role == "student") {
         const { error } = await createStudent(
+          supabase,
           {
             id: 0,
             prefix: {
@@ -161,6 +160,7 @@ const EditPersonDialog = ({
       // TODO: add student to class
       else if (form.role == "teacher") {
         const { error } = await createTeacher(
+          supabase,
           {
             id: 0,
             prefix: {
@@ -223,7 +223,8 @@ const EditPersonDialog = ({
         .match({ citizen_id: person?.citizenID })
         .limit(1)
         .maybeSingle();
-      if (error || !data) {
+
+      if (error) {
         console.error(error);
         return;
       }

@@ -157,7 +157,7 @@ const Class: NextPage<{ classNumber: number; classItem: ClassType }> = ({
 
 export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   const classNumber = Number(params?.classNumber);
-  const classItem = await getClassroom(supabase, classNumber);
+  const { data: classItem } = await getClassroom(supabase, classNumber);
 
   return {
     props: {
@@ -167,7 +167,7 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
         "teacher",
       ])),
       classNumber,
-      classItem,
+      classItem: classItem!,
     },
     revalidate: 300,
   };

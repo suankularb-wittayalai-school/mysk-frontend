@@ -256,10 +256,6 @@ export async function db2Teacher(
     },
     profile: teacher.person.profile as OrUndefined<string>,
     teacherID: teacher.teacher_id,
-    classAdvisorAt: {
-      id: 0,
-      number: 0,
-    },
     citizenID: teacher.person.citizen_id,
     birthdate: teacher.person.birthdate,
     subjectGroup: {

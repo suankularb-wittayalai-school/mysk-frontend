@@ -14,7 +14,7 @@
   }
 
   html {
-    @apply [accent-color:var(--primary)];
+    @apply motion-safe:scroll-smooth [accent-color:var(--primary)];
   }
 }
 

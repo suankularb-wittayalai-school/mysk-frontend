@@ -2,6 +2,7 @@
   "title": "Subjects you teach",
   "schedule": {
     "title": "Schedule",
+    "blocked": "To create your schedule, refer to the “Subjects you teach” section below and follow the instructions there.",
     "action": {
       "enterEditMode": "Enter edit mode"
     }
@@ -25,6 +26,8 @@
       "supportingText": "Select a subject, then assign the classes you will teach this subject to.",
       "subject": "Subject",
       "addClasses": "Add classes",
+      "detailsInfo": "To add more details about your subject that’s unique to each class, use the “See details” button on each subject once you’re done.",
+      "scheduleInfo": "You can now also add this subject to your schedule.",
       "action": {
         "cancel": "Cancel",
         "add": "Add"

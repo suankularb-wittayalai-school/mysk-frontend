@@ -64,7 +64,7 @@ const ElectivePeriodsReveal = ({
           {schedulePeriod.content.map((item) => (
             <li
               key={item.id}
-              style={{ width: periodWidth * schedulePeriod.duration - 12 }}
+              style={{ width: periodWidth * item.duration - 12 }}
             >
               <SubjectPeriod
                 schedulePeriod={item}

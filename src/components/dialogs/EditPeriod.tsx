@@ -35,7 +35,7 @@ import { PeriodContentItemOptSubj } from "@utils/types/schedule";
 // Miscellaneous
 import { roomPattern } from "@utils/patterns";
 
-const EditPeriod = ({
+const EditPeriodDialog = ({
   show,
   onClose,
   onSubmit,
@@ -69,9 +69,9 @@ const EditPeriod = ({
         : 0,
     classID: 0,
     room: "",
-    day: 0,
+    day: 1,
     startTime: 0,
-    duration: 0,
+    duration: 1,
   });
 
   // Classes
@@ -103,7 +103,10 @@ const EditPeriod = ({
     // Populate form with day-time data if adding from Schedule
     else if (!canEditStartTime)
       setForm({
-        subject: teacher?.subjectsInCharge ? teacher.subjectsInCharge[0].id : 0,
+        subject:
+          teacher?.subjectsInCharge && teacher.subjectsInCharge.length > 0
+            ? teacher.subjectsInCharge[0].id
+            : 0,
         classID: classes.length > 0 ? classes[0].id : 0,
         room: "",
         day: day || 0,
@@ -119,9 +122,9 @@ const EditPeriod = ({
             : 0,
         classID: classes.length > 0 ? classes[0].id : 0,
         room: "",
-        day: 0,
-        startTime: 0,
-        duration: 0,
+        day: 1,
+        startTime: 1,
+        duration: 1,
       });
   }, [show]);
 
@@ -145,7 +148,8 @@ const EditPeriod = ({
     if (teacher) {
       if (mode == "add") await createScheduleItem(supabase, form, teacher.id);
       else if (mode == "edit")
-        if (schedulePeriod?.id) await editScheduleItem(supabase, form, schedulePeriod.id);
+        if (schedulePeriod?.id)
+          await editScheduleItem(supabase, form, schedulePeriod.id);
         else
           console.error(
             "cannot push edit, Schedule Period is missing Supabase ID"
@@ -263,4 +267,4 @@ const EditPeriod = ({
   );
 };
 
-export default EditPeriod;
+export default EditPeriodDialog;

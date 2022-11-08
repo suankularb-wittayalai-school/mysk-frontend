@@ -13,14 +13,11 @@ import { BackendDataReturn, DatabaseClient } from "@utils/types/common";
 import { ImportedStudentData, Student } from "@utils/types/person";
 import { Database } from "@utils/types/supabase";
 
-const prefixMap = {
-  เด็กชาย: "Master",
-  นาย: "Mr.",
-  นาง: "Mrs.",
-  นางสาว: "Miss.",
-} as const;
+// Miscellaneous
+import { prefixMap } from "@utils/maps";
 
 export async function createStudent(
+  supabase: DatabaseClient,
   student: Student,
   email: string,
   isAdmin: boolean = false
@@ -95,7 +92,10 @@ export async function createStudent(
   return { data: createdStudent!, error: null };
 }
 
-export async function deleteStudent(student: Student) {
+export async function deleteStudent(
+  supabase: DatabaseClient,
+  student: Student
+) {
   const { data: userid, error: selectingError } = await supabase
     .from("users")
     .select("id")
@@ -167,7 +167,10 @@ export async function deleteStudent(student: Student) {
   });
 }
 
-export async function importStudents(data: ImportedStudentData[]) {
+export async function importStudents(
+  supabase: DatabaseClient,
+  data: ImportedStudentData[]
+) {
   const students: { person: Student; email: string }[] = data.map((student) => {
     const person: Student = {
       id: 0,
@@ -207,7 +210,7 @@ export async function importStudents(data: ImportedStudentData[]) {
   // }
   // sequentially create students
   for (let i = 0; i < students.length; i++) {
-    await createStudent(students[i].person, students[i].email);
+    await createStudent(supabase, students[i].person, students[i].email);
     if (i % 10 === 0) {
       console.log(i);
     }

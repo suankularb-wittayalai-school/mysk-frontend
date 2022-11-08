@@ -4,13 +4,10 @@ import { motion } from "framer-motion";
 import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
-import { useEffect, useReducer, useState } from "react";
-
-import { useQuery, useQueryClient } from "react-query";
 
 import { withPageAuth } from "@supabase/auth-helpers-nextjs";
 
@@ -33,10 +30,11 @@ import {
 } from "@suankularb-components/react";
 
 // Components
+import BlockingPane from "@components/BlockingPane";
+import SubjectCard from "@components/SubjectCard";
 import LogOutDialog from "@components/dialogs/LogOut";
 import AddSubjectDialog from "@components/dialogs/AddSubject";
 import Schedule from "@components/schedule/Schedule";
-import SubjectCard from "@components/SubjectCard";
 
 // Animations
 import { animationTransition } from "@utils/animations/config";
@@ -53,18 +51,26 @@ import { ClassWNumber } from "@utils/types/class";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
+
+// Hooks
 import { useToggle } from "@utils/hooks/toggle";
-import { useRouter } from "next/router";
 
 const ScheduleSection = ({
   schedule,
+  disabled,
 }: {
   schedule: ScheduleType;
+  disabled?: boolean;
 }): JSX.Element => {
   const { t } = useTranslation("teach");
 
   return (
-    <Section>
+    <Section className="relative">
+      <BlockingPane
+        icon={<MaterialIcon icon="block" allowCustomSize />}
+        text={t("schedule.blocked")}
+        show={disabled}
+      />
       <Header
         icon={<MaterialIcon icon="dashboard" allowCustomSize />}
         text={t("schedule.title")}
@@ -77,6 +83,7 @@ const ScheduleSection = ({
           icon={<MaterialIcon icon="edit" />}
           url="/teach/schedule"
           LinkElement={Link}
+          disabled={disabled}
         />
       </Actions>
     </Section>
@@ -185,7 +192,7 @@ const Teach: NextPage<{
           />
         }
       >
-        <ScheduleSection schedule={schedule} />
+        <ScheduleSection schedule={schedule} disabled={subjects.length == 0} />
         <SubjectsYouTeachSection
           subjects={subjects}
           toggleShowAdd={toggleShowAdd}

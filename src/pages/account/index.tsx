@@ -9,7 +9,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { User, withPageAuth } from "@supabase/auth-helpers-nextjs";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // SK Components
 import {
@@ -18,6 +18,7 @@ import {
   Dropdown,
   Header,
   KeyboardInput,
+  LayoutGridCols,
   LinkButton,
   MaterialIcon,
   RegularLayout,
@@ -305,6 +306,41 @@ const EditInfoSection = ({
   );
 };
 
+const PreferencesSection = (): JSX.Element => {
+  const { t } = useTranslation("account");
+  const router = useRouter();
+  const locale = router.locale as LangCode;
+
+  const [form, setForm] = useState({
+    locale,
+  });
+
+  useEffect(() => {
+    router.push(router.asPath, router.asPath, { locale: form.locale });
+  }, [form.locale]);
+
+  return (
+    <Section>
+      <Header
+        icon={<MaterialIcon icon="settings" allowCustomSize />}
+        text={t("preferences.title")}
+      />
+      <LayoutGridCols cols={3}>
+        <Dropdown
+          name="language"
+          label="ภาษา / Display language"
+          options={[
+            { value: "th", label: "ภาษาไทย" },
+            { value: "en-US", label: "English (United States)" },
+          ]}
+          defaultValue={locale}
+          onChange={(e: LangCode) => setForm({ ...form, locale: e })}
+        />
+      </LayoutGridCols>
+    </Section>
+  );
+};
+
 const AccountDetails: NextPage<{ user: Student | Teacher }> = ({ user }) => {
   const { t } = useTranslation("account");
 
@@ -336,6 +372,7 @@ const AccountDetails: NextPage<{ user: Student | Teacher }> = ({ user }) => {
         />
         {/* TODO: Edit Info functionality */}
         {/* <EditInfoSection user={user} /> */}
+        <PreferencesSection />
       </RegularLayout>
 
       {/* Dialogs */}

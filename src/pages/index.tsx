@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 
 import type { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
-import Image from "next/image";
+import Image from "next/future/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -41,15 +41,18 @@ import { getLocaleString } from "@utils/helpers/i18n";
 type Feed = { lastUpdated: string; content: NewsItemInfoNoDate[] };
 
 // News
-const LandingFeed = ({ feed }: { feed?: Feed }): JSX.Element => {
+const LandingFeed = ({ feed }: { feed: Feed }): JSX.Element => {
   const { t } = useTranslation("landing");
   const locale = useRouter().locale as LangCode;
 
   return (
     <section
       aria-label={t("news.title")}
-      className="mt-16 bg-[#C5E7FF5E] !p-0 backdrop-blur-md dark:bg-[#004C6D5E]
-        sm:col-span-2 sm:col-start-2 sm:mt-0 sm:rounded-xl"
+      className={[
+        `mt-16 bg-[#C5E7FF5E] !p-0 backdrop-blur-md dark:bg-[#004C6D5E]
+        sm:col-span-2 sm:col-start-2 sm:mt-0 sm:rounded-xl`,
+        feed.content.length == 0 ? "sm:!pb-0" : "sm:!pb-2",
+      ].join(" ")}
     >
       <CardHeader
         icon={<MaterialIcon icon="newspaper" className="text-on-surface" />}
@@ -76,17 +79,21 @@ const LandingFeed = ({ feed }: { feed?: Feed }): JSX.Element => {
           ) : undefined
         }
       />
-      <ul className="flex flex-col pb-1">
-        {(feed?.content || []).map((feedItem) => (
-          <LandingFeedItem key={feedItem.id} feedItem={feedItem} />
-        ))}
-        <li
-          className="container-secondary mt-6 py-4 px-6
-            text-center font-display text-lg font-medium sm:hidden"
-        >
-          {t("news.reachedEnd")}
-        </li>
-      </ul>
+      {feed && (
+        <div className="overflow-y-auto overflow-x-hidden sm:max-h-96">
+          <ul className="flex flex-col">
+            {feed.content.map((feedItem) => (
+              <LandingFeedItem key={feedItem.id} feedItem={feedItem} />
+            ))}
+            <li
+              className="container-secondary mt-6 py-4 px-6
+              text-center font-display text-lg font-medium sm:hidden"
+            >
+              {t("news.reachedEnd")}
+            </li>
+          </ul>
+        </div>
+      )}
     </section>
   );
 };
@@ -113,21 +120,25 @@ const LandingFeedItem = ({
             {feedItem.image ? (
               <Image
                 src={feedItem.image}
-                layout="fill"
-                objectFit="cover"
+                fill
                 alt={getLocaleString(feedItem.content.title, locale)}
+                className="object-cover"
               />
             ) : (
               <p
-                className="max-lines-2 m-2 overflow-hidden font-display text-5xl font-light
-                  leading-none text-on-surface-variant opacity-30"
+                className="max-lines-2 m-2 overflow-hidden font-display
+                  text-5xl font-light leading-none text-on-surface-variant
+                  opacity-30"
               >
                 {getLocaleString(feedItem.content.title, locale)}
               </p>
             )}
           </div>
           <div className="flex flex-col gap-1">
-            <h3 className="max-lines-2 font-display text-2xl font-bold leading-none">
+            <h3
+              className="max-lines-2 font-display text-2xl font-bold
+                leading-none"
+            >
               {getLocaleString(feedItem.content.title, locale)}
             </h3>
             <p className="max-lines-2 leading-tight">
@@ -147,28 +158,35 @@ const LandingBanner = (): JSX.Element => {
 
   return (
     <header className="flex flex-col gap-2 font-display sm:gap-6">
-      <h2 className="text-[7rem] font-bold leading-none sm:text-[10rem]">
+      <h2
+        className="text-[7rem] font-bold leading-none tracking-tighter
+          sm:text-[10rem]"
+      >
         <Trans i18nKey="brand.nameWithAccent" ns="common">
           My
           <span className="text-[#8B005A] dark:text-[#FF80C3]">
             {/* (@SiravitPhokeed)
-                These colors are `secondary70` and `secondary30` in the Figma palette, but not
-                the Tailwind palette. Should we add them (and others like them)?
+                These colors are `secondary70` and `secondary30` in the Figma
+                palette, but not the Tailwind palette. Should we add them (and
+                others like them)?
               */}
             SK
           </span>
         </Trans>
       </h2>
       <div className="flex flex-col gap-2">
-        <div className="flex flex-row items-center gap-2 leading-tight sm:gap-6">
-          <div className="relative aspect-square h-24 drop-shadow sm:h-28">
-            <Image
-              src="/images/branding/logo-white.svg"
-              layout="fill"
-              priority
-              alt={t("brand.logoAlt", { ns: "common" })}
-            />
-          </div>
+        <div
+          className="flex flex-row items-center gap-2 leading-tight
+            sm:gap-6"
+        >
+          <Image
+            src="/images/branding/logo-white.svg"
+            width={96}
+            height={96}
+            priority
+            alt={t("brand.logoAlt", { ns: "common" })}
+            className="h-24 drop-shadow sm:h-28"
+          />
           <p className="text-xl sm:text-3xl">
             <Trans i18nKey="brand.slogan" ns="common">
               Education management
@@ -232,8 +250,9 @@ const Landing: NextPage<{ feed: Feed }> & {
         <title>{t("brand.name", { ns: "common" })}</title>
       </Head>
       <div
-        className="min-h-screen bg-[url('/images/landing-light.webp')] bg-cover bg-fixed bg-center
-          text-on-surface dark:bg-[url('/images/landing-dark.webp')] sm:pt-[4.5rem]"
+        className="min-h-screen bg-[url('/images/landing-light.webp')] bg-cover
+          bg-fixed bg-center text-on-surface
+          dark:bg-[url('/images/landing-dark.webp')] sm:pt-[4.5rem]"
       >
         <RegularLayout>
           <div className="flex flex-col gap-y-6 md:grid md:grid-cols-2 md:gap-x-6">
