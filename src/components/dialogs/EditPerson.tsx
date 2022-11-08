@@ -93,17 +93,6 @@ const EditPersonDialog = ({
     }
   }, [mode, person]);
 
-  // Dummybase
-  const classes = [
-    {
-      id: 509,
-      name: {
-        "en-US": "M.509",
-        th: "ม.509",
-      },
-    },
-  ];
-
   function validate(): boolean {
     if (!form.thPrefix) return false;
     if (!form.thFirstName) return false;
@@ -240,7 +229,9 @@ const EditPersonDialog = ({
         return;
       }
 
-      const personID: number = data?.id;
+      const personID: number = data!.id;
+
+      console.log({ personID });
 
       // Update person
       const { error: updatePersonError } = await supabase

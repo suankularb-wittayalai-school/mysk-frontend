@@ -181,15 +181,13 @@ export async function db2Student(
     name: {
       th: {
         firstName: student.person.first_name_th,
+        middleName: student.person.middle_name_th as OrUndefined<string>,
         lastName: student.person.last_name_th,
       },
       "en-US": {
-        firstName: student.person.first_name_en
-          ? student.person.first_name_en
-          : "",
-        lastName: student.person.last_name_en
-          ? student.person.last_name_en
-          : "",
+        firstName: student.person.first_name_en || "",
+        middleName: student.person.middle_name_en as OrUndefined<string>,
+        lastName: student.person.last_name_en || "",
       },
     },
     studentID: student.std_id,
@@ -245,17 +243,15 @@ export async function db2Teacher(
       "en-US": teacher.person.prefix_en as OrUndefined<string>,
     },
     name: {
-      "en-US": {
-        firstName: teacher.person.first_name_en
-          ? teacher.person.first_name_en
-          : "",
-        lastName: teacher.person.last_name_en
-          ? teacher.person.last_name_en
-          : "",
-      },
       th: {
         firstName: teacher.person.first_name_th,
+        middleName: teacher.person.middle_name_th as OrUndefined<string>,
         lastName: teacher.person.last_name_th,
+      },
+      "en-US": {
+        firstName: teacher.person.first_name_en || "",
+        middleName: teacher.person.middle_name_en as OrUndefined<string>,
+        lastName: teacher.person.last_name_en || "",
       },
     },
     profile: teacher.person.profile as OrUndefined<string>,
@@ -475,10 +471,7 @@ export async function db2Class(
     }
     if (students) {
       formatted.students = await Promise.all(
-        students.map(
-          async (student) =>
-            await db2Student(supabase, student)
-        )
+        students.map(async (student) => await db2Student(supabase, student))
       );
     }
   }

@@ -76,10 +76,10 @@
       "studentID": "Student ID",
       "teacherID": "Teacher ID",
       "subjectGroup": "Subject group",
-      "classAdvisorAt": {
-        "label": "Class advisor at",
-        "none": "Not an advisor"
-      },
+      "subjectGroup_helper": "Choose “Guest Lecturer” if none applies.",
+      "classAdvisorAt": "Class advisor at",
+      "classAdvisorAt_helper": "Must be 3-digit, i.e. 408.",
+      "classAdvisorAt_error": "Invalid. Should be 3-digit, i.e. 408.",
       "isAdmin": "Give administrator permissions"
     },
     "general": {

@@ -18,7 +18,7 @@ import {
 } from "react";
 
 import { User, withPageAuth } from "@supabase/auth-helpers-nextjs";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 
 // SK Components
 import {
@@ -67,6 +67,7 @@ import { prefixMap } from "@utils/maps";
 import {
   citizenIDPattern,
   citizenIDRegex,
+  classPattern,
   studentIDRegex,
 } from "@utils/patterns";
 
@@ -134,11 +135,6 @@ const HeroSection = ({
             title: t("welcome.nextSteps.newPassword.title"),
             desc: t("welcome.nextSteps.newPassword.desc"),
           },
-          role == "teacher" && {
-            icon: <MaterialIcon icon="school" />,
-            title: t("welcome.nextSteps.prepareForStudents.title"),
-            desc: t("welcome.nextSteps.prepareForStudents.desc"),
-          },
           {
             icon: <MaterialIcon icon="login" />,
             title: t("welcome.nextSteps.done.title"),
@@ -175,6 +171,7 @@ const DataCheckSection = ({
 }): JSX.Element => {
   const { t } = useTranslation(["landing", "account"]);
   const supabase = useSupabaseClient();
+  const email = useUser()!.email;
   const locale = useRouter().locale as LangCode;
 
   const sectionRef = useRef<any>();
@@ -195,9 +192,9 @@ const DataCheckSection = ({
     enMiddleName: user.name["en-US"]?.middleName || "",
     enLastName: user.name["en-US"]?.lastName || "",
     studentID: user.role == "student" ? user.studentID : "",
-    teacherID: user.role == "teacher" ? user.teacherID : "",
     citizenID: user.citizenID,
     birthDate: user.birthdate,
+    email: email || "",
     subjectGroup: user.role == "teacher" ? user.subjectGroup.id : 0,
     classAdvisorAt:
       user.role == "teacher" && user.classAdvisorAt
@@ -230,6 +227,10 @@ const DataCheckSection = ({
       (!form.enFirstName || !form.enLastName)
     )
       return false;
+
+    // General information are required
+    if (!form.birthDate) return false;
+    if (!form.email) return false;
 
     // Student ID validation
     if (
@@ -393,6 +394,14 @@ const DataCheckSection = ({
               defaultValue={user.birthdate}
               attr={{ disabled }}
             />
+            <KeyboardInput
+              name="email"
+              type="text"
+              label={t("profile.general.email", { ns: "account" })}
+              onChange={(e) => setForm({ ...form, email: e })}
+              defaultValue={email}
+              attr={{ disabled }}
+            />
           </div>
         </section>
 
@@ -404,29 +413,6 @@ const DataCheckSection = ({
           <div className="layout-grid-cols-4 !gap-y-0">
             {user.role == "teacher" ? (
               <>
-                <KeyboardInput
-                  name="teacher-id"
-                  type="text"
-                  label={t("profile.role.teacherID", { ns: "account" })}
-                  onChange={(e) => setForm({ ...form, teacherID: e })}
-                  defaultValue={user.teacherID}
-                  attr={{ disabled }}
-                />
-                <KeyboardInput
-                  name="teacher-advisor-at"
-                  type="text"
-                  label={t("profile.role.classAdvisorAt.label", {
-                    ns: "account",
-                  })}
-                  onChange={(e) =>
-                    setForm({
-                      ...form,
-                      classAdvisorAt: parseInt(e),
-                    })
-                  }
-                  defaultValue={user.classAdvisorAt?.number}
-                  attr={{ disabled }}
-                />
                 <Dropdown
                   name="subject-group"
                   label={t("profile.role.subjectGroup", { ns: "account" })}
@@ -434,10 +420,30 @@ const DataCheckSection = ({
                     value: subjectGroup.id,
                     label: getLocaleString(subjectGroup.name, locale),
                   }))}
+                  helperMsg={t("profile.role.subjectGroup_helper", {
+                    ns: "account",
+                  })}
                   onChange={(e: number) =>
                     setForm({ ...form, subjectGroup: e })
                   }
                   defaultValue={user.subjectGroup.id}
+                />
+                <KeyboardInput
+                  name="class-advisor-at"
+                  type="text"
+                  label={t("profile.role.classAdvisorAt", { ns: "account" })}
+                  helperMsg={t("profile.role.classAdvisorAt_helper", {
+                    ns: "account",
+                  })}
+                  errorMsg={t("profile.role.classAdvisorAt_error", {
+                    ns: "account",
+                  })}
+                  useAutoMsg
+                  onChange={(e) =>
+                    setForm({ ...form, classAdvisorAt: parseInt(e) })
+                  }
+                  defaultValue={user.classAdvisorAt?.number || ""}
+                  attr={{ pattern: classPattern, disabled }}
                 />
               </>
             ) : (
