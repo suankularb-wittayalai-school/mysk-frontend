@@ -1,4 +1,6 @@
 // External libraries
+import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
+
 import { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
@@ -6,18 +8,10 @@ import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { FC, useMemo, useState } from "react";
-
-import {
-  ColumnDef,
-  getCoreRowModel,
-  getFilteredRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
+import { FC, useState } from "react";
 
 // SK Components
 import {
-  Button,
   Card,
   CardHeader,
   ChipRadioGroup,
@@ -26,26 +20,23 @@ import {
   MaterialIcon,
   RegularLayout,
   Section,
-  Table,
   Title,
 } from "@suankularb-components/react";
 
-// Components
-import DataTableBody from "@components/data-table/DataTableBody";
-import DataTableHeader from "@components/data-table/DataTableHeader";
+// Animations
+import { animationTransition } from "@utils/animations/config";
 
 // Types
+import { IndividualOnboardingStatus } from "@utils/types/admin";
 import { LangCode } from "@utils/types/common";
+import { Role } from "@utils/types/person";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
-import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
-import { animationTransition } from "@utils/animations/config";
-import { Role } from "@utils/types/person";
 
 const StatisticsSection: FC = () => {
   const { t } = useTranslation("admin");
-  const [countRequest, setCountRequest] = useState<"complete" | "incomplete">(
+  const [countType, setCountRequest] = useState<"complete" | "incomplete">(
     "complete"
   );
 
@@ -64,12 +55,12 @@ const StatisticsSection: FC = () => {
     <Section>
       <Header
         icon={<MaterialIcon icon="data_usage" allowCustomSize />}
-        text="Statistics"
+        text={t("onboarding.stats.title")}
       />
       <ChipRadioGroup
         choices={[
-          { id: "complete", name: "Complete" },
-          { id: "incomplete", name: "Incomplete" },
+          { id: "complete", name: t("onboarding.stats.chip.complete") },
+          { id: "incomplete", name: t("onboarding.stats.chip.incomplete") },
         ]}
         onChange={setCountRequest}
         required
@@ -78,17 +69,23 @@ const StatisticsSection: FC = () => {
       <LayoutGridCols cols={2}>
         {["teacher", "student"].map((role) => (
           <Card key={role} type="stacked" appearance="outlined">
-            <CardHeader title={<h3>Teachers onboarded</h3>} />
+            <CardHeader
+              title={
+                <h3>{t(`onboarding.stats.${role}.title.${countType}`)}</h3>
+              }
+            />
             <p className="px-4 pb-2 font-display">
               <span className="text-6xl font-bold">
-                {countRequest == "incomplete"
+                {countType == "incomplete"
                   ? statistics[role as Role].full -
                     statistics[role as Role].complete
                   : statistics[role as Role].complete}
               </span>
               <span className="text-4xl">/</span>
               <span className="text-xl">
-                {statistics[role as Role].full} teachers
+                {t(`onboarding.stats.${role}.count`, {
+                  count: statistics[role as Role].full,
+                })}
               </span>
             </p>
           </Card>
@@ -98,13 +95,47 @@ const StatisticsSection: FC = () => {
   );
 };
 
+const IndividualStatusCard: FC<{ teacher: IndividualOnboardingStatus }> = ({
+  teacher,
+}) => {
+  const { t } = useTranslation("admin");
+
+  return (
+    <Card type="horizontal" appearance="tonal">
+      <CardHeader
+        title={<h3 className="!break-all">{teacher.name}</h3>}
+        label={
+          <div className="!flex flex-row items-center gap-1">
+            {teacher.passwordSet ? (
+              <>
+                <MaterialIcon icon="password" className="text-primary" />
+                <span>{t("onboarding.status.status.passwordSet")}</span>
+              </>
+            ) : teacher.dataChecked ? (
+              <>
+                <MaterialIcon icon="badge" className="text-primary" />
+                <span>{t("onboarding.status.status.dataChecked")}</span>
+              </>
+            ) : (
+              <>
+                <MaterialIcon icon="block" className="text-primary" />
+                <span>{t("onboarding.status.status.noneCompleted")}</span>
+              </>
+            )}
+          </div>
+        }
+      />
+    </Card>
+  );
+};
+
 const IndividualStatusSection: FC = () => {
   const { t } = useTranslation("admin");
 
-  const teachers = [
+  const teachers: IndividualOnboardingStatus[] = [
     {
       id: 1,
-      name: "Boonsup Wattanapornmongkol",
+      name: "จอห์น โด",
       dataChecked: true,
       passwordSet: false,
     },
@@ -114,7 +145,7 @@ const IndividualStatusSection: FC = () => {
     <Section>
       <Header
         icon={<MaterialIcon icon="group" allowCustomSize />}
-        text="Teacher onboarding status"
+        text={t("onboarding.status.title.teacher")}
       />
       <LayoutGridCols cols={3}>
         <ul className="contents">
@@ -129,49 +160,7 @@ const IndividualStatusSection: FC = () => {
                   layoutId={`teacher-${teacher.id}`}
                   transition={animationTransition}
                 >
-                  <Card type="horizontal" appearance="tonal">
-                    <CardHeader
-                      title={<h3 className="!break-all">{teacher.name}</h3>}
-                      label={
-                        <div className="!flex flex-row items-center gap-1">
-                          {teacher.passwordSet ? (
-                            <>
-                              <MaterialIcon
-                                icon="password"
-                                className="text-primary"
-                              />
-                              <span>Password set</span>
-                            </>
-                          ) : teacher.dataChecked ? (
-                            <>
-                              <MaterialIcon
-                                icon="badge"
-                                className="text-primary"
-                              />
-                              <span>Data checked</span>
-                            </>
-                          ) : (
-                            <>
-                              <MaterialIcon
-                                icon="block"
-                                className="text-primary"
-                              />
-                              <span>No steps completed</span>
-                            </>
-                          )}
-                        </div>
-                      }
-                      end={
-                        <Button
-                          name="Delete user"
-                          type="text"
-                          icon={<MaterialIcon icon="delete" />}
-                          iconOnly
-                          isDangerous
-                        />
-                      }
-                    />
-                  </Card>
+                  <IndividualStatusCard teacher={teacher} />
                 </motion.li>
               ))}
             </AnimatePresence>
@@ -188,12 +177,12 @@ const OnboardingStatus: NextPage = () => {
   return (
     <>
       <Head>
-        <title>{createTitleStr("Onboarding status", t)}</title>
+        <title>{createTitleStr(t("onboarding.title"), t)}</title>
       </Head>
       <RegularLayout
         Title={
           <Title
-            name={{ title: "Onboarding status" }}
+            name={{ title: t("onboarding.title") }}
             pageIcon={<MaterialIcon icon="waving_hand" />}
             backGoesTo="/admin"
             LinkElement={Link}

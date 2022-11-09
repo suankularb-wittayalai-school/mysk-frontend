@@ -130,7 +130,7 @@ const OnboardingSection = (): JSX.Element => {
     <Section>
       <Header
         icon={<MaterialIcon icon="waving_hand" allowCustomSize />}
-        text="Onboarding"
+        text={t("onboarding.card.title")}
       />
       <LayoutGridCols cols={3}>
         <Link href="/admin/onboarding">
@@ -138,8 +138,10 @@ const OnboardingSection = (): JSX.Element => {
             <Card type="horizontal" appearance="outlined" hasAction>
               <CardHeader
                 icon={<MaterialIcon icon="waving_hand" />}
-                title={<h3 id="onboarding-title">Onboarding</h3>}
-                label="Check onboarding status"
+                title={
+                  <h3 id="onboarding-title">{t("onboarding.card.title")}</h3>
+                }
+                label={t("onboarding.card.supportingText")}
                 end={<MaterialIcon icon="arrow_forward" />}
               />
             </Card>
