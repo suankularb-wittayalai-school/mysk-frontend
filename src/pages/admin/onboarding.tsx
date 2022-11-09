@@ -8,7 +8,7 @@ import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
 // SK Components
 import {
@@ -33,6 +33,7 @@ import { Role } from "@utils/types/person";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
+import { supabase } from "@utils/supabase-client";
 
 const StatisticsSection: FC = () => {
   const { t } = useTranslation("admin");
@@ -40,16 +41,72 @@ const StatisticsSection: FC = () => {
     "complete"
   );
 
-  const statistics = {
+  // get user count in realtime using supabase
+  // const statistics = {
+  //   teacher: {
+  //     complete: 239,
+  //     full: 241,
+  //   },
+  //   student: {
+  //     complete: 0,
+  //     full: 3168,
+  //   },
+  // };
+  const [statistics, setStatistics] = useState<{
     teacher: {
-      complete: 239,
-      full: 241,
+      complete: number;
+      full: number;
+    };
+    student: {
+      complete: number;
+      full: number;
+    };
+  }>({
+    teacher: {
+      complete: 0,
+      full: 0,
     },
     student: {
       complete: 0,
-      full: 3168,
+      full: 0,
     },
-  };
+  });
+
+  useEffect(() => {
+    const users = supabase
+      .channel("usersCount")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "users" },
+        (payload) => {
+          console.log("Change received!", payload);
+          // map the payload to the statistics where onboard are false
+          const newStatistics = {
+            teacher: {
+              complete: 0,
+              full: 0,
+            },
+            student: {
+              complete: 0,
+              full: 0,
+            },
+          };
+          payload.new.forEach((user: any) => {
+            if (user.onboard === false) {
+              newStatistics[user.role as Role].full++;
+            } else {
+              newStatistics[user.role as Role].complete++;
+            }
+          });
+          setStatistics(newStatistics);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      users.unsubscribe();
+    };
+  }, []);
 
   return (
     <Section>
@@ -209,3 +266,4 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
 };
 
 export default OnboardingStatus;
+
