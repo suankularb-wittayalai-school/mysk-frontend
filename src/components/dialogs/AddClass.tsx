@@ -36,7 +36,7 @@ const AddClassDialog = ({
   const [classroom, setClassroom] = useState<Class | null>(null);
 
   useEffect(() => {
-    if (!classRegex.test(classroomNumber)) {
+    if (classRegex.test(classroomNumber))
       supabase
         .from("classroom")
         .select("*")
@@ -53,7 +53,6 @@ const AddClassDialog = ({
             setClassroom(null);
           }
         });
-    }
   }, [classroomNumber]);
 
   return (
@@ -63,7 +62,11 @@ const AddClassDialog = ({
       title={t("dialog.addClass.title")}
       actions={[
         { name: t("dialog.addClass.action.cancel"), type: "close" },
-        { name: t("dialog.addClass.action.add"), type: "submit" },
+        {
+          name: t("dialog.addClass.action.add"),
+          type: "submit",
+          disabled: !classRegex.test(classroomNumber),
+        },
       ]}
       show={show}
       onClose={onClose}
