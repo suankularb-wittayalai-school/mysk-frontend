@@ -84,8 +84,8 @@
     },
     "general": {
       "title": "General information",
-      "citizenID": "Citizen ID",
-      "citizenID_error": "Invalid citizen ID.",
+      "citizenID": "Citizen ID or passport",
+      "citizenID_error": "Invalid citizen ID or unsupported passport.",
       "birthDate": "Birth date",
       "email": "School email"
     }
