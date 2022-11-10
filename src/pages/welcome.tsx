@@ -610,17 +610,9 @@ const DoneSection = ({
 
   return (
     <motion.div
-      initial={{
-        scale: role == "teacher" ? 0.8 : 0.4,
-        y: role == "teacher" ? -280 : 0,
-        opacity: 0,
-      }}
+      initial={{ scale: 0.4, y: 0, opacity: 0 }}
       animate={{ scale: 1, y: 0, opacity: 1 }}
-      exit={{
-        scale: role == "teacher" ? 0.8 : 0.4,
-        y: role == "teacher" ? -280 : 0,
-        opacity: 0,
-      }}
+      exit={{ scale: 0.4, y: 0, opacity: 0 }}
       transition={animationTransition}
       ref={sectionRef}
     >
@@ -634,11 +626,7 @@ const DoneSection = ({
           <Card
             type="stacked"
             appearance="tonal"
-            className={
-              role == "teacher"
-                ? "col-span-2 sm:col-start-2 md:col-start-3"
-                : "col-span-4 md:col-start-2"
-            }
+            className="col-span-4 md:col-start-2"
           >
             {/* FIXME: When Card Media is added to React SK Components, change this */}
             <div className="card__media relative h-60">
