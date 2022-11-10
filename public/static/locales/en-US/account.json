@@ -85,6 +85,7 @@
     "general": {
       "title": "General information",
       "citizenID": "Citizen ID",
+      "citizenID_error": "Invalid citizen ID.",
       "birthDate": "Birth date",
       "email": "School email"
     }
@@ -107,6 +108,7 @@
       "newPwd": "New password",
       "newPwd_error": "Lengthen to at least 8 characters.",
       "confirmNewPwd": "Confirm new password",
+      "confirmNewPwd_error": "Check if you repeated the new password exactly.",
       "action": {
         "cancel": "Cancel",
         "save": "Save"

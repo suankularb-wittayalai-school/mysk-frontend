@@ -552,10 +552,14 @@ const NewPasswordSection = ({
               label={t("dialog.changePassword.confirmNewPwd", {
                 ns: "account",
               })}
-              errorMsg={t("dialog.changePassword.newPwd_error", {
-                ns: "account",
-              })}
-              useAutoMsg
+              errorMsg={
+                form.confirmNewPassword &&
+                form.newPassword != form.confirmNewPassword
+                  ? t("dialog.changePassword.confirmNewPwd_error", {
+                      ns: "account",
+                    })
+                  : undefined
+              }
               onChange={(e) => setForm({ ...form, confirmNewPassword: e })}
               attr={{ minLength: 8, disabled }}
             />
