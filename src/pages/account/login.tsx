@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { FormEvent, useState } from "react";
+import { useState } from "react";
 
 import { User, useSupabaseClient } from "@supabase/auth-helpers-react";
 
@@ -16,7 +16,6 @@ import { User, useSupabaseClient } from "@supabase/auth-helpers-react";
 import {
   Actions,
   Button,
-  FormButton,
   KeyboardInput,
   LayoutGridCols,
   MaterialIcon,
@@ -81,13 +80,23 @@ const Login: NextPage = () => {
       return;
     }
 
+    const { data: user, error: userError } = await supabase
+      .from("users")
+      .select("role, onboarded")
+      .match({ id: data.user?.id })
+      .limit(1)
+      .single();
+    if (userError) {
+      toggleLoading();
+      return;
+    }
+
     // Onboard the user if this is their first log in
-    if (!(data.user as User).user_metadata.onboarded) router.push("/welcome");
+    if (user!.onboarded) router.push("/welcome");
 
     // Role redirect
-    const role: Role = (data.user as User).user_metadata.role;
-    if (role == "teacher") router.push("/teach");
-    if (role == "student") router.push("/learn");
+    if (user!.role == "teacher") router.push("/teach");
+    if (user!.role == "student") router.push("/learn");
   }
 
   return (

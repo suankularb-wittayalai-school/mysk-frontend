@@ -50,7 +50,6 @@ import { getPersonFromUser, setupPerson } from "@utils/backend/person/person";
 import { getSubjectGroups } from "@utils/backend/subject/subjectGroup";
 
 // Helpers
-import { sumArray } from "@utils/helpers/array";
 import { getLocaleString } from "@utils/helpers/i18n";
 import { createTitleStr } from "@utils/helpers/title";
 
@@ -64,12 +63,8 @@ import { SubjectGroup } from "@utils/types/subject";
 
 // Miscellaneous
 import { prefixMap } from "@utils/maps";
-import {
-  citizenIDPattern,
-  citizenIDRegex,
-  classPattern,
-  studentIDRegex,
-} from "@utils/patterns";
+import { classPattern, studentIDRegex } from "@utils/patterns";
+import { validateCitizenID, validatePassport } from "@utils/helpers/validators";
 
 // Sections
 const HeroSection = ({
@@ -171,7 +166,7 @@ const DataCheckSection = ({
 }): JSX.Element => {
   const { t } = useTranslation(["landing", "account"]);
   const supabase = useSupabaseClient();
-  const email = useUser()!.email;
+  const email = useUser()?.email;
   const locale = useRouter().locale as LangCode;
 
   const sectionRef = useRef<any>();
@@ -240,31 +235,9 @@ const DataCheckSection = ({
       return false;
 
     // Citizen ID validation
-
-    // Citizen ID has enough digits
-    if (!form.citizenID || !citizenIDRegex.test(form.citizenID)) return false;
-    const citizenIDDigits = form.citizenID
-      .split("")
-      .map((digit) => Number(digit));
-
-    // Citizen ID has valid checksum
-
-    // - Checksum is the last digit
-    // - Mulitplied sum is calculated from the sum of each digit multiplied by
-    //   its index (counting down from 13)
-
-    // checksum = 11 - (multiplied sum % 11) % 10
-
-    if (
-      11 -
-        ((sumArray(
-          citizenIDDigits.slice(0, 12).map((digit, idx) => digit * (13 - idx))
-        ) %
-          11) %
-          10) !=
-      citizenIDDigits[12]
-    )
+    if (!validateCitizenID(form.citizenID) && !validatePassport(form.citizenID))
       return false;
+
     return true;
   }
 
@@ -382,9 +355,15 @@ const DataCheckSection = ({
               name="citizen-id"
               type="text"
               label={t("profile.general.citizenID", { ns: "account" })}
+              errorMsg={
+                !validateCitizenID(form.citizenID) &&
+                !validatePassport(form.citizenID)
+                  ? t("profile.general.citizenID_error", { ns: "account" })
+                  : undefined
+              }
               onChange={(e) => setForm({ ...form, citizenID: e })}
               defaultValue={user.citizenID}
-              attr={{ pattern: citizenIDPattern, disabled }}
+              attr={{ disabled }}
             />
             <NativeInput
               name="birth-date"
@@ -551,10 +530,14 @@ const NewPasswordSection = ({
               label={t("dialog.changePassword.confirmNewPwd", {
                 ns: "account",
               })}
-              errorMsg={t("dialog.changePassword.newPwd_error", {
-                ns: "account",
-              })}
-              useAutoMsg
+              errorMsg={
+                form.confirmNewPassword &&
+                form.newPassword != form.confirmNewPassword
+                  ? t("dialog.changePassword.confirmNewPwd_error", {
+                      ns: "account",
+                    })
+                  : undefined
+              }
               onChange={(e) => setForm({ ...form, confirmNewPassword: e })}
               attr={{ minLength: 8, disabled }}
             />
@@ -599,8 +582,9 @@ const DoneSection = ({
   canSetRef?: boolean;
 }): JSX.Element => {
   const supabase = useSupabaseClient();
-  const { t } = useTranslation("landing");
+  const user = useUser();
   const router = useRouter();
+  const { t } = useTranslation("landing");
 
   const sectionRef = useRef<any>();
   useEffect(() => {
@@ -609,17 +593,9 @@ const DoneSection = ({
 
   return (
     <motion.div
-      initial={{
-        scale: role == "teacher" ? 0.8 : 0.4,
-        y: role == "teacher" ? -280 : 0,
-        opacity: 0,
-      }}
+      initial={{ scale: 0.4, y: 0, opacity: 0 }}
       animate={{ scale: 1, y: 0, opacity: 1 }}
-      exit={{
-        scale: role == "teacher" ? 0.8 : 0.4,
-        y: role == "teacher" ? -280 : 0,
-        opacity: 0,
-      }}
+      exit={{ scale: 0.4, y: 0, opacity: 0 }}
       transition={animationTransition}
       ref={sectionRef}
     >
@@ -633,11 +609,7 @@ const DoneSection = ({
           <Card
             type="stacked"
             appearance="tonal"
-            className={
-              role == "teacher"
-                ? "col-span-2 sm:col-start-2 md:col-start-3"
-                : "col-span-4 md:col-start-2"
-            }
+            className="col-span-4 md:col-start-2"
           >
             {/* FIXME: When Card Media is added to React SK Components, change this */}
             <div className="card__media relative h-60">
@@ -667,6 +639,10 @@ const DoneSection = ({
                 className="w-full !text-center"
                 onClick={async () => {
                   await supabase.auth.updateUser({ data: { onboarded: true } });
+                  await supabase
+                    .from("users")
+                    .update({ onboarded: true })
+                    .match({ id: user!.id });
                   if (role == "teacher") router.push("/teach");
                   else router.push("/learn");
                 }}
