@@ -36,6 +36,7 @@ import { createTitleStr } from "@utils/helpers/title";
 import { Database } from "@utils/types/supabase";
 import { withPageAuth } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { getOnBoardTeacherData } from "@utils/backend/person/teacher";
 
 const StatisticsSection: FC<{
   statistics: {
@@ -132,17 +133,10 @@ const IndividualStatusCard: FC<{ teacher: IndividualOnboardingStatus }> = ({
   );
 };
 
-const IndividualStatusSection: FC = () => {
+const IndividualStatusSection: FC<{
+  teachers: IndividualOnboardingStatus[];
+}> = ({ teachers }) => {
   const { t } = useTranslation("admin");
-
-  const teachers: IndividualOnboardingStatus[] = [
-    {
-      id: 1,
-      name: "จอห์น โด",
-      dataChecked: true,
-      passwordSet: false,
-    },
-  ];
 
   return (
     <Section>
@@ -185,7 +179,8 @@ const OnboardingStatus: NextPage<{
       full: number;
     };
   };
-}> = ({ statistics }) => {
+  teachers: IndividualOnboardingStatus[];
+}> = ({ statistics, teachers }) => {
   const { t } = useTranslation("admin");
   const supabase = useSupabaseClient<DatabaseClient>();
 
@@ -276,7 +271,7 @@ const OnboardingStatus: NextPage<{
         }
       >
         <StatisticsSection statistics={currentStatistic} />
-        <IndividualStatusSection />
+        <IndividualStatusSection teachers={teachers} />
       </RegularLayout>
     </>
   );
@@ -285,9 +280,12 @@ const OnboardingStatus: NextPage<{
 export const getServerSideProps: GetServerSideProps = withPageAuth({
   async getServerSideProps({ locale }, supabase) {
     // get teacher and student count who have onboarded
+    const teachers: IndividualOnboardingStatus[] = await getOnBoardTeacherData(
+      supabase,
+      locale as LangCode
+    );
+
     const {
-      data: teacherOnboarded,
-      error: teacherOnboardedError,
       count: teacherOnboardedCount,
     } = await (supabase as DatabaseClient)
       .from("users")
@@ -296,8 +294,6 @@ export const getServerSideProps: GetServerSideProps = withPageAuth({
       .eq("onboarded", true);
 
     const {
-      data: studentOnboarded,
-      error: studentOnboardedError,
       count: studentOnboardedCount,
     } = await (supabase as DatabaseClient)
       .from("users")
@@ -307,8 +303,6 @@ export const getServerSideProps: GetServerSideProps = withPageAuth({
 
     // get teacher and student count who have not onboarded
     const {
-      data: teacherNotOnboarded,
-      error: teacherNotOnboardedError,
       count: teacherNotOnboardedCount,
     } = await (supabase as DatabaseClient)
       .from("users")
@@ -317,8 +311,6 @@ export const getServerSideProps: GetServerSideProps = withPageAuth({
       .eq("onboarded", false);
 
     const {
-      data: studentNotOnboarded,
-      error: studentNotOnboardedError,
       count: studentNotOnboardedCount,
     } = await (supabase as DatabaseClient)
       .from("users")
@@ -346,6 +338,7 @@ export const getServerSideProps: GetServerSideProps = withPageAuth({
           "account",
         ])),
         statistics,
+        teachers,
       },
     };
   },
