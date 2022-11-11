@@ -1,5 +1,5 @@
 // External libraries
-import { User } from "@supabase/supabase-js";
+import { SupabaseClient, User } from "@supabase/supabase-js";
 
 // Backend
 import { db2Teacher } from "@utils/backend/database";
@@ -25,6 +25,7 @@ import { ImportedTeacherData, Teacher } from "@utils/types/person";
 import { prefixMap, subjectGroupMap } from "@utils/maps";
 import { IndividualOnboardingStatus } from "@utils/types/admin";
 import { nameJoiner } from "@utils/helpers/name";
+import { Database } from "@utils/types/supabase";
 
 export async function getTeacherFromUser(
   supabase: DatabaseClient,
@@ -296,7 +297,7 @@ export async function getOnBoardTeacherData(
       const person = await db2Teacher(supabase, data!);
 
       return {
-        id: parseInt(id),
+        id: person.id,
         passwordSet: onboarded,
         name: nameJoiner(locale, person.name),
         // TODO use validate citizen id function
@@ -305,5 +306,24 @@ export async function getOnBoardTeacherData(
     })
   );
   return teachers;
+}
+
+export async function getTeacherFromPublicUser(
+  supabase: DatabaseClient,
+  publicUser: Database["public"]["Tables"]["users"]["Update"]
+): Promise<Teacher | null> {
+  const { data, error } = await supabase
+    .from("teacher")
+    .select("* ,person(*), subject_group(*)")
+    .match({ id: publicUser.teacher })
+    .limit(1)
+    .maybeSingle();
+
+  if (error) {
+    console.error(error);
+    return null;
+  }
+
+  return await db2Teacher(supabase, data!);
 }
 

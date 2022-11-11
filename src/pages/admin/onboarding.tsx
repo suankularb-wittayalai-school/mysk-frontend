@@ -36,7 +36,13 @@ import { createTitleStr } from "@utils/helpers/title";
 import { Database } from "@utils/types/supabase";
 import { withPageAuth } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { getOnBoardTeacherData } from "@utils/backend/person/teacher";
+import {
+  getOnBoardTeacherData,
+  getTeacherFromPublicUser,
+  getTeacherFromUser,
+} from "@utils/backend/person/teacher";
+import { nameJoiner } from "@utils/helpers/name";
+import { useRouter } from "next/router";
 
 const StatisticsSection: FC<{
   statistics: {
@@ -183,6 +189,8 @@ const OnboardingStatus: NextPage<{
 }> = ({ statistics, teachers }) => {
   const { t } = useTranslation("admin");
   const supabase = useSupabaseClient<DatabaseClient>();
+  const router = useRouter();
+  const locale = router.locale as LangCode;
 
   const [currentStatistic, setStatistics] = useState<{
     teacher: {
@@ -194,6 +202,10 @@ const OnboardingStatus: NextPage<{
       full: number;
     };
   }>(statistics);
+
+  const [currentTeachers, setTeachers] = useState<IndividualOnboardingStatus[]>(
+    teachers
+  );
 
   useEffect(() => {
     // listen to onboarding status changes with supabase realtime and rls
@@ -228,6 +240,19 @@ const OnboardingStatus: NextPage<{
                 },
               }));
             }
+            getTeacherFromPublicUser(supabase, payload.new).then((teacher) => {
+              // console.log({ teacher, currentTeachers });
+              // remove the old teacher from the list
+              setTeachers((prev) => [
+                ...prev.filter((t) => t.id != teacher!.id),
+                {
+                  id: teacher!.id,
+                  dataChecked: payload.new.onboarded,
+                  name: nameJoiner(locale, teacher!.name),
+                  passwordSet: payload.new.onboarded,
+                },
+              ]);
+            });
           } else if (payload.new.role == '"student"') {
             if (payload.new.onboarded && !payload.old.onboarded) {
               setStatistics((prev) => ({
@@ -271,7 +296,7 @@ const OnboardingStatus: NextPage<{
         }
       >
         <StatisticsSection statistics={currentStatistic} />
-        <IndividualStatusSection teachers={teachers} />
+        <IndividualStatusSection teachers={currentTeachers} />
       </RegularLayout>
     </>
   );
