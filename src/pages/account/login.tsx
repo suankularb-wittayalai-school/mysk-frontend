@@ -92,11 +92,11 @@ const Login: NextPage = () => {
     }
 
     // Onboard the user if this is their first log in
-    if (user.onboarded) router.push("/welcome");
+    if (user!.onboarded) router.push("/welcome");
 
     // Role redirect
-    if (user.role == "teacher") router.push("/teach");
-    if (user.role == "student") router.push("/learn");
+    if (user!.role == "teacher") router.push("/teach");
+    if (user!.role == "student") router.push("/learn");
   }
 
   return (

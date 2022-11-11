@@ -10,6 +10,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useState } from "react";
 
 import { withPageAuth } from "@supabase/auth-helpers-nextjs";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 // SK Components
 import {
@@ -58,9 +59,6 @@ import { DialogProps, LangCode } from "@utils/types/common";
 
 // Backend
 import { db2Subject, db2SubjectListItem } from "@utils/backend/database";
-
-// Supbase
-import { supabase } from "@utils/supabase-client";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
@@ -680,6 +678,7 @@ const SubjectDetails: NextPage<{
 }> = ({ subject, subjectRooms, periodLogs, substAsgn, allSubjects }) => {
   const { t } = useTranslation(["subjects", "common"]);
   const router = useRouter();
+  const supabase = useSupabaseClient();
   const locale = router.locale as LangCode;
 
   // Subject details
