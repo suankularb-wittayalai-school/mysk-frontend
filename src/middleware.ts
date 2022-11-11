@@ -36,9 +36,9 @@ export async function middleware(req: NextRequest) {
   if (pageRole == "not-protected") return NextResponse.next();
 
   // (@SiravitPhokeed)
-  // I’m not using the Supabase Server Client because that isn’t supported here.
-  // The way we're approaching middleware is very much not intended by Supabase.
-  // As a workaround, we’re fetching directly from the Supabase API.
+  // I’m not using the Supabase Server Client because that isn’t supported
+  // here. The way we’re approaching middleware is very much not intended by
+  // Supabase. As a workaround, we’re fetching directly from the Supabase API.
 
   // Fetch user from Supabase
   let user = null;
