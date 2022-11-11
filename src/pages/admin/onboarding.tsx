@@ -34,79 +34,24 @@ import { Role } from "@utils/types/person";
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
 import { supabase } from "@utils/supabase-client";
+import { Database } from "@utils/types/supabase";
 
-const StatisticsSection: FC = () => {
+const StatisticsSection: FC<{
+  statistics: {
+    teacher: {
+      complete: number;
+      full: number;
+    };
+    student: {
+      complete: number;
+      full: number;
+    };
+  };
+}> = ({ statistics }) => {
   const { t } = useTranslation("admin");
   const [countType, setCountRequest] = useState<"complete" | "incomplete">(
     "complete"
   );
-
-  // get user count in realtime using supabase
-  // const statistics = {
-  //   teacher: {
-  //     complete: 239,
-  //     full: 241,
-  //   },
-  //   student: {
-  //     complete: 0,
-  //     full: 3168,
-  //   },
-  // };
-  const [statistics, setStatistics] = useState<{
-    teacher: {
-      complete: number;
-      full: number;
-    };
-    student: {
-      complete: number;
-      full: number;
-    };
-  }>({
-    teacher: {
-      complete: 0,
-      full: 0,
-    },
-    student: {
-      complete: 0,
-      full: 0,
-    },
-  });
-
-  useEffect(() => {
-    const users = supabase
-      .channel("usersCount")
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "users" },
-        (payload) => {
-          console.log("Change received!", payload);
-          // map the payload to the statistics where onboard are false
-          const newStatistics = {
-            teacher: {
-              complete: 0,
-              full: 0,
-            },
-            student: {
-              complete: 0,
-              full: 0,
-            },
-          };
-          payload.new.forEach((user: any) => {
-            if (user.onboard === false) {
-              newStatistics[user.role as Role].full++;
-            } else {
-              newStatistics[user.role as Role].complete++;
-            }
-          });
-          setStatistics(newStatistics);
-        }
-      )
-      .subscribe();
-
-    return () => {
-      users.unsubscribe();
-    };
-  }, []);
 
   return (
     <Section>
@@ -228,8 +173,78 @@ const IndividualStatusSection: FC = () => {
   );
 };
 
-const OnboardingStatus: NextPage = () => {
+const OnboardingStatus: NextPage<{
+  statistics: {
+    teacher: {
+      complete: number;
+      full: number;
+    };
+    student: {
+      complete: number;
+      full: number;
+    };
+  };
+}> = ({ statistics }) => {
   const { t } = useTranslation("admin");
+
+  const [currentStatistic, setStatistics] = useState<{
+    teacher: {
+      complete: number;
+      full: number;
+    };
+    student: {
+      complete: number;
+      full: number;
+    };
+  }>(statistics);
+
+  useEffect(() => {
+    const users = supabase
+      .channel("onboarding_status:*")
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "users",
+          filter: 'role=eq."teacher"',
+        },
+        (payload: {
+          eventType: "UPDATE";
+          schema: string;
+          table: string;
+          new: Database["public"]["Tables"]["users"]["Row"];
+          old: Database["public"]["Tables"]["users"]["Row"];
+        }) => {
+          console.log("Change received!", payload);
+          // map the payload to the statistics where onboard are false
+          if (payload.new.role == '"teacher"') {
+            if (payload.new.onboarded && !payload.old.onboarded) {
+              setStatistics((prev) => ({
+                ...prev,
+                teacher: {
+                  ...prev.teacher,
+                  complete: prev.teacher.complete + 1,
+                },
+              }));
+            } else {
+              setStatistics((prev) => ({
+                ...prev,
+                teacher: {
+                  ...prev.teacher,
+                  complete: prev.teacher.complete - 1,
+                },
+              }));
+            }
+          }
+        }
+      )
+      .subscribe();
+    console.log(users);
+    return () => {
+      users.unsubscribe();
+    };
+  }, []);
 
   return (
     <>
@@ -246,7 +261,7 @@ const OnboardingStatus: NextPage = () => {
           />
         }
       >
-        <StatisticsSection />
+        <StatisticsSection statistics={currentStatistic} />
         <IndividualStatusSection />
       </RegularLayout>
     </>
@@ -254,6 +269,60 @@ const OnboardingStatus: NextPage = () => {
 };
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
+  // get teacher and student count who have onboarded
+  const {
+    data: teacherOnboarded,
+    error: teacherOnboardedError,
+    count: teacherOnboardedCount,
+  } = await supabase
+    .from("users")
+    .select("*", { count: "exact" })
+    .eq("role", '"teacher"')
+    .eq("onboarded", true);
+
+  const {
+    data: studentOnboarded,
+    error: studentOnboardedError,
+    count: studentOnboardedCount,
+  } = await supabase
+    .from("users")
+    .select("*", { count: "exact" })
+    .eq("role", '"student"')
+    .eq("onboarded", true);
+
+  // get teacher and student count who have not onboarded
+  const {
+    data: teacherNotOnboarded,
+    error: teacherNotOnboardedError,
+    count: teacherNotOnboardedCount,
+  } = await supabase
+    .from("users")
+    .select("*", { count: "exact" })
+    .eq("role", '"teacher"')
+    .eq("onboarded", false);
+
+  const {
+    data: studentNotOnboarded,
+    error: studentNotOnboardedError,
+    count: studentNotOnboardedCount,
+  } = await supabase
+    .from("users")
+    .select("*", { count: "exact" })
+    .eq("role", '"student"')
+    .eq("onboarded", false);
+
+  // format into statistics
+  const statistics = {
+    teacher: {
+      complete: teacherOnboardedCount!,
+      full: teacherOnboardedCount! + teacherNotOnboardedCount!,
+    },
+    student: {
+      complete: studentOnboardedCount!,
+      full: studentOnboardedCount! + studentNotOnboardedCount!,
+    },
+  };
+
   return {
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
@@ -261,6 +330,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         "admin",
         "account",
       ])),
+      statistics,
     },
   };
 };
