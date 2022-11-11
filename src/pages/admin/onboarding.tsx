@@ -1,7 +1,7 @@
 // External libraries
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 
-import { GetStaticProps, NextPage } from "next";
+import { GetServerSideProps, GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 
@@ -28,13 +28,14 @@ import { animationTransition } from "@utils/animations/config";
 
 // Types
 import { IndividualOnboardingStatus } from "@utils/types/admin";
-import { LangCode } from "@utils/types/common";
+import { DatabaseClient, LangCode } from "@utils/types/common";
 import { Role } from "@utils/types/person";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
-import { supabase } from "@utils/supabase-client";
 import { Database } from "@utils/types/supabase";
+import { withPageAuth } from "@supabase/auth-helpers-nextjs";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 const StatisticsSection: FC<{
   statistics: {
@@ -186,6 +187,7 @@ const OnboardingStatus: NextPage<{
   };
 }> = ({ statistics }) => {
   const { t } = useTranslation("admin");
+  const supabase = useSupabaseClient<DatabaseClient>();
 
   const [currentStatistic, setStatistics] = useState<{
     teacher: {
@@ -199,6 +201,7 @@ const OnboardingStatus: NextPage<{
   }>(statistics);
 
   useEffect(() => {
+    // listen to onboarding status changes with supabase realtime and rls
     const users = supabase
       .channel("onboarding_status:*")
       .on(
@@ -209,14 +212,8 @@ const OnboardingStatus: NextPage<{
           table: "users",
           filter: 'role=eq."teacher"',
         },
-        (payload: {
-          eventType: "UPDATE";
-          schema: string;
-          table: string;
-          new: Database["public"]["Tables"]["users"]["Row"];
-          old: Database["public"]["Tables"]["users"]["Row"];
-        }) => {
-          console.log("Change received!", payload);
+        (payload) => {
+          // console.log("Change received!", payload);
           // map the payload to the statistics where onboard are false
           if (payload.new.role == '"teacher"') {
             if (payload.new.onboarded && !payload.old.onboarded) {
@@ -236,11 +233,28 @@ const OnboardingStatus: NextPage<{
                 },
               }));
             }
+          } else if (payload.new.role == '"student"') {
+            if (payload.new.onboarded && !payload.old.onboarded) {
+              setStatistics((prev) => ({
+                ...prev,
+                student: {
+                  ...prev.student,
+                  complete: prev.student.complete + 1,
+                },
+              }));
+            } else {
+              setStatistics((prev) => ({
+                ...prev,
+                student: {
+                  ...prev.student,
+                  complete: prev.student.complete - 1,
+                },
+              }));
+            }
           }
         }
       )
       .subscribe();
-    console.log(users);
     return () => {
       users.unsubscribe();
     };
@@ -268,72 +282,74 @@ const OnboardingStatus: NextPage<{
   );
 };
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => {
-  // get teacher and student count who have onboarded
-  const {
-    data: teacherOnboarded,
-    error: teacherOnboardedError,
-    count: teacherOnboardedCount,
-  } = await supabase
-    .from("users")
-    .select("*", { count: "exact" })
-    .eq("role", '"teacher"')
-    .eq("onboarded", true);
+export const getServerSideProps: GetServerSideProps = withPageAuth({
+  async getServerSideProps({ locale }, supabase) {
+    // get teacher and student count who have onboarded
+    const {
+      data: teacherOnboarded,
+      error: teacherOnboardedError,
+      count: teacherOnboardedCount,
+    } = await (supabase as DatabaseClient)
+      .from("users")
+      .select("*", { count: "exact" })
+      .eq("role", '"teacher"')
+      .eq("onboarded", true);
 
-  const {
-    data: studentOnboarded,
-    error: studentOnboardedError,
-    count: studentOnboardedCount,
-  } = await supabase
-    .from("users")
-    .select("*", { count: "exact" })
-    .eq("role", '"student"')
-    .eq("onboarded", true);
+    const {
+      data: studentOnboarded,
+      error: studentOnboardedError,
+      count: studentOnboardedCount,
+    } = await (supabase as DatabaseClient)
+      .from("users")
+      .select("*", { count: "exact" })
+      .eq("role", '"student"')
+      .eq("onboarded", true);
 
-  // get teacher and student count who have not onboarded
-  const {
-    data: teacherNotOnboarded,
-    error: teacherNotOnboardedError,
-    count: teacherNotOnboardedCount,
-  } = await supabase
-    .from("users")
-    .select("*", { count: "exact" })
-    .eq("role", '"teacher"')
-    .eq("onboarded", false);
+    // get teacher and student count who have not onboarded
+    const {
+      data: teacherNotOnboarded,
+      error: teacherNotOnboardedError,
+      count: teacherNotOnboardedCount,
+    } = await (supabase as DatabaseClient)
+      .from("users")
+      .select("*", { count: "exact" })
+      .eq("role", '"teacher"')
+      .eq("onboarded", false);
 
-  const {
-    data: studentNotOnboarded,
-    error: studentNotOnboardedError,
-    count: studentNotOnboardedCount,
-  } = await supabase
-    .from("users")
-    .select("*", { count: "exact" })
-    .eq("role", '"student"')
-    .eq("onboarded", false);
+    const {
+      data: studentNotOnboarded,
+      error: studentNotOnboardedError,
+      count: studentNotOnboardedCount,
+    } = await (supabase as DatabaseClient)
+      .from("users")
+      .select("*", { count: "exact" })
+      .eq("role", '"student"')
+      .eq("onboarded", false);
 
-  // format into statistics
-  const statistics = {
-    teacher: {
-      complete: teacherOnboardedCount!,
-      full: teacherOnboardedCount! + teacherNotOnboardedCount!,
-    },
-    student: {
-      complete: studentOnboardedCount!,
-      full: studentOnboardedCount! + studentNotOnboardedCount!,
-    },
-  };
+    // format into statistics
+    const statistics = {
+      teacher: {
+        complete: teacherOnboardedCount!,
+        full: teacherOnboardedCount! + teacherNotOnboardedCount!,
+      },
+      student: {
+        complete: studentOnboardedCount!,
+        full: studentOnboardedCount! + studentNotOnboardedCount!,
+      },
+    };
 
-  return {
-    props: {
-      ...(await serverSideTranslations(locale as LangCode, [
-        "common",
-        "admin",
-        "account",
-      ])),
-      statistics,
-    },
-  };
-};
+    return {
+      props: {
+        ...(await serverSideTranslations(locale as LangCode, [
+          "common",
+          "admin",
+          "account",
+        ])),
+        statistics,
+      },
+    };
+  },
+});
 
 export default OnboardingStatus;
 
