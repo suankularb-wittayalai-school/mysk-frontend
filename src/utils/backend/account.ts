@@ -23,9 +23,9 @@ export async function getUserMetadata(
 
   return {
     data: {
-      role: JSON.parse(data.role) as Role,
-      isAdmin: data.is_admin,
-      onboarded: data.onboarded,
+      role: JSON.parse(data!.role) as Role,
+      isAdmin: data!.is_admin,
+      onboarded: data!.onboarded,
     },
     error: null,
   };
