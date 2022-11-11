@@ -582,8 +582,9 @@ const DoneSection = ({
   canSetRef?: boolean;
 }): JSX.Element => {
   const supabase = useSupabaseClient();
-  const { t } = useTranslation("landing");
+  const user = useUser();
   const router = useRouter();
+  const { t } = useTranslation("landing");
 
   const sectionRef = useRef<any>();
   useEffect(() => {
@@ -638,6 +639,10 @@ const DoneSection = ({
                 className="w-full !text-center"
                 onClick={async () => {
                   await supabase.auth.updateUser({ data: { onboarded: true } });
+                  await supabase
+                    .from("users")
+                    .update({ onboarded: true })
+                    .match({ id: user!.id });
                   if (role == "teacher") router.push("/teach");
                   else router.push("/learn");
                 }}
