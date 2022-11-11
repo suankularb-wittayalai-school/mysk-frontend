@@ -72,8 +72,6 @@ export async function middleware(req: NextRequest) {
   const userIsOnboarded: boolean = user ? user.onboarded : false;
   const userIsAdmin: boolean = user ? user.is_admin : false;
 
-  console.log({ userRole, userIsOnboarded, userIsAdmin });
-
   // Decide on destination based on user and page protection type
   let destination: string | null = null;
   // Disallow public users from visiting private pages
