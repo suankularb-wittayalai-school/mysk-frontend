@@ -43,6 +43,7 @@ import { Role } from "@utils/types/person";
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
 import { nameJoiner } from "@utils/helpers/name";
+import { getOnboardStatistic } from "@utils/backend/statistic";
 
 const StatisticsSection: FC<{
   statistics: {
@@ -310,50 +311,7 @@ export const getServerSideProps: GetServerSideProps = withPageAuth({
       locale as LangCode
     );
 
-    const {
-      count: teacherOnboardedCount,
-    } = await (supabase as DatabaseClient)
-      .from("users")
-      .select("*", { count: "exact" })
-      .eq("role", '"teacher"')
-      .eq("onboarded", true);
-
-    const {
-      count: studentOnboardedCount,
-    } = await (supabase as DatabaseClient)
-      .from("users")
-      .select("*", { count: "exact" })
-      .eq("role", '"student"')
-      .eq("onboarded", true);
-
-    // get teacher and student count who have not onboarded
-    const {
-      count: teacherNotOnboardedCount,
-    } = await (supabase as DatabaseClient)
-      .from("users")
-      .select("*", { count: "exact" })
-      .eq("role", '"teacher"')
-      .eq("onboarded", false);
-
-    const {
-      count: studentNotOnboardedCount,
-    } = await (supabase as DatabaseClient)
-      .from("users")
-      .select("*", { count: "exact" })
-      .eq("role", '"student"')
-      .eq("onboarded", false);
-
-    // format into statistics
-    const statistics = {
-      teacher: {
-        complete: teacherOnboardedCount!,
-        full: teacherOnboardedCount! + teacherNotOnboardedCount!,
-      },
-      student: {
-        complete: studentOnboardedCount!,
-        full: studentOnboardedCount! + studentNotOnboardedCount!,
-      },
-    };
+    const statistics = await getOnboardStatistic(supabase);
 
     return {
       props: {
