@@ -57,7 +57,7 @@ const StatisticsSection: FC<{
   };
 }> = ({ statistics }) => {
   const { t } = useTranslation("admin");
-  const [countType, setCountRequest] = useState<"complete" | "incomplete">(
+  const [countType, setCountTyoe] = useState<"complete" | "incomplete">(
     "complete"
   );
 
@@ -72,7 +72,7 @@ const StatisticsSection: FC<{
           { id: "complete", name: t("onboarding.stats.chip.complete") },
           { id: "incomplete", name: t("onboarding.stats.chip.incomplete") },
         ]}
-        onChange={setCountRequest}
+        onChange={setCountTyoe}
         required
         value="complete"
       />
