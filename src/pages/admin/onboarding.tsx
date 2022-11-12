@@ -188,7 +188,7 @@ const OnboardingStatus: NextPage<{
   teachers: IndividualOnboardingStatus[];
 }> = ({ statistics, teachers }) => {
   const { t } = useTranslation("admin");
-  const supabase = useSupabaseClient<DatabaseClient>();
+  const supabase = useSupabaseClient();
   const router = useRouter();
   const locale = router.locale as LangCode;
 
