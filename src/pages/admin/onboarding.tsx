@@ -34,16 +34,16 @@ import {
   getOnBoardTeacherData,
   getTeacherFromPublicUser,
 } from "@utils/backend/person/teacher";
+import { getOnboardStatistic } from "@utils/backend/statistic";
 
 // Types
 import { IndividualOnboardingStatus } from "@utils/types/admin";
-import { DatabaseClient, LangCode } from "@utils/types/common";
+import { LangCode } from "@utils/types/common";
 import { Role } from "@utils/types/person";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
 import { nameJoiner } from "@utils/helpers/name";
-import { getOnboardStatistic } from "@utils/backend/statistic";
 
 const StatisticsSection: FC<{
   statistics: {
