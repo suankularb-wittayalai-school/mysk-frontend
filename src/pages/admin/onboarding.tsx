@@ -1,12 +1,15 @@
 // External libraries
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 
-import { GetServerSideProps, GetStaticProps, NextPage } from "next";
+import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 
+import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { withPageAuth } from "@supabase/auth-helpers-nextjs";
 
 import { FC, useEffect, useState } from "react";
 
@@ -26,6 +29,12 @@ import {
 // Animations
 import { animationTransition } from "@utils/animations/config";
 
+// Backend
+import {
+  getOnBoardTeacherData,
+  getTeacherFromPublicUser,
+} from "@utils/backend/person/teacher";
+
 // Types
 import { IndividualOnboardingStatus } from "@utils/types/admin";
 import { DatabaseClient, LangCode } from "@utils/types/common";
@@ -33,16 +42,7 @@ import { Role } from "@utils/types/person";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
-import { Database } from "@utils/types/supabase";
-import { withPageAuth } from "@supabase/auth-helpers-nextjs";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import {
-  getOnBoardTeacherData,
-  getTeacherFromPublicUser,
-  getTeacherFromUser,
-} from "@utils/backend/person/teacher";
 import { nameJoiner } from "@utils/helpers/name";
-import { useRouter } from "next/router";
 
 const StatisticsSection: FC<{
   statistics: {
