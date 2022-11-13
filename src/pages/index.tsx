@@ -207,8 +207,8 @@ const LandingBanner = (): JSX.Element => {
           <LinkButton
             label={t("help")}
             type="tonal"
-            url="/help"
-            LinkElement={Link}
+            url="https://docs.google.com/document/d/1cP_Q8tE0dKW2-exFOdgQocToxbpiXFeRuyClNu51NiY/edit?usp=sharing"
+            attr={{ target: "_blank" }}
           />
           <Link href="/" locale={locale == "en-US" ? "th" : "en-US"}>
             <a title={t("changeLang")}>

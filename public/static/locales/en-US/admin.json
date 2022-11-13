@@ -236,6 +236,46 @@
       }
     }
   },
+  "onboarding": {
+    "title": "Onboarding status",
+    "card": {
+      "title": "Onboarding",
+      "supportingText": "Check onboarding status"
+    },
+    "stats": {
+      "title": "Statistics",
+      "chip": {
+        "complete": "Complete",
+        "incomplete": "Incomplete"
+      },
+      "teacher": {
+        "title": {
+          "complete": "Teachers who have completed",
+          "incomplete": "Teachers who have not completed"
+        },
+        "count": "{{count}} students"
+      },
+      "student": {
+        "title": {
+          "complete": "Students who have completed",
+          "incomplete": "Students who have not completed"
+        },
+        "count": "{{count}} teachers"
+      }
+    },
+    "status": {
+      "title": {
+        "teacher": "Teacher onboarding status",
+        "student": "Student onboarding status"
+      },
+      "status": {
+        "name": "Name",
+        "noneCompleted": "No steps completed",
+        "dataChecked": "Data checked",
+        "passwordSet": "Password set"
+      }
+    }
+  },
   "common": {
     "action": {
       "import": "Import data",

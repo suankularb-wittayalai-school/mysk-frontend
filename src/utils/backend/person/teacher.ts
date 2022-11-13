@@ -1,5 +1,5 @@
 // External libraries
-import { User } from "@supabase/supabase-js";
+import { SupabaseClient, User } from "@supabase/supabase-js";
 
 // Backend
 import { db2Teacher } from "@utils/backend/database";
@@ -17,11 +17,15 @@ import {
   BackendDataReturn,
   BackendReturn,
   DatabaseClient,
+  LangCode,
 } from "@utils/types/common";
 import { ImportedTeacherData, Teacher } from "@utils/types/person";
 
 // Miscellaneous
 import { prefixMap, subjectGroupMap } from "@utils/maps";
+import { IndividualOnboardingStatus } from "@utils/types/admin";
+import { nameJoiner } from "@utils/helpers/name";
+import { Database } from "@utils/types/supabase";
 
 export async function getTeacherFromUser(
   supabase: DatabaseClient,
@@ -264,3 +268,62 @@ export async function getClassAdvisorAt(
 
   return { data: data!, error: null };
 }
+
+export async function getOnBoardTeacherData(
+  supabase: DatabaseClient,
+  locale: LangCode
+): Promise<IndividualOnboardingStatus[]> {
+  // get all teachers
+  const { data: teachersData } = await (supabase as DatabaseClient)
+    .from("users")
+    .select("*")
+    .eq("role", '"teacher"')
+    .order("onboarded", { ascending: true });
+
+  const teachers: IndividualOnboardingStatus[] = await Promise.all(
+    teachersData!.map(async (teacher) => {
+      const { id, onboarded } = teacher;
+
+      // get cooresponding teacher data and their name
+      const { data, error } = await supabase
+        .from("teacher")
+        .select("*, person(*), subject_group(*)")
+        .match({ id: teacher.teacher })
+        .single();
+
+      if (error) {
+        console.error(error);
+      }
+      const person = await db2Teacher(supabase, data!);
+
+      return {
+        id: person.id,
+        passwordSet: onboarded,
+        name: nameJoiner(locale, person.name),
+        // TODO use validate citizen id function
+        dataChecked: onboarded,
+      };
+    })
+  );
+  return teachers;
+}
+
+export async function getTeacherFromPublicUser(
+  supabase: DatabaseClient,
+  publicUser: Database["public"]["Tables"]["users"]["Update"]
+): Promise<Teacher | null> {
+  const { data, error } = await supabase
+    .from("teacher")
+    .select("* ,person(*), subject_group(*)")
+    .match({ id: publicUser.teacher })
+    .limit(1)
+    .maybeSingle();
+
+  if (error) {
+    console.error(error);
+    return null;
+  }
+
+  return await db2Teacher(supabase, data!);
+}
+

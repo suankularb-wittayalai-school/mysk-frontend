@@ -11,6 +11,7 @@ import {
   Card,
   CardHeader,
   Header,
+  LayoutGridCols,
   MaterialIcon,
   RegularLayout,
   Section,
@@ -122,6 +123,35 @@ const ScheduleSection = (): JSX.Element => {
   );
 };
 
+const OnboardingSection = (): JSX.Element => {
+  const { t } = useTranslation("admin");
+
+  return (
+    <Section>
+      <Header
+        icon={<MaterialIcon icon="waving_hand" allowCustomSize />}
+        text={t("onboarding.card.title")}
+      />
+      <LayoutGridCols cols={3}>
+        <Link href="/admin/onboarding">
+          <a aria-labelledby="onboarding-title">
+            <Card type="horizontal" appearance="outlined" hasAction>
+              <CardHeader
+                icon={<MaterialIcon icon="waving_hand" />}
+                title={
+                  <h3 id="onboarding-title">{t("onboarding.card.title")}</h3>
+                }
+                label={t("onboarding.card.supportingText")}
+                end={<MaterialIcon icon="arrow_forward" />}
+              />
+            </Card>
+          </a>
+        </Link>
+      </LayoutGridCols>
+    </Section>
+  );
+};
+
 const Admin: NextPage = () => {
   const { t } = useTranslation(["admin", "common"]);
 
@@ -142,6 +172,7 @@ const Admin: NextPage = () => {
       >
         <DatabaseSection />
         <ScheduleSection />
+        <OnboardingSection />
       </RegularLayout>
     </>
   );
