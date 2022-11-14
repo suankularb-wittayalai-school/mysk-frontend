@@ -61,23 +61,15 @@ const LandingFeed = ({ feed }: { feed: Feed }): JSX.Element => {
             {t("news.title")}
           </h2>
         }
-        label={
-          feed ? (
-            <p className="font-display">
-              <Trans i18nKey="news.lastUpdated" ns="landing">
-                {{
-                  lastUpdated:
-                    feed.lastUpdated &&
-                    new Date(feed.lastUpdated).toLocaleDateString(locale, {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    }),
-                }}
-              </Trans>
-            </p>
-          ) : undefined
-        }
+        label={t("news.lastUpdated", {
+          lastUpdated:
+            feed.lastUpdated &&
+            new Date(feed.lastUpdated).toLocaleDateString(locale, {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            }),
+        })}
       />
       {feed && (
         <div className="overflow-y-auto overflow-x-hidden sm:max-h-96">
@@ -257,9 +249,11 @@ const Landing: NextPage<{ feed: Feed }> & {
         <RegularLayout>
           <div className="flex flex-col gap-y-6 md:grid md:grid-cols-2 md:gap-x-6">
             <LandingBanner />
-            <div className="!px-0 sm:grid sm:grid-cols-3 sm:gap-x-6 md:block">
-              <LandingFeed feed={feed} />
-            </div>
+            {feed.content.length > 0 && (
+              <div className="!px-0 sm:grid sm:grid-cols-3 sm:gap-x-6 md:block">
+                <LandingFeed feed={feed} />
+              </div>
+            )}
           </div>
         </RegularLayout>
       </div>
