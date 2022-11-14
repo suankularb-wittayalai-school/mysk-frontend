@@ -311,9 +311,7 @@ const PreferencesSection = (): JSX.Element => {
   const router = useRouter();
   const locale = router.locale as LangCode;
 
-  const [form, setForm] = useState({
-    locale,
-  });
+  const [form, setForm] = useState({ locale });
 
   useEffect(() => {
     router.push(router.asPath, router.asPath, { locale: form.locale });

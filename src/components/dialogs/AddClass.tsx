@@ -1,6 +1,6 @@
 // External libraries
 import { useTranslation } from "next-i18next";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 // SK Components
@@ -15,6 +15,10 @@ import { db2Class } from "@utils/backend/database";
 
 // Helpers
 import { getCurrentAcademicYear } from "@utils/helpers/date";
+import { withLoading } from "@utils/helpers/loading";
+
+// Hooks
+import { useToggle } from "@utils/hooks/toggle";
 
 // Types
 import { Class } from "@utils/types/class";
@@ -31,29 +35,14 @@ const AddClassDialog = ({
   const { t } = useTranslation("common");
   const supabase = useSupabaseClient();
 
-  // Hooks
-  const [classroomNumber, setClassroomNumber] = useState<string>("");
-  const [classroom, setClassroom] = useState<Class | null>(null);
+  const [loading, toggleLoading] = useToggle();
 
-  useEffect(() => {
-    if (classRegex.test(classroomNumber))
-      supabase
-        .from("classroom")
-        .select("*")
-        .match({ number: classroomNumber, year: getCurrentAcademicYear() })
-        .limit(1)
-        .single()
-        .then((res) => {
-          if (res.data) {
-            db2Class(supabase, res.data).then((classroom) => {
-              setClassroom(classroom);
-            });
-          } else {
-            console.error(res.error);
-            setClassroom(null);
-          }
-        });
-  }, [classroomNumber]);
+  // Form control
+  const [number, setNumber] = useState<string>("");
+
+  function validate(): boolean {
+    return classRegex.test(number);
+  }
 
   return (
     <Dialog
@@ -65,12 +54,33 @@ const AddClassDialog = ({
         {
           name: t("dialog.addClass.action.add"),
           type: "submit",
-          disabled: !classRegex.test(classroomNumber),
+          disabled: !validate() || loading,
         },
       ]}
       show={show}
       onClose={onClose}
-      onSubmit={() => (classroom ? onSubmit(classroom) : null)}
+      onSubmit={() =>
+        withLoading(
+          async () => {
+            const { data, error } = await supabase
+              .from("classroom")
+              .select("*")
+              .match({ number, year: getCurrentAcademicYear() })
+              .limit(1)
+              .single();
+
+            if (error) {
+              console.error(error);
+              return false;
+            }
+
+            onSubmit(await db2Class(supabase, data));
+            return true;
+          },
+          toggleLoading,
+          { hasEndToggle: true }
+        )
+      }
     >
       <DialogSection name="input">
         <KeyboardInput
@@ -80,7 +90,7 @@ const AddClassDialog = ({
           helperMsg={t("dialog.addClass.class_helper")}
           errorMsg={t("dialog.addClass.class_error")}
           useAutoMsg
-          onChange={(e) => setClassroomNumber(e)}
+          onChange={(e) => setNumber(e)}
           attr={{ pattern: classPattern }}
         />
       </DialogSection>
