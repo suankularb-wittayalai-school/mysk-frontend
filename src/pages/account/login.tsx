@@ -10,7 +10,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { useState } from "react";
 
-import { User, useSupabaseClient } from "@supabase/auth-helpers-react";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 // SK Components
 import {
@@ -27,9 +27,11 @@ import {
 // Components
 import ForgotPasswordDialog from "@components/dialogs/account/ForgotPassword";
 
+// Backend
+import { getUserMetadata } from "@utils/backend/account";
+
 // Types
 import { LangCode } from "@utils/types/common";
-import { Role } from "@utils/types/person";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
@@ -71,32 +73,33 @@ const Login: NextPage = () => {
     if (!validate()) return;
 
     // Log in user in Supabase
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
-    if (error) {
+    if (!session || error) {
       toggleLoading();
       return;
     }
 
-    const { data: user, error: userError } = await supabase
-      .from("users")
-      .select("role, onboarded")
-      .match({ id: data.user?.id })
-      .limit(1)
-      .single();
-    if (userError) {
+    const { data: metadata, error: metadataError } = await getUserMetadata(
+      supabase,
+      session.user.id
+    );
+    if (metadataError) {
       toggleLoading();
       return;
     }
 
     // Onboard the user if this is their first log in
-    if (user!.onboarded) router.push("/welcome");
+    if (!metadata!.onboarded) router.push("/welcome");
 
     // Role redirect
-    if (user!.role == "teacher") router.push("/teach");
-    if (user!.role == "student") router.push("/learn");
+    if (metadata!.role == "teacher") router.push("/teach");
+    if (metadata!.role == "student") router.push("/learn");
   }
 
   return (

@@ -1,7 +1,7 @@
 // External libraries
 import { useTranslation } from "next-i18next";
 import { useState } from "react";
-import { User, useUser } from "@supabase/auth-helpers-react";
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 
 // SK Components
 import {
@@ -23,8 +23,9 @@ import { DialogProps } from "@utils/types/common";
 import { useToggle } from "@utils/hooks/toggle";
 
 const ChangePassword = ({ show, onClose }: DialogProps): JSX.Element => {
+  const supabase = useSupabaseClient();
+  const user = useUser()!;
   const { t } = useTranslation("account");
-  const user = useUser() as User;
 
   const [loading, toggleLoading] = useToggle();
 
@@ -64,7 +65,7 @@ const ChangePassword = ({ show, onClose }: DialogProps): JSX.Element => {
         onClose={toggleShowDiscard}
         onSubmit={async () => {
           toggleLoading();
-          await changePassword(form, user);
+          await changePassword(supabase, form, user);
           toggleLoading();
           onClose();
         }}

@@ -2,6 +2,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+import { User } from "@supabase/supabase-js";
+
 // Types
 import { Role } from "@utils/types/person";
 
@@ -34,27 +36,41 @@ export async function middleware(req: NextRequest) {
   if (pageRole == "not-protected") return NextResponse.next();
 
   // (@SiravitPhokeed)
-  // I’m not using the Supabase Server Client because that isn’t supported here.
-  // The way we're approaching middleware is very much not intended by Supabase.
-  // As a workaround, we’re fetching directly from the Supabase API.
+  // I’m not using the Supabase Server Client because that isn’t supported
+  // here. The way we’re approaching middleware is very much not intended by
+  // Supabase. As a workaround, we’re fetching directly from the Supabase API.
 
   // Fetch user from Supabase
   let user = null;
   const authCookie = req.cookies.get("supabase-auth-token");
-  if (authCookie)
-    user = await (
+
+  if (authCookie) {
+    const headers = {
+      Authorization: `Bearer ${JSON.parse(authCookie).access_token}`,
+      APIKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string,
+    };
+
+    const sbUser: User = await (
       await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/user`, {
-        headers: {
-          Authorization: `Bearer ${JSON.parse(authCookie).access_token}`,
-          APIKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string,
-        },
+        headers,
       })
     ).json();
 
+    if (sbUser)
+      user = (
+        await (
+          await fetch(
+            `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/users?id=eq.${sbUser.id}&select=role,onboarded,is_admin&limit=1`,
+            { headers }
+          )
+        ).json()
+      )[0];
+  }
+
   // Intepret user metadata
-  const userRole: Role | "public" = user?.user_metadata?.role || "public";
-  const userIsOnboarded: boolean = user?.user_metadata?.onboarded;
-  const userIsAdmin: boolean = user?.user_metadata?.isAdmin;
+  const userRole: Role | "public" = user ? JSON.parse(user.role) : "public";
+  const userIsOnboarded: boolean = user ? user.onboarded : false;
+  const userIsAdmin: boolean = user ? user.is_admin : false;
 
   // Decide on destination based on user and page protection type
   let destination: string | null = null;
@@ -95,7 +111,7 @@ export async function middleware(req: NextRequest) {
     }
   }
   // Redirect if decided so, continue if not
-  // Note: While developing, comment out line 89 if you want to test protected
+  // Note: While developing, comment out line 114 if you want to test protected
   // pages via IPv4. Pages using user data will not work, however.
   if (destination) return NextResponse.redirect(new URL(destination, req.url));
   return NextResponse.next();

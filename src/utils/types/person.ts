@@ -3,6 +3,12 @@ import { MultiLangObj, MultiLangString } from "./common";
 import { Contact } from "./contact";
 import { SubjectGroup, SubjectWNameAndCode } from "./subject";
 
+export type UserMetadata = {
+  role: Role;
+  isAdmin: boolean;
+  onboarded: boolean;
+};
+
 export type Person = {
   id: number;
   prefix: MultiLangString;
