@@ -653,7 +653,7 @@ const DoneSection = ({
                 label={t("welcome.done.action.finish")}
                 type="filled"
                 className="w-full !text-center"
-                onClick={() => {
+                onClick={() => 
                   withLoading(async () => {
                     // Verify that the user is onboarded before continuing
                     const { data, error } = await supabase
@@ -664,13 +664,14 @@ const DoneSection = ({
                       .single();
                     console.log({ data, error });
                     if (error) return false;
-                    if (!data.onboarded) return false;
+                    if (!data!.onboarded) return false;
 
+                    // Redirect
                     if (role == "teacher") router.push("/teach");
                     else router.push("/learn");
                     return true;
-                  }, toggleLoading);
-                }}
+                  }, toggleLoading)
+                }
                 disabled={loading}
               />
             </CardActions>
