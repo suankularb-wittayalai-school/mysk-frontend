@@ -17,6 +17,7 @@ import AddClassDialog from "@components/dialogs/AddClass";
 
 // Hooks
 import { useTeacherAccount } from "@utils/hooks/auth";
+import { useToggle } from "@utils/hooks/toggle";
 
 // Types
 import {
@@ -24,7 +25,6 @@ import {
   LangCode,
   SubmittableDialogProps,
 } from "@utils/types/common";
-import { Teacher } from "@utils/types/person";
 
 const AddSubjectDialog = ({
   show,
@@ -38,7 +38,7 @@ const AddSubjectDialog = ({
   const [subjectID, setSubjectID] = useState<number>(0);
   const [classChipList, setClassChipList] = useState<ChipInputListItem[]>([]);
 
-  const [showAddClass, setShowAddClass] = useState<boolean>(false);
+  const [showAddClass, toggleShowAddClass] = useToggle();
 
   const [teacher] = useTeacherAccount();
 
@@ -69,7 +69,7 @@ const AddSubjectDialog = ({
       .from("room_subjects")
       .select("*")
       .in("class", classroomList)
-      .contains("teacher", [(teacher as Teacher).id])
+      .contains("teacher", [teacher!.id])
       .eq("subject", subjectID);
 
     if (error) {
@@ -87,7 +87,7 @@ const AddSubjectDialog = ({
       await supabase.from("room_subjects").insert({
         class: Number(classroom),
         subject: subjectID,
-        teacher: [(teacher as Teacher).id],
+        teacher: [teacher!.id],
       });
     });
 
@@ -95,9 +95,13 @@ const AddSubjectDialog = ({
   }
 
   useEffect(() => {
-    setSubjectID(0);
-    setClassChipList([]);
-  }, [show]);
+    if (show) {
+      if (teacher?.subjectsInCharge?.length)
+        setSubjectID(teacher.subjectsInCharge?.[0].id);
+      else setSubjectID(0);
+      setClassChipList([]);
+    }
+  }, [show, teacher]);
 
   useEffect(() => {
     if (teacher?.subjectsInCharge) setSubjectID(teacher.subjectsInCharge[0].id);
@@ -138,7 +142,7 @@ const AddSubjectDialog = ({
             onChange={(newList) => {
               setClassChipList(newList as ChipInputListItem[]);
             }}
-            onAdd={() => setShowAddClass(true)}
+            onAdd={toggleShowAddClass}
           />
         </DialogSection>
         <DialogSection>
@@ -148,16 +152,21 @@ const AddSubjectDialog = ({
       </Dialog>
       <AddClassDialog
         show={showAddClass}
-        onClose={() => setShowAddClass(false)}
+        onClose={toggleShowAddClass}
         onSubmit={(classroom) => {
-          setClassChipList([
-            ...classChipList,
-            {
-              id: classroom.id.toString(),
-              name: t("class", { ns: "common", number: classroom.number }),
-            },
-          ]);
-          setShowAddClass(false);
+          if (
+            !classChipList
+              .map((classItem) => Number(classItem.id))
+              .includes(classroom.id)
+          )
+            setClassChipList([
+              ...classChipList,
+              {
+                id: classroom.id.toString(),
+                name: t("class", { ns: "common", number: classroom.number }),
+              },
+            ]);
+          toggleShowAddClass();
         }}
       />
     </>

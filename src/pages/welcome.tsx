@@ -65,6 +65,7 @@ import { SubjectGroup } from "@utils/types/subject";
 import { prefixMap } from "@utils/maps";
 import { classPattern, studentIDRegex } from "@utils/patterns";
 import { validateCitizenID, validatePassport } from "@utils/helpers/validators";
+import { withLoading } from "@utils/helpers/loading";
 
 // Sections
 const HeroSection = ({
@@ -471,6 +472,7 @@ const NewPasswordSection = ({
   disabled?: boolean;
 }): JSX.Element => {
   const supabase = useSupabaseClient();
+  const user = useUser();
   const { t } = useTranslation(["landing", "account"]);
 
   const sectionRef = useRef<any>();
@@ -556,12 +558,24 @@ const NewPasswordSection = ({
             }
             onClick={async () => {
               toggleLoading();
-              const { error } = await supabase.auth.updateUser({
+              const { error: pwdError } = await supabase.auth.updateUser({
                 password: form.newPassword,
               });
+              if (pwdError) return;
+
+              const { error: sbUserError } = await supabase.auth.updateUser({
+                data: { onboarded: true },
+              });
+              if (sbUserError) return;
+
+              const { error: userError } = await supabase
+                .from("users")
+                .update({ onboarded: true })
+                .match({ id: user!.id });
+              if (userError) return;
+
               toggleLoading();
 
-              if (error) return;
               incrementStep();
             }}
             disabled={disabled || !validate() || loading}
@@ -585,6 +599,8 @@ const DoneSection = ({
   const user = useUser();
   const router = useRouter();
   const { t } = useTranslation("landing");
+
+  const [loading, toggleLoading] = useToggle();
 
   const sectionRef = useRef<any>();
   useEffect(() => {
@@ -637,15 +653,26 @@ const DoneSection = ({
                 label={t("welcome.done.action.finish")}
                 type="filled"
                 className="w-full !text-center"
-                onClick={async () => {
-                  await supabase.auth.updateUser({ data: { onboarded: true } });
-                  await supabase
-                    .from("users")
-                    .update({ onboarded: true })
-                    .match({ id: user!.id });
-                  if (role == "teacher") router.push("/teach");
-                  else router.push("/learn");
-                }}
+                onClick={() => 
+                  withLoading(async () => {
+                    // Verify that the user is onboarded before continuing
+                    const { data, error } = await supabase
+                      .from("users")
+                      .select("onboarded")
+                      .match({ id: user!.id })
+                      .limit(1)
+                      .single();
+                    console.log({ data, error });
+                    if (error) return false;
+                    if (!data!.onboarded) return false;
+
+                    // Redirect
+                    if (role == "teacher") router.push("/teach");
+                    else router.push("/learn");
+                    return true;
+                  }, toggleLoading)
+                }
+                disabled={loading}
               />
             </CardActions>
           </Card>

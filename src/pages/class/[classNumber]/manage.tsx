@@ -66,6 +66,8 @@ import { Contact } from "@utils/types/contact";
 import { Student, Teacher } from "@utils/types/person";
 import { StudentFormItem } from "@utils/types/news";
 import { Database } from "@utils/types/supabase";
+
+// Miscellaneous
 import { classPattern, classRegex } from "@utils/patterns";
 
 const GoToClassSection = ({ number }: { number: number }): JSX.Element => {
@@ -375,7 +377,7 @@ const StudentListSection = ({
 
   return (
     <Section labelledBy="student-list">
-      <div className="layout-grid-cols-3 items-start">
+      <LayoutGridCols cols={3}>
         <div className="md:col-span-2">
           <Header
             icon={<MaterialIcon icon="groups" allowCustomSize />}
@@ -386,12 +388,12 @@ const StudentListSection = ({
           placeholder={t("studentList.searchStudents")}
           onChange={setQuery}
         />
-      </div>
+      </LayoutGridCols>
       <div ref={tableRef} className="print:p-12">
         <PrintHeader
           title={t("class", { ns: "common", number: classNumber })}
         />
-        <Table width={320}>
+        <Table width={320} className="print:!rounded-none">
           <thead>
             <tr>
               <th className="w-24">{t("studentList.table.classNo")}</th>
