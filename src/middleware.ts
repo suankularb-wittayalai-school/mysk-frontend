@@ -2,12 +2,14 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-import { User } from "@supabase/supabase-js";
+import { createMiddlewareSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
 // Types
 import { Role } from "@utils/types/person";
 
 export async function middleware(req: NextRequest) {
+  const res = NextResponse.next();
+
   // Get current page protection type
   const route = req.nextUrl.pathname;
   const pageRole: Role | "public" | "admin" | "user" | "not-protected" =
@@ -33,39 +35,23 @@ export async function middleware(req: NextRequest) {
   // console.log(pageRole);
 
   // Ignore page without protection
-  if (pageRole == "not-protected") return NextResponse.next();
+  if (pageRole == "not-protected") return res;
 
-  // (@SiravitPhokeed)
-  // I’m not using the Supabase Server Client because that isn’t supported
-  // here. The way we’re approaching middleware is very much not intended by
-  // Supabase. As a workaround, we’re fetching directly from the Supabase API.
+  // Declare Supabase client
+  const supabase = createMiddlewareSupabaseClient({ req, res });
 
-  // Fetch user from Supabase
-  let user = null;
-  const authCookie = req.cookies.get("supabase-auth-token");
+  // Get current session
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
-  if (authCookie) {
-    const headers = {
-      Authorization: `Bearer ${JSON.parse(authCookie).access_token}`,
-      APIKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string,
-    };
-
-    const sbUser: User = await (
-      await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/user`, {
-        headers,
-      })
-    ).json();
-
-    if (sbUser)
-      user = (
-        await (
-          await fetch(
-            `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/users?id=eq.${sbUser.id}&select=role,onboarded,is_admin&limit=1`,
-            { headers }
-          )
-        ).json()
-      )[0];
-  }
+  // Get user metadata
+  const { data: user } = await supabase
+    .from("users")
+    .select("role, onboarded, is_admin")
+    .match({ id: session?.user.id })
+    .limit(1)
+    .maybeSingle();
 
   // Intepret user metadata
   const userRole: Role | "public" = user ? JSON.parse(user.role) : "public";
@@ -110,6 +96,7 @@ export async function middleware(req: NextRequest) {
       else if (userRole == "teacher") destination = "/teach";
     }
   }
+
   // Redirect if decided so, continue if not
   // Note: While developing, comment out line 114 if you want to test protected
   // pages via IPv4. Pages using user data will not work, however.
@@ -135,3 +122,4 @@ export const config = {
     "/news/payment/:id",
   ],
 };
+
