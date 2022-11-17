@@ -59,6 +59,8 @@ import { createTitleStr } from "@utils/helpers/title";
 
 // Hooks
 import { useToggle } from "@utils/hooks/toggle";
+import { Database } from "@utils/types/supabase";
+import { getLocalePath } from "@utils/helpers/i18n";
 
 const ScheduleSection = ({
   schedule,
@@ -218,8 +220,29 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
-  const { data: user } = await supabase.auth.getUser();
-  const teacherID = user.user?.user_metadata.teacher;
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  const { data: user, error } = await supabase
+    .from("users")
+    .select("teacher(id), onboarded")
+    .match({ id: session?.user.id })
+    .limit(1)
+    .single();
+
+  if (error) console.error(error);
+  if (!user!.onboarded)
+    return {
+      redirect: {
+        destination: getLocalePath("/welcome", locale as LangCode),
+        permanent: false,
+      },
+    };
+
+  const teacherID = (
+    user!.teacher as Database["public"]["Tables"]["teacher"]["Row"]
+  ).id;
 
   const { data: schedule } = await getSchedule(supabase, "teacher", teacherID);
 

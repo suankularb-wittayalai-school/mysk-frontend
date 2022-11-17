@@ -5,10 +5,7 @@ import {
   NextApiResponse,
   NextPage,
 } from "next";
-import {
-  createServerSupabaseClient,
-  User,
-} from "@supabase/auth-helpers-nextjs";
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
 // Backend
 import { getClassNumberFromUser } from "@utils/backend/classroom/classroom";
@@ -30,11 +27,31 @@ export const getServerSideProps: GetServerSideProps = async ({
     req: req as NextApiRequest,
     res: res as NextApiResponse,
   });
-  const { data: user } = await supabase.auth.getUser();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  const { data: user, error } = await supabase
+    .from("users")
+    .select("onboarded")
+    .match({ id: session!.user.id })
+    .limit(1)
+    .single();
+
+  if (error) console.error(error);
+  if (user!.onboarded)
+    return {
+      redirect: {
+        destination: getLocalePath("/welcome", locale as LangCode),
+        permanent: false,
+      },
+    };
+
   const { data: classID } = await getClassNumberFromUser(
     supabase,
-    user.user as User
+    session!.user
   );
+
   return {
     redirect: {
       destination: getLocalePath(`/learn/${classID}`, locale as LangCode),

@@ -16,6 +16,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import {
   MutableRefObject,
+  ReactNode,
   useEffect,
   useReducer,
   useRef,
@@ -45,6 +46,7 @@ import {
   CardActions,
   NativeInput,
   Dropdown,
+  PageLayout,
 } from "@suankularb-components/react";
 
 // Components
@@ -58,7 +60,7 @@ import { getPersonFromUser, setupPerson } from "@utils/backend/person/person";
 import { getSubjectGroups } from "@utils/backend/subject/subjectGroup";
 
 // Helpers
-import { getLocaleString } from "@utils/helpers/i18n";
+import { getLocalePath, getLocaleString } from "@utils/helpers/i18n";
 import { createTitleStr } from "@utils/helpers/title";
 
 // Hooks
@@ -74,6 +76,7 @@ import { prefixMap } from "@utils/maps";
 import { classPattern, studentIDRegex } from "@utils/patterns";
 import { validateCitizenID, validatePassport } from "@utils/helpers/validators";
 import { withLoading } from "@utils/helpers/loading";
+import { getUserMetadata } from "@utils/backend/account";
 
 // Sections
 const HeroSection = ({
@@ -694,7 +697,9 @@ const DoneSection = ({
 const Welcome: NextPage<{
   person: Student | Teacher;
   subjectGroups: SubjectGroup[];
-}> = ({ person: user, subjectGroups }) => {
+}> & {
+  getLayout?: (page: NextPage) => ReactNode;
+} = ({ person: user, subjectGroups }) => {
   const { t } = useTranslation(["landing", "common"]);
 
   const [currStep, incrementStep] = useReducer((value) => value + 1, 0);
@@ -768,6 +773,26 @@ const Welcome: NextPage<{
   );
 };
 
+Welcome.getLayout = (page: NextPage) => (
+  <PageLayout
+    currentPath="/welcome"
+    navItems={
+      [
+        {
+          name: "Welcome",
+          icon: {
+            inactive: <MaterialIcon icon="waving_hand" type="outlined" />,
+            active: <MaterialIcon icon="waving_hand" type="filled" />,
+          },
+          url: "/welcome",
+        },
+      ]
+    }
+  >
+    {page}
+  </PageLayout>
+);
+
 export const getServerSideProps: GetServerSideProps = async ({
   locale,
   req,
@@ -778,8 +803,31 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
-  const { data: user } = await supabase.auth.getUser();
-  const { data: person } = await getPersonFromUser(supabase, user.user as User);
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  const { data: metadata, error: metadataError } = await getUserMetadata(
+    supabase,
+    session!.user.id
+  );
+  if (metadataError) console.error(metadataError);
+  if (metadata?.onboarded)
+    return {
+      redirect: {
+        destination: getLocalePath(
+          metadata!.role == "teacher" ? "/teach" : "/learn",
+          locale as LangCode
+        ),
+        permanent: false,
+      },
+    };
+
+  const { data: person } = await getPersonFromUser(
+    supabase,
+    session!.user as User
+  );
+
   const { data: subjectGroups } = await getSubjectGroups();
 
   return {
