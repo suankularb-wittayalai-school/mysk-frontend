@@ -1,7 +1,12 @@
 // External libraries
 import { AnimatePresence, motion } from "framer-motion";
 
-import { GetServerSideProps, NextPage } from "next";
+import {
+  GetServerSideProps,
+  NextApiRequest,
+  NextApiResponse,
+  NextPage,
+} from "next";
 import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -17,7 +22,10 @@ import {
   useState,
 } from "react";
 
-import { User, withPageAuth } from "@supabase/auth-helpers-nextjs";
+import {
+  createServerSupabaseClient,
+  User,
+} from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 
 // SK Components
@@ -653,7 +661,7 @@ const DoneSection = ({
                 label={t("welcome.done.action.finish")}
                 type="filled"
                 className="w-full !text-center"
-                onClick={() => 
+                onClick={() =>
                   withLoading(async () => {
                     // Verify that the user is onboarded before continuing
                     const { data, error } = await supabase
@@ -760,27 +768,31 @@ const Welcome: NextPage<{
   );
 };
 
-export const getServerSideProps: GetServerSideProps = withPageAuth({
-  async getServerSideProps({ locale }, supabase) {
-    const { data: user } = await supabase.auth.getUser();
-    const { data: person } = await getPersonFromUser(
-      supabase,
-      user.user as User
-    );
-    const { data: subjectGroups } = await getSubjectGroups();
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  req,
+  res,
+}) => {
+  const supabase = createServerSupabaseClient({
+    req: req as NextApiRequest,
+    res: res as NextApiResponse,
+  });
 
-    return {
-      props: {
-        ...(await serverSideTranslations(locale as LangCode, [
-          "common",
-          "account",
-          "landing",
-        ])),
-        person,
-        subjectGroups,
-      },
-    };
-  },
-});
+  const { data: user } = await supabase.auth.getUser();
+  const { data: person } = await getPersonFromUser(supabase, user.user as User);
+  const { data: subjectGroups } = await getSubjectGroups();
+
+  return {
+    props: {
+      ...(await serverSideTranslations(locale as LangCode, [
+        "common",
+        "account",
+        "landing",
+      ])),
+      person,
+      subjectGroups,
+    },
+  };
+};
 
 export default Welcome;

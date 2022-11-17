@@ -1,5 +1,10 @@
 // External libraries
-import { GetServerSideProps, NextPage } from "next";
+import {
+  GetServerSideProps,
+  NextApiRequest,
+  NextApiResponse,
+  NextPage,
+} from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -7,7 +12,10 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { User, withPageAuth } from "@supabase/auth-helpers-nextjs";
+import {
+  createServerSupabaseClient,
+  User,
+} from "@supabase/auth-helpers-nextjs";
 
 import { useEffect, useState } from "react";
 
@@ -380,24 +388,28 @@ const AccountDetails: NextPage<{ user: Student | Teacher }> = ({ user }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = withPageAuth({
-  async getServerSideProps({ locale }, supabase) {
-    const { data: sbUser } = await supabase.auth.getUser();
-    const { data: user } = await getPersonFromUser(
-      supabase,
-      sbUser.user as User
-    );
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  req,
+  res,
+}) => {
+  const supabase = createServerSupabaseClient({
+    req: req as NextApiRequest,
+    res: res as NextApiResponse,
+  });
 
-    return {
-      props: {
-        ...(await serverSideTranslations(locale as LangCode, [
-          "common",
-          "account",
-        ])),
-        user,
-      },
-    };
-  },
-});
+  const { data: sbUser } = await supabase.auth.getUser();
+  const { data: user } = await getPersonFromUser(supabase, sbUser.user as User);
+
+  return {
+    props: {
+      ...(await serverSideTranslations(locale as LangCode, [
+        "common",
+        "account",
+      ])),
+      user,
+    },
+  };
+};
 
 export default AccountDetails;

@@ -492,9 +492,7 @@ const Developers: NextPage = (): JSX.Element => {
 };
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale as LangCode, ["common", "about"])),
-  },
+  props: await serverSideTranslations(locale as LangCode, ["common", "about"]),
 });
 
 export default Developers;
