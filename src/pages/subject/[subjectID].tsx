@@ -1,5 +1,5 @@
 // External libraries
-import { GetServerSideProps, NextPage } from "next";
+import { GetServerSideProps, NextApiRequest, NextApiResponse, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -9,7 +9,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { useState } from "react";
 
-import { withPageAuth } from "@supabase/auth-helpers-nextjs";
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 // SK Components
@@ -33,29 +33,29 @@ import {
   Table,
   TextArea,
   Title,
-  XScrollContent,
+  XScrollContent
 } from "@suankularb-components/react";
 
 // Components
-import AddClassDialog from "@components/dialogs/AddClass";
-import ConnectSubjectDialog from "@components/dialogs/ConnectSubject";
-import ConfirmDelete from "@components/dialogs/ConfirmDelete";
-import ImageDialog from "@components/dialogs/Image";
-import BrandIcon from "@components/icons/BrandIcon";
 import HoverList from "@components/HoverList";
 import Markdown from "@components/Markdown";
 import Sentiment from "@components/Sentiment";
+import AddClassDialog from "@components/dialogs/AddClass";
+import ConfirmDelete from "@components/dialogs/ConfirmDelete";
+import ConnectSubjectDialog from "@components/dialogs/ConnectSubject";
+import ImageDialog from "@components/dialogs/Image";
+import BrandIcon from "@components/icons/BrandIcon";
 
 // Types
+import { DialogProps, LangCode } from "@utils/types/common";
 import {
   PeriodLog,
   PeriodMedium,
   Subject,
   SubjectListItem,
   SubjectWNameAndCode,
-  SubstituteAssignment,
+  SubstituteAssignment
 } from "@utils/types/subject";
-import { DialogProps, LangCode } from "@utils/types/common";
 
 // Backend
 import { db2Subject, db2SubjectListItem } from "@utils/backend/database";
@@ -843,8 +843,17 @@ const SubjectDetails: NextPage<{
   );
 };
 
-export const getServerSideProps: GetServerSideProps = withPageAuth({
-  async getServerSideProps({ locale, params }, supabase) {
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  params,
+  req,
+  res,
+}) => {
+  const supabase = createServerSupabaseClient({
+    req: req as NextApiRequest,
+    res: res as NextApiResponse,
+  });
+
     const { data: dbSubject, error: dbSubjectError } = await supabase
       .from("subject")
       .select("*")
@@ -895,7 +904,6 @@ export const getServerSideProps: GetServerSideProps = withPageAuth({
         allSubjects,
       },
     };
-  },
-});
+  };
 
 export default SubjectDetails;
