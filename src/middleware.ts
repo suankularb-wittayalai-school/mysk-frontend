@@ -75,14 +75,13 @@ export async function middleware(req: NextRequest) {
   // Get user metadata
   const { data: user } = await supabase
     .from("users")
-    .select("role, onboarded, is_admin")
+    .select("role, is_admin")
     .match({ id: session?.user.id })
     .limit(1)
     .maybeSingle();
 
   // Intepret user metadata
   const userRole: Role | "public" = user ? JSON.parse(user.role) : "public";
-  const userIsOnboarded: boolean = user ? user.onboarded : false;
   const userIsAdmin: boolean = user ? user.is_admin : false;
 
   // Decide on destination based on user and page protection type
@@ -90,17 +89,12 @@ export async function middleware(req: NextRequest) {
   // Disallow public users from visiting private pages
   if (pageRole != "public" && userRole == "public")
     destination = "/account/login";
-  // Disallow logged in users who haven’t been onboarded from visiting any
-  // other pages from Welcome
-  else if (userRole != "public" && !userIsOnboarded) destination = "/welcome";
   // Disallow logged in users from visiting certain pages under certain
   // circumstances
   // prettier-ignore
   else if (
     !(
       (
-        // Allow new users to visit Welcome
-        (route == "/welcome" && !userIsOnboarded) ||
         // Allow admins to visit admin pages
         (pageRole == "admin" && userIsAdmin) ||
         // Allow all users to visit user pages
