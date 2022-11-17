@@ -1,7 +1,12 @@
 // External libraries
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 
-import type { GetServerSideProps, NextPage } from "next";
+import type {
+  GetServerSideProps,
+  NextApiRequest,
+  NextApiResponse,
+  NextPage,
+} from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Head from "next/head";
@@ -10,6 +15,8 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 
 import { useEffect, useState } from "react";
+
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
 // Supabase
 import { supabase } from "@utils/supabase-client";
@@ -57,7 +64,6 @@ import { createTitleStr } from "@utils/helpers/title";
 
 // Hooks
 import { useToggle } from "@utils/hooks/toggle";
-import { withPageAuth } from "@supabase/auth-helpers-nextjs";
 
 // Page-specific components
 const ClassCard = ({
@@ -335,34 +341,41 @@ const Classes: NextPage<{ classes: Class[] }> = ({
   );
 };
 
-export const getServerSideProps: GetServerSideProps = withPageAuth({
-  async getServerSideProps({ locale }, supabase) {
-    let classes: Class[] = [];
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  req,
+  res,
+}) => {
+  const supabase = createServerSupabaseClient({
+    req: req as NextApiRequest,
+    res: res as NextApiResponse,
+  });
 
-    const { data, error } = await supabase
-      .from("classroom")
-      .select("*")
-      .order("number");
+  let classes: Class[] = [];
 
-    if (error) console.error(error);
+  const { data, error } = await supabase
+    .from("classroom")
+    .select("*")
+    .order("number");
 
-    if (data)
-      classes = await Promise.all(
-        data.map(async (classItem) => await db2Class(supabase, classItem))
-      );
+  if (error) console.error(error);
 
-    return {
-      props: {
-        ...(await serverSideTranslations(locale as LangCode, [
-          "common",
-          "admin",
-          "account",
-          "class",
-        ])),
-        classes,
-      },
-    };
-  },
-});
+  if (data)
+    classes = await Promise.all(
+      data.map(async (classItem) => await db2Class(supabase, classItem))
+    );
+
+  return {
+    props: {
+      ...(await serverSideTranslations(locale as LangCode, [
+        "common",
+        "admin",
+        "account",
+        "class",
+      ])),
+      classes,
+    },
+  };
+};
 
 export default Classes;
