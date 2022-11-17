@@ -61,6 +61,7 @@ import { createTitleStr } from "@utils/helpers/title";
 import { useToggle } from "@utils/hooks/toggle";
 import { Database } from "@utils/types/supabase";
 import { getLocalePath } from "@utils/helpers/i18n";
+import { getUserMetadata } from "@utils/backend/account";
 
 const ScheduleSection = ({
   schedule,
@@ -224,15 +225,13 @@ export const getServerSideProps: GetServerSideProps = async ({
     data: { session },
   } = await supabase.auth.getSession();
 
-  const { data: user, error } = await supabase
-    .from("users")
-    .select("teacher(id), onboarded")
-    .match({ id: session?.user.id })
-    .limit(1)
-    .single();
+  const { data: metadata, error: metadataError } = await getUserMetadata(
+    supabase,
+    session!.user.id
+  );
+  if (metadataError) console.error(metadataError);
 
-  if (error) console.error(error);
-  if (!user!.onboarded)
+  if (!metadata?.onboarded)
     return {
       redirect: {
         destination: getLocalePath("/welcome", locale as LangCode),
@@ -240,13 +239,16 @@ export const getServerSideProps: GetServerSideProps = async ({
       },
     };
 
-  const teacherID = (
-    user!.teacher as Database["public"]["Tables"]["teacher"]["Row"]
-  ).id;
+  const { data: schedule } = await getSchedule(
+    supabase,
+    "teacher",
+    metadata.teacher!
+  );
 
-  const { data: schedule } = await getSchedule(supabase, "teacher", teacherID);
-
-  const { data: subjects } = await getTeachingSubjects(supabase, teacherID);
+  const { data: subjects } = await getTeachingSubjects(
+    supabase,
+    metadata.teacher!
+  );
 
   return {
     props: {

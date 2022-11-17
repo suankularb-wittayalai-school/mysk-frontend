@@ -2,7 +2,11 @@
 import { User } from "@supabase/supabase-js";
 
 // Types
-import { BackendDataReturn, DatabaseClient } from "@utils/types/common";
+import {
+  BackendDataReturn,
+  DatabaseClient,
+  OrUndefined,
+} from "@utils/types/common";
 import { Role, UserMetadata } from "@utils/types/person";
 
 export async function getUserMetadata(
@@ -11,7 +15,7 @@ export async function getUserMetadata(
 ): Promise<BackendDataReturn<UserMetadata, null>> {
   const { data, error } = await supabase
     .from("users")
-    .select("role, is_admin, onboarded")
+    .select("role, student, teacher, is_admin, onboarded")
     .match({ id })
     .limit(1)
     .single();
@@ -24,6 +28,8 @@ export async function getUserMetadata(
   return {
     data: {
       role: JSON.parse(data!.role) as Role,
+      student: data!.student as OrUndefined<number>,
+      teacher: data!.teacher as OrUndefined<number>,
       isAdmin: data!.is_admin,
       onboarded: data!.onboarded,
     },

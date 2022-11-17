@@ -5,6 +5,8 @@ import { SubjectGroup, SubjectWNameAndCode } from "./subject";
 
 export type UserMetadata = {
   role: Role;
+  student?: number;
+  teacher?: number;
   isAdmin: boolean;
   onboarded: boolean;
 };

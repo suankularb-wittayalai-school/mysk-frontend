@@ -8,6 +8,7 @@ import {
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
 // Backend
+import { getUserMetadata } from "@utils/backend/account";
 import { getClassNumberFromUser } from "@utils/backend/classroom/classroom";
 
 // Helpers
@@ -31,15 +32,13 @@ export const getServerSideProps: GetServerSideProps = async ({
     data: { session },
   } = await supabase.auth.getSession();
 
-  const { data: user, error } = await supabase
-    .from("users")
-    .select("onboarded")
-    .match({ id: session!.user.id })
-    .limit(1)
-    .single();
+  const { data: metadata, error: metadataError } = await getUserMetadata(
+    supabase,
+    session!.user.id
+  );
+  if (metadataError) console.error(metadataError);
 
-  if (error) console.error(error);
-  if (user!.onboarded)
+  if (!metadata?.onboarded)
     return {
       redirect: {
         destination: getLocalePath("/welcome", locale as LangCode),
