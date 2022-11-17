@@ -14,7 +14,7 @@
   }
 
   html {
-    @apply motion-safe:scroll-smooth [accent-color:var(--primary)];
+    @apply w-screen [accent-color:var(--primary)] motion-safe:scroll-smooth overflow-x-hidden;
   }
 }
 
