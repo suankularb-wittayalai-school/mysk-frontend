@@ -13,6 +13,12 @@ import {
 // Backend
 import { getClassNumberFromUser } from "@utils/backend/classroom/classroom";
 
+// Helpers
+import { getLocalePath } from "@utils/helpers/i18n";
+
+// Types
+import { LangCode } from "@utils/types/common";
+
 const Learn: NextPage = () => null;
 
 export const getServerSideProps: GetServerSideProps = async ({
@@ -31,7 +37,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   );
   return {
     redirect: {
-      destination: `${locale == "th" ? "" : "/en-US"}/learn/${classID}`,
+      destination: getLocalePath(`/learn/${classID}`, locale as LangCode),
       permanent: false,
     },
   };
