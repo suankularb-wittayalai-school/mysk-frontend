@@ -1,7 +1,12 @@
 // External libraries
 import { motion } from "framer-motion";
 
-import { GetServerSideProps, NextPage } from "next";
+import {
+  GetServerSideProps,
+  NextApiRequest,
+  NextApiResponse,
+  NextPage,
+} from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -9,7 +14,7 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { withPageAuth } from "@supabase/auth-helpers-nextjs";
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
 // SK Components
 import {
@@ -213,32 +218,35 @@ const Teach: NextPage<{
   );
 };
 
-export const getServerSideProps: GetServerSideProps = withPageAuth({
-  async getServerSideProps({ locale }, supabase) {
-    const { data: user } = await supabase.auth.getUser();
-    const teacherID = user.user?.user_metadata.teacher;
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  req,
+  res,
+}) => {
+  const supabase = createServerSupabaseClient({
+    req: req as NextApiRequest,
+    res: res as NextApiResponse,
+  });
 
-    const { data: schedule } = await getSchedule(
-      supabase,
-      "teacher",
-      teacherID
-    );
+  const { data: user } = await supabase.auth.getUser();
+  const teacherID = user.user?.user_metadata.teacher;
 
-    const { data: subjects } = await getTeachingSubjects(supabase, teacherID);
+  const { data: schedule } = await getSchedule(supabase, "teacher", teacherID);
 
-    return {
-      props: {
-        ...(await serverSideTranslations(locale as LangCode, [
-          "common",
-          "account",
-          "teach",
-          "schedule",
-        ])),
-        schedule,
-        subjects,
-      },
-    };
-  },
-});
+  const { data: subjects } = await getTeachingSubjects(supabase, teacherID);
+
+  return {
+    props: {
+      ...(await serverSideTranslations(locale as LangCode, [
+        "common",
+        "account",
+        "teach",
+        "schedule",
+      ])),
+      schedule,
+      subjects,
+    },
+  };
+};
 
 export default Teach;
