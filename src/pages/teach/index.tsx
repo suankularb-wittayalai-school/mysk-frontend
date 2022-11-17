@@ -106,15 +106,10 @@ const SubjectsYouTeachSection = ({
 
   return (
     <Section>
-      <LayoutGridCols cols={3}>
-        <div className="md:col-span-2">
-          <Header
-            icon={<MaterialIcon icon="library_books" allowCustomSize />}
-            text={t("subjects.title")}
-          />
-        </div>
-        <Search placeholder={t("subjects.search")} />
-      </LayoutGridCols>
+      <Header
+        icon={<MaterialIcon icon="library_books" allowCustomSize />}
+        text={t("subjects.title")}
+      />
 
       {subjects.length == 0 ? (
         // Guide the user on how to add subjects
@@ -144,15 +139,9 @@ const SubjectsYouTeachSection = ({
           <LayoutGridCols cols={3}>
             <ul className="contents">
               {subjects.map((subject) => (
-                <motion.li
-                  key={subject.id}
-                  initial={{ scale: 0.8, y: 20, opacity: 0 }}
-                  animate={{ scale: 1, y: 0, opacity: 1 }}
-                  exit={{ scale: 0.8, y: 20, opacity: 0 }}
-                  transition={animationTransition}
-                >
+                <li key={subject.id} className="contents">
                   <SubjectCard subject={subject} />
-                </motion.li>
+                </li>
               ))}
             </ul>
           </LayoutGridCols>
@@ -160,6 +149,7 @@ const SubjectsYouTeachSection = ({
             <Button
               label={t("subjects.action.add")}
               type="outlined"
+              icon={<MaterialIcon icon="add" />}
               onClick={toggleShowAdd}
             />
           </Actions>
