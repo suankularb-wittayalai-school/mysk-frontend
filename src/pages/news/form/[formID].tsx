@@ -1,14 +1,22 @@
 // External libraries
 import { useState } from "react";
 
-import { GetServerSideProps, NextPage } from "next";
+import {
+  GetServerSideProps,
+  NextApiRequest,
+  NextApiResponse,
+  NextPage,
+} from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { User, withPageAuth } from "@supabase/auth-helpers-nextjs";
+import {
+  createServerSupabaseClient,
+  User,
+} from "@supabase/auth-helpers-nextjs";
 
 // SK Components
 import {
@@ -131,30 +139,35 @@ const FormPage: NextPage<{ formPage: FormPageType; personID: number }> = ({
   );
 };
 
-export const getServerSideProps: GetServerSideProps = withPageAuth({
-  async getServerSideProps({ locale, params }, supabase) {
-    const { data: user } = await supabase.auth.getUser();
-    const { data: personID } = await getPersonIDFromUser(
-      supabase,
-      user.user as User
-    );
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  params,
+  req,
+  res,
+}) => {
+  const supabase = createServerSupabaseClient({
+    req: req as NextApiRequest,
+    res: res as NextApiResponse,
+  });
 
-    if (!params?.formID) return { notFound: true };
+  const { data: user } = await supabase.auth.getUser();
+  const { data: personID } = await getPersonIDFromUser(
+    supabase,
+    user.user as User
+  );
 
-    const { data: formPage, error } = await getForm(Number(params?.formID));
-    if (error) return { notFound: true };
+  if (!params?.formID) return { notFound: true };
 
-    return {
-      props: {
-        ...(await serverSideTranslations(locale as LangCode, [
-          "common",
-          "news",
-        ])),
-        formPage,
-        personID,
-      },
-    };
-  },
-});
+  const { data: formPage, error } = await getForm(Number(params?.formID));
+  if (error) return { notFound: true };
+
+  return {
+    props: {
+      ...(await serverSideTranslations(locale as LangCode, ["common", "news"])),
+      formPage,
+      personID,
+    },
+  };
+};
 
 export default FormPage;
