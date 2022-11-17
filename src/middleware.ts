@@ -30,13 +30,12 @@ export async function middleware(req: NextRequest) {
     // Redirect to the correct language
 
     // From Thai to English
-    if (browserLang == "en" && locale != "en-US") {
-      console.log({ locale, browserLang });
+    if (browserLang == "en" && locale != "en-US")
       return NextResponse.redirect(new URL("/en-US", req.url));
-    }
     // From Thai (or unsupported language) to Thai (which is the default
     // language)
-    else return NextResponse.redirect(new URL("/", req.url));
+    else if (browserLang != "en" && locale == "en-US")
+      return NextResponse.redirect(new URL("/", req.url));
   }
 
   // Get current page protection type

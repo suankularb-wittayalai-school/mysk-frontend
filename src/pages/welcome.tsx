@@ -773,26 +773,6 @@ const Welcome: NextPage<{
   );
 };
 
-Welcome.getLayout = (page: NextPage) => (
-  <PageLayout
-    currentPath="/welcome"
-    navItems={
-      [
-        {
-          name: "Welcome",
-          icon: {
-            inactive: <MaterialIcon icon="waving_hand" type="outlined" />,
-            active: <MaterialIcon icon="waving_hand" type="filled" />,
-          },
-          url: "/welcome",
-        },
-      ]
-    }
-  >
-    {page}
-  </PageLayout>
-);
-
 export const getServerSideProps: GetServerSideProps = async ({
   locale,
   req,
