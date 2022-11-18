@@ -1,5 +1,10 @@
 // External libraries
-import { GetServerSideProps, NextPage } from "next";
+import {
+  GetServerSideProps,
+  NextApiRequest,
+  NextApiResponse,
+  NextPage,
+} from "next";
 import Head from "next/head";
 import Link from "next/link";
 
@@ -28,7 +33,7 @@ import { Schedule as ScheduleType } from "@utils/types/schedule";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
-import { withPageAuth } from "@supabase/auth-helpers-nextjs";
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
 const ScheduleSection = ({
   schedule,
@@ -81,29 +86,36 @@ const SchedulesThisGrade: NextPage<{
     </>
   );
 };
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  params,
+  req,
+  res,
+}) => {
+  const supabase = createServerSupabaseClient({
+    req: req as NextApiRequest,
+    res: res as NextApiResponse,
+  });
 
-export const getServerSideProps: GetServerSideProps = withPageAuth({
-  async getServerSideProps({ locale, params }, supabase) {
-    const grade = Number(params?.grade);
+  const grade = Number(params?.grade);
 
-    const { data: schedulesThisGrade, error } = await getSchedulesOfGrade(
-      supabase,
-      grade
-    );
-    if (error) return { notFound: true };
+  const { data: schedulesThisGrade, error } = await getSchedulesOfGrade(
+    supabase,
+    grade
+  );
+  if (error) return { notFound: true };
 
-    return {
-      props: {
-        ...(await serverSideTranslations(locale as LangCode, [
-          "common",
-          "admin",
-          "schedule",
-        ])),
-        grade,
-        schedulesThisGrade,
-      },
-    };
-  },
-});
+  return {
+    props: {
+      ...(await serverSideTranslations(locale as LangCode, [
+        "common",
+        "admin",
+        "schedule",
+      ])),
+      grade,
+      schedulesThisGrade,
+    },
+  };
+};
 
 export default SchedulesThisGrade;

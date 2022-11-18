@@ -29,6 +29,7 @@ import { addAtIndex } from "@utils/helpers/array";
 
 // Types
 import { ClassWNumber } from "@utils/types/class";
+import { getUserMetadata } from "@utils/backend/account";
 
 const Layout = ({
   navIsTransparent,
@@ -70,6 +71,17 @@ const Layout = ({
   ];
 
   const [navItems, setNavItems] = useState(defaultNav);
+
+  const welcomeNav = [
+    {
+      name: t("navigation.welcome"),
+      icon: {
+        inactive: <MaterialIcon icon="waving_hand" type="outlined" />,
+        active: <MaterialIcon icon="waving_hand" type="filled" />,
+      },
+      url: "/welcome",
+    },
+  ];
 
   const studentNav = [
     {
@@ -119,15 +131,33 @@ const Layout = ({
 
   useEffect(() => {
     async function constructNavigation() {
-      const role = user?.user_metadata.role;
+      // Reset Navigation at log out
+      if (!user) {
+        setNavItems(defaultNav);
+        return;
+      }
+
+      // Get user metadata
+      const { data: metadata, error: metadataError } = await getUserMetadata(
+        supabase,
+        user.id
+      );
+      if (metadataError) {
+        console.error(metadataError);
+        return;
+      }
 
       // Decide the Navigation the user is going to see based on their role
 
+      // Welcome Navigation
+      if (!metadata!.onboarded) {
+        setNavItems(welcomeNav);
+      }
       // Student Navigation
-      if (role == "student") {
+      else if (metadata!.role == "student") {
         const { data: classOfStudent, error } = await getClassOfStudent(
           supabase,
-          user?.user_metadata.student
+          metadata!.student!
         );
 
         if (error) {
@@ -158,10 +188,10 @@ const Layout = ({
         );
       }
       // Teacher Navigation
-      else if (role == "teacher") {
+      else if (metadata!.role == "teacher") {
         const { data: classAdvisorAt, error } = await getClassAdvisorAt(
           supabase,
-          user?.user_metadata.teacher
+          metadata!.teacher!
         );
 
         if (error) console.error(error);
@@ -178,14 +208,14 @@ const Layout = ({
               inactive: <MaterialIcon icon="groups" type="outlined" />,
               active: <MaterialIcon icon="groups" type="filled" />,
             },
-            url: `/class/${(classAdvisorAt as ClassWNumber).number}/manage`,
+            url: `/class/${classAdvisorAt!.number}/manage`,
           })
         );
-      } else setNavItems(defaultNav);
+      }
     }
 
     constructNavigation();
-  }, [user]);
+  }, [router.asPath]);
 
   return (
     <LayoutGroup>

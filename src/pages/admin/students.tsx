@@ -1,5 +1,10 @@
 // External libraries
-import type { GetServerSideProps, NextPage } from "next";
+import type {
+  GetServerSideProps,
+  NextApiRequest,
+  NextApiResponse,
+  NextPage,
+} from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Head from "next/head";
@@ -9,7 +14,7 @@ import { useTranslation } from "next-i18next";
 
 import { useEffect, useMemo, useState } from "react";
 
-import { withPageAuth } from "@supabase/auth-helpers-nextjs";
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 import {
@@ -287,36 +292,42 @@ const Students: NextPage<{ students: Student[] }> = ({
   );
 };
 
-export const getServerSideProps: GetServerSideProps = withPageAuth({
-  async getServerSideProps({ locale }, supabase) {
-    const { data, error } = await (supabase as DatabaseClient)
-      .from("student")
-      .select("*, person(*)")
-      .order("std_id", { ascending: false });
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  req,
+  res,
+}) => {
+  const supabase = createServerSupabaseClient({
+    req: req as NextApiRequest,
+    res: res as NextApiResponse,
+  });
 
-    if (error) console.error(error);
-    if (!data) return { props: { students: [] } };
+  const { data, error } = await (supabase as DatabaseClient)
+    .from("student")
+    .select("*, person(*)")
+    .order("std_id", { ascending: false });
 
-    const students: Student[] = (
-      await Promise.all(
-        data.map(async (student) => await db2Student(supabase, student))
-      )
+  if (error) console.error(error);
+  if (!data) return { props: { students: [] } };
+
+  const students: Student[] = (
+    await Promise.all(
+      data.map(async (student) => await db2Student(supabase, student))
     )
-      .sort((a, b) => a.classNo - b.classNo)
-      .sort((a, b) => a.class.number - b.class.number);
+  )
+    .sort((a, b) => a.classNo - b.classNo)
+    .sort((a, b) => a.class.number - b.class.number);
 
-    return {
-      props: {
-        ...(await serverSideTranslations(locale as LangCode, [
-          "common",
-          "admin",
-          "account",
-        ])),
-        students,
-      },
-    };
-  },
-});
+  return {
+    props: {
+      ...(await serverSideTranslations(locale as LangCode, [
+        "common",
+        "admin",
+        "account",
+      ])),
+      students,
+    },
+  };
+};
 
 export default Students;
-

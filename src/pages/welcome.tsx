@@ -1,7 +1,12 @@
 // External libraries
 import { AnimatePresence, motion } from "framer-motion";
 
-import { GetServerSideProps, NextPage } from "next";
+import {
+  GetServerSideProps,
+  NextApiRequest,
+  NextApiResponse,
+  NextPage,
+} from "next";
 import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -11,13 +16,17 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import {
   MutableRefObject,
+  ReactNode,
   useEffect,
   useReducer,
   useRef,
   useState,
 } from "react";
 
-import { User, withPageAuth } from "@supabase/auth-helpers-nextjs";
+import {
+  createServerSupabaseClient,
+  User,
+} from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 
 // SK Components
@@ -37,6 +46,7 @@ import {
   CardActions,
   NativeInput,
   Dropdown,
+  PageLayout,
 } from "@suankularb-components/react";
 
 // Components
@@ -50,7 +60,7 @@ import { getPersonFromUser, setupPerson } from "@utils/backend/person/person";
 import { getSubjectGroups } from "@utils/backend/subject/subjectGroup";
 
 // Helpers
-import { getLocaleString } from "@utils/helpers/i18n";
+import { getLocalePath, getLocaleString } from "@utils/helpers/i18n";
 import { createTitleStr } from "@utils/helpers/title";
 
 // Hooks
@@ -66,6 +76,7 @@ import { prefixMap } from "@utils/maps";
 import { classPattern, studentIDRegex } from "@utils/patterns";
 import { validateCitizenID, validatePassport } from "@utils/helpers/validators";
 import { withLoading } from "@utils/helpers/loading";
+import { getUserMetadata } from "@utils/backend/account";
 
 // Sections
 const HeroSection = ({
@@ -653,7 +664,7 @@ const DoneSection = ({
                 label={t("welcome.done.action.finish")}
                 type="filled"
                 className="w-full !text-center"
-                onClick={() => 
+                onClick={() =>
                   withLoading(async () => {
                     // Verify that the user is onboarded before continuing
                     const { data, error } = await supabase
@@ -686,7 +697,9 @@ const DoneSection = ({
 const Welcome: NextPage<{
   person: Student | Teacher;
   subjectGroups: SubjectGroup[];
-}> = ({ person: user, subjectGroups }) => {
+}> & {
+  getLayout?: (page: NextPage) => ReactNode;
+} = ({ person: user, subjectGroups }) => {
   const { t } = useTranslation(["landing", "common"]);
 
   const [currStep, incrementStep] = useReducer((value) => value + 1, 0);
@@ -760,27 +773,54 @@ const Welcome: NextPage<{
   );
 };
 
-export const getServerSideProps: GetServerSideProps = withPageAuth({
-  async getServerSideProps({ locale }, supabase) {
-    const { data: user } = await supabase.auth.getUser();
-    const { data: person } = await getPersonFromUser(
-      supabase,
-      user.user as User
-    );
-    const { data: subjectGroups } = await getSubjectGroups();
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  req,
+  res,
+}) => {
+  const supabase = createServerSupabaseClient({
+    req: req as NextApiRequest,
+    res: res as NextApiResponse,
+  });
 
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  const { data: metadata, error: metadataError } = await getUserMetadata(
+    supabase,
+    session!.user.id
+  );
+  if (metadataError) console.error(metadataError);
+  if (metadata?.onboarded)
     return {
-      props: {
-        ...(await serverSideTranslations(locale as LangCode, [
-          "common",
-          "account",
-          "landing",
-        ])),
-        person,
-        subjectGroups,
+      redirect: {
+        destination: getLocalePath(
+          metadata!.role == "teacher" ? "/teach" : "/learn",
+          locale as LangCode
+        ),
+        permanent: false,
       },
     };
-  },
-});
+
+  const { data: person } = await getPersonFromUser(
+    supabase,
+    session!.user as User
+  );
+
+  const { data: subjectGroups } = await getSubjectGroups();
+
+  return {
+    props: {
+      ...(await serverSideTranslations(locale as LangCode, [
+        "common",
+        "account",
+        "landing",
+      ])),
+      person,
+      subjectGroups,
+    },
+  };
+};
 
 export default Welcome;

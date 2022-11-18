@@ -1,7 +1,12 @@
 // External libraries
 import { isThisYear } from "date-fns";
 
-import { GetServerSideProps, NextPage } from "next";
+import {
+  GetServerSideProps,
+  NextApiRequest,
+  NextApiResponse,
+  NextPage,
+} from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -13,7 +18,10 @@ import { MutableRefObject, useEffect, useRef, useState } from "react";
 
 import ReactToPrint from "react-to-print";
 
-import { User, withPageAuth } from "@supabase/auth-helpers-nextjs";
+import {
+  createServerSupabaseClient,
+  User,
+} from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 // SK Components
@@ -540,41 +548,49 @@ const Class: NextPage<{
   );
 };
 
-export const getServerSideProps: GetServerSideProps = withPageAuth({
-  async getServerSideProps({ locale, params }, supabase) {
-    const { data: classItem, error } = await getClassroom(
-      supabase,
-      Number(params?.classNumber)
-    );
-    if (error) return { notFound: true };
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  params,
+  req,
+  res,
+}) => {
+  const supabase = createServerSupabaseClient({
+    req: req as NextApiRequest,
+    res: res as NextApiResponse,
+  });
 
-    const studentForms: StudentFormItem[] = [];
+  const { data: classItem, error } = await getClassroom(
+    supabase,
+    Number(params?.classNumber)
+  );
+  if (error) return { notFound: true };
 
-    const { data: sbUser } = await supabase.auth.getUser();
-    const { data: teacher } = await getTeacherFromUser(
-      supabase,
-      sbUser.user as User
-    );
-    const isAdvisor = teacher
-      ? teacher.classAdvisorAt?.id == classItem!.id
-      : false;
+  const studentForms: StudentFormItem[] = [];
 
-    return {
-      props: {
-        ...(await serverSideTranslations(locale as LangCode, [
-          "common",
-          "account",
-          "class",
-          "dashboard",
-          "news",
-          "teacher",
-        ])),
-        classItem,
-        studentForms,
-        isAdvisor,
-      },
-    };
-  },
-});
+  const { data: sbUser } = await supabase.auth.getUser();
+  const { data: teacher } = await getTeacherFromUser(
+    supabase,
+    sbUser.user as User
+  );
+  const isAdvisor = teacher
+    ? teacher.classAdvisorAt?.id == classItem!.id
+    : false;
+
+  return {
+    props: {
+      ...(await serverSideTranslations(locale as LangCode, [
+        "common",
+        "account",
+        "class",
+        "dashboard",
+        "news",
+        "teacher",
+      ])),
+      classItem,
+      studentForms,
+      isAdvisor,
+    },
+  };
+};
 
 export default Class;

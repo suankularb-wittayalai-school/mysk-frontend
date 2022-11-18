@@ -4,14 +4,41 @@ import type { NextRequest } from "next/server";
 
 import { createMiddlewareSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
+// Helpers
+import { getLocalePath } from "@utils/helpers/i18n";
+
 // Types
+import { LangCode } from "@utils/types/common";
 import { Role } from "@utils/types/person";
 
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next();
 
-  // Get current page protection type
+  // Get original destination
   const route = req.nextUrl.pathname;
+  const locale = req.nextUrl.locale as LangCode;
+
+  // Ensure user is on the correct language in Landing
+  // p.s. The other pages don’t matter because you land at Landing. :)
+  if (route == "/") {
+    // Detect browser language
+    const browserLang = req.headers
+      .get("accept-language")
+      ?.split(",")?.[0]
+      .split("-")?.[0];
+
+    // Redirect to the correct language
+
+    // From Thai to English
+    if (browserLang == "en" && locale != "en-US")
+      return NextResponse.redirect(new URL("/en-US", req.url));
+    // From Thai (or unsupported language) to Thai (which is the default
+    // language)
+    else if (browserLang != "en" && locale == "en-US")
+      return NextResponse.redirect(new URL("/", req.url));
+  }
+
+  // Get current page protection type
   const pageRole: Role | "public" | "admin" | "user" | "not-protected" =
     // Public pages
     route == "/" || /^\/(account\/(login|forgot\-password)|about)/.test(route)
@@ -32,7 +59,6 @@ export async function middleware(req: NextRequest) {
       ? "user"
       : // Fallback (images, icons, manifest, etc.)
         "not-protected";
-  // console.log(pageRole);
 
   // Ignore page without protection
   if (pageRole == "not-protected") return res;
@@ -48,14 +74,13 @@ export async function middleware(req: NextRequest) {
   // Get user metadata
   const { data: user } = await supabase
     .from("users")
-    .select("role, onboarded, is_admin")
+    .select("role, is_admin")
     .match({ id: session?.user.id })
     .limit(1)
     .maybeSingle();
 
   // Intepret user metadata
   const userRole: Role | "public" = user ? JSON.parse(user.role) : "public";
-  const userIsOnboarded: boolean = user ? user.onboarded : false;
   const userIsAdmin: boolean = user ? user.is_admin : false;
 
   // Decide on destination based on user and page protection type
@@ -63,17 +88,12 @@ export async function middleware(req: NextRequest) {
   // Disallow public users from visiting private pages
   if (pageRole != "public" && userRole == "public")
     destination = "/account/login";
-  // Disallow logged in users who haven’t been onboarded from visiting any
-  // other pages from Welcome
-  else if (userRole != "public" && !userIsOnboarded) destination = "/welcome";
   // Disallow logged in users from visiting certain pages under certain
   // circumstances
   // prettier-ignore
   else if (
     !(
       (
-        // Allow new users to visit Welcome
-        (route == "/welcome" && !userIsOnboarded) ||
         // Allow admins to visit admin pages
         (pageRole == "admin" && userIsAdmin) ||
         // Allow all users to visit user pages
@@ -98,9 +118,12 @@ export async function middleware(req: NextRequest) {
   }
 
   // Redirect if decided so, continue if not
-  // Note: While developing, comment out line 114 if you want to test protected
-  // pages via IPv4. Pages using user data will not work, however.
-  if (destination) return NextResponse.redirect(new URL(destination, req.url));
+  // Note: While developing, comment out lines 124-127 if you want to test
+  // protected pages via IPv4. Pages using user data will not work, however.
+  if (destination)
+    return NextResponse.redirect(
+      new URL(getLocalePath(destination, locale), req.url)
+    );
   return NextResponse.next();
 }
 
@@ -122,4 +145,3 @@ export const config = {
     "/news/payment/:id",
   ],
 };
-

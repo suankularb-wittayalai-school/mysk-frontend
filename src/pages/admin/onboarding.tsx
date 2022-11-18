@@ -1,15 +1,21 @@
 // External libraries
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 
-import { GetServerSideProps, NextPage } from "next";
+import {
+  GetServerSideProps,
+  NextApiRequest,
+  NextApiResponse,
+  NextPage,
+} from "next";
 import Head from "next/head";
 import Link from "next/link";
 
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { withPageAuth } from "@supabase/auth-helpers-nextjs";
 
 import { FC, useEffect, useState } from "react";
 
@@ -204,9 +210,8 @@ const OnboardingStatus: NextPage<{
     };
   }>(statistics);
 
-  const [currentTeachers, setTeachers] = useState<IndividualOnboardingStatus[]>(
-    teachers
-  );
+  const [currentTeachers, setTeachers] =
+    useState<IndividualOnboardingStatus[]>(teachers);
 
   useEffect(() => {
     // listen to onboarding status changes with supabase realtime and rls
@@ -303,29 +308,35 @@ const OnboardingStatus: NextPage<{
   );
 };
 
-export const getServerSideProps: GetServerSideProps = withPageAuth({
-  async getServerSideProps({ locale }, supabase) {
-    // get teacher and student count who have onboarded
-    const teachers: IndividualOnboardingStatus[] = await getOnBoardTeacherData(
-      supabase,
-      locale as LangCode
-    );
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  req,
+  res,
+}) => {
+  const supabase = createServerSupabaseClient({
+    req: req as NextApiRequest,
+    res: res as NextApiResponse,
+  });
 
-    const statistics = await getOnboardStatistic(supabase);
+  // get teacher and student count who have onboarded
+  const teachers: IndividualOnboardingStatus[] = await getOnBoardTeacherData(
+    supabase,
+    locale as LangCode
+  );
 
-    return {
-      props: {
-        ...(await serverSideTranslations(locale as LangCode, [
-          "common",
-          "admin",
-          "account",
-        ])),
-        statistics,
-        teachers,
-      },
-    };
-  },
-});
+  const statistics = await getOnboardStatistic(supabase);
+
+  return {
+    props: {
+      ...(await serverSideTranslations(locale as LangCode, [
+        "common",
+        "admin",
+        "account",
+      ])),
+      statistics,
+      teachers,
+    },
+  };
+};
 
 export default OnboardingStatus;
-

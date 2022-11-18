@@ -1,7 +1,12 @@
 // External libraries
 import { motion } from "framer-motion";
 
-import { GetServerSideProps, NextPage } from "next";
+import {
+  GetServerSideProps,
+  NextApiRequest,
+  NextApiResponse,
+  NextPage,
+} from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -9,7 +14,7 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { withPageAuth } from "@supabase/auth-helpers-nextjs";
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
 // SK Components
 import {
@@ -54,6 +59,9 @@ import { createTitleStr } from "@utils/helpers/title";
 
 // Hooks
 import { useToggle } from "@utils/hooks/toggle";
+import { Database } from "@utils/types/supabase";
+import { getLocalePath } from "@utils/helpers/i18n";
+import { getUserMetadata } from "@utils/backend/account";
 
 const ScheduleSection = ({
   schedule,
@@ -79,7 +87,7 @@ const ScheduleSection = ({
       <Actions>
         <LinkButton
           label={t("schedule.action.enterEditMode")}
-          type="tonal"
+          type="outlined"
           icon={<MaterialIcon icon="edit" />}
           url="/teach/schedule"
           LinkElement={Link}
@@ -101,15 +109,10 @@ const SubjectsYouTeachSection = ({
 
   return (
     <Section>
-      <LayoutGridCols cols={3}>
-        <div className="md:col-span-2">
-          <Header
-            icon={<MaterialIcon icon="library_books" allowCustomSize />}
-            text={t("subjects.title")}
-          />
-        </div>
-        <Search placeholder={t("subjects.search")} />
-      </LayoutGridCols>
+      <Header
+        icon={<MaterialIcon icon="library_books" allowCustomSize />}
+        text={t("subjects.title")}
+      />
 
       {subjects.length == 0 ? (
         // Guide the user on how to add subjects
@@ -139,15 +142,9 @@ const SubjectsYouTeachSection = ({
           <LayoutGridCols cols={3}>
             <ul className="contents">
               {subjects.map((subject) => (
-                <motion.li
-                  key={subject.id}
-                  initial={{ scale: 0.8, y: 20, opacity: 0 }}
-                  animate={{ scale: 1, y: 0, opacity: 1 }}
-                  exit={{ scale: 0.8, y: 20, opacity: 0 }}
-                  transition={animationTransition}
-                >
+                <li key={subject.id} className="contents">
                   <SubjectCard subject={subject} />
-                </motion.li>
+                </li>
               ))}
             </ul>
           </LayoutGridCols>
@@ -155,6 +152,7 @@ const SubjectsYouTeachSection = ({
             <Button
               label={t("subjects.action.add")}
               type="outlined"
+              icon={<MaterialIcon icon="add" />}
               onClick={toggleShowAdd}
             />
           </Actions>
@@ -213,32 +211,57 @@ const Teach: NextPage<{
   );
 };
 
-export const getServerSideProps: GetServerSideProps = withPageAuth({
-  async getServerSideProps({ locale }, supabase) {
-    const { data: user } = await supabase.auth.getUser();
-    const teacherID = user.user?.user_metadata.teacher;
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  req,
+  res,
+}) => {
+  const supabase = createServerSupabaseClient({
+    req: req as NextApiRequest,
+    res: res as NextApiResponse,
+  });
 
-    const { data: schedule } = await getSchedule(
-      supabase,
-      "teacher",
-      teacherID
-    );
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
-    const { data: subjects } = await getTeachingSubjects(supabase, teacherID);
+  const { data: metadata, error: metadataError } = await getUserMetadata(
+    supabase,
+    session!.user.id
+  );
+  if (metadataError) console.error(metadataError);
 
+  if (!metadata?.onboarded)
     return {
-      props: {
-        ...(await serverSideTranslations(locale as LangCode, [
-          "common",
-          "account",
-          "teach",
-          "schedule",
-        ])),
-        schedule,
-        subjects,
+      redirect: {
+        destination: getLocalePath("/welcome", locale as LangCode),
+        permanent: false,
       },
     };
-  },
-});
+
+  const { data: schedule } = await getSchedule(
+    supabase,
+    "teacher",
+    metadata.teacher!
+  );
+
+  const { data: subjects } = await getTeachingSubjects(
+    supabase,
+    metadata.teacher!
+  );
+
+  return {
+    props: {
+      ...(await serverSideTranslations(locale as LangCode, [
+        "common",
+        "account",
+        "teach",
+        "schedule",
+      ])),
+      schedule,
+      subjects,
+    },
+  };
+};
 
 export default Teach;

@@ -13,3 +13,7 @@ export function getLocaleObj(
 ): any {
   return multiLangString[locale] || multiLangString.th;
 }
+
+export function getLocalePath(path: string, locale: LangCode): string {
+  return [locale == "th" ? "" : "/en-US", path].join("");
+}

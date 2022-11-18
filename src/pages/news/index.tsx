@@ -1,5 +1,10 @@
 // // External libraries
-import { GetServerSideProps, NextPage } from "next";
+import {
+  GetServerSideProps,
+  NextApiRequest,
+  NextApiResponse,
+  NextPage,
+} from "next";
 import Head from "next/head";
 import Link from "next/link";
 
@@ -8,7 +13,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { useState } from "react";
 
-import { withPageAuth } from "@supabase/auth-helpers-nextjs";
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
 // SK Components
 import {
@@ -71,24 +76,28 @@ const NewsPage: NextPage<{ role: Role; newsFeed: NewsListNoDate }> = ({
   );
 };
 
-export const getServerSideProps: GetServerSideProps = withPageAuth({
-  async getServerSideProps({ locale }, supabase) {
-    const { data: user } = await supabase.auth.getUser();
-    const role = user.user?.user_metadata.role;
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  req,
+  res,
+}) => {
+  const supabase = createServerSupabaseClient({
+    req: req as NextApiRequest,
+    res: res as NextApiResponse,
+  });
 
-    const { data: newsFeed } = await getNewsFeed(role);
+  const { data: user } = await supabase.auth.getUser();
+  const role = user.user?.user_metadata.role;
 
-    return {
-      props: {
-        ...(await serverSideTranslations(locale as LangCode, [
-          "common",
-          "news",
-        ])),
-        role,
-        newsFeed,
-      },
-    };
-  },
-});
+  const { data: newsFeed } = await getNewsFeed(role);
+
+  return {
+    props: {
+      ...(await serverSideTranslations(locale as LangCode, ["common", "news"])),
+      role,
+      newsFeed,
+    },
+  };
+};
 
 export default NewsPage;
