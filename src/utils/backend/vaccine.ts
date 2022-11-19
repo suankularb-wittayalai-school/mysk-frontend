@@ -16,7 +16,7 @@ export async function getVaccineRecordbyPersonId(
   }
 
   return (
-    data.map((vaccineRecord, index) => ({
+    data!.map((vaccineRecord, index) => ({
       id: vaccineRecord.id,
       doseNo: index + 1,
       vaccineName: vaccineRecord.vaccine_name,
