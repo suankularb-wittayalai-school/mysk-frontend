@@ -1,0 +1,20 @@
+{
+  "vaccine": {
+    "provider": {
+      "label": "Provider"
+    },
+    "date": {
+      "label": "Date of Vaccination"
+    },
+    "lot": {
+      "label": "Lot Number"
+    },
+    "administeringCenter": {
+      "label": "Administering Center"
+    },
+    "dose": {
+      "label": "Dose"
+    }
+  }
+}
+

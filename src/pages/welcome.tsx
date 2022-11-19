@@ -485,7 +485,7 @@ const VaccineDataSection = ({
   disabled?: boolean;
 }) => {
   const supabase = useSupabaseClient();
-  const { t } = useTranslation(["landing", "account"]);
+  const { t } = useTranslation(["landing", "covid"]);
   const user = useUser();
 
   const sectionRef = useRef<any>();
@@ -516,7 +516,6 @@ const VaccineDataSection = ({
       transition={animationTransition}
       ref={sectionRef}
     >
-      {console.log({ vaccineData })}
       <Section>
         <Header
           icon={<MaterialIcon icon="badge" allowCustomSize />}
@@ -535,36 +534,53 @@ const VaccineDataSection = ({
                 </p>
                 <p className="text-sm">{t("welcome.vaccineData.notice")}</p>
               </CardSupportingText>
-              <div className="flex flex-wrap justify-evenly">
-                <NativeInput
-                  name="vaccine-date"
-                  type="date"
-                  label={t("welcome.vaccineData.date")}
-                  onChange={(e) => setForm({ ...form, date: e })}
-                  attr={{ disabled }}
-                />
-                <KeyboardInput
-                  name="vaccine-provider"
-                  type="text"
-                  label={t("vaccine.provider.label")}
-                  onChange={(e) => setForm({ ...form, provider: e })}
-                  attr={{ disabled }}
-                />
-                <KeyboardInput
-                  name="vaccine-lot"
-                  type="text"
-                  label={t("vaccine.lot.label")}
-                  onChange={(e) => setForm({ ...form, lotno: e })}
-                  attr={{ disabled }}
-                />
-                <KeyboardInput
-                  name="vaccine-administering-center"
-                  type="text"
-                  label={t("vaccine.administeringCenter.label")}
-                  onChange={(e) => setForm({ ...form, administeringCenter: e })}
-                  attr={{ disabled }}
-                />
-              </div>
+              <section className="flex flex-col justify-center p-4">
+                <div className="layout-grid-cols-2 !gap-y-0">
+                  <NativeInput
+                    name="vaccine-date"
+                    type="date"
+                    label={t("vaccine.date.label", { ns: "covid" })}
+                    onChange={(e) => setForm({ ...form, date: e })}
+                    attr={{ disabled }}
+                  />
+                  <Dropdown
+                    name="vaccine-provider"
+                    label={t("vaccine.provider.label", { ns: "covid" })}
+                    // info from https://covid19.trackvaccines.org/country/thailand/
+                    options={[
+                      { value: "pfizer", label: "Pfizer" },
+                      { value: "sinovac", label: "Sinovac" },
+                      { value: "astra", label: "AstraZeneca" },
+                      { value: "moderna", label: "Moderna" },
+                      { value: "janssen", label: "J&J" },
+                      { value: "sinopharm", label: "Sinopharm" },
+                      { value: "novavax", label: "Novavax" },
+                    ]}
+                    onChange={(e: string) => setForm({ ...form, provider: e })}
+                    defaultValue={"pfizer"}
+                  />
+                </div>
+                <div className="layout-grid-cols-2 !gap-y-0">
+                  <KeyboardInput
+                    name="vaccine-lot"
+                    type="text"
+                    label={t("vaccine.lot.label", { ns: "covid" })}
+                    onChange={(e) => setForm({ ...form, lotno: e })}
+                    attr={{ disabled }}
+                  />
+                  <KeyboardInput
+                    name="vaccine-administering-center"
+                    type="text"
+                    label={t("vaccine.administeringCenter.label", {
+                      ns: "covid",
+                    })}
+                    onChange={(e) =>
+                      setForm({ ...form, administeringCenter: e })
+                    }
+                    attr={{ disabled }}
+                  />
+                </div>
+              </section>
               <CardActions>
                 <Button
                   label={t("welcome.vaccineData.action.add")}
