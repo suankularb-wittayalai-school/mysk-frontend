@@ -471,6 +471,48 @@ const DataCheckSection = ({
   );
 };
 
+const VaccineDataSection = ({
+  incrementStep,
+  setRef,
+  canSetRef,
+  disabled,
+}: {
+  incrementStep: () => void;
+  setRef: (ref: MutableRefObject<any>) => void;
+  canSetRef?: boolean;
+  disabled?: boolean;
+}) => {
+  const supabase = useSupabaseClient();
+  const { t } = useTranslation(["landing", "account"]);
+  const user = useUser();
+
+  const sectionRef = useRef<any>();
+  useEffect(() => {
+    if (canSetRef) setTimeout(() => setRef(sectionRef), animationSpeed);
+  }, [canSetRef]);
+
+  const [loading, toggleLoading] = useToggle();
+
+  const [form, setForm] = useState({});
+
+  return (
+    <motion.div
+      initial={{ scale: 0.8, y: -280, opacity: 0 }}
+      animate={{ scale: 1, y: 0, opacity: 1 }}
+      exit={{ scale: 0.8, y: -280, opacity: 0 }}
+      transition={animationTransition}
+      ref={sectionRef}
+    >
+      <Section>
+        <Header
+          icon={<MaterialIcon icon="badge" allowCustomSize />}
+          text={t("welcome.vaccineData.title")}
+        />
+      </Section>
+    </motion.div>
+  );
+};
+
 const NewPasswordSection = ({
   incrementStep,
   setRef,
@@ -746,15 +788,24 @@ const Welcome: NextPage<{
             />
           )}
           {currStep >= 2 && (
+            <VaccineDataSection
+              key={"vaccine-data-section"}
+              incrementStep={incrementStep}
+              setRef={setCurrStepRef}
+              canSetRef={currStep >= 2}
+              disabled={currStep >= 3}
+            />
+          )}
+          {currStep >= 3 && (
             <div className="layout-grid-cols-2 !gap-y-[inherit]">
               <NewPasswordSection
                 key="new-password-section"
                 incrementStep={incrementStep}
                 setRef={setCurrStepRef}
-                canSetRef={currStep >= 2}
-                disabled={currStep >= 3}
+                canSetRef={currStep >= 3}
+                disabled={currStep >= 4}
               />
-              {currStep >= 3 && (
+              {currStep >= 4 && (
                 <DoneSection
                   key="done-section"
                   role={user.role}
@@ -824,3 +875,4 @@ export const getServerSideProps: GetServerSideProps = async ({
 };
 
 export default Welcome;
+
