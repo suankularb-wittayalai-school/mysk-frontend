@@ -57,7 +57,11 @@ import LogOutDialog from "@components/dialogs/LogOut";
 import { animationSpeed, animationTransition } from "@utils/animations/config";
 
 // Backend
-import { getPersonFromUser, setupPerson } from "@utils/backend/person/person";
+import {
+  getPersonFromUser,
+  getPersonIDFromUser,
+  setupPerson,
+} from "@utils/backend/person/person";
 import { getSubjectGroups } from "@utils/backend/subject/subjectGroup";
 
 // Helpers
@@ -79,6 +83,10 @@ import { validateCitizenID, validatePassport } from "@utils/helpers/validators";
 import { withLoading } from "@utils/helpers/loading";
 import { getUserMetadata } from "@utils/backend/account";
 import { VaccineRecord } from "@utils/types/vaccine";
+import {
+  addVaccineRecord,
+  getVaccineRecordbyPersonId,
+} from "@utils/backend/vaccine";
 
 // Sections
 const HeroSection = ({
@@ -478,11 +486,13 @@ const VaccineDataSection = ({
   setRef,
   canSetRef,
   disabled,
+  vaccineRecords,
 }: {
   incrementStep: () => void;
   setRef: (ref: MutableRefObject<any>) => void;
   canSetRef?: boolean;
   disabled?: boolean;
+  vaccineRecords: VaccineRecord[];
 }) => {
   const supabase = useSupabaseClient();
   const { t } = useTranslation(["landing", "covid"]);
@@ -502,9 +512,22 @@ const VaccineDataSection = ({
     provider: "",
   });
 
-  const [vaccineData, setVaccineData] = useState<VaccineRecord[]>([]);
+  const [vaccineData, setVaccineData] = useState<VaccineRecord[]>(
+    vaccineRecords
+  );
 
   const validate = () => {
+    return true;
+  };
+
+  const validateForm = () => {
+    if (
+      !form.lotno ||
+      !form.date ||
+      !form.administeringCenter ||
+      !form.provider
+    )
+      return false;
     return true;
   };
 
@@ -548,13 +571,16 @@ const VaccineDataSection = ({
                     label={t("vaccine.provider.label", { ns: "covid" })}
                     // info from https://covid19.trackvaccines.org/country/thailand/
                     options={[
-                      { value: "pfizer", label: "Pfizer" },
-                      { value: "sinovac", label: "Sinovac" },
-                      { value: "astra", label: "AstraZeneca" },
-                      { value: "moderna", label: "Moderna" },
-                      { value: "janssen", label: "J&J" },
-                      { value: "sinopharm", label: "Sinopharm" },
-                      { value: "novavax", label: "Novavax" },
+                      { value: "comirnaty", label: "Comirnaty (Pfizer)" },
+                      { value: "coronavac", label: "CoronaVac (Sinovac)" },
+                      { value: "vaxzevria", label: "Vaxzevria (AstraZeneca)" },
+                      { value: "spikevax", label: "Spikevax (Moderna)" },
+                      { value: "jcovden", label: "Jcovden (J&J)" },
+                      { value: "covilo", label: "Covilo (Sinopharm)" },
+                      {
+                        value: "covovax",
+                        label: "COVOVAX (Novavax formulation)",
+                      },
                     ]}
                     onChange={(e: string) => setForm({ ...form, provider: e })}
                     defaultValue={"pfizer"}
@@ -585,9 +611,14 @@ const VaccineDataSection = ({
                 <Button
                   label={t("welcome.vaccineData.action.add")}
                   type="filled"
-                  onClick={() => {
-                    setVaccineData([
-                      ...vaccineData,
+                  onClick={async () => {
+                    const { data: personid } = await getPersonIDFromUser(
+                      supabase,
+                      user!
+                    );
+                    toggleLoading();
+                    await addVaccineRecord(
+                      supabase,
                       {
                         id: 0,
                         doseNo: 0,
@@ -596,15 +627,16 @@ const VaccineDataSection = ({
                         administeredBy: form.administeringCenter,
                         vaccineName: form.provider,
                       },
-                    ]);
-                    setForm({
-                      lotno: "",
-                      date: "",
-                      administeringCenter: "",
-                      provider: "",
-                    });
+                      personid!
+                    );
+                    const newVaccineRecords = await getVaccineRecordbyPersonId(
+                      supabase,
+                      personid!
+                    );
+                    toggleLoading();
+                    setVaccineData(newVaccineRecords);
                   }}
-                  disabled={disabled || !validate() || loading}
+                  disabled={disabled || !validateForm() || loading}
                 />
               </CardActions>
             </Card>
@@ -663,13 +695,19 @@ const VaccineDataSection = ({
                         label={t("vaccine.provider.label", { ns: "covid" })}
                         // info from https://covid19.trackvaccines.org/country/thailand/
                         options={[
-                          { value: "pfizer", label: "Pfizer" },
-                          { value: "sinovac", label: "Sinovac" },
-                          { value: "astra", label: "AstraZeneca" },
-                          { value: "moderna", label: "Moderna" },
-                          { value: "janssen", label: "J&J" },
-                          { value: "sinopharm", label: "Sinopharm" },
-                          { value: "novavax", label: "Novavax" },
+                          { value: "comirnaty", label: "Comirnaty (Pfizer)" },
+                          { value: "coronavac", label: "CoronaVac (Sinovac)" },
+                          {
+                            value: "vaxzevria",
+                            label: "Vaxzevria (AstraZeneca)",
+                          },
+                          { value: "spikevax", label: "Spikevax (Moderna)" },
+                          { value: "jcovden", label: "Jcovden (J&J)" },
+                          { value: "covilo", label: "Covilo (Sinopharm)" },
+                          {
+                            value: "covovax",
+                            label: "COVOVAX (Novavax formulation)",
+                          },
                         ]}
                         onChange={(e: string) => {
                           // edit vaccine data state by editting the vaccineData array
@@ -983,9 +1021,10 @@ const DoneSection = ({
 const Welcome: NextPage<{
   person: Student | Teacher;
   subjectGroups: SubjectGroup[];
+  vaccineRecords: VaccineRecord[];
 }> & {
   getLayout?: (page: NextPage) => ReactNode;
-} = ({ person: user, subjectGroups }) => {
+} = ({ person: user, subjectGroups, vaccineRecords }) => {
   const { t } = useTranslation(["landing", "common"]);
 
   const [currStep, incrementStep] = useReducer((value) => value + 1, 0);
@@ -1038,6 +1077,7 @@ const Welcome: NextPage<{
               setRef={setCurrStepRef}
               canSetRef={currStep >= 2}
               disabled={currStep >= 3}
+              vaccineRecords={vaccineRecords}
             />
           )}
           {currStep >= 3 && (
@@ -1105,6 +1145,10 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   const { data: subjectGroups } = await getSubjectGroups();
 
+  const vaccineRecords = await getVaccineRecordbyPersonId(supabase, person!.id);
+
+  // console.log(vaccineRecord);
+
   return {
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
@@ -1115,6 +1159,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       ])),
       person,
       subjectGroups,
+      vaccineRecords,
     },
   };
 };

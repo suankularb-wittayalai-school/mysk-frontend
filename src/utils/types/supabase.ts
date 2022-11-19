@@ -581,7 +581,6 @@ export interface Database {
           id: number;
           created_at: string | null;
           person: number;
-          vaccine_dose_no: number;
           vaccination_date: string;
           vaccine_name: string;
           lot_no: string;
@@ -591,7 +590,6 @@ export interface Database {
           id?: number;
           created_at?: string | null;
           person: number;
-          vaccine_dose_no?: number;
           vaccination_date: string;
           vaccine_name?: string;
           lot_no?: string;
@@ -601,7 +599,6 @@ export interface Database {
           id?: number;
           created_at?: string | null;
           person?: number;
-          vaccine_dose_no?: number;
           vaccination_date?: string;
           vaccine_name?: string;
           lot_no?: string;
