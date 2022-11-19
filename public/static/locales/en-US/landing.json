@@ -59,6 +59,10 @@
       "title": "Vaccine data",
       "instruction": "Please enter your vaccine data as seen in the MoPr app. You can see it by opening the MoPr app > Log in > Click “COVID-19 Vaccine History”",
       "notice": "Your vaccine data will be used to collect school’s vaccine statistics only. Thank you for your cooperation.",
+      "header": {
+        "addCard": "Add Vaccination Data",
+        "editCard": "Vaccine dose {0}"
+      },
       "action": {
         "continue": "Save and continue",
         "add": "Add"

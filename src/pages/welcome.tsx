@@ -47,6 +47,7 @@ import {
   NativeInput,
   Dropdown,
   PageLayout,
+  CardList,
 } from "@suankularb-components/react";
 
 // Components
@@ -77,6 +78,7 @@ import { classPattern, studentIDRegex } from "@utils/patterns";
 import { validateCitizenID, validatePassport } from "@utils/helpers/validators";
 import { withLoading } from "@utils/helpers/loading";
 import { getUserMetadata } from "@utils/backend/account";
+import { VaccineRecord } from "@utils/types/vaccine";
 
 // Sections
 const HeroSection = ({
@@ -493,7 +495,18 @@ const VaccineDataSection = ({
 
   const [loading, toggleLoading] = useToggle();
 
-  const [form, setForm] = useState({});
+  const [form, setForm] = useState({
+    lotno: "",
+    date: "",
+    administeringCenter: "",
+    provider: "",
+  });
+
+  const [vaccineData, setVaccineData] = useState<VaccineRecord[]>([]);
+
+  const validate = () => {
+    return true;
+  };
 
   return (
     <motion.div
@@ -503,11 +516,95 @@ const VaccineDataSection = ({
       transition={animationTransition}
       ref={sectionRef}
     >
+      {console.log({ vaccineData })}
       <Section>
         <Header
           icon={<MaterialIcon icon="badge" allowCustomSize />}
           text={t("welcome.vaccineData.title")}
         />
+        <LayoutGridCols cols={6}>
+          <div className="col-span-3">
+            <Card type="stacked" hasAction appearance="outlined">
+              <CardHeader
+                icon={"add_circle"}
+                title={t("welcome.vaccineData.header.addCard")}
+              />
+              <CardSupportingText>
+                <p className="text-sm">
+                  {t("welcome.vaccineData.instruction")}
+                </p>
+                <p className="text-sm">{t("welcome.vaccineData.notice")}</p>
+              </CardSupportingText>
+              <div className="flex flex-wrap justify-evenly">
+                <NativeInput
+                  name="vaccine-date"
+                  type="date"
+                  label={t("welcome.vaccineData.date")}
+                  onChange={(e) => setForm({ ...form, date: e })}
+                  attr={{ disabled }}
+                />
+                <KeyboardInput
+                  name="vaccine-provider"
+                  type="text"
+                  label={t("vaccine.provider.label")}
+                  onChange={(e) => setForm({ ...form, provider: e })}
+                  attr={{ disabled }}
+                />
+                <KeyboardInput
+                  name="vaccine-lot"
+                  type="text"
+                  label={t("vaccine.lot.label")}
+                  onChange={(e) => setForm({ ...form, lotno: e })}
+                  attr={{ disabled }}
+                />
+                <KeyboardInput
+                  name="vaccine-administering-center"
+                  type="text"
+                  label={t("vaccine.administeringCenter.label")}
+                  onChange={(e) => setForm({ ...form, administeringCenter: e })}
+                  attr={{ disabled }}
+                />
+              </div>
+              <CardActions>
+                <Button
+                  label={t("welcome.vaccineData.action.add")}
+                  type="filled"
+                  onClick={() => {
+                    setVaccineData([
+                      ...vaccineData,
+                      {
+                        id: 0,
+                        doseNo: 0,
+                        lotNo: form.lotno,
+                        vaccineDate: new Date(form.date),
+                        administeredBy: form.administeringCenter,
+                        vaccineName: form.provider,
+                      },
+                    ]);
+                  }}
+                  disabled={disabled || !validate() || loading}
+                />
+              </CardActions>
+            </Card>
+          </div>
+          <div className="col-span-3 md:col-start-5"></div>
+        </LayoutGridCols>
+        <Actions>
+          <Button
+            label={t("welcome.dataCheck.action.continue")}
+            type="filled"
+            icon={<MaterialIcon icon="arrow_downward" />}
+            onClick={async () => {
+              toggleLoading();
+
+              // toggleLoading();
+
+              // if (error) return;
+              incrementStep();
+            }}
+            disabled={disabled || !validate() || loading}
+          />
+        </Actions>
       </Section>
     </motion.div>
   );
