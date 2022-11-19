@@ -1,4 +1,4 @@
-import { DatabaseClient } from "@utils/types/common";
+import { BackendDataReturn, DatabaseClient } from "@utils/types/common";
 import { VaccineRecord } from "@utils/types/vaccine";
 
 export async function getVaccineRecordbyPersonId(
@@ -45,4 +45,39 @@ export async function addVaccineRecord(
   if (error) {
     throw error;
   }
+}
+
+export async function deleteVaccineRecord(
+  supabase: DatabaseClient,
+  vaccineRecordId: number
+): Promise<void> {
+  const { error } = await supabase
+    .from("vaccine_records")
+    .delete()
+    .eq("id", vaccineRecordId);
+
+  if (error) {
+    throw error;
+  }
+}
+
+export async function updateVaccineRecords(
+  supabase: DatabaseClient,
+  vaccineRecords: VaccineRecord[],
+  personId: number
+): Promise<BackendDataReturn<VaccineRecord[]>> {
+  const dbVaccineRecords = vaccineRecords.map((vaccineRecord) => ({
+    id: vaccineRecord.id,
+    person: personId,
+    vaccine_name: vaccineRecord.vaccineName,
+    vaccination_date: vaccineRecord.vaccineDate.toDateString(),
+    lot_no: vaccineRecord.lotNo,
+    administering_center: vaccineRecord.administeredBy,
+  }));
+
+  const { data, error } = await supabase
+    .from("vaccine_records")
+    .upsert(dbVaccineRecords, { onConflict: "id" });
+
+  return { data: [], error };
 }

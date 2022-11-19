@@ -85,7 +85,9 @@ import { getUserMetadata } from "@utils/backend/account";
 import { VaccineRecord } from "@utils/types/vaccine";
 import {
   addVaccineRecord,
+  deleteVaccineRecord,
   getVaccineRecordbyPersonId,
+  updateVaccineRecords,
 } from "@utils/backend/vaccine";
 
 // Sections
@@ -517,7 +519,15 @@ const VaccineDataSection = ({
   );
 
   const validate = () => {
-    return true;
+    if (vaccineData.length == 0) return false;
+    return vaccineData.every((vaccine) => {
+      return (
+        vaccine.lotNo &&
+        vaccine.vaccineDate &&
+        vaccine.administeredBy &&
+        vaccine.vaccineName
+      );
+    });
   };
 
   const validateForm = () => {
@@ -552,10 +562,8 @@ const VaccineDataSection = ({
                 title={t("welcome.vaccineData.header.addCard")}
               />
               <CardSupportingText>
-                <p className="text-sm">
-                  {t("welcome.vaccineData.instruction")}
-                </p>
-                <p className="text-sm">{t("welcome.vaccineData.notice")}</p>
+                <p>{t("welcome.vaccineData.instruction")}</p>
+                <p>{t("welcome.vaccineData.notice")}</p>
               </CardSupportingText>
               <section className="flex flex-col justify-center p-4">
                 <div className="layout-grid-cols-2 !gap-y-0">
@@ -661,7 +669,22 @@ const VaccineDataSection = ({
                         icon={<MaterialIcon icon="delete" />}
                         iconOnly
                         isDangerous
-                        onClick={() => {}}
+                        onClick={async () => {
+                          toggleLoading();
+                          const { data: personid } = await getPersonIDFromUser(
+                            supabase,
+                            user!
+                          );
+
+                          await deleteVaccineRecord(supabase, vaccine.id);
+                          const newVaccineRecords = await getVaccineRecordbyPersonId(
+                            supabase,
+                            personid!
+                          );
+                          setVaccineData(newVaccineRecords);
+                          toggleLoading();
+                        }}
+                        disabled={disabled || loading}
                         type="text"
                       />
                     }
@@ -782,9 +805,21 @@ const VaccineDataSection = ({
             onClick={async () => {
               toggleLoading();
 
-              // toggleLoading();
+              const { data: personid } = await getPersonIDFromUser(
+                supabase,
+                user!
+              );
 
-              // if (error) return;
+              const { error } = await updateVaccineRecords(
+                supabase,
+                vaccineData,
+                personid!
+              );
+              toggleLoading();
+              if (error) {
+                return;
+              }
+
               incrementStep();
             }}
             disabled={disabled || !validate() || loading}
