@@ -72,6 +72,8 @@ import { getUserMetadata } from "@utils/backend/account";
 // Helpers
 import { getLocalePath, getLocaleString } from "@utils/helpers/i18n";
 import { createTitleStr } from "@utils/helpers/title";
+import { validateCitizenID, validatePassport } from "@utils/helpers/validators";
+import { withLoading } from "@utils/helpers/loading";
 
 // Hooks
 import { useToggle } from "@utils/hooks/toggle";
@@ -85,8 +87,6 @@ import { VaccineRecord } from "@utils/types/vaccine";
 // Miscellaneous
 import { prefixMap } from "@utils/maps";
 import { classPattern, studentIDRegex } from "@utils/patterns";
-import { validateCitizenID, validatePassport } from "@utils/helpers/validators";
-import { withLoading } from "@utils/helpers/loading";
 
 // Sections
 const HeroSection = ({
@@ -645,10 +645,9 @@ const VaccineDataSection = ({
                       },
                       personid!
                     );
-                    const newVaccineRecords = await getVaccineRecordbyPersonId(
-                      supabase,
-                      personid!
-                    );
+                    const {
+                      data: newVaccineRecords,
+                    } = await getVaccineRecordbyPersonId(supabase, personid!);
                     toggleLoading();
                     setVaccineData(newVaccineRecords);
                   }}
@@ -685,7 +684,9 @@ const VaccineDataSection = ({
                             } = await getPersonIDFromUser(supabase, user!);
 
                             await deleteVaccineRecord(supabase, vaccine.id);
-                            const newVaccineRecords = await getVaccineRecordbyPersonId(
+                            const {
+                              data: newVaccineRecords,
+                            } = await getVaccineRecordbyPersonId(
                               supabase,
                               personid!
                             );
@@ -1197,7 +1198,10 @@ export const getServerSideProps: GetServerSideProps = async ({
     session!.user as User
   );
 
-  const vaccineRecords = await getVaccineRecordbyPersonId(supabase, personId!);
+  const { data: vaccineRecords } = await getVaccineRecordbyPersonId(
+    supabase,
+    personId!
+  );
 
   return {
     props: {

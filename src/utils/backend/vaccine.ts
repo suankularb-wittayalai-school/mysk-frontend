@@ -1,10 +1,14 @@
-import { BackendDataReturn, DatabaseClient } from "@utils/types/common";
+import {
+  BackendDataReturn,
+  BackendReturn,
+  DatabaseClient,
+} from "@utils/types/common";
 import { VaccineRecord } from "@utils/types/vaccine";
 
 export async function getVaccineRecordbyPersonId(
   supabase: DatabaseClient,
   personId: number
-): Promise<VaccineRecord[]> {
+): Promise<BackendDataReturn<VaccineRecord[]>> {
   const { data, error } = await supabase
     .from("vaccine_records")
     .select("*")
@@ -13,10 +17,11 @@ export async function getVaccineRecordbyPersonId(
 
   if (error) {
     // throw error;
-    console.error(error);
+    // console.error(error);
+    return { data: [], error };
   }
 
-  return (
+  const vaccineRecord =
     data!.map((vaccineRecord, index) => ({
       id: vaccineRecord.id,
       doseNo: index + 1,
@@ -24,15 +29,16 @@ export async function getVaccineRecordbyPersonId(
       vaccineDate: vaccineRecord.vaccination_date,
       lotNo: vaccineRecord.lot_no,
       administeredBy: vaccineRecord.administering_center,
-    })) ?? []
-  );
+    })) ?? [];
+
+  return { data: vaccineRecord, error: null };
 }
 
 export async function addVaccineRecord(
   supabase: DatabaseClient,
   vaccineRecord: VaccineRecord,
   personId: number
-): Promise<void> {
+): Promise<BackendReturn> {
   const { error } = await supabase.from("vaccine_records").insert([
     {
       person: personId,
@@ -43,32 +49,26 @@ export async function addVaccineRecord(
     },
   ]);
 
-  if (error) {
-    // throw error;
-    console.error(error);
-  }
+  return { error };
 }
 
 export async function deleteVaccineRecord(
   supabase: DatabaseClient,
   vaccineRecordId: number
-): Promise<void> {
+): Promise<BackendReturn> {
   const { error } = await supabase
     .from("vaccine_records")
     .delete()
     .eq("id", vaccineRecordId);
 
-  if (error) {
-    // throw error;
-    console.error(error);
-  }
+  return { error };
 }
 
 export async function updateVaccineRecords(
   supabase: DatabaseClient,
   vaccineRecords: VaccineRecord[],
   personId: number
-): Promise<BackendDataReturn<VaccineRecord[]>> {
+): Promise<BackendReturn> {
   const dbVaccineRecords = vaccineRecords.map((vaccineRecord) => ({
     id: vaccineRecord.id,
     person: personId,
@@ -82,5 +82,5 @@ export async function updateVaccineRecords(
     .from("vaccine_records")
     .upsert(dbVaccineRecords, { onConflict: "id" });
 
-  return { data: [], error };
+  return { error };
 }
