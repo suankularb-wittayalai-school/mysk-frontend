@@ -556,7 +556,11 @@ const VaccineDataSection = ({
         />
         <LayoutGridCols cols={6}>
           <div className="col-span-3">
-            <Card type="stacked" appearance="outlined">
+            <Card
+              type="stacked"
+              appearance="outlined"
+              className="!overflow-auto"
+            >
               <CardHeader
                 icon={"add_circle"}
                 title={t("welcome.vaccineData.header.addCard")}
@@ -591,7 +595,6 @@ const VaccineDataSection = ({
                       },
                     ]}
                     onChange={(e: string) => setForm({ ...form, provider: e })}
-                    defaultValue={"pfizer"}
                   />
                 </div>
                 <div className="layout-grid-cols-2 !gap-y-0">
@@ -631,7 +634,7 @@ const VaccineDataSection = ({
                         id: 0,
                         doseNo: 0,
                         lotNo: form.lotno,
-                        vaccineDate: new Date(form.date),
+                        vaccineDate: form.date,
                         administeredBy: form.administeringCenter,
                         vaccineName: form.provider,
                       },
@@ -701,7 +704,7 @@ const VaccineDataSection = ({
                             if (v.id === vaccine.id) {
                               return {
                                 ...v,
-                                vaccineDate: new Date(e),
+                                vaccineDate: e,
                               };
                             }
                             return v;
@@ -709,9 +712,7 @@ const VaccineDataSection = ({
                           setVaccineData(newVaccineData);
                         }}
                         attr={{ disabled }}
-                        defaultValue={vaccine.vaccineDate
-                          .toISOString()
-                          .slice(0, 10)}
+                        defaultValue={vaccine.vaccineDate}
                       />
                       <Dropdown
                         name="vaccine-provider"
@@ -1180,9 +1181,12 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   const { data: subjectGroups } = await getSubjectGroups();
 
-  const vaccineRecords = await getVaccineRecordbyPersonId(supabase, person!.id);
+  const { data: personId } = await getPersonIDFromUser(
+    supabase,
+    session!.user as User
+  );
 
-  // console.log(vaccineRecord);
+  const vaccineRecords = await getVaccineRecordbyPersonId(supabase, personId!);
 
   return {
     props: {

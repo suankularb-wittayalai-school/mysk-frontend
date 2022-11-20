@@ -12,7 +12,8 @@ export async function getVaccineRecordbyPersonId(
     .order("vaccination_date", { ascending: true });
 
   if (error) {
-    throw error;
+    // throw error;
+    console.error(error);
   }
 
   return (
@@ -20,7 +21,7 @@ export async function getVaccineRecordbyPersonId(
       id: vaccineRecord.id,
       doseNo: index + 1,
       vaccineName: vaccineRecord.vaccine_name,
-      vaccineDate: new Date(vaccineRecord.vaccination_date),
+      vaccineDate: vaccineRecord.vaccination_date,
       lotNo: vaccineRecord.lot_no,
       administeredBy: vaccineRecord.administering_center,
     })) ?? []
@@ -36,14 +37,15 @@ export async function addVaccineRecord(
     {
       person: personId,
       vaccine_name: vaccineRecord.vaccineName,
-      vaccination_date: vaccineRecord.vaccineDate.toDateString(),
+      vaccination_date: vaccineRecord.vaccineDate,
       lot_no: vaccineRecord.lotNo,
       administering_center: vaccineRecord.administeredBy,
     },
   ]);
 
   if (error) {
-    throw error;
+    // throw error;
+    console.error(error);
   }
 }
 
@@ -57,7 +59,8 @@ export async function deleteVaccineRecord(
     .eq("id", vaccineRecordId);
 
   if (error) {
-    throw error;
+    // throw error;
+    console.error(error);
   }
 }
 
@@ -70,7 +73,7 @@ export async function updateVaccineRecords(
     id: vaccineRecord.id,
     person: personId,
     vaccine_name: vaccineRecord.vaccineName,
-    vaccination_date: vaccineRecord.vaccineDate.toDateString(),
+    vaccination_date: vaccineRecord.vaccineDate,
     lot_no: vaccineRecord.lotNo,
     administering_center: vaccineRecord.administeredBy,
   }));
