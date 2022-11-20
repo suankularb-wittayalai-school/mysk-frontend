@@ -46,8 +46,6 @@ import {
   CardActions,
   NativeInput,
   Dropdown,
-  PageLayout,
-  CardList,
 } from "@suankularb-components/react";
 
 // Components
@@ -63,6 +61,13 @@ import {
   setupPerson,
 } from "@utils/backend/person/person";
 import { getSubjectGroups } from "@utils/backend/subject/subjectGroup";
+import {
+  addVaccineRecord,
+  deleteVaccineRecord,
+  getVaccineRecordbyPersonId,
+  updateVaccineRecords,
+} from "@utils/backend/vaccine";
+import { getUserMetadata } from "@utils/backend/account";
 
 // Helpers
 import { getLocalePath, getLocaleString } from "@utils/helpers/i18n";
@@ -75,20 +80,13 @@ import { useToggle } from "@utils/hooks/toggle";
 import { LangCode } from "@utils/types/common";
 import { DefaultTHPrefix, Role, Student, Teacher } from "@utils/types/person";
 import { SubjectGroup } from "@utils/types/subject";
+import { VaccineRecord } from "@utils/types/vaccine";
 
 // Miscellaneous
 import { prefixMap } from "@utils/maps";
 import { classPattern, studentIDRegex } from "@utils/patterns";
 import { validateCitizenID, validatePassport } from "@utils/helpers/validators";
 import { withLoading } from "@utils/helpers/loading";
-import { getUserMetadata } from "@utils/backend/account";
-import { VaccineRecord } from "@utils/types/vaccine";
-import {
-  addVaccineRecord,
-  deleteVaccineRecord,
-  getVaccineRecordbyPersonId,
-  updateVaccineRecords,
-} from "@utils/backend/vaccine";
 
 // Sections
 const HeroSection = ({
@@ -148,6 +146,11 @@ const HeroSection = ({
             icon: <MaterialIcon icon="badge" />,
             title: t("welcome.nextSteps.dataCheck.title"),
             desc: t("welcome.nextSteps.dataCheck.desc"),
+          },
+          {
+            icon: <MaterialIcon icon="vaccines" />,
+            title: t("welcome.nextSteps.vaccine.title"),
+            desc: t("welcome.nextSteps.vaccine.desc"),
           },
           {
             icon: <MaterialIcon icon="password" />,
@@ -484,11 +487,11 @@ const DataCheckSection = ({
 };
 
 const VaccineDataSection = ({
+  vaccineRecords,
   incrementStep,
   setRef,
   canSetRef,
   disabled,
-  vaccineRecords,
 }: {
   incrementStep: () => void;
   setRef: (ref: MutableRefObject<any>) => void;
@@ -511,12 +514,25 @@ const VaccineDataSection = ({
     lotno: "",
     date: "",
     administeringCenter: "",
-    provider: "",
+    provider: "comirnaty",
   });
 
   const [vaccineData, setVaccineData] = useState<VaccineRecord[]>(
     vaccineRecords
   );
+
+  const providerOption = [
+    { value: "comirnaty", label: "Comirnaty (Pfizer)" },
+    { value: "coronavac", label: "CoronaVac (Sinovac)" },
+    { value: "vaxzevria", label: "Vaxzevria (AstraZeneca)" },
+    { value: "spikevax", label: "Spikevax (Moderna)" },
+    { value: "jcovden", label: "Jcovden (J&J)" },
+    { value: "covilo", label: "Covilo (Sinopharm)" },
+    {
+      value: "covovax",
+      label: "COVOVAX (Novavax formulation)",
+    },
+  ];
 
   const validate = () => {
     if (vaccineData.length == 0) return false;
@@ -551,18 +567,18 @@ const VaccineDataSection = ({
     >
       <Section>
         <Header
-          icon={<MaterialIcon icon="badge" allowCustomSize />}
+          icon={<MaterialIcon icon="vaccines" allowCustomSize />}
           text={t("welcome.vaccineData.title")}
         />
-        <LayoutGridCols cols={6}>
-          <div className="col-span-3">
+        <LayoutGridCols cols={2}>
+          <div>
             <Card
               type="stacked"
               appearance="outlined"
-              className="!overflow-auto"
+              className="!overflow-visible"
             >
               <CardHeader
-                icon={"add_circle"}
+                icon="add_circle"
                 title={t("welcome.vaccineData.header.addCard")}
               />
               <CardSupportingText>
@@ -582,18 +598,7 @@ const VaccineDataSection = ({
                     name="vaccine-provider"
                     label={t("vaccine.provider.label", { ns: "covid" })}
                     // info from https://covid19.trackvaccines.org/country/thailand/
-                    options={[
-                      { value: "comirnaty", label: "Comirnaty (Pfizer)" },
-                      { value: "coronavac", label: "CoronaVac (Sinovac)" },
-                      { value: "vaxzevria", label: "Vaxzevria (AstraZeneca)" },
-                      { value: "spikevax", label: "Spikevax (Moderna)" },
-                      { value: "jcovden", label: "Jcovden (J&J)" },
-                      { value: "covilo", label: "Covilo (Sinopharm)" },
-                      {
-                        value: "covovax",
-                        label: "COVOVAX (Novavax formulation)",
-                      },
-                    ]}
+                    options={providerOption}
                     onChange={(e: string) => setForm({ ...form, provider: e })}
                   />
                 </div>
@@ -652,151 +657,157 @@ const VaccineDataSection = ({
               </CardActions>
             </Card>
           </div>
+          <AnimatePresence>
+            {vaccineData.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={animationTransition}
+                className="flex flex-col gap-4"
+              >
+                {vaccineData.map((vaccine) => (
+                  <Card type="stacked" appearance="tonal" key={vaccine.id}>
+                    <CardHeader
+                      icon={"badge"}
+                      title={t("welcome.vaccineData.header.vaccineCard", {
+                        doseNo: vaccine.doseNo,
+                      })}
+                      end={
+                        <Button
+                          icon={<MaterialIcon icon="delete" />}
+                          iconOnly
+                          isDangerous
+                          onClick={async () => {
+                            toggleLoading();
+                            const {
+                              data: personid,
+                            } = await getPersonIDFromUser(supabase, user!);
 
-          <div className="col-span-3 md:col-start-5">
-            {vaccineData.length > 0 &&
-              vaccineData.map((vaccine) => (
-                <Card
-                  type="stacked"
-                  appearance="tonal"
-                  className="mb-4"
-                  key={vaccine.id}
-                >
+                            await deleteVaccineRecord(supabase, vaccine.id);
+                            const newVaccineRecords = await getVaccineRecordbyPersonId(
+                              supabase,
+                              personid!
+                            );
+                            setVaccineData(newVaccineRecords);
+                            toggleLoading();
+                          }}
+                          disabled={disabled || loading}
+                          type="text"
+                        />
+                      }
+                    />
+                    <section className="flex flex-col justify-center p-4">
+                      <div className="layout-grid-cols-2 !gap-y-0">
+                        <NativeInput
+                          name="vaccine-date"
+                          type="date"
+                          label={t("vaccine.date.label", { ns: "covid" })}
+                          onChange={(e) => {
+                            // edit vaccine data state by editting the vaccineData array
+                            const newVaccineData = vaccineData.map((v) => {
+                              if (v.id === vaccine.id) {
+                                return {
+                                  ...v,
+                                  vaccineDate: e,
+                                };
+                              }
+                              return v;
+                            });
+                            setVaccineData(newVaccineData);
+                          }}
+                          attr={{ disabled }}
+                          defaultValue={vaccine.vaccineDate}
+                        />
+                        <Dropdown
+                          name="vaccine-provider"
+                          label={t("vaccine.provider.label", { ns: "covid" })}
+                          // info from https://covid19.trackvaccines.org/country/thailand/
+                          options={providerOption}
+                          onChange={(e: string) => {
+                            // edit vaccine data state by editting the vaccineData array
+                            const newVaccineData = vaccineData.map((v) => {
+                              if (v.id === vaccine.id) {
+                                return {
+                                  ...v,
+                                  vaccineName: e,
+                                };
+                              }
+                              return v;
+                            });
+                            setVaccineData(newVaccineData);
+                          }}
+                          defaultValue={vaccine.vaccineName}
+                        />
+                      </div>
+                      <div className="layout-grid-cols-2 !gap-y-0">
+                        <KeyboardInput
+                          name="vaccine-lot"
+                          type="text"
+                          label={t("vaccine.lot.label", { ns: "covid" })}
+                          onChange={(e) => {
+                            // edit vaccine data state by editting the vaccineData array
+                            const newVaccineData = vaccineData.map((v) => {
+                              if (v.id === vaccine.id) {
+                                return {
+                                  ...v,
+                                  lotNo: e,
+                                };
+                              }
+                              return v;
+                            });
+                            setVaccineData(newVaccineData);
+                          }}
+                          attr={{ disabled }}
+                          defaultValue={vaccine.lotNo}
+                        />
+                        <KeyboardInput
+                          name="vaccine-administering-center"
+                          type="text"
+                          label={t("vaccine.administeringCenter.label", {
+                            ns: "covid",
+                          })}
+                          onChange={(e) => {
+                            // edit vaccine data state by editting the vaccineData array
+                            const newVaccineData = vaccineData.map((v) => {
+                              if (v.id === vaccine.id) {
+                                return {
+                                  ...v,
+                                  administeredBy: e,
+                                };
+                              }
+                              return v;
+                            });
+                            setVaccineData(newVaccineData);
+                          }}
+                          attr={{ disabled }}
+                          defaultValue={vaccine.administeredBy}
+                        />
+                      </div>
+                    </section>
+                  </Card>
+                ))}
+              </motion.div>
+            )}
+            {!loading && vaccineData.length === 0 && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={animationTransition}
+              >
+                <Card type="stacked" appearance="tonal" className="mb-4">
                   <CardHeader
                     icon={"badge"}
-                    title={t("welcome.vaccineData.header.vaccineCard", {
-                      doseNo: vaccine.doseNo,
-                    })}
-                    end={
-                      <Button
-                        icon={<MaterialIcon icon="delete" />}
-                        iconOnly
-                        isDangerous
-                        onClick={async () => {
-                          toggleLoading();
-                          const { data: personid } = await getPersonIDFromUser(
-                            supabase,
-                            user!
-                          );
-
-                          await deleteVaccineRecord(supabase, vaccine.id);
-                          const newVaccineRecords = await getVaccineRecordbyPersonId(
-                            supabase,
-                            personid!
-                          );
-                          setVaccineData(newVaccineRecords);
-                          toggleLoading();
-                        }}
-                        disabled={disabled || loading}
-                        type="text"
-                      />
-                    }
+                    title={t("welcome.vaccineData.header.noVaccineCard")}
                   />
-                  <section className="flex flex-col justify-center p-4">
-                    <div className="layout-grid-cols-2 !gap-y-0">
-                      <NativeInput
-                        name="vaccine-date"
-                        type="date"
-                        label={t("vaccine.date.label", { ns: "covid" })}
-                        onChange={(e) => {
-                          // edit vaccine data state by editting the vaccineData array
-                          const newVaccineData = vaccineData.map((v) => {
-                            if (v.id === vaccine.id) {
-                              return {
-                                ...v,
-                                vaccineDate: e,
-                              };
-                            }
-                            return v;
-                          });
-                          setVaccineData(newVaccineData);
-                        }}
-                        attr={{ disabled }}
-                        defaultValue={vaccine.vaccineDate}
-                      />
-                      <Dropdown
-                        name="vaccine-provider"
-                        label={t("vaccine.provider.label", { ns: "covid" })}
-                        // info from https://covid19.trackvaccines.org/country/thailand/
-                        options={[
-                          { value: "comirnaty", label: "Comirnaty (Pfizer)" },
-                          { value: "coronavac", label: "CoronaVac (Sinovac)" },
-                          {
-                            value: "vaxzevria",
-                            label: "Vaxzevria (AstraZeneca)",
-                          },
-                          { value: "spikevax", label: "Spikevax (Moderna)" },
-                          { value: "jcovden", label: "Jcovden (J&J)" },
-                          { value: "covilo", label: "Covilo (Sinopharm)" },
-                          {
-                            value: "covovax",
-                            label: "COVOVAX (Novavax formulation)",
-                          },
-                        ]}
-                        onChange={(e: string) => {
-                          // edit vaccine data state by editting the vaccineData array
-                          const newVaccineData = vaccineData.map((v) => {
-                            if (v.id === vaccine.id) {
-                              return {
-                                ...v,
-                                vaccineName: e,
-                              };
-                            }
-                            return v;
-                          });
-                          setVaccineData(newVaccineData);
-                        }}
-                        defaultValue={vaccine.vaccineName}
-                      />
-                    </div>
-                    <div className="layout-grid-cols-2 !gap-y-0">
-                      <KeyboardInput
-                        name="vaccine-lot"
-                        type="text"
-                        label={t("vaccine.lot.label", { ns: "covid" })}
-                        onChange={(e) => {
-                          // edit vaccine data state by editting the vaccineData array
-                          const newVaccineData = vaccineData.map((v) => {
-                            if (v.id === vaccine.id) {
-                              return {
-                                ...v,
-                                lotNo: e,
-                              };
-                            }
-                            return v;
-                          });
-                          setVaccineData(newVaccineData);
-                        }}
-                        attr={{ disabled }}
-                        defaultValue={vaccine.lotNo}
-                      />
-                      <KeyboardInput
-                        name="vaccine-administering-center"
-                        type="text"
-                        label={t("vaccine.administeringCenter.label", {
-                          ns: "covid",
-                        })}
-                        onChange={(e) => {
-                          // edit vaccine data state by editting the vaccineData array
-                          const newVaccineData = vaccineData.map((v) => {
-                            if (v.id === vaccine.id) {
-                              return {
-                                ...v,
-                                administeredBy: e,
-                              };
-                            }
-                            return v;
-                          });
-                          setVaccineData(newVaccineData);
-                        }}
-                        attr={{ disabled }}
-                        defaultValue={vaccine.administeredBy}
-                      />
-                    </div>
-                  </section>
                 </Card>
-              ))}
-          </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          {/* <div className=" col-span-3 md:col-start-5">
+            
+          </div> */}
         </LayoutGridCols>
         <Actions>
           <Button

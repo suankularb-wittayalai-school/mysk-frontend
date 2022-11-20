@@ -28,6 +28,10 @@
         "title": "Data check",
         "desc": "We have imported your data from relevant school departments. This process may introduce some error, so check if it misses anything."
       },
+      "vaccine": {
+        "title": "Vaccination data",
+        "desc": "According to school policy, we are required to collect your vaccination data for the school's vaccination statistics."
+      },
       "newPassword": {
         "title": "Create password",
         "desc": "For the security of you and the school’s data, create a new password."
@@ -56,26 +60,17 @@
       }
     },
     "vaccineData": {
-      "title": "Vaccine data",
-      "instruction": "Please enter your vaccine data as seen in the MoPr app. You can see it by opening the MoPr app > Log in > Click “COVID-19 Vaccine History”",
-      "notice": "Your vaccine data will be used to collect school’s vaccine statistics only. Thank you for your cooperation.",
+      "title": "Vaccination data",
+      "instruction": "Enter your vaccination info exactly as seen in the Mor Prom app. You can see it by opening the Mor Prom app > Log in > Tap “Health Certificate” > Tap “Vaccineation of COVID-19”",
+      "notice": "Your vaccine data will only be used for the school statistics only. Thank you for your cooperation.",
       "header": {
-        "addCard": "Add Vaccination Data",
-        "vaccineCard": "Vaccine dose {{doseNo}}"
+        "addCard": "Add vaccination data",
+        "vaccineCard": "dose {{doseNo}}",
+        "noVaccineCard": "No vaccination data"
       },
       "action": {
         "continue": "Save and continue",
         "add": "Add"
-      }
-    },
-    "preparingForStudents": {
-      "title": "Prepare for students",
-      "notice": "Teachers: this part is important. Read this before proceeding.",
-      "desc": "Administrators have already assigned subjects to you, but we still need data on what classes you teach each, whhich you can do after the setup process. Learn how to prepare MySK for your students:",
-      "steps": {
-        "1": "Connect your subjects to the classes you teach each subject to.",
-        "2": "In each subject, add class-specific details (like Google Classroom codes) for each class.",
-        "3": "Add periods to your Schedule."
       }
     },
     "done": {
