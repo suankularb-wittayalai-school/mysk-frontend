@@ -196,27 +196,29 @@ export async function setupPerson(
       return { data: null, error };
     }
 
-    // Get the classroom that the teacher is an advisor of
-    const { data: classroom, error: classroomError } = await supabase
-      .from("classroom")
-      .select("id, advisors")
-      .match({ number: form.classAdvisorAt, year: getCurrentAcademicYear() })
-      .maybeSingle();
+    if (form.classAdvisorAt) {
+      // Get the classroom that the teacher is an advisor of
+      const { data: classroom, error: classroomError } = await supabase
+        .from("classroom")
+        .select("id, advisors")
+        .match({ number: form.classAdvisorAt, year: getCurrentAcademicYear() })
+        .maybeSingle();
 
-    if (classroomError) {
-      console.error(classroomError);
-      return { data: null, error: classroomError };
-    }
+      if (classroomError) {
+        console.error(classroomError);
+        return { data: null, error: classroomError };
+      }
 
-    // Update class advisor
-    const { error: classAdvisorError } = await supabase
-      .from("classroom")
-      .update({ advisors: [...classroom!.advisors, person.id] })
-      .match({ id: classroom!.id });
+      // Update class advisor
+      const { error: classAdvisorError } = await supabase
+        .from("classroom")
+        .update({ advisors: [...classroom!.advisors, person.id] })
+        .match({ id: classroom!.id });
 
-    if (classAdvisorError) {
-      console.error(classAdvisorError);
-      return { data: null, error: classAdvisorError };
+      if (classAdvisorError) {
+        console.error(classAdvisorError);
+        return { data: null, error: classAdvisorError };
+      }
     }
 
     return { data: updPerson!, error: null };
