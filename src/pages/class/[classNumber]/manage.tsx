@@ -56,6 +56,7 @@ import {
   addAdvisorToClassroom,
   addContactToClassroom,
   getClassroom,
+  removeContactFromClassroom,
 } from "@utils/backend/classroom/classroom";
 import { createContact } from "@utils/backend/contact";
 import { getTeacherFromUser } from "@utils/backend/person/teacher";
@@ -333,14 +334,18 @@ const ClassAdvisorsSection = ({
 
 const ContactSection = ({
   contacts,
+  classroomId,
   toggleShowAdd,
   allowEdit,
 }: {
   contacts: Contact[];
+  classroomId: number;
   toggleShowAdd: () => void;
   allowEdit?: boolean;
 }): JSX.Element => {
   const { t } = useTranslation("class");
+  const supabase = useSupabaseClient();
+  const router = useRouter();
 
   return (
     <Section labelledBy="class-contacts">
@@ -354,6 +359,16 @@ const ContactSection = ({
             key={contact.id}
             contact={contact}
             className="!w-initial"
+            allowEdit={allowEdit}
+            onDelete={() => {
+              removeContactFromClassroom(
+                supabase,
+                contact.id,
+                classroomId
+              ).then(() => {
+                router.replace(router.asPath);
+              });
+            }}
           />
         ))}
       </div>
@@ -504,6 +519,7 @@ const Class: NextPage<{
           contacts={classItem.contacts}
           toggleShowAdd={toggleShowAddContact}
           allowEdit={isAdvisor}
+          classroomId={classItem.id}
         />
         <StudentListSection
           students={classItem.students}

@@ -2,7 +2,12 @@
 import { useRouter } from "next/router";
 
 // SK Components
-import { Card, CardHeader, MaterialIcon } from "@suankularb-components/react";
+import {
+  Button,
+  Card,
+  CardHeader,
+  MaterialIcon,
+} from "@suankularb-components/react";
 
 // Components
 import ContactIcon from "@components/icons/ContactIcon";
@@ -14,9 +19,13 @@ import { getContactURL } from "@utils/helpers/contact";
 
 const ContactChip = ({
   contact,
+  allowEdit,
+  onDelete,
   className,
 }: {
   contact: Contact;
+  allowEdit?: boolean;
+  onDelete?: () => void;
   className?: string;
 }): JSX.Element => {
   const locale = useRouter().locale as LangCode;
@@ -40,6 +49,16 @@ const ContactChip = ({
           }
           end={
             <div className="flex flex-row-reverse">
+              {allowEdit && (
+                <Button
+                  type="text"
+                  icon={<MaterialIcon icon="delete" />}
+                  iconOnly
+                  className=" ml-4"
+                  isDangerous
+                  onClick={onDelete}
+                />
+              )}
               {contact.includes!.teachers && (
                 <MaterialIcon
                   icon="school"

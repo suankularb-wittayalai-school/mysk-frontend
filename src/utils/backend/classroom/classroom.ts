@@ -267,6 +267,43 @@ export async function addContactToClassroom(
   return { data: updatedClassroom!, error: null };
 }
 
+export async function removeContactFromClassroom(
+  supabase: DatabaseClient,
+  contactID: number,
+  classID: number
+): Promise<
+  BackendDataReturn<Database["public"]["Tables"]["classroom"]["Row"], null>
+> {
+  const { data: classroom, error: classroomSelectionError } = await supabase
+    .from("classroom")
+    .select("contacts, number, year")
+    .match({ id: classID, year: getCurrentAcademicYear() })
+    .limit(1)
+    .single();
+
+  if (classroomSelectionError) {
+    return { data: null, error: classroomSelectionError };
+  }
+
+  const { data: updatedClassroom, error: classroomUpdatingError } =
+    await supabase
+      .from("classroom")
+      .update({
+        contacts: classroom!.contacts.filter((id) => id !== contactID),
+      })
+      .eq("id", classID)
+      .select("*")
+      .limit(1)
+      .single();
+
+  if (classroomUpdatingError) {
+    console.error(classroomUpdatingError);
+    return { data: null, error: classroomUpdatingError };
+  }
+
+  return { data: updatedClassroom!, error: null };
+}
+
 export async function getClassNumberFromUser(
   supabase: DatabaseClient,
   user: User
