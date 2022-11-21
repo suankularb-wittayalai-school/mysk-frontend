@@ -31,58 +31,53 @@ const ContactChip = ({
   const locale = useRouter().locale as LangCode;
 
   return (
-    <a
-      href={getContactURL(contact.type, contact.value)}
-      target="_blank"
-      rel="noreferrer"
-    >
-      <Card
-        type="horizontal"
-        appearance="tonal"
-        hasAction
-        className={className}
-      >
-        <CardHeader
-          icon={<ContactIcon icon={contact.type} width={24} />}
-          title={
+    <Card type="horizontal" appearance="tonal" hasAction className={className}>
+      <CardHeader
+        icon={<ContactIcon icon={contact.type} width={24} />}
+        title={
+          <a
+            href={getContactURL(contact.type, contact.value)}
+            target="_blank"
+            rel="noreferrer"
+          >
             <span id={`contact-${contact.id}`}>{contact.name[locale]}</span>
-          }
-          end={
-            <div className="flex flex-row-reverse">
-              {allowEdit && (
-                <Button
-                  type="text"
-                  icon={<MaterialIcon icon="delete" />}
-                  iconOnly
-                  className=" ml-4"
-                  isDangerous
-                  onClick={onDelete}
-                />
-              )}
-              {contact.includes!.teachers && (
-                <MaterialIcon
-                  icon="school"
-                  className="text-stroke text-stroke-0.25 text-stroke-surface-1 -ml-2 text-secondary"
-                />
-              )}
-              {contact.includes!.parents && (
-                <MaterialIcon
-                  icon="escalator_warning"
-                  className="text-stroke text-stroke-0.25 text-stroke-surface-1 -ml-2 text-primary"
-                />
-              )}
-              {contact.includes!.students && (
-                <MaterialIcon
-                  icon="groups"
-                  className="text-stroke text-stroke-0.25 text-stroke-surface-1 -ml-2 text-primary"
-                />
-              )}
-            </div>
-          }
-          className="bg-surface-1 !p-2"
-        />
-      </Card>
-    </a>
+          </a>
+        }
+        end={
+          <div className="flex flex-row-reverse">
+            {allowEdit && (
+              <Button
+                type="text"
+                icon={<MaterialIcon icon="delete" />}
+                iconOnly
+                className=" ml-4"
+                isDangerous
+                onClick={onDelete}
+              />
+            )}
+            {contact.includes!.teachers && (
+              <MaterialIcon
+                icon="school"
+                className="text-stroke text-stroke-0.25 text-stroke-surface-1 -ml-2 text-secondary"
+              />
+            )}
+            {contact.includes!.parents && (
+              <MaterialIcon
+                icon="escalator_warning"
+                className="text-stroke text-stroke-0.25 text-stroke-surface-1 -ml-2 text-primary"
+              />
+            )}
+            {contact.includes!.students && (
+              <MaterialIcon
+                icon="groups"
+                className="text-stroke text-stroke-0.25 text-stroke-surface-1 -ml-2 text-primary"
+              />
+            )}
+          </div>
+        }
+        className="bg-surface-1 !p-2"
+      />
+    </Card>
   );
 };
 

@@ -61,3 +61,23 @@ export async function updateContact(
   return { data: updatedContact!, error: null };
 }
 
+export async function deleteContact(
+  supabase: DatabaseClient,
+  contactId: number
+): Promise<
+  BackendDataReturn<Database["public"]["Tables"]["contact"]["Row"], null>
+> {
+  const { data: deletedContact, error: contactDeleteError } = await supabase
+    .from("contact")
+    .delete()
+    .match({ id: contactId })
+    .select("*")
+    .single();
+
+  if (contactDeleteError) {
+    console.error(contactDeleteError);
+    return { data: null, error: contactDeleteError };
+  }
+  return { data: deletedContact!, error: null };
+}
+

@@ -2,7 +2,11 @@
 import { User } from "@supabase/supabase-js";
 
 // Backend
-import { createContact, updateContact } from "@utils/backend/contact";
+import {
+  createContact,
+  deleteContact,
+  updateContact,
+} from "@utils/backend/contact";
 
 // Converters
 import { db2Class, db2Student } from "@utils/backend/database";
@@ -299,6 +303,16 @@ export async function removeContactFromClassroom(
   if (classroomUpdatingError) {
     console.error(classroomUpdatingError);
     return { data: null, error: classroomUpdatingError };
+  }
+
+  const { error: contactDeletionError } = await deleteContact(
+    supabase,
+    contactID
+  );
+
+  if (contactDeletionError) {
+    console.error(contactDeletionError);
+    return { data: null, error: contactDeletionError };
   }
 
   return { data: updatedClassroom!, error: null };
