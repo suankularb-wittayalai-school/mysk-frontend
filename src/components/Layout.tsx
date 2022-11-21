@@ -215,7 +215,7 @@ const Layout = ({
     }
 
     constructNavigation();
-  }, [router.asPath]);
+  }, [router.asPath, user]);
 
   return (
     <LayoutGroup>
@@ -267,3 +267,4 @@ const Layout = ({
 };
 
 export default Layout;
+
