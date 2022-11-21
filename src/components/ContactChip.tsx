@@ -20,7 +20,6 @@ const ContactChip = ({
   className?: string;
 }): JSX.Element => {
   const locale = useRouter().locale as LangCode;
-  console.log(contact);
 
   return (
     <a
@@ -40,28 +39,26 @@ const ContactChip = ({
             <span id={`contact-${contact.id}`}>{contact.name[locale]}</span>
           }
           end={
-            contact.includes ? (
-              <div className="flex flex-row-reverse">
-                {contact.includes.teachers && (
-                  <MaterialIcon
-                    icon="school"
-                    className="text-stroke text-stroke-0.25 text-stroke-surface-1 -ml-2 text-secondary"
-                  />
-                )}
-                {contact.includes.parents && (
-                  <MaterialIcon
-                    icon="escalator_warning"
-                    className="text-stroke text-stroke-0.25 text-stroke-surface-1 -ml-2 text-primary"
-                  />
-                )}
-                {contact.includes.students && (
-                  <MaterialIcon
-                    icon="groups"
-                    className="text-stroke text-stroke-0.25 text-stroke-surface-1 -ml-2 text-primary"
-                  />
-                )}
-              </div>
-            ) : undefined
+            <div className="flex flex-row-reverse">
+              {contact.includes!.teachers && (
+                <MaterialIcon
+                  icon="school"
+                  className="text-stroke text-stroke-0.25 text-stroke-surface-1 -ml-2 text-secondary"
+                />
+              )}
+              {contact.includes!.parents && (
+                <MaterialIcon
+                  icon="escalator_warning"
+                  className="text-stroke text-stroke-0.25 text-stroke-surface-1 -ml-2 text-primary"
+                />
+              )}
+              {contact.includes!.students && (
+                <MaterialIcon
+                  icon="groups"
+                  className="text-stroke text-stroke-0.25 text-stroke-surface-1 -ml-2 text-primary"
+                />
+              )}
+            </div>
           }
           className="bg-surface-1 !p-2"
         />
