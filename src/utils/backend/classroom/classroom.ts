@@ -22,7 +22,9 @@ export async function createClassroom(
 ): Promise<
   BackendDataReturn<Database["public"]["Tables"]["classroom"]["Row"], null>
 > {
-  const contacts = await Promise.all(classroom.contacts.map(createContact));
+  const contacts = await Promise.all(
+    classroom.contacts.map((contact) => createContact(supabase, contact))
+  );
 
   // check if any contact creation failed
   if (contacts.some((contact) => contact.error)) {
@@ -104,7 +106,7 @@ export async function updateClassroom(
   BackendDataReturn<Database["public"]["Tables"]["classroom"]["Row"], null>
 > {
   const contacts = await Promise.all(
-    classroom.contacts.map(updateContact)
+    classroom.contacts.map((contact) => updateContact(supabase, contact))
   ).catch((error) => {
     console.error(error);
     return [];
@@ -356,3 +358,4 @@ export async function getClassStudentList(
     error: null,
   };
 }
+

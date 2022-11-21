@@ -32,6 +32,11 @@ export function db2Contact(
     },
     value: contact.value,
     type: contact.type,
+    includes: {
+      students: contact.include_students!,
+      parents: contact.include_parents!,
+      teachers: contact.include_teachers!,
+    },
   };
 }
 
@@ -635,3 +640,4 @@ export async function db2SubjectListItem(
 
   return formatted;
 }
+

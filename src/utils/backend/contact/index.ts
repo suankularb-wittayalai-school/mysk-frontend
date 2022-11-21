@@ -2,11 +2,12 @@
 import { supabase } from "@utils/supabase-client";
 
 // Types
-import { BackendDataReturn } from "@utils/types/common";
+import { BackendDataReturn, DatabaseClient } from "@utils/types/common";
 import { Contact } from "@utils/types/contact";
 import { Database } from "@utils/types/supabase";
 
 export async function createContact(
+  supabase: DatabaseClient,
   contact: Contact
 ): Promise<
   BackendDataReturn<Database["public"]["Tables"]["contact"]["Row"], null>
@@ -33,6 +34,7 @@ export async function createContact(
 }
 
 export async function updateContact(
+  supabase: DatabaseClient,
   contact: Contact
 ): Promise<
   BackendDataReturn<Database["public"]["Tables"]["contact"]["Row"], null>
@@ -58,3 +60,4 @@ export async function updateContact(
   }
   return { data: updatedContact!, error: null };
 }
+

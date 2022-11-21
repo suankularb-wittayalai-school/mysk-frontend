@@ -22,7 +22,9 @@ export async function createPerson(
 > {
   // create contacts
   const contacts = await Promise.all(
-    person.contacts.map(async (contact) => await createContact(contact))
+    person.contacts.map(
+      async (contact) => await createContact(supabase, contact)
+    )
   );
 
   // check if any contact creation failed
@@ -294,3 +296,4 @@ export async function getPersonIDFromUser(
 
   return { data: null, error: { message: "invalid role." } };
 }
+

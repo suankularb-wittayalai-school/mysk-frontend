@@ -20,6 +20,7 @@ const ContactChip = ({
   className?: string;
 }): JSX.Element => {
   const locale = useRouter().locale as LangCode;
+  console.log(contact);
 
   return (
     <a
@@ -70,3 +71,4 @@ const ContactChip = ({
 };
 
 export default ContactChip;
+
