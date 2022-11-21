@@ -576,6 +576,35 @@ export interface Database {
           onboarded?: boolean;
         };
       };
+      vaccine_records: {
+        Row: {
+          id: number;
+          created_at: string | null;
+          person: number;
+          vaccination_date: string;
+          vaccine_name: string;
+          lot_no: string;
+          administering_center: string;
+        };
+        Insert: {
+          id?: number;
+          created_at?: string | null;
+          person: number;
+          vaccination_date: string;
+          vaccine_name?: string;
+          lot_no?: string;
+          administering_center?: string;
+        };
+        Update: {
+          id?: number;
+          created_at?: string | null;
+          person?: number;
+          vaccination_date?: string;
+          vaccine_name?: string;
+          lot_no?: string;
+          administering_center?: string;
+        };
+      };
     };
     Views: {
       [_ in never]: never;
