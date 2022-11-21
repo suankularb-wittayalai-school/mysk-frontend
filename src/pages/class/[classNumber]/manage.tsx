@@ -360,14 +360,13 @@ const ContactSection = ({
             contact={contact}
             className="!w-initial"
             allowEdit={allowEdit}
-            onDelete={() => {
-              removeContactFromClassroom(
+            onDelete={async () => {
+              await removeContactFromClassroom(
                 supabase,
                 contact.id,
                 classroomId
-              ).then(() => {
-                router.replace(router.asPath);
-              });
+              );
+              router.replace(router.asPath);
             }}
           />
         ))}
@@ -547,7 +546,6 @@ const Class: NextPage<{
           } = await createContact(supabase, contact);
 
           if (contactCreationError) {
-            console.error(contactCreationError);
             return;
           }
 
