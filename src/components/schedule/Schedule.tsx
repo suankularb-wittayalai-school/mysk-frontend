@@ -87,7 +87,7 @@ const Schedule = ({
       !px-0 sm:overflow-x-visible"
   >
     <div aria-hidden className="flex flex-col gap-2 pb-2 pl-4 sm:pl-0">
-      <div className="mb-2 h-[3.03125rem]" />
+      <div className="mb-1 h-[2.375rem]" />
       {schedule.content.map((scheduleRow) => (
         <ScheduleDay key={scheduleRow.day} day={scheduleRow.day} />
       ))}
