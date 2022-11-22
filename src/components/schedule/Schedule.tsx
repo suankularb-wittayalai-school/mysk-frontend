@@ -16,6 +16,7 @@ import {
   PeriodContentItem,
   ScheduleRow as ScheduleRowType,
 } from "@utils/types/schedule";
+import NumbersRow from "./NumbersRow";
 
 // Day section
 const ScheduleDay = ({ day }: { day: ScheduleRowType["day"] }): JSX.Element => {
@@ -85,7 +86,8 @@ const Schedule = ({
     className="scroll-w-0 flex flex-row gap-5 overflow-x-auto overflow-y-hidden
       !px-0 sm:overflow-x-visible"
   >
-    <div aria-hidden className="flex flex-col gap-2 pt-4 pb-2 pl-4 sm:pl-0">
+    <div aria-hidden className="flex flex-col gap-2 pb-2 pl-4 sm:pl-0">
+      <div className="mb-2 h-[3.03125rem]" />
       {schedule.content.map((scheduleRow) => (
         <ScheduleDay key={scheduleRow.day} day={scheduleRow.day} />
       ))}
@@ -99,7 +101,8 @@ const Schedule = ({
     >
       <LayoutGroup>
         <AnimatePresence initial={false}>
-          <ul className="flex flex-col gap-2 pt-4 pb-2 pl-1 pr-4 sm:pr-0">
+          <ul className="flex flex-col gap-2 pb-2 pl-1 pr-4 sm:pr-0">
+            <NumbersRow />
             {schedule.content.map((scheduleRow) => (
               <ScheduleRow
                 key={scheduleRow.day}
