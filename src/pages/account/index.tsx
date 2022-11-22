@@ -322,6 +322,7 @@ const PreferencesSection = (): JSX.Element => {
   const [form, setForm] = useState({ locale });
 
   useEffect(() => {
+    localStorage.setItem("preferredLang", form.locale);
     router.push(router.asPath, router.asPath, { locale: form.locale });
   }, [form.locale]);
 
@@ -413,3 +414,4 @@ export const getServerSideProps: GetServerSideProps = async ({
 };
 
 export default AccountDetails;
+
