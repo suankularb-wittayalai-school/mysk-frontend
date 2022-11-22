@@ -17,6 +17,7 @@ import {
   PeriodContentItem,
   ScheduleRow as ScheduleRowType,
 } from "@utils/types/schedule";
+import { FC } from "react";
 
 // Day section
 const ScheduleDay = ({ day }: { day: ScheduleRowType["day"] }): JSX.Element => {
@@ -44,16 +45,7 @@ const ScheduleDay = ({ day }: { day: ScheduleRowType["day"] }): JSX.Element => {
 };
 
 // Main component
-const Schedule = ({
-  schedule,
-  role,
-  noScroll,
-  allowEdit,
-  setAddPeriod,
-  setEditPeriod,
-  setDeletePeriod,
-  toggleFetched,
-}: {
+const Schedule: FC<{
   schedule: Schedule;
   role: Role;
   noScroll?: boolean;
@@ -84,46 +76,60 @@ const Schedule = ({
     periodID: number;
   }) => void;
   toggleFetched?: () => void;
-}): JSX.Element => (
-  <div
-    className="scroll-w-0 flex flex-row gap-5 overflow-x-auto overflow-y-hidden
-      !px-0 sm:overflow-x-visible"
-  >
-    <div aria-hidden className="flex flex-col gap-2 pb-2 pl-4 sm:pl-0">
-      <div className="mb-1 h-[2.375rem]" />
-      {schedule.content.map((scheduleRow) => (
-        <ScheduleDay key={scheduleRow.day} day={scheduleRow.day} />
-      ))}
-    </div>
+}> = ({
+  schedule,
+  role,
+  noScroll,
+  allowEdit,
+  setAddPeriod,
+  setEditPeriod,
+  setDeletePeriod,
+  toggleFetched,
+}) => {
+  const periodWidth = 112;
+
+  return (
     <div
-      className={
-        noScroll
-          ? "grow"
-          : "scroll-w-0 scroll-desktop grow overflow-y-clip sm:overflow-x-auto"
-      }
+      className="scroll-w-0 flex flex-row gap-5 overflow-x-auto overflow-y-hidden
+      !px-0 sm:overflow-x-visible"
     >
-      <LayoutGroup>
-        <AnimatePresence initial={false}>
-          <ul className="flex flex-col gap-2 pb-2 pl-1 pr-4 sm:pr-0">
-            <NumbersRow />
-            {schedule.content.map((scheduleRow) => (
-              <ScheduleRow
-                key={scheduleRow.day}
-                scheduleRow={scheduleRow}
-                role={role}
-                allowEdit={allowEdit}
-                setAddPeriod={setAddPeriod}
-                setEditPeriod={setEditPeriod}
-                setDeletePeriod={setDeletePeriod}
-                toggleFetched={toggleFetched}
-              />
-            ))}
-          </ul>
-        </AnimatePresence>
-      </LayoutGroup>
+      <div aria-hidden className="flex flex-col gap-2 pb-2 pl-4 sm:pl-0">
+        <div className="mb-1 h-[2.375rem]" />
+        {schedule.content.map((scheduleRow) => (
+          <ScheduleDay key={scheduleRow.day} day={scheduleRow.day} />
+        ))}
+      </div>
+      <div
+        className={
+          noScroll
+            ? "grow"
+            : "scroll-w-0 scroll-desktop grow overflow-y-clip sm:overflow-x-auto"
+        }
+      >
+        <LayoutGroup>
+          <AnimatePresence initial={false}>
+            <ul className="flex flex-col gap-2 pb-2 pl-1 pr-4 sm:pr-0">
+              <NumbersRow periodWidth={periodWidth} />
+              {schedule.content.map((scheduleRow) => (
+                <ScheduleRow
+                  key={scheduleRow.day}
+                  scheduleRow={scheduleRow}
+                  periodWidth={periodWidth}
+                  role={role}
+                  allowEdit={allowEdit}
+                  setAddPeriod={setAddPeriod}
+                  setEditPeriod={setEditPeriod}
+                  setDeletePeriod={setDeletePeriod}
+                  toggleFetched={toggleFetched}
+                />
+              ))}
+            </ul>
+          </AnimatePresence>
+        </LayoutGroup>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default Schedule;
 export { ScheduleDay as ScheduleDays, ScheduleRow };

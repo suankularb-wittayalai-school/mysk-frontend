@@ -5,14 +5,15 @@ import { FC } from "react";
 import { range } from "@utils/helpers/array";
 import { periodTimes } from "@utils/helpers/schedule";
 
-const NumbersRow: FC = () => {
+const NumbersRow: FC<{ periodWidth: number }> = ({ periodWidth }) => {
   return (
     <ul className="mx-1 mb-1 flex w-fit flex-row gap-2">
       {range(10, 1).map((i) => (
         <li
           key={`numbers-${i}`}
-          className="flex w-[104px] flex-row items-center gap-2 rounded-lg
-            bg-surface-1 py-2 px-4 leading-none"
+          className="flex flex-row items-center gap-2 rounded-lg bg-surface-1
+            py-2 px-4 leading-none"
+          style={{ width: periodWidth - 8 }}
         >
           <span className="font-display font-medium">{i}</span>
           <span className="text-xs text-outline">
