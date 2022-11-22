@@ -548,7 +548,7 @@ export async function db2SchedulePeriod(
       formatted.content[0].subject.teachers = await Promise.all(
         teachers.map(
           async (teacher) =>
-            await db2Teacher(supabase, teacher, { contacts: false })
+            await db2Teacher(supabase, teacher)
         )
       );
     }

@@ -132,7 +132,7 @@ const EditPeriodDialog = ({
   function validate(): boolean {
     if (!form.subject) return false;
     if (!form.classID) return false;
-    if (!form.room) return false;
+    if (!form.room || form.room.length != 4) return false;
 
     if (!form.day) return false;
     if (form.startTime < 1 || form.startTime > 10) return false;
@@ -163,10 +163,7 @@ const EditPeriodDialog = ({
       label={`${mode}-period`}
       title={t(`dialog.editPeriod.title.${mode}`)}
       actions={[
-        {
-          name: t("dialog.editPeriod.action.cancel"),
-          type: "close",
-        },
+        { name: t("dialog.editPeriod.action.cancel"), type: "close" },
         {
           name: t("dialog.editPeriod.action.save"),
           type: "submit",
@@ -218,6 +215,7 @@ const EditPeriodDialog = ({
           name="room"
           type="text"
           label={t("dialog.editPeriod.form.room")}
+          helperMsg={t("dialog.editPeriod.form.room_helper")}
           defaultValue={mode == "edit" ? schedulePeriod?.room : undefined}
           onChange={(e: string) => setForm({ ...form, room: e })}
           attr={{ pattern: roomPattern }}
