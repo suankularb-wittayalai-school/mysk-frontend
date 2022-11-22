@@ -7,6 +7,7 @@ import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
 // Components
+import NumbersRow from "@components/schedule/NumbersRow";
 import ScheduleRow from "@components/schedule/ScheduleRow";
 
 // Types
@@ -16,7 +17,6 @@ import {
   PeriodContentItem,
   ScheduleRow as ScheduleRowType,
 } from "@utils/types/schedule";
-import NumbersRow from "./NumbersRow";
 
 // Day section
 const ScheduleDay = ({ day }: { day: ScheduleRowType["day"] }): JSX.Element => {
@@ -25,7 +25,10 @@ const ScheduleDay = ({ day }: { day: ScheduleRowType["day"] }): JSX.Element => {
   const today = new Date();
 
   return (
-    <div className="container-primary flex w-40 flex-col rounded-xl px-4 py-2 leading-snug">
+    <div
+      className="container-primary flex w-40 flex-col rounded-xl px-4 py-2
+        leading-snug"
+    >
       <p className="font-display text-xl font-medium">
         {t(`datetime.day.${day}`)}
       </p>

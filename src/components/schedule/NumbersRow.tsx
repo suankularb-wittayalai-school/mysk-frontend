@@ -20,7 +20,7 @@ const NumbersRow: FC = () => {
               .map((j) =>
                 // Get the start/end time of this Period
                 Object.values(periodTimes[i + j])
-                  // Format the hours and minutes part of the time
+                  // Format the hours and minutes parts of the time
                   .map((part) => part.toString().padStart(2, "0"))
                   // Join those parts
                   .join(":")
