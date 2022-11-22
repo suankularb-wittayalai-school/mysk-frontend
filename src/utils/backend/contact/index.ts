@@ -80,4 +80,3 @@ export async function deleteContact(
   }
   return { data: deletedContact!, error: null };
 }
-

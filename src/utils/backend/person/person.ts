@@ -298,4 +298,3 @@ export async function getPersonIDFromUser(
 
   return { data: null, error: { message: "invalid role." } };
 }
-

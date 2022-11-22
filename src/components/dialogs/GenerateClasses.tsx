@@ -93,7 +93,9 @@ const GenerateClassesDialog = ({
       .flat();
 
     await Promise.all(
-      classes.map(async (classItem) => await createClassroom(supabase, classItem))
+      classes.map(
+        async (classItem) => await createClassroom(supabase, classItem)
+      )
     );
 
     onSubmit();

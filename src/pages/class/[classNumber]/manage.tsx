@@ -540,10 +540,8 @@ const Class: NextPage<{
         show={showAddContact}
         onClose={toggleShowAddContact}
         onSubmit={async (contact) => {
-          const {
-            data: createdContact,
-            error: contactCreationError,
-          } = await createContact(supabase, contact);
+          const { data: createdContact, error: contactCreationError } =
+            await createContact(supabase, contact);
 
           if (contactCreationError) {
             return;
@@ -610,4 +608,3 @@ export const getServerSideProps: GetServerSideProps = async ({
 };
 
 export default Class;
-

@@ -546,10 +546,7 @@ export async function db2SchedulePeriod(
     }
     if (teachers) {
       formatted.content[0].subject.teachers = await Promise.all(
-        teachers.map(
-          async (teacher) =>
-            await db2Teacher(supabase, teacher)
-        )
+        teachers.map(async (teacher) => await db2Teacher(supabase, teacher))
       );
     }
 
@@ -640,4 +637,3 @@ export async function db2SubjectListItem(
 
   return formatted;
 }
-
