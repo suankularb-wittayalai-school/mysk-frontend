@@ -11,16 +11,16 @@ const NumbersRow: FC<{ periodWidth: number }> = ({ periodWidth }) => {
       {range(10, 1).map((i) => (
         <li
           key={`numbers-${i}`}
-          className="flex flex-row items-center gap-2 rounded-lg bg-surface-1
+          className="flex flex-row items-center gap-2 rounded-lg bg-surface-2
             py-2 px-4 leading-none"
           style={{ width: periodWidth - 8 }}
         >
           <span className="font-display font-medium">{i}</span>
-          <span className="text-xs text-outline">
-            {range(2, -1)
+          <span className="text-xs text-on-surface-variant opacity-80">
+            {range(2, i - 1)
               .map((j) =>
                 // Get the start/end time of this Period
-                Object.values(periodTimes[i + j])
+                Object.values(periodTimes[j])
                   // Format the hours and minutes parts of the time
                   .map((part) => part.toString().padStart(2, "0"))
                   // Join those parts
