@@ -10,7 +10,7 @@ import { useRouter } from "next/router";
 import { useTranslation, Trans } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 
 // SK Components
 import {
@@ -209,6 +209,13 @@ const LandingBanner = (): JSX.Element => {
                 icon={<MaterialIcon icon="translate" />}
                 iconOnly
                 attr={{ "aria-hidden": true, tabIndex: -1 }}
+                onClick={() => {
+                  // set local storage of preferred language to the opposite of the current language
+                  localStorage.setItem(
+                    "preferredLang",
+                    locale == "en-US" ? "th" : "en-US"
+                  );
+                }}
               />
             </a>
           </Link>
@@ -223,6 +230,33 @@ const Landing: NextPage<{ feed: Feed }> & {
   getLayout?: (page: NextPage) => ReactNode;
 } = ({ feed }) => {
   const { t } = useTranslation(["landing", "common"]);
+  const router = useRouter();
+  const locale = router.locale as LangCode;
+
+  useEffect(() => {
+    // try to get the user's preferred language from localStorage
+    const preferredLang = localStorage.getItem("preferredLang");
+    if (preferredLang && preferredLang != locale) {
+      router.push(router.asPath, router.asPath, {
+        locale: preferredLang,
+      });
+    }
+
+    // if the user has not set a preferred language, set it to the current one
+    if (!preferredLang) {
+      const browserLocale = navigator.language;
+      if (browserLocale != "th" && browserLocale != "en-US") {
+        localStorage.setItem("preferredLang", "en-US");
+      } else {
+        localStorage.setItem("preferredLang", browserLocale);
+        if (browserLocale != locale) {
+          router.replace(router.asPath, router.asPath, {
+            locale: browserLocale,
+          });
+        }
+      }
+    }
+  }, [router, locale]);
 
   return (
     <>
@@ -281,3 +315,4 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
 };
 
 export default Landing;
+
