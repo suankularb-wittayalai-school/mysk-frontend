@@ -90,8 +90,8 @@ const Schedule: FC<{
 
   return (
     <div
-      className="scroll-w-0 flex flex-row gap-5 overflow-x-auto overflow-y-hidden
-      !px-0 sm:overflow-x-visible"
+      className="scroll-desktop flex w-full flex-row gap-5 overflow-x-auto
+      overflow-y-hidden !px-0 sm:overflow-x-visible"
     >
       <div aria-hidden className="flex flex-col gap-2 pb-2 pl-4 sm:pl-0">
         <div className="mb-1 h-[2.375rem]" />

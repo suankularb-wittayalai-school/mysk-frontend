@@ -73,18 +73,20 @@ const ScheduleSection = ({
   const { t } = useTranslation("teach");
 
   return (
-    <Section className="relative">
+    <Section className="relative !max-w-[81.5rem] items-center">
       <BlockingPane
         icon={<MaterialIcon icon="block" allowCustomSize />}
         text={t("schedule.blocked")}
         show={disabled}
       />
-      <Header
-        icon={<MaterialIcon icon="dashboard" allowCustomSize />}
-        text={t("schedule.title")}
-      />
+      <div className="w-full max-w-[70.5rem]">
+        <Header
+          icon={<MaterialIcon icon="dashboard" allowCustomSize />}
+          text={t("schedule.title")}
+        />
+      </div>
       <Schedule schedule={schedule} role="teacher" />
-      <Actions>
+      <Actions className="w-full max-w-[70.5rem]">
         <LinkButton
           label={t("schedule.action.enterEditMode")}
           type="outlined"

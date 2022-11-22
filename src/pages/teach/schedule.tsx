@@ -113,7 +113,7 @@ const TeacherSchedule: NextPage = () => {
           />
         }
       >
-        <Section>
+        <Section className="!max-w-[81.5rem]">
           <Schedule
             schedule={schedule}
             role="teacher"
@@ -123,7 +123,7 @@ const TeacherSchedule: NextPage = () => {
             setDeletePeriod={setDeletePeriod}
             toggleFetched={toggleFetched}
           />
-          <Actions>
+          <Actions className="w-full max-w-[70.5rem]">
             <Button
               name={t("schedule.action.sync")}
               type="outlined"
