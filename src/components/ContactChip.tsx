@@ -55,19 +55,20 @@ const ContactChip = ({
                 onClick={onDelete}
               />
             )}
-            {contact.includes!.teachers && (
+
+            {contact.includes && contact.includes.teachers && (
               <MaterialIcon
                 icon="school"
                 className="text-stroke text-stroke-0.25 text-stroke-surface-1 -ml-2 text-secondary"
               />
             )}
-            {contact.includes!.parents && (
+            {contact.includes && contact.includes!.parents && (
               <MaterialIcon
                 icon="escalator_warning"
                 className="text-stroke text-stroke-0.25 text-stroke-surface-1 -ml-2 text-primary"
               />
             )}
-            {contact.includes!.students && (
+            {contact.includes && contact.includes!.students && (
               <MaterialIcon
                 icon="groups"
                 className="text-stroke text-stroke-0.25 text-stroke-surface-1 -ml-2 text-primary"
@@ -82,3 +83,4 @@ const ContactChip = ({
 };
 
 export default ContactChip;
+

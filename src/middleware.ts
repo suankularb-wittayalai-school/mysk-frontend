@@ -18,26 +18,6 @@ export async function middleware(req: NextRequest) {
   const route = req.nextUrl.pathname;
   const locale = req.nextUrl.locale as LangCode;
 
-  // Ensure user is on the correct language in Landing
-  // p.s. The other pages don’t matter because you land at Landing. :)
-  // if (route == "/") {
-  //   // Detect browser language
-  //   const browserLang = req.headers
-  //     .get("accept-language")
-  //     ?.split(",")?.[0]
-  //     .split("-")?.[0];
-
-  //   // Redirect to the correct language
-
-  //   // From Thai to English
-  //   if (browserLang == "en" && locale != "en-US")
-  //     return NextResponse.redirect(new URL("/en-US", req.url));
-  //   // From Thai (or unsupported language) to Thai (which is the default
-  //   // language)
-  //   else if (browserLang != "en" && locale == "en-US")
-  //     return NextResponse.redirect(new URL("/", req.url));
-  // }
-
   // Get current page protection type
   const pageRole: Role | "public" | "admin" | "user" | "not-protected" =
     // Public pages

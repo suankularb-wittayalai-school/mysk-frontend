@@ -1,6 +1,8 @@
 // External libraries
 import { setDay } from "date-fns";
 
+import { FC } from "react";
+
 import { AnimatePresence, LayoutGroup } from "framer-motion";
 
 import { useTranslation } from "next-i18next";
@@ -13,11 +15,10 @@ import ScheduleRow from "@components/schedule/ScheduleRow";
 // Types
 import { Role } from "@utils/types/person";
 import {
-  Schedule as Schedule,
+  Schedule,
   PeriodContentItem,
   ScheduleRow as ScheduleRowType,
 } from "@utils/types/schedule";
-import { FC } from "react";
 
 // Day section
 const ScheduleDay = ({ day }: { day: ScheduleRowType["day"] }): JSX.Element => {
@@ -133,3 +134,4 @@ const Schedule: FC<{
 
 export default Schedule;
 export { ScheduleDay as ScheduleDays, ScheduleRow };
+
