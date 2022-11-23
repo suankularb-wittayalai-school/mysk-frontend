@@ -1,5 +1,10 @@
 // External libraries
-import { GetServerSideProps, NextApiRequest, NextApiResponse, NextPage } from "next";
+import {
+  GetServerSideProps,
+  NextApiRequest,
+  NextApiResponse,
+  NextPage,
+} from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -33,7 +38,7 @@ import {
   Table,
   TextArea,
   Title,
-  XScrollContent
+  XScrollContent,
 } from "@suankularb-components/react";
 
 // Components
@@ -54,7 +59,7 @@ import {
   Subject,
   SubjectListItem,
   SubjectWNameAndCode,
-  SubstituteAssignment
+  SubstituteAssignment,
 } from "@utils/types/subject";
 
 // Backend
@@ -854,56 +859,55 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
-    const { data: dbSubject, error: dbSubjectError } = await supabase
-      .from("subject")
-      .select("*")
-      .match({ id: params?.subjectID })
-      .limit(1)
-      .single();
+  const { data: dbSubject, error: dbSubjectError } = await supabase
+    .from("subject")
+    .select("*")
+    .match({ id: params?.subjectID })
+    .limit(1)
+    .single();
 
-    const { data: roomSubjects, error: roomSubjectsError } = await supabase
-      .from("room_subjects")
-      .select("*, subject:subject(*), class(*)")
-      .eq("subject", params?.subjectID as string);
+  const { data: roomSubjects, error: roomSubjectsError } = await supabase
+    .from("room_subjects")
+    .select("*, subject:subject(*), class(*)")
+    .eq("subject", params?.subjectID as string);
 
-    if (dbSubjectError) console.error(dbSubjectError);
-    if (roomSubjectsError) console.error(roomSubjectsError);
+  if (dbSubjectError) console.error(dbSubjectError);
+  if (roomSubjectsError) console.error(roomSubjectsError);
 
-    const subject: Subject | undefined = dbSubject
-      ? await db2Subject(supabase, dbSubject)
-      : undefined;
+  const subject: Subject | undefined = dbSubject
+    ? await db2Subject(supabase, dbSubject)
+    : undefined;
 
-    const subjectRooms: SubjectListItem[] = roomSubjects
-      ? await Promise.all(
-          roomSubjects.map(
-            async (roomSubject) =>
-              await db2SubjectListItem(supabase, roomSubject)
-          )
+  const subjectRooms: SubjectListItem[] = roomSubjects
+    ? await Promise.all(
+        roomSubjects.map(
+          async (roomSubject) => await db2SubjectListItem(supabase, roomSubject)
         )
-      : [];
+      )
+    : [];
 
-    subjectRooms.sort((a, b) => b.classroom.number - a.classroom.number);
+  subjectRooms.sort((a, b) => b.classroom.number - a.classroom.number);
 
-    const substAsgn: SubstituteAssignment[] = [];
-    const allSubjects: SubjectWNameAndCode[] = [];
-    const periodLogs: PeriodLog[] = [];
+  const substAsgn: SubstituteAssignment[] = [];
+  const allSubjects: SubjectWNameAndCode[] = [];
+  const periodLogs: PeriodLog[] = [];
 
-    return {
-      props: {
-        ...(await serverSideTranslations(locale as LangCode, [
-          "common",
-          "subjects",
-        ])),
-        subject,
-        subjectRooms,
-        periodLogs: periodLogs.map((periodLog) => ({
-          ...periodLog,
-          date: periodLog.date.getTime(),
-        })),
-        substAsgn,
-        allSubjects,
-      },
-    };
+  return {
+    props: {
+      ...(await serverSideTranslations(locale as LangCode, [
+        "common",
+        "subjects",
+      ])),
+      subject,
+      subjectRooms,
+      periodLogs: periodLogs.map((periodLog) => ({
+        ...periodLog,
+        date: periodLog.date.getTime(),
+      })),
+      substAsgn,
+      allSubjects,
+    },
   };
+};
 
 export default SubjectDetails;

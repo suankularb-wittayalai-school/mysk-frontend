@@ -7,7 +7,7 @@
       "label": "วันที่รับวัคซีน"
     },
     "lot": {
-      "label": "เลขที่ Lot"
+      "label": "เลขที่ lot"
     },
     "administeringCenter": {
       "label": "สถานที่ฉีดวัคซีน"
@@ -17,4 +17,3 @@
     }
   }
 }
-

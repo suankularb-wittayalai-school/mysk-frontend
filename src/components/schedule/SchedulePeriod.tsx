@@ -18,7 +18,6 @@ import {
   SchedulePeriod as SchedulePeriodType,
   PeriodContentItem,
 } from "@utils/types/schedule";
-import { useToggle } from "@utils/hooks/toggle";
 
 // Schedule Period
 const SchedulePeriod = ({

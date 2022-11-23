@@ -1,6 +1,4 @@
 // External libraries
-import { motion } from "framer-motion";
-
 import {
   GetServerSideProps,
   NextApiRequest,
@@ -13,6 +11,8 @@ import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+
+import { FC } from "react";
 
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
@@ -29,7 +29,6 @@ import {
   LinkButton,
   MaterialIcon,
   RegularLayout,
-  Search,
   Section,
   Title,
 } from "@suankularb-components/react";
@@ -41,10 +40,8 @@ import LogOutDialog from "@components/dialogs/LogOut";
 import AddSubjectDialog from "@components/dialogs/AddSubject";
 import Schedule from "@components/schedule/Schedule";
 
-// Animations
-import { animationTransition } from "@utils/animations/config";
-
 // Backend
+import { getUserMetadata } from "@utils/backend/account";
 import { getSchedule } from "@utils/backend/schedule/schedule";
 import { getTeachingSubjects } from "@utils/backend/subject/subject";
 
@@ -55,38 +52,35 @@ import { SubjectWNameAndCode } from "@utils/types/subject";
 import { ClassWNumber } from "@utils/types/class";
 
 // Helpers
+import { getLocalePath } from "@utils/helpers/i18n";
 import { createTitleStr } from "@utils/helpers/title";
 
 // Hooks
 import { useToggle } from "@utils/hooks/toggle";
-import { Database } from "@utils/types/supabase";
-import { getLocalePath } from "@utils/helpers/i18n";
-import { getUserMetadata } from "@utils/backend/account";
 
-const ScheduleSection = ({
-  schedule,
-  disabled,
-}: {
+const ScheduleSection: FC<{
   schedule: ScheduleType;
   disabled?: boolean;
-}): JSX.Element => {
+}> = ({ schedule, disabled }): JSX.Element => {
   const { t } = useTranslation("teach");
 
   return (
-    <Section className="relative">
+    <Section className="relative !max-w-[81.5rem] items-center">
       <BlockingPane
         icon={<MaterialIcon icon="block" allowCustomSize />}
         text={t("schedule.blocked")}
         show={disabled}
       />
-      <Header
-        icon={<MaterialIcon icon="dashboard" allowCustomSize />}
-        text={t("schedule.title")}
-      />
+      <div className="w-full max-w-[70.5rem]">
+        <Header
+          icon={<MaterialIcon icon="dashboard" allowCustomSize />}
+          text={t("schedule.title")}
+        />
+      </div>
       <Schedule schedule={schedule} role="teacher" />
-      <Actions>
+      <Actions className="w-full max-w-[70.5rem]">
         <LinkButton
-          label={t("schedule.action.enterEditMode")}
+          label={t("schedule.action.edit")}
           type="outlined"
           icon={<MaterialIcon icon="edit" />}
           url="/teach/schedule"
@@ -98,13 +92,10 @@ const ScheduleSection = ({
   );
 };
 
-const SubjectsYouTeachSection = ({
-  subjects,
-  toggleShowAdd,
-}: {
+const SubjectsYouTeachSection: FC<{
   subjects: (SubjectWNameAndCode & { classes: ClassWNumber[] })[];
   toggleShowAdd: () => void;
-}): JSX.Element => {
+}> = ({ subjects, toggleShowAdd }): JSX.Element => {
   const { t } = useTranslation("teach");
 
   return (

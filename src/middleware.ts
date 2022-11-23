@@ -55,7 +55,7 @@ export async function middleware(req: NextRequest) {
       /^\/(teach|class\/\d{3}\/manage)/.test(route)
       ? "teacher"
       : // User pages
-      /^\/(news|account)/.test(route)
+      /^\/(news|account|welcome)/.test(route)
       ? "user"
       : // Fallback (images, icons, manifest, etc.)
         "not-protected";

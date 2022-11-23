@@ -1,5 +1,10 @@
 // External libraries
-import { GetStaticProps, NextPage } from "next";
+import {
+  GetServerSideProps,
+  NextApiRequest,
+  NextApiResponse,
+  NextPage,
+} from "next";
 import Head from "next/head";
 import Link from "next/link";
 
@@ -7,6 +12,9 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { useEffect, useState } from "react";
+
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 // SK Components
 import {
@@ -24,21 +32,17 @@ import EditPeriodDialog from "@components/dialogs/EditPeriod";
 import Schedule from "@components/schedule/Schedule";
 
 // Backend
+import { getUserMetadata } from "@utils/backend/account";
 import {
   deleteScheduleItem,
   getSchedule,
 } from "@utils/backend/schedule/schedule";
 
 // Helpers
-import { range } from "@utils/helpers/array";
 import { createTitleStr } from "@utils/helpers/title";
 
 // Hooks
-import { useTeacherAccount } from "@utils/hooks/auth";
 import { useToggle } from "@utils/hooks/toggle";
-
-// Supabase
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 // Types
 import { LangCode } from "@utils/types/common";
@@ -47,25 +51,24 @@ import {
   PeriodContentItemOptSubj,
 } from "@utils/types/schedule";
 
-const TeacherSchedule: NextPage = () => {
+const TeacherSchedule: NextPage<{
+  teacherID: number;
+  schedule: ScheduleType;
+}> = ({ teacherID, schedule: defaultSchedule }) => {
   const { t } = useTranslation("schedule");
   const supabase = useSupabaseClient();
-  const [teacher] = useTeacherAccount();
 
   // Data fetch
-  const plhSchedule = {
-    content: range(5, 1).map((day) => ({ day: day as Day, content: [] })),
-  };
-  const [schedule, setSchedule] = useState<ScheduleType>(plhSchedule);
-  const [fetched, toggleFetched] = useToggle();
+  const [schedule, setSchedule] = useState<ScheduleType>(defaultSchedule);
+  const [fetched, toggleFetched] = useToggle(true);
 
   useEffect(() => {
     const fetchAndSetSchedule = async () => {
-      if (!fetched && teacher) {
+      if (!fetched) {
         const { data, error } = await getSchedule(
           supabase,
           "teacher",
-          teacher.id
+          teacherID
         );
         if (error) toggleFetched();
         setSchedule(data);
@@ -73,7 +76,7 @@ const TeacherSchedule: NextPage = () => {
       }
     };
     fetchAndSetSchedule();
-  }, [fetched, teacher]);
+  }, [fetched]);
 
   // Dialog control
   const [addSubjectToPeriod, setAddSubjectToPeriod] = useState<{
@@ -113,7 +116,7 @@ const TeacherSchedule: NextPage = () => {
           />
         }
       >
-        <Section>
+        <Section className="!max-w-[81.5rem]">
           <Schedule
             schedule={schedule}
             role="teacher"
@@ -123,7 +126,7 @@ const TeacherSchedule: NextPage = () => {
             setDeletePeriod={setDeletePeriod}
             toggleFetched={toggleFetched}
           />
-          <Actions>
+          <Actions className="w-full max-w-[70.5rem]">
             <Button
               name={t("schedule.action.sync")}
               type="outlined"
@@ -202,13 +205,32 @@ const TeacherSchedule: NextPage = () => {
   );
 };
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  req,
+  res,
+}) => {
+  const supabase = createServerSupabaseClient({
+    req: req as NextApiRequest,
+    res: res as NextApiResponse,
+  });
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  const { data: metadata } = await getUserMetadata(supabase, session!.user.id);
+  const teacherID = metadata!.teacher!;
+
+  const { data: schedule } = await getSchedule(supabase, "teacher", teacherID);
+
   return {
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
         "common",
         "schedule",
       ])),
+      teacherID,
+      schedule,
     },
   };
 };

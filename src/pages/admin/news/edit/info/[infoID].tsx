@@ -122,7 +122,9 @@ const EditInfo: NextPage<{ existingData: InfoPage }> = ({
           toggleShowAddImage={toggleShowAddImage}
         />
         <ArticlePublish
-          handlePublish={async () => await updateInfo(supabase, existingData.id, form)}
+          handlePublish={async () =>
+            await updateInfo(supabase, existingData.id, form)
+          }
           allowPublish={validate()}
         />
       </RegularLayout>
