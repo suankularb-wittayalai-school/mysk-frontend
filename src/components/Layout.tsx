@@ -215,7 +215,7 @@ const Layout = ({
     }
 
     constructNavigation();
-  }, [router.asPath]);
+  }, [router.asPath, user]);
 
   return (
     <LayoutGroup>

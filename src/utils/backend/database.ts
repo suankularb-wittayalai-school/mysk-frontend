@@ -32,6 +32,11 @@ export function db2Contact(
     },
     value: contact.value,
     type: contact.type,
+    includes: {
+      students: contact.include_students ?? false,
+      parents: contact.include_parents ?? false,
+      teachers: contact.include_teachers ?? false,
+    },
   };
 }
 
@@ -541,10 +546,7 @@ export async function db2SchedulePeriod(
     }
     if (teachers) {
       formatted.content[0].subject.teachers = await Promise.all(
-        teachers.map(
-          async (teacher) =>
-            await db2Teacher(supabase, teacher, { contacts: false })
-        )
+        teachers.map(async (teacher) => await db2Teacher(supabase, teacher))
       );
     }
 

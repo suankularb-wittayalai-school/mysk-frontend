@@ -2,7 +2,11 @@
 import { User } from "@supabase/supabase-js";
 
 // Backend
-import { createContact, updateContact } from "@utils/backend/contact";
+import {
+  createContact,
+  deleteContact,
+  updateContact,
+} from "@utils/backend/contact";
 
 // Converters
 import { db2Class, db2Student } from "@utils/backend/database";
@@ -22,7 +26,9 @@ export async function createClassroom(
 ): Promise<
   BackendDataReturn<Database["public"]["Tables"]["classroom"]["Row"], null>
 > {
-  const contacts = await Promise.all(classroom.contacts.map(createContact));
+  const contacts = await Promise.all(
+    classroom.contacts.map((contact) => createContact(supabase, contact))
+  );
 
   // check if any contact creation failed
   if (contacts.some((contact) => contact.error)) {
@@ -104,7 +110,7 @@ export async function updateClassroom(
   BackendDataReturn<Database["public"]["Tables"]["classroom"]["Row"], null>
 > {
   const contacts = await Promise.all(
-    classroom.contacts.map(updateContact)
+    classroom.contacts.map((contact) => updateContact(supabase, contact))
   ).catch((error) => {
     console.error(error);
     return [];
@@ -260,6 +266,53 @@ export async function addContactToClassroom(
   if (classroomUpdatingError) {
     console.error(classroomUpdatingError);
     return { data: null, error: classroomUpdatingError };
+  }
+
+  return { data: updatedClassroom!, error: null };
+}
+
+export async function removeContactFromClassroom(
+  supabase: DatabaseClient,
+  contactID: number,
+  classID: number
+): Promise<
+  BackendDataReturn<Database["public"]["Tables"]["classroom"]["Row"], null>
+> {
+  const { data: classroom, error: classroomSelectionError } = await supabase
+    .from("classroom")
+    .select("contacts, number, year")
+    .match({ id: classID, year: getCurrentAcademicYear() })
+    .limit(1)
+    .single();
+
+  if (classroomSelectionError) {
+    return { data: null, error: classroomSelectionError };
+  }
+
+  const { data: updatedClassroom, error: classroomUpdatingError } =
+    await supabase
+      .from("classroom")
+      .update({
+        contacts: classroom!.contacts.filter((id) => id !== contactID),
+      })
+      .eq("id", classID)
+      .select("*")
+      .limit(1)
+      .single();
+
+  if (classroomUpdatingError) {
+    console.error(classroomUpdatingError);
+    return { data: null, error: classroomUpdatingError };
+  }
+
+  const { error: contactDeletionError } = await deleteContact(
+    supabase,
+    contactID
+  );
+
+  if (contactDeletionError) {
+    console.error(contactDeletionError);
+    return { data: null, error: contactDeletionError };
   }
 
   return { data: updatedClassroom!, error: null };

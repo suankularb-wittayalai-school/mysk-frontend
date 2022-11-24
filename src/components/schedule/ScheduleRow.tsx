@@ -1,7 +1,7 @@
 // External libraries
 import { setDay } from "date-fns";
 import { useTranslation } from "next-i18next";
-import { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
 // Components
 import SchedulePeriod from "@components/schedule/SchedulePeriod";
@@ -13,16 +13,9 @@ import {
   PeriodContentItem,
 } from "@utils/types/schedule";
 
-const ScheduleRow = ({
-  scheduleRow,
-  role,
-  allowEdit,
-  setAddPeriod,
-  setEditPeriod,
-  setDeletePeriod,
-  toggleFetched,
-}: {
+const ScheduleRow: FC<{
   scheduleRow: ScheduleRowType;
+  periodWidth: number;
   role: Role;
   allowEdit?: boolean;
   setAddPeriod?: ({
@@ -51,6 +44,15 @@ const ScheduleRow = ({
     periodID: number;
   }) => void;
   toggleFetched?: () => void;
+}> = ({
+  scheduleRow,
+  periodWidth,
+  role,
+  allowEdit,
+  setAddPeriod,
+  setEditPeriod,
+  setDeletePeriod,
+  toggleFetched,
 }): JSX.Element => {
   const { t } = useTranslation("common");
 
@@ -62,8 +64,6 @@ const ScheduleRow = ({
     const updateInterval = setInterval(() => setNow(new Date()), 5000);
     return () => clearInterval(updateInterval);
   }, []);
-
-  const periodWidth = 112;
 
   return (
     <li aria-label={t(`datetime.day.${scheduleRow.day}`)}>

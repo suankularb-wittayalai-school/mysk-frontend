@@ -517,9 +517,8 @@ const VaccineDataSection = ({
     provider: "comirnaty",
   });
 
-  const [vaccineData, setVaccineData] = useState<VaccineRecord[]>(
-    vaccineRecords
-  );
+  const [vaccineData, setVaccineData] =
+    useState<VaccineRecord[]>(vaccineRecords);
 
   const providerOption = [
     { value: "comirnaty", label: "Comirnaty (Pfizer)" },
@@ -645,9 +644,8 @@ const VaccineDataSection = ({
                       },
                       personid!
                     );
-                    const {
-                      data: newVaccineRecords,
-                    } = await getVaccineRecordbyPersonId(supabase, personid!);
+                    const { data: newVaccineRecords } =
+                      await getVaccineRecordbyPersonId(supabase, personid!);
                     toggleLoading();
                     setVaccineData(newVaccineRecords);
                   }}
@@ -679,17 +677,15 @@ const VaccineDataSection = ({
                           isDangerous
                           onClick={async () => {
                             toggleLoading();
-                            const {
-                              data: personid,
-                            } = await getPersonIDFromUser(supabase, user!);
+                            const { data: personid } =
+                              await getPersonIDFromUser(supabase, user!);
 
                             await deleteVaccineRecord(supabase, vaccine.id);
-                            const {
-                              data: newVaccineRecords,
-                            } = await getVaccineRecordbyPersonId(
-                              supabase,
-                              personid!
-                            );
+                            const { data: newVaccineRecords } =
+                              await getVaccineRecordbyPersonId(
+                                supabase,
+                                personid!
+                              );
                             setVaccineData(newVaccineRecords);
                             toggleLoading();
                           }}

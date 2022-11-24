@@ -56,7 +56,9 @@ export async function getSubjectList(
 
   return {
     data: await Promise.all(
-      data.map(async (roomSubject) => await db2SubjectListItem(supabase, roomSubject))
+      data.map(
+        async (roomSubject) => await db2SubjectListItem(supabase, roomSubject)
+      )
     ),
     error: null,
   };

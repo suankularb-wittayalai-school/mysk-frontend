@@ -2,11 +2,12 @@
 import { supabase } from "@utils/supabase-client";
 
 // Types
-import { BackendDataReturn } from "@utils/types/common";
+import { BackendDataReturn, DatabaseClient } from "@utils/types/common";
 import { Contact } from "@utils/types/contact";
 import { Database } from "@utils/types/supabase";
 
 export async function createContact(
+  supabase: DatabaseClient,
   contact: Contact
 ): Promise<
   BackendDataReturn<Database["public"]["Tables"]["contact"]["Row"], null>
@@ -33,6 +34,7 @@ export async function createContact(
 }
 
 export async function updateContact(
+  supabase: DatabaseClient,
   contact: Contact
 ): Promise<
   BackendDataReturn<Database["public"]["Tables"]["contact"]["Row"], null>
@@ -57,4 +59,24 @@ export async function updateContact(
     return { data: null, error: contactUpdateError };
   }
   return { data: updatedContact!, error: null };
+}
+
+export async function deleteContact(
+  supabase: DatabaseClient,
+  contactId: number
+): Promise<
+  BackendDataReturn<Database["public"]["Tables"]["contact"]["Row"], null>
+> {
+  const { data: deletedContact, error: contactDeleteError } = await supabase
+    .from("contact")
+    .delete()
+    .match({ id: contactId })
+    .select("*")
+    .single();
+
+  if (contactDeleteError) {
+    console.error(contactDeleteError);
+    return { data: null, error: contactDeleteError };
+  }
+  return { data: deletedContact!, error: null };
 }

@@ -326,4 +326,3 @@ export async function getTeacherFromPublicUser(
 
   return await db2Teacher(supabase, data!);
 }
-
