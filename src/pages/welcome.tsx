@@ -536,9 +536,7 @@ const VaccineDataSection = ({
     if (vaccineData.length == 0) return false;
     return vaccineData.every((vaccine) => {
       return (
-        vaccine.lotNo &&
         vaccine.vaccineDate &&
-        vaccine.administeredBy &&
         vaccine.vaccineName
       );
     });
