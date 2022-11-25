@@ -511,14 +511,13 @@ const VaccineDataSection = ({
   const [loading, toggleLoading] = useToggle();
 
   const [form, setForm] = useState({
-    lotno: "",
     date: "",
-    administeringCenter: "",
     provider: "comirnaty",
   });
 
-  const [vaccineData, setVaccineData] =
-    useState<VaccineRecord[]>(vaccineRecords);
+  const [vaccineData, setVaccineData] = useState<VaccineRecord[]>(
+    vaccineRecords
+  );
 
   const providerOption = [
     { value: "comirnaty", label: "Comirnaty (Pfizer)" },
@@ -546,13 +545,7 @@ const VaccineDataSection = ({
   };
 
   const validateForm = () => {
-    if (
-      !form.lotno ||
-      !form.date ||
-      !form.administeringCenter ||
-      !form.provider
-    )
-      return false;
+    if (!form.date || !form.provider) return false;
     return true;
   };
 
@@ -601,26 +594,6 @@ const VaccineDataSection = ({
                     onChange={(e: string) => setForm({ ...form, provider: e })}
                   />
                 </div>
-                <div className="layout-grid-cols-2 !gap-y-0">
-                  <KeyboardInput
-                    name="vaccine-lot"
-                    type="text"
-                    label={t("vaccine.lot.label", { ns: "covid" })}
-                    onChange={(e) => setForm({ ...form, lotno: e })}
-                    attr={{ disabled }}
-                  />
-                  <KeyboardInput
-                    name="vaccine-administering-center"
-                    type="text"
-                    label={t("vaccine.administeringCenter.label", {
-                      ns: "covid",
-                    })}
-                    onChange={(e) =>
-                      setForm({ ...form, administeringCenter: e })
-                    }
-                    attr={{ disabled }}
-                  />
-                </div>
               </section>
               <CardActions>
                 <Button
@@ -637,15 +610,16 @@ const VaccineDataSection = ({
                       {
                         id: 0,
                         doseNo: 0,
-                        lotNo: form.lotno,
+                        lotNo: "",
                         vaccineDate: form.date,
-                        administeredBy: form.administeringCenter,
+                        administeredBy: "",
                         vaccineName: form.provider,
                       },
                       personid!
                     );
-                    const { data: newVaccineRecords } =
-                      await getVaccineRecordbyPersonId(supabase, personid!);
+                    const {
+                      data: newVaccineRecords,
+                    } = await getVaccineRecordbyPersonId(supabase, personid!);
                     toggleLoading();
                     setVaccineData(newVaccineRecords);
                   }}
@@ -677,15 +651,17 @@ const VaccineDataSection = ({
                           isDangerous
                           onClick={async () => {
                             toggleLoading();
-                            const { data: personid } =
-                              await getPersonIDFromUser(supabase, user!);
+                            const {
+                              data: personid,
+                            } = await getPersonIDFromUser(supabase, user!);
 
                             await deleteVaccineRecord(supabase, vaccine.id);
-                            const { data: newVaccineRecords } =
-                              await getVaccineRecordbyPersonId(
-                                supabase,
-                                personid!
-                              );
+                            const {
+                              data: newVaccineRecords,
+                            } = await getVaccineRecordbyPersonId(
+                              supabase,
+                              personid!
+                            );
                             setVaccineData(newVaccineRecords);
                             toggleLoading();
                           }}
@@ -735,50 +711,6 @@ const VaccineDataSection = ({
                             setVaccineData(newVaccineData);
                           }}
                           defaultValue={vaccine.vaccineName}
-                        />
-                      </div>
-                      <div className="layout-grid-cols-2 !gap-y-0">
-                        <KeyboardInput
-                          name="vaccine-lot"
-                          type="text"
-                          label={t("vaccine.lot.label", { ns: "covid" })}
-                          onChange={(e) => {
-                            // edit vaccine data state by editting the vaccineData array
-                            const newVaccineData = vaccineData.map((v) => {
-                              if (v.id === vaccine.id) {
-                                return {
-                                  ...v,
-                                  lotNo: e,
-                                };
-                              }
-                              return v;
-                            });
-                            setVaccineData(newVaccineData);
-                          }}
-                          attr={{ disabled }}
-                          defaultValue={vaccine.lotNo}
-                        />
-                        <KeyboardInput
-                          name="vaccine-administering-center"
-                          type="text"
-                          label={t("vaccine.administeringCenter.label", {
-                            ns: "covid",
-                          })}
-                          onChange={(e) => {
-                            // edit vaccine data state by editting the vaccineData array
-                            const newVaccineData = vaccineData.map((v) => {
-                              if (v.id === vaccine.id) {
-                                return {
-                                  ...v,
-                                  administeredBy: e,
-                                };
-                              }
-                              return v;
-                            });
-                            setVaccineData(newVaccineData);
-                          }}
-                          attr={{ disabled }}
-                          defaultValue={vaccine.administeredBy}
                         />
                       </div>
                     </section>
@@ -1215,3 +1147,4 @@ export const getServerSideProps: GetServerSideProps = async ({
 };
 
 export default Welcome;
+
