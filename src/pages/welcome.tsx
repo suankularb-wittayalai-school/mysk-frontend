@@ -501,7 +501,7 @@ const VaccineDataSection = ({
 }) => {
   const supabase = useSupabaseClient();
   const { t } = useTranslation(["landing", "covid"]);
-  const user = useUser();
+  const user = useUser()!;
 
   const sectionRef = useRef<any>();
   useEffect(() => {
@@ -510,15 +510,12 @@ const VaccineDataSection = ({
 
   const [loading, toggleLoading] = useToggle();
 
-  const [form, setForm] = useState({
-    date: "",
-    provider: "comirnaty",
-  });
+  const [form, setForm] = useState({ date: "", provider: "comirnaty" });
 
-  const [vaccineData, setVaccineData] = useState<VaccineRecord[]>(
-    vaccineRecords
-  );
+  const [vaccineData, setVaccineData] =
+    useState<VaccineRecord[]>(vaccineRecords);
 
+  // Information from https://covid19.trackvaccines.org/country/thailand/
   const providerOption = [
     { value: "comirnaty", label: "Comirnaty (Pfizer)" },
     { value: "coronavac", label: "CoronaVac (Sinovac)" },
@@ -584,7 +581,6 @@ const VaccineDataSection = ({
                   <Dropdown
                     name="vaccine-provider"
                     label={t("vaccine.provider.label", { ns: "covid" })}
-                    // info from https://covid19.trackvaccines.org/country/thailand/
                     options={providerOption}
                     onChange={(e: string) => setForm({ ...form, provider: e })}
                   />
@@ -595,28 +591,33 @@ const VaccineDataSection = ({
                   label={t("welcome.vaccineData.action.add")}
                   type="filled"
                   onClick={async () => {
-                    const { data: personid } = await getPersonIDFromUser(
+                    const { data: personID } = await getPersonIDFromUser(
                       supabase,
-                      user!
+                      user
                     );
-                    toggleLoading();
-                    await addVaccineRecord(
-                      supabase,
-                      {
-                        id: 0,
-                        doseNo: 0,
-                        lotNo: "",
-                        vaccineDate: form.date,
-                        administeredBy: "",
-                        vaccineName: form.provider,
+                    withLoading(
+                      async () => {
+                        await addVaccineRecord(
+                          supabase,
+                          {
+                            id: 0,
+                            doseNo: 0,
+                            lotNo: "",
+                            vaccineDate: form.date,
+                            administeredBy: "",
+                            vaccineName: form.provider,
+                          },
+                          personID!
+                        );
+                        const { data: newVaccineRecords } =
+                          await getVaccineRecordbyPersonId(supabase, personID!);
+
+                        setVaccineData(newVaccineRecords);
+                        return true;
                       },
-                      personid!
+                      toggleLoading,
+                      { hasEndToggle: true }
                     );
-                    const {
-                      data: newVaccineRecords,
-                    } = await getVaccineRecordbyPersonId(supabase, personid!);
-                    toggleLoading();
-                    setVaccineData(newVaccineRecords);
                   }}
                   disabled={disabled || !validateForm() || loading}
                 />
@@ -645,17 +646,15 @@ const VaccineDataSection = ({
                           isDangerous
                           onClick={async () => {
                             toggleLoading();
-                            const {
-                              data: personid,
-                            } = await getPersonIDFromUser(supabase, user!);
+                            const { data: personid } =
+                              await getPersonIDFromUser(supabase, user!);
 
                             await deleteVaccineRecord(supabase, vaccine.id);
-                            const {
-                              data: newVaccineRecords,
-                            } = await getVaccineRecordbyPersonId(
-                              supabase,
-                              personid!
-                            );
+                            const { data: newVaccineRecords } =
+                              await getVaccineRecordbyPersonId(
+                                supabase,
+                                personid!
+                              );
                             setVaccineData(newVaccineRecords);
                             toggleLoading();
                           }}
@@ -1141,3 +1140,4 @@ export const getServerSideProps: GetServerSideProps = async ({
 };
 
 export default Welcome;
+
