@@ -582,7 +582,7 @@ const VaccineDataSection = ({
                     name="vaccine-provider"
                     label={t("vaccine.provider.label", { ns: "covid" })}
                     options={providerOption}
-                    onChange={(e: string) => setForm({ ...form, provider: e })}
+                    onChange={(e) => setForm({ ...form, provider: e })}
                   />
                 </div>
               </section>
@@ -634,7 +634,12 @@ const VaccineDataSection = ({
                 className="flex flex-col gap-4"
               >
                 {vaccineData.map((vaccine) => (
-                  <Card type="stacked" appearance="tonal" key={vaccine.id}>
+                  <Card
+                    key={vaccine.id}
+                    type="stacked"
+                    appearance="tonal"
+                    className="!overflow-visible"
+                  >
                     <CardHeader
                       title={t("welcome.vaccineData.header.vaccineCard", {
                         doseNo: vaccine.doseNo,
