@@ -535,10 +535,7 @@ const VaccineDataSection = ({
   const validate = () => {
     if (vaccineData.length == 0) return false;
     return vaccineData.every((vaccine) => {
-      return (
-        vaccine.vaccineDate &&
-        vaccine.vaccineName
-      );
+      return vaccine.vaccineDate && vaccine.vaccineName;
     });
   };
 
@@ -638,7 +635,6 @@ const VaccineDataSection = ({
                 {vaccineData.map((vaccine) => (
                   <Card type="stacked" appearance="tonal" key={vaccine.id}>
                     <CardHeader
-                      icon={"badge"}
                       title={t("welcome.vaccineData.header.vaccineCard", {
                         doseNo: vaccine.doseNo,
                       })}
@@ -1145,4 +1141,3 @@ export const getServerSideProps: GetServerSideProps = async ({
 };
 
 export default Welcome;
-

@@ -65,7 +65,7 @@
       "notice": "Your vaccine data will only be used for the school statistics only. Thank you for your cooperation.",
       "header": {
         "addCard": "Add vaccination data",
-        "vaccineCard": "dose {{doseNo}}",
+        "vaccineCard": "Dose {{doseNo}}",
         "noVaccineCard": "No vaccination data"
       },
       "action": {
