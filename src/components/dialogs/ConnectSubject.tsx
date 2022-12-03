@@ -309,6 +309,7 @@ const ConnectSubjectDialog = ({
         <DialogSection
           name="class-access"
           title={t("dialog.connectSubject.classAccess.title")}
+          isDoubleColumn
           hasNoGap
         >
           <KeyboardInput
@@ -329,6 +330,7 @@ const ConnectSubjectDialog = ({
             useAutoMsg
             onChange={(e) => setForm({ ...form, ggcLink: e })}
             defaultValue={subjectRoom ? subjectRoom.ggcLink : undefined}
+            className="col-span-2"
             attr={{ pattern: "https://classroom.google.com/c/[a-zA-Z0-9]{16}" }}
           />
           <KeyboardInput
@@ -338,6 +340,7 @@ const ConnectSubjectDialog = ({
             errorMsg={t("dialog.connectSubject.classAccess.ggMeetLink_error")}
             useAutoMsg
             onChange={(e) => setForm({ ...form, ggMeetLink: e })}
+            className="col-span-2"
             defaultValue={subjectRoom ? subjectRoom.ggMeetLink : undefined}
           />
         </DialogSection>
