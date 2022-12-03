@@ -623,14 +623,19 @@ const VaccineDataSection = ({
               />
             </CardActions>
           </Card>
-          <AnimatePresence>
+          <AnimatePresence exitBeforeEnter>
             {vaccineData.length == 0 ? (
-              <section
+              <motion.section
+                key="vaccine-none"
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.8, opacity: 0 }}
+                transition={animationTransition}
                 className="grid place-items-center rounded-lg bg-surface-2
                   p-2 text-center text-on-surface"
               >
                 {t("welcome.vaccineData.header.noVaccineCard")}
-              </section>
+              </motion.section>
             ) : (
               <section className="flex h-fit flex-row gap-2">
                 {vaccineData.map((vaccine) => (
@@ -651,14 +656,14 @@ const VaccineDataSection = ({
                           isDangerous
                           onClick={async () => {
                             toggleLoading();
-                            const { data: personid } =
-                              await getPersonIDFromUser(supabase, user!);
+                            const { data: personID } =
+                              await getPersonIDFromUser(supabase, user);
 
                             await deleteVaccineRecord(supabase, vaccine.id);
                             const { data: newVaccineRecords } =
                               await getVaccineRecordbyPersonId(
                                 supabase,
-                                personid!
+                                personID!
                               );
                             setVaccineData(newVaccineRecords);
                             toggleLoading();
@@ -674,16 +679,15 @@ const VaccineDataSection = ({
                           name="vaccine-date"
                           type="date"
                           label={t("vaccine.date.label", { ns: "covid" })}
-                          onChange={(e) => {
-                            // edit vaccine data state by editting the vaccineData array
-                            const newVaccineData = vaccineData.map((v) => {
-                              if (v.id === vaccine.id) {
-                                return { ...v, vaccineDate: e };
-                              }
-                              return v;
-                            });
-                            setVaccineData(newVaccineData);
-                          }}
+                          onChange={(e) =>
+                            setVaccineData(
+                              vaccineData.map((dataItem) =>
+                                vaccine.id == dataItem.id
+                                  ? { ...dataItem, vaccineDate: e }
+                                  : dataItem
+                              )
+                            )
+                          }
                           attr={{ disabled }}
                           defaultValue={vaccine.vaccineDate}
                         />
@@ -691,19 +695,15 @@ const VaccineDataSection = ({
                           name="vaccine-provider"
                           label={t("vaccine.provider.label", { ns: "covid" })}
                           options={providerOption}
-                          onChange={(e: string) => {
-                            // edit vaccine data state by editting the vaccineData array
-                            const newVaccineData = vaccineData.map((v) => {
-                              if (v.id === vaccine.id) {
-                                return {
-                                  ...v,
-                                  vaccineName: e,
-                                };
-                              }
-                              return v;
-                            });
-                            setVaccineData(newVaccineData);
-                          }}
+                          onChange={(e: string) =>
+                            setVaccineData(
+                              vaccineData.map((dataItem) =>
+                                vaccine.id == dataItem.id
+                                  ? { ...dataItem, vaccineName: e }
+                                  : dataItem
+                              )
+                            )
+                          }
                           defaultValue={vaccine.vaccineName}
                         />
                       </div>
