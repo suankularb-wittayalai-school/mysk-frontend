@@ -182,7 +182,7 @@ const ConnectSubjectDialog = ({
         await supabase
           .from("room_subjects")
           .select("*")
-          .eq("class", classroom.id)
+          .eq("class", classroom!.id)
           .contains("teacher", [user?.id])
           .eq("subject", subject.id);
 
