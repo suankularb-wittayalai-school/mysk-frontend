@@ -1,5 +1,5 @@
 // External libraries
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 
 import {
   GetServerSideProps,
@@ -587,7 +587,7 @@ const VaccineDataSection = ({
           <Card
             type="stacked"
             appearance="outlined"
-            className="!overflow-visible"
+            className="h-fit !overflow-visible"
           >
             <CardHeader
               icon="add_circle"
@@ -631,85 +631,107 @@ const VaccineDataSection = ({
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.8, opacity: 0 }}
                 transition={animationTransition}
-                className="grid place-items-center rounded-lg bg-surface-2
-                  p-2 text-center text-on-surface"
+                className="grid place-items-center rounded-lg bg-surface-2 px-2
+                  py-4 text-center text-on-surface"
               >
                 {t("welcome.vaccineData.header.noVaccineCard")}
               </motion.section>
             ) : (
-              <section className="flex h-fit flex-row gap-2">
-                {vaccineData.map((vaccine) => (
-                  <Card
-                    key={vaccine.id}
-                    type="stacked"
-                    appearance="tonal"
-                    className="!overflow-visible"
-                  >
-                    <CardHeader
-                      title={t("welcome.vaccineData.header.vaccineCard", {
-                        doseNo: vaccine.doseNo,
-                      })}
-                      end={
-                        <Button
-                          icon={<MaterialIcon icon="delete" />}
-                          iconOnly
-                          isDangerous
-                          onClick={async () => {
-                            toggleLoading();
-                            const { data: personID } =
-                              await getPersonIDFromUser(supabase, user);
+              <section className="flex h-fit flex-col gap-2">
+                <ul className="contents">
+                  <LayoutGroup>
+                    <AnimatePresence>
+                      {vaccineData.map((vaccine) => (
+                        <motion.li
+                          key={vaccine.id}
+                          layoutId={`vaccine-data-${vaccine.id}`}
+                          initial={{ x: -100, opacity: 0 }}
+                          animate={{ x: 0, opacity: 1 }}
+                          exit={{ x: -100, opacity: 0 }}
+                          transition={animationTransition}
+                        >
+                          <Card
+                            type="stacked"
+                            appearance="tonal"
+                            className="!overflow-visible"
+                          >
+                            <CardHeader
+                              title={t(
+                                "welcome.vaccineData.header.vaccineCard",
+                                { doseNo: vaccine.doseNo }
+                              )}
+                              end={
+                                <Button
+                                  icon={<MaterialIcon icon="delete" />}
+                                  iconOnly
+                                  isDangerous
+                                  onClick={async () => {
+                                    toggleLoading();
+                                    const { data: personID } =
+                                      await getPersonIDFromUser(supabase, user);
 
-                            await deleteVaccineRecord(supabase, vaccine.id);
-                            const { data: newVaccineRecords } =
-                              await getVaccineRecordbyPersonId(
-                                supabase,
-                                personID!
-                              );
-                            setVaccineData(newVaccineRecords);
-                            toggleLoading();
-                          }}
-                          disabled={disabled || loading}
-                          type="text"
-                        />
-                      }
-                    />
-                    <section className="flex flex-col justify-center p-4">
-                      <div className="layout-grid-cols-2 !gap-y-0">
-                        <NativeInput
-                          name="vaccine-date"
-                          type="date"
-                          label={t("vaccine.date.label", { ns: "covid" })}
-                          onChange={(e) =>
-                            setVaccineData(
-                              vaccineData.map((dataItem) =>
-                                vaccine.id == dataItem.id
-                                  ? { ...dataItem, vaccineDate: e }
-                                  : dataItem
-                              )
-                            )
-                          }
-                          attr={{ disabled }}
-                          defaultValue={vaccine.vaccineDate}
-                        />
-                        <Dropdown
-                          name="vaccine-provider"
-                          label={t("vaccine.provider.label", { ns: "covid" })}
-                          options={providerOption}
-                          onChange={(e: string) =>
-                            setVaccineData(
-                              vaccineData.map((dataItem) =>
-                                vaccine.id == dataItem.id
-                                  ? { ...dataItem, vaccineName: e }
-                                  : dataItem
-                              )
-                            )
-                          }
-                          defaultValue={vaccine.vaccineName}
-                        />
-                      </div>
-                    </section>
-                  </Card>
-                ))}
+                                    await deleteVaccineRecord(
+                                      supabase,
+                                      vaccine.id
+                                    );
+                                    const { data: newVaccineRecords } =
+                                      await getVaccineRecordbyPersonId(
+                                        supabase,
+                                        personID!
+                                      );
+                                    setVaccineData(newVaccineRecords);
+                                    toggleLoading();
+                                  }}
+                                  disabled={disabled || loading}
+                                  type="text"
+                                />
+                              }
+                            />
+                            <section className="flex flex-col justify-center p-4">
+                              <div className="layout-grid-cols-2 !gap-y-0">
+                                <NativeInput
+                                  name="vaccine-date"
+                                  type="date"
+                                  label={t("vaccine.date.label", {
+                                    ns: "covid",
+                                  })}
+                                  onChange={(e) =>
+                                    setVaccineData(
+                                      vaccineData.map((dataItem) =>
+                                        vaccine.id == dataItem.id
+                                          ? { ...dataItem, vaccineDate: e }
+                                          : dataItem
+                                      )
+                                    )
+                                  }
+                                  attr={{ disabled }}
+                                  defaultValue={vaccine.vaccineDate}
+                                />
+                                <Dropdown
+                                  name="vaccine-provider"
+                                  label={t("vaccine.provider.label", {
+                                    ns: "covid",
+                                  })}
+                                  options={providerOption}
+                                  onChange={(e: string) =>
+                                    setVaccineData(
+                                      vaccineData.map((dataItem) =>
+                                        vaccine.id == dataItem.id
+                                          ? { ...dataItem, vaccineName: e }
+                                          : dataItem
+                                      )
+                                    )
+                                  }
+                                  defaultValue={vaccine.vaccineName}
+                                />
+                              </div>
+                            </section>
+                          </Card>
+                        </motion.li>
+                      ))}
+                    </AnimatePresence>
+                  </LayoutGroup>
+                </ul>
               </section>
             )}
           </AnimatePresence>
