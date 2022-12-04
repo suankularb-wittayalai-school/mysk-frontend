@@ -15,12 +15,12 @@ import {
 // Components
 import AddTeacherDialog from "@components/dialogs/AddTeacher";
 
-// Hooks
-import { useTeacherAccount } from "@utils/hooks/auth";
-
 // Helpers
 import { getCurrentAcademicYear } from "@utils/helpers/date";
 import { nameJoiner } from "@utils/helpers/name";
+
+// Hooks
+import { useTeacherAccount } from "@utils/hooks/auth";
 
 // Types
 import {
@@ -30,6 +30,9 @@ import {
 } from "@utils/types/common";
 import { Teacher } from "@utils/types/person";
 import { Subject, SubjectListItem } from "@utils/types/subject";
+
+// Miscellaneous
+import { classPattern, classRegex } from "@utils/patterns";
 
 const ConnectSubjectDialog = ({
   show,
@@ -134,7 +137,7 @@ const ConnectSubjectDialog = ({
   function validate(): boolean {
     // Search subject via code
     if (!subject) return false;
-    if (!(form.classroom && form.classroom.match(/[1-6][0-1][1-9]/)))
+    if (!(form.classroom) || !classRegex.test(form.classroom))
       return false;
 
     // Class access
@@ -162,41 +165,39 @@ const ConnectSubjectDialog = ({
   async function handleSubmit() {
     if (!validate()) return;
 
-    const { data: classroom, error: classroomSelectionError } = await supabase
+    const { data: classroom, error: classError } = await supabase
       .from("classroom")
       .select("id")
       .match({ number: form.classroom, year: getCurrentAcademicYear() })
       .limit(1)
       .single();
 
-    // console.log(classroom);
-    if (!classroom || classroomSelectionError) {
-      console.error(classroomSelectionError);
+    if (classError) {
+      console.error(classError);
       return;
     }
 
     if (mode == "add") {
-      const { data: roomSubjects, error: roomSubjectsSelectionError } =
+      const { data: roomSubjects, error: roomSubjectsError } =
         await supabase
           .from("room_subjects")
           .select("*")
-          .eq("class", classroom.id)
+          .eq("class", classroom!.id)
           .contains("teacher", [user?.id])
           .eq("subject", subject.id);
 
-      // console.log(data);
-      if (roomSubjectsSelectionError) {
-        console.error(roomSubjectsSelectionError);
+      if (roomSubjectsError) {
+        console.error(roomSubjectsError);
         return;
       }
-      // TODO: show a snackbar saying subject for the class already exist
+      // TODO: Show a snackbar saying subject for the class already exist
       if (roomSubjects && roomSubjects.length > 0) {
         onClose();
         return;
       }
 
-      const { data, error } = await supabase.from("room_subjects").insert({
-        class: classroom.id,
+      const { error } = await supabase.from("room_subjects").insert({
+        class: classroom!.id,
         subject: subject.id,
         teacher: form.teachers.map((teacher) => teacher.id),
         coteacher: form.coTeachers
@@ -210,20 +211,19 @@ const ConnectSubjectDialog = ({
       if (error) console.error(error);
     }
     if (mode == "edit") {
-      const { data: roomSubjects, error: roomSubjectsSelectionError } =
+      const { data: roomSubjects, error: roomSubjectsError } =
         await supabase
           .from("room_subjects")
           .select("*")
-          .eq("class", classroom.id)
+          .eq("class", classroom!.id)
           .contains("teacher", [user?.id])
           .eq("subject", subject.id);
 
-      // console.log(data);
-      if (roomSubjectsSelectionError) {
-        console.error(roomSubjectsSelectionError);
+      if (roomSubjectsError) {
+        console.error(roomSubjectsError);
         return;
       }
-      // TODO: show a snackbar saying subject for the class does not exist
+      // TODO: Show a snackbar saying subject for the class does not exist
       if (roomSubjects?.length == 0 || !roomSubjects) {
         onClose();
         return;
@@ -232,7 +232,7 @@ const ConnectSubjectDialog = ({
       const { error } = await supabase
         .from("room_subjects")
         .update({
-          class: classroom.id,
+          class: classroom!.id,
           subject: subject.id,
           teacher: form.teachers.map((teacher) => teacher.id),
           coteacher: form.coTeachers
@@ -301,7 +301,7 @@ const ConnectSubjectDialog = ({
             defaultValue={
               subjectRoom ? subjectRoom.classroom.number : undefined
             }
-            attr={{ pattern: "[1-6][0-1][1-9]" }}
+            attr={{ pattern: classPattern }}
           />
         </DialogSection>
 
@@ -309,6 +309,7 @@ const ConnectSubjectDialog = ({
         <DialogSection
           name="class-access"
           title={t("dialog.connectSubject.classAccess.title")}
+          isDoubleColumn
           hasNoGap
         >
           <KeyboardInput
@@ -329,6 +330,7 @@ const ConnectSubjectDialog = ({
             useAutoMsg
             onChange={(e) => setForm({ ...form, ggcLink: e })}
             defaultValue={subjectRoom ? subjectRoom.ggcLink : undefined}
+            className="col-span-2"
             attr={{ pattern: "https://classroom.google.com/c/[a-zA-Z0-9]{16}" }}
           />
           <KeyboardInput
@@ -338,6 +340,7 @@ const ConnectSubjectDialog = ({
             errorMsg={t("dialog.connectSubject.classAccess.ggMeetLink_error")}
             useAutoMsg
             onChange={(e) => setForm({ ...form, ggMeetLink: e })}
+            className="col-span-2"
             defaultValue={subjectRoom ? subjectRoom.ggMeetLink : undefined}
           />
         </DialogSection>

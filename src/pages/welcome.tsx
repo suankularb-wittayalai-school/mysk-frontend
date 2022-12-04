@@ -1,5 +1,5 @@
 // External libraries
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 
 import {
   GetServerSideProps,
@@ -15,6 +15,7 @@ import { Trans, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import {
+  FC,
   MutableRefObject,
   ReactNode,
   useEffect,
@@ -486,6 +487,99 @@ const DataCheckSection = ({
   );
 };
 
+const VaccineCard: FC<{
+  vaccine: VaccineRecord;
+  vaccineData: VaccineRecord[];
+  providerOptions: { value: string; label: string }[];
+  setVaccineData: (value: VaccineRecord[]) => void;
+  toggleLoading: () => void;
+  loading?: boolean;
+  disabled?: boolean;
+}> = ({
+  vaccine,
+  vaccineData,
+  providerOptions,
+  setVaccineData,
+  toggleLoading,
+  loading,
+  disabled,
+}) => {
+  const supabase = useSupabaseClient();
+  const { t } = useTranslation(["landing", "covid"]);
+  const user = useUser()!;
+
+  return (
+    <Card type="stacked" appearance="tonal" className="!overflow-visible">
+      <CardHeader
+        title={t("welcome.vaccineData.header.vaccineCard", {
+          doseNo: vaccine.doseNo,
+        })}
+        end={
+          <Button
+            icon={<MaterialIcon icon="delete" />}
+            iconOnly
+            isDangerous
+            onClick={async () => {
+              toggleLoading();
+              const { data: personID } = await getPersonIDFromUser(
+                supabase,
+                user
+              );
+
+              await deleteVaccineRecord(supabase, vaccine.id);
+              const { data: newVaccineRecords } =
+                await getVaccineRecordbyPersonId(supabase, personID!);
+              setVaccineData(newVaccineRecords);
+              toggleLoading();
+            }}
+            disabled={disabled || loading}
+            type="text"
+          />
+        }
+      />
+      <section className="flex flex-col justify-center p-4">
+        <div className="layout-grid-cols-2 !gap-y-0">
+          <NativeInput
+            name="vaccine-date"
+            type="date"
+            label={t("vaccine.date.label", {
+              ns: "covid",
+            })}
+            onChange={(e) =>
+              setVaccineData(
+                vaccineData.map((dataItem) =>
+                  vaccine.id == dataItem.id
+                    ? { ...dataItem, vaccineDate: e }
+                    : dataItem
+                )
+              )
+            }
+            attr={{ disabled }}
+            defaultValue={vaccine.vaccineDate}
+          />
+          <Dropdown
+            name="vaccine-provider"
+            label={t("vaccine.provider.label", {
+              ns: "covid",
+            })}
+            options={providerOptions}
+            onChange={(e: string) =>
+              setVaccineData(
+                vaccineData.map((dataItem) =>
+                  vaccine.id == dataItem.id
+                    ? { ...dataItem, vaccineName: e }
+                    : dataItem
+                )
+              )
+            }
+            defaultValue={vaccine.vaccineName}
+          />
+        </div>
+      </section>
+    </Card>
+  );
+};
+
 const VaccineDataSection = ({
   vaccineRecords,
   incrementStep,
@@ -501,7 +595,7 @@ const VaccineDataSection = ({
 }) => {
   const supabase = useSupabaseClient();
   const { t } = useTranslation(["landing", "covid"]);
-  const user = useUser();
+  const user = useUser()!;
 
   const sectionRef = useRef<any>();
   useEffect(() => {
@@ -510,16 +604,13 @@ const VaccineDataSection = ({
 
   const [loading, toggleLoading] = useToggle();
 
-  const [form, setForm] = useState({
-    date: "",
-    provider: "comirnaty",
-  });
+  const [form, setForm] = useState({ date: "", provider: "comirnaty" });
 
-  const [vaccineData, setVaccineData] = useState<VaccineRecord[]>(
-    vaccineRecords
-  );
+  const [vaccineData, setVaccineData] =
+    useState<VaccineRecord[]>(vaccineRecords);
 
-  const providerOption = [
+  // Information from https://covid19.trackvaccines.org/country/thailand/
+  const providerOptions = [
     { value: "comirnaty", label: "Comirnaty (Pfizer)" },
     { value: "coronavac", label: "CoronaVac (Sinovac)" },
     { value: "vaxzevria", label: "Vaxzevria (AstraZeneca)" },
@@ -531,6 +622,35 @@ const VaccineDataSection = ({
       label: "COVOVAX (Novavax formulation)",
     },
   ];
+
+  async function handleAdd() {
+    const { data: personID } = await getPersonIDFromUser(supabase, user);
+    withLoading(
+      async () => {
+        await addVaccineRecord(
+          supabase,
+          {
+            id: 0,
+            doseNo: 0,
+            lotNo: "",
+            vaccineDate: form.date,
+            administeredBy: "",
+            vaccineName: form.provider,
+          },
+          personID!
+        );
+        const { data: newVaccineRecords } = await getVaccineRecordbyPersonId(
+          supabase,
+          personID!
+        );
+
+        setVaccineData(newVaccineRecords);
+        return true;
+      },
+      toggleLoading,
+      { hasEndToggle: true }
+    );
+  }
 
   const validate = () => {
     if (vaccineData.length == 0) return false;
@@ -558,179 +678,89 @@ const VaccineDataSection = ({
           text={t("welcome.vaccineData.title")}
         />
         <LayoutGridCols cols={2}>
-          <div>
-            <Card
-              type="stacked"
-              appearance="outlined"
-              className="!overflow-visible"
-            >
-              <CardHeader
-                icon="add_circle"
-                title={t("welcome.vaccineData.header.addCard")}
-              />
-              <CardSupportingText>
-                <p>{t("welcome.vaccineData.instruction")}</p>
-                <p>{t("welcome.vaccineData.notice")}</p>
-              </CardSupportingText>
-              <section className="flex flex-col justify-center p-4">
-                <div className="layout-grid-cols-2 !gap-y-0">
-                  <NativeInput
-                    name="vaccine-date"
-                    type="date"
-                    label={t("vaccine.date.label", { ns: "covid" })}
-                    onChange={(e) => setForm({ ...form, date: e })}
-                    attr={{ disabled }}
-                  />
-                  <Dropdown
-                    name="vaccine-provider"
-                    label={t("vaccine.provider.label", { ns: "covid" })}
-                    // info from https://covid19.trackvaccines.org/country/thailand/
-                    options={providerOption}
-                    onChange={(e: string) => setForm({ ...form, provider: e })}
-                  />
-                </div>
-              </section>
-              <CardActions>
-                <Button
-                  label={t("welcome.vaccineData.action.add")}
-                  type="filled"
-                  onClick={async () => {
-                    const { data: personid } = await getPersonIDFromUser(
-                      supabase,
-                      user!
-                    );
-                    toggleLoading();
-                    await addVaccineRecord(
-                      supabase,
-                      {
-                        id: 0,
-                        doseNo: 0,
-                        lotNo: "",
-                        vaccineDate: form.date,
-                        administeredBy: "",
-                        vaccineName: form.provider,
-                      },
-                      personid!
-                    );
-                    const {
-                      data: newVaccineRecords,
-                    } = await getVaccineRecordbyPersonId(supabase, personid!);
-                    toggleLoading();
-                    setVaccineData(newVaccineRecords);
-                  }}
-                  disabled={disabled || !validateForm() || loading}
+          <Card
+            type="stacked"
+            appearance="outlined"
+            className="h-fit !overflow-visible"
+          >
+            <CardHeader
+              icon="add_circle"
+              title={t("welcome.vaccineData.header.addCard")}
+            />
+            <CardSupportingText>
+              <p>{t("welcome.vaccineData.instruction")}</p>
+              <p>{t("welcome.vaccineData.notice")}</p>
+            </CardSupportingText>
+            <section className="flex flex-col justify-center p-4">
+              <div className="layout-grid-cols-2 !gap-y-0">
+                <NativeInput
+                  name="vaccine-date"
+                  type="date"
+                  label={t("vaccine.date.label", { ns: "covid" })}
+                  onChange={(e) => setForm({ ...form, date: e })}
+                  attr={{ disabled }}
                 />
-              </CardActions>
-            </Card>
-          </div>
-          <AnimatePresence>
-            {vaccineData.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
+                <Dropdown
+                  name="vaccine-provider"
+                  label={t("vaccine.provider.label", { ns: "covid" })}
+                  options={providerOptions}
+                  onChange={(e: string) => setForm({ ...form, provider: e })}
+                />
+              </div>
+            </section>
+            <CardActions>
+              <Button
+                label={t("welcome.vaccineData.action.add")}
+                type="tonal"
+                onClick={handleAdd}
+                disabled={disabled || !validateForm() || loading}
+              />
+            </CardActions>
+          </Card>
+          <AnimatePresence exitBeforeEnter>
+            {vaccineData.length == 0 ? (
+              <motion.section
+                key="vaccine-none"
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.8, opacity: 0 }}
                 transition={animationTransition}
-                className="flex flex-col gap-4"
+                className="grid place-items-center rounded-lg bg-surface-2 px-2
+                  py-4 text-center text-on-surface"
               >
-                {vaccineData.map((vaccine) => (
-                  <Card type="stacked" appearance="tonal" key={vaccine.id}>
-                    <CardHeader
-                      title={t("welcome.vaccineData.header.vaccineCard", {
-                        doseNo: vaccine.doseNo,
-                      })}
-                      end={
-                        <Button
-                          icon={<MaterialIcon icon="delete" />}
-                          iconOnly
-                          isDangerous
-                          onClick={async () => {
-                            toggleLoading();
-                            const {
-                              data: personid,
-                            } = await getPersonIDFromUser(supabase, user!);
-
-                            await deleteVaccineRecord(supabase, vaccine.id);
-                            const {
-                              data: newVaccineRecords,
-                            } = await getVaccineRecordbyPersonId(
-                              supabase,
-                              personid!
-                            );
-                            setVaccineData(newVaccineRecords);
-                            toggleLoading();
-                          }}
-                          disabled={disabled || loading}
-                          type="text"
-                        />
-                      }
-                    />
-                    <section className="flex flex-col justify-center p-4">
-                      <div className="layout-grid-cols-2 !gap-y-0">
-                        <NativeInput
-                          name="vaccine-date"
-                          type="date"
-                          label={t("vaccine.date.label", { ns: "covid" })}
-                          onChange={(e) => {
-                            // edit vaccine data state by editting the vaccineData array
-                            const newVaccineData = vaccineData.map((v) => {
-                              if (v.id === vaccine.id) {
-                                return {
-                                  ...v,
-                                  vaccineDate: e,
-                                };
-                              }
-                              return v;
-                            });
-                            setVaccineData(newVaccineData);
-                          }}
-                          attr={{ disabled }}
-                          defaultValue={vaccine.vaccineDate}
-                        />
-                        <Dropdown
-                          name="vaccine-provider"
-                          label={t("vaccine.provider.label", { ns: "covid" })}
-                          // info from https://covid19.trackvaccines.org/country/thailand/
-                          options={providerOption}
-                          onChange={(e: string) => {
-                            // edit vaccine data state by editting the vaccineData array
-                            const newVaccineData = vaccineData.map((v) => {
-                              if (v.id === vaccine.id) {
-                                return {
-                                  ...v,
-                                  vaccineName: e,
-                                };
-                              }
-                              return v;
-                            });
-                            setVaccineData(newVaccineData);
-                          }}
-                          defaultValue={vaccine.vaccineName}
-                        />
-                      </div>
-                    </section>
-                  </Card>
-                ))}
-              </motion.div>
-            )}
-            {!loading && vaccineData.length === 0 && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={animationTransition}
-              >
-                <Card type="stacked" appearance="tonal" className="mb-4">
-                  <CardHeader
-                    icon={"badge"}
-                    title={t("welcome.vaccineData.header.noVaccineCard")}
-                  />
-                </Card>
-              </motion.div>
+                {t("welcome.vaccineData.header.noVaccineCard")}
+              </motion.section>
+            ) : (
+              <section className="flex h-fit flex-col gap-2">
+                <ul className="contents">
+                  <LayoutGroup>
+                    <AnimatePresence>
+                      {vaccineData.map((vaccine) => (
+                        <motion.li
+                          key={vaccine.id}
+                          layoutId={`vaccine-data-${vaccine.id}`}
+                          initial={{ x: -100, opacity: 0 }}
+                          animate={{ x: 0, opacity: 1 }}
+                          exit={{ x: -100, opacity: 0 }}
+                          transition={animationTransition}
+                        >
+                          <VaccineCard
+                            vaccine={vaccine}
+                            vaccineData={vaccineData}
+                            providerOptions={providerOptions}
+                            setVaccineData={setVaccineData}
+                            toggleLoading={toggleLoading}
+                            loading={loading}
+                            disabled={disabled}
+                          />
+                        </motion.li>
+                      ))}
+                    </AnimatePresence>
+                  </LayoutGroup>
+                </ul>
+              </section>
             )}
           </AnimatePresence>
-          {/* <div className=" col-span-3 md:col-start-5">
-            
-          </div> */}
         </LayoutGridCols>
         <Actions>
           <Button
@@ -1141,3 +1171,4 @@ export const getServerSideProps: GetServerSideProps = async ({
 };
 
 export default Welcome;
+
