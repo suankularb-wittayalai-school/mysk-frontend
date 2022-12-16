@@ -13,7 +13,12 @@ import { ReactNode } from "react";
 import { useUser } from "@supabase/auth-helpers-react";
 
 // SK Components
-import { FAB, MaterialIcon, Title } from "@suankularb-components/react";
+import {
+  FAB,
+  MaterialIcon,
+  Section,
+  Title,
+} from "@suankularb-components/react";
 
 // Animations
 import {
@@ -72,15 +77,14 @@ const NewsPageWrapper = ({
         />
         <div className="content-layout__content !gap-y-0">
           {/* This part will animate from News Card and Landing Feed Item. */}
-          <motion.section
-            className="section"
-            layoutId={["news", news.type, news.id].join("-")}
-            transition={enterPageTransition}
-          >
+          <Section>
             {/* Banner image */}
-            <div
+            <motion.div
+              layoutId={["news", news.type, news.id].join("-")}
               className="container-surface-variant relative aspect-video w-full
-                overflow-hidden !p-0 text-right shadow sm:rounded-xl md:aspect-[5/1]"
+                overflow-hidden !p-0 text-right shadow sm:rounded-xl
+                md:aspect-[5/1]"
+              transition={enterPageTransition}
             >
               {news.image ? (
                 <Image
@@ -90,11 +94,14 @@ const NewsPageWrapper = ({
                   alt=""
                 />
               ) : (
-                <p className="m-4 font-display text-8xl font-light leading-none opacity-30">
+                <p
+                  className="m-4 font-display text-8xl font-light leading-none
+                    opacity-30"
+                >
                   {getLocaleString(news.content.title, locale)}
                 </p>
               )}
-            </div>
+            </motion.div>
 
             {/* Title and short description */}
             <div className="font-display">
@@ -105,15 +112,9 @@ const NewsPageWrapper = ({
                 {getLocaleString(news.content.description, locale)}
               </motion.p>
             </div>
-          </motion.section>
+          </Section>
 
-          <motion.div
-            initial={{ y: -280, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={enterPageTransition}
-          >
-            {children}
-          </motion.div>
+          {children}
         </div>
       </main>
 

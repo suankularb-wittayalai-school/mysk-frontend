@@ -105,11 +105,9 @@ const NewsPage: NextPage<{ role: Role; newsFeed: NewsListNoDate }> = ({
         }
       >
         <RelatedPagesSection />
-        <Section>
-          {/* TODO: Make filtering News a reality! */}
-          {/* <NewsFilter setNewsFilter={setNewsFilter} /> */}
-          <NewsFeed news={filteredNews} />
-        </Section>
+        {/* TODO: Make filtering News a reality! */}
+        {/* <NewsFilter setNewsFilter={setNewsFilter} /> */}
+        <NewsFeed news={filteredNews} />
       </RegularLayout>
     </>
   );
