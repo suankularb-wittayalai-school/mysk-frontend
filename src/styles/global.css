@@ -14,18 +14,19 @@
   }
 
   html {
-    @apply overflow-x-hidden [accent-color:var(--primary)] motion-safe:scroll-smooth
-      sm:w-screen;
+    @apply overflow-x-hidden [accent-color:var(--primary)]
+      motion-safe:scroll-smooth sm:w-screen;
   }
 }
 
 @layer components {
   .link,
   .markdown a {
-    @apply font-display font-medium text-primary underline decoration-primary
-      decoration-2 underline-offset-4 transition-[text-decoration-color]
-      hover:decoration-tertiary hover:transition-none
-      focus-visible:decoration-tertiary focus-visible:transition-none;
+    @apply break-all font-display font-medium text-primary underline
+      decoration-primary decoration-2 underline-offset-4
+      transition-[text-decoration-color] hover:decoration-tertiary
+      hover:transition-none focus-visible:decoration-tertiary
+      focus-visible:transition-none;
   }
 
   .markdown {
