@@ -11,7 +11,7 @@ import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useState } from "react";
+import { FC, useState } from "react";
 
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
@@ -41,6 +41,41 @@ import { LangCode } from "@utils/types/common";
 import { NewsItemType, NewsListNoDate } from "@utils/types/news";
 import { Role } from "@utils/types/person";
 
+const RelatedPagesSection: FC = () => {
+  const { t } = useTranslation("news");
+
+  return (
+    <Section>
+      <LayoutGridCols cols={3}>
+        <Link href="/news/orders">
+          <a>
+            <Card type="horizontal" hasAction>
+              <CardHeader
+                icon={<MaterialIcon icon="inbox" />}
+                title={<h3>{t("orders.title")}</h3>}
+                label={<span>{t("orders.newNotice", { count: 2 })}</span>}
+                end={<MaterialIcon icon="arrow_forward" />}
+              />
+            </Card>
+          </a>
+        </Link>
+        <Link href="/news/documents">
+          <a>
+            <Card type="horizontal" hasAction>
+              <CardHeader
+                icon={<MaterialIcon icon="drafts" />}
+                title={<h3>{t("documents.title")}</h3>}
+                label={<span>{t("documents.newNotice", { count: 1 })}</span>}
+                end={<MaterialIcon icon="arrow_forward" />}
+              />
+            </Card>
+          </a>
+        </Link>
+      </LayoutGridCols>
+    </Section>
+  );
+};
+
 // Page
 const NewsPage: NextPage<{ role: Role; newsFeed: NewsListNoDate }> = ({
   role,
@@ -69,36 +104,7 @@ const NewsPage: NextPage<{ role: Role; newsFeed: NewsListNoDate }> = ({
           />
         }
       >
-        <Section>
-          <LayoutGridCols cols={3}>
-            <Link href="/news/orders">
-              <a>
-                <Card type="horizontal" hasAction>
-                  <CardHeader
-                    icon={<MaterialIcon icon="inbox" />}
-                    title={<h3>{t("orders.title")}</h3>}
-                    label={<span>{t("orders.newNotice", { count: 2 })}</span>}
-                    end={<MaterialIcon icon="arrow_forward" />}
-                  />
-                </Card>
-              </a>
-            </Link>
-            <Link href="/news/documents">
-              <a>
-                <Card type="horizontal" hasAction>
-                  <CardHeader
-                    icon={<MaterialIcon icon="drafts" />}
-                    title={<h3>{t("documents.title")}</h3>}
-                    label={
-                      <span>{t("documents.newNotice", { count: 1 })}</span>
-                    }
-                    end={<MaterialIcon icon="arrow_forward" />}
-                  />
-                </Card>
-              </a>
-            </Link>
-          </LayoutGridCols>
-        </Section>
+        <RelatedPagesSection />
         <Section>
           {/* TODO: Make filtering News a reality! */}
           {/* <NewsFilter setNewsFilter={setNewsFilter} /> */}
