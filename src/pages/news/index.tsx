@@ -76,8 +76,8 @@ const NewsPage: NextPage<{ role: Role; newsFeed: NewsListNoDate }> = ({
                 <Card type="horizontal" hasAction>
                   <CardHeader
                     icon={<MaterialIcon icon="inbox" />}
-                    title={<h3>คำสั่งโรงเรียน</h3>}
-                    label={<span>มีคำสั่งใหม่ 25 คำสั่งในสัปดาห์นี้</span>}
+                    title={<h3>{t("orders.title")}</h3>}
+                    label={<span>{t("orders.newNotice", { count: 2 })}</span>}
                     end={<MaterialIcon icon="arrow_forward" />}
                   />
                 </Card>
@@ -88,8 +88,10 @@ const NewsPage: NextPage<{ role: Role; newsFeed: NewsListNoDate }> = ({
                 <Card type="horizontal" hasAction>
                   <CardHeader
                     icon={<MaterialIcon icon="drafts" />}
-                    title={<h3>หนังสือออก</h3>}
-                    label={<span>มีหนังสือออกใหม่ 7 หนังสือในสัปดาห์นี้</span>}
+                    title={<h3>{t("documents.title")}</h3>}
+                    label={
+                      <span>{t("documents.newNotice", { count: 1 })}</span>
+                    }
                     end={<MaterialIcon icon="arrow_forward" />}
                   />
                 </Card>

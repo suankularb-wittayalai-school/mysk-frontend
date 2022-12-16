@@ -53,5 +53,15 @@
       "reset": "Reset",
       "submit": "Submit form"
     }
+  },
+  "orders": {
+    "title": "School orders",
+    "newNotice_one": "{{count}} new order this week",
+    "newNotice_other": "{{count}} new orders this week"
+  },
+  "documents": {
+    "title": "Documents",
+    "newNotice_one": "{{count}} new document this week",
+    "newNotice_other": "{{count}} new documents this week"
   }
 }
