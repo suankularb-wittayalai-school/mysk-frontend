@@ -17,6 +17,9 @@ import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
 // SK Components
 import {
+  Card,
+  CardHeader,
+  LayoutGridCols,
   MaterialIcon,
   RegularLayout,
   Section,
@@ -66,6 +69,34 @@ const NewsPage: NextPage<{ role: Role; newsFeed: NewsListNoDate }> = ({
           />
         }
       >
+        <Section>
+          <LayoutGridCols cols={3}>
+            <Link href="/news/orders">
+              <a>
+                <Card type="horizontal" hasAction>
+                  <CardHeader
+                    icon={<MaterialIcon icon="inbox" />}
+                    title={<h3>คำสั่งโรงเรียน</h3>}
+                    label={<span>มีคำสั่งใหม่ 25 คำสั่งในสัปดาห์นี้</span>}
+                    end={<MaterialIcon icon="arrow_forward" />}
+                  />
+                </Card>
+              </a>
+            </Link>
+            <Link href="/news/documents">
+              <a>
+                <Card type="horizontal" hasAction>
+                  <CardHeader
+                    icon={<MaterialIcon icon="drafts" />}
+                    title={<h3>หนังสือออก</h3>}
+                    label={<span>มีหนังสือออกใหม่ 7 หนังสือในสัปดาห์นี้</span>}
+                    end={<MaterialIcon icon="arrow_forward" />}
+                  />
+                </Card>
+              </a>
+            </Link>
+          </LayoutGridCols>
+        </Section>
         <Section>
           {/* TODO: Make filtering News a reality! */}
           {/* <NewsFilter setNewsFilter={setNewsFilter} /> */}
