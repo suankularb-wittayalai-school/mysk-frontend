@@ -52,8 +52,10 @@ const RelatedPagesSection: FC = () => {
             <Card type="horizontal" hasAction>
               <CardHeader
                 icon={<MaterialIcon icon="inbox" />}
-                title={<h3>{t("orders.title")}</h3>}
-                label={<span>{t("orders.newNotice", { count: 2 })}</span>}
+                title={<h3>{t("schoolDocs.orders.title")}</h3>}
+                label={
+                  <span>{t("schoolDocs.orders.newNotice", { count: 2 })}</span>
+                }
                 end={<MaterialIcon icon="arrow_forward" />}
               />
             </Card>
@@ -64,8 +66,12 @@ const RelatedPagesSection: FC = () => {
             <Card type="horizontal" hasAction>
               <CardHeader
                 icon={<MaterialIcon icon="drafts" />}
-                title={<h3>{t("documents.title")}</h3>}
-                label={<span>{t("documents.newNotice", { count: 1 })}</span>}
+                title={<h3>{t("schoolDocs.documents.title")}</h3>}
+                label={
+                  <span>
+                    {t("schoolDocs.documents.newNotice", { count: 1 })}
+                  </span>
+                }
                 end={<MaterialIcon icon="arrow_forward" />}
               />
             </Card>

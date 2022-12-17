@@ -3,7 +3,7 @@ import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 
-import { useTranslation } from "next-i18next";
+import { Trans, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { FC, useEffect, useState } from "react";
@@ -36,6 +36,7 @@ import { LangCode } from "@utils/types/common";
 import { SchoolDocument } from "@utils/types/news";
 
 const OrdersList: FC<{ orders: SchoolDocument[] }> = ({ orders }) => {
+  const { t } = useTranslation("news");
   const locale = useLocale();
 
   return (
@@ -53,9 +54,20 @@ const OrdersList: FC<{ orders: SchoolDocument[] }> = ({ orders }) => {
               {/* Code and date */}
               <div className="flex flex-row divide-x divide-outline">
                 <span className="pr-2">
-                  ที่{" "}
-                  <span className="font-black text-tertiary">{order.code}</span>
-                  /{getLocaleYear("th", new Date(order.date).getFullYear())}
+                  <Trans
+                    i18nKey={"schoolDocs.orders.code"}
+                    ns="news"
+                    values={{
+                      code: order.code,
+                      year: getLocaleYear(
+                        "th",
+                        new Date(order.date).getFullYear()
+                      ),
+                    }}
+                    components={{
+                      span: <span className="font-black text-tertiary" />,
+                    }}
+                  />
                 </span>
                 <time className="pl-2 text-outline">
                   {new Date(order.date).toLocaleDateString(locale, {
@@ -65,6 +77,7 @@ const OrdersList: FC<{ orders: SchoolDocument[] }> = ({ orders }) => {
                   })}
                 </time>
               </div>
+
               {/* Title */}
               <h3 className="max-lines-5 text-3xl">{order.subject}</h3>
             </div>
@@ -97,12 +110,12 @@ const OrdersPage: NextPage<{
   return (
     <>
       <Head>
-        <title>{createTitleStr(t("orders.title"), t)}</title>
+        <title>{createTitleStr(t("schoolDocs.orders.title"), t)}</title>
       </Head>
       <RegularLayout
         Title={
           <Title
-            name={{ title: t("orders.title") }}
+            name={{ title: t("schoolDocs.orders.title") }}
             pageIcon={<MaterialIcon icon="inbox" />}
             backGoesTo="/news"
             LinkElement={Link}
@@ -111,7 +124,10 @@ const OrdersPage: NextPage<{
       >
         <Section>
           <LayoutGridCols cols={3}>
-            <Search placeholder="ค้นหาคำสั่ง" onChange={setQuery} />
+            <Search
+              placeholder={t("schoolDocs.orders.searchPlh")}
+              onChange={setQuery}
+            />
           </LayoutGridCols>
         </Section>
         <Section>
@@ -119,14 +135,14 @@ const OrdersPage: NextPage<{
           {!query && (
             <Actions align="center">
               <LinkButton
-                label="หน้าที่แล้ว"
+                label={t("schoolDocs.action.back")}
                 type="tonal"
                 url={`/news/orders/${pageNo - 1}`}
                 LinkElement={Link}
                 disabled={pageNo == 1}
               />
               <LinkButton
-                label="หน้าต่อไป"
+                label={t("schoolDocs.action.next")}
                 type="tonal"
                 url={`/news/orders/${pageNo + 1}`}
                 LinkElement={Link}
