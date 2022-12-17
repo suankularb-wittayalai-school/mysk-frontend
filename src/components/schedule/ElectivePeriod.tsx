@@ -54,7 +54,7 @@ const ElectivePeriod = ({
               layoutId={`sp-${schedulePeriod.id}-header`}
               transition={animationTransition}
             >
-              {t("schedule.elective")}
+              {t(`schedule.${role == "teacher" ? "overlap" : "elective"}`)}
             </motion.span>
           </div>
         </motion.button>

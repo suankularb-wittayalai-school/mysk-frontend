@@ -57,7 +57,7 @@ const ElectivePeriodsReveal = ({
             layoutId={`sp-${schedulePeriod.id}-header`}
             transition={animationTransition}
           >
-            {t("schedule.elective")}
+            {t(`schedule.${role == "teacher" ? "overlap" : "elective"}`)}
           </motion.h1>
         </div>
         <ul className="flex flex-row gap-2">

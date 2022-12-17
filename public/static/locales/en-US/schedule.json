@@ -11,6 +11,7 @@
         "close": "Close"
       }
     },
+    "overlap": "Many subjects",
     "hoverMenu": {
       "add": "Add period here",
       "edit": "Edit this period",
