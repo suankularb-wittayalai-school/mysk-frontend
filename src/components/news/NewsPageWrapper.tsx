@@ -21,10 +21,7 @@ import {
 } from "@suankularb-components/react";
 
 // Animations
-import {
-  animationTransition,
-  enterPageTransition,
-} from "@utils/animations/config";
+import { enterPageTransition } from "@utils/animations/config";
 
 // Helpers
 import { getLocaleString } from "@utils/helpers/i18n";
@@ -40,6 +37,7 @@ const NewsPageWrapper = ({
   news: InfoPage | FormPage;
   children: ReactNode;
 }) => {
+  const { t } = useTranslation("news");
   const router = useRouter();
   const locale = router.locale as LangCode;
   const user = useUser();
@@ -68,9 +66,7 @@ const NewsPageWrapper = ({
       </Head>
       <main className="content-layout">
         <Title
-          name={{
-            title: getLocaleString(news.content.title, locale),
-          }}
+          name={{ title: t(`itemType.${news.type}`) }}
           pageIcon={<MaterialIcon icon="info" />}
           backGoesTo={user ? "/news" : "/"}
           LinkElement={Link}
