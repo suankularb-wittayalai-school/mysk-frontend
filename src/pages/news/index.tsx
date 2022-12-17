@@ -47,7 +47,7 @@ const RelatedPagesSection: FC = () => {
   return (
     <Section>
       <LayoutGridCols cols={3}>
-        <Link href="/news/orders">
+        <Link href="/news/orders/1">
           <a>
             <Card type="horizontal" hasAction>
               <CardHeader
@@ -59,7 +59,7 @@ const RelatedPagesSection: FC = () => {
             </Card>
           </a>
         </Link>
-        <Link href="/news/documents">
+        <Link href="/news/documents/1">
           <a>
             <Card type="horizontal" hasAction>
               <CardHeader
