@@ -15,6 +15,7 @@ import { useUser } from "@supabase/auth-helpers-react";
 // SK Components
 import {
   FAB,
+  LayoutGridCols,
   MaterialIcon,
   Section,
   Title,
@@ -74,39 +75,31 @@ const NewsPageWrapper = ({
         <div className="content-layout__content !gap-y-0">
           {/* This part will animate from News Card and Landing Feed Item. */}
           <Section>
-            {/* Banner image */}
-            <motion.div
-              layoutId={["news", news.type, news.id].join("-")}
-              className="container-surface-variant relative aspect-video w-full
-                overflow-hidden !p-0 text-right shadow sm:rounded-xl
-                md:aspect-[5/1]"
-              transition={enterPageTransition}
-            >
-              {news.image ? (
+            <div className="layout-grid-cols-2 !flex !gap-y-6 !px-0 md:!grid">
+              {/* Banner image */}
+              <motion.div
+                layoutId={["news", news.type, news.id].join("-")}
+                className="container-surface-variant relative aspect-video w-full
+                  overflow-hidden text-right shadow sm:rounded-xl"
+                transition={enterPageTransition}
+              >
                 <Image
-                  src={news.image}
+                  src={news.image || "/images/graphics/news-placeholder.png"}
                   layout="fill"
                   objectFit="cover"
                   alt=""
                 />
-              ) : (
-                <p
-                  className="m-4 font-display text-8xl font-light leading-none
-                    opacity-30"
-                >
-                  {getLocaleString(news.content.title, locale)}
-                </p>
-              )}
-            </motion.div>
+              </motion.div>
 
-            {/* Title and short description */}
-            <div className="font-display">
-              <motion.h1 className="text-4xl font-bold">
-                {getLocaleString(news.content.title, locale)}
-              </motion.h1>
-              <motion.p className="text-lg">
-                {getLocaleString(news.content.description, locale)}
-              </motion.p>
+              {/* Title and short description */}
+              <div className="mt-2 px-4 font-display sm:mt-0 sm:px-0">
+                <h1 className="text-4xl font-bold leading-tight">
+                  {getLocaleString(news.content.title, locale)}
+                </h1>
+                <p className="mt-4 text-lg">
+                  {getLocaleString(news.content.description, locale)}
+                </p>
+              </div>
             </div>
           </Section>
 
