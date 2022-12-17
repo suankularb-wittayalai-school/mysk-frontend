@@ -294,7 +294,7 @@ const Landing: NextPage<{ feed: Feed }> & {
                 </div>
               )}
             </div>
-            <div className="hidden text-xs opacity-50 sm:block">
+            <div className="dark hidden text-xs text-white opacity-80 dark:opacity-50 sm:block">
               <p>
                 <Trans
                   i18nKey="footnote.supervisors"
