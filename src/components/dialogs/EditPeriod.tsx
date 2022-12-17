@@ -133,19 +133,25 @@ const EditPeriodDialog = ({
 
   // Form validation
   function validate(): boolean {
+    // Validate metadata
     if (!form.subject) return false;
     if (!form.classID) return false;
     if (!form.room || form.room.length != 4) return false;
 
+    // Validate position
     if (!form.day) return false;
     if (form.startTime < 1 || form.startTime > 10) return false;
     if (form.duration < 1 || form.duration > 10) return false;
 
+    // Check for overlap
+    // Flatten Schedule into list of Schedule Periods
     for (let periodFromSchedule of schedule.content
       .map((row) => row.content.map((period) => ({ ...period, day: row.day })))
       .flat()) {
+      // Ignore empty Periods
       if (periodFromSchedule.content.length == 0) continue;
 
+      // Ignore the Period currently being edited (if editing)
       if (
         mode == "edit" &&
         periodFromSchedule.day == day &&
@@ -153,6 +159,7 @@ const EditPeriodDialog = ({
       )
         continue;
 
+      // Check this Period for overlap
       if (
         arePeriodsOverlapping(
           {
@@ -166,14 +173,8 @@ const EditPeriodDialog = ({
             duration: form.duration,
           }
         )
-      ) {
-        console.log({
-          day: periodFromSchedule.day,
-          startTime: periodFromSchedule.startTime,
-          duration: periodFromSchedule.duration,
-        });
+      )
         return false;
-      }
     }
 
     return true;
