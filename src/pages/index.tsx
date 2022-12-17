@@ -98,35 +98,30 @@ const LandingFeedItem = ({
   const locale = useRouter().locale as LangCode;
 
   return (
-    <motion.li
-      key={feedItem.id}
-      layoutId={`news-info-${feedItem.id}`}
-      transition={animationTransition}
-    >
+    <li key={feedItem.id}>
       <Link href={`/news/info/${feedItem.id}`}>
         <a className="has-action relative grid grid-cols-2 gap-x-6 px-2 py-1">
-          <div
-            className="relative h-full min-h-[8rem] w-full overflow-hidden rounded-xl
-              bg-surface-2 bg-cover text-right font-medium"
-          >
-            {feedItem.image ? (
+          {feedItem.image && (
+            <motion.div
+              className="relative h-full min-h-[8rem] w-full overflow-hidden
+              rounded-xl bg-surface-2 bg-cover text-right font-medium"
+              layoutId={`news-info-${feedItem.id}`}
+              transition={animationTransition}
+            >
               <Image
                 src={feedItem.image}
                 fill
                 alt={getLocaleString(feedItem.content.title, locale)}
                 className="object-cover"
               />
-            ) : (
-              <p
-                className="max-lines-2 m-2 overflow-hidden font-display
-                  text-5xl font-light leading-none text-on-surface-variant
-                  opacity-30"
-              >
-                {getLocaleString(feedItem.content.title, locale)}
-              </p>
-            )}
-          </div>
-          <div className="flex flex-col gap-1">
+            </motion.div>
+          )}
+          <div
+            className={[
+              "flex flex-col gap-1",
+              !feedItem.image && "col-span-2 p-2",
+            ].join(" ")}
+          >
             <h3
               className="max-lines-2 font-display text-2xl font-bold
                 leading-none"
@@ -139,7 +134,7 @@ const LandingFeedItem = ({
           </div>
         </a>
       </Link>
-    </motion.li>
+    </li>
   );
 };
 
@@ -315,4 +310,3 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
 };
 
 export default Landing;
-
