@@ -16,6 +16,7 @@ import ContactIcon from "@components/icons/ContactIcon";
 import { LangCode } from "@utils/types/common";
 import { Contact } from "@utils/types/contact";
 import { getContactURL } from "@utils/helpers/contact";
+import Includes from "./Includes";
 
 const ContactChip = ({
   contact,
@@ -56,24 +57,7 @@ const ContactChip = ({
               />
             )}
 
-            {contact.includes && contact.includes.teachers && (
-              <MaterialIcon
-                icon="school"
-                className="text-stroke text-stroke-0.25 text-stroke-surface-1 -ml-2 text-secondary"
-              />
-            )}
-            {contact.includes && contact.includes!.parents && (
-              <MaterialIcon
-                icon="escalator_warning"
-                className="text-stroke text-stroke-0.25 text-stroke-surface-1 -ml-2 text-primary"
-              />
-            )}
-            {contact.includes && contact.includes!.students && (
-              <MaterialIcon
-                icon="groups"
-                className="text-stroke text-stroke-0.25 text-stroke-surface-1 -ml-2 text-primary"
-              />
-            )}
+            {contact.includes && <Includes includes={contact.includes} />}
           </div>
         }
         className="bg-surface-1 !p-2"
@@ -83,4 +67,3 @@ const ContactChip = ({
 };
 
 export default ContactChip;
-
