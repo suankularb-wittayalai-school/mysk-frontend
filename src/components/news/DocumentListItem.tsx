@@ -33,7 +33,7 @@ const DocumentListItem: FC<{
         <div className="divide-x divide-outline">
           <span className="pr-2">
             <Trans
-              i18nKey={`schoolDocs.${type}.code`}
+              i18nKey={`schoolDocs.${type}s.code`}
               ns="news"
               values={{
                 code: document.code,
