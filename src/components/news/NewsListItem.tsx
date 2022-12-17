@@ -204,7 +204,7 @@ const NewsListItem: FC<{
               <div className="flex flex-row divide-x divide-outline">
                 <time className="text-outline">
                   {new Date(newsItem.postDate).toLocaleDateString(locale, {
-                    year: "2-digit",
+                    year: locale == "en-US" ? "numeric" : "2-digit",
                     month: "short",
                     day: "numeric",
                   })}

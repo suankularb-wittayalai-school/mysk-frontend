@@ -107,7 +107,7 @@ export type FieldType =
   | "time"
   | "scale";
 
-export interface FormField {
+export type FormField = {
   id: number;
   label: MultiLangString;
   type: FieldType;
@@ -118,10 +118,27 @@ export interface FormField {
     end: number;
   };
   default?: string;
-}
+};
 
 export type FormPage = Omit<NewsItemFormNoDate, "done"> & {
   content: {
     fields: FormField[];
   };
 };
+
+// School documents
+export type SchoolDocument = {
+  id: number;
+  code: string;
+  date: string;
+  subject: string;
+  attendTo?: string;
+  includes?: Partial<{
+    students: boolean;
+    parents: boolean;
+    teachers: boolean;
+  }>;
+  documentLink: string;
+};
+
+export type SchoolDocumentType = "order" | "document";
