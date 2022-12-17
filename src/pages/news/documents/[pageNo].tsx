@@ -24,7 +24,7 @@ import {
 import DocumentListItem from "@components/news/DocumentListItem";
 
 // Backend
-import { getNoOfSchoolDocsPages } from "@utils/backend/news/document";
+import { getNoOfSchoolDocsPages, getSchoolDocs } from "@utils/backend/news/document";
 
 // Helpers
 import { range } from "@utils/helpers/array";
@@ -114,20 +114,8 @@ const DocumentsPage: NextPage<{
 export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   const pageNo = Number(params?.pageNo);
 
-  // TODO: Fetch Documents
-  // (Replace hard-coded `documents` array with the `getDocuments` function below.)
-  const documents: SchoolDocument[] = [
-    {
-      id: 1,
-      code: "1243",
-      date: "2022-11-09",
-      subject: "แจ้งการสอบธรรมสนามหลวง ปีการศึกษา 2565 และการหยุดเรียน",
-      includes: { students: true, teachers: true, parents: true },
-      documentLink: "https://drive.google.com/",
-    },
-  ];
-  // const { data: documents, error: documentsError } = await getDocuments("document", pageNo);
-  // if (documentsError) console.error(documentsError);
+  const { data: documents, error: documentsError } = await getSchoolDocs("document", pageNo);
+  if (documentsError) console.error(documentsError);
 
   const { data: noPages, error: numError } = await getNoOfSchoolDocsPages(
     "document"

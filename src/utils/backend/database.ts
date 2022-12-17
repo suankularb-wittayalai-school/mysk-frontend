@@ -14,6 +14,7 @@ import {
   InfoPage,
   NewsItemFormNoDate,
   NewsItemInfoNoDate,
+  SchoolDocument,
 } from "@utils/types/news";
 import { Role, Student, Teacher } from "@utils/types/person";
 import { SchedulePeriod } from "@utils/types/schedule";
@@ -621,6 +622,26 @@ export async function db2SubjectListItem(
       );
     }
   }
+
+  return formatted;
+}
+
+export function db2SchoolDocument(
+  schoolDocument: Database["public"]["Tables"]["school_documents"]["Row"]
+) {
+  const formatted: SchoolDocument = {
+    id: schoolDocument.id,
+    code: schoolDocument.code,
+    date: schoolDocument.date,
+    subject: schoolDocument.subject,
+    attendTo: schoolDocument.attend_to as OrUndefined<string>,
+    includes: {
+      students: schoolDocument.include_students ?? false,
+      parents: schoolDocument.include_parents ?? false,
+      teachers: schoolDocument.include_teachers ?? false,
+    },
+    documentLink: schoolDocument.document_link,
+  };
 
   return formatted;
 }

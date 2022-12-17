@@ -24,7 +24,10 @@ import {
 import DocumentListItem from "@components/news/DocumentListItem";
 
 // Backend
-import { getNoOfSchoolDocsPages } from "@utils/backend/news/document";
+import {
+  getNoOfSchoolDocsPages,
+  getSchoolDocs,
+} from "@utils/backend/news/document";
 
 // Helpers
 import { range } from "@utils/helpers/array";
@@ -114,22 +117,11 @@ const OrdersPage: NextPage<{
 export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   const pageNo = Number(params?.pageNo);
 
-  // TODO: Fetch Orders
-  // (Replace hard-coded `orders` array with the `getOrders` function below.)
-  const orders: SchoolDocument[] = [
-    {
-      id: 1,
-      code: "270",
-      date: "2022-12-17",
-      subject:
-        "แต่งตั้งครูที่ปรึกษากิตกรรมชุมนุมนักเรียน ปีการศึกษา 2565 (เพิ่มเติม)",
-      includes: { teachers: true },
-      documentLink:
-        "https://drive.google.com/file/d/1p9KfIKUyvDegLxPtd6L32O0sRJ0bvGhp/view?usp=drivesdk",
-    },
-  ];
-  // const { data: orders, error: ordersError } = await getOrders("order", pageNo);
-  // if (ordersError) console.error(ordersError);
+  const { data: orders, error: ordersError } = await getSchoolDocs(
+    "order",
+    pageNo
+  );
+  if (ordersError) console.error(ordersError);
 
   const { data: noPages, error: numError } = await getNoOfSchoolDocsPages(
     "order"

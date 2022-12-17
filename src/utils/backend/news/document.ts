@@ -9,7 +9,13 @@ import {
   SchoolDocumentType,
 } from "@utils/types/news";
 import { supabase } from "@utils/supabase-client";
+import { db2SchoolDocument } from "../database";
 
+// Constants
+// Number of documents displayed per page
+const docsPerPage = 50;
+
+// Functions
 /**
  * Fetches the number of new orders and documents dated within the week (from
  * Monday).
@@ -71,10 +77,24 @@ export async function searchSchoolDocs(
  * @returns All school documents of a type
  */
 export async function getSchoolDocs(
-  type: SchoolDocumentType
-): Promise<BackendDataReturn<SchoolDocument>> {
-  console.error("function not implemented.");
-  return { data: [], error: { message: "function not implemented." } };
+  type: SchoolDocumentType,
+  page: number
+): Promise<BackendDataReturn<SchoolDocument[]>> {
+  const { data, error } = await supabase
+    .from("school_documents")
+    .select("*")
+    .range((page - 1) * docsPerPage, page * docsPerPage)
+    .match({ type });
+
+  if (error) {
+    console.error(error);
+    return { data: [], error };
+  }
+
+  return {
+    data: data.map((document) => db2SchoolDocument(document)),
+    error: null,
+  };
 }
 
 /**
@@ -86,7 +106,6 @@ export async function getSchoolDocs(
 export async function getNoOfSchoolDocsPages(
   type: SchoolDocumentType
 ): Promise<BackendDataReturn<number, 1>> {
-  const docsPerPage = 50;
   const { count, error } = await supabase
     .from("school_documents")
     .select("id", { count: "estimated" })
