@@ -402,6 +402,47 @@ export interface Database {
           classroom?: number;
         };
       };
+      school_documents: {
+        Row: {
+          id: number;
+          created_at: string | null;
+          code: string;
+          date: string;
+          subject: string;
+          attend_to: string | null;
+          include_students: boolean;
+          include_teachers: boolean;
+          include_parents: boolean;
+          document_link: string;
+          type: Database["public"]["Enums"]["school_document_type_enum"];
+        };
+        Insert: {
+          id?: number;
+          created_at?: string | null;
+          code: string;
+          date: string;
+          subject: string;
+          attend_to?: string;
+          include_students?: boolean;
+          include_teachers?: boolean;
+          include_parents?: boolean;
+          document_link: string;
+          type: Database["public"]["Enums"]["school_document_type_enum"];
+        };
+        Update: {
+          id?: number;
+          created_at?: string | null;
+          code?: string;
+          date?: string;
+          subject?: string;
+          attend_to?: string;
+          include_students?: boolean;
+          include_teachers?: boolean;
+          include_parents?: boolean;
+          document_link?: string;
+          type?: Database["public"]["Enums"]["school_document_type_enum"];
+        };
+      };
       stats: {
         Row: {
           id: number;
@@ -633,8 +674,7 @@ export interface Database {
         | "date"
         | "time"
         | "scale";
-      prefix_en_enum: "Master" | "Mr." | "Mrs." | "Miss.";
-      prefix_th_enum: "เด็กชาย" | "นาย" | "นาง" | "นางสาว";
+      school_document_type_enum: "order" | "document";
       subject_type_en_enum:
         | "Core Courses"
         | "Elective Courses"

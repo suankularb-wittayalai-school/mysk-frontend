@@ -1,3 +1,6 @@
+// External libraries
+import { previousMonday } from "date-fns";
+
 // Types
 import { BackendDataReturn } from "@utils/types/common";
 import {
@@ -5,6 +8,7 @@ import {
   SchoolDocument,
   SchoolDocumentType,
 } from "@utils/types/news";
+import { supabase } from "@utils/supabase-client";
 
 /**
  * Fetches the number of new orders and documents dated within the week (from
@@ -16,10 +20,31 @@ import {
 export async function getNewSchoolDocumentCount(): Promise<
   BackendDataReturn<NewSchoolDocumentCount, { order: 0; document: 0 }>
 > {
-  console.error("function not implemented.");
+  const lastMonday = previousMonday(new Date()).toISOString();
+
+  const { count: orderCount, error: orderError } = await supabase
+    .from("school_documents")
+    .select("id", { count: "exact" })
+    .match({ type: "order" })
+    .gt("date", lastMonday);
+  if (orderError) {
+    console.error(orderError);
+    return { data: { order: 0, document: 0 }, error: orderError };
+  }
+
+  const { count: documentCount, error: documentError } = await supabase
+    .from("school_documents")
+    .select("id", { count: "exact" })
+    .match({ type: "document" })
+    .gt("date", lastMonday);
+  if (documentError) {
+    console.error(documentError);
+    return { data: { order: 0, document: 0 }, error: documentError };
+  }
+
   return {
-    data: { order: 0, document: 0 },
-    error: { message: "function not implemented." },
+    data: { order: orderCount!, document: documentCount! },
+    error: null,
   };
 }
 
