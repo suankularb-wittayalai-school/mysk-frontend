@@ -78,7 +78,7 @@ export async function searchSchoolDocs(
   }
 
   return {
-    data: data.map((document) => db2SchoolDocument(document)),
+    data: data!.map((document) => db2SchoolDocument(document)),
     error: null,
   };
 }
@@ -105,7 +105,7 @@ export async function getSchoolDocs(
   }
 
   return {
-    data: data.map((document) => db2SchoolDocument(document)),
+    data: data!.map((document) => db2SchoolDocument(document)),
     error: null,
   };
 }
