@@ -153,10 +153,10 @@ const LandingBanner = (): JSX.Element => {
           My
           <span className="text-[#8B005A] dark:text-[#FF80C3]">
             {/* (@SiravitPhokeed)
-                  These colors are `secondary70` and `secondary30` in the Figma
-                  palette, but not the Tailwind palette. Should we add them (and
-                  others like them)?
-                */}
+              These colors are `secondary70` and `secondary30` in the Figma
+              palette, but not the Tailwind palette. Should we add them (and
+              others like them)?
+            */}
             SK
           </span>
         </Trans>
@@ -164,7 +164,7 @@ const LandingBanner = (): JSX.Element => {
       <div className="flex flex-col gap-2">
         <div
           className="flex flex-row items-center gap-2 leading-tight
-              sm:gap-6"
+            sm:gap-6"
         >
           <Image
             src="/images/branding/logo-white.svg"
@@ -276,11 +276,20 @@ const Landing: NextPage<{ feed: Feed }> & {
           dark:bg-[url('/images/landing-dark.webp')] sm:pt-[4.5rem]"
       >
         <div className="content-layout">
-          <div className="content-layout__content h-[calc(100vh-4.5rem)]">
-            <div className="flex h-full flex-col gap-y-6 md:grid md:grid-cols-2 md:gap-x-6">
+          <div
+            className="content-layout__content h-fit
+              min-h-[calc(100vh-4.5rem)]"
+          >
+            <div
+              className="flex grow flex-col gap-y-6 md:grid md:grid-cols-2
+                md:gap-x-6"
+            >
               <LandingBanner />
               {feed.content.length > 0 && (
-                <div className="!px-0 sm:grid sm:grid-cols-3 sm:gap-x-6 md:block">
+                <div
+                  className="!px-0 sm:grid sm:grid-cols-3 sm:gap-x-6
+                    md:block"
+                >
                   <LandingFeed feed={feed} />
                 </div>
               )}
