@@ -65,9 +65,22 @@ export async function getNewSchoolDocumentCount(): Promise<
 export async function searchSchoolDocs(
   type: SchoolDocumentType,
   query: string
-): Promise<BackendDataReturn<SchoolDocument>> {
-  console.error("function not implemented.");
-  return { data: [], error: { message: "function not implemented." } };
+): Promise<BackendDataReturn<SchoolDocument[]>> {
+  const { data, error } = await supabase
+    .from("school_documents")
+    .select("*")
+    .match({ type })
+    .or(`code.like.%${query}%, subject.like.%${query}%`);
+
+  if (error) {
+    console.error(error);
+    return { data: [], error };
+  }
+
+  return {
+    data: data.map((document) => db2SchoolDocument(document)),
+    error: null,
+  };
 }
 
 /**

@@ -27,6 +27,7 @@ import DocumentListItem from "@components/news/DocumentListItem";
 import {
   getNoOfSchoolDocsPages,
   getSchoolDocs,
+  searchSchoolDocs,
 } from "@utils/backend/news/document";
 
 // Helpers
@@ -58,11 +59,13 @@ const OrdersPage: NextPage<{
 
   const [query, setQuery] = useState<string>("");
   useEffect(() => {
-    if (query == "") {
-      setOrders(originalOrders);
-    } else if (query.length > 3) {
-      // TODO: Search with query
+    async function searchAndSetOrders() {
+      const { data, error } = await searchSchoolDocs("order", query);
+      if (error) setOrders(originalOrders);
+      else setOrders(data);
     }
+    if (query == "") setOrders(originalOrders);
+    else searchAndSetOrders();
   }, [query]);
 
   return (

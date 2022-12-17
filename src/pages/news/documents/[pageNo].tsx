@@ -24,7 +24,11 @@ import {
 import DocumentListItem from "@components/news/DocumentListItem";
 
 // Backend
-import { getNoOfSchoolDocsPages, getSchoolDocs } from "@utils/backend/news/document";
+import {
+  getNoOfSchoolDocsPages,
+  getSchoolDocs,
+  searchSchoolDocs,
+} from "@utils/backend/news/document";
 
 // Helpers
 import { range } from "@utils/helpers/array";
@@ -56,10 +60,13 @@ const DocumentsPage: NextPage<{
 
   const [query, setQuery] = useState<string>("");
   useEffect(() => {
-    if (query == "") {
-      setDocuments(originalDocuments);
-    } else if (query.length > 3) {
+    async function searchAndSetDocuments() {
+      const { data, error } = await searchSchoolDocs("document", query);
+      if (error) setDocuments(originalDocuments);
+      else setDocuments(data);
     }
+    if (query == "") setDocuments(originalDocuments);
+    else searchAndSetDocuments();
   }, [query]);
 
   return (
@@ -114,7 +121,10 @@ const DocumentsPage: NextPage<{
 export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   const pageNo = Number(params?.pageNo);
 
-  const { data: documents, error: documentsError } = await getSchoolDocs("document", pageNo);
+  const { data: documents, error: documentsError } = await getSchoolDocs(
+    "document",
+    pageNo
+  );
   if (documentsError) console.error(documentsError);
 
   const { data: noPages, error: numError } = await getNoOfSchoolDocsPages(
@@ -136,9 +146,7 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const { data: noPages, error } = await getNoOfSchoolDocsPages(
-    "document"
-  );
+  const { data: noPages, error } = await getNoOfSchoolDocsPages("document");
   if (error) console.error(error);
 
   return {
