@@ -13,6 +13,7 @@ import { useLocale } from "@utils/hooks/i18n";
 
 // Types
 import { SchoolDocument, SchoolDocumentType } from "@utils/types/news";
+import Includes from "@components/Includes";
 
 const DocumentListItem: FC<{
   type: SchoolDocumentType;
@@ -30,7 +31,7 @@ const DocumentListItem: FC<{
     >
       <div className="flex w-full flex-col gap-2">
         {/* Code and date */}
-        <div className="divide-x divide-outline">
+        <div className="divide-x divide-outline flex flex-row items-center">
           <span className="pr-2">
             <Trans
               i18nKey={`schoolDocs.${type}s.code`}
@@ -47,13 +48,14 @@ const DocumentListItem: FC<{
               }}
             />
           </span>
-          <time className="pl-2 text-outline">
+          <time className="px-2 text-outline">
             {new Date(document.date).toLocaleDateString(locale, {
               year: locale == "en-US" ? "numeric" : "2-digit",
               month: "short",
               day: "numeric",
             })}
           </time>
+          {document.includes && <Includes includes={document.includes} className="pl-4 ml-0" />}
         </div>
 
         {/* Title */}
