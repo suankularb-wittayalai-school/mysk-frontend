@@ -133,11 +133,11 @@ export type SchoolDocument = {
   date: string;
   subject: string;
   attendTo?: string;
-  includes?: Partial<{
+  includes?: {
     students: boolean;
     parents: boolean;
     teachers: boolean;
-  }>;
+  };
   documentLink: string;
 };
 

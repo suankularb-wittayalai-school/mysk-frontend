@@ -51,9 +51,9 @@ const OrdersList: FC<{ orders: SchoolDocument[] }> = ({ orders }) => (
           <motion.li
             key={order.id}
             layoutId={`order-${order.id}`}
-            initial={{ scale: 0.8, y: 20, opacity: 0 }}
+            initial={{ scale: 0.95, y: 10, opacity: 0 }}
             animate={{ scale: 1, y: 0, opacity: 1 }}
-            exit={{ scale: 0.8, y: 20, opacity: 0 }}
+            exit={{ scale: 0.95, y: 10, opacity: 0 }}
             transition={animationTransition}
           >
             <DocumentListItem type="order" document={order} />

@@ -29,9 +29,9 @@ const NewsFeed = ({
             key={["news", newsItem.type, newsItem.id].join("-")}
             aria-posinset={index}
             aria-setsize={-1}
-            initial={{ scale: 0.8, y: 20, opacity: 0 }}
+            initial={{ scale: 0.95, y: 10, opacity: 0 }}
             animate={{ scale: 1, y: 0, opacity: 1 }}
-            exit={{ scale: 0.8, y: 20, opacity: 0 }}
+            exit={{ scale: 0.95, y: 10, opacity: 0 }}
             transition={animationTransition}
             className="!px-0"
           >
