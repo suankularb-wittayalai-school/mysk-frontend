@@ -32,16 +32,23 @@ import NewsFilter from "@components/news/NewsFilter";
 
 // Backend
 import { getNewsFeed } from "@utils/backend/news";
+import { getNewSchoolDocumentCount } from "@utils/backend/news/document";
 
 // Helpers
 import { createTitleStr } from "@utils/helpers/title";
 
 // Types
 import { LangCode } from "@utils/types/common";
-import { NewsItemType, NewsListNoDate } from "@utils/types/news";
+import {
+  NewSchoolDocumentCount,
+  NewsItemType,
+  NewsListNoDate,
+} from "@utils/types/news";
 import { Role } from "@utils/types/person";
 
-const RelatedPagesSection: FC = () => {
+const RelatedPagesSection: FC<{
+  newCounts: NewSchoolDocumentCount;
+}> = ({ newCounts }) => {
   const { t } = useTranslation("news");
 
   return (
@@ -54,7 +61,11 @@ const RelatedPagesSection: FC = () => {
                 icon={<MaterialIcon icon="inbox" />}
                 title={<h3>{t("schoolDocs.orders.title")}</h3>}
                 label={
-                  <span>{t("schoolDocs.orders.newNotice", { count: 2 })}</span>
+                  <span>
+                    {t("schoolDocs.orders.newNotice", {
+                      count: newCounts.order,
+                    })}
+                  </span>
                 }
                 end={<MaterialIcon icon="arrow_forward" />}
               />
@@ -69,7 +80,9 @@ const RelatedPagesSection: FC = () => {
                 title={<h3>{t("schoolDocs.documents.title")}</h3>}
                 label={
                   <span>
-                    {t("schoolDocs.documents.newNotice", { count: 1 })}
+                    {t("schoolDocs.documents.newNotice", {
+                      count: newCounts.document,
+                    })}
                   </span>
                 }
                 end={<MaterialIcon icon="arrow_forward" />}
@@ -83,10 +96,11 @@ const RelatedPagesSection: FC = () => {
 };
 
 // Page
-const NewsPage: NextPage<{ role: Role; newsFeed: NewsListNoDate }> = ({
-  role,
-  newsFeed,
-}): JSX.Element => {
+const NewsPage: NextPage<{
+  role: Role;
+  newCounts: NewSchoolDocumentCount;
+  newsFeed: NewsListNoDate;
+}> = ({ role, newCounts, newsFeed }): JSX.Element => {
   const { t } = useTranslation(["news", "common"]);
 
   const [newsFilter, setNewsFilter] = useState<NewsItemType[]>([]);
@@ -110,7 +124,7 @@ const NewsPage: NextPage<{ role: Role; newsFeed: NewsListNoDate }> = ({
           />
         }
       >
-        <RelatedPagesSection />
+        <RelatedPagesSection newCounts={newCounts} />
         {/* TODO: Make filtering News a reality! */}
         {/* <NewsFilter setNewsFilter={setNewsFilter} /> */}
         <NewsFeed news={filteredNews} />
@@ -132,12 +146,14 @@ export const getServerSideProps: GetServerSideProps = async ({
   const { data: user } = await supabase.auth.getUser();
   const role = user.user?.user_metadata.role;
 
+  const { data: newCounts } = await getNewSchoolDocumentCount();
   const { data: newsFeed } = await getNewsFeed(role);
 
   return {
     props: {
       ...(await serverSideTranslations(locale as LangCode, ["common", "news"])),
       role,
+      newCounts,
       newsFeed,
     },
   };

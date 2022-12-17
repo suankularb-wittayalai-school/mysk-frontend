@@ -1,5 +1,27 @@
+// Types
 import { BackendDataReturn } from "@utils/types/common";
-import { SchoolDocument, SchoolDocumentType } from "@utils/types/news";
+import {
+  NewSchoolDocumentCount,
+  SchoolDocument,
+  SchoolDocumentType,
+} from "@utils/types/news";
+
+/**
+ * Fetches the number of new orders and documents dated within the week (from
+ * Monday).
+ * @returns
+ * An object with number of new orders (key `order`) and documents (key
+ * `document`)
+ */
+export async function getNewSchoolDocumentCount(): Promise<
+  BackendDataReturn<NewSchoolDocumentCount, { order: 0; document: 0 }>
+> {
+  console.error("function not implemented.");
+  return {
+    data: { order: 0, document: 0 },
+    error: { message: "function not implemented." },
+  };
+}
 
 /**
  * Searches all school documents for matching type and query.

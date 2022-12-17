@@ -142,3 +142,6 @@ export type SchoolDocument = {
 };
 
 export type SchoolDocumentType = "order" | "document";
+export type NewSchoolDocumentCount = {
+  [K in SchoolDocumentType]: number;
+};
