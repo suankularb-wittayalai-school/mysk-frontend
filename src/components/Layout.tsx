@@ -59,15 +59,7 @@ const Layout = ({
         active: <MaterialIcon icon="login" type="filled" />,
       },
       url: "/account/login",
-    },
-    {
-      name: t("navigation.about"),
-      icon: {
-        inactive: <MaterialIcon icon="information" type="outlined" />,
-        active: <MaterialIcon icon="information" type="filled" />,
-      },
-      url: "/about",
-    },
+    }
   ];
 
   const [navItems, setNavItems] = useState(defaultNav);
