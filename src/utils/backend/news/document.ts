@@ -85,11 +85,20 @@ export async function getSchoolDocs(
  */
 export async function getNoOfSchoolDocsPages(
   type: SchoolDocumentType
-): Promise<BackendDataReturn<number, null>> {
+): Promise<BackendDataReturn<number, 1>> {
   const docsPerPage = 50;
-  // TODO: Get numbers of school documents pages (divide total number of school
-  // documents by number of orders per page)
-  console.error("function not implemented.");
+  const { count, error } = await supabase
+    .from("school_documents")
+    .select("id", { count: "estimated" })
+    .match({ type });
 
-  return { data: 3, error: null };
+  if (error) {
+    console.error(error);
+    return { data: 1, error };
+  }
+
+  const calculatedNoPages = Math.ceil(count! / docsPerPage);
+  const cappedNoPages = calculatedNoPages < 1 ? 1 : calculatedNoPages;
+
+  return { data: cappedNoPages, error: null };
 }

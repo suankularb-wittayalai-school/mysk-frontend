@@ -3,7 +3,7 @@ import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 
-import { Trans, useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { FC, useEffect, useState } from "react";
@@ -131,10 +131,10 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   // const { data: orders, error: ordersError } = await getOrders("order", pageNo);
   // if (ordersError) console.error(ordersError);
 
-  const { data: noOfOrders, error: numError } = await getNoOfSchoolDocsPages(
+  const { data: noPages, error: numError } = await getNoOfSchoolDocsPages(
     "order"
   );
-  const isLastPage = pageNo == noOfOrders;
+  const isLastPage = pageNo == noPages;
 
   if (numError) console.error(numError);
 
@@ -150,11 +150,11 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const { data: noOfOrders, error } = await getNoOfSchoolDocsPages("order");
+  const { data: noPages, error } = await getNoOfSchoolDocsPages("order");
   if (error) console.error(error);
 
   return {
-    paths: range(error ? 1 : noOfOrders, 1).map((pageNo) => ({
+    paths: range(noPages, 1).map((pageNo) => ({
       params: { pageNo: pageNo.toString() },
     })),
     fallback: "blocking",
