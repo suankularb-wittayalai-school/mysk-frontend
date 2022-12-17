@@ -7,5 +7,5 @@ export async function getNoOfOrderPages(): Promise<
   // like 50 or something)
   console.error("function not implemented.");
 
-  return { data: 1, error: null };
+  return { data: 3, error: null };
 }
