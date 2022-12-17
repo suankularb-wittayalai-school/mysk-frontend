@@ -94,7 +94,7 @@ const App = ({
             </ErrorBoundary>
           )}
         </MotionConfig>
-        <ReactQueryDevtools initialIsOpen={false} />
+        {/* <ReactQueryDevtools initialIsOpen={false} /> */}
       </QueryClientProvider>
     </SessionContextProvider>
   );
