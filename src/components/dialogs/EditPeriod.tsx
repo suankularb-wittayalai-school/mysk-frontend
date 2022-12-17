@@ -162,6 +162,7 @@ const EditPeriodDialog = ({
       type="regular"
       label={`${mode}-period`}
       title={t(`dialog.editPeriod.title.${mode}`)}
+      supportingText={t("dialog.editPeriod.longPeriodsNote")}
       actions={[
         { name: t("dialog.editPeriod.action.cancel"), type: "close" },
         {
