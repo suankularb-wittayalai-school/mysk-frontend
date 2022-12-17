@@ -67,7 +67,7 @@
       "newNotice_one": "{{count}} new document this week",
       "newNotice_other": "{{count}} new documents this week",
       "searchPlh": "Search documents",
-      "code": "ศธ 04290.20/<span>{{code}}</span>"
+      "code": "MoE 04290.20/<span>{{code}}</span>"
     },
     "action": {
       "back": "Back",
