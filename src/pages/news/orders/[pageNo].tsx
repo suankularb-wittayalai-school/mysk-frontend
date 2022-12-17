@@ -20,74 +20,29 @@ import {
   LinkButton,
 } from "@suankularb-components/react";
 
+// Components
+import DocumentListItem from "@components/news/DocumentListItem";
+
 // Backend
 import { getNoOfSchoolDocsPages } from "@utils/backend/news/document";
 
 // Helpers
 import { range } from "@utils/helpers/array";
-import { getLocaleYear } from "@utils/helpers/date";
 import { createTitleStr } from "@utils/helpers/title";
-
-// Hooks
-import { useLocale } from "@utils/hooks/i18n";
 
 // Types
 import { LangCode } from "@utils/types/common";
 import { SchoolDocument } from "@utils/types/news";
 
-const OrdersList: FC<{ orders: SchoolDocument[] }> = ({ orders }) => {
-  const { t } = useTranslation("news");
-  const locale = useLocale();
-
-  return (
-    <ul className="flex flex-col divide-y-2 divide-outline !px-0">
-      {orders.map((order) => (
-        <li key={order.id}>
-          <a
-            href={order.documentLink}
-            target="mysk-documents"
-            rel="noreferrer"
-            className="has-action flex w-full flex-row items-center gap-2 py-4
-              px-4 font-display sm:px-0"
-          >
-            <div className="flex w-full flex-col gap-2">
-              {/* Code and date */}
-              <div className="flex flex-row divide-x divide-outline">
-                <span className="pr-2">
-                  <Trans
-                    i18nKey={"schoolDocs.orders.code"}
-                    ns="news"
-                    values={{
-                      code: order.code,
-                      year: getLocaleYear(
-                        "th",
-                        new Date(order.date).getFullYear()
-                      ),
-                    }}
-                    components={{
-                      span: <span className="font-black text-tertiary" />,
-                    }}
-                  />
-                </span>
-                <time className="pl-2 text-outline">
-                  {new Date(order.date).toLocaleDateString(locale, {
-                    year: locale == "en-US" ? "numeric" : "2-digit",
-                    month: "short",
-                    day: "numeric",
-                  })}
-                </time>
-              </div>
-
-              {/* Title */}
-              <h3 className="max-lines-5 text-3xl">{order.subject}</h3>
-            </div>
-            <MaterialIcon icon="open_in_new" className="text-secondary" />
-          </a>
-        </li>
-      ))}
-    </ul>
-  );
-};
+const OrdersList: FC<{ orders: SchoolDocument[] }> = ({ orders }) => (
+  <ul className="flex flex-col divide-y-2 divide-outline !px-0">
+    {orders.map((order) => (
+      <li key={order.id}>
+        <DocumentListItem type="order" document={order} />
+      </li>
+    ))}
+  </ul>
+);
 
 const OrdersPage: NextPage<{
   orders: SchoolDocument[];
