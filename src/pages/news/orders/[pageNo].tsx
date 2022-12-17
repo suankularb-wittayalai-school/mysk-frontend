@@ -1,4 +1,6 @@
 // External libraries
+import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
+
 import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
@@ -23,6 +25,9 @@ import {
 // Components
 import DocumentListItem from "@components/news/DocumentListItem";
 
+// Animations
+import { animationTransition } from "@utils/animations/config";
+
 // Backend
 import {
   getNoOfSchoolDocsPages,
@@ -40,11 +45,22 @@ import { SchoolDocument } from "@utils/types/news";
 
 const OrdersList: FC<{ orders: SchoolDocument[] }> = ({ orders }) => (
   <ul className="flex flex-col divide-y-2 divide-outline !px-0">
-    {orders.map((order) => (
-      <li key={order.id}>
-        <DocumentListItem type="order" document={order} />
-      </li>
-    ))}
+    <LayoutGroup>
+      <AnimatePresence initial={false}>
+        {orders.map((order) => (
+          <motion.li
+            key={order.id}
+            layoutId={`order-${order.id}`}
+            initial={{ scale: 0.8, y: 20, opacity: 0 }}
+            animate={{ scale: 1, y: 0, opacity: 1 }}
+            exit={{ scale: 0.8, y: 20, opacity: 0 }}
+            transition={animationTransition}
+          >
+            <DocumentListItem type="order" document={order} />
+          </motion.li>
+        ))}
+      </AnimatePresence>
+    </LayoutGroup>
   </ul>
 );
 
@@ -93,24 +109,33 @@ const OrdersPage: NextPage<{
         </Section>
         <Section>
           <OrdersList orders={orders} />
-          {!query && (
-            <Actions align="center">
-              <LinkButton
-                label={t("schoolDocs.action.back")}
-                type="tonal"
-                url={`/news/orders/${pageNo - 1}`}
-                LinkElement={Link}
-                disabled={pageNo == 1}
-              />
-              <LinkButton
-                label={t("schoolDocs.action.next")}
-                type="tonal"
-                url={`/news/orders/${pageNo + 1}`}
-                LinkElement={Link}
-                disabled={isLastPage}
-              />
-            </Actions>
-          )}
+          <AnimatePresence>
+            {!query && (
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.8, opacity: 0 }}
+                transition={animationTransition}
+              >
+                <Actions align="center">
+                  <LinkButton
+                    label={t("schoolDocs.action.back")}
+                    type="tonal"
+                    url={`/news/documents/${pageNo - 1}`}
+                    LinkElement={Link}
+                    disabled={pageNo == 1}
+                  />
+                  <LinkButton
+                    label={t("schoolDocs.action.next")}
+                    type="tonal"
+                    url={`/news/documents/${pageNo + 1}`}
+                    LinkElement={Link}
+                    disabled={isLastPage}
+                  />
+                </Actions>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </Section>
       </RegularLayout>
     </>
