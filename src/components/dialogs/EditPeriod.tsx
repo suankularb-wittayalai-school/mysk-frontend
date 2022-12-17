@@ -20,6 +20,7 @@ import { getRoomsEnrolledInSubject } from "@utils/backend/subject/roomSubject";
 
 // Helpers
 import { range } from "@utils/helpers/array";
+import { arePeriodsOverlapping } from "@utils/helpers/schedule";
 
 // Hooks
 import { useTeacherAccount } from "@utils/hooks/auth";
@@ -30,7 +31,7 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 // Types
 import { ClassWNumber } from "@utils/types/class";
 import { LangCode, SubmittableDialogProps } from "@utils/types/common";
-import { PeriodContentItemOptSubj } from "@utils/types/schedule";
+import { PeriodContentItemOptSubj, Schedule } from "@utils/types/schedule";
 
 // Miscellaneous
 import { roomPattern } from "@utils/patterns";
@@ -42,11 +43,13 @@ const EditPeriodDialog = ({
   mode,
   day,
   schedulePeriod,
+  schedule,
   canEditStartTime,
 }: SubmittableDialogProps & {
   mode: "add" | "edit";
   day?: Day;
   schedulePeriod?: PeriodContentItemOptSubj;
+  schedule: Schedule;
   canEditStartTime?: boolean;
 }): JSX.Element => {
   const { t } = useTranslation(["schedule", "common"]);
@@ -59,7 +62,7 @@ const EditPeriodDialog = ({
     subject: number;
     classID: number;
     room: string;
-    day: number;
+    day: Day;
     startTime: number;
     duration: number;
   }>({
@@ -137,6 +140,41 @@ const EditPeriodDialog = ({
     if (!form.day) return false;
     if (form.startTime < 1 || form.startTime > 10) return false;
     if (form.duration < 1 || form.duration > 10) return false;
+
+    for (let periodFromSchedule of schedule.content
+      .map((row) => row.content.map((period) => ({ ...period, day: row.day })))
+      .flat()) {
+      if (periodFromSchedule.content.length == 0) continue;
+
+      if (
+        mode == "edit" &&
+        periodFromSchedule.day == day &&
+        periodFromSchedule.startTime == schedulePeriod!.startTime
+      )
+        continue;
+
+      if (
+        arePeriodsOverlapping(
+          {
+            day: periodFromSchedule.day,
+            startTime: periodFromSchedule.startTime,
+            duration: periodFromSchedule.duration,
+          },
+          {
+            day: form.day,
+            startTime: form.startTime,
+            duration: form.duration,
+          }
+        )
+      ) {
+        console.log({
+          day: periodFromSchedule.day,
+          startTime: periodFromSchedule.startTime,
+          duration: periodFromSchedule.duration,
+        });
+        return false;
+      }
+    }
 
     return true;
   }
@@ -233,7 +271,9 @@ const EditPeriodDialog = ({
                 label: t(`datetime.day.${day + 1}`, { ns: "common" }),
               }))}
               defaultValue={day}
-              onChange={(e: string) => setForm({ ...form, day: Number(e) })}
+              onChange={(e: string) =>
+                setForm({ ...form, day: Number(e) as Day })
+              }
             />
 
             {/* Start time */}
