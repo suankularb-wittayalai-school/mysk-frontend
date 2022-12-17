@@ -58,7 +58,7 @@ export async function getSchedule(
   const { data, error } = await supabase
     .from("schedule_items")
     .select(
-      "*, subject:subject(*), teacher:teacher(*), classroom:classroom(id,number)"
+      "*, subject(*), teacher(*, person(*), subject_group(*)), classroom(id, number)"
     )
     .match(
       role == "teacher"

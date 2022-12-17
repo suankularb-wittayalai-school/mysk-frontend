@@ -536,27 +536,14 @@ export async function db2SchedulePeriod(
   };
 
   if (role == "student" && formatted.content.length > 0) {
-    const { data: teachers, error: teachersError } = await supabase
-      .from("teacher")
-      .select("*, person(*), subject_group(*)")
-      .in("id", scheduleItem.subject.teachers);
-
-    if (teachersError) {
-      console.error(teachersError);
-    }
-    if (teachers) {
-      formatted.content[0].subject.teachers = await Promise.all(
-        teachers.map(async (teacher) => await db2Teacher(supabase, teacher))
-      );
-    }
+    formatted.content[0].subject.teachers = [
+      await db2Teacher(supabase, scheduleItem.teacher),
+    ];
 
     const { data: coTeachers, error: coTeachersError } = await supabase
       .from("teacher")
       .select("*, person(*), subject_group(*)")
-      .in(
-        "id",
-        scheduleItem.subject.coTeachers ? scheduleItem.subject.coTeachers : []
-      );
+      .in("id", scheduleItem.coteachers || []);
 
     if (coTeachersError) {
       console.error(coTeachersError);
