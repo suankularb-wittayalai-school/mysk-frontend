@@ -1,5 +1,6 @@
 // External libraries
 import { motion } from "framer-motion";
+import { FC, useEffect } from "react";
 import { useTranslation } from "next-i18next";
 
 // SK Components
@@ -13,27 +14,51 @@ import { animationSpeed, animationTransition } from "@utils/animations/config";
 
 // Types
 import { Role } from "@utils/types/person";
-import { SchedulePeriod as SchedulePeriodType } from "@utils/types/schedule";
-import { useToggle } from "@utils/hooks/toggle";
-import { useEffect } from "react";
+import {
+  PeriodContentItem,
+  SchedulePeriod as SchedulePeriodType,
+} from "@utils/types/schedule";
 
-const ElectivePeriodsReveal = ({
-  show,
-  schedulePeriod,
-  periodWidth,
-  day,
-  role,
-  allowEdit,
-  setShow,
-}: {
+// Hooks
+import { useToggle } from "@utils/hooks/toggle";
+
+const ElectivePeriodsReveal: FC<{
   show: boolean;
   schedulePeriod: SchedulePeriodType;
   periodWidth: number;
   day: Day;
   role: Role;
   allowEdit?: boolean;
+  setEditPeriod?: ({
+    show,
+    day,
+    schedulePeriod,
+  }: {
+    show: boolean;
+    day: Day;
+    schedulePeriod: PeriodContentItem;
+  }) => void;
+  setDeletePeriod?: ({
+    show,
+    periodID,
+  }: {
+    show: boolean;
+    periodID: number;
+  }) => void;
+  toggleFetched?: () => void;
   setShow: (value: boolean) => void;
-}): JSX.Element => {
+}> = ({
+  show,
+  schedulePeriod,
+  periodWidth,
+  day,
+  role,
+  allowEdit,
+  setEditPeriod,
+  setDeletePeriod,
+  toggleFetched,
+  setShow,
+}) => {
   const { t } = useTranslation("schedule");
 
   const [allowClose, toggleAllowClose] = useToggle();
@@ -57,7 +82,7 @@ const ElectivePeriodsReveal = ({
             layoutId={`sp-${schedulePeriod.id}-header`}
             transition={animationTransition}
           >
-            {t("schedule.elective")}
+            {t(`schedule.${role == "teacher" ? "overlap" : "elective"}`)}
           </motion.h1>
         </div>
         <ul className="flex flex-row gap-2">
@@ -72,6 +97,9 @@ const ElectivePeriodsReveal = ({
                 day={day}
                 role={role}
                 allowEdit={allowEdit}
+                setEditPeriod={setEditPeriod}
+                setDeletePeriod={setDeletePeriod}
+                toggleFetched={toggleFetched}
                 className="shadow"
               />
             </li>

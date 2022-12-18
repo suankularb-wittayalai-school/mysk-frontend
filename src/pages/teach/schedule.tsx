@@ -162,17 +162,19 @@ const TeacherSchedule: NextPage<{
           startTime: addSubjectToPeriod.startTime,
           duration: 1,
         }}
+        schedule={schedule}
         mode="add"
       />
 
       {/* Add from Button */}
       <EditPeriodDialog
         show={addPeriod}
-        onClose={() => toggleAddPeriod()}
+        onClose={toggleAddPeriod}
         onSubmit={() => {
           toggleAddPeriod();
           toggleFetched();
         }}
+        schedule={schedule}
         mode="add"
         canEditStartTime
       />
@@ -187,6 +189,7 @@ const TeacherSchedule: NextPage<{
         }}
         day={editPeriod.day}
         schedulePeriod={editPeriod.schedulePeriod}
+        schedule={schedule}
         mode="edit"
         canEditStartTime
       />

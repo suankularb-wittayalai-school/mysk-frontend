@@ -6,8 +6,6 @@ import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useReducer } from "react";
-
 // SK Components
 import {
   Header,
@@ -70,11 +68,13 @@ const StudentSchedule: NextPage<{
           />
         }
       >
-        <Section>
-          <Header
-            icon={<MaterialIcon icon="dashboard" allowCustomSize />}
-            text={t("schedule")}
-          />
+        <Section className="!max-w-[81.5rem] items-center">
+          <div className="w-full max-w-[70.5rem]">
+            <Header
+              icon={<MaterialIcon icon="dashboard" allowCustomSize />}
+              text={t("schedule")}
+            />
+          </div>
           <Schedule schedule={schedule} role="student" />
         </Section>
         <Section>

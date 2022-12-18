@@ -53,5 +53,25 @@
       "reset": "Reset",
       "submit": "Submit form"
     }
+  },
+  "schoolDocs": {
+    "orders": {
+      "title": "School orders",
+      "newNotice_one": "{{count}} new order this week",
+      "newNotice_other": "{{count}} new orders this week",
+      "searchPlh": "Search orders",
+      "code": "№ <span>{{code}}</span>/{{year}}"
+    },
+    "documents": {
+      "title": "Documents",
+      "newNotice_one": "{{count}} new document this week",
+      "newNotice_other": "{{count}} new documents this week",
+      "searchPlh": "Search documents",
+      "code": "MoE 04290.20/<span>{{code}}</span>"
+    },
+    "action": {
+      "back": "Back",
+      "next": "Next"
+    }
   }
 }

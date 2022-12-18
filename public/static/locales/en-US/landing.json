@@ -7,6 +7,10 @@
     "lastUpdated": "Last updated {{lastUpdated}}",
     "reachedEnd": "You’ve reached the end."
   },
+  "footnote": {
+    "supervisors": "<strong>MySK {{version}}</strong> is supervised by Supannee Supeerath and Atipol Sukrisadanon.",
+    "developers": "Its development was led by Siravit Phokeed and Smart Wattanapornmongkol with help from Sadudee Theparree and Tempoom Leelacharoen. <a>See contributions here.</a>"
+  },
   "welcome": {
     "title": "Welcome",
     "hero": {

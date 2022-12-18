@@ -137,23 +137,25 @@ const ConnectSubjectDialog = ({
   function validate(): boolean {
     // Search subject via code
     if (!subject) return false;
-    if (!(form.classroom) || !classRegex.test(form.classroom))
-      return false;
+    if (!form.classroom || !classRegex.test(form.classroom)) return false;
 
     // Class access
     if (form.ggcCode && (form.ggcCode.length < 6 || form.ggcCode.length > 7))
       return false;
     if (
       form.ggcLink &&
-      !form.ggcLink.match(/https:\/\/classroom.google.com\/c\/[a-zA-Z0-9]{16}/)
+      !form.ggcLink.match(
+        /https:\/\/classroom.google.com\/c\/[a-zA-Z0-9]{16}(\?cjc=[a-z0-9]{6,7})?/
+      )
     )
       return false;
-    if (form.ggMeetLink) {
-      try {
-        new URL(form.ggMeetLink);
-      } catch (_) {
-        return false;
-      }
+    if (
+      form.ggMeetLink &&
+      !form.ggMeetLink.match(
+        /https:\/\/meet.google.com\/[a-z]{3}-[a-z]{4}-[a-z]{3}(\?hs=\d{3})?/
+      )
+    ) {
+      return false;
     }
 
     // Personnel
@@ -178,13 +180,12 @@ const ConnectSubjectDialog = ({
     }
 
     if (mode == "add") {
-      const { data: roomSubjects, error: roomSubjectsError } =
-        await supabase
-          .from("room_subjects")
-          .select("*")
-          .eq("class", classroom!.id)
-          .contains("teacher", [user?.id])
-          .eq("subject", subject.id);
+      const { data: roomSubjects, error: roomSubjectsError } = await supabase
+        .from("room_subjects")
+        .select("*")
+        .eq("class", classroom!.id)
+        .contains("teacher", [user?.id])
+        .eq("subject", subject.id);
 
       if (roomSubjectsError) {
         console.error(roomSubjectsError);
@@ -211,13 +212,12 @@ const ConnectSubjectDialog = ({
       if (error) console.error(error);
     }
     if (mode == "edit") {
-      const { data: roomSubjects, error: roomSubjectsError } =
-        await supabase
-          .from("room_subjects")
-          .select("*")
-          .eq("class", classroom!.id)
-          .contains("teacher", [user?.id])
-          .eq("subject", subject.id);
+      const { data: roomSubjects, error: roomSubjectsError } = await supabase
+        .from("room_subjects")
+        .select("*")
+        .eq("class", classroom!.id)
+        .contains("teacher", [user?.id])
+        .eq("subject", subject.id);
 
       if (roomSubjectsError) {
         console.error(roomSubjectsError);
@@ -331,7 +331,10 @@ const ConnectSubjectDialog = ({
             onChange={(e) => setForm({ ...form, ggcLink: e })}
             defaultValue={subjectRoom ? subjectRoom.ggcLink : undefined}
             className="col-span-2"
-            attr={{ pattern: "https://classroom.google.com/c/[a-zA-Z0-9]{16}" }}
+            attr={{
+              pattern:
+                "https://classroom.google.com/c/[a-zA-Z0-9]{16}(\\?cjc=[a-z0-9]{6,7})?",
+            }}
           />
           <KeyboardInput
             name="ggc-meet"
@@ -340,8 +343,12 @@ const ConnectSubjectDialog = ({
             errorMsg={t("dialog.connectSubject.classAccess.ggMeetLink_error")}
             useAutoMsg
             onChange={(e) => setForm({ ...form, ggMeetLink: e })}
-            className="col-span-2"
             defaultValue={subjectRoom ? subjectRoom.ggMeetLink : undefined}
+            className="col-span-2"
+            attr={{
+              pattern:
+                "https:\\/\\/meet.google.com\\/[a-z]{3}-[a-z]{4}-[a-z]{3}(\\?hs=\\d{3})?",
+            }}
           />
         </DialogSection>
 

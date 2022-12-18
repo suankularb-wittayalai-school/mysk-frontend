@@ -14,6 +14,7 @@ import {
   InfoPage,
   NewsItemFormNoDate,
   NewsItemInfoNoDate,
+  SchoolDocument,
 } from "@utils/types/news";
 import { Role, Student, Teacher } from "@utils/types/person";
 import { SchedulePeriod } from "@utils/types/schedule";
@@ -536,27 +537,14 @@ export async function db2SchedulePeriod(
   };
 
   if (role == "student" && formatted.content.length > 0) {
-    const { data: teachers, error: teachersError } = await supabase
-      .from("teacher")
-      .select("*, person(*), subject_group(*)")
-      .in("id", scheduleItem.subject.teachers);
-
-    if (teachersError) {
-      console.error(teachersError);
-    }
-    if (teachers) {
-      formatted.content[0].subject.teachers = await Promise.all(
-        teachers.map(async (teacher) => await db2Teacher(supabase, teacher))
-      );
-    }
+    formatted.content[0].subject.teachers = [
+      await db2Teacher(supabase, scheduleItem.teacher),
+    ];
 
     const { data: coTeachers, error: coTeachersError } = await supabase
       .from("teacher")
       .select("*, person(*), subject_group(*)")
-      .in(
-        "id",
-        scheduleItem.subject.coTeachers ? scheduleItem.subject.coTeachers : []
-      );
+      .in("id", scheduleItem.coteachers || []);
 
     if (coTeachersError) {
       console.error(coTeachersError);
@@ -634,6 +622,26 @@ export async function db2SubjectListItem(
       );
     }
   }
+
+  return formatted;
+}
+
+export function db2SchoolDocument(
+  schoolDocument: Database["public"]["Tables"]["school_documents"]["Row"]
+) {
+  const formatted: SchoolDocument = {
+    id: schoolDocument.id,
+    code: schoolDocument.code,
+    date: schoolDocument.date,
+    subject: schoolDocument.subject,
+    attendTo: schoolDocument.attend_to as OrUndefined<string>,
+    includes: {
+      students: schoolDocument.include_students ?? false,
+      parents: schoolDocument.include_parents ?? false,
+      teachers: schoolDocument.include_teachers ?? false,
+    },
+    documentLink: schoolDocument.document_link,
+  };
 
   return formatted;
 }

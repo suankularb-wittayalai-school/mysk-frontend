@@ -11,6 +11,7 @@
         "close": "Close"
       }
     },
+    "overlap": "Many subjects",
     "hoverMenu": {
       "add": "Add period here",
       "edit": "Edit this period",
@@ -47,6 +48,7 @@
         "add": "Add subject period",
         "edit": "Edit subject period"
       },
+      "longPeriodsNote": "For longer periods, do not add them as multiple individual periods. Edit the “Period duration” property below.",
       "form": {
         "title": "Period information",
         "subject": "Subject",

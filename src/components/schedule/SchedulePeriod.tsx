@@ -102,6 +102,9 @@ const SchedulePeriod = ({
           day={day.getDay() as Day}
           role={role}
           allowEdit={allowEdit}
+          setEditPeriod={setEditPeriod}
+          setDeletePeriod={setDeletePeriod}
+          toggleFetched={toggleFetched}
         />
       ) : schedulePeriod.content.length == 1 ? (
         // Filled period
