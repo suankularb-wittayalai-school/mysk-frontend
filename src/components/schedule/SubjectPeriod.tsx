@@ -79,7 +79,7 @@ const SubjectPeriod = ({
   return (
     <div
       className={[
-        "relative h-[3.75rem] cursor-auto rounded-lg leading-snug",
+        "relative h-[3.75rem] cursor-auto overflow-x-hidden rounded-lg leading-snug",
         isInSession ? "container-tertiary shadow" : "container-secondary",
         showMenu ? "z-20" : null,
         className,
@@ -122,7 +122,7 @@ const SubjectPeriod = ({
           setDragging={setDragging}
         />
       )}
-      <div className="flex flex-col px-4 py-2">
+      <div className="flex flex-col whitespace-nowrap px-4 py-2">
         {role == "teacher" ? (
           <>
             <span className="truncate font-display text-xl font-medium">

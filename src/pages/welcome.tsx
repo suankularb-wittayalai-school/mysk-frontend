@@ -379,20 +379,24 @@ const DataCheckSection = ({
             {t("profile.general.title", { ns: "account" })}
           </h3>
           <div className="layout-grid-cols-4 !gap-y-0">
-            <KeyboardInput
-              name="citizen-id"
-              type="text"
-              label={t("profile.general.citizenID", { ns: "account" })}
-              errorMsg={
-                !validateCitizenID(form.citizenID) &&
-                !validatePassport(form.citizenID)
-                  ? t("profile.general.citizenID_error", { ns: "account" })
-                  : undefined
-              }
-              onChange={(e) => setForm({ ...form, citizenID: e })}
-              defaultValue={user.citizenID}
-              attr={{ disabled }}
-            />
+            {/* Removing this as some teachers are uncomfortable with entering
+                their citizen ID. */}
+            {/*
+              <KeyboardInput
+                name="citizen-id"
+                type="text"
+                label={t("profile.general.citizenID", { ns: "account" })}
+                errorMsg={
+                  !validateCitizenID(form.citizenID) &&
+                  !validatePassport(form.citizenID)
+                    ? t("profile.general.citizenID_error", { ns: "account" })
+                    : undefined
+                }
+                onChange={(e) => setForm({ ...form, citizenID: e })}
+                defaultValue={user.citizenID}
+                attr={{ disabled }}
+              />
+            */}
             <NativeInput
               name="birth-date"
               type="date"
@@ -1171,4 +1175,3 @@ export const getServerSideProps: GetServerSideProps = async ({
 };
 
 export default Welcome;
-
