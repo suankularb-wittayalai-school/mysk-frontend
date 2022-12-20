@@ -38,10 +38,10 @@ export function validateCitizenID(citizenID: string): boolean {
 
 export function validatePassport(passportNumber: string): string | false {
   // Indian passport
-  if (/^[A-Z]{1}-[0-9]{7}$/.test(passportNumber)) return "IN";
+  if (/^[A-Z]{1}[0-9]{7}$/.test(passportNumber)) return "IN";
 
   // Philippine passport
-  if (/^[A-Za-z][0-9]{7}[A-Za-z][^A-Za-z]$/.test(passportNumber)) return "PH";
+  if (/^[A-Za-z][0-9]{7}[A-Za-z]$/.test(passportNumber)) return "PH";
 
   // United States passport
   if (/^\d{9}\D$/.test(passportNumber)) return "US";
