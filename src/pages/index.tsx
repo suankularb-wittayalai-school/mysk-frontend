@@ -299,7 +299,7 @@ const Landing: NextPage<{ feed: Feed }> & {
                 <Trans
                   i18nKey="footnote.supervisors"
                   ns="landing"
-                  values={{ version: "0.2.2" }}
+                  values={{ version: "0.3.0" }}
                 />
               </p>
               <p>
