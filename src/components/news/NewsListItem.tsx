@@ -1,25 +1,30 @@
 // External libraries
-import { formatDistanceToNowStrict, isPast, isThisYear } from "date-fns";
+import { formatDistanceToNowStrict, isPast } from "date-fns";
 import { enUS, th } from "date-fns/locale";
 
+import { motion } from "framer-motion";
+
+import Image from "next/future/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
+
 import { Trans, useTranslation } from "next-i18next";
+
+import { FC } from "react";
 
 // SK Components
 import {
-  Card,
-  CardActions,
-  CardHeader,
-  CardSupportingText,
   Chip,
   ChipList,
-  LinkButton,
+  LayoutGridCols,
   MaterialIcon,
 } from "@suankularb-components/react";
 
 // Components
 import NewsIcon from "@components/icons/NewsIcon";
+
+// Animations
+import { enterPageTransition } from "@utils/animations/config";
 
 // Types
 import { LangCode } from "@utils/types/common";
@@ -137,87 +142,97 @@ const NewsChipList = ({
   );
 };
 
-const NewsCard = ({
-  newsItem,
-  editable,
-  showChips,
-  btnType,
-}: {
+const NewsListItem: FC<{
   newsItem: NewsItemNoDate;
   editable?: boolean;
   showChips?: boolean;
-  btnType?: "filled" | "outlined" | "text" | "tonal";
-}): JSX.Element => {
+}> = ({ newsItem, editable, showChips }) => {
   const { t } = useTranslation("news");
   const locale = useRouter().locale as LangCode;
 
   return (
-    <Card type="stacked" appearance="outlined">
-      <CardHeader
-        icon={<NewsIcon type={newsItem.type} className="text-secondary" />}
-        title={
-          <h3 className="text-lg font-medium">
-            {getLocaleString(newsItem.content.title, locale)}
-          </h3>
-        }
-        label={
-          <div className="flex divide-x divide-outline">
-            <span className="pr-2">{t(`itemType.${newsItem.type}`)}</span>
-            <time className="pl-2 text-outline">
-              {new Date(newsItem.postDate).toLocaleDateString(locale, {
-                year: isThisYear(new Date(newsItem.postDate))
-                  ? undefined
-                  : "numeric",
-                month: "short",
-                day: "numeric",
-              })}
-            </time>
-          </div>
-        }
-        end={
-          ["info", "stats"].includes(newsItem.type) ? undefined : (
-            <div>
-              <NewsStatus newsItem={newsItem} />
+    <Link
+      href={
+        editable
+          ? `/admin/news/edit/${newsItem.type}/${newsItem.id}`
+          : `/news/${newsItem.type}/${newsItem.id}`
+      }
+    >
+      <a className="has-action font-display sm:py-2">
+        <LayoutGridCols cols={4}>
+          {/* Image */}
+          {newsItem.image && (
+            <motion.div
+              layoutId={["news", newsItem.type, newsItem.id].join("-")}
+              transition={enterPageTransition}
+              className="surface-variant relative aspect-video w-full
+              overflow-hidden sm:rounded-lg"
+            >
+              <Image
+                src={newsItem.image}
+                fill
+                alt=""
+                className="object-cover"
+              />
+            </motion.div>
+          )}
+
+          {/* Text section */}
+          <div
+            className={[
+              "flex flex-col-reverse items-start gap-x-2 p-4 sm:px-0 md:flex-row",
+              newsItem.image ? "md:col-span-3" : "sm:col-span-2 md:col-span-4",
+            ].join(" ")}
+          >
+            <div className="flex w-full flex-col gap-2">
+              {/* Title */}
+              <h3 className="max-lines-1 text-3xl">
+                {getLocaleString(newsItem.content.title, locale)}
+              </h3>
+
+              {/* Subtitle */}
+              <p className="max-lines-2 text-lg">
+                {getLocaleString(newsItem.content.description, locale)}
+              </p>
+
+              {/* Chip list */}
+              {showChips && newsItem.type != "info" && (
+                <NewsChipList newsItem={newsItem} />
+              )}
+
+              {/* Author and date */}
+              <div className="flex flex-row divide-x divide-outline">
+                <time className="text-outline">
+                  {new Date(newsItem.postDate).toLocaleDateString(locale, {
+                    year: locale == "en-US" ? "numeric" : "2-digit",
+                    month: "short",
+                    day: "numeric",
+                  })}
+                </time>
+              </div>
             </div>
-          )
-        }
-        className="font-display"
-      />
-      {showChips && newsItem.type != "info" && (
-        <div className="overflow-x-auto py-1 px-4">
-          <NewsChipList newsItem={newsItem} />
-        </div>
-      )}
-      <CardSupportingText>
-        <p className="max-lines-2">
-          {getLocaleString(newsItem.content.description, locale)}
-        </p>
-      </CardSupportingText>
-      <CardActions>
-        {editable ? (
-          <LinkButton
-            label={t("itemAction.edit")}
-            type={btnType || "filled"}
-            url={`/admin/news/edit/${newsItem.type}/${newsItem.id}`}
-            LinkElement={Link}
-          />
-        ) : (
-          <LinkButton
-            label={t(
-              `itemAction.${newsItem.type}${
-                ["info", "stats"].includes(newsItem.type)
-                  ? ""
-                  : `.${newsItem.done ? "edit" : "do"}`
-              }`
-            )}
-            type={btnType || "filled"}
-            url={`/news/${newsItem.type}/${newsItem.id}`}
-            LinkElement={Link}
-          />
-        )}
-      </CardActions>
-    </Card>
+
+            {/* Icons */}
+            <div
+              className="flex w-full flex-row items-center justify-between
+                gap-8 md:w-fit md:justify-start"
+            >
+              {/* Type */}
+              <div className="flex flex-row-reverse gap-2 sm:flex-row">
+                <span>{t(`itemType.${newsItem.type}`)}</span>
+                <NewsIcon type={newsItem.type} className="text-secondary" />
+              </div>
+
+              {/* Status */}
+              {["info", "stats"].includes(newsItem.type) ? undefined : (
+                <NewsStatus newsItem={newsItem} />
+              )}
+            </div>
+          </div>
+        </LayoutGridCols>
+      </a>
+    </Link>
   );
 };
 
-export default NewsCard;
+export default NewsListItem;

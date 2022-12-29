@@ -3,13 +3,14 @@ import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import Masonry from "react-masonry-css";
 
 // Components
-import NewsCard from "@components/news/NewsCard";
+import NewsCard from "@components/news/NewsListItem";
 
 // Animations
 import { animationTransition } from "@utils/animations/config";
 
 // Types
 import { NewsItemNoDate } from "@utils/types/news";
+import NewsListItem from "@components/news/NewsListItem";
 
 const NewsFeed = ({
   news,
@@ -20,35 +21,23 @@ const NewsFeed = ({
   isForAdmin?: boolean;
   btnType?: "filled" | "tonal" | "text" | "outlined";
 }): JSX.Element => (
-  <section role="feed">
+  <section role="feed" className="divide-y-2 divide-outline !px-0">
     <LayoutGroup>
       <AnimatePresence initial={false}>
-        <Masonry
-          role="feed"
-          breakpointCols={{ default: 3, 905: 2, 600: 1 }}
-          className="flex flex-row gap-4 sm:gap-6"
-          columnClassName="flex flex-col gap-4 sm:gap-6"
-        >
-          {news.map((newsItem, index) => (
-            <motion.article
-              key={["news", newsItem.type, newsItem.id].join("-")}
-              aria-posinset={index}
-              aria-setsize={-1}
-              initial={{ scale: 0.8, y: 20, opacity: 0 }}
-              animate={{ scale: 1, y: 0, opacity: 1 }}
-              exit={{ scale: 0.8, y: 20, opacity: 0 }}
-              layoutId={["news", newsItem.type, newsItem.id].join("-")}
-              transition={animationTransition}
-            >
-              <NewsCard
-                newsItem={newsItem}
-                editable={isForAdmin}
-                btnType={btnType || "filled"}
-                showChips
-              />
-            </motion.article>
-          ))}
-        </Masonry>
+        {news.map((newsItem, index) => (
+          <motion.article
+            key={["news", newsItem.type, newsItem.id].join("-")}
+            aria-posinset={index}
+            aria-setsize={-1}
+            initial={{ scale: 0.95, y: 10, opacity: 0 }}
+            animate={{ scale: 1, y: 0, opacity: 1 }}
+            exit={{ scale: 0.95, y: 10, opacity: 0 }}
+            transition={animationTransition}
+            className="!px-0"
+          >
+            <NewsListItem newsItem={newsItem} editable={isForAdmin} showChips />
+          </motion.article>
+        ))}
       </AnimatePresence>
     </LayoutGroup>
   </section>

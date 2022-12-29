@@ -6,7 +6,7 @@ import type { AppProps } from "next/app";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
-import { appWithTranslation } from "next-i18next";
+import { appWithTranslation, useTranslation } from "next-i18next";
 
 import { ReactElement, ReactNode, useEffect, useState } from "react";
 
@@ -54,6 +54,9 @@ const App = ({
     getLayout?: (page: ReactElement) => ReactNode;
   };
 }) => {
+  // Translation
+  const {t} = useTranslation("common")
+
   // Supabase client
   const [supabaseClient] = useState(() =>
     createBrowserSupabaseClient<Database>()
@@ -85,6 +88,7 @@ const App = ({
             name="viewport"
             content="width=device-width, initial-scale=1.0"
           />
+          <meta name="description" content={t("brand.description")} />
         </Head>
         <PageLoadDim />
         <MotionConfig reducedMotion="user">
@@ -94,7 +98,7 @@ const App = ({
             </ErrorBoundary>
           )}
         </MotionConfig>
-        <ReactQueryDevtools initialIsOpen={false} />
+        {/* <ReactQueryDevtools initialIsOpen={false} /> */}
       </QueryClientProvider>
     </SessionContextProvider>
   );

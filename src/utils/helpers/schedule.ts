@@ -31,8 +31,8 @@ export function isInPeriod(
   return isWithinInterval(date, {
     start: new Date(
       periodDay.setHours(
-        periodTimes[periodStart].hours,
-        periodTimes[periodStart].min,
+        periodTimes[periodStart - 1].hours,
+        periodTimes[periodStart - 1].min,
         0,
         0
       )

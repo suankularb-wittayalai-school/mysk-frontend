@@ -5,6 +5,7 @@ import gfm from "remark-gfm";
 
 // SK Components
 import { Table } from "@suankularb-components/react";
+import { FC } from "react";
 
 const Markdown = ({
   noStyles,
@@ -17,6 +18,34 @@ const Markdown = ({
     <ReactMarkdown
       remarkPlugins={[gfm]}
       components={{
+        a: ({ href, title, children }) => {
+          const maxLength = 36;
+          const text = children ? children[0]?.toString() : "";
+
+          const AWithProps: FC = ({ children }) => (
+            <a {...{ href, title }} target="_blank" rel="noreferrer">
+              {children}
+            </a>
+          );
+
+          // Don’t modify if empty or not link
+          if (!text) return <AWithProps>{children}</AWithProps>;
+
+          try {
+            new URL(text);
+          } catch (_) {
+            return <AWithProps>{children}</AWithProps>;
+          }
+
+          // Shorten link
+          return (
+            <AWithProps>
+              {text.length > maxLength
+                ? [children[0]?.toString().slice(0, maxLength), "…"].join("")
+                : children}
+            </AWithProps>
+          );
+        },
         img: ({ src, alt }) => {
           if (
             src?.startsWith(

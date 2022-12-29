@@ -1,7 +1,7 @@
 // External libraries
 import { LayoutGroup, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
-import { useState } from "react";
+import { FC, useState } from "react";
 
 // Components
 import ElectivePeriodsReveal from "@components/schedule/ElectivePeriodsReveal";
@@ -11,22 +11,42 @@ import { animationTransition } from "@utils/animations/config";
 
 // Types
 import { Role } from "@utils/types/person";
-import { SchedulePeriod } from "@utils/types/schedule";
+import { PeriodContentItem, SchedulePeriod } from "@utils/types/schedule";
 
-const ElectivePeriod = ({
-  isInSession,
-  periodWidth,
-  schedulePeriod,
-  day,
-  role,
-  allowEdit,
-}: {
+const ElectivePeriod: FC<{
   isInSession: boolean;
   periodWidth: number;
   schedulePeriod: SchedulePeriod;
   day: Day;
   role: Role;
   allowEdit?: boolean;
+  setEditPeriod?: ({
+    show,
+    day,
+    schedulePeriod,
+  }: {
+    show: boolean;
+    day: Day;
+    schedulePeriod: PeriodContentItem;
+  }) => void;
+  setDeletePeriod?: ({
+    show,
+    periodID,
+  }: {
+    show: boolean;
+    periodID: number;
+  }) => void;
+  toggleFetched?: () => void;
+}> = ({
+  isInSession,
+  periodWidth,
+  schedulePeriod,
+  day,
+  role,
+  allowEdit,
+  setEditPeriod,
+  setDeletePeriod,
+  toggleFetched,
 }) => {
   const { t } = useTranslation("schedule");
 
@@ -54,7 +74,7 @@ const ElectivePeriod = ({
               layoutId={`sp-${schedulePeriod.id}-header`}
               transition={animationTransition}
             >
-              {t("schedule.elective")}
+              {t(`schedule.${role == "teacher" ? "overlap" : "elective"}`)}
             </motion.span>
           </div>
         </motion.button>
@@ -66,6 +86,9 @@ const ElectivePeriod = ({
           day={day}
           role={role}
           allowEdit={allowEdit}
+          setEditPeriod={setEditPeriod}
+          setDeletePeriod={setDeletePeriod}
+          toggleFetched={toggleFetched}
           setShow={setShowPeriods}
         />
       )}
