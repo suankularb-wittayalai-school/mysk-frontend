@@ -263,8 +263,8 @@ const DataCheckSection = ({
       return false;
 
     // Citizen ID validation
-    if (!validateCitizenID(form.citizenID) && !validatePassport(form.citizenID))
-      return false;
+    // if (!validateCitizenID(form.citizenID) && !validatePassport(form.citizenID))
+    //  return false;
 
     return true;
   }
