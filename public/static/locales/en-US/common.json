@@ -5,19 +5,18 @@
     "slogan": "Education management<br>Suankularb Wittayalai School",
     "sloganShort": "MySK education management system",
     "description": "Easily access and understand school data with the MySK education management system for Suankularb Wittayalai School.",
-    "school": "Suankularb Wittayalai School",
-    "logoAlt": "The logo of MySK: pink and blue rose with the text MySK as its core"
+    "school": "Suankularb Wittayalai School"
   },
   "navigation": {
     "welcome": "Welcome",
     "login": "Log in",
-    "about": "About",
     "learn": "Learn",
     "teach": "Teach",
-    "people": "People",
     "class": "Class",
+    "lookup": "News",
     "news": "News",
-    "me": "Me"
+    "account": "Account",
+    "language": "ภาษาไทย"
   },
   "name": {
     "prefix": {
