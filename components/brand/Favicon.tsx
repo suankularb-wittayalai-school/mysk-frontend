@@ -1,4 +1,7 @@
-const Favicon = () => (
+// External libraries
+import { FC } from "react";
+
+const Favicon: FC = () => (
   <svg
     width="24"
     height="24"

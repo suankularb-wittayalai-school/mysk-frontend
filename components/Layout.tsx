@@ -22,7 +22,8 @@ import {
 } from "@suankularb-components/react";
 
 // Internal components
-import Favicon from "@/components/Favicon";
+import Favicon from "@/components/brand/Favicon";
+import RailLogo from "@/components/brand/RailLogo";
 
 // Hooks
 import { usePageIsLoading, useTransitionEvent } from "@/utils/hooks/routing";
@@ -72,7 +73,10 @@ const Layout: FC<
       {/* Navigation Drawer */}
       <NavDrawer open={navOpen} onClose={() => setNavOpen(false)}>
         {/* Top-level pages */}
-        <NavDrawerSection header="TODO">
+        <NavDrawerSection
+          header={<span className="skc-headline-small">MySK</span>}
+          alt="MySK"
+        >
           <NavDrawerItem
             icon={<MaterialIcon icon="home" />}
             label={t("navigation.welcome")}
@@ -92,15 +96,7 @@ const Layout: FC<
 
       {/* Navigation Bar/Rail */}
       <NavBar
-        brand={
-          <Image
-            src="/images/logo.svg"
-            priority
-            width={56}
-            height={56}
-            alt=""
-          />
-        }
+        brand={<RailLogo />}
         fab={fab}
         end={
           <NavBarItem
