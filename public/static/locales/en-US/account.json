@@ -120,6 +120,9 @@
     "forgotPassword": {
       "title": "Reset with password",
       "supportingText": "To verify your identity, we will send you an email with a link back to MySK. Follow that link to continue the process.",
+      "form": {
+        "email": "Email to send to"
+      },
       "action": {
         "cancel": "Cancel",
         "send": "Send"

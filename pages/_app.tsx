@@ -17,7 +17,7 @@ import { appWithTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
 
 // SK Components
-import { ThemeProvider } from "@suankularb-components/react";
+import { Snackbar, ThemeProvider } from "@suankularb-components/react";
 
 // Internal components
 import Layout from "@/components/Layout";
@@ -68,7 +68,7 @@ function App({ Component, pageProps }: CustomAppProps) {
       else if (event == "PASSWORD_RECOVERY")
         router.push("/account/forgot-password");
     });
-  });
+  }, []);
 
   return (
     <>

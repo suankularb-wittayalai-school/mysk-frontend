@@ -31,6 +31,7 @@ import { useToggle } from "@/utils/hooks/toggle";
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import ForgotPasswordDialog from "@/components/account/ForgotPassword";
 
 // Page
 const IndexPage: CustomPage = () => {
@@ -94,6 +95,9 @@ const IndexPage: CustomPage = () => {
     }, toggleLoading);
   }
 
+  // Forgot Password Dialog control
+  const [showForgor, setShowForgor] = useState<boolean>(false);
+
   return (
     <>
       <Head>
@@ -144,9 +148,18 @@ const IndexPage: CustomPage = () => {
                     className="bg-surface"
                   />
                   <Actions align={locale === "en-US" ? "right" : "full"}>
-                    <Button appearance="outlined" className="!bg-surface">
+                    <Button
+                      appearance="outlined"
+                      onClick={() => setShowForgor(true)}
+                      className="!bg-surface"
+                    >
                       {t("logIn.action.forgotPassword", { ns: "account" })}
                     </Button>
+                    <ForgotPasswordDialog
+                      open={showForgor}
+                      onClose={() => setShowForgor(false)}
+                      inputEmail={email}
+                    />
                     <Button
                       appearance="filled"
                       loading={loading || undefined}
