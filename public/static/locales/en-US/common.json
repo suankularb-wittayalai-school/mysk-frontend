@@ -15,7 +15,21 @@
     "news": "News",
     "account": "Account",
     "language": "ภาษาไทย",
-    "logOut": "Log out"
+    "logOut": "Log out",
+    "drawer": {
+      "lookup": {
+        "title": "Lookup",
+        "students": "Students",
+        "teachers": "Teachers",
+        "orders": "Orders",
+        "documents": "Documents"
+      },
+      "about": {
+        "title": "About",
+        "help": "Help/report issue",
+        "admin": "Admin panel"
+      }
+    }
   },
   "name": {
     "prefix": {

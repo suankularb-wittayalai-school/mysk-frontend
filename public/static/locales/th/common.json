@@ -15,7 +15,21 @@
     "news": "ข่าวสาร",
     "account": "บัญชีผู้ใช้",
     "language": "English",
-    "logOut": "ออกจากระบบ"
+    "logOut": "ออกจากระบบ",
+    "drawer": {
+      "lookup": {
+        "title": "ค้นหา",
+        "students": "นักเรียน",
+        "teachers": "อาจารย์",
+        "orders": "คำสั่งโรงเรียน",
+        "documents": "หนังสือออก"
+      },
+      "about": {
+        "title": "เกี่ยวกับ",
+        "help": "รายงาน/แนะนำ",
+        "admin": "แผงแอดมิน"
+      }
+    }
   },
   "name": {
     "prefix": {

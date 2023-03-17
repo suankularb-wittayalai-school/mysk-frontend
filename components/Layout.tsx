@@ -129,13 +129,23 @@ const Layout: FC<
           header={<span className="skc-headline-small">MySK</span>}
           alt="MySK"
         >
-          <NavDrawerItem
-            icon={<MaterialIcon icon="school" />}
-            label={t("navigation.learn")}
-            selected={router.pathname.startsWith("/learn")}
-            href={`/learn/${classNumber}`}
-            element={Link}
-          />
+          {pageRole === "teacher" ? (
+            <NavDrawerItem
+              icon={<MaterialIcon icon="school" />}
+              label={t("navigation.teach")}
+              selected={router.pathname.startsWith("/teach")}
+              href={`/teach/${classNumber}`}
+              element={Link}
+            />
+          ) : (
+            <NavDrawerItem
+              icon={<MaterialIcon icon="school" />}
+              label={t("navigation.learn")}
+              selected={router.pathname.startsWith("/learn")}
+              href={`/learn/${classNumber}`}
+              element={Link}
+            />
+          )}
           {pageRole === "student" || (pageRole === "teacher" && classNumber) ? (
             <NavDrawerItem
               icon={<MaterialIcon icon="groups" />}
@@ -150,7 +160,15 @@ const Layout: FC<
           <NavDrawerItem
             icon={<MaterialIcon icon="search" />}
             label={t("navigation.lookup")}
-            selected={router.pathname.startsWith("/lookup")}
+            selected={
+              router.pathname.startsWith("/lookup") &&
+              !(
+                router.pathname.startsWith("/lookup/students") ||
+                router.pathname.startsWith("/lookup/teachers") ||
+                router.pathname.startsWith("/lookup/orders") ||
+                router.pathname.startsWith("/lookup/documents")
+              )
+            }
             href="/lookup"
             element={Link}
           />
@@ -166,6 +184,56 @@ const Layout: FC<
             label={t("navigation.account")}
             selected={router.pathname.startsWith("/account")}
             href="/account"
+            element={Link}
+          />
+        </NavDrawerSection>
+
+        {/* Lookup */}
+        <NavDrawerSection header={t("navigation.drawer.lookup.title")}>
+          <NavDrawerItem
+            icon={<MaterialIcon icon="groups" />}
+            label={t("navigation.drawer.lookup.students")}
+            selected={router.pathname.startsWith("/lookup/students")}
+            href="/lookup/students"
+            element={Link}
+          />
+          <NavDrawerItem
+            icon={<MaterialIcon icon="group" />}
+            label={t("navigation.drawer.lookup.teachers")}
+            selected={router.pathname.startsWith("/lookup/teachers")}
+            href="/lookup/teachers"
+            element={Link}
+          />
+          <NavDrawerItem
+            icon={<MaterialIcon icon="mail" />}
+            label={t("navigation.drawer.lookup.orders")}
+            selected={router.pathname.startsWith("/lookup/orders")}
+            href="/lookup/orders"
+            element={Link}
+          />
+          <NavDrawerItem
+            icon={<MaterialIcon icon="description" />}
+            label={t("navigation.drawer.lookup.documents")}
+            selected={router.pathname.startsWith("/lookup/documents")}
+            href="/lookup/documents"
+            element={Link}
+          />
+        </NavDrawerSection>
+
+        {/* About */}
+        <NavDrawerSection header={t("navigation.drawer.about.title")}>
+          <NavDrawerItem
+            icon={<MaterialIcon icon="contact_support" />}
+            label={t("navigation.drawer.about.help")}
+            selected={router.pathname.startsWith("/help")}
+            href="/help"
+            element={Link}
+          />
+          <NavDrawerItem
+            icon={<MaterialIcon icon="admin_panel_settings" />}
+            label={t("navigation.drawer.about.admin")}
+            selected={router.pathname.startsWith("/admin")}
+            href="/admin"
             element={Link}
           />
         </NavDrawerSection>
@@ -200,13 +268,23 @@ const Layout: FC<
             }
             onNavToggle={() => setNavOpen(true)}
           >
-            <NavBarItem
-              icon={<MaterialIcon icon="school" />}
-              label={t("navigation.learn")}
-              selected={router.pathname.startsWith("/learn")}
-              href={`/learn/${classNumber}`}
-              element={Link}
-            />
+            {pageRole === "teacher" ? (
+              <NavBarItem
+                icon={<MaterialIcon icon="school" />}
+                label={t("navigation.teach")}
+                selected={router.pathname.startsWith("/teach")}
+                href={`/teach/${classNumber}`}
+                element={Link}
+              />
+            ) : (
+              <NavBarItem
+                icon={<MaterialIcon icon="school" />}
+                label={t("navigation.learn")}
+                selected={router.pathname.startsWith("/learn")}
+                href={`/learn/${classNumber}`}
+                element={Link}
+              />
+            )}
             {(pageRole === "student" ||
               (pageRole === "teacher" && classNumber)) && (
               <NavBarItem
