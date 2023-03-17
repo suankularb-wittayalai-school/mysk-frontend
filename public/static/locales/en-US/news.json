@@ -1,8 +1,5 @@
 {
-  "title": {
-    "title": "News",
-    "subtitle": "and Forms"
-  },
+  "title": "News and forms",
   "filter": {
     "forms": "Forms",
     "info": "Info",
