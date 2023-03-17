@@ -18,13 +18,13 @@ import {
   ChipSet,
   Columns,
   MaterialIcon,
+  ListItem,
+  transition,
+  useAnimationConfig,
 } from "@suankularb-components/react";
 
 // Components
 import NewsIcon from "@/components/news/NewsIcon";
-
-// Animations
-import { enterPageTransition } from "@/utils/animations/config";
 
 // Types
 import { LangCode } from "@/utils/types/common";
@@ -143,21 +143,27 @@ const NewsListItem: FC<{
   const { t } = useTranslation("news");
   const locale = useRouter().locale as LangCode;
 
+  const { duration, easing } = useAnimationConfig();
+
   return (
-    <Link
+    <ListItem
+      align="top"
+      lines={3}
+      stateLayerEffect
       href={
         editable
           ? `/admin/news/edit/${newsItem.type}/${newsItem.id}`
           : `/news/${newsItem.type}/${newsItem.id}`
       }
-      className="has-action sm:py-2"
+      element={Link}
+      className="has-action !p-0 sm:!py-2"
     >
-      <Columns columns={4}>
+      <Columns columns={4} className="w-full">
         {/* Image */}
         {newsItem.image && (
           <motion.div
             layoutId={["news", newsItem.type, newsItem.id].join("-")}
-            transition={enterPageTransition}
+            transition={transition(duration.medium4, easing.standardAccelerate)}
             className="surface-variant relative aspect-video w-full
               overflow-hidden sm:rounded-lg"
           >
@@ -207,7 +213,9 @@ const NewsListItem: FC<{
           >
             {/* Type */}
             <div className="flex flex-row-reverse gap-2 sm:flex-row">
-              <span className="skc-title-medium">{t(`itemType.${newsItem.type}`)}</span>
+              <span className="skc-title-medium">
+                {t(`itemType.${newsItem.type}`)}
+              </span>
               <NewsIcon type={newsItem.type} className="text-secondary" />
             </div>
 
@@ -218,7 +226,7 @@ const NewsListItem: FC<{
           </div>
         </div>
       </Columns>
-    </Link>
+    </ListItem>
   );
 };
 
