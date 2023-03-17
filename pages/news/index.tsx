@@ -74,7 +74,6 @@ export const getServerSideProps: GetServerSideProps = async ({
 NewsPage.pageHeader = {
   title: { key: "title", ns: "news" },
   icon: <MaterialIcon icon="newspaper" />,
-  parentURL: "/account/logout",
 };
 
 NewsPage.pageRole = "student";

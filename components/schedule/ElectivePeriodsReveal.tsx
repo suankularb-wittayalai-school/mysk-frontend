@@ -4,13 +4,15 @@ import { FC, useEffect } from "react";
 import { useTranslation } from "next-i18next";
 
 // SK Components
-import { Actions, Button } from "@suankularb-components/react";
+import {
+  Actions,
+  Button,
+  transition,
+  useAnimationConfig,
+} from "@suankularb-components/react";
 
 // Internal components
 import SubjectPeriod from "@/components/schedule/SubjectPeriod";
-
-// Animations
-import { animationSpeed, animationTransition } from "@/utils/animations/config";
 
 // Types
 import { Role } from "@/utils/types/person";
@@ -59,11 +61,15 @@ const ElectivePeriodsReveal: FC<{
   toggleFetched,
   setShow,
 }) => {
+  // Translation
   const { t } = useTranslation("schedule");
+
+  // Animation
+  const { duration, easing } = useAnimationConfig();
 
   const [allowClose, toggleAllowClose] = useToggle();
   useEffect(() => {
-    if (show) setTimeout(toggleAllowClose, animationSpeed);
+    if (show) setTimeout(toggleAllowClose, duration.medium4);
     else toggleAllowClose();
   }, [show]);
 
@@ -73,14 +79,14 @@ const ElectivePeriodsReveal: FC<{
         text-on-surface-variant"
       onMouseLeave={() => allowClose && setShow(false)}
       layoutId={`sp-${schedulePeriod.id}-button`}
-      transition={animationTransition}
+      transition={transition(duration.medium4, easing.standard)}
     >
       <div className="flex flex-row gap-2">
         <div className="px-2">
           <motion.h1
             className="truncate font-display text-xl font-medium"
             layoutId={`sp-${schedulePeriod.id}-header`}
-            transition={animationTransition}
+            transition={transition(duration.medium4, easing.standard)}
           >
             {t(`schedule.${role == "teacher" ? "overlap" : "elective"}`)}
           </motion.h1>

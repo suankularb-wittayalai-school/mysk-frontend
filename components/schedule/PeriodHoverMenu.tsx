@@ -5,10 +5,11 @@ import { Trans, useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
 
 // SK Components
-import { MaterialIcon } from "@suankularb-components/react";
-
-// Animations
-import { animationTransition } from "@/utils/animations/config";
+import {
+  MaterialIcon,
+  transition,
+  useAnimationConfig,
+} from "@suankularb-components/react";
 
 // Backend
 import { editScheduleItemDuration } from "@/utils/backend/schedule/schedule";
@@ -53,7 +54,13 @@ const PeriodHoverMenu = ({
   toggleFetched?: () => void;
   setDragging: (value: boolean) => void;
 }): JSX.Element => {
+  // Translation
   const { t } = useTranslation("schedule");
+
+  // Animation
+  const { duration, easing } = useAnimationConfig();
+
+  // Database
   const supabase = useSupabaseClient();
   const [teacher] = useTeacherAccount();
 
@@ -93,7 +100,7 @@ const PeriodHoverMenu = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={animationTransition}
+            transition={transition(duration.short4, easing.standard)}
           >
             <div className="relative h-full w-full">
               {/* Helper message */}
@@ -105,7 +112,7 @@ const PeriodHoverMenu = ({
                   initial={{ scale: 0.9, y: 5, opacity: 0 }}
                   animate={{ scale: 1, y: 0, opacity: 1 }}
                   exit={{ scale: 0.9, y: 5, opacity: 0 }}
-                  transition={animationTransition}
+                  transition={transition(duration.short4, easing.standard)}
                 >
                   {!listeningCursor ? (
                     <Trans i18nKey="schedule.extendGuide.initial" ns="schedule">
@@ -221,7 +228,7 @@ const PeriodHoverMenu = ({
               initial={{ opacity: 0, borderWidth: 2 }}
               animate={{ opacity: 1, borderWidth: 4 }}
               exit={{ opacity: 0, borderWidth: 2 }}
-              transition={animationTransition}
+              transition={transition(duration.short4, easing.standard)}
             />
 
             {/* Detection area */}
@@ -236,7 +243,7 @@ const PeriodHoverMenu = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={animationTransition}
+              transition={transition(duration.short4, easing.standard)}
               onMouseMove={(e) => setCursor({ x: e.clientX, y: e.clientY })}
               onMouseUp={() => {
                 // Show Indicator for 1 second after touch if touch device

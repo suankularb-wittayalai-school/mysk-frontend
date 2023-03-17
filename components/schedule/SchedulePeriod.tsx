@@ -1,13 +1,13 @@
 // External libraries
 import { motion } from "framer-motion";
 
+// SK Components
+import { transition, useAnimationConfig } from "@suankularb-components/react";
+
 // Internal components
 import ElectivePeriod from "@/components/schedule/ElectivePeriod";
 import SubjectPeriod from "@/components/schedule/SubjectPeriod";
 import EmptyPeriod from "@/components/schedule/EmptyPeriod";
-
-// Animations
-import { animationTransition } from "@/utils/animations/config";
 
 // Helpers
 import { isInPeriod } from "@/utils/helpers/schedule";
@@ -65,6 +65,9 @@ const SchedulePeriod = ({
   }) => void;
   toggleFetched?: () => void;
 }): JSX.Element => {
+  // Animation
+  const { duration, easing } = useAnimationConfig();
+
   return (
     <motion.li
       key={
@@ -86,7 +89,7 @@ const SchedulePeriod = ({
       initial={{ scale: 0.8, y: 20, opacity: 0 }}
       animate={{ scale: 1, y: 0, opacity: 1 }}
       exit={{ scale: 0.8, y: 20, opacity: 0 }}
-      transition={animationTransition}
+      transition={transition(duration.short4, easing.standard)}
     >
       {schedulePeriod.content.length > 1 ? (
         // Elective period

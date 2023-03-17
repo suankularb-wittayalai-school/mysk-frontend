@@ -96,7 +96,6 @@ export const getServerSideProps: GetServerSideProps = async ({
 
 TeachPage.pageHeader = {
   title: { key: "title", ns: "teach" },
-  parentURL: "/account/logout",
 };
 
 TeachPage.pageRole = "teacher";

@@ -3,11 +3,11 @@ import { LayoutGroup, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { FC, useState } from "react";
 
+// SK Components
+import { transition, useAnimationConfig } from "@suankularb-components/react";
+
 // Internal components
 import ElectivePeriodsReveal from "@/components/schedule/ElectivePeriodsReveal";
-
-// Animations
-import { animationTransition } from "@/utils/animations/config";
 
 // Types
 import { Role } from "@/utils/types/person";
@@ -49,6 +49,7 @@ const ElectivePeriod: FC<{
   toggleFetched,
 }) => {
   const { t } = useTranslation("schedule");
+  const { duration, easing } = useAnimationConfig();
 
   // Dialog control
   const [showPeriods, setShowPeriods] = useState<boolean>(false);
@@ -67,12 +68,12 @@ const ElectivePeriod: FC<{
           onMouseEnter={() => setShowPeriods(true)}
           onClick={() => setShowPeriods(true)}
           layoutId={`sp-${schedulePeriod.id}-button`}
-          transition={animationTransition}
+          transition={transition(duration.medium4, easing.standard)}
         >
           <div className="px-4 py-2">
             <motion.span
               layoutId={`sp-${schedulePeriod.id}-header`}
-              transition={animationTransition}
+              transition={transition(duration.medium4, easing.standard)}
             >
               {t(`schedule.${role == "teacher" ? "overlap" : "elective"}`)}
             </motion.span>
