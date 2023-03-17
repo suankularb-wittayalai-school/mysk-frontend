@@ -8,15 +8,14 @@
     "school": "โรงเรียนสวนกุหลาบวิทยาลัย"
   },
   "navigation": {
-    "welcome": "หน้าหลัก",
-    "login": "เข้าสู่ระบบ",
     "learn": "การเรียน",
     "teach": "การสอน",
     "class": "ห้องเรียน",
     "lookup": "ค้นหา",
     "news": "ข่าวสาร",
-    "me": "บัญชีผู้ใช้",
-    "language": "English"
+    "account": "บัญชีผู้ใช้",
+    "language": "English",
+    "logOut": "ออกจากระบบ"
   },
   "name": {
     "prefix": {

@@ -1,13 +1,20 @@
 // External libraries
+import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { SessionContextProvider } from "@supabase/auth-helpers-react";
+
 import { MotionConfig } from "framer-motion";
+
 import {
   Inter,
   Space_Grotesk,
   Sarabun,
   IBM_Plex_Sans_Thai,
 } from "next/font/google";
+import { useRouter } from "next/router";
+
 import { appWithTranslation } from "next-i18next";
-import { useState } from "react";
+
+import { useEffect, useState } from "react";
 
 // SK Components
 import { ThemeProvider } from "@suankularb-components/react";
@@ -22,9 +29,12 @@ import SnackbarContext from "@/contexts/SnackbarContext";
 // Styles
 import "@/styles/global.css";
 
-// Utilities
-import { CustomAppProps } from "@/utils/types/common";
+// Hooks
 import { usePreviousPath } from "@/utils/hooks/routing";
+
+// Types
+import { CustomAppProps } from "@/utils/types/common";
+import { Database } from "@/utils/types/supabase";
 
 // English fonts
 const bodyFontEN = Inter({ subsets: ["latin"] });
@@ -41,9 +51,24 @@ const displayFontTH = IBM_Plex_Sans_Thai({
 });
 
 function App({ Component, pageProps }: CustomAppProps) {
-  const { fab, pageHeader, childURLs } = Component;
+  const { fab, pageHeader, pageRole, childURLs } = Component;
   const { previousPath } = usePreviousPath();
   const [snackbar, setSnackbar] = useState<JSX.Element | null>(null);
+
+  // Supabase client
+  const [supabaseClient] = useState(() =>
+    createBrowserSupabaseClient<Database>()
+  );
+
+  // Authentication
+  const router = useRouter();
+  useEffect(() => {
+    supabaseClient.auth.onAuthStateChange((event) => {
+      if (event == "SIGNED_OUT") router.push("/");
+      else if (event == "PASSWORD_RECOVERY")
+        router.push("/account/forgot-password");
+    });
+  });
 
   return (
     <>
@@ -56,17 +81,19 @@ function App({ Component, pageProps }: CustomAppProps) {
         }
       `}</style>
 
-      <PreviousRouteContext.Provider value={previousPath}>
-        <SnackbarContext.Provider value={{ snackbar, setSnackbar }}>
-          <MotionConfig reducedMotion="user">
-            <ThemeProvider>
-              <Layout {...{ fab, pageHeader, childURLs }}>
-                <Component {...pageProps} />
-              </Layout>
-            </ThemeProvider>
-          </MotionConfig>
-        </SnackbarContext.Provider>
-      </PreviousRouteContext.Provider>
+      <SessionContextProvider supabaseClient={supabaseClient}>
+        <PreviousRouteContext.Provider value={previousPath}>
+          <SnackbarContext.Provider value={{ snackbar, setSnackbar }}>
+            <MotionConfig reducedMotion="user">
+              <ThemeProvider>
+                <Layout {...{ fab, pageHeader, pageRole, childURLs }}>
+                  <Component {...pageProps} />
+                </Layout>
+              </ThemeProvider>
+            </MotionConfig>
+          </SnackbarContext.Provider>
+        </PreviousRouteContext.Provider>
+      </SessionContextProvider>
     </>
   );
 }

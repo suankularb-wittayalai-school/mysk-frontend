@@ -10,6 +10,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { PageHeaderProps } from "@suankularb-components/react";
 
 // Types
+import { Role } from "@/utils/types/person";
 import { Database } from "@/utils/types/supabase";
 
 export type OrUndefined<T> = T | undefined;
@@ -22,7 +23,7 @@ export type LangCode = "en-US" | "th";
 /**
  * The {@link NextPage} type extended with properties for SKCom.
  */
-export type CustomPage = NextPage & {
+export type CustomPage<T = {}> = NextPage<T> & {
   /**
    * A FAB to place in Navigation Rail for or fixed on this page only.
    *
@@ -51,6 +52,11 @@ export type CustomPage = NextPage & {
   } & Partial<Omit<PageHeaderProps, "title">>;
 
   /**
+   * Who can access this page.
+   */
+  pageRole?: Role | "public";
+
+  /**
    * A list of child URLs of the current page.
    */
   childURLs?: string[];
@@ -63,7 +69,6 @@ export type CustomAppProps = {
   Component: CustomPage;
   pageProps: AppProps["pageProps"];
 };
-
 
 export type MultiLangString = {
   th: string;

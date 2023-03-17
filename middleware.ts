@@ -67,7 +67,7 @@ export async function middleware(req: NextRequest) {
   let destination: string | null = null;
   // Disallow public users from visiting private pages
   if (pageRole != "public" && userRole == "public")
-    destination = "/account/login";
+    destination = "/not-allowed";
   // Disallow logged in users from visiting certain pages under certain
   // circumstances
   // prettier-ignore
@@ -98,7 +98,7 @@ export async function middleware(req: NextRequest) {
   }
 
   // Redirect if decided so, continue if not
-  // Note: While developing, comment out lines 124-127 if you want to test
+  // Note: While developing, comment out lines 103-106 if you want to test
   // protected pages via IPv4. Pages using user data will not work, however.
   if (destination)
     return NextResponse.redirect(
@@ -112,7 +112,6 @@ export const config = {
     "/",
     "/welcome",
     "/account",
-    "/account/:path*",
     "/about",
     "/admin/:path*",
     "/learn",
@@ -125,4 +124,3 @@ export const config = {
     "/news/payment/:id",
   ],
 };
-

@@ -10,9 +10,9 @@
   },
   "dependencies": {
     "@suankularb-components/react": "^3.0.0",
-    "@supabase/auth-helpers-nextjs": "^0.5.2",
+    "@supabase/auth-helpers-nextjs": "^0.5.6",
     "@supabase/auth-helpers-react": "^0.3.1",
-    "@supabase/supabase-js": "^2.0.4",
+    "@supabase/supabase-js": "^2.11.0",
     "@tanstack/react-table": "^8.7.9",
     "csv": "^6.0.5",
     "csv-parse": "^5.0.4",
@@ -30,7 +30,7 @@
     "react-to-print": "^2.14.7",
     "remark-gfm": "^3.0.1",
     "sharp": "^0.31.3",
-    "supabase": "^1.11.3"
+    "supabase": "^1.42.7"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.4",

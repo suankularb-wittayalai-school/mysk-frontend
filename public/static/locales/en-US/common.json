@@ -8,15 +8,14 @@
     "school": "Suankularb Wittayalai School"
   },
   "navigation": {
-    "welcome": "Welcome",
-    "login": "Log in",
     "learn": "Learn",
     "teach": "Teach",
     "class": "Class",
     "lookup": "News",
     "news": "News",
     "account": "Account",
-    "language": "ภาษาไทย"
+    "language": "ภาษาไทย",
+    "logOut": "Log out"
   },
   "name": {
     "prefix": {

@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 
-import { FC, ReactNode, useState } from "react";
+import { FC, ReactNode, useEffect, useState } from "react";
 
 // SK Components
 import {
@@ -31,10 +31,17 @@ import { useSnackbar } from "@/utils/hooks/snackbar";
 
 // Types
 import { CustomPage } from "@/utils/types/common";
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
+import { getUserMetadata } from "@/utils/backend/account";
+import { getClassOfStudent } from "@/utils/backend/person/student";
+import { getClassAdvisorAt } from "@/utils/backend/person/teacher";
 
 const Layout: FC<
-  { children: ReactNode } & Pick<CustomPage, "fab" | "pageHeader" | "childURLs">
-> = ({ children, fab, pageHeader, childURLs }) => {
+  { children: ReactNode } & Pick<
+    CustomPage,
+    "fab" | "pageHeader" | "pageRole" | "childURLs"
+  >
+> = ({ children, fab, pageHeader, pageRole, childURLs }) => {
   // Translation
   const { t } = useTranslation([
     "common",
@@ -47,7 +54,53 @@ const Layout: FC<
   const router = useRouter();
   const [navOpen, setNavOpen] = useState<boolean>(false);
 
-  const getIsSelected = (pattern: RegExp) => pattern.test(router.pathname);
+  // Class data (for Navigation links)
+  const supabase = useSupabaseClient();
+  const user = useUser();
+  const [classNumber, setClassNumber] = useState<number | null>();
+  async function getAndSetClassNumber() {
+    // Get user metadata
+    const { data: metadata, error: metadataError } = await getUserMetadata(
+      supabase,
+      user!.id
+    );
+    if (metadataError) {
+      console.error(metadataError);
+      return;
+    }
+
+    // For a student
+    if (metadata!.role == "student") {
+      const { data: classOfStudent, error } = await getClassOfStudent(
+        supabase,
+        metadata!.student!
+      );
+      if (error) {
+        console.error(error);
+        return;
+      }
+      setClassNumber(classOfStudent.number);
+    }
+
+    // For a teacher
+    else if (metadata!.role == "teacher") {
+      const { data: classAdvisorAt, error } = await getClassAdvisorAt(
+        supabase,
+        metadata!.teacher!
+      );
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+      if (!classAdvisorAt) return;
+      setClassNumber(classAdvisorAt.number);
+    }
+  }
+  useEffect(() => {
+    if (!user || pageRole === "public") return;
+    getAndSetClassNumber();
+  }, [user]);
 
   // Root Layout
   const { pageIsLoading } = usePageIsLoading();
@@ -78,56 +131,115 @@ const Layout: FC<
           alt="MySK"
         >
           <NavDrawerItem
-            icon={<MaterialIcon icon="home" />}
-            label={t("navigation.welcome")}
-            selected={router.pathname === "/"}
-            href="/"
+            icon={<MaterialIcon icon="school" />}
+            label={t("navigation.learn")}
+            selected={router.pathname.startsWith("/learn")}
+            href={`/learn/${classNumber}`}
+            element={Link}
+          />
+          {(pageRole === "student" ||
+            (pageRole === "teacher" && classNumber)) && (
+            <NavDrawerItem
+              icon={<MaterialIcon icon="groups" />}
+              label={t("navigation.class")}
+              selected={router.pathname.startsWith("/class")}
+              href={`/class/${classNumber}/overview`}
+              element={Link}
+            />
+          )}
+          <NavDrawerItem
+            icon={<MaterialIcon icon="search" />}
+            label={t("navigation.lookup")}
+            selected={router.pathname.startsWith("/lookup")}
+            href="/lookup"
             element={Link}
           />
           <NavDrawerItem
-            icon={<MaterialIcon icon="login" />}
-            label={t("navigation.login")}
-            selected={router.pathname === "/account/login"}
-            href="/account/login"
+            icon={<MaterialIcon icon="newspaper" />}
+            label={t("navigation.news")}
+            selected={router.pathname.startsWith("/news")}
+            href="/news"
+            element={Link}
+          />
+          <NavDrawerItem
+            icon={<MaterialIcon icon="account_circle" />}
+            label={t("navigation.account")}
+            selected={router.pathname.startsWith("/account")}
+            href="/account"
             element={Link}
           />
         </NavDrawerSection>
       </NavDrawer>
 
       {/* Navigation Bar/Rail */}
-      <NavBar
-        brand={<RailLogo />}
-        fab={fab}
-        end={
-          <NavBarItem
-            icon={<MaterialIcon icon="translate" />}
-            label={t("navigation.language")}
-            href="/"
-            element={(props) => (
-              <Link
-                locale={router.locale == "en-US" ? "th" : "en-US"}
-                {...props}
+      {!pageRole ||
+        (pageRole !== "public" && (
+          <NavBar
+            brand={<RailLogo />}
+            fab={fab}
+            end={
+              <>
+                <NavBarItem
+                  icon={<MaterialIcon icon="translate" />}
+                  label={t("navigation.language")}
+                  href="/"
+                  element={(props) => (
+                    <Link
+                      locale={router.locale == "en-US" ? "th" : "en-US"}
+                      {...props}
+                    />
+                  )}
+                />
+                <NavBarItem
+                  icon={<MaterialIcon icon="logout" />}
+                  label={t("navigation.logOut")}
+                  href="/account/logout"
+                  element={Link}
+                />
+              </>
+            }
+            onNavToggle={() => setNavOpen(true)}
+          >
+            <NavBarItem
+              icon={<MaterialIcon icon="school" />}
+              label={t("navigation.learn")}
+              selected={router.pathname.startsWith("/learn")}
+              href={`/learn/${classNumber}`}
+              element={Link}
+            />
+            {(pageRole === "student" ||
+              (pageRole === "teacher" && classNumber)) && (
+              <NavBarItem
+                icon={<MaterialIcon icon="groups" />}
+                label={t("navigation.class")}
+                selected={router.pathname.startsWith("/class")}
+                href={`/class/${classNumber}/overview`}
+                element={Link}
               />
             )}
-          />
-        }
-        onNavToggle={() => setNavOpen(true)}
-      >
-        <NavBarItem
-          icon={<MaterialIcon icon="home" />}
-          label={t("navigation.welcome")}
-          selected={router.pathname === "/"}
-          href="/"
-          element={Link}
-        />
-        <NavBarItem
-          icon={<MaterialIcon icon="login" />}
-          label={t("navigation.login")}
-          selected={router.pathname === "/account/login"}
-          href="/account/login"
-          element={Link}
-        />
-      </NavBar>
+            <NavBarItem
+              icon={<MaterialIcon icon="search" />}
+              label={t("navigation.lookup")}
+              selected={router.pathname.startsWith("/lookup")}
+              href="/lookup"
+              element={Link}
+            />
+            <NavBarItem
+              icon={<MaterialIcon icon="newspaper" />}
+              label={t("navigation.news")}
+              selected={router.pathname.startsWith("/news")}
+              href="/news"
+              element={Link}
+            />
+            <NavBarItem
+              icon={<MaterialIcon icon="account_circle" />}
+              label={t("navigation.account")}
+              selected={router.pathname.startsWith("/account")}
+              href="/account"
+              element={Link}
+            />
+          </NavBar>
+        ))}
 
       {/* Page Header */}
       {pageHeader && (
