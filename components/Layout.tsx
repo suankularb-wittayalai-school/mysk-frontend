@@ -137,8 +137,7 @@ const Layout: FC<
             href={`/learn/${classNumber}`}
             element={Link}
           />
-          {(pageRole === "student" ||
-            (pageRole === "teacher" && classNumber)) && (
+          {pageRole === "student" || (pageRole === "teacher" && classNumber) ? (
             <NavDrawerItem
               icon={<MaterialIcon icon="groups" />}
               label={t("navigation.class")}
@@ -146,6 +145,8 @@ const Layout: FC<
               href={`/class/${classNumber}/overview`}
               element={Link}
             />
+          ) : (
+            <></>
           )}
           <NavDrawerItem
             icon={<MaterialIcon icon="search" />}
@@ -207,16 +208,16 @@ const Layout: FC<
               href={`/learn/${classNumber}`}
               element={Link}
             />
-            {(pageRole === "student" ||
-              (pageRole === "teacher" && classNumber)) && (
-              <NavBarItem
-                icon={<MaterialIcon icon="groups" />}
-                label={t("navigation.class")}
-                selected={router.pathname.startsWith("/class")}
-                href={`/class/${classNumber}/overview`}
-                element={Link}
-              />
-            )}
+            {pageRole === "student" ||
+              (pageRole === "teacher" && classNumber && (
+                <NavBarItem
+                  icon={<MaterialIcon icon="groups" />}
+                  label={t("navigation.class")}
+                  selected={router.pathname.startsWith("/class")}
+                  href={`/class/${classNumber}/overview`}
+                  element={Link}
+                />
+              ))}
             <NavBarItem
               icon={<MaterialIcon icon="search" />}
               label={t("navigation.lookup")}

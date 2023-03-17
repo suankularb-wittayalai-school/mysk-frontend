@@ -103,6 +103,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 LearnPage.pageHeader = {
   title: { key: "title", ns: "learn" },
   icon: <MaterialIcon icon="school" />,
+  parentURL: "/account/logout",
 };
 
 LearnPage.pageRole = "student";

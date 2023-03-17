@@ -34,6 +34,9 @@
       "logIn": "Log in"
     }
   },
+  "logOut": {
+    "title": "Logging out…"
+  },
   "forgor": {
     "title": "Password reset",
     "newPassword": "New password",

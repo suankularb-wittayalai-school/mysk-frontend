@@ -43,11 +43,11 @@ const IndexPage: CustomPage = () => {
 
   // Supabase
   const supabase = useSupabaseClient();
-  
+
   // Form control
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  
+
   // Form submission
   const [loading, toggleLoading] = useToggle();
 
@@ -99,7 +99,10 @@ const IndexPage: CustomPage = () => {
       <Head>
         <title>{t("brand.name", { ns: "common" })}</title>
       </Head>
-      <ContentLayout>
+      <ContentLayout
+        className="-mb-20 min-h-screen bg-cover bg-center
+          supports-[height:100svh]:min-h-[100svh] sm:mb-0"
+      >
         <Columns columns={3} className="mx-4 sm:mx-0">
           <div className="col-span-2">
             <h1 className="skc-display-large mb-12">
@@ -125,6 +128,8 @@ const IndexPage: CustomPage = () => {
                       )
                     }
                     locale={locale}
+                    inputAttr={{ autoCapitalize: "off" }}
+                    className="bg-surface"
                   />
                   <TextField
                     appearance="outlined"
@@ -136,9 +141,10 @@ const IndexPage: CustomPage = () => {
                     onChange={(value) => setPassword(value as string)}
                     locale={locale}
                     inputAttr={{ type: "password" }}
+                    className="bg-surface"
                   />
                   <Actions align={locale === "en-US" ? "right" : "full"}>
-                    <Button appearance="outlined">
+                    <Button appearance="outlined" className="!bg-surface">
                       {t("logIn.action.forgotPassword", { ns: "account" })}
                     </Button>
                     <Button
