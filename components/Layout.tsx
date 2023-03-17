@@ -1,5 +1,4 @@
 // External libraries
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -208,16 +207,16 @@ const Layout: FC<
               href={`/learn/${classNumber}`}
               element={Link}
             />
-            {pageRole === "student" ||
-              (pageRole === "teacher" && classNumber && (
-                <NavBarItem
-                  icon={<MaterialIcon icon="groups" />}
-                  label={t("navigation.class")}
-                  selected={router.pathname.startsWith("/class")}
-                  href={`/class/${classNumber}/overview`}
-                  element={Link}
-                />
-              ))}
+            {(pageRole === "student" ||
+              (pageRole === "teacher" && classNumber)) && (
+              <NavBarItem
+                icon={<MaterialIcon icon="groups" />}
+                label={t("navigation.class")}
+                selected={router.pathname.startsWith("/class")}
+                href={`/class/${classNumber}/overview`}
+                element={Link}
+              />
+            )}
             <NavBarItem
               icon={<MaterialIcon icon="search" />}
               label={t("navigation.lookup")}

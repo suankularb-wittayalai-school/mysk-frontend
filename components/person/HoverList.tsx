@@ -20,7 +20,7 @@ const HoverList = ({
   const locale = useRouter().locale as LangCode;
 
   return (
-    <span className={`skc-body-small ${truncate ? "truncate" : ""}`}>
+    <span className={truncate ? "truncate" : undefined}>
       {people.length > 0 &&
         // Show the first person’s name in user locale
         (useFullName

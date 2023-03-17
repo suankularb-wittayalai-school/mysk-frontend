@@ -55,11 +55,13 @@ export async function getSubjectList(
   }
 
   return {
-    data: await Promise.all(
-      data.map(
-        async (roomSubject) => await db2SubjectListItem(supabase, roomSubject)
+    data: (
+      await Promise.all(
+        data.map(
+          async (roomSubject) => await db2SubjectListItem(supabase, roomSubject)
+        )
       )
-    ),
+    ).sort((a, b) => (a.subject.code.th > b.subject.code.th ? 1 : -1)),
     error: null,
   };
 }
