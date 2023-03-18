@@ -8,28 +8,32 @@ import { User } from "@supabase/supabase-js";
 import { db2Teacher } from "@/utils/backend/database";
 
 // Types
+import { DatabaseClient } from "@/utils/types/common";
 import { Teacher } from "@/utils/types/person";
 
 export function useTeacherAccount(): [Teacher | null, User | null] {
   const user = useUser();
-  const supabase = useSupabaseClient();
+  const supabase = useSupabaseClient() as DatabaseClient;
   const [teacher, setTeacher] = useState<Teacher | null>(null);
 
   useEffect(() => {
-    if (!user || user.user_metadata.role != "teacher") return;
-    supabase
-      .from("teacher")
-      .select("*, person(*), subject_group(*)")
-      .eq("id", user.user_metadata.teacher)
-      .single()
-      .then((res) => {
-        if (res.error) {
-          console.log(res.error);
-          return;
-        }
+    async function getAndSetTeacher() {
+      const { data, error } = await supabase
+        .from("teacher")
+        .select("*, person(*), subject_group(*)")
+        .eq("id", user!.user_metadata.teacher)
+        .single();
 
-        db2Teacher(supabase, res.data).then((teacher) => setTeacher(teacher));
-      });
+      if (error) {
+        console.log(error);
+        return;
+      }
+
+      db2Teacher(supabase, data).then((teacher) => setTeacher(teacher));
+    }
+
+    if (!user || user.user_metadata.role != "teacher") return;
+    getAndSetTeacher();
   }, [user]);
   return [teacher, user];
 }

@@ -27,7 +27,9 @@
       "about": {
         "title": "About",
         "help": "Help/report issue",
-        "admin": "Admin panel"
+        "admin": "Admin panel",
+        "language": "ภาษาไทย",
+        "logOut": "Log out"
       }
     }
   },
