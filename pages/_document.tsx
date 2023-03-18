@@ -28,13 +28,13 @@ export default function Document() {
         <meta name="msapplication-TileColor" content="#2b5797" />
         <meta
           name="theme-color"
-          content="#dfebf3"
+          content="#d8e7ef"
           media="(prefers-color-scheme: light)"
           key="theme-light"
         />
         <meta
           name="theme-color"
-          content="#243037"
+          content="#27353d"
           media="(prefers-color-scheme: dark)"
           key="theme-dark"
         />
