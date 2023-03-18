@@ -156,7 +156,7 @@ const NewsListItem: FC<{
           : `/news/${newsItem.type}/${newsItem.id}`
       }
       element={Link}
-      className="has-action !p-0 sm:!py-2"
+      className="!p-0"
     >
       <Columns columns={4} className="w-full">
         {/* Image */}
@@ -174,7 +174,7 @@ const NewsListItem: FC<{
         {/* Text section */}
         <div
           className={[
-            "flex flex-col-reverse items-start gap-x-2 p-4 sm:px-0 md:flex-row",
+            "flex flex-col-reverse items-start gap-x-2 p-4 md:flex-row",
             newsItem.image ? "md:col-span-3" : "sm:col-span-2 md:col-span-4",
           ].join(" ")}
         >

@@ -1,4 +1,6 @@
 // External libraries
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
+
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -24,23 +26,24 @@ import {
 import Favicon from "@/components/brand/Favicon";
 import RailLogo from "@/components/brand/RailLogo";
 
+// Backend
+import { getUserMetadata } from "@/utils/backend/account";
+import { getClassOfStudent } from "@/utils/backend/person/student";
+import { getClassAdvisorAt } from "@/utils/backend/person/teacher";
+
 // Hooks
 import { usePageIsLoading, useTransitionEvent } from "@/utils/hooks/routing";
 import { useSnackbar } from "@/utils/hooks/snackbar";
 
 // Types
 import { CustomPage } from "@/utils/types/common";
-import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
-import { getUserMetadata } from "@/utils/backend/account";
-import { getClassOfStudent } from "@/utils/backend/person/student";
-import { getClassAdvisorAt } from "@/utils/backend/person/teacher";
 
 const Layout: FC<
   { children: ReactNode } & Pick<
     CustomPage,
-    "fab" | "pageHeader" | "pageRole" | "childURLs"
+    "context" | "fab" | "pageHeader" | "pageRole" | "childURLs"
   >
-> = ({ children, fab, pageHeader, pageRole, childURLs }) => {
+> = ({ children, context: Context, fab, pageHeader, pageRole, childURLs }) => {
   // Translation
   const { t } = useTranslation([
     "common",
@@ -111,7 +114,7 @@ const Layout: FC<
   // Snackbar
   const { snackbarOpen, setSnackbarOpen, snackbarProps } = useSnackbar();
 
-  return (
+  const rootLayout = (
     <RootLayout
       // Spatial transition is a beta feature. You can enable it with
       // appending `SKCOM_ENABLE_SPATIAL_TRANSITIONS=true` to your
@@ -353,6 +356,8 @@ const Layout: FC<
       {children}
     </RootLayout>
   );
+
+  return Context ? <Context>{rootLayout}</Context> : rootLayout;
 };
 
 export default Layout;

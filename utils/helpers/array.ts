@@ -8,6 +8,12 @@ export function sumArray(array: number[]) {
   return array.reduce((a, b) => a + b, 0);
 }
 
+export function toggleItem(item: any, array: any[]): any[] {
+  return array.includes(item)
+    ? array.filter((existingItem) => item !== existingItem)
+    : [...array, item];
+}
+
 export function addAtIndex(array: any[], index: number, newItem: any) {
   return [...array.slice(0, index), newItem, ...array.slice(index)];
 }

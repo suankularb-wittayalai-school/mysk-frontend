@@ -17,7 +17,7 @@ import { appWithTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
 
 // SK Components
-import { Snackbar, ThemeProvider } from "@suankularb-components/react";
+import { ThemeProvider } from "@suankularb-components/react";
 
 // Internal components
 import Layout from "@/components/Layout";
@@ -51,7 +51,7 @@ const displayFontTH = IBM_Plex_Sans_Thai({
 });
 
 function App({ Component, pageProps }: CustomAppProps) {
-  const { fab, pageHeader, pageRole, childURLs } = Component;
+  const { context, fab, pageHeader, pageRole, childURLs } = Component;
   const { previousPath } = usePreviousPath();
   const [snackbar, setSnackbar] = useState<JSX.Element | null>(null);
 
@@ -86,7 +86,7 @@ function App({ Component, pageProps }: CustomAppProps) {
           <SnackbarContext.Provider value={{ snackbar, setSnackbar }}>
             <MotionConfig reducedMotion="user">
               <ThemeProvider>
-                <Layout {...{ fab, pageHeader, pageRole, childURLs }}>
+                <Layout {...{ context, fab, pageHeader, pageRole, childURLs }}>
                   <Component {...pageProps} />
                 </Layout>
               </ThemeProvider>
