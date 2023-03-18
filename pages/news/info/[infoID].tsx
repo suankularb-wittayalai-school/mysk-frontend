@@ -25,6 +25,7 @@ import { getLocaleString } from "@/utils/helpers/i18n";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
+import NewsMeta from "@/components/news/NewsMeta";
 
 const InfoPage: CustomPage<{ infoPage: InfoPageType }> = ({ infoPage }) => {
   // Translation
@@ -38,6 +39,7 @@ const InfoPage: CustomPage<{ infoPage: InfoPageType }> = ({ infoPage }) => {
           {createTitleStr(getLocaleString(infoPage.content.title, locale), t)}
         </title>
       </Head>
+      <NewsMeta newsItem={infoPage} />
       <NewsPageHeader newsItem={infoPage} />
       <ContentLayout>
         <Columns columns={6}>
