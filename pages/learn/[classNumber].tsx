@@ -9,7 +9,6 @@ import { FC, useEffect, useState } from "react";
 
 // SK Components
 import {
-  Actions,
   Button,
   Card,
   CardContent,
@@ -23,6 +22,8 @@ import {
 } from "@suankularb-components/react";
 
 // Internal components
+import BrandIcon from "@/components/icons/BrandIcon";
+import HoverList from "@/components/person/HoverList";
 import Schedule from "@/components/schedule/Schedule";
 
 // Backend
@@ -43,11 +44,11 @@ import { SubjectListItem, SubjectName } from "@/utils/types/subject";
 
 // Helpers
 import { createTitleStr } from "@/utils/helpers/title";
-import { useLocale } from "@/utils/hooks/i18n";
 import { getLocaleObj, getLocaleString } from "@/utils/helpers/i18n";
-import BrandIcon from "@/components/icons/BrandIcon";
-import HoverList from "@/components/person/HoverList";
 import { nameJoiner } from "@/utils/helpers/name";
+
+// Hooks
+import { useLocale } from "@/utils/hooks/i18n";
 
 const ScheduleSection: FC<{ schedule: ScheduleType }> = ({ schedule }) => {
   const { t } = useTranslation("learn");
@@ -91,7 +92,7 @@ const SubjectListSection: FC<{ subjectList: SubjectListItem[] }> = ({
   return (
     <Section>
       <Columns columns={3} className="!items-end">
-        <Header className="col-span-2">{t("subjectList.title")}</Header>
+        <Header className="md:col-span-2">{t("subjectList.title")}</Header>
         <Search
           alt={t("subjectList.search")}
           value={query}

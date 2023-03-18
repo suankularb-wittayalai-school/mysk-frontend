@@ -59,8 +59,8 @@ const ElectivePeriod: FC<{
       {!showPeriods ? (
         <motion.button
           className={[
-            `group relative h-14 w-full rounded-sm text-left
-              align-middle font-display text-xl font-medium leading-none`,
+            `skc-title-medium group relative h-14 w-full rounded-sm text-left
+            align-middle !leading-none`,
             isInSession
               ? "bg-tertiary-translucent-12 shadow text-on-tertiary-container"
               : "bg-surface-2 text-on-surface-variant",
@@ -72,7 +72,9 @@ const ElectivePeriod: FC<{
         >
           <div className="px-4 py-2">
             <motion.span
-              layoutId={`sp-${schedulePeriod.id}-header`}
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
               transition={transition(duration.medium4, easing.standard)}
             >
               {t(`schedule.${role == "teacher" ? "overlap" : "elective"}`)}

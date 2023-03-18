@@ -1,15 +1,9 @@
 // External libraries
 import { motion } from "framer-motion";
-import { FC, useEffect } from "react";
-import { useTranslation } from "next-i18next";
+import { FC } from "react";
 
 // SK Components
-import {
-  Actions,
-  Button,
-  transition,
-  useAnimationConfig,
-} from "@suankularb-components/react";
+import { transition, useAnimationConfig } from "@suankularb-components/react";
 
 // Internal components
 import SubjectPeriod from "@/components/schedule/SubjectPeriod";
@@ -20,9 +14,6 @@ import {
   PeriodContentItem,
   SchedulePeriod as SchedulePeriodType,
 } from "@/utils/types/schedule";
-
-// Hooks
-import { useToggle } from "@/utils/hooks/toggle";
 
 const ElectivePeriodsReveal: FC<{
   show: boolean;
@@ -61,36 +52,18 @@ const ElectivePeriodsReveal: FC<{
   toggleFetched,
   setShow,
 }) => {
-  // Translation
-  const { t } = useTranslation("schedule");
-
   // Animation
   const { duration, easing } = useAnimationConfig();
 
-  const [allowClose, toggleAllowClose] = useToggle();
-  useEffect(() => {
-    if (show) setTimeout(toggleAllowClose, duration.medium4);
-    else toggleAllowClose();
-  }, [show]);
-
   return (
-    <motion.div
-      className="mx-0 w-fit rounded-sm border-2 border-primary bg-surface-2 p-2
-        text-on-surface-variant"
-      onMouseLeave={() => allowClose && setShow(false)}
-      layoutId={`sp-${schedulePeriod.id}-button`}
-      transition={transition(duration.medium4, easing.standard)}
-    >
-      <div className="flex flex-row gap-2">
-        <div className="px-2">
-          <motion.h1
-            className="truncate font-display text-xl font-medium"
-            layoutId={`sp-${schedulePeriod.id}-header`}
-            transition={transition(duration.medium4, easing.standard)}
-          >
-            {t(`schedule.${role == "teacher" ? "overlap" : "elective"}`)}
-          </motion.h1>
-        </div>
+    <>
+      <motion.div
+        className="relative -top-2 -left-2 z-20 mx-0 w-fit rounded-sm border-2
+          border-primary bg-surface-2 p-2 text-on-surface-variant"
+        onMouseLeave={() => setShow(false)}
+        layoutId={`sp-${schedulePeriod.id}-button`}
+        transition={transition(duration.medium4, easing.standard)}
+      >
         <ul className="flex flex-row gap-2">
           {schedulePeriod.content.map((item) => (
             <li
@@ -111,13 +84,9 @@ const ElectivePeriodsReveal: FC<{
             </li>
           ))}
         </ul>
-      </div>
-      <Actions className="pt-2">
-        <Button appearance="text" onClick={() => setShow(false)}>
-          {t("schedule.electiveReveal.action.close")}
-        </Button>
-      </Actions>
-    </motion.div>
+      </motion.div>
+      <div className="fixed inset-0 z-10" onTouchEnd={() => setShow(false)} />
+    </>
   );
 };
 
