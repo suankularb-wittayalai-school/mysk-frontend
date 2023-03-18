@@ -253,7 +253,7 @@ const Layout: FC<
                 <NavBarItem
                   icon={<MaterialIcon icon="translate" />}
                   label={t("navigation.language")}
-                  href="/"
+                  href={router.pathname}
                   element={(props) => (
                     <Link
                       locale={router.locale == "en-US" ? "th" : "en-US"}
