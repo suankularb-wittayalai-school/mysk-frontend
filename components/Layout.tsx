@@ -37,6 +37,7 @@ import { useSnackbar } from "@/utils/hooks/snackbar";
 
 // Types
 import { CustomPage } from "@/utils/types/common";
+import { UserMetadata } from "@/utils/types/person";
 
 const Layout: FC<
   { children: ReactNode } & Pick<
@@ -59,6 +60,7 @@ const Layout: FC<
   // Class data (for Navigation links)
   const supabase = useSupabaseClient();
   const user = useUser();
+  const [userMetadata, setUserMetadata] = useState<UserMetadata | null>();
   const [classNumber, setClassNumber] = useState<number | null>();
   async function getAndSetClassNumber() {
     // Get user metadata
@@ -68,8 +70,10 @@ const Layout: FC<
     );
     if (metadataError) {
       console.error(metadataError);
+      setUserMetadata(null);
       return;
     }
+    setUserMetadata(metadata);
 
     // For a student
     if (metadata!.role == "student") {
@@ -132,12 +136,12 @@ const Layout: FC<
           header={<span className="skc-headline-small">MySK</span>}
           alt="MySK"
         >
-          {pageRole === "teacher" ? (
+          {userMetadata?.role === "teacher" || pageRole === "teacher" ? (
             <NavDrawerItem
               icon={<MaterialIcon icon="school" />}
               label={t("navigation.teach")}
               selected={router.pathname.startsWith("/teach")}
-              href={`/teach/${classNumber}`}
+              href="/teach"
               element={Link}
             />
           ) : (
@@ -207,13 +211,17 @@ const Layout: FC<
             href="/lookup/teachers"
             element={Link}
           />
-          <NavDrawerItem
-            icon={<MaterialIcon icon="mail" />}
-            label={t("navigation.drawer.lookup.orders")}
-            selected={router.pathname.startsWith("/lookup/orders")}
-            href="/lookup/orders"
-            element={Link}
-          />
+          {userMetadata?.role === "teacher" || pageRole === "teacher" ? (
+            <NavDrawerItem
+              icon={<MaterialIcon icon="mail" />}
+              label={t("navigation.drawer.lookup.orders")}
+              selected={router.pathname.startsWith("/lookup/orders")}
+              href="/lookup/orders"
+              element={Link}
+            />
+          ) : (
+            <></>
+          )}
           <NavDrawerItem
             icon={<MaterialIcon icon="description" />}
             label={t("navigation.drawer.lookup.documents")}
@@ -232,11 +240,32 @@ const Layout: FC<
             href="/help"
             element={Link}
           />
+          {userMetadata?.isAdmin ? (
+            <NavDrawerItem
+              icon={<MaterialIcon icon="admin_panel_settings" />}
+              label={t("navigation.drawer.about.admin")}
+              selected={router.pathname.startsWith("/admin")}
+              href="/admin"
+              element={Link}
+            />
+          ) : (
+            <></>
+          )}
           <NavDrawerItem
-            icon={<MaterialIcon icon="admin_panel_settings" />}
-            label={t("navigation.drawer.about.admin")}
-            selected={router.pathname.startsWith("/admin")}
-            href="/admin"
+            icon={<MaterialIcon icon="translate" />}
+            label={t("navigation.drawer.about.language")}
+            href={router.pathname}
+            element={(props) => (
+              <Link
+                locale={router.locale == "en-US" ? "th" : "en-US"}
+                {...props}
+              />
+            )}
+          />
+          <NavDrawerItem
+            icon={<MaterialIcon icon="logout" />}
+            label={t("navigation.drawer.about.logOut")}
+            href="/account/logout"
             element={Link}
           />
         </NavDrawerSection>
@@ -271,12 +300,12 @@ const Layout: FC<
             }
             onNavToggle={() => setNavOpen(true)}
           >
-            {pageRole === "teacher" ? (
+            {userMetadata?.role === "teacher" || pageRole === "teacher" ? (
               <NavBarItem
                 icon={<MaterialIcon icon="school" />}
                 label={t("navigation.teach")}
                 selected={router.pathname.startsWith("/teach")}
-                href={`/teach/${classNumber}`}
+                href="/teach"
                 element={Link}
               />
             ) : (
