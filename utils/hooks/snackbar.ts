@@ -44,7 +44,7 @@ export function useSnackbar() {
       clearTimeout(exitWait);
       clearTimeout(visibilityTimer);
     };
-  });
+  }, [snackbar]);
 
   return {
     /**
