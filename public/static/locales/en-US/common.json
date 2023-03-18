@@ -33,6 +33,7 @@
       }
     }
   },
+  "pageLoading": "Loading page…",
   "name": {
     "prefix": {
       "Master": "Master ",
@@ -82,6 +83,10 @@
     }
   },
   "seeDetails": "See details",
+  "snackbar": {
+    "loading": "Loading…",
+    "copiedToClipboard": "Copied to clipboard"
+  },
   "dialog": {
     "addContact": {
       "title": "Add contact",

@@ -29,24 +29,15 @@
     "dueWithin": "Due within {{dueDate}}",
     "pastDueBy": "Past due by {{timePast}}"
   },
-  "itemAction": {
-    "edit": "Edit",
-    "info": "Read more",
-    "stats": "Read more",
-    "form": {
-      "do": "Do form",
-      "edit": "Edit form"
-    },
-    "payment": {
-      "do": "Pay",
-      "edit": "See payment"
-    }
-  },
-  "pageAction": {
+  "action": {
     "admin": {
       "edit": "Edit article"
     },
+    "common": {
+      "copyLink": "Copy link"
+    },
     "form": {
+      "do": "Do form",
       "reset": "Reset",
       "submit": "Submit form"
     }

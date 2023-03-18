@@ -14,7 +14,7 @@ import { useRouter } from "next/router";
 
 import { appWithTranslation } from "next-i18next";
 
-import { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
 // SK Components
 import { ThemeProvider } from "@suankularb-components/react";
@@ -35,6 +35,8 @@ import { usePreviousPath } from "@/utils/hooks/routing";
 // Types
 import { CustomAppProps } from "@/utils/types/common";
 import { Database } from "@/utils/types/supabase";
+import { ReactNode } from "react-markdown/lib/ast-to-react";
+import NavDrawerContext from "@/contexts/NavDrawerContext";
 
 // English fonts
 const bodyFontEN = Inter({ subsets: ["latin"] });
@@ -50,10 +52,24 @@ const displayFontTH = IBM_Plex_Sans_Thai({
   subsets: ["thai"],
 });
 
-function App({ Component, pageProps }: CustomAppProps) {
-  const { context, fab, pageHeader, pageRole, childURLs } = Component;
+const Contexts: FC<{ children: ReactNode }> = ({ children }) => {
   const { previousPath } = usePreviousPath();
   const [snackbar, setSnackbar] = useState<JSX.Element | null>(null);
+  const [navOpen, setNavOpen] = useState<boolean>(false);
+
+  return (
+    <PreviousRouteContext.Provider value={previousPath}>
+      <SnackbarContext.Provider value={{ snackbar, setSnackbar }}>
+        <NavDrawerContext.Provider value={{ navOpen, setNavOpen }}>
+          {children}
+        </NavDrawerContext.Provider>
+      </SnackbarContext.Provider>
+    </PreviousRouteContext.Provider>
+  );
+};
+
+function App({ Component, pageProps }: CustomAppProps) {
+  const { context, fab, pageHeader, pageRole, childURLs } = Component;
 
   // Supabase client
   const [supabaseClient] = useState(() =>
@@ -82,17 +98,15 @@ function App({ Component, pageProps }: CustomAppProps) {
       `}</style>
 
       <SessionContextProvider supabaseClient={supabaseClient}>
-        <PreviousRouteContext.Provider value={previousPath}>
-          <SnackbarContext.Provider value={{ snackbar, setSnackbar }}>
-            <MotionConfig reducedMotion="user">
-              <ThemeProvider>
-                <Layout {...{ context, fab, pageHeader, pageRole, childURLs }}>
-                  <Component {...pageProps} />
-                </Layout>
-              </ThemeProvider>
-            </MotionConfig>
-          </SnackbarContext.Provider>
-        </PreviousRouteContext.Provider>
+        <Contexts>
+          <MotionConfig reducedMotion="user">
+            <ThemeProvider>
+              <Layout {...{ context, fab, pageHeader, pageRole, childURLs }}>
+                <Component {...pageProps} />
+              </Layout>
+            </ThemeProvider>
+          </MotionConfig>
+        </Contexts>
       </SessionContextProvider>
     </>
   );

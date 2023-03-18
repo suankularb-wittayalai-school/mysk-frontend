@@ -33,6 +33,7 @@
       }
     }
   },
+  "pageLoading": "หน้ากำลังโหลด…",
   "name": {
     "prefix": {
       "Master": "เด็กชาย",
@@ -82,6 +83,10 @@
     }
   },
   "seeDetails": "ดูรายละเอียด",
+  "snackbar": {
+    "loading": "กำลังโหลด…",
+    "copiedToClipboard": "คัดลอกไปที่คลิปบอร์ดแล้ว"
+  },
   "dialog": {
     "addContact": {
       "title": "เพิ่มช่องทางการติดต่อ",

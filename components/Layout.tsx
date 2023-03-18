@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 
-import { FC, ReactNode, useEffect, useState } from "react";
+import { FC, ReactNode, useContext, useEffect, useState } from "react";
 
 // SK Components
 import {
@@ -30,6 +30,9 @@ import RailLogo from "@/components/brand/RailLogo";
 import { getUserMetadata } from "@/utils/backend/account";
 import { getClassOfStudent } from "@/utils/backend/person/student";
 import { getClassAdvisorAt } from "@/utils/backend/person/teacher";
+
+// Contexts
+import NavDrawerContext from "@/contexts/NavDrawerContext";
 
 // Hooks
 import { usePageIsLoading, useTransitionEvent } from "@/utils/hooks/routing";
@@ -55,7 +58,7 @@ const Layout: FC<
 
   // Navigation Bar and Drawer
   const router = useRouter();
-  const [navOpen, setNavOpen] = useState<boolean>(false);
+  const { navOpen, setNavOpen } = useContext(NavDrawerContext);
 
   // Class data (for Navigation links)
   const supabase = useSupabaseClient();
@@ -282,7 +285,7 @@ const Layout: FC<
                 <NavBarItem
                   icon={<MaterialIcon icon="translate" />}
                   label={t("navigation.language")}
-                  href={router.pathname}
+                  href={router.asPath}
                   element={(props) => (
                     <Link
                       locale={router.locale == "en-US" ? "th" : "en-US"}
@@ -368,11 +371,13 @@ const Layout: FC<
       )}
 
       {/* Page loading indicator */}
-      <Progress
-        appearance="linear"
-        alt="Loading page…"
-        visible={pageIsLoading}
-      />
+      {pageHeader && (
+        <Progress
+          appearance="linear"
+          alt={t("pageLoading")}
+          visible={pageIsLoading}
+        />
+      )}
 
       {/* Snackbar */}
       <Snackbar

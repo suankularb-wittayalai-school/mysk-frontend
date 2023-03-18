@@ -29,24 +29,15 @@
     "dueWithin": "ภายใน {{dueDate}}",
     "pastDueBy": "{{timePast}}ที่แล้ว"
   },
-  "itemAction": {
-    "edit": "แก้ไข",
-    "info": "อ่านเพิ่มเติม",
-    "stats": "อ่านเพิ่มเติม",
-    "form": {
-      "do": "ทำแบบสอบถาม",
-      "edit": "แก้ไขแบบสอบถาม"
-    },
-    "payment": {
-      "do": "ชำระเงิน",
-      "edit": "ดูการชำระเงิน"
-    }
-  },
-  "pageAction": {
+  "action": {
     "admin": {
       "edit": "แก้ไขบทความ"
     },
+    "common": {
+      "copyLink": "คัดลอกลิงก์"
+    },
     "form": {
+      "do": "ทำแบบสอบถาม",
       "reset": "รีเซต",
       "submit": "ส่งแบบสอบถาม"
     }
