@@ -1,4 +1,4 @@
-// External libraries
+// SK Components
 import { MaterialIcon } from "@suankularb-components/react";
 
 // Types
