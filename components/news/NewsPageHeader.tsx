@@ -1,5 +1,4 @@
 // External libraries
-import Link from "next/link";
 import Image from "next/image";
 
 import { useTranslation } from "next-i18next";
@@ -12,17 +11,14 @@ import {
   Button,
   Columns,
   MaterialIcon,
-  PageHeader,
-  Progress,
   Snackbar,
 } from "@suankularb-components/react";
 
 // Internal components
-import Favicon from "@/components/brand/Favicon";
+import PageHeader from "@/components/common/PageHeader";
 import NewsChipSet from "@/components/news/NewsChipSet";
 
 // Contexts
-import NavDrawerContext from "@/contexts/NavDrawerContext";
 import SnackbarContext from "@/contexts/SnackbarContext";
 
 // Types
@@ -34,7 +30,6 @@ import { getLocaleString } from "@/utils/helpers/i18n";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
-import { usePageIsLoading } from "@/utils/hooks/routing";
 
 const PageActions: FC<{ title: string; className?: string }> = ({
   title,
@@ -79,74 +74,59 @@ const NewsPageHeader: FC<{ newsItem: InfoPage | FormPage }> = ({
   const locale = useLocale();
   const { t } = useTranslation("common");
 
-  // Navigation Drawer toggle
-  const { setNavOpen } = useContext(NavDrawerContext);
-
-  // Page load
-  const { pageIsLoading } = usePageIsLoading();
-
   return (
-    <>
-      <PageHeader
-        title={getLocaleString(newsItem.content.title, locale)}
-        brand={<Favicon />}
-        parentURL="/news"
-        homeURL="/"
-        locale={locale}
-        element={Link}
-        onNavToggle={() => setNavOpen(true)}
+    <PageHeader
+      title={getLocaleString(newsItem.content.title, locale)}
+      parentURL="/news"
+    >
+      <Columns
+        columns={2}
+        className="!flex !flex-col-reverse !gap-y-6 md:!grid"
       >
-        <Columns
-          columns={2}
-          className="!flex !flex-col-reverse !gap-y-6 md:!grid"
-        >
-          {/* Banner image */}
-          <div
-            className="shadow relative -left-4 aspect-video w-[calc(100%+2rem)]
+        {/* Banner image */}
+        <div
+          className="shadow relative -left-4 aspect-video w-[calc(100%+2rem)]
               overflow-hidden bg-surface-variant sm:left-0 sm:w-full
               sm:rounded-lg"
-          >
-            <Image
-              src={newsItem.image || "/images/graphics/news-placeholder.png"}
-              fill
-              alt=""
-              className="object-cover"
-            />
-          </div>
+        >
+          <Image
+            src={newsItem.image || "/images/graphics/news-placeholder.png"}
+            fill
+            priority
+            alt=""
+            className="object-cover"
+          />
+        </div>
 
-          {/* Title and short description */}
-          <div className="flex flex-col gap-3">
-            <p className="skc-headline-small">
-              {getLocaleString(newsItem.content.description, locale)}
-            </p>
-            <NewsChipSet newsItem={newsItem as InfoPage} />
-            <PageActions
-              title={createTitleStr(
-                getLocaleString(newsItem.content.title, locale),
-                t
-              )}
-              className="!hidden md:!flex"
-            />
-          </div>
-        </Columns>
+        {/* Title and short description */}
+        <div className="flex flex-col gap-3">
+          <p className="skc-headline-small">
+            {getLocaleString(newsItem.content.description, locale)}
+          </p>
 
-        {/* Actions */}
-        <PageActions
-          title={createTitleStr(
-            getLocaleString(newsItem.content.title, locale),
-            t
+          {newsItem.type !== "info" && (
+            <NewsChipSet newsItem={{ ...newsItem, done: false }} />
           )}
-          className="mt-3 md:!hidden"
-        />
-      </PageHeader>
 
-      {/* Page loading indicator */}
-      <Progress
-        appearance="linear"
-        alt={t("pageLoading")}
-        visible={pageIsLoading}
+          <PageActions
+            title={createTitleStr(
+              getLocaleString(newsItem.content.title, locale),
+              t
+            )}
+            className="!hidden md:!flex"
+          />
+        </div>
+      </Columns>
+
+      {/* Actions */}
+      <PageActions
+        title={createTitleStr(
+          getLocaleString(newsItem.content.title, locale),
+          t
+        )}
+        className="mt-3 md:!hidden"
       />
-    </>
+    </PageHeader>
   );
 };
 
