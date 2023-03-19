@@ -46,6 +46,10 @@
     "requiredButEmpty": "Please fill in the required field “{{field}}”",
     "success": "Your form is submitted"
   },
+  "form": {
+    "pastSubmissions": "Past submissions",
+    "submitNew": "Submit a new one"
+  },
   "schoolDocs": {
     "orders": {
       "title": "School orders",

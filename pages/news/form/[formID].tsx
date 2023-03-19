@@ -208,7 +208,7 @@ const FormPage: CustomPage<{
           >
             {/* Past submissions */}
             <Section>
-              <Header>Past submissions</Header>
+              <Header>{t("form.pastSubmissions")}</Header>
               <Table contentWidth={72 + formPage.content.fields.length * 160}>
                 <TableHead>
                   <TableRow>
@@ -242,10 +242,15 @@ const FormPage: CustomPage<{
             </Section>
 
             {/* Submit a new one */}
-            <Section>
+            <Section sectionAttr={{ "aria-labelledby": "header-submit-new" }}>
               <Card appearance="outlined">
                 <CardContent className="!px-0 sm:!px-4">
-                  <Header className="sr-only">Submit a new one</Header>
+                  <Header
+                    className="sr-only"
+                    hAttr={{ id: "header-submit-new" }}
+                  >
+                    {t("form.submitNew")}
+                  </Header>
                   <Form {...{ formPage, form, setForm }} />
                   <FormActions
                     handleSubmit={handleSubmit}

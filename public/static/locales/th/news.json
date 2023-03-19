@@ -46,6 +46,10 @@
     "requiredButEmpty": "กรุณาใส่ข้อมูลในช่อง “{{field}}”",
     "success": "ส่งแบบสอบถามเรียบร้อย"
   },
+  "form": {
+    "pastSubmissions": "ประวัติการทำ",
+    "submitNew": "ส่งแบบสอบถามใหม่"
+  },
   "schoolDocs": {
     "orders": {
       "title": "คำสั่งโรงเรียน",
