@@ -42,6 +42,10 @@
       "submit": "ส่งแบบสอบถาม"
     }
   },
+  "snackbar": {
+    "requiredButEmpty": "กรุณาใส่ข้อมูลในช่อง “{{field}}”",
+    "success": "ส่งแบบสอบถามเรียบร้อย"
+  },
   "schoolDocs": {
     "orders": {
       "title": "คำสั่งโรงเรียน",

@@ -131,10 +131,10 @@ const NewsListItem: FC<{
           {/* Icons */}
           <div
             className="flex w-full flex-row items-center justify-between
-                gap-8 md:w-fit md:justify-start"
+              gap-8 md:w-fit md:justify-start"
           >
             {/* Type */}
-            <div className="flex flex-row-reverse gap-2 sm:flex-row">
+            <div className="flex flex-row-reverse gap-2 md:flex-row">
               <span className="skc-title-medium">
                 {t(`itemType.${newsItem.type}`)}
               </span>
@@ -142,7 +142,7 @@ const NewsListItem: FC<{
             </div>
 
             {/* Status */}
-            {["info", "stats"].includes(newsItem.type) ? undefined : (
+            {!["info", "stats"].includes(newsItem.type) && (
               <NewsStatus newsItem={newsItem} />
             )}
           </div>

@@ -42,6 +42,10 @@
       "submit": "Submit form"
     }
   },
+  "snackbar": {
+    "requiredButEmpty": "Please fill in the required field “{{field}}”",
+    "success": "Your form is submitted"
+  },
   "schoolDocs": {
     "orders": {
       "title": "School orders",

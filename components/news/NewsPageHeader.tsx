@@ -22,7 +22,7 @@ import NewsChipSet from "@/components/news/NewsChipSet";
 import SnackbarContext from "@/contexts/SnackbarContext";
 
 // Types
-import { FormPage, InfoPage } from "@/utils/types/news";
+import { FormPage, InfoPage, NewsItemType } from "@/utils/types/news";
 
 // Helpers
 import { createTitleStr } from "@/utils/helpers/title";
@@ -31,10 +31,11 @@ import { getLocaleString } from "@/utils/helpers/i18n";
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
 
-const PageActions: FC<{ title: string; className?: string }> = ({
-  title,
-  className,
-}) => {
+const PageActions: FC<{
+  type: NewsItemType;
+  title: string;
+  className?: string;
+}> = ({ type, title, className }) => {
   // Translation
   const { t } = useTranslation(["news", "common"]);
 
@@ -43,7 +44,9 @@ const PageActions: FC<{ title: string; className?: string }> = ({
 
   return (
     <Actions align="left" className={className}>
-      {/* <Button appearance="filled">{t("action.form.do")}</Button> */}
+      {type === "form" && (
+        <Button appearance="filled" href="#form">{t("action.form.do")}</Button>
+      )}
       <Button
         appearance="outlined"
         icon={<MaterialIcon icon="link" />}
@@ -86,8 +89,8 @@ const NewsPageHeader: FC<{ newsItem: InfoPage | FormPage }> = ({
         {/* Banner image */}
         <div
           className="shadow relative -left-4 aspect-video w-[calc(100%+2rem)]
-              overflow-hidden bg-surface-variant sm:left-0 sm:w-full
-              sm:rounded-lg"
+            overflow-hidden bg-surface-variant sm:left-0 sm:w-full
+            sm:rounded-lg"
         >
           <Image
             src={newsItem.image || "/images/graphics/news-placeholder.png"}
@@ -108,18 +111,31 @@ const NewsPageHeader: FC<{ newsItem: InfoPage | FormPage }> = ({
             <NewsChipSet newsItem={{ ...newsItem, done: false }} />
           )}
 
+          {/* Author and date */}
+          <div className="skc-title-medium flex flex-row divide-x divide-outline">
+            <time className="text-outline">
+              {new Date(newsItem.postDate).toLocaleDateString(locale, {
+                year: locale == "en-US" ? "numeric" : "2-digit",
+                month: "short",
+                day: "numeric",
+              })}
+            </time>
+          </div>
+
           <PageActions
+            type={newsItem.type}
             title={createTitleStr(
               getLocaleString(newsItem.content.title, locale),
               t
             )}
-            className="!hidden md:!flex"
+            className="mt-3 !hidden md:!flex"
           />
         </div>
       </Columns>
 
       {/* Actions */}
       <PageActions
+        type={newsItem.type}
         title={createTitleStr(
           getLocaleString(newsItem.content.title, locale),
           t
