@@ -113,24 +113,17 @@ const Layout: FC<
 
   // Root Layout
   const { pageIsLoading } = usePageIsLoading();
-  const { transitionEvent } = useTransitionEvent(
-    pageHeader?.parentURL,
-    childURLs
-  );
+  // const { transitionEvent } = useTransitionEvent(
+  //   pageHeader?.parentURL,
+  //   childURLs
+  // );
 
   // Snackbar
   const { snackbarOpen, setSnackbarOpen, snackbarProps } = useSnackbar();
 
   const rootLayout = (
     <RootLayout
-      // Spatial transition is a beta feature. You can enable it with
-      // appending `SKCOM_ENABLE_SPATIAL_TRANSITIONS=true` to your
-      // `.env.local` file.
-      transitionEvent={
-        process.env.SKCOM_ENABLE_SPATIAL_TRANSITIONS === "true"
-          ? transitionEvent
-          : undefined
-      }
+    // transitionEvent={transitionEvent}
     >
       {/* Navigation Drawer */}
       <NavDrawer open={navOpen} onClose={() => setNavOpen(false)}>
