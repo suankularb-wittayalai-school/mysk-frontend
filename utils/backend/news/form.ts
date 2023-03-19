@@ -1,6 +1,11 @@
 // Types
 import { BackendDataReturn } from "@/utils/types/common";
-import { FormField, FormPage, NewsItemFormNoDate } from "@/utils/types/news";
+import {
+  FormField,
+  FormPage,
+  FormSubmission,
+  NewsItemFormNoDate,
+} from "@/utils/types/news";
 import { Database } from "@/utils/types/supabase";
 
 // Converters
@@ -44,6 +49,50 @@ export async function getForm(
     data: await db2FormPage(data!),
     error: null,
   };
+}
+
+export async function getFormSubmissions(
+  formID: number,
+  personID: number
+): Promise<BackendDataReturn<FormSubmission[]>> {
+  const { data: submissionIDs, error: submissionsError } = await supabase
+    .from("form_submissions")
+    .select("id")
+    .match({ form: formID, person: personID });
+
+  if (submissionsError) return { data: [], error: submissionsError };
+
+  let submissions: FormSubmission[] = [];
+
+  for (let submissionID of submissionIDs) {
+    const { data, error } = await supabase
+      .from("form_field_value")
+      .select("field(label_th,label_en,type),value")
+      .match({ submission: submissionID.id });
+
+    if (error) return { data: [], error };
+
+    submissions = [
+      ...submissions,
+      data!.map((field) => {
+        const question = field.field as Pick<
+          Database["public"]["Tables"]["form_questions"]["Row"],
+          "label_th" | "label_en" | "type"
+        >;
+
+        return {
+          label: {
+            th: question.label_th,
+            "en-US": question.label_en || undefined,
+          },
+          type: question.type,
+          value: field.value,
+        };
+      }),
+    ];
+  }
+
+  return { data: submissions, error: null };
 }
 
 export async function sendForm(

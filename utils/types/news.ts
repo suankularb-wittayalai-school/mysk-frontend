@@ -126,6 +126,12 @@ export type FormPage = Omit<NewsItemFormNoDate, "done"> & {
   };
 };
 
+export type FormSubmission = {
+  label: MultiLangString;
+  type: FieldType;
+  value: string;
+}[];
+
 // School documents
 export type SchoolDocument = {
   id: number;

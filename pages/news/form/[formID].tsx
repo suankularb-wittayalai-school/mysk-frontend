@@ -9,16 +9,25 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useContext, useState } from "react";
+import { FC, useContext, useState } from "react";
 
 // SK Components
 import {
   Actions,
   Button,
+  Card,
+  CardContent,
   Columns,
   ContentLayout,
+  Header,
   MaterialIcon,
+  Section,
   Snackbar,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
 } from "@suankularb-components/react";
 
 // Internal components
@@ -27,7 +36,11 @@ import NewsMeta from "@/components/news/NewsMeta";
 import NewsPageHeader from "@/components/news/NewsPageHeader";
 
 // Backend
-import { getForm, sendForm } from "@/utils/backend/news/form";
+import {
+  getForm,
+  getFormSubmissions,
+  sendForm,
+} from "@/utils/backend/news/form";
 import { getPersonIDFromUser } from "@/utils/backend/person/person";
 
 // Contexts
@@ -35,7 +48,7 @@ import SnackbarContext from "@/contexts/SnackbarContext";
 
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { FormPage as FormPageType } from "@/utils/types/news";
+import { FormPage as FormPageType, FormSubmission } from "@/utils/types/news";
 
 // Helpers
 import { getLocaleString } from "@/utils/helpers/i18n";
@@ -44,10 +57,66 @@ import { createTitleStr } from "@/utils/helpers/title";
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
 
-const FormPage: CustomPage<{ formPage: FormPageType; personID: number }> = ({
-  formPage,
-  personID,
+type FormControl = {
+  [label: string]: string | number | string[] | File | null;
+};
+
+const Form: FC<{
+  formPage: FormPageType;
+  form: FormControl;
+  setForm: (value: FormControl) => void;
+}> = ({ formPage, form, setForm }) => {
+  // Translation
+  const locale = useLocale();
+
+  return (
+    <div
+      id="form"
+      className="mx-4 flex scroll-m-16 flex-col gap-4 sm:col-span-2
+      sm:mx-0 md:col-span-1 md:col-start-2"
+    >
+      {formPage.content.fields.map((field) => (
+        <FormField
+          key={field.id}
+          field={field}
+          value={form[getLocaleString(field.label, locale)]!}
+          onChange={(value) =>
+            setForm({
+              ...form,
+              [getLocaleString(field.label, locale)]: value,
+            })
+          }
+        />
+      ))}
+    </div>
+  );
+};
+
+const FormActions: FC<{ handleSubmit: () => void; className?: string }> = ({
+  handleSubmit,
+  className,
 }) => {
+  const { t } = useTranslation("news");
+
+  return (
+    <Actions className={className}>
+      <Button
+        appearance="filled"
+        icon={<MaterialIcon icon="send" />}
+        onClick={handleSubmit}
+        className="!w-full sm:!w-fit"
+      >
+        {t("action.form.submit")}
+      </Button>
+    </Actions>
+  );
+};
+
+const FormPage: CustomPage<{
+  formPage: FormPageType;
+  submissions: FormSubmission[];
+  personID: number;
+}> = ({ formPage, submissions, personID }) => {
   // Translation
   const locale = useLocale();
   const { t } = useTranslation(["news", "common"]);
@@ -59,9 +128,7 @@ const FormPage: CustomPage<{ formPage: FormPageType; personID: number }> = ({
   const { setSnackbar } = useContext(SnackbarContext);
 
   // Form control
-  const [form, setForm] = useState<{
-    [label: string]: string | number | string[] | File | null;
-  }>(
+  const [form, setForm] = useState<FormControl>(
     formPage.content.fields.reduce(
       (form, field) => ({
         ...form,
@@ -115,7 +182,8 @@ const FormPage: CustomPage<{ formPage: FormPageType; personID: number }> = ({
 
     if (error) return;
 
-    await router.push("/news");
+    if (formPage.frequency === "once") await router.push("/news");
+    else await router.replace(router.asPath);
     setSnackbar(<Snackbar>{t("snackbar.success")}</Snackbar>);
   }
 
@@ -130,37 +198,71 @@ const FormPage: CustomPage<{ formPage: FormPageType; personID: number }> = ({
       <NewsPageHeader newsItem={formPage} />
 
       <ContentLayout>
-        <Columns columns={3}>
-          <div
-            id="form"
-            className="mx-4 flex scroll-m-16 flex-col gap-4 sm:col-span-2
-              sm:mx-0 md:col-span-1 md:col-start-2"
+        {/* If a form can be submitted more than once, show past submissions in
+            a Table */}
+        {formPage.frequency !== "once" ? (
+          <Columns
+            columns={2}
+            className="!flex !flex-col-reverse !items-stretch !gap-y-6
+              sm:!grid"
           >
-            {formPage.content.fields.map((field) => (
-              <FormField
-                key={field.id}
-                field={field}
-                value={form[getLocaleString(field.label, locale)]!}
-                onChange={(value) =>
-                  setForm({
-                    ...form,
-                    [getLocaleString(field.label, locale)]: value,
-                  })
-                }
-              />
-            ))}
-          </div>
-        </Columns>
-        <Actions className="mx-4 sm:mx-0">
-          <Button
-            appearance="filled"
-            icon={<MaterialIcon icon="send" />}
-            onClick={handleSubmit}
-            className="!w-full sm:!w-fit"
-          >
-            {t("action.form.submit")}
-          </Button>
-        </Actions>
+            {/* Past submissions */}
+            <Section>
+              <Header>Past submissions</Header>
+              <Table contentWidth={72 + formPage.content.fields.length * 160}>
+                <TableHead>
+                  <TableRow>
+                    <TableCell header>No.</TableCell>
+                    {formPage.content.fields.map((field) => (
+                      <TableCell key={field.id} header>
+                        {getLocaleString(field.label, locale)}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {submissions.map((submission, idx) => (
+                    <TableRow key={idx}>
+                      <TableCell>{idx + 1}</TableCell>
+                      {formPage.content.fields.map((field) => (
+                        <TableCell key={field.id}>
+                          {field.type === "file" ? (
+                            <MaterialIcon icon="attach_file" size={20} />
+                          ) : (
+                            submission.find(
+                              (item) => field.label.th === item.label.th
+                            )?.value
+                          )}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Section>
+
+            {/* Submit a new one */}
+            <Section>
+              <Card appearance="outlined">
+                <CardContent className="!px-0 sm:!px-4">
+                  <Header className="sr-only">Submit a new one</Header>
+                  <Form {...{ formPage, form, setForm }} />
+                  <FormActions
+                    handleSubmit={handleSubmit}
+                    className="mx-4 sm:mx-0"
+                  />
+                </CardContent>
+              </Card>
+            </Section>
+          </Columns>
+        ) : (
+          <>
+            <Columns columns={3}>
+              <Form {...{ formPage, form, setForm }} />
+            </Columns>
+            <FormActions handleSubmit={handleSubmit} className="mx-4 sm:mx-0" />
+          </>
+        )}
       </ContentLayout>
     </>
   );
@@ -188,10 +290,16 @@ export const getServerSideProps: GetServerSideProps = async ({
   const { data: formPage, error } = await getForm(Number(params?.formID));
   if (error) return { notFound: true };
 
+  const { data: submissions } = await getFormSubmissions(
+    Number(params?.formID),
+    personID!
+  );
+
   return {
     props: {
       ...(await serverSideTranslations(locale as LangCode, ["common", "news"])),
       formPage,
+      submissions,
       personID,
     },
   };
