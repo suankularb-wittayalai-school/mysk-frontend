@@ -67,7 +67,7 @@ export async function middleware(req: NextRequest) {
   let destination: string | null = null;
   // Disallow public users from visiting private pages
   if (pageRole != "public" && userRole == "public")
-    destination = "/not-allowed";
+    destination = "/";
   // Disallow logged in users from visiting certain pages under certain
   // circumstances
   // prettier-ignore
