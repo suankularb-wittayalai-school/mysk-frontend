@@ -35,7 +35,7 @@
     }
   },
   "logOut": {
-    "title": "Logging out…"
+    "loading": "Logging you out…"
   },
   "forgor": {
     "title": "Password reset",

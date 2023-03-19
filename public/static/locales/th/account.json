@@ -34,6 +34,9 @@
       "logIn": "เข้าสู่ระบบ"
     }
   },
+  "logOut": {
+    "loading": "กำลังออกจากระบบ…"
+  },
   "forgor": {
     "title": "ลืมรหัสผ่าน",
     "resetWithEmail": "ใช้อีเมล",
