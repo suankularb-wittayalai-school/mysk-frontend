@@ -236,17 +236,6 @@ const Layout: FC<
             href="/help"
             element={Link}
           />
-          {userMetadata?.isAdmin ? (
-            <NavDrawerItem
-              icon={<MaterialIcon icon="admin_panel_settings" />}
-              label={t("navigation.drawer.about.admin")}
-              selected={router.pathname.startsWith("/admin")}
-              href="/admin"
-              element={Link}
-            />
-          ) : (
-            <></>
-          )}
           <NavDrawerItem
             icon={<MaterialIcon icon="translate" />}
             label={t("navigation.drawer.about.language")}
