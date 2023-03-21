@@ -12,4 +12,18 @@ module.exports = withBundleAnalyzer({
     domains: ["ykqqepbodqjhiwfjcvxe.supabase.co"],
   },
   i18n,
+  async redirects() {
+    return [
+      {
+        source: "/account/login",
+        destination: "/",
+        permanent: true,
+      },
+      {
+        source: "/admin",
+        destination: "/lookup",
+        permanent: true,
+      },
+    ];
+  },
 });
