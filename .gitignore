@@ -8,6 +8,9 @@
 # testing
 /coverage
 
+# bundle size
+/analyze/
+
 # next.js
 /.next/
 /out/
