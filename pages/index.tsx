@@ -1,8 +1,9 @@
 // External libraries
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
-import Image from "next/image";
 import Head from "next/head";
+import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { Trans, useTranslation } from "next-i18next";
@@ -41,7 +42,6 @@ import { useToggle } from "@/utils/hooks/toggle";
 
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
-import Link from "next/link";
 
 const LoginSection: FC = () => {
   // Router
@@ -62,7 +62,7 @@ const LoginSection: FC = () => {
   const [loading, toggleLoading] = useToggle();
 
   function validate(): boolean {
-    if (!email) return false;
+    if (!email || email.endsWith("sk.ac.th")) return false;
     if (!password) return false;
 
     return true;
@@ -106,18 +106,15 @@ const LoginSection: FC = () => {
   const [showForgor, setShowForgor] = useState<boolean>(false);
 
   return (
-    <Section>
-      <Header className="!mb-4">Log in to MySK</Header>
+    <Section className="!gap-y-5">
+      <Header>{t("logIn.title")}</Header>
       <Columns columns={3}>
-        <div className="col-span-2 flex flex-col gap-10">
+        <div className="col-span-2 flex flex-col gap-4">
           <TextField
             appearance="outlined"
             label={t("logIn.form.email")}
             align="right"
             trailing="sk.ac.th"
-            helperMsg={t("logIn.form.email_helper", {
-              ns: "account",
-            })}
             error={email.endsWith("sk.ac.th")}
             value={email}
             onChange={(value) =>
@@ -134,9 +131,6 @@ const LoginSection: FC = () => {
           <TextField
             appearance="outlined"
             label={t("logIn.form.password")}
-            helperMsg={t("logIn.form.password_helper", {
-              ns: "account",
-            })}
             value={password}
             onChange={(value) => setPassword(value as string)}
             locale={locale}
@@ -189,7 +183,13 @@ const ImageSection: FC = () => (
           srcSet={LandingImageDark.src}
           media="(prefers-color-scheme: dark)"
         />
-        <Image src={LandingImageLight} width={1080} height={1080} alt="" />
+        <Image
+          src={LandingImageLight}
+          width={1080}
+          height={1080}
+          priority
+          alt=""
+        />
       </picture>
     </div>
   </div>
@@ -220,22 +220,29 @@ const IndexPage: CustomPage = () => {
           >
             {/* Left side */}
             <div className="z-10 mx-4 sm:mx-0">
-              {/* Tagline */}
-              {/* `sm:!text-8xl sm:!leading-[4rem]` is a simulation of
-                  `skc-display-large`; since that is not a Tailwind class, we
-                  cannot apply the `sm:` suffix */}
-              <h1
-                className="skc-display-medium mb-12 sm:!text-8xl
-                  sm:!leading-[4rem]"
-              >
-                A year in the making.{" "}
-                <span
-                  className="bg-gradient-to-r from-primary to-secondary
-                    bg-clip-text font-bold text-transparent"
+              <div className="mb-12 flex flex-col gap-4">
+                {/* Tagline */}
+                {/* `sm:!text-8xl sm:!leading-[4rem]` is a simulation of
+                    `skc-display-large`; since that is not a Tailwind class, we
+                    cannot apply the `sm:` suffix */}
+                <h1
+                  className="skc-display-medium sm:!text-8xl
+                    sm:!leading-[4rem]"
                 >
-                  Rebuilt from the ground up.
-                </span>
-              </h1>
+                  <Trans i18nKey="hero.title" ns="landing">
+                    MySK ปีนี้มาใหม่หมด{" "}
+                    <span
+                      className="bg-gradient-to-r from-primary to-secondary
+                      bg-clip-text font-bold text-transparent"
+                    >
+                      ใช้ง่าย ทำได้มากกว่าเดิม
+                    </span>
+                  </Trans>
+                </h1>
+                <p className="skc-display-medium hidden sm:block">
+                  {t("hero.subtitle")}
+                </p>
+              </div>
 
               {/* Log in form */}
               <LoginSection />
@@ -244,23 +251,27 @@ const IndexPage: CustomPage = () => {
                 <div className="flex flex-row gap-1">
                   <MaterialIcon icon="contact_support" />
                   <p>
-                    Stuck?{" "}
-                    <Link href="/help" className="link">
-                      Find help here.
-                    </Link>
+                    <Trans i18nKey="action.help" ns="landing">
+                      สงสัยอะไรเปิด
+                      <Link href="/help" className="link">
+                        หน้าช่วยเหลือ
+                      </Link>
+                    </Trans>
                   </p>
                 </div>
                 <div className="flex flex-row gap-1">
                   <MaterialIcon icon="translate" />
                   <p>
-                    Available in:{" "}
-                    <Link
-                      href="/"
-                      locale={locale === "en-US" ? "th" : "en-US"}
-                      className="link"
-                    >
-                      ภาษาไทย
-                    </Link>
+                    <Trans i18nKey="action.changeLang" ns="landing">
+                      เปลี่ยนภาษาเป็น:{" "}
+                      <Link
+                        href="/"
+                        locale={locale === "en-US" ? "th" : "en-US"}
+                        className="link"
+                      >
+                        English
+                      </Link>
+                    </Trans>
                   </p>
                 </div>
               </div>

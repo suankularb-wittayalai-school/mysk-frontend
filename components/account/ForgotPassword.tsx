@@ -82,7 +82,6 @@ const ForgotPasswordDialog: DialogComponent<{ inputEmail?: string }> = ({
             label={t("dialog.forgotPassword.form.email", { ns: "account" })}
             align="right"
             trailing="sk.ac.th"
-            helperMsg={t("logIn.form.email_helper", { ns: "account" })}
             error={email.endsWith("sk.ac.th")}
             value={email}
             onChange={(value) =>
