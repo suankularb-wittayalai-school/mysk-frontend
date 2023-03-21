@@ -214,14 +214,17 @@ const IndexPage: CustomPage = () => {
     if (preferredLang) {
       // If the user is already looking at the correct language, don’t redirect
       if (preferredLang === locale) return;
-      // Otherwise, redirec tto the correct language
-      else
-        router.replace(router.asPath, router.asPath, { locale: preferredLang });
+
+      // Otherwise, redirect to the correct language
+      router.replace(router.asPath, router.asPath, { locale: preferredLang });
     }
 
     // If the user has not set a preferred language, set it to the current one
     else {
       const browserLocale = navigator.language;
+
+      // If the user is already looking at the correct language, don’t redirect
+      if (browserLocale === locale) return;
 
       // If the browser language is not supported by MySK, set to Englsih
       if (!["th", "en-US"].includes(browserLocale)) {
@@ -232,11 +235,11 @@ const IndexPage: CustomPage = () => {
       // Otherwise, set to the browser language
       else {
         localStorage.setItem("preferredLang", browserLocale);
+
         // Then redirect the user
-        if (browserLocale !== locale)
-          router.replace(router.asPath, router.asPath, {
-            locale: browserLocale,
-          });
+        router.replace(router.asPath, router.asPath, {
+          locale: browserLocale,
+        });
       }
     }
 
