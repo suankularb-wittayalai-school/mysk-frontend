@@ -64,7 +64,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   if (!metadata?.onboarded)
     return {
       redirect: {
-        destination: getLocalePath("/welcome", locale as LangCode),
+        destination: getLocalePath("/account/welcome", locale as LangCode),
         permanent: false,
       },
     };

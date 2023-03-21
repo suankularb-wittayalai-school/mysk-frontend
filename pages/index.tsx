@@ -96,7 +96,7 @@ const LoginSection: FC = () => {
       if (metadataError) return false;
 
       // Onboard the user if this is their first log in
-      if (!metadata!.onboarded) router.push("/welcome");
+      if (!metadata!.onboarded) router.push("/account/welcome");
 
       // Role redirect
       if (metadata!.role == "teacher") router.push("/teach");
