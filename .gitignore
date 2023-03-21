@@ -9,7 +9,7 @@
 /coverage
 
 # bundle size
-/analyze/
+/analyze
 
 # next.js
 /.next/
