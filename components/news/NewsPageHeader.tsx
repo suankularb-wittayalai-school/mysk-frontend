@@ -45,7 +45,9 @@ const PageActions: FC<{
   return (
     <Actions align="left" className={className}>
       {type === "form" && (
-        <Button appearance="filled" href="#form">{t("action.form.do")}</Button>
+        <Button appearance="filled" href="#form">
+          {t("action.form.do")}
+        </Button>
       )}
       <Button
         appearance="outlined"

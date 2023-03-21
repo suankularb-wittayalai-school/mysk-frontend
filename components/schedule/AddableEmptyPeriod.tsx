@@ -46,15 +46,15 @@ const AddableEmptySchedulePeriod = ({
     <button
       className={`grid h-14 w-full place-items-center rounded-sm text-4xl
       transition-[border-color] ${
-          processing
-            ? "bg-secondary-translucent-12 border-4 border-secondary"
-            : `hover:bg-primary-translucent-08 focus:bg-primary-translucent-12 group
+        processing
+          ? "bg-secondary-translucent-12 border-4 border-secondary"
+          : `hover:bg-primary-translucent-08 focus:bg-primary-translucent-12 group
                 hover:border-primary focus:border-primary ${
                   isInSession
                     ? "border-4 border-secondary"
                     : "border-[1px] border-outline-variant"
                 }`
-        }`}
+      }`}
       title={t("schedule.hoverMenu.add")}
       onClick={
         setAddPeriod

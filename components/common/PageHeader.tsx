@@ -4,7 +4,11 @@ import { useTranslation } from "next-i18next";
 import { FC, useContext } from "react";
 
 // SK Components
-import { PageHeader, PageHeaderProps, Progress } from "@suankularb-components/react";
+import {
+  PageHeader,
+  PageHeaderProps,
+  Progress,
+} from "@suankularb-components/react";
 
 // Internal components
 import Favicon from "@/components/brand/Favicon";
