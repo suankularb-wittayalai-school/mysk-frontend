@@ -15,7 +15,7 @@
   }
 
   body {
-    @apply bg-background font-sans text-on-background;
+    @apply bg-background font-body text-on-background;
   }
 
   @media (prefers-color-scheme: dark) {
@@ -28,17 +28,17 @@
 @layer components {
   .link,
   .markdown a {
-    @apply font-display font-medium text-primary underline decoration-primary
-      decoration-2 underline-offset-4 transition-[text-decoration-color]
+    @apply font-medium text-primary underline decoration-primary decoration-2
+      underline-offset-4 transition-[text-decoration-color]
       hover:decoration-tertiary hover:transition-none
       focus-visible:decoration-tertiary focus-visible:transition-none;
   }
 
   .markdown {
-    @apply prose dark:prose-invert prose-headings:font-display prose-h5:text-on-primary-container prose-h6:font-sans
+    @apply prose max-w-none font-body text-base text-on-background
+      dark:prose-invert prose-headings:font-display
+      prose-h5:text-on-primary-container prose-h6:font-body
       prose-h6:text-on-primary-container prose-li:marker:font-display
-      prose-li:marker:text-outline max-w-none
-      font-sans text-base
-      text-on-background;
+      prose-li:marker:text-outline;
   }
 }

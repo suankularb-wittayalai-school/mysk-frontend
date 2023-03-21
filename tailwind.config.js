@@ -62,7 +62,7 @@ module.exports = {
     // Font family
     fontFamily: {
       display: "var(--font-display)",
-      sans: "var(--font-body)",
+      body: "var(--font-body)",
     },
 
     // Breakpoints

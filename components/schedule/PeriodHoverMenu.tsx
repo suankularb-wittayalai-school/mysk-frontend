@@ -108,7 +108,7 @@ const PeriodHoverMenu = ({
                 <motion.p
                   className="inverse-surface shadow absolute bottom-1 left-1
                     flex h-6 w-fit items-center gap-1 whitespace-nowrap
-                    rounded-md px-2 font-sans font-medium"
+                    rounded-md px-2 font-body font-medium"
                   initial={{ scale: 0.9, y: 5, opacity: 0 }}
                   animate={{ scale: 1, y: 0, opacity: 1 }}
                   exit={{ scale: 0.9, y: 5, opacity: 0 }}
