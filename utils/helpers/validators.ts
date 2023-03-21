@@ -47,8 +47,7 @@ export function validatePassport(passportNumber: string): string | false {
   if (/^\d{9}$/.test(passportNumber)) return "US";
 
   // Chinese passport
-  if (/^([A-Za-z]|\d)[A-Za-z0-9]{8,9}$/.test(passportNumber))
-    return "ZH";
+  if (/^([A-Za-z]|\d)[A-Za-z0-9]{8,9}$/.test(passportNumber)) return "ZH";
 
   // Invalid passport
   return false;
