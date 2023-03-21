@@ -40,7 +40,7 @@ const NewsMeta: FC<{ newsItem: InfoPage | FormPage }> = ({ newsItem }) => {
         content={
           newsItem.image
             ? newsItem.image
-            : "https://beta.mysk.school/images/graphics/news-placeholder.png"
+            : "https://beta.mysk.school/images/graphics/news-placeholder-light.webp"
         }
       />
       <meta

@@ -21,6 +21,10 @@ import NewsChipSet from "@/components/news/NewsChipSet";
 // Contexts
 import SnackbarContext from "@/contexts/SnackbarContext";
 
+// Images
+import NewsPlaceholderLight from "@/public/images/graphics/news-placeholder-light.webp";
+import NewsPlaceholderDark from "@/public/images/graphics/news-placeholder-dark.webp";
+
 // Types
 import { FormPage, InfoPage, NewsItemType } from "@/utils/types/news";
 
@@ -89,7 +93,7 @@ const NewsPageHeader: FC<{ newsItem: InfoPage | FormPage }> = ({
         className="!flex !flex-col-reverse !gap-y-6 md:!grid"
       >
         {/* Banner image */}
-        <div
+        {/* <div
           className="shadow relative -left-4 aspect-video w-[calc(100%+2rem)]
             overflow-hidden bg-surface-variant sm:left-0 sm:w-full
             sm:rounded-lg"
@@ -101,7 +105,24 @@ const NewsPageHeader: FC<{ newsItem: InfoPage | FormPage }> = ({
             alt=""
             className="object-cover"
           />
-        </div>
+        </div> */}
+        <picture
+          className="shadow relative -left-4 aspect-video w-[calc(100%+2rem)]
+            overflow-hidden bg-surface-variant object-cover sm:left-0
+            sm:w-full sm:rounded-lg"
+        >
+          <source
+            srcSet={NewsPlaceholderDark.src}
+            media="(prefers-color-scheme: dark)"
+          />
+          <Image
+            src={NewsPlaceholderLight}
+            width={648}
+            height={364.5}
+            priority
+            alt=""
+          />
+        </picture>
 
         {/* Title and short description */}
         <div className="flex flex-col gap-3">
