@@ -205,6 +205,10 @@ const IndexPage: CustomPage = () => {
     <>
       <Head>
         <title>{t("brand.name", { ns: "common" })}</title>
+        <meta
+          name="description"
+          content={t("brand.description", { ns: "common" })}
+        />
       </Head>
       <ContentLayout className="-mb-20 !pb-6 !pt-0 sm:mb-0 md:!py-12">
         {/* 6rem is the combined padding height put on Content Layout */}
