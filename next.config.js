@@ -14,16 +14,8 @@ module.exports = withBundleAnalyzer({
   i18n,
   async redirects() {
     return [
-      {
-        source: "/account/login",
-        destination: "/",
-        permanent: true,
-      },
-      {
-        source: "/admin",
-        destination: "/lookup",
-        permanent: true,
-      },
+      { source: "/account/login", destination: "/", permanent: true },
+      { source: "/admin", destination: "/lookup", permanent: true },
     ];
   },
 });
