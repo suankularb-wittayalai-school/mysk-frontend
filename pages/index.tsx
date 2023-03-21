@@ -27,6 +27,9 @@ import {
 // Internal components
 import ForgotPasswordDialog from "@/components/account/ForgotPassword";
 
+// Contexts
+import SnackbarContext from "@/contexts/SnackbarContext";
+
 // Images
 import LandingImageLight from "@/public/images/landing-light.webp";
 import LandingImageDark from "@/public/images/landing-dark.webp";
@@ -43,7 +46,6 @@ import { useToggle } from "@/utils/hooks/toggle";
 
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
-import SnackbarContext from "@/contexts/SnackbarContext";
 
 const LoginSection: FC = () => {
   // Router
