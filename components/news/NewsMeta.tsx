@@ -23,6 +23,10 @@ const NewsMeta: FC<{ newsItem: InfoPage | FormPage }> = ({ newsItem }) => {
   return (
     <Head>
       <meta
+        property="description"
+        content={getLocaleString(newsItem.content.description, locale)}
+      />
+      <meta
         property="og:title"
         content={getLocaleString(newsItem.content.title, locale)}
       />
@@ -31,10 +35,17 @@ const NewsMeta: FC<{ newsItem: InfoPage | FormPage }> = ({ newsItem }) => {
         property="og:url"
         content={`https://beta.mysk.school/news/info/${newsItem.id}`}
       />
-      <meta property="og:image" content={newsItem.image} />
+      <meta
+        property="og:image"
+        content={
+          newsItem.image
+            ? newsItem.image
+            : "https://beta.mysk.school/images/graphics/news-placeholder.png"
+        }
+      />
       <meta
         property="og:description"
-        content={newsItem.content.description[locale]}
+        content={getLocaleString(newsItem.content.description, locale)}
       />
       <meta property="og:locale" content={locale} />
       <meta property="og:site_name" content="MySK" />

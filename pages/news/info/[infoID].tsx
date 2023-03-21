@@ -10,6 +10,7 @@ import { Columns, ContentLayout } from "@suankularb-components/react";
 
 // Internal components
 import Markdown from "@/components/formatting/Markdown";
+import NewsMeta from "@/components/news/NewsMeta";
 import NewsPageHeader from "@/components/news/NewsPageHeader";
 
 // Backend
@@ -25,7 +26,6 @@ import { getLocaleString } from "@/utils/helpers/i18n";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
-import NewsMeta from "@/components/news/NewsMeta";
 
 const InfoPage: CustomPage<{ infoPage: InfoPageType }> = ({ infoPage }) => {
   // Translation
