@@ -9,7 +9,7 @@ import { useRouter } from "next/router";
 import { Trans, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { FC, useState } from "react";
+import { FC, useContext, useEffect, useState } from "react";
 
 // SK Components
 import {
@@ -20,6 +20,7 @@ import {
   Header,
   MaterialIcon,
   Section,
+  Snackbar,
   TextField,
 } from "@suankularb-components/react";
 
@@ -42,6 +43,7 @@ import { useToggle } from "@/utils/hooks/toggle";
 
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
+import SnackbarContext from "@/contexts/SnackbarContext";
 
 const LoginSection: FC = () => {
   // Router
@@ -200,6 +202,65 @@ const IndexPage: CustomPage = () => {
   // Translation
   const locale = useLocale();
   const { t } = useTranslation(["landing", "common"]);
+
+  // Language detection redirect
+  // Thanks @Jimmy-Tempest!
+  const router = useRouter();
+  const { setSnackbar } = useContext(SnackbarContext);
+  useEffect(() => {
+    // Attempt to get the user’s preferred language from local storage
+    const preferredLang = localStorage.getItem("preferredLang");
+
+    if (preferredLang) {
+      // If the user is already looking at the correct language, don’t redirect
+      if (preferredLang === locale) return;
+      // Otherwise, redirec tto the correct language
+      else
+        router.replace(router.asPath, router.asPath, { locale: preferredLang });
+    }
+
+    // If the user has not set a preferred language, set it to the current one
+    else {
+      const browserLocale = navigator.language;
+
+      // If the browser language is not supported by MySK, set to Englsih
+      if (!["th", "en-US"].includes(browserLocale)) {
+        localStorage.setItem("preferredLang", "en-US");
+        router.replace(router.asPath, router.asPath, { locale: "en-US" });
+      }
+
+      // Otherwise, set to the browser language
+      else {
+        localStorage.setItem("preferredLang", browserLocale);
+        // Then redirect the user
+        if (browserLocale !== locale)
+          router.replace(router.asPath, router.asPath, {
+            locale: browserLocale,
+          });
+      }
+    }
+
+    setSnackbar(
+      <Snackbar
+        action={
+          // An option to stay in the current language
+          <Button
+            appearance="text"
+            onClick={() => {
+              // Remember the preference
+              localStorage.setItem("preferredLang", locale);
+              // Redirect back
+              router.replace(router.asPath, router.asPath, { locale });
+            }}
+          >
+            {t("snackbar.languageRedirect.action", { ns: "common" })}
+          </Button>
+        }
+      >
+        {t("snackbar.languageRedirect.message", { ns: "common" })}
+      </Snackbar>
+    );
+  }, []);
 
   return (
     <>

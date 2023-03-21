@@ -83,7 +83,11 @@
   "seeDetails": "See details",
   "snackbar": {
     "loading": "Loading…",
-    "copiedToClipboard": "Copied to clipboard"
+    "copiedToClipboard": "Copied to clipboard",
+    "languageRedirect": {
+      "message": "กำลังเปลี่ยนภาษาเป็นภาษาไทย…",
+      "action": "Stay in English"
+    }
   },
   "dialog": {
     "addContact": {

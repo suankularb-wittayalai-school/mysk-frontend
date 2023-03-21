@@ -84,7 +84,11 @@
   "seeDetails": "ดูรายละเอียด",
   "snackbar": {
     "loading": "กำลังโหลด…",
-    "copiedToClipboard": "คัดลอกไปที่คลิปบอร์ดแล้ว"
+    "copiedToClipboard": "คัดลอกไปที่คลิปบอร์ดแล้ว",
+    "languageRedirect": {
+      "message": "Redirecting you to the English website…",
+      "action": "ใช้ภาษาไทย"
+    }
   },
   "dialog": {
     "addContact": {
