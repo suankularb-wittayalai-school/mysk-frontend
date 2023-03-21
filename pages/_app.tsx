@@ -14,7 +14,7 @@ import { useRouter } from "next/router";
 
 import { appWithTranslation } from "next-i18next";
 
-import { FC, useEffect, useState } from "react";
+import { FC, ReactNode, useEffect, useState } from "react";
 
 // SK Components
 import { ThemeProvider } from "@suankularb-components/react";
@@ -23,6 +23,7 @@ import { ThemeProvider } from "@suankularb-components/react";
 import Layout from "@/components/Layout";
 
 // Contexts
+import NavDrawerContext from "@/contexts/NavDrawerContext";
 import PreviousRouteContext from "@/contexts/PreviousRouteContext";
 import SnackbarContext from "@/contexts/SnackbarContext";
 
@@ -35,8 +36,6 @@ import { usePreviousPath } from "@/utils/hooks/routing";
 // Types
 import { CustomAppProps } from "@/utils/types/common";
 import { Database } from "@/utils/types/supabase";
-import { ReactNode } from "react-markdown/lib/ast-to-react";
-import NavDrawerContext from "@/contexts/NavDrawerContext";
 
 // English fonts
 const bodyFontEN = Inter({ subsets: ["latin"] });
