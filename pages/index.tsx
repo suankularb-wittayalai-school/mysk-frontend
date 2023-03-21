@@ -1,11 +1,14 @@
 // External libraries
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+
+import Image from "next/image";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
-import { useTranslation } from "next-i18next";
+import { Trans, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useState } from "react";
+import { FC, useState } from "react";
 
 // SK Components
 import {
@@ -14,9 +17,17 @@ import {
   Columns,
   ContentLayout,
   Header,
+  MaterialIcon,
   Section,
   TextField,
 } from "@suankularb-components/react";
+
+// Internal components
+import ForgotPasswordDialog from "@/components/account/ForgotPassword";
+
+// Images
+import LandingImageLight from "@/public/images/landing-light.webp";
+import LandingImageDark from "@/public/images/landing-dark.webp";
 
 // Backend
 import { getUserMetadata } from "@/utils/backend/account";
@@ -30,17 +41,15 @@ import { useToggle } from "@/utils/hooks/toggle";
 
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import ForgotPasswordDialog from "@/components/account/ForgotPassword";
+import Link from "next/link";
 
-// Page
-const IndexPage: CustomPage = () => {
+const LoginSection: FC = () => {
   // Router
   const locale = useLocale();
   const router = useRouter();
 
   // Translation
-  const { t } = useTranslation(["landing", "account", "common"]);
+  const { t } = useTranslation(["account", "landing"]);
 
   // Supabase
   const supabase = useSupabaseClient();
@@ -89,8 +98,6 @@ const IndexPage: CustomPage = () => {
       if (metadata!.role == "teacher") router.push("/teach");
       if (metadata!.role == "student") router.push("/learn");
 
-      console.log("login successful");
-
       return true;
     }, toggleLoading);
   }
@@ -99,80 +106,200 @@ const IndexPage: CustomPage = () => {
   const [showForgor, setShowForgor] = useState<boolean>(false);
 
   return (
+    <Section>
+      <Header className="!mb-4">Log in to MySK</Header>
+      <Columns columns={3}>
+        <div className="col-span-2 flex flex-col gap-10">
+          <TextField
+            appearance="outlined"
+            label={t("logIn.form.email")}
+            align="right"
+            trailing="sk.ac.th"
+            helperMsg={t("logIn.form.email_helper", {
+              ns: "account",
+            })}
+            error={email.endsWith("sk.ac.th")}
+            value={email}
+            onChange={(value) =>
+              setEmail(
+                (value as string).endsWith("sk.ac.th")
+                  ? (value as string).slice(0, -8)
+                  : (value as string)
+              )
+            }
+            locale={locale}
+            inputAttr={{ autoCapitalize: "off" }}
+            className="bg-surface"
+          />
+          <TextField
+            appearance="outlined"
+            label={t("logIn.form.password")}
+            helperMsg={t("logIn.form.password_helper", {
+              ns: "account",
+            })}
+            value={password}
+            onChange={(value) => setPassword(value as string)}
+            locale={locale}
+            inputAttr={{ type: "password" }}
+            className="bg-surface"
+          />
+          <Actions align="full">
+            <Button
+              appearance="outlined"
+              onClick={() => setShowForgor(true)}
+              className="!bg-surface"
+            >
+              {t("logIn.action.forgotPassword")}
+            </Button>
+            <ForgotPasswordDialog
+              open={showForgor}
+              onClose={() => setShowForgor(false)}
+              inputEmail={email}
+            />
+            <Button
+              appearance="filled"
+              loading={loading || undefined}
+              onClick={handleSubmit}
+            >
+              {t("logIn.action.logIn")}
+            </Button>
+          </Actions>
+        </div>
+      </Columns>
+    </Section>
+  );
+};
+
+const ImageSection: FC = () => (
+  <div
+    aria-hidden
+    className="bg-gradient-to-b from-surface-5 via-transparent sm:bg-none
+      md:relative"
+  >
+    {/* Image in center */}
+    <div
+      className="md:absolute md:left-0 md:right-0 md:h-[calc(100vh-6rem)]
+        supports-[height:100svh]:md:h-[calc(100svh-6rem)]"
+    >
+      <picture
+        className="relative md:absolute md:right-[-10.5rem] md:left-[-10.5rem]
+          md:top-1/2 md:z-0 md:-translate-y-1/2"
+      >
+        <source
+          srcSet={LandingImageDark.src}
+          media="(prefers-color-scheme: dark)"
+        />
+        <Image src={LandingImageLight} width={1080} height={1080} alt="" />
+      </picture>
+    </div>
+  </div>
+);
+
+// Page
+const IndexPage: CustomPage = () => {
+  // Translation
+  const locale = useLocale();
+  const { t } = useTranslation(["landing", "common"]);
+
+  return (
     <>
       <Head>
         <title>{t("brand.name", { ns: "common" })}</title>
       </Head>
-      <ContentLayout
-        className="-mb-20 min-h-screen bg-cover bg-center
-          supports-[height:100svh]:min-h-[100svh] sm:mb-0"
-      >
-        <Columns columns={3} className="mx-4 sm:mx-0">
-          <div className="col-span-2">
-            <h1 className="skc-display-large mb-12">
-              A year in the making. Rebuilt from the ground up.
-            </h1>
-            <Section>
-              <Header className="!mb-4">Log in to MySK</Header>
-              <Columns columns={2}>
-                <div className="flex flex-col gap-10">
-                  <TextField
-                    appearance="outlined"
-                    label={t("logIn.form.email", { ns: "account" })}
-                    align="right"
-                    trailing="sk.ac.th"
-                    helperMsg={t("logIn.form.email_helper", { ns: "account" })}
-                    error={email.endsWith("sk.ac.th")}
-                    value={email}
-                    onChange={(value) =>
-                      setEmail(
-                        (value as string).endsWith("sk.ac.th")
-                          ? (value as string).slice(0, -8)
-                          : (value as string)
-                      )
-                    }
-                    locale={locale}
-                    inputAttr={{ autoCapitalize: "off" }}
-                    className="bg-surface"
-                  />
-                  <TextField
-                    appearance="outlined"
-                    label={t("logIn.form.password", { ns: "account" })}
-                    helperMsg={t("logIn.form.password_helper", {
-                      ns: "account",
-                    })}
-                    value={password}
-                    onChange={(value) => setPassword(value as string)}
-                    locale={locale}
-                    inputAttr={{ type: "password" }}
-                    className="bg-surface"
-                  />
-                  <Actions align={locale === "en-US" ? "right" : "full"}>
-                    <Button
-                      appearance="outlined"
-                      onClick={() => setShowForgor(true)}
-                      className="!bg-surface"
-                    >
-                      {t("logIn.action.forgotPassword", { ns: "account" })}
-                    </Button>
-                    <ForgotPasswordDialog
-                      open={showForgor}
-                      onClose={() => setShowForgor(false)}
-                      inputEmail={email}
-                    />
-                    <Button
-                      appearance="filled"
-                      loading={loading || undefined}
-                      onClick={handleSubmit}
-                    >
-                      {t("logIn.action.logIn", { ns: "account" })}
-                    </Button>
-                  </Actions>
+      <ContentLayout className="-mb-20 !pb-6 !pt-0 sm:mb-0 md:!py-12">
+        {/* 6rem is the combined padding height put on Content Layout */}
+        <div
+          className="flex flex-col justify-between gap-16
+            md:min-h-[calc(100vh-6rem)]
+            supports-[height:100svh]:md:min-h-[calc(100svh-6rem)]"
+        >
+          {/* Tagline, log in form, and image */}
+          <Columns
+            columns={2}
+            className="!flex !flex-col-reverse md:!grid md:!items-stretch"
+          >
+            {/* Left side */}
+            <div className="z-10 mx-4 sm:mx-0">
+              {/* Tagline */}
+              {/* `sm:!text-8xl sm:!leading-[4rem]` is a simulation of
+                  `skc-display-large`; since that is not a Tailwind class, we
+                  cannot apply the `sm:` suffix */}
+              <h1
+                className="skc-display-medium mb-12 sm:!text-8xl
+                  sm:!leading-[4rem]"
+              >
+                A year in the making.{" "}
+                <span
+                  className="bg-gradient-to-r from-primary to-secondary
+                    bg-clip-text font-bold text-transparent"
+                >
+                  Rebuilt from the ground up.
+                </span>
+              </h1>
+
+              {/* Log in form */}
+              <LoginSection />
+
+              <div className="mt-9 flex flex-col gap-1">
+                <div className="flex flex-row gap-1">
+                  <MaterialIcon icon="contact_support" />
+                  <p>
+                    Stuck?{" "}
+                    <Link href="/help" className="link">
+                      Find help here.
+                    </Link>
+                  </p>
                 </div>
-              </Columns>
-            </Section>
-          </div>
-        </Columns>
+                <div className="flex flex-row gap-1">
+                  <MaterialIcon icon="translate" />
+                  <p>
+                    Available in:{" "}
+                    <Link
+                      href="/"
+                      locale={locale === "en-US" ? "th" : "en-US"}
+                      className="link"
+                    >
+                      ภาษาไทย
+                    </Link>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Right side */}
+            <ImageSection />
+          </Columns>
+
+          {/* Footnote */}
+          <footer
+            className="skc-body-small z-10 mx-4 text-on-surface-variant
+              sm:mx-0"
+          >
+            <p className="mb-2 sm:mb-0">
+              <Trans
+                i18nKey="footnote.supervisors"
+                ns="landing"
+                values={{ version: "0.4.0" }}
+              />
+            </p>
+            <p>
+              <Trans
+                i18nKey="footnote.developers"
+                ns="landing"
+                components={{
+                  a: (
+                    <a
+                      target="_blank"
+                      rel="noreferrer"
+                      href="https://github.com/suankularb-wittayalai-school/mysk-frontend/graphs/contributors"
+                      className="link"
+                    />
+                  ),
+                }}
+              />
+            </p>
+          </footer>
+        </div>
       </ContentLayout>
     </>
   );
