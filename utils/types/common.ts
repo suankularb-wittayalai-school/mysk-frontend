@@ -9,7 +9,7 @@ import { PostgrestError, SupabaseClient } from "@supabase/supabase-js";
 import { ColumnDef } from "@tanstack/react-table";
 
 // Internal components
-import { PageHeaderProps } from "@suankularb-components/react";
+import { PageHeaderProps, TextFieldProps } from "@suankularb-components/react";
 
 // Types
 import { Role } from "@/utils/types/person";
@@ -121,3 +121,13 @@ export type DialogComponent<T = {}> = (props: T & DialogProps) => JSX.Element;
 export type SubmittableDialogComponent<T = () => void, U = {}> = (
   props: U & SubmittableDialogProps<T>
 ) => JSX.Element;
+
+export type FormControlValues<T extends string | symbol = string> = {
+  [key in T]: string;
+};
+export type FormControlValids<T extends string | symbol = string> = {
+  [key in T]: boolean;
+};
+export type FormControlProps<T extends string | symbol = string> = {
+  [key in T]: Pick<TextFieldProps, "value" | "onChange" | "required" | "error">;
+};

@@ -32,7 +32,12 @@ import { createTitleStr } from "@/utils/helpers/title";
 import { useLocale } from "@/utils/hooks/i18n";
 
 // Types
-import { CustomPage, LangCode } from "@/utils/types/common";
+import { CustomPage, FormControlProps, LangCode } from "@/utils/types/common";
+import { useForm } from "@/utils/hooks/form";
+import {
+  validateCitizenID,
+  validatePassport,
+} from "@/utils/helpers/validators";
 
 const NextWarningCard: FC = () => {
   // Translation
@@ -72,12 +77,12 @@ const GivingInformationCard: FC = () => {
   );
 };
 
-const ThaiNameSection: FC = () => {
+const ThaiNameSection: FC<{ formProps: FormControlProps }> = ({
+  formProps,
+}) => {
   // Translation
   const locale = useLocale();
   const { t } = useTranslation("welcome");
-
-  // TODO: form control
 
   return (
     <Section>
@@ -97,27 +102,41 @@ const ThaiNameSection: FC = () => {
           appearance="outlined"
           label="Prefix"
           helperMsg="เด็กชาย, นาย, นาง, นางสาว, etc."
+          {...formProps.prefixTH}
         />
-        <TextField appearance="outlined" label="First name" />
+        <TextField
+          appearance="outlined"
+          label="First name"
+          {...formProps.firstNameTH}
+        />
         <TextField
           appearance="outlined"
           label="Middle name"
           helperMsg="Leave blank if you don’t want your middle name to be
             displayed."
+          {...formProps.middleNameTH}
         />
-        <TextField appearance="outlined" label="Last name" />
-        <TextField appearance="outlined" label="Nickname" />
+        <TextField
+          appearance="outlined"
+          label="Last name"
+          {...formProps.lastNameTH}
+        />
+        <TextField
+          appearance="outlined"
+          label="Nickname"
+          {...formProps.nicknameTH}
+        />
       </Columns>
     </Section>
   );
 };
 
-const EnglishNameSection: FC = () => {
+const EnglishNameSection: FC<{ formProps: FormControlProps }> = ({
+  formProps,
+}) => {
   // Translation
   const locale = useLocale();
   const { t } = useTranslation("welcome");
-
-  // TODO: form control
 
   return (
     <Section>
@@ -127,22 +146,38 @@ const EnglishNameSection: FC = () => {
           appearance="outlined"
           label="English prefix"
           helperMsg="Master, Mr., Mrs., Ms., etc."
+          {...formProps.prefixEN}
         />
-        <TextField appearance="outlined" label="English first name" />
+        <TextField
+          appearance="outlined"
+          label="English first name"
+          {...formProps.firstNameEN}
+        />
         <TextField
           appearance="outlined"
           label="English middle name"
           helperMsg="Leave blank if you don’t want your middle name to be
             displayed."
+          {...formProps.middleNameEN}
         />
-        <TextField appearance="outlined" label="English last name" />
-        <TextField appearance="outlined" label="English nickname" />
+        <TextField
+          appearance="outlined"
+          label="English last name"
+          {...formProps.lastNameEN}
+        />
+        <TextField
+          appearance="outlined"
+          label="English nickname"
+          {...formProps.nicknameEN}
+        />
       </Columns>
     </Section>
   );
 };
 
-const MiscellaneousSection: FC = () => {
+const MiscellaneousSection: FC<{ formProps: FormControlProps }> = ({
+  formProps,
+}) => {
   // Translation
   const locale = useLocale();
   const { t } = useTranslation("welcome");
@@ -153,7 +188,7 @@ const MiscellaneousSection: FC = () => {
     <Section>
       <Header level={3}>Miscellaneous</Header>
       <Columns columns={4} className="my-3 !gap-y-12">
-        <Select appearance="outlined" label="Gender">
+        <Select appearance="outlined" label="Gender" {...formProps.gender}>
           <MenuItem value="male">Male</MenuItem>
           <MenuItem value="female">Female</MenuItem>
           <MenuItem value="non-binary">Non-binary</MenuItem>
@@ -163,6 +198,7 @@ const MiscellaneousSection: FC = () => {
           appearance="outlined"
           label="Birthdate"
           inputAttr={{ type: "date" }}
+          {...formProps.birthdate}
         />
         <TextField
           appearance="outlined"
@@ -170,6 +206,7 @@ const MiscellaneousSection: FC = () => {
           leading={<MaterialIcon icon="lock" />}
           helperMsg="Only people you allow access to this information can see
             it."
+          {...formProps.citizenID}
         />
         <TextField
           appearance="outlined"
@@ -177,6 +214,7 @@ const MiscellaneousSection: FC = () => {
           leading={<MaterialIcon icon="lock" />}
           helperMsg="Only people you allow access to this information can see
             it."
+          {...formProps.passportNumber}
         />
         <Select
           appearance="outlined"
@@ -184,6 +222,7 @@ const MiscellaneousSection: FC = () => {
           leading={<MaterialIcon icon="lock" />}
           helperMsg="Only people you allow access to this information can see
             it."
+          {...formProps.bloodGroup}
         >
           <MenuItem value="A">A</MenuItem>
           <MenuItem value="B">B</MenuItem>
@@ -225,7 +264,48 @@ const ContactsSection: FC = () => {
 
 const WelcomePage: CustomPage = () => {
   // Translation
+  const locale = useLocale();
   const { t } = useTranslation(["welcome", "common"]);
+
+  const { formProps } = useForm<
+    | "prefixTH"
+    | "firstNameTH"
+    | "middleNameTH"
+    | "lastNameTH"
+    | "nicknameTH"
+    | "prefixEN"
+    | "firstNameEN"
+    | "middleNameEN"
+    | "lastNameEN"
+    | "nicknameEN"
+    | "gender"
+    | "birthdate"
+    | "citizenID"
+    | "passportNumber"
+    | "bloodGroup"
+  >([
+    { key: "prefixTH", required: true },
+    { key: "firstNameTH", required: true },
+    { key: "middleNameTH" },
+    { key: "lastNameTH", required: true },
+    { key: "nicknameTH" },
+    { key: "prefixEN", required: true },
+    { key: "firstNameEN", required: true },
+    { key: "middleNameEN" },
+    { key: "lastNameEN", required: true },
+    { key: "nicknameEN" },
+    { key: "gender", required: true },
+    {
+      key: "citizenID",
+      required: locale === "th",
+      validate: validateCitizenID,
+    },
+    {
+      key: "passportNumber",
+      validate: (value) => Boolean(validatePassport(value)),
+    },
+    { key: "bloodGroup", required: true },
+  ]);
 
   return (
     <>
@@ -241,9 +321,9 @@ const WelcomePage: CustomPage = () => {
             We have already imported some fields from relevant organizations in
             the school. Please check for any inaccuracies in the import.
           </p>
-          <ThaiNameSection />
-          <EnglishNameSection />
-          <MiscellaneousSection />
+          <ThaiNameSection formProps={formProps} />
+          <EnglishNameSection formProps={formProps} />
+          <MiscellaneousSection formProps={formProps} />
         </Section>
         <ContactsSection />
         <Actions className="mx-4 sm:mx-0">

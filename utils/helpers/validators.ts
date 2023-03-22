@@ -37,6 +37,10 @@ export function validateCitizenID(citizenID: string): boolean {
 }
 
 export function validatePassport(passportNumber: string): string | false {
+  // Thai passport
+  if (/^(([A-Za-z]{1}\d{6,7})|[A-Za-z]{2}\d{7})$/.test(passportNumber))
+    return "TH";
+
   // Indian passport
   if (/^[A-Z]{1}[0-9]{7}$/.test(passportNumber)) return "IN";
 
