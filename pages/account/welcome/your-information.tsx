@@ -82,13 +82,15 @@ const ThaiNameSection: FC = () => {
   return (
     <Section>
       <Header level={3}>Thai name</Header>
-      {locale !== "th" && (
+      {locale !== "th" ? (
         <p>
           Foreign teachers: we understand that you may not be able to fill in
           these fields by yourself, but since most students use Thai as their
           first language, you may want to find someone to transcribe your name
           into Thai for you. We apologize for the inconvenience.
         </p>
+      ) : (
+        <></>
       )}
       <Columns columns={4} className="my-3 !gap-y-12">
         <TextField
@@ -201,9 +203,11 @@ const ContactsSection: FC = () => {
   // TODO: form control
 
   return (
-    <Section>
+    <Section sectionAttr={{ "aria-labelledby": "header-contacts" }}>
       <Columns columns={3}>
-        <Header className="md:col-span-2">Contacts</Header>
+        <Header className="md:col-span-2" hAttr={{ id: "header-contacts" }}>
+          Contacts
+        </Header>
         <Actions>
           <Button appearance="tonal" icon={<MaterialIcon icon="add" />}>
             Add contact

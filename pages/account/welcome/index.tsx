@@ -31,11 +31,10 @@ const ThankYouSection: FC = () => {
 
   return (
     <Section sectionAttr={{ "aria-labelledby": "header-thank-you" }}>
-      <h2 id="header-thank-you" className="skc-headline-small">
-        Thank you for testing out the new MySK.
-        <br />
-        Before we get started, however, we need to set a few things up.
-      </h2>
+      <div className="skc-headline-small">
+        <h2 id="header-thank-you">Thank you for testing out the new MySK.</h2>
+        <p>Before we get started, however, we need to set a few things up.</p>
+      </div>
       <p>
         Every academic year, not only do we welcome new students into the
         school, some information about people inside the school also change.
@@ -77,6 +76,7 @@ const NoticesSection: FC = () => {
 
   return (
     <Section>
+      <Header className="sr-only">Final instructions</Header>
       <p>
         When you press “Next” on each step, your information will be saved for
         that step.
