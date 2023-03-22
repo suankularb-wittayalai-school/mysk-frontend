@@ -52,7 +52,7 @@ const AddableEmptySchedulePeriod = ({
                 hover:border-primary focus:border-primary ${
                   isInSession
                     ? "border-4 border-secondary"
-                    : "border-[1px] border-outline-variant"
+                    : "border-1 border-outline-variant"
                 }`
       }`}
       title={t("schedule.hoverMenu.add")}

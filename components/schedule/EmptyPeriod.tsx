@@ -45,7 +45,7 @@ const EmptyPeriod = ({
         className={`h-14 w-full rounded-sm ${
           isInSession
             ? "border-4 border-secondary"
-            : "border-[1px] border-outline-variant"
+            : "border-1 border-outline-variant"
         }`}
       />
     );
