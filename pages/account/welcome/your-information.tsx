@@ -309,7 +309,7 @@ const WelcomePage: CustomPage = () => {
   return (
     <>
       <Head>
-        <title>{createTitleStr("Your information", t)}</title>
+        <title>{createTitleStr(t("yourInformation.title"), t)}</title>
       </Head>
       <ContentLayout>
         <NextWarningCard />
@@ -349,7 +349,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => ({
 });
 
 WelcomePage.pageHeader = {
-  title: "Your information",
+  title: { key: "yourInformation.title", ns: "welcome" },
   icon: <MaterialIcon icon="badge" />,
   parentURL: "/account/welcome",
 };

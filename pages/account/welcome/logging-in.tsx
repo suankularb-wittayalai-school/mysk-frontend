@@ -268,7 +268,7 @@ const LoggingInPage: CustomPage<{ user: User }> = ({ user }) => {
   return (
     <>
       <Head>
-        <title>{createTitleStr("Welcome", t)}</title>
+        <title>{createTitleStr(t("loggingIn.title"), t)}</title>
       </Head>
       <ContentLayout>
         <LastPageCard />

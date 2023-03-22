@@ -120,7 +120,7 @@ const WelcomePage: CustomPage = () => {
   return (
     <>
       <Head>
-        <title>{createTitleStr("Welcome", t)}</title>
+        <title>{createTitleStr(t("instructions.title"), t)}</title>
       </Head>
       <ContentLayout>
         <ThankYouSection />

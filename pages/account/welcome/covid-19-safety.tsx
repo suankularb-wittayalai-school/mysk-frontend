@@ -222,7 +222,7 @@ const COVID19SafetyPage: CustomPage<{ userRole: Role }> = ({ userRole }) => {
   return (
     <>
       <Head>
-        <title>{createTitleStr("Welcome", t)}</title>
+        <title>{createTitleStr(t("covid19Safety.title"), t)}</title>
       </Head>
       <ContentLayout>
         <Card

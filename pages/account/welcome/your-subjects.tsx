@@ -32,7 +32,7 @@ const YourSubjectsPage: CustomPage = () => {
   return (
     <>
       <Head>
-        <title>{createTitleStr("Welcome", t)}</title>
+        <title>{createTitleStr(t("yourSubjects.title"), t)}</title>
       </Head>
       <ContentLayout>
         <p>Bet.</p>
