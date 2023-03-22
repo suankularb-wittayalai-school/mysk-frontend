@@ -17,22 +17,19 @@ import InstragramLogo from "@/public/images/social/instagram.svg";
 import DiscordLogo from "@/public/images/social/discord.svg";
 
 // Types
-import { ContactVia } from "@/utils/types/contact";
+import { Contact, ContactVia } from "@/utils/types/contact";
 import { useTranslation } from "next-i18next";
+import { getLocaleString } from "@/utils/helpers/i18n";
+import { useLocale } from "@/utils/hooks/i18n";
 
 /**
  * A contact Card.
  *
- * @param type The medium in which you can contact this person, i.e. Facebook, e-mail, etc.
- * @param label The text label on this contact.
- * @param href The link to this contact.
+ * @param contact A Contact object.
  */
-const ContactCard: FC<{
-  type: ContactVia;
-  label: string;
-  href: string;
-}> = ({ type, label, href }) => {
+const ContactCard: FC<{ contact: Contact }> = ({ contact }) => {
   // Translation
+  const locale = useLocale();
   const { t } = useTranslation("common");
 
   const avatarMap = {
@@ -58,11 +55,16 @@ const ContactCard: FC<{
   };
 
   return (
-    <Card appearance="outlined" direction="row" stateLayerEffect href={href}>
+    <Card
+      appearance="outlined"
+      direction="row"
+      stateLayerEffect
+      href={contact.value}
+    >
       <CardHeader
-        avatar={<Avatar>{avatarMap[type]}</Avatar>}
-        title={label}
-        subtitle={subtitleMap[type]}
+        avatar={<Avatar>{avatarMap[contact.type]}</Avatar>}
+        title={getLocaleString(contact.name, locale)}
+        subtitle={subtitleMap[contact.type]}
       />
     </Card>
   );

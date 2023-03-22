@@ -62,9 +62,9 @@ export function useForm<KeyEnum extends string | symbol>(
       [key]: required ? formValues[key as KeyEnum].length > 0 : true,
     };
   }, {} as FormControlValids<KeyEnum>);
-  const formOK = !Object.values(formValidsStrict).find(
-    (valid) => valid === false
-  );
+  const formOK =
+    Object.values(formValidsStrict).filter((valid) => valid).length ===
+    formSpecs.length;
 
   // Props for a Text Field/Select
   const formProps: FormControlProps<KeyEnum> = Object.keys(formValues).reduce(

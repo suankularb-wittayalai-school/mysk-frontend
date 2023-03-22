@@ -91,44 +91,6 @@
     }
   },
   "dialog": {
-    "addContact": {
-      "title": "เพิ่มช่องทางการติดต่อ",
-      "type": "แพลตฟอร์ม",
-      "nameTH": "ป้ายกำกับการติดต่อ",
-      "nameEN": "ป้ายกำกับการติดต่อภาษาอังกฤษ",
-      "value": {
-        "phone": "เบอร์โทรศัพท์",
-        "email": "ที่อยู่อีเมล",
-        "website": "URL",
-        "facebook": "ชื่อ Facebook",
-        "line": "รหัสเชิญเข้ากลุ่ม/LINE ID",
-        "line_helper": "รหัส 10 หลักอยู่ท้ายลิงก์เชิญ",
-        "instagram": "ชื่อผู้ใช้ Instagram",
-        "discord": "รหัสเชิญเข้า Discord",
-        "discord_helper": "รหัส 8 หลักอยู่ท้ายลิงก์เชิญ",
-        "other": "ชื่อ/ID ติดต่อ"
-      },
-      "value_error": "ค่าไม่ถูกต้อง",
-      "labelDefault": {
-        "one": "กลุ่ม{{type1}}",
-        "one_public": "กลุ่ม{{type1}}สาธารณะ",
-        "two": "กลุ่ม{{type1}}กับ{{type2}}",
-        "two_public": "กลุ่ม{{type1}}กับ{{type2}}สาธารณะ",
-        "three": "กลุ่มรวมห้อง",
-        "three_public": "กลุ่มรวมห้องสาธารณะ"
-      },
-      "includes": {
-        "title": "กลุ่มที่อนุญาตให้เข้าถึง",
-        "students": "นักเรียน",
-        "teachers": "อาจารย์",
-        "parents": "ผู้ปกครอง",
-        "other": "อื่นๆ"
-      },
-      "action": {
-        "cancel": "ยกเลิก",
-        "add": "เพิ่ม"
-      }
-    },
     "addClass": {
       "title": "เพิ่มห้องเรียน",
       "class": "ห้องเรียน",

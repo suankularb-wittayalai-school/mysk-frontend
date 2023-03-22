@@ -117,10 +117,10 @@ export type DataTableColumnDef = ColumnDef<object> &
     noDataMsg: string | JSX.Element;
   }>;
 
-export type DialogComponent<T = {}> = (props: T & DialogProps) => JSX.Element;
-export type SubmittableDialogComponent<T = () => void, U = {}> = (
-  props: U & SubmittableDialogProps<T>
-) => JSX.Element;
+export type DialogComponent<T = {}> = FC<T & DialogProps>;
+export type SubmittableDialogComponent<T = () => void, U = {}> = FC<
+  U & SubmittableDialogProps<T>
+>;
 
 export type FormControlValues<T extends string | symbol = string> = {
   [key in T]: string;

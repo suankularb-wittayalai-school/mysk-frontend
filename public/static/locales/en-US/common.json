@@ -90,36 +90,6 @@
     }
   },
   "dialog": {
-    "addContact": {
-      "title": "Add contact",
-      "type": "Platform",
-      "nameTH": "Thai contact label",
-      "nameEN": "English contact label",
-      "value": {
-        "phone": "Phone number",
-        "email": "Email address",
-        "website": "URL",
-        "facebook": "Facebook name",
-        "line": "LINE ID/invite code",
-        "line_helper": "10-digit code at end of invite link.",
-        "instagram": "Instagram username",
-        "discord": "Discord invite code",
-        "discord_helper": "8-digit code at end of invite link.",
-        "other": "Value"
-      },
-      "value_error": "Invalid value.",
-      "includes": {
-        "title": "Includes",
-        "students": "Students",
-        "teachers": "Teachers",
-        "parents": "Parents",
-        "other": "Other"
-      },
-      "action": {
-        "cancel": "Cancel",
-        "add": "Add"
-      }
-    },
     "addClass": {
       "title": "Add class",
       "class": "Class",

@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { FC } from "react";
+import { FC, useState } from "react";
 
 // SK Components
 import {
@@ -38,6 +38,9 @@ import {
   validateCitizenID,
   validatePassport,
 } from "@/utils/helpers/validators";
+import AddContactDialog from "@/components/account/AddContactDialog";
+import { Contact } from "@/utils/types/contact";
+import ContactCard from "@/components/account/ContactCard";
 
 const NextWarningCard: FC = () => {
   // Translation
@@ -182,8 +185,6 @@ const MiscellaneousSection: FC<{ formProps: FormControlProps }> = ({
   const locale = useLocale();
   const { t } = useTranslation("welcome");
 
-  // TODO: form control
-
   return (
     <Section>
       <Header level={3}>Miscellaneous</Header>
@@ -236,10 +237,13 @@ const MiscellaneousSection: FC<{ formProps: FormControlProps }> = ({
 
 const ContactsSection: FC = () => {
   // Translation
-  const locale = useLocale();
   const { t } = useTranslation("welcome");
 
-  // TODO: form control
+  // Form control
+  const [contacts, setContacts] = useState<Contact[]>([]);
+
+  // Dialog control
+  const [showAdd, setShowAdd] = useState<boolean>(false);
 
   return (
     <Section sectionAttr={{ "aria-labelledby": "header-contacts" }}>
@@ -248,16 +252,36 @@ const ContactsSection: FC = () => {
           Contacts
         </Header>
         <Actions>
-          <Button appearance="tonal" icon={<MaterialIcon icon="add" />}>
+          <Button
+            appearance="tonal"
+            icon={<MaterialIcon icon="add" />}
+            onClick={() => setShowAdd(true)}
+          >
             Add contact
           </Button>
+          <AddContactDialog
+            open={showAdd}
+            onClose={() => setShowAdd(false)}
+            onSubmit={(contact) => {
+              setShowAdd(false);
+              setContacts([...contacts, contact]);
+            }}
+          />
         </Actions>
       </Columns>
-      <Card appearance="outlined" className="!grid h-20 place-content-center">
-        <p className="skc-body-medium text-on-surface-variant">
-          No contacts added yet.
-        </p>
-      </Card>
+      {contacts.length ? (
+        <Columns columns={4}>
+          {contacts.map((contact) => (
+            <ContactCard key={contact.id} contact={contact} />
+          ))}
+        </Columns>
+      ) : (
+        <Card appearance="outlined" className="!grid h-20 place-content-center">
+          <p className="skc-body-medium text-on-surface-variant">
+            No contacts added yet.
+          </p>
+        </Card>
+      )}
     </Section>
   );
 };
@@ -345,6 +369,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => ({
     ...(await serverSideTranslations(locale as LangCode, [
       "common",
       "welcome",
+      "account",
     ])),
   },
 });
