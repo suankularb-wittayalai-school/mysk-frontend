@@ -35,6 +35,7 @@ import { getClassAdvisorAt } from "@/utils/backend/person/teacher";
 import NavDrawerContext from "@/contexts/NavDrawerContext";
 
 // Hooks
+import { useLocale } from "@/utils/hooks/i18n";
 import { usePageIsLoading, useTransitionEvent } from "@/utils/hooks/routing";
 import { useSnackbar } from "@/utils/hooks/snackbar";
 
@@ -49,6 +50,7 @@ const Layout: FC<
   >
 > = ({ children, context: Context, fab, pageHeader, pageRole, childURLs }) => {
   // Translation
+  const locale = useLocale();
   const { t } = useTranslation([
     "common",
     ...(typeof pageHeader?.title === "object" && "ns" in pageHeader?.title
@@ -242,7 +244,13 @@ const Layout: FC<
             href={router.asPath}
             element={(props) => (
               <Link
-                locale={router.locale == "en-US" ? "th" : "en-US"}
+                locale={locale == "en-US" ? "th" : "en-US"}
+                onClick={() =>
+                  localStorage.setItem(
+                    "preferredLang",
+                    locale == "en-US" ? "th" : "en-US"
+                  )
+                }
                 {...props}
               />
             )}
@@ -270,7 +278,13 @@ const Layout: FC<
                   href={router.asPath}
                   element={(props) => (
                     <Link
-                      locale={router.locale == "en-US" ? "th" : "en-US"}
+                      locale={locale == "en-US" ? "th" : "en-US"}
+                      onClick={() =>
+                        localStorage.setItem(
+                          "preferredLang",
+                          locale == "en-US" ? "th" : "en-US"
+                        )
+                      }
                       {...props}
                     />
                   )}

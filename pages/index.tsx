@@ -336,7 +336,13 @@ const IndexPage: CustomPage = () => {
                       เปลี่ยนภาษาเป็น:{" "}
                       <Link
                         href="/"
-                        locale={locale === "en-US" ? "th" : "en-US"}
+                        locale={locale == "en-US" ? "th" : "en-US"}
+                        onClick={() =>
+                          localStorage.setItem(
+                            "preferredLang",
+                            locale == "en-US" ? "th" : "en-US"
+                          )
+                        }
                         className="link"
                       >
                         English
