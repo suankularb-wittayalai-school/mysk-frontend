@@ -32,7 +32,9 @@ export async function middleware(req: NextRequest) {
         )
       ? "student"
       : // Teacher pages
-      /^\/(teach|class\/\d{3}\/manage)/.test(route)
+      /^\/(account\/welcome\/your-subjects|teach|class\/\d{3}\/manage)/.test(
+          route
+        )
       ? "teacher"
       : // User pages
       /^\/(news|account|welcome)/.test(route)

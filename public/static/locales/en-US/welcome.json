@@ -1,5 +1,17 @@
 {
   "instructions": {
     "title": "Welcome to MySK"
+  },
+  "yourInformation": {
+    "title": "Your information"
+  },
+  "covid19Safety": {
+    "title": "COVID-19 safety"
+  },
+  "yourSubjects": {
+    "title": "Your subjects"
+  },
+  "loggingIn": {
+    "title": "Logging in"
   }
 }

@@ -24,11 +24,8 @@ export async function getVaccineRecordbyPersonId(
   const vaccineRecord =
     data!.map((vaccineRecord, index) => ({
       id: vaccineRecord.id,
-      doseNo: index + 1,
-      vaccineName: vaccineRecord.vaccine_name,
+      provider: vaccineRecord.vaccine_name,
       vaccineDate: vaccineRecord.vaccination_date,
-      lotNo: vaccineRecord.lot_no,
-      administeredBy: vaccineRecord.administering_center,
     })) ?? [];
 
   return { data: vaccineRecord, error: null };
@@ -42,10 +39,8 @@ export async function addVaccineRecord(
   const { error } = await supabase.from("vaccine_records").insert([
     {
       person: personId,
-      vaccine_name: vaccineRecord.vaccineName,
+      vaccine_name: vaccineRecord.provider,
       vaccination_date: vaccineRecord.vaccineDate,
-      lot_no: vaccineRecord.lotNo,
-      administering_center: vaccineRecord.administeredBy,
     },
   ]);
 
@@ -72,13 +67,11 @@ export async function updateVaccineRecords(
   const dbVaccineRecords = vaccineRecords.map((vaccineRecord) => ({
     id: vaccineRecord.id,
     person: personId,
-    vaccine_name: vaccineRecord.vaccineName,
+    vaccine_name: vaccineRecord.provider,
     vaccination_date: vaccineRecord.vaccineDate,
-    lot_no: vaccineRecord.lotNo,
-    administering_center: vaccineRecord.administeredBy,
   }));
 
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from("vaccine_records")
     .upsert(dbVaccineRecords, { onConflict: "id" });
 

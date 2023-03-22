@@ -25,22 +25,24 @@ import {
   TextField,
 } from "@suankularb-components/react";
 
+// Internal components
+import AddContactDialog from "@/components/account/AddContactDialog";
+import ContactCard from "@/components/account/ContactCard";
+
 // Helpers
 import { createTitleStr } from "@/utils/helpers/title";
-
-// Hooks
-import { useLocale } from "@/utils/hooks/i18n";
-
-// Types
-import { CustomPage, FormControlProps, LangCode } from "@/utils/types/common";
-import { useForm } from "@/utils/hooks/form";
 import {
   validateCitizenID,
   validatePassport,
 } from "@/utils/helpers/validators";
-import AddContactDialog from "@/components/account/AddContactDialog";
+
+// Hooks
+import { useLocale } from "@/utils/hooks/i18n";
+import { useForm } from "@/utils/hooks/form";
+
+// Types
+import { CustomPage, FormControlProps, LangCode } from "@/utils/types/common";
 import { Contact } from "@/utils/types/contact";
-import ContactCard from "@/components/account/ContactCard";
 
 const NextWarningCard: FC = () => {
   // Translation

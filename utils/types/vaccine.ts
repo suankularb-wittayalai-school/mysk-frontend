@@ -1,8 +1,5 @@
 export type VaccineRecord = {
   id: number;
-  doseNo: number;
-  vaccineName: string;
+  provider: string;
   vaccineDate: string;
-  lotNo: string;
-  administeredBy: string;
 };

@@ -1,5 +1,17 @@
 {
   "instructions": {
     "title": "ยินดีต้อนรับสู่ MySK"
+  },
+  "yourInformation": {
+    "title": "ข้อมูลของท่าน"
+  },
+  "covid19Safety": {
+    "title": "การป้องกัน COVID-19"
+  },
+  "yourSubjects": {
+    "title": "วิชาและตารางสอน"
+  },
+  "loggingIn": {
+    "title": "วิธีการเข้าสู่ระบบ"
   }
 }
