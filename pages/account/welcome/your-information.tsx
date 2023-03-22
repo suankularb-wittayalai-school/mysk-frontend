@@ -59,29 +59,6 @@ const NextWarningCard: FC = () => {
   );
 };
 
-const GivingInformationCard: FC = () => {
-  // Translation
-  const { t } = useTranslation("welcome");
-
-  return (
-    <Card appearance="outlined" className="mx-4 sm:mx-0">
-      <CardHeader title="Why should I give my information?" />
-      <CardContent>
-        <p>
-          People inside the school can search for basic information about you,
-          like your name and contacts, via MySK Lookup. More private
-          information, your citizen ID, for instance, can only be seen by the
-          people you give explicit approval to.
-        </p>
-        <p>
-          Don’t worry; no information is shared without your knowledge and no
-          one outside the school have access to your data, not even parents.
-        </p>
-      </CardContent>
-    </Card>
-  );
-};
-
 const ThaiNameSection: FC<{ formProps: FormControlProps }> = ({
   formProps,
 }) => {
@@ -92,16 +69,6 @@ const ThaiNameSection: FC<{ formProps: FormControlProps }> = ({
   return (
     <Section>
       <Header level={3}>Thai name</Header>
-      {locale !== "th" ? (
-        <p>
-          Foreign teachers: we understand that you may not be able to fill in
-          these fields by yourself, but since most students use Thai as their
-          first language, you may want to find someone to transcribe your name
-          into Thai for you. We apologize for the inconvenience.
-        </p>
-      ) : (
-        <></>
-      )}
       <Columns columns={4} className="my-3 !gap-y-12">
         <TextField
           appearance="outlined"
@@ -190,6 +157,12 @@ const MiscellaneousSection: FC<{ formProps: FormControlProps }> = ({
   return (
     <Section>
       <Header level={3}>Miscellaneous</Header>
+      <p>
+        You are in control of your data.{" "}
+        <Link href="/help/essentials/onboarding" className="link">
+          Learn how this information is used.
+        </Link>
+      </p>
       <Columns columns={4} className="my-3 !gap-y-12">
         <Select appearance="outlined" label="Gender" {...formProps.gender}>
           <MenuItem value="male">Male</MenuItem>
@@ -340,7 +313,6 @@ const WelcomePage: CustomPage = () => {
       </Head>
       <ContentLayout>
         <NextWarningCard />
-        <GivingInformationCard />
         <Section className="pb-6">
           <Header>General information</Header>
           <p className="-mt-2">

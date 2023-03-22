@@ -1,6 +1,7 @@
 // External libraries
 import { GetStaticProps } from "next";
 import Head from "next/head";
+import Image from "next/image";
 import Link from "next/link";
 
 import { useTranslation } from "next-i18next";
@@ -13,11 +14,16 @@ import {
   Actions,
   Button,
   Card,
+  Columns,
   ContentLayout,
   Header,
   MaterialIcon,
   Section,
 } from "@suankularb-components/react";
+
+// Images
+import WelcomeImageLight from "@/public/images/graphics/welcome-light.webp";
+import WelcomeImageDark from "@/public/images/graphics/welcome-dark.webp";
 
 // Helpers
 import { createTitleStr } from "@/utils/helpers/title";
@@ -30,22 +36,37 @@ const ThankYouSection: FC = () => {
   const { t } = useTranslation("welcome");
 
   return (
-    <Section sectionAttr={{ "aria-labelledby": "header-thank-you" }}>
-      <div className="skc-headline-small">
-        <h2 id="header-thank-you">Thank you for testing out the new MySK.</h2>
-        <p>Before we get started, however, we need to set a few things up.</p>
-      </div>
-      <p>
-        Every academic year, not only do we welcome new students into the
-        school, some information about people inside the school also change.
-        This is an opportunity to add or check the accuracy of the information
-        in your MySK account.
-      </p>
-      <p>
-        Your MySK account is used not for MySK but for other services inside the
-        school as well, so ensure your information is correct.
-      </p>
-    </Section>
+    <Columns columns={3}>
+      <picture
+        className="mx-4 mb-4 overflow-hidden rounded-lg
+          border-1 border-outline-variant sm:mx-0 sm:translate-y-0"
+      >
+        <source
+          srcSet={WelcomeImageDark.src}
+          media="(prefers-color-scheme: dark)"
+        />
+        <Image src={WelcomeImageLight} width={720} height={480} alt="" />
+      </picture>
+      <Section
+        sectionAttr={{ "aria-labelledby": "header-thank-you" }}
+        className="sm:col-span-2"
+      >
+        <div className="skc-headline-small">
+          <h2 id="header-thank-you">Thank you for testing out the new MySK.</h2>
+          <p>Before we get started, however, we need to set a few things up.</p>
+        </div>
+        <p>
+          Every academic year, not only do we welcome new students into the
+          school, some information about people inside the school also change.
+          This is an opportunity to add or check the accuracy of the information
+          in your MySK account.
+        </p>
+        <p>
+          Your MySK account is used not for MySK but for other services inside
+          the school as well, so ensure your information is correct.
+        </p>
+      </Section>
+    </Columns>
   );
 };
 

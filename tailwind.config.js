@@ -215,6 +215,11 @@ module.exports = {
         outline: "var(--outline)",
         "outline-variant": "var(--outline-variant)",
       },
+
+      // Border width
+      borderWidth: {
+        1: "1px",
+      },
     },
   },
   plugins: [require("@tailwindcss/typography")],

@@ -265,7 +265,7 @@ const COVID19SafetyPage: CustomPage<{ userRole: Role }> = ({ userRole }) => {
                     className="!grid h-full place-content-center"
                   >
                     <p className="skc-body-medium text-on-surface-variant">
-                      No vaccination data
+                      No vaccination data added yet.
                     </p>
                   </Card>
                 </motion.div>
