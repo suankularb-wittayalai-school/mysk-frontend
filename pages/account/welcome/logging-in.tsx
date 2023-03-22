@@ -338,7 +338,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 LoggingInPage.pageHeader = {
   title: { key: "loggingIn.title", ns: "welcome" },
   icon: <MaterialIcon icon="password" />,
-  parentURL: "/account/welcome/covid-19-safety",
+  parentURL: "/account/welcome/your-subjects",
 };
 
 export default LoggingInPage;
