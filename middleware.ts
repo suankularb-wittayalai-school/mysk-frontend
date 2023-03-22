@@ -37,7 +37,7 @@ export async function middleware(req: NextRequest) {
         )
       ? "teacher"
       : // User pages
-      /^\/(news|account|welcome)/.test(route)
+      /^\/(account|news|lookup)/.test(route)
       ? "user"
       : // Fallback (images, icons, manifest, etc.)
         "not-protected";
@@ -56,7 +56,7 @@ export async function middleware(req: NextRequest) {
   // Get user metadata
   const { data: user } = await supabase
     .from("users")
-    .select("role, is_admin")
+    .select("role, onboarded, is_admin")
     .match({ id: session?.user.id })
     .limit(1)
     .maybeSingle();
@@ -64,38 +64,45 @@ export async function middleware(req: NextRequest) {
   // Intepret user metadata
   const userRole: Role | "public" = user ? JSON.parse(user.role) : "public";
   const userIsAdmin: boolean = user ? user.is_admin : false;
+  const userIsOnboarded: boolean = user ? user.onboarded : false;
 
   // Decide on destination based on user and page protection type
   let destination: string | null = null;
+
   // Disallow public users from visiting private pages
-  if (pageRole != "public" && userRole == "public")
-    destination = "/";
+  if (pageRole !== "public" && userRole === "public") destination = "/";
+  // Disallow students from vising the Your Subject page of the onboarding
+  // process
+  else if (route === "/account/welcome/your-subjects" && userRole === "student")
+    destination = "/account/welcome/covid-19-safety";
   // Disallow logged in users from visiting certain pages under certain
   // circumstances
   // prettier-ignore
   else if (
     !(
       (
+        // Allow new users to visit onboarding pages
+        (route.startsWith("/account/welcome") && !userIsOnboarded) ||
         // Allow admins to visit admin pages
-        (pageRole == "admin" && userIsAdmin) ||
+        (pageRole === "admin" && userIsAdmin) ||
         // Allow all users to visit user pages
-        pageRole == "user" ||
+        pageRole === "user" ||
         // Allow users with the correct roles
-        pageRole == userRole
+        pageRole === userRole
       )
     )
   ) {
     // Set destinations for students and teachers in the wrong pages
-    if (userRole == "student") destination = "/learn";
-    else if (userRole == "teacher") destination = "/teach";
+    if (userRole === "student") destination = "/learn";
+    else if (userRole === "teacher") destination = "/teach";
   }
   // Allow all users to visit user pages
   // Allow users with the correct roles
-  else if (!(pageRole == "user" || pageRole == userRole)) {
+  else if (!(pageRole === "user" || pageRole === userRole)) {
     if (pageRole != "admin" || !userIsAdmin) {
       // Set destinations for students and teachers in the wrong pages
-      if (userRole == "student") destination = "/learn";
-      else if (userRole == "teacher") destination = "/teach";
+      if (userRole === "student") destination = "/learn";
+      else if (userRole === "teacher") destination = "/teach";
     }
   }
 
@@ -112,14 +119,14 @@ export async function middleware(req: NextRequest) {
 export const config = {
   matcher: [
     "/",
-    "/welcome",
     "/account",
+    "/account/:path*",
     "/about",
-    "/admin/:path*",
     "/learn",
     "/learn/:id",
     "/teach",
     "/class/:id/:path*",
+    "/lookup/:path*",
     "/news",
     "/news/stats/:id",
     "/news/form/:id",
