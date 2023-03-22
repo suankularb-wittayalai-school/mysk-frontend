@@ -234,7 +234,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 
 LoggingInPage.pageHeader = {
   title: { key: "loggingIn.title", ns: "welcome" },
-  icon: <MaterialIcon icon="waving_hand" />,
+  icon: <MaterialIcon icon="password" />,
   parentURL: "/account/welcome/covid-19-safety",
 };
 

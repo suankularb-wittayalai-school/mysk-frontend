@@ -326,7 +326,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 
 COVID19SafetyPage.pageHeader = {
   title: { key: "covid19Safety.title", ns: "welcome" },
-  icon: <MaterialIcon icon="waving_hand" />,
+  icon: <MaterialIcon icon="vaccines" />,
   parentURL: "/account/welcome/your-information",
 };
 

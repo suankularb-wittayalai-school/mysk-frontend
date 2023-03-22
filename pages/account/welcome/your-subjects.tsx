@@ -61,7 +61,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => ({
 
 YourSubjectsPage.pageHeader = {
   title: { key: "yourSubjects.title", ns: "welcome" },
-  icon: <MaterialIcon icon="waving_hand" />,
+  icon: <MaterialIcon icon="book" />,
   parentURL: "/account/welcome/covid-19-safety",
 };
 

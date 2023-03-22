@@ -378,7 +378,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => ({
 
 WelcomePage.pageHeader = {
   title: "Your information",
-  icon: <MaterialIcon icon="waving_hand" />,
+  icon: <MaterialIcon icon="badge" />,
   parentURL: "/account/welcome",
 };
 
