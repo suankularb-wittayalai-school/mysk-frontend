@@ -247,7 +247,7 @@ const COVID19SafetyPage: CustomPage<{ userRole: Role }> = ({ userRole }) => {
                 )
               }
             />
-            <AnimatePresence mode="wait">
+            <AnimatePresence initial={false} mode="wait">
               {doses.length ? (
                 <ul className="flex flex-col gap-3">
                   <DoseCardList doses={doses} setDoses={setDoses} />
