@@ -3,7 +3,7 @@ import {
   createServerSupabaseClient,
   User,
 } from "@supabase/auth-helpers-nextjs";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import Head from "next/head";
@@ -27,16 +27,20 @@ import {
   TextField,
 } from "@suankularb-components/react";
 
+// Internal components
+import BlockingPane from "@/components/common/BlockingPane";
+
 // Helpers
 import { withLoading } from "@/utils/helpers/loading";
 import { createTitleStr } from "@/utils/helpers/title";
 
 // Hooks
+import { useLocale } from "@/utils/hooks/i18n";
 import { useToggle } from "@/utils/hooks/toggle";
 
 // Types
 import type { CustomPage, LangCode } from "@/utils/types/common";
-import { useLocale } from "@/utils/hooks/i18n";
+import Link from "next/link";
 
 const LastPageCard: FC = () => {
   // Translation
@@ -61,16 +65,50 @@ const CheckEmailSection: FC<{ user: User }> = ({ user }) => {
   const locale = useLocale();
   const { t } = useTranslation("welcome");
 
+  // Supabase
+  const supabase = useSupabaseClient();
+
   // Form control
   const [email, setEmail] = useState<string>("");
 
+  const [loading, toggleLoading] = useToggle();
+  const [success, toggleSuccess] = useToggle();
+  function handleSubmit() {
+    withLoading(
+      async () => {
+        const { error } = await supabase.auth.updateUser({
+          email: [email, "sk.ac.th"].join(""),
+        });
+        if (error) {
+          console.error(error);
+          return false;
+        }
+
+        toggleSuccess();
+        return true;
+      },
+      toggleLoading,
+      { hasEndToggle: true }
+    );
+  }
+
   return (
-    <Section>
+    <Section className="relative">
+      <BlockingPane
+        icon={<MaterialIcon icon="email" size={48} />}
+        open={success}
+      >
+        Check both your old and new email, and click the link on both addresses.{" "}
+        <Link href="/help/essentials/onboarding" className="link">
+          Learn more
+        </Link>
+      </BlockingPane>
       <Header>Check email</Header>
       <p>
         You’re using “{user.email},” does that seem correct? If not, specify a
-        new one, and we’ll send an email to your current email to securely
-        confirm the change.
+        new one, and we’ll send an email to both your old and your new email
+        addresses to confirm the change. You must click the link on both
+        addresses.
       </p>
       <Columns columns={6}>
         <TextField
@@ -93,7 +131,13 @@ const CheckEmailSection: FC<{ user: User }> = ({ user }) => {
         />
       </Columns>
       <Actions>
-        <Button appearance="tonal">Send verification email</Button>
+        <Button
+          appearance="tonal"
+          loading={loading || undefined}
+          onClick={handleSubmit}
+        >
+          Send verification email
+        </Button>
       </Actions>
     </Section>
   );
@@ -103,13 +147,66 @@ const CreatePasswordSection: FC = () => {
   // Translation
   const { t } = useTranslation("welcome");
 
+  // Supabase
+  const supabase = useSupabaseClient();
+  const user = useUser();
+
   const [form, setForm] = useState({
     password: "",
     confirmPassword: "",
   });
 
+  const [loading, toggleLoading] = useToggle();
+  const [success, toggleSuccess] = useToggle();
+  function handleSubmit() {
+    withLoading(
+      async () => {
+        // Set new password
+        const { error: pwdError } = await supabase.auth.updateUser({
+          password: form.password,
+        });
+        if (pwdError) {
+          console.error(pwdError);
+          return false;
+        }
+
+        // Flag the user as onboarded
+
+        // In Supabase’s internals
+        const { error: sbUserError } = await supabase.auth.updateUser({
+          data: { onboarded: true },
+        });
+        if (sbUserError) {
+          console.error(sbUserError);
+          return false;
+        }
+
+        // In our own table
+        const { error: userError } = await supabase
+          .from("users")
+          .update({ onboarded: true })
+          .match({ id: user!.id });
+        if (userError) {
+          console.error(userError);
+          return false;
+        }
+
+        toggleSuccess();
+        return true;
+      },
+      toggleLoading,
+      { hasEndToggle: true }
+    );
+  }
+
   return (
-    <Section>
+    <Section className="relative">
+      <BlockingPane
+        icon={<MaterialIcon icon="done" size={48} />}
+        open={success}
+      >
+        Password created. You’re all set to start exploring MySK!
+      </BlockingPane>
       <Header>Create a password</Header>
       <p>
         For the security of you and the school’s data, create a new password for
@@ -143,7 +240,13 @@ const CreatePasswordSection: FC = () => {
         </div>
       </Columns>
       <Actions>
-        <Button appearance="tonal">Set password</Button>
+        <Button
+          appearance="tonal"
+          loading={loading || undefined}
+          onClick={handleSubmit}
+        >
+          Set password
+        </Button>
       </Actions>
     </Section>
   );
