@@ -1,6 +1,30 @@
 {
   "instructions": {
-    "title": "Welcome to MySK"
+    "title": "Welcome to MySK",
+    "thankYou": {
+      "title": "Thank you for testing out the new MySK.",
+      "subtitle": "Before we get started, however, we need to set a few things up.",
+      "reason": "Every academic year, not only do we welcome new students into the school, some information about people inside the school also change. This is an opportunity to add or check the accuracy of the information in your MySK account.",
+      "usage": "Your MySK account is used not for MySK but for other services inside the school as well, so ensure your information is correct."
+    },
+    "comingUp": {
+      "title": "Coming up",
+      "desc": "As you set up your MySK account for 2023, you’ll progress through these steps:",
+      "step": {
+        "1": "Your information",
+        "2": "COVID-19 safety",
+        "3": "Your subjects",
+        "4": "Logging in"
+      }
+    },
+    "notices": {
+      "title": "Final instructions",
+      "desc": "When you press “Next” on each step, your information will be saved for that step.",
+      "warning": "Don’t close this tab. You’ll have to restart the set up process all over again if you do."
+    },
+    "action": {
+      "logOut": "Log out"
+    }
   },
   "yourInformation": {
     "title": "Your information"
@@ -13,5 +37,10 @@
   },
   "loggingIn": {
     "title": "Logging in"
+  },
+  "common": {
+    "action": {
+      "next": "Next"
+    }
   }
 }

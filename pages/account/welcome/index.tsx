@@ -52,19 +52,11 @@ const ThankYouSection: FC = () => {
         className="sm:col-span-2"
       >
         <div className="skc-headline-small">
-          <h2 id="header-thank-you">Thank you for testing out the new MySK.</h2>
-          <p>Before we get started, however, we need to set a few things up.</p>
+          <h2 id="header-thank-you">{t("instructions.thankYou.title")}</h2>
+          <p>{t("instructions.thankYou.subtitle")}</p>
         </div>
-        <p>
-          Every academic year, not only do we welcome new students into the
-          school, some information about people inside the school also change.
-          This is an opportunity to add or check the accuracy of the information
-          in your MySK account.
-        </p>
-        <p>
-          Your MySK account is used not for MySK but for other services inside
-          the school as well, so ensure your information is correct.
-        </p>
+        <p>{t("instructions.thankYou.reason")}</p>
+        <p>{t("instructions.thankYou.usage")}</p>
       </Section>
     </Columns>
   );
@@ -76,16 +68,13 @@ const ComingUpSection: FC = () => {
 
   return (
     <Section>
-      <Header>Coming up</Header>
-      <p>
-        As you set up your MySK account for 2023, you’ll progress through these
-        steps:
-      </p>
+      <Header>{t("instructions.comingUp.title")}</Header>
+      <p>{t("instructions.comingUp.desc")}</p>
       <ol className="list-decimal pl-6">
-        <li>Your information</li>
-        <li>COVID-19 safety</li>
-        <li>Your subjects</li>
-        <li>Logging in</li>
+        <li>{t("instructions.comingUp.step.1")}</li>
+        <li>{t("instructions.comingUp.step.2")}</li>
+        <li>{t("instructions.comingUp.step.3")}</li>
+        <li>{t("instructions.comingUp.step.4")}</li>
       </ol>
     </Section>
   );
@@ -97,17 +86,15 @@ const NoticesSection: FC = () => {
 
   return (
     <Section>
-      <Header className="sr-only">Final instructions</Header>
-      <p>
-        When you press “Next” on each step, your information will be saved for
-        that step.
-      </p>
-      <Card appearance="outlined" className="!flex-row gap-3 py-3 px-4">
+      <Header className="sr-only">{t("instructions.notices.title")}</Header>
+      <p>{t("instructions.notices.desc")}</p>
+      <Card
+        appearance="outlined"
+        direction="row"
+        className="items-center gap-3 py-3 px-4"
+      >
         <MaterialIcon icon="warning" className="text-error" />
-        <p>
-          Don’t close this tab. You’ll have to restart the set up process all
-          over again if you do.
-        </p>
+        <p>{t("instructions.notices.warning")}</p>
       </Card>
     </Section>
   );
@@ -126,21 +113,21 @@ const WelcomePage: CustomPage = () => {
         <ThankYouSection />
         <ComingUpSection />
         <NoticesSection />
-        <Actions>
+        <Actions className="mx-4 sm:mx-0">
           <Button
             appearance="outlined"
             dangerous
             href="/account/logout"
             element={Link}
           >
-            Log out
+            {t("instructions.action.logOut")}
           </Button>
           <Button
             appearance="filled"
             href="/account/welcome/your-information"
             element={Link}
           >
-            Next
+            {t("common.action.next")}
           </Button>
         </Actions>
       </ContentLayout>
