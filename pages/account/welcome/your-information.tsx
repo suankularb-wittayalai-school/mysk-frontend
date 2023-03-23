@@ -3,7 +3,7 @@ import { GetStaticProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
 
-import { useTranslation } from "next-i18next";
+import { Trans, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { FC, useState } from "react";
@@ -13,8 +13,6 @@ import {
   Actions,
   Button,
   Card,
-  CardContent,
-  CardHeader,
   Columns,
   ContentLayout,
   Header,
@@ -51,10 +49,11 @@ const NextWarningCard: FC = () => {
   return (
     <Card
       appearance="outlined"
-      className="mx-4 !flex-row gap-3 py-3 px-4 sm:mx-0"
+      direction="row"
+      className="mx-4 items-center gap-3 py-3 px-4 sm:mx-0"
     >
       <MaterialIcon icon="warning" className="text-error" />
-      <p>Remember: your information is not saved until you press “Next.”</p>
+      <p>{t("common.nextReminder")}</p>
     </Card>
   );
 };
@@ -63,39 +62,37 @@ const ThaiNameSection: FC<{ formProps: FormControlProps }> = ({
   formProps,
 }) => {
   // Translation
-  const locale = useLocale();
-  const { t } = useTranslation("welcome");
+  const { t } = useTranslation("account");
 
   return (
     <Section>
-      <Header level={3}>Thai name</Header>
+      <Header level={3}>{t("profile.name.title")}</Header>
       <Columns columns={4} className="my-3 !gap-y-12">
         <TextField
           appearance="outlined"
-          label="Prefix"
-          helperMsg="เด็กชาย, นาย, นาง, นางสาว, etc."
+          label={t("profile.name.prefix")}
+          helperMsg={t("profile.name.prefix_helper")}
           {...formProps.prefixTH}
         />
         <TextField
           appearance="outlined"
-          label="First name"
+          label={t("profile.name.firstName")}
           {...formProps.firstNameTH}
         />
         <TextField
           appearance="outlined"
-          label="Middle name"
-          helperMsg="Leave blank if you don’t want your middle name to be
-            displayed."
+          label={t("profile.name.middleName")}
+          helperMsg={t("profile.name.middleName_helper")}
           {...formProps.middleNameTH}
         />
         <TextField
           appearance="outlined"
-          label="Last name"
+          label={t("profile.name.lastName")}
           {...formProps.lastNameTH}
         />
         <TextField
           appearance="outlined"
-          label="Nickname"
+          label={t("profile.name.nickname")}
           {...formProps.nicknameTH}
         />
       </Columns>
@@ -107,40 +104,63 @@ const EnglishNameSection: FC<{ formProps: FormControlProps }> = ({
   formProps,
 }) => {
   // Translation
-  const locale = useLocale();
-  const { t } = useTranslation("welcome");
+  const { t } = useTranslation("account");
 
   return (
     <Section>
-      <Header level={3}>English name</Header>
+      <Header level={3}>{t("profile.enName.title")}</Header>
       <Columns columns={4} className="my-3 !gap-y-12">
         <TextField
           appearance="outlined"
-          label="English prefix"
-          helperMsg="Master, Mr., Mrs., Ms., etc."
+          label={t("profile.enName.prefix")}
+          helperMsg={t("profile.enName.prefix_helper")}
           {...formProps.prefixEN}
         />
         <TextField
           appearance="outlined"
-          label="English first name"
+          label={t("profile.enName.firstName")}
           {...formProps.firstNameEN}
         />
         <TextField
           appearance="outlined"
-          label="English middle name"
-          helperMsg="Leave blank if you don’t want your middle name to be
-            displayed."
+          label={t("profile.enName.middleName")}
+          helperMsg={t("profile.name.middleName_helper")}
           {...formProps.middleNameEN}
         />
         <TextField
           appearance="outlined"
-          label="English last name"
+          label={t("profile.enName.lastName")}
           {...formProps.lastNameEN}
         />
         <TextField
           appearance="outlined"
-          label="English nickname"
+          label={t("profile.enName.nickname")}
           {...formProps.nicknameEN}
+        />
+      </Columns>
+    </Section>
+  );
+};
+
+const RoleSection: FC<{ formProps: FormControlProps }> = ({ formProps }) => {
+  // Translation
+  const { t } = useTranslation("account");
+
+  return (
+    <Section>
+      <Header level={3}>{t("profile.role.title")}</Header>
+      <Columns columns={4} className="mt-3 mb-8 !gap-y-12">
+        <TextField
+          appearance="outlined"
+          label={t("profile.role.subjectGroup")}
+          helperMsg={t("profile.role.subjectGroup_helper")}
+          {...formProps.subjectGroup}
+        />
+        <TextField
+          appearance="outlined"
+          label={t("profile.role.classAdvisorAt")}
+          helperMsg={t("profile.role.classAdvisorAt_helper")}
+          {...formProps.classAdvisorAt}
         />
       </Columns>
     </Section>
@@ -151,50 +171,51 @@ const MiscellaneousSection: FC<{ formProps: FormControlProps }> = ({
   formProps,
 }) => {
   // Translation
-  const locale = useLocale();
-  const { t } = useTranslation("welcome");
+  const { t } = useTranslation("account");
 
   return (
     <Section>
-      <Header level={3}>Miscellaneous</Header>
-      <p>
-        You are in control of your data.{" "}
-        <Link href="/help/essentials/onboarding" className="link">
-          Learn how this information is used.
-        </Link>
-      </p>
+      <Header level={3}>{t("profile.general.title")}</Header>
       <Columns columns={4} className="my-3 !gap-y-12">
-        <Select appearance="outlined" label="Gender" {...formProps.gender}>
-          <MenuItem value="male">Male</MenuItem>
-          <MenuItem value="female">Female</MenuItem>
-          <MenuItem value="non-binary">Non-binary</MenuItem>
-          <MenuItem value="no-response">Prefer not to respond</MenuItem>
+        <Select
+          appearance="outlined"
+          label={t("profile.general.gender.label")}
+          {...formProps.gender}
+        >
+          <MenuItem value="male">{t("profile.general.gender.male")}</MenuItem>
+          <MenuItem value="female">
+            {t("profile.general.gender.female")}
+          </MenuItem>
+          <MenuItem value="non-binary">
+            {t("profile.general.gender.nonBinary")}
+          </MenuItem>
+          <MenuItem value="no-response">
+            {t("profile.general.gender.noReponse")}
+          </MenuItem>
         </Select>
         <TextField
           appearance="outlined"
-          label="Birthdate"
+          label={t("profile.general.birthDate")}
           inputAttr={{ type: "date" }}
           {...formProps.birthdate}
         />
         <TextField
           appearance="outlined"
-          label="Citizen ID"
+          label={t("profile.general.citizenID")}
           leading={<MaterialIcon icon="lock" />}
-          helperMsg="Only people you allow access to this information can see
-            it."
+          helperMsg={t("profile.common.privateInfo_helper")}
           {...formProps.citizenID}
         />
         <TextField
           appearance="outlined"
-          label="Passport number"
+          label={t("profile.general.passportNumber")}
           leading={<MaterialIcon icon="lock" />}
-          helperMsg="Only people you allow access to this information can see
-            it."
+          helperMsg={t("profile.common.privateInfo_helper")}
           {...formProps.passportNumber}
         />
         <Select
           appearance="outlined"
-          label="Blood group"
+          label={t("profile.general.bloodGroup")}
           leading={<MaterialIcon icon="lock" />}
           helperMsg="Only people you allow access to this information can see
             it."
@@ -212,7 +233,7 @@ const MiscellaneousSection: FC<{ formProps: FormControlProps }> = ({
 
 const ContactsSection: FC = () => {
   // Translation
-  const { t } = useTranslation("welcome");
+  const { t } = useTranslation("account");
 
   // Form control
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -222,9 +243,9 @@ const ContactsSection: FC = () => {
 
   return (
     <Section sectionAttr={{ "aria-labelledby": "header-contacts" }}>
-      <Columns columns={3}>
+      <Columns columns={3} className="!items-end">
         <Header className="md:col-span-2" hAttr={{ id: "header-contacts" }}>
-          Contacts
+          {t("profile.contacts.title")}
         </Header>
         <Actions>
           <Button
@@ -232,7 +253,7 @@ const ContactsSection: FC = () => {
             icon={<MaterialIcon icon="add" />}
             onClick={() => setShowAdd(true)}
           >
-            Add contact
+            {t("profile.contacts.action.add")}
           </Button>
           <AddContactDialog
             open={showAdd}
@@ -247,13 +268,21 @@ const ContactsSection: FC = () => {
       {contacts.length ? (
         <Columns columns={4}>
           {contacts.map((contact) => (
-            <ContactCard key={contact.id} contact={contact} />
+            <ContactCard
+              key={contact.id}
+              contact={contact}
+              onChange={() => {}}
+              onRemove={() => {}}
+            />
           ))}
         </Columns>
       ) : (
-        <Card appearance="outlined" className="!grid h-20 place-content-center">
+        <Card
+          appearance="outlined"
+          className="!grid h-[4.375rem] place-content-center"
+        >
           <p className="skc-body-medium text-on-surface-variant">
-            No contacts added yet.
+            {t("profile.contacts.noContacts")}
           </p>
         </Card>
       )}
@@ -277,6 +306,8 @@ const WelcomePage: CustomPage = () => {
     | "middleNameEN"
     | "lastNameEN"
     | "nicknameEN"
+    | "subjectGroup"
+    | "classAdvisorAt"
     | "gender"
     | "birthdate"
     | "citizenID"
@@ -293,15 +324,21 @@ const WelcomePage: CustomPage = () => {
     { key: "middleNameEN" },
     { key: "lastNameEN", required: true },
     { key: "nicknameEN" },
+    { key: "subjectGroup" },
+    { key: "classAdvisorAt" },
     { key: "gender", required: true },
     {
       key: "citizenID",
       required: locale === "th",
-      validate: validateCitizenID,
+      validate: (value) =>
+        validateCitizenID(value) ||
+        t("profile.general.citizenID_error", { ns: "account" }),
     },
     {
       key: "passportNumber",
-      validate: (value) => Boolean(validatePassport(value)),
+      validate: (value) =>
+        Boolean(validatePassport(value)) ||
+        t("profile.general.passportNumber_error", { ns: "account" }),
     },
     { key: "bloodGroup", required: true },
   ]);
@@ -314,13 +351,18 @@ const WelcomePage: CustomPage = () => {
       <ContentLayout>
         <NextWarningCard />
         <Section className="pb-6">
-          <Header>General information</Header>
+          <Header>{t("yourInformation.general.title")}</Header>
+          <p className="-mt-2">{t("yourInformation.general.desc")}</p>
           <p className="-mt-2">
-            We have already imported some fields from relevant organizations in
-            the school. Please check for any inaccuracies in the import.
+            <Trans i18nKey="yourInformation.general.inControl" ns="welcome">
+              <Link href="/help/essentials/onboarding" className="link">
+                ทำไมโรงเรียนจึงต้องขอข้อมูลนี้
+              </Link>
+            </Trans>
           </p>
           <ThaiNameSection formProps={formProps} />
           <EnglishNameSection formProps={formProps} />
+          <RoleSection formProps={formProps} />
           <MiscellaneousSection formProps={formProps} />
         </Section>
         <ContactsSection />
@@ -330,7 +372,7 @@ const WelcomePage: CustomPage = () => {
             href="/account/welcome/covid-19-safety"
             element={Link}
           >
-            Next
+            {t("common.action.next")}
           </Button>
         </Actions>
       </ContentLayout>

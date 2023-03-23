@@ -2,27 +2,42 @@
 import { TextFieldProps } from "@suankularb-components/react";
 import { useMemo, useState } from "react";
 
+// Hooks
+import { useLocale } from "@/utils/hooks/i18n";
+
 // Types
 import {
   FormControlProps,
   FormControlValids,
+  FormControlValidsWMessages,
   FormControlValues,
 } from "@/utils/types/common";
 
 /**
  * A form state manager, handling values, error state, and props for Text Field.
  *
- * @param formSpecs The form specifications: an array of objects with the key, the default value, and a validation function for that field
- * @returns TODO
+ * @param formSpecs The form specifications: an array of objects with the key, the default value, and a validation function for that field.
+ *
+ * @returns
+ * `form` — Form values;
+ * `setForm` — Form values setter;
+ * `resetForm` — Replace all form values with defaults;
+ * `formValids` — Validation result for each field;
+ * `formValidsStrict` — Validation result for each field, taking `required` into account;
+ * `formOK` — If the form as a whole is valid;
+ * `formProps` — Props for each field’s Text Field or Select component.
  */
 export function useForm<KeyEnum extends string | symbol>(
   formSpecs: {
     key: KeyEnum;
     defaultValue?: string;
-    validate?: (value: string) => boolean;
+    validate?: (value: string) => string | boolean;
     required?: boolean;
   }[]
 ) {
+  // Translation
+  const locale = useLocale();
+
   // An object with default values
   const defaultForm = useMemo<FormControlValues<KeyEnum>>(
     () =>
@@ -38,19 +53,34 @@ export function useForm<KeyEnum extends string | symbol>(
     useState<FormControlValues<KeyEnum>>(defaultForm);
 
   // Form validation
-  const formValids: FormControlValids<KeyEnum> = Object.keys(formValues).reduce(
-    (form, key, idx) => {
-      const { validate } = formSpecs[idx];
-      return {
-        ...form,
-        [key]:
-          formValues[key as KeyEnum] && validate
-            ? !validate(formValues[key as KeyEnum])
-            : false,
-      };
-    },
-    {} as FormControlValids<KeyEnum>
-  );
+
+  // Both form valid states and erorr messages
+  const formMessages: FormControlValidsWMessages<KeyEnum> = Object.keys(
+    formValues
+  ).reduce((form, key, idx) => {
+    const { validate } = formSpecs[idx];
+
+    return {
+      ...form,
+      [key]:
+        formValues[key as KeyEnum] && validate
+          ? validate(formValues[key as KeyEnum])
+          : true,
+    };
+  }, {} as FormControlValids<KeyEnum>);
+
+  // Form error states
+  const formValids: FormControlValids<KeyEnum> = Object.keys(
+    formMessages
+  ).reduce((form, key) => {
+    const messageOrValid = formMessages[key as KeyEnum];
+
+    return {
+      ...form,
+      [key]:
+        typeof messageOrValid === "string" ? !messageOrValid : messageOrValid,
+    };
+  }, {} as FormControlValids<KeyEnum>);
 
   // Form validation (taking into account `required`)
   const formValidsStrict: FormControlValids<KeyEnum> = Object.keys(
@@ -71,19 +101,22 @@ export function useForm<KeyEnum extends string | symbol>(
     (form, key, idx) => ({
       ...form,
       [key]: {
+        // (@SiravitPhokeed)
+        // The spread operator is used as to not override the original helper
+        // message with `undefined` when there is no error. Otherwise, the
+        // original helper message would never be shown.
+        ...(typeof formMessages[key as KeyEnum] === "string"
+          ? { helperMsg: formMessages[key as KeyEnum] }
+          : {}),
+        required: formSpecs[idx].required,
+        error: !formValids[key as KeyEnum],
         value: formValues[key as KeyEnum],
         onChange: (value: string | File) =>
           setFormValues({ ...formValues, [key]: value as string }),
-        error: formValids[key as KeyEnum],
-        required: formSpecs[idx].required,
+        locale,
       },
     }),
-    {} as {
-      [key in KeyEnum]: Pick<
-        TextFieldProps,
-        "value" | "onChange" | "required" | "error"
-      >;
-    }
+    {} as FormControlProps<KeyEnum>
   );
 
   return {

@@ -44,20 +44,24 @@
   },
   "profile": {
     "name": {
-      "title": "Local name (Thai)",
+      "title": "Thai name",
       "prefix": "Prefix",
       "prefix_helper": "เด็กชาย, นาย, นาง, นางสาว, etc.",
       "firstName": "First name",
       "middleName": "Middle name",
-      "lastName": "Last name"
+      "middleName_helper": "Leave blank if you don’t want your middle name to be displayed.",
+      "lastName": "Last name",
+      "nickname": "Nickname"
     },
     "enName": {
+      "title": "English name",
       "prefix": "English prefix",
       "prefix_helper": "Master, Mr., Mrs., Ms., etc.",
-      "title": "English name",
       "firstName": "English first name",
       "middleName": "English middle name",
-      "lastName": "English last name"
+      "middleName_helper": "Leave blank if you don’t want your middle name to be displayed.",
+      "lastName": "English last name",
+      "nickname": "English nickname"
     },
     "class": {
       "title": "Class",
@@ -72,8 +76,6 @@
         "student": "Student",
         "teacher": "Teacher"
       },
-      "studentID": "Student ID",
-      "teacherID": "Teacher ID",
       "subjectGroup": "Subject group",
       "subjectGroup_helper": "Choose “Guest Lecturer” if none applies.",
       "classAdvisorAt": "Class advisor at",
@@ -83,10 +85,32 @@
     },
     "general": {
       "title": "General information",
+      "gender": {
+        "label": "Gender",
+        "male": "Male",
+        "female": "Female",
+        "nonBinary": "Non-binary",
+        "noReponse": "Prefer not to respond"
+      },
+      "birthDate": "Birth date",
       "citizenID": "Citizen ID or passport",
       "citizenID_error": "Invalid citizen ID or unsupported passport.",
-      "birthDate": "Birth date",
-      "email": "School email"
+      "passportNumber": "Passport number",
+      "passportNumber_error": "Invalid passport number or unsupported passport.",
+      "bloodGroup": "Blood group"
+    },
+    "contacts": {
+      "title": "Contacts",
+      "noContacts": "No contacts added yet.",
+      "action": {
+        "add": "Add contact",
+        "edit": "Edit",
+        "delete": "Delete",
+        "link": "Go to"
+      }
+    },
+    "common": {
+      "privateInfo_helper": "Only people you allow access to this information can see it."
     }
   },
   "preferences": {
@@ -95,6 +119,7 @@
   "dialog": {
     "addContact": {
       "title": "Add contact",
+      "desc": "A contact is a way people can reach you. Everyone inside the school can find your contact information via MySK Lookup.",
       "type": "Platform",
       "nameTH": "Thai contact label",
       "nameEN": "English contact label",

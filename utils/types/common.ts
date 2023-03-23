@@ -128,6 +128,12 @@ export type FormControlValues<T extends string | symbol = string> = {
 export type FormControlValids<T extends string | symbol = string> = {
   [key in T]: boolean;
 };
+export type FormControlValidsWMessages<T extends string | symbol = string> = {
+  [key in T]: boolean | string;
+};
 export type FormControlProps<T extends string | symbol = string> = {
-  [key in T]: Pick<TextFieldProps, "value" | "onChange" | "required" | "error">;
+  [key in T]: Pick<
+    TextFieldProps,
+    "helperMsg" | "value" | "onChange" | "required" | "error"
+  >;
 };

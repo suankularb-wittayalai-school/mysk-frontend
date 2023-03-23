@@ -27,7 +27,12 @@
     }
   },
   "yourInformation": {
-    "title": "Your information"
+    "title": "Your information",
+    "general": {
+      "title": "About you",
+      "desc": "We have already imported some fields from relevant organizations in the school. Please check for any inaccuracies in the import.",
+      "inControl": "You are in control of your data. <0>Learn how this information is used.</0>"
+    }
   },
   "covid19Safety": {
     "title": "COVID-19 safety"
@@ -39,6 +44,7 @@
     "title": "Logging in"
   },
   "common": {
+    "nextReminder": "Remember: your information is not saved until you press “Next.”",
     "action": {
       "next": "Next"
     }
