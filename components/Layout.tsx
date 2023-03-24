@@ -356,7 +356,9 @@ const Layout: FC<
           brand={<Favicon />}
           homeURL="/"
           element={Link}
-          onNavToggle={() => setNavOpen(true)}
+          onNavToggle={() =>
+            pageRole && pageRole !== "public" && setNavOpen(true)
+          }
           {...pageHeader}
           title={
             typeof pageHeader.title === "object" && "ns" in pageHeader.title
