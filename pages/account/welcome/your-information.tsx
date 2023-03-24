@@ -426,7 +426,7 @@ const WelcomePage: CustomPage<{
           <MiscellaneousSection formProps={formProps} />
         </Section>
         <ContactsSection />
-        <Actions className="mx-4 sm:mx-0">
+        <Actions className="mx-4 sm:mx-0 sm:mb-20">
           <Button
             appearance="filled"
             href="/account/welcome/covid-19-safety"

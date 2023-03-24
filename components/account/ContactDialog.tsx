@@ -1,6 +1,6 @@
 // External libraries
 import { useTranslation } from "next-i18next";
-import { useReducer } from "react";
+import { useEffect, useReducer } from "react";
 
 // SK Components
 import {
@@ -15,14 +15,14 @@ import {
   TextField,
 } from "@suankularb-components/react";
 
+// Helpers
+import { range } from "@/utils/helpers/array";
+
 // Hooks
 import { useForm } from "@/utils/hooks/form";
 
 // Types
-import {
-  MultiLangString,
-  SubmittableDialogComponent,
-} from "@/utils/types/common";
+import { SubmittableDialogComponent } from "@/utils/types/common";
 import { Contact, ContactVia } from "@/utils/types/contact";
 
 const ContactDialog: SubmittableDialogComponent<
@@ -34,37 +34,42 @@ const ContactDialog: SubmittableDialogComponent<
   const contactValuesMap: {
     [key in ContactVia]: {
       type: "number" | "tel" | "email" | "url" | "text";
-      validate?: (value: string) => boolean;
       helperMsg?: string;
-      label: MultiLangString;
+      getLabel?: (value: string) => string;
+      validate?: (value: string) => boolean;
     };
   } = {
     Phone: {
       type: "tel",
+      getLabel: (value) =>
+        range(Math.min(Math.ceil(value.length / 3), 3))
+          .map((setIdx) =>
+            value.slice(
+              setIdx * 3,
+              setIdx === 2 ? value.length : setIdx * 3 + 3
+            )
+          )
+          .join(" "),
       validate: (value) => /\d{9,10}/.test(value),
-      label: { "en-US": "Telephone", th: "เบอร์โทรศัพท์" },
     },
-    Email: { type: "email", label: { "en-US": "Email", th: "อีเมล" } },
-    Website: { type: "url", label: { "en-US": "Website", th: "เว็บไซต์" } },
-    Facebook: { type: "text", label: { "en-US": "Facebook", th: "Facebook" } },
+    Email: { type: "email" },
+    Website: { type: "url", getLabel: () => "เว็บไซต์ส่วนตัว" },
+    Facebook: { type: "text" },
     Line: {
       type: "text",
-      validate: (value) => value.length === 10,
       helperMsg: t("dialog.contact.value.line_helper"),
-      label: { "en-US": "LINE", th: "LINE" },
+      validate: (value) => value.length === 10,
     },
     Instagram: {
       type: "text",
       validate: (value) => /(?:(?:[\\w][\\.]{0,1})*[\\w]){1,29}/.test(value),
-      label: { "en-US": "Instagram", th: "Instagram" },
     },
     Discord: {
       type: "text",
-      validate: (value) => /[a-zA-Z0-9]{8}/.test(value),
       helperMsg: t("dialog.contact.value.discord_helper"),
-      label: { "en-US": "Discord", th: "Discord" },
+      validate: (value) => /[a-zA-Z0-9]{8}/.test(value),
     },
-    Other: { type: "text", label: { "en-US": "", th: "" } },
+    Other: { type: "text" },
   };
 
   const [counter, incrementCounter] = useReducer((counter) => counter + 1, 1);
@@ -76,6 +81,10 @@ const ContactDialog: SubmittableDialogComponent<
     { key: "type", required: true, defaultValue: contact?.type || "Phone" },
     { key: "value", required: true, defaultValue: contact?.value },
   ]);
+  useEffect(() => {
+    const { getLabel } = contactValuesMap[form.type as ContactVia];
+    setForm({ ...form, nameTH: getLabel ? getLabel(form.value) : form.value });
+  }, [form.value]);
 
   return (
     <Dialog open={open} width={580} onClose={onClose}>

@@ -89,7 +89,7 @@ const AddDoseSection: FC<{ addDose: (dose: VaccineRecord) => void }> = ({
           Your vaccine data will only be used in the compilation of school
           statistics. No one can read your vaccination info except the school.
         </p>
-        <div className="mt-4 grid grid-cols-2 gap-6">
+        <Columns columns={2} className="mt-4 !gap-y-4">
           <TextField
             appearance="outlined"
             label="Date of vaccination"
@@ -97,11 +97,13 @@ const AddDoseSection: FC<{ addDose: (dose: VaccineRecord) => void }> = ({
             {...formProps.vaccineDate}
           />
           <ProviderSelect {...formProps.provider} />
-        </div>
+        </Columns>
         <Actions>
           <Button
             appearance="tonal"
-            icon={<MaterialIcon icon="arrow_forward" />}
+            icon={
+              <MaterialIcon icon="arrow_downward" className="sm:-rotate-90" />
+            }
             onClick={() => {
               if (!formOK) return;
               addDose({ id: counter, ...form });
@@ -254,7 +256,7 @@ const COVID19SafetyPage: CustomPage<{ userRole: Role }> = ({ userRole }) => {
                 </ul>
               ) : (
                 <motion.div
-                  className="h-20 sm:h-full"
+                  className="min-h-[5rem]"
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ scale: 0.8, opacity: 0 }}
