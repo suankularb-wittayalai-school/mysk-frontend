@@ -1,5 +1,10 @@
 // External libraries
-import { GetStaticProps } from "next";
+import {
+  createServerSupabaseClient,
+  User,
+} from "@supabase/auth-helpers-nextjs";
+
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import Head from "next/head";
 import Link from "next/link";
 
@@ -24,7 +29,7 @@ import {
 } from "@suankularb-components/react";
 
 // Internal components
-import AddContactDialog from "@/components/account/AddContactDialog";
+import ContactDialog from "@/components/account/ContactDialog";
 import ContactCard from "@/components/account/ContactCard";
 
 // Helpers
@@ -41,6 +46,12 @@ import { useForm } from "@/utils/hooks/form";
 // Types
 import { CustomPage, FormControlProps, LangCode } from "@/utils/types/common";
 import { Contact } from "@/utils/types/contact";
+import { getPersonFromUser } from "@/utils/backend/person/person";
+import { getSubjectGroups } from "@/utils/backend/subject/subjectGroup";
+import { Student, Teacher } from "@/utils/types/person";
+import { SubjectGroup } from "@/utils/types/subject";
+import { getLocaleString } from "@/utils/helpers/i18n";
+import { setItem } from "@/utils/helpers/array";
 
 const NextWarningCard: FC = () => {
   // Translation
@@ -90,11 +101,11 @@ const ThaiNameSection: FC<{ formProps: FormControlProps }> = ({
           label={t("profile.name.lastName")}
           {...formProps.lastNameTH}
         />
-        <TextField
+        {/* <TextField
           appearance="outlined"
           label={t("profile.name.nickname")}
           {...formProps.nicknameTH}
-        />
+        /> */}
       </Columns>
     </Section>
   );
@@ -132,30 +143,40 @@ const EnglishNameSection: FC<{ formProps: FormControlProps }> = ({
           label={t("profile.enName.lastName")}
           {...formProps.lastNameEN}
         />
-        <TextField
+        {/* <TextField
           appearance="outlined"
           label={t("profile.enName.nickname")}
           {...formProps.nicknameEN}
-        />
+        /> */}
       </Columns>
     </Section>
   );
 };
 
-const RoleSection: FC<{ formProps: FormControlProps }> = ({ formProps }) => {
+const RoleSection: FC<{
+  formProps: FormControlProps;
+  subjectGroups: SubjectGroup[];
+}> = ({ formProps, subjectGroups }) => {
   // Translation
+  const locale = useLocale();
   const { t } = useTranslation("account");
 
   return (
     <Section>
       <Header level={3}>{t("profile.role.title")}</Header>
       <Columns columns={4} className="mt-3 mb-8 !gap-y-12">
-        <TextField
+        <Select
           appearance="outlined"
           label={t("profile.role.subjectGroup")}
           helperMsg={t("profile.role.subjectGroup_helper")}
           {...formProps.subjectGroup}
-        />
+        >
+          {subjectGroups.map((subjectGroup) => (
+            <MenuItem key={subjectGroup.id} value={subjectGroup.id}>
+              {getLocaleString(subjectGroup.name, locale)}
+            </MenuItem>
+          ))}
+        </Select>
         <TextField
           appearance="outlined"
           label={t("profile.role.classAdvisorAt")}
@@ -177,7 +198,7 @@ const MiscellaneousSection: FC<{ formProps: FormControlProps }> = ({
     <Section>
       <Header level={3}>{t("profile.general.title")}</Header>
       <Columns columns={4} className="my-3 !gap-y-12">
-        <Select
+        {/* <Select
           appearance="outlined"
           label={t("profile.general.gender.label")}
           {...formProps.gender}
@@ -192,7 +213,7 @@ const MiscellaneousSection: FC<{ formProps: FormControlProps }> = ({
           <MenuItem value="no-response">
             {t("profile.general.gender.noReponse")}
           </MenuItem>
-        </Select>
+        </Select> */}
         <TextField
           appearance="outlined"
           label={t("profile.general.birthDate")}
@@ -204,28 +225,28 @@ const MiscellaneousSection: FC<{ formProps: FormControlProps }> = ({
           label={t("profile.general.citizenID")}
           leading={<MaterialIcon icon="lock" />}
           helperMsg={t("profile.common.privateInfo_helper")}
+          inputAttr={{ type: "number" }}
           {...formProps.citizenID}
         />
-        <TextField
+        {/* <TextField
           appearance="outlined"
           label={t("profile.general.passportNumber")}
           leading={<MaterialIcon icon="lock" />}
           helperMsg={t("profile.common.privateInfo_helper")}
           {...formProps.passportNumber}
-        />
-        <Select
+        /> */}
+        {/* <Select
           appearance="outlined"
           label={t("profile.general.bloodGroup")}
           leading={<MaterialIcon icon="lock" />}
-          helperMsg="Only people you allow access to this information can see
-            it."
+          helperMsg={t("profile.common.privateInfo_helper")}
           {...formProps.bloodGroup}
         >
           <MenuItem value="A">A</MenuItem>
           <MenuItem value="B">B</MenuItem>
           <MenuItem value="AB">AB</MenuItem>
           <MenuItem value="O">O</MenuItem>
-        </Select>
+        </Select> */}
       </Columns>
     </Section>
   );
@@ -255,7 +276,7 @@ const ContactsSection: FC = () => {
           >
             {t("profile.contacts.action.add")}
           </Button>
-          <AddContactDialog
+          <ContactDialog
             open={showAdd}
             onClose={() => setShowAdd(false)}
             onSubmit={(contact) => {
@@ -267,19 +288,23 @@ const ContactsSection: FC = () => {
       </Columns>
       {contacts.length ? (
         <Columns columns={4}>
-          {contacts.map((contact) => (
+          {contacts.map((contact, idx) => (
             <ContactCard
               key={contact.id}
               contact={contact}
-              onChange={() => {}}
-              onRemove={() => {}}
+              onChange={() =>
+                setContacts(setItem<Contact>(contact, idx, contacts))
+              }
+              onRemove={() =>
+                setContacts(contacts.filter((item) => contact.id !== item.id))
+              }
             />
           ))}
         </Columns>
       ) : (
         <Card
           appearance="outlined"
-          className="!grid h-[4.375rem] place-content-center"
+          className="box-content !grid h-[4.5rem] place-content-center"
         >
           <p className="skc-body-medium text-on-surface-variant">
             {t("profile.contacts.noContacts")}
@@ -290,7 +315,10 @@ const ContactsSection: FC = () => {
   );
 };
 
-const WelcomePage: CustomPage = () => {
+const WelcomePage: CustomPage<{
+  person: Student | Teacher;
+  subjectGroups: SubjectGroup[];
+}> = ({ person, subjectGroups }) => {
   // Translation
   const locale = useLocale();
   const { t } = useTranslation(["welcome", "common"]);
@@ -314,22 +342,50 @@ const WelcomePage: CustomPage = () => {
     | "passportNumber"
     | "bloodGroup"
   >([
-    { key: "prefixTH", required: true },
-    { key: "firstNameTH", required: true },
-    { key: "middleNameTH" },
-    { key: "lastNameTH", required: true },
+    { key: "prefixTH", required: true, defaultValue: person.prefix.th },
+    {
+      key: "firstNameTH",
+      required: true,
+      defaultValue: person.name.th.firstName,
+    },
+    { key: "middleNameTH", defaultValue: person.name.th.middleName },
+    {
+      key: "lastNameTH",
+      required: true,
+      defaultValue: person.name.th.lastName,
+    },
     { key: "nicknameTH" },
-    { key: "prefixEN", required: true },
-    { key: "firstNameEN", required: true },
-    { key: "middleNameEN" },
-    { key: "lastNameEN", required: true },
+    { key: "prefixEN", required: true, defaultValue: person.prefix["en-US"] },
+    {
+      key: "firstNameEN",
+      required: true,
+      defaultValue: person.name["en-US"]?.firstName,
+    },
+    { key: "middleNameEN", defaultValue: person.name["en-US"]?.middleName },
+    {
+      key: "lastNameEN",
+      required: true,
+      defaultValue: person.name["en-US"]?.lastName,
+    },
     { key: "nicknameEN" },
-    { key: "subjectGroup" },
-    { key: "classAdvisorAt" },
+    {
+      key: "subjectGroup",
+      defaultValue:
+        person.role === "teacher" && subjectGroups.length
+          ? subjectGroups[0].id
+          : undefined,
+    },
+    {
+      key: "classAdvisorAt",
+      defaultValue:
+        person.role === "teacher" ? person.classAdvisorAt?.number : undefined,
+    },
     { key: "gender", required: true },
+    { key: "birthdate", required: true, defaultValue: person.birthdate },
     {
       key: "citizenID",
       required: locale === "th",
+      defaultValue: person.citizenID,
       validate: (value) =>
         validateCitizenID(value) ||
         t("profile.general.citizenID_error", { ns: "account" }),
@@ -362,7 +418,11 @@ const WelcomePage: CustomPage = () => {
           </p>
           <ThaiNameSection formProps={formProps} />
           <EnglishNameSection formProps={formProps} />
-          <RoleSection formProps={formProps} />
+          {person.role === "teacher" ? (
+            <RoleSection formProps={formProps} subjectGroups={subjectGroups} />
+          ) : (
+            <></>
+          )}
           <MiscellaneousSection formProps={formProps} />
         </Section>
         <ContactsSection />
@@ -380,15 +440,39 @@ const WelcomePage: CustomPage = () => {
   );
 };
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale as LangCode, [
-      "common",
-      "welcome",
-      "account",
-    ])),
-  },
-});
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  req,
+  res,
+}) => {
+  const supabase = createServerSupabaseClient({
+    req: req as NextApiRequest,
+    res: res as NextApiResponse,
+  });
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  const { data: person } = await getPersonFromUser(
+    supabase,
+    session!.user as User
+  );
+
+  const { data: subjectGroups } = await getSubjectGroups();
+
+  return {
+    props: {
+      ...(await serverSideTranslations(locale as LangCode, [
+        "common",
+        "welcome",
+        "account",
+      ])),
+      person,
+      subjectGroups,
+    },
+  };
+};
 
 WelcomePage.pageHeader = {
   title: { key: "yourInformation.title", ns: "welcome" },

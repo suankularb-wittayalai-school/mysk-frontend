@@ -30,8 +30,8 @@ import {
 export function useForm<KeyEnum extends string | symbol>(
   formSpecs: {
     key: KeyEnum;
-    defaultValue?: string;
-    validate?: (value: string) => string | boolean;
+    defaultValue?: any;
+    validate?: (value: any) => string | boolean;
     required?: boolean;
   }[]
 ) {
@@ -112,7 +112,13 @@ export function useForm<KeyEnum extends string | symbol>(
         error: !formValids[key as KeyEnum],
         value: formValues[key as KeyEnum],
         onChange: (value: string | File) =>
-          setFormValues({ ...formValues, [key]: value as string }),
+          setFormValues({
+            ...formValues,
+            [key]:
+              typeof formSpecs[idx].defaultValue === "number"
+                ? Number(value)
+                : (value as string),
+          }),
         locale,
       },
     }),

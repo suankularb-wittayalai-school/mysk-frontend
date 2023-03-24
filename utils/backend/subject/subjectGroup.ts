@@ -8,7 +8,10 @@ import { SubjectGroup } from "@/utils/types/subject";
 export async function getSubjectGroups(): Promise<
   BackendDataReturn<SubjectGroup[]>
 > {
-  const { data, error } = await supabase.from("SubjectGroup").select("*");
+  const { data, error } = await supabase
+    .from("SubjectGroup")
+    .select("*")
+    .order("id");
   if (error) return { data: [], error };
   return {
     data: data!.map((subjectGroup) => ({

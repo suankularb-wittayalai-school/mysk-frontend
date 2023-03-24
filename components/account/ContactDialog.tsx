@@ -1,6 +1,6 @@
 // External libraries
 import { useTranslation } from "next-i18next";
-import { useEffect, useReducer } from "react";
+import { useReducer } from "react";
 
 // SK Components
 import {
@@ -10,7 +10,6 @@ import {
   Dialog,
   DialogContent,
   DialogHeader,
-  MaterialIcon,
   MenuItem,
   Select,
   TextField,
@@ -26,9 +25,10 @@ import {
 } from "@/utils/types/common";
 import { Contact, ContactVia } from "@/utils/types/contact";
 
-const AddContactDialog: SubmittableDialogComponent<
-  (contact: Contact) => void
-> = ({ open, onClose, onSubmit }) => {
+const ContactDialog: SubmittableDialogComponent<
+  (contact: Contact) => void,
+  { contact?: Contact }
+> = ({ open, contact, onClose, onSubmit }) => {
   const { t } = useTranslation("account");
 
   const contactValuesMap: {
@@ -50,7 +50,7 @@ const AddContactDialog: SubmittableDialogComponent<
     Line: {
       type: "text",
       validate: (value) => value.length === 10,
-      helperMsg: t("dialog.addContact.value.line_helper"),
+      helperMsg: t("dialog.contact.value.line_helper"),
       label: { "en-US": "LINE", th: "LINE" },
     },
     Instagram: {
@@ -61,7 +61,7 @@ const AddContactDialog: SubmittableDialogComponent<
     Discord: {
       type: "text",
       validate: (value) => /[a-zA-Z0-9]{8}/.test(value),
-      helperMsg: t("dialog.addContact.value.discord_helper"),
+      helperMsg: t("dialog.contact.value.discord_helper"),
       label: { "en-US": "Discord", th: "Discord" },
     },
     Other: { type: "text", label: { "en-US": "", th: "" } },
@@ -71,70 +71,64 @@ const AddContactDialog: SubmittableDialogComponent<
   const { form, setForm, resetForm, formOK, formProps } = useForm<
     "nameTH" | "nameEN" | "type" | "value"
   >([
-    { key: "nameTH", required: true },
-    { key: "nameEN" },
-    { key: "type", required: true, defaultValue: "Phone" },
-    { key: "value", required: true },
+    { key: "nameTH", required: true, defaultValue: contact?.name.th },
+    { key: "nameEN", defaultValue: contact?.name["en-US"] },
+    { key: "type", required: true, defaultValue: contact?.type || "Phone" },
+    { key: "value", required: true, defaultValue: contact?.value },
   ]);
 
   return (
     <Dialog open={open} width={580} onClose={onClose}>
       <DialogHeader
-        title={t("dialog.addContact.title")}
-        desc={t("dialog.addContact.desc")}
+        title={t(`dialog.contact.title.${contact ? "edit" : "add"}`)}
+        desc={t("dialog.contact.desc")}
       />
       <DialogContent className="px-6">
         <Columns columns={2} className="!gap-y-8">
           <Select
             appearance="outlined"
-            label={t("dialog.addContact.type.label")}
+            label={t("dialog.contact.type.label")}
             {...formProps.type}
           >
-            <MenuItem value="Phone">
-              {t("dialog.addContact.type.phone")}
-            </MenuItem>
-            <MenuItem value="Email">
-              {t("dialog.addContact.type.email")}
-            </MenuItem>
+            <MenuItem value="Phone">{t("dialog.contact.type.phone")}</MenuItem>
+            <MenuItem value="Email">{t("dialog.contact.type.email")}</MenuItem>
             <MenuItem value="Facebook">
-              {t("dialog.addContact.type.facebook")}
+              {t("dialog.contact.type.facebook")}
             </MenuItem>
-            <MenuItem value="Line">{t("dialog.addContact.type.line")}</MenuItem>
+            <MenuItem value="Line">{t("dialog.contact.type.line")}</MenuItem>
             <MenuItem value="Instagram">
-              {t("dialog.addContact.type.instagram")}
+              {t("dialog.contact.type.instagram")}
             </MenuItem>
             <MenuItem value="Website">
-              {t("dialog.addContact.type.website")}
+              {t("dialog.contact.type.website")}
             </MenuItem>
             <MenuItem value="Discord">
-              {t("dialog.addContact.type.discord")}
+              {t("dialog.contact.type.discord")}
             </MenuItem>
-            <MenuItem value="Other">
-              {t("dialog.addContact.type.other")}
-            </MenuItem>
+            <MenuItem value="Other">{t("dialog.contact.type.other")}</MenuItem>
           </Select>
           <TextField
             appearance="outlined"
-            label={t(`dialog.addContact.value.${form.type.toLowerCase()}`)}
+            label={t(`dialog.contact.value.${form.type.toLowerCase()}`)}
             helperMsg={contactValuesMap[form.type as ContactVia].helperMsg}
             inputAttr={{ type: contactValuesMap[form.type as ContactVia].type }}
             {...formProps.value}
           />
           <TextField
             appearance="outlined"
-            label={t("dialog.addContact.nameTH")}
+            label={t("dialog.contact.nameTH")}
             {...formProps.nameTH}
           />
           <TextField
             appearance="outlined"
-            label={t("dialog.addContact.nameEN")}
+            label={t("dialog.contact.nameEN")}
             {...formProps.nameEN}
           />
         </Columns>
       </DialogContent>
       <Actions>
         <Button appearance="text" onClick={onClose}>
-          {t("dialog.addContact.action.cancel")}
+          {t("dialog.contact.action.cancel")}
         </Button>
         <Button
           appearance="text"
@@ -150,11 +144,11 @@ const AddContactDialog: SubmittableDialogComponent<
             incrementCounter();
           }}
         >
-          {t("dialog.addContact.action.add")}
+          {t("dialog.contact.action.add")}
         </Button>
       </Actions>
     </Dialog>
   );
 };
 
-export default AddContactDialog;
+export default ContactDialog;

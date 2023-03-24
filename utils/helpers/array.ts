@@ -7,6 +7,29 @@ export function range(to: number, from?: number) {
 export function sumArray(array: number[]) {
   return array.reduce((a, b) => a + b, 0);
 }
+export function setItem<Item = any>(
+  item: Item,
+  index: number,
+  array: Item[]
+): Item[];
+
+export function setItem<Item = any>(
+  item: Item,
+  predicate: (item: Item) => boolean,
+  array: Item[]
+): Item[];
+
+export function setItem<Item = any>(
+  item: Item,
+  index: number | ((item: Item) => boolean),
+  array: Item[]
+): Item[] {
+  if (typeof index === "number") {
+    array[index] = item;
+    return array;
+  }
+  return array.map((mapItem) => (index(mapItem) ? item : mapItem));
+}
 
 export function toggleItem(item: any, array: any[]): any[] {
   return array.includes(item)

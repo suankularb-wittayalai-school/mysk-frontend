@@ -1,4 +1,5 @@
 // External libraries
+import { useTranslation } from "next-i18next";
 import Image from "next/image";
 import { FC, useState } from "react";
 
@@ -12,25 +13,31 @@ import {
   CardContent,
 } from "@suankularb-components/react";
 
+// Contacts
+import ContactDialog from "@/components/account/ContactDialog";
+
 // Images
 import FacebookLogo from "@/public/images/social/facebook.svg";
 import LineLogo from "@/public/images/social/line.svg";
 import InstragramLogo from "@/public/images/social/instagram.svg";
 import DiscordLogo from "@/public/images/social/discord.svg";
 
+// Helpers
+import { getLocaleString } from "@/utils/helpers/i18n";
+import { getContactURL } from "@/utils/helpers/contact";
+
+// Hooks
+import { useLocale } from "@/utils/hooks/i18n";
+
 // Types
 import { Contact } from "@/utils/types/contact";
-import { useTranslation } from "next-i18next";
-import { getLocaleString } from "@/utils/helpers/i18n";
-import { useLocale } from "@/utils/hooks/i18n";
-import { getContactURL } from "@/utils/helpers/contact";
-import AddContactDialog from "./AddContactDialog";
 
 /**
  * A contact Card.
  *
  * @param contact A Contact object.
- * @param editable
+ * @param onChange Triggers when this Contact is edited.
+ * @param onRemove Triggers when this Contact is removed.
  */
 const ContactCard: FC<{
   contact: Contact;
@@ -101,6 +108,7 @@ const ContactCard: FC<{
               appearance="tonal"
               icon={<MaterialIcon icon="delete" />}
               dangerous
+              onClick={onRemove}
             />
             <Button
               appearance="tonal"
@@ -110,8 +118,9 @@ const ContactCard: FC<{
           </CardContent>
         </div>
       </Card>
-      <AddContactDialog
+      <ContactDialog
         open={showAdd}
+        contact={contact}
         onClose={() => setShowAdd(false)}
         onSubmit={(contact) => {
           if (onChange) onChange(contact);

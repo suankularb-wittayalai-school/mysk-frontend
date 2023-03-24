@@ -117,10 +117,23 @@
     "title": "Preferences"
   },
   "dialog": {
-    "addContact": {
-      "title": "Add contact",
+    "contact": {
+      "title": {
+        "add": "Add contact",
+        "edit": "Edit contact"
+      },
       "desc": "A contact is a way people can reach you. Everyone inside the school can find your contact information via MySK Lookup.",
-      "type": "Platform",
+      "type": {
+        "label": "Platform",
+        "phone": "Phone",
+        "email": "Email",
+        "facebook": "Facebook",
+        "line": "LINE",
+        "instagram": "Instagram",
+        "website": "Website",
+        "discord": "Discord",
+        "other": "Other"
+      },
       "nameTH": "Thai contact label",
       "nameEN": "English contact label",
       "value": {
@@ -145,7 +158,8 @@
       },
       "action": {
         "cancel": "Cancel",
-        "add": "Add"
+        "add": "Add",
+        "edit": "Edit"
       }
     },
     "checkEmail": {
