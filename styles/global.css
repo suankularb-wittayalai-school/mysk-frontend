@@ -25,6 +25,16 @@
   }
 }
 
+@layer utilities {
+  .center-all {
+    @apply grid [grid-template-areas:"center"] place-items-center;
+  }
+
+  .center-all * {
+    @apply [grid-area:center];
+  }
+}
+
 @layer components {
   .link,
   .markdown a {
