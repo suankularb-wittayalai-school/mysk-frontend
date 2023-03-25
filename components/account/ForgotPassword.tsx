@@ -14,7 +14,7 @@ import {
 } from "@suankularb-components/react";
 
 // Components
-import CheckEmailDialog from "@/components/account/CheckEmail";
+import CheckEmailDialog from "@/components/account/CheckEmailDialog";
 
 // Helpers
 import { withLoading } from "@/utils/helpers/loading";
@@ -70,7 +70,7 @@ const ForgotPasswordDialog: DialogComponent<{ inputEmail?: string }> = ({
 
   return (
     <>
-      <Dialog open={open} onClose={onClose}>
+      <Dialog open={open ? !showCheckEmail : false} onClose={onClose}>
         <DialogHeader
           title={t("dialog.forgotPassword.title")}
           icon={<MaterialIcon icon="lock_open" />}
@@ -116,7 +116,7 @@ const ForgotPasswordDialog: DialogComponent<{ inputEmail?: string }> = ({
           toggleShowCheckEmail();
           onClose();
         }}
-        email={email}
+        email={[email, "sk.ac.th"].join("")}
       />
     </>
   );
