@@ -79,7 +79,7 @@ const ContactCard: FC<{
     <>
       <Card
         appearance="outlined"
-        stateLayerEffect={!(onChange || onRemove)}
+        stateLayerEffect={!editable}
         href={
           !editable ? getContactURL(contact.type, contact.value) : undefined
         }
