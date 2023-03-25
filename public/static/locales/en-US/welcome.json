@@ -35,7 +35,27 @@
     }
   },
   "covid19Safety": {
-    "title": "COVID-19 safety"
+    "title": "COVID-19 safety",
+    "vaccination": {
+      "title": "Vaccination",
+      "addDose": {
+        "title": "Add dose",
+        "desc": "Enter your vaccination info exactly as seen in the Mor Prom app. You can see it by opening the Mor Prom app <0></0> Log in <0></0> Tap “Health Certificate” <0></0> Tap “Vaccination of COVID-19”",
+        "usage": "Your vaccine data will only be used in the compilation of school statistics. No one can read your vaccination info except the school.",
+        "action": {
+          "add": "Add dose"
+        }
+      },
+      "dose": {
+        "doseNo": "Dose {{doseNo}}",
+        "date": "Date of vaccination",
+        "provider": "Provider",
+        "noData": "No vaccination data added yet.",
+        "action": {
+          "delete": "Delete this dose"
+        }
+      }
+    }
   },
   "yourSubjects": {
     "title": "Your subjects"

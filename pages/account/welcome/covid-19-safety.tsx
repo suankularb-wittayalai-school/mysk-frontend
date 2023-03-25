@@ -7,7 +7,7 @@ import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import Head from "next/head";
 import Link from "next/link";
 
-import { useTranslation } from "next-i18next";
+import { Trans, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { FC, useEffect, useReducer, useState } from "react";
@@ -28,10 +28,12 @@ import {
   Select,
   SelectProps,
   TextField,
-  TextFieldProps,
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
+
+// Internal components
+import NextWarningCard from "@/components/welcome/NextWarningCard";
 
 // Backend
 import { getUserMetadata } from "@/utils/backend/account";
@@ -47,18 +49,27 @@ import { CustomPage, LangCode } from "@/utils/types/common";
 import { Role } from "@/utils/types/person";
 import { VaccineRecord } from "@/utils/types/vaccine";
 
-const ProviderSelect: FC<Partial<SelectProps>> = (props?) => (
-  // Information from https://covid19.trackvaccines.org/country/thailand/
-  <Select appearance="outlined" label="Provider" {...props}>
-    <MenuItem value="comirnaty">Comirnaty (Pfizer)</MenuItem>
-    <MenuItem value="coronavac">CoronaVac (Sinovac)</MenuItem>
-    <MenuItem value="vaxzevria">Vaxzevria (AstraZeneca)</MenuItem>
-    <MenuItem value="spikevax">Spikevax (Moderna)</MenuItem>
-    <MenuItem value="jcovden">Jcovden (J&J)</MenuItem>
-    <MenuItem value="covilo">Covilo (Sinopharm)</MenuItem>
-    <MenuItem value="covovax">COVOVAX (Novavax formulation)</MenuItem>
-  </Select>
-);
+const ProviderSelect: FC<Partial<SelectProps>> = (props?) => {
+  // Translation
+  const { t } = useTranslation("welcome");
+
+  return (
+    // Information from https://covid19.trackvaccines.org/country/thailand/
+    <Select
+      appearance="outlined"
+      label={t("covid19Safety.vaccination.dose.provider")}
+      {...props}
+    >
+      <MenuItem value="comirnaty">Comirnaty (Pfizer)</MenuItem>
+      <MenuItem value="coronavac">CoronaVac (Sinovac)</MenuItem>
+      <MenuItem value="vaxzevria">Vaxzevria (AstraZeneca)</MenuItem>
+      <MenuItem value="spikevax">Spikevax (Moderna)</MenuItem>
+      <MenuItem value="jcovden">Jcovden (J&J)</MenuItem>
+      <MenuItem value="covilo">Covilo (Sinopharm)</MenuItem>
+      <MenuItem value="covovax">COVOVAX (Novavax formulation)</MenuItem>
+    </Select>
+  );
+};
 
 const AddDoseSection: FC<{ addDose: (dose: VaccineRecord) => void }> = ({
   addDose,
@@ -78,21 +89,21 @@ const AddDoseSection: FC<{ addDose: (dose: VaccineRecord) => void }> = ({
 
   return (
     <Card appearance="outlined">
-      <CardHeader title="Add a dose" />
+      <CardHeader title={t("covid19Safety.vaccination.addDose.title")} />
       <CardContent>
         <p>
-          Enter your vaccination info exactly as seen in the Mor Prom app. You
-          can see it by opening the Mor Prom app &gt; Log in &gt; Tap “Health
-          Certificate” &gt; Tap “Vaccination of COVID-19”
+          <Trans i18nKey="covid19Safety.vaccination.addDose.desc" ns="welcome">
+            <MaterialIcon
+              icon="chevron_right"
+              className="-mx-1 -mb-2 !inline-block"
+            />
+          </Trans>
         </p>
-        <p>
-          Your vaccine data will only be used in the compilation of school
-          statistics. No one can read your vaccination info except the school.
-        </p>
+        <p>{t("covid19Safety.vaccination.addDose.usage")}</p>
         <Columns columns={2} className="mt-4 !gap-y-4">
           <TextField
             appearance="outlined"
-            label="Date of vaccination"
+            label={t("covid19Safety.vaccination.dose.date")}
             inputAttr={{ type: "date" }}
             {...formProps.vaccineDate}
           />
@@ -110,7 +121,7 @@ const AddDoseSection: FC<{ addDose: (dose: VaccineRecord) => void }> = ({
               incrementCounter();
             }}
           >
-            Add dose
+            {t("covid19Safety.vaccination.addDose.action.add")}
           </Button>
         </Actions>
       </CardContent>
@@ -158,6 +169,7 @@ const DoseCard: FC<{
             <Button
               appearance="text"
               icon={<MaterialIcon icon="delete" />}
+              alt={t("covid19Safety.vaccination.dose.action.delete")}
               dangerous
               onClick={removeDose}
             />
@@ -167,7 +179,7 @@ const DoseCard: FC<{
           <div className="my-4 grid grid-cols-2 gap-6">
             <TextField
               appearance="filled"
-              label="Date of vaccination"
+              label={t("covid19Safety.vaccination.dose.date")}
               inputAttr={{ type: "date" }}
               {...formProps.vaccineDate}
             />
@@ -227,15 +239,9 @@ const COVID19SafetyPage: CustomPage<{ userRole: Role }> = ({ userRole }) => {
         <title>{createTitleStr(t("covid19Safety.title"), t)}</title>
       </Head>
       <ContentLayout>
-        <Card
-          appearance="outlined"
-          className="mx-4 !flex-row gap-3 py-3 px-4 sm:mx-0"
-        >
-          <MaterialIcon icon="warning" className="text-error" />
-          <p>Remember: your information is not saved until you press “Next.”</p>
-        </Card>
+        <NextWarningCard />
         <Section>
-          <Header>Vaccination</Header>
+          <Header>{t("covid19Safety.vaccination.title")}</Header>
           <Columns
             columns={2}
             className={!doses.length ? "!items-stretch" : undefined}
@@ -267,7 +273,7 @@ const COVID19SafetyPage: CustomPage<{ userRole: Role }> = ({ userRole }) => {
                     className="!grid h-full place-content-center"
                   >
                     <p className="skc-body-medium text-on-surface-variant">
-                      No vaccination data added yet.
+                      {t("covid19Safety.vaccination.dose.noData")}
                     </p>
                   </Card>
                 </motion.div>
@@ -285,7 +291,7 @@ const COVID19SafetyPage: CustomPage<{ userRole: Role }> = ({ userRole }) => {
             }
             element={Link}
           >
-            Next
+            {t("common.action.next")}
           </Button>
         </Actions>
       </ContentLayout>

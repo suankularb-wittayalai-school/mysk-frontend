@@ -1,7 +1,7 @@
 // External libraries
 import {
   createServerSupabaseClient,
-  User
+  User,
 } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
@@ -28,7 +28,7 @@ import {
   Section,
   Select,
   Snackbar,
-  TextField
+  TextField,
 } from "@suankularb-components/react";
 
 // Internal components
