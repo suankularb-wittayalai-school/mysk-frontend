@@ -164,7 +164,12 @@ const DoseCard: FC<{
     >
       <Card appearance="filled">
         <div className="flex flex-row items-center">
-          <CardHeader title={`Dose ${idx + 1}`} className="grow" />
+          <CardHeader
+            title={t("covid19Safety.vaccination.dose.doseNo", {
+              doseNo: idx + 1,
+            })}
+            className="grow"
+          />
           <div className="mx-4">
             <Button
               appearance="text"
