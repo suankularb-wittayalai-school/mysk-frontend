@@ -86,7 +86,15 @@ const ContactCard: FC<{
       >
         <CardHeader
           avatar={<Avatar>{avatarMap[contact.type]}</Avatar>}
-          title={getLocaleString(contact.name, locale)}
+          title={
+            <a
+              href={getContactURL(contact.type, contact.value)}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {getLocaleString(contact.name, locale)}
+            </a>
+          }
           subtitle={subtitleMap[contact.type]}
           overflow={
             <Menu>
@@ -110,6 +118,7 @@ const ContactCard: FC<{
               </MenuItem>
             </Menu>
           }
+          className="break-all"
         />
       </Card>
       <ContactDialog

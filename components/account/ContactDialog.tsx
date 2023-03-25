@@ -54,18 +54,21 @@ const ContactDialog: SubmittableDialogComponent<
     },
     Email: { type: "email" },
     Website: { type: "url", getLabel: () => "เว็บไซต์ส่วนตัว" },
-    Facebook: { type: "text" },
+    Facebook: { type: "text", getLabel: (value) => value },
     Line: {
       type: "text",
       helperMsg: t("dialog.contact.value.line_helper"),
+      getLabel: (value) => value,
       validate: (value) => value.length === 10,
     },
     Instagram: {
       type: "text",
+      getLabel: (value) => value,
       validate: (value) => /(?:(?:[\\w][\\.]{0,1})*[\\w]){1,29}/.test(value),
     },
     Discord: {
       type: "text",
+      getLabel: (value) => value,
       helperMsg: t("dialog.contact.value.discord_helper"),
       validate: (value) => /[a-zA-Z0-9]{8}/.test(value),
     },
@@ -83,7 +86,7 @@ const ContactDialog: SubmittableDialogComponent<
   ]);
   useEffect(() => {
     const { getLabel } = contactValuesMap[form.type as ContactVia];
-    setForm({ ...form, nameTH: getLabel ? getLabel(form.value) : form.value });
+    if (getLabel) setForm({ ...form, nameTH: getLabel(form.value) });
   }, [form.value]);
 
   return (
