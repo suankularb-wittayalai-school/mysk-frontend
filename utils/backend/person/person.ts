@@ -14,6 +14,7 @@ import { supabase } from "@/utils/supabase-client";
 import { BackendDataReturn, DatabaseClient } from "@/utils/types/common";
 import { Person, Student, Teacher } from "@/utils/types/person";
 import { Database } from "@/utils/types/supabase";
+import { Contact } from "@/utils/types/contact";
 
 export async function createPerson(
   person: Person
@@ -74,34 +75,55 @@ export async function createPerson(
 export async function setupPerson(
   supabase: DatabaseClient,
   form: {
-    thPrefix: string;
-    thFirstName: string;
-    thMiddleName: string;
-    thLastName: string;
-    enPrefix: string;
-    enFirstName: string;
-    enMiddleName: string;
-    enLastName: string;
-    studentID: string;
-    citizenID: string;
-    birthDate: string;
-    email: string;
+    prefixTH: string;
+    firstNameTH: string;
+    middleNameTH: string;
+    lastNameTH: string;
+    prefixEN: string;
+    firstNameEN: string;
+    middleNameEN: string;
+    lastNameEN: string;
     subjectGroup: number;
-    classAdvisorAt: number;
+    classAdvisorAt: string;
+    birthdate: string;
+    contacts: Contact[];
   },
   person: Student | Teacher
 ): Promise<
   BackendDataReturn<Database["public"]["Tables"]["people"]["Row"], null>
 > {
-  // Update user’s email
-  const { error: emailError } = await supabase.auth.updateUser({
-    email: form.email,
-  });
-
-  if (emailError) {
-    console.error(emailError);
-    return { data: null, error: emailError };
+  // Delete contacts
+  const formContactIDs = form.contacts.map((contact) => contact.id);
+  const contactsToDelete = person.contacts.filter((contact) =>
+    formContactIDs.includes(contact.id)
+  );
+  for (let contact of contactsToDelete) {
+    const { error } = await supabase
+      .from("contacts")
+      .delete()
+      .eq("id", contact.id);
+    if (error) {
+      console.error(error);
+      return { data: null, error };
+    }
   }
+
+  // Create contacts
+  const createdContacts = (
+    await Promise.all(
+      form.contacts.map(async (contact) => {
+        const { data: createdContact, error } = await createContact(
+          supabase,
+          contact
+        );
+        if (error) {
+          console.error(error);
+          return;
+        }
+        return createdContact!.id;
+      })
+    )
+  ).filter((contactID) => contactID) as number[];
 
   // Get person ID
   let personID = 0;
@@ -145,16 +167,16 @@ export async function setupPerson(
   const { data: updPerson, error: personError } = await supabase
     .from("people")
     .update({
-      prefix_th: form.thPrefix,
-      first_name_th: form.thFirstName,
-      middle_name_th: form.thMiddleName,
-      last_name_th: form.thLastName,
-      prefix_en: form.enPrefix,
-      first_name_en: form.enFirstName,
-      middle_name_en: form.enMiddleName,
-      last_name_en: form.enLastName,
-      birthdate: form.birthDate,
-      citizen_id: form.citizenID,
+      prefix_th: form.prefixTH,
+      first_name_th: form.firstNameTH,
+      middle_name_th: form.middleNameTH,
+      last_name_th: form.lastNameTH,
+      prefix_en: form.prefixEN,
+      first_name_en: form.firstNameEN,
+      middle_name_en: form.middleNameEN,
+      last_name_en: form.lastNameEN,
+      birthdate: form.birthdate,
+      contacts: createdContacts,
     })
     .match({ id: personID })
     .select("*")
@@ -166,26 +188,8 @@ export async function setupPerson(
     return { data: null, error: personError };
   }
 
-  // Update role-specific data (`student` or `teacher` table)
-
-  // Update a student’s student ID
-  if (person.role == "student") {
-    const { error } = await supabase
-      .from("student")
-      .update({ std_id: form.studentID })
-      .match({ id: person.id, std_id: person.studentID })
-      .limit(1)
-      .single();
-
-    if (error) {
-      console.error(error);
-      return { data: null, error };
-    }
-    return { data: updPerson!, error: null };
-  }
-
   // Update a teacher’s subject group and class advisor status
-  else if (person.role == "teacher") {
+  if (person.role == "teacher") {
     const { error } = await supabase
       .from("teacher")
       .update({ subject_group: form.subjectGroup })
@@ -220,19 +224,15 @@ export async function setupPerson(
         return { data: null, error: classAdvisorError };
       }
     }
-
-    return { data: updPerson!, error: null };
   }
 
-  // Invalid role handling
-  const error = { message: "invalid role." };
-  console.error(error);
-  return { data: null, error };
+  return { data: updPerson!, error: null };
 }
 
 export async function getPersonFromUser(
   supabase: DatabaseClient,
-  user: User
+  user: User,
+  options?: Partial<{ contacts: boolean }>
 ): Promise<BackendDataReturn<Student | Teacher, null>> {
   if (user?.user_metadata.role == "student") {
     const { data: student, error: studentError } = await supabase
@@ -247,7 +247,7 @@ export async function getPersonFromUser(
       return { data: null, error: studentError };
     }
 
-    return { data: await db2Student(supabase, student!), error: null };
+    return { data: await db2Student(supabase, student!, options), error: null };
   } else if (user?.user_metadata.role == "teacher")
     return getTeacherFromUser(supabase, user);
 

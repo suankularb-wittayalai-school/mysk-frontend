@@ -123,7 +123,7 @@ export type SubmittableDialogComponent<T = () => void, U = {}> = FC<
 >;
 
 export type FormControlValues<T extends string | symbol = string> = {
-  [key in T]: string;
+  [key in T]: any;
 };
 export type FormControlValids<T extends string | symbol = string> = {
   [key in T]: boolean;

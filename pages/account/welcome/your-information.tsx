@@ -11,7 +11,7 @@ import Link from "next/link";
 import { Trans, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { FC, useState } from "react";
+import { FC, useContext, useState } from "react";
 
 // SK Components
 import {
@@ -25,6 +25,7 @@ import {
   MenuItem,
   Section,
   Select,
+  Snackbar,
   TextField,
 } from "@suankularb-components/react";
 
@@ -46,12 +47,18 @@ import { useForm } from "@/utils/hooks/form";
 // Types
 import { CustomPage, FormControlProps, LangCode } from "@/utils/types/common";
 import { Contact } from "@/utils/types/contact";
-import { getPersonFromUser } from "@/utils/backend/person/person";
+import { getPersonFromUser, setupPerson } from "@/utils/backend/person/person";
 import { getSubjectGroups } from "@/utils/backend/subject/subjectGroup";
 import { Student, Teacher } from "@/utils/types/person";
 import { SubjectGroup } from "@/utils/types/subject";
 import { getLocaleString } from "@/utils/helpers/i18n";
 import { setItem } from "@/utils/helpers/array";
+import { useToggle } from "@/utils/hooks/toggle";
+import { withLoading } from "@/utils/helpers/loading";
+import { useRouter } from "next/router";
+import { createContact } from "@/utils/backend/contact";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import SnackbarContext from "@/contexts/SnackbarContext";
 
 const NextWarningCard: FC = () => {
   // Translation
@@ -252,12 +259,12 @@ const MiscellaneousSection: FC<{ formProps: FormControlProps }> = ({
   );
 };
 
-const ContactsSection: FC = () => {
+const ContactsSection: FC<{
+  contacts: Contact[];
+  setContacts: (value: Contact[]) => void;
+}> = ({ contacts, setContacts }) => {
   // Translation
   const { t } = useTranslation("account");
-
-  // Form control
-  const [contacts, setContacts] = useState<Contact[]>([]);
 
   // Dialog control
   const [showAdd, setShowAdd] = useState<boolean>(false);
@@ -320,10 +327,20 @@ const WelcomePage: CustomPage<{
   subjectGroups: SubjectGroup[];
 }> = ({ person, subjectGroups }) => {
   // Translation
-  const locale = useLocale();
+  // const locale = useLocale();
   const { t } = useTranslation(["welcome", "common"]);
 
-  const { formProps } = useForm<
+  // Routing
+  const router = useRouter();
+
+  // Supabase
+  const supabase = useSupabaseClient();
+
+  // Snackbar
+  const { setSnackbar } = useContext(SnackbarContext);
+
+  // Form control
+  const { form, formProps } = useForm<
     | "prefixTH"
     | "firstNameTH"
     | "middleNameTH"
@@ -398,6 +415,29 @@ const WelcomePage: CustomPage<{
     // },
     // { key: "bloodGroup", required: true },
   ]);
+  const [contacts, setContacts] = useState<Contact[]>(person.contacts);
+
+  // Form submission
+  const [loading, toggleLoading] = useToggle();
+  async function handleSubmit() {
+    withLoading(async () => {
+      const { error } = await setupPerson(
+        supabase,
+        { ...form, contacts },
+        person
+      );
+
+      if (error) {
+        setSnackbar(
+          <Snackbar>{t("snackbar.failure", { ns: "common" })}</Snackbar>
+        );
+        return false;
+      }
+
+      router.push("/account/welcome/covid-19-safety");
+      return true;
+    }, toggleLoading);
+  }
 
   return (
     <>
@@ -425,12 +465,12 @@ const WelcomePage: CustomPage<{
           )}
           <MiscellaneousSection formProps={formProps} />
         </Section>
-        <ContactsSection />
+        <ContactsSection contacts={contacts} setContacts={setContacts} />
         <Actions className="mx-4 sm:mx-0 sm:mb-20">
           <Button
             appearance="filled"
-            href="/account/welcome/covid-19-safety"
-            element={Link}
+            loading={loading || undefined}
+            onClick={handleSubmit}
           >
             {t("common.action.next")}
           </Button>
@@ -456,7 +496,8 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   const { data: person } = await getPersonFromUser(
     supabase,
-    session!.user as User
+    session!.user as User,
+    { contacts: true }
   );
 
   const { data: subjectGroups } = await getSubjectGroups();

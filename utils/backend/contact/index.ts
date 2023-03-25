@@ -1,19 +1,37 @@
-// Supabase
-import { supabase } from "@/utils/supabase-client";
+// Backend
+import { db2Contact } from "@/utils/backend/database";
 
 // Types
 import { BackendDataReturn, DatabaseClient } from "@/utils/types/common";
 import { Contact } from "@/utils/types/contact";
 import { Database } from "@/utils/types/supabase";
 
+export async function getContact(
+  supabase: DatabaseClient,
+  id: number
+): Promise<BackendDataReturn<Contact, null>> {
+  const { data, error } = await supabase
+    .from("contacts")
+    .select("*")
+    .match({ id })
+    .single();
+
+  if (error) {
+    console.error(error);
+    return { data: null, error };
+  }
+
+  return { data: db2Contact(data), error: null };
+}
+
 export async function createContact(
   supabase: DatabaseClient,
   contact: Contact
 ): Promise<
-  BackendDataReturn<Database["public"]["Tables"]["contact"]["Row"], null>
+  BackendDataReturn<Database["public"]["Tables"]["contacts"]["Row"], null>
 > {
   const { data: createdContact, error: contactCreationError } = await supabase
-    .from("contact")
+    .from("contacts")
     .insert({
       type: contact.type,
       value: contact.value,
@@ -37,10 +55,10 @@ export async function updateContact(
   supabase: DatabaseClient,
   contact: Contact
 ): Promise<
-  BackendDataReturn<Database["public"]["Tables"]["contact"]["Row"], null>
+  BackendDataReturn<Database["public"]["Tables"]["contacts"]["Row"], null>
 > {
   const { data: updatedContact, error: contactUpdateError } = await supabase
-    .from("contact")
+    .from("contacts")
     .update({
       type: contact.type,
       value: contact.value,
@@ -65,10 +83,10 @@ export async function deleteContact(
   supabase: DatabaseClient,
   contactId: number
 ): Promise<
-  BackendDataReturn<Database["public"]["Tables"]["contact"]["Row"], null>
+  BackendDataReturn<Database["public"]["Tables"]["contacts"]["Row"], null>
 > {
   const { data: deletedContact, error: contactDeleteError } = await supabase
-    .from("contact")
+    .from("contacts")
     .delete()
     .match({ id: contactId })
     .select("*")

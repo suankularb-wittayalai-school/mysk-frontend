@@ -23,7 +23,7 @@ import { Database } from "@/utils/types/supabase";
 
 // Contact
 export function db2Contact(
-  contact: Database["public"]["Tables"]["contact"]["Row"]
+  contact: Database["public"]["Tables"]["contacts"]["Row"]
 ): Contact {
   return {
     id: contact.id,
@@ -206,7 +206,7 @@ export async function db2Student(
 
   if (options?.contacts) {
     const { data: contacts, error: contactError } = await supabase
-      .from("contact")
+      .from("contacts")
       .select("*")
       .in("id", student.person.contacts ? student.person.contacts : []);
 
@@ -277,7 +277,7 @@ export async function db2Teacher(
 
   if (options?.contacts) {
     const { data: contacts, error: contactError } = await supabase
-      .from("contact")
+      .from("contacts")
       .select("*")
       .in("id", teacher.person.contacts ? teacher.person.contacts : []);
 
@@ -484,7 +484,7 @@ export async function db2Class(
 
   if (classDB.contacts) {
     const { data: contacts, error: contactError } = await supabase
-      .from("contact")
+      .from("contacts")
       .select("*")
       .in("id", classDB.contacts);
 

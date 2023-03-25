@@ -44,7 +44,7 @@ export interface Database {
           no_list?: number[];
         };
       };
-      contact: {
+      contacts: {
         Row: {
           id: number;
           created_at: string | null;

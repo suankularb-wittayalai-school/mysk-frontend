@@ -83,6 +83,8 @@
   "seeDetails": "See details",
   "snackbar": {
     "loading": "Loading…",
+    "error": "Error: {{errorMsg}}",
+    "failure": "Task failed, please try again",
     "copiedToClipboard": "Copied to clipboard",
     "languageRedirect": {
       "message": "กำลังเปลี่ยนภาษาเป็นภาษาไทย…",

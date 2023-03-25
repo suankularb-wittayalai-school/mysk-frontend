@@ -84,6 +84,8 @@
   "seeDetails": "ดูรายละเอียด",
   "snackbar": {
     "loading": "กำลังโหลด…",
+    "error": "ข้อผิดพลาด: {{errorMsg}}",
+    "failure": "เกิดข้อผิดพลาด โปรดลองอีกครั้ง",
     "copiedToClipboard": "คัดลอกไปที่คลิปบอร์ดแล้ว",
     "languageRedirect": {
       "message": "Redirecting you to the English website…",

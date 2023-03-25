@@ -1,5 +1,4 @@
 // External libraries
-import { TextFieldProps } from "@suankularb-components/react";
 import { useMemo, useState } from "react";
 
 // Hooks
