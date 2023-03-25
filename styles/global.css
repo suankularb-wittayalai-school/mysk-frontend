@@ -27,7 +27,7 @@
 
 @layer utilities {
   .center-all {
-    @apply grid [grid-template-areas:"center"] place-items-center;
+    @apply grid place-items-center [grid-template-areas:"center"];
   }
 
   .center-all * {
