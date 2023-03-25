@@ -51,7 +51,7 @@ const ContactCard: FC<{
   const { t } = useTranslation(["account", "common"]);
 
   const editable = Boolean(onChange || onRemove);
-  const [showAdd, setShowAdd] = useState<boolean>(false);
+  const [showEdit, setShowEdit] = useState<boolean>(false);
 
   const avatarMap = {
     Phone: <MaterialIcon icon="phone" />,
@@ -91,6 +91,7 @@ const ContactCard: FC<{
               href={getContactURL(contact.type, contact.value)}
               target="_blank"
               rel="noreferrer"
+              className="break-all"
             >
               {getLocaleString(contact.name, locale)}
             </a>
@@ -100,7 +101,7 @@ const ContactCard: FC<{
             <Menu>
               <MenuItem
                 icon={<MaterialIcon icon="edit" />}
-                onClick={() => setShowAdd(true)}
+                onClick={() => setShowEdit(true)}
               >
                 {t("profile.contacts.action.edit")}
               </MenuItem>
@@ -118,16 +119,15 @@ const ContactCard: FC<{
               </MenuItem>
             </Menu>
           }
-          className="break-all"
         />
       </Card>
       <ContactDialog
-        open={showAdd}
+        open={showEdit}
         contact={contact}
-        onClose={() => setShowAdd(false)}
+        onClose={() => setShowEdit(false)}
         onSubmit={(contact) => {
           if (onChange) onChange(contact);
-          setShowAdd(false);
+          setShowEdit(false);
         }}
       />
     </>

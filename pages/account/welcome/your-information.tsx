@@ -44,7 +44,7 @@ import { getPersonFromUser, setupPerson } from "@/utils/backend/person/person";
 import { getSubjectGroups } from "@/utils/backend/subject/subjectGroup";
 
 // Helpers
-import { setItem } from "@/utils/helpers/array";
+import { changeItem } from "@/utils/helpers/array";
 import { getLocaleString } from "@/utils/helpers/i18n";
 import { withLoading } from "@/utils/helpers/loading";
 import { createTitleStr } from "@/utils/helpers/title";
@@ -283,8 +283,8 @@ const ContactsSection: FC<{
             <ContactCard
               key={contact.id}
               contact={contact}
-              onChange={() =>
-                setContacts(setItem<Contact>(contact, idx, contacts))
+              onChange={(contact) =>
+                setContacts(changeItem<Contact>(contact, idx, contacts))
               }
               onRemove={() =>
                 setContacts(contacts.filter((item) => contact.id !== item.id))
@@ -399,7 +399,8 @@ const WelcomePage: CustomPage<{
     // },
     // { key: "bloodGroup", required: true },
   ]);
-  const [contacts, setContacts] = useState<Contact[]>(person.contacts);
+  // const [contacts, setContacts] = useState<Contact[]>(person.contacts);
+  const [contacts, setContacts] = useState<Contact[]>([]);
 
   // Form submission
   const [loading, toggleLoading] = useToggle();

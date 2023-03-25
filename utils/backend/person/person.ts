@@ -92,12 +92,8 @@ export async function setupPerson(
 ): Promise<
   BackendDataReturn<Database["public"]["Tables"]["people"]["Row"], null>
 > {
-  // Delete contacts
-  const formContactIDs = form.contacts.map((contact) => contact.id);
-  const contactsToDelete = person.contacts.filter((contact) =>
-    formContactIDs.includes(contact.id)
-  );
-  for (let contact of contactsToDelete) {
+  // Delete existing contacts
+  for (let contact of person.contacts) {
     const { error } = await supabase
       .from("contacts")
       .delete()
