@@ -220,14 +220,14 @@ const MiscellaneousSection: FC<{ formProps: FormControlProps }> = ({
           inputAttr={{ type: "date" }}
           {...formProps.birthdate}
         />
-        <TextField
+        {/* <TextField
           appearance="outlined"
           label={t("profile.general.citizenID")}
           leading={<MaterialIcon icon="lock" />}
           helperMsg={t("profile.common.privateInfo_helper")}
           inputAttr={{ type: "number" }}
           {...formProps.citizenID}
-        />
+        /> */}
         {/* <TextField
           appearance="outlined"
           label={t("profile.general.passportNumber")}
@@ -380,23 +380,23 @@ const WelcomePage: CustomPage<{
       defaultValue:
         person.role === "teacher" ? person.classAdvisorAt?.number : undefined,
     },
-    { key: "gender", required: true },
+    // { key: "gender", required: true },
     { key: "birthdate", required: true, defaultValue: person.birthdate },
-    {
-      key: "citizenID",
-      required: locale === "th",
-      defaultValue: person.citizenID,
-      validate: (value) =>
-        validateCitizenID(value) ||
-        t("profile.general.citizenID_error", { ns: "account" }),
-    },
-    {
-      key: "passportNumber",
-      validate: (value) =>
-        Boolean(validatePassport(value)) ||
-        t("profile.general.passportNumber_error", { ns: "account" }),
-    },
-    { key: "bloodGroup", required: true },
+    // {
+    //   key: "citizenID",
+    //   required: locale === "th",
+    //   defaultValue: person.citizenID,
+    //   validate: (value) =>
+    //     validateCitizenID(value) ||
+    //     t("profile.general.citizenID_error", { ns: "account" }),
+    // },
+    // {
+    //   key: "passportNumber",
+    //   validate: (value) =>
+    //     Boolean(validatePassport(value)) ||
+    //     t("profile.general.passportNumber_error", { ns: "account" }),
+    // },
+    // { key: "bloodGroup", required: true },
   ]);
 
   return (
