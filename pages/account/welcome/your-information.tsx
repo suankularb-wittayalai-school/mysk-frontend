@@ -1,12 +1,14 @@
 // External libraries
 import {
   createServerSupabaseClient,
-  User,
+  User
 } from "@supabase/auth-helpers-nextjs";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 import { Trans, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -26,55 +28,37 @@ import {
   Section,
   Select,
   Snackbar,
-  TextField,
+  TextField
 } from "@suankularb-components/react";
 
 // Internal components
-import ContactDialog from "@/components/account/ContactDialog";
 import ContactCard from "@/components/account/ContactCard";
+import ContactDialog from "@/components/account/ContactDialog";
+import NextWarningCard from "@/components/welcome/NextWarningCard";
+
+// Contexts
+import SnackbarContext from "@/contexts/SnackbarContext";
+
+// Backend
+import { getPersonFromUser, setupPerson } from "@/utils/backend/person/person";
+import { getSubjectGroups } from "@/utils/backend/subject/subjectGroup";
 
 // Helpers
+import { setItem } from "@/utils/helpers/array";
+import { getLocaleString } from "@/utils/helpers/i18n";
+import { withLoading } from "@/utils/helpers/loading";
 import { createTitleStr } from "@/utils/helpers/title";
-import {
-  validateCitizenID,
-  validatePassport,
-} from "@/utils/helpers/validators";
 
 // Hooks
-import { useLocale } from "@/utils/hooks/i18n";
 import { useForm } from "@/utils/hooks/form";
+import { useLocale } from "@/utils/hooks/i18n";
+import { useToggle } from "@/utils/hooks/toggle";
 
 // Types
 import { CustomPage, FormControlProps, LangCode } from "@/utils/types/common";
 import { Contact } from "@/utils/types/contact";
-import { getPersonFromUser, setupPerson } from "@/utils/backend/person/person";
-import { getSubjectGroups } from "@/utils/backend/subject/subjectGroup";
 import { Student, Teacher } from "@/utils/types/person";
 import { SubjectGroup } from "@/utils/types/subject";
-import { getLocaleString } from "@/utils/helpers/i18n";
-import { setItem } from "@/utils/helpers/array";
-import { useToggle } from "@/utils/hooks/toggle";
-import { withLoading } from "@/utils/helpers/loading";
-import { useRouter } from "next/router";
-import { createContact } from "@/utils/backend/contact";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import SnackbarContext from "@/contexts/SnackbarContext";
-
-const NextWarningCard: FC = () => {
-  // Translation
-  const { t } = useTranslation("welcome");
-
-  return (
-    <Card
-      appearance="outlined"
-      direction="row"
-      className="mx-4 items-center gap-3 py-3 px-4 sm:mx-0"
-    >
-      <MaterialIcon icon="warning" className="text-error" />
-      <p>{t("common.nextReminder")}</p>
-    </Card>
-  );
-};
 
 const ThaiNameSection: FC<{ formProps: FormControlProps }> = ({
   formProps,
