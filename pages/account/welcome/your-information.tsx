@@ -399,8 +399,7 @@ const WelcomePage: CustomPage<{
     // },
     // { key: "bloodGroup", required: true },
   ]);
-  // const [contacts, setContacts] = useState<Contact[]>(person.contacts);
-  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [contacts, setContacts] = useState<Contact[]>(person.contacts);
 
   // Form submission
   const [loading, toggleLoading] = useToggle();

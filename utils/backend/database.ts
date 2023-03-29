@@ -208,7 +208,7 @@ export async function db2Student(
     const { data: contacts, error: contactError } = await supabase
       .from("contacts")
       .select("*")
-      .in("id", student.person.contacts ? student.person.contacts : []);
+      .in("id", student.person.contacts || []);
 
     if (contactError) console.error(contactError);
     if (contacts) formatted.contacts = contacts.map(db2Contact);

@@ -47,33 +47,29 @@ export async function addVaccineRecord(
   return { error };
 }
 
-export async function deleteVaccineRecord(
-  supabase: DatabaseClient,
-  vaccineRecordId: number
-): Promise<BackendReturn> {
-  const { error } = await supabase
-    .from("vaccine_records")
-    .delete()
-    .eq("id", vaccineRecordId);
-
-  return { error };
-}
-
 export async function updateVaccineRecords(
   supabase: DatabaseClient,
   vaccineRecords: VaccineRecord[],
-  personId: number
+  personID: number
 ): Promise<BackendReturn> {
-  const dbVaccineRecords = vaccineRecords.map((vaccineRecord) => ({
-    id: vaccineRecord.id,
-    person: personId,
-    vaccine_name: vaccineRecord.provider,
-    vaccination_date: vaccineRecord.vaccineDate,
-  }));
-
-  const { error } = await supabase
+  // Delete existing records
+  const { error: deletionError } = await supabase
     .from("vaccine_records")
-    .upsert(dbVaccineRecords, { onConflict: "id" });
+    .delete()
+    .match({ person: personID });
+  if (deletionError) {
+    console.error(deletionError);
+    return { error: deletionError };
+  }
+
+  // Add new records
+  const { error } = await supabase.from("vaccine_records").upsert(
+    vaccineRecords.map((vaccineRecord) => ({
+      person: personID,
+      vaccine_name: vaccineRecord.provider,
+      vaccination_date: vaccineRecord.vaccineDate,
+    }))
+  );
 
   return { error };
 }

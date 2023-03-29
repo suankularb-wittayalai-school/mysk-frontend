@@ -1,5 +1,5 @@
 // External libraries
-import { useMemo, useState } from "react";
+import { createElement, useContext, useMemo, useState } from "react";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
@@ -11,6 +11,9 @@ import {
   FormControlValidsWMessages,
   FormControlValues,
 } from "@/utils/types/common";
+import SnackbarContext from "@/contexts/SnackbarContext";
+import { Snackbar } from "@suankularb-components/react";
+import { useTranslation } from "next-i18next";
 
 /**
  * A form state manager, handling values, error state, and props for Text Field.
@@ -21,6 +24,7 @@ import {
  * `form` — Form values;
  * `setForm` — Form values setter;
  * `resetForm` — Replace all form values with defaults;
+ * `openFormSnackbar` — Show a Snackbar if the form is invalid;
  * `formValids` — Validation result for each field;
  * `formValidsStrict` — Validation result for each field, taking `required` into account;
  * `formOK` — If the form as a whole is valid;
@@ -36,6 +40,10 @@ export function useForm<KeyEnum extends string | symbol>(
 ) {
   // Translation
   const locale = useLocale();
+  const { t } = useTranslation("common");
+
+  // Snackbar
+  const { setSnackbar } = useContext(SnackbarContext);
 
   // An object with default values
   const defaultForm = useMemo<FormControlValues<KeyEnum>>(
@@ -149,6 +157,16 @@ export function useForm<KeyEnum extends string | symbol>(
      * When called, sets all fields to the default value.
      */
     resetForm: () => setFormValues(defaultForm),
+
+    /**
+     *
+     */
+    openFormSnackbar: () =>
+      !formOK &&
+      setSnackbar(
+        // eslint-disable-next-line react/no-children-prop
+        createElement(Snackbar, { children: t("snackbar.formInvalid") })
+      ),
 
     /**
      * An object with values representing the validity of each field.

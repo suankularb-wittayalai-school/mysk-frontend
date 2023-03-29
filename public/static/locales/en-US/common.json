@@ -85,6 +85,7 @@
     "loading": "Loading…",
     "error": "Error: {{errorMsg}}",
     "failure": "Task failed, please try again",
+    "formInvalid": "Check the form and try again",
     "copiedToClipboard": "Copied to clipboard",
     "languageRedirect": {
       "message": "กำลังเปลี่ยนภาษาเป็นภาษาไทย…",

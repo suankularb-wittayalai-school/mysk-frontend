@@ -121,6 +121,8 @@ export async function setupPerson(
     )
   ).filter((contactID) => contactID) as number[];
 
+  console.log(createdContacts);
+
   // Get person ID
   let personID = 0;
 

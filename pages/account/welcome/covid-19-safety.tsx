@@ -5,12 +5,11 @@ import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import Head from "next/head";
-import Link from "next/link";
 
 import { Trans, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { FC, useEffect, useReducer, useState } from "react";
+import { FC, useContext, useEffect, useReducer, useState } from "react";
 
 // SK Components
 import {
@@ -27,6 +26,7 @@ import {
   Section,
   Select,
   SelectProps,
+  Snackbar,
   TextField,
   transition,
   useAnimationConfig,
@@ -48,6 +48,17 @@ import { useForm } from "@/utils/hooks/form";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Role } from "@/utils/types/person";
 import { VaccineRecord } from "@/utils/types/vaccine";
+import {
+  getVaccineRecordbyPersonId as getVaccineRecordbyPersonID,
+  updateVaccineRecords,
+} from "@/utils/backend/vaccine";
+import { getPersonIDFromUser } from "@/utils/backend/person/person";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { Database } from "@/utils/types/supabase";
+import { withLoading } from "@/utils/helpers/loading";
+import { useToggle } from "@/utils/hooks/toggle";
+import { useRouter } from "next/router";
+import SnackbarContext from "@/contexts/SnackbarContext";
 
 const ProviderSelect: FC<Partial<SelectProps>> = (props?) => {
   // Translation
@@ -82,7 +93,9 @@ const AddDoseSection: FC<{ addDose: (dose: VaccineRecord) => void }> = ({
     (counter: number) => counter + 1,
     1
   );
-  const { form, formOK, formProps } = useForm<"vaccineDate" | "provider">([
+  const { form, resetForm, openFormSnackbar, formOK, formProps } = useForm<
+    "vaccineDate" | "provider"
+  >([
     { key: "vaccineDate", required: true },
     { key: "provider", required: true },
   ]);
@@ -116,9 +129,11 @@ const AddDoseSection: FC<{ addDose: (dose: VaccineRecord) => void }> = ({
               <MaterialIcon icon="arrow_downward" className="sm:-rotate-90" />
             }
             onClick={() => {
+              openFormSnackbar();
               if (!formOK) return;
               addDose({ id: counter, ...form });
               incrementCounter();
+              resetForm();
             }}
           >
             {t("covid19Safety.vaccination.addDose.action.add")}
@@ -151,10 +166,9 @@ const DoseCard: FC<{
   return (
     <motion.div
       key={dose.id}
-      initial={{ x: -100, scale: 0.6, opacity: 0 }}
-      animate={{ x: 0, scale: 1, opacity: 1 }}
+      initial={{ scale: 0.8, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
       exit={{
-        x: -100,
         scale: 0.8,
         opacity: 0,
         transition: transition(duration.short4, easing.emphasizedAccelerate),
@@ -181,7 +195,7 @@ const DoseCard: FC<{
           </div>
         </div>
         <CardContent>
-          <div className="my-4 grid grid-cols-2 gap-6">
+          <Columns columns={2} className="my-4">
             <TextField
               appearance="filled"
               label={t("covid19Safety.vaccination.dose.date")}
@@ -189,7 +203,7 @@ const DoseCard: FC<{
               {...formProps.vaccineDate}
             />
             <ProviderSelect appearance="filled" {...formProps.provider} />
-          </div>
+          </Columns>
         </CardContent>
       </Card>
     </motion.div>
@@ -197,46 +211,86 @@ const DoseCard: FC<{
 };
 
 const DoseCardList: FC<{
-  doses: VaccineRecord[];
-  setDoses: (doses: VaccineRecord[]) => void;
-}> = ({ doses, setDoses }) => (
-  <LayoutGroup>
-    <AnimatePresence>
-      {doses.map((dose, idx) => (
-        <DoseCard
-          key={dose.id}
-          idx={idx}
-          dose={dose}
-          setDose={(dose) =>
-            setDoses(
-              doses
-                // Replace dose with new information
-                .map((mapDose, mapIdx) =>
-                  idx === mapIdx ? { ...mapDose, ...dose } : mapDose
-                )
-                // Sort doses by date
-                .sort((a, b) =>
-                  new Date(b.vaccineDate) <= new Date(a.vaccineDate) ? 1 : -1
-                )
-            )
-          }
-          removeDose={() =>
-            setDoses(doses.filter((_, filterIdx) => idx !== filterIdx))
-          }
-        />
-      ))}
-    </AnimatePresence>
-  </LayoutGroup>
+  vaccineRecords: VaccineRecord[];
+  setVaccineRecords: (vaccineRecords: VaccineRecord[]) => void;
+}> = ({ vaccineRecords, setVaccineRecords }) => (
+  <AnimatePresence initial={false}>
+    {vaccineRecords.map((dose, idx) => (
+      <DoseCard
+        key={dose.id}
+        idx={idx}
+        dose={dose}
+        setDose={(dose) =>
+          setVaccineRecords(
+            vaccineRecords
+              // Replace dose with new information
+              .map((mapDose, mapIdx) =>
+                idx === mapIdx ? { ...mapDose, ...dose } : mapDose
+              )
+              // Sort vaccineRecords by date
+              .sort((a, b) =>
+                new Date(b.vaccineDate) <= new Date(a.vaccineDate) ? 1 : -1
+              )
+          )
+        }
+        removeDose={() =>
+          setVaccineRecords(
+            vaccineRecords.filter((_, filterIdx) => idx !== filterIdx)
+          )
+        }
+      />
+    ))}
+  </AnimatePresence>
 );
 
-const COVID19SafetyPage: CustomPage<{ userRole: Role }> = ({ userRole }) => {
+const COVID19SafetyPage: CustomPage<{
+  userRole: Role;
+  personID: number;
+  vaccineRecords: VaccineRecord[];
+}> = ({ userRole, personID, vaccineRecords: existingRecords }) => {
   // Translation
   const { t } = useTranslation(["welcome", "common"]);
 
   // Animation
   const { duration, easing } = useAnimationConfig();
 
-  const [doses, setDoses] = useState<VaccineRecord[]>([]);
+  // Router
+  const router = useRouter();
+
+  // Supabase
+  const supabase = useSupabaseClient<Database>();
+
+  // Snackbar
+  const { setSnackbar } = useContext(SnackbarContext);
+
+  // Form control
+  const [vaccineRecords, setVaccineRecords] =
+    useState<VaccineRecord[]>(existingRecords);
+
+  // Form submission
+  const [loading, toggleLoading] = useToggle();
+  function handleSubmit() {
+    withLoading(async () => {
+      const { error } = await updateVaccineRecords(
+        supabase,
+        vaccineRecords,
+        personID
+      );
+
+      if (error) {
+        console.error(error);
+        setSnackbar(
+          <Snackbar>{t("snackbar.failure", { ns: "common" })}</Snackbar>
+        );
+        return false;
+      }
+
+      if (userRole === "teacher") router.push("/account/welcome/your-subjects");
+      else router.push("/account/welcome/logging-in");
+
+      return true;
+    }, toggleLoading);
+  }
 
   return (
     <>
@@ -247,54 +301,67 @@ const COVID19SafetyPage: CustomPage<{ userRole: Role }> = ({ userRole }) => {
         <NextWarningCard />
         <Section>
           <Header>{t("covid19Safety.vaccination.title")}</Header>
+
           <Columns
             columns={2}
-            className={!doses.length ? "!items-stretch" : undefined}
+            className={!vaccineRecords.length ? "!items-stretch" : undefined}
           >
+            {/* Add side */}
             <AddDoseSection
               addDose={(dose) =>
-                setDoses(
-                  [...doses, dose].sort((a, b) =>
+                setVaccineRecords(
+                  [...vaccineRecords, dose].sort((a, b) =>
                     new Date(b.vaccineDate) <= new Date(a.vaccineDate) ? 1 : -1
                   )
                 )
               }
             />
-            <AnimatePresence initial={false} mode="wait">
-              {doses.length ? (
-                <ul className="flex flex-col gap-3">
-                  <DoseCardList doses={doses} setDoses={setDoses} />
-                </ul>
-              ) : (
-                <motion.div
-                  className="min-h-[5rem]"
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0.8, opacity: 0 }}
-                  transition={transition(duration.medium2, easing.standard)}
-                >
-                  <Card
-                    appearance="outlined"
-                    className="!grid h-full place-content-center"
+
+            {/* List side */}
+            <LayoutGroup>
+              <AnimatePresence initial={false} mode="wait">
+                {vaccineRecords.length ? (
+                  // Vaccine record list
+                  <motion.ul
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.8, opacity: 1 }}
+                    transition={transition(duration.medium2, easing.standard)}
+                    className="flex flex-col gap-3"
                   >
-                    <p className="skc-body-medium text-on-surface-variant">
-                      {t("covid19Safety.vaccination.dose.noData")}
-                    </p>
-                  </Card>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                    <DoseCardList
+                      vaccineRecords={vaccineRecords}
+                      setVaccineRecords={setVaccineRecords}
+                    />
+                  </motion.ul>
+                ) : (
+                  // Placeholder for when there are no records
+                  <motion.div
+                    className="min-h-[5rem]"
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.8, opacity: 0 }}
+                    transition={transition(duration.medium2, easing.standard)}
+                  >
+                    <Card
+                      appearance="outlined"
+                      className="!grid h-full place-content-center"
+                    >
+                      <p className="skc-body-medium text-on-surface-variant">
+                        {t("covid19Safety.vaccination.dose.noData")}
+                      </p>
+                    </Card>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </LayoutGroup>
           </Columns>
         </Section>
         <Actions className="mx-4 pb-36 sm:mx-0">
           <Button
             appearance="filled"
-            href={
-              userRole === "teacher"
-                ? "/account/welcome/your-subjects"
-                : "/account/welcome/logging-in"
-            }
-            element={Link}
+            onClick={handleSubmit}
+            loading={loading || undefined}
           >
             {t("common.action.next")}
           </Button>
@@ -326,6 +393,13 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   const userRole = metadata!.role;
 
+  const { data: personID } = await getPersonIDFromUser(supabase, session!.user);
+
+  const { data: vaccineRecords } = await getVaccineRecordbyPersonID(
+    supabase,
+    personID!
+  );
+
   return {
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
@@ -333,6 +407,8 @@ export const getServerSideProps: GetServerSideProps = async ({
         "welcome",
       ])),
       userRole,
+      personID,
+      vaccineRecords,
     },
   };
 };
