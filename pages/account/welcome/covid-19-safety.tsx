@@ -187,15 +187,14 @@ const DoseCard: FC<{
             })}
             className="grow"
           />
-          <div className="mx-4">
-            <Button
-              appearance="text"
-              icon={<MaterialIcon icon="delete" />}
-              alt={t("covid19Safety.vaccination.dose.action.delete")}
-              dangerous
-              onClick={removeDose}
-            />
-          </div>
+          <Button
+            appearance="text"
+            icon={<MaterialIcon icon="delete" />}
+            alt={t("covid19Safety.vaccination.dose.action.delete")}
+            dangerous
+            onClick={removeDose}
+            className="!mr-3"
+          />
         </div>
         <CardContent>
           <Columns columns={2} className="my-4">
@@ -220,9 +219,6 @@ const COVID19SafetyPage: CustomPage<{
 }> = ({ userRole, personID, vaccineRecords: existingRecords }) => {
   // Translation
   const { t } = useTranslation(["welcome", "common"]);
-
-  // Animation
-  const { duration, easing } = useAnimationConfig();
 
   // Router
   const router = useRouter();
