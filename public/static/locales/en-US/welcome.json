@@ -61,7 +61,34 @@
     "title": "Your subjects"
   },
   "loggingIn": {
-    "title": "Logging in"
+    "title": "Logging in",
+    "lastPage": "You’re almost there! This is the last page: you’ll log in to MySK proper after you press “Done.”",
+    "checkEmail": {
+      "title": "Check email",
+      "success": "Check both your old and new email, and click the link on both addresses. <0>Learn more</0>",
+      "desc": "You’re using “{{email}},” does that seem correct? If not, specify a new one, and we’ll send an email to both your old and your new email addresses to confirm the change. You must click the link on both addresses.",
+      "form": {
+        "email": "Email"
+      },
+      "action": {
+        "send": "Send verification email"
+      }
+    },
+    "createPassword": {
+      "title": "Create a password",
+      "success": "Password created. You’re all set to start exploring MySK!",
+      "desc": "For the security of you and the school’s data, create a new password for your MySK account. Enter your new password twice to confirm.",
+      "form": {
+        "newPwd": "New password",
+        "confirmNewPwd": "Confirm new password"
+      },
+      "action": {
+        "set": "Set password"
+      }
+    },
+    "action": {
+      "done": "Done"
+    }
   },
   "common": {
     "nextReminder": "Remember: your information is not saved until you press “Next.”",

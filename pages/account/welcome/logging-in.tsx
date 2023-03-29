@@ -7,9 +7,10 @@ import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import Head from "next/head";
+import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { useTranslation } from "next-i18next";
+import { Trans, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { FC, useState } from "react";
@@ -40,7 +41,6 @@ import { useToggle } from "@/utils/hooks/toggle";
 
 // Types
 import type { CustomPage, LangCode } from "@/utils/types/common";
-import Link from "next/link";
 
 const LastPageCard: FC = () => {
   // Translation
@@ -49,13 +49,11 @@ const LastPageCard: FC = () => {
   return (
     <Card
       appearance="outlined"
-      className="mx-4 !flex-row items-center gap-3 py-3 px-4 sm:mx-0"
+      direction="row"
+      className="mx-4 items-center gap-3 py-3 px-4 sm:mx-0"
     >
       <MaterialIcon icon="info" className="text-on-surface-variant" />
-      <p>
-        You’re almost there! This is the last page: you’ll log in to MySK proper
-        after you press “Done.”
-      </p>
+      <p>{t("loggingIn.lastPage")}</p>
     </Card>
   );
 };
@@ -98,22 +96,16 @@ const CheckEmailSection: FC<{ user: User }> = ({ user }) => {
         icon={<MaterialIcon icon="email" size={48} />}
         open={success}
       >
-        Check both your old and new email, and click the link on both addresses.{" "}
-        <Link href="/help/essentials/onboarding" className="link">
-          Learn more
-        </Link>
+        <Trans i18nKey="loggingIn.checkEmail.success" ns="welcome">
+          <Link href="/help/essentials/onboarding" className="link" />
+        </Trans>
       </BlockingPane>
-      <Header>Check email</Header>
-      <p>
-        You’re using “{user.email},” does that seem correct? If not, specify a
-        new one, and we’ll send an email to both your old and your new email
-        addresses to confirm the change. You must click the link on both
-        addresses.
-      </p>
+      <Header>{t("loggingIn.checkEmail.title")}</Header>
+      <p>{t("loggingIn.checkEmail.desc", { email: user.email })}</p>
       <Columns columns={6}>
         <TextField
           appearance="outlined"
-          label="Email"
+          label={t("loggingIn.checkEmail.form.email")}
           align="right"
           trailing="sk.ac.th"
           error={email.endsWith("sk.ac.th")}
@@ -136,7 +128,7 @@ const CheckEmailSection: FC<{ user: User }> = ({ user }) => {
           loading={loading || undefined}
           onClick={handleSubmit}
         >
-          Send verification email
+          {t("loggingIn.checkEmail.action.send")}
         </Button>
       </Actions>
     </Section>
@@ -205,18 +197,15 @@ const CreatePasswordSection: FC = () => {
         icon={<MaterialIcon icon="done" size={48} />}
         open={success}
       >
-        Password created. You’re all set to start exploring MySK!
+        {t("loggingIn.createPassword.success")}
       </BlockingPane>
-      <Header>Create a password</Header>
-      <p>
-        For the security of you and the school’s data, create a new password for
-        your MySK account. Enter your new password twice to confirm.
-      </p>
+      <Header>{t("loggingIn.createPassword.title")}</Header>
+      <p>{t("loggingIn.createPassword.desc")}</p>
       <Columns columns={6}>
         <div className="col-span-4 flex flex-col gap-4 md:col-start-2">
           <TextField
             appearance="outlined"
-            label="New password"
+            label={t("loggingIn.createPassword.form.newPwd")}
             error={form.password.length > 0 && form.password.length < 8}
             value={form.password}
             onChange={(value) =>
@@ -226,7 +215,7 @@ const CreatePasswordSection: FC = () => {
           />
           <TextField
             appearance="outlined"
-            label="Confirm new password"
+            label={t("loggingIn.createPassword.form.confirmNewPwd")}
             error={
               form.confirmPassword.length > 0 &&
               form.confirmPassword !== form.password
@@ -245,7 +234,7 @@ const CreatePasswordSection: FC = () => {
           loading={loading || undefined}
           onClick={handleSubmit}
         >
-          Set password
+          {t("loggingIn.createPassword.action.set")}
         </Button>
       </Actions>
     </Section>
@@ -300,7 +289,7 @@ const LoggingInPage: CustomPage<{ user: User }> = ({ user }) => {
               }, toggleLoading)
             }
           >
-            Done
+            {t("loggingIn.action.done")}
           </Button>
         </Actions>
       </ContentLayout>
