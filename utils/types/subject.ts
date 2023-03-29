@@ -1,20 +1,16 @@
-import { ClassWNumber } from "./class";
-import { Teacher } from "./person";
+// Types
+import { ClassWNumber } from "@/utils/types/class";
+import { MultiLangString } from "@/utils/types/common";
+import { Teacher } from "@/utils/types/person";
 
 // Subject Group
 export type SubjectGroup = {
   id: number;
-  name: {
-    "en-US": string;
-    th: string;
-  };
+  name: Required<MultiLangString>;
 };
 
 export type SubjectSubgroup = {
-  name: {
-    "en-US": string;
-    th: string;
-  };
+  name: Required<MultiLangString>;
   subjectGroup: SubjectGroup;
 };
 
@@ -33,22 +29,10 @@ export type SubjectTypeEN =
 // Subject
 export type Subject = {
   id: number;
-  code: {
-    "en-US": string;
-    th: string;
-  };
-  name: {
-    "en-US"?: SubjectName;
-    th: SubjectName;
-  };
-  type: {
-    "en-US": SubjectTypeEN;
-    th: SubjectTypeTH;
-  };
-  description?: {
-    "en-US": string;
-    th: string;
-  };
+  code: Required<MultiLangString>;
+  name: MultiLangString;
+  type: Required<MultiLangString>;
+  description?: MultiLangString;
   teachers: Teacher[];
   coTeachers?: Teacher[];
   subjectGroup: SubjectGroup;
@@ -58,11 +42,7 @@ export type Subject = {
   credit: number;
 };
 
-export type SubjectWNameAndCode = {
-  id: Subject["id"];
-  code: Subject["code"];
-  name: Subject["name"];
-};
+export type SubjectWNameAndCode = Pick<Subject, "id" | "code" | "name">;
 
 export type SubjectName = {
   name: string;
@@ -72,16 +52,20 @@ export type SubjectName = {
 // Subject List Item
 export type SubjectListItem = {
   id: number;
-  subject: {
-    code: Subject["code"];
-    name: Subject["name"];
-  };
+  subject: Pick<Subject, "code" | "name">;
   classroom: ClassWNumber;
   teachers: Teacher[];
   coTeachers?: Teacher[];
   ggcCode?: string;
   ggcLink?: string;
   ggMeetLink?: string;
+};
+
+// Subjects List Item for Teachers
+export type TeacherSubjectItem = {
+  id: number;
+  subject: Pick<Subject, "code" | "name">;
+  classroom: ClassWNumber;
 };
 
 // Period Log
@@ -104,14 +88,8 @@ export type PeriodMedium =
 // Substitute Assignment
 export type SubstituteAssignment = {
   id: number;
-  name: {
-    "en-US": string;
-    th: string;
-  };
-  desc: {
-    "en-US": string;
-    th: string;
-  };
+  name: MultiLangString;
+  desc: MultiLangString;
   classes: ClassWNumber[];
   subject: SubjectWNameAndCode;
 };
