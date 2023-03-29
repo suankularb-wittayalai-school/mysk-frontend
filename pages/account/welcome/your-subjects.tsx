@@ -58,6 +58,16 @@ const AddSubjectCard: FC = () => {
             </ChipSet>
           </ChipField>
         </Columns>
+        <Actions>
+          <Button
+            appearance="tonal"
+            icon={
+              <MaterialIcon icon="arrow_downward" className="sm:-rotate-90" />
+            }
+          >
+            Add subject
+          </Button>
+        </Actions>
       </CardContent>
     </Card>
   );
