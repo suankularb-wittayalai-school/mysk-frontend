@@ -1,10 +1,12 @@
 // External libraries
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
-import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
+import { motion } from "framer-motion";
 
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import Head from "next/head";
+import { useRouter } from "next/router";
 
 import { Trans, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -34,31 +36,32 @@ import {
 
 // Internal components
 import NextWarningCard from "@/components/welcome/NextWarningCard";
+import RightCardList from "@/components/welcome/RightCardList";
+
+// Contexts
+import SnackbarContext from "@/contexts/SnackbarContext";
 
 // Backend
 import { getUserMetadata } from "@/utils/backend/account";
-
-// Helpers
-import { createTitleStr } from "@/utils/helpers/title";
-
-// Hooks
-import { useForm } from "@/utils/hooks/form";
-
-// Types
-import { CustomPage, LangCode } from "@/utils/types/common";
-import { Role } from "@/utils/types/person";
-import { VaccineRecord } from "@/utils/types/vaccine";
+import { getPersonIDFromUser } from "@/utils/backend/person/person";
 import {
   getVaccineRecordbyPersonId as getVaccineRecordbyPersonID,
   updateVaccineRecords,
 } from "@/utils/backend/vaccine";
-import { getPersonIDFromUser } from "@/utils/backend/person/person";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { Database } from "@/utils/types/supabase";
+
+// Helpers
 import { withLoading } from "@/utils/helpers/loading";
+import { createTitleStr } from "@/utils/helpers/title";
+
+// Hooks
+import { useForm } from "@/utils/hooks/form";
 import { useToggle } from "@/utils/hooks/toggle";
-import { useRouter } from "next/router";
-import SnackbarContext from "@/contexts/SnackbarContext";
+
+// Types
+import { CustomPage, LangCode } from "@/utils/types/common";
+import { Role } from "@/utils/types/person";
+import { Database } from "@/utils/types/supabase";
+import { VaccineRecord } from "@/utils/types/vaccine";
 
 const ProviderSelect: FC<Partial<SelectProps>> = (props?) => {
   // Translation
@@ -210,39 +213,6 @@ const DoseCard: FC<{
   );
 };
 
-const DoseCardList: FC<{
-  vaccineRecords: VaccineRecord[];
-  setVaccineRecords: (vaccineRecords: VaccineRecord[]) => void;
-}> = ({ vaccineRecords, setVaccineRecords }) => (
-  <AnimatePresence initial={false}>
-    {vaccineRecords.map((dose, idx) => (
-      <DoseCard
-        key={dose.id}
-        idx={idx}
-        dose={dose}
-        setDose={(dose) =>
-          setVaccineRecords(
-            vaccineRecords
-              // Replace dose with new information
-              .map((mapDose, mapIdx) =>
-                idx === mapIdx ? { ...mapDose, ...dose } : mapDose
-              )
-              // Sort vaccineRecords by date
-              .sort((a, b) =>
-                new Date(b.vaccineDate) <= new Date(a.vaccineDate) ? 1 : -1
-              )
-          )
-        }
-        removeDose={() =>
-          setVaccineRecords(
-            vaccineRecords.filter((_, filterIdx) => idx !== filterIdx)
-          )
-        }
-      />
-    ))}
-  </AnimatePresence>
-);
-
 const COVID19SafetyPage: CustomPage<{
   userRole: Role;
   personID: number;
@@ -318,43 +288,38 @@ const COVID19SafetyPage: CustomPage<{
             />
 
             {/* List side */}
-            <LayoutGroup>
-              <AnimatePresence initial={false} mode="wait">
-                {vaccineRecords.length ? (
-                  // Vaccine record list
-                  <motion.ul
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    exit={{ scale: 0.8, opacity: 1 }}
-                    transition={transition(duration.medium2, easing.standard)}
-                    className="flex flex-col gap-3"
-                  >
-                    <DoseCardList
-                      vaccineRecords={vaccineRecords}
-                      setVaccineRecords={setVaccineRecords}
-                    />
-                  </motion.ul>
-                ) : (
-                  // Placeholder for when there are no records
-                  <motion.div
-                    className="min-h-[5rem]"
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    exit={{ scale: 0.8, opacity: 0 }}
-                    transition={transition(duration.medium2, easing.standard)}
-                  >
-                    <Card
-                      appearance="outlined"
-                      className="!grid h-full place-content-center"
-                    >
-                      <p className="skc-body-medium text-on-surface-variant">
-                        {t("covid19Safety.vaccination.dose.noData")}
-                      </p>
-                    </Card>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </LayoutGroup>
+            <RightCardList
+              emptyText={t("covid19Safety.vaccination.dose.noData")}
+              isEmpty={!vaccineRecords.length}
+            >
+              {vaccineRecords.map((dose, idx) => (
+                <DoseCard
+                  key={dose.id}
+                  idx={idx}
+                  dose={dose}
+                  setDose={(dose) =>
+                    setVaccineRecords(
+                      vaccineRecords
+                        // Replace dose with new information
+                        .map((mapDose, mapIdx) =>
+                          idx === mapIdx ? { ...mapDose, ...dose } : mapDose
+                        )
+                        // Sort vaccineRecords by date
+                        .sort((a, b) =>
+                          new Date(b.vaccineDate) <= new Date(a.vaccineDate)
+                            ? 1
+                            : -1
+                        )
+                    )
+                  }
+                  removeDose={() =>
+                    setVaccineRecords(
+                      vaccineRecords.filter((_, filterIdx) => idx !== filterIdx)
+                    )
+                  }
+                />
+              ))}
+            </RightCardList>
           </Columns>
         </Section>
         <Actions className="mx-4 pb-36 sm:mx-0">
