@@ -22,7 +22,7 @@ const NewsFeed: FC<{ news: NewsItemNoDate[]; isForAdmin?: boolean }> = ({
   const { duration, easing } = useAnimationConfig();
 
   return (
-    <List divided className="overflow-hidden">
+    <List divided className="overflow-hidden sm:rounded-lg">
       <LayoutGroup>
         <AnimatePresence initial={false}>
           {news.map((newsItem) => (
