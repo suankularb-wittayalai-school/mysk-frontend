@@ -85,9 +85,9 @@ const ProviderSelect: FC<Partial<SelectProps>> = (props?) => {
   );
 };
 
-const AddDoseSection: FC<{ addDose: (dose: VaccineRecord) => void }> = ({
-  addDose,
-}) => {
+const AddVaccineRecordSection: FC<{
+  addVaccineRecord: (dose: VaccineRecord) => void;
+}> = ({ addVaccineRecord }) => {
   // Translation
   const { t } = useTranslation("welcome");
 
@@ -134,7 +134,7 @@ const AddDoseSection: FC<{ addDose: (dose: VaccineRecord) => void }> = ({
             onClick={() => {
               openFormSnackbar();
               if (!formOK) return;
-              addDose({ id: counter, ...form });
+              addVaccineRecord({ id: counter, ...form });
               incrementCounter();
               resetForm();
             }}
@@ -147,12 +147,14 @@ const AddDoseSection: FC<{ addDose: (dose: VaccineRecord) => void }> = ({
   );
 };
 
-const DoseCard: FC<{
+const VaccineRecordCard: FC<{
   dose: VaccineRecord;
   idx: number;
-  setDose: (dose: Pick<VaccineRecord, "vaccineDate" | "provider">) => void;
-  removeDose: () => void;
-}> = ({ dose, idx, setDose, removeDose }) => {
+  setVaccineRecord: (
+    dose: Pick<VaccineRecord, "vaccineDate" | "provider">
+  ) => void;
+  removeVaccineRecord: () => void;
+}> = ({ dose, idx, setVaccineRecord, removeVaccineRecord }) => {
   // Translation
   const { t } = useTranslation("welcome");
 
@@ -164,7 +166,7 @@ const DoseCard: FC<{
     { key: "vaccineDate", defaultValue: dose.vaccineDate, required: true },
     { key: "provider", defaultValue: dose.provider, required: true },
   ]);
-  useEffect(() => setDose(form), [form]);
+  useEffect(() => setVaccineRecord(form), [form]);
 
   return (
     <motion.div
@@ -192,7 +194,7 @@ const DoseCard: FC<{
             icon={<MaterialIcon icon="delete" />}
             alt={t("covid19Safety.vaccination.dose.action.delete")}
             dangerous
-            onClick={removeDose}
+            onClick={removeVaccineRecord}
             className="!mr-3"
           />
         </div>
@@ -273,8 +275,8 @@ const COVID19SafetyPage: CustomPage<{
             className={!vaccineRecords.length ? "!items-stretch" : undefined}
           >
             {/* Add side */}
-            <AddDoseSection
-              addDose={(dose) =>
+            <AddVaccineRecordSection
+              addVaccineRecord={(dose) =>
                 setVaccineRecords(
                   [...vaccineRecords, dose].sort((a, b) =>
                     new Date(b.vaccineDate) <= new Date(a.vaccineDate) ? 1 : -1
@@ -289,16 +291,18 @@ const COVID19SafetyPage: CustomPage<{
               isEmpty={!vaccineRecords.length}
             >
               {vaccineRecords.map((dose, idx) => (
-                <DoseCard
+                <VaccineRecordCard
                   key={dose.id}
                   idx={idx}
                   dose={dose}
-                  setDose={(dose) =>
+                  setVaccineRecord={(dose) =>
                     setVaccineRecords(
                       vaccineRecords
                         // Replace dose with new information
-                        .map((mapDose, mapIdx) =>
-                          idx === mapIdx ? { ...mapDose, ...dose } : mapDose
+                        .map((mapVaccineRecord, mapIdx) =>
+                          idx === mapIdx
+                            ? { ...mapVaccineRecord, ...dose }
+                            : mapVaccineRecord
                         )
                         // Sort vaccineRecords by date
                         .sort((a, b) =>
@@ -308,7 +312,7 @@ const COVID19SafetyPage: CustomPage<{
                         )
                     )
                   }
-                  removeDose={() =>
+                  removeVaccineRecord={() =>
                     setVaccineRecords(
                       vaccineRecords.filter((_, filterIdx) => idx !== filterIdx)
                     )
