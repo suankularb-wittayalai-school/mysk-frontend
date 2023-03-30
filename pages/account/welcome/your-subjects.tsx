@@ -57,6 +57,7 @@ const AddSubjectCard: FC<{
 }> = ({ subjectsInCharge, addSubject }) => {
   // Translation
   const locale = useLocale();
+  const { t } = useTranslation("welcome");
 
   // Form control
   const { form, setForm, resetForm, openFormSnackbar, formOK, formProps } =
@@ -73,14 +74,15 @@ const AddSubjectCard: FC<{
 
   return (
     <Card appearance="outlined">
-      <CardHeader title="Add a subject" />
+      <CardHeader title={t("yourSubjects.subjects.addSubject.title")} />
       <CardContent>
-        <p>
-          Select from a list of subjects, specify which classes learn that
-          subject with you, and add it to the final list.
-        </p>
+        <p>{t("yourSubjects.subjects.addSubject.desc")}</p>
         <Columns columns={2} className="my-4 !gap-y-4">
-          <Select appearance="outlined" label="Subject" {...formProps.subject}>
+          <Select
+            appearance="outlined"
+            label={t("yourSubjects.subjects.subject.subject")}
+            {...formProps.subject}
+          >
             {subjectsInCharge.map((subjectInCharge) => (
               <MenuItem key={subjectInCharge.id} value={subjectInCharge.id}>
                 {getLocaleObj(subjectInCharge.name, locale).name}
@@ -111,7 +113,7 @@ const AddSubjectCard: FC<{
               resetForm();
             }}
           >
-            Add subject
+            {t("yourSubjects.subjects.addSubject.action.add")}
           </Button>
         </Actions>
       </CardContent>
@@ -153,7 +155,7 @@ const SubjectCard: FC<{
           <Button
             appearance="text"
             icon={<MaterialIcon icon="delete" />}
-            alt="Delete"
+            alt={t("yourSubjects.subjects.subject.action.delete")}
             dangerous
             onClick={onDelete}
             className="!mr-3"
@@ -181,7 +183,7 @@ const SubjectsSection: FC<{ subjectsInCharge: SubjectWNameAndCode[] }> = ({
 
   return (
     <Section>
-      <Header>Subjects and classes</Header>
+      <Header>{t("yourSubjects.subjects.title")}</Header>
       <Columns
         columns={2}
         className={!roomSubjects.length ? "!items-stretch" : undefined}
@@ -194,8 +196,7 @@ const SubjectsSection: FC<{ subjectsInCharge: SubjectWNameAndCode[] }> = ({
           addSubject={(subject) => setRoomSubjects([...roomSubjects, subject])}
         />
         <RightCardList
-          emptyText="Connect a subject to its classes for it to show up
-            here."
+          emptyText={t("yourSubjects.subjects.subject.noSubjects")}
           isEmpty={!roomSubjects.length}
         >
           {roomSubjects.map((subject) => (

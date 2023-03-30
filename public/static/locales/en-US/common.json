@@ -63,13 +63,15 @@
     }
   },
   "input": {
-    "none": {
-      "noFilesAttached": "No files attached",
-      "noNewFilesAttached": "Attach file to change",
-      "noOptions": "No options",
-      "noneSelected": "Select an option"
-    },
-    "error": {}
+    "classesField": {
+      "label": "ห้องเรียน",
+      "placeholder": "ใส่เลขห้องเรียน 3 หลัก",
+      "snackbar": {
+        "badFormat": "ต้องเป็นตัวเลข 3 หลัก",
+        "duplicate": "มีห้องเรียนนี้แล้ว",
+        "notFound": "ไม่มีห้องเรียนนี้"
+      }
+    }
   },
   "error": "Error: {{errorMsg}}",
   "fallback": {
@@ -93,40 +95,6 @@
     }
   },
   "dialog": {
-    "addClass": {
-      "title": "Add class",
-      "class": "Class",
-      "class_helper": "Should be 3-digit, i.e. 408.",
-      "class_error": "Invalid. Should be 3-digit, i.e. 408.",
-      "action": {
-        "add": "Add",
-        "cancel": "Cancel"
-      }
-    },
-    "addStudent": {
-      "title": "Add student",
-      "supportingText": "Search the student to add with their student ID.",
-      "studentID": "Student ID",
-      "searchResult": {
-        "title": "Search result",
-        "notFound": "No students with this ID."
-      },
-      "action": {
-        "cancel": "Cancel",
-        "add": "Add"
-      }
-    },
-    "addTeacher": {
-      "title": "Add teacher",
-      "supportingText": "Select a subject group to filter teachers by their subject group.",
-      "subjectGroup": "Subject group",
-      "teacher": "Teacher to add",
-      "noTeachers": "No teachers",
-      "action": {
-        "cancel": "Cancel",
-        "add": "Add"
-      }
-    },
     "confirmDelete": {
       "title": "Delete this item?",
       "supportingText": "This action cannot be undone.",

@@ -21,9 +21,10 @@ import { getClassWNumber } from "@/utils/backend/classroom/classroom";
 import { ClassWNumber } from "@/utils/types/class";
 
 const ClassesField: FC<{
+  label?: string;
   classes: ClassWNumber[];
   onChange: (value: ClassWNumber[]) => void;
-}> = ({ classes, onChange }) => {
+}> = ({ label, classes, onChange }) => {
   // Translation
   const { t } = useTranslation("common");
 
@@ -38,20 +39,25 @@ const ClassesField: FC<{
 
   return (
     <ChipField
-      label="Classes"
-      placeholder="Enter class number"
+      label={label || t("input.classesField.label")}
+      placeholder={t("input.classesField.placeholder")}
       value={classField}
       onChange={setClassField}
       onNewEntry={async (value) => {
         // Validate
+        if (!value) return;
         if (!/^\d{3}$/.test(value)) {
-          setSnackbar(<Snackbar>Class must be a 3-digit number</Snackbar>);
+          setSnackbar(
+            <Snackbar>{t("input.classesField.snackbar.badFormat")}</Snackbar>
+          );
           return;
         }
 
         // Ensure no duplicate
         if (classes.find((classItem) => Number(value) === classItem.number)) {
-          setSnackbar(<Snackbar>Class already exists</Snackbar>);
+          setSnackbar(
+            <Snackbar>{t("input.classesField.snackbar.duplicate")}</Snackbar>
+          );
           return;
         }
 
@@ -61,7 +67,9 @@ const ClassesField: FC<{
         // If class doesn’t exist, notify the user
         if (error) {
           console.error(error);
-          setSnackbar(<Snackbar>Class not found</Snackbar>);
+          setSnackbar(
+            <Snackbar>{t("input.classesField.snackbar.notFound")}</Snackbar>
+          );
           return;
         }
 
