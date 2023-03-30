@@ -1,4 +1,6 @@
 // External libraries
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+
 import { GetStaticProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
@@ -6,7 +8,7 @@ import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { FC, useState } from "react";
+import { FC, useContext, useState } from "react";
 
 // SK Components
 import {
@@ -28,8 +30,12 @@ import {
 } from "@suankularb-components/react";
 
 // Internal components
+import ClassesField from "@/components/class/ClassesField";
 import NextWarningCard from "@/components/welcome/NextWarningCard";
 import RightCardList from "@/components/welcome/RightCardList";
+
+// Contexts
+import SnackbarContext from "@/contexts/SnackbarContext";
 
 // Helpers
 import { createTitleStr } from "@/utils/helpers/title";
@@ -37,8 +43,12 @@ import { createTitleStr } from "@/utils/helpers/title";
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { TeacherSubjectItem } from "@/utils/types/subject";
+import { ClassWNumber } from "@/utils/types/class";
 
 const AddSubjectCard: FC = () => {
+  // Form control
+  const [classes, setClasses] = useState<ClassWNumber[]>([]);
+
   return (
     <Card appearance="outlined">
       <CardHeader title="Add a subject" />
@@ -52,11 +62,7 @@ const AddSubjectCard: FC = () => {
             <MenuItem value={1}>Media Production 2</MenuItem>
             <MenuItem value={2}>Writing Web Page 2</MenuItem>
           </Select>
-          <ChipField label="Classes" className="sm:col-span-2">
-            <ChipSet>
-              <InputChip onDelete={() => {}}>M.501</InputChip>
-            </ChipSet>
-          </ChipField>
+          <ClassesField classes={classes} onChange={setClasses} />
         </Columns>
         <Actions>
           <Button
@@ -73,9 +79,12 @@ const AddSubjectCard: FC = () => {
   );
 };
 
-const SubjectCard: FC = () => {
+const SubjectCard: FC<{
+  subject: TeacherSubjectItem;
+  onChange: (subject: TeacherSubjectItem) => void;
+}> = ({ subject, onChange }) => {
   // Translation
-  const { t } = useTranslation("welcome");
+  const { t } = useTranslation(["welcome", "common"]);
 
   return (
     <Card appearance="filled">
@@ -84,17 +93,13 @@ const SubjectCard: FC = () => {
         <Button
           appearance="text"
           icon={<MaterialIcon icon="delete" />}
-          alt={t("covid19Safety.vaccination.dose.action.delete")}
+          alt="Delete"
           dangerous
           className="!mr-3"
         />
       </div>
       <CardContent>
-        <ChipField label="Classes">
-          <ChipSet>
-            <InputChip onDelete={() => {}}>M.501</InputChip>
-          </ChipSet>
-        </ChipField>
+        <ClassesField classes={[]} onChange={() => {}} />
       </CardContent>
     </Card>
   );
@@ -120,7 +125,19 @@ const SubjectsSection: FC = () => {
             here."
           isEmpty={!roomSubjects.length}
         >
-          <SubjectCard />
+          {roomSubjects.map((subject) => (
+            <SubjectCard
+              key={subject.id}
+              subject={subject}
+              onChange={(subject) =>
+                setRoomSubjects(
+                  roomSubjects.map((mapSubject) =>
+                    subject.id === mapSubject.id ? subject : mapSubject
+                  )
+                )
+              }
+            />
+          ))}
         </RightCardList>
       </Columns>
     </Section>
@@ -139,7 +156,7 @@ const YourSubjectsPage: CustomPage = () => {
       <ContentLayout>
         <NextWarningCard />
         <SubjectsSection />
-        <Actions>
+        <Actions className="mx-4 sm:mx-0">
           <Button
             appearance="filled"
             href="/account/welcome/logging-in"
