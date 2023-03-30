@@ -10,7 +10,7 @@ import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
 // SK Components
 import {
@@ -64,6 +64,12 @@ const AddSubjectCard: FC<{
       { key: "subject", defaultValue: subjectsInCharge[0]?.id },
       { key: "classes", defaultValue: [], required: true },
     ]);
+
+  // When the available subjects change, set the selected subject to the first
+  useEffect(
+    () => setForm({ ...form, subject: subjectsInCharge[0]?.id }),
+    [subjectsInCharge]
+  );
 
   return (
     <Card appearance="outlined">
