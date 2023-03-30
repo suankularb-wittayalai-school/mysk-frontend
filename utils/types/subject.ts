@@ -1,6 +1,6 @@
 // Types
 import { ClassWNumber } from "@/utils/types/class";
-import { MultiLangString } from "@/utils/types/common";
+import { MultiLangObj, MultiLangString } from "@/utils/types/common";
 import { Teacher } from "@/utils/types/person";
 
 // Subject Group
@@ -30,8 +30,11 @@ export type SubjectTypeEN =
 export type Subject = {
   id: number;
   code: Required<MultiLangString>;
-  name: MultiLangString;
-  type: Required<MultiLangString>;
+  name: MultiLangObj<SubjectName>;
+  type: {
+    th: SubjectTypeTH,
+    "en-US": SubjectTypeEN
+  };
   description?: MultiLangString;
   teachers: Teacher[];
   coTeachers?: Teacher[];
