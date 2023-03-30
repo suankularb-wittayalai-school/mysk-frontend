@@ -30,7 +30,10 @@ export function useSnackbar() {
   let exitWait: NodeJS.Timeout;
   let visibilityTimer: NodeJS.Timeout;
   useEffect(() => {
-    if (!snackbar) return;
+    if (!snackbar) {
+      setSnackbarOpen(false);
+      return;
+    }
 
     clearTimeout(exitWait);
     clearTimeout(visibilityTimer);
