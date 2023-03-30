@@ -15,7 +15,7 @@ import { db2Class, db2Student } from "@/utils/backend/database";
 import { getCurrentAcademicYear } from "@/utils/helpers/date";
 
 // Types
-import { Class } from "@/utils/types/class";
+import { Class, ClassWNumber } from "@/utils/types/class";
 import { BackendDataReturn, DatabaseClient } from "@/utils/types/common";
 import { StudentListItem } from "@/utils/types/person";
 import { Database } from "@/utils/types/supabase";
@@ -78,16 +78,6 @@ export async function getClassroom(
   supabase: DatabaseClient,
   number: number
 ): Promise<BackendDataReturn<Class, null>> {
-  let classItem: Class = {
-    id: 0,
-    number: 0,
-    classAdvisors: [],
-    contacts: [],
-    students: [],
-    year: getCurrentAcademicYear(),
-    subjects: [],
-  };
-
   const { data, error } = await supabase
     .from("classroom")
     .select("*")
@@ -101,6 +91,25 @@ export async function getClassroom(
   }
 
   return { data: await db2Class(supabase, data!), error: null };
+}
+
+export async function getClassWNumber(
+  supabase: DatabaseClient,
+  number: number
+): Promise<BackendDataReturn<ClassWNumber, null>> {
+  const { data, error } = await supabase
+    .from("classroom")
+    .select("id, number")
+    .match({ number, year: getCurrentAcademicYear() })
+    .limit(1)
+    .single();
+
+  if (error) {
+    console.error(error);
+    return { data: null, error };
+  }
+
+  return { data: data!, error };
 }
 
 export async function updateClassroom(
