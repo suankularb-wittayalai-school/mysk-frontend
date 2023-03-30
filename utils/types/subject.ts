@@ -65,7 +65,7 @@ export type SubjectListItem = {
 export type TeacherSubjectItem = {
   id: number;
   subject: Pick<Subject, "code" | "name">;
-  classroom: ClassWNumber;
+  classes: ClassWNumber[];
 };
 
 // Period Log
