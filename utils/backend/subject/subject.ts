@@ -79,6 +79,44 @@ export async function importSubjects(data: ImportedSubjectData[]) {
   await Promise.all(subjects.map(createSubject));
 }
 
+export async function getSubjectsInCharge(
+  supabase: DatabaseClient,
+  teacherID: number
+): Promise<BackendDataReturn<SubjectWNameAndCode[]>> {
+  const { data, error } = await supabase
+    .from("subject")
+    .select(
+      "id, code_th, code_en, name_th, name_en, short_name_th, short_name_en"
+    )
+    .contains("teachers", [teacherID]);
+
+  if (error) {
+    console.error(error);
+    return { data: [], error };
+  }
+
+  return {
+    data: data.map((subject) => ({
+      id: subject.id,
+      code: {
+        "en-US": subject.code_en,
+        th: subject.code_th,
+      },
+      name: {
+        "en-US": {
+          name: subject.name_en,
+          shortName: subject.short_name_en as OrUndefined<string>,
+        },
+        th: {
+          name: subject.name_th,
+          shortName: subject.short_name_th as OrUndefined<string>,
+        },
+      },
+    })),
+    error: null,
+  };
+}
+
 export async function getTeachingSubjects(
   supabase: DatabaseClient,
   teacherID: number

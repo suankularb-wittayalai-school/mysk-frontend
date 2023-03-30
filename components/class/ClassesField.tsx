@@ -19,7 +19,6 @@ import { getClassWNumber } from "@/utils/backend/classroom/classroom";
 
 // Types
 import { ClassWNumber } from "@/utils/types/class";
-import { classRegex } from "@/utils/patterns";
 
 const ClassesField: FC<{
   classes: ClassWNumber[];
@@ -63,7 +62,6 @@ const ClassesField: FC<{
         if (error) {
           console.error(error);
           setSnackbar(<Snackbar>Class not found</Snackbar>);
-          setClassField(value);
           return;
         }
 

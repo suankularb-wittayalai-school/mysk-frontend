@@ -8,8 +8,8 @@ import { createPerson } from "@/utils/backend/person/person";
 // Helpers
 import { getCurrentAcademicYear } from "@/utils/helpers/date";
 
-// Supabase
-import { supabase } from "@/utils/supabase-client";
+// Helpers
+import { nameJoiner } from "@/utils/helpers/name";
 
 // Types
 import { ClassWNumber } from "@/utils/types/class";
@@ -19,13 +19,12 @@ import {
   DatabaseClient,
   LangCode,
 } from "@/utils/types/common";
+import { IndividualOnboardingStatus } from "@/utils/types/admin";
 import { ImportedTeacherData, Teacher } from "@/utils/types/person";
+import { Database } from "@/utils/types/supabase";
 
 // Miscellaneous
 import { prefixMap, subjectGroupMap } from "@/utils/maps";
-import { IndividualOnboardingStatus } from "@/utils/types/admin";
-import { nameJoiner } from "@/utils/helpers/name";
-import { Database } from "@/utils/types/supabase";
 
 export async function getTeacherFromUser(
   supabase: DatabaseClient,
