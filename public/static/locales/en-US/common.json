@@ -64,12 +64,12 @@
   },
   "input": {
     "classesField": {
-      "label": "ห้องเรียน",
-      "placeholder": "ใส่เลขห้องเรียน 3 หลัก",
+      "label": "Classes",
+      "placeholder": "Enter class number",
       "snackbar": {
-        "badFormat": "ต้องเป็นตัวเลข 3 หลัก",
-        "duplicate": "มีห้องเรียนนี้แล้ว",
-        "notFound": "ไม่มีห้องเรียนนี้"
+        "badFormat": "Must be a 3-digit number",
+        "duplicate": "You’ve already added this class",
+        "notFound": "This class doesn’t exist"
       }
     }
   },
