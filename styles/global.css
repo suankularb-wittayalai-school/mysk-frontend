@@ -36,6 +36,10 @@
 }
 
 @layer components {
+  .kbd {
+    @apply inline-block rounded-sm border-b-2 border-b-outline-variant bg-surface-2 px-2 py-1 active:translate-y-0.5 active:border-b-0 -my-1 active:-mb-0.5 select-none;
+  }
+
   .link,
   .markdown a {
     @apply font-medium text-primary underline decoration-primary decoration-2
