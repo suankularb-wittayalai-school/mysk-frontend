@@ -32,8 +32,8 @@ export type Subject = {
   code: Required<MultiLangString>;
   name: MultiLangObj<SubjectName>;
   type: {
-    th: SubjectTypeTH,
-    "en-US": SubjectTypeEN
+    th: SubjectTypeTH;
+    "en-US": SubjectTypeEN;
   };
   description?: MultiLangString;
   teachers: Teacher[];
@@ -69,6 +69,7 @@ export type TeacherSubjectItem = {
   id: number;
   subject: Pick<Subject, "code" | "name">;
   classes: ClassWNumber[];
+  isCoteacher?: boolean;
 };
 
 // Period Log

@@ -1,13 +1,14 @@
 // External libraries
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
 import { motion } from "framer-motion";
 
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import Head from "next/head";
-import Link from "next/link";
+import { useRouter } from "next/router";
 
-import { useTranslation } from "next-i18next";
+import { Trans, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { FC, useEffect, useState } from "react";
@@ -19,8 +20,10 @@ import {
   Card,
   CardContent,
   CardHeader,
+  Checkbox,
   Columns,
   ContentLayout,
+  FormItem,
   Header,
   MaterialIcon,
   MenuItem,
@@ -32,10 +35,12 @@ import {
 
 // Internal components
 import ClassesField from "@/components/class/ClassesField";
+import BlockingPane from "@/components/common/BlockingPane";
 import NextWarningCard from "@/components/welcome/NextWarningCard";
 import RightCardList from "@/components/welcome/RightCardList";
 
 // Backend
+import { updateRoomSubjectsFromTeachSubjects } from "@/utils/backend/subject/roomSubject";
 import { getSubjectsInCharge } from "@/utils/backend/subject/subject";
 import { getUserMetadata } from "@/utils/backend/account";
 
@@ -61,9 +66,10 @@ const AddSubjectCard: FC<{
 
   // Form control
   const { form, setForm, resetForm, openFormSnackbar, formOK, formProps } =
-    useForm<"subject" | "classes">([
+    useForm<"subject" | "classes" | "isCoteacher">([
       { key: "subject", defaultValue: subjectsInCharge[0]?.id },
       { key: "classes", defaultValue: [], required: true },
+      { key: "isCoteacher", defaultValue: false },
     ]);
 
   // When the available subjects change, set the selected subject to the first
@@ -73,51 +79,84 @@ const AddSubjectCard: FC<{
   );
 
   return (
-    <Card appearance="outlined">
-      <CardHeader title={t("yourSubjects.subjects.addSubject.title")} />
-      <CardContent>
-        <p>{t("yourSubjects.subjects.addSubject.desc")}</p>
-        <Columns columns={2} className="my-4 !gap-y-4">
-          <Select
-            appearance="outlined"
-            label={t("yourSubjects.subjects.subject.subject")}
-            {...formProps.subject}
-          >
-            {subjectsInCharge.map((subjectInCharge) => (
-              <MenuItem key={subjectInCharge.id} value={subjectInCharge.id}>
-                {getLocaleObj(subjectInCharge.name, locale).name}
-              </MenuItem>
-            ))}
-          </Select>
-          <ClassesField
-            classes={form.classes}
-            onChange={(classes) => setForm({ ...form, classes })}
+    <Section className="relative -left-4 !-mx-4 px-4 sm:left-0 sm:!mx-0 sm:px-0">
+      <BlockingPane
+        icon={
+          <MaterialIcon
+            icon="arrow_downward"
+            size={48}
+            className="sm:-rotate-90"
           />
-        </Columns>
-        <Actions>
-          <Button
-            appearance="tonal"
-            icon={
-              <MaterialIcon icon="arrow_downward" className="sm:-rotate-90" />
-            }
-            onClick={() => {
-              openFormSnackbar();
-              if (!formOK) return;
-              addSubject({
-                id: form.subject,
-                subject: subjectsInCharge.find(
-                  (subjectInCharge) => form.subject === subjectInCharge.id
-                )!,
-                classes: form.classes,
-              });
-              resetForm();
-            }}
-          >
-            {t("yourSubjects.subjects.addSubject.action.add")}
-          </Button>
-        </Actions>
-      </CardContent>
-    </Card>
+        }
+        open={!subjectsInCharge.length}
+      >
+        You have already added all subjects you’re in charge of. You can still
+        edit classes on the final list.
+      </BlockingPane>
+      <Card appearance="outlined">
+        <CardHeader title={t("yourSubjects.subjects.addSubject.title")} />
+        <CardContent>
+          <p>{t("yourSubjects.subjects.addSubject.desc")}</p>
+          <p>
+            <Trans
+              i18nKey="yourSubjects.subjects.addSubject.classesExplain"
+              ns="welcome"
+            >
+              <kbd className="kbd">Enter ↵</kbd>
+            </Trans>
+          </p>
+          <Columns columns={2} className="my-4 !gap-y-4">
+            <Select
+              appearance="outlined"
+              label={t("yourSubjects.subjects.subject.subject")}
+              {...formProps.subject}
+            >
+              {subjectsInCharge.map((subjectInCharge) => (
+                <MenuItem key={subjectInCharge.id} value={subjectInCharge.id}>
+                  {getLocaleObj(subjectInCharge.name, locale).name}
+                </MenuItem>
+              ))}
+            </Select>
+            <ClassesField
+              classes={form.classes}
+              onChange={(classes) => setForm({ ...form, classes })}
+            />
+            <FormItem
+              label={t("yourSubjects.subjects.subject.isCoteacher")}
+              className="sm:col-span-2"
+            >
+              <Checkbox
+                value={form.isCoteacher}
+                onChange={(value) => setForm({ ...form, isCoteacher: value })}
+              />
+            </FormItem>
+          </Columns>
+          <Actions>
+            <Button
+              appearance="tonal"
+              icon={
+                <MaterialIcon icon="arrow_downward" className="sm:-rotate-90" />
+              }
+              disabled={!subjectsInCharge.length}
+              onClick={() => {
+                openFormSnackbar();
+                if (!formOK) return;
+                addSubject({
+                  id: form.subject,
+                  subject: subjectsInCharge.find(
+                    (subjectInCharge) => form.subject === subjectInCharge.id
+                  )!,
+                  classes: form.classes,
+                });
+                resetForm();
+              }}
+            >
+              {t("yourSubjects.subjects.addSubject.action.add")}
+            </Button>
+          </Actions>
+        </CardContent>
+      </Card>
+    </Section>
   );
 };
 
@@ -134,7 +173,7 @@ const SubjectCard: FC<{
   const { duration, easing } = useAnimationConfig();
 
   return (
-    <motion.div
+    <motion.li
       initial={{ scale: 0.8, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       exit={{
@@ -166,53 +205,77 @@ const SubjectCard: FC<{
             classes={roomSubject.classes}
             onChange={(classes) => onChange({ ...roomSubject, classes })}
           />
+          <FormItem
+            label={t("yourSubjects.subjects.subject.isCoteacher")}
+            className="sm:col-span-2"
+            labelAttr={{
+              htmlFor: `checkbox-coteacher-subject-${roomSubject.id}`,
+            }}
+          >
+            <Checkbox
+              value={roomSubject.isCoteacher}
+              onChange={(value) =>
+                onChange({ ...roomSubject, isCoteacher: value })
+              }
+              inputAttr={{
+                id: `checkbox-coteacher-subject-${roomSubject.id}`,
+              }}
+            />
+          </FormItem>
         </CardContent>
       </Card>
-    </motion.div>
+    </motion.li>
   );
 };
 
-const SubjectsSection: FC<{ subjectsInCharge: SubjectWNameAndCode[] }> = ({
-  subjectsInCharge,
-}) => {
+const SubjectsSection: FC<{
+  subjectsInCharge: SubjectWNameAndCode[];
+  teachSubjects: TeacherSubjectItem[];
+  setTeachSubjects: (teachSubjects: TeacherSubjectItem[]) => void;
+}> = ({ subjectsInCharge, teachSubjects, setTeachSubjects }) => {
   // Translation
   const { t } = useTranslation("welcome");
-
-  // Form control
-  const [roomSubjects, setRoomSubjects] = useState<TeacherSubjectItem[]>([]);
 
   return (
     <Section>
       <Header>{t("yourSubjects.subjects.title")}</Header>
       <Columns
         columns={2}
-        className={!roomSubjects.length ? "!items-stretch" : undefined}
+        className={!teachSubjects.length ? "!items-stretch" : undefined}
       >
         <AddSubjectCard
           subjectsInCharge={subjectsInCharge.filter(
             (subject) =>
-              !roomSubjects.find((roomSubject) => subject.id === roomSubject.id)
+              !teachSubjects.find(
+                (roomSubject) => subject.id === roomSubject.id
+              )
           )}
-          addSubject={(subject) => setRoomSubjects([...roomSubjects, subject])}
+          addSubject={(subject) =>
+            setTeachSubjects(
+              [...teachSubjects, subject].sort((a, b) =>
+                a.subject.code.th > b.subject.code.th ? 1 : -1
+              )
+            )
+          }
         />
         <RightCardList
           emptyText={t("yourSubjects.subjects.subject.noSubjects")}
-          isEmpty={!roomSubjects.length}
+          isEmpty={!teachSubjects.length}
         >
-          {roomSubjects.map((subject) => (
+          {teachSubjects.map((subject) => (
             <SubjectCard
               key={subject.id}
               roomSubject={subject}
               onChange={(subject) =>
-                setRoomSubjects(
-                  roomSubjects.map((mapSubject) =>
+                setTeachSubjects(
+                  teachSubjects.map((mapSubject) =>
                     subject.id === mapSubject.id ? subject : mapSubject
                   )
                 )
               }
               onDelete={() =>
-                setRoomSubjects(
-                  roomSubjects.filter(
+                setTeachSubjects(
+                  teachSubjects.filter(
                     (mapSubject) => subject.id !== mapSubject.id
                   )
                 )
@@ -227,9 +290,29 @@ const SubjectsSection: FC<{ subjectsInCharge: SubjectWNameAndCode[] }> = ({
 
 const YourSubjectsPage: CustomPage<{
   subjectsInCharge: SubjectWNameAndCode[];
-}> = ({ subjectsInCharge }) => {
+  teacherID: number;
+}> = ({ subjectsInCharge, teacherID }) => {
   // Translation
   const { t } = useTranslation(["welcome", "common"]);
+
+  // Supabase
+  const supabase = useSupabaseClient();
+
+  // Router
+  const router = useRouter();
+
+  // Form control
+  const [teachSubjects, setTeachSubjects] = useState<TeacherSubjectItem[]>([]);
+
+  // Form submission
+  async function handleSubmit() {
+    const { error } = await updateRoomSubjectsFromTeachSubjects(
+      supabase,
+      teachSubjects,
+      teacherID
+    );
+    router.push("/account/welcome/logging-in");
+  }
 
   return (
     <>
@@ -238,13 +321,13 @@ const YourSubjectsPage: CustomPage<{
       </Head>
       <ContentLayout>
         <NextWarningCard />
-        <SubjectsSection subjectsInCharge={subjectsInCharge} />
+        <SubjectsSection
+          subjectsInCharge={subjectsInCharge}
+          teachSubjects={teachSubjects}
+          setTeachSubjects={setTeachSubjects}
+        />
         <Actions className="mx-4 sm:mx-0">
-          <Button
-            appearance="filled"
-            href="/account/welcome/logging-in"
-            element={Link}
-          >
+          <Button appearance="filled" onClick={handleSubmit}>
             {t("common.action.next")}
           </Button>
         </Actions>
@@ -273,9 +356,11 @@ export const getServerSideProps: GetServerSideProps = async ({
   );
   if (metadataError) console.error(metadataError);
 
+  const teacherID = metadata!.teacher!;
+
   const { data: subjectsInCharge } = await getSubjectsInCharge(
     supabase,
-    metadata!.teacher!
+    teacherID
   );
 
   return {
@@ -285,6 +370,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         "welcome",
       ])),
       subjectsInCharge,
+      teacherID,
     },
   };
 };
