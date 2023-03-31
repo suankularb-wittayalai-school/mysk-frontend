@@ -37,7 +37,9 @@
 
 @layer components {
   .kbd {
-    @apply inline-block rounded-sm border-b-2 border-b-outline-variant bg-surface-2 px-2 py-1 active:translate-y-0.5 active:border-b-0 -my-1 active:-mb-0.5 select-none;
+    @apply -my-1 inline-block select-none rounded-sm border-[0.25px] border-b-2
+      border-outline-variant bg-surface-2 px-2 py-1 active:-mb-[3.5px]
+      active:translate-y-0.5 active:border-b-[0.25px];
   }
 
   .link,
