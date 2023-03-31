@@ -35,6 +35,7 @@ import {
 } from "@suankularb-components/react";
 
 // Internal components
+import MySKPageHeader from "@/components/common/MySKPageHeader";
 import NextWarningCard from "@/components/welcome/NextWarningCard";
 import RightCardList from "@/components/welcome/RightCardList";
 
@@ -265,11 +266,15 @@ const COVID19SafetyPage: CustomPage<{
       <Head>
         <title>{createTitleStr(t("covid19Safety.title"), t)}</title>
       </Head>
+      <MySKPageHeader
+        title={t("covid19Safety.title")}
+        icon={<MaterialIcon icon="vaccines" />}
+        parentURL="/account/welcome/your-information"
+      />
       <ContentLayout>
         <NextWarningCard />
         <Section>
           <Header>{t("covid19Safety.vaccination.title")}</Header>
-
           <Columns
             columns={2}
             className={!vaccineRecords.length ? "!items-stretch" : undefined}
@@ -376,12 +381,6 @@ export const getServerSideProps: GetServerSideProps = async ({
       vaccineRecords,
     },
   };
-};
-
-COVID19SafetyPage.pageHeader = {
-  title: { key: "covid19Safety.title", ns: "welcome" },
-  icon: <MaterialIcon icon="vaccines" />,
-  parentURL: "/account/welcome/your-information",
 };
 
 COVID19SafetyPage.childURLs = [

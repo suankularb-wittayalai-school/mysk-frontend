@@ -22,6 +22,7 @@ import {
 } from "@suankularb-components/react";
 
 // Internal components
+import MySKPageHeader from "@/components/common/MySKPageHeader";
 import BrandIcon from "@/components/icons/BrandIcon";
 import HoverList from "@/components/person/HoverList";
 import Schedule from "@/components/schedule/Schedule";
@@ -172,6 +173,10 @@ const LearnPage: CustomPage<{
       <Head>
         <title>{createTitleStr(t("title"), t)}</title>
       </Head>
+      <MySKPageHeader
+        title={t("title")}
+        icon={<MaterialIcon icon="school" />}
+      />
       <ContentLayout>
         <ScheduleSection schedule={schedule} />
         <SubjectListSection subjectList={subjectList} />
@@ -222,11 +227,6 @@ export const getStaticPaths: GetStaticPaths = async () => {
     })),
     fallback: "blocking",
   };
-};
-
-LearnPage.pageHeader = {
-  title: { key: "title", ns: "learn" },
-  icon: <MaterialIcon icon="school" />,
 };
 
 LearnPage.pageRole = "student";

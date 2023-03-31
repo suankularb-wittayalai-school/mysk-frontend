@@ -40,26 +40,6 @@ export type CustomPage<T = {}> = NextPage<T> &
     fab: JSX.Element;
 
     /**
-     * Additional props for the Page Header component, applied specifically to
-     * this page only.
-     *
-     * `title` is required.
-     *
-     * @see {@link https://docs.google.com/document/d/1UJeTpXcB2MBL9Df4GUUeZ78xb-RshNIC_-LCIKmCo-8/edit?usp=sharing#heading=h.5w06ou3fwzsd SKCom documentation on Page Header}
-     */
-    pageHeader: {
-      /**
-       * The title text: the biggest text in a page and the only within a `<h1>`
-       * tag.
-       *
-       * - You can use next-i18next by passing in the key and the namespace in an
-       *   object, i.e. `{ key: "title", ns: "home" }`
-       * - Always required.
-       */
-      title: string | JSX.Element | { key: string; ns: string };
-    } & Partial<Omit<PageHeaderProps, "title">>;
-
-    /**
      * Who can access this page.
      */
     pageRole: Role | "public";

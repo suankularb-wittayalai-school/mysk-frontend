@@ -46,17 +46,12 @@ import { UserMetadata } from "@/utils/types/person";
 const Layout: FC<
   { children: ReactNode } & Pick<
     CustomPage,
-    "context" | "fab" | "pageHeader" | "pageRole" | "childURLs"
+    "context" | "fab" | "pageRole" | "childURLs"
   >
-> = ({ children, context: Context, fab, pageHeader, pageRole, childURLs }) => {
+> = ({ children, context: Context, fab, pageRole, childURLs }) => {
   // Translation
   const locale = useLocale();
-  const { t } = useTranslation([
-    "common",
-    ...(typeof pageHeader?.title === "object" && "ns" in pageHeader?.title
-      ? [(pageHeader.title as { ns: string }).ns]
-      : []),
-  ]);
+  const { t } = useTranslation("common");
 
   // Navigation Bar and Drawer
   const router = useRouter();
@@ -348,33 +343,6 @@ const Layout: FC<
             />
           </NavBar>
         ))}
-
-      {/* Page Header */}
-      {pageHeader && (
-        <PageHeader
-          brand={<Favicon />}
-          homeURL="/"
-          element={Link}
-          onNavToggle={() =>
-            pageRole && pageRole !== "public" && setNavOpen(true)
-          }
-          {...pageHeader}
-          title={
-            typeof pageHeader.title === "object" && "ns" in pageHeader.title
-              ? t(pageHeader.title.key, { ns: pageHeader.title.ns })
-              : pageHeader.title
-          }
-        />
-      )}
-
-      {/* Page loading indicator */}
-      {pageHeader && (
-        <Progress
-          appearance="linear"
-          alt={t("pageLoading")}
-          visible={pageIsLoading}
-        />
-      )}
 
       {/* Snackbar */}
       <Snackbar

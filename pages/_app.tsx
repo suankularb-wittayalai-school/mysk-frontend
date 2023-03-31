@@ -72,7 +72,7 @@ const Contexts: FC<{ children: ReactNode }> = ({ children }) => {
 };
 
 function App({ Component, pageProps }: CustomAppProps) {
-  const { context, fab, pageHeader, pageRole, childURLs } = Component;
+  const { context, fab, pageRole, childURLs } = Component;
 
   // Supabase client
   const [supabaseClient] = useState(() =>
@@ -106,7 +106,7 @@ function App({ Component, pageProps }: CustomAppProps) {
         <Contexts>
           <MotionConfig reducedMotion="user">
             <ThemeProvider>
-              <Layout {...{ context, fab, pageHeader, pageRole, childURLs }}>
+              <Layout {...{ context, fab, pageRole, childURLs }}>
                 <Component {...pageProps} />
               </Layout>
             </ThemeProvider>

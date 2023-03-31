@@ -30,7 +30,7 @@ const RightCardList: FC<{
             appearance="outlined"
             className="!grid h-full place-content-center p-4"
           >
-            <p className="skc-body-medium text-on-surface-variant text-center">
+            <p className="skc-body-medium text-center text-on-surface-variant">
               {emptyText}
             </p>
           </Card>

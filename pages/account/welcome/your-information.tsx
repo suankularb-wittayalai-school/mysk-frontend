@@ -34,6 +34,7 @@ import {
 // Internal components
 import ContactCard from "@/components/account/ContactCard";
 import ContactDialog from "@/components/account/ContactDialog";
+import MySKPageHeader from "@/components/common/MySKPageHeader";
 import NextWarningCard from "@/components/welcome/NextWarningCard";
 
 // Contexts
@@ -428,6 +429,11 @@ const WelcomePage: CustomPage<{
       <Head>
         <title>{createTitleStr(t("yourInformation.title"), t)}</title>
       </Head>
+      <MySKPageHeader
+        title={t("yourInformation.title")}
+        icon={<MaterialIcon icon="badge" />}
+        parentURL="/account/welcome"
+      />
       <ContentLayout>
         <NextWarningCard />
         <Section className="pb-6">
@@ -497,12 +503,6 @@ export const getServerSideProps: GetServerSideProps = async ({
       subjectGroups,
     },
   };
-};
-
-WelcomePage.pageHeader = {
-  title: { key: "yourInformation.title", ns: "welcome" },
-  icon: <MaterialIcon icon="badge" />,
-  parentURL: "/account/welcome",
 };
 
 WelcomePage.childURLs = ["/account/welcome/your-information"];

@@ -30,6 +30,7 @@ import {
 
 // Internal components
 import BlockingPane from "@/components/common/BlockingPane";
+import MySKPageHeader from "@/components/common/MySKPageHeader";
 
 // Helpers
 import { withLoading } from "@/utils/helpers/loading";
@@ -259,6 +260,11 @@ const LoggingInPage: CustomPage<{ user: User }> = ({ user }) => {
       <Head>
         <title>{createTitleStr(t("loggingIn.title"), t)}</title>
       </Head>
+      <MySKPageHeader
+        title={t("loggingIn.title")}
+        icon={<MaterialIcon icon="password" />}
+        parentURL="/account/welcome/your-subjects"
+      />
       <ContentLayout>
         <LastPageCard />
         <Columns columns={2} className="!gap-y-8">
@@ -322,12 +328,6 @@ export const getServerSideProps: GetServerSideProps = async ({
       user,
     },
   };
-};
-
-LoggingInPage.pageHeader = {
-  title: { key: "loggingIn.title", ns: "welcome" },
-  icon: <MaterialIcon icon="password" />,
-  parentURL: "/account/welcome/your-subjects",
 };
 
 export default LoggingInPage;

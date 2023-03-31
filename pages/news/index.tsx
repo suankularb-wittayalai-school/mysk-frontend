@@ -14,6 +14,7 @@ import {
   ContentLayout,
   ChipSet,
   FilterChip,
+  MaterialIcon,
 } from "@suankularb-components/react";
 
 // Internal components
@@ -137,7 +138,10 @@ const NewsPage: CustomPage<{ newsFeed: NewsListNoDate; userRole: Role }> = ({
       <Head>
         <title>{createTitleStr(t("title"), t)}</title>
       </Head>
-      <MySKPageHeader title={t("title")}>
+      <MySKPageHeader
+        title={t("title")}
+        icon={<MaterialIcon icon="newspaper" />}
+      >
         {userRole !== "teacher" && (
           <NewsFilterChipSet
             newsFilter={newsFilter}

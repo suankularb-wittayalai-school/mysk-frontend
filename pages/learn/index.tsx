@@ -1,11 +1,11 @@
 // External libraries
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import {
   GetServerSideProps,
   NextApiRequest,
   NextApiResponse,
   NextPage,
 } from "next";
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
 // Backend
 import { getUserMetadata } from "@/utils/backend/account";

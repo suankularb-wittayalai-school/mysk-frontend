@@ -35,8 +35,8 @@ import {
 } from "@suankularb-components/react";
 
 // Internal components
-import ClassesField from "@/components/class/ClassesField";
 import BlockingPane from "@/components/common/BlockingPane";
+import MySKPageHeader from "@/components/common/MySKPageHeader";
 import NextWarningCard from "@/components/welcome/NextWarningCard";
 import RightCardList from "@/components/welcome/RightCardList";
 
@@ -62,6 +62,7 @@ import { SubjectWNameAndCode, TeacherSubjectItem } from "@/utils/types/subject";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import { withLoading } from "@/utils/helpers/loading";
 import { useToggle } from "@/utils/hooks/toggle";
+import ClassesField from "@/components/class/ClassesField";
 
 const AddSubjectCard: FC<{
   subjectsInCharge: SubjectWNameAndCode[];
@@ -343,6 +344,11 @@ const YourSubjectsPage: CustomPage<{
       <Head>
         <title>{createTitleStr(t("yourSubjects.title"), t)}</title>
       </Head>
+      <MySKPageHeader
+        title={t("yourSubjects.title")}
+        icon={<MaterialIcon icon="book" />}
+        parentURL="/account/welcome/covid-19-safety"
+      />
       <ContentLayout>
         <NextWarningCard />
         <SubjectsSection
@@ -407,12 +413,6 @@ export const getServerSideProps: GetServerSideProps = async ({
       teacherID,
     },
   };
-};
-
-YourSubjectsPage.pageHeader = {
-  title: { key: "yourSubjects.title", ns: "welcome" },
-  icon: <MaterialIcon icon="book" />,
-  parentURL: "/account/welcome/covid-19-safety",
 };
 
 YourSubjectsPage.childURLs = ["/account/welcome/logging-in"];

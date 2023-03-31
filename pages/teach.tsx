@@ -8,7 +8,15 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
 // SK Components
-import { ContentLayout, Header, Section } from "@suankularb-components/react";
+import {
+  ContentLayout,
+  Header,
+  MaterialIcon,
+  Section,
+} from "@suankularb-components/react";
+
+// Internal components
+import MySKPageHeader from "@/components/common/MySKPageHeader";
 
 // Backend
 import { getUserMetadata } from "@/utils/backend/account";
@@ -24,13 +32,17 @@ import { CustomPage, LangCode } from "@/utils/types/common";
 
 // Page
 const TeachPage: CustomPage = () => {
-  const { t } = useTranslation(["landing", "common"]);
+  const { t } = useTranslation("teach");
 
   return (
     <>
       <Head>
         <title>{createTitleStr(t("title"), t)}</title>
       </Head>
+      <MySKPageHeader
+        title={t("title")}
+        icon={<MaterialIcon icon="school" />}
+      />
       <ContentLayout>
         <Section>
           <Header>TODO</Header>
@@ -92,10 +104,6 @@ export const getServerSideProps: GetServerSideProps = async ({
       subjects,
     },
   };
-};
-
-TeachPage.pageHeader = {
-  title: { key: "title", ns: "teach" },
 };
 
 TeachPage.pageRole = "teacher";

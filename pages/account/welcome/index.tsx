@@ -21,6 +21,9 @@ import {
   Section,
 } from "@suankularb-components/react";
 
+// Internal components
+import MySKPageHeader from "@/components/common/MySKPageHeader";
+
 // Images
 import WelcomeImageLight from "@/public/images/graphics/welcome-light.webp";
 import WelcomeImageDark from "@/public/images/graphics/welcome-dark.webp";
@@ -109,6 +112,10 @@ const WelcomePage: CustomPage = () => {
       <Head>
         <title>{createTitleStr(t("instructions.title"), t)}</title>
       </Head>
+      <MySKPageHeader
+        title={t("instructions.title")}
+        icon={<MaterialIcon icon="waving_hand" />}
+      />
       <ContentLayout>
         <ThankYouSection />
         <ComingUpSection />
@@ -143,11 +150,6 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => ({
     ])),
   },
 });
-
-WelcomePage.pageHeader = {
-  title: { key: "instructions.title", ns: "welcome" },
-  icon: <MaterialIcon icon="waving_hand" />,
-};
 
 WelcomePage.childURLs = ["/account/welcome/your-information"];
 

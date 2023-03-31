@@ -23,6 +23,9 @@ import {
   TextField,
 } from "@suankularb-components/react";
 
+// Internal components
+import MySKPageHeader from "@/components/common/MySKPageHeader";
+
 // Helpers
 import { withLoading } from "@/utils/helpers/loading";
 import { createTitleStr } from "@/utils/helpers/title";
@@ -47,7 +50,7 @@ const ForgotPasswordPage: CustomPage = () => {
   function validate(): boolean {
     if (form.newPassword.length < 8) return false;
     if (form.confirmNewPassword.length < 8) return false;
-    if (form.newPassword != form.confirmNewPassword) return false;
+    if (form.newPassword !== form.confirmNewPassword) return false;
     return true;
   }
 
@@ -74,6 +77,11 @@ const ForgotPasswordPage: CustomPage = () => {
       <Head>
         <title>{createTitleStr(t("forgor.title"), t)}</title>
       </Head>
+      <MySKPageHeader
+        title={t("forgor.title")}
+        icon={<MaterialIcon icon="lock" />}
+        parentURL="/"
+      />
       <ContentLayout>
         <Columns columns={3}>
           <Image
@@ -148,12 +156,6 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
       ])),
     },
   };
-};
-
-ForgotPasswordPage.pageHeader = {
-  title: { key: "forgor.title", ns: "account" },
-  icon: <MaterialIcon icon="lock" />,
-  parentURL: "/",
 };
 
 export default ForgotPasswordPage;
