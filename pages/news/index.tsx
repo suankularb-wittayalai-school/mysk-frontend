@@ -1,18 +1,11 @@
-// // External libraries
+// External libraries
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import Head from "next/head";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import {
-  createContext,
-  FC,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { FC, useState } from "react";
 
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
@@ -23,7 +16,8 @@ import {
   FilterChip,
 } from "@suankularb-components/react";
 
-// News components
+// Internal components
+import MySKPageHeader from "@/components/common/PageHeader";
 import NewsFeed from "@/components/news/NewsFeed";
 import NewsIcon from "@/components/news/NewsIcon";
 
@@ -37,6 +31,7 @@ import { createTitleStr } from "@/utils/helpers/title";
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { NewsItemType, NewsListNoDate } from "@/utils/types/news";
+import { Role } from "@/utils/types/person";
 
 // Context
 type NewsFilterValue = {
@@ -44,29 +39,11 @@ type NewsFilterValue = {
   done: boolean | null;
 };
 
-const NewsFilterContext = createContext<{
+// Components
+const NewsFilterChipSet: FC<{
   newsFilter: NewsFilterValue;
   setNewsFilter: (value: NewsFilterValue) => void;
-}>({ newsFilter: { types: [], done: null }, setNewsFilter: () => {} });
-
-const NewsFilterState: FC<{ children: ReactNode }> = ({ children }) => {
-  const [newsFilter, setNewsFilter] = useState<{
-    types: NewsItemType[];
-    done: boolean | null;
-  }>({ types: [], done: null });
-
-  return (
-    <NewsFilterContext.Provider value={{ newsFilter, setNewsFilter }}>
-      {children}
-    </NewsFilterContext.Provider>
-  );
-};
-
-// Components
-const NewsFilterChipSet: FC = () => {
-  // State
-  const { newsFilter, setNewsFilter } = useContext(NewsFilterContext);
-
+}> = ({ newsFilter, setNewsFilter }) => {
   // Translation
   const { t } = useTranslation("news");
 
@@ -144,37 +121,44 @@ const NewsFilterChipSet: FC = () => {
 };
 
 // Page
-const NewsPage: CustomPage<{
-  newsFeed: NewsListNoDate;
-}> = ({ newsFeed }) => {
+const NewsPage: CustomPage<{ newsFeed: NewsListNoDate; userRole: Role }> = ({
+  newsFeed,
+  userRole,
+}) => {
   const { t } = useTranslation(["news", "common"]);
 
-  const { newsFilter, setNewsFilter } = useContext(NewsFilterContext);
-  const [filteredNews, setFilteredNews] = useState<NewsListNoDate>(newsFeed);
-
-  useEffect(() => {
-    setFilteredNews(
-      newsFeed
-        .filter((newsItem) =>
-          newsFilter.types.length
-            ? newsFilter.types.includes(newsItem.type)
-            : newsFeed
-        )
-        .filter((newsItem) =>
-          newsFilter.done !== null
-            ? newsFilter.done === newsItem.done
-            : newsFeed
-        )
-    );
-  }, [newsFilter]);
+  const [newsFilter, setNewsFilter] = useState<{
+    types: NewsItemType[];
+    done: boolean | null;
+  }>({ types: [], done: null });
 
   return (
     <>
       <Head>
         <title>{createTitleStr(t("title"), t)}</title>
       </Head>
+      <MySKPageHeader title={t("title")}>
+        {userRole !== "teacher" && (
+          <NewsFilterChipSet
+            newsFilter={newsFilter}
+            setNewsFilter={setNewsFilter}
+          />
+        )}
+      </MySKPageHeader>
       <ContentLayout>
-        <NewsFeed news={filteredNews} />
+        <NewsFeed
+          news={newsFeed
+            .filter((newsItem) =>
+              newsFilter.types.length
+                ? newsFilter.types.includes(newsItem.type)
+                : newsFeed
+            )
+            .filter((newsItem) =>
+              newsFilter.done !== null
+                ? newsFilter.done === newsItem.done
+                : newsFeed
+            )}
+        />
       </ContentLayout>
     </>
   );
@@ -191,23 +175,17 @@ export const getServerSideProps: GetServerSideProps = async ({
   });
 
   const { data: user } = await supabase.auth.getUser();
-  const role = user.user?.user_metadata.role;
+  const userRole = user.user?.user_metadata.role;
 
-  const { data: newsFeed } = await getNewsFeed(role);
+  const { data: newsFeed } = await getNewsFeed(userRole);
 
   return {
     props: {
       ...(await serverSideTranslations(locale as LangCode, ["common", "news"])),
       newsFeed,
+      userRole,
     },
   };
-};
-
-NewsPage.context = NewsFilterState;
-
-NewsPage.pageHeader = {
-  title: { key: "title", ns: "news" },
-  children: <NewsFilterChipSet />,
 };
 
 NewsPage.pageRole = "student";
