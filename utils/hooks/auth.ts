@@ -17,7 +17,8 @@ export function useTeacherAccount(): [Teacher | null, User | null] {
   const [teacher, setTeacher] = useState<Teacher | null>(null);
 
   useEffect(() => {
-    async function getAndSetTeacher() {
+    if (!user || user.user_metadata.role != "teacher") return;
+    (async () => {
       const { data, error } = await supabase
         .from("teacher")
         .select("*, person(*), subject_group(*)")
@@ -30,10 +31,7 @@ export function useTeacherAccount(): [Teacher | null, User | null] {
       }
 
       db2Teacher(supabase, data).then((teacher) => setTeacher(teacher));
-    }
-
-    if (!user || user.user_metadata.role != "teacher") return;
-    getAndSetTeacher();
+    })();
   }, [user]);
   return [teacher, user];
 }

@@ -67,50 +67,49 @@ const Layout: FC<
   const user = useUser();
   const [userMetadata, setUserMetadata] = useState<UserMetadata | null>();
   const [classNumber, setClassNumber] = useState<number | null>();
-  async function getAndSetClassNumber() {
-    // Get user metadata
-    const { data: metadata, error: metadataError } = await getUserMetadata(
-      supabase,
-      user!.id
-    );
-    if (metadataError) {
-      console.error(metadataError);
-      setUserMetadata(null);
-      return;
-    }
-    setUserMetadata(metadata);
-
-    // For a student
-    if (metadata!.role == "student") {
-      const { data: classOfStudent, error } = await getClassOfStudent(
-        supabase,
-        metadata!.student!
-      );
-      if (error) {
-        console.error(error);
-        return;
-      }
-      setClassNumber(classOfStudent.number);
-    }
-
-    // For a teacher
-    else if (metadata!.role == "teacher") {
-      const { data: classAdvisorAt, error } = await getClassAdvisorAt(
-        supabase,
-        metadata!.teacher!
-      );
-
-      if (error) {
-        console.error(error);
-        return;
-      }
-      if (!classAdvisorAt) return;
-      setClassNumber(classAdvisorAt.number);
-    }
-  }
   useEffect(() => {
     if (!user || pageRole === "public") return;
-    getAndSetClassNumber();
+    (async () => {
+      // Get user metadata
+      const { data: metadata, error: metadataError } = await getUserMetadata(
+        supabase,
+        user!.id
+      );
+      if (metadataError) {
+        console.error(metadataError);
+        setUserMetadata(null);
+        return;
+      }
+      setUserMetadata(metadata);
+
+      // For a student
+      if (metadata!.role == "student") {
+        const { data: classOfStudent, error } = await getClassOfStudent(
+          supabase,
+          metadata!.student!
+        );
+        if (error) {
+          console.error(error);
+          return;
+        }
+        setClassNumber(classOfStudent.number);
+      }
+
+      // For a teacher
+      else if (metadata!.role == "teacher") {
+        const { data: classAdvisorAt, error } = await getClassAdvisorAt(
+          supabase,
+          metadata!.teacher!
+        );
+
+        if (error) {
+          console.error(error);
+          return;
+        }
+        if (!classAdvisorAt) return;
+        setClassNumber(classAdvisorAt.number);
+      }
+    })();
   }, [user]);
 
   // Root Layout
