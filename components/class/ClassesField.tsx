@@ -83,7 +83,14 @@ const ClassesField: FC<{
     >
       <ChipSet>
         {classes.map((classItem) => (
-          <InputChip key={classItem.id} onDelete={() => {}}>
+          <InputChip
+            key={classItem.id}
+            onDelete={() =>
+              onChange(
+                classes.filter((mapClass) => classItem.id !== mapClass.id)
+              )
+            }
+          >
             {t("class", { ns: "common", number: classItem.number })}
           </InputChip>
         ))}
