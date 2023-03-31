@@ -1,4 +1,6 @@
 // External libraries
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import Head from "next/head";
 
@@ -6,8 +8,6 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { FC, useState } from "react";
-
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
 // SK Components
 import {
@@ -17,7 +17,7 @@ import {
 } from "@suankularb-components/react";
 
 // Internal components
-import MySKPageHeader from "@/components/common/PageHeader";
+import MySKPageHeader from "@/components/common/MySKPageHeader";
 import NewsFeed from "@/components/news/NewsFeed";
 import NewsIcon from "@/components/news/NewsIcon";
 

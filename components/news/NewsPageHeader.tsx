@@ -15,7 +15,7 @@ import {
 } from "@suankularb-components/react";
 
 // Internal components
-import PageHeader from "@/components/common/PageHeader";
+import PageHeader from "@/components/common/MySKPageHeader";
 import NewsChipSet from "@/components/news/NewsChipSet";
 
 // Contexts
