@@ -9,6 +9,7 @@ import {
   Space_Grotesk,
   Sarabun,
   IBM_Plex_Sans_Thai,
+  Fira_Code,
 } from "next/font/google";
 import { useRouter } from "next/router";
 
@@ -50,6 +51,9 @@ const displayFontTH = IBM_Plex_Sans_Thai({
   weight: ["300", "400", "500", "700"],
   subsets: ["thai"],
 });
+
+// Mono font
+const monoFont = Fira_Code({ subsets: ["latin"] });
 
 const Contexts: FC<{ children: ReactNode }> = ({ children }) => {
   const { previousPath } = usePreviousPath();
@@ -93,6 +97,8 @@ function App({ Component, pageProps }: CustomAppProps) {
             ${bodyFontEN.style.fontFamily}, ${bodyFontTH.style.fontFamily};
           --font-display: ${displayFontEN.style.fontFamily},
             ${displayFontTH.style.fontFamily};
+          --font-mono: ui-monospace, SFMono-Regular, SF Mono,
+            ${monoFont.style.fontFamily};
         }
       `}</style>
 
