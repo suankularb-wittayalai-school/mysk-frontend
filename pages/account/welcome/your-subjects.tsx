@@ -11,7 +11,7 @@ import { useRouter } from "next/router";
 import { Trans, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { FC, useEffect, useState } from "react";
+import { FC, useContext, useEffect, useState } from "react";
 
 // SK Components
 import {
@@ -29,6 +29,7 @@ import {
   MenuItem,
   Section,
   Select,
+  Snackbar,
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
@@ -40,7 +41,10 @@ import NextWarningCard from "@/components/welcome/NextWarningCard";
 import RightCardList from "@/components/welcome/RightCardList";
 
 // Backend
-import { updateRoomSubjectsFromTeachSubjects } from "@/utils/backend/subject/roomSubject";
+import {
+  getTeachSubjectList,
+  updateRoomSubjectsFromTeachSubjects,
+} from "@/utils/backend/subject/roomSubject";
 import { getSubjectsInCharge } from "@/utils/backend/subject/subject";
 import { getUserMetadata } from "@/utils/backend/account";
 
@@ -55,6 +59,9 @@ import { useLocale } from "@/utils/hooks/i18n";
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { SubjectWNameAndCode, TeacherSubjectItem } from "@/utils/types/subject";
+import SnackbarContext from "@/contexts/SnackbarContext";
+import { withLoading } from "@/utils/helpers/loading";
+import { useToggle } from "@/utils/hooks/toggle";
 
 const AddSubjectCard: FC<{
   subjectsInCharge: SubjectWNameAndCode[];
@@ -290,28 +297,45 @@ const SubjectsSection: FC<{
 
 const YourSubjectsPage: CustomPage<{
   subjectsInCharge: SubjectWNameAndCode[];
+  teachSubjectList: TeacherSubjectItem[];
   teacherID: number;
-}> = ({ subjectsInCharge, teacherID }) => {
+}> = ({ subjectsInCharge, teachSubjectList, teacherID }) => {
   // Translation
   const { t } = useTranslation(["welcome", "common"]);
 
   // Supabase
   const supabase = useSupabaseClient();
 
+  // Snackbar
+  const { setSnackbar } = useContext(SnackbarContext);
+
   // Router
   const router = useRouter();
 
   // Form control
-  const [teachSubjects, setTeachSubjects] = useState<TeacherSubjectItem[]>([]);
+  const [teachSubjects, setTeachSubjects] =
+    useState<TeacherSubjectItem[]>(teachSubjectList);
 
   // Form submission
+  const [loading, toggleLoading] = useToggle();
   async function handleSubmit() {
-    const { error } = await updateRoomSubjectsFromTeachSubjects(
-      supabase,
-      teachSubjects,
-      teacherID
-    );
-    router.push("/account/welcome/logging-in");
+    withLoading(async () => {
+      const { error } = await updateRoomSubjectsFromTeachSubjects(
+        supabase,
+        teachSubjects,
+        teacherID
+      );
+
+      if (error) {
+        setSnackbar(
+          <Snackbar>{t("snackbar.failure", { ns: "common" })}</Snackbar>
+        );
+        return false;
+      }
+
+      router.push("/account/welcome/logging-in");
+      return true;
+    }, toggleLoading);
   }
 
   return (
@@ -327,7 +351,11 @@ const YourSubjectsPage: CustomPage<{
           setTeachSubjects={setTeachSubjects}
         />
         <Actions className="mx-4 sm:mx-0">
-          <Button appearance="filled" onClick={handleSubmit}>
+          <Button
+            appearance="filled"
+            onClick={handleSubmit}
+            loading={loading || undefined}
+          >
             {t("common.action.next")}
           </Button>
         </Actions>
@@ -363,6 +391,11 @@ export const getServerSideProps: GetServerSideProps = async ({
     teacherID
   );
 
+  const { data: teachSubjectList } = await getTeachSubjectList(
+    supabase,
+    teacherID
+  );
+
   return {
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
@@ -370,6 +403,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         "welcome",
       ])),
       subjectsInCharge,
+      teachSubjectList,
       teacherID,
     },
   };
