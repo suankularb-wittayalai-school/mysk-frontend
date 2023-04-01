@@ -31,9 +31,7 @@
   "subjectList": {
     "title": "Subject list",
     "search": "Search subjects",
-    "table": {
-      "code": "S. Code",
-      "name": "Subject Name",
+    "card": {
       "teachers": "Teachers",
       "ggcCode": "Class Code",
       "action": {

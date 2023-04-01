@@ -2,23 +2,37 @@
   "brand": {
     "name": "MySK",
     "nameWithAccent": "My<1>SK</1>",
-    "slogan": "ระบบจัดการการศึกษา<br>โรงเรียนสวนกุหลาบวิทยาลัย",
-    "sloganShort": "ระบบจัดการการศึกษา MySK",
+    "slogan": "MySK ปีนี้มาใหม่หมด<1>ใช้ง่าย ทำได้มากกว่าเดิม</1>",
     "description": "เข้าถึงและเข้าใจข้อมูลต่างๆ ของโรงเรียนอย่างง่ายดายด้วยระบบจัดการการศึกษา MySK โรงเรียนสวนกุหลาบวิทยาลัย",
-    "school": "โรงเรียนสวนกุหลาบวิทยาลัย",
-    "logoAlt": "โลโก้ดอกไม้สีชมพู มีตัวอักษร MySK อยู่ตรงกลาง"
+    "school": "โรงเรียนสวนกุหลาบวิทยาลัย"
   },
   "navigation": {
-    "welcome": "ยินดีต้อนรับ",
-    "login": "เข้าสู่ระบบ",
-    "about": "เกี่ยวกับ",
     "learn": "การเรียน",
     "teach": "การสอน",
-    "people": "รายชื่อ",
     "class": "ห้องเรียน",
+    "lookup": "ค้นหา",
     "news": "ข่าวสาร",
-    "me": "บัญชีผู้ใช้"
+    "account": "บัญชีผู้ใช้",
+    "language": "English",
+    "logOut": "ออกจากระบบ",
+    "drawer": {
+      "lookup": {
+        "title": "ค้นหา",
+        "students": "นักเรียน",
+        "teachers": "อาจารย์",
+        "orders": "คำสั่งโรงเรียน",
+        "documents": "หนังสือออก"
+      },
+      "about": {
+        "title": "เกี่ยวกับ",
+        "help": "รายงาน/แนะนำ",
+        "admin": "แผงแอดมิน",
+        "language": "English",
+        "logOut": "ออกจากระบบ"
+      }
+    }
   },
+  "pageLoading": "หน้ากำลังโหลด…",
   "name": {
     "prefix": {
       "Master": "เด็กชาย",
@@ -50,13 +64,15 @@
     }
   },
   "input": {
-    "none": {
-      "noFilesAttached": "ยังไม่มีไฟล์ที่ถูกเลือก",
-      "noNewFilesAttached": "เลือกไฟล์เพื่อเปลี่ยน",
-      "noOptions": "ไม่มีรายการให้เลือก",
-      "noneSelected": "เลือกจากรายการ"
-    },
-    "error": {}
+    "classesField": {
+      "label": "ห้องเรียน",
+      "placeholder": "ใส่เลขห้องเรียน 3 หลัก",
+      "snackbar": {
+        "badFormat": "ต้องเป็นตัวเลข 3 หลัก",
+        "duplicate": "มีห้องเรียนนี้แล้ว",
+        "notFound": "ไม่มีห้องเรียนนี้"
+      }
+    }
   },
   "error": "ข้อผิดพลาด: {{errorMsg}}",
   "fallback": {
@@ -68,79 +84,18 @@
     }
   },
   "seeDetails": "ดูรายละเอียด",
+  "snackbar": {
+    "loading": "กำลังโหลด…",
+    "error": "ข้อผิดพลาด: {{errorMsg}}",
+    "failure": "เกิดข้อผิดพลาด โปรดลองอีกครั้ง",
+    "copiedToClipboard": "คัดลอกไปที่คลิปบอร์ดแล้ว",
+    "formInvalid": "ตรวจสอบว่าข้อมูลครบและถูกต้อง แล้วลองอีกครั้ง",
+    "languageRedirect": {
+      "message": "Redirecting you to the English website…",
+      "action": "ใช้ภาษาไทย"
+    }
+  },
   "dialog": {
-    "addContact": {
-      "title": "เพิ่มช่องทางการติดต่อ",
-      "type": "แพลตฟอร์ม",
-      "nameTH": "ป้ายกำกับการติดต่อ",
-      "nameEN": "ป้ายกำกับการติดต่อภาษาอังกฤษ",
-      "value": {
-        "phone": "เบอร์โทรศัพท์",
-        "email": "ที่อยู่อีเมล",
-        "website": "URL",
-        "facebook": "ชื่อ Facebook",
-        "line": "รหัสเชิญเข้ากลุ่ม/LINE ID",
-        "line_helper": "รหัส 10 หลักอยู่ท้ายลิงก์เชิญ",
-        "instagram": "ชื่อผู้ใช้ Instagram",
-        "discord": "รหัสเชิญเข้า Discord",
-        "discord_helper": "รหัส 8 หลักอยู่ท้ายลิงก์เชิญ",
-        "other": "ชื่อ/ID ติดต่อ"
-      },
-      "value_error": "ค่าไม่ถูกต้อง",
-      "labelDefault": {
-        "one": "กลุ่ม{{type1}}",
-        "one_public": "กลุ่ม{{type1}}สาธารณะ",
-        "two": "กลุ่ม{{type1}}กับ{{type2}}",
-        "two_public": "กลุ่ม{{type1}}กับ{{type2}}สาธารณะ",
-        "three": "กลุ่มรวมห้อง",
-        "three_public": "กลุ่มรวมห้องสาธารณะ"
-      },
-      "includes": {
-        "title": "กลุ่มที่อนุญาตให้เข้าถึง",
-        "students": "นักเรียน",
-        "teachers": "อาจารย์",
-        "parents": "ผู้ปกครอง",
-        "other": "อื่นๆ"
-      },
-      "action": {
-        "cancel": "ยกเลิก",
-        "add": "เพิ่ม"
-      }
-    },
-    "addClass": {
-      "title": "เพิ่มห้องเรียน",
-      "class": "ห้องเรียน",
-      "class_helper": "ต้องมี 3 หลัก เช่น 408",
-      "class_error": "ไม่ถูกต้อง ต้องมี 3 หลัก เช่น 408",
-      "action": {
-        "add": "เพิ่ม",
-        "cancel": "ยกเลิก"
-      }
-    },
-    "addStudent": {
-      "title": "เพิ่มนักเรียน",
-      "supportingText": "ค้นหานักเรียนที่จะเพิ่มโดยใส่เลขประจำตัวนักเรียน",
-      "studentID": "เลขประจำตัวนักเรียน",
-      "searchResult": {
-        "title": "ผลลัพธ์การค้นหา",
-        "notFound": "ไม่พบนักเรียนที่มีเลขประจำตัวนี้"
-      },
-      "action": {
-        "cancel": "ยกเลิก",
-        "add": "เพิ่ม"
-      }
-    },
-    "addTeacher": {
-      "title": "เพิ่มอาจารย์",
-      "supportingText": "เลือกกลุ่มสาระการเรียนรู้เพื่อกรองอาจารย์ตามกลุ่มสาระการเรียนรู้",
-      "subjectGroup": "กลุ่มสาระการเรียนรู้",
-      "teacher": "อาจารย์",
-      "noTeachers": "ไม่มีอาจารย์",
-      "action": {
-        "cancel": "ยกเลิก",
-        "add": "เพิ่ม"
-      }
-    },
     "confirmDelete": {
       "title": "ยืนยันการลบ",
       "supportingText": "ตรวจสอบให้แน่ใจว่าต้องการลบรายการนี้ เพราะการกระทำนี้ไม่สามารถย้อนกลับได้",

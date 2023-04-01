@@ -1,12 +1,9 @@
 {
-  "title": {
-    "title": "ข่าวสาร",
-    "subtitle": "และแบบสอบถาม"
-  },
+  "title": "ข่าวสารและแบบสอบถาม",
   "filter": {
-    "forms": "แบบสอบถาม",
     "info": "บทความ",
-    "payments": "การชำระเงิน",
+    "form": "แบบสอบถาม",
+    "payment": "การชำระเงิน",
     "amountDone": {
       "notDone": "ยังไม่ได้ทำ",
       "done": "ทำแล้ว",
@@ -32,27 +29,26 @@
     "dueWithin": "ภายใน {{dueDate}}",
     "pastDueBy": "{{timePast}}ที่แล้ว"
   },
-  "itemAction": {
-    "edit": "แก้ไข",
-    "info": "อ่านเพิ่มเติม",
-    "stats": "อ่านเพิ่มเติม",
-    "form": {
-      "do": "ทำแบบสอบถาม",
-      "edit": "แก้ไขแบบสอบถาม"
-    },
-    "payment": {
-      "do": "ชำระเงิน",
-      "edit": "ดูการชำระเงิน"
-    }
-  },
-  "pageAction": {
+  "action": {
     "admin": {
       "edit": "แก้ไขบทความ"
     },
+    "common": {
+      "copyLink": "คัดลอกลิงก์"
+    },
     "form": {
+      "do": "ทำแบบสอบถาม",
       "reset": "รีเซต",
       "submit": "ส่งแบบสอบถาม"
     }
+  },
+  "snackbar": {
+    "requiredButEmpty": "กรุณาใส่ข้อมูลในช่อง “{{field}}”",
+    "success": "ส่งแบบสอบถามเรียบร้อย"
+  },
+  "form": {
+    "pastSubmissions": "ประวัติการทำ",
+    "submitNew": "ส่งแบบสอบถามใหม่"
   },
   "schoolDocs": {
     "orders": {

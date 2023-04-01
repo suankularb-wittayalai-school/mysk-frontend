@@ -31,9 +31,7 @@
   "subjectList": {
     "title": "รายชื่อวิชา",
     "search": "ค้นหาวิชา",
-    "table": {
-      "code": "รหัสวิชา",
-      "name": "ชื่อวิชา",
+    "card": {
       "teachers": "ครูผู้สอน",
       "ggcCode": "Class Code",
       "action": {

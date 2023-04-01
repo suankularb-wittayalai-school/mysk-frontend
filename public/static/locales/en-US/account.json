@@ -21,18 +21,17 @@
   },
   "logIn": {
     "title": "Log in",
-    "graphicAlt": "MySK logo surrounded by various UI elements from the app",
     "form": {
       "email": "School email",
-      "email_helper": "Your school email ends with “sk.ac.th”.",
-      "email_error": "Invalid email. Must end with “sk.ac.th”.",
-      "password": "Password",
-      "password_helper": "Default is annouced during the assembly or given by the admin."
+      "password": "Password"
     },
     "action": {
       "forgotPassword": "Forgot password",
       "logIn": "Log in"
     }
+  },
+  "logOut": {
+    "loading": "Logging you out…"
   },
   "forgor": {
     "title": "Password reset",
@@ -45,20 +44,24 @@
   },
   "profile": {
     "name": {
-      "title": "Local name (Thai)",
+      "title": "Thai name",
       "prefix": "Prefix",
       "prefix_helper": "เด็กชาย, นาย, นาง, นางสาว, etc.",
       "firstName": "First name",
       "middleName": "Middle name",
-      "lastName": "Last name"
+      "middleName_helper": "Leave blank if you don’t want your middle name to be displayed.",
+      "lastName": "Last name",
+      "nickname": "Nickname"
     },
     "enName": {
+      "title": "English name",
       "prefix": "English prefix",
       "prefix_helper": "Master, Mr., Mrs., Ms., etc.",
-      "title": "English name",
       "firstName": "English first name",
       "middleName": "English middle name",
-      "lastName": "English last name"
+      "middleName_helper": "Leave blank if you don’t want your middle name to be displayed.",
+      "lastName": "English last name",
+      "nickname": "English nickname"
     },
     "class": {
       "title": "Class",
@@ -73,8 +76,6 @@
         "student": "Student",
         "teacher": "Teacher"
       },
-      "studentID": "Student ID",
-      "teacherID": "Teacher ID",
       "subjectGroup": "Subject group",
       "subjectGroup_helper": "Choose “Guest Lecturer” if none applies.",
       "classAdvisorAt": "Class advisor at",
@@ -84,16 +85,83 @@
     },
     "general": {
       "title": "General information",
-      "citizenID": "Citizen ID or passport",
-      "citizenID_error": "Invalid citizen ID or unsupported passport.",
+      "gender": {
+        "label": "Gender",
+        "male": "Male",
+        "female": "Female",
+        "nonBinary": "Non-binary",
+        "noReponse": "Prefer not to respond"
+      },
       "birthDate": "Birth date",
-      "email": "School email"
+      "citizenID": "Citizen ID",
+      "citizenID_error": "Invalid citizen ID.",
+      "passportNumber": "Passport number",
+      "passportNumber_error": "Invalid passport number or unsupported passport.",
+      "bloodGroup": "Blood group"
+    },
+    "contacts": {
+      "title": "Contacts",
+      "noContacts": "No contacts added yet.",
+      "action": {
+        "add": "Add contact",
+        "edit": "Edit",
+        "delete": "Delete",
+        "link": "Go to"
+      }
+    },
+    "common": {
+      "privateInfo_helper": "Only people you allow access to this information can see it."
     }
   },
   "preferences": {
     "title": "Preferences"
   },
   "dialog": {
+    "contact": {
+      "title": {
+        "add": "Add contact",
+        "edit": "Edit contact"
+      },
+      "desc": "A contact is a way people can reach you. Everyone inside the school can find your contact information via MySK Lookup.",
+      "type": {
+        "label": "Platform",
+        "phone": "Phone",
+        "email": "Email",
+        "facebook": "Facebook",
+        "line": "LINE",
+        "instagram": "Instagram",
+        "website": "Website",
+        "discord": "Discord",
+        "other": "Other"
+      },
+      "nameTH": "Thai contact label",
+      "nameEN": "English contact label",
+      "value": {
+        "phone": "Phone number",
+        "email": "Email address",
+        "website": "URL",
+        "facebook": "Facebook name",
+        "line": "LINE ID/invite code",
+        "line_helper": "10-digit code at end of invite link.",
+        "instagram": "Instagram username",
+        "discord": "Discord invite code",
+        "discord_helper": "8-digit code at end of invite link.",
+        "other": "Value"
+      },
+      "value_error": "Invalid value.",
+      "includes": {
+        "title": "Includes",
+        "students": "Students",
+        "teachers": "Teachers",
+        "parents": "Parents",
+        "other": "Other"
+      },
+      "action": {
+        "cancel": "Cancel",
+        "add": "Add",
+        "edit": "Edit"
+      }
+    },
     "checkEmail": {
       "title": "Check your email",
       "supportingText": "An email has been sent to {{email}}. That email contains a link; use it to continue setting your new password.",
@@ -117,6 +185,9 @@
     "forgotPassword": {
       "title": "Reset with password",
       "supportingText": "To verify your identity, we will send you an email with a link back to MySK. Follow that link to continue the process.",
+      "form": {
+        "email": "Email to send to"
+      },
       "action": {
         "cancel": "Cancel",
         "send": "Send"

@@ -1,0 +1,118 @@
+{
+  "instructions": {
+    "title": "Welcome to MySK",
+    "thankYou": {
+      "title": "Thank you for testing out the new MySK.",
+      "subtitle": "Before we get started, however, we need to set a few things up.",
+      "reason": "Every academic year, not only do we welcome new students into the school, some information about people inside the school also change. This is an opportunity to add or check the accuracy of the information in your MySK account.",
+      "usage": "Your MySK account is used not for MySK but for other services inside the school as well, so ensure your information is correct."
+    },
+    "comingUp": {
+      "title": "Coming up",
+      "desc": "As you set up your MySK account for 2023, you’ll progress through these steps:",
+      "step": {
+        "1": "Your information",
+        "2": "COVID-19 safety",
+        "3": "Your subjects",
+        "4": "Logging in"
+      }
+    },
+    "notices": {
+      "title": "Final instructions",
+      "desc": "When you press “Next” on each step, your information will be saved for that step.",
+      "warning": "Don’t close this tab. You’ll have to restart the set up process all over again if you do."
+    },
+    "action": {
+      "logOut": "Log out"
+    }
+  },
+  "yourInformation": {
+    "title": "Your information",
+    "general": {
+      "title": "About you",
+      "desc": "We have already imported some fields from relevant organizations in the school. Please check for any inaccuracies in the import.",
+      "inControl": "You are in control of your data. <0>Learn how this information is used.</0>"
+    }
+  },
+  "covid19Safety": {
+    "title": "COVID-19 safety",
+    "vaccination": {
+      "title": "Vaccination",
+      "addDose": {
+        "title": "Add dose",
+        "desc": "Enter your vaccination info exactly as seen in the Mor Prom app. You can see it by opening the Mor Prom app <0></0> Log in <0></0> Tap “Health Certificate” <0></0> Tap “Vaccination of COVID-19”",
+        "usage": "Your vaccine data will only be used in the compilation of school statistics. No one can read your vaccination info except the school.",
+        "action": {
+          "add": "Add dose"
+        }
+      },
+      "dose": {
+        "doseNo": "Dose {{doseNo}}",
+        "date": "Date of vaccination",
+        "provider": "Provider",
+        "noData": "No vaccination data added yet.",
+        "action": {
+          "delete": "Delete this dose"
+        }
+      }
+    }
+  },
+  "yourSubjects": {
+    "title": "Your subjects",
+    "subjects": {
+      "title": "Subjects and classes",
+      "addSubject": {
+        "title": "Add a subject",
+        "desc": "Select from a list of subjects, specify which classes learn that subject with you, and add it to the final list.",
+        "classesExplain": "For the classes field, press <0>Enter ↵</0> after each class. A class is represented by a 3-digit number.",
+        "action": {
+          "add": "Add subject"
+        }
+      },
+      "subject": {
+        "subject": "Subject",
+        "isCoteacher": "I’m a coteacher",
+        "noSubjects": "Connect a subject to its classes for it to show up here.",
+        "action": {
+          "delete": "Remove this subject from your account"
+        }
+      }
+    }
+  },
+  "loggingIn": {
+    "title": "Logging in",
+    "lastPage": "You’re almost there! This is the last page: you’ll log in to MySK proper after you press “Done.”",
+    "checkEmail": {
+      "title": "Check email",
+      "success": "Check both your old and new email, and click the link on both addresses. <0>Learn more</0>",
+      "desc": "You’re using “{{email}},” does that seem correct? If not, specify a new one, and we’ll send an email to both your old and your new email addresses to confirm the change. You must click the link on both addresses.",
+      "form": {
+        "email": "Email"
+      },
+      "action": {
+        "send": "Send verification email"
+      }
+    },
+    "createPassword": {
+      "title": "Create a password",
+      "success": "Password created. You’re all set to start exploring MySK!",
+      "desc": "For the security of you and the school’s data, create a new password for your MySK account. Enter your new password twice to confirm.",
+      "form": {
+        "newPwd": "New password",
+        "confirmNewPwd": "Confirm new password"
+      },
+      "action": {
+        "set": "Set password"
+      }
+    },
+    "action": {
+      "done": "Done"
+    }
+  },
+  "common": {
+    "nextReminder": "Remember: your information is not saved until you press “Next.”",
+    "action": {
+      "next": "Next"
+    }
+  }
+}

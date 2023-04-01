@@ -1,100 +1,226 @@
+/** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./src/pages/**/*.{ts,tsx}", "./src/components/**/*.{ts,tsx}"],
+  content: [
+    "./app/**/*.{js,ts,jsx,tsx}",
+    "./pages/**/*.{js,ts,jsx,tsx}",
+    "./components/**/*.{js,ts,jsx,tsx}",
+  ],
   theme: {
+    // Shadow
+    boxShadow: {
+      1: "var(--shadow-1)",
+      2: "var(--shadow-2)",
+      3: "var(--shadow-3)",
+      4: "var(--shadow-4)",
+      5: "var(--shadow-5)",
+    },
+    dropShadow: {
+      text: "var(--shadow-text)",
+      1: "var(--shadow-1)",
+      2: "var(--shadow-2)",
+      3: "var(--shadow-3)",
+      4: "var(--shadow-4)",
+      5: "var(--shadow-5)",
+    },
+
+    // Rounded corners
+    borderRadius: {
+      xs: "var(--rounded-xs)",
+      sm: "var(--rounded-sm)",
+      md: "var(--rounded-md)",
+      lg: "var(--rounded-lg)",
+      xl: "var(--rounded-xl)",
+      full: "var(--rounded-full)",
+    },
+
+    // Font size
+    fontSize: {
+      xs: "var(--text-xs)",
+      sm: "var(--text-sm)",
+      base: "var(--text-base)",
+      lg: "var(--text-lg)",
+      xl: "var(--text-xl)",
+      "2xl": "var(--text-2xl)",
+      "3xl": "var(--text-3xl)",
+      "4xl": "var(--text-4xl)",
+      "5xl": "var(--text-5xl)",
+      "6xl": "var(--text-6xl)",
+      "7xl": "var(--text-7xl)",
+      "8xl": "var(--text-8xl)",
+      "9xl": "var(--text-9xl)",
+    },
+
+    // Font weight
+    fontWeight: {
+      thin: "var(--font-thin)",
+      light: "var(--font-light)",
+      regular: "var(--font-regular)",
+      medium: "var(--font-medium)",
+      bold: "var(--font-bold)",
+    },
+
+    // Font family
+    fontFamily: {
+      display: "var(--font-display)",
+      body: "var(--font-body)",
+      mono: "var(--font-mono)",
+    },
+
+    // Breakpoints
+    screens: {
+      sm: "600px",
+      md: "905px",
+      lg: "1440px",
+    },
+
+    // Colors
     extend: {
       colors: {
+        // Static colors
+        white: "#ffffff",
+        black: "#000000",
+
+        // Primary tones
+        "primary-100": "var(--primary-100)",
+        "primary-99": "var(--primary-99)",
+        "primary-95": "var(--primary-95)",
+        "primary-90": "var(--primary-90)",
+        "primary-80": "var(--primary-80)",
+        "primary-70": "var(--primary-70)",
+        "primary-60": "var(--primary-60)",
+        "primary-50": "var(--primary-50)",
+        "primary-40": "var(--primary-40)",
+        "primary-30": "var(--primary-30)",
+        "primary-20": "var(--primary-20)",
+        "primary-10": "var(--primary-10)",
+        "primary-0": "var(--primary-0)",
+
+        // Secondary tones
+        "secondary-100": "var(--secondary-100)",
+        "secondary-99": "var(--secondary-99)",
+        "secondary-95": "var(--secondary-95)",
+        "secondary-90": "var(--secondary-90)",
+        "secondary-80": "var(--secondary-80)",
+        "secondary-70": "var(--secondary-70)",
+        "secondary-60": "var(--secondary-60)",
+        "secondary-50": "var(--secondary-50)",
+        "secondary-40": "var(--secondary-40)",
+        "secondary-30": "var(--secondary-30)",
+        "secondary-20": "var(--secondary-20)",
+        "secondary-10": "var(--secondary-10)",
+        "secondary-0": "var(--secondary-0)",
+
+        // Tertiary tones
+        "tertiary-100": "var(--tertiary-100)",
+        "tertiary-99": "var(--tertiary-99)",
+        "tertiary-95": "var(--tertiary-95)",
+        "tertiary-90": "var(--tertiary-90)",
+        "tertiary-80": "var(--tertiary-80)",
+        "tertiary-70": "var(--tertiary-70)",
+        "tertiary-60": "var(--tertiary-60)",
+        "tertiary-50": "var(--tertiary-50)",
+        "tertiary-40": "var(--tertiary-40)",
+        "tertiary-30": "var(--tertiary-30)",
+        "tertiary-20": "var(--tertiary-20)",
+        "tertiary-10": "var(--tertiary-10)",
+        "tertiary-0": "var(--tertiary-0)",
+
+        // Neutral tones
+        "neutral-100": "var(--neutral-100)",
+        "neutral-99": "var(--neutral-99)",
+        "neutral-95": "var(--neutral-95)",
+        "neutral-90": "var(--neutral-90)",
+        "neutral-80": "var(--neutral-80)",
+        "neutral-70": "var(--neutral-70)",
+        "neutral-60": "var(--neutral-60)",
+        "neutral-50": "var(--neutral-50)",
+        "neutral-40": "var(--neutral-40)",
+        "neutral-30": "var(--neutral-30)",
+        "neutral-20": "var(--neutral-20)",
+        "neutral-10": "var(--neutral-10)",
+        "neutral-0": "var(--neutral-0)",
+
+        // Neutral variant tones
+        "neutral-variant-100": "var(--neutral-variant-100)",
+        "neutral-variant-99": "var(--neutral-variant-99)",
+        "neutral-variant-95": "var(--neutral-variant-95)",
+        "neutral-variant-90": "var(--neutral-variant-90)",
+        "neutral-variant-80": "var(--neutral-variant-80)",
+        "neutral-variant-70": "var(--neutral-variant-70)",
+        "neutral-variant-60": "var(--neutral-variant-60)",
+        "neutral-variant-50": "var(--neutral-variant-50)",
+        "neutral-variant-40": "var(--neutral-variant-40)",
+        "neutral-variant-30": "var(--neutral-variant-30)",
+        "neutral-variant-20": "var(--neutral-variant-20)",
+        "neutral-variant-10": "var(--neutral-variant-10)",
+        "neutral-variant-0": "var(--neutral-variant-0)",
+
+        // Error tones
+        "error-100": "var(--error-100)",
+        "error-99": "var(--error-99)",
+        "error-95": "var(--error-95)",
+        "error-90": "var(--error-90)",
+        "error-80": "var(--error-80)",
+        "error-70": "var(--error-70)",
+        "error-60": "var(--error-60)",
+        "error-50": "var(--error-50)",
+        "error-40": "var(--error-40)",
+        "error-30": "var(--error-30)",
+        "error-20": "var(--error-20)",
+        "error-10": "var(--error-10)",
+        "error-0": "var(--error-0)",
+
+        // Primary
         primary: "var(--primary)",
-        "primary-translucent-08": "var(--primary-translucent-08)",
-        "primary-translucent-12": "var(--primary-translucent-12)",
         "on-primary": "var(--on-primary)",
-        "on-primary-translucent-08": "var(--on-primary-translucent-08)",
-        "on-primary-translucent-12": "var(--on-primary-translucent-12)",
         "primary-container": "var(--primary-container)",
         "on-primary-container": "var(--on-primary-container)",
+        "inverse-primary": "var(--inverse-primary)",
+
+        // Secondary
         secondary: "var(--secondary)",
-        "secondary-translucent-08": "var(--secondary-translucent-08)",
-        "secondary-translucent-12": "var(--secondary-translucent-12)",
         "on-secondary": "var(--on-secondary)",
-        "on-secondary-translucent-08": "var(--on-secondary-translucent-08)",
-        "on-secondary-translucent-12": "var(--on-secondary-translucent-12)",
         "secondary-container": "var(--secondary-container)",
         "on-secondary-container": "var(--on-secondary-container)",
+
+        // Tertiary
         tertiary: "var(--tertiary)",
-        "tertiary-translucent-08": "var(--tertiary-translucent-08)",
-        "tertiary-translucent-12": "var(--tertiary-translucent-12)",
         "on-tertiary": "var(--on-tertiary)",
-        "on-tertiary-translucent-08": "var(--on-tertiary-translucent-08)",
-        "on-tertiary-translucent-12": "var(--on-tertiary-translucent-12)",
         "tertiary-container": "var(--tertiary-container)",
         "on-tertiary-container": "var(--on-tertiary-container)",
+
+        // Error
         error: "var(--error)",
-        "error-container": "var(--error-container)",
         "on-error": "var(--on-error)",
+        "error-container": "var(--error-container)",
         "on-error-container": "var(--on-error-container)",
-        background: "var(--background)",
-        "on-background": "var(--on-background)",
+
+        // Surface
         surface: "var(--surface)",
         "on-surface": "var(--on-surface)",
-        "on-surface-translucent-38": "var(--on-surface-translucent-38)",
         "surface-variant": "var(--surface-variant)",
         "on-surface-variant": "var(--on-surface-variant)",
-        outline: "var(--outline)",
         "inverse-on-surface": "var(--inverse-on-surface)",
         "inverse-surface": "var(--inverse-surface)",
-        "inverse-primary": "var(--inverse-primary)",
-        shadow: "var(--shadow)",
         "surface-1": "var(--surface-1)",
         "surface-2": "var(--surface-2)",
         "surface-3": "var(--surface-3)",
         "surface-4": "var(--surface-4)",
         "surface-5": "var(--surface-5)",
-        black: "var(--black)",
-        white: "var(--white)",
+
+        // Background
+        background: "var(--background)",
+        "on-background": "var(--on-background)",
+
+        // Outline
+        outline: "var(--outline)",
+        "outline-variant": "var(--outline-variant)",
       },
-      fontSize: {
-        xs: "0.6875rem",
-        sm: "0.75rem",
-        base: "0.875rem",
-        lg: "1rem",
-        xl: "1.125rem",
-        "2xl": "1.375rem",
-        "3xl": "1.5rem",
-        "4xl": "1.75rem",
-        "5xl": "2rem",
-        "6xl": "2.25rem",
-        "7xl": "2.8125rem",
-        "8xl": "3.5625rem",
-        "9xl": "4rem",
+
+      // Border width
+      borderWidth: {
+        1: "1px",
       },
-      fontFamily: {
-        display: ["-apple-system-headline", "var(--font-display)"],
-        sans: ["-apple-system", "var(--font-sans)"],
-      },
-      borderRadius: {
-        none: "0",
-        xs: "var(--rounded-xs)",
-        sm: "var(--rounded-sm)",
-        DEFAULT: "var(--rounded)",
-        lg: "var(--rounded-lg)",
-        xl: "var(--rounded-xl)",
-        "2xl": "var(--rounded-2xl)",
-        "3xl": "var(--rounded-3xl)",
-        full: "9999px",
-      },
-      boxShadow: {
-        DEFAULT:
-          "0px 1px 2px rgba(0, 0, 0, 0.3), 0px 1px 3px 1px rgba(0, 0, 0, 0.15)",
-        md: "0px 1px 2px rgba(0, 0, 0, 0.3), 0px 2px 6px 2px rgba(0, 0, 0, 0.15)",
-        lg: "0px 4px 8px 3px rgba(0, 0, 0, 0.15), 0px 1px 3px rgba(0, 0, 0, 0.3)",
-        xl: "0px 6px 10px 4px rgba(0, 0, 0, 0.15), 0px 2px 3px rgba(0, 0, 0, 0.3)",
-        "2xl":
-          "0px 8px 12px 6px rgba(0, 0, 0, 0.15), 0px 4px 4px rgba(0, 0, 0, 0.3)",
-      },
-    },
-    screens: {
-      sm: "600px",
-      md: "905px",
-      lg: "1440px",
     },
   },
   plugins: [require("@tailwindcss/typography")],
