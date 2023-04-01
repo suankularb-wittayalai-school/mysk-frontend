@@ -155,6 +155,7 @@ const AddSubjectCard: FC<{
                     (subjectInCharge) => form.subject === subjectInCharge.id
                   )!,
                   classes: form.classes,
+                  isCoteacher: form.isCoteacher,
                 });
                 resetForm();
               }}
