@@ -38,6 +38,7 @@ const Schedule: FC<{
       ref={scheduleRef}
       className="relative -my-2 !mx-0 overflow-x-auto overflow-y-hidden"
     >
+      <NowLine />
       <ul className="flex w-fit flex-col gap-2 px-4 py-2 sm:px-0">
         {/* Period numbers and start-end times */}
         <NumbersRow />
