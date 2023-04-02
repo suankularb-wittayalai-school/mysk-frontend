@@ -15,6 +15,7 @@ import ScheduleContext from "@/contexts/ScheduleContext";
 import { Role } from "@/utils/types/person";
 import { Schedule } from "@/utils/types/schedule";
 import { getCurrentPeriod } from "@/utils/helpers/schedule";
+import { LayoutGroup } from "framer-motion";
 
 const Schedule: FC<{
   schedule: Schedule;
@@ -44,23 +45,28 @@ const Schedule: FC<{
         <NumbersRow />
 
         <ScheduleContext.Provider value={{ role, constraintsRef: scheduleRef }}>
-          {/* For each day */}
-          {schedule.content.map((row) => (
-            <li key={row.day} className="flex flex-row gap-2">
-              {/* The day of this row */}
-              <DayCard day={row.day} />
-              {/* The periods in this row */}
-              <ul className="flex flex-row gap-2">
-                {row.content.map((period) =>
-                  period.content.length ? (
-                    <SubjectPeriod key={period.id} period={period.content[0]} />
-                  ) : (
-                    <EmptyPeriod key={period.id} />
-                  )
-                )}
-              </ul>
-            </li>
-          ))}
+          <LayoutGroup>
+            {/* For each day */}
+            {schedule.content.map((row) => (
+              <li key={row.day} className="flex flex-row gap-2">
+                {/* The day of this row */}
+                <DayCard day={row.day} />
+                {/* The periods in this row */}
+                <ul className="flex flex-row gap-2">
+                  {row.content.map((period) =>
+                    period.content.length ? (
+                      <SubjectPeriod
+                        key={period.id}
+                        period={period.content[0]}
+                      />
+                    ) : (
+                      <EmptyPeriod key={period.id} />
+                    )
+                  )}
+                </ul>
+              </li>
+            ))}
+          </LayoutGroup>
         </ScheduleContext.Provider>
       </ul>
     </figure>

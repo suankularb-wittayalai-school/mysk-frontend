@@ -27,6 +27,7 @@ export type PeriodContentItem = {
   subject: {
     id: Subject["id"];
     name: Subject["name"];
+    code: Subject["code"];
     teachers: Teacher[];
     coTeachers?: Teacher[];
   };
