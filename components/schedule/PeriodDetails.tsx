@@ -1,4 +1,5 @@
 // External libraries
+import { useTranslation } from "next-i18next";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect } from "react";
 
@@ -8,6 +9,7 @@ import {
   Button,
   DialogContent,
   DialogHeader,
+  MaterialIcon,
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
@@ -26,6 +28,7 @@ import { useLocale } from "@/utils/hooks/i18n";
 // Types
 import { DialogComponent } from "@/utils/types/common";
 import { PeriodContentItem } from "@/utils/types/schedule";
+import PeriodDetailsContent from "./PeriodDetailsContent";
 
 const PeriodDetails: DialogComponent<{ period: PeriodContentItem }> = ({
   period,
@@ -34,6 +37,7 @@ const PeriodDetails: DialogComponent<{ period: PeriodContentItem }> = ({
 }) => {
   // Translation
   const locale = useLocale();
+  const { t } = useTranslation("schedule");
 
   // Animation
   const { duration, easing } = useAnimationConfig();
@@ -60,66 +64,31 @@ const PeriodDetails: DialogComponent<{ period: PeriodContentItem }> = ({
           >
             {/* Dialog */}
             <motion.div
+              role="alertdialog"
+              aria-modal
               layoutId={`period-${period.id}`}
               transition={transition(duration.medium4, easing.standard)}
-              className="pointer-events-auto w-80 rounded-xl bg-surface-3
-                text-on-surface-variant"
+              className="pointer-events-auto w-80 overflow-hidden rounded-xl
+                bg-surface-3 text-on-surface-variant"
             >
-              <DialogHeader
-                title={getLocaleObj(period.subject.name, locale).name}
-                desc={[period.startTime, period.startTime + period.duration]
-                  .map((j) =>
-                    // Get the start/end time of this Period
-                    Object.values(periodTimes[j])
-                      // Format the hours and minutes parts of the time
-                      .map((part) => part.toString().padStart(2, "0"))
-                      // Join those parts
-                      .join(":")
-                  )
-                  // Join the start and end
-                  .join("-")}
-              />
-              <DialogContent className="flex flex-col gap-4 px-6 pt-6">
-                {/* Teachers and coteachers */}
-                <section aria-labelledby="period-teacher">
-                  <h2 id="period-teacher" className="skc-title-medium">
-                    Teachers
-                  </h2>
-                  <ul className="skc-body-medium">
-                    {period.subject.teachers.map((teacher) => (
-                      <li key={teacher.id}>
-                        {nameJoiner(locale, teacher.name)}
-                      </li>
-                    ))}
-                    {period.subject.coTeachers?.map((teacher) => (
-                      <li className="text-outline" key={teacher.id}>
-                        {nameJoiner(locale, teacher.name)}
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-                <section aria-labelledby="period-code">
-                  <h2 id="period-code" className="skc-title-medium">
-                    Subject code
-                  </h2>
-                  <p className="skc-body-medium">
-                    <MultilingualText text={period.subject.code} />
-                  </p>
-                </section>
-                {period.room && (
-                  <section aria-labelledby="period-room">
-                    <h2 id="period-room" className="skc-title-medium">
-                      Room
-                    </h2>
-                    <p className="skc-body-medium">{period.room}</p>
-                  </section>
-                )}
+              <div
+                className="flex flex-row items-center gap-2 border-b-1
+                  border-b-outline bg-surface-3 p-2"
+              >
+                <Button
+                  appearance="text"
+                  icon={<MaterialIcon icon="close" />}
+                  onClick={onClose}
+                  className="!text-on-surface before:!bg-on-surface
+                    [&_span]:!bg-on-surface"
+                />
+                <h1 className="skc-headline-small">
+                  {getLocaleObj(period.subject.name, locale).name}
+                </h1>
+              </div>
+              <DialogContent className="flex flex-col gap-4 p-6 pt-4">
+                <PeriodDetailsContent period={period} />
               </DialogContent>
-              <Actions className="p-6">
-                <Button appearance="text" onClick={onClose}>
-                  Close
-                </Button>
-              </Actions>
             </motion.div>
           </div>
 

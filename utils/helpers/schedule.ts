@@ -10,7 +10,9 @@ import {
 import { range } from "@/utils/helpers/array";
 
 // Types
-import { Schedule } from "@/utils/types/schedule";
+import { LangCode } from "@/utils/types/common";
+import { Schedule, SchedulePeriod } from "@/utils/types/schedule";
+import { Subject } from "@/utils/types/subject";
 
 export const periodTimes = [
   { hours: 8, min: 30 },
@@ -94,6 +96,30 @@ export function arePeriodsOverlapping(
 
   // If both checks fail, the Periods are not overlapping
   return false;
+}
+
+/**
+ * Format a Subject Period’s Subject name with the duration in mind
+ *
+ * @param duration The length of this Period
+ * @param subjectName The Subject name object
+ *
+ * @returns A formatted Subject name to be shown in a Subject Period
+ */
+export function getSubjectName(
+  duration: SchedulePeriod["duration"],
+  subjectName: Subject["name"],
+  locale: LangCode
+) {
+  return duration < 2
+    ? // If short period, use short name
+      subjectName[locale]?.shortName ||
+        subjectName.th.shortName ||
+        // If no short name, use name
+        subjectName[locale]?.name ||
+        subjectName.th.name
+    : // If long period, use name
+      subjectName[locale]?.name || subjectName.th.name;
 }
 
 export function createEmptySchedule(startDay: Day, endDay?: Day): Schedule {

@@ -2,6 +2,9 @@
 import { motion } from "framer-motion";
 import { FC, useContext, useState } from "react";
 
+// SK Components
+import { transition, useAnimationConfig } from "@suankularb-components/react";
+
 // Internal components
 import HoverList from "@/components/person/HoverList";
 import PeriodDetails from "@/components/schedule/PeriodDetails";
@@ -11,14 +14,13 @@ import ScheduleContext from "@/contexts/ScheduleContext";
 
 // Helpers
 import { getLocaleObj } from "@/utils/helpers/i18n";
+import { getSubjectName } from "@/utils/helpers/schedule";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
 
 // Types
-import { PeriodContentItem, SchedulePeriod } from "@/utils/types/schedule";
-import { Subject } from "@/utils/types/subject";
-import { transition, useAnimationConfig } from "@suankularb-components/react";
+import { PeriodContentItem } from "@/utils/types/schedule";
 
 const SubjectPeriod: FC<{ period: PeriodContentItem }> = ({ period }) => {
   // Translation
@@ -32,29 +34,6 @@ const SubjectPeriod: FC<{ period: PeriodContentItem }> = ({ period }) => {
 
   // Dialog control
   const [detailsOpen, setDetailsOpen] = useState<boolean>(false);
-
-  /**
-   * Format a Subject Period’s Subject name with the duration in mind
-   *
-   * @param duration The length of this Period
-   * @param subjectName The Subject name object
-   *
-   * @returns A formatted Subject name to be shown in a Subject Period
-   */
-  function getSubjectName(
-    duration: SchedulePeriod["duration"],
-    subjectName: Subject["name"]
-  ) {
-    return duration < 2
-      ? // If short period, use short name
-        subjectName[locale]?.shortName ||
-          subjectName.th.shortName ||
-          // If no short name, use name
-          subjectName[locale]?.name ||
-          subjectName.th.name
-      : // If long period, use name
-        subjectName[locale]?.name || subjectName.th.name;
-  }
 
   return (
     <>
@@ -85,7 +64,7 @@ const SubjectPeriod: FC<{ period: PeriodContentItem }> = ({ period }) => {
             className="skc-title-medium truncate"
             title={getLocaleObj(period.subject.name, locale).name}
           >
-            {getSubjectName(period.duration, period.subject.name)}
+            {getSubjectName(period.duration, period.subject.name, locale)}
           </span>
           <span className="skc-body-small">
             <HoverList people={period.subject.teachers} />

@@ -6,22 +6,13 @@
   },
   "schedule": {
     "elective": "Elective period",
-    "electiveReveal": {
-      "action": {
-        "close": "Close"
-      }
-    },
-    "overlap": "Many subjects",
     "hoverMenu": {
       "add": "Add period here",
       "edit": "Edit this period",
+      "more": "View details or edit this period",
       "delete": "Delete this period",
       "move": "Drag to move period",
       "extend": "Drag to extend/shorten period"
-    },
-    "extendGuide": {
-      "initial": "Tap <1></1> to extend period",
-      "tapToExtend": "Tap right edge to extend to"
     },
     "action": {
       "sync": "Sync with server",
@@ -41,6 +32,18 @@
     }
   },
   "dialog": {
+    "periodDetails": {
+      "teachers": "Teachers",
+      "code": "Subject code",
+      "room": "Room",
+      "action": {
+        "close": "Close"
+      }
+    },
+    "electivePeriodDetails": {
+      "title": "Elective period",
+      "desc": "Many subjects occupy this period, so it is likely that they are electives. Below is a list of all of them."
+    },
     "editPeriod": {
       "title": {
         "add": "Add subject period",
