@@ -239,7 +239,11 @@ export async function db2Student(
 export async function db2Teacher(
   supabase: DatabaseClient,
   teacher: Database["public"]["Tables"]["teacher"]["Row"],
-  options?: Partial<{ contacts: boolean }>
+  options?: Partial<{
+    contacts: boolean;
+    classAdvisorAt: boolean;
+    subjectsInCharge: boolean;
+  }>
 ): Promise<Teacher> {
   const formatted: Teacher = {
     id: teacher.id,
@@ -286,50 +290,54 @@ export async function db2Teacher(
     if (contacts) formatted.contacts = contacts.map(db2Contact);
   }
 
-  const { data: classItem, error: classError } = await supabase
-    .from("classroom")
-    .select("id, number, advisors")
-    .match({ year: getCurrentAcademicYear() })
-    .contains("advisors", [teacher.id])
-    .limit(1)
-    .maybeSingle();
+  if (options?.classAdvisorAt) {
+    const { data: classItem, error: classError } = await supabase
+      .from("classroom")
+      .select("id, number, advisors")
+      .match({ year: getCurrentAcademicYear() })
+      .contains("advisors", [teacher.id])
+      .limit(1)
+      .maybeSingle();
 
-  if (classError) console.error(classError);
+    if (classError) console.error(classError);
 
-  if (classItem) {
-    formatted.classAdvisorAt = {
-      id: classItem.id,
-      number: classItem.number,
-    };
+    if (classItem) {
+      formatted.classAdvisorAt = {
+        id: classItem.id,
+        number: classItem.number,
+      };
+    }
   }
 
   // get subjects in charge
-  const { data: subjects, error: subjectError } = await supabase
-    .from("subject")
-    .select("*")
-    .contains("teachers", [teacher.id]);
+  if (true) {
+    const { data: subjects, error: subjectError } = await supabase
+      .from("subject")
+      .select("*")
+      .contains("teachers", [teacher.id]);
 
-  if (subjectError) {
-    console.error(subjectError);
-  }
-  if (subjects) {
-    formatted.subjectsInCharge = subjects.map((subject) => ({
-      id: subject.id,
-      code: {
-        "en-US": subject.code_en,
-        th: subject.code_th,
-      },
-      name: {
-        "en-US": {
-          name: subject.name_en,
-          shortName: subject.short_name_en as OrUndefined<string>,
+    if (subjectError) {
+      console.error(subjectError);
+    }
+    if (subjects) {
+      formatted.subjectsInCharge = subjects.map((subject) => ({
+        id: subject.id,
+        code: {
+          "en-US": subject.code_en,
+          th: subject.code_th,
         },
-        th: {
-          name: subject.name_th,
-          shortName: subject.short_name_th as OrUndefined<string>,
+        name: {
+          "en-US": {
+            name: subject.name_en,
+            shortName: subject.short_name_en as OrUndefined<string>,
+          },
+          th: {
+            name: subject.name_th,
+            shortName: subject.short_name_th as OrUndefined<string>,
+          },
         },
-      },
-    }));
+      }));
+    }
   }
 
   return formatted;
@@ -526,6 +534,10 @@ export async function db2SchedulePeriod(
               shortName: scheduleItem.subject
                 .short_name_th as OrUndefined<string>,
             },
+          },
+          code: {
+            "en-US": scheduleItem.subject.code_en,
+            th: scheduleItem.subject.code_th,
           },
           teachers: [],
           coTeachers: [],
