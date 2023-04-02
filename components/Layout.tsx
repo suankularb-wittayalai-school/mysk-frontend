@@ -141,7 +141,7 @@ const Layout: FC<
               icon={<MaterialIcon icon="school" />}
               label={t("navigation.learn")}
               selected={router.pathname.startsWith("/learn")}
-              href={`/learn/${classNumber}`}
+              href="/learn"
               element={Link}
             />
           )}
@@ -306,7 +306,7 @@ const Layout: FC<
                 icon={<MaterialIcon icon="school" />}
                 label={t("navigation.learn")}
                 selected={router.pathname.startsWith("/learn")}
-                href={`/learn/${classNumber}`}
+                href="/learn"
                 element={Link}
               />
             )}

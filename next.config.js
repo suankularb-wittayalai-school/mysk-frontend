@@ -16,6 +16,7 @@ module.exports = withBundleAnalyzer({
     return [
       { source: "/account/login", destination: "/", permanent: true },
       { source: "/welcome", destination: "/account/welcome", permanent: true },
+      { source: "/learn/:id", destination: "/learn", permanent: true },
       { source: "/admin", destination: "/lookup", permanent: true },
     ];
   },

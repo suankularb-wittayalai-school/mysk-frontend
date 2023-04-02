@@ -1,5 +1,5 @@
 // External libraries
-import { GetStaticPaths, GetStaticProps } from "next";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import Head from "next/head";
 
 import { useTranslation } from "next-i18next";
@@ -31,6 +31,7 @@ import Schedule from "@/components/schedule/Schedule";
 import {
   getAllClassNumbers,
   getClassIDFromNumber,
+  getClassNumberFromUser,
 } from "@/utils/backend/classroom/classroom";
 import { getSchedule } from "@/utils/backend/schedule/schedule";
 import { getSubjectList } from "@/utils/backend/subject/roomSubject";
@@ -50,6 +51,7 @@ import { nameJoiner } from "@/utils/helpers/name";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
 const ScheduleSection: FC<{ schedule: ScheduleType }> = ({ schedule }) => {
   const { t } = useTranslation("learn");
@@ -179,25 +181,27 @@ const LearnPage: CustomPage<{
   );
 };
 
-export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
-  const classNumber = Number(params?.classNumber);
-  if (!classNumber) return { notFound: true };
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  req,
+  res,
+}) => {
+  const supabase = createServerSupabaseClient({
+    req: req as NextApiRequest,
+    res: res as NextApiResponse,
+  });
 
-  const { data: classID, error } = await getClassIDFromNumber(
-    supabase,
-    Number(params?.classNumber)
-  );
-  if (error) return { notFound: true };
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
-  const { data: schedule } = await getSchedule(
+  const { data: classNumber } = await getClassNumberFromUser(
     supabase,
-    "student",
-    classID as number
+    session!.user
   );
-  const { data: subjectList } = await getSubjectList(
-    supabase,
-    classID as number
-  );
+  const { data: classID } = await getClassIDFromNumber(supabase, classNumber!);
+  const { data: schedule } = await getSchedule(supabase, "student", classID!);
+  const { data: subjectList } = await getSubjectList(supabase, classID!);
 
   return {
     props: {
@@ -210,16 +214,6 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
       schedule,
       subjectList,
     },
-    revalidate: 300,
-  };
-};
-
-export const getStaticPaths: GetStaticPaths = async () => {
-  return {
-    paths: (await getAllClassNumbers(supabase)).map((number) => ({
-      params: { classNumber: number.toString() },
-    })),
-    fallback: "blocking",
   };
 };
 
