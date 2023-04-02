@@ -15,7 +15,7 @@ const DayCard: FC<{ day: Day }> = ({ day }) => {
   const today = new Date();
 
   return (
-    <div className="z-20 pr-4 sm:sticky sm:left-0 sm:bg-background">
+    <div className="z-20 pr-4 py-1 -my-1 sm:sticky sm:left-0 sm:bg-background">
       <div
         className="flex w-32 flex-col rounded-sm bg-primary-container px-4 py-2
           text-on-primary-container"

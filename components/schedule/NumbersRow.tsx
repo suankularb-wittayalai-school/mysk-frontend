@@ -8,7 +8,10 @@ import { periodTimes } from "@/utils/helpers/schedule";
 const NumbersRow: FC = () => {
   return (
     <ul className="mb-1 flex w-fit flex-row gap-2">
-      <li aria-hidden className="w-36 bg-background sm:sticky sm:left-0 z-20" />
+      <li
+        aria-hidden
+        className="z-20 -mt-1 -mb-2 w-36 bg-background pt-1 pb-2 sm:sticky sm:left-0"
+      />
       {range(10, 1).map((i) => (
         <li
           key={i}
