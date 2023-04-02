@@ -6,6 +6,7 @@ import { FC, RefObject, useEffect, useRef } from "react";
 import DayCard from "@/components/schedule/DayCard";
 import NowLine from "@/components/schedule/NowLine";
 import NumbersRow from "@/components/schedule/NumbersRow";
+import ElectivePeriod from "@/components/schedule/ElectivePeriod";
 import EmptyPeriod from "@/components/schedule/EmptyPeriod";
 import SubjectPeriod from "@/components/schedule/SubjectPeriod";
 
@@ -59,16 +60,16 @@ const Schedule: FC<{
                 <DayCard day={row.day} />
                 {/* The periods in this row */}
                 <ul className="flex flex-row gap-2">
-                  {row.content.map((period) =>
-                    period.content.length ? (
-                      <SubjectPeriod
-                        key={period.id}
-                        period={period.content[0]}
-                      />
+                  {row.content.map((period) => {
+                    const key = [row.day, period.startTime].join("-");
+                    return period.content.length === 1 ? (
+                      <SubjectPeriod key={key} period={period.content[0]} />
+                    ) : period.content.length ? (
+                      <ElectivePeriod key={key} period={period} />
                     ) : (
-                      <EmptyPeriod key={period.id} />
-                    )
-                  )}
+                      <EmptyPeriod key={key} />
+                    );
+                  })}
                 </ul>
               </li>
             ))}
