@@ -171,8 +171,8 @@ const LoginSection: FC = () => {
 const ImageSection: FC = () => (
   <div
     aria-hidden
-    className="bg-gradient-to-b from-surface-5 via-transparent sm:bg-none
-      md:relative"
+    className="-z-10 bg-gradient-to-b from-surface-5 via-transparent
+      sm:bg-none md:relative"
   >
     {/* Image in center */}
     <div
@@ -181,7 +181,7 @@ const ImageSection: FC = () => (
     >
       <picture
         className="relative md:absolute md:right-[-10.5rem] md:left-[-10.5rem]
-          md:top-1/2 md:z-0 md:-translate-y-1/2"
+          md:top-1/2 md:-translate-y-1/2"
       >
         <source
           srcSet={LandingImageDark.src}
@@ -289,7 +289,7 @@ const IndexPage: CustomPage = () => {
             className="!flex !flex-col-reverse md:!grid md:!items-stretch"
           >
             {/* Left side */}
-            <div className="z-10 mx-4 sm:mx-0">
+            <div className="mx-4 sm:mx-0">
               <div className="mb-12 flex flex-col gap-4">
                 {/* Tagline */}
                 {/* `sm:!text-8xl sm:!leading-[4rem]` is a simulation of
@@ -359,7 +359,7 @@ const IndexPage: CustomPage = () => {
 
           {/* Footnote */}
           <footer
-            className="skc-body-small z-10 mx-4 text-on-surface-variant
+            className="skc-body-small mx-4 text-on-surface-variant
               sm:mx-0"
           >
             <p className="mb-2 sm:mb-0">

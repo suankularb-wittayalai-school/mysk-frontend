@@ -1,5 +1,5 @@
 // External libraries
-import { isWithinInterval } from "date-fns";
+import { differenceInMinutes, isPast, isWithinInterval } from "date-fns";
 
 // Helpers
 import { range } from "@/utils/helpers/array";
@@ -47,6 +47,19 @@ export function isInPeriod(
     ),
   });
 }
+
+export function getCurrentPeriod(): number {
+  return isPast(new Date().setHours(periodTimes[11].hours, periodTimes[11].min))
+    ? 0
+    : Math.floor(
+        differenceInMinutes(
+          new Date(),
+          new Date().setHours(periodTimes[0].hours, periodTimes[0].min)
+        ) / 50
+      ) + 1;
+}
+
+export function isSchoolInSessionNow() {}
 
 export function arePeriodsOverlapping(
   period1: { day?: Day; startTime: number; duration: number },

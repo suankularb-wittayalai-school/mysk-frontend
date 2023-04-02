@@ -1,68 +1,40 @@
 // External libraries
-import { useRouter } from "next/router";
-import { useTranslation } from "next-i18next";
-import { useState } from "react";
+import { motion } from "framer-motion";
+import { FC, useContext } from "react";
 
 // Internal components
-import PeriodHoverMenu from "@/components/schedule/PeriodHoverMenu";
+import HoverList from "@/components/person/HoverList";
+
+// Contexts
+import ScheduleContext from "@/contexts/ScheduleContext";
 
 // Helpers
 import { getLocaleObj } from "@/utils/helpers/i18n";
 
+// Hooks
+import { useLocale } from "@/utils/hooks/i18n";
+
 // Types
-import { LangCode } from "@/utils/types/common";
-import { Role } from "@/utils/types/person";
-import {
-  SchedulePeriod as SchedulePeriodType,
-  PeriodContentItem,
-} from "@/utils/types/schedule";
+import { PeriodContentItem, SchedulePeriod } from "@/utils/types/schedule";
 import { Subject } from "@/utils/types/subject";
-import HoverList from "../person/HoverList";
 
-const SubjectPeriod = ({
-  isInSession,
-  day,
-  schedulePeriod,
-  role,
-  allowEdit,
-  setEditPeriod,
-  setDeletePeriod,
-  toggleFetched,
-  className,
-}: {
-  isInSession: boolean;
-  day: Day;
-  schedulePeriod: PeriodContentItem;
-  role: Role;
-  allowEdit?: boolean;
-  setEditPeriod?: ({
-    show,
-    day,
-    schedulePeriod,
-  }: {
-    show: boolean;
-    day: Day;
-    schedulePeriod: PeriodContentItem;
-  }) => void;
-  setDeletePeriod?: ({
-    show,
-    periodID,
-  }: {
-    show: boolean;
-    periodID: number;
-  }) => void;
-  toggleFetched?: () => void;
-  className?: string;
-}): JSX.Element => {
-  const { t } = useTranslation("common");
-  const locale = useRouter().locale as LangCode;
+const SubjectPeriod: FC<{ period: PeriodContentItem }> = ({ period }) => {
+  // Translation
+  const locale = useLocale();
 
-  const [showMenu, setShowMenu] = useState<boolean>(false);
-  const [dragging, setDragging] = useState<boolean>(false);
+  // Context
+  const { role, constraintsRef } = useContext(ScheduleContext);
 
-  // Component-specific utils
+  /**
+   * Format a Subject Period’s Subject name with the duration in mind
+   *
+   * @param duration The length of this Period
+   * @param subjectName The Subject name object
+   *
+   * @returns A formatted Subject name to be shown in a Subject Period
+   */
   function getSubjectName(
-    duration: SchedulePeriodType["duration"],
+    duration: SchedulePeriod["duration"],
     subjectName: Subject["name"]
   ) {
     return duration < 2
@@ -77,88 +49,37 @@ const SubjectPeriod = ({
   }
 
   return (
-    <div
-      className={[
-        "relative h-14 cursor-auto overflow-x-hidden rounded-sm leading-snug",
-        isInSession
-          ? "shadow bg-tertiary-container text-on-tertiary-container"
-          : "bg-secondary-container text-on-secondary-container",
-        showMenu ? "z-20" : null,
-        className,
-      ]
-        .filter((className) => className)
-        .join(" ")}
-      tabIndex={0}
-      // Mouse support
-      onMouseOver={() => setShowMenu(true)}
-      onMouseOut={() => setShowMenu(false)}
-      // Keyboard/touch support
-      onFocus={() => setShowMenu(true)}
-      onBlur={() => setShowMenu(false)}
-      // Drag support
-      draggable={dragging}
-      onDragStart={(e) =>
-        e.dataTransfer.setData(
-          "text/plain",
-          JSON.stringify({
-            id: schedulePeriod.id,
-            duration: schedulePeriod.duration,
-            class: schedulePeriod.class,
-          })
-        )
-      }
-      onDragOver={(e) => {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = "none";
-        setDragging(false);
-      }}
+    <motion.li
+      drag={role === "teacher"}
+      whileDrag={{ boxShadow: "var(--shadow-3)" }}
+      dragConstraints={constraintsRef}
+      dragMomentum={false}
+      onDragEnd={(_, info) => console.log(info.point)}
+      className="rounded-sm transition-shadow"
     >
-      {role == "teacher" && allowEdit && (
-        <PeriodHoverMenu
-          show={showMenu}
-          day={day}
-          schedulePeriod={schedulePeriod}
-          setEditPeriod={setEditPeriod}
-          setDeletePeriod={setDeletePeriod}
-          toggleFetched={toggleFetched}
-          setDragging={setDragging}
-        />
-      )}
-      <div className="flex flex-col whitespace-nowrap px-4 py-2">
-        {role == "teacher" ? (
-          <>
-            <span className="skc-title-medium truncate font-medium">
-              {schedulePeriod.class &&
-                t("class", { number: schedulePeriod.class.number })}
-            </span>
-            <span
-              className="skc-body-small truncate"
-              title={getLocaleObj(schedulePeriod.subject.name, locale).name}
-            >
-              {getSubjectName(
-                schedulePeriod.duration,
-                schedulePeriod.subject.name
-              )}
-            </span>
-          </>
-        ) : (
-          <>
-            <span
-              className="skc-title-medium truncate font-medium"
-              title={getLocaleObj(schedulePeriod.subject.name, locale).name}
-            >
-              {getSubjectName(
-                schedulePeriod.duration,
-                schedulePeriod.subject.name
-              )}
-            </span>
-            <span className="skc-body-small">
-              <HoverList people={schedulePeriod.subject.teachers} />
-            </span>
-          </>
-        )}
-      </div>
-    </div>
+      <button
+        className="flex w-24 flex-col rounded-sm bg-secondary-container px-4
+          py-2 text-on-secondary-container transition-shadow hover:shadow-1
+          focus:shadow-2"
+        style={{
+          width:
+            // Calculate period width by duration
+            period.duration * 96 +
+            // Correct for missing gap in the middle of multi-period periods
+            (period.duration - 1) * 8,
+        }}
+      >
+        <span
+          className="skc-title-medium truncate"
+          title={getLocaleObj(period.subject.name, locale).name}
+        >
+          {getSubjectName(period.duration, period.subject.name)}
+        </span>
+        <span className="skc-body-small">
+          <HoverList people={period.subject.teachers} />
+        </span>
+      </button>
+    </motion.li>
   );
 };
 

@@ -5,7 +5,7 @@ import Head from "next/head";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 
 // SK Components
 import {
@@ -69,26 +69,6 @@ const SubjectListSection: FC<{ subjectList: SubjectListItem[] }> = ({
   const locale = useLocale();
 
   const [query, setQuery] = useState<string>("");
-  const [filterredList, setFilterredList] =
-    useState<SubjectListItem[]>(subjectList);
-  useEffect(() => {
-    if (!query) {
-      setFilterredList(subjectList);
-      return;
-    }
-    setFilterredList(
-      subjectList.filter(
-        (listItem) =>
-          (
-            getLocaleObj(listItem.subject.name, locale) as SubjectName
-          ).name.includes(query) ||
-          getLocaleString(listItem.subject.code, locale).includes(query) ||
-          listItem.teachers.filter((teacher) =>
-            nameJoiner(locale, teacher.name).includes(query)
-          ).length
-      )
-    );
-  }, [query]);
 
   return (
     <Section>
@@ -102,7 +82,21 @@ const SubjectListSection: FC<{ subjectList: SubjectListItem[] }> = ({
         />
       </Columns>
       <Columns columns={3}>
-        {filterredList.map((listItem) => (
+        {(query
+          ? subjectList.filter(
+              (listItem) =>
+                (
+                  getLocaleObj(listItem.subject.name, locale) as SubjectName
+                ).name.includes(query) ||
+                getLocaleString(listItem.subject.code, locale).includes(
+                  query
+                ) ||
+                listItem.teachers.filter((teacher) =>
+                  nameJoiner(locale, teacher.name).includes(query)
+                ).length
+            )
+          : subjectList
+        ).map((listItem) => (
           <Card key={listItem.id} appearance="outlined">
             <div className="flex flex-row">
               <CardHeader

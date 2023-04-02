@@ -1,54 +1,7 @@
-// Internal components
-import AddableEmptyPeriod from "@/components/schedule/AddableEmptyPeriod";
+import { FC } from "react";
 
-// Types
-import { Role } from "@/utils/types/person";
-
-const EmptyPeriod = ({
-  isInSession,
-  day,
-  startTime,
-  role,
-  allowEdit,
-  setAddPeriod,
-  toggleFetched,
-}: {
-  isInSession: boolean;
-  day: Day;
-  startTime: number;
-  role: Role;
-  allowEdit?: boolean;
-  setAddPeriod?: ({
-    show,
-    day,
-    startTime,
-  }: {
-    show: boolean;
-    day: Day;
-    startTime: number;
-  }) => void;
-  toggleFetched?: () => void;
-}): JSX.Element => {
-  if (role == "teacher" && allowEdit)
-    return (
-      <AddableEmptyPeriod
-        isInSession={isInSession}
-        day={day}
-        startTime={startTime}
-        setAddPeriod={setAddPeriod}
-        toggleFetched={toggleFetched}
-      />
-    );
-  else
-    return (
-      <div
-        className={`h-14 w-full rounded-sm ${
-          isInSession
-            ? "border-4 border-secondary"
-            : "border-1 border-outline-variant"
-        }`}
-      />
-    );
+const EmptyPeriod: FC = () => {
+  return <li className="border-1 border-outline-variant w-24 rounded-sm" />;
 };
 
 export default EmptyPeriod;
