@@ -1,9 +1,9 @@
 // Backend
-import { db2SchedulePeriod } from "@/utils/backend/database";
+import { db2SchedulePeriod, db2Teacher } from "@/utils/backend/database";
 import { isOverlappingExistingItems } from "@/utils/backend/schedule/utils";
-import { range } from "@/utils/helpers/array";
 
 // Helpers
+import { range } from "@/utils/helpers/array";
 import {
   arePeriodsOverlapping,
   createEmptySchedule,
@@ -17,8 +17,12 @@ import {
 } from "@/utils/types/common";
 
 // Types
-import { Role } from "@/utils/types/person";
-import { Schedule, PeriodContentItem } from "@/utils/types/schedule";
+import { Role, Teacher } from "@/utils/types/person";
+import {
+  Schedule,
+  PeriodContentItem,
+  SchedulePeriod,
+} from "@/utils/types/schedule";
 
 /**
  * Construct a Schedule from Schedule Items from the student’s perspective
@@ -78,6 +82,31 @@ export async function getSchedule(
     return { data: schedule, error };
   }
 
+  let teacherIDs: number[] = [];
+  for (let scheduleItem of data!)
+    teacherIDs = [
+      ...teacherIDs,
+      scheduleItem.teacher.id,
+      ...(scheduleItem.coteachers || []),
+    ];
+
+  // Fetch teacher data seperately
+  const { data: teachersData, error: teachersError } = await supabase
+    .from("teacher")
+    .select("*, person(*), subject_group(*)")
+    .or(`id.in.(${teacherIDs})`);
+
+  // Return an empty Schedule if fetch failed
+  if (teachersError) {
+    console.error(teachersError);
+    return { data: schedule, error: teachersError };
+  }
+
+  // Format teachers data
+  const teachers: Teacher[] = await Promise.all(
+    teachersData.map(async (teacher) => await db2Teacher(supabase, teacher))
+  );
+
   // Add Supabase data to empty schedule
   for (let incomingPeriod of data!) {
     // Find the index of the row we want to manipulate
@@ -112,11 +141,24 @@ export async function getSchedule(
 
       // Determine what to do if the incoming period overlaps with an existing
       // period
-      const processedPeriod = await db2SchedulePeriod(
+      let processedPeriod = await db2SchedulePeriod(
         supabase,
         incomingPeriod,
         role
       );
+
+      processedPeriod.content[0].subject = {
+        ...processedPeriod.content[0].subject,
+        teachers: [
+          teachers.find((teacher) => incomingPeriod.teacher.id === teacher.id)!,
+        ],
+        coTeachers: incomingPeriod.coteachers
+          ? incomingPeriod.coteachers.map(
+              (coTeacher) =>
+                teachers.find((teacher) => coTeacher === teacher.id)!
+            )
+          : [],
+      };
 
       // Replace empty period
       if (schedulePeriod.content.length == 0) {
@@ -140,8 +182,7 @@ export async function getSchedule(
     }
   }
 
-  // Sort the periods to ensure sensible tab order
-  // This has no effect on the visual Schedule
+  // Sort the periods
   schedule.content = schedule.content.map((scheduleRow) => ({
     ...scheduleRow,
     content: scheduleRow.content.sort((a, b) => a.startTime - b.startTime),

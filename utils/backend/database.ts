@@ -510,7 +510,8 @@ export async function db2Class(
 export async function db2SchedulePeriod(
   supabase: DatabaseClient,
   scheduleItem: Database["public"]["Tables"]["schedule_items"]["Row"],
-  role: Role
+  role: Role,
+  options?: Partial<{ teachers: boolean; coTeachers: boolean }>
 ): Promise<SchedulePeriod> {
   const formatted: SchedulePeriod = {
     id: scheduleItem.id,
@@ -548,25 +549,29 @@ export async function db2SchedulePeriod(
     ],
   };
 
-  if (role == "student" && formatted.content.length > 0) {
-    formatted.content[0].subject.teachers = [
-      await db2Teacher(supabase, scheduleItem.teacher),
-    ];
-
-    const { data: coTeachers, error: coTeachersError } = await supabase
-      .from("teacher")
-      .select("*, person(*), subject_group(*)")
-      .in("id", scheduleItem.coteachers || []);
-
-    if (coTeachersError) {
-      console.error(coTeachersError);
+  if (options?.teachers) {
+    if (role == "student" && formatted.content.length > 0) {
+      formatted.content[0].subject.teachers = [
+        await db2Teacher(supabase, scheduleItem.teacher),
+      ];
     }
-    if (coTeachers) {
-      formatted.content[0].subject.coTeachers = await Promise.all(
-        coTeachers.map(async (teacher) => {
-          return await db2Teacher(supabase, teacher);
-        })
-      );
+
+    if (options?.coTeachers) {
+      const { data: coTeachers, error: coTeachersError } = await supabase
+        .from("teacher")
+        .select("*, person(*), subject_group(*)")
+        .in("id", scheduleItem.coteachers || []);
+
+      if (coTeachersError) {
+        console.error(coTeachersError);
+      }
+      if (coTeachers) {
+        formatted.content[0].subject.coTeachers = await Promise.all(
+          coTeachers.map(async (teacher) => {
+            return await db2Teacher(supabase, teacher);
+          })
+        );
+      }
     }
   }
 
