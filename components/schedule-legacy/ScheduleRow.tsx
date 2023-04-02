@@ -4,7 +4,7 @@ import { useTranslation } from "next-i18next";
 import { FC, useEffect, useState } from "react";
 
 // Internal components
-import SchedulePeriod from "@/components/schedule/SchedulePeriod";
+import SchedulePeriod from "@/components/schedule-legacy/SchedulePeriod";
 
 // Types
 import { Role } from "@/utils/types/person";

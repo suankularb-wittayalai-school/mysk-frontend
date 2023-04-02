@@ -6,7 +6,7 @@ import { FC } from "react";
 import { transition, useAnimationConfig } from "@suankularb-components/react";
 
 // Internal components
-import SubjectPeriod from "@/components/schedule/SubjectPeriod";
+import SubjectPeriod from "@/components/schedule-legacy/SubjectPeriod";
 
 // Types
 import { Role } from "@/utils/types/person";

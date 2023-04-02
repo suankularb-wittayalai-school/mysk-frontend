@@ -7,7 +7,7 @@ import { FC, useState } from "react";
 import { transition, useAnimationConfig } from "@suankularb-components/react";
 
 // Internal components
-import ElectivePeriodsReveal from "@/components/schedule/ElectivePeriodsReveal";
+import ElectivePeriodsReveal from "@/components/schedule-legacy/ElectivePeriodsReveal";
 
 // Types
 import { Role } from "@/utils/types/person";

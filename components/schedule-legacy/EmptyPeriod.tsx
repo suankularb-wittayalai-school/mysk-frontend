@@ -1,5 +1,5 @@
 // Internal components
-import AddableEmptyPeriod from "@/components/schedule/AddableEmptyPeriod";
+import AddableEmptyPeriod from "@/components/schedule-legacy/AddableEmptyPeriod";
 
 // Types
 import { Role } from "@/utils/types/person";

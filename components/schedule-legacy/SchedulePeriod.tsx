@@ -5,9 +5,9 @@ import { motion } from "framer-motion";
 import { transition, useAnimationConfig } from "@suankularb-components/react";
 
 // Internal components
-import ElectivePeriod from "@/components/schedule/ElectivePeriod";
-import SubjectPeriod from "@/components/schedule/SubjectPeriod";
-import EmptyPeriod from "@/components/schedule/EmptyPeriod";
+import ElectivePeriod from "@/components/schedule-legacy/ElectivePeriod";
+import SubjectPeriod from "@/components/schedule-legacy/SubjectPeriod";
+import EmptyPeriod from "@/components/schedule-legacy/EmptyPeriod";
 
 // Helpers
 import { isInPeriod } from "@/utils/helpers/schedule";
