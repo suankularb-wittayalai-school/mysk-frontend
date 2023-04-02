@@ -1,4 +1,5 @@
 // External libraries
+import { LayoutGroup } from "framer-motion";
 import { FC, RefObject, useEffect, useRef } from "react";
 
 // Internal components
@@ -14,8 +15,10 @@ import ScheduleContext from "@/contexts/ScheduleContext";
 // Types
 import { Role } from "@/utils/types/person";
 import { Schedule } from "@/utils/types/schedule";
-import { getCurrentPeriod } from "@/utils/helpers/schedule";
-import { LayoutGroup } from "framer-motion";
+import {
+  getCurrentPeriod,
+  isSchoolInSessionNow,
+} from "@/utils/helpers/schedule";
 
 const Schedule: FC<{
   schedule: Schedule;
@@ -27,6 +30,7 @@ const Schedule: FC<{
   useEffect(() => {
     const schedule = scheduleRef.current;
     if (!schedule) return;
+    if (isSchoolInSessionNow() !== "in-session") return;
     schedule.scrollTo({
       top: 0,
       left: (getCurrentPeriod() - 2) * 104,
@@ -39,7 +43,9 @@ const Schedule: FC<{
       ref={scheduleRef}
       className="relative -my-2 !mx-0 overflow-x-auto overflow-y-hidden"
     >
-      <NowLine />
+      {/* Now indicator line */}
+      {isSchoolInSessionNow() === "in-session" && <NowLine />}
+
       <ul className="flex w-fit flex-col gap-2 px-4 py-2 sm:px-0">
         {/* Period numbers and start-end times */}
         <NumbersRow />

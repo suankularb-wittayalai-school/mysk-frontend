@@ -1,5 +1,6 @@
 // External libraries
 import { AnimatePresence, motion } from "framer-motion";
+import { useEffect } from "react";
 
 // SK Components
 import {
@@ -37,6 +38,17 @@ const PeriodDetails: DialogComponent<{ period: PeriodContentItem }> = ({
   // Animation
   const { duration, easing } = useAnimationConfig();
 
+  // Close the Dialog with the escape key
+  useEffect(() => {
+    const handleKeyUp = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+    window.addEventListener("keyup", handleKeyUp);
+    return () => {
+      window.removeEventListener("keyup", handleKeyUp);
+    };
+  }, []);
+
   return (
     <AnimatePresence>
       {open && (
@@ -50,7 +62,8 @@ const PeriodDetails: DialogComponent<{ period: PeriodContentItem }> = ({
             <motion.div
               layoutId={`period-${period.id}`}
               transition={transition(duration.medium4, easing.standard)}
-              className="pointer-events-auto w-80 rounded-xl bg-surface-3 text-on-surface-variant"
+              className="pointer-events-auto w-80 rounded-xl bg-surface-3
+                text-on-surface-variant"
             >
               <DialogHeader
                 title={getLocaleObj(period.subject.name, locale).name}
