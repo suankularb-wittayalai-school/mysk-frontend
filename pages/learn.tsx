@@ -29,15 +29,11 @@ import Schedule from "@/components/schedule/Schedule";
 
 // Backend
 import {
-  getAllClassNumbers,
   getClassIDFromNumber,
   getClassNumberFromUser,
 } from "@/utils/backend/classroom/classroom";
 import { getSchedule } from "@/utils/backend/schedule/schedule";
 import { getSubjectList } from "@/utils/backend/subject/roomSubject";
-
-// Supabase
-import { supabase } from "@/utils/supabase-backend";
 
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";

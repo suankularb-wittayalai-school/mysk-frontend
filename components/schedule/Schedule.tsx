@@ -25,8 +25,9 @@ import {
 
 const Schedule: FC<{
   schedule: Schedule;
+  teacherID?: number;
   role: Role;
-}> = ({ schedule, role }) => {
+}> = ({ schedule, teacherID, role }) => {
   // Ref for drag constrains and scrolling
   const scheduleRef: RefObject<HTMLElement> = useRef(null);
 
@@ -72,7 +73,9 @@ const Schedule: FC<{
         {/* Period numbers and start-end times */}
         <NumbersRow />
 
-        <ScheduleContext.Provider value={{ role, constraintsRef: scheduleRef }}>
+        <ScheduleContext.Provider
+          value={{ role, teacherID, constraintsRef: scheduleRef }}
+        >
           <LayoutGroup>
             {/* For each day */}
             {schedule.content.map((row) => {

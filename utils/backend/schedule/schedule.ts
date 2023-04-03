@@ -290,7 +290,7 @@ export async function moveScheduleItem(
     return {
       error: {
         message:
-          "new period duration causes it to overlap with other relevant periods",
+          "new period duration causes it to overlap with other relevant periods.",
       },
     };
 

@@ -9,6 +9,7 @@ import { RefObject, createContext } from "react";
  */
 const ScheduleContext = createContext<{
   role: Role;
+  teacherID?: number;
   constraintsRef?: RefObject<Element>;
 }>({ role: "student", constraintsRef: undefined });
 
