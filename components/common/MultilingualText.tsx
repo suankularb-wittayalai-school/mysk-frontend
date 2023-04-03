@@ -8,9 +8,9 @@ const MultilingualText: FC<{ text: { th: string; "en-US"?: string } }> = ({
     <div className="flex flex-row gap-1">
       <div
         aria-label="English"
-        className="text-secondary border-secondary grid h-5 w-5
-          select-none place-content-center rounded-full border-[1px]
-          text-[0.5rem]"
+        className="grid h-5 w-5 select-none place-content-center
+          rounded-full border-[1px] border-secondary text-[0.5rem]
+          text-secondary"
       >
         EN
       </div>
@@ -19,9 +19,9 @@ const MultilingualText: FC<{ text: { th: string; "en-US"?: string } }> = ({
     <div className="flex flex-row gap-1">
       <div
         aria-label="Thai"
-        className="text-secondary border-secondary grid h-5 w-5
-          select-none place-content-center rounded-full border-[1px]
-          text-[0.5rem]"
+        className="grid h-5 w-5 select-none place-content-center
+          rounded-full border-[1px] border-secondary text-[0.5rem]
+          text-secondary"
       >
         TH
       </div>
