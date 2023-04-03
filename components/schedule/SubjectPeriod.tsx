@@ -167,23 +167,25 @@ const SubjectPeriod: FC<{
         }
 
         // Calculate new `startTime` and `day`
-        const startTime = Math.min(
+        const newStartTime = Math.min(
           Math.max(
             Math.ceil(
-              (dropPosition.left + constraints.scrollLeft - periodWidth / 2) /
+              (dropPosition.left +
+                constraints.scrollLeft -
+                periodWidth * 0.75) /
                 periodWidth
             ) + 1,
             1
           ),
           10
         );
-        const day = Math.min(
+        const newDay = Math.min(
           Math.max(Math.ceil(dropPosition.top / periodHeight), 1),
           5
         ) as Day;
 
         // Don’t do anything if the period is in the same location
-        if (startTime === period.startTime) {
+        if (newStartTime === period.startTime && newDay === day) {
           setDragFailed(true);
           return false;
         }
@@ -191,8 +193,8 @@ const SubjectPeriod: FC<{
         // Save the change to Supabase
         const { error } = await moveScheduleItem(
           supabase,
-          day,
-          { ...period, startTime },
+          newDay,
+          { ...period, startTime: newStartTime },
           teacherID!
         );
 
