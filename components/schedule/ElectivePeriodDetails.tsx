@@ -33,7 +33,6 @@ const SubjectPeriodCard: FC<{
 }> = ({ period, subject }) => {
   // Translation
   const locale = useLocale();
-  const { t } = useTranslation("schedule");
 
   return (
     <Card appearance="filled" className="!bg-surface">
@@ -70,7 +69,6 @@ const ElectivePeriodDetails: DialogComponent<{ period: SchedulePeriod }> = ({
   onClose,
 }) => {
   // Translation
-  const locale = useLocale();
   const { t } = useTranslation("schedule");
 
   // Animation
@@ -106,6 +104,7 @@ const ElectivePeriodDetails: DialogComponent<{ period: SchedulePeriod }> = ({
                 max-w-[calc(100vw-3rem)] overflow-y-auto overflow-x-hidden
                 rounded-xl bg-surface-3 text-on-surface-variant"
             >
+              {/* Top app bar */}
               <div
                 className="sticky top-0 flex flex-row items-center
                   gap-2 border-b-1 border-b-outline bg-surface-3 p-2"
@@ -121,15 +120,22 @@ const ElectivePeriodDetails: DialogComponent<{ period: SchedulePeriod }> = ({
                   {t("dialog.electivePeriodDetails.title")}
                 </h1>
               </div>
+
+              {/* Subject list */}
               <div className="flex flex-col gap-4 p-6 pt-5">
                 <p>{t("dialog.electivePeriodDetails.desc")}</p>
-                {period.content.map((subject) => (
-                  <SubjectPeriodCard
-                    key={subject.id}
-                    period={period}
-                    subject={subject}
-                  />
-                ))}
+
+                {period.content
+                  .sort((a, b) =>
+                    a.subject.code.th > b.subject.code.th ? 1 : -1
+                  )
+                  .map((subject) => (
+                    <SubjectPeriodCard
+                      key={subject.id}
+                      period={period}
+                      subject={subject}
+                    />
+                  ))}
               </div>
             </motion.div>
           </div>

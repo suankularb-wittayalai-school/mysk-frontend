@@ -1,6 +1,7 @@
 // External libraries
+import { setDay } from "date-fns";
 import { LayoutGroup } from "framer-motion";
-import { FC, RefObject, useEffect, useRef } from "react";
+import { FC, RefObject, useEffect, useRef, useState } from "react";
 
 // Internal components
 import DayCard from "@/components/schedule/DayCard";
@@ -18,6 +19,7 @@ import { Role } from "@/utils/types/person";
 import { Schedule } from "@/utils/types/schedule";
 import {
   getCurrentPeriod,
+  isInPeriod,
   isSchoolInSessionNow,
 } from "@/utils/helpers/schedule";
 
@@ -25,7 +27,26 @@ const Schedule: FC<{
   schedule: Schedule;
   role: Role;
 }> = ({ schedule, role }) => {
+  // Ref for drag constrains and scrolling
   const scheduleRef: RefObject<HTMLElement> = useRef(null);
+
+  // Time calculation set up
+  const [now, setNow] = useState<Date>(new Date());
+
+  // (@SiravitPhokeed)
+  // we’re using a long update interval because this updates the Period
+  // components. When a Period is expanded, the original unexpanded period is
+  // hidden by Framer Motion. When the Period update from a change in `now`,
+  // the original shows again. This means if we use a short interval like 1
+  // second, it would take a maximum of 1 second of looking at the details of a
+  // Period for it to bug out slightly. It’s not a huge deal, so I decided to
+  // just settle on making it happen less.
+
+  // Update the current time every 20 seconds
+  useEffect(() => {
+    const nowInterval = setInterval(() => setNow(new Date()), 20000);
+    return () => clearInterval(nowInterval);
+  }, []);
 
   // Scroll to near current period
   useEffect(() => {
@@ -54,25 +75,39 @@ const Schedule: FC<{
         <ScheduleContext.Provider value={{ role, constraintsRef: scheduleRef }}>
           <LayoutGroup>
             {/* For each day */}
-            {schedule.content.map((row) => (
-              <li key={row.day} className="flex flex-row gap-2">
-                {/* The day of this row */}
-                <DayCard day={row.day} />
-                {/* The periods in this row */}
-                <ul className="flex flex-row gap-2">
-                  {row.content.map((period) => {
-                    const key = [row.day, period.startTime].join("-");
-                    return period.content.length === 1 ? (
-                      <SubjectPeriod key={key} period={period.content[0]} />
-                    ) : period.content.length ? (
-                      <ElectivePeriod key={key} period={period} />
-                    ) : (
-                      <EmptyPeriod key={key} />
-                    );
-                  })}
-                </ul>
-              </li>
-            ))}
+            {schedule.content.map((row) => {
+              const day = setDay(now, row.day);
+
+              return (
+                <li key={row.day} className="flex flex-row gap-2">
+                  {/* The day of this row */}
+                  <DayCard day={row.day} />
+
+                  {/* The periods in this row */}
+                  <ul className="flex flex-row gap-2">
+                    {row.content.map((period) => {
+                      const props = {
+                        key: [row.day, period.startTime].join("-"),
+                        isInSession: isInPeriod(
+                          now,
+                          day,
+                          period.startTime,
+                          period.duration
+                        ),
+                      };
+
+                      return period.content.length === 1 ? (
+                        <SubjectPeriod period={period.content[0]} {...props} />
+                      ) : period.content.length ? (
+                        <ElectivePeriod period={period} {...props} />
+                      ) : (
+                        <EmptyPeriod {...props} />
+                      );
+                    })}
+                  </ul>
+                </li>
+              );
+            })}
           </LayoutGroup>
         </ScheduleContext.Provider>
       </ul>

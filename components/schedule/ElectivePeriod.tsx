@@ -9,10 +9,16 @@ import { transition, useAnimationConfig } from "@suankularb-components/react";
 // Internal components
 import ElectivePeriodDetails from "@/components/schedule/ElectivePeriodDetails";
 
+// Helpers
+import { cn } from "@/utils/helpers/className";
+
 // Types
 import { SchedulePeriod } from "@/utils/types/schedule";
 
-const ElectivePeriod: FC<{ period: SchedulePeriod }> = ({ period }) => {
+const ElectivePeriod: FC<{
+  period: SchedulePeriod;
+  isInSession?: boolean;
+}> = ({ period, isInSession }) => {
   // Translation
   const { t } = useTranslation("schedule");
 
@@ -29,10 +35,22 @@ const ElectivePeriod: FC<{ period: SchedulePeriod }> = ({ period }) => {
         transition={transition(duration.medium2, easing.standard)}
       >
         <button
-          className="skc-title-medium tap-highlight-none flex h-full w-24
-            flex-col justify-center rounded-sm bg-surface-2 px-4 py-2
-            text-left !leading-none text-on-surface transition-shadow
-            hover:shadow-1 focus:shadow-2"
+          className={cn([
+            `skc-title-medium tap-highlight-none relative flex h-full w-24 
+             flex-col justify-center rounded-sm bg-surface-2 px-4 py-2
+             text-left !leading-none text-on-surface transition-shadow
+             before:absolute before:inset-0 before:-z-10 before:h-14
+             before:w-24 before:rounded-sm
+             before:transition-[transform,box-shadow] hover:shadow-1
+             hover:before:rotate-6 hover:before:shadow-1 focus:shadow-2
+             active:before:rotate-0 active:before:shadow-none`,
+            isInSession
+              ? `bg-tertiary-container text-on-tertiary-container shadow-1
+                 before:bg-tertiary-80 hover:shadow-2
+                 dark:before:bg-tertiary-20`
+              : `bg-surface-2 text-on-surface-variant
+                 before:bg-surface-variant`,
+          ])}
           onClick={() => setDetailsOpen(true)}
         >
           {t("schedule.elective")}

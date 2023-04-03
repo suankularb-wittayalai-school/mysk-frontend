@@ -1,4 +1,3 @@
-import { Day } from "date-fns";
 import { ClassWNumber } from "./class";
 import { Teacher } from "./person";
 import { Subject } from "./subject";

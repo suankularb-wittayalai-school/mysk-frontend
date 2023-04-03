@@ -13,6 +13,7 @@ import PeriodDetails from "@/components/schedule/PeriodDetails";
 import ScheduleContext from "@/contexts/ScheduleContext";
 
 // Helpers
+import { cn } from "@/utils/helpers/className";
 import { getLocaleObj } from "@/utils/helpers/i18n";
 import { getSubjectName } from "@/utils/helpers/schedule";
 
@@ -22,7 +23,10 @@ import { useLocale } from "@/utils/hooks/i18n";
 // Types
 import { PeriodContentItem } from "@/utils/types/schedule";
 
-const SubjectPeriod: FC<{ period: PeriodContentItem }> = ({ period }) => {
+const SubjectPeriod: FC<{
+  period: PeriodContentItem;
+  isInSession?: boolean;
+}> = ({ period, isInSession }) => {
   // Translation
   const locale = useLocale();
 
@@ -48,9 +52,15 @@ const SubjectPeriod: FC<{ period: PeriodContentItem }> = ({ period }) => {
         className="rounded-sm transition-shadow"
       >
         <button
-          className="tap-highlight-none flex w-24 flex-col rounded-sm
-            bg-secondary-container px-4 py-2 text-on-secondary-container
-            transition-shadow hover:shadow-1 focus:shadow-2"
+          className={cn([
+            `tap-highlight-none flex w-24 flex-col rounded-sm
+             bg-secondary-container px-4 py-2 text-left
+             text-on-secondary-container
+             transition-[background-color,color,box-shadow] focus:shadow-2`,
+            isInSession
+              ? "bg-tertiary-container text-on-tertiary-container shadow-1 hover:shadow-2"
+              : "bg-secondary-container text-on-secondary-container hover:shadow-1",
+          ])}
           style={{
             width:
               // Calculate period width by duration

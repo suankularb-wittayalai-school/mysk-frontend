@@ -5,22 +5,15 @@ import { useEffect } from "react";
 
 // SK Components
 import {
-  Actions,
   Button,
   DialogContent,
-  DialogHeader,
   MaterialIcon,
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
 
-// Internal components
-import MultilingualText from "@/components/common/MultilingualText";
-
 // Helpers
 import { getLocaleObj } from "@/utils/helpers/i18n";
-import { nameJoiner } from "@/utils/helpers/name";
-import { periodTimes } from "@/utils/helpers/schedule";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
@@ -72,7 +65,7 @@ const PeriodDetails: DialogComponent<{ period: PeriodContentItem }> = ({
                 bg-surface-3 text-on-surface-variant"
             >
               <div
-                className="flex flex-row items-center gap-2 border-b-1
+                className="flex flex-row items-start gap-2 border-b-1
                   border-b-outline bg-surface-3 p-2"
               >
                 <Button
@@ -82,7 +75,7 @@ const PeriodDetails: DialogComponent<{ period: PeriodContentItem }> = ({
                   className="!text-on-surface before:!bg-on-surface
                     [&_span]:!bg-on-surface"
                 />
-                <h1 className="skc-headline-small">
+                <h1 className="skc-headline-small my-1 mr-4">
                   {getLocaleObj(period.subject.name, locale).name}
                 </h1>
               </div>
