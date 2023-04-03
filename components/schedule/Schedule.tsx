@@ -100,7 +100,11 @@ const Schedule: FC<{
                       };
 
                       return period.content.length === 1 ? (
-                        <SubjectPeriod period={period.content[0]} {...props} />
+                        <SubjectPeriod
+                          period={period.content[0]}
+                          day={row.day}
+                          {...props}
+                        />
                       ) : period.content.length ? (
                         <ElectivePeriod period={period} {...props} />
                       ) : (
