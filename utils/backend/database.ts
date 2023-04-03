@@ -543,11 +543,12 @@ export async function db2SchedulePeriod(
           teachers: [],
           coTeachers: [],
         },
-        class: scheduleItem.classroom,
         room: scheduleItem.room,
       },
     ],
   };
+
+  if (role === "teacher") formatted.content[0].class = scheduleItem.classroom;
 
   if (options?.teachers) {
     if (role == "student" && formatted.content.length > 0) {

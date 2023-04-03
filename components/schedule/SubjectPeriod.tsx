@@ -37,6 +37,7 @@ import ScheduleContext from "@/contexts/ScheduleContext";
 
 // Backend
 import {
+  deleteScheduleItem,
   editScheduleItemDuration,
   moveScheduleItem,
 } from "@/utils/backend/schedule/schedule";
@@ -84,26 +85,50 @@ const SubjectPeriod: FC<{
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
 
   // Keyboard support for opening/closing hover menu
+  let tabOutCloseTimeout: NodeJS.Timeout;
+  function openMenu() {
+    if (tabOutCloseTimeout) clearTimeout(tabOutCloseTimeout);
+    if (atBreakpoint !== "base") setMenuOpen(true);
+  }
+  function closeMenu() {
+    if (!detailsOpen)
+      tabOutCloseTimeout = setTimeout(() => setMenuOpen(false), 600);
+  }
   useEffect(() => {
     const period = periodRef?.current;
     if (!period) return;
 
-    period.addEventListener("focusin", () => setMenuOpen(true));
-    period.addEventListener("focusout", () => setMenuOpen(false));
+    period.addEventListener("focusin", openMenu);
+    period.addEventListener("focusout", closeMenu);
 
     return () => {
-      period.removeEventListener("focusin", () => setMenuOpen(true));
-      period.removeEventListener("focusout", () => setMenuOpen(false));
+      period.removeEventListener("focusin", openMenu);
+      period.removeEventListener("focusout", closeMenu);
     };
   }, []);
 
   // Close the hover menu after the Dialog fully closes to prevent glitchy
   // container transform effect
+  let dialogCloseTimeout: NodeJS.Timeout;
   useEffect(() => {
-    if (!detailsOpen) {
-      setTimeout(() => setMenuOpen(false), 500);
-    }
+    if (!detailsOpen)
+      dialogCloseTimeout = setTimeout(() => setMenuOpen(false), 500);
+    return () => clearTimeout(dialogCloseTimeout);
   }, [detailsOpen]);
+
+  async function handleDelete() {
+    withLoading(
+      async () => {
+        setDetailsOpen(false);
+        const { error } = await deleteScheduleItem(supabase, period.id!);
+        if (error) return false;
+        await router.replace(router.asPath);
+        return true;
+      },
+      toggleLoading,
+      { hasEndToggle: true }
+    );
+  }
 
   // Loading
   const [loading, toggleLoading] = useToggle();
@@ -142,12 +167,20 @@ const SubjectPeriod: FC<{
         }
 
         // Calculate new `startTime` and `day`
-        const startTime =
-          Math.ceil(
-            (dropPosition.left + constraints.scrollLeft - periodWidth / 2) /
-              periodWidth
-          ) + 1;
-        const day = Math.ceil(dropPosition.top / periodHeight) as Day;
+        const startTime = Math.min(
+          Math.max(
+            Math.ceil(
+              (dropPosition.left + constraints.scrollLeft - periodWidth / 2) /
+                periodWidth
+            ) + 1,
+            1
+          ),
+          10
+        );
+        const day = Math.min(
+          Math.max(Math.ceil(dropPosition.top / periodHeight), 1),
+          5
+        ) as Day;
 
         // Don’t do anything if the period is in the same location
         if (startTime === period.startTime) {
@@ -263,14 +296,14 @@ const SubjectPeriod: FC<{
         <button
           className={cn([
             `tap-highlight-none flex h-14 w-24 flex-col rounded-sm
-           bg-secondary-container px-4 py-2 text-left
-           text-on-secondary-container
-           transition-[background-color,color,box-shadow] focus:shadow-2`,
+             bg-secondary-container px-4 py-2 text-left
+             text-on-secondary-container
+             transition-[background-color,color,box-shadow] focus:shadow-2`,
             !loading && isInSession
               ? `bg-tertiary-container text-on-tertiary-container shadow-1
-               hover:shadow-2`
+                 hover:shadow-2`
               : `bg-secondary-container text-on-secondary-container
-               hover:shadow-1`,
+                 hover:shadow-1`,
             loading && "grid place-content-center",
           ])}
           style={{
@@ -296,23 +329,35 @@ const SubjectPeriod: FC<{
           ) : (
             <>
               {/* Subject name / class */}
-              <motion.span
-                layoutId={`period-${period.id}-class`}
-                transition={transition(
-                  duration.short2,
-                  easing.standardDecelerate
-                )}
-                className="skc-title-medium truncate"
-                title={getLocaleObj(period.subject.name, locale).name}
-              >
-                {role === "teacher"
-                  ? t("class", { number: period.class!.number })
-                  : getSubjectName(
-                      period.duration,
-                      period.subject.name,
-                      locale
-                    )}
-              </motion.span>
+              {atBreakpoint !== "base" && role === "teacher" ? (
+                <motion.span
+                  layoutId={`period-${period.id}-class`}
+                  transition={transition(
+                    duration.short2,
+                    easing.standardDecelerate
+                  )}
+                  className="skc-title-medium truncate"
+                >
+                  {t("class", { number: period.class!.number })}
+                </motion.span>
+              ) : (
+                <span
+                  className="skc-title-medium truncate"
+                  title={
+                    role === "student"
+                      ? getLocaleObj(period.subject.name, locale).name
+                      : undefined
+                  }
+                >
+                  {role === "teacher"
+                    ? t("class", { number: period.class!.number })
+                    : getSubjectName(
+                        period.duration,
+                        period.subject.name,
+                        locale
+                      )}
+                </span>
+              )}
 
               {/* Teacher / subject name */}
               <span className="skc-body-small">
@@ -328,7 +373,11 @@ const SubjectPeriod: FC<{
 
         {/* Hover menu */}
         <SubjectPeriodMenu
-          open={role === "teacher" && (extending || (!loading && menuOpen))}
+          open={
+            atBreakpoint !== "base" &&
+            role === "teacher" &&
+            (extending || (!loading && menuOpen))
+          }
           {...{ period, dragControls, extending, setExtending, setDetailsOpen }}
         />
 
@@ -370,7 +419,7 @@ const SubjectPeriod: FC<{
                 exit={{ opacity: 0 }}
                 transition={transition(duration.short4, easing.standard)}
                 className={cn([
-                  `absolute inset-0 rounded-sm bg-gradient-to-l
+                  `absolute inset-0 z-0 rounded-sm bg-gradient-to-l
                    from-secondary-container transition-[width]`,
                   periodDuration > 1 ? "w-[12.5rem]" : "w-24",
                 ])}
@@ -384,7 +433,8 @@ const SubjectPeriod: FC<{
       {extending && (
         <div
           aria-hidden
-          className="fixed inset-0 cursor-ew-resize touch-none select-none"
+          className="fixed inset-0 z-10 cursor-ew-resize touch-none
+            select-none"
           onPointerMove={handleMouseMove}
           onPointerUp={handleMouseUp}
           onClick={handleMouseUp}
@@ -394,8 +444,10 @@ const SubjectPeriod: FC<{
       {/* Dialog */}
       <PeriodDetails
         period={period}
+        role={role}
         open={detailsOpen}
         onClose={() => setDetailsOpen(false)}
+        onDelete={handleDelete}
       />
     </>
   );

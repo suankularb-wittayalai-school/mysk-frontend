@@ -1,10 +1,17 @@
 // External libraries
 import { FC } from "react";
 
-const MultilingualText: FC<{ text: { th: string; "en-US"?: string } }> = ({
-  text,
-}) => (
-  <div className="flex flex-col gap-1">
+// Types
+import { MultiLangString } from "@/utils/types/common";
+
+// Helpers
+import { cn } from "@/utils/helpers/className";
+
+const MultilangText: FC<{
+  text: MultiLangString;
+  className?: string;
+}> = ({ text, className }) => (
+  <div className={cn(["flex flex-col gap-1", className])}>
     <div className="flex flex-row gap-1">
       <div
         aria-label="English"
@@ -30,4 +37,4 @@ const MultilingualText: FC<{ text: { th: string; "en-US"?: string } }> = ({
   </div>
 );
 
-export default MultilingualText;
+export default MultilangText;

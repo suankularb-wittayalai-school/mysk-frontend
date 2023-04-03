@@ -12,6 +12,9 @@ import {
   useAnimationConfig,
 } from "@suankularb-components/react";
 
+// Internal components
+import PeriodDetailsContent from "@/components/schedule/PeriodDetailsContent";
+
 // Helpers
 import { getLocaleObj } from "@/utils/helpers/i18n";
 
@@ -20,14 +23,14 @@ import { useLocale } from "@/utils/hooks/i18n";
 
 // Types
 import { DialogComponent } from "@/utils/types/common";
+import { Role } from "@/utils/types/person";
 import { PeriodContentItem } from "@/utils/types/schedule";
-import PeriodDetailsContent from "./PeriodDetailsContent";
 
-const PeriodDetails: DialogComponent<{ period: PeriodContentItem }> = ({
-  period,
-  open,
-  onClose,
-}) => {
+const PeriodDetails: DialogComponent<{
+  period: PeriodContentItem;
+  role: Role;
+  onDelete?: () => void;
+}> = ({ period, role, open, onClose, onDelete }) => {
   // Translation
   const locale = useLocale();
   const { t } = useTranslation("schedule");
@@ -71,6 +74,7 @@ const PeriodDetails: DialogComponent<{ period: PeriodContentItem }> = ({
                 <Button
                   appearance="text"
                   icon={<MaterialIcon icon="close" />}
+                  alt={t("dialog.periodDetails.action.close")}
                   onClick={onClose}
                   className="!text-on-surface before:!bg-on-surface
                     [&_span]:!bg-on-surface"
@@ -81,6 +85,17 @@ const PeriodDetails: DialogComponent<{ period: PeriodContentItem }> = ({
               </div>
               <DialogContent className="flex flex-col gap-4 p-6 pt-4">
                 <PeriodDetailsContent period={period} />
+                {role === "teacher" && (
+                  <Button
+                    appearance="outlined"
+                    icon={<MaterialIcon icon="delete" />}
+                    dangerous
+                    onClick={onDelete}
+                    className="!mt-4"
+                  >
+                    {t("dialog.periodDetails.action.delete")}
+                  </Button>
+                )}
               </DialogContent>
             </motion.div>
           </div>

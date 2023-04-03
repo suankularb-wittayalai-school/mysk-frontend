@@ -3,7 +3,7 @@ import { useTranslation } from "next-i18next";
 import { FC } from "react";
 
 // SK Components
-import MultilingualText from "@/components/common/MultilingualText";
+import MultilangText from "@/components/common/MultilingualText";
 
 // Helpers
 import { nameJoiner } from "@/utils/helpers/name";
@@ -41,6 +41,18 @@ const PeriodDetailsContent: FC<{ period: PeriodContentItem }> = ({
       </section>
 
       {/* Room */}
+      {period.class && (
+        <section aria-labelledby="period-room">
+          <h2 id="period-room" className="skc-title-medium">
+            {t("dialog.periodDetails.class")}
+          </h2>
+          <p className="skc-body-medium">
+            {t("class", { ns: "common", number: period.class.number })}
+          </p>
+        </section>
+      )}
+
+      {/* Room */}
       {period.room && (
         <section aria-labelledby="period-room">
           <h2 id="period-room" className="skc-title-medium">
@@ -55,9 +67,7 @@ const PeriodDetailsContent: FC<{ period: PeriodContentItem }> = ({
         <h2 id="period-code" className="skc-title-medium">
           {t("dialog.periodDetails.code")}
         </h2>
-        <p className="skc-body-medium">
-          <MultilingualText text={period.subject.code} />
-        </p>
+        <MultilangText text={period.subject.code} className="skc-body-medium" />
       </section>
     </>
   );

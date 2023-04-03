@@ -8,15 +8,9 @@
     "elective": "Elective period",
     "hoverMenu": {
       "add": "Add period here",
-      "edit": "Edit this period",
-      "more": "View details or edit this period",
-      "delete": "Delete this period",
+      "more": "View details",
       "move": "Drag to move period",
       "extend": "Drag to extend/shorten period"
-    },
-    "action": {
-      "sync": "Sync with server",
-      "add": "Add period"
     }
   },
   "subjectList": {
@@ -35,9 +29,11 @@
     "periodDetails": {
       "teachers": "Teachers",
       "code": "Subject code",
+      "class": "Class",
       "room": "Room",
       "action": {
-        "close": "Close"
+        "close": "Close",
+        "delete": "Delete period"
       }
     },
     "electivePeriodDetails": {
