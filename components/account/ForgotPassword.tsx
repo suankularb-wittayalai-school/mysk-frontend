@@ -53,7 +53,7 @@ const ForgotPasswordDialog: DialogComponent<{ inputEmail?: string }> = ({
         const { data, error } = await supabase.auth.resetPasswordForEmail(
           [email, "sk.ac.th"].join("")
         );
-        if (data) toggleShowCheckEmail();
+        if (data) setShowCheckEmail(true);
         if (error) {
           console.error(error);
           return false;
@@ -66,7 +66,7 @@ const ForgotPasswordDialog: DialogComponent<{ inputEmail?: string }> = ({
   }
 
   // Dialog control
-  const [showCheckEmail, toggleShowCheckEmail] = useToggle();
+  const [showCheckEmail, setShowCheckEmail] = useState<boolean>(false);
 
   return (
     <>
@@ -113,7 +113,7 @@ const ForgotPasswordDialog: DialogComponent<{ inputEmail?: string }> = ({
       <CheckEmailDialog
         open={showCheckEmail}
         onClose={() => {
-          toggleShowCheckEmail();
+          setShowCheckEmail(false);
           onClose();
         }}
         email={[email, "sk.ac.th"].join("")}
