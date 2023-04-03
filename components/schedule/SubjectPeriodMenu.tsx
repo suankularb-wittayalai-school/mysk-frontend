@@ -18,8 +18,17 @@ const SubjectPeriodMenu: FC<{
   open: boolean;
   period: PeriodContentItem;
   dragControls: DragControls;
-  setDetailsOpen: (open: boolean) => void;
-}> = ({ open, period, dragControls, setDetailsOpen }) => {
+  extending: boolean;
+  setExtending: (value: boolean) => void;
+  setDetailsOpen: (value: boolean) => void;
+}> = ({
+  open,
+  period,
+  dragControls,
+  extending,
+  setExtending,
+  setDetailsOpen,
+}) => {
   // Translation
   const { t } = useTranslation(["schedule", "common"]);
 
@@ -32,13 +41,14 @@ const SubjectPeriodMenu: FC<{
   );
   const exitTransition = transition(duration.short2, easing.standardAccelerate);
 
+  // Moving
   const [moving, setMoving] = useState<boolean>(false);
 
   return (
     <AnimatePresence>
       {open && (
         <div
-          className="absolute top-0 left-0 flex h-14 w-24 flex-col rounded-sm
+          className="absolute inset-0 flex h-14 flex-col rounded-sm
             bg-secondary-container p-1 pt-0.5"
         >
           <motion.span
@@ -48,48 +58,64 @@ const SubjectPeriodMenu: FC<{
           >
             {t("class", { ns: "common", number: period.class!.number })}
           </motion.span>
+
           <motion.div
             initial={{ y: "50%", scaleY: 0 }}
             animate={{ y: "0%", scaleY: 1 }}
             exit={{ y: "50%", scaleY: 0, transition: exitTransition }}
             transition={entranceTransition}
             className={cn([
-              `grid grow gap-1`,
-              moving ? `grid-cols-1` : `grid-cols-[1fr,2.25rem,1fr]`,
+              `grid w-full grow gap-1`,
+              moving || extending ? `grid-cols-1` : `grid-cols-[2fr,3fr,2fr]`,
             ])}
           >
-            <button
-              title={t("schedule.hoverMenu.move")}
-              onPointerDown={(event) => {
-                setMoving(true);
-                dragControls.start(event);
-              }}
-              onPointerUp={() => setMoving(false)}
-              className={cn([
-                `grid cursor-grab place-content-center rounded-xs bg-surface
-                 text-on-surface transition-colors`,
-                moving && `cursor-grabbing bg-secondary text-on-secondary`,
-              ])}
-            >
-              <MaterialIcon icon="drag_indicator" size={20} />
-            </button>
+            {/* Move period */}
+            {!extending && (
+              <button
+                title={t("schedule.hoverMenu.move")}
+                onPointerDown={(event) => {
+                  setMoving(true);
+                  dragControls.start(event);
+                }}
+                onPointerUp={() => setMoving(false)}
+                className={cn([
+                  `grid cursor-grab place-content-center rounded-xs
+                   transition-colors`,
+                  moving
+                    ? `cursor-grabbing bg-secondary text-on-secondary`
+                    : `bg-surface text-on-surface`,
+                ])}
+              >
+                <MaterialIcon icon="drag_indicator" size={20} />
+              </button>
+            )}
+
+            {/* Period details Dialog trigger */}
+            {!(moving || extending) && (
+              <button
+                title={t("schedule.hoverMenu.more")}
+                className="grid place-content-center rounded-xs bg-primary text-on-primary"
+                onClick={() => setDetailsOpen(true)}
+              >
+                <MaterialIcon icon="open_in_full" />
+              </button>
+            )}
+
+            {/* Extend/shorten period */}
             {!moving && (
-              <>
-                <button
-                  title={t("schedule.hoverMenu.more")}
-                  className="grid place-content-center rounded-xs bg-primary text-on-primary"
-                  onClick={() => setDetailsOpen(true)}
-                >
-                  <MaterialIcon icon="open_in_full" />
-                </button>
-                <button
-                  title={t("schedule.hoverMenu.extend")}
-                  className="grid cursor-ew-resize place-content-center rounded-xs
-                    bg-surface text-on-surface"
-                >
-                  <MaterialIcon icon="straighten" size={20} />
-                </button>
-              </>
+              <button
+                title={t("schedule.hoverMenu.extend")}
+                onPointerDown={() => setExtending(true)}
+                className={cn([
+                  `grid cursor-ew-resize place-content-center rounded-xs
+                   transition-colors`,
+                  extending
+                    ? `bg-secondary text-on-secondary`
+                    : `bg-surface text-on-surface`,
+                ])}
+              >
+                <MaterialIcon icon="straighten" size={20} />
+              </button>
             )}
           </motion.div>
         </div>
