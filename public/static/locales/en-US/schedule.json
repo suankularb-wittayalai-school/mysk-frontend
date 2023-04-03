@@ -11,7 +11,9 @@
       "more": "View details",
       "move": "Drag to move period",
       "extend": "Drag to extend/shorten period"
-    }
+    },
+    "periodLength_one": "{{count}} prd.",
+    "periodLength_other": "{{count}} prds."
   },
   "subjectList": {
     "title": "Subject list",

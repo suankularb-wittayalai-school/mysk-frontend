@@ -62,7 +62,7 @@ const SubjectPeriod: FC<{
 }> = ({ period, day, isInSession }) => {
   // Translation
   const locale = useLocale();
-  const { t } = useTranslation("common");
+  const { t } = useTranslation(["schedule", "common"]);
 
   // Router
   const router = useRouter();
@@ -289,22 +289,26 @@ const SubjectPeriod: FC<{
         onDragEnd={handleDragEnd}
         onMouseEnter={() => atBreakpoint !== "base" && setMenuOpen(true)}
         onMouseLeave={() => !detailsOpen && setMenuOpen(false)}
-        className="relative touch-none rounded-sm transition-shadow"
+        className={cn([
+          `relative touch-none rounded-sm transition-shadow focus-within:shadow-2`,
+          !loading &&
+            (isInSession ? `shadow-1 hover:shadow-2` : `hover:shadow-1`),
+        ])}
         style={{ transform: "none" }}
       >
         {/* Period content */}
         <button
           className={cn([
-            `tap-highlight-none flex h-14 w-24 flex-col rounded-sm
-             bg-secondary-container px-4 py-2 text-left
-             text-on-secondary-container
-             transition-[background-color,color,box-shadow] focus:shadow-2`,
+            `tap-highlight-none flex h-14 w-24 flex-col rounded-sm border-4
+             border-secondary-container bg-secondary-container px-3 py-1
+             text-left text-on-secondary-container
+             transition-[border,background-color,color]`,
             !loading && isInSession
-              ? `bg-tertiary-container text-on-tertiary-container shadow-1
-                 hover:shadow-2`
-              : `bg-secondary-container text-on-secondary-container
-                 hover:shadow-1`,
-            loading && "grid place-content-center",
+              ? `border-tertiary-container bg-tertiary-container
+                 text-on-tertiary-container`
+              : `bg-secondary-container text-on-secondary-container`,
+            loading && "bg-surface text-secondary",
+            role === "teacher" && "cursor-default",
           ])}
           style={{
             width:
@@ -318,57 +322,41 @@ const SubjectPeriod: FC<{
             setDetailsOpen(true)
           }
         >
-          {loading ? (
-            // Spinning Progress while saving new position
-            <Progress
-              appearance="circular"
-              alt="Saving your changes…"
-              visible
-              className="!h-8 !w-8"
-            />
-          ) : (
-            <>
-              {/* Subject name / class */}
-              {atBreakpoint !== "base" && role === "teacher" ? (
-                <motion.span
-                  layoutId={`period-${period.id}-class`}
-                  transition={transition(
-                    duration.short2,
-                    easing.standardDecelerate
-                  )}
-                  className="skc-title-medium truncate"
-                >
-                  {t("class", { number: period.class!.number })}
-                </motion.span>
-              ) : (
-                <span
-                  className="skc-title-medium truncate"
-                  title={
-                    role === "student"
-                      ? getLocaleObj(period.subject.name, locale).name
-                      : undefined
-                  }
-                >
-                  {role === "teacher"
-                    ? t("class", { number: period.class!.number })
-                    : getSubjectName(
-                        period.duration,
-                        period.subject.name,
-                        locale
-                      )}
-                </span>
+          {/* Subject name / class */}
+          {atBreakpoint !== "base" && role === "teacher" ? (
+            <motion.span
+              layoutId={`period-${period.id}-class`}
+              transition={transition(
+                duration.short2,
+                easing.standardDecelerate
               )}
-
-              {/* Teacher / subject name */}
-              <span className="skc-body-small">
-                {role === "teacher" ? (
-                  getSubjectName(period.duration, period.subject.name, locale)
-                ) : (
-                  <HoverList people={period.subject.teachers} />
-                )}
-              </span>
-            </>
+              className="skc-title-medium truncate"
+            >
+              {t("class", { ns: "common", number: period.class!.number })}
+            </motion.span>
+          ) : (
+            <span
+              className="skc-title-medium truncate"
+              title={
+                role === "student"
+                  ? getLocaleObj(period.subject.name, locale).name
+                  : undefined
+              }
+            >
+              {role === "teacher"
+                ? t("class", { ns: "common", number: period.class!.number })
+                : getSubjectName(period.duration, period.subject.name, locale)}
+            </span>
           )}
+
+          {/* Teacher / subject name */}
+          <span className="skc-body-small">
+            {role === "teacher" ? (
+              getSubjectName(period.duration, period.subject.name, locale)
+            ) : (
+              <HoverList people={period.subject.teachers} />
+            )}
+          </span>
         </button>
 
         {/* Hover menu */}
@@ -410,20 +398,25 @@ const SubjectPeriod: FC<{
               {/* End guide */}
               <motion.div
                 aria-hidden
-                initial={{ opacity: 0 }}
+                initial={{ opacity: 0, scaleY: 0 }}
                 animate={{
                   opacity: 1,
+                  scaleY: 1,
                   x:
                     periodDuration > 1 ? periodWidth * (periodDuration - 2) : 0,
                 }}
-                exit={{ opacity: 0 }}
+                exit={{ opacity: 0, scaleY: 0 }}
                 transition={transition(duration.short4, easing.standard)}
                 className={cn([
-                  `absolute inset-0 z-0 rounded-sm bg-gradient-to-l
-                   from-secondary-container transition-[width]`,
+                  `skc-body-medium absolute -top-1 -bottom-1 left-0 z-0 flex
+                   flex-col items-end border-r-4 border-secondary
+                   bg-gradient-to-l from-secondary-container pr-1
+                   transition-[width]`,
                   periodDuration > 1 ? "w-[12.5rem]" : "w-24",
                 ])}
-              />
+              >
+                {t("schedule.periodLength", { count: periodDuration })}
+              </motion.div>
             </>
           )}
         </AnimatePresence>

@@ -10,9 +10,11 @@ import {
   useAnimationConfig,
 } from "@suankularb-components/react";
 
+// Helpers
+import { cn } from "@/utils/helpers/className";
+
 // Types
 import { PeriodContentItem } from "@/utils/types/schedule";
-import { cn } from "@/utils/helpers/className";
 
 const SubjectPeriodMenu: FC<{
   open: boolean;
@@ -79,11 +81,11 @@ const SubjectPeriodMenu: FC<{
                 }}
                 onPointerUp={() => setMoving(false)}
                 className={cn([
-                  `grid cursor-grab place-content-center rounded-xs
+                  `grid place-content-center rounded-xs
                    transition-colors`,
                   moving
                     ? `cursor-grabbing bg-secondary text-on-secondary`
-                    : `bg-surface text-on-surface`,
+                    : `cursor-grab bg-surface text-on-surface`,
                 ])}
               >
                 <MaterialIcon icon="drag_indicator" size={20} />
@@ -94,7 +96,8 @@ const SubjectPeriodMenu: FC<{
             {!(moving || extending) && (
               <button
                 title={t("schedule.hoverMenu.more")}
-                className="grid place-content-center rounded-xs bg-primary text-on-primary"
+                className="grid place-content-center rounded-xs bg-primary
+                  text-on-primary"
                 onClick={() => setDetailsOpen(true)}
               >
                 <MaterialIcon icon="open_in_full" />
