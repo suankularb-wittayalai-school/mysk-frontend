@@ -6,6 +6,7 @@ import {
   AnimatePresence,
   PanInfo,
   motion,
+  useAnimationControls,
   useDragControls,
 } from "framer-motion";
 import {
@@ -69,6 +70,7 @@ const SubjectPeriod: FC<{
 
   // Animation
   const { duration, easing } = useAnimationConfig();
+  const animationControls = useAnimationControls();
   const dragControls = useDragControls();
 
   // Supabase
@@ -138,8 +140,6 @@ const SubjectPeriod: FC<{
   const periodHeight = 60; // 56 + 4
 
   // Look at that drag
-  const [dragFailed, setDragFailed] = useState<boolean>(false);
-
   async function handleDragEnd(
     _: globalThis.MouseEvent | TouchEvent | PointerEvent,
     info: PanInfo
@@ -149,7 +149,7 @@ const SubjectPeriod: FC<{
         // Get the rectangle
         const constraints = constraintsRef?.current;
         if (!constraints) {
-          setDragFailed(true);
+          animationControls.start({ x: 0, y: 0 });
           return false;
         }
         const { top, left } = constraints.getBoundingClientRect();
@@ -162,7 +162,7 @@ const SubjectPeriod: FC<{
 
         // Validate position
         if (dropPosition.left < 0 || dropPosition.top < 0) {
-          setDragFailed(true);
+          animationControls.start({ x: 0, y: 0 });
           return false;
         }
 
@@ -184,9 +184,9 @@ const SubjectPeriod: FC<{
           5
         ) as Day;
 
-        // Don’t do anything if the period is in the same location
+        // Don’t do anything if the Period is in the same location
         if (newStartTime === period.startTime && newDay === day) {
-          setDragFailed(true);
+          animationControls.start({ x: 0, y: 0 });
           return false;
         }
 
@@ -199,21 +199,24 @@ const SubjectPeriod: FC<{
         );
 
         if (error) {
-          setDragFailed(true);
+          animationControls.start({ x: 0, y: 0 });
           return false;
         }
 
+        // Visually move the Period
+        animationControls.start({
+          x: (newStartTime - period.startTime) * periodWidth,
+          y: (newDay - day) * (periodHeight + 4),
+        });
+
         // Refetch the Schedule
         await router.replace(router.asPath);
-        setDragFailed(false);
 
         return true;
       },
       toggleLoading,
       { hasEndToggle: true }
     );
-
-    setDragFailed(false);
   }
 
   // Period extension
@@ -280,7 +283,7 @@ const SubjectPeriod: FC<{
       <motion.li
         ref={periodRef}
         layoutId={`period-${period.id}`}
-        animate={!dragFailed ? { x: 0, y: 0 } : undefined}
+        animate={animationControls}
         transition={transition(duration.medium2, easing.standard)}
         drag={role === "teacher" && atBreakpoint !== "base"}
         dragListener={false}
@@ -296,7 +299,6 @@ const SubjectPeriod: FC<{
           !loading &&
             (isInSession ? `shadow-1 hover:shadow-2` : `hover:shadow-1`),
         ])}
-        style={{ transform: "none" }}
       >
         {/* Period content */}
         <button
@@ -309,6 +311,7 @@ const SubjectPeriod: FC<{
               ? `border-tertiary-container bg-tertiary-container
                  text-on-tertiary-container`
               : `bg-secondary-container text-on-secondary-container`,
+            extending && "bg-transparent",
             loading && "bg-surface text-secondary",
             role === "teacher" && "cursor-default",
           ])}
@@ -410,7 +413,7 @@ const SubjectPeriod: FC<{
                 exit={{ opacity: 0, scaleY: 0 }}
                 transition={transition(duration.short4, easing.standard)}
                 className={cn([
-                  `skc-body-medium absolute -top-1 -bottom-1 left-0 z-0 flex
+                  `skc-body-medium absolute -top-1 -bottom-1 left-0 z-10 flex
                    flex-col items-end border-r-4 border-secondary
                    bg-gradient-to-l from-secondary-container pr-1
                    transition-[width]`,
@@ -428,7 +431,7 @@ const SubjectPeriod: FC<{
       {extending && (
         <div
           aria-hidden
-          className="fixed inset-0 z-10 cursor-ew-resize touch-none
+          className="fixed inset-0 z-20 cursor-ew-resize touch-none
             select-none"
           onPointerMove={handleMouseMove}
           onPointerUp={handleMouseUp}
