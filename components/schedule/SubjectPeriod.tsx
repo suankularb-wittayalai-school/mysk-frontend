@@ -22,7 +22,6 @@ import {
 // SK Components
 import {
   MaterialIcon,
-  Progress,
   transition,
   useAnimationConfig,
   useBreakpoint,
@@ -90,7 +89,7 @@ const SubjectPeriod: FC<{
   let tabOutCloseTimeout: NodeJS.Timeout;
   function openMenu() {
     if (tabOutCloseTimeout) clearTimeout(tabOutCloseTimeout);
-    if (atBreakpoint !== "base") setMenuOpen(true);
+    setMenuOpen(true);
   }
   function closeMenu() {
     if (!detailsOpen)
@@ -285,14 +284,14 @@ const SubjectPeriod: FC<{
         layoutId={`period-${period.id}`}
         animate={animationControls}
         transition={transition(duration.medium2, easing.standard)}
-        drag={role === "teacher" && atBreakpoint !== "base"}
+        drag={role === "teacher"}
         dragListener={false}
         dragControls={dragControls}
         whileDrag={{ boxShadow: "var(--shadow-3)", zIndex: 35 }}
         dragConstraints={constraintsRef}
         dragMomentum={false}
         onDragEnd={handleDragEnd}
-        onMouseEnter={() => atBreakpoint !== "base" && setMenuOpen(true)}
+        onMouseEnter={() => setMenuOpen(true)}
         onMouseLeave={() => !detailsOpen && setMenuOpen(false)}
         className={cn([
           `relative touch-none rounded-sm transition-shadow focus-within:shadow-2`,
@@ -322,13 +321,10 @@ const SubjectPeriod: FC<{
               // Correct for missing gap in the middle of multi-period periods
               (period.duration - 1) * 8,
           }}
-          onClick={() =>
-            (role === "student" || atBreakpoint === "base") &&
-            setDetailsOpen(true)
-          }
+          onClick={() => role === "student" && setDetailsOpen(true)}
         >
           {/* Subject name / class */}
-          {atBreakpoint !== "base" && role === "teacher" ? (
+          {role === "teacher" ? (
             <motion.span
               layoutId={`period-${period.id}-class`}
               transition={transition(
@@ -348,9 +344,7 @@ const SubjectPeriod: FC<{
                   : undefined
               }
             >
-              {role === "teacher"
-                ? t("class", { ns: "common", number: period.class!.number })
-                : getSubjectName(period.duration, period.subject.name, locale)}
+              {getSubjectName(period.duration, period.subject.name, locale)}
             </span>
           )}
 
@@ -366,11 +360,7 @@ const SubjectPeriod: FC<{
 
         {/* Hover menu */}
         <SubjectPeriodMenu
-          open={
-            atBreakpoint !== "base" &&
-            role === "teacher" &&
-            (extending || (!loading && menuOpen))
-          }
+          open={role === "teacher" && (extending || (!loading && menuOpen))}
           {...{ period, dragControls, extending, setExtending, setDetailsOpen }}
         />
 

@@ -96,8 +96,8 @@ const SubjectPeriodMenu: FC<{
             {!(moving || extending) && (
               <button
                 title={t("schedule.hoverMenu.more")}
-                className="grid place-content-center rounded-xs bg-primary
-                  text-on-primary"
+                className="tap-highlight-none grid place-content-center
+                  rounded-xs bg-primary text-on-primary"
                 onClick={() => setDetailsOpen(true)}
               >
                 <MaterialIcon icon="open_in_full" />
