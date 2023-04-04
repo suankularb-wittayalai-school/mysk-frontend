@@ -116,6 +116,9 @@
   "preferences": {
     "title": "Preferences"
   },
+  "snackbar": {
+    "invalidCreds": "Invalid email or password"
+  },
   "dialog": {
     "contact": {
       "title": {

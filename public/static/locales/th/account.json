@@ -102,6 +102,9 @@
   "preferences": {
     "title": "การตั้งค่า"
   },
+  "snackbar": {
+    "invalidCreds": "อีเมลหรือรหัสผ่านไม่ถูกต้อง"
+  },
   "dialog": {
     "contact": {
       "title": {

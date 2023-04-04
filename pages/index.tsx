@@ -55,6 +55,9 @@ const LoginSection: FC = () => {
   // Translation
   const { t } = useTranslation(["account", "landing"]);
 
+  // Snackbar
+  const { setSnackbar } = useContext(SnackbarContext);
+
   // Supabase
   const supabase = useSupabaseClient();
 
@@ -73,10 +76,20 @@ const LoginSection: FC = () => {
   }
 
   async function handleSubmit() {
+    // Set the current language as the preferred language
+    // (If the user can find and click on the Log in Button, they’re most
+    // likely most comfortable in the current language)
+    localStorage.setItem("preferredLang", locale == "en-US" ? "th" : "en-US");
+
     // Disable Log in Button
     withLoading(async () => {
       // Validate response
-      if (!validate()) return false;
+      if (!validate()) {
+        setSnackbar(
+          <Snackbar>{t("snackbar.formInvalid", { ns: "common" })}</Snackbar>
+        );
+        return false;
+      }
 
       // Log in user in Supabase
       const {
@@ -86,6 +99,9 @@ const LoginSection: FC = () => {
         email: [email, "sk.ac.th"].join(""),
         password,
       });
+
+      if (error?.name === "AuthApiError")
+        setSnackbar(<Snackbar>{t("snackbar.invalidCreds")}</Snackbar>);
 
       if (!session || error) return false;
 
