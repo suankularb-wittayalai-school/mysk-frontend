@@ -1,5 +1,6 @@
 // External libraries
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { useContext } from "react";
 
@@ -7,7 +8,6 @@ import { useContext } from "react";
 import {
   Actions,
   Button,
-  Card,
   Dialog,
   DialogContent,
   DialogHeader,
@@ -20,13 +20,23 @@ import {
 
 // Contexts
 import ScheduleContext from "@/contexts/ScheduleContext";
+import SnackbarContext from "@/contexts/SnackbarContext";
+
+// Backend
+import { createScheduleItem } from "@/utils/backend/schedule/schedule";
 
 // Helpers
 import { getLocaleObj } from "@/utils/helpers/i18n";
+import { withLoading } from "@/utils/helpers/loading";
+import {
+  getSubjectName,
+  periodDurationToWidth,
+} from "@/utils/helpers/schedule";
 
 // Hooks
 import { useForm } from "@/utils/hooks/form";
 import { useLocale } from "@/utils/hooks/i18n";
+import { useToggle } from "@/utils/hooks/toggle";
 
 // Types
 import { SubmittableDialogComponent } from "@/utils/types/common";
@@ -34,15 +44,6 @@ import { SubjectWNameAndCode } from "@/utils/types/subject";
 
 // Miscellaneous
 import { classRegex, roomRegex } from "@/utils/patterns";
-import {
-  getSubjectName,
-  periodDurationToWidth,
-} from "@/utils/helpers/schedule";
-import { createScheduleItem } from "@/utils/backend/schedule/schedule";
-import SnackbarContext from "@/contexts/SnackbarContext";
-import { withLoading } from "@/utils/helpers/loading";
-import { useRouter } from "next/router";
-import { useToggle } from "@/utils/hooks/toggle";
 
 const AddPeriodDialog: SubmittableDialogComponent<
   () => void,
