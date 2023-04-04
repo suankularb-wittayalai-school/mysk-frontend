@@ -14,6 +14,7 @@ import {
 } from "@suankularb-components/react";
 
 // Internal components
+import PeriodDetailsContent from "@/components/schedule/PeriodDetailsContent";
 
 // Helpers
 import { getLocaleObj } from "@/utils/helpers/i18n";
@@ -25,7 +26,6 @@ import { useLocale } from "@/utils/hooks/i18n";
 // Types
 import { DialogComponent } from "@/utils/types/common";
 import { PeriodContentItem, SchedulePeriod } from "@/utils/types/schedule";
-import PeriodDetailsContent from "./PeriodDetailsContent";
 
 const SubjectPeriodCard: FC<{
   period: SchedulePeriod;
