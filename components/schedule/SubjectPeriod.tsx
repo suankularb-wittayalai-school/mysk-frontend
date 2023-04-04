@@ -286,7 +286,8 @@ const SubjectPeriod: FC<{
         onMouseEnter={() => setMenuOpen(true)}
         onMouseLeave={() => !detailsOpen && setMenuOpen(false)}
         className={cn([
-          `relative touch-none rounded-sm transition-shadow focus-within:shadow-2`,
+          `relative rounded-sm transition-shadow focus-within:shadow-2`,
+          role === "teacher" && "touch-none",
           !loading &&
             (isInSession ? `shadow-1 hover:shadow-2` : `hover:shadow-1`),
         ])}
