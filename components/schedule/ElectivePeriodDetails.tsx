@@ -102,7 +102,8 @@ const ElectivePeriodDetails: DialogComponent<{ period: SchedulePeriod }> = ({
               transition={transition(duration.medium4, easing.standard)}
               className="pointer-events-auto max-h-[calc(100vh-3rem)] w-96
                 max-w-[calc(100vw-3rem)] overflow-y-auto overflow-x-hidden
-                rounded-xl bg-surface-3 text-on-surface-variant"
+                rounded-xl bg-surface-3 text-on-surface-variant
+                supports-[height:100dvh]:max-h-[calc(100dvh-3rem)]"
             >
               {/* Top app bar */}
               <div

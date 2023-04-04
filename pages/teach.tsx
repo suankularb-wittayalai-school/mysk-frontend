@@ -22,7 +22,10 @@ import Schedule from "@/components/schedule/Schedule";
 // Backend
 import { getUserMetadata } from "@/utils/backend/account";
 import { getSchedule } from "@/utils/backend/schedule/schedule";
-import { getTeachingSubjects } from "@/utils/backend/subject/subject";
+import {
+  getSubjectsInCharge,
+  getTeachingSubjects,
+} from "@/utils/backend/subject/subject";
 
 // Helpers
 import { getLocalePath } from "@/utils/helpers/i18n";
@@ -31,14 +34,15 @@ import { createTitleStr } from "@/utils/helpers/title";
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Schedule as ScheduleType } from "@/utils/types/schedule";
-import { TeacherSubjectItem } from "@/utils/types/subject";
+import { SubjectWNameAndCode, TeacherSubjectItem } from "@/utils/types/subject";
 
 // Page
 const TeachPage: CustomPage<{
   schedule: ScheduleType;
-  subjects: TeacherSubjectItem[];
+  subjectsInCharge: SubjectWNameAndCode[];
+  teachingSubjects: TeacherSubjectItem[];
   teacherID: number;
-}> = ({ schedule, subjects, teacherID }) => {
+}> = ({ schedule, subjectsInCharge, teachingSubjects, teacherID }) => {
   const { t } = useTranslation("teach");
 
   return (
@@ -53,7 +57,10 @@ const TeachPage: CustomPage<{
       <ContentLayout>
         <Section>
           <Header>Schedule</Header>
-          <Schedule schedule={schedule} teacherID={teacherID} role="teacher" />
+          <Schedule
+            {...{ schedule, subjectsInCharge, teacherID }}
+            role="teacher"
+          />
         </Section>
       </ContentLayout>
     </>
@@ -90,7 +97,14 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   const teacherID = metadata.teacher!;
   const { data: schedule } = await getSchedule(supabase, "teacher", teacherID);
-  const { data: subjects } = await getTeachingSubjects(supabase, teacherID);
+  const { data: subjectsInCharge } = await getSubjectsInCharge(
+    supabase,
+    teacherID
+  );
+  const { data: teachingSubjects } = await getTeachingSubjects(
+    supabase,
+    teacherID
+  );
 
   return {
     props: {
@@ -101,7 +115,8 @@ export const getServerSideProps: GetServerSideProps = async ({
         "schedule",
       ])),
       schedule,
-      subjects,
+      subjectsInCharge,
+      subjects: teachingSubjects,
       teacherID,
     },
   };

@@ -46,7 +46,7 @@ import {
 import { cn } from "@/utils/helpers/className";
 import { getLocaleObj } from "@/utils/helpers/i18n";
 import { withLoading } from "@/utils/helpers/loading";
-import { getSubjectName } from "@/utils/helpers/schedule";
+import { getSubjectName, positionPxToPeriod } from "@/utils/helpers/schedule";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
@@ -151,37 +151,18 @@ const SubjectPeriod: FC<{
           animationControls.start({ x: 0, y: 0 });
           return false;
         }
-        const { top, left } = constraints.getBoundingClientRect();
 
-        // Calculate the drop position within the Schedule content area
-        const dropPosition = {
-          top: info.point.y - top - 60,
-          left: info.point.x - left - 152,
-        };
+        const { startTime: newStartTime, day: newDay } = positionPxToPeriod(
+          info.point.x,
+          info.point.y,
+          constraints
+        );
 
         // Validate position
-        if (dropPosition.left < 0 || dropPosition.top < 0) {
+        if (newStartTime === null) {
           animationControls.start({ x: 0, y: 0 });
           return false;
         }
-
-        // Calculate new `startTime` and `day`
-        const newStartTime = Math.min(
-          Math.max(
-            Math.ceil(
-              (dropPosition.left +
-                constraints.scrollLeft -
-                periodWidth * 0.75) /
-                periodWidth
-            ) + 1,
-            1
-          ),
-          10
-        );
-        const newDay = Math.min(
-          Math.max(Math.ceil(dropPosition.top / periodHeight), 1),
-          5
-        ) as Day;
 
         // Don’t do anything if the Period is in the same location
         if (newStartTime === period.startTime && newDay === day) {
@@ -306,12 +287,11 @@ const SubjectPeriod: FC<{
              border-secondary-container bg-secondary-container px-3 py-1
              text-left text-on-secondary-container
              transition-[border,background-color,color]`,
-            !loading && isInSession
+            !(loading || extending) && isInSession
               ? `border-tertiary-container bg-tertiary-container
                  text-on-tertiary-container`
               : `bg-secondary-container text-on-secondary-container`,
-            extending && "bg-transparent",
-            loading && "bg-surface text-secondary",
+            (loading || extending) && "bg-surface text-secondary",
             role === "teacher" && "cursor-default",
           ])}
           style={{
@@ -349,13 +329,15 @@ const SubjectPeriod: FC<{
           )}
 
           {/* Teacher / subject name */}
-          <span className="skc-body-small">
-            {role === "teacher" ? (
-              getSubjectName(period.duration, period.subject.name, locale)
-            ) : (
-              <HoverList people={period.subject.teachers} />
-            )}
-          </span>
+          {(!menuOpen || extending || loading) && (
+            <span className="skc-body-small">
+              {role === "teacher" ? (
+                getSubjectName(period.duration, period.subject.name, locale)
+              ) : (
+                <HoverList people={period.subject.teachers} />
+              )}
+            </span>
+          )}
         </button>
 
         {/* Hover menu */}
@@ -381,6 +363,7 @@ const SubjectPeriod: FC<{
                     easing.standardAccelerate
                   ),
                 }}
+                aria-hidden
                 className="absolute -right-12 bottom-0.5 z-20 text-secondary"
                 transition={transition(
                   duration.short4,
@@ -390,28 +373,22 @@ const SubjectPeriod: FC<{
                 <MaterialIcon icon="double_arrow" size={40} />
               </motion.div>
 
-              {/* End guide */}
+              {/* Result guide */}
               <motion.div
                 aria-hidden
-                initial={{ opacity: 0, scaleY: 0 }}
+                initial={{ opacity: 0 }}
                 animate={{
                   opacity: 1,
-                  scaleY: 1,
-                  x:
-                    periodDuration > 1 ? periodWidth * (periodDuration - 2) : 0,
+                  width:
+                    // Calculate period width by duration
+                    periodDuration * 96 +
+                    // Correct for missing gap in the middle of multi-period periods
+                    (periodDuration - 1) * 8,
                 }}
-                exit={{ opacity: 0, scaleY: 0 }}
+                exit={{ opacity: 0 }}
                 transition={transition(duration.short4, easing.standard)}
-                className={cn([
-                  `skc-body-medium absolute -top-1 -bottom-1 left-0 z-10 flex
-                   flex-col items-end border-r-4 border-secondary
-                   bg-gradient-to-l from-secondary-container pr-1
-                   transition-[width]`,
-                  periodDuration > 1 ? "w-[12.5rem]" : "w-24",
-                ])}
-              >
-                {t("schedule.periodLength", { count: periodDuration })}
-              </motion.div>
+                className="absolute inset-0 rounded-sm border-4 border-secondary"
+              />
             </>
           )}
         </AnimatePresence>

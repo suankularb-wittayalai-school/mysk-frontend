@@ -39,3 +39,5 @@ export type PeriodContentItem = {
 export type PeriodContentItemOptSubj = Omit<PeriodContentItem, "subject"> & {
   subject?: PeriodContentItem["subject"];
 };
+
+export type PeriodLocation = { startTime: number; day: number };

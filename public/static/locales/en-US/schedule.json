@@ -47,7 +47,7 @@
         "add": "Add subject period",
         "edit": "Edit subject period"
       },
-      "longPeriodsNote": "For longer periods, do not add them as multiple individual periods. Edit the “Period duration” property below.",
+      "addDesc": "You’re adding {{subject}} to {{day}}, period {{startTime}}. Fill in the following to finish.",
       "form": {
         "title": "Period information",
         "subject": "Subject",
@@ -56,7 +56,11 @@
         "room_helper": "4-digit code in front of rooms, i.e. 1216",
         "day": "Day",
         "periodStart": "Starts at period",
-        "duration": "Period duration"
+        "duration": {
+          "label": "Period duration",
+          "single": "Single period (50 minutes)",
+          "double": "Double period (1 hr 40 min)"
+        }
       },
       "action": {
         "cancel": "Cancel",

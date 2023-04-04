@@ -98,6 +98,36 @@ export function arePeriodsOverlapping(
   return false;
 }
 
+export function positionPxToPeriod(x: number, y: number, constraints: Element) {
+  // Get rectangle
+  const { top, left } = constraints.getBoundingClientRect();
+
+  // Calculate the drop position within the Schedule content area
+  const dropPosition = {
+    top: y - top - 60,
+    left: x - left - 152,
+  };
+
+  // Validate position
+  if (dropPosition.left < 0 || dropPosition.top < 0) {
+    return { startTime: null, day: null };
+  }
+
+  // Calculate `startTime` and `day`
+  const startTime = Math.min(
+    Math.max(
+      Math.ceil(
+        (dropPosition.left + constraints.scrollLeft - 104 * 0.75) / 104
+      ) + 1,
+      1
+    ),
+    10
+  );
+  const day = Math.min(Math.max(Math.ceil(dropPosition.top / 60), 1), 5) as Day;
+
+  return { startTime, day };
+}
+
 /**
  * Format a Subject Period’s Subject name with the duration in mind
  *

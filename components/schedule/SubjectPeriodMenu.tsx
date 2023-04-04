@@ -48,10 +48,12 @@ const SubjectPeriodMenu: FC<{
 
   return (
     <AnimatePresence>
-      {open && (
+      {open && !extending && (
         <div
-          className="absolute inset-0 flex h-14 flex-col rounded-sm
-            bg-secondary-container p-1 pt-0.5"
+          className={cn([
+            `absolute inset-0 flex h-14 flex-col rounded-sm p-1 pt-0.5`,
+            moving && `bg-secondary-container`,
+          ])}
         >
           <motion.span
             layoutId={`period-${period.id}-class`}
