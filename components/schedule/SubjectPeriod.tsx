@@ -24,7 +24,6 @@ import {
   MaterialIcon,
   transition,
   useAnimationConfig,
-  useBreakpoint,
 } from "@suankularb-components/react";
 
 // Internal components
@@ -86,7 +85,6 @@ const SubjectPeriod: FC<{
   const [detailsOpen, setDetailsOpen] = useState<boolean>(false);
 
   // Hover menu
-  const { atBreakpoint } = useBreakpoint();
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
 
   // Keyboard support for opening/closing hover menu
@@ -339,7 +337,7 @@ const SubjectPeriod: FC<{
           )}
 
           {/* Teacher / subject name */}
-          {(!menuOpen || extending || loading) && (
+          {(role === "student" || !menuOpen || extending || loading) && (
             <span className="skc-body-small">
               {role === "teacher" ? (
                 getSubjectName(period.duration, period.subject.name, locale)
