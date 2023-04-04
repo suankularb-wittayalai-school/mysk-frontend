@@ -83,15 +83,17 @@ const Schedule: FC<{
       }}
     >
       <div className="relative -my-2 !mx-0 flex flex-col-reverse gap-3 sm:flex-col">
-        {/* Subjects in Charge Card: for Subjects to be added to Schedule */}
         {role === "teacher" && (
-          <SubjectsInChargeCard subjects={subjectsInCharge!} />
-        )}
+          <>
+            {/* Subjects in Charge Card: for Subjects to be added to Schedule */}
+            <SubjectsInChargeCard subjects={subjectsInCharge!} />
 
-        <p className="mx-4 sm:mx-0">
-          Drag a subject into the period when you teach that subject, then fill
-          in the rest of the information.
-        </p>
+            <p className="mx-4 sm:mx-0">
+              Drag a subject into the period when you teach that subject, then
+              fill in the rest of the information.
+            </p>
+          </>
+        )}
 
         <figure
           ref={scheduleRef}
