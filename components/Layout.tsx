@@ -16,14 +16,11 @@ import {
   NavDrawer,
   NavDrawerItem,
   NavDrawerSection,
-  PageHeader,
-  Progress,
   RootLayout,
   Snackbar,
 } from "@suankularb-components/react";
 
 // Internal components
-import Favicon from "@/components/brand/Favicon";
 import RailLogo from "@/components/brand/RailLogo";
 
 // Backend
@@ -36,7 +33,7 @@ import NavDrawerContext from "@/contexts/NavDrawerContext";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
-import { usePageIsLoading, useTransitionEvent } from "@/utils/hooks/routing";
+import { useTransitionEvent } from "@/utils/hooks/routing";
 import { useSnackbar } from "@/utils/hooks/snackbar";
 
 // Types
@@ -107,8 +104,7 @@ const Layout: FC<
     })();
   }, [user]);
 
-  // Root Layout
-  const { pageIsLoading } = usePageIsLoading();
+  // // Root Layout
   // const { transitionEvent } = useTransitionEvent(
   //   pageHeader?.parentURL,
   //   childURLs
