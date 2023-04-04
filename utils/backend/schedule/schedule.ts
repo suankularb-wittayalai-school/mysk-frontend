@@ -9,20 +9,17 @@ import {
   createEmptySchedule,
 } from "@/utils/helpers/schedule";
 
-// Supabase
+// Backend
+import { getClassIDFromNumber } from "@/utils/backend/classroom/classroom";
+
+// Types
 import {
   BackendDataReturn,
   BackendReturn,
   DatabaseClient,
 } from "@/utils/types/common";
-
-// Types
 import { Role, Teacher } from "@/utils/types/person";
-import {
-  Schedule,
-  PeriodContentItem,
-  SchedulePeriod,
-} from "@/utils/types/schedule";
+import { Schedule, PeriodContentItem } from "@/utils/types/schedule";
 
 /**
  * Construct a Schedule from Schedule Items from the student’s perspective
@@ -227,7 +224,7 @@ export async function createScheduleItem(
   supabase: DatabaseClient,
   form: {
     subject: number;
-    classID: number;
+    class: number;
     room: string;
     day: number;
     startTime: number;
@@ -235,9 +232,19 @@ export async function createScheduleItem(
   },
   teacherID: number
 ): Promise<BackendReturn> {
+  const { data: classID, error: classError } = await getClassIDFromNumber(
+    supabase,
+    form.class
+  );
+
+  if (classError) {
+    console.error(classError);
+    return { error: classError };
+  }
+
   const { error } = await supabase.from("schedule_items").insert({
     subject: form.subject,
-    classroom: form.classID,
+    classroom: classID,
     room: form.room,
     teacher: teacherID,
     day: form.day,

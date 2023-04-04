@@ -105,27 +105,27 @@ export function positionPxToPeriod(x: number, y: number, constraints: Element) {
   // Calculate the drop position within the Schedule content area
   const dropPosition = {
     top: y - top - 60,
-    left: x - left - 152,
+    left: x + constraints.scrollLeft - left - 152,
   };
 
-  // Validate position
-  if (dropPosition.left < 0 || dropPosition.top < 0) {
-    return { startTime: null, day: null };
-  }
-
   // Calculate `startTime` and `day`
-  const startTime = Math.min(
-    Math.max(
-      Math.ceil(
-        (dropPosition.left + constraints.scrollLeft - 104 * 0.75) / 104
-      ) + 1,
-      1
-    ),
-    10
-  );
-  const day = Math.min(Math.max(Math.ceil(dropPosition.top / 60), 1), 5) as Day;
+  const startTime = Math.ceil((dropPosition.left - 104 * 0.75) / 104) + 1;
+  const day = Math.ceil(dropPosition.top / 60) as Day;
+
+  // Validate calculated position
+  if (startTime < 0 || startTime > 10) return { startTime: null, day: null };
+  if (day < 1 || day > 5) return { startTime: null, day: null };
 
   return { startTime, day };
+}
+
+export function periodDurationToWidth(duration: number) {
+  return (
+    // Calculate period width by duration
+    duration * 96 +
+    // Correct for missing gap in the middle of multi-period periods
+    (duration - 1) * 8
+  );
 }
 
 /**

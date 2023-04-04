@@ -46,7 +46,11 @@ import {
 import { cn } from "@/utils/helpers/className";
 import { getLocaleObj } from "@/utils/helpers/i18n";
 import { withLoading } from "@/utils/helpers/loading";
-import { getSubjectName, positionPxToPeriod } from "@/utils/helpers/schedule";
+import {
+  getSubjectName,
+  periodDurationToWidth,
+  positionPxToPeriod,
+} from "@/utils/helpers/schedule";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
@@ -199,6 +203,18 @@ const SubjectPeriod: FC<{
     );
   }
 
+  // Reset dragging when the window size changes
+  function handleWindowResize() {
+    animationControls.set({ x: 0, y: 0 });
+  }
+
+  useEffect(() => {
+    window.addEventListener("resize", handleWindowResize);
+    return () => {
+      window.removeEventListener("resize", handleWindowResize);
+    };
+  }, []);
+
   // Period extension
   const periodRef: RefObject<HTMLLIElement> = useRef(null);
   const [extending, setExtending] = useState<boolean>(false);
@@ -294,13 +310,7 @@ const SubjectPeriod: FC<{
             (loading || extending) && "bg-surface text-secondary",
             role === "teacher" && "cursor-default",
           ])}
-          style={{
-            width:
-              // Calculate period width by duration
-              period.duration * 96 +
-              // Correct for missing gap in the middle of multi-period periods
-              (period.duration - 1) * 8,
-          }}
+          style={{ width: periodDurationToWidth(period.duration) }}
           onClick={() => role === "student" && setDetailsOpen(true)}
         >
           {/* Subject name / class */}
