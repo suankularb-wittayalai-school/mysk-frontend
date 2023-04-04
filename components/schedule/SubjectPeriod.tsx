@@ -79,7 +79,8 @@ const SubjectPeriod: FC<{
   const supabase = useSupabaseClient();
 
   // Context
-  const { role, teacherID, constraintsRef } = useContext(ScheduleContext);
+  const { role, teacherID, periodWidth, periodHeight, constraintsRef } =
+    useContext(ScheduleContext);
 
   // Dialog control
   const [detailsOpen, setDetailsOpen] = useState<boolean>(false);
@@ -135,10 +136,6 @@ const SubjectPeriod: FC<{
 
   // Loading
   const [loading, toggleLoading] = useToggle();
-
-  // Period width and height (used in move and extend)
-  const periodWidth = 104; // 96 + 8
-  const periodHeight = 60; // 56 + 4
 
   // Look at that drag
   async function handleDragEnd(
