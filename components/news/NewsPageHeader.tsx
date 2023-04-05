@@ -1,8 +1,5 @@
 // External libraries
-import Image from "next/image";
-
 import { useTranslation } from "next-i18next";
-
 import { FC, useContext } from "react";
 
 // SK Components
@@ -15,6 +12,7 @@ import {
 } from "@suankularb-components/react";
 
 // Internal components
+import MultiSchemeImage from "@/components/common/MultiSchemeImage";
 import PageHeader from "@/components/common/MySKPageHeader";
 import NewsChipSet from "@/components/news/NewsChipSet";
 
@@ -93,36 +91,18 @@ const NewsPageHeader: FC<{ newsItem: InfoPage | FormPage }> = ({
         className="!flex !flex-col-reverse !gap-y-6 md:!grid"
       >
         {/* Banner image */}
-        {/* <div
-          className="shadow relative -left-4 aspect-video w-[calc(100%+2rem)]
-            overflow-hidden bg-surface-variant sm:left-0 sm:w-full
-            sm:rounded-lg"
-        >
-          <Image
-            src={newsItem.image || "/images/graphics/news-placeholder.png"}
-            fill
-            priority
-            alt=""
-            className="object-cover"
-          />
-        </div> */}
-        <picture
+        <MultiSchemeImage
+          {...(newsItem.image
+            ? { srcLight: newsItem.image, srcDark: undefined }
+            : { srcLight: NewsPlaceholderLight, srcDark: NewsPlaceholderDark })}
+          width={648}
+          height={364.5}
+          priority
+          alt=""
           className="shadow relative -left-4 aspect-video w-[calc(100%+2rem)]
             overflow-hidden bg-surface-variant object-cover sm:left-0
             sm:w-full sm:rounded-lg"
-        >
-          <source
-            srcSet={NewsPlaceholderDark.src}
-            media="(prefers-color-scheme: dark)"
-          />
-          <Image
-            src={NewsPlaceholderLight}
-            width={648}
-            height={364.5}
-            priority
-            alt=""
-          />
-        </picture>
+        />
 
         {/* Title and short description */}
         <div className="flex flex-col gap-3">

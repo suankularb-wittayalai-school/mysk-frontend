@@ -2,7 +2,6 @@
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 import Head from "next/head";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -26,6 +25,7 @@ import {
 
 // Internal components
 import ForgotPasswordDialog from "@/components/account/ForgotPassword";
+import MultiSchemeImage from "@/components/common/MultiSchemeImage";
 
 // Contexts
 import SnackbarContext from "@/contexts/SnackbarContext";
@@ -195,22 +195,16 @@ const ImageSection: FC = () => (
       className="md:absolute md:left-0 md:right-0 md:h-[calc(100vh-6rem)]
         supports-[height:100svh]:md:h-[calc(100svh-6rem)]"
     >
-      <picture
+      <MultiSchemeImage
+        srcLight={LandingImageLight}
+        srcDark={LandingImageDark}
+        width={1080}
+        height={1080}
+        priority
+        alt=""
         className="relative md:absolute md:right-[-10.5rem] md:left-[-10.5rem]
           md:top-1/2 md:-translate-y-1/2"
-      >
-        <source
-          srcSet={LandingImageDark.src}
-          media="(prefers-color-scheme: dark)"
-        />
-        <Image
-          src={LandingImageLight}
-          width={1080}
-          height={1080}
-          priority
-          alt=""
-        />
-      </picture>
+      />
     </div>
   </div>
 );
