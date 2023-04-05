@@ -73,13 +73,37 @@
       }
     }
   },
-  "error": "Error: {{errorMsg}}",
-  "fallback": {
-    "title": "Client-side error",
-    "stack": "Stack trace",
-    "action": {
-      "back": "Back",
-      "reload": "Reload"
+  "error": {
+    "404": {
+      "title": "We couldn’t find that.",
+      "desc": "Check the URL and try again."
+    },
+    "500": {
+      "title": "Something went wrong on the server.",
+      "desc": "We encountered an error on the server. Try again in a few moments."
+    },
+    "client": {
+      "title": "Something went wrong on your client.",
+      "desc": "We encountered an error while trying to render or perform an action on your browser. Please try again.",
+      "callStack": "Call stack for developers"
+    },
+    "sectionFallback": {
+      "title": "Something went wrong in this section.",
+      "desc": "We encountered an error while trying to render or perform an action in this section. Please try again.",
+      "callStack": "Call stack for developers"
+    },
+    "offline": {
+      "title": "Connect to the internet.",
+      "tabName": "Offline",
+      "desc": "This page needs an internet connection to work. Check your connection and try again.",
+      "offlineAvailability": "Only pages that you frequently visit are available offline.",
+      "schoolWiFi": {
+        "title": "School wi-fi",
+        "desc": "Inside the school? You can connect to the “SK_Student” wi-fi. Ask a classmate or a teacher for instructions."
+      }
+    },
+    "common": {
+      "persistNotice": "If this persists, contact support."
     }
   },
   "seeDetails": "See details",

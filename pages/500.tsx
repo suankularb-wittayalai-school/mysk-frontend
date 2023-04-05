@@ -1,3 +1,9 @@
+// External libraries
+import { GetStaticProps } from "next";
+
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+
 // Images
 import ServerErrorLight from "@/public/images/graphics/error/500-light.png";
 import ServerErrorDark from "@/public/images/graphics/error/500-dark.png";
@@ -8,9 +14,11 @@ import ErrorHero from "@/components/error/ErrorHero";
 import ErrorLayout from "@/components/error/ErrorLayout";
 
 // Types
-import { CustomPage } from "@/utils/types/common";
+import { CustomPage, LangCode } from "@/utils/types/common";
 
 const ServerErrorPage: CustomPage = () => {
+  const { t } = useTranslation("common");
+
   return (
     <ErrorLayout>
       <ErrorHero
@@ -23,19 +31,21 @@ const ServerErrorPage: CustomPage = () => {
             alt=""
           />
         }
-        title="Something went wrong on the server."
+        title={t("error.500.title")}
         code={500}
-        verbose="Internal Server Error"
+        verbose={t("error.500.verbose")}
       >
         <div className="skc-body-large flex flex-col gap-2">
-          <p>
-            We encountered an error on the server. Try again in a few moments.
-          </p>
-          <p>If this persists, contact support.</p>
+          <p>{t("error.500.desc")}</p>
+          <p>{t("error.common.persistNotice")}</p>
         </div>
       </ErrorHero>
     </ErrorLayout>
   );
 };
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => ({
+  props: await serverSideTranslations(locale as LangCode, ["common"]),
+});
 
 export default ServerErrorPage;

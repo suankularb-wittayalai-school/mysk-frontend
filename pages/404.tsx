@@ -1,3 +1,9 @@
+// External libraries
+import { GetStaticProps } from "next";
+
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+
 // Images
 import NotFoundLight from "@/public/images/graphics/error/404-light.png";
 import NotFoundDark from "@/public/images/graphics/error/404-dark.png";
@@ -8,9 +14,11 @@ import ErrorHero from "@/components/error/ErrorHero";
 import ErrorLayout from "@/components/error/ErrorLayout";
 
 // Types
-import { CustomPage } from "@/utils/types/common";
+import { CustomPage, LangCode } from "@/utils/types/common";
 
 const NotFoundPage: CustomPage = () => {
+  const { t } = useTranslation("common");
+
   return (
     <ErrorLayout>
       <ErrorHero
@@ -23,14 +31,18 @@ const NotFoundPage: CustomPage = () => {
             alt=""
           />
         }
-        title="We couldn’t find that."
+        title={t("error.404.title")}
         code={404}
-        verbose="Not Found"
+        verbose={t("error.404.verbose")}
       >
-        <p className="skc-body-large">Check the URL and try again.</p>
+        <p className="skc-body-large">{t("error.404.desc")}</p>
       </ErrorHero>
     </ErrorLayout>
   );
 };
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => ({
+  props: await serverSideTranslations(locale as LangCode, ["common"]),
+});
 
 export default NotFoundPage;
