@@ -1,15 +1,15 @@
 // External libraries
-import { NextPage } from "next";
-import { AppProps } from "next/app";
+import type { NextPage } from "next";
+import type { AppProps } from "next/app";
 
-import { FC, ReactNode } from "react";
+import type { FC, ReactNode } from "react";
 
-import { PostgrestError, SupabaseClient } from "@supabase/supabase-js";
+import type { PostgrestError, SupabaseClient } from "@supabase/supabase-js";
 
-import { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef } from "@tanstack/react-table";
 
-// Internal components
-import { PageHeaderProps, TextFieldProps } from "@suankularb-components/react";
+// SK Components
+import type { TextFieldProps } from "@suankularb-components/react";
 
 // Types
 import { Role } from "@/utils/types/person";
