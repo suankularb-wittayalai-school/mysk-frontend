@@ -31,7 +31,7 @@ const ErrorHero: FC<{
             <h1 className="skc-headline-large">{title}</h1>
             {(code || verbose) && (
               <p className="skc-title-large text-on-surface-variant">
-                {[code, verbose].join(": ")}
+                {[code, verbose].filter((segment) => segment).join(": ")}
               </p>
             )}
           </header>

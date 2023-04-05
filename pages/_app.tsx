@@ -22,6 +22,8 @@ import { ThemeProvider } from "@suankularb-components/react";
 
 // Internal components
 import Layout from "@/components/Layout";
+import ErrorBoundary from "@/components/error/ErrorBoundary";
+import PageFallback from "@/components/error/PageFallback";
 
 // Contexts
 import NavDrawerContext from "@/contexts/NavDrawerContext";
@@ -107,7 +109,9 @@ function App({ Component, pageProps }: CustomAppProps) {
           <MotionConfig reducedMotion="user">
             <ThemeProvider>
               <Layout {...{ context, fab, pageRole, childURLs }}>
-                <Component {...pageProps} />
+                <ErrorBoundary Fallback={PageFallback}>
+                  <Component {...pageProps} />
+                </ErrorBoundary>
               </Layout>
             </ThemeProvider>
           </MotionConfig>

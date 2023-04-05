@@ -17,19 +17,26 @@ const ErrorLayout: FC<{ children: ReactNode }> = ({ children }) => {
         px-4 supports-[height:100dvh]:min-h-[100dvh] sm:px-0"
     >
       <div className="absolute top-11 left-4 right-4">
-        <div className="mx-auto w-full max-w-[72.5rem] sm:w-[calc(100%-11rem)]">
+        <div
+          className="mx-auto w-full max-w-[72.5rem]
+            sm:w-[calc(100%-11rem)]"
+        >
           <Button
             appearance="text"
             icon={<MaterialIcon icon="arrow_backward" />}
             alt="Go back"
             onClick={() => window.history.back()}
-            className="-left-2 before:!bg-on-surface [&_i]:text-on-surface [&_span]:!bg-on-surface"
+            className="-left-2 before:!bg-on-surface [&_i]:text-on-surface
+              [&_span]:!bg-on-surface"
           />
         </div>
       </div>
       <ContentLayout>
         <Columns columns={6}>
-          <div className="col-span-2 sm:col-span-4 md:col-span-4 md:col-start-2">
+          <div
+            className="col-span-2 flex flex-col gap-6 sm:col-span-4
+              md:col-span-4 md:col-start-2"
+          >
             {children}
           </div>
         </Columns>
