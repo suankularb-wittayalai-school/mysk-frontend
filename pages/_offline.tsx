@@ -1,10 +1,9 @@
-// External libraries
-import Image from "next/image";
-
 // Images
-import OfflineImage from "@/public/images/graphics/error/offline.png";
+import OfflineLight from "@/public/images/graphics/error/offline-light.png";
+import OfflineDark from "@/public/images/graphics/error/offline-dark.png";
 
 // Internal components
+import MultiSchemeImage from "@/components/common/MultiSchemeImage";
 import ErrorHero from "@/components/error/ErrorHero";
 import ErrorLayout from "@/components/error/ErrorLayout";
 
@@ -15,7 +14,15 @@ const OfflinePage: CustomPage = () => {
   return (
     <ErrorLayout>
       <ErrorHero
-        image={<Image src={OfflineImage} width={360} height={306} alt="" />}
+        image={
+          <MultiSchemeImage
+            srcLight={OfflineLight}
+            srcDark={OfflineDark}
+            width={360}
+            height={244}
+            alt=""
+          />
+        }
         title="Connect to the internet."
       >
         <p className="skc-body-large">

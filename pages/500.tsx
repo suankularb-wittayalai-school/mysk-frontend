@@ -1,10 +1,9 @@
-// External libraries
-import Image from "next/image";
-
 // Images
-import ServerErrorImage from "@/public/images/graphics/error/500.png";
+import ServerErrorLight from "@/public/images/graphics/error/500-light.png";
+import ServerErrorDark from "@/public/images/graphics/error/500-dark.png";
 
 // Internal components
+import MultiSchemeImage from "@/components/common/MultiSchemeImage";
 import ErrorHero from "@/components/error/ErrorHero";
 import ErrorLayout from "@/components/error/ErrorLayout";
 
@@ -15,7 +14,15 @@ const ServerErrorPage: CustomPage = () => {
   return (
     <ErrorLayout>
       <ErrorHero
-        image={<Image src={ServerErrorImage} width={360} height={306} alt="" />}
+        image={
+          <MultiSchemeImage
+            srcLight={ServerErrorLight}
+            srcDark={ServerErrorDark}
+            width={360}
+            height={244}
+            alt=""
+          />
+        }
         title="Something went wrong on the server."
         code={500}
         verbose="Internal Server Error"

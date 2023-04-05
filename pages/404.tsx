@@ -1,10 +1,9 @@
-// External libraries
-import Image from "next/image";
-
 // Images
-import NotFoundImage from "@/public/images/graphics/error/404.png";
+import NotFoundLight from "@/public/images/graphics/error/404-light.png";
+import NotFoundDark from "@/public/images/graphics/error/404-dark.png";
 
 // Internal components
+import MultiSchemeImage from "@/components/common/MultiSchemeImage";
 import ErrorHero from "@/components/error/ErrorHero";
 import ErrorLayout from "@/components/error/ErrorLayout";
 
@@ -15,7 +14,15 @@ const NotFoundPage: CustomPage = () => {
   return (
     <ErrorLayout>
       <ErrorHero
-        image={<Image src={NotFoundImage} width={360} height={306} alt="" />}
+        image={
+          <MultiSchemeImage
+            srcLight={NotFoundLight}
+            srcDark={NotFoundDark}
+            width={360}
+            height={306}
+            alt=""
+          />
+        }
         title="We couldn’t find that."
         code={404}
         verbose="Not Found"
