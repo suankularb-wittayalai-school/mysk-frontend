@@ -34,6 +34,7 @@ const NotFoundPage: CustomPage = () => {
         title={t("error.404.title")}
         code={404}
         verbose={t("error.404.verbose")}
+        tabName={t("error.404.tabName")}
       >
         <p className="skc-body-large">{t("error.404.desc")}</p>
       </ErrorHero>

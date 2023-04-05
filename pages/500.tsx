@@ -34,6 +34,7 @@ const ServerErrorPage: CustomPage = () => {
         title={t("error.500.title")}
         code={500}
         verbose={t("error.500.verbose")}
+        tabName={t("error.500.tabName")}
       >
         <div className="skc-body-large flex flex-col gap-2">
           <p>{t("error.500.desc")}</p>
