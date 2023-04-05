@@ -4,8 +4,6 @@ import { FC, useContext, useState } from "react";
 
 // SK Components
 import {
-  Card,
-  ChipSet,
   InputChip,
   MaterialIcon,
   transition,
@@ -20,12 +18,12 @@ import ScheduleContext from "@/contexts/ScheduleContext";
 
 // Helpers
 import { getLocaleObj, getLocaleString } from "@/utils/helpers/i18n";
+import { positionPxToPeriod } from "@/utils/helpers/schedule";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
 
 // Types
-import { positionPxToPeriod } from "@/utils/helpers/schedule";
 import { SubjectWNameAndCode } from "@/utils/types/subject";
 
 const ScheduleSubjectChip: FC<{ subject: SubjectWNameAndCode }> = ({
@@ -45,7 +43,7 @@ const ScheduleSubjectChip: FC<{ subject: SubjectWNameAndCode }> = ({
   // Dialog control
   const [addOpen, setAddOpen] = useState<boolean>(false);
 
-  function handleMouseMove(x: number, y: number, subjectID: number) {
+  function handleMouseMove(x: number, y: number) {
     const constraints = constraintsRef?.current;
     if (!constraints) return;
 
@@ -59,18 +57,19 @@ const ScheduleSubjectChip: FC<{ subject: SubjectWNameAndCode }> = ({
       animationControls.start({ x: 0, y: 0 });
       return;
     }
-    animationControls.start({ opacity: 0, scale: 1.4 });
+    animationControls.start({ opacity: 0.5 });
 
     setAddOpen(true);
   }
 
-  function handleDialogClose() {
+  async function handleDialogClose() {
     if (!addOpen) return;
 
     setAddOpen(false);
     setAdditionSite!();
 
-    animationControls.set({ x: 0, y: "-50%", opacity: 0, scale: 1, scaleY: 0 });
+    await animationControls.start({ opacity: 0, scale: 1.4 });
+    animationControls.set({ x: 0, y: "-50%", scale: 1, scaleY: 0 });
     animationControls.start({ y: 0, opacity: 1, scaleY: 1 });
   }
 
@@ -82,15 +81,9 @@ const ScheduleSubjectChip: FC<{ subject: SubjectWNameAndCode }> = ({
         drag
         dragMomentum={false}
         whileDrag={{ boxShadow: "var(--shadow-3)" }}
-        onMouseMove={(event) =>
-          handleMouseMove(event.clientX, event.clientY, subject.id)
-        }
+        onMouseMove={(event) => handleMouseMove(event.clientX, event.clientY)}
         onTouchMove={(event) =>
-          handleMouseMove(
-            event.touches[0].clientX,
-            event.touches[0].clientY,
-            subject.id
-          )
+          handleMouseMove(event.touches[0].clientX, event.touches[0].clientY)
         }
         onDragEnd={handleDragEnd}
         className="!z-40 rounded-sm transition-shadow"
