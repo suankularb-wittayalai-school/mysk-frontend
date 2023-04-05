@@ -255,90 +255,90 @@ const Layout: FC<
       </NavDrawer>
 
       {/* Navigation Bar/Rail */}
-      {!pageRole ||
-        (pageRole !== "public" && (
-          <NavBar
-            brand={<RailLogo />}
-            fab={fab}
-            end={
-              <>
-                <NavBarItem
-                  icon={<MaterialIcon icon="translate" />}
-                  label={t("navigation.language")}
-                  href={router.asPath}
-                  element={(props) => (
-                    <Link
-                      locale={locale == "en-US" ? "th" : "en-US"}
-                      onClick={() =>
-                        localStorage.setItem(
-                          "preferredLang",
-                          locale == "en-US" ? "th" : "en-US"
-                        )
-                      }
-                      {...props}
-                    />
-                  )}
-                />
-                <NavBarItem
-                  icon={<MaterialIcon icon="logout" />}
-                  label={t("navigation.logOut")}
-                  href="/account/logout"
-                  element={Link}
-                />
-              </>
-            }
-            onNavToggle={() => setNavOpen(true)}
-          >
-            {userMetadata?.role === "teacher" || pageRole === "teacher" ? (
+      {(!pageRole || pageRole !== "public") && (
+        <NavBar
+          brand={<RailLogo />}
+          fab={fab}
+          end={
+            <>
               <NavBarItem
-                icon={<MaterialIcon icon="school" />}
-                label={t("navigation.teach")}
-                selected={router.pathname.startsWith("/teach")}
-                href="/teach"
+                icon={<MaterialIcon icon="translate" />}
+                label={t("navigation.language")}
+                href={router.asPath}
+                element={(props) => (
+                  <Link
+                    locale={locale == "en-US" ? "th" : "en-US"}
+                    onClick={() =>
+                      localStorage.setItem(
+                        "preferredLang",
+                        locale == "en-US" ? "th" : "en-US"
+                      )
+                    }
+                    {...props}
+                  />
+                )}
+              />
+              <NavBarItem
+                icon={<MaterialIcon icon="logout" />}
+                label={t("navigation.logOut")}
+                href="/account/logout"
                 element={Link}
               />
-            ) : (
-              <NavBarItem
-                icon={<MaterialIcon icon="school" />}
-                label={t("navigation.learn")}
-                selected={router.pathname.startsWith("/learn")}
-                href="/learn"
-                element={Link}
-              />
-            )}
-            {(pageRole === "student" ||
-              (pageRole === "teacher" && classNumber)) && (
-              <NavBarItem
-                icon={<MaterialIcon icon="groups" />}
-                label={t("navigation.class")}
-                selected={router.pathname.startsWith("/class")}
-                href={`/class/${classNumber}/overview`}
-                element={Link}
-              />
-            )}
+            </>
+          }
+          onNavToggle={() => setNavOpen(true)}
+        >
+          {userMetadata?.role === "teacher" || pageRole === "teacher" ? (
             <NavBarItem
-              icon={<MaterialIcon icon="search" />}
-              label={t("navigation.lookup")}
-              selected={router.pathname.startsWith("/lookup")}
-              href="/lookup"
+              icon={<MaterialIcon icon="school" />}
+              label={t("navigation.teach")}
+              selected={router.pathname.startsWith("/teach")}
+              href="/teach"
               element={Link}
             />
+          ) : (
             <NavBarItem
-              icon={<MaterialIcon icon="newspaper" />}
-              label={t("navigation.news")}
-              selected={router.pathname.startsWith("/news")}
-              href="/news"
+              icon={<MaterialIcon icon="school" />}
+              label={t("navigation.learn")}
+              selected={router.pathname.startsWith("/learn")}
+              href="/learn"
               element={Link}
             />
+          )}
+          {(!pageRole ||
+            pageRole === "student" ||
+            (pageRole === "teacher" && classNumber)) && (
             <NavBarItem
-              icon={<MaterialIcon icon="account_circle" />}
-              label={t("navigation.account")}
-              selected={router.pathname.startsWith("/account")}
-              href="/account"
+              icon={<MaterialIcon icon="groups" />}
+              label={t("navigation.class")}
+              selected={router.pathname.startsWith("/class")}
+              href={`/class/${classNumber}/overview`}
               element={Link}
             />
-          </NavBar>
-        ))}
+          )}
+          <NavBarItem
+            icon={<MaterialIcon icon="search" />}
+            label={t("navigation.lookup")}
+            selected={router.pathname.startsWith("/lookup")}
+            href="/lookup"
+            element={Link}
+          />
+          <NavBarItem
+            icon={<MaterialIcon icon="newspaper" />}
+            label={t("navigation.news")}
+            selected={router.pathname.startsWith("/news")}
+            href="/news"
+            element={Link}
+          />
+          <NavBarItem
+            icon={<MaterialIcon icon="account_circle" />}
+            label={t("navigation.account")}
+            selected={router.pathname.startsWith("/account")}
+            href="/account"
+            element={Link}
+          />
+        </NavBar>
+      )}
 
       {/* Snackbar */}
       <Snackbar
