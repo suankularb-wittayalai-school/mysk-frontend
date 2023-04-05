@@ -16,8 +16,8 @@ const ErrorLayout: FC<{ children: ReactNode }> = ({ children }) => {
         from-surface-variant via-transparent bg-fixed
         px-4 supports-[height:100dvh]:min-h-[100dvh] sm:px-0"
     >
-      <div className="absolute top-14 left-4 right-4">
-        <div className="mx-auto w-full max-w-[70.5rem] sm:w-[calc(100%-10rem)]">
+      <div className="absolute top-11 left-4 right-4">
+        <div className="mx-auto w-full max-w-[72.5rem] sm:w-[calc(100%-11rem)]">
           <Button
             appearance="text"
             icon={<MaterialIcon icon="arrow_backward" />}
