@@ -1,6 +1,7 @@
 // External libraries
 import { setDay } from "date-fns";
 import { LayoutGroup } from "framer-motion";
+import { useTranslation } from "next-i18next";
 import { FC, RefObject, useEffect, useRef, useState } from "react";
 
 // Internal components
@@ -34,6 +35,9 @@ const Schedule: FC<{
   teacherID?: number;
   role: Role;
 }> = ({ schedule, subjectsInCharge, teacherID, role }) => {
+  // Translation
+  const { t } = useTranslation("schedule");
+
   // Ref for drag constrains and scrolling
   const scheduleRef: RefObject<HTMLElement> = useRef(null);
 
@@ -87,11 +91,7 @@ const Schedule: FC<{
           <>
             {/* Subjects in Charge Card: for Subjects to be added to Schedule */}
             <SubjectsInChargeCard subjects={subjectsInCharge!} />
-
-            <p className="mx-4 sm:mx-0">
-              Drag a subject into the period when you teach that subject, then
-              fill in the rest of the information.
-            </p>
+            <p className="mx-4 sm:mx-0">{t("schedule.additionGuide")}</p>
           </>
         )}
 

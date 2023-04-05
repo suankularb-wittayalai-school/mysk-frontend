@@ -80,48 +80,51 @@ const LookupClassSchedulePage: CustomPage<{
   subjectList: SubjectListItem[];
 }> = ({ classItem, schedule, subjectList }) => {
   // Translation
-  const { t } = useTranslation("lookup");
+  const { t } = useTranslation(["class", "common"]);
 
   const parentURL = `/lookup/class/${classItem.number}`;
 
   return (
     <>
       <Head>
-        <title>{createTitleStr(`M.${classItem.number} schedule`, t)}</title>
+        <title>
+          {createTitleStr(t("schedule.title", { number: classItem.number }), t)}
+        </title>
       </Head>
       <MySKPageHeader
-        title={`M.${classItem.number} schedule`}
+        title={t("schedule.title", { number: classItem.number })}
         parentURL={parentURL}
       >
         <TabsContainer appearance="primary" alt="">
           <Tab
             icon={<MaterialIcon icon="info" />}
-            label="Overview"
+            label={t("common.navigation.overview")}
             href={parentURL}
             element={Link}
           />
           <Tab
             icon={<MaterialIcon icon="groups" />}
-            label="Students"
+            label={t("common.navigation.students")}
             href={`${parentURL}/students`}
             element={Link}
           />
           <Tab
             icon={<MaterialIcon icon="group" />}
-            label="Teachers"
+            label={t("common.navigation.teachers")}
             href={`${parentURL}/teachers`}
             element={Link}
           />
           <Tab
             icon={<MaterialIcon icon="dashboard" />}
-            label="Schedule"
+            label={t("common.navigation.schedule")}
             selected
             href={`${parentURL}/schedule`}
             element={Link}
           />
         </TabsContainer>
       </MySKPageHeader>
-      <ContentLayout><Schedule schedule={schedule} role="student" />
+      <ContentLayout>
+        <Schedule schedule={schedule} role="student" />
         <SubjectListSection subjectList={subjectList} />
       </ContentLayout>
     </>
@@ -153,8 +156,7 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
         "common",
-        "learn",
-        "lookup",
+        "class",
         "schedule",
       ])),
       classItem,

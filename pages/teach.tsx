@@ -56,7 +56,7 @@ const TeachPage: CustomPage<{
       />
       <ContentLayout>
         <Section>
-          <Header>Schedule</Header>
+          <Header>{t("schedule.title")}</Header>
           <Schedule
             {...{ schedule, subjectsInCharge, teacherID }}
             role="teacher"
