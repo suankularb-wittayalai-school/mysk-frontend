@@ -1,6 +1,7 @@
 // External libraries
 import { GetStaticPaths, GetStaticProps } from "next";
 import Head from "next/head";
+import Link from "next/link";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -45,18 +46,9 @@ import { createTitleStr } from "@/utils/helpers/title";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
+
+// Types
 import { ClassWNumber } from "@/utils/types/class";
-
-const ScheduleSection: FC<{ schedule: ScheduleType }> = ({ schedule }) => {
-  const { t } = useTranslation("learn");
-
-  return (
-    <Section>
-      <Header>{t("schedule")}</Header>
-      <Schedule schedule={schedule} role="student" />
-    </Section>
-  );
-};
 
 const SubjectListSection: FC<{ subjectList: SubjectListItem[] }> = ({
   subjectList,
@@ -106,27 +98,30 @@ const LookupClassSchedulePage: CustomPage<{
             icon={<MaterialIcon icon="info" />}
             label="Overview"
             href={parentURL}
+            element={Link}
           />
           <Tab
             icon={<MaterialIcon icon="groups" />}
             label="Students"
             href={`${parentURL}/students`}
+            element={Link}
           />
           <Tab
             icon={<MaterialIcon icon="group" />}
             label="Teachers"
             href={`${parentURL}/teachers`}
+            element={Link}
           />
           <Tab
             icon={<MaterialIcon icon="dashboard" />}
             label="Schedule"
             selected
             href={`${parentURL}/schedule`}
+            element={Link}
           />
         </TabsContainer>
       </MySKPageHeader>
-      <ContentLayout>
-        <ScheduleSection schedule={schedule} />
+      <ContentLayout><Schedule schedule={schedule} role="student" />
         <SubjectListSection subjectList={subjectList} />
       </ContentLayout>
     </>

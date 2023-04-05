@@ -298,7 +298,8 @@ const SubjectPeriod: FC<{
             `tap-highlight-none flex h-14 w-24 flex-col rounded-sm border-4
              border-secondary-container bg-secondary-container px-3 py-1
              text-left text-on-secondary-container
-             transition-[border,background-color,color]`,
+             transition-[border,background-color,color] [&_*]:w-full
+             [&_*]:truncate [&_*]:break-all`,
             !(loading || extending) && isInSession
               ? `border-tertiary-container bg-tertiary-container
                  text-on-tertiary-container`
@@ -317,13 +318,13 @@ const SubjectPeriod: FC<{
                 duration.short2,
                 easing.standardDecelerate
               )}
-              className="skc-title-medium truncate"
+              className="skc-title-medium !w-fit"
             >
               {t("class", { ns: "common", number: period.class!.number })}
             </motion.span>
           ) : (
             <span
-              className="skc-title-medium truncate"
+              className="skc-title-medium"
               title={
                 role === "student"
                   ? getLocaleObj(period.subject.name, locale).name
