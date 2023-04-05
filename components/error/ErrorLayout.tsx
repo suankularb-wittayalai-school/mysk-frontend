@@ -13,10 +13,10 @@ const ErrorLayout: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <div
       className="flex min-h-screen flex-col justify-center bg-gradient-to-b
-        from-surface-variant via-transparent bg-fixed
-        px-4 supports-[height:100dvh]:min-h-[100dvh] sm:px-0"
+        from-surface-5 via-transparent bg-fixed px-4
+        supports-[height:100dvh]:min-h-[100dvh] sm:px-0"
     >
-      <div className="absolute top-11 left-4 right-4">
+      <div className="absolute top-4 left-4 right-4 sm:top-11">
         <div
           className="mx-auto w-full max-w-[72.5rem]
             sm:w-[calc(100%-11rem)]"
