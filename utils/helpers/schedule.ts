@@ -113,7 +113,7 @@ export function positionPxToPeriod(x: number, y: number, constraints: Element) {
   const day = Math.ceil(dropPosition.top / 60) as Day;
 
   // Validate calculated position
-  if (startTime < 0 || startTime > 10) return { startTime: null, day: null };
+  if (startTime < 1 || startTime > 10) return { startTime: null, day: null };
   if (day < 1 || day > 5) return { startTime: null, day: null };
 
   return { startTime, day };
