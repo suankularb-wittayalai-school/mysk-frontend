@@ -136,6 +136,6 @@ export const getServerSideProps: GetServerSideProps = async ({
   };
 };
 
-LearnPage.pageRole = "student";
+LearnPage.navType = "student";
 
 export default LearnPage;

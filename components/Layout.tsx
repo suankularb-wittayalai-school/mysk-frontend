@@ -43,9 +43,9 @@ import { UserMetadata } from "@/utils/types/person";
 const Layout: FC<
   { children: ReactNode } & Pick<
     CustomPage,
-    "context" | "fab" | "pageRole" | "childURLs"
+    "context" | "fab" | "navType" | "childURLs"
   >
-> = ({ children, context: Context, fab, pageRole, childURLs }) => {
+> = ({ children, context: Context, fab, navType, childURLs }) => {
   // Translation
   const locale = useLocale();
   const { t } = useTranslation("common");
@@ -60,7 +60,7 @@ const Layout: FC<
   const [userMetadata, setUserMetadata] = useState<UserMetadata | null>();
   const [classNumber, setClassNumber] = useState<number | null>();
   useEffect(() => {
-    if (!user || pageRole === "public") return;
+    if (!user || navType === "hidden") return;
     (async () => {
       // Get user metadata
       const { data: metadata, error: metadataError } = await getUserMetadata(
@@ -124,7 +124,7 @@ const Layout: FC<
           header={<span className="skc-headline-small">MySK</span>}
           alt="MySK"
         >
-          {userMetadata?.role === "teacher" || pageRole === "teacher" ? (
+          {userMetadata?.role === "teacher" || navType === "teacher" ? (
             <NavDrawerItem
               icon={<MaterialIcon icon="school" />}
               label={t("navigation.teach")}
@@ -141,7 +141,7 @@ const Layout: FC<
               element={Link}
             />
           )}
-          {pageRole === "student" || (pageRole === "teacher" && classNumber) ? (
+          {navType === "student" || (navType === "teacher" && classNumber) ? (
             <NavDrawerItem
               icon={<MaterialIcon icon="groups" />}
               label={t("navigation.class")}
@@ -199,7 +199,7 @@ const Layout: FC<
             href="/lookup/teachers"
             element={Link}
           />
-          {userMetadata?.role === "teacher" || pageRole === "teacher" ? (
+          {userMetadata?.role === "teacher" || navType === "teacher" ? (
             <NavDrawerItem
               icon={<MaterialIcon icon="mail" />}
               label={t("navigation.drawer.lookup.orders")}
@@ -255,7 +255,7 @@ const Layout: FC<
       </NavDrawer>
 
       {/* Navigation Bar/Rail */}
-      {(!pageRole || pageRole !== "public") && (
+      {(!navType || navType !== "hidden") && (
         <NavBar
           brand={<RailLogo />}
           fab={fab}
@@ -288,7 +288,7 @@ const Layout: FC<
           }
           onNavToggle={() => setNavOpen(true)}
         >
-          {userMetadata?.role === "teacher" || pageRole === "teacher" ? (
+          {userMetadata?.role === "teacher" || navType === "teacher" ? (
             <NavBarItem
               icon={<MaterialIcon icon="school" />}
               label={t("navigation.teach")}
@@ -305,9 +305,9 @@ const Layout: FC<
               element={Link}
             />
           )}
-          {(!pageRole ||
-            pageRole === "student" ||
-            (pageRole === "teacher" && classNumber)) && (
+          {(!navType ||
+            navType === "student" ||
+            (navType === "teacher" && classNumber)) && (
             <NavBarItem
               icon={<MaterialIcon icon="groups" />}
               label={t("navigation.class")}

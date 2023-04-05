@@ -176,6 +176,6 @@ export const getStaticPaths: GetStaticPaths = async () => {
   };
 };
 
-LookupClassSchedulePage.pageRole = "student";
+LookupClassSchedulePage.navType = "student";
 
 export default LookupClassSchedulePage;

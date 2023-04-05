@@ -408,4 +408,6 @@ export const getStaticProps = async ({ locale }: { locale: LangCode }) => ({
   },
 });
 
+IndexPage.navType = "hidden";
+
 export default IndexPage;

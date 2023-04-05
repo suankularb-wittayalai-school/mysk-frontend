@@ -122,6 +122,6 @@ export const getServerSideProps: GetServerSideProps = async ({
   };
 };
 
-TeachPage.pageRole = "teacher";
+TeachPage.navType = "teacher";
 
 export default TeachPage;

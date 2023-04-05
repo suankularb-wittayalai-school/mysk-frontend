@@ -46,4 +46,6 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => ({
   },
 });
 
+LogOutPage.navType = "hidden";
+
 export default LogOutPage;

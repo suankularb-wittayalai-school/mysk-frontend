@@ -79,6 +79,6 @@ export const getStaticPaths: GetStaticPaths = async () => {
   };
 };
 
-InfoPage.pageRole = "student";
+InfoPage.navType = "student";
 
 export default InfoPage;

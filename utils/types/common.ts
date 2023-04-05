@@ -40,9 +40,19 @@ export type CustomPage<T = {}> = NextPage<T> &
     fab: JSX.Element;
 
     /**
-     * Who can access this page.
+     * Determines what links are shown in Navigation Bar/Rail/Drawer
+     *
+     * ---
+     *
+     * An example of the effects of each type in a Navigation Bar/Rail:
+     *
+     * `student` — Learn, Class, Lookup, News, Account;
+     *
+     * `teacher` — Teach, (Class), Lookup, News, Account;
+     *
+     * `hidden` — Navigation Bar/Rail not shown at all.
      */
-    pageRole: Role | "public";
+    navType: Role | "hidden";
 
     /**
      * A list of child URLs of the current page.
