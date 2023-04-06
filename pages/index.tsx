@@ -282,10 +282,6 @@ const IndexPage: CustomPage = () => {
       <Head>
         <title>{t("brand.name", { ns: "common" })}</title>
         <meta
-          name="apple-mobile-web-app-status-bar-style"
-          content="black-translucent"
-        />
-        <meta
           name="description"
           content={t("brand.description", { ns: "common" })}
         />
