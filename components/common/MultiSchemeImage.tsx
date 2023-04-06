@@ -23,6 +23,7 @@ const MultiSchemeImage: FC<
       {/* eslint-disable-next-line jsx-a11y/alt-text */}
       <Image
         src={srcLight}
+        className="w-full"
         {...removeFromObjectByKeys<
           Omit<ComponentProps<typeof Image>, "src" | "className">
         >(["srcLight", "srcDark", "className"], props)}
