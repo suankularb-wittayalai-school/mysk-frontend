@@ -9,6 +9,7 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
 const withPWA = require("next-pwa")({
   dest: "public",
   register: true,
+  runtimeCaching: require("./cache"),
   // (@SiravitPhokeed)
   // The docs says that `cacheOnFrontEndNav` should be enabled if the user has
   // spotty internet connection. Since we plan to deploy this for a school
