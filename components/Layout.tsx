@@ -60,7 +60,7 @@ const Layout: FC<
   const [userMetadata, setUserMetadata] = useState<UserMetadata | null>();
   const [classNumber, setClassNumber] = useState<number | null>();
   useEffect(() => {
-    if (!user || navType === "hidden") return;
+    if (!user) return;
     (async () => {
       // Get user metadata
       const { data: metadata, error: metadataError } = await getUserMetadata(
