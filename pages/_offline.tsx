@@ -16,14 +16,6 @@ import ErrorLayout from "@/components/error/ErrorLayout";
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
 
-// (@SiravitPhokeed)
-// I don’t know if next-i18next works with _offline.tsx. I don’t even know how
-// I would know if any of this works. When I tried turning off the internet
-// connection and navigating to an un-cached page, I just get the default
-// browser not connected page.
-// I’m just gonna leave this here in case someone in the future knows what’s
-// going on here.
-
 const OfflinePage: CustomPage = () => {
   const { t } = useTranslation("common");
 

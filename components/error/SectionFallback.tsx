@@ -6,7 +6,7 @@ import { FC } from "react";
 import ClientErrorDark from "@/public/images/graphics/error/client-dark.png";
 import ClientErrorLight from "@/public/images/graphics/error/client-light.png";
 
-// Components
+// Internal components
 import MultiSchemeImage from "@/components/common/MultiSchemeImage";
 import CallStackSection from "@/components/error/CallStackSection";
 import ErrorHero from "@/components/error/ErrorHero";
