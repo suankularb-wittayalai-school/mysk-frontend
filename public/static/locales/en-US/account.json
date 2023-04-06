@@ -31,7 +31,11 @@
     }
   },
   "logOut": {
-    "loading": "Logging you out…"
+    "loading": "Logging you out…",
+    "action": {
+      "reload": "Reload",
+      "goToLanding": "Go to Landing"
+    }
   },
   "forgor": {
     "title": "Password reset",
