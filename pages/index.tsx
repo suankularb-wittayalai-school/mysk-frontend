@@ -79,7 +79,7 @@ const LoginSection: FC = () => {
     // Set the current language as the preferred language
     // (If the user can find and click on the Log in Button, they’re most
     // likely most comfortable in the current language)
-    localStorage.setItem("preferredLang", locale == "en-US" ? "th" : "en-US");
+    localStorage.setItem("preferredLang", locale);
 
     // Disable Log in Button
     withLoading(async () => {
