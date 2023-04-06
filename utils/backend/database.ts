@@ -310,7 +310,7 @@ export async function db2Teacher(
   }
 
   // get subjects in charge
-  if (true) {
+  if (options?.subjectsInCharge) {
     const { data: subjects, error: subjectError } = await supabase
       .from("subject")
       .select("*")
