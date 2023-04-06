@@ -4,6 +4,7 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { motion } from "framer-motion";
 
 import { GetStaticProps } from "next";
+import Head from "next/head";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -33,28 +34,38 @@ const LogOutPage: CustomPage = () => {
   }, []);
 
   return (
-    <div
-      className="-mb-20 grid min-h-screen place-content-center
+    <>
+      <Head>
+        <meta
+          name="apple-mobile-web-app-status-bar-style"
+          content="black-translucent"
+        />
+      </Head>
+      <div
+        className="-mb-20 grid min-h-screen place-content-center
         supports-[height:100svh]:min-h-[100svh] sm:mb-0"
-    >
-      <div className="flex flex-col items-center gap-4">
-        <Progress appearance="circular" alt="Logging you out…" visible />
-        <h1 className="skc-label-large">{t("logOut.loading")}</h1>
-        {loggedOut && (
-          <motion.div
-            initial={{ opacity: 0, scale: 1.4 }}
-            animate={{ opacity: 1, scale: 1 }}
-          >
-            <Actions>
-              <Button appearance="outlined">{t("logOut.action.reload")}</Button>
-              <Button appearance="tonal">
-                {t("logOut.action.goToLanding")}
-              </Button>
-            </Actions>
-          </motion.div>
-        )}
+      >
+        <div className="flex flex-col items-center gap-4">
+          <Progress appearance="circular" alt="Logging you out…" visible />
+          <h1 className="skc-label-large">{t("logOut.loading")}</h1>
+          {loggedOut && (
+            <motion.div
+              initial={{ opacity: 0, scale: 1.4 }}
+              animate={{ opacity: 1, scale: 1 }}
+            >
+              <Actions>
+                <Button appearance="outlined">
+                  {t("logOut.action.reload")}
+                </Button>
+                <Button appearance="tonal">
+                  {t("logOut.action.goToLanding")}
+                </Button>
+              </Actions>
+            </motion.div>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
