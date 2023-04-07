@@ -108,31 +108,48 @@ const OrdersList: FC<{
 const LookupOrdersPage: CustomPage<{
   orders: SchoolDocument[];
 }> = ({ orders }) => {
+  // Translation
   const { t } = useTranslation("lookup");
 
+  // Animation
   const { duration, easing } = useAnimationConfig();
 
+  // Snackbar
   const { setSnackbar } = useContext(SnackbarContext);
 
+  // Selected Order
   const [selected, setSelected] = useState<SchoolDocument>(orders[0]);
+
+  // iframe
+
+  // If the iframe is loading
   const [loading, setLoading] = useState<boolean>(true);
   useEffect(() => setLoading(true), [selected]);
 
+  // Responsive iframe size
   const mainRef: RefObject<HTMLDivElement> = useRef(null);
+  const headerRef: RefObject<HTMLDivElement> = useRef(null);
   const [iframeSize, setIframeSize] = useState({ width: 640, height: 480 });
+
+  /**
+   * Sets the iframe size according to the width and height of relevant
+   * components.
+   */
+  function updateIframeSize() {
+    const main = mainRef.current;
+    const header = headerRef.current;
+    if (!main || !header) return;
+    setIframeSize({
+      width: main.clientWidth - 12,
+      height: main.clientHeight - header.clientHeight - 48,
+    });
+  }
+
   useEffect(() => {
-    function handleResize() {
-      const main = mainRef.current;
-      if (!main) return;
-      setIframeSize({
-        width: main.clientWidth - 12,
-        height: main.clientHeight - 154,
-      });
-    }
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    window.addEventListener("resize", updateIframeSize);
+    return () => window.removeEventListener("resize", updateIframeSize);
   }, []);
+  useEffect(updateIframeSize, [selected]);
 
   /**
    * Opens the native share sheet (if available) for the Drive link. As a
@@ -182,7 +199,10 @@ const LookupOrdersPage: CustomPage<{
             appearance="outlined"
             className="relative h-full overflow-hidden"
           >
-            <div className="flex flex-col gap-2 bg-surface-2 px-5 py-4">
+            <div
+              ref={headerRef}
+              className="flex flex-col gap-2 bg-surface-2 px-5 py-4"
+            >
               <h2 className="skc-headline-small">{selected.subject}</h2>
               <ChipSet>
                 <AssistChip
