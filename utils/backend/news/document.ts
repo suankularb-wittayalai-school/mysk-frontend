@@ -90,13 +90,13 @@ export async function searchSchoolDocs(
  * @returns All school documents of a type
  */
 export async function getSchoolDocs(
-  type: SchoolDocumentType,
-  page: number
+  type: SchoolDocumentType
 ): Promise<BackendDataReturn<SchoolDocument[]>> {
   const { data, error } = await supabase
     .from("school_documents")
     .select("*")
-    .range((page - 1) * docsPerPage, page * docsPerPage)
+    .order("date", { ascending: false })
+    .limit(100)
     .match({ type });
 
   if (error) {
