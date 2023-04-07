@@ -9,6 +9,7 @@ import {
   SubjectName,
   SubjectTypeEN,
   SubjectWNameAndCode,
+  TeacherSubjectItem,
 } from "@/utils/types/subject";
 
 // Miscelleneous
@@ -120,9 +121,7 @@ export async function getSubjectsInCharge(
 export async function getTeachingSubjects(
   supabase: DatabaseClient,
   teacherID: number
-): Promise<
-  BackendDataReturn<(SubjectWNameAndCode & { classes: ClassWNumber[] })[]>
-> {
+): Promise<BackendDataReturn<TeacherSubjectItem[]>> {
   const { data: roomSubjects, error } = await supabase
     .from("room_subjects")
     .select("*, subject:subject(*), class(*)")
@@ -133,25 +132,27 @@ export async function getTeachingSubjects(
     return { data: [], error };
   }
 
-  const subjects: (SubjectWNameAndCode & {
-    classes: ClassWNumber[];
-  })[] = await Promise.all(
+  const subjects: TeacherSubjectItem[] = await Promise.all(
     roomSubjects!.map(async (roomSubject) => {
-      const subject: SubjectWNameAndCode & { classes: ClassWNumber[] } = {
+      const subject: TeacherSubjectItem = {
         id: roomSubject.subject.id,
-        name: {
-          "en-US": {
-            name: roomSubject.subject.name_en,
-            shortName: roomSubject.subject.short_name_en as OrUndefined<string>,
+        subject: {
+          name: {
+            "en-US": {
+              name: roomSubject.subject.name_en,
+              shortName: roomSubject.subject
+                .short_name_en as OrUndefined<string>,
+            },
+            th: {
+              name: roomSubject.subject.name_th,
+              shortName: roomSubject.subject
+                .short_name_th as OrUndefined<string>,
+            },
           },
-          th: {
-            name: roomSubject.subject.name_th,
-            shortName: roomSubject.subject.short_name_th as OrUndefined<string>,
+          code: {
+            "en-US": roomSubject.subject.code_en,
+            th: roomSubject.subject.code_th,
           },
-        },
-        code: {
-          "en-US": roomSubject.subject.code_en,
-          th: roomSubject.subject.code_th,
         },
         classes: [
           {
@@ -163,16 +164,14 @@ export async function getTeachingSubjects(
       return subject;
     })
   );
-  // merge classes array of subjects with same id
+
+  // Merge classes array of subjects with same ID
   const subjectsWithClasses = subjects.reduce((acc, subject) => {
     const existing = acc.find((s) => s.id === subject.id);
-    if (existing) {
-      existing.classes = [...existing.classes, ...subject.classes];
-    } else {
-      acc.push(subject);
-    }
+    if (existing) existing.classes = [...existing.classes, ...subject.classes];
+    else acc.push(subject);
     return acc;
-  }, [] as (SubjectWNameAndCode & { classes: ClassWNumber[] })[]);
+  }, [] as TeacherSubjectItem[]);
 
   return { data: subjectsWithClasses, error: null };
 }

@@ -1,23 +1,24 @@
 // Backend
-import { db2SchedulePeriod } from "@/utils/backend/database";
+import { db2SchedulePeriod, db2Teacher } from "@/utils/backend/database";
 import { isOverlappingExistingItems } from "@/utils/backend/schedule/utils";
-import { range } from "@/utils/helpers/array";
 
 // Helpers
+import { range } from "@/utils/helpers/array";
 import {
   arePeriodsOverlapping,
   createEmptySchedule,
 } from "@/utils/helpers/schedule";
 
-// Supabase
+// Backend
+import { getClassIDFromNumber } from "@/utils/backend/classroom/classroom";
+
+// Types
 import {
   BackendDataReturn,
   BackendReturn,
   DatabaseClient,
 } from "@/utils/types/common";
-
-// Types
-import { Role } from "@/utils/types/person";
+import { Role, Teacher } from "@/utils/types/person";
 import { Schedule, PeriodContentItem } from "@/utils/types/schedule";
 
 /**
@@ -78,6 +79,31 @@ export async function getSchedule(
     return { data: schedule, error };
   }
 
+  let teacherIDs: number[] = [];
+  for (let scheduleItem of data!)
+    teacherIDs = [
+      ...teacherIDs,
+      scheduleItem.teacher.id,
+      ...(scheduleItem.coteachers || []),
+    ];
+
+  // Fetch teacher data seperately
+  const { data: teachersData, error: teachersError } = await supabase
+    .from("teacher")
+    .select("*, person(*), subject_group(*)")
+    .or(`id.in.(${teacherIDs})`);
+
+  // Return an empty Schedule if fetch failed
+  if (teachersError) {
+    console.error(teachersError);
+    return { data: schedule, error: teachersError };
+  }
+
+  // Format teachers data
+  const teachers: Teacher[] = await Promise.all(
+    teachersData.map(async (teacher) => await db2Teacher(supabase, teacher))
+  );
+
   // Add Supabase data to empty schedule
   for (let incomingPeriod of data!) {
     // Find the index of the row we want to manipulate
@@ -112,11 +138,24 @@ export async function getSchedule(
 
       // Determine what to do if the incoming period overlaps with an existing
       // period
-      const processedPeriod = await db2SchedulePeriod(
+      let processedPeriod = await db2SchedulePeriod(
         supabase,
         incomingPeriod,
         role
       );
+
+      processedPeriod.content[0].subject = {
+        ...processedPeriod.content[0].subject,
+        teachers: [
+          teachers.find((teacher) => incomingPeriod.teacher.id === teacher.id)!,
+        ],
+        coTeachers: incomingPeriod.coteachers
+          ? incomingPeriod.coteachers.map(
+              (coTeacher) =>
+                teachers.find((teacher) => coTeacher === teacher.id)!
+            )
+          : [],
+      };
 
       // Replace empty period
       if (schedulePeriod.content.length == 0) {
@@ -140,8 +179,7 @@ export async function getSchedule(
     }
   }
 
-  // Sort the periods to ensure sensible tab order
-  // This has no effect on the visual Schedule
+  // Sort the periods
   schedule.content = schedule.content.map((scheduleRow) => ({
     ...scheduleRow,
     content: scheduleRow.content.sort((a, b) => a.startTime - b.startTime),
@@ -186,7 +224,7 @@ export async function createScheduleItem(
   supabase: DatabaseClient,
   form: {
     subject: number;
-    classID: number;
+    class: number;
     room: string;
     day: number;
     startTime: number;
@@ -194,9 +232,19 @@ export async function createScheduleItem(
   },
   teacherID: number
 ): Promise<BackendReturn> {
+  const { data: classID, error: classError } = await getClassIDFromNumber(
+    supabase,
+    form.class
+  );
+
+  if (classError) {
+    console.error(classError);
+    return { error: classError };
+  }
+
   const { error } = await supabase.from("schedule_items").insert({
     subject: form.subject,
-    classroom: form.classID,
+    classroom: classID,
     room: form.room,
     teacher: teacherID,
     day: form.day,
@@ -249,7 +297,7 @@ export async function moveScheduleItem(
     return {
       error: {
         message:
-          "new period duration causes it to overlap with other relevant periods",
+          "new period duration causes it to overlap with other relevant periods.",
       },
     };
 

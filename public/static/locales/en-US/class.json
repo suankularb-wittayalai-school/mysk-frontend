@@ -1,63 +1,22 @@
 {
-  "title": "M.{{className}}",
-  "goToClass": "Go to class number…",
-  "item": {
-    "school": {
-      "title": "School",
-      "classNo": "Class number",
-      "classNo_helper": "Must be 3-digit, i.e. 408.",
-      "classNo_error": "Invalid. Should be 3-digit, i.e. 408.",
-      "year": "Academic year",
-      "semester": "Semester"
-    },
-    "people": {
-      "title": "People",
-      "classAdvisors": "Class advisors",
-      "students": "Students"
-    },
-    "contacts": {
-      "title": "Contacts",
-      "contacts": "Contacts"
-    }
+  "overview": {
+    "title": "M.{{number}}"
   },
-  "links": {
-    "teacherList": {
-      "title": "Teacher list",
-      "supportingText": "List of teachers that teach M.{{classNumber}}"
-    },
-    "studentList": {
-      "title": "Student list",
-      "supportingText": "List of students in M.{{classNumber}}"
-    }
+  "student": {
+    "title": "Students of M.{{number}}"
   },
-  "classAdvisors": {
-    "title": "Class advisors",
-    "addAdvisors": "Add advisor"
+  "teacher": {
+    "title": "Teachers of M.{{number}}"
   },
-  "classContacts": {
-    "title": "Class contacts",
-    "addClassContacts": "Add contacts"
+  "schedule": {
+    "title": "M.{{number}} schedule"
   },
-  "studentList": {
-    "title": "Student list",
-    "tabTitle": "M.{{classNumber}} student list",
-    "searchStudents": "Search students",
-    "table": {
-      "classNo": "Class №",
-      "name": "Name"
-    },
-    "printList": "Print list"
-  },
-  "studentForms": {
-    "title": "Student forms",
-    "filter": {
-      "forms": "Forms",
-      "payments": "Payments",
-      "amountDone": {
-        "fewDone": "Few done",
-        "mostDone": "Most done",
-        "allDone": "All done"
-      }
+  "common": {
+    "navigation": {
+      "overview": "Overview",
+      "students": "Students",
+      "teachers": "Teachers",
+      "schedule": "Schedule"
     }
   }
 }

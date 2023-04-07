@@ -1,4 +1,3 @@
-import { Day } from "date-fns";
 import { ClassWNumber } from "./class";
 import { Teacher } from "./person";
 import { Subject } from "./subject";
@@ -27,6 +26,7 @@ export type PeriodContentItem = {
   subject: {
     id: Subject["id"];
     name: Subject["name"];
+    code: Subject["code"];
     teachers: Teacher[];
     coTeachers?: Teacher[];
   };
@@ -39,3 +39,5 @@ export type PeriodContentItem = {
 export type PeriodContentItemOptSubj = Omit<PeriodContentItem, "subject"> & {
   subject?: PeriodContentItem["subject"];
 };
+
+export type PeriodLocation = { startTime: number; day: number };

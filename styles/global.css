@@ -26,6 +26,14 @@
 }
 
 @layer utilities {
+  .tap-highlight-none {
+    @apply [-webkit-tap-highlight-color:transparent];
+  }
+
+  .fixed-center {
+    @apply fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2;
+  }
+
   .center-all {
     @apply grid place-items-center [grid-template-areas:"center"];
   }

@@ -22,7 +22,11 @@
     }
   },
   "logOut": {
-    "loading": "กำลังออกจากระบบ…"
+    "loading": "กำลังออกจากระบบ…",
+    "action": {
+      "reload": "ลองอีกครั้ง",
+      "goToLanding": "ไปหน้าหลัก"
+    }
   },
   "forgor": {
     "title": "ลืมรหัสผ่าน",
@@ -101,6 +105,9 @@
   },
   "preferences": {
     "title": "การตั้งค่า"
+  },
+  "snackbar": {
+    "invalidCreds": "อีเมลหรือรหัสผ่านไม่ถูกต้อง"
   },
   "dialog": {
     "contact": {

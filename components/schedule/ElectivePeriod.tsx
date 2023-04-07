@@ -1,101 +1,67 @@
 // External libraries
-import { LayoutGroup, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
+import { motion } from "framer-motion";
 import { FC, useState } from "react";
 
 // SK Components
 import { transition, useAnimationConfig } from "@suankularb-components/react";
 
 // Internal components
-import ElectivePeriodsReveal from "@/components/schedule/ElectivePeriodsReveal";
+import ElectivePeriodDetails from "@/components/schedule/ElectivePeriodDetails";
+
+// Helpers
+import { cn } from "@/utils/helpers/className";
 
 // Types
-import { Role } from "@/utils/types/person";
-import { PeriodContentItem, SchedulePeriod } from "@/utils/types/schedule";
+import { SchedulePeriod } from "@/utils/types/schedule";
 
 const ElectivePeriod: FC<{
-  isInSession: boolean;
-  periodWidth: number;
-  schedulePeriod: SchedulePeriod;
-  day: Day;
-  role: Role;
-  allowEdit?: boolean;
-  setEditPeriod?: ({
-    show,
-    day,
-    schedulePeriod,
-  }: {
-    show: boolean;
-    day: Day;
-    schedulePeriod: PeriodContentItem;
-  }) => void;
-  setDeletePeriod?: ({
-    show,
-    periodID,
-  }: {
-    show: boolean;
-    periodID: number;
-  }) => void;
-  toggleFetched?: () => void;
-}> = ({
-  isInSession,
-  periodWidth,
-  schedulePeriod,
-  day,
-  role,
-  allowEdit,
-  setEditPeriod,
-  setDeletePeriod,
-  toggleFetched,
-}) => {
+  period: SchedulePeriod;
+  isInSession?: boolean;
+}> = ({ period, isInSession }) => {
+  // Translation
   const { t } = useTranslation("schedule");
+
+  // Animation
   const { duration, easing } = useAnimationConfig();
 
   // Dialog control
-  const [showPeriods, setShowPeriods] = useState<boolean>(false);
+  const [detailsOpen, setDetailsOpen] = useState<boolean>(false);
 
   return (
-    <LayoutGroup>
-      {!showPeriods ? (
-        <motion.button
-          className={[
-            `skc-title-medium group relative h-14 w-full rounded-sm text-left
-            align-middle !leading-none`,
+    <>
+      <motion.li
+        layoutId={`elective-period-${period.id}`}
+        transition={transition(duration.medium2, easing.standard)}
+      >
+        <button
+          className={cn([
+            `skc-title-medium tap-highlight-none relative flex h-full w-24 
+             flex-col justify-center rounded-sm bg-surface-2 px-4 py-2
+             text-left !leading-none text-on-surface transition-shadow
+             before:absolute before:inset-0 before:-z-10 before:h-14
+             before:w-24 before:rounded-sm
+             before:transition-[transform,box-shadow] hover:shadow-1
+             hover:before:rotate-6 hover:before:shadow-1 focus:shadow-2
+             active:before:rotate-0 active:before:shadow-none`,
             isInSession
-              ? "bg-tertiary-translucent-12 shadow text-on-tertiary-container"
-              : "bg-surface-2 text-on-surface-variant",
-          ].join(" ")}
-          onMouseEnter={() => setShowPeriods(true)}
-          onClick={() => setShowPeriods(true)}
-          layoutId={`sp-${schedulePeriod.id}-button`}
-          transition={transition(duration.medium4, easing.standard)}
+              ? `bg-tertiary-container text-on-tertiary-container shadow-1
+                 before:bg-tertiary-80 hover:shadow-2
+                 dark:before:bg-tertiary-20`
+              : `bg-surface-2 text-on-surface-variant
+                 before:bg-surface-variant`,
+          ])}
+          onClick={() => setDetailsOpen(true)}
         >
-          <div className="px-4 py-2">
-            <motion.span
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              transition={transition(duration.medium4, easing.standard)}
-            >
-              {t(`schedule.${role == "teacher" ? "overlap" : "elective"}`)}
-            </motion.span>
-          </div>
-        </motion.button>
-      ) : (
-        <ElectivePeriodsReveal
-          show={showPeriods}
-          schedulePeriod={schedulePeriod}
-          periodWidth={periodWidth}
-          day={day}
-          role={role}
-          allowEdit={allowEdit}
-          setEditPeriod={setEditPeriod}
-          setDeletePeriod={setDeletePeriod}
-          toggleFetched={toggleFetched}
-          setShow={setShowPeriods}
-        />
-      )}
-    </LayoutGroup>
+          {t("schedule.elective")}
+        </button>
+      </motion.li>
+      <ElectivePeriodDetails
+        period={period}
+        open={detailsOpen}
+        onClose={() => setDetailsOpen(false)}
+      />
+    </>
   );
 };
 

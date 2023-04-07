@@ -22,6 +22,7 @@ import {
 } from "@suankularb-components/react";
 
 // Internal components
+import MultiSchemeImage from "@/components/common/MultiSchemeImage";
 import MySKPageHeader from "@/components/common/MySKPageHeader";
 
 // Images
@@ -40,16 +41,15 @@ const ThankYouSection: FC = () => {
 
   return (
     <Columns columns={3}>
-      <picture
+      <MultiSchemeImage
+        srcLight={WelcomeImageLight}
+        srcDark={WelcomeImageDark}
+        width={720}
+        height={480}
+        alt=""
         className="mx-4 mb-4 overflow-hidden rounded-lg
           border-1 border-outline-variant sm:mx-0 sm:translate-y-0"
-      >
-        <source
-          srcSet={WelcomeImageDark.src}
-          media="(prefers-color-scheme: dark)"
-        />
-        <Image src={WelcomeImageLight} width={720} height={480} alt="" />
-      </picture>
+      />
       <Section
         sectionAttr={{ "aria-labelledby": "header-thank-you" }}
         className="sm:col-span-2"

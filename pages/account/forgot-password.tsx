@@ -158,4 +158,6 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
   };
 };
 
+ForgotPasswordPage.navType = "hidden";
+
 export default ForgotPasswordPage;

@@ -2,7 +2,6 @@
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 import Head from "next/head";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -26,6 +25,7 @@ import {
 
 // Internal components
 import ForgotPasswordDialog from "@/components/account/ForgotPassword";
+import MultiSchemeImage from "@/components/common/MultiSchemeImage";
 
 // Contexts
 import SnackbarContext from "@/contexts/SnackbarContext";
@@ -55,6 +55,9 @@ const LoginSection: FC = () => {
   // Translation
   const { t } = useTranslation(["account", "landing"]);
 
+  // Snackbar
+  const { setSnackbar } = useContext(SnackbarContext);
+
   // Supabase
   const supabase = useSupabaseClient();
 
@@ -73,10 +76,20 @@ const LoginSection: FC = () => {
   }
 
   async function handleSubmit() {
+    // Set the current language as the preferred language
+    // (If the user can find and click on the Log in Button, they’re most
+    // likely most comfortable in the current language)
+    localStorage.setItem("preferredLang", locale);
+
     // Disable Log in Button
     withLoading(async () => {
       // Validate response
-      if (!validate()) return false;
+      if (!validate()) {
+        setSnackbar(
+          <Snackbar>{t("snackbar.formInvalid", { ns: "common" })}</Snackbar>
+        );
+        return false;
+      }
 
       // Log in user in Supabase
       const {
@@ -86,6 +99,9 @@ const LoginSection: FC = () => {
         email: [email, "sk.ac.th"].join(""),
         password,
       });
+
+      if (error?.name === "AuthApiError")
+        setSnackbar(<Snackbar>{t("snackbar.invalidCreds")}</Snackbar>);
 
       if (!session || error) return false;
 
@@ -171,30 +187,24 @@ const LoginSection: FC = () => {
 const ImageSection: FC = () => (
   <div
     aria-hidden
-    className="bg-gradient-to-b from-surface-5 via-transparent sm:bg-none
-      md:relative"
+    className="-z-10 bg-gradient-to-b from-surface-5 via-transparent
+      sm:bg-none md:relative"
   >
     {/* Image in center */}
     <div
       className="md:absolute md:left-0 md:right-0 md:h-[calc(100vh-6rem)]
         supports-[height:100svh]:md:h-[calc(100svh-6rem)]"
     >
-      <picture
+      <MultiSchemeImage
+        srcLight={LandingImageLight}
+        srcDark={LandingImageDark}
+        width={1080}
+        height={1080}
+        priority
+        alt=""
         className="relative md:absolute md:right-[-10.5rem] md:left-[-10.5rem]
-          md:top-1/2 md:z-0 md:-translate-y-1/2"
-      >
-        <source
-          srcSet={LandingImageDark.src}
-          media="(prefers-color-scheme: dark)"
-        />
-        <Image
-          src={LandingImageLight}
-          width={1080}
-          height={1080}
-          priority
-          alt=""
-        />
-      </picture>
+          md:top-1/2 md:-translate-y-1/2"
+      />
     </div>
   </div>
 );
@@ -289,7 +299,7 @@ const IndexPage: CustomPage = () => {
             className="!flex !flex-col-reverse md:!grid md:!items-stretch"
           >
             {/* Left side */}
-            <div className="z-10 mx-4 sm:mx-0">
+            <div className="mx-4 sm:mx-0">
               <div className="mb-12 flex flex-col gap-4">
                 {/* Tagline */}
                 {/* `sm:!text-8xl sm:!leading-[4rem]` is a simulation of
@@ -359,7 +369,7 @@ const IndexPage: CustomPage = () => {
 
           {/* Footnote */}
           <footer
-            className="skc-body-small z-10 mx-4 text-on-surface-variant
+            className="skc-body-small mx-4 text-on-surface-variant
               sm:mx-0"
           >
             <p className="mb-2 sm:mb-0">
@@ -397,5 +407,7 @@ export const getStaticProps = async ({ locale }: { locale: LangCode }) => ({
     ...(await serverSideTranslations(locale, ["common", "account", "landing"])),
   },
 });
+
+IndexPage.navType = "hidden";
 
 export default IndexPage;

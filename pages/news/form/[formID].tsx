@@ -310,6 +310,6 @@ export const getServerSideProps: GetServerSideProps = async ({
   };
 };
 
-FormPage.pageRole = "student";
+FormPage.navType = "student";
 
 export default FormPage;

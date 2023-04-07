@@ -22,6 +22,8 @@ import { ThemeProvider } from "@suankularb-components/react";
 
 // Internal components
 import Layout from "@/components/Layout";
+import ErrorBoundary from "@/components/error/ErrorBoundary";
+import PageFallback from "@/components/error/PageFallback";
 
 // Contexts
 import NavDrawerContext from "@/contexts/NavDrawerContext";
@@ -72,7 +74,7 @@ const Contexts: FC<{ children: ReactNode }> = ({ children }) => {
 };
 
 function App({ Component, pageProps }: CustomAppProps) {
-  const { context, fab, pageRole, childURLs } = Component;
+  const { context, fab, navType, childURLs } = Component;
 
   // Supabase client
   const [supabaseClient] = useState(() =>
@@ -106,8 +108,10 @@ function App({ Component, pageProps }: CustomAppProps) {
         <Contexts>
           <MotionConfig reducedMotion="user">
             <ThemeProvider>
-              <Layout {...{ context, fab, pageRole, childURLs }}>
-                <Component {...pageProps} />
+              <Layout {...{ context, fab, navType, childURLs }}>
+                <ErrorBoundary Fallback={PageFallback}>
+                  <Component {...pageProps} />
+                </ErrorBoundary>
               </Layout>
             </ThemeProvider>
           </MotionConfig>

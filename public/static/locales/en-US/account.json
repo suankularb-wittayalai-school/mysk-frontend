@@ -31,7 +31,11 @@
     }
   },
   "logOut": {
-    "loading": "Logging you out…"
+    "loading": "Logging you out…",
+    "action": {
+      "reload": "Reload",
+      "goToLanding": "Go to Landing"
+    }
   },
   "forgor": {
     "title": "Password reset",
@@ -115,6 +119,9 @@
   },
   "preferences": {
     "title": "Preferences"
+  },
+  "snackbar": {
+    "invalidCreds": "Invalid email or password"
   },
   "dialog": {
     "contact": {
