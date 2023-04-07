@@ -173,8 +173,8 @@ const LookupOrdersPage: CustomPage<{
       selected.documentLink
         // Remove “https://drive.google.com/file/d/” prefix
         .slice(32)
-        // Remove /view?usp=drivesdk” suffix
-        .split("/view?usp=drivesdk")[0]
+        // Remove “/view?usp=___” suffix
+        .split(/\/view\?usp=[a-z]+/)[0]
     }&export=download`;
     setSnackbar(<Snackbar>Getting that file for you…</Snackbar>);
   }
@@ -240,7 +240,7 @@ const LookupOrdersPage: CustomPage<{
               <iframe
                 key={selected.id}
                 src={`${
-                  selected.documentLink.split("/view?usp=drivesdk")[0]
+                  selected.documentLink.split(/\/view\?usp=[a-z]+/)[0]
                 }/preview`}
                 width={iframeSize.width}
                 height={iframeSize.height}
