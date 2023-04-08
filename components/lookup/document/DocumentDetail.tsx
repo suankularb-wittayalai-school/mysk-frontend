@@ -76,6 +76,13 @@ const DocumentDetails: FC<{
   }
 
   /**
+   * Open the Google Drive PDF file in a new window.
+   */
+  function handlePopOut() {
+    window.open(document.documentLink, "_blank", "popup, noreferrer");
+  }
+
+  /**
    * Downloads the PDF file from Google Drive.
    */
   function handleDownload() {
@@ -104,6 +111,12 @@ const DocumentDetails: FC<{
               onClick={handleShare}
             >
               Share
+            </AssistChip>
+            <AssistChip
+              icon={<MaterialIcon icon="open_in_new" />}
+              onClick={handlePopOut}
+            >
+              Pop out
             </AssistChip>
             <AssistChip
               icon={<MaterialIcon icon="download" />}

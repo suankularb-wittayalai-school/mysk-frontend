@@ -20,6 +20,7 @@ import LookupList from "@/components/lookup/LookupList";
 import {
   getSchoolDocs,
   getSchoolDocsByID,
+  searchSchoolDocs,
 } from "@/utils/backend/news/document";
 
 // Helpers
@@ -31,21 +32,22 @@ import { SchoolDocument } from "@/utils/types/news";
 import EmptyDetail from "@/components/lookup/EmptyDetail";
 
 const LookupOrdersPage: CustomPage<{
-  orders: SchoolDocument[];
+  recentOrders: SchoolDocument[];
   selectedIdx: number;
-}> = ({ orders, selectedIdx }) => {
+}> = ({ recentOrders, selectedIdx }) => {
   // Translation
   const { t } = useTranslation(["lookup", "common"]);
 
+  const [orders, setOrders] = useState<SchoolDocument[]>(recentOrders);
+
   // Selected Order
-  const [selected, setSelected] = useState<SchoolDocument>(orders[selectedIdx]);
+  const [selected, setSelected] = useState<SchoolDocument>(
+    recentOrders[selectedIdx]
+  );
 
   // If the iframe is loading
   const [loading, setLoading] = useState<boolean>(true);
   useEffect(() => setLoading(true), [selected]);
-
-  // Query
-  const [query, setQuery] = useState<string>("");
 
   return (
     <>
@@ -61,8 +63,14 @@ const LookupOrdersPage: CustomPage<{
         <LookupList
           length={orders.length}
           searchAlt="Search orders"
-          query={query}
-          setQuery={setQuery}
+          onSearch={async (query) => {
+            if (!query) {
+              setOrders(recentOrders);
+              return;
+            }
+            const { data } = await searchSchoolDocs("order", query);
+            setOrders(data);
+          }}
         >
           {orders.map((order) => (
             <DocumentCard
@@ -89,15 +97,15 @@ export const getServerSideProps: GetServerSideProps = async ({
   const selectedID = Number(query?.id);
   let selectedIdx = 0;
 
-  let orders;
+  let recentOrders;
   const { data: defaultOrders } = await getSchoolDocs("order");
 
   selectedIdx = defaultOrders.findIndex((order) => selectedID === order.id);
 
   if (selectedID && selectedIdx === -1) {
     const { data: selected } = await getSchoolDocsByID("order", selectedID);
-    orders = [selected, ...defaultOrders];
-  } else orders = defaultOrders;
+    recentOrders = [selected, ...defaultOrders];
+  } else recentOrders = defaultOrders;
 
   selectedIdx = Math.max(selectedIdx, 0);
 
@@ -107,7 +115,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         "common",
         "lookup",
       ])),
-      orders,
+      recentOrders,
       selectedIdx,
     },
   };

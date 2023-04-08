@@ -8,7 +8,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useEffect, useState } from "react";
 
 // SK Components
-import { Card, MaterialIcon, SplitLayout } from "@suankularb-components/react";
+import { MaterialIcon, SplitLayout } from "@suankularb-components/react";
 
 // Internal components
 import MySKPageHeader from "@/components/common/MySKPageHeader";
@@ -31,23 +31,20 @@ import { SchoolDocument } from "@/utils/types/news";
 import EmptyDetail from "@/components/lookup/EmptyDetail";
 
 const LookupDocumentsPage: CustomPage<{
-  documents: SchoolDocument[];
+  recentDocs: SchoolDocument[];
   selectedIdx: number;
-}> = ({ documents, selectedIdx }) => {
+}> = ({ recentDocs, selectedIdx }) => {
   // Translation
   const { t } = useTranslation(["lookup", "common"]);
 
   // Selected Document
   const [selected, setSelected] = useState<SchoolDocument>(
-    documents[selectedIdx]
+    recentDocs[selectedIdx]
   );
 
   // If the iframe is loading
   const [loading, setLoading] = useState<boolean>(true);
   useEffect(() => setLoading(true), [selected]);
-
-  // Query
-  const [query, setQuery] = useState<string>("");
 
   return (
     <>
@@ -61,12 +58,11 @@ const LookupDocumentsPage: CustomPage<{
       />
       <SplitLayout ratio="list-detail">
         <LookupList
-          length={documents.length}
+          length={recentDocs.length}
           searchAlt="Search documents"
-          query={query}
-          setQuery={setQuery}
+          onSearch={() => {}}
         >
-          {documents.map((document) => (
+          {recentDocs.map((document) => (
             <DocumentCard
               key={document.id}
               document={document}
@@ -91,7 +87,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   const selectedID = Number(query?.id);
   let selectedIdx = 0;
 
-  let documents;
+  let recentDocs;
   const { data: defaultDocuments } = await getSchoolDocs("document");
 
   selectedIdx = defaultDocuments.findIndex(
@@ -100,8 +96,8 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   if (selectedID && selectedIdx === -1) {
     const { data: selected } = await getSchoolDocsByID("document", selectedID);
-    documents = [selected, ...defaultDocuments];
-  } else documents = defaultDocuments;
+    recentDocs = [selected, ...defaultDocuments];
+  } else recentDocs = defaultDocuments;
 
   selectedIdx = Math.max(selectedIdx, 0);
 
@@ -111,7 +107,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         "common",
         "lookup",
       ])),
-      documents,
+      recentDocs,
       selectedIdx,
     },
   };

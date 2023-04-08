@@ -64,11 +64,21 @@ export async function searchSchoolDocs(
   type: SchoolDocumentType,
   query: string
 ): Promise<BackendDataReturn<SchoolDocument[]>> {
+  // Parse the query in case it is in {code}/{year}
+  const codeSegments = query.split("/");
+  const year = Number(codeSegments[1]) - 543;
+
   const { data, error } = await supabase
     .from("school_documents")
     .select("*")
     .match({ type })
-    .or(`code.like.%${query}%, subject.like.%${query}%`);
+    .or(
+      query.match(/\d+\/\d{4}/)
+        ? // If the query is in {code}/{year}, parse it, and only search with the code and year
+          `and(code.like.%${codeSegments[0]}%,date.gte."${year}-01-01",date.lte."${year}-12-31"))`
+        : // Otherwise, search for code and subject line
+          `code.like.%${query}%, subject.like.%${query}%`
+    );
 
   if (error) {
     console.error(error);
