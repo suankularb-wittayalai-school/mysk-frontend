@@ -17,7 +17,7 @@ const ErrorLayout: FC<{ children: ReactNode }> = ({ children }) => {
         supports-[height:100dvh]:min-h-[calc(100dvh-5rem)] sm:px-0
         supports-[height:100dvh]:sm:min-h-[100dvh]"
     >
-      <div className="absolute top-4 left-4 right-4 sm:top-11">
+      <div className="fixed top-4 left-4 right-4 sm:top-11">
         <div
           className="mx-auto w-full max-w-[72.5rem]
             sm:w-[calc(100%-11rem)]"

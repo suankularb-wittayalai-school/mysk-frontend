@@ -123,7 +123,7 @@ export type FormControlValidsWMessages<T extends string | symbol = string> = {
 };
 export type FormControlProps<T extends string | symbol = string> = {
   [key in T]: Pick<
-    TextFieldProps,
+    TextFieldProps<string | File>,
     "helperMsg" | "value" | "onChange" | "required" | "error"
   >;
 };

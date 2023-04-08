@@ -6,7 +6,14 @@ import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 
-import { FC, ReactNode, useContext, useEffect, useState } from "react";
+import {
+  FC,
+  ReactNode,
+  forwardRef,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 // SK Components
 import {
@@ -232,7 +239,8 @@ const Layout: FC<
             icon={<MaterialIcon icon="translate" />}
             label={t("navigation.drawer.about.language")}
             href={router.asPath}
-            element={(props) => (
+            // eslint-disable-next-line react/display-name
+            element={forwardRef((props, ref) => (
               <Link
                 locale={locale == "en-US" ? "th" : "en-US"}
                 onClick={() =>
@@ -241,9 +249,9 @@ const Layout: FC<
                     locale == "en-US" ? "th" : "en-US"
                   )
                 }
-                {...props}
+                {...{ ...props, ref }}
               />
-            )}
+            ))}
           />
           <NavDrawerItem
             icon={<MaterialIcon icon="logout" />}
