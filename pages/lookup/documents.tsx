@@ -8,7 +8,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useEffect, useState } from "react";
 
 // SK Components
-import { MaterialIcon, SplitLayout } from "@suankularb-components/react";
+import { Card, MaterialIcon, SplitLayout } from "@suankularb-components/react";
 
 // Internal components
 import MySKPageHeader from "@/components/common/MySKPageHeader";
@@ -30,15 +30,17 @@ import { CustomPage, LangCode } from "@/utils/types/common";
 import { SchoolDocument } from "@/utils/types/news";
 import EmptyDetail from "@/components/lookup/EmptyDetail";
 
-const LookupOrdersPage: CustomPage<{
-  orders: SchoolDocument[];
+const LookupDocumentsPage: CustomPage<{
+  documents: SchoolDocument[];
   selectedIdx: number;
-}> = ({ orders, selectedIdx }) => {
+}> = ({ documents, selectedIdx }) => {
   // Translation
   const { t } = useTranslation(["lookup", "common"]);
 
-  // Selected Order
-  const [selected, setSelected] = useState<SchoolDocument>(orders[selectedIdx]);
+  // Selected Document
+  const [selected, setSelected] = useState<SchoolDocument>(
+    documents[selectedIdx]
+  );
 
   // If the iframe is loading
   const [loading, setLoading] = useState<boolean>(true);
@@ -50,24 +52,24 @@ const LookupOrdersPage: CustomPage<{
   return (
     <>
       <Head>
-        <title>{createTitleStr("Lookup orders", t)}</title>
+        <title>{createTitleStr("Lookup documents", t)}</title>
       </Head>
       <MySKPageHeader
-        title="Lookup orders"
+        title="Lookup documents"
         icon={<MaterialIcon icon="search" />}
         parentURL="/lookup"
       />
       <SplitLayout ratio="list-detail">
         <LookupList
-          length={orders.length}
-          searchAlt="Search orders"
+          length={documents.length}
+          searchAlt="Search documents"
           query={query}
           setQuery={setQuery}
         >
-          {orders.map((order) => (
+          {documents.map((document) => (
             <DocumentCard
-              key={order.id}
-              document={order}
+              key={document.id}
+              document={document}
               {...{ selected, setSelected }}
             />
           ))}
@@ -89,15 +91,17 @@ export const getServerSideProps: GetServerSideProps = async ({
   const selectedID = Number(query?.id);
   let selectedIdx = 0;
 
-  let orders;
-  const { data: defaultOrders } = await getSchoolDocs("order");
+  let documents;
+  const { data: defaultDocuments } = await getSchoolDocs("document");
 
-  selectedIdx = defaultOrders.findIndex((order) => selectedID === order.id);
+  selectedIdx = defaultDocuments.findIndex(
+    (document) => selectedID === document.id
+  );
 
   if (selectedID && selectedIdx === -1) {
-    const { data: selected } = await getSchoolDocsByID("order", selectedID);
-    orders = [selected, ...defaultOrders];
-  } else orders = defaultOrders;
+    const { data: selected } = await getSchoolDocsByID("document", selectedID);
+    documents = [selected, ...defaultDocuments];
+  } else documents = defaultDocuments;
 
   selectedIdx = Math.max(selectedIdx, 0);
 
@@ -107,10 +111,10 @@ export const getServerSideProps: GetServerSideProps = async ({
         "common",
         "lookup",
       ])),
-      orders,
+      documents,
       selectedIdx,
     },
   };
 };
 
-export default LookupOrdersPage;
+export default LookupDocumentsPage;

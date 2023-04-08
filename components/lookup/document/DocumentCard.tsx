@@ -35,7 +35,6 @@ const DocumentCard: FC<{
 
   return (
     <Card
-      key={document.id}
       appearance="filled"
       direction="row"
       stateLayerEffect

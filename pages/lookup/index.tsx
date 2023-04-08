@@ -78,7 +78,10 @@ const LookupPage: CustomPage = () => {
       <Head>
         <title>{createTitleStr("School lookup", t)}</title>
       </Head>
-      <MySKPageHeader title="School lookup" />
+      <MySKPageHeader
+        title="School lookup"
+        icon={<MaterialIcon icon="search" />}
+      />
       <ContentLayout>
         <Columns
           columns={6}
