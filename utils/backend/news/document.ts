@@ -12,6 +12,7 @@ import { supabase } from "@/utils/supabase-client";
 
 // Converters
 import { db2SchoolDocument } from "@/utils/backend/database";
+import { Role } from "@/utils/types/person";
 
 // Functions
 /**
@@ -97,12 +98,18 @@ export async function searchSchoolDocs(
  * @returns 100 school documents of a type.
  */
 export async function getSchoolDocs(
-  type: SchoolDocumentType
+  type: SchoolDocumentType,
+  role: Role
 ): Promise<BackendDataReturn<SchoolDocument[]>> {
   const { data, error } = await supabase
     .from("school_documents")
     .select("*")
-    .match({ type })
+    .match({
+      type,
+      ...(role === "teacher"
+        ? { include_teachers: true }
+        : { include_students: true }),
+    })
     .order("date", { ascending: false })
     .order("code", { ascending: false })
     .limit(100);

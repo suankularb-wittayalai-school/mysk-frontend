@@ -34,7 +34,11 @@ const LookupList: FC<{
   }, [query]);
 
   return (
-    <aside className="flex flex-col gap-6">
+    <aside aria-labelledby="header-list" className="flex flex-col gap-6">
+      <h2 id="header-list" className="sr-only">
+        {t("title")}
+      </h2>
+
       {/* Search */}
       <Search
         alt={searchAlt}

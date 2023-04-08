@@ -32,9 +32,22 @@
       "metadata": "№ {{code}}/{{year}} • {{date}}"
     },
     "header": {
-      "share": "Share",
-      "popOut": "Pop out",
-      "download": "Download"
+      "restrictions": {
+        "title": "Restricted",
+        "desc_one": "Only {{role}} should access.",
+        "desc_two": "Only {{role1}} and {{role2}} should access.",
+        "desc_all": "Students, teachers, and parents can access.",
+        "descSegment": {
+          "student": "students",
+          "teacher": "teachers",
+          "parent": "parents"
+        }
+      },
+      "action": {
+        "share": "Share",
+        "popOut": "Pop out",
+        "download": "Download"
+      }
     },
     "detail": {
       "loading": "Loading document from Google Drive…"
@@ -45,6 +58,7 @@
   },
   "common": {
     "list": {
+      "title": "List",
       "searchHelper": "Press the search icon to search.",
       "maxNote": "For performance reasons, we limit the number of search results to 100. If you can’t find what you’re looking for, try a more specific query.",
       "endOfList": "You’ve reached the end."
