@@ -63,7 +63,9 @@ const OrdersList: FC<{
 
   return (
     <div className="flex flex-col gap-2">
+      {/* For each order, render a Card */}
       {orders.map((order) => {
+        // Cast the signed date
         const orderDate = new Date(order.date);
         return (
           <Card
@@ -73,16 +75,21 @@ const OrdersList: FC<{
             stateLayerEffect
             className={cn([
               "text-left",
+              // A different style for the selected Order
               selected.id === order.id
                 ? "!bg-primary-container"
                 : "!border-transparent !bg-transparent",
             ])}
             {...(atBreakpoint === "base"
-              ? {
+              ? // If the user is on mobile, take then straight to the Google
+                // Drive file
+                {
                   href: order.documentLink,
                   aAttr: { target: "_blank", rel: "noreferrer" },
                 }
-              : {
+              : // If the user is on tablet/desktop, show the selected Order in
+                // an iframe in the detail section
+                {
                   onClick: () => {
                     setSelected(order);
                     router.replace(`/lookup/orders?id=${order.id}`, undefined, {
@@ -91,8 +98,11 @@ const OrdersList: FC<{
                   },
                 })}
           >
+            {/* Subject line, code, and signed date */}
             <CardHeader
+              // Subject line
               title={order.subject}
+              // {code}/{year in BE} • {date}
               subtitle={`№ ${order.code}/${getLocaleYear(
                 "th",
                 orderDate.getFullYear()
@@ -109,6 +119,8 @@ const OrdersList: FC<{
           </Card>
         );
       })}
+
+      {/* Card at the end to explain why the list has stopped */}
       <Card appearance="outlined">
         <p className="py-2 px-4 text-on-surface-variant">
           {orders.length === 100
