@@ -7,7 +7,7 @@ import { Card } from "@suankularb-components/react";
 
 const EmptyDetail: FC = () => {
   // Translation
-  const { t } = useTranslation("common");
+  const { t } = useTranslation("lookup");
 
   return (
     <main className="hidden sm:block">
@@ -15,7 +15,9 @@ const EmptyDetail: FC = () => {
         appearance="outlined"
         className="relative !grid h-full place-content-center"
       >
-        <p className="text-on-surface-variant">Nothing selected.</p>
+        <p className="text-on-surface-variant">
+          {t("common.detail.noneSelected")}
+        </p>
       </Card>
     </main>
   );

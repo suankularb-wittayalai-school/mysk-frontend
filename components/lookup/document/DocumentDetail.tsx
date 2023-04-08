@@ -27,7 +27,7 @@ const DocumentDetails: FC<{
   setLoading: (value: boolean) => void;
 }> = ({ document, loading, setLoading }) => {
   // Translation
-  const { t } = useTranslation("lookup");
+  const { t } = useTranslation("lookup", { keyPrefix: "documents" });
 
   // Animation
   const { duration, easing } = useAnimationConfig();
@@ -94,7 +94,7 @@ const DocumentDetails: FC<{
         .split(/\/view\?usp=[a-z]+/)[0]
     }&export=download`;
 
-    setSnackbar(<Snackbar>Getting that file for you…</Snackbar>);
+    setSnackbar(<Snackbar>{t("snackbar.download")}</Snackbar>);
   }
 
   return (
@@ -110,19 +110,19 @@ const DocumentDetails: FC<{
               icon={<MaterialIcon icon="share" />}
               onClick={handleShare}
             >
-              Share
+              {t("header.share")}
             </AssistChip>
             <AssistChip
               icon={<MaterialIcon icon="open_in_new" />}
               onClick={handlePopOut}
             >
-              Pop out
+              {t("header.popOut")}
             </AssistChip>
             <AssistChip
               icon={<MaterialIcon icon="download" />}
               onClick={handleDownload}
             >
-              Download
+              {t("header.download")}
             </AssistChip>
           </ChipSet>
         </div>

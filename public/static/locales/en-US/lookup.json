@@ -1,0 +1,56 @@
+{
+  "title": "School lookup",
+  "search": "Search everything",
+  "students": {
+    "title": "Lookup students",
+    "list": {
+      "searchAlt": "Search students"
+    }
+  },
+  "teachers": {
+    "title": "Lookup teachers",
+    "list": {
+      "searchAlt": "Search teachers"
+    }
+  },
+  "classes": {
+    "title": "Lookup classes",
+    "list": {
+      "searchAlt": "Search classes"
+    }
+  },
+  "orders": {
+    "title": "Lookup orders",
+    "list": {
+      "searchAlt": "Search orders"
+    }
+  },
+  "documents": {
+    "title": "Lookup documents",
+    "list": {
+      "searchAlt": "Search documents",
+      "metadata": "№ {{code}}/{{year}} • {{date}}"
+    },
+    "header": {
+      "share": "Share",
+      "popOut": "Pop out",
+      "download": "Download"
+    },
+    "detail": {
+      "loading": "Loading document from Google Drive…"
+    },
+    "snackbar": {
+      "download": "Getting that file for you…"
+    }
+  },
+  "common": {
+    "list": {
+      "searchHelper": "Press the search icon to search.",
+      "maxNote": "For performance reasons, we limit the number of search results to 100. If you can’t find what you’re looking for, try a more specific query.",
+      "endOfList": "You’ve reached the end."
+    },
+    "detail": {
+      "noneSelected": "Nothing selected."
+    }
+  }
+}

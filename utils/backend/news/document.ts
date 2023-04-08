@@ -17,9 +17,7 @@ import { db2SchoolDocument } from "@/utils/backend/database";
 /**
  * Fetches the number of new orders and documents dated within the week (from
  * Monday).
- * @returns
- * An object with number of new orders (key `order`) and documents (key
- * `document`)
+ * @returns An object with number of new orders (key `order`) and documents (key `document`).
  */
 export async function getNewSchoolDocumentCount(): Promise<
   BackendDataReturn<NewSchoolDocumentCount, { order: 0; document: 0 }>
@@ -54,10 +52,8 @@ export async function getNewSchoolDocumentCount(): Promise<
 
 /**
  * Searches all school documents for matching type and query.
- * @param type
- * `order` (order; คำสั่ง) or `document` (official document; หนังสือออก)
- * @param query
- * A string to search for, will be matched against `code` and `subject`
+ * @param type `order` (order; คำสั่ง) or `document` (official document; หนังสือออก)
+ * @param query A string to search for, will be matched against `code` and `subject`
  * @returns School documents matching type and query
  */
 export async function searchSchoolDocs(
@@ -74,11 +70,15 @@ export async function searchSchoolDocs(
     .match({ type })
     .or(
       query.match(/\d+\/\d{4}/)
-        ? // If the query is in {code}/{year}, parse it, and only search with the code and year
+        ? // If the query is in {code}/{year}, parse it, and only search with
+          // the code and year
           `and(code.like.%${codeSegments[0]}%,date.gte."${year}-01-01",date.lte."${year}-12-31"))`
         : // Otherwise, search for code and subject line
           `code.like.%${query}%, subject.like.%${query}%`
-    );
+    )
+    .order("date", { ascending: false })
+    .order("code", { ascending: false })
+    .limit(100);
 
   if (error) {
     console.error(error);
@@ -102,9 +102,10 @@ export async function getSchoolDocs(
   const { data, error } = await supabase
     .from("school_documents")
     .select("*")
+    .match({ type })
     .order("date", { ascending: false })
-    .limit(100)
-    .match({ type });
+    .order("code", { ascending: false })
+    .limit(100);
 
   if (error) {
     console.error(error);

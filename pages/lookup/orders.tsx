@@ -52,17 +52,17 @@ const LookupOrdersPage: CustomPage<{
   return (
     <>
       <Head>
-        <title>{createTitleStr("Lookup orders", t)}</title>
+        <title>{createTitleStr(t("orders.title"), t)}</title>
       </Head>
       <MySKPageHeader
-        title="Lookup orders"
+        title={t("orders.title")}
         icon={<MaterialIcon icon="search" />}
         parentURL="/lookup"
       />
       <SplitLayout ratio="list-detail">
         <LookupList
           length={orders.length}
-          searchAlt="Search orders"
+          searchAlt={t("orders.list.searchAlt")}
           onSearch={async (query) => {
             if (!query) {
               setOrders(recentOrders);

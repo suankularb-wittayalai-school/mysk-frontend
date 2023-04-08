@@ -76,10 +76,10 @@ const LookupPage: CustomPage = () => {
   return (
     <>
       <Head>
-        <title>{createTitleStr("School lookup", t)}</title>
+        <title>{createTitleStr(t("title"), t)}</title>
       </Head>
       <MySKPageHeader
-        title="School lookup"
+        title={t("title")}
         icon={<MaterialIcon icon="search" />}
       />
       <ContentLayout>
@@ -90,29 +90,29 @@ const LookupPage: CustomPage = () => {
           <LookupCard
             id="students"
             icon={<MaterialIcon icon="backpack" size={48} />}
-            text="Lookup students"
+            text={t("students.title")}
             className="md:col-span-3"
           />
           <LookupCard
             id="teachers"
             icon={<MaterialIcon icon="group" size={48} />}
-            text="Lookup teachers"
+            text={t("teachers.title")}
             className="md:col-span-3"
           />
           <LookupCard
             id="classes"
             icon={<MaterialIcon icon="groups" size={48} />}
-            text="Lookup classes"
+            text={t("classes.title")}
           />
           <LookupCard
             id="orders"
             icon={<MaterialIcon icon="mail" size={48} />}
-            text="Lookup orders"
+            text={t("orders.title")}
           />
           <LookupCard
             id="documents"
             icon={<MaterialIcon icon="description" size={48} />}
-            text="Lookup documents"
+            text={t("documents.title")}
           />
         </Columns>
       </ContentLayout>

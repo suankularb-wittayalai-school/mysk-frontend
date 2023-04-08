@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { MaterialIcon, SplitLayout } from "@suankularb-components/react";
 
 // Internal components
+import EmptyDetail from "@/components/lookup/EmptyDetail";
 import MySKPageHeader from "@/components/common/MySKPageHeader";
 import DocumentCard from "@/components/lookup/document/DocumentCard";
 import DocumentDetails from "@/components/lookup/document/DocumentDetail";
@@ -20,6 +21,7 @@ import LookupList from "@/components/lookup/LookupList";
 import {
   getSchoolDocs,
   getSchoolDocsByID,
+  searchSchoolDocs,
 } from "@/utils/backend/news/document";
 
 // Helpers
@@ -28,7 +30,6 @@ import { createTitleStr } from "@/utils/helpers/title";
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { SchoolDocument } from "@/utils/types/news";
-import EmptyDetail from "@/components/lookup/EmptyDetail";
 
 const LookupDocumentsPage: CustomPage<{
   recentDocs: SchoolDocument[];
@@ -36,6 +37,8 @@ const LookupDocumentsPage: CustomPage<{
 }> = ({ recentDocs, selectedIdx }) => {
   // Translation
   const { t } = useTranslation(["lookup", "common"]);
+
+  const [documents, setDocuments] = useState<SchoolDocument[]>(recentDocs);
 
   // Selected Document
   const [selected, setSelected] = useState<SchoolDocument>(
@@ -49,20 +52,27 @@ const LookupDocumentsPage: CustomPage<{
   return (
     <>
       <Head>
-        <title>{createTitleStr("Lookup documents", t)}</title>
+        <title>{createTitleStr(t("documents.title"), t)}</title>
       </Head>
       <MySKPageHeader
-        title="Lookup documents"
+        title={t("documents.title")}
         icon={<MaterialIcon icon="search" />}
         parentURL="/lookup"
       />
       <SplitLayout ratio="list-detail">
         <LookupList
           length={recentDocs.length}
-          searchAlt="Search documents"
-          onSearch={() => {}}
+          searchAlt={t("documents.list.searchAlt")}
+          onSearch={async (query) => {
+            if (!query) {
+              setDocuments(recentDocs);
+              return;
+            }
+            const { data } = await searchSchoolDocs("order", query);
+            setDocuments(data);
+          }}
         >
-          {recentDocs.map((document) => (
+          {documents.map((document) => (
             <DocumentCard
               key={document.id}
               document={document}

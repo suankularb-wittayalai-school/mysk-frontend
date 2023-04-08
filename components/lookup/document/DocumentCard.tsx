@@ -1,6 +1,7 @@
 // External libraries
 import { isThisYear } from "date-fns";
 import { useRouter } from "next/router";
+import { Trans, useTranslation } from "next-i18next";
 import { FC } from "react";
 
 // SK Components
@@ -23,6 +24,7 @@ const DocumentCard: FC<{
 }> = ({ document, selected, setSelected }) => {
   // Translation
   const locale = useLocale();
+  const { t } = useTranslation("lookup", { keyPrefix: "documents.list" });
 
   // Router
   const router = useRouter();
@@ -56,6 +58,7 @@ const DocumentCard: FC<{
           // an iframe in the detail section
           {
             onClick: () => {
+              if (selected?.id === document.id) return;
               if (setSelected) setSelected(document);
               router.replace(`/lookup/orders?id=${document.id}`, undefined, {
                 shallow: true,
@@ -68,18 +71,19 @@ const DocumentCard: FC<{
         // Subject line
         title={document.subject}
         // {code}/{year in BE} • {date}
-        subtitle={`№ ${document.code}/${getLocaleYear(
-          "th",
-          documentDate.getFullYear()
-        )} • ${documentDate.toLocaleDateString(locale, {
-          year: !isThisYear(documentDate)
-            ? locale === "en-US"
-              ? "numeric"
-              : "2-digit"
-            : undefined,
-          month: "short",
-          day: "numeric",
-        })}`}
+        subtitle={t("metadata", {
+          code: document.code,
+          year: getLocaleYear("th", documentDate.getFullYear()),
+          date: documentDate.toLocaleDateString(locale, {
+            year: !isThisYear(documentDate)
+              ? locale === "en-US"
+                ? "numeric"
+                : "2-digit"
+              : undefined,
+            month: "short",
+            day: "numeric",
+          }),
+        })}
       />
     </Card>
   );
