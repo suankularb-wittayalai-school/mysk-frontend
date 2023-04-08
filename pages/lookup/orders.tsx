@@ -294,15 +294,14 @@ export const getServerSideProps: GetServerSideProps = async ({
   let orders;
   const { data: defaultOrders } = await getSchoolDocs("order");
 
-  selectedIdx = Math.max(
-    defaultOrders.findIndex((order) => selectedID === order.id),
-    0
-  );
+  selectedIdx = defaultOrders.findIndex((order) => selectedID === order.id);
 
-  if (selectedID && !selectedIdx) {
+  if (selectedID && selectedIdx === -1) {
     const { data: selected } = await getSchoolDocsByID("order", selectedID);
     orders = [selected, ...defaultOrders];
   } else orders = defaultOrders;
+
+  selectedIdx = Math.max(selectedIdx, 0);
 
   return {
     props: {
