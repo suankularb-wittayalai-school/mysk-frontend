@@ -1,10 +1,11 @@
 // External libraries
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { isThisYear } from "date-fns";
 
 import { AnimatePresence, motion } from "framer-motion";
 
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
+import { GetServerSideProps } from "next";
 import Head from "next/head";
+import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -30,20 +31,26 @@ import {
 // Internal components
 import MySKPageHeader from "@/components/common/MySKPageHeader";
 
+// Contexts
+import SnackbarContext from "@/contexts/SnackbarContext";
+
 // Backend
-import { getSchoolDocs } from "@/utils/backend/news/document";
+import {
+  getSchoolDocs,
+  getSchoolDocsByID,
+} from "@/utils/backend/news/document";
 
 // Helpers
 import { cn } from "@/utils/helpers/className";
 import { getLocaleYear } from "@/utils/helpers/date";
 import { createTitleStr } from "@/utils/helpers/title";
 
+// Hooks
+import { useLocale } from "@/utils/hooks/i18n";
+
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { SchoolDocument } from "@/utils/types/news";
-import SnackbarContext from "@/contexts/SnackbarContext";
-import { useLocale } from "@/utils/hooks/i18n";
-import { isThisYear } from "date-fns";
 
 const OrdersList: FC<{
   orders: SchoolDocument[];
@@ -52,6 +59,7 @@ const OrdersList: FC<{
 }> = ({ orders, selected, setSelected }) => {
   const { atBreakpoint } = useBreakpoint();
   const locale = useLocale();
+  const router = useRouter();
 
   return (
     <div className="flex flex-col gap-2">
@@ -74,7 +82,14 @@ const OrdersList: FC<{
                   href: order.documentLink,
                   aAttr: { target: "_blank", rel: "noreferrer" },
                 }
-              : { onClick: () => setSelected(order) })}
+              : {
+                  onClick: () => {
+                    setSelected(order);
+                    router.replace(`/lookup/orders?id=${order.id}`, undefined, {
+                      shallow: true,
+                    });
+                  },
+                })}
           >
             <CardHeader
               title={order.subject}
@@ -107,7 +122,8 @@ const OrdersList: FC<{
 
 const LookupOrdersPage: CustomPage<{
   orders: SchoolDocument[];
-}> = ({ orders }) => {
+  selectedIdx: number;
+}> = ({ orders, selectedIdx }) => {
   // Translation
   const { t } = useTranslation("lookup");
 
@@ -118,7 +134,7 @@ const LookupOrdersPage: CustomPage<{
   const { setSnackbar } = useContext(SnackbarContext);
 
   // Selected Order
-  const [selected, setSelected] = useState<SchoolDocument>(orders[0]);
+  const [selected, setSelected] = useState<SchoolDocument>(orders[selectedIdx]);
 
   // iframe
 
@@ -258,16 +274,23 @@ const LookupOrdersPage: CustomPage<{
 
 export const getServerSideProps: GetServerSideProps = async ({
   locale,
-  params,
-  req,
-  res,
+  query,
 }) => {
-  const supabase = createServerSupabaseClient({
-    req: req as NextApiRequest,
-    res: res as NextApiResponse,
-  });
+  const selectedID = Number(query?.id);
+  let selectedIdx = 0;
 
-  const { data: orders, error: ordersError } = await getSchoolDocs("order");
+  let orders;
+  const { data: defaultOrders } = await getSchoolDocs("order");
+
+  selectedIdx = Math.max(
+    defaultOrders.findIndex((order) => selectedID === order.id),
+    0
+  );
+
+  if (selectedID && !selectedIdx) {
+    const { data: selected } = await getSchoolDocsByID("order", selectedID);
+    orders = [selected, ...defaultOrders];
+  } else orders = defaultOrders;
 
   return {
     props: {
@@ -276,6 +299,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         "lookup",
       ])),
       orders,
+      selectedIdx,
     },
   };
 };

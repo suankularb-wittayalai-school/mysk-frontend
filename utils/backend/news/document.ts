@@ -9,11 +9,9 @@ import {
   SchoolDocumentType,
 } from "@/utils/types/news";
 import { supabase } from "@/utils/supabase-client";
-import { db2SchoolDocument } from "../database";
 
-// Constants
-// Number of documents displayed per page
-const docsPerPage = 50;
+// Converters
+import { db2SchoolDocument } from "@/utils/backend/database";
 
 // Functions
 /**
@@ -84,10 +82,9 @@ export async function searchSchoolDocs(
 }
 
 /**
- * Fetches all school documents of a type.
- * @param type
- * `order` (order; คำสั่ง) or `document` (official document; หนังสือออก)
- * @returns All school documents of a type
+ * Fetches the 100 most recent school documents of a type.
+ * @param type `order` (order; คำสั่ง) or `document` (official document; หนังสือออก).
+ * @returns 100 school documents of a type.
  */
 export async function getSchoolDocs(
   type: SchoolDocumentType
@@ -111,26 +108,30 @@ export async function getSchoolDocs(
 }
 
 /**
- * Finds how many pages are required to display all school documents of a type.
- * @param type
- * `order` (order; คำสั่ง) or `document` (official document; หนังสือออก)
- * @returns Number of pages
+ * Get a school document by its Supabase ID.
+ * @param type `order` (order; คำสั่ง) or `document` (official document; หนังสือออก).
+ * @param id The Supabse ID of the school document.
+ * @returns A school document.
  */
-export async function getNoOfSchoolDocsPages(
-  type: SchoolDocumentType
-): Promise<BackendDataReturn<number, 1>> {
-  const { count, error } = await supabase
+export async function getSchoolDocsByID(
+  type: SchoolDocumentType,
+  id: number
+): Promise<BackendDataReturn<SchoolDocument, null>> {
+  const { data, error } = await supabase
     .from("school_documents")
-    .select("id", { count: "estimated" })
-    .match({ type });
+    .select("*")
+    .order("date", { ascending: false })
+    .match({ id, type })
+    .limit(1)
+    .single();
 
   if (error) {
     console.error(error);
-    return { data: 1, error };
+    return { data: null, error };
   }
 
-  const calculatedNoPages = Math.ceil(count! / docsPerPage);
-  const cappedNoPages = calculatedNoPages < 1 ? 1 : calculatedNoPages;
-
-  return { data: cappedNoPages, error: null };
+  return {
+    data: db2SchoolDocument(data),
+    error: null,
+  };
 }
