@@ -34,21 +34,23 @@ const LookupList: FC<{
   }, [query]);
 
   return (
-    <aside aria-labelledby="header-list" className="flex flex-col gap-6">
+    <aside aria-labelledby="header-list" className="flex flex-col gap-3 !pt-0">
       <h2 id="header-list" className="sr-only">
         {t("title")}
       </h2>
 
       {/* Search */}
-      <Search
-        alt={searchAlt}
-        value={query}
-        locale={locale}
-        onChange={setQuery}
-        onSearch={() => onSearch(query)}
-      >
-        <p className="px-4 text-on-surface-variant">{t("searchHelper")}</p>
-      </Search>
+      <div className="sticky top-0 z-10 bg-background pt-6 pb-3">
+        <Search
+          alt={searchAlt}
+          value={query}
+          locale={locale}
+          onChange={setQuery}
+          onSearch={() => onSearch(query)}
+        >
+          <p className="px-4 text-on-surface-variant">{t("searchHelper")}</p>
+        </Search>
+      </div>
 
       {/* List */}
       <div className="flex flex-col gap-2">
