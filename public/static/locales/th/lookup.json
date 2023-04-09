@@ -1,16 +1,10 @@
 {
   "title": "ค้นหาในโรงเรียน",
   "search": "ค้นหาทุกอย่าง",
-  "students": {
-    "title": "ค้นหานักเรียน",
+  "people": {
+    "title": "ค้นหาผู้คน",
     "list": {
-      "searchAlt": "ค้นหานักเรียน"
-    }
-  },
-  "teachers": {
-    "title": "ค้นหาอาจารย์",
-    "list": {
-      "searchAlt": "ค้นหาอาจารย์"
+      "searchAlt": "ค้นหาผู้คน"
     }
   },
   "classes": {

@@ -38,8 +38,7 @@ const LookupCard: FC<{
     appearance="filled"
     stateLayerEffect
     className={cn([
-      `col-span-2 !justify-end border-1 border-outline-variant
-       sm:min-h-[9.25rem]`,
+      `!justify-end border-1 border-outline-variant sm:min-h-[9.25rem]`,
       className,
     ])}
     href={`/lookup/${id}`}
@@ -83,21 +82,11 @@ const LookupPage: CustomPage = () => {
         icon={<MaterialIcon icon="search" />}
       />
       <ContentLayout>
-        <Columns
-          columns={6}
-          className="mx-4 sm:mx-0 sm:!items-stretch sm:!gap-y-6"
-        >
+        <Columns columns={2} className="mx-4 sm:mx-0 sm:!gap-y-6">
           <LookupCard
-            id="students"
-            icon={<MaterialIcon icon="backpack" size={48} />}
-            text={t("students.title")}
-            className="md:col-span-3"
-          />
-          <LookupCard
-            id="teachers"
-            icon={<MaterialIcon icon="group" size={48} />}
-            text={t("teachers.title")}
-            className="md:col-span-3"
+            id="people"
+            icon={<MaterialIcon icon="badge" size={48} />}
+            text={t("people.title")}
           />
           <LookupCard
             id="classes"
