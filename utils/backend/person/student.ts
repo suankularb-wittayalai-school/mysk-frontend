@@ -4,9 +4,6 @@ import { createPerson } from "@/utils/backend/person/person";
 // Helpers
 import { getCurrentAcademicYear } from "@/utils/helpers/date";
 
-// Supabase
-import { supabase } from "@/utils/supabase-client";
-
 // Types
 import { ClassWNumber } from "@/utils/types/class";
 import { BackendDataReturn, DatabaseClient } from "@/utils/types/common";

@@ -3,7 +3,7 @@ import { User } from "@supabase/supabase-js";
 
 // Backend
 import { createContact } from "@/utils/backend/contact";
-import { db2Student } from "@/utils/backend/database";
+import { db2PersonName, db2Student } from "@/utils/backend/database";
 import { getTeacherFromUser } from "@/utils/backend/person/teacher";
 import { getCurrentAcademicYear } from "@/utils/helpers/date";
 
@@ -12,9 +12,17 @@ import { supabase } from "@/utils/supabase-client";
 
 // Types
 import { BackendDataReturn, DatabaseClient } from "@/utils/types/common";
-import { Person, Student, Teacher } from "@/utils/types/person";
-import { Database } from "@/utils/types/supabase";
+import { ClassWNumber } from "@/utils/types/class";
 import { Contact } from "@/utils/types/contact";
+import {
+  Person,
+  PersonLookupItem,
+  PersonLookupItemGeneric,
+  Student,
+  Teacher,
+} from "@/utils/types/person";
+import { SubjectGroup } from "@/utils/types/subject";
+import { Database } from "@/utils/types/supabase";
 
 export async function createPerson(
   person: Person
@@ -295,4 +303,94 @@ export async function getPersonIDFromUser(
   }
 
   return { data: null, error: { message: "invalid role." } };
+}
+
+export async function getInitialLookupPeopelList(): Promise<
+  BackendDataReturn<PersonLookupItem[]>
+> {
+  const { data: people, error: peopleError } = await supabase
+    .from("people")
+    .select("*")
+    .order("first_name_th")
+    .limit(100);
+
+  if (peopleError) {
+    console.error(peopleError);
+    return { data: [], error: peopleError };
+  }
+
+  const peopleIDs = people.map((person) => person.id);
+
+  // Students
+
+  // Get all students that have the matching person ID
+  const { data: students, error: studentsError } = await supabase
+    .from("student")
+    .select("*, person(*)")
+    .or(`person.in.(${peopleIDs.join()})`);
+
+  if (studentsError) {
+    console.error(studentsError);
+    return { data: [], error: studentsError };
+  }
+
+  // Get all classes that contain these students
+  const { data: classes, error: classesError } = await supabase
+    .from("classroom")
+    .select("id, number, students")
+    .or(students.map((student) => `students.cs.{"${student.id}"}`).join());
+
+  if (classesError) {
+    console.error(classesError);
+    return { data: [], error: classesError };
+  }
+
+  // Format the list
+  const formattedStudents: PersonLookupItemGeneric<ClassWNumber>[] =
+    students.map((student) => {
+      const classItem = classes.find((classItem) =>
+        classItem.students.includes(student.id)
+      )!;
+      return {
+        id: student.id,
+        role: "student",
+        metadata: { id: classItem.id, number: classItem.number },
+        ...db2PersonName(student.person),
+      };
+    });
+
+  // Teachers
+
+  // Get all teachers that have the matching person ID
+  const { data: teachers, error: teachersError } = await supabase
+    .from("teacher")
+    .select("*, person(*), subject_group(*)")
+    .or(`person.in.(${peopleIDs.join()})`);
+
+  if (teachersError) {
+    console.error(teachersError);
+    return { data: [], error: teachersError };
+  }
+
+  // Format the list
+  const formattedTeachers: PersonLookupItemGeneric<SubjectGroup>[] =
+    teachers.map((teacher) => ({
+      id: teacher.id,
+      role: "teacher",
+      metadata: {
+        id: teacher.subject_group.id,
+        name: {
+          th: teacher.subject_group.name_th,
+          "en-US": teacher.subject_group.name_en,
+        },
+      },
+      ...db2PersonName(teacher.person),
+    }));
+
+  return {
+    data: (formattedStudents as PersonLookupItem[])
+      .concat(formattedTeachers as PersonLookupItem[])
+      .sort((a, b) => (a.name.th.firstName > b.name.th.firstName ? 1 : -1)),
+    error: null,
+  };
 }
