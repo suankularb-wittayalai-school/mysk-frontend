@@ -305,7 +305,7 @@ export async function getPersonIDFromUser(
   return { data: null, error: { message: "invalid role." } };
 }
 
-export async function getInitialLookupPeopelList(): Promise<
+export async function getInitialPeopleLookupList(): Promise<
   BackendDataReturn<PersonLookupItem[]>
 > {
   const { data: people, error: peopleError } = await supabase

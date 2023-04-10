@@ -9,7 +9,7 @@ import { Card, CardHeader } from "@suankularb-components/react";
 import DynamicAvatar from "@/components/common/DynamicAvatar";
 
 // Types
-import { PersonLookupItem } from "@/utils/types/person";
+import { PersonLookupItem, Role } from "@/utils/types/person";
 
 // Helpers
 import { cn } from "@/utils/helpers/className";
@@ -21,21 +21,25 @@ import { useLocale } from "@/utils/hooks/i18n";
 
 const PersonCard: FC<{
   person: PersonLookupItem;
-  selected?: number;
-  setSelected?: (id: number) => void;
+  selected?: { id: number; role: Role };
+  setSelected?: (selected: { id: number; role: Role }) => void;
 }> = ({ person, selected, setSelected }) => {
   // Translation
   const locale = useLocale();
   const { t } = useTranslation("common");
 
-  const thisSelected = selected === person.id;
+  /**
+   * If this Card is the selected Card in Lookup People. A selected Card has a
+   * different styling.
+   */
+  const thisSelected = selected?.id === person.id;
 
   return (
     <Card
       appearance="filled"
       direction="row"
       stateLayerEffect
-      onClick={() => setSelected && setSelected(person.id)}
+      onClick={() => setSelected && setSelected({ ...person })}
       className={cn([
         "text-left",
         !thisSelected && "!border-transparent !bg-transparent",

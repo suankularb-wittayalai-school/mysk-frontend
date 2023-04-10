@@ -22,19 +22,18 @@ import MySKPageHeader from "@/components/common/MySKPageHeader";
 import EmptyDetail from "@/components/lookup/EmptyDetail";
 import LookupList from "@/components/lookup/LookupList";
 import PersonCard from "@/components/lookup/person/PersonCard";
+import PersonDetails from "@/components/lookup/person/PersonDetails";
 
 // Backend
-import { getUserMetadata } from "@/utils/backend/account";
+import { getInitialPeopleLookupList } from "@/utils/backend/person/person";
 
 // Helpers
+import { toggleItem } from "@/utils/helpers/array";
 import { createTitleStr } from "@/utils/helpers/title";
 
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { PersonLookupItem, Role } from "@/utils/types/person";
-import { getInitialLookupPeopelList as getInitialPeopleLookupList } from "@/utils/backend/person/person";
-import { useToggle } from "@/utils/hooks/toggle";
-import { toggleItem } from "@/utils/helpers/array";
 
 const LookupStudentsPage: CustomPage<{
   initialPeople: PersonLookupItem[];
@@ -46,10 +45,14 @@ const LookupStudentsPage: CustomPage<{
   const [people, setPeople] = useState<PersonLookupItem[]>(initialPeople);
 
   // Selected Person
-  const [selected, setSelected] = useState<number>(initialPeople[0]?.id);
-
-  // If person details is loading
-  const [loading, toggleLoading] = useToggle();
+  const [selected, setSelected] = useState(
+    initialPeople[selectedIdx]
+      ? {
+          id: initialPeople[selectedIdx].id,
+          role: initialPeople[selectedIdx].role,
+        }
+      : undefined
+  );
 
   // For showing Filter Chips when the list is already filterred by text
   const [filterred, setFilterred] = useState<boolean>(false);
@@ -111,7 +114,7 @@ const LookupStudentsPage: CustomPage<{
             />
           ))}
         </LookupList>
-        <EmptyDetail />
+        {selected ? <PersonDetails selected={selected} /> : <EmptyDetail />}
       </SplitLayout>
     </>
   );
