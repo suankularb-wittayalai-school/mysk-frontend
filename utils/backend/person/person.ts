@@ -386,14 +386,23 @@ export async function getPeopleLookupList(
   }
 
   // Get all classes that contain these students
-  const { data: classes, error: classesError } = await supabase
-    .from("classroom")
-    .select("id, number, students")
-    .or(students.map((student) => `students.cs.{"${student.id}"}`).join());
+  let classes: Pick<
+    Database["public"]["Tables"]["classroom"]["Row"],
+    "id" | "number" | "students"
+  >[] = [];
 
-  if (classesError) {
-    console.error(classesError);
-    return { data: [], error: classesError };
+  if (students.length) {
+    const { data, error } = await supabase
+      .from("classroom")
+      .select("id, number, students")
+      .or(students.map((student) => `students.cs.{"${student.id}"}`).join());
+
+    if (error) {
+      console.error(error);
+      return { data: [], error };
+    }
+
+    classes = data;
   }
 
   // Format the list
