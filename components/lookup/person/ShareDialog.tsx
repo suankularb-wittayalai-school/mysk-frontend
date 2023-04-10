@@ -39,11 +39,11 @@ const ShareDialog: DialogComponent<{
         };${getLocaleObj(person.name, locale).firstName};;;\nFN:${nameJoiner(
           locale,
           person.name
-        )}${emails.map(
-          (email) => `EMAIL;type=INTERNET:${email.value}\n`
-        )}${phoneNumbers.map(
-          (phoneNumber) => `TEL;type=CELL:${phoneNumber.value}\n`
-        )}\nEND:VCARD`,
+        )}\n${emails
+          .map((email) => `EMAIL;type=INTERNET:${email.value}`)
+          .join("\n")}\n${phoneNumbers
+          .map((phoneNumber) => `TEL;type=CELL:${phoneNumber.value}`)
+          .join("\n")}\nEND:VCARD`,
       ],
       { type: "text/vcard;charset=utf-8" }
     );
@@ -53,8 +53,8 @@ const ShareDialog: DialogComponent<{
   }
 
   async function handleCopyLink() {
-    const shareData = {
-      title: "Siravit Phokeed - MySK",
+    const shareData: ShareData = {
+      title: `${nameJoiner(locale, person.name)} - MySK`,
       url: window.location.href,
     };
     if (navigator.canShare && navigator.canShare(shareData))
@@ -116,8 +116,7 @@ const ShareDialog: DialogComponent<{
             </Button>
           </Actions>
           <p className="skc-label-small text-on-surface-variant">
-            Print out the details of this person. Private info you have access
-            to is also included.
+            Print out the details of this person.
           </p>
         </div>
       </DialogContent>
