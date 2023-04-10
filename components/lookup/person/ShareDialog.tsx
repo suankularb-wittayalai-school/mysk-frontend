@@ -1,4 +1,5 @@
 // External libraries
+import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 
 // SK Components
@@ -27,6 +28,8 @@ const ShareDialog: DialogComponent<{
 }> = ({ person, open, onClose }) => {
   const locale = useLocale();
   const { t } = useTranslation(["lookup", "common"]);
+
+  const router = useRouter();
 
   async function handleSaveVCard() {
     const emails = person.contacts.filter(
@@ -107,8 +110,9 @@ const ShareDialog: DialogComponent<{
     onClose();
   }
 
-  function handlePrint() {
+  async function handlePrint() {
     onClose();
+    await router.push(`/lookup/person/${person.role}/${person.id}`);
     setTimeout(() => window.print(), 200);
   }
 
