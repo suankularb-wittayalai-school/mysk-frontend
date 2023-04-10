@@ -10,7 +10,12 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useEffect, useState } from "react";
 
 // SK Components
-import { MaterialIcon, SplitLayout } from "@suankularb-components/react";
+import {
+  ChipSet,
+  FilterChip,
+  MaterialIcon,
+  SplitLayout,
+} from "@suankularb-components/react";
 
 // Internal components
 import MySKPageHeader from "@/components/common/MySKPageHeader";
@@ -26,8 +31,10 @@ import { createTitleStr } from "@/utils/helpers/title";
 
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { PersonLookupItem } from "@/utils/types/person";
+import { PersonLookupItem, Role } from "@/utils/types/person";
 import { getInitialLookupPeopelList as getInitialPeopleLookupList } from "@/utils/backend/person/person";
+import { useToggle } from "@/utils/hooks/toggle";
+import { toggleItem } from "@/utils/helpers/array";
 
 const LookupStudentsPage: CustomPage<{
   initialPeople: PersonLookupItem[];
@@ -36,14 +43,17 @@ const LookupStudentsPage: CustomPage<{
   // Translation
   const { t } = useTranslation(["lookup", "common"]);
 
-  const [students, setStudents] = useState<PersonLookupItem[]>(initialPeople);
+  const [people, setPeople] = useState<PersonLookupItem[]>(initialPeople);
 
-  // Selected Order
+  // Selected Person
   const [selected, setSelected] = useState<number>(initialPeople[0]?.id);
 
-  // If the iframe is loading
-  const [loading, setLoading] = useState<boolean>(true);
-  useEffect(() => setLoading(true), [selected]);
+  // If person details is loading
+  const [loading, toggleLoading] = useToggle();
+
+  // For showing Filter Chips when the list is already filterred by text
+  const [filterred, setFilterred] = useState<boolean>(false);
+  const [filters, setFilters] = useState<Role[]>(["student", "teacher"]);
 
   return (
     <>
@@ -57,14 +67,46 @@ const LookupStudentsPage: CustomPage<{
       />
       <SplitLayout ratio="list-detail">
         <LookupList
-          length={students.length}
-          searchAlt="Search students"
-          onSearch={() => {}}
+          length={people.length}
+          searchAlt={t("people.list.searchAlt")}
+          searchFilters={
+            filterred ? (
+              <ChipSet>
+                <FilterChip
+                  selected={filters.includes("student")}
+                  onClick={() =>
+                    setFilters(toggleItem<Role>("student", filters))
+                  }
+                >
+                  Students
+                </FilterChip>
+                <FilterChip
+                  selected={filters.includes("teacher")}
+                  onClick={() =>
+                    setFilters(toggleItem<Role>("teacher", filters))
+                  }
+                >
+                  Teachers
+                </FilterChip>
+              </ChipSet>
+            ) : undefined
+          }
+          onSearch={(value) => {
+            if (!value) {
+              setFilterred(false);
+              setPeople(initialPeople);
+              return;
+            }
+            setFilterred(true);
+          }}
         >
-          {students.map((student) => (
+          {(filterred
+            ? people.filter((person) => filters.includes(person.role))
+            : people
+          ).map((person) => (
             <PersonCard
-              key={student.id}
-              person={student}
+              key={person.id}
+              person={person}
               {...{ selected, setSelected }}
             />
           ))}
