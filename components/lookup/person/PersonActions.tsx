@@ -37,6 +37,7 @@ const PersonActions: FC<{ person?: Student | Teacher }> = ({ person }) => {
       <ChipSet>
         {classItem && (
           <>
+            {/* See class */}
             <AssistChip
               icon={<MaterialIcon icon="groups" />}
               href={`/lookup/class/${classItem.number}`}
@@ -44,6 +45,8 @@ const PersonActions: FC<{ person?: Student | Teacher }> = ({ person }) => {
             >
               {t("seeClass")}
             </AssistChip>
+
+            {/* See schedule */}
             <AssistChip
               icon={<MaterialIcon icon="dashboard" />}
               href={`/lookup/class/${classItem.number}/schedule`}
@@ -53,6 +56,8 @@ const PersonActions: FC<{ person?: Student | Teacher }> = ({ person }) => {
             </AssistChip>
           </>
         )}
+
+        {/* Share */}
         <AssistChip
           icon={<MaterialIcon icon="share" />}
           onClick={() => setShareOpen(true)}
