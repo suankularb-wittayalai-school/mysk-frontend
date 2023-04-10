@@ -168,7 +168,7 @@ const DocumentDetails: FC<{
   useEffect(updateIframeSize, [document]);
 
   return (
-    <main ref={mainRef} className="hidden sm:block">
+    <main ref={mainRef}>
       <Card appearance="outlined" className="relative h-full overflow-hidden">
         {/* Top App Bar */}
         <div

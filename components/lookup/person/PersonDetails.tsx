@@ -69,7 +69,7 @@ const PersonDetails: FC<{ selected: { id: number; role: Role } }> = ({
           <title>{createTitleStr(nameJoiner(locale, person.name), t)}</title>
         )}
       </Head>
-      <main className="hidden sm:block">
+      <main aria-labelledby="header-person-details">
         <Card appearance="outlined" className="relative h-full overflow-hidden">
           <PersonHeader {...{ person }} />
           <Progress
