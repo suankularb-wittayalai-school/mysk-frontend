@@ -22,6 +22,7 @@ import {
   Person,
   PersonLookupItem,
   PersonLookupItemGeneric,
+  Role,
   Student,
   Teacher,
 } from "@/utils/types/person";
@@ -307,6 +308,27 @@ export async function getPersonIDFromUser(
   }
 
   return { data: null, error: { message: "invalid role." } };
+}
+
+export async function getPersonRole(
+  supabase: DatabaseClient,
+  personID: number
+): Promise<BackendDataReturn<Role, null>> {
+  const { data: teacher, error: teacherError } = await supabase
+    .from("teacher")
+    .select("id")
+    .match({ person: personID })
+    .limit(1)
+    .maybeSingle();
+
+  console.log(teacher);
+
+  if (teacherError) {
+    console.error(teacherError);
+    return { data: null, error: teacherError };
+  }
+
+  return { data: teacher ? "teacher" : "student", error: null };
 }
 
 export async function getPeopleLookupList(

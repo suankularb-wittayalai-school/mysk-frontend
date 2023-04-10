@@ -1,10 +1,13 @@
 // External libraries
+import Link from "next/link";
 import { useRouter } from "next/router";
+
 import { useTranslation } from "next-i18next";
+
 import { FC } from "react";
 
 // SK Components
-import { Card, CardHeader } from "@suankularb-components/react";
+import { Card, CardHeader, useBreakpoint } from "@suankularb-components/react";
 
 // Internal components
 import DynamicAvatar from "@/components/common/DynamicAvatar";
@@ -32,6 +35,9 @@ const PersonCard: FC<{
   // Router
   const router = useRouter();
 
+  // Responsive
+  const { atBreakpoint } = useBreakpoint();
+
   /**
    * If this Card is the selected Card in Lookup People. A selected Card has a
    * different styling.
@@ -43,12 +49,22 @@ const PersonCard: FC<{
       appearance="filled"
       direction="row"
       stateLayerEffect
-      onClick={() => {
-        if (setSelected) setSelected({ ...person });
-        router.push(`/lookup/people?id=${person.id}`, undefined, {
-          shallow: true,
-        });
-      }}
+      {...(atBreakpoint === "base"
+        ? // If the user is on mobile, open a new page
+          {
+            href: `/lookup/person/${person.role}/${person.id}`,
+            element: Link,
+          }
+        : // If the user is on tablet/desktop, show the selected Person in the
+          // detail section
+          {
+            onClick: () => {
+              if (setSelected) setSelected({ ...person });
+              router.push(`/lookup/person?id=${person.id}`, undefined, {
+                shallow: true,
+              });
+            },
+          })}
       className={cn([
         "text-left",
         !thisSelected && "!border-transparent !bg-transparent",

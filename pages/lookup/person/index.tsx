@@ -1,7 +1,5 @@
 // External libraries
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
-
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
+import { GetServerSideProps } from "next";
 import Head from "next/head";
 
 import { useTranslation } from "next-i18next";
@@ -33,7 +31,12 @@ import { createTitleStr } from "@/utils/helpers/title";
 
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { PersonLookupItem, Role } from "@/utils/types/person";
+import { PersonLookupItem, Role, Student, Teacher } from "@/utils/types/person";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { getStudent } from "@/utils/backend/person/student";
+import { getTeacher } from "@/utils/backend/person/teacher";
+import { withLoading } from "@/utils/helpers/loading";
+import { useToggle } from "@/utils/hooks/toggle";
 
 const LookupStudentsPage: CustomPage<{
   initialPeople: PersonLookupItem[];
@@ -53,6 +56,45 @@ const LookupStudentsPage: CustomPage<{
         }
       : undefined
   );
+
+  const supabase = useSupabaseClient();
+  const [loading, toggleLoading] = useToggle();
+
+  const [selectedPerson, setSelectedPerson] = useState<Student | Teacher>();
+  useEffect(() => {
+    if (!selected) return;
+
+    withLoading(
+      async () => {
+        let person: Student | Teacher | undefined;
+
+        // If a Student is selected
+        if (selected.role === "student") {
+          const { data: student, error } = await getStudent(
+            supabase,
+            selected.id
+          );
+          if (error) return false;
+          person = student;
+        }
+
+        // If a Teacher is selected
+        else if (selected.role === "teacher") {
+          const { data: teacher, error } = await getTeacher(
+            supabase,
+            selected.id
+          );
+          if (error) return false;
+          person = teacher;
+        }
+
+        setSelectedPerson(person);
+        return true;
+      },
+      toggleLoading,
+      { hasEndToggle: true }
+    );
+  }, [selected]);
 
   // For showing Filter Chips when the list is already filterred by text
   const [filterred, setFilterred] = useState<boolean>(false);
@@ -119,7 +161,11 @@ const LookupStudentsPage: CustomPage<{
             />
           ))}
         </LookupList>
-        {selected ? <PersonDetails selected={selected} /> : <EmptyDetail />}
+        {selected ? (
+          <PersonDetails person={selectedPerson} loading={loading} />
+        ) : (
+          <EmptyDetail />
+        )}
       </SplitLayout>
     </>
   );
