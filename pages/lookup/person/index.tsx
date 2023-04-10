@@ -1,4 +1,6 @@
 // External libraries
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 
@@ -24,19 +26,20 @@ import PersonDetails from "@/components/lookup/person/PersonDetails";
 
 // Backend
 import { getPeopleLookupList } from "@/utils/backend/person/person";
+import { getStudent } from "@/utils/backend/person/student";
+import { getTeacher } from "@/utils/backend/person/teacher";
 
 // Helpers
 import { toggleItem } from "@/utils/helpers/array";
 import { createTitleStr } from "@/utils/helpers/title";
+import { withLoading } from "@/utils/helpers/loading";
+
+// Hooks
+import { useToggle } from "@/utils/hooks/toggle";
 
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { PersonLookupItem, Role, Student, Teacher } from "@/utils/types/person";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { getStudent } from "@/utils/backend/person/student";
-import { getTeacher } from "@/utils/backend/person/teacher";
-import { withLoading } from "@/utils/helpers/loading";
-import { useToggle } from "@/utils/hooks/toggle";
 
 const LookupStudentsPage: CustomPage<{
   initialPeople: PersonLookupItem[];
