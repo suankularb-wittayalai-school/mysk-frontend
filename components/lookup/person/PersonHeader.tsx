@@ -23,8 +23,8 @@ const PersonHeader: FC<{ person?: Student | Teacher }> = ({ person }) => {
   return (
     <>
       <div
-        className="sticky flex flex-col gap-6 bg-surface-2 px-5 py-4
-          md:flex-row"
+        className="sticky z-[70] flex flex-col gap-6 bg-surface-2
+          px-5 py-4 md:flex-row"
       >
         <DynamicAvatar
           className={cn([
