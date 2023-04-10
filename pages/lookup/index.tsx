@@ -84,22 +84,22 @@ const LookupPage: CustomPage = () => {
       <ContentLayout>
         <Columns columns={2} className="mx-4 sm:mx-0 sm:!gap-y-6">
           <LookupCard
-            id="people"
+            id="person"
             icon={<MaterialIcon icon="badge" size={48} />}
             text={t("people.title")}
           />
           <LookupCard
-            id="classes"
+            id="class"
             icon={<MaterialIcon icon="groups" size={48} />}
             text={t("classes.title")}
           />
           <LookupCard
-            id="orders"
+            id="order"
             icon={<MaterialIcon icon="mail" size={48} />}
             text={t("orders.title")}
           />
           <LookupCard
-            id="documents"
+            id="document"
             icon={<MaterialIcon icon="description" size={48} />}
             text={t("documents.title")}
           />

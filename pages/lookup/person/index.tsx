@@ -128,15 +128,13 @@ const LookupStudentsPage: CustomPage<{
 export const getServerSideProps: GetServerSideProps = async ({
   locale,
   query,
-  req,
-  res,
 }) => {
   const selectedID = Number(query?.id);
   let selectedIdx = 0;
 
   const { data: initialPeople } = await getPeopleLookupList();
 
-  selectedIdx = initialPeople.findIndex((person) => selectedID === person.id);
+  // selectedIdx = initialPeople.findIndex((person) => selectedID === person.id);
 
   return {
     props: {
