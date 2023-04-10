@@ -26,7 +26,7 @@ const DynamicAvatar: FC<
         ) : // Use the first letter of first name and last name, if available
         name ? (
           // Use English name, if available
-          locale === "en-US" && name["en-US"]?.firstName ? (
+          locale === "en-US" && name["en-US"] ? (
             [name["en-US"].firstName[0], name["en-US"].lastName[0]]
               .join("")
               .toUpperCase()

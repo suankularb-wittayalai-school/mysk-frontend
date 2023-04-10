@@ -327,11 +327,13 @@ export function db2PersonName(
         middleName: person.middle_name_th as OrUndefined<string>,
         lastName: person.last_name_th,
       },
-      "en-US": {
-        firstName: person.first_name_en || "",
-        middleName: person.middle_name_en as OrUndefined<string>,
-        lastName: person.last_name_en || "",
-      },
+      ...(person.first_name_en && {
+        "en-US": {
+          firstName: person.first_name_en!,
+          middleName: person.middle_name_en as OrUndefined<string>,
+          lastName: person.last_name_en!,
+        },
+      }),
     },
   };
 }
