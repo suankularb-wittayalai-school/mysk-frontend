@@ -32,7 +32,12 @@
         "title": "Share {{name}}…",
         "saveVCard": {
           "label": "Save to contacts",
-          "desc": "Save a .vcf file to see this person as a contact on your device."
+          "desc": "Save a .vcf file to see this person as a contact on your device.",
+          "segment": {
+            "org": "Suankularb Wittayalai School",
+            "title": "Teacher",
+            "note": "Class advisor at M.{{number}}"
+          }
         },
         "copyLink": {
           "label": "Copy link",

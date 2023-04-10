@@ -72,13 +72,12 @@ const ShareDialog: DialogComponent<{
           // Role within the school
           person.role === "teacher" &&
             [
-              `item1.ORG:${"Suankularb Wittayalai School"};${getLocaleString(
-                person.subjectGroup.name,
-                locale
-              )}`,
-              `item2.TITLE:Teacher`,
+              `item1.ORG:${t(
+                "dialog.share.saveVCard.segment.org"
+              )};${getLocaleString(person.subjectGroup.name, locale)}`,
+              `item2.TITLE:${t("dialog.share.saveVCard.segment.title")}`,
               person.classAdvisorAt &&
-                `NOTE:${"Class advisor at "}${t("class", {
+                `NOTE:${t("dialog.share.saveVCard.segment.note", {
                   ns: "common",
                   number: person.classAdvisorAt.number,
                 })}`,
