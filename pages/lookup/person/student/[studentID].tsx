@@ -9,6 +9,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 
 // Internal components
+import DynamicAvatar from "@/components/common/DynamicAvatar";
 import MySKPageHeader from "@/components/common/MySKPageHeader";
 import PersonDetailsContent from "@/components/lookup/person/PersonDetailsContent";
 
@@ -40,7 +41,12 @@ const PersonDetailsPage: CustomPage<{
       <MySKPageHeader
         title={nameJoiner(locale, student.name)}
         parentURL="/lookup/person"
-      />
+      >
+        <DynamicAvatar
+          profile={student.profile}
+          className="relative z-10 -mb-12 -mt-6 !h-20 !w-20 self-end"
+        />
+      </MySKPageHeader>
       <PersonDetailsContent person={student} />
     </>
   );

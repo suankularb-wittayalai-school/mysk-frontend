@@ -31,55 +31,53 @@ const GeneralInfoSection: FC<{
   const { t } = useTranslation(["lookup", "common"]);
 
   return (
-    <Section>
-      <Columns columns={4}>
-        {/* Full name */}
-        <DetailSection
-          id="full-name"
-          title="Full name"
-          className="md:col-span-2"
-        >
-          <MultilangText
-            text={{
-              th: nameJoiner("th", person.name),
-              "en-US": person.name["en-US"]?.firstName
-                ? nameJoiner("en-US", person.name)
-                : undefined,
-            }}
-          />
+    <Section className="!grid grid-cols-2 !gap-x-6 md:grid-cols-4">
+      {/* Full name */}
+      <DetailSection
+        id="full-name"
+        title="Full name"
+        className="col-span-2 sm:col-span-1 md:col-span-2"
+      >
+        <MultilangText
+          text={{
+            th: nameJoiner("th", person.name),
+            "en-US": person.name["en-US"]?.firstName
+              ? nameJoiner("en-US", person.name)
+              : undefined,
+          }}
+        />
+      </DetailSection>
+
+      {/* Class */}
+      {person.role === "student" && (
+        <DetailSection id="class" title="Class">
+          <span className="block">
+            {t("class", { ns: "common", number: person.class.number })}
+          </span>
+          <span className="block">{person.classNo}</span>
         </DetailSection>
-
-        {/* Class */}
-        {person.role === "student" && (
-          <DetailSection id="class" title="Class">
-            <span className="block">
-              {t("class", { ns: "common", number: person.class.number })}
-            </span>
-            <span className="block">{person.classNo}</span>
-          </DetailSection>
-        )}
-        {person.role === "teacher" && person.classAdvisorAt && (
-          <DetailSection id="class-advisor-at" title="Class advisor at">
-            <span>
-              {t("class", {
-                ns: "common",
-                number: person.classAdvisorAt.number,
-              })}
-            </span>
-          </DetailSection>
-        )}
-
-        {/* Birthdate */}
-        <DetailSection id="birthdate" title="Birthdate">
-          <time>
-            {new Date(person.birthdate).toLocaleDateString(locale, {
-              day: "numeric",
-              month: "long",
-              year: undefined,
+      )}
+      {person.role === "teacher" && person.classAdvisorAt && (
+        <DetailSection id="class-advisor-at" title="Class advisor at">
+          <span>
+            {t("class", {
+              ns: "common",
+              number: person.classAdvisorAt.number,
             })}
-          </time>
+          </span>
         </DetailSection>
-      </Columns>
+      )}
+
+      {/* Birthdate */}
+      <DetailSection id="birthdate" title="Birthdate">
+        <time>
+          {new Date(person.birthdate).toLocaleDateString(locale, {
+            day: "numeric",
+            month: "long",
+            year: undefined,
+          })}
+        </time>
+      </DetailSection>
     </Section>
   );
 };
