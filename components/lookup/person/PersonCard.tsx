@@ -70,7 +70,8 @@ const PersonCard: FC<{
         !thisSelected && "!border-transparent !bg-transparent",
         person.role === "teacher"
           ? thisSelected
-            ? `!bg-secondary-container !text-on-secondary-container state-layer:!bg-on-secondary-container`
+            ? `!bg-secondary-container !text-on-secondary-container
+               state-layer:!bg-on-secondary-container`
             : `state-layer:!bg-secondary`
           : thisSelected && `!bg-primary-container !text-on-primary-container`,
       ])}
