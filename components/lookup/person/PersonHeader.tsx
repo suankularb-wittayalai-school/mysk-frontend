@@ -22,7 +22,7 @@ import { Student, Teacher } from "@/utils/types/person";
 const PersonHeader: FC<{ person?: Student | Teacher }> = ({ person }) => {
   // Translation
   const locale = useLocale();
-  const { t } = useTranslation("people.header");
+  const { t } = useTranslation("lookup", { keyPrefix: "people.header" });
 
   return (
     <>
