@@ -11,8 +11,10 @@ import {
 
 // Internal components
 import DynamicAvatar from "@/components/common/DynamicAvatar";
+import ShareDialog from "@/components/lookup/person/ShareDialog";
 
 // Helpers
+import { cn } from "@/utils/helpers/className";
 import { nameJoiner } from "@/utils/helpers/name";
 
 // Hooks
@@ -20,8 +22,6 @@ import { useLocale } from "@/utils/hooks/i18n";
 
 // Types
 import { Student, Teacher } from "@/utils/types/person";
-import ShareDialog from "./ShareDialog";
-import { cn } from "@/utils/helpers/className";
 
 const PersonHeader: FC<{ person?: Student | Teacher }> = ({ person }) => {
   const locale = useLocale();
@@ -40,7 +40,7 @@ const PersonHeader: FC<{ person?: Student | Teacher }> = ({ person }) => {
 
   return (
     <>
-      <div className="sticky flex flex-row gap-6 bg-surface-2 px-5 py-4">
+      <div className="sticky flex flex-col gap-6 bg-surface-2 px-5 py-4 md:flex-row">
         <DynamicAvatar
           className={cn([
             "!h-14 !w-14",
@@ -48,8 +48,8 @@ const PersonHeader: FC<{ person?: Student | Teacher }> = ({ person }) => {
               "!bg-secondary-container !text-on-secondary-container",
           ])}
         />
-        <div className="flex flex-col gap-2">
-          <h2 className="skc-display-small">
+        <div className="flex flex-col gap-4 md:gap-2">
+          <h2 className="skc-display-small break-all">
             {person ? nameJoiner(locale, person.name) : "Loading…"}
           </h2>
           <ChipSet>
