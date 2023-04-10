@@ -12,22 +12,31 @@ import { useLocale } from "@/utils/hooks/i18n";
 import { Person } from "@/utils/types/person";
 
 const DynamicAvatar: FC<
-  Pick<Person, "name" | "profile"> & { className?: string }
+  Partial<Pick<Person, "name" | "profile">> & { className?: string }
 > = ({ name, profile, className }) => {
   // Translation
   const locale = useLocale();
 
   return (
     <Avatar {...{ className }}>
-      {profile ? (
-        <Image src={profile} alt="" />
-      ) : locale === "en-US" && name["en-US"]?.firstName ? (
-        [name["en-US"].firstName[0], name["en-US"].lastName[0]]
-          .join("")
-          .toUpperCase()
-      ) : (
-        [name.th.firstName[0], name.th.lastName[0]].join("")
-      )}
+      {
+        // Use profile image, if available
+        profile ? (
+          <Image src={profile} alt="" />
+        ) : // Use the first letter of first name and last name, if available
+        name ? (
+          // Use English name, if available
+          locale === "en-US" && name["en-US"]?.firstName ? (
+            [name["en-US"].firstName[0], name["en-US"].lastName[0]]
+              .join("")
+              .toUpperCase()
+          ) : (
+            // Otherwise, use Thai name
+            [name.th.firstName[0], name.th.lastName[0]].join("")
+          )
+        ) : // If nothing available, show the default vector
+        undefined
+      }
     </Avatar>
   );
 };
