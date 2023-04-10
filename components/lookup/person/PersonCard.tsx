@@ -1,4 +1,5 @@
 // External libraries
+import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { FC } from "react";
 
@@ -28,6 +29,9 @@ const PersonCard: FC<{
   const locale = useLocale();
   const { t } = useTranslation("common");
 
+  // Router
+  const router = useRouter();
+
   /**
    * If this Card is the selected Card in Lookup People. A selected Card has a
    * different styling.
@@ -39,7 +43,12 @@ const PersonCard: FC<{
       appearance="filled"
       direction="row"
       stateLayerEffect
-      onClick={() => setSelected && setSelected({ ...person })}
+      onClick={() => {
+        if (setSelected) setSelected({ ...person });
+        router.push(`/lookup/people?id=${person.id}`, undefined, {
+          shallow: true,
+        });
+      }}
       className={cn([
         "text-left",
         !thisSelected && "!border-transparent !bg-transparent",

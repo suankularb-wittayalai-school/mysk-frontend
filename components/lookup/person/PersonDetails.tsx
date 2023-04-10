@@ -13,10 +13,18 @@ import { getTeacher } from "@/utils/backend/person/teacher";
 import { useToggle } from "@/utils/hooks/toggle";
 import { withLoading } from "@/utils/helpers/loading";
 import PersonDetailsContent from "./PersonDetailsContent";
+import Head from "next/head";
+import { createTitleStr } from "@/utils/helpers/title";
+import { nameJoiner } from "@/utils/helpers/name";
+import { useLocale } from "@/utils/hooks/i18n";
+import { useTranslation } from "next-i18next";
 
 const PersonDetails: FC<{ selected: { id: number; role: Role } }> = ({
   selected,
 }) => {
+  const locale = useLocale();
+  const { t } = useTranslation(["lookup", "common"]);
+
   const supabase = useSupabaseClient();
   const [person, setPerson] = useState<Student | Teacher>();
 
@@ -55,18 +63,25 @@ const PersonDetails: FC<{ selected: { id: number; role: Role } }> = ({
   }, [selected]);
 
   return (
-    <main className="hidden sm:block">
-      <Card appearance="outlined" className="relative h-full overflow-hidden">
-        <PersonHeader {...{ person }} />
-        <Progress
-          appearance="linear"
-          alt="Loading person details…"
-          visible={loading}
-          className="sticky -mb-1"
-        />
-        {person && <PersonDetailsContent {...{ person }} />}
-      </Card>
-    </main>
+    <>
+      <Head>
+        {person && (
+          <title>{createTitleStr(nameJoiner(locale, person.name), t)}</title>
+        )}
+      </Head>
+      <main className="hidden sm:block">
+        <Card appearance="outlined" className="relative h-full overflow-hidden">
+          <PersonHeader {...{ person }} />
+          <Progress
+            appearance="linear"
+            alt="Loading person details…"
+            visible={loading}
+            className="sticky -mb-1"
+          />
+          {person && <PersonDetailsContent {...{ person }} />}
+        </Card>
+      </main>
+    </>
   );
 };
 
