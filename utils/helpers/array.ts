@@ -31,7 +31,7 @@ export function changeItem<Item = any>(
   );
 }
 
-export function toggleItem(item: any, array: any[]): any[] {
+export function toggleItem<Item = any>(item: Item, array: Item[]): Item[] {
   return array.includes(item)
     ? array.filter((existingItem) => item !== existingItem)
     : [...array, item];
