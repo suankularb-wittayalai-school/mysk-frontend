@@ -321,8 +321,6 @@ export async function getPersonRole(
     .limit(1)
     .maybeSingle();
 
-  console.log(teacher);
-
   if (teacherError) {
     console.error(teacherError);
     return { data: null, error: teacherError };

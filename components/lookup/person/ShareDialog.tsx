@@ -1,3 +1,6 @@
+// External libraries
+import { useTranslation } from "next-i18next";
+
 // SK Components
 import {
   Actions,
@@ -13,16 +16,17 @@ import { DialogComponent } from "@/utils/types/common";
 import { Student, Teacher } from "@/utils/types/person";
 
 // Helpers
+import { getLocaleString } from "@/utils/helpers/i18n";
 import { nameJoiner } from "@/utils/helpers/name";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
-import { getLocaleObj } from "@/utils/helpers/i18n";
 
 const ShareDialog: DialogComponent<{
   person: Student | Teacher;
 }> = ({ person, open, onClose }) => {
   const locale = useLocale();
+  const { t } = useTranslation(["lookup", "common"]);
 
   async function handleSaveVCard() {
     const emails = person.contacts.filter(
@@ -34,16 +38,56 @@ const ShareDialog: DialogComponent<{
 
     var vCard = new Blob(
       [
-        `BEGIN:VCARD\nVERSION:3.0\nN:${
-          getLocaleObj(person.name, locale).lastName
-        };${getLocaleObj(person.name, locale).firstName};;;\nFN:${nameJoiner(
-          locale,
-          person.name
-        )}\n${emails
-          .map((email) => `EMAIL;type=INTERNET:${email.value}`)
-          .join("\n")}\n${phoneNumbers
-          .map((phoneNumber) => `TEL;type=CELL:${phoneNumber.value}`)
-          .join("\n")}\nEND:VCARD`,
+        [
+          // File header
+          `BEGIN:VCARD`,
+          `VERSION:3.0`,
+
+          // Name
+          `N:${nameJoiner(locale, person.name, undefined, {
+            firstName: false,
+          })};${nameJoiner(locale, person.name, undefined, {
+            lastName: false,
+          })};;${person.role === "teacher" ? "T." : ""};`,
+          `FN:${nameJoiner(
+            locale,
+            person.name,
+            person.role === "teacher" ? { th: "อ.", "en-US": "T." } : undefined
+          )}`,
+
+          // Birthday
+          `BDAY:${person.birthdate.split("-").join("")}`,
+
+          // Contacts
+          emails
+            .map((email) => `EMAIL;type=INTERNET:${email.value}`)
+            .join("\n"),
+          phoneNumbers
+            .map((phoneNumber) => `TEL;type=CELL:${phoneNumber.value}`)
+            .join("\n"),
+
+          // Role within the school
+          person.role === "teacher" &&
+            [
+              `item1.ORG:${"Suankularb Wittayalai School"};${getLocaleString(
+                person.subjectGroup.name,
+                locale
+              )}`,
+              `item2.TITLE:Teacher`,
+              person.classAdvisorAt &&
+                `NOTE:${"Class advisor at "}${t("class", {
+                  ns: "common",
+                  number: person.classAdvisorAt.number,
+                })}`,
+            ]
+              .filter((segment) => segment)
+              .join("\n"),
+
+          // File footer
+          `END:VCARD`,
+        ]
+          .filter((segment) => segment)
+          .join("\n"),
       ],
       { type: "text/vcard;charset=utf-8" }
     );
