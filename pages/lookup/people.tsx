@@ -25,7 +25,7 @@ import PersonCard from "@/components/lookup/person/PersonCard";
 import PersonDetails from "@/components/lookup/person/PersonDetails";
 
 // Backend
-import { getInitialPeopleLookupList } from "@/utils/backend/person/person";
+import { getPeopleLookupList } from "@/utils/backend/person/person";
 
 // Helpers
 import { toggleItem } from "@/utils/helpers/array";
@@ -57,6 +57,18 @@ const LookupStudentsPage: CustomPage<{
   // For showing Filter Chips when the list is already filterred by text
   const [filterred, setFilterred] = useState<boolean>(false);
   const [filters, setFilters] = useState<Role[]>(["student", "teacher"]);
+
+  async function handleSearch(query: string) {
+    if (!query) {
+      setFilterred(false);
+      setPeople(initialPeople);
+      return;
+    }
+
+    const { data: people } = await getPeopleLookupList(query);
+    setFilterred(true);
+    setPeople(people);
+  }
 
   return (
     <>
@@ -94,14 +106,7 @@ const LookupStudentsPage: CustomPage<{
               </ChipSet>
             ) : undefined
           }
-          onSearch={(value) => {
-            if (!value) {
-              setFilterred(false);
-              setPeople(initialPeople);
-              return;
-            }
-            setFilterred(true);
-          }}
+          onSearch={handleSearch}
         >
           {(filterred
             ? people.filter((person) => filters.includes(person.role))
@@ -129,7 +134,9 @@ export const getServerSideProps: GetServerSideProps = async ({
   const selectedID = Number(query?.id);
   let selectedIdx = 0;
 
-  const { data: initialPeople } = await getInitialPeopleLookupList();
+  const { data: initialPeople } = await getPeopleLookupList();
+
+  selectedIdx = initialPeople.findIndex((person) => selectedID === person.id);
 
   return {
     props: {

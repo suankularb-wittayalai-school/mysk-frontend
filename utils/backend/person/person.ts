@@ -11,7 +11,11 @@ import { getCurrentAcademicYear } from "@/utils/helpers/date";
 import { supabase } from "@/utils/supabase-client";
 
 // Types
-import { BackendDataReturn, DatabaseClient } from "@/utils/types/common";
+import {
+  BackendDataReturn,
+  DatabaseClient,
+  LangCode,
+} from "@/utils/types/common";
 import { ClassWNumber } from "@/utils/types/class";
 import { Contact } from "@/utils/types/contact";
 import {
@@ -305,13 +309,22 @@ export async function getPersonIDFromUser(
   return { data: null, error: { message: "invalid role." } };
 }
 
-export async function getInitialPeopleLookupList(): Promise<
-  BackendDataReturn<PersonLookupItem[]>
-> {
+export async function getPeopleLookupList(
+  query?: string
+): Promise<BackendDataReturn<PersonLookupItem[]>> {
   const { data: people, error: peopleError } = await supabase
     .from("people")
-    .select("*")
+    .select("id")
+    .or(
+      `first_name_th.like.%${query || ""}%, \
+      middle_name_th.like.%${query || ""}%, \
+      last_name_th.like.%${query || ""}%, \
+      first_name_en.ilike.%${query || ""}%, \
+      middle_name_en.ilike.%${query || ""}%, \
+      last_name_en.ilike.%${query || ""}%`
+    )
     .order("first_name_th")
+    .order("last_name_th")
     .limit(100);
 
   if (peopleError) {
@@ -326,7 +339,25 @@ export async function getInitialPeopleLookupList(): Promise<
   // Get all students that have the matching person ID
   const { data: students, error: studentsError } = await supabase
     .from("student")
-    .select("*, person(*)")
+    // We’re not using person(*) because that would expose citizen ID of
+    // literally everyone in the school and that’s no good isn’t it!
+    .select(
+      `*,
+      person(
+        id,
+        prefix_th,
+        first_name_th,
+        middle_name_th,
+        last_name_th,
+        prefix_en,
+        first_name_en,
+        middle_name_en,
+        last_name_en,
+        birthdate,
+        contacts,
+        profile
+      )`
+    )
     .or(`person.in.(${peopleIDs.join()})`);
 
   if (studentsError) {
