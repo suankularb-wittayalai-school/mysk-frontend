@@ -35,14 +35,16 @@ const GeneralInfoSection: FC<{
       {/* Full name */}
       <DetailSection
         id="full-name"
-        title="Full name"
+        title={t("people.detail.general.fullName")}
         className="col-span-2 sm:col-span-1 md:col-span-2"
       >
         <MultilangText
           text={{
-            th: nameJoiner("th", person.name),
-            "en-US": person.name["en-US"]?.firstName
-              ? nameJoiner("en-US", person.name)
+            th: nameJoiner("th", person.name, person.prefix, { prefix: true }),
+            "en-US": person.name["en-US"]
+              ? nameJoiner("en-US", person.name, person.prefix, {
+                  prefix: true,
+                })
               : undefined,
           }}
         />
@@ -50,11 +52,18 @@ const GeneralInfoSection: FC<{
 
       {/* Class */}
       {person.role === "student" && (
-        <DetailSection id="class" title="Class">
+        <DetailSection
+          id="class"
+          title={t("people.detail.general.class.title")}
+        >
           <span className="block">
             {t("class", { ns: "common", number: person.class.number })}
           </span>
-          <span className="block">{person.classNo}</span>
+          <span className="block">
+            {t("people.detail.general.class.classNo", {
+              classNo: person.classNo,
+            })}
+          </span>
         </DetailSection>
       )}
       {person.role === "teacher" && person.classAdvisorAt && (
@@ -69,7 +78,10 @@ const GeneralInfoSection: FC<{
       )}
 
       {/* Birthdate */}
-      <DetailSection id="birthdate" title="Birthdate">
+      <DetailSection
+        id="birthdate"
+        title={t("people.detail.general.birthdate")}
+      >
         <time>
           {new Date(person.birthdate).toLocaleDateString(locale, {
             day: "numeric",
@@ -85,15 +97,14 @@ const GeneralInfoSection: FC<{
 const PersonDetailsContent: FC<{
   person: Student | Teacher;
 }> = ({ person }) => {
-  const locale = useLocale();
-  const { t } = useTranslation(["lookup", "common"]);
+  const { t } = useTranslation("lookup", { keyPrefix: "people.detail" });
 
   return (
     <ContentLayout>
       <GeneralInfoSection {...{ person }} />
       {person.contacts.length > 0 && (
         <Section>
-          <Header level={3}>Contacts</Header>
+          <Header level={3}>{t("contacts.title")}</Header>
           <Columns columns={2}>
             {person.contacts.map((contact) => (
               <ContactCard key={contact.id} contact={contact} />

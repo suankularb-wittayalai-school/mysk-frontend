@@ -118,7 +118,11 @@ const ShareDialog: DialogComponent<{
 
   return (
     <Dialog open={open} onClose={onClose} width={312}>
-      <DialogHeader desc={`Share ${nameJoiner(locale, person.name)}…`} />
+      <DialogHeader
+        desc={t("people.dialog.share.title", {
+          name: nameJoiner(locale, person.name),
+        })}
+      />
       <DialogContent className="mx-6 flex flex-col gap-4">
         {/* Save to contacts */}
         <div className="flex flex-col gap-2">
@@ -128,11 +132,11 @@ const ShareDialog: DialogComponent<{
               icon={<MaterialIcon icon="contact_page" />}
               onClick={handleSaveVCard}
             >
-              Save to contacts
+              {t("people.dialog.share.saveVCard.label")}
             </Button>
           </Actions>
           <p className="skc-label-small text-on-surface-variant">
-            Save a .vcf file to see this person as a contact on your device.
+            {t("people.dialog.share.saveVCard.desc")}
           </p>
         </div>
 
@@ -144,11 +148,11 @@ const ShareDialog: DialogComponent<{
               icon={<MaterialIcon icon="link" />}
               onClick={handleCopyLink}
             >
-              Copy link
+              {t("people.dialog.share.copyLink.label")}
             </Button>
           </Actions>
           <p className="skc-label-small text-on-surface-variant">
-            Get a link to this page.
+            {t("people.dialog.share.copyLink.desc")}
           </p>
         </div>
 
@@ -160,17 +164,17 @@ const ShareDialog: DialogComponent<{
               icon={<MaterialIcon icon="print" />}
               onClick={handlePrint}
             >
-              Print
+              {t("people.dialog.share.print.label")}
             </Button>
           </Actions>
           <p className="skc-label-small text-on-surface-variant">
-            Print out the details of this person.
+            {t("people.dialog.share.print.desc")}
           </p>
         </div>
       </DialogContent>
       <Actions>
         <Button appearance="text" onClick={onClose}>
-          Done
+          {t("people.dialog.share.action.close")}
         </Button>
       </Actions>
     </Dialog>

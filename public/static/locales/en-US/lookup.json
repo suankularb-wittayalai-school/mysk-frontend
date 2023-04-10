@@ -5,6 +5,47 @@
     "title": "Lookup people",
     "list": {
       "searchAlt": "Search people"
+    },
+    "header": {
+      "loading": "Loading…",
+      "action": {
+        "seeClass": "See class",
+        "seeSchedule": "See schedule",
+        "share": "Share"
+      }
+    },
+    "detail": {
+      "general": {
+        "fullName": "Full name",
+        "class": {
+          "title": "Class",
+          "classNo": "No. {{classNo}}"
+        },
+        "birthdate": "Birthdate"
+      },
+      "contacts": {
+        "title": "Contacts"
+      }
+    },
+    "dialog": {
+      "share": {
+        "title": "Share {{name}}…",
+        "saveVCard": {
+          "label": "Save to contacts",
+          "desc": "Save a .vcf file to see this person as a contact on your device."
+        },
+        "copyLink": {
+          "label": "Copy link",
+          "desc": "Get a link to this page."
+        },
+        "print": {
+          "label": "Print",
+          "desc": "Print out the details of this person."
+        },
+        "action": {
+          "close": "Close"
+        }
+      }
     }
   },
   "classes": {

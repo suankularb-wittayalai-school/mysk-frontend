@@ -1,5 +1,6 @@
 // External libraries
 import Link from "next/link";
+import { useTranslation } from "next-i18next";
 import { FC, useState } from "react";
 
 // SK Components
@@ -16,6 +17,9 @@ import ShareDialog from "@/components/lookup/person/ShareDialog";
 import { Student, Teacher } from "@/utils/types/person";
 
 const PersonActions: FC<{ person?: Student | Teacher }> = ({ person }) => {
+  const { t } = useTranslation("lookup", { keyPrefix: "people.header.action" });
+
+  // Dialog control
   const [shareOpen, setShareOpen] = useState<boolean>(false);
 
   /**
@@ -38,14 +42,14 @@ const PersonActions: FC<{ person?: Student | Teacher }> = ({ person }) => {
               href={`/lookup/class/${classItem.number}`}
               element={Link}
             >
-              See class
+              {t("seeClass")}
             </AssistChip>
             <AssistChip
               icon={<MaterialIcon icon="dashboard" />}
               href={`/lookup/class/${classItem.number}/schedule`}
               element={Link}
             >
-              See schedule
+              {t("seeSchedule")}
             </AssistChip>
           </>
         )}
@@ -53,7 +57,7 @@ const PersonActions: FC<{ person?: Student | Teacher }> = ({ person }) => {
           icon={<MaterialIcon icon="share" />}
           onClick={() => setShareOpen(true)}
         >
-          Share
+          {t("share")}
         </AssistChip>
       </ChipSet>
 
