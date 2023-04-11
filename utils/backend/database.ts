@@ -644,6 +644,7 @@ export function db2SchoolDocument(
 ) {
   const formatted: SchoolDocument = {
     id: schoolDocument.id,
+    type: schoolDocument.type,
     code: schoolDocument.code,
     date: schoolDocument.date,
     subject: schoolDocument.subject,

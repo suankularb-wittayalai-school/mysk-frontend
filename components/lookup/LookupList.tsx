@@ -63,10 +63,14 @@ const LookupList: FC<{
         {children}
 
         {/* Card at the end to explain why the list has stopped */}
-        {length > 10 && (
+        {(length === 0 || length > 10) && (
           <Card appearance="outlined">
             <p className="py-2 px-4 text-on-surface-variant">
-              {length === 100 ? t("maxNote") : t("endOfList")}
+              {length === 100
+                ? t("maxNote")
+                : length === 0
+                ? t("noResults")
+                : t("endOfList")}
             </p>
           </Card>
         )}

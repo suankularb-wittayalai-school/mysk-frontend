@@ -60,9 +60,13 @@ const DocumentCard: FC<{
             onClick: () => {
               if (selected?.id === document.id) return;
               if (setSelected) setSelected(document);
-              router.replace(`/lookup/orders?id=${document.id}`, undefined, {
-                shallow: true,
-              });
+              router.replace(
+                `/lookup/document?id=${document.id}&type=${document.type}`,
+                undefined,
+                {
+                  shallow: true,
+                }
+              );
             },
           })}
     >
@@ -71,7 +75,7 @@ const DocumentCard: FC<{
         // Subject line
         title={document.subject}
         // {code}/{year in BE} • {date}
-        subtitle={t("metadata", {
+        subtitle={t(`metadata.${document.type}`, {
           code: document.code,
           year: getLocaleYear("th", documentDate.getFullYear()),
           date: documentDate.toLocaleDateString(locale, {

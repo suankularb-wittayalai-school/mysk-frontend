@@ -135,6 +135,7 @@ export type FormSubmission = {
 // School documents
 export type SchoolDocument = {
   id: number;
+  type: SchoolDocumentType;
   code: string;
   date: string;
   subject: string;

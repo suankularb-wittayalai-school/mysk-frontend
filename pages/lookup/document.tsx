@@ -10,7 +10,12 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useEffect, useState } from "react";
 
 // SK Components
-import { MaterialIcon, SplitLayout } from "@suankularb-components/react";
+import {
+  ChipSet,
+  FilterChip,
+  MaterialIcon,
+  SplitLayout,
+} from "@suankularb-components/react";
 
 // Internal components
 import MySKPageHeader from "@/components/common/MySKPageHeader";
@@ -32,12 +37,14 @@ import { createTitleStr } from "@/utils/helpers/title";
 
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { SchoolDocument } from "@/utils/types/news";
+import { SchoolDocument, SchoolDocumentType } from "@/utils/types/news";
+import { Role } from "@/utils/types/person";
 
 const LookupDocumentsPage: CustomPage<{
   recentDocs: SchoolDocument[];
   selectedIdx: number;
-}> = ({ recentDocs, selectedIdx }) => {
+  userRole: Role;
+}> = ({ recentDocs, selectedIdx, userRole }) => {
   // Translation
   const { t } = useTranslation(["lookup", "common"]);
 
@@ -47,6 +54,17 @@ const LookupDocumentsPage: CustomPage<{
   const [selected, setSelected] = useState<SchoolDocument>(
     recentDocs[selectedIdx]
   );
+
+  // Type
+  const [type, setType] = useState<SchoolDocumentType>(
+    userRole === "teacher" ? "order" : "document"
+  );
+  useEffect(() => {
+    (async () => {
+      const { data } = await getSchoolDocs(type, userRole);
+      setDocuments(data);
+    })();
+  }, [type]);
 
   // If the iframe is loading
   const [loading, setLoading] = useState<boolean>(true);
@@ -64,8 +82,26 @@ const LookupDocumentsPage: CustomPage<{
       />
       <SplitLayout ratio="list-detail">
         <LookupList
-          length={recentDocs.length}
+          length={documents.length}
           searchAlt={t("documents.list.searchAlt")}
+          searchFilters={
+            userRole === "teacher" ? (
+              <ChipSet>
+                <FilterChip
+                  selected={type === "order"}
+                  onClick={() => setType("order")}
+                >
+                  {t("documents.list.filter.orders")}
+                </FilterChip>
+                <FilterChip
+                  selected={type === "document"}
+                  onClick={() => setType("document")}
+                >
+                  {t("documents.list.filter.documents")}
+                </FilterChip>
+              </ChipSet>
+            ) : undefined
+          }
           onSearch={async (query) => {
             if (!query) {
               setDocuments(recentDocs);
@@ -109,23 +145,28 @@ export const getServerSideProps: GetServerSideProps = async ({
   } = await supabase.auth.getSession();
 
   const { data: metadata } = await getUserMetadata(supabase, session!.user.id);
+  const userRole = metadata!.role;
 
-  const selectedID = Number(query?.id);
+  const selected = {
+    id: query.id ? Number(query.id) : null,
+    type: query.type ? (query.type as SchoolDocumentType) : null,
+  };
   let selectedIdx = 0;
 
   let recentDocs;
   const { data: defaultDocuments } = await getSchoolDocs(
-    "document",
-    metadata!.role
+    selected.type || (userRole === "teacher" ? "order" : "document"),
+    userRole
   );
 
   selectedIdx = defaultDocuments.findIndex(
-    (document) => selectedID === document.id
+    (document) => selected.id === document.id && selected.type === document.type
   );
 
-  if (selectedID && selectedIdx === -1) {
-    const { data: selected } = await getSchoolDocsByID("document", selectedID);
-    recentDocs = [selected, ...defaultDocuments];
+  if (selected.id && selectedIdx === -1) {
+    const { data, error } = await getSchoolDocsByID("document", selected.id);
+    if (error) recentDocs = defaultDocuments;
+    else recentDocs = [data, ...defaultDocuments];
   } else recentDocs = defaultDocuments;
 
   selectedIdx = Math.max(selectedIdx, 0);
@@ -138,6 +179,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       ])),
       recentDocs,
       selectedIdx,
+      userRole,
     },
   };
 };

@@ -59,17 +59,18 @@
       "searchAlt": "Search classes"
     }
   },
-  "orders": {
-    "title": "Lookup orders",
-    "list": {
-      "searchAlt": "Search orders"
-    }
-  },
   "documents": {
     "title": "Lookup documents",
     "list": {
       "searchAlt": "Search documents",
-      "metadata": "№ {{code}}/{{year}} • {{date}}"
+      "filter": {
+        "orders": "Orders",
+        "documents": "Documents"
+      },
+      "metadata": {
+        "order": "№ {{code}}/{{year}} • {{date}}",
+        "document": "MoE 04290.20/{{code}} • {{date}}"
+      }
     },
     "header": {
       "restrictions": {
@@ -101,6 +102,7 @@
       "title": "List",
       "searchHelper": "Press the search icon to search.",
       "maxNote": "For performance reasons, we limit the number of search results to 100. If you can’t find what you’re looking for, try a more specific query.",
+      "noResults": "No results.",
       "endOfList": "You’ve reached the end."
     },
     "detail": {
