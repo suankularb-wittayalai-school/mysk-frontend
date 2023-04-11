@@ -21,8 +21,9 @@ const LookupList: FC<{
   children: ReactNode;
   length: number;
   searchAlt: string;
+  searchFilters?: ReactNode;
   onSearch: (value: string) => void;
-}> = ({ children, length, searchAlt, onSearch }) => {
+}> = ({ children, length, searchAlt, searchFilters, onSearch }) => {
   // Translation
   const locale = useLocale();
   const { t } = useTranslation("lookup", { keyPrefix: "common.list" });
@@ -34,21 +35,27 @@ const LookupList: FC<{
   }, [query]);
 
   return (
-    <aside aria-labelledby="header-list" className="flex flex-col gap-6">
+    <aside aria-labelledby="header-list" className="flex flex-col gap-3 !pt-0">
       <h2 id="header-list" className="sr-only">
         {t("title")}
       </h2>
 
       {/* Search */}
-      <Search
-        alt={searchAlt}
-        value={query}
-        locale={locale}
-        onChange={setQuery}
-        onSearch={() => onSearch(query)}
+      <div
+        className="sticky top-0 z-10 flex flex-col gap-3 bg-background pt-6
+          pb-3"
       >
-        <p className="px-4 text-on-surface-variant">{t("searchHelper")}</p>
-      </Search>
+        <Search
+          alt={searchAlt}
+          value={query}
+          locale={locale}
+          onChange={setQuery}
+          onSearch={() => onSearch(query)}
+        >
+          <p className="px-4 text-on-surface-variant">{t("searchHelper")}</p>
+        </Search>
+        {searchFilters}
+      </div>
 
       {/* List */}
       <div className="flex flex-col gap-2">

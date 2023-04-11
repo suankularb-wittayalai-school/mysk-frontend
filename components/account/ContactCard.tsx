@@ -9,8 +9,6 @@ import {
   Card,
   CardHeader,
   Avatar,
-  Button,
-  CardContent,
   Menu,
   MenuItem,
 } from "@suankularb-components/react";
@@ -98,26 +96,28 @@ const ContactCard: FC<{
           }
           subtitle={subtitleMap[contact.type]}
           overflow={
-            <Menu>
-              <MenuItem
-                icon={<MaterialIcon icon="edit" />}
-                onClick={() => setShowEdit(true)}
-              >
-                {t("profile.contacts.action.edit")}
-              </MenuItem>
-              <MenuItem
-                icon={<MaterialIcon icon="delete" />}
-                onClick={onRemove}
-              >
-                {t("profile.contacts.action.delete")}
-              </MenuItem>
-              <MenuItem
-                icon={<MaterialIcon icon="open_in_new" />}
-                href={getContactURL(contact.type, contact.value)}
-              >
-                {t("profile.contacts.action.link")}
-              </MenuItem>
-            </Menu>
+            editable ? (
+              <Menu>
+                <MenuItem
+                  icon={<MaterialIcon icon="edit" />}
+                  onClick={() => setShowEdit(true)}
+                >
+                  {t("profile.contacts.action.edit")}
+                </MenuItem>
+                <MenuItem
+                  icon={<MaterialIcon icon="delete" />}
+                  onClick={onRemove}
+                >
+                  {t("profile.contacts.action.delete")}
+                </MenuItem>
+                <MenuItem
+                  icon={<MaterialIcon icon="open_in_new" />}
+                  href={getContactURL(contact.type, contact.value)}
+                >
+                  {t("profile.contacts.action.link")}
+                </MenuItem>
+              </Menu>
+            ) : undefined
           }
         />
       </Card>

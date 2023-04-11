@@ -1,11 +1,11 @@
 // Backend
 import { createPerson } from "@/utils/backend/person/person";
 
+// Converters
+import { db2Student } from "@/utils/backend/database";
+
 // Helpers
 import { getCurrentAcademicYear } from "@/utils/helpers/date";
-
-// Supabase
-import { supabase } from "@/utils/supabase-client";
 
 // Types
 import { ClassWNumber } from "@/utils/types/class";
@@ -15,6 +15,27 @@ import { Database } from "@/utils/types/supabase";
 
 // Miscellaneous
 import { prefixMap } from "@/utils/maps";
+
+export async function getStudent(
+  supabase: DatabaseClient,
+  id: number
+): Promise<BackendDataReturn<Student, null>> {
+  const { data, error } = await supabase
+    .from("student")
+    .select("*, person(*)")
+    .match({ id })
+    .single();
+
+  if (error) {
+    console.error(error);
+    return { data: null, error };
+  }
+
+  return {
+    data: await db2Student(supabase, data!, { contacts: true }),
+    error: null,
+  };
+}
 
 export async function createStudent(
   supabase: DatabaseClient,

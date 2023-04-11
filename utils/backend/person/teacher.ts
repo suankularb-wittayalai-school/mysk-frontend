@@ -26,6 +26,30 @@ import { Database } from "@/utils/types/supabase";
 // Miscellaneous
 import { prefixMap, subjectGroupMap } from "@/utils/maps";
 
+export async function getTeacher(
+  supabase: DatabaseClient,
+  id: number
+): Promise<BackendDataReturn<Teacher, null>> {
+  const { data, error } = await supabase
+    .from("teacher")
+    .select("*, person(*), subject_group(*)")
+    .match({ id })
+    .single();
+
+  if (error) {
+    console.error(error);
+    return { data: null, error };
+  }
+
+  return {
+    data: await db2Teacher(supabase, data!, {
+      contacts: true,
+      classAdvisorAt: true,
+    }),
+    error: null,
+  };
+}
+
 export async function getTeacherFromUser(
   supabase: DatabaseClient,
   user: User

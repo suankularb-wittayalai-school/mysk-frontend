@@ -17,7 +17,7 @@ import MySKPageHeader from "@/components/common/MySKPageHeader";
 import EmptyDetail from "@/components/lookup/EmptyDetail";
 import LookupList from "@/components/lookup/LookupList";
 import DocumentCard from "@/components/lookup/document/DocumentCard";
-import DocumentDetails from "@/components/lookup/document/DocumentDetail";
+import DocumentDetails from "@/components/lookup/document/DocumentDetails";
 
 // Backend
 import { getUserMetadata } from "@/utils/backend/account";

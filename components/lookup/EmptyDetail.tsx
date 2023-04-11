@@ -10,7 +10,7 @@ const EmptyDetail: FC = () => {
   const { t } = useTranslation("lookup");
 
   return (
-    <main className="hidden sm:block">
+    <main>
       <Card
         appearance="outlined"
         className="relative !grid h-full place-content-center"

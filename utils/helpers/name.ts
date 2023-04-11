@@ -20,21 +20,21 @@ export function nameJoiner(
     return [
       options.prefix && prefix ? getLocaleString(prefix, locale) : undefined,
       [
-        options.firstName == true || options.firstName == undefined
+        options.firstName === true || options.firstName === undefined
           ? name[locale]?.firstName || name.th.firstName
           : undefined,
-        options.middleName == true || options.middleName == undefined
+        options.middleName === true || options.middleName === undefined
           ? name[locale]?.middleName || name.th.middleName
           : undefined,
-        options.lastName == true || options.lastName == undefined
+        options.lastName === true || options.lastName === undefined
           ? name[locale]?.lastName || name.th.lastName
           : undefined,
       ]
-        .filter((item) => item != undefined)
+        .filter((item) => item)
         .join(" "),
     ]
-      .filter((item) => item != undefined)
-      .join(locale == "en-US" ? " " : "");
+      .filter((item) => item)
+      .join(locale === "en-US" ? " " : "");
   else
     return [
       name[locale]?.firstName || name.th.firstName,

@@ -16,7 +16,7 @@ import {
   NewsItemInfoNoDate,
   SchoolDocument,
 } from "@/utils/types/news";
-import { Role, Student, Teacher } from "@/utils/types/person";
+import { Person, Role, Student, Teacher } from "@/utils/types/person";
 import { SchedulePeriod } from "@/utils/types/schedule";
 import { Subject, SubjectListItem } from "@/utils/types/subject";
 import { Database } from "@/utils/types/supabase";
@@ -179,23 +179,8 @@ export async function db2Student(
 ): Promise<Student> {
   const formatted: Student = {
     id: student.id,
-    prefix: {
-      th: student.person.prefix_th,
-      "en-US": student.person.prefix_en as OrUndefined<string>,
-    },
     role: "student",
-    name: {
-      th: {
-        firstName: student.person.first_name_th,
-        middleName: student.person.middle_name_th as OrUndefined<string>,
-        lastName: student.person.last_name_th,
-      },
-      "en-US": {
-        firstName: student.person.first_name_en || "",
-        middleName: student.person.middle_name_en as OrUndefined<string>,
-        lastName: student.person.last_name_en || "",
-      },
-    },
+    ...db2PersonName(student.person),
     studentID: student.std_id,
     class: { id: 0, number: 0 },
     citizenID: student.person.citizen_id,
@@ -248,22 +233,7 @@ export async function db2Teacher(
   const formatted: Teacher = {
     id: teacher.id,
     role: "teacher",
-    prefix: {
-      th: teacher.person.prefix_th,
-      "en-US": teacher.person.prefix_en as OrUndefined<string>,
-    },
-    name: {
-      th: {
-        firstName: teacher.person.first_name_th,
-        middleName: teacher.person.middle_name_th as OrUndefined<string>,
-        lastName: teacher.person.last_name_th,
-      },
-      "en-US": {
-        firstName: teacher.person.first_name_en || "",
-        middleName: teacher.person.middle_name_en as OrUndefined<string>,
-        lastName: teacher.person.last_name_en || "",
-      },
-    },
+    ...db2PersonName(teacher.person),
     profile: teacher.person.profile as OrUndefined<string>,
     teacherID: teacher.teacher_id,
     citizenID: teacher.person.citizen_id,
@@ -341,6 +311,31 @@ export async function db2Teacher(
   }
 
   return formatted;
+}
+
+export function db2PersonName(
+  person: Database["public"]["Tables"]["people"]["Row"]
+): Pick<Person, "prefix" | "name"> {
+  return {
+    prefix: {
+      th: person.prefix_th,
+      "en-US": person.prefix_en as OrUndefined<string>,
+    },
+    name: {
+      th: {
+        firstName: person.first_name_th,
+        middleName: person.middle_name_th as OrUndefined<string>,
+        lastName: person.last_name_th,
+      },
+      ...(person.first_name_en && {
+        "en-US": {
+          firstName: person.first_name_en!,
+          middleName: person.middle_name_en as OrUndefined<string>,
+          lastName: person.last_name_en!,
+        },
+      }),
+    },
+  };
 }
 
 export async function db2Subject(

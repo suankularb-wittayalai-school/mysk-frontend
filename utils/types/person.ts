@@ -64,6 +64,26 @@ export type StudentListItem = {
   name: MultiLangObj<PersonName>;
 };
 
+export type PersonLookupItem = {
+  id: number;
+  role: Role;
+  metadata: ClassWNumber;
+  prefix: MultiLangString;
+  name: MultiLangObj<PersonName>;
+} & (
+  | { role: "student"; metadata: ClassWNumber }
+  | { role: "teacher"; metadata: SubjectGroup }
+);
+
+export type PersonLookupItemGeneric<Metadata> = {
+  id: number;
+  role: Role;
+  metadata: Metadata;
+  prefix: MultiLangString;
+  name: MultiLangObj<PersonName>;
+
+}
+
 export type ImportedStudentData = {
   prefix: DefaultTHPrefix;
   first_name_th: string;

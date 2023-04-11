@@ -1,16 +1,56 @@
 {
   "title": "School lookup",
   "search": "Search everything",
-  "students": {
-    "title": "Lookup students",
+  "people": {
+    "title": "Lookup people",
     "list": {
-      "searchAlt": "Search students"
-    }
-  },
-  "teachers": {
-    "title": "Lookup teachers",
-    "list": {
-      "searchAlt": "Search teachers"
+      "searchAlt": "Search people"
+    },
+    "header": {
+      "loading": "Loading…",
+      "action": {
+        "seeClass": "See class",
+        "seeSchedule": "See schedule",
+        "share": "Share"
+      }
+    },
+    "detail": {
+      "general": {
+        "fullName": "Full name",
+        "class": {
+          "title": "Class",
+          "classNo": "No. {{classNo}}"
+        },
+        "birthdate": "Birthdate"
+      },
+      "contacts": {
+        "title": "Contacts"
+      }
+    },
+    "dialog": {
+      "share": {
+        "title": "Share {{name}}…",
+        "saveVCard": {
+          "label": "Save to contacts",
+          "desc": "Save a .vcf file to see this person as a contact on your device.",
+          "segment": {
+            "org": "Suankularb Wittayalai School",
+            "title": "Teacher",
+            "note": "Class advisor at M.{{number}}"
+          }
+        },
+        "copyLink": {
+          "label": "Copy link",
+          "desc": "Get a link to this page."
+        },
+        "print": {
+          "label": "Print",
+          "desc": "Print out the details of this person."
+        },
+        "action": {
+          "close": "Close"
+        }
+      }
     }
   },
   "classes": {

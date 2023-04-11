@@ -104,9 +104,9 @@ const RestrictionsCard: FC<{
 
   return (
     <Card
-      appearance="filled"
-      className="mx-5 mb-4 gap-1.5 !rounded-sm border-1 border-outline-variant
-        p-3 md:col-span-3 md:my-3 md:mr-3 md:min-h-[5.25rem]"
+      appearance="outlined"
+      className="mx-5 mb-4 gap-1.5 !rounded-sm p-3 md:col-span-3 md:my-3
+        md:mr-3 md:min-h-[5.25rem]"
     >
       <div className="flex flex-row gap-1.5">
         <MaterialIcon
@@ -168,7 +168,7 @@ const DocumentDetails: FC<{
   useEffect(updateIframeSize, [document]);
 
   return (
-    <main ref={mainRef} className="hidden sm:block">
+    <main ref={mainRef}>
       <Card appearance="outlined" className="relative h-full overflow-hidden">
         {/* Top App Bar */}
         <div
