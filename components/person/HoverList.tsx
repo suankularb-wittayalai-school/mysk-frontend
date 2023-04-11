@@ -27,9 +27,11 @@ const HoverList = ({
           ? nameJoiner(locale, people[0].name)
           : people[0].name[locale]?.firstName || people[0].name.th.firstName)}
       {
-        // If there are more than one person, display +1 and show the remaining people on hover
+        // If there are more than one person, display +1 and show the remaining
+        // people on hover
         people.length > 1 && (
           <abbr
+            tabIndex={0}
             className="text-outline"
             title={people
               .slice(1)
