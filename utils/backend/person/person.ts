@@ -225,14 +225,16 @@ export async function setupPerson(
       }
 
       // Update class advisor
-      const { error: classAdvisorError } = await supabase
-        .from("classroom")
-        .update({ advisors: [...classroom!.advisors, person.id] })
-        .match({ id: classroom!.id });
+      if (!classroom!.advisors.includes(person.id)) {
+        const { error: classAdvisorError } = await supabase
+          .from("classroom")
+          .update({ advisors: [...classroom!.advisors, person.id] })
+          .match({ id: classroom!.id });
 
-      if (classAdvisorError) {
-        console.error(classAdvisorError);
-        return { data: null, error: classAdvisorError };
+        if (classAdvisorError) {
+          console.error(classAdvisorError);
+          return { data: null, error: classAdvisorError };
+        }
       }
     }
   }
