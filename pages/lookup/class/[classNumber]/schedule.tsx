@@ -49,6 +49,7 @@ import { useLocale } from "@/utils/hooks/i18n";
 
 // Types
 import { ClassWNumber } from "@/utils/types/class";
+import ClassTabs from "@/components/lookup/class/ClassTabs";
 
 const SubjectListSection: FC<{ subjectList: SubjectListItem[] }> = ({
   subjectList,
@@ -95,33 +96,7 @@ const LookupClassSchedulePage: CustomPage<{
         title={t("schedule.title", { number: classItem.number })}
         parentURL={parentURL}
       >
-        <TabsContainer appearance="primary" alt="">
-          <Tab
-            icon={<MaterialIcon icon="info" />}
-            label={t("common.navigation.overview")}
-            href={parentURL}
-            element={Link}
-          />
-          <Tab
-            icon={<MaterialIcon icon="groups" />}
-            label={t("common.navigation.students")}
-            href={`${parentURL}/students`}
-            element={Link}
-          />
-          <Tab
-            icon={<MaterialIcon icon="group" />}
-            label={t("common.navigation.teachers")}
-            href={`${parentURL}/teachers`}
-            element={Link}
-          />
-          <Tab
-            icon={<MaterialIcon icon="dashboard" />}
-            label={t("common.navigation.schedule")}
-            selected
-            href={`${parentURL}/schedule`}
-            element={Link}
-          />
-        </TabsContainer>
+        <ClassTabs number={classItem.number} />
       </MySKPageHeader>
       <ContentLayout>
         <Schedule schedule={schedule} role="student" />
