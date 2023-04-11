@@ -13,7 +13,7 @@ export function nameJoiner(
     prefix: boolean;
     firstName: boolean;
     middleName: boolean;
-    lastName: boolean;
+    lastName: boolean | "abbr";
   }>
 ) {
   if (options)
@@ -26,7 +26,9 @@ export function nameJoiner(
         options.middleName === true || options.middleName === undefined
           ? name[locale]?.middleName || name.th.middleName
           : undefined,
-        options.lastName === true || options.lastName === undefined
+        options.lastName === "abbr"
+          ? [(name[locale]?.lastName || name.th.lastName)[0], "."].join("")
+          : options.lastName === true || options.lastName === undefined
           ? name[locale]?.lastName || name.th.lastName
           : undefined,
       ]
@@ -41,6 +43,6 @@ export function nameJoiner(
       name[locale]?.middleName || name.th.middleName,
       name[locale]?.lastName || name.th.lastName,
     ]
-      .filter((item) => item != undefined)
+      .filter((item) => item)
       .join(" ");
 }
