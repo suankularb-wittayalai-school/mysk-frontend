@@ -9,13 +9,13 @@ import {
 } from "@/utils/backend/contact";
 
 // Converters
-import { db2Class, db2Student } from "@/utils/backend/database";
+import { db2Class, db2PersonName, db2Student } from "@/utils/backend/database";
 
 // Helpers
 import { getCurrentAcademicYear } from "@/utils/helpers/date";
 
 // Types
-import { Class, ClassWNumber } from "@/utils/types/class";
+import { Class, ClassLookupListItem, ClassWNumber } from "@/utils/types/class";
 import { BackendDataReturn, DatabaseClient } from "@/utils/types/common";
 import { StudentListItem } from "@/utils/types/person";
 import { Database } from "@/utils/types/supabase";
@@ -325,6 +325,43 @@ export async function removeContactFromClassroom(
   }
 
   return { data: updatedClassroom!, error: null };
+}
+
+export async function getLookupClasses(
+  supabase: DatabaseClient
+): Promise<BackendDataReturn<ClassLookupListItem[]>> {
+  const { data, error } = await supabase
+    .from("classroom")
+    .select("id, number, advisors")
+    .order("number");
+
+  if (error) {
+    console.error(error);
+    return { data: [], error };
+  }
+
+  const classAdvisorIDs = data!.map((classItem) => classItem.advisors).flat();
+  const { data: teachers, error: teacherError } = await supabase
+    .from("teacher")
+    .select("*, person(*)")
+    .or(`id.in.(${classAdvisorIDs.join()})`);
+
+  if (teacherError) {
+    console.error(teacherError);
+    return { data: [], error: teacherError };
+  }
+
+  return {
+    data: data.map((classItem) => ({
+      id: classItem.id,
+      number: classItem.number,
+      classAdvisors: classItem.advisors.map((advisor) => {
+        const teacher = teachers?.find((teacher) => advisor === teacher.id)!;
+        return { id: teacher.id, ...db2PersonName(teacher.person) };
+      }),
+    })),
+    error: null,
+  };
 }
 
 export async function getClassNumberFromUser(
