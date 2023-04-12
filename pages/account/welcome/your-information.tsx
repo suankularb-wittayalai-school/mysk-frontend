@@ -507,4 +507,6 @@ export const getServerSideProps: GetServerSideProps = async ({
 
 WelcomePage.childURLs = ["/account/welcome/your-information"];
 
+WelcomePage.navType = "hidden";
+
 export default WelcomePage;

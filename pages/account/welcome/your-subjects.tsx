@@ -420,4 +420,6 @@ export const getServerSideProps: GetServerSideProps = async ({
 
 YourSubjectsPage.childURLs = ["/account/welcome/logging-in"];
 
+YourSubjectsPage.navType = "hidden";
+
 export default YourSubjectsPage;

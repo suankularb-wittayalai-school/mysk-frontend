@@ -330,4 +330,6 @@ export const getServerSideProps: GetServerSideProps = async ({
   };
 };
 
+LoggingInPage.navType = "hidden";
+
 export default LoggingInPage;

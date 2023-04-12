@@ -388,4 +388,6 @@ COVID19SafetyPage.childURLs = [
   "/account/welcome/logging-in",
 ];
 
+COVID19SafetyPage.navType = "hidden";
+
 export default COVID19SafetyPage;
