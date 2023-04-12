@@ -17,7 +17,7 @@ export type Person = {
   role: Role;
   name: MultiLangObj<PersonName>;
   profile?: string;
-  citizenID: string;
+  citizenID?: string;
   birthdate: string;
   contacts: Contact[];
   isAdmin?: boolean;

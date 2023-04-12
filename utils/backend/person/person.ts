@@ -67,7 +67,7 @@ export async function createPerson(
       middle_name_en: person.name["en-US"]?.middleName,
       last_name_en: person.name["en-US"]?.lastName,
       birthdate: person.birthdate,
-      citizen_id: person.citizenID,
+      citizen_id: person.citizenID!,
       contacts: contactIDs as number[],
     })
     .select("*")

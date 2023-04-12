@@ -175,7 +175,7 @@ export async function db2FormPage(
 export async function db2Student(
   supabase: DatabaseClient,
   student: Database["public"]["Tables"]["student"]["Row"],
-  options?: Partial<{ contacts: boolean }>
+  options?: Partial<{ citizenID: boolean; contacts: boolean }>
 ): Promise<Student> {
   const formatted: Student = {
     id: student.id,
@@ -183,11 +183,12 @@ export async function db2Student(
     ...db2PersonName(student.person),
     studentID: student.std_id,
     class: { id: 0, number: 0 },
-    citizenID: student.person.citizen_id,
     birthdate: student.person.birthdate,
     classNo: 1,
     contacts: [],
   };
+
+  if (options?.citizenID) formatted.citizenID = student.person.citizen_id
 
   if (options?.contacts) {
     const { data: contacts, error: contactError } = await supabase
