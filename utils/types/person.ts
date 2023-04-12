@@ -79,7 +79,6 @@ export type PersonLookupItemGeneric<Metadata> = {
   metadata: Metadata;
   prefix: MultiLangString;
   name: MultiLangObj<PersonName>;
-
 }
 
 export type ImportedStudentData = {

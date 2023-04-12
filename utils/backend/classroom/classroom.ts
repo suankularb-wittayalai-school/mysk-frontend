@@ -7,6 +7,7 @@ import {
   deleteContact,
   updateContact,
 } from "@/utils/backend/contact";
+import { getSubjectGroups } from "@/utils/backend/subject/subjectGroup";
 
 // Converters
 import { db2Class, db2PersonName, db2Student } from "@/utils/backend/database";
@@ -19,6 +20,7 @@ import {
   Class,
   ClassLookupListItem,
   ClassOverview,
+  ClassTeachersListSection,
   ClassWNumber,
 } from "@/utils/types/class";
 import { BackendDataReturn, DatabaseClient } from "@/utils/types/common";
@@ -388,6 +390,64 @@ export async function getClassOverview(
 
   return {
     data: await db2Class(supabase, data, { advisors: true, contacts: true }),
+    error: null,
+  };
+}
+
+export async function getClassTeachersList(
+  supabase: DatabaseClient,
+  classID: number
+): Promise<BackendDataReturn<ClassTeachersListSection[]>> {
+  // Get the teacher IDs of all subjectRooms where class matches
+  const { data: roomSubjects, error: roomSubjectsError } = await supabase
+    .from("room_subjects")
+    .select("teacher")
+    .match({ class: classID });
+
+  if (roomSubjectsError) {
+    console.error(roomSubjectsError);
+    return { data: [], error: roomSubjectsError };
+  }
+
+  const teacherIDs = roomSubjects!
+    .map((roomSubject) => roomSubject.teacher)
+    .flat();
+
+  // Fetch those teachers
+  const { data: teachers, error: teacherError } = await supabase
+    .from("teacher")
+    .select("*, person(*), subject_group(id)")
+    .or(`id.in.(${teacherIDs.join()})`);
+
+  if (teacherError) {
+    console.error(teacherError);
+    return { data: [], error: teacherError };
+  }
+
+  // Get all subject groups
+  const { data: subjectGroups, error: subjectGroupError } =
+    await getSubjectGroups();
+
+  if (subjectGroupError) {
+    console.error(subjectGroupError);
+    return { data: [], error: subjectGroupError };
+  }
+
+  // Format the Teachers into a list grouped into Subject Groups
+  return {
+    data: subjectGroups
+      .map((subjectGroup) => ({
+        subjectGroup,
+        teachers: teachers
+          .filter((teacher) => subjectGroup.id === teacher.subject_group.id)
+          .map((teacher) => ({
+            id: teacher.id,
+            role: "teacher" as "teacher",
+            ...db2PersonName(teacher.person),
+            metadata: null,
+          })),
+      }))
+      .filter((section) => section.teachers.length),
     error: null,
   };
 }

@@ -95,9 +95,11 @@ const PersonCard: FC<{
         }
         title={nameJoiner(locale, person.name, person.prefix)}
         subtitle={
-          person.role === "teacher"
-            ? getLocaleString(person.metadata.name, locale)
-            : t("class", { number: person.metadata.number })
+          person.metadata
+            ? person.role === "teacher"
+              ? getLocaleString(person.metadata.name, locale)
+              : t("class", { number: person.metadata.number })
+            : undefined
         }
       />
     </Card>

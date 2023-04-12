@@ -1,7 +1,12 @@
 // Types
 import { Contact } from "@/utils/types/contact";
-import { Person, Student, Teacher } from "@/utils/types/person";
-import { SubjectListItem } from "@/utils/types/subject";
+import {
+  Person,
+  PersonLookupItemGeneric,
+  Student,
+  Teacher,
+} from "@/utils/types/person";
+import { SubjectGroup, SubjectListItem } from "@/utils/types/subject";
 
 export type Class = {
   id: number;
@@ -18,6 +23,11 @@ export type ClassWNumber = Pick<Class, "id" | "number">;
 export type ClassLookupListItem = ClassWNumber & {
   classAdvisors: Pick<Person, "id" | "prefix" | "name">[];
   studentCount: number;
+};
+
+export type ClassTeachersListSection = {
+  subjectGroup: SubjectGroup;
+  teachers: PersonLookupItemGeneric<null>[];
 };
 
 export type ClassOverview = Pick<

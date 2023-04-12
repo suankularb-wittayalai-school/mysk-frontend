@@ -16,7 +16,10 @@ import ShareDialog from "@/components/lookup/person/ShareDialog";
 // Types
 import { Student, Teacher } from "@/utils/types/person";
 
-const PersonActions: FC<{ person?: Student | Teacher }> = ({ person }) => {
+const PersonActions: FC<{
+  person?: Student | Teacher;
+  suggestionsType?: "full" | "share-only";
+}> = ({ person, suggestionsType }) => {
   const { t } = useTranslation("lookup", { keyPrefix: "people.header.action" });
 
   // Dialog control
@@ -35,7 +38,7 @@ const PersonActions: FC<{ person?: Student | Teacher }> = ({ person }) => {
   return (
     <>
       <ChipSet>
-        {classItem && (
+        {suggestionsType !== "share-only" && classItem && (
           <>
             {/* See class */}
             <AssistChip

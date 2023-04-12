@@ -25,7 +25,7 @@ import { Role } from "@/utils/types/person";
 const DocumentActions: FC<{ document: SchoolDocument }> = ({ document }) => {
   // Translation
   const { t } = useTranslation("lookup", {
-    keyPrefix: "documents.header.action",
+    keyPrefix: "documents",
   });
 
   // Snackbar
@@ -70,19 +70,19 @@ const DocumentActions: FC<{ document: SchoolDocument }> = ({ document }) => {
   return (
     <ChipSet>
       <AssistChip icon={<MaterialIcon icon="share" />} onClick={handleShare}>
-        {t("share")}
+        {t("header.action.share")}
       </AssistChip>
       <AssistChip
         icon={<MaterialIcon icon="open_in_new" />}
         onClick={handlePopOut}
       >
-        {t("popOut")}
+        {t("header.action.popOut")}
       </AssistChip>
       <AssistChip
         icon={<MaterialIcon icon="download" />}
         onClick={handleDownload}
       >
-        {t("download")}
+        {t("header.action.download")}
       </AssistChip>
     </ChipSet>
   );

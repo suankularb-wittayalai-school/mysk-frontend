@@ -106,10 +106,10 @@ const ClassPeekModal: FC<{
             layoutId={`class-${classItem.id}`}
             transition={transition(duration.medium4, easing.standard)}
             className="absolute -inset-2 bottom-auto z-[90] min-w-[16rem]
-            group-even:left-auto sm:-inset-4 sm:bottom-auto
-            sm:group-even:left-0 sm:group-[&:nth-child(4n)]:left-auto
-            md:group-[&:nth-child(4n)]:left-0
-            md:group-[&:nth-child(6n)]:!left-auto"
+              group-even:left-auto sm:-inset-4 sm:bottom-auto
+              sm:group-even:left-0 sm:group-[&:nth-child(4n)]:left-auto
+              md:group-[&:nth-child(4n)]:left-0
+              md:group-[&:nth-child(6n)]:!left-auto"
           >
             <Card appearance="filled">
               <CardHeader
@@ -160,7 +160,7 @@ const ClassPeekModal: FC<{
           <motion.div
             className="skc-scrim"
             initial={{ opacity: 0 }}
-            animate={{ opacity: 0.5 }}
+            animate={{ opacity: 0.3 }}
             exit={{ opacity: 0 }}
             transition={transition(duration.medium4, easing.standard)}
             onClick={onClose}
