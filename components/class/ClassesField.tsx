@@ -17,6 +17,13 @@ import SnackbarContext from "@/contexts/SnackbarContext";
 // Backend
 import { getClassWNumber } from "@/utils/backend/classroom/classroom";
 
+// Helpers
+import { withLoading } from "@/utils/helpers/loading";
+
+// Hooks
+import { useLocale } from "@/utils/hooks/i18n";
+import { useToggle } from "@/utils/hooks/toggle";
+
 // Types
 import { ClassWNumber } from "@/utils/types/class";
 
@@ -26,6 +33,7 @@ const ClassesField: FC<{
   onChange: (value: ClassWNumber[]) => void;
 }> = ({ label, classes, onChange }) => {
   // Translation
+  const locale = useLocale();
   const { t } = useTranslation("common");
 
   // Supabase
@@ -37,13 +45,16 @@ const ClassesField: FC<{
   // Form control
   const [classField, setClassField] = useState<string>("");
 
+  // Loading
+  const [loading, toggleLoading] = useToggle();
+
   return (
     <ChipField
       label={label || t("input.classesField.label")}
       placeholder={t("input.classesField.placeholder")}
       value={classField}
       onChange={setClassField}
-      onNewEntry={async (value) => {
+      onNewEntry={(value) => {
         // Validate
         if (!value) return;
         if (!/^\d{3}$/.test(value)) {
@@ -62,23 +73,33 @@ const ClassesField: FC<{
         }
 
         // Find class in database
-        const { data, error } = await getClassWNumber(supabase, Number(value));
+        withLoading(
+          async () => {
+            const { data, error } = await getClassWNumber(
+              supabase,
+              Number(value)
+            );
 
-        // If class doesn’t exist, notify the user
-        if (error) {
-          console.error(error);
-          setSnackbar(
-            <Snackbar>{t("input.classesField.snackbar.notFound")}</Snackbar>
-          );
-          return;
-        }
+            // If class doesn’t exist, notify the user
+            if (error) {
+              console.error(error);
+              setSnackbar(
+                <Snackbar>{t("input.classesField.snackbar.notFound")}</Snackbar>
+              );
+              return false;
+            }
 
-        // Add class to list
-        onChange([...classes, data!]);
+            // Add class to list
+            onChange([...classes, data!]);
+            return true;
+          },
+          toggleLoading,
+          { hasEndToggle: true }
+        );
       }}
-      onDeleteLast={() => {
-        onChange(classes.slice(0, -1));
-      }}
+      onDeleteLast={() => onChange(classes.slice(0, -1))}
+      loading={loading}
+      locale={locale}
       className="sm:col-span-2"
     >
       <ChipSet>
