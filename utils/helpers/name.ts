@@ -5,6 +5,21 @@ import { getLocaleString } from "@/utils/helpers/i18n";
 import { LangCode, MultiLangString } from "@/utils/types/common";
 import { Person } from "@/utils/types/person";
 
+/**
+ * Joins segments of a name (usually the return of `db2PersonName`) into a
+ * single string.
+ *
+ * @param locale The language of the resulting string.
+ * @param name An object with `firstName`, `middleName`, and `lastName`, each as a multi-language string.
+ * @param prefix A multi-language string.
+ * @param options Options to show or abbreviate a segment.
+ * @param options.prefix Shows prefix, defaults to false.
+ * @param options.firstName Shows first name, defaults to true.
+ * @param options.middleName Shows middle name, defaults to true.
+ * @param options.lastName Shows last name, defaults to true; "abbr" only shows the first letter.
+ *
+ * @returns The name formatted into a single string.
+ */
 export function nameJoiner(
   locale: LangCode,
   name: Person["name"],
