@@ -46,7 +46,7 @@ const PersonCard: FC<{
 
   return (
     <Card
-      appearance="filled"
+      appearance="outlined"
       direction="row"
       stateLayerEffect
       {...(atBreakpoint === "base"
@@ -73,7 +73,7 @@ const PersonCard: FC<{
         person.role === "teacher"
           ? thisSelected
             ? `!bg-secondary-container !text-on-secondary-container
-               state-layer:!bg-on-secondary-container`
+               focus:!border-secondary state-layer:!bg-on-secondary-container`
             : `state-layer:!bg-secondary`
           : thisSelected && `!bg-primary-container !text-on-primary-container`,
       ])}

@@ -37,7 +37,7 @@ const DocumentCard: FC<{
 
   return (
     <Card
-      appearance="filled"
+      appearance="outlined"
       direction="row"
       stateLayerEffect
       className={cn([
