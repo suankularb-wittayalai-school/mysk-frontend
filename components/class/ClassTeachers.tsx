@@ -54,7 +54,10 @@ const ClassTeachers: FC<{
   }, [selected]);
 
   return (
-    <SplitLayout ratio="list-detail">
+    <SplitLayout
+      ratio="list-detail"
+      className="sm:[&>*>*]:!h-[calc(100vh-14.75rem-1px)]"
+    >
       <aside className="!flex flex-col gap-6">
         {teacherList.map((section) => (
           <section
