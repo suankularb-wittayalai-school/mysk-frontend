@@ -376,7 +376,6 @@ export async function getPeopleLookupList(
         middle_name_en,
         last_name_en,
         birthdate,
-        contacts,
         profile
       )`
     )
@@ -426,7 +425,23 @@ export async function getPeopleLookupList(
   // Get all teachers that have the matching person ID
   const { data: teachers, error: teachersError } = await supabase
     .from("teacher")
-    .select("*, person(*), subject_group(*)")
+    .select(
+      `*,
+      person(
+        id,
+        prefix_th,
+        first_name_th,
+        middle_name_th,
+        last_name_th,
+        prefix_en,
+        first_name_en,
+        middle_name_en,
+        last_name_en,
+        birthdate,
+        profile
+      ),
+      subject_group(*)`
+    )
     .or(`person.in.(${peopleIDs.join()})`);
 
   if (teachersError) {
@@ -455,4 +470,76 @@ export async function getPeopleLookupList(
       .sort((a, b) => (a.name.th.firstName > b.name.th.firstName ? 1 : -1)),
     error: null,
   };
+}
+
+export async function getLookupListPerson(
+  id: number,
+  role: Role
+): Promise<BackendDataReturn<PersonLookupItem, null>> {
+  let person: PersonLookupItem | null = null;
+
+  // Fetch student
+  if (role === "student") {
+    const { data, error } = await supabase
+      .from("student")
+      .select("*, person(*)")
+      .match({ id })
+      .limit(1)
+      .single();
+
+    if (error) {
+      console.error(error);
+      return { data: null, error };
+    }
+
+    const { data: classItem, error: classError } = await supabase
+      .from("classroom")
+      .select("id, number")
+      .contains("students", [id])
+      .limit(1)
+      .single();
+
+    if (classError) {
+      console.error(classError);
+      return { data: null, error: classError };
+    }
+
+    person = {
+      id: data.id,
+      role: "student",
+      metadata: { id: classItem.id, number: classItem.number },
+      ...db2PersonName(data.person),
+    };
+  }
+
+  // Fetch teacher
+  else if (role === "teacher") {
+    const { data, error } = await supabase
+      .from("teacher")
+      .select("*, person(*), subject_group(*)")
+      .match({ id })
+      .limit(1)
+      .single();
+
+    if (error) {
+      console.error(error);
+      return { data: null, error };
+    }
+
+    person = {
+      id: data.id,
+      role: "teacher",
+      metadata: {
+        id: data.subject_group.id,
+        name: {
+          th: data.subject_group.name_th,
+          "en-US": data.subject_group.name_en,
+        },
+      },
+      ...db2PersonName(data.person),
+    };
+  }
+
+  if (person) return { data: person, error: null };
+  return { data: null, error: { message: "invalid role." } };
 }

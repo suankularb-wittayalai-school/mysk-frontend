@@ -60,9 +60,11 @@ const PersonCard: FC<{
           {
             onClick: () => {
               if (setSelected) setSelected({ ...person });
-              router.push(`/lookup/person?id=${person.id}`, undefined, {
-                shallow: true,
-              });
+              router.push(
+                `/lookup/person?id=${person.id}&role=${person.role}`,
+                undefined,
+                { shallow: true }
+              );
             },
           })}
       className={cn([

@@ -66,8 +66,6 @@ export type StudentListItem = {
 
 export type PersonLookupItem = {
   id: number;
-  role: Role;
-  metadata: ClassWNumber;
   prefix: MultiLangString;
   name: MultiLangObj<PersonName>;
 } & (

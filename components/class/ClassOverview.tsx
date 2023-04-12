@@ -1,4 +1,5 @@
 // External libraries
+import Link from "next/link";
 import { FC } from "react";
 
 // SK Components
@@ -9,19 +10,26 @@ import {
   ContentLayout,
   Header,
   Section,
+  useBreakpoint,
 } from "@suankularb-components/react";
+
+// Internal components
+import DynamicAvatar from "@/components/common/DynamicAvatar";
+
+// Helpers
+import { getLocaleString } from "@/utils/helpers/i18n";
+import { nameJoiner } from "@/utils/helpers/name";
+
+// Hooks
+import { useLocale } from "@/utils/hooks/i18n";
 
 // Types
 import { ClassOverview as ClassOverviewType } from "@/utils/types/class";
-import DynamicAvatar from "../common/DynamicAvatar";
-import { nameJoiner } from "@/utils/helpers/name";
-import { useLocale } from "@/utils/hooks/i18n";
-import Link from "next/link";
-import { getLocaleString } from "@/utils/helpers/i18n";
 
 const ClassOverview: FC<{ classItem: ClassOverviewType }> = ({ classItem }) => {
-  4;
   const locale = useLocale();
+
+  const { atBreakpoint } = useBreakpoint();
 
   return (
     <ContentLayout>
@@ -33,7 +41,11 @@ const ClassOverview: FC<{ classItem: ClassOverviewType }> = ({ classItem }) => {
               key={teacher.id}
               appearance="outlined"
               stateLayerEffect
-              href={`/lookup/person/teacher/${teacher.id}`}
+              href={
+                atBreakpoint === "base"
+                  ? `/lookup/person/teacher/${teacher.id}`
+                  : `/lookup/person?id=${teacher.id}&role=teacher`
+              }
               element={Link}
             >
               <CardHeader

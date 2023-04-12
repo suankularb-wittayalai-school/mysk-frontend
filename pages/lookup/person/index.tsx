@@ -25,7 +25,10 @@ import PersonCard from "@/components/lookup/person/PersonCard";
 import PersonDetails from "@/components/lookup/person/PersonDetails";
 
 // Backend
-import { getPeopleLookupList } from "@/utils/backend/person/person";
+import {
+  getLookupListPerson,
+  getPeopleLookupList,
+} from "@/utils/backend/person/person";
 import { getStudent } from "@/utils/backend/person/student";
 import { getTeacher } from "@/utils/backend/person/teacher";
 
@@ -41,7 +44,7 @@ import { useToggle } from "@/utils/hooks/toggle";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { PersonLookupItem, Role, Student, Teacher } from "@/utils/types/person";
 
-const LookupStudentsPage: CustomPage<{
+const LookupPeoplePage: CustomPage<{
   initialPeople: PersonLookupItem[];
   selectedIdx: number;
 }> = ({ initialPeople, selectedIdx }) => {
@@ -178,12 +181,32 @@ export const getServerSideProps: GetServerSideProps = async ({
   locale,
   query,
 }) => {
-  const selectedID = Number(query?.id);
+  const selected = query.id
+    ? { id: Number(query.id), role: query.role as Role }
+    : null;
   let selectedIdx = 0;
 
-  const { data: initialPeople } = await getPeopleLookupList();
+  let initialPeople: PersonLookupItem[];
 
-  // selectedIdx = initialPeople.findIndex((person) => selectedID === person.id);
+  const { data: defaultPeople } = await getPeopleLookupList();
+  initialPeople = defaultPeople;
+
+  if (selected) {
+    selectedIdx = initialPeople.findIndex(
+      (person) => selected.id === person.id && selected.role === person.role
+    );
+
+    if (selectedIdx === -1) {
+      const { data, error } = await getLookupListPerson(
+        selected.id,
+        selected.role
+      );
+      if (error) initialPeople = defaultPeople;
+      else initialPeople = [data, ...defaultPeople];
+    } else initialPeople = defaultPeople;
+  }
+
+  selectedIdx = Math.max(selectedIdx, 0);
 
   return {
     props: {
@@ -197,4 +220,4 @@ export const getServerSideProps: GetServerSideProps = async ({
   };
 };
 
-export default LookupStudentsPage;
+export default LookupPeoplePage;
