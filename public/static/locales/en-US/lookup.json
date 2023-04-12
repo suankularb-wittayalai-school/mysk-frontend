@@ -34,6 +34,7 @@
           "label": "Save to contacts",
           "desc": "Save a .vcf file to see this person as a contact on your device.",
           "segment": {
+            "teacherPrefix": "T. ",
             "org": "Suankularb Wittayalai School",
             "title": "Teacher",
             "note": "Class advisor at M.{{number}}"
