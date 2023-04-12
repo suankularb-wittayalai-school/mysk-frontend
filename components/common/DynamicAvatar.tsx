@@ -5,6 +5,9 @@ import { FC } from "react";
 // SK Components
 import { Avatar } from "@suankularb-components/react";
 
+// Helpers
+import { startsWithThaiVowel } from "@/utils/helpers/name";
+
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
 
@@ -32,7 +35,14 @@ const DynamicAvatar: FC<
               .toUpperCase()
           ) : (
             // Otherwise, use Thai name
-            [name.th.firstName[0], name.th.lastName[0]].join("")
+            [
+              startsWithThaiVowel(name.th.firstName[0])
+                ? name.th.firstName[1]
+                : name.th.firstName[0],
+              startsWithThaiVowel(name.th.lastName[0])
+                ? name.th.lastName[1]
+                : name.th.lastName[0],
+            ].join("")
           )
         ) : // If nothing available, show the default vector
         undefined

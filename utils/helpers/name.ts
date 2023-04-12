@@ -6,6 +6,15 @@ import { LangCode, MultiLangString } from "@/utils/types/common";
 import { Person } from "@/utils/types/person";
 
 /**
+ * If a given string starts with a vowel (“เ”, “แ”, “โ”, “ไ”, “ใ”).
+ * @param string A string to test.
+ * @returns True if it does, false if not.
+ */
+export function startsWithThaiVowel(string: string) {
+  return ["เ", "แ", "โ", "ไ", "ใ"].includes(string[0]);
+}
+
+/**
  * Joins segments of a name (usually the return of `db2PersonName`) into a
  * single string.
  *
