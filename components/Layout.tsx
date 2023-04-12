@@ -64,7 +64,7 @@ const Layout: FC<
   const supabase = useSupabaseClient();
   const user = useUser();
   const [userMetadata, setUserMetadata] = useState<UserMetadata | null>();
-  const [classNumber, setClassNumber] = useState<number | null>();
+  const [isClassAdvisor, setIsClassAdvisor] = useState<boolean>(false);
   useEffect(() => {
     if (!user) return;
     (async () => {
@@ -80,32 +80,20 @@ const Layout: FC<
       }
       setUserMetadata(metadata);
 
-      // For a student
-      if (metadata!.role == "student") {
-        const { data: classOfStudent, error } = await getClassOfStudent(
-          supabase,
-          metadata!.student!
-        );
-        if (error) {
-          console.error(error);
-          return;
-        }
-        setClassNumber(classOfStudent.number);
-      }
-
-      // For a teacher
-      else if (metadata!.role == "teacher") {
+      // Check if the user is a Class Advisor
+      if (metadata!.role === "teacher") {
         const { data: classAdvisorAt, error } = await getClassAdvisorAt(
           supabase,
           metadata!.teacher!
         );
 
-        if (error) {
-          console.error(error);
+        if (classAdvisorAt) {
+          setIsClassAdvisor(true);
           return;
         }
-        if (!classAdvisorAt) return;
-        setClassNumber(classAdvisorAt.number);
+
+        if (error) console.error(error);
+        setIsClassAdvisor(false);
       }
     })();
   }, [user]);
@@ -139,12 +127,13 @@ const Layout: FC<
               element={Link}
             />
           )}
-          {navType === "student" || (navType === "teacher" && classNumber) ? (
+          {navType === "student" ||
+          (navType === "teacher" && isClassAdvisor) ? (
             <NavDrawerItem
               icon={<MaterialIcon icon="groups" />}
               label={t("navigation.class")}
               selected={router.pathname.startsWith("/class")}
-              href={`/class/${classNumber}/overview`}
+              href="/class"
               element={Link}
             />
           ) : (
@@ -221,11 +210,11 @@ const Layout: FC<
             // eslint-disable-next-line react/display-name
             element={forwardRef((props, ref) => (
               <Link
-                locale={locale == "en-US" ? "th" : "en-US"}
+                locale={locale === "en-US" ? "th" : "en-US"}
                 onClick={() =>
                   localStorage.setItem(
                     "preferredLang",
-                    locale == "en-US" ? "th" : "en-US"
+                    locale === "en-US" ? "th" : "en-US"
                   )
                 }
                 {...{ ...props, ref }}
@@ -254,11 +243,11 @@ const Layout: FC<
                 href={router.asPath}
                 element={(props) => (
                   <Link
-                    locale={locale == "en-US" ? "th" : "en-US"}
+                    locale={locale === "en-US" ? "th" : "en-US"}
                     onClick={() =>
                       localStorage.setItem(
                         "preferredLang",
-                        locale == "en-US" ? "th" : "en-US"
+                        locale === "en-US" ? "th" : "en-US"
                       )
                     }
                     {...props}
@@ -294,12 +283,12 @@ const Layout: FC<
           )}
           {(!navType ||
             navType === "student" ||
-            (navType === "teacher" && classNumber)) && (
+            (navType === "teacher" && isClassAdvisor)) && (
             <NavBarItem
               icon={<MaterialIcon icon="groups" />}
               label={t("navigation.class")}
               selected={router.pathname.startsWith("/class")}
-              href={`/class/${classNumber}/overview`}
+              href="/class"
               element={Link}
             />
           )}
