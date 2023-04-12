@@ -1,7 +1,6 @@
 // External libraries
 import { GetStaticPaths, GetStaticProps } from "next";
 import Head from "next/head";
-import Link from "next/link";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -13,15 +12,13 @@ import {
   Columns,
   ContentLayout,
   Header,
-  MaterialIcon,
   Search,
   Section,
-  Tab,
-  TabsContainer,
 } from "@suankularb-components/react";
 
 // Internal components
 import MySKPageHeader from "@/components/common/MySKPageHeader";
+import ClassTabs from "@/components/lookup/class/ClassTabs";
 import Schedule from "@/components/schedule/Schedule";
 import SubjectList from "@/components/subject/SubjectList";
 
@@ -49,7 +46,6 @@ import { useLocale } from "@/utils/hooks/i18n";
 
 // Types
 import { ClassWNumber } from "@/utils/types/class";
-import ClassTabs from "@/components/lookup/class/ClassTabs";
 
 const SubjectListSection: FC<{ subjectList: SubjectListItem[] }> = ({
   subjectList,

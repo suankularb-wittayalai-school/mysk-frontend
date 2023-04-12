@@ -1,5 +1,4 @@
 // External libraries
-
 import { GetStaticPaths, GetStaticProps } from "next";
 import Head from "next/head";
 
@@ -7,6 +6,7 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 // Internal components
+import ClassTeachers from "@/components/class/ClassTeachers";
 import MySKPageHeader from "@/components/common/MySKPageHeader";
 import ClassTabs from "@/components/lookup/class/ClassTabs";
 
@@ -26,7 +26,6 @@ import { createTitleStr } from "@/utils/helpers/title";
 // Types
 import { ClassTeachersListSection } from "@/utils/types/class";
 import { CustomPage, LangCode } from "@/utils/types/common";
-import ClassTeachers from "@/components/class/ClassTeachers";
 
 const ClassTeachersPage: CustomPage<{
   classNumber: number;
