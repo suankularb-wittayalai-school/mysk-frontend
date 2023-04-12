@@ -56,7 +56,14 @@
   "classes": {
     "title": "Lookup classes",
     "list": {
-      "searchAlt": "Search classes"
+      "searchAlt": "Search classes",
+      "numStudents_one": "{{count}} student",
+      "numStudents_other": "{{count}} students",
+      "action": {
+        "schedule": "See schedule",
+        "students": "Students",
+        "teachers": "Teachers"
+      }
     }
   },
   "documents": {

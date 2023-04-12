@@ -17,6 +17,7 @@ export type ClassWNumber = Pick<Class, "id" | "number">;
 
 export type ClassLookupListItem = ClassWNumber & {
   classAdvisors: Pick<Person, "id" | "prefix" | "name">[];
+  studentCount: number;
 };
 
 export type ClassOverview = Pick<

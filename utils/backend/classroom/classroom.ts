@@ -337,7 +337,7 @@ export async function getLookupClasses(
 ): Promise<BackendDataReturn<ClassLookupListItem[]>> {
   const { data, error } = await supabase
     .from("classroom")
-    .select("id, number, advisors")
+    .select("id, number, advisors, students")
     .order("number");
 
   if (error) {
@@ -364,6 +364,7 @@ export async function getLookupClasses(
         const teacher = teachers?.find((teacher) => advisor === teacher.id)!;
         return { id: teacher.id, ...db2PersonName(teacher.person) };
       }),
+      studentCount: classItem.students.length,
     })),
     error: null,
   };

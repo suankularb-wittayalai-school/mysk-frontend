@@ -56,7 +56,13 @@
   "classes": {
     "title": "ค้นหาห้องเรียน",
     "list": {
-      "searchAlt": "ค้นหาห้องเรียน"
+      "searchAlt": "ค้นหาห้องเรียน",
+      "numStudents": "นักเรียน {{count}} คน",
+      "action": {
+        "schedule": "ดูตารางเรียน",
+        "students": "นักเรียน",
+        "teachers": "อาจารย์"
+      }
     }
   },
   "documents": {
