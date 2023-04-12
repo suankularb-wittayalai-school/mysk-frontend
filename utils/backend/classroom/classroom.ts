@@ -452,15 +452,15 @@ export async function getClassTeachersList(
   };
 }
 
-export async function getClassNumberFromUser(
+export async function getClassFromUser(
   supabase: DatabaseClient,
   user: User
-): Promise<BackendDataReturn<number, null>> {
+): Promise<BackendDataReturn<ClassWNumber, null>> {
   const studentID: number = user.user_metadata.student;
 
   const { data: classItem, error: classError } = await supabase
     .from("classroom")
-    .select("number")
+    .select("id, number")
     .match({ year: getCurrentAcademicYear() })
     .contains("students", [studentID])
     .limit(1)
@@ -471,7 +471,7 @@ export async function getClassNumberFromUser(
     return { data: null, error: classError };
   }
 
-  return { data: classItem!.number, error: null };
+  return { data: classItem!, error: null };
 }
 
 export async function getClassIDFromNumber(

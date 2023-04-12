@@ -25,7 +25,7 @@ import SubjectList from "@/components/subject/SubjectList";
 // Backend
 import {
   getClassIDFromNumber,
-  getClassNumberFromUser,
+  getClassFromUser,
 } from "@/utils/backend/classroom/classroom";
 import { getSchedule } from "@/utils/backend/schedule/schedule";
 import { getSubjectList } from "@/utils/backend/subject/roomSubject";
@@ -114,13 +114,13 @@ export const getServerSideProps: GetServerSideProps = async ({
     data: { session },
   } = await supabase.auth.getSession();
 
-  const { data: classNumber } = await getClassNumberFromUser(
+  const { data: classItem } = await getClassFromUser(supabase, session!.user);
+  const { data: schedule } = await getSchedule(
     supabase,
-    session!.user
+    "student",
+    classItem!.id
   );
-  const { data: classID } = await getClassIDFromNumber(supabase, classNumber!);
-  const { data: schedule } = await getSchedule(supabase, "student", classID!);
-  const { data: subjectList } = await getSubjectList(supabase, classID!);
+  const { data: subjectList } = await getSubjectList(supabase, classItem!.id);
 
   return {
     props: {
