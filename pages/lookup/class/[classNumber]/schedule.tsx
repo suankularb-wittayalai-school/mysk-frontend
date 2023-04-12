@@ -92,7 +92,7 @@ const LookupClassSchedulePage: CustomPage<{
         title={t("schedule.title", { number: classItem.number })}
         parentURL={parentURL}
       >
-        <ClassTabs number={classItem.number} />
+        <ClassTabs number={classItem.number} type="lookup" />
       </MySKPageHeader>
       <ContentLayout>
         <Schedule schedule={schedule} role="student" />

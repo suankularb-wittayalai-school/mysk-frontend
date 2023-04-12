@@ -42,7 +42,7 @@ const ClassTeachersPage: CustomPage<{
         title={`M.${classNumber} teachers`}
         parentURL={`/lookup/class/${classNumber}`}
       >
-        <ClassTabs number={classNumber} />
+        <ClassTabs number={classNumber} type="lookup" />
       </MySKPageHeader>
       <ClassTeachers {...{ teacherList }} />
     </>

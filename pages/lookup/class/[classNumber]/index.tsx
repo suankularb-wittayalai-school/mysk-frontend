@@ -40,7 +40,7 @@ const ClassOverviewPage: CustomPage<{ classItem: ClassOverviewType }> = ({
         title={`M.${classItem.number} overview`}
         parentURL="/lookup/class"
       >
-        <ClassTabs number={classItem.number} />
+        <ClassTabs number={classItem.number} type="lookup" />
       </MySKPageHeader>
       <ClassOverview {...{ classItem }} />
     </>

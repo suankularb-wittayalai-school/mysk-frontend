@@ -1,17 +1,26 @@
 // External libraries
+import { useUser } from "@supabase/auth-helpers-react";
+
 import Link from "next/link";
+import { useRouter } from "next/router";
+
 import { useTranslation } from "next-i18next";
+
 import { FC } from "react";
 
 // SK Components
 import { MaterialIcon, Tab, TabsContainer } from "@suankularb-components/react";
-import { useRouter } from "next/router";
 
-const ClassTabs: FC<{ number: number }> = ({ number }) => {
+const ClassTabs: FC<{
+  number: number;
+  type: "class" | "lookup";
+}> = ({ number, type }) => {
   const { t } = useTranslation("class");
 
   const router = useRouter();
-  const parentURL = `/lookup/class/${number}`;
+  const parentURL = type === "lookup" ? `/lookup/class/${number}` : "/class";
+
+  const user = useUser();
 
   return (
     <TabsContainer appearance="primary" alt="">
@@ -36,13 +45,17 @@ const ClassTabs: FC<{ number: number }> = ({ number }) => {
         href={`${parentURL}/teachers`}
         element={Link}
       />
-      <Tab
-        icon={<MaterialIcon icon="dashboard" />}
-        label={t("common.navigation.schedule")}
-        selected={router.asPath === `${parentURL}/schedule`}
-        href={`${parentURL}/schedule`}
-        element={Link}
-      />
+      {type === "lookup" || user?.role === "teacher" ? (
+        <Tab
+          icon={<MaterialIcon icon="dashboard" />}
+          label={t("common.navigation.schedule")}
+          selected={router.asPath === `${parentURL}/schedule`}
+          href={`${parentURL}/schedule`}
+          element={Link}
+        />
+      ) : (
+        <></>
+      )}
     </TabsContainer>
   );
 };
