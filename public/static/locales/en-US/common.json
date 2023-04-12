@@ -17,10 +17,9 @@
     "drawer": {
       "lookup": {
         "title": "Lookup",
-        "students": "Students",
-        "teachers": "Teachers",
-        "orders": "Orders",
-        "documents": "Documents"
+        "person": "Students/teachers",
+        "class": "Classes",
+        "documents": "School documents/orders"
       },
       "about": {
         "title": "About",

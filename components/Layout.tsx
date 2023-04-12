@@ -156,10 +156,9 @@ const Layout: FC<
             selected={
               router.pathname.startsWith("/lookup") &&
               !(
-                router.pathname.startsWith("/lookup/students") ||
-                router.pathname.startsWith("/lookup/teachers") ||
-                router.pathname.startsWith("/lookup/orders") ||
-                router.pathname.startsWith("/lookup/documents")
+                router.pathname.startsWith("/lookup/person") ||
+                router.pathname.startsWith("/lookup/class") ||
+                router.pathname.startsWith("/lookup/document")
               )
             }
             href="/lookup"
@@ -184,35 +183,24 @@ const Layout: FC<
         {/* Lookup */}
         <NavDrawerSection header={t("navigation.drawer.lookup.title")}>
           <NavDrawerItem
-            icon={<MaterialIcon icon="groups" />}
-            label={t("navigation.drawer.lookup.students")}
-            selected={router.pathname.startsWith("/lookup/students")}
-            href="/lookup/students"
+            icon={<MaterialIcon icon="badge" />}
+            label={t("navigation.drawer.lookup.person")}
+            selected={router.pathname.startsWith("/lookup/person")}
+            href="/lookup/person"
             element={Link}
           />
           <NavDrawerItem
-            icon={<MaterialIcon icon="group" />}
-            label={t("navigation.drawer.lookup.teachers")}
-            selected={router.pathname.startsWith("/lookup/teachers")}
-            href="/lookup/teachers"
+            icon={<MaterialIcon icon="groups" />}
+            label={t("navigation.drawer.lookup.class")}
+            selected={router.pathname.startsWith("/lookup/class")}
+            href="/lookup/class"
             element={Link}
           />
-          {userMetadata?.role === "teacher" || navType === "teacher" ? (
-            <NavDrawerItem
-              icon={<MaterialIcon icon="mail" />}
-              label={t("navigation.drawer.lookup.orders")}
-              selected={router.pathname.startsWith("/lookup/orders")}
-              href="/lookup/orders"
-              element={Link}
-            />
-          ) : (
-            <></>
-          )}
           <NavDrawerItem
             icon={<MaterialIcon icon="description" />}
-            label={t("navigation.drawer.lookup.documents")}
-            selected={router.pathname.startsWith("/lookup/documents")}
-            href="/lookup/documents"
+            label={t("navigation.drawer.lookup.document")}
+            selected={router.pathname.startsWith("/lookup/document")}
+            href="/lookup/document"
             element={Link}
           />
         </NavDrawerSection>
