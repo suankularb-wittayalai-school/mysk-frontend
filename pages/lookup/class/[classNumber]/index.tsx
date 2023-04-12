@@ -5,10 +5,8 @@ import Head from "next/head";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-// SK Components
-import { ContentLayout } from "@suankularb-components/react";
-
 // Internal components
+import ClassOverview from "@/components/class/ClassOverview";
 import MySKPageHeader from "@/components/common/MySKPageHeader";
 import ClassTabs from "@/components/lookup/class/ClassTabs";
 
@@ -16,16 +14,19 @@ import ClassTabs from "@/components/lookup/class/ClassTabs";
 import { supabase } from "@/utils/supabase-backend";
 
 // Backend
-import { getAllClassNumbers } from "@/utils/backend/classroom/classroom";
+import {
+  getAllClassNumbers,
+  getClassOverview,
+} from "@/utils/backend/classroom/classroom";
 
 // Helpers
 import { createTitleStr } from "@/utils/helpers/title";
 
 // Types
-import { ClassOverview } from "@/utils/types/class";
+import { ClassOverview as ClassOverviewType } from "@/utils/types/class";
 import { CustomPage, LangCode } from "@/utils/types/common";
 
-const ClassOverviewPage: CustomPage<{ classItem: ClassOverview }> = ({
+const ClassOverviewPage: CustomPage<{ classItem: ClassOverviewType }> = ({
   classItem,
 }) => {
   const { t } = useTranslation(["class", "common"]);
@@ -41,9 +42,7 @@ const ClassOverviewPage: CustomPage<{ classItem: ClassOverview }> = ({
       >
         <ClassTabs number={classItem.number} />
       </MySKPageHeader>
-      <ContentLayout>
-        <p className="mx-4 sm:mx-0">TODO</p>
-      </ContentLayout>
+      <ClassOverview {...{ classItem }} />
     </>
   );
 };
@@ -52,12 +51,11 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   const classNumber = Number(params?.classNumber);
   if (Number.isNaN(classNumber)) return { notFound: true };
 
-  const classItem: ClassOverview = {
-    number: classNumber,
-    classAdvisors: [],
-    contacts: [],
-    subjects: [],
-  };
+  const { data: classItem, error } = await getClassOverview(
+    supabase,
+    classNumber
+  );
+  if (error) return { notFound: true };
 
   return {
     props: {

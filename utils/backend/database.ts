@@ -440,7 +440,12 @@ export async function db2Subject(
 
 export async function db2Class(
   supabase: DatabaseClient,
-  classDB: Database["public"]["Tables"]["classroom"]["Row"]
+  classDB: Database["public"]["Tables"]["classroom"]["Row"],
+  options?: Partial<{
+    advisors: boolean;
+    students: boolean;
+    contacts: boolean;
+  }>
 ): Promise<Class> {
   const formatted: Class = {
     id: classDB.id,
@@ -452,7 +457,7 @@ export async function db2Class(
     year: classDB.year,
   };
 
-  if (classDB.advisors) {
+  if (options?.advisors && classDB.advisors) {
     const { data: classAdvisor, error: classAdvisorError } = await supabase
       .from("teacher")
       .select("*, person(*), subject_group(*)")
@@ -469,7 +474,7 @@ export async function db2Class(
     }
   }
 
-  if (classDB.students) {
+  if (options?.students && classDB.students) {
     const { data: students, error: studentsError } = await supabase
       .from("student")
       .select("*, person(*)")
@@ -485,7 +490,7 @@ export async function db2Class(
     }
   }
 
-  if (classDB.contacts) {
+  if (options?.contacts && classDB.contacts) {
     const { data: contacts, error: contactError } = await supabase
       .from("contacts")
       .select("*")

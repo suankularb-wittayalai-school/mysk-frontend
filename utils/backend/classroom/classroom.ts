@@ -15,7 +15,12 @@ import { db2Class, db2PersonName, db2Student } from "@/utils/backend/database";
 import { getCurrentAcademicYear } from "@/utils/helpers/date";
 
 // Types
-import { Class, ClassLookupListItem, ClassWNumber } from "@/utils/types/class";
+import {
+  Class,
+  ClassLookupListItem,
+  ClassOverview,
+  ClassWNumber,
+} from "@/utils/types/class";
 import { BackendDataReturn, DatabaseClient } from "@/utils/types/common";
 import { StudentListItem } from "@/utils/types/person";
 import { Database } from "@/utils/types/supabase";
@@ -360,6 +365,28 @@ export async function getLookupClasses(
         return { id: teacher.id, ...db2PersonName(teacher.person) };
       }),
     })),
+    error: null,
+  };
+}
+
+export async function getClassOverview(
+  supabase: DatabaseClient,
+  number: number
+): Promise<BackendDataReturn<ClassOverview, null>> {
+  const { data, error } = await supabase
+    .from("classroom")
+    .select("*")
+    .match({ number, year: getCurrentAcademicYear() })
+    .limit(1)
+    .single();
+
+  if (error) {
+    console.error(error);
+    return { data: null, error };
+  }
+
+  return {
+    data: await db2Class(supabase, data, { advisors: true, contacts: true }),
     error: null,
   };
 }
