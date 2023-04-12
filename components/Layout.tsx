@@ -40,7 +40,6 @@ import NavDrawerContext from "@/contexts/NavDrawerContext";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
-import { useTransitionEvent } from "@/utils/hooks/routing";
 import { useSnackbar } from "@/utils/hooks/snackbar";
 
 // Types
@@ -111,19 +110,11 @@ const Layout: FC<
     })();
   }, [user]);
 
-  // // Root Layout
-  // const { transitionEvent } = useTransitionEvent(
-  //   pageHeader?.parentURL,
-  //   childURLs
-  // );
-
   // Snackbar
   const { snackbarOpen, setSnackbarOpen, snackbarProps } = useSnackbar();
 
   const rootLayout = (
-    <RootLayout
-    // transitionEvent={transitionEvent}
-    >
+    <RootLayout>
       {/* Navigation Drawer */}
       <NavDrawer open={navOpen} onClose={() => setNavOpen(false)}>
         {/* Top-level pages */}
