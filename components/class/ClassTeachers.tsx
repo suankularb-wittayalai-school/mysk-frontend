@@ -6,7 +6,7 @@ import { FC, useEffect, useState } from "react";
 import { SplitLayout } from "@suankularb-components/react";
 
 // Internal components
-import ClassTeacherCard from "@/components/class/ClassTeacberCard";
+import ClassTeacherCard from "@/components/class/ClassTeacherCard";
 import EmptyDetail from "@/components/lookup/EmptyDetail";
 import PersonDetails from "@/components/lookup/person/PersonDetails";
 
