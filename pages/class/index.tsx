@@ -14,14 +14,20 @@ import ClassTabs from "@/components/lookup/class/ClassTabs";
 
 // Backend
 import { getUserMetadata } from "@/utils/backend/account";
-import { getClassOverview } from "@/utils/backend/classroom/classroom";
+import {
+  getClassFromUser,
+  getClassOverview,
+} from "@/utils/backend/classroom/classroom";
 import { getClassAdvisorAt } from "@/utils/backend/person/teacher";
 
 // Helpers
 import { createTitleStr } from "@/utils/helpers/title";
 
 // Types
-import { ClassOverview as ClassOverviewType } from "@/utils/types/class";
+import {
+  ClassOverview as ClassOverviewType,
+  ClassWNumber,
+} from "@/utils/types/class";
 import { CustomPage, LangCode } from "@/utils/types/common";
 
 const ClassOverviewPage: CustomPage<{
@@ -55,15 +61,17 @@ export const getServerSideProps: GetServerSideProps = async ({
   const {
     data: { session },
   } = await supabase.auth.getSession();
-  const { data: metadata, error: metadataError } = await getUserMetadata(
-    supabase,
-    session!.user.id
-  );
+  const { data: metadata } = await getUserMetadata(supabase, session!.user.id);
 
-  const { data: classWNumber } = await getClassAdvisorAt(
-    supabase,
-    metadata!.teacher!
-  );
+  let classWNumber: ClassWNumber;
+  if (metadata!.role === "student") {
+    const { data } = await getClassFromUser(supabase, session!.user);
+    classWNumber = data!;
+  } else if (metadata!.role === "teacher") {
+    const { data } = await getClassAdvisorAt(supabase, metadata!.teacher!);
+    classWNumber = data!;
+  }
+
   const { data: classItem } = await getClassOverview(
     supabase,
     classWNumber!.number

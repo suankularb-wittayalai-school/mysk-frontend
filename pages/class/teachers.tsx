@@ -13,10 +13,12 @@ import MySKPageHeader from "@/components/common/MySKPageHeader";
 import ClassTabs from "@/components/lookup/class/ClassTabs";
 
 // Backend
+import { getUserMetadata } from "@/utils/backend/account";
 import {
   getClassFromUser,
   getClassTeachersList,
 } from "@/utils/backend/classroom/classroom";
+import { getClassAdvisorAt } from "@/utils/backend/person/teacher";
 
 // Helpers
 import { createTitleStr } from "@/utils/helpers/title";
@@ -57,8 +59,17 @@ export const getServerSideProps: GetServerSideProps = async ({
   const {
     data: { session },
   } = await supabase.auth.getSession();
+  const { data: metadata } = await getUserMetadata(supabase, session!.user.id);
 
-  const { data: classItem } = await getClassFromUser(supabase, session!.user);
+  let classItem: ClassWNumber;
+  if (metadata!.role === "student") {
+    const { data } = await getClassFromUser(supabase, session!.user);
+    classItem = data!;
+  } else if (metadata!.role === "teacher") {
+    const { data } = await getClassAdvisorAt(supabase, metadata!.teacher!);
+    classItem = data!;
+  }
+
   const { data: teacherList } = await getClassTeachersList(
     supabase,
     classItem!.id
@@ -71,7 +82,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         "class",
         "lookup",
       ])),
-      classItem,
+      classItem: classItem!,
       teacherList,
     },
   };
