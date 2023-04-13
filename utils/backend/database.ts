@@ -188,7 +188,7 @@ export async function db2Student(
     contacts: [],
   };
 
-  if (options?.citizenID) formatted.citizenID = student.person.citizen_id
+  if (options?.citizenID) formatted.citizenID = student.person.citizen_id;
 
   if (options?.contacts) {
     const { data: contacts, error: contactError } = await supabase
