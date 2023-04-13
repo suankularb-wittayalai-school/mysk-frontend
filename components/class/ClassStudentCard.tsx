@@ -2,7 +2,7 @@
 import { FC } from "react";
 
 // SK Component
-import { Avatar, Card, CardHeader } from "@suankularb-components/react";
+import { Card, CardHeader } from "@suankularb-components/react";
 
 // Internal components
 import DynamicAvatar from "@/components/common/DynamicAvatar";
@@ -39,14 +39,25 @@ const ClassStudentCard: FC<{
         stateLayerEffect
         onClick={() => setSelectedID && setSelectedID(student.id)}
         className={cn([
-          `w-full items-center py-1.5 px-3 text-left`,
+          `w-full items-center pr-3 text-left`,
           thisSelected ? `!bg-primary-container` : `!border-transparent`,
         ])}
       >
+        <CardHeader
+          avatar={
+            <DynamicAvatar
+              name={student.name}
+              className={
+                thisSelected ? "!bg-primary !text-on-primary" : undefined
+              }
+            />
+          }
+          title={nameJoiner(locale, student.name)}
+          className="grow"
+        />
         <span
           className={cn([
-            `skc-display-small text-outline
-             [font-feature-settings:"tnum"on,"lnum"on]`,
+            `skc-display-small text-outline [font-feature-settings:"tnum"on,"lnum"on]`,
             thisSelected && `!text-primary`,
           ])}
         >
@@ -55,11 +66,6 @@ const ClassStudentCard: FC<{
           )}
           {student.classNo}
         </span>
-        <CardHeader title={nameJoiner(locale, student.name)} className="grow" />
-        <DynamicAvatar
-          name={student.name}
-          className={thisSelected ? "!bg-primary !text-on-primary" : undefined}
-        />
       </Card>
     </li>
   );
