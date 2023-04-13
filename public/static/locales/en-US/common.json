@@ -19,7 +19,7 @@
         "title": "Lookup",
         "person": "Students/teachers",
         "class": "Classes",
-        "documents": "School documents/orders"
+        "document": "School documents/orders"
       },
       "about": {
         "title": "About",
