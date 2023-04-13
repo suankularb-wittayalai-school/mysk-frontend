@@ -11,7 +11,9 @@
       "action": {
         "seeClass": "See class",
         "seeSchedule": "See schedule",
-        "share": "Share"
+        "share": "Share",
+        "edit": "Edit",
+        "delete": "Delete"
       }
     },
     "detail": {

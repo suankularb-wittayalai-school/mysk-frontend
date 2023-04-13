@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 // SK Components
 import {
   ChipSet,
+  FAB,
   FilterChip,
   MaterialIcon,
   SplitLayout,
@@ -45,6 +46,7 @@ import { useToggle } from "@/utils/hooks/toggle";
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { PersonLookupItem, Role, Student, Teacher } from "@/utils/types/person";
+import AddPersonFAB from "@/components/lookup/person/AddPersonFAB";
 
 const LookupPeoplePage: CustomPage<{
   initialPeople: PersonLookupItem[];
@@ -243,5 +245,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     },
   };
 };
+
+LookupPeoplePage.fab = <AddPersonFAB />;
 
 export default LookupPeoplePage;

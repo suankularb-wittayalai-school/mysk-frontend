@@ -25,10 +25,7 @@ const PersonHeader: FC<ComponentProps<typeof PersonActions>> = ({
   const { t } = useTranslation("lookup", { keyPrefix: "people.header" });
 
   return (
-    <div
-      className="flex flex-col gap-6 bg-surface-2 px-5 py-4 md:sticky md:z-[70]
-        md:flex-row"
-    >
+    <div className="flex flex-col gap-6 bg-surface-2 px-5 py-4 md:flex-row">
       <DynamicAvatar
         className={cn([
           "!h-14 !w-14",

@@ -11,7 +11,9 @@
       "action": {
         "seeClass": "ดูห้องเรียน",
         "seeSchedule": "ดูตารางเรียนห้อง",
-        "share": "แชร์"
+        "share": "แชร์",
+        "edit": "แก้ไข",
+        "delete": "ลบ"
       }
     },
     "detail": {
