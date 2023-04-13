@@ -28,16 +28,6 @@
       "goToLanding": "ไปหน้าหลัก"
     }
   },
-  "forgor": {
-    "title": "ลืมรหัสผ่าน",
-    "resetWithEmail": "ใช้อีเมล",
-    "newPassword": "เปลี่ยนรหัสผ่าน",
-    "supportingText": "ยืนยันตัวตนสำเร็จ ให้ตั้งรหัสผ่านใหม่",
-    "graphicAlt": "ไอคอนล็อคห้อยอยู่บนเส้น",
-    "action": {
-      "use": "ใช้"
-    }
-  },
   "profile": {
     "name": {
       "title": "ชื่อจริง",

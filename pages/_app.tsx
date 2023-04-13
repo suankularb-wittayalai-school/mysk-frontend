@@ -11,7 +11,6 @@ import {
   IBM_Plex_Sans_Thai,
   Fira_Code,
 } from "next/font/google";
-import { useRouter } from "next/router";
 
 import { appWithTranslation } from "next-i18next";
 
@@ -22,6 +21,7 @@ import { ThemeProvider } from "@suankularb-components/react";
 
 // Internal components
 import Layout from "@/components/Layout";
+import ForgorDialog from "@/components/account/ForgorDialog";
 import ErrorBoundary from "@/components/error/ErrorBoundary";
 import PageFallback from "@/components/error/PageFallback";
 
@@ -57,6 +57,14 @@ const displayFontTH = IBM_Plex_Sans_Thai({
 // Mono font
 const monoFont = Fira_Code({ subsets: ["latin"] });
 
+/**
+ * To prevent the App component from being more of a triangle than it already
+ * is, all the context providers are extracted into this component.
+ *
+ * @param children The app that uses contexts.
+ *
+ * @returns The app wrapped with context providers.
+ */
 const Contexts: FC<{ children: ReactNode }> = ({ children }) => {
   const { previousPath } = usePreviousPath();
   const [snackbar, setSnackbar] = useState<JSX.Element | null>(null);
@@ -77,22 +85,35 @@ function App({ Component, pageProps }: CustomAppProps) {
   const { context, fab, navType, childURLs } = Component;
 
   // Supabase client
-  const [supabaseClient] = useState(() =>
-    createBrowserSupabaseClient<Database>()
-  );
+  const [supabase] = useState(() => createBrowserSupabaseClient<Database>());
 
-  // Authentication
-  const router = useRouter();
+  // Forgot password process (abbreviated throughout the codebase as `forgor`):
+  //
+  // 1. The user initiates forgor with the Forgot password Button in Landing.
+  //    (see `/pages/index.tsx`)
+  // 2. The user enters their email address to send a verification email to
+  //    with the Request Forgor Dialog.
+  //    (see `/components/account/RequestForgorDialog.tsx`)
+  // 3. The email is sent, and the user is told the next steps.
+  //    (see `/components/account/CheckEmail.tsx`)
+  // 4. The user opens their email, sees our email, and clicks the link.
+  // 5. The user is redirected back to MySK. A `PASSWORD_RECOVERY` event fires,
+  //    the code block below intercepts it and open the Forgor Dialog.
+  // 6. The user enters their new password, save it, and goes on with their life.
+  //
+  // See https://supabase.com/docs/reference/javascript/auth-resetpasswordforemail.
+
+  const [verifiedForgorOpen, setVerifiedForgorOpen] = useState<boolean>(false);
   useEffect(() => {
-    supabaseClient.auth.onAuthStateChange((event) => {
-      if (event == "SIGNED_OUT") router.push("/");
-      else if (event == "PASSWORD_RECOVERY")
-        router.push("/account/forgot-password");
+    supabase.auth.onAuthStateChange(async (event) => {
+      if (event === "PASSWORD_RECOVERY") setVerifiedForgorOpen(true);
     });
   }, []);
 
   return (
     <>
+      {/* Put Next.js generated font families into variables that SKCom and
+          TailwindCSS can use */}
       <style jsx global>{`
         :root {
           --font-body: -apple-system, BlinkMacSystemFont,
@@ -104,13 +125,21 @@ function App({ Component, pageProps }: CustomAppProps) {
         }
       `}</style>
 
-      <SessionContextProvider supabaseClient={supabaseClient}>
+      {/* Context proviers */}
+      <SessionContextProvider supabaseClient={supabase}>
         <Contexts>
+          {/* Framer Motion a11y */}
           <MotionConfig reducedMotion="user">
+            {/* SKCom variables */}
             <ThemeProvider>
+              {/* Rendered app */}
               <Layout {...{ context, fab, navType, childURLs }}>
                 <ErrorBoundary Fallback={PageFallback}>
                   <Component {...pageProps} />
+                  <ForgorDialog
+                    open={verifiedForgorOpen}
+                    onClose={() => setVerifiedForgorOpen(false)}
+                  />
                 </ErrorBoundary>
               </Layout>
             </ThemeProvider>

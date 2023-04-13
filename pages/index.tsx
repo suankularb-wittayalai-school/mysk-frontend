@@ -24,7 +24,7 @@ import {
 } from "@suankularb-components/react";
 
 // Internal components
-import ForgotPasswordDialog from "@/components/account/ForgotPassword";
+import RequestForgorDialog from "@/components/account/RequestForgorDialog";
 import MultiSchemeImage from "@/components/common/MultiSchemeImage";
 
 // Contexts
@@ -130,7 +130,7 @@ const LoginSection: FC = () => {
       <Header>{t("logIn.title")}</Header>
       <Columns columns={3}>
         <div className="col-span-2 flex flex-col gap-4">
-          <TextField
+          <TextField<string>
             appearance="outlined"
             label={t("logIn.form.email")}
             align="right"
@@ -138,21 +138,17 @@ const LoginSection: FC = () => {
             error={email.endsWith("sk.ac.th")}
             value={email}
             onChange={(value) =>
-              setEmail(
-                (value as string).endsWith("sk.ac.th")
-                  ? (value as string).slice(0, -8)
-                  : (value as string)
-              )
+              setEmail(value.endsWith("sk.ac.th") ? value.slice(0, -8) : value)
             }
             locale={locale}
             inputAttr={{ autoCapitalize: "off" }}
             className="bg-surface"
           />
-          <TextField
+          <TextField<string>
             appearance="outlined"
             label={t("logIn.form.password")}
             value={password}
-            onChange={(value) => setPassword(value as string)}
+            onChange={(value) => setPassword(value)}
             locale={locale}
             inputAttr={{ type: "password" }}
             className="bg-surface"
@@ -165,7 +161,7 @@ const LoginSection: FC = () => {
             >
               {t("logIn.action.forgotPassword")}
             </Button>
-            <ForgotPasswordDialog
+            <RequestForgorDialog
               open={showForgor}
               onClose={() => setShowForgor(false)}
               inputEmail={email}

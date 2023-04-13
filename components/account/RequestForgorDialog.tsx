@@ -29,7 +29,16 @@ import { supabase } from "@/utils/supabase-client";
 // Types
 import { DialogComponent } from "@/utils/types/common";
 
-const ForgotPasswordDialog: DialogComponent<{ inputEmail?: string }> = ({
+/**
+ * The initiating Dialog of Forgor.
+ * 
+ * Read about the full process in `/pages/_app.tsx`.
+ * 
+ * @param inputEmail The default email address to send verification email to.
+ * 
+ * @returns A Dialog. 
+ */
+const RequestForgorDialog: DialogComponent<{ inputEmail?: string }> = ({
   open,
   onClose,
   inputEmail,
@@ -77,7 +86,7 @@ const ForgotPasswordDialog: DialogComponent<{ inputEmail?: string }> = ({
           desc={t("dialog.forgotPassword.supportingText")}
         />
         <DialogContent className="mx-6">
-          <TextField
+          <TextField<string>
             appearance="outlined"
             label={t("dialog.forgotPassword.form.email", { ns: "account" })}
             align="right"
@@ -85,11 +94,7 @@ const ForgotPasswordDialog: DialogComponent<{ inputEmail?: string }> = ({
             error={email.endsWith("sk.ac.th")}
             value={email}
             onChange={(value) =>
-              setEmail(
-                (value as string).endsWith("sk.ac.th")
-                  ? (value as string).slice(0, -8)
-                  : (value as string)
-              )
+              setEmail(value.endsWith("sk.ac.th") ? value.slice(0, -8) : value)
             }
             locale={locale}
             inputAttr={{ autoCapitalize: "off" }}
@@ -122,4 +127,4 @@ const ForgotPasswordDialog: DialogComponent<{ inputEmail?: string }> = ({
   );
 };
 
-export default ForgotPasswordDialog;
+export default RequestForgorDialog;
