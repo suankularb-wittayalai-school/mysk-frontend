@@ -15,6 +15,7 @@ import {
   FilterChip,
   MaterialIcon,
   SplitLayout,
+  useBreakpoint,
 } from "@suankularb-components/react";
 
 // Internal components
@@ -43,6 +44,7 @@ import { useToggle } from "@/utils/hooks/toggle";
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { PersonLookupItem, Role, Student, Teacher } from "@/utils/types/person";
+import { useRouter } from "next/router";
 
 const LookupPeoplePage: CustomPage<{
   initialPeople: PersonLookupItem[];
@@ -54,14 +56,23 @@ const LookupPeoplePage: CustomPage<{
   const [people, setPeople] = useState<PersonLookupItem[]>(initialPeople);
 
   // Selected Person
+  const { atBreakpoint } = useBreakpoint();
   const [selected, setSelected] = useState(
-    initialPeople[selectedIdx]
+    initialPeople[selectedIdx] && atBreakpoint !== "base"
       ? {
           id: initialPeople[selectedIdx].id,
           role: initialPeople[selectedIdx].role,
         }
       : undefined
   );
+
+  const router = useRouter();
+  useEffect(() => {
+    if (selectedIdx && atBreakpoint === "base") {
+      const { id, role } = initialPeople[selectedIdx];
+      router.push(`/lookup/person/${role}/${id}`);
+    }
+  }, [selectedIdx]);
 
   const supabase = useSupabaseClient();
   const [loading, toggleLoading] = useToggle();
