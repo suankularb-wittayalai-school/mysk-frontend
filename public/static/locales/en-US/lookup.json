@@ -3,6 +3,8 @@
   "search": "Search everything",
   "people": {
     "title": "Lookup people",
+    "desc": "Find your classmates, teachers, and everyone else in Suankularb. Better connect with people with contacts and live schedule information.",
+    "count": "{{students}} students and {{teachers}} teachers available.",
     "list": {
       "searchAlt": "Search people"
     },
@@ -58,6 +60,8 @@
   },
   "classes": {
     "title": "Lookup classes",
+    "desc": "Get the students, teachers, subjects, and schedule of any class.",
+    "count": "{{classes}} classes available.",
     "list": {
       "searchAlt": "Search classes",
       "numStudents_one": "{{count}} student",
@@ -71,6 +75,9 @@
   },
   "documents": {
     "title": "Lookup documents",
+    "desc": "No more shuffling through file cabinets; find everything from orders to school documents.",
+    "count": "{{orders}} orders and {{documents}} school documents available.",
+    "thaiOnly": "Available in Thai only.",
     "list": {
       "searchAlt": "Search documents",
       "filter": {
