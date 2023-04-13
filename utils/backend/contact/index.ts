@@ -35,8 +35,8 @@ export async function createContact(
     .insert({
       type: contact.type,
       value: contact.value,
-      name_en: contact.name["en-US"],
-      name_th: contact.name.th,
+      name_en: contact.name?.["en-US"],
+      name_th: contact.name?.th || null,
       include_students: contact.includes?.students,
       include_parents: contact.includes?.parents,
       include_teachers: contact.includes?.teachers,
@@ -62,8 +62,8 @@ export async function updateContact(
     .update({
       type: contact.type,
       value: contact.value,
-      name_en: contact.name["en-US"],
-      name_th: contact.name.th,
+      name_en: contact.name?.["en-US"],
+      name_th: contact.name?.th || null,
       include_students: contact.includes?.students,
       include_parents: contact.includes?.parents,
       include_teachers: contact.includes?.teachers,

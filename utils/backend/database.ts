@@ -27,10 +27,14 @@ export function db2Contact(
 ): Contact {
   return {
     id: contact.id,
-    name: {
-      th: contact.name_th,
-      "en-US": contact.name_en ? contact.name_en : "",
-    },
+    ...(contact.name_th
+      ? {
+          name: {
+            th: contact.name_th,
+            "en-US": contact.name_en as OrUndefined<string>,
+          },
+        }
+      : {}),
     value: contact.value,
     type: contact.type,
     includes: {
