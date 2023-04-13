@@ -1,7 +1,7 @@
 // External libraries
 import { isThisYear } from "date-fns";
 import { useRouter } from "next/router";
-import { Trans, useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next";
 import { FC } from "react";
 
 // SK Components
@@ -42,10 +42,8 @@ const DocumentCard: FC<{
       stateLayerEffect
       className={cn([
         "text-left",
-        // A different style for the selected Order
-        selected?.id === document.id
-          ? "!bg-primary-container"
-          : "!border-transparent !bg-transparent",
+        "!border-transparent !bg-transparent",
+        selected?.id === document.id && "sm:!bg-primary-container",
       ])}
       {...(atBreakpoint === "base"
         ? // If the user is on mobile, take then straight to the Google
@@ -63,9 +61,7 @@ const DocumentCard: FC<{
               router.replace(
                 `/lookup/document?id=${document.id}&type=${document.type}`,
                 undefined,
-                {
-                  shallow: true,
-                }
+                { shallow: true }
               );
             },
           })}
