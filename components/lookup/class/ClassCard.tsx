@@ -17,6 +17,7 @@ import {
   Card,
   CardContent,
   CardHeader,
+  MaterialIcon,
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
@@ -47,7 +48,7 @@ const ClassCard: FC<{ classItem: ClassLookupListItem }> = ({ classItem }) => {
     <div className="group relative">
       <motion.div
         layoutId={`class-${classItem.id}`}
-        transition={transition(duration.medium2, easing.standard)}
+        transition={transition(duration.medium1, easing.standard)}
         className="h-[4.375rem] w-full"
       >
         <Card
@@ -104,8 +105,8 @@ const ClassPeekModal: FC<{
         <>
           <motion.div
             layoutId={`class-${classItem.id}`}
-            transition={transition(duration.medium4, easing.standard)}
-            className="absolute -inset-2 bottom-auto z-[90] min-w-[16rem]
+            transition={transition(duration.medium3, easing.standard)}
+            className="absolute -inset-2 bottom-auto z-[90] min-w-[18rem]
               group-even:left-auto sm:-inset-4 sm:bottom-auto
               sm:group-even:left-0 sm:group-[&:nth-child(4n)]:left-auto
               md:group-[&:nth-child(4n)]:left-0
@@ -132,6 +133,7 @@ const ClassPeekModal: FC<{
                 <Actions align="full">
                   <Button
                     appearance="outlined"
+                    icon={<MaterialIcon icon="dashboard" />}
                     href={`${baseURL}/schedule`}
                     element={Link}
                   >
@@ -141,6 +143,7 @@ const ClassPeekModal: FC<{
                 <Actions align="full" className="!mt-0">
                   <Button
                     appearance="outlined"
+                    icon={<MaterialIcon icon="groups" />}
                     href={`${baseURL}/students`}
                     element={Link}
                   >
@@ -148,6 +151,7 @@ const ClassPeekModal: FC<{
                   </Button>
                   <Button
                     appearance="outlined"
+                    icon={<MaterialIcon icon="group" />}
                     href={`${baseURL}/teachers`}
                     element={Link}
                   >
