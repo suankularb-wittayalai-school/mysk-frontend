@@ -47,7 +47,7 @@ const PersonDetailsPage: CustomPage<{
         <PersonActions person={teacher} suggestionsType="full" />
         <DynamicAvatar
           profile={teacher.profile}
-          className="relative z-10 -mb-12 -mt-6 !h-20 !w-20 self-end"
+          className="relative z-[80] -mb-12 -mt-6 !h-20 !w-20 self-end"
         />
       </MySKPageHeader>
       <PersonDetailsContent person={teacher} />
