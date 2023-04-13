@@ -1,11 +1,7 @@
 // External libraries
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
-import {
-  GetServerSideProps,
-  NextApiRequest,
-  NextApiResponse
-} from "next";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import Head from "next/head";
 
 import { useTranslation } from "next-i18next";
@@ -19,7 +15,7 @@ import ClassTabs from "@/components/lookup/class/ClassTabs";
 // Backend
 import {
   getClassFromUser,
-  getClassStudentList
+  getClassStudentList,
 } from "@/utils/backend/classroom/classroom";
 
 // Helpers
