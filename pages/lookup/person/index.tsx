@@ -3,6 +3,7 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 import { GetServerSideProps } from "next";
 import Head from "next/head";
+import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -44,7 +45,6 @@ import { useToggle } from "@/utils/hooks/toggle";
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { PersonLookupItem, Role, Student, Teacher } from "@/utils/types/person";
-import { useRouter } from "next/router";
 
 const LookupPeoplePage: CustomPage<{
   initialPeople: PersonLookupItem[];
@@ -55,10 +55,9 @@ const LookupPeoplePage: CustomPage<{
 
   const [people, setPeople] = useState<PersonLookupItem[]>(initialPeople);
 
-  // Selected Person
-  const { atBreakpoint } = useBreakpoint();
+  // Information for identifying the selected Person, used in fetch later
   const [selected, setSelected] = useState(
-    initialPeople[selectedIdx] && atBreakpoint !== "base"
+    initialPeople[selectedIdx]
       ? {
           id: initialPeople[selectedIdx].id,
           role: initialPeople[selectedIdx].role,
@@ -66,6 +65,8 @@ const LookupPeoplePage: CustomPage<{
       : undefined
   );
 
+  // Redirect mobile users to the details page when URL has query
+  const { atBreakpoint } = useBreakpoint();
   const router = useRouter();
   useEffect(() => {
     if (selectedIdx && atBreakpoint === "base") {
@@ -74,9 +75,21 @@ const LookupPeoplePage: CustomPage<{
     }
   }, [selectedIdx]);
 
+  // Update the URL with the selected Person query, so as to make sharing
+  // easier
+  useEffect(() => {
+    if (selected)
+      router.replace(
+        `/lookup/person?id=${selected.id}&role=${selected.role}`,
+        undefined,
+        { shallow: true }
+      );
+  }, []);
+
   const supabase = useSupabaseClient();
   const [loading, toggleLoading] = useToggle();
 
+  // Information about the selected Person
   const [selectedPerson, setSelectedPerson] = useState<Student | Teacher>();
   useEffect(() => {
     if (!selected) return;
