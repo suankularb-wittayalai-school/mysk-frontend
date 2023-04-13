@@ -1,6 +1,6 @@
 // External libraries
 import { useTranslation } from "next-i18next";
-import { useEffect, useReducer } from "react";
+import { useReducer } from "react";
 
 // SK Components
 import {
@@ -14,9 +14,6 @@ import {
   Select,
   TextField,
 } from "@suankularb-components/react";
-
-// Helpers
-import { range } from "@/utils/helpers/array";
 
 // Hooks
 import { useForm } from "@/utils/hooks/form";
@@ -35,40 +32,27 @@ const ContactDialog: SubmittableDialogComponent<
     [key in ContactVia]: {
       type: "number" | "tel" | "email" | "url" | "text";
       helperMsg?: string;
-      getLabel?: (value: string) => string;
       validate?: (value: string) => boolean;
     };
   } = {
     Phone: {
       type: "tel",
-      getLabel: (value) =>
-        range(Math.min(Math.ceil(value.length / 3), 3))
-          .map((setIdx) =>
-            value.slice(
-              setIdx * 3,
-              setIdx === 2 ? value.length : setIdx * 3 + 3
-            )
-          )
-          .join(" "),
       validate: (value) => /\d{9,10}/.test(value),
     },
     Email: { type: "email" },
-    Website: { type: "url", getLabel: () => "เว็บไซต์ส่วนตัว" },
-    Facebook: { type: "text", getLabel: (value) => value },
+    Website: { type: "url" },
+    Facebook: { type: "text" },
     Line: {
       type: "text",
       helperMsg: t("dialog.contact.value.line_helper"),
-      getLabel: (value) => value,
       validate: (value) => value.length === 10,
     },
     Instagram: {
       type: "text",
-      getLabel: (value) => value,
       validate: (value) => /(?:(?:[\\w][\\.]{0,1})*[\\w]){1,29}/.test(value),
     },
     Discord: {
       type: "text",
-      getLabel: (value) => value,
       helperMsg: t("dialog.contact.value.discord_helper"),
       validate: (value) => /[a-zA-Z0-9]{8}/.test(value),
     },
@@ -76,18 +60,14 @@ const ContactDialog: SubmittableDialogComponent<
   };
 
   const [counter, incrementCounter] = useReducer((counter) => counter + 1, 1);
-  const { form, setForm, resetForm, formOK, formProps } = useForm<
+  const { form, resetForm, formOK, formProps } = useForm<
     "nameTH" | "nameEN" | "type" | "value"
   >([
-    { key: "nameTH", required: true, defaultValue: contact?.name.th },
-    { key: "nameEN", defaultValue: contact?.name["en-US"] },
+    { key: "nameTH", defaultValue: contact?.name?.th },
+    { key: "nameEN", defaultValue: contact?.name?.["en-US"] },
     { key: "type", required: true, defaultValue: contact?.type || "Phone" },
     { key: "value", required: true, defaultValue: contact?.value },
   ]);
-  useEffect(() => {
-    const { getLabel } = contactValuesMap[form.type as ContactVia];
-    if (getLabel) setForm({ ...form, nameTH: getLabel(form.value) });
-  }, [form.value]);
 
   return (
     <Dialog open={open} width={580} onClose={onClose}>
@@ -97,6 +77,7 @@ const ContactDialog: SubmittableDialogComponent<
       />
       <DialogContent className="px-6">
         <Columns columns={2} className="!gap-y-8">
+          {/* Type */}
           <Select
             appearance="outlined"
             label={t("dialog.contact.type.label")}
@@ -119,6 +100,8 @@ const ContactDialog: SubmittableDialogComponent<
             </MenuItem>
             <MenuItem value="Other">{t("dialog.contact.type.other")}</MenuItem>
           </Select>
+
+          {/* Value */}
           <TextField
             appearance="outlined"
             label={t(`dialog.contact.value.${form.type.toLowerCase()}`)}
@@ -126,6 +109,8 @@ const ContactDialog: SubmittableDialogComponent<
             inputAttr={{ type: contactValuesMap[form.type as ContactVia].type }}
             {...formProps.value}
           />
+
+          {/* Label */}
           <TextField
             appearance="outlined"
             label={t("dialog.contact.nameTH")}
@@ -148,7 +133,9 @@ const ContactDialog: SubmittableDialogComponent<
             if (!formOK) return;
             onSubmit({
               id: counter,
-              name: { th: form.nameTH, "en-US": form.nameEN },
+              ...(form.nameTH
+                ? { name: { th: form.nameTH, "en-US": form.nameEN } }
+                : {}),
               type: form.type as ContactVia,
               value: form.value,
             });
@@ -156,7 +143,7 @@ const ContactDialog: SubmittableDialogComponent<
             incrementCounter();
           }}
         >
-          {t("dialog.contact.action.add")}
+          {t(`dialog.contact.action.${contact ? "edit" : "add"}`)}
         </Button>
       </Actions>
     </Dialog>

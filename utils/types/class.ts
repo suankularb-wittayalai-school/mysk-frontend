@@ -32,5 +32,5 @@ export type ClassTeachersListSection = {
 
 export type ClassOverview = Pick<
   Class,
-  "number" | "classAdvisors" | "contacts" | "subjects"
+  "id" | "number" | "classAdvisors" | "contacts" | "subjects"
 >;

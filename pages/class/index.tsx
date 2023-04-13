@@ -32,7 +32,8 @@ import { CustomPage, LangCode } from "@/utils/types/common";
 
 const ClassOverviewPage: CustomPage<{
   classItem: ClassOverviewType;
-}> = ({ classItem }) => {
+  editable: boolean;
+}> = ({ classItem, editable }) => {
   const { t } = useTranslation(["class", "common"]);
 
   return (
@@ -43,7 +44,7 @@ const ClassOverviewPage: CustomPage<{
       <MySKPageHeader title="Your class">
         <ClassTabs number={classItem.number} type="class" />
       </MySKPageHeader>
-      <ClassOverview {...{ classItem }} />
+      <ClassOverview {...{ classItem, editable }} />
     </>
   );
 };
@@ -64,12 +65,14 @@ export const getServerSideProps: GetServerSideProps = async ({
   const { data: metadata } = await getUserMetadata(supabase, session!.user.id);
 
   let classWNumber: ClassWNumber;
+  let editable = false;
   if (metadata!.role === "student") {
     const { data } = await getClassFromUser(supabase, session!.user);
     classWNumber = data!;
   } else if (metadata!.role === "teacher") {
     const { data } = await getClassAdvisorAt(supabase, metadata!.teacher!);
     classWNumber = data!;
+    editable = true;
   }
 
   const { data: classItem } = await getClassOverview(
@@ -81,9 +84,11 @@ export const getServerSideProps: GetServerSideProps = async ({
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
         "common",
+        "account",
         "class",
       ])),
       classItem,
+      editable,
     },
   };
 };
