@@ -19,7 +19,7 @@ import { PersonLookupItemGeneric } from "@/utils/types/person";
 
 const ClassTeacherCard: FC<{
   teacher: PersonLookupItemGeneric<null>;
-  classNumber: number;
+  classNumber?: number;
   selectedID?: number;
   setSelectedID?: (id: number) => void;
 }> = ({ teacher, classNumber, selectedID, setSelectedID }) => {
@@ -34,7 +34,9 @@ const ClassTeacherCard: FC<{
       {...(atBreakpoint === "base"
         ? // If the user is on mobile, open a new page
           {
-            href: `/lookup/class/${classNumber}/teacher/${teacher.id}`,
+            href: classNumber
+              ? `/lookup/class/${classNumber}/teacher/${teacher.id}`
+              : `/class/teacher/${teacher.id}`,
             element: Link,
           }
         : // If the user is on tablet/desktop, show the selected Student in

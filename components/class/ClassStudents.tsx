@@ -8,6 +8,7 @@ import { SplitLayout } from "@suankularb-components/react";
 // Internal components
 import ClassStudentCard from "@/components/class/ClassStudentCard";
 import EmptyDetail from "@/components/lookup/EmptyDetail";
+import LookupList from "@/components/lookup/LookupList";
 import PersonDetails from "@/components/lookup/person/PersonDetails";
 
 // Backend
@@ -15,18 +16,18 @@ import { getStudent } from "@/utils/backend/person/student";
 
 // Helpers
 import { withLoading } from "@/utils/helpers/loading";
+import { nameJoiner } from "@/utils/helpers/name";
 
 // Hooks
 import { useToggle } from "@/utils/hooks/toggle";
 
 // Types
 import { Student } from "@/utils/types/person";
-import LookupList from "../lookup/LookupList";
-import { nameJoiner } from "@/utils/helpers/name";
 
 const ClassStudents: FC<{
   studentList: Student[];
-}> = ({ studentList }) => {
+  classNumber?: number;
+}> = ({ studentList, classNumber }) => {
   // Selected Person
   const [selected, setSelected] = useState(studentList[0]?.id);
 
@@ -78,6 +79,7 @@ const ClassStudents: FC<{
               key={student.id}
               seperated={query === ""}
               student={student}
+              classNumber={classNumber}
               selectedID={selected}
               setSelectedID={setSelected}
             />

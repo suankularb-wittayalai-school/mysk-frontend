@@ -21,9 +21,10 @@ import Link from "next/link";
 const ClassStudentCard: FC<{
   student: Student;
   seperated?: boolean;
+  classNumber?: number;
   selectedID?: number;
   setSelectedID?: (id: number) => void;
-}> = ({ student, seperated, selectedID, setSelectedID }) => {
+}> = ({ student, seperated, classNumber, selectedID, setSelectedID }) => {
   const locale = useLocale();
   const { atBreakpoint } = useBreakpoint();
   const thisSelected = selectedID === student.id;
@@ -46,7 +47,9 @@ const ClassStudentCard: FC<{
         {...(atBreakpoint === "base"
           ? // If the user is on mobile, open a new page
             {
-              href: `/lookup/class/${student.class.number}/student/${student.id}`,
+              href: classNumber
+                ? `/lookup/class/${classNumber}/student/${student.id}`
+                : `/class/student/${student.id}`,
               element: Link,
             }
           : // If the user is on tablet/desktop, show the selected Student in

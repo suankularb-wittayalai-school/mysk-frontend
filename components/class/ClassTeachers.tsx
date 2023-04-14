@@ -27,7 +27,7 @@ import { Teacher } from "@/utils/types/person";
 
 const ClassTeachers: FC<{
   teacherList: ClassTeachersListSection[];
-  classNumber: number;
+  classNumber?: number;
 }> = ({ teacherList, classNumber }) => {
   const locale = useLocale();
 
