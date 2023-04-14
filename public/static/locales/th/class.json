@@ -1,12 +1,30 @@
 {
   "overview": {
-    "title": "ม.{{number}}"
+    "title": {
+      "class": "ห้องเรียน",
+      "lookup": "ม.{{number}}"
+    },
+    "classAdvisors": {
+      "title": "ครูที่ปรึกษา"
+    }
   },
   "student": {
-    "title": "นักเรียนห้องม.{{number}}"
+    "title": {
+      "class": "เพื่อนร่วมห้อง",
+      "lookup": "นักเรียนห้องม.{{number}}"
+    },
+    "list": {
+      "searchAlt": "ค้นหานักเรียน"
+    }
   },
   "teacher": {
-    "title": "อาจารย์ที่สอนม.{{number}}"
+    "title": {
+      "class": "อาจารย์ที่สอนห้องนี้",
+      "lookup": "อาจารย์ที่สอนม.{{number}}"
+    },
+    "list": {
+      "searchAlt": "ค้นหาอาจารย์"
+    }
   },
   "schedule": {
     "title": "ตารางเรียนม.{{number}}"

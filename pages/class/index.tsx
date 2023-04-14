@@ -39,9 +39,9 @@ const ClassOverviewPage: CustomPage<{
   return (
     <>
       <Head>
-        <title>{createTitleStr("Your class", t)}</title>
+        <title>{createTitleStr(t("overview.title.class"), t)}</title>
       </Head>
-      <MySKPageHeader title="Your class">
+      <MySKPageHeader title={t("overview.title.class")}>
         <ClassTabs number={classItem.number} type="class" />
       </MySKPageHeader>
       <ClassOverview {...{ classItem, editable }} />

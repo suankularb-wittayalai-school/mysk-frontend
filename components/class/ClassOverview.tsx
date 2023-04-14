@@ -1,9 +1,7 @@
 // External libraries
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useTranslation } from "next-i18next";
-
-import Link from "next/link";
 import { useRouter } from "next/router";
-
 import { FC, useState } from "react";
 
 // SK Components
@@ -24,23 +22,21 @@ import ContactCard from "@/components/account/ContactCard";
 import ContactDialog from "@/components/account/ContactDialog";
 import DynamicAvatar from "@/components/common/DynamicAvatar";
 
+// Backemd
+import { addContactToClassroom } from "@/utils/backend/classroom/classroom";
+import { createContact, deleteContact } from "@/utils/backend/contact";
+
 // Helpers
-import { changeItem } from "@/utils/helpers/array";
 import { getLocaleString } from "@/utils/helpers/i18n";
-import { withLoading } from "@/utils/helpers/loading";
 import { nameJoiner } from "@/utils/helpers/name";
 
 // Hooks
-import { ClassOverview as ClassOverviewType } from "@/utils/types/class";
 import { useLocale } from "@/utils/hooks/i18n";
-import { useToggle } from "@/utils/hooks/toggle";
 
 // Types
+import { ClassOverview as ClassOverviewType } from "@/utils/types/class";
 import { Contact } from "@/utils/types/contact";
 import { Teacher } from "@/utils/types/person";
-import { addContactToClassroom } from "@/utils/backend/classroom/classroom";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { createContact, deleteContact } from "@/utils/backend/contact";
 
 const AdvisorsSection: FC<{ advisors: Teacher[] }> = ({ advisors }) => {
   const locale = useLocale();
@@ -48,7 +44,7 @@ const AdvisorsSection: FC<{ advisors: Teacher[] }> = ({ advisors }) => {
 
   return (
     <Section>
-      <Header>Class advisors</Header>
+      <Header>{t("overview.classAdvisors.title")}</Header>
       <Columns columns={3}>
         {advisors.map((teacher) => (
           <Card
@@ -57,7 +53,6 @@ const AdvisorsSection: FC<{ advisors: Teacher[] }> = ({ advisors }) => {
             stateLayerEffect
             href={`/lookup/person?id=${teacher.id}&role=teacher`}
             aAttr={{ target: "_blank", rel: "noreferrer" }}
-            element={Link}
           >
             <CardHeader
               avatar={<DynamicAvatar profile={teacher.profile} />}
@@ -82,54 +77,31 @@ const ContactsSection: FC<{
   // Dialog control
   const [showAdd, setShowAdd] = useState<boolean>(false);
 
-  const [loading, toggleLoading] = useToggle();
   const router = useRouter();
   const supabase = useSupabaseClient();
 
   async function handleAdd(contact: Contact) {
-    withLoading(
-      async () => {
-        setShowAdd(false);
+    setShowAdd(false);
 
-        const { data, error } = await createContact(supabase, contact);
-        if (error) return false;
+    const { data, error } = await createContact(supabase, contact);
+    if (error) return;
 
-        const { error: classError } = await addContactToClassroom(
-          supabase,
-          data!.id,
-          classID!
-        );
-        if (classError) return false;
-
-        await router.replace(router.asPath);
-        return true;
-      },
-      toggleLoading,
-      { hasEndToggle: true }
+    const { error: classError } = await addContactToClassroom(
+      supabase,
+      data!.id,
+      classID!
     );
+    if (classError) return;
+
+    router.replace(router.asPath);
   }
   async function handleEdit(contact: Contact) {
-    withLoading(
-      async () => {
-        await router.replace(router.asPath);
-        return true;
-      },
-      toggleLoading,
-      { hasEndToggle: true }
-    );
+    router.replace(router.asPath);
   }
   async function handleRemove(contactID: number) {
-    withLoading(
-      async () => {
-        const { error } = await deleteContact(supabase, contactID);
-        if (error) return false;
-
-        await router.replace(router.asPath);
-        return true;
-      },
-      toggleLoading,
-      { hasEndToggle: true }
-    );
+    const { error } = await deleteContact(supabase, contactID);
+    if (error) return;
+    router.replace(router.asPath);
   }
 
   return (

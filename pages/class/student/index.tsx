@@ -37,9 +37,9 @@ const ClassStudentsPage: CustomPage<{
   return (
     <>
       <Head>
-        <title>{createTitleStr("Your classmates", t)}</title>
+        <title>{createTitleStr(t("student.title.class"), t)}</title>
       </Head>
-      <MySKPageHeader title="Your classmates" parentURL="/class">
+      <MySKPageHeader title={t("student.title.class")} parentURL="/class">
         <ClassTabs number={classItem.number} type="class" />
       </MySKPageHeader>
       <ClassStudents {...{ studentList }} />
