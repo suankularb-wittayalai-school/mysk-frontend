@@ -51,11 +51,18 @@ const ShareDialog: DialogComponent<{
             firstName: false,
           })};${nameJoiner(locale, person.name, undefined, {
             lastName: false,
-          })};;${person.role === "teacher" ? "T." : ""};`,
+          })};;${
+            person.role === "teacher"
+              ? t("people.dialog.share.saveVCard.segment.teacherPrefix")
+              : ""
+          };`,
           `FN:${nameJoiner(
             locale,
             person.name,
-            person.role === "teacher" ? { th: "อ.", "en-US": "T." } : undefined
+            person.role === "teacher"
+              ? { th: "อ. ", "en-US": "T." }
+              : undefined,
+            { prefix: person.role === "teacher" }
           )}`,
 
           // Birthday

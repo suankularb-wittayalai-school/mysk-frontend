@@ -1,9 +1,9 @@
+// Types
+import { MultiLangString } from "@/utils/types/common";
+
 export type Contact = {
   id: number;
-  name: {
-    "en-US": string;
-    th: string;
-  };
+  name?: MultiLangString;
   type: ContactVia;
   includes?: {
     students: boolean;

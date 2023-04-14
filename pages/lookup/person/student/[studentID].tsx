@@ -11,6 +11,7 @@ import Head from "next/head";
 // Internal components
 import DynamicAvatar from "@/components/common/DynamicAvatar";
 import MySKPageHeader from "@/components/common/MySKPageHeader";
+import PersonActions from "@/components/lookup/person/PersonActions";
 import PersonDetailsContent from "@/components/lookup/person/PersonDetailsContent";
 
 // Backend
@@ -41,10 +42,12 @@ const PersonDetailsPage: CustomPage<{
       <MySKPageHeader
         title={nameJoiner(locale, student.name)}
         parentURL="/lookup/person"
+        className="!overflow-visible"
       >
+        <PersonActions person={student} suggestionsType="full" />
         <DynamicAvatar
           profile={student.profile}
-          className="relative z-10 -mb-12 -mt-6 !h-20 !w-20 self-end"
+          className="relative z-[80] -mb-12 -mt-6 !h-20 !w-20 self-end"
         />
       </MySKPageHeader>
       <PersonDetailsContent person={student} />

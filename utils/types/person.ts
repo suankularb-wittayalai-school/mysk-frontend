@@ -17,7 +17,7 @@ export type Person = {
   role: Role;
   name: MultiLangObj<PersonName>;
   profile?: string;
-  citizenID: string;
+  citizenID?: string;
   birthdate: string;
   contacts: Contact[];
   isAdmin?: boolean;
@@ -66,8 +66,6 @@ export type StudentListItem = {
 
 export type PersonLookupItem = {
   id: number;
-  role: Role;
-  metadata: ClassWNumber;
   prefix: MultiLangString;
   name: MultiLangObj<PersonName>;
 } & (
@@ -81,8 +79,7 @@ export type PersonLookupItemGeneric<Metadata> = {
   metadata: Metadata;
   prefix: MultiLangString;
   name: MultiLangObj<PersonName>;
-
-}
+};
 
 export type ImportedStudentData = {
   prefix: DefaultTHPrefix;

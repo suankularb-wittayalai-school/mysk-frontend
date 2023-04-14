@@ -24,7 +24,7 @@ import {
 } from "@suankularb-components/react";
 
 // Internal components
-import ForgotPasswordDialog from "@/components/account/ForgotPassword";
+import RequestForgorDialog from "@/components/account/RequestForgorDialog";
 import MultiSchemeImage from "@/components/common/MultiSchemeImage";
 
 // Contexts
@@ -130,7 +130,7 @@ const LoginSection: FC = () => {
       <Header>{t("logIn.title")}</Header>
       <Columns columns={3}>
         <div className="col-span-2 flex flex-col gap-4">
-          <TextField
+          <TextField<string>
             appearance="outlined"
             label={t("logIn.form.email")}
             align="right"
@@ -138,21 +138,17 @@ const LoginSection: FC = () => {
             error={email.endsWith("sk.ac.th")}
             value={email}
             onChange={(value) =>
-              setEmail(
-                (value as string).endsWith("sk.ac.th")
-                  ? (value as string).slice(0, -8)
-                  : (value as string)
-              )
+              setEmail(value.endsWith("sk.ac.th") ? value.slice(0, -8) : value)
             }
             locale={locale}
             inputAttr={{ autoCapitalize: "off" }}
             className="bg-surface"
           />
-          <TextField
+          <TextField<string>
             appearance="outlined"
             label={t("logIn.form.password")}
             value={password}
-            onChange={(value) => setPassword(value as string)}
+            onChange={(value) => setPassword(value)}
             locale={locale}
             inputAttr={{ type: "password" }}
             className="bg-surface"
@@ -165,7 +161,7 @@ const LoginSection: FC = () => {
             >
               {t("logIn.action.forgotPassword")}
             </Button>
-            <ForgotPasswordDialog
+            <RequestForgorDialog
               open={showForgor}
               onClose={() => setShowForgor(false)}
               inputEmail={email}
@@ -185,11 +181,7 @@ const LoginSection: FC = () => {
 };
 
 const ImageSection: FC = () => (
-  <div
-    aria-hidden
-    className="-z-10 bg-gradient-to-b from-surface-5 via-transparent
-      sm:bg-none md:relative"
-  >
+  <div aria-hidden className="pointer-events-none sm:bg-none md:relative">
     {/* Image in center */}
     <div
       className="md:absolute md:left-0 md:right-0 md:h-[calc(100vh-6rem)]
@@ -286,7 +278,10 @@ const IndexPage: CustomPage = () => {
           content={t("brand.description", { ns: "common" })}
         />
       </Head>
-      <ContentLayout className="-mb-20 !pb-6 !pt-0 sm:mb-0 md:!py-12">
+      <ContentLayout
+        className="sm:to-60% -mb-20 bg-gradient-to-b from-surface-5
+          to-transparent bg-fixed !pb-6 !pt-0 sm:mb-0 md:!py-12"
+      >
         {/* 6rem is the combined padding height put on Content Layout */}
         <div
           className="flex flex-col justify-between gap-16
@@ -319,9 +314,6 @@ const IndexPage: CustomPage = () => {
                     </span>
                   </Trans>
                 </h1>
-                <p className="skc-display-medium hidden sm:block">
-                  {t("hero.subtitle")}
-                </p>
               </div>
 
               {/* Log in form */}

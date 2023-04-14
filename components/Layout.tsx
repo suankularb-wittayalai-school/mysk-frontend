@@ -40,7 +40,6 @@ import NavDrawerContext from "@/contexts/NavDrawerContext";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
-import { useTransitionEvent } from "@/utils/hooks/routing";
 import { useSnackbar } from "@/utils/hooks/snackbar";
 
 // Types
@@ -65,7 +64,7 @@ const Layout: FC<
   const supabase = useSupabaseClient();
   const user = useUser();
   const [userMetadata, setUserMetadata] = useState<UserMetadata | null>();
-  const [classNumber, setClassNumber] = useState<number | null>();
+  const [isClassAdvisor, setIsClassAdvisor] = useState<boolean>(false);
   useEffect(() => {
     if (!user) return;
     (async () => {
@@ -81,49 +80,29 @@ const Layout: FC<
       }
       setUserMetadata(metadata);
 
-      // For a student
-      if (metadata!.role == "student") {
-        const { data: classOfStudent, error } = await getClassOfStudent(
-          supabase,
-          metadata!.student!
-        );
-        if (error) {
-          console.error(error);
-          return;
-        }
-        setClassNumber(classOfStudent.number);
-      }
-
-      // For a teacher
-      else if (metadata!.role == "teacher") {
+      // Check if the user is a Class Advisor
+      if (metadata!.role === "teacher") {
         const { data: classAdvisorAt, error } = await getClassAdvisorAt(
           supabase,
           metadata!.teacher!
         );
 
-        if (error) {
-          console.error(error);
+        if (classAdvisorAt) {
+          setIsClassAdvisor(true);
           return;
         }
-        if (!classAdvisorAt) return;
-        setClassNumber(classAdvisorAt.number);
+
+        if (error) console.error(error);
+        setIsClassAdvisor(false);
       }
     })();
   }, [user]);
-
-  // // Root Layout
-  // const { transitionEvent } = useTransitionEvent(
-  //   pageHeader?.parentURL,
-  //   childURLs
-  // );
 
   // Snackbar
   const { snackbarOpen, setSnackbarOpen, snackbarProps } = useSnackbar();
 
   const rootLayout = (
-    <RootLayout
-    // transitionEvent={transitionEvent}
-    >
+    <RootLayout>
       {/* Navigation Drawer */}
       <NavDrawer open={navOpen} onClose={() => setNavOpen(false)}>
         {/* Top-level pages */}
@@ -148,12 +127,13 @@ const Layout: FC<
               element={Link}
             />
           )}
-          {navType === "student" || (navType === "teacher" && classNumber) ? (
+          {navType === "student" ||
+          (navType === "teacher" && isClassAdvisor) ? (
             <NavDrawerItem
               icon={<MaterialIcon icon="groups" />}
               label={t("navigation.class")}
               selected={router.pathname.startsWith("/class")}
-              href={`/class/${classNumber}/overview`}
+              href="/class"
               element={Link}
             />
           ) : (
@@ -165,10 +145,9 @@ const Layout: FC<
             selected={
               router.pathname.startsWith("/lookup") &&
               !(
-                router.pathname.startsWith("/lookup/students") ||
-                router.pathname.startsWith("/lookup/teachers") ||
-                router.pathname.startsWith("/lookup/orders") ||
-                router.pathname.startsWith("/lookup/documents")
+                router.pathname.startsWith("/lookup/person") ||
+                router.pathname.startsWith("/lookup/class") ||
+                router.pathname.startsWith("/lookup/document")
               )
             }
             href="/lookup"
@@ -193,35 +172,24 @@ const Layout: FC<
         {/* Lookup */}
         <NavDrawerSection header={t("navigation.drawer.lookup.title")}>
           <NavDrawerItem
-            icon={<MaterialIcon icon="groups" />}
-            label={t("navigation.drawer.lookup.students")}
-            selected={router.pathname.startsWith("/lookup/students")}
-            href="/lookup/students"
+            icon={<MaterialIcon icon="badge" />}
+            label={t("navigation.drawer.lookup.person")}
+            selected={router.pathname.startsWith("/lookup/person")}
+            href="/lookup/person"
             element={Link}
           />
           <NavDrawerItem
-            icon={<MaterialIcon icon="group" />}
-            label={t("navigation.drawer.lookup.teachers")}
-            selected={router.pathname.startsWith("/lookup/teachers")}
-            href="/lookup/teachers"
+            icon={<MaterialIcon icon="groups" />}
+            label={t("navigation.drawer.lookup.class")}
+            selected={router.pathname.startsWith("/lookup/class")}
+            href="/lookup/class"
             element={Link}
           />
-          {userMetadata?.role === "teacher" || navType === "teacher" ? (
-            <NavDrawerItem
-              icon={<MaterialIcon icon="mail" />}
-              label={t("navigation.drawer.lookup.orders")}
-              selected={router.pathname.startsWith("/lookup/orders")}
-              href="/lookup/orders"
-              element={Link}
-            />
-          ) : (
-            <></>
-          )}
           <NavDrawerItem
             icon={<MaterialIcon icon="description" />}
-            label={t("navigation.drawer.lookup.documents")}
-            selected={router.pathname.startsWith("/lookup/documents")}
-            href="/lookup/documents"
+            label={t("navigation.drawer.lookup.document")}
+            selected={router.pathname.startsWith("/lookup/document")}
+            href="/lookup/document"
             element={Link}
           />
         </NavDrawerSection>
@@ -242,11 +210,11 @@ const Layout: FC<
             // eslint-disable-next-line react/display-name
             element={forwardRef((props, ref) => (
               <Link
-                locale={locale == "en-US" ? "th" : "en-US"}
+                locale={locale === "en-US" ? "th" : "en-US"}
                 onClick={() =>
                   localStorage.setItem(
                     "preferredLang",
-                    locale == "en-US" ? "th" : "en-US"
+                    locale === "en-US" ? "th" : "en-US"
                   )
                 }
                 {...{ ...props, ref }}
@@ -275,11 +243,11 @@ const Layout: FC<
                 href={router.asPath}
                 element={(props) => (
                   <Link
-                    locale={locale == "en-US" ? "th" : "en-US"}
+                    locale={locale === "en-US" ? "th" : "en-US"}
                     onClick={() =>
                       localStorage.setItem(
                         "preferredLang",
-                        locale == "en-US" ? "th" : "en-US"
+                        locale === "en-US" ? "th" : "en-US"
                       )
                     }
                     {...props}
@@ -315,12 +283,12 @@ const Layout: FC<
           )}
           {(!navType ||
             navType === "student" ||
-            (navType === "teacher" && classNumber)) && (
+            (navType === "teacher" && isClassAdvisor)) && (
             <NavBarItem
               icon={<MaterialIcon icon="groups" />}
               label={t("navigation.class")}
               selected={router.pathname.startsWith("/class")}
-              href={`/class/${classNumber}/overview`}
+              href="/class"
               element={Link}
             />
           )}

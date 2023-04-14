@@ -17,10 +17,9 @@
     "drawer": {
       "lookup": {
         "title": "Lookup",
-        "students": "Students",
-        "teachers": "Teachers",
-        "orders": "Orders",
-        "documents": "Documents"
+        "person": "Students/teachers",
+        "class": "Classes",
+        "document": "School documents/orders"
       },
       "about": {
         "title": "About",
@@ -123,8 +122,8 @@
   },
   "dialog": {
     "confirmDelete": {
-      "title": "Delete this item?",
-      "supportingText": "This action cannot be undone.",
+      "title": "Confirm deletion",
+      "desc": "This action cannot be undone.",
       "action": {
         "cancel": "Cancel",
         "delete": "Delete"
@@ -132,10 +131,22 @@
     },
     "discardDraft": {
       "title": "Discard draft?",
-      "supportingText": "All changes will be deleted.",
+      "desc": "All changes will be deleted.",
       "action": {
         "continue": "Continue editing",
         "discard": "Discard"
+      }
+    },
+    "completeForgor": {
+      "title": "Set a new password",
+      "desc": "We’ve successfully verified you. Enter your new password twice to complete the process.",
+      "form": {
+        "newPwd": "New password",
+        "newPwd_error": "Lengthen to at least 8 characters.",
+        "confirmNewPwd": "Confirm new password"
+      },
+      "action": {
+        "set": "Set"
       }
     },
     "image": {

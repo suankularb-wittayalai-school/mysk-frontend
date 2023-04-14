@@ -1,12 +1,30 @@
 {
   "overview": {
-    "title": "M.{{number}}"
+    "title": {
+      "class": "Your class",
+      "lookup": "M.{{number}}"
+    },
+    "classAdvisors": {
+      "title": "Class advisors"
+    }
   },
   "student": {
-    "title": "Students of M.{{number}}"
+    "title": {
+      "class": "Your classmates",
+      "lookup": "Students of M.{{number}}"
+    },
+    "list": {
+      "searchAlt": "Search students"
+    }
   },
   "teacher": {
-    "title": "Teachers of M.{{number}}"
+    "title": {
+      "class": "Your teachers",
+      "lookup": "Teachers of M.{{number}}"
+    },
+    "list": {
+      "searchAlt": "Search teachers"
+    }
   },
   "schedule": {
     "title": "M.{{number}} schedule"

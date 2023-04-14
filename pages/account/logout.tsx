@@ -1,17 +1,16 @@
 // External libraries
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
-import { motion } from "framer-motion";
-
 import { GetStaticProps } from "next";
+import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 // SK Components
-import { Actions, Button, Progress } from "@suankularb-components/react";
+import { Progress } from "@suankularb-components/react";
 
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
@@ -22,14 +21,12 @@ const LogOutPage: CustomPage = () => {
 
   // Log the user out
   const supabase = useSupabaseClient();
-  const [loggedOut, setLoggedOut] = useState<boolean>(false);
-  let logOutTimeout: NodeJS.Timeout;
+  const router = useRouter();
   useEffect(() => {
     (async () => {
       await supabase.auth.signOut();
-      logOutTimeout = setTimeout(() => setLoggedOut(true), 1000);
+      router.push("/");
     })();
-    return () => clearTimeout(logOutTimeout);
   }, []);
 
   return (
@@ -40,19 +37,6 @@ const LogOutPage: CustomPage = () => {
       <div className="flex flex-col items-center gap-4">
         <Progress appearance="circular" alt="Logging you out…" visible />
         <h1 className="skc-label-large">{t("logOut.loading")}</h1>
-        {loggedOut && (
-          <motion.div
-            initial={{ opacity: 0, scale: 1.4 }}
-            animate={{ opacity: 1, scale: 1 }}
-          >
-            <Actions>
-              <Button appearance="outlined">{t("logOut.action.reload")}</Button>
-              <Button appearance="tonal">
-                {t("logOut.action.goToLanding")}
-              </Button>
-            </Actions>
-          </motion.div>
-        )}
       </div>
     </div>
   );

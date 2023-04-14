@@ -1,7 +1,7 @@
 // External libraries
 import { isThisYear } from "date-fns";
 import { useRouter } from "next/router";
-import { Trans, useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next";
 import { FC } from "react";
 
 // SK Components
@@ -37,15 +37,13 @@ const DocumentCard: FC<{
 
   return (
     <Card
-      appearance="filled"
+      appearance="outlined"
       direction="row"
       stateLayerEffect
       className={cn([
         "text-left",
-        // A different style for the selected Order
-        selected?.id === document.id
-          ? "!bg-primary-container"
-          : "!border-transparent !bg-transparent",
+        "!border-transparent !bg-transparent",
+        selected?.id === document.id && "sm:!bg-primary-container",
       ])}
       {...(atBreakpoint === "base"
         ? // If the user is on mobile, take then straight to the Google
@@ -60,9 +58,11 @@ const DocumentCard: FC<{
             onClick: () => {
               if (selected?.id === document.id) return;
               if (setSelected) setSelected(document);
-              router.replace(`/lookup/orders?id=${document.id}`, undefined, {
-                shallow: true,
-              });
+              router.replace(
+                `/lookup/document?id=${document.id}&type=${document.type}`,
+                undefined,
+                { shallow: true }
+              );
             },
           })}
     >
@@ -71,7 +71,7 @@ const DocumentCard: FC<{
         // Subject line
         title={document.subject}
         // {code}/{year in BE} • {date}
-        subtitle={t("metadata", {
+        subtitle={t(`metadata.${document.type}`, {
           code: document.code,
           year: getLocaleYear("th", documentDate.getFullYear()),
           date: documentDate.toLocaleDateString(locale, {

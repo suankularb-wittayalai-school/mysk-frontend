@@ -7,15 +7,22 @@ import {
   deleteContact,
   updateContact,
 } from "@/utils/backend/contact";
+import { getSubjectGroups } from "@/utils/backend/subject/subjectGroup";
 
 // Converters
-import { db2Class, db2Student } from "@/utils/backend/database";
+import { db2Class, db2PersonName, db2Student } from "@/utils/backend/database";
 
 // Helpers
 import { getCurrentAcademicYear } from "@/utils/helpers/date";
 
 // Types
-import { Class, ClassWNumber } from "@/utils/types/class";
+import {
+  Class,
+  ClassLookupListItem,
+  ClassOverview,
+  ClassTeachersListSection,
+  ClassWNumber,
+} from "@/utils/types/class";
 import { BackendDataReturn, DatabaseClient } from "@/utils/types/common";
 import { StudentListItem } from "@/utils/types/person";
 import { Database } from "@/utils/types/supabase";
@@ -327,15 +334,133 @@ export async function removeContactFromClassroom(
   return { data: updatedClassroom!, error: null };
 }
 
-export async function getClassNumberFromUser(
+export async function getLookupClasses(
+  supabase: DatabaseClient
+): Promise<BackendDataReturn<ClassLookupListItem[]>> {
+  const { data, error } = await supabase
+    .from("classroom")
+    .select("id, number, advisors, students")
+    .order("number");
+
+  if (error) {
+    console.error(error);
+    return { data: [], error };
+  }
+
+  const classAdvisorIDs = data!.map((classItem) => classItem.advisors).flat();
+  const { data: teachers, error: teacherError } = await supabase
+    .from("teacher")
+    .select("*, person(*)")
+    .or(`id.in.(${classAdvisorIDs.join()})`);
+
+  if (teacherError) {
+    console.error(teacherError);
+    return { data: [], error: teacherError };
+  }
+
+  return {
+    data: data.map((classItem) => ({
+      id: classItem.id,
+      number: classItem.number,
+      classAdvisors: classItem.advisors.map((advisor) => {
+        const teacher = teachers?.find((teacher) => advisor === teacher.id)!;
+        return { id: teacher.id, ...db2PersonName(teacher.person) };
+      }),
+      studentCount: classItem.students.length,
+    })),
+    error: null,
+  };
+}
+
+export async function getClassOverview(
+  supabase: DatabaseClient,
+  number: number
+): Promise<BackendDataReturn<ClassOverview, null>> {
+  const { data, error } = await supabase
+    .from("classroom")
+    .select("*")
+    .match({ number, year: getCurrentAcademicYear() })
+    .limit(1)
+    .single();
+
+  if (error) {
+    console.error(error);
+    return { data: null, error };
+  }
+
+  return {
+    data: await db2Class(supabase, data, { advisors: true, contacts: true }),
+    error: null,
+  };
+}
+
+export async function getClassTeachersList(
+  supabase: DatabaseClient,
+  classID: number
+): Promise<BackendDataReturn<ClassTeachersListSection[]>> {
+  // Get the teacher IDs of all subjectRooms where class matches
+  const { data: roomSubjects, error: roomSubjectsError } = await supabase
+    .from("room_subjects")
+    .select("teacher")
+    .match({ class: classID });
+
+  if (roomSubjectsError) {
+    console.error(roomSubjectsError);
+    return { data: [], error: roomSubjectsError };
+  }
+
+  const teacherIDs = roomSubjects!
+    .map((roomSubject) => roomSubject.teacher)
+    .flat();
+
+  // Fetch those teachers
+  const { data: teachers, error: teacherError } = await supabase
+    .from("teacher")
+    .select("*, person(*), subject_group(id)")
+    .or(`id.in.(${teacherIDs.join()})`);
+
+  if (teacherError) {
+    console.error(teacherError);
+    return { data: [], error: teacherError };
+  }
+
+  // Get all subject groups
+  const { data: subjectGroups, error: subjectGroupError } =
+    await getSubjectGroups();
+
+  if (subjectGroupError) {
+    console.error(subjectGroupError);
+    return { data: [], error: subjectGroupError };
+  }
+
+  // Format the Teachers into a list grouped into Subject Groups
+  return {
+    data: subjectGroups
+      .map((subjectGroup) => ({
+        subjectGroup,
+        teachers: teachers
+          .filter((teacher) => subjectGroup.id === teacher.subject_group.id)
+          .map((teacher) => ({
+            id: teacher.id,
+            role: "teacher" as "teacher",
+            ...db2PersonName(teacher.person),
+            metadata: null,
+          })),
+      }))
+      .filter((section) => section.teachers.length),
+    error: null,
+  };
+}
+
+export async function getClassFromUser(
   supabase: DatabaseClient,
   user: User
-): Promise<BackendDataReturn<number, null>> {
+): Promise<BackendDataReturn<ClassWNumber, null>> {
   const studentID: number = user.user_metadata.student;
 
   const { data: classItem, error: classError } = await supabase
     .from("classroom")
-    .select("number")
+    .select("id, number")
     .match({ year: getCurrentAcademicYear() })
     .contains("students", [studentID])
     .limit(1)
@@ -346,7 +471,7 @@ export async function getClassNumberFromUser(
     return { data: null, error: classError };
   }
 
-  return { data: classItem!.number, error: null };
+  return { data: classItem!, error: null };
 }
 
 export async function getClassIDFromNumber(

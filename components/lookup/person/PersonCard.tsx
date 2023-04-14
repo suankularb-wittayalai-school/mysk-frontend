@@ -46,7 +46,7 @@ const PersonCard: FC<{
 
   return (
     <Card
-      appearance="filled"
+      appearance="outlined"
       direction="row"
       stateLayerEffect
       {...(atBreakpoint === "base"
@@ -60,20 +60,22 @@ const PersonCard: FC<{
           {
             onClick: () => {
               if (setSelected) setSelected({ ...person });
-              router.push(`/lookup/person?id=${person.id}`, undefined, {
-                shallow: true,
-              });
+              router.push(
+                `/lookup/person?id=${person.id}&role=${person.role}`,
+                undefined,
+                { shallow: true }
+              );
             },
           })}
       className={cn([
-        "text-left",
-        !thisSelected && "!border-transparent !bg-transparent",
+        "!border-transparent !bg-transparent text-left",
         person.role === "teacher"
           ? thisSelected
-            ? `!bg-secondary-container !text-on-secondary-container
-               state-layer:!bg-on-secondary-container`
+            ? `sm:!bg-secondary-container sm:!text-on-secondary-container
+               sm:focus:!border-secondary sm:state-layer:!bg-on-secondary-container`
             : `state-layer:!bg-secondary`
-          : thisSelected && `!bg-primary-container !text-on-primary-container`,
+          : thisSelected &&
+            `sm:!bg-primary-container sm:!text-on-primary-container`,
       ])}
     >
       <CardHeader
@@ -82,20 +84,23 @@ const PersonCard: FC<{
             name={person.name}
             className={
               person.role === "teacher"
-                ? thisSelected
-                  ? `!bg-secondary !text-on-secondary`
-                  : `!bg-secondary-container !text-on-secondary-container`
+                ? cn([
+                    thisSelected && `sm:!bg-secondary sm:!text-on-secondary`,
+                    `!bg-secondary-container !text-on-secondary-container`,
+                  ])
                 : thisSelected
-                ? `!bg-primary !text-on-primary`
-                : `!bg-primary-container !text-on-primary-container`
+                ? `sm:!bg-primary sm:!text-on-primary`
+                : undefined
             }
           />
         }
         title={nameJoiner(locale, person.name, person.prefix)}
         subtitle={
-          person.role === "teacher"
-            ? getLocaleString(person.metadata.name, locale)
-            : t("class", { number: person.metadata.number })
+          person.metadata
+            ? person.role === "teacher"
+              ? getLocaleString(person.metadata.name, locale)
+              : t("class", { number: person.metadata.number })
+            : undefined
         }
       />
     </Card>

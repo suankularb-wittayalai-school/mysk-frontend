@@ -1,7 +1,7 @@
 // External libraries
 import { useTranslation } from "next-i18next";
 import Head from "next/head";
-import { FC } from "react";
+import { ComponentProps, FC } from "react";
 
 // SK Components
 import { Card, Progress } from "@suankularb-components/react";
@@ -17,13 +17,9 @@ import { createTitleStr } from "@/utils/helpers/title";
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
 
-// Types
-import { Student, Teacher } from "@/utils/types/person";
-
-const PersonDetails: FC<{
-  person?: Student | Teacher;
-  loading?: boolean;
-}> = ({ person, loading }) => {
+const PersonDetails: FC<
+  ComponentProps<typeof PersonHeader> & { loading?: boolean }
+> = ({ person, suggestionsType, loading }) => {
   const locale = useLocale();
   const { t } = useTranslation(["lookup", "common"]);
 
@@ -34,9 +30,13 @@ const PersonDetails: FC<{
           <title>{createTitleStr(nameJoiner(locale, person.name), t)}</title>
         )}
       </Head>
-      <main aria-labelledby="header-person-details">
-        <Card appearance="outlined" className="relative h-full overflow-hidden">
-          <PersonHeader {...{ person }} />
+      <main
+        aria-live="polite"
+        aria-busy={loading}
+        aria-labelledby="header-person-details"
+      >
+        <Card appearance="outlined" className="relative h-full overflow-auto">
+          <PersonHeader {...{ person, suggestionsType }} />
           <Progress
             appearance="linear"
             alt="Loading person details…"

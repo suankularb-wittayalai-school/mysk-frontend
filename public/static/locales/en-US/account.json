@@ -37,15 +37,6 @@
       "goToLanding": "Go to Landing"
     }
   },
-  "forgor": {
-    "title": "Password reset",
-    "newPassword": "New password",
-    "supportingText": "Your identity has been verified. Choose a new password and remember it.",
-    "graphicAlt": "Lock icon hanging on a thread",
-    "action": {
-      "use": "Use"
-    }
-  },
   "profile": {
     "name": {
       "title": "Thai name",

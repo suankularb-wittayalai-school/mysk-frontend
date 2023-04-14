@@ -1,7 +1,6 @@
 // External libraries
 import { GetStaticPaths, GetStaticProps } from "next";
 import Head from "next/head";
-import Link from "next/link";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -13,15 +12,13 @@ import {
   Columns,
   ContentLayout,
   Header,
-  MaterialIcon,
   Search,
   Section,
-  Tab,
-  TabsContainer,
 } from "@suankularb-components/react";
 
 // Internal components
 import MySKPageHeader from "@/components/common/MySKPageHeader";
+import ClassTabs from "@/components/lookup/class/ClassTabs";
 import Schedule from "@/components/schedule/Schedule";
 import SubjectList from "@/components/subject/SubjectList";
 
@@ -95,33 +92,7 @@ const LookupClassSchedulePage: CustomPage<{
         title={t("schedule.title", { number: classItem.number })}
         parentURL={parentURL}
       >
-        <TabsContainer appearance="primary" alt="">
-          <Tab
-            icon={<MaterialIcon icon="info" />}
-            label={t("common.navigation.overview")}
-            href={parentURL}
-            element={Link}
-          />
-          <Tab
-            icon={<MaterialIcon icon="groups" />}
-            label={t("common.navigation.students")}
-            href={`${parentURL}/students`}
-            element={Link}
-          />
-          <Tab
-            icon={<MaterialIcon icon="group" />}
-            label={t("common.navigation.teachers")}
-            href={`${parentURL}/teachers`}
-            element={Link}
-          />
-          <Tab
-            icon={<MaterialIcon icon="dashboard" />}
-            label={t("common.navigation.schedule")}
-            selected
-            href={`${parentURL}/schedule`}
-            element={Link}
-          />
-        </TabsContainer>
+        <ClassTabs number={classItem.number} type="lookup" />
       </MySKPageHeader>
       <ContentLayout>
         <Schedule schedule={schedule} role="student" />

@@ -31,6 +31,7 @@ import { useLocale } from "@/utils/hooks/i18n";
 
 // Types
 import { Contact } from "@/utils/types/contact";
+import { range } from "@/utils/helpers/array";
 
 /**
  * A contact Card.
@@ -73,6 +74,19 @@ const ContactCard: FC<{
     Other: t("contact.other", { ns: "common" }),
   };
 
+  const formattedLabel = contact.name
+    ? getLocaleString(contact.name, locale)
+    : contact.type === "Phone"
+    ? range(Math.min(Math.ceil(contact.value.length / 3), 3))
+        .map((setIdx) =>
+          contact.value.slice(
+            setIdx * 3,
+            setIdx === 2 ? contact.value.length : setIdx * 3 + 3
+          )
+        )
+        .join(" ")
+    : contact.value;
+
   return (
     <>
       <Card
@@ -85,14 +99,18 @@ const ContactCard: FC<{
         <CardHeader
           avatar={<Avatar>{avatarMap[contact.type]}</Avatar>}
           title={
-            <a
-              href={getContactURL(contact.type, contact.value)}
-              target="_blank"
-              rel="noreferrer"
-              className="break-all"
-            >
-              {getLocaleString(contact.name, locale)}
-            </a>
+            editable ? (
+              <a
+                href={getContactURL(contact.type, contact.value)}
+                target="_blank"
+                rel="noreferrer"
+                className="break-all"
+              >
+                {formattedLabel}
+              </a>
+            ) : (
+              formattedLabel
+            )
           }
           subtitle={subtitleMap[contact.type]}
           overflow={
@@ -119,6 +137,7 @@ const ContactCard: FC<{
               </Menu>
             ) : undefined
           }
+          className={editable ? "[&_h3>a]:link" : undefined}
         />
       </Card>
       <ContactDialog

@@ -3,6 +3,7 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 import { GetServerSideProps } from "next";
 import Head from "next/head";
+import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -12,9 +13,11 @@ import { useEffect, useState } from "react";
 // SK Components
 import {
   ChipSet,
+  FAB,
   FilterChip,
   MaterialIcon,
   SplitLayout,
+  useBreakpoint,
 } from "@suankularb-components/react";
 
 // Internal components
@@ -25,7 +28,10 @@ import PersonCard from "@/components/lookup/person/PersonCard";
 import PersonDetails from "@/components/lookup/person/PersonDetails";
 
 // Backend
-import { getPeopleLookupList } from "@/utils/backend/person/person";
+import {
+  getLookupListPerson,
+  getPeopleLookupList,
+} from "@/utils/backend/person/person";
 import { getStudent } from "@/utils/backend/person/student";
 import { getTeacher } from "@/utils/backend/person/teacher";
 
@@ -40,8 +46,9 @@ import { useToggle } from "@/utils/hooks/toggle";
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { PersonLookupItem, Role, Student, Teacher } from "@/utils/types/person";
+import AddPersonFAB from "@/components/lookup/person/AddPersonFAB";
 
-const LookupStudentsPage: CustomPage<{
+const LookupPeoplePage: CustomPage<{
   initialPeople: PersonLookupItem[];
   selectedIdx: number;
 }> = ({ initialPeople, selectedIdx }) => {
@@ -50,7 +57,7 @@ const LookupStudentsPage: CustomPage<{
 
   const [people, setPeople] = useState<PersonLookupItem[]>(initialPeople);
 
-  // Selected Person
+  // Information for identifying the selected Person, used in fetch later
   const [selected, setSelected] = useState(
     initialPeople[selectedIdx]
       ? {
@@ -60,9 +67,31 @@ const LookupStudentsPage: CustomPage<{
       : undefined
   );
 
+  // Redirect mobile users to the details page when URL has query
+  const { atBreakpoint } = useBreakpoint();
+  const router = useRouter();
+  useEffect(() => {
+    if (selectedIdx && atBreakpoint === "base") {
+      const { id, role } = initialPeople[selectedIdx];
+      router.push(`/lookup/person/${role}/${id}`);
+    }
+  }, [selectedIdx]);
+
+  // Update the URL with the selected Person query, so as to make sharing
+  // easier
+  useEffect(() => {
+    if (selected)
+      router.replace(
+        `/lookup/person?id=${selected.id}&role=${selected.role}`,
+        undefined,
+        { shallow: true }
+      );
+  }, []);
+
   const supabase = useSupabaseClient();
   const [loading, toggleLoading] = useToggle();
 
+  // Information about the selected Person
   const [selectedPerson, setSelectedPerson] = useState<Student | Teacher>();
   useEffect(() => {
     if (!selected) return;
@@ -178,12 +207,32 @@ export const getServerSideProps: GetServerSideProps = async ({
   locale,
   query,
 }) => {
-  const selectedID = Number(query?.id);
+  const selected = query.id
+    ? { id: Number(query.id), role: query.role as Role }
+    : null;
   let selectedIdx = 0;
 
-  const { data: initialPeople } = await getPeopleLookupList();
+  let initialPeople: PersonLookupItem[];
 
-  // selectedIdx = initialPeople.findIndex((person) => selectedID === person.id);
+  const { data: defaultPeople } = await getPeopleLookupList();
+  initialPeople = defaultPeople;
+
+  if (selected) {
+    selectedIdx = initialPeople.findIndex(
+      (person) => selected.id === person.id && selected.role === person.role
+    );
+
+    if (selectedIdx === -1) {
+      const { data, error } = await getLookupListPerson(
+        selected.id,
+        selected.role
+      );
+      if (error) initialPeople = defaultPeople;
+      else initialPeople = [data, ...defaultPeople];
+    } else initialPeople = defaultPeople;
+  }
+
+  selectedIdx = Math.max(selectedIdx, 0);
 
   return {
     props: {
@@ -197,4 +246,6 @@ export const getServerSideProps: GetServerSideProps = async ({
   };
 };
 
-export default LookupStudentsPage;
+LookupPeoplePage.fab = <AddPersonFAB />;
+
+export default LookupPeoplePage;

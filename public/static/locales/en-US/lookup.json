@@ -3,6 +3,8 @@
   "search": "Search everything",
   "people": {
     "title": "Lookup people",
+    "desc": "Find your classmates, teachers, and everyone else in Suankularb. Better connect with people with contacts and live schedule information.",
+    "count": "{{students}} students and {{teachers}} teachers available.",
     "list": {
       "searchAlt": "Search people"
     },
@@ -11,7 +13,9 @@
       "action": {
         "seeClass": "See class",
         "seeSchedule": "See schedule",
-        "share": "Share"
+        "share": "Share",
+        "edit": "Edit",
+        "delete": "Delete"
       }
     },
     "detail": {
@@ -34,6 +38,7 @@
           "label": "Save to contacts",
           "desc": "Save a .vcf file to see this person as a contact on your device.",
           "segment": {
+            "teacherPrefix": "T. ",
             "org": "Suankularb Wittayalai School",
             "title": "Teacher",
             "note": "Class advisor at M.{{number}}"
@@ -55,21 +60,34 @@
   },
   "classes": {
     "title": "Lookup classes",
+    "desc": "Get the students, teachers, subjects, and schedule of any class.",
+    "count": "{{classes}} classes available.",
     "list": {
-      "searchAlt": "Search classes"
-    }
-  },
-  "orders": {
-    "title": "Lookup orders",
-    "list": {
-      "searchAlt": "Search orders"
+      "searchAlt": "Search classes",
+      "numStudents_one": "{{count}} student",
+      "numStudents_other": "{{count}} students",
+      "action": {
+        "schedule": "See schedule",
+        "students": "Students",
+        "teachers": "Teachers"
+      }
     }
   },
   "documents": {
     "title": "Lookup documents",
+    "desc": "No more shuffling through file cabinets; find everything from orders to school documents.",
+    "count": "{{orders}} orders and {{documents}} school documents available.",
+    "thaiOnly": "Available in Thai only.",
     "list": {
       "searchAlt": "Search documents",
-      "metadata": "№ {{code}}/{{year}} • {{date}}"
+      "filter": {
+        "orders": "Orders",
+        "documents": "Documents"
+      },
+      "metadata": {
+        "order": "№ {{code}}/{{year}} • {{date}}",
+        "document": "MoE 04290.20/{{code}} • {{date}}"
+      }
     },
     "header": {
       "restrictions": {
@@ -101,6 +119,7 @@
       "title": "List",
       "searchHelper": "Press the search icon to search.",
       "maxNote": "For performance reasons, we limit the number of search results to 100. If you can’t find what you’re looking for, try a more specific query.",
+      "noResults": "No results.",
       "endOfList": "You’ve reached the end."
     },
     "detail": {

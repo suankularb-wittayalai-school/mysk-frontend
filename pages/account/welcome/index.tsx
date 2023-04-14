@@ -143,14 +143,14 @@ const WelcomePage: CustomPage = () => {
 };
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale as LangCode, [
-      "common",
-      "welcome",
-    ])),
-  },
+  props: await serverSideTranslations(locale as LangCode, [
+    "common",
+    "welcome",
+  ]),
 });
 
 WelcomePage.childURLs = ["/account/welcome/your-information"];
+
+WelcomePage.navType = "hidden";
 
 export default WelcomePage;

@@ -48,7 +48,7 @@ export interface Database {
         Row: {
           id: number;
           created_at: string | null;
-          name_th: string;
+          name_th: string | null;
           type: Database["public"]["Enums"]["contact_type"];
           value: string;
           name_en: string | null;
@@ -59,7 +59,7 @@ export interface Database {
         Insert: {
           id?: number;
           created_at?: string | null;
-          name_th: string;
+          name_th: string | null;
           type: Database["public"]["Enums"]["contact_type"];
           value: string;
           name_en?: string | null;
@@ -70,7 +70,7 @@ export interface Database {
         Update: {
           id?: number;
           created_at?: string | null;
-          name_th?: string;
+          name_th?: string | null;
           type?: Database["public"]["Enums"]["contact_type"];
           value?: string;
           name_en?: string | null;

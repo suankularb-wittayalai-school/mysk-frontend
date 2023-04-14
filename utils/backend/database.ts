@@ -27,10 +27,14 @@ export function db2Contact(
 ): Contact {
   return {
     id: contact.id,
-    name: {
-      th: contact.name_th,
-      "en-US": contact.name_en ? contact.name_en : "",
-    },
+    ...(contact.name_th
+      ? {
+          name: {
+            th: contact.name_th,
+            "en-US": contact.name_en as OrUndefined<string>,
+          },
+        }
+      : {}),
     value: contact.value,
     type: contact.type,
     includes: {
@@ -175,7 +179,7 @@ export async function db2FormPage(
 export async function db2Student(
   supabase: DatabaseClient,
   student: Database["public"]["Tables"]["student"]["Row"],
-  options?: Partial<{ contacts: boolean }>
+  options?: Partial<{ citizenID: boolean; contacts: boolean }>
 ): Promise<Student> {
   const formatted: Student = {
     id: student.id,
@@ -183,11 +187,12 @@ export async function db2Student(
     ...db2PersonName(student.person),
     studentID: student.std_id,
     class: { id: 0, number: 0 },
-    citizenID: student.person.citizen_id,
     birthdate: student.person.birthdate,
     classNo: 1,
     contacts: [],
   };
+
+  if (options?.citizenID) formatted.citizenID = student.person.citizen_id;
 
   if (options?.contacts) {
     const { data: contacts, error: contactError } = await supabase
@@ -440,7 +445,12 @@ export async function db2Subject(
 
 export async function db2Class(
   supabase: DatabaseClient,
-  classDB: Database["public"]["Tables"]["classroom"]["Row"]
+  classDB: Database["public"]["Tables"]["classroom"]["Row"],
+  options?: Partial<{
+    advisors: boolean;
+    students: boolean;
+    contacts: boolean;
+  }>
 ): Promise<Class> {
   const formatted: Class = {
     id: classDB.id,
@@ -452,7 +462,7 @@ export async function db2Class(
     year: classDB.year,
   };
 
-  if (classDB.advisors) {
+  if (options?.advisors && classDB.advisors) {
     const { data: classAdvisor, error: classAdvisorError } = await supabase
       .from("teacher")
       .select("*, person(*), subject_group(*)")
@@ -469,7 +479,7 @@ export async function db2Class(
     }
   }
 
-  if (classDB.students) {
+  if (options?.students && classDB.students) {
     const { data: students, error: studentsError } = await supabase
       .from("student")
       .select("*, person(*)")
@@ -485,7 +495,7 @@ export async function db2Class(
     }
   }
 
-  if (classDB.contacts) {
+  if (options?.contacts && classDB.contacts) {
     const { data: contacts, error: contactError } = await supabase
       .from("contacts")
       .select("*")
@@ -644,6 +654,7 @@ export function db2SchoolDocument(
 ) {
   const formatted: SchoolDocument = {
     id: schoolDocument.id,
+    type: schoolDocument.type,
     code: schoolDocument.code,
     date: schoolDocument.date,
     subject: schoolDocument.subject,

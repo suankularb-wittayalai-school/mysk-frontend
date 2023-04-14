@@ -225,53 +225,6 @@ export async function importTeachers(
   );
 }
 
-export async function getTeacherList(
-  supabase: DatabaseClient,
-  classID: number
-): Promise<Teacher[]> {
-  // Get the teachers of all subjectRooms where class matches
-  const { data: roomSubjects, error: roomSubjectsError } = await supabase
-    .from("room_subjects")
-    .select("teacher")
-    .match({ class: classID });
-  if (roomSubjectsError) {
-    console.error(roomSubjectsError);
-    return [];
-  }
-
-  // Map array of teacher IDs into array of teachers (fetch teacher in map)
-  const selectedTeachers = await Promise.all(
-    // Flatten the arrays into an array of teacher IDs
-    roomSubjects!
-      .map((roomSubject) => roomSubject.teacher)
-      .flat()
-      // Remove duplicates
-      .filter((id, index, self) => self.indexOf(id) === index)
-      // Fetch teacher data for each teacher
-      .map(async (teacher_id) => {
-        // Get teacher from ID
-        const { data, error } = await supabase
-          .from("teacher")
-          .select("* ,person(*), subject_group(*)")
-          .match({ id: teacher_id })
-          .limit(1)
-          .single();
-
-        if (error) {
-          console.error(error);
-          return null;
-        }
-
-        return data;
-      })
-  );
-  const teachers = selectedTeachers.filter((teacher) => teacher);
-
-  return await Promise.all(
-    teachers.map(async (teacher) => await db2Teacher(supabase, teacher!))
-  );
-}
-
 export async function getClassAdvisorAt(
   supabase: DatabaseClient,
   teacherDBID: number
