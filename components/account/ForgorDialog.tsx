@@ -25,9 +25,9 @@ import { DialogComponent } from "@/utils/types/common";
 /**
  * The final Dialog of Forgor, where the user was just verified and enters
  * their new password.
- * 
+ *
  * Read about the full process in `/pages/_app.tsx`.
- * 
+ *
  * @returns A Dialog.
  */
 const ForgorDialog: DialogComponent = ({ open, onClose }) => {

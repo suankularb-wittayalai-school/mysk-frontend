@@ -14,11 +14,11 @@ import { DialogComponent } from "@/utils/types/common";
 
 /**
  * Tells the user the next steps after entering their email.
- * 
+ *
  * Read about the full process in `/pages/_app.tsx`.
- * 
+ *
  * @param email The email address where the verification email was sent to.
- *  
+ *
  * @returns A Dialog.
  */
 const CheckEmailDialog: DialogComponent<{ email: string }> = ({

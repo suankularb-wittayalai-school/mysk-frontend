@@ -31,12 +31,12 @@ import { DialogComponent } from "@/utils/types/common";
 
 /**
  * The initiating Dialog of Forgor.
- * 
+ *
  * Read about the full process in `/pages/_app.tsx`.
- * 
+ *
  * @param inputEmail The default email address to send verification email to.
- * 
- * @returns A Dialog. 
+ *
+ * @returns A Dialog.
  */
 const RequestForgorDialog: DialogComponent<{ inputEmail?: string }> = ({
   open,
