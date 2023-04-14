@@ -19,31 +19,16 @@ export async function middleware(req: NextRequest) {
   const locale = req.nextUrl.locale as LangCode;
 
   // Get current page protection type
-  const pageRole: Role | "public" | "admin" | "user" | "not-protected" =
-    // Public pages
-    route == "/" || /^\/(account\/(login|forgot\-password)|about)/.test(route)
+  const pageRole: Role | "public" | "admin" | "user" =
+    route === "/"
       ? "public"
-      : // Admin pages
-      /^\/admin/.test(route)
+      : /^\/news\/(info|form)\/(create|(\d+\/edit))/.test(route)
       ? "admin"
-      : // Student pages
-      /^\/(learn|news\/form\/\d+|class\/\d{3}\/(view|students|teachers|schedule))/.test(
-          route
-        )
+      : /^\/learn/.test(route)
       ? "student"
-      : // Teacher pages
-      /^\/(account\/welcome\/your-subjects|teach|class\/\d{3}\/manage)/.test(
-          route
-        )
+      : /^\/(teach|class\/\d{3}\/form\/\d+)/.test(route)
       ? "teacher"
-      : // User pages
-      /^\/(account|news|lookup)/.test(route)
-      ? "user"
-      : // Fallback (images, icons, manifest, etc.)
-        "not-protected";
-
-  // Ignore page without protection
-  if (pageRole == "not-protected") return res;
+      : "user";
 
   // Declare Supabase client
   const supabase = createMiddlewareSupabaseClient({ req, res });
@@ -123,7 +108,7 @@ export const config = {
     "/learn",
     "/learn/:id",
     "/teach",
-    "/class/:id/:path*",
+    "/class/:path*",
     "/lookup/:path*",
     "/news",
     "/news/stats/:id",
