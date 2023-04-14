@@ -2,7 +2,7 @@
 import { FC } from "react";
 
 // SK Component
-import { Card, CardHeader } from "@suankularb-components/react";
+import { Card, CardHeader, useBreakpoint } from "@suankularb-components/react";
 
 // Internal components
 import DynamicAvatar from "@/components/common/DynamicAvatar";
@@ -16,6 +16,7 @@ import { useLocale } from "@/utils/hooks/i18n";
 // Types
 import { Student } from "@/utils/types/person";
 import { cn } from "@/utils/helpers/className";
+import Link from "next/link";
 
 const ClassStudentCard: FC<{
   student: Student;
@@ -24,7 +25,7 @@ const ClassStudentCard: FC<{
   setSelectedID?: (id: number) => void;
 }> = ({ student, seperated, selectedID, setSelectedID }) => {
   const locale = useLocale();
-
+  const { atBreakpoint } = useBreakpoint();
   const thisSelected = selectedID === student.id;
 
   return (
@@ -42,7 +43,15 @@ const ClassStudentCard: FC<{
         appearance="outlined"
         direction="row"
         stateLayerEffect
-        onClick={() => setSelectedID && setSelectedID(student.id)}
+        {...(atBreakpoint === "base"
+          ? // If the user is on mobile, open a new page
+            {
+              href: `/lookup/class/${student.class.number}/student/${student.id}`,
+              element: Link,
+            }
+          : // If the user is on tablet/desktop, show the selected Student in
+            // the detail section
+            { onClick: () => setSelectedID && setSelectedID(student.id) })}
         className={cn([
           `w-full items-center pr-3 text-left`,
           thisSelected ? `!bg-primary-container` : `!border-transparent`,

@@ -27,7 +27,8 @@ import { Teacher } from "@/utils/types/person";
 
 const ClassTeachers: FC<{
   teacherList: ClassTeachersListSection[];
-}> = ({ teacherList }) => {
+  classNumber: number;
+}> = ({ teacherList, classNumber }) => {
   const locale = useLocale();
 
   // Selected Person
@@ -71,6 +72,7 @@ const ClassTeachers: FC<{
               <ClassTeacherCard
                 key={teacher.id}
                 teacher={teacher}
+                classNumber={classNumber}
                 selectedID={selected}
                 setSelectedID={setSelected}
               />

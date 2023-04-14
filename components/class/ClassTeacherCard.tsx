@@ -1,8 +1,9 @@
 // External libraries
+import Link from "next/link";
 import { FC } from "react";
 
 // SK Component
-import { Card, CardHeader } from "@suankularb-components/react";
+import { Card, CardHeader, useBreakpoint } from "@suankularb-components/react";
 
 // Internal components
 import DynamicAvatar from "@/components/common/DynamicAvatar";
@@ -18,17 +19,27 @@ import { PersonLookupItemGeneric } from "@/utils/types/person";
 
 const ClassTeacherCard: FC<{
   teacher: PersonLookupItemGeneric<null>;
+  classNumber: number;
   selectedID?: number;
   setSelectedID?: (id: number) => void;
-}> = ({ teacher, selectedID, setSelectedID }) => {
+}> = ({ teacher, classNumber, selectedID, setSelectedID }) => {
   const locale = useLocale();
+  const { atBreakpoint } = useBreakpoint();
 
   return (
     <Card
       key={teacher.id}
       appearance="outlined"
       stateLayerEffect
-      onClick={() => setSelectedID && setSelectedID(teacher.id)}
+      {...(atBreakpoint === "base"
+        ? // If the user is on mobile, open a new page
+          {
+            href: `/lookup/class/${classNumber}/teacher/${teacher.id}`,
+            element: Link,
+          }
+        : // If the user is on tablet/desktop, show the selected Student in
+          // the detail section
+          { onClick: () => setSelectedID && setSelectedID(teacher.id) })}
       className={
         selectedID === teacher.id
           ? "!bg-primary-container !text-on-primary-container"

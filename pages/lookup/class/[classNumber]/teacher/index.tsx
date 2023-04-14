@@ -44,7 +44,7 @@ const ClassTeachersPage: CustomPage<{
       >
         <ClassTabs number={classNumber} type="lookup" />
       </MySKPageHeader>
-      <ClassTeachers {...{ teacherList }} />
+      <ClassTeachers {...{ teacherList, classNumber }} />
     </>
   );
 };
