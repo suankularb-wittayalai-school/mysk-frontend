@@ -144,7 +144,7 @@ const ClassPeekModal: FC<{
                   <Button
                     appearance="outlined"
                     icon={<MaterialIcon icon="groups" />}
-                    href={`${baseURL}/students`}
+                    href={`${baseURL}/student`}
                     element={Link}
                   >
                     {t("classes.list.action.students")}
@@ -152,7 +152,7 @@ const ClassPeekModal: FC<{
                   <Button
                     appearance="outlined"
                     icon={<MaterialIcon icon="group" />}
-                    href={`${baseURL}/teachers`}
+                    href={`${baseURL}/teacher`}
                     element={Link}
                   >
                     {t("classes.list.action.teachers")}

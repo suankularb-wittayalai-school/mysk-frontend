@@ -24,6 +24,7 @@ const ClassTabs: FC<{
 
   return (
     <TabsContainer appearance="primary" alt="">
+      {/* Overview Tab: Class Advisors and Contacts */}
       <Tab
         icon={<MaterialIcon icon="info" />}
         label={t("common.navigation.overview")}
@@ -31,20 +32,27 @@ const ClassTabs: FC<{
         href={parentURL}
         element={Link}
       />
+
+      {/* Students Tab: list of all Students in this Class */}
       <Tab
         icon={<MaterialIcon icon="groups" />}
         label={t("common.navigation.students")}
-        selected={router.asPath === `${parentURL}/students`}
-        href={`${parentURL}/students`}
+        selected={router.asPath === `${parentURL}/student`}
+        href={`${parentURL}/student`}
         element={Link}
       />
+
+      {/* Students Tab: list of all Teachers that teach this class (not
+          including Class Advisors) */}
       <Tab
         icon={<MaterialIcon icon="group" />}
         label={t("common.navigation.teachers")}
-        selected={router.asPath === `${parentURL}/teachers`}
-        href={`${parentURL}/teachers`}
+        selected={router.asPath === `${parentURL}/teacher`}
+        href={`${parentURL}/teacher`}
         element={Link}
       />
+
+      {/* Schedule Tab: this Class’s Schedule */}
       {type === "lookup" || user?.role === "teacher" ? (
         <Tab
           icon={<MaterialIcon icon="dashboard" />}
