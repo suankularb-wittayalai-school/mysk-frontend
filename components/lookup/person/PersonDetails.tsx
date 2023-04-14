@@ -30,7 +30,11 @@ const PersonDetails: FC<
           <title>{createTitleStr(nameJoiner(locale, person.name), t)}</title>
         )}
       </Head>
-      <main aria-labelledby="header-person-details">
+      <main
+        aria-live="polite"
+        aria-busy={loading}
+        aria-labelledby="header-person-details"
+      >
         <Card appearance="outlined" className="relative h-full overflow-auto">
           <PersonHeader {...{ person, suggestionsType }} />
           <Progress
