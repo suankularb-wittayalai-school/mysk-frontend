@@ -181,11 +181,7 @@ const LoginSection: FC = () => {
 };
 
 const ImageSection: FC = () => (
-  <div
-    aria-hidden
-    className="-z-10 bg-gradient-to-b from-surface-5 via-transparent
-      sm:bg-none md:relative"
-  >
+  <div aria-hidden className="pointer-events-none sm:bg-none md:relative">
     {/* Image in center */}
     <div
       className="md:absolute md:left-0 md:right-0 md:h-[calc(100vh-6rem)]
@@ -282,7 +278,10 @@ const IndexPage: CustomPage = () => {
           content={t("brand.description", { ns: "common" })}
         />
       </Head>
-      <ContentLayout className="-mb-20 !pb-6 !pt-0 sm:mb-0 md:!py-12">
+      <ContentLayout
+        className="sm:to-60% -mb-20 bg-gradient-to-b from-surface-5
+          to-transparent bg-fixed !pb-6 !pt-0 sm:mb-0 md:!py-12"
+      >
         {/* 6rem is the combined padding height put on Content Layout */}
         <div
           className="flex flex-col justify-between gap-16
@@ -315,9 +314,6 @@ const IndexPage: CustomPage = () => {
                     </span>
                   </Trans>
                 </h1>
-                <p className="skc-display-medium hidden sm:block">
-                  {t("hero.subtitle")}
-                </p>
               </div>
 
               {/* Log in form */}
