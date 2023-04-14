@@ -19,9 +19,10 @@ import { cn } from "@/utils/helpers/className";
 
 const ClassStudentCard: FC<{
   student: Student;
+  seperated?: boolean;
   selectedID?: number;
   setSelectedID?: (id: number) => void;
-}> = ({ student, selectedID, setSelectedID }) => {
+}> = ({ student, seperated, selectedID, setSelectedID }) => {
   const locale = useLocale();
 
   const thisSelected = selectedID === student.id;
@@ -29,9 +30,13 @@ const ClassStudentCard: FC<{
   return (
     <li
       aria-label={nameJoiner(locale, student.name)}
-      className="border-t-outline px-4 sm:px-0
-        [&:nth-child(10n+1):not(:first-child)]:border-t-1
-        [&:nth-child(10n+1):not(:first-child)]:pt-2"
+      className={
+        seperated
+          ? `border-t-outline px-4 sm:px-0
+             [&:nth-child(10n+1):not(:first-child)]:border-t-1
+             [&:nth-child(10n+1):not(:first-child)]:pt-2`
+          : undefined
+      }
     >
       <Card
         appearance="outlined"

@@ -14,15 +14,15 @@ import PersonDetails from "@/components/lookup/person/PersonDetails";
 import { getStudent } from "@/utils/backend/person/student";
 
 // Helpers
-import { getLocaleString } from "@/utils/helpers/i18n";
 import { withLoading } from "@/utils/helpers/loading";
 
 // Hooks
-import { useLocale } from "@/utils/hooks/i18n";
 import { useToggle } from "@/utils/hooks/toggle";
 
 // Types
 import { Student } from "@/utils/types/person";
+import LookupList from "../lookup/LookupList";
+import { nameJoiner } from "@/utils/helpers/name";
 
 const ClassStudents: FC<{
   studentList: Student[];
@@ -50,24 +50,39 @@ const ClassStudents: FC<{
     );
   }, [selected]);
 
+  // Query
+  const [query, setQuery] = useState<string>("");
+
   return (
     <SplitLayout
       ratio="list-detail"
       className="sm:[&>*>*]:!h-[calc(100vh-14.75rem-1px)]
         supports-[height:100dvh]:sm:[&>*>*]:!h-[calc(100dvh-14.75rem-1px)]"
     >
-      <aside className="!px-0 sm:!pr-3">
-        <ul className="!flex flex-col gap-2">
-          {studentList.map((student) => (
+      <LookupList
+        length={studentList.length}
+        searchAlt="Search students"
+        query={query}
+        onQueryChange={setQuery}
+        liveFilter
+      >
+        {studentList
+          .filter(
+            (student) =>
+              String(student.classNo).includes(query) ||
+              nameJoiner("th", student.name).toLowerCase().includes(query) ||
+              nameJoiner("en-US", student.name).toLowerCase().includes(query)
+          )
+          .map((student) => (
             <ClassStudentCard
               key={student.id}
+              seperated={query === ""}
               student={student}
               selectedID={selected}
               setSelectedID={setSelected}
             />
           ))}
-        </ul>
-      </aside>
+      </LookupList>
       {selected ? (
         <PersonDetails
           person={selectedStudent}
