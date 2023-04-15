@@ -1,4 +1,5 @@
 // External libraries
+import Link from "next/link";
 import { FC } from "react";
 
 // SK Component
@@ -8,6 +9,7 @@ import { Card, CardHeader, useBreakpoint } from "@suankularb-components/react";
 import DynamicAvatar from "@/components/common/DynamicAvatar";
 
 // Helpers
+import { cn } from "@/utils/helpers/className";
 import { nameJoiner } from "@/utils/helpers/name";
 
 // Hooks
@@ -15,8 +17,6 @@ import { useLocale } from "@/utils/hooks/i18n";
 
 // Types
 import { Student } from "@/utils/types/person";
-import { cn } from "@/utils/helpers/className";
-import Link from "next/link";
 
 const ClassStudentCard: FC<{
   student: Student;
@@ -34,7 +34,7 @@ const ClassStudentCard: FC<{
       aria-label={nameJoiner(locale, student.name)}
       className={
         seperated
-          ? `border-t-outline px-4 sm:px-0
+          ? `-mx-4 border-t-outline px-4 sm:mx-0 sm:px-0
              [&:nth-child(10n+1):not(:first-child)]:border-t-1
              [&:nth-child(10n+1):not(:first-child)]:pt-2`
           : undefined
@@ -56,8 +56,10 @@ const ClassStudentCard: FC<{
             // the detail section
             { onClick: () => setSelectedID && setSelectedID(student.id) })}
         className={cn([
-          `w-full items-center pr-3 text-left`,
-          thisSelected ? `!bg-primary-container` : `!border-transparent`,
+          `w-full items-center !border-transparent pr-3 text-left`,
+          thisSelected &&
+            `sm:!border-outline-variant sm:!bg-primary-container
+             sm:focus:!border-primary`,
         ])}
       >
         <CardHeader
@@ -65,7 +67,7 @@ const ClassStudentCard: FC<{
             <DynamicAvatar
               name={student.name}
               className={
-                thisSelected ? "!bg-primary !text-on-primary" : undefined
+                thisSelected ? "sm:!bg-primary sm:!text-on-primary" : undefined
               }
             />
           }
@@ -74,7 +76,8 @@ const ClassStudentCard: FC<{
         />
         <span
           className={cn([
-            `skc-display-small text-outline [font-feature-settings:"tnum"on,"lnum"on]`,
+            `skc-display-small text-outline
+             [font-feature-settings:"tnum"on,"lnum"on]`,
             thisSelected && `!text-primary`,
           ])}
         >
