@@ -28,9 +28,7 @@ import { useLocale } from "@/utils/hooks/i18n";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Teacher } from "@/utils/types/person";
 
-const PersonDetailsPage: CustomPage<{
-  teacher: Teacher;
-}> = ({ teacher }) => {
+const TeacherDetailsPage: CustomPage<{ teacher: Teacher }> = ({ teacher }) => {
   const locale = useLocale();
   const { t } = useTranslation("common");
 
@@ -82,4 +80,4 @@ export const getServerSideProps: GetServerSideProps = async ({
   };
 };
 
-export default PersonDetailsPage;
+export default TeacherDetailsPage;
