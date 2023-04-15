@@ -86,7 +86,7 @@ const SubjectList: FC<{ subjectList: SubjectListItem[]; query: string }> = ({
                 <span className="skc-body-medium break-all">
                   <HoverList
                     people={listItem.teachers}
-                    useFullName={listItem.teachers.length === 1}
+                    options={{ nameJoinerOptions: { lastName: true } }}
                   />
                 </span>
               </div>

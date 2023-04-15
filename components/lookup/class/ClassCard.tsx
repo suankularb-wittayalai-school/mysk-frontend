@@ -63,7 +63,12 @@ const ClassCard: FC<{ classItem: ClassLookupListItem }> = ({ classItem }) => {
         >
           <CardHeader
             title={t("class", { number: classItem.number })}
-            subtitle={<HoverList people={classItem.classAdvisors} />}
+            subtitle={
+              <HoverList
+                people={classItem.classAdvisors}
+                options={{ maxVisibleLength: 2 }}
+              />
+            }
             className="!items-start text-left [&_*]:!font-body"
           />
         </Card>

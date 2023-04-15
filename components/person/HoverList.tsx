@@ -1,48 +1,68 @@
 // External libraries
-import { useRouter } from "next/router";
+import { FC } from "react";
 
 // Types
-import { LangCode } from "@/utils/types/common";
 import { Person } from "@/utils/types/person";
 
 // Helpers
 import { nameJoiner } from "@/utils/helpers/name";
 
-const HoverList = ({
-  people,
-  truncate,
-  useFullName,
-}: {
-  people: { name: Person["name"] }[];
+// Hooks
+import { useLocale } from "@/utils/hooks/i18n";
+
+const HoverList: FC<{
+  people: { name: Person["name"]; prefix?: Person["prefix"] }[];
   truncate?: boolean;
-  useFullName?: boolean;
-}) => {
-  const locale = useRouter().locale as LangCode;
+  options?: Partial<{
+    nameJoinerOptions: Parameters<typeof nameJoiner>["3"];
+    maxVisibleLength: number;
+  }>;
+}> = ({ people, truncate, options }) => {
+  const locale = useLocale();
+
+  /**
+   * The number of names shown, the rest are collapsed
+   */
+  const maxVisibleLength = options?.maxVisibleLength || 1;
 
   return (
     <span className={truncate ? "truncate" : undefined}>
       {people.length > 0 &&
-        // Show the first person’s name in user locale
-        (useFullName
-          ? nameJoiner(locale, people[0].name)
-          : people[0].name[locale]?.firstName || people[0].name.th.firstName)}
+        // Visible names
+        people
+          .slice(0, maxVisibleLength)
+          .map((person) =>
+            nameJoiner(
+              locale,
+              person.name,
+              person.prefix,
+              options?.nameJoinerOptions || {
+                middleName: false,
+                lastName: false,
+              }
+            )
+          )
+          .join(", ")}
       {
-        // If there are more than one person, display +1 and show the remaining
-        // people on hover
-        people.length > 1 && (
+        // Other names are collapsed into a number (i.e. +1), with a tooltip
+        // showing the full list of these names
+        people.length > maxVisibleLength && (
           <abbr
             tabIndex={0}
             className="text-outline"
             title={people
-              .slice(1)
+              .slice(maxVisibleLength)
               .map((person) =>
-                useFullName
-                  ? nameJoiner(locale, person.name)
-                  : person.name[locale]?.firstName || person.name.th.firstName
+                nameJoiner(
+                  locale,
+                  person.name,
+                  person.prefix,
+                  options?.nameJoinerOptions || { lastName: false }
+                )
               )
               .join(", ")}
           >
-            +{people.length - 1}
+            +{people.length - maxVisibleLength}
           </abbr>
         )
       }
