@@ -1,19 +1,27 @@
 // External libraries
 import { useTranslation } from "next-i18next";
-import { FC } from "react";
+import { FC, forwardRef, useContext, useEffect, useState } from "react";
 
 // SK Components
 import {
+  AssistChip,
+  Card,
+  ChipSet,
   Columns,
   ContentLayout,
   Header,
+  MaterialIcon,
   Section,
+  Snackbar,
 } from "@suankularb-components/react";
 
 // Internal components
 import ContactCard from "@/components/account/ContactCard";
 import MultilangText from "@/components/common/MultilingualText";
 import DetailSection from "@/components/lookup/person/DetailSection";
+
+// Contexts
+import SnackbarContext from "@/contexts/SnackbarContext";
 
 // Types
 import { Student, Teacher } from "@/utils/types/person";
@@ -23,6 +31,103 @@ import { nameJoiner } from "@/utils/helpers/name";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
+
+const StarbucksCard: FC = () => {
+  const locale = useLocale();
+  const { t } = useTranslation("lookup", { keyPrefix: "people" });
+
+  const { setSnackbar } = useContext(SnackbarContext);
+
+  const [synthVoices, setSynthVoices] = useState<SpeechSynthesisVoice[]>();
+
+  useEffect(() => {
+    // Get the SpeechSynthesis object
+    const { speechSynthesis } = window;
+
+    // See https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API/Using_the_Web_Speech_API#javascript_2
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+      speechSynthesis.onvoiceschanged = () => {
+        // Read the voices list
+        const voices = speechSynthesis
+          .getVoices()
+          // Filter for voices with key `lang` of `th-TH` or `th_TH`
+          .filter((voice) => /th(-|_)TH/.test(voice.lang));
+
+        // Set the voice list state
+        setSynthVoices(voices);
+      };
+    }
+
+    // Cleanup
+    return () => {
+      speechSynthesis.onvoiceschanged = null;
+    };
+  }, []);
+
+  function handleReadAloud() {
+    // If no Thai voices found, the user is notified of the failure
+    if (!synthVoices?.length) {
+      setSnackbar(<Snackbar>{t("snackbar.thaiSpeechNotSupported")}</Snackbar>);
+      return;
+    }
+
+    // Create the SpeechSynthesisUtterance object
+    const textToUtter = [
+      t("detail.starbucks.order.line1"),
+      t("detail.starbucks.order.line2"),
+    ].join("; ");
+    const utterance = new SpeechSynthesisUtterance(textToUtter);
+
+    // Configure the utterance
+    utterance.lang = "th-TH";
+    utterance.voice =
+      synthVoices.find(
+        (voice) =>
+          voice.voiceURI ===
+          "Microsoft Premwadee Online (Natural) - Thai (Thailand)"
+      ) || null;
+
+    // Speak the utterance
+    speechSynthesis.speak(utterance);
+  }
+
+  return (
+    <Card
+      appearance="outlined"
+      direction="row"
+      className="mx-4 items-start bg-gradient-to-l from-[#82998760] px-4 py-3
+        sm:mx-0 sm:px-5 sm:py-4"
+    >
+      <div className="flex grow flex-col gap-2">
+        <div className="skc-title-medium !font-body" lang="th">
+          <p>{t("detail.starbucks.order.line1")}</p>
+          <p>{t("detail.starbucks.order.line2")}</p>
+        </div>
+        <ChipSet>
+          <AssistChip
+            icon={<MaterialIcon icon="volume_up" />}
+            onClick={handleReadAloud}
+          >
+            {t("detail.starbucks.action.readAloud")}
+          </AssistChip>
+          <AssistChip
+            icon={<MaterialIcon icon="open_in_new" />}
+            href={`https://www.starbucks.co.th/${locale}/delivery-in-app/`}
+            // eslint-disable-next-line react/display-name
+            element={forwardRef((props, ref) => (
+              <a {...props} ref={ref} target="_blank" rel="noreferrer" />
+            ))}
+          >
+            {t("detail.starbucks.action.openStarbucks")}
+          </AssistChip>
+        </ChipSet>
+      </div>
+      <div className="my-1 hidden rounded-full bg-surface p-2 text-primary sm:block">
+        <MaterialIcon icon="auto_awesome" />
+      </div>
+    </Card>
+  );
+};
 
 const GeneralInfoSection: FC<{
   person: Student | Teacher;
@@ -101,6 +206,7 @@ const PersonDetailsContent: FC<{
 
   return (
     <ContentLayout>
+      {person.name["en-US"]?.firstName === "Supannee" && <StarbucksCard />}
       <GeneralInfoSection {...{ person }} />
       {person.contacts.length > 0 && (
         <Section>

@@ -19,6 +19,16 @@
       }
     },
     "detail": {
+      "starbucks": {
+        "order": {
+          "line1": "ชาเขียว Starbucks เย็น แก้วใหญ่ ไม่ใส่ syrup",
+          "line2": "extra green tea 6 ช้อน แยกน้ำแข็ง ฝาโดม"
+        },
+        "action": {
+          "readAloud": "อ่านออกเสียง",
+          "openStarbucks": "เปิด Starbucks"
+        }
+      },
       "general": {
         "fullName": "ชื่อสกุล",
         "class": {
@@ -56,6 +66,9 @@
           "close": "ปิด"
         }
       }
+    },
+    "snackbar": {
+      "thaiSpeechNotSupported": "ขออภัย เบราว์เซอร์ไม่รองรับการออกเสียงภาษาไทย"
     }
   },
   "classes": {
