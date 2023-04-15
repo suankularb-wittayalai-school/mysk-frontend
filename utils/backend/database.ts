@@ -473,9 +473,13 @@ export async function db2Class(
     }
 
     if (classAdvisor) {
-      formatted.classAdvisors = await Promise.all(
-        classAdvisor.map(async (teacher) => await db2Teacher(supabase, teacher))
-      );
+      formatted.classAdvisors = (
+        await Promise.all(
+          classAdvisor.map(
+            async (teacher) => await db2Teacher(supabase, teacher)
+          )
+        )
+      ).sort((a, b) => (a.name.th.firstName > b.name.th.firstName ? 1 : -1));
     }
   }
 
