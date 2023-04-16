@@ -5,6 +5,15 @@ import { FC, ReactNode } from "react";
 // SK Components
 import { transition, useAnimationConfig } from "@suankularb-components/react";
 
+/**
+ * A translucent background blur material that takes up the size of its parent, effectively blocking the parent’s content.
+ * 
+ * @param icon An icon, preferrably a Material Icon instance.
+ * @param open If the Blocking Pane is visible.
+ * @param children An explaination as to why the parent is blocked. Should include at lease 1 `<p>`.
+ * 
+ * @returns A JSX Element.
+ */
 const BlockingPane: FC<{
   icon?: JSX.Element;
   open?: boolean;

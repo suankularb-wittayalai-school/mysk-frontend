@@ -31,11 +31,7 @@ import { NewsItemNoDate } from "@/utils/types/news";
 // Helpers
 import { getLocaleString } from "@/utils/helpers/i18n";
 
-const NewsStatus = ({
-  newsItem,
-}: {
-  newsItem: NewsItemNoDate;
-}): JSX.Element => {
+const NewsStatus: FC<{ newsItem: NewsItemNoDate }> = ({ newsItem }) => {
   return (
     <div
       className={`${

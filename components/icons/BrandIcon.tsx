@@ -1,15 +1,23 @@
+// External libraries
+import type { FC } from "react";
+
 // SK Components
 import { MaterialIcon } from "@suankularb-components/react";
 
-const BrandIcon = ({
-  icon,
-  size,
-}: {
+/**
+ * A vector icon of a brand.
+ * 
+ * @param icon The icon ID.
+ * @param size The size of the icon in pixels. Defaults to 24.
+ * 
+ * @returns A JSX Element.
+ */
+const BrandIcon: FC<{
   icon: "google" | "gg-classroom" | "gg-meet";
   size?: number;
-}): JSX.Element =>
+}> = ({ icon, size }) =>
   icon ? (
-    icon == "google" ? (
+    icon === "google" ? (
       <svg
         width={size?.toString() || "24"}
         height={size?.toString() || "24"}
@@ -24,7 +32,7 @@ const BrandIcon = ({
           fill="currentColor"
         />
       </svg>
-    ) : icon == "gg-classroom" ? (
+    ) : icon === "gg-classroom" ? (
       <svg
         width={size?.toString() || "24"}
         height={size?.toString() || "24"}
@@ -69,7 +77,7 @@ const BrandIcon = ({
           fill="currentColor"
         />
       </svg>
-    ) : icon == "gg-meet" ? (
+    ) : icon === "gg-meet" ? (
       <svg
         width={size?.toString() || "24"}
         height={size?.toString() || "24"}

@@ -15,10 +15,10 @@ import NewsListItem from "@/components/news/NewsListItem";
 // Types
 import { NewsItemNoDate } from "@/utils/types/news";
 
-const NewsFeed: FC<{ news: NewsItemNoDate[]; isForAdmin?: boolean }> = ({
-  news,
-  isForAdmin,
-}): JSX.Element => {
+const NewsFeed: FC<{
+  news: NewsItemNoDate[];
+  isForAdmin?: boolean;
+}> = ({ news, isForAdmin }) => {
   const { duration, easing } = useAnimationConfig();
 
   return (
