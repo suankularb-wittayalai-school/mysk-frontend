@@ -3,6 +3,8 @@ import {
   differenceInMinutes,
   isFuture,
   isPast,
+  isSaturday,
+  isSunday,
   isWithinInterval,
 } from "date-fns";
 
@@ -14,6 +16,11 @@ import { LangCode } from "@/utils/types/common";
 import { Schedule, SchedulePeriod } from "@/utils/types/schedule";
 import { Subject } from "@/utils/types/subject";
 
+/**
+ * The start times of each period (index 0-9; period 1-10).
+ *
+ * Note: `periodTimes[10]` is the end time of period 10.
+ */
 export const periodTimes = [
   { hours: 8, min: 30 },
   { hours: 9, min: 20 },
@@ -28,6 +35,16 @@ export const periodTimes = [
   { hours: 16, min: 50 },
 ];
 
+/**
+ * If a given date is within a given period.
+ *
+ * @param date The date to check against.
+ * @param periodDay The day of the period to check against.
+ * @param periodStart The starting period number of the period to check against.
+ * @param periodDuration The duration of the period to check against.
+ *
+ * @returns A boolean representing whether the given date is within the given period.
+ */
 export function isInPeriod(
   date: Date,
   periodDay: Date,
@@ -54,6 +71,11 @@ export function isInPeriod(
   });
 }
 
+/**
+ * Get the current period number.
+ *
+ * @returns A number from 1 to 10.
+ */
 export function getCurrentPeriod(): number {
   return isPast(new Date().setHours(periodTimes[10].hours, periodTimes[10].min))
     ? 0
@@ -65,7 +87,19 @@ export function getCurrentPeriod(): number {
       ) + 1;
 }
 
+/**
+ * Check if school is in session now.
+ *
+ * @returns
+ * `before` — it’s morning and school haven’t started;
+ * `in-session` — school is in session;
+ * `after` —  it’s after school or it’s the weekend.
+ */
 export function isSchoolInSessionNow(): "before" | "in-session" | "after" {
+  // Weekend check
+  if (isSaturday(new Date()) || isSunday(new Date())) return "after";
+
+  // Time check
   return isFuture(new Date().setHours(periodTimes[0].hours, periodTimes[0].min))
     ? "before"
     : isPast(new Date().setHours(periodTimes[10].hours, periodTimes[10].min))
@@ -98,6 +132,15 @@ export function arePeriodsOverlapping(
   return false;
 }
 
+/**
+ * Converts a curosor position into a Period Location.
+ *
+ * @param x The horizontal position of the cursor on the screen.
+ * @param y The vertical position of the cursor on the screen.
+ * @param constraints The Schedule element, used in getting the bounding rectangle to used as anchor points.
+ *
+ * @returns A Period Location with `startTime` and `day`.
+ */
 export function positionPxToPeriod(x: number, y: number, constraints: Element) {
   // Get rectangle
   const { top, left } = constraints.getBoundingClientRect();
@@ -152,6 +195,15 @@ export function getSubjectName(
       subjectName[locale]?.name || subjectName.th.name;
 }
 
+/**
+ * Creates a Schedule with no Subject Periods (put simply, the `content` arrays
+ * are empty).
+ *
+ * @param startDay The first day of the Schedule (1 to 7; Monday to Sunday).
+ * @param endDay The last day of the Schedule (1 to 7; Monday to Sunday).
+ *
+ * @returns An empty Schedule.
+ */
 export function createEmptySchedule(startDay: Day, endDay?: Day): Schedule {
   return {
     content: range(endDay ? endDay - startDay + 1 : 1).map((day) => ({

@@ -106,16 +106,17 @@ export async function getSchedule(
 
   // Add Supabase data to empty schedule
   for (let incomingPeriod of data!) {
-    // Find the index of the row we want to manipulate
+    // Find the index of the row (day) we want to manipulate
     const scheduleRowIndex = schedule.content.findIndex(
-      (scheduleRow) => incomingPeriod.day == scheduleRow.day
+      (scheduleRow) => incomingPeriod.day === scheduleRow.day
     );
 
-    // Loop through each exisitng period in this row
+    // Loop through each existing period in this row
     const periodIndices = range(
       schedule.content[scheduleRowIndex].content.length
     );
     for (let idx of periodIndices) {
+      // The current period that exists in the Schedule
       const schedulePeriod = schedule.content[scheduleRowIndex].content[idx];
 
       // If there is no period at this index, skip it
@@ -144,6 +145,7 @@ export async function getSchedule(
         role
       );
 
+      // Add teacher and coteacher data to the subject
       processedPeriod.content[0].subject = {
         ...processedPeriod.content[0].subject,
         teachers: [
@@ -158,7 +160,7 @@ export async function getSchedule(
       };
 
       // Replace empty period
-      if (schedulePeriod.content.length == 0) {
+      if (schedulePeriod.content.length === 0) {
         schedule.content[scheduleRowIndex].content[idx] = processedPeriod;
         // Remove empty periods that is now overlapping the new incoming period
         schedule.content[scheduleRowIndex].content.splice(
@@ -168,6 +170,12 @@ export async function getSchedule(
         continue;
       }
 
+      // After this point, we’re dealing with combining many overlapping
+      // subjects into 1 period, or an Elective Period, to put simply. This
+      // does not apply to teachers as a teacher cannot be teaching 2 classes
+      // at once, so we can just ignore it.
+      if (role === "teacher") continue;
+
       // If a period already exists here, just adjust duration and modify the
       // `subjects` array
       if (schedulePeriod.duration < incomingPeriod.duration)
@@ -175,6 +183,7 @@ export async function getSchedule(
       schedulePeriod.content = schedulePeriod.content.concat(
         processedPeriod.content
       );
+
       schedule.content[scheduleRowIndex].content[idx] = schedulePeriod;
     }
   }
