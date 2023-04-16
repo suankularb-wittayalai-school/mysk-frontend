@@ -139,7 +139,6 @@ const GeneralInfoSection: FC<{
     <Section className="!grid grid-cols-2 !gap-x-6 md:grid-cols-4">
       {/* Full name */}
       <DetailSection
-        id="full-name"
         title={t("people.detail.general.fullName")}
         className="col-span-2 sm:col-span-1 md:col-span-2"
       >
@@ -157,10 +156,7 @@ const GeneralInfoSection: FC<{
 
       {/* Class */}
       {person.role === "student" && (
-        <DetailSection
-          id="class"
-          title={t("people.detail.general.class.title")}
-        >
+        <DetailSection title={t("people.detail.general.class.title")}>
           <span className="block">
             {t("class", { ns: "common", number: person.class.number })}
           </span>
@@ -172,7 +168,7 @@ const GeneralInfoSection: FC<{
         </DetailSection>
       )}
       {person.role === "teacher" && person.classAdvisorAt && (
-        <DetailSection id="class-advisor-at" title="Class advisor at">
+        <DetailSection title="Class advisor at">
           <span>
             {t("class", {
               ns: "common",
@@ -183,10 +179,7 @@ const GeneralInfoSection: FC<{
       )}
 
       {/* Birthdate */}
-      <DetailSection
-        id="birthdate"
-        title={t("people.detail.general.birthdate")}
-      >
+      <DetailSection title={t("people.detail.general.birthdate")}>
         <time>
           {new Date(person.birthdate).toLocaleDateString(locale, {
             day: "numeric",
