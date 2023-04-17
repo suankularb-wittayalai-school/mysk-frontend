@@ -1,23 +1,13 @@
 {
-  "title": "About me",
+  "title": "About",
   "basicInfo": {
-    "profileAlt": "A picture of you",
     "classAndNo": "M.{{class}} No. {{classNo}}",
-    "subjectGroup": "Teacher in {{subjectGroup}}",
     "classAdvisorAt": "Class advisor at M.{{classAdvisorAt}}"
   },
-  "editInfo": {
-    "title": "Personal information",
-    "requestInfo": "You can request changes to your personal information. Administrators will review your request and approve the changes as they see fit.",
-    "action": {
-      "sendRequest": "Send request",
-      "save": "Save"
-    }
-  },
   "action": {
-    "changePassword": "Change password",
-    "goToAdmin": "Go to Admin Panel",
-    "logOut": "Log out"
+    "chat": "Chat",
+    "logOut": "Log out",
+    "changePassword": "Change password"
   },
   "logIn": {
     "title": "Log in",

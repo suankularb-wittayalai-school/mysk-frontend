@@ -1,14 +1,13 @@
 {
   "title": "บัญชีผู้ใช้",
   "basicInfo": {
-    "profileAlt": "รูปของคุณ",
     "classAndNo": "ม.{{class}} เลขที่ {{classNo}}",
-    "subjectGroup": "กลุ่มสาระการเรียนรู้{{subjectGroup}}",
     "classAdvisorAt": "ครูที่ปรึกษา ม.{{classAdvisorAt}}"
   },
   "action": {
-    "changePassword": "เปลี่ยนรหัสผ่าน",
-    "logOut": "ออกจากระบบ"
+    "chat": "การสนทนา",
+    "logOut": "ออกจากระบบ",
+    "changePassword": "เปลี่ยนรหัสผ่าน"
   },
   "logIn": {
     "title": "เข้าสู่ระบบ",
