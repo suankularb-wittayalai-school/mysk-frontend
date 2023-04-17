@@ -159,12 +159,16 @@
     },
     "changePassword": {
       "title": "Change password",
-      "supportingText": "If you are still using the default password, changing it is highly recommended.",
+      "desc": "Verify your identity by entering your current password, then change the password by entering your new password twice.",
       "originalPwd": "Current password",
       "newPwd": "New password",
       "newPwd_error": "Lengthen to at least 8 characters.",
       "confirmNewPwd": "Confirm new password",
       "confirmNewPwd_error": "Check if you repeated the new password exactly.",
+      "snackbar": {
+        "invalidPwd": "The original password is incorrect",
+        "success": "Your password has been changed."
+      },
       "action": {
         "cancel": "Cancel",
         "save": "Save"
