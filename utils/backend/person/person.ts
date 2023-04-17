@@ -3,20 +3,21 @@ import { User } from "@supabase/supabase-js";
 
 // Backend
 import { createContact } from "@/utils/backend/contact";
-import { db2PersonName, db2Student } from "@/utils/backend/database";
-import { getTeacherFromUser } from "@/utils/backend/person/teacher";
 import { getCurrentAcademicYear } from "@/utils/helpers/date";
+
+// Converters
+import {
+  db2PersonName,
+  db2Student,
+  db2Teacher,
+} from "@/utils/backend/database";
 
 // Supabase
 import { supabase } from "@/utils/supabase-client";
 
 // Types
-import {
-  BackendDataReturn,
-  DatabaseClient,
-  LangCode,
-} from "@/utils/types/common";
 import { ClassWNumber } from "@/utils/types/class";
+import { BackendDataReturn, DatabaseClient } from "@/utils/types/common";
 import { Contact } from "@/utils/types/contact";
 import {
   Person,
@@ -242,28 +243,61 @@ export async function setupPerson(
   return { data: updPerson!, error: null };
 }
 
+/**
+ * Reads the metadata of a user and fetches the corresponding Student or
+ * Teacher.
+ * 
+ * @param supabase An instance of the Supabase client.
+ * @param user A Supabase user.
+ * @param options The options parameter of {@link db2Student} or {@link db2Teacher}.
+ * 
+ * @return A Backend Data Return with a Student or a Teacher.
+ */
 export async function getPersonFromUser(
   supabase: DatabaseClient,
   user: User,
-  options?: Partial<{ contacts: boolean }>
+  options?: Parameters<typeof db2Student | typeof db2Teacher>["2"]
 ): Promise<BackendDataReturn<Student | Teacher, null>> {
-  if (user?.user_metadata.role == "student") {
-    const { data: student, error: studentError } = await supabase
+  // If the user is a Student
+  if (user?.user_metadata.role === "student") {
+    const { data, error } = await supabase
       .from("student")
       .select("*, person(*)")
       .match({ id: user.user_metadata.student })
       .limit(1)
       .single();
 
-    if (studentError) {
-      console.error(studentError);
-      return { data: null, error: studentError };
+    if (error) {
+      console.error(error);
+      return { data: null, error };
     }
 
-    return { data: await db2Student(supabase, student!, options), error: null };
-  } else if (user?.user_metadata.role == "teacher")
-    return getTeacherFromUser(supabase, user);
+    return { data: await db2Student(supabase, data!, options), error: null };
+  } 
+  
+  // If the user is a Teacher
+  if (user?.user_metadata.role === "teacher") {
+    const { data, error } = await supabase
+      .from("teacher")
+      .select("*, person(*), subject_group(*)")
+      .match({ id: user.user_metadata.teacher })
+      .single();
 
+    if (error) {
+      console.error(error);
+      return { data: null, error };
+    }
+
+    return {
+      data: {
+        ...(await db2Teacher(supabase, data!, options)),
+        isAdmin: user.user_metadata.isAdmin,
+      },
+      error: null,
+    };
+  }
+
+  // Otherwise, the user has an invalid role
   return { data: null, error: { message: "invalid role." } };
 }
 

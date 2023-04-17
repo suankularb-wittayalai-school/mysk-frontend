@@ -1,9 +1,8 @@
-// External libraries
-import { SupabaseClient, User } from "@supabase/supabase-js";
-
 // Backend
-import { db2Teacher } from "@/utils/backend/database";
 import { createPerson } from "@/utils/backend/person/person";
+
+// Converters
+import { db2Teacher } from "@/utils/backend/database";
 
 // Helpers
 import { getCurrentAcademicYear } from "@/utils/helpers/date";
@@ -12,6 +11,7 @@ import { getCurrentAcademicYear } from "@/utils/helpers/date";
 import { nameJoiner } from "@/utils/helpers/name";
 
 // Types
+import { IndividualOnboardingStatus } from "@/utils/types/admin";
 import { ClassWNumber } from "@/utils/types/class";
 import {
   BackendDataReturn,
@@ -19,7 +19,6 @@ import {
   DatabaseClient,
   LangCode,
 } from "@/utils/types/common";
-import { IndividualOnboardingStatus } from "@/utils/types/admin";
 import { ImportedTeacherData, Teacher } from "@/utils/types/person";
 import { Database } from "@/utils/types/supabase";
 
@@ -46,30 +45,6 @@ export async function getTeacher(
       contacts: true,
       classAdvisorAt: true,
     }),
-    error: null,
-  };
-}
-
-export async function getTeacherFromUser(
-  supabase: DatabaseClient,
-  user: User
-): Promise<BackendDataReturn<Teacher, null>> {
-  const { data, error } = await supabase
-    .from("teacher")
-    .select("*, person(*), subject_group(*)")
-    .match({ id: user.user_metadata.teacher })
-    .single();
-
-  if (error) {
-    console.error(error);
-    return { data: null, error };
-  }
-
-  return {
-    data: {
-      ...(await db2Teacher(supabase, data!)),
-      isAdmin: user.user_metadata.isAdmin,
-    },
     error: null,
   };
 }
