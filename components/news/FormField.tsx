@@ -43,7 +43,7 @@ const FormField: FC<{
     <div>
       <div
         aria-labelledby={`form-field-${field.id}`}
-        className="skc-title-small pt-2 pb-3"
+        className="skc-title-small pb-3 pt-2"
       >
         {getLocaleString(field.label, locale)}
       </div>

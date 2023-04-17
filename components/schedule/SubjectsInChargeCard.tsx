@@ -20,7 +20,7 @@ const SubjectsInChargeCard: FC<{ subjects: SubjectWNameAndCode[] }> = ({
   return (
     <Card
       appearance="filled"
-      className="mx-4 min-h-[3rem] gap-2 px-4 pt-2 pb-4 sm:mx-0 sm:!flex-row
+      className="mx-4 min-h-[3rem] gap-2 px-4 pb-4 pt-2 sm:mx-0 sm:!flex-row
         sm:items-center sm:gap-4 sm:py-2"
     >
       <h3 className="skc-title-medium whitespace-nowrap">

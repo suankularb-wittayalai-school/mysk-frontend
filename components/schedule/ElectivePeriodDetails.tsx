@@ -56,7 +56,7 @@ const SubjectPeriodCard: FC<{
           </time>
         </div>
       </div>
-      <Columns columns={2} className="px-4 pt-2 pb-3">
+      <Columns columns={2} className="px-4 pb-3 pt-2">
         <PeriodDetailsContent period={subject} />
       </Columns>
     </Card>

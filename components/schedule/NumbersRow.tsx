@@ -11,13 +11,13 @@ const NumbersRow: FC = () => {
       <ul className="mb-1 flex w-fit flex-row gap-2">
         <li
           aria-hidden
-          className="z-20 -mt-1 -mb-2 w-36 bg-background pt-1 pb-2 sm:sticky sm:left-0"
+          className="z-20 -mb-2 -mt-1 w-36 bg-background pb-2 pt-1 sm:sticky sm:left-0"
         />
         {range(10, 1).map((i) => (
           <li
             key={i}
             className="flex w-24 flex-row items-center gap-2 rounded-sm
-              bg-surface-2 py-2 px-4"
+              bg-surface-2 px-4 py-2"
           >
             <span className="skc-title-small !leading-none">{i}</span>
             <span className="skc-label-small !leading-none text-on-surface-variant opacity-80">
