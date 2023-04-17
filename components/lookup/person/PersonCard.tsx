@@ -69,13 +69,16 @@ const PersonCard: FC<{
           })}
       className={cn([
         "!border-transparent !bg-transparent text-left",
+        thisSelected && `sm:!border-outline-variant`,
         person.role === "teacher"
           ? thisSelected
             ? `sm:!bg-secondary-container sm:!text-on-secondary-container
-               sm:focus:!border-secondary sm:state-layer:!bg-on-secondary-container`
+               sm:focus:!border-secondary
+               sm:state-layer:!bg-on-secondary-container`
             : `state-layer:!bg-secondary`
           : thisSelected &&
-            `sm:!bg-primary-container sm:!text-on-primary-container`,
+            `sm:!bg-primary-container sm:!text-on-primary-container
+             sm:focus:!border-primary`,
       ])}
     >
       <CardHeader

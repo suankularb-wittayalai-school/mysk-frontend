@@ -39,10 +39,10 @@ const TeacherDetailsPage: CustomPage<{ teacher: Teacher }> = ({ teacher }) => {
       </Head>
       <MySKPageHeader
         title={nameJoiner(locale, teacher.name)}
-        parentURL="/lookup/person"
+        parentURL="/class/teacher"
         className="!overflow-visible"
       >
-        <PersonActions person={teacher} suggestionsType="full" />
+        <PersonActions person={teacher} suggestionsType="share-only" />
         <DynamicAvatar
           profile={teacher.profile}
           className="relative z-[80] -mb-12 -mt-6 !h-20 !w-20 self-end"

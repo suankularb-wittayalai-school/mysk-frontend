@@ -362,10 +362,12 @@ export async function getLookupClasses(
     data: data.map((classItem) => ({
       id: classItem.id,
       number: classItem.number,
-      classAdvisors: classItem.advisors.map((advisor) => {
-        const teacher = teachers?.find((teacher) => advisor === teacher.id)!;
-        return { id: teacher.id, ...db2PersonName(teacher.person) };
-      }),
+      classAdvisors: classItem.advisors
+        .map((advisor) => {
+          const teacher = teachers?.find((teacher) => advisor === teacher.id)!;
+          return { id: teacher.id, ...db2PersonName(teacher.person) };
+        })
+        .sort((a, b) => (a.name.th.firstName > b.name.th.firstName ? 1 : -1)),
       studentCount: classItem.students.length,
     })),
     error: null,

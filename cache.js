@@ -104,26 +104,23 @@ module.exports = [
       },
     },
   },
-
-  // (@SiravitPhokeed)
-  // It seems this cache entry is causing trouble. I’ll be the first to admit
-  // that I’m not sure I fully understand this, but since `getServerSideProps`
-  // and `getStaticProps` sometimes fail to pass data to the pages, I think
-  // there might be problems with the default caching method, so I removed it.
-  // Surprisingly, everything works fine, and no more missing data. Huh.
-
-  // {
-  //   urlPattern: /\/_next\/data\/.+\/.+\.json$/i,
-  //   handler: "StaleWhileRevalidate",
-  //   options: {
-  //     cacheName: "next-data",
-  //     expiration: {
-  //       maxEntries: 32,
-  //       maxAgeSeconds: 24 * 60 * 60, // 24 hours
-  //     },
-  //   },
-  // },
-
+  {
+    urlPattern: /\/_next\/data\/.+\/.+\.json$/i,
+    // (@SiravitPhokeed)
+    // This is supposed to be `StaleWhileRevalidate`, but with that set,
+    // Next.js data seems to always be missing. With `NetworkFirst`, the data
+    // is only missing sometimes when offline. This works for some reason, and
+    // I would very much like to know why.
+    handler: "NetworkFirst",
+    options: {
+      cacheName: "next-data",
+      expiration: {
+        maxEntries: 32,
+        maxAgeSeconds: 24 * 60 * 60, // 24 hours
+      },
+      networkTimeoutSeconds: 10,
+    },
+  },
   {
     urlPattern: /\.(?:json|xml|csv)$/i,
     handler: "NetworkFirst",
@@ -140,8 +137,10 @@ module.exports = [
       const isSameOrigin = self.origin === url.origin;
       if (!isSameOrigin) return false;
       const pathname = url.pathname;
-      // Exclude /api/auth/callback/* to fix OAuth workflow in Safari without impact other environment
-      // Above route is default for next-auth, you may need to change it if your OAuth workflow has a different callback route
+      // Exclude /api/auth/callback/* to fix OAuth workflow in Safari without
+      // impact other environment.
+      // Above route is default for next-auth, you may need to change it if
+      // your OAuth workflow has a different callback route.
       // Issue: https://github.com/shadowwalker/next-pwa/issues/131#issuecomment-821894809
       if (pathname.startsWith("/api/auth/")) return false;
       if (pathname.startsWith("/api/")) return true;

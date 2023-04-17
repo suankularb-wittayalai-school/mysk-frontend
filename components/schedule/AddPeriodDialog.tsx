@@ -119,7 +119,12 @@ const AddPeriodDialog: SubmittableDialogComponent<
   }
 
   return (
-    <Dialog open={open} width={360} onClose={onClose}>
+    <Dialog
+      open={open}
+      width={360}
+      onClose={onClose}
+      className="[&_.skc-text-field\_\_label]:!bg-surface-3"
+    >
       <DialogHeader
         title={t("dialog.editPeriod.title.add")}
         desc={t("dialog.editPeriod.addDesc", {

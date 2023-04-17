@@ -1,16 +1,16 @@
+// External libraries
+import type { FC } from "react";
+
 // SK Components
 import { MaterialIcon } from "@suankularb-components/react";
 
 // Types
 import { NewsItemType } from "@/utils/types/news";
 
-const NewsIcon = ({
-  type,
-  className,
-}: {
+const NewsIcon: FC<{
   type: NewsItemType;
   className?: string;
-}): JSX.Element => {
+}> = ({ type, className }) => {
   if (type == "stats")
     return <MaterialIcon icon="monitoring" className={className} />;
   else if (type == "form")

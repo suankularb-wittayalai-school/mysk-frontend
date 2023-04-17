@@ -8,8 +8,8 @@ import { supabase } from "@/utils/supabase-client";
 import { PeriodContentItem } from "@/utils/types/schedule";
 
 export async function isOverlappingExistingItems(
-  day: Day,
-  schedulePeriod: PeriodContentItem,
+  day: number,
+  schedulePeriod: Pick<PeriodContentItem, "id" | "startTime" | "duration">,
   teacherID: number
 ): Promise<boolean> {
   // Get the Schedule Items taught by this teacher in that day
@@ -27,7 +27,7 @@ export async function isOverlappingExistingItems(
   // Check for overlap
   for (let item of itemsSameTeacher) {
     if (
-      item.id != schedulePeriod.id &&
+      item.id !== schedulePeriod.id &&
       arePeriodsOverlapping(
         {
           startTime: schedulePeriod.startTime,

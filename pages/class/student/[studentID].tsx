@@ -15,7 +15,7 @@ import PersonActions from "@/components/lookup/person/PersonActions";
 import PersonDetailsContent from "@/components/lookup/person/PersonDetailsContent";
 
 // Backend
-import { getTeacher } from "@/utils/backend/person/teacher";
+import { getStudent } from "@/utils/backend/person/student";
 
 // Helpers
 import { nameJoiner } from "@/utils/helpers/name";
@@ -26,29 +26,29 @@ import { useLocale } from "@/utils/hooks/i18n";
 
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { Teacher } from "@/utils/types/person";
+import { Student } from "@/utils/types/person";
 
-const TeacherDetailsPage: CustomPage<{ teacher: Teacher }> = ({ teacher }) => {
+const StudentDetailsPage: CustomPage<{ student: Student }> = ({ student }) => {
   const locale = useLocale();
   const { t } = useTranslation("common");
 
   return (
     <>
       <Head>
-        <title>{createTitleStr(nameJoiner(locale, teacher.name), t)}</title>
+        <title>{createTitleStr(nameJoiner(locale, student.name), t)}</title>
       </Head>
       <MySKPageHeader
-        title={nameJoiner(locale, teacher.name)}
-        parentURL="/lookup/person"
+        title={nameJoiner(locale, student.name)}
+        parentURL="/class/student"
         className="!overflow-visible"
       >
-        <PersonActions person={teacher} suggestionsType="full" />
+        <PersonActions person={student} suggestionsType="share-only" />
         <DynamicAvatar
-          profile={teacher.profile}
+          profile={student.profile}
           className="relative z-[80] -mb-12 -mt-6 !h-20 !w-20 self-end"
         />
       </MySKPageHeader>
-      <PersonDetailsContent person={teacher} />
+      <PersonDetailsContent person={student} />
     </>
   );
 };
@@ -59,14 +59,14 @@ export const getServerSideProps: GetServerSideProps = async ({
   req,
   res,
 }) => {
-  const teacherID = Number(params?.teacherID);
+  const studentID = Number(params?.studentID);
 
   const supabase = createServerSupabaseClient({
     req: req as NextApiRequest,
     res: res as NextApiResponse,
   });
 
-  const { data: teacher, error } = await getTeacher(supabase, teacherID);
+  const { data: student, error } = await getStudent(supabase, studentID);
   if (error) return { notFound: true };
 
   return {
@@ -75,9 +75,9 @@ export const getServerSideProps: GetServerSideProps = async ({
         "common",
         "lookup",
       ])),
-      teacher,
+      student,
     },
   };
 };
 
-export default TeacherDetailsPage;
+export default StudentDetailsPage;

@@ -127,8 +127,9 @@ const Layout: FC<
               element={Link}
             />
           )}
-          {navType === "student" ||
-          (navType === "teacher" && isClassAdvisor) ? (
+          {((navType || userMetadata?.role) === "student" ||
+            ((navType || userMetadata?.role) === "teacher" &&
+              isClassAdvisor)) && (
             <NavDrawerItem
               icon={<MaterialIcon icon="groups" />}
               label={t("navigation.class")}
@@ -136,8 +137,6 @@ const Layout: FC<
               href="/class"
               element={Link}
             />
-          ) : (
-            <></>
           )}
           <NavDrawerItem
             icon={<MaterialIcon icon="search" />}
@@ -264,7 +263,7 @@ const Layout: FC<
           }
           onNavToggle={() => setNavOpen(true)}
         >
-          {userMetadata?.role === "teacher" || navType === "teacher" ? (
+          {(navType || userMetadata?.role) === "teacher" ? (
             <NavBarItem
               icon={<MaterialIcon icon="school" />}
               label={t("navigation.teach")}
@@ -281,9 +280,9 @@ const Layout: FC<
               element={Link}
             />
           )}
-          {(!navType ||
-            navType === "student" ||
-            (navType === "teacher" && isClassAdvisor)) && (
+          {((navType || userMetadata?.role) === "student" ||
+            ((navType || userMetadata?.role) === "teacher" &&
+              isClassAdvisor)) && (
             <NavBarItem
               icon={<MaterialIcon icon="groups" />}
               label={t("navigation.class")}

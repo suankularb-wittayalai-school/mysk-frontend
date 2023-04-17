@@ -106,16 +106,17 @@ export async function getSchedule(
 
   // Add Supabase data to empty schedule
   for (let incomingPeriod of data!) {
-    // Find the index of the row we want to manipulate
+    // Find the index of the row (day) we want to manipulate
     const scheduleRowIndex = schedule.content.findIndex(
-      (scheduleRow) => incomingPeriod.day == scheduleRow.day
+      (scheduleRow) => incomingPeriod.day === scheduleRow.day
     );
 
-    // Loop through each exisitng period in this row
+    // Loop through each existing period in this row
     const periodIndices = range(
       schedule.content[scheduleRowIndex].content.length
     );
     for (let idx of periodIndices) {
+      // The current period that exists in the Schedule
       const schedulePeriod = schedule.content[scheduleRowIndex].content[idx];
 
       // If there is no period at this index, skip it
@@ -144,6 +145,7 @@ export async function getSchedule(
         role
       );
 
+      // Add teacher and coteacher data to the subject
       processedPeriod.content[0].subject = {
         ...processedPeriod.content[0].subject,
         teachers: [
@@ -158,7 +160,7 @@ export async function getSchedule(
       };
 
       // Replace empty period
-      if (schedulePeriod.content.length == 0) {
+      if (schedulePeriod.content.length === 0) {
         schedule.content[scheduleRowIndex].content[idx] = processedPeriod;
         // Remove empty periods that is now overlapping the new incoming period
         schedule.content[scheduleRowIndex].content.splice(
@@ -168,6 +170,12 @@ export async function getSchedule(
         continue;
       }
 
+      // After this point, we’re dealing with combining many overlapping
+      // subjects into 1 period, or an Elective Period, to put simply. This
+      // does not apply to teachers as a teacher cannot be teaching 2 classes
+      // at once, so we can just ignore it.
+      if (role === "teacher") continue;
+
       // If a period already exists here, just adjust duration and modify the
       // `subjects` array
       if (schedulePeriod.duration < incomingPeriod.duration)
@@ -175,6 +183,7 @@ export async function getSchedule(
       schedulePeriod.content = schedulePeriod.content.concat(
         processedPeriod.content
       );
+
       schedule.content[scheduleRowIndex].content[idx] = schedulePeriod;
     }
   }
@@ -232,6 +241,21 @@ export async function createScheduleItem(
   },
   teacherID: number
 ): Promise<BackendReturn> {
+  // Check overlap
+  if (
+    await isOverlappingExistingItems(
+      form.day as Day,
+      { startTime: form.startTime, duration: form.duration },
+      teacherID
+    )
+  )
+    return {
+      error: {
+        message:
+          "new period duration causes it to overlap with other relevant periods.",
+      },
+    };
+
   const { data: classID, error: classError } = await getClassIDFromNumber(
     supabase,
     form.class
@@ -288,12 +312,20 @@ export async function editScheduleItem(
 
 export async function moveScheduleItem(
   supabase: DatabaseClient,
-  newDay: Day,
-  newSchedulePeriod: PeriodContentItem,
+  day: Day,
+  schedulePeriod: PeriodContentItem,
   teacherID: number
 ): Promise<BackendReturn> {
+  // Cap start time
+  schedulePeriod.startTime = Math.min(
+    // A period must not exceed the left edge of the Schedule
+    Math.max(schedulePeriod.startTime, 1),
+    // A period must not exceed the right edge of the Schedule
+    10 - schedulePeriod.duration + 1
+  );
+
   // Check overlap
-  if (await isOverlappingExistingItems(newDay, newSchedulePeriod, teacherID))
+  if (await isOverlappingExistingItems(day, schedulePeriod, teacherID))
     return {
       error: {
         message:
@@ -303,8 +335,8 @@ export async function moveScheduleItem(
 
   const { error } = await supabase
     .from("schedule_items")
-    .update({ day: newDay, start_time: newSchedulePeriod.startTime })
-    .match({ id: newSchedulePeriod.id });
+    .update({ day: day, start_time: schedulePeriod.startTime })
+    .match({ id: schedulePeriod.id });
 
   if (error) console.error(error);
 
@@ -318,9 +350,14 @@ export async function editScheduleItemDuration(
   teacherID: number
 ): Promise<BackendReturn> {
   // Cap duration
-  if (schedulePeriod.duration < 1) schedulePeriod.duration = 1;
-  else if (schedulePeriod.duration > 10) schedulePeriod.duration = 10;
+  schedulePeriod.duration = Math.min(
+    // A period must be at least 1 duration long
+    Math.max(schedulePeriod.duration, 1),
+    // A period must not exceed the right edge of the Schedule
+    10 - schedulePeriod.startTime + 1
+  );
 
+  // A period must not overlap other relevant periods
   if (await isOverlappingExistingItems(day, schedulePeriod, teacherID))
     return {
       error: {
@@ -329,7 +366,7 @@ export async function editScheduleItemDuration(
       },
     };
 
-  // If overlap, end the function; if not, push the update
+  // Save the change
   const { error } = await supabase
     .from("schedule_items")
     .update({ duration: schedulePeriod.duration })

@@ -74,7 +74,7 @@ const PersonActions: FC<{
 
   return (
     <>
-      <ChipSet>
+      <ChipSet className="[&~.skc-scrim]:mx-0">
         {suggestionsType !== "share-only" && classItem && (
           <>
             {/* See class */}

@@ -19,6 +19,12 @@
       }
     },
     "detail": {
+      "starbucks": {
+        "action": {
+          "readAloud": "Read aloud",
+          "openStarbucks": "Open Starbucks"
+        }
+      },
       "general": {
         "fullName": "Full name",
         "class": {
@@ -56,6 +62,9 @@
           "close": "Close"
         }
       }
+    },
+    "snackbar": {
+      "thaiSpeechNotSupported": "Your browser doesn’t support Thai text-to-speech"
     }
   },
   "classes": {

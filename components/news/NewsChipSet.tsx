@@ -6,6 +6,8 @@ import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 
+import type { FC } from "react";
+
 // SK Components
 import { InputChip, ChipSet, MaterialIcon } from "@suankularb-components/react";
 
@@ -13,13 +15,9 @@ import { InputChip, ChipSet, MaterialIcon } from "@suankularb-components/react";
 import { LangCode } from "@/utils/types/common";
 import { NewsItemNoDate } from "@/utils/types/news";
 
-// Helpers
-
-const NewsChipSet = ({
-  newsItem,
-}: {
+const NewsChipSet: FC<{
   newsItem: NewsItemNoDate;
-}): JSX.Element => {
+}> = ({ newsItem }) => {
   const { t } = useTranslation("news");
   const locale = useRouter().locale as LangCode;
 

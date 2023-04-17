@@ -1,5 +1,6 @@
 // External libraries
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { FC, useState } from "react";
@@ -52,7 +53,7 @@ const AdvisorsSection: FC<{ advisors: Teacher[] }> = ({ advisors }) => {
             appearance="outlined"
             stateLayerEffect
             href={`/lookup/person?id=${teacher.id}&role=teacher`}
-            aAttr={{ target: "_blank", rel: "noreferrer" }}
+            element={Link}
           >
             <CardHeader
               avatar={<DynamicAvatar profile={teacher.profile} />}
