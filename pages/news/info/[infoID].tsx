@@ -44,7 +44,7 @@ const InfoPage: CustomPage<{ infoPage: InfoPageType }> = ({ infoPage }) => {
       <ContentLayout>
         <Columns columns={6}>
           <div
-            className="skc-body-large col-span-2 mx-4 -my-5 sm:col-span-4
+            className="skc-body-large col-span-2 -my-5 mx-4 sm:col-span-4
               sm:mx-0 md:col-start-2"
           >
             <Markdown>
