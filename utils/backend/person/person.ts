@@ -246,11 +246,11 @@ export async function setupPerson(
 /**
  * Reads the metadata of a user and fetches the corresponding Student or
  * Teacher.
- * 
+ *
  * @param supabase An instance of the Supabase client.
  * @param user A Supabase user.
  * @param options The options parameter of {@link db2Student} or {@link db2Teacher}.
- * 
+ *
  * @return A Backend Data Return with a Student or a Teacher.
  */
 export async function getPersonFromUser(
@@ -273,8 +273,8 @@ export async function getPersonFromUser(
     }
 
     return { data: await db2Student(supabase, data!, options), error: null };
-  } 
-  
+  }
+
   // If the user is a Teacher
   if (user?.user_metadata.role === "teacher") {
     const { data, error } = await supabase
