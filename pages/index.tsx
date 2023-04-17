@@ -194,7 +194,7 @@ const ImageSection: FC = () => (
         height={1080}
         priority
         alt=""
-        className="relative md:absolute md:right-[-10.5rem] md:left-[-10.5rem]
+        className="relative md:absolute md:left-[-10.5rem] md:right-[-10.5rem]
           md:top-1/2 md:-translate-y-1/2"
       />
     </div>
@@ -279,8 +279,8 @@ const IndexPage: CustomPage = () => {
         />
       </Head>
       <ContentLayout
-        className="sm:to-60% -mb-20 bg-gradient-to-b from-surface-5
-          to-transparent bg-fixed !pb-6 !pt-0 sm:mb-0 md:!py-12"
+        className="-mb-20 bg-gradient-to-b from-surface-5 to-transparent
+          to-60% bg-fixed !pb-6 !pt-0 sm:mb-0 md:!py-12"
       >
         {/* 6rem is the combined padding height put on Content Layout */}
         <div
