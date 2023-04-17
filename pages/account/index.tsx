@@ -11,7 +11,7 @@ import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import type { FC } from "react";
+import { FC, useState } from "react";
 
 // SK Components
 import {
@@ -42,6 +42,7 @@ import { useLocale } from "@/utils/hooks/i18n";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Student, Teacher } from "@/utils/types/person";
 import { SubjectGroup } from "@/utils/types/subject";
+import ChangePasswordDialog from "@/components/account/ChangePasswordDialog";
 
 /**
  * The most basic information about a Person, their name and their role inside
@@ -54,6 +55,9 @@ import { SubjectGroup } from "@/utils/types/subject";
 const BasicInfoSection: FC<{ person: Student | Teacher }> = ({ person }) => {
   const locale = useLocale();
   const { t } = useTranslation("account");
+
+  // Dialog control
+  const [changePwdOpen, setChangePwdOpen] = useState<boolean>(false);
 
   return (
     <section className="mx-4 flex flex-col gap-4 sm:mx-0">
@@ -115,9 +119,17 @@ const BasicInfoSection: FC<{ person: Student | Teacher }> = ({ person }) => {
         </Button>
 
         {/* Change password */}
-        <Button appearance="outlined" icon={<MaterialIcon icon="password" />}>
+        <Button
+          appearance="outlined"
+          icon={<MaterialIcon icon="password" />}
+          onClick={() => setChangePwdOpen(true)}
+        >
           {t("action.changePassword")}
         </Button>
+        <ChangePasswordDialog
+          open={changePwdOpen}
+          onClose={() => setChangePwdOpen(false)}
+        />
       </Actions>
     </section>
   );

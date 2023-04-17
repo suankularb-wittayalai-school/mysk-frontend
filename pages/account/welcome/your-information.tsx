@@ -156,7 +156,7 @@ const RoleSection: FC<{
   return (
     <Section>
       <Header level={3}>{t("profile.role.title")}</Header>
-      <Columns columns={4} className="mt-3 mb-8 !gap-y-12">
+      <Columns columns={4} className="mb-8 mt-3 !gap-y-12">
         <Select
           appearance="outlined"
           label={t("profile.role.subjectGroup")}

@@ -94,7 +94,7 @@ const NoticesSection: FC = () => {
       <Card
         appearance="outlined"
         direction="row"
-        className="items-center gap-3 py-3 px-4"
+        className="items-center gap-3 px-4 py-3"
       >
         <MaterialIcon icon="warning" className="text-error" />
         <p>{t("instructions.notices.warning")}</p>
