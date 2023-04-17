@@ -4,7 +4,11 @@ import type { AppProps } from "next/app";
 
 import type { FC, ReactNode } from "react";
 
-import type { PostgrestError, SupabaseClient } from "@supabase/supabase-js";
+import type {
+  AuthError,
+  PostgrestError,
+  SupabaseClient,
+} from "@supabase/supabase-js";
 
 import type { ColumnDef } from "@tanstack/react-table";
 
@@ -88,7 +92,7 @@ export type SubmittableDialogProps<T = () => void> = DialogProps & {
 };
 
 export type BackendReturn = { error: Partial<PostgrestError> | null };
-
+export type BackendAuthReturn = { error: Partial<AuthError> | null };
 export type BackendDataReturn<T, U = []> =
   | { data: T; error: null }
   | { data: U; error: Partial<PostgrestError> };
