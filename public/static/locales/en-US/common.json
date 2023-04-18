@@ -111,6 +111,7 @@
   "seeDetails": "See details",
   "snackbar": {
     "loading": "Loading…",
+    "changesSaved": "Changes saved",
     "error": "Error: {{errorMsg}}",
     "failure": "Task failed, please try again",
     "formInvalid": "Check the form and try again",
