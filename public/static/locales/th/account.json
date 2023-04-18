@@ -56,7 +56,7 @@
         "teacher": "อาจารย์"
       },
       "subjectGroup": "กลุ่มสาระการเรียนรู้",
-      "subjectGroup_helper": "เลือก “อาจารย์พิเศษ” หากไม่อยู่ในกลุ่มสาระฯ ใด ๆ",
+      "subjectGroup_helper": "เลือก “อาจารย์พิเศษ” หากไม่อยู่ในกลุ่มสาระฯ ใด ๆ",
       "classAdvisorAt": "ห้องที่เป็นครูที่ปรึกษา",
       "classAdvisorAt_helper": "ต้องมี 3 หลัก เช่น 408",
       "classAdvisorAt_error": "ไม่ถูกต้อง ต้องมี 3 หลัก เช่น 408",
@@ -68,7 +68,7 @@
         "label": "เพศ",
         "male": "ชาย",
         "female": "หญิง",
-        "nonBinary": "อื่น ๆ",
+        "nonBinary": "อื่น ๆ",
         "noReponse": "ไม่ต้องการตอบ"
       },
       "birthDate": "วันเกิด",
@@ -90,6 +90,10 @@
     },
     "common": {
       "privateInfo_helper": "จะไม่มีใครเห็นข้อมูลนี้จนกว่าจะให้คำอนุญาตต่อคนคนนั้น"
+    },
+    "action": {
+      "reset": "ลบการแก้ไข",
+      "save": "บันทึก"
     }
   },
   "preferences": {
@@ -114,7 +118,7 @@
         "instagram": "Instagram",
         "website": "เว็บไซต์",
         "discord": "Discord",
-        "other": "อื่น ๆ"
+        "other": "อื่น ๆ"
       },
       "nameTH": "ป้ายกำกับการติดต่อ",
       "nameEN": "ป้ายกำกับการติดต่อภาษาอังกฤษ",
