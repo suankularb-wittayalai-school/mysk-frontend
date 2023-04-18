@@ -96,6 +96,10 @@
     },
     "common": {
       "privateInfo_helper": "Only people you allow access to this information can see it."
+    },
+    "action": {
+      "reset": "Reset form",
+      "save": "Save"
     }
   },
   "preferences": {

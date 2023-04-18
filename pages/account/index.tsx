@@ -1,8 +1,23 @@
+/**
+ * `/account` TABLE OF CONTENTS
+ *
+ * Note: `Ctrl` + click to jump to a component.
+ *
+ * **Sections**
+ * - {@link BasicInfoSection}
+ * - {@link UserFieldsSection}
+ * - {@link UserContactsSection}
+ *
+ * **Page**
+ * - {@link AccountPage}
+ */
+
 // External libraries
 import {
   createServerSupabaseClient,
   User,
 } from "@supabase/auth-helpers-nextjs";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import Head from "next/head";
@@ -11,7 +26,7 @@ import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { FC, useState } from "react";
+import { FC, useContext, useState } from "react";
 
 // SK Components
 import {
@@ -20,29 +35,43 @@ import {
   ContentLayout,
   MaterialIcon,
   Section,
+  Snackbar,
 } from "@suankularb-components/react";
 
 // Internal components
+import ChangePasswordDialog from "@/components/account/ChangePasswordDialog";
+import ContactsSection from "@/components/account/ContactSection";
+import PersonFields from "@/components/account/PersonFields";
 import DynamicAvatar from "@/components/common/DynamicAvatar";
 import MySKPageHeader from "@/components/common/MySKPageHeader";
 
+// Contexts
+import SnackbarContext from "@/contexts/SnackbarContext";
+
 // Backend
-import { getPersonFromUser } from "@/utils/backend/person/person";
+import { editPerson, getPersonFromUser } from "@/utils/backend/person/person";
 import { getSubjectGroups } from "@/utils/backend/subject/subjectGroup";
 
 // Helpers
 import { getLocaleString } from "@/utils/helpers/i18n";
+import { withLoading } from "@/utils/helpers/loading";
 import { nameJoiner } from "@/utils/helpers/name";
 import { createTitleStr } from "@/utils/helpers/title";
 
 // Hooks
+import { useForm } from "@/utils/hooks/form";
 import { useLocale } from "@/utils/hooks/i18n";
+import { useRefreshProps } from "@/utils/hooks/routing";
+import { useToggle } from "@/utils/hooks/toggle";
 
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
+import { Contact } from "@/utils/types/contact";
 import { Student, Teacher } from "@/utils/types/person";
 import { SubjectGroup } from "@/utils/types/subject";
-import ChangePasswordDialog from "@/components/account/ChangePasswordDialog";
+
+// Miscellaneous
+import { classRegex } from "@/utils/patterns";
 
 /**
  * The most basic information about a Person, their name and their role inside
@@ -80,9 +109,10 @@ const BasicInfoSection: FC<{ person: Student | Teacher }> = ({ person }) => {
               // For a teacher: Class Advisor at and Subject Group
               person.role === "teacher"
                 ? [
-                    t("basicInfo.classAdvisorAt", {
-                      classAdvisorAt: person.classAdvisorAt?.number,
-                    }),
+                    person.classAdvisorAt &&
+                      t("basicInfo.classAdvisorAt", {
+                        classAdvisorAt: person.classAdvisorAt.number,
+                      }),
                     getLocaleString(person.subjectGroup.name, locale),
                   ]
                     .filter((segment) => segment)
@@ -136,6 +166,211 @@ const BasicInfoSection: FC<{ person: Student | Teacher }> = ({ person }) => {
 };
 
 /**
+ * An editable display of a Person’s information.
+ *
+ * @param person The Person to display information of.
+ *
+ * @returns A Section.
+ */
+const UserFieldsSection: FC<{
+  person: Student | Teacher;
+  subjectGroups: SubjectGroup[];
+}> = ({ person, subjectGroups }) => {
+  const { t } = useTranslation(["account", "common"]);
+
+  const { setSnackbar } = useContext(SnackbarContext);
+
+  // Form control
+  const { form, resetForm, formOK, formProps } = useForm<
+    | "prefixTH"
+    | "firstNameTH"
+    | "middleNameTH"
+    | "lastNameTH"
+    | "nicknameTH"
+    | "prefixEN"
+    | "firstNameEN"
+    | "middleNameEN"
+    | "lastNameEN"
+    | "nicknameEN"
+    | "subjectGroup"
+    | "classAdvisorAt"
+    | "gender"
+    | "birthdate"
+    | "citizenID"
+    | "passportNumber"
+    | "bloodGroup"
+  >([
+    { key: "prefixTH", required: true, defaultValue: person.prefix.th },
+    {
+      key: "firstNameTH",
+      required: true,
+      defaultValue: person.name.th.firstName,
+    },
+    { key: "middleNameTH", defaultValue: person.name.th.middleName },
+    {
+      key: "lastNameTH",
+      required: true,
+      defaultValue: person.name.th.lastName,
+    },
+    { key: "nicknameTH" },
+    { key: "prefixEN", required: true, defaultValue: person.prefix["en-US"] },
+    {
+      key: "firstNameEN",
+      required: true,
+      defaultValue: person.name["en-US"]?.firstName,
+    },
+    { key: "middleNameEN", defaultValue: person.name["en-US"]?.middleName },
+    {
+      key: "lastNameEN",
+      required: true,
+      defaultValue: person.name["en-US"]?.lastName,
+    },
+    { key: "nicknameEN" },
+    {
+      key: "subjectGroup",
+      defaultValue:
+        person.role === "teacher" && subjectGroups.length
+          ? subjectGroups[0].id
+          : undefined,
+    },
+    {
+      key: "classAdvisorAt",
+      defaultValue:
+        person.role === "teacher"
+          ? // (@SiravitPhokeed)
+            // Not using `String()` constructor here because that would
+            // literally show the string "undefined" if the user is not a Class
+            // Advisor.
+            // `toString`, on the otherhand, isn’t even called if the user
+            // isn’t a Class Advisor (since classAdvisorAt would be undefined
+            // and `?` catches that), so `undefined` would be passed in, which
+            // `useForm` turns into "".
+            person.classAdvisorAt?.number.toString()
+          : undefined,
+      validate: (value: string) => classRegex.test(value),
+    },
+    // { key: "gender", required: true },
+    { key: "birthdate", required: true, defaultValue: person.birthdate },
+    // {
+    //   key: "citizenID",
+    //   required: locale === "th",
+    //   defaultValue: person.citizenID,
+    //   validate: (value) =>
+    //     validateCitizenID(value) ||
+    //     t("profile.general.citizenID_error", { ns: "account" }),
+    // },
+    // {
+    //   key: "passportNumber",
+    //   validate: (value) =>
+    //     Boolean(validatePassport(value)) ||
+    //     t("profile.general.passportNumber_error", { ns: "account" }),
+    // },
+    // { key: "bloodGroup", required: true },
+  ]);
+
+  const supabase = useSupabaseClient();
+
+  const refreshProps = useRefreshProps();
+  const [loading, toggleLoading] = useToggle();
+
+  /**
+   * Save the changes to Supabase.
+   */
+  async function handleSubmit() {
+    withLoading(
+      async () => {
+        if (!formOK) {
+          setSnackbar(
+            <Snackbar>{t("snackbar.formInvalid", { ns: "common" })}</Snackbar>
+          );
+          return false;
+        }
+
+        const { error } = await editPerson(supabase, form, person);
+
+        if (error) {
+          setSnackbar(
+            <Snackbar>{t("snackbar.failure", { ns: "common" })}</Snackbar>
+          );
+          return false;
+        }
+
+        await refreshProps();
+        setSnackbar(
+          <Snackbar>{t("snackbar.changesSaved", { ns: "common" })}</Snackbar>
+        );
+        return true;
+      },
+      toggleLoading,
+      { hasEndToggle: true }
+    );
+  }
+
+  return (
+    <Section>
+      <PersonFields
+        subjectGroups={person.role === "teacher" ? subjectGroups : undefined}
+        formProps={formProps}
+      />
+      <Actions
+        className="sticky inset-0 bottom-20 z-20 !mx-0 bg-surface-1 px-4 py-4
+          sm:static sm:bg-transparent sm:p-0"
+      >
+        <Button
+          appearance="outlined"
+          icon={<MaterialIcon icon="undo" />}
+          onClick={resetForm}
+          disabled={loading}
+        >
+          {t("profile.action.reset")}
+        </Button>
+        <Button
+          appearance="filled"
+          icon={<MaterialIcon icon="save" />}
+          onClick={handleSubmit}
+          loading={loading || undefined}
+        >
+          {t("profile.action.save")}
+        </Button>
+      </Actions>
+    </Section>
+  );
+};
+
+/**
+ * An editable display of a Person’s Contacts.
+ *
+ * @param person The Person to display Contacts of.
+ *
+ * @returns A Section.
+ */
+const UserContactsSection: FC<{ person: Student | Teacher }> = ({ person }) => {
+  const refreshProps = useRefreshProps();
+
+  async function handleAdd(contact: Contact) {
+    // TODO: Save the new contact to Supabase
+    refreshProps();
+  }
+
+  async function handleEdit(contact: Contact) {
+    // TODO: Save the edited contact to Supabase
+    refreshProps();
+  }
+
+  async function handleRemove(contactID: number) {
+    // TODO: Remove the contact from Supabase
+    refreshProps();
+  }
+
+  return (
+    <ContactsSection
+      contacts={person.contacts}
+      {...{ handleAdd, handleEdit, handleRemove }}
+    />
+  );
+};
+
+/**
  * A page where a user can view and edit their information.
  *
  * @param person The Person to display information of.
@@ -161,9 +396,8 @@ const AccountPage: CustomPage<{
       />
       <ContentLayout>
         <BasicInfoSection {...{ person }} />
-        <Section>
-          <p>TODO</p>
-        </Section>
+        <UserFieldsSection {...{ person, subjectGroups }} />
+        <UserContactsSection {...{ person }} />
       </ContentLayout>
     </>
   );
