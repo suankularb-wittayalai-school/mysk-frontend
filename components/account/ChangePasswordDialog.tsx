@@ -111,7 +111,7 @@ const ChangePasswordDialog: DialogComponent = ({ open, onClose }) => {
         {/* Original password */}
         <TextField
           appearance="outlined"
-          label="Original password"
+          label={t("dialog.changePassword.originalPwd")}
           inputAttr={{ type: "password" }}
           {...formProps.originalPassword}
         />
@@ -119,7 +119,7 @@ const ChangePasswordDialog: DialogComponent = ({ open, onClose }) => {
         {/* New password */}
         <TextField
           appearance="outlined"
-          label="New password"
+          label={t("dialog.changePassword.newPwd")}
           inputAttr={{ type: "password" }}
           {...formProps.newPassword}
         />
@@ -127,7 +127,7 @@ const ChangePasswordDialog: DialogComponent = ({ open, onClose }) => {
         {/* Confirm new password */}
         <TextField
           appearance="outlined"
-          label="Confirm new password"
+          label={t("dialog.changePassword.confirmNewPwd")}
           inputAttr={{ type: "password" }}
           {...formProps.confirmNewPassword}
         />
