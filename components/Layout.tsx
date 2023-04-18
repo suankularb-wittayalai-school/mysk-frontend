@@ -243,6 +243,7 @@ const Layout: FC<
                 element={(props) => (
                   <Link
                     locale={locale === "en-US" ? "th" : "en-US"}
+                    scroll={false}
                     onClick={() =>
                       localStorage.setItem(
                         "preferredLang",
