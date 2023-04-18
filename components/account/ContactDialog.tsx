@@ -143,7 +143,7 @@ const ContactDialog: SubmittableDialogComponent<
             incrementCounter();
           }}
         >
-          {t(`dialog.contact.action.${contact ? "edit" : "add"}`)}
+          {t(`dialog.contact.action.${contact ? "save" : "add"}`)}
         </Button>
       </Actions>
     </Dialog>

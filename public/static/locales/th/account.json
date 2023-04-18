@@ -149,7 +149,7 @@
       "action": {
         "cancel": "ยกเลิก",
         "add": "เพิ่ม",
-        "edit": "แก้ไข"
+        "save": "บันทึก"
       }
     },
     "checkEmail": {

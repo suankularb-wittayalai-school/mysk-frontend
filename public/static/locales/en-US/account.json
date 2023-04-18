@@ -147,7 +147,7 @@
       "action": {
         "cancel": "Cancel",
         "add": "Add",
-        "edit": "Edit"
+        "save": "Save"
       }
     },
     "checkEmail": {
