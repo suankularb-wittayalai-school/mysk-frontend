@@ -100,8 +100,7 @@ const AddSubjectCard: FC<{
         }
         open={!subjectsInCharge.length}
       >
-        You have already added all subjects you’re in charge of. You can still
-        edit classes on the final list.
+        {t("yourSubjects.subjects.addSubject.allSubjectsAdded")}
       </BlockingPane>
       <Card appearance="outlined">
         <CardHeader title={t("yourSubjects.subjects.addSubject.title")} />
