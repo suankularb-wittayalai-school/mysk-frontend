@@ -133,9 +133,7 @@ const ContactDialog: SubmittableDialogComponent<
             if (!formOK) return;
             onSubmit({
               id: counter,
-              ...(form.nameTH
-                ? { name: { th: form.nameTH, "en-US": form.nameEN } }
-                : {}),
+              name: { th: form.nameTH, "en-US": form.nameEN },
               type: form.type as ContactVia,
               value: form.value,
             });

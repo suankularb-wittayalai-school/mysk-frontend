@@ -86,7 +86,7 @@ export async function createPerson(
   };
 }
 
-export async function setupPerson(
+export async function editPerson(
   supabase: DatabaseClient,
   form: {
     prefixTH: string;
@@ -100,48 +100,50 @@ export async function setupPerson(
     subjectGroup: number;
     classAdvisorAt: string;
     birthdate: string;
-    contacts: Contact[];
+    contacts?: Contact[];
   },
   person: Student | Teacher
 ): Promise<
   BackendDataReturn<Database["public"]["Tables"]["people"]["Row"], null>
 > {
-  // Delete existing contacts
-  for (let contact of person.contacts) {
-    const { error } = await supabase
-      .from("contacts")
-      .delete()
-      .eq("id", contact.id);
-    if (error) {
-      console.error(error);
-      return { data: null, error };
+  let createdContactIDs: number[] | undefined = undefined;
+
+  if (form.contacts) {
+    // Delete existing contacts
+    for (let contact of person.contacts) {
+      const { error } = await supabase
+        .from("contacts")
+        .delete()
+        .eq("id", contact.id);
+      if (error) {
+        console.error(error);
+        return { data: null, error };
+      }
     }
+
+    // Create contacts
+    createdContactIDs = (
+      await Promise.all(
+        form.contacts.map(async (contact) => {
+          const { data: createdContact, error } = await createContact(
+            supabase,
+            contact
+          );
+          if (error) {
+            console.error(error);
+            return;
+          }
+          return createdContact!.id;
+        })
+      )
+    ).filter((contactID) => contactID) as number[];
   }
-
-  // Create contacts
-  const createdContacts = (
-    await Promise.all(
-      form.contacts.map(async (contact) => {
-        const { data: createdContact, error } = await createContact(
-          supabase,
-          contact
-        );
-        if (error) {
-          console.error(error);
-          return;
-        }
-        return createdContact!.id;
-      })
-    )
-  ).filter((contactID) => contactID) as number[];
-
-  console.log(createdContacts);
 
   // Get person ID
   let personID = 0;
 
   // Fetch person ID from `student` table if user is a student
-  if (person.role == "student") {
+  if (person.role === "student") {
     const { data: studentPersonID, error: idError } = await supabase
       .from("student")
       .select("person(id)")
@@ -160,7 +162,7 @@ export async function setupPerson(
   }
 
   // Fetch person ID from `teacher` table if user is a teacher
-  else if (person.role == "teacher") {
+  else if (person.role === "teacher") {
     const { data: teacherPersonID, error: idError } = await supabase
       .from("teacher")
       .select("person")
@@ -188,7 +190,7 @@ export async function setupPerson(
       middle_name_en: form.middleNameEN,
       last_name_en: form.lastNameEN,
       birthdate: form.birthdate,
-      contacts: createdContacts,
+      contacts: createdContactIDs,
     })
     .match({ id: personID })
     .select("*")
