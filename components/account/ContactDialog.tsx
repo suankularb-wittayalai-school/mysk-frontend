@@ -1,6 +1,6 @@
 // External libraries
 import { useTranslation } from "next-i18next";
-import { useEffect, useReducer } from "react";
+import { ComponentProps, useEffect, useReducer } from "react";
 
 // SK Components
 import {
@@ -30,7 +30,7 @@ const ContactDialog: SubmittableDialogComponent<
 
   const contactValuesMap: {
     [key in ContactVia]: {
-      type: "number" | "tel" | "email" | "url" | "text";
+      type: ComponentProps<"input">["type"];
       helperMsg?: string;
       validate?: (value: string) => boolean;
     };
@@ -45,7 +45,6 @@ const ContactDialog: SubmittableDialogComponent<
     Line: {
       type: "text",
       helperMsg: t("dialog.contact.value.line_helper"),
-      validate: (value) => value.length === 10,
     },
     Instagram: {
       type: "text",
