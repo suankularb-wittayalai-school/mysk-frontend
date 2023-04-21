@@ -37,7 +37,7 @@ const ContactDialog: SubmittableDialogComponent<
   } = {
     Phone: {
       type: "tel",
-      validate: (value) => /\d{9,10}/.test(value),
+      validate: (value) => /^\d{9,10}$/.test(value),
     },
     Email: { type: "email" },
     Website: { type: "url" },
@@ -49,12 +49,12 @@ const ContactDialog: SubmittableDialogComponent<
     },
     Instagram: {
       type: "text",
-      validate: (value) => /(?:(?:[\\w][\\.]{0,1})*[\\w]){1,29}/.test(value),
+      validate: (value) => /^(?:(?:[\\w][\\.]{0,1})*[\\w]){1,29}$/.test(value),
     },
     Discord: {
       type: "text",
       helperMsg: t("dialog.contact.value.discord_helper"),
-      validate: (value) => /[a-zA-Z0-9]{8}/.test(value),
+      validate: (value) => /^[a-zA-Z0-9]{8}$/.test(value),
     },
     Other: { type: "text" },
   };
@@ -108,6 +108,13 @@ const ContactDialog: SubmittableDialogComponent<
             helperMsg={contactValuesMap[form.type as ContactVia].helperMsg}
             inputAttr={{ type: contactValuesMap[form.type as ContactVia].type }}
             {...formProps.value}
+            error={
+              form.value && contactValuesMap[form.type as ContactVia].validate
+                ? !contactValuesMap[form.type as ContactVia].validate!(
+                    form.value
+                  )
+                : false
+            }
           />
 
           {/* Label */}
@@ -130,7 +137,21 @@ const ContactDialog: SubmittableDialogComponent<
         <Button
           appearance="text"
           onClick={() => {
-            if (!formOK) return;
+            if (
+              !(
+                // Check for form completion
+                (
+                  formOK &&
+                  // Check if value is valid
+                  (contactValuesMap[form.type as ContactVia].validate
+                    ? contactValuesMap[form.type as ContactVia].validate!(
+                        form.value
+                      )
+                    : true)
+                )
+              )
+            )
+              return;
             onSubmit({
               id: counter,
               name: { th: form.nameTH, "en-US": form.nameEN },
