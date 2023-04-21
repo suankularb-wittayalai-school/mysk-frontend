@@ -5,8 +5,8 @@ import { useEffect, useRef, useState } from "react";
 /**
  * Creates a function that, when called, runs `getServerSideProps` again
  * without reloading or changing the scroll position of the page.
- * 
- * @returns A function. 
+ *
+ * @returns A function.
  */
 export function useRefreshProps() {
   const router = useRouter();
