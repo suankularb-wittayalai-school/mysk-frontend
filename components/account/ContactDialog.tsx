@@ -1,6 +1,6 @@
 // External libraries
 import { useTranslation } from "next-i18next";
-import { useReducer } from "react";
+import { useEffect, useReducer } from "react";
 
 // SK Components
 import {
@@ -60,7 +60,7 @@ const ContactDialog: SubmittableDialogComponent<
   };
 
   const [counter, incrementCounter] = useReducer((counter) => counter + 1, 1);
-  const { form, resetForm, formOK, formProps } = useForm<
+  const { form, setForm, resetForm, formOK, formProps } = useForm<
     "nameTH" | "nameEN" | "type" | "value"
   >([
     { key: "nameTH", defaultValue: contact?.name?.th },
@@ -68,6 +68,20 @@ const ContactDialog: SubmittableDialogComponent<
     { key: "type", required: true, defaultValue: contact?.type || "Phone" },
     { key: "value", required: true, defaultValue: contact?.value },
   ]);
+
+  // Format group invite codes from invite links for LINE and Discord
+  useEffect(() => {
+    if (form.type === "Line")
+      setForm({
+        ...form,
+        value: (form.value as string).split("https://line.me/R/ti/g/").join(""),
+      });
+    else if (form.type === "Discord")
+      setForm({
+        ...form,
+        value: (form.value as string).split("https://discord.gg/").join(""),
+      });
+  }, [form.value, form.type]);
 
   return (
     <Dialog open={open} width={580} onClose={onClose}>
