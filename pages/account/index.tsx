@@ -49,7 +49,12 @@ import MySKPageHeader from "@/components/common/MySKPageHeader";
 import SnackbarContext from "@/contexts/SnackbarContext";
 
 // Backend
-import { editPerson, getPersonFromUser } from "@/utils/backend/person/person";
+import {
+  addContactToPerson,
+  editPerson,
+  getPersonFromUser,
+  removeContactFromPerson,
+} from "@/utils/backend/person/person";
 import { getSubjectGroups } from "@/utils/backend/subject/subjectGroup";
 
 // Helpers
@@ -71,6 +76,11 @@ import { Student, Teacher } from "@/utils/types/person";
 import { SubjectGroup } from "@/utils/types/subject";
 
 // Miscellaneous
+import {
+  createContact,
+  deleteContact,
+  updateContact,
+} from "@/utils/backend/contact";
 import { classRegex } from "@/utils/patterns";
 
 /**
@@ -345,20 +355,67 @@ const UserFieldsSection: FC<{
  * @returns A Section.
  */
 const UserContactsSection: FC<{ person: Student | Teacher }> = ({ person }) => {
+  const { t } = useTranslation("common");
+  const { setSnackbar } = useContext(SnackbarContext);
   const refreshProps = useRefreshProps();
+  const supabase = useSupabaseClient();
 
+  /**
+   * Creates and add a Contact to this class.
+   *
+   * @param contact The Contact to add.
+   */
   async function handleAdd(contact: Contact) {
-    // TODO: Save the new contact to Supabase
+    const { data, error } = await createContact(supabase, contact);
+    if (error) {
+      setSnackbar(<Snackbar>{t("snackbar.failure")}</Snackbar>);
+      return;
+    }
+
+    const { error: personError } = await addContactToPerson(
+      supabase,
+      data!.id,
+      person
+    );
+    if (personError) {
+      setSnackbar(<Snackbar>{t("snackbar.failure")}</Snackbar>);
+      return;
+    }
+
     refreshProps();
   }
 
+  /**
+   * Edits a given Contact.
+   *
+   * @param contact The new data for the Contact.
+   */
   async function handleEdit(contact: Contact) {
-    // TODO: Save the edited contact to Supabase
+    const { error } = await updateContact(supabase, contact);
+    if (error) {
+      setSnackbar(<Snackbar>{t("snackbar.failure")}</Snackbar>);
+      return;
+    }
+
     refreshProps();
   }
 
+  /**
+   * Delete a given Contact from Supabase.
+   *
+   * @param contactID The ID of the Contact to delete.
+   */
   async function handleRemove(contactID: number) {
-    // TODO: Remove the contact from Supabase
+    const { error } = await removeContactFromPerson(
+      supabase,
+      contactID,
+      person
+    );
+    if (error) {
+      setSnackbar(<Snackbar>{t("snackbar.failure")}</Snackbar>);
+      return;
+    }
+
     refreshProps();
   }
 

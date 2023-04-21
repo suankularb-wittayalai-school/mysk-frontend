@@ -2,7 +2,7 @@
 import { User } from "@supabase/supabase-js";
 
 // Backend
-import { createContact } from "@/utils/backend/contact";
+import { createContact, deleteContact } from "@/utils/backend/contact";
 import { getCurrentAcademicYear } from "@/utils/helpers/date";
 
 // Converters
@@ -243,6 +243,155 @@ export async function editPerson(
   }
 
   return { data: updPerson!, error: null };
+}
+
+export async function addContactToPerson(
+  supabase: DatabaseClient,
+  contactID: number,
+  person: Student | Teacher
+): Promise<
+  BackendDataReturn<Database["public"]["Tables"]["people"]["Row"], null>
+> {
+  let personID = 0;
+
+  if (person.role === "student") {
+    const { data: studentPersonID, error: idError } = await supabase
+      .from("student")
+      .select("person(id)")
+      .match({ id: person.id })
+      .limit(1)
+      .single();
+
+    if (idError) {
+      console.error(idError);
+      return { data: null, error: idError };
+    }
+
+    personID = (
+      studentPersonID!.person as Database["public"]["Tables"]["people"]["Row"]
+    ).id;
+  } else if (person.role === "teacher") {
+    const { data: teacherPersonID, error: idError } = await supabase
+      .from("teacher")
+      .select("person")
+      .match({ id: person.id })
+      .limit(1)
+      .single();
+
+    if (idError) {
+      console.error(idError);
+      return { data: null, error: idError };
+    }
+    personID = teacherPersonID!.person as unknown as number;
+  }
+
+  const { data: selectedPerson, error: personSelectionError } = await supabase
+    .from("people")
+    .select("contacts")
+    .eq("id", personID)
+    .limit(1)
+    .single();
+
+  if (personSelectionError) {
+    return { data: null, error: personSelectionError };
+  }
+
+  const { data: updatedPerson, error: personUpdatingError } = await supabase
+    .from("people")
+    .update({
+      contacts: [...(selectedPerson!.contacts || []), contactID],
+    })
+    .eq("id", personID)
+    .select("*")
+    .limit(1)
+    .single();
+
+  if (personUpdatingError) {
+    console.error(personUpdatingError);
+    return { data: null, error: personUpdatingError };
+  }
+
+  return { data: updatedPerson!, error: null };
+}
+
+export async function removeContactFromPerson(
+  supabase: DatabaseClient,
+  contactID: number,
+  person: Student | Teacher
+): Promise<
+  BackendDataReturn<Database["public"]["Tables"]["people"]["Row"], null>
+> {
+  let personID = 0;
+
+  if (person.role === "student") {
+    const { data: studentPersonID, error: idError } = await supabase
+      .from("student")
+      .select("person(id)")
+      .match({ id: person.id })
+      .limit(1)
+      .single();
+
+    if (idError) {
+      console.error(idError);
+      return { data: null, error: idError };
+    }
+
+    personID = (
+      studentPersonID!.person as Database["public"]["Tables"]["people"]["Row"]
+    ).id;
+  } else if (person.role === "teacher") {
+    const { data: teacherPersonID, error: idError } = await supabase
+      .from("teacher")
+      .select("person")
+      .match({ id: person.id })
+      .limit(1)
+      .single();
+
+    if (idError) {
+      console.error(idError);
+      return { data: null, error: idError };
+    }
+    personID = teacherPersonID!.person as unknown as number;
+  }
+
+  const { data: selectedPerson, error: personSelectionError } = await supabase
+    .from("people")
+    .select("contacts")
+    .eq("id", personID)
+    .limit(1)
+    .single();
+
+  if (personSelectionError) {
+    return { data: null, error: personSelectionError };
+  }
+
+  const { data: updatedPerson, error: personUpdatingError } = await supabase
+    .from("people")
+    .update({
+      contacts:
+        selectedPerson!.contacts?.filter((id) => id !== contactID) || null,
+    })
+    .eq("id", personID)
+    .select("*")
+    .limit(1)
+    .single();
+
+  if (personUpdatingError) {
+    console.error(personUpdatingError);
+    return { data: null, error: personUpdatingError };
+  }
+
+  const { error: contactDeletionError } = await deleteContact(
+    supabase,
+    contactID
+  );
+
+  if (contactDeletionError) {
+    console.error(contactDeletionError);
+    return { data: null, error: contactDeletionError };
+  }
+
+  return { data: updatedPerson!, error: null };
 }
 
 /**
