@@ -2,21 +2,22 @@
 import { User } from "@supabase/supabase-js";
 
 // Backend
-import { createContact } from "@/utils/backend/contact";
-import { db2PersonName, db2Student } from "@/utils/backend/database";
-import { getTeacherFromUser } from "@/utils/backend/person/teacher";
+import { createContact, deleteContact } from "@/utils/backend/contact";
 import { getCurrentAcademicYear } from "@/utils/helpers/date";
+
+// Converters
+import {
+  db2PersonName,
+  db2Student,
+  db2Teacher,
+} from "@/utils/backend/database";
 
 // Supabase
 import { supabase } from "@/utils/supabase-client";
 
 // Types
-import {
-  BackendDataReturn,
-  DatabaseClient,
-  LangCode,
-} from "@/utils/types/common";
 import { ClassWNumber } from "@/utils/types/class";
+import { BackendDataReturn, DatabaseClient } from "@/utils/types/common";
 import { Contact } from "@/utils/types/contact";
 import {
   Person,
@@ -85,7 +86,7 @@ export async function createPerson(
   };
 }
 
-export async function setupPerson(
+export async function editPerson(
   supabase: DatabaseClient,
   form: {
     prefixTH: string;
@@ -99,48 +100,50 @@ export async function setupPerson(
     subjectGroup: number;
     classAdvisorAt: string;
     birthdate: string;
-    contacts: Contact[];
+    contacts?: Contact[];
   },
   person: Student | Teacher
 ): Promise<
   BackendDataReturn<Database["public"]["Tables"]["people"]["Row"], null>
 > {
-  // Delete existing contacts
-  for (let contact of person.contacts) {
-    const { error } = await supabase
-      .from("contacts")
-      .delete()
-      .eq("id", contact.id);
-    if (error) {
-      console.error(error);
-      return { data: null, error };
+  let createdContactIDs: number[] | undefined = undefined;
+
+  if (form.contacts) {
+    // Delete existing contacts
+    for (let contact of person.contacts) {
+      const { error } = await supabase
+        .from("contacts")
+        .delete()
+        .eq("id", contact.id);
+      if (error) {
+        console.error(error);
+        return { data: null, error };
+      }
     }
+
+    // Create contacts
+    createdContactIDs = (
+      await Promise.all(
+        form.contacts.map(async (contact) => {
+          const { data: createdContact, error } = await createContact(
+            supabase,
+            contact
+          );
+          if (error) {
+            console.error(error);
+            return;
+          }
+          return createdContact!.id;
+        })
+      )
+    ).filter((contactID) => contactID) as number[];
   }
-
-  // Create contacts
-  const createdContacts = (
-    await Promise.all(
-      form.contacts.map(async (contact) => {
-        const { data: createdContact, error } = await createContact(
-          supabase,
-          contact
-        );
-        if (error) {
-          console.error(error);
-          return;
-        }
-        return createdContact!.id;
-      })
-    )
-  ).filter((contactID) => contactID) as number[];
-
-  console.log(createdContacts);
 
   // Get person ID
   let personID = 0;
 
   // Fetch person ID from `student` table if user is a student
-  if (person.role == "student") {
+  if (person.role === "student") {
     const { data: studentPersonID, error: idError } = await supabase
       .from("student")
       .select("person(id)")
@@ -159,7 +162,7 @@ export async function setupPerson(
   }
 
   // Fetch person ID from `teacher` table if user is a teacher
-  else if (person.role == "teacher") {
+  else if (person.role === "teacher") {
     const { data: teacherPersonID, error: idError } = await supabase
       .from("teacher")
       .select("person")
@@ -187,7 +190,7 @@ export async function setupPerson(
       middle_name_en: form.middleNameEN,
       last_name_en: form.lastNameEN,
       birthdate: form.birthdate,
-      contacts: createdContacts,
+      contacts: createdContactIDs,
     })
     .match({ id: personID })
     .select("*")
@@ -242,28 +245,210 @@ export async function setupPerson(
   return { data: updPerson!, error: null };
 }
 
+export async function addContactToPerson(
+  supabase: DatabaseClient,
+  contactID: number,
+  person: Student | Teacher
+): Promise<
+  BackendDataReturn<Database["public"]["Tables"]["people"]["Row"], null>
+> {
+  let personID = 0;
+
+  if (person.role === "student") {
+    const { data: studentPersonID, error: idError } = await supabase
+      .from("student")
+      .select("person(id)")
+      .match({ id: person.id })
+      .limit(1)
+      .single();
+
+    if (idError) {
+      console.error(idError);
+      return { data: null, error: idError };
+    }
+
+    personID = (
+      studentPersonID!.person as Database["public"]["Tables"]["people"]["Row"]
+    ).id;
+  } else if (person.role === "teacher") {
+    const { data: teacherPersonID, error: idError } = await supabase
+      .from("teacher")
+      .select("person")
+      .match({ id: person.id })
+      .limit(1)
+      .single();
+
+    if (idError) {
+      console.error(idError);
+      return { data: null, error: idError };
+    }
+    personID = teacherPersonID!.person as unknown as number;
+  }
+
+  const { data: selectedPerson, error: personSelectionError } = await supabase
+    .from("people")
+    .select("contacts")
+    .eq("id", personID)
+    .limit(1)
+    .single();
+
+  if (personSelectionError) {
+    return { data: null, error: personSelectionError };
+  }
+
+  const { data: updatedPerson, error: personUpdatingError } = await supabase
+    .from("people")
+    .update({
+      contacts: [...(selectedPerson!.contacts || []), contactID],
+    })
+    .eq("id", personID)
+    .select("*")
+    .limit(1)
+    .single();
+
+  if (personUpdatingError) {
+    console.error(personUpdatingError);
+    return { data: null, error: personUpdatingError };
+  }
+
+  return { data: updatedPerson!, error: null };
+}
+
+export async function removeContactFromPerson(
+  supabase: DatabaseClient,
+  contactID: number,
+  person: Student | Teacher
+): Promise<
+  BackendDataReturn<Database["public"]["Tables"]["people"]["Row"], null>
+> {
+  let personID = 0;
+
+  if (person.role === "student") {
+    const { data: studentPersonID, error: idError } = await supabase
+      .from("student")
+      .select("person(id)")
+      .match({ id: person.id })
+      .limit(1)
+      .single();
+
+    if (idError) {
+      console.error(idError);
+      return { data: null, error: idError };
+    }
+
+    personID = (
+      studentPersonID!.person as Database["public"]["Tables"]["people"]["Row"]
+    ).id;
+  } else if (person.role === "teacher") {
+    const { data: teacherPersonID, error: idError } = await supabase
+      .from("teacher")
+      .select("person")
+      .match({ id: person.id })
+      .limit(1)
+      .single();
+
+    if (idError) {
+      console.error(idError);
+      return { data: null, error: idError };
+    }
+    personID = teacherPersonID!.person as unknown as number;
+  }
+
+  const { data: selectedPerson, error: personSelectionError } = await supabase
+    .from("people")
+    .select("contacts")
+    .eq("id", personID)
+    .limit(1)
+    .single();
+
+  if (personSelectionError) {
+    return { data: null, error: personSelectionError };
+  }
+
+  const { data: updatedPerson, error: personUpdatingError } = await supabase
+    .from("people")
+    .update({
+      contacts:
+        selectedPerson!.contacts?.filter((id) => id !== contactID) || null,
+    })
+    .eq("id", personID)
+    .select("*")
+    .limit(1)
+    .single();
+
+  if (personUpdatingError) {
+    console.error(personUpdatingError);
+    return { data: null, error: personUpdatingError };
+  }
+
+  const { error: contactDeletionError } = await deleteContact(
+    supabase,
+    contactID
+  );
+
+  if (contactDeletionError) {
+    console.error(contactDeletionError);
+    return { data: null, error: contactDeletionError };
+  }
+
+  return { data: updatedPerson!, error: null };
+}
+
+/**
+ * Reads the metadata of a user and fetches the corresponding Student or
+ * Teacher.
+ *
+ * @param supabase An instance of the Supabase client.
+ * @param user A Supabase user.
+ * @param options The options parameter of {@link db2Student} or {@link db2Teacher}.
+ *
+ * @return A Backend Data Return with a Student or a Teacher.
+ */
 export async function getPersonFromUser(
   supabase: DatabaseClient,
   user: User,
-  options?: Partial<{ contacts: boolean }>
+  options?: Parameters<typeof db2Student | typeof db2Teacher>["2"]
 ): Promise<BackendDataReturn<Student | Teacher, null>> {
-  if (user?.user_metadata.role == "student") {
-    const { data: student, error: studentError } = await supabase
+  // If the user is a Student
+  if (user?.user_metadata.role === "student") {
+    const { data, error } = await supabase
       .from("student")
       .select("*, person(*)")
       .match({ id: user.user_metadata.student })
       .limit(1)
       .single();
 
-    if (studentError) {
-      console.error(studentError);
-      return { data: null, error: studentError };
+    if (error) {
+      console.error(error);
+      return { data: null, error };
     }
 
-    return { data: await db2Student(supabase, student!, options), error: null };
-  } else if (user?.user_metadata.role == "teacher")
-    return getTeacherFromUser(supabase, user);
+    return { data: await db2Student(supabase, data!, options), error: null };
+  }
 
+  // If the user is a Teacher
+  if (user?.user_metadata.role === "teacher") {
+    const { data, error } = await supabase
+      .from("teacher")
+      .select("*, person(*), subject_group(*)")
+      .match({ id: user.user_metadata.teacher })
+      .single();
+
+    if (error) {
+      console.error(error);
+      return { data: null, error };
+    }
+
+    return {
+      data: {
+        ...(await db2Teacher(supabase, data!, options)),
+        isAdmin: user.user_metadata.isAdmin,
+      },
+      error: null,
+    };
+  }
+
+  // Otherwise, the user has an invalid role
   return { data: null, error: { message: "invalid role." } };
 }
 

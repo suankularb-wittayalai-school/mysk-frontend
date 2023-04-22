@@ -86,7 +86,7 @@ const Schedule: FC<{
         constraintsRef: scheduleRef,
       }}
     >
-      <div className="relative -my-2 !mx-0 flex flex-col-reverse gap-3 sm:flex-col">
+      <div className="relative !mx-0 -my-2 flex flex-col-reverse gap-3 sm:flex-col">
         {role === "teacher" && (
           <>
             {/* Subjects in Charge Card: for Subjects to be added to Schedule */}

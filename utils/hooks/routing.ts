@@ -3,6 +3,17 @@ import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 
 /**
+ * Creates a function that, when called, runs `getServerSideProps` again
+ * without reloading or changing the scroll position of the page.
+ *
+ * @returns A function.
+ */
+export function useRefreshProps() {
+  const router = useRouter();
+  return () => router.replace(router.asPath, undefined, { scroll: false });
+}
+
+/**
  * Get the route of the previous page the user was in. This only tracks pages
  * inside this app, and doesn’t include external pages.
  *

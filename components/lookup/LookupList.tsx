@@ -53,8 +53,8 @@ const LookupList: FC<{
 
       {/* Search */}
       <div
-        className="sticky top-0 z-10 flex flex-col gap-3 bg-background pt-6
-          pb-3"
+        className="sticky top-0 z-10 flex flex-col gap-3 bg-background pb-3
+          pt-6"
       >
         <Search
           alt={searchAlt}
@@ -91,7 +91,7 @@ const LookupList: FC<{
         {(length === 0 || length > 10) && (
           <li>
             <Card appearance="outlined">
-              <p className="py-2 px-4 text-on-surface-variant">
+              <p className="px-4 py-2 text-on-surface-variant">
                 {length === 100
                   ? t("maxNote")
                   : length === 0

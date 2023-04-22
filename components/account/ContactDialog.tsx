@@ -1,6 +1,6 @@
 // External libraries
 import { useTranslation } from "next-i18next";
-import { useReducer } from "react";
+import { ComponentProps, useEffect, useReducer } from "react";
 
 // SK Components
 import {
@@ -30,14 +30,14 @@ const ContactDialog: SubmittableDialogComponent<
 
   const contactValuesMap: {
     [key in ContactVia]: {
-      type: "number" | "tel" | "email" | "url" | "text";
+      type: ComponentProps<"input">["type"];
       helperMsg?: string;
       validate?: (value: string) => boolean;
     };
   } = {
     Phone: {
       type: "tel",
-      validate: (value) => /\d{9,10}/.test(value),
+      validate: (value) => /^\d{9,10}$/.test(value),
     },
     Email: { type: "email" },
     Website: { type: "url" },
@@ -45,22 +45,21 @@ const ContactDialog: SubmittableDialogComponent<
     Line: {
       type: "text",
       helperMsg: t("dialog.contact.value.line_helper"),
-      validate: (value) => value.length === 10,
     },
     Instagram: {
       type: "text",
-      validate: (value) => /(?:(?:[\\w][\\.]{0,1})*[\\w]){1,29}/.test(value),
+      validate: (value) => /^(?:(?:[\\w][\\.]{0,1})*[\\w]){1,29}$/.test(value),
     },
     Discord: {
       type: "text",
       helperMsg: t("dialog.contact.value.discord_helper"),
-      validate: (value) => /[a-zA-Z0-9]{8}/.test(value),
+      validate: (value) => /^[a-zA-Z0-9]{8}$/.test(value),
     },
     Other: { type: "text" },
   };
 
   const [counter, incrementCounter] = useReducer((counter) => counter + 1, 1);
-  const { form, resetForm, formOK, formProps } = useForm<
+  const { form, setForm, resetForm, formOK, formProps } = useForm<
     "nameTH" | "nameEN" | "type" | "value"
   >([
     { key: "nameTH", defaultValue: contact?.name?.th },
@@ -68,6 +67,20 @@ const ContactDialog: SubmittableDialogComponent<
     { key: "type", required: true, defaultValue: contact?.type || "Phone" },
     { key: "value", required: true, defaultValue: contact?.value },
   ]);
+
+  // Format group invite codes from invite links for LINE and Discord
+  useEffect(() => {
+    if (form.type === "Line")
+      setForm({
+        ...form,
+        value: (form.value as string).split("https://line.me/R/ti/g/").join(""),
+      });
+    else if (form.type === "Discord")
+      setForm({
+        ...form,
+        value: (form.value as string).split("https://discord.gg/").join(""),
+      });
+  }, [form.value, form.type]);
 
   return (
     <Dialog open={open} width={580} onClose={onClose}>
@@ -108,6 +121,13 @@ const ContactDialog: SubmittableDialogComponent<
             helperMsg={contactValuesMap[form.type as ContactVia].helperMsg}
             inputAttr={{ type: contactValuesMap[form.type as ContactVia].type }}
             {...formProps.value}
+            error={
+              form.value && contactValuesMap[form.type as ContactVia].validate
+                ? !contactValuesMap[form.type as ContactVia].validate!(
+                    form.value
+                  )
+                : false
+            }
           />
 
           {/* Label */}
@@ -130,12 +150,24 @@ const ContactDialog: SubmittableDialogComponent<
         <Button
           appearance="text"
           onClick={() => {
-            if (!formOK) return;
+            if (
+              !(
+                // Check for form completion
+                (
+                  formOK &&
+                  // Check if value is valid
+                  (contactValuesMap[form.type as ContactVia].validate
+                    ? contactValuesMap[form.type as ContactVia].validate!(
+                        form.value
+                      )
+                    : true)
+                )
+              )
+            )
+              return;
             onSubmit({
               id: counter,
-              ...(form.nameTH
-                ? { name: { th: form.nameTH, "en-US": form.nameEN } }
-                : {}),
+              name: { th: form.nameTH, "en-US": form.nameEN },
               type: form.type as ContactVia,
               value: form.value,
             });
@@ -143,7 +175,7 @@ const ContactDialog: SubmittableDialogComponent<
             incrementCounter();
           }}
         >
-          {t(`dialog.contact.action.${contact ? "edit" : "add"}`)}
+          {t(`dialog.contact.action.${contact ? "save" : "add"}`)}
         </Button>
       </Actions>
     </Dialog>

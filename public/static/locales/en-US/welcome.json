@@ -65,6 +65,7 @@
         "title": "Add a subject",
         "desc": "Select from a list of subjects, specify which classes learn that subject with you, and add it to the final list.",
         "classesExplain": "For the classes field, press <0>Enter ↵</0> after each class. A class is represented by a 3-digit number.",
+        "allSubjectsAdded": "You have already added all subjects you’re in charge of. You can still edit classes on the final list.",
         "action": {
           "add": "Add subject"
         }

@@ -17,7 +17,7 @@ const NowLine: FC = () => {
       // The Schedule’s content starts at 152 pixels from the left edge
       // (9.5rem), so we add that as the initial value
       // Note: 168 pixels (10.5rem) for mobile to account for 1rem left padding
-      className="pointer-events-none absolute top-12 left-[10.5rem] z-30 -mx-1
+      className="pointer-events-none absolute left-[10.5rem] top-12 z-30 -mx-1
         text-error drop-shadow-3 transition-transform sm:left-[9.5rem]"
       style={{
         // Each period is 50 minutes = 3000 seconds,

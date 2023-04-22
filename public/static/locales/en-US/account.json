@@ -1,23 +1,13 @@
 {
-  "title": "About me",
+  "title": "About",
   "basicInfo": {
-    "profileAlt": "A picture of you",
     "classAndNo": "M.{{class}} No. {{classNo}}",
-    "subjectGroup": "Teacher in {{subjectGroup}}",
     "classAdvisorAt": "Class advisor at M.{{classAdvisorAt}}"
   },
-  "editInfo": {
-    "title": "Personal information",
-    "requestInfo": "You can request changes to your personal information. Administrators will review your request and approve the changes as they see fit.",
-    "action": {
-      "sendRequest": "Send request",
-      "save": "Save"
-    }
-  },
   "action": {
-    "changePassword": "Change password",
-    "goToAdmin": "Go to Admin Panel",
-    "logOut": "Log out"
+    "chat": "Chat",
+    "logOut": "Log out",
+    "changePassword": "Change password"
   },
   "logIn": {
     "title": "Log in",
@@ -106,6 +96,10 @@
     },
     "common": {
       "privateInfo_helper": "Only people you allow access to this information can see it."
+    },
+    "action": {
+      "reset": "Reset form",
+      "save": "Save"
     }
   },
   "preferences": {
@@ -157,7 +151,7 @@
       "action": {
         "cancel": "Cancel",
         "add": "Add",
-        "edit": "Edit"
+        "save": "Save"
       }
     },
     "checkEmail": {
@@ -169,12 +163,16 @@
     },
     "changePassword": {
       "title": "Change password",
-      "supportingText": "If you are still using the default password, changing it is highly recommended.",
+      "desc": "Verify your identity by entering your current password, then change the password by entering your new password twice.",
       "originalPwd": "Current password",
       "newPwd": "New password",
       "newPwd_error": "Lengthen to at least 8 characters.",
       "confirmNewPwd": "Confirm new password",
       "confirmNewPwd_error": "Check if you repeated the new password exactly.",
+      "snackbar": {
+        "invalidPwd": "The original password is incorrect",
+        "success": "Your password has been changed."
+      },
       "action": {
         "cancel": "Cancel",
         "save": "Save"

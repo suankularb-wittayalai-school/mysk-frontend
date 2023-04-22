@@ -6,10 +6,10 @@ import { MaterialIcon } from "@suankularb-components/react";
 
 /**
  * A vector icon of a brand.
- * 
+ *
  * @param icon The icon ID.
  * @param size The size of the icon in pixels. Defaults to 24.
- * 
+ *
  * @returns A JSX Element.
  */
 const BrandIcon: FC<{

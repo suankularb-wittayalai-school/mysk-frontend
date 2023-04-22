@@ -1,9 +1,11 @@
 // External libraries
-import { User } from "@supabase/supabase-js";
+import type { User } from "@supabase/supabase-js";
 
 // Types
 import {
+  BackendAuthReturn,
   BackendDataReturn,
+  BackendReturn,
   DatabaseClient,
   OrUndefined,
 } from "@/utils/types/common";
@@ -45,7 +47,7 @@ export async function changePassword(
     confirmNewPassword: string;
   },
   user: User
-) {
+): Promise<BackendAuthReturn> {
   const { error: logInError } = await supabase.auth.signInWithPassword({
     email: user.email as string,
     password: form.originalPassword,
@@ -53,7 +55,7 @@ export async function changePassword(
 
   if (logInError) {
     console.error(logInError);
-    return;
+    return { error: logInError };
   }
 
   const { error: passwordUpdatingError } = await supabase.auth.updateUser({
@@ -62,6 +64,8 @@ export async function changePassword(
 
   if (passwordUpdatingError) {
     console.error(passwordUpdatingError);
-    return;
+    return { error: passwordUpdatingError };
   }
+
+  return { error: null };
 }

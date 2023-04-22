@@ -72,7 +72,7 @@ const LookupCard: FC<{
 
     {/* Count and other notes */}
     {children && (
-      <div className="flex flex-col gap-1 bg-surface-2 py-3 px-4">
+      <div className="flex flex-col gap-1 bg-surface-2 px-4 py-3">
         {children}
       </div>
     )}

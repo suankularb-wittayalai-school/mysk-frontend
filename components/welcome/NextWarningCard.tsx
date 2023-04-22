@@ -16,7 +16,7 @@ const NextWarningCard: FC = () => {
     <Card
       appearance="outlined"
       direction="row"
-      className="mx-4 items-center gap-3 py-3 px-4 sm:mx-0"
+      className="mx-4 items-center gap-3 px-4 py-3 sm:mx-0"
     >
       <MaterialIcon icon="warning" className="text-error" />
       <p>{t("common.nextReminder")}</p>
