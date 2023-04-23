@@ -82,6 +82,36 @@ const ContactDialog: SubmittableDialogComponent<
       });
   }, [form.value, form.type]);
 
+  /**
+   * Pass the form data onto `onSubmit`.
+   */
+  function handleSubmit() {
+    if (
+      !(
+        // Check for form completion
+        (
+          formOK &&
+          // Check if value is valid
+          (contactValuesMap[form.type as ContactVia].validate
+            ? contactValuesMap[form.type as ContactVia].validate!(form.value)
+            : true)
+        )
+      )
+    )
+      return;
+    onSubmit({
+      id: counter,
+      // Omit the `name` key if the Thai Label field is empty
+      ...(form.nameTH
+        ? { name: { th: form.nameTH, "en-US": form.nameEN } }
+        : {}),
+      type: form.type as ContactVia,
+      value: form.value,
+    });
+    resetForm();
+    incrementCounter();
+  }
+
   return (
     <Dialog open={open} width={580} onClose={onClose}>
       <DialogHeader
@@ -144,37 +174,13 @@ const ContactDialog: SubmittableDialogComponent<
         </Columns>
       </DialogContent>
       <Actions>
+        {/* Cancel */}
         <Button appearance="text" onClick={onClose}>
           {t("dialog.contact.action.cancel")}
         </Button>
-        <Button
-          appearance="text"
-          onClick={() => {
-            if (
-              !(
-                // Check for form completion
-                (
-                  formOK &&
-                  // Check if value is valid
-                  (contactValuesMap[form.type as ContactVia].validate
-                    ? contactValuesMap[form.type as ContactVia].validate!(
-                        form.value
-                      )
-                    : true)
-                )
-              )
-            )
-              return;
-            onSubmit({
-              id: counter,
-              name: { th: form.nameTH, "en-US": form.nameEN },
-              type: form.type as ContactVia,
-              value: form.value,
-            });
-            resetForm();
-            incrementCounter();
-          }}
-        >
+
+        {/* Save */}
+        <Button appearance="text" onClick={handleSubmit}>
           {t(`dialog.contact.action.${contact ? "save" : "add"}`)}
         </Button>
       </Actions>
