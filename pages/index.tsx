@@ -100,11 +100,13 @@ const LoginSection: FC = () => {
         password,
       });
 
+      // If the user enter a wrong email or password, inform them
       if (error?.name === "AuthApiError")
         setSnackbar(<Snackbar>{t("snackbar.invalidCreds")}</Snackbar>);
 
       if (!session || error) return false;
 
+      // Get the user metadata to figure where to redirect to
       const { data: metadata, error: metadataError } = await getUserMetadata(
         supabase,
         session.user.id
@@ -112,11 +114,14 @@ const LoginSection: FC = () => {
       if (metadataError) return false;
 
       // Onboard the user if this is their first log in
-      if (!metadata!.onboarded) router.push("/account/welcome");
+      if (!metadata!.onboarded) {
+        router.push("/account/welcome");
+        return true;
+      }
 
-      // Role redirect
-      if (metadata!.role == "teacher") router.push("/teach");
-      if (metadata!.role == "student") router.push("/learn");
+      // Redirect the user accoridng to their role
+      if (metadata!.role === "teacher") router.push("/teach");
+      if (metadata!.role === "student") router.push("/learn");
 
       return true;
     }, toggleLoading);
@@ -137,9 +142,7 @@ const LoginSection: FC = () => {
             trailing="sk.ac.th"
             error={email.endsWith("sk.ac.th")}
             value={email}
-            onChange={(value) =>
-              setEmail(value.endsWith("sk.ac.th") ? value.slice(0, -8) : value)
-            }
+            onChange={(value) => setEmail(value.split("sk.ac.th", 1)[0])}
             locale={locale}
             inputAttr={{ autoCapitalize: "off" }}
             className="bg-surface"
@@ -157,7 +160,7 @@ const LoginSection: FC = () => {
             <Button
               appearance="outlined"
               onClick={() => setShowForgor(true)}
-              className="!bg-surface"
+              className="!bg-surface !min-w-[7.25rem]"
             >
               {t("logIn.action.forgotPassword")}
             </Button>
