@@ -142,9 +142,7 @@ const LoginSection: FC = () => {
             trailing="sk.ac.th"
             error={email.endsWith("sk.ac.th")}
             value={email}
-            onChange={(value) =>
-              setEmail(value.endsWith("sk.ac.th") ? value.slice(0, -8) : value)
-            }
+            onChange={(value) => setEmail(value.split("sk.ac.th", 1)[0])}
             locale={locale}
             inputAttr={{ autoCapitalize: "off" }}
             className="bg-surface"
@@ -162,7 +160,7 @@ const LoginSection: FC = () => {
             <Button
               appearance="outlined"
               onClick={() => setShowForgor(true)}
-              className="!bg-surface"
+              className="!bg-surface !min-w-[7.25rem]"
             >
               {t("logIn.action.forgotPassword")}
             </Button>
