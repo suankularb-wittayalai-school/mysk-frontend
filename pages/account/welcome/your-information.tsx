@@ -193,7 +193,12 @@ const WelcomePage: CustomPage<{
               </Link>
             </Trans>
           </p>
-          <PersonFields {...{ subjectGroups, formProps }} />
+          <PersonFields
+            subjectGroups={
+              person.role === "teacher" ? subjectGroups : undefined
+            }
+            formProps={formProps}
+          />
         </Section>
         <ContactsSection
           contacts={contacts}
