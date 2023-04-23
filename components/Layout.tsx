@@ -232,7 +232,11 @@ const Layout: FC<
       {/* Navigation Bar/Rail */}
       {(!navType || navType !== "hidden") && (
         <NavBar
-          brand={<RailLogo />}
+          brand={
+            <Link href="/" className="group">
+              <RailLogo />
+            </Link>
+          }
           fab={fab}
           end={
             <>
