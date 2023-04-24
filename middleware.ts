@@ -22,7 +22,7 @@ export async function middleware(req: NextRequest) {
   const pageRole: Role | "public" | "admin" | "user" =
     route === "/"
       ? "public"
-      : /^\/news\/(info|form)\/(create|(\d+\/edit))/.test(route)
+      : /^\/admin|(news\/(info|form)\/(create|(\d+\/edit)))/.test(route)
       ? "admin"
       : /^\/learn/.test(route)
       ? "student"
@@ -84,7 +84,7 @@ export async function middleware(req: NextRequest) {
   // Allow all users to visit user pages
   // Allow users with the correct roles
   else if (!(pageRole === "user" || pageRole === userRole)) {
-    if (pageRole != "admin" || !userIsAdmin) {
+    if (pageRole !== "admin" || !userIsAdmin) {
       // Set destinations for students and teachers in the wrong pages
       if (userRole === "student") destination = "/learn";
       else if (userRole === "teacher") destination = "/teach";
@@ -105,6 +105,7 @@ export const config = {
     "/account",
     "/account/:path*",
     "/about",
+    "/admin/:path*",
     "/learn",
     "/learn/:id",
     "/teach",
