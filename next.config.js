@@ -32,7 +32,6 @@ module.exports = withBundleAnalyzer(
           permanent: true,
         },
         { source: "/learn/:id", destination: "/learn", permanent: true },
-        { source: "/admin", destination: "/lookup", permanent: true },
       ];
     },
   })
