@@ -2,10 +2,10 @@
  * `/admin` TABLE OF CONTENTS
  *
  * Note: `Ctrl` + click to jump to a component.
- * 
+ *
  * **Reusables**
  * - {@link AdminPanelCard}
- * - {@link CardLink}
+ * - {@link AdminCardAction}
  *
  * **Sections**
  * - {@link NewYearNewDataCard}
@@ -49,7 +49,7 @@ import { CustomPage, LangCode } from "@/utils/types/common";
  * @param accentColor An accent color to denote importance or relation to other Cards.
  * @param icon An large icon to help admins find content quickly.
  * @param className `className` on the content container.
- * 
+ *
  * @returns A Card.
  */
 const AdminPanelCard: FC<{
@@ -62,7 +62,7 @@ const AdminPanelCard: FC<{
     <Card
       appearance="outlined"
       direction="row"
-      className="!grid grid-cols-4 gap-4 sm:gap-6 overflow-hidden sm:!flex"
+      className="!grid grid-cols-4 gap-4 overflow-hidden sm:!flex sm:gap-6"
     >
       <div
         className={cn([
@@ -77,59 +77,66 @@ const AdminPanelCard: FC<{
       >
         {icon}
       </div>
-      <div className={cn(["col-span-3 py-3 pr-3", className])}>
-        {children}
-      </div>
+      <div className={cn(["col-span-3 py-3 pr-3", className])}>{children}</div>
     </Card>
   );
 };
 
 /**
- * A small Card that links to other admin pages. Card Links are placed in
- * groups inside the Section Cards in this page. They are a Card’s CTAs, one
+ * A small Card that links to other admin pages. Admin Card Actions are placed
+ * in groups inside the Section Cards in this page. They are a Card’s CTAs, one
  * could say.
  *
  * @param children The text label.
- * @param href The URL of the page this Card Link leads to.
+ * @param onClick he function called when the user interacts with the Admin Card Action.
+ * @param href The URL of the page this Admin Card Action Link leads to.
  * @param size `standard` or `large`. `large` should be used sparingly as it denotes importance.
  * @param color The background color.
  * @param icon An icon to help admins find the right link quickly.
- * 
+ *
  * @returns A Card.
  */
-const CardLink: FC<{
+const AdminCardAction: FC<{
   children: ReactNode;
-  href: string;
+  onClick?: () => any;
+  href?: string;
   size?: "standard" | "large";
   color: "surface-variant" | "primary" | "secondary" | "tertiary";
   icon: JSX.Element;
-}> = ({ children, href, size, color, icon }) => {
+}> = ({ children, onClick, href, size, color, icon }) => {
   return (
     <Card
       appearance="filled"
       direction="row"
       stateLayerEffect
+      onClick={onClick}
       href={href}
       element={Link}
       className={cn([
-        "items-center !gap-5 rounded-sm !border-0 px-3 py-2",
+        "items-center !gap-5 !border-0 px-3 py-2",
+        size !== "large" && "!rounded-sm",
         {
-          "surface-variant": "!bg-surface-variant",
+          "surface-variant":
+            "!bg-surface-variant state-layer:!bg-on-surface-variant",
           primary: "!bg-primary-container",
-          secondary: "!bg-secondary-container",
-          tertiary: "!bg-tertiary-container",
+          secondary:
+            "!bg-secondary-container state-layer:!bg-on-secondary-container",
+          tertiary:
+            "!bg-tertiary-container state-layer:!bg-on-tertiary-container",
         }[color],
       ])}
     >
-      <span
+      <h4
         className={cn([
           "grow",
           size === "large" ? "skc-title-large" : "skc-title-medium",
         ])}
       >
         {children}
-      </span>
-      <div className="[&_.skc-icon]:!text-5xl">{icon}</div>
+      </h4>
+      <div className={size === "large" ? "[&_.skc-icon]:!text-5xl" : undefined}>
+        {icon}
+      </div>
     </Card>
   );
 };
@@ -137,7 +144,7 @@ const CardLink: FC<{
 /**
  * Informs the user as to why some tables appear empty (the academic year
  * changed). Should only be shown when at least 1 year-dependent table has 0
- * entries marked for the current academic year. 
+ * entries marked for the current academic year.
  *
  * @returns A Card.
  */
@@ -172,7 +179,7 @@ const ManageDataCard: FC = () => {
     <AdminPanelCard
       accentColor="surface-1"
       icon={<MaterialIcon icon="database" size={48} />}
-      className="grid grid-cols-1 gap-6 md:grid-cols-[5fr,6fr] items-start"
+      className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr,6fr]"
     >
       <div className="flex flex-col gap-1">
         <h2 className="skc-headline-small">View and edit the school’s data</h2>
@@ -182,38 +189,91 @@ const ManageDataCard: FC = () => {
         </p>
       </div>
       <div className="grid grid-cols-1 gap-x-3 gap-y-2 sm:grid-cols-2">
-        <CardLink
+        <AdminCardAction
           href="/admin/table/student"
           size="large"
           color="primary"
           icon={<MaterialIcon icon="face" size={40} />}
         >
           Students
-        </CardLink>
-        <CardLink
+        </AdminCardAction>
+        <AdminCardAction
           href="/admin/table/teacher"
           size="large"
           color="primary"
           icon={<MaterialIcon icon="support_agent" size={40} />}
         >
           Teachers
-        </CardLink>
-        <CardLink
+        </AdminCardAction>
+        <AdminCardAction
           href="/admin/table/subject"
           size="large"
           color="primary"
           icon={<MaterialIcon icon="book" size={40} />}
         >
           Subjects
-        </CardLink>
-        <CardLink
+        </AdminCardAction>
+        <AdminCardAction
           href="/admin/table/class"
           size="large"
           color="primary"
           icon={<MaterialIcon icon="groups" size={40} />}
         >
           Classes
-        </CardLink>
+        </AdminCardAction>
+      </div>
+    </AdminPanelCard>
+  );
+};
+
+/**
+ * A place to import CSVs into the database.
+ *
+ * @returns A Card.
+ */
+const ImportDataCard: FC = () => {
+  return (
+    <AdminPanelCard
+      accentColor="surface-1"
+      icon={<MaterialIcon icon="upload" size={48} />}
+      className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr,6fr]"
+    >
+      <div className="flex flex-col gap-1">
+        <h2 className="skc-headline-small">Quickly import data with CSV</h2>
+        <p>
+          Create a CSV file in the proper format with spreadsheet software like
+          Google Sheets or Microsoft Excel, and import it here.
+        </p>
+      </div>
+      <div className="grid grid-cols-1 gap-x-3 gap-y-2 sm:grid-cols-2">
+        <AdminCardAction
+          href="/admin/table/student"
+          color="secondary"
+          icon={<MaterialIcon icon="face" />}
+        >
+          Import students
+        </AdminCardAction>
+        <AdminCardAction
+          href="/admin/table/teacher"
+          color="secondary"
+          icon={<MaterialIcon icon="support_agent" />}
+        >
+          Import teachers
+        </AdminCardAction>
+        <AdminCardAction
+          href="/admin/table/subject"
+          color="secondary"
+          icon={<MaterialIcon icon="book" />}
+        >
+          Import subjects
+        </AdminCardAction>
+        <AdminCardAction
+          href="/admin/table/class"
+          color="secondary"
+          icon={<MaterialIcon icon="groups" />}
+        >
+          Import classes
+        </AdminCardAction>
       </div>
     </AdminPanelCard>
   );
@@ -244,6 +304,7 @@ const AdminPanelPage: CustomPage = () => {
         </Section>
         <Section>
           <ManageDataCard />
+          <ImportDataCard />
         </Section>
       </ContentLayout>
     </>
