@@ -22,7 +22,7 @@ import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useState } from "react";
 
 // SK Components
 import {
@@ -33,6 +33,9 @@ import {
 } from "@suankularb-components/react";
 
 // Internal components
+import ImportStudentsDialog from "@/components/admin/ImportStudentsDialog";
+import ImportSubjectsDialog from "@/components/admin/ImportSubjectsDialog";
+import ImportTeachersDialog from "@/components/admin/ImportTeachersDialog";
 import MySKPageHeader from "@/components/common/MySKPageHeader";
 
 // Helpers
@@ -41,6 +44,7 @@ import { createTitleStr } from "@/utils/helpers/title";
 
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
+import { useRouter } from "next/router";
 
 /**
  * This page groups content into Cards. This is a template for those Cards.
@@ -109,6 +113,7 @@ const AdminCardAction: FC<{
       appearance="filled"
       direction="row"
       stateLayerEffect
+      shadowEffect
       onClick={onClick}
       href={href}
       element={Link}
@@ -128,7 +133,7 @@ const AdminCardAction: FC<{
     >
       <h4
         className={cn([
-          "grow",
+          "grow text-left",
           size === "large" ? "skc-title-large" : "skc-title-medium",
         ])}
       >
@@ -232,6 +237,14 @@ const ManageDataCard: FC = () => {
  * @returns A Card.
  */
 const ImportDataCard: FC = () => {
+  const router = useRouter();
+
+  // Dialog control
+  const [studentOpen, setStudentOpen] = useState<boolean>(false);
+  const [teacherOpen, setTeacherOpen] = useState<boolean>(false);
+  const [subjectOpen, setSubjectOpen] = useState<boolean>(false);
+  const [classOpen, setClassOpen] = useState<boolean>(false);
+
   return (
     <AdminPanelCard
       accentColor="surface-1"
@@ -246,33 +259,64 @@ const ImportDataCard: FC = () => {
         </p>
       </div>
       <div className="grid grid-cols-1 gap-x-3 gap-y-2 sm:grid-cols-2">
+        {/* Students */}
         <AdminCardAction
-          href="/admin/table/student"
+          onClick={() => setStudentOpen(true)}
           color="secondary"
           icon={<MaterialIcon icon="face" />}
         >
           Import students
         </AdminCardAction>
+        <ImportStudentsDialog
+          open={studentOpen}
+          onClose={() => setStudentOpen(false)}
+          onSubmit={() => {
+            setStudentOpen(false);
+            router.push("/admin/table/student");
+          }}
+        />
+
+        {/* Teachers */}
         <AdminCardAction
-          href="/admin/table/teacher"
+          onClick={() => setTeacherOpen(true)}
           color="secondary"
           icon={<MaterialIcon icon="support_agent" />}
         >
           Import teachers
         </AdminCardAction>
+        <ImportTeachersDialog
+          open={teacherOpen}
+          onClose={() => setTeacherOpen(false)}
+          onSubmit={() => {
+            setTeacherOpen(false);
+            router.push("/admin/table/teacher");
+          }}
+        />
+
+        {/* Subjects */}
         <AdminCardAction
-          href="/admin/table/subject"
+          onClick={() => setSubjectOpen(true)}
           color="secondary"
           icon={<MaterialIcon icon="book" />}
         >
           Import subjects
         </AdminCardAction>
+        <ImportSubjectsDialog
+          open={subjectOpen}
+          onClose={() => setSubjectOpen(false)}
+          onSubmit={() => {
+            setSubjectOpen(false);
+            router.push("/admin/table/subject");
+          }}
+        />
+
+        {/* Classes */}
         <AdminCardAction
-          href="/admin/table/class"
+          onClick={() => setClassOpen(true)}
           color="secondary"
           icon={<MaterialIcon icon="groups" />}
         >
-          Import classes
+          Generate classes
         </AdminCardAction>
       </div>
     </AdminPanelCard>
@@ -302,7 +346,7 @@ const AdminPanelPage: CustomPage = () => {
         <Section>
           <NewYearNewDataCard />
         </Section>
-        <Section>
+        <Section className="!gap-3">
           <ManageDataCard />
           <ImportDataCard />
         </Section>

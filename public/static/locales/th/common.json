@@ -124,6 +124,12 @@
     "languageRedirect": {
       "message": "Redirecting you to the English website…",
       "action": "ใช้ภาษาไทย"
+    },
+    "common": {
+      "action": {
+        "close": "ปิด",
+        "retry": "ลองอีกครั้ง"
+      }
     }
   },
   "dialog": {

@@ -1,0 +1,36 @@
+{
+  "title": "Admin panel",
+  "suggestions": {
+    "title": "Suggestions",
+    "newYearNewData": {}
+  },
+  "data": {
+    "title": "Data",
+    "manage": {},
+    "import": {
+      "dialog": {
+        "import": {
+          "title": {
+            "student": "Import students",
+            "teacher": "Import teachers",
+            "subject": "Import subjects",
+            "class": "Import classes"
+          },
+          "desc": "You can import a CSV file to the MySK database. Please ensure that the columns in your CSV file match the following exactly.",
+          "table": {
+            "header": "Header",
+            "contentType": "Content type",
+            "required": "Required"
+          },
+          "form": {
+            "csvFile": "CSV file",
+            "hasHeader": "Has a header row"
+          },
+          "action": {
+            "import": "Import"
+          }
+        }
+      }
+    }
+  }
+}
