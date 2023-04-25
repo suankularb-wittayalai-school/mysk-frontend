@@ -121,7 +121,7 @@ function App({ Component, pageProps }: CustomAppProps) {
           --font-display: ${displayFontEN.style.fontFamily},
             ${displayFontTH.style.fontFamily};
           --font-mono: ui-monospace, SFMono-Regular, SF Mono,
-            ${monoFont.style.fontFamily};
+            ${monoFont.style.fontFamily}, ${bodyFontTH.style.fontFamily};
         }
       `}</style>
 
