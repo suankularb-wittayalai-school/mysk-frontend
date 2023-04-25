@@ -27,7 +27,8 @@
             "hasHeader": "Has a header row"
           },
           "action": {
-            "import": "Import"
+            "import": "Import",
+            "downloadStarter": "Download starter file"
           }
         }
       }

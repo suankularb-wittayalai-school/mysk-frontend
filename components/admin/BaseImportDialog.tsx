@@ -154,6 +154,7 @@ const BaseImportDialog: SubmittableDialogComponent<
       }
       width={600}
       onClose={onClose}
+      className="[&_.skc-fullscreen-dialog\_\_content]:!gap-6"
     >
       <Section>
         <p className="skc-body-medium">{t("data.import.dialog.import.desc")}</p>
@@ -200,9 +201,16 @@ const BaseImportDialog: SubmittableDialogComponent<
             ))}
           </TableBody>
         </Table>
+      </Section>
+
+      <Section>
         <Actions align="left">
-          <Button appearance="filled" onClick={handleDownload}>
-            Download starter file
+          <Button
+            appearance="filled"
+            icon={<MaterialIcon icon="download" />}
+            onClick={handleDownload}
+          >
+            {t("data.import.dialog.import.action.downloadStarter")}
           </Button>
         </Actions>
       </Section>
