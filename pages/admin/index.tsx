@@ -333,6 +333,57 @@ const ImportDataCard: FC = () => {
 };
 
 /**
+ * Links to pages for creating and editing News Articles and Forms.
+ *
+ * @returns A Card.
+ */
+const ManageNewsCard: FC = () => {
+  return (
+    <AdminPanelCard
+      accentColor="surface-1"
+      icon={<MaterialIcon icon="newspaper" size={48} />}
+      className="flex flex-col gap-3"
+    >
+      <div className="flex flex-col gap-1">
+        <h2 className="skc-headline-small">
+          Interact with students with news articles and forms
+        </h2>
+        <p>
+          You can create articles with text, image, and tables that appear right
+          inside MySK for students and teachers. For data collection, you can
+          also create forms for students to fill, and class advisors can view
+          the results.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 gap-2 md:grid-cols-3 md:gap-6">
+        <AdminCardAction
+          href="/news/info/create"
+          color="surface-variant"
+          icon={<MaterialIcon icon="add_notes" />}
+        >
+          Create an article
+        </AdminCardAction>
+        <AdminCardAction
+          href="/news/form/create"
+          color="surface-variant"
+          icon={<MaterialIcon icon="assignment_add" />}
+        >
+          Create a form
+        </AdminCardAction>
+        <AdminCardAction
+          href="/news"
+          color="surface-variant"
+          icon={<MaterialIcon icon="folder_open" />}
+        >
+          Manage existing
+        </AdminCardAction>
+      </div>
+    </AdminPanelCard>
+  );
+};
+
+/**
  * A landing page for admins; contains intelligent suggestions, statistics, and
  * links for managing data and news articles.
  *
@@ -352,12 +403,15 @@ const AdminPanelPage: CustomPage = () => {
         icon={<MaterialIcon icon="shield_person" />}
       />
       <ContentLayout>
-        <Section>
+        <Section className="!gap-3">
           <NewYearNewDataCard />
         </Section>
         <Section className="!gap-3">
           <ManageDataCard />
           <ImportDataCard />
+        </Section>
+        <Section className="!gap-3">
+          <ManageNewsCard />
         </Section>
       </ContentLayout>
     </>
