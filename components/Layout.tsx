@@ -224,6 +224,7 @@ const Layout: FC<
             <NavDrawerItem
               icon={<MaterialIcon icon="shield_person" />}
               label={t("navigation.drawer.about.admin")}
+              selected={router.pathname.startsWith("/admin")}
               href="/admin"
               element={Link}
             />
