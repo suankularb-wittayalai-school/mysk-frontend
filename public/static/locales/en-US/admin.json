@@ -13,8 +13,7 @@
           "title": {
             "student": "Import students",
             "teacher": "Import teachers",
-            "subject": "Import subjects",
-            "class": "Import classes"
+            "subject": "Import subjects"
           },
           "desc": "You can import a CSV file to the MySK database. Please ensure that the columns in your CSV file match the following exactly.",
           "table": {
@@ -29,6 +28,24 @@
           "action": {
             "import": "Import",
             "downloadStarter": "Download starter file"
+          }
+        },
+        "generateClasses": {
+          "title": "Generate classes",
+          "desc": "Automatically generate a whole academic year of classes with this tool.",
+          "numGrades": "Number of grades",
+          "numClasses": {
+            "title": "Classes per grade",
+            "instructions": "Enter the amount of classes you would like in each grade. For example, if you want the classes <0>M.101, M.102, M.103</0>, enter “3” inside the field labeled “Num. of classes in M.1”.",
+            "input": "Num. classes in M.{{grade}}"
+          },
+          "preview": {
+            "title": "Preview",
+            "class": "M.{{number}}"
+          },
+          "action": {
+            "cancel": "Cancel",
+            "generate": "Generate"
           }
         }
       }

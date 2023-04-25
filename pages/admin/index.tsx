@@ -45,6 +45,7 @@ import { createTitleStr } from "@/utils/helpers/title";
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { useRouter } from "next/router";
+import GenerateClassesDialog from "@/components/admin/GenerateClassesDialog";
 
 /**
  * This page groups content into Cards. This is a template for those Cards.
@@ -318,6 +319,14 @@ const ImportDataCard: FC = () => {
         >
           Generate classes
         </AdminCardAction>
+        <GenerateClassesDialog
+          open={classOpen}
+          onClose={() => setClassOpen(false)}
+          onSubmit={() => {
+            setClassOpen(false);
+            router.push("/admin/table/class");
+          }}
+        />
       </div>
     </AdminPanelCard>
   );
