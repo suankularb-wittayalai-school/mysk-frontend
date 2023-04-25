@@ -38,6 +38,7 @@ import LandingImageDark from "@/public/images/landing-dark.webp";
 import { getUserMetadata } from "@/utils/backend/account";
 
 // Helpers
+import { cn } from "@/utils/helpers/className";
 import { withLoading } from "@/utils/helpers/loading";
 
 // Hooks
@@ -160,7 +161,10 @@ const LoginSection: FC = () => {
             <Button
               appearance="outlined"
               onClick={() => setShowForgor(true)}
-              className="!bg-surface !min-w-[7.25rem]"
+              className={cn([
+                "!bg-surface",
+                locale === "en-US" && "!min-w-[7.25rem]",
+              ])}
             >
               {t("logIn.action.forgotPassword")}
             </Button>
@@ -341,11 +345,11 @@ const IndexPage: CustomPage = () => {
                       เปลี่ยนภาษาเป็น:{" "}
                       <Link
                         href="/"
-                        locale={locale == "en-US" ? "th" : "en-US"}
+                        locale={locale === "en-US" ? "th" : "en-US"}
                         onClick={() =>
                           localStorage.setItem(
                             "preferredLang",
-                            locale == "en-US" ? "th" : "en-US"
+                            locale === "en-US" ? "th" : "en-US"
                           )
                         }
                         className="link"
