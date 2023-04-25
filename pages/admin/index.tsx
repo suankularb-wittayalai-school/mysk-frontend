@@ -82,7 +82,9 @@ const AdminPanelCard: FC<{
       >
         {icon}
       </div>
-      <div className={cn(["col-span-3 py-3 pr-3", className])}>{children}</div>
+      <div className={cn(["col-span-3 grow py-3 pr-3", className])}>
+        {children}
+      </div>
     </Card>
   );
 };
