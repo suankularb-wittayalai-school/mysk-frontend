@@ -6,18 +6,26 @@
  * **Reusables**
  * - {@link AdminPanelCard}
  * - {@link AdminCardAction}
+ * - {@link StatisticsCard}
  *
  * **Sections**
  * - {@link NewYearNewDataCard}
+ * - {@link StatisticsSection}
  * - {@link ManageDataCard}
+ * - {@link ImportDataCard}
+ * - {@link ManageNewsCard}
  *
  * **Page**
  * - {@link AdminPanelPage}
  */
 
 // External libraries
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -27,12 +35,15 @@ import { FC, ReactNode, useState } from "react";
 // SK Components
 import {
   Card,
+  CardContent,
+  Columns,
   ContentLayout,
   MaterialIcon,
   Section,
 } from "@suankularb-components/react";
 
 // Internal components
+import GenerateClassesDialog from "@/components/admin/GenerateClassesDialog";
 import ImportStudentsDialog from "@/components/admin/ImportStudentsDialog";
 import ImportSubjectsDialog from "@/components/admin/ImportSubjectsDialog";
 import ImportTeachersDialog from "@/components/admin/ImportTeachersDialog";
@@ -40,12 +51,15 @@ import MySKPageHeader from "@/components/common/MySKPageHeader";
 
 // Helpers
 import { cn } from "@/utils/helpers/className";
+import { getCurrentAcademicYear } from "@/utils/helpers/date";
 import { createTitleStr } from "@/utils/helpers/title";
 
+// Hooks
+import { useLocale } from "@/utils/hooks/i18n";
+
 // Types
+import { AdminPanelStatistics } from "@/utils/types/admin";
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { useRouter } from "next/router";
-import GenerateClassesDialog from "@/components/admin/GenerateClassesDialog";
 
 /**
  * This page groups content into Cards. This is a template for those Cards.
@@ -85,6 +99,29 @@ const AdminPanelCard: FC<{
       <div className={cn(["col-span-3 grow py-3 pr-3", className])}>
         {children}
       </div>
+    </Card>
+  );
+};
+
+/**
+ * A Card displaying a main and a related statistic of a table. Only used by
+ * {@link StatisticsSection Statistics Section}.
+ *
+ * @param title The main statistic.
+ * @param subtitle A related statistic.
+ *
+ * @returns A Card.
+ */
+const StatisticsCard: FC<{
+  title: string;
+  subtitle: string;
+}> = ({ title, subtitle }) => {
+  return (
+    <Card appearance="filled" direction="row">
+      <CardContent className="grow !gap-1 !px-4 !py-3">
+        <p className="skc-headline-small">{title}</p>
+        <p className="skc-body-medium text-on-surface-variant">{subtitle}</p>
+      </CardContent>
     </Card>
   );
 };
@@ -146,6 +183,50 @@ const AdminCardAction: FC<{
         {icon}
       </div>
     </Card>
+  );
+};
+
+/**
+ * Displays the number of students, teachers, classes, news articles, and other
+ * information related to those, grouped into Cards.
+ *
+ * @param count A number of statistics passed in from `getServerSideProps`.
+ *
+ * @returns A Section.
+ */
+const StatisticsSection: FC<{ count: AdminPanelStatistics }> = ({ count }) => {
+  const locale = useLocale();
+  const { t } = useTranslation("admin");
+
+  return (
+    <Section>
+      <Columns columns={4} className="!items-stretch">
+        <StatisticsCard
+          title={`${count.students.all.toLocaleString(locale)} students`}
+          subtitle={`${count.students.onboarded.toLocaleString(
+            locale
+          )} students onboarded`}
+        />
+        <StatisticsCard
+          title={`${count.teachers.all.toLocaleString(locale)} teachers`}
+          subtitle={`${count.teachers.onboarded.toLocaleString(
+            locale
+          )} teachers onboarded`}
+        />
+        <StatisticsCard
+          title={`${count.classes.thisYear.toLocaleString(locale)} classes`}
+          subtitle={`${count.classes.all.toLocaleString(
+            locale
+          )} classes including past years`}
+        />
+        <StatisticsCard
+          title={`${count.news.thisYear.toLocaleString(locale)} news articles`}
+          subtitle={`${count.news.all.toLocaleString(
+            locale
+          )} articles including past years`}
+        />
+      </Columns>
+    </Section>
   );
 };
 
@@ -391,7 +472,9 @@ const ManageNewsCard: FC = () => {
  *
  * @returns A Page.
  */
-const AdminPanelPage: CustomPage = () => {
+const AdminPanelPage: CustomPage<{
+  count: AdminPanelStatistics;
+}> = ({ count }) => {
   // Translation
   const { t } = useTranslation(["admin", "common"]);
 
@@ -405,13 +488,24 @@ const AdminPanelPage: CustomPage = () => {
         icon={<MaterialIcon icon="shield_person" />}
       />
       <ContentLayout>
-        <Section className="!gap-3">
-          <NewYearNewDataCard />
+        {/* Suggestions */}
+        <Section className="!gap-3 empty:hidden">
+          {/* Show the New Year New Data Card when a table is empty */}
+          {(count.students.all === 0 ||
+            count.teachers.all === 0 ||
+            count.classes.thisYear === 0) && <NewYearNewDataCard />}
         </Section>
+
+        {/* Statistics */}
+        <StatisticsSection count={count} />
+
+        {/* Data */}
         <Section className="!gap-3">
           <ManageDataCard />
           <ImportDataCard />
         </Section>
+
+        {/* News */}
         <Section className="!gap-3">
           <ManageNewsCard />
         </Section>
@@ -420,10 +514,65 @@ const AdminPanelPage: CustomPage = () => {
   );
 };
 
-export const getStaticProps = async ({ locale }: { locale: LangCode }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ["common", "admin"])),
-  },
-});
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  req,
+  res,
+}) => {
+  const supabase = createServerSupabaseClient({
+    req: req as NextApiRequest,
+    res: res as NextApiResponse,
+  });
+
+  // Statistics
+
+  // TODO: Onboarding statistics
+
+  // Students
+  const { count: allStudents } = await supabase
+    .from("student")
+    .select("id", { count: "exact", head: true });
+
+  // Teachers
+  const { count: allTeachers } = await supabase
+    .from("teacher")
+    .select("id", { count: "exact", head: true });
+
+  // Classes
+  const { count: allClasses } = await supabase
+    .from("classroom")
+    .select("id", { count: "exact", head: true });
+  const { count: classesThisYear } = await supabase
+    .from("classroom")
+    .select("id", { count: "exact", head: true })
+    .match({ year: getCurrentAcademicYear() });
+
+  // News
+  const { count: allNews } = await supabase
+    .from("news")
+    .select("id", { count: "exact", head: true });
+  const { count: newsThisYear } = await supabase
+    .from("news")
+    .select("id", { count: "exact", head: true })
+    .gte("created_at", `${new Date().getFullYear()}-01-01`);
+
+  // Put the statistics in 1 constant to pass
+  const count = {
+    students: { all: allStudents, onboarded: 0 },
+    teachers: { all: allTeachers, onboarded: 0 },
+    classes: { all: allClasses, thisYear: classesThisYear },
+    news: { all: allNews, thisYear: newsThisYear },
+  };
+
+  return {
+    props: {
+      ...(await serverSideTranslations(locale as LangCode, [
+        "common",
+        "admin",
+      ])),
+      count,
+    },
+  };
+};
 
 export default AdminPanelPage;
