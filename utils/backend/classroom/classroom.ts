@@ -13,11 +13,13 @@ import { getSubjectGroups } from "@/utils/backend/subject/subjectGroup";
 import { db2Class, db2PersonName, db2Student } from "@/utils/backend/database";
 
 // Helpers
+import { range } from "@/utils/helpers/array";
 import { getCurrentAcademicYear } from "@/utils/helpers/date";
 
 // Types
 import {
   Class,
+  ClassAdminListItem,
   ClassLookupListItem,
   ClassOverview,
   ClassTeachersListSection,
@@ -26,7 +28,6 @@ import {
 import { BackendDataReturn, DatabaseClient } from "@/utils/types/common";
 import { StudentListItem } from "@/utils/types/person";
 import { Database } from "@/utils/types/supabase";
-import { range } from "@/utils/helpers/array";
 
 export async function createClassroom(
   supabase: DatabaseClient,
@@ -369,7 +370,8 @@ export async function getLookupClasses(
   const { data, error } = await supabase
     .from("classroom")
     .select("id, number, advisors, students")
-    .order("number");
+    .order("number")
+    .match({ year: getCurrentAcademicYear() });
 
   if (error) {
     console.error(error);
@@ -398,6 +400,51 @@ export async function getLookupClasses(
         })
         .sort((a, b) => (a.name.th.firstName > b.name.th.firstName ? 1 : -1)),
       studentCount: classItem.students.length,
+    })),
+    error: null,
+  };
+}
+
+export async function getAdminClasses(
+  supabase: DatabaseClient,
+  page: number,
+  rowsPerPage: number
+): Promise<BackendDataReturn<ClassAdminListItem[]>> {
+  const { data, error } = await supabase
+    .from("classroom")
+    .select("id, number, advisors, students, year")
+    .order("year", { ascending: false })
+    .order("number")
+    .range(rowsPerPage * (page - 1), rowsPerPage * page - 1);
+
+  if (error) {
+    console.error(error);
+    return { data: [], error };
+  }
+
+  const classAdvisorIDs = data!.map((classItem) => classItem.advisors).flat();
+  const { data: teachers, error: teacherError } = await supabase
+    .from("teacher")
+    .select("*, person(*)")
+    .or(`id.in.(${classAdvisorIDs.join()})`);
+
+  if (teacherError) {
+    console.error(teacherError);
+    return { data: [], error: teacherError };
+  }
+
+  return {
+    data: data.map((classItem) => ({
+      id: classItem.id,
+      number: classItem.number,
+      classAdvisors: classItem.advisors
+        .map((advisor) => {
+          const teacher = teachers?.find((teacher) => advisor === teacher.id)!;
+          return { id: teacher.id, ...db2PersonName(teacher.person) };
+        })
+        .sort((a, b) => (a.name.th.firstName > b.name.th.firstName ? 1 : -1)),
+      studentCount: classItem.students.length,
+      year: classItem.year,
     })),
     error: null,
   };
