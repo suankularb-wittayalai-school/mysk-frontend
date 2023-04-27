@@ -1,5 +1,5 @@
 // External libraries
-import { FC } from "react";
+import { FC, Fragment } from "react";
 
 // Types
 import { LangCode, MultiLangString } from "@/utils/types/common";
@@ -17,7 +17,7 @@ const MultilangText: FC<{
 }> = ({ text, options, className }) => (
   <div
     className={cn([
-      "flex gap-1",
+      "grid grid-cols-[1.25rem,1fr] gap-1",
       options?.priorityLanguage === "en-US" ? "flex-col-reverse" : "flex-col",
       className,
     ])}
@@ -25,7 +25,7 @@ const MultilangText: FC<{
     {(["th", "en-US"] as LangCode[]).map(
       (langCode) =>
         !(options?.hideEmptyLanguage && !text[langCode]) && (
-          <div key={langCode} className="flex flex-row gap-1">
+          <Fragment key={langCode}>
             {/* Icon */}
             <div
               aria-label={langCode === "en-US" ? "English" : "ภาษาไทย"}
@@ -50,7 +50,7 @@ const MultilangText: FC<{
             >
               {text[langCode]}
             </p>
-          </div>
+          </Fragment>
         )
     )}
   </div>
