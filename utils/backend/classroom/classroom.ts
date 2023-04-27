@@ -26,6 +26,7 @@ import {
 import { BackendDataReturn, DatabaseClient } from "@/utils/types/common";
 import { StudentListItem } from "@/utils/types/person";
 import { Database } from "@/utils/types/supabase";
+import { range } from "@/utils/helpers/array";
 
 export async function createClassroom(
   supabase: DatabaseClient,
@@ -209,6 +210,34 @@ export async function importClasses(
     classesToImport.map(
       async (classItem) => await createClassroom(supabase, classItem)
     )
+  );
+}
+
+export async function generateClasses(
+  supabase: DatabaseClient,
+  noOfClassesPerGrade: number[]
+) {
+  const classes: Class[] = noOfClassesPerGrade
+    .map((numClasses, index) => {
+      const classesForGrade: Class[] = range(numClasses).map((classNumber) => ({
+        id: 0,
+        number: (index + 1) * 100 + (classNumber + 1),
+        year: getCurrentAcademicYear(),
+        students: [],
+        classAdvisors: [],
+        schedule: {
+          id: 0,
+          content: [],
+        },
+        contacts: [],
+        subjects: [],
+      }));
+      return classesForGrade;
+    })
+    .flat();
+
+  await Promise.all(
+    classes.map(async (classItem) => await createClassroom(supabase, classItem))
   );
 }
 

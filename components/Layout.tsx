@@ -220,6 +220,15 @@ const Layout: FC<
               />
             ))}
           />
+          {userMetadata?.isAdmin && (
+            <NavDrawerItem
+              icon={<MaterialIcon icon="shield_person" />}
+              label={t("navigation.drawer.about.admin")}
+              selected={router.pathname.startsWith("/admin")}
+              href="/admin"
+              element={Link}
+            />
+          )}
           <NavDrawerItem
             icon={<MaterialIcon icon="logout" />}
             label={t("navigation.drawer.about.logOut")}

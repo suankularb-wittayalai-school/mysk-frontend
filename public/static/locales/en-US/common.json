@@ -119,6 +119,12 @@
     "languageRedirect": {
       "message": "กำลังเปลี่ยนภาษาเป็นภาษาไทย…",
       "action": "Stay in English"
+    },
+    "common": {
+      "action": {
+        "close": "Close",
+        "retry": "Retry"
+      }
     }
   },
   "dialog": {

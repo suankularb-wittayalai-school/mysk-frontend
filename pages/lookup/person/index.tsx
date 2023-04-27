@@ -22,7 +22,6 @@ import {
 
 // Internal components
 import MySKPageHeader from "@/components/common/MySKPageHeader";
-import AddPersonFAB from "@/components/lookup/person/AddPersonFAB";
 import EmptyDetail from "@/components/lookup/EmptyDetail";
 import LookupList from "@/components/lookup/LookupList";
 import PersonCard from "@/components/lookup/person/PersonCard";
@@ -245,7 +244,5 @@ export const getServerSideProps: GetServerSideProps = async ({
     },
   };
 };
-
-LookupPeoplePage.fab = <AddPersonFAB />;
 
 export default LookupPeoplePage;
