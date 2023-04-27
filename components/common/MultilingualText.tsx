@@ -15,14 +15,12 @@ const MultilangText: FC<{
   }>;
   className?: string;
 }> = ({ text, options, className }) => (
-  <div
-    className={cn([
-      "grid grid-cols-[1.25rem,1fr] gap-1",
-      options?.priorityLanguage === "en-US" ? "flex-col-reverse" : "flex-col",
-      className,
-    ])}
-  >
-    {(["th", "en-US"] as LangCode[]).map(
+  <div className={cn(["grid grid-cols-[1.25rem,1fr] gap-1", className])}>
+    {(
+      (options?.priorityLanguage === "en-US"
+        ? ["en-US", "th"]
+        : ["th", "en-US"]) as LangCode[]
+    ).map(
       (langCode) =>
         !(options?.hideEmptyLanguage && !text[langCode]) && (
           <Fragment key={langCode}>
@@ -31,7 +29,8 @@ const MultilangText: FC<{
               aria-label={langCode === "en-US" ? "English" : "ภาษาไทย"}
               className={cn([
                 `grid h-5 w-5 select-none place-content-center rounded-full
-                 border-[1px]  text-[0.5rem]`,
+                 border-1 text-[0.5rem]`,
+                !options?.priorityLanguage ||
                 langCode === options?.priorityLanguage
                   ? `border-secondary text-secondary`
                   : `border-outline text-outline`,
@@ -43,6 +42,7 @@ const MultilangText: FC<{
             {/* Text */}
             <p
               className={
+                options?.priorityLanguage &&
                 langCode !== options?.priorityLanguage
                   ? `text-outline`
                   : undefined
