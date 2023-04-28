@@ -248,7 +248,7 @@ const ManageStudentsPage: CustomPage<{
               totalRows={totalRows}
               locale={locale}
               onChange={setPage}
-              className="sticky bottom-0"
+              className="sticky bottom-20 sm:bottom-0"
             />
           </DataTable>
         </Section>

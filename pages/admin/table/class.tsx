@@ -35,16 +35,15 @@ import {
 } from "@suankularb-components/react";
 
 // Internal components
-import MultilangText from "@/components/common/MultilingualText";
 import MySKPageHeader from "@/components/common/MySKPageHeader";
 
 // Backend
 import { getAdminClasses } from "@/utils/backend/classroom/classroom";
 
 // Helpers
-import { nameJoiner } from "@/utils/helpers/name";
 import { getLocaleYear } from "@/utils/helpers/date";
 import { withLoading } from "@/utils/helpers/loading";
+import { nameJoiner } from "@/utils/helpers/name";
 import { createTitleStr } from "@/utils/helpers/title";
 
 // Hooks
@@ -265,7 +264,7 @@ const ManageClassesPage: CustomPage<{
               totalRows={totalRows}
               locale={locale}
               onChange={setPage}
-              className="sticky bottom-0"
+              className="sticky bottom-20 sm:bottom-0"
             />
           </DataTable>
         </Section>
