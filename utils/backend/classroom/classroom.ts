@@ -25,7 +25,11 @@ import {
   ClassTeachersListSection,
   ClassWNumber,
 } from "@/utils/types/class";
-import { BackendDataReturn, DatabaseClient } from "@/utils/types/common";
+import {
+  BackendCountedDataReturn,
+  BackendDataReturn,
+  DatabaseClient,
+} from "@/utils/types/common";
 import { StudentListItem } from "@/utils/types/person";
 import { Database } from "@/utils/types/supabase";
 
@@ -408,18 +412,43 @@ export async function getLookupClasses(
 export async function getAdminClasses(
   supabase: DatabaseClient,
   page: number,
-  rowsPerPage: number
-): Promise<BackendDataReturn<ClassAdminListItem[]>> {
-  const { data, error } = await supabase
+  rowsPerPage: number,
+  query?: string
+): Promise<BackendCountedDataReturn<ClassAdminListItem[]>> {
+  // If the query in invalid, we already know the result: an empty array
+  if (query && query.length > 3 && !/[0-9]/.test(query))
+    return { data: [], count: 0, error: null };
+
+  // Format the query into a number range, for use with `.gt()` and `.lt()`
+  const numberRange = query
+    ? query.length === 1
+      ? { gt: Number(query) * 100, lt: (Number(query) + 1) * 100 }
+      : query.length === 2
+      ? { gt: Number(query) * 10, lt: (Number(query) + 1) * 10 }
+      : { gt: Number(query) - 1, lt: Number(query) + 1 }
+    : { gt: 0, lt: 700 };
+
+  // Fetch classes
+  const { data, count, error } = await supabase
     .from("classroom")
-    .select("id, number, advisors, students, year")
+    .select("id, number, advisors, students, year", { count: "exact" })
+    // Class number query
+    .gt("number", numberRange.gt)
+    .lt("number", numberRange.lt)
+    // Academic year query
+    .or(
+      query && query.length >= 4
+        ? `year.eq.${query}, year.eq.${Number(query) - 543}`
+        : "year.gt.0"
+    )
     .order("year", { ascending: false })
     .order("number")
+    // Pagination
     .range(rowsPerPage * (page - 1), rowsPerPage * page - 1);
 
   if (error) {
     console.error(error);
-    return { data: [], error };
+    return { data: [], count: 0, error };
   }
 
   const classAdvisorIDs = data!.map((classItem) => classItem.advisors).flat();
@@ -430,7 +459,7 @@ export async function getAdminClasses(
 
   if (teacherError) {
     console.error(teacherError);
-    return { data: [], error: teacherError };
+    return { data: [], count: 0, error: teacherError };
   }
 
   return {
@@ -446,6 +475,7 @@ export async function getAdminClasses(
       studentCount: classItem.students.length,
       year: classItem.year,
     })),
+    count: count!,
     error: null,
   };
 }

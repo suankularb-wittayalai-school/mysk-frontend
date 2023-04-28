@@ -27,6 +27,7 @@ import {
   DataTableContent,
   DataTableHead,
   DataTablePagination,
+  DataTableSearch,
   FAB,
   MaterialIcon,
   Progress,
@@ -42,15 +43,15 @@ import { getAdminClasses } from "@/utils/backend/classroom/classroom";
 
 // Helpers
 import { nameJoiner } from "@/utils/helpers/name";
+import { getLocaleYear } from "@/utils/helpers/date";
+import { withLoading } from "@/utils/helpers/loading";
 import { createTitleStr } from "@/utils/helpers/title";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
+import { useToggle } from "@/utils/hooks/toggle";
 
 // Types
-import { getLocaleYear } from "@/utils/helpers/date";
-import { withLoading } from "@/utils/helpers/loading";
-import { useToggle } from "@/utils/hooks/toggle";
 import { ClassAdminListItem } from "@/utils/types/class";
 import { CustomPage, LangCode } from "@/utils/types/common";
 
@@ -78,16 +79,19 @@ const ManageClassesPage: CustomPage<{
   const supabase = useSupabaseClient();
 
   // Data Table states
+  const [globalFilter, setGlobablFilter] = useState<string>("");
   const [sorting, setSorting] = useState<SortingState>([]);
   const [page, setPage] = useState<number>(1);
   const [loading, toggleLoading] = useToggle();
 
   const [data, setData] = useState<ClassAdminListItem[]>(classList);
+  const [totalRows, setTotalRows] = useState<number>(totalClassCount);
 
   // Handle page change
   useEffect(() => {
     // Scroll to the top
     window.scroll({ top: 0 });
+    setTotalRows(totalClassCount);
 
     withLoading(
       // Fetch the new page if necessary
@@ -106,7 +110,8 @@ const ManageClassesPage: CustomPage<{
             const { data, error } = await getAdminClasses(
               supabase,
               page,
-              rowsPerPage
+              rowsPerPage,
+              globalFilter // <-- For when a search result spans many pages
             );
             if (error) return classList;
             return data;
@@ -119,52 +124,99 @@ const ManageClassesPage: CustomPage<{
     );
   }, [page]);
 
+  // Handle global filter
+  useEffect(() => {
+    withLoading(
+      // Fetch the new page if necessary
+      async () => {
+        setData(
+          await (async () => {
+            // Reset the table if there is no global filter
+            if (!globalFilter) {
+              setTotalRows(totalClassCount);
+              return classList;
+            }
+
+            // Fetch the rows with the global filter
+            setPage(1);
+            const { data, count, error } = await getAdminClasses(
+              supabase,
+              1,
+              rowsPerPage,
+              globalFilter
+            );
+            setTotalRows(count);
+            if (error) return [];
+            return data;
+          })()
+        );
+        return true;
+      },
+      toggleLoading,
+      { hasEndToggle: true }
+    );
+  }, [globalFilter]);
+
   // Column definitions
   const columns = useMemo<DataTableColumnDef<ClassAdminListItem>[]>(
     () => [
       // 3-digit number
       {
-        accessorKey: "number",
+        id: "number",
+        accessorFn: (row) => `M.${row.number}`,
         header: "Number",
-        thAttr: { className: "w-2/12" },
-        render: (row) => <>M.{row.number}</>,
+        thAttr: { className: "w-1/12" },
       },
       // Full list of Class Advisors in both languages
       {
-        accessorKey: "advisors",
-        header: "Class advisors",
-        thAttr: { className: "w-6/12" },
+        id: "classAdvisorsTH",
+        accessorFn: (row) =>
+          row.classAdvisors
+            .map((advisor) => nameJoiner("th", advisor.name))
+            .join(", "),
+        header: "Class advisors (in Thai)",
+        thAttr: { className: "w-4/12" },
         render: (row) => (
-          <MultilangText
-            text={{
-              // Thai
-              th: row.classAdvisors
-                .map((advisor) => nameJoiner("th", advisor.name))
-                .join(", "),
-              // American English
-              "en-US": row.classAdvisors
-                .map((advisor) => nameJoiner("en-US", advisor.name))
-                .join(", "),
-            }}
-            options={{ hideEmptyLanguage: true, priorityLanguage: locale }}
-          />
+          <ul className="list-disc pl-6">
+            {row.classAdvisors.map((advisor) => (
+              <li key={advisor.id}>
+                {nameJoiner("th", advisor.name, advisor.prefix)}
+              </li>
+            ))}
+          </ul>
+        ),
+      },
+      {
+        id: "classAdvisorsEN",
+        accessorFn: (row) =>
+          row.classAdvisors
+            .map((advisor) => nameJoiner("en-US", advisor.name))
+            .join(", "),
+        header: "Class advisors (in English)",
+        thAttr: { className: "w-4/12" },
+        render: (row) => (
+          <ul className="list-disc pl-6">
+            {row.classAdvisors.map((advisor) => (
+              <li key={advisor.id}>
+                {nameJoiner("en-US", advisor.name, advisor.prefix)}
+              </li>
+            ))}
+          </ul>
         ),
       },
       // Number of students
       {
-        accessorKey: "studentCount",
+        id: "studentCount",
+        accessorFn: (row) => `${row.studentCount} students`,
         header: "Student count",
         thAttr: { className: "w-2/12" },
-        render: (row: ClassAdminListItem) => <>{row.studentCount} students</>,
       },
       // Academic year
       {
-        accessorKey: "year",
+        id: "year",
+        accessorFn: (row) => getLocaleYear(locale, row.year),
         header: "Academic year",
-        thAttr: { className: "w-2/12" },
-        render: (row: ClassAdminListItem) => (
-          <>{getLocaleYear(locale, row.year)}</>
-        ),
+        thAttr: { className: "w-1/12" },
       },
     ],
     [locale]
@@ -181,17 +233,6 @@ const ManageClassesPage: CustomPage<{
     getSortedRowModel: getSortedRowModel(),
   });
 
-  // (@SiravitPhokeed)
-  //
-  // You might be wondering why there is no search here. The problem is the
-  // current database is so poorly structured that most of the relevant data is
-  // basically impossible to sort or filter by. `number` seems like the only
-  // promising candidate (and perhaps the most useful), but we made the
-  // decision to have it be a `bigint` and apparently Supabase refuses to allow
-  // `like` on it.
-  //
-  // TL;DR: No search until we get an actually workable API.
-
   return (
     <>
       <Head>
@@ -205,6 +246,11 @@ const ManageClassesPage: CustomPage<{
       <ContentLayout>
         <Section>
           <DataTable>
+            <DataTableSearch
+              value={globalFilter}
+              locale={locale}
+              onChange={setGlobablFilter}
+            />
             <Progress
               appearance="linear"
               alt="Loading table…"
@@ -216,9 +262,10 @@ const ManageClassesPage: CustomPage<{
             </DataTableContent>
             <DataTablePagination
               rowsPerPage={rowsPerPage}
-              totalRows={totalClassCount}
+              totalRows={totalRows}
               locale={locale}
               onChange={setPage}
+              className="sticky bottom-0"
             />
           </DataTable>
         </Section>
