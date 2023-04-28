@@ -53,11 +53,44 @@ export async function getAdminStudentList(
   rowsPerPage: number,
   query?: string
 ): Promise<BackendCountedDataReturn<StudentAdminListItem[]>> {
+  let peopleIDs: number[] | null = null;
+
+  // Support for searching with a name segment, which requires `people`
+  if (query && query.length >= 3) {
+    const { data, error } = await supabase
+      .from("people")
+      .select("id")
+      .or(
+        `first_name_th.like.%${query || ""}%, \
+        middle_name_th.like.%${query || ""}%, \
+        last_name_th.like.%${query || ""}%, \
+        first_name_en.ilike.%${query || ""}%, \
+        middle_name_en.ilike.%${query || ""}%, \
+        last_name_en.ilike.%${query || ""}%`
+      )
+      .limit(rowsPerPage);
+
+    if (error) {
+      console.error(error);
+      return { data: [], count: 0, error: null };
+    }
+
+    peopleIDs = data.map((person) => person.id);
+  }
+
   const { data, count, error } = await supabase
     .from("student")
     .select("*, person(*)", { count: "exact" })
-    .like("std_id", `${query || ""}%`)
+    .or(
+      // If the query is for a name segment, use the search result from
+      // `people`
+      peopleIDs && !(query && /[0-9]{1,5}/.test(query))
+        ? `person.in.(${peopleIDs.join()})`
+        : // Otherwise, the query (if exists) is for student ID
+          `std_id.like.${query || ""}%`
+    )
     .order("std_id", { ascending: false })
+    // Pagination
     .range(rowsPerPage * (page - 1), rowsPerPage * page - 1);
 
   if (error) {

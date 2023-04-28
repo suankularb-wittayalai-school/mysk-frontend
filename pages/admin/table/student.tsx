@@ -130,8 +130,12 @@ const ManageStudentsPage: CustomPage<{
       async () => {
         setData(
           await (async () => {
-            // Reset the table if there is no global filter
-            if (!globalFilter) {
+            // Reset the table if there is no global filter or if the filter is
+            // a text query that is too short
+            if (
+              !globalFilter ||
+              (!/[0-9]{1,5}/.test(globalFilter) && globalFilter.length < 3)
+            ) {
               setTotalRows(totalStudentCount);
               return studentList;
             }
@@ -228,6 +232,7 @@ const ManageStudentsPage: CustomPage<{
               value={globalFilter}
               locale={locale}
               onChange={setGlobablFilter}
+              inputAttr={{ readOnly: loading }}
             />
             <Progress
               appearance="linear"
