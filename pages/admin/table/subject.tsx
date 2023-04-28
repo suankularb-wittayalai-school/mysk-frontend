@@ -1,3 +1,12 @@
+/**
+ * `/admin/table/subject` TABLE OF CONTENTS
+ *
+ * Note: `Ctrl` + click to jump to a component.
+ *
+ * **Page**
+ * - {@link ManageSubjectsPage}
+ */
+
 // External libraries
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
@@ -6,8 +15,7 @@ import {
   SortingState,
   getCoreRowModel,
   getFilteredRowModel,
-  getSortedRowModel,
-  useReactTable,
+  useReactTable
 } from "@tanstack/react-table";
 
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
@@ -21,23 +29,23 @@ import { useEffect, useMemo, useState } from "react";
 // SK Components
 import {
   ContentLayout,
-  DataTable,
-  DataTableBody,
   DataTableColumnDef,
-  DataTableContent,
-  DataTableHead,
-  DataTablePagination,
-  DataTableSearch,
   FAB,
   MaterialIcon,
-  Progress,
   Section,
 } from "@suankularb-components/react";
 
 // Internal components
+import AdminDataTable from "@/components/admin/AdminDataTable";
 import MySKPageHeader from "@/components/common/MySKPageHeader";
 
+// Backend
+import { getAdminSubjectList } from "@/utils/backend/subject/subject";
+
 // Helpers
+import { getLocaleYear } from "@/utils/helpers/date";
+import { getLocaleObj, getLocaleString } from "@/utils/helpers/i18n";
+import { withLoading } from "@/utils/helpers/loading";
 import { createTitleStr } from "@/utils/helpers/title";
 
 // Hooks
@@ -46,11 +54,12 @@ import { useToggle } from "@/utils/hooks/toggle";
 
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
+import { Subject } from "@/utils/types/subject";
 
 /**
  * The number of rows visible per page. Used in pagination.
  */
-const rowsPerPage = 250;
+const rowsPerPage = 20;
 
 /**
  * Displays a paginated Data Table of all subjects of all academic years, where
@@ -62,7 +71,7 @@ const rowsPerPage = 250;
  * @returns A Page.
  */
 const ManageSubjectsPage: CustomPage<{
-  subjectList: any[];
+  subjectList: Subject[];
   totalSubjectCount: number;
 }> = ({ subjectList, totalSubjectCount }) => {
   const locale = useLocale();
@@ -71,7 +80,7 @@ const ManageSubjectsPage: CustomPage<{
   const supabase = useSupabaseClient();
 
   // Data Table states
-  const [globalFilter, setGlobablFilter] = useState<string>("");
+  const [globalFilter, setGlobalFilter] = useState<string>("");
   const [sorting, setSorting] = useState<SortingState>([]);
   const [page, setPage] = useState<number>(1);
   const [loading, toggleLoading] = useToggle();
@@ -79,43 +88,117 @@ const ManageSubjectsPage: CustomPage<{
   const [data, setData] = useState(subjectList);
   const [totalRows, setTotalRows] = useState<number>(totalSubjectCount);
 
-  // Handle page change
+  // NOTE: the code for page and global filter change is nearly identical
+  // across all `/admin/table` pages (see `/admin/table/student` for best
+  // explanation), not sure how to merge them into 1 place though
+
+  // Handle page and sorting state change
   useEffect(() => {
     // Scroll to the top
     window.scroll({ top: 0 });
-
-    // TODO
-
     setTotalRows(totalSubjectCount);
-  });
+
+    withLoading(
+      // Fetch the new page if necessary
+      async () => {
+        setData(
+          await (async () => {
+            // The first page is already fetched, so we can just use that
+            if (page === 1 && !sorting.length) return subjectList;
+
+            // For other pages, we have to fetch that specific page from the
+            // database
+            const { data, error } = await getAdminSubjectList(
+              supabase,
+              page,
+              rowsPerPage,
+              globalFilter, // <-- For when a search result spans many pages
+              sorting
+            );
+            if (error) return subjectList;
+            return data;
+          })()
+        );
+        return true;
+      },
+      toggleLoading,
+      { hasEndToggle: true }
+    );
+  }, [page, sorting]);
 
   // Handle global filter
   useEffect(() => {
-    // TODO
+    withLoading(
+      // Fetch the new page if necessary
+      async () => {
+        setData(
+          await (async () => {
+            // Reset the table if there is no global filter
+            if (!globalFilter) {
+              setTotalRows(totalSubjectCount);
+              return subjectList;
+            }
+
+            // Fetch the rows with the global filter
+            setPage(1);
+            const { data, count, error } = await getAdminSubjectList(
+              supabase,
+              1,
+              rowsPerPage,
+              globalFilter,
+              sorting
+            );
+            setTotalRows(count);
+            if (error) return [];
+            return data;
+          })()
+        );
+        return true;
+      },
+      toggleLoading,
+      { hasEndToggle: true }
+    );
   }, [globalFilter]);
 
   // Column definitions
-  const columns = useMemo<DataTableColumnDef[]>(
+  const columns = useMemo<DataTableColumnDef<Subject>[]>(
     () => [
       {
-        id: "subjectCode",
-        header: "Subject code",
+        id: "codeTH",
+        accessorFn: (row) => getLocaleString(row.code, "th"),
+        header: "Thai code",
+        thAttr: { className: "w-2/12" }
       },
       {
-        id: "subjectName",
-        header: "Subject name",
+        id: "codeEN",
+        accessorFn: (row) => getLocaleString(row.code, "en-US"),
+        header: "English code",
+        thAttr: { className: "w-2/12" }
       },
       {
-        id: "teachers",
-        header: "Teachers",
+        id: "nameTH",
+        accessorFn: (row) => getLocaleObj(row.name, "th").name,
+        header: "Thai name",
+        thAttr: { className: "w-3/12" },
+      },
+      {
+        id: "nameEN",
+        accessorFn: (row) => getLocaleObj(row.name, "en-US").name,
+        header: "English name",
+        thAttr: { className: "w-3/12" },
       },
       {
         id: "year",
+        accessorFn: (row) => getLocaleYear(locale, row.year),
         header: "Academic year",
+        thAttr: { className: "w-1/12" },
+        tdAttr: { align: "center" },
       },
       {
-        id: "semester",
+        accessorKey: "semester",
         header: "Semester",
+        thAttr: { className: "w-1/12" },
+        tdAttr: { align: "center" },
       },
     ],
     [locale]
@@ -129,7 +212,9 @@ const ManageSubjectsPage: CustomPage<{
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    getSortedRowModel: getSortedRowModel(),
+    // (@SiravitPhokeed)
+    // We’re not using `getSortedRowModel` because we’re sorting directly on
+    // Supabase in `getAdminSubjectList`.
   });
 
   return (
@@ -144,29 +229,16 @@ const ManageSubjectsPage: CustomPage<{
       />
       <ContentLayout>
         <Section>
-          <DataTable>
-            <DataTableSearch
-              value={globalFilter}
-              locale={locale}
-              onChange={setGlobablFilter}
-            />
-            <Progress
-              appearance="linear"
-              alt="Loading table…"
-              visible={loading}
-            />
-            <DataTableContent contentWidth={800}>
-              <DataTableHead headerGroups={getHeaderGroups()} locale={locale} />
-              <DataTableBody rowModel={getRowModel()} />
-            </DataTableContent>
-            <DataTablePagination
-              rowsPerPage={rowsPerPage}
-              totalRows={totalRows}
-              locale={locale}
-              onChange={setPage}
-              className="sticky bottom-20 sm:bottom-0"
-            />
-          </DataTable>
+          <AdminDataTable
+            headerGroups={getHeaderGroups()}
+            rowModel={getRowModel()}
+            globalFilter={globalFilter}
+            onGlobalFilterChange={setGlobalFilter}
+            totalRows={totalRows}
+            rowsPerPage={rowsPerPage}
+            onPageChange={setPage}
+            loading={loading}
+          />
         </Section>
       </ContentLayout>
     </>
@@ -183,10 +255,8 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
-  const { data: subjectList, count: totalSubjectCount } = {
-    data: [],
-    count: 0,
-  };
+  const { data: subjectList, count: totalSubjectCount } =
+    await getAdminSubjectList(supabase, 1, rowsPerPage);
 
   return {
     props: {

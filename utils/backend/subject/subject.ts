@@ -1,8 +1,17 @@
 // Supabase
 import { supabase } from "@/utils/supabase-client";
 
+// Backend
+import { db2Subject } from "@/utils/backend/database";
+
 // Types
-import { ClassWNumber } from "@/utils/types/class";
+import {
+  BackendCountedDataReturn,
+  BackendDataReturn,
+  BackendReturn,
+  DatabaseClient,
+  OrUndefined,
+} from "@/utils/types/common";
 import {
   ImportedSubjectData,
   Subject,
@@ -14,12 +23,7 @@ import {
 
 // Miscelleneous
 import { subjectGroupMap, subjectTypeMap } from "@/utils/maps";
-import {
-  BackendDataReturn,
-  BackendReturn,
-  DatabaseClient,
-  OrUndefined,
-} from "@/utils/types/common";
+import { SortingState } from "@tanstack/react-table";
 
 export async function deleteSubject(subject: Subject) {
   // Delete the syllabus if it exists
@@ -78,6 +82,59 @@ export async function importSubjects(data: ImportedSubjectData[]) {
   }));
 
   await Promise.all(subjects.map(createSubject));
+}
+
+export async function getAdminSubjectList(
+  supabase: DatabaseClient,
+  page: number,
+  rowsPerPage: number,
+  query?: string,
+  sorting?: SortingState
+): Promise<BackendCountedDataReturn<Subject[]>> {
+  const { data, count, error } = await supabase
+    .from("subject")
+    .select("*", { count: "exact" })
+    .or(
+      [
+        `code_th.like.%${query || ""}%`,
+        `name_th.like.%${query || ""}%`,
+        `code_en.ilike.%${query || ""}%`,
+        `name_en.ilike.%${query || ""}%`,
+        query &&
+          /^[1-9][0-9]{3}$/.test(query) &&
+          `year.eq.${query}, year.eq.${Number(query) - 543}`,
+        query && ["1", "2"].includes(query) && `semester.eq.${query}`,
+      ]
+        .filter((segment) => segment)
+        .join(",")
+    )
+    .order(
+      (sorting?.length
+        ? {
+            codeTH: "code_th",
+            nameTH: "name_th",
+            codeEN: "code_en",
+            nameEN: "name_en",
+          }[sorting[0].id]!
+        : "code_th") as "code_th" | "name_th" | "code_en" | "name_en",
+      { ascending: !sorting?.[0].desc }
+    )
+    .order("semester")
+    .order("year")
+    .range(rowsPerPage * (page - 1), rowsPerPage * page - 1);
+
+  if (error) {
+    console.error(error);
+    return { data: [], count: 0, error };
+  }
+
+  return {
+    data: await Promise.all(
+      data!.map(async (subject) => await db2Subject(supabase, subject))
+    ),
+    count: count!,
+    error: null,
+  };
 }
 
 export async function getSubjectsInCharge(
