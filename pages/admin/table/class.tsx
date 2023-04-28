@@ -57,7 +57,7 @@ import { CustomPage, LangCode } from "@/utils/types/common";
 /**
  * The number of rows visible per page. Used in pagination.
  */
-const rowsPerPage = 50;
+const rowsPerPage = 250;
 
 /**
  * Displays a paginated Data Table of all classes of all academic years, where
