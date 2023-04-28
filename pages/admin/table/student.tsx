@@ -1,3 +1,12 @@
+/**
+ * `/admin/table/student` TABLE OF CONTENTS
+ *
+ * Note: `Ctrl` + click to jump to a component.
+ *
+ * **Page**
+ * - {@link ManageStudentsPage}
+ */
+
 // External libraries
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
@@ -35,6 +44,7 @@ import {
 } from "@suankularb-components/react";
 
 // Internal components
+import AdminDataTable from "@/components/admin/AdminDataTable";
 import MySKPageHeader from "@/components/common/MySKPageHeader";
 
 // Backend
@@ -55,7 +65,7 @@ import { StudentAdminListItem } from "@/utils/types/person";
 /**
  * The number of rows visible per page. Used in pagination.
  */
-const rowsPerPage = 250;
+const rowsPerPage = 20;
 
 /**
  * Displays a paginated Data Table of all students of all academic years, where
@@ -76,7 +86,7 @@ const ManageStudentsPage: CustomPage<{
   const supabase = useSupabaseClient();
 
   // Data Table states
-  const [globalFilter, setGlobablFilter] = useState<string>("");
+  const [globalFilter, setGlobalFilter] = useState<string>("");
   const [sorting, setSorting] = useState<SortingState>([
     { id: "studentID", desc: true },
   ]);
@@ -85,6 +95,10 @@ const ManageStudentsPage: CustomPage<{
 
   const [data, setData] = useState<any[]>(studentList);
   const [totalRows, setTotalRows] = useState<number>(totalStudentCount);
+
+  // NOTE: the code for page and global filter change is nearly identical
+  // across all `/admin/table` pages, not sure how to merge them into 1 place
+  // though
 
   // Handle page change
   useEffect(() => {
@@ -227,30 +241,16 @@ const ManageStudentsPage: CustomPage<{
       />
       <ContentLayout>
         <Section>
-          <DataTable>
-            <DataTableSearch
-              value={globalFilter}
-              locale={locale}
-              onChange={setGlobablFilter}
-              inputAttr={{ readOnly: loading }}
-            />
-            <Progress
-              appearance="linear"
-              alt="Loading table…"
-              visible={loading}
-            />
-            <DataTableContent contentWidth={800}>
-              <DataTableHead headerGroups={getHeaderGroups()} locale={locale} />
-              <DataTableBody rowModel={getRowModel()} />
-            </DataTableContent>
-            <DataTablePagination
-              rowsPerPage={rowsPerPage}
-              totalRows={totalRows}
-              locale={locale}
-              onChange={setPage}
-              className="sticky bottom-20 sm:bottom-0"
-            />
-          </DataTable>
+          <AdminDataTable
+            headerGroups={getHeaderGroups()}
+            rowModel={getRowModel()}
+            globalFilter={globalFilter}
+            onGlobalFilterChange={setGlobalFilter}
+            totalRows={totalRows}
+            rowsPerPage={rowsPerPage}
+            onPageChange={setPage}
+            loading={loading}
+          />
         </Section>
       </ContentLayout>
     </>

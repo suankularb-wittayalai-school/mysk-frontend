@@ -1,3 +1,12 @@
+/**
+ * `/admin/table/class` TABLE OF CONTENTS
+ *
+ * Note: `Ctrl` + click to jump to a component.
+ *
+ * **Page**
+ * - {@link ManageClassesPage}
+ */
+
 // External libraries
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
@@ -35,6 +44,7 @@ import {
 } from "@suankularb-components/react";
 
 // Internal components
+import AdminDataTable from "@/components/admin/AdminDataTable";
 import MySKPageHeader from "@/components/common/MySKPageHeader";
 
 // Backend
@@ -57,7 +67,7 @@ import { CustomPage, LangCode } from "@/utils/types/common";
 /**
  * The number of rows visible per page. Used in pagination.
  */
-const rowsPerPage = 250;
+const rowsPerPage = 20;
 
 /**
  * Displays a paginated Data Table of all classes of all academic years, where
@@ -78,13 +88,17 @@ const ManageClassesPage: CustomPage<{
   const supabase = useSupabaseClient();
 
   // Data Table states
-  const [globalFilter, setGlobablFilter] = useState<string>("");
+  const [globalFilter, setGlobalFilter] = useState<string>("");
   const [sorting, setSorting] = useState<SortingState>([]);
   const [page, setPage] = useState<number>(1);
   const [loading, toggleLoading] = useToggle();
 
   const [data, setData] = useState<ClassAdminListItem[]>(classList);
   const [totalRows, setTotalRows] = useState<number>(totalClassCount);
+
+  // NOTE: the code for page and global filter change is nearly identical
+  // across all `/admin/table` pages (see `/admin/table/student` for best
+  // explanation), not sure how to merge them into 1 place though
 
   // Handle page change
   useEffect(() => {
@@ -96,10 +110,6 @@ const ManageClassesPage: CustomPage<{
       // Fetch the new page if necessary
       async () => {
         setData(
-          // This is an Immediately Invoked Function Expression (IIFE; pronounced
-          // “iffy”), where we define a function fetching the page and
-          // immediately call it
-          // Learn more: https://developer.mozilla.org/en-US/docs/Glossary/IIFE
           await (async () => {
             // The first page is already fetched, so we can just use that
             if (page === 1) return classList;
@@ -244,29 +254,16 @@ const ManageClassesPage: CustomPage<{
       />
       <ContentLayout>
         <Section>
-          <DataTable>
-            <DataTableSearch
-              value={globalFilter}
-              locale={locale}
-              onChange={setGlobablFilter}
-            />
-            <Progress
-              appearance="linear"
-              alt="Loading table…"
-              visible={loading}
-            />
-            <DataTableContent contentWidth={800}>
-              <DataTableHead headerGroups={getHeaderGroups()} locale={locale} />
-              <DataTableBody rowModel={getRowModel()} />
-            </DataTableContent>
-            <DataTablePagination
-              rowsPerPage={rowsPerPage}
-              totalRows={totalRows}
-              locale={locale}
-              onChange={setPage}
-              className="sticky bottom-20 sm:bottom-0"
-            />
-          </DataTable>
+          <AdminDataTable
+            headerGroups={getHeaderGroups()}
+            rowModel={getRowModel()}
+            globalFilter={globalFilter}
+            onGlobalFilterChange={setGlobalFilter}
+            totalRows={totalRows}
+            rowsPerPage={rowsPerPage}
+            onPageChange={setPage}
+            loading={loading}
+          />
         </Section>
       </ContentLayout>
     </>
