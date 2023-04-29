@@ -20,9 +20,7 @@
  */
 
 // External libraries
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
-
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
+import { GetStaticProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -47,7 +45,10 @@ import GenerateClassesDialog from "@/components/admin/GenerateClassesDialog";
 import ImportStudentsDialog from "@/components/admin/ImportStudentsDialog";
 import ImportSubjectsDialog from "@/components/admin/ImportSubjectsDialog";
 import ImportTeachersDialog from "@/components/admin/ImportTeachersDialog";
+
+// Supabase
 import MySKPageHeader from "@/components/common/MySKPageHeader";
+import { supabase } from "@/utils/supabase-backend";
 
 // Helpers
 import { cn } from "@/utils/helpers/className";
@@ -190,7 +191,7 @@ const AdminCardAction: FC<{
  * Displays the number of students, teachers, classes, news articles, and other
  * information related to those, grouped into Cards.
  *
- * @param count A number of statistics passed in from `getServerSideProps`.
+ * @param count A number of statistics passed in from `getStaticProps`.
  *
  * @returns A Section.
  */
@@ -486,6 +487,7 @@ const AdminPanelPage: CustomPage<{
       <MySKPageHeader
         title="Admin panel"
         icon={<MaterialIcon icon="shield_person" />}
+        parentURL="/account"
       />
       <ContentLayout>
         {/* Suggestions */}
@@ -514,16 +516,7 @@ const AdminPanelPage: CustomPage<{
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  req,
-  res,
-}) => {
-  const supabase = createServerSupabaseClient({
-    req: req as NextApiRequest,
-    res: res as NextApiResponse,
-  });
-
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
   // Statistics
 
   // TODO: Onboarding statistics
@@ -572,6 +565,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       ])),
       count,
     },
+    revalidate: 10,
   };
 };
 
