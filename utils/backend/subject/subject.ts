@@ -117,7 +117,7 @@ export async function getAdminSubjectList(
             nameEN: "name_en",
           }[sorting[0].id]!
         : "code_th") as "code_th" | "name_th" | "code_en" | "name_en",
-      { ascending: !sorting?.[0].desc }
+      { ascending: !sorting?.[0]?.desc }
     )
     .order("semester")
     .order("year")
