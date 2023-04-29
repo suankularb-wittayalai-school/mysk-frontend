@@ -41,7 +41,7 @@ const AdminDataTable: FC<{
   const { t } = useTranslation("admin");
 
   return (
-    <DataTable>
+    <DataTable layout>
       <DataTableSearch
         value={globalFilter}
         locale={locale}
