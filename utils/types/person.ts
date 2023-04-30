@@ -87,7 +87,7 @@ export type StudentAdminListItem = {
   classItem: ClassWNumber;
   classNo: number;
   name: MultiLangString;
-}
+};
 
 export type ImportedStudentData = {
   prefix: DefaultTHPrefix;
