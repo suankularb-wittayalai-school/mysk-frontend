@@ -196,35 +196,26 @@ const AdminCardAction: FC<{
  * @returns A Section.
  */
 const StatisticsSection: FC<{ count: AdminPanelStatistics }> = ({ count }) => {
-  const locale = useLocale();
-  const { t } = useTranslation("admin");
+  const { t } = useTranslation("admin", { keyPrefix: "statistics" });
 
   return (
     <Section>
       <Columns columns={4} className="!items-stretch">
         <StatisticsCard
-          title={`${count.students.all.toLocaleString(locale)} students`}
-          subtitle={`${count.students.onboarded.toLocaleString(
-            locale
-          )} students onboarded`}
+          title={t("student.all", { count: count.students.all })}
+          subtitle={t("student.onboarded", { count: count.students.onboarded })}
         />
         <StatisticsCard
-          title={`${count.teachers.all.toLocaleString(locale)} teachers`}
-          subtitle={`${count.teachers.onboarded.toLocaleString(
-            locale
-          )} teachers onboarded`}
+          title={t("teacher.all", { count: count.teachers.all })}
+          subtitle={t("teacher.onboarded", { count: count.teachers.onboarded })}
         />
         <StatisticsCard
-          title={`${count.classes.thisYear.toLocaleString(locale)} classes`}
-          subtitle={`${count.classes.all.toLocaleString(
-            locale
-          )} classes including past years`}
+          title={t("class.thisYear", { count: count.classes.thisYear })}
+          subtitle={t("class.all", { count: count.classes.all })}
         />
         <StatisticsCard
-          title={`${count.news.thisYear.toLocaleString(locale)} news articles`}
-          subtitle={`${count.news.all.toLocaleString(
-            locale
-          )} articles including past years`}
+          title={t("news.thisYear", { count: 1 })}
+          subtitle={t("news.all", { count: count.classes.all })}
         />
       </Columns>
     </Section>
@@ -239,20 +230,19 @@ const StatisticsSection: FC<{ count: AdminPanelStatistics }> = ({ count }) => {
  * @returns A Card.
  */
 const NewYearNewDataCard: FC = () => {
+  const { t } = useTranslation("admin", { keyPrefix: "statistics" });
+
   return (
     <AdminPanelCard
       accentColor="tertiary"
       icon={<MaterialIcon icon="temp_preferences_custom" size={48} />}
       className="flex flex-col gap-1 pb-4"
     >
-      <h2 className="skc-headline-small">New year, new data</h2>
-      <p>
-        We noticed that some tables for 2023 is empty. Why not get started by
-        importing and adding data for this year?
-      </p>
+      <h2 className="skc-headline-small">{t("title")}</h2>
+      <p>{t("desc")}</p>
       <p>
         <a href="mailto:itsolutions@sk.ac.th" className="link">
-          Contact support for more details
+          {t("contactSupport")}
         </a>
       </p>
     </AdminPanelCard>
@@ -265,19 +255,21 @@ const NewYearNewDataCard: FC = () => {
  * @returns A Card.
  */
 const ManageDataCard: FC = () => {
+  const { t } = useTranslation("admin", { keyPrefix: "data.manage" });
+
   return (
     <AdminPanelCard
       accentColor="surface-1"
       icon={<MaterialIcon icon="database" size={48} />}
       className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr,6fr]"
     >
+      {/* Text */}
       <div className="flex flex-col gap-1">
-        <h2 className="skc-headline-small">View and edit the school’s data</h2>
-        <p>
-          You have access to the entirety of the school’s data. You can add,
-          edit, view, and delete entries.
-        </p>
+        <h2 className="skc-headline-small">{t("title")}</h2>
+        <p>{t("desc")}</p>
       </div>
+
+      {/* Actions */}
       <div className="grid grid-cols-1 gap-x-3 gap-y-2 sm:grid-cols-2">
         <AdminCardAction
           href="/admin/table/student"
@@ -285,7 +277,7 @@ const ManageDataCard: FC = () => {
           color="primary"
           icon={<MaterialIcon icon="face" size={40} />}
         >
-          Students
+          {t("action.student")}
         </AdminCardAction>
         <AdminCardAction
           href="/admin/table/teacher"
@@ -293,7 +285,7 @@ const ManageDataCard: FC = () => {
           color="primary"
           icon={<MaterialIcon icon="support_agent" size={40} />}
         >
-          Teachers
+          {t("action.teacher")}
         </AdminCardAction>
         <AdminCardAction
           href="/admin/table/subject"
@@ -301,7 +293,7 @@ const ManageDataCard: FC = () => {
           color="primary"
           icon={<MaterialIcon icon="book" size={40} />}
         >
-          Subjects
+          {t("action.subject")}
         </AdminCardAction>
         <AdminCardAction
           href="/admin/table/class"
@@ -309,7 +301,7 @@ const ManageDataCard: FC = () => {
           color="primary"
           icon={<MaterialIcon icon="groups" size={40} />}
         >
-          Classes
+          {t("action.class")}
         </AdminCardAction>
       </div>
     </AdminPanelCard>
@@ -322,6 +314,8 @@ const ManageDataCard: FC = () => {
  * @returns A Card.
  */
 const ImportDataCard: FC = () => {
+  const { t } = useTranslation("admin", { keyPrefix: "data.import" });
+
   const router = useRouter();
 
   // Dialog control
@@ -336,13 +330,13 @@ const ImportDataCard: FC = () => {
       icon={<MaterialIcon icon="upload" size={48} />}
       className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr,6fr]"
     >
+      {/* Text */}
       <div className="flex flex-col gap-1">
-        <h2 className="skc-headline-small">Quickly import data with CSV</h2>
-        <p>
-          Create a CSV file in the proper format with spreadsheet software like
-          Google Sheets or Microsoft Excel, and import it here.
-        </p>
+        <h2 className="skc-headline-small">{t("title")}</h2>
+        <p>{t("desc")}</p>
       </div>
+
+      {/* Actions */}
       <div className="grid grid-cols-1 gap-x-3 gap-y-2 sm:grid-cols-2">
         {/* Students */}
         <AdminCardAction
@@ -350,7 +344,7 @@ const ImportDataCard: FC = () => {
           color="secondary"
           icon={<MaterialIcon icon="face" />}
         >
-          Import students
+          {t("action.student")}
         </AdminCardAction>
         <ImportStudentsDialog
           open={studentOpen}
@@ -367,7 +361,7 @@ const ImportDataCard: FC = () => {
           color="secondary"
           icon={<MaterialIcon icon="support_agent" />}
         >
-          Import teachers
+          {t("action.teacher")}
         </AdminCardAction>
         <ImportTeachersDialog
           open={teacherOpen}
@@ -384,7 +378,7 @@ const ImportDataCard: FC = () => {
           color="secondary"
           icon={<MaterialIcon icon="book" />}
         >
-          Import subjects
+          {t("action.subject")}
         </AdminCardAction>
         <ImportSubjectsDialog
           open={subjectOpen}
@@ -401,7 +395,7 @@ const ImportDataCard: FC = () => {
           color="secondary"
           icon={<MaterialIcon icon="groups" />}
         >
-          Generate classes
+          {t("action.class")}
         </AdminCardAction>
         <GenerateClassesDialog
           open={classOpen}
@@ -422,6 +416,8 @@ const ImportDataCard: FC = () => {
  * @returns A Card.
  */
 const ManageNewsCard: FC = () => {
+  const { t } = useTranslation("admin", { keyPrefix: "news" });
+
   return (
     <AdminPanelCard
       accentColor="surface-1"
@@ -429,15 +425,8 @@ const ManageNewsCard: FC = () => {
       className="flex flex-col gap-3"
     >
       <div className="flex flex-col gap-1">
-        <h2 className="skc-headline-small">
-          Interact with students with news articles and forms
-        </h2>
-        <p>
-          You can create articles with text, image, and tables that appear right
-          inside MySK for students and teachers. For data collection, you can
-          also create forms for students to fill, and class advisors can view
-          the results.
-        </p>
+        <h2 className="skc-headline-small">{t("title")}</h2>
+        <p>{t("desc")}</p>
       </div>
 
       <div className="grid grid-cols-1 gap-2 md:grid-cols-3 md:gap-6">
@@ -446,21 +435,21 @@ const ManageNewsCard: FC = () => {
           color="surface-variant"
           icon={<MaterialIcon icon="add_notes" />}
         >
-          Create an article
+          {t("action.createArticle")}
         </AdminCardAction>
         <AdminCardAction
           href="/news/form/create"
           color="surface-variant"
           icon={<MaterialIcon icon="assignment_add" />}
         >
-          Create a form
+          {t("action.createForm")}
         </AdminCardAction>
         <AdminCardAction
           href="/news"
           color="surface-variant"
           icon={<MaterialIcon icon="folder_open" />}
         >
-          Manage existing
+          {t("action.manage")}
         </AdminCardAction>
       </div>
     </AdminPanelCard>
@@ -482,10 +471,10 @@ const AdminPanelPage: CustomPage<{
   return (
     <>
       <Head>
-        <title>{createTitleStr("Admin panel", t)}</title>
+        <title>{createTitleStr(t("title"), t)}</title>
       </Head>
       <MySKPageHeader
-        title="Admin panel"
+        title={t("title")}
         icon={<MaterialIcon icon="shield_person" />}
         parentURL="/account"
       />
