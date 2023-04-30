@@ -63,7 +63,7 @@
         "thead": {
           "number": "ห้อง",
           "classAdvisorsTH": "ครูที่ปรึกษา",
-          "classAdvisorsEN": "Class advisors",
+          "classAdvisorsEN": "ครูที่ปรึกษา (ภาษาอังกฤษ)",
           "studentCount": "จำนวนนักเรียน",
           "year": "ปีการศึกษา"
         },
