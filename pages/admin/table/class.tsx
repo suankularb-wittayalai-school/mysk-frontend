@@ -3,6 +3,9 @@
  *
  * Note: `Ctrl` + click to jump to a component.
  *
+ * **Components**
+ * - {@link ClassRowActions}
+ *
  * **Page**
  * - {@link ManageClassesPage}
  */
@@ -25,26 +28,22 @@ import Head from "next/head";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useEffect, useMemo, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 
 // SK Components
 import {
+  Button,
   ContentLayout,
-  DataTable,
-  DataTableBody,
   DataTableColumnDef,
-  DataTableContent,
-  DataTableHead,
-  DataTablePagination,
-  DataTableSearch,
   FAB,
   MaterialIcon,
-  Progress,
   Section,
+  SegmentedButton,
 } from "@suankularb-components/react";
 
 // Internal components
 import AdminDataTable from "@/components/admin/AdminDataTable";
+import ConfirmDeleteDialog from "@/components/common/ConfirmDeleteDialog";
 import MySKPageHeader from "@/components/common/MySKPageHeader";
 
 // Backend
@@ -68,6 +67,56 @@ import { CustomPage, LangCode } from "@/utils/types/common";
  * The number of rows visible per page. Used in pagination.
  */
 const rowsPerPage = 20;
+
+/**
+ * Row actions for a class in the Admin Data Table.
+ *
+ * @param row The data for the row this is placed in.
+ *
+ * @returns A Segmented Button.
+ */
+const ClassRowActions: FC<{ row: ClassAdminListItem }> = ({ row }) => {
+  const [editOpen, setEditOpen] = useState<boolean>(false);
+  const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
+
+  return (
+    <>
+      <SegmentedButton alt="Row actions">
+        {/* Edit */}
+        <Button
+          appearance="outlined"
+          icon={<MaterialIcon icon="edit" />}
+          tooltip="Edit this entry"
+          onClick={() => setEditOpen(true)}
+        />
+
+        {/* Delete */}
+        <Button
+          appearance="outlined"
+          icon={<MaterialIcon icon="delete" />}
+          tooltip="Delete this entry"
+          dangerous
+          onClick={() => setDeleteOpen(true)}
+        />
+      </SegmentedButton>
+
+      {/* Dialogs */}
+
+      {/* Edit */}
+      {/* TODO: Edit Class Dialog */}
+
+      {/* Delete */}
+      <ConfirmDeleteDialog
+        open={deleteOpen}
+        onClose={() => setDeleteOpen(false)}
+        onSubmit={() => {
+          // TODO: Actually delete this entry from the database
+          setDeleteOpen(false);
+        }}
+      />
+    </>
+  );
+};
 
 /**
  * Displays a paginated Data Table of all classes of all academic years, where
@@ -257,6 +306,7 @@ const ManageClassesPage: CustomPage<{
           <AdminDataTable
             headerGroups={getHeaderGroups()}
             rowModel={getRowModel()}
+            rowActions={(row) => <ClassRowActions row={row} />}
             globalFilter={globalFilter}
             onGlobalFilterChange={setGlobalFilter}
             totalRows={totalRows}
