@@ -52,7 +52,7 @@ import { supabase } from "@/utils/supabase-backend";
 
 // Helpers
 import { cn } from "@/utils/helpers/className";
-import { getCurrentAcademicYear } from "@/utils/helpers/date";
+import { getCurrentAcademicYear, getLocaleYear } from "@/utils/helpers/date";
 import { createTitleStr } from "@/utils/helpers/title";
 
 // Hooks
@@ -230,7 +230,10 @@ const StatisticsSection: FC<{ count: AdminPanelStatistics }> = ({ count }) => {
  * @returns A Card.
  */
 const NewYearNewDataCard: FC = () => {
-  const { t } = useTranslation("admin", { keyPrefix: "statistics" });
+  const locale = useLocale();
+  const { t } = useTranslation("admin", {
+    keyPrefix: "suggestions.newYearNewData",
+  });
 
   return (
     <AdminPanelCard
@@ -239,7 +242,9 @@ const NewYearNewDataCard: FC = () => {
       className="flex flex-col gap-1 pb-4"
     >
       <h2 className="skc-headline-small">{t("title")}</h2>
-      <p>{t("desc")}</p>
+      <p>
+        {t("desc", { year: getLocaleYear(locale, getCurrentAcademicYear()) })}
+      </p>
       <p>
         <a href="mailto:itsolutions@sk.ac.th" className="link">
           {t("contactSupport")}

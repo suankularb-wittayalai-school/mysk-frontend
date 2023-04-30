@@ -4,7 +4,7 @@
     "title": "Suggestions",
     "newYearNewData": {
       "title": "New year, new data",
-      "desc": "We noticed that some tables for 2023 is empty. Why not get started by importing and adding data for this year?",
+      "desc": "We noticed that some tables for {{year}} is empty. Why not get started by importing and adding data for this year?",
       "contactSupport": "Contact support for more details"
     }
   },
