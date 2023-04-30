@@ -285,6 +285,7 @@ const ManageSubjectsPage: CustomPage<{
           <AdminDataTable
             headerGroups={getHeaderGroups()}
             rowModel={getRowModel()}
+            rowActions={(row) => <SubjectRowActions row={row} />}
             globalFilter={globalFilter}
             onGlobalFilterChange={setGlobalFilter}
             totalRows={totalRows}
