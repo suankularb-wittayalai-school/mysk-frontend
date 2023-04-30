@@ -130,7 +130,7 @@ const ManageStudentsPage: CustomPage<{
   totalStudentCount: number;
 }> = ({ studentList, totalStudentCount }) => {
   const locale = useLocale();
-  const { t } = useTranslation("admin");
+  const { t } = useTranslation("admin", { keyPrefix: "data.manage.student" });
 
   const supabase = useSupabaseClient();
 
@@ -228,7 +228,7 @@ const ManageStudentsPage: CustomPage<{
     () => [
       {
         accessorKey: "studentID",
-        header: "Student ID",
+        header: t("thead.studentID"),
         thAttr: { className: "w-2/12" },
         tdAttr: {
           align: "center",
@@ -236,18 +236,21 @@ const ManageStudentsPage: CustomPage<{
         },
       },
       {
+        id: "nameTH",
         accessorFn: (row) => row.name.th,
-        header: "Thai name",
+        header: t("thead.nameTH"),
         thAttr: { className: "w-4/12" },
       },
       {
+        id: "nameEN",
         accessorFn: (row) => row.name["en-US"],
-        header: "English name",
+        header: t("thead.nameEN"),
         thAttr: { className: "w-4/12" },
       },
       {
+        id: "class",
         accessorFn: (row) => `M.${row.classItem.number}`,
-        header: "Class",
+        header: t("thead.class"),
         thAttr: { className: "w-1/12" },
         tdAttr: {
           align: "center",
@@ -255,8 +258,9 @@ const ManageStudentsPage: CustomPage<{
         },
       },
       {
+        id: "classNo",
         accessorFn: (row) => row.classNo,
-        header: "Class №",
+        header: t("thead.classNo"),
         thAttr: { className: "w-1/12" },
         tdAttr: {
           align: "right",
@@ -281,10 +285,10 @@ const ManageStudentsPage: CustomPage<{
   return (
     <>
       <Head>
-        <title>{createTitleStr("Manage students", t)}</title>
+        <title>{createTitleStr(t("title"), t)}</title>
       </Head>
       <MySKPageHeader
-        title="Manage students"
+        title={t("title")}
         icon={<MaterialIcon icon="table" />}
         parentURL="/admin"
       />

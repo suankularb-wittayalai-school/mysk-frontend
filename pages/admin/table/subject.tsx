@@ -128,7 +128,7 @@ const ManageSubjectsPage: CustomPage<{
   totalSubjectCount: number;
 }> = ({ subjectList, totalSubjectCount }) => {
   const locale = useLocale();
-  const { t } = useTranslation("admin");
+  const { t } = useTranslation("admin", { keyPrefix: "data.manage.subject" });
 
   const supabase = useSupabaseClient();
 
@@ -219,37 +219,37 @@ const ManageSubjectsPage: CustomPage<{
       {
         id: "codeTH",
         accessorFn: (row) => getLocaleString(row.code, "th"),
-        header: "Thai code",
+        header: t("thead.codeTH"),
         thAttr: { className: "w-2/12" },
       },
       {
         id: "codeEN",
         accessorFn: (row) => getLocaleString(row.code, "en-US"),
-        header: "English code",
+        header: t("thead.codeEN"),
         thAttr: { className: "w-2/12" },
       },
       {
         id: "nameTH",
         accessorFn: (row) => getLocaleObj(row.name, "th").name,
-        header: "Thai name",
+        header: t("thead.nameTH"),
         thAttr: { className: "w-3/12" },
       },
       {
         id: "nameEN",
         accessorFn: (row) => getLocaleObj(row.name, "en-US").name,
-        header: "English name",
+        header: t("thead.nameEN"),
         thAttr: { className: "w-3/12" },
       },
       {
         id: "year",
         accessorFn: (row) => getLocaleYear(locale, row.year),
-        header: "Academic year",
+        header: t("thead.year"),
         thAttr: { className: "w-1/12" },
         tdAttr: { align: "center" },
       },
       {
         accessorKey: "semester",
-        header: "Semester",
+        header: t("thead.semester"),
         thAttr: { className: "w-1/12" },
         tdAttr: { align: "center" },
       },
@@ -273,10 +273,10 @@ const ManageSubjectsPage: CustomPage<{
   return (
     <>
       <Head>
-        <title>{createTitleStr("Manage subjects", t)}</title>
+        <title>{createTitleStr(t("title"), t)}</title>
       </Head>
       <MySKPageHeader
-        title="Manage subjects"
+        title={t("title")}
         icon={<MaterialIcon icon="table" />}
         parentURL="/admin"
       />

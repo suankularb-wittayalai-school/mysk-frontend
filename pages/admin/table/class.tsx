@@ -132,7 +132,7 @@ const ManageClassesPage: CustomPage<{
   totalClassCount: number;
 }> = ({ classList, totalClassCount }) => {
   const locale = useLocale();
-  const { t } = useTranslation("admin");
+  const { t } = useTranslation("admin", { keyPrefix: "data.manage.class" });
 
   const supabase = useSupabaseClient();
 
@@ -221,8 +221,8 @@ const ManageClassesPage: CustomPage<{
       // 3-digit number
       {
         id: "number",
-        accessorFn: (row) => `M.${row.number}`,
-        header: "Number",
+        accessorFn: (row) => t("tbody.class",{number: row.number}),
+        header: t("thead.number"),
         thAttr: { className: "w-1/12" },
       },
       // Full list of Class Advisors in both languages
@@ -232,7 +232,7 @@ const ManageClassesPage: CustomPage<{
           row.classAdvisors
             .map((advisor) => nameJoiner("th", advisor.name))
             .join(", "),
-        header: "Class advisors (in Thai)",
+        header: t("thead.classAdvisorsTH"),
         thAttr: { className: "w-4/12" },
         render: (row) => (
           <ul className="list-disc pl-6">
@@ -250,7 +250,7 @@ const ManageClassesPage: CustomPage<{
           row.classAdvisors
             .map((advisor) => nameJoiner("en-US", advisor.name))
             .join(", "),
-        header: "Class advisors (in English)",
+        header: t("thead.classAdvisorsEN"),
         thAttr: { className: "w-4/12" },
         render: (row) => (
           <ul className="list-disc pl-6">
@@ -265,15 +265,15 @@ const ManageClassesPage: CustomPage<{
       // Number of students
       {
         id: "studentCount",
-        accessorFn: (row) => `${row.studentCount} students`,
-        header: "Student count",
+        accessorFn: (row) => t("tbody.studentCount",{count: row.studentCount}),
+        header: t("thead.studentCount"),
         thAttr: { className: "w-2/12" },
       },
       // Academic year
       {
         id: "year",
         accessorFn: (row) => getLocaleYear(locale, row.year),
-        header: "Academic year",
+        header: t("thead.year"),
         thAttr: { className: "w-1/12" },
       },
     ],
@@ -294,10 +294,10 @@ const ManageClassesPage: CustomPage<{
   return (
     <>
       <Head>
-        <title>{createTitleStr("Manage classes", t)}</title>
+        <title>{createTitleStr(t("title"), t)}</title>
       </Head>
       <MySKPageHeader
-        title="Manage classes"
+        title={t("title")}
         icon={<MaterialIcon icon="table" />}
         parentURL="/admin"
       />

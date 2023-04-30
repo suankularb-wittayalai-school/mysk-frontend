@@ -44,6 +44,43 @@
         "teacher": "Teachers",
         "subject": "Subjects",
         "class": "Classes"
+      },
+      "student": {
+        "title": "Manage students",
+        "thead": {
+          "studentID": "Student ID",
+          "nameTH": "Thai name",
+          "nameEN": "English name",
+          "class": "Class",
+          "classNo": "Class №"
+        }
+      },
+      "subject": {
+        "title": "Manage subjects",
+        "thead": {
+          "codeTH": "Thai code",
+          "codeEN": "English code",
+          "nameTH": "Thai name",
+          "nameEN": "English name",
+          "year": "Academic year",
+          "semester": "Semester"
+        }
+      },
+      "class": {
+        "title": "Manage classes",
+        "thead": {
+          "number": "Number",
+          "classAdvisorsTH": "Class advisors (in Thai)",
+          "classAdvisorsEN": "Class advisors",
+          "studentCount": "Student count",
+          "year": "Academic year"
+        },
+        "tbody": {
+          "class": "M.{{number}}",
+          "studentCount_zero": "No students",
+          "studentCount_one": "{{count, number}} student",
+          "studentCount_other": "{{count, number}} students"
+        }
       }
     },
     "import": {

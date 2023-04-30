@@ -36,6 +36,42 @@
         "teacher": "อาจารย์",
         "subject": "วิชา",
         "class": "ห้องเรียน"
+      },
+      "student": {
+        "title": "จัดการข้อมูลนักเรียน",
+        "thead": {
+          "studentID": "รหัสนักเรียน",
+          "nameTH": "ชื่อ-นามสกุล",
+          "nameEN": "ชื่อ-นามสกุลภาษาอังกฤษ",
+          "class": "ห้องเรียน",
+          "classNo": "เลขที่ในห้อง"
+        }
+      },
+      "subject": {
+        "title": "จัดการข้อมูลวิชา",
+        "thead": {
+          "codeTH": "รหัสวิชา",
+          "codeEN": "รหัสวิชาภาษาอังกฤษ",
+          "nameTH": "วิชา",
+          "nameEN": "วิชาภาษาอังกฤษ",
+          "year": "ปีการศึกษา",
+          "semester": "ภาคเรียน"
+        }
+      },
+      "class": {
+        "title": "จัดการข้อมูลห้องเรียน",
+        "thead": {
+          "number": "ห้อง",
+          "classAdvisorsTH": "ครูที่ปรึกษา",
+          "classAdvisorsEN": "Class advisors",
+          "studentCount": "จำนวนนักเรียน",
+          "year": "ปีการศึกษา"
+        },
+        "tbody": {
+          "class": "ม.{{number}}",
+          "studentCount_zero": "ไม่มีนักเรียน",
+          "studentCount_other": "{{count, number}} คน"
+        }
       }
     },
     "import": {
