@@ -129,6 +129,7 @@ const ManageSubjectsPage: CustomPage<{
 }> = ({ subjectList, totalSubjectCount }) => {
   const locale = useLocale();
   const { t } = useTranslation("admin", { keyPrefix: "data.manage.subject" });
+  const { t: tCommon } = useTranslation("common");
 
   const supabase = useSupabaseClient();
 
@@ -273,7 +274,7 @@ const ManageSubjectsPage: CustomPage<{
   return (
     <>
       <Head>
-        <title>{createTitleStr(t("title"), t)}</title>
+        <title>{createTitleStr(t("title"), tCommon)}</title>
       </Head>
       <MySKPageHeader
         title={t("title")}

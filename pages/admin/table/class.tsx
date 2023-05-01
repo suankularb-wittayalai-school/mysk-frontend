@@ -133,6 +133,7 @@ const ManageClassesPage: CustomPage<{
 }> = ({ classList, totalClassCount }) => {
   const locale = useLocale();
   const { t } = useTranslation("admin", { keyPrefix: "data.manage.class" });
+  const { t: tCommon } = useTranslation("common");
 
   const supabase = useSupabaseClient();
 
@@ -294,7 +295,7 @@ const ManageClassesPage: CustomPage<{
   return (
     <>
       <Head>
-        <title>{createTitleStr(t("title"), t)}</title>
+        <title>{createTitleStr(t("title"), tCommon)}</title>
       </Head>
       <MySKPageHeader
         title={t("title")}
