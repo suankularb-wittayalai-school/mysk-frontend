@@ -159,7 +159,7 @@ const ClassContactsSection: FC<{
   return (
     <ContactsSection
       contacts={contacts}
-      handleAdd={handleAdd}
+      handleAdd={editable ? handleAdd : undefined}
       handleEdit={editable ? handleEdit : undefined}
       handleRemove={
         editable ? (contactID) => handleRemove(contactID) : undefined
