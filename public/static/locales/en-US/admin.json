@@ -30,8 +30,8 @@
     "news": {
       "thisYear_one": "{{count, number}} news article",
       "thisYear_other": "{{count, number}} news articles",
-      "all_one": "{{count, number}} news article including past years",
-      "all_other": "{{count, number}} news articles including past years"
+      "all_one": "{{count, number}} article including past years",
+      "all_other": "{{count, number}} articles including past years"
     }
   },
   "data": {
