@@ -29,7 +29,6 @@ import {
   ClassWNumber,
 } from "@/utils/types/class";
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { getLocalePath } from "@/utils/helpers/i18n";
 
 const ClassOverviewPage: CustomPage<{
   classItem: ClassOverviewType;

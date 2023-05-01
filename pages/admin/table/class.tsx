@@ -222,7 +222,7 @@ const ManageClassesPage: CustomPage<{
       // 3-digit number
       {
         id: "number",
-        accessorFn: (row) => t("tbody.class",{number: row.number}),
+        accessorFn: (row) => t("tbody.class", { number: row.number }),
         header: t("thead.number"),
         thAttr: { className: "w-1/12" },
       },
@@ -266,7 +266,8 @@ const ManageClassesPage: CustomPage<{
       // Number of students
       {
         id: "studentCount",
-        accessorFn: (row) => t("tbody.studentCount",{count: row.studentCount}),
+        accessorFn: (row) =>
+          t("tbody.studentCount", { count: row.studentCount }),
         header: t("thead.studentCount"),
         thAttr: { className: "w-2/12" },
       },
