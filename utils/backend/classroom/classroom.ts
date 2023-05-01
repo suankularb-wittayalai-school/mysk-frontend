@@ -606,7 +606,8 @@ export async function getAllClassNumbers(
 ): Promise<number[]> {
   const { data: classrooms, error: classroomsError } = await supabase
     .from("classroom")
-    .select("number");
+    .select("number")
+    .match({ year: getCurrentAcademicYear() });
 
   if (classroomsError) {
     console.error(classroomsError);
