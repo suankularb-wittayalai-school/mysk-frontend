@@ -92,25 +92,30 @@ const LookupClassesPage: CustomPage<{
         {
           // For a number from 1 to 6, render a Section representing a grade
           // (there are 6 grades in Suankularb)
-          range(6, 1).map((grade) => (
-            <Section key={grade}>
-              <Header>{t("class", { ns: "common", number: grade })}</Header>
-              <Columns columns={6} className="!items-stretch">
-                {classes
-                  // Filter for only classes in this grade
-                  // For example, for M.1, the filter is `100 < number < 200`
-                  .filter(
-                    (classItem) =>
-                      classItem.number > grade * 100 &&
-                      classItem.number < (grade + 1) * 100
-                  )
-                  // Render the Cards
-                  .map((classItem) => (
-                    <ClassCard key={classItem.id} classItem={classItem} />
-                  ))}
-              </Columns>
-            </Section>
-          ))
+          range(
+            // Get the number of grades from getting the first digit of the
+            // last class
+            Math.floor(classes.slice(-1)[0]?.number || 0 / 100), 1).map(
+            (grade) => (
+              <Section key={grade}>
+                <Header>{t("class", { ns: "common", number: grade })}</Header>
+                <Columns columns={6} className="!items-stretch">
+                  {classes
+                    // Filter for only classes in this grade
+                    // For example, for M.1, the filter is `100 < number < 200`
+                    .filter(
+                      (classItem) =>
+                        classItem.number > grade * 100 &&
+                        classItem.number < (grade + 1) * 100
+                    )
+                    // Render the Cards
+                    .map((classItem) => (
+                      <ClassCard key={classItem.id} classItem={classItem} />
+                    ))}
+                </Columns>
+              </Section>
+            )
+          )
         }
       </ContentLayout>
     </>
