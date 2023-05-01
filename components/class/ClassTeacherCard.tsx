@@ -44,7 +44,7 @@ const ClassTeacherCard: FC<{
           { onClick: () => setSelectedID && setSelectedID(teacher.id) })}
       className={
         selectedID === teacher.id
-          ? "!bg-primary-container !text-on-primary-container"
+          ? "sm:!bg-primary-container sm:!text-on-primary-container"
           : undefined
       }
     >
@@ -54,7 +54,7 @@ const ClassTeacherCard: FC<{
             name={teacher.name}
             className={
               selectedID === teacher.id
-                ? "!bg-primary !text-on-primary"
+                ? "sm:!bg-primary sm:!text-on-primary"
                 : undefined
             }
           />

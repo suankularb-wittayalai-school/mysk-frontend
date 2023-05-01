@@ -96,6 +96,9 @@ export type BackendAuthReturn = { error: Partial<AuthError> | null };
 export type BackendDataReturn<T, U = []> =
   | { data: T; error: null }
   | { data: U; error: Partial<PostgrestError> };
+export type BackendCountedDataReturn<T, U = []> = BackendDataReturn<T, U> & {
+  count: number;
+};
 
 export type DatabaseClient = SupabaseClient<
   Database,

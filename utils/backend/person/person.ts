@@ -2,6 +2,7 @@
 import { User } from "@supabase/supabase-js";
 
 // Backend
+import { getUserMetadata } from "@/utils/backend/account";
 import { createContact, deleteContact } from "@/utils/backend/contact";
 import { getCurrentAcademicYear } from "@/utils/helpers/date";
 
@@ -409,12 +410,19 @@ export async function getPersonFromUser(
   user: User,
   options?: Parameters<typeof db2Student | typeof db2Teacher>["2"]
 ): Promise<BackendDataReturn<Student | Teacher, null>> {
+  const { data: metadata, error } = await getUserMetadata(supabase, user.id);
+
+  if (error) {
+    console.error(error);
+    return { data: null, error };
+  }
+
   // If the user is a Student
-  if (user?.user_metadata.role === "student") {
+  if (metadata?.role === "student") {
     const { data, error } = await supabase
       .from("student")
       .select("*, person(*)")
-      .match({ id: user.user_metadata.student })
+      .match({ id: metadata.student })
       .limit(1)
       .single();
 
@@ -427,11 +435,11 @@ export async function getPersonFromUser(
   }
 
   // If the user is a Teacher
-  if (user?.user_metadata.role === "teacher") {
+  if (metadata?.role === "teacher") {
     const { data, error } = await supabase
       .from("teacher")
       .select("*, person(*), subject_group(*)")
-      .match({ id: user.user_metadata.teacher })
+      .match({ id: metadata.teacher })
       .single();
 
     if (error) {
@@ -442,7 +450,7 @@ export async function getPersonFromUser(
     return {
       data: {
         ...(await db2Teacher(supabase, data!, options)),
-        isAdmin: user.user_metadata.isAdmin,
+        isAdmin: metadata.isAdmin,
       },
       error: null,
     };
@@ -456,11 +464,18 @@ export async function getPersonIDFromUser(
   supabase: DatabaseClient,
   user: User
 ): Promise<BackendDataReturn<number, null>> {
-  if (user?.user_metadata.role == "student") {
+  const { data: metadata, error } = await getUserMetadata(supabase, user.id);
+
+  if (error) {
+    console.error(error);
+    return { data: null, error };
+  }
+
+  if (metadata?.role === "student") {
     const { data: student, error: studentError } = await supabase
       .from("student")
       .select("person(id)")
-      .match({ id: user.user_metadata.student })
+      .match({ id: metadata.student })
       .limit(1)
       .single();
 
@@ -474,11 +489,11 @@ export async function getPersonIDFromUser(
         .id,
       error: null,
     };
-  } else if (user?.user_metadata.role == "teacher") {
+  } else if (metadata?.role === "teacher") {
     const { data: teacher, error: teacherError } = await supabase
       .from("teacher")
       .select("person(id)")
-      .match({ id: user.user_metadata.teacher })
+      .match({ id: metadata.teacher })
       .limit(1)
       .single();
 

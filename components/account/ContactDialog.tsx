@@ -15,6 +15,9 @@ import {
   TextField,
 } from "@suankularb-components/react";
 
+// Internal components
+import ContactCard from "@/components/account/ContactCard";
+
 // Hooks
 import { useForm } from "@/utils/hooks/form";
 
@@ -42,18 +45,14 @@ const ContactDialog: SubmittableDialogComponent<
     Email: { type: "email" },
     Website: { type: "url" },
     Facebook: { type: "text" },
-    Line: {
-      type: "text",
-      helperMsg: t("dialog.contact.value.line_helper"),
-    },
+    Line: { type: "text" },
     Instagram: {
       type: "text",
-      validate: (value) => /^(?:(?:[\\w][\\.]{0,1})*[\\w]){1,29}$/.test(value),
+      validate: (value) => /^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/i.test(value),
     },
     Discord: {
       type: "text",
-      helperMsg: t("dialog.contact.value.discord_helper"),
-      validate: (value) => /^[a-zA-Z0-9]{8}$/.test(value),
+      validate: (value) => /^([a-zA-Z0-9]{8}|.{3,32}#[0-9]{4})$/.test(value),
     },
     Other: { type: "text" },
   };
@@ -120,6 +119,23 @@ const ContactDialog: SubmittableDialogComponent<
       />
       <DialogContent className="px-6">
         <Columns columns={2} className="!gap-y-8">
+          {formOK && (
+            <>
+              <ContactCard
+                contact={{
+                  id: counter,
+                  // Omit the `name` key if the Thai Label field is empty
+                  ...(form.nameTH
+                    ? { name: { th: form.nameTH, "en-US": form.nameEN } }
+                    : {}),
+                  type: form.type as ContactVia,
+                  value: form.value,
+                }}
+              />
+              <div aria-hidden className="hidden sm:block" />
+            </>
+          )}
+
           {/* Type */}
           <Select
             appearance="outlined"
@@ -164,11 +180,13 @@ const ContactDialog: SubmittableDialogComponent<
           <TextField
             appearance="outlined"
             label={t("dialog.contact.nameTH")}
+            helperMsg={t("dialog.contact.name_helper")}
             {...formProps.nameTH}
           />
           <TextField
             appearance="outlined"
             label={t("dialog.contact.nameEN")}
+            helperMsg={t("dialog.contact.name_helper")}
             {...formProps.nameEN}
           />
         </Columns>

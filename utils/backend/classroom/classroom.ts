@@ -13,20 +13,25 @@ import { getSubjectGroups } from "@/utils/backend/subject/subjectGroup";
 import { db2Class, db2PersonName, db2Student } from "@/utils/backend/database";
 
 // Helpers
+import { range } from "@/utils/helpers/array";
 import { getCurrentAcademicYear } from "@/utils/helpers/date";
 
 // Types
 import {
   Class,
+  ClassAdminListItem,
   ClassLookupListItem,
   ClassOverview,
   ClassTeachersListSection,
   ClassWNumber,
 } from "@/utils/types/class";
-import { BackendDataReturn, DatabaseClient } from "@/utils/types/common";
+import {
+  BackendCountedDataReturn,
+  BackendDataReturn,
+  DatabaseClient,
+} from "@/utils/types/common";
 import { StudentListItem } from "@/utils/types/person";
 import { Database } from "@/utils/types/supabase";
-import { range } from "@/utils/helpers/array";
 
 export async function createClassroom(
   supabase: DatabaseClient,
@@ -369,7 +374,8 @@ export async function getLookupClasses(
   const { data, error } = await supabase
     .from("classroom")
     .select("id, number, advisors, students")
-    .order("number");
+    .order("number")
+    .match({ year: getCurrentAcademicYear() });
 
   if (error) {
     console.error(error);
@@ -399,6 +405,77 @@ export async function getLookupClasses(
         .sort((a, b) => (a.name.th.firstName > b.name.th.firstName ? 1 : -1)),
       studentCount: classItem.students.length,
     })),
+    error: null,
+  };
+}
+
+export async function getAdminClasses(
+  supabase: DatabaseClient,
+  page: number,
+  rowsPerPage: number,
+  query?: string
+): Promise<BackendCountedDataReturn<ClassAdminListItem[]>> {
+  // If the query in invalid, we already know the result: an empty array
+  if (query && query.length > 3 && !/[0-9]/.test(query))
+    return { data: [], count: 0, error: null };
+
+  // Format the query into a number range, for use with `.gt()` and `.lt()`
+  const numberRange = query
+    ? query.length === 1
+      ? { gt: Number(query) * 100, lt: (Number(query) + 1) * 100 }
+      : query.length === 2
+      ? { gt: Number(query) * 10, lt: (Number(query) + 1) * 10 }
+      : { gt: Number(query) - 1, lt: Number(query) + 1 }
+    : { gt: 0, lt: 700 };
+
+  // Fetch classes
+  const { data, count, error } = await supabase
+    .from("classroom")
+    .select("id, number, advisors, students, year", { count: "exact" })
+    // Class number query
+    .gt("number", numberRange.gt)
+    .lt("number", numberRange.lt)
+    // Academic year query
+    .or(
+      query && query.length >= 4
+        ? `year.eq.${query}, year.eq.${Number(query) - 543}`
+        : "year.gt.0"
+    )
+    .order("year", { ascending: false })
+    .order("number")
+    // Pagination
+    .range(rowsPerPage * (page - 1), rowsPerPage * page - 1);
+
+  if (error) {
+    console.error(error);
+    return { data: [], count: 0, error };
+  }
+
+  const classAdvisorIDs = data!.map((classItem) => classItem.advisors).flat();
+  const { data: teachers, error: teacherError } = await supabase
+    .from("teacher")
+    .select("*, person(*)")
+    .or(`id.in.(${classAdvisorIDs.join()})`);
+
+  if (teacherError) {
+    console.error(teacherError);
+    return { data: [], count: 0, error: teacherError };
+  }
+
+  return {
+    data: data.map((classItem) => ({
+      id: classItem.id,
+      number: classItem.number,
+      classAdvisors: classItem.advisors
+        .map((advisor) => {
+          const teacher = teachers?.find((teacher) => advisor === teacher.id)!;
+          return { id: teacher.id, ...db2PersonName(teacher.person) };
+        })
+        .sort((a, b) => (a.name.th.firstName > b.name.th.firstName ? 1 : -1)),
+      studentCount: classItem.students.length,
+      year: classItem.year,
+    })),
+    count: count!,
     error: null,
   };
 }
@@ -529,7 +606,8 @@ export async function getAllClassNumbers(
 ): Promise<number[]> {
   const { data: classrooms, error: classroomsError } = await supabase
     .from("classroom")
-    .select("number");
+    .select("number")
+    .match({ year: getCurrentAcademicYear() });
 
   if (classroomsError) {
     console.error(classroomsError);

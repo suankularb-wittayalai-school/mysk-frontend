@@ -40,9 +40,17 @@ export function nameJoiner(
     lastName: boolean | "abbr";
   }>
 ) {
+  const firstNameLocale = /^[a-zA-Z]/.test(
+    name[locale]?.firstName || name.th.firstName
+  )
+    ? "en-US"
+    : "th";
+
   if (options)
     return [
-      options.prefix && prefix ? getLocaleString(prefix, locale) : undefined,
+      options.prefix && prefix
+        ? getLocaleString(prefix, firstNameLocale)
+        : undefined,
       [
         options.firstName === true || options.firstName === undefined
           ? name[locale]?.firstName || name.th.firstName
@@ -60,7 +68,7 @@ export function nameJoiner(
         .join(" "),
     ]
       .filter((item) => item)
-      .join(locale === "en-US" ? " " : "");
+      .join(firstNameLocale === "en-US" ? " " : "");
   else
     return [
       name[locale]?.firstName || name.th.firstName,

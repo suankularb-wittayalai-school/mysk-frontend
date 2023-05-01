@@ -198,9 +198,11 @@ const Layout: FC<
           <NavDrawerItem
             icon={<MaterialIcon icon="contact_support" />}
             label={t("navigation.drawer.about.help")}
-            selected={router.pathname.startsWith("/help")}
-            href="/help"
-            element={Link}
+            // TODO: Change this back to `/help` when the Help page is done
+            href="mailto:itsolutions@sk.ac.th"
+            // selected={router.pathname.startsWith("/help")}
+            // href="/help"
+            // element={Link}
           />
           <NavDrawerItem
             icon={<MaterialIcon icon="translate" />}

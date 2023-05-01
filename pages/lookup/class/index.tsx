@@ -92,7 +92,12 @@ const LookupClassesPage: CustomPage<{
         {
           // For a number from 1 to 6, render a Section representing a grade
           // (there are 6 grades in Suankularb)
-          range(6, 1).map((grade) => (
+          range(
+            // Get the number of grades from getting the first digit of the
+            // last class
+            Math.floor((classes.slice(-1)[0]?.number || 0) / 100),
+            1
+          ).map((grade) => (
             <Section key={grade}>
               <Header>{t("class", { ns: "common", number: grade })}</Header>
               <Columns columns={6} className="!items-stretch">

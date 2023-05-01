@@ -11,6 +11,7 @@ import {
   IBM_Plex_Sans_Thai,
   Fira_Code,
 } from "next/font/google";
+import { useRouter } from "next/router";
 
 import { appWithTranslation } from "next-i18next";
 
@@ -103,10 +104,28 @@ function App({ Component, pageProps }: CustomAppProps) {
   //
   // See https://supabase.com/docs/reference/javascript/auth-resetpasswordforemail.
 
+  const router = useRouter();
   const [verifiedForgorOpen, setVerifiedForgorOpen] = useState<boolean>(false);
   useEffect(() => {
     supabase.auth.onAuthStateChange(async (event) => {
-      if (event === "PASSWORD_RECOVERY") setVerifiedForgorOpen(true);
+      switch (event) {
+        // Magic link support
+        case "SIGNED_IN":
+          // Only redirect if user is at Landing
+          if (!router.pathname) router.push("/learn");
+          break;
+
+        // A fallback in case logging out via `/account/logout` fails to
+        // redirect
+        case "SIGNED_OUT":
+          router.push("/");
+          break;
+
+        // Forgor process (see 5.)
+        case "PASSWORD_RECOVERY":
+          setVerifiedForgorOpen(true);
+          break;
+      }
     });
   }, []);
 

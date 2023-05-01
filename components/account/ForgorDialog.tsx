@@ -1,5 +1,6 @@
 // External libraries
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 
 // SK Components
@@ -40,16 +41,17 @@ const ForgorDialog: DialogComponent = ({ open, onClose }) => {
       key: "newPwd",
       required: true,
       validate: (value: string) =>
-        value.length < 8 ? t("newPwd_error") : true,
+        value.length < 8 ? t("form.newPwd_error") : true,
     },
     {
       key: "confirmNewPwd",
       required: true,
       validate: (value: string) =>
-        value.length < 8 ? t("newPwd_error") : true,
+        value.length < 8 ? t("form.newPwd_error") : true,
     },
   ]);
 
+  const router = useRouter();
   const supabase = useSupabaseClient();
   const [loading, toggleLoading] = useToggle();
   async function handleSubmit() {
@@ -66,6 +68,8 @@ const ForgorDialog: DialogComponent = ({ open, onClose }) => {
       }
 
       if (data) onClose();
+
+      router.push("/learn")
       return true;
     }, toggleLoading);
   }

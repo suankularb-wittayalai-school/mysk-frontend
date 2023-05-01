@@ -64,7 +64,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   } = await supabase.auth.getSession();
   const { data: metadata } = await getUserMetadata(supabase, session!.user.id);
 
-  let classWNumber: ClassWNumber;
+  let classWNumber: ClassWNumber | null = null;
   let editable = false;
   if (metadata!.role === "student") {
     const { data } = await getClassFromUser(supabase, session!.user);
@@ -74,6 +74,8 @@ export const getServerSideProps: GetServerSideProps = async ({
     classWNumber = data!;
     editable = true;
   }
+
+  if (!classWNumber) return { notFound: true };
 
   const { data: classItem } = await getClassOverview(
     supabase,

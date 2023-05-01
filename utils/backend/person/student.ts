@@ -2,19 +2,29 @@
 import { createPerson } from "@/utils/backend/person/person";
 
 // Converters
-import { db2Student } from "@/utils/backend/database";
+import { db2PersonName, db2Student } from "@/utils/backend/database";
 
 // Helpers
 import { getCurrentAcademicYear } from "@/utils/helpers/date";
 
 // Types
 import { ClassWNumber } from "@/utils/types/class";
-import { BackendDataReturn, DatabaseClient } from "@/utils/types/common";
-import { ImportedStudentData, Student } from "@/utils/types/person";
+import {
+  BackendCountedDataReturn,
+  BackendDataReturn,
+  DatabaseClient,
+} from "@/utils/types/common";
+import {
+  ImportedStudentData,
+  Student,
+  StudentAdminListItem,
+} from "@/utils/types/person";
 import { Database } from "@/utils/types/supabase";
 
 // Miscellaneous
 import { prefixMap } from "@/utils/maps";
+import { removeFromObjectByKeys } from "@/utils/helpers/object";
+import { nameJoiner } from "@/utils/helpers/name";
 
 export async function getStudent(
   supabase: DatabaseClient,
@@ -33,6 +43,98 @@ export async function getStudent(
 
   return {
     data: await db2Student(supabase, data!, { contacts: true }),
+    error: null,
+  };
+}
+
+export async function getAdminStudentList(
+  supabase: DatabaseClient,
+  page: number,
+  rowsPerPage: number,
+  query?: string
+): Promise<BackendCountedDataReturn<StudentAdminListItem[]>> {
+  let peopleIDs: number[] | null = null;
+
+  // Support for searching with a name segment, which requires `people`
+  if (query && query.length >= 3) {
+    const { data, error } = await supabase
+      .from("people")
+      .select("id")
+      .or(
+        `first_name_th.like.%${query || ""}%, \
+        middle_name_th.like.%${query || ""}%, \
+        last_name_th.like.%${query || ""}%, \
+        first_name_en.ilike.%${query || ""}%, \
+        middle_name_en.ilike.%${query || ""}%, \
+        last_name_en.ilike.%${query || ""}%`
+      )
+      .limit(rowsPerPage);
+
+    if (error) {
+      console.error(error);
+      return { data: [], count: 0, error: null };
+    }
+
+    peopleIDs = data.map((person) => person.id);
+  }
+
+  const { data, count, error } = await supabase
+    .from("student")
+    .select("*, person(*)", { count: "exact" })
+    .or(
+      // If the query is for a name segment, use the search result from
+      // `people`
+      peopleIDs && !(query && /[0-9]{1,5}/.test(query))
+        ? `person.in.(${peopleIDs.join()})`
+        : // Otherwise, the query (if exists) is for student ID
+          `std_id.like.${query || ""}%`
+    )
+    .order("std_id", { ascending: false })
+    // Pagination
+    .range(rowsPerPage * (page - 1), rowsPerPage * page - 1);
+
+  if (error) {
+    console.error(error);
+    return { data: [], count: 0, error };
+  }
+
+  // Get all classes that contain these students
+  const { data: classes, error: classesError } = await supabase
+    .from("classroom")
+    .select("id, number, students, no_list")
+    .or(data.map((student) => `students.cs.{"${student.id}"}`).join());
+
+  if (classesError) {
+    console.error(classesError);
+    return { data: [], count: 0, error: classesError };
+  }
+
+  return {
+    data: data.map((student) => {
+      const classItem = classes.find((classItem) =>
+        classItem.students.includes(student.id)
+      )!;
+      const studentName = db2PersonName(student.person);
+
+      return {
+        id: student.id,
+        studentID: student.std_id,
+        classItem: removeFromObjectByKeys(["students"], classItem),
+        classNo:
+          classItem.no_list.findIndex(
+            (noListStudent) => student.id === noListStudent
+          ) + 1,
+        name: {
+          th: nameJoiner("th", studentName.name, studentName.prefix, {
+            prefix: true,
+          }),
+          "en-US": nameJoiner("en-US", studentName.name, studentName.prefix, {
+            prefix: true,
+          }),
+        },
+      };
+    }),
+    count: count!,
     error: null,
   };
 }

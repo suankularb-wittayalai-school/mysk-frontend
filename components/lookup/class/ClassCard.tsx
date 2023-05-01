@@ -108,6 +108,17 @@ const ClassPeekModal: FC<{
     <AnimatePresence>
       {open && (
         <>
+          {/* Scrim */}
+          <motion.div
+            className="skc-scrim"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.3 }}
+            exit={{ opacity: 0 }}
+            transition={transition(duration.medium4, easing.standard)}
+            onClick={onClose}
+          />
+
+          {/* Modal */}
           <motion.div
             layoutId={`class-${classItem.id}`}
             transition={transition(duration.medium3, easing.standard)}
@@ -166,14 +177,6 @@ const ClassPeekModal: FC<{
               </CardContent>
             </Card>
           </motion.div>
-          <motion.div
-            className="skc-scrim"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.3 }}
-            exit={{ opacity: 0 }}
-            transition={transition(duration.medium4, easing.standard)}
-            onClick={onClose}
-          />
         </>
       )}
     </AnimatePresence>

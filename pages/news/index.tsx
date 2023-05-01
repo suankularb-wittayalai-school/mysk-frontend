@@ -23,6 +23,7 @@ import NewsFeed from "@/components/news/NewsFeed";
 import NewsIcon from "@/components/news/NewsIcon";
 
 // Backend
+import { getUserMetadata } from "@/utils/backend/account";
 import { getNewsFeed } from "@/utils/backend/news";
 
 // Helpers
@@ -178,10 +179,13 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
-  const { data: user } = await supabase.auth.getUser();
-  const userRole = user.user?.user_metadata.role;
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const { data: metadata } = await getUserMetadata(supabase, user!.id);
+  const { data: newsFeed } = await getNewsFeed(metadata!.role);
 
-  const { data: newsFeed } = await getNewsFeed(userRole);
+  const userRole = metadata!.role;
 
   return {
     props: {

@@ -41,9 +41,10 @@ const DocumentCard: FC<{
       direction="row"
       stateLayerEffect
       className={cn([
-        "text-left",
-        "!border-transparent !bg-transparent",
-        selected?.id === document.id && "sm:!bg-primary-container",
+        `w-full items-center !border-transparent pr-3 text-left`,
+        selected?.id === document.id &&
+          `sm:!border-outline-variant sm:!bg-primary-container
+           sm:focus:!border-primary`,
       ])}
       {...(atBreakpoint === "base"
         ? // If the user is on mobile, take then straight to the Google

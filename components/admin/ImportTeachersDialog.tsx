@@ -14,11 +14,11 @@ import { ImportedTeacherData } from "@/utils/types/person";
 
 /**
  * An interface for importing Teachers with a CSV file.
- * 
+ *
  * @param open If the Dialog is open and shown.
  * @param onClose Triggers when the Dialog is closed.
  * @param onSubmit Triggers when the data is successfully imported.
- * 
+ *
  * @returns A Full-screen Dialog.
  */
 const ImportTeachersDialog: SubmittableDialogComponent = ({

@@ -25,6 +25,8 @@ export type ClassLookupListItem = ClassWNumber & {
   studentCount: number;
 };
 
+export type ClassAdminListItem = ClassLookupListItem & { year: number };
+
 export type ClassTeachersListSection = {
   subjectGroup: SubjectGroup;
   teachers: PersonLookupItemGeneric<null>[];

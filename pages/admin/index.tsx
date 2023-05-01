@@ -20,9 +20,7 @@
  */
 
 // External libraries
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
-
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
+import { GetStaticProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -39,6 +37,7 @@ import {
   Columns,
   ContentLayout,
   MaterialIcon,
+  Progress,
   Section,
 } from "@suankularb-components/react";
 
@@ -47,11 +46,14 @@ import GenerateClassesDialog from "@/components/admin/GenerateClassesDialog";
 import ImportStudentsDialog from "@/components/admin/ImportStudentsDialog";
 import ImportSubjectsDialog from "@/components/admin/ImportSubjectsDialog";
 import ImportTeachersDialog from "@/components/admin/ImportTeachersDialog";
+
+// Supabase
 import MySKPageHeader from "@/components/common/MySKPageHeader";
+import { supabase } from "@/utils/supabase-backend";
 
 // Helpers
 import { cn } from "@/utils/helpers/className";
-import { getCurrentAcademicYear } from "@/utils/helpers/date";
+import { getCurrentAcademicYear, getLocaleYear } from "@/utils/helpers/date";
 import { createTitleStr } from "@/utils/helpers/title";
 
 // Hooks
@@ -76,32 +78,30 @@ const AdminPanelCard: FC<{
   accentColor: "surface-1" | "primary" | "secondary" | "tertiary";
   icon: JSX.Element;
   className?: string;
-}> = ({ children, accentColor, icon, className }) => {
-  return (
-    <Card
-      appearance="outlined"
-      direction="row"
-      className="!grid grid-cols-4 gap-4 overflow-hidden sm:!flex sm:gap-6"
+}> = ({ children, accentColor, icon, className }) => (
+  <Card
+    appearance="outlined"
+    direction="row"
+    className="!grid grid-cols-4 gap-4 overflow-hidden sm:!flex sm:gap-6"
+  >
+    <div
+      className={cn([
+        {
+          "surface-1": "bg-surface-1 text-on-surface",
+          primary: "bg-primary-container text-on-primary-container",
+          secondary: "bg-secondary-container text-on-secondary-container",
+          tertiary: "bg-tertiary-container text-on-tertiary-container",
+        }[accentColor],
+        "grid p-3 pt-6 sm:place-content-center sm:pt-3 [&_*]:mx-auto",
+      ])}
     >
-      <div
-        className={cn([
-          {
-            "surface-1": "bg-surface-1 text-on-surface",
-            primary: "bg-primary-container text-on-primary-container",
-            secondary: "bg-secondary-container text-on-secondary-container",
-            tertiary: "bg-tertiary-container text-on-tertiary-container",
-          }[accentColor],
-          "grid p-3 pt-6 sm:place-content-center sm:pt-3 [&_*]:mx-auto",
-        ])}
-      >
-        {icon}
-      </div>
-      <div className={cn(["col-span-3 grow py-3 pr-3", className])}>
-        {children}
-      </div>
-    </Card>
-  );
-};
+      {icon}
+    </div>
+    <div className={cn(["col-span-3 grow py-3 pr-3", className])}>
+      {children}
+    </div>
+  </Card>
+);
 
 /**
  * A Card displaying a main and a related statistic of a table. Only used by
@@ -115,16 +115,27 @@ const AdminPanelCard: FC<{
 const StatisticsCard: FC<{
   title: string;
   subtitle: string;
-}> = ({ title, subtitle }) => {
-  return (
-    <Card appearance="filled" direction="row">
-      <CardContent className="grow !gap-1 !px-4 !py-3">
-        <p className="skc-headline-small">{title}</p>
-        <p className="skc-body-medium text-on-surface-variant">{subtitle}</p>
-      </CardContent>
-    </Card>
-  );
-};
+  progressAlt?: string;
+  progressValue?: number;
+}> = ({ title, subtitle, progressAlt, progressValue }) => (
+  <Card
+    appearance="filled"
+    className="overflow-hidden border-1 border-outline-variant"
+  >
+    <CardContent className="grow !gap-0.5 !px-4 !py-3">
+      <p className="skc-headline-small">{title}</p>
+      <p className="skc-body-medium text-on-surface-variant">{subtitle}</p>
+    </CardContent>
+    {progressAlt && progressValue && (
+      <Progress
+        appearance="linear"
+        alt={progressAlt}
+        value={progressValue}
+        visible
+      />
+    )}
+  </Card>
+);
 
 /**
  * A small Card that links to other admin pages. Admin Card Actions are placed
@@ -190,40 +201,35 @@ const AdminCardAction: FC<{
  * Displays the number of students, teachers, classes, news articles, and other
  * information related to those, grouped into Cards.
  *
- * @param count A number of statistics passed in from `getServerSideProps`.
+ * @param count A number of statistics passed in from `getStaticProps`.
  *
  * @returns A Section.
  */
 const StatisticsSection: FC<{ count: AdminPanelStatistics }> = ({ count }) => {
-  const locale = useLocale();
-  const { t } = useTranslation("admin");
+  const { t } = useTranslation("admin", { keyPrefix: "statistics" });
 
   return (
     <Section>
       <Columns columns={4} className="!items-stretch">
         <StatisticsCard
-          title={`${count.students.all.toLocaleString(locale)} students`}
-          subtitle={`${count.students.onboarded.toLocaleString(
-            locale
-          )} students onboarded`}
+          title={t("student.all", { count: count.students.all })}
+          subtitle={t("student.onboarded", { count: count.students.onboarded })}
+          progressAlt="Students onboarded"
+          progressValue={(count.students.onboarded / count.students.all) * 100}
         />
         <StatisticsCard
-          title={`${count.teachers.all.toLocaleString(locale)} teachers`}
-          subtitle={`${count.teachers.onboarded.toLocaleString(
-            locale
-          )} teachers onboarded`}
+          title={t("teacher.all", { count: count.teachers.all })}
+          subtitle={t("teacher.onboarded", { count: count.teachers.onboarded })}
+          progressAlt="Teachers onboarded"
+          progressValue={(count.teachers.onboarded / count.teachers.all) * 100}
         />
         <StatisticsCard
-          title={`${count.classes.thisYear.toLocaleString(locale)} classes`}
-          subtitle={`${count.classes.all.toLocaleString(
-            locale
-          )} classes including past years`}
+          title={t("class.thisYear", { count: count.classes.thisYear })}
+          subtitle={t("class.all", { count: count.classes.all })}
         />
         <StatisticsCard
-          title={`${count.news.thisYear.toLocaleString(locale)} news articles`}
-          subtitle={`${count.news.all.toLocaleString(
-            locale
-          )} articles including past years`}
+          title={t("news.thisYear", { count: count.news.thisYear })}
+          subtitle={t("news.all", { count: count.news.all })}
         />
       </Columns>
     </Section>
@@ -238,20 +244,24 @@ const StatisticsSection: FC<{ count: AdminPanelStatistics }> = ({ count }) => {
  * @returns A Card.
  */
 const NewYearNewDataCard: FC = () => {
+  const locale = useLocale();
+  const { t } = useTranslation("admin", {
+    keyPrefix: "suggestions.newYearNewData",
+  });
+
   return (
     <AdminPanelCard
       accentColor="tertiary"
       icon={<MaterialIcon icon="temp_preferences_custom" size={48} />}
       className="flex flex-col gap-1 pb-4"
     >
-      <h2 className="skc-headline-small">New year, new data</h2>
+      <h2 className="skc-headline-small">{t("title")}</h2>
       <p>
-        We noticed that some tables for 2023 is empty. Why not get started by
-        importing and adding data for this year?
+        {t("desc", { year: getLocaleYear(locale, getCurrentAcademicYear()) })}
       </p>
       <p>
         <a href="mailto:itsolutions@sk.ac.th" className="link">
-          Contact support for more details
+          {t("contactSupport")}
         </a>
       </p>
     </AdminPanelCard>
@@ -264,19 +274,21 @@ const NewYearNewDataCard: FC = () => {
  * @returns A Card.
  */
 const ManageDataCard: FC = () => {
+  const { t } = useTranslation("admin", { keyPrefix: "data.manage" });
+
   return (
     <AdminPanelCard
       accentColor="surface-1"
       icon={<MaterialIcon icon="database" size={48} />}
       className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr,6fr]"
     >
+      {/* Text */}
       <div className="flex flex-col gap-1">
-        <h2 className="skc-headline-small">View and edit the school’s data</h2>
-        <p>
-          You have access to the entirety of the school’s data. You can add,
-          edit, view, and delete entries.
-        </p>
+        <h2 className="skc-headline-small">{t("title")}</h2>
+        <p>{t("desc")}</p>
       </div>
+
+      {/* Actions */}
       <div className="grid grid-cols-1 gap-x-3 gap-y-2 sm:grid-cols-2">
         <AdminCardAction
           href="/admin/table/student"
@@ -284,7 +296,7 @@ const ManageDataCard: FC = () => {
           color="primary"
           icon={<MaterialIcon icon="face" size={40} />}
         >
-          Students
+          {t("action.student")}
         </AdminCardAction>
         <AdminCardAction
           href="/admin/table/teacher"
@@ -292,7 +304,7 @@ const ManageDataCard: FC = () => {
           color="primary"
           icon={<MaterialIcon icon="support_agent" size={40} />}
         >
-          Teachers
+          {t("action.teacher")}
         </AdminCardAction>
         <AdminCardAction
           href="/admin/table/subject"
@@ -300,7 +312,7 @@ const ManageDataCard: FC = () => {
           color="primary"
           icon={<MaterialIcon icon="book" size={40} />}
         >
-          Subjects
+          {t("action.subject")}
         </AdminCardAction>
         <AdminCardAction
           href="/admin/table/class"
@@ -308,7 +320,7 @@ const ManageDataCard: FC = () => {
           color="primary"
           icon={<MaterialIcon icon="groups" size={40} />}
         >
-          Classes
+          {t("action.class")}
         </AdminCardAction>
       </div>
     </AdminPanelCard>
@@ -321,6 +333,8 @@ const ManageDataCard: FC = () => {
  * @returns A Card.
  */
 const ImportDataCard: FC = () => {
+  const { t } = useTranslation("admin", { keyPrefix: "data.import" });
+
   const router = useRouter();
 
   // Dialog control
@@ -335,13 +349,13 @@ const ImportDataCard: FC = () => {
       icon={<MaterialIcon icon="upload" size={48} />}
       className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr,6fr]"
     >
+      {/* Text */}
       <div className="flex flex-col gap-1">
-        <h2 className="skc-headline-small">Quickly import data with CSV</h2>
-        <p>
-          Create a CSV file in the proper format with spreadsheet software like
-          Google Sheets or Microsoft Excel, and import it here.
-        </p>
+        <h2 className="skc-headline-small">{t("title")}</h2>
+        <p>{t("desc")}</p>
       </div>
+
+      {/* Actions */}
       <div className="grid grid-cols-1 gap-x-3 gap-y-2 sm:grid-cols-2">
         {/* Students */}
         <AdminCardAction
@@ -349,7 +363,7 @@ const ImportDataCard: FC = () => {
           color="secondary"
           icon={<MaterialIcon icon="face" />}
         >
-          Import students
+          {t("action.student")}
         </AdminCardAction>
         <ImportStudentsDialog
           open={studentOpen}
@@ -366,7 +380,7 @@ const ImportDataCard: FC = () => {
           color="secondary"
           icon={<MaterialIcon icon="support_agent" />}
         >
-          Import teachers
+          {t("action.teacher")}
         </AdminCardAction>
         <ImportTeachersDialog
           open={teacherOpen}
@@ -383,7 +397,7 @@ const ImportDataCard: FC = () => {
           color="secondary"
           icon={<MaterialIcon icon="book" />}
         >
-          Import subjects
+          {t("action.subject")}
         </AdminCardAction>
         <ImportSubjectsDialog
           open={subjectOpen}
@@ -400,7 +414,7 @@ const ImportDataCard: FC = () => {
           color="secondary"
           icon={<MaterialIcon icon="groups" />}
         >
-          Generate classes
+          {t("action.class")}
         </AdminCardAction>
         <GenerateClassesDialog
           open={classOpen}
@@ -421,6 +435,8 @@ const ImportDataCard: FC = () => {
  * @returns A Card.
  */
 const ManageNewsCard: FC = () => {
+  const { t } = useTranslation("admin", { keyPrefix: "news" });
+
   return (
     <AdminPanelCard
       accentColor="surface-1"
@@ -428,38 +444,31 @@ const ManageNewsCard: FC = () => {
       className="flex flex-col gap-3"
     >
       <div className="flex flex-col gap-1">
-        <h2 className="skc-headline-small">
-          Interact with students with news articles and forms
-        </h2>
-        <p>
-          You can create articles with text, image, and tables that appear right
-          inside MySK for students and teachers. For data collection, you can
-          also create forms for students to fill, and class advisors can view
-          the results.
-        </p>
+        <h2 className="skc-headline-small">{t("title")}</h2>
+        <p>{t("desc")}</p>
       </div>
 
       <div className="grid grid-cols-1 gap-2 md:grid-cols-3 md:gap-6">
         <AdminCardAction
-          href="/news/info/create"
+          href="/admin/news/info/create"
           color="surface-variant"
           icon={<MaterialIcon icon="add_notes" />}
         >
-          Create an article
+          {t("action.createArticle")}
         </AdminCardAction>
         <AdminCardAction
-          href="/news/form/create"
+          href="/admin/news/form/create"
           color="surface-variant"
           icon={<MaterialIcon icon="assignment_add" />}
         >
-          Create a form
+          {t("action.createForm")}
         </AdminCardAction>
         <AdminCardAction
-          href="/news"
+          href="/admin/news"
           color="surface-variant"
           icon={<MaterialIcon icon="folder_open" />}
         >
-          Manage existing
+          {t("action.manage")}
         </AdminCardAction>
       </div>
     </AdminPanelCard>
@@ -481,11 +490,12 @@ const AdminPanelPage: CustomPage<{
   return (
     <>
       <Head>
-        <title>{createTitleStr("Admin panel", t)}</title>
+        <title>{createTitleStr(t("title"), t)}</title>
       </Head>
       <MySKPageHeader
-        title="Admin panel"
+        title={t("title")}
         icon={<MaterialIcon icon="shield_person" />}
+        parentURL="/account"
       />
       <ContentLayout>
         {/* Suggestions */}
@@ -514,19 +524,8 @@ const AdminPanelPage: CustomPage<{
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  req,
-  res,
-}) => {
-  const supabase = createServerSupabaseClient({
-    req: req as NextApiRequest,
-    res: res as NextApiResponse,
-  });
-
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
   // Statistics
-
-  // TODO: Onboarding statistics
 
   // Students
   const { count: allStudents } = await supabase
@@ -537,6 +536,16 @@ export const getServerSideProps: GetServerSideProps = async ({
   const { count: allTeachers } = await supabase
     .from("teacher")
     .select("id", { count: "exact", head: true });
+
+  // Onboarded
+  const { count: onboardedStudents } = await supabase
+    .from("users")
+    .select("id", { count: "exact", head: true })
+    .match({ role: '"student"', onboarded: true });
+  const { count: onboardedTeachers } = await supabase
+    .from("users")
+    .select("id", { count: "exact", head: true })
+    .match({ role: '"teacher"', onboarded: true });
 
   // Classes
   const { count: allClasses } = await supabase
@@ -558,8 +567,8 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   // Put the statistics in 1 constant to pass
   const count = {
-    students: { all: allStudents, onboarded: 0 },
-    teachers: { all: allTeachers, onboarded: 0 },
+    students: { all: allStudents, onboarded: onboardedStudents },
+    teachers: { all: allTeachers, onboarded: onboardedTeachers },
     classes: { all: allClasses, thisYear: classesThisYear },
     news: { all: allNews, thisYear: newsThisYear },
   };
@@ -572,6 +581,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       ])),
       count,
     },
+    revalidate: 10,
   };
 };
 

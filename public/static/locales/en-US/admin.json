@@ -2,12 +2,96 @@
   "title": "Admin panel",
   "suggestions": {
     "title": "Suggestions",
-    "newYearNewData": {}
+    "newYearNewData": {
+      "title": "New year, new data",
+      "desc": "We noticed that some tables for {{year}} is empty. Why not get started by importing and adding data for this year?",
+      "contactSupport": "Contact support for more details"
+    }
+  },
+  "statistics": {
+    "student": {
+      "all_one": "{{count, number}} student",
+      "all_other": "{{count, number}} students",
+      "onboarded_one": "{{count, number}} student onboarded",
+      "onboarded_other": "{{count, number}} students onboarded"
+    },
+    "teacher": {
+      "all_one": "{{count, number}} teacher",
+      "all_other": "{{count, number}} teachers",
+      "onboarded_one": "{{count, number}} teacher onboarded",
+      "onboarded_other": "{{count, number}} teachers onboarded"
+    },
+    "class": {
+      "thisYear_one": "{{count, number}} class",
+      "thisYear_other": "{{count, number}} classes",
+      "all_one": "{{count, number}} class including past years",
+      "all_other": "{{count, number}} classes including past years"
+    },
+    "news": {
+      "thisYear_one": "{{count, number}} news article",
+      "thisYear_other": "{{count, number}} news articles",
+      "all_one": "{{count, number}} article including past years",
+      "all_other": "{{count, number}} articles including past years"
+    }
   },
   "data": {
     "title": "Data",
-    "manage": {},
+    "manage": {
+      "title": "View and edit the school’s data",
+      "desc": "You have access to the entirety of the school’s data. You can add, edit, view, and delete entries.",
+      "action": {
+        "student": "Students",
+        "teacher": "Teachers",
+        "subject": "Subjects",
+        "class": "Classes"
+      },
+      "student": {
+        "title": "Manage students",
+        "thead": {
+          "studentID": "Student ID",
+          "nameTH": "Thai name",
+          "nameEN": "English name",
+          "class": "Class",
+          "classNo": "Class №"
+        }
+      },
+      "subject": {
+        "title": "Manage subjects",
+        "thead": {
+          "codeTH": "Thai code",
+          "codeEN": "English code",
+          "nameTH": "Thai name",
+          "nameEN": "English name",
+          "year": "Academic year",
+          "semester": "Semester"
+        }
+      },
+      "class": {
+        "title": "Manage classes",
+        "thead": {
+          "number": "Number",
+          "classAdvisorsTH": "Class advisors (in Thai)",
+          "classAdvisorsEN": "Class advisors",
+          "studentCount": "Student count",
+          "year": "Academic year"
+        },
+        "tbody": {
+          "class": "M.{{number}}",
+          "studentCount_zero": "No students",
+          "studentCount_one": "{{count, number}} student",
+          "studentCount_other": "{{count, number}} students"
+        }
+      }
+    },
     "import": {
+      "title": "Quickly import data with CSV",
+      "desc": "Create a CSV file in the proper format with spreadsheet software like Google Sheets or Microsoft Excel, and import it here.",
+      "action": {
+        "student": "Import students",
+        "teacher": "Import teachers",
+        "subject": "Import subjects",
+        "class": "Generate classes"
+      },
       "dialog": {
         "import": {
           "title": {
@@ -49,6 +133,15 @@
           }
         }
       }
+    }
+  },
+  "news": {
+    "title": "Interact with students with news articles and forms",
+    "desc": "You can create articles with text, image, and tables that appear right inside MySK for students and teachers. For data collection, you can also create forms for students to fill, and class advisors can view the results.",
+    "action": {
+      "createArticle": "Create an article",
+      "createForm": "Create a form",
+      "manage": "Manage existing"
     }
   }
 }

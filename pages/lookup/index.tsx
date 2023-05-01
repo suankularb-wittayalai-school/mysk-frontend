@@ -34,6 +34,7 @@ import LookupPeopleLight from "@/public/images/graphics/lookup/person-light.svg"
 
 // Helpers
 import { cn } from "@/utils/helpers/className";
+import { getCurrentAcademicYear } from "@/utils/helpers/date";
 import { createTitleStr } from "@/utils/helpers/title";
 
 // Hooks
@@ -202,7 +203,8 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
     .select("id", { count: "exact", head: true });
   const { count: classes } = await supabase
     .from("classroom")
-    .select("id", { count: "exact", head: true });
+    .select("id", { count: "exact", head: true })
+    .match({ year: getCurrentAcademicYear() });
   const { count: orders } = await supabase
     .from("school_documents")
     .select("id", { count: "exact", head: true })

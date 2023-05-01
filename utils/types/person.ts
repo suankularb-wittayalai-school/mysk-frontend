@@ -81,6 +81,14 @@ export type PersonLookupItemGeneric<Metadata> = {
   name: MultiLangObj<PersonName>;
 };
 
+export type StudentAdminListItem = {
+  id: number;
+  studentID: string;
+  classItem: ClassWNumber;
+  classNo: number;
+  name: MultiLangString;
+};
+
 export type ImportedStudentData = {
   prefix: DefaultTHPrefix;
   first_name_th: string;

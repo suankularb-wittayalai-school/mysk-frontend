@@ -71,8 +71,12 @@ const ClassStudents: FC<{
           .filter(
             (student) =>
               String(student.classNo).includes(query) ||
-              nameJoiner("th", student.name).toLowerCase().includes(query) ||
-              nameJoiner("en-US", student.name).toLowerCase().includes(query)
+              nameJoiner("th", student.name)
+                .toLowerCase()
+                .includes(query.toLowerCase()) ||
+              nameJoiner("en-US", student.name)
+                .toLowerCase()
+                .includes(query.toLowerCase())
           )
           .map((student) => (
             <ClassStudentCard

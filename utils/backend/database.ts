@@ -345,7 +345,12 @@ export function db2PersonName(
 
 export async function db2Subject(
   supabase: DatabaseClient,
-  subject: Database["public"]["Tables"]["subject"]["Row"]
+  subject: Database["public"]["Tables"]["subject"]["Row"],
+  options?: Partial<{
+    subjectGroup: boolean;
+    teachers: boolean;
+    coTeachers: boolean;
+  }>
 ): Promise<Subject> {
   const formatted: Subject = {
     id: subject.id,
@@ -388,56 +393,62 @@ export async function db2Subject(
     coTeachers: [],
   };
 
-  const { data: subjectGroup, error: subjectGroupError } = await supabase
-    .from("SubjectGroup")
-    .select("*")
-    .match({ id: subject.group })
-    .limit(1);
+  if (options?.subjectGroup) {
+    const { data: subjectGroup, error: subjectGroupError } = await supabase
+      .from("SubjectGroup")
+      .select("*")
+      .match({ id: subject.group })
+      .limit(1);
 
-  if (subjectGroupError) {
-    console.error(subjectGroupError);
-  }
-  if (subjectGroup) {
-    formatted.subjectGroup = {
-      id: subjectGroup[0].id,
-      name: {
-        "en-US": subjectGroup[0].name_en,
-        th: subjectGroup[0].name_th,
-      },
-    };
-  }
-
-  const { data: teachers, error: teachersError } = await supabase
-    .from("teacher")
-    .select("*, person(*), subject_group(*)")
-    .in("id", subject.teachers);
-
-  if (teachersError) {
-    console.error(teachersError);
+    if (subjectGroupError) {
+      console.error(subjectGroupError);
+    }
+    if (subjectGroup) {
+      formatted.subjectGroup = {
+        id: subjectGroup[0].id,
+        name: {
+          "en-US": subjectGroup[0].name_en,
+          th: subjectGroup[0].name_th,
+        },
+      };
+    }
   }
 
-  if (teachers) {
-    formatted.teachers = await Promise.all(
-      teachers.map(async (teacher) => {
-        return await db2Teacher(supabase, teacher);
-      })
-    );
+  if (options?.teachers) {
+    const { data: teachers, error: teachersError } = await supabase
+      .from("teacher")
+      .select("*, person(*), subject_group(*)")
+      .in("id", subject.teachers);
+
+    if (teachersError) {
+      console.error(teachersError);
+    }
+
+    if (teachers) {
+      formatted.teachers = await Promise.all(
+        teachers.map(async (teacher) => {
+          return await db2Teacher(supabase, teacher);
+        })
+      );
+    }
   }
 
-  const { data: coTeachers, error: coTeachersError } = await supabase
-    .from("teacher")
-    .select("*, person(*), subject_group(*)")
-    .in("id", subject.coTeachers ? subject.coTeachers : []);
+  if (options?.coTeachers) {
+    const { data: coTeachers, error: coTeachersError } = await supabase
+      .from("teacher")
+      .select("*, person(*), subject_group(*)")
+      .in("id", subject.coTeachers ? subject.coTeachers : []);
 
-  if (coTeachersError) {
-    console.error(coTeachersError);
-  }
-  if (coTeachers) {
-    formatted.coTeachers = await Promise.all(
-      coTeachers.map(async (teacher) => {
-        return await db2Teacher(supabase, teacher);
-      })
-    );
+    if (coTeachersError) {
+      console.error(coTeachersError);
+    }
+    if (coTeachers) {
+      formatted.coTeachers = await Promise.all(
+        coTeachers.map(async (teacher) => {
+          return await db2Teacher(supabase, teacher);
+        })
+      );
+    }
   }
 
   return formatted;
