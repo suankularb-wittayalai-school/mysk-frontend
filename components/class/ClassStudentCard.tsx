@@ -78,7 +78,7 @@ const ClassStudentCard: FC<{
           className={cn([
             `skc-display-small text-outline
              [font-feature-settings:"tnum"on,"lnum"on]`,
-            thisSelected && `!text-primary`,
+            thisSelected && `sm:!text-primary`,
           ])}
         >
           {student.classNo < 10 && (
