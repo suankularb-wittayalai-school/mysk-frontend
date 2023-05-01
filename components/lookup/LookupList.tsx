@@ -53,8 +53,8 @@ const LookupList: FC<{
 
       {/* Search */}
       <div
-        className="sticky top-0 z-10 flex flex-col gap-3 bg-background pb-3
-          pt-6"
+        className="sticky top-[3.25rem] sm:top-0 z-10 flex flex-col gap-3
+          bg-background pb-3 pt-6"
       >
         <Search
           alt={searchAlt}
