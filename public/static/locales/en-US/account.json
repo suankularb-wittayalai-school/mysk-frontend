@@ -128,16 +128,15 @@
       },
       "nameTH": "Thai contact label",
       "nameEN": "English contact label",
+      "name_helper": "(Optional)",
       "value": {
         "phone": "Phone number",
         "email": "Email address",
         "website": "URL",
         "facebook": "Facebook name",
         "line": "LINE ID/invite code",
-        "line_helper": "10-digit code at end of invite link.",
         "instagram": "Instagram username",
-        "discord": "Discord invite code",
-        "discord_helper": "8-digit code at end of invite link.",
+        "discord": "Discord invite code/username",
         "other": "Value"
       },
       "value_error": "Invalid value.",
