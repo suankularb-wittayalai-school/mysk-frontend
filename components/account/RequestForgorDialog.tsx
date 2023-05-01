@@ -59,6 +59,7 @@ const RequestForgorDialog: DialogComponent<{ inputEmail?: string }> = ({
 
     withLoading(
       async () => {
+        // Initiate forgor process
         const { data, error } = await supabase.auth.resetPasswordForEmail(
           [email, "sk.ac.th"].join("")
         );
@@ -67,6 +68,9 @@ const RequestForgorDialog: DialogComponent<{ inputEmail?: string }> = ({
           console.error(error);
           return false;
         }
+        
+        // Reset form
+        setEmail("");
         return true;
       },
       toggleLoading,
