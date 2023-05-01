@@ -151,6 +151,7 @@ const GeneralInfoSection: FC<{
                 })
               : undefined,
           }}
+          options={{ hideIconsIfOnlyLanguage: true }}
         />
       </DetailSection>
 
