@@ -37,6 +37,7 @@ import {
   Columns,
   ContentLayout,
   MaterialIcon,
+  Progress,
   Section,
 } from "@suankularb-components/react";
 
@@ -77,32 +78,30 @@ const AdminPanelCard: FC<{
   accentColor: "surface-1" | "primary" | "secondary" | "tertiary";
   icon: JSX.Element;
   className?: string;
-}> = ({ children, accentColor, icon, className }) => {
-  return (
-    <Card
-      appearance="outlined"
-      direction="row"
-      className="!grid grid-cols-4 gap-4 overflow-hidden sm:!flex sm:gap-6"
+}> = ({ children, accentColor, icon, className }) => (
+  <Card
+    appearance="outlined"
+    direction="row"
+    className="!grid grid-cols-4 gap-4 overflow-hidden sm:!flex sm:gap-6"
+  >
+    <div
+      className={cn([
+        {
+          "surface-1": "bg-surface-1 text-on-surface",
+          primary: "bg-primary-container text-on-primary-container",
+          secondary: "bg-secondary-container text-on-secondary-container",
+          tertiary: "bg-tertiary-container text-on-tertiary-container",
+        }[accentColor],
+        "grid p-3 pt-6 sm:place-content-center sm:pt-3 [&_*]:mx-auto",
+      ])}
     >
-      <div
-        className={cn([
-          {
-            "surface-1": "bg-surface-1 text-on-surface",
-            primary: "bg-primary-container text-on-primary-container",
-            secondary: "bg-secondary-container text-on-secondary-container",
-            tertiary: "bg-tertiary-container text-on-tertiary-container",
-          }[accentColor],
-          "grid p-3 pt-6 sm:place-content-center sm:pt-3 [&_*]:mx-auto",
-        ])}
-      >
-        {icon}
-      </div>
-      <div className={cn(["col-span-3 grow py-3 pr-3", className])}>
-        {children}
-      </div>
-    </Card>
-  );
-};
+      {icon}
+    </div>
+    <div className={cn(["col-span-3 grow py-3 pr-3", className])}>
+      {children}
+    </div>
+  </Card>
+);
 
 /**
  * A Card displaying a main and a related statistic of a table. Only used by
@@ -116,16 +115,27 @@ const AdminPanelCard: FC<{
 const StatisticsCard: FC<{
   title: string;
   subtitle: string;
-}> = ({ title, subtitle }) => {
-  return (
-    <Card appearance="filled" direction="row">
-      <CardContent className="grow !gap-1 !px-4 !py-3">
-        <p className="skc-headline-small">{title}</p>
-        <p className="skc-body-medium text-on-surface-variant">{subtitle}</p>
-      </CardContent>
-    </Card>
-  );
-};
+  progressAlt?: string;
+  progressValue?: number;
+}> = ({ title, subtitle, progressAlt, progressValue }) => (
+  <Card
+    appearance="filled"
+    className="overflow-hidden border-1 border-outline-variant"
+  >
+    <CardContent className="grow !gap-0.5 !px-4 !py-3">
+      <p className="skc-headline-small">{title}</p>
+      <p className="skc-body-medium text-on-surface-variant">{subtitle}</p>
+    </CardContent>
+    {progressAlt && progressValue && (
+      <Progress
+        appearance="linear"
+        alt={progressAlt}
+        value={progressValue}
+        visible
+      />
+    )}
+  </Card>
+);
 
 /**
  * A small Card that links to other admin pages. Admin Card Actions are placed
@@ -204,18 +214,22 @@ const StatisticsSection: FC<{ count: AdminPanelStatistics }> = ({ count }) => {
         <StatisticsCard
           title={t("student.all", { count: count.students.all })}
           subtitle={t("student.onboarded", { count: count.students.onboarded })}
+          progressAlt="Students onboarded"
+          progressValue={(count.students.onboarded / count.students.all) * 100}
         />
         <StatisticsCard
           title={t("teacher.all", { count: count.teachers.all })}
           subtitle={t("teacher.onboarded", { count: count.teachers.onboarded })}
+          progressAlt="Teachers onboarded"
+          progressValue={(count.teachers.onboarded / count.teachers.all) * 100}
         />
         <StatisticsCard
           title={t("class.thisYear", { count: count.classes.thisYear })}
           subtitle={t("class.all", { count: count.classes.all })}
         />
         <StatisticsCard
-          title={t("news.thisYear", { count: 1 })}
-          subtitle={t("news.all", { count: count.classes.all })}
+          title={t("news.thisYear", { count: count.news.thisYear })}
+          subtitle={t("news.all", { count: count.news.all })}
         />
       </Columns>
     </Section>
@@ -436,21 +450,21 @@ const ManageNewsCard: FC = () => {
 
       <div className="grid grid-cols-1 gap-2 md:grid-cols-3 md:gap-6">
         <AdminCardAction
-          href="/news/info/create"
+          href="/admin/news/info/create"
           color="surface-variant"
           icon={<MaterialIcon icon="add_notes" />}
         >
           {t("action.createArticle")}
         </AdminCardAction>
         <AdminCardAction
-          href="/news/form/create"
+          href="/admin/news/form/create"
           color="surface-variant"
           icon={<MaterialIcon icon="assignment_add" />}
         >
           {t("action.createForm")}
         </AdminCardAction>
         <AdminCardAction
-          href="/news"
+          href="/admin/news"
           color="surface-variant"
           icon={<MaterialIcon icon="folder_open" />}
         >
@@ -513,8 +527,6 @@ const AdminPanelPage: CustomPage<{
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
   // Statistics
 
-  // TODO: Onboarding statistics
-
   // Students
   const { count: allStudents } = await supabase
     .from("student")
@@ -524,6 +536,16 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
   const { count: allTeachers } = await supabase
     .from("teacher")
     .select("id", { count: "exact", head: true });
+
+  // Onboarded
+  const { count: onboardedStudents } = await supabase
+    .from("users")
+    .select("id", { count: "exact", head: true })
+    .match({ role: '"student"', onboarded: true });
+  const { count: onboardedTeachers } = await supabase
+    .from("users")
+    .select("id", { count: "exact", head: true })
+    .match({ role: '"teacher"', onboarded: true });
 
   // Classes
   const { count: allClasses } = await supabase
@@ -545,8 +567,8 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
 
   // Put the statistics in 1 constant to pass
   const count = {
-    students: { all: allStudents, onboarded: 0 },
-    teachers: { all: allTeachers, onboarded: 0 },
+    students: { all: allStudents, onboarded: onboardedStudents },
+    teachers: { all: allTeachers, onboarded: onboardedTeachers },
     classes: { all: allClasses, thisYear: classesThisYear },
     news: { all: allNews, thisYear: newsThisYear },
   };
