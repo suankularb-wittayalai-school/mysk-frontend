@@ -95,7 +95,7 @@ const LookupClassesPage: CustomPage<{
           range(
             // Get the number of grades from getting the first digit of the
             // last class
-            Math.floor(classes.slice(-1)[0]?.number || 0 / 100),
+            Math.floor((classes.slice(-1)[0]?.number || 0) / 100),
             1
           ).map((grade) => (
             <Section key={grade}>
