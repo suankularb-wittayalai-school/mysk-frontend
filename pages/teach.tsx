@@ -1,17 +1,21 @@
 // External libraries
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import Head from "next/head";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { FC } from "react";
 
 // SK Components
 import {
+  Columns,
   ContentLayout,
   Header,
   MaterialIcon,
+  Search,
   Section,
 } from "@suankularb-components/react";
 
@@ -31,19 +35,61 @@ import {
 import { getLocalePath } from "@/utils/helpers/i18n";
 import { createTitleStr } from "@/utils/helpers/title";
 
+// Hooks
+import { useLocale } from "@/utils/hooks/i18n";
+
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Schedule as ScheduleType } from "@/utils/types/schedule";
 import { SubjectWNameAndCode, TeacherSubjectItem } from "@/utils/types/subject";
+import TeachingSubjectCard from "@/components/subject/TeachingSubjectCard";
 
-// Page
+const ScheduleSection: FC<{
+  schedule: ScheduleType;
+  subjectsInCharge: SubjectWNameAndCode[];
+  teacherID: number;
+}> = ({ schedule, subjectsInCharge, teacherID }) => {
+  const { t } = useTranslation("teach");
+
+  return (
+    <Section>
+      <Header>{t("schedule.title")}</Header>
+      <Schedule {...{ schedule, subjectsInCharge, teacherID }} role="teacher" />
+    </Section>
+  );
+};
+
+const SubjectsSection: FC<{
+  subjects: TeacherSubjectItem[];
+}> = ({ subjects }) => {
+  const locale = useLocale();
+  const { t } = useTranslation("teach");
+
+  return (
+    <Section>
+      <Columns columns={3}>
+        <Header className="md:col-span-2">{t("subjects.title")}</Header>
+        <Search alt="Search subjects" locale={locale} />
+      </Columns>
+      <Columns columns={3}>
+        {subjects.map((subject) => (
+          <TeachingSubjectCard key={subject.id} subject={subject} />
+        ))}
+      </Columns>
+    </Section>
+  );
+};
+
+/**
+ *
+ */
 const TeachPage: CustomPage<{
   schedule: ScheduleType;
   subjectsInCharge: SubjectWNameAndCode[];
   teachingSubjects: TeacherSubjectItem[];
   teacherID: number;
 }> = ({ schedule, subjectsInCharge, teachingSubjects, teacherID }) => {
-  const { t } = useTranslation("teach");
+  const { t } = useTranslation(["teach", "common"]);
 
   return (
     <>
@@ -55,13 +101,8 @@ const TeachPage: CustomPage<{
         icon={<MaterialIcon icon="school" />}
       />
       <ContentLayout>
-        <Section>
-          <Header>{t("schedule.title")}</Header>
-          <Schedule
-            {...{ schedule, subjectsInCharge, teacherID }}
-            role="teacher"
-          />
-        </Section>
+        <ScheduleSection {...{ schedule, subjectsInCharge, teacherID }} />
+        <SubjectsSection subjects={teachingSubjects} />
       </ContentLayout>
     </>
   );
@@ -116,7 +157,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       ])),
       schedule,
       subjectsInCharge,
-      subjects: teachingSubjects,
+      teachingSubjects,
       teacherID,
     },
   };

@@ -25,10 +25,10 @@ import { nameJoiner } from "@/utils/helpers/name";
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
 
-const SubjectList: FC<{ subjectList: SubjectListItem[]; query: string }> = ({
-  subjectList,
-  query,
-}) => {
+const SubjectList: FC<{
+  subjectList: SubjectListItem[];
+  query: string;
+}> = ({ subjectList, query }) => {
   // Translation
   const { t } = useTranslation("schedule");
   const locale = useLocale();
