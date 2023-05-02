@@ -67,7 +67,7 @@ export type SubjectListItem = {
 // Subjects List Item for Teachers
 export type TeacherSubjectItem = {
   id: number;
-  subject: Pick<Subject, "code" | "name">;
+  subject: SubjectWNameAndCode;
   classes: ClassWNumber[];
   isCoteacher?: boolean;
 };

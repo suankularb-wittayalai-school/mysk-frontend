@@ -27,8 +27,8 @@ import { SubjectListItem } from "@/utils/types/subject";
  * @returns A Full-screen Dialog.
  */
 const SubjectClassesDialog: DialogComponent<{
-  subjectID: number;
-}> = ({ open, onClose, subjectID }) => {
+  subject: SubjectWNameAndCode;
+}> = ({ open, onClose, subject }) => {
   const supabase = useSupabaseClient();
   const [loading, toggleLoading] = useToggle();
 

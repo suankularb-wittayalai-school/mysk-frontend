@@ -2,16 +2,17 @@
 import { PostgrestError } from "@supabase/supabase-js";
 
 // Backend
-import { db2SubjectListItem } from "@/utils/backend/database";
-
-// Supabase
-import { supabase } from "@/utils/supabase-client";
+import { db2SubjectListItem, db2Teacher } from "@/utils/backend/database";
 
 // Types
-import { ClassWNumber } from "@/utils/types/class";
-import { BackendDataReturn, DatabaseClient } from "@/utils/types/common";
+import {
+  BackendDataReturn,
+  DatabaseClient,
+  OrUndefined,
+} from "@/utils/types/common";
 import { SubjectListItem, TeacherSubjectItem } from "@/utils/types/subject";
 import { Database } from "@/utils/types/supabase";
+import { Teacher } from "@/utils/types/person";
 
 export async function getRoomsEnrolledInSubject(
   supabase: DatabaseClient,
@@ -70,67 +71,62 @@ export async function getTeachingSubjects(
   supabase: DatabaseClient,
   teacherID: number
 ): Promise<BackendDataReturn<TeacherSubjectItem[]>> {
-  const { data, error } = await supabase
+  const { data: roomSubjects, error } = await supabase
     .from("room_subjects")
-    .select(
-      "subject(id,name_th,name_en,code_th,code_en), teacher, coteacher, \
-       class(id,number)"
-    )
-    .or(`teacher.cs.{"${teacherID}"}, coteacher.cs.{"${teacherID}"}`);
+    .select("*, subject:subject(*), class(*)")
+    .or(`teacher.cs.{${teacherID}}, coteacher.cs.{${teacherID}}`);
 
   if (error) {
     console.error(error);
     return { data: [], error };
   }
 
-  const teacherSubjectList: TeacherSubjectItem[] = data
-    .map(
-      (roomSubject) =>
-        (roomSubject.subject as Database["public"]["Tables"]["subject"]["Row"])
-          .id
-    )
-    .filter((id, index, array) => array.indexOf(id) === index)
-    .map((subjectID) => {
-      const subject = data.find(
-        (roomSubject) =>
-          subjectID ===
-          (
-            roomSubject.subject as Database["public"]["Tables"]["subject"]["Row"]
-          ).id
-      )!.subject as Database["public"]["Tables"]["subject"]["Row"];
-      return {
-        id: subjectID,
+  const subjects: TeacherSubjectItem[] = await Promise.all(
+    roomSubjects!.map(async (roomSubject) => {
+      const subject: TeacherSubjectItem = {
+        id: roomSubject.id,
         subject: {
-          id: subject.id,
+          id: roomSubject.subject.id,
           name: {
-            "en-US": { name: subject.name_en },
-            th: { name: subject.name_th },
+            "en-US": {
+              name: roomSubject.subject.name_en,
+              shortName: roomSubject.subject
+                .short_name_en as OrUndefined<string>,
+            },
+            th: {
+              name: roomSubject.subject.name_th,
+              shortName: roomSubject.subject
+                .short_name_th as OrUndefined<string>,
+            },
           },
           code: {
-            "en-US": subject.code_en,
-            th: subject.code_th,
+            "en-US": roomSubject.subject.code_en,
+            th: roomSubject.subject.code_th,
           },
         },
-        classes: data
-          .filter(
-            (roomSubject) =>
-              subjectID ===
-              (
-                roomSubject.subject as Database["public"]["Tables"]["subject"]["Row"]
-              ).id
-          )
-          .map((roomSubject) => ({
-            id: (
-              roomSubject.class as Database["public"]["Tables"]["classroom"]["Row"]
-            ).id,
-            number: (
-              roomSubject.class as Database["public"]["Tables"]["classroom"]["Row"]
-            ).number,
-          })),
+        classes: [
+          {
+            id: roomSubject.class.id,
+            number: roomSubject.class.number,
+          },
+        ],
       };
-    });
+      return subject;
+    })
+  );
 
-  return { data: teacherSubjectList, error: null };
+  // Merge classes array of subjects with same ID
+  const subjectsWithClasses = subjects.reduce((acc, subject) => {
+    const existing = acc.find((s) => s.subject.id === subject.subject.id);
+    if (existing)
+      existing.classes = [...existing.classes, ...subject.classes].sort(
+        (a, b) => a.number - b.number
+      );
+    else acc.push(subject);
+    return acc;
+  }, [] as TeacherSubjectItem[]);
+
+  return { data: subjectsWithClasses, error: null };
 }
 
 /**

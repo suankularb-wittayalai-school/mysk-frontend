@@ -175,64 +175,6 @@ export async function getSubjectsInCharge(
   };
 }
 
-export async function getTeachingSubjects(
-  supabase: DatabaseClient,
-  teacherID: number
-): Promise<BackendDataReturn<TeacherSubjectItem[]>> {
-  const { data: roomSubjects, error } = await supabase
-    .from("room_subjects")
-    .select("*, subject:subject(*), class(*)")
-    .contains("teacher", [teacherID]);
-
-  if (error) {
-    console.error(error);
-    return { data: [], error };
-  }
-
-  const subjects: TeacherSubjectItem[] = await Promise.all(
-    roomSubjects!.map(async (roomSubject) => {
-      const subject: TeacherSubjectItem = {
-        id: roomSubject.subject.id,
-        subject: {
-          name: {
-            "en-US": {
-              name: roomSubject.subject.name_en,
-              shortName: roomSubject.subject
-                .short_name_en as OrUndefined<string>,
-            },
-            th: {
-              name: roomSubject.subject.name_th,
-              shortName: roomSubject.subject
-                .short_name_th as OrUndefined<string>,
-            },
-          },
-          code: {
-            "en-US": roomSubject.subject.code_en,
-            th: roomSubject.subject.code_th,
-          },
-        },
-        classes: [
-          {
-            id: roomSubject.class.id,
-            number: roomSubject.class.number,
-          },
-        ],
-      };
-      return subject;
-    })
-  );
-
-  // Merge classes array of subjects with same ID
-  const subjectsWithClasses = subjects.reduce((acc, subject) => {
-    const existing = acc.find((s) => s.id === subject.id);
-    if (existing) existing.classes = [...existing.classes, ...subject.classes];
-    else acc.push(subject);
-    return acc;
-  }, [] as TeacherSubjectItem[]);
-
-  return { data: subjectsWithClasses, error: null };
-}
-
 export async function createSubject(subject: Subject): Promise<BackendReturn> {
   if (typeof subject.syllabus === "string") {
     return { error: { message: "syllabus must be a buffer" } };

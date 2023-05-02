@@ -62,7 +62,7 @@ const TeachingSubjectCard: FC<{
       <SubjectClassesDialog
         open={classesOpen}
         onClose={() => setClassesOpen(false)}
-        subjectID={subject.id}
+        subject={subject.subject}
       />
     </>
   );
