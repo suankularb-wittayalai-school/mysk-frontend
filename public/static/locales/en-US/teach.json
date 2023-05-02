@@ -1,20 +1,11 @@
 {
-  "title": "Subjects you teach",
+  "title": "Teach",
   "schedule": {
-    "title": "Schedule",
-    "blocked": "To create your schedule, refer to the “Subjects you teach” section below and follow the instructions there.",
-    "action": {
-      "edit": "Edit schedule"
-    }
+    "title": "Schedule"
   },
   "subjects": {
-    "title": "Subjects you teach",
+    "title": "Subjects",
     "search": "Search subjects",
-    "noSubjects": {
-      "title": "No subjects",
-      "subtitle": "Subject links incomplete",
-      "supportingText": "Administrators have already assigned subjects to you. For them to show up here, you must link those subjects in the classes you teach. Use the “Add subject” button to learn more and link."
-    },
     "action": {
       "add": "Add subject",
       "seeDetails": "See details"
@@ -26,8 +17,6 @@
       "supportingText": "Select a subject, then assign the classes you will teach this subject to.",
       "subject": "Subject",
       "addClasses": "Add classes",
-      "detailsInfo": "To add more details about your subject that’s unique to each class, use the “See details” button on each subject once you’re done.",
-      "scheduleInfo": "You can now also add this subject to your schedule.",
       "action": {
         "cancel": "Cancel",
         "add": "Add"
