@@ -46,7 +46,7 @@ import SnackbarContext from "@/contexts/SnackbarContext";
 
 // Backend
 import {
-  getTeachSubjectList,
+  getTeachingSubjects,
   updateRoomSubjectsFromTeachSubjects,
 } from "@/utils/backend/subject/roomSubject";
 import { getSubjectsInCharge } from "@/utils/backend/subject/subject";
@@ -399,7 +399,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     teacherID
   );
 
-  const { data: teachSubjectList } = await getTeachSubjectList(
+  const { data: teachSubjectList } = await getTeachingSubjects(
     supabase,
     teacherID
   );

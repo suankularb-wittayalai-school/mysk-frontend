@@ -66,7 +66,7 @@ export async function getSubjectList(
   };
 }
 
-export async function getTeachSubjectList(
+export async function getTeachingSubjects(
   supabase: DatabaseClient,
   teacherID: number
 ): Promise<BackendDataReturn<TeacherSubjectItem[]>> {
