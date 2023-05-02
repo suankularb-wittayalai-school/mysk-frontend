@@ -48,10 +48,10 @@ import {
 
 /**
  * Teachers and Co-teachers.
- * 
+ *
  * @param form Form Control Props for this Section.
  * @param setForm A setter for Form Control Props for this Section.
- * 
+ *
  * @returns A Section.
  */
 const PeopleSection: FC<{
@@ -111,9 +111,9 @@ const PeopleSection: FC<{
 
 /**
  * Google Classroom code, Google Classroom link, and Google Meet link.
- * 
- * @param formProps Form Control Props for this Section. 
- * 
+ *
+ * @param formProps Form Control Props for this Section.
+ *
  * @returns A Section.
  */
 const GoogleSection: FC<{
@@ -197,11 +197,11 @@ const GoogleSection: FC<{
 /**
  * Allows the user to add or edit a Class to a Subject they teach (an
  * abstraction of editing a Room Subject).
- * 
+ *
  * @param open If the Full-screen Dialog is open and shown.
  * @param onClose Triggers when the Full-screen Dialog is closed.
  * @param onSubmit Triggers when the Room Subject is done being added/edited. This returns no data, but expects a reload.
- * 
+ *
  * @returns A Full-screen Dialog.
  */
 const RoomSubjectDialog: SubmittableDialogComponent = ({
@@ -244,7 +244,7 @@ const RoomSubjectDialog: SubmittableDialogComponent = ({
         }
 
         // TODO
-        
+
         // (Simulated wait)
         await new Promise((resolve) => setTimeout(resolve, 200));
 

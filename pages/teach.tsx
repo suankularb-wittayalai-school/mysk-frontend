@@ -11,7 +11,6 @@
  * - {@link TeachPage}
  */
 
-
 // External libraries
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
@@ -58,11 +57,11 @@ import { SubjectWNameAndCode, TeacherSubjectItem } from "@/utils/types/subject";
 
 /**
  * Displays the Teacher’s Schedule and relevant related information.
- * 
+ *
  * @param schedule Data for displaying Schedule.
  * @param subjectsInCharge The Subjects assigned to this teacher. Used in editing the Schedule.
  * @param teacherID The Teacher’s database ID. Used in validating edits in the Schedule.
- * 
+ *
  * @returns A Section.
  */
 const ScheduleSection: FC<{
@@ -82,9 +81,9 @@ const ScheduleSection: FC<{
 
 /**
  * Displays the Teacher’s Subjects.
- * 
+ *
  * @param subjects An array of Teacher Subject Items, an abstraction of Room Subjects connected to this Teacher.
- * 
+ *
  * @returns A Section.
  */
 const SubjectsSection: FC<{
@@ -111,12 +110,12 @@ const SubjectsSection: FC<{
 /**
  * The Teacher’s counterpart to Learn, where the user can see their Schedule
  * and their Subjects.
- * 
+ *
  * @param schedule Data for displaying Schedule.
  * @param subjectsInCharge The Subjects assigned to this teacher. Used in editing the Schedule.
  * @param teachingSubjects An array of Teacher Subject Items, an abstraction of Room Subjects connected to this Teacher.
  * @param teacherID The Teacher’s database ID. Used in validating edits in the Schedule.
- * 
+ *
  * @returns A Page.
  */
 const TeachPage: CustomPage<{
