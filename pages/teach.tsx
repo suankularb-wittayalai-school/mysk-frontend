@@ -1,3 +1,17 @@
+/**
+ * `/teach` TABLE OF CONTENTS
+ *
+ * Note: `Ctrl` + click to jump to a component.
+ *
+ * **Sections**
+ * - {@link ScheduleSection}
+ * - {@link SubjectsSection}
+ *
+ * **Page**
+ * - {@link TeachPage}
+ */
+
+
 // External libraries
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
@@ -22,14 +36,13 @@ import {
 // Internal components
 import MySKPageHeader from "@/components/common/MySKPageHeader";
 import Schedule from "@/components/schedule/Schedule";
+import TeachingSubjectCard from "@/components/subject/TeachingSubjectCard";
 
 // Backend
 import { getUserMetadata } from "@/utils/backend/account";
 import { getSchedule } from "@/utils/backend/schedule/schedule";
-import {
-  getSubjectsInCharge,
-  getTeachingSubjects,
-} from "@/utils/backend/subject/subject";
+import { getTeachingSubjects } from "@/utils/backend/subject/roomSubject";
+import { getSubjectsInCharge } from "@/utils/backend/subject/subject";
 
 // Helpers
 import { getLocalePath } from "@/utils/helpers/i18n";
@@ -42,8 +55,16 @@ import { useLocale } from "@/utils/hooks/i18n";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Schedule as ScheduleType } from "@/utils/types/schedule";
 import { SubjectWNameAndCode, TeacherSubjectItem } from "@/utils/types/subject";
-import TeachingSubjectCard from "@/components/subject/TeachingSubjectCard";
 
+/**
+ * Displays the Teacher’s Schedule and relevant related information.
+ * 
+ * @param schedule Data for displaying Schedule.
+ * @param subjectsInCharge The Subjects assigned to this teacher. Used in editing the Schedule.
+ * @param teacherID The Teacher’s database ID. Used in validating edits in the Schedule.
+ * 
+ * @returns A Section.
+ */
 const ScheduleSection: FC<{
   schedule: ScheduleType;
   subjectsInCharge: SubjectWNameAndCode[];
@@ -59,6 +80,13 @@ const ScheduleSection: FC<{
   );
 };
 
+/**
+ * Displays the Teacher’s Subjects.
+ * 
+ * @param subjects An array of Teacher Subject Items, an abstraction of Room Subjects connected to this Teacher.
+ * 
+ * @returns A Section.
+ */
 const SubjectsSection: FC<{
   subjects: TeacherSubjectItem[];
 }> = ({ subjects }) => {
@@ -66,8 +94,8 @@ const SubjectsSection: FC<{
   const { t } = useTranslation("teach");
 
   return (
-    <Section>
-      <Columns columns={3}>
+    <Section className="!gap-y-3">
+      <Columns columns={3} className="!items-end">
         <Header className="md:col-span-2">{t("subjects.title")}</Header>
         <Search alt="Search subjects" locale={locale} />
       </Columns>
@@ -81,7 +109,15 @@ const SubjectsSection: FC<{
 };
 
 /**
- *
+ * The Teacher’s counterpart to Learn, where the user can see their Schedule
+ * and their Subjects.
+ * 
+ * @param schedule Data for displaying Schedule.
+ * @param subjectsInCharge The Subjects assigned to this teacher. Used in editing the Schedule.
+ * @param teachingSubjects An array of Teacher Subject Items, an abstraction of Room Subjects connected to this Teacher.
+ * @param teacherID The Teacher’s database ID. Used in validating edits in the Schedule.
+ * 
+ * @returns A Page.
  */
 const TeachPage: CustomPage<{
   schedule: ScheduleType;

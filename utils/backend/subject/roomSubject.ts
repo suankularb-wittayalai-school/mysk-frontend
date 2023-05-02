@@ -14,28 +14,78 @@ import { SubjectListItem, TeacherSubjectItem } from "@/utils/types/subject";
 import { Database } from "@/utils/types/supabase";
 import { Teacher } from "@/utils/types/person";
 
-export async function getRoomsEnrolledInSubject(
+export async function getTeachingSubjectClasses(
   supabase: DatabaseClient,
   subjectID: number
-): Promise<BackendDataReturn<ClassWNumber[]>> {
+): Promise<BackendDataReturn<SubjectListItem[]>> {
   const { data, error } = await supabase
     .from("room_subjects")
-    .select("classroom(id, number)")
-    .match({ subject: subjectID });
+    .select("*, subject:subject(*), class(*)")
+    .eq("subject", subjectID);
 
-  if (error || !data) {
+  if (error) {
     console.error(error);
-    return { data: [], error };
+    return { data: [], error: null };
   }
 
+  const teacherIDs = data.map((roomSubject) => roomSubject.teacher).flat();
+
+  const { data: teachersData, error: teacherError } = await supabase
+    .from("teacher")
+    .select(
+      `*,
+      person(
+        id,
+        prefix_th,
+        first_name_th,
+        middle_name_th,
+        last_name_th,
+        prefix_en,
+        first_name_en,
+        middle_name_en,
+        last_name_en
+      )`
+    )
+    .or(`id.in.(${teacherIDs.join()})`);
+
+  if (teacherError) {
+    console.error(teacherError);
+    return { data: [], error: null };
+  }
+
+  const teachers: Teacher[] = await Promise.all(
+    teachersData.map(async (teacher) => await db2Teacher(supabase, teacher))
+  );
+
   return {
-    data: data.map((roomSubject) => ({
-      id: (
-        roomSubject.classroom as Database["public"]["Tables"]["classroom"]["Row"]
-      ).id,
-      number: (
-        roomSubject.classroom as Database["public"]["Tables"]["classroom"]["Row"]
-      ).number,
+    data: data!.map((roomSubject) => ({
+      id: roomSubject.id,
+      subject: {
+        code: {
+          "en-US": roomSubject.subject.code_en,
+          th: roomSubject.subject.code_th,
+        },
+        name: {
+          "en-US": {
+            name: roomSubject.subject.name_en,
+            shortName: roomSubject.subject.short_name_en as OrUndefined<string>,
+          },
+          th: {
+            name: roomSubject.subject.name_th,
+            shortName: roomSubject.subject.short_name_th as OrUndefined<string>,
+          },
+        },
+      },
+      classroom: roomSubject.class,
+      teachers: roomSubject.teacher.map(
+        (teacherID) => teachers.find((teacher) => teacherID === teacher.id)!
+      ),
+      coTeachers: roomSubject.coteacher?.map(
+        (teacherID) => teachers.find((teacher) => teacherID === teacher.id)!
+      ),
+      ggMeetLink: roomSubject.gg_meet_link || undefined,
+      ggcCode: roomSubject.ggc_code || undefined,
+      ggcLink: roomSubject.ggc_link || undefined,
     })),
     error: null,
   };
