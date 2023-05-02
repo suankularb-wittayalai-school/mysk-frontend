@@ -15,7 +15,8 @@ import { MaterialIcon } from "@suankularb-components/react";
 const BrandIcon: FC<{
   icon: "google" | "gg-classroom" | "gg-meet";
   size?: number;
-}> = ({ icon, size }) =>
+  className?: string;
+}> = ({ icon, size, className }) =>
   icon ? (
     icon === "google" ? (
       <svg
@@ -24,6 +25,7 @@ const BrandIcon: FC<{
         viewBox="0 0 24 24"
         fill="currentColor"
         xmlns="http://www.w3.org/2000/svg"
+        className={className}
       >
         <path
           d="M3 12C3 7.0374 7.0374 3 12 3C14.0043 3 15.9013 3.64483 17.4861 4.8648L15.3946 7.5816C14.4147 6.82731 13.2409 6.42857
@@ -39,6 +41,7 @@ const BrandIcon: FC<{
         viewBox="0 0 24 24"
         fill="currentColor"
         xmlns="http://www.w3.org/2000/svg"
+        className={className}
       >
         <path
           d="M13.6364 17.4211H17.7273M3 4V19H21V4H3Z"
@@ -84,6 +87,7 @@ const BrandIcon: FC<{
         viewBox="0 0 24 24"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
+        className={className}
       >
         <path
           fillRule="evenodd"
@@ -93,7 +97,7 @@ const BrandIcon: FC<{
         />
       </svg>
     ) : (
-      <MaterialIcon icon="circle" />
+      <MaterialIcon icon="circle" className={className} />
     )
   ) : (
     <MaterialIcon icon="circle" />
