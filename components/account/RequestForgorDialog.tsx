@@ -68,7 +68,7 @@ const RequestForgorDialog: DialogComponent<{ inputEmail?: string }> = ({
           console.error(error);
           return false;
         }
-        
+
         // Reset form
         setEmail("");
         return true;
