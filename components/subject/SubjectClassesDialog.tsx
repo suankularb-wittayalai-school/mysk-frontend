@@ -75,82 +75,58 @@ import { SubjectListItem, SubjectWNameAndCode } from "@/utils/types/subject";
  */
 const ClassRowActions: FC<{
   row: SubjectListItem;
-  handleEditClass: () => void;
-}> = ({ row, handleEditClass }) => {
-  const [editOpen, setEditOpen] = useState<boolean>(false);
-  const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
+  onEditOpen: () => void;
+  onDeleteOpen: () => void;
+}> = ({ row, onEditOpen, onDeleteOpen }) => {
+  const { t } = useTranslation("teach");
 
   return (
-    <>
-      <SegmentedButton alt="Row actions">
-        {/* Edit */}
-        {row.ggcLink && (
-          <Button
-            appearance="outlined"
-            icon={<BrandIcon icon="gg-classroom" />}
-            tooltip="Open Google Classroom"
-            href={row.ggcLink}
-            // eslint-disable-next-line react/display-name
-            element={forwardRef((props, ref) => (
-              <a {...props} ref={ref} target="_blank" rel="noreferrer" />
-            ))}
-            className="!text-secondary state-layer:!bg-secondary"
-          />
-        )}
-        {row.ggMeetLink && (
-          <Button
-            appearance="outlined"
-            icon={<BrandIcon icon="gg-meet" />}
-            tooltip="Open Google Meet"
-            href={row.ggMeetLink}
-            // eslint-disable-next-line react/display-name
-            element={forwardRef((props, ref) => (
-              <a {...props} ref={ref} target="_blank" rel="noreferrer" />
-            ))}
-            className="!text-secondary state-layer:!bg-secondary"
-          />
-        )}
-
-        {/* Edit */}
+    <SegmentedButton alt="Row actions">
+      {/* Edit */}
+      {row.ggcLink && (
         <Button
           appearance="outlined"
-          icon={<MaterialIcon icon="edit" />}
-          tooltip="Edit this entry"
-          onClick={() => setEditOpen(true)}
+          icon={<BrandIcon icon="gg-classroom" />}
+          tooltip="Open Google Classroom"
+          href={row.ggcLink}
+          // eslint-disable-next-line react/display-name
+          element={forwardRef((props, ref) => (
+            <a {...props} ref={ref} target="_blank" rel="noreferrer" />
+          ))}
+          className="!text-secondary state-layer:!bg-secondary"
         />
-
-        {/* Delete */}
+      )}
+      {row.ggMeetLink && (
         <Button
           appearance="outlined"
-          icon={<MaterialIcon icon="delete" />}
-          tooltip="Delete this entry"
-          dangerous
-          onClick={() => setDeleteOpen(true)}
+          icon={<BrandIcon icon="gg-meet" />}
+          tooltip="Open Google Meet"
+          href={row.ggMeetLink}
+          // eslint-disable-next-line react/display-name
+          element={forwardRef((props, ref) => (
+            <a {...props} ref={ref} target="_blank" rel="noreferrer" />
+          ))}
+          className="!text-secondary state-layer:!bg-secondary"
         />
-      </SegmentedButton>
-
-      {/* Dialogs */}
+      )}
 
       {/* Edit */}
-      <RoomSubjectDialog
-        open={editOpen}
-        onClose={() => setEditOpen(false)}
-        onSubmit={() => {
-          setEditOpen(false);
-          handleEditClass();
-        }}
+      <Button
+        appearance="outlined"
+        icon={<MaterialIcon icon="edit" />}
+        tooltip="Edit this entry"
+        onClick={onEditOpen}
       />
 
       {/* Delete */}
-      <ConfirmDeleteDialog
-        open={deleteOpen}
-        onClose={() => setDeleteOpen(false)}
-        onSubmit={() => {
-          // TODO: Actually delete this entry from the database
-          setDeleteOpen(false);
-        }}
+      <Button
+        appearance="outlined"
+        icon={<MaterialIcon icon="delete" />}
+        tooltip="Delete this entry"
+        dangerous
+        onClick={onDeleteOpen}
       />
-    </>
+    </SegmentedButton>
   );
 };
 
@@ -390,7 +366,8 @@ const SubjectClassesDialog: DialogComponent<{
                     rowActions={(row) => (
                       <ClassRowActions
                         row={row}
-                        handleEditClass={() => setData([])}
+                        onEditOpen={() => {}}
+                        onDeleteOpen={() => {}}
                       />
                     )}
                   />

@@ -49,6 +49,60 @@ export async function getTeacher(
   };
 }
 
+export async function getTeacherByFirstName(
+  supabase: DatabaseClient,
+  firstName: string
+): Promise<BackendDataReturn<Teacher, null>> {
+  const { data: people, error: peopleError } = await supabase
+    .from("people")
+    .select("id")
+    .or(
+      `first_name_th.like.${firstName}, \
+      first_name_en.ilike.${firstName}`
+    )
+    .limit(10);
+
+  if (peopleError) {
+    console.error(peopleError);
+    return { data: null, error: peopleError };
+  }
+
+  const { data, error } = await supabase
+    .from("teacher")
+    .select(
+      `*,
+      person(
+        id,
+        prefix_th,
+        first_name_th,
+        middle_name_th,
+        last_name_th,
+        prefix_en,
+        first_name_en,
+        middle_name_en,
+        last_name_en,
+        profile
+      ),
+      subject_group(*)`
+    )
+    .in(
+      "person",
+      people!.map((person) => person.id)
+    )
+    .limit(1)
+    .single();
+
+  if (error) {
+    console.error(error);
+    return { data: null, error };
+  }
+
+  return {
+    data: await db2Teacher(supabase, data!),
+    error: null,
+  };
+}
+
 export async function createTeacher(
   supabase: DatabaseClient,
   teacher: Teacher,

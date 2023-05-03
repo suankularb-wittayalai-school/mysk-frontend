@@ -1,33 +1,29 @@
 // External libraries
 import { useTranslation } from "next-i18next";
-import { FC, useContext, useState } from "react";
+import { FC, useContext } from "react";
 
 // SK Components
 import {
   Button,
-  ChipField,
-  ChipSet,
   Columns,
   FullscreenDialog,
-  InputChip,
   Section,
   Snackbar,
-  TextField,
+  TextField
 } from "@suankularb-components/react";
 
 // Internal components
 import BrandIcon from "@/components/icons/BrandIcon";
+import TeachersField from "@/components/person/TeachersField";
 
 // Contexts
 import SnackbarContext from "@/contexts/SnackbarContext";
 
 // Helpers
 import { withLoading } from "@/utils/helpers/loading";
-import { nameJoiner } from "@/utils/helpers/name";
 
 // Hooks
 import { useForm } from "@/utils/hooks/form";
-import { useLocale } from "@/utils/hooks/i18n";
 import { useToggle } from "@/utils/hooks/toggle";
 
 // Types
@@ -58,11 +54,7 @@ const PeopleSection: FC<{
   form: FormControlValues<"teachers" | "coTeachers">;
   setForm: (form: FormControlValues<"teachers" | "coTeachers">) => void;
 }> = ({ form, setForm }) => {
-  const locale = useLocale();
-
-  // Form control
-  const [teacherField, setTeacherField] = useState<string>("");
-  const [coTeacherField, setCoTeacherField] = useState<string>("");
+  const { t } = useTranslation("teach");
 
   return (
     <Section sectionAttr={{ "aria-labelledby": "header-people" }}>
@@ -74,36 +66,16 @@ const PeopleSection: FC<{
         class. They will also see this class in their list.
       </p>
       <div className="flex flex-col gap-6">
-        <ChipField
+        <TeachersField
           label="Teachers"
-          value={teacherField}
-          onChange={setTeacherField}
-          onNewEntry={() => {}}
-          onDeleteLast={() => {}}
-          placeholder="Enter first name"
-        >
-          <ChipSet>
-            {form.teachers.map((teacher: Teacher) => (
-              <InputChip key={teacher.id}>
-                {nameJoiner(locale, teacher.name)}
-              </InputChip>
-            ))}
-          </ChipSet>
-        </ChipField>
-        <ChipField
+          teachers={form.teachers}
+          onChange={(teachers) => setForm({ ...form, teachers })}
+        />
+        <TeachersField
           label="Co-teachers"
-          value={coTeacherField}
-          onChange={setCoTeacherField}
-          placeholder="Enter first name"
-        >
-          <ChipSet>
-            {form.coTeachers.map((teacher: Teacher) => (
-              <InputChip key={teacher.id}>
-                {nameJoiner(locale, teacher.name)}
-              </InputChip>
-            ))}
-          </ChipSet>
-        </ChipField>
+          teachers={form.coTeachers}
+          onChange={(coTeachers) => setForm({ ...form, coTeachers })}
+        />
       </div>
     </Section>
   );
@@ -119,6 +91,8 @@ const PeopleSection: FC<{
 const GoogleSection: FC<{
   formProps: FormControlProps<"ggcCode" | "ggcLink" | "ggMeet">;
 }> = ({ formProps }) => {
+  const { t } = useTranslation("teach");
+  
   return (
     <Section sectionAttr={{ "aria-labelledby": "header-google" }}>
       <h2 id="header-google" className="skc-title-large">
