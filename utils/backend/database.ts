@@ -606,6 +606,7 @@ export async function db2SubjectListItem(
   const formatted: SubjectListItem = {
     id: roomSubject.id,
     subject: {
+      id: roomSubject.subject.id,
       code: {
         "en-US": roomSubject.subject.code_en,
         th: roomSubject.subject.code_th,
