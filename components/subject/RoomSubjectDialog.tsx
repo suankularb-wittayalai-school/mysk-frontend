@@ -1,6 +1,8 @@
 // External libraries
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+
 import { useTranslation } from "next-i18next";
-import { FC, useContext } from "react";
+import { FC, useContext, useEffect } from "react";
 
 // SK Components
 import {
@@ -9,7 +11,7 @@ import {
   FullscreenDialog,
   Section,
   Snackbar,
-  TextField
+  TextField,
 } from "@suankularb-components/react";
 
 // Internal components
@@ -18,6 +20,12 @@ import TeachersField from "@/components/person/TeachersField";
 
 // Contexts
 import SnackbarContext from "@/contexts/SnackbarContext";
+
+// Backend
+import {
+  createRoomSubject,
+  editRoomSubject,
+} from "@/utils/backend/subject/roomSubject";
 
 // Helpers
 import { withLoading } from "@/utils/helpers/loading";
@@ -33,6 +41,7 @@ import {
   SubmittableDialogComponent,
 } from "@/utils/types/common";
 import { Teacher } from "@/utils/types/person";
+import { SubjectListItem, SubjectWNameAndCode } from "@/utils/types/subject";
 
 // Miscellaneous
 import {
@@ -89,10 +98,10 @@ const PeopleSection: FC<{
  * @returns A Section.
  */
 const GoogleSection: FC<{
-  formProps: FormControlProps<"ggcCode" | "ggcLink" | "ggMeet">;
+  formProps: FormControlProps<"ggcCode" | "ggcLink" | "ggMeetLink">;
 }> = ({ formProps }) => {
   const { t } = useTranslation("teach");
-  
+
   return (
     <Section sectionAttr={{ "aria-labelledby": "header-google" }}>
       <h2 id="header-google" className="skc-title-large">
@@ -161,7 +170,7 @@ const GoogleSection: FC<{
           appearance="outlined"
           label="Google Meet link"
           className="sm:col-span-2"
-          {...formProps.ggMeet}
+          {...formProps.ggMeetLink}
         />
       </Columns>
     </Section>
@@ -175,20 +184,21 @@ const GoogleSection: FC<{
  * @param open If the Full-screen Dialog is open and shown.
  * @param onClose Triggers when the Full-screen Dialog is closed.
  * @param onSubmit Triggers when the Room Subject is done being added/edited. This returns no data, but expects a reload.
+ * @param data Existing data for a Room Subject, for editing.
+ * @param subject The Subject of the Subject Classes Dialog that triggered this Dialog.
  *
  * @returns A Full-screen Dialog.
  */
-const RoomSubjectDialog: SubmittableDialogComponent = ({
-  open,
-  onClose,
-  onSubmit,
-}) => {
+const RoomSubjectDialog: SubmittableDialogComponent<
+  () => void,
+  { data?: SubjectListItem; subject: SubjectWNameAndCode }
+> = ({ open, onClose, onSubmit, data, subject }) => {
   const { t } = useTranslation(["teach", "common"]);
 
   const { setSnackbar } = useContext(SnackbarContext);
 
-  const { form, setForm, formOK, formProps } = useForm<
-    "class" | "teachers" | "coTeachers" | "ggcCode" | "ggcLink" | "ggMeet"
+  const { form, setForm, resetForm, formOK, formProps } = useForm<
+    "class" | "teachers" | "coTeachers" | "ggcCode" | "ggcLink" | "ggMeetLink"
   >([
     { key: "class", validate: (value: string) => classRegex.test(value) },
     {
@@ -199,9 +209,28 @@ const RoomSubjectDialog: SubmittableDialogComponent = ({
     { key: "coTeachers", defaultValue: [] },
     { key: "ggcCode", validate: (value: string) => ggcCodeRegex.test(value) },
     { key: "ggcLink", validate: (value: string) => ggcLinkRegex.test(value) },
-    { key: "ggMeet", validate: (value: string) => ggMeetLinkRegex.test(value) },
+    {
+      key: "ggMeetLink",
+      validate: (value: string) => ggMeetLinkRegex.test(value),
+    },
   ]);
 
+  useEffect(() => {
+    if (!data) {
+      resetForm();
+      return;
+    }
+    setForm({
+      class: String(data.classroom.number),
+      teachers: data.teachers,
+      coTeachers: data.coTeachers || [],
+      ggcCode: data.ggcCode || "",
+      ggcLink: data.ggcLink || "",
+      ggMeetLink: data.ggMeetLink || "",
+    });
+  }, [data]);
+
+  const supabase = useSupabaseClient();
   const [loading, toggleLoading] = useToggle();
 
   /**
@@ -217,12 +246,40 @@ const RoomSubjectDialog: SubmittableDialogComponent = ({
           return false;
         }
 
-        // TODO
+        let hasError = false;
 
-        // (Simulated wait)
-        await new Promise((resolve) => setTimeout(resolve, 200));
+        // Add mode
+        if (!data) {
+          const { error } = await createRoomSubject(supabase, {
+            ...form,
+            id: 0,
+            subject,
+            classroom: { id: 0, number: Number(form.class) },
+          });
+          hasError = error !== null;
+        }
+
+        // Edit mode
+        else {
+          const { error } = await editRoomSubject(supabase, {
+            ...form,
+            id: data.id,
+            subject,
+            classroom: { id: 0, number: Number(form.class) },
+          });
+          hasError = error !== null;
+        }
+
+        if (hasError) {
+          setSnackbar(
+            <Snackbar>{t("snackbar.failure", { ns: "common" })}</Snackbar>
+          );
+          return false;
+        }
 
         onSubmit();
+        resetForm();
+
         return true;
       },
       toggleLoading,
@@ -233,14 +290,14 @@ const RoomSubjectDialog: SubmittableDialogComponent = ({
   return (
     <FullscreenDialog
       open={open}
-      title="Add a class to subject"
+      title={data ? "Edit class of subject" : "Add a class to subject"}
       action={
         <Button
           appearance="text"
           onClick={handleSubmit}
           loading={loading || undefined}
         >
-          Add
+          {data ? "Save" : "Add"}
         </Button>
       }
       width={580}

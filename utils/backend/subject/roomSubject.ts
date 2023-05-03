@@ -1,18 +1,28 @@
 // External libraries
 import { PostgrestError } from "@supabase/supabase-js";
 
-// Backend
+// Converters
 import { db2SubjectListItem, db2Teacher } from "@/utils/backend/database";
+
+// Backend
+import { getClassIDFromNumber } from "@/utils/backend/classroom/classroom";
+
+// Helpers
+import {
+  getCurrentAcademicYear,
+  getCurrentSemester,
+} from "@/utils/helpers/date";
 
 // Types
 import {
   BackendDataReturn,
+  BackendReturn,
   DatabaseClient,
   OrUndefined,
 } from "@/utils/types/common";
+import { Teacher } from "@/utils/types/person";
 import { SubjectListItem, TeacherSubjectItem } from "@/utils/types/subject";
 import { Database } from "@/utils/types/supabase";
-import { Teacher } from "@/utils/types/person";
 
 export async function getTeachingSubjectClasses(
   supabase: DatabaseClient,
@@ -61,6 +71,7 @@ export async function getTeachingSubjectClasses(
     data: data!.map((roomSubject) => ({
       id: roomSubject.id,
       subject: {
+        id: roomSubject.subject.id,
         code: {
           "en-US": roomSubject.subject.code_en,
           th: roomSubject.subject.code_th,
@@ -300,6 +311,8 @@ export async function updateRoomSubjectsFromTeachSubjects(
         teacher: roomSubject.teacher,
         coteacher: roomSubject.coteacher,
         class: roomSubject.class.id,
+        year: roomSubject.year,
+        semester: roomSubject.semester,
       }))
     )
     .select();
@@ -320,6 +333,8 @@ export async function updateRoomSubjectsFromTeachSubjects(
             teacher: !teachSubject.isCoteacher ? [teacherID] : [],
             coteacher: teachSubject.isCoteacher ? [teacherID] : [],
             class: classItem.id,
+            year: getCurrentAcademicYear(),
+            semester: getCurrentSemester(),
           }))
         )
         .flat()
@@ -332,4 +347,72 @@ export async function updateRoomSubjectsFromTeachSubjects(
   }
 
   return { data: updatedRows!.concat(newRows!), error: null };
+}
+
+export async function createRoomSubject(
+  supabase: DatabaseClient,
+  subjectListItem: SubjectListItem
+): Promise<BackendReturn> {
+  const { data: classID, error: classError } = await getClassIDFromNumber(
+    supabase,
+    subjectListItem.classroom.number
+  );
+
+  if (classError) return { error: classError };
+
+  const { error } = await supabase.from("room_subjects").insert({
+    subject: subjectListItem.subject.id,
+    ggc_code: subjectListItem.ggcCode,
+    ggc_link: subjectListItem.ggcLink,
+    gg_meet_link: subjectListItem.ggMeetLink,
+    teacher: subjectListItem.teachers.map((teacher) => teacher.id),
+    coteacher: subjectListItem.coTeachers!.map((teacher) => teacher.id),
+    class: classID!,
+    year: getCurrentAcademicYear(),
+    semester: getCurrentSemester(),
+  });
+
+  if (error) console.error(error);
+  return { error };
+}
+
+export async function editRoomSubject(
+  supabase: DatabaseClient,
+  subjectListItem: SubjectListItem
+): Promise<BackendReturn> {
+  const { data: classID, error: classError } = await getClassIDFromNumber(
+    supabase,
+    subjectListItem.classroom.number
+  );
+
+  if (classError) return { error: classError };
+
+  const { error } = await supabase
+    .from("room_subjects")
+    .update({
+      subject: subjectListItem.subject.id,
+      ggc_code: subjectListItem.ggcCode,
+      ggc_link: subjectListItem.ggcLink,
+      gg_meet_link: subjectListItem.ggMeetLink,
+      teacher: subjectListItem.teachers.map((teacher) => teacher.id),
+      coteacher: subjectListItem.coTeachers!.map((teacher) => teacher.id),
+      class: classID!,
+    })
+    .eq("id", subjectListItem.id);
+
+  if (error) console.error(error);
+  return { error };
+}
+
+export async function deleteRoomSubject(
+  supabase: DatabaseClient,
+  id: number
+): Promise<BackendReturn> {
+  const { error } = await supabase
+    .from("room_subjects")
+    .delete()
+    .eq("id", id)
+    .limit(1);
+
+  return { error };
 }

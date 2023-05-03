@@ -51,7 +51,10 @@ import RoomSubjectDialog from "@/components/subject/RoomSubjectDialog";
 import SnackbarContext from "@/contexts/SnackbarContext";
 
 // Backend
-import { getTeachingSubjectClasses } from "@/utils/backend/subject/roomSubject";
+import {
+  deleteRoomSubject,
+  getTeachingSubjectClasses,
+} from "@/utils/backend/subject/roomSubject";
 
 // Helpers
 import { getLocaleObj } from "@/utils/helpers/i18n";
@@ -297,6 +300,8 @@ const SubjectClassesDialog: DialogComponent<{
 
   // Dialog control
   const [addOpen, setAddOpen] = useState<boolean>(false);
+  const [editRow, setEditRow] = useState<SubjectListItem | null>(null);
+  const [deleteID, setDeleteID] = useState<number | null>(null);
 
   return (
     <>
@@ -366,8 +371,8 @@ const SubjectClassesDialog: DialogComponent<{
                     rowActions={(row) => (
                       <ClassRowActions
                         row={row}
-                        onEditOpen={() => {}}
-                        onDeleteOpen={() => {}}
+                        onEditOpen={() => setEditRow(row)}
+                        onDeleteOpen={() => setDeleteID(row.id)}
                       />
                     )}
                   />
@@ -389,6 +394,26 @@ const SubjectClassesDialog: DialogComponent<{
         onClose={() => setAddOpen(false)}
         onSubmit={() => {
           setAddOpen(false);
+          setData([]);
+        }}
+        subject={subject}
+      />
+      <RoomSubjectDialog
+        open={editRow !== null}
+        onClose={() => setEditRow(null)}
+        onSubmit={() => {
+          setEditRow(null);
+          setData([]);
+        }}
+        data={editRow || undefined}
+        subject={subject}
+      />
+      <ConfirmDeleteDialog
+        open={deleteID !== null}
+        onClose={() => setDeleteID(null)}
+        onSubmit={async () => {
+          await deleteRoomSubject(supabase, deleteID!);
+          setDeleteID(null);
           setData([]);
         }}
       />
