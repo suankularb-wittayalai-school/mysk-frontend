@@ -312,7 +312,7 @@ const SubjectClassesDialog: DialogComponent<{
         action={null as any}
         width={640}
         onClose={onClose}
-        className="skc-body-medium relative sm:!min-h-[43rem]"
+        className="skc-body-medium relative [&_.skc-fullscreen-dialog\_\_content]:sm:!h-[39rem]"
       >
         <Progress
           appearance="linear"
