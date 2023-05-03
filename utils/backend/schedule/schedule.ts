@@ -1,16 +1,20 @@
 // Backend
-import { db2SchedulePeriod, db2Teacher } from "@/utils/backend/database";
+import { getClassIDFromNumber } from "@/utils/backend/classroom/classroom";
 import { isOverlappingExistingItems } from "@/utils/backend/schedule/utils";
+
+// Converters
+import { db2SchedulePeriod, db2Teacher } from "@/utils/backend/database";
 
 // Helpers
 import { range } from "@/utils/helpers/array";
 import {
+  getCurrentAcademicYear,
+  getCurrentSemester,
+} from "@/utils/helpers/date";
+import {
   arePeriodsOverlapping,
   createEmptySchedule,
 } from "@/utils/helpers/schedule";
-
-// Backend
-import { getClassIDFromNumber } from "@/utils/backend/classroom/classroom";
 
 // Types
 import {
@@ -19,7 +23,7 @@ import {
   DatabaseClient,
 } from "@/utils/types/common";
 import { Role, Teacher } from "@/utils/types/person";
-import { Schedule, PeriodContentItem } from "@/utils/types/schedule";
+import { PeriodContentItem, Schedule } from "@/utils/types/schedule";
 
 /**
  * Construct a Schedule from Schedule Items from the student’s perspective
@@ -53,7 +57,7 @@ export async function getSchedule(
 ): Promise<BackendDataReturn<Schedule, Schedule>> {
   // Schedule filled with empty periods
   let schedule =
-    day == undefined ? createEmptySchedule(1, 5) : createEmptySchedule(day);
+    day === undefined ? createEmptySchedule(1, 5) : createEmptySchedule(day);
 
   // Fetch data from Supabase
   const { data, error } = await supabase
@@ -61,17 +65,19 @@ export async function getSchedule(
     .select(
       "*, subject(*), teacher(*, person(*), subject_group(*)), classroom(id, number)"
     )
-    .match(
-      role == "teacher"
+    .match({
+      ...(role === "teacher"
         ? // Match teacher if role is teacher
-          day == undefined
+          day === undefined
           ? { teacher: id }
           : { teacher: id, day }
         : // Match classroom if role is student
-        day == undefined
+        day === undefined
         ? { classroom: id }
-        : { classroom: id, day }
-    );
+        : { classroom: id, day }),
+      year: getCurrentAcademicYear(),
+      semester: getCurrentSemester(),
+    });
 
   // Return an empty Schedule if fetch failed
   if (error) {
@@ -274,6 +280,8 @@ export async function createScheduleItem(
     day: form.day,
     start_time: form.startTime,
     duration: form.duration,
+    year: getCurrentAcademicYear(),
+    semester: getCurrentSemester(),
   });
 
   if (error) console.error(error);

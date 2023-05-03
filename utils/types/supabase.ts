@@ -382,6 +382,8 @@ export interface Database {
             Database["public"]["Tables"]["classroom"]["Row"],
             "id" | "number"
           >;
+          year: number;
+          semester: number;
         };
         Insert: {
           id?: number;
@@ -394,6 +396,8 @@ export interface Database {
           duration: number;
           room: string;
           classroom?: number;
+          year: number;
+          semester: number;
         };
         Update: {
           id?: number;
@@ -406,6 +410,8 @@ export interface Database {
           duration?: number;
           room?: string;
           classroom?: number;
+          year?: number;
+          semester?: number;
         };
       };
       school_documents: {

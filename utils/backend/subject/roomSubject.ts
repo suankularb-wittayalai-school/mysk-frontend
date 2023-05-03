@@ -31,7 +31,11 @@ export async function getTeachingSubjectClasses(
   const { data, error } = await supabase
     .from("room_subjects")
     .select("*, subject:subject(*), class(*)")
-    .eq("subject", subjectID);
+    .match({
+      subject: subjectID,
+      year: getCurrentAcademicYear(),
+      semester: getCurrentSemester(),
+    });
 
   if (error) {
     console.error(error);
@@ -109,7 +113,11 @@ export async function getSubjectList(
   const { data, error } = await supabase
     .from("room_subjects")
     .select("*, subject:subject(*), class(*)")
-    .match({ class: classID });
+    .match({
+      class: classID,
+      year: getCurrentAcademicYear(),
+      semester: getCurrentSemester(),
+    });
 
   if (error || !data) {
     console.error(error);
@@ -135,7 +143,8 @@ export async function getTeachingSubjects(
   const { data: roomSubjects, error } = await supabase
     .from("room_subjects")
     .select("*, subject:subject(*), class(*)")
-    .or(`teacher.cs.{${teacherID}}, coteacher.cs.{${teacherID}}`);
+    .or(`teacher.cs.{${teacherID}}, coteacher.cs.{${teacherID}}`)
+    .match({ year: getCurrentAcademicYear(), semester: getCurrentSemester() });
 
   if (error) {
     console.error(error);

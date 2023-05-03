@@ -1,8 +1,17 @@
+// External libraries
+import { SortingState } from "@tanstack/react-table";
+
 // Supabase
 import { supabase } from "@/utils/supabase-client";
 
 // Backend
 import { db2Subject } from "@/utils/backend/database";
+
+// Helpers
+import {
+  getCurrentAcademicYear,
+  getCurrentSemester,
+} from "@/utils/helpers/date";
 
 // Types
 import {
@@ -17,13 +26,11 @@ import {
   Subject,
   SubjectName,
   SubjectTypeEN,
-  SubjectWNameAndCode,
-  TeacherSubjectItem,
+  SubjectWNameAndCode
 } from "@/utils/types/subject";
 
 // Miscelleneous
 import { subjectGroupMap, subjectTypeMap } from "@/utils/maps";
-import { SortingState } from "@tanstack/react-table";
 
 export async function deleteSubject(subject: Subject) {
   // Delete the syllabus if it exists
@@ -146,7 +153,8 @@ export async function getSubjectsInCharge(
     .select(
       "id, code_th, code_en, name_th, name_en, short_name_th, short_name_en"
     )
-    .contains("teachers", [teacherID]);
+    .contains("teachers", [teacherID])
+    .match({ year: getCurrentAcademicYear(), semester: getCurrentSemester() });
 
   if (error) {
     console.error(error);
