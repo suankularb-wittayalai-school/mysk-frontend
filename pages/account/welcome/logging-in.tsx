@@ -72,9 +72,16 @@ const CheckEmailSection: FC<{ user: User }> = ({ user }) => {
 
   const [loading, toggleLoading] = useToggle();
   const [success, toggleSuccess] = useToggle();
+  const [notNeeded, toggleNotNeeded] = useToggle();
+
   function handleSubmit() {
     withLoading(
       async () => {
+        if ([email, "sk.ac.th"].join("") === user.email) {
+          toggleNotNeeded();
+          return true;
+        }
+
         const { error } = await supabase.auth.updateUser({
           email: [email, "sk.ac.th"].join(""),
         });
@@ -101,6 +108,14 @@ const CheckEmailSection: FC<{ user: User }> = ({ user }) => {
           <Link href="/help/essentials/onboarding" className="link" />
         </Trans>
       </BlockingPane>
+
+      <BlockingPane
+        icon={<MaterialIcon icon="check" size={48} />}
+        open={notNeeded}
+      >
+        {t("loggingIn.checkEmail.notNeeded")}
+      </BlockingPane>
+
       <Header>{t("loggingIn.checkEmail.title")}</Header>
       <p>{t("loggingIn.checkEmail.desc", { email: user.email })}</p>
       <Columns columns={6}>

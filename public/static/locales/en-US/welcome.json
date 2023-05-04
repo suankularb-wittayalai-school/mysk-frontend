@@ -66,12 +66,13 @@
     "checkEmail": {
       "title": "Check email",
       "success": "Check both your old and new email, and click the link on both addresses. <0>Learn more</0>",
+      "notNeeded": "You’re already using your preferred email, so there’s no need to change it. Your email was not changed.",
       "desc": "You’re using “{{email}},” does that seem correct? If not, specify a new one, and we’ll send an email to both your old and your new email addresses to confirm the change. You must click the link on both addresses.",
       "form": {
-        "email": "Email"
+        "email": "New email"
       },
       "action": {
-        "send": "Send verification email"
+        "send": "Start email change"
       }
     },
     "createPassword": {
