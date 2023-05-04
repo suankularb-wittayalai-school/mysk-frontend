@@ -6,6 +6,7 @@ import { db2SubjectListItem, db2Teacher } from "@/utils/backend/database";
 
 // Backend
 import { getClassIDFromNumber } from "@/utils/backend/classroom/classroom";
+import { getSubjectsInCharge } from "@/utils/backend/subject/subject";
 
 // Helpers
 import {
@@ -141,10 +142,23 @@ export async function getTeachingSubjects(
   supabase: DatabaseClient,
   teacherID: number
 ): Promise<BackendDataReturn<TeacherSubjectItem[]>> {
+  const { data: subjects, error: subjectsError } = await getSubjectsInCharge(
+    supabase,
+    teacherID
+  );
+
+  if (subjectsError) {
+    logError("getTeachingSubjects (subjects)", subjectsError);
+    return { data: [], error: subjectsError };
+  }
+
   const { data: roomSubjects, error } = await supabase
     .from("room_subjects")
-    .select("*, subject:subject(*), class(*)")
-    .or(`teacher.cs.{${teacherID}}, coteacher.cs.{${teacherID}}`)
+    .select("*, subject(id), class(*)")
+    .in(
+      "subject",
+      subjects!.map((subject) => subject.id)
+    )
     .match({ year: getCurrentAcademicYear(), semester: getCurrentSemester() });
 
   if (error) {
@@ -152,52 +166,17 @@ export async function getTeachingSubjects(
     return { data: [], error };
   }
 
-  const subjects: TeacherSubjectItem[] = await Promise.all(
-    roomSubjects!.map(async (roomSubject) => {
-      const subject: TeacherSubjectItem = {
-        id: roomSubject.id,
-        subject: {
-          id: roomSubject.subject.id,
-          name: {
-            "en-US": {
-              name: roomSubject.subject.name_en,
-              shortName: roomSubject.subject
-                .short_name_en as OrUndefined<string>,
-            },
-            th: {
-              name: roomSubject.subject.name_th,
-              shortName: roomSubject.subject
-                .short_name_th as OrUndefined<string>,
-            },
-          },
-          code: {
-            "en-US": roomSubject.subject.code_en,
-            th: roomSubject.subject.code_th,
-          },
-        },
-        classes: [
-          {
-            id: roomSubject.class.id,
-            number: roomSubject.class.number,
-          },
-        ],
-      };
-      return subject;
-    })
-  );
-
-  // Merge classes array of subjects with same ID
-  const subjectsWithClasses = subjects.reduce((acc, subject) => {
-    const existing = acc.find((s) => s.subject.id === subject.subject.id);
-    if (existing)
-      existing.classes = [...existing.classes, ...subject.classes].sort(
-        (a, b) => a.number - b.number
-      );
-    else acc.push(subject);
-    return acc;
-  }, [] as TeacherSubjectItem[]);
-
-  return { data: subjectsWithClasses, error: null };
+  return {
+    data: subjects.map((subject) => ({
+      id: subject.id,
+      subject: subject,
+      classes: roomSubjects
+        .filter((roomSubject) => subject.id === roomSubject.subject.id)
+        .map((roomSubject) => roomSubject.class)
+        .sort((a, b) => a.number - b.number),
+    })),
+    error: null,
+  };
 }
 
 /**
@@ -410,7 +389,7 @@ export async function editRoomSubject(
     })
     .eq("id", subjectListItem.id);
 
-  if (error) logError("editRoomSubject", error, true);
+  if (error) logError("editRoomSubject", error);
   return { error };
 }
 
@@ -424,6 +403,6 @@ export async function deleteRoomSubject(
     .eq("id", id)
     .limit(1);
 
-  if (error) logError("deleteRoomSubject", error, true);
+  if (error) logError("deleteRoomSubject", error);
   return { error };
 }

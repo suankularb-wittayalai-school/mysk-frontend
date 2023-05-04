@@ -4,6 +4,7 @@ import { FC, useState } from "react";
 
 // SK Components
 import {
+  Actions,
   Button,
   Card,
   CardContent,
@@ -43,22 +44,33 @@ const TeachingSubjectCard: FC<{
             subtitle={getLocaleString(subject.subject.code, locale)}
             className="grow"
           />
-          <Button
-            appearance="text"
-            icon={<MaterialIcon icon="open_in_full" />}
-            onClick={() => setClassesOpen(true)}
-          />
+          {subject.classes.length !== 0 && (
+            <Button
+              appearance="text"
+              icon={<MaterialIcon icon="open_in_full" />}
+              onClick={() => setClassesOpen(true)}
+            />
+          )}
         </div>
         <CardContent>
-          <ChipSet>
-            {subject.classes.map((classItem) => (
-              <InputChip key={classItem.id}>
-                {t("class", { ns: "common", number: classItem.number })}
-              </InputChip>
-            ))}
-          </ChipSet>
+          {subject.classes.length ? (
+            <ChipSet>
+              {subject.classes.map((classItem) => (
+                <InputChip key={classItem.id}>
+                  {t("class", { ns: "common", number: classItem.number })}
+                </InputChip>
+              ))}
+            </ChipSet>
+          ) : (
+            <Actions align="full" className="!mt-0">
+              <Button appearance="filled" onClick={() => setClassesOpen(true)}>
+                Set up
+              </Button>
+            </Actions>
+          )}
         </CardContent>
       </Card>
+
       <SubjectClassesDialog
         open={classesOpen}
         onClose={() => setClassesOpen(false)}

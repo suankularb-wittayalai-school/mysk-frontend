@@ -64,6 +64,7 @@ import { nameJoiner } from "@/utils/helpers/name";
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
 import { useToggle } from "@/utils/hooks/toggle";
+import { useRefreshProps } from "@/utils/hooks/routing";
 
 // Types
 import { DialogComponent } from "@/utils/types/common";
@@ -152,6 +153,7 @@ const SubjectClassesDialog: DialogComponent<{
 
   const { duration, easing } = useAnimationConfig();
   const { setSnackbar } = useContext(SnackbarContext);
+  const refreshProps = useRefreshProps();
 
   const supabase = useSupabaseClient();
 
@@ -166,9 +168,9 @@ const SubjectClassesDialog: DialogComponent<{
   ]);
   const [loading, toggleLoading] = useToggle();
 
-  const [data, setData] = useState<SubjectListItem[]>([]);
+  const [data, setData] = useState<SubjectListItem[] | null>(null);
   useEffect(() => {
-    if (!open || data.length) return;
+    if (!open || data) return;
     withLoading(
       async () => {
         // TODO: Fetch Room Subjects from Supabase
@@ -287,7 +289,7 @@ const SubjectClassesDialog: DialogComponent<{
 
   // Tanstack Table setup
   const { getHeaderGroups, getRowModel, setPageIndex } = useReactTable({
-    data,
+    data: data || [],
     columns,
     state: { globalFilter, sorting, pagination },
     onSortingChange: setSorting,
@@ -312,7 +314,8 @@ const SubjectClassesDialog: DialogComponent<{
         action={null as any}
         width={640}
         onClose={onClose}
-        className="skc-body-medium relative [&_.skc-fullscreen-dialog\_\_content]:sm:!h-[39rem]"
+        className="skc-body-medium relative
+          [&_.skc-fullscreen-dialog\_\_content]:sm:!h-[39rem]"
       >
         <Progress
           appearance="linear"
@@ -348,7 +351,7 @@ const SubjectClassesDialog: DialogComponent<{
         </Actions>
 
         <AnimatePresence>
-          {data.length && (
+          {data?.length && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -394,7 +397,8 @@ const SubjectClassesDialog: DialogComponent<{
         onClose={() => setAddOpen(false)}
         onSubmit={() => {
           setAddOpen(false);
-          setData([]);
+          setData(null);
+          refreshProps();
         }}
         subject={subject}
       />
@@ -403,7 +407,8 @@ const SubjectClassesDialog: DialogComponent<{
         onClose={() => setEditRow(null)}
         onSubmit={() => {
           setEditRow(null);
-          setData([]);
+          setData(null);
+          refreshProps();
         }}
         data={editRow || undefined}
         subject={subject}
@@ -414,7 +419,8 @@ const SubjectClassesDialog: DialogComponent<{
         onSubmit={async () => {
           await deleteRoomSubject(supabase, deleteID!);
           setDeleteID(null);
-          setData([]);
+          setData(null);
+          refreshProps();
         }}
       />
     </>
