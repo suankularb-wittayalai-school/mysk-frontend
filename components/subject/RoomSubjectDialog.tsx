@@ -200,7 +200,11 @@ const RoomSubjectDialog: SubmittableDialogComponent<
   const { form, setForm, resetForm, formOK, formProps } = useForm<
     "class" | "teachers" | "coTeachers" | "ggcCode" | "ggcLink" | "ggMeetLink"
   >([
-    { key: "class", validate: (value: string) => classRegex.test(value) },
+    {
+      key: "class",
+      validate: (value: string) => classRegex.test(value),
+      required: true,
+    },
     {
       key: "teachers",
       defaultValue: [],
