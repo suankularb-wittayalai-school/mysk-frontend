@@ -12,6 +12,7 @@ import {
   getCurrentAcademicYear,
   getCurrentSemester,
 } from "@/utils/helpers/date";
+import { logError } from "@/utils/helpers/debug";
 
 // Types
 import {
@@ -26,7 +27,7 @@ import {
   Subject,
   SubjectName,
   SubjectTypeEN,
-  SubjectWNameAndCode
+  SubjectWNameAndCode,
 } from "@/utils/types/subject";
 
 // Miscelleneous
@@ -38,7 +39,7 @@ export async function deleteSubject(subject: Subject) {
     const { error: syllabusError } = await supabase.storage
       .from("syllabus")
       .remove([subject.syllabus.toString()]);
-    if (syllabusError) console.error(syllabusError);
+    if (syllabusError) logError("deleteSubject (syllabus)", syllabusError);
   }
 
   // Delete the subject
@@ -46,7 +47,7 @@ export async function deleteSubject(subject: Subject) {
     .from("subject")
     .delete()
     .match({ id: subject.id });
-  if (error) console.error(error);
+  if (error) logError("deleteSubject", error);
 }
 
 export async function importSubjects(data: ImportedSubjectData[]) {
@@ -131,7 +132,7 @@ export async function getAdminSubjectList(
     .range(rowsPerPage * (page - 1), rowsPerPage * page - 1);
 
   if (error) {
-    console.error(error);
+    logError("getAdminSubjectList", error);
     return { data: [], count: 0, error };
   }
 
@@ -153,11 +154,11 @@ export async function getSubjectsInCharge(
     .select(
       "id, code_th, code_en, name_th, name_en, short_name_th, short_name_en"
     )
-    .contains("teachers", [teacherID])
+    .or(`teachers.cs.{${teacherID}}, coTeachers.cs.{${teacherID}}`)
     .match({ year: getCurrentAcademicYear(), semester: getCurrentSemester() });
 
   if (error) {
-    console.error(error);
+    logError("getSubjectsInCharge", error);
     return { data: [], error };
   }
 
@@ -185,7 +186,9 @@ export async function getSubjectsInCharge(
 
 export async function createSubject(subject: Subject): Promise<BackendReturn> {
   if (typeof subject.syllabus === "string") {
-    return { error: { message: "syllabus must be a buffer" } };
+    const error = { message: "syllabus must be a buffer" };
+    logError("createSubject (syllabus type check)", error);
+    return { error };
   }
 
   const { data: createdSubject, error: subjectCreationError } = await supabase
@@ -214,7 +217,7 @@ export async function createSubject(subject: Subject): Promise<BackendReturn> {
     .single();
 
   if (subjectCreationError) {
-    console.error(subjectCreationError);
+    logError("createSubject", subjectCreationError);
     return { error: subjectCreationError };
   }
 
@@ -226,13 +229,21 @@ export async function createSubject(subject: Subject): Promise<BackendReturn> {
         upsert: false,
       });
     if (uploadingError) {
-      return { error: { message: "syllabus upload failed." } };
+      logError("createSubject (syllabus upload)", uploadingError);
+      return { error: uploadingError };
     }
 
-    await supabase
+    const { error: updateWithSyllabusError } = await supabase
       .from("subject")
       .update({ syllabus: `${createdSubject!.id}/syllabus.pdf` })
       .match({ id: createdSubject!.id });
+    if (updateWithSyllabusError) {
+      logError(
+        "createSubject (update subject with syllabus)",
+        updateWithSyllabusError
+      );
+      return { error: updateWithSyllabusError };
+    }
   }
 
   return { error: null };
@@ -240,7 +251,9 @@ export async function createSubject(subject: Subject): Promise<BackendReturn> {
 
 export async function editSubject(subject: Subject): Promise<BackendReturn> {
   if (typeof subject.syllabus === "string") {
-    return { error: { message: "syllabus must be a buffer" } };
+    const error = { message: "syllabus must be a buffer" };
+    logError("createSubject (syllabus type check)", error);
+    return { error };
   }
   // console.log(`${subject.id}/syllabus.pdf`, subject.syllabus);
   // console.log(subject.syllabus);
@@ -252,7 +265,7 @@ export async function editSubject(subject: Subject): Promise<BackendReturn> {
         upsert: false,
       });
     if (uploadingError) {
-      console.error(uploadingError);
+      logError("editSubject (syllabus)", uploadingError);
       return { error: { message: "syllabus upload failed" } };
     }
     // console.log(syllabus);
@@ -284,7 +297,7 @@ export async function editSubject(subject: Subject): Promise<BackendReturn> {
     .match({ id: subject.id });
 
   if (subjectEditionError) {
-    console.error(subjectEditionError);
+    logError("editSubject", subjectEditionError);
     return { error: subjectEditionError };
   }
   return { error: null };
