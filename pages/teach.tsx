@@ -20,7 +20,7 @@ import Head from "next/head";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { FC } from "react";
+import { FC, useState } from "react";
 
 // SK Components
 import {
@@ -92,16 +92,31 @@ const SubjectsSection: FC<{
   const locale = useLocale();
   const { t } = useTranslation("teach");
 
+  const [globalFilter, setGlobalFilter] = useState<string>("");
+
   return (
     <Section className="!gap-y-3">
       <Columns columns={3} className="!items-end">
         <Header className="md:col-span-2">{t("subjects.title")}</Header>
-        <Search alt="Search subjects" locale={locale} />
+        <Search
+          alt="Search subjects"
+          value={globalFilter}
+          locale={locale}
+          onChange={setGlobalFilter}
+        />
       </Columns>
       <Columns columns={3}>
-        {subjects.map((subject) => (
-          <TeachingSubjectCard key={subject.id} subject={subject} />
-        ))}
+        {subjects
+          .filter(
+            (subject) =>
+              subject.subject.name.th.name.includes(globalFilter) ||
+              subject.subject.name["en-US"]?.name.includes(globalFilter) ||
+              subject.subject.code["en-US"].includes(globalFilter) ||
+              subject.subject.code["en-US"].includes(globalFilter)
+          )
+          .map((subject) => (
+            <TeachingSubjectCard key={subject.id} subject={subject} />
+          ))}
       </Columns>
     </Section>
   );
