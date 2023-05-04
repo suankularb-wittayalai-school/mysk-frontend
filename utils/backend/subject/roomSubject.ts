@@ -12,6 +12,7 @@ import {
   getCurrentAcademicYear,
   getCurrentSemester,
 } from "@/utils/helpers/date";
+import { logError } from "@/utils/helpers/debug";
 
 // Types
 import {
@@ -120,7 +121,7 @@ export async function getSubjectList(
     });
 
   if (error || !data) {
-    console.error(error);
+    logError("getSubjectList", error);
     return { data: [], error };
   }
 
@@ -147,7 +148,7 @@ export async function getTeachingSubjects(
     .match({ year: getCurrentAcademicYear(), semester: getCurrentSemester() });
 
   if (error) {
-    console.error(error);
+    logError("getTeachingSubjects", error);
     return { data: [], error };
   }
 
@@ -381,7 +382,7 @@ export async function createRoomSubject(
     semester: getCurrentSemester(),
   });
 
-  if (error) console.error(error);
+  if (error) logError("createRoomSubject", error);
   return { error };
 }
 
@@ -409,7 +410,7 @@ export async function editRoomSubject(
     })
     .eq("id", subjectListItem.id);
 
-  if (error) console.error(error);
+  if (error) logError("editRoomSubject", error, true);
   return { error };
 }
 
@@ -423,5 +424,6 @@ export async function deleteRoomSubject(
     .eq("id", id)
     .limit(1);
 
+  if (error) logError("deleteRoomSubject", error, true);
   return { error };
 }
