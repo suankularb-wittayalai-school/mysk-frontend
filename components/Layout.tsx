@@ -1,5 +1,3 @@
-"use client";
-
 // External libraries
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 
