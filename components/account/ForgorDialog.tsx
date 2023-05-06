@@ -69,7 +69,7 @@ const ForgorDialog: DialogComponent = ({ open, onClose }) => {
 
       if (data) onClose();
 
-      router.push("/learn")
+      router.push("/learn");
       return true;
     }, toggleLoading);
   }

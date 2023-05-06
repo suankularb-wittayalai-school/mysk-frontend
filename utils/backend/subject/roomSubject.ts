@@ -1,40 +1,108 @@
 // External libraries
 import { PostgrestError } from "@supabase/supabase-js";
 
-// Backend
-import { db2SubjectListItem } from "@/utils/backend/database";
+// Converters
+import { db2SubjectListItem, db2Teacher } from "@/utils/backend/database";
 
-// Supabase
-import { supabase } from "@/utils/supabase-client";
+// Backend
+import { getClassIDFromNumber } from "@/utils/backend/classroom/classroom";
+import { getSubjectsInCharge } from "@/utils/backend/subject/subject";
+
+// Helpers
+import {
+  getCurrentAcademicYear,
+  getCurrentSemester,
+} from "@/utils/helpers/date";
+import { logError } from "@/utils/helpers/debug";
 
 // Types
-import { ClassWNumber } from "@/utils/types/class";
-import { BackendDataReturn, DatabaseClient } from "@/utils/types/common";
+import {
+  BackendDataReturn,
+  BackendReturn,
+  DatabaseClient,
+  OrUndefined,
+} from "@/utils/types/common";
+import { Teacher } from "@/utils/types/person";
 import { SubjectListItem, TeacherSubjectItem } from "@/utils/types/subject";
 import { Database } from "@/utils/types/supabase";
 
-export async function getRoomsEnrolledInSubject(
+export async function getTeachingSubjectClasses(
   supabase: DatabaseClient,
   subjectID: number
-): Promise<BackendDataReturn<ClassWNumber[]>> {
+): Promise<BackendDataReturn<SubjectListItem[]>> {
   const { data, error } = await supabase
     .from("room_subjects")
-    .select("classroom(id, number)")
-    .match({ subject: subjectID });
+    .select("*, subject:subject(*), class(*)")
+    .match({
+      subject: subjectID,
+      year: getCurrentAcademicYear(),
+      semester: getCurrentSemester(),
+    });
 
-  if (error || !data) {
+  if (error) {
     console.error(error);
-    return { data: [], error };
+    return { data: [], error: null };
   }
 
+  const teacherIDs = data.map((roomSubject) => roomSubject.teacher).flat();
+
+  const { data: teachersData, error: teacherError } = await supabase
+    .from("teacher")
+    .select(
+      `*,
+      person(
+        id,
+        prefix_th,
+        first_name_th,
+        middle_name_th,
+        last_name_th,
+        prefix_en,
+        first_name_en,
+        middle_name_en,
+        last_name_en
+      )`
+    )
+    .or(`id.in.(${teacherIDs.join()})`);
+
+  if (teacherError) {
+    console.error(teacherError);
+    return { data: [], error: null };
+  }
+
+  const teachers: Teacher[] = await Promise.all(
+    teachersData.map(async (teacher) => await db2Teacher(supabase, teacher))
+  );
+
   return {
-    data: data.map((roomSubject) => ({
-      id: (
-        roomSubject.classroom as Database["public"]["Tables"]["classroom"]["Row"]
-      ).id,
-      number: (
-        roomSubject.classroom as Database["public"]["Tables"]["classroom"]["Row"]
-      ).number,
+    data: data!.map((roomSubject) => ({
+      id: roomSubject.id,
+      subject: {
+        id: roomSubject.subject.id,
+        code: {
+          "en-US": roomSubject.subject.code_en,
+          th: roomSubject.subject.code_th,
+        },
+        name: {
+          "en-US": {
+            name: roomSubject.subject.name_en,
+            shortName: roomSubject.subject.short_name_en as OrUndefined<string>,
+          },
+          th: {
+            name: roomSubject.subject.name_th,
+            shortName: roomSubject.subject.short_name_th as OrUndefined<string>,
+          },
+        },
+      },
+      classroom: roomSubject.class,
+      teachers: roomSubject.teacher.map(
+        (teacherID) => teachers.find((teacher) => teacherID === teacher.id)!
+      ),
+      coTeachers: roomSubject.coteacher?.map(
+        (teacherID) => teachers.find((teacher) => teacherID === teacher.id)!
+      ),
+      ggMeetLink: roomSubject.gg_meet_link || undefined,
+      ggcCode: roomSubject.ggc_code || undefined,
+      ggcLink: roomSubject.ggc_link || undefined,
     })),
     error: null,
   };
@@ -47,10 +115,14 @@ export async function getSubjectList(
   const { data, error } = await supabase
     .from("room_subjects")
     .select("*, subject:subject(*), class(*)")
-    .match({ class: classID });
+    .match({
+      class: classID,
+      year: getCurrentAcademicYear(),
+      semester: getCurrentSemester(),
+    });
 
   if (error || !data) {
-    console.error(error);
+    logError("getSubjectList", error);
     return { data: [], error };
   }
 
@@ -66,71 +138,45 @@ export async function getSubjectList(
   };
 }
 
-export async function getTeachSubjectList(
+export async function getTeachingSubjects(
   supabase: DatabaseClient,
   teacherID: number
 ): Promise<BackendDataReturn<TeacherSubjectItem[]>> {
-  const { data, error } = await supabase
+  const { data: subjects, error: subjectsError } = await getSubjectsInCharge(
+    supabase,
+    teacherID
+  );
+
+  if (subjectsError) {
+    logError("getTeachingSubjects (subjects)", subjectsError);
+    return { data: [], error: subjectsError };
+  }
+
+  const { data: roomSubjects, error } = await supabase
     .from("room_subjects")
-    .select(
-      "subject(id,name_th,name_en,code_th,code_en), teacher, coteacher, \
-       class(id,number)"
+    .select("*, subject(id), class(*)")
+    .in(
+      "subject",
+      subjects!.map((subject) => subject.id)
     )
-    .or(`teacher.cs.{"${teacherID}"}, coteacher.cs.{"${teacherID}"}`);
+    .match({ year: getCurrentAcademicYear(), semester: getCurrentSemester() });
 
   if (error) {
-    console.error(error);
+    logError("getTeachingSubjects", error);
     return { data: [], error };
   }
 
-  const teacherSubjectList: TeacherSubjectItem[] = data
-    .map(
-      (roomSubject) =>
-        (roomSubject.subject as Database["public"]["Tables"]["subject"]["Row"])
-          .id
-    )
-    .filter((id, index, array) => array.indexOf(id) === index)
-    .map((subjectID) => {
-      const subject = data.find(
-        (roomSubject) =>
-          subjectID ===
-          (
-            roomSubject.subject as Database["public"]["Tables"]["subject"]["Row"]
-          ).id
-      )!.subject as Database["public"]["Tables"]["subject"]["Row"];
-      return {
-        id: subjectID,
-        subject: {
-          id: subject.id,
-          name: {
-            "en-US": { name: subject.name_en },
-            th: { name: subject.name_th },
-          },
-          code: {
-            "en-US": subject.code_en,
-            th: subject.code_th,
-          },
-        },
-        classes: data
-          .filter(
-            (roomSubject) =>
-              subjectID ===
-              (
-                roomSubject.subject as Database["public"]["Tables"]["subject"]["Row"]
-              ).id
-          )
-          .map((roomSubject) => ({
-            id: (
-              roomSubject.class as Database["public"]["Tables"]["classroom"]["Row"]
-            ).id,
-            number: (
-              roomSubject.class as Database["public"]["Tables"]["classroom"]["Row"]
-            ).number,
-          })),
-      };
-    });
-
-  return { data: teacherSubjectList, error: null };
+  return {
+    data: subjects.map((subject) => ({
+      id: subject.id,
+      subject: subject,
+      classes: roomSubjects
+        .filter((roomSubject) => subject.id === roomSubject.subject.id)
+        .map((roomSubject) => roomSubject.class)
+        .sort((a, b) => a.number - b.number),
+    })),
+    error: null,
+  };
 }
 
 /**
@@ -254,6 +300,8 @@ export async function updateRoomSubjectsFromTeachSubjects(
         teacher: roomSubject.teacher,
         coteacher: roomSubject.coteacher,
         class: roomSubject.class.id,
+        year: roomSubject.year,
+        semester: roomSubject.semester,
       }))
     )
     .select();
@@ -274,6 +322,8 @@ export async function updateRoomSubjectsFromTeachSubjects(
             teacher: !teachSubject.isCoteacher ? [teacherID] : [],
             coteacher: teachSubject.isCoteacher ? [teacherID] : [],
             class: classItem.id,
+            year: getCurrentAcademicYear(),
+            semester: getCurrentSemester(),
           }))
         )
         .flat()
@@ -286,4 +336,73 @@ export async function updateRoomSubjectsFromTeachSubjects(
   }
 
   return { data: updatedRows!.concat(newRows!), error: null };
+}
+
+export async function createRoomSubject(
+  supabase: DatabaseClient,
+  subjectListItem: SubjectListItem
+): Promise<BackendReturn> {
+  const { data: classID, error: classError } = await getClassIDFromNumber(
+    supabase,
+    subjectListItem.classroom.number
+  );
+
+  if (classError) return { error: classError };
+
+  const { error } = await supabase.from("room_subjects").insert({
+    subject: subjectListItem.subject.id,
+    ggc_code: subjectListItem.ggcCode,
+    ggc_link: subjectListItem.ggcLink,
+    gg_meet_link: subjectListItem.ggMeetLink,
+    teacher: subjectListItem.teachers.map((teacher) => teacher.id),
+    coteacher: subjectListItem.coTeachers!.map((teacher) => teacher.id),
+    class: classID!,
+    year: getCurrentAcademicYear(),
+    semester: getCurrentSemester(),
+  });
+
+  if (error) logError("createRoomSubject", error);
+  return { error };
+}
+
+export async function editRoomSubject(
+  supabase: DatabaseClient,
+  subjectListItem: SubjectListItem
+): Promise<BackendReturn> {
+  const { data: classID, error: classError } = await getClassIDFromNumber(
+    supabase,
+    subjectListItem.classroom.number
+  );
+
+  if (classError) return { error: classError };
+
+  const { error } = await supabase
+    .from("room_subjects")
+    .update({
+      subject: subjectListItem.subject.id,
+      ggc_code: subjectListItem.ggcCode,
+      ggc_link: subjectListItem.ggcLink,
+      gg_meet_link: subjectListItem.ggMeetLink,
+      teacher: subjectListItem.teachers.map((teacher) => teacher.id),
+      coteacher: subjectListItem.coTeachers!.map((teacher) => teacher.id),
+      class: classID!,
+    })
+    .eq("id", subjectListItem.id);
+
+  if (error) logError("editRoomSubject", error);
+  return { error };
+}
+
+export async function deleteRoomSubject(
+  supabase: DatabaseClient,
+  id: number
+): Promise<BackendReturn> {
+  const { error } = await supabase
+    .from("room_subjects")
+    .delete()
+    .eq("id", id)
+    .limit(1);
+
+  if (error) logError("deleteRoomSubject", error);
+  return { error };
 }

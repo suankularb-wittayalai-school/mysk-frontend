@@ -337,6 +337,8 @@ export interface Database {
             Database["public"]["Tables"]["classroom"]["Row"],
             "id" | "number"
           >;
+          year: number;
+          semester: number;
         };
         Insert: {
           id?: number;
@@ -348,6 +350,8 @@ export interface Database {
           teacher: number[];
           coteacher?: number[] | null;
           class: number;
+          year: number;
+          semester: number;
         };
         Update: {
           id?: number;
@@ -359,6 +363,8 @@ export interface Database {
           teacher?: number[];
           coteacher?: number[] | null;
           class?: number;
+          year?: number;
+          semester?: number;
         };
       };
       schedule_items: {
@@ -376,6 +382,8 @@ export interface Database {
             Database["public"]["Tables"]["classroom"]["Row"],
             "id" | "number"
           >;
+          year: number;
+          semester: number;
         };
         Insert: {
           id?: number;
@@ -388,6 +396,8 @@ export interface Database {
           duration: number;
           room: string;
           classroom?: number;
+          year: number;
+          semester: number;
         };
         Update: {
           id?: number;
@@ -400,6 +410,8 @@ export interface Database {
           duration?: number;
           room?: string;
           classroom?: number;
+          year?: number;
+          semester?: number;
         };
       };
       school_documents: {

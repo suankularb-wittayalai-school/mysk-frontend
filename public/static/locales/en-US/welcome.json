@@ -58,27 +58,7 @@
     }
   },
   "yourSubjects": {
-    "title": "Your subjects",
-    "subjects": {
-      "title": "Subjects and classes",
-      "addSubject": {
-        "title": "Add a subject",
-        "desc": "Select from a list of subjects, specify which classes learn that subject with you, and add it to the final list.",
-        "classesExplain": "For the classes field, press <0>Enter ↵</0> after each class. A class is represented by a 3-digit number.",
-        "allSubjectsAdded": "You have already added all subjects you’re in charge of. You can still edit classes on the final list.",
-        "action": {
-          "add": "Add subject"
-        }
-      },
-      "subject": {
-        "subject": "Subject",
-        "isCoteacher": "I’m a coteacher",
-        "noSubjects": "Connect a subject to its classes for it to show up here.",
-        "action": {
-          "delete": "Remove this subject from your account"
-        }
-      }
-    }
+    "title": "Your subjects"
   },
   "loggingIn": {
     "title": "Logging in",
@@ -86,12 +66,13 @@
     "checkEmail": {
       "title": "Check email",
       "success": "Check both your old and new email, and click the link on both addresses. <0>Learn more</0>",
+      "notNeeded": "You’re already using your preferred email, so there’s no need to change it. Your email was not changed.",
       "desc": "You’re using “{{email}},” does that seem correct? If not, specify a new one, and we’ll send an email to both your old and your new email addresses to confirm the change. You must click the link on both addresses.",
       "form": {
-        "email": "Email"
+        "email": "New email"
       },
       "action": {
-        "send": "Send verification email"
+        "send": "Start email change"
       }
     },
     "createPassword": {

@@ -32,7 +32,6 @@ import RailLogo from "@/components/brand/RailLogo";
 
 // Backend
 import { getUserMetadata } from "@/utils/backend/account";
-import { getClassOfStudent } from "@/utils/backend/person/student";
 import { getClassAdvisorAt } from "@/utils/backend/person/teacher";
 
 // Contexts

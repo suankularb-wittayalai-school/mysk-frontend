@@ -166,7 +166,9 @@ const WelcomePage: CustomPage<{
         return false;
       }
 
-      router.push("/account/welcome/covid-19-safety");
+      if (person.role === "teacher")
+        router.push("/account/welcome/your-subjects");
+      else router.push("/account/welcome/logging-in");
       return true;
     }, toggleLoading);
   }

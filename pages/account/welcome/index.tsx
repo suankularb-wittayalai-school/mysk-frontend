@@ -75,7 +75,7 @@ const ComingUpSection: FC = () => {
       <p>{t("instructions.comingUp.desc")}</p>
       <ol className="list-decimal pl-6">
         <li>{t("instructions.comingUp.step.1")}</li>
-        <li>{t("instructions.comingUp.step.2")}</li>
+        {/* <li>{t("instructions.comingUp.step.2")}</li> */}
         <li>{t("instructions.comingUp.step.3")}</li>
         <li>{t("instructions.comingUp.step.4")}</li>
       </ol>

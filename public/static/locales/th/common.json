@@ -71,6 +71,14 @@
         "duplicate": "มีห้องเรียนนี้แล้ว",
         "notFound": "ไม่มีห้องเรียนนี้"
       }
+    },
+    "teachersField": {
+      "label": "อาจารย์",
+      "placeholder": "ใส่ชื่อจริง",
+      "snackbar": {
+        "duplicate": "มีอาจารย์คนนี้แล้ว",
+        "notFound": "ไม่พบอาจารย์คนนี้"
+      }
     }
   },
   "error": {

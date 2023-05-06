@@ -70,6 +70,14 @@
         "duplicate": "You’ve already added this class",
         "notFound": "This class doesn’t exist"
       }
+    },
+    "teachersField": {
+      "label": "Teachers",
+      "placeholder": "Enter first name",
+      "snackbar": {
+        "duplicate": "You’ve already added this teacher",
+        "notFound": "Cannot find this teacher"
+      }
     }
   },
   "error": {
