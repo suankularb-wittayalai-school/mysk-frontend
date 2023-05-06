@@ -313,8 +313,8 @@ const IndexPage: CustomPage = () => {
       />
       <ContentLayout>
         <div
-          className="grid grid-cols-1 gap-6 overflow-hidden sm:grid-cols-2
-            sm:overflow-visible md:grid-cols-[4fr,5fr,3fr] -mt-8"
+          className="-mt-8 grid grid-cols-1 gap-6 overflow-hidden sm:mt-4
+            sm:grid-cols-2 sm:overflow-visible md:grid-cols-[4fr,5fr,3fr]"
         >
           <div className="flex flex-col-reverse sm:contents">
             <Section className="relative z-10 mx-4 !gap-12 sm:mx-0">
@@ -325,13 +325,16 @@ const IndexPage: CustomPage = () => {
                 <OptionsSection />
               </div>
             </Section>
-            <div className="relative grid h-[28rem] sm:h-[calc(100vh-4rem)] place-content-center">
+            <div
+              className="relative grid h-[28rem] place-content-center
+                sm:h-[calc(100vh-5rem)]"
+            >
               <MultiSchemeImage
                 srcLight={LandingPhoneLight}
                 srcDark={LandingPhoneDark}
                 alt="Pink and blue hand holding phone with MySK logo."
-                className="relative -mx-[18rem] h-full max-w-[calc(100vw+36rem)]
-                  sm:-right-16 md:right-0"
+                className="relative -mx-[18rem] h-full
+                  max-w-[calc(100vw+36rem)] sm:-right-16 md:right-0"
               />
             </div>
           </div>
