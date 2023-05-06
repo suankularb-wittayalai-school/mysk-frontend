@@ -47,7 +47,7 @@ const YourSubjectsPage: CustomPage<{
       <MySKPageHeader
         title={t("yourSubjects.title")}
         icon={<MaterialIcon icon="book" />}
-        parentURL="/account/welcome/covid-19-safety"
+        parentURL="/account/welcome/your-information"
       />
       <ContentLayout>
         <Columns columns={3}>

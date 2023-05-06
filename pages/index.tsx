@@ -2,10 +2,9 @@
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 import Head from "next/head";
-import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { Trans, useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { FC, useContext, useEffect, useState } from "react";
@@ -16,9 +15,12 @@ import {
   Button,
   Columns,
   ContentLayout,
+  Divider,
   Header,
   MaterialIcon,
+  MenuItem,
   Section,
+  Select,
   Snackbar,
   TextField,
 } from "@suankularb-components/react";
@@ -31,8 +33,14 @@ import MultiSchemeImage from "@/components/common/MultiSchemeImage";
 import SnackbarContext from "@/contexts/SnackbarContext";
 
 // Images
-import LandingImageLight from "@/public/images/landing-light.webp";
-import LandingImageDark from "@/public/images/landing-dark.webp";
+import LandingBackgroundLight from "@/public/images/graphics/landing/background-light.svg";
+import LandingBackgroundDark from "@/public/images/graphics/landing/background-dark.svg";
+import LandingPhoneLight from "@/public/images/graphics/landing/phone-light.svg";
+import LandingPhoneDark from "@/public/images/graphics/landing/phone-dark.svg";
+import SKISoLight from "@/public/images/orgs/skiso-light.svg";
+import SKISoDark from "@/public/images/orgs/skiso-dark.svg";
+import SKELCLight from "@/public/images/orgs/skelc-light.svg";
+import SKELCDark from "@/public/images/orgs/skelc-dark.svg";
 
 // Backend
 import { getUserMetadata } from "@/utils/backend/account";
@@ -128,85 +136,97 @@ const LoginSection: FC = () => {
     }, toggleLoading);
   }
 
-  // Forgot Password Dialog control
-  const [showForgor, setShowForgor] = useState<boolean>(false);
-
   return (
     <Section className="!gap-y-5">
       <Header>{t("logIn.title")}</Header>
-      <Columns columns={3}>
-        <div className="col-span-2 flex flex-col gap-4">
-          <TextField<string>
-            appearance="outlined"
-            label={t("logIn.form.email")}
-            align="right"
-            trailing="sk.ac.th"
-            error={email.endsWith("sk.ac.th")}
-            value={email}
-            onChange={(value) => setEmail(value.split("sk.ac.th", 1)[0])}
-            locale={locale}
-            inputAttr={{ autoCapitalize: "off" }}
-            className="bg-surface"
-          />
-          <TextField<string>
-            appearance="outlined"
-            label={t("logIn.form.password")}
-            value={password}
-            onChange={(value) => setPassword(value)}
-            locale={locale}
-            inputAttr={{ type: "password" }}
-            className="bg-surface"
-          />
-          <Actions align="full">
-            <Button
-              appearance="outlined"
-              onClick={() => setShowForgor(true)}
-              className={cn([
-                "!bg-surface",
-                locale === "en-US" && "!min-w-[7.25rem]",
-              ])}
-            >
-              {t("logIn.action.forgotPassword")}
-            </Button>
-            <RequestForgorDialog
-              open={showForgor}
-              onClose={() => setShowForgor(false)}
-              inputEmail={email}
-            />
-            <Button
-              appearance="filled"
-              loading={loading || undefined}
-              onClick={handleSubmit}
-            >
-              {t("logIn.action.logIn")}
-            </Button>
-          </Actions>
-        </div>
-      </Columns>
+      <TextField<string>
+        appearance="outlined"
+        label={t("logIn.form.email")}
+        align="right"
+        trailing="sk.ac.th"
+        error={email.endsWith("sk.ac.th")}
+        value={email}
+        onChange={(value) => setEmail(value.split("sk.ac.th", 1)[0])}
+        locale={locale}
+        inputAttr={{ autoCapitalize: "off" }}
+      />
+      <TextField<string>
+        appearance="outlined"
+        label={t("logIn.form.password")}
+        value={password}
+        onChange={(value) => setPassword(value)}
+        locale={locale}
+        inputAttr={{ type: "password" }}
+      />
+      <Actions>
+        <Button
+          appearance="filled"
+          loading={loading || undefined}
+          onClick={handleSubmit}
+        >
+          {t("logIn.action.logIn")}
+        </Button>
+      </Actions>
     </Section>
   );
 };
 
-const ImageSection: FC = () => (
-  <div aria-hidden className="pointer-events-none sm:bg-none md:relative">
-    {/* Image in center */}
-    <div
-      className="md:absolute md:left-0 md:right-0 md:h-[calc(100vh-6rem)]
-        supports-[height:100svh]:md:h-[calc(100svh-6rem)]"
-    >
-      <MultiSchemeImage
-        srcLight={LandingImageLight}
-        srcDark={LandingImageDark}
-        width={1080}
-        height={1080}
-        priority
-        alt=""
-        className="relative md:absolute md:left-[-10.5rem] md:right-[-10.5rem]
-          md:top-1/2 md:-translate-y-1/2"
-      />
-    </div>
-  </div>
-);
+const OptionsSection: FC = () => {
+  const locale = useLocale();
+  const router = useRouter();
+
+  return (
+    <Section className="!gap-4">
+      <Select
+        appearance="outlined"
+        label="Language"
+        leading={<MaterialIcon icon="translate" />}
+        locale={locale}
+        value={locale}
+        onChange={(locale) => {
+          // Remember the preference
+          localStorage.setItem("preferredLang", locale);
+          // Redirect back
+          router.replace(router.asPath, router.asPath, { locale });
+        }}
+      >
+        <MenuItem value="en-US">English</MenuItem>
+        <MenuItem value="th">ภาษาไทย</MenuItem>
+      </Select>
+      <Actions
+        align="full"
+        className="grid-cols-1 sm:mr-12 sm:!grid md:mr-0 md:!flex"
+      >
+        <Button appearance="tonal">Instant log in</Button>
+        <Button appearance="tonal">Help</Button>
+      </Actions>
+    </Section>
+  );
+};
+
+const PatchNotesSection: FC = () => {
+  return (
+    <Section className="!gap-5">
+      <Header className="skc-headline-large">New in 0.4.0</Header>
+      <p className="skc-title-large">
+        This version brings a brand new MySK experience.
+      </p>
+      <ul className="skc-body-medium list-disc pl-6">
+        <li>A completely redesigned interface</li>
+        <li>MySK Lookup: a database of the entire school at your fingertips</li>
+        <li>Bug fixes</li>
+      </ul>
+      <a
+        href="https://github.com/suankularb-wittayalai-school/mysk-frontend/pulls?q=is%3Apr+is%3Aclosed+base%3Amain+release+in%3Atitle"
+        target="_blank"
+        rel="noreferrer"
+        className="link"
+      >
+        More patch notes…
+      </a>
+    </Section>
+  );
+};
 
 // Page
 const IndexPage: CustomPage = () => {
@@ -285,116 +305,76 @@ const IndexPage: CustomPage = () => {
           content={t("brand.description", { ns: "common" })}
         />
       </Head>
-      <ContentLayout
-        className="-mb-20 bg-gradient-to-b from-surface-5 to-transparent
-          to-60% bg-fixed !pb-6 !pt-0 sm:mb-0 md:!py-12"
-      >
-        {/* 6rem is the combined padding height put on Content Layout */}
+      <MultiSchemeImage
+        srcLight={LandingBackgroundLight}
+        srcDark={LandingBackgroundDark}
+        alt=""
+        className="fixed inset-0 -z-10 [&_img]:h-full [&_img]:object-cover"
+      />
+      <ContentLayout>
         <div
-          className="flex flex-col justify-between gap-16
-            md:min-h-[calc(100vh-6rem)]
-            supports-[height:100svh]:md:min-h-[calc(100svh-6rem)]"
+          className="grid grid-cols-1 gap-6 overflow-hidden sm:grid-cols-2
+            sm:overflow-visible md:grid-cols-[4fr,5fr,3fr] -mt-8"
         >
-          {/* Tagline, log in form, and image */}
-          <Columns
-            columns={2}
-            className="!flex !flex-col-reverse md:!grid md:!items-stretch"
-          >
-            {/* Left side */}
-            <div className="mx-4 sm:mx-0">
-              <div className="mb-12 flex flex-col gap-4">
-                {/* Tagline */}
-                {/* `sm:!text-8xl sm:!leading-[4rem]` is a simulation of
-                    `skc-display-large`; since that is not a Tailwind class, we
-                    cannot apply the `sm:` suffix */}
-                <h1
-                  className="skc-display-medium sm:!text-8xl
-                    sm:!leading-[4rem]"
-                >
-                  <Trans i18nKey="hero.title" ns="landing">
-                    MySK ปีนี้มาใหม่หมด{" "}
-                    <span
-                      className="bg-gradient-to-r from-primary to-secondary
-                      bg-clip-text font-bold text-transparent"
-                    >
-                      ใช้ง่าย ทำได้มากกว่าเดิม
-                    </span>
-                  </Trans>
-                </h1>
+          <div className="flex flex-col-reverse sm:contents">
+            <Section className="relative z-10 mx-4 !gap-12 sm:mx-0">
+              <h1 className="skc-display-large">Your one-stop school portal</h1>
+              <div className="flex flex-col gap-8">
+                <LoginSection />
+                <Divider />
+                <OptionsSection />
               </div>
-
-              {/* Log in form */}
-              <LoginSection />
-
-              <div className="mt-9 flex flex-col gap-1">
-                <div className="flex flex-row gap-1">
-                  <MaterialIcon icon="contact_support" />
-                  <p>
-                    <Trans i18nKey="action.help" ns="landing">
-                      สงสัยอะไรเปิด
-                      <Link href="/help" className="link">
-                        หน้าช่วยเหลือ
-                      </Link>
-                    </Trans>
-                  </p>
-                </div>
-                <div className="flex flex-row gap-1">
-                  <MaterialIcon icon="translate" />
-                  <p>
-                    <Trans i18nKey="action.changeLang" ns="landing">
-                      เปลี่ยนภาษาเป็น:{" "}
-                      <Link
-                        href="/"
-                        locale={locale === "en-US" ? "th" : "en-US"}
-                        onClick={() =>
-                          localStorage.setItem(
-                            "preferredLang",
-                            locale === "en-US" ? "th" : "en-US"
-                          )
-                        }
-                        className="link"
-                      >
-                        English
-                      </Link>
-                    </Trans>
-                  </p>
-                </div>
-              </div>
+            </Section>
+            <div className="relative grid h-[28rem] sm:h-[calc(100vh-4rem)] place-content-center">
+              <MultiSchemeImage
+                srcLight={LandingPhoneLight}
+                srcDark={LandingPhoneDark}
+                alt="Pink and blue hand holding phone with MySK logo."
+                className="relative -mx-[18rem] h-full max-w-[calc(100vw+36rem)]
+                  sm:-right-16 md:right-0"
+              />
             </div>
+          </div>
 
-            {/* Right side */}
-            <ImageSection />
-          </Columns>
+          <Section className="z-10 mx-4 !gap-9 sm:mx-0">
+            <PatchNotesSection />
+            <Section className="skc-body-small !gap-2">
+              <p>
+                MySK is supervised by Supannee Supeerath and Atipol
+                Sukrisadanon.
+              </p>
+              <p>
+                Its development was led by Siravit Phokeed and Smart
+                Wattanapornmongkol with help from Sadudee Theparree and Tempoom
+                Leelacharoen.
+              </p>
+              <p>
+                Translations to Thai contributed by{" "}
+                <a
+                  href="https://www.instagram.com/sk.elc/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="link"
+                >
+                  Suankularb English Club
+                </a>
+                .
+              </p>
+            </Section>
 
-          {/* Footnote */}
-          <footer
-            className="skc-body-small mx-4 text-on-surface-variant
-              sm:mx-0"
-          >
-            <p className="mb-2 sm:mb-0">
-              <Trans
-                i18nKey="footnote.supervisors"
-                ns="landing"
-                values={{ version: "0.4.0" }}
+            <section className="flex flex-row items-center justify-end gap-4">
+              <MultiSchemeImage
+                srcLight={SKELCLight}
+                srcDark={SKELCDark}
+                alt="Suankularb English Club"
               />
-            </p>
-            <p>
-              <Trans
-                i18nKey="footnote.developers"
-                ns="landing"
-                components={{
-                  a: (
-                    <a
-                      target="_blank"
-                      rel="noreferrer"
-                      href="https://github.com/suankularb-wittayalai-school/mysk-frontend/graphs/contributors"
-                      className="link"
-                    />
-                  ),
-                }}
+              <MultiSchemeImage
+                srcLight={SKISoLight}
+                srcDark={SKISoDark}
+                alt="SK IT Solutions"
               />
-            </p>
-          </footer>
+            </section>
+          </Section>
         </div>
       </ContentLayout>
     </>
