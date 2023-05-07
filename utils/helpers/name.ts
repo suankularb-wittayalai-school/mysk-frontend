@@ -22,7 +22,7 @@ export function startsWithThaiVowel(string: string) {
  * @param name An object with `firstName`, `middleName`, and `lastName`, each as a multi-language string.
  * @param prefix A multi-language string.
  * @param options Options to show or abbreviate a segment.
- * @param options.prefix Shows prefix, defaults to false.
+ * @param options.prefix Shows prefix, defaults to false; "teacher" shows "T." or "ครู".
  * @param options.firstName Shows first name, defaults to true.
  * @param options.middleName Shows middle name, defaults to true.
  * @param options.lastName Shows last name, defaults to true; "abbr" only shows the first letter.
@@ -34,7 +34,7 @@ export function nameJoiner(
   name: Person["name"],
   prefix?: MultiLangString,
   options?: Partial<{
-    prefix: boolean;
+    prefix: boolean | "teacher";
     firstName: boolean;
     middleName: boolean;
     lastName: boolean | "abbr";
@@ -48,7 +48,11 @@ export function nameJoiner(
 
   if (options)
     return [
-      options.prefix && prefix
+      options.prefix === "teacher"
+        ? firstNameLocale === "en-US"
+          ? "T."
+          : "ครู"
+        : options.prefix === true && prefix
         ? getLocaleString(prefix, firstNameLocale)
         : undefined,
       [

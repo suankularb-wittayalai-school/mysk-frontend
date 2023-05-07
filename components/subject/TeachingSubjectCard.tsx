@@ -48,6 +48,7 @@ const TeachingSubjectCard: FC<{
             <Button
               appearance="text"
               icon={<MaterialIcon icon="open_in_full" />}
+              alt={t("subjects.action.seeDetails")}
               onClick={() => setClassesOpen(true)}
             />
           )}
@@ -64,7 +65,7 @@ const TeachingSubjectCard: FC<{
           ) : (
             <Actions align="full" className="!mt-0">
               <Button appearance="filled" onClick={() => setClassesOpen(true)}>
-                Set up
+                {t("subjects.action.setUp")}
               </Button>
             </Actions>
           )}

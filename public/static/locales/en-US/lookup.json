@@ -19,6 +19,7 @@
       }
     },
     "detail": {
+      "loading": "Loading person details…",
       "starbucks": {
         "action": {
           "readAloud": "Read aloud",

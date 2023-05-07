@@ -15,15 +15,15 @@ export function logError(location: string, error: Partial<PostgrestError>) {
     [
       // Header
       typeof window === "undefined"
-        ? `\x1b[31merror\x1b[0m - an error occurred at \x1b[33m${location}\x1b[0m`
+        ? `\x1b[0m- \x1b[31merror\x1b[0man error occurred at \x1b[33m${location}\x1b[0m`
         : `\x1b[0mERROR`,
 
       // Content
-      error.message && `  ${error.message}`,
-      error.details && `  ${error.details}`,
-      error.hint && `  hint: ${error.hint}`,
+      error.message,
+      error.details,
+      error.hint && `hint: ${error.hint}`,
     ]
       .filter((segment) => segment)
-      .join("\n")
+      .join("\n    ")
   );
 }

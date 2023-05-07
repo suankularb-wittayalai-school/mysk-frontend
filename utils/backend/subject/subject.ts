@@ -154,8 +154,7 @@ export async function getSubjectsInCharge(
     .select(
       "id, code_th, code_en, name_th, name_en, short_name_th, short_name_en"
     )
-    .or(`teachers.cs.{${teacherID}}, coTeachers.cs.{${teacherID}}`)
-    .match({ year: getCurrentAcademicYear(), semester: getCurrentSemester() });
+    .or(`teachers.cs.{${teacherID}}, coTeachers.cs.{${teacherID}}`);
 
   if (error) {
     logError("getSubjectsInCharge", error);

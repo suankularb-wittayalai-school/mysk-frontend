@@ -261,7 +261,10 @@ export const getServerSideProps: GetServerSideProps = async ({
   };
 };
 
-WelcomePage.childURLs = ["/account/welcome/your-information"];
+WelcomePage.childURLs = [
+  "/account/welcome/your-subjects",
+  "/account/welcome/logging-in",
+];
 
 WelcomePage.navType = "hidden";
 

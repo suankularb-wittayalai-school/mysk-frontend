@@ -82,7 +82,9 @@ const ClassRowActions: FC<{
   onEditOpen: () => void;
   onDeleteOpen: () => void;
 }> = ({ row, onEditOpen, onDeleteOpen }) => {
-  const { t } = useTranslation("teach");
+  const { t } = useTranslation("teach", {
+    keyPrefix: "dialog.subjectClasses.rowAction",
+  });
 
   return (
     <SegmentedButton alt="Row actions">
@@ -91,7 +93,7 @@ const ClassRowActions: FC<{
         <Button
           appearance="outlined"
           icon={<BrandIcon icon="gg-classroom" />}
-          tooltip="Open Google Classroom"
+          tooltip={t("classLink")}
           href={row.ggcLink}
           // eslint-disable-next-line react/display-name
           element={forwardRef((props, ref) => (
@@ -104,7 +106,7 @@ const ClassRowActions: FC<{
         <Button
           appearance="outlined"
           icon={<BrandIcon icon="gg-meet" />}
-          tooltip="Open Google Meet"
+          tooltip={t("meetLink")}
           href={row.ggMeetLink}
           // eslint-disable-next-line react/display-name
           element={forwardRef((props, ref) => (
@@ -118,7 +120,7 @@ const ClassRowActions: FC<{
       <Button
         appearance="outlined"
         icon={<MaterialIcon icon="edit" />}
-        tooltip="Edit this entry"
+        tooltip={t("edit")}
         onClick={onEditOpen}
       />
 
@@ -126,7 +128,7 @@ const ClassRowActions: FC<{
       <Button
         appearance="outlined"
         icon={<MaterialIcon icon="delete" />}
-        tooltip="Delete this entry"
+        tooltip={t("delete")}
         dangerous
         onClick={onDeleteOpen}
       />
@@ -149,7 +151,8 @@ const SubjectClassesDialog: DialogComponent<{
   subject: SubjectWNameAndCode;
 }> = ({ open, onClose, subject }) => {
   const locale = useLocale();
-  const { t } = useTranslation(["teach", "common"]);
+  const { t } = useTranslation("teach", { keyPrefix: "dialog.subjectClasses" });
+  const { t: tx } = useTranslation("common");
 
   const { duration, easing } = useAnimationConfig();
   const { setSnackbar } = useContext(SnackbarContext);
@@ -173,15 +176,12 @@ const SubjectClassesDialog: DialogComponent<{
     if (!open || data) return;
     withLoading(
       async () => {
-        // TODO: Fetch Room Subjects from Supabase
         const { data, error } = await getTeachingSubjectClasses(
           supabase,
           subject.id
         );
         if (error) {
-          setSnackbar(
-            <Snackbar>{t("snackbar.failure", { ns: "common" })}</Snackbar>
-          );
+          setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
           return false;
         }
         setData(data);
@@ -196,15 +196,14 @@ const SubjectClassesDialog: DialogComponent<{
     () => [
       {
         id: "class",
-        accessorFn: (row) =>
-          t("class", { ns: "common", number: row.classroom.number }),
-        header: "Class",
+        accessorFn: (row) => tx("class", { number: row.classroom.number }),
+        header: t("thead.class"),
         thAttr: { className: "w-1/12" },
       },
       {
         id: "classCode",
         accessorFn: (row) => row.ggcCode,
-        header: "Classroom code",
+        header: t("thead.classCode"),
         thAttr: { className: "w-1/12" },
         tdAttr: { className: "!font-mono" },
       },
@@ -212,7 +211,7 @@ const SubjectClassesDialog: DialogComponent<{
         id: "teachers",
         accessorFn: (row) =>
           row.teachers.map((teacher) => nameJoiner(locale, teacher.name)),
-        header: "Teachers",
+        header: t("thead.teachers"),
         thAttr: { className: "w-3/12" },
         render: (row) => (
           <ul className="list-disc pl-4">
@@ -226,7 +225,7 @@ const SubjectClassesDialog: DialogComponent<{
         id: "coTeachers",
         accessorFn: (row) =>
           row.coTeachers?.map((teacher) => nameJoiner(locale, teacher.name)),
-        header: "Co-teachers",
+        header: t("thead.coTeachers"),
         thAttr: { className: "w-3/12" },
         render: (row) =>
           row.coTeachers ? (
@@ -240,7 +239,7 @@ const SubjectClassesDialog: DialogComponent<{
       {
         id: "classLink",
         accessorFn: (row) => row.ggcLink,
-        header: "Classroom link",
+        header: t("thead.classLink"),
         thAttr: { className: "w-2/12" },
         tdAttr: { className: "[&>*]:!py-2" },
         render: (row) => (
@@ -263,7 +262,7 @@ const SubjectClassesDialog: DialogComponent<{
       {
         id: "meetLink",
         accessorFn: (row) => row.ggMeetLink,
-        header: "Meet link",
+        header: t("thead.meetLink"),
         thAttr: { className: "w-2/12" },
         tdAttr: { className: "[&>*]:!py-2" },
         render: (row) => (
@@ -319,14 +318,14 @@ const SubjectClassesDialog: DialogComponent<{
       >
         <Progress
           appearance="linear"
-          alt="Loading classes…"
+          alt={t("loading")}
           visible={loading}
           className="absolute inset-0 bottom-auto top-16"
         />
 
         <Columns columns={2}>
           <div>
-            <h3 className="skc-title-medium">Subject</h3>
+            <h3 className="skc-title-medium">{t("summary.subject")}</h3>
             <MultilangText
               text={{
                 th: subject.name.th.name,
@@ -335,7 +334,7 @@ const SubjectClassesDialog: DialogComponent<{
             />
           </div>
           <div>
-            <h3 className="skc-title-medium">Subject code</h3>
+            <h3 className="skc-title-medium">{t("summary.subjectCode")}</h3>
             <MultilangText text={subject.code} />
           </div>
         </Columns>
@@ -346,7 +345,7 @@ const SubjectClassesDialog: DialogComponent<{
             icon={<MaterialIcon icon="add" />}
             onClick={() => setAddOpen(true)}
           >
-            Add a class
+            {t("action.addClass")}
           </Button>
         </Actions>
 
@@ -368,7 +367,10 @@ const SubjectClassesDialog: DialogComponent<{
                   onChange={setGlobalFilter}
                 />
                 <DataTableContent contentWidth={1080}>
-                  <DataTableHead headerGroups={getHeaderGroups()} />
+                  <DataTableHead
+                    headerGroups={getHeaderGroups()}
+                    locale={locale}
+                  />
                   <DataTableBody
                     rowModel={getRowModel()}
                     rowActions={(row) => (
@@ -383,6 +385,7 @@ const SubjectClassesDialog: DialogComponent<{
                 <DataTablePagination
                   rowsPerPage={pagination.pageSize}
                   totalRows={data.length}
+                  locale={locale}
                   onChange={(page) => setPageIndex(page - 1)}
                 />
               </DataTable>

@@ -37,6 +37,7 @@ import { useLocale } from "@/utils/hooks/i18n";
  * @returns A Card.
  */
 const ClassCard: FC<{ classItem: ClassLookupListItem }> = ({ classItem }) => {
+  const locale = useLocale();
   const { t } = useTranslation("common");
 
   const { duration, easing } = useAnimationConfig();
@@ -66,7 +67,14 @@ const ClassCard: FC<{ classItem: ClassLookupListItem }> = ({ classItem }) => {
             subtitle={
               <HoverList
                 people={classItem.classAdvisors}
-                options={{ maxVisibleLength: 2 }}
+                options={{
+                  nameJoinerOptions: {
+                    prefix: locale === "th" ? "teacher" : false,
+                    lastName: false,
+                  },
+                  maxVisibleLength: 2,
+                }}
+                className="whitespace-nowrap"
               />
             }
             className="!items-start text-left [&_*]:!font-body"
@@ -136,7 +144,11 @@ const ClassPeekModal: FC<{
                   </Link>
                 }
                 subtitle={classItem.classAdvisors
-                  .map((teacher) => nameJoiner(locale, teacher.name))
+                  .map((teacher) =>
+                    nameJoiner(locale, teacher.name, undefined, {
+                      prefix: "teacher",
+                    })
+                  )
                   .join(", ")}
                 className="!px-4 [&_span]:!font-body"
               />
