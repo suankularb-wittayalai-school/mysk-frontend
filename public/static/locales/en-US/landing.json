@@ -1,14 +1,36 @@
 {
-  "hero": {
-    "title": "Rebuilt from the ground up. <2>More capable than ever.</2>",
-    "subtitle": "Say hello to the new MySK."
+  "main": {
+    "title": "Your one-stop school portal",
+    "options": {
+      "language": "Language",
+      "action": {
+        "forgor": "Forgot password",
+        "help": "Help"
+      }
+    }
   },
-  "action": {
-    "help": "Stuck? <1>Find help here.</1>",
-    "changeLang": "Also available in: <2>ภาษาไทย</2>"
-  },
-  "footnote": {
-    "supervisors": "<strong>MySK {{version}}</strong> is supervised by Supannee Supeerath and Atipol Sukrisadanon.",
-    "developers": "Its development was led by Siravit Phokeed and Smart Wattanapornmongkol with help from Sadudee Theparree and Tempoom Leelacharoen. <a>See contributions here.</a>"
+  "imageAlt": "Pink and blue hand holding phone with MySK logo",
+  "aside": {
+    "patchNotes": {
+      "title": "New in 0.4.0",
+      "subtitle": "This version brings a brand new MySK experience.",
+      "list": {
+        "1": "A completely redesigned interface",
+        "2": "MySK Lookup: a database of the entire school at your fingertips",
+        "3": "Bug fixes"
+      },
+      "action": {
+        "more": "More patch notes…"
+      }
+    },
+    "credits": {
+      "supervisors": "MySK is supervised by Supannee Supeerath and Atipol Sukrisadanon.",
+      "developers": "Its development was led by Siravit Phokeed and Smart Wattanapornmongkol with help from Sadudee Theparree and Tempoom Leelacharoen.",
+      "translations": "Translations to Thai contributed by <a>Suankularb English Club</a>.",
+      "logo": {
+        "skelc": "SK English Club",
+        "skiso": "SK IT Solutions"
+      }
+    }
   }
 }

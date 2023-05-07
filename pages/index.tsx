@@ -5,7 +5,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { useTranslation } from "next-i18next";
+import { Trans, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { FC, useContext, useEffect, useState } from "react";
@@ -175,6 +175,8 @@ const LoginSection: FC = () => {
 
 const OptionsSection: FC = () => {
   const locale = useLocale();
+  const { t } = useTranslation("landing", { keyPrefix: "main.options" });
+
   const refreshProps = useRefreshProps();
 
   return (
@@ -182,7 +184,7 @@ const OptionsSection: FC = () => {
       {/* Language selector */}
       <Select
         appearance="outlined"
-        label="Language"
+        label={t("language")}
         leading={<MaterialIcon icon="translate" />}
         locale={locale}
         value={locale}
@@ -202,11 +204,9 @@ const OptionsSection: FC = () => {
         align="full"
         className="grid-cols-1 sm:mr-12 sm:!grid md:mr-0 md:!flex"
       >
-        <Button appearance="tonal" tooltip="Feature not yet available" disabled>
-          Instant log in
-        </Button>
+        <Button appearance="tonal">{t("action.forgor")}</Button>
         <Button appearance="tonal" href="/help" element={Link}>
-          Help
+          {t("action.help")}
         </Button>
       </Actions>
     </Section>
@@ -214,16 +214,16 @@ const OptionsSection: FC = () => {
 };
 
 const PatchNotesSection: FC = () => {
+  const { t } = useTranslation("landing", { keyPrefix: "aside.patchNotes" });
+
   return (
     <Section className="!gap-5">
-      <Header className="skc-headline-large">New in 0.4.0</Header>
-      <p className="skc-title-large">
-        This version brings a brand new MySK experience.
-      </p>
+      <Header className="skc-headline-large">{t("title")}</Header>
+      <p className="skc-title-large">{t("subtitle")}</p>
       <ul className="skc-body-medium list-disc pl-6">
-        <li>A completely redesigned interface</li>
-        <li>MySK Lookup: a database of the entire school at your fingertips</li>
-        <li>Bug fixes</li>
+        <li>{t("list.1")}</li>
+        <li>{t("list.2")}</li>
+        <li>{t("list.3")}</li>
       </ul>
       <p>
         <a
@@ -232,7 +232,7 @@ const PatchNotesSection: FC = () => {
           rel="noreferrer"
           className="link"
         >
-          More patch notes…
+          {t("action.more")}
         </a>
       </p>
     </Section>
@@ -240,26 +240,28 @@ const PatchNotesSection: FC = () => {
 };
 
 const CreditsSection: FC = () => {
+  const { t } = useTranslation("landing", { keyPrefix: "aside.credits" });
+
   return (
     <>
       <Section className="skc-body-small !gap-2">
-        <p>MySK is supervised by Supannee Supeerath and Atipol Sukrisadanon.</p>
+        <p>{t("supervisors")}</p>
+        <p>{t("developers")}</p>
         <p>
-          Its development was led by Siravit Phokeed and Smart
-          Wattanapornmongkol with help from Sadudee Theparree and Tempoom
-          Leelacharoen.
-        </p>
-        <p>
-          Translations to Thai contributed by{" "}
-          <a
-            href="https://www.instagram.com/sk.elc/"
-            target="_blank"
-            rel="noreferrer"
-            className="link"
-          >
-            Suankularb English Club
-          </a>
-          .
+          <Trans
+            i18nKey="aside.credits.translations"
+            ns="landing"
+            components={{
+              a: (
+                <a
+                  href="https://www.instagram.com/sk.elc/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="link"
+                />
+              ),
+            }}
+          />
         </p>
       </Section>
       <section className="flex flex-row items-center justify-end gap-4">
@@ -368,7 +370,7 @@ const IndexPage: CustomPage = () => {
           <div className="flex flex-col-reverse sm:contents">
             {/* Main section */}
             <Section className="relative z-10 mx-4 !gap-12 sm:mx-0">
-              <h1 className="skc-display-large">Your one-stop school portal</h1>
+              <h1 className="skc-display-large">{t("main.title")}</h1>
               <div className="flex flex-col gap-8">
                 <LoginSection />
                 <Divider />
@@ -385,7 +387,7 @@ const IndexPage: CustomPage = () => {
                 <MultiSchemeImage
                   srcLight={LandingPhoneLight}
                   srcDark={LandingPhoneDark}
-                  alt="Pink and blue hand holding phone with MySK logo"
+                  alt={t("imageAlt")}
                   className="-mx-[18rem] h-full max-w-[calc(100vw+36rem)]"
                 />
               </div>
