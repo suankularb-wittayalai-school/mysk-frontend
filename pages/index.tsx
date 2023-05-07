@@ -40,6 +40,7 @@ import {
 } from "@suankularb-components/react";
 
 // Internal components
+import RequestForgorDialog from "@/components/account/RequestForgorDialog";
 import MultiSchemeImage from "@/components/common/MultiSchemeImage";
 
 // Contexts
@@ -193,8 +194,8 @@ const LogInSection: FC = () => {
 };
 
 /**
- * A locale selector, a forgor process initiator, and a link to the Help page
- * (now just a prompt to email SK IT Solutions).
+ * A locale selector, a Forgot Password process initiator, and a link to the
+ * Help page (now just a prompt to email SK IT Solutions).
  *
  * @returns A Section.
  */
@@ -203,6 +204,8 @@ const OptionsSection: FC = () => {
   const { t } = useTranslation("landing", { keyPrefix: "main.options" });
 
   const refreshProps = useRefreshProps();
+
+  const [forgorOpen, setForgorOpen] = useState<boolean>(false);
 
   return (
     <Section className="!gap-4">
@@ -229,7 +232,17 @@ const OptionsSection: FC = () => {
         align="full"
         className="grid-cols-1 sm:mr-12 sm:!grid md:mr-0 md:!flex"
       >
-        <Button appearance="tonal">{t("action.forgor")}</Button>
+        <Button
+          appearance="tonal"
+          onClick={() => setForgorOpen(true)}
+          className={locale === "en-US" ? "!min-w-[13ch]" : undefined}
+        >
+          {t("action.forgor")}
+        </Button>
+        <RequestForgorDialog
+          open={forgorOpen}
+          onClose={() => setForgorOpen(false)}
+        />
         <Button
           appearance="tonal"
           // TODO: Change this back to `/help` when the Help page is done
@@ -309,12 +322,14 @@ const CreditsSection: FC = () => {
         <MultiSchemeImage
           srcLight={SKELCLight}
           srcDark={SKELCDark}
-          alt="Suankularb English Club"
+          alt={t("logo.skelc")}
+          priority
         />
         <MultiSchemeImage
           srcLight={SKISoLight}
           srcDark={SKISoDark}
-          alt="SK IT Solutions"
+          alt={t("logo.skiso")}
+          priority
         />
       </section>
     </>
@@ -408,6 +423,7 @@ const LandingPage: CustomPage = () => {
         srcLight={LandingBackgroundLight}
         srcDark={LandingBackgroundDark}
         alt=""
+        priority
         className="fixed inset-0 -z-10 [&_img]:h-full [&_img]:object-cover"
       />
 
