@@ -122,26 +122,31 @@ const Schedule: FC<{
                     {/* The periods in this row */}
                     <ul className="flex flex-row gap-2">
                       {row.content.map((period) => {
-                        const props = {
-                          key: [row.day, period.startTime].join("-"),
-                          isInSession: isInPeriod(
-                            now,
-                            day,
-                            period.startTime,
-                            period.duration
-                          ),
-                        };
+                        const isInSession = isInPeriod(
+                          now,
+                          day,
+                          period.startTime,
+                          period.duration
+                        );
 
                         return period.content.length === 1 ? (
                           <SubjectPeriod
+                            key={[row.day, period.startTime].join("-")}
                             period={period.content[0]}
                             day={row.day}
-                            {...props}
+                            isInSession={isInSession}
                           />
                         ) : period.content.length ? (
-                          <ElectivePeriod period={period} {...props} />
+                          <ElectivePeriod
+                            key={[row.day, period.startTime].join("-")}
+                            period={period}
+                            isInSession={isInSession}
+                          />
                         ) : (
-                          <EmptyPeriod {...props} />
+                          <EmptyPeriod
+                            key={[row.day, period.startTime].join("-")}
+                            isInSession={isInSession}
+                          />
                         );
                       })}
                     </ul>
