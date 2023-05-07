@@ -1,8 +1,22 @@
+/**
+ * `/` TABLE OF CONTENTS
+ *
+ * Note: `Ctrl` + click to jump to a component.
+ *
+ * **Sections**
+ * - {@link LogInSection}
+ * - {@link OptionsSection}
+ * - {@link PatchNotesSection}
+ * - {@link CreditsSection}
+ *
+ * **Page**
+ * - {@link LandingPage}
+ */
+
 // External libraries
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 import Head from "next/head";
-import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { Trans, useTranslation } from "next-i18next";
@@ -52,13 +66,18 @@ import { withLoading } from "@/utils/helpers/loading";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
+import { useRefreshProps } from "@/utils/hooks/routing";
 import { useToggle } from "@/utils/hooks/toggle";
 
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { useRefreshProps } from "@/utils/hooks/routing";
 
-const LoginSection: FC = () => {
+/**
+ * A form for logging in.
+ *
+ * @returns A Section.
+ */
+const LogInSection: FC = () => {
   // Router
   const locale = useLocale();
   const router = useRouter();
@@ -173,6 +192,12 @@ const LoginSection: FC = () => {
   );
 };
 
+/**
+ * A locale selector, a forgor process initiator, and a link to the Help page
+ * (now just a prompt to email SK IT Solutions).
+ *
+ * @returns A Section.
+ */
 const OptionsSection: FC = () => {
   const locale = useLocale();
   const { t } = useTranslation("landing", { keyPrefix: "main.options" });
@@ -205,7 +230,11 @@ const OptionsSection: FC = () => {
         className="grid-cols-1 sm:mr-12 sm:!grid md:mr-0 md:!flex"
       >
         <Button appearance="tonal">{t("action.forgor")}</Button>
-        <Button appearance="tonal" href="/help" element={Link}>
+        <Button
+          appearance="tonal"
+          // TODO: Change this back to `/help` when the Help page is done
+          href="mailto:itsolutions@sk.ac.th"
+        >
           {t("action.help")}
         </Button>
       </Actions>
@@ -213,6 +242,12 @@ const OptionsSection: FC = () => {
   );
 };
 
+/**
+ * A summary of all the changes in the latest patch (and the latest minor and
+ * major versions). Must be manually updated here in every update.
+ *
+ * @returns A Section.
+ */
 const PatchNotesSection: FC = () => {
   const { t } = useTranslation("landing", { keyPrefix: "aside.patchNotes" });
 
@@ -239,6 +274,12 @@ const PatchNotesSection: FC = () => {
   );
 };
 
+/**
+ * Credits to supervisors, developers, and organizations involved in creating
+ * and maintaining MySK.
+ *
+ * @returns 2 Sections.
+ */
 const CreditsSection: FC = () => {
   const { t } = useTranslation("landing", { keyPrefix: "aside.credits" });
 
@@ -280,8 +321,13 @@ const CreditsSection: FC = () => {
   );
 };
 
-// Page
-const IndexPage: CustomPage = () => {
+/**
+ * The landing for users who have not yet logged in. Contains the form for
+ * logging in, links to public pages, patch notes, and credits.
+ *
+ * @returns A Page.
+ */
+const LandingPage: CustomPage = () => {
   const locale = useLocale();
   const { t } = useTranslation(["landing", "common"]);
 
@@ -378,7 +424,7 @@ const IndexPage: CustomPage = () => {
                 {t("main.title")}
               </h1>
               <div className="flex flex-col gap-8">
-                <LoginSection />
+                <LogInSection />
                 <Divider />
                 <OptionsSection />
               </div>
@@ -413,11 +459,9 @@ const IndexPage: CustomPage = () => {
 };
 
 export const getStaticProps = async ({ locale }: { locale: LangCode }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ["common", "account", "landing"])),
-  },
+  props: await serverSideTranslations(locale, ["common", "account", "landing"]),
 });
 
-IndexPage.navType = "hidden";
+LandingPage.navType = "hidden";
 
-export default IndexPage;
+export default LandingPage;
