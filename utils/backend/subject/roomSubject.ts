@@ -44,7 +44,11 @@ export async function getTeachingSubjectClasses(
     return { data: [], error: null };
   }
 
-  const teacherIDs = data.map((roomSubject) => roomSubject.teacher).flat();
+  const teacherIDs = data
+    .map((roomSubject) =>
+      roomSubject.teacher.concat(roomSubject.coteacher || [])
+    )
+    .flat();
 
   const { data: teachersData, error: teacherError } = await supabase
     .from("teacher")
