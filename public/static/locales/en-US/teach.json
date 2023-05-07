@@ -7,18 +7,61 @@
     "title": "Subjects",
     "search": "Search subjects",
     "action": {
-      "add": "Add subject",
+      "setUp": "Set up",
       "seeDetails": "See details"
     }
   },
   "dialog": {
-    "addSubject": {
-      "title": "Add subject",
-      "supportingText": "Select a subject, then assign the classes you will teach this subject to.",
-      "subject": "Subject",
-      "addClasses": "Add classes",
+    "subjectClasses": {
+      "loading": "Loading classes…",
+      "summary": {
+        "subject": "Subject",
+        "subjectCode": "Subject code"
+      },
+      "thead": {
+        "class": "Class",
+        "classCode": "Classroom code",
+        "teachers": "Teachers",
+        "coTeachers": "Co-teachers",
+        "classLink": "Classroom link",
+        "meetLink": "Meet link"
+      },
+      "rowAction": {
+        "classLink": "Open Google Classroom",
+        "meetLink": "Open Google Meet",
+        "edit": "Edit this entry",
+        "delete": "Delete this entry"
+      },
       "action": {
-        "cancel": "Cancel",
+        "addClass": "Add class"
+      }
+    },
+    "roomSubject": {
+      "title": {
+        "add": "Add a class to subject",
+        "edit": "Edit class of subject"
+      },
+      "class": "Class",
+      "class_helper": "The class you’re teaching this subject to.",
+      "people": {
+        "title": "People",
+        "desc": "Add teachers and co-teachers that teach this subject to this class. They will see this class on their list.",
+        "teachers": "Teachers",
+        "coTeachers": "Co-teachers"
+      },
+      "google": {
+        "title": "Google services",
+        "desc": "<a>Create a class</a> on Google Classroom first. Then, enter information related to that class to let students find your class via MySK.",
+        "ggcCode": "Google Classroom code",
+        "ggcCode_helper": "Learn <a>how to get the code</a>.",
+        "ggcLink": "Google Classroom link",
+        "ggcLink_helper": "Learn <a>how to get the link</a>.",
+        "ggcLink_error": "Ensure you copied the entire link.",
+        "ggMeetLink": "Google Meet link",
+        "ggMeetLink_error": "Ensure you copied the entire link."
+      },
+      "action": {
+        "save": "Save",
         "add": "Add"
       }
     }

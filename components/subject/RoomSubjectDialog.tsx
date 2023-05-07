@@ -1,7 +1,7 @@
 // External libraries
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
-import { useTranslation } from "next-i18next";
+import { Trans, useTranslation } from "next-i18next";
 import { FC, useContext, useEffect } from "react";
 
 // SK Components
@@ -63,25 +63,24 @@ const PeopleSection: FC<{
   form: FormControlValues<"teachers" | "coTeachers">;
   setForm: (form: FormControlValues<"teachers" | "coTeachers">) => void;
 }> = ({ form, setForm }) => {
-  const { t } = useTranslation("teach");
+  const { t } = useTranslation("teach", {
+    keyPrefix: "dialog.roomSubject.people",
+  });
 
   return (
     <Section sectionAttr={{ "aria-labelledby": "header-people" }}>
       <h2 id="header-people" className="skc-title-large">
-        People
+        {t("title")}
       </h2>
-      <p className="skc-body-medium pb-3">
-        Add other teachers and co-teachers that also teach this subject to this
-        class. They will also see this class in their list.
-      </p>
+      <p className="skc-body-medium pb-3">{t("desc")}</p>
       <div className="flex flex-col gap-6">
         <TeachersField
-          label="Teachers"
+          label={t("teachers")}
           teachers={form.teachers}
           onChange={(teachers) => setForm({ ...form, teachers })}
         />
         <TeachersField
-          label="Co-teachers"
+          label={t("coTeachers")}
           teachers={form.coTeachers}
           onChange={(coTeachers) => setForm({ ...form, coTeachers })}
         />
@@ -100,24 +99,30 @@ const PeopleSection: FC<{
 const GoogleSection: FC<{
   formProps: FormControlProps<"ggcCode" | "ggcLink" | "ggMeetLink">;
 }> = ({ formProps }) => {
-  const { t } = useTranslation("teach");
+  const { t } = useTranslation("teach", {
+    keyPrefix: "dialog.roomSubject.google",
+  });
 
   return (
     <Section sectionAttr={{ "aria-labelledby": "header-google" }}>
       <h2 id="header-google" className="skc-title-large">
-        <BrandIcon icon="google" className="inline-block" /> Google services
+        <BrandIcon icon="google" className="inline-block" /> {t("title")}
       </h2>
       <p className="skc-body-medium pb-3">
-        <a
-          href="https://support.google.com/edu/classroom/answer/6020273"
-          target="_blank"
-          rel="noreferrer"
-          className="link"
-        >
-          Create a class
-        </a>{" "}
-        on Google Classroom first. Then, enter information related to that class
-        to let students find your class via MySK.
+        <Trans
+          i18nKey="dialog.roomSubject.google.desc"
+          ns="teach"
+          components={{
+            a: (
+              <a
+                href="https://support.google.com/edu/classroom/answer/6020273"
+                target="_blank"
+                rel="noreferrer"
+                className="link"
+              />
+            ),
+          }}
+        />
       </p>
 
       {/* Fields */}
@@ -125,20 +130,22 @@ const GoogleSection: FC<{
         {/* GGC code */}
         <TextField
           appearance="outlined"
-          label="Google Classroom code"
+          label={t("ggcCode")}
           helperMsg={
-            <>
-              Learn{" "}
-              <a
-                href="https://support.google.com/edu/classroom/answer/6020282#zippy=%2Cinvite-students-with-a-class-code"
-                target="_blank"
-                rel="noreferrer"
-                className="link"
-              >
-                how to get the code
-              </a>
-              .
-            </>
+            <Trans
+              i18nKey="dialog.roomSubject.google.ggcCode_helper"
+              ns="teach"
+              components={{
+                a: (
+                  <a
+                    href="https://support.google.com/edu/classroom/answer/6020282#zippy=%2Cinvite-students-with-a-class-code"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="link"
+                  />
+                ),
+              }}
+            />
           }
           {...formProps.ggcCode}
         />
@@ -146,20 +153,22 @@ const GoogleSection: FC<{
         {/* GGC link */}
         <TextField
           appearance="outlined"
-          label="Google Classroom link"
+          label={t("ggcLink")}
           helperMsg={
-            <>
-              Learn{" "}
-              <a
-                href="https://support.google.com/edu/classroom/answer/6020282#zippy=%2Cinvite-students-with-an-invite-link"
-                target="_blank"
-                rel="noreferrer"
-                className="link"
-              >
-                how to get the link
-              </a>
-              .
-            </>
+            <Trans
+              i18nKey="dialog.roomSubject.google.ggcLink_helper"
+              ns="teach"
+              components={{
+                a: (
+                  <a
+                    href="https://support.google.com/edu/classroom/answer/6020282#zippy=%2Cinvite-students-with-a-class-code"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="link"
+                  />
+                ),
+              }}
+            />
           }
           className="sm:col-span-2"
           {...formProps.ggcLink}
@@ -168,7 +177,7 @@ const GoogleSection: FC<{
         {/* Google Meet link */}
         <TextField
           appearance="outlined"
-          label="Google Meet link"
+          label={t("ggMeetLink")}
           className="sm:col-span-2"
           {...formProps.ggMeetLink}
         />
@@ -193,7 +202,8 @@ const RoomSubjectDialog: SubmittableDialogComponent<
   () => void,
   { data?: SubjectListItem; subject: SubjectWNameAndCode }
 > = ({ open, onClose, onSubmit, data, subject }) => {
-  const { t } = useTranslation(["teach", "common"]);
+  const { t } = useTranslation("teach", { keyPrefix: "dialog.roomSubject" });
+  const { t: tx } = useTranslation("common");
 
   const { setSnackbar } = useContext(SnackbarContext);
 
@@ -244,9 +254,7 @@ const RoomSubjectDialog: SubmittableDialogComponent<
     withLoading(
       async () => {
         if (!formOK) {
-          setSnackbar(
-            <Snackbar>{t("snackbar.formInvalid", { ns: "common" })}</Snackbar>
-          );
+          setSnackbar(<Snackbar>{tx("snackbar.formInvalid")}</Snackbar>);
           return false;
         }
 
@@ -275,9 +283,7 @@ const RoomSubjectDialog: SubmittableDialogComponent<
         }
 
         if (hasError) {
-          setSnackbar(
-            <Snackbar>{t("snackbar.failure", { ns: "common" })}</Snackbar>
-          );
+          setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
           return false;
         }
 
@@ -294,14 +300,14 @@ const RoomSubjectDialog: SubmittableDialogComponent<
   return (
     <FullscreenDialog
       open={open}
-      title={data ? "Edit class of subject" : "Add a class to subject"}
+      title={data ? t("title.edit") : t("title.add")}
       action={
         <Button
           appearance="text"
           onClick={handleSubmit}
           loading={loading || undefined}
         >
-          {data ? "Save" : "Add"}
+          {data ? t("action.save") : t("action.add")}
         </Button>
       }
       width={580}
@@ -311,8 +317,8 @@ const RoomSubjectDialog: SubmittableDialogComponent<
       <Columns columns={2} className="!gap-y-9 pb-5">
         <TextField
           appearance="outlined"
-          label="Class"
-          helperMsg="The class you’re teaching this subject to."
+          label={t("class")}
+          helperMsg={t("class_helper")}
           {...formProps.class}
         />
       </Columns>

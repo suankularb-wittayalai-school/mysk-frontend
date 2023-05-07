@@ -14,7 +14,8 @@ import {
   Button,
   Columns,
   ContentLayout,
-  MaterialIcon
+  MaterialIcon,
+  Section,
 } from "@suankularb-components/react";
 
 // Internal components
@@ -23,9 +24,7 @@ import TeachingSubjectCard from "@/components/subject/TeachingSubjectCard";
 
 // Backend
 import { getUserMetadata } from "@/utils/backend/account";
-import {
-  getTeachingSubjects
-} from "@/utils/backend/subject/roomSubject";
+import { getTeachingSubjects } from "@/utils/backend/subject/roomSubject";
 
 // Helpers
 import { createTitleStr } from "@/utils/helpers/title";
@@ -50,11 +49,13 @@ const YourSubjectsPage: CustomPage<{
         parentURL="/account/welcome/your-information"
       />
       <ContentLayout>
-        <Columns columns={3}>
-          {subjects.map((subject) => (
-            <TeachingSubjectCard key={subject.id} subject={subject} />
-          ))}
-        </Columns>
+        <Section>
+          <Columns columns={3}>
+            {subjects.map((subject) => (
+              <TeachingSubjectCard key={subject.id} subject={subject} />
+            ))}
+          </Columns>
+        </Section>
         <Actions className="mx-4 sm:mx-0 sm:mb-20">
           <Button
             appearance="filled"
@@ -99,6 +100,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       ...(await serverSideTranslations(locale as LangCode, [
         "common",
         "welcome",
+        "teach",
       ])),
       subjects,
     },
