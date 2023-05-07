@@ -365,12 +365,12 @@ const IndexPage: CustomPage = () => {
       <ContentLayout className="overflow-hidden md:overflow-visible">
         <div
           className="-mt-8 grid grid-cols-1 gap-6 sm:mt-4
-            sm:grid-cols-2 md:grid-cols-[4fr,5fr,3fr]"
+            sm:grid-cols-2 md:grid-cols-[minmax(0,4fr),5fr,3fr]"
         >
           <div className="flex flex-col-reverse sm:contents">
             {/* Main section */}
             <Section className="relative z-10 mx-4 !gap-12 sm:mx-0">
-              <h1 className="skc-display-large">{t("main.title")}</h1>
+              <h1 className="skc-display-large lg:min-w-[12ch]">{t("main.title")}</h1>
               <div className="flex flex-col gap-8">
                 <LoginSection />
                 <Divider />
