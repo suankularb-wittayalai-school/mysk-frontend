@@ -56,14 +56,9 @@ const ShareDialog: DialogComponent<{
               ? t("people.dialog.share.saveVCard.segment.teacherPrefix")
               : ""
           };`,
-          `FN:${nameJoiner(
-            locale,
-            person.name,
-            person.role === "teacher"
-              ? { th: "อ. ", "en-US": "T." }
-              : undefined,
-            { prefix: person.role === "teacher" }
-          )}`,
+          `FN:${nameJoiner(locale, person.name, undefined, {
+            prefix: person.role === "teacher" ? "teacher" : false,
+          })}`,
 
           // Birthday
           `BDAY:${person.birthdate.split("-").join("")}`,

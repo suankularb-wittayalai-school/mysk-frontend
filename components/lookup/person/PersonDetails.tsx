@@ -39,7 +39,7 @@ const PersonDetails: FC<
           <PersonHeader {...{ person, suggestionsType }} />
           <Progress
             appearance="linear"
-            alt="Loading person details…"
+            alt={t("people.detail.loading")}
             visible={loading}
             className="sticky -mb-1"
           />

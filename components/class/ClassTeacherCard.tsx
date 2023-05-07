@@ -59,7 +59,9 @@ const ClassTeacherCard: FC<{
             }
           />
         }
-        title={nameJoiner(locale, teacher.name)}
+        title={nameJoiner(locale, teacher.name, undefined, {
+          prefix: "teacher",
+        })}
         className="!text-left"
       />
     </Card>

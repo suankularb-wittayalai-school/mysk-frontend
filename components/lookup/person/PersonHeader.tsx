@@ -35,7 +35,11 @@ const PersonHeader: FC<ComponentProps<typeof PersonActions>> = ({
       />
       <div className="flex flex-col gap-4 md:gap-2">
         <Header hAttr={{ id: "header-person-details" }}>
-          {person ? nameJoiner(locale, person.name) : t("loading")}
+          {person
+            ? nameJoiner(locale, person.name, undefined, {
+                prefix: person.role === "teacher" ? "teacher" : false,
+              })
+            : t("loading")}
         </Header>
         <PersonActions {...{ person, suggestionsType }} />
       </div>

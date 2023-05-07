@@ -12,12 +12,12 @@ import { useLocale } from "@/utils/hooks/i18n";
 
 const HoverList: FC<{
   people: { name: Person["name"]; prefix?: Person["prefix"] }[];
-  truncate?: boolean;
   options?: Partial<{
     nameJoinerOptions: Parameters<typeof nameJoiner>["3"];
     maxVisibleLength: number;
   }>;
-}> = ({ people, truncate, options }) => {
+  className?: string;
+}> = ({ people, options, className }) => {
   const locale = useLocale();
 
   /**
@@ -26,7 +26,7 @@ const HoverList: FC<{
   const maxVisibleLength = options?.maxVisibleLength || 1;
 
   return (
-    <span className={truncate ? "truncate" : undefined}>
+    <span className={className}>
       {people.length > 0 &&
         // Visible names
         people
