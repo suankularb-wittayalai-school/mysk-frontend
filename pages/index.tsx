@@ -2,6 +2,7 @@
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 import Head from "next/head";
+import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
@@ -13,7 +14,6 @@ import { FC, useContext, useEffect, useState } from "react";
 import {
   Actions,
   Button,
-  Columns,
   ContentLayout,
   Divider,
   Header,
@@ -26,27 +26,28 @@ import {
 } from "@suankularb-components/react";
 
 // Internal components
-import RequestForgorDialog from "@/components/account/RequestForgorDialog";
 import MultiSchemeImage from "@/components/common/MultiSchemeImage";
 
 // Contexts
 import SnackbarContext from "@/contexts/SnackbarContext";
 
 // Images
-import LandingBackgroundLight from "@/public/images/graphics/landing/background-light.svg";
 import LandingBackgroundDark from "@/public/images/graphics/landing/background-dark.svg";
-import LandingPhoneLight from "@/public/images/graphics/landing/phone-light.svg";
+import LandingBackgroundLight from "@/public/images/graphics/landing/background-light.svg";
+
 import LandingPhoneDark from "@/public/images/graphics/landing/phone-dark.svg";
-import SKISoLight from "@/public/images/orgs/skiso-light.svg";
-import SKISoDark from "@/public/images/orgs/skiso-dark.svg";
-import SKELCLight from "@/public/images/orgs/skelc-light.svg";
+import LandingPhoneLight from "@/public/images/graphics/landing/phone-light.svg";
+
 import SKELCDark from "@/public/images/orgs/skelc-dark.svg";
+import SKELCLight from "@/public/images/orgs/skelc-light.svg";
+
+import SKISoDark from "@/public/images/orgs/skiso-dark.svg";
+import SKISoLight from "@/public/images/orgs/skiso-light.svg";
 
 // Backend
 import { getUserMetadata } from "@/utils/backend/account";
 
 // Helpers
-import { cn } from "@/utils/helpers/className";
 import { withLoading } from "@/utils/helpers/loading";
 
 // Hooks
@@ -55,6 +56,7 @@ import { useToggle } from "@/utils/hooks/toggle";
 
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
+import { useRefreshProps } from "@/utils/hooks/routing";
 
 const LoginSection: FC = () => {
   // Router
@@ -173,10 +175,11 @@ const LoginSection: FC = () => {
 
 const OptionsSection: FC = () => {
   const locale = useLocale();
-  const router = useRouter();
+  const refreshProps = useRefreshProps();
 
   return (
     <Section className="!gap-4">
+      {/* Language selector */}
       <Select
         appearance="outlined"
         label="Language"
@@ -186,19 +189,25 @@ const OptionsSection: FC = () => {
         onChange={(locale) => {
           // Remember the preference
           localStorage.setItem("preferredLang", locale);
-          // Redirect back
-          router.replace(router.asPath, router.asPath, { locale });
+          // Redirect to the new language
+          refreshProps({ locale });
         }}
       >
         <MenuItem value="en-US">English</MenuItem>
         <MenuItem value="th">ภาษาไทย</MenuItem>
       </Select>
+
+      {/* Actions */}
       <Actions
         align="full"
         className="grid-cols-1 sm:mr-12 sm:!grid md:mr-0 md:!flex"
       >
-        <Button appearance="tonal">Instant log in</Button>
-        <Button appearance="tonal">Help</Button>
+        <Button appearance="tonal" tooltip="Feature not yet available" disabled>
+          Instant log in
+        </Button>
+        <Button appearance="tonal" href="/help" element={Link}>
+          Help
+        </Button>
       </Actions>
     </Section>
   );
@@ -216,23 +225,65 @@ const PatchNotesSection: FC = () => {
         <li>MySK Lookup: a database of the entire school at your fingertips</li>
         <li>Bug fixes</li>
       </ul>
-      <a
-        href="https://github.com/suankularb-wittayalai-school/mysk-frontend/pulls?q=is%3Apr+is%3Aclosed+base%3Amain+release+in%3Atitle"
-        target="_blank"
-        rel="noreferrer"
-        className="link"
-      >
-        More patch notes…
-      </a>
+      <p>
+        <a
+          href="https://github.com/suankularb-wittayalai-school/mysk-frontend/pulls?q=is%3Apr+is%3Aclosed+base%3Amain+release+in%3Atitle"
+          target="_blank"
+          rel="noreferrer"
+          className="link"
+        >
+          More patch notes…
+        </a>
+      </p>
     </Section>
+  );
+};
+
+const CreditsSection: FC = () => {
+  return (
+    <>
+      <Section className="skc-body-small !gap-2">
+        <p>MySK is supervised by Supannee Supeerath and Atipol Sukrisadanon.</p>
+        <p>
+          Its development was led by Siravit Phokeed and Smart
+          Wattanapornmongkol with help from Sadudee Theparree and Tempoom
+          Leelacharoen.
+        </p>
+        <p>
+          Translations to Thai contributed by{" "}
+          <a
+            href="https://www.instagram.com/sk.elc/"
+            target="_blank"
+            rel="noreferrer"
+            className="link"
+          >
+            Suankularb English Club
+          </a>
+          .
+        </p>
+      </Section>
+      <section className="flex flex-row items-center justify-end gap-4">
+        <MultiSchemeImage
+          srcLight={SKELCLight}
+          srcDark={SKELCDark}
+          alt="Suankularb English Club"
+        />
+        <MultiSchemeImage
+          srcLight={SKISoLight}
+          srcDark={SKISoDark}
+          alt="SK IT Solutions"
+        />
+      </section>
+    </>
   );
 };
 
 // Page
 const IndexPage: CustomPage = () => {
-  // Translation
   const locale = useLocale();
   const { t } = useTranslation(["landing", "common"]);
+
+  const refreshProps = useRefreshProps();
 
   // Language detection redirect
   // Thanks @Jimmy-Tempest!
@@ -247,7 +298,7 @@ const IndexPage: CustomPage = () => {
       if (preferredLang === locale) return;
 
       // Otherwise, redirect to the correct language
-      router.replace(router.asPath, router.asPath, { locale: preferredLang });
+      refreshProps({ locale: preferredLang });
     }
 
     // If the user has not set a preferred language, set it to the current one
@@ -260,7 +311,7 @@ const IndexPage: CustomPage = () => {
       // If the browser language is not supported by MySK, set to Englsih
       if (!["th", "en-US"].includes(browserLocale)) {
         localStorage.setItem("preferredLang", "en-US");
-        router.replace(router.asPath, router.asPath, { locale: "en-US" });
+        refreshProps({ locale: "en-US" });
       }
 
       // Otherwise, set to the browser language
@@ -268,9 +319,7 @@ const IndexPage: CustomPage = () => {
         localStorage.setItem("preferredLang", browserLocale);
 
         // Then redirect the user
-        router.replace(router.asPath, router.asPath, {
-          locale: browserLocale,
-        });
+        refreshProps({ locale: browserLocale });
       }
     }
 
@@ -311,12 +360,13 @@ const IndexPage: CustomPage = () => {
         alt=""
         className="fixed inset-0 -z-10 [&_img]:h-full [&_img]:object-cover"
       />
-      <ContentLayout>
+      <ContentLayout className="overflow-hidden md:overflow-visible">
         <div
-          className="-mt-8 grid grid-cols-1 gap-6 overflow-hidden sm:mt-4
-            sm:grid-cols-2 sm:overflow-visible md:grid-cols-[4fr,5fr,3fr]"
+          className="-mt-8 grid grid-cols-1 gap-6 sm:mt-4
+            sm:grid-cols-2 md:grid-cols-[4fr,5fr,3fr]"
         >
           <div className="flex flex-col-reverse sm:contents">
+            {/* Main section */}
             <Section className="relative z-10 mx-4 !gap-12 sm:mx-0">
               <h1 className="skc-display-large">Your one-stop school portal</h1>
               <div className="flex flex-col gap-8">
@@ -325,58 +375,27 @@ const IndexPage: CustomPage = () => {
                 <OptionsSection />
               </div>
             </Section>
-            <div
-              className="relative grid h-[28rem] place-content-center
-                sm:h-[calc(100vh-5rem)]"
-            >
-              <MultiSchemeImage
-                srcLight={LandingPhoneLight}
-                srcDark={LandingPhoneDark}
-                alt="Pink and blue hand holding phone with MySK logo."
-                className="relative -mx-[18rem] h-full
-                  max-w-[calc(100vw+36rem)] sm:-right-16 md:right-0"
-              />
+
+            {/* Image */}
+            <div className="h-[28rem]">
+              <div
+                className="relative grid h-full place-content-center sm:fixed
+                  sm:-right-8 sm:top-8 sm:h-[calc(100vh-5rem)] md:static"
+              >
+                <MultiSchemeImage
+                  srcLight={LandingPhoneLight}
+                  srcDark={LandingPhoneDark}
+                  alt="Pink and blue hand holding phone with MySK logo"
+                  className="-mx-[18rem] h-full max-w-[calc(100vw+36rem)]"
+                />
+              </div>
             </div>
           </div>
 
-          <Section className="z-10 mx-4 !gap-9 sm:mx-0">
+          {/* Supplementary section */}
+          <Section className="z-10 mx-4 mt-16 !gap-9 sm:mx-0 md:mt-0">
             <PatchNotesSection />
-            <Section className="skc-body-small !gap-2">
-              <p>
-                MySK is supervised by Supannee Supeerath and Atipol
-                Sukrisadanon.
-              </p>
-              <p>
-                Its development was led by Siravit Phokeed and Smart
-                Wattanapornmongkol with help from Sadudee Theparree and Tempoom
-                Leelacharoen.
-              </p>
-              <p>
-                Translations to Thai contributed by{" "}
-                <a
-                  href="https://www.instagram.com/sk.elc/"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="link"
-                >
-                  Suankularb English Club
-                </a>
-                .
-              </p>
-            </Section>
-
-            <section className="flex flex-row items-center justify-end gap-4">
-              <MultiSchemeImage
-                srcLight={SKELCLight}
-                srcDark={SKELCDark}
-                alt="Suankularb English Club"
-              />
-              <MultiSchemeImage
-                srcLight={SKISoLight}
-                srcDark={SKISoDark}
-                alt="SK IT Solutions"
-              />
-            </section>
+            <CreditsSection />
           </Section>
         </div>
       </ContentLayout>
