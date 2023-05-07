@@ -2,6 +2,8 @@
 import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
 
+import { Analytics } from "@vercel/analytics/react";
+
 import { MotionConfig } from "framer-motion";
 
 import {
@@ -162,6 +164,7 @@ function App({ Component, pageProps }: CustomAppProps) {
                 </ErrorBoundary>
               </Layout>
             </ThemeProvider>
+            <Analytics />
           </MotionConfig>
         </Contexts>
       </SessionContextProvider>
