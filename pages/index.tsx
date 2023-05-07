@@ -356,21 +356,27 @@ const IndexPage: CustomPage = () => {
           content={t("brand.description", { ns: "common" })}
         />
       </Head>
+
+      {/* Background */}
       <MultiSchemeImage
         srcLight={LandingBackgroundLight}
         srcDark={LandingBackgroundDark}
         alt=""
         className="fixed inset-0 -z-10 [&_img]:h-full [&_img]:object-cover"
       />
+
+      {/* Content */}
       <ContentLayout className="overflow-hidden md:overflow-visible">
         <div
-          className="-mt-8 grid grid-cols-1 gap-6 sm:mt-4
+          className="-mt-8 grid grid-cols-1 gap-6 sm:my-4
             sm:grid-cols-2 md:grid-cols-[minmax(0,4fr),5fr,3fr]"
         >
           <div className="flex flex-col-reverse sm:contents">
             {/* Main section */}
             <Section className="relative z-10 mx-4 !gap-12 sm:mx-0">
-              <h1 className="skc-display-large lg:min-w-[12ch]">{t("main.title")}</h1>
+              <h1 className="skc-display-large lg:min-w-[12ch]">
+                {t("main.title")}
+              </h1>
               <div className="flex flex-col gap-8">
                 <LoginSection />
                 <Divider />
@@ -388,6 +394,7 @@ const IndexPage: CustomPage = () => {
                   srcLight={LandingPhoneLight}
                   srcDark={LandingPhoneDark}
                   alt={t("imageAlt")}
+                  priority
                   className="-mx-[18rem] h-full max-w-[calc(100vw+36rem)]"
                 />
               </div>
