@@ -1,8 +1,8 @@
 // External libraries
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 
 import { Trans, useTranslation } from "next-i18next";
-import { FC, useContext, useEffect } from "react";
+import { FC, useContext, useEffect, useMemo } from "react";
 
 // SK Components
 import {
@@ -50,6 +50,7 @@ import {
   ggcCodeRegex,
   ggcLinkRegex,
 } from "@/utils/patterns";
+import { getPersonFromUser } from "@/utils/backend/person/person";
 
 /**
  * Teachers and Co-teachers.
@@ -229,11 +230,31 @@ const RoomSubjectDialog: SubmittableDialogComponent<
     },
   ]);
 
+  // Fetch the Teacher that is the user
+  const user = useUser();
+  const supabase = useSupabaseClient();
+  const userTeacher = useMemo(async () => {
+    if (!user || data) return;
+    const { data: teacher, error } = await getPersonFromUser(supabase, user);
+    if (error) return null;
+    return teacher as Teacher;
+  }, [user?.id]);
+
+  // Teachers Chip Field default if in add mode
   useEffect(() => {
-    if (!data) {
-      resetForm();
-      return;
-    }
+    if (!open || data) return;
+    resetForm();
+    // If the Teacher is fetched, insert it into the Teachers Chip Field
+    (async () => {
+      if (await userTeacher)
+        setForm({ ...form, teachers: [await userTeacher] });
+    })();
+    return;
+  }, [open, userTeacher]);
+
+  // Populate form with data if in edit mode
+  useEffect(() => {
+    if (!data) return;
     setForm({
       class: String(data.classroom.number),
       teachers: data.teachers,
@@ -244,7 +265,6 @@ const RoomSubjectDialog: SubmittableDialogComponent<
     });
   }, [data]);
 
-  const supabase = useSupabaseClient();
   const [loading, toggleLoading] = useToggle();
 
   /**
