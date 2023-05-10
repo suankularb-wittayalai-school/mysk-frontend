@@ -439,7 +439,7 @@ const LandingPage: CustomPage = () => {
         >
           <div className="flex flex-col-reverse sm:contents">
             {/* Main section */}
-            <Section className="relative z-10 mx-4 !gap-12 sm:mx-0">
+            <Section className="relative z-20 mx-4 !gap-12 sm:mx-0">
               <h1 className="skc-display-large lg:min-w-[12ch]">
                 {t("main.title")}
               </h1>
