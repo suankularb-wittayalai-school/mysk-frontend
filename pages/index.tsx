@@ -22,7 +22,7 @@ import { useRouter } from "next/router";
 import { Trans, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { FC, useContext, useEffect, useState } from "react";
+import { FC, forwardRef, useContext, useEffect, useState } from "react";
 
 // SK Components
 import {
@@ -246,7 +246,11 @@ const OptionsSection: FC = () => {
         <Button
           appearance="tonal"
           // TODO: Change this back to `/help` when the Help page is done
-          href="mailto:itsolutions@sk.ac.th"
+          href="https://docs.google.com/document/d/1yAEVK09BgbpFIPpG5j1xvfCRUGUdRyL9S1gAxh9UjfU/edit?usp=share_link"
+          // eslint-disable-next-line react/display-name
+          element={forwardRef((props, ref) => (
+            <a {...props} ref={ref} target="_blank" rel="noreferrer" />
+          ))}
         >
           {t("action.help")}
         </Button>
