@@ -196,6 +196,4 @@ export const getServerSideProps: GetServerSideProps = async ({
   };
 };
 
-NewsPage.navType = "student";
-
 export default NewsPage;
