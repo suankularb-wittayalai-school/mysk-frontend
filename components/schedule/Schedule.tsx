@@ -6,10 +6,10 @@ import { FC, RefObject, useEffect, useRef, useState } from "react";
 
 // Internal components
 import DayCard from "@/components/schedule/DayCard";
-import NowLine from "@/components/schedule/NowLine";
-import NumbersRow from "@/components/schedule/NumbersRow";
 import ElectivePeriod from "@/components/schedule/ElectivePeriod";
 import EmptyPeriod from "@/components/schedule/EmptyPeriod";
+import NowLine from "@/components/schedule/NowLine";
+import NumbersRow from "@/components/schedule/NumbersRow";
 import PeriodAdditionHint from "@/components/schedule/PeriodAdditionHint";
 import SubjectPeriod from "@/components/schedule/SubjectPeriod";
 import SubjectsInChargeCard from "@/components/schedule/SubjectsInChargeCard";
@@ -29,6 +29,16 @@ import { Role } from "@/utils/types/person";
 import { PeriodLocation, Schedule } from "@/utils/types/schedule";
 import { SubjectWNameAndCode } from "@/utils/types/subject";
 
+/**
+ * An interactive Schedule.
+ *
+ * @param schedule Data for displaying Schedule.
+ * @param subjectsInCharge The Subjects assigned to this teacher. Used in editing the Schedule.
+ * @param teacherID The Teacher’s database ID. Used in validating edits in the Schedule.
+ * @param role The user’s role. Used in determining the Schedule view.
+ *
+ * @returns A JSX Element.
+ */
 const Schedule: FC<{
   schedule: Schedule;
   subjectsInCharge?: SubjectWNameAndCode[];
@@ -86,10 +96,14 @@ const Schedule: FC<{
         constraintsRef: scheduleRef,
       }}
     >
-      <div className="relative !mx-0 -my-2 flex flex-col-reverse gap-3 sm:flex-col">
+      <div
+        className="relative !mx-0 -my-2 flex flex-col-reverse gap-3
+          sm:flex-col"
+      >
         {role === "teacher" && (
           <>
-            {/* Subjects in Charge Card: for Subjects to be added to Schedule */}
+            {/* Subjects in Charge Card: for Subjects to be added to
+                Schedule */}
             <SubjectsInChargeCard subjects={subjectsInCharge!} />
             <p className="mx-4 sm:mx-0">{t("schedule.additionGuide")}</p>
           </>
