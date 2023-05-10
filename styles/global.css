@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Material Symbols Outlined";
+  font-weight: 100 700;
+  font-style: normal;
+  src: url(/fonts/material-symbols.woff2) format("woff2");
+}
+
+@layer base {
+  * {
+    @apply outline-offset-4;
+  }
+
+  html {
+    @apply accent-primary;
+  }
+
+  body {
+    @apply bg-background font-body text-on-background;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    html {
+      @apply [color-scheme:dark];
+    }
+  }
+}
+
+@layer utilities {
+  .tap-highlight-none {
+    @apply [-webkit-tap-highlight-color:transparent];
+  }
+
+  .fixed-center {
+    @apply fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2;
+  }
+
+  .center-all {
+    @apply grid place-items-center [grid-template-areas:"center"];
+  }
+
+  .center-all * {
+    @apply [grid-area:center];
+  }
+}
+
+@layer components {
+  .kbd {
+    @apply -my-1 inline-block select-none rounded-sm border-[0.25px] border-b-2
+      border-outline-variant bg-surface-2 px-2 py-1 active:-mb-[3.5px]
+      active:translate-y-0.5 active:border-b-[0.25px];
+  }
+
+  .link,
+  .markdown a {
+    @apply font-medium text-primary underline decoration-primary decoration-2
+      underline-offset-4 transition-[text-decoration-color]
+      hover:decoration-tertiary hover:transition-none
+      focus-visible:decoration-tertiary focus-visible:transition-none;
+  }
+
+  .markdown {
+    @apply prose max-w-none font-body text-base text-on-background
+      dark:prose-invert prose-headings:font-display
+      prose-h5:text-on-primary-container prose-h6:font-body
+      prose-h6:text-on-primary-container prose-li:marker:font-display
+      prose-li:marker:text-outline;
+  }
+}

@@ -1,12 +1,9 @@
 {
-  "title": {
-    "title": "News",
-    "subtitle": "and Forms"
-  },
+  "title": "News and forms",
   "filter": {
-    "forms": "Forms",
     "info": "Info",
-    "payments": "Payments",
+    "form": "Forms",
+    "payment": "Payments",
     "amountDone": {
       "notDone": "Not done",
       "done": "Done",
@@ -32,27 +29,26 @@
     "dueWithin": "Due within {{dueDate}}",
     "pastDueBy": "Past due by {{timePast}}"
   },
-  "itemAction": {
-    "edit": "Edit",
-    "info": "Read more",
-    "stats": "Read more",
-    "form": {
-      "do": "Do form",
-      "edit": "Edit form"
-    },
-    "payment": {
-      "do": "Pay",
-      "edit": "See payment"
-    }
-  },
-  "pageAction": {
+  "action": {
     "admin": {
       "edit": "Edit article"
     },
+    "common": {
+      "copyLink": "Copy link"
+    },
     "form": {
+      "do": "Do form",
       "reset": "Reset",
       "submit": "Submit form"
     }
+  },
+  "snackbar": {
+    "requiredButEmpty": "Please fill in the required field “{{field}}”",
+    "success": "Your form is submitted"
+  },
+  "form": {
+    "pastSubmissions": "Past submissions",
+    "submitNew": "Submit a new one"
   },
   "schoolDocs": {
     "orders": {

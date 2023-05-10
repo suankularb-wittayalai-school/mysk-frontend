@@ -1,63 +1,40 @@
 {
-  "title": "ม.{{className}}",
-  "goToClass": "ไปที่ห้อง…",
-  "item": {
-    "school": {
-      "title": "โรงเรียน",
-      "classNo": "เลขห้องเรียน",
-      "classNo_helper": "ต้องมี 3 หลัก เช่น 408",
-      "classNo_error": "ไม่ถูกต้อง ต้องมี 3 หลัก เช่น 408",
-      "year": "ปีการศึกษา",
-      "semester": "ภาคเรียน"
+  "overview": {
+    "title": {
+      "class": "ห้องเรียน",
+      "lookup": "ม.{{number}}"
     },
-    "people": {
-      "title": "บุคคล",
-      "classAdvisors": "อาจารย์ที่ปรึกษา",
-      "students": "นักเรียน"
-    },
-    "contacts": {
-      "title": "ช่องทางการติดต่อ",
-      "contacts": "ช่องทางการติดต่อ"
+    "classAdvisors": {
+      "title": "ครูที่ปรึกษา"
     }
   },
-  "links": {
-    "teacherList": {
-      "title": "รายชื่ออาจารย์",
-      "supportingText": "ดูรายชื่ออาจารย์ที่สอนห้องม.{{classNumber}}"
+  "student": {
+    "title": {
+      "class": "เพื่อนร่วมห้อง",
+      "lookup": "นักเรียนห้องม.{{number}}"
     },
-    "studentList": {
-      "title": "รายชื่อนักเรียน",
-      "supportingText": "ดูรายชื่อนักเรียนห้องม.{{classNumber}}"
+    "list": {
+      "searchAlt": "ค้นหานักเรียน"
     }
   },
-  "classAdvisors": {
-    "title": "ครูที่ปรึกษา",
-    "addAdvisors": "เพิ่มครูที่ปรึกษา"
-  },
-  "classContacts": {
-    "title": "ช่องทางติดต่อ",
-    "addClassContacts": "เพิ่มช่องทางติดต่อ"
-  },
-  "studentList": {
-    "title": "รายชื่อนักเรียน",
-    "tabTitle": "รายชื่อนักเรียนม.{{classNumber}}",
-    "searchStudents": "ค้นหาชื่อนักเรียน",
-    "table": {
-      "classNo": "เลขที่",
-      "name": "ชื่อ-นามสกุล"
+  "teacher": {
+    "title": {
+      "class": "อาจารย์ที่สอนห้องนี้",
+      "lookup": "อาจารย์ที่สอนม.{{number}}"
     },
-    "printList": "พิมพ์ใบรายชื่อ"
+    "list": {
+      "searchAlt": "ค้นหาอาจารย์"
+    }
   },
-  "studentForms": {
-    "title": "การทำแบบสำรวจของนักเรียน",
-    "filter": {
-      "forms": "แบบสอบถาม",
-      "payments": "การชำระเงิน",
-      "amountDone": {
-        "fewDone": "นักเรียนทำน้อย",
-        "mostDone": "นักเรียนทำมาก",
-        "allDone": "นักเรียนทุกคนทำแล้ว"
-      }
+  "schedule": {
+    "title": "ตารางเรียนม.{{number}}"
+  },
+  "common": {
+    "navigation": {
+      "overview": "ข้อมูล",
+      "students": "นักเรียน",
+      "teachers": "อาจารย์",
+      "schedule": "ตารางเรียน"
     }
   }
 }

@@ -1,63 +1,40 @@
 {
-  "title": "M.{{className}}",
-  "goToClass": "Go to class number…",
-  "item": {
-    "school": {
-      "title": "School",
-      "classNo": "Class number",
-      "classNo_helper": "Must be 3-digit, i.e. 408.",
-      "classNo_error": "Invalid. Should be 3-digit, i.e. 408.",
-      "year": "Academic year",
-      "semester": "Semester"
+  "overview": {
+    "title": {
+      "class": "Your class",
+      "lookup": "M.{{number}}"
     },
-    "people": {
-      "title": "People",
-      "classAdvisors": "Class advisors",
-      "students": "Students"
-    },
-    "contacts": {
-      "title": "Contacts",
-      "contacts": "Contacts"
+    "classAdvisors": {
+      "title": "Class advisors"
     }
   },
-  "links": {
-    "teacherList": {
-      "title": "Teacher list",
-      "supportingText": "List of teachers that teach M.{{classNumber}}"
+  "student": {
+    "title": {
+      "class": "Your classmates",
+      "lookup": "Students of M.{{number}}"
     },
-    "studentList": {
-      "title": "Student list",
-      "supportingText": "List of students in M.{{classNumber}}"
+    "list": {
+      "searchAlt": "Search students"
     }
   },
-  "classAdvisors": {
-    "title": "Class advisors",
-    "addAdvisors": "Add advisor"
-  },
-  "classContacts": {
-    "title": "Class contacts",
-    "addClassContacts": "Add contacts"
-  },
-  "studentList": {
-    "title": "Student list",
-    "tabTitle": "M.{{classNumber}} student list",
-    "searchStudents": "Search students",
-    "table": {
-      "classNo": "Class №",
-      "name": "Name"
+  "teacher": {
+    "title": {
+      "class": "Your teachers",
+      "lookup": "Teachers of M.{{number}}"
     },
-    "printList": "Print list"
+    "list": {
+      "searchAlt": "Search teachers"
+    }
   },
-  "studentForms": {
-    "title": "Student forms",
-    "filter": {
-      "forms": "Forms",
-      "payments": "Payments",
-      "amountDone": {
-        "fewDone": "Few done",
-        "mostDone": "Most done",
-        "allDone": "All done"
-      }
+  "schedule": {
+    "title": "M.{{number}} schedule"
+  },
+  "common": {
+    "navigation": {
+      "overview": "Overview",
+      "students": "Students",
+      "teachers": "Teachers",
+      "schedule": "Schedule"
     }
   }
 }

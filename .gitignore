@@ -8,6 +8,9 @@
 # testing
 /coverage
 
+# bundle size
+/analyze
+
 # next.js
 /.next/
 /out/
@@ -35,3 +38,13 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+
+# pwa
+**/public/sw.js
+**/public/workbox-*.js
+**/public/worker-*.js
+**/public/fallback-*.js
+**/public/sw.js.map
+**/public/workbox-*.js.map
+**/public/worker-*.js.map
+**/public/fallback-*.js.map

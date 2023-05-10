@@ -5,35 +5,20 @@
     "teacher": "Schedule"
   },
   "schedule": {
+    "yourSubjects": "Your subjects",
+    "additionGuide": "Drag a subject into the period when you teach that subject, then fill in the rest of the information.",
     "elective": "Elective period",
-    "electiveReveal": {
-      "action": {
-        "close": "Close"
-      }
-    },
-    "overlap": "Many subjects",
     "hoverMenu": {
       "add": "Add period here",
-      "edit": "Edit this period",
-      "delete": "Delete this period",
+      "more": "View details",
       "move": "Drag to move period",
       "extend": "Drag to extend/shorten period"
-    },
-    "extendGuide": {
-      "initial": "Tap <1></1> to extend period",
-      "tapToExtend": "Tap right edge to extend to"
-    },
-    "action": {
-      "sync": "Sync with server",
-      "add": "Add period"
     }
   },
   "subjectList": {
     "title": "Subject list",
     "search": "Search subjects",
-    "table": {
-      "code": "S. Code",
-      "name": "Subject Name",
+    "card": {
       "teachers": "Teachers",
       "ggcCode": "Class Code",
       "action": {
@@ -43,12 +28,26 @@
     }
   },
   "dialog": {
+    "periodDetails": {
+      "teachers": "Teachers",
+      "code": "Subject code",
+      "class": "Class",
+      "room": "Room",
+      "action": {
+        "close": "Close",
+        "delete": "Delete period"
+      }
+    },
+    "electivePeriodDetails": {
+      "title": "Elective period",
+      "desc": "Many subjects occupy this period, so it is likely that they are electives. Below is a list of all of them."
+    },
     "editPeriod": {
       "title": {
         "add": "Add subject period",
         "edit": "Edit subject period"
       },
-      "longPeriodsNote": "For longer periods, do not add them as multiple individual periods. Edit the “Period duration” property below.",
+      "addDesc": "You’re adding {{subject}} to {{day}}, period {{startTime}}. Fill in the following to finish.",
       "form": {
         "title": "Period information",
         "subject": "Subject",
@@ -57,7 +56,11 @@
         "room_helper": "4-digit code in front of rooms, i.e. 1216",
         "day": "Day",
         "periodStart": "Starts at period",
-        "duration": "Period duration"
+        "duration": {
+          "label": "Period duration",
+          "single": "Single period (50 minutes)",
+          "double": "Double period (1 hr 40 min)"
+        }
       },
       "action": {
         "cancel": "Cancel",

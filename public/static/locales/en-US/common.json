@@ -2,23 +2,35 @@
   "brand": {
     "name": "MySK",
     "nameWithAccent": "My<1>SK</1>",
-    "slogan": "Education management<br>Suankularb Wittayalai School",
-    "sloganShort": "MySK education management system",
     "description": "Easily access and understand school data with the MySK education management system for Suankularb Wittayalai School.",
-    "school": "Suankularb Wittayalai School",
-    "logoAlt": "The logo of MySK: pink and blue rose with the text MySK as its core"
+    "school": "Suankularb Wittayalai School"
   },
   "navigation": {
-    "welcome": "Welcome",
-    "login": "Log in",
-    "about": "About",
     "learn": "Learn",
     "teach": "Teach",
-    "people": "People",
     "class": "Class",
+    "lookup": "Lookup",
     "news": "News",
-    "me": "Me"
+    "account": "Account",
+    "language": "ภาษาไทย",
+    "logOut": "Log out",
+    "drawer": {
+      "lookup": {
+        "title": "Lookup",
+        "person": "Students/teachers",
+        "class": "Classes",
+        "document": "School documents/orders"
+      },
+      "about": {
+        "title": "About",
+        "help": "Help/report issue",
+        "admin": "Admin panel",
+        "language": "ภาษาไทย",
+        "logOut": "Log out"
+      }
+    }
   },
+  "pageLoading": "Loading page…",
   "name": {
     "prefix": {
       "Master": "Master ",
@@ -50,92 +62,83 @@
     }
   },
   "input": {
-    "none": {
-      "noFilesAttached": "No files attached",
-      "noNewFilesAttached": "Attach file to change",
-      "noOptions": "No options",
-      "noneSelected": "Select an option"
+    "classesField": {
+      "label": "Classes",
+      "placeholder": "Enter class number",
+      "snackbar": {
+        "badFormat": "Must be a 3-digit number",
+        "duplicate": "You’ve already added this class",
+        "notFound": "This class doesn’t exist"
+      }
     },
-    "error": {}
+    "teachersField": {
+      "label": "Teachers",
+      "placeholder": "Enter first name",
+      "snackbar": {
+        "duplicate": "You’ve already added this teacher",
+        "notFound": "Cannot find this teacher"
+      }
+    }
   },
-  "error": "Error: {{errorMsg}}",
-  "fallback": {
-    "title": "Client-side error",
-    "stack": "Stack trace",
-    "action": {
-      "back": "Back",
-      "reload": "Reload"
+  "error": {
+    "404": {
+      "title": "We couldn’t find that.",
+      "tabName": "Not found",
+      "desc": "Check the URL and try again."
+    },
+    "500": {
+      "title": "Something went wrong on the server.",
+      "tabName": "Server-side error",
+      "desc": "We encountered an error on the server. Try again in a few moments."
+    },
+    "client": {
+      "title": "Something went wrong on your client.",
+      "tabName": "Client-side exception",
+      "desc": "We encountered an error while trying to render or perform an action on your browser. Please try again.",
+      "callStack": "Call stack for developers"
+    },
+    "sectionFallback": {
+      "title": "Something went wrong in this section.",
+      "desc": "We encountered an error while trying to render or perform an action in this section. Please try again.",
+      "callStack": "Call stack for developers"
+    },
+    "offline": {
+      "title": "Connect to the internet.",
+      "tabName": "Offline",
+      "desc": "This page needs an internet connection to work. Check your connection and try again.",
+      "offlineAvailability": "Only pages that you frequently visit are available offline.",
+      "schoolWiFi": {
+        "title": "School wi-fi",
+        "desc": "Inside the school? You can connect to the “SK_Student” wi-fi. Ask a classmate or a teacher for instructions."
+      }
+    },
+    "common": {
+      "persistNotice": "If this persists, contact support."
     }
   },
   "seeDetails": "See details",
+  "snackbar": {
+    "loading": "Loading…",
+    "changesSaved": "Changes saved",
+    "error": "Error: {{errorMsg}}",
+    "failure": "Task failed, please try again",
+    "formInvalid": "Check the form and try again",
+    "copiedToClipboard": "Copied to clipboard",
+    "languageRedirect": {
+      "message": "กำลังเปลี่ยนภาษาเป็นภาษาไทย…",
+      "action": "Stay in English"
+    },
+    "common": {
+      "action": {
+        "close": "Close",
+        "retry": "Retry"
+      }
+    }
+  },
   "dialog": {
-    "addContact": {
-      "title": "Add contact",
-      "type": "Platform",
-      "nameTH": "Thai contact label",
-      "nameEN": "English contact label",
-      "value": {
-        "phone": "Phone number",
-        "email": "Email address",
-        "website": "URL",
-        "facebook": "Facebook name",
-        "line": "LINE ID/invite code",
-        "line_helper": "10-digit code at end of invite link.",
-        "instagram": "Instagram username",
-        "discord": "Discord invite code",
-        "discord_helper": "8-digit code at end of invite link.",
-        "other": "Value"
-      },
-      "value_error": "Invalid value.",
-      "includes": {
-        "title": "Includes",
-        "students": "Students",
-        "teachers": "Teachers",
-        "parents": "Parents",
-        "other": "Other"
-      },
-      "action": {
-        "cancel": "Cancel",
-        "add": "Add"
-      }
-    },
-    "addClass": {
-      "title": "Add class",
-      "class": "Class",
-      "class_helper": "Should be 3-digit, i.e. 408.",
-      "class_error": "Invalid. Should be 3-digit, i.e. 408.",
-      "action": {
-        "add": "Add",
-        "cancel": "Cancel"
-      }
-    },
-    "addStudent": {
-      "title": "Add student",
-      "supportingText": "Search the student to add with their student ID.",
-      "studentID": "Student ID",
-      "searchResult": {
-        "title": "Search result",
-        "notFound": "No students with this ID."
-      },
-      "action": {
-        "cancel": "Cancel",
-        "add": "Add"
-      }
-    },
-    "addTeacher": {
-      "title": "Add teacher",
-      "supportingText": "Select a subject group to filter teachers by their subject group.",
-      "subjectGroup": "Subject group",
-      "teacher": "Teacher to add",
-      "noTeachers": "No teachers",
-      "action": {
-        "cancel": "Cancel",
-        "add": "Add"
-      }
-    },
     "confirmDelete": {
-      "title": "Delete this item?",
-      "supportingText": "This action cannot be undone.",
+      "title": "Confirm deletion",
+      "desc": "This action cannot be undone.",
       "action": {
         "cancel": "Cancel",
         "delete": "Delete"
@@ -143,10 +146,22 @@
     },
     "discardDraft": {
       "title": "Discard draft?",
-      "supportingText": "All changes will be deleted.",
+      "desc": "All changes will be deleted.",
       "action": {
         "continue": "Continue editing",
         "discard": "Discard"
+      }
+    },
+    "completeForgor": {
+      "title": "Set a new password",
+      "desc": "We’ve successfully verified you. Enter your new password twice to complete the process.",
+      "form": {
+        "newPwd": "New password",
+        "newPwd_error": "Lengthen to at least 8 characters.",
+        "confirmNewPwd": "Confirm new password"
+      },
+      "action": {
+        "set": "Set"
       }
     },
     "image": {

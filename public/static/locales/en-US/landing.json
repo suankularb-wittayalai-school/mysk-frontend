@@ -1,87 +1,35 @@
 {
-  "changeLang": "ใช้ในภาษาไทย",
-  "login": "Log in",
-  "help": "Help",
-  "news": {
-    "title": "Suankularb News",
-    "lastUpdated": "Last updated {{lastUpdated}}",
-    "reachedEnd": "You’ve reached the end."
+  "main": {
+    "title": "Your one-stop school portal",
+    "options": {
+      "language": "Language",
+      "action": {
+        "forgor": "Forgot password",
+        "help": "Help"
+      }
+    }
   },
-  "footnote": {
-    "supervisors": "<strong>MySK {{version}}</strong> is supervised by Supannee Supeerath and Atipol Sukrisadanon.",
-    "developers": "Its development was led by Siravit Phokeed and Smart Wattanapornmongkol with help from Sadudee Theparree and Tempoom Leelacharoen. <a>See contributions here.</a>"
-  },
-  "welcome": {
-    "title": "Welcome",
-    "hero": {
-      "graphicAlt": "Arrows pointing into MySK from the left",
-      "title": "Welcome to MySK",
-      "subtitle": {
-        "student": "You’re almost there. Let’s set a few things up first.",
-        "teacher": "You’re almost there. Let’s set a few things up first."
-      },
-      "notice": "Please ensure all data entered in each section within this page is correct before proceeding to the next one. Parts of the data entered here can take a long time to be later changed, if modification is even possible.",
-      "action": {
-        "logOut": "Log out",
-        "continue": "Continue"
-      }
-    },
-    "nextSteps": {
-      "title": "Coming up",
-      "dataCheck": {
-        "title": "Data check",
-        "desc": "We have imported your data from relevant school departments. This process may introduce some error, so check if it misses anything."
-      },
-      "vaccine": {
-        "title": "Vaccination data",
-        "desc": "According to school policy, we are required to collect your vaccination data for the school's vaccination statistics."
-      },
-      "newPassword": {
-        "title": "Create password",
-        "desc": "For the security of you and the school’s data, create a new password."
-      },
-      "prepareForStudents": {
-        "title": "Prepare for students",
-        "desc": "For teachers, there are a few more things you have to do to make MySK ready for your students. Learn more in this section."
-      },
-      "done": {
-        "title": "You’re all set",
-        "desc": "Everything is ready for you to start using MySK."
-      }
-    },
-    "dataCheck": {
-      "title": "Data check",
-      "desc": "We have imported your data from relevant school departments. This process may introduce some error, including incorrect or missing data. For example, your first name and middle name maybe combined into the first name field, or you’re still listed as “Master” after you have turned 15. You can correct these import errors in this section.",
-      "action": {
-        "continue": "Save and continue"
-      }
-    },
-    "newPassword": {
-      "title": "Create password",
-      "desc": "For the security of you and the school’s data, create a new password for MySK. Enter your new password twice to confirm.",
-      "action": {
-        "continue": "Create and continue"
-      }
-    },
-    "vaccineData": {
-      "title": "Vaccination data",
-      "instruction": "Enter your vaccination info exactly as seen in the Mor Prom app. You can see it by opening the Mor Prom app > Log in > Tap “Health Certificate” > Tap “Vaccineation of COVID-19”",
-      "notice": "Your vaccine data will only be used for the school statistics only. Thank you for your cooperation.",
-      "header": {
-        "addCard": "Add vaccination data",
-        "vaccineCard": "Dose {{doseNo}}",
-        "noVaccineCard": "No vaccination data"
+  "imageAlt": "Pink and blue hand holding phone with MySK logo",
+  "aside": {
+    "patchNotes": {
+      "title": "New in 0.4.0",
+      "subtitle": "This version brings a brand new MySK experience.",
+      "list": {
+        "1": "A completely redesigned interface",
+        "2": "MySK Lookup: a database of the entire school at your fingertips",
+        "3": "Bug fixes"
       },
       "action": {
-        "continue": "Save and continue",
-        "add": "Add"
+        "more": "More patch notes…"
       }
     },
-    "done": {
-      "title": "You’re all set",
-      "desc": "Everything is ready for you to start using MySK. If you have any questions or concerns, visit the <2>help page</2>.",
-      "action": {
-        "finish": "Finish"
+    "credits": {
+      "supervisors": "MySK is supervised by Supannee Supeerath and Atipol Sukrisadanon.",
+      "developers": "Its development was led by Siravit Phokeed and Smart Wattanapornmongkol with help from Sadudee Theparree and Tempoom Leelacharoen.",
+      "translations": "Translations to Thai contributed by <a>Suankularb English Club</a>.",
+      "logo": {
+        "skelc": "SK English Club",
+        "skiso": "SK IT Solutions"
       }
     }
   }
