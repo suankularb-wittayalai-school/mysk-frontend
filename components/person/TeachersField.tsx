@@ -77,7 +77,7 @@ const TeachersField: FC<{
           return;
         }
 
-        // Find teacher in database
+        // Find teachers in database
         withLoading(
           async () => {
             const { data, error } = await getTeacherByFirstName(
@@ -85,7 +85,7 @@ const TeachersField: FC<{
               value
             );
 
-            // If teacher doesn’t exist, notify the user
+            // If no teachers match, notify the user
             if (error) {
               console.error(error);
               setSnackbar(
@@ -96,8 +96,8 @@ const TeachersField: FC<{
               return false;
             }
 
-            // Add teacher to list
-            onChange([...teachers, data!]);
+            // Add teachers to list
+            onChange([...teachers, ...data!]);
             return true;
           },
           toggleLoading,

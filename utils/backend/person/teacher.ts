@@ -52,7 +52,7 @@ export async function getTeacher(
 export async function getTeacherByFirstName(
   supabase: DatabaseClient,
   firstName: string
-): Promise<BackendDataReturn<Teacher, null>> {
+): Promise<BackendDataReturn<Teacher[]>> {
   const { data: people, error: peopleError } = await supabase
     .from("people")
     .select("id")
@@ -64,7 +64,7 @@ export async function getTeacherByFirstName(
 
   if (peopleError) {
     console.error(peopleError);
-    return { data: null, error: peopleError };
+    return { data: [], error: peopleError };
   }
 
   const { data, error } = await supabase
@@ -88,17 +88,17 @@ export async function getTeacherByFirstName(
     .in(
       "person",
       people!.map((person) => person.id)
-    )
-    .limit(1)
-    .single();
+    );
 
   if (error) {
     console.error(error);
-    return { data: null, error };
+    return { data: [], error };
   }
 
   return {
-    data: await db2Teacher(supabase, data!),
+    data: await Promise.all(
+      data!.map(async (teacher) => await db2Teacher(supabase, teacher))
+    ),
     error: null,
   };
 }
