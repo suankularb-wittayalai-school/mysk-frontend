@@ -44,6 +44,7 @@ const ClassSearchResult: FC<{ classItem: ClassLookupListItem }> = ({
         desc={classItem.classAdvisors
           .map(({ name }) =>
             nameJoiner(locale, name, undefined, {
+              prefix: "teacher",
               middleName: false,
               lastName: "abbr",
             })
