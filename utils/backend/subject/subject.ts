@@ -8,10 +8,7 @@ import { supabase } from "@/utils/supabase-client";
 import { db2Subject } from "@/utils/backend/database";
 
 // Helpers
-import {
-  getCurrentAcademicYear,
-  getCurrentSemester,
-} from "@/utils/helpers/date";
+import { getCurrentSemester } from "@/utils/helpers/date";
 import { logError } from "@/utils/helpers/debug";
 
 // Types
@@ -154,6 +151,7 @@ export async function getSubjectsInCharge(
     .select(
       "id, code_th, code_en, name_th, name_en, short_name_th, short_name_en"
     )
+    .eq("semester", getCurrentSemester())
     .or(`teachers.cs.{${teacherID}}, coTeachers.cs.{${teacherID}}`);
 
   if (error) {
