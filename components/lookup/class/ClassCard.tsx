@@ -50,7 +50,8 @@ const ClassCard: FC<{ classItem: ClassLookupListItem }> = ({ classItem }) => {
       <motion.div
         layoutId={`class-${classItem.id}`}
         transition={transition(duration.medium1, easing.standard)}
-        className="h-[4.375rem] w-full"
+        className="h-[4.375rem] w-full overflow-hidden"
+        style={{ borderRadius: 12 }}
       >
         <Card
           appearance="filled"
@@ -132,9 +133,10 @@ const ClassPeekModal: FC<{
             transition={transition(duration.medium3, easing.standard)}
             className="absolute -inset-2 bottom-auto z-[90] min-w-[18rem]
               group-even:left-auto sm:-inset-4 sm:bottom-auto
-              sm:group-even:left-0 sm:group-[&:nth-child(4n)]:left-auto
-              md:group-[&:nth-child(4n)]:left-0
+              sm:group-even:-left-4 sm:group-[&:nth-child(4n)]:left-auto
+              md:group-[&:nth-child(4n)]:-left-4
               md:group-[&:nth-child(6n)]:!left-auto"
+            style={{ borderRadius: 12 }}
           >
             <Card appearance="filled">
               <CardHeader
