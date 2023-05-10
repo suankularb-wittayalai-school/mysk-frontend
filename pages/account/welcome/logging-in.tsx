@@ -33,6 +33,7 @@ import BlockingPane from "@/components/common/BlockingPane";
 import MySKPageHeader from "@/components/common/MySKPageHeader";
 
 // Helpers
+import { logError } from "@/utils/helpers/debug";
 import { withLoading } from "@/utils/helpers/loading";
 import { createTitleStr } from "@/utils/helpers/title";
 
@@ -86,7 +87,16 @@ const CheckEmailSection: FC<{ user: User }> = ({ user }) => {
           email: [email, "sk.ac.th"].join(""),
         });
         if (error) {
-          console.error(error);
+          logError("handleSubmit of CheckEmailSection (auth)", error);
+          return false;
+        }
+
+        const { error: publicError } = await supabase
+          .from("users")
+          .update({ email: [email, "sk.ac.th"].join("") })
+          .eq("id", user.id);
+        if (publicError) {
+          logError("handleSubmit of CheckEmailSection (public)", publicError);
           return false;
         }
 
