@@ -240,24 +240,15 @@ const UserFieldsSection: FC<{
       key: "subjectGroup",
       defaultValue:
         person.role === "teacher" && subjectGroups.length
-          ? subjectGroups[0].id
+          ? person.subjectGroup.id || subjectGroups[0].id
           : undefined,
     },
     {
       key: "classAdvisorAt",
       defaultValue:
-        person.role === "teacher"
-          ? // (@SiravitPhokeed)
-            // Not using `String()` constructor here because that would
-            // literally show the string "undefined" if the user is not a Class
-            // Advisor.
-            // `toString`, on the otherhand, isn’t even called if the user
-            // isn’t a Class Advisor (since classAdvisorAt would be undefined
-            // and `?` catches that), so `undefined` would be passed in, which
-            // `useForm` turns into "".
-            person.classAdvisorAt?.number.toString()
+        person.role === "teacher" && person.classAdvisorAt
+          ? String(person.classAdvisorAt.number)
           : undefined,
-      validate: (value: string) => classRegex.test(value),
     },
     // { key: "gender", required: true },
     { key: "birthdate", required: true, defaultValue: person.birthdate },

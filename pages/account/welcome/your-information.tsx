@@ -121,13 +121,15 @@ const WelcomePage: CustomPage<{
       key: "subjectGroup",
       defaultValue:
         person.role === "teacher" && subjectGroups.length
-          ? subjectGroups[0].id
+          ? person.subjectGroup.id || subjectGroups[0].id
           : undefined,
     },
     {
       key: "classAdvisorAt",
       defaultValue:
-        person.role === "teacher" ? person.classAdvisorAt?.number : undefined,
+        person.role === "teacher" && person.classAdvisorAt
+          ? String(person.classAdvisorAt.number)
+          : undefined,
     },
     // { key: "gender", required: true },
     { key: "birthdate", required: true, defaultValue: person.birthdate },
@@ -243,7 +245,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   const { data: person } = await getPersonFromUser(
     supabase,
     session!.user as User,
-    { contacts: true }
+    { contacts: true, classAdvisorAt: true }
   );
 
   const { data: subjectGroups } = await getSubjectGroups();

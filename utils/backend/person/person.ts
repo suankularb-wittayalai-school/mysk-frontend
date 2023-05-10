@@ -13,6 +13,9 @@ import {
   db2Teacher,
 } from "@/utils/backend/database";
 
+// Helpers
+import { logError } from "@/utils/helpers/debug";
+
 // Supabase
 import { supabase } from "@/utils/supabase-client";
 
@@ -117,7 +120,7 @@ export async function editPerson(
         .delete()
         .eq("id", contact.id);
       if (error) {
-        console.error(error);
+        logError("editPerson (delete existing Contacts)", error);
         return { data: null, error };
       }
     }
@@ -131,7 +134,7 @@ export async function editPerson(
             contact
           );
           if (error) {
-            console.error(error);
+            logError("editPerson (add Contacts)", error);
             return;
           }
           return createdContact!.id;
@@ -153,7 +156,7 @@ export async function editPerson(
       .single();
 
     if (idError) {
-      console.error(idError);
+      logError("editPerson (Student Person ID)", idError);
       return { data: null, error: idError };
     }
 
@@ -172,7 +175,7 @@ export async function editPerson(
       .single();
 
     if (idError) {
-      console.error(idError);
+      logError("editPerson (Teacher Person ID)", idError);
       return { data: null, error: idError };
     }
     personID = teacherPersonID!.person as unknown as number;
@@ -199,24 +202,61 @@ export async function editPerson(
     .single();
 
   if (personError) {
-    console.error(personError);
+    logError("editPerson (update Person)", personError);
     return { data: null, error: personError };
   }
 
   // Update a teacher’s subject group and class advisor status
-  if (person.role == "teacher") {
+  if (person.role === "teacher") {
     const { error } = await supabase
       .from("teacher")
       .update({ subject_group: form.subjectGroup })
       .match({ id: person.id });
 
     if (error) {
-      console.error(error);
+      logError("editPerson (update Teacher)", error);
       return { data: null, error };
     }
 
+    // Remove the teacher from the classroom the teacher was an advisor of
+    if (
+      // If the teacher is aleady an advisor
+      person.classAdvisorAt &&
+      // If Class Advisor At field is empty or was changed
+      (!form.classAdvisorAt ||
+        form.classAdvisorAt !== String(person.classAdvisorAt.number))
+    ) {
+      const { data: classItem, error: classError } = await supabase
+        .from("classroom")
+        .select("advisors")
+        .eq("id", person.classAdvisorAt.id)
+        .limit(1)
+        .single();
+
+      if (classError) {
+        logError("editPerson (get Class to remove Teacher from)", classError);
+        return { data: null, error: classError };
+      }
+
+      const { error: classUpdateError } = await supabase
+        .from("classroom")
+        .update({
+          advisors: classItem.advisors.filter(
+            (advisor) => person.id !== advisor
+          ),
+        })
+        .eq("id", person.classAdvisorAt.id)
+        .limit(1)
+        .single();
+
+      if (classUpdateError) {
+        logError("editPerson (remove Teacher from Class)", classUpdateError);
+        return { data: null, error: classUpdateError };
+      }
+    }
+
     if (form.classAdvisorAt) {
-      // Get the classroom that the teacher is an advisor of
+      // Get the classroom that the teacher will be an advisor of
       const { data: classroom, error: classroomError } = await supabase
         .from("classroom")
         .select("id, advisors")
@@ -224,7 +264,7 @@ export async function editPerson(
         .maybeSingle();
 
       if (classroomError) {
-        console.error(classroomError);
+        logError("editPerson", classroomError);
         return { data: null, error: classroomError };
       }
 
