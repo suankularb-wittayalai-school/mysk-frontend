@@ -16,6 +16,8 @@
 // External libraries
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 
+import va from "@vercel/analytics";
+
 import Head from "next/head";
 import { useRouter } from "next/router";
 
@@ -121,6 +123,9 @@ const LogInSection: FC = () => {
         );
         return false;
       }
+
+      // Track event
+      va.track("Log in");
 
       // Log in user in Supabase
       const {

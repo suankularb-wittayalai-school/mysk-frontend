@@ -1,4 +1,5 @@
 // External libraries
+import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
 import { FC, useState } from "react";
 
@@ -50,6 +51,7 @@ const ContactsSection: FC<{
             open={showAdd}
             onClose={() => setShowAdd(false)}
             onSubmit={(contact) => {
+              va.track("Add Contact");
               setShowAdd(false);
               if (handleAdd) handleAdd(contact);
             }}
