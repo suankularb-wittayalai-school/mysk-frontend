@@ -1,4 +1,5 @@
 // External libraries
+import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
 
@@ -68,6 +69,9 @@ const RequestForgorDialog: DialogComponent<{ inputEmail?: string }> = ({
           console.error(error);
           return false;
         }
+
+        // Track event
+        va.track("Start Forgot Password");
 
         // Reset form
         setEmail("");

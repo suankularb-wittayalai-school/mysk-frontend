@@ -2,7 +2,7 @@
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 
 // SK Components
 import {
@@ -74,9 +74,18 @@ const AddPeriodDialog: SubmittableDialogComponent<
       required: true,
       validate: (value: string) => classRegex.test(value),
     },
-    { key: "room", validate: (value: string) => roomRegex.test(value) },
+    {
+      key: "room",
+      validate: (value: string) =>
+        value.split(", ").every((room) => roomRegex.test(room)),
+    },
     { key: "duration", defaultValue: 1 },
   ]);
+
+  useEffect(() => {
+    if ((form.room as string).endsWith(","))
+      setForm({ ...form, room: form.room + " " });
+  }, [form.room]);
 
   // Form submission
   const [loading, toggleLoading] = useToggle();

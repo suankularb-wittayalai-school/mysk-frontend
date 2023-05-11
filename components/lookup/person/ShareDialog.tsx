@@ -1,4 +1,5 @@
 // External libraries
+import va from "@vercel/analytics";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 
@@ -32,6 +33,11 @@ const ShareDialog: DialogComponent<{
   const router = useRouter();
 
   async function handleSaveVCard() {
+    va.track("Share Person", {
+      person: nameJoiner("en-US", person.name),
+      method: "vCard",
+    });
+
     const emails = person.contacts.filter(
       (contact) => contact.type === "Email"
     );
@@ -100,6 +106,11 @@ const ShareDialog: DialogComponent<{
   }
 
   async function handleCopyLink() {
+    va.track("Share Person", {
+      person: nameJoiner("en-US", person.name),
+      method: "Native Share",
+    });
+
     const shareData: ShareData = {
       title: `${nameJoiner(locale, person.name)} - MySK`,
       url: window.location.href,
@@ -111,6 +122,11 @@ const ShareDialog: DialogComponent<{
   }
 
   async function handlePrint() {
+    va.track("Share Person", {
+      person: nameJoiner("en-US", person.name),
+      method: "Print",
+    });
+
     onClose();
     await router.push(`/lookup/person/${person.role}/${person.id}`);
     setTimeout(() => window.print(), 200);

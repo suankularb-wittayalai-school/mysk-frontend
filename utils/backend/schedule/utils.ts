@@ -1,4 +1,8 @@
 // Helpers
+import {
+  getCurrentAcademicYear,
+  getCurrentSemester,
+} from "@/utils/helpers/date";
 import { arePeriodsOverlapping } from "@/utils/helpers/schedule";
 
 // Supabase
@@ -17,7 +21,12 @@ export async function isOverlappingExistingItems(
     await supabase
       .from("schedule_items")
       .select("id, start_time, duration")
-      .match({ teacher: teacherID, day });
+      .match({
+        teacher: teacherID,
+        day,
+        year: getCurrentAcademicYear(),
+        semester: getCurrentSemester(),
+      });
 
   if (itemsSameTeacherError || !itemsSameTeacher) {
     console.error(itemsSameTeacherError);
