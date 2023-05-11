@@ -1,0 +1,27 @@
+name: Feature Request
+description: Suggest an idea for this project
+labels: ["type: enhancement", "lang: en"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to let us hear your idea.
+  - type: checkboxes
+    id: no-duplicate
+    attributes:
+      label: Before we begin
+      options:
+        - label: I have already searched the Issues page, and I am sure this feature request isn’t a duplicate.
+          required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem (optional)
+      description: Is your feature request related to a problem? Please describe.
+  - type: textarea
+    id: solution
+    attributes:
+      label: Solution
+      description: Describe the solution you’d like
+    validations:
+      required: true

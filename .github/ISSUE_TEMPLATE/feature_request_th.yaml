@@ -1,0 +1,27 @@
+name: คำขอฟีเจอร์ใหม่
+description: นำเสนอความคิดของคุณ
+labels: ["type: enhancement", "lang: th"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ขอบคุณที่สละเวลาให้เราได้ยินความคิดของคุณ
+  - type: checkboxes
+    id: no-duplicate
+    attributes:
+      label: ก่อนเริ่ม
+      options:
+        - label: ได้ตรวจสอบแล้วว่าคำขอฟีเจอร์นี้ไม่ซ้ำกับคำขออื่น ๆ ที่อยู่ในหน้านี้
+          required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: เหตุผล (ไม่จำเป็น)
+      description: คําขอฟีเจอร์ของคุณเกี่ยวข้องกับปัญหาหรือไม่ กรุณาอธิบาย
+  - type: textarea
+    id: solution
+    attributes:
+      label: ฟีเจอร์ที่ขอ
+      description: อธิบายฟีเจอร์ใหม่ที่คุณต้องการ
+    validations:
+      required: true

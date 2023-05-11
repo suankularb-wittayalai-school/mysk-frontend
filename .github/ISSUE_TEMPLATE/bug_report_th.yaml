@@ -1,0 +1,57 @@
+name: รายงานข้อผิดพลาด
+description: ช่วยในการพัฒนา MySK โดยการรายงานข้อผิดพลาด
+labels: ["type: bug", "lang: th"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ขอบคุณที่สละเวลาในการกรอกแบบฟอร์มรายงานข้อผิดพลาดนี้
+  - type: checkboxes
+    id: no-duplicate
+    attributes:
+      label: ก่อนเริ่ม
+      options:
+        - label: ได้ตรวจสอบแล้วว่ารายงานข้อผิดพลาดนี้ไม่ซ้ำกับรายงานอื่น ๆ ที่อยู่ในหน้านี้
+          required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: เกิดอะไรขึน
+      description: บอกเราว่าคุณเห็นอะไร และว่าคิดว่าควรจะเกิดอะไรขึ้นแทน
+    validations:
+      required: true
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: ขั้นตอนในการทําซ้ํา
+      description: ให้รายละเอียดสิ่งที่คุณทําก่อนเกิดข้อผิดพลาดทีละขั้นตอน เพื่อให้เราสามารถไปทำซ้ำได้
+      value: |
+        1. 
+        2. 
+        3. 
+    validations:
+      required: true
+  - type: dropdown
+    id: version
+    attributes:
+      label: Version
+      description: What version of MySK are you on?
+      options:
+        - Default
+        - Preview
+  - type: dropdown
+    id: browsers
+    attributes:
+      label: What browsers are you seeing the problem on?
+      multiple: true
+      options:
+        - Firefox
+        - Chrome
+        - Safari
+        - Microsoft Edge
+  - type: textarea
+    id: logs
+    attributes:
+      label: บันทึกคอนโซล
+      description: |
+        ให้เปิดคอนโซลโดยกด <kbd>F12</kbd> ไปที่หน้า “คอนโซล” (Console) แล้วคัดลอกบันทึกทั้งหมดมาที่นี่ ถ้ามี

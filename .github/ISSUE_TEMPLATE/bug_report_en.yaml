@@ -1,0 +1,57 @@
+name: Bug Report
+description: File a bug report to help us improve
+labels: ["type: bug", "lang: en"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report.
+  - type: checkboxes
+    id: no-duplicate
+    attributes:
+      label: Before we begin
+      options:
+        - label: I have already searched the Issues page, and I am sure this bug report isn’t a duplicate.
+          required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Tell us what you saw, and what you think should have happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Give us a step-by-step breakdown of what you did before the error.
+      value: |
+        1. 
+        2. 
+        3. 
+    validations:
+      required: true
+  - type: dropdown
+    id: version
+    attributes:
+      label: Version
+      description: What version of MySK are you on?
+      options:
+        - Default
+        - Preview
+  - type: dropdown
+    id: browsers
+    attributes:
+      label: What browsers are you seeing the problem on?
+      multiple: true
+      options:
+        - Firefox
+        - Chrome
+        - Safari
+        - Microsoft Edge
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: |
+        Open the browser console with <kbd>F12</kbd>, go to Console, and copy all the logs to here.
