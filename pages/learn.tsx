@@ -1,4 +1,6 @@
 // External libraries
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import Head from "next/head";
 
@@ -40,7 +42,6 @@ import { createTitleStr } from "@/utils/helpers/title";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
 const ScheduleSection: FC<{ schedule: ScheduleType }> = ({ schedule }) => {
   const { t } = useTranslation("learn");
