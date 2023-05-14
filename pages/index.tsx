@@ -270,7 +270,9 @@ const PatchNotesSection: FC = () => {
   return (
     <Section className="!gap-5">
       <Header className="skc-headline-large">
-        {t("title", { version: process.env.NEXT_PUBLIC_VERSION })}
+        {t("title", {
+          version: process.env.NEXT_PUBLIC_VERSION || "[Preview]",
+        })}
       </Header>
       <p className="skc-title-large">{t("subtitle")}</p>
       <ul className="skc-body-medium list-disc pl-6">

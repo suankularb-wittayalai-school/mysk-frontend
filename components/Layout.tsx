@@ -250,8 +250,13 @@ const Layout: FC<
             label={t("navigation.drawer.about.logOut")}
             onClick={() => setLogOutOpen(true)}
           />
-          <p className="skc-label-small pt-2 p-4 text-on-surface-variant">
-            {process.env.NEXT_PUBLIC_VERSION}
+
+          {/* Version number */}
+          <p
+            className="skc-label-small p-4 pt-8 !font-display
+              text-on-surface-variant"
+          >
+            {process.env.NEXT_PUBLIC_VERSION || "Preview version"}
           </p>
         </NavDrawerSection>
       </NavDrawer>
