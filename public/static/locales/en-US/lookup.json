@@ -36,6 +36,7 @@
           "title": "Class",
           "classNo": "No. {{classNo}}"
         },
+        "classAdvisorAt": "Class advisor at",
         "birthdate": "Birthdate"
       },
       "contacts": {
