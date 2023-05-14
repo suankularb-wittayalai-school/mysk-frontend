@@ -40,13 +40,15 @@ const ContactsSection: FC<{
           {t("profile.contacts.title")}
         </Header>
         <Actions>
-          <Button
-            appearance="tonal"
-            icon={<MaterialIcon icon="add" />}
-            onClick={() => setShowAdd(true)}
-          >
-            {t("profile.contacts.action.add")}
-          </Button>
+          {editable && (
+            <Button
+              appearance="tonal"
+              icon={<MaterialIcon icon="add" />}
+              onClick={() => setShowAdd(true)}
+            >
+              {t("profile.contacts.action.add")}
+            </Button>
+          )}
           <ContactDialog
             open={showAdd}
             onClose={() => setShowAdd(false)}
