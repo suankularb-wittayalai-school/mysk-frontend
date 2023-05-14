@@ -6,7 +6,11 @@
     "desc": "Find your classmates, teachers, and everyone else in Suankularb. Better connect with people with contacts and live schedule information.",
     "count": "{{students}} students and {{teachers}} teachers available.",
     "list": {
-      "searchAlt": "Search people"
+      "searchAlt": "Search people",
+      "filter": {
+        "student": "Students",
+        "teacher": "Teachers"
+      }
     },
     "header": {
       "loading": "Loading…",

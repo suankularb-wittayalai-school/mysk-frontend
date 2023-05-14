@@ -13,11 +13,10 @@ import { useEffect, useState } from "react";
 // SK Components
 import {
   ChipSet,
-  FAB,
   FilterChip,
   MaterialIcon,
   SplitLayout,
-  useBreakpoint,
+  useBreakpoint
 } from "@suankularb-components/react";
 
 // Internal components
@@ -37,8 +36,8 @@ import { getTeacher } from "@/utils/backend/person/teacher";
 
 // Helpers
 import { toggleItem } from "@/utils/helpers/array";
-import { createTitleStr } from "@/utils/helpers/title";
 import { withLoading } from "@/utils/helpers/loading";
+import { createTitleStr } from "@/utils/helpers/title";
 
 // Hooks
 import { useToggle } from "@/utils/hooks/toggle";
@@ -166,7 +165,7 @@ const LookupPeoplePage: CustomPage<{
                     setFilters(toggleItem<Role>("student", filters))
                   }
                 >
-                  Students
+                  {t("people.list.filter.student")}
                 </FilterChip>
                 <FilterChip
                   selected={filters.includes("teacher")}
@@ -174,7 +173,7 @@ const LookupPeoplePage: CustomPage<{
                     setFilters(toggleItem<Role>("teacher", filters))
                   }
                 >
-                  Teachers
+                  {t("people.list.filter.teacher")}
                 </FilterChip>
               </ChipSet>
             ) : undefined
