@@ -76,12 +76,8 @@ import { Student, Teacher } from "@/utils/types/person";
 import { SubjectGroup } from "@/utils/types/subject";
 
 // Miscellaneous
-import {
-  createContact,
-  deleteContact,
-  updateContact,
-} from "@/utils/backend/contact";
-import { classRegex } from "@/utils/patterns";
+import { createContact, updateContact } from "@/utils/backend/contact";
+import LogOutDialog from "@/components/account/LogOutDialog";
 
 /**
  * The most basic information about a Person, their name and their role inside
@@ -96,6 +92,7 @@ const BasicInfoSection: FC<{ person: Student | Teacher }> = ({ person }) => {
   const { t } = useTranslation("account");
 
   // Dialog control
+  const [logOutOpen, setLogOutOpen] = useState<boolean>(false);
   const [changePwdOpen, setChangePwdOpen] = useState<boolean>(false);
 
   return (
@@ -152,11 +149,11 @@ const BasicInfoSection: FC<{ person: Student | Teacher }> = ({ person }) => {
           appearance="tonal"
           icon={<MaterialIcon icon="logout" />}
           dangerous
-          href="/account/logout"
-          element={Link}
+          onClick={() => setLogOutOpen(true)}
         >
           {t("action.logOut")}
         </Button>
+        <LogOutDialog open={logOutOpen} onClose={() => setLogOutOpen(false)} />
 
         {/* Change password */}
         <Button
