@@ -154,7 +154,6 @@ const WelcomePage: CustomPage = () => {
 export const getStaticProps: GetStaticProps = async ({ locale }) => ({
   props: await serverSideTranslations(locale as LangCode, [
     "common",
-    "account",
     "welcome",
   ]),
 });

@@ -34,7 +34,7 @@ import { DialogComponent } from "@/utils/types/common";
  */
 const LogOutDialog: DialogComponent = ({ open, onClose }) => {
   // Translation
-  const { t } = useTranslation("account", { keyPrefix: "dialog.logOut" });
+  const { t } = useTranslation("common", { keyPrefix: "dialog.logOut" });
   const { t: tx } = useTranslation("common");
 
   const { setSnackbar } = useContext(SnackbarContext);

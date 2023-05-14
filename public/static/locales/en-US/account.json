@@ -187,14 +187,6 @@
         "cancel": "Cancel",
         "save": "Save"
       }
-    },
-    "logOut": {
-      "title": "Log out",
-      "desc": "Are you sure you want to log out?",
-      "action": {
-        "logOut": "Log out",
-        "back": "Back"
-      }
     }
   }
 }
