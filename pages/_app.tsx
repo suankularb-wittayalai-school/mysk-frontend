@@ -7,17 +7,16 @@ import { Analytics } from "@vercel/analytics/react";
 import { MotionConfig } from "framer-motion";
 
 import {
-  Inter,
-  Space_Grotesk,
-  Sarabun,
-  IBM_Plex_Sans_Thai,
   Fira_Code,
+  IBM_Plex_Sans_Thai,
+  Inter,
+  Sarabun,
+  Space_Grotesk,
 } from "next/font/google";
-import { useRouter } from "next/router";
 
 import { appWithTranslation } from "next-i18next";
 
-import { FC, ReactNode, useEffect, useState } from "react";
+import { FC, ReactNode, useState } from "react";
 
 // SK Components
 import { ThemeProvider } from "@suankularb-components/react";

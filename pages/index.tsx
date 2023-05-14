@@ -42,6 +42,7 @@ import {
 } from "@suankularb-components/react";
 
 // Internal components
+import MagicLinkDialog from "@/components/account/MagicLinkDialog";
 import MultiSchemeImage from "@/components/common/MultiSchemeImage";
 
 // Contexts
@@ -82,7 +83,6 @@ import { CustomPage, LangCode } from "@/utils/types/common";
 const LogInSection: FC = () => {
   // Router
   const locale = useLocale();
-  const router = useRouter();
 
   // Translation
   const { t } = useTranslation(["account", "landing"]);
@@ -141,23 +141,6 @@ const LogInSection: FC = () => {
 
       if (!session || error) return false;
 
-      // Get the user metadata to figure where to redirect to
-      const { data: metadata, error: metadataError } = await getUserMetadata(
-        supabase,
-        session.user.id
-      );
-      if (metadataError) return false;
-
-      // Onboard the user if this is their first log in
-      if (!metadata!.onboarded) {
-        router.push("/account/welcome");
-        return true;
-      }
-
-      // Redirect the user accoridng to their role
-      if (metadata!.role === "teacher") router.push("/teach");
-      if (metadata!.role === "student") router.push("/learn");
-
       return true;
     }, toggleLoading);
   }
@@ -209,7 +192,8 @@ const OptionsSection: FC = () => {
 
   const refreshProps = useRefreshProps();
 
-  const [forgorOpen, setMagicLinkOpen] = useState<boolean>(false);
+  // Dialog control
+  const [magicLinkOpen, setMagicLinkOpen] = useState<boolean>(false);
 
   return (
     <Section className="!gap-4">
@@ -236,6 +220,7 @@ const OptionsSection: FC = () => {
         align="full"
         className="grid-cols-1 sm:mr-12 sm:!grid md:mr-0 md:!flex"
       >
+        {/* Magic link */}
         <Button
           appearance="tonal"
           onClick={() => setMagicLinkOpen(true)}
@@ -243,6 +228,12 @@ const OptionsSection: FC = () => {
         >
           {t("action.magicLink")}
         </Button>
+        <MagicLinkDialog
+          open={magicLinkOpen}
+          onClose={() => setMagicLinkOpen(false)}
+        />
+
+        {/* Help */}
         <Button
           appearance="tonal"
           // TODO: Change this back to `/help` when the Help page is done
@@ -412,10 +403,29 @@ const LandingPage: CustomPage = () => {
     );
   }, []);
 
-  // Support for magic link
+  // Log in (both methods) redirect
   const user = useUser();
+  const supabase = useSupabaseClient();
   useEffect(() => {
-    if (user) router.push("/learn");
+    if (!user) return;
+    (async () => {
+      // Get the user metadata to figure where to redirect to
+      const { data: metadata, error: metadataError } = await getUserMetadata(
+        supabase,
+        user.id
+      );
+      if (metadataError) return false;
+
+      // Onboard the user if this is their first log in
+      if (!metadata!.onboarded) {
+        router.push("/account/welcome");
+        return true;
+      }
+
+      // Redirect the user accoridng to their role
+      if (metadata!.role === "teacher") router.push("/teach");
+      if (metadata!.role === "student") router.push("/learn");
+    })();
   }, [user?.id]);
 
   return (

@@ -15,28 +15,21 @@ import { DialogComponent } from "@/utils/types/common";
 /**
  * Tells the user the next steps after entering their email.
  *
- * Read about the full process in `/pages/_app.tsx`.
- *
- * @param email The email address where the verification email was sent to.
+ * @param email The email address where the log in link was sent to.
  *
  * @returns A Dialog.
  */
-const CheckEmailDialog: DialogComponent<{ email: string }> = ({
-  open,
-  onClose,
-  email,
-}) => {
-  const { t } = useTranslation("account");
+const CheckEmailDialog: DialogComponent<{
+  email: string;
+}> = ({ open, onClose, email }) => {
+  const { t } = useTranslation("account", { keyPrefix: "dialog.checkEmail" });
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogHeader
-        title={t("dialog.checkEmail.title")}
-        desc={t("dialog.checkEmail.supportingText", { email })}
-      />
+      <DialogHeader title={t("title")} desc={t("desc", { email })} />
       <Actions>
         <Button appearance="text" onClick={onClose}>
-          {t("dialog.checkEmail.action.gotIt")}
+          {t("action.gotIt")}
         </Button>
       </Actions>
     </Dialog>
