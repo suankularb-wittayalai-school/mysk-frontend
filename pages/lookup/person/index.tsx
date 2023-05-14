@@ -17,7 +17,8 @@ import {
   ChipSet,
   FilterChip,
   MaterialIcon,
-  SplitLayout
+  SplitLayout,
+  useBreakpoint,
 } from "@suankularb-components/react";
 
 // Internal components
@@ -67,13 +68,21 @@ const LookupPeoplePage: CustomPage<{
   );
 
   // Redirect mobile users to the details page when URL has query
+  // (Yes, we have to do this weirdness, otherwise `atBreakpoint` will always
+  // be `base` for some reason thus will always redirects)
   const router = useRouter();
+  const { atBreakpoint } = useBreakpoint();
+  const [breakpointChecked, setBreakpointChecked] = useState<boolean>(false);
   useEffect(() => {
-    if (selectedIdx && !window.matchMedia("(min-width: 600px)")) {
+    if (atBreakpoint === "base" && !breakpointChecked) {
+      setBreakpointChecked(true);
+      return;
+    }
+    if (selectedIdx && atBreakpoint === "base") {
       const { id, role } = initialPeople[selectedIdx];
       router.push(`/lookup/person/${role}/${id}`);
     }
-  }, []);
+  }, [breakpointChecked]);
 
   // Update the URL with the selected Person query, so as to make sharing
   // easier
