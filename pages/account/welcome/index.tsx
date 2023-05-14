@@ -1,13 +1,12 @@
 // External libraries
 import { GetStaticProps } from "next";
 import Head from "next/head";
-import Image from "next/image";
 import Link from "next/link";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { FC } from "react";
+import { FC, useState } from "react";
 
 // SK Components
 import {
@@ -22,12 +21,13 @@ import {
 } from "@suankularb-components/react";
 
 // Internal components
+import LogOutDialog from "@/components/account/LogOutDialog";
 import MultiSchemeImage from "@/components/common/MultiSchemeImage";
 import MySKPageHeader from "@/components/common/MySKPageHeader";
 
 // Images
-import WelcomeImageLight from "@/public/images/graphics/welcome-light.webp";
 import WelcomeImageDark from "@/public/images/graphics/welcome-dark.webp";
+import WelcomeImageLight from "@/public/images/graphics/welcome-light.webp";
 
 // Helpers
 import { createTitleStr } from "@/utils/helpers/title";
@@ -51,8 +51,10 @@ const ThankYouSection: FC = () => {
           border-1 border-outline-variant sm:mx-0 sm:translate-y-0"
       />
       <Section
-        sectionAttr={{ "aria-labelledby": "header-thank-you" }}
         className="sm:col-span-2"
+        element={(props) => (
+          <section {...props} aria-labelledby="header-thank-you" />
+        )}
       >
         <div className="skc-headline-small">
           <h2 id="header-thank-you">{t("instructions.thankYou.title")}</h2>
@@ -107,6 +109,9 @@ const WelcomePage: CustomPage = () => {
   // Translation
   const { t } = useTranslation(["welcome", "common"]);
 
+  // Dialog control
+  const [logOutOpen, setLogOutOpen] = useState<boolean>(false);
+
   return (
     <>
       <Head>
@@ -115,6 +120,7 @@ const WelcomePage: CustomPage = () => {
       <MySKPageHeader
         title={t("instructions.title")}
         icon={<MaterialIcon icon="waving_hand" />}
+        onBack={() => setLogOutOpen(true)}
       />
       <ContentLayout>
         <ThankYouSection />
@@ -124,11 +130,14 @@ const WelcomePage: CustomPage = () => {
           <Button
             appearance="outlined"
             dangerous
-            href="/account/logout"
-            element={Link}
+            onClick={() => setLogOutOpen(true)}
           >
             {t("instructions.action.logOut")}
           </Button>
+          <LogOutDialog
+            open={logOutOpen}
+            onClose={() => setLogOutOpen(false)}
+          />
           <Button
             appearance="filled"
             href="/account/welcome/your-information"
@@ -145,6 +154,7 @@ const WelcomePage: CustomPage = () => {
 export const getStaticProps: GetStaticProps = async ({ locale }) => ({
   props: await serverSideTranslations(locale as LangCode, [
     "common",
+    "account",
     "welcome",
   ]),
 });
