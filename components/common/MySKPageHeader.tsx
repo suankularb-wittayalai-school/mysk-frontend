@@ -37,7 +37,7 @@ const MySKPageHeader: FC<
         brand={<Favicon />}
         homeURL="/"
         locale={locale}
-        element={Link}
+        buttonElement={Link}
         onNavToggle={() => setNavOpen(true)}
         {...props}
       />
