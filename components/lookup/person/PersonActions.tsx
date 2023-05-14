@@ -1,7 +1,6 @@
 // External libraries
-import Link from "next/link";
 import { useTranslation } from "next-i18next";
-import { FC, useState } from "react";
+import { FC, forwardRef, useState } from "react";
 
 // SK Components
 import {
@@ -15,6 +14,7 @@ import ShareDialog from "@/components/lookup/person/ShareDialog";
 
 // Types
 import { Student, Teacher } from "@/utils/types/person";
+import Link from "next/link";
 
 const PersonActions: FC<{
   person?: Student | Teacher;
@@ -43,8 +43,15 @@ const PersonActions: FC<{
             {/* See class */}
             <AssistChip
               icon={<MaterialIcon icon="groups" />}
-              href={`/lookup/class/${classItem.number}`}
-              element={Link}
+              // TODO: I forgot to pass `href`; use the `href` props as normal when that’s fixed
+              // eslint-disable-next-line react/display-name
+              element={forwardRef((props, ref) => (
+                <Link
+                  {...props}
+                  ref={ref}
+                  href={`/lookup/class/${classItem.number}`}
+                />
+              ))}
             >
               {t("seeClass")}
             </AssistChip>
@@ -52,8 +59,14 @@ const PersonActions: FC<{
             {/* See schedule */}
             <AssistChip
               icon={<MaterialIcon icon="dashboard" />}
-              href={`/lookup/class/${classItem.number}/schedule`}
-              element={Link}
+              // eslint-disable-next-line react/display-name
+              element={forwardRef((props, ref) => (
+                <Link
+                  {...props}
+                  ref={ref}
+                  href={`/lookup/class/${classItem.number}/schedule`}
+                />
+              ))}
             >
               {t("seeSchedule")}
             </AssistChip>

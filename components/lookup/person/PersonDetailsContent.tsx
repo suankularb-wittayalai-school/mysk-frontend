@@ -1,4 +1,5 @@
 // External libraries
+import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
 import { FC, forwardRef, useContext, useEffect, useState } from "react";
 
@@ -65,6 +66,12 @@ const StarbucksCard: FC = () => {
   }, []);
 
   function handleReadAloud() {
+    // Track easter egg discovery
+    va.track("Find Starbucks Easter Egg", {
+      action: "Read aloud",
+      successful: Boolean(synthVoices?.length),
+    });
+
     // If no Thai voices found, the user is notified of the failure
     if (!synthVoices?.length) {
       setSnackbar(<Snackbar>{t("snackbar.thaiSpeechNotSupported")}</Snackbar>);
@@ -112,10 +119,20 @@ const StarbucksCard: FC = () => {
           </AssistChip>
           <AssistChip
             icon={<MaterialIcon icon="open_in_new" />}
-            href={`https://www.starbucks.co.th/${locale}/delivery-in-app/`}
+            onClick={() =>
+              va.track("Find Starbucks Easter Egg", {
+                action: "Open Starbucks",
+              })
+            }
             // eslint-disable-next-line react/display-name
             element={forwardRef((props, ref) => (
-              <a {...props} ref={ref} target="_blank" rel="noreferrer" />
+              <a
+                {...props}
+                ref={ref}
+                href={`https://www.starbucks.co.th/${locale}/delivery-in-app/`}
+                target="_blank"
+                rel="noreferrer"
+              />
             ))}
           >
             {t("detail.starbucks.action.openStarbucks")}
