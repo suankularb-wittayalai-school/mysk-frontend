@@ -1,6 +1,8 @@
 // External libraries
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 
+import va from "@vercel/analytics";
+
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -202,10 +204,19 @@ const Layout: FC<
             icon={<MaterialIcon icon="contact_support" />}
             label={t("navigation.drawer.about.help")}
             // TODO: Change this back to `/help` when the Help page is done
-            href="mailto:itsolutions@sk.ac.th"
-            // selected={router.pathname.startsWith("/help")}
-            // href="/help"
-            // element={Link}
+            href="https://docs.google.com/document/d/1yAEVK09BgbpFIPpG5j1xvfCRUGUdRyL9S1gAxh9UjfU/edit?usp=share_link"
+            // eslint-disable-next-line react/display-name
+            element={forwardRef((props, ref) => (
+              <a
+                {...props}
+                ref={ref}
+                onClick={() =>
+                  va.track("Open User Guide", { location: "Naviation Drawer" })
+                }
+                target="_blank"
+                rel="noreferrer"
+              />
+            ))}
           />
           <NavDrawerItem
             icon={<MaterialIcon icon="translate" />}

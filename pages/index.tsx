@@ -240,7 +240,15 @@ const OptionsSection: FC = () => {
           href="https://docs.google.com/document/d/1yAEVK09BgbpFIPpG5j1xvfCRUGUdRyL9S1gAxh9UjfU/edit?usp=share_link"
           // eslint-disable-next-line react/display-name
           element={forwardRef((props, ref) => (
-            <a {...props} ref={ref} target="_blank" rel="noreferrer" />
+            <a
+              {...props}
+              ref={ref}
+              onClick={() =>
+                va.track("Open User Guide", { location: "Landing" })
+              }
+              target="_blank"
+              rel="noreferrer"
+            />
           ))}
         >
           {t("action.help")}
