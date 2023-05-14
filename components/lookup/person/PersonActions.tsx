@@ -1,4 +1,5 @@
 // External libraries
+import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { FC, forwardRef, useState } from "react";
 
@@ -14,7 +15,6 @@ import ShareDialog from "@/components/lookup/person/ShareDialog";
 
 // Types
 import { Student, Teacher } from "@/utils/types/person";
-import Link from "next/link";
 
 const PersonActions: FC<{
   person?: Student | Teacher;
