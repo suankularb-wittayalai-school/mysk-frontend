@@ -76,7 +76,7 @@ export type PersonLookupItem = {
 export type PersonLookupItemGeneric<Metadata> = {
   id: number;
   role: Role;
-  metadata: Metadata;
+  metadata?: Metadata;
   prefix: MultiLangString;
   name: MultiLangObj<PersonName>;
 };
