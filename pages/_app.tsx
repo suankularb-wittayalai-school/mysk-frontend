@@ -164,7 +164,15 @@ function App({ Component, pageProps }: CustomAppProps) {
                 </ErrorBoundary>
               </Layout>
             </ThemeProvider>
-            <Analytics />
+
+            {/* Analytics */}
+            <Analytics
+              beforeSend={(event) => {
+                // Ignore locale when reporting pages
+                const url = event.url.replace(/\/(en-US|th)/, "");
+                return { ...event, url };
+              }}
+            />
           </MotionConfig>
         </Contexts>
       </SessionContextProvider>
