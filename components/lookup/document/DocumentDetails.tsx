@@ -1,4 +1,5 @@
 // External libraries
+import va from "@vercel/analytics";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { FC, RefObject, useContext, useEffect, useRef, useState } from "react";
@@ -36,6 +37,8 @@ const DocumentActions: FC<{ document: SchoolDocument }> = ({ document }) => {
    * fallback, this function puts the link in the clipboard.
    */
   async function handleShare() {
+    va.track("Share Document", { subject: document.subject });
+
     const shareData = {
       title: document.subject,
       url: document.documentLink,
@@ -49,6 +52,8 @@ const DocumentActions: FC<{ document: SchoolDocument }> = ({ document }) => {
    * Open the Google Drive PDF file in a new window.
    */
   function handlePopOut() {
+    va.track("Pop out Document", { subject: document.subject });
+
     window.open(document.documentLink, "_blank", "popup, noreferrer");
   }
 
@@ -56,6 +61,8 @@ const DocumentActions: FC<{ document: SchoolDocument }> = ({ document }) => {
    * Downloads the PDF file from Google Drive.
    */
   function handleDownload() {
+    va.track("Download Document", { subject: document.subject });
+
     window.location.href = `https://drive.google.com/u/1/uc?id=${
       document.documentLink
         // Remove “https://drive.google.com/file/d/” prefix

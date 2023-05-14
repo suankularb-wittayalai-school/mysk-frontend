@@ -1,6 +1,8 @@
 // External libraries
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
+import va from "@vercel/analytics";
+
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import Head from "next/head";
 
@@ -103,6 +105,9 @@ const LookupDocumentsPage: CustomPage<{
             ) : undefined
           }
           onSearch={async (query) => {
+            va.track("Search Document", {
+              type: type === "order" ? "Order" : "School Document",
+            });
             if (!query) {
               setDocuments(recentDocs);
               return;

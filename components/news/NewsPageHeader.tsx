@@ -1,4 +1,5 @@
 // External libraries
+import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
 import { FC, useContext } from "react";
 
@@ -20,25 +21,35 @@ import NewsChipSet from "@/components/news/NewsChipSet";
 import SnackbarContext from "@/contexts/SnackbarContext";
 
 // Images
-import NewsPlaceholderLight from "@/public/images/graphics/news-placeholder-light.webp";
 import NewsPlaceholderDark from "@/public/images/graphics/news-placeholder-dark.webp";
+import NewsPlaceholderLight from "@/public/images/graphics/news-placeholder-light.webp";
 
 // Types
+import { MultiLangString } from "@/utils/types/common";
 import { FormPage, InfoPage, NewsItemType } from "@/utils/types/news";
 
 // Helpers
-import { createTitleStr } from "@/utils/helpers/title";
 import { getLocaleString } from "@/utils/helpers/i18n";
+import { createTitleStr } from "@/utils/helpers/title";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
 
+/**
+ * Actions for a News Article.
+ *
+ * @param type The type of the News Article.
+ * @param title A multilingual string representing the title of the News Article.
+ *
+ * @returns An Actions.
+ */
 const PageActions: FC<{
   type: NewsItemType;
-  title: string;
+  title: MultiLangString;
   className?: string;
 }> = ({ type, title, className }) => {
   // Translation
+  const locale = useLocale();
   const { t } = useTranslation(["news", "common"]);
 
   // Snackbar
@@ -55,7 +66,13 @@ const PageActions: FC<{
         appearance="outlined"
         icon={<MaterialIcon icon="link" />}
         onClick={async () => {
-          const shareData = { title, url: window.location.href };
+          va.track("Share News Article", {
+            title: getLocaleString(title, "en-US"),
+          });
+          const shareData = {
+            title: createTitleStr(getLocaleString(title, locale), t),
+            url: window.location.href,
+          };
           if (navigator.canShare && navigator.canShare(shareData)) {
             await navigator.share(shareData);
             return;
@@ -74,12 +91,18 @@ const PageActions: FC<{
   );
 };
 
-const NewsPageHeader: FC<{ newsItem: InfoPage | FormPage }> = ({
-  newsItem,
-}) => {
+/**
+ * The Page Header for a News Article of any type.
+ *
+ * @param newsItem An instance of Info Page or Form Page.
+ *
+ * @returns A Page Header.
+ */
+const NewsPageHeader: FC<{
+  newsItem: InfoPage | FormPage;
+}> = ({ newsItem }) => {
   // Translation
   const locale = useLocale();
-  const { t } = useTranslation("common");
 
   return (
     <PageHeader
@@ -127,10 +150,7 @@ const NewsPageHeader: FC<{ newsItem: InfoPage | FormPage }> = ({
 
           <PageActions
             type={newsItem.type}
-            title={createTitleStr(
-              getLocaleString(newsItem.content.title, locale),
-              t
-            )}
+            title={newsItem.content.title}
             className="mt-3 !hidden md:!flex"
           />
         </div>
@@ -139,10 +159,7 @@ const NewsPageHeader: FC<{ newsItem: InfoPage | FormPage }> = ({
       {/* Actions */}
       <PageActions
         type={newsItem.type}
-        title={createTitleStr(
-          getLocaleString(newsItem.content.title, locale),
-          t
-        )}
+        title={newsItem.content.title}
         className="mt-3 md:!hidden"
       />
     </PageHeader>

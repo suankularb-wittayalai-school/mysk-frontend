@@ -1,5 +1,6 @@
 // External libraries
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import va from "@vercel/analytics";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import {
@@ -123,6 +124,7 @@ const SubjectPeriod: FC<{
   async function handleDelete() {
     withLoading(
       async () => {
+        va.track("Delete Period");
         setDetailsOpen(false);
         const { error } = await deleteScheduleItem(supabase, period.id!);
         if (error) return false;
@@ -144,6 +146,9 @@ const SubjectPeriod: FC<{
   ) {
     await withLoading(
       async () => {
+        // Track
+        va.track("Extend Period");
+
         // Get the rectangle
         const constraints = constraintsRef?.current;
         if (!constraints) {
@@ -240,6 +245,9 @@ const SubjectPeriod: FC<{
     setExtending(false);
     withLoading(
       async () => {
+        // Track
+        va.track("Move Period");
+
         // Don’t do anything if the period’s duration stays the same
         if (periodDuration === period.duration) {
           setExtending(false);
@@ -308,7 +316,12 @@ const SubjectPeriod: FC<{
             role === "teacher" && "cursor-default",
           ])}
           style={{ width: periodDurationToWidth(period.duration) }}
-          onClick={() => role === "student" && setDetailsOpen(true)}
+          onClick={() => {
+            if (role === "student") {
+              va.track("Open Period Details");
+              setDetailsOpen(true);
+            }
+          }}
         >
           {/* Subject name / class */}
           {role === "teacher" ? (

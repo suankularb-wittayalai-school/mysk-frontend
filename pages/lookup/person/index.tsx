@@ -1,6 +1,8 @@
 // External libraries
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
+import va from "@vercel/analytics";
+
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -131,6 +133,8 @@ const LookupPeoplePage: CustomPage<{
   const [filters, setFilters] = useState<Role[]>(["student", "teacher"]);
 
   async function handleSearch(query: string) {
+    va.track("Search Person")
+
     if (!query) {
       setFilterred(false);
       setPeople(initialPeople);
