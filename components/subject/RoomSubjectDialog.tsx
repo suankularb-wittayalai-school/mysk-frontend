@@ -69,7 +69,11 @@ const PeopleSection: FC<{
   });
 
   return (
-    <Section sectionAttr={{ "aria-labelledby": "header-people" }}>
+    <Section
+      element={(props) => (
+        <section {...props} aria-labelledby="header-people" />
+      )}
+    >
       <h2 id="header-people" className="skc-title-large">
         {t("title")}
       </h2>
@@ -105,7 +109,11 @@ const GoogleSection: FC<{
   });
 
   return (
-    <Section sectionAttr={{ "aria-labelledby": "header-google" }}>
+    <Section
+      element={(props) => (
+        <section {...props} aria-labelledby="header-google" />
+      )}
+    >
       <h2 id="header-google" className="skc-title-large">
         <BrandIcon icon="google" className="inline-block" /> {t("title")}
       </h2>

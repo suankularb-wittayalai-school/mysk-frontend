@@ -34,9 +34,16 @@ const ContactsSection: FC<{
   const [showAdd, setShowAdd] = useState<boolean>(false);
 
   return (
-    <Section sectionAttr={{ "aria-labelledby": "header-contacts" }}>
+    <Section
+      element={(props) => (
+        <section {...props} aria-labelledby="header-contacts" />
+      )}
+    >
       <Columns columns={3} className="!items-end">
-        <Header className="md:col-span-2" hAttr={{ id: "header-contacts" }}>
+        <Header
+          className="md:col-span-2"
+          element={(props) => <h2 {...props} id="header-contacts" />}
+        >
           {t("profile.contacts.title")}
         </Header>
         <Actions>
