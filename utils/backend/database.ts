@@ -186,7 +186,6 @@ export async function db2Student(
     role: "student",
     ...db2PersonName(student.person),
     studentID: student.std_id,
-    class: { id: 0, number: 0 },
     birthdate: student.person.birthdate,
     classNo: 1,
     contacts: [],
@@ -204,22 +203,22 @@ export async function db2Student(
     if (contacts) formatted.contacts = contacts.map(db2Contact);
   }
 
-  const { data: classes, error: classError } = await supabase
+  const { data: classItem, error: classError } = await supabase
     .from("classroom")
     .select("id, number, students, no_list")
     .match({ year: getCurrentAcademicYear() })
     .contains("students", [student.id])
     .limit(1)
-    .single();
+    .maybeSingle();
   if (classError) {
     console.error(classError);
   }
-  if (classes) {
+  if (classItem) {
     formatted.class = {
-      id: classes.id,
-      number: classes.number,
+      id: classItem.id,
+      number: classItem.number,
     };
-    formatted.classNo = classes.no_list.indexOf(student.id) + 1;
+    formatted.classNo = classItem.no_list.indexOf(student.id) + 1;
   }
 
   return formatted;

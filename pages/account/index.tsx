@@ -124,7 +124,7 @@ const BasicInfoSection: FC<{ person: Student | Teacher }> = ({ person }) => {
                   ]
                     .filter((segment) => segment)
                     .join(" • ")
-                : // For a student: Class and Class No.
+                : person.class && // For a student: Class and Class No.
                   t("basicInfo.classAndNo", {
                     class: person.class.number,
                     classNo: person.classNo,

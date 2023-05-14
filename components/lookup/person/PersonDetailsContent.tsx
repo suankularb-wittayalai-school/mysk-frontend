@@ -173,7 +173,7 @@ const GeneralInfoSection: FC<{
       </DetailSection>
 
       {/* Class */}
-      {person.role === "student" && (
+      {person.role === "student" && person.class && (
         <DetailSection title={t("people.detail.general.class.title")}>
           <span className="block">
             {t("class", { ns: "common", number: person.class.number })}

@@ -115,7 +115,11 @@ export const getServerSideProps: GetServerSideProps = async ({
     data: { session },
   } = await supabase.auth.getSession();
 
-  const { data: classItem } = await getClassFromUser(supabase, session!.user);
+  const { data: classItem, error } = await getClassFromUser(
+    supabase,
+    session!.user
+  );
+  if (error) return { notFound: true };
   const { data: schedule } = await getSchedule(
     supabase,
     "student",
