@@ -4,7 +4,7 @@
     "options": {
       "language": "ภาษา",
       "action": {
-        "forgor": "ลืมรหัสผ่าน",
+        "magicLink": "เข้าสู่ระบบไร้รหัส",
         "help": "ช่วยเหลือ"
       }
     }

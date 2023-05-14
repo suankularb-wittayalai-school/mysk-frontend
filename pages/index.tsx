@@ -42,7 +42,6 @@ import {
 } from "@suankularb-components/react";
 
 // Internal components
-import RequestForgorDialog from "@/components/account/RequestForgorDialog";
 import MultiSchemeImage from "@/components/common/MultiSchemeImage";
 
 // Contexts
@@ -210,7 +209,7 @@ const OptionsSection: FC = () => {
 
   const refreshProps = useRefreshProps();
 
-  const [forgorOpen, setForgorOpen] = useState<boolean>(false);
+  const [forgorOpen, setMagicLinkOpen] = useState<boolean>(false);
 
   return (
     <Section className="!gap-4">
@@ -239,15 +238,11 @@ const OptionsSection: FC = () => {
       >
         <Button
           appearance="tonal"
-          onClick={() => setForgorOpen(true)}
+          onClick={() => setMagicLinkOpen(true)}
           className={locale === "en-US" ? "!min-w-[13ch]" : undefined}
         >
-          {t("action.forgor")}
+          {t("action.magicLink")}
         </Button>
-        <RequestForgorDialog
-          open={forgorOpen}
-          onClose={() => setForgorOpen(false)}
-        />
         <Button
           appearance="tonal"
           // TODO: Change this back to `/help` when the Help page is done
