@@ -17,8 +17,7 @@ import {
   ChipSet,
   FilterChip,
   MaterialIcon,
-  SplitLayout,
-  useBreakpoint
+  SplitLayout
 } from "@suankularb-components/react";
 
 // Internal components
@@ -68,14 +67,13 @@ const LookupPeoplePage: CustomPage<{
   );
 
   // Redirect mobile users to the details page when URL has query
-  const { atBreakpoint } = useBreakpoint();
   const router = useRouter();
   useEffect(() => {
-    if (selectedIdx && atBreakpoint === "base") {
+    if (selectedIdx && !window.matchMedia("(min-width: 600px)")) {
       const { id, role } = initialPeople[selectedIdx];
       router.push(`/lookup/person/${role}/${id}`);
     }
-  }, [selectedIdx]);
+  }, []);
 
   // Update the URL with the selected Person query, so as to make sharing
   // easier
@@ -133,7 +131,7 @@ const LookupPeoplePage: CustomPage<{
   const [filters, setFilters] = useState<Role[]>(["student", "teacher"]);
 
   async function handleSearch(query: string) {
-    va.track("Search Person")
+    va.track("Search Person");
 
     if (!query) {
       setFilterred(false);
