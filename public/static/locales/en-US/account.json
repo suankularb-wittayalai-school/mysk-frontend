@@ -190,7 +190,7 @@
     },
     "logOut": {
       "title": "Log out",
-      "supportingText": "Are you sure you want to log out?",
+      "desc": "Are you sure you want to log out?",
       "action": {
         "logOut": "Log out",
         "back": "Back"

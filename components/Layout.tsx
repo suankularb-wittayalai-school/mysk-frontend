@@ -44,6 +44,7 @@ import { useSnackbar } from "@/utils/hooks/snackbar";
 // Types
 import { CustomPage } from "@/utils/types/common";
 import { UserMetadata } from "@/utils/types/person";
+import LogOutDialog from "./account/LogOutDialog";
 
 const Layout: FC<
   { children: ReactNode } & Pick<
@@ -99,6 +100,9 @@ const Layout: FC<
 
   // Snackbar
   const { snackbarOpen, setSnackbarOpen, snackbarProps } = useSnackbar();
+
+  // Dialog control
+  const [logOutOpen, setLogOutOpen] = useState<boolean>(false);
 
   const rootLayout = (
     <RootLayout>
@@ -233,8 +237,7 @@ const Layout: FC<
           <NavDrawerItem
             icon={<MaterialIcon icon="logout" />}
             label={t("navigation.drawer.about.logOut")}
-            href="/account/logout"
-            element={Link}
+            onClick={() => setLogOutOpen(true)}
           />
         </NavDrawerSection>
       </NavDrawer>
@@ -271,8 +274,7 @@ const Layout: FC<
               <NavBarItem
                 icon={<MaterialIcon icon="logout" />}
                 label={t("navigation.logOut")}
-                href="/account/logout"
-                element={Link}
+                onClick={() => setLogOutOpen(true)}
               />
             </>
           }
@@ -329,6 +331,9 @@ const Layout: FC<
           />
         </NavBar>
       )}
+
+      {/* Log out Dialog */}
+      <LogOutDialog open={logOutOpen} onClose={() => setLogOutOpen(false)} />
 
       {/* Snackbar */}
       <Snackbar
