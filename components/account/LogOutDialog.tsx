@@ -1,7 +1,8 @@
 // External libraries
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import va from "@vercel/analytics";
-import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
 import { useContext } from "react";
 
 // SK Components
@@ -23,9 +24,6 @@ import { withLoading } from "@/utils/helpers/loading";
 // Hooks
 import { useToggle } from "@/utils/hooks/toggle";
 
-// Supabase
-import { supabase } from "@/utils/supabase-client";
-
 // Types
 import { DialogComponent } from "@/utils/types/common";
 
@@ -34,7 +32,7 @@ import { DialogComponent } from "@/utils/types/common";
  *
  * @returns A Dialog.
  */
-const MagicLinkDialog: DialogComponent = ({ open, onClose }) => {
+const LogOutDialog: DialogComponent = ({ open, onClose }) => {
   // Translation
   const { t } = useTranslation("account", { keyPrefix: "dialog.logOut" });
   const { t: tx } = useTranslation("common");
@@ -43,7 +41,9 @@ const MagicLinkDialog: DialogComponent = ({ open, onClose }) => {
 
   const router = useRouter();
 
+  const supabase = useSupabaseClient();
   const [loading, toggleLoading] = useToggle();
+
   function handleSubmit() {
     withLoading(
       async () => {
@@ -57,9 +57,11 @@ const MagicLinkDialog: DialogComponent = ({ open, onClose }) => {
 
         // Track event
         va.track("Log out");
-
+        // Close the Dialog
+        onClose();
         // Redirect to Landing
         router.push("/");
+
         return true;
       },
       toggleLoading,
@@ -87,4 +89,4 @@ const MagicLinkDialog: DialogComponent = ({ open, onClose }) => {
   );
 };
 
-export default MagicLinkDialog;
+export default LogOutDialog;
