@@ -29,11 +29,13 @@ import {
   ClassWNumber,
 } from "@/utils/types/class";
 import { CustomPage, LangCode } from "@/utils/types/common";
+import { Role } from "@/utils/types/person";
 
 const ClassOverviewPage: CustomPage<{
   classItem: ClassOverviewType;
   editable: boolean;
-}> = ({ classItem, editable }) => {
+  userRole: Role;
+}> = ({ classItem, editable, userRole }) => {
   const { t } = useTranslation(["class", "common"]);
 
   return (
@@ -41,7 +43,7 @@ const ClassOverviewPage: CustomPage<{
       <Head>
         <title>{createTitleStr(t("overview.title.class"), t)}</title>
       </Head>
-      <MySKPageHeader title={t("overview.title.class")}>
+      <MySKPageHeader title={t(`overview.title.${userRole}`)}>
         <ClassTabs number={classItem.number} type="class" />
       </MySKPageHeader>
       <ClassOverview {...{ classItem, editable }} />
@@ -64,15 +66,27 @@ export const getServerSideProps: GetServerSideProps = async ({
   } = await supabase.auth.getSession();
   const { data: metadata } = await getUserMetadata(supabase, session!.user.id);
 
+  const userRole = metadata!.role;
+
   let classWNumber: ClassWNumber | null = null;
   let editable = false;
-  if (metadata!.role === "student") {
-    const { data } = await getClassFromUser(supabase, session!.user);
-    classWNumber = data!;
-  } else if (metadata!.role === "teacher") {
-    const { data } = await getClassAdvisorAt(supabase, metadata!.teacher!);
-    classWNumber = data!;
-    editable = true;
+
+  switch (userRole) {
+    case "student":
+      const { data: classItem } = await getClassFromUser(
+        supabase,
+        session!.user
+      );
+      classWNumber = classItem!;
+      break;
+    case "teacher":
+      const { data: classAdvisorAt } = await getClassAdvisorAt(
+        supabase,
+        metadata!.teacher!
+      );
+      classWNumber = classAdvisorAt!;
+      editable = true;
+      break;
   }
 
   if (!classWNumber) return { notFound: true };
@@ -91,6 +105,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       ])),
       classItem,
       editable,
+      userRole,
     },
   };
 };

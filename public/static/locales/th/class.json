@@ -1,7 +1,8 @@
 {
   "overview": {
     "title": {
-      "class": "ห้องเรียน",
+      "student": "ห้องเรียน",
+      "teacher": "ห้องที่ปรึกษา",
       "lookup": "ม.{{number}}"
     },
     "classAdvisors": {
@@ -10,7 +11,8 @@
   },
   "student": {
     "title": {
-      "class": "เพื่อนร่วมห้อง",
+      "student": "นักเรียนในห้อง",
+      "teacher": "นักเรียนในห้อง",
       "lookup": "นักเรียนห้องม.{{number}}"
     },
     "list": {
@@ -19,7 +21,8 @@
   },
   "teacher": {
     "title": {
-      "class": "อาจารย์ที่สอนห้องนี้",
+      "student": "อาจารย์ที่สอนห้องนี้",
+      "teacher": "อาจารย์ที่สอนห้องนี้",
       "lookup": "อาจารย์ที่สอนม.{{number}}"
     },
     "list": {

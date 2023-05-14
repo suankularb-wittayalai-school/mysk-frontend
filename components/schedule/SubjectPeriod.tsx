@@ -1,5 +1,6 @@
 // External libraries
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import va from "@vercel/analytics";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import {
@@ -21,6 +22,7 @@ import {
 
 // SK Components
 import {
+  Interactive,
   MaterialIcon,
   transition,
   useAnimationConfig,
@@ -123,6 +125,7 @@ const SubjectPeriod: FC<{
   async function handleDelete() {
     withLoading(
       async () => {
+        va.track("Delete Period");
         setDetailsOpen(false);
         const { error } = await deleteScheduleItem(supabase, period.id!);
         if (error) return false;
@@ -144,6 +147,9 @@ const SubjectPeriod: FC<{
   ) {
     await withLoading(
       async () => {
+        // Track
+        va.track("Extend Period");
+
         // Get the rectangle
         const constraints = constraintsRef?.current;
         if (!constraints) {
@@ -240,6 +246,9 @@ const SubjectPeriod: FC<{
     setExtending(false);
     withLoading(
       async () => {
+        // Track
+        va.track("Move Period");
+
         // Don’t do anything if the period’s duration stays the same
         if (periodDuration === period.duration) {
           setExtending(false);
@@ -293,22 +302,34 @@ const SubjectPeriod: FC<{
         ])}
       >
         {/* Period content */}
-        <button
+        <Interactive
+          stateLayerEffect={role !== "teacher"}
+          rippleEffect={role !== "teacher"}
           className={cn([
-            `tap-highlight-none flex h-14 w-24 flex-col rounded-sm border-4
-             border-secondary-container bg-secondary-container px-3 py-1
-             text-left text-on-secondary-container
-             transition-[border,background-color,color] [&_*]:w-full
-             [&_*]:truncate [&_*]:break-all`,
+            `tap-highlight-none flex h-14 w-24 flex-col rounded-sm
+             bg-secondary-container text-left text-on-secondary-container
+             transition-[border,background-color,color]
+             state-layer:bg-on-secondary-container
+             [&>*]:w-full [&>*]:truncate [&>*]:break-all`,
             !(loading || extending) && isInSession
               ? `border-tertiary-container bg-tertiary-container
                  text-on-tertiary-container`
               : `bg-secondary-container text-on-secondary-container`,
-            (loading || extending) && "bg-surface text-secondary",
-            role === "teacher" && "cursor-default",
+            (loading || extending) && `bg-surface text-secondary`,
+            role === "teacher"
+              ? `cursor-default overflow-visible border-4 border-secondary-container
+                 px-3 py-1`
+              : `px-4 py-2`,
           ])}
           style={{ width: periodDurationToWidth(period.duration) }}
-          onClick={() => role === "student" && setDetailsOpen(true)}
+          onClick={
+            role === "student"
+              ? () => {
+                  va.track("Open Period Details");
+                  setDetailsOpen(true);
+                }
+              : undefined
+          }
         >
           {/* Subject name / class */}
           {role === "teacher" ? (
@@ -345,7 +366,7 @@ const SubjectPeriod: FC<{
               )}
             </span>
           )}
-        </button>
+        </Interactive>
 
         {/* Hover menu */}
         <SubjectPeriodMenu

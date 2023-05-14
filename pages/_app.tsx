@@ -7,24 +7,22 @@ import { Analytics } from "@vercel/analytics/react";
 import { MotionConfig } from "framer-motion";
 
 import {
-  Inter,
-  Space_Grotesk,
-  Sarabun,
-  IBM_Plex_Sans_Thai,
   Fira_Code,
+  IBM_Plex_Sans_Thai,
+  Inter,
+  Sarabun,
+  Space_Grotesk,
 } from "next/font/google";
-import { useRouter } from "next/router";
 
 import { appWithTranslation } from "next-i18next";
 
-import { FC, ReactNode, useEffect, useState } from "react";
+import { FC, ReactNode, useState } from "react";
 
 // SK Components
 import { ThemeProvider } from "@suankularb-components/react";
 
 // Internal components
 import Layout from "@/components/Layout";
-import ForgorDialog from "@/components/account/ForgorDialog";
 import ErrorBoundary from "@/components/error/ErrorBoundary";
 import PageFallback from "@/components/error/PageFallback";
 
@@ -90,47 +88,6 @@ function App({ Component, pageProps }: CustomAppProps) {
   // Supabase client
   const [supabase] = useState(() => createBrowserSupabaseClient<Database>());
 
-  // Forgot password process (abbreviated throughout the codebase as `forgor`):
-  //
-  // 1. The user initiates forgor with the Forgot password Button in Landing.
-  //    (see `/pages/index.tsx`)
-  // 2. The user enters their email address to send a verification email to
-  //    with the Request Forgor Dialog.
-  //    (see `/components/account/RequestForgorDialog.tsx`)
-  // 3. The email is sent, and the user is told the next steps.
-  //    (see `/components/account/CheckEmail.tsx`)
-  // 4. The user opens their email, sees our email, and clicks the link.
-  // 5. The user is redirected back to MySK. A `PASSWORD_RECOVERY` event fires,
-  //    the code block below intercepts it and open the Forgor Dialog.
-  // 6. The user enters their new password, save it, and goes on with their life.
-  //
-  // See https://supabase.com/docs/reference/javascript/auth-resetpasswordforemail.
-
-  const router = useRouter();
-  const [verifiedForgorOpen, setVerifiedForgorOpen] = useState<boolean>(false);
-  useEffect(() => {
-    supabase.auth.onAuthStateChange(async (event) => {
-      switch (event) {
-        // Magic link support
-        case "SIGNED_IN":
-          // Only redirect if user is at Landing
-          if (!router.pathname) router.push("/learn");
-          break;
-
-        // A fallback in case logging out via `/account/logout` fails to
-        // redirect
-        case "SIGNED_OUT":
-          router.push("/");
-          break;
-
-        // Forgor process (see 5.)
-        case "PASSWORD_RECOVERY":
-          setVerifiedForgorOpen(true);
-          break;
-      }
-    });
-  }, []);
-
   return (
     <>
       {/* Put Next.js generated font families into variables that SKCom and
@@ -157,14 +114,18 @@ function App({ Component, pageProps }: CustomAppProps) {
               <Layout {...{ context, fab, navType, childURLs }}>
                 <ErrorBoundary Fallback={PageFallback}>
                   <Component {...pageProps} />
-                  <ForgorDialog
-                    open={verifiedForgorOpen}
-                    onClose={() => setVerifiedForgorOpen(false)}
-                  />
                 </ErrorBoundary>
               </Layout>
             </ThemeProvider>
-            <Analytics />
+
+            {/* Analytics */}
+            <Analytics
+              beforeSend={(event) => {
+                // Ignore locale when reporting pages
+                const url = event.url.replace(/\/(en-US|th)/, "");
+                return { ...event, url };
+              }}
+            />
           </MotionConfig>
         </Contexts>
       </SessionContextProvider>

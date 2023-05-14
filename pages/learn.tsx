@@ -1,4 +1,6 @@
 // External libraries
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import Head from "next/head";
 
@@ -40,7 +42,6 @@ import { createTitleStr } from "@/utils/helpers/title";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
 const ScheduleSection: FC<{ schedule: ScheduleType }> = ({ schedule }) => {
   const { t } = useTranslation("learn");
@@ -114,7 +115,11 @@ export const getServerSideProps: GetServerSideProps = async ({
     data: { session },
   } = await supabase.auth.getSession();
 
-  const { data: classItem } = await getClassFromUser(supabase, session!.user);
+  const { data: classItem, error } = await getClassFromUser(
+    supabase,
+    session!.user
+  );
+  if (error) return { notFound: true };
   const { data: schedule } = await getSchedule(
     supabase,
     "student",

@@ -41,15 +41,13 @@ export type DefaultTHPrefix = "เด็กชาย" | "นาย" | "นาง
 export type DefaultENPrefix = "Master." | "Mr." | "Mrs." | "Miss.";
 
 export type Student = Person & {
-  // TODO: Add more properties when the schema is completed
   role: "student";
   studentID: string;
-  class: ClassWNumber;
+  class?: ClassWNumber;
   classNo: number;
 };
 
 export type Teacher = Person & {
-  // TODO: Add more properties when the schema is completed
   role: "teacher";
   teacherID: string;
   classAdvisorAt?: ClassWNumber;
@@ -76,7 +74,7 @@ export type PersonLookupItem = {
 export type PersonLookupItemGeneric<Metadata> = {
   id: number;
   role: Role;
-  metadata: Metadata;
+  metadata?: Metadata;
   prefix: MultiLangString;
   name: MultiLangObj<PersonName>;
 };

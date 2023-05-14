@@ -46,9 +46,9 @@ import GenerateClassesDialog from "@/components/admin/GenerateClassesDialog";
 import ImportStudentsDialog from "@/components/admin/ImportStudentsDialog";
 import ImportSubjectsDialog from "@/components/admin/ImportSubjectsDialog";
 import ImportTeachersDialog from "@/components/admin/ImportTeachersDialog";
+import MySKPageHeader from "@/components/common/MySKPageHeader";
 
 // Supabase
-import MySKPageHeader from "@/components/common/MySKPageHeader";
 import { supabase } from "@/utils/supabase-backend";
 
 // Helpers
@@ -167,7 +167,7 @@ const AdminCardAction: FC<{
       shadowEffect
       onClick={onClick}
       href={href}
-      element={Link}
+      element={href ? Link : "button"}
       className={cn([
         "items-center !gap-5 !border-0 px-3 py-2",
         size !== "large" && "!rounded-sm",

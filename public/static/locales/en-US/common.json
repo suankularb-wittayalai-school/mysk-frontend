@@ -152,16 +152,12 @@
         "discard": "Discard"
       }
     },
-    "completeForgor": {
-      "title": "Set a new password",
-      "desc": "We’ve successfully verified you. Enter your new password twice to complete the process.",
-      "form": {
-        "newPwd": "New password",
-        "newPwd_error": "Lengthen to at least 8 characters.",
-        "confirmNewPwd": "Confirm new password"
-      },
+    "logOut": {
+      "title": "Log out",
+      "desc": "Are you sure you want to log out?",
       "action": {
-        "set": "Set"
+        "logOut": "Log out",
+        "back": "Back"
       }
     },
     "image": {

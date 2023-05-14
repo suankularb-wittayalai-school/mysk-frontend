@@ -42,7 +42,7 @@ import {
 } from "@suankularb-components/react";
 
 // Internal components
-import RequestForgorDialog from "@/components/account/RequestForgorDialog";
+import MagicLinkDialog from "@/components/account/MagicLinkDialog";
 import MultiSchemeImage from "@/components/common/MultiSchemeImage";
 
 // Contexts
@@ -83,7 +83,6 @@ import { CustomPage, LangCode } from "@/utils/types/common";
 const LogInSection: FC = () => {
   // Router
   const locale = useLocale();
-  const router = useRouter();
 
   // Translation
   const { t } = useTranslation(["account", "landing"]);
@@ -142,23 +141,6 @@ const LogInSection: FC = () => {
 
       if (!session || error) return false;
 
-      // Get the user metadata to figure where to redirect to
-      const { data: metadata, error: metadataError } = await getUserMetadata(
-        supabase,
-        session.user.id
-      );
-      if (metadataError) return false;
-
-      // Onboard the user if this is their first log in
-      if (!metadata!.onboarded) {
-        router.push("/account/welcome");
-        return true;
-      }
-
-      // Redirect the user accoridng to their role
-      if (metadata!.role === "teacher") router.push("/teach");
-      if (metadata!.role === "student") router.push("/learn");
-
       return true;
     }, toggleLoading);
   }
@@ -210,7 +192,8 @@ const OptionsSection: FC = () => {
 
   const refreshProps = useRefreshProps();
 
-  const [forgorOpen, setForgorOpen] = useState<boolean>(false);
+  // Dialog control
+  const [magicLinkOpen, setMagicLinkOpen] = useState<boolean>(false);
 
   return (
     <Section className="!gap-4">
@@ -237,24 +220,35 @@ const OptionsSection: FC = () => {
         align="full"
         className="grid-cols-1 sm:mr-12 sm:!grid md:mr-0 md:!flex"
       >
+        {/* Magic link */}
         <Button
           appearance="tonal"
-          onClick={() => setForgorOpen(true)}
+          onClick={() => setMagicLinkOpen(true)}
           className={locale === "en-US" ? "!min-w-[13ch]" : undefined}
         >
-          {t("action.forgor")}
+          {t("action.magicLink")}
         </Button>
-        <RequestForgorDialog
-          open={forgorOpen}
-          onClose={() => setForgorOpen(false)}
+        <MagicLinkDialog
+          open={magicLinkOpen}
+          onClose={() => setMagicLinkOpen(false)}
         />
+
+        {/* Help */}
         <Button
           appearance="tonal"
           // TODO: Change this back to `/help` when the Help page is done
           href="https://docs.google.com/document/d/1yAEVK09BgbpFIPpG5j1xvfCRUGUdRyL9S1gAxh9UjfU/edit?usp=share_link"
           // eslint-disable-next-line react/display-name
           element={forwardRef((props, ref) => (
-            <a {...props} ref={ref} target="_blank" rel="noreferrer" />
+            <a
+              {...props}
+              ref={ref}
+              onClick={() =>
+                va.track("Open User Guide", { location: "Landing" })
+              }
+              target="_blank"
+              rel="noreferrer"
+            />
           ))}
         >
           {t("action.help")}
@@ -275,7 +269,11 @@ const PatchNotesSection: FC = () => {
 
   return (
     <Section className="!gap-5">
-      <Header className="skc-headline-large">{t("title")}</Header>
+      <Header className="skc-headline-large">
+        {t("title", {
+          version: process.env.NEXT_PUBLIC_VERSION || "[Preview]",
+        })}
+      </Header>
       <p className="skc-title-large">{t("subtitle")}</p>
       <ul className="skc-body-medium list-disc pl-6">
         <li>{t("list.1")}</li>
@@ -417,10 +415,29 @@ const LandingPage: CustomPage = () => {
     );
   }, []);
 
-  // Support for magic link
+  // Log in (both methods) redirect
   const user = useUser();
+  const supabase = useSupabaseClient();
   useEffect(() => {
-    if (user) router.push("/learn");
+    if (!user) return;
+    (async () => {
+      // Get the user metadata to figure where to redirect to
+      const { data: metadata, error: metadataError } = await getUserMetadata(
+        supabase,
+        user.id
+      );
+      if (metadataError) return false;
+
+      // Onboard the user if this is their first log in
+      if (!metadata!.onboarded) {
+        router.push("/account/welcome");
+        return true;
+      }
+
+      // Redirect the user accoridng to their role
+      if (metadata!.role === "teacher") router.push("/teach");
+      if (metadata!.role === "student") router.push("/learn");
+    })();
   }, [user?.id]);
 
   return (

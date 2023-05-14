@@ -1,10 +1,12 @@
 // External libraries
+import va from "@vercel/analytics";
 import { AnimatePresence, DragControls, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { FC, useState } from "react";
 
 // SK Components
 import {
+  Interactive,
   MaterialIcon,
   transition,
   useAnimationConfig,
@@ -75,42 +77,55 @@ const SubjectPeriodMenu: FC<{
           >
             {/* Move period */}
             {!extending && (
-              <button
-                title={t("schedule.hoverMenu.move")}
-                onPointerDown={(event) => {
-                  setMoving(true);
-                  dragControls.start(event);
+              <Interactive
+                element="button"
+                rippleEffect={false}
+                shadowEffect
+                attr={{
+                  title: t("schedule.hoverMenu.move"),
+                  onPointerDown: (event) => {
+                    setMoving(true);
+                    dragControls.start(event);
+                  },
+                  onPointerUp: () => setMoving(false),
                 }}
-                onPointerUp={() => setMoving(false)}
                 className={cn([
-                  `grid place-content-center rounded-xs
-                   transition-colors`,
+                  `grid place-content-center rounded-xs transition-colors`,
                   moving
                     ? `cursor-grabbing bg-secondary text-on-secondary`
                     : `cursor-grab bg-surface text-on-surface`,
                 ])}
               >
                 <MaterialIcon icon="drag_indicator" size={20} />
-              </button>
+              </Interactive>
             )}
 
             {/* Period details Dialog trigger */}
             {!(moving || extending) && (
-              <button
-                title={t("schedule.hoverMenu.more")}
+              <Interactive
+                shadowEffect
+                onClick={() => {
+                  va.track("Open Period Details");
+                  setDetailsOpen(true);
+                }}
+                attr={{ title: t("schedule.hoverMenu.more") }}
                 className="tap-highlight-none grid place-content-center
-                  rounded-xs bg-primary text-on-primary"
-                onClick={() => setDetailsOpen(true)}
+                  rounded-xs bg-primary text-on-primary state-layer:!bg-on-primary"
               >
                 <MaterialIcon icon="open_in_full" />
-              </button>
+              </Interactive>
             )}
 
             {/* Extend/shorten period */}
             {!moving && (
-              <button
-                title={t("schedule.hoverMenu.extend")}
-                onPointerDown={() => setExtending(true)}
+              <Interactive
+                element="button"
+                rippleEffect={false}
+                shadowEffect
+                attr={{
+                  title: t("schedule.hoverMenu.extend"),
+                  onPointerDown: () => setExtending(true),
+                }}
                 className={cn([
                   `grid cursor-ew-resize place-content-center rounded-xs
                    transition-colors`,
@@ -120,7 +135,7 @@ const SubjectPeriodMenu: FC<{
                 ])}
               >
                 <MaterialIcon icon="straighten" size={20} />
-              </button>
+              </Interactive>
             )}
           </motion.div>
         </div>

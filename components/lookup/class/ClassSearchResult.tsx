@@ -1,4 +1,5 @@
 // External libraries
+import va from "@vercel/analytics";
 import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { FC } from "react";
@@ -35,6 +36,9 @@ const ClassSearchResult: FC<{ classItem: ClassLookupListItem }> = ({
       lines={classItem.classAdvisors.length ? 2 : 1}
       stateLayerEffect
       href={`/lookup/class/${classItem.number}`}
+      onClick={() =>
+        va.track("Search Class", { number: `M.${classItem.number}` })
+      }
       element={Link}
     >
       <ListItemContent

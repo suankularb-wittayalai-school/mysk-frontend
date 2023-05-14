@@ -1,21 +1,25 @@
 // External libraries
 import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
-import { useEffect, useState } from "react";
+import { useContext, useState } from "react";
 
 // SK Components
 import {
-  Dialog,
-  TextField,
-  MaterialIcon,
-  DialogHeader,
-  DialogContent,
   Actions,
   Button,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  MaterialIcon,
+  Snackbar,
+  TextField,
 } from "@suankularb-components/react";
 
-// Components
+// Internal components
 import CheckEmailDialog from "@/components/account/CheckEmailDialog";
+
+// Contexts
+import SnackbarContext from "@/contexts/SnackbarContext";
 
 // Helpers
 import { withLoading } from "@/utils/helpers/loading";
@@ -29,52 +33,45 @@ import { supabase } from "@/utils/supabase-client";
 
 // Types
 import { DialogComponent } from "@/utils/types/common";
+import { logError } from "@/utils/helpers/debug";
 
 /**
- * The initiating Dialog of Forgor.
- *
- * Read about the full process in `/pages/_app.tsx`.
- *
- * @param inputEmail The default email address to send verification email to.
+ * Initiates the Log in With Magic Link process.
  *
  * @returns A Dialog.
  */
-const RequestForgorDialog: DialogComponent<{ inputEmail?: string }> = ({
-  open,
-  onClose,
-  inputEmail,
-}) => {
+const MagicLinkDialog: DialogComponent = ({ open, onClose }) => {
   // Translation
-  const { t } = useTranslation("account");
+  const { t } = useTranslation("account", { keyPrefix: "dialog.magicLink" });
+  const { t: tx } = useTranslation("common");
   const locale = useLocale();
 
+  const { setSnackbar } = useContext(SnackbarContext);
+
   // Form control
-  const [email, setEmail] = useState<string>(inputEmail || "");
-  useEffect(() => {
-    if (inputEmail) setEmail(inputEmail);
-  }, [inputEmail]);
+  const [email, setEmail] = useState<string>("");
 
   const [loading, toggleLoading] = useToggle();
   function handleSubmit() {
-    if (!email) return;
-
+    if (!email) {
+      setSnackbar(<Snackbar>{tx("snackbar.formInvalid")}</Snackbar>);
+      return;
+    }
     withLoading(
       async () => {
-        // Initiate forgor process
-        const { data, error } = await supabase.auth.resetPasswordForEmail(
-          [email, "sk.ac.th"].join("")
-        );
+        // Send magic link
+        const { data, error } = await supabase.auth.signInWithOtp({
+          email: [email, "sk.ac.th"].join(""),
+        });
         if (data) setShowCheckEmail(true);
         if (error) {
-          console.error(error);
+          logError("handleSubmit in MagicLinkDialog", error);
+          setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
           return false;
         }
 
         // Track event
-        va.track("Start Forgot Password");
-
-        // Reset form
-        setEmail("");
+        va.track("Send Magic Link");
         return true;
       },
       toggleLoading,
@@ -89,14 +86,14 @@ const RequestForgorDialog: DialogComponent<{ inputEmail?: string }> = ({
     <>
       <Dialog open={open ? !showCheckEmail : false} onClose={onClose}>
         <DialogHeader
-          title={t("dialog.forgotPassword.title")}
-          icon={<MaterialIcon icon="lock_open" />}
-          desc={t("dialog.forgotPassword.supportingText")}
+          title={t("title")}
+          icon={<MaterialIcon icon="magic_button" />}
+          desc={t("desc")}
         />
         <DialogContent className="mx-6">
           <TextField<string>
             appearance="outlined"
-            label={t("dialog.forgotPassword.form.email", { ns: "account" })}
+            label={t("form.email")}
             align="right"
             trailing="sk.ac.th"
             error={email.endsWith("sk.ac.th")}
@@ -110,14 +107,14 @@ const RequestForgorDialog: DialogComponent<{ inputEmail?: string }> = ({
         </DialogContent>
         <Actions>
           <Button appearance="text" onClick={onClose}>
-            {t("dialog.forgotPassword.action.cancel")}
+            {t("action.cancel")}
           </Button>
           <Button
             appearance="text"
             loading={loading || undefined}
             onClick={handleSubmit}
           >
-            {t("dialog.forgotPassword.action.send")}
+            {t("action.send")}
           </Button>
         </Actions>
       </Dialog>
@@ -128,6 +125,7 @@ const RequestForgorDialog: DialogComponent<{ inputEmail?: string }> = ({
         onClose={() => {
           setShowCheckEmail(false);
           onClose();
+          setEmail("");
         }}
         email={[email, "sk.ac.th"].join("")}
       />
@@ -135,4 +133,4 @@ const RequestForgorDialog: DialogComponent<{ inputEmail?: string }> = ({
   );
 };
 
-export default RequestForgorDialog;
+export default MagicLinkDialog;

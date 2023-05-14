@@ -1,10 +1,15 @@
 // External libraries
+import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
 import { motion } from "framer-motion";
 import { FC, useState } from "react";
 
 // SK Components
-import { transition, useAnimationConfig } from "@suankularb-components/react";
+import {
+  Interactive,
+  transition,
+  useAnimationConfig,
+} from "@suankularb-components/react";
 
 // Internal components
 import ElectivePeriodDetails from "@/components/schedule/ElectivePeriodDetails";
@@ -35,7 +40,7 @@ const ElectivePeriod: FC<{
         layoutId={`elective-period-${period.id}`}
         transition={transition(duration.medium2, easing.standard)}
       >
-        <button
+        <Interactive
           className={cn([
             `skc-title-medium tap-highlight-none relative flex h-full flex-col
              justify-center rounded-sm bg-surface-2 px-4 py-2 text-left
@@ -52,10 +57,13 @@ const ElectivePeriod: FC<{
                  before:bg-surface-variant`,
           ])}
           style={{ width: periodDurationToWidth(period.duration) }}
-          onClick={() => setDetailsOpen(true)}
+          onClick={() => {
+            va.track("Open Period Details");
+            setDetailsOpen(true);
+          }}
         >
           {t("schedule.elective")}
-        </button>
+        </Interactive>
       </motion.li>
       <ElectivePeriodDetails
         period={period}

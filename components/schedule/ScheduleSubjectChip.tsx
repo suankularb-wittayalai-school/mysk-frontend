@@ -89,7 +89,7 @@ const ScheduleSubjectChip: FC<{ subject: SubjectWNameAndCode }> = ({
         className="!z-40 rounded-sm transition-shadow"
       >
         <InputChip
-          icon={<MaterialIcon icon="drag_indicator" />}
+          icon={<MaterialIcon icon="drag_indicator" className="!text-xl" />}
           className="!cursor-grab touch-none !bg-surface-variant
             active:!cursor-grabbing [&_i]:text-on-surface-variant"
         >

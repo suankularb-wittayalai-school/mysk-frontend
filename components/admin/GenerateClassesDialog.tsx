@@ -130,7 +130,11 @@ const GenerateClassesDialog: SubmittableDialogComponent = ({
       </Section>
 
       {/* Number of classes per grade */}
-      <Section sectionAttr={{ "aria-labelledby": "header-classes-per-grade" }}>
+      <Section
+        element={(props) => (
+          <section {...props} aria-labelledby="header-classes-per-grade" />
+        )}
+      >
         <h2 id="header-classes-per-grade" className="skc-title-large">
           {t("numClasses.title")}
         </h2>
@@ -187,7 +191,11 @@ const GenerateClassesDialog: SubmittableDialogComponent = ({
       {(form.numClasses as number[]).filter(
         (numClassesInGrade) => numClassesInGrade
       ).length !== 0 ? (
-        <Section sectionAttr={{ "aria-labelledby": "header-preview" }}>
+        <Section
+          element={(props) => (
+            <section {...props} aria-labelledby="header-preview" />
+          )}
+        >
           <h2 id="header-preview" className="skc-title-large">
             {t("preview.title")}
           </h2>

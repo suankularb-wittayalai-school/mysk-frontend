@@ -26,12 +26,13 @@ import { createTitleStr } from "@/utils/helpers/title";
 // Types
 import { ClassWNumber } from "@/utils/types/class";
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { Student } from "@/utils/types/person";
+import { Role, Student } from "@/utils/types/person";
 
 const ClassStudentsPage: CustomPage<{
   classItem: ClassWNumber;
   studentList: Student[];
-}> = ({ classItem, studentList }) => {
+  userRole: Role;
+}> = ({ classItem, studentList, userRole }) => {
   const { t } = useTranslation(["class", "common"]);
 
   return (
@@ -39,7 +40,7 @@ const ClassStudentsPage: CustomPage<{
       <Head>
         <title>{createTitleStr(t("student.title.class"), t)}</title>
       </Head>
-      <MySKPageHeader title={t("student.title.class")} parentURL="/class">
+      <MySKPageHeader title={t(`student.title.${userRole}`)} parentURL="/class">
         <ClassTabs number={classItem.number} type="class" />
       </MySKPageHeader>
       <ClassStudents {...{ studentList }} />
@@ -62,11 +63,13 @@ export const getServerSideProps: GetServerSideProps = async ({
   } = await supabase.auth.getSession();
   const { data: metadata } = await getUserMetadata(supabase, session!.user.id);
 
+  const userRole = metadata!.role;
+
   let classItem: ClassWNumber;
-  if (metadata!.role === "student") {
+  if (userRole === "student") {
     const { data } = await getClassFromUser(supabase, session!.user);
     classItem = data!;
-  } else if (metadata!.role === "teacher") {
+  } else if (userRole === "teacher") {
     const { data } = await getClassAdvisorAt(supabase, metadata!.teacher!);
     classItem = data!;
   }
@@ -85,6 +88,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       ])),
       classItem: classItem!,
       studentList,
+      userRole,
     },
   };
 };

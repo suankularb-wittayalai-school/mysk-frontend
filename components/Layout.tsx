@@ -1,6 +1,8 @@
 // External libraries
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 
+import va from "@vercel/analytics";
+
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -44,6 +46,7 @@ import { useSnackbar } from "@/utils/hooks/snackbar";
 // Types
 import { CustomPage } from "@/utils/types/common";
 import { UserMetadata } from "@/utils/types/person";
+import LogOutDialog from "./account/LogOutDialog";
 
 const Layout: FC<
   { children: ReactNode } & Pick<
@@ -99,6 +102,9 @@ const Layout: FC<
 
   // Snackbar
   const { snackbarOpen, setSnackbarOpen, snackbarProps } = useSnackbar();
+
+  // Dialog control
+  const [logOutOpen, setLogOutOpen] = useState<boolean>(false);
 
   const rootLayout = (
     <RootLayout>
@@ -198,10 +204,19 @@ const Layout: FC<
             icon={<MaterialIcon icon="contact_support" />}
             label={t("navigation.drawer.about.help")}
             // TODO: Change this back to `/help` when the Help page is done
-            href="mailto:itsolutions@sk.ac.th"
-            // selected={router.pathname.startsWith("/help")}
-            // href="/help"
-            // element={Link}
+            href="https://docs.google.com/document/d/1yAEVK09BgbpFIPpG5j1xvfCRUGUdRyL9S1gAxh9UjfU/edit?usp=share_link"
+            // eslint-disable-next-line react/display-name
+            element={forwardRef((props, ref) => (
+              <a
+                {...props}
+                ref={ref}
+                onClick={() =>
+                  va.track("Open User Guide", { location: "Naviation Drawer" })
+                }
+                target="_blank"
+                rel="noreferrer"
+              />
+            ))}
           />
           <NavDrawerItem
             icon={<MaterialIcon icon="translate" />}
@@ -233,9 +248,16 @@ const Layout: FC<
           <NavDrawerItem
             icon={<MaterialIcon icon="logout" />}
             label={t("navigation.drawer.about.logOut")}
-            href="/account/logout"
-            element={Link}
+            onClick={() => setLogOutOpen(true)}
           />
+
+          {/* Version number */}
+          <p
+            className="skc-label-small p-4 pt-8 !font-display
+              text-on-surface-variant"
+          >
+            {process.env.NEXT_PUBLIC_VERSION || "Preview version"}
+          </p>
         </NavDrawerSection>
       </NavDrawer>
 
@@ -271,8 +293,7 @@ const Layout: FC<
               <NavBarItem
                 icon={<MaterialIcon icon="logout" />}
                 label={t("navigation.logOut")}
-                href="/account/logout"
-                element={Link}
+                onClick={() => setLogOutOpen(true)}
               />
             </>
           }
@@ -329,6 +350,9 @@ const Layout: FC<
           />
         </NavBar>
       )}
+
+      {/* Log out Dialog */}
+      <LogOutDialog open={logOutOpen} onClose={() => setLogOutOpen(false)} />
 
       {/* Snackbar */}
       <Snackbar

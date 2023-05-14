@@ -230,7 +230,7 @@ module.exports = {
   plugins: [
     require("@tailwindcss/typography"),
     plugin(function ({ addVariant }) {
-      addVariant("state-layer", ["&::before","&>span"]);
+      addVariant("state-layer", ["&::before","&>span:empty"]);
     }),
   ],
 };

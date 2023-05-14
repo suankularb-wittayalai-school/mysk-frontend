@@ -99,7 +99,7 @@ const ContactDialog: SubmittableDialogComponent<
     )
       return;
     onSubmit({
-      id: counter,
+      id: contact?.id || counter,
       // Omit the `name` key if the Thai Label field is empty
       ...(form.nameTH
         ? { name: { th: form.nameTH, "en-US": form.nameEN } }
@@ -108,7 +108,7 @@ const ContactDialog: SubmittableDialogComponent<
       value: form.value,
     });
     resetForm();
-    incrementCounter();
+    if (!contact) incrementCounter();
   }
 
   return (

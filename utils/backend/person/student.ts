@@ -174,16 +174,21 @@ export async function createStudent(
 
   // add the student to the students array of the class
   // get the class
-  const { data: classData, error: classError } = await supabase
-    .from("classroom")
-    .select("*")
-    .match({ number: student.class.number, year: getCurrentAcademicYear() })
-    .limit(1)
-    .single();
-  if (classData) {
+
+  if (student.class) {
+    const { data: classData, error: classError } = await supabase
+      .from("classroom")
+      .select("*")
+      .match({ number: student.class.number, year: getCurrentAcademicYear() })
+      .limit(1)
+      .single();
+    if (classError) {
+      console.error(classError);
+      return { data: null, error: classError };
+    }
     // add the student to the students array of the class
     // console.log(classData);
-    const { data: updatedClass, error: updateClassError } = await supabase
+    const { error: updateClassError } = await supabase
       .from("classroom")
       .update({
         students: [...classData.students, createdStudent!.id],
@@ -194,10 +199,13 @@ export async function createStudent(
           ...classData.no_list.slice(student.classNo),
         ],
       })
-      .match({ number: student.class.number, year: getCurrentAcademicYear() });
-
-    if (updateClassError || !updatedClass) {
+      .match({
+        number: student.class.number,
+        year: getCurrentAcademicYear(),
+      });
+    if (updateClassError) {
       console.error(updateClassError);
+      return { data: null, error: updateClassError };
     }
   }
 
@@ -261,27 +269,33 @@ export async function deleteStudent(
   }
 
   // get the class of the student
-  const { data: classData, error: classError } = await supabase
-    .from("classroom")
-    .select("*")
-    .match({ number: student.class.number })
-    .limit(1)
-    .maybeSingle();
+  if (student.class) {
+    const { data: classData, error: classError } = await supabase
+      .from("classroom")
+      .select("*")
+      .match({ number: student.class.number })
+      .limit(1)
+      .maybeSingle();
+    if (classError) {
+      console.error(classError);
+      return { data: null, error: classError };
+    }
 
-  // remove the student from the class
-  const { data: classStudent, error: classStudentError } = await supabase
-    .from("classroom")
-    .update({
-      students: classData!.students.filter((id) => id !== student.id),
-      // replace the student id with 0
-      no_list: classData!.no_list.map((id) => (id === student.id ? 0 : id)),
-    })
-    .in("students", [student.id]);
-
-  if (classStudentError || !classStudent) {
-    console.error(classStudentError);
-    return;
+    // remove the student from the class
+    const { data: classStudent, error: classStudentError } = await supabase
+      .from("classroom")
+      .update({
+        students: classData!.students.filter((id) => id !== student.id),
+        // replace the student id with 0
+        no_list: classData!.no_list.map((id) => (id === student.id ? 0 : id)),
+      })
+      .in("students", [student.id]);
+    if (classStudentError) {
+      console.error(classStudentError);
+      return { data: null, error: classStudentError };
+    }
   }
+
   // Delete account of the student
   await fetch(`/api/account`, {
     method: "DELETE",

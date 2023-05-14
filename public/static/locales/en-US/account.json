@@ -16,7 +16,7 @@
       "password": "Password"
     },
     "action": {
-      "forgotPassword": "Forgot password",
+      "magicLink": "Magic link",
       "logIn": "Log in"
     }
   },
@@ -155,9 +155,20 @@
     },
     "checkEmail": {
       "title": "Check your email",
-      "supportingText": "An email has been sent to {{email}}. That email contains a link; use it to continue setting your new password.",
+      "desc": "An email has been sent to {{email}}. Use the link there to instantly log in, passwords-free.",
       "action": {
         "gotIt": "Got it"
+      }
+    },
+    "magicLink": {
+      "title": "Log in with magic link",
+      "desc": "Leave forgetting passwords behind. Enter your email here and we’ll send you a link that you can use to instantly log in.",
+      "form": {
+        "email": "Email to send to"
+      },
+      "action": {
+        "cancel": "Cancel",
+        "send": "Send"
       }
     },
     "changePassword": {
@@ -175,40 +186,6 @@
       "action": {
         "cancel": "Cancel",
         "save": "Save"
-      }
-    },
-    "forgotPassword": {
-      "title": "Reset password",
-      "supportingText": "To verify your identity, we will send you an email with a link back to MySK. Follow that link to continue the process.",
-      "form": {
-        "email": "Email to send to"
-      },
-      "action": {
-        "cancel": "Cancel",
-        "send": "Send"
-      }
-    },
-    "requestEditProfile": {
-      "title": "Request profile edit",
-      "supportingText": "You can request changes to your personal information. Administrators will review your request and approve the changes as they see fit.",
-      "action": {
-        "cancel": "Cancel",
-        "sendRequest": "Send request"
-      }
-    },
-    "editProfile": {
-      "title": "Edit profile",
-      "action": {
-        "cancel": "Cancel",
-        "save": "Save"
-      }
-    },
-    "logOut": {
-      "title": "Log out",
-      "supportingText": "Are you sure you want to log out?",
-      "action": {
-        "logOut": "Log out",
-        "back": "Back"
       }
     }
   }

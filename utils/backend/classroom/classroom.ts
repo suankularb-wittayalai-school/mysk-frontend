@@ -2,6 +2,7 @@
 import { User } from "@supabase/supabase-js";
 
 // Backend
+import { getUserMetadata } from "@/utils/backend/account";
 import {
   createContact,
   deleteContact,
@@ -564,22 +565,30 @@ export async function getClassFromUser(
   supabase: DatabaseClient,
   user: User
 ): Promise<BackendDataReturn<ClassWNumber, null>> {
-  const studentID: number = user.user_metadata.student;
+  const { data: metadata, error: metadataError } = await getUserMetadata(
+    supabase,
+    user!.id
+  );
 
-  const { data: classItem, error: classError } = await supabase
+  if (metadataError) {
+    console.error(metadataError);
+    return { data: null, error: metadataError };
+  }
+
+  const { data, error } = await supabase
     .from("classroom")
     .select("id, number")
     .match({ year: getCurrentAcademicYear() })
-    .contains("students", [studentID])
+    .contains("students", [metadata!.student!])
     .limit(1)
     .single();
 
-  if (classError) {
-    console.error(classError);
-    return { data: null, error: classError };
+  if (error) {
+    console.error(error);
+    return { data: null, error };
   }
 
-  return { data: classItem!, error: null };
+  return { data: data!, error: null };
 }
 
 export async function getClassIDFromNumber(

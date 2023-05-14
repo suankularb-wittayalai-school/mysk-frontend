@@ -1,7 +1,8 @@
 {
   "overview": {
     "title": {
-      "class": "Your class",
+      "student": "Your class",
+      "teacher": "Your class",
       "lookup": "M.{{number}}"
     },
     "classAdvisors": {
@@ -10,7 +11,8 @@
   },
   "student": {
     "title": {
-      "class": "Your classmates",
+      "student": "Your classmates",
+      "teacher": "Students in your class",
       "lookup": "Students of M.{{number}}"
     },
     "list": {
@@ -19,7 +21,8 @@
   },
   "teacher": {
     "title": {
-      "class": "Your teachers",
+      "student": "Your teachers",
+      "teacher": "Teaching this class",
       "lookup": "Teachers of M.{{number}}"
     },
     "list": {

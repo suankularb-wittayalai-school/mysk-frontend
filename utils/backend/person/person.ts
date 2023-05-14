@@ -636,7 +636,8 @@ export async function getPeopleLookupList(
     const { data, error } = await supabase
       .from("classroom")
       .select("id, number, students")
-      .or(students.map((student) => `students.cs.{"${student.id}"}`).join());
+      .or(students.map((student) => `students.cs.{"${student.id}"}`).join())
+      .eq("year", getCurrentAcademicYear());
 
     if (error) {
       console.error(error);
@@ -651,11 +652,13 @@ export async function getPeopleLookupList(
     students.map((student) => {
       const classItem = classes.find((classItem) =>
         classItem.students.includes(student.id)
-      )!;
+      );
       return {
         id: student.id,
         role: "student",
-        metadata: { id: classItem.id, number: classItem.number },
+        ...(classItem
+          ? { metadata: { id: classItem.id, number: classItem.number } }
+          : {}),
         ...db2PersonName(student.person),
       };
     });

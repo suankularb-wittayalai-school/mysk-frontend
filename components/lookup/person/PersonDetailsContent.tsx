@@ -1,4 +1,5 @@
 // External libraries
+import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
 import { FC, forwardRef, useContext, useEffect, useState } from "react";
 
@@ -65,6 +66,12 @@ const StarbucksCard: FC = () => {
   }, []);
 
   function handleReadAloud() {
+    // Track easter egg discovery
+    va.track("Find Starbucks Easter Egg", {
+      action: "Read aloud",
+      successful: Boolean(synthVoices?.length),
+    });
+
     // If no Thai voices found, the user is notified of the failure
     if (!synthVoices?.length) {
       setSnackbar(<Snackbar>{t("snackbar.thaiSpeechNotSupported")}</Snackbar>);
@@ -112,10 +119,20 @@ const StarbucksCard: FC = () => {
           </AssistChip>
           <AssistChip
             icon={<MaterialIcon icon="open_in_new" />}
-            href={`https://www.starbucks.co.th/${locale}/delivery-in-app/`}
+            onClick={() =>
+              va.track("Find Starbucks Easter Egg", {
+                action: "Open Starbucks",
+              })
+            }
             // eslint-disable-next-line react/display-name
             element={forwardRef((props, ref) => (
-              <a {...props} ref={ref} target="_blank" rel="noreferrer" />
+              <a
+                {...props}
+                ref={ref}
+                href={`https://www.starbucks.co.th/${locale}/delivery-in-app/`}
+                target="_blank"
+                rel="noreferrer"
+              />
             ))}
           >
             {t("detail.starbucks.action.openStarbucks")}
@@ -133,13 +150,16 @@ const GeneralInfoSection: FC<{
   person: Student | Teacher;
 }> = ({ person }) => {
   const locale = useLocale();
-  const { t } = useTranslation(["lookup", "common"]);
+  const { t } = useTranslation("lookup", {
+    keyPrefix: "people.detail.general",
+  });
+  const { t: tx } = useTranslation("common");
 
   return (
     <Section className="!grid grid-cols-2 !gap-x-6 md:grid-cols-4">
       {/* Full name */}
       <DetailSection
-        title={t("people.detail.general.fullName")}
+        title={t("fullName")}
         className="col-span-2 sm:col-span-1 md:col-span-2"
       >
         <MultilangText
@@ -156,31 +176,24 @@ const GeneralInfoSection: FC<{
       </DetailSection>
 
       {/* Class */}
-      {person.role === "student" && (
-        <DetailSection title={t("people.detail.general.class.title")}>
+      {person.role === "student" && person.class && (
+        <DetailSection title={t("class.title")}>
           <span className="block">
-            {t("class", { ns: "common", number: person.class.number })}
+            {tx("class", { number: person.class.number })}
           </span>
           <span className="block">
-            {t("people.detail.general.class.classNo", {
-              classNo: person.classNo,
-            })}
+            {t("class.classNo", { classNo: person.classNo })}
           </span>
         </DetailSection>
       )}
       {person.role === "teacher" && person.classAdvisorAt && (
-        <DetailSection title="Class advisor at">
-          <span>
-            {t("class", {
-              ns: "common",
-              number: person.classAdvisorAt.number,
-            })}
-          </span>
+        <DetailSection title={t("classAdvisorAt")}>
+          <span>{tx("class", { number: person.classAdvisorAt.number })}</span>
         </DetailSection>
       )}
 
       {/* Birthdate */}
-      <DetailSection title={t("people.detail.general.birthdate")}>
+      <DetailSection title={t("birthdate")}>
         <time>
           {new Date(person.birthdate).toLocaleDateString(locale, {
             day: "numeric",

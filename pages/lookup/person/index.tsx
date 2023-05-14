@@ -1,6 +1,8 @@
 // External libraries
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
+import va from "@vercel/analytics";
+
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -13,7 +15,6 @@ import { useEffect, useState } from "react";
 // SK Components
 import {
   ChipSet,
-  FAB,
   FilterChip,
   MaterialIcon,
   SplitLayout,
@@ -37,8 +38,8 @@ import { getTeacher } from "@/utils/backend/person/teacher";
 
 // Helpers
 import { toggleItem } from "@/utils/helpers/array";
-import { createTitleStr } from "@/utils/helpers/title";
 import { withLoading } from "@/utils/helpers/loading";
+import { createTitleStr } from "@/utils/helpers/title";
 
 // Hooks
 import { useToggle } from "@/utils/hooks/toggle";
@@ -67,14 +68,21 @@ const LookupPeoplePage: CustomPage<{
   );
 
   // Redirect mobile users to the details page when URL has query
-  const { atBreakpoint } = useBreakpoint();
+  // (Yes, we have to do this weirdness, otherwise `atBreakpoint` will always
+  // be `base` for some reason thus will always redirects)
   const router = useRouter();
+  const { atBreakpoint } = useBreakpoint();
+  const [breakpointChecked, setBreakpointChecked] = useState<boolean>(false);
   useEffect(() => {
+    if (atBreakpoint === "base" && !breakpointChecked) {
+      setBreakpointChecked(true);
+      return;
+    }
     if (selectedIdx && atBreakpoint === "base") {
       const { id, role } = initialPeople[selectedIdx];
       router.push(`/lookup/person/${role}/${id}`);
     }
-  }, [selectedIdx]);
+  }, [breakpointChecked]);
 
   // Update the URL with the selected Person query, so as to make sharing
   // easier
@@ -132,6 +140,8 @@ const LookupPeoplePage: CustomPage<{
   const [filters, setFilters] = useState<Role[]>(["student", "teacher"]);
 
   async function handleSearch(query: string) {
+    va.track("Search Person");
+
     if (!query) {
       setFilterred(false);
       setPeople(initialPeople);
@@ -166,7 +176,7 @@ const LookupPeoplePage: CustomPage<{
                     setFilters(toggleItem<Role>("student", filters))
                   }
                 >
-                  Students
+                  {t("people.list.filter.student")}
                 </FilterChip>
                 <FilterChip
                   selected={filters.includes("teacher")}
@@ -174,7 +184,7 @@ const LookupPeoplePage: CustomPage<{
                     setFilters(toggleItem<Role>("teacher", filters))
                   }
                 >
-                  Teachers
+                  {t("people.list.filter.teacher")}
                 </FilterChip>
               </ChipSet>
             ) : undefined
