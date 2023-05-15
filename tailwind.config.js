@@ -67,6 +67,7 @@ module.exports = {
     fontFamily: {
       display: "var(--font-display)",
       body: "var(--font-body)",
+      print: "var(--font-print)",
       mono: "var(--font-mono)",
     },
 

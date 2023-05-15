@@ -98,6 +98,7 @@ function App({ Component, pageProps }: CustomAppProps) {
             ${bodyFontEN.style.fontFamily}, ${bodyFontTH.style.fontFamily};
           --font-display: ${displayFontEN.style.fontFamily},
             ${displayFontTH.style.fontFamily};
+          --font-print: ${bodyFontTH.style.fontFamily}, Sarabun;
           --font-mono: ui-monospace, SFMono-Regular, SF Mono,
             ${monoFont.style.fontFamily}, ${bodyFontTH.style.fontFamily};
         }
