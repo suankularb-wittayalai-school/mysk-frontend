@@ -44,9 +44,7 @@ const PeriodDetails: DialogComponent<{
       if (event.key === "Escape") onClose();
     };
     window.addEventListener("keyup", handleKeyUp);
-    return () => {
-      window.removeEventListener("keyup", handleKeyUp);
-    };
+    return () => window.removeEventListener("keyup", handleKeyUp);
   }, []);
 
   return (
@@ -68,7 +66,7 @@ const PeriodDetails: DialogComponent<{
                 bg-surface-3 text-on-surface-variant"
             >
               <div
-                className="flex flex-row items-start gap-2 border-b-1
+                className="grid grid-cols-[2.5rem,auto] items-start gap-2 border-b-1
                   border-b-outline bg-surface-3 p-2"
               >
                 <Button
