@@ -14,6 +14,7 @@ import {
   Sarabun,
   Space_Grotesk,
 } from "next/font/google";
+import localFont from "next/font/local";
 
 import { appWithTranslation } from "next-i18next";
 
@@ -58,6 +59,13 @@ const displayFontTH = IBM_Plex_Sans_Thai({
 
 // Mono font
 const monoFont = Fira_Code({ subsets: ["latin"] });
+
+// Icon font
+const iconFont = localFont({
+  src: "../public/fonts/material-symbols.woff2",
+  weight: "100 700",
+  style: "normal",
+});
 
 /**
  * To prevent the App component from being more of a triangle than it already
@@ -108,6 +116,7 @@ function App({ Component, pageProps }: CustomAppProps) {
             ${displayFontTH.style.fontFamily};
           --font-mono: ui-monospace, SFMono-Regular, SF Mono,
             ${monoFont.style.fontFamily}, ${bodyFontTH.style.fontFamily};
+          --font-icon: ${iconFont.style.fontFamily};
         }
       `}</style>
 

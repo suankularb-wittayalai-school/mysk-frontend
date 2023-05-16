@@ -68,6 +68,7 @@ module.exports = {
       display: "var(--font-display)",
       body: "var(--font-body)",
       mono: "var(--font-mono)",
+      icon: "var(--font-icon)",
     },
 
     // Breakpoints
