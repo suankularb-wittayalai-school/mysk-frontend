@@ -50,31 +50,53 @@ const SubjectList: FC<{
       ).map((listItem) => (
         <Card key={listItem.id} appearance="outlined">
           <div className="flex flex-row">
+            {/* Subject name and code */}
             <CardHeader
               title={
                 (getLocaleObj(listItem.subject.name, locale) as SubjectName)
                   .name
               }
               subtitle={getLocaleString(listItem.subject.code, locale)}
-              className="grow truncate break-all"
+              element={(props) => (
+                <div
+                  {...props}
+                  title={
+                    (getLocaleObj(listItem.subject.name, locale) as SubjectName)
+                      .name
+                  }
+                />
+              )}
+              // I have no idea why this works, but it does, and I’m not gonna
+              // touch it
+              className="grow truncate break-all [&>*>*]:truncate [&>*]:w-full"
             />
+
+            {/* Google services shortcuts */}
             <div className="flex flex-row items-center px-4">
               <Button
                 appearance="text"
                 icon={<BrandIcon icon="gg-meet" />}
                 href={listItem.ggMeetLink}
                 disabled={!listItem.ggMeetLink}
+                element={(props) => (
+                  <a {...props} target="_blank" rel="noreferrer" />
+                )}
               />
               <Button
                 appearance="text"
                 icon={<BrandIcon icon="gg-classroom" />}
                 href={listItem.ggcLink}
                 disabled={!listItem.ggcLink}
+                element={(props) => (
+                  <a {...props} target="_blank" rel="noreferrer" />
+                )}
               />
             </div>
           </div>
+
           <CardContent>
             <Columns columns={2}>
+              {/* Teachers */}
               <div
                 className={
                   listItem.teachers.length === 1 ? "truncate" : undefined
@@ -90,6 +112,8 @@ const SubjectList: FC<{
                   />
                 </span>
               </div>
+
+              {/* Class code */}
               {listItem.ggcCode && (
                 <div>
                   <h4 className="skc-title-medium">Class code</h4>
