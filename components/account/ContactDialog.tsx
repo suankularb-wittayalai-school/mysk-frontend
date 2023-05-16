@@ -67,14 +67,9 @@ const ContactDialog: SubmittableDialogComponent<
     { key: "value", required: true, defaultValue: contact?.value },
   ]);
 
-  // Format group invite codes from invite links for LINE and Discord
+  // Format group invite codes from invite links for Discord
   useEffect(() => {
-    if (form.type === "Line")
-      setForm({
-        ...form,
-        value: (form.value as string).split("https://line.me/R/ti/g/").join(""),
-      });
-    else if (form.type === "Discord")
+    if (form.type === "Discord")
       setForm({
         ...form,
         value: (form.value as string).split("https://discord.gg/").join(""),
