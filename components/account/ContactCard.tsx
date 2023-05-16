@@ -95,7 +95,6 @@ const ContactCard: FC<{
         href={
           !editable ? getContactURL(contact.type, contact.value) : undefined
         }
-        className="!overflow-visible"
       >
         <CardHeader
           avatar={<Avatar>{avatarMap[contact.type]}</Avatar>}
