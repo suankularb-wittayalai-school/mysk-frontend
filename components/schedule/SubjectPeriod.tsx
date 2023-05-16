@@ -309,7 +309,7 @@ const SubjectPeriod: FC<{
             `tap-highlight-none flex h-14 w-24 flex-col rounded-sm
              bg-secondary-container text-left text-on-secondary-container
              transition-[border,background-color,color]
-             state-layer:bg-on-secondary-container
+             state-layer:!bg-on-secondary-container
              [&>*]:w-full [&>*]:truncate [&>*]:break-all`,
             !(loading || extending) && isInSession
               ? `border-tertiary-container bg-tertiary-container
@@ -317,8 +317,8 @@ const SubjectPeriod: FC<{
               : `bg-secondary-container text-on-secondary-container`,
             (loading || extending) && `bg-surface text-secondary`,
             role === "teacher"
-              ? `cursor-default overflow-visible border-4 border-secondary-container
-                 px-3 py-1`
+              ? `cursor-default overflow-visible border-4
+                 border-secondary-container px-3 py-1`
               : `px-4 py-2`,
           ])}
           style={{ width: periodDurationToWidth(period.duration) }}
