@@ -148,7 +148,7 @@ const SubjectPeriod: FC<{
     await withLoading(
       async () => {
         // Track
-        va.track("Extend Period");
+        va.track("Move Period");
 
         // Get the rectangle
         const constraints = constraintsRef?.current;
@@ -247,7 +247,7 @@ const SubjectPeriod: FC<{
     withLoading(
       async () => {
         // Track
-        va.track("Move Period");
+        va.track("Extend Period");
 
         // Don’t do anything if the period’s duration stays the same
         if (periodDuration === period.duration) {
