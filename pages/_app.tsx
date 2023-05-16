@@ -2,6 +2,7 @@
 import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
 
+import va from "@vercel/analytics";
 import { Analytics } from "@vercel/analytics/react";
 
 import { MotionConfig } from "framer-motion";
@@ -16,7 +17,7 @@ import {
 
 import { appWithTranslation } from "next-i18next";
 
-import { FC, ReactNode, useState } from "react";
+import { FC, ReactNode, useEffect, useState } from "react";
 
 // SK Components
 import { ThemeProvider } from "@suankularb-components/react";
@@ -87,6 +88,13 @@ function App({ Component, pageProps }: CustomAppProps) {
 
   // Supabase client
   const [supabase] = useState(() => createBrowserSupabaseClient<Database>());
+
+  // Track PWA installs
+  useEffect(() => {
+    const trackInstall = () => va.track("Install PWA");
+    window.addEventListener("appinstalled", trackInstall);
+    return () => window.removeEventListener("appinstalled", trackInstall);
+  });
 
   return (
     <>
