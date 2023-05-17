@@ -29,6 +29,7 @@ module.exports = {
 
     // Rounded corners
     borderRadius: {
+      none: "var(--rounded-none)",
       xs: "var(--rounded-xs)",
       sm: "var(--rounded-sm)",
       md: "var(--rounded-md)",
