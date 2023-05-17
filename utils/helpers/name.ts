@@ -61,9 +61,14 @@ export function nameJoiner(
           : undefined,
         name[locale]?.middleName || name.th.middleName
           ? options.middleName === "abbr"
-            ? [(name[locale]?.middleName || name.th.middleName)![0], "."].join(
-                ""
-              )
+            ? [
+                locale === "en-US" && name["en-US"]?.middleName
+                  ? name["en-US"].middleName[0]
+                  : startsWithThaiVowel(name.th.middleName!)
+                  ? name.th.middleName![1]
+                  : name.th.middleName![0],
+                ".",
+              ].join("")
             : options.middleName === true || options.middleName === undefined
             ? name[locale]?.middleName || name.th.middleName
             : undefined
