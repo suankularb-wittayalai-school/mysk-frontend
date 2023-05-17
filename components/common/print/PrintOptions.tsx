@@ -50,7 +50,14 @@ const PrintOptions: FC<{
         Note: preview may not be 100% accurate. You may need to adjust scaling
         or other settings in your browser’s print dialog.
       </p>
-      <div className="h-56 overflow-x-auto sm:h-auto">{children}</div>
+      <div
+        className="h-56 overflow-x-auto sm:h-auto
+          [&_.skc-chip-set\_\_label]:!bg-surface-3
+          [&_.skc-select--outlined_.skc-select\_\_label]:!bg-surface-3
+          [&_.skc-text-field--outlined_.skc-text-field\_\_label]:!bg-surface-3"
+      >
+        {children}
+      </div>
       <Actions className="px-4 py-3.5">
         <Button
           appearance="filled"
