@@ -101,7 +101,13 @@ const LookupPeoplePage: CustomPage<{
   // Information about the selected Person
   const [selectedPerson, setSelectedPerson] = useState<Student | Teacher>();
   useEffect(() => {
-    if (!selected) return;
+    if (
+      !selected ||
+      (selected.id === selectedPerson?.id &&
+        selected.role === selectedPerson?.role) ||
+      atBreakpoint === "base"
+    )
+      return;
 
     withLoading(
       async () => {

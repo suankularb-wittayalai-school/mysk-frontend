@@ -38,6 +38,9 @@ const ClassStudents: FC<{
   studentList: Student[];
   classNumber?: number;
 }> = ({ studentList, classNumber }) => {
+  const { atBreakpoint } = useBreakpoint();
+  const router = useRouter();
+
   // Selected Person
   const [selected, setSelected] = useState(studentList[0]?.id);
 
@@ -46,7 +49,12 @@ const ClassStudents: FC<{
 
   const [selectedStudent, setSelectedStudent] = useState<Student>();
   useEffect(() => {
-    if (!selected) return;
+    if (
+      !selected ||
+      selected === selectedStudent?.id ||
+      atBreakpoint === "base"
+    )
+      return;
 
     withLoading(
       async () => {
