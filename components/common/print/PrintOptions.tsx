@@ -23,6 +23,10 @@ const PrintOptions: FC<{ children: ReactNode }> = ({ children }) => (
       />
       <h2 className="skc-title-large">Print options</h2>
     </header>
+    <p className="skc-label-medium p-4 text-on-surface-variant">
+      Note: preview may not be 100% accurate. You may need to adjust scaling or
+      other settings in your browser’s print dialog.
+    </p>
     <div className="h-56 overflow-x-auto sm:h-auto">{children}</div>
     <Actions className="px-4 py-3.5">
       <Button
