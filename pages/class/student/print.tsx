@@ -183,7 +183,7 @@ const StudentsListPaper: FC<{
 
               {/* Prefix */}
               {options.columns.includes("prefix") && (
-                <td className="w-8 !border-r-0">
+                <td className="w-12 !border-r-0">
                   {getLocaleString(student.prefix, options.language)}
                 </td>
               )}
@@ -296,7 +296,7 @@ const StudentsPrintOptions: FC<{
         <TextField
           appearance="outlined"
           label="Empty columns"
-          inputAttr={{ type: "number", min: 0, max: 12, step: 1 }}
+          inputAttr={{ type: "number", min: 0, max: 15, step: 1 }}
           {...formProps.numEmpty}
         />
         <FormItem
@@ -342,8 +342,8 @@ const StudentsListPrintPage: CustomPage<{
     { key: "columns", defaultValue: ["classNo", "prefix", "fullName"] },
     {
       key: "numEmpty",
-      defaultValue: "6",
-      validate: (value) => range(13).includes(Number(value)),
+      defaultValue: "10",
+      validate: (value) => range(16).includes(Number(value)),
     },
     { key: "enableNotes", defaultValue: false },
     { key: "enableTimestamp", defaultValue: false },
