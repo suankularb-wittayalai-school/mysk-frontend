@@ -1,4 +1,5 @@
 // External libraries
+import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { FC } from "react";
 
@@ -221,8 +222,10 @@ const StudentsPrintOptions: FC<{
 }> = ({ form, setForm, formProps, userRole }) => {
   const { t } = useTranslation("class");
 
+  const router = useRouter();
+
   return (
-    <PrintOptions>
+    <PrintOptions parentURL={router.asPath.replace(/\/print$/, "")}>
       <section className="flex flex-col gap-6 px-4 pb-5 pt-6">
         <Select appearance="outlined" label="Language" {...formProps.language}>
           <MenuItem value="en-US">English</MenuItem>
