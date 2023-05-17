@@ -221,11 +221,7 @@ const OptionsSection: FC = () => {
         className="grid-cols-1 sm:mr-12 sm:!grid md:mr-0 md:!flex"
       >
         {/* Magic link */}
-        <Button
-          appearance="tonal"
-          onClick={() => setMagicLinkOpen(true)}
-          className={locale === "en-US" ? "!min-w-[13ch]" : undefined}
-        >
+        <Button appearance="tonal" onClick={() => setMagicLinkOpen(true)}>
           {t("action.magicLink")}
         </Button>
         <MagicLinkDialog
