@@ -3,7 +3,6 @@ import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import Head from "next/head";
-import Link from "next/link";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -12,19 +11,19 @@ import { FC } from "react";
 
 // SK Components
 import {
-  Actions,
-  Button,
   Checkbox,
-  Columns,
-  ContentLayout,
   FormGroup,
   FormItem,
-  MaterialIcon,
   MenuItem,
   Select,
   Switch,
   TextField,
 } from "@suankularb-components/react";
+
+// Internal components
+import PaperPreview from "@/components/common/print/PaperPreview";
+import PrintOptions from "@/components/common/print/PrintOptions";
+import PrintPage from "@/components/common/print/PrintPage";
 
 // Backend
 import { getUserMetadata } from "@/utils/backend/account";
@@ -41,6 +40,8 @@ import {
   getCurrentSemester,
   getLocaleYear,
 } from "@/utils/helpers/date";
+import { getLocaleObj, getLocaleString } from "@/utils/helpers/i18n";
+import { nameJoiner } from "@/utils/helpers/name";
 import { createTitleStr } from "@/utils/helpers/title";
 
 // Hooks
@@ -48,11 +49,9 @@ import { useForm } from "@/utils/hooks/form";
 import { useLocale } from "@/utils/hooks/i18n";
 
 // Types
-import { getLocaleObj, getLocaleString } from "@/utils/helpers/i18n";
 import { ClassWNumber } from "@/utils/types/class";
 import { CustomPage, FormControlProps, LangCode } from "@/utils/types/common";
 import { Role, Student } from "@/utils/types/person";
-import { nameJoiner } from "@/utils/helpers/name";
 
 type OptionsType = {
   language: LangCode;
@@ -68,11 +67,7 @@ const StudentsListPaper: FC<{
   options: OptionsType;
 }> = ({ classItem, studentList, options }) => {
   return (
-    <article
-      className="print aspect-[1/1.4142] min-w-[42rem] bg-white p-8
-        text-black shadow-3 print:!block print:w-full print:min-w-0 print:p-0
-        print:shadow-none md:col-span-2"
-    >
+    <PaperPreview>
       {/* Header */}
       <h1 className="mb-4 text-center text-lg font-bold">
         {options.language === "en-US"
@@ -198,7 +193,7 @@ const StudentsListPaper: FC<{
           })}
         </time>
       )}
-    </article>
+    </PaperPreview>
   );
 };
 
@@ -211,21 +206,7 @@ const StudentsPrintOptions: FC<{
   const { t } = useTranslation("class");
 
   return (
-    <aside
-      className="sticky top-12 divide-y-1 divide-outline rounded-xl bg-surface
-        shadow-3 print:hidden lg:top-8 lg:shadow-none"
-    >
-      <header className="flex flex-row items-center gap-2 py-2 pl-2 pr-4">
-        <Button
-          appearance="text"
-          icon={<MaterialIcon icon="arrow_backward" />}
-          alt="Navigate up"
-          href="/class/student"
-          element={Link}
-          className="!text-on-surface state-layer:!bg-on-surface"
-        />
-        <h2 className="skc-title-large">Print options</h2>
-      </header>
+    <PrintOptions>
       <section className="flex flex-col gap-6 px-4 pb-5 pt-6">
         <Select appearance="outlined" label="Language" {...formProps.language}>
           <MenuItem value="en-US">English</MenuItem>
@@ -308,16 +289,7 @@ const StudentsPrintOptions: FC<{
           />
         </FormItem>
       </section>
-      <Actions className="px-4 py-3.5">
-        <Button
-          appearance="filled"
-          icon={<MaterialIcon icon="print" />}
-          onClick={() => window.print()}
-        >
-          Print
-        </Button>
-      </Actions>
-    </aside>
+    </PrintOptions>
   );
 };
 
@@ -345,20 +317,10 @@ const StudentsListPrintPage: CustomPage<{
         <title>{createTitleStr("Print student list", t)}</title>
       </Head>
       <h1 className="sr-only">Print student list</h1>
-      <ContentLayout
-        className="min-h-screen bg-surface-2
-          supports-[height:100dvh]:min-h-[100dvh] print:-mb-20 print:!py-0"
-      >
-        <Columns columns={3}>
-          <StudentsListPaper {...{ classItem, studentList }} options={form} />
-          <StudentsPrintOptions {...{ form, setForm, formProps, userRole }} />
-        </Columns>
-      </ContentLayout>
-      <style jsx global>{`
-        .skc-nav-bar {
-          background-color: var(--surface-2) !important;
-        }
-      `}</style>
+      <PrintPage>
+        <StudentsListPaper {...{ classItem, studentList }} options={form} />
+        <StudentsPrintOptions {...{ form, setForm, formProps, userRole }} />
+      </PrintPage>
     </>
   );
 };
