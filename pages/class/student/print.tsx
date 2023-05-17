@@ -263,7 +263,7 @@ const StudentsPrintOptions: FC<{
         <TextField
           appearance="outlined"
           label="Empty columns"
-          inputAttr={{ type: "number" }}
+          inputAttr={{ type: "number", min: 0, max: 12, step: 1 }}
           {...formProps.numEmpty}
         />
         <FormItem
@@ -306,7 +306,11 @@ const StudentsListPrintPage: CustomPage<{
   >([
     { key: "language", defaultValue: locale },
     { key: "columns", defaultValue: ["classNo", "prefix", "fullName"] },
-    { key: "numEmpty", defaultValue: "6" },
+    {
+      key: "numEmpty",
+      defaultValue: "6",
+      validate: (value) => range(13).includes(Number(value)),
+    },
     { key: "enableNotes", defaultValue: false },
     { key: "enableTimestamp", defaultValue: false },
   ]);
