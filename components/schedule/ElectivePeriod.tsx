@@ -39,22 +39,26 @@ const ElectivePeriod: FC<{
       <motion.li
         layoutId={`elective-period-${period.id}`}
         transition={transition(duration.medium2, easing.standard)}
+        className={cn([
+          `relative before:absolute
+           before:inset-0 before:-z-10 before:h-14
+           before:rounded-sm before:transition-[transform,box-shadow]
+           hover:before:rotate-6 hover:before:shadow-1
+           active:before:rotate-0 active:before:shadow-none`,
+          isInSession
+            ? `before:bg-tertiary-80 dark:before:bg-tertiary-20`
+            : `before:bg-surface-2`,
+        ])}
       >
         <Interactive
           className={cn([
-            `skc-title-medium tap-highlight-none relative flex h-full flex-col
-             justify-center rounded-sm bg-surface-2 px-4 py-2 text-left
-             !leading-none text-on-surface transition-shadow before:absolute
-             before:inset-0 before:-z-10 before:h-14
-             before:rounded-sm before:transition-[transform,box-shadow]
-             hover:shadow-1 hover:before:rotate-6 hover:before:shadow-1
-             focus:shadow-2 active:before:rotate-0 active:before:shadow-none`,
+            `skc-title-medium flex h-full flex-col justify-center rounded-sm
+             bg-surface-2 px-4 py-2 text-left !leading-none text-on-surface
+             transition-shadow hover:shadow-1 focus:shadow-2`,
             isInSession
               ? `bg-tertiary-container text-on-tertiary-container shadow-1
-                 before:bg-tertiary-80 hover:shadow-2
-                 dark:before:bg-tertiary-20`
-              : `bg-surface-2 text-on-surface-variant
-                 before:bg-surface-variant`,
+                 hover:shadow-2`
+              : `bg-surface-2 text-on-surface-variant`,
           ])}
           style={{ width: periodDurationToWidth(period.duration) }}
           onClick={() => {

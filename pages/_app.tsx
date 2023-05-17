@@ -2,6 +2,7 @@
 import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
 
+import va from "@vercel/analytics";
 import { Analytics } from "@vercel/analytics/react";
 
 import { MotionConfig } from "framer-motion";
@@ -13,10 +14,11 @@ import {
   Sarabun,
   Space_Grotesk,
 } from "next/font/google";
+import localFont from "next/font/local";
 
 import { appWithTranslation } from "next-i18next";
 
-import { FC, ReactNode, useState } from "react";
+import { FC, ReactNode, useEffect, useState } from "react";
 
 // SK Components
 import { ThemeProvider } from "@suankularb-components/react";
@@ -58,6 +60,13 @@ const displayFontTH = IBM_Plex_Sans_Thai({
 // Mono font
 const monoFont = Fira_Code({ subsets: ["latin"] });
 
+// Icon font
+const iconFont = localFont({
+  src: "../public/fonts/material-symbols.woff2",
+  weight: "100 700",
+  style: "normal",
+});
+
 /**
  * To prevent the App component from being more of a triangle than it already
  * is, all the context providers are extracted into this component.
@@ -88,6 +97,13 @@ function App({ Component, pageProps }: CustomAppProps) {
   // Supabase client
   const [supabase] = useState(() => createBrowserSupabaseClient<Database>());
 
+  // Track PWA installs
+  useEffect(() => {
+    const trackInstall = () => va.track("Install PWA");
+    window.addEventListener("appinstalled", trackInstall);
+    return () => window.removeEventListener("appinstalled", trackInstall);
+  });
+
   return (
     <>
       {/* Put Next.js generated font families into variables that SKCom and
@@ -101,6 +117,7 @@ function App({ Component, pageProps }: CustomAppProps) {
           --font-print: ${bodyFontTH.style.fontFamily}, Sarabun;
           --font-mono: ui-monospace, SFMono-Regular, SF Mono,
             ${monoFont.style.fontFamily}, ${bodyFontTH.style.fontFamily};
+          --font-icon: ${iconFont.style.fontFamily};
         }
       `}</style>
 

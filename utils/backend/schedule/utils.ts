@@ -13,14 +13,16 @@ import { PeriodContentItem } from "@/utils/types/schedule";
 
 export async function isOverlappingExistingItems(
   day: number,
-  schedulePeriod: Pick<PeriodContentItem, "id" | "startTime" | "duration">,
-  teacherID: number
+  schedulePeriod: Pick<PeriodContentItem, "id" | "startTime" | "duration"> &
+    Partial<Pick<PeriodContentItem, "subject">>,
+  teacherID: number,
+  options?: Partial<{ allowSameSubject: boolean }>
 ): Promise<boolean> {
   // Get the Schedule Items taught by this teacher in that day
   const { data: itemsSameTeacher, error: itemsSameTeacherError } =
     await supabase
       .from("schedule_items")
-      .select("id, start_time, duration")
+      .select("id, start_time, duration, subject(id)")
       .match({
         teacher: teacherID,
         day,
@@ -35,6 +37,11 @@ export async function isOverlappingExistingItems(
 
   // Check for overlap
   for (let item of itemsSameTeacher) {
+    if (
+      options?.allowSameSubject &&
+      (item.subject as { id: number })?.id === schedulePeriod.subject?.id
+    )
+      return false;
     if (
       item.id !== schedulePeriod.id &&
       arePeriodsOverlapping(
