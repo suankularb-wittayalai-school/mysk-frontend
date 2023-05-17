@@ -48,81 +48,172 @@ import { useForm } from "@/utils/hooks/form";
 import { useLocale } from "@/utils/hooks/i18n";
 
 // Types
+import { getLocaleObj, getLocaleString } from "@/utils/helpers/i18n";
 import { ClassWNumber } from "@/utils/types/class";
-import { CustomPage, LangCode } from "@/utils/types/common";
+import { CustomPage, FormControlProps, LangCode } from "@/utils/types/common";
 import { Role, Student } from "@/utils/types/person";
+import { nameJoiner } from "@/utils/helpers/name";
+
+type OptionsType = {
+  language: LangCode;
+  columns: ("classNo" | "studentID" | "prefix" | "fullName")[];
+  numEmpty: number;
+  enableNotes: boolean;
+  enableTimestamp: boolean;
+};
 
 const StudentsListPaper: FC<{
   classItem: ClassWNumber;
   studentList: Student[];
-}> = ({ classItem, studentList }) => {
-  const { t } = useTranslation("class");
-
+  options: OptionsType;
+}> = ({ classItem, studentList, options }) => {
   return (
     <article
-      className="print aspect-[1/1.4142] min-w-[42rem] bg-white p-8 font-print
+      className="print aspect-[1/1.4142] min-w-[42rem] bg-white p-8
         text-black shadow-3 print:!block print:w-full print:min-w-0 print:p-0
         print:shadow-none md:col-span-2"
     >
+      {/* Header */}
       <h1 className="mb-4 text-center text-lg font-bold">
-        โรงเรียนสวนกุหลาบวิทยาลัย
+        {options.language === "en-US"
+          ? "Suankularb Wittayalai School"
+          : "โรงเรียนสวนกุหลาบวิทยาลัย"}
         <br />
-        รายชื่อนักเรียนห้อง ม.{classItem.number} ภาคเรียนที่{" "}
-        {getCurrentSemester()} ปีการศึกษา{" "}
-        {getLocaleYear("th", getCurrentAcademicYear())}
+        {(() => {
+          const number = classItem.number;
+          const semester = getCurrentSemester();
+          const year = getLocaleYear("th", getCurrentAcademicYear());
+          if (options.language === "en-US")
+            return `M.${number} student list of semester ${semester}/${year}`;
+          return `รายชื่อนักเรียนห้อง ม.${number} ภาคเรียนที่ ${semester} ปีการศึกษา ${year}`;
+        })()}
       </h1>
+
+      {/* Table */}
       <table
         className="w-full [&_td]:border-1 [&_td]:border-black [&_td]:px-1
           [&_td]:py-0.5 [&_th]:border-1 [&_th]:border-black [&_th]:px-1
           [&_th]:py-0.5"
       >
+        {/* Head area */}
         <thead>
           <tr>
-            <th className="w-12">เลขที่</th>
-            <th colSpan={3}>ชื่อ</th>
-            {range(6).map((idx) => (
+            {/* Class no. */}
+            {options.columns.includes("classNo") && (
+              <th className="w-12">
+                {options.language === "en-US" ? "№" : "เลขที่"}
+              </th>
+            )}
+
+            {/* Student ID */}
+            {options.columns.includes("studentID") && (
+              <th className="w-24">เลขประจำตัว</th>
+            )}
+
+            {/* Full name */}
+            {(options.columns.includes("prefix") ||
+              options.columns.includes("fullName")) && (
+              <th
+                colSpan={
+                  options.columns.includes("prefix") &&
+                  options.columns.includes("fullName")
+                    ? 3
+                    : options.columns.includes("fullName")
+                    ? 2
+                    : 1
+                }
+              >
+                {options.language === "en-US" ? "Full name" : "ชื่อ-สกุล"}
+              </th>
+            )}
+
+            {/* Empty columns */}
+            {range(options.numEmpty).map((idx) => (
               <th key={idx} className="w-8" />
             ))}
-            <th>หมายเหตุ</th>
+
+            {/* Notes */}
+            {options.enableNotes && (
+              <th className="min-w-32">
+                {options.language === "en-US" ? "Notes" : "หมายเหตุ"}
+              </th>
+            )}
           </tr>
         </thead>
+
+        {/* Body area */}
         <tbody>
           {studentList.map((student) => (
-            <tr key={student.id}>
-              <td className="text-center">{student.classNo}</td>
-              <td className="!border-r-0">{student.prefix.th}</td>
-              <td className="!border-x-0">{student.name.th.firstName}</td>
-              <td className="!border-l-0">{student.name.th.lastName}</td>
-              {range(6).map((idx) => (
+            <tr key={student.id} className="[&>td]:h-[1.625rem]">
+              {/* Class no. */}
+              {options.columns.includes("classNo") && (
+                <td className="text-center">{student.classNo}</td>
+              )}
+
+              {/* Student ID */}
+              {options.columns.includes("studentID") && (
+                <td className="text-center">{student.studentID}</td>
+              )}
+
+              {/* Prefix */}
+              {options.columns.includes("prefix") && (
+                <td className="w-12 !border-r-0">
+                  {getLocaleString(student.prefix, options.language)}
+                </td>
+              )}
+
+              {/* Full name */}
+              {options.columns.includes("fullName") && (
+                <>
+                  <td className="w-28 !border-r-0 [&:not(:first-child)]:!border-l-0">
+                    {nameJoiner(options.language, student.name, undefined, {
+                      middleName: "abbr",
+                      lastName: false,
+                    })}
+                  </td>
+                  <td className="w-36 !border-l-0">
+                    {getLocaleObj(student.name, options.language).lastName}
+                  </td>
+                </>
+              )}
+
+              {/* Empty columns */}
+              {range(options.numEmpty).map((idx) => (
                 <td key={idx} />
               ))}
-              <td></td>
+
+              {/* Notes */}
+              {options.enableNotes && <td></td>}
             </tr>
           ))}
         </tbody>
       </table>
+
+      {/* Timestamp */}
+      {options.enableTimestamp && (
+        <time className="mt-2 block text-sm opacity-50">
+          {new Date().toLocaleString(options.language, {
+            dateStyle: "full",
+            timeStyle: "medium",
+          })}
+        </time>
+      )}
     </article>
   );
 };
 
-const StudentsPrintOptions: FC = () => {
-  const locale = useLocale();
+const StudentsPrintOptions: FC<{
+  form: OptionsType;
+  setForm: (form: OptionsType) => void;
+  formProps: FormControlProps<keyof OptionsType>;
+  userRole: Role;
+}> = ({ form, setForm, formProps, userRole }) => {
   const { t } = useTranslation("class");
-
-  const { form, setForm, formProps } = useForm<
-    "language" | "columns" | "numEmpty" | "enableNotes" | "enableTimestamp"
-  >([
-    { key: "language", defaultValue: locale },
-    { key: "columns", defaultValue: [] },
-    { key: "numEmpty", defaultValue: "6" },
-    { key: "enableNotes", defaultValue: false },
-    { key: "enableTimestamp", defaultValue: false },
-  ]);
 
   return (
     <aside
-      className="sticky top-12 lg:top-8 divide-y-1 divide-outline rounded-xl bg-surface
-        print:hidden shadow-3 lg:shadow-none"
+      className="sticky top-12 divide-y-1 divide-outline rounded-xl bg-surface
+        shadow-3 print:hidden lg:top-8 lg:shadow-none"
     >
       <header className="flex flex-row items-center gap-2 py-2 pl-2 pr-4">
         <Button
@@ -152,17 +243,19 @@ const StudentsPrintOptions: FC = () => {
               }
             />
           </FormItem>
-          <FormItem label="Student ID">
-            <Checkbox
-              value={form.columns.includes("studentID")}
-              onChange={() =>
-                setForm({
-                  ...form,
-                  columns: toggleItem("studentID", form.columns),
-                })
-              }
-            />
-          </FormItem>
+          {userRole === "teacher" && (
+            <FormItem label="Student ID">
+              <Checkbox
+                value={form.columns.includes("studentID")}
+                onChange={() =>
+                  setForm({
+                    ...form,
+                    columns: toggleItem("studentID", form.columns),
+                  })
+                }
+              />
+            </FormItem>
+          )}
           <FormItem label="Prefix">
             <Checkbox
               value={form.columns.includes("prefix")}
@@ -233,7 +326,18 @@ const StudentsListPrintPage: CustomPage<{
   studentList: Student[];
   userRole: Role;
 }> = ({ classItem, studentList, userRole }) => {
+  const locale = useLocale();
   const { t } = useTranslation(["class", "common"]);
+
+  const { form, setForm, formProps } = useForm<
+    "language" | "columns" | "numEmpty" | "enableNotes" | "enableTimestamp"
+  >([
+    { key: "language", defaultValue: locale },
+    { key: "columns", defaultValue: ["classNo", "prefix", "fullName"] },
+    { key: "numEmpty", defaultValue: "6" },
+    { key: "enableNotes", defaultValue: false },
+    { key: "enableTimestamp", defaultValue: false },
+  ]);
 
   return (
     <>
@@ -246,10 +350,15 @@ const StudentsListPrintPage: CustomPage<{
           supports-[height:100dvh]:min-h-[100dvh] print:-mb-20 print:!py-0"
       >
         <Columns columns={3}>
-          <StudentsListPaper {...{ classItem, studentList }} />
-          <StudentsPrintOptions />
+          <StudentsListPaper {...{ classItem, studentList }} options={form} />
+          <StudentsPrintOptions {...{ form, setForm, formProps, userRole }} />
         </Columns>
       </ContentLayout>
+      <style jsx global>{`
+        .skc-nav-bar {
+          background-color: var(--surface-2) !important;
+        }
+      `}</style>
     </>
   );
 };
