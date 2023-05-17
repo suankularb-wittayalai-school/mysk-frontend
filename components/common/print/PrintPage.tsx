@@ -24,8 +24,9 @@ const PrintPage: FC<{ children: ReactNode }> = ({ children }) => {
         />
       </Head>
       <ContentLayout
-        className="min-h-screen supports-[height:100dvh]:min-h-[100dvh] print:-mb-20
-          print:bg-white print:!py-0 sm:bg-surface-2"
+        className="min-h-screen supports-[height:100dvh]:min-h-[100dvh]
+          print:-mb-20 print:contents print:bg-white print:!py-0
+          sm:bg-surface-2"
       >
         <Columns columns={3}>{children}</Columns>
       </ContentLayout>
