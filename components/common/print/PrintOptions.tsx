@@ -53,8 +53,11 @@ const PrintOptions: FC<{
       <div
         className="h-56 overflow-x-auto sm:h-auto
           [&_.skc-chip-set\_\_label]:!bg-surface-3
+          [&_.skc-chip-set\_\_label]:sm:!bg-surface
           [&_.skc-select--outlined_.skc-select\_\_label]:!bg-surface-3
-          [&_.skc-text-field--outlined_.skc-text-field\_\_label]:!bg-surface-3"
+          [&_.skc-select--outlined_.skc-select\_\_label]:sm:!bg-surface
+          [&_.skc-text-field--outlined_.skc-text-field\_\_label]:!bg-surface-3
+          [&_.skc-text-field--outlined_.skc-text-field\_\_label]:sm:!bg-surface"
       >
         {children}
       </div>
