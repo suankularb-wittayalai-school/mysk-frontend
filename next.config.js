@@ -25,6 +25,18 @@ module.exports = withBundleAnalyzer(
     i18n,
     async redirects() {
       return [
+        { source: "/index.php", destination: "/", permanent: true },
+        { source: "/login.php", destination: "/", permanent: true },
+        {
+          source: "/index_online_std.php",
+          destination: "/learn",
+          permanent: true,
+        },
+        {
+          source: "/index_online_std_time_table.php",
+          destination: "/learn",
+          permanent: true,
+        },
         { source: "/account/login", destination: "/", permanent: true },
         {
           source: "/welcome",

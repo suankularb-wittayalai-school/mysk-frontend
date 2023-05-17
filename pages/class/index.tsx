@@ -41,7 +41,7 @@ const ClassOverviewPage: CustomPage<{
   return (
     <>
       <Head>
-        <title>{createTitleStr(t("overview.title.class"), t)}</title>
+        <title>{createTitleStr(t(`overview.title.${userRole}`), t)}</title>
       </Head>
       <MySKPageHeader title={t(`overview.title.${userRole}`)}>
         <ClassTabs number={classItem.number} type="class" />

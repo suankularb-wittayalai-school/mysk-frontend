@@ -28,8 +28,8 @@ const SubjectsInChargeCard: FC<{
   return (
     <Card
       appearance="filled"
-      className="mx-4 min-h-[3rem] gap-2 !overflow-visible px-4 pb-4 pt-2
-        sm:mx-0 sm:pb-3 md:!flex-row md:items-center md:gap-4 md:py-2"
+      className="mx-4 min-h-[3rem] gap-2 px-4 pb-4 pt-2 sm:mx-0 sm:pb-3
+        md:!flex-row md:items-center md:gap-4 md:py-2"
     >
       <h3 className="skc-title-medium whitespace-nowrap">
         {t("schedule.yourSubjects")}

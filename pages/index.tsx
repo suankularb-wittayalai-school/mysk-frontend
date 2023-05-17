@@ -108,12 +108,6 @@ const LogInSection: FC = () => {
   }
 
   async function handleSubmit() {
-    // Set the current language as the preferred language
-    // (If the user can find and click on the Log in Button, they’re most
-    // likely most comfortable in the current language)
-    localStorage.setItem("preferredLang", locale);
-
-    // Disable Log in Button
     withLoading(async () => {
       // Validate response
       if (!validate()) {
@@ -350,74 +344,12 @@ const CreditsSection: FC = () => {
  * @returns A Page.
  */
 const LandingPage: CustomPage = () => {
-  const locale = useLocale();
   const { t } = useTranslation(["landing", "common"]);
-
-  const refreshProps = useRefreshProps();
-
-  // Language detection redirect
-  // Thanks @Jimmy-Tempest!
-  const router = useRouter();
-  const { setSnackbar } = useContext(SnackbarContext);
-  useEffect(() => {
-    // Attempt to get the user’s preferred language from local storage
-    const preferredLang = localStorage.getItem("preferredLang");
-
-    if (preferredLang) {
-      // If the user is already looking at the correct language, don’t redirect
-      if (preferredLang === locale) return;
-
-      // Otherwise, redirect to the correct language
-      refreshProps({ locale: preferredLang });
-    }
-
-    // If the user has not set a preferred language, set it to the current one
-    else {
-      const browserLocale = navigator.language;
-
-      // If the user is already looking at the correct language, don’t redirect
-      if (browserLocale === locale) return;
-
-      // If the browser language is not supported by MySK, set to Englsih
-      if (!["th", "en-US"].includes(browserLocale)) {
-        localStorage.setItem("preferredLang", "en-US");
-        refreshProps({ locale: "en-US" });
-      }
-
-      // Otherwise, set to the browser language
-      else {
-        localStorage.setItem("preferredLang", browserLocale);
-
-        // Then redirect the user
-        refreshProps({ locale: browserLocale });
-      }
-    }
-
-    setSnackbar(
-      <Snackbar
-        action={
-          // An option to stay in the current language
-          <Button
-            appearance="text"
-            onClick={() => {
-              // Remember the preference
-              localStorage.setItem("preferredLang", locale);
-              // Redirect back
-              router.replace(router.asPath, router.asPath, { locale });
-            }}
-          >
-            {t("snackbar.languageRedirect.action", { ns: "common" })}
-          </Button>
-        }
-      >
-        {t("snackbar.languageRedirect.message", { ns: "common" })}
-      </Snackbar>
-    );
-  }, []);
 
   // Log in (both methods) redirect
   const user = useUser();
   const supabase = useSupabaseClient();
+  const router = useRouter();
   useEffect(() => {
     if (!user) return;
     (async () => {
