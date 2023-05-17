@@ -98,8 +98,8 @@ const StudentsListPaper: FC<{
       {/* Table */}
       <table
         className="w-full border-2 border-black [&_td]:whitespace-nowrap
-            [&_td]:border-1 [&_td]:border-black [&_td]:px-1 [&_td]:py-0.5
-            [&_th]:border-1 [&_th]:border-black [&_th]:px-1 [&_th]:py-0.5"
+          [&_td]:border-1 [&_td]:border-black [&_td]:px-1 [&_td]:py-0.5
+          [&_th]:border-1 [&_th]:border-black [&_th]:px-1 [&_th]:py-0.5"
       >
         {/* Head area */}
         <thead className="border-b-2 border-black">
