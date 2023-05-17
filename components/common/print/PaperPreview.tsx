@@ -6,8 +6,8 @@ const PaperPreview: FC<{ children: ReactNode }> = ({ children }) => (
       print:contents sm:mt-0 sm:contents"
   >
     <article
-      className="aspect-[1/1.4142] min-w-[42rem] bg-white p-8 text-black 
-        print:m-0 print:!block print:w-full print:min-w-0 print:p-0
+      className="aspect-[1/1.4142] min-w-[42rem] bg-white p-8 font-print
+        text-black print:m-0 print:!block print:w-full print:min-w-0 print:p-0
         print:shadow-none sm:mr-[26rem] sm:shadow-3 md:col-span-2 lg:mr-0"
     >
       {children}

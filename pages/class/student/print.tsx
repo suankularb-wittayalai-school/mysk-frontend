@@ -29,17 +29,14 @@ import PrintPage from "@/components/common/print/PrintPage";
 import { getUserMetadata } from "@/utils/backend/account";
 import {
   getClassFromUser,
+  getClassOverview,
   getClassStudentList,
 } from "@/utils/backend/classroom/classroom";
 import { getClassAdvisorAt } from "@/utils/backend/person/teacher";
 
 // Helpers
 import { range, toggleItem } from "@/utils/helpers/array";
-import {
-  getCurrentAcademicYear,
-  getCurrentSemester,
-  getLocaleYear,
-} from "@/utils/helpers/date";
+import { getCurrentAcademicYear, getLocaleYear } from "@/utils/helpers/date";
 import { getLocaleObj, getLocaleString } from "@/utils/helpers/i18n";
 import { nameJoiner } from "@/utils/helpers/name";
 import { createTitleStr } from "@/utils/helpers/title";
@@ -49,7 +46,7 @@ import { useForm } from "@/utils/hooks/form";
 import { useLocale } from "@/utils/hooks/i18n";
 
 // Types
-import { ClassWNumber } from "@/utils/types/class";
+import { ClassOverview, ClassWNumber } from "@/utils/types/class";
 import { CustomPage, FormControlProps, LangCode } from "@/utils/types/common";
 import { Role, Student } from "@/utils/types/person";
 
@@ -63,35 +60,65 @@ type OptionsType = {
 
 const StudentsListPaper: FC<{
   classItem: ClassWNumber;
+  classOverview: ClassOverview;
   studentList: Student[];
   options: OptionsType;
-}> = ({ classItem, studentList, options }) => {
+}> = ({ classItem, classOverview, studentList, options }) => {
   return (
     <PaperPreview>
       {/* Header */}
-      <h1 className="mb-4 text-center text-lg font-bold">
-        {options.language === "en-US"
-          ? "Suankularb Wittayalai School"
-          : "โรงเรียนสวนกุหลาบวิทยาลัย"}
-        <br />
-        {(() => {
-          const number = classItem.number;
-          const semester = getCurrentSemester();
-          const year = getLocaleYear("th", getCurrentAcademicYear());
-          if (options.language === "en-US")
-            return `M.${number} student list of semester ${semester}/${year}`;
-          return `รายชื่อนักเรียนห้อง ม.${number} ภาคเรียนที่ ${semester} ปีการศึกษา ${year}`;
-        })()}
-      </h1>
+      <div className="text-center text-[0.925rem] leading-6">
+        <p>
+          {options.language === "en-US"
+            ? "Suankularb Wittayalai School"
+            : "โรงเรียนสวนกุหลาบวิทยาลัย"}
+        </p>
+        <p>
+          {(() => {
+            const grade = Math.floor(classItem.number / 100);
+            const year = getLocaleYear(
+              options.language,
+              getCurrentAcademicYear()
+            );
+            if (options.language === "en-US")
+              return `Mattayomsuksa ${grade} Student List; Academic Year ${year}`;
+            return `รายชื่อนักเรียนชั้นมัธยมศึกษาปีที่ ${grade} ปีการศึกษา ${year}`;
+          })()}
+        </p>
+      </div>
+
+      {/* Class number and Advisors */}
+      <div className="flex flex-row">
+        <span
+          className="-mt-2 ml-4 mr-14 inline-block self-end whitespace-nowrap
+            text-xl font-medium"
+        >
+          {options.language === "en-US"
+            ? `M.${classItem.number}`
+            : `ม.${classItem.number}`}
+        </span>
+        <span className="mr-4 whitespace-nowrap font-bold">
+          {options.language === "en-US" ? "Class advisors" : "ครูที่ปรึกษา"}
+        </span>
+        <div className="mb-1 flex grow flex-row flex-wrap gap-x-2">
+          {classOverview.classAdvisors.map((teacher) => (
+            <span key={teacher.id} className="-mb-1 font-medium">
+              {nameJoiner(options.language, teacher.name, teacher.prefix, {
+                prefix: true,
+              })}
+            </span>
+          ))}
+        </div>
+      </div>
 
       {/* Table */}
       <table
-        className="w-full [&_td]:border-1 [&_td]:border-black [&_td]:px-1
-          [&_td]:py-0.5 [&_th]:border-1 [&_th]:border-black [&_th]:px-1
-          [&_th]:py-0.5"
+        className="w-full border-2 border-black [&_td]:border-1
+            [&_td]:border-black [&_td]:px-1 [&_td]:py-0.5 [&_th]:border-1
+            [&_th]:border-black [&_th]:px-1 [&_th]:py-0.5"
       >
         {/* Head area */}
-        <thead>
+        <thead className="border-b-2 border-black">
           <tr>
             {/* Class no. */}
             {options.columns.includes("classNo") && (
@@ -102,7 +129,9 @@ const StudentsListPaper: FC<{
 
             {/* Student ID */}
             {options.columns.includes("studentID") && (
-              <th className="w-24">เลขประจำตัว</th>
+              <th className="w-24">
+                {options.language === "en-US" ? "Student ID" : "เลขประจำตัว"}
+              </th>
             )}
 
             {/* Full name */}
@@ -118,18 +147,20 @@ const StudentsListPaper: FC<{
                     : 1
                 }
               >
-                {options.language === "en-US" ? "Full name" : "ชื่อ-สกุล"}
+                {options.language === "en-US" ? "Full name" : "ชื่อ - นามสกุล"}
               </th>
             )}
 
             {/* Empty columns */}
             {range(options.numEmpty).map((idx) => (
-              <th key={idx} className="w-8" />
+              <th key={idx} className={idx === 0 ? "!border-l-2" : undefined}>
+                &nbsp;
+              </th>
             ))}
 
             {/* Notes */}
             {options.enableNotes && (
-              <th className="min-w-32">
+              <th className="w-32">
                 {options.language === "en-US" ? "Notes" : "หมายเหตุ"}
               </th>
             )}
@@ -139,7 +170,7 @@ const StudentsListPaper: FC<{
         {/* Body area */}
         <tbody>
           {studentList.map((student) => (
-            <tr key={student.id} className="[&>td]:h-[1.625rem]">
+            <tr key={student.id}>
               {/* Class no. */}
               {options.columns.includes("classNo") && (
                 <td className="text-center">{student.classNo}</td>
@@ -152,7 +183,7 @@ const StudentsListPaper: FC<{
 
               {/* Prefix */}
               {options.columns.includes("prefix") && (
-                <td className="w-12 !border-r-0">
+                <td className="w-8 !border-r-0">
                   {getLocaleString(student.prefix, options.language)}
                 </td>
               )}
@@ -162,7 +193,7 @@ const StudentsListPaper: FC<{
                 <>
                   <td className="w-28 !border-r-0 [&:not(:first-child)]:!border-l-0">
                     {nameJoiner(options.language, student.name, undefined, {
-                      middleName: "abbr",
+                      middleName: options.language === "en-US" ? "abbr" : true,
                       lastName: false,
                     })}
                   </td>
@@ -174,11 +205,13 @@ const StudentsListPaper: FC<{
 
               {/* Empty columns */}
               {range(options.numEmpty).map((idx) => (
-                <td key={idx} />
+                <td key={idx} className={idx === 0 ? "!border-l-2" : undefined}>
+                  &nbsp;
+                </td>
               ))}
 
               {/* Notes */}
-              {options.enableNotes && <td></td>}
+              {options.enableNotes && <td>&nbsp;</td>}
             </tr>
           ))}
         </tbody>
@@ -295,9 +328,10 @@ const StudentsPrintOptions: FC<{
 
 const StudentsListPrintPage: CustomPage<{
   classItem: ClassWNumber;
+  classOverview: ClassOverview;
   studentList: Student[];
   userRole: Role;
-}> = ({ classItem, studentList, userRole }) => {
+}> = ({ classItem, classOverview, studentList, userRole }) => {
   const locale = useLocale();
   const { t } = useTranslation(["class", "common"]);
 
@@ -322,7 +356,10 @@ const StudentsListPrintPage: CustomPage<{
       </Head>
       <h1 className="sr-only">Print student list</h1>
       <PrintPage>
-        <StudentsListPaper {...{ classItem, studentList }} options={form} />
+        <StudentsListPaper
+          {...{ classItem, classOverview, studentList }}
+          options={form}
+        />
         <StudentsPrintOptions {...{ form, setForm, formProps, userRole }} />
       </PrintPage>
     </>
@@ -355,6 +392,11 @@ export const getServerSideProps: GetServerSideProps = async ({
     classItem = data!;
   }
 
+  const { data: classOverview } = await getClassOverview(
+    supabase,
+    classItem!.number
+  );
+
   const { data: studentList } = await getClassStudentList(
     supabase,
     classItem!.id
@@ -368,6 +410,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         "lookup",
       ])),
       classItem: classItem!,
+      classOverview,
       studentList,
       userRole,
     },

@@ -6,7 +6,12 @@ import { FC, ReactNode } from "react";
 import { Button, MaterialIcon, Actions } from "@suankularb-components/react";
 
 const PrintOptions: FC<{ children: ReactNode }> = ({ children }) => (
-  <aside className="fixed bottom-20 z-50 w-screen divide-y-1 divide-outline rounded-t-xl shadow-3 md:shadow-none bg-surface-3 print:hidden sm:inset-0 sm:left-auto sm:h-auto sm:w-96 sm:rounded-l-xl sm:rounded-tr-none lg:sticky md:top-0 lg:w-full lg:rounded-r-xl sm:bg-surface lg:top-8">
+  <aside
+    className="fixed bottom-20 z-50 w-screen divide-y-1 divide-outline
+      rounded-t-xl bg-surface-3 shadow-3 print:hidden sm:inset-0 sm:left-auto
+      sm:h-auto sm:w-96 sm:rounded-l-xl sm:rounded-tr-none sm:bg-surface
+      md:top-0 md:shadow-none lg:sticky lg:top-8 lg:w-full lg:rounded-r-xl"
+  >
     <header className="flex flex-row items-center gap-2 py-2 pl-2 pr-4">
       <Button
         appearance="text"
