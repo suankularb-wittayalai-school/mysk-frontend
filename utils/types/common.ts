@@ -27,6 +27,16 @@ export type OrUndefined<T> = T | undefined;
 export type LangCode = "en-US" | "th";
 
 /**
+ * The color scheme of the UI: light, dark, or auto.
+ */
+export type ColorScheme = "light" | "dark" | "auto";
+
+/**
+ * User preferences parsed from local storage.
+ */
+export type Preferences = { locale: LangCode; colorScheme: ColorScheme };
+
+/**
  * The {@link NextPage} type extended with properties for SKCom.
  */
 export type CustomPage<T = {}> = NextPage<T> &

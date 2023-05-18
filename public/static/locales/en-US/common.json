@@ -1,7 +1,6 @@
 {
   "brand": {
     "name": "MySK",
-    "nameWithAccent": "My<1>SK</1>",
     "description": "Easily access and understand school data with the MySK education management system for Suankularb Wittayalai School.",
     "school": "Suankularb Wittayalai School"
   },
@@ -12,6 +11,10 @@
     "lookup": "Lookup",
     "news": "News",
     "account": "Account",
+    "colorScheme": {
+      "dark": "Turn off lights",
+      "light": "Turn on lights"
+    },
     "language": "ภาษาไทย",
     "logOut": "Log out",
     "drawer": {

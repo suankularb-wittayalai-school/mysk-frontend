@@ -12,7 +12,7 @@ import {
 
 // Internal components
 import Favicon from "@/components/brand/Favicon";
-import NavDrawerContext from "@/contexts/NavDrawerContext";
+import AppStateContext from "@/contexts/AppStateContext";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
@@ -26,7 +26,7 @@ const MySKPageHeader: FC<
   const { t } = useTranslation("common");
 
   // Navigation Drawer toggle
-  const { setNavOpen } = useContext(NavDrawerContext);
+  const { setNavOpen } = useContext(AppStateContext);
 
   // Page load
   const { pageIsLoading } = usePageIsLoading();

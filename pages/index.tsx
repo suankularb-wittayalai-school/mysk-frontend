@@ -69,6 +69,7 @@ import { withLoading } from "@/utils/helpers/loading";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
+import { usePreferences } from "@/utils/hooks/preferences";
 import { useRefreshProps } from "@/utils/hooks/routing";
 import { useToggle } from "@/utils/hooks/toggle";
 
@@ -201,6 +202,7 @@ const OptionsSection: FC = () => {
   const locale = useLocale();
   const { t } = useTranslation("landing", { keyPrefix: "main.options" });
 
+  const { setPreference } = usePreferences();
   const refreshProps = useRefreshProps();
 
   // Dialog control
@@ -217,7 +219,7 @@ const OptionsSection: FC = () => {
         value={locale}
         onChange={(locale) => {
           // Remember the preference
-          localStorage.setItem("preferredLang", locale);
+          setPreference("locale", locale);
           // Redirect to the new language
           refreshProps({ locale });
         }}

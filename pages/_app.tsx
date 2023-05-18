@@ -29,7 +29,7 @@ import ErrorBoundary from "@/components/error/ErrorBoundary";
 import PageFallback from "@/components/error/PageFallback";
 
 // Contexts
-import NavDrawerContext from "@/contexts/NavDrawerContext";
+import AppStateContext from "@/contexts/AppStateContext";
 import PreviousRouteContext from "@/contexts/PreviousRouteContext";
 import SnackbarContext from "@/contexts/SnackbarContext";
 
@@ -40,7 +40,7 @@ import "@/styles/global.css";
 import { usePreviousPath } from "@/utils/hooks/routing";
 
 // Types
-import { CustomAppProps } from "@/utils/types/common";
+import { ColorScheme, CustomAppProps } from "@/utils/types/common";
 import { Database } from "@/utils/types/supabase";
 
 // English fonts
@@ -78,14 +78,17 @@ const iconFont = localFont({
 const Contexts: FC<{ children: ReactNode }> = ({ children }) => {
   const { previousPath } = usePreviousPath();
   const [snackbar, setSnackbar] = useState<JSX.Element | null>(null);
+  const [colorScheme, setColorScheme] = useState<ColorScheme>();
   const [navOpen, setNavOpen] = useState<boolean>(false);
 
   return (
     <PreviousRouteContext.Provider value={previousPath}>
       <SnackbarContext.Provider value={{ snackbar, setSnackbar }}>
-        <NavDrawerContext.Provider value={{ navOpen, setNavOpen }}>
+        <AppStateContext.Provider
+          value={{ colorScheme, setColorScheme, navOpen, setNavOpen }}
+        >
           {children}
-        </NavDrawerContext.Provider>
+        </AppStateContext.Provider>
       </SnackbarContext.Provider>
     </PreviousRouteContext.Provider>
   );
