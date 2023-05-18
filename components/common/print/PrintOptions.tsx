@@ -25,11 +25,14 @@ const PrintOptions: FC<{
   return (
     <aside
       className="fixed bottom-20 z-50 w-screen divide-y-1 divide-outline
-      rounded-t-xl bg-surface-3 shadow-3 print:hidden sm:inset-0 sm:left-auto
-      sm:h-auto sm:w-96 sm:rounded-l-xl sm:rounded-tr-none sm:bg-surface
-      md:top-0 md:shadow-none lg:sticky lg:top-8 lg:w-full lg:rounded-r-xl"
+        rounded-t-xl bg-surface-3 shadow-3 print:hidden sm:inset-0 sm:left-auto
+        sm:h-auto sm:w-96 sm:rounded-l-xl sm:rounded-tr-none sm:bg-surface
+        md:top-0 md:shadow-none lg:sticky lg:top-8 lg:w-full lg:rounded-r-xl"
     >
-      <header className="relative flex flex-row items-center gap-2 py-2 pl-2 pr-4">
+      <header
+        className="relative flex flex-row items-center gap-2 py-2 pl-2
+          pr-4"
+      >
         <Button
           appearance="text"
           icon={<MaterialIcon icon="arrow_backward" />}
@@ -46,20 +49,28 @@ const PrintOptions: FC<{
           className="absolute inset-0 top-auto"
         />
       </header>
-      <p className="skc-label-medium p-4 text-on-surface-variant">
-        Note: preview may not be 100% accurate. You may need to adjust scaling
-        or other settings in your browser’s print dialog.
-      </p>
       <div
         className="h-56 overflow-x-auto sm:h-auto
-          [&_.skc-chip-set\_\_label]:!bg-surface-3
-          [&_.skc-chip-set\_\_label]:sm:!bg-surface
-          [&_.skc-select--outlined_.skc-select\_\_label]:!bg-surface-3
-          [&_.skc-select--outlined_.skc-select\_\_label]:sm:!bg-surface
-          [&_.skc-text-field--outlined_.skc-text-field\_\_label]:!bg-surface-3
-          [&_.skc-text-field--outlined_.skc-text-field\_\_label]:sm:!bg-surface"
+          sm:max-h-[calc(100vh-7.8125rem)] lg:max-h-[calc(100vh-11.8125rem)]"
       >
-        {children}
+        <p
+          className="skc-label-medium sticky top-0 z-20 border-b-1
+            border-outline bg-surface-3 p-4 text-on-surface-variant
+            sm:bg-surface"
+        >
+          Note: preview may not be 100% accurate. You may need to adjust scaling
+          or other settings in your browser’s print dialog.
+        </p>
+        <div
+          className="[&_.skc-chip-set\_\_label]:!bg-surface-3
+            [&_.skc-chip-set\_\_label]:sm:!bg-surface
+            [&_.skc-select--outlined_.skc-select\_\_label]:!bg-surface-3
+            [&_.skc-select--outlined_.skc-select\_\_label]:sm:!bg-surface
+            [&_.skc-text-field--outlined_.skc-text-field\_\_label]:!bg-surface-3
+            [&_.skc-text-field--outlined_.skc-text-field\_\_label]:sm:!bg-surface"
+        >
+          {children}
+        </div>
       </div>
       <Actions className="px-4 py-3.5">
         <Button
