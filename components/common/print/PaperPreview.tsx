@@ -1,6 +1,17 @@
 // External libraries
 import { FC, ReactNode } from "react";
 
+// Internal components
+import PrintPage from "@/components/common/print/PrintPage";
+
+/**
+ * A simulation of an A4 paper. The first child of
+ * {@link PrintPage Print Page} and the only element visible to printers.
+ * 
+ * @param children The contents of the print preview.
+ *  
+ * @returns A JSX Element representation of an A4 paper.
+ */
 const PaperPreview: FC<{ children: ReactNode }> = ({ children }) => (
   <div
     className="-mt-8 mb-96 w-screen overflow-auto border-b-1 border-outline

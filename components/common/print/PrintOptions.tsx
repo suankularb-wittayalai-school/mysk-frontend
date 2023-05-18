@@ -11,9 +11,21 @@ import {
   Progress,
 } from "@suankularb-components/react";
 
+// Internal components
+import PrintPage from "@/components/common/print/PrintPage";
+
 // Hooks
 import { usePageIsLoading } from "@/utils/hooks/routing";
 
+/**
+ * Configurations for a print preview. The second child of
+ * {@link PrintPage Print Page}.
+ *
+ * @param children Various form elements for configuration of a print preview.
+ * @param parentURL The URL of the page to navigate up to. Used by the back Button.
+ *
+ * @returns A Bottom/Side Sheet or Card depending on the screen size.
+ */
 const PrintOptions: FC<{
   children: ReactNode;
   parentURL: string;
