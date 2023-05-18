@@ -25,6 +25,7 @@
         "title": "About",
         "help": "Help/report issue",
         "admin": "Admin panel",
+        "legacy": "Legacy MySK",
         "language": "ภาษาไทย",
         "logOut": "Log out"
       }

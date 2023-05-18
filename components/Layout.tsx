@@ -246,6 +246,15 @@ const Layout: FC<
             />
           )}
           <NavDrawerItem
+            icon={<MaterialIcon icon="web" />}
+            label={t("navigation.drawer.about.legacy")}
+            href="http://archive.mysk.school/"
+            // eslint-disable-next-line react/display-name
+            element={forwardRef((props, ref) => (
+              <a {...props} ref={ref} target="_blank" rel="noreferrer" />
+            ))}
+          />
+          <NavDrawerItem
             icon={<MaterialIcon icon="logout" />}
             label={t("navigation.drawer.about.logOut")}
             onClick={() => setLogOutOpen(true)}
