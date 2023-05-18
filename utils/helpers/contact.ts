@@ -1,15 +1,14 @@
 // Types
-import { ContactVia } from "@/utils/types/contact";
+import { Contact } from "@/utils/types/contact";
 
 /**
  * Converts Contact value into a URL depending on the type.
  *
- * @param type The type of the Contact.
- * @param value The value to be converted.
+ * @param contact The Contact to be converted.
  *
  * @returns A URL that can be used in links.
  */
-export function getContactURL(type: ContactVia, value: string) {
+export function getContactURL({ type, value }: Contact) {
   switch (type) {
     case "Phone":
       return `tel:${value}`;
@@ -26,5 +25,22 @@ export function getContactURL(type: ContactVia, value: string) {
       return `https://discord.gg/invite/${value}`;
     default:
       return value;
+  }
+}
+
+/**
+ * Checks if a given Contact can be converted into a link.
+ *
+ * @param contact The Contact to be checked.
+ *
+ * @returns A boolean.
+ */
+export function getContactIsLinkable({ type, value }: Contact): boolean {
+  if (type !== "Other") return true;
+  try {
+    new URL(value);
+    return true;
+  } catch (TypeError) {
+    return false;
   }
 }
