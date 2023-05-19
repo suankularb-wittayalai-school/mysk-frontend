@@ -145,6 +145,21 @@ const Layout: FC<
     html.className = colorScheme;
   }, [colorScheme]);
 
+  // Ensure light color scheme is used for printing
+  useEffect(() => {
+    if (!preferences) return;
+    window.addEventListener("beforeprint", () => setColorScheme("light"));
+    window.addEventListener("afterprint", () =>
+      setColorScheme(preferences.colorScheme)
+    );
+    return () => {
+      window.removeEventListener("beforeprint", () => setColorScheme("light"));
+      window.removeEventListener("afterprint", () =>
+        setColorScheme(preferences.colorScheme)
+      );
+    };
+  }, [preferences]);
+
   const rootLayout = (
     <RootLayout>
       {/* Navigation Drawer */}
