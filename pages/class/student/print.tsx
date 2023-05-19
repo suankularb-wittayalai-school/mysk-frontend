@@ -38,7 +38,7 @@ const StudentsListPrintPage: CustomPage<{
   return (
     <>
       <Head>
-        <title>{createTitleStr("Print student list", t)}</title>
+        <title>{createTitleStr(t("student.print.title"), t)}</title>
       </Head>
       <PrintStudentList
         {...{ classItem, classOverview, studentList, userRole }}

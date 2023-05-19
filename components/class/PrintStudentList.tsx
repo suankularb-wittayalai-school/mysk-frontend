@@ -34,6 +34,9 @@ import { ClassOverview, ClassWNumber } from "@/utils/types/class";
 import { FormControlProps, LangCode } from "@/utils/types/common";
 import { Role, Student } from "@/utils/types/person";
 
+/**
+ * The options type for the Student List Printout.
+ */
 type OptionsType = {
   language: LangCode;
   columns: ("classNo" | "studentID" | "prefix" | "fullName")[];
@@ -42,6 +45,21 @@ type OptionsType = {
   enableTimestamp: boolean;
 };
 
+/**
+ * The maximum number of empty columns displayed on the preview.
+ */
+const maximumEmptyColumns = 20;
+
+/**
+ * A preview of the Student List Printout.
+ * 
+ * @param classItem The Class (`ClassWNumber`) to print information of.
+ * @param classOverview (`ClassOverview`); used for Class Advisors information.
+ * @param studentList The list of all Students in this Class.
+ * @param options Print options.
+ * 
+ * @returns A Paper Preview.
+ */
 const StudentsListPaper: FC<{
   classItem: ClassWNumber;
   classOverview: ClassOverview;
@@ -84,9 +102,9 @@ const StudentsListPaper: FC<{
         <span className="mr-4 whitespace-nowrap font-bold">
           {options.language === "en-US" ? "Class advisors" : "ครูที่ปรึกษา"}
         </span>
-        <div className="mb-1 flex grow flex-row flex-wrap gap-x-2">
+        <div className="mb-1 flex grow flex-row flex-wrap gap-x-2 font-bold">
           {classOverview.classAdvisors.map((teacher) => (
-            <span key={teacher.id} className="-mb-1 font-medium">
+            <span key={teacher.id} className="-mb-1">
               {nameJoiner(options.language, teacher.name, teacher.prefix, {
                 prefix: true,
               })}
@@ -136,11 +154,13 @@ const StudentsListPaper: FC<{
             )}
 
             {/* Empty columns */}
-            {range(options.numEmpty).map((idx) => (
-              <th key={idx} className={idx === 0 ? "!border-l-2" : undefined}>
-                &nbsp;
-              </th>
-            ))}
+            {range(Math.min(options.numEmpty, maximumEmptyColumns)).map(
+              (idx) => (
+                <th key={idx} className={idx === 0 ? "!border-l-2" : undefined}>
+                  {idx === 0 && options.columns.length === 0 ? " " : undefined}
+                </th>
+              )
+            )}
 
             {/* Notes */}
             {options.enableNotes && (
@@ -167,7 +187,7 @@ const StudentsListPaper: FC<{
 
               {/* Prefix */}
               {options.columns.includes("prefix") && (
-                <td className="w-14 !border-r-0">
+                <td className="w-8 !border-r-0">
                   {getLocaleString(student.prefix, options.language)}
                 </td>
               )}
@@ -188,14 +208,23 @@ const StudentsListPaper: FC<{
               )}
 
               {/* Empty columns */}
-              {range(options.numEmpty).map((idx) => (
-                <td key={idx} className={idx === 0 ? "!border-l-2" : undefined}>
-                  &nbsp;
-                </td>
-              ))}
+              {range(Math.min(options.numEmpty, maximumEmptyColumns)).map(
+                (idx) => (
+                  <td
+                    key={idx}
+                    className={idx === 0 ? "!border-l-2" : undefined}
+                  >
+                    {idx === 0 && options.columns.length === 0
+                      ? " "
+                      : undefined}
+                  </td>
+                )
+              )}
 
               {/* Notes */}
-              {options.enableNotes && <td>&nbsp;</td>}
+              {options.enableNotes && (
+                <td>{options.columns.length === 0 ? " " : undefined}</td>
+              )}
             </tr>
           ))}
         </tbody>
@@ -214,25 +243,39 @@ const StudentsListPaper: FC<{
   );
 };
 
+/**
+ * Options for the Student List Printout.
+ * 
+ * @param form The form control values.
+ * @param setForm The form setter.
+ * @param formProps The form control props.
+ * @param userRole The role of the user visitng the page. Exposes Student ID if the user is a Teacher.
+ * 
+ * @returns A Print Options.
+ */
 const StudentsPrintOptions: FC<{
   form: OptionsType;
   setForm: (form: OptionsType) => void;
   formProps: FormControlProps<keyof OptionsType>;
   userRole: Role;
 }> = ({ form, setForm, formProps, userRole }) => {
-  const { t } = useTranslation("class");
+  const { t } = useTranslation("class", { keyPrefix: "student.print" });
 
   const router = useRouter();
 
   return (
     <PrintOptions parentURL={router.asPath.replace(/\/print$/, "")}>
       <section className="flex flex-col gap-6 px-4 pb-5 pt-6">
-        <Select appearance="outlined" label="Language" {...formProps.language}>
+        <Select
+          appearance="outlined"
+          label={t("language")}
+          {...formProps.language}
+        >
           <MenuItem value="en-US">English</MenuItem>
           <MenuItem value="th">ภาษาไทย</MenuItem>
         </Select>
-        <FormGroup label="Information to show">
-          <FormItem label="Class №">
+        <FormGroup label={t("columns.label")}>
+          <FormItem label={t("columns.classNo")}>
             <Checkbox
               value={form.columns.includes("classNo")}
               onChange={() =>
@@ -244,7 +287,7 @@ const StudentsPrintOptions: FC<{
             />
           </FormItem>
           {userRole === "teacher" && (
-            <FormItem label="Student ID">
+            <FormItem label={t("columns.studentID")}>
               <Checkbox
                 value={form.columns.includes("studentID")}
                 onChange={() =>
@@ -256,7 +299,7 @@ const StudentsPrintOptions: FC<{
               />
             </FormItem>
           )}
-          <FormItem label="Prefix">
+          <FormItem label={t("columns.prefix")}>
             <Checkbox
               value={form.columns.includes("prefix")}
               onChange={() =>
@@ -267,7 +310,7 @@ const StudentsPrintOptions: FC<{
               }
             />
           </FormItem>
-          <FormItem label="Full name">
+          <FormItem label={t("columns.fullName")}>
             <Checkbox
               value={form.columns.includes("fullName")}
               onChange={() =>
@@ -281,12 +324,17 @@ const StudentsPrintOptions: FC<{
         </FormGroup>
         <TextField
           appearance="outlined"
-          label="Empty columns"
-          inputAttr={{ type: "number", min: 0, max: 15, step: 1 }}
+          label={t("numEmpty")}
+          inputAttr={{
+            type: "number",
+            min: 0,
+            max: maximumEmptyColumns,
+            step: 1,
+          }}
           {...formProps.numEmpty}
         />
         <FormItem
-          label="Notes column"
+          label={t("enableNotes")}
           labelAttr={{ className: "grow skc-title-medium" }}
           className="items-center"
         >
@@ -296,7 +344,7 @@ const StudentsPrintOptions: FC<{
           />
         </FormItem>
         <FormItem
-          label="Timestamp"
+          label={t("enableTimestamp")}
           labelAttr={{ className: "grow skc-title-medium" }}
           className="items-center"
         >
@@ -312,6 +360,16 @@ const StudentsPrintOptions: FC<{
   );
 };
 
+/**
+ * The preview page for the Student List Printout.
+ * 
+ * @param classItem The Class (`ClassWNumber`) to print information of.
+ * @param classOverview (`ClassOverview`); used for Class Advisors information.
+ * @param studentList The list of all Students in this Class.
+ * @param userRole The role of the user visitng the page. Exposes Student ID if the user is a Teacher.
+ * 
+ * @returns A Print Page.
+ */
 const PrintStudentList: FC<{
   classItem: ClassWNumber;
   classOverview: ClassOverview;
@@ -329,7 +387,8 @@ const PrintStudentList: FC<{
     {
       key: "numEmpty",
       defaultValue: "10",
-      validate: (value) => range(16).includes(Number(value)),
+      validate: (value) =>
+        range(maximumEmptyColumns + 1).includes(Number(value)),
     },
     { key: "enableNotes", defaultValue: false },
     { key: "enableTimestamp", defaultValue: false },
@@ -337,7 +396,7 @@ const PrintStudentList: FC<{
 
   return (
     <>
-      <h1 className="sr-only">Print student list</h1>
+      <h1 className="sr-only">{t("title")}</h1>
       <PrintPage>
         <StudentsListPaper
           {...{ classItem, classOverview, studentList }}
