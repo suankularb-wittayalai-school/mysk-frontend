@@ -1,7 +1,7 @@
 // External libraries
 import { useTranslation } from "next-i18next";
 import Image from "next/image";
-import { FC, useContext, useState } from "react";
+import { FC, forwardRef, useContext, useState } from "react";
 
 // SK Components
 import {
@@ -41,7 +41,7 @@ import SnackbarContext from "@/contexts/SnackbarContext";
  * @param contact A Contact object.
  * @param onChange Triggers when this Contact is edited.
  * @param onRemove Triggers when this Contact is removed.
- * 
+ *
  * @returns A Card.
  */
 const ContactCard: FC<{
@@ -101,17 +101,16 @@ const ContactCard: FC<{
         stateLayerEffect={!editable}
         {...(!editable
           ? getContactIsLinkable(contact)
-            ?
-            // If the Contact is linkable, link to it
-            {
+            ? // If the Contact is linkable, link to it
+              {
                 href: getContactURL(contact),
-                element: (props) => (
-                  <a {...props} target="_blank" rel="noreferrer" />
-                ),
+                // eslint-disable-next-line react/display-name
+                element: forwardRef((props, ref) => (
+                  <a {...props} ref={ref} target="_blank" rel="noreferrer" />
+                )),
               }
-            : 
-            // Otherwise, copy the value to clipboard
-            {
+            : // Otherwise, copy the value to clipboard
+              {
                 onClick: () => {
                   navigator.clipboard.writeText(contact.value);
                   setSnackbar(
