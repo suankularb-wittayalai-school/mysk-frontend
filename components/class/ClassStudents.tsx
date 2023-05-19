@@ -4,6 +4,8 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
+import { useTranslation } from "next-i18next";
+
 import { FC, useEffect, useState } from "react";
 
 // SK Components
@@ -38,6 +40,8 @@ const ClassStudents: FC<{
   studentList: Student[];
   classNumber?: number;
 }> = ({ studentList, classNumber }) => {
+  const { t } = useTranslation("class", { keyPrefix: "student.list" });
+
   const { atBreakpoint } = useBreakpoint();
   const router = useRouter();
 
@@ -80,7 +84,7 @@ const ClassStudents: FC<{
     >
       <LookupList
         length={studentList.length}
-        searchAlt="Search students"
+        searchAlt={t("searchAlt")}
         actions={
           <Actions className="-mt-3 mb-4 !grid grid-cols-1 md:!grid-cols-[2fr,3fr]">
             <Button
@@ -89,13 +93,13 @@ const ClassStudents: FC<{
               href={`${router.asPath}/print`}
               element={Link}
             >
-              Print
+              {t("action.print")}
             </Button>
             <Button
               appearance="outlined"
               icon={<MaterialIcon icon="contact_page" />}
             >
-              Save to contacts
+              {t("action.saveVCards")}
             </Button>
           </Actions>
         }
