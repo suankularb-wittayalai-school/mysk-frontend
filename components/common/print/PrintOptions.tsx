@@ -30,7 +30,7 @@ const PrintOptions: FC<{
   children: ReactNode;
   parentURL: string;
 }> = ({ children, parentURL }) => {
-  const { t } = useTranslation("common");
+  const { t } = useTranslation("common", { keyPrefix: "print" });
 
   const { pageIsLoading } = usePageIsLoading();
 
@@ -48,12 +48,12 @@ const PrintOptions: FC<{
         <Button
           appearance="text"
           icon={<MaterialIcon icon="arrow_backward" />}
-          alt="Navigate up"
+          alt={t("action.back")}
           href={parentURL}
           element={Link}
           className="!text-on-surface state-layer:!bg-on-surface"
         />
-        <h2 className="skc-title-large">Print options</h2>
+        <h2 className="skc-title-large">{t("title")}</h2>
         <Progress
           appearance="linear"
           alt={t("pageLoading")}
@@ -62,7 +62,7 @@ const PrintOptions: FC<{
         />
       </header>
       <div
-        className="h-56 overflow-x-auto sm:h-auto
+        className="h-64 overflow-x-auto sm:h-auto
           sm:max-h-[calc(100vh-7.8125rem)] lg:max-h-[calc(100vh-11.8125rem)]"
       >
         <p
@@ -70,8 +70,7 @@ const PrintOptions: FC<{
             border-outline bg-surface-3 p-4 text-on-surface-variant
             sm:bg-surface"
         >
-          Note: preview may not be 100% accurate. You may need to adjust scaling
-          or other settings in your browser’s print dialog.
+          {t("note")}
         </p>
         <div
           className="[&_.skc-chip-set\_\_label]:!bg-surface-3
@@ -90,7 +89,7 @@ const PrintOptions: FC<{
           icon={<MaterialIcon icon="print" />}
           onClick={() => window.print()}
         >
-          Print
+          {t("action.print")}
         </Button>
       </Actions>
     </aside>

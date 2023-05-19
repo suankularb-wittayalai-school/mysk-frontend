@@ -120,6 +120,14 @@
       "persistNotice": "If this persists, contact support."
     }
   },
+  "print": {
+    "title": "Print options",
+    "note": "Note: preview may not be 100% accurate. You may need to adjust scaling or other settings in your browser’s print dialog.",
+    "action": {
+      "back": "Back",
+      "print": "Print"
+    }
+  },
   "seeDetails": "See details",
   "snackbar": {
     "loading": "Loading…",
