@@ -18,6 +18,7 @@ import { DialogComponent } from "@/utils/types/common";
 import { Student, Teacher } from "@/utils/types/person";
 
 // Helpers
+import { getContactIsLinkable, getContactURL } from "@/utils/helpers/contact";
 import { getLocaleString } from "@/utils/helpers/i18n";
 import { nameJoiner } from "@/utils/helpers/name";
 
@@ -28,7 +29,8 @@ const ShareDialog: DialogComponent<{
   person: Student | Teacher;
 }> = ({ person, open, onClose }) => {
   const locale = useLocale();
-  const { t } = useTranslation(["lookup", "common"]);
+  const { t } = useTranslation("lookup");
+  const { t: tx } = useTranslation("common");
 
   const router = useRouter();
 
@@ -37,13 +39,6 @@ const ShareDialog: DialogComponent<{
       person: nameJoiner("en-US", person.name),
       method: "vCard",
     });
-
-    const emails = person.contacts.filter(
-      (contact) => contact.type === "Email"
-    );
-    const phoneNumbers = person.contacts.filter(
-      (contact) => contact.type === "Phone"
-    );
 
     var vCard = new Blob(
       [
@@ -70,11 +65,33 @@ const ShareDialog: DialogComponent<{
           `BDAY:${person.birthdate.split("-").join("")}`,
 
           // Contacts
-          emails
-            .map((email) => `EMAIL;type=INTERNET:${email.value}`)
-            .join("\n"),
-          phoneNumbers
-            .map((phoneNumber) => `TEL;type=CELL:${phoneNumber.value}`)
+          person.contacts
+            .map((contact, idx) => {
+              switch (contact.type) {
+                case "Phone":
+                  return `item${idx + 1}.TEL;type=CELL:${contact.value}`;
+                case "Email":
+                  return `item${idx + 1}.EMAIL;type=INTERNET:${contact.value}`;
+                default:
+                  if (getContactIsLinkable(contact))
+                    return [
+                      `item${idx + 1}.URL:${getContactURL(contact)}`,
+                      !["Website", "Other"].includes(contact.value) &&
+                        `item${idx + 1}.X-ABLabel:${
+                          {
+                            Facebook: tx("contact.facebook"),
+                            Line: tx("contact.line"),
+                            Instagram: tx("contact.instagram"),
+                            Discord: tx("contact.discord"),
+                          }[contact.type as string]
+                        }`,
+                    ]
+                      .filter((segment) => segment)
+                      .join("\n");
+                  break;
+              }
+            })
+            .filter((segment) => segment)
             .join("\n"),
 
           // Role within the school
@@ -91,6 +108,10 @@ const ShareDialog: DialogComponent<{
             ]
               .filter((segment) => segment)
               .join("\n"),
+
+          // VCard metadata
+          `KIND:individual`,
+          `REV:${new Date().toISOString()}`,
 
           // File footer
           `END:VCARD`,
