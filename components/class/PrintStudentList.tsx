@@ -52,12 +52,12 @@ const maximumEmptyColumns = 20;
 
 /**
  * A preview of the Student List Printout.
- * 
+ *
  * @param classItem The Class (`ClassWNumber`) to print information of.
  * @param classOverview (`ClassOverview`); used for Class Advisors information.
  * @param studentList The list of all Students in this Class.
  * @param options Print options.
- * 
+ *
  * @returns A Paper Preview.
  */
 const StudentsListPaper: FC<{
@@ -245,12 +245,12 @@ const StudentsListPaper: FC<{
 
 /**
  * Options for the Student List Printout.
- * 
+ *
  * @param form The form control values.
  * @param setForm The form setter.
  * @param formProps The form control props.
  * @param userRole The role of the user visitng the page. Exposes Student ID if the user is a Teacher.
- * 
+ *
  * @returns A Print Options.
  */
 const StudentsPrintOptions: FC<{
@@ -362,12 +362,12 @@ const StudentsPrintOptions: FC<{
 
 /**
  * The preview page for the Student List Printout.
- * 
+ *
  * @param classItem The Class (`ClassWNumber`) to print information of.
  * @param classOverview (`ClassOverview`); used for Class Advisors information.
  * @param studentList The list of all Students in this Class.
  * @param userRole The role of the user visitng the page. Exposes Student ID if the user is a Teacher.
- * 
+ *
  * @returns A Print Page.
  */
 const PrintStudentList: FC<{
