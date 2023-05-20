@@ -14,9 +14,9 @@ import { ColorScheme } from "@/utils/types/common";
 
 /**
  * An icon representing a color scheme.
- * 
+ *
  * @param colorScheme Either `light` or `dark`.
- * 
+ *
  * @returns A Material Icon.
  */
 const SchemeIcon: FC<{ colorScheme: ColorScheme }> = ({ colorScheme }) => {

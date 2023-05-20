@@ -2,10 +2,17 @@
 import { createPerson } from "@/utils/backend/person/person";
 
 // Converters
-import { db2PersonName, db2Student } from "@/utils/backend/database";
+import {
+  db2Contact,
+  db2PersonName,
+  db2Student,
+} from "@/utils/backend/database";
 
 // Helpers
 import { getCurrentAcademicYear } from "@/utils/helpers/date";
+import { logError } from "@/utils/helpers/debug";
+import { nameJoiner } from "@/utils/helpers/name";
+import { removeFromObjectByKeys } from "@/utils/helpers/object";
 
 // Types
 import { ClassWNumber } from "@/utils/types/class";
@@ -23,8 +30,6 @@ import { Database } from "@/utils/types/supabase";
 
 // Miscellaneous
 import { prefixMap } from "@/utils/maps";
-import { removeFromObjectByKeys } from "@/utils/helpers/object";
-import { nameJoiner } from "@/utils/helpers/name";
 
 export async function getStudent(
   supabase: DatabaseClient,
@@ -136,6 +141,47 @@ export async function getAdminStudentList(
     }),
     count: count!,
     error: null,
+  };
+}
+
+export async function getFullStudentsFromIDs(
+  supabase: DatabaseClient,
+  students: number[]
+): Promise<BackendDataReturn<Student[]>> {
+  const { data, error } = await supabase
+    .from("student")
+    .select("*, person(*)")
+    .in("id", students);
+
+  if (error) {
+    logError("getFullStudentsFromIDs (Students)", error);
+    return { data: [], error };
+  }
+
+  const { data: contactsData, error: contactError } = await supabase
+    .from("contacts")
+    .select("*")
+    .in("id", data.map((student) => student.person.contacts || []).flat());
+
+  if (contactError) {
+    logError("getFullStudentsFromIDs (Contacts)", contactError);
+    return { data: [], error: contactError };
+  }
+
+  const contacts = contactsData.map(db2Contact);
+
+  return {
+    data: await Promise.all(
+      data.map(async (student) => ({
+        ...(await db2Student(supabase, student)),
+        contacts:
+          student.person.contacts?.map(
+            (contact) =>
+              contacts.find((mapContact) => contact === mapContact.id)!
+          ) || [],
+      }))
+    ),
+    error,
   };
 }
 

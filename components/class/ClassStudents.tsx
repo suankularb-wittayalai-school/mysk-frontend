@@ -1,6 +1,8 @@
 // External libraries
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
+import va from "@vercel/analytics";
+
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -24,9 +26,13 @@ import LookupList from "@/components/lookup/LookupList";
 import PersonDetails from "@/components/lookup/person/PersonDetails";
 
 // Backend
-import { getStudent } from "@/utils/backend/person/student";
+import {
+  getFullStudentsFromIDs,
+  getStudent,
+} from "@/utils/backend/person/student";
 
 // Helpers
+import { useGetVCard } from "@/utils/helpers/contact";
 import { withLoading } from "@/utils/helpers/loading";
 import { nameJoiner } from "@/utils/helpers/name";
 
@@ -76,6 +82,37 @@ const ClassStudents: FC<{
   // Query
   const [query, setQuery] = useState<string>("");
 
+  // VCard
+  const getVCard = useGetVCard();
+  const [vCardLoading, toggleVCardLoading] = useToggle();
+  async function handleSaveVCard() {
+    withLoading(
+      async () => {
+        const { data, error } = await getFullStudentsFromIDs(
+          supabase,
+          studentList.map((student) => student.id)
+        );
+        if (error) return false;
+
+        const vCards = data.map((student) => getVCard(student));
+        var mergedVCard = new Blob(
+          [
+            (
+              await Promise.all(vCards.map(async (vCard) => await vCard.text()))
+            ).join("\n"),
+          ],
+          { type: "text/vcard;charset=utf-8" }
+        );
+
+        window.location.href = URL.createObjectURL(mergedVCard);
+        va.track("Save Class VCards", { number: `M.${classNumber}` });
+        return true;
+      },
+      toggleVCardLoading,
+      { hasEndToggle: true }
+    );
+  }
+
   return (
     <SplitLayout
       ratio="list-detail"
@@ -86,7 +123,7 @@ const ClassStudents: FC<{
         length={studentList.length}
         searchAlt={t("searchAlt")}
         actions={
-          <Actions className="-mt-3 mb-4 !grid grid-cols-1 md:!grid-cols-[2fr,3fr]">
+          <Actions className="-mt-3 mb-4 !grid grid-cols-1 md:!grid-cols-[1fr,2fr]">
             <Button
               appearance="filled"
               icon={<MaterialIcon icon="print" />}
@@ -98,6 +135,8 @@ const ClassStudents: FC<{
             <Button
               appearance="outlined"
               icon={<MaterialIcon icon="contact_page" />}
+              onClick={handleSaveVCard}
+              loading={vCardLoading || undefined}
             >
               {t("action.saveVCards")}
             </Button>

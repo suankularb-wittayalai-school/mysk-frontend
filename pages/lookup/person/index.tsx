@@ -139,7 +139,7 @@ const LookupPeoplePage: CustomPage<{
       toggleLoading,
       { hasEndToggle: true }
     );
-  }, [selected]);
+  }, [selected, atBreakpoint === "base"]);
 
   // For showing Filter Chips when the list is already filterred by text
   const [filterred, setFilterred] = useState<boolean>(false);

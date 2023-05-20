@@ -58,7 +58,7 @@ const ClassTeachers: FC<{
       toggleLoading,
       { hasEndToggle: true }
     );
-  }, [selected]);
+  }, [selected, atBreakpoint === "base"]);
 
   return (
     <SplitLayout
