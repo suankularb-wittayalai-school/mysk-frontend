@@ -123,7 +123,7 @@ const ClassStudents: FC<{
         length={studentList.length}
         searchAlt={t("searchAlt")}
         actions={
-          <Actions className="-mt-3 mb-4 !grid grid-cols-1 md:!grid-cols-[2fr,3fr]">
+          <Actions className="-mt-3 mb-4 !grid grid-cols-1 md:!grid-cols-[1fr,2fr]">
             <Button
               appearance="filled"
               icon={<MaterialIcon icon="print" />}
