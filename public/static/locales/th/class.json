@@ -16,7 +16,25 @@
       "lookup": "นักเรียนห้องม.{{number}}"
     },
     "list": {
-      "searchAlt": "ค้นหานักเรียน"
+      "searchAlt": "ค้นหานักเรียน",
+      "action": {
+        "print": "พิมพ์",
+        "saveVCards": "บันทึกลงแอพรายชื่อ"
+      }
+    },
+    "print": {
+      "title": "พิมพ์ใบรายชื่อ",
+      "language": "ภาษา",
+      "columns": {
+        "label": "ข้อมูลที่แสดง",
+        "classNo": "เลขที่ในห้อง",
+        "studentID": "เลขประจำตัวนักเรียน",
+        "prefix": "คำนำหน้าชื่อ",
+        "fullName": "ชื่อจริง-นามสกุล"
+      },
+      "numEmpty": "เพิ่มหลัก",
+      "enableNotes": "หลักหมายเหตุ",
+      "enableTimestamp": "ประทับเวลา"
     }
   },
   "teacher": {

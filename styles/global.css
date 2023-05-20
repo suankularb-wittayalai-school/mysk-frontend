@@ -22,6 +22,14 @@
     @apply bg-background font-body text-on-background;
   }
 
+  .light {
+    @apply [color-scheme:light];
+  }
+
+  .dark {
+    @apply [color-scheme:dark];
+  }
+
   @media (prefers-color-scheme: dark) {
     html {
       @apply [color-scheme:dark];

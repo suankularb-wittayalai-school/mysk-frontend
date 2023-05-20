@@ -101,7 +101,13 @@ const LookupPeoplePage: CustomPage<{
   // Information about the selected Person
   const [selectedPerson, setSelectedPerson] = useState<Student | Teacher>();
   useEffect(() => {
-    if (!selected) return;
+    if (
+      !selected ||
+      (selected.id === selectedPerson?.id &&
+        selected.role === selectedPerson?.role) ||
+      atBreakpoint === "base"
+    )
+      return;
 
     withLoading(
       async () => {
@@ -133,7 +139,7 @@ const LookupPeoplePage: CustomPage<{
       toggleLoading,
       { hasEndToggle: true }
     );
-  }, [selected]);
+  }, [selected, atBreakpoint === "base"]);
 
   // For showing Filter Chips when the list is already filterred by text
   const [filterred, setFilterred] = useState<boolean>(false);

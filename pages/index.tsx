@@ -69,6 +69,7 @@ import { withLoading } from "@/utils/helpers/loading";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
+import { usePreferences } from "@/utils/hooks/preferences";
 import { useRefreshProps } from "@/utils/hooks/routing";
 import { useToggle } from "@/utils/hooks/toggle";
 
@@ -81,16 +82,11 @@ import { CustomPage, LangCode } from "@/utils/types/common";
  * @returns A Section.
  */
 const LogInSection: FC = () => {
-  // Router
   const locale = useLocale();
-
-  // Translation
   const { t } = useTranslation(["account", "landing"]);
 
-  // Snackbar
   const { setSnackbar } = useContext(SnackbarContext);
 
-  // Supabase
   const supabase = useSupabaseClient();
 
   // Form control
@@ -100,13 +96,22 @@ const LogInSection: FC = () => {
   // Form submission
   const [loading, toggleLoading] = useToggle();
 
+  /**
+   * Check if the form is valid.
+   *
+   * @returns A boolean representing if the log in form is valid.
+   */
   function validate(): boolean {
-    if (!email || email.endsWith("sk.ac.th")) return false;
+    if (!email || email.endsWith("sk.ac.th") || !/@(student.)?$/.test(email))
+      return false;
     if (!password) return false;
 
     return true;
   }
 
+  /**
+   * Logs the user in or inform the user of mistakes in the form.
+   */
   async function handleSubmit() {
     withLoading(async () => {
       // Validate response
@@ -117,8 +122,8 @@ const LogInSection: FC = () => {
         return false;
       }
 
-      // Track event
-      va.track("Log in");
+      // Blur focus from the form
+      (document.activeElement as HTMLInputElement)?.blur?.();
 
       // Log in user in Supabase
       const {
@@ -128,6 +133,9 @@ const LogInSection: FC = () => {
         email: [email, "sk.ac.th"].join(""),
         password,
       });
+
+      // Track event
+      va.track("Log in");
 
       // If the user enter a wrong email or password, inform them
       if (error?.name === "AuthApiError")
@@ -147,11 +155,18 @@ const LogInSection: FC = () => {
         label={t("logIn.form.email")}
         align="right"
         trailing="sk.ac.th"
-        error={email.endsWith("sk.ac.th")}
+        error={
+          email.length !== 0 &&
+          (email.endsWith("sk.ac.th") || !/@(student.)?$/.test(email))
+        }
         value={email}
         onChange={(value) => setEmail(value.split("sk.ac.th", 1)[0])}
         locale={locale}
-        inputAttr={{ autoCapitalize: "off" }}
+        inputAttr={{
+          autoCapitalize: "off",
+          spellCheck: false,
+          onKeyUp: (event) => event.key === "Enter" && handleSubmit(),
+        }}
       />
       <TextField<string>
         appearance="outlined"
@@ -159,7 +174,10 @@ const LogInSection: FC = () => {
         value={password}
         onChange={(value) => setPassword(value)}
         locale={locale}
-        inputAttr={{ type: "password" }}
+        inputAttr={{
+          type: "password",
+          onKeyUp: (event) => event.key === "Enter" && handleSubmit(),
+        }}
       />
       <Actions>
         <Button
@@ -184,6 +202,7 @@ const OptionsSection: FC = () => {
   const locale = useLocale();
   const { t } = useTranslation("landing", { keyPrefix: "main.options" });
 
+  const { setPreference } = usePreferences();
   const refreshProps = useRefreshProps();
 
   // Dialog control
@@ -200,7 +219,7 @@ const OptionsSection: FC = () => {
         value={locale}
         onChange={(locale) => {
           // Remember the preference
-          localStorage.setItem("preferredLang", locale);
+          setPreference("locale", locale);
           // Redirect to the new language
           refreshProps({ locale });
         }}
@@ -215,11 +234,7 @@ const OptionsSection: FC = () => {
         className="grid-cols-1 sm:mr-12 sm:!grid md:mr-0 md:!flex"
       >
         {/* Magic link */}
-        <Button
-          appearance="tonal"
-          onClick={() => setMagicLinkOpen(true)}
-          className={locale === "en-US" ? "!min-w-[13ch]" : undefined}
-        >
+        <Button appearance="tonal" onClick={() => setMagicLinkOpen(true)}>
           {t("action.magicLink")}
         </Button>
         <MagicLinkDialog

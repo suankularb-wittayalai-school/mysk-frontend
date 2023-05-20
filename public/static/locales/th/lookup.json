@@ -27,7 +27,7 @@
       "starbucks": {
         "order": {
           "line1": "ชาเขียว Starbucks เย็น แก้วใหญ่ ไม่ใส่ syrup",
-          "line2": "extra green tea 6 ช้อน แยกน้ำแข็ง ฝาโดม"
+          "line2": "extra green tea 7 ช้อน แยกน้ำแข็ง ฝาโดม"
         },
         "action": {
           "readAloud": "อ่านออกเสียง",

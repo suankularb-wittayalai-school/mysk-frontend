@@ -1,6 +1,6 @@
 // External libraries
 import { useTranslation } from "next-i18next";
-import { FC, ReactNode, useEffect, useState } from "react";
+import { FC, ReactNode, useState } from "react";
 
 // SK Components
 import { Card, Search } from "@suankularb-components/react";
@@ -24,6 +24,7 @@ const LookupList: FC<{
   length: number;
   searchAlt: string;
   searchFilters?: ReactNode;
+  actions?: ReactNode;
   query?: string;
   onQueryChange?: (value: string) => void;
   onSearch?: (value: string) => void;
@@ -33,6 +34,7 @@ const LookupList: FC<{
   length,
   searchAlt,
   searchFilters,
+  actions,
   query,
   onQueryChange,
   onSearch,
@@ -81,6 +83,9 @@ const LookupList: FC<{
         </Search>
         {searchFilters}
       </div>
+
+      {/* Actions */}
+      {actions}
 
       {/* List */}
       <ul className="flex flex-col gap-2">

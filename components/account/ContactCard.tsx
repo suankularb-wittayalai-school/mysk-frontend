@@ -1,7 +1,7 @@
 // External libraries
 import { useTranslation } from "next-i18next";
 import Image from "next/image";
-import { FC, useState } from "react";
+import { FC, forwardRef, useContext, useState } from "react";
 
 // SK Components
 import {
@@ -11,6 +11,7 @@ import {
   Avatar,
   Menu,
   MenuItem,
+  Snackbar,
 } from "@suankularb-components/react";
 
 // Contacts
@@ -24,7 +25,7 @@ import DiscordLogo from "@/public/images/social/discord.svg";
 
 // Helpers
 import { getLocaleString } from "@/utils/helpers/i18n";
-import { getContactURL } from "@/utils/helpers/contact";
+import { getContactIsLinkable, getContactURL } from "@/utils/helpers/contact";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
@@ -32,6 +33,7 @@ import { useLocale } from "@/utils/hooks/i18n";
 // Types
 import { Contact } from "@/utils/types/contact";
 import { range } from "@/utils/helpers/array";
+import SnackbarContext from "@/contexts/SnackbarContext";
 
 /**
  * A contact Card.
@@ -39,6 +41,8 @@ import { range } from "@/utils/helpers/array";
  * @param contact A Contact object.
  * @param onChange Triggers when this Contact is edited.
  * @param onRemove Triggers when this Contact is removed.
+ *
+ * @returns A Card.
  */
 const ContactCard: FC<{
   contact: Contact;
@@ -47,7 +51,10 @@ const ContactCard: FC<{
 }> = ({ contact, onChange, onRemove }) => {
   // Translation
   const locale = useLocale();
-  const { t } = useTranslation(["account", "common"]);
+  const { t } = useTranslation("account");
+  const { t: tx } = useTranslation("common");
+
+  const { setSnackbar } = useContext(SnackbarContext);
 
   const editable = Boolean(onChange || onRemove);
   const [showEdit, setShowEdit] = useState<boolean>(false);
@@ -64,14 +71,14 @@ const ContactCard: FC<{
   };
 
   const subtitleMap = {
-    Phone: t("contact.phone", { ns: "common" }),
-    Email: t("contact.email", { ns: "common" }),
-    Facebook: t("contact.facebook", { ns: "common" }),
-    Line: t("contact.line", { ns: "common" }),
-    Instagram: t("contact.instagram", { ns: "common" }),
-    Website: t("contact.website", { ns: "common" }),
-    Discord: t("contact.discord", { ns: "common" }),
-    Other: t("contact.other", { ns: "common" }),
+    Phone: tx("contact.phone"),
+    Email: tx("contact.email"),
+    Facebook: tx("contact.facebook"),
+    Line: tx("contact.line"),
+    Instagram: tx("contact.instagram"),
+    Website: tx("contact.website"),
+    Discord: tx("contact.discord"),
+    Other: tx("contact.other"),
   };
 
   const formattedLabel = contact.name
@@ -92,16 +99,33 @@ const ContactCard: FC<{
       <Card
         appearance="outlined"
         stateLayerEffect={!editable}
-        href={
-          !editable ? getContactURL(contact.type, contact.value) : undefined
-        }
+        {...(!editable
+          ? getContactIsLinkable(contact)
+            ? // If the Contact is linkable, link to it
+              {
+                href: getContactURL(contact),
+                // eslint-disable-next-line react/display-name
+                element: forwardRef((props, ref) => (
+                  <a {...props} ref={ref} target="_blank" rel="noreferrer" />
+                )),
+              }
+            : // Otherwise, copy the value to clipboard
+              {
+                onClick: () => {
+                  navigator.clipboard.writeText(contact.value);
+                  setSnackbar(
+                    <Snackbar>{tx("snackbar.copiedToClipboard")}</Snackbar>
+                  );
+                },
+              }
+          : {})}
       >
         <CardHeader
           avatar={<Avatar>{avatarMap[contact.type]}</Avatar>}
           title={
             editable ? (
               <a
-                href={getContactURL(contact.type, contact.value)}
+                href={getContactURL(contact)}
                 target="_blank"
                 rel="noreferrer"
                 className="break-all"
@@ -130,7 +154,10 @@ const ContactCard: FC<{
                 </MenuItem>
                 <MenuItem
                   icon={<MaterialIcon icon="open_in_new" />}
-                  href={getContactURL(contact.type, contact.value)}
+                  href={getContactURL(contact)}
+                  element={(props) => (
+                    <a {...props} target="_blank" rel="noreferrer" />
+                  )}
                 >
                   {t("profile.contacts.action.link")}
                 </MenuItem>

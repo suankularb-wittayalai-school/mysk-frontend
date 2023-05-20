@@ -1,7 +1,7 @@
 // External libraries
 import va from "@vercel/analytics";
-import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
 
 // SK Components
 import {
@@ -18,7 +18,7 @@ import { DialogComponent } from "@/utils/types/common";
 import { Student, Teacher } from "@/utils/types/person";
 
 // Helpers
-import { getLocaleString } from "@/utils/helpers/i18n";
+import { useGetVCard } from "@/utils/helpers/contact";
 import { nameJoiner } from "@/utils/helpers/name";
 
 // Hooks
@@ -28,79 +28,18 @@ const ShareDialog: DialogComponent<{
   person: Student | Teacher;
 }> = ({ person, open, onClose }) => {
   const locale = useLocale();
-  const { t } = useTranslation(["lookup", "common"]);
+  const { t } = useTranslation("lookup");
 
   const router = useRouter();
+
+  const getVCard = useGetVCard();
 
   async function handleSaveVCard() {
     va.track("Share Person", {
       person: nameJoiner("en-US", person.name),
       method: "vCard",
     });
-
-    const emails = person.contacts.filter(
-      (contact) => contact.type === "Email"
-    );
-    const phoneNumbers = person.contacts.filter(
-      (contact) => contact.type === "Phone"
-    );
-
-    var vCard = new Blob(
-      [
-        [
-          // File header
-          `BEGIN:VCARD`,
-          `VERSION:3.0`,
-
-          // Name
-          `N:${nameJoiner(locale, person.name, undefined, {
-            firstName: false,
-          })};${nameJoiner(locale, person.name, undefined, {
-            lastName: false,
-          })};;${
-            person.role === "teacher"
-              ? t("people.dialog.share.saveVCard.segment.teacherPrefix")
-              : ""
-          };`,
-          `FN:${nameJoiner(locale, person.name, undefined, {
-            prefix: person.role === "teacher" ? "teacher" : false,
-          })}`,
-
-          // Birthday
-          `BDAY:${person.birthdate.split("-").join("")}`,
-
-          // Contacts
-          emails
-            .map((email) => `EMAIL;type=INTERNET:${email.value}`)
-            .join("\n"),
-          phoneNumbers
-            .map((phoneNumber) => `TEL;type=CELL:${phoneNumber.value}`)
-            .join("\n"),
-
-          // Role within the school
-          person.role === "teacher" &&
-            [
-              `item1.ORG:${t(
-                "people.dialog.share.saveVCard.segment.org"
-              )};${getLocaleString(person.subjectGroup.name, locale)}`,
-              `item2.TITLE:${t("people.dialog.share.saveVCard.segment.title")}`,
-              person.classAdvisorAt &&
-                `NOTE:${t("people.dialog.share.saveVCard.segment.note", {
-                  number: person.classAdvisorAt.number,
-                })}`,
-            ]
-              .filter((segment) => segment)
-              .join("\n"),
-
-          // File footer
-          `END:VCARD`,
-        ]
-          .filter((segment) => segment)
-          .join("\n"),
-      ],
-      { type: "text/vcard;charset=utf-8" }
-    );
-
+    var vCard = getVCard(person);
     window.location.href = URL.createObjectURL(vCard);
     onClose();
   }

@@ -36,7 +36,7 @@ export function nameJoiner(
   options?: Partial<{
     prefix: boolean | "teacher";
     firstName: boolean;
-    middleName: boolean;
+    middleName: boolean | "abbr";
     lastName: boolean | "abbr";
   }>
 ) {
@@ -59,8 +59,19 @@ export function nameJoiner(
         options.firstName === true || options.firstName === undefined
           ? name[locale]?.firstName || name.th.firstName
           : undefined,
-        options.middleName === true || options.middleName === undefined
-          ? name[locale]?.middleName || name.th.middleName
+        name[locale]?.middleName || name.th.middleName
+          ? options.middleName === "abbr"
+            ? [
+                locale === "en-US" && name["en-US"]?.middleName
+                  ? name["en-US"].middleName[0]
+                  : startsWithThaiVowel(name.th.middleName!)
+                  ? name.th.middleName![1]
+                  : name.th.middleName![0],
+                ".",
+              ].join("")
+            : options.middleName === true || options.middleName === undefined
+            ? name[locale]?.middleName || name.th.middleName
+            : undefined
           : undefined,
         options.lastName === "abbr"
           ? [(name[locale]?.lastName || name.th.lastName)[0], "."].join("")
