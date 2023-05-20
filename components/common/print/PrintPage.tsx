@@ -44,7 +44,10 @@ const PrintPage: FC<{ children: ReactNode }> = ({ children }) => (
     </ContentLayout>
 
     <style jsx global>{`
-      body,
+      body {
+        background-color: var(--surface-2);
+      }
+
       .skc-nav-bar {
         background-color: var(--surface-2) !important;
       }
