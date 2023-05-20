@@ -15,8 +15,8 @@
       "title": "New in {{version}}",
       "subtitle": "This version brings a brand new MySK experience.",
       "list": {
-        "1": "A completely redesigned interface",
-        "2": "MySK Lookup: a database of the entire school at your fingertips",
+        "1": "Student List Printout: Get a fully customizable name list printout of your students in both Thai and English",
+        "2": "Save all your students/classmates’ contacts to your phone in just one click",
         "3": "Bug fixes"
       },
       "action": {
