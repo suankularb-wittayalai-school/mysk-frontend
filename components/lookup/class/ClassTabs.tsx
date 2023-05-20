@@ -22,13 +22,20 @@ const ClassTabs: FC<{
 
   const [selected, setSelected] = useState<
     "overview" | "students" | "teachers" | "schedule"
-  >();
-  useEffect(() => {
-    if (router.asPath === parentURL) setSelected("overview");
-    else if (router.asPath === `${parentURL}/student`) setSelected("students");
-    else if (router.asPath === `${parentURL}/teacher`) setSelected("teachers");
-    else if (router.asPath === `${parentURL}/schedule`) setSelected("schedule");
-  }, [router.asPath]);
+  >(
+    (() => {
+      switch (router.asPath) {
+        case `${parentURL}/student`:
+          return "students";
+        case `${parentURL}/teacher`:
+          return "teachers";
+        case `${parentURL}/schedule`:
+          return "schedule";
+        default:
+          return "overview";
+      }
+    })()
+  );
 
   const user = useUser();
 
