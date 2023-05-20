@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 
 // SK Components
 import { MaterialIcon, Tab, TabsContainer } from "@suankularb-components/react";
@@ -20,6 +20,16 @@ const ClassTabs: FC<{
   const router = useRouter();
   const parentURL = type === "lookup" ? `/lookup/class/${number}` : "/class";
 
+  const [selected, setSelected] = useState<
+    "overview" | "students" | "teachers" | "schedule"
+  >();
+  useEffect(() => {
+    if (router.asPath === parentURL) setSelected("overview");
+    else if (router.asPath === `${parentURL}/student`) setSelected("students");
+    else if (router.asPath === `${parentURL}/teacher`) setSelected("teachers");
+    else if (router.asPath === `${parentURL}/schedule`) setSelected("schedule");
+  }, [router.asPath]);
+
   const user = useUser();
 
   return (
@@ -28,8 +38,9 @@ const ClassTabs: FC<{
       <Tab
         icon={<MaterialIcon icon="info" />}
         label={t("common.navigation.overview")}
-        selected={router.asPath === parentURL}
+        selected={selected === "overview"}
         href={parentURL}
+        onClick={() => setSelected("overview")}
         element={Link}
       />
 
@@ -37,8 +48,9 @@ const ClassTabs: FC<{
       <Tab
         icon={<MaterialIcon icon="groups" />}
         label={t("common.navigation.students")}
-        selected={router.asPath === `${parentURL}/student`}
+        selected={selected === "students"}
         href={`${parentURL}/student`}
+        onClick={() => setSelected("students")}
         element={Link}
       />
 
@@ -47,8 +59,9 @@ const ClassTabs: FC<{
       <Tab
         icon={<MaterialIcon icon="group" />}
         label={t("common.navigation.teachers")}
-        selected={router.asPath === `${parentURL}/teacher`}
+        selected={selected === "teachers"}
         href={`${parentURL}/teacher`}
+        onClick={() => setSelected("teachers")}
         element={Link}
       />
 
@@ -57,8 +70,9 @@ const ClassTabs: FC<{
         <Tab
           icon={<MaterialIcon icon="dashboard" />}
           label={t("common.navigation.schedule")}
-          selected={router.asPath === `${parentURL}/schedule`}
+          selected={selected === "schedule"}
           href={`${parentURL}/schedule`}
+          onClick={() => setSelected("schedule")}
           element={Link}
         />
       ) : (
