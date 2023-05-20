@@ -30,23 +30,26 @@ import {
 } from "@suankularb-components/react";
 
 // Internal components
+import LogOutDialog from "@/components/account/LogOutDialog";
 import RailLogo from "@/components/brand/RailLogo";
+import SchemeIcon from "@/components/icons/SchemeIcon";
 
 // Backend
 import { getUserMetadata } from "@/utils/backend/account";
 import { getClassAdvisorAt } from "@/utils/backend/person/teacher";
 
 // Contexts
-import NavDrawerContext from "@/contexts/NavDrawerContext";
+import AppStateContext from "@/contexts/AppStateContext";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
+import { usePreferences } from "@/utils/hooks/preferences";
+import { useRefreshProps } from "@/utils/hooks/routing";
 import { useSnackbar } from "@/utils/hooks/snackbar";
 
 // Types
 import { CustomPage } from "@/utils/types/common";
 import { UserMetadata } from "@/utils/types/person";
-import LogOutDialog from "./account/LogOutDialog";
 
 const Layout: FC<
   { children: ReactNode } & Pick<
@@ -58,9 +61,13 @@ const Layout: FC<
   const locale = useLocale();
   const { t } = useTranslation("common");
 
+  // Router
+  const refreshProps = useRefreshProps();
+
   // Navigation Bar and Drawer
   const router = useRouter();
-  const { navOpen, setNavOpen } = useContext(NavDrawerContext);
+  const { colorScheme, setColorScheme, navOpen, setNavOpen } =
+    useContext(AppStateContext);
 
   // Class data (for Navigation links)
   const supabase = useSupabaseClient();
@@ -105,6 +112,53 @@ const Layout: FC<
 
   // Dialog control
   const [logOutOpen, setLogOutOpen] = useState<boolean>(false);
+
+  // Preferences
+  const { preferences, setPreference } = usePreferences();
+
+  // Detect color scheme
+  function setSchemeFromMedia() {
+    setColorScheme(
+      window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light"
+    );
+  }
+  useEffect(() => {
+    if (preferences)
+      if (preferences.colorScheme === "auto") {
+        // If the color scheme preference is `auto`, listen to the
+        // `prefers-color-scheme` media query for the color scheme
+        const media = window.matchMedia("(prefers-color-scheme: dark)");
+        media.addEventListener("change", setSchemeFromMedia);
+        return () => media.removeEventListener("change", setSchemeFromMedia);
+      }
+      // Otherwise, use the color scheme
+      else setColorScheme(preferences.colorScheme);
+  }, [preferences]);
+
+  // Set color scheme class
+  useEffect(() => {
+    if (!colorScheme) return;
+    const html = document.querySelector("html");
+    if (!html) return;
+    html.className = colorScheme;
+  }, [colorScheme]);
+
+  // Ensure light color scheme is used for printing
+  useEffect(() => {
+    if (!preferences) return;
+    window.addEventListener("beforeprint", () => setColorScheme("light"));
+    window.addEventListener("afterprint", () =>
+      setColorScheme(preferences.colorScheme)
+    );
+    return () => {
+      window.removeEventListener("beforeprint", () => setColorScheme("light"));
+      window.removeEventListener("afterprint", () =>
+        setColorScheme(preferences.colorScheme)
+      );
+    };
+  }, [preferences]);
 
   const rootLayout = (
     <RootLayout>
@@ -218,24 +272,6 @@ const Layout: FC<
               />
             ))}
           />
-          <NavDrawerItem
-            icon={<MaterialIcon icon="translate" />}
-            label={t("navigation.drawer.about.language")}
-            href={router.asPath}
-            // eslint-disable-next-line react/display-name
-            element={forwardRef((props, ref) => (
-              <Link
-                locale={locale === "en-US" ? "th" : "en-US"}
-                onClick={() =>
-                  localStorage.setItem(
-                    "preferredLang",
-                    locale === "en-US" ? "th" : "en-US"
-                  )
-                }
-                {...{ ...props, ref }}
-              />
-            ))}
-          />
           {userMetadata?.isAdmin && (
             <NavDrawerItem
               icon={<MaterialIcon icon="shield_person" />}
@@ -245,6 +281,24 @@ const Layout: FC<
               element={Link}
             />
           )}
+          <NavDrawerItem
+            icon={<MaterialIcon icon="web" />}
+            label={t("navigation.drawer.about.legacy")}
+            href="http://archive.mysk.school/"
+            // eslint-disable-next-line react/display-name
+            element={forwardRef((props, ref) => (
+              <a {...props} ref={ref} target="_blank" rel="noreferrer" />
+            ))}
+          />
+          <NavDrawerItem
+            icon={<MaterialIcon icon="translate" />}
+            label={t("navigation.language")}
+            onClick={() => {
+              const newLocale = locale === "en-US" ? "th" : "en-US";
+              refreshProps({ locale: newLocale });
+              setPreference("locale", newLocale);
+            }}
+          />
           <NavDrawerItem
             icon={<MaterialIcon icon="logout" />}
             label={t("navigation.drawer.about.logOut")}
@@ -275,20 +329,35 @@ const Layout: FC<
               <NavBarItem
                 icon={<MaterialIcon icon="translate" />}
                 label={t("navigation.language")}
-                href={router.asPath}
-                element={(props) => (
-                  <Link
-                    locale={locale === "en-US" ? "th" : "en-US"}
-                    scroll={false}
-                    onClick={() =>
-                      localStorage.setItem(
-                        "preferredLang",
-                        locale === "en-US" ? "th" : "en-US"
-                      )
+                onClick={() => {
+                  const newLocale = locale === "en-US" ? "th" : "en-US";
+                  refreshProps({ locale: newLocale });
+                  setPreference("locale", newLocale);
+                }}
+              />
+              <NavBarItem
+                icon={
+                  <SchemeIcon
+                    colorScheme={
+                      (colorScheme === "dark" ? "light" : "dark") || "light"
                     }
-                    {...props}
                   />
+                }
+                label={t(
+                  `navigation.colorScheme.${
+                    colorScheme === "dark" ? "light" : "dark"
+                  }`
                 )}
+                onClick={() => {
+                  const newScheme = colorScheme === "dark" ? "light" : "dark";
+                  setColorScheme(newScheme);
+                  setPreference("colorScheme", newScheme);
+                  va.track("Toggle Color Scheme", {
+                    newScheme:
+                      newScheme === "dark" ? "Dark mode" : "Light mode",
+                    location: "Navigation Rail",
+                  });
+                }}
               />
               <NavBarItem
                 icon={<MaterialIcon icon="logout" />}

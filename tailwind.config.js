@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 
-const plugin = require("tailwindcss/plugin")
+const plugin = require("tailwindcss/plugin");
 
 module.exports = {
   content: [
@@ -8,6 +8,7 @@ module.exports = {
     "./pages/**/*.{js,ts,jsx,tsx}",
     "./components/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: "class",
   theme: {
     // Shadow
     boxShadow: {
@@ -29,6 +30,7 @@ module.exports = {
 
     // Rounded corners
     borderRadius: {
+      none: "var(--rounded-none)",
       xs: "var(--rounded-xs)",
       sm: "var(--rounded-sm)",
       md: "var(--rounded-md)",
@@ -67,7 +69,9 @@ module.exports = {
     fontFamily: {
       display: "var(--font-display)",
       body: "var(--font-body)",
+      print: "var(--font-print)",
       mono: "var(--font-mono)",
+      icon: "var(--font-icon)",
     },
 
     // Breakpoints
@@ -230,7 +234,7 @@ module.exports = {
   plugins: [
     require("@tailwindcss/typography"),
     plugin(function ({ addVariant }) {
-      addVariant("state-layer", ["&::before","&>span:empty"]);
+      addVariant("state-layer", ["&::before", "&>span:empty"]);
     }),
   ],
 };

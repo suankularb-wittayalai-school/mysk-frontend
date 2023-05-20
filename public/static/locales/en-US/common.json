@@ -1,7 +1,6 @@
 {
   "brand": {
     "name": "MySK",
-    "nameWithAccent": "My<1>SK</1>",
     "description": "Easily access and understand school data with the MySK education management system for Suankularb Wittayalai School.",
     "school": "Suankularb Wittayalai School"
   },
@@ -12,6 +11,10 @@
     "lookup": "Lookup",
     "news": "News",
     "account": "Account",
+    "colorScheme": {
+      "dark": "Turn off lights",
+      "light": "Turn on lights"
+    },
     "language": "ภาษาไทย",
     "logOut": "Log out",
     "drawer": {
@@ -25,6 +28,7 @@
         "title": "About",
         "help": "Help/report issue",
         "admin": "Admin panel",
+        "legacy": "Legacy MySK",
         "language": "ภาษาไทย",
         "logOut": "Log out"
       }
@@ -114,6 +118,14 @@
     },
     "common": {
       "persistNotice": "If this persists, contact support."
+    }
+  },
+  "print": {
+    "title": "Print options",
+    "note": "Note: preview may not be 100% accurate. You may need to adjust scaling or other settings in your browser’s print dialog.",
+    "action": {
+      "back": "Back",
+      "print": "Print"
     }
   },
   "seeDetails": "See details",

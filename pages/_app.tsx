@@ -2,6 +2,7 @@
 import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
 
+import va from "@vercel/analytics";
 import { Analytics } from "@vercel/analytics/react";
 
 import { MotionConfig } from "framer-motion";
@@ -13,10 +14,11 @@ import {
   Sarabun,
   Space_Grotesk,
 } from "next/font/google";
+import localFont from "next/font/local";
 
 import { appWithTranslation } from "next-i18next";
 
-import { FC, ReactNode, useState } from "react";
+import { FC, ReactNode, useEffect, useState } from "react";
 
 // SK Components
 import { ThemeProvider } from "@suankularb-components/react";
@@ -27,7 +29,7 @@ import ErrorBoundary from "@/components/error/ErrorBoundary";
 import PageFallback from "@/components/error/PageFallback";
 
 // Contexts
-import NavDrawerContext from "@/contexts/NavDrawerContext";
+import AppStateContext from "@/contexts/AppStateContext";
 import PreviousRouteContext from "@/contexts/PreviousRouteContext";
 import SnackbarContext from "@/contexts/SnackbarContext";
 
@@ -38,7 +40,7 @@ import "@/styles/global.css";
 import { usePreviousPath } from "@/utils/hooks/routing";
 
 // Types
-import { CustomAppProps } from "@/utils/types/common";
+import { ColorScheme, CustomAppProps } from "@/utils/types/common";
 import { Database } from "@/utils/types/supabase";
 
 // English fonts
@@ -58,6 +60,13 @@ const displayFontTH = IBM_Plex_Sans_Thai({
 // Mono font
 const monoFont = Fira_Code({ subsets: ["latin"] });
 
+// Icon font
+const iconFont = localFont({
+  src: "../public/fonts/material-symbols.woff2",
+  weight: "100 700",
+  style: "normal",
+});
+
 /**
  * To prevent the App component from being more of a triangle than it already
  * is, all the context providers are extracted into this component.
@@ -69,14 +78,17 @@ const monoFont = Fira_Code({ subsets: ["latin"] });
 const Contexts: FC<{ children: ReactNode }> = ({ children }) => {
   const { previousPath } = usePreviousPath();
   const [snackbar, setSnackbar] = useState<JSX.Element | null>(null);
+  const [colorScheme, setColorScheme] = useState<ColorScheme>();
   const [navOpen, setNavOpen] = useState<boolean>(false);
 
   return (
     <PreviousRouteContext.Provider value={previousPath}>
       <SnackbarContext.Provider value={{ snackbar, setSnackbar }}>
-        <NavDrawerContext.Provider value={{ navOpen, setNavOpen }}>
+        <AppStateContext.Provider
+          value={{ colorScheme, setColorScheme, navOpen, setNavOpen }}
+        >
           {children}
-        </NavDrawerContext.Provider>
+        </AppStateContext.Provider>
       </SnackbarContext.Provider>
     </PreviousRouteContext.Provider>
   );
@@ -88,6 +100,13 @@ function App({ Component, pageProps }: CustomAppProps) {
   // Supabase client
   const [supabase] = useState(() => createBrowserSupabaseClient<Database>());
 
+  // Track PWA installs
+  useEffect(() => {
+    const trackInstall = () => va.track("Install PWA");
+    window.addEventListener("appinstalled", trackInstall);
+    return () => window.removeEventListener("appinstalled", trackInstall);
+  });
+
   return (
     <>
       {/* Put Next.js generated font families into variables that SKCom and
@@ -98,8 +117,10 @@ function App({ Component, pageProps }: CustomAppProps) {
             ${bodyFontEN.style.fontFamily}, ${bodyFontTH.style.fontFamily};
           --font-display: ${displayFontEN.style.fontFamily},
             ${displayFontTH.style.fontFamily};
+          --font-print: ${bodyFontTH.style.fontFamily}, Sarabun;
           --font-mono: ui-monospace, SFMono-Regular, SF Mono,
             ${monoFont.style.fontFamily}, ${bodyFontTH.style.fontFamily};
+          --font-icon: ${iconFont.style.fontFamily};
         }
       `}</style>
 

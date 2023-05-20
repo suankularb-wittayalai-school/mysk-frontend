@@ -16,7 +16,25 @@
       "lookup": "Students of M.{{number}}"
     },
     "list": {
-      "searchAlt": "Search students"
+      "searchAlt": "Search students",
+      "action": {
+        "print": "Print",
+        "saveVCards": "Save to contacts"
+      }
+    },
+    "print": {
+      "title": "Print student list",
+      "language": "Language",
+      "columns": {
+        "label": "Information to show",
+        "classNo": "Class №",
+        "studentID": "Student ID",
+        "prefix": "Prefix",
+        "fullName": "Full name"
+      },
+      "numEmpty": "Empty columns",
+      "enableNotes": "Notes column",
+      "enableTimestamp": "Timestamp"
     }
   },
   "teacher": {

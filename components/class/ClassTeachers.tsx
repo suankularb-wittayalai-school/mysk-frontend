@@ -3,7 +3,7 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { FC, useEffect, useState } from "react";
 
 // SK Components
-import { SplitLayout } from "@suankularb-components/react";
+import { SplitLayout, useBreakpoint } from "@suankularb-components/react";
 
 // Internal components
 import ClassTeacherCard from "@/components/class/ClassTeacherCard";
@@ -29,6 +29,7 @@ const ClassTeachers: FC<{
   teacherList: ClassTeachersListSection[];
   classNumber?: number;
 }> = ({ teacherList, classNumber }) => {
+  const { atBreakpoint } = useBreakpoint();
   const locale = useLocale();
 
   // Selected Person
@@ -39,7 +40,12 @@ const ClassTeachers: FC<{
 
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher>();
   useEffect(() => {
-    if (!selected) return;
+    if (
+      !selected ||
+      selected === selectedTeacher?.id ||
+      atBreakpoint === "base"
+    )
+      return;
 
     withLoading(
       async () => {

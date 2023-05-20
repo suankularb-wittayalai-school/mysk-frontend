@@ -8,14 +8,13 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 // Internal components
-import ClassStudents from "@/components/class/ClassStudents";
-import MySKPageHeader from "@/components/common/MySKPageHeader";
-import ClassTabs from "@/components/lookup/class/ClassTabs";
+import PrintStudentList from "@/components/class/PrintStudentList";
 
 // Backend
 import { getUserMetadata } from "@/utils/backend/account";
 import {
   getClassFromUser,
+  getClassOverview,
   getClassStudentList,
 } from "@/utils/backend/classroom/classroom";
 import { getClassAdvisorAt } from "@/utils/backend/person/teacher";
@@ -24,26 +23,26 @@ import { getClassAdvisorAt } from "@/utils/backend/person/teacher";
 import { createTitleStr } from "@/utils/helpers/title";
 
 // Types
-import { ClassWNumber } from "@/utils/types/class";
+import { ClassOverview, ClassWNumber } from "@/utils/types/class";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Role, Student } from "@/utils/types/person";
 
-const ClassStudentsPage: CustomPage<{
+const StudentsListPrintPage: CustomPage<{
   classItem: ClassWNumber;
+  classOverview: ClassOverview;
   studentList: Student[];
   userRole: Role;
-}> = ({ classItem, studentList, userRole }) => {
+}> = ({ classItem, classOverview, studentList, userRole }) => {
   const { t } = useTranslation(["class", "common"]);
 
   return (
     <>
       <Head>
-        <title>{createTitleStr(t(`student.title.${userRole}`), t)}</title>
+        <title>{createTitleStr(t("student.print.title"), t)}</title>
       </Head>
-      <MySKPageHeader title={t(`student.title.${userRole}`)} parentURL="/class">
-        <ClassTabs number={classItem.number} type="class" />
-      </MySKPageHeader>
-      <ClassStudents {...{ studentList }} />
+      <PrintStudentList
+        {...{ classItem, classOverview, studentList, userRole }}
+      />
     </>
   );
 };
@@ -74,6 +73,11 @@ export const getServerSideProps: GetServerSideProps = async ({
     classItem = data!;
   }
 
+  const { data: classOverview } = await getClassOverview(
+    supabase,
+    classItem!.number
+  );
+
   const { data: studentList } = await getClassStudentList(
     supabase,
     classItem!.id
@@ -87,10 +91,11 @@ export const getServerSideProps: GetServerSideProps = async ({
         "lookup",
       ])),
       classItem: classItem!,
+      classOverview,
       studentList,
       userRole,
     },
   };
 };
 
-export default ClassStudentsPage;
+export default StudentsListPrintPage;

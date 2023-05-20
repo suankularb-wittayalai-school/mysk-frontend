@@ -36,10 +36,15 @@ const ClassStudentsPage: CustomPage<{
   return (
     <>
       <Head>
-        <title>{createTitleStr(`M.${classNumber} students`, t)}</title>
+        <title>
+          {createTitleStr(
+            t("student.title.lookup", { number: classNumber }),
+            t
+          )}
+        </title>
       </Head>
       <MySKPageHeader
-        title={`M.${classNumber} students`}
+        title={t("student.title.lookup", { number: classNumber })}
         parentURL={`/lookup/class/${classNumber}`}
       >
         <ClassTabs number={classNumber} type="lookup" />

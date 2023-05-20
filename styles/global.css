@@ -2,11 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
-  font-family: "Material Symbols Outlined";
-  font-weight: 100 700;
-  font-style: normal;
-  src: url(/fonts/material-symbols.woff2) format("woff2");
+@media print {
+  .skc-root-layout
+    > *:not(.skc-content-layout, .skc-split-layout, .skc-page-header) {
+    display: none;
+  }
 }
 
 @layer base {
@@ -22,10 +22,22 @@
     @apply bg-background font-body text-on-background;
   }
 
+  .light {
+    @apply [color-scheme:light];
+  }
+
+  .dark {
+    @apply [color-scheme:dark];
+  }
+
   @media (prefers-color-scheme: dark) {
     html {
       @apply [color-scheme:dark];
     }
+  }
+
+  .skc-icon {
+    @apply !font-icon;
   }
 }
 
