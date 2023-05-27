@@ -210,7 +210,13 @@ const UserFieldsSection: FC<{
     | "pantsSize"
     | "bloodGroup"
   >([
-    { key: "prefixTH", required: true, defaultValue: person.prefix.th },
+    {
+      key: "prefixTH",
+      required: true,
+      defaultValue: person.prefix.th,
+      validate: (value: string) =>
+        person.role === "student" ? ["เด็กชาย", "นาย"].includes(value) : true,
+    },
     {
       key: "firstNameTH",
       required: true,
@@ -223,7 +229,13 @@ const UserFieldsSection: FC<{
       defaultValue: person.name.th.lastName,
     },
     { key: "nicknameTH", defaultValue: person.name.th.nickname },
-    { key: "prefixEN", required: true, defaultValue: person.prefix["en-US"] },
+    {
+      key: "prefixEN",
+      required: true,
+      defaultValue: person.prefix["en-US"],
+      validate: (value: string) =>
+        person.role === "student" ? ["Master", "Mr."].includes(value) : true,
+    },
     {
       key: "firstNameEN",
       required: true,
