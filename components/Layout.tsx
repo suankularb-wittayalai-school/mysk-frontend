@@ -284,10 +284,15 @@ const Layout: FC<
           <NavDrawerItem
             icon={<MaterialIcon icon="web" />}
             label={t("navigation.drawer.about.legacy")}
-            href="http://archive.mysk.school/"
+            href="http://mysk.school.61.19.250.243.no-domain.name/"
             // eslint-disable-next-line react/display-name
             element={forwardRef((props, ref) => (
-              <a {...props} ref={ref} target="_blank" rel="noreferrer" />
+              <a
+                {...props}
+                ref={ref}
+                onClick={() => va.track("Open Legacy MySK")}
+                target="_blank"
+              />
             ))}
           />
           <NavDrawerItem
