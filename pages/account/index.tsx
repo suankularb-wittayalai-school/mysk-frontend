@@ -41,6 +41,7 @@ import {
 // Internal components
 import ChangePasswordDialog from "@/components/account/ChangePasswordDialog";
 import ContactsSection from "@/components/account/ContactSection";
+import LogOutDialog from "@/components/account/LogOutDialog";
 import PersonFields from "@/components/account/PersonFields";
 import DynamicAvatar from "@/components/common/DynamicAvatar";
 import MySKPageHeader from "@/components/common/MySKPageHeader";
@@ -49,6 +50,7 @@ import MySKPageHeader from "@/components/common/MySKPageHeader";
 import SnackbarContext from "@/contexts/SnackbarContext";
 
 // Backend
+import { createContact, updateContact } from "@/utils/backend/contact";
 import {
   addContactToPerson,
   editPerson,
@@ -76,8 +78,7 @@ import { Student, Teacher } from "@/utils/types/person";
 import { SubjectGroup } from "@/utils/types/subject";
 
 // Miscellaneous
-import { createContact, updateContact } from "@/utils/backend/contact";
-import LogOutDialog from "@/components/account/LogOutDialog";
+import { pantsSizeRegex } from "@/utils/patterns";
 
 /**
  * The most basic information about a Person, their name and their role inside
@@ -205,6 +206,8 @@ const UserFieldsSection: FC<{
     | "birthdate"
     | "citizenID"
     | "passportNumber"
+    | "shirtSize"
+    | "pantsSize"
     | "bloodGroup"
   >([
     { key: "prefixTH", required: true, defaultValue: person.prefix.th },
@@ -219,7 +222,7 @@ const UserFieldsSection: FC<{
       required: true,
       defaultValue: person.name.th.lastName,
     },
-    { key: "nicknameTH" },
+    { key: "nicknameTH", defaultValue: person.name.th.nickname },
     { key: "prefixEN", required: true, defaultValue: person.prefix["en-US"] },
     {
       key: "firstNameEN",
@@ -232,7 +235,7 @@ const UserFieldsSection: FC<{
       required: true,
       defaultValue: person.name["en-US"]?.lastName,
     },
-    { key: "nicknameEN" },
+    { key: "nicknameEN", defaultValue: person.name["en-US"]?.nickname },
     {
       key: "subjectGroup",
       defaultValue:
@@ -263,6 +266,12 @@ const UserFieldsSection: FC<{
     //     Boolean(validatePassport(value)) ||
     //     t("profile.general.passportNumber_error", { ns: "account" }),
     // },
+    { key: "shirtSize", defaultValue: person.shirtSize },
+    {
+      key: "pantsSize",
+      defaultValue: person.pantsSize,
+      validate: (value: string) => pantsSizeRegex.test(value),
+    },
     // { key: "bloodGroup", required: true },
   ]);
 

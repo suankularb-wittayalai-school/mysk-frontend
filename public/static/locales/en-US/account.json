@@ -82,6 +82,8 @@
       "citizenID_error": "Invalid citizen ID.",
       "passportNumber": "Passport number",
       "passportNumber_error": "Invalid passport number or unsupported passport.",
+      "shirtSize": "Shirt size",
+      "pantsSize": "School pants size",
       "bloodGroup": "Blood group"
     },
     "contacts": {
