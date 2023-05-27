@@ -590,9 +590,11 @@ export async function getPeopleLookupList(
       `first_name_th.like.%${query || ""}%, \
       middle_name_th.like.%${query || ""}%, \
       last_name_th.like.%${query || ""}%, \
+      nickname_th.like.%${query || ""}%, \
       first_name_en.ilike.%${query || ""}%, \
       middle_name_en.ilike.%${query || ""}%, \
-      last_name_en.ilike.%${query || ""}%`
+      last_name_en.ilike.%${query || ""}%, \
+      nickname_en.ilike.%${query || ""}%`
     )
     .order("first_name_th")
     .order("last_name_th")

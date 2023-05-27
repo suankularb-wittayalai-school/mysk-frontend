@@ -10,6 +10,7 @@ import DynamicAvatar from "@/components/common/DynamicAvatar";
 
 // Helpers
 import { cn } from "@/utils/helpers/className";
+import { getLocaleObj } from "@/utils/helpers/i18n";
 import { nameJoiner } from "@/utils/helpers/name";
 
 // Hooks
@@ -72,6 +73,7 @@ const ClassStudentCard: FC<{
             />
           }
           title={nameJoiner(locale, student.name)}
+          subtitle={getLocaleObj(student.name, locale).nickname}
           className="grow"
         />
         <span

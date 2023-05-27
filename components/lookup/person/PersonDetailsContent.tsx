@@ -175,6 +175,18 @@ const GeneralInfoSection: FC<{
         />
       </DetailSection>
 
+      {/* Nickname */}
+      {(person.name.th.nickname || person.name["en-US"]?.nickname) && (
+        <DetailSection title={t("nickname")}>
+          <MultilangText
+            text={{
+              th: person.name.th.nickname!,
+              "en-US": person.name["en-US"]?.nickname,
+            }}
+          />
+        </DetailSection>
+      )}
+
       {/* Class */}
       {person.role === "student" && person.class && (
         <DetailSection title={t("class.title")}>

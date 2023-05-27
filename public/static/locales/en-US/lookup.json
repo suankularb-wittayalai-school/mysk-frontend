@@ -32,6 +32,7 @@
       },
       "general": {
         "fullName": "Full name",
+        "nickname": "Nickname",
         "class": {
           "title": "Class",
           "classNo": "No. {{classNo}}"
