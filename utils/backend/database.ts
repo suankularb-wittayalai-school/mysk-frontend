@@ -1,5 +1,8 @@
 // Helpers
-import { getCurrentAcademicYear } from "@/utils/helpers/date";
+import {
+  getCurrentAcademicYear,
+  getCurrentSemester,
+} from "@/utils/helpers/date";
 
 // Supabase
 import { supabase } from "@/utils/supabase-client";
@@ -298,7 +301,9 @@ export async function db2Teacher(
     const { data: subjects, error: subjectError } = await supabase
       .from("subject")
       .select("*")
-      .contains("teachers", [teacher.id]);
+      .contains("teachers", [teacher.id])
+      .eq("semester", getCurrentSemester())
+      .order("code_th");
 
     if (subjectError) {
       console.error(subjectError);
