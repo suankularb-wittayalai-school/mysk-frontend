@@ -340,14 +340,14 @@ export function db2PersonName(
         firstName: person.first_name_th,
         middleName: person.middle_name_th as OrUndefined<string>,
         lastName: person.last_name_th,
-        nickname: person.nickname_th as OrUndefined<string>,
+        nickname: (person.nickname_th || null) as OrUndefined<string>,
       },
       ...(person.first_name_en && {
         "en-US": {
           firstName: person.first_name_en!,
           middleName: person.middle_name_en as OrUndefined<string>,
           lastName: person.last_name_en!,
-          nickname: person.nickname_en as OrUndefined<string>,
+          nickname: (person.nickname_en || null) as OrUndefined<string>,
         },
       }),
     },
