@@ -3,6 +3,7 @@ export type AdminPanelStatistics = {
   teachers: { all: number; onboarded: number };
   classes: { all: number; thisYear: number };
   news: { all: number; thisYear: number };
+  lastUpdated: number;
 };
 
 export type IndividualOnboardingStatus = {
