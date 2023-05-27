@@ -8,7 +8,7 @@ import { PostgrestError } from "@supabase/supabase-js";
  * @param error A `PostgrestError`.
  * @param clientSide If the error happened client-side.
  *
- * @todo This is en experiment at the moment; if others like it then we’ll implement it for all fetches.
+ * @todo This is an experiment at the moment; if others like it then we’ll implement it for all fetches.
  */
 export function logError(location: string, error: Partial<PostgrestError>) {
   console.error(
@@ -16,7 +16,7 @@ export function logError(location: string, error: Partial<PostgrestError>) {
       // Header
       typeof window === "undefined"
         ? `\x1b[0m- \x1b[31merror\x1b[0man error occurred at \x1b[33m${location}\x1b[0m`
-        : `\x1b[0mERROR`,
+        : `\x1b[0m[Fetch error]`,
 
       // Content
       error.message,
