@@ -42,6 +42,9 @@
       },
       "contacts": {
         "title": "Contacts"
+      },
+      "subjects": {
+        "title": "Subjects in charge"
       }
     },
     "dialog": {

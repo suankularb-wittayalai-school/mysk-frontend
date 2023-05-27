@@ -46,6 +46,9 @@
       },
       "contacts": {
         "title": "ช่องทางการติดต่อ"
+      },
+      "subjects": {
+        "title": "วิชาที่สอน"
       }
     },
     "dialog": {

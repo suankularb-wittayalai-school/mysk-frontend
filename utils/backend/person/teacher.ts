@@ -44,6 +44,7 @@ export async function getTeacher(
     data: await db2Teacher(supabase, data!, {
       contacts: true,
       classAdvisorAt: true,
+      subjectsInCharge: true,
     }),
     error: null,
   };

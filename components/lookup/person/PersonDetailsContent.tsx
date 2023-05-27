@@ -7,6 +7,7 @@ import { FC, forwardRef, useContext, useEffect, useState } from "react";
 import {
   AssistChip,
   Card,
+  CardHeader,
   ChipSet,
   Columns,
   ContentLayout,
@@ -26,8 +27,10 @@ import SnackbarContext from "@/contexts/SnackbarContext";
 
 // Types
 import { Student, Teacher } from "@/utils/types/person";
+import { SubjectWNameAndCode } from "@/utils/types/subject";
 
 // Helpers
+import { getLocaleObj, getLocaleString } from "@/utils/helpers/i18n";
 import { nameJoiner } from "@/utils/helpers/name";
 
 // Hooks
@@ -218,9 +221,33 @@ const GeneralInfoSection: FC<{
   );
 };
 
+const SubjectsSection: FC<{
+  subjects: SubjectWNameAndCode[];
+}> = ({ subjects }) => {
+  const locale = useLocale();
+  const { t } = useTranslation("lookup", { keyPrefix: "people.detail" });
+
+  return (
+    <Section>
+      <Header level={3}>{t("subjects.title")}</Header>
+      <Columns columns={2}>
+        {subjects.map((subject) => (
+          <Card key={subject.id} appearance="outlined" direction="row">
+            <CardHeader
+              title={getLocaleObj(subject.name, locale).name}
+              subtitle={getLocaleString(subject.code, locale)}
+            />
+          </Card>
+        ))}
+      </Columns>
+    </Section>
+  );
+};
+
 const PersonDetailsContent: FC<{
   person: Student | Teacher;
 }> = ({ person }) => {
+  const locale = useLocale();
   const { t } = useTranslation("lookup", { keyPrefix: "people.detail" });
 
   return (
@@ -237,6 +264,11 @@ const PersonDetailsContent: FC<{
           </Columns>
         </Section>
       )}
+      {person.role === "teacher" &&
+        person.subjectsInCharge &&
+        person.subjectsInCharge.length !== 0 && (
+          <SubjectsSection subjects={person.subjectsInCharge} />
+        )}
     </ContentLayout>
   );
 };
