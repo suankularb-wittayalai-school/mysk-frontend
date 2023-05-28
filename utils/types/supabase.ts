@@ -285,8 +285,12 @@ export interface Database {
           last_name_en: string | null;
           middle_name_th: string | null;
           middle_name_en: string | null;
+          nickname_th: string | null;
+          nickname_en: string | null;
           birthdate: string;
           citizen_id: string;
+          shirt_size: Database["public"]["Enums"]["shirt_size"] | null;
+          pants_size: string | null;
           contacts: number[] | null;
           profile: string | null;
         };
@@ -301,8 +305,12 @@ export interface Database {
           last_name_en?: string | null;
           middle_name_th?: string | null;
           middle_name_en?: string | null;
+          nickname_th?: string | null;
+          nickname_en?: string | null;
           birthdate: string;
           citizen_id: string;
+          shirt_size?: Database["public"]["Enums"]["shirt_size"] | null;
+          pants_size?: string | null;
           contacts?: number[] | null;
           profile?: string | null;
         };
@@ -317,8 +325,12 @@ export interface Database {
           last_name_en?: string | null;
           middle_name_th?: string | null;
           middle_name_en?: string | null;
+          nickname_th?: string | null;
+          nickname_en?: string | null;
           birthdate?: string;
           citizen_id?: string;
+          shirt_size?: Database["public"]["Enums"]["shirt_size"] | null;
+          pants_size?: string | null;
           contacts?: number[] | null;
           profile?: string | null;
         };
@@ -687,6 +699,17 @@ export interface Database {
         | "time"
         | "scale";
       school_document_type_enum: "order" | "document";
+      shirt_size:
+        | "XS"
+        | "S"
+        | "M"
+        | "L"
+        | "XL"
+        | "2XL"
+        | "3XL"
+        | "4XL"
+        | "5XL"
+        | "6XL";
       subject_type_en_enum:
         | "Core Courses"
         | "Elective Courses"

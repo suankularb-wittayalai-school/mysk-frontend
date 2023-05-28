@@ -95,11 +95,11 @@ const ThaiNameSection: FC<{ formProps: FormControlProps }> = ({
           label={t("profile.name.lastName")}
           {...formProps.lastNameTH}
         />
-        {/* <TextField
+        <TextField
           appearance="outlined"
           label={t("profile.name.nickname")}
           {...formProps.nicknameTH}
-        /> */}
+        />
       </Columns>
     </Section>
   );
@@ -138,11 +138,11 @@ const EnglishNameSection: FC<{ formProps: FormControlProps }> = ({
           label={t("profile.enName.lastName")}
           {...formProps.lastNameEN}
         />
-        {/* <TextField
+        <TextField
           appearance="outlined"
           label={t("profile.enName.nickname")}
           {...formProps.nicknameEN}
-        /> */}
+        />
       </Columns>
     </Section>
   );
@@ -184,9 +184,9 @@ const RoleSection: FC<{
   );
 };
 
-const MiscellaneousSection: FC<{ formProps: FormControlProps }> = ({
-  formProps,
-}) => {
+const MiscellaneousSection: FC<{
+  formProps: FormControlProps;
+}> = ({ formProps }) => {
   const { t } = useTranslation("account");
 
   return (
@@ -232,6 +232,28 @@ const MiscellaneousSection: FC<{ formProps: FormControlProps }> = ({
           helperMsg={t("profile.common.privateInfo_helper")}
           {...formProps.passportNumber}
         /> */}
+        <Select
+          appearance="outlined"
+          label={t("profile.general.shirtSize")}
+          {...formProps.shirtSize}
+        >
+          <MenuItem value="XS">XS</MenuItem>
+          <MenuItem value="S">S</MenuItem>
+          <MenuItem value="M">M</MenuItem>
+          <MenuItem value="L">L</MenuItem>
+          <MenuItem value="XL">XL</MenuItem>
+          <MenuItem value="2XL">2XL</MenuItem>
+          <MenuItem value="3XL">3XL</MenuItem>
+          <MenuItem value="4XL">4XL</MenuItem>
+          <MenuItem value="5XL">5XL</MenuItem>
+          <MenuItem value="6XL">6XL</MenuItem>
+        </Select>
+        <TextField
+          appearance="outlined"
+          label={t("profile.general.pantsSize")}
+          className="[&>input]:[font-feature-settings:'calt'on]"
+          {...formProps.pantsSize}
+        />
         {/* <Select
           appearance="outlined"
           label={t("profile.general.bloodGroup")}
@@ -268,6 +290,8 @@ const PersonFields: FC<{
     | "birthdate"
     | "citizenID"
     | "passportNumber"
+    | "shirtSize"
+    | "pantsSize"
     | "bloodGroup"
   >;
 }> = ({ subjectGroups, formProps }) => {

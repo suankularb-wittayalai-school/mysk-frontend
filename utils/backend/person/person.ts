@@ -28,6 +28,7 @@ import {
   PersonLookupItem,
   PersonLookupItemGeneric,
   Role,
+  ShirtSize,
   Student,
   Teacher,
 } from "@/utils/types/person";
@@ -97,13 +98,17 @@ export async function editPerson(
     firstNameTH: string;
     middleNameTH: string;
     lastNameTH: string;
+    nicknameTH: string;
     prefixEN: string;
     firstNameEN: string;
     middleNameEN: string;
     lastNameEN: string;
+    nicknameEN: string;
     subjectGroup: number;
     classAdvisorAt: string;
     birthdate: string;
+    shirtSize: ShirtSize;
+    pantsSize: string;
     contacts?: Contact[];
   },
   person: Student | Teacher
@@ -189,11 +194,15 @@ export async function editPerson(
       first_name_th: form.firstNameTH,
       middle_name_th: form.middleNameTH,
       last_name_th: form.lastNameTH,
+      nickname_th: form.nicknameTH,
       prefix_en: form.prefixEN,
       first_name_en: form.firstNameEN,
       middle_name_en: form.middleNameEN,
       last_name_en: form.lastNameEN,
+      nickname_en: form.nicknameEN,
       birthdate: form.birthdate,
+      shirt_size: form.shirtSize,
+      pants_size: form.pantsSize,
       contacts: createdContactIDs,
     })
     .match({ id: personID })
@@ -581,9 +590,11 @@ export async function getPeopleLookupList(
       `first_name_th.like.%${query || ""}%, \
       middle_name_th.like.%${query || ""}%, \
       last_name_th.like.%${query || ""}%, \
+      nickname_th.like.%${query || ""}%, \
       first_name_en.ilike.%${query || ""}%, \
       middle_name_en.ilike.%${query || ""}%, \
-      last_name_en.ilike.%${query || ""}%`
+      last_name_en.ilike.%${query || ""}%, \
+      nickname_en.ilike.%${query || ""}%`
     )
     .order("first_name_th")
     .order("last_name_th")

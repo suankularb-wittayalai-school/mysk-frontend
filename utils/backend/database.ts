@@ -1,5 +1,8 @@
 // Helpers
-import { getCurrentAcademicYear } from "@/utils/helpers/date";
+import {
+  getCurrentAcademicYear,
+  getCurrentSemester,
+} from "@/utils/helpers/date";
 
 // Supabase
 import { supabase } from "@/utils/supabase-client";
@@ -16,7 +19,13 @@ import {
   NewsItemInfoNoDate,
   SchoolDocument,
 } from "@/utils/types/news";
-import { Person, Role, Student, Teacher } from "@/utils/types/person";
+import {
+  Person,
+  Role,
+  ShirtSize,
+  Student,
+  Teacher,
+} from "@/utils/types/person";
 import { SchedulePeriod } from "@/utils/types/schedule";
 import { Subject, SubjectListItem } from "@/utils/types/subject";
 import { Database } from "@/utils/types/supabase";
@@ -187,6 +196,8 @@ export async function db2Student(
     ...db2PersonName(student.person),
     studentID: student.std_id,
     birthdate: student.person.birthdate,
+    shirtSize: student.person.shirt_size as OrUndefined<ShirtSize>,
+    pantsSize: student.person.pants_size as OrUndefined<string>,
     classNo: 1,
     contacts: [],
   };
@@ -242,6 +253,8 @@ export async function db2Teacher(
     teacherID: teacher.teacher_id,
     citizenID: teacher.person.citizen_id,
     birthdate: teacher.person.birthdate,
+    shirtSize: teacher.person.shirt_size as OrUndefined<ShirtSize>,
+    pantsSize: teacher.person.pants_size as OrUndefined<string>,
     subjectGroup: {
       id: teacher.subject_group.id,
       name: {
@@ -288,7 +301,9 @@ export async function db2Teacher(
     const { data: subjects, error: subjectError } = await supabase
       .from("subject")
       .select("*")
-      .contains("teachers", [teacher.id]);
+      .contains("teachers", [teacher.id])
+      .eq("semester", getCurrentSemester())
+      .order("code_th");
 
     if (subjectError) {
       console.error(subjectError);
@@ -330,12 +345,14 @@ export function db2PersonName(
         firstName: person.first_name_th,
         middleName: person.middle_name_th as OrUndefined<string>,
         lastName: person.last_name_th,
+        nickname: (person.nickname_th || null) as OrUndefined<string>,
       },
       ...(person.first_name_en && {
         "en-US": {
           firstName: person.first_name_en!,
           middleName: person.middle_name_en as OrUndefined<string>,
           lastName: person.last_name_en!,
+          nickname: (person.nickname_en || null) as OrUndefined<string>,
         },
       }),
     },

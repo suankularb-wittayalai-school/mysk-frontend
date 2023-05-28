@@ -35,7 +35,8 @@
         }
       },
       "general": {
-        "fullName": "ชื่อสกุล",
+        "fullName": "ชื่อ-สกุล",
+        "nickname": "ชื่อเล่น",
         "class": {
           "title": "ห้องเรียน",
           "classNo": "เลขที่ {{classNo}}"
@@ -45,6 +46,9 @@
       },
       "contacts": {
         "title": "ช่องทางการติดต่อ"
+      },
+      "subjects": {
+        "title": "วิชาที่สอน"
       }
     },
     "dialog": {

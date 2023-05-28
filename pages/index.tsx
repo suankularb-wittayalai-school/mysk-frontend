@@ -293,7 +293,6 @@ const PatchNotesSection: FC = () => {
         <a
           href="https://github.com/suankularb-wittayalai-school/mysk-frontend/pulls?q=is%3Apr+is%3Aclosed+base%3Amain+release+in%3Atitle"
           target="_blank"
-          rel="noreferrer"
           className="link"
         >
           {t("action.more")}

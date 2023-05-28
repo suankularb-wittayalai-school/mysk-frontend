@@ -54,6 +54,9 @@ import { Contact } from "@/utils/types/contact";
 import { Student, Teacher } from "@/utils/types/person";
 import { SubjectGroup } from "@/utils/types/subject";
 
+// Miscellaneous
+import { pantsSizeRegex } from "@/utils/patterns";
+
 const WelcomePage: CustomPage<{
   person: Student | Teacher;
   subjectGroups: SubjectGroup[];
@@ -89,6 +92,8 @@ const WelcomePage: CustomPage<{
     | "birthdate"
     | "citizenID"
     | "passportNumber"
+    | "shirtSize"
+    | "pantsSize"
     | "bloodGroup"
   >([
     { key: "prefixTH", required: true, defaultValue: person.prefix.th },
@@ -103,7 +108,7 @@ const WelcomePage: CustomPage<{
       required: true,
       defaultValue: person.name.th.lastName,
     },
-    { key: "nicknameTH" },
+    { key: "nicknameTH", defaultValue: person.name.th.nickname },
     { key: "prefixEN", required: true, defaultValue: person.prefix["en-US"] },
     {
       key: "firstNameEN",
@@ -116,7 +121,7 @@ const WelcomePage: CustomPage<{
       required: true,
       defaultValue: person.name["en-US"]?.lastName,
     },
-    { key: "nicknameEN" },
+    { key: "nicknameEN", defaultValue: person.name["en-US"]?.nickname },
     {
       key: "subjectGroup",
       defaultValue:
@@ -147,6 +152,12 @@ const WelcomePage: CustomPage<{
     //     Boolean(validatePassport(value)) ||
     //     t("profile.general.passportNumber_error", { ns: "account" }),
     // },
+    { key: "shirtSize", defaultValue: person.shirtSize },
+    {
+      key: "pantsSize",
+      defaultValue: person.pantsSize,
+      validate: (value: string) => pantsSizeRegex.test(value),
+    },
     // { key: "bloodGroup", required: true },
   ]);
   const [contacts, setContacts] = useState<Contact[]>(person.contacts);

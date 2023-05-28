@@ -127,12 +127,14 @@ const StatisticsCard: FC<{
       <p className="skc-body-medium text-on-surface-variant">{subtitle}</p>
     </CardContent>
     {progressAlt && progressValue && (
-      <Progress
-        appearance="linear"
-        alt={progressAlt}
-        value={progressValue}
-        visible
-      />
+      <div title={`${progressValue.toFixed(2)}%`}>
+        <Progress
+          appearance="linear"
+          alt={progressAlt}
+          value={progressValue}
+          visible
+        />
+      </div>
     )}
   </Card>
 );
@@ -206,6 +208,7 @@ const AdminCardAction: FC<{
  * @returns A Section.
  */
 const StatisticsSection: FC<{ count: AdminPanelStatistics }> = ({ count }) => {
+  const locale = useLocale();
   const { t } = useTranslation("admin", { keyPrefix: "statistics" });
 
   return (
@@ -232,6 +235,14 @@ const StatisticsSection: FC<{ count: AdminPanelStatistics }> = ({ count }) => {
           subtitle={t("news.all", { count: count.news.all })}
         />
       </Columns>
+      <p className="text-on-surface-variant">
+        {t("lastUpdated", {
+          date: new Date(count.lastUpdated).toLocaleString(locale, {
+            dateStyle: "medium",
+            timeStyle: "medium",
+          }),
+        })}
+      </p>
     </Section>
   );
 };
@@ -571,6 +582,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
     teachers: { all: allTeachers, onboarded: onboardedTeachers },
     classes: { all: allClasses, thisYear: classesThisYear },
     news: { all: allNews, thisYear: newsThisYear },
+    lastUpdated: new Date().getTime(),
   };
 
   return {

@@ -30,7 +30,10 @@
         "classNo": "Class №",
         "studentID": "Student ID",
         "prefix": "Prefix",
-        "fullName": "Full name"
+        "fullName": "Full name",
+        "nickname": "Nickname",
+        "shirtSize": "Shirt size",
+        "pantsSize": "School pants size"
       },
       "numEmpty": "Empty columns",
       "enableNotes": "Notes column",

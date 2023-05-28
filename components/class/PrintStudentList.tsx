@@ -39,7 +39,15 @@ import { Role, Student } from "@/utils/types/person";
  */
 type OptionsType = {
   language: LangCode;
-  columns: ("classNo" | "studentID" | "prefix" | "fullName")[];
+  columns: (
+    | "classNo"
+    | "studentID"
+    | "prefix"
+    | "fullName"
+    | "nickname"
+    | "shirtSize"
+    | "pantsSize"
+  )[];
   numEmpty: number;
   enableNotes: boolean;
   enableTimestamp: boolean;
@@ -153,6 +161,27 @@ const StudentsListPaper: FC<{
               </th>
             )}
 
+            {/* Nickname */}
+            {options.columns.includes("nickname") && (
+              <th className="w-20">
+                {options.language === "en-US" ? "Nickname" : "ชื่อเล่น"}
+              </th>
+            )}
+
+            {/* Shirt size */}
+            {options.columns.includes("shirtSize") && (
+              <th className="w-12">
+                {options.language === "en-US" ? "Shirt" : "เสื้อ"}
+              </th>
+            )}
+
+            {/* Pants size */}
+            {options.columns.includes("pantsSize") && (
+              <th className="w-12">
+                {options.language === "en-US" ? "Pants" : "กางเกง"}
+              </th>
+            )}
+
             {/* Empty columns */}
             {range(Math.min(options.numEmpty, maximumEmptyColumns)).map(
               (idx) => (
@@ -205,6 +234,25 @@ const StudentsListPaper: FC<{
                     {getLocaleObj(student.name, options.language).lastName}
                   </td>
                 </>
+              )}
+
+              {/* Nickname */}
+              {options.columns.includes("nickname") && (
+                <td className="w-20">
+                  {getLocaleObj(student.name, options.language).nickname}
+                </td>
+              )}
+
+              {/* Shirt size */}
+              {options.columns.includes("shirtSize") && (
+                <td className="w-12 text-center">{student.shirtSize}</td>
+              )}
+
+              {/* Pants size */}
+              {options.columns.includes("pantsSize") && (
+                <td className="w-12 text-center">
+                  {student.pantsSize?.replace("x", "×")}
+                </td>
               )}
 
               {/* Empty columns */}
@@ -317,6 +365,39 @@ const StudentsPrintOptions: FC<{
                 setForm({
                   ...form,
                   columns: toggleItem("fullName", form.columns),
+                })
+              }
+            />
+          </FormItem>
+          <FormItem label={t("columns.nickname")}>
+            <Checkbox
+              value={form.columns.includes("nickname")}
+              onChange={() =>
+                setForm({
+                  ...form,
+                  columns: toggleItem("nickname", form.columns),
+                })
+              }
+            />
+          </FormItem>
+          <FormItem label={t("columns.shirtSize")}>
+            <Checkbox
+              value={form.columns.includes("shirtSize")}
+              onChange={() =>
+                setForm({
+                  ...form,
+                  columns: toggleItem("shirtSize", form.columns),
+                })
+              }
+            />
+          </FormItem>
+          <FormItem label={t("columns.pantsSize")}>
+            <Checkbox
+              value={form.columns.includes("pantsSize")}
+              onChange={() =>
+                setForm({
+                  ...form,
+                  columns: toggleItem("pantsSize", form.columns),
                 })
               }
             />

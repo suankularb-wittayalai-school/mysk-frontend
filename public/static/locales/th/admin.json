@@ -24,7 +24,8 @@
     "news": {
       "thisYear": "ข่าวสาร {{count, number}} บทความ",
       "all": "{{count, number}} บทความรวมปีที่ผ่านมา"
-    }
+    },
+    "lastUpdated": "ข้อมูล ณ {{date}}"
   },
   "data": {
     "title": "ระบบข้อมูล",

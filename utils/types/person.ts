@@ -1,7 +1,8 @@
-import { ClassWNumber } from "./class";
-import { MultiLangObj, MultiLangString } from "./common";
-import { Contact } from "./contact";
-import { SubjectGroup, SubjectWNameAndCode } from "./subject";
+// Types
+import { ClassWNumber } from "@/utils/types/class";
+import { MultiLangObj, MultiLangString } from "@/utils/types/common";
+import { Contact } from "@/utils/types/contact";
+import { SubjectGroup, SubjectWNameAndCode } from "@/utils/types/subject";
 
 export type UserMetadata = {
   role: Role;
@@ -11,6 +12,18 @@ export type UserMetadata = {
   onboarded: boolean;
 };
 
+export type ShirtSize =
+  | "XS"
+  | "S"
+  | "M"
+  | "L"
+  | "XL"
+  | "2XL"
+  | "3XL"
+  | "4XL"
+  | "5XL"
+  | "6XL";
+
 export type Person = {
   id: number;
   prefix: MultiLangString;
@@ -19,6 +32,8 @@ export type Person = {
   profile?: string;
   citizenID?: string;
   birthdate: string;
+  shirtSize?: ShirtSize;
+  pantsSize?: string;
   contacts: Contact[];
   isAdmin?: boolean;
 };

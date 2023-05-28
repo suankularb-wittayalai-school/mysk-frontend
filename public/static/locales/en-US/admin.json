@@ -32,7 +32,8 @@
       "thisYear_other": "{{count, number}} news articles",
       "all_one": "{{count, number}} article including past years",
       "all_other": "{{count, number}} articles including past years"
-    }
+    },
+    "lastUpdated": "Last updated: {{date}}"
   },
   "data": {
     "title": "Data",

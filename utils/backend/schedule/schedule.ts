@@ -182,6 +182,17 @@ export async function getSchedule(
       // at once, so we can just ignore it.
       if (role === "teacher") continue;
 
+      // If the period that already exists here is for the same subject as the
+      // new period, it is likely that the Teacher and the Co-teacher both
+      // added their subjects (which are identical), thus only one should be
+      // shown
+      if (
+        schedulePeriod.content.filter(
+          (period) => period.subject.id === incomingPeriod.subject.id
+        ).length
+      )
+        continue;
+
       // If a period already exists here, just adjust duration and modify the
       // `subjects` array
       if (schedulePeriod.duration < incomingPeriod.duration)
