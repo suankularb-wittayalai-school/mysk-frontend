@@ -206,6 +206,7 @@ const UserFieldsSection: FC<{
     | "birthdate"
     | "citizenID"
     | "passportNumber"
+    | "allergies"
     | "shirtSize"
     | "pantsSize"
     | "bloodGroup"
@@ -278,6 +279,7 @@ const UserFieldsSection: FC<{
     //     Boolean(validatePassport(value)) ||
     //     t("profile.general.passportNumber_error", { ns: "account" }),
     // },
+    { key: "allergies", defaultValue: person.allergies },
     { key: "shirtSize", defaultValue: person.shirtSize },
     {
       key: "pantsSize",

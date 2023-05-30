@@ -1,66 +1,26 @@
 // External libraries
-import {
-  createServerSupabaseClient,
-  User,
-} from "@supabase/auth-helpers-nextjs";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
-
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import Head from "next/head";
-import Link from "next/link";
-import { useRouter } from "next/router";
-
-import { Trans, useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
-import { FC, useContext, useState } from "react";
+import { useTranslation } from "next-i18next";
+import { FC } from "react";
 
 // SK Components
 import {
-  Actions,
-  Button,
-  Card,
   Columns,
-  ContentLayout,
   Header,
-  MaterialIcon,
   MenuItem,
   Section,
   Select,
-  Snackbar,
   TextField,
 } from "@suankularb-components/react";
 
-// Internal components
-import ContactCard from "@/components/account/ContactCard";
-import ContactDialog from "@/components/account/ContactDialog";
-import MySKPageHeader from "@/components/common/MySKPageHeader";
-import NextWarningCard from "@/components/welcome/NextWarningCard";
-
-// Contexts
-import SnackbarContext from "@/contexts/SnackbarContext";
-
-// Backend
-import { getPersonFromUser, editPerson } from "@/utils/backend/person/person";
-import { getSubjectGroups } from "@/utils/backend/subject/subjectGroup";
-
 // Helpers
-import { changeItem } from "@/utils/helpers/array";
 import { getLocaleString } from "@/utils/helpers/i18n";
-import { withLoading } from "@/utils/helpers/loading";
-import { createTitleStr } from "@/utils/helpers/title";
 
 // Hooks
-import { useForm } from "@/utils/hooks/form";
 import { useLocale } from "@/utils/hooks/i18n";
-import { useToggle } from "@/utils/hooks/toggle";
 
 // Types
-import { CustomPage, FormControlProps, LangCode } from "@/utils/types/common";
-import { Contact } from "@/utils/types/contact";
-import { Student, Teacher } from "@/utils/types/person";
+import { FormControlProps } from "@/utils/types/common";
 import { SubjectGroup } from "@/utils/types/subject";
-import { classRegex } from "@/utils/patterns";
 
 const ThaiNameSection: FC<{ formProps: FormControlProps }> = ({
   formProps,
@@ -232,9 +192,16 @@ const MiscellaneousSection: FC<{
           helperMsg={t("profile.common.privateInfo_helper")}
           {...formProps.passportNumber}
         /> */}
+        <TextField
+          appearance="outlined"
+          label={t("profile.general.allergies")}
+          behavior="multi-line"
+          helperMsg={t("profile.general.allergies_helper")}
+          {...formProps.allergies}
+        />
         <Select
           appearance="outlined"
-          label={t("profile.general.shirtSize")}
+          label={t("profile.general.shirtSize.label")}
           {...formProps.shirtSize}
         >
           <MenuItem value="XS">XS</MenuItem>

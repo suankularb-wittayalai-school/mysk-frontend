@@ -92,11 +92,18 @@ const WelcomePage: CustomPage<{
     | "birthdate"
     | "citizenID"
     | "passportNumber"
+    | "allergies"
     | "shirtSize"
     | "pantsSize"
     | "bloodGroup"
   >([
-    { key: "prefixTH", required: true, defaultValue: person.prefix.th },
+    {
+      key: "prefixTH",
+      required: true,
+      defaultValue: person.prefix.th,
+      validate: (value: string) =>
+        person.role === "student" ? ["เด็กชาย", "นาย"].includes(value) : true,
+    },
     {
       key: "firstNameTH",
       required: true,
@@ -109,7 +116,13 @@ const WelcomePage: CustomPage<{
       defaultValue: person.name.th.lastName,
     },
     { key: "nicknameTH", defaultValue: person.name.th.nickname },
-    { key: "prefixEN", required: true, defaultValue: person.prefix["en-US"] },
+    {
+      key: "prefixEN",
+      required: true,
+      defaultValue: person.prefix["en-US"],
+      validate: (value: string) =>
+        person.role === "student" ? ["Master", "Mr."].includes(value) : true,
+    },
     {
       key: "firstNameEN",
       required: true,
@@ -152,6 +165,7 @@ const WelcomePage: CustomPage<{
     //     Boolean(validatePassport(value)) ||
     //     t("profile.general.passportNumber_error", { ns: "account" }),
     // },
+    { key: "allergies", defaultValue: person.allergies },
     { key: "shirtSize", defaultValue: person.shirtSize },
     {
       key: "pantsSize",

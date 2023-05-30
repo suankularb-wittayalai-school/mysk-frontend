@@ -196,6 +196,7 @@ export async function db2Student(
     ...db2PersonName(student.person),
     studentID: student.std_id,
     birthdate: student.person.birthdate,
+    allergies: student.person.allergies as OrUndefined<string>,
     shirtSize: student.person.shirt_size as OrUndefined<ShirtSize>,
     pantsSize: student.person.pants_size as OrUndefined<string>,
     classNo: 1,
@@ -253,6 +254,7 @@ export async function db2Teacher(
     teacherID: teacher.teacher_id,
     citizenID: teacher.person.citizen_id,
     birthdate: teacher.person.birthdate,
+    allergies: teacher.person.allergies as OrUndefined<string>,
     shirtSize: teacher.person.shirt_size as OrUndefined<ShirtSize>,
     pantsSize: teacher.person.pants_size as OrUndefined<string>,
     subjectGroup: {
