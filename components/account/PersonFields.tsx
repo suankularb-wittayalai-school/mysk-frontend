@@ -1,5 +1,5 @@
 // External libraries
-import { useTranslation } from "next-i18next";
+import { Trans, useTranslation } from "next-i18next";
 import { FC } from "react";
 
 // SK Components
@@ -204,16 +204,31 @@ const MiscellaneousSection: FC<{
           label={t("profile.general.shirtSize.label")}
           {...formProps.shirtSize}
         >
-          <MenuItem value="XS">XS</MenuItem>
-          <MenuItem value="S">S</MenuItem>
-          <MenuItem value="M">M</MenuItem>
-          <MenuItem value="L">L</MenuItem>
-          <MenuItem value="XL">XL</MenuItem>
-          <MenuItem value="2XL">2XL</MenuItem>
-          <MenuItem value="3XL">3XL</MenuItem>
-          <MenuItem value="4XL">4XL</MenuItem>
-          <MenuItem value="5XL">5XL</MenuItem>
-          <MenuItem value="6XL">6XL</MenuItem>
+          {[
+            { size: "XS", measurement: 34 },
+            { size: "S", measurement: 36 },
+            { size: "M", measurement: 38 },
+            { size: "L", measurement: 40 },
+            { size: "XL", measurement: 42 },
+            { size: "2XL", measurement: 44 },
+            { size: "3XL", measurement: 48 },
+            { size: "4XL", measurement: 52 },
+            { size: "5XL", measurement: 56 },
+            { size: "6XL", measurement: 60 },
+          ].map((option) => (
+            <MenuItem key={option.size} value={option.size}>
+              <Trans
+                i18nKey="profile.general.shirtSize.option"
+                ns="account"
+                values={option}
+                components={{
+                  1: (
+                    <span className="font-light !text-on-surface-variant" />
+                  ),
+                }}
+              />
+            </MenuItem>
+          ))}
         </Select>
         <TextField
           appearance="outlined"

@@ -80,7 +80,7 @@
       "allergies_helper": "เว้นช่องนี้หากไม่มี",
       "shirtSize": {
         "label": "ไซส์เสื้อ",
-        "option": "{{size}} ({{measurement}} นิ้ว)"
+        "option": "{{size}} <1>({{measurement}} นิ้ว)</1>"
       },
       "pantsSize": "ขนาดกางเกงนักเรียน",
       "bloodGroup": "กรุ๊ปเลือด"
