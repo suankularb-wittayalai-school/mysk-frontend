@@ -216,17 +216,14 @@ const MiscellaneousSection: FC<{
             { size: "5XL", measurement: 56 },
             { size: "6XL", measurement: 60 },
           ].map((option) => (
-            <MenuItem key={option.size} value={option.size}>
-              <Trans
-                i18nKey="profile.general.shirtSize.option"
-                ns="account"
-                values={option}
-                components={{
-                  1: (
-                    <span className="font-light !text-on-surface-variant" />
-                  ),
-                }}
-              />
+            <MenuItem
+              key={option.size}
+              metadata={t("profile.general.shirtSize.metadata", {
+                count: option.measurement,
+              })}
+              value={option.size}
+            >
+              {option.size}
             </MenuItem>
           ))}
         </Select>

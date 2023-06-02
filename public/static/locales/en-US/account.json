@@ -86,7 +86,8 @@
       "allergies_helper": "Leave blank if you don’t have any.",
       "shirtSize": {
         "label": "Shirt size",
-        "option": "{{size}} <1>({{measurement}} inches)</1>"
+        "metadata_one": "{{count, number}} inch",
+        "metadata_other": "{{count, number}} inches"
       },
       "pantsSize": "School pants size",
       "bloodGroup": "Blood group"
