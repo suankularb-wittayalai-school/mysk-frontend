@@ -18,6 +18,12 @@ export async function middleware(req: NextRequest) {
   const route = req.nextUrl.pathname;
   const locale = req.nextUrl.locale as LangCode;
 
+  // Ignore all page requests if under maintenance
+  if (process.env.CLOSED_FOR_MAINTENANCE === "true")
+    return NextResponse.redirect(
+      new URL(getLocalePath("/maintenance", locale), req.url)
+    );
+
   // Get current page protection type
   const pageRole: Role | "public" | "admin" | "user" =
     route === "/"
@@ -59,7 +65,7 @@ export async function middleware(req: NextRequest) {
   // Disallow students from vising the Your Subject page of the onboarding
   // process
   else if (route === "/account/welcome/your-subjects" && userRole === "student")
-    destination = "/account/welcome/covid-19-safety";
+    destination = "/account/welcome/your-information";
   // Disallow logged in users from visiting certain pages under certain
   // circumstances
   // prettier-ignore
