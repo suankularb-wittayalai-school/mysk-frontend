@@ -34,7 +34,7 @@ export type Person = {
   birthdate: string;
   shirtSize?: ShirtSize;
   pantsSize?: string;
-  allergies?: string;
+  allergies?: string[];
   contacts: Contact[];
   isAdmin?: boolean;
 };

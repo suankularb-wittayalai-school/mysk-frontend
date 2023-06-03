@@ -289,7 +289,6 @@ export interface Database {
           nickname_en: string | null;
           birthdate: string;
           citizen_id: string;
-          allergies: string | null;
           shirt_size: Database["public"]["Enums"]["shirt_size"] | null;
           pants_size: string | null;
           contacts: number[] | null;
@@ -310,7 +309,6 @@ export interface Database {
           nickname_en?: string | null;
           birthdate: string;
           citizen_id: string;
-          allergies?: string | null;
           shirt_size?: Database["public"]["Enums"]["shirt_size"] | null;
           pants_size?: string | null;
           contacts?: number[] | null;
@@ -331,7 +329,6 @@ export interface Database {
           nickname_en?: string | null;
           birthdate?: string;
           citizen_id?: string;
-          allergies?: string | null;
           shirt_size?: Database["public"]["Enums"]["shirt_size"] | null;
           pants_size?: string | null;
           contacts?: number[] | null;

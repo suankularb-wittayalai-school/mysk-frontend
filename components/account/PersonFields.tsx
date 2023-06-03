@@ -197,7 +197,6 @@ const MiscellaneousSection: FC<{
           label={t("profile.general.allergies")}
           behavior="multi-line"
           helperMsg={t("profile.general.allergies_helper")}
-          {...formProps.allergies}
         />
         <Select
           appearance="outlined"

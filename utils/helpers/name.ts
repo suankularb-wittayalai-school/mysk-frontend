@@ -11,7 +11,7 @@ import { Person } from "@/utils/types/person";
  * @returns True if it does, false if not.
  */
 export function startsWithThaiVowel(string: string) {
-  return ["เ", "แ", "โ", "ไ", "ใ"].includes(string[0]);
+  return ["เ", "แ", "โ", "ไ", "ใ"].includes(string?.[0]);
 }
 
 /**
