@@ -652,10 +652,30 @@ export async function getClassStudentList(
     return { data: [], error };
   }
 
+  const personIDs = data.map((student) => student.person.id);
+
+  const { data: allergies, error: allergiesError } = await supabase
+    .from("people_allergies")
+    .select("person_id(id), allergy_name")
+    .or(`person_id.in.(${personIDs.join(",")})`);
+
+  if (allergiesError) {
+    console.error(allergiesError);
+    return { data: [], error: allergiesError };
+  }
+
   return {
     data: (
       await Promise.all(
-        data!.map(async (student) => await db2Student(supabase, student))
+        data!.map(async (student) => ({
+          ...(await db2Student(supabase, student)),
+          allergies: allergies
+            .filter(
+              (allergy) =>
+                (allergy.person_id as { id: number }).id === student.person.id
+            )
+            .map((allergy) => allergy.allergy_name),
+        }))
       )
     ).sort((a, b) => a.classNo - b.classNo),
     error: null,
