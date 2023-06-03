@@ -188,7 +188,11 @@ export async function db2FormPage(
 export async function db2Student(
   supabase: DatabaseClient,
   student: Database["public"]["Tables"]["student"]["Row"],
-  options?: Partial<{ citizenID: boolean; contacts: boolean }>
+  options?: Partial<{
+    citizenID: boolean;
+    allergies: boolean;
+    contacts: boolean;
+  }>
 ): Promise<Student> {
   const formatted: Student = {
     id: student.id,
@@ -204,6 +208,17 @@ export async function db2Student(
   };
 
   if (options?.citizenID) formatted.citizenID = student.person.citizen_id;
+
+  if (options?.allergies) {
+    const { data: allergies, error: allergiesError } = await supabase
+      .from("people_allergies")
+      .select("allergy_name")
+      .eq("person_id", student.person.id);
+
+    if (allergiesError) console.error(allergiesError);
+    if (allergies)
+      formatted.allergies = allergies.map((allergy) => allergy.allergy_name);
+  }
 
   if (options?.contacts) {
     const { data: contacts, error: contactError } = await supabase
@@ -242,6 +257,7 @@ export async function db2Teacher(
   teacher: Database["public"]["Tables"]["teacher"]["Row"],
   options?: Partial<{
     contacts: boolean;
+    allergies: boolean;
     classAdvisorAt: boolean;
     subjectsInCharge: boolean;
   }>
@@ -277,6 +293,17 @@ export async function db2Teacher(
     if (contactError) console.error(contactError);
 
     if (contacts) formatted.contacts = contacts.map(db2Contact);
+  }
+
+  if (options?.allergies) {
+    const { data: allergies, error: allergiesError } = await supabase
+      .from("people_allergies")
+      .select("allergy_name")
+      .eq("person_id", teacher.person.id);
+
+    if (allergiesError) console.error(allergiesError);
+    if (allergies)
+      formatted.allergies = allergies.map((allergy) => allergy.allergy_name);
   }
 
   if (options?.classAdvisorAt) {

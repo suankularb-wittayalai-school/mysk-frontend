@@ -335,6 +335,26 @@ export interface Database {
           profile?: string | null;
         };
       };
+      people_allergies: {
+        Row: {
+          id: number;
+          created_at: string;
+          person_id: Database["public"]["Tables"]["people"]["Row"];
+          allergy_name: string;
+        };
+        Insert: {
+          id?: number;
+          created_at?: string;
+          person_id: number;
+          allergy_name: string;
+        };
+        Update: {
+          id?: number;
+          created_at?: string;
+          person_id?: number;
+          allergy_name?: string;
+        };
+      };
       room_subjects: {
         Row: {
           id: number;

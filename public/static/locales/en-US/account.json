@@ -82,7 +82,7 @@
       "citizenID_error": "Invalid citizen ID.",
       "passportNumber": "Passport number",
       "passportNumber_error": "Invalid passport number or unsupported passport.",
-      "allergies": "Allergies",
+      "allergies": "Allergies (in Thai)",
       "allergies_helper": "Leave blank if you don’t have any.",
       "shirtSize": {
         "label": "Shirt size",

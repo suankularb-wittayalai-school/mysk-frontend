@@ -189,7 +189,7 @@ const UserFieldsSection: FC<{
   const { setSnackbar } = useContext(SnackbarContext);
 
   // Form control
-  const { form, resetForm, formOK, formProps } = useForm<
+  const { form, setForm, resetForm, formOK, formProps } = useForm<
     | "prefixTH"
     | "firstNameTH"
     | "middleNameTH"
@@ -331,6 +331,8 @@ const UserFieldsSection: FC<{
     <Section>
       <PersonFields
         subjectGroups={person.role === "teacher" ? subjectGroups : undefined}
+        form={form}
+        setForm={setForm}
         formProps={formProps}
       />
       <Actions
@@ -488,7 +490,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   const { data: person } = await getPersonFromUser(
     supabase,
     session!.user as User,
-    { contacts: true, classAdvisorAt: true }
+    { contacts: true, allergies: true, classAdvisorAt: true }
   );
 
   const { data: subjectGroups } = await getSubjectGroups();

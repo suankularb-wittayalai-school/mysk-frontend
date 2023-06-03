@@ -1,11 +1,14 @@
 // External libraries
 import { Trans, useTranslation } from "next-i18next";
-import { FC } from "react";
+import { FC, useState } from "react";
 
 // SK Components
 import {
+  ChipField,
+  ChipSet,
   Columns,
   Header,
+  InputChip,
   MenuItem,
   Section,
   Select,
@@ -19,8 +22,9 @@ import { getLocaleString } from "@/utils/helpers/i18n";
 import { useLocale } from "@/utils/hooks/i18n";
 
 // Types
-import { FormControlProps } from "@/utils/types/common";
+import { FormControlProps, FormControlValues } from "@/utils/types/common";
 import { SubjectGroup } from "@/utils/types/subject";
+import AllergiesField from "../person/AllergiesField";
 
 const ThaiNameSection: FC<{ formProps: FormControlProps }> = ({
   formProps,
@@ -145,8 +149,10 @@ const RoleSection: FC<{
 };
 
 const MiscellaneousSection: FC<{
+  form: FormControlValues;
+  setForm: (form: FormControlValues) => void;
   formProps: FormControlProps;
-}> = ({ formProps }) => {
+}> = ({ form, setForm, formProps }) => {
   const { t } = useTranslation("account");
 
   return (
@@ -192,11 +198,9 @@ const MiscellaneousSection: FC<{
           helperMsg={t("profile.common.privateInfo_helper")}
           {...formProps.passportNumber}
         /> */}
-        <TextField
-          appearance="outlined"
-          label={t("profile.general.allergies")}
-          behavior="multi-line"
-          helperMsg={t("profile.general.allergies_helper")}
+        <AllergiesField
+          allergies={form.allergies}
+          onChange={(allergies) => setForm({ ...form, allergies })}
         />
         <Select
           appearance="outlined"
@@ -249,36 +253,40 @@ const MiscellaneousSection: FC<{
   );
 };
 
+type FormControlSymbol =
+  | "prefixTH"
+  | "firstNameTH"
+  | "middleNameTH"
+  | "lastNameTH"
+  | "nicknameTH"
+  | "prefixEN"
+  | "firstNameEN"
+  | "middleNameEN"
+  | "lastNameEN"
+  | "nicknameEN"
+  | "subjectGroup"
+  | "classAdvisorAt"
+  | "gender"
+  | "birthdate"
+  | "citizenID"
+  | "passportNumber"
+  | "allergies"
+  | "shirtSize"
+  | "pantsSize"
+  | "bloodGroup";
+
 const PersonFields: FC<{
   subjectGroups?: SubjectGroup[];
-  formProps: FormControlProps<
-    | "prefixTH"
-    | "firstNameTH"
-    | "middleNameTH"
-    | "lastNameTH"
-    | "nicknameTH"
-    | "prefixEN"
-    | "firstNameEN"
-    | "middleNameEN"
-    | "lastNameEN"
-    | "nicknameEN"
-    | "subjectGroup"
-    | "classAdvisorAt"
-    | "gender"
-    | "birthdate"
-    | "citizenID"
-    | "passportNumber"
-    | "shirtSize"
-    | "pantsSize"
-    | "bloodGroup"
-  >;
-}> = ({ subjectGroups, formProps }) => {
+  form: FormControlValues<FormControlSymbol>;
+  setForm: (form: FormControlValues<FormControlSymbol>) => void;
+  formProps: FormControlProps<FormControlSymbol>;
+}> = ({ subjectGroups, form, setForm, formProps }) => {
   return (
     <>
       <ThaiNameSection {...{ formProps }} />
       <EnglishNameSection {...{ formProps }} />
       {subjectGroups && <RoleSection {...{ formProps, subjectGroups }} />}
-      <MiscellaneousSection {...{ formProps }} />
+      <MiscellaneousSection {...{ form, setForm, formProps }} />
     </>
   );
 };
