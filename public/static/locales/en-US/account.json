@@ -70,6 +70,7 @@
     },
     "general": {
       "title": "General information",
+      "allergiesNote": "Note: the allergies field is comma-seperated.",
       "gender": {
         "label": "Gender",
         "male": "Male",

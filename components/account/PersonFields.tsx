@@ -1,14 +1,11 @@
 // External libraries
-import { Trans, useTranslation } from "next-i18next";
-import { FC, useState } from "react";
+import { useTranslation } from "next-i18next";
+import { FC } from "react";
 
 // SK Components
 import {
-  ChipField,
-  ChipSet,
   Columns,
   Header,
-  InputChip,
   MenuItem,
   Section,
   Select,
@@ -160,6 +157,7 @@ const MiscellaneousSection: FC<{
       <Header level={3} className="sr-only">
         {t("profile.general.title")}
       </Header>
+      <p className="skc-body-medium">{t("profile.general.allergiesNote")}</p>
       <Columns columns={4} className="my-3 !gap-y-12">
         {/* <Select
           appearance="outlined"
