@@ -45,6 +45,7 @@ type OptionsType = {
     | "prefix"
     | "fullName"
     | "nickname"
+    | "allergies"
     | "shirtSize"
     | "pantsSize"
   )[];
@@ -168,6 +169,13 @@ const StudentsListPaper: FC<{
               </th>
             )}
 
+            {/* Notes */}
+            {options.columns.includes("allergies") && (
+              <th className="w-32">
+                {options.language === "en-US" ? "Allergies" : "ภูมิแพ้/อาหารที่แพ้"}
+              </th>
+            )}
+
             {/* Shirt size */}
             {options.columns.includes("shirtSize") && (
               <th className="w-12">
@@ -238,19 +246,21 @@ const StudentsListPaper: FC<{
 
               {/* Nickname */}
               {options.columns.includes("nickname") && (
-                <td className="w-20">
-                  {getLocaleObj(student.name, options.language).nickname}
-                </td>
+                <td>{getLocaleObj(student.name, options.language).nickname}</td>
+              )}
+
+              {options.columns.includes("allergies") && (
+                <td>{student.allergies?.join()}</td>
               )}
 
               {/* Shirt size */}
               {options.columns.includes("shirtSize") && (
-                <td className="w-12 text-center">{student.shirtSize}</td>
+                <td className="text-center">{student.shirtSize}</td>
               )}
 
               {/* Pants size */}
               {options.columns.includes("pantsSize") && (
-                <td className="w-12 text-center">
+                <td className="text-center">
                   {student.pantsSize?.replace("x", "×")}
                 </td>
               )}
@@ -347,61 +357,30 @@ const StudentsPrintOptions: FC<{
               />
             </FormItem>
           )}
-          <FormItem label={t("columns.prefix")}>
-            <Checkbox
-              value={form.columns.includes("prefix")}
-              onChange={() =>
-                setForm({
-                  ...form,
-                  columns: toggleItem("prefix", form.columns),
-                })
-              }
-            />
-          </FormItem>
-          <FormItem label={t("columns.fullName")}>
-            <Checkbox
-              value={form.columns.includes("fullName")}
-              onChange={() =>
-                setForm({
-                  ...form,
-                  columns: toggleItem("fullName", form.columns),
-                })
-              }
-            />
-          </FormItem>
-          <FormItem label={t("columns.nickname")}>
-            <Checkbox
-              value={form.columns.includes("nickname")}
-              onChange={() =>
-                setForm({
-                  ...form,
-                  columns: toggleItem("nickname", form.columns),
-                })
-              }
-            />
-          </FormItem>
-          <FormItem label={t("columns.shirtSize")}>
-            <Checkbox
-              value={form.columns.includes("shirtSize")}
-              onChange={() =>
-                setForm({
-                  ...form,
-                  columns: toggleItem("shirtSize", form.columns),
-                })
-              }
-            />
-          </FormItem>
-          <FormItem label={t("columns.pantsSize")}>
-            <Checkbox
-              value={form.columns.includes("pantsSize")}
-              onChange={() =>
-                setForm({
-                  ...form,
-                  columns: toggleItem("pantsSize", form.columns),
-                })
-              }
-            />
-          </FormItem>
+          {(
+            [
+              "classNo",
+              userRole === "teacher" && "studentID",
+              "prefix",
+              "fullName",
+              "nickname",
+              "allergies",
+              "shirtSize",
+              "pantsSize",
+            ].filter((column) => column) as OptionsType["columns"]
+          ).map((column) => (
+            <FormItem key={column} label={t(`columns.${column}`)}>
+              <Checkbox
+                value={form.columns.includes(column)}
+                onChange={() =>
+                  setForm({
+                    ...form,
+                    columns: toggleItem(column, form.columns),
+                  })
+                }
+              />
+            </FormItem>
+          ))}
         </FormGroup>
         <TextField
           appearance="outlined"

@@ -82,3 +82,17 @@
       prose-li:marker:text-outline;
   }
 }
+
+/* SK Components workarounds */
+
+.skc-chip-field__content > .skc-chip-set {
+  flex-wrap: nowrap;
+}
+
+.skc-chip-field__content > .skc-chip-set:empty ~ .skc-chip-field__input {
+  margin-inline: 0.25rem;
+}
+
+.skc-chip-field__content > .skc-chip-set:empty {
+  display: none;
+}

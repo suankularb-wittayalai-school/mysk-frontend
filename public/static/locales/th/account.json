@@ -64,6 +64,7 @@
     },
     "general": {
       "title": "ข้อมูลทั่วไป",
+      "allergiesNote": "หมายเหตุ: กด Enter หลังแต่ละภูมิแพ้/อาหารที่แพ้",
       "gender": {
         "label": "เพศ",
         "male": "ชาย",
@@ -76,7 +77,12 @@
       "citizenID_error": "เลขประจำตัวประชาชนไม่ถูกต้อง",
       "passportNumber": "เลขหนังสือเดินทาง",
       "passportNumber_error": "เลขหนังสือเดินทางไม่ถูกต้อง หรือเป็นหนังสือเดินทางที่ไม่รู้จัก",
-      "shirtSize": "ไซส์เสื้อ",
+      "allergies": "ภูมิแฟ้/อาหารที่แพ้",
+      "allergies_helper": "เว้นช่องนี้หากไม่มี",
+      "shirtSize": {
+        "label": "ไซส์เสื้อ",
+        "metadata": "{{count, number}} นิ้ว"
+      },
       "pantsSize": "ขนาดกางเกงนักเรียน",
       "bloodGroup": "กรุ๊ปเลือด"
     },

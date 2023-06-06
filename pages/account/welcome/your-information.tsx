@@ -75,7 +75,7 @@ const WelcomePage: CustomPage<{
   const { setSnackbar } = useContext(SnackbarContext);
 
   // Form control
-  const { form, formProps } = useForm<
+  const { form, setForm, formProps } = useForm<
     | "prefixTH"
     | "firstNameTH"
     | "middleNameTH"
@@ -92,11 +92,18 @@ const WelcomePage: CustomPage<{
     | "birthdate"
     | "citizenID"
     | "passportNumber"
+    | "allergies"
     | "shirtSize"
     | "pantsSize"
     | "bloodGroup"
   >([
-    { key: "prefixTH", required: true, defaultValue: person.prefix.th },
+    {
+      key: "prefixTH",
+      required: true,
+      defaultValue: person.prefix.th,
+      validate: (value: string) =>
+        person.role === "student" ? ["เด็กชาย", "นาย"].includes(value) : true,
+    },
     {
       key: "firstNameTH",
       required: true,
@@ -109,7 +116,13 @@ const WelcomePage: CustomPage<{
       defaultValue: person.name.th.lastName,
     },
     { key: "nicknameTH", defaultValue: person.name.th.nickname },
-    { key: "prefixEN", required: true, defaultValue: person.prefix["en-US"] },
+    {
+      key: "prefixEN",
+      required: true,
+      defaultValue: person.prefix["en-US"],
+      validate: (value: string) =>
+        person.role === "student" ? ["Master", "Mr."].includes(value) : true,
+    },
     {
       key: "firstNameEN",
       required: true,
@@ -152,6 +165,7 @@ const WelcomePage: CustomPage<{
     //     Boolean(validatePassport(value)) ||
     //     t("profile.general.passportNumber_error", { ns: "account" }),
     // },
+    { key: "allergies", defaultValue: person.allergies },
     { key: "shirtSize", defaultValue: person.shirtSize },
     {
       key: "pantsSize",
@@ -212,6 +226,8 @@ const WelcomePage: CustomPage<{
             subjectGroups={
               person.role === "teacher" ? subjectGroups : undefined
             }
+            form={form}
+            setForm={setForm}
             formProps={formProps}
           />
         </Section>
@@ -256,7 +272,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   const { data: person } = await getPersonFromUser(
     supabase,
     session!.user as User,
-    { contacts: true, classAdvisorAt: true }
+    { contacts: true, allergies: true, classAdvisorAt: true }
   );
 
   const { data: subjectGroups } = await getSubjectGroups();

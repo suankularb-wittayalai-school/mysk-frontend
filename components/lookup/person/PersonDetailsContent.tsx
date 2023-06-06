@@ -186,6 +186,7 @@ const GeneralInfoSection: FC<{
               th: person.name.th.nickname!,
               "en-US": person.name["en-US"]?.nickname,
             }}
+            options={{ hideIconsIfOnlyLanguage: true }}
           />
         </DetailSection>
       )}

@@ -107,6 +107,7 @@ export async function editPerson(
     subjectGroup: number;
     classAdvisorAt: string;
     birthdate: string;
+    allergies: string[];
     shirtSize: ShirtSize;
     pantsSize: string;
     contacts?: Contact[];
@@ -184,6 +185,31 @@ export async function editPerson(
       return { data: null, error: idError };
     }
     personID = teacherPersonID!.person as unknown as number;
+  }
+
+  // Update allergies data
+  const { error: allergiesRemoveError } = await supabase
+    .from("people_allergies")
+    .delete()
+    .eq("person_id", personID);
+
+  if (allergiesRemoveError) {
+    logError("editPerson (allergies removal)", allergiesRemoveError);
+    return { data: null, error: allergiesRemoveError };
+  }
+
+  const { error: allergiesAddError } = await supabase
+    .from("people_allergies")
+    .insert(
+      form.allergies.map((allergy) => ({
+        person_id: personID,
+        allergy_name: allergy,
+      }))
+    );
+
+  if (allergiesAddError) {
+    logError("editPerson (allergies addition)", allergiesAddError);
+    return { data: null, error: allergiesAddError };
   }
 
   // Update person data (`person` table)

@@ -1,66 +1,27 @@
 // External libraries
-import {
-  createServerSupabaseClient,
-  User,
-} from "@supabase/auth-helpers-nextjs";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
-
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import Head from "next/head";
-import Link from "next/link";
-import { useRouter } from "next/router";
-
-import { Trans, useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
-import { FC, useContext, useState } from "react";
+import { useTranslation } from "next-i18next";
+import { FC } from "react";
 
 // SK Components
 import {
-  Actions,
-  Button,
-  Card,
   Columns,
-  ContentLayout,
   Header,
-  MaterialIcon,
   MenuItem,
   Section,
   Select,
-  Snackbar,
   TextField,
 } from "@suankularb-components/react";
 
-// Internal components
-import ContactCard from "@/components/account/ContactCard";
-import ContactDialog from "@/components/account/ContactDialog";
-import MySKPageHeader from "@/components/common/MySKPageHeader";
-import NextWarningCard from "@/components/welcome/NextWarningCard";
-
-// Contexts
-import SnackbarContext from "@/contexts/SnackbarContext";
-
-// Backend
-import { getPersonFromUser, editPerson } from "@/utils/backend/person/person";
-import { getSubjectGroups } from "@/utils/backend/subject/subjectGroup";
-
 // Helpers
-import { changeItem } from "@/utils/helpers/array";
 import { getLocaleString } from "@/utils/helpers/i18n";
-import { withLoading } from "@/utils/helpers/loading";
-import { createTitleStr } from "@/utils/helpers/title";
 
 // Hooks
-import { useForm } from "@/utils/hooks/form";
 import { useLocale } from "@/utils/hooks/i18n";
-import { useToggle } from "@/utils/hooks/toggle";
 
 // Types
-import { CustomPage, FormControlProps, LangCode } from "@/utils/types/common";
-import { Contact } from "@/utils/types/contact";
-import { Student, Teacher } from "@/utils/types/person";
+import { FormControlProps, FormControlValues } from "@/utils/types/common";
 import { SubjectGroup } from "@/utils/types/subject";
-import { classRegex } from "@/utils/patterns";
+import AllergiesField from "../person/AllergiesField";
 
 const ThaiNameSection: FC<{ formProps: FormControlProps }> = ({
   formProps,
@@ -185,8 +146,10 @@ const RoleSection: FC<{
 };
 
 const MiscellaneousSection: FC<{
+  form: FormControlValues;
+  setForm: (form: FormControlValues) => void;
   formProps: FormControlProps;
-}> = ({ formProps }) => {
+}> = ({ form, setForm, formProps }) => {
   const { t } = useTranslation("account");
 
   return (
@@ -194,6 +157,7 @@ const MiscellaneousSection: FC<{
       <Header level={3} className="sr-only">
         {t("profile.general.title")}
       </Header>
+      <p className="skc-body-medium">{t("profile.general.allergiesNote")}</p>
       <Columns columns={4} className="my-3 !gap-y-12">
         {/* <Select
           appearance="outlined"
@@ -232,21 +196,37 @@ const MiscellaneousSection: FC<{
           helperMsg={t("profile.common.privateInfo_helper")}
           {...formProps.passportNumber}
         /> */}
+        <AllergiesField
+          allergies={form.allergies}
+          onChange={(allergies) => setForm({ ...form, allergies })}
+        />
         <Select
           appearance="outlined"
-          label={t("profile.general.shirtSize")}
+          label={t("profile.general.shirtSize.label")}
           {...formProps.shirtSize}
         >
-          <MenuItem value="XS">XS</MenuItem>
-          <MenuItem value="S">S</MenuItem>
-          <MenuItem value="M">M</MenuItem>
-          <MenuItem value="L">L</MenuItem>
-          <MenuItem value="XL">XL</MenuItem>
-          <MenuItem value="2XL">2XL</MenuItem>
-          <MenuItem value="3XL">3XL</MenuItem>
-          <MenuItem value="4XL">4XL</MenuItem>
-          <MenuItem value="5XL">5XL</MenuItem>
-          <MenuItem value="6XL">6XL</MenuItem>
+          {[
+            { size: "XS", measurement: 34 },
+            { size: "S", measurement: 36 },
+            { size: "M", measurement: 38 },
+            { size: "L", measurement: 40 },
+            { size: "XL", measurement: 42 },
+            { size: "2XL", measurement: 44 },
+            { size: "3XL", measurement: 48 },
+            { size: "4XL", measurement: 52 },
+            { size: "5XL", measurement: 56 },
+            { size: "6XL", measurement: 60 },
+          ].map((option) => (
+            <MenuItem
+              key={option.size}
+              metadata={t("profile.general.shirtSize.metadata", {
+                count: option.measurement,
+              })}
+              value={option.size}
+            >
+              {option.size}
+            </MenuItem>
+          ))}
         </Select>
         <TextField
           appearance="outlined"
@@ -271,36 +251,40 @@ const MiscellaneousSection: FC<{
   );
 };
 
+type FormControlSymbol =
+  | "prefixTH"
+  | "firstNameTH"
+  | "middleNameTH"
+  | "lastNameTH"
+  | "nicknameTH"
+  | "prefixEN"
+  | "firstNameEN"
+  | "middleNameEN"
+  | "lastNameEN"
+  | "nicknameEN"
+  | "subjectGroup"
+  | "classAdvisorAt"
+  | "gender"
+  | "birthdate"
+  | "citizenID"
+  | "passportNumber"
+  | "allergies"
+  | "shirtSize"
+  | "pantsSize"
+  | "bloodGroup";
+
 const PersonFields: FC<{
   subjectGroups?: SubjectGroup[];
-  formProps: FormControlProps<
-    | "prefixTH"
-    | "firstNameTH"
-    | "middleNameTH"
-    | "lastNameTH"
-    | "nicknameTH"
-    | "prefixEN"
-    | "firstNameEN"
-    | "middleNameEN"
-    | "lastNameEN"
-    | "nicknameEN"
-    | "subjectGroup"
-    | "classAdvisorAt"
-    | "gender"
-    | "birthdate"
-    | "citizenID"
-    | "passportNumber"
-    | "shirtSize"
-    | "pantsSize"
-    | "bloodGroup"
-  >;
-}> = ({ subjectGroups, formProps }) => {
+  form: FormControlValues<FormControlSymbol>;
+  setForm: (form: FormControlValues<FormControlSymbol>) => void;
+  formProps: FormControlProps<FormControlSymbol>;
+}> = ({ subjectGroups, form, setForm, formProps }) => {
   return (
     <>
       <ThaiNameSection {...{ formProps }} />
       <EnglishNameSection {...{ formProps }} />
       {subjectGroups && <RoleSection {...{ formProps, subjectGroups }} />}
-      <MiscellaneousSection {...{ formProps }} />
+      <MiscellaneousSection {...{ form, setForm, formProps }} />
     </>
   );
 };
