@@ -1,5 +1,8 @@
 // External libraries
-import { createPagesBrowserClient } from "@supabase/auth-helpers-nextjs";
+import {
+  Session,
+  createPagesBrowserClient,
+} from "@supabase/auth-helpers-nextjs";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
 
 import va from "@vercel/analytics";
@@ -125,7 +128,10 @@ function App({ Component, pageProps }: CustomAppProps) {
       `}</style>
 
       {/* Context proviers */}
-      <SessionContextProvider supabaseClient={supabase}>
+      <SessionContextProvider
+        supabaseClient={supabase}
+        initialSession={pageProps.initialSession as Session}
+      >
         <Contexts>
           {/* Framer Motion a11y */}
           <MotionConfig reducedMotion="user">
