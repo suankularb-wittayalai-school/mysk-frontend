@@ -1,5 +1,5 @@
 // External libraries
-import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { createPagesBrowserClient } from "@supabase/auth-helpers-nextjs";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
 
 import va from "@vercel/analytics";
@@ -98,7 +98,7 @@ function App({ Component, pageProps }: CustomAppProps) {
   const { context, fab, navType, childURLs } = Component;
 
   // Supabase client
-  const [supabase] = useState(() => createBrowserSupabaseClient<Database>());
+  const [supabase] = useState(() => createPagesBrowserClient<Database>());
 
   // Track PWA installs
   useEffect(() => {
