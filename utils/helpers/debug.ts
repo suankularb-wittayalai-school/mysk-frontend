@@ -19,6 +19,7 @@ export function logError(location: string, error: Partial<PostgrestError>) {
         : `\x1b[0m[Fetch error]`,
 
       // Content
+      typeof window !== "undefined" && `Error occured at ${location}`,
       error.message,
       error.details,
       error.hint && `hint: ${error.hint}`,
