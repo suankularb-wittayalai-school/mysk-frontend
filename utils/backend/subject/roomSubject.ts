@@ -191,7 +191,7 @@ export async function getTeachingSubjects(
 /**
  * Generate Room Subjects from an array of Teacher Subject Items.
  *
- * @param supabase An Supabase client with proper permissions (either `useSupabaseClient` or `createServerSupabaseClient`).
+ * @param supabase An Supabase client with proper permissions (either `useSupabaseClient` or `createPagesServerClient`).
  * @param teachSubjects An array of subject-class connections for a teacher
  * @param teacherID The Supabase teacher ID of the user (not to be confused with person ID, citizen ID, user ID, Supabase user ID, or legacy teacher ID from the old MySK; those are clearly very different)
  *
