@@ -37,6 +37,7 @@ export async function getForm(
     .from("forms")
     .select("*, parent(*)")
     .match({ id: formID })
+    .order("id")
     .limit(1)
     .single();
 
@@ -67,7 +68,7 @@ export async function getFormSubmissions(
   for (let submissionID of submissionIDs) {
     const { data, error } = await supabase
       .from("form_field_value")
-      .select("field(label_th,label_en,type),value")
+      .select("field(label_th, label_en, type), value")
       .match({ submission: submissionID.id });
 
     if (error) return { data: [], error };
@@ -75,7 +76,7 @@ export async function getFormSubmissions(
     submissions = [
       ...submissions,
       data!.map((field) => {
-        const question = field.field as Pick<
+        const question = field.field as unknown as Pick<
           Database["public"]["Tables"]["form_questions"]["Row"],
           "label_th" | "label_en" | "type"
         >;
@@ -107,6 +108,7 @@ export async function sendForm(
     .from("form_submissions")
     .insert({ form: formID, person: sendAs ?? null })
     .select("*")
+    .order("id")
     .limit(1)
     .single();
 
@@ -172,6 +174,7 @@ async function sendFormAnswer(
             submission: submissionID,
           })
           .select("*")
+          .order("id")
           .limit(1)
           .single();
 
@@ -197,6 +200,7 @@ async function sendFormAnswer(
             }))
           )
           .select("*")
+          .order("id")
           .limit(1)
           .single();
 
@@ -222,6 +226,7 @@ async function sendFormAnswer(
           submission: submissionID,
         })
         .select("*")
+        .order("id")
         .limit(1)
         .single();
 

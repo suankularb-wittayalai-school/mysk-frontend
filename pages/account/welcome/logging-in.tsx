@@ -307,6 +307,7 @@ const LoggingInPage: CustomPage<{ user: User }> = ({ user }) => {
                   .from("users")
                   .select("onboarded")
                   .match({ id: user!.id })
+                  .order("id")
                   .limit(1)
                   .single();
 

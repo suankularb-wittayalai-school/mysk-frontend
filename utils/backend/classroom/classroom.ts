@@ -77,6 +77,7 @@ export async function createClassroom(
       subjects: [],
     })
     .select("*")
+    .order("id")
     .limit(1)
     .single();
 
@@ -96,6 +97,7 @@ export async function getClassroom(
     .from("classroom")
     .select("*")
     .match({ number, year: getCurrentAcademicYear() })
+    .order("id")
     .limit(1)
     .single();
 
@@ -115,6 +117,7 @@ export async function getClassWNumber(
     .from("classroom")
     .select("id, number")
     .match({ number, year: getCurrentAcademicYear() })
+    .order("id")
     .limit(1)
     .single();
 
@@ -258,6 +261,7 @@ export async function addAdvisorToClassroom(
     .from("classroom")
     .select("advisors, number, year")
     .match({ id: classID, year: getCurrentAcademicYear() })
+    .order("id")
     .limit(1)
     .single();
 
@@ -274,6 +278,7 @@ export async function addAdvisorToClassroom(
       })
       .eq("id", classID)
       .select("*")
+      .order("id")
       .limit(1)
       .single();
 
@@ -296,6 +301,7 @@ export async function addContactToClassroom(
     .from("classroom")
     .select("contacts, number, year")
     .match({ id: classID, year: getCurrentAcademicYear() })
+    .order("id")
     .limit(1)
     .single();
 
@@ -311,6 +317,7 @@ export async function addContactToClassroom(
       })
       .eq("id", classID)
       .select("*")
+      .order("id")
       .limit(1)
       .single();
 
@@ -333,6 +340,7 @@ export async function removeContactFromClassroom(
     .from("classroom")
     .select("contacts, number, year")
     .match({ id: classID, year: getCurrentAcademicYear() })
+    .order("id")
     .limit(1)
     .single();
 
@@ -348,6 +356,7 @@ export async function removeContactFromClassroom(
       })
       .eq("id", classID)
       .select("*")
+      .order("id")
       .limit(1)
       .single();
 
@@ -401,7 +410,12 @@ export async function getLookupClasses(
       classAdvisors: classItem.advisors
         .map((advisor) => {
           const teacher = teachers?.find((teacher) => advisor === teacher.id)!;
-          return { id: teacher.id, ...db2PersonName(teacher.person) };
+          return {
+            id: teacher.id,
+            ...db2PersonName(
+              teacher.person as unknown as Database["public"]["Tables"]["people"]["Row"]
+            ),
+          };
         })
         .sort((a, b) => (a.name.th.firstName > b.name.th.firstName ? 1 : -1)),
       studentCount: classItem.students.length,
@@ -470,7 +484,12 @@ export async function getAdminClasses(
       classAdvisors: classItem.advisors
         .map((advisor) => {
           const teacher = teachers?.find((teacher) => advisor === teacher.id)!;
-          return { id: teacher.id, ...db2PersonName(teacher.person) };
+          return {
+            id: teacher.id,
+            ...db2PersonName(
+              teacher.person as unknown as Database["public"]["Tables"]["people"]["Row"]
+            ),
+          };
         })
         .sort((a, b) => (a.name.th.firstName > b.name.th.firstName ? 1 : -1)),
       studentCount: classItem.students.length,
@@ -489,6 +508,7 @@ export async function getClassOverview(
     .from("classroom")
     .select("*")
     .match({ number, year: getCurrentAcademicYear() })
+    .order("id")
     .limit(1)
     .single();
 
@@ -525,7 +545,7 @@ export async function getClassTeachersList(
   // Fetch those teachers
   const { data: teachers, error: teacherError } = await supabase
     .from("teacher")
-    .select("*, person(*), subject_group(id)")
+    .select("*, person(*), subject_group")
     .or(`id.in.(${teacherIDs.join()})`);
 
   if (teacherError) {
@@ -548,11 +568,13 @@ export async function getClassTeachersList(
       .map((subjectGroup) => ({
         subjectGroup,
         teachers: teachers
-          .filter((teacher) => subjectGroup.id === teacher.subject_group.id)
+          .filter((teacher) => subjectGroup.id === teacher.subject_group)
           .map((teacher) => ({
             id: teacher.id,
             role: "teacher" as "teacher",
-            ...db2PersonName(teacher.person),
+            ...db2PersonName(
+              teacher.person as unknown as Database["public"]["Tables"]["people"]["Row"]
+            ),
             metadata: null,
           })),
       }))
@@ -580,6 +602,7 @@ export async function getClassFromUser(
     .select("id, number")
     .match({ year: getCurrentAcademicYear() })
     .contains("students", [metadata!.student!])
+    .order("id")
     .limit(1)
     .single();
 
@@ -599,6 +622,7 @@ export async function getClassIDFromNumber(
     .from("classroom")
     .select("id")
     .match({ number, year: getCurrentAcademicYear() })
+    .order("id")
     .limit(1)
     .single();
 
@@ -634,6 +658,7 @@ export async function getClassStudentList(
     .from("classroom")
     .select("students")
     .match({ id: classID, year: getCurrentAcademicYear() })
+    .order("id")
     .limit(1)
     .single();
 
@@ -652,11 +677,16 @@ export async function getClassStudentList(
     return { data: [], error };
   }
 
-  const personIDs = data.map((student) => student.person.id);
+  const personIDs = data.map(
+    (student) =>
+      (
+        student.person as unknown as Database["public"]["Tables"]["people"]["Row"]
+      ).id
+  );
 
   const { data: allergies, error: allergiesError } = await supabase
     .from("people_allergies")
-    .select("person_id(id), allergy_name")
+    .select("person_id, allergy_name")
     .or(`person_id.in.(${personIDs.join(",")})`);
 
   if (allergiesError) {
@@ -672,7 +702,10 @@ export async function getClassStudentList(
           allergies: allergies
             .filter(
               (allergy) =>
-                (allergy.person_id as { id: number }).id === student.person.id
+                allergy.person_id ===
+                (
+                  student.person as unknown as Database["public"]["Tables"]["people"]["Row"]
+                ).id
             )
             .map((allergy) => allergy.allergy_name),
         }))

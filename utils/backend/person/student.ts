@@ -119,7 +119,9 @@ export async function getAdminStudentList(
       const classItem = classes.find((classItem) =>
         classItem.students.includes(student.id)
       )!;
-      const studentName = db2PersonName(student.person);
+      const studentName = db2PersonName(
+        student.person as unknown as Database["public"]["Tables"]["people"]["Row"]
+      );
 
       return {
         id: student.id,
@@ -161,7 +163,17 @@ export async function getFullStudentsFromIDs(
   const { data: contactsData, error: contactError } = await supabase
     .from("contacts")
     .select("*")
-    .in("id", data.map((student) => student.person.contacts || []).flat());
+    .in(
+      "id",
+      data
+        .map(
+          (student) =>
+            (
+              student.person as unknown as Database["public"]["Tables"]["people"]["Row"]
+            ).contacts || []
+        )
+        .flat()
+    );
 
   if (contactError) {
     logError("getFullStudentsFromIDs (Contacts)", contactError);
@@ -175,7 +187,9 @@ export async function getFullStudentsFromIDs(
       data.map(async (student) => ({
         ...(await db2Student(supabase, student)),
         contacts:
-          student.person.contacts?.map(
+          (
+            student.person as unknown as Database["public"]["Tables"]["people"]["Row"]
+          ).contacts?.map(
             (contact) =>
               contacts.find((mapContact) => contact === mapContact.id)!
           ) || [],
@@ -226,6 +240,7 @@ export async function createStudent(
       .from("classroom")
       .select("*")
       .match({ number: student.class.number, year: getCurrentAcademicYear() })
+      .order("id")
       .limit(1)
       .single();
     if (classError) {
@@ -277,6 +292,7 @@ export async function deleteStudent(
     .from("users")
     .select("id")
     .match({ student: student.id })
+    .order("id")
     .limit(1)
     .single();
 
@@ -292,7 +308,8 @@ export async function deleteStudent(
     .from("student")
     .delete()
     .match({ id: student.id })
-    .select("person(id)")
+    .select("person")
+    .order("id")
     .limit(1)
     .single();
 
@@ -305,9 +322,7 @@ export async function deleteStudent(
   const { error: personDeletingError } = await supabase
     .from("people")
     .delete()
-    .match({
-      id: (data as Database["public"]["Tables"]["student"]["Row"]).person.id,
-    });
+    .eq("id", data!.person);
 
   if (personDeletingError) {
     console.error(personDeletingError);
@@ -320,6 +335,7 @@ export async function deleteStudent(
       .from("classroom")
       .select("*")
       .match({ number: student.class.number })
+      .order("id")
       .limit(1)
       .maybeSingle();
     if (classError) {
@@ -409,6 +425,7 @@ export async function getClassOfStudent(
     .select("id, number")
     .match({ year: getCurrentAcademicYear() })
     .contains("students", [studentDBID])
+    .order("id")
     .limit(1)
     .single();
 
