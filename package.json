@@ -11,9 +11,9 @@
   },
   "dependencies": {
     "@suankularb-components/react": "^3.1.1",
-    "@supabase/auth-helpers-nextjs": "^0.6.1",
-    "@supabase/auth-helpers-react": "^0.3.1",
-    "@supabase/supabase-js": "^2.22.0",
+    "@supabase/auth-helpers-nextjs": "^0.7.3",
+    "@supabase/auth-helpers-react": "^0.4.1",
+    "@supabase/supabase-js": "^2.26.0",
     "@tanstack/react-table": "^8.9.1",
     "@vercel/analytics": "^1.0.1",
     "csv": "^6.3.0",
