@@ -3,7 +3,7 @@ export type Json =
   | number
   | boolean
   | null
-  | { [key: string]: Json }
+  | { [key: string]: Json | undefined }
   | Json[];
 
 export interface Database {
@@ -11,693 +11,1074 @@ export interface Database {
     Tables: {
       classroom: {
         Row: {
-          id: number;
-          created_at: string | null;
-          number: number;
-          year: number;
-          students: number[];
           advisors: number[];
           contacts: number[];
-          subjects: number[];
+          created_at: string | null;
+          id: number;
           no_list: number[];
+          number: number;
+          students: number[];
+          subjects: number[];
+          year: number;
         };
         Insert: {
-          id?: number;
-          created_at?: string | null;
-          number: number;
-          year: number;
-          students: number[];
           advisors: number[];
           contacts: number[];
-          subjects: number[];
+          created_at?: string | null;
+          id?: number;
           no_list?: number[];
+          number: number;
+          students: number[];
+          subjects: number[];
+          year: number;
         };
         Update: {
-          id?: number;
-          created_at?: string | null;
-          number?: number;
-          year?: number;
-          students?: number[];
           advisors?: number[];
           contacts?: number[];
-          subjects?: number[];
+          created_at?: string | null;
+          id?: number;
           no_list?: number[];
+          number?: number;
+          students?: number[];
+          subjects?: number[];
+          year?: number;
         };
+        Relationships: [];
+      };
+      club_contacts: {
+        Row: {
+          club_id: string;
+          contact_id: number;
+          created_at: string | null;
+          id: string;
+        };
+        Insert: {
+          club_id: string;
+          contact_id: number;
+          created_at?: string | null;
+          id?: string;
+        };
+        Update: {
+          club_id?: string;
+          contact_id?: number;
+          created_at?: string | null;
+          id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "club_contacts_club_id_fkey";
+            columns: ["club_id"];
+            referencedRelation: "clubs";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "club_contacts_contact_id_fkey";
+            columns: ["contact_id"];
+            referencedRelation: "contacts";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      club_members: {
+        Row: {
+          club_id: string;
+          created_at: string | null;
+          id: string;
+          membership_status: Database["public"]["Enums"]["submission_status"];
+          student_id: number;
+          year: number;
+        };
+        Insert: {
+          club_id: string;
+          created_at?: string | null;
+          id?: string;
+          membership_status?: Database["public"]["Enums"]["submission_status"];
+          student_id: number;
+          year: number;
+        };
+        Update: {
+          club_id?: string;
+          created_at?: string | null;
+          id?: string;
+          membership_status?: Database["public"]["Enums"]["submission_status"];
+          student_id?: number;
+          year?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "club_members_club_id_fkey";
+            columns: ["club_id"];
+            referencedRelation: "clubs";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "club_members_student_id_fkey";
+            columns: ["student_id"];
+            referencedRelation: "student";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      club_staffs: {
+        Row: {
+          club_id: string;
+          created_at: string | null;
+          id: string;
+          position: string | null;
+          student_id: number;
+          year: number;
+        };
+        Insert: {
+          club_id: string;
+          created_at?: string | null;
+          id?: string;
+          position?: string | null;
+          student_id: number;
+          year: number;
+        };
+        Update: {
+          club_id?: string;
+          created_at?: string | null;
+          id?: string;
+          position?: string | null;
+          student_id?: number;
+          year?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "club_staffs_club_id_fkey";
+            columns: ["club_id"];
+            referencedRelation: "clubs";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "club_staffs_student_id_fkey";
+            columns: ["student_id"];
+            referencedRelation: "student";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      clubs: {
+        Row: {
+          accent_color: string | null;
+          background_color: string | null;
+          created_at: string | null;
+          house: Database["public"]["Enums"]["activity_day_houses"] | null;
+          id: string;
+          map_location: number | null;
+          organization_id: string;
+        };
+        Insert: {
+          accent_color?: string | null;
+          background_color?: string | null;
+          created_at?: string | null;
+          house?: Database["public"]["Enums"]["activity_day_houses"] | null;
+          id?: string;
+          map_location?: number | null;
+          organization_id: string;
+        };
+        Update: {
+          accent_color?: string | null;
+          background_color?: string | null;
+          created_at?: string | null;
+          house?: Database["public"]["Enums"]["activity_day_houses"] | null;
+          id?: string;
+          map_location?: number | null;
+          organization_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "clubs_organization_id_fkey";
+            columns: ["organization_id"];
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       contacts: {
         Row: {
-          id: number;
           created_at: string | null;
-          name_th: string | null;
-          type: Database["public"]["Enums"]["contact_type"];
-          value: string;
-          name_en: string | null;
+          id: number;
+          include_parents: boolean | null;
           include_students: boolean | null;
           include_teachers: boolean | null;
-          include_parents: boolean | null;
-        };
-        Insert: {
-          id?: number;
-          created_at?: string | null;
+          name_en: string | null;
           name_th: string | null;
           type: Database["public"]["Enums"]["contact_type"];
           value: string;
-          name_en?: string | null;
+        };
+        Insert: {
+          created_at?: string | null;
+          id?: number;
+          include_parents?: boolean | null;
           include_students?: boolean | null;
           include_teachers?: boolean | null;
-          include_parents?: boolean | null;
+          name_en?: string | null;
+          name_th?: string | null;
+          type: Database["public"]["Enums"]["contact_type"];
+          value: string;
         };
         Update: {
-          id?: number;
           created_at?: string | null;
+          id?: number;
+          include_parents?: boolean | null;
+          include_students?: boolean | null;
+          include_teachers?: boolean | null;
+          name_en?: string | null;
           name_th?: string | null;
           type?: Database["public"]["Enums"]["contact_type"];
           value?: string;
-          name_en?: string | null;
-          include_students?: boolean | null;
-          include_teachers?: boolean | null;
-          include_parents?: boolean | null;
         };
+        Relationships: [];
       };
       form_field_value: {
         Row: {
-          id: number;
           created_at: string | null;
           field: number;
-          value: string;
+          id: number;
           submission: number;
+          value: string;
         };
         Insert: {
-          id?: number;
           created_at?: string | null;
           field: number;
-          value?: string;
+          id?: number;
           submission: number;
+          value?: string;
         };
         Update: {
-          id?: number;
           created_at?: string | null;
           field?: number;
-          value?: string;
+          id?: number;
           submission?: number;
+          value?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: "form_field_value_field_fkey";
+            columns: ["field"];
+            referencedRelation: "form_questions";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "form_field_value_submission_fkey";
+            columns: ["submission"];
+            referencedRelation: "form_submissions";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       form_questions: {
         Row: {
-          id: number;
           created_at: string | null;
-          form: number;
-          label_th: string;
-          type: Database["public"]["Enums"]["form_type_enum"];
-          options: string[] | null;
-          range_start: number | null;
-          range_end: number | null;
-          label_en: string | null;
-          required: boolean;
           default: string;
+          form: number;
+          id: number;
+          label_en: string | null;
+          label_th: string;
+          options: string[] | null;
+          range_end: number | null;
+          range_start: number | null;
+          required: boolean;
+          type: Database["public"]["Enums"]["form_type_enum"];
         };
         Insert: {
-          id?: number;
           created_at?: string | null;
-          form: number;
-          label_th?: string;
-          type?: Database["public"]["Enums"]["form_type_enum"];
-          options?: string[] | null;
-          range_start?: number | null;
-          range_end?: number | null;
-          label_en?: string | null;
-          required?: boolean;
           default?: string;
+          form: number;
+          id?: number;
+          label_en?: string | null;
+          label_th?: string;
+          options?: string[] | null;
+          range_end?: number | null;
+          range_start?: number | null;
+          required?: boolean;
+          type?: Database["public"]["Enums"]["form_type_enum"];
         };
         Update: {
-          id?: number;
           created_at?: string | null;
-          form?: number;
-          label_th?: string;
-          type?: Database["public"]["Enums"]["form_type_enum"];
-          options?: string[] | null;
-          range_start?: number | null;
-          range_end?: number | null;
-          label_en?: string | null;
-          required?: boolean;
           default?: string;
+          form?: number;
+          id?: number;
+          label_en?: string | null;
+          label_th?: string;
+          options?: string[] | null;
+          range_end?: number | null;
+          range_start?: number | null;
+          required?: boolean;
+          type?: Database["public"]["Enums"]["form_type_enum"];
         };
+        Relationships: [
+          {
+            foreignKeyName: "form_questions_form_fkey";
+            columns: ["form"];
+            referencedRelation: "forms";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       form_submissions: {
         Row: {
-          id: number;
           created_at: string | null;
           form: number;
-          person: Database["public"]["Tables"]["people"]["Row"] | null;
+          id: number;
+          person: number | null;
         };
         Insert: {
-          id?: number;
           created_at?: string | null;
           form: number;
+          id?: number;
           person?: number | null;
         };
         Update: {
-          id?: number;
           created_at?: string | null;
           form?: number;
+          id?: number;
           person?: number | null;
         };
+        Relationships: [
+          {
+            foreignKeyName: "form_submissions_form_fkey";
+            columns: ["form"];
+            referencedRelation: "forms";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "form_submissions_person_fkey";
+            columns: ["person"];
+            referencedRelation: "people";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       forms: {
         Row: {
-          id: number;
           created_at: string;
           due_date: string | null;
-          students_done: number[] | null;
           frequency: Database["public"]["Enums"]["form_frequency_enum"] | null;
-          parent: Database["public"]["Tables"]["news"]["Row"];
+          id: number;
+          parent: number;
+          students_done: number[] | null;
         };
         Insert: {
-          id?: number;
           created_at?: string;
           due_date?: string | null;
-          students_done?: number[] | null;
           frequency?: Database["public"]["Enums"]["form_frequency_enum"] | null;
+          id?: number;
           parent: number;
+          students_done?: number[] | null;
         };
         Update: {
-          id?: number;
           created_at?: string;
           due_date?: string | null;
-          students_done?: number[] | null;
           frequency?: Database["public"]["Enums"]["form_frequency_enum"] | null;
+          id?: number;
           parent?: number;
+          students_done?: number[] | null;
         };
+        Relationships: [
+          {
+            foreignKeyName: "forms_parent_fkey";
+            columns: ["parent"];
+            referencedRelation: "news";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       infos: {
         Row: {
-          id: number;
-          created_at: string;
-          body_th: string;
           body_en: string;
-          parent: Database["public"]["Tables"]["news"]["Row"];
+          body_th: string;
+          created_at: string;
+          id: number;
+          parent: number;
         };
         Insert: {
-          id?: number;
-          created_at?: string;
-          body_th: string;
           body_en: string;
+          body_th: string;
+          created_at?: string;
+          id?: number;
           parent: number;
         };
         Update: {
-          id?: number;
-          created_at?: string;
-          body_th?: string;
           body_en?: string;
+          body_th?: string;
+          created_at?: string;
+          id?: number;
           parent?: number;
         };
+        Relationships: [
+          {
+            foreignKeyName: "infos_parent_fkey";
+            columns: ["parent"];
+            referencedRelation: "news";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       news: {
         Row: {
-          id: number;
           created_at: string;
-          title_th: string;
-          title_en: string | null;
-          description_th: string;
           description_en: string | null;
+          description_th: string;
+          id: number;
           image: string | null;
           old_url: string | null;
+          title_en: string | null;
+          title_th: string;
         };
         Insert: {
-          id?: number;
           created_at?: string;
-          title_th?: string;
-          title_en?: string | null;
-          description_th?: string;
           description_en?: string | null;
+          description_th?: string;
+          id?: number;
           image?: string | null;
           old_url?: string | null;
+          title_en?: string | null;
+          title_th?: string;
         };
         Update: {
-          id?: number;
           created_at?: string;
-          title_th?: string;
-          title_en?: string | null;
-          description_th?: string;
           description_en?: string | null;
+          description_th?: string;
+          id?: number;
           image?: string | null;
           old_url?: string | null;
+          title_en?: string | null;
+          title_th?: string;
         };
+        Relationships: [];
+      };
+      organizations: {
+        Row: {
+          created_at: string | null;
+          description_en: string | null;
+          description_th: string | null;
+          id: string;
+          logo_url: string | null;
+          main_room: string | null;
+          name_en: string | null;
+          name_th: string;
+        };
+        Insert: {
+          created_at?: string | null;
+          description_en?: string | null;
+          description_th?: string | null;
+          id?: string;
+          logo_url?: string | null;
+          main_room?: string | null;
+          name_en?: string | null;
+          name_th: string;
+        };
+        Update: {
+          created_at?: string | null;
+          description_en?: string | null;
+          description_th?: string | null;
+          id?: string;
+          logo_url?: string | null;
+          main_room?: string | null;
+          name_en?: string | null;
+          name_th?: string;
+        };
+        Relationships: [];
       };
       payments: {
         Row: {
-          id: number;
+          amount_owed: number | null;
           created_at: string;
           due_date: string | null;
-          students_done: number[] | null;
-          amount_owed: number | null;
           frequency: Database["public"]["Enums"]["form_frequency_enum"] | null;
-          parent: Database["public"]["Tables"]["news"]["Row"];
+          id: number;
+          parent: number;
+          students_done: number[] | null;
         };
         Insert: {
-          id?: number;
+          amount_owed?: number | null;
           created_at?: string;
           due_date?: string | null;
-          students_done?: number[] | null;
-          amount_owed?: number | null;
           frequency?: Database["public"]["Enums"]["form_frequency_enum"] | null;
+          id?: number;
           parent: number;
+          students_done?: number[] | null;
         };
         Update: {
-          id?: number;
+          amount_owed?: number | null;
           created_at?: string;
           due_date?: string | null;
-          students_done?: number[] | null;
-          amount_owed?: number | null;
           frequency?: Database["public"]["Enums"]["form_frequency_enum"] | null;
+          id?: number;
           parent?: number;
+          students_done?: number[] | null;
         };
+        Relationships: [
+          {
+            foreignKeyName: "payments_parent_fkey";
+            columns: ["parent"];
+            referencedRelation: "news";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       people: {
         Row: {
-          id: number;
-          created_at: string | null;
-          prefix_th: string;
-          prefix_en: string | null;
-          first_name_th: string;
-          first_name_en: string | null;
-          last_name_th: string;
-          last_name_en: string | null;
-          middle_name_th: string | null;
-          middle_name_en: string | null;
-          nickname_th: string | null;
-          nickname_en: string | null;
           birthdate: string;
           citizen_id: string;
-          shirt_size: Database["public"]["Enums"]["shirt_size"] | null;
-          pants_size: string | null;
           contacts: number[] | null;
+          created_at: string | null;
+          first_name_en: string | null;
+          first_name_th: string;
+          id: number;
+          last_name_en: string | null;
+          last_name_th: string;
+          middle_name_en: string | null;
+          middle_name_th: string | null;
+          nickname_en: string | null;
+          nickname_th: string | null;
+          pants_size: string | null;
+          prefix_en: string | null;
+          prefix_th: string;
           profile: string | null;
+          shirt_size: Database["public"]["Enums"]["shirt_size"] | null;
         };
         Insert: {
-          id?: number;
-          created_at?: string | null;
-          prefix_th: string;
-          prefix_en?: string | null;
-          first_name_th: string;
-          first_name_en?: string | null;
-          last_name_th: string;
-          last_name_en?: string | null;
-          middle_name_th?: string | null;
-          middle_name_en?: string | null;
-          nickname_th?: string | null;
-          nickname_en?: string | null;
           birthdate: string;
           citizen_id: string;
-          shirt_size?: Database["public"]["Enums"]["shirt_size"] | null;
-          pants_size?: string | null;
           contacts?: number[] | null;
+          created_at?: string | null;
+          first_name_en?: string | null;
+          first_name_th: string;
+          id?: number;
+          last_name_en?: string | null;
+          last_name_th: string;
+          middle_name_en?: string | null;
+          middle_name_th?: string | null;
+          nickname_en?: string | null;
+          nickname_th?: string | null;
+          pants_size?: string | null;
+          prefix_en?: string | null;
+          prefix_th: string;
           profile?: string | null;
+          shirt_size?: Database["public"]["Enums"]["shirt_size"] | null;
         };
         Update: {
-          id?: number;
-          created_at?: string | null;
-          prefix_th?: string;
-          prefix_en?: string | null;
-          first_name_th?: string;
-          first_name_en?: string | null;
-          last_name_th?: string;
-          last_name_en?: string | null;
-          middle_name_th?: string | null;
-          middle_name_en?: string | null;
-          nickname_th?: string | null;
-          nickname_en?: string | null;
           birthdate?: string;
           citizen_id?: string;
-          shirt_size?: Database["public"]["Enums"]["shirt_size"] | null;
-          pants_size?: string | null;
           contacts?: number[] | null;
+          created_at?: string | null;
+          first_name_en?: string | null;
+          first_name_th?: string;
+          id?: number;
+          last_name_en?: string | null;
+          last_name_th?: string;
+          middle_name_en?: string | null;
+          middle_name_th?: string | null;
+          nickname_en?: string | null;
+          nickname_th?: string | null;
+          pants_size?: string | null;
+          prefix_en?: string | null;
+          prefix_th?: string;
           profile?: string | null;
+          shirt_size?: Database["public"]["Enums"]["shirt_size"] | null;
         };
+        Relationships: [];
       };
       people_allergies: {
         Row: {
-          id: number;
-          created_at: string;
-          person_id: Database["public"]["Tables"]["people"]["Row"];
           allergy_name: string;
+          created_at: string | null;
+          id: number;
+          person_id: number;
         };
         Insert: {
-          id?: number;
-          created_at?: string;
-          person_id: number;
           allergy_name: string;
+          created_at?: string | null;
+          id?: number;
+          person_id: number;
         };
         Update: {
-          id?: number;
-          created_at?: string;
-          person_id?: number;
           allergy_name?: string;
+          created_at?: string | null;
+          id?: number;
+          person_id?: number;
         };
+        Relationships: [
+          {
+            foreignKeyName: "people_allergies_person_id_fkey";
+            columns: ["person_id"];
+            referencedRelation: "people";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       room_subjects: {
         Row: {
-          id: number;
+          class: number;
+          coteacher: number[] | null;
           created_at: string | null;
-          subject: Database["public"]["Tables"]["subject"]["Row"];
+          gg_meet_link: string | null;
           ggc_code: string | null;
           ggc_link: string | null;
-          gg_meet_link: string | null;
-          teacher: number[];
-          coteacher: number[] | null;
-          class: Pick<
-            Database["public"]["Tables"]["classroom"]["Row"],
-            "id" | "number"
-          >;
-          year: number;
+          id: number;
           semester: number;
+          subject: number;
+          teacher: number[];
+          year: number;
         };
         Insert: {
-          id?: number;
+          class: number;
+          coteacher?: number[] | null;
           created_at?: string | null;
-          subject: number;
+          gg_meet_link?: string | null;
           ggc_code?: string | null;
           ggc_link?: string | null;
-          gg_meet_link?: string | null;
+          id?: number;
+          semester?: number;
+          subject: number;
           teacher: number[];
-          coteacher?: number[] | null;
-          class: number;
-          year: number;
-          semester: number;
+          year?: number;
         };
         Update: {
-          id?: number;
+          class?: number;
+          coteacher?: number[] | null;
           created_at?: string | null;
-          subject?: number;
+          gg_meet_link?: string | null;
           ggc_code?: string | null;
           ggc_link?: string | null;
-          gg_meet_link?: string | null;
-          teacher?: number[];
-          coteacher?: number[] | null;
-          class?: number;
-          year?: number;
+          id?: number;
           semester?: number;
+          subject?: number;
+          teacher?: number[];
+          year?: number;
         };
+        Relationships: [
+          {
+            foreignKeyName: "room_subjects_class_fkey";
+            columns: ["class"];
+            referencedRelation: "classroom";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "room_subjects_subject_fkey";
+            columns: ["subject"];
+            referencedRelation: "subject";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       schedule_items: {
         Row: {
-          id: number;
-          created_at: string | null;
-          subject: Database["public"]["Tables"]["subject"]["Row"];
-          teacher: Database["public"]["Tables"]["teacher"]["Row"];
+          classroom: number | null;
           coteachers: number[] | null;
+          created_at: string | null;
           day: number | null;
-          start_time: number;
           duration: number;
+          id: number;
           room: string;
-          classroom: Pick<
-            Database["public"]["Tables"]["classroom"]["Row"],
-            "id" | "number"
-          >;
-          year: number;
           semester: number;
+          start_time: number;
+          subject: number;
+          teacher: number;
+          year: number;
         };
         Insert: {
-          id?: number;
-          created_at?: string | null;
-          subject?: number;
-          teacher: number;
+          classroom?: number | null;
           coteachers?: number[] | null;
+          created_at?: string | null;
           day?: number | null;
-          start_time: number;
           duration: number;
+          id?: number;
           room: string;
-          classroom?: number;
-          year: number;
           semester: number;
+          start_time: number;
+          subject: number;
+          teacher: number;
+          year: number;
         };
         Update: {
-          id?: number;
+          classroom?: number | null;
+          coteachers?: number[] | null;
           created_at?: string | null;
+          day?: number | null;
+          duration?: number;
+          id?: number;
+          room?: string;
+          semester?: number;
+          start_time?: number;
           subject?: number;
           teacher?: number;
-          coteachers?: number[] | null;
-          day?: number | null;
-          start_time?: number;
-          duration?: number;
-          room?: string;
-          classroom?: number;
           year?: number;
-          semester?: number;
         };
+        Relationships: [
+          {
+            foreignKeyName: "schedule_items_classroom_fkey";
+            columns: ["classroom"];
+            referencedRelation: "classroom";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "schedule_items_subject_fkey";
+            columns: ["subject"];
+            referencedRelation: "subject";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "schedule_items_teacher_fkey";
+            columns: ["teacher"];
+            referencedRelation: "teacher";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       school_documents: {
         Row: {
-          id: number;
-          created_at: string | null;
-          code: string;
-          date: string;
-          subject: string;
           attend_to: string | null;
-          include_students: boolean;
-          include_teachers: boolean;
-          include_parents: boolean;
+          code: string;
+          created_at: string | null;
+          date: string;
           document_link: string;
-          type: Database["public"]["Enums"]["school_document_type_enum"];
+          id: number;
+          include_parents: boolean | null;
+          include_students: boolean | null;
+          include_teachers: boolean | null;
+          subject: string;
+          type: string;
         };
         Insert: {
-          id?: number;
+          attend_to?: string | null;
+          code?: string;
           created_at?: string | null;
-          code: string;
           date: string;
-          subject: string;
-          attend_to?: string;
-          include_students?: boolean;
-          include_teachers?: boolean;
-          include_parents?: boolean;
-          document_link: string;
-          type: Database["public"]["Enums"]["school_document_type_enum"];
+          document_link?: string;
+          id?: number;
+          include_parents?: boolean | null;
+          include_students?: boolean | null;
+          include_teachers?: boolean | null;
+          subject?: string;
+          type: string;
         };
         Update: {
-          id?: number;
-          created_at?: string | null;
+          attend_to?: string | null;
           code?: string;
+          created_at?: string | null;
           date?: string;
-          subject?: string;
-          attend_to?: string;
-          include_students?: boolean;
-          include_teachers?: boolean;
-          include_parents?: boolean;
           document_link?: string;
-          type?: Database["public"]["Enums"]["school_document_type_enum"];
+          id?: number;
+          include_parents?: boolean | null;
+          include_students?: boolean | null;
+          include_teachers?: boolean | null;
+          subject?: string;
+          type?: string;
         };
+        Relationships: [];
+      };
+      settings: {
+        Row: {
+          created_at: string | null;
+          id: number;
+          language: string | null;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string | null;
+          id?: number;
+          language?: string | null;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string | null;
+          id?: number;
+          language?: string | null;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "settings_user_id_fkey";
+            columns: ["user_id"];
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       stats: {
         Row: {
-          id: number;
           created_at: string;
-          parent: Database["public"]["Tables"]["news"]["Row"];
+          id: number;
+          parent: number;
         };
         Insert: {
-          id?: number;
           created_at?: string;
+          id?: number;
           parent: number;
         };
         Update: {
-          id?: number;
           created_at?: string;
+          id?: number;
           parent?: number;
         };
+        Relationships: [
+          {
+            foreignKeyName: "stats_parent_fkey";
+            columns: ["parent"];
+            referencedRelation: "news";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       student: {
         Row: {
-          id: number;
           created_at: string | null;
-          person: Database["public"]["Tables"]["people"]["Row"];
+          id: number;
+          person: number;
           std_id: string;
         };
         Insert: {
-          id?: number;
           created_at?: string | null;
+          id?: number;
           person: number;
           std_id: string;
         };
         Update: {
-          id?: number;
           created_at?: string | null;
+          id?: number;
           person?: number;
           std_id?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: "student_person_fkey";
+            columns: ["person"];
+            referencedRelation: "people";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       subject: {
         Row: {
-          id: number;
-          created_at: string | null;
-          name_th: string;
-          name_en: string;
-          code_th: string;
           code_en: string;
-          type_th: Database["public"]["Enums"]["subject_type_th_enum"];
-          type_en: Database["public"]["Enums"]["subject_type_en_enum"];
+          code_th: string;
+          coTeachers: number[] | null;
+          created_at: string | null;
           credit: number;
-          description_th: string | null;
           description_en: string | null;
-          year: number;
-          semester: number;
+          description_th: string | null;
           group: number;
+          id: number;
+          name_en: string;
+          name_th: string;
+          semester: number;
+          short_name_en: string | null;
+          short_name_th: string | null;
           syllabus: string | null;
           teachers: number[];
-          coTeachers: number[] | null;
-          short_name_th: string | null;
-          short_name_en: string | null;
+          type_en: Database["public"]["Enums"]["subject_type_en_enum"];
+          type_th: Database["public"]["Enums"]["subject_type_th_enum"];
+          year: number;
         };
         Insert: {
-          id?: number;
-          created_at?: string | null;
-          name_th: string;
-          name_en: string;
-          code_th: string;
           code_en: string;
-          type_th: Database["public"]["Enums"]["subject_type_th_enum"];
-          type_en: Database["public"]["Enums"]["subject_type_en_enum"];
+          code_th: string;
+          coTeachers?: number[] | null;
+          created_at?: string | null;
           credit: number;
-          description_th?: string | null;
           description_en?: string | null;
-          year: number;
-          semester: number;
+          description_th?: string | null;
           group: number;
+          id?: number;
+          name_en: string;
+          name_th: string;
+          semester: number;
+          short_name_en?: string | null;
+          short_name_th?: string | null;
           syllabus?: string | null;
           teachers: number[];
-          coTeachers?: number[] | null;
-          short_name_th?: string | null;
-          short_name_en?: string | null;
+          type_en: Database["public"]["Enums"]["subject_type_en_enum"];
+          type_th: Database["public"]["Enums"]["subject_type_th_enum"];
+          year: number;
         };
         Update: {
-          id?: number;
-          created_at?: string | null;
-          name_th?: string;
-          name_en?: string;
-          code_th?: string;
           code_en?: string;
-          type_th?: Database["public"]["Enums"]["subject_type_th_enum"];
-          type_en?: Database["public"]["Enums"]["subject_type_en_enum"];
+          code_th?: string;
+          coTeachers?: number[] | null;
+          created_at?: string | null;
           credit?: number;
-          description_th?: string | null;
           description_en?: string | null;
-          year?: number;
-          semester?: number;
+          description_th?: string | null;
           group?: number;
+          id?: number;
+          name_en?: string;
+          name_th?: string;
+          semester?: number;
+          short_name_en?: string | null;
+          short_name_th?: string | null;
           syllabus?: string | null;
           teachers?: number[];
-          coTeachers?: number[] | null;
-          short_name_th?: string | null;
-          short_name_en?: string | null;
+          type_en?: Database["public"]["Enums"]["subject_type_en_enum"];
+          type_th?: Database["public"]["Enums"]["subject_type_th_enum"];
+          year?: number;
         };
+        Relationships: [
+          {
+            foreignKeyName: "subject_group_fkey";
+            columns: ["group"];
+            referencedRelation: "SubjectGroup";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       SubjectGroup: {
         Row: {
-          id: number;
           created_at: string | null;
-          name_th: string;
+          id: number;
           name_en: string;
+          name_th: string;
         };
         Insert: {
-          id?: number;
           created_at?: string | null;
-          name_th: string;
+          id?: number;
           name_en: string;
+          name_th: string;
         };
         Update: {
-          id?: number;
           created_at?: string | null;
-          name_th?: string;
+          id?: number;
           name_en?: string;
+          name_th?: string;
         };
+        Relationships: [];
       };
       teacher: {
         Row: {
-          id: number;
           created_at: string | null;
-          person: Database["public"]["Tables"]["people"]["Row"];
+          id: number;
+          person: number;
+          subject_group: number;
           teacher_id: string;
-          subject_group: Database["public"]["Tables"]["SubjectGroup"]["Row"];
         };
         Insert: {
-          id?: number;
           created_at?: string | null;
+          id?: number;
           person: number;
+          subject_group: number;
           teacher_id: string;
-          subject_group?: number;
         };
         Update: {
-          id?: number;
           created_at?: string | null;
+          id?: number;
           person?: number;
-          teacher_id?: string;
           subject_group?: number;
+          teacher_id?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: "teacher_person_fkey";
+            columns: ["person"];
+            referencedRelation: "people";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "teacher_subject_group_fkey";
+            columns: ["subject_group"];
+            referencedRelation: "SubjectGroup";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       users: {
         Row: {
-          id: string;
           email: string | null;
+          id: string;
+          is_admin: boolean;
+          onboarded: boolean;
           role: string;
           student: number | null;
           teacher: number | null;
-          is_admin: boolean;
-          onboarded: boolean;
         };
         Insert: {
-          id: string;
           email?: string | null;
+          id: string;
+          is_admin?: boolean;
+          onboarded?: boolean;
           role?: string;
           student?: number | null;
           teacher?: number | null;
-          is_admin?: boolean;
-          onboarded?: boolean;
         };
         Update: {
-          id?: string;
           email?: string | null;
+          id?: string;
+          is_admin?: boolean;
+          onboarded?: boolean;
           role?: string;
           student?: number | null;
           teacher?: number | null;
-          is_admin?: boolean;
-          onboarded?: boolean;
         };
+        Relationships: [
+          {
+            foreignKeyName: "users_student_fkey";
+            columns: ["student"];
+            referencedRelation: "student";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "users_teacher_fkey";
+            columns: ["teacher"];
+            referencedRelation: "teacher";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       vaccine_records: {
         Row: {
-          id: number;
+          administering_center: string;
           created_at: string | null;
+          id: number;
+          lot_no: string;
           person: number;
           vaccination_date: string;
           vaccine_name: string;
-          lot_no: string;
-          administering_center: string;
         };
         Insert: {
-          id?: number;
+          administering_center?: string;
           created_at?: string | null;
+          id?: number;
+          lot_no?: string;
           person: number;
           vaccination_date: string;
           vaccine_name?: string;
-          lot_no?: string;
-          administering_center?: string;
         };
         Update: {
-          id?: number;
+          administering_center?: string;
           created_at?: string | null;
+          id?: number;
+          lot_no?: string;
           person?: number;
           vaccination_date?: string;
           vaccine_name?: string;
-          lot_no?: string;
-          administering_center?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: "vaccine_records_person_fkey";
+            columns: ["person"];
+            referencedRelation: "people";
+            referencedColumns: ["id"];
+          }
+        ];
       };
     };
     Views: {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      diesel_manage_updated_at: {
+        Args: {
+          _tbl: unknown;
+        };
+        Returns: undefined;
+      };
     };
     Enums: {
+      activity_day_houses: "felis" | "cornicula" | "sciurus" | "cyprinus";
+      blood_group: "O-" | "O+" | "A-" | "A+" | "B-" | "B+" | "AB-" | "AB+";
       contact_type:
         | "Phone"
         | "Email"
@@ -718,7 +1099,6 @@ export interface Database {
         | "date"
         | "time"
         | "scale";
-      school_document_type_enum: "order" | "document";
       shirt_size:
         | "XS"
         | "S"
@@ -740,6 +1120,10 @@ export interface Database {
         | "รายวิชาเพิ่มเติม"
         | "รายวิชาเลือก"
         | "กิจกรรมพัฒนาผู้เรียน";
+      submission_status: "approved" | "pending" | "declined";
+    };
+    CompositeTypes: {
+      [_ in never]: never;
     };
   };
 }

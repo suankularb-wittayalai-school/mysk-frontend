@@ -1,8 +1,8 @@
 // External libraries
-import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
-import { createMiddlewareSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 
 // Helpers
 import { getLocalePath } from "@/utils/helpers/i18n";
@@ -37,7 +37,7 @@ export async function middleware(req: NextRequest) {
       : "user";
 
   // Declare Supabase client
-  const supabase = createMiddlewareSupabaseClient({ req, res });
+  const supabase = createMiddlewareClient({ req, res });
 
   // Get current session
   const {
@@ -48,7 +48,8 @@ export async function middleware(req: NextRequest) {
   const { data: user } = await supabase
     .from("users")
     .select("role, onboarded, is_admin")
-    .match({ id: session?.user.id })
+    .eq("id", session?.user.id)
+    .order("id")
     .limit(1)
     .maybeSingle();
 

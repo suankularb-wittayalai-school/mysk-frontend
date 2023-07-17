@@ -14,7 +14,7 @@
 
 // External libraries
 import {
-  createServerSupabaseClient,
+  createPagesServerClient,
   User,
 } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
@@ -478,7 +478,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   req,
   res,
 }) => {
-  const supabase = createServerSupabaseClient({
+  const supabase = createPagesServerClient({
     req: req as NextApiRequest,
     res: res as NextApiResponse,
   });

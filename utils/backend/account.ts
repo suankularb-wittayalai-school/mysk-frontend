@@ -5,7 +5,6 @@ import type { User } from "@supabase/supabase-js";
 import {
   BackendAuthReturn,
   BackendDataReturn,
-  BackendReturn,
   DatabaseClient,
   OrUndefined,
 } from "@/utils/types/common";
@@ -19,6 +18,7 @@ export async function getUserMetadata(
     .from("users")
     .select("role, student, teacher, is_admin, onboarded")
     .match({ id })
+    .order("id")
     .limit(1)
     .single();
 

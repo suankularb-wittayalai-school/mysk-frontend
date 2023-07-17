@@ -77,6 +77,7 @@ export async function createPerson(
       contacts: contactIDs as number[],
     })
     .select("*")
+    .order("id")
     .limit(1)
     .single();
 
@@ -157,7 +158,8 @@ export async function editPerson(
     const { data: studentPersonID, error: idError } = await supabase
       .from("student")
       .select("person(id)")
-      .match({ id: person.id })
+      .eq("id", person.id)
+      .order("id")
       .limit(1)
       .single();
 
@@ -167,7 +169,8 @@ export async function editPerson(
     }
 
     personID = (
-      studentPersonID!.person as Database["public"]["Tables"]["people"]["Row"]
+      studentPersonID!
+        .person as unknown as Database["public"]["Tables"]["people"]["Row"]
     ).id;
   }
 
@@ -176,7 +179,8 @@ export async function editPerson(
     const { data: teacherPersonID, error: idError } = await supabase
       .from("teacher")
       .select("person")
-      .match({ id: person.id })
+      .eq("id", person.id)
+      .order("id")
       .limit(1)
       .single();
 
@@ -233,6 +237,7 @@ export async function editPerson(
     })
     .match({ id: personID })
     .select("*")
+    .order("id")
     .limit(1)
     .single();
 
@@ -265,6 +270,7 @@ export async function editPerson(
         .from("classroom")
         .select("advisors")
         .eq("id", person.classAdvisorAt.id)
+        .order("id")
         .limit(1)
         .single();
 
@@ -281,6 +287,7 @@ export async function editPerson(
           ),
         })
         .eq("id", person.classAdvisorAt.id)
+        .order("id")
         .limit(1)
         .single();
 
@@ -333,8 +340,9 @@ export async function addContactToPerson(
   if (person.role === "student") {
     const { data: studentPersonID, error: idError } = await supabase
       .from("student")
-      .select("person(id)")
+      .select("person")
       .match({ id: person.id })
+      .order("id")
       .limit(1)
       .single();
 
@@ -343,14 +351,13 @@ export async function addContactToPerson(
       return { data: null, error: idError };
     }
 
-    personID = (
-      studentPersonID!.person as Database["public"]["Tables"]["people"]["Row"]
-    ).id;
+    personID = studentPersonID!.person;
   } else if (person.role === "teacher") {
     const { data: teacherPersonID, error: idError } = await supabase
       .from("teacher")
       .select("person")
       .match({ id: person.id })
+      .order("id")
       .limit(1)
       .single();
 
@@ -365,6 +372,7 @@ export async function addContactToPerson(
     .from("people")
     .select("contacts")
     .eq("id", personID)
+    .order("id")
     .limit(1)
     .single();
 
@@ -379,6 +387,7 @@ export async function addContactToPerson(
     })
     .eq("id", personID)
     .select("*")
+    .order("id")
     .limit(1)
     .single();
 
@@ -402,8 +411,9 @@ export async function removeContactFromPerson(
   if (person.role === "student") {
     const { data: studentPersonID, error: idError } = await supabase
       .from("student")
-      .select("person(id)")
+      .select("person")
       .match({ id: person.id })
+      .order("id")
       .limit(1)
       .single();
 
@@ -412,14 +422,13 @@ export async function removeContactFromPerson(
       return { data: null, error: idError };
     }
 
-    personID = (
-      studentPersonID!.person as Database["public"]["Tables"]["people"]["Row"]
-    ).id;
+    personID = studentPersonID!.person;
   } else if (person.role === "teacher") {
     const { data: teacherPersonID, error: idError } = await supabase
       .from("teacher")
       .select("person")
       .match({ id: person.id })
+      .order("id")
       .limit(1)
       .single();
 
@@ -427,13 +436,14 @@ export async function removeContactFromPerson(
       console.error(idError);
       return { data: null, error: idError };
     }
-    personID = teacherPersonID!.person as unknown as number;
+    personID = teacherPersonID!.person;
   }
 
   const { data: selectedPerson, error: personSelectionError } = await supabase
     .from("people")
     .select("contacts")
     .eq("id", personID)
+    .order("id")
     .limit(1)
     .single();
 
@@ -449,6 +459,7 @@ export async function removeContactFromPerson(
     })
     .eq("id", personID)
     .select("*")
+    .order("id")
     .limit(1)
     .single();
 
@@ -498,6 +509,7 @@ export async function getPersonFromUser(
       .from("student")
       .select("*, person(*)")
       .match({ id: metadata.student })
+      .order("id")
       .limit(1)
       .single();
 
@@ -549,8 +561,9 @@ export async function getPersonIDFromUser(
   if (metadata?.role === "student") {
     const { data: student, error: studentError } = await supabase
       .from("student")
-      .select("person(id)")
+      .select("person")
       .match({ id: metadata.student })
+      .order("id")
       .limit(1)
       .single();
 
@@ -559,16 +572,13 @@ export async function getPersonIDFromUser(
       return { data: null, error: studentError };
     }
 
-    return {
-      data: (student as Database["public"]["Tables"]["student"]["Row"]).person
-        .id,
-      error: null,
-    };
+    return { data: student.person, error: null };
   } else if (metadata?.role === "teacher") {
     const { data: teacher, error: teacherError } = await supabase
       .from("teacher")
-      .select("person(id)")
+      .select("person")
       .match({ id: metadata.teacher })
+      .order("id")
       .limit(1)
       .single();
 
@@ -577,11 +587,7 @@ export async function getPersonIDFromUser(
       return { data: null, error: teacherError };
     }
 
-    return {
-      data: (teacher as Database["public"]["Tables"]["teacher"]["Row"]).person
-        .id,
-      error: null,
-    };
+    return { data: teacher.person, error: null };
   }
 
   return { data: null, error: { message: "invalid role." } };
@@ -595,6 +601,7 @@ export async function getPersonRole(
     .from("teacher")
     .select("id")
     .match({ person: personID })
+    .order("id")
     .limit(1)
     .maybeSingle();
 
@@ -696,7 +703,9 @@ export async function getPeopleLookupList(
         ...(classItem
           ? { metadata: { id: classItem.id, number: classItem.number } }
           : {}),
-        ...db2PersonName(student.person),
+        ...db2PersonName(
+          student.person as unknown as Database["public"]["Tables"]["people"]["Row"]
+        ),
       };
     });
 
@@ -730,19 +739,24 @@ export async function getPeopleLookupList(
   }
 
   // Format the list
-  const formattedTeachers: PersonLookupItemGeneric<SubjectGroup>[] =
-    teachers.map((teacher) => ({
-      id: teacher.id,
-      role: "teacher",
-      metadata: {
-        id: teacher.subject_group.id,
-        name: {
-          th: teacher.subject_group.name_th,
-          "en-US": teacher.subject_group.name_en,
-        },
+  const formattedTeachers: PersonLookupItemGeneric<SubjectGroup>[] = (
+    teachers as unknown as (Database["public"]["Tables"]["teacher"]["Row"] & {
+      subject_group: Database["public"]["Tables"]["SubjectGroup"]["Row"];
+    })[]
+  ).map((teacher) => ({
+    id: teacher.id,
+    role: "teacher",
+    metadata: {
+      id: teacher.subject_group.id,
+      name: {
+        th: teacher.subject_group.name_th,
+        "en-US": teacher.subject_group.name_en,
       },
-      ...db2PersonName(teacher.person),
-    }));
+    },
+    ...db2PersonName(
+      teacher.person as unknown as Database["public"]["Tables"]["people"]["Row"]
+    ),
+  }));
 
   return {
     data: (formattedStudents as PersonLookupItem[])
@@ -764,6 +778,7 @@ export async function getLookupListPerson(
       .from("student")
       .select("*, person(*)")
       .match({ id })
+      .order("id")
       .limit(1)
       .single();
 
@@ -776,6 +791,7 @@ export async function getLookupListPerson(
       .from("classroom")
       .select("id, number")
       .contains("students", [id])
+      .order("id")
       .limit(1)
       .single();
 
@@ -788,7 +804,9 @@ export async function getLookupListPerson(
       id: data.id,
       role: "student",
       metadata: { id: classItem.id, number: classItem.number },
-      ...db2PersonName(data.person),
+      ...db2PersonName(
+        data.person as unknown as Database["public"]["Tables"]["people"]["Row"]
+      ),
     };
   }
 
@@ -798,6 +816,7 @@ export async function getLookupListPerson(
       .from("teacher")
       .select("*, person(*), subject_group(*)")
       .match({ id })
+      .order("id")
       .limit(1)
       .single();
 
@@ -806,17 +825,22 @@ export async function getLookupListPerson(
       return { data: null, error };
     }
 
+    const subjectGroup =
+      data.subject_group as unknown as Database["public"]["Tables"]["SubjectGroup"]["Row"];
+
     person = {
       id: data.id,
       role: "teacher",
       metadata: {
-        id: data.subject_group.id,
+        id: subjectGroup.id,
         name: {
-          th: data.subject_group.name_th,
-          "en-US": data.subject_group.name_en,
+          th: subjectGroup.name_th,
+          "en-US": subjectGroup.name_en,
         },
       },
-      ...db2PersonName(data.person),
+      ...db2PersonName(
+        data.person as unknown as Database["public"]["Tables"]["people"]["Row"]
+      ),
     };
   }
 

@@ -1,6 +1,6 @@
 // External libraries
 import {
-  createServerSupabaseClient,
+  createPagesServerClient,
   User,
 } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
@@ -307,6 +307,7 @@ const LoggingInPage: CustomPage<{ user: User }> = ({ user }) => {
                   .from("users")
                   .select("onboarded")
                   .match({ id: user!.id })
+                  .order("id")
                   .limit(1)
                   .single();
 
@@ -333,7 +334,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   req,
   res,
 }) => {
-  const supabase = createServerSupabaseClient({
+  const supabase = createPagesServerClient({
     req: req as NextApiRequest,
     res: res as NextApiResponse,
   });

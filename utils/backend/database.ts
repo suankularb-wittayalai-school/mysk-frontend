@@ -8,8 +8,8 @@ import {
 import { supabase } from "@/utils/supabase-client";
 
 // Types
-import { Class } from "@/utils/types/class";
-import { OrUndefined, DatabaseClient } from "@/utils/types/common";
+import { Class, ClassWNumber } from "@/utils/types/class";
+import { DatabaseClient, OrUndefined } from "@/utils/types/common";
 import { Contact } from "@/utils/types/contact";
 import {
   FormField,
@@ -18,6 +18,7 @@ import {
   NewsItemFormNoDate,
   NewsItemInfoNoDate,
   SchoolDocument,
+  SchoolDocumentType,
 } from "@/utils/types/news";
 import {
   Person,
@@ -29,6 +30,11 @@ import {
 import { SchedulePeriod } from "@/utils/types/schedule";
 import { Subject, SubjectListItem } from "@/utils/types/subject";
 import { Database } from "@/utils/types/supabase";
+
+// (@SiravitPhokeed)
+// Came back to this file after a long break from this project and I can
+// confirm that database.ts is still as awful as ever. Wait, no, it’s even more
+// awful now. Too bad!
 
 // Contact
 export function db2Contact(
@@ -60,24 +66,29 @@ export function db2Contact(
 export function dbInfo2NewsItem(
   info: Database["public"]["Tables"]["infos"]["Row"]
 ): NewsItemInfoNoDate {
-  return {
+  const parent =
+    info.parent as unknown as Database["public"]["Tables"]["news"]["Row"];
+
+  const formatted: NewsItemInfoNoDate = {
     id: info.id,
     type: "info",
     postDate: info.created_at,
-    image: info.parent.image
-      ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/news/${info.parent.image}`
+    image: parent.image
+      ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/news/${parent.image}`
       : "",
     content: {
       title: {
-        "en-US": info.parent.title_en || "",
-        th: info.parent.title_th,
+        "en-US": parent.title_en || "",
+        th: parent.title_th,
       },
       description: {
-        "en-US": info.parent.description_en || "",
-        th: info.parent.description_th,
+        "en-US": parent.description_en || "",
+        th: parent.description_th,
       },
     },
   };
+
+  return formatted;
 }
 
 export function db2InfoPage(
@@ -102,18 +113,21 @@ export function dbForm2NewsItem(
   form: Database["public"]["Tables"]["forms"]["Row"],
   studentID?: number
 ): NewsItemFormNoDate {
+  const parent =
+    form.parent as unknown as Database["public"]["Tables"]["news"]["Row"];
+
   const formatted: NewsItemFormNoDate = {
     id: form.id,
     type: "form",
     postDate: form.created_at,
     content: {
       title: {
-        "en-US": form.parent.title_en || "",
-        th: form.parent.title_th,
+        "en-US": parent.title_en || "",
+        th: parent.title_th,
       },
       description: {
-        "en-US": form.parent.description_en || "",
-        th: form.parent.description_th,
+        "en-US": parent.description_en || "",
+        th: parent.description_th,
       },
     },
     dueDate: form.due_date as OrUndefined<string>,
@@ -150,19 +164,22 @@ export function db2Field(
 
 export async function db2FormPage(
   form: Database["public"]["Tables"]["forms"]["Row"]
-) {
+): Promise<FormPage> {
+  const parent =
+    form.parent as unknown as Database["public"]["Tables"]["news"]["Row"];
+
   const formatted: FormPage = {
     id: form.id,
     type: "form",
     postDate: form.created_at,
     content: {
       title: {
-        "en-US": form.parent.title_en || "",
-        th: form.parent.title_th,
+        "en-US": parent.title_en || "",
+        th: parent.title_th,
       },
       description: {
-        "en-US": form.parent.description_en || "",
-        th: form.parent.description_th,
+        "en-US": parent.description_en || "",
+        th: parent.description_th,
       },
       fields: [],
     },
@@ -194,26 +211,29 @@ export async function db2Student(
     contacts: boolean;
   }>
 ): Promise<Student> {
+  const person =
+    student.person as unknown as Database["public"]["Tables"]["people"]["Row"];
+
   const formatted: Student = {
     id: student.id,
     role: "student",
-    ...db2PersonName(student.person),
+    ...db2PersonName(person),
     studentID: student.std_id,
-    birthdate: student.person.birthdate,
+    birthdate: person.birthdate,
     allergies: [],
-    shirtSize: student.person.shirt_size as OrUndefined<ShirtSize>,
-    pantsSize: student.person.pants_size as OrUndefined<string>,
+    shirtSize: person.shirt_size as OrUndefined<ShirtSize>,
+    pantsSize: person.pants_size as OrUndefined<string>,
     classNo: 1,
     contacts: [],
   };
 
-  if (options?.citizenID) formatted.citizenID = student.person.citizen_id;
+  if (options?.citizenID) formatted.citizenID = person.citizen_id;
 
   if (options?.allergies) {
     const { data: allergies, error: allergiesError } = await supabase
       .from("people_allergies")
       .select("allergy_name")
-      .eq("person_id", student.person.id);
+      .eq("person_id", person.id);
 
     if (allergiesError) console.error(allergiesError);
     if (allergies)
@@ -224,7 +244,7 @@ export async function db2Student(
     const { data: contacts, error: contactError } = await supabase
       .from("contacts")
       .select("*")
-      .in("id", student.person.contacts || []);
+      .in("id", person.contacts || []);
 
     if (contactError) console.error(contactError);
     if (contacts) formatted.contacts = contacts.map(db2Contact);
@@ -233,8 +253,9 @@ export async function db2Student(
   const { data: classItem, error: classError } = await supabase
     .from("classroom")
     .select("id, number, students, no_list")
-    .match({ year: getCurrentAcademicYear() })
+    .eq("year", getCurrentAcademicYear())
     .contains("students", [student.id])
+    .order("id")
     .limit(1)
     .maybeSingle();
   if (classError) {
@@ -262,22 +283,27 @@ export async function db2Teacher(
     subjectsInCharge: boolean;
   }>
 ): Promise<Teacher> {
+  const person =
+    teacher.person as unknown as Database["public"]["Tables"]["people"]["Row"];
+  const subjectGroup =
+    teacher.subject_group as unknown as Database["public"]["Tables"]["SubjectGroup"]["Row"];
+
   const formatted: Teacher = {
     id: teacher.id,
     role: "teacher",
-    ...db2PersonName(teacher.person),
-    profile: teacher.person.profile as OrUndefined<string>,
+    ...db2PersonName(person),
+    profile: person.profile as OrUndefined<string>,
     teacherID: teacher.teacher_id,
-    citizenID: teacher.person.citizen_id,
-    birthdate: teacher.person.birthdate,
+    citizenID: person.citizen_id,
+    birthdate: person.birthdate,
     allergies: [],
-    shirtSize: teacher.person.shirt_size as OrUndefined<ShirtSize>,
-    pantsSize: teacher.person.pants_size as OrUndefined<string>,
+    shirtSize: person.shirt_size as OrUndefined<ShirtSize>,
+    pantsSize: person.pants_size as OrUndefined<string>,
     subjectGroup: {
-      id: teacher.subject_group.id,
+      id: subjectGroup.id,
       name: {
-        "en-US": teacher.subject_group.name_en,
-        th: teacher.subject_group.name_th,
+        "en-US": subjectGroup.name_en,
+        th: subjectGroup.name_th,
       },
     },
     contacts: [],
@@ -288,7 +314,7 @@ export async function db2Teacher(
     const { data: contacts, error: contactError } = await supabase
       .from("contacts")
       .select("*")
-      .in("id", teacher.person.contacts ? teacher.person.contacts : []);
+      .in("id", person.contacts ? person.contacts : []);
 
     if (contactError) console.error(contactError);
 
@@ -299,7 +325,7 @@ export async function db2Teacher(
     const { data: allergies, error: allergiesError } = await supabase
       .from("people_allergies")
       .select("allergy_name")
-      .eq("person_id", teacher.person.id);
+      .eq("person_id", person.id);
 
     if (allergiesError) console.error(allergiesError);
     if (allergies)
@@ -310,8 +336,9 @@ export async function db2Teacher(
     const { data: classItem, error: classError } = await supabase
       .from("classroom")
       .select("id, number, advisors")
-      .match({ year: getCurrentAcademicYear() })
+      .eq("year", getCurrentAcademicYear())
       .contains("advisors", [teacher.id])
+      .order("id")
       .limit(1)
       .maybeSingle();
 
@@ -442,7 +469,8 @@ export async function db2Subject(
     const { data: subjectGroup, error: subjectGroupError } = await supabase
       .from("SubjectGroup")
       .select("*")
-      .match({ id: subject.group })
+      .eq("id", subject.group)
+      .order("id")
       .limit(1);
 
     if (subjectGroupError) {
@@ -578,6 +606,9 @@ export async function db2SchedulePeriod(
   role: Role,
   options?: Partial<{ teachers: boolean; coTeachers: boolean }>
 ): Promise<SchedulePeriod> {
+  const subject =
+    scheduleItem.subject as unknown as Database["public"]["Tables"]["subject"]["Row"];
+
   const formatted: SchedulePeriod = {
     id: scheduleItem.id,
     startTime: scheduleItem.start_time,
@@ -588,22 +619,20 @@ export async function db2SchedulePeriod(
         startTime: scheduleItem.start_time,
         duration: scheduleItem.duration,
         subject: {
-          id: scheduleItem.subject.id,
+          id: subject.id,
           name: {
             "en-US": {
-              name: scheduleItem.subject.name_en,
-              shortName: scheduleItem.subject
-                .short_name_en as OrUndefined<string>,
+              name: subject.name_en,
+              shortName: subject.short_name_en as OrUndefined<string>,
             },
             th: {
-              name: scheduleItem.subject.name_th,
-              shortName: scheduleItem.subject
-                .short_name_th as OrUndefined<string>,
+              name: subject.name_th,
+              shortName: subject.short_name_th as OrUndefined<string>,
             },
           },
           code: {
-            "en-US": scheduleItem.subject.code_en,
-            th: scheduleItem.subject.code_th,
+            "en-US": subject.code_en,
+            th: subject.code_th,
           },
           teachers: [],
           coTeachers: [],
@@ -613,12 +642,17 @@ export async function db2SchedulePeriod(
     ],
   };
 
-  if (role === "teacher") formatted.content[0].class = scheduleItem.classroom;
+  if (role === "teacher")
+    formatted.content[0].class =
+      scheduleItem.classroom as unknown as ClassWNumber;
 
   if (options?.teachers) {
     if (role == "student" && formatted.content.length > 0) {
       formatted.content[0].subject.teachers = [
-        await db2Teacher(supabase, scheduleItem.teacher),
+        await db2Teacher(
+          supabase,
+          scheduleItem.teacher as unknown as Database["public"]["Tables"]["teacher"]["Row"]
+        ),
       ];
     }
 
@@ -648,26 +682,29 @@ export async function db2SubjectListItem(
   supabase: DatabaseClient,
   roomSubject: Database["public"]["Tables"]["room_subjects"]["Row"]
 ) {
+  const subject =
+    roomSubject.subject as unknown as Database["public"]["Tables"]["subject"]["Row"];
+
   const formatted: SubjectListItem = {
     id: roomSubject.id,
     subject: {
-      id: roomSubject.subject.id,
+      id: subject.id,
       code: {
-        "en-US": roomSubject.subject.code_en,
-        th: roomSubject.subject.code_th,
+        "en-US": subject.code_en,
+        th: subject.code_th,
       },
       name: {
         "en-US": {
-          name: roomSubject.subject.name_en,
-          shortName: roomSubject.subject.short_name_en as OrUndefined<string>,
+          name: subject.name_en,
+          shortName: subject.short_name_en as OrUndefined<string>,
         },
         th: {
-          name: roomSubject.subject.name_th,
-          shortName: roomSubject.subject.short_name_th as OrUndefined<string>,
+          name: subject.name_th,
+          shortName: subject.short_name_th as OrUndefined<string>,
         },
       },
     },
-    classroom: roomSubject.class,
+    classroom: roomSubject.class as unknown as ClassWNumber,
     teachers: [],
     coTeachers: [],
     ggMeetLink: roomSubject.gg_meet_link ? roomSubject.gg_meet_link : "",
@@ -715,7 +752,7 @@ export function db2SchoolDocument(
 ) {
   const formatted: SchoolDocument = {
     id: schoolDocument.id,
-    type: schoolDocument.type,
+    type: schoolDocument.type as SchoolDocumentType,
     code: schoolDocument.code,
     date: schoolDocument.date,
     subject: schoolDocument.subject,

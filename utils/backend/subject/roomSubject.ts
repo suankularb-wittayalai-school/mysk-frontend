@@ -25,6 +25,7 @@ import {
 import { Teacher } from "@/utils/types/person";
 import { SubjectListItem, TeacherSubjectItem } from "@/utils/types/subject";
 import { Database } from "@/utils/types/supabase";
+import { Class } from "@/utils/types/class";
 
 export async function getTeachingSubjectClasses(
   supabase: DatabaseClient,
@@ -97,7 +98,7 @@ export async function getTeachingSubjectClasses(
           },
         },
       },
-      classroom: roomSubject.class,
+      classroom: roomSubject.class as unknown as Pick<Class, "id" | "number">,
       teachers: roomSubject.teacher.map(
         (teacherID) => teachers.find((teacher) => teacherID === teacher.id)!
       ),
@@ -174,10 +175,14 @@ export async function getTeachingSubjects(
     data: subjects.map((subject) => ({
       id: subject.id,
       subject: subject,
-      classes: roomSubjects
-        .filter((roomSubject) => subject.id === roomSubject.subject.id)
-        .map((roomSubject) => roomSubject.class)
-        .sort((a, b) => a.number - b.number),
+      classes: (
+        roomSubjects
+          .filter((roomSubject) => subject.id === roomSubject.subject.id)
+          .map((roomSubject) => roomSubject.class) as unknown as Pick<
+          Class,
+          "id" | "number"
+        >[]
+      ).sort((a, b) => a.number - b.number),
     })),
     error: null,
   };
@@ -186,7 +191,7 @@ export async function getTeachingSubjects(
 /**
  * Generate Room Subjects from an array of Teacher Subject Items.
  *
- * @param supabase An Supabase client with proper permissions (either `useSupabaseClient` or `createServerSupabaseClient`).
+ * @param supabase An Supabase client with proper permissions (either `useSupabaseClient` or `createPagesServerClient`).
  * @param teachSubjects An array of subject-class connections for a teacher
  * @param teacherID The Supabase teacher ID of the user (not to be confused with person ID, citizen ID, user ID, Supabase user ID, or legacy teacher ID from the old MySK; those are clearly very different)
  *
@@ -203,7 +208,7 @@ export async function updateRoomSubjectsFromTeachSubjects(
   // to add
   const { data: existing, error: exisitingError } = await supabase
     .from("room_subjects")
-    .select("*, subject(id), class(id)")
+    .select("*, subject, class")
     .or(
       `subject.in.(${teachSubjects.map(
         (teachSubject) => teachSubject.id
@@ -231,14 +236,19 @@ export async function updateRoomSubjectsFromTeachSubjects(
   // the first rule of web development to never trust the client? What is this?
   // What are we doing??
 
+  // (@SiravitPhokeed on 17/07/2023)
+  // Funny how to best documented backend function is both a rant AND never
+  // actually used. That just about describes the state of the backend right
+  // now. Too bad!
+
   const modifiedExisting = existing.map((roomSubject) => {
     const relevantTeachSubject = teachSubjects.find(
       (teachSubject) =>
         // Check for matching subject
-        roomSubject.subject.id === teachSubject.id &&
+        roomSubject.subject === teachSubject.id &&
         // Check for matching class
         teachSubject.classes.find(
-          (classItem) => classItem.id === roomSubject.class.id
+          (classItem) => classItem.id === roomSubject.class
         )
     );
 
@@ -273,14 +283,14 @@ export async function updateRoomSubjectsFromTeachSubjects(
   // client-side list
   const teachSubjectsWithoutExisting = teachSubjects.map((teachSubject) => {
     const relevantExisting = modifiedExisting.filter(
-      (roomSubject) => teachSubject.id === roomSubject.subject.id
+      (roomSubject) => teachSubject.id === roomSubject.subject
     );
     return {
       ...teachSubject,
       classes: relevantExisting.length
         ? teachSubject.classes.filter((classItem) =>
             relevantExisting.find(
-              (roomSubject) => classItem.id !== roomSubject.class.id
+              (roomSubject) => classItem.id !== roomSubject.class
             )
           )
         : teachSubject.classes,
@@ -300,10 +310,10 @@ export async function updateRoomSubjectsFromTeachSubjects(
     .upsert(
       modifiedExisting.map((roomSubject) => ({
         id: roomSubject.id,
-        subject: roomSubject.subject.id,
+        subject: roomSubject.subject,
         teacher: roomSubject.teacher,
         coteacher: roomSubject.coteacher,
-        class: roomSubject.class.id,
+        class: roomSubject.class,
         year: roomSubject.year,
         semester: roomSubject.semester,
       }))
@@ -405,6 +415,7 @@ export async function deleteRoomSubject(
     .from("room_subjects")
     .delete()
     .eq("id", id)
+    .order("id")
     .limit(1);
 
   if (error) logError("deleteRoomSubject", error);

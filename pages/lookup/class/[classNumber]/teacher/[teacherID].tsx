@@ -1,5 +1,5 @@
 // External libraries
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 
@@ -65,7 +65,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   const classNumber = Number(params?.classNumber);
   const teacherID = Number(params?.teacherID);
 
-  const supabase = createServerSupabaseClient({
+  const supabase = createPagesServerClient({
     req: req as NextApiRequest,
     res: res as NextApiResponse,
   });

@@ -128,6 +128,7 @@ export async function createTeacher(
       teacher_id: teacher.teacherID.trim(),
     })
     .select("id")
+    .order("id")
     .limit(1)
     .single();
 
@@ -160,6 +161,7 @@ export async function deleteTeacher(
     .from("users")
     .select("id")
     .match({ teacher: teacher.id })
+    .order("id")
     .limit(1)
     .single();
 
@@ -178,6 +180,7 @@ export async function deleteTeacher(
     .delete()
     .match({ id: teacher.id })
     .select("person")
+    .order("id")
     .limit(1)
     .single();
 
@@ -264,6 +267,7 @@ export async function getClassAdvisorAt(
     .select("id, number")
     .match({ year: getCurrentAcademicYear() })
     .contains("advisors", [teacherDBID])
+    .order("id")
     .limit(1)
     .single();
 
@@ -322,6 +326,7 @@ export async function getTeacherFromPublicUser(
     .from("teacher")
     .select("* ,person(*), subject_group(*)")
     .match({ id: publicUser.teacher })
+    .order("id")
     .limit(1)
     .maybeSingle();
 

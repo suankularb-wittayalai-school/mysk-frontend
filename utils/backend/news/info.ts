@@ -81,6 +81,7 @@ export async function getInfo(
       "*, parent:news(title_th, title_en, description_th, description_en, image, old_url)"
     )
     .match({ id })
+    .order("id")
     .limit(1)
     .single();
 
@@ -168,6 +169,7 @@ export async function createInfo(
       old_url: form.oldURL,
     })
     .select("*")
+    .order("id")
     .limit(1)
     .single();
 
@@ -180,7 +182,7 @@ export async function createInfo(
   if (form.image) {
     const { error: imageError } = await uploadBanner(
       "add",
-      (news as Database["public"]["Tables"]["news"]["Row"]).id,
+      news.id,
       form.image
     );
     if (imageError) return { data: null, error: imageError };
@@ -191,9 +193,10 @@ export async function createInfo(
     .insert({
       body_th: form.bodyTH,
       body_en: form.bodyEN,
-      parent: (news as Database["public"]["Tables"]["news"]["Row"]).id,
+      parent: news.id,
     })
     .select("*, parent(*)")
+    .order("id")
     .limit(1)
     .single();
 
@@ -230,8 +233,9 @@ export async function updateInfo(
       body_th: form.bodyTH,
       body_en: form.bodyEN,
     })
-    .match({ id })
+    .eq("id", id)
     .select("*, parent(*)")
+    .order("id")
     .limit(1)
     .single();
 
@@ -249,10 +253,14 @@ export async function updateInfo(
       description_en: form.descEN,
       old_url: form.oldURL,
     })
-    .match({
-      id: updatedInfo!.parent.id,
-    })
+    .eq(
+      "id",
+      (
+        updatedInfo.parent as unknown as Database["public"]["Tables"]["news"]["Row"]
+      ).id
+    )
     .select("image")
+    .order("id")
     .limit(1)
     .single();
 
@@ -280,8 +288,9 @@ export async function deleteInfo(
   const { data: info, error: infoError } = await supabase
     .from("infos")
     .delete()
-    .match({ id })
-    .select("parent(id)")
+    .eq("id", id)
+    .select("parent")
+    .order("id")
     .limit(1)
     .single();
 
@@ -293,9 +302,7 @@ export async function deleteInfo(
   const { error: newsError } = await supabase
     .from("news")
     .delete()
-    .match({
-      id: (info as Database["public"]["Tables"]["infos"]["Row"]).parent.id,
-    });
+    .eq("id", info.parent);
 
   if (newsError) {
     console.error(newsError);

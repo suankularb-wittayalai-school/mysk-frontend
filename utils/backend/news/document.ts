@@ -140,6 +140,7 @@ export async function getSchoolDocsByID(
     .select("*")
     .order("date", { ascending: false })
     .match({ id, type })
+    .order("id")
     .limit(1)
     .single();
 
