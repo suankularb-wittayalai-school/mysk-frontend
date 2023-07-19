@@ -77,7 +77,6 @@ export function isInPeriod(
  * @returns A number from 1 to 10.
  */
 export function getCurrentPeriod(): number {
-  return 4;
   return isPast(new Date().setHours(periodTimes[10].hours, periodTimes[10].min))
     ? 0
     : Math.floor(
