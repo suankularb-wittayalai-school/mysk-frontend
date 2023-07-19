@@ -1,6 +1,8 @@
 // External libraries
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 
+import { LayoutGroup, motion } from "framer-motion";
+
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import Head from "next/head";
 
@@ -16,19 +18,18 @@ import {
   Header,
   MaterialIcon,
   Search,
-  Section,
+  transition,
+  useAnimationConfig,
 } from "@suankularb-components/react";
 
 // Internal components
 import MySKPageHeader from "@/components/common/MySKPageHeader";
 import Schedule from "@/components/schedule/Schedule";
+import ScheduleAtAGlance from "@/components/schedule/ScheduleAtAGlance";
 import SubjectList from "@/components/subject/SubjectList";
 
 // Backend
-import {
-  getClassIDFromNumber,
-  getClassFromUser,
-} from "@/utils/backend/classroom/classroom";
+import { getClassFromUser } from "@/utils/backend/classroom/classroom";
 import { getSchedule } from "@/utils/backend/schedule/schedule";
 import { getSubjectList } from "@/utils/backend/subject/roomSubject";
 
@@ -46,11 +47,17 @@ import { useLocale } from "@/utils/hooks/i18n";
 const ScheduleSection: FC<{ schedule: ScheduleType }> = ({ schedule }) => {
   const { t } = useTranslation("learn");
 
+  const { duration, easing } = useAnimationConfig();
+
   return (
-    <Section>
+    <motion.section
+      className="skc-section"
+      layout="position"
+      transition={transition(duration.medium4, easing.standard)}
+    >
       <Header>{t("schedule")}</Header>
       <Schedule schedule={schedule} role="student" />
-    </Section>
+    </motion.section>
   );
 };
 
@@ -60,10 +67,16 @@ const SubjectListSection: FC<{ subjectList: SubjectListItem[] }> = ({
   const { t } = useTranslation("schedule");
   const locale = useLocale();
 
+  const { duration, easing } = useAnimationConfig();
+
   const [query, setQuery] = useState<string>("");
 
   return (
-    <Section>
+    <motion.section
+      className="skc-section"
+      layout="position"
+      transition={transition(duration.medium4, easing.standard)}
+    >
       <Columns columns={3} className="!items-end">
         <Header className="md:col-span-2">{t("subjectList.title")}</Header>
         <Search
@@ -74,7 +87,7 @@ const SubjectListSection: FC<{ subjectList: SubjectListItem[] }> = ({
         />
       </Columns>
       <SubjectList {...{ subjectList, query }} />
-    </Section>
+    </motion.section>
   );
 };
 
@@ -94,8 +107,11 @@ const LearnPage: CustomPage<{
         icon={<MaterialIcon icon="school" />}
       />
       <ContentLayout>
-        <ScheduleSection schedule={schedule} />
-        <SubjectListSection subjectList={subjectList} />
+        <LayoutGroup>
+          <ScheduleAtAGlance schedule={schedule} role="student" />
+          <ScheduleSection schedule={schedule} />
+          <SubjectListSection subjectList={subjectList} />
+        </LayoutGroup>
       </ContentLayout>
     </>
   );
@@ -117,13 +133,13 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   const { data: classItem, error } = await getClassFromUser(
     supabase,
-    session!.user
+    session!.user,
   );
   if (error) return { notFound: true };
   const { data: schedule } = await getSchedule(
     supabase,
     "student",
-    classItem!.id
+    classItem!.id,
   );
   const { data: subjectList } = await getSubjectList(supabase, classItem!.id);
 

@@ -4,19 +4,18 @@ import { LangCode } from "@/utils/types/common";
 export function getLocaleYear(
   locale: LangCode,
   year: number,
-  fromType?: "AD" | "BE"
+  fromType?: "AD" | "BE",
 ): number {
-  if (fromType == "BE") {
-    // From BE to AD
-    if (locale == "en-US") return year - 543;
-    // From BE to BE
-    else return year;
-  } else {
-    // From AD to AD
-    if (locale == "en-US") return year;
-    // From AD to BE
-    else return year + 543;
-  }
+  return (
+    year +
+    // From BE to AD (year - 543)
+    (fromType === "BE" && locale === "en-US"
+      ? -543
+      : // From AD to BE (year + 543)
+      fromType === "AD" && locale === "th"
+      ? 543
+      : 0)
+  );
 }
 
 export function getCurrentSemester(): 1 | 2 {

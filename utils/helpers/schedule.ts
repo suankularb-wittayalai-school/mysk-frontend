@@ -49,7 +49,7 @@ export function isInPeriod(
   date: Date,
   periodDay: Date,
   periodStart: number,
-  periodDuration: number
+  periodDuration: number,
 ) {
   return isWithinInterval(date, {
     start: new Date(
@@ -57,16 +57,16 @@ export function isInPeriod(
         periodTimes[periodStart - 1].hours,
         periodTimes[periodStart - 1].min,
         0,
-        0
-      )
+        0,
+      ),
     ),
     end: new Date(
       periodDay.setHours(
         periodTimes[periodStart + periodDuration - 1].hours,
         periodTimes[periodStart + periodDuration - 1].min,
         0,
-        0
-      )
+        0,
+      ),
     ),
   });
 }
@@ -82,8 +82,8 @@ export function getCurrentPeriod(): number {
     : Math.floor(
         differenceInMinutes(
           new Date(),
-          new Date().setHours(periodTimes[0].hours, periodTimes[0].min)
-        ) / 50
+          new Date().setHours(periodTimes[0].hours, periodTimes[0].min),
+        ) / 50,
       ) + 1;
 }
 
@@ -107,9 +107,22 @@ export function isSchoolInSessionNow(): "before" | "in-session" | "after" {
     : "in-session";
 }
 
+export function getTodaySetToPeriodTime(
+  periodNumber: number,
+  edge?: "start" | "end",
+): Date {
+  return new Date(
+    new Date().setHours(
+      periodTimes[periodNumber + (edge === "end" ? 0 : -1)].hours,
+      periodTimes[periodNumber + (edge === "end" ? 0 : -1)].min,
+      0,
+    ),
+  );
+}
+
 export function arePeriodsOverlapping(
   period1: { day?: Day; startTime: number; duration: number },
-  period2: { day?: Day; startTime: number; duration: number }
+  period2: { day?: Day; startTime: number; duration: number },
 ): boolean {
   // If the Periods are not on the same day, they are not overlapping
   if (period1.day && period2.day && period1.day != period2.day) return false;
@@ -182,7 +195,7 @@ export function periodDurationToWidth(duration: number) {
 export function getSubjectName(
   duration: SchedulePeriod["duration"],
   subjectName: Subject["name"],
-  locale: LangCode
+  locale: LangCode,
 ) {
   return duration < 2
     ? // If short period, use short name

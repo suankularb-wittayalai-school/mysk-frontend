@@ -29,12 +29,14 @@ import {
   Header,
   MaterialIcon,
   Search,
-  Section,
+  transition,
+  useAnimationConfig,
 } from "@suankularb-components/react";
 
 // Internal components
 import MySKPageHeader from "@/components/common/MySKPageHeader";
 import Schedule from "@/components/schedule/Schedule";
+import ScheduleAtAGlance from "@/components/schedule/ScheduleAtAGlance";
 import TeachingSubjectCard from "@/components/subject/TeachingSubjectCard";
 
 // Backend
@@ -54,6 +56,7 @@ import { useLocale } from "@/utils/hooks/i18n";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Schedule as ScheduleType } from "@/utils/types/schedule";
 import { SubjectWNameAndCode, TeacherSubjectItem } from "@/utils/types/subject";
+import { LayoutGroup, motion } from "framer-motion";
 
 /**
  * Displays the Teacher’s Schedule and relevant related information.
@@ -71,11 +74,17 @@ const ScheduleSection: FC<{
 }> = ({ schedule, subjectsInCharge, teacherID }) => {
   const { t } = useTranslation("teach");
 
+  const { duration, easing } = useAnimationConfig();
+
   return (
-    <Section>
+    <motion.section
+      className="skc-section"
+      layout="position"
+      transition={transition(duration.medium4, easing.standard)}
+    >
       <Header>{t("schedule.title")}</Header>
       <Schedule {...{ schedule, subjectsInCharge, teacherID }} role="teacher" />
-    </Section>
+    </motion.section>
   );
 };
 
@@ -92,10 +101,16 @@ const SubjectsSection: FC<{
   const locale = useLocale();
   const { t } = useTranslation("teach");
 
+  const { duration, easing } = useAnimationConfig();
+
   const [globalFilter, setGlobalFilter] = useState<string>("");
 
   return (
-    <Section className="!gap-y-3">
+    <motion.section
+      className="skc-section !gap-y-3"
+      layout="position"
+      transition={transition(duration.medium4, easing.standard)}
+    >
       <Columns columns={3} className="!items-end">
         <Header className="md:col-span-2">{t("subjects.title")}</Header>
         <Search
@@ -112,13 +127,13 @@ const SubjectsSection: FC<{
               subject.subject.name.th.name.includes(globalFilter) ||
               subject.subject.name["en-US"]?.name.includes(globalFilter) ||
               subject.subject.code["en-US"].includes(globalFilter) ||
-              subject.subject.code["en-US"].includes(globalFilter)
+              subject.subject.code["en-US"].includes(globalFilter),
           )
           .map((subject) => (
             <TeachingSubjectCard key={subject.id} subject={subject} />
           ))}
       </Columns>
-    </Section>
+    </motion.section>
   );
 };
 
@@ -151,8 +166,11 @@ const TeachPage: CustomPage<{
         icon={<MaterialIcon icon="school" />}
       />
       <ContentLayout>
-        <ScheduleSection {...{ schedule, subjectsInCharge, teacherID }} />
-        <SubjectsSection subjects={teachingSubjects} />
+        <LayoutGroup>
+          <ScheduleAtAGlance schedule={schedule} role="teacher" />
+          <ScheduleSection {...{ schedule, subjectsInCharge, teacherID }} />
+          <SubjectsSection subjects={teachingSubjects} />
+        </LayoutGroup>
       </ContentLayout>
     </>
   );
@@ -174,7 +192,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   const { data: metadata, error: metadataError } = await getUserMetadata(
     supabase,
-    session!.user.id
+    session!.user.id,
   );
   if (metadataError) console.error(metadataError);
 
@@ -190,11 +208,11 @@ export const getServerSideProps: GetServerSideProps = async ({
   const { data: schedule } = await getSchedule(supabase, "teacher", teacherID);
   const { data: subjectsInCharge } = await getSubjectsInCharge(
     supabase,
-    teacherID
+    teacherID,
   );
   const { data: teachingSubjects } = await getTeachingSubjects(
     supabase,
-    teacherID
+    teacherID,
   );
 
   return {
