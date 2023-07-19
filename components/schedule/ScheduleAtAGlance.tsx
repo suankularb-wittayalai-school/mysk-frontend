@@ -80,19 +80,19 @@ const ScheduleAtAGlance: FC<{
         ),
         now,
       )
-    : 0;
+    : null;
   const minutesTilImmediateNext = immediateNextPeriod?.content.length
     ? differenceInMinutes(
         getTodaySetToPeriodTime(immediateNextPeriod.startTime),
         now,
       )
-    : 0;
+    : null;
   const minutesTilTodayNext = todayNextPeriod?.content.length
     ? differenceInMinutes(
         getTodaySetToPeriodTime(todayNextPeriod.startTime),
         now,
       )
-    : 0;
+    : null;
 
   // A percentage of time since the start of the class relative to the total
   // class duration
@@ -115,7 +115,7 @@ const ScheduleAtAGlance: FC<{
     role === "teacher"
       ? // If the teacher is free and it’s 5 minutes before the next class
         // starts, they are instructed to travel
-        immediateNextPeriod?.content.length &&
+        minutesTilImmediateNext &&
         minutesTilImmediateNext >= 0 &&
         minutesTilImmediateNext <= 5
         ? "teach-travel"
@@ -126,6 +126,7 @@ const ScheduleAtAGlance: FC<{
         : // If the teacher is teaching and it’s 10 minutes until it’s over,
         //   they are intructed to wrap the class up
         currentPeriod?.content.length &&
+          minutesTilEnd &&
           minutesTilEnd >= 0 &&
           minutesTilEnd <= 10
         ? "teach-wrap-up"
@@ -135,7 +136,9 @@ const ScheduleAtAGlance: FC<{
         : "none"
       : role === "student"
       ? // If it’s 10 minutes before the next class, display that class
-        minutesTilImmediateNext >= 0 && minutesTilImmediateNext <= 10
+        minutesTilImmediateNext &&
+        minutesTilImmediateNext >= 0 &&
+        minutesTilImmediateNext <= 10
         ? "learn-next"
         : // If the student is in class, display that class
         currentPeriod?.content.length
@@ -146,6 +149,8 @@ const ScheduleAtAGlance: FC<{
         ? "lunch"
         : "none"
       : "none";
+
+  // console.log(minutesTilImmediateNext);
 
   return (
     <AnimatePresence initial={false}>
@@ -185,11 +190,11 @@ const ScheduleAtAGlance: FC<{
               {/* Countdown */}
               <GlanceCountdown
                 minutesLeft={
-                  ["teach-travel", "teach-future"].includes(displayType)
+                  (["teach-travel", "teach-future"].includes(displayType)
                     ? minutesTilTodayNext
                     : ["teach-next", "learn-next"].includes(displayType)
                     ? minutesTilImmediateNext
-                    : minutesTilEnd
+                    : minutesTilEnd) || 0
                 }
               />
 
