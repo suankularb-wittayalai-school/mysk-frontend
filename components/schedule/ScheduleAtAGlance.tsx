@@ -84,18 +84,21 @@ const ScheduleAtAGlance: FC<{
           "end",
         ),
         now,
+        { roundingMethod: "ceil" },
       )
     : null;
   const minutesTilImmediateNext = immediateNextPeriod?.content.length
     ? differenceInMinutes(
         getTodaySetToPeriodTime(immediateNextPeriod.startTime),
         now,
+        { roundingMethod: "ceil" },
       )
     : null;
   const minutesTilTodayNext = todayNextPeriod?.content.length
     ? differenceInMinutes(
         getTodaySetToPeriodTime(todayNextPeriod.startTime),
         now,
+        { roundingMethod: "ceil" },
       )
     : null;
 
