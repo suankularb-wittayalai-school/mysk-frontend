@@ -1,6 +1,7 @@
 // Imports
 import HoverList from "@/components/person/HoverList";
 import GlanceCountdown from "@/components/schedule/GlanceCountdown";
+import { range } from "@/utils/helpers/array";
 import { cn } from "@/utils/helpers/className";
 import { getLocaleObj, getLocaleString } from "@/utils/helpers/i18n";
 import {
@@ -43,9 +44,13 @@ const ScheduleAtAGlance: FC<{
     return () => clearInterval(interval);
   }, []);
 
-  // Determine the current and next period every second
+  // Determine relevant periods every second
   const periodNumber = getCurrentPeriod();
-  const currentPeriod = schedule.content[now.getDay() - 1].content.find(
+  const todayRow = range(5, 1).includes(now.getDay())
+    ? schedule.content[now.getDay() - 1].content
+    : [];
+
+  const currentPeriod = todayRow.find(
     (period) =>
       period.content.length &&
       // The period starts before or at the current period
@@ -55,11 +60,11 @@ const ScheduleAtAGlance: FC<{
       period.startTime + period.duration > periodNumber,
   );
 
-  const immediateNextPeriod = schedule.content[now.getDay() - 1].content.find(
+  const immediateNextPeriod = todayRow.find(
     // The period starts at the next period
     (period) => periodNumber + 1 === period.startTime,
   );
-  const todayNextPeriod = schedule.content[now.getDay() - 1].content.filter(
+  const todayNextPeriod = todayRow.filter(
     // The period starts at any period after the current
     (period) => period.content.length && period.startTime > periodNumber,
   )[0];
