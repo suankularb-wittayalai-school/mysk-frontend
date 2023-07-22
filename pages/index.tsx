@@ -13,6 +13,7 @@
  */
 
 // Imports
+import EmailOTPDialog from "@/components/account/EmailOTPDialog";
 import MultiSchemeImage from "@/components/common/MultiSchemeImage";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import MySKDark from "@/public/images/brand/mysk-dark.svg";
@@ -36,7 +37,7 @@ import {
   Snackbar,
   TextField,
   transition,
-  useAnimationConfig
+  useAnimationConfig,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import va from "@vercel/analytics";
@@ -55,6 +56,7 @@ import { FC, useContext, useState } from "react";
 const LogInSection: FC = () => {
   const locale = useLocale();
   const { t } = useTranslation("account");
+  const { t: tx } = useTranslation("common");
 
   const router = useRouter();
   const { setSnackbar } = useContext(SnackbarContext);
@@ -66,15 +68,22 @@ const LogInSection: FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // Datebase interaction
+  const emailIsValid = /@(student\.)?sk\.ac\.th$/.test(email);
+  const passwordIsValid = password.length >= 6;
+
+  // Dialog control
+  const [showAskOTP, setShowAskOTP] = useState(false);
+
+  // Database interaction
   const supabase = useSupabaseClient();
-  const [loading, toggleLoading] = useToggle();
+  const [otpLoading, toggleOTPLoading] = useToggle();
+  const [passwordLoading, togglePasswordLoading] = useToggle();
 
   /**
    * Logs the user in with email and password.
    */
   async function handlePasswordLogIn() {
-    if (!/@(student\.)?sk\.ac\.th$/.test(email) || password.length < 6) {
+    if (!(emailIsValid && passwordIsValid)) {
       setSnackbar(<Snackbar>{t("snackbar.invalidCreds")}</Snackbar>);
       return;
     }
@@ -95,7 +104,34 @@ const LogInSection: FC = () => {
       if (!session || error) return false;
       await router.push("/learn");
       return true;
-    }, toggleLoading);
+    }, togglePasswordLoading);
+  }
+
+  /**
+   * Sends an OTP to the user’s email address.
+   */
+  async function handleRequestOTP() {
+    if (!emailIsValid) {
+      setSnackbar(<Snackbar>{tx("snackbar.formInvalid")}</Snackbar>);
+      return;
+    }
+
+    withLoading(async () => {
+      const { error } = await supabase.auth.signInWithOtp({ email });
+
+      // Track event
+      va.track("Request Email OTP");
+
+      if (error) {
+        setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
+        return false;
+      }
+
+      // Ask the user for the OTP
+      setShowAskOTP(true);
+
+      return true;
+    }, toggleOTPLoading);
   }
 
   return (
@@ -152,7 +188,14 @@ const LogInSection: FC = () => {
             value={email}
             onChange={setEmail}
             locale={locale}
-            inputAttr={{ type: "email" }}
+            inputAttr={{
+              type: "email",
+              onKeyUp: (event) =>
+                event.key === "Enter" &&
+                (password.length >= 6
+                  ? handlePasswordLogIn()
+                  : setShowPasswordField(true)),
+            }}
           />
         </motion.div>
         <TextField<string>
@@ -161,7 +204,11 @@ const LogInSection: FC = () => {
           value={password}
           onChange={setPassword}
           locale={locale}
-          inputAttr={{ type: "password" }}
+          inputAttr={{
+            id: "field-password",
+            type: "password",
+            onKeyUp: (event) => event.key === "Enter" && handlePasswordLogIn(),
+          }}
           className={!showPasswordField ? "!hidden" : ""}
         />
       </motion.div>
@@ -181,7 +228,7 @@ const LogInSection: FC = () => {
               <MaterialIcon icon="password" />
             )
           }
-          loading={loading || undefined}
+          loading={passwordLoading || undefined}
           onClick={
             showPasswordField || password.length >= 6
               ? handlePasswordLogIn
@@ -191,10 +238,20 @@ const LogInSection: FC = () => {
           {showPasswordField ? "Log in" : "Continue with password"}
         </Button>
         {!showPasswordField && (
-          <Button appearance="tonal" icon={<MaterialIcon icon="send" />}>
+          <Button
+            appearance="tonal"
+            icon={<MaterialIcon icon="send" />}
+            loading={otpLoading || undefined}
+            onClick={handleRequestOTP}
+          >
             Send OTP
           </Button>
         )}
+        <EmailOTPDialog
+          open={showAskOTP}
+          onClose={() => setShowAskOTP(false)}
+          email={email}
+        />
       </motion.div>
     </motion.section>
   );
