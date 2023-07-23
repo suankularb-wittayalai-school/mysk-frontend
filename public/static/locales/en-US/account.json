@@ -144,12 +144,15 @@
     "emailOTP": {
       "title": "OTP sent to your email",
       "desc": "We’ve sent a 6-digit one-time password to {{email}}. Enter the code to log in.",
+      "form": {
+        "otp": "6-digit OTP"
+      },
       "snackbar": {
         "otpRequestExpired": "Your OTP has expired; request a new one",
         "incorrectOTP": "Incorrect OTP"
       },
       "action": {
-        "cancel": "ยกเลิก"
+        "cancel": "Cancel"
       }
     },
     "changePassword": {

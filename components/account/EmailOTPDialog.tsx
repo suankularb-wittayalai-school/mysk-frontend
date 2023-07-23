@@ -99,7 +99,7 @@ const EmailOTPDialog: DialogComponent<{
       <DialogContent className="mx-6">
         <TextField<string>
           appearance="outlined"
-          label="6-digit OTP"
+          label={t("form.otp")}
           disabled={loading}
           value={token}
           // Only allow numbers
