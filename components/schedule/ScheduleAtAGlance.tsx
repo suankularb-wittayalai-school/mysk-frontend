@@ -3,6 +3,7 @@ import HoverList from "@/components/person/HoverList";
 import GlanceCountdown from "@/components/schedule/GlanceCountdown";
 import { range } from "@/utils/helpers/array";
 import { cn } from "@/utils/helpers/className";
+import { useNow } from "@/utils/helpers/date";
 import { getLocaleObj, getLocaleString } from "@/utils/helpers/i18n";
 import {
   getCurrentPeriod,
@@ -19,7 +20,7 @@ import {
 import { differenceInMinutes, differenceInSeconds } from "date-fns";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { Trans, useTranslation } from "next-i18next";
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 
 /**
  * A glanceable banner dynamically updated by the current and upcoming schedule
@@ -36,13 +37,8 @@ const ScheduleAtAGlance: FC<{
   const { t } = useTranslation("schedule", { keyPrefix: "atAGlance" });
 
   const { duration, easing } = useAnimationConfig();
-
-  // Time keeping: update the current time every second
-  const [now, setNow] = useState<Date>(new Date());
-  useEffect(() => {
-    const interval = setInterval(() => setNow(new Date()), 1000);
-    return () => clearInterval(interval);
-  }, []);
+  
+  const now = useNow();
 
   // Determine relevant periods every second
   const periodNumber = getCurrentPeriod();
