@@ -119,44 +119,45 @@ const ScheduleAtAGlance: FC<{
     | "teach-wrap-up"
     | "teach-travel"
     | "teach-future"
-    | "none" =
-    role === "teacher"
-      ? // If the teacher is free and it’s 5 minutes before the next class
-        // starts, they are instructed to travel
-        minutesTilImmediateNext &&
-        minutesTilImmediateNext >= 0 &&
-        minutesTilImmediateNext <= 5
-        ? "teach-travel"
-        : // If the teacher is free and the next class is far away, show a
-        //   countdown
-        todayNextPeriod?.content.length && !currentPeriod?.content.length
-        ? "teach-future"
-        : // If the teacher is teaching and it’s 10 minutes until it’s over,
-        //   they are intructed to wrap the class up
-        currentPeriod?.content.length &&
-          minutesTilEnd &&
-          minutesTilEnd >= 0 &&
-          minutesTilEnd <= 10
-        ? "teach-wrap-up"
-        : // If the teacher is teaching, display the current class
-        currentPeriod?.content.length
-        ? "teach-current"
-        : "none"
-      : role === "student"
-      ? // If it’s 10 minutes before the next class, display that class
-        minutesTilImmediateNext &&
-        minutesTilImmediateNext >= 0 &&
-        minutesTilImmediateNext <= 10
-        ? "learn-next"
-        : // If the student is in class, display that class
-        currentPeriod?.content.length
-        ? "learn-current"
-        : // If the student is free and it’s a lunch period, display that it’s
-        //   lunch
-        [4, 5].includes(periodNumber)
-        ? "lunch"
-        : "none"
-      : "none";
+    | "none" = !todayRow.length
+    ? "none"
+    : role === "teacher"
+    ? // If the teacher is free and it’s 5 minutes before the next class
+      // starts, they are instructed to travel
+      minutesTilImmediateNext &&
+      minutesTilImmediateNext >= 0 &&
+      minutesTilImmediateNext <= 5
+      ? "teach-travel"
+      : // If the teacher is free and the next class is far away, show a
+      //   countdown
+      todayNextPeriod?.content.length && !currentPeriod?.content.length
+      ? "teach-future"
+      : // If the teacher is teaching and it’s 10 minutes until it’s over,
+      //   they are intructed to wrap the class up
+      currentPeriod?.content.length &&
+        minutesTilEnd &&
+        minutesTilEnd >= 0 &&
+        minutesTilEnd <= 10
+      ? "teach-wrap-up"
+      : // If the teacher is teaching, display the current class
+      currentPeriod?.content.length
+      ? "teach-current"
+      : "none"
+    : role === "student"
+    ? // If it’s 10 minutes before the next class, display that class
+      minutesTilImmediateNext &&
+      minutesTilImmediateNext >= 0 &&
+      minutesTilImmediateNext <= 10
+      ? "learn-next"
+      : // If the student is in class, display that class
+      currentPeriod?.content.length
+      ? "learn-current"
+      : // If the student is free and it’s a lunch period, display that it’s
+      //   lunch
+      [4, 5].includes(periodNumber)
+      ? "lunch"
+      : "none"
+    : "none";
 
   // console.log(minutesTilImmediateNext);
 
