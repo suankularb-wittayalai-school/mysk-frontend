@@ -69,7 +69,7 @@ const LogInSection: FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const emailIsValid = /@(student\.)?sk\.ac\.th$/.test(email);
+  const emailIsValid = /.+@(student\.)?sk\.ac\.th$/.test(email);
   const passwordIsValid = password.length >= 6;
 
   // Dialog control
@@ -195,6 +195,7 @@ const LogInSection: FC = () => {
             label="School email"
             helperMsg="Use the email ending in sk.ac.th"
             value={email}
+            error={email !== "" && !emailIsValid}
             onChange={setEmail}
             locale={locale}
             inputAttr={{
