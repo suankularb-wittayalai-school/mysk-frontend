@@ -1,5 +1,6 @@
-// Types
+// Imports
 import { LangCode } from "@/utils/types/common";
+import { useEffect, useState } from "react";
 
 export function getLocaleYear(
   locale: LangCode,
@@ -29,4 +30,16 @@ export function getCurrentAcademicYear(): number {
   const year = new Date().getFullYear();
   if (month <= 4) return year - 1;
   else return year;
+}
+
+export function useNow(updateFrequency?: number): Date {
+  const [now, setNow] = useState(new Date());
+  useEffect(() => {
+    const interval = setInterval(
+      () => setNow(new Date()),
+      updateFrequency || 1000,
+    );
+    return () => clearInterval(interval);
+  }, []);
+  return now;
 }
