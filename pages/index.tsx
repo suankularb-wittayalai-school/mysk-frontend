@@ -43,7 +43,7 @@ import {
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import va from "@vercel/analytics";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
-import { Trans, useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -56,7 +56,7 @@ import { FC, useContext, useState } from "react";
  */
 const LogInSection: FC = () => {
   const locale = useLocale();
-  const { t } = useTranslation("account");
+  const { t } = useTranslation("landing", { keyPrefix: "main" });
   const { t: tx } = useTranslation("common");
 
   const router = useRouter();
@@ -128,10 +128,7 @@ const LogInSection: FC = () => {
           logError("handleRequestOTP", error);
           if (error.status === 429)
             setSnackbar(
-              <Snackbar>
-                You’ve made too many OTP requests; we’ve temporarily disabled
-                OTP for you as a security measure
-              </Snackbar>,
+              <Snackbar>{t("snackbar.tooManyOTPRequests")}</Snackbar>,
             );
           else setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
           return false;
@@ -177,10 +174,10 @@ const LogInSection: FC = () => {
         <MultiSchemeImage
           srcLight={MySKLight}
           srcDark={MySKDark}
-          alt="MySK logo"
+          alt={t("logoAlt")}
           className="[&>img]:w-16"
         />
-        <h2 className="skc-headline-medium">Log in to MySK</h2>
+        <h2 className="skc-headline-medium">{t("title")}</h2>
       </motion.div>
 
       {/* Form */}
@@ -192,8 +189,8 @@ const LogInSection: FC = () => {
         <motion.div layout="position">
           <TextField<string>
             appearance="outlined"
-            label="School email"
-            helperMsg="Use the email ending in sk.ac.th"
+            label={t("logIn.form.email")}
+            helperMsg={t("logIn.form.email_helper")}
             value={email}
             error={email !== "" && !emailIsValid}
             onChange={setEmail}
@@ -210,7 +207,7 @@ const LogInSection: FC = () => {
         </motion.div>
         <TextField<string>
           appearance="outlined"
-          label="Password"
+          label={t("logIn.form.password")}
           value={password}
           onChange={setPassword}
           locale={locale}
@@ -219,7 +216,7 @@ const LogInSection: FC = () => {
             type: "password",
             onKeyUp: (event) => event.key === "Enter" && handlePasswordLogIn(),
           }}
-          className={!showPasswordField ? "!hidden" : ""}
+          className={!showPasswordField ? "!sr-only" : ""}
         />
       </motion.div>
 
@@ -245,7 +242,9 @@ const LogInSection: FC = () => {
               : () => setShowPasswordField(true)
           }
         >
-          {showPasswordField ? "Log in" : "Continue with password"}
+          {showPasswordField
+            ? t("logIn.action.logIn")
+            : t("logIn.action.continueWithPassword")}
         </Button>
         {!showPasswordField && (
           <Button
@@ -254,7 +253,7 @@ const LogInSection: FC = () => {
             loading={otpLoading || undefined}
             onClick={handleRequestOTP}
           >
-            Send OTP
+            {t("logIn.action.sendOTP")}
           </Button>
         )}
         <EmailOTPDialog
@@ -275,11 +274,15 @@ const LogInSection: FC = () => {
  */
 const PatchNotesSection: FC = () => {
   const locale = useLocale();
+  const [visibleLocale, setVisibleLocale] = useState<LangCode>(locale);
+  const { t } = useTranslation("landing", { keyPrefix: "aside" });
 
   const { setPreference } = usePreferences();
   const refreshProps = useRefreshProps();
 
   function changeLocaleTo(locale: LangCode) {
+    // Give immediate visual feedback
+    setVisibleLocale(locale);
     // Remember the preference
     setPreference("locale", locale);
     // Redirect to the new language
@@ -289,17 +292,21 @@ const PatchNotesSection: FC = () => {
   return (
     <>
       {/* Language Switcher */}
-      <SegmentedButton alt="Language / ภาษา" full>
+      <SegmentedButton
+        alt="Language / ภาษา"
+        full
+        className="mb-2 rounded-full bg-surface"
+      >
         <Button
           appearance="outlined"
-          selected={locale === "th"}
+          selected={visibleLocale === "th"}
           onClick={() => changeLocaleTo("th")}
         >
           ภาษาไทย
         </Button>
         <Button
           appearance="outlined"
-          selected={locale === "en-US"}
+          selected={visibleLocale === "en-US"}
           onClick={() => changeLocaleTo("en-US")}
         >
           English
@@ -307,20 +314,19 @@ const PatchNotesSection: FC = () => {
       </SegmentedButton>
 
       {/* Patch notes */}
-      <article aria-label="Patch notes" className="contents">
+      <article aria-label={t("patchNotes.alt")} className="contents">
         <header>
           <h2 className="skc-title-small text-on-surface-variant">
-            MySK {process.env.NEXT_PUBLIC_VERSION}
+            {t("patchNotes.overline", {
+              version: process.env.NEXT_PUBLIC_VERSION || "Preview",
+            })}
           </h2>
-          <p className="skc-title-large">Schedule just got more helpful</p>
+          <p className="skc-title-large">{t("patchNotes.title")}</p>
         </header>
         <ul className="list-disc pl-6">
-          <li>
-            Schedule at a Glance shows the most relevant information from your
-            schedule.
-          </li>
-          <li>Find any teacher’s schedule with Lookup.</li>
-          <li>Email OTP—a new, easier way to log in without a password.</li>
+          <li>{t("patchNotes.list.1")}</li>
+          <li>{t("patchNotes.list.2")}</li>
+          <li>{t("patchNotes.list.3")}</li>
         </ul>
       </article>
 
@@ -331,7 +337,7 @@ const PatchNotesSection: FC = () => {
           target="_blank"
           className="link"
         >
-          Patch notes
+          {t("action.patchNotes")}
         </a>
         &nbsp;&nbsp;
         <a
@@ -340,46 +346,10 @@ const PatchNotesSection: FC = () => {
           rel="noreferrer"
           className="link"
         >
-          Report issue
+          {t("action.report")}
         </a>
       </p>
     </>
-  );
-};
-
-/**
- * Credits to supervisors, developers, and organizations involved in creating
- * and maintaining MySK.
- *
- * @returns A `<div>`.
- */
-const CreditsSection: FC = () => {
-  const { t } = useTranslation("landing", { keyPrefix: "aside.credits" });
-
-  return (
-    <motion.div
-      layout="position"
-      className="skc-body-small flex flex-col gap-2 text-on-surface-variant"
-    >
-      <p>{t("supervisors")}</p>
-      <p>{t("developers")}</p>
-      <p>
-        <Trans
-          i18nKey="aside.credits.translations"
-          ns="landing"
-          components={{
-            a: (
-              <a
-                href="https://www.instagram.com/sk.elc/"
-                target="_blank"
-                rel="noreferrer"
-                className="link"
-              />
-            ),
-          }}
-        />
-      </p>
-    </motion.div>
   );
 };
 
@@ -424,14 +394,14 @@ const LandingPage: CustomPage = () => {
       <ContentLayout className="overflow-hidden md:overflow-visible">
         <Columns columns={6}>
           <div
-            className="col-span-2 mx-4 flex flex-col gap-6 sm:col-span-4
-              sm:mx-0 md:col-start-2"
+            className="col-span-2 mx-4 flex min-h-[calc(100vh-4rem)] flex-col
+              gap-6 supports-[height:100svh]:min-h-[calc(100svh-4rem)]
+              sm:col-span-4 sm:mx-0 md:col-start-2"
           >
             <LayoutGroup>
-              <div
-                className="flex flex-col justify-center
-                  sm:min-h-[calc(100vh-10.5rem)]"
-              >
+              {/* Main section (centers the card) */}
+              <div className="flex grow flex-col justify-center">
+                {/* Card */}
                 <motion.div
                   layout
                   transition={transition(duration.medium4, easing.standard)}
@@ -440,6 +410,7 @@ const LandingPage: CustomPage = () => {
                     [&>*]:p-6 [&>:first-child]:md:pr-3 [&>:last-child]:md:pl-3"
                   style={{ borderRadius: 28 }}
                 >
+                  {/* Log in Section */}
                   <motion.section
                     layout
                     transition={transition(duration.medium4, easing.standard)}
@@ -447,6 +418,8 @@ const LandingPage: CustomPage = () => {
                   >
                     <LogInSection />
                   </motion.section>
+
+                  {/* Patch Notes Section */}
                   <motion.section
                     layout="position"
                     transition={transition(duration.medium4, easing.standard)}
@@ -456,7 +429,14 @@ const LandingPage: CustomPage = () => {
                   </motion.section>
                 </motion.div>
               </div>
-              <CreditsSection />
+
+              {/* Credits */}
+              <motion.p
+                layout="position"
+                className="skc-body-small text-on-surface-variant"
+              >
+                {t("credits")}
+              </motion.p>
             </LayoutGroup>
           </div>
         </Columns>

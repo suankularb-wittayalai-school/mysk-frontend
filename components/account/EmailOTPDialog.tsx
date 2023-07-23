@@ -19,6 +19,7 @@ import va from "@vercel/analytics";
 import { differenceInSeconds } from "date-fns";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "next-i18next";
 
 /**
  * A Dialog asking for the OTP after the email was sent.
@@ -32,6 +33,8 @@ import { useContext, useEffect, useMemo, useState } from "react";
 const EmailOTPDialog: DialogComponent<{
   email: string;
 }> = ({ open, onClose, email }) => {
+  const { t } = useTranslation("account", { keyPrefix: "dialog.emailOTP" });
+
   const router = useRouter();
   const { setSnackbar } = useContext(SnackbarContext);
 
@@ -54,9 +57,9 @@ const EmailOTPDialog: DialogComponent<{
     if (open) setIsExpired(false);
   }, [open]);
   useEffect(() => {
-    if (!isExpired && differenceInSeconds(now, requestTime) >= 60) {
+    if (open && !isExpired && differenceInSeconds(now, requestTime) >= 60) {
       onClose();
-      setSnackbar(<Snackbar>Your OTP has expired; request a new one</Snackbar>);
+      setSnackbar(<Snackbar>{t("snackbar.otpRequestExpired")}</Snackbar>);
       setIsExpired(true);
     }
   }, [now]);
@@ -74,7 +77,7 @@ const EmailOTPDialog: DialogComponent<{
 
       if (error) {
         logError("handleRequestOTP", error);
-        setSnackbar(<Snackbar>Incorrect OTP</Snackbar>);
+        setSnackbar(<Snackbar>{t("snackbar.incorrectOTP")}</Snackbar>);
         return false;
       }
 
@@ -92,10 +95,7 @@ const EmailOTPDialog: DialogComponent<{
       // Disable tap outside to close
       onClose={() => {}}
     >
-      <DialogHeader
-        title="OTP sent to your email"
-        desc={`We’ve sent a 6-digit one-time password to ${email}. Enter the code to log in.`}
-      />
+      <DialogHeader title={t("title")} desc={t("desc", { email })} />
       <DialogContent className="mx-6">
         <TextField<string>
           appearance="outlined"
@@ -110,7 +110,7 @@ const EmailOTPDialog: DialogComponent<{
       </DialogContent>
       <Actions>
         <Button appearance="text" onClick={onClose}>
-          Cancel
+          {t("action.cancel")}
         </Button>
       </Actions>
     </Dialog>

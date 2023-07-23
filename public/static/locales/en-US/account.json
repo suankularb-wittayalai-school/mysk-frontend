@@ -9,24 +9,6 @@
     "logOut": "Log out",
     "changePassword": "Change password"
   },
-  "logIn": {
-    "title": "Log in",
-    "form": {
-      "email": "School email",
-      "password": "Password"
-    },
-    "action": {
-      "magicLink": "Magic link",
-      "logIn": "Log in"
-    }
-  },
-  "logOut": {
-    "loading": "Logging you out…",
-    "action": {
-      "reload": "Reload",
-      "goToLanding": "Go to Landing"
-    }
-  },
   "profile": {
     "name": {
       "title": "Thai name",
@@ -114,9 +96,6 @@
   "preferences": {
     "title": "Preferences"
   },
-  "snackbar": {
-    "invalidCreds": "Invalid email or password"
-  },
   "dialog": {
     "contact": {
       "title": {
@@ -162,22 +141,15 @@
         "save": "Save"
       }
     },
-    "checkEmail": {
-      "title": "Check your email",
-      "desc": "An email has been sent to {{email}}. Use the link there to instantly log in, passwords-free.",
-      "action": {
-        "gotIt": "Got it"
-      }
-    },
-    "magicLink": {
-      "title": "Log in with magic link",
-      "desc": "Leave forgetting passwords behind. Enter your email here and we’ll send you a link that you can use to instantly log in.",
-      "form": {
-        "email": "Email to send to"
+    "emailOTP": {
+      "title": "OTP sent to your email",
+      "desc": "We’ve sent a 6-digit one-time password to {{email}}. Enter the code to log in.",
+      "snackbar": {
+        "otpRequestExpired": "Your OTP has expired; request a new one",
+        "incorrectOTP": "Incorrect OTP"
       },
       "action": {
-        "cancel": "Cancel",
-        "send": "Send"
+        "cancel": "ยกเลิก"
       }
     },
     "changePassword": {
