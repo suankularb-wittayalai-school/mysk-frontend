@@ -1,7 +1,9 @@
 // Imports
 import HoverList from "@/components/person/HoverList";
 import GlanceCountdown from "@/components/schedule/GlanceCountdown";
+import { range } from "@/utils/helpers/array";
 import { cn } from "@/utils/helpers/className";
+import { useNow } from "@/utils/helpers/date";
 import { getLocaleObj, getLocaleString } from "@/utils/helpers/i18n";
 import {
   getCurrentPeriod,
@@ -18,7 +20,7 @@ import {
 import { differenceInMinutes, differenceInSeconds } from "date-fns";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { Trans, useTranslation } from "next-i18next";
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 
 /**
  * A glanceable banner dynamically updated by the current and upcoming schedule
@@ -35,17 +37,16 @@ const ScheduleAtAGlance: FC<{
   const { t } = useTranslation("schedule", { keyPrefix: "atAGlance" });
 
   const { duration, easing } = useAnimationConfig();
+  
+  const now = useNow();
 
-  // Time keeping: update the current time every second
-  const [now, setNow] = useState<Date>(new Date());
-  useEffect(() => {
-    const interval = setInterval(() => setNow(new Date()), 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // Determine the current and next period every second
+  // Determine relevant periods every second
   const periodNumber = getCurrentPeriod();
-  const currentPeriod = schedule.content[now.getDay() - 1].content.find(
+  const todayRow = range(5, 1).includes(now.getDay())
+    ? schedule.content[now.getDay() - 1].content
+    : [];
+
+  const currentPeriod = todayRow.find(
     (period) =>
       period.content.length &&
       // The period starts before or at the current period
@@ -55,11 +56,11 @@ const ScheduleAtAGlance: FC<{
       period.startTime + period.duration > periodNumber,
   );
 
-  const immediateNextPeriod = schedule.content[now.getDay() - 1].content.find(
+  const immediateNextPeriod = todayRow.find(
     // The period starts at the next period
     (period) => periodNumber + 1 === period.startTime,
   );
-  const todayNextPeriod = schedule.content[now.getDay() - 1].content.filter(
+  const todayNextPeriod = todayRow.filter(
     // The period starts at any period after the current
     (period) => period.content.length && period.startTime > periodNumber,
   )[0];
@@ -79,18 +80,21 @@ const ScheduleAtAGlance: FC<{
           "end",
         ),
         now,
+        { roundingMethod: "ceil" },
       )
     : null;
   const minutesTilImmediateNext = immediateNextPeriod?.content.length
     ? differenceInMinutes(
         getTodaySetToPeriodTime(immediateNextPeriod.startTime),
         now,
+        { roundingMethod: "ceil" },
       )
     : null;
   const minutesTilTodayNext = todayNextPeriod?.content.length
     ? differenceInMinutes(
         getTodaySetToPeriodTime(todayNextPeriod.startTime),
         now,
+        { roundingMethod: "ceil" },
       )
     : null;
 
@@ -111,44 +115,45 @@ const ScheduleAtAGlance: FC<{
     | "teach-wrap-up"
     | "teach-travel"
     | "teach-future"
-    | "none" =
-    role === "teacher"
-      ? // If the teacher is free and it’s 5 minutes before the next class
-        // starts, they are instructed to travel
-        minutesTilImmediateNext &&
-        minutesTilImmediateNext >= 0 &&
-        minutesTilImmediateNext <= 5
-        ? "teach-travel"
-        : // If the teacher is free and the next class is far away, show a
-        //   countdown
-        todayNextPeriod?.content.length && !currentPeriod?.content.length
-        ? "teach-future"
-        : // If the teacher is teaching and it’s 10 minutes until it’s over,
-        //   they are intructed to wrap the class up
-        currentPeriod?.content.length &&
-          minutesTilEnd &&
-          minutesTilEnd >= 0 &&
-          minutesTilEnd <= 10
-        ? "teach-wrap-up"
-        : // If the teacher is teaching, display the current class
-        currentPeriod?.content.length
-        ? "teach-current"
-        : "none"
-      : role === "student"
-      ? // If it’s 10 minutes before the next class, display that class
-        minutesTilImmediateNext &&
-        minutesTilImmediateNext >= 0 &&
-        minutesTilImmediateNext <= 10
-        ? "learn-next"
-        : // If the student is in class, display that class
-        currentPeriod?.content.length
-        ? "learn-current"
-        : // If the student is free and it’s a lunch period, display that it’s
-        //   lunch
-        [4, 5].includes(periodNumber)
-        ? "lunch"
-        : "none"
-      : "none";
+    | "none" = !todayRow.length
+    ? "none"
+    : role === "teacher"
+    ? // If the teacher is free and it’s 5 minutes before the next class
+      // starts, they are instructed to travel
+      minutesTilImmediateNext &&
+      minutesTilImmediateNext >= 0 &&
+      minutesTilImmediateNext <= 5
+      ? "teach-travel"
+      : // If the teacher is free and the next class is far away, show a
+      //   countdown
+      todayNextPeriod?.content.length && !currentPeriod?.content.length
+      ? "teach-future"
+      : // If the teacher is teaching and it’s 10 minutes until it’s over,
+      //   they are intructed to wrap the class up
+      currentPeriod?.content.length &&
+        minutesTilEnd &&
+        minutesTilEnd >= 0 &&
+        minutesTilEnd <= 10
+      ? "teach-wrap-up"
+      : // If the teacher is teaching, display the current class
+      currentPeriod?.content.length
+      ? "teach-current"
+      : "none"
+    : role === "student"
+    ? // If it’s 10 minutes before the next class, display that class
+      minutesTilImmediateNext &&
+      minutesTilImmediateNext >= 0 &&
+      minutesTilImmediateNext <= 10
+      ? "learn-next"
+      : // If the student is in class, display that class
+      currentPeriod?.content.length
+      ? "learn-current"
+      : // If the student is free and it’s a lunch period, display that it’s
+      //   lunch
+      [4, 5].includes(periodNumber)
+      ? "lunch"
+      : "none"
+    : "none";
 
   // console.log(minutesTilImmediateNext);
 

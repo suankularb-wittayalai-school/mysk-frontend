@@ -1,16 +1,13 @@
-// External libraries
+// Imports
+import { useNow } from "@/utils/helpers/date";
 import { differenceInSeconds } from "date-fns";
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 
+/**
+ * A vertical red line indicating the current time in the Schedule.
+ */
 const NowLine: FC = () => {
-  // Time calculation set up
-  const [now, setNow] = useState<Date>(new Date());
-
-  // Update the current time every second
-  useEffect(() => {
-    const nowInterval = setInterval(() => setNow(new Date()), 1000);
-    return () => clearInterval(nowInterval);
-  }, []);
+  const now = useNow();
 
   return (
     <div

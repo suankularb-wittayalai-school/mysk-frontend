@@ -28,6 +28,7 @@ import {
 import { Role } from "@/utils/types/person";
 import { PeriodLocation, Schedule } from "@/utils/types/schedule";
 import { SubjectWNameAndCode } from "@/utils/types/subject";
+import { useNow } from "@/utils/helpers/date";
 
 /**
  * An interactive Schedule.
@@ -51,9 +52,6 @@ const Schedule: FC<{
   // Ref for drag constrains and scrolling
   const scheduleRef: RefObject<HTMLElement> = useRef(null);
 
-  // Time calculation set up
-  const [now, setNow] = useState<Date>(new Date());
-
   // (@SiravitPhokeed)
   // we’re using a long update interval because this updates the Period
   // components. When a Period is expanded, the original unexpanded period is
@@ -63,11 +61,8 @@ const Schedule: FC<{
   // Period for it to bug out slightly. It’s not a huge deal, so I decided to
   // just settle on making it happen less.
 
-  // Update the current time every 20 seconds
-  useEffect(() => {
-    const nowInterval = setInterval(() => setNow(new Date()), 20000);
-    return () => clearInterval(nowInterval);
-  }, []);
+  // Time calculation set up
+  const now = useNow(20000);
 
   // State for dropping to add a new period
   const [additionSite, setAdditionSite] = useState<PeriodLocation>();
@@ -140,7 +135,7 @@ const Schedule: FC<{
                           now,
                           day,
                           period.startTime,
-                          period.duration
+                          period.duration,
                         );
 
                         return period.content.length === 1 ? (
