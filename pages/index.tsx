@@ -21,6 +21,7 @@ import MySKLight from "@/public/images/brand/mysk-light.svg";
 import BackgroundDark from "@/public/images/graphics/landing/background-dark.svg";
 import BackgroundLight from "@/public/images/graphics/landing/background-light.svg";
 import { cn } from "@/utils/helpers/className";
+import { logError } from "@/utils/helpers/debug";
 import { withLoading } from "@/utils/helpers/loading";
 import { useLocale } from "@/utils/hooks/i18n";
 import { usePreferences } from "@/utils/hooks/preferences";
@@ -116,30 +117,38 @@ const LogInSection: FC = () => {
       return;
     }
 
-    withLoading(async () => {
-      const { error } = await supabase.auth.signInWithOtp({ email });
+    withLoading(
+      async () => {
+        const { error } = await supabase.auth.signInWithOtp({ email });
 
-      // Track event
-      va.track("Request Email OTP");
+        // Track event
+        va.track("Request Email OTP");
 
-      if (error) {
-        setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
-        return false;
-      }
+        if (error) {
+          logError("handleRequestOTP", error);
+          if (error.status === 429)
+            setSnackbar(
+              <Snackbar>
+                You’ve made too many OTP requests; we’ve temporarily disabled
+                OTP for you as a security measure
+              </Snackbar>,
+            );
+          else setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
+          return false;
+        }
 
-      // Ask the user for the OTP
-      setShowAskOTP(true);
+        // Ask the user for the OTP
+        setShowAskOTP(true);
 
-      return true;
-    }, toggleOTPLoading);
+        return true;
+      },
+      toggleOTPLoading,
+      { hasEndToggle: true },
+    );
   }
 
   return (
-    <motion.section
-      layout
-      transition={transition(duration.medium4, easing.standard)}
-      className="relative flex flex-col gap-6 bg-surface"
-    >
+    <>
       {/* Close Button (for exiting password mode) */}
       <AnimatePresence>
         {showPasswordField && (
@@ -192,7 +201,7 @@ const LogInSection: FC = () => {
               type: "email",
               onKeyUp: (event) =>
                 event.key === "Enter" &&
-                (password.length >= 6
+                (passwordIsValid
                   ? handlePasswordLogIn()
                   : setShowPasswordField(true)),
             }}
@@ -253,7 +262,7 @@ const LogInSection: FC = () => {
           email={email}
         />
       </motion.div>
-    </motion.section>
+    </>
   );
 };
 
@@ -261,12 +270,10 @@ const LogInSection: FC = () => {
  * Credits to supervisors, developers, and organizations involved in creating
  * and maintaining MySK.
  *
- * @returns A `<section>`.
+ * @returns The contents of a `<section>`.
  */
 const PatchNotesSection: FC = () => {
   const locale = useLocale();
-
-  const { duration, easing } = useAnimationConfig();
 
   const { setPreference } = usePreferences();
   const refreshProps = useRefreshProps();
@@ -279,12 +286,7 @@ const PatchNotesSection: FC = () => {
   }
 
   return (
-    <motion.section
-      layout="position"
-      layoutRoot
-      transition={transition(duration.medium4, easing.standard)}
-      className="flex flex-col gap-3 bg-surface-variant"
-    >
+    <>
       {/* Language Switcher */}
       <SegmentedButton alt="Language / ภาษา" full>
         <Button
@@ -340,7 +342,7 @@ const PatchNotesSection: FC = () => {
           Report issue
         </a>
       </p>
-    </motion.section>
+    </>
   );
 };
 
@@ -437,8 +439,20 @@ const LandingPage: CustomPage = () => {
                     [&>*]:p-6 [&>:first-child]:md:pr-3 [&>:last-child]:md:pl-3"
                   style={{ borderRadius: 28 }}
                 >
-                  <LogInSection />
-                  <PatchNotesSection />
+                  <motion.section
+                    layout
+                    transition={transition(duration.medium4, easing.standard)}
+                    className="relative flex flex-col gap-6 bg-surface"
+                  >
+                    <LogInSection />
+                  </motion.section>
+                  <motion.section
+                    layout="position"
+                    transition={transition(duration.medium4, easing.standard)}
+                    className="flex flex-col gap-3 bg-surface-variant"
+                  >
+                    <PatchNotesSection />
+                  </motion.section>
                 </motion.div>
               </div>
               <CreditsSection />
