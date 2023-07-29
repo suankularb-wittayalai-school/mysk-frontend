@@ -27,12 +27,14 @@ import DocumentCard from "@/components/lookup/document/DocumentCard";
 import DocumentDetails from "@/components/lookup/document/DocumentDetails";
 
 // Backend
-import { getUserMetadata } from "@/utils/backend/account/getUserByEmail";
-import {
-  getSchoolDocs,
-  getSchoolDocsByID,
-  searchSchoolDocs,
-} from "@/utils/backend/news/document";
+// import { getUserMetadata } from "@/utils/backend/account/getUserByEmail";
+// import {
+//   getSchoolDocs,
+//   getSchoolDocsByID,
+//   searchSchoolDocs,
+// } from "@/utils/backend/news/document";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 
 // Helpers
 import { createTitleStr } from "@/utils/helpers/title";
@@ -40,7 +42,7 @@ import { createTitleStr } from "@/utils/helpers/title";
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { SchoolDocument, SchoolDocumentType } from "@/utils/types/news";
-import { Role } from "@/utils/types/person";
+import { UserRole } from "@/utils/types/person";
 
 const LookupDocumentsPage: CustomPage<{
   recentDocs: SchoolDocument[];
@@ -149,8 +151,20 @@ export const getServerSideProps: GetServerSideProps = async ({
     data: { session },
   } = await supabase.auth.getSession();
 
-  const { data: metadata } = await getUserMetadata(supabase, session!.user.id);
-  const userRole = metadata!.role;
+  const { data: user, error } = await getLoggedInPerson(
+    supabase,
+    authOptions,
+    req,
+    res,
+    { includeContacts: true, detailed: true },
+  );
+
+  if (error) {
+    return {
+      notFound: true,
+    }
+  }
+  const userRole = user!.role;
 
   const selected = {
     id: query.id ? Number(query.id) : null,

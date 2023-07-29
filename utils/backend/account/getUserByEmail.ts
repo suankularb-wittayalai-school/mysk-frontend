@@ -14,12 +14,12 @@ import { User } from "@/utils/types/person";
 export default async function getUserByEmail(
   supabase: DatabaseClient,
   email: string,
-): Promise<BackendReturn<User>> {
+): Promise<BackendReturn<User | null>> {
   const { data, error } = await supabase
     .from("users")
     .select("*")
     .eq("email", email)
-    .single();
+    .maybeSingle();
 
   if (error) {
     logError("getUserByEmail", error);

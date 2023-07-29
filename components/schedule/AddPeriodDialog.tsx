@@ -46,7 +46,7 @@ import { DialogFC } from "@/utils/types/component";
 import { classRegex, roomRegex } from "@/utils/patterns";
 
 const AddPeriodDialog: DialogFC<{
-  subject: Pick<Subject , "id" | "name" | "short_name" | "code">;
+  subject: Pick<Subject, "id" | "name" | "short_name" | "code">;
   onSubmit: () => void;
 }> = ({ open, subject, onClose, onSubmit }) => {
   // Translation
@@ -144,38 +144,39 @@ const AddPeriodDialog: DialogFC<{
       />
       <DialogContent>
         <div className="flex flex-col gap-y-6 px-6">
-          <div
+          {/* <div
             className="grid grid-cols-[6rem,1fr] gap-4"
             style={{
               gridTemplateColumns: `${periodDurationToWidth(
                 form.duration,
               )}px 1fr`,
             }}
-          >
-            {/* Preview period */}
-            <div
-              className="flex flex-col rounded-sm bg-secondary
+          > */}
+          {/* Preview period */}
+          <div
+            style={{ width: periodDurationToWidth(form.duration) }}
+            className="flex flex-col rounded-sm bg-secondary
                 px-4 py-2 text-on-secondary dark:bg-secondary-container
                 dark:text-on-secondary-container"
-            >
-              <span className="skc-title-medium truncate">
-                {t("class", {
-                  ns: "common",
-                  number: (form.class as string).padEnd(3, "_"),
-                })}
-              </span>
-              <span className="skc-body-small">
-                {getSubjectName(form.duration, subject, locale)}
-              </span>
-            </div>
-
-            {/* Class */}
-            <TextField
-              appearance="outlined"
-              label={t("dialog.editPeriod.form.class")}
-              {...formProps.class}
-            />
+          >
+            <span className="skc-title-medium truncate">
+              {t("class", {
+                ns: "common",
+                number: (form.class as string).padEnd(3, "_"),
+              })}
+            </span>
+            <span className="skc-body-small">
+              {getSubjectName(form.duration, subject, locale)}
+            </span>
           </div>
+
+          {/* Class */}
+          <TextField
+            appearance="outlined"
+            label={t("dialog.editPeriod.form.class")}
+            {...formProps.class}
+          />
+          {/* </div> */}
 
           {/* Room code */}
           <TextField

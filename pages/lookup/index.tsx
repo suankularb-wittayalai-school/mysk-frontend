@@ -177,7 +177,8 @@ const LookupPage: CustomPage<{
             <p>
               {t("documents.count", {
                 orders: count.orders.toLocaleString(),
-                documents: count.documents.toLocaleString(),
+                // documents: count.documents.toLocaleString(),
+                documents: "0",
               })}
             </p>
             {locale !== "th" && (
@@ -196,25 +197,25 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
   // Count the total number of students, teachers, classes, orders, and
   // documents in the database
   const { count: students } = await supabase
-    .from("student")
+    .from("students")
     .select("id", { count: "exact", head: true });
   const { count: teachers } = await supabase
-    .from("teacher")
+    .from("teachers")
     .select("id", { count: "exact", head: true });
   const { count: classes } = await supabase
-    .from("classroom")
+    .from("classrooms")
     .select("id", { count: "exact", head: true })
     .match({ year: getCurrentAcademicYear() });
   const { count: orders } = await supabase
     .from("school_documents")
     .select("id", { count: "exact", head: true })
     .match({ type: "order" });
-  const { count: documents } = await supabase
-    .from("school_documents")
-    .select("id", { count: "exact", head: true })
-    .match({ type: "document" });
+  // const { count: documents } = await supabase
+  //   .from("school_documents")
+  //   .select("id", { count: "exact", head: true })
+  //   .match({ type: "announcement" });
 
-  const count = { students, teachers, classes, orders, documents };
+  const count = { students, teachers, classes, orders };
 
   return {
     props: {
