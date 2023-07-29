@@ -24,9 +24,9 @@ import { positionPxToPeriod } from "@/utils/helpers/schedule";
 import { useLocale } from "@/utils/hooks/i18n";
 
 // Types
-import { SubjectWNameAndCode } from "@/utils/types/subject";
+import { Subject } from "@/utils/types/subject";
 
-const ScheduleSubjectChip: FC<{ subject: SubjectWNameAndCode }> = ({
+const ScheduleSubjectChip: FC<{ subject: Pick<Subject, "id" | "name" | "code" | "short_name"> }> = ({
   subject,
 }) => {
   // Translation

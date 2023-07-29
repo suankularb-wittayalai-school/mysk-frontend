@@ -39,15 +39,14 @@ import { useLocale } from "@/utils/hooks/i18n";
 import { useToggle } from "@/utils/hooks/toggle";
 
 // Types
-// import { SubjectWNameAndCode } from "@/utils/types/subject";
+import { Subject } from "@/utils/types/subject";
 import { DialogFC } from "@/utils/types/component";
 
 // Miscellaneous
 import { classRegex, roomRegex } from "@/utils/patterns";
 
 const AddPeriodDialog: DialogFC<{
-  // subject: SubjectWNameAndCode;
-  subject: any;
+  subject: Pick<Subject , "id" | "name" | "short_name" | "code">;
   onSubmit: () => void;
 }> = ({ open, subject, onClose, onSubmit }) => {
   // Translation
@@ -166,7 +165,7 @@ const AddPeriodDialog: DialogFC<{
                 })}
               </span>
               <span className="skc-body-small">
-                {getSubjectName(form.duration, subject.name, locale)}
+                {getSubjectName(form.duration, subject, locale)}
               </span>
             </div>
 

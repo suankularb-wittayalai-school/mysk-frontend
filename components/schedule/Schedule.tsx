@@ -27,7 +27,7 @@ import {
 // Types
 import { UserRole } from "@/utils/types/person";
 import { PeriodLocation, Schedule } from "@/utils/types/schedule";
-import { SubjectWNameAndCode } from "@/utils/types/subject";
+import { Subject } from "@/utils/types/subject";
 import { useNow } from "@/utils/helpers/date";
 
 /**
@@ -42,7 +42,7 @@ import { useNow } from "@/utils/helpers/date";
  */
 const Schedule: FC<{
   schedule: Schedule;
-  subjectsInCharge?: SubjectWNameAndCode[];
+  subjectsInCharge?: Pick<Subject, "id" | "name" | "code" | "short_name">[];
   teacherID?: number;
   role: UserRole;
 }> = ({ schedule, subjectsInCharge, teacherID, role }) => {
@@ -134,26 +134,26 @@ const Schedule: FC<{
                         const isInSession = isInPeriod(
                           now,
                           day,
-                          period.startTime,
+                          period.start_time,
                           period.duration,
                         );
 
                         return period.content.length === 1 ? (
                           <SubjectPeriod
-                            key={[row.day, period.startTime].join("-")}
+                            key={[row.day, period.start_time].join("-")}
                             period={period.content[0]}
                             day={row.day}
                             isInSession={isInSession}
                           />
                         ) : period.content.length ? (
                           <ElectivePeriod
-                            key={[row.day, period.startTime].join("-")}
+                            key={[row.day, period.start_time].join("-")}
                             period={period}
                             isInSession={isInSession}
                           />
                         ) : (
                           <EmptyPeriod
-                            key={[row.day, period.startTime].join("-")}
+                            key={[row.day, period.start_time].join("-")}
                             isInSession={isInSession}
                           />
                         );

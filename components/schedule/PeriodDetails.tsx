@@ -16,19 +16,19 @@ import {
 import PeriodDetailsContent from "@/components/schedule/PeriodDetailsContent";
 
 // Helpers
-import { getLocaleObj } from "@/utils/helpers/i18n";
+import { getLocaleString } from "@/utils/helpers/string";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
 
 // Types
-import { DialogComponent } from "@/utils/types/common";
-import { Role } from "@/utils/types/person";
+import { DialogFC } from "@/utils/types/component";
+import { UserRole } from "@/utils/types/person";
 import { PeriodContentItem } from "@/utils/types/schedule";
 
-const PeriodDetails: DialogComponent<{
+const PeriodDetails: DialogFC<{
   period: PeriodContentItem;
-  role: Role;
+  role: UserRole;
   onDelete?: () => void;
 }> = ({ period, role, open, onClose, onDelete }) => {
   // Translation
@@ -78,7 +78,7 @@ const PeriodDetails: DialogComponent<{
                     [&_span]:!bg-on-surface"
                 />
                 <h1 className="skc-headline-small my-1 mr-4">
-                  {getLocaleObj(period.subject.name, locale).name}
+                  {getLocaleString(period.subject.name, locale)}
                 </h1>
               </div>
               <DialogContent className="flex flex-col gap-4 p-6 pt-4">

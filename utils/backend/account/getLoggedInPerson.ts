@@ -154,7 +154,7 @@ async function getTeacherFromUserID(
     return { data: null, error: subjectGroupError };
   }
 
-  let subjectsInCharge: Pick<Subject, "id" | "name" | "code">[] = [];
+  let subjectsInCharge: Pick<Subject, "id" | "name" | "code" | "short_name">[] = [];
 
   if (options?.detailed) {
     let { data: subjectsInChargeData, error: subjectsInChargeError } =
@@ -191,6 +191,10 @@ async function getTeacherFromUserID(
       code: {
         th: s.code_th,
         "en-US": s.code_en,
+      },
+      short_name: {
+        th: s.short_name_th ?? "",
+        "en-US": s.short_name_en,
       }
     }));
   }

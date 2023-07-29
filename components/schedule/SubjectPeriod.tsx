@@ -45,7 +45,7 @@ import ScheduleContext from "@/contexts/ScheduleContext";
 
 // Helpers
 import { cn } from "@/utils/helpers/className";
-import { getLocaleObj } from "@/utils/helpers/i18n";
+import { getLocaleString } from "@/utils/helpers/string";
 import { withLoading } from "@/utils/helpers/loading";
 import {
   getSubjectName,
@@ -58,11 +58,10 @@ import { useLocale } from "@/utils/hooks/i18n";
 import { useToggle } from "@/utils/hooks/toggle";
 
 // Types
-// import { PeriodContentItem } from "@/utils/types/schedule";
+import { PeriodContentItem } from "@/utils/types/schedule";
 
 const SubjectPeriod: FC<{
-  // period: PeriodContentItem;
-  period: any;
+  period: PeriodContentItem;
   day: Day;
   isInSession?: boolean;
 }> = ({ period, day, isInSession }) => {
@@ -144,7 +143,7 @@ const SubjectPeriod: FC<{
   // Look at that drag
   async function handleDragEnd(
     _: globalThis.MouseEvent | TouchEvent | PointerEvent,
-    info: PanInfo
+    info: PanInfo,
   ) {
     await withLoading(
       async () => {
@@ -161,7 +160,7 @@ const SubjectPeriod: FC<{
         const { startTime: newStartTime, day: newDay } = positionPxToPeriod(
           info.point.x,
           info.point.y,
-          constraints
+          constraints,
         );
 
         // Validate position
@@ -171,7 +170,7 @@ const SubjectPeriod: FC<{
         }
 
         // Don’t do anything if the Period is in the same location
-        if (newStartTime === period.startTime && newDay === day) {
+        if (newStartTime === period.start_time && newDay === day) {
           animationControls.start({ x: 0, y: 0 });
           return false;
         }
@@ -201,7 +200,7 @@ const SubjectPeriod: FC<{
         return true;
       },
       toggleLoading,
-      { hasEndToggle: true }
+      { hasEndToggle: true },
     );
   }
 
@@ -237,7 +236,7 @@ const SubjectPeriod: FC<{
     // Calculate the drop position within the Schedule content area
     const duration = Math.max(
       Math.round((event.clientX - left) / periodWidth),
-      1
+      1,
     );
     setPeriodDuration(duration);
   }
@@ -338,22 +337,26 @@ const SubjectPeriod: FC<{
               layoutId={`period-${period.id}-class`}
               transition={transition(
                 duration.short2,
-                easing.standardDecelerate
+                easing.standardDecelerate,
               )}
               className="skc-title-medium !w-fit"
             >
-              {t("class", { ns: "common", number: period.class!.number })}
+              {period.classrooms
+                ?.map((classroom) =>
+                  t("class", { ns: "common", number: classroom.number }),
+                )
+                .join(", ")}
             </motion.span>
           ) : (
             <span
               className="skc-title-medium"
               title={
                 role === "student"
-                  ? getLocaleObj(period.subject.name, locale).name
+                  ? getLocaleString(period.subject.name, locale)
                   : undefined
               }
             >
-              {getSubjectName(period.duration, period.subject.name, locale)}
+              {getSubjectName(period.duration, period.subject, locale)}
             </span>
           )}
 
@@ -361,9 +364,9 @@ const SubjectPeriod: FC<{
           {(role === "student" || !menuOpen || extending || loading) && (
             <span className="skc-body-small">
               {role === "teacher" ? (
-                getSubjectName(period.duration, period.subject.name, locale)
+                getSubjectName(period.duration, period.subject, locale)
               ) : (
-                <HoverList people={period.subject.teachers} />
+                <HoverList people={period.teachers} />
               )}
             </span>
           )}
@@ -389,14 +392,14 @@ const SubjectPeriod: FC<{
                   x: -10,
                   transition: transition(
                     duration.short2,
-                    easing.standardAccelerate
+                    easing.standardAccelerate,
                   ),
                 }}
                 aria-hidden
                 className="absolute -right-12 bottom-0.5 z-20 text-secondary"
                 transition={transition(
                   duration.short4,
-                  easing.standardDecelerate
+                  easing.standardDecelerate,
                 )}
               >
                 <MaterialIcon icon="double_arrow" size={40} />

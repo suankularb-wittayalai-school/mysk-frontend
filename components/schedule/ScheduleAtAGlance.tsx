@@ -50,19 +50,19 @@ const ScheduleAtAGlance: FC<{
     (period) =>
       period.content.length &&
       // The period starts before or at the current period
-      period.startTime <= periodNumber &&
+      period.start_time <= periodNumber &&
       // The period ends at or after the end of the current period (current
       // period number + 1)
-      period.startTime + period.duration > periodNumber,
+      period.start_time + period.duration > periodNumber,
   );
 
   const immediateNextPeriod = todayRow.find(
     // The period starts at the next period
-    (period) => periodNumber + 1 === period.startTime,
+    (period) => periodNumber + 1 === period.start_time,
   );
   const todayNextPeriod = todayRow.filter(
     // The period starts at any period after the current
-    (period) => period.content.length && period.startTime > periodNumber,
+    (period) => period.content.length && period.start_time > periodNumber,
   )[0];
 
   // Note: `differenceInSeconds` and `differenceInMinutes` operate by
@@ -71,12 +71,12 @@ const ScheduleAtAGlance: FC<{
   // The edges of periods relative to current time, used in calculating the
   // display type
   const secondsSinceStart = currentPeriod
-    ? differenceInSeconds(now, getTodaySetToPeriodTime(currentPeriod.startTime))
+    ? differenceInSeconds(now, getTodaySetToPeriodTime(currentPeriod.start_time))
     : 0;
   const minutesTilEnd = currentPeriod
     ? differenceInMinutes(
         getTodaySetToPeriodTime(
-          currentPeriod.startTime + currentPeriod.duration - 1,
+          currentPeriod.start_time + currentPeriod.duration - 1,
           "end",
         ),
         now,
@@ -85,14 +85,14 @@ const ScheduleAtAGlance: FC<{
     : null;
   const minutesTilImmediateNext = immediateNextPeriod?.content.length
     ? differenceInMinutes(
-        getTodaySetToPeriodTime(immediateNextPeriod.startTime),
+        getTodaySetToPeriodTime(immediateNextPeriod.start_time),
         now,
         { roundingMethod: "ceil" },
       )
     : null;
   const minutesTilTodayNext = todayNextPeriod?.content.length
     ? differenceInMinutes(
-        getTodaySetToPeriodTime(todayNextPeriod.startTime),
+        getTodaySetToPeriodTime(todayNextPeriod.start_time),
         now,
         { roundingMethod: "ceil" },
       )

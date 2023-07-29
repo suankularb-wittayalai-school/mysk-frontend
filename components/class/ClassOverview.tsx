@@ -34,12 +34,14 @@ import SnackbarContext from "@/contexts/SnackbarContext";
 // } from "@/utils/backend/contact";
 
 // Helpers
-import { getLocaleString } from "@/utils/helpers/i18n";
-import { getLocaleName } from "@/utils/helpers/string";
+import { getLocaleName, getLocaleString } from "@/utils/helpers/string";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
 import { useRefreshProps } from "@/utils/hooks/routing";
+import { Classroom } from "@/utils/types/classroom";
+import { Contact } from "@/utils/types/contact";
+import { Teacher } from "@/utils/types/person";
 
 // Types
 // import { ClassOverview as ClassOverviewType } from "@/utils/types/class";
@@ -53,8 +55,9 @@ import { useRefreshProps } from "@/utils/hooks/routing";
  *
  * @returns A Section.
  */
-// const AdvisorsSection: FC<{ advisors: Teacher[] }> = ({ advisors }) => {
-const AdvisorsSection: FC<{ advisors: any[] }> = ({ advisors }) => {
+const AdvisorsSection: FC<{ advisors: Classroom["class_advisors"] }> = ({
+  advisors,
+}) => {
   const locale = useLocale();
   const { t } = useTranslation("class");
 
@@ -72,8 +75,8 @@ const AdvisorsSection: FC<{ advisors: any[] }> = ({ advisors }) => {
           >
             <CardHeader
               avatar={<DynamicAvatar profile={teacher.profile} />}
-              title={getLocaleName(locale, teacher.name)}
-              subtitle={getLocaleString(teacher.subjectGroup.name, locale)}
+              title={getLocaleName(locale, teacher)}
+              subtitle={getLocaleString(teacher.subject_group.name, locale)}
             />
           </Card>
         ))}
@@ -90,8 +93,8 @@ const AdvisorsSection: FC<{ advisors: any[] }> = ({ advisors }) => {
  */
 const ClassContactsSection: FC<{
   // contacts: Contact[];
-  contacts: any[];
-  classID?: number;
+  contacts: Contact[];
+  classID?: string;
   editable?: boolean;
 }> = ({ contacts, classID, editable }) => {
   const { t } = useTranslation("common");
@@ -104,8 +107,7 @@ const ClassContactsSection: FC<{
    *
    * @param contact The Contact to add.
    */
-  // async function handleAdd(contact: Contact) {
-  async function handleAdd(contact: any) {
+  async function handleAdd(contact: Contact) {
     // const { data, error } = await createContact(supabase, contact);
     // if (error) {
     //   setSnackbar(<Snackbar>{t("snackbar.failure")}</Snackbar>);
@@ -130,8 +132,7 @@ const ClassContactsSection: FC<{
    *
    * @param contact The new data for the Contact.
    */
-  // async function handleEdit(contact: Contact) {
-  async function handleEdit(contact: any) {
+  async function handleEdit(contact: Contact) {
     // const { error } = await updateContact(supabase, contact);
     // if (error) {
     //   setSnackbar(<Snackbar>{t("snackbar.failure")}</Snackbar>);
@@ -176,22 +177,22 @@ const ClassContactsSection: FC<{
  * Displays an overview of a Class. Used for Class Overview pages like `/class`
  * and `/lookup/class/[classNumber]`. Occupies the full page.
  *
- * @param classItem The overview information (Advisors and Contacts) of the Class to display.
+ * @param classroom The overview information (Advisors and Contacts) of the Class to display.
  * @param editable If the user can edit information about this class. Reserved for this class’ Class Advisors and admins.
  *
  * @returns A Content Layout.
  */
 const ClassOverview: FC<{
-  // classItem: ClassOverviewType;
-  classItem: any;
+  // classroom: ClassOverviewType;
+  classroom: Pick<Classroom, "id" | "class_advisors" | "contacts">;
   editable?: boolean;
-}> = ({ classItem, editable }) => {
+}> = ({ classroom, editable }) => {
   return (
     <ContentLayout>
-      <AdvisorsSection advisors={classItem.classAdvisors} />
+      <AdvisorsSection advisors={classroom.class_advisors} />
       <ClassContactsSection
-        contacts={classItem.contacts}
-        classID={classItem.id}
+        contacts={classroom.contacts}
+        classID={classroom.id}
         editable={editable}
       />
     </ContentLayout>

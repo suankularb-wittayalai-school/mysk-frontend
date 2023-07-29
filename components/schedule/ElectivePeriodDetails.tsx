@@ -17,7 +17,7 @@ import {
 import PeriodDetailsContent from "@/components/schedule/PeriodDetailsContent";
 
 // Helpers
-import { getLocaleObj } from "@/utils/helpers/i18n";
+import { getLocaleString } from "@/utils/helpers/string";
 import { periodTimes } from "@/utils/helpers/schedule";
 
 // Hooks
@@ -39,10 +39,10 @@ const SubjectPeriodCard: FC<{
       <div className="flex flex-row gap-2 border-b-1 border-b-outline-variant px-4 py-2">
         <div className="flex flex-col">
           <h2 className="skc-title-medium">
-            {getLocaleObj(subject.subject.name, locale).name}
+            {getLocaleString(subject.subject.name, locale)}
           </h2>
           <time className="skc-body-small">
-            {[period.startTime - 1, period.startTime + period.duration - 1]
+            {[period.start_time - 1, period.start_time + period.duration - 1]
               .map((j) =>
                 // Get the start/end time of this Period
                 Object.values(periodTimes[j])

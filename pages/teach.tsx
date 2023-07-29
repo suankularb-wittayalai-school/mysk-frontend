@@ -74,7 +74,7 @@ import { LayoutGroup, motion } from "framer-motion";
  */
 const ScheduleSection: FC<{
   schedule: ScheduleType;
-  subjectsInCharge: Pick<Subject, "id"| "name" | "code">[];
+  subjectsInCharge: Pick<Subject, "id"| "name" | "code" | "short_name">[];
   teacherID: number;
 }> = ({ schedule, subjectsInCharge, teacherID }) => {
   const { t } = useTranslation("teach");
@@ -155,7 +155,7 @@ const SubjectsSection: FC<{
  */
 const TeachPage: CustomPage<{
   schedule: ScheduleType;
-  subjectsInCharge: Pick<Subject, "id" | "name" | "code">[];
+  subjectsInCharge: Pick<Subject, "id" | "name" | "code" | "short_name">[];
   teachingSubjects: SubjectClassrooms[];
   teacherID: number;
 }> = ({ schedule, subjectsInCharge, teachingSubjects, teacherID }) => {
@@ -239,6 +239,8 @@ export const getServerSideProps: GetServerSideProps = async ({
   // console.log(teachingSubjects)
 
   // const {data}
+
+  // console.log({teachingSubjects, subjectsInCharge: user.subjects_in_charge})
 
   
 

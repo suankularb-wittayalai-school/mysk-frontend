@@ -24,7 +24,7 @@ export default async function getTeachingSubject(
 
     const { data: classroomSubjects, error: classroomSubjectsError } = await supabase
         .from("classroom_subjects")
-        .select("subjects(id, name_en, name_th, code_en, code_th), classrooms(id, number)")
+        .select("subjects(id, name_en, name_th, code_en, code_th, short_name_en, short_name_th), classrooms(id, number)")
         .in("id", classroomSubjectIDs)
         .eq("year", options?.academicYear || getCurrentAcademicYear())
         .eq("semester", options?.semester || getCurrentSemester())
@@ -53,6 +53,7 @@ export default async function getTeachingSubject(
                     id: subject?.id ?? "",
                     name: mergeDBLocales(subject, "name"),
                     code: mergeDBLocales(subject, "code"),
+                    short_name: mergeDBLocales(subject, "short_name"),
                 },
                 classrooms: [classroom],
             })

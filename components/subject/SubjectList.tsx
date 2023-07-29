@@ -19,17 +19,17 @@ import BrandIcon from "@/components/icons/BrandIcon";
 import HoverList from "@/components/person/HoverList";
 
 // Types
-import { SubjectListItem, SubjectName } from "@/utils/types/subject";
+import { ClassroomSubject } from "@/utils/types/subject";
 
 // Helpers
-import { getLocaleObj, getLocaleString } from "@/utils/helpers/i18n";
+import { getLocaleString } from "@/utils/helpers/string";
 import { getLocaleName } from "@/utils/helpers/string";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
 
 const SubjectList: FC<{
-  subjectList: SubjectListItem[];
+  subjectList: ClassroomSubject[];
   query: string;
 }> = ({ subjectList, query }) => {
   // Translation
@@ -45,13 +45,13 @@ const SubjectList: FC<{
           ? subjectList.filter(
               (listItem) =>
                 (
-                  getLocaleObj(listItem.subject.name, locale) as SubjectName
-                ).name.includes(query) ||
+                  getLocaleString(listItem.subject.name, locale)
+                ).includes(query) ||
                 getLocaleString(listItem.subject.code, locale).includes(
                   query
                 ) ||
                 listItem.teachers.filter((teacher) =>
-                  getLocaleName(locale, teacher.name).includes(query)
+                  getLocaleName(locale, teacher).includes(query)
                 ).length
             )
           : subjectList
@@ -71,8 +71,8 @@ const SubjectList: FC<{
               {/* Subject name and code */}
               <CardHeader
                 title={
-                  (getLocaleObj(listItem.subject.name, locale) as SubjectName)
-                    .name
+                  (getLocaleString(listItem.subject.name, locale))
+                    
                 }
                 subtitle={getLocaleString(listItem.subject.code, locale)}
                 element={(props) => (
@@ -80,11 +80,11 @@ const SubjectList: FC<{
                     {...props}
                     title={
                       (
-                        getLocaleObj(
+                        getLocaleString(
                           listItem.subject.name,
                           locale
-                        ) as SubjectName
-                      ).name
+                        ) 
+                      )
                     }
                   />
                 )}
@@ -97,8 +97,8 @@ const SubjectList: FC<{
                 <Button
                   appearance="text"
                   icon={<BrandIcon icon="gg-meet" />}
-                  href={listItem.ggMeetLink}
-                  disabled={!listItem.ggMeetLink}
+                  href={listItem.gg_meet_link ?? ""}
+                  disabled={!listItem.gg_meet_link}
                   element={(props) => (
                     <a {...props} target="_blank" rel="noreferrer" />
                   )}
@@ -106,8 +106,8 @@ const SubjectList: FC<{
                 <Button
                   appearance="text"
                   icon={<BrandIcon icon="gg-classroom" />}
-                  href={listItem.ggcLink}
-                  disabled={!listItem.ggcLink}
+                  href={listItem.ggc_link ??  ""}
+                  disabled={!listItem.ggc_link}
                   element={(props) => (
                     <a {...props} target="_blank" rel="noreferrer" />
                   )}
@@ -133,11 +133,11 @@ const SubjectList: FC<{
                   </span>
                 </div>
                 {/* Class code */}
-                {listItem.ggcCode && (
+                {listItem.ggc_code && (
                   <div>
                     <h4 className="skc-title-medium">Class code</h4>
                     <span className="skc-body-medium !font-mono">
-                      {listItem.ggcCode}
+                      {listItem.ggc_code}
                     </span>
                   </div>
                 )}

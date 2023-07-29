@@ -11,9 +11,9 @@ import { getLocaleName } from "@/utils/helpers/string";
 import { useLocale } from "@/utils/hooks/i18n";
 
 const HoverList: FC<{
-  people: { name: Person["name"]; prefix?: Person["prefix"] }[];
+  people: Parameters<typeof getLocaleName>["1"][];
   options?: Partial<{
-    nameJoinerOptions: Parameters<typeof getLocaleName>["3"];
+    nameJoinerOptions: Parameters<typeof getLocaleName>["2"];
     maxVisibleLength: number;
   }>;
   className?: string;
@@ -34,8 +34,7 @@ const HoverList: FC<{
           .map((person) =>
             getLocaleName(
               locale,
-              person.name,
-              person.prefix,
+              person,
               options?.nameJoinerOptions || {
                 middleName: false,
                 lastName: false,
@@ -55,8 +54,7 @@ const HoverList: FC<{
               .map((person) =>
                 getLocaleName(
                   locale,
-                  person.name,
-                  person.prefix,
+                  person,
                   options?.nameJoinerOptions || { lastName: false }
                 )
               )

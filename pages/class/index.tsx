@@ -13,29 +13,35 @@ import MySKPageHeader from "@/components/common/MySKPageHeader";
 import ClassTabs from "@/components/lookup/class/ClassTabs";
 
 // Backend
-import { getUserMetadata } from "@/utils/backend/account/getUserByEmail";
-import {
-  getClassFromUser,
-  getClassOverview,
-} from "@/utils/backend/classroom/classroom";
-import { getClassAdvisorAt } from "@/utils/backend/person/teacher";
+// import { getUserMetadata } from "@/utils/backend/account/getUserByEmail";
+// import {
+//   getClassFromUser,
+//   getClassOverview,
+// } from "@/utils/backend/classroom/classroom";
+import getClassroomOverview from "@/utils/backend/classroom/getClassroomOverview";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 
 // Helpers
 import { createTitleStr } from "@/utils/helpers/title";
 
 // Types
-import {
-  ClassOverview as ClassOverviewType,
-  ClassWNumber,
-} from "@/utils/types/class";
+// import {
+//   ClassOverview as ClassOverviewType,
+//   ClassWNumber,
+// } from "@/utils/types/class";
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { Role } from "@/utils/types/person";
+import { UserRole } from "@/utils/types/person";
+import { Classroom } from "@/utils/types/classroom";
 
-const ClassOverviewPage: CustomPage<{
-  classItem: ClassOverviewType;
+const ClassroomOverviewPage: CustomPage<{
+  classroom: Pick<
+    Classroom,
+    "id" | "number" | "class_advisors" | "contacts" | "subjects"
+  >;
   editable: boolean;
-  userRole: Role;
-}> = ({ classItem, editable, userRole }) => {
+  userRole: UserRole;
+}> = ({ classroom, editable, userRole }) => {
   const { t } = useTranslation(["class", "common"]);
 
   return (
@@ -44,9 +50,9 @@ const ClassOverviewPage: CustomPage<{
         <title>{createTitleStr(t(`overview.title.${userRole}`), t)}</title>
       </Head>
       <MySKPageHeader title={t(`overview.title.${userRole}`)}>
-        <ClassTabs number={classItem.number} type="class" />
+        <ClassTabs number={classroom.number} type="class" />
       </MySKPageHeader>
-      <ClassOverview {...{ classItem, editable }} />
+      <ClassOverview {...{ classroom, editable }} />
     </>
   );
 };
@@ -61,40 +67,37 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  const { data: metadata } = await getUserMetadata(supabase, session!.user.id);
+  const { data: user, error } = await getLoggedInPerson(
+    supabase,
+    authOptions,
+    req,
+    res,
+    { includeContacts: true, detailed: true },
+  );
 
-  const userRole = metadata!.role;
+  const userRole = user!.role;
 
-  let classWNumber: ClassWNumber | null = null;
+  let classroom: Pick<Classroom, "id" | "number"> | null = null;
   let editable = false;
 
   switch (userRole) {
     case "student":
-      const { data: classItem } = await getClassFromUser(
-        supabase,
-        session!.user
-      );
-      classWNumber = classItem!;
+      classroom = user?.classroom!;
       break;
     case "teacher":
-      const { data: classAdvisorAt } = await getClassAdvisorAt(
-        supabase,
-        metadata!.teacher!
-      );
-      classWNumber = classAdvisorAt!;
+      classroom = user?.class_advisor_at!;
       editable = true;
       break;
   }
 
-  if (!classWNumber) return { notFound: true };
+  if (!classroom) return { notFound: true };
 
-  const { data: classItem } = await getClassOverview(
+  const { data: classroomOverview, error: classroomOverviewError } = await getClassroomOverview(
     supabase,
-    classWNumber!.number
+    classroom!.id,
   );
+
+  console.log({classroomOverview, classroomOverviewError});
 
   return {
     props: {
@@ -103,11 +106,11 @@ export const getServerSideProps: GetServerSideProps = async ({
         "account",
         "class",
       ])),
-      classItem,
+      classroom: classroomOverview,
       editable,
       userRole,
     },
   };
 };
 
-export default ClassOverviewPage;
+export default ClassroomOverviewPage;

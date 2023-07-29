@@ -29,36 +29,40 @@ const PeriodDetailsContent: FC<{ period: PeriodContentItem }> = ({
           {t("dialog.periodDetails.teachers")}
         </h2>
         <ul className="skc-body-medium">
-          {period.subject.teachers.map((teacher) => (
-            <li key={teacher.id}>{getLocaleName(locale, teacher.name)}</li>
+          {period.teachers.map((teacher) => (
+            <li key={teacher.id}>{getLocaleName(locale, teacher)}</li>
           ))}
-          {period.subject.coTeachers?.map((teacher) => (
+          {period.co_teachers?.map((teacher) => (
             <li className="text-outline" key={teacher.id}>
-              {getLocaleName(locale, teacher.name)}
+              {getLocaleName(locale, teacher)}
             </li>
           ))}
         </ul>
       </section>
 
       {/* Room */}
-      {period.class && (
+      {period.classrooms && (
         <section aria-labelledby="period-room">
           <h2 id="period-room" className="skc-title-medium">
             {t("dialog.periodDetails.class")}
           </h2>
           <p className="skc-body-medium">
-            {t("class", { ns: "common", number: period.class.number })}
+            {period.classrooms
+              .map((classroom) =>
+                t("class", { ns: "common", number: classroom.number }),
+              )
+              .join(", ")}
           </p>
         </section>
       )}
 
       {/* Room */}
-      {period.room && (
+      {period.rooms && (
         <section aria-labelledby="period-room">
           <h2 id="period-room" className="skc-title-medium">
             {t("dialog.periodDetails.room")}
           </h2>
-          <p className="skc-body-medium">{period.room}</p>
+          <p className="skc-body-medium">{period.rooms.join(", ")}</p>
         </section>
       )}
 
