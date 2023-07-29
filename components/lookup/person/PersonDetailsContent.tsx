@@ -31,7 +31,7 @@ import { SubjectWNameAndCode } from "@/utils/types/subject";
 
 // Helpers
 import { getLocaleObj, getLocaleString } from "@/utils/helpers/i18n";
-import { nameJoiner } from "@/utils/helpers/name";
+import { getLocaleName } from "@/utils/helpers/string";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
@@ -167,9 +167,9 @@ const GeneralInfoSection: FC<{
       >
         <MultilangText
           text={{
-            th: nameJoiner("th", person.name, person.prefix, { prefix: true }),
+            th: getLocaleName("th", person.name, person.prefix, { prefix: true }),
             "en-US": person.name["en-US"]
-              ? nameJoiner("en-US", person.name, person.prefix, {
+              ? getLocaleName("en-US", person.name, person.prefix, {
                   prefix: true,
                 })
               : undefined,

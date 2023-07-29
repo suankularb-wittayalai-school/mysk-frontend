@@ -11,7 +11,7 @@ import DynamicAvatar from "@/components/common/DynamicAvatar";
 // Helpers
 import { cn } from "@/utils/helpers/className";
 import { getLocaleObj } from "@/utils/helpers/i18n";
-import { nameJoiner } from "@/utils/helpers/name";
+import { getLocaleName } from "@/utils/helpers/string";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
@@ -32,7 +32,7 @@ const ClassStudentCard: FC<{
 
   return (
     <li
-      aria-label={nameJoiner(locale, student.name)}
+      aria-label={getLocaleName(locale, student.name)}
       className={
         seperated
           ? `-mx-4 border-t-outline px-4 sm:mx-0 sm:px-0
@@ -72,7 +72,7 @@ const ClassStudentCard: FC<{
               }
             />
           }
-          title={nameJoiner(locale, student.name)}
+          title={getLocaleName(locale, student.name)}
           subtitle={getLocaleObj(student.name, locale).nickname}
           className="grow"
         />

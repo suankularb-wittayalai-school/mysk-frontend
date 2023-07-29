@@ -23,7 +23,7 @@ import {
 } from "@suankularb-components/react";
 
 // Helpers
-import { nameJoiner } from "@/utils/helpers/name";
+import { getLocaleName } from "@/utils/helpers/string";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
@@ -147,7 +147,7 @@ const ClassPeekModal: FC<{
                 }
                 subtitle={classItem.classAdvisors
                   .map((teacher) =>
-                    nameJoiner(locale, teacher.name, undefined, {
+                    getLocaleName(locale, teacher.name, undefined, {
                       prefix: "teacher",
                     })
                   )

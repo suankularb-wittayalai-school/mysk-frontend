@@ -5,7 +5,7 @@ import { FC } from "react";
 import { Person } from "@/utils/types/person";
 
 // Helpers
-import { nameJoiner } from "@/utils/helpers/name";
+import { getLocaleName } from "@/utils/helpers/string";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
@@ -13,7 +13,7 @@ import { useLocale } from "@/utils/hooks/i18n";
 const HoverList: FC<{
   people: { name: Person["name"]; prefix?: Person["prefix"] }[];
   options?: Partial<{
-    nameJoinerOptions: Parameters<typeof nameJoiner>["3"];
+    nameJoinerOptions: Parameters<typeof getLocaleName>["3"];
     maxVisibleLength: number;
   }>;
   className?: string;
@@ -32,7 +32,7 @@ const HoverList: FC<{
         people
           .slice(0, maxVisibleLength)
           .map((person) =>
-            nameJoiner(
+            getLocaleName(
               locale,
               person.name,
               person.prefix,
@@ -53,7 +53,7 @@ const HoverList: FC<{
             title={people
               .slice(maxVisibleLength)
               .map((person) =>
-                nameJoiner(
+                getLocaleName(
                   locale,
                   person.name,
                   person.prefix,

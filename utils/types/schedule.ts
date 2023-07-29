@@ -1,9 +1,9 @@
-import { ClassWNumber } from "./class";
-import { Teacher } from "./person";
-import { Subject } from "./subject";
+import { Classroom } from "@/utils/types/classroom";
+import { Teacher } from "@/utils/types/person";
+import { Subject } from "@/utils/types/subject";
 
 export type Schedule = {
-  class?: ClassWNumber;
+  class?: Pick<Classroom, "id" | "number">;
   content: ScheduleRow[];
 };
 
@@ -13,31 +13,21 @@ export type ScheduleRow = {
 };
 
 export type SchedulePeriod = {
-  id?: number;
+  id?: string;
   startTime: number;
   duration: number;
   content: PeriodContentItem[];
 };
 
 export type PeriodContentItem = {
-  id?: number;
-  startTime: number;
+  id?: string;
+  start_time: number;
   duration: number;
-  subject: {
-    id: Subject["id"];
-    name: Subject["name"];
-    code: Subject["code"];
-    teachers: Teacher[];
-    coTeachers?: Teacher[];
-  };
-  // Physical room wherein this Subject is taught (Ex. 1214, 4306)
-  room?: string;
-  // The class taking this Subject
-  class?: ClassWNumber;
+  subject: Pick<Subject, "id" | "code" | "name">;
+  teachers: Teacher[];
+  co_teachers?: Teacher[];
+  // Physical rooms wherein this Subject is taught (Ex. 1214, 4306)
+  rooms?: string[];
+  // The classes taking this Subject
+  classrooms?: Pick<Classroom, "id" | "number">[];
 };
-
-export type PeriodContentItemOptSubj = Omit<PeriodContentItem, "subject"> & {
-  subject?: PeriodContentItem["subject"];
-};
-
-export type PeriodLocation = { startTime: number; day: number };

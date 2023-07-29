@@ -23,7 +23,7 @@ import { SubjectListItem, SubjectName } from "@/utils/types/subject";
 
 // Helpers
 import { getLocaleObj, getLocaleString } from "@/utils/helpers/i18n";
-import { nameJoiner } from "@/utils/helpers/name";
+import { getLocaleName } from "@/utils/helpers/string";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
@@ -51,7 +51,7 @@ const SubjectList: FC<{
                   query
                 ) ||
                 listItem.teachers.filter((teacher) =>
-                  nameJoiner(locale, teacher.name).includes(query)
+                  getLocaleName(locale, teacher.name).includes(query)
                 ).length
             )
           : subjectList

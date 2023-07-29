@@ -2,7 +2,7 @@
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
-import { useContext, useEffect } from "react";
+import { FC, useContext, useEffect } from "react";
 
 // SK Components
 import {
@@ -23,7 +23,7 @@ import ScheduleContext from "@/contexts/ScheduleContext";
 import SnackbarContext from "@/contexts/SnackbarContext";
 
 // Backend
-import { createScheduleItem } from "@/utils/backend/schedule/schedule";
+// import { createScheduleItem } from "@/utils/backend/schedule/schedule";
 
 // Helpers
 import { getLocaleObj } from "@/utils/helpers/i18n";
@@ -39,16 +39,17 @@ import { useLocale } from "@/utils/hooks/i18n";
 import { useToggle } from "@/utils/hooks/toggle";
 
 // Types
-import { SubmittableDialogComponent } from "@/utils/types/common";
-import { SubjectWNameAndCode } from "@/utils/types/subject";
+// import { SubjectWNameAndCode } from "@/utils/types/subject";
+import { DialogFC } from "@/utils/types/component";
 
 // Miscellaneous
 import { classRegex, roomRegex } from "@/utils/patterns";
 
-const AddPeriodDialog: SubmittableDialogComponent<
-  () => void,
-  { subject: SubjectWNameAndCode }
-> = ({ open, subject, onClose, onSubmit }) => {
+const AddPeriodDialog: DialogFC<{
+  // subject: SubjectWNameAndCode;
+  subject: any;
+  onSubmit: () => void;
+}> = ({ open, subject, onClose, onSubmit }) => {
   // Translation
   const locale = useLocale();
   const { t } = useTranslation(["schedule", "common"]);
@@ -92,39 +93,39 @@ const AddPeriodDialog: SubmittableDialogComponent<
   async function handleSubmit() {
     if (!formOK) {
       setSnackbar(
-        <Snackbar>{t("snackbar.formInvalid", { ns: "common" })}</Snackbar>
+        <Snackbar>{t("snackbar.formInvalid", { ns: "common" })}</Snackbar>,
       );
       return;
     }
 
-    await withLoading(
-      async () => {
-        const { error } = await createScheduleItem(
-          supabase,
-          {
-            ...form,
-            subject: subject.id,
-            ...additionSite!,
-          },
-          teacherID!
-        );
+    // await withLoading(
+    //   async () => {
+    //     const { error } = await createScheduleItem(
+    //       supabase,
+    //       {
+    //         ...form,
+    //         subject: subject.id,
+    //         ...additionSite!,
+    //       },
+    //       teacherID!,
+    //     );
 
-        if (error) {
-          setSnackbar(
-            <Snackbar>{t("snackbar.failure", { ns: "common" })}</Snackbar>
-          );
-          return false;
-        }
+    //     if (error) {
+    //       setSnackbar(
+    //         <Snackbar>{t("snackbar.failure", { ns: "common" })}</Snackbar>,
+    //       );
+    //       return false;
+    //     }
 
-        await router.replace(router.asPath);
-        onSubmit();
-        resetForm();
+    //     await router.replace(router.asPath);
+    //     onSubmit();
+    //     resetForm();
 
-        return true;
-      },
-      toggleLoading,
-      { hasEndToggle: true }
-    );
+    //     return true;
+    //   },
+    //   toggleLoading,
+    //   { hasEndToggle: true },
+    // );
   }
 
   return (
@@ -148,7 +149,7 @@ const AddPeriodDialog: SubmittableDialogComponent<
             className="grid grid-cols-[6rem,1fr] gap-4"
             style={{
               gridTemplateColumns: `${periodDurationToWidth(
-                form.duration
+                form.duration,
               )}px 1fr`,
             }}
           >

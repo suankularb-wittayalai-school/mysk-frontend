@@ -52,7 +52,7 @@ import { getAdminClasses } from "@/utils/backend/classroom/classroom";
 // Helpers
 import { getLocaleYear } from "@/utils/helpers/date";
 import { withLoading } from "@/utils/helpers/loading";
-import { nameJoiner } from "@/utils/helpers/name";
+import { getLocaleName } from "@/utils/helpers/string";
 import { createTitleStr } from "@/utils/helpers/title";
 
 // Hooks
@@ -231,7 +231,7 @@ const ManageClassesPage: CustomPage<{
         id: "classAdvisorsTH",
         accessorFn: (row) =>
           row.classAdvisors
-            .map((advisor) => nameJoiner("th", advisor.name))
+            .map((advisor) => getLocaleName("th", advisor.name))
             .join(", "),
         header: t("thead.classAdvisorsTH"),
         thAttr: { className: "w-4/12" },
@@ -239,7 +239,7 @@ const ManageClassesPage: CustomPage<{
           <ul className="list-disc pl-6">
             {row.classAdvisors.map((advisor) => (
               <li key={advisor.id}>
-                {nameJoiner("th", advisor.name, advisor.prefix)}
+                {getLocaleName("th", advisor.name, advisor.prefix)}
               </li>
             ))}
           </ul>
@@ -249,7 +249,7 @@ const ManageClassesPage: CustomPage<{
         id: "classAdvisorsEN",
         accessorFn: (row) =>
           row.classAdvisors
-            .map((advisor) => nameJoiner("en-US", advisor.name))
+            .map((advisor) => getLocaleName("en-US", advisor.name))
             .join(", "),
         header: t("thead.classAdvisorsEN"),
         thAttr: { className: "w-4/12" },
@@ -257,7 +257,7 @@ const ManageClassesPage: CustomPage<{
           <ul className="list-disc pl-6">
             {row.classAdvisors.map((advisor) => (
               <li key={advisor.id}>
-                {nameJoiner("en-US", advisor.name, advisor.prefix)}
+                {getLocaleName("en-US", advisor.name, advisor.prefix)}
               </li>
             ))}
           </ul>

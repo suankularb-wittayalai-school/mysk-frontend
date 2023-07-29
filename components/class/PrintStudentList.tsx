@@ -23,7 +23,7 @@ import PrintPage from "@/components/common/print/PrintPage";
 import { range, toggleItem } from "@/utils/helpers/array";
 import { getCurrentAcademicYear, getLocaleYear } from "@/utils/helpers/date";
 import { getLocaleObj, getLocaleString } from "@/utils/helpers/i18n";
-import { nameJoiner } from "@/utils/helpers/name";
+import { getLocaleName } from "@/utils/helpers/string";
 
 // Hooks
 import { useForm } from "@/utils/hooks/form";
@@ -114,7 +114,7 @@ const StudentsListPaper: FC<{
         <div className="mb-1 flex grow flex-row flex-wrap gap-x-2 font-bold">
           {classOverview.classAdvisors.map((teacher) => (
             <span key={teacher.id} className="-mb-1">
-              {nameJoiner(options.language, teacher.name, teacher.prefix, {
+              {getLocaleName(options.language, teacher.name, teacher.prefix, {
                 prefix: true,
               })}
             </span>
@@ -233,7 +233,7 @@ const StudentsListPaper: FC<{
               {options.columns.includes("fullName") && (
                 <>
                   <td className="w-28 !border-r-0 [&:not(:first-child)]:!border-l-0">
-                    {nameJoiner(options.language, student.name, undefined, {
+                    {getLocaleName(options.language, student.name, undefined, {
                       middleName: options.language === "en-US" ? "abbr" : true,
                       lastName: false,
                     })}

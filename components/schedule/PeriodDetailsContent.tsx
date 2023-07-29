@@ -6,7 +6,7 @@ import { FC } from "react";
 import MultilangText from "@/components/common/MultilingualText";
 
 // Helpers
-import { nameJoiner } from "@/utils/helpers/name";
+import { getLocaleName } from "@/utils/helpers/string";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
@@ -30,11 +30,11 @@ const PeriodDetailsContent: FC<{ period: PeriodContentItem }> = ({
         </h2>
         <ul className="skc-body-medium">
           {period.subject.teachers.map((teacher) => (
-            <li key={teacher.id}>{nameJoiner(locale, teacher.name)}</li>
+            <li key={teacher.id}>{getLocaleName(locale, teacher.name)}</li>
           ))}
           {period.subject.coTeachers?.map((teacher) => (
             <li className="text-outline" key={teacher.id}>
-              {nameJoiner(locale, teacher.name)}
+              {getLocaleName(locale, teacher.name)}
             </li>
           ))}
         </ul>

@@ -4,6 +4,7 @@ import {
   createPagesBrowserClient,
 } from "@supabase/auth-helpers-nextjs";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
+import { SessionProvider } from "next-auth/react"
 
 import va from "@vercel/analytics";
 import { Analytics } from "@vercel/analytics/react";
@@ -97,7 +98,7 @@ const Contexts: FC<{ children: ReactNode }> = ({ children }) => {
   );
 };
 
-function App({ Component, pageProps }: CustomAppProps) {
+function App({ Component, pageProps: { session, ...pageProps }, }: CustomAppProps) {
   const { context, fab, navType, childURLs } = Component;
 
   // Supabase client
@@ -128,6 +129,7 @@ function App({ Component, pageProps }: CustomAppProps) {
       `}</style>
 
       {/* Context proviers */}
+      <SessionProvider session={session}>
       <SessionContextProvider
         supabaseClient={supabase}
         initialSession={pageProps.initialSession as Session}
@@ -156,6 +158,7 @@ function App({ Component, pageProps }: CustomAppProps) {
           </MotionConfig>
         </Contexts>
       </SessionContextProvider>
+      </SessionProvider>
     </>
   );
 }

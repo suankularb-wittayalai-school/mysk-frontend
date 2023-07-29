@@ -22,7 +22,7 @@ import { getTeacherByFirstName } from "@/utils/backend/person/teacher";
 
 // Helpers
 import { withLoading } from "@/utils/helpers/loading";
-import { nameJoiner } from "@/utils/helpers/name";
+import { getLocaleName } from "@/utils/helpers/string";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
@@ -119,7 +119,7 @@ const TeachersField: FC<{
               )
             }
           >
-            {nameJoiner(locale, teacher.name, undefined, {
+            {getLocaleName(locale, teacher.name, undefined, {
               middleName: false,
               lastName: "abbr",
             })}

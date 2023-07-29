@@ -25,7 +25,7 @@ import {
 } from "@/utils/helpers/schedule";
 
 // Types
-import { Role } from "@/utils/types/person";
+import { UserRole } from "@/utils/types/person";
 import { PeriodLocation, Schedule } from "@/utils/types/schedule";
 import { SubjectWNameAndCode } from "@/utils/types/subject";
 import { useNow } from "@/utils/helpers/date";
@@ -44,7 +44,7 @@ const Schedule: FC<{
   schedule: Schedule;
   subjectsInCharge?: SubjectWNameAndCode[];
   teacherID?: number;
-  role: Role;
+  role: UserRole;
 }> = ({ schedule, subjectsInCharge, teacherID, role }) => {
   // Translation
   const { t } = useTranslation("schedule");

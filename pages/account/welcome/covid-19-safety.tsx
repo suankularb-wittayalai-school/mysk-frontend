@@ -43,7 +43,7 @@ import RightCardList from "@/components/welcome/RightCardList";
 import SnackbarContext from "@/contexts/SnackbarContext";
 
 // Backend
-import { getUserMetadata } from "@/utils/backend/account";
+import { getUserMetadata } from "@/utils/backend/account/getUserByEmail";
 import { getPersonIDFromUser } from "@/utils/backend/person/person";
 import {
   getVaccineRecordbyPersonId as getVaccineRecordbyPersonID,

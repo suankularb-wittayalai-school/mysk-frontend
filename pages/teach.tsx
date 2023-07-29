@@ -40,7 +40,7 @@ import ScheduleAtAGlance from "@/components/schedule/ScheduleAtAGlance";
 import TeachingSubjectCard from "@/components/subject/TeachingSubjectCard";
 
 // Backend
-import { getUserMetadata } from "@/utils/backend/account";
+import { getUserMetadata } from "@/utils/backend/account/getUserByEmail";
 import { getSchedule } from "@/utils/backend/schedule/schedule";
 import { getTeachingSubjects } from "@/utils/backend/subject/roomSubject";
 import { getSubjectsInCharge } from "@/utils/backend/subject/subject";

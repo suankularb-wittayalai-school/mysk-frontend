@@ -34,7 +34,7 @@ import {
 // Helpers
 import { useGetVCard } from "@/utils/helpers/contact";
 import { withLoading } from "@/utils/helpers/loading";
-import { nameJoiner } from "@/utils/helpers/name";
+import { getLocaleName } from "@/utils/helpers/string";
 
 // Hooks
 import { useToggle } from "@/utils/hooks/toggle";
@@ -150,10 +150,10 @@ const ClassStudents: FC<{
           .filter(
             (student) =>
               String(student.classNo).includes(query) ||
-              nameJoiner("th", student.name)
+              getLocaleName("th", student.name)
                 .toLowerCase()
                 .includes(query.toLowerCase()) ||
-              nameJoiner("en-US", student.name)
+              getLocaleName("en-US", student.name)
                 .toLowerCase()
                 .includes(query.toLowerCase())
           )

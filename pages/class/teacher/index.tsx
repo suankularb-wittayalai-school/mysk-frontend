@@ -13,7 +13,7 @@ import MySKPageHeader from "@/components/common/MySKPageHeader";
 import ClassTabs from "@/components/lookup/class/ClassTabs";
 
 // Backend
-import { getUserMetadata } from "@/utils/backend/account";
+import { getUserMetadata } from "@/utils/backend/account/getUserByEmail";
 import {
   getClassFromUser,
   getClassTeachersList,

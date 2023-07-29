@@ -59,7 +59,7 @@ import {
 // Helpers
 import { getLocaleObj } from "@/utils/helpers/i18n";
 import { withLoading } from "@/utils/helpers/loading";
-import { nameJoiner } from "@/utils/helpers/name";
+import { getLocaleName } from "@/utils/helpers/string";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
@@ -210,13 +210,13 @@ const SubjectClassesDialog: DialogComponent<{
       {
         id: "teachers",
         accessorFn: (row) =>
-          row.teachers.map((teacher) => nameJoiner(locale, teacher.name)),
+          row.teachers.map((teacher) => getLocaleName(locale, teacher.name)),
         header: t("thead.teachers"),
         thAttr: { className: "w-3/12" },
         render: (row) => (
           <ul className="list-disc pl-4">
             {row.teachers.map((teacher) => (
-              <li key={teacher.id}>{nameJoiner(locale, teacher.name)}</li>
+              <li key={teacher.id}>{getLocaleName(locale, teacher.name)}</li>
             ))}
           </ul>
         ),
@@ -224,14 +224,14 @@ const SubjectClassesDialog: DialogComponent<{
       {
         id: "coTeachers",
         accessorFn: (row) =>
-          row.coTeachers?.map((teacher) => nameJoiner(locale, teacher.name)),
+          row.coTeachers?.map((teacher) => getLocaleName(locale, teacher.name)),
         header: t("thead.coTeachers"),
         thAttr: { className: "w-3/12" },
         render: (row) =>
           row.coTeachers ? (
             <ul className="list-disc pl-6">
               {row.coTeachers.map((teacher) => (
-                <li key={teacher.id}>{nameJoiner(locale, teacher.name)}</li>
+                <li key={teacher.id}>{getLocaleName(locale, teacher.name)}</li>
               ))}
             </ul>
           ) : null,

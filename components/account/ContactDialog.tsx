@@ -1,8 +1,8 @@
-// External libraries
-import { useTranslation } from "next-i18next";
-import { ComponentProps, useEffect, useReducer } from "react";
-
-// SK Components
+// Imports
+import ContactCard from "@/components/account/ContactCard";
+import { useForm } from "@/utils/hooks/form";
+import { DialogFC } from "@/utils/types/component";
+import { Contact, ContactType } from "@/utils/types/contact";
 import {
   Actions,
   Button,
@@ -14,47 +14,39 @@ import {
   Select,
   TextField,
 } from "@suankularb-components/react";
+import { useTranslation } from "next-i18next";
+import { ComponentProps, useEffect, useReducer } from "react";
 
-// Internal components
-import ContactCard from "@/components/account/ContactCard";
-
-// Hooks
-import { useForm } from "@/utils/hooks/form";
-
-// Types
-import { SubmittableDialogComponent } from "@/utils/types/common";
-import { Contact, ContactVia } from "@/utils/types/contact";
-
-const ContactDialog: SubmittableDialogComponent<
-  (contact: Contact) => void,
-  { contact?: Contact }
-> = ({ open, contact, onClose, onSubmit }) => {
+const ContactDialog: DialogFC<{
+  contact?: Contact;
+  onSubmit: (contact: Contact) => void;
+}> = ({ open, contact, onClose, onSubmit }) => {
   const { t } = useTranslation("account");
 
   const contactValuesMap: {
-    [key in ContactVia]: {
+    [key in ContactType]: {
       type: ComponentProps<"input">["type"];
       helperMsg?: string;
       validate?: (value: string) => boolean;
     };
   } = {
-    Phone: {
+    phone: {
       type: "tel",
       validate: (value) => /^\d{9,10}$/.test(value),
     },
-    Email: { type: "email" },
-    Website: { type: "url" },
-    Facebook: { type: "text" },
-    Line: { type: "text" },
-    Instagram: {
+    email: { type: "email" },
+    website: { type: "url" },
+    facebook: { type: "text" },
+    line: { type: "text" },
+    instagram: {
       type: "text",
       validate: (value) => /^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/i.test(value),
     },
-    Discord: {
+    discord: {
       type: "text",
       validate: (value) => /^([a-zA-Z0-9]{8}|.{3,32}#[0-9]{4})$/.test(value),
     },
-    Other: { type: "text" },
+    other: { type: "text" },
   };
 
   const [counter, incrementCounter] = useReducer((counter) => counter + 1, 1);
@@ -63,13 +55,13 @@ const ContactDialog: SubmittableDialogComponent<
   >([
     { key: "nameTH", defaultValue: contact?.name?.th },
     { key: "nameEN", defaultValue: contact?.name?.["en-US"] },
-    { key: "type", required: true, defaultValue: contact?.type || "Phone" },
+    { key: "type", required: true, defaultValue: contact?.type || "phone" },
     { key: "value", required: true, defaultValue: contact?.value },
   ]);
 
   // Format group invite codes from invite links for Discord
   useEffect(() => {
-    if (form.type === "Discord")
+    if (form.type === "discord")
       setForm({
         ...form,
         value: (form.value as string).split("https://discord.gg/").join(""),
@@ -86,8 +78,8 @@ const ContactDialog: SubmittableDialogComponent<
         (
           formOK &&
           // Check if value is valid
-          (contactValuesMap[form.type as ContactVia].validate
-            ? contactValuesMap[form.type as ContactVia].validate!(form.value)
+          (contactValuesMap[form.type as ContactType].validate
+            ? contactValuesMap[form.type as ContactType].validate!(form.value)
             : true)
         )
       )
@@ -95,12 +87,12 @@ const ContactDialog: SubmittableDialogComponent<
       return;
     onSubmit({
       id: contact?.id || counter,
-      // Omit the `name` key if the Thai Label field is empty
-      ...(form.nameTH
-        ? { name: { th: form.nameTH, "en-US": form.nameEN } }
-        : {}),
-      type: form.type as ContactVia,
+      name: form.nameTH ? { th: form.nameTH, "en-US": form.nameEN } : null,
+      type: form.type,
       value: form.value,
+      include_students: null,
+      include_teachers: null,
+      include_parents: null,
     });
     resetForm();
     if (!contact) incrementCounter();
@@ -119,12 +111,14 @@ const ContactDialog: SubmittableDialogComponent<
               <ContactCard
                 contact={{
                   id: counter,
-                  // Omit the `name` key if the Thai Label field is empty
-                  ...(form.nameTH
-                    ? { name: { th: form.nameTH, "en-US": form.nameEN } }
-                    : {}),
-                  type: form.type as ContactVia,
+                  name: form.nameTH
+                    ? { th: form.nameTH, "en-US": form.nameEN }
+                    : null,
+                  type: form.type as ContactType,
                   value: form.value,
+                  include_students: null,
+                  include_teachers: null,
+                  include_parents: null,
                 }}
               />
               <div aria-hidden className="hidden sm:block" />
@@ -137,35 +131,37 @@ const ContactDialog: SubmittableDialogComponent<
             label={t("dialog.contact.type.label")}
             {...formProps.type}
           >
-            <MenuItem value="Phone">{t("dialog.contact.type.phone")}</MenuItem>
-            <MenuItem value="Email">{t("dialog.contact.type.email")}</MenuItem>
-            <MenuItem value="Facebook">
+            <MenuItem value="phone">{t("dialog.contact.type.phone")}</MenuItem>
+            <MenuItem value="email">{t("dialog.contact.type.email")}</MenuItem>
+            <MenuItem value="facebook">
               {t("dialog.contact.type.facebook")}
             </MenuItem>
             <MenuItem value="Line">{t("dialog.contact.type.line")}</MenuItem>
-            <MenuItem value="Instagram">
+            <MenuItem value="instagram">
               {t("dialog.contact.type.instagram")}
             </MenuItem>
-            <MenuItem value="Website">
+            <MenuItem value="website">
               {t("dialog.contact.type.website")}
             </MenuItem>
-            <MenuItem value="Discord">
+            <MenuItem value="discord">
               {t("dialog.contact.type.discord")}
             </MenuItem>
-            <MenuItem value="Other">{t("dialog.contact.type.other")}</MenuItem>
+            <MenuItem value="other">{t("dialog.contact.type.other")}</MenuItem>
           </Select>
 
           {/* Value */}
           <TextField
             appearance="outlined"
             label={t(`dialog.contact.value.${form.type.toLowerCase()}`)}
-            helperMsg={contactValuesMap[form.type as ContactVia].helperMsg}
-            inputAttr={{ type: contactValuesMap[form.type as ContactVia].type }}
+            helperMsg={contactValuesMap[form.type as ContactType].helperMsg}
+            inputAttr={{
+              type: contactValuesMap[form.type as ContactType].type,
+            }}
             {...formProps.value}
             error={
-              form.value && contactValuesMap[form.type as ContactVia].validate
-                ? !contactValuesMap[form.type as ContactVia].validate!(
-                    form.value
+              form.value && contactValuesMap[form.type as ContactType].validate
+                ? !contactValuesMap[form.type as ContactType].validate!(
+                    form.value,
                   )
                 : false
             }

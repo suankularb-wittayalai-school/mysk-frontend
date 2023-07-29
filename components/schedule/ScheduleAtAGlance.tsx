@@ -155,8 +155,6 @@ const ScheduleAtAGlance: FC<{
       : "none"
     : "none";
 
-  // console.log(minutesTilImmediateNext);
-
   return (
     <AnimatePresence initial={false}>
       {

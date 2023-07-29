@@ -8,7 +8,7 @@ import { FC } from "react";
 import { ListItem, ListItemContent } from "@suankularb-components/react";
 
 // Helpers
-import { nameJoiner } from "@/utils/helpers/name";
+import { getLocaleName } from "@/utils/helpers/string";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
@@ -47,7 +47,7 @@ const ClassSearchResult: FC<{ classItem: ClassLookupListItem }> = ({
         // A list of all class advisors
         desc={classItem.classAdvisors
           .map(({ name }) =>
-            nameJoiner(locale, name, undefined, {
+            getLocaleName(locale, name, undefined, {
               prefix: "teacher",
               middleName: false,
               lastName: "abbr",

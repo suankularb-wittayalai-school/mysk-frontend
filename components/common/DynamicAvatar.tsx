@@ -6,7 +6,7 @@ import { FC } from "react";
 import { Avatar } from "@suankularb-components/react";
 
 // Helpers
-import { startsWithThaiVowel } from "@/utils/helpers/name";
+import { startsWithThaiVowel } from "@/utils/helpers/string";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";

@@ -1,5 +1,7 @@
 // External libraries
-import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { useSession } from "next-auth/react"
+
 
 import va from "@vercel/analytics";
 
@@ -31,12 +33,13 @@ import {
 
 // Internal components
 import LogOutDialog from "@/components/account/LogOutDialog";
+import GoogleOneTap from "@/components/account/GoogleOneTap";
 import RailLogo from "@/components/brand/RailLogo";
 import SchemeIcon from "@/components/icons/SchemeIcon";
 
 // Backend
-import { getUserMetadata } from "@/utils/backend/account";
-import { getClassAdvisorAt } from "@/utils/backend/person/teacher";
+// import { getUserMetadata } from "@/utils/backend/account";
+// import { getClassAdvisorAt } from "@/utils/backend/person/teacher";
 
 // Contexts
 import AppStateContext from "@/contexts/AppStateContext";
@@ -46,10 +49,12 @@ import { useLocale } from "@/utils/hooks/i18n";
 import { usePreferences } from "@/utils/hooks/preferences";
 import { useRefreshProps } from "@/utils/hooks/routing";
 import { useSnackbar } from "@/utils/hooks/snackbar";
+import { useUser } from "@/utils/helpers/auth";
 
 // Types
 import { CustomPage } from "@/utils/types/common";
-import { UserMetadata } from "@/utils/types/person";
+import { User } from "@/utils/types/person";
+// import { UserMetadata } from "@/utils/types/person";
 
 const Layout: FC<
   { children: ReactNode } & Pick<
@@ -71,41 +76,33 @@ const Layout: FC<
 
   // Class data (for Navigation links)
   const supabase = useSupabaseClient();
-  const user = useUser();
-  const [userMetadata, setUserMetadata] = useState<UserMetadata | null>();
+  // const user = useUser();
+
+  const {user, status} = useUser();
+
+  // console.log(user);
+
   const [isClassAdvisor, setIsClassAdvisor] = useState<boolean>(false);
-  useEffect(() => {
-    if (!user) return;
-    (async () => {
-      // Get user metadata
-      const { data: metadata, error: metadataError } = await getUserMetadata(
-        supabase,
-        user!.id
-      );
-      if (metadataError) {
-        console.error(metadataError);
-        setUserMetadata(null);
-        return;
-      }
-      setUserMetadata(metadata);
+  // useEffect(() => {
+  //   if (!user) return;
+  //   (async () => {
+  //     // Check if the user is a Class Advisor
+  //     if (user!.role === "teacher") {
+  //       const { data: classAdvisorAt, error } = await getClassAdvisorAt(
+  //         supabase,
+  //         user!.teacher!,
+  //       );
 
-      // Check if the user is a Class Advisor
-      if (metadata!.role === "teacher") {
-        const { data: classAdvisorAt, error } = await getClassAdvisorAt(
-          supabase,
-          metadata!.teacher!
-        );
+  //       if (classAdvisorAt) {
+  //         setIsClassAdvisor(true);
+  //         return;
+  //       }
 
-        if (classAdvisorAt) {
-          setIsClassAdvisor(true);
-          return;
-        }
-
-        if (error) console.error(error);
-        setIsClassAdvisor(false);
-      }
-    })();
-  }, [user]);
+  //       if (error) console.error(error);
+  //       setIsClassAdvisor(false);
+  //     }
+  //   })();
+  // }, [user]);
 
   // Snackbar
   const { snackbarOpen, setSnackbarOpen, snackbarProps } = useSnackbar();
@@ -121,7 +118,7 @@ const Layout: FC<
     setColorScheme(
       window.matchMedia("(prefers-color-scheme: dark)").matches
         ? "dark"
-        : "light"
+        : "light",
     );
   }
   useEffect(() => {
@@ -150,12 +147,12 @@ const Layout: FC<
     if (!preferences) return;
     window.addEventListener("beforeprint", () => setColorScheme("light"));
     window.addEventListener("afterprint", () =>
-      setColorScheme(preferences.colorScheme)
+      setColorScheme(preferences.colorScheme),
     );
     return () => {
       window.removeEventListener("beforeprint", () => setColorScheme("light"));
       window.removeEventListener("afterprint", () =>
-        setColorScheme(preferences.colorScheme)
+        setColorScheme(preferences.colorScheme),
       );
     };
   }, [preferences]);
@@ -169,7 +166,7 @@ const Layout: FC<
           header={<span className="skc-headline-small">MySK</span>}
           alt="MySK"
         >
-          {userMetadata?.role === "teacher" || navType === "teacher" ? (
+          {user?.role === "teacher" || navType === "teacher" ? (
             <NavDrawerItem
               icon={<MaterialIcon icon="school" />}
               label={t("navigation.teach")}
@@ -186,8 +183,8 @@ const Layout: FC<
               element={Link}
             />
           )}
-          {((navType || userMetadata?.role) === "student" ||
-            ((navType || userMetadata?.role) === "teacher" &&
+          {((navType || user?.role) === "student" ||
+            ((navType || user?.role) === "teacher" &&
               isClassAdvisor)) && (
             <NavDrawerItem
               icon={<MaterialIcon icon="groups" />}
@@ -272,7 +269,7 @@ const Layout: FC<
               />
             ))}
           />
-          {userMetadata?.isAdmin && (
+          {user?.is_admin && (
             <NavDrawerItem
               icon={<MaterialIcon icon="shield_person" />}
               label={t("navigation.drawer.about.admin")}
@@ -351,7 +348,7 @@ const Layout: FC<
                 label={t(
                   `navigation.colorScheme.${
                     colorScheme === "dark" ? "light" : "dark"
-                  }`
+                  }`,
                 )}
                 onClick={() => {
                   const newScheme = colorScheme === "dark" ? "light" : "dark";
@@ -373,7 +370,7 @@ const Layout: FC<
           }
           onNavToggle={() => setNavOpen(true)}
         >
-          {(navType || userMetadata?.role) === "teacher" ? (
+          {(navType || user?.role) === "teacher" ? (
             <NavBarItem
               icon={<MaterialIcon icon="school" />}
               label={t("navigation.teach")}
@@ -390,8 +387,8 @@ const Layout: FC<
               element={Link}
             />
           )}
-          {((navType || userMetadata?.role) === "student" ||
-            ((navType || userMetadata?.role) === "teacher" &&
+          {((navType || user?.role) === "student" ||
+            ((navType || user?.role) === "teacher" &&
               isClassAdvisor)) && (
             <NavBarItem
               icon={<MaterialIcon icon="groups" />}
@@ -437,6 +434,8 @@ const Layout: FC<
 
       {/* Content */}
       {children}
+      
+      <GoogleOneTap />
     </RootLayout>
   );
 

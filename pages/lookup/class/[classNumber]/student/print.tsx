@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase-backend";
 
 // Backend
-import { getUserMetadata } from "@/utils/backend/account";
+import { getUserMetadata } from "@/utils/backend/account/getUserByEmail";
 import {
   getAllClassNumbers,
   getClassOverview,

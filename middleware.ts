@@ -1,18 +1,21 @@
-// External libraries
-import type { NextRequest } from "next/server";
-import { NextResponse } from "next/server";
-
-import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
-
-// Helpers
-import { getLocalePath } from "@/utils/helpers/i18n";
-
-// Types
+// Imports
+import getUserByEmail from "@/utils/backend/account/getUserByEmail";
+import { getLocalePath } from "@/utils/helpers/string";
 import { LangCode } from "@/utils/types/common";
-import { Role } from "@/utils/types/person";
+import { UserRole } from "@/utils/types/person";
+import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
+import { decode } from "next-auth/jwt";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next();
+
+  // Since we are using next-auth and middleware is not fully supported yet, we
+  // can decode the token and get the user info from it
+  const decoded = await decode({
+    token: req.cookies.get("next-auth.session-token")?.value,
+    secret: process.env.NEXTAUTH_SECRET as string,
+  });
 
   // Get original destination
   const route = req.nextUrl.pathname;
@@ -21,11 +24,11 @@ export async function middleware(req: NextRequest) {
   // Ignore all page requests if under maintenance
   if (process.env.CLOSED_FOR_MAINTENANCE === "true")
     return NextResponse.redirect(
-      new URL(getLocalePath("/maintenance", locale), req.url)
+      new URL(getLocalePath("/maintenance", locale), req.url),
     );
 
   // Get current page protection type
-  const pageRole: Role | "public" | "admin" | "user" =
+  const pageRole: UserRole | "public" | "admin" | "user" =
     route === "/"
       ? "public"
       : /^\/admin|(news\/(info|form)\/(create|(\d+\/edit)))/.test(route)
@@ -39,33 +42,20 @@ export async function middleware(req: NextRequest) {
   // Declare Supabase client
   const supabase = createMiddlewareClient({ req, res });
 
-  // Get current session
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
   // Get user metadata
-  const { data: user } = await supabase
-    .from("users")
-    .select("role, onboarded, is_admin")
-    .eq("id", session?.user.id)
-    .order("id")
-    .limit(1)
-    .maybeSingle();
-
-  // Intepret user metadata
-  const userRole: Role | "public" = user ? JSON.parse(user.role) : "public";
-  const userIsAdmin: boolean = user ? user.is_admin : false;
-  const userIsOnboarded: boolean = user ? user.onboarded : false;
+  const { data: user } = await getUserByEmail(
+    supabase,
+    decoded?.email as string,
+  );
 
   // Decide on destination based on user and page protection type
   let destination: string | null = null;
 
   // Disallow public users from visiting private pages
-  if (pageRole !== "public" && userRole === "public") destination = "/";
+  if (pageRole !== "public" && !user) destination = "/";
   // Disallow students from vising the Your Subject page of the onboarding
   // process
-  else if (route === "/account/welcome/your-subjects" && userRole === "student")
+  else if (route === "/account/welcome/your-subjects" && user?.role === "student")
     destination = "/account/welcome/your-information";
   // Disallow logged in users from visiting certain pages under certain
   // circumstances
@@ -74,34 +64,34 @@ export async function middleware(req: NextRequest) {
     !(
       (
         // Allow new users to visit onboarding pages
-        (route.startsWith("/account/welcome") && !userIsOnboarded) ||
+        (route.startsWith("/account/welcome") && !user?.onboarded) ||
         // Allow admins to visit admin pages
-        (pageRole === "admin" && userIsAdmin) ||
+        (pageRole === "admin" && user?.is_admin) ||
         // Allow all users to visit user pages
         pageRole === "user" ||
         // Allow users with the correct roles
-        pageRole === userRole
+        pageRole === user?.role
       )
     )
   ) {
     // Set destinations for students and teachers in the wrong pages
-    if (userRole === "student") destination = "/learn";
-    else if (userRole === "teacher") destination = "/teach";
+    if (user?.role === "student") destination = "/learn";
+    else if (user?.role === "teacher") destination = "/teach";
   }
   // Allow all users to visit user pages
   // Allow users with the correct roles
-  else if (!(pageRole === "user" || pageRole === userRole)) {
-    if (pageRole !== "admin" || !userIsAdmin) {
+  else if (!(pageRole === "user" || pageRole === user?.role)) {
+    if (pageRole !== "admin" || !user?.is_admin) {
       // Set destinations for students and teachers in the wrong pages
-      if (userRole === "student") destination = "/learn";
-      else if (userRole === "teacher") destination = "/teach";
+      if (user?.role === "student") destination = "/learn";
+      else if (user?.role === "teacher") destination = "/teach";
     }
   }
 
   // Redirect if decided so, continue if not
   if (destination)
     return NextResponse.redirect(
-      new URL(getLocalePath(destination, locale), req.url)
+      new URL(getLocalePath(destination, locale), req.url),
     );
   return NextResponse.next();
 }

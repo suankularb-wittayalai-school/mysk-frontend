@@ -18,7 +18,7 @@ import PersonDetailsContent from "@/components/lookup/person/PersonDetailsConten
 import { getTeacher } from "@/utils/backend/person/teacher";
 
 // Helpers
-import { nameJoiner } from "@/utils/helpers/name";
+import { getLocaleName } from "@/utils/helpers/string";
 import { createTitleStr } from "@/utils/helpers/title";
 
 // Hooks
@@ -38,10 +38,10 @@ const PersonDetailsPage: CustomPage<{
   return (
     <>
       <Head>
-        <title>{createTitleStr(nameJoiner(locale, teacher.name), t)}</title>
+        <title>{createTitleStr(getLocaleName(locale, teacher.name), t)}</title>
       </Head>
       <MySKPageHeader
-        title={nameJoiner(locale, teacher.name)}
+        title={getLocaleName(locale, teacher.name)}
         parentURL={`/lookup/class/${classNumber}`}
         className="!overflow-visible"
       >

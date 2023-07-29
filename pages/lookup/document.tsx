@@ -27,7 +27,7 @@ import DocumentCard from "@/components/lookup/document/DocumentCard";
 import DocumentDetails from "@/components/lookup/document/DocumentDetails";
 
 // Backend
-import { getUserMetadata } from "@/utils/backend/account";
+import { getUserMetadata } from "@/utils/backend/account/getUserByEmail";
 import {
   getSchoolDocs,
   getSchoolDocsByID,

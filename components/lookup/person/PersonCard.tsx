@@ -18,7 +18,7 @@ import { PersonLookupItem, Role } from "@/utils/types/person";
 // Helpers
 import { cn } from "@/utils/helpers/className";
 import { getLocaleString } from "@/utils/helpers/i18n";
-import { nameJoiner } from "@/utils/helpers/name";
+import { getLocaleName } from "@/utils/helpers/string";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
@@ -97,7 +97,7 @@ const PersonCard: FC<{
             }
           />
         }
-        title={nameJoiner(locale, person.name, undefined, {
+        title={getLocaleName(locale, person.name, undefined, {
           prefix: person.role === "teacher" ? "teacher" : false,
         })}
         subtitle={

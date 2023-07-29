@@ -37,11 +37,11 @@ import SubjectPeriodMenu from "@/components/schedule/SubjectPeriodMenu";
 import ScheduleContext from "@/contexts/ScheduleContext";
 
 // Backend
-import {
-  deleteScheduleItem,
-  editScheduleItemDuration,
-  moveScheduleItem,
-} from "@/utils/backend/schedule/schedule";
+// import {
+//   deleteScheduleItem,
+//   editScheduleItemDuration,
+//   moveScheduleItem,
+// } from "@/utils/backend/schedule/schedule";
 
 // Helpers
 import { cn } from "@/utils/helpers/className";
@@ -58,10 +58,11 @@ import { useLocale } from "@/utils/hooks/i18n";
 import { useToggle } from "@/utils/hooks/toggle";
 
 // Types
-import { PeriodContentItem } from "@/utils/types/schedule";
+// import { PeriodContentItem } from "@/utils/types/schedule";
 
 const SubjectPeriod: FC<{
-  period: PeriodContentItem;
+  // period: PeriodContentItem;
+  period: any;
   day: Day;
   isInSession?: boolean;
 }> = ({ period, day, isInSession }) => {
@@ -123,18 +124,18 @@ const SubjectPeriod: FC<{
   }, [detailsOpen]);
 
   async function handleDelete() {
-    withLoading(
-      async () => {
-        va.track("Delete Period");
-        setDetailsOpen(false);
-        const { error } = await deleteScheduleItem(supabase, period.id!);
-        if (error) return false;
-        await router.replace(router.asPath);
-        return true;
-      },
-      toggleLoading,
-      { hasEndToggle: true }
-    );
+    // withLoading(
+    //   async () => {
+    //     va.track("Delete Period");
+    //     setDetailsOpen(false);
+    //     const { error } = await deleteScheduleItem(supabase, period.id!);
+    //     if (error) return false;
+    //     await router.replace(router.asPath);
+    //     return true;
+    //   },
+    //   toggleLoading,
+    //   { hasEndToggle: true }
+    // );
   }
 
   // Loading
@@ -176,26 +177,26 @@ const SubjectPeriod: FC<{
         }
 
         // Save the change to Supabase
-        const { error } = await moveScheduleItem(
-          supabase,
-          newDay,
-          { ...period, startTime: newStartTime },
-          teacherID!
-        );
+        // const { error } = await moveScheduleItem(
+        //   supabase,
+        //   newDay,
+        //   { ...period, startTime: newStartTime },
+        //   teacherID!
+        // );
 
-        if (error) {
-          animationControls.start({ x: 0, y: 0 });
-          return false;
-        }
+        // if (error) {
+        //   animationControls.start({ x: 0, y: 0 });
+        //   return false;
+        // }
 
-        // Visually move the Period
-        animationControls.start({
-          x: (newStartTime - period.startTime) * periodWidth,
-          y: (newDay - day) * (periodHeight + 4),
-        });
+        // // Visually move the Period
+        // animationControls.start({
+        //   x: (newStartTime - period.startTime) * periodWidth,
+        //   y: (newDay - day) * (periodHeight + 4),
+        // });
 
-        // Refetch the Schedule
-        await router.replace(router.asPath);
+        // // Refetch the Schedule
+        // await router.replace(router.asPath);
 
         return true;
       },
@@ -244,38 +245,38 @@ const SubjectPeriod: FC<{
   // Save the new duration to Supabase
   async function handleMouseUp() {
     setExtending(false);
-    withLoading(
-      async () => {
-        // Track
-        va.track("Extend Period");
+    // withLoading(
+    //   async () => {
+    //     // Track
+    //     va.track("Extend Period");
 
-        // Don’t do anything if the period’s duration stays the same
-        if (periodDuration === period.duration) {
-          setExtending(false);
-          return false;
-        }
+    //     // Don’t do anything if the period’s duration stays the same
+    //     if (periodDuration === period.duration) {
+    //       setExtending(false);
+    //       return false;
+    //     }
 
-        // Save to Supabase
-        const { error } = await editScheduleItemDuration(
-          supabase,
-          day,
-          { ...period, duration: periodDuration },
-          teacherID!
-        );
+    //     // Save to Supabase
+    //     const { error } = await editScheduleItemDuration(
+    //       supabase,
+    //       day,
+    //       { ...period, duration: periodDuration },
+    //       teacherID!
+    //     );
 
-        if (error) {
-          setExtending(false);
-          return false;
-        }
+    //     if (error) {
+    //       setExtending(false);
+    //       return false;
+    //     }
 
-        // Refetch the Schedule
-        await router.replace(router.asPath);
+    //     // Refetch the Schedule
+    //     await router.replace(router.asPath);
 
-        return true;
-      },
-      toggleLoading,
-      { hasEndToggle: true }
-    );
+    //     return true;
+    //   },
+    //   toggleLoading,
+    //   { hasEndToggle: true }
+    // );
   }
 
   return (

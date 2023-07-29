@@ -23,7 +23,7 @@ import MySKPageHeader from "@/components/common/MySKPageHeader";
 import TeachingSubjectCard from "@/components/subject/TeachingSubjectCard";
 
 // Backend
-import { getUserMetadata } from "@/utils/backend/account";
+import { getUserMetadata } from "@/utils/backend/account/getUserByEmail";
 import { getTeachingSubjects } from "@/utils/backend/subject/roomSubject";
 
 // Helpers

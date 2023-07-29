@@ -23,7 +23,7 @@ import NewsFeed from "@/components/news/NewsFeed";
 import NewsIcon from "@/components/news/NewsIcon";
 
 // Backend
-import { getUserMetadata } from "@/utils/backend/account";
+import { getUserMetadata } from "@/utils/backend/account/getUserByEmail";
 import { getNewsFeed } from "@/utils/backend/news";
 
 // Helpers

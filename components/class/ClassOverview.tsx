@@ -23,28 +23,28 @@ import DynamicAvatar from "@/components/common/DynamicAvatar";
 import SnackbarContext from "@/contexts/SnackbarContext";
 
 // Backend
-import {
-  addContactToClassroom,
-  removeContactFromClassroom,
-} from "@/utils/backend/classroom/classroom";
-import {
-  createContact,
-  deleteContact,
-  updateContact,
-} from "@/utils/backend/contact";
+// import {
+//   addContactToClassroom,
+//   removeContactFromClassroom,
+// } from "@/utils/backend/classroom/classroom";
+// import {
+//   createContact,
+//   deleteContact,
+//   updateContact,
+// } from "@/utils/backend/contact";
 
 // Helpers
 import { getLocaleString } from "@/utils/helpers/i18n";
-import { nameJoiner } from "@/utils/helpers/name";
+import { getLocaleName } from "@/utils/helpers/string";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
 import { useRefreshProps } from "@/utils/hooks/routing";
 
 // Types
-import { ClassOverview as ClassOverviewType } from "@/utils/types/class";
-import { Contact } from "@/utils/types/contact";
-import { Teacher } from "@/utils/types/person";
+// import { ClassOverview as ClassOverviewType } from "@/utils/types/class";
+// import { Contact } from "@/utils/types/contact";
+// import { Teacher } from "@/utils/types/person";
 
 /**
  * Displays a list of this class’ Class Advisors.
@@ -53,7 +53,8 @@ import { Teacher } from "@/utils/types/person";
  *
  * @returns A Section.
  */
-const AdvisorsSection: FC<{ advisors: Teacher[] }> = ({ advisors }) => {
+// const AdvisorsSection: FC<{ advisors: Teacher[] }> = ({ advisors }) => {
+const AdvisorsSection: FC<{ advisors: any[] }> = ({ advisors }) => {
   const locale = useLocale();
   const { t } = useTranslation("class");
 
@@ -71,7 +72,7 @@ const AdvisorsSection: FC<{ advisors: Teacher[] }> = ({ advisors }) => {
           >
             <CardHeader
               avatar={<DynamicAvatar profile={teacher.profile} />}
-              title={nameJoiner(locale, teacher.name)}
+              title={getLocaleName(locale, teacher.name)}
               subtitle={getLocaleString(teacher.subjectGroup.name, locale)}
             />
           </Card>
@@ -88,7 +89,8 @@ const AdvisorsSection: FC<{ advisors: Teacher[] }> = ({ advisors }) => {
  * @param advisors The list of Contacts to display.
  */
 const ClassContactsSection: FC<{
-  contacts: Contact[];
+  // contacts: Contact[];
+  contacts: any[];
   classID?: number;
   editable?: boolean;
 }> = ({ contacts, classID, editable }) => {
@@ -102,22 +104,23 @@ const ClassContactsSection: FC<{
    *
    * @param contact The Contact to add.
    */
-  async function handleAdd(contact: Contact) {
-    const { data, error } = await createContact(supabase, contact);
-    if (error) {
-      setSnackbar(<Snackbar>{t("snackbar.failure")}</Snackbar>);
-      return;
-    }
+  // async function handleAdd(contact: Contact) {
+  async function handleAdd(contact: any) {
+    // const { data, error } = await createContact(supabase, contact);
+    // if (error) {
+    //   setSnackbar(<Snackbar>{t("snackbar.failure")}</Snackbar>);
+    //   return;
+    // }
 
-    const { error: classError } = await addContactToClassroom(
-      supabase,
-      data!.id,
-      classID!
-    );
-    if (classError) {
-      setSnackbar(<Snackbar>{t("snackbar.failure")}</Snackbar>);
-      return;
-    }
+    // const { error: classError } = await addContactToClassroom(
+    //   supabase,
+    //   data!.id,
+    //   classID!
+    // );
+    // if (classError) {
+    //   setSnackbar(<Snackbar>{t("snackbar.failure")}</Snackbar>);
+    //   return;
+    // }
 
     refreshProps();
   }
@@ -127,12 +130,13 @@ const ClassContactsSection: FC<{
    *
    * @param contact The new data for the Contact.
    */
-  async function handleEdit(contact: Contact) {
-    const { error } = await updateContact(supabase, contact);
-    if (error) {
-      setSnackbar(<Snackbar>{t("snackbar.failure")}</Snackbar>);
-      return;
-    }
+  // async function handleEdit(contact: Contact) {
+  async function handleEdit(contact: any) {
+    // const { error } = await updateContact(supabase, contact);
+    // if (error) {
+    //   setSnackbar(<Snackbar>{t("snackbar.failure")}</Snackbar>);
+    //   return;
+    // }
 
     refreshProps();
   }
@@ -143,15 +147,15 @@ const ClassContactsSection: FC<{
    * @param contactID The ID of the Contact to delete.
    */
   async function handleRemove(contactID: number) {
-    const { error } = await removeContactFromClassroom(
-      supabase,
-      contactID,
-      classID!
-    );
-    if (error) {
-      setSnackbar(<Snackbar>{t("snackbar.failure")}</Snackbar>);
-      return;
-    }
+    // const { error } = await removeContactFromClassroom(
+    //   supabase,
+    //   contactID,
+    //   classID!
+    // );
+    // if (error) {
+    //   setSnackbar(<Snackbar>{t("snackbar.failure")}</Snackbar>);
+    //   return;
+    // }
 
     refreshProps();
   }
@@ -178,7 +182,8 @@ const ClassContactsSection: FC<{
  * @returns A Content Layout.
  */
 const ClassOverview: FC<{
-  classItem: ClassOverviewType;
+  // classItem: ClassOverviewType;
+  classItem: any;
   editable?: boolean;
 }> = ({ classItem, editable }) => {
   return (

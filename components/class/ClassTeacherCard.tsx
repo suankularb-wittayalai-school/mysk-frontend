@@ -9,7 +9,7 @@ import { Card, CardHeader, useBreakpoint } from "@suankularb-components/react";
 import DynamicAvatar from "@/components/common/DynamicAvatar";
 
 // Helpers
-import { nameJoiner } from "@/utils/helpers/name";
+import { getLocaleName } from "@/utils/helpers/string";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
@@ -59,7 +59,7 @@ const ClassTeacherCard: FC<{
             }
           />
         }
-        title={nameJoiner(locale, teacher.name, undefined, {
+        title={getLocaleName(locale, teacher.name, undefined, {
           prefix: "teacher",
         })}
         className="!text-left"

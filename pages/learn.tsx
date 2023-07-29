@@ -29,14 +29,14 @@ import ScheduleAtAGlance from "@/components/schedule/ScheduleAtAGlance";
 import SubjectList from "@/components/subject/SubjectList";
 
 // Backend
-import { getClassFromUser } from "@/utils/backend/classroom/classroom";
-import { getSchedule } from "@/utils/backend/schedule/schedule";
-import { getSubjectList } from "@/utils/backend/subject/roomSubject";
+// import { getClassFromUser } from "@/utils/backend/classroom/classroom";
+// import { getSchedule } from "@/utils/backend/schedule/schedule";
+// import { getSubjectList } from "@/utils/backend/subject/roomSubject";
 
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { Schedule as ScheduleType } from "@/utils/types/schedule";
-import { SubjectListItem } from "@/utils/types/subject";
+// import { Schedule as ScheduleType } from "@/utils/types/schedule";
+// import { SubjectListItem } from "@/utils/types/subject";
 
 // Helpers
 import { createTitleStr } from "@/utils/helpers/title";
@@ -44,7 +44,8 @@ import { createTitleStr } from "@/utils/helpers/title";
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
 
-const ScheduleSection: FC<{ schedule: ScheduleType }> = ({ schedule }) => {
+// const ScheduleSection: FC<{ schedule: ScheduleType }> = ({ schedule }) => {
+const ScheduleSection: FC<{ schedule: any }> = ({ schedule }) => {
   const { t } = useTranslation("learn");
 
   const { duration, easing } = useAnimationConfig();
@@ -61,7 +62,8 @@ const ScheduleSection: FC<{ schedule: ScheduleType }> = ({ schedule }) => {
   );
 };
 
-const SubjectListSection: FC<{ subjectList: SubjectListItem[] }> = ({
+// const SubjectListSection: FC<{ subjectList: SubjectListItem[] }> = ({
+const SubjectListSection: FC<{ subjectList: any[] }> = ({
   subjectList,
 }) => {
   const { t } = useTranslation("schedule");
@@ -92,8 +94,10 @@ const SubjectListSection: FC<{ subjectList: SubjectListItem[] }> = ({
 };
 
 const LearnPage: CustomPage<{
-  schedule: ScheduleType;
-  subjectList: SubjectListItem[];
+  // schedule: ScheduleType;
+  // subjectList: SubjectListItem[];
+  schedule: any;
+  subjectList: any[];
 }> = ({ schedule, subjectList }) => {
   const { t } = useTranslation("learn");
 
@@ -131,17 +135,17 @@ export const getServerSideProps: GetServerSideProps = async ({
     data: { session },
   } = await supabase.auth.getSession();
 
-  const { data: classItem, error } = await getClassFromUser(
-    supabase,
-    session!.user,
-  );
-  if (error) return { notFound: true };
-  const { data: schedule } = await getSchedule(
-    supabase,
-    "student",
-    classItem!.id,
-  );
-  const { data: subjectList } = await getSubjectList(supabase, classItem!.id);
+  // const { data: classItem, error } = await getClassFromUser(
+  //   supabase,
+  //   session!.user,
+  // );
+  // if (error) return { notFound: true };
+  // const { data: schedule } = await getSchedule(
+  //   supabase,
+  //   "student",
+  //   classItem!.id,
+  // );
+  // const { data: subjectList } = await getSubjectList(supabase, classItem!.id);
 
   return {
     props: {
@@ -151,8 +155,8 @@ export const getServerSideProps: GetServerSideProps = async ({
         "learn",
         "schedule",
       ])),
-      schedule,
-      subjectList,
+      // schedule,
+      // subjectList,
     },
   };
 };
