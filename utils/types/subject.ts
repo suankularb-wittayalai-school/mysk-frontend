@@ -38,3 +38,10 @@ export type ClassroomSubject = {
   ggc_link?: string;
   gg_meet_link?: string;
 };
+
+
+export type SubjectClassrooms = {
+  id: string;
+  subject: Pick<Subject, "id" | "name" | "code">;
+  classrooms: Pick<Classroom, "id" | "number">[];
+}

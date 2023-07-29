@@ -18,7 +18,7 @@ import DynamicAvatar from "@/components/common/DynamicAvatar";
 import SnackbarContext from "@/contexts/SnackbarContext";
 
 // Backend
-import { getTeacherByFirstName } from "@/utils/backend/person/teacher";
+// import { getTeacherByFirstName } from "@/utils/backend/person/teacher";
 
 // Helpers
 import { withLoading } from "@/utils/helpers/loading";

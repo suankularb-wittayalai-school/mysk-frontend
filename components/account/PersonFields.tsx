@@ -13,7 +13,7 @@ import {
 } from "@suankularb-components/react";
 
 // Helpers
-import { getLocaleString } from "@/utils/helpers/i18n";
+import { getLocaleString } from "@/utils/helpers/string";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";

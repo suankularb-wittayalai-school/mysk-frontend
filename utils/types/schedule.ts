@@ -24,8 +24,8 @@ export type PeriodContentItem = {
   start_time: number;
   duration: number;
   subject: Pick<Subject, "id" | "code" | "name">;
-  teachers: Teacher[];
-  co_teachers?: Teacher[];
+  teachers: Pick<Teacher, "id" | "first_name" | "last_name">[];
+  co_teachers?: Pick<Teacher, "id" | "first_name" | "last_name">[];
   // Physical rooms wherein this Subject is taught (Ex. 1214, 4306)
   rooms?: string[];
   // The classes taking this Subject

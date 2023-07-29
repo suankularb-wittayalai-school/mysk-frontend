@@ -17,7 +17,7 @@ import AddPeriodDialog from "@/components/schedule/AddPeriodDialog";
 import ScheduleContext from "@/contexts/ScheduleContext";
 
 // Helpers
-import { getLocaleObj, getLocaleString } from "@/utils/helpers/i18n";
+import { getLocaleString } from "@/utils/helpers/string";
 import { positionPxToPeriod } from "@/utils/helpers/schedule";
 
 // Hooks
@@ -95,7 +95,7 @@ const ScheduleSubjectChip: FC<{ subject: SubjectWNameAndCode }> = ({
         >
           {[
             getLocaleString(subject.code, locale),
-            getLocaleObj(subject.name, locale).name,
+            getLocaleString(subject.name, locale),
           ].join(" • ")}
         </InputChip>
       </motion.div>

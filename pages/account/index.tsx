@@ -27,10 +27,10 @@ import SnackbarContext from "@/contexts/SnackbarContext";
 //   removeContactFromPerson,
 // } from "@/utils/backend/person/person";
 // import { getSubjectGroups } from "@/utils/backend/subject/subjectGroup";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
-import { getLocaleString } from "@/utils/helpers/string";
 import { withLoading } from "@/utils/helpers/loading";
-import { getLocaleName } from "@/utils/helpers/string";
+import { getLocaleName, getLocaleString } from "@/utils/helpers/string";
 import { createTitleStr } from "@/utils/helpers/title";
 import { useForm } from "@/utils/hooks/form";
 import { useLocale } from "@/utils/hooks/i18n";
@@ -52,11 +52,9 @@ import {
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import { getServerSession } from "next-auth/next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
-import { authOptions } from "pages/api/auth/[...nextauth]";
 import { FC, useContext, useState } from "react";
 
 /**
@@ -215,7 +213,7 @@ const UserFieldsSection: FC<{
     {
       key: "subjectGroup",
       defaultValue:
-        person.role === "teacher" && subjectGroups.length
+        person.role === "teacher" && subjectGroups.length > 0
           ? person.subject_group.id || subjectGroups[0].id
           : undefined,
     },
@@ -452,9 +450,9 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   const { data: user, error } = await getLoggedInPerson(
     supabase,
+    authOptions,
     req,
     res,
-    authOptions,
     { includeContacts: true, detailed: true },
   );
 
@@ -469,7 +467,21 @@ export const getServerSideProps: GetServerSideProps = async ({
   //   { contacts: true, allergies: true, classAdvisorAt: true },
   // );
 
-  // const { data: subjectGroups } = await getSubjectGroups();
+  const { data: fetchedSubjectGroups } = await supabase.from("subject_groups").select("*");
+
+  if (!fetchedSubjectGroups) {
+    return {
+      notFound: true,
+    };
+  }
+
+  const subjectGroups = fetchedSubjectGroups.map((sg) => ({
+    id: sg.id,
+    name: {
+      th: sg.name_th,
+      "en-US": sg.name_en,
+    }
+  }))
 
   return {
     props: {
@@ -479,7 +491,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         "account",
       ])),
       user,
-      // subjectGroups,
+      subjectGroups,
     },
   };
 };

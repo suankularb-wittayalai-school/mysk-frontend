@@ -26,7 +26,7 @@ import SnackbarContext from "@/contexts/SnackbarContext";
 // import { createScheduleItem } from "@/utils/backend/schedule/schedule";
 
 // Helpers
-import { getLocaleObj } from "@/utils/helpers/i18n";
+import { getLocaleString } from "@/utils/helpers/string";
 import { withLoading } from "@/utils/helpers/loading";
 import {
   getSubjectName,
@@ -138,7 +138,7 @@ const AddPeriodDialog: DialogFC<{
       <DialogHeader
         title={t("dialog.editPeriod.title.add")}
         desc={t("dialog.editPeriod.addDesc", {
-          subject: getLocaleObj(subject.name, locale).name,
+          subject: getLocaleString(subject.name, locale),
           day: t(`datetime.day.${additionSite?.day}`, { ns: "common" }),
           startTime: additionSite?.startTime,
         })}

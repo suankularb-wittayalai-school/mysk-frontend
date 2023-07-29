@@ -51,10 +51,10 @@ import RoomSubjectDialog from "@/components/subject/RoomSubjectDialog";
 import SnackbarContext from "@/contexts/SnackbarContext";
 
 // Backend
-import {
-  deleteRoomSubject,
-  getTeachingSubjectClasses,
-} from "@/utils/backend/subject/roomSubject";
+// import {
+//   deleteRoomSubject,
+//   getTeachingSubjectClasses,
+// } from "@/utils/backend/subject/roomSubject";
 
 // Helpers
 import { getLocaleObj } from "@/utils/helpers/i18n";

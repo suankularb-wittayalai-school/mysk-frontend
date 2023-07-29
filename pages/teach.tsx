@@ -14,6 +14,7 @@
 // External libraries
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 
+
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import Head from "next/head";
 
@@ -39,14 +40,18 @@ import Schedule from "@/components/schedule/Schedule";
 import ScheduleAtAGlance from "@/components/schedule/ScheduleAtAGlance";
 import TeachingSubjectCard from "@/components/subject/TeachingSubjectCard";
 
+
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
+
 // Backend
-import { getUserMetadata } from "@/utils/backend/account/getUserByEmail";
-import { getSchedule } from "@/utils/backend/schedule/schedule";
-import { getTeachingSubjects } from "@/utils/backend/subject/roomSubject";
-import { getSubjectsInCharge } from "@/utils/backend/subject/subject";
+// import { getUserMetadata } from "@/utils/backend/account/getUserByEmail";
+import getTeacherSchedule from "@/utils/backend/schedule/getTeacherSchedule";
+import getTeachingSubjects from "@/utils/backend/subject/getTeachingSubjects";
+// import { getSubjectsInCharge } from "@/utils/backend/subject/subject";
 
 // Helpers
-import { getLocalePath } from "@/utils/helpers/i18n";
+import { getLocalePath } from "@/utils/helpers/string";
 import { createTitleStr } from "@/utils/helpers/title";
 
 // Hooks
@@ -55,7 +60,7 @@ import { useLocale } from "@/utils/hooks/i18n";
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Schedule as ScheduleType } from "@/utils/types/schedule";
-import { SubjectWNameAndCode, TeacherSubjectItem } from "@/utils/types/subject";
+import { Subject, SubjectClassrooms } from "@/utils/types/subject";
 import { LayoutGroup, motion } from "framer-motion";
 
 /**
@@ -69,7 +74,7 @@ import { LayoutGroup, motion } from "framer-motion";
  */
 const ScheduleSection: FC<{
   schedule: ScheduleType;
-  subjectsInCharge: SubjectWNameAndCode[];
+  subjectsInCharge: Pick<Subject, "id"| "name" | "code">[];
   teacherID: number;
 }> = ({ schedule, subjectsInCharge, teacherID }) => {
   const { t } = useTranslation("teach");
@@ -96,7 +101,7 @@ const ScheduleSection: FC<{
  * @returns A Section.
  */
 const SubjectsSection: FC<{
-  subjects: TeacherSubjectItem[];
+  subjects: SubjectClassrooms[];
 }> = ({ subjects }) => {
   const locale = useLocale();
   const { t } = useTranslation("teach");
@@ -124,10 +129,10 @@ const SubjectsSection: FC<{
         {subjects
           .filter(
             (subject) =>
-              subject.subject.name.th.name.includes(globalFilter) ||
-              subject.subject.name["en-US"]?.name.includes(globalFilter) ||
-              subject.subject.code["en-US"].includes(globalFilter) ||
-              subject.subject.code["en-US"].includes(globalFilter),
+              subject.subject.name.th.includes(globalFilter) ||
+              subject.subject.name["en-US"]?.includes(globalFilter) ||
+              subject.subject.code["en-US"]?.includes(globalFilter) ||
+              subject.subject.code["en-US"]?.includes(globalFilter),
           )
           .map((subject) => (
             <TeachingSubjectCard key={subject.id} subject={subject} />
@@ -150,8 +155,8 @@ const SubjectsSection: FC<{
  */
 const TeachPage: CustomPage<{
   schedule: ScheduleType;
-  subjectsInCharge: SubjectWNameAndCode[];
-  teachingSubjects: TeacherSubjectItem[];
+  subjectsInCharge: Pick<Subject, "id" | "name" | "code">[];
+  teachingSubjects: SubjectClassrooms[];
   teacherID: number;
 }> = ({ schedule, subjectsInCharge, teachingSubjects, teacherID }) => {
   const { t } = useTranslation(["teach", "common"]);
@@ -186,34 +191,56 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  const { data: metadata, error: metadataError } = await getUserMetadata(
+  const { data: user, error } = await getLoggedInPerson(
     supabase,
-    session!.user.id,
+    authOptions,
+    req,
+    res,
+    { includeContacts: true, detailed: true },
   );
-  if (metadataError) console.error(metadataError);
 
-  if (!metadata?.onboarded)
+  if (error) {
+    return {
+      notFound: true,
+    };
+  }
+
+  if (user.role !== "teacher") {
     return {
       redirect: {
-        destination: getLocalePath("/account/welcome", locale as LangCode),
+        destination: getLocalePath("/learn", locale as LangCode),
         permanent: false,
       },
     };
+  }
 
-  const teacherID = metadata.teacher!;
-  const { data: schedule } = await getSchedule(supabase, "teacher", teacherID);
-  const { data: subjectsInCharge } = await getSubjectsInCharge(
-    supabase,
-    teacherID,
-  );
-  const { data: teachingSubjects } = await getTeachingSubjects(
-    supabase,
-    teacherID,
-  );
+  // if (!metadata?.onboarded)
+  //   return {
+  //     redirect: {
+  //       destination: getLocalePath("/account/welcome", locale as LangCode),
+  //       permanent: false,
+  //     },
+  //   };
+
+  // const teacherID = metadata.teacher!;
+  const { data: schedule } = await getTeacherSchedule(supabase, user.id);
+  // const { data: subjectsInCharge } = await getSubjectsInCharge(
+  //   supabase,
+  //   teacherID,
+  // );
+
+
+  // const { data: teachingSubjects } = await getTeachingSubjects(
+  //   supabase,
+  //   teacherID,
+  // );
+  const {data: teachingSubjects} = await getTeachingSubjects(supabase, user.id);
+
+  // console.log(teachingSubjects)
+
+  // const {data}
+
+  
 
   return {
     props: {
@@ -224,9 +251,9 @@ export const getServerSideProps: GetServerSideProps = async ({
         "schedule",
       ])),
       schedule,
-      subjectsInCharge,
+      subjectsInCharge: user.subjects_in_charge,
       teachingSubjects,
-      teacherID,
+      teacherID: user.id,
     },
   };
 };

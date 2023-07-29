@@ -4,6 +4,7 @@ import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useContext } from "react";
+import { signOut } from "next-auth/react"
 
 // SK Components
 import {
@@ -48,12 +49,14 @@ const LogOutDialog: DialogComponent = ({ open, onClose }) => {
     withLoading(
       async () => {
         // Log the user out
-        const { error } = await supabase.auth.signOut();
-        if (error) {
-          logError("handleSubmit in LogOutDialog", error);
-          setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
-          return false;
-        }
+        // const { error } = await supabase.auth.signOut();
+        // if (error) {
+        //   logError("handleSubmit in LogOutDialog", error);
+        //   setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
+        //   return false;
+        // }
+
+        signOut();
 
         // Track event
         va.track("Log out");

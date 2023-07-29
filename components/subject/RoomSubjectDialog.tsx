@@ -22,10 +22,10 @@ import TeachersField from "@/components/person/TeachersField";
 import SnackbarContext from "@/contexts/SnackbarContext";
 
 // Backend
-import {
-  createRoomSubject,
-  editRoomSubject,
-} from "@/utils/backend/subject/roomSubject";
+// import {
+//   createRoomSubject,
+//   editRoomSubject,
+// } from "@/utils/backend/subject/roomSubject";
 
 // Helpers
 import { withLoading } from "@/utils/helpers/loading";
@@ -38,10 +38,10 @@ import { useToggle } from "@/utils/hooks/toggle";
 import {
   FormControlProps,
   FormControlValues,
-  SubmittableDialogComponent,
+  // SubmittableDialogComponent,
 } from "@/utils/types/common";
 import { Teacher } from "@/utils/types/person";
-import { SubjectListItem, SubjectWNameAndCode } from "@/utils/types/subject";
+// import { SubjectListItem, SubjectWNameAndCode } from "@/utils/types/subject";
 
 // Miscellaneous
 import {
@@ -50,7 +50,8 @@ import {
   ggcCodeRegex,
   ggcLinkRegex,
 } from "@/utils/patterns";
-import { getPersonFromUser } from "@/utils/backend/person/person";
+import { DialogFC } from "@/utils/types/component";
+// import { getPersonFromUser } from "@/utils/backend/person/person";
 
 /**
  * Teachers and Co-teachers.
@@ -207,10 +208,15 @@ const GoogleSection: FC<{
  *
  * @returns A Full-screen Dialog.
  */
-const RoomSubjectDialog: SubmittableDialogComponent<
-  () => void,
-  { data?: SubjectListItem; subject: SubjectWNameAndCode }
-> = ({ open, onClose, onSubmit, data, subject }) => {
+// const RoomSubjectDialog: SubmittableDialogComponent<
+//   () => void,
+//   { data?: SubjectListItem; subject: SubjectWNameAndCode }
+// > = ({ open, onClose, onSubmit, data, subject }) => {
+const RoomSubjectDialog: DialogFC<{
+  data?: any;
+  subject: any;
+  onSubmit: () => void;
+}> = ({ open, onClose, onSubmit, data, subject }) => {
   const { t } = useTranslation("teach", { keyPrefix: "dialog.roomSubject" });
   const { t: tx } = useTranslation("common");
 
@@ -243,9 +249,9 @@ const RoomSubjectDialog: SubmittableDialogComponent<
   const supabase = useSupabaseClient();
   const userTeacher = useMemo(async () => {
     if (!user || data) return;
-    const { data: teacher, error } = await getPersonFromUser(supabase, user);
-    if (error) return null;
-    return teacher as Teacher;
+    // const { data: teacher, error } = await getPersonFromUser(supabase, user);
+    // if (error) return null;
+    // return teacher as Teacher;
   }, [user?.id]);
 
   // Teachers Chip Field default if in add mode
@@ -254,8 +260,8 @@ const RoomSubjectDialog: SubmittableDialogComponent<
     resetForm();
     // If the Teacher is fetched, insert it into the Teachers Chip Field
     (async () => {
-      if (await userTeacher)
-        setForm({ ...form, teachers: [await userTeacher] });
+      // if (await userTeacher)
+      //   setForm({ ...form, teachers: [await userTeacher] });
     })();
     return;
   }, [open, userTeacher]);
@@ -290,24 +296,24 @@ const RoomSubjectDialog: SubmittableDialogComponent<
 
         // Add mode
         if (!data) {
-          const { error } = await createRoomSubject(supabase, {
-            ...form,
-            id: 0,
-            subject,
-            classroom: { id: 0, number: Number(form.class) },
-          });
-          hasError = error !== null;
+          // const { error } = await createRoomSubject(supabase, {
+          //   ...form,
+          //   id: 0,
+          //   subject,
+          //   classroom: { id: 0, number: Number(form.class) },
+          // });
+          // hasError = error !== null;
         }
 
         // Edit mode
         else {
-          const { error } = await editRoomSubject(supabase, {
-            ...form,
-            id: data.id,
-            subject,
-            classroom: { id: 0, number: Number(form.class) },
-          });
-          hasError = error !== null;
+          // const { error } = await editRoomSubject(supabase, {
+          //   ...form,
+          //   id: data.id,
+          //   subject,
+          //   classroom: { id: 0, number: Number(form.class) },
+          // });
+          // hasError = error !== null;
         }
 
         if (hasError) {
@@ -321,7 +327,7 @@ const RoomSubjectDialog: SubmittableDialogComponent<
         return true;
       },
       toggleLoading,
-      { hasEndToggle: true }
+      { hasEndToggle: true },
     );
   }
 

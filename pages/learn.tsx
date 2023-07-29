@@ -42,7 +42,13 @@ import { CustomPage, LangCode } from "@/utils/types/common";
 import { createTitleStr } from "@/utils/helpers/title";
 
 // Hooks
+import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
+import getClassSchedule from "@/utils/backend/schedule/getClassSchedule";
 import { useLocale } from "@/utils/hooks/i18n";
+import { Student } from "@/utils/types/person";
+import { Schedule as ScheduleType } from "@/utils/types/schedule";
+import { authOptions } from "./api/auth/[...nextauth]";
+import { createEmptySchedule } from "@/utils/helpers/schedule";
 
 // const ScheduleSection: FC<{ schedule: ScheduleType }> = ({ schedule }) => {
 const ScheduleSection: FC<{ schedule: any }> = ({ schedule }) => {
@@ -63,9 +69,7 @@ const ScheduleSection: FC<{ schedule: any }> = ({ schedule }) => {
 };
 
 // const SubjectListSection: FC<{ subjectList: SubjectListItem[] }> = ({
-const SubjectListSection: FC<{ subjectList: any[] }> = ({
-  subjectList,
-}) => {
+const SubjectListSection: FC<{ subjectList: any[] }> = ({ subjectList }) => {
   const { t } = useTranslation("schedule");
   const locale = useLocale();
 
@@ -94,9 +98,8 @@ const SubjectListSection: FC<{ subjectList: any[] }> = ({
 };
 
 const LearnPage: CustomPage<{
-  // schedule: ScheduleType;
+  schedule: ScheduleType;
   // subjectList: SubjectListItem[];
-  schedule: any;
   subjectList: any[];
 }> = ({ schedule, subjectList }) => {
   const { t } = useTranslation("learn");
@@ -114,7 +117,7 @@ const LearnPage: CustomPage<{
         <LayoutGroup>
           <ScheduleAtAGlance schedule={schedule} role="student" />
           <ScheduleSection schedule={schedule} />
-          <SubjectListSection subjectList={subjectList} />
+          {/* <SubjectListSection subjectList={subjectList} /> */}
         </LayoutGroup>
       </ContentLayout>
     </>
@@ -131,31 +134,27 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  // const { data: classItem, error } = await getClassFromUser(
-  //   supabase,
-  //   session!.user,
-  // );
-  // if (error) return { notFound: true };
-  // const { data: schedule } = await getSchedule(
-  //   supabase,
-  //   "student",
-  //   classItem!.id,
-  // );
+  const { data: user } = await getLoggedInPerson(
+    supabase,
+    authOptions,
+    req,
+    res,
+  );
+  const { data: schedule } = await getClassSchedule(
+    supabase,
+    (user as Student).classroom!.id,
+  );
   // const { data: subjectList } = await getSubjectList(supabase, classItem!.id);
 
   return {
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
-        "common",
+        "common", 
         "account",
         "learn",
         "schedule",
       ])),
-      // schedule,
+      schedule: schedule || createEmptySchedule(1, 5),
       // subjectList,
     },
   };
