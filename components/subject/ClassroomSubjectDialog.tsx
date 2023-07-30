@@ -51,6 +51,8 @@ import {
   ggcLinkRegex,
 } from "@/utils/patterns";
 import { DialogFC } from "@/utils/types/component";
+import { ClassroomSubject } from "@/utils/types/subject";
+import { useLoggedInPerson } from "@/utils/helpers/auth";
 // import { getPersonFromUser } from "@/utils/backend/person/person";
 
 /**
@@ -208,15 +210,14 @@ const GoogleSection: FC<{
  *
  * @returns A Full-screen Dialog.
  */
-// const RoomSubjectDialog: SubmittableDialogComponent<
+// const ClassroomSubjectDialog: SubmittableDialogComponent<
 //   () => void,
 //   { data?: SubjectListItem; subject: SubjectWNameAndCode }
 // > = ({ open, onClose, onSubmit, data, subject }) => {
-const RoomSubjectDialog: DialogFC<{
-  data?: any;
-  subject: any;
+const ClassroomSubjectDialog: DialogFC<{
+  data?: ClassroomSubject;
   onSubmit: () => void;
-}> = ({ open, onClose, onSubmit, data, subject }) => {
+}> = ({ open, data, onClose, onSubmit }) => {
   const { t } = useTranslation("teach", { keyPrefix: "dialog.roomSubject" });
   const { t: tx } = useTranslation("common");
 
@@ -245,26 +246,17 @@ const RoomSubjectDialog: DialogFC<{
   ]);
 
   // Fetch the Teacher that is the user
-  const user = useUser();
   const supabase = useSupabaseClient();
-  const userTeacher = useMemo(async () => {
-    if (!user || data) return;
-    // const { data: teacher, error } = await getPersonFromUser(supabase, user);
-    // if (error) return null;
-    // return teacher as Teacher;
-  }, [user?.id]);
+  const { person: user } = useLoggedInPerson();
 
   // Teachers Chip Field default if in add mode
   useEffect(() => {
     if (!open || data) return;
     resetForm();
     // If the Teacher is fetched, insert it into the Teachers Chip Field
-    (async () => {
-      // if (await userTeacher)
-      //   setForm({ ...form, teachers: [await userTeacher] });
-    })();
+    if (user) setForm({ ...form, teachers: [user] });
     return;
-  }, [open, userTeacher]);
+  }, [open, user]);
 
   // Populate form with data if in edit mode
   useEffect(() => {
@@ -272,10 +264,10 @@ const RoomSubjectDialog: DialogFC<{
     setForm({
       class: String(data.classroom.number),
       teachers: data.teachers,
-      coTeachers: data.coTeachers || [],
-      ggcCode: data.ggcCode || "",
-      ggcLink: data.ggcLink || "",
-      ggMeetLink: data.ggMeetLink || "",
+      coTeachers: data.co_teachers || [],
+      ggcCode: data.ggc_code || "",
+      ggcLink: data.ggc_link || "",
+      ggMeetLink: data.gg_meet_link || "",
     });
   }, [data]);
 
@@ -365,4 +357,4 @@ const RoomSubjectDialog: DialogFC<{
   );
 };
 
-export default RoomSubjectDialog;
+export default ClassroomSubjectDialog;

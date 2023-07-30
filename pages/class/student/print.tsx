@@ -11,29 +11,31 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import PrintStudentList from "@/components/class/PrintStudentList";
 
 // Backend
-import { getUserMetadata } from "@/utils/backend/account/getUserByEmail";
-import {
-  getClassFromUser,
-  getClassOverview,
-  getClassStudentList,
-} from "@/utils/backend/classroom/classroom";
-import { getClassAdvisorAt } from "@/utils/backend/person/teacher";
+import getClassroomOverview from "@/utils/backend/classroom/getClassroomOverview";
 
 // Helpers
 import { createTitleStr } from "@/utils/helpers/title";
 
 // Types
-import { ClassOverview, ClassWNumber } from "@/utils/types/class";
+import { Classroom } from "@/utils/types/classroom";
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { Role, Student } from "@/utils/types/person";
+import { UserRole, Student } from "@/utils/types/person";
+import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import getStudentsOfClass from "@/utils/backend/classroom/getStudentsOfClass";
+import { getStudentsByIDs } from "@/utils/backend/person/getStudentsByIDs";
 
 const StudentsListPrintPage: CustomPage<{
-  classItem: ClassWNumber;
-  classOverview: ClassOverview;
+  classItem: Pick<Classroom, "id" | "number">;
+  classroomOverview: Pick<
+  Classroom,
+  "id" | "number" | "class_advisors" | "contacts" | "subjects"
+>;
   studentList: Student[];
-  userRole: Role;
-}> = ({ classItem, classOverview, studentList, userRole }) => {
+  userRole: UserRole;
+}> = ({ classItem, classroomOverview, studentList, userRole }) => {
   const { t } = useTranslation(["class", "common"]);
+  // console.log(classOverview)
 
   return (
     <>
@@ -41,7 +43,7 @@ const StudentsListPrintPage: CustomPage<{
         <title>{createTitleStr(t("student.print.title"), t)}</title>
       </Head>
       <PrintStudentList
-        {...{ classItem, classOverview, studentList, userRole }}
+        {...{ classItem, classroomOverview, studentList, userRole }}
       />
     </>
   );
@@ -57,31 +59,46 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  const { data: metadata } = await getUserMetadata(supabase, session!.user.id);
+  const { data: user, error } = await getLoggedInPerson(
+    supabase,
+    authOptions,
+    req,
+    res,
+    { includeContacts: true, detailed: true },
+  );
 
-  const userRole = metadata!.role;
+  const userRole = user!.role;
 
-  let classItem: ClassWNumber;
-  if (userRole === "student") {
-    const { data } = await getClassFromUser(supabase, session!.user);
-    classItem = data!;
-  } else if (userRole === "teacher") {
-    const { data } = await getClassAdvisorAt(supabase, metadata!.teacher!);
-    classItem = data!;
+  let classroom: Pick<Classroom, "id" | "number"> | null = null;
+
+  switch (userRole) {
+    case "student":
+      classroom = user?.classroom!;
+      break;
+    case "teacher":
+      classroom = user?.class_advisor_at!;
+      break;
   }
 
-  const { data: classOverview } = await getClassOverview(
+  if (!classroom) return { notFound: true };
+
+  const { data: classroomOverview } = await getClassroomOverview(
     supabase,
-    classItem!.number
+    classroom!.id,
   );
 
-  const { data: studentList } = await getClassStudentList(
+  const { data: compactStudentList } = await getStudentsOfClass(
     supabase,
-    classItem!.id
+    classroom!.id,
   );
+
+  const { data: studentList } = await getStudentsByIDs(
+    supabase,
+    compactStudentList!.map((student) => student.id),
+    { detailed: true}
+  );
+
+  // console.log({ classroomOverview })
 
   return {
     props: {
@@ -90,9 +107,9 @@ export const getServerSideProps: GetServerSideProps = async ({
         "class",
         "lookup",
       ])),
-      classItem: classItem!,
-      classOverview,
-      studentList,
+      classItem: classroom!,
+      classroomOverview,
+      studentList: studentList!.sort((a, b) => a.class_no - b.class_no),
       userRole,
     },
   };

@@ -3,12 +3,23 @@ import { LangCode, MultiLangString } from "@/utils/types/common";
 import { Person } from "@/utils/types/person";
 
 /**
+ * Vowels that can be at the start of Thai words.
+ */
+const THAI_STARTING_VOWELS = ["เ", "แ", "โ", "ไ", "ใ"];
+
+/**
  * If a given string starts with a vowel (“เ”, “แ”, “โ”, “ไ”, “ใ”).
  * @param string A string to test.
  * @returns True if it does, false if not.
  */
 export function startsWithThaiVowel(string: string) {
-  return ["เ", "แ", "โ", "ไ", "ใ"].includes(string?.[0]);
+  return THAI_STARTING_VOWELS.includes(string?.[0]);
+}
+
+export function getFirstLetterOfName(name: string) {
+  return name
+    .split("")
+    .find((letter) => !THAI_STARTING_VOWELS.includes(letter));
 }
 
 export function getLocaleString(
@@ -22,8 +33,10 @@ export function getLocalePath(path: string, locale: LangCode): string {
   return [locale == "th" ? "" : "/en-US", path].join("");
 }
 
-export function mergeDBLocales(data: any, key: string): MultiLangString {
-  return { th: data[`${key}_th`], "en-US": data[`${key}_en`] };
+export function mergeDBLocales(data?: any, key?: string): MultiLangString {
+  return data && key
+    ? { th: data[`${key}_th`], "en-US": data[`${key}_en`] }
+    : { th: "", "en-US": null };
 }
 
 /**
@@ -48,7 +61,7 @@ export function getLocaleName(
   options?: Partial<{
     prefix: boolean | "teacher";
     firstName: boolean;
-    middleName: boolean;
+    middleName: boolean | "abbr";
     lastName: boolean;
   }>,
 ) {
@@ -70,7 +83,9 @@ export function getLocaleName(
       ? " "
       : "",
     options?.firstName !== false && name.first_name?.[firstNameLocale],
-    options?.middleName !== false && name.middle_name?.[firstNameLocale],
+    options?.middleName !== false && options?.middleName === "abbr"
+      ? getFirstLetterOfName(name.middle_name?.[firstNameLocale] || "")
+      : name.middle_name?.[firstNameLocale],
     options?.lastName !== false && name.last_name?.[firstNameLocale],
   ]
     .filter((segment) => segment)

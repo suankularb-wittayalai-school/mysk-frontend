@@ -45,7 +45,7 @@ import {
 import ConfirmDeleteDialog from "@/components/common/ConfirmDeleteDialog";
 import MultilangText from "@/components/common/MultilingualText";
 import BrandIcon from "@/components/icons/BrandIcon";
-import RoomSubjectDialog from "@/components/subject/RoomSubjectDialog";
+import ClassroomSubjectDialog from "@/components/subject/ClassroomSubjectDialog";
 
 // Contexts
 import SnackbarContext from "@/contexts/SnackbarContext";
@@ -69,6 +69,7 @@ import { useRefreshProps } from "@/utils/hooks/routing";
 // Types
 import { ClassroomSubject, Subject } from "@/utils/types/subject";
 import { DialogFC } from "@/utils/types/component";
+import getClassroomSubjectsOfSubject from "@/utils/backend/subject/getClassroomSubjectsOfSubject";
 
 /**
  * Row actions for a Class this subject is taught to.
@@ -172,25 +173,25 @@ const SubjectClassesDialog: DialogFC<{
   const [loading, toggleLoading] = useToggle();
 
   const [data, setData] = useState<ClassroomSubject[] | null>(null);
-  // useEffect(() => {
-  //   if (!open || data) return;
-  //   withLoading(
-  //     async () => {
-  //       const { data, error } = await getTeachingSubjectClasses(
-  //         supabase,
-  //         subject.id
-  //       );
-  //       if (error) {
-  //         setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
-  //         return false;
-  //       }
-  //       setData(data);
-  //       return true;
-  //     },
-  //     toggleLoading,
-  //     { hasEndToggle: true }
-  //   );
-  // }, [open, data]);
+  useEffect(() => {
+    if (!open || data) return;
+    withLoading(
+      async () => {
+        const { data, error } = await getClassroomSubjectsOfSubject(
+          supabase,
+          subject.id,
+        );
+        if (error) {
+          setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
+          return false;
+        }
+        setData(data);
+        return true;
+      },
+      toggleLoading,
+      { hasEndToggle: true },
+    );
+  }, [open, data]);
 
   const columns = useMemo<DataTableColumnDef<ClassroomSubject>[]>(
     () => [
@@ -283,7 +284,7 @@ const SubjectClassesDialog: DialogFC<{
         ),
       },
     ],
-    []
+    [],
   );
 
   // Tanstack Table setup
@@ -395,7 +396,7 @@ const SubjectClassesDialog: DialogFC<{
       </FullscreenDialog>
 
       {/* Dialogs */}
-      <RoomSubjectDialog
+      <ClassroomSubjectDialog
         open={addOpen}
         onClose={() => setAddOpen(false)}
         onSubmit={() => {
@@ -403,9 +404,8 @@ const SubjectClassesDialog: DialogFC<{
           setData(null);
           refreshProps();
         }}
-        subject={subject}
       />
-      <RoomSubjectDialog
+      <ClassroomSubjectDialog
         open={editRow !== null}
         onClose={() => setEditRow(null)}
         onSubmit={() => {
@@ -414,7 +414,6 @@ const SubjectClassesDialog: DialogFC<{
           refreshProps();
         }}
         data={editRow || undefined}
-        subject={subject}
       />
       <ConfirmDeleteDialog
         open={deleteID !== null}

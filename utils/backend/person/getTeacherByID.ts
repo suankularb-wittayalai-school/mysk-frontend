@@ -32,10 +32,13 @@ export async function getTeacherByID(
     nickname: mergeDBLocales(teacherData!.people, "nickname"),
     middle_name: mergeDBLocales(teacherData!.people, "middle_name"),
     teacher_id: teacherData!.teacher_id,
-    class_advisor_at: {
-      id: teacherData!.classroom_advisors[0].classrooms!.id,
-      number: teacherData!.classroom_advisors[0].classrooms!.number,
-    },
+    class_advisor_at:
+      teacherData!.classroom_advisors.length > 0
+        ? {
+            id: teacherData!.classroom_advisors[0].classrooms!.id,
+            number: teacherData!.classroom_advisors[0].classrooms!.number,
+          }
+        : null,
     contacts: options?.detailed
       ? teacherData!.people!.person_contacts.map((contacts) => {
           const { contacts: contact } = contacts;

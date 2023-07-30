@@ -11,7 +11,10 @@ export async function getStudentsByIDs(
   let { data: studentData, error: studentError } = await supabase
     .from("students")
     .select(
-      "*, people(*, person_contacts(contacts(*)), person_allergies(allergy_name)), classroom_students!inner(class_no, classrooms(id, number))",
+      `*,
+      people(*, person_contacts(contacts(*)),
+      person_allergies(allergy_name)),
+      classroom_students!inner(class_no, classrooms(id, number))`,
     )
     .in("id", studentID);
 
@@ -66,7 +69,11 @@ export async function getStudentsByIDs(
       ? studentData!.people?.pants_size ?? null
       : null,
     role: "student",
+    is_admin: null,
   }));
 
-  return { data: students, error: null };
+  return {
+    data: students,
+    error: null,
+  };
 }

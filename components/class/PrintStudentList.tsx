@@ -22,7 +22,7 @@ import PrintPage from "@/components/common/print/PrintPage";
 // Helpers
 import { range, toggleItem } from "@/utils/helpers/array";
 import { getCurrentAcademicYear, getLocaleYear } from "@/utils/helpers/date";
-import { getLocaleObj, getLocaleString } from "@/utils/helpers/i18n";
+import { getLocaleString } from "@/utils/helpers/string";
 import { getLocaleName } from "@/utils/helpers/string";
 
 // Hooks
@@ -30,9 +30,9 @@ import { useForm } from "@/utils/hooks/form";
 import { useLocale } from "@/utils/hooks/i18n";
 
 // Types
-import { ClassOverview, ClassWNumber } from "@/utils/types/class";
+import { Classroom } from "@/utils/types/classroom";
 import { FormControlProps, LangCode } from "@/utils/types/common";
-import { Role, Student } from "@/utils/types/person";
+import { UserRole, Student } from "@/utils/types/person";
 
 /**
  * The options type for the Student List Printout.
@@ -70,11 +70,14 @@ const maximumEmptyColumns = 20;
  * @returns A Paper Preview.
  */
 const StudentsListPaper: FC<{
-  classItem: ClassWNumber;
-  classOverview: ClassOverview;
+  classItem: Pick<Classroom, "id" | "number">;
+  classroomOverview: Pick<
+  Classroom,
+  "id" | "number" | "class_advisors" | "contacts" | "subjects"
+>;
   studentList: Student[];
   options: OptionsType;
-}> = ({ classItem, classOverview, studentList, options }) => {
+}> = ({ classItem, classroomOverview, studentList, options }) => {
   return (
     <PaperPreview>
       {/* Header */}
@@ -112,9 +115,9 @@ const StudentsListPaper: FC<{
           {options.language === "en-US" ? "Class advisors" : "ครูที่ปรึกษา"}
         </span>
         <div className="mb-1 flex grow flex-row flex-wrap gap-x-2 font-bold">
-          {classOverview.classAdvisors.map((teacher) => (
+          {classroomOverview.class_advisors.map((teacher) => (
             <span key={teacher.id} className="-mb-1">
-              {getLocaleName(options.language, teacher.name, teacher.prefix, {
+              {getLocaleName(options.language, teacher, {
                 prefix: true,
               })}
             </span>
@@ -214,12 +217,12 @@ const StudentsListPaper: FC<{
             <tr key={student.id}>
               {/* Class no. */}
               {options.columns.includes("classNo") && (
-                <td className="text-center">{student.classNo}</td>
+                <td className="text-center">{student.class_no}</td>
               )}
 
               {/* Student ID */}
               {options.columns.includes("studentID") && (
-                <td className="text-center">{student.studentID}</td>
+                <td className="text-center">{student.student_id}</td>
               )}
 
               {/* Prefix */}
@@ -233,20 +236,20 @@ const StudentsListPaper: FC<{
               {options.columns.includes("fullName") && (
                 <>
                   <td className="w-28 !border-r-0 [&:not(:first-child)]:!border-l-0">
-                    {getLocaleName(options.language, student.name, undefined, {
+                    {getLocaleName(options.language, student, {
                       middleName: options.language === "en-US" ? "abbr" : true,
                       lastName: false,
                     })}
                   </td>
                   <td className="w-36 !border-l-0">
-                    {getLocaleObj(student.name, options.language).lastName}
+                    {getLocaleString(student.last_name, options.language)}
                   </td>
                 </>
               )}
 
               {/* Nickname */}
               {options.columns.includes("nickname") && (
-                <td>{getLocaleObj(student.name, options.language).nickname}</td>
+                <td>{getLocaleString(student.first_name, options.language)}</td>
               )}
 
               {options.columns.includes("allergies") && (
@@ -255,13 +258,13 @@ const StudentsListPaper: FC<{
 
               {/* Shirt size */}
               {options.columns.includes("shirtSize") && (
-                <td className="text-center">{student.shirtSize}</td>
+                <td className="text-center">{student.shirt_size}</td>
               )}
 
               {/* Pants size */}
               {options.columns.includes("pantsSize") && (
                 <td className="text-center">
-                  {student.pantsSize?.replace("x", "×")}
+                  {student.pants_size?.replace("x", "×")}
                 </td>
               )}
 
@@ -315,7 +318,7 @@ const StudentsPrintOptions: FC<{
   form: OptionsType;
   setForm: (form: OptionsType) => void;
   formProps: FormControlProps<keyof OptionsType>;
-  userRole: Role;
+  userRole: UserRole;
 }> = ({ form, setForm, formProps, userRole }) => {
   const { t } = useTranslation("class", { keyPrefix: "student.print" });
 
@@ -431,11 +434,14 @@ const StudentsPrintOptions: FC<{
  * @returns A Print Page.
  */
 const PrintStudentList: FC<{
-  classItem: ClassWNumber;
-  classOverview: ClassOverview;
+  classItem: Pick<Classroom, "id" | "number">;
+  classroomOverview: Pick<
+  Classroom,
+  "id" | "number" | "class_advisors" | "contacts" | "subjects"
+>;
   studentList: Student[];
-  userRole: Role;
-}> = ({ classItem, classOverview, studentList, userRole }) => {
+  userRole: UserRole;
+}> = ({ classItem, classroomOverview, studentList, userRole }) => {
   const locale = useLocale();
   const { t } = useTranslation("class");
 
@@ -454,12 +460,14 @@ const PrintStudentList: FC<{
     { key: "enableTimestamp", defaultValue: false },
   ]);
 
+  // console.log(classOverview);
+
   return (
     <>
       <h1 className="sr-only">{t("title")}</h1>
       <PrintPage>
         <StudentsListPaper
-          {...{ classItem, classOverview, studentList }}
+          {...{ classItem, classroomOverview, studentList }}
           options={form}
         />
         <StudentsPrintOptions {...{ form, setForm, formProps, userRole }} />
