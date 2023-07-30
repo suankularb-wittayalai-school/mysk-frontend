@@ -53,6 +53,10 @@ export async function middleware(req: NextRequest) {
 
   // Disallow public users from visiting private pages
   if (pageRole !== "public" && !user) destination = "/";
+
+  // Disallow logged in users from visiting onboarding pages except for the ones not onboarded
+  if (user && !user?.onboarded && !route.startsWith("/account/welcome"))
+    destination = "/account/welcome";
   // Disallow students from vising the Your Subject page of the onboarding
   // process
   else if (route === "/account/welcome/your-subjects" && user?.role === "student")
