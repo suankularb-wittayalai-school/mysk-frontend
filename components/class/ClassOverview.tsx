@@ -42,6 +42,8 @@ import { useRefreshProps } from "@/utils/hooks/routing";
 import { Classroom } from "@/utils/types/classroom";
 import { Contact } from "@/utils/types/contact";
 import { Teacher } from "@/utils/types/person";
+import createContact from "@/utils/backend/contact/createContact";
+import updateContact from "@/utils/backend/contact/updateContact";
 
 // Types
 // import { ClassOverview as ClassOverviewType } from "@/utils/types/class";
@@ -108,21 +110,21 @@ const ClassContactsSection: FC<{
    * @param contact The Contact to add.
    */
   async function handleAdd(contact: Contact) {
-    // const { data, error } = await createContact(supabase, contact);
-    // if (error) {
-    //   setSnackbar(<Snackbar>{t("snackbar.failure")}</Snackbar>);
-    //   return;
-    // }
+    const { data: contactID, error } = await createContact(supabase, contact);
+    if (error) {
+      setSnackbar(<Snackbar>{t("snackbar.failure")}</Snackbar>);
+      return;
+    }
 
-    // const { error: classError } = await addContactToClassroom(
-    //   supabase,
-    //   data!.id,
-    //   classID!
-    // );
-    // if (classError) {
-    //   setSnackbar(<Snackbar>{t("snackbar.failure")}</Snackbar>);
-    //   return;
-    // }
+    const { error: classError } = await supabase.from("classroom_contacts").insert({
+      classroom_id: classID,
+      contact_id: contactID,
+    });
+
+    if (classError) {
+      setSnackbar(<Snackbar>{t("snackbar.failure")}</Snackbar>);
+      return;
+    }
 
     refreshProps();
   }
@@ -133,11 +135,11 @@ const ClassContactsSection: FC<{
    * @param contact The new data for the Contact.
    */
   async function handleEdit(contact: Contact) {
-    // const { error } = await updateContact(supabase, contact);
-    // if (error) {
-    //   setSnackbar(<Snackbar>{t("snackbar.failure")}</Snackbar>);
-    //   return;
-    // }
+    const { error } = await updateContact(supabase, contact);
+    if (error) {
+      setSnackbar(<Snackbar>{t("snackbar.failure")}</Snackbar>);
+      return;
+    }
 
     refreshProps();
   }
@@ -147,16 +149,12 @@ const ClassContactsSection: FC<{
    *
    * @param contactID The ID of the Contact to delete.
    */
-  async function handleRemove(contactID: number) {
-    // const { error } = await removeContactFromClassroom(
-    //   supabase,
-    //   contactID,
-    //   classID!
-    // );
-    // if (error) {
-    //   setSnackbar(<Snackbar>{t("snackbar.failure")}</Snackbar>);
-    //   return;
-    // }
+  async function handleRemove(contactID: string) {
+    const { error } = await supabase.from("contacts").delete().match({ id: contactID });
+    if (error) {
+      setSnackbar(<Snackbar>{t("snackbar.failure")}</Snackbar>);
+      return;
+    }
 
     refreshProps();
   }

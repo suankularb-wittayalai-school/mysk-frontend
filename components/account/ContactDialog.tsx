@@ -136,7 +136,7 @@ const ContactDialog: DialogFC<{
             <MenuItem value="facebook">
               {t("dialog.contact.type.facebook")}
             </MenuItem>
-            <MenuItem value="Line">{t("dialog.contact.type.line")}</MenuItem>
+            <MenuItem value="line">{t("dialog.contact.type.line")}</MenuItem>
             <MenuItem value="instagram">
               {t("dialog.contact.type.instagram")}
             </MenuItem>

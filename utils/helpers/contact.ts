@@ -101,10 +101,10 @@ export function useGetVCard() {
                       !["Website", "Other"].includes(contact.value) &&
                         `item${idx + 1}.X-ABLabel:${
                           {
-                            Facebook: tx("contact.facebook"),
-                            Line: tx("contact.line"),
-                            Instagram: tx("contact.instagram"),
-                            Discord: tx("contact.discord"),
+                            facebook: tx("contact.facebook"),
+                            line: tx("contact.line"),
+                            instagram: tx("contact.instagram"),
+                            discord: tx("contact.discord"),
                           }[contact.type as string]
                         }`,
                     ]
