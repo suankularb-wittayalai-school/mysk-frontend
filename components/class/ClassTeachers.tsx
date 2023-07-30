@@ -11,10 +11,10 @@ import EmptyDetail from "@/components/lookup/EmptyDetail";
 import PersonDetails from "@/components/lookup/person/PersonDetails";
 
 // Backend
-import { getTeacher } from "@/utils/backend/person/teacher";
+// import { getTeacher } from "@/utils/backend/person/teacher";
 
 // Helpers
-import { getLocaleString } from "@/utils/helpers/i18n";
+import { getLocaleString } from "@/utils/helpers/string";
 import { withLoading } from "@/utils/helpers/loading";
 
 // Hooks
@@ -22,11 +22,13 @@ import { useLocale } from "@/utils/hooks/i18n";
 import { useToggle } from "@/utils/hooks/toggle";
 
 // Types
-import { ClassTeachersListSection } from "@/utils/types/class";
+// import { ClassTeachersListSection } from "@/utils/types/class";
 import { Teacher } from "@/utils/types/person";
+import { SubjectGroupTeachers } from "@/utils/types/subject";
 
 const ClassTeachers: FC<{
-  teacherList: ClassTeachersListSection[];
+  // teacherList: ClassTeachersListSection[];
+  teacherList: SubjectGroupTeachers[];
   classNumber?: number;
 }> = ({ teacherList, classNumber }) => {
   const { atBreakpoint } = useBreakpoint();
@@ -38,7 +40,7 @@ const ClassTeachers: FC<{
   const supabase = useSupabaseClient();
   const [loading, toggleLoading] = useToggle();
 
-  const [selectedTeacher, setSelectedTeacher] = useState<Teacher>();
+  const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>();
   useEffect(() => {
     if (
       !selected ||
@@ -47,17 +49,18 @@ const ClassTeachers: FC<{
     )
       return;
 
-    withLoading(
-      async () => {
-        const { data, error } = await getTeacher(supabase, selected);
-        if (error) return false;
+    // TODO: Fix this
+    // withLoading(
+    //   async () => {
+    //     const { data, error } = await getTeacher(supabase, selected);
+    //     if (error) return false;
 
-        setSelectedTeacher(data);
-        return true;
-      },
-      toggleLoading,
-      { hasEndToggle: true }
-    );
+    //     setSelectedTeacher(data);
+    //     return true;
+    //   },
+    //   toggleLoading,
+    //   { hasEndToggle: true }
+    // );
   }, [selected, atBreakpoint === "base"]);
 
   return (
@@ -68,11 +71,11 @@ const ClassTeachers: FC<{
       <aside className="!flex flex-col gap-6">
         {teacherList.map((section) => (
           <section
-            key={section.subjectGroup.id}
+            key={section.subject_group.id}
             className="flex flex-col gap-2"
           >
             <h3 className="skc-headline-small">
-              {getLocaleString(section.subjectGroup.name, locale)}
+              {getLocaleString(section.subject_group.name, locale)}
             </h3>
             {section.teachers.map((teacher) => (
               <ClassTeacherCard
@@ -86,7 +89,7 @@ const ClassTeachers: FC<{
           </section>
         ))}
       </aside>
-      {selected ? (
+      {selectedTeacher ? (
         <PersonDetails
           person={selectedTeacher}
           suggestionsType="share-only"

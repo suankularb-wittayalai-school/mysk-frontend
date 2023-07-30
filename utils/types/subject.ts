@@ -34,14 +34,21 @@ export type ClassroomSubject = {
   classroom: Pick<Classroom, "id" | "number">;
   teachers: Pick<Teacher, "id" | "first_name" | "last_name">[];
   co_teachers: Pick<Teacher, "id" | "first_name" | "last_name">[] | null;
-  ggc_code: string| null;
-  ggc_link: string| null;
-  gg_meet_link: string| null;
+  ggc_code: string | null;
+  ggc_link: string | null;
+  gg_meet_link: string | null;
 };
-
 
 export type SubjectClassrooms = {
   id: string;
   subject: Pick<Subject, "id" | "name" | "code" | "short_name">;
   classrooms: Pick<Classroom, "id" | "number">[];
-}
+};
+
+export type SubjectGroupTeachers = {
+  subject_group: SubjectGroup;
+  teachers: Pick<
+    Teacher,
+    "id" | "role" | "prefix" | "first_name" | "last_name"
+  >[];
+};

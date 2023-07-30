@@ -15,13 +15,16 @@ import { getLocaleName } from "@/utils/helpers/string";
 import { useLocale } from "@/utils/hooks/i18n";
 
 // Types
-import { PersonLookupItemGeneric } from "@/utils/types/person";
+import { Teacher } from "@/utils/types/person";
 
 const ClassTeacherCard: FC<{
-  teacher: PersonLookupItemGeneric<null>;
+  teacher: Pick<
+  Teacher,
+  "id" | "role" | "prefix" | "first_name" | "last_name"
+>;
   classNumber?: number;
-  selectedID?: number;
-  setSelectedID?: (id: number) => void;
+  selectedID?: string;
+  setSelectedID?: (id: string) => void;
 }> = ({ teacher, classNumber, selectedID, setSelectedID }) => {
   const locale = useLocale();
   const { atBreakpoint } = useBreakpoint();
@@ -51,7 +54,8 @@ const ClassTeacherCard: FC<{
       <CardHeader
         avatar={
           <DynamicAvatar
-            name={teacher.name}
+            first_name={teacher.first_name}
+            last_name={teacher.last_name}
             className={
               selectedID === teacher.id
                 ? "sm:!bg-primary sm:!text-on-primary"
@@ -59,7 +63,7 @@ const ClassTeacherCard: FC<{
             }
           />
         }
-        title={getLocaleName(locale, teacher.name, undefined, {
+        title={getLocaleName(locale, teacher, {
           prefix: "teacher",
         })}
         className="!text-left"

@@ -7,7 +7,7 @@ import { Person } from "@/utils/types/person";
 export async function getPersonByID(
   supabase: DatabaseClient,
   personID: string,
-  options?: { includeContacts: boolean, detailed?: boolean },
+  options?: { includeContacts: boolean; detailed?: boolean },
 ): Promise<BackendReturn<Person>> {
   let { data: personData, error: personError } = await supabase
     .from("people")
@@ -23,10 +23,11 @@ export async function getPersonByID(
   let contacts: Contact[] = [];
 
   if (options?.includeContacts) {
-    let { data: personContactsData, error: personContactsError } = await supabase
-      .from("person_contacts")
-      .select("contact_id")
-      .eq("person_id", personData!.id);
+    let { data: personContactsData, error: personContactsError } =
+      await supabase
+        .from("person_contacts")
+        .select("contact_id")
+        .eq("person_id", personData!.id);
 
     if (personContactsError) {
       logError("getPersonByID (person_contacts)", personContactsError);
@@ -44,8 +45,6 @@ export async function getPersonByID(
       logError("getPersonByID (contacts)", contactsError);
       return { data: null, error: contactsError };
     }
-
-    
 
     contacts = contactsData!.map((contact) => {
       return {
@@ -70,7 +69,7 @@ export async function getPersonByID(
       .from("person_allergies")
       .select("allergy_name")
       .eq("person_id", personData!.id);
-    
+
     if (allergiesError) {
       logError("getPersonByID (allergies)", allergiesError);
       return { data: null, error: allergiesError };
@@ -91,9 +90,10 @@ export async function getPersonByID(
       contacts: contacts,
       profile: personData!.profile,
       citizen_id: options?.detailed ? personData!.citizen_id : null,
-      shirt_size: options?.detailed ? personData!.shirt_size  : null,
+      shirt_size: options?.detailed ? personData!.shirt_size : null,
       pants_size: options?.detailed ? personData!.pants_size : null,
       allergies: options?.detailed ? allergies : [],
+      is_admin: null,
     },
     error: null,
   };
