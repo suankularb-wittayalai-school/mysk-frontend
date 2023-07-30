@@ -51,8 +51,9 @@ import {
   ggcLinkRegex,
 } from "@/utils/patterns";
 import { DialogFC } from "@/utils/types/component";
-import { ClassroomSubject } from "@/utils/types/subject";
+import { ClassroomSubject, Subject } from "@/utils/types/subject";
 import { useLoggedInPerson } from "@/utils/helpers/auth";
+import { createClassroomSubject } from "@/utils/backend/subject/createClassroomSubject";
 // import { getPersonFromUser } from "@/utils/backend/person/person";
 
 /**
@@ -216,8 +217,9 @@ const GoogleSection: FC<{
 // > = ({ open, onClose, onSubmit, data, subject }) => {
 const ClassroomSubjectDialog: DialogFC<{
   data?: ClassroomSubject;
+  subjectID: string;
   onSubmit: () => void;
-}> = ({ open, data, onClose, onSubmit }) => {
+}> = ({ open, data, subjectID, onClose, onSubmit }) => {
   const { t } = useTranslation("teach", { keyPrefix: "dialog.roomSubject" });
   const { t: tx } = useTranslation("common");
 
@@ -285,15 +287,25 @@ const ClassroomSubjectDialog: DialogFC<{
         }
 
         let hasError = false;
+        const classroomSubject: Parameters<typeof createClassroomSubject>["1"] =
+          {
+            classroom: { number: form.class },
+            subject: { id: subjectID },
+            teachers: form.teachers,
+            co_teachers: form.coTeachers,
+            ggc_code: form.ggcCode,
+            ggc_link: form.ggcLink,
+            gg_meet_link: form.ggMeetLink,
+          };
+
+        console.log(form.teachers);
 
         // Add mode
         if (!data) {
-          // const { error } = await createRoomSubject(supabase, {
-          //   ...form,
-          //   id: 0,
-          //   subject,
-          //   classroom: { id: 0, number: Number(form.class) },
-          // });
+          // const { error } = await createClassroomSubject(
+          //   supabase,
+          //   classroomSubject,
+          // );
           // hasError = error !== null;
         }
 

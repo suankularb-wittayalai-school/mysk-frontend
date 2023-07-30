@@ -23,12 +23,6 @@ import Schedule from "@/components/schedule/Schedule";
 import SubjectList from "@/components/subject/SubjectList";
 
 // Backend
-import {
-  getAllClassNumbers,
-  getClassIDFromNumber,
-} from "@/utils/backend/classroom/classroom";
-import { getSchedule } from "@/utils/backend/schedule/schedule";
-import { getSubjectList } from "@/utils/backend/subject/roomSubject";
 
 // Supabase
 import { supabase } from "@/utils/supabase-backend";
@@ -36,7 +30,7 @@ import { supabase } from "@/utils/supabase-backend";
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Schedule as ScheduleType } from "@/utils/types/schedule";
-import { SubjectListItem } from "@/utils/types/subject";
+import { ClassroomSubject } from "@/utils/types/subject";
 
 // Helpers
 import { createTitleStr } from "@/utils/helpers/title";
@@ -45,9 +39,12 @@ import { createTitleStr } from "@/utils/helpers/title";
 import { useLocale } from "@/utils/hooks/i18n";
 
 // Types
-import { ClassWNumber } from "@/utils/types/class";
+import { Classroom } from "@/utils/types/classroom";
+import getClassSchedule from "@/utils/backend/schedule/getClassSchedule";
+import getClassroomSubjectsOfClass from "@/utils/backend/subject/getClassroomSubjectsOfClass";
+import { getCurrentAcademicYear } from "@/utils/helpers/date";
 
-const SubjectListSection: FC<{ subjectList: SubjectListItem[] }> = ({
+const SubjectListSection: FC<{ subjectList: ClassroomSubject[] }> = ({
   subjectList,
 }) => {
   const { t } = useTranslation("schedule");
@@ -72,7 +69,7 @@ const SubjectListSection: FC<{ subjectList: SubjectListItem[] }> = ({
 };
 
 const LookupClassSchedulePage: CustomPage<{
-  classItem: ClassWNumber;
+  classItem: Pick<Classroom, "id" | "number">;
   schedule: ScheduleType;
   subjectList: SubjectListItem[];
 }> = ({ classItem, schedule, subjectList }) => {
@@ -104,23 +101,24 @@ const LookupClassSchedulePage: CustomPage<{
 
 export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   const classNumber = Number(params?.classNumber);
-  if (!classNumber) return { notFound: true };
+  if (Number.isNaN(classNumber)) return { notFound: true };
 
-  const { data: classID, error } = await getClassIDFromNumber(
-    supabase,
-    Number(params?.classNumber)
-  );
+  const {data, error} = await supabase.from("classrooms").select("id").eq("number", classNumber).eq("year", getCurrentAcademicYear()).single();
+
   if (error) return { notFound: true };
+
+  const classID = data?.id;
+  if (!classID) return { notFound: true };
+
   const classItem = { id: classID, number: classNumber };
 
-  const { data: schedule } = await getSchedule(
+  const { data: schedule } = await getClassSchedule(
     supabase,
-    "student",
-    classID as number
+    classID
   );
-  const { data: subjectList } = await getSubjectList(
+  const { data: subjectList } = await getClassroomSubjectsOfClass(
     supabase,
-    classID as number
+    classID
   );
 
   return {
@@ -139,9 +137,13 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
+  const { data: classNumbers, error } = await supabase.from("classrooms").select("number").eq("year", getCurrentAcademicYear());
+  
+  if (error) return { paths: [], fallback: "blocking" };
+
   return {
-    paths: (await getAllClassNumbers(supabase)).map((number) => ({
-      params: { classNumber: number.toString() },
+    paths: classNumbers!.map((classroom) => ({
+      params: { classNumber: classroom.number.toString() },
     })),
     fallback: "blocking",
   };

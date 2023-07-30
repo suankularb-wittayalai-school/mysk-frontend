@@ -35,7 +35,6 @@ const StudentsListPrintPage: CustomPage<{
   userRole: UserRole;
 }> = ({ classItem, classroomOverview, studentList, userRole }) => {
   const { t } = useTranslation(["class", "common"]);
-  // console.log(classOverview)
 
   return (
     <>

@@ -60,34 +60,38 @@ export function getLocaleName(
   >,
   options?: Partial<{
     prefix: boolean | "teacher";
-    firstName: boolean;
+    firstName: boolean | "abbr";
     middleName: boolean | "abbr";
-    lastName: boolean;
+    lastName: boolean | "abbr";
   }>,
 ) {
-  const firstNameLocale =
+  const detectedLocale =
     name.first_name?.th &&
     /^[a-zA-Z]/.test(name.first_name?.[locale] || name.first_name.th)
       ? "en-US"
       : "th";
+  const closestLocale = name.first_name?.[locale] ? locale : "th";
 
-  const teacherPrefix = {
-    th: "ครู",
-    "en-US": "T.",
-  };
+  const teacherPrefix = { th: "ครู", "en-US": "T." };
 
   return [
-    options?.prefix && options?.prefix == "teacher"
-      ? teacherPrefix[firstNameLocale]
-      : name.prefix?.[firstNameLocale] + locale === "en-US"
-      ? " "
-      : "",
-    options?.firstName !== false && name.first_name?.[firstNameLocale],
-    options?.middleName !== false && options?.middleName === "abbr"
-      ? getFirstLetterOfName(name.middle_name?.[firstNameLocale] || "")
-      : name.middle_name?.[firstNameLocale],
-    options?.lastName !== false && name.last_name?.[firstNameLocale],
+    options?.prefix === "teacher"
+      ? teacherPrefix[detectedLocale]
+      : options?.prefix && name.prefix?.[detectedLocale],
+    [
+      options?.firstName !== false && options?.firstName === "abbr"
+        ? getFirstLetterOfName(name.first_name?.[closestLocale] || "")
+        : name.first_name?.[closestLocale],
+      options?.middleName !== false && options?.middleName === "abbr"
+        ? getFirstLetterOfName(name.middle_name?.[closestLocale] || "")
+        : name.middle_name?.[closestLocale],
+      options?.lastName !== false && options?.lastName === "abbr"
+        ? getFirstLetterOfName(name.last_name?.[closestLocale] || "")
+        : name.last_name?.[closestLocale],
+    ]
+      .filter((segment) => segment)
+      .join(" "),
   ]
     .filter((segment) => segment)
-    .join(" ");
+    .join(detectedLocale === "en-US" ? " " : "");
 }

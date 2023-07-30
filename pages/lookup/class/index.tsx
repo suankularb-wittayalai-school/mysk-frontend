@@ -109,13 +109,19 @@ const LookupClassesPage: CustomPage<{
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
   const { data: classes } = await getLookupClassrooms(supabase);
 
+  if (!classes) {
+    return {
+      notFound: true,
+    };
+  }
+
   return {
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
         "common",
         "lookup",
       ])),
-      classes,
+      classes: classes.sort((a, b) => a.number - b.number),
     },
     revalidate: 300,
   };

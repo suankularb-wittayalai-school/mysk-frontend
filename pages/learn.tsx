@@ -50,9 +50,10 @@ import { Schedule as ScheduleType } from "@/utils/types/schedule";
 import { authOptions } from "./api/auth/[...nextauth]";
 import { createEmptySchedule } from "@/utils/helpers/schedule";
 import getClassroomSubjectsOfClass from "@/utils/backend/subject/getClassroomSubjectsOfClass";
+import { ClassroomSubject } from "@/utils/types/subject";
 
 // const ScheduleSection: FC<{ schedule: ScheduleType }> = ({ schedule }) => {
-const ScheduleSection: FC<{ schedule: any }> = ({ schedule }) => {
+const ScheduleSection: FC<{ schedule: ScheduleType }> = ({ schedule }) => {
   const { t } = useTranslation("learn");
 
   const { duration, easing } = useAnimationConfig();
@@ -70,7 +71,7 @@ const ScheduleSection: FC<{ schedule: any }> = ({ schedule }) => {
 };
 
 // const SubjectListSection: FC<{ subjectList: SubjectListItem[] }> = ({
-const SubjectListSection: FC<{ subjectList: any[] }> = ({ subjectList }) => {
+const SubjectListSection: FC<{ subjectList: ClassroomSubject[] }> = ({ subjectList }) => {
   const { t } = useTranslation("schedule");
   const locale = useLocale();
 

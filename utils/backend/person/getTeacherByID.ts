@@ -12,7 +12,13 @@ export async function getTeacherByID(
   let { data: teacherData, error: studentError } = await supabase
     .from("teachers")
     .select(
-      `*, people(*, person_contacts(contacts(*)), person_allergies(allergy_name)), classroom_advisors(classrooms!inner(id, number)), subject_groups(id, name_en, name_th), subject_teachers(subjects!inner(id, name_en, name_th, code_en, code_th, short_name_en, short_name_th))`,
+      `*,
+      people(*, person_contacts(contacts(*)), person_allergies(allergy_name)),
+      classroom_advisors(classrooms!inner(id, number)),
+      subject_groups(id, name_en, name_th),
+      subject_teachers(
+        subjects!inner(id, name_en, name_th, code_en, code_th, short_name_en, short_name_th)
+      )`,
     )
     .eq("id", teacherID)
     .eq("classroom_advisors.classrooms.year", getCurrentAcademicYear())

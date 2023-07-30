@@ -1,40 +1,28 @@
-// External libraries
+// Imports
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useTranslation } from "next-i18next";
 import { FC, useContext, useState } from "react";
-
-// SK Components
 import {
   ChipField,
   ChipSet,
   InputChip,
   Snackbar,
 } from "@suankularb-components/react";
-
-// Internal components
 import DynamicAvatar from "@/components/common/DynamicAvatar";
-
-// Contexts
 import SnackbarContext from "@/contexts/SnackbarContext";
-
-// Backend
-// import { getTeacherByFirstName } from "@/utils/backend/person/teacher";
-
-// Helpers
 import { withLoading } from "@/utils/helpers/loading";
 import { getLocaleName } from "@/utils/helpers/string";
-
-// Hooks
 import { useLocale } from "@/utils/hooks/i18n";
 import { useToggle } from "@/utils/hooks/toggle";
-
-// Types
 import { Teacher } from "@/utils/types/person";
+import getTeachersByFirstName from "@/utils/backend/person/getTeacherByFirstName";
 
 const TeachersField: FC<{
   label?: string;
-  teachers: Teacher[];
-  onChange: (value: Teacher[]) => void;
+  teachers: Pick<Teacher, "id" | "first_name" | "last_name" | "profile">[];
+  onChange: (
+    value: Pick<Teacher, "id" | "first_name" | "last_name" | "profile">[],
+  ) => void;
 }> = ({ label, teachers, onChange }) => {
   // Translation
   const locale = useLocale();
@@ -66,13 +54,13 @@ const TeachersField: FC<{
         if (
           teachers.find((teacher) =>
             [
-              teacher.name.th.firstName,
-              teacher.name["en-US"]?.firstName.toLowerCase(),
-            ].includes(value.toLowerCase())
+              teacher.first_name.th,
+              teacher.first_name["en-US"]?.toLowerCase(),
+            ].includes(value.toLowerCase()),
           )
         ) {
           setSnackbar(
-            <Snackbar>{t("input.teachersField.snackbar.duplicate")}</Snackbar>
+            <Snackbar>{t("input.teachersField.snackbar.duplicate")}</Snackbar>,
           );
           return;
         }
@@ -80,9 +68,9 @@ const TeachersField: FC<{
         // Find teachers in database
         withLoading(
           async () => {
-            const { data, error } = await getTeacherByFirstName(
+            const { data, error } = await getTeachersByFirstName(
               supabase,
-              value
+              value,
             );
 
             // If no teachers match, notify the user
@@ -91,7 +79,7 @@ const TeachersField: FC<{
               setSnackbar(
                 <Snackbar>
                   {t("input.teachersField.snackbar.notFound")}
-                </Snackbar>
+                </Snackbar>,
               );
               return false;
             }
@@ -101,7 +89,7 @@ const TeachersField: FC<{
             return true;
           },
           toggleLoading,
-          { hasEndToggle: true }
+          { hasEndToggle: true },
         );
       }}
       onDeleteLast={() => onChange(teachers.slice(0, -1))}
@@ -115,11 +103,11 @@ const TeachersField: FC<{
             avatar={<DynamicAvatar profile={teacher.profile} />}
             onDelete={() =>
               onChange(
-                teachers.filter((mapTeacher) => teacher.id !== mapTeacher.id)
+                teachers.filter((mapTeacher) => teacher.id !== mapTeacher.id),
               )
             }
           >
-            {getLocaleName(locale, teacher.name, undefined, {
+            {getLocaleName(locale, teacher, {
               middleName: false,
               lastName: "abbr",
             })}

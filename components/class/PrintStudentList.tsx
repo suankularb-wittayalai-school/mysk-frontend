@@ -72,9 +72,9 @@ const maximumEmptyColumns = 20;
 const StudentsListPaper: FC<{
   classItem: Pick<Classroom, "id" | "number">;
   classroomOverview: Pick<
-  Classroom,
-  "id" | "number" | "class_advisors" | "contacts" | "subjects"
->;
+    Classroom,
+    "id" | "number" | "class_advisors" | "contacts" | "subjects"
+  >;
   studentList: Student[];
   options: OptionsType;
 }> = ({ classItem, classroomOverview, studentList, options }) => {
@@ -92,7 +92,7 @@ const StudentsListPaper: FC<{
             const grade = Math.floor(classItem.number / 100);
             const year = getLocaleYear(
               options.language,
-              getCurrentAcademicYear()
+              getCurrentAcademicYear(),
             );
             if (options.language === "en-US")
               return `Mattayomsuksa ${grade} Student List; Academic Year ${year}`;
@@ -175,7 +175,9 @@ const StudentsListPaper: FC<{
             {/* Notes */}
             {options.columns.includes("allergies") && (
               <th className="w-32">
-                {options.language === "en-US" ? "Allergies" : "ภูมิแพ้/อาหารที่แพ้"}
+                {options.language === "en-US"
+                  ? "Allergies"
+                  : "ภูมิแพ้/อาหารที่แพ้"}
               </th>
             )}
 
@@ -199,7 +201,7 @@ const StudentsListPaper: FC<{
                 <th key={idx} className={idx === 0 ? "!border-l-2" : undefined}>
                   {idx === 0 && options.columns.length === 0 ? " " : undefined}
                 </th>
-              )
+              ),
             )}
 
             {/* Notes */}
@@ -279,7 +281,7 @@ const StudentsListPaper: FC<{
                       ? " "
                       : undefined}
                   </td>
-                )
+                ),
               )}
 
               {/* Notes */}
@@ -336,30 +338,6 @@ const StudentsPrintOptions: FC<{
           <MenuItem value="th">ภาษาไทย</MenuItem>
         </Select>
         <FormGroup label={t("columns.label")}>
-          <FormItem label={t("columns.classNo")}>
-            <Checkbox
-              value={form.columns.includes("classNo")}
-              onChange={() =>
-                setForm({
-                  ...form,
-                  columns: toggleItem("classNo", form.columns),
-                })
-              }
-            />
-          </FormItem>
-          {userRole === "teacher" && (
-            <FormItem label={t("columns.studentID")}>
-              <Checkbox
-                value={form.columns.includes("studentID")}
-                onChange={() =>
-                  setForm({
-                    ...form,
-                    columns: toggleItem("studentID", form.columns),
-                  })
-                }
-              />
-            </FormItem>
-          )}
           {(
             [
               "classNo",
@@ -436,9 +414,9 @@ const StudentsPrintOptions: FC<{
 const PrintStudentList: FC<{
   classItem: Pick<Classroom, "id" | "number">;
   classroomOverview: Pick<
-  Classroom,
-  "id" | "number" | "class_advisors" | "contacts" | "subjects"
->;
+    Classroom,
+    "id" | "number" | "class_advisors" | "contacts" | "subjects"
+  >;
   studentList: Student[];
   userRole: UserRole;
 }> = ({ classItem, classroomOverview, studentList, userRole }) => {

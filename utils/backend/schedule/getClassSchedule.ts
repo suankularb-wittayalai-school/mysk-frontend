@@ -58,7 +58,6 @@ export default async function getClassSchedule(
       schedule_item_rooms!inner(room)
     `,
     )
-    // `match` doesn’t work lmao
     .eq("schedule_item_classrooms.classroom_id", classroomID)
     .eq("year", getCurrentAcademicYear())
     .eq("semester", getCurrentSemester());

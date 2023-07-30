@@ -12,13 +12,6 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase-backend";
 
 // Backend
-import { getUserMetadata } from "@/utils/backend/account/getUserByEmail";
-import {
-  getAllClassNumbers,
-  getClassOverview,
-  getClassStudentList,
-  getClassWNumber,
-} from "@/utils/backend/classroom/classroom";
 
 // Internal components
 import PrintStudentList from "@/components/class/PrintStudentList";
@@ -27,27 +20,32 @@ import PrintStudentList from "@/components/class/PrintStudentList";
 import { createTitleStr } from "@/utils/helpers/title";
 
 // Types
-import { ClassOverview, ClassWNumber } from "@/utils/types/class";
+import {  Classroom } from "@/utils/types/classroom";
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { Role, Student } from "@/utils/types/person";
+import { UserRole, Student } from "@/utils/types/person";
+import { getCurrentAcademicYear } from "@/utils/helpers/date";
+import getClassroomOverview from "@/utils/backend/classroom/getClassroomOverview";
+import getStudentsOfClass from "@/utils/backend/classroom/getStudentsOfClass";
+import { getStudentsByIDs } from "@/utils/backend/person/getStudentsByIDs";
+import { useLoggedInPerson } from "@/utils/helpers/auth";
 
 const StudentsListPrintPage: CustomPage<{
-  classItem: ClassWNumber;
-  classOverview: ClassOverview;
+  classItem: Pick<Classroom, "id" | "number">;
+  classroomOverview: Pick<
+  Classroom,
+  "id" | "number" | "class_advisors" | "contacts" | "subjects"
+>;
   studentList: Student[];
-}> = ({ classItem, classOverview, studentList }) => {
+}> = ({ classItem, classroomOverview, studentList }) => {
   const { t } = useTranslation(["class", "common"]);
 
-  const user = useUser();
-  const supabase = useSupabaseClient();
-  const [userRole, setUserRole] = useState<Role>("student");
+  const { person: user } = useLoggedInPerson();
+  const [userRole, setUserRole] = useState<UserRole>("student");
+
   useEffect(() => {
-    if (!user) return;
-    (async () => {
-      const { data: metadata } = await getUserMetadata(supabase, user!.id);
-      setUserRole(metadata?.role || "student");
-    })();
-  }, [user]);
+    if (user?.role) setUserRole(user.role);
+  }
+  , [user]);
 
   return (
     <>
@@ -55,7 +53,7 @@ const StudentsListPrintPage: CustomPage<{
         <title>{createTitleStr(t("student.print.title"), t)}</title>
       </Head>
       <PrintStudentList
-        {...{ classItem, classOverview, studentList, userRole }}
+        {...{ classItem, classroomOverview, studentList, userRole }}
       />
     </>
   );
@@ -65,19 +63,30 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   const classNumber = Number(params?.classNumber);
   if (Number.isNaN(classNumber)) return { notFound: true };
 
-  const { data: classItem, error: classError } = await getClassWNumber(
-    supabase,
-    classNumber
-  );
+  const {data, error} = await supabase.from("classrooms").select("id").eq("number", classNumber).eq("year", getCurrentAcademicYear()).single();
+
+  if (error) return { notFound: true };
+
+  const classID = data.id;
+
+  const { data: classItem, error: classError } = await supabase.from("classrooms").select("id, number").eq("id", classID).single();
+
   if (classError) return { notFound: true };
 
-  const { data: classOverview } = await getClassOverview(
+  const { data: classroomOverview } = await getClassroomOverview(
     supabase,
-    classItem!.number
+    classID
   );
-  const { data: studentList } = await getClassStudentList(
+
+  const { data: compactStudentList } = await getStudentsOfClass(
     supabase,
-    classItem!.id
+    classID,
+  );
+
+  const { data: studentList } = await getStudentsByIDs(
+    supabase,
+    compactStudentList!.map((student) => student.id),
+    { detailed: true}
   );
 
   return {
@@ -88,16 +97,20 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
         "lookup",
       ])),
       classItem,
-      classOverview,
-      studentList,
+      classroomOverview,
+      studentList: studentList!.sort((a, b) => a.class_no - b.class_no),
     },
   };
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
+  const { data: classNumbers, error } = await supabase.from("classrooms").select("number").eq("year", getCurrentAcademicYear());
+  
+  if (error) return { paths: [], fallback: "blocking" };
+
   return {
-    paths: (await getAllClassNumbers(supabase)).map((number) => ({
-      params: { classNumber: number.toString() },
+    paths: classNumbers!.map((classroom) => ({
+      params: { classNumber: classroom.number.toString() },
     })),
     fallback: "blocking",
   };

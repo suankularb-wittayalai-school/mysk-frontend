@@ -1,15 +1,39 @@
+import {
+  getCurrentAcademicYear,
+  getCurrentSemester,
+} from "@/utils/helpers/date";
 import { logError } from "@/utils/helpers/debug";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
+import { Classroom } from "@/utils/types/classroom";
 import { ClassroomSubject } from "@/utils/types/subject";
 
 export async function createClassroomSubject(
   supabase: DatabaseClient,
-  classroomSubject: ClassroomSubject,
+  classroomSubject: Omit<ClassroomSubject, "id" | "classroom" | "subject"> & {
+    classroom: Pick<Classroom, "number">;
+    subject: Pick<Classroom, "id">;
+  },
 ): Promise<BackendReturn<null>> {
+  const { data: classroom, error: classroomError } = await supabase
+    .from("classroom")
+    .select("id")
+    .eq("number", classroomSubject.classroom.number)
+    .eq("year", getCurrentAcademicYear())
+    .eq("semester", getCurrentSemester())
+    .limit(1)
+    .single();
+  if (classroomError) {
+    logError(
+      "createClassroomSubject (classroom_subject_teachers)",
+      classroomError,
+    );
+    return { data: null, error: classroomError };
+  }
+
   const { data, error } = await supabase
     .from("classroom_subjects")
     .insert({
-      classroom_id: classroomSubject.classroom.id,
+      classroom_id: classroom!.id,
       subject_id: classroomSubject.subject.id,
       ggc_code: classroomSubject.ggc_code,
       ggc_link: classroomSubject.ggc_link,
@@ -37,7 +61,7 @@ export async function createClassroomSubject(
       "createClassroomSubject (classroom_subject_teachers)",
       teachersError,
     );
-    return { data: null, error };
+    return { data: null, error: teachersError };
   }
 
   const { error: coTeachersError } = await supabase
@@ -48,13 +72,13 @@ export async function createClassroomSubject(
         teacher_id: id,
       })),
     );
-  if (teachersError) {
+  if (coTeachersError) {
     logError(
       "createClassroomSubject (classroom_subject_co_teachers)",
-      teachersError,
+      coTeachersError,
     );
-    return { data: null, error };
+    return { data: null, error: coTeachersError };
   }
 
-  return { data: null, error };
+  return { data: null, error: null };
 }

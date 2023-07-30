@@ -38,6 +38,8 @@ const ClassTeachers: FC<{
   // Selected Person
   const [selected, setSelected] = useState(teacherList[0]?.teachers[0]?.id);
 
+  
+
   const supabase = useSupabaseClient();
   const [loading, toggleLoading] = useToggle();
 
@@ -50,7 +52,6 @@ const ClassTeachers: FC<{
     )
       return;
 
-    // TODO: Fix this
     withLoading(
       async () => {
         const { data, error } = await getTeacherByID(supabase, selected, {detailed: true});
