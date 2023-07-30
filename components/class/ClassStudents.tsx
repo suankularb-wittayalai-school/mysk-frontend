@@ -42,6 +42,7 @@ import { useToggle } from "@/utils/hooks/toggle";
 // Types
 import { Student } from "@/utils/types/person";
 import { getStudentByID } from "@/utils/backend/person/getStudentByID";
+import { getStudentsByIDs } from "@/utils/backend/person/getStudentsByIDs";
 
 const ClassStudents: FC<{
   studentList: Pick<Student, "id" | "first_name" | "last_name" | "nickname" | "class_no">[];
@@ -86,32 +87,32 @@ const ClassStudents: FC<{
   const getVCard = useGetVCard();
   const [vCardLoading, toggleVCardLoading] = useToggle();
   async function handleSaveVCard() {
-    // withLoading(
-    //   async () => {
-    //     // TODO: Fix this
-    //     const { data, error } = await getFullStudentsFromIDs(
-    //       supabase,
-    //       studentList.map((student) => student.id)
-    //     );
-    //     if (error) return false;
+    withLoading(
+      async () => {
+        const { data, error } = await getStudentsByIDs(
+          supabase,
+          studentList.map((student) => student.id),
+          { detailed: true }
+        );
+        if (error) return false;
 
-    //     const vCards = data.map((student) => getVCard(student));
-    //     var mergedVCard = new Blob(
-    //       [
-    //         (
-    //           await Promise.all(vCards.map(async (vCard) => await vCard.text()))
-    //         ).join("\n"),
-    //       ],
-    //       { type: "text/vcard;charset=utf-8" }
-    //     );
+        const vCards = data.map((student) => getVCard(student));
+        var mergedVCard = new Blob(
+          [
+            (
+              await Promise.all(vCards.map(async (vCard) => await vCard.text()))
+            ).join("\n"),
+          ],
+          { type: "text/vcard;charset=utf-8" }
+        );
 
-    //     window.location.href = URL.createObjectURL(mergedVCard);
-    //     va.track("Save Class VCards", { number: `M.${classNumber}` });
-    //     return true;
-    //   },
-    //   toggleVCardLoading,
-    //   { hasEndToggle: true }
-    // );
+        window.location.href = URL.createObjectURL(mergedVCard);
+        va.track("Save Class VCards", { number: `M.${classNumber}` });
+        return true;
+      },
+      toggleVCardLoading,
+      { hasEndToggle: true }
+    );
   }
 
   return (
