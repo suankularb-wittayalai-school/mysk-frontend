@@ -33,6 +33,7 @@ import addContactToPerson from "@/utils/backend/contact/addContactToPerson";
 import createContact from "@/utils/backend/contact/createContact";
 import updateContact from "@/utils/backend/contact/updateContact";
 import { updatePerson } from "@/utils/backend/person/updatePerson";
+import getSubjectGroups from "@/utils/backend/subject/getSubjectGroups";
 import { withLoading } from "@/utils/helpers/loading";
 import { getLocaleName, getLocaleString } from "@/utils/helpers/string";
 import { createTitleStr } from "@/utils/helpers/title";
@@ -386,7 +387,7 @@ const UserContactsSection: FC<{ person: Student | Teacher }> = ({ person }) => {
    *
    * @param contactID The ID of the Contact to delete.
    */
-  async function handleRemove(contactID: number) {
+  async function handleRemove(contactID: string) {
 
     const { error} = await supabase.from("contacts").delete().match({id: contactID})
 
@@ -467,21 +468,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     };
   };
 
-  const { data: fetchedSubjectGroups } = await supabase.from("subject_groups").select("*");
-
-  if (!fetchedSubjectGroups) {
-    return {
-      notFound: true,
-    };
-  }
-
-  const subjectGroups = fetchedSubjectGroups.map((sg) => ({
-    id: sg.id,
-    name: {
-      th: sg.name_th,
-      "en-US": sg.name_en,
-    }
-  }));
+  const { data: subjectGroups } = await getSubjectGroups(supabase);
 
   return {
     props: {
