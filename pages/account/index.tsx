@@ -29,6 +29,8 @@ import SnackbarContext from "@/contexts/SnackbarContext";
 // import { getSubjectGroups } from "@/utils/backend/subject/subjectGroup";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
+import addContactToPerson from "@/utils/backend/contact/addContactToPerson";
+import createContact from "@/utils/backend/contact/createContact";
 import { withLoading } from "@/utils/helpers/loading";
 import { getLocaleName, getLocaleString } from "@/utils/helpers/string";
 import { createTitleStr } from "@/utils/helpers/title";
@@ -340,21 +342,25 @@ const UserContactsSection: FC<{ person: Student | Teacher }> = ({ person }) => {
    * @param contact The Contact to add.
    */
   async function handleAdd(contact: Contact) {
-    // const { data, error } = await createContact(supabase, contact);
-    // if (error) {
-    //   setSnackbar(<Snackbar>{t("snackbar.failure")}</Snackbar>);
-    //   return;
-    // }
+    const { data: contactID, error } = await createContact(supabase, contact);
+    if (error) {
+      console.error(error);
+      setSnackbar(<Snackbar>{t("snackbar.failure")}</Snackbar>);
+      return;
+    }
 
-    // const { error: personError } = await addContactToPerson(
-    //   supabase,
-    //   data!.id,
-    //   person,
-    // );
-    // if (personError) {
-    //   setSnackbar(<Snackbar>{t("snackbar.failure")}</Snackbar>);
-    //   return;
-    // }
+    const { error: personContactError } = await addContactToPerson(
+      supabase,
+      person,
+      contactID,
+    );
+
+
+    if (personContactError) {
+      console.error(personContactError);
+      setSnackbar(<Snackbar>{t("snackbar.failure")}</Snackbar>);
+      return;
+    }
 
     refreshProps();
   }
@@ -385,10 +391,13 @@ const UserContactsSection: FC<{ person: Student | Teacher }> = ({ person }) => {
     //   contactID,
     //   person,
     // );
-    // if (error) {
-    //   setSnackbar(<Snackbar>{t("snackbar.failure")}</Snackbar>);
-    //   return;
-    // }
+
+    const { error} = await supabase.from("contacts").delete().match({id: contactID})
+
+    if (error) {
+      setSnackbar(<Snackbar>{t("snackbar.failure")}</Snackbar>);
+      return;
+    }
 
     refreshProps();
   }
@@ -460,12 +469,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     return {
       notFound: true,
     };
-  }
-  // const { data: person } = await getPersonFromUser(
-  //   supabase,
-  //   session!.user as User,
-  //   { contacts: true, allergies: true, classAdvisorAt: true },
-  // );
+  };
 
   const { data: fetchedSubjectGroups } = await supabase.from("subject_groups").select("*");
 
@@ -481,7 +485,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       th: sg.name_th,
       "en-US": sg.name_en,
     }
-  }))
+  }));
 
   return {
     props: {
