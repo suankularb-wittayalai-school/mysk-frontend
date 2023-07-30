@@ -138,8 +138,8 @@ const ClassRowActions: FC<{
 
 /**
  * Allows the Teacher to view and edit the Classes that they teach this Subject
- * to. Behind the scenes, this is a list of Room Subjects connected to this
- * Teacher and this Subject.
+ * to. Behind the scenes, this is a list of Classroom Subjects connected to
+ * this Teacher and this Subject.
  *
  * @param open If the Full-screen Dialog is open and shown.
  * @param onClose The function triggered when the Full-screen Dialog is closed.

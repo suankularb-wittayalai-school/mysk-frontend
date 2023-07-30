@@ -8,7 +8,7 @@ import { GetServerSidePropsContext } from "next";
 
 import { getCurrentAcademicYear } from "@/utils/helpers/date";
 
-export default async function getClassStudentList(
+export default async function getStudentsOfClass(
   supabase: DatabaseClient,
   classroomID: string,
   options?: { year?: number },

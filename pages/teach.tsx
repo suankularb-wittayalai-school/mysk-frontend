@@ -11,19 +11,21 @@
  * - {@link TeachPage}
  */
 
-// External libraries
-import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
-
-
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import Head from "next/head";
-
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
-import { FC, useState } from "react";
-
-// SK Components
+// Imports
+import MySKPageHeader from "@/components/common/MySKPageHeader";
+import Schedule from "@/components/schedule/Schedule";
+import ScheduleAtAGlance from "@/components/schedule/ScheduleAtAGlance";
+import TeachingSubjectCard from "@/components/subject/TeachingSubjectCard";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
+import getTeacherSchedule from "@/utils/backend/schedule/getTeacherSchedule";
+import getTeachingSubjects from "@/utils/backend/subject/getTeachingSubjects";
+import { getLocalePath } from "@/utils/helpers/string";
+import { createTitleStr } from "@/utils/helpers/title";
+import { useLocale } from "@/utils/hooks/i18n";
+import { CustomPage, LangCode } from "@/utils/types/common";
+import { Schedule as ScheduleType } from "@/utils/types/schedule";
+import { Subject, SubjectClassrooms } from "@/utils/types/subject";
 import {
   Columns,
   ContentLayout,
@@ -33,35 +35,13 @@ import {
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
-
-// Internal components
-import MySKPageHeader from "@/components/common/MySKPageHeader";
-import Schedule from "@/components/schedule/Schedule";
-import ScheduleAtAGlance from "@/components/schedule/ScheduleAtAGlance";
-import TeachingSubjectCard from "@/components/subject/TeachingSubjectCard";
-
-
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
-import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
-
-// Backend
-// import { getUserMetadata } from "@/utils/backend/account/getUserByEmail";
-import getTeacherSchedule from "@/utils/backend/schedule/getTeacherSchedule";
-import getTeachingSubjects from "@/utils/backend/subject/getTeachingSubjects";
-// import { getSubjectsInCharge } from "@/utils/backend/subject/subject";
-
-// Helpers
-import { getLocalePath } from "@/utils/helpers/string";
-import { createTitleStr } from "@/utils/helpers/title";
-
-// Hooks
-import { useLocale } from "@/utils/hooks/i18n";
-
-// Types
-import { CustomPage, LangCode } from "@/utils/types/common";
-import { Schedule as ScheduleType } from "@/utils/types/schedule";
-import { Subject, SubjectClassrooms } from "@/utils/types/subject";
+import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { LayoutGroup, motion } from "framer-motion";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
+import Head from "next/head";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { FC, useState } from "react";
 
 /**
  * Displays the Teacher’s Schedule and relevant related information.
@@ -74,7 +54,7 @@ import { LayoutGroup, motion } from "framer-motion";
  */
 const ScheduleSection: FC<{
   schedule: ScheduleType;
-  subjectsInCharge: Pick<Subject, "id"| "name" | "code" | "short_name">[];
+  subjectsInCharge: Pick<Subject, "id" | "name" | "code" | "short_name">[];
   teacherID: number;
 }> = ({ schedule, subjectsInCharge, teacherID }) => {
   const { t } = useTranslation("teach");
@@ -159,12 +139,13 @@ const TeachPage: CustomPage<{
   teachingSubjects: SubjectClassrooms[];
   teacherID: number;
 }> = ({ schedule, subjectsInCharge, teachingSubjects, teacherID }) => {
-  const { t } = useTranslation(["teach", "common"]);
+  const { t } = useTranslation("teach");
+  const { t: tx } = useTranslation("common");
 
   return (
     <>
       <Head>
-        <title>{createTitleStr(t("title"), t)}</title>
+        <title>{createTitleStr(t("title"), tx)}</title>
       </Head>
       <MySKPageHeader
         title={t("title")}
@@ -229,20 +210,20 @@ export const getServerSideProps: GetServerSideProps = async ({
   //   teacherID,
   // );
 
-
   // const { data: teachingSubjects } = await getTeachingSubjects(
   //   supabase,
   //   teacherID,
   // );
-  const {data: teachingSubjects} = await getTeachingSubjects(supabase, user.id);
+  const { data: teachingSubjects } = await getTeachingSubjects(
+    supabase,
+    user.id,
+  );
 
   // console.log(teachingSubjects)
 
   // const {data}
 
   // console.log({teachingSubjects, subjectsInCharge: user.subjects_in_charge})
-
-  
 
   return {
     props: {

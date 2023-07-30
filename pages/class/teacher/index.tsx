@@ -24,7 +24,7 @@ import { Classroom } from "@/utils/types/classroom";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
 import { SubjectGroupTeachers } from "@/utils/types/subject";
-import getClassTeacherList from "@/utils/backend/classroom/getClassTeacherList";
+import getTeachersOfClass from "@/utils/backend/classroom/getTeachersOfClass";
 
 
 const ClassTeachersPage: CustomPage<{
@@ -68,7 +68,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   let classItem: Pick<Classroom, "id" | "number"> = user!.role === "student" ? user!.classroom! : user!.class_advisor_at!;
 
-  const { data: allTeacherList } = await getClassTeacherList(
+  const { data: allTeacherList } = await getTeachersOfClass(
     supabase,
     classItem!.id
   );

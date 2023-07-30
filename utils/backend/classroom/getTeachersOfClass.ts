@@ -5,7 +5,7 @@ import { Teacher } from "@/utils/types/person";
 
 import { getCurrentAcademicYear } from "@/utils/helpers/date";
 
-export default async function getClassTeacherList(
+export default async function getTeachersOfClass(
   supabase: DatabaseClient,
   classroomID: string,
   options?: { year?: number },

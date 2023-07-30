@@ -49,7 +49,7 @@ import { Student } from "@/utils/types/person";
 import { Schedule as ScheduleType } from "@/utils/types/schedule";
 import { authOptions } from "./api/auth/[...nextauth]";
 import { createEmptySchedule } from "@/utils/helpers/schedule";
-import getClassroomSubjectsLists from "@/utils/backend/subject/getClassroomSubjectsLists";
+import getClassroomSubjectsOfClass from "@/utils/backend/subject/getClassroomSubjectsOfClass";
 
 // const ScheduleSection: FC<{ schedule: ScheduleType }> = ({ schedule }) => {
 const ScheduleSection: FC<{ schedule: any }> = ({ schedule }) => {
@@ -145,7 +145,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     supabase,
     (user as Student).classroom!.id,
   );
-  const { data: subjectList } = await getClassroomSubjectsLists(
+  const { data: subjectList } = await getClassroomSubjectsOfClass(
     supabase,
     (user as Student).classroom!.id,
   );

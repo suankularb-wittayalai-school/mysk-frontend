@@ -1,3 +1,4 @@
+// Imports
 import { logError } from "@/utils/helpers/debug";
 import { mergeDBLocales } from "@/utils/helpers/string";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
@@ -7,7 +8,7 @@ import {
   getCurrentSemester,
 } from "@/utils/helpers/date";
 
-export default async function getClassroomSubjectsLists(
+export default async function getClassroomSubjectsOfClass(
   supabase: DatabaseClient,
   classID: string,
   options?: { academicYear: number; semester: number },
@@ -17,13 +18,13 @@ export default async function getClassroomSubjectsLists(
       .from("classroom_subjects")
       .select(
         `id,
-            subjects(id, name_en, name_th, code_en, code_th),
-            classrooms(id, number),
-            classroom_subject_teachers(teachers(id, people(first_name_th, last_name_th, first_name_en, last_name_en))),
-            classroom_subject_co_teachers(teachers(id, people(first_name_th, last_name_th, first_name_en, last_name_en))),
-            ggc_code,
-            ggc_link,
-            gg_meet_link`,
+        subjects(id, name_en, name_th, code_en, code_th),
+        classrooms(id, number),
+        classroom_subject_teachers(teachers(id, people(first_name_th, last_name_th, first_name_en, last_name_en))),
+        classroom_subject_co_teachers(teachers(id, people(first_name_th, last_name_th, first_name_en, last_name_en))),
+        ggc_code,
+        ggc_link,
+        gg_meet_link`,
       )
       .eq("classroom_id", classID)
       .eq("year", options?.academicYear || getCurrentAcademicYear())

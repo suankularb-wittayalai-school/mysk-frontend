@@ -29,7 +29,7 @@ import { CustomPage, LangCode } from "@/utils/types/common";
 import { UserRole, Student } from "@/utils/types/person";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
-import getClassStudentList from "@/utils/backend/classroom/getClassStudentList";
+import getStudentsOfClass from "@/utils/backend/classroom/getStudentsOfClass";
 
 const ClassStudentsPage: CustomPage<{
   classItem: Pick<Classroom, "id" | "number">;
@@ -73,7 +73,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   let classItem: Pick<Classroom, "id" | "number"> = user!.role === "student" ? user!.classroom! : user!.class_advisor_at!;
   // }
 
-  const { data: studentList, error } = await getClassStudentList(
+  const { data: studentList, error } = await getStudentsOfClass(
     supabase,
     classItem!.id
   );

@@ -25,6 +25,7 @@ import { useToggle } from "@/utils/hooks/toggle";
 // import { ClassTeachersListSection } from "@/utils/types/class";
 import { Teacher } from "@/utils/types/person";
 import { SubjectGroupTeachers } from "@/utils/types/subject";
+import { getTeacherByID } from "@/utils/backend/person/getTeacherByID";
 
 const ClassTeachers: FC<{
   // teacherList: ClassTeachersListSection[];
@@ -50,17 +51,17 @@ const ClassTeachers: FC<{
       return;
 
     // TODO: Fix this
-    // withLoading(
-    //   async () => {
-    //     const { data, error } = await getTeacher(supabase, selected);
-    //     if (error) return false;
+    withLoading(
+      async () => {
+        const { data, error } = await getTeacherByID(supabase, selected, {detailed: true});
+        if (error) return false;
 
-    //     setSelectedTeacher(data);
-    //     return true;
-    //   },
-    //   toggleLoading,
-    //   { hasEndToggle: true }
-    // );
+        setSelectedTeacher(data);
+        return true;
+      },
+      toggleLoading,
+      { hasEndToggle: true }
+    );
   }, [selected, atBreakpoint === "base"]);
 
   return (
