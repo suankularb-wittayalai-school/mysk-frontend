@@ -1,6 +1,6 @@
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
 
-export async function deleteClassroomSubject(
+export default async function deleteClassroomSubject(
   supabase: DatabaseClient,
   classroomSubjectID: string,
 ): Promise<BackendReturn<null>> {

@@ -52,6 +52,7 @@ import { useRefreshProps } from "@/utils/hooks/routing";
 import { ClassroomSubject, Subject } from "@/utils/types/subject";
 import { DialogFC } from "@/utils/types/component";
 import getClassroomSubjectsOfSubject from "@/utils/backend/subject/getClassroomSubjectsOfSubject";
+import deleteClassroomSubject from "@/utils/backend/subject/deleteClassroomSubject";
 
 /**
  * Row actions for a Class this subject is taught to.
@@ -403,8 +404,7 @@ const SubjectClassesDialog: DialogFC<{
         open={deleteID !== null}
         onClose={() => setDeleteID(null)}
         onSubmit={async () => {
-          // TODO
-          // await deleteRoomSubject(supabase, deleteID!);
+          await deleteClassroomSubject(supabase, deleteID!);
           setDeleteID(null);
           setData(null);
           refreshProps();
