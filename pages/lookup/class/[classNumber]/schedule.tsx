@@ -71,7 +71,7 @@ const SubjectListSection: FC<{ subjectList: ClassroomSubject[] }> = ({
 const LookupClassSchedulePage: CustomPage<{
   classItem: Pick<Classroom, "id" | "number">;
   schedule: ScheduleType;
-  subjectList: SubjectListItem[];
+  subjectList: ClassroomSubject[];
 }> = ({ classItem, schedule, subjectList }) => {
   // Translation
   const { t } = useTranslation(["class", "common"]);

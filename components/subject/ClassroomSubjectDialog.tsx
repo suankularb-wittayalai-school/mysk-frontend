@@ -54,6 +54,7 @@ import { DialogFC } from "@/utils/types/component";
 import { ClassroomSubject, Subject } from "@/utils/types/subject";
 import { useLoggedInPerson } from "@/utils/helpers/auth";
 import { createClassroomSubject } from "@/utils/backend/subject/createClassroomSubject";
+import { updateClassroomSubject } from "@/utils/backend/subject/updateClassroomSubject";
 // import { getPersonFromUser } from "@/utils/backend/person/person";
 
 /**
@@ -298,26 +299,22 @@ const ClassroomSubjectDialog: DialogFC<{
             gg_meet_link: form.ggMeetLink,
           };
 
-        console.log(form.teachers);
-
         // Add mode
         if (!data) {
-          // const { error } = await createClassroomSubject(
-          //   supabase,
-          //   classroomSubject,
-          // );
-          // hasError = error !== null;
+          const { error } = await createClassroomSubject(
+            supabase,
+            classroomSubject,
+          );
+          hasError = error !== null;
         }
 
         // Edit mode
         else {
-          // const { error } = await editRoomSubject(supabase, {
-          //   ...form,
-          //   id: data.id,
-          //   subject,
-          //   classroom: { id: 0, number: Number(form.class) },
-          // });
-          // hasError = error !== null;
+          const { error } = await updateClassroomSubject(supabase, {
+            id: data.id,
+            ...classroomSubject,
+          });
+          hasError = error !== null;
         }
 
         if (hasError) {

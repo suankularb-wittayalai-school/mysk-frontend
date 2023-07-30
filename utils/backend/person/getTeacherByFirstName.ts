@@ -11,21 +11,16 @@ export default async function getTeachersByFirstName(
   BackendReturn<Pick<Teacher, "id" | "first_name" | "last_name" | "profile">[]>
 > {
   const { data, error } = await supabase
-    .from("teachers")
+    .from("people")
     .select(
-      `id,
-      people(
-        first_name_th,
-        first_name_en,
-        last_name_th,
-        last_name_en,
-        profile
-      )`,
+      `first_name_th,
+      first_name_en,
+      last_name_th,
+      last_name_en,
+      profile,
+      teachers!inner(id)`,
     )
-    .eq("people.first_name_th", firstName);
-  // .or(
-  //   `people.first_name_th.eq.${firstName},people.first_name_en.ilike.${firstName}`,
-  // );
+    .or(`first_name_th.ilike.${firstName},first_name_en.ilike.${firstName}`);
 
   if (error) {
     logError("getTeachersByFirstName", error);
@@ -33,11 +28,11 @@ export default async function getTeachersByFirstName(
   }
 
   return {
-    data: data!.map((teacher) => ({
-      id: teacher.id,
-      first_name: mergeDBLocales(teacher.people, "first_name"),
-      last_name: mergeDBLocales(teacher.people, "last_name"),
-      profile: teacher.people!.profile,
+    data: data!.map((person) => ({
+      id: person.teachers[0].id,
+      first_name: mergeDBLocales(person, "first_name"),
+      last_name: mergeDBLocales(person, "last_name"),
+      profile: person.profile,
     })),
     error: null,
   };

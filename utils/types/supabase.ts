@@ -1294,7 +1294,7 @@ export interface Database {
         | "website"
         | "discord"
         | "other"
-      school_document_type: "order" | "annoucement" | "record" | "other"
+      school_document_type: "order" | "announcement" | "record" | "other"
       shirt_size:
         | "XS"
         | "S"

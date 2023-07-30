@@ -1,4 +1,4 @@
-// Externa libraries
+// Imports
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import {
   PaginationState,
@@ -19,8 +19,6 @@ import {
   useMemo,
   useState,
 } from "react";
-
-// SK Components
 import {
   Actions,
   Button,
@@ -40,33 +38,17 @@ import {
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
-
-// Internal components
 import ConfirmDeleteDialog from "@/components/common/ConfirmDeleteDialog";
 import MultilangText from "@/components/common/MultilingualText";
 import BrandIcon from "@/components/icons/BrandIcon";
 import ClassroomSubjectDialog from "@/components/subject/ClassroomSubjectDialog";
-
-// Contexts
 import SnackbarContext from "@/contexts/SnackbarContext";
-
-// Backend
-// import {
-//   deleteRoomSubject,
-//   getTeachingSubjectClasses,
-// } from "@/utils/backend/subject/roomSubject";
-
-// Helpers
 import { getLocaleString } from "@/utils/helpers/string";
 import { withLoading } from "@/utils/helpers/loading";
 import { getLocaleName } from "@/utils/helpers/string";
-
-// Hooks
 import { useLocale } from "@/utils/hooks/i18n";
 import { useToggle } from "@/utils/hooks/toggle";
 import { useRefreshProps } from "@/utils/hooks/routing";
-
-// Types
 import { ClassroomSubject, Subject } from "@/utils/types/subject";
 import { DialogFC } from "@/utils/types/component";
 import getClassroomSubjectsOfSubject from "@/utils/backend/subject/getClassroomSubjectsOfSubject";
@@ -90,12 +72,12 @@ const ClassRowActions: FC<{
   return (
     <SegmentedButton alt="Row actions">
       {/* Edit */}
-      {row.gg_meet_link && (
+      {row.ggc_link && (
         <Button
           appearance="outlined"
           icon={<BrandIcon icon="gg-classroom" />}
           tooltip={t("classLink")}
-          href={row.gg_meet_link}
+          href={row.ggc_link}
           // eslint-disable-next-line react/display-name
           element={forwardRef((props, ref) => (
             <a {...props} ref={ref} target="_blank" rel="noreferrer" />
@@ -398,6 +380,7 @@ const SubjectClassesDialog: DialogFC<{
       {/* Dialogs */}
       <ClassroomSubjectDialog
         open={addOpen}
+        subjectID={subject.id}
         onClose={() => setAddOpen(false)}
         onSubmit={() => {
           setAddOpen(false);
@@ -407,13 +390,14 @@ const SubjectClassesDialog: DialogFC<{
       />
       <ClassroomSubjectDialog
         open={editRow !== null}
+        data={editRow || undefined}
+        subjectID={subject.id}
         onClose={() => setEditRow(null)}
         onSubmit={() => {
           setEditRow(null);
           setData(null);
           refreshProps();
         }}
-        data={editRow || undefined}
       />
       <ConfirmDeleteDialog
         open={deleteID !== null}

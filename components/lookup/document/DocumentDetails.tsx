@@ -21,7 +21,7 @@ import SnackbarContext from "@/contexts/SnackbarContext";
 
 // Types
 import { SchoolDocument } from "@/utils/types/news";
-import { Role } from "@/utils/types/person";
+import { UserRole } from "@/utils/types/person";
 
 const DocumentActions: FC<{ document: SchoolDocument }> = ({ document }) => {
   // Translation
@@ -41,7 +41,7 @@ const DocumentActions: FC<{ document: SchoolDocument }> = ({ document }) => {
 
     const shareData = {
       title: document.subject,
-      url: document.documentLink,
+      url: document.document_link,
     };
     if (navigator.canShare && navigator.canShare(shareData))
       await navigator.share(shareData);
@@ -54,7 +54,7 @@ const DocumentActions: FC<{ document: SchoolDocument }> = ({ document }) => {
   function handlePopOut() {
     va.track("Pop out Document", { subject: document.subject });
 
-    window.open(document.documentLink, "_blank", "popup, noreferrer");
+    window.open(document.document_link, "_blank", "popup, noreferrer");
   }
 
   /**
@@ -64,7 +64,7 @@ const DocumentActions: FC<{ document: SchoolDocument }> = ({ document }) => {
     va.track("Download Document", { subject: document.subject });
 
     window.location.href = `https://drive.google.com/u/1/uc?id=${
-      document.documentLink
+      document.document_link
         // Remove “https://drive.google.com/file/d/” prefix
         .slice(32)
         // Remove “/view?usp=___” suffix
@@ -96,7 +96,8 @@ const DocumentActions: FC<{ document: SchoolDocument }> = ({ document }) => {
 };
 
 const RestrictionsCard: FC<{
-  includes?: SchoolDocument["includes"];
+  // includes?: SchoolDocument["includes"];
+  includes?: { students?: boolean; teachers?: boolean; parents?: boolean };
 }> = ({ includes }) => {
   // Translation
   const { t } = useTranslation("lookup", {
@@ -107,7 +108,7 @@ const RestrictionsCard: FC<{
     includes?.students && "student",
     includes?.teachers && "teacher",
     includes?.parents && "parent",
-  ].filter((role) => role) as (Role | "parent")[];
+  ].filter((role) => role) as (UserRole | "parent")[];
 
   return (
     <Card
@@ -186,7 +187,11 @@ const DocumentDetails: FC<{
             <h2 className="skc-headline-small">{document.subject}</h2>
             <DocumentActions document={document} />
           </div>
-          <RestrictionsCard includes={document.includes} />
+          <RestrictionsCard includes={{
+            students: document.include_students,
+            teachers: document.include_teachers,
+            parents: document.include_parents,
+          }} />
         </div>
 
         {/* Google Drive embed */}
@@ -216,7 +221,7 @@ const DocumentDetails: FC<{
           <iframe
             key={document.id}
             src={`${
-              document.documentLink.split(/\/view\?usp=[a-z]+/)[0]
+              document.document_link.split(/\/view\?usp=[a-z]+/)[0]
             }/preview`}
             width={iframeSize.width}
             height={iframeSize.height}

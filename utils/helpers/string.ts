@@ -79,15 +79,18 @@ export function getLocaleName(
       ? teacherPrefix[detectedLocale]
       : options?.prefix && name.prefix?.[detectedLocale],
     [
-      options?.firstName !== false && options?.firstName === "abbr"
-        ? getFirstLetterOfName(name.first_name?.[closestLocale] || "")
-        : name.first_name?.[closestLocale],
-      options?.middleName !== false && options?.middleName === "abbr"
-        ? getFirstLetterOfName(name.middle_name?.[closestLocale] || "")
-        : name.middle_name?.[closestLocale],
-      options?.lastName !== false && options?.lastName === "abbr"
-        ? getFirstLetterOfName(name.last_name?.[closestLocale] || "")
-        : name.last_name?.[closestLocale],
+      options?.firstName !== false &&
+        (options?.firstName === "abbr"
+          ? getFirstLetterOfName(name.first_name?.[closestLocale] || "")
+          : name.first_name?.[closestLocale]),
+      options?.middleName !== false &&
+        (options?.middleName === "abbr"
+          ? getFirstLetterOfName(name.middle_name?.[closestLocale] || "")
+          : name.middle_name?.[closestLocale]),
+      options?.lastName !== false &&
+        (options?.lastName === "abbr"
+          ? getFirstLetterOfName(name.last_name?.[closestLocale] || "")
+          : name.last_name?.[closestLocale]),
     ]
       .filter((segment) => segment)
       .join(" "),
