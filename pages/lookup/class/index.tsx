@@ -1,13 +1,14 @@
-// External libraries
-import { GetStaticProps } from "next";
-import Head from "next/head";
-
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
-import { useState } from "react";
-
-// SK Components
+// Imports
+import MySKPageHeader from "@/components/common/MySKPageHeader";
+import ClassCard from "@/components/lookup/class/ClassCard";
+import ClassSearchResult from "@/components/lookup/class/ClassSearchResult";
+import getLookupClassrooms from "@/utils/backend/classroom/getLookupClassrooms";
+import { range } from "@/utils/helpers/array";
+import { createTitleStr } from "@/utils/helpers/title";
+import { useLocale } from "@/utils/hooks/i18n";
+import { supabase } from "@/utils/supabase-backend";
+import { Classroom } from "@/utils/types/classroom";
+import { CustomPage, LangCode } from "@/utils/types/common";
 import {
   Columns,
   ContentLayout,
@@ -17,31 +18,14 @@ import {
   Search,
   Section,
 } from "@suankularb-components/react";
-
-// Internal components
-import MySKPageHeader from "@/components/common/MySKPageHeader";
-import ClassCard from "@/components/lookup/class/ClassCard";
-import ClassSearchResult from "@/components/lookup/class/ClassSearchResult";
-
-// Backend
-import { getLookupClasses } from "@/utils/backend/classroom/classroom";
-
-// Supabase
-import { supabase } from "@/utils/supabase-backend";
-
-// Helpers
-import { range } from "@/utils/helpers/array";
-import { createTitleStr } from "@/utils/helpers/title";
-
-// Hooks
-import { useLocale } from "@/utils/hooks/i18n";
-
-// Types
-import { ClassLookupListItem } from "@/utils/types/class";
-import { CustomPage, LangCode } from "@/utils/types/common";
+import { GetStaticProps } from "next";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Head from "next/head";
+import { useState } from "react";
 
 const LookupClassesPage: CustomPage<{
-  classes: ClassLookupListItem[];
+  classes: (Pick<Classroom, "id" | "number" | "class_advisors"> & {studentCount: number})[];
 }> = ({ classes }) => {
   // Translation
   const locale = useLocale();
@@ -123,7 +107,7 @@ const LookupClassesPage: CustomPage<{
 };
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
-  const { data: classes } = await getLookupClasses(supabase);
+  const { data: classes } = await getLookupClassrooms(supabase);
 
   return {
     props: {
