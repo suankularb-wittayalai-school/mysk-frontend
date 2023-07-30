@@ -15,8 +15,8 @@ import { useLocale } from "@/utils/hooks/i18n";
 import { Person } from "@/utils/types/person";
 
 const DynamicAvatar: FC<
-  Partial<Pick<Person, "name" | "profile">> & { className?: string }
-> = ({ name, profile, className }) => {
+  Partial<Pick<Person, "first_name" | "last_name" | "profile">> & { className?: string }
+> = ({ first_name, last_name, profile, className }) => {
   // Translation
   const locale = useLocale();
 
@@ -27,21 +27,21 @@ const DynamicAvatar: FC<
         profile ? (
           <Image src={profile} alt="" />
         ) : // Use the first letter of first name and last name, if available
-        name ? (
+        first_name && last_name ? (
           // Use English name, if available
-          locale === "en-US" && name["en-US"] ? (
-            [name["en-US"].firstName[0], name["en-US"].lastName[0]]
+          locale === "en-US" && first_name["en-US"] && last_name["en-US"] ? (
+            [first_name["en-US"][0], last_name["en-US"][0]]
               .join("")
               .toUpperCase()
           ) : (
             // Otherwise, use Thai name
             [
-              startsWithThaiVowel(name.th.firstName[0])
-                ? name.th.firstName[1]
-                : name.th.firstName[0],
-              startsWithThaiVowel(name.th.lastName[0])
-                ? name.th.lastName[1]
-                : name.th.lastName[0],
+              startsWithThaiVowel(first_name.th[0])
+                ? first_name.th[1]
+                : first_name.th[0],
+              startsWithThaiVowel(last_name.th[0])
+                ? last_name.th[1]
+                : last_name.th[0],
             ].join("")
           )
         ) : // If nothing available, show the default vector

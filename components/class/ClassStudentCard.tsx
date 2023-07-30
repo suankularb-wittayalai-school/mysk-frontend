@@ -10,8 +10,7 @@ import DynamicAvatar from "@/components/common/DynamicAvatar";
 
 // Helpers
 import { cn } from "@/utils/helpers/className";
-import { getLocaleObj } from "@/utils/helpers/i18n";
-import { getLocaleName } from "@/utils/helpers/string";
+import { getLocaleName, getLocaleString } from "@/utils/helpers/string";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
@@ -20,11 +19,11 @@ import { useLocale } from "@/utils/hooks/i18n";
 import { Student } from "@/utils/types/person";
 
 const ClassStudentCard: FC<{
-  student: Student;
+  student: Pick<Student, "id" | "first_name" | "last_name" | "nickname" | "class_no">;
   seperated?: boolean;
   classNumber?: number;
-  selectedID?: number;
-  setSelectedID?: (id: number) => void;
+  selectedID?: string;
+  setSelectedID?: (id: string) => void;
 }> = ({ student, seperated, classNumber, selectedID, setSelectedID }) => {
   const locale = useLocale();
   const { atBreakpoint } = useBreakpoint();
@@ -32,7 +31,7 @@ const ClassStudentCard: FC<{
 
   return (
     <li
-      aria-label={getLocaleName(locale, student.name)}
+      aria-label={getLocaleName(locale, student)}
       className={
         seperated
           ? `-mx-4 border-t-outline px-4 sm:mx-0 sm:px-0
@@ -66,14 +65,15 @@ const ClassStudentCard: FC<{
         <CardHeader
           avatar={
             <DynamicAvatar
-              name={student.name}
+            first_name={student.first_name}
+            last_name={student.last_name}
               className={
                 thisSelected ? "sm:!bg-primary sm:!text-on-primary" : undefined
               }
             />
           }
-          title={getLocaleName(locale, student.name)}
-          subtitle={getLocaleObj(student.name, locale).nickname}
+          title={getLocaleName(locale, student)}
+          subtitle={student.nickname ? getLocaleString(student.nickname, locale) : ""}
           className="grow"
         />
         <span
@@ -83,10 +83,10 @@ const ClassStudentCard: FC<{
             thisSelected && `sm:!text-primary`,
           ])}
         >
-          {student.classNo < 10 && (
+          {student.class_no < 10 && (
             <span className="font-light opacity-30">0</span>
           )}
-          {student.classNo}
+          {student.class_no}
         </span>
       </Card>
     </li>

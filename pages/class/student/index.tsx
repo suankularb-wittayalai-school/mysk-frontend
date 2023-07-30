@@ -13,25 +13,28 @@ import MySKPageHeader from "@/components/common/MySKPageHeader";
 import ClassTabs from "@/components/lookup/class/ClassTabs";
 
 // Backend
-import { getUserMetadata } from "@/utils/backend/account/getUserByEmail";
-import {
-  getClassFromUser,
-  getClassStudentList,
-} from "@/utils/backend/classroom/classroom";
-import { getClassAdvisorAt } from "@/utils/backend/person/teacher";
+// import { getUserMetadata } from "@/utils/backend/account/getUserByEmail";
+// import {
+//   getClassFromUser,
+//   getClassStudentList,
+// } from "@/utils/backend/classroom/classroom";
+// import { getClassAdvisorAt } from "@/utils/backend/person/teacher";
 
 // Helpers
 import { createTitleStr } from "@/utils/helpers/title";
 
 // Types
-import { ClassWNumber } from "@/utils/types/class";
+import { Classroom } from "@/utils/types/classroom";
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { Role, Student } from "@/utils/types/person";
+import { UserRole, Student } from "@/utils/types/person";
+import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import getClassStudentList from "@/utils/backend/classroom/getClassStudentList";
 
 const ClassStudentsPage: CustomPage<{
-  classItem: ClassWNumber;
-  studentList: Student[];
-  userRole: Role;
+  classItem: Pick<Classroom, "id" | "number">;
+  studentList: Pick<Student, "id" | "first_name" | "last_name" | "nickname" | "class_no">[];
+  userRole: UserRole;
 }> = ({ classItem, studentList, userRole }) => {
   const { t } = useTranslation(["class", "common"]);
 
@@ -58,26 +61,24 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  const { data: metadata } = await getUserMetadata(supabase, session!.user.id);
+  const { data: user } = await getLoggedInPerson(
+    supabase,
+    authOptions,
+    req,
+    res,
+  );
 
-  const userRole = metadata!.role;
+  const userRole = user!.role;
 
-  let classItem: ClassWNumber;
-  if (userRole === "student") {
-    const { data } = await getClassFromUser(supabase, session!.user);
-    classItem = data!;
-  } else if (userRole === "teacher") {
-    const { data } = await getClassAdvisorAt(supabase, metadata!.teacher!);
-    classItem = data!;
-  }
+  let classItem: Pick<Classroom, "id" | "number"> = user!.role === "student" ? user!.classroom! : user!.class_advisor_at!;
+  // }
 
-  const { data: studentList } = await getClassStudentList(
+  const { data: studentList, error } = await getClassStudentList(
     supabase,
     classItem!.id
   );
+
+  console.log({studentList, error});
 
   return {
     props: {
