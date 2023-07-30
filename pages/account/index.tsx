@@ -31,6 +31,7 @@ import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import addContactToPerson from "@/utils/backend/contact/addContactToPerson";
 import createContact from "@/utils/backend/contact/createContact";
+import updateContact from "@/utils/backend/contact/updateContact";
 import { withLoading } from "@/utils/helpers/loading";
 import { getLocaleName, getLocaleString } from "@/utils/helpers/string";
 import { createTitleStr } from "@/utils/helpers/title";
@@ -371,11 +372,11 @@ const UserContactsSection: FC<{ person: Student | Teacher }> = ({ person }) => {
    * @param contact The new data for the Contact.
    */
   async function handleEdit(contact: Contact) {
-    // const { error } = await updateContact(supabase, contact);
-    // if (error) {
-    //   setSnackbar(<Snackbar>{t("snackbar.failure")}</Snackbar>);
-    //   return;
-    // }
+    const { error } = await updateContact(supabase, contact);
+    if (error) {
+      setSnackbar(<Snackbar>{t("snackbar.failure")}</Snackbar>);
+      return;
+    }
 
     refreshProps();
   }
