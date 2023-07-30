@@ -97,7 +97,11 @@ const DocumentActions: FC<{ document: SchoolDocument }> = ({ document }) => {
 
 const RestrictionsCard: FC<{
   // includes?: SchoolDocument["includes"];
-  includes?: { students?: boolean; teachers?: boolean; parents?: boolean };
+  includes?: {
+    students: boolean | null;
+    teachers: boolean | null;
+    parents: boolean | null;
+  };
 }> = ({ includes }) => {
   // Translation
   const { t } = useTranslation("lookup", {
@@ -187,11 +191,13 @@ const DocumentDetails: FC<{
             <h2 className="skc-headline-small">{document.subject}</h2>
             <DocumentActions document={document} />
           </div>
-          <RestrictionsCard includes={{
-            students: document.include_students,
-            teachers: document.include_teachers,
-            parents: document.include_parents,
-          }} />
+          <RestrictionsCard
+            includes={{
+              students: document.include_students,
+              teachers: document.include_teachers,
+              parents: document.include_parents,
+            }}
+          />
         </div>
 
         {/* Google Drive embed */}
