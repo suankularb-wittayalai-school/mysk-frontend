@@ -1,3 +1,4 @@
+import { getCurrentAcademicYear } from "@/utils/helpers/date";
 import { logError } from "@/utils/helpers/debug";
 import { mergeDBLocales } from "@/utils/helpers/string";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
@@ -12,9 +13,10 @@ export async function getStudentByID(
   let { data: studentData, error: studentError } = await supabase
     .from("students")
     .select(
-      "*, people(*, person_contacts(contacts(*)), person_allergies(allergy_name)), classroom_students!inner(class_no, classrooms(id, number))",
+      "*, people(*, person_contacts(contacts(*)), person_allergies(allergy_name)), classroom_students(class_no, classrooms!inner(id, number))",
     )
     .eq("id", studentID)
+    .eq("classroom_students.classrooms.year", getCurrentAcademicYear())
     .single();
 
   if (studentError) {
@@ -68,6 +70,7 @@ export async function getStudentByID(
       ? studentData!.people?.pants_size ?? null
       : null,
     role: "student",
+    is_admin: null,
   };
 
   return { data: student, error: null };

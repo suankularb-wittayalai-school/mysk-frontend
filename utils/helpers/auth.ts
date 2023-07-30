@@ -2,11 +2,16 @@
 import getUserByEmail from "@/utils/backend/account/getUserByEmail";
 import { logError } from "@/utils/helpers/debug";
 import { useLocale } from "@/utils/hooks/i18n";
-import { User } from "@/utils/types/person";
+import { Student, Teacher, User } from "@/utils/types/person";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { set } from "date-fns";
 import { SignInOptions, signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import {
+  getStudentFromUserID,
+  getTeacherFromUserID,
+} from "../backend/account/getLoggedInPerson";
 
 /**
  * Tap into Google Sign in.
@@ -123,4 +128,43 @@ export const useUser = () => {
   }, [data]);
 
   return { user, status };
+};
+
+export const useLoggedInPerson = (options?: {
+  includeContacts: boolean;
+  detailed?: boolean;
+}) => {
+  const { user, status } = useUser();
+  const [person, setPerson] = useState<Student | Teacher | null>(null);
+  const supabase = useSupabaseClient();
+
+  useEffect(() => {
+    if (!user) return;
+    (async () => {
+      switch (user!.role) {
+        case "student":
+          const { data, error } = await getStudentFromUserID(
+            supabase,
+            user!.id,
+            options,
+          );
+          if (error) {
+            logError("useLoggedInPerson (student)", error);
+          }
+          setPerson({ ...data!, is_admin: user!.is_admin });
+          break;
+
+        case "teacher":
+          const { data: teacherData, error: teacherError } =
+            await getTeacherFromUserID(supabase, user!.id, options);
+          if (teacherError) {
+            logError("useLoggedInPerson (teacher)", teacherError);
+          }
+          setPerson({ ...teacherData!, is_admin: user!.is_admin });
+          break;
+      }
+    })();
+  }, [user]);
+
+  return { person, status };
 };

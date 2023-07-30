@@ -45,6 +45,7 @@ export type Person = {
   pants_size: string | null;
   allergies: string[] | null;
   contacts: Contact[];
+  is_admin: boolean | null;
 };
 
 export type Student = Person & {
@@ -56,8 +57,8 @@ export type Student = Person & {
 
 export type Teacher = Person & {
   teacher_id: string;
-  class_advisor_at: Pick<Classroom, "id" | "number"> | null; 
-  subject_group: SubjectGroup; 
-  subjects_in_charge: Pick<Subject, "id" | "name" | "code" | "short_name">[]; 
+  class_advisor_at: Pick<Classroom, "id" | "number"> | null;
+  subject_group: SubjectGroup;
+  subjects_in_charge: Pick<Subject, "id" | "name" | "code" | "short_name">[];
   role: "teacher";
 };

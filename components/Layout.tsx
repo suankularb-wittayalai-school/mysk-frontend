@@ -49,7 +49,7 @@ import { useLocale } from "@/utils/hooks/i18n";
 import { usePreferences } from "@/utils/hooks/preferences";
 import { useRefreshProps } from "@/utils/hooks/routing";
 import { useSnackbar } from "@/utils/hooks/snackbar";
-import { useUser } from "@/utils/helpers/auth";
+import { useLoggedInPerson, useUser } from "@/utils/helpers/auth";
 
 // Types
 import { CustomPage } from "@/utils/types/common";
@@ -75,34 +75,28 @@ const Layout: FC<
     useContext(AppStateContext);
 
   // Class data (for Navigation links)
-  const supabase = useSupabaseClient();
   // const user = useUser();
 
-  const {user, status} = useUser();
+  const {person: user, status} = useLoggedInPerson();
 
   // console.log(user);
 
   const [isClassAdvisor, setIsClassAdvisor] = useState<boolean>(false);
-  // useEffect(() => {
-  //   if (!user) return;
-  //   (async () => {
-  //     // Check if the user is a Class Advisor
-  //     if (user!.role === "teacher") {
-  //       const { data: classAdvisorAt, error } = await getClassAdvisorAt(
-  //         supabase,
-  //         user!.teacher!,
-  //       );
+  useEffect(() => {
+    if (!user) return;
+    (async () => {
+      // Check if the user is a Class Advisor
+      if (user!.role === "teacher") {
+        if (user.class_advisor_at) {
+          setIsClassAdvisor(true);
+          return;
+        }
 
-  //       if (classAdvisorAt) {
-  //         setIsClassAdvisor(true);
-  //         return;
-  //       }
-
-  //       if (error) console.error(error);
-  //       setIsClassAdvisor(false);
-  //     }
-  //   })();
-  // }, [user]);
+        // if (error) console.error(error);
+        setIsClassAdvisor(false);
+      }
+    })();
+  }, [user]);
 
   // Snackbar
   const { snackbarOpen, setSnackbarOpen, snackbarProps } = useSnackbar();

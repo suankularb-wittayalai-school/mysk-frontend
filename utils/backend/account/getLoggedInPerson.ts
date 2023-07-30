@@ -11,7 +11,7 @@ import { NextAuthOptions, getServerSession } from "next-auth";
 import { getPersonByID } from "@/utils/backend/person/getPersonByID";
 import { getCurrentAcademicYear } from "@/utils/helpers/date";
 
-async function getStudentFromUserID(
+export async function getStudentFromUserID(
   supabase: DatabaseClient,
   userID: string,
   options?: { includeContacts: boolean; detailed?: boolean },
@@ -86,7 +86,7 @@ async function getStudentFromUserID(
   };
 }
 
-async function getTeacherFromUserID(
+export async function getTeacherFromUserID(
   supabase: DatabaseClient,
   userID: string,
   options?: { includeContacts: boolean; detailed?: boolean },
@@ -260,7 +260,7 @@ export default async function getLoggedInPerson(
         logError("getLoggedInPerson", error);
         return { data: null, error };
       }
-      loggedInAccount = data;
+      loggedInAccount = { ...data!, is_admin: user!.is_admin };
       break;
 
     case "teacher":
@@ -270,7 +270,7 @@ export default async function getLoggedInPerson(
         logError("getLoggedInPerson", teacherError);
         return { data: null, error: teacherError };
       }
-      loggedInAccount = teacherData;
+      loggedInAccount = { ...teacherData!, is_admin: user!.is_admin };
       break;
   }
 
