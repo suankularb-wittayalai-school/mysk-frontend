@@ -133,10 +133,12 @@ async function getTeacherFromUserID(
     .in("id", [classroomTeacherData!.map((cs) => cs.classroom_id)])
     .eq("year", getCurrentAcademicYear());
 
-  let classroom = classroomData?.length ? {
-    id: classroomData[0]!.id,
-    number: classroomData[0]!.number,
-  } : null;
+  let classroom = classroomData?.length
+    ? {
+        id: classroomData[0]!.id,
+        number: classroomData[0]!.number,
+      }
+    : null;
 
   if (classroomError) {
     logError("getTeacherFromUserID (classrooms)", classroomError);
@@ -146,7 +148,7 @@ async function getTeacherFromUserID(
   let { data: subjectGroupData, error: subjectGroupError } = await supabase
     .from("subject_groups")
     .select("*")
-    .eq("id",teacherData?.subject_group_id)
+    .eq("id", teacherData?.subject_group_id)
     .single();
 
   if (subjectGroupError) {
@@ -154,7 +156,8 @@ async function getTeacherFromUserID(
     return { data: null, error: subjectGroupError };
   }
 
-  let subjectsInCharge: Pick<Subject, "id" | "name" | "code" | "short_name">[] = [];
+  let subjectsInCharge: Pick<Subject, "id" | "name" | "code" | "short_name">[] =
+    [];
 
   if (options?.detailed) {
     let { data: subjectsInChargeData, error: subjectsInChargeError } =
@@ -195,7 +198,7 @@ async function getTeacherFromUserID(
       short_name: {
         th: s.short_name_th ?? "",
         "en-US": s.short_name_en,
-      }
+      },
     }));
   }
 
@@ -210,7 +213,7 @@ async function getTeacherFromUserID(
         name: {
           th: subjectGroupData!.name_th,
           "en-US": subjectGroupData!.name_en,
-        }
+        },
       },
       subjects_in_charge: subjectsInCharge,
       role: "teacher",
@@ -239,18 +242,18 @@ export default async function getLoggedInPerson(
     data.user!.email as string,
   );
 
-  if (!user) {
+  if (error) {
     logError("getLoggedInPerson", error);
     return { data: null, error };
   }
 
   let loggedInAccount: Student | Teacher | null = null;
 
-  switch (user.role) {
+  switch (user!.role) {
     case "student":
       const { data, error } = await getStudentFromUserID(
         supabase,
-        user.id,
+        user!.id,
         options,
       );
       if (error) {
@@ -262,7 +265,7 @@ export default async function getLoggedInPerson(
 
     case "teacher":
       const { data: teacherData, error: teacherError } =
-        await getTeacherFromUserID(supabase, user.id, options);
+        await getTeacherFromUserID(supabase, user!.id, options);
       if (teacherError) {
         logError("getLoggedInPerson", teacherError);
         return { data: null, error: teacherError };

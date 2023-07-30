@@ -1,7 +1,6 @@
 // External libraries
 import {
   createPagesServerClient,
-  User,
 } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 
@@ -43,7 +42,14 @@ import { useToggle } from "@/utils/hooks/toggle";
 
 // Types
 import type { CustomPage, LangCode } from "@/utils/types/common";
+import { User } from "@/utils/types/person";
 
+//Backend
+import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { getServerSession } from "next-auth";
+import getUserByEmail from "@/utils/backend/account/getUserByEmail";
+import { log } from "console";
 const LastPageCard: FC = () => {
   // Translation
   const { t } = useTranslation("welcome");
@@ -294,7 +300,7 @@ const LoggingInPage: CustomPage<{ user: User }> = ({ user }) => {
         <LastPageCard />
         <Columns columns={2} className="!gap-y-8">
           <CheckEmailSection user={user} />
-          <CreatePasswordSection />
+          {/* <CreatePasswordSection /> */}
         </Columns>
         <Actions className="mx-4 sm:mx-0">
           <Button
@@ -302,6 +308,16 @@ const LoggingInPage: CustomPage<{ user: User }> = ({ user }) => {
             loading={loading || undefined}
             onClick={() =>
               withLoading(async () => {
+                const { error: userError } = await supabase
+                  .from("users")
+                  .update({ onboarded: true })
+                  .match({ id: user!.id });
+                if (userError) {
+                  // console.error(userError);
+                  logError("Done submit(onboarding user)", userError);
+                  return false;
+                }
+
                 // Verify that the user is onboarded before continuing
                 const { data, error } = await supabase
                   .from("users")
@@ -339,11 +355,20 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  const data = await getServerSession(req, res, authOptions);
 
-  const user = session!.user;
+  if (!data) {
+    return { notFound: true };
+  }
+
+  const { data: user, error } = await getUserByEmail(
+    supabase,
+    data.user!.email as string,
+  );
+
+  if (error) {
+    return { notFound: true };
+  }
 
   return {
     props: {

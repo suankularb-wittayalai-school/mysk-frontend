@@ -23,18 +23,19 @@ import MySKPageHeader from "@/components/common/MySKPageHeader";
 import TeachingSubjectCard from "@/components/subject/TeachingSubjectCard";
 
 // Backend
-import { getUserMetadata } from "@/utils/backend/account/getUserByEmail";
-import { getTeachingSubjects } from "@/utils/backend/subject/roomSubject";
+import getTeachingSubjects from "@/utils/backend/subject/getTeachingSubjects";
 
 // Helpers
 import { createTitleStr } from "@/utils/helpers/title";
 
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { TeacherSubjectItem } from "@/utils/types/subject";
+import { SubjectClassrooms } from "@/utils/types/subject";
+import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
 
 const YourSubjectsPage: CustomPage<{
-  subjects: TeacherSubjectItem[];
+  subjects: SubjectClassrooms[];
 }> = ({ subjects }) => {
   const { t } = useTranslation(["welcome", "common"]);
 
@@ -80,20 +81,20 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  const { data: metadata, error: metadataError } = await getUserMetadata(
+  const { data: user, error } = await getLoggedInPerson(
     supabase,
-    session!.user.id
+    authOptions,
+    req,
+    res,
+    { includeContacts: true, detailed: true },
   );
-  if (metadataError) console.error(metadataError);
 
-  const { data: subjects } = await getTeachingSubjects(
+  const { data: subjects, error: subjectError } = await getTeachingSubjects(
     supabase,
-    metadata!.teacher!
+    user!.id
   );
+
+  console.log({subjects, subjectError})
 
   return {
     props: {
