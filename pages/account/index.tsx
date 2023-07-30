@@ -32,6 +32,7 @@ import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import addContactToPerson from "@/utils/backend/contact/addContactToPerson";
 import createContact from "@/utils/backend/contact/createContact";
 import updateContact from "@/utils/backend/contact/updateContact";
+import { updatePerson } from "@/utils/backend/person/updatePerson";
 import { withLoading } from "@/utils/helpers/loading";
 import { getLocaleName, getLocaleString } from "@/utils/helpers/string";
 import { createTitleStr } from "@/utils/helpers/title";
@@ -271,14 +272,14 @@ const UserFieldsSection: FC<{
           return false;
         }
 
-        // const { error } = await editPerson(supabase, form, person);
+        const { error } = await updatePerson(supabase, form, person);
 
-        // if (error) {
-        //   setSnackbar(
-        //     <Snackbar>{t("snackbar.failure", { ns: "common" })}</Snackbar>,
-        //   );
-        //   return false;
-        // }
+        if (error) {
+          setSnackbar(
+            <Snackbar>{t("snackbar.failure", { ns: "common" })}</Snackbar>,
+          );
+          return false;
+        }
 
         await refreshProps();
         setSnackbar(
@@ -345,7 +346,6 @@ const UserContactsSection: FC<{ person: Student | Teacher }> = ({ person }) => {
   async function handleAdd(contact: Contact) {
     const { data: contactID, error } = await createContact(supabase, contact);
     if (error) {
-      console.error(error);
       setSnackbar(<Snackbar>{t("snackbar.failure")}</Snackbar>);
       return;
     }
@@ -387,11 +387,6 @@ const UserContactsSection: FC<{ person: Student | Teacher }> = ({ person }) => {
    * @param contactID The ID of the Contact to delete.
    */
   async function handleRemove(contactID: number) {
-    // const { error } = await removeContactFromPerson(
-    //   supabase,
-    //   contactID,
-    //   person,
-    // );
 
     const { error} = await supabase.from("contacts").delete().match({id: contactID})
 
