@@ -41,6 +41,7 @@ import { useToggle } from "@/utils/hooks/toggle";
 
 // Types
 import { Student } from "@/utils/types/person";
+import { getStudentByID } from "@/utils/backend/person/getStudentByID";
 
 const ClassStudents: FC<{
   studentList: Pick<Student, "id" | "first_name" | "last_name" | "nickname" | "class_no">[];
@@ -57,7 +58,7 @@ const ClassStudents: FC<{
   const supabase = useSupabaseClient();
   const [loading, toggleLoading] = useToggle();
 
-  const [selectedStudent, setSelectedStudent] = useState<Student>();
+  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   useEffect(() => {
     if (
       !selected ||
@@ -68,11 +69,9 @@ const ClassStudents: FC<{
 
     withLoading(
       async () => {
-        // TODO: Fix this
-        // const { data, error } = await getStudent(supabase, selected);
-        // if (error) return false;
-
-        // setSelectedStudent(data);
+        const { data, error } = await getStudentByID(supabase, selected, {detailed: true});
+        if (error) return false;
+        setSelectedStudent(data);
         return true;
       },
       toggleLoading,
@@ -87,32 +86,32 @@ const ClassStudents: FC<{
   const getVCard = useGetVCard();
   const [vCardLoading, toggleVCardLoading] = useToggle();
   async function handleSaveVCard() {
-    withLoading(
-      async () => {
-        // TODO: Fix this
-        // const { data, error } = await getFullStudentsFromIDs(
-        //   supabase,
-        //   studentList.map((student) => student.id)
-        // );
-        // if (error) return false;
+    // withLoading(
+    //   async () => {
+    //     // TODO: Fix this
+    //     const { data, error } = await getFullStudentsFromIDs(
+    //       supabase,
+    //       studentList.map((student) => student.id)
+    //     );
+    //     if (error) return false;
 
-        // const vCards = data.map((student) => getVCard(student));
-        // var mergedVCard = new Blob(
-        //   [
-        //     (
-        //       await Promise.all(vCards.map(async (vCard) => await vCard.text()))
-        //     ).join("\n"),
-        //   ],
-        //   { type: "text/vcard;charset=utf-8" }
-        // );
+    //     const vCards = data.map((student) => getVCard(student));
+    //     var mergedVCard = new Blob(
+    //       [
+    //         (
+    //           await Promise.all(vCards.map(async (vCard) => await vCard.text()))
+    //         ).join("\n"),
+    //       ],
+    //       { type: "text/vcard;charset=utf-8" }
+    //     );
 
-        // window.location.href = URL.createObjectURL(mergedVCard);
-        // va.track("Save Class VCards", { number: `M.${classNumber}` });
-        return true;
-      },
-      toggleVCardLoading,
-      { hasEndToggle: true }
-    );
+    //     window.location.href = URL.createObjectURL(mergedVCard);
+    //     va.track("Save Class VCards", { number: `M.${classNumber}` });
+    //     return true;
+    //   },
+    //   toggleVCardLoading,
+    //   { hasEndToggle: true }
+    // );
   }
 
   return (
@@ -170,7 +169,7 @@ const ClassStudents: FC<{
             />
           ))}
       </LookupList>
-      {selected ? (
+      {selectedStudent ? (
         <PersonDetails
           person={selectedStudent}
           suggestionsType="share-only"

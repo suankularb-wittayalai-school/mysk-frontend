@@ -36,7 +36,7 @@ const PersonHeader: FC<ComponentProps<typeof PersonActions>> = ({
       <div className="flex flex-col gap-4 md:gap-2">
         <Header hAttr={{ id: "header-person-details" }}>
           {person
-            ? getLocaleName(locale, person.name, undefined, {
+            ? getLocaleName(locale, person, {
                 prefix: person.role === "teacher" ? "teacher" : false,
               })
             : t("loading")}

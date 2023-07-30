@@ -78,7 +78,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     classItem!.id
   );
 
-  console.log({studentList, error});
+  // console.log({studentList});
 
   return {
     props: {

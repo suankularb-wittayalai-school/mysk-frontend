@@ -27,10 +27,10 @@ import SnackbarContext from "@/contexts/SnackbarContext";
 
 // Types
 import { Student, Teacher } from "@/utils/types/person";
-import { SubjectWNameAndCode } from "@/utils/types/subject";
+import { Subject } from "@/utils/types/subject";
 
 // Helpers
-import { getLocaleObj, getLocaleString } from "@/utils/helpers/i18n";
+import { getLocaleString } from "@/utils/helpers/string";
 import { getLocaleName } from "@/utils/helpers/string";
 
 // Hooks
@@ -167,24 +167,22 @@ const GeneralInfoSection: FC<{
       >
         <MultilangText
           text={{
-            th: getLocaleName("th", person.name, person.prefix, { prefix: true }),
-            "en-US": person.name["en-US"]
-              ? getLocaleName("en-US", person.name, person.prefix, {
+            th: getLocaleName("th", person, { prefix: true }),
+            "en-US":  getLocaleName("en-US", person, {
                   prefix: true,
-                })
-              : undefined,
+                }),
           }}
           options={{ hideIconsIfOnlyLanguage: true }}
         />
       </DetailSection>
 
       {/* Nickname */}
-      {(person.name.th.nickname || person.name["en-US"]?.nickname) && (
+      {(person.nickname?.th || person.nickname ? person.nickname["en-US"] : "") && (
         <DetailSection title={t("nickname")}>
           <MultilangText
             text={{
-              th: person.name.th.nickname!,
-              "en-US": person.name["en-US"]?.nickname,
+              th: person.nickname!.th,
+              "en-US": person.nickname!["en-US"],
             }}
             options={{ hideIconsIfOnlyLanguage: true }}
           />
@@ -192,19 +190,19 @@ const GeneralInfoSection: FC<{
       )}
 
       {/* Class */}
-      {person.role === "student" && person.class && (
+      {person.role === "student" && person.classroom && (
         <DetailSection title={t("class.title")}>
           <span className="block">
-            {tx("class", { number: person.class.number })}
+            {tx("class", { number: person.classroom.number })}
           </span>
           <span className="block">
-            {t("class.classNo", { classNo: person.classNo })}
+            {t("class.classNo", { classNo: person.class_no })}
           </span>
         </DetailSection>
       )}
-      {person.role === "teacher" && person.classAdvisorAt && (
+      {person.role === "teacher" && person.class_advisor_at && (
         <DetailSection title={t("classAdvisorAt")}>
-          <span>{tx("class", { number: person.classAdvisorAt.number })}</span>
+          <span>{tx("class", { number: person.class_advisor_at.number })}</span>
         </DetailSection>
       )}
 
@@ -223,7 +221,7 @@ const GeneralInfoSection: FC<{
 };
 
 const SubjectsSection: FC<{
-  subjects: SubjectWNameAndCode[];
+  subjects: Pick<Subject, "id" | "code" | "name" | "short_name">[];
 }> = ({ subjects }) => {
   const locale = useLocale();
   const { t } = useTranslation("lookup", { keyPrefix: "people.detail" });
@@ -235,7 +233,7 @@ const SubjectsSection: FC<{
         {subjects.map((subject) => (
           <Card key={subject.id} appearance="outlined" direction="row">
             <CardHeader
-              title={getLocaleObj(subject.name, locale).name}
+              title={getLocaleString(subject.name, locale)}
               subtitle={getLocaleString(subject.code, locale)}
             />
           </Card>
@@ -253,7 +251,7 @@ const PersonDetailsContent: FC<{
 
   return (
     <ContentLayout>
-      {person.name["en-US"]?.firstName === "Supannee" && <StarbucksCard />}
+      {person.first_name["en-US"] === "Supannee" && <StarbucksCard />}
       <GeneralInfoSection {...{ person }} />
       {person.contacts.length > 0 && (
         <Section>
@@ -266,9 +264,9 @@ const PersonDetailsContent: FC<{
         </Section>
       )}
       {person.role === "teacher" &&
-        person.subjectsInCharge &&
-        person.subjectsInCharge.length !== 0 && (
-          <SubjectsSection subjects={person.subjectsInCharge} />
+        person.subjects_in_charge &&
+        person.subjects_in_charge.length !== 0 && (
+          <SubjectsSection subjects={person.subjects_in_charge} />
         )}
     </ContentLayout>
   );

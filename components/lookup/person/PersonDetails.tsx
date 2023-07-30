@@ -23,11 +23,12 @@ const PersonDetails: FC<
   const locale = useLocale();
   const { t } = useTranslation(["lookup", "common"]);
 
+
   return (
     <>
       <Head>
         {person && (
-          <title>{createTitleStr(getLocaleName(locale, person.name), t)}</title>
+          <title>{createTitleStr(getLocaleName(locale, person), t)}</title>
         )}
       </Head>
       <main

@@ -14,8 +14,8 @@ import {
 } from "@suankularb-components/react";
 
 // Types
-import { DialogComponent } from "@/utils/types/common";
 import { Student, Teacher } from "@/utils/types/person";
+import { DialogFC } from "@/utils/types/component";
 
 // Helpers
 import { useGetVCard } from "@/utils/helpers/contact";
@@ -24,7 +24,8 @@ import { getLocaleName } from "@/utils/helpers/string";
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
 
-const ShareDialog: DialogComponent<{
+
+const ShareDialog: DialogFC<{
   person: Student | Teacher;
 }> = ({ person, open, onClose }) => {
   const locale = useLocale();
@@ -36,7 +37,7 @@ const ShareDialog: DialogComponent<{
 
   async function handleSaveVCard() {
     va.track("Share Person", {
-      person: getLocaleName("en-US", person.name),
+      person: getLocaleName("en-US", person),
       method: "vCard",
     });
     var vCard = getVCard(person);
@@ -46,12 +47,12 @@ const ShareDialog: DialogComponent<{
 
   async function handleCopyLink() {
     va.track("Share Person", {
-      person: getLocaleName("en-US", person.name),
+      person: getLocaleName("en-US", person),
       method: "Native Share",
     });
 
     const shareData: ShareData = {
-      title: `${getLocaleName(locale, person.name)} - MySK`,
+      title: `${getLocaleName(locale, person)} - MySK`,
       url: window.location.href,
     };
     if (navigator.canShare && navigator.canShare(shareData))
@@ -62,7 +63,7 @@ const ShareDialog: DialogComponent<{
 
   async function handlePrint() {
     va.track("Share Person", {
-      person: getLocaleName("en-US", person.name),
+      person: getLocaleName("en-US", person),
       method: "Print",
     });
 
@@ -75,7 +76,7 @@ const ShareDialog: DialogComponent<{
     <Dialog open={open} onClose={onClose} width={312}>
       <DialogHeader
         desc={t("people.dialog.share.title", {
-          name: getLocaleName(locale, person.name),
+          name: getLocaleName(locale, person),
         })}
       />
       <DialogContent className="mx-6 flex flex-col gap-4">

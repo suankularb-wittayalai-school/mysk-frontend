@@ -46,7 +46,7 @@ export function getLocaleName(
     Pick<Person, "prefix" | "first_name" | "middle_name" | "last_name">
   >,
   options?: Partial<{
-    prefix: boolean;
+    prefix: boolean | "teacher";
     firstName: boolean;
     middleName: boolean;
     lastName: boolean;
@@ -58,9 +58,17 @@ export function getLocaleName(
       ? "en-US"
       : "th";
 
+  const teacherPrefix = {
+    th: "ครู",
+    "en-US": "T.",
+  };
+
   return [
-    options?.prefix &&
-      (name.prefix?.[firstNameLocale] + locale === "en-US" ? " " : ""),
+    options?.prefix && options?.prefix == "teacher"
+      ? teacherPrefix[firstNameLocale]
+      : name.prefix?.[firstNameLocale] + locale === "en-US"
+      ? " "
+      : "",
     options?.firstName !== false && name.first_name?.[firstNameLocale],
     options?.middleName !== false && name.middle_name?.[firstNameLocale],
     options?.lastName !== false && name.last_name?.[firstNameLocale],
