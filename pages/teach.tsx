@@ -38,9 +38,9 @@ import {
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { LayoutGroup, motion } from "framer-motion";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import Head from "next/head";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Head from "next/head";
 import { FC, useState } from "react";
 
 /**
@@ -76,7 +76,7 @@ const ScheduleSection: FC<{
 /**
  * Displays the Teacher’s Subjects.
  *
- * @param subjects An array of Teacher Subject Items, an abstraction of Room Subjects connected to this Teacher.
+ * @param subjects An array of Subject Classrooms, an abstraction of Classroom Subjects connected to this Teacher.
  *
  * @returns A Section.
  */
@@ -180,50 +180,20 @@ export const getServerSideProps: GetServerSideProps = async ({
     { includeContacts: true, detailed: true },
   );
 
-  if (error) {
-    return {
-      notFound: true,
-    };
-  }
-
-  if (user.role !== "teacher") {
+  if (error) return { notFound: true };
+  if (user.role !== "teacher")
     return {
       redirect: {
         destination: getLocalePath("/learn", locale as LangCode),
         permanent: false,
       },
     };
-  }
 
-  // if (!metadata?.onboarded)
-  //   return {
-  //     redirect: {
-  //       destination: getLocalePath("/account/welcome", locale as LangCode),
-  //       permanent: false,
-  //     },
-  //   };
-
-  // const teacherID = metadata.teacher!;
   const { data: schedule } = await getTeacherSchedule(supabase, user.id);
-  // const { data: subjectsInCharge } = await getSubjectsInCharge(
-  //   supabase,
-  //   teacherID,
-  // );
-
-  // const { data: teachingSubjects } = await getTeachingSubjects(
-  //   supabase,
-  //   teacherID,
-  // );
   const { data: teachingSubjects } = await getTeachingSubjects(
     supabase,
     user.id,
   );
-
-  // console.log(teachingSubjects)
-
-  // const {data}
-
-  // console.log({teachingSubjects, subjectsInCharge: user.subjects_in_charge})
 
   return {
     props: {
