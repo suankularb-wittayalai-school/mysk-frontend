@@ -53,7 +53,7 @@ import {
 } from "@/utils/types/person";
 import { getStudentByID } from "@/utils/backend/person/getStudentByID";
 import { getTeacherByID } from "@/utils/backend/person/getTeacherByID";
-import { getPersonForLookupList } from "@/utils/backend/person/getPersonForLookupList";
+import { getPersonForLookupDetail } from "@/utils/backend/person/getPersonForLookupDetail";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { getPeopleLookupList } from "@/utils/backend/person/getPeopleLookupList";
 
@@ -263,7 +263,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     );
 
     if (selectedIdx === -1) {
-      const { data, error } = await getPersonForLookupList(
+      const { data, error } = await getPersonForLookupDetail(
         supabase,
         selected.id as string,
         selected.role,

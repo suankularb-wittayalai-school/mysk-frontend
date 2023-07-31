@@ -46,7 +46,6 @@ import AdminDataTable from "@/components/admin/AdminDataTable";
 import MySKPageHeader from "@/components/common/MySKPageHeader";
 
 // Backend
-import { getAdminStudentList } from "@/utils/backend/person/student";
 
 // Helpers
 import { withLoading } from "@/utils/helpers/loading";
@@ -58,8 +57,10 @@ import { useToggle } from "@/utils/hooks/toggle";
 
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { StudentAdminListItem } from "@/utils/types/person";
+import { Student } from "@/utils/types/person";
 import ConfirmDeleteDialog from "@/components/common/ConfirmDeleteDialog";
+import { getStudentsForAdmin } from "@/utils/backend/person/getStudentForAdmin";
+import { getLocaleName } from "@/utils/helpers/string";
 
 /**
  * The number of rows visible per page. Used in pagination.
@@ -73,7 +74,18 @@ const rowsPerPage = 20;
  *
  * @returns A Segmented Button.
  */
-const StudentRowActions: FC<{ row: StudentAdminListItem }> = ({ row }) => {
+const StudentRowActions: FC<{
+  row: Pick<
+    Student,
+    | "id"
+    | "student_id"
+    | "classroom"
+    | "class_no"
+    | "first_name"
+    | "last_name"
+    | "middle_name"
+  >;
+}> = ({ row }) => {
   const [editOpen, setEditOpen] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
 
@@ -126,7 +138,16 @@ const StudentRowActions: FC<{ row: StudentAdminListItem }> = ({ row }) => {
  * @returns A Page.
  */
 const ManageStudentsPage: CustomPage<{
-  studentList: StudentAdminListItem[];
+  studentList: Pick<
+    Student,
+    | "id"
+    | "student_id"
+    | "classroom"
+    | "class_no"
+    | "first_name"
+    | "last_name"
+    | "middle_name"
+  >[];
   totalStudentCount: number;
 }> = ({ studentList, totalStudentCount }) => {
   const locale = useLocale();
@@ -170,20 +191,20 @@ const ManageStudentsPage: CustomPage<{
 
             // For other pages, we have to fetch that specific page from the
             // database
-            const { data, error } = await getAdminStudentList(
+            const { data, error } = await getStudentsForAdmin(
               supabase,
               page,
               rowsPerPage,
-              globalFilter // <-- For when a search result spans many pages
+              globalFilter, // <-- For when a search result spans many pages
             );
             if (error) return studentList;
             return data;
-          })()
+          })(),
         );
         return true;
       },
       toggleLoading,
-      { hasEndToggle: true }
+      { hasEndToggle: true },
     );
   }, [page]);
 
@@ -206,29 +227,42 @@ const ManageStudentsPage: CustomPage<{
 
             // Fetch the rows with the global filter
             setPage(1);
-            const { data, count, error } = await getAdminStudentList(
+            const { data, count, error } = await getStudentsForAdmin(
               supabase,
               1,
               rowsPerPage,
-              globalFilter
+              globalFilter,
             );
             setTotalRows(count);
             if (error) return [];
             return data;
-          })()
+          })(),
         );
         return true;
       },
       toggleLoading,
-      { hasEndToggle: true }
+      { hasEndToggle: true },
     );
   }, [globalFilter]);
 
   // Column definitions
-  const columns = useMemo<DataTableColumnDef<StudentAdminListItem>[]>(
+  const columns = useMemo<
+    DataTableColumnDef<
+      Pick<
+        Student,
+        | "id"
+        | "student_id"
+        | "classroom"
+        | "class_no"
+        | "first_name"
+        | "last_name"
+        | "middle_name"
+      >
+    >[]
+  >(
     () => [
       {
-        accessorKey: "studentID",
+        accessorKey: "student_id",
         header: t("thead.studentID"),
         thAttr: { className: "w-2/12" },
         tdAttr: {
@@ -238,19 +272,20 @@ const ManageStudentsPage: CustomPage<{
       },
       {
         id: "nameTH",
-        accessorFn: (row) => row.name.th,
+        accessorFn: (row) => getLocaleName("th", row, { middleName: "abbr" }),
         header: t("thead.nameTH"),
         thAttr: { className: "w-4/12" },
       },
       {
         id: "nameEN",
-        accessorFn: (row) => row.name["en-US"],
+        accessorFn: (row) =>
+          getLocaleName("en-US", row, { middleName: "abbr" }),
         header: t("thead.nameEN"),
         thAttr: { className: "w-4/12" },
       },
       {
         id: "class",
-        accessorFn: (row) => `M.${row.classItem.number}`,
+        accessorFn: (row) => (row.classroom ? `M.${row.classroom.number}` : ""),
         header: t("thead.class"),
         thAttr: { className: "w-1/12" },
         tdAttr: {
@@ -260,7 +295,7 @@ const ManageStudentsPage: CustomPage<{
       },
       {
         id: "classNo",
-        accessorFn: (row) => row.classNo,
+        accessorFn: (row) => row.class_no,
         header: t("thead.classNo"),
         thAttr: { className: "w-1/12" },
         tdAttr: {
@@ -269,7 +304,7 @@ const ManageStudentsPage: CustomPage<{
         },
       },
     ],
-    [locale]
+    [locale],
   );
 
   // Tanstack Table setup
@@ -323,7 +358,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   });
 
   const { data: studentList, count: totalStudentCount } =
-    await getAdminStudentList(supabase, 1, rowsPerPage);
+    await getStudentsForAdmin(supabase, 1, rowsPerPage);
 
   return {
     props: {

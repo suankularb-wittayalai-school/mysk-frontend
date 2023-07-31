@@ -4,7 +4,7 @@ import { getStudentByID } from "./getStudentByID";
 import { getTeacherByID } from "./getTeacherByID";
 import { logError } from "@/utils/helpers/debug";
 
-export async function getPersonForLookupList(
+export async function getPersonForLookupDetail(
   supabase: DatabaseClient,
   id: string,
   role: UserRole,
