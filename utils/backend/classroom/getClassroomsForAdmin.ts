@@ -2,23 +2,41 @@ import { logError } from "@/utils/helpers/debug";
 import { mergeDBLocales } from "@/utils/helpers/string";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
 import { Classroom } from "@/utils/types/classroom";
-import { getCurrentAcademicYear } from "@/utils/helpers/date";
 
-export default async function getLookupClassrooms(
+export async function getClassroomsForAdmin(
   supabase: DatabaseClient,
-  options?: { year?: number },
+  page: number,
+  rowsPerPage: number,
+  query?: string,
 ): Promise<
   BackendReturn<
-    (Pick<Classroom, "id" | "number" | "class_advisors"> & {
+    (Pick<Classroom, "id" | "number" | "class_advisors" | "year"> & {
       studentCount: number;
     })[]
-  >
+  > & { count: number }
 > {
-  const { data: classroomsData, error: classroomsError } = await supabase
+  if (query && query.length > 3 && !/[0-9]/.test(query))
+    return { data: [], count: 0, error: null };
+
+  // Format the query into a number range, for use with `.gt()` and `.lt()`
+  const numberRange = query
+    ? query.length === 1
+      ? { gt: Number(query) * 100, lt: (Number(query) + 1) * 100 }
+      : query.length === 2
+      ? { gt: Number(query) * 10, lt: (Number(query) + 1) * 10 }
+      : { gt: Number(query) - 1, lt: Number(query) + 1 }
+    : { gt: 0, lt: 700 };
+
+  const {
+    data: classroomsData,
+    error: classroomsError,
+    count,
+  } = await supabase
     .from("classrooms")
     .select(
       `id,
       number,
+      year,
       classroom_advisors!inner(
         teachers(
           id,
@@ -35,20 +53,36 @@ export default async function getLookupClassrooms(
         )
       ),
       classroom_students!inner(id)`,
+      { count: "exact" },
     )
-    .eq("year", options?.year || getCurrentAcademicYear());
+    .gt("number", numberRange.gt)
+    .lt("number", numberRange.lt)
+    // Academic year query
+    .or(
+      query && query.length >= 4
+        ? `year.eq.${query}, year.eq.${Number(query) - 543}`
+        : "year.gt.0",
+    )
+    .order("year", { ascending: false })
+    .order("number")
+    // Pagination
+    .range(rowsPerPage * (page - 1), rowsPerPage * page - 1);
 
   if (classroomsError) {
-    logError("getLookupClassrooms (classrooms)", classroomsError);
-    return { error: classroomsError, data: null };
+    logError("getClassroomsForAdmin (classrooms)", classroomsError);
+    return { data: null, count: 0, error: classroomsError };
   }
 
-  const classrooms: (Pick<Classroom, "id" | "number" | "class_advisors"> & {
+  const classrooms: (Pick<
+    Classroom,
+    "id" | "number" | "class_advisors" | "year"
+  > & {
     studentCount: number;
   })[] =
     classroomsData?.map((classroom) => ({
       id: classroom.id,
       number: classroom.number,
+      year: classroom.year,
       class_advisors: classroom.classroom_advisors?.map((classroomAdvisor) => {
         const teacher = classroomAdvisor.teachers!;
         return {
@@ -66,5 +100,5 @@ export default async function getLookupClassrooms(
       studentCount: classroom.classroom_students?.length ?? 0,
     })) ?? [];
 
-  return { data: classrooms, error: null };
+  return { data: classrooms, count: count!, error: null };
 }
