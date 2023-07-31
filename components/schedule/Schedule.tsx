@@ -43,7 +43,7 @@ import { useNow } from "@/utils/helpers/date";
 const Schedule: FC<{
   schedule: Schedule;
   subjectsInCharge?: Pick<Subject, "id" | "name" | "code" | "short_name">[];
-  teacherID?: number;
+  teacherID?: string;
   role: UserRole;
 }> = ({ schedule, subjectsInCharge, teacherID, role }) => {
   // Translation

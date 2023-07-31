@@ -1,10 +1,22 @@
-// External libraries
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { useRouter } from "next/router";
-import { useTranslation } from "next-i18next";
-import { FC, useContext, useEffect } from "react";
-
-// SK Components
+// Imports
+import ClassroomsField from "@/components/class/ClassroomsField";
+import RoomsField from "@/components/room/RoomsField";
+import ScheduleContext from "@/contexts/ScheduleContext";
+import SnackbarContext from "@/contexts/SnackbarContext";
+import createScheduleItem from "@/utils/backend/schedule/createScheduleItem";
+import { withLoading } from "@/utils/helpers/loading";
+import {
+  getSubjectName,
+  periodDurationToWidth,
+} from "@/utils/helpers/schedule";
+import { getLocaleString } from "@/utils/helpers/string";
+import { useForm } from "@/utils/hooks/form";
+import { useLocale } from "@/utils/hooks/i18n";
+import { useToggle } from "@/utils/hooks/toggle";
+import { roomRegex } from "@/utils/patterns";
+import { Classroom } from "@/utils/types/classroom";
+import { DialogFC } from "@/utils/types/component";
+import { Subject } from "@/utils/types/subject";
 import {
   Actions,
   Button,
@@ -15,78 +27,48 @@ import {
   FormItem,
   Radio,
   Snackbar,
-  TextField,
+  transition,
+  useAnimationConfig,
 } from "@suankularb-components/react";
-
-// Contexts
-import ScheduleContext from "@/contexts/ScheduleContext";
-import SnackbarContext from "@/contexts/SnackbarContext";
-
-// Backend
-// import { createScheduleItem } from "@/utils/backend/schedule/schedule";
-
-// Helpers
-import { getLocaleString } from "@/utils/helpers/string";
-import { withLoading } from "@/utils/helpers/loading";
-import {
-  getSubjectName,
-  periodDurationToWidth,
-} from "@/utils/helpers/schedule";
-
-// Hooks
-import { useForm } from "@/utils/hooks/form";
-import { useLocale } from "@/utils/hooks/i18n";
-import { useToggle } from "@/utils/hooks/toggle";
-
-// Types
-import { Subject } from "@/utils/types/subject";
-import { DialogFC } from "@/utils/types/component";
-
-// Miscellaneous
-import { classRegex, roomRegex } from "@/utils/patterns";
-import createScheduleItem from "@/utils/backend/schedule/createScheduleItem";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
+import { useContext } from "react";
 
 const AddPeriodDialog: DialogFC<{
   subject: Pick<Subject, "id" | "name" | "short_name" | "code">;
   onSubmit: () => void;
 }> = ({ open, subject, onClose, onSubmit }) => {
-  // Translation
-  const locale = useLocale();
-  const { t } = useTranslation(["schedule", "common"]);
-
-  // Router
   const router = useRouter();
+  const locale = useLocale();
+  const { t } = useTranslation("schedule");
+  const { t: tx } = useTranslation("common");
 
-  // Supabase
-  const supabase = useSupabaseClient();
-
-  // Snackbar
+  const { duration, easing } = useAnimationConfig();
+  const { teacherID, additionSite } = useContext(ScheduleContext);
   const { setSnackbar } = useContext(SnackbarContext);
 
-  // Context
-  const { teacherID, additionSite } = useContext(ScheduleContext);
+  const supabase = useSupabaseClient();
 
   // Form control
   const { form, setForm, resetForm, formOK, formProps } = useForm<
-    "class" | "room" | "duration"
+    "classrooms" | "rooms" | "duration"
   >([
     {
-      key: "class",
+      key: "classrooms",
       required: true,
-      validate: (value: string) => classRegex.test(value),
+      defaultValue: [],
+      validate: (value) => value.length,
     },
     {
-      key: "room",
-      validate: (value: string) =>
-        value.split(", ").every((room) => roomRegex.test(room)),
+      key: "rooms",
+      defaultValue: [],
+      validate: (value: string[]) =>
+        value.every((room) => roomRegex.test(room)),
     },
     { key: "duration", defaultValue: 1 },
   ]);
-
-  useEffect(() => {
-    if ((form.room as string).endsWith(","))
-      setForm({ ...form, room: form.room + " " });
-  }, [form.room]);
 
   // Form submission
   const [loading, toggleLoading] = useToggle();
@@ -100,15 +82,14 @@ const AddPeriodDialog: DialogFC<{
 
     await withLoading(
       async () => {
-        const { error } = await createScheduleItem(
-          supabase,
-          {
-            ...form,
-            subject: subject.id,
-            ...additionSite!,
-          },
-          teacherID!,
-        );
+        const { error } = await createScheduleItem(supabase, {
+          ...form,
+          day: additionSite!.day,
+          start_time: additionSite!.startTime,
+          subject: { id: subject.id },
+          teachers: [{ id: teacherID! }],
+          co_teachers: [],
+        });
 
         if (error) {
           setSnackbar(
@@ -145,46 +126,60 @@ const AddPeriodDialog: DialogFC<{
       />
       <DialogContent>
         <div className="flex flex-col gap-y-6 px-6">
-          {/* <div
-            className="grid grid-cols-[6rem,1fr] gap-4"
-            style={{
-              gridTemplateColumns: `${periodDurationToWidth(
-                form.duration,
-              )}px 1fr`,
-            }}
-          > */}
           {/* Preview period */}
-          <div
-            style={{ width: periodDurationToWidth(form.duration) }}
-            className="flex flex-col rounded-sm bg-secondary
-                px-4 py-2 text-on-secondary dark:bg-secondary-container
-                dark:text-on-secondary-container"
+          <motion.div
+            layout
+            transition={{
+              type: "spring",
+              bounce: 0.325,
+              duration: duration.medium4,
+            }}
+            style={{
+              width: periodDurationToWidth(form.duration),
+              borderRadius: 8,
+            }}
+            className="flex h-14 flex-col overflow-hidden rounded-sm
+              bg-secondary px-4 py-2 text-on-secondary
+              dark:bg-secondary-container dark:text-on-secondary-container"
           >
-            <span className="skc-title-medium truncate">
-              {t("class", {
-                ns: "common",
-                number: (form.class as string).padEnd(3, "_"),
+            <motion.span
+              key={form.duration}
+              layout="position"
+              className="skc-title-medium truncate"
+            >
+              {tx("class", {
+                number: form.classrooms.length
+                  ? (form.classrooms as Pick<Classroom, "id" | "number">[]).map(
+                      ({ number }) => number,
+                    )
+                  : "___",
               })}
-            </span>
-            <span className="skc-body-small">
-              {getSubjectName(form.duration, subject, locale)}
-            </span>
-          </div>
+            </motion.span>
+            <AnimatePresence mode="popLayout">
+              <motion.span
+                key={form.duration}
+                layout="position"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                transition={transition(duration.short4, easing.standard)}
+                className="skc-body-small"
+              >
+                {getSubjectName(form.duration, subject, locale)}
+              </motion.span>
+            </AnimatePresence>
+          </motion.div>
 
           {/* Class */}
-          <TextField
-            appearance="outlined"
-            label={t("dialog.editPeriod.form.class")}
-            {...formProps.class}
+          <ClassroomsField
+            classrooms={form.classrooms}
+            onChange={(classrooms) => setForm({ ...form, classrooms })}
           />
-          {/* </div> */}
 
           {/* Room code */}
-          <TextField
-            appearance="outlined"
-            label={t("dialog.editPeriod.form.room")}
-            helperMsg={t("dialog.editPeriod.form.room_helper")}
-            {...formProps.room}
+          <RoomsField
+            rooms={form.rooms}
+            onChange={(rooms) => setForm({ ...form, rooms })}
           />
 
           {/* Period duration */}

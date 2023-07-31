@@ -10,6 +10,7 @@ import {
 } from "@/utils/helpers/schedule";
 import { mergeDBLocales } from "@/utils/helpers/string";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
+import { Classroom } from "@/utils/types/classroom";
 import { Schedule, PeriodContentItem } from "@/utils/types/schedule";
 import { list, omit } from "radash";
 
@@ -58,7 +59,6 @@ export default async function getTeacherSchedule(
       schedule_item_rooms!inner(room)
     `,
     )
-    // `match` doesn’t work lmao
     .eq("schedule_item_teachers.teacher_id", teacherID)
     .eq("year", getCurrentAcademicYear())
     .eq("semester", getCurrentSemester());
@@ -85,6 +85,9 @@ export default async function getTeacherSchedule(
         first_name: mergeDBLocales(teacher.teachers!.people, "first_name"),
         last_name: mergeDBLocales(teacher.teachers!.people, "last_name"),
       })),
+      classrooms: scheduleItem.schedule_item_classrooms.map(
+        (classroom) => classroom.classrooms!,
+      ),
       rooms: scheduleItem.schedule_item_rooms.map((room) => room.room),
     }));
 
@@ -126,36 +129,14 @@ export default async function getTeacherSchedule(
       const omittedPeriod = omit(incomingPeriod, ["day"]);
 
       // Replace empty period
-      if (schedulePeriod.content.length === 0) {
-        schedule.content[scheduleRowIndex].content[idx].content = [
-          omittedPeriod,
-        ];
-        schedule.content[scheduleRowIndex].content[idx].id = omittedPeriod.id;
+      schedule.content[scheduleRowIndex].content[idx].content = [omittedPeriod];
+      schedule.content[scheduleRowIndex].content[idx].id = omittedPeriod.id;
 
-        // Remove empty periods that is now overlapping the new incoming period
-        schedule.content[scheduleRowIndex].content.splice(
-          idx + 1,
-          incomingPeriod.duration - 1,
-        );
-        continue;
-      }
-
-      // If the period that already exists here is for the same subject as the
-      // new period, it is likely that the Teacher and the Co-teacher both
-      // added their subjects (which are identical), thus only one should be
-      // shown
-      if (
-        schedulePeriod.content.filter(
-          (period) => period.subject.id === incomingPeriod.subject.id,
-        ).length
-      )
-        continue;
-
-      // If a period already exists here, just adjust duration and modify the
-      // `subjects` array
-      if (schedulePeriod.duration < incomingPeriod.duration)
-        schedulePeriod.duration = incomingPeriod.duration;
-      schedulePeriod.content = schedulePeriod.content.concat([omittedPeriod]);
+      // Remove empty periods that is now overlapping the new incoming period
+      schedule.content[scheduleRowIndex].content.splice(
+        idx + 1,
+        incomingPeriod.duration - 1,
+      );
 
       schedule.content[scheduleRowIndex].content[idx] = schedulePeriod;
     }

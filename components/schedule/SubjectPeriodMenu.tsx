@@ -41,7 +41,7 @@ const SubjectPeriodMenu: FC<{
 
   const entranceTransition = transition(
     duration.short4,
-    easing.standardDecelerate
+    easing.standardDecelerate,
   );
   const exitTransition = transition(duration.short2, easing.standardAccelerate);
 
@@ -62,7 +62,10 @@ const SubjectPeriodMenu: FC<{
             transition={entranceTransition}
             className="skc-body-small w-fit !font-display"
           >
-            {t("class", { ns: "common", number: period.class!.number })}
+            {t("class", {
+              ns: "common",
+              number: period.classrooms?.map(({ number }) => number).join(),
+            })}
           </motion.span>
 
           <motion.div

@@ -55,7 +55,7 @@ import { FC, useState } from "react";
 const ScheduleSection: FC<{
   schedule: ScheduleType;
   subjectsInCharge: Pick<Subject, "id" | "name" | "code" | "short_name">[];
-  teacherID: number;
+  teacherID: string;
 }> = ({ schedule, subjectsInCharge, teacherID }) => {
   const { t } = useTranslation("teach");
 
@@ -137,7 +137,7 @@ const TeachPage: CustomPage<{
   schedule: ScheduleType;
   subjectsInCharge: Pick<Subject, "id" | "name" | "code" | "short_name">[];
   teachingSubjects: SubjectClassrooms[];
-  teacherID: number;
+  teacherID: string;
 }> = ({ schedule, subjectsInCharge, teachingSubjects, teacherID }) => {
   const { t } = useTranslation("teach");
   const { t: tx } = useTranslation("common");

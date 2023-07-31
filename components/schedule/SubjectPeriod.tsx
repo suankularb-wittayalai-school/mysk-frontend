@@ -340,11 +340,10 @@ const SubjectPeriod: FC<{
               )}
               className="skc-title-medium !w-fit"
             >
-              {period.classrooms
-                ?.map((classroom) =>
-                  t("class", { ns: "common", number: classroom.number }),
-                )
-                .join(", ")}
+              {t("class", {
+                ns: "common",
+                number: period.classrooms?.map(({ number }) => number).join(),
+              })}
             </motion.span>
           ) : (
             <span
