@@ -7,8 +7,8 @@ type NewsBase = {
   created_at: string;
   title: MultiLangString;
   description: MultiLangString;
-  image?: string;
-  old_url?: string;
+  image: string | null;
+  old_url: string | null;
 };
 
 export type Info = NewsBase & {

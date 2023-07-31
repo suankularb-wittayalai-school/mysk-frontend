@@ -20,14 +20,16 @@ export async function getSchoolDocuments(
       ...(role === "teacher"
         ? { include_teachers: true }
         : { include_students: true }),
-    })
-    .order("date", { ascending: false })
-    .order("code", { ascending: false })
-    .limit(100);
+    });
 
   if (type) {
     query.eq("type", type);
   }
+
+  query
+    .order("date", { ascending: false })
+    .order("code", { ascending: false })
+    .limit(100);
 
   const { data, error } = await query;
 

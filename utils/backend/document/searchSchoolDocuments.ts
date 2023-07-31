@@ -27,14 +27,16 @@ export async function searchSchoolDocuments(
           `and(code.like.%${codeSegments[0]}%,date.gte."${year}-01-01",date.lte."${year}-12-31"))`
         : // Otherwise, search for code and subject line
           `code.like.%${query}%, subject.like.%${query}%`,
-    )
-    .order("date", { ascending: false })
-    .order("code", { ascending: false })
-    .limit(100);
+    );
 
   if (type) {
     dbQuery.eq("type", type);
   }
+
+  dbQuery
+    .order("date", { ascending: false })
+    .order("code", { ascending: false })
+    .limit(100);
 
   const { data, error } = await dbQuery;
 

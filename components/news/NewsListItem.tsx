@@ -26,35 +26,36 @@ import NewsIcon from "@/components/news/NewsIcon";
 
 // Types
 import { LangCode } from "@/utils/types/common";
-import { NewsItemNoDate } from "@/utils/types/news";
+import { Info } from "@/utils/types/news";
 
 // Helpers
-import { getLocaleString } from "@/utils/helpers/i18n";
+import { getLocaleString } from "@/utils/helpers/string";
 
-const NewsStatus: FC<{ newsItem: NewsItemNoDate }> = ({ newsItem }) => {
+const NewsStatus: FC<{ newsItem: Info }> = ({ newsItem }) => {
   return (
     <div
-      className={`${
-        newsItem.done
-          ? "bg-primary-container text-on-primary-container"
-          : (newsItem.type == "form" || newsItem.type == "payment") &&
-            newsItem.dueDate &&
-            isPast(new Date(newsItem.dueDate))
-          ? "bg-error text-on-error"
-          : "bg-tertiary-container text-on-tertiary-container"
-      } grid aspect-square w-10 place-content-center rounded-md`}
+      // className={`${
+      //   newsItem.done
+      //     ? "bg-primary-container text-on-primary-container"
+      //     : (newsItem.type == "form" || newsItem.type == "payment") &&
+      //       newsItem.dueDate &&
+      //       isPast(new Date(newsItem.dueDate))
+      //     ? "bg-error text-on-error"
+      //     : "bg-tertiary-container text-on-tertiary-container"
+      // } grid aspect-square w-10 place-content-center rounded-md`}
+      className={`grid aspect-square w-10 place-content-center rounded-md bg-tertiary-container text-on-tertiary-container`}
     >
-      {newsItem.done ? (
+      {/* {newsItem.done ? (
         <MaterialIcon icon="done" />
       ) : (
         <MaterialIcon icon="close" />
-      )}
+      )} */}
     </div>
   );
 };
 
 const NewsListItem: FC<{
-  newsItem: NewsItemNoDate;
+  newsItem: Info;
   editable?: boolean;
   showChips?: boolean;
 }> = ({ newsItem, editable, showChips }) => {
@@ -70,8 +71,8 @@ const NewsListItem: FC<{
       stateLayerEffect
       href={
         editable
-          ? `/admin/news/edit/${newsItem.type}/${newsItem.id}`
-          : `/news/${newsItem.type}/${newsItem.id}`
+          ? `/admin/news/edit/info/${newsItem.id}`
+          : `/news/info/${newsItem.id}`
       }
       element={Link}
       className="!p-0"
@@ -80,7 +81,7 @@ const NewsListItem: FC<{
         {/* Image */}
         {newsItem.image && (
           <motion.div
-            layoutId={["news", newsItem.type, newsItem.id].join("-")}
+            layoutId={["news", newsItem.id].join("-")}
             transition={transition(duration.medium4, easing.standardAccelerate)}
             className="surface-variant relative aspect-video w-full
               overflow-hidden sm:rounded-lg"
@@ -99,23 +100,23 @@ const NewsListItem: FC<{
           <div className="flex w-full flex-col gap-2">
             {/* Title */}
             <h3 className="skc-headline-small">
-              {getLocaleString(newsItem.content.title, locale)}
+              {getLocaleString(newsItem.title, locale)}
             </h3>
 
             {/* Subtitle */}
             <p className="skc-title-medium !font-regular">
-              {getLocaleString(newsItem.content.description, locale)}
+              {getLocaleString(newsItem.description, locale)}
             </p>
 
             {/* Chip list */}
-            {showChips && newsItem.type != "info" && (
+            {/* {showChips && newsItem.type != "info" && (
               <NewsChipSet newsItem={newsItem} />
-            )}
+            )} */}
 
             {/* Author and date */}
             <div className="flex flex-row divide-x divide-outline">
               <time className="text-outline">
-                {new Date(newsItem.postDate).toLocaleDateString(locale, {
+                {new Date(newsItem.created_at).toLocaleDateString(locale, {
                   year: locale == "en-US" ? "numeric" : "2-digit",
                   month: "short",
                   day: "numeric",
@@ -131,14 +132,15 @@ const NewsListItem: FC<{
           >
             {/* Type */}
             <div className="flex flex-row-reverse gap-2 md:flex-row">
-              <span className="skc-title-medium">
-                {t(`itemType.${newsItem.type}`)}
-              </span>
-              <NewsIcon type={newsItem.type} className="text-secondary" />
+              <span className="skc-title-medium">{t(`itemType.info`)}</span>
+              <NewsIcon type={"info"} className="text-secondary" />
             </div>
 
             {/* Status */}
-            {!["info", "stats"].includes(newsItem.type) && (
+            {/* {!["info", "stats"].includes(newsItem.type) && (
+              <NewsStatus newsItem={newsItem} />
+            )} */}
+            {!["info", "stats"].includes("info") && (
               <NewsStatus newsItem={newsItem} />
             )}
           </div>

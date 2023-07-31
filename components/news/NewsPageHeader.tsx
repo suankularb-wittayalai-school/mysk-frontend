@@ -26,10 +26,10 @@ import NewsPlaceholderLight from "@/public/images/graphics/news-placeholder-ligh
 
 // Types
 import { MultiLangString } from "@/utils/types/common";
-import { FormPage, InfoPage, NewsItemType } from "@/utils/types/news";
+import { Info } from "@/utils/types/news";
 
 // Helpers
-import { getLocaleString } from "@/utils/helpers/i18n";
+import { getLocaleString } from "@/utils/helpers/string";
 import { createTitleStr } from "@/utils/helpers/title";
 
 // Hooks
@@ -44,10 +44,10 @@ import { useLocale } from "@/utils/hooks/i18n";
  * @returns An Actions.
  */
 const PageActions: FC<{
-  type: NewsItemType;
+  // type: NewsItemType;
   title: MultiLangString;
   className?: string;
-}> = ({ type, title, className }) => {
+}> = ({ title, className }) => {
   // Translation
   const locale = useLocale();
   const { t } = useTranslation(["news", "common"]);
@@ -57,11 +57,11 @@ const PageActions: FC<{
 
   return (
     <Actions align="left" className={className}>
-      {type === "form" && (
+      {/* {type === "form" && (
         <Button appearance="filled" href="#form">
           {t("action.form.do")}
         </Button>
-      )}
+      )} */}
       <Button
         appearance="outlined"
         icon={<MaterialIcon icon="link" />}
@@ -81,7 +81,7 @@ const PageActions: FC<{
           setSnackbar(
             <Snackbar>
               {t("snackbar.copiedToClipboard", { ns: "common" })}
-            </Snackbar>
+            </Snackbar>,
           );
         }}
       >
@@ -99,14 +99,14 @@ const PageActions: FC<{
  * @returns A Page Header.
  */
 const NewsPageHeader: FC<{
-  newsItem: InfoPage | FormPage;
+  newsItem: Info;
 }> = ({ newsItem }) => {
   // Translation
   const locale = useLocale();
 
   return (
     <PageHeader
-      title={getLocaleString(newsItem.content.title, locale)}
+      title={getLocaleString(newsItem.title, locale)}
       parentURL="/news"
     >
       <Columns
@@ -130,17 +130,17 @@ const NewsPageHeader: FC<{
         {/* Title and short description */}
         <div className="flex flex-col gap-3">
           <p className="skc-headline-small">
-            {getLocaleString(newsItem.content.description, locale)}
+            {getLocaleString(newsItem.description, locale)}
           </p>
 
-          {newsItem.type !== "info" && (
+          {/* {newsItem.type !== "info" && (
             <NewsChipSet newsItem={{ ...newsItem, done: false }} />
-          )}
+          )} */}
 
           {/* Author and date */}
           <div className="skc-title-medium flex flex-row divide-x divide-outline">
             <time className="text-outline">
-              {new Date(newsItem.postDate).toLocaleDateString(locale, {
+              {new Date(newsItem.created_at).toLocaleDateString(locale, {
                 year: locale == "en-US" ? "numeric" : "2-digit",
                 month: "short",
                 day: "numeric",
@@ -149,8 +149,8 @@ const NewsPageHeader: FC<{
           </div>
 
           <PageActions
-            type={newsItem.type}
-            title={newsItem.content.title}
+            // type={newsItem.type}
+            title={newsItem.title}
             className="mt-3 !hidden md:!flex"
           />
         </div>
@@ -158,8 +158,8 @@ const NewsPageHeader: FC<{
 
       {/* Actions */}
       <PageActions
-        type={newsItem.type}
-        title={newsItem.content.title}
+        // type={newsItem.type}
+        title={newsItem.title}
         className="mt-3 md:!hidden"
       />
     </PageHeader>
