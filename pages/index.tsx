@@ -254,8 +254,9 @@ const LandingPage: CustomPage = () => {
                 {/* Card */}
                 <div
                   className="grid overflow-hidden rounded-xl border-1
-                    border-outline-variant md:grid-cols-2 [&>*]:p-6 [&>*]:px-4 [&>*]:sm:py-6
-                    [&>:first-child]:md:pr-3 [&>:last-child]:md:pl-3"
+                    border-outline-variant md:grid-cols-2 [&>*]:p-6 [&>*]:px-4
+                    [&>*]:sm:p-6 [&>:first-child]:md:pr-3
+                    [&>:last-child]:md:pl-3"
                 >
                   <LogInSection />
                   <PatchNotesSection />
