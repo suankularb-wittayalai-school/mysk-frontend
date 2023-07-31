@@ -10,13 +10,6 @@ import { NextRequest, NextResponse } from "next/server";
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next();
 
-  // Since we are using next-auth and middleware is not fully supported yet, we
-  // can decode the token and get the user info from it
-  const decoded = await decode({
-    token: req.cookies.get("next-auth.session-token")?.value,
-    secret: process.env.NEXTAUTH_SECRET as string,
-  });
-
   // Get original destination
   const route = req.nextUrl.pathname;
   const locale = req.nextUrl.locale as LangCode;
@@ -26,6 +19,15 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(
       new URL(getLocalePath("/maintenance", locale), req.url),
     );
+  // else if (route === "/maintenance")
+  //   return NextResponse.redirect(new URL(getLocalePath("/", locale), req.url));
+
+  // Since we are using next-auth and middleware is not fully supported yet, we
+  // can decode the token and get the user info from it
+  const decoded = await decode({
+    token: req.cookies.get("next-auth.session-token")?.value,
+    secret: process.env.NEXTAUTH_SECRET as string,
+  });
 
   // Get current page protection type
   const pageRole: UserRole | "public" | "admin" | "user" =
@@ -112,6 +114,7 @@ export const config = {
     "/teach",
     "/class/:path*",
     "/lookup/:path*",
+    "/maintenance",
     "/news",
     "/news/stats/:id",
     "/news/form/:id",
