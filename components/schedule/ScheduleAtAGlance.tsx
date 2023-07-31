@@ -4,13 +4,13 @@ import GlanceCountdown from "@/components/schedule/GlanceCountdown";
 import { range } from "@/utils/helpers/array";
 import { cn } from "@/utils/helpers/className";
 import { useNow } from "@/utils/helpers/date";
-import { getLocaleObj, getLocaleString } from "@/utils/helpers/i18n";
+import { getLocaleString } from "@/utils/helpers/string";
 import {
   getCurrentPeriod,
   getTodaySetToPeriodTime,
 } from "@/utils/helpers/schedule";
 import { useLocale } from "@/utils/hooks/i18n";
-import { Role } from "@/utils/types/person";
+import { UserRole } from "@/utils/types/person";
 import { Schedule } from "@/utils/types/schedule";
 import {
   MaterialIcon,
@@ -31,13 +31,13 @@ import { FC } from "react";
  */
 const ScheduleAtAGlance: FC<{
   schedule: Schedule;
-  role: Role;
+  role: UserRole;
 }> = ({ schedule, role }) => {
   const locale = useLocale();
   const { t } = useTranslation("schedule", { keyPrefix: "atAGlance" });
 
   const { duration, easing } = useAnimationConfig();
-  
+
   const now = useNow();
 
   // Determine relevant periods every second
@@ -48,7 +48,6 @@ const ScheduleAtAGlance: FC<{
 
   const currentPeriod = todayRow.find(
     (period) =>
-      period.content.length &&
       // The period starts before or at the current period
       period.start_time <= periodNumber &&
       // The period ends at or after the end of the current period (current
@@ -71,7 +70,10 @@ const ScheduleAtAGlance: FC<{
   // The edges of periods relative to current time, used in calculating the
   // display type
   const secondsSinceStart = currentPeriod
-    ? differenceInSeconds(now, getTodaySetToPeriodTime(currentPeriod.start_time))
+    ? differenceInSeconds(
+        now,
+        getTodaySetToPeriodTime(currentPeriod.start_time),
+      )
     : 0;
   const minutesTilEnd = currentPeriod
     ? differenceInMinutes(
@@ -97,6 +99,8 @@ const ScheduleAtAGlance: FC<{
         { roundingMethod: "ceil" },
       )
     : null;
+
+  // console.log({ currentPeriod });
 
   // A percentage of time since the start of the class relative to the total
   // class duration
@@ -220,10 +224,10 @@ const ScheduleAtAGlance: FC<{
                         values={{
                           subject:
                             currentPeriod?.content.length &&
-                            getLocaleObj(
+                            getLocaleString(
                               currentPeriod.content[0].subject.name,
                               locale,
-                            ).name,
+                            ),
                         }}
                       />
                     ),
@@ -234,10 +238,10 @@ const ScheduleAtAGlance: FC<{
                         values={{
                           subject:
                             immediateNextPeriod?.content.length &&
-                            getLocaleObj(
+                            getLocaleString(
                               immediateNextPeriod.content[0].subject.name,
                               locale,
-                            ).name,
+                            ),
                         }}
                       />
                     ),
@@ -249,10 +253,10 @@ const ScheduleAtAGlance: FC<{
                         values={{
                           subject:
                             currentPeriod?.content.length &&
-                            getLocaleObj(
+                            getLocaleString(
                               currentPeriod.content[0].subject.name,
                               locale,
-                            ).name,
+                            ),
                         }}
                       />
                     ),
@@ -263,10 +267,10 @@ const ScheduleAtAGlance: FC<{
                         values={{
                           subject:
                             currentPeriod?.content.length &&
-                            getLocaleObj(
+                            getLocaleString(
                               currentPeriod.content[0].subject.name,
                               locale,
-                            ).name,
+                            ),
                         }}
                       />
                     ),
@@ -274,7 +278,11 @@ const ScheduleAtAGlance: FC<{
                       <Trans
                         i18nKey="atAGlance.title.teachTravel"
                         ns="schedule"
-                        values={{ room: immediateNextPeriod?.content[0]?.room }}
+                        values={{
+                          room: immediateNextPeriod?.content[0]?.rooms?.join(
+                            ", ",
+                          ),
+                        }}
                       />
                     ),
                     "teach-future": (
@@ -284,10 +292,10 @@ const ScheduleAtAGlance: FC<{
                         values={{
                           subject:
                             todayNextPeriod?.content.length &&
-                            getLocaleObj(
+                            getLocaleString(
                               todayNextPeriod.content[0].subject.name,
                               locale,
-                            ).name,
+                            ),
                         }}
                       />
                     ),
@@ -321,7 +329,7 @@ const ScheduleAtAGlance: FC<{
                           {t("details.subject")}
                         </h3>
                         <p className="skc-body-medium text-on-surface-variant">
-                          {getLocaleObj(period.subject.name, locale).name}
+                          {getLocaleString(period.subject.name, locale)}
                         </p>
                       </div>
 
@@ -339,7 +347,8 @@ const ScheduleAtAGlance: FC<{
                       <div
                         className={cn([
                           `flex flex-col`,
-                          !period.room && `sm:col-span-2`,
+                          !(period.rooms && period.rooms.length > 0) &&
+                            `sm:col-span-2`,
                         ])}
                       >
                         <h3 className="skc-title-medium">
@@ -347,20 +356,20 @@ const ScheduleAtAGlance: FC<{
                         </h3>
                         <p className="skc-body-medium text-on-surface-variant">
                           <HoverList
-                            people={period.subject.teachers}
+                            people={period.teachers}
                             options={{ nameJoinerOptions: { lastName: true } }}
                           />
                         </p>
                       </div>
 
                       {/* Room */}
-                      {period.room && (
+                      {period.rooms && period.rooms?.length > 0 && (
                         <div className="flex flex-col">
                           <h3 className="skc-title-medium">
                             {t("details.room")}
                           </h3>
                           <p className="skc-body-medium text-on-surface-variant">
-                            {period.room}
+                            {period.rooms.join(", ")}
                           </p>
                         </div>
                       )}
