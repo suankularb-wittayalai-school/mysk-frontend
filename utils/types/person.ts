@@ -62,3 +62,27 @@ export type Teacher = Person & {
   subjects_in_charge: Pick<Subject, "id" | "name" | "code" | "short_name">[];
   role: "teacher";
 };
+
+export type PersonLookupItem =
+  | Pick<
+      Student,
+      | "id"
+      | "prefix"
+      | "first_name"
+      | "last_name"
+      | "middle_name"
+      | "nickname"
+      | "role"
+      | "classroom"
+    >
+  | Pick<
+      Teacher,
+      | "id"
+      | "prefix"
+      | "first_name"
+      | "last_name"
+      | "middle_name"
+      | "nickname"
+      | "role"
+      | "subject_group"
+    >;
