@@ -1,25 +1,14 @@
-// External libraries
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { useSession } from "next-auth/react"
-
-
-import va from "@vercel/analytics";
-
-import Link from "next/link";
-import { useRouter } from "next/router";
-
-import { useTranslation } from "next-i18next";
-
-import {
-  FC,
-  ReactNode,
-  forwardRef,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
-
-// SK Components
+// Imports
+import LogOutDialog from "@/components/account/LogOutDialog";
+import RailLogo from "@/components/brand/RailLogo";
+import SchemeIcon from "@/components/icons/SchemeIcon";
+import AppStateContext from "@/contexts/AppStateContext";
+import { useLoggedInPerson } from "@/utils/helpers/auth";
+import { useLocale } from "@/utils/hooks/i18n";
+import { usePreferences } from "@/utils/hooks/preferences";
+import { useRefreshProps } from "@/utils/hooks/routing";
+import { useSnackbar } from "@/utils/hooks/snackbar";
+import { CustomPage } from "@/utils/types/common";
 import {
   MaterialIcon,
   NavBar,
@@ -30,32 +19,28 @@ import {
   RootLayout,
   Snackbar,
 } from "@suankularb-components/react";
+import va from "@vercel/analytics";
+import { useTranslation } from "next-i18next";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import {
+  FC,
+  ReactNode,
+  forwardRef,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
-// Internal components
-import LogOutDialog from "@/components/account/LogOutDialog";
-import GoogleOneTap from "@/components/account/GoogleOneTap";
-import RailLogo from "@/components/brand/RailLogo";
-import SchemeIcon from "@/components/icons/SchemeIcon";
-
-// Backend
-// import { getUserMetadata } from "@/utils/backend/account";
-// import { getClassAdvisorAt } from "@/utils/backend/person/teacher";
-
-// Contexts
-import AppStateContext from "@/contexts/AppStateContext";
-
-// Hooks
-import { useLocale } from "@/utils/hooks/i18n";
-import { usePreferences } from "@/utils/hooks/preferences";
-import { useRefreshProps } from "@/utils/hooks/routing";
-import { useSnackbar } from "@/utils/hooks/snackbar";
-import { useLoggedInPerson, useUser } from "@/utils/helpers/auth";
-
-// Types
-import { CustomPage } from "@/utils/types/common";
-import { User } from "@/utils/types/person";
-// import { UserMetadata } from "@/utils/types/person";
-
+/**
+ * The root layout of MySK.
+ *
+ * @param children
+ *
+ * @see {@link CustomPage} for other props.
+ *
+ * @returns A Root Layout or a Root Layout wrapped in the given context.
+ */
 const Layout: FC<
   { children: ReactNode } & Pick<
     CustomPage,
@@ -75,9 +60,7 @@ const Layout: FC<
     useContext(AppStateContext);
 
   // Class data (for Navigation links)
-  // const user = useUser();
-
-  const {person: user, status} = useLoggedInPerson();
+  const { person: user } = useLoggedInPerson();
 
   // console.log(user);
 
@@ -178,8 +161,7 @@ const Layout: FC<
             />
           )}
           {((navType || user?.role) === "student" ||
-            ((navType || user?.role) === "teacher" &&
-              isClassAdvisor)) && (
+            ((navType || user?.role) === "teacher" && isClassAdvisor)) && (
             <NavDrawerItem
               icon={<MaterialIcon icon="groups" />}
               label={t("navigation.class")}
@@ -382,8 +364,7 @@ const Layout: FC<
             />
           )}
           {((navType || user?.role) === "student" ||
-            ((navType || user?.role) === "teacher" &&
-              isClassAdvisor)) && (
+            ((navType || user?.role) === "teacher" && isClassAdvisor)) && (
             <NavBarItem
               icon={<MaterialIcon icon="groups" />}
               label={t("navigation.class")}
@@ -428,8 +409,6 @@ const Layout: FC<
 
       {/* Content */}
       {children}
-      
-      <GoogleOneTap />
     </RootLayout>
   );
 
