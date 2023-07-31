@@ -100,13 +100,9 @@
 /* Google One Tap UI */
 
 #credential_picker_container {
-  @apply !top-2 !right-2;
-  /* top: 0.5rem !important;
-  right: 0.5rem !important; */
-  overflow: hidden;
+  @apply !right-2 !top-2;
 }
 
 .dark #credential_picker_container {
-  border-radius: var(--rounded-md);
-  overflow: hidden;
+  @apply rounded-md overflow-hidden
 }
