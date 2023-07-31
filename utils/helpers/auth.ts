@@ -1,17 +1,16 @@
 // Imports
+import {
+  getStudentFromUserID,
+  getTeacherFromUserID,
+} from "@/utils/backend/account/getLoggedInPerson";
 import getUserByEmail from "@/utils/backend/account/getUserByEmail";
 import { logError } from "@/utils/helpers/debug";
 import { useLocale } from "@/utils/hooks/i18n";
 import { Student, Teacher, User } from "@/utils/types/person";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { set } from "date-fns";
 import { SignInOptions, signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import {
-  getStudentFromUserID,
-  getTeacherFromUserID,
-} from "../backend/account/getLoggedInPerson";
 
 /**
  * Tap into Google Sign in.
@@ -20,94 +19,65 @@ import {
  * @param options.parentButtonId The HTML ID of the Sign in Button.
  * @param options.buttonWidth The width of the Sign in Button in pixels.
  *
+ * @see {@link SignInOptions} for more options.
+ *
  * @returns `isLoading`—if One Tap is loading.
  */
 export const useOneTapSignin = (
   options?: {
-    parentContainerId?: string;
-    parentButtonId?: string;
+    parentButtonID?: string;
     buttonWidth?: number;
   } & Pick<SignInOptions, "redirect" | "callbackUrl">,
 ) => {
   const locale = useLocale();
 
-  const { parentContainerId, parentButtonId, buttonWidth } = options || {};
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
 
-  // Taking advantage in recent development of useSession hook
-  // If user is unauthenticated, google one tap ui is initialized and rendered
-  const { status } = useSession({
+  // If user is unauthenticated, Google One Tap UI is initialized and rendered
+  useSession({
     required: true,
     onUnauthenticated() {
-      if (isLoading) return;
+      if (loading) return;
 
       const { google } = window;
       if (!google) return;
 
-      try {
-        google.accounts.id.initialize({
-          client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
-          // itp_support: false,
-          callback: async (response: any) => {
-            setIsLoading(true);
-
-            // Here we call our Provider with the token provided by google
-            await signIn("googleonetap", {
-              credential: response.credential,
-              redirect: true,
-              ...options,
-            });
-            router.push("/learn");
-
-            setIsLoading(false);
-          },
-          prompt_parent_id: parentContainerId,
-        });
-
-        // Render Google One Tap on supported browser
-        if (!/(Safari|Firefox)/i.test(navigator.userAgent))
-          google.accounts.id.prompt((notification) => {
-            if (notification.isNotDisplayed())
-              logError("useOneTapSignin", {
-                code: "getNotDisplayedReason",
-                hint: notification.getNotDisplayedReason(),
-              });
-            else if (notification.isSkippedMoment())
-              logError("useOneTapSignin", {
-                code: "getNotDisplayedReason",
-                hint: notification.getSkippedReason(),
-              });
-            else if (notification.isDismissedMoment())
-              logError("useOneTapSignin", {
-                code: "getDismissedReason",
-                hint: notification.getDismissedReason(),
-              });
+      google.accounts.id.initialize({
+        client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+        cancel_on_tap_outside: false,
+        log_level: "info",
+        callback: async (response) => {
+          setLoading(true);
+          await signIn("googleonetap", {
+            credential: response.credential,
+            redirect: true,
+            ...options,
           });
+          router.push("/learn");
+          setLoading(false);
+        },
+      });
 
-        // Render the Sign in button if provided with an ID
-        if (parentButtonId) {
-          google.accounts.id.renderButton(
-            document.getElementById(parentButtonId) as HTMLElement,
-            {
-              shape: "pill",
-              text: "continue_with",
-              width: buttonWidth,
-              locale,
-            },
-          );
-        }
-      } catch (error) {
-        logError("useOneTapSignin", {
-          code: "googleOneTap",
-          hint: error as string,
+      // Google One Tap UI
+      google.accounts.id.prompt();
+
+      // Render the Google Sign In (GSI) Button if provided with an ID
+      const parentButton = options?.parentButtonID
+        ? document.getElementById(options.parentButtonID)
+        : null;
+      if (parentButton)
+        google.accounts.id.renderButton(parentButton, {
+          shape: "pill",
+          text: "continue_with",
+          width: options?.buttonWidth,
+          locale,
         });
-      }
     },
   });
 
-  return { isLoading };
+  return { loading };
 };
 
 export const useUser = () => {

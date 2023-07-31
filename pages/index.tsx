@@ -18,7 +18,8 @@ import MySKDark from "@/public/images/brand/mysk-dark.svg";
 import MySKLight from "@/public/images/brand/mysk-light.svg";
 import BackgroundDark from "@/public/images/graphics/landing/background-dark.svg";
 import BackgroundLight from "@/public/images/graphics/landing/background-light.svg";
-import GoogleLogo from "@/public/images/social/google.svg";
+import { useOneTapSignin } from "@/utils/helpers/auth";
+import { cn } from "@/utils/helpers/className";
 import { useLocale } from "@/utils/hooks/i18n";
 import { usePreferences } from "@/utils/hooks/preferences";
 import { usePageIsLoading, useRefreshProps } from "@/utils/hooks/routing";
@@ -30,15 +31,13 @@ import {
   MaterialIcon,
   Progress,
   SegmentedButton,
+  useBreakpoint,
 } from "@suankularb-components/react";
 import { LayoutGroup } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
-import Image from "next/image";
 import { FC, useEffect, useRef, useState } from "react";
-import { useSession, signIn } from "next-auth/react";
-import { useOneTapSignin } from "@/utils/helpers/auth";
 
 /**
  * A form for logging in.
@@ -47,15 +46,21 @@ import { useOneTapSignin } from "@/utils/helpers/auth";
  */
 const LogInSection: FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
+
+  const { atBreakpoint } = useBreakpoint();
   const [buttonWidth, setButtonWidth] = useState<number>();
-  useOneTapSignin({
+
+  const { loading } = useOneTapSignin({
     redirect: false,
-    parentButtonId: "button-google-sign-in",
+    parentButtonID: "button-google-sign-in",
     buttonWidth,
   });
 
   function handleResize() {
-    setButtonWidth((sectionRef?.current as HTMLDivElement)?.clientWidth - 36);
+    setButtonWidth(
+      (sectionRef?.current as HTMLDivElement)?.clientWidth -
+        (atBreakpoint === "base" ? 32 : 36),
+    );
   }
   useEffect(() => {
     handleResize();
@@ -83,7 +88,10 @@ const LogInSection: FC = () => {
       <div className="flex grow flex-col gap-2">
         <div
           id="button-google-sign-in"
-          className="h-[44px] [color-scheme:light]"
+          className={cn([
+            `h-[38px] rounded-full [color-scheme:light]`,
+            loading && `bg-surface-2`,
+          ])}
         />
         <p className="skc-body-small mx-4 text-on-surface-variant">
           Use the email ending in sk.ac.th
@@ -136,7 +144,7 @@ const PatchNotesSection: FC = () => {
       <SegmentedButton
         alt="Language / ภาษา"
         full
-        className="mb-2 rounded-full bg-surface"
+        className="rounded-full bg-surface sm:mb-2"
       >
         <Button
           appearance="outlined"
@@ -186,8 +194,8 @@ const PatchNotesSection: FC = () => {
 };
 
 /**
- * The landing for users who have not yet logged in. Contains the form for
- * logging in, links to public pages, patch notes, and credits.
+ * The landing for users who have not yet logged in. Contains the Google Sign
+ * In (GSI) Button, help links, patch notes, and credits.
  *
  * @returns A Page.
  */
@@ -202,6 +210,18 @@ const LandingPage: CustomPage = () => {
       <Head>
         <title>{tx("brand.name")}</title>
         <meta name="description" content={tx("brand.description")} />
+        <meta
+          name="theme-color"
+          content="#fbfcff"
+          media="(prefers-color-scheme: light)"
+          key="theme-light"
+        />
+        <meta
+          name="theme-color"
+          content="#191c1e"
+          media="(prefers-color-scheme: dark)"
+          key="theme-dark"
+        />
       </Head>
 
       {/* Page Loading Indicator */}
@@ -234,7 +254,7 @@ const LandingPage: CustomPage = () => {
                 {/* Card */}
                 <div
                   className="grid overflow-hidden rounded-xl border-1
-                    border-outline-variant md:grid-cols-2 [&>*]:p-6
+                    border-outline-variant md:grid-cols-2 [&>*]:p-6 [&>*]:px-4 [&>*]:sm:py-6
                     [&>:first-child]:md:pr-3 [&>:last-child]:md:pl-3"
                 >
                   <LogInSection />
@@ -249,6 +269,20 @@ const LandingPage: CustomPage = () => {
             </LayoutGroup>
           </div>
         </Columns>
+
+        {/* Add bottom padding when Google One Tap UI displays if on mobile so
+            as to not cover the footer */}
+        <style jsx global>{`
+          body:has(> #credential_picker_iframe) .skc-content-layout {
+            padding-bottom: 9.5625rem;
+          }
+
+          @media only screen and (min-width: 600px) {
+            body:has(> #credential_picker_iframe) .skc-content-layout {
+              padding-bottom: 2rem;
+            }
+          }
+        `}</style>
       </ContentLayout>
     </>
   );
