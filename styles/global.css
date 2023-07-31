@@ -96,3 +96,17 @@
 .skc-chip-field__content > .skc-chip-set:empty {
   display: none;
 }
+
+/* Google One Tap UI */
+
+#credential_picker_container {
+  @apply !top-2 !right-2;
+  /* top: 0.5rem !important;
+  right: 0.5rem !important; */
+  overflow: hidden;
+}
+
+.dark #credential_picker_container {
+  border-radius: var(--rounded-md);
+  overflow: hidden;
+}
