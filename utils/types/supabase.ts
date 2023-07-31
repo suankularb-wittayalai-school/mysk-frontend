@@ -846,9 +846,9 @@ export interface Database {
           day: number
           duration: number
           id: string
-          legacy_classroom_id: number
+          legacy_classroom_id: number | null
           legacy_id: number
-          legacy_subject_id: number
+          legacy_subject_id: number | null
           semester: number
           start_time: number
           subject_id: string
@@ -859,9 +859,9 @@ export interface Database {
           day: number
           duration: number
           id?: string
-          legacy_classroom_id: number
+          legacy_classroom_id?: number | null
           legacy_id?: number
-          legacy_subject_id: number
+          legacy_subject_id?: number | null
           semester: number
           start_time: number
           subject_id: string
@@ -872,9 +872,9 @@ export interface Database {
           day?: number
           duration?: number
           id?: string
-          legacy_classroom_id?: number
+          legacy_classroom_id?: number | null
           legacy_id?: number
-          legacy_subject_id?: number
+          legacy_subject_id?: number | null
           semester?: number
           start_time?: number
           subject_id?: string

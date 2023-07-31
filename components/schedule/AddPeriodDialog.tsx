@@ -44,6 +44,7 @@ import { DialogFC } from "@/utils/types/component";
 
 // Miscellaneous
 import { classRegex, roomRegex } from "@/utils/patterns";
+import createScheduleItem from "@/utils/backend/schedule/createScheduleItem";
 
 const AddPeriodDialog: DialogFC<{
   subject: Pick<Subject, "id" | "name" | "short_name" | "code">;
@@ -97,34 +98,34 @@ const AddPeriodDialog: DialogFC<{
       return;
     }
 
-    // await withLoading(
-    //   async () => {
-    //     const { error } = await createScheduleItem(
-    //       supabase,
-    //       {
-    //         ...form,
-    //         subject: subject.id,
-    //         ...additionSite!,
-    //       },
-    //       teacherID!,
-    //     );
+    await withLoading(
+      async () => {
+        const { error } = await createScheduleItem(
+          supabase,
+          {
+            ...form,
+            subject: subject.id,
+            ...additionSite!,
+          },
+          teacherID!,
+        );
 
-    //     if (error) {
-    //       setSnackbar(
-    //         <Snackbar>{t("snackbar.failure", { ns: "common" })}</Snackbar>,
-    //       );
-    //       return false;
-    //     }
+        if (error) {
+          setSnackbar(
+            <Snackbar>{t("snackbar.failure", { ns: "common" })}</Snackbar>,
+          );
+          return false;
+        }
 
-    //     await router.replace(router.asPath);
-    //     onSubmit();
-    //     resetForm();
+        await router.replace(router.asPath);
+        onSubmit();
+        resetForm();
 
-    //     return true;
-    //   },
-    //   toggleLoading,
-    //   { hasEndToggle: true },
-    // );
+        return true;
+      },
+      toggleLoading,
+      { hasEndToggle: true },
+    );
   }
 
   return (

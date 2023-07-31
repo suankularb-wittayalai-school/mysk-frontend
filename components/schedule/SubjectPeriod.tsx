@@ -59,6 +59,7 @@ import { useToggle } from "@/utils/hooks/toggle";
 
 // Types
 import { PeriodContentItem } from "@/utils/types/schedule";
+import moveScheduleItem from "@/utils/backend/schedule/moveScheduleItem";
 
 const SubjectPeriod: FC<{
   period: PeriodContentItem;
@@ -176,26 +177,24 @@ const SubjectPeriod: FC<{
         }
 
         // Save the change to Supabase
-        // const { error } = await moveScheduleItem(
-        //   supabase,
-        //   newDay,
-        //   { ...period, startTime: newStartTime },
-        //   teacherID!
-        // );
+        const { error } = await moveScheduleItem(supabase, {
+          ...period,
+          day: newDay,
+        });
 
-        // if (error) {
-        //   animationControls.start({ x: 0, y: 0 });
-        //   return false;
-        // }
+        if (error) {
+          animationControls.start({ x: 0, y: 0 });
+          return false;
+        }
 
-        // // Visually move the Period
-        // animationControls.start({
-        //   x: (newStartTime - period.startTime) * periodWidth,
-        //   y: (newDay - day) * (periodHeight + 4),
-        // });
+        // Visually move the Period
+        animationControls.start({
+          x: (newStartTime - period.start_time) * periodWidth,
+          y: (newDay - day) * (periodHeight + 4),
+        });
 
-        // // Refetch the Schedule
-        // await router.replace(router.asPath);
+        // Refetch the Schedule
+        await router.replace(router.asPath);
 
         return true;
       },
