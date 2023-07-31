@@ -31,11 +31,17 @@ export async function getStudentByID(
     nickname: mergeDBLocales(studentData!.people, "nickname"),
     middle_name: mergeDBLocales(studentData!.people, "middle_name"),
     student_id: studentData!.student_id,
-    classroom: {
-      id: studentData!.classroom_students[0].classrooms!.id,
-      number: studentData!.classroom_students[0].classrooms!.number,
-    },
-    class_no: studentData!.classroom_students[0].class_no,
+    classroom:
+      studentData!.classroom_students.length > 0
+        ? {
+            id: studentData!.classroom_students[0].classrooms!.id,
+            number: studentData!.classroom_students[0].classrooms!.number,
+          }
+        : null,
+    class_no:
+      studentData!.classroom_students.length > 0
+        ? studentData!.classroom_students[0].class_no
+        : null,
     contacts: options?.detailed
       ? studentData!.people!.person_contacts.map((contacts) => {
           const { contacts: contact } = contacts;

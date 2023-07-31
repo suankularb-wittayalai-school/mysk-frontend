@@ -51,7 +51,7 @@ export type Person = {
 export type Student = Person & {
   student_id: string;
   classroom: Pick<Classroom, "id" | "number"> | null;
-  class_no: number;
+  class_no: number | null;
   role: "student";
 };
 
