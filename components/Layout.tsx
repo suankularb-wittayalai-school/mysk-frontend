@@ -101,6 +101,7 @@ const Layout: FC<
   useEffect(() => {
     if (preferences)
       if (preferences.colorScheme === "auto") {
+        setSchemeFromMedia();
         // If the color scheme preference is `auto`, listen to the
         // `prefers-color-scheme` media query for the color scheme
         const media = window.matchMedia("(prefers-color-scheme: dark)");
