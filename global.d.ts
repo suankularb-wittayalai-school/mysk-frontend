@@ -7,6 +7,12 @@ declare global {
       NEXT_PUBLIC_VERSION: string;
 
       /**
+       * The Google Client ID of this application, retrieved from Google Cloud
+       * Console > APIs and Service > Credentials > OAuth 2.0 Client ID.
+       */
+      NEXT_PUBLIC_GOOGLE_CLIENT_ID: string;
+
+      /**
        * The URL of the Supabase project, retrieved from Settings > API >
        * Project URL.
        */
@@ -23,11 +29,6 @@ declare global {
        * API > Project API Keys > `service_role` `secret`.
        */
       SUPABASE_SERVICE_ROLE: string;
-
-      /**
-       * The default password for new accounts.
-       */
-      NEW_ACCOUNT_DEFAULT_PASS: string;
 
       /**
        * Whether MySK is currently closed for maintenance. Will close off
