@@ -149,6 +149,8 @@ export const getServerSideProps: GetServerSideProps = async ({
     (user as Student).classroom!.id,
   );
 
+  // console.log({ user, schedule, subjectList })
+
   return {
     props: {
       ...(await serverSideTranslations(locale as LangCode, [

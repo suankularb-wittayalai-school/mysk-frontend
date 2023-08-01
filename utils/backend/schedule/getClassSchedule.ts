@@ -42,10 +42,10 @@ export default async function getClassSchedule(
         short_name_th
       ),
       schedule_item_classrooms!inner(
-        classrooms(id, number)
+        classrooms!inner(id, number)
       ),
       schedule_item_teachers!inner(
-        teachers(
+        teachers!inner(
           id,
           people(
             first_name_en,
@@ -86,6 +86,8 @@ export default async function getClassSchedule(
       })),
       rooms: scheduleItem.schedule_item_rooms.map((room) => room.room),
     }));
+
+    // console.log({ scheduleItems })
 
   // Add Supabase data to empty schedule
   for (let incomingPeriod of periodsItems) {
