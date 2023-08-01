@@ -37,7 +37,7 @@ import { LayoutGroup } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, forwardRef, useEffect, useRef, useState } from "react";
 
 /**
  * A form for logging in.
@@ -45,6 +45,8 @@ import { FC, useEffect, useRef, useState } from "react";
  * @returns A `<section>`.
  */
 const LogInSection: FC = () => {
+  const { t } = useTranslation("landing", { keyPrefix: "main" });
+
   const sectionRef = useRef<HTMLDivElement>(null);
 
   const { atBreakpoint } = useBreakpoint();
@@ -78,10 +80,10 @@ const LogInSection: FC = () => {
         <MultiSchemeImage
           srcLight={MySKLight}
           srcDark={MySKDark}
-          alt="MySK logo"
+          alt={t("logoAlt")}
           className="[&>img]:w-16"
         />
-        <h2 className="skc-headline-medium">Log in to MySK</h2>
+        <h2 className="skc-headline-medium">{t("title")}</h2>
       </div>
 
       {/* Log in with Google */}
@@ -94,21 +96,33 @@ const LogInSection: FC = () => {
           ])}
         />
         <p className="skc-body-small mx-4 text-on-surface-variant">
-          Use the email ending in sk.ac.th
+          {t("googleHelper")}
         </p>
       </div>
 
       {/* Supplementary actions */}
       <div className="flex flex-col gap-2 [&>*]:!bg-surface-3 [&>*]:state-layer:!bg-primary">
-        <Button appearance="tonal" icon={<MaterialIcon icon="help" />} href="">
-          Help
+        <Button
+          appearance="tonal"
+          icon={<MaterialIcon icon="help" />}
+          href="https://docs.google.com/document/d/1yAEVK09BgbpFIPpG5j1xvfCRUGUdRyL9S1gAxh9UjfU/edit?usp=sharing"
+          // eslint-disable-next-line react/display-name
+          element={forwardRef((props, ref) => (
+            <a ref={ref} {...props} target="_blank" rel="noreferrer" />
+          ))}
+        >
+          {t("action.help")}
         </Button>
         <Button
           appearance="tonal"
           icon={<MaterialIcon icon="report" />}
-          href=""
+          href="https://forms.gle/v73WxeTx4hE9fbSX6"
+          // eslint-disable-next-line react/display-name
+          element={forwardRef((props, ref) => (
+            <a ref={ref} {...props} target="_blank" rel="noreferrer" />
+          ))}
         >
-          Report an issue
+          {t("action.report")}
         </Button>
       </div>
     </section>
@@ -142,7 +156,7 @@ const PatchNotesSection: FC = () => {
     <section className="relative flex flex-col gap-6 bg-surface-variant">
       {/* Language Switcher */}
       <SegmentedButton
-        alt="Language / ภาษา"
+        alt={t("languageSwitcher.title")}
         full
         className="rounded-full bg-surface sm:mb-2"
       >
@@ -151,14 +165,14 @@ const PatchNotesSection: FC = () => {
           selected={visibleLocale === "th"}
           onClick={() => changeLocaleTo("th")}
         >
-          ภาษาไทย
+          {t("languageSwitcher.th")}
         </Button>
         <Button
           appearance="outlined"
           selected={visibleLocale === "en-US"}
           onClick={() => changeLocaleTo("en-US")}
         >
-          English
+          {t("languageSwitcher.en")}
         </Button>
       </SegmentedButton>
 
@@ -186,7 +200,7 @@ const PatchNotesSection: FC = () => {
           target="_blank"
           className="link"
         >
-          More patch notes…
+          {t("action.patchNotes")}
         </a>
       </p>
     </section>
