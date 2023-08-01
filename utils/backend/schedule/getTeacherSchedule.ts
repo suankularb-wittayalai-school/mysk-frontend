@@ -12,7 +12,7 @@ import { mergeDBLocales } from "@/utils/helpers/string";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
 import { Classroom } from "@/utils/types/classroom";
 import { Schedule, PeriodContentItem } from "@/utils/types/schedule";
-import { list, omit } from "radash";
+import { list, omit, pick } from "radash";
 
 /**
  * Construct a Schedule from Schedule Items from the student’s perspective.
@@ -129,16 +129,17 @@ export default async function getTeacherSchedule(
       const omittedPeriod = omit(incomingPeriod, ["day"]);
 
       // Replace empty period
-      schedule.content[scheduleRowIndex].content[idx].content = [omittedPeriod];
-      schedule.content[scheduleRowIndex].content[idx].id = omittedPeriod.id;
+      schedule.content[scheduleRowIndex].content[idx] = {
+        ...schedule.content[scheduleRowIndex].content[idx],
+        ...pick(omittedPeriod, ["id", "duration"]),
+        content: [omittedPeriod],
+      };
 
       // Remove empty periods that is now overlapping the new incoming period
       schedule.content[scheduleRowIndex].content.splice(
         idx + 1,
         incomingPeriod.duration - 1,
       );
-
-      schedule.content[scheduleRowIndex].content[idx] = schedulePeriod;
     }
   }
 

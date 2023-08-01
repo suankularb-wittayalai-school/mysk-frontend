@@ -1,17 +1,15 @@
-// Imports
 import { logError } from "@/utils/helpers/debug";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
-import { SchedulePeriod } from "@/utils/types/schedule";
-import { omit } from "radash";
+import { PeriodContentItem } from "@/utils/types/schedule";
+import { pick } from "radash";
 
-export default async function moveScheduleItem(
+export default async function updateScheduleItemDuration(
   supabase: DatabaseClient,
-  scheduleItem: Omit<SchedulePeriod, "content"> & { day: number },
+  scheduleItem: Pick<PeriodContentItem, "id" | "duration">,
 ): Promise<BackendReturn<null>> {
-  console.log(omit(scheduleItem, ["id"]));
   const { error } = await supabase
     .from("schedule_items")
-    .update(omit(scheduleItem, ["id"]))
+    .update(pick(scheduleItem, ["duration"]))
     .eq("id", scheduleItem.id);
 
   if (error) logError("moveScheduleItem", error);

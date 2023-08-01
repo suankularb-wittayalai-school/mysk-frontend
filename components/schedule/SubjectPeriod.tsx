@@ -1,8 +1,31 @@
-// External libraries
+// Imports
+import HoverList from "@/components/person/HoverList";
+import PeriodDetails from "@/components/schedule/PeriodDetails";
+import SubjectPeriodMenu from "@/components/schedule/SubjectPeriodMenu";
+import ScheduleContext from "@/contexts/ScheduleContext";
+import deleteScheduleItem from "@/utils/backend/schedule/deleteScheduleItem";
+import lengthenScheduleItem from "@/utils/backend/schedule/lengthenScheduleItem";
+import moveScheduleItem from "@/utils/backend/schedule/moveScheduleItem";
+import { cn } from "@/utils/helpers/className";
+import { withLoading } from "@/utils/helpers/loading";
+import {
+  getSubjectName,
+  periodDurationToWidth,
+  positionPxToPeriod,
+} from "@/utils/helpers/schedule";
+import { getLocaleString } from "@/utils/helpers/string";
+import { useLocale } from "@/utils/hooks/i18n";
+import { useRefreshProps } from "@/utils/hooks/routing";
+import { useToggle } from "@/utils/hooks/toggle";
+import { PeriodContentItem } from "@/utils/types/schedule";
+import {
+  Interactive,
+  MaterialIcon,
+  transition,
+  useAnimationConfig,
+} from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import va from "@vercel/analytics";
-import { useRouter } from "next/router";
-import { useTranslation } from "next-i18next";
 import {
   AnimatePresence,
   PanInfo,
@@ -10,6 +33,9 @@ import {
   useAnimationControls,
   useDragControls,
 } from "framer-motion";
+import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
+import { pick } from "radash";
 import {
   FC,
   MouseEvent,
@@ -20,75 +46,26 @@ import {
   useState,
 } from "react";
 
-// SK Components
-import {
-  Interactive,
-  MaterialIcon,
-  transition,
-  useAnimationConfig,
-} from "@suankularb-components/react";
-
-// Internal components
-import HoverList from "@/components/person/HoverList";
-import PeriodDetails from "@/components/schedule/PeriodDetails";
-import SubjectPeriodMenu from "@/components/schedule/SubjectPeriodMenu";
-
-// Contexts
-import ScheduleContext from "@/contexts/ScheduleContext";
-
-// Backend
-// import {
-//   deleteScheduleItem,
-//   editScheduleItemDuration,
-//   moveScheduleItem,
-// } from "@/utils/backend/schedule/schedule";
-
-// Helpers
-import { cn } from "@/utils/helpers/className";
-import { getLocaleString } from "@/utils/helpers/string";
-import { withLoading } from "@/utils/helpers/loading";
-import {
-  getSubjectName,
-  periodDurationToWidth,
-  positionPxToPeriod,
-} from "@/utils/helpers/schedule";
-
-// Hooks
-import { useLocale } from "@/utils/hooks/i18n";
-import { useToggle } from "@/utils/hooks/toggle";
-
-// Types
-import { PeriodContentItem } from "@/utils/types/schedule";
-import moveScheduleItem from "@/utils/backend/schedule/moveScheduleItem";
-
 const SubjectPeriod: FC<{
   period: PeriodContentItem;
   day: Day;
   isInSession?: boolean;
 }> = ({ period, day, isInSession }) => {
-  // Translation
+  const router = useRouter();
+  const refreshProps = useRefreshProps();
   const locale = useLocale();
   const { t } = useTranslation(["schedule", "common"]);
 
-  // Router
-  const router = useRouter();
-
-  // Animation
   const { duration, easing } = useAnimationConfig();
   const animationControls = useAnimationControls();
   const dragControls = useDragControls();
 
-  // Supabase
   const supabase = useSupabaseClient();
 
-  // Context
-  const { role, teacherID, periodWidth, periodHeight, constraintsRef } =
+  const { role, periodWidth, periodHeight, constraintsRef } =
     useContext(ScheduleContext);
 
-  // Dialog control
   const [detailsOpen, setDetailsOpen] = useState<boolean>(false);
-
-  // Hover menu
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
 
   // Keyboard support for opening/closing hover menu
@@ -124,18 +101,18 @@ const SubjectPeriod: FC<{
   }, [detailsOpen]);
 
   async function handleDelete() {
-    // withLoading(
-    //   async () => {
-    //     va.track("Delete Period");
-    //     setDetailsOpen(false);
-    //     const { error } = await deleteScheduleItem(supabase, period.id!);
-    //     if (error) return false;
-    //     await router.replace(router.asPath);
-    //     return true;
-    //   },
-    //   toggleLoading,
-    //   { hasEndToggle: true }
-    // );
+    withLoading(
+      async () => {
+        va.track("Delete Period");
+        setDetailsOpen(false);
+        const { error } = await deleteScheduleItem(supabase, period.id!);
+        if (error) return false;
+        await refreshProps();
+        return true;
+      },
+      toggleLoading,
+      { hasEndToggle: true },
+    );
   }
 
   // Loading
@@ -178,7 +155,8 @@ const SubjectPeriod: FC<{
 
         // Save the change to Supabase
         const { error } = await moveScheduleItem(supabase, {
-          ...period,
+          ...pick(period, ["id", "duration"]),
+          start_time: newStartTime,
           day: newDay,
         });
 
@@ -194,7 +172,7 @@ const SubjectPeriod: FC<{
         });
 
         // Refetch the Schedule
-        await router.replace(router.asPath);
+        await refreshProps();
 
         return true;
       },
@@ -210,9 +188,7 @@ const SubjectPeriod: FC<{
 
   useEffect(() => {
     window.addEventListener("resize", handleWindowResize);
-    return () => {
-      window.removeEventListener("resize", handleWindowResize);
-    };
+    return () => window.removeEventListener("resize", handleWindowResize);
   }, []);
 
   // Period extension
@@ -243,38 +219,39 @@ const SubjectPeriod: FC<{
   // Save the new duration to Supabase
   async function handleMouseUp() {
     setExtending(false);
-    // withLoading(
-    //   async () => {
-    //     // Track
-    //     va.track("Extend Period");
+    withLoading(
+      async () => {
+        // Track
+        va.track("Extend Period");
 
-    //     // Don’t do anything if the period’s duration stays the same
-    //     if (periodDuration === period.duration) {
-    //       setExtending(false);
-    //       return false;
-    //     }
+        // Don’t do anything if the period’s duration stays the same
+        if (
+          periodDuration === period.duration ||
+          period.start_time + periodDuration - 1 > 10
+        ) {
+          setExtending(false);
+          return false;
+        }
 
-    //     // Save to Supabase
-    //     const { error } = await editScheduleItemDuration(
-    //       supabase,
-    //       day,
-    //       { ...period, duration: periodDuration },
-    //       teacherID!
-    //     );
+        // Save to Supabase
+        const { error } = await lengthenScheduleItem(supabase, {
+          id: period.id!,
+          duration: periodDuration,
+        });
 
-    //     if (error) {
-    //       setExtending(false);
-    //       return false;
-    //     }
+        if (error) {
+          setExtending(false);
+          return false;
+        }
 
-    //     // Refetch the Schedule
-    //     await router.replace(router.asPath);
+        // Refetch the Schedule
+        await refreshProps();
 
-    //     return true;
-    //   },
-    //   toggleLoading,
-    //   { hasEndToggle: true }
-    // );
+        return true;
+      },
+      toggleLoading,
+      { hasEndToggle: true },
+    );
   }
 
   return (
