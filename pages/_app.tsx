@@ -4,7 +4,7 @@ import {
   createPagesBrowserClient,
 } from "@supabase/auth-helpers-nextjs";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
-import { SessionProvider } from "next-auth/react"
+import { SessionProvider } from "next-auth/react";
 
 import va from "@vercel/analytics";
 import { Analytics } from "@vercel/analytics/react";
@@ -46,6 +46,7 @@ import { usePreviousPath } from "@/utils/hooks/routing";
 // Types
 import { ColorScheme, CustomAppProps } from "@/utils/types/common";
 import { Database } from "@/utils/types/supabase";
+import AccountNotFoundDialog from "@/components/account/AccountNotFoundDialog";
 
 // English fonts
 const bodyFontEN = Inter({ subsets: ["latin"] });
@@ -83,22 +84,37 @@ const Contexts: FC<{ children: ReactNode }> = ({ children }) => {
   const { previousPath } = usePreviousPath();
   const [snackbar, setSnackbar] = useState<JSX.Element | null>(null);
   const [colorScheme, setColorScheme] = useState<ColorScheme>();
-  const [navOpen, setNavOpen] = useState<boolean>(false);
+  const [navOpen, setNavOpen] = useState(false);
+  const [accountNotFoundOpen, setAccountNotFoundOpen] = useState(false);
 
   return (
     <PreviousRouteContext.Provider value={previousPath}>
       <SnackbarContext.Provider value={{ snackbar, setSnackbar }}>
         <AppStateContext.Provider
-          value={{ colorScheme, setColorScheme, navOpen, setNavOpen }}
+          value={{
+            colorScheme,
+            setColorScheme,
+            navOpen,
+            setNavOpen,
+            accountNotFoundOpen,
+            setAccountNotFoundOpen,
+          }}
         >
           {children}
+          <AccountNotFoundDialog
+            open={accountNotFoundOpen}
+            onClose={() => setAccountNotFoundOpen(false)}
+          />
         </AppStateContext.Provider>
       </SnackbarContext.Provider>
     </PreviousRouteContext.Provider>
   );
 };
 
-function App({ Component, pageProps: { session, ...pageProps }, }: CustomAppProps) {
+function App({
+  Component,
+  pageProps: { session, ...pageProps },
+}: CustomAppProps) {
   const { context, fab, navType, childURLs } = Component;
 
   // Supabase client
@@ -130,34 +146,34 @@ function App({ Component, pageProps: { session, ...pageProps }, }: CustomAppProp
 
       {/* Context proviers */}
       <SessionProvider session={session}>
-      <SessionContextProvider
-        supabaseClient={supabase}
-        initialSession={pageProps.initialSession as Session}
-      >
-        <Contexts>
-          {/* Framer Motion a11y */}
-          <MotionConfig reducedMotion="user">
-            {/* SKCom variables */}
-            <ThemeProvider>
-              {/* Rendered app */}
-              <Layout {...{ context, fab, navType, childURLs }}>
-                <ErrorBoundary Fallback={PageFallback}>
-                  <Component {...pageProps} />
-                </ErrorBoundary>
-              </Layout>
-            </ThemeProvider>
+        <SessionContextProvider
+          supabaseClient={supabase}
+          initialSession={pageProps.initialSession as Session}
+        >
+          <Contexts>
+            {/* Framer Motion a11y */}
+            <MotionConfig reducedMotion="user">
+              {/* SKCom variables */}
+              <ThemeProvider>
+                {/* Rendered app */}
+                <Layout {...{ context, fab, navType, childURLs }}>
+                  <ErrorBoundary Fallback={PageFallback}>
+                    <Component {...pageProps} />
+                  </ErrorBoundary>
+                </Layout>
+              </ThemeProvider>
 
-            {/* Analytics */}
-            <Analytics
-              beforeSend={(event) => {
-                // Ignore locale when reporting pages
-                const url = event.url.replace(/\/(en-US|th)/, "");
-                return { ...event, url };
-              }}
-            />
-          </MotionConfig>
-        </Contexts>
-      </SessionContextProvider>
+              {/* Analytics */}
+              <Analytics
+                beforeSend={(event) => {
+                  // Ignore locale when reporting pages
+                  const url = event.url.replace(/\/(en-US|th)/, "");
+                  return { ...event, url };
+                }}
+              />
+            </MotionConfig>
+          </Contexts>
+        </SessionContextProvider>
       </SessionProvider>
     </>
   );

@@ -1,4 +1,5 @@
 // Imports
+import AppStateContext from "@/contexts/AppStateContext";
 import {
   getStudentFromUserID,
   getTeacherFromUserID,
@@ -10,7 +11,7 @@ import { Student, Teacher, User } from "@/utils/types/person";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { SignInOptions, signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 /**
  * Tap into Google Sign in.
@@ -29,25 +30,30 @@ export const useOneTapSignin = (
     buttonWidth?: number;
   } & Pick<SignInOptions, "redirect" | "callbackUrl">,
 ) => {
+  const router = useRouter();
   const locale = useLocale();
 
-  const [loading, setLoading] = useState(false);
+  const { setAccountNotFoundOpen } = useContext(AppStateContext);
 
-  const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   /**
    * Signs the user in with a Google One Tap UI credential string and redirects
    * the user afterwards.
-   * 
+   *
    * @param credential Credential string.
    */
   async function logInWithGoogle(credential: string) {
     setLoading(true);
-    await signIn("googleonetap", {
+    const { status } = (await signIn("googleonetap", {
       credential,
       redirect: true,
       ...options,
-    });
+    }))!;
+    if (status === 401) {
+      setAccountNotFoundOpen(true);
+      return;
+    }
     router.push("/learn");
     setLoading(false);
   }
@@ -57,7 +63,8 @@ export const useOneTapSignin = (
   useEffect(() => {
     if (process.env.NEXT_PUBLIC_ALLOW_PASTE_GOOGLE_CREDENTIAL !== "true")
       return;
-    if (["localhost", "mysk.school"].includes(window.location.host)) return;
+    if (["localhost:3000", "mysk.school"].includes(window.location.host))
+      return;
     const credential = prompt(
       "You are in a dev environment. To log in, copy over your Google \
 credential string from your host machine and paste it here.\n\n*You may see \
