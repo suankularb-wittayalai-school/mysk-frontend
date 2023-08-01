@@ -1,19 +1,13 @@
-// External libraries
-import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
-import { FC } from "react";
-
-// SK Components
+// Imports
+import NewsListItem from "@/components/news/NewsListItem";
+import { Info } from "@/utils/types/news";
 import {
   List,
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
-
-// Internal components
-import NewsListItem from "@/components/news/NewsListItem";
-
-// Types
-import { Info } from "@/utils/types/news";
+import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
+import { FC } from "react";
 
 const NewsFeed: FC<{
   news: Info[];
@@ -44,11 +38,9 @@ const NewsFeed: FC<{
               transition={transition(duration.medium4, easing.standard)}
             >
               <NewsListItem
-                // key={["news", newsItem.type, newsItem.id].join("-")}
                 key={["news", newsItem.id].join("-")}
                 newsItem={newsItem}
                 editable={isForAdmin}
-                showChips
               />
             </motion.article>
           ))}

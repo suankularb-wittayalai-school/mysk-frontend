@@ -26,35 +26,37 @@ const PersonActions: FC<{
   const [shareOpen, setShareOpen] = useState<boolean>(false);
 
   /**
-   * The Class relevant to the selected Person.
+   * The Classroom relevant to the selected Person.
    */
-  const classItem =
+  const classroom =
     person?.role === "student"
-      ? person.class
-      : person?.role === "teacher" && person.classAdvisorAt
-      ? person.classAdvisorAt
+      ? person.classroom
+      : person?.role === "teacher" && person.class_advisor_at
+      ? person.class_advisor_at
       : null;
 
   return (
     <>
       <ChipSet className="[&~.skc-scrim]:mx-0">
-        {suggestionsType !== "share-only" && classItem && (
+        {suggestionsType !== "share-only" && (
           <>
             {/* See class */}
-            <AssistChip
-              icon={<MaterialIcon icon="groups" />}
-              // TODO: I forgot to pass `href`; use the `href` props as normal when that’s fixed
-              // eslint-disable-next-line react/display-name
-              element={forwardRef((props, ref) => (
-                <Link
-                  {...props}
-                  ref={ref}
-                  href={`/lookup/class/${classItem.number}`}
-                />
-              ))}
-            >
-              {t("seeClass")}
-            </AssistChip>
+            {classroom && (
+              <AssistChip
+                icon={<MaterialIcon icon="groups" />}
+                // TODO: I forgot to pass `href`; use the `href` props as normal when that’s fixed
+                // eslint-disable-next-line react/display-name
+                element={forwardRef((props, ref) => (
+                  <Link
+                    {...props}
+                    ref={ref}
+                    href={`/lookup/class/${classroom.number}`}
+                  />
+                ))}
+              >
+                {t("seeClass")}
+              </AssistChip>
+            )}
 
             {/* See schedule */}
             <AssistChip
@@ -64,7 +66,13 @@ const PersonActions: FC<{
                 <Link
                   {...props}
                   ref={ref}
-                  href={`/lookup/class/${classItem.number}/schedule`}
+                  href={
+                    person?.role === "teacher"
+                      ? `/lookup/person/teacher/${person.id}/schedule`
+                      : person?.role === "student" && person.classroom
+                      ? `/lookup/class/${person.classroom.number}/schedule`
+                      : undefined
+                  }
                 />
               ))}
             >

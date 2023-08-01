@@ -1,16 +1,9 @@
-// External libraries
+// Imports
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useTranslation } from "next-i18next";
-
-// Internal components
 import BaseImportDialog from "@/components/admin/BaseImportDialog";
-
-// Backend
-import { importStudents } from "@/utils/backend/person/student";
-
-// Types
-import { SubmittableDialogComponent } from "@/utils/types/common";
-import { ImportedStudentData } from "@/utils/types/person";
+// import importStudents from "@/utils/backend/person/importStudents";
+import { DialogFC } from "@/utils/types/component";
 
 /**
  * An interface for importing Students with a CSV file.
@@ -21,11 +14,9 @@ import { ImportedStudentData } from "@/utils/types/person";
  *
  * @returns A Full-screen Dialog.
  */
-const ImportStudentsDialog: SubmittableDialogComponent = ({
-  open,
-  onClose,
-  onSubmit,
-}) => {
+const ImportStudentsDialog: DialogFC<{
+  onSubmit: () => void;
+}> = ({ open, onClose, onSubmit }) => {
   const { t } = useTranslation("admin");
 
   const supabase = useSupabaseClient();
@@ -34,8 +25,9 @@ const ImportStudentsDialog: SubmittableDialogComponent = ({
     <BaseImportDialog
       open={open}
       onClose={onClose}
-      onSubmit={async (data: ImportedStudentData[]) => {
-        await importStudents(supabase, data);
+      // onSubmit={async (data: ImportedStudentData[]) => {
+      onSubmit={async (data: any[]) => {
+        // await importStudents(supabase, data);
         onSubmit();
       }}
       title={t("data.import.dialog.import.title.student")}

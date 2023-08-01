@@ -1,9 +1,10 @@
-// External libraries
-import { useTranslation } from "next-i18next";
-import { AnimatePresence, motion } from "framer-motion";
-import { FC, useEffect } from "react";
-
-// SK Components
+// Imports
+import PeriodDetailsContent from "@/components/schedule/PeriodDetailsContent";
+import { periodTimes } from "@/utils/helpers/schedule";
+import { getLocaleString } from "@/utils/helpers/string";
+import { useLocale } from "@/utils/hooks/i18n";
+import { DialogFC } from "@/utils/types/component";
+import { PeriodContentItem, SchedulePeriod } from "@/utils/types/schedule";
 import {
   Button,
   Card,
@@ -12,20 +13,9 @@ import {
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
-
-// Internal components
-import PeriodDetailsContent from "@/components/schedule/PeriodDetailsContent";
-
-// Helpers
-import { getLocaleString } from "@/utils/helpers/string";
-import { periodTimes } from "@/utils/helpers/schedule";
-
-// Hooks
-import { useLocale } from "@/utils/hooks/i18n";
-
-// Types
-import { DialogComponent } from "@/utils/types/common";
-import { PeriodContentItem, SchedulePeriod } from "@/utils/types/schedule";
+import { AnimatePresence, motion } from "framer-motion";
+import { useTranslation } from "next-i18next";
+import { FC, useEffect } from "react";
 
 const SubjectPeriodCard: FC<{
   period: SchedulePeriod;
@@ -49,7 +39,7 @@ const SubjectPeriodCard: FC<{
                   // Format the hours and minutes parts of the time
                   .map((part) => part.toString().padStart(2, "0"))
                   // Join those parts
-                  .join(":")
+                  .join(":"),
               )
               // Join the start and end
               .join("-")}
@@ -63,11 +53,9 @@ const SubjectPeriodCard: FC<{
   );
 };
 
-const ElectivePeriodDetails: DialogComponent<{ period: SchedulePeriod }> = ({
-  period,
-  open,
-  onClose,
-}) => {
+const ElectivePeriodDetails: DialogFC<{
+  period: SchedulePeriod;
+}> = ({ period, open, onClose }) => {
   // Translation
   const { t } = useTranslation("schedule");
 
@@ -128,7 +116,7 @@ const ElectivePeriodDetails: DialogComponent<{ period: SchedulePeriod }> = ({
 
                 {period.content
                   .sort((a, b) =>
-                    a.subject.code.th > b.subject.code.th ? 1 : -1
+                    a.subject.code.th > b.subject.code.th ? 1 : -1,
                   )
                   .map((subject) => (
                     <SubjectPeriodCard

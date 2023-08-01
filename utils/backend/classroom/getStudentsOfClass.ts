@@ -63,7 +63,10 @@ export default async function getStudentsOfClass(
   });
 
   return {
-    data: studentList.sort((a, b) => a.class_no - b.class_no),
+    data: studentList.sort(
+      // Put Students with no class No. first
+      (a, b) => (a.class_no || 0) - (b.class_no || 0),
+    ),
     error: null,
   };
 }

@@ -19,7 +19,10 @@ import { useLocale } from "@/utils/hooks/i18n";
 import { Student } from "@/utils/types/person";
 
 const ClassStudentCard: FC<{
-  student: Pick<Student, "id" | "first_name" | "last_name" | "nickname" | "class_no">;
+  student: Pick<
+    Student,
+    "id" | "first_name" | "last_name" | "nickname" | "class_no"
+  >;
   seperated?: boolean;
   classNumber?: number;
   selectedID?: string;
@@ -65,15 +68,17 @@ const ClassStudentCard: FC<{
         <CardHeader
           avatar={
             <DynamicAvatar
-            first_name={student.first_name}
-            last_name={student.last_name}
+              first_name={student.first_name}
+              last_name={student.last_name}
               className={
                 thisSelected ? "sm:!bg-primary sm:!text-on-primary" : undefined
               }
             />
           }
           title={getLocaleName(locale, student)}
-          subtitle={student.nickname ? getLocaleString(student.nickname, locale) : ""}
+          subtitle={
+            student.nickname ? getLocaleString(student.nickname, locale) : ""
+          }
           className="grow"
         />
         <span
@@ -83,7 +88,7 @@ const ClassStudentCard: FC<{
             thisSelected && `sm:!text-primary`,
           ])}
         >
-          {student.class_no < 10 && (
+          {student.class_no && student.class_no < 10 && (
             <span className="font-light opacity-30">0</span>
           )}
           {student.class_no}

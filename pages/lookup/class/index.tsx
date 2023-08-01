@@ -25,8 +25,10 @@ import Head from "next/head";
 import { useState } from "react";
 
 const LookupClassesPage: CustomPage<{
-  classes: (Pick<Classroom, "id" | "number" | "class_advisors"> & {studentCount: number})[];
-}> = ({ classes }) => {
+  classrooms: (Pick<Classroom, "id" | "number" | "class_advisors"> & {
+    studentCount: number;
+  })[];
+}> = ({ classrooms }) => {
   // Translation
   const locale = useLocale();
   const { t } = useTranslation(["lookup", "common"]);
@@ -55,16 +57,16 @@ const LookupClassesPage: CustomPage<{
               [&_li]:list-none"
           >
             <List>
-              {classes
+              {classrooms
                 // Since the entire database of classes is now stored on the
                 // user’s device, we can just use filter and not incur any
                 // database calls
-                .filter((classItem) => String(classItem.number).includes(query))
+                .filter((classroom) => String(classroom.number).includes(query))
                 // Limit suggestions to 5
                 .slice(0, 5)
                 // Render the filterred list
-                .map((classItem) => (
-                  <ClassSearchResult key={classItem.id} classItem={classItem} />
+                .map((classroom) => (
+                  <ClassSearchResult key={classroom.id} classroom={classroom} />
                 ))}
             </List>
           </Search>
@@ -79,19 +81,19 @@ const LookupClassesPage: CustomPage<{
           range(
             // Get the number of grades from getting the first digit of the
             // last class
-            Math.floor((classes.slice(-1)[0]?.number || 0) / 100),
-            1
+            Math.floor((classrooms.slice(-1)[0]?.number || 0) / 100),
+            1,
           ).map((grade) => (
             <Section key={grade}>
               <Header>{t("class", { ns: "common", number: grade })}</Header>
               <Columns columns={6} className="!items-stretch">
-                {classes
+                {classrooms
                   // Filter for only classes in this grade
                   // For example, for M.1, the filter is `100 < number < 200`
                   .filter(
                     (classItem) =>
                       classItem.number > grade * 100 &&
-                      classItem.number < (grade + 1) * 100
+                      classItem.number < (grade + 1) * 100,
                   )
                   // Render the Cards
                   .map((classItem) => (

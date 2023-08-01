@@ -17,20 +17,20 @@ import getClassroomOverview from "@/utils/backend/classroom/getClassroomOverview
 import { createTitleStr } from "@/utils/helpers/title";
 
 // Types
-import { Classroom } from "@/utils/types/classroom";
-import { CustomPage, LangCode } from "@/utils/types/common";
-import { UserRole, Student } from "@/utils/types/person";
-import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import getStudentsOfClass from "@/utils/backend/classroom/getStudentsOfClass";
 import { getStudentsByIDs } from "@/utils/backend/person/getStudentsByIDs";
+import { Classroom } from "@/utils/types/classroom";
+import { CustomPage, LangCode } from "@/utils/types/common";
+import { Student, UserRole } from "@/utils/types/person";
 
 const StudentsListPrintPage: CustomPage<{
   classItem: Pick<Classroom, "id" | "number">;
   classroomOverview: Pick<
-  Classroom,
-  "id" | "number" | "class_advisors" | "contacts" | "subjects"
->;
+    Classroom,
+    "id" | "number" | "class_advisors" | "contacts" | "subjects"
+  >;
   studentList: Student[];
   userRole: UserRole;
 }> = ({ classItem, classroomOverview, studentList, userRole }) => {
@@ -58,7 +58,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
-  const { data: user, error } = await getLoggedInPerson(
+  const { data: user } = await getLoggedInPerson(
     supabase,
     authOptions,
     req,
@@ -94,10 +94,8 @@ export const getServerSideProps: GetServerSideProps = async ({
   const { data: studentList } = await getStudentsByIDs(
     supabase,
     compactStudentList!.map((student) => student.id),
-    { detailed: true}
+    { detailed: true },
   );
-
-  // console.log({ classroomOverview })
 
   return {
     props: {
@@ -108,7 +106,10 @@ export const getServerSideProps: GetServerSideProps = async ({
       ])),
       classItem: classroom!,
       classroomOverview,
-      studentList: studentList!.sort((a, b) => a.class_no - b.class_no),
+      studentList: studentList!.sort(
+        // Put Students with no class No. first
+        (a, b) => (a.class_no || 0) - (b.class_no || 0),
+      ),
       userRole,
     },
   };

@@ -20,10 +20,6 @@ import {
   useAnimationConfig,
 } from "@suankularb-components/react";
 
-// Internal components
-import NewsChipSet from "@/components/news/NewsChipSet";
-import NewsIcon from "@/components/news/NewsIcon";
-
 // Types
 import { LangCode } from "@/utils/types/common";
 import { Info } from "@/utils/types/news";
@@ -31,34 +27,10 @@ import { Info } from "@/utils/types/news";
 // Helpers
 import { getLocaleString } from "@/utils/helpers/string";
 
-const NewsStatus: FC<{ newsItem: Info }> = ({ newsItem }) => {
-  return (
-    <div
-      // className={`${
-      //   newsItem.done
-      //     ? "bg-primary-container text-on-primary-container"
-      //     : (newsItem.type == "form" || newsItem.type == "payment") &&
-      //       newsItem.dueDate &&
-      //       isPast(new Date(newsItem.dueDate))
-      //     ? "bg-error text-on-error"
-      //     : "bg-tertiary-container text-on-tertiary-container"
-      // } grid aspect-square w-10 place-content-center rounded-md`}
-      className={`grid aspect-square w-10 place-content-center rounded-md bg-tertiary-container text-on-tertiary-container`}
-    >
-      {/* {newsItem.done ? (
-        <MaterialIcon icon="done" />
-      ) : (
-        <MaterialIcon icon="close" />
-      )} */}
-    </div>
-  );
-};
-
 const NewsListItem: FC<{
   newsItem: Info;
   editable?: boolean;
-  showChips?: boolean;
-}> = ({ newsItem, editable, showChips }) => {
+}> = ({ newsItem, editable }) => {
   const { t } = useTranslation("news");
   const locale = useRouter().locale as LangCode;
 
@@ -108,11 +80,6 @@ const NewsListItem: FC<{
               {getLocaleString(newsItem.description, locale)}
             </p>
 
-            {/* Chip list */}
-            {/* {showChips && newsItem.type != "info" && (
-              <NewsChipSet newsItem={newsItem} />
-            )} */}
-
             {/* Author and date */}
             <div className="flex flex-row divide-x divide-outline">
               <time className="text-outline">
@@ -123,26 +90,6 @@ const NewsListItem: FC<{
                 })}
               </time>
             </div>
-          </div>
-
-          {/* Icons */}
-          <div
-            className="flex w-full flex-row items-center justify-between
-              gap-8 md:w-fit md:justify-start"
-          >
-            {/* Type */}
-            <div className="flex flex-row-reverse gap-2 md:flex-row">
-              <span className="skc-title-medium">{t(`itemType.info`)}</span>
-              <NewsIcon type={"info"} className="text-secondary" />
-            </div>
-
-            {/* Status */}
-            {/* {!["info", "stats"].includes(newsItem.type) && (
-              <NewsStatus newsItem={newsItem} />
-            )} */}
-            {!["info", "stats"].includes("info") && (
-              <NewsStatus newsItem={newsItem} />
-            )}
           </div>
         </div>
       </Columns>

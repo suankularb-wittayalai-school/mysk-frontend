@@ -1,7 +1,7 @@
 // External libraries
 import va from "@vercel/analytics";
-import Link from "next/link";
 import { useTranslation } from "next-i18next";
+import Link from "next/link";
 import { FC } from "react";
 
 // SK Components
@@ -14,44 +14,44 @@ import { getLocaleName } from "@/utils/helpers/string";
 import { useLocale } from "@/utils/hooks/i18n";
 
 // Types
-import { ClassLookupListItem } from "@/utils/types/class";
+import { Classroom } from "@/utils/types/classroom";
 
 /**
  * When searching for classes in Lookup Classes, the user is presented with a
  * list of suggestions. This is one of the List Items.
  *
- * @param classItem An instance of `ClassLookupListItem`, an item from the array fetched from the `getLookupClasses` backend function.
+ * @param classroom An item from the array fetched from the `getLookupClassrooms` backend function.
  *
  * @returns A List Item.
  */
-const ClassSearchResult: FC<{ classItem: ClassLookupListItem }> = ({
-  classItem,
-}) => {
+const ClassSearchResult: FC<{
+  classroom: Pick<Classroom, "number" | "class_advisors">;
+}> = ({ classroom }) => {
   const locale = useLocale();
   const { t } = useTranslation("common");
 
   return (
     <ListItem
       align="center"
-      lines={classItem.classAdvisors.length ? 2 : 1}
+      lines={classroom.class_advisors.length ? 2 : 1}
       stateLayerEffect
-      href={`/lookup/class/${classItem.number}`}
+      href={`/lookup/class/${classroom.number}`}
       onClick={() =>
-        va.track("Search Class", { number: `M.${classItem.number}` })
+        va.track("Search Class", { number: `M.${classroom.number}` })
       }
       element={Link}
     >
       <ListItemContent
         // Formatted class number
-        title={t("class", { number: classItem.number })}
+        title={t("class", { number: classroom.number })}
         // A list of all class advisors
-        desc={classItem.classAdvisors
-          .map(({ name }) =>
-            getLocaleName(locale, name, undefined, {
+        desc={classroom.class_advisors
+          .map((teacher) =>
+            getLocaleName(locale, teacher, {
               prefix: "teacher",
               middleName: false,
               lastName: "abbr",
-            })
+            }),
           )
           .join(", ")}
       />

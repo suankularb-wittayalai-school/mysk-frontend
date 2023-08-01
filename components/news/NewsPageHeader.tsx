@@ -1,9 +1,15 @@
-// External libraries
-import va from "@vercel/analytics";
-import { useTranslation } from "next-i18next";
-import { FC, useContext } from "react";
-
-// SK Components
+// Imports
+import MultiSchemeImage from "@/components/common/MultiSchemeImage";
+import PageHeader from "@/components/common/MySKPageHeader";
+import SnackbarContext from "@/contexts/SnackbarContext";
+import NewsPlaceholderDark from "@/public/images/graphics/news-placeholder-dark.webp";
+import NewsPlaceholderLight from "@/public/images/graphics/news-placeholder-light.webp";
+import { getLocaleString } from "@/utils/helpers/string";
+import { createTitleStr } from "@/utils/helpers/title";
+import { useLocale } from "@/utils/hooks/i18n";
+import { MultiLangString } from "@/utils/types/common";
+import { StylableFC } from "@/utils/types/component";
+import { Info } from "@/utils/types/news";
 import {
   Actions,
   Button,
@@ -11,43 +17,20 @@ import {
   MaterialIcon,
   Snackbar,
 } from "@suankularb-components/react";
-
-// Internal components
-import MultiSchemeImage from "@/components/common/MultiSchemeImage";
-import PageHeader from "@/components/common/MySKPageHeader";
-import NewsChipSet from "@/components/news/NewsChipSet";
-
-// Contexts
-import SnackbarContext from "@/contexts/SnackbarContext";
-
-// Images
-import NewsPlaceholderDark from "@/public/images/graphics/news-placeholder-dark.webp";
-import NewsPlaceholderLight from "@/public/images/graphics/news-placeholder-light.webp";
-
-// Types
-import { MultiLangString } from "@/utils/types/common";
-import { Info } from "@/utils/types/news";
-
-// Helpers
-import { getLocaleString } from "@/utils/helpers/string";
-import { createTitleStr } from "@/utils/helpers/title";
-
-// Hooks
-import { useLocale } from "@/utils/hooks/i18n";
+import va from "@vercel/analytics";
+import { useTranslation } from "next-i18next";
+import { FC, useContext } from "react";
 
 /**
  * Actions for a News Article.
  *
- * @param type The type of the News Article.
  * @param title A multilingual string representing the title of the News Article.
  *
  * @returns An Actions.
  */
-const PageActions: FC<{
-  // type: NewsItemType;
+const PageActions: StylableFC<{
   title: MultiLangString;
-  className?: string;
-}> = ({ title, className }) => {
+}> = ({ title, style, className }) => {
   // Translation
   const locale = useLocale();
   const { t } = useTranslation(["news", "common"]);
@@ -56,12 +39,7 @@ const PageActions: FC<{
   const { setSnackbar } = useContext(SnackbarContext);
 
   return (
-    <Actions align="left" className={className}>
-      {/* {type === "form" && (
-        <Button appearance="filled" href="#form">
-          {t("action.form.do")}
-        </Button>
-      )} */}
+    <Actions align="left" style={style} className={className}>
       <Button
         appearance="outlined"
         icon={<MaterialIcon icon="link" />}
@@ -98,10 +76,7 @@ const PageActions: FC<{
  *
  * @returns A Page Header.
  */
-const NewsPageHeader: FC<{
-  newsItem: Info;
-}> = ({ newsItem }) => {
-  // Translation
+const NewsPageHeader: FC<{ newsItem: Info }> = ({ newsItem }) => {
   const locale = useLocale();
 
   return (
@@ -133,10 +108,6 @@ const NewsPageHeader: FC<{
             {getLocaleString(newsItem.description, locale)}
           </p>
 
-          {/* {newsItem.type !== "info" && (
-            <NewsChipSet newsItem={{ ...newsItem, done: false }} />
-          )} */}
-
           {/* Author and date */}
           <div className="skc-title-medium flex flex-row divide-x divide-outline">
             <time className="text-outline">
@@ -149,7 +120,6 @@ const NewsPageHeader: FC<{
           </div>
 
           <PageActions
-            // type={newsItem.type}
             title={newsItem.title}
             className="mt-3 !hidden md:!flex"
           />
@@ -157,11 +127,7 @@ const NewsPageHeader: FC<{
       </Columns>
 
       {/* Actions */}
-      <PageActions
-        // type={newsItem.type}
-        title={newsItem.title}
-        className="mt-3 md:!hidden"
-      />
+      <PageActions title={newsItem.title} className="mt-3 md:!hidden" />
     </PageHeader>
   );
 };

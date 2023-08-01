@@ -1,13 +1,18 @@
-// External libraries
-import { GetStaticPaths, GetStaticProps } from "next";
-import Head from "next/head";
-
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
-import { FC, useState } from "react";
-
-// SK Components
+// Imports
+import MySKPageHeader from "@/components/common/MySKPageHeader";
+import ClassTabs from "@/components/lookup/class/ClassTabs";
+import Schedule from "@/components/schedule/Schedule";
+import SubjectList from "@/components/subject/SubjectList";
+import getClassSchedule from "@/utils/backend/schedule/getClassSchedule";
+import getClassroomSubjectsOfClass from "@/utils/backend/subject/getClassroomSubjectsOfClass";
+import { getCurrentAcademicYear } from "@/utils/helpers/date";
+import { createTitleStr } from "@/utils/helpers/title";
+import { useLocale } from "@/utils/hooks/i18n";
+import { supabase } from "@/utils/supabase-backend";
+import { Classroom } from "@/utils/types/classroom";
+import { CustomPage, LangCode } from "@/utils/types/common";
+import { Schedule as ScheduleType } from "@/utils/types/schedule";
+import { ClassroomSubject } from "@/utils/types/subject";
 import {
   Columns,
   ContentLayout,
@@ -15,38 +20,15 @@ import {
   Search,
   Section,
 } from "@suankularb-components/react";
+import { GetStaticPaths, GetStaticProps } from "next";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Head from "next/head";
+import { FC, useState } from "react";
 
-// Internal components
-import MySKPageHeader from "@/components/common/MySKPageHeader";
-import ClassTabs from "@/components/lookup/class/ClassTabs";
-import Schedule from "@/components/schedule/Schedule";
-import SubjectList from "@/components/subject/SubjectList";
-
-// Backend
-
-// Supabase
-import { supabase } from "@/utils/supabase-backend";
-
-// Types
-import { CustomPage, LangCode } from "@/utils/types/common";
-import { Schedule as ScheduleType } from "@/utils/types/schedule";
-import { ClassroomSubject } from "@/utils/types/subject";
-
-// Helpers
-import { createTitleStr } from "@/utils/helpers/title";
-
-// Hooks
-import { useLocale } from "@/utils/hooks/i18n";
-
-// Types
-import { Classroom } from "@/utils/types/classroom";
-import getClassSchedule from "@/utils/backend/schedule/getClassSchedule";
-import getClassroomSubjectsOfClass from "@/utils/backend/subject/getClassroomSubjectsOfClass";
-import { getCurrentAcademicYear } from "@/utils/helpers/date";
-
-const SubjectListSection: FC<{ subjectList: ClassroomSubject[] }> = ({
-  subjectList,
-}) => {
+const SubjectListSection: FC<{
+  subjectList: ClassroomSubject[];
+}> = ({ subjectList }) => {
   const { t } = useTranslation("schedule");
   const locale = useLocale();
 
@@ -69,27 +51,31 @@ const SubjectListSection: FC<{ subjectList: ClassroomSubject[] }> = ({
 };
 
 const LookupClassSchedulePage: CustomPage<{
-  classItem: Pick<Classroom, "id" | "number">;
+  classroom: Pick<Classroom, "id" | "number">;
   schedule: ScheduleType;
   subjectList: ClassroomSubject[];
-}> = ({ classItem, schedule, subjectList }) => {
+}> = ({ classroom, schedule, subjectList }) => {
   // Translation
-  const { t } = useTranslation(["class", "common"]);
+  const { t } = useTranslation("class");
+  const { t: tx } = useTranslation("common");
 
-  const parentURL = `/lookup/class/${classItem.number}`;
+  const parentURL = `/lookup/class/${classroom.number}`;
 
   return (
     <>
       <Head>
         <title>
-          {createTitleStr(t("schedule.title", { number: classItem.number }), t)}
+          {createTitleStr(
+            t("schedule.title", { number: classroom.number }),
+            tx,
+          )}
         </title>
       </Head>
       <MySKPageHeader
-        title={t("schedule.title", { number: classItem.number })}
+        title={t("schedule.title", { number: classroom.number })}
         parentURL={parentURL}
       >
-        <ClassTabs number={classItem.number} type="lookup" />
+        <ClassTabs number={classroom.number} type="lookup" />
       </MySKPageHeader>
       <ContentLayout>
         <Schedule schedule={schedule} role="student" />
@@ -103,22 +89,24 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   const classNumber = Number(params?.classNumber);
   if (Number.isNaN(classNumber)) return { notFound: true };
 
-  const {data, error} = await supabase.from("classrooms").select("id").eq("number", classNumber).eq("year", getCurrentAcademicYear()).single();
+  const { data, error } = await supabase
+    .from("classrooms")
+    .select("id")
+    .eq("number", classNumber)
+    .eq("year", getCurrentAcademicYear())
+    .single();
 
   if (error) return { notFound: true };
 
   const classID = data?.id;
   if (!classID) return { notFound: true };
 
-  const classItem = { id: classID, number: classNumber };
+  const classroom = { id: classID, number: classNumber };
 
-  const { data: schedule } = await getClassSchedule(
-    supabase,
-    classID
-  );
+  const { data: schedule } = await getClassSchedule(supabase, classID);
   const { data: subjectList } = await getClassroomSubjectsOfClass(
     supabase,
-    classID
+    classID,
   );
 
   return {
@@ -128,7 +116,7 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
         "class",
         "schedule",
       ])),
-      classItem,
+      classroom,
       schedule,
       subjectList,
     },
@@ -137,8 +125,11 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const { data: classNumbers, error } = await supabase.from("classrooms").select("number").eq("year", getCurrentAcademicYear());
-  
+  const { data: classNumbers, error } = await supabase
+    .from("classrooms")
+    .select("number")
+    .eq("year", getCurrentAcademicYear());
+
   if (error) return { paths: [], fallback: "blocking" };
 
   return {

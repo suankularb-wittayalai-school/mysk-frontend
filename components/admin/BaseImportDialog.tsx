@@ -1,9 +1,8 @@
-// External libraries
-import { parse } from "csv-parse";
-import { useTranslation } from "next-i18next";
-import { useContext } from "react";
-
-// SK Components
+// Imports
+import SnackbarContext from "@/contexts/SnackbarContext";
+import { useForm } from "@/utils/hooks/form";
+import { useLocale } from "@/utils/hooks/i18n";
+import { DialogFC } from "@/utils/types/component";
 import {
   Actions,
   Button,
@@ -21,16 +20,9 @@ import {
   TableRow,
   TextField,
 } from "@suankularb-components/react";
-
-// Contexts
-import SnackbarContext from "@/contexts/SnackbarContext";
-
-// Hooks
-import { useForm } from "@/utils/hooks/form";
-import { useLocale } from "@/utils/hooks/i18n";
-
-// Types
-import { SubmittableDialogComponent } from "@/utils/types/common";
+import { parse } from "csv-parse";
+import { useTranslation } from "next-i18next";
+import { useContext } from "react";
 
 /**
  * The base component for a Data Import Dialog, a processed reserved for
@@ -45,15 +37,16 @@ import { SubmittableDialogComponent } from "@/utils/types/common";
  *
  * @returns A Full-screen Dialog.
  */
-const BaseImportDialog: SubmittableDialogComponent<
-  (csvData: any) => any,
-  {
-    title: string;
-    columns: { name: string; type: string; optional?: boolean }[];
-  }
-> = ({ open, onClose, onSubmit, title, columns }) => {
+const BaseImportDialog: DialogFC<{
+  title: string;
+  columns: { name: string; type: string; optional?: boolean }[];
+  onSubmit: (csvData: any) => any;
+}> = ({ open, onClose, onSubmit, title, columns }) => {
   const locale = useLocale();
-  const { t } = useTranslation(["admin", "common"]);
+  const { t } = useTranslation("admin", {
+    keyPrefix: "data.import.dialog.import",
+  });
+  const { t: tx } = useTranslation(["common", "admin"]);
 
   const { setSnackbar } = useContext(SnackbarContext);
 
@@ -65,7 +58,7 @@ const BaseImportDialog: SubmittableDialogComponent<
         validate: (value: File) => /.csv$/.test(value.name),
       },
       { key: "hasHeader", defaultValue: true },
-    ]
+    ],
   );
 
   /**
@@ -74,9 +67,7 @@ const BaseImportDialog: SubmittableDialogComponent<
   async function handleSubmit() {
     // Validate the form
     if (!formOK) {
-      setSnackbar(
-        <Snackbar>{t("snackbar.formInvalid", { ns: "common" })}</Snackbar>
-      );
+      setSnackbar(<Snackbar>{tx("snackbar.formInvalid")}</Snackbar>);
       return;
     }
 
@@ -88,7 +79,7 @@ const BaseImportDialog: SubmittableDialogComponent<
           event.target?.result ? resolve(event.target.result) : reject();
         reader.onerror = (event) => reject(event);
         reader.readAsText(form.csvFile);
-      }
+      },
     );
 
     if (!fileContent) return;
@@ -114,12 +105,12 @@ const BaseImportDialog: SubmittableDialogComponent<
             <Snackbar
               action={
                 <Button appearance="text" onClick={handleSubmit}>
-                  {t("snackbar.common.action.retry", { ns: "common" })}
+                  {tx("snackbar.common.action.retry")}
                 </Button>
               }
             >
-              {t("snackbar.failure", { ns: "common" })}
-            </Snackbar>
+              {tx("snackbar.failure")}
+            </Snackbar>,
           );
           return;
         }
@@ -127,7 +118,7 @@ const BaseImportDialog: SubmittableDialogComponent<
         // Pass the parsed data onto `onSubmit`
         onSubmit(result);
         return;
-      }
+      },
     );
   }
 
@@ -137,7 +128,7 @@ const BaseImportDialog: SubmittableDialogComponent<
   async function handleDownload() {
     const csvFile = new Blob(
       [columns.map((column) => column.name).join() + "\n"],
-      { type: "text/csv" }
+      { type: "text/csv" },
     );
     window.location.href = URL.createObjectURL(csvFile);
     setSnackbar(<Snackbar>The CSV file will be downloaded soon</Snackbar>);
@@ -149,7 +140,7 @@ const BaseImportDialog: SubmittableDialogComponent<
       title={title}
       action={
         <Button appearance="text" onClick={handleSubmit}>
-          {t("data.import.dialog.import.action.import")}
+          {t("action.import")}
         </Button>
       }
       width={600}
@@ -157,18 +148,18 @@ const BaseImportDialog: SubmittableDialogComponent<
       className="[&_.skc-fullscreen-dialog\_\_content]:!gap-6"
     >
       <Section>
-        <p className="skc-body-medium">{t("data.import.dialog.import.desc")}</p>
+        <p className="skc-body-medium">{t("desc")}</p>
         <Table contentWidth={600} className="sm:h-96 sm:resize-y">
           <TableHead fixed>
             <TableRow>
               <TableCell header className="w-4/12">
-                {t("data.import.dialog.import.table.header")}
+                {t("table.header")}
               </TableCell>
               <TableCell header className="w-6/12">
-                {t("data.import.dialog.import.table.contentType")}
+                {t("table.contentType")}
               </TableCell>
               <TableCell header className="w-2/12">
-                {t("data.import.dialog.import.table.required")}
+                {t("table.required")}
               </TableCell>
             </TableRow>
           </TableHead>
@@ -210,7 +201,7 @@ const BaseImportDialog: SubmittableDialogComponent<
             icon={<MaterialIcon icon="download" />}
             onClick={handleDownload}
           >
-            {t("data.import.dialog.import.action.downloadStarter")}
+            {t("action.downloadStarter")}
           </Button>
         </Actions>
       </Section>
@@ -219,7 +210,7 @@ const BaseImportDialog: SubmittableDialogComponent<
         <Columns columns={2} className="!items-stretch">
           <TextField<File>
             appearance="filled"
-            label={t("data.import.dialog.import.form.csvFile")}
+            label={t("form.csvFile")}
             trailing={<MaterialIcon icon="attach_file" />}
             locale={locale}
             inputAttr={{ type: "file", accept: ".csv" }}
@@ -231,7 +222,7 @@ const BaseImportDialog: SubmittableDialogComponent<
             className="items-center gap-2 px-4 py-3"
           >
             <label htmlFor="switch-has-header" className="skc-title-small grow">
-              {t("data.import.dialog.import.form.hasHeader")}
+              {tx("form.hasHeader", { ns: "admin" })}
             </label>
             <Switch
               value={form.hasHeader}
