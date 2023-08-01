@@ -13,9 +13,8 @@ const RoomsField: FC<{
   const [field, setField] = useState("");
 
   useEffect(() => {
-    if (field.length === 4) {
+    if (roomRegex.test(field)) {
       if (rooms.includes(field)) return;
-      if (!roomRegex.test(field)) return;
       onChange([...rooms, field]);
       setField("");
     } else if (/^\/\d$/.test(field)) {
