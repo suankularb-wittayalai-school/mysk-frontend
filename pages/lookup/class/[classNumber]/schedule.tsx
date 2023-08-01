@@ -78,7 +78,7 @@ const LookupClassSchedulePage: CustomPage<{
         <ClassTabs number={classroom.number} type="lookup" />
       </MySKPageHeader>
       <ContentLayout>
-        <Schedule schedule={schedule} role="student" />
+        <Schedule schedule={schedule} view="student" />
         <SubjectListSection subjectList={subjectList} />
       </ContentLayout>
     </>

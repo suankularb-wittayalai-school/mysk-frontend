@@ -34,7 +34,6 @@ import {
   useDragControls,
 } from "framer-motion";
 import { useTranslation } from "next-i18next";
-import { useRouter } from "next/router";
 import { pick } from "radash";
 import {
   FC,
@@ -51,7 +50,6 @@ const SubjectPeriod: FC<{
   day: Day;
   isInSession?: boolean;
 }> = ({ period, day, isInSession }) => {
-  const router = useRouter();
   const refreshProps = useRefreshProps();
   const locale = useLocale();
   const { t } = useTranslation(["schedule", "common"]);
@@ -62,7 +60,7 @@ const SubjectPeriod: FC<{
 
   const supabase = useSupabaseClient();
 
-  const { role, periodWidth, periodHeight, constraintsRef } =
+  const { view, editable, periodWidth, periodHeight, constraintsRef } =
     useContext(ScheduleContext);
 
   const [detailsOpen, setDetailsOpen] = useState<boolean>(false);
@@ -79,6 +77,8 @@ const SubjectPeriod: FC<{
       tabOutCloseTimeout = setTimeout(() => setMenuOpen(false), 600);
   }
   useEffect(() => {
+    if (!editable) return;
+
     const period = periodRef?.current;
     if (!period) return;
 
@@ -261,26 +261,26 @@ const SubjectPeriod: FC<{
         layoutId={`period-${period.id}`}
         animate={animationControls}
         transition={transition(duration.medium2, easing.standard)}
-        drag={role === "teacher"}
+        drag={editable}
         dragListener={false}
         dragControls={dragControls}
         whileDrag={{ boxShadow: "var(--shadow-3)", zIndex: 35 }}
         dragConstraints={constraintsRef}
         dragMomentum={false}
         onDragEnd={handleDragEnd}
-        onMouseEnter={() => setMenuOpen(true)}
-        onMouseLeave={() => !detailsOpen && setMenuOpen(false)}
+        onMouseEnter={() => editable && setMenuOpen(true)}
+        onMouseLeave={() => editable && !detailsOpen && setMenuOpen(false)}
         className={cn([
           `relative rounded-sm transition-shadow focus-within:shadow-2`,
-          role === "teacher" && "touch-none",
+          editable && "touch-none",
           !loading &&
             (isInSession ? `shadow-1 hover:shadow-2` : `hover:shadow-1`),
         ])}
       >
         {/* Period content */}
         <Interactive
-          stateLayerEffect={role !== "teacher"}
-          rippleEffect={role !== "teacher"}
+          stateLayerEffect={editable}
+          rippleEffect={editable}
           className={cn([
             `tap-highlight-none flex h-14 w-24 flex-col rounded-sm
              bg-secondary-container text-left text-on-secondary-container
@@ -292,14 +292,14 @@ const SubjectPeriod: FC<{
                  text-on-tertiary-container`
               : `bg-secondary-container text-on-secondary-container`,
             (loading || extending) && `bg-surface text-secondary`,
-            role === "teacher"
+            editable
               ? `cursor-default overflow-visible border-4
                  border-secondary-container px-3 py-1`
               : `px-4 py-2`,
           ])}
           style={{ width: periodDurationToWidth(period.duration) }}
           onClick={
-            role === "student"
+            !editable
               ? () => {
                   va.track("Open Period Details");
                   setDetailsOpen(true);
@@ -308,7 +308,7 @@ const SubjectPeriod: FC<{
           }
         >
           {/* Subject name / class */}
-          {role === "teacher" ? (
+          {view === "teacher" ? (
             <motion.span
               layoutId={`period-${period.id}-class`}
               transition={transition(
@@ -326,7 +326,7 @@ const SubjectPeriod: FC<{
             <span
               className="skc-title-medium"
               title={
-                role === "student"
+                view === "student"
                   ? getLocaleString(period.subject.name, locale)
                   : undefined
               }
@@ -336,9 +336,9 @@ const SubjectPeriod: FC<{
           )}
 
           {/* Teacher / subject name */}
-          {(role === "student" || !menuOpen || extending || loading) && (
+          {(view === "student" || !menuOpen || extending || loading) && (
             <span className="skc-body-small">
-              {role === "teacher" ? (
+              {view === "teacher" ? (
                 getSubjectName(period.duration, period.subject, locale)
               ) : (
                 <HoverList people={period.teachers} />
@@ -349,7 +349,7 @@ const SubjectPeriod: FC<{
 
         {/* Hover menu */}
         <SubjectPeriodMenu
-          open={role === "teacher" && (extending || (!loading && menuOpen))}
+          open={view === "teacher" && (extending || (!loading && menuOpen))}
           {...{ period, dragControls, extending, setExtending, setDetailsOpen }}
         />
 
@@ -416,7 +416,6 @@ const SubjectPeriod: FC<{
       {/* Dialog */}
       <PeriodDetails
         period={period}
-        role={role}
         open={detailsOpen}
         onClose={() => setDetailsOpen(false)}
         onDelete={handleDelete}

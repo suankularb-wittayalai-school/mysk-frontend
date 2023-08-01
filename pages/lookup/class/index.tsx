@@ -31,7 +31,8 @@ const LookupClassesPage: CustomPage<{
 }> = ({ classrooms }) => {
   // Translation
   const locale = useLocale();
-  const { t } = useTranslation(["lookup", "common"]);
+  const { t } = useTranslation("lookup");
+  const { t: tx } = useTranslation("common");
 
   // Form control
   const [query, setQuery] = useState<string>("");
@@ -39,7 +40,7 @@ const LookupClassesPage: CustomPage<{
   return (
     <>
       <Head>
-        <title>{createTitleStr(t("classes.title"), t)}</title>
+        <title>{createTitleStr(t("classes.title"), tx)}</title>
       </Head>
       <MySKPageHeader
         title={t("classes.title")}
@@ -58,7 +59,7 @@ const LookupClassesPage: CustomPage<{
           >
             <List>
               {classrooms
-                // Since the entire database of classes is now stored on the
+                // Since the entire database of classrooms is now stored on the
                 // user’s device, we can just use filter and not incur any
                 // database calls
                 .filter((classroom) => String(classroom.number).includes(query))
@@ -88,7 +89,7 @@ const LookupClassesPage: CustomPage<{
               <Header>{t("class", { ns: "common", number: grade })}</Header>
               <Columns columns={6} className="!items-stretch">
                 {classrooms
-                  // Filter for only classes in this grade
+                  // Filter for only classrooms in this grade
                   // For example, for M.1, the filter is `100 < number < 200`
                   .filter(
                     (classItem) =>
@@ -109,13 +110,7 @@ const LookupClassesPage: CustomPage<{
 };
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
-  const { data: classes } = await getLookupClassrooms(supabase);
-
-  if (!classes) {
-    return {
-      notFound: true,
-    };
-  }
+  const { data: classrooms } = await getLookupClassrooms(supabase);
 
   return {
     props: {
@@ -123,7 +118,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         "common",
         "lookup",
       ])),
-      classes: classes.sort((a, b) => a.number - b.number),
+      classrooms: classrooms!.sort((a, b) => a.number - b.number),
     },
     revalidate: 300,
   };

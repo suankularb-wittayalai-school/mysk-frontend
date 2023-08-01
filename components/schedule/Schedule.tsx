@@ -25,10 +25,9 @@ import {
 } from "@/utils/helpers/schedule";
 
 // Types
-import { UserRole } from "@/utils/types/person";
+import { useNow } from "@/utils/helpers/date";
 import { PeriodLocation, Schedule } from "@/utils/types/schedule";
 import { Subject } from "@/utils/types/subject";
-import { useNow } from "@/utils/helpers/date";
 
 /**
  * An interactive Schedule.
@@ -36,7 +35,7 @@ import { useNow } from "@/utils/helpers/date";
  * @param schedule Data for displaying Schedule.
  * @param subjectsInCharge The Subjects assigned to this teacher. Used in editing the Schedule.
  * @param teacherID The Teacher’s database ID. Used in validating edits in the Schedule.
- * @param role The user’s role. Used in determining the Schedule view.
+ * @param role The Schedule view, from the perspective of a student or a teacher.
  *
  * @returns A JSX Element.
  */
@@ -44,8 +43,9 @@ const Schedule: FC<{
   schedule: Schedule;
   subjectsInCharge?: Pick<Subject, "id" | "name" | "code" | "short_name">[];
   teacherID?: string;
-  role: UserRole;
-}> = ({ schedule, subjectsInCharge, teacherID, role }) => {
+  view: "student" | "teacher";
+  editable?: boolean;
+}> = ({ schedule, subjectsInCharge, teacherID, view, editable }) => {
   // Translation
   const { t } = useTranslation("schedule");
 
@@ -82,7 +82,8 @@ const Schedule: FC<{
   return (
     <ScheduleContext.Provider
       value={{
-        role,
+        view: view,
+        editable,
         teacherID,
         periodWidth: 104, // 96 + 8
         periodHeight: 60, // 56 + 4
@@ -95,7 +96,7 @@ const Schedule: FC<{
         className="relative !mx-0 -my-2 flex flex-col-reverse gap-3
           sm:flex-col"
       >
-        {role === "teacher" && (
+        {editable && (
           <>
             {/* Subjects in Charge Card: for Subjects to be added to
                 Schedule */}

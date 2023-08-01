@@ -16,7 +16,7 @@
       "loading": "กำลังโหลด…",
       "action": {
         "seeClass": "ดูห้องเรียน",
-        "seeSchedule": "ดูตารางเรียน/สอน",
+        "seeSchedule": "ดูตาราง",
         "share": "แชร์",
         "edit": "แก้ไข",
         "delete": "ลบ"
@@ -50,6 +50,9 @@
       "subjects": {
         "title": "วิชาที่สอน"
       }
+    },
+    "schedule": {
+      "title": "ตารางสอนของ{{name}}"
     },
     "dialog": {
       "share": {

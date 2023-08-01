@@ -3,7 +3,9 @@ import MySKPageHeader from "@/components/common/MySKPageHeader";
 import Schedule from "@/components/schedule/Schedule";
 import { getTeacherByID } from "@/utils/backend/person/getTeacherByID";
 import getTeacherSchedule from "@/utils/backend/schedule/getTeacherSchedule";
+import { getLocaleName } from "@/utils/helpers/string";
 import { createTitleStr } from "@/utils/helpers/title";
+import { useLocale } from "@/utils/hooks/i18n";
 import { supabase } from "@/utils/supabase-backend";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Teacher } from "@/utils/types/person";
@@ -16,11 +18,11 @@ import Head from "next/head";
 import { pick } from "radash";
 
 const LookupTeacherSchedulePage: CustomPage<{
-  teacher: Pick<Teacher, "id" | "first_name" | "middle_name" | "last_name">;
+  teacher: Pick<Teacher, "id" | "first_name">;
   schedule: ScheduleType;
 }> = ({ teacher, schedule }) => {
-  // Translation
-  const { t } = useTranslation("lookup");
+  const locale = useLocale();
+  const { t } = useTranslation("lookup", { keyPrefix: "people.schedule" });
   const { t: tx } = useTranslation("common");
 
   return (
@@ -28,18 +30,27 @@ const LookupTeacherSchedulePage: CustomPage<{
       <Head>
         <title>
           {createTitleStr(
-            // t("schedule.title", { number: classItem.number }),
-            "TODO",
+            t("title", {
+              name: getLocaleName(locale, teacher, {
+                prefix: "teacher",
+                lastName: false,
+              }),
+            }),
             tx,
           )}
         </title>
       </Head>
       <MySKPageHeader
-        title="TODO"
+        title={t("title", {
+          name: getLocaleName(locale, teacher, {
+            prefix: "teacher",
+            lastName: false,
+          }),
+        })}
         parentURL={`/lookup/person?id=${teacher.id}&role=teacher`}
       />
       <ContentLayout>
-        <Schedule schedule={schedule} role="teacher" />
+        <Schedule schedule={schedule} view="teacher" />
       </ContentLayout>
     </>
   );
@@ -60,7 +71,7 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
         "lookup",
         "schedule",
       ])),
-      teacher: pick(teacher, ["id", "first_name", "last_name", "middle_name"]),
+      teacher: pick(teacher, ["id", "first_name"]),
       schedule,
     },
     revalidate: 300,

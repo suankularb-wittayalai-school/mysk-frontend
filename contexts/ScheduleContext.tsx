@@ -1,15 +1,13 @@
-// External libraries
+// Imports
 import { RefObject, createContext } from "react";
-
-// Types
-import { UserRole } from "@/utils/types/person";
 import { PeriodLocation } from "@/utils/types/schedule";
 
 /**
- * A Context that provides the value and the setter for showing Snackbars.
+ * A Context that provides information about a Schedule.
  */
 const ScheduleContext = createContext<{
-  role: UserRole;
+  view: "student" | "teacher";
+  editable?: boolean;
   teacherID?: string;
   periodWidth: number;
   periodHeight: number;
@@ -17,7 +15,7 @@ const ScheduleContext = createContext<{
   setAdditionSite?: (value?: PeriodLocation) => void;
   constraintsRef?: RefObject<Element>;
 }>({
-  role: "student",
+  view: "student",
   periodWidth: 0,
   periodHeight: 0,
   constraintsRef: undefined,

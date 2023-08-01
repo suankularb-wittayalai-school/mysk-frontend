@@ -68,7 +68,11 @@ const ScheduleSection: FC<{
       transition={transition(duration.medium4, easing.standard)}
     >
       <Header>{t("schedule.title")}</Header>
-      <Schedule {...{ schedule, subjectsInCharge, teacherID }} role="teacher" />
+      <Schedule
+        {...{ schedule, subjectsInCharge, teacherID }}
+        view="teacher"
+        editable
+      />
     </motion.section>
   );
 };

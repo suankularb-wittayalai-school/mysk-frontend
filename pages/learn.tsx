@@ -63,7 +63,7 @@ const ScheduleSection: FC<{ schedule: ScheduleType }> = ({ schedule }) => {
       transition={transition(duration.medium4, easing.standard)}
     >
       <Header>{t("schedule")}</Header>
-      <Schedule schedule={schedule} role="student" />
+      <Schedule schedule={schedule} view="student" />
     </motion.section>
   );
 };

@@ -71,7 +71,7 @@ const PersonActions: FC<{
                       ? `/lookup/person/teacher/${person.id}/schedule`
                       : person?.role === "student" && person.classroom
                       ? `/lookup/class/${person.classroom.number}/schedule`
-                      : undefined
+                      : `#`
                   }
                 />
               ))}
