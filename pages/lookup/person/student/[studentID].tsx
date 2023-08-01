@@ -15,7 +15,6 @@ import PersonActions from "@/components/lookup/person/PersonActions";
 import PersonDetailsContent from "@/components/lookup/person/PersonDetailsContent";
 
 // Backend
-import { getStudent } from "@/utils/backend/person/student";
 
 // Helpers
 import { getLocaleName } from "@/utils/helpers/string";
@@ -27,6 +26,7 @@ import { useLocale } from "@/utils/hooks/i18n";
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Student } from "@/utils/types/person";
+import { getStudentByID } from "@/utils/backend/person/getStudentByID";
 
 const StudentDetailsPage: CustomPage<{ student: Student }> = ({ student }) => {
   const locale = useLocale();
@@ -35,10 +35,10 @@ const StudentDetailsPage: CustomPage<{ student: Student }> = ({ student }) => {
   return (
     <>
       <Head>
-        <title>{createTitleStr(getLocaleName(locale, student.name), t)}</title>
+        <title>{createTitleStr(getLocaleName(locale, student), t)}</title>
       </Head>
       <MySKPageHeader
-        title={getLocaleName(locale, student.name)}
+        title={getLocaleName(locale, student)}
         parentURL="/lookup/person"
         className="!overflow-visible"
       >
@@ -59,14 +59,14 @@ export const getServerSideProps: GetServerSideProps = async ({
   req,
   res,
 }) => {
-  const studentID = Number(params?.studentID);
+  const studentID = params?.studentID as string;
 
   const supabase = createPagesServerClient({
     req: req as NextApiRequest,
     res: res as NextApiResponse,
   });
 
-  const { data: student, error } = await getStudent(supabase, studentID);
+  const { data: student, error } = await getStudentByID(supabase, studentID);
   if (error) return { notFound: true };
 
   return {
