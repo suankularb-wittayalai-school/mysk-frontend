@@ -35,6 +35,38 @@ export const useOneTapSignin = (
 
   const router = useRouter();
 
+  /**
+   * Signs the user in with a Google One Tap UI credential string and redirects
+   * the user afterwards.
+   * 
+   * @param credential Credential string.
+   */
+  async function logInWithGoogle(credential: string) {
+    setLoading(true);
+    await signIn("googleonetap", {
+      credential,
+      redirect: true,
+      ...options,
+    });
+    router.push("/learn");
+    setLoading(false);
+  }
+
+  // Prompts the user to enter the credential string manually on environments
+  // where the normal Google One Tap UI flow is not possible
+  useEffect(() => {
+    if (process.env.NEXT_PUBLIC_ALLOW_PASTE_GOOGLE_CREDENTIAL !== "true")
+      return;
+    if (["localhost", "mysk.school"].includes(window.location.host)) return;
+    const credential = prompt(
+      "You are in a dev environment. To log in, copy over your Google \
+credential string from your host machine and paste it here.\n\n*You may see \
+this dialog box twice. Ignore the second one.",
+    );
+    if (!credential) return;
+    logInWithGoogle(credential);
+  }, []);
+
   // If user is unauthenticated, Google One Tap UI is initialized and rendered
   useSession({
     required: true,
@@ -48,15 +80,12 @@ export const useOneTapSignin = (
         client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
         cancel_on_tap_outside: false,
         log_level: "info",
-        callback: async (response) => {
-          setLoading(true);
-          await signIn("googleonetap", {
-            credential: response.credential,
-            redirect: true,
-            ...options,
-          });
-          router.push("/learn");
-          setLoading(false);
+        callback: async ({ credential }) => {
+          if (process.env.NEXT_PUBLIC_ALLOW_PASTE_GOOGLE_CREDENTIAL === "true")
+            console.log(
+              `[Google One Tap UI] Logged in with credential \`${credential}\``,
+            );
+          logInWithGoogle(credential);
         },
       });
 

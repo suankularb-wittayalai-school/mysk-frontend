@@ -25,6 +25,11 @@ declare global {
       NEXT_PUBLIC_SUPABASE_ANON_KEY: string;
 
       /**
+       * Whether the user is allowed to see and log in with Google credentials.
+       */
+      NEXT_PUBLIC_ALLOW_PASTE_GOOGLE_CREDENTIAL: "true" | "false";
+
+      /**
        * The service role of the Supabase project, retrieved from Settings >
        * API > Project API Keys > `service_role` `secret`.
        */
