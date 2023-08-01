@@ -52,7 +52,7 @@ const AddPeriodDialog: DialogFC<{
   const supabase = useSupabaseClient();
 
   // Form control
-  const { form, setForm, resetForm, formOK, formProps } = useForm<
+  const { form, setForm, resetForm, formOK } = useForm<
     "classrooms" | "rooms" | "duration"
   >([
     {
