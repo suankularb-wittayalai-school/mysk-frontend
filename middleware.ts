@@ -30,11 +30,6 @@ export async function middleware(req: NextRequest) {
   else if (route === "/maintenance")
     return NextResponse.redirect(new URL(getLocalePath("/", locale), req.url));
 
-  const decoded = await getToken({ req });
-
-  // DEBUG
-  console.log({ decoded });
-
   // Get current page protection type
   const pageRole: UserRole | "public" | "admin" | "user" =
     route === "/"
@@ -51,7 +46,8 @@ export async function middleware(req: NextRequest) {
   const supabase = createMiddlewareClient({ req, res });
 
   // Get user metadata
-  const { data: user, error } = await getUserByEmail(supabase, decoded?.email!);
+  const { email } = (await getToken({ req }))!;
+  const { data: user, error } = await getUserByEmail(supabase, email!);
   if (error) logError("middleware (user)", error);
 
   // Decide on destination based on user and page protection type
@@ -97,9 +93,6 @@ export async function middleware(req: NextRequest) {
       else if (user?.role === "teacher") destination = "/teach";
     }
   }
-
-  // DEBUG
-  console.log({ pageRole, destination });
 
   // Redirect if decided so, continue if not
   if (destination)
