@@ -9,6 +9,7 @@ import { logError } from "@/utils/helpers/debug";
 import { useLocale } from "@/utils/hooks/i18n";
 import { Student, Teacher, User } from "@/utils/types/person";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import va from "@vercel/analytics";
 import { SignInOptions, signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
@@ -71,6 +72,7 @@ credential string from your host machine and paste it here.\n\n*You may see \
 this dialog box twice. Ignore the second one.",
     );
     if (!credential) return;
+    va.track("Log in", { method: "Manual Credential String" });
     logInWithGoogle(credential);
   }, []);
 
@@ -86,8 +88,18 @@ this dialog box twice. Ignore the second one.",
       google.accounts.id.initialize({
         client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
         cancel_on_tap_outside: false,
-        log_level: "debug",
-        callback: async ({ credential }) => {
+        log_level: "info",
+        callback: async ({ credential, select_by }) => {
+          va.track(
+            "Log in",
+            /btn|user/.test(select_by)
+              ? {
+                  method: select_by.includes("btn")
+                    ? "GSI Button"
+                    : "Google One Tap UI",
+                }
+              : undefined,
+          );
           if (process.env.NEXT_PUBLIC_ALLOW_PASTE_GOOGLE_CREDENTIAL === "true")
             console.log(
               `[Google One Tap UI] Logged in with credential \`${credential}\``,
