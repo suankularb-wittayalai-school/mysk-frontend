@@ -16,7 +16,8 @@
       "teachCurrent": "คุณกำลังสอน <strong>{{subject}}</strong>",
       "teachWrapUp": "ใกล้หมดเวลาคาบนี้แล้ว",
       "teachTravel": "ไปที่ห้อง <strong>{{room}}</strong> ตอนนี้",
-      "teachFuture": "คาบนี้ว่าง คาบต่อไปวันนี้คือ<strong>{{subject}}</strong>"
+      "teachFuture": "คาบนี้ว่าง คาบต่อไปวันนี้คือ<strong>{{subject}}</strong>",
+      "electiveSegment": "วิชาเลือก"
     },
     "details": {
       "subject": "วิชา",

@@ -157,15 +157,21 @@ const ScheduleAtAGlance: FC<{
       : "none"
     : "none";
 
+  const displayPeriod = ["learn-next", "teach-travel"].includes(displayType)
+    ? immediateNextPeriod
+    : displayType === "teach-future"
+    ? todayNextPeriod
+    : currentPeriod;
+
   function getSubjectStringFromPeriod(period?: SchedulePeriod) {
-    switch (currentPeriod?.content.length) {
+    switch (period?.content.length) {
       case undefined:
       case 0:
         return null;
       case 1:
-        return getLocaleString(currentPeriod.content[0].subject.name, locale);
+        return getLocaleString(period.content[0].subject.name, locale);
       default:
-        return "your chosen elective";
+        return t("title.electiveSegment");
     }
   }
 
@@ -294,12 +300,7 @@ const ScheduleAtAGlance: FC<{
             <LayoutGroup>
               <AnimatePresence initial={false}>
                 <motion.ul layout="position" role="list" className="contents">
-                  {(["learn-next", "teach-travel"].includes(displayType)
-                    ? immediateNextPeriod
-                    : displayType === "teach-future"
-                    ? todayNextPeriod
-                    : currentPeriod
-                  )?.content.map((period, idx) => (
+                  {displayPeriod?.content.map((period, idx) => (
                     <motion.li
                       key={period.id}
                       layoutId={`subject-${period.id}`}
@@ -370,21 +371,25 @@ const ScheduleAtAGlance: FC<{
                       </div>
 
                       {/* Room */}
-                      <div className="flex flex-col">
-                        {idx === 0 && (
-                          <h3 className="skc-title-medium">
-                            {t("details.room")}
-                          </h3>
-                        )}
-                        <p
-                          className={cn([
-                            `skc-body-medium text-on-surface-variant`,
-                            idx !== 0 && `-mt-2`,
-                          ])}
-                        >
-                          {period.rooms?.join(", ") || "Unknown"}
-                        </p>
-                      </div>
+                      {displayPeriod.content.find(
+                        (period) => period.rooms?.length,
+                      ) && (
+                        <div className="flex flex-col">
+                          {idx === 0 && (
+                            <h3 className="skc-title-medium">
+                              {t("details.room")}
+                            </h3>
+                          )}
+                          <p
+                            className={cn([
+                              `skc-body-medium text-on-surface-variant`,
+                              idx !== 0 && `-mt-2`,
+                            ])}
+                          >
+                            {period.rooms?.join(", ") || " "}
+                          </p>
+                        </div>
+                      )}
                     </motion.li>
                   ))}
                 </motion.ul>
