@@ -60,8 +60,8 @@ export async function getStudentsByIDs(
       ? studentData!.people?.citizen_id ?? null
       : null,
     birthdate: options?.detailed
-      ? studentData!.people?.birthdate ?? "1970-01-01"
-      : "1970-01-01",
+      ? studentData!.people?.birthdate ?? null
+      : null,
     shirt_size: options?.detailed
       ? studentData!.people?.shirt_size ?? null
       : null,

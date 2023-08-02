@@ -1,9 +1,12 @@
-// External libraries
-import va from "@vercel/analytics";
-import { useTranslation } from "next-i18next";
-import { FC, forwardRef, useContext, useEffect, useState } from "react";
-
-// SK Components
+// Imports
+import ContactCard from "@/components/account/ContactCard";
+import MultilangText from "@/components/common/MultilingualText";
+import DetailSection from "@/components/lookup/person/DetailSection";
+import SnackbarContext from "@/contexts/SnackbarContext";
+import { getLocaleName, getLocaleString } from "@/utils/helpers/string";
+import { useLocale } from "@/utils/hooks/i18n";
+import { Student, Teacher } from "@/utils/types/person";
+import { Subject } from "@/utils/types/subject";
 import {
   AssistChip,
   Card,
@@ -16,25 +19,9 @@ import {
   Section,
   Snackbar,
 } from "@suankularb-components/react";
-
-// Internal components
-import ContactCard from "@/components/account/ContactCard";
-import MultilangText from "@/components/common/MultilingualText";
-import DetailSection from "@/components/lookup/person/DetailSection";
-
-// Contexts
-import SnackbarContext from "@/contexts/SnackbarContext";
-
-// Types
-import { Student, Teacher } from "@/utils/types/person";
-import { Subject } from "@/utils/types/subject";
-
-// Helpers
-import { getLocaleString } from "@/utils/helpers/string";
-import { getLocaleName } from "@/utils/helpers/string";
-
-// Hooks
-import { useLocale } from "@/utils/hooks/i18n";
+import va from "@vercel/analytics";
+import { useTranslation } from "next-i18next";
+import { FC, forwardRef, useContext, useEffect, useState } from "react";
 
 const StarbucksCard: FC = () => {
   const locale = useLocale();
@@ -94,7 +81,7 @@ const StarbucksCard: FC = () => {
       synthVoices.find(
         (voice) =>
           voice.voiceURI ===
-          "Microsoft Premwadee Online (Natural) - Thai (Thailand)"
+          "Microsoft Premwadee Online (Natural) - Thai (Thailand)",
       ) || null;
 
     // Speak the utterance
@@ -122,6 +109,7 @@ const StarbucksCard: FC = () => {
           </AssistChip>
           <AssistChip
             icon={<MaterialIcon icon="open_in_new" />}
+            href={`https://www.starbucks.co.th/${locale}/delivery-in-app/`}
             onClick={() =>
               va.track("Find Starbucks Easter Egg", {
                 action: "Open Starbucks",
@@ -129,13 +117,7 @@ const StarbucksCard: FC = () => {
             }
             // eslint-disable-next-line react/display-name
             element={forwardRef((props, ref) => (
-              <a
-                {...props}
-                ref={ref}
-                href={`https://www.starbucks.co.th/${locale}/delivery-in-app/`}
-                target="_blank"
-                rel="noreferrer"
-              />
+              <a {...props} ref={ref} target="_blank" rel="noreferrer" />
             ))}
           >
             {t("detail.starbucks.action.openStarbucks")}
@@ -168,16 +150,18 @@ const GeneralInfoSection: FC<{
         <MultilangText
           text={{
             th: getLocaleName("th", person, { prefix: true }),
-            "en-US":  getLocaleName("en-US", person, {
-                  prefix: true,
-                }),
+            "en-US": getLocaleName("en-US", person, {
+              prefix: true,
+            }),
           }}
           options={{ hideIconsIfOnlyLanguage: true }}
         />
       </DetailSection>
 
       {/* Nickname */}
-      {(person.nickname?.th || person.nickname ? person.nickname["en-US"] : "") && (
+      {(person.nickname?.th || person.nickname
+        ? person.nickname["en-US"]
+        : "") && (
         <DetailSection title={t("nickname")}>
           <MultilangText
             text={{
@@ -207,15 +191,19 @@ const GeneralInfoSection: FC<{
       )}
 
       {/* Birthdate */}
-      <DetailSection title={t("birthdate")}>
-        <time>
-          {new Date(person.birthdate).toLocaleDateString(locale, {
-            day: "numeric",
-            month: "long",
-            year: undefined,
-          })}
-        </time>
-      </DetailSection>
+      {person.birthdate &&
+        // Assuming no real person is born on Jan 1, 1970
+        person.birthdate !== "1970-01-01" && (
+          <DetailSection title={t("birthdate")}>
+            <time>
+              {new Date(person.birthdate).toLocaleDateString(locale, {
+                day: "numeric",
+                month: "long",
+                year: undefined,
+              })}
+            </time>
+          </DetailSection>
+        )}
     </Section>
   );
 };

@@ -7,7 +7,11 @@ import { Teacher } from "@/utils/types/person";
 export async function getTeacherByID(
   supabase: DatabaseClient,
   teacherID: string,
-  options?: { detailed?: boolean; year?: number },
+  options?: Partial<{
+    detailed: boolean;
+    includeContacts: boolean;
+    year: number;
+  }>,
 ): Promise<BackendReturn<Teacher>> {
   let { data: teacherData, error: studentError } = await supabase
     .from("teachers")
@@ -45,7 +49,7 @@ export async function getTeacherByID(
             number: teacherData!.classroom_advisors[0].classrooms!.number,
           }
         : null,
-    contacts: options?.detailed
+    contacts: options?.includeContacts
       ? teacherData!.people!.person_contacts.map((contacts) => {
           const { contacts: contact } = contacts;
           return {

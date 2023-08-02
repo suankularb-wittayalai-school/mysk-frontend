@@ -42,20 +42,18 @@ import { createTitleStr } from "@/utils/helpers/title";
 import { useToggle } from "@/utils/hooks/toggle";
 
 // Types
-import { CustomPage, LangCode } from "@/utils/types/common";
-import {
-  UserRole,
-  Student,
-  Teacher,
-  User,
-  Person,
-  PersonLookupItem,
-} from "@/utils/types/person";
+import { getPeopleLookupList } from "@/utils/backend/person/getPeopleLookupList";
+import { getPersonForLookupDetail } from "@/utils/backend/person/getPersonForLookupDetail";
 import { getStudentByID } from "@/utils/backend/person/getStudentByID";
 import { getTeacherByID } from "@/utils/backend/person/getTeacherByID";
-import { getPersonForLookupDetail } from "@/utils/backend/person/getPersonForLookupDetail";
+import { CustomPage, LangCode } from "@/utils/types/common";
+import {
+  PersonLookupItem,
+  Student,
+  Teacher,
+  UserRole,
+} from "@/utils/types/person";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
-import { getPeopleLookupList } from "@/utils/backend/person/getPeopleLookupList";
 
 const LookupPeoplePage: CustomPage<{
   initialPeople: PersonLookupItem[];
@@ -253,7 +251,6 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   let initialPeople: PersonLookupItem[] = [];
 
-  // TODO
   const { data: defaultPeople } = await getPeopleLookupList(supabase);
   if (defaultPeople) initialPeople = defaultPeople;
 
@@ -263,7 +260,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     );
 
     if (selectedIdx === -1) {
-      const { data, error } = await getPersonForLookupDetail(
+      const { data } = await getPersonForLookupDetail(
         supabase,
         selected.id as string,
         selected.role,

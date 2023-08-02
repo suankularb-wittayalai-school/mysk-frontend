@@ -7,7 +7,7 @@ import { Person } from "@/utils/types/person";
 export async function getPersonByID(
   supabase: DatabaseClient,
   personID: string,
-  options?: { includeContacts: boolean; detailed?: boolean },
+  options?: Partial<{ includeContacts: boolean; detailed: boolean }>,
 ): Promise<BackendReturn<Person>> {
   let { data: personData, error: personError } = await supabase
     .from("people")

@@ -45,9 +45,13 @@ import { getStudentByID } from "@/utils/backend/person/getStudentByID";
 import { getStudentsByIDs } from "@/utils/backend/person/getStudentsByIDs";
 
 const ClassStudents: FC<{
-  studentList: Pick<Student, "id" | "first_name" | "last_name" | "nickname" | "class_no">[];
+  studentList: Pick<
+    Student,
+    "id" | "first_name" | "last_name" | "nickname" | "class_no"
+  >[];
   classNumber?: number;
-}> = ({ studentList, classNumber }) => {
+  isOwnClass?: boolean;
+}> = ({ studentList, classNumber, isOwnClass }) => {
   const { t } = useTranslation("class", { keyPrefix: "student.list" });
 
   const { atBreakpoint } = useBreakpoint();
@@ -70,13 +74,16 @@ const ClassStudents: FC<{
 
     withLoading(
       async () => {
-        const { data, error } = await getStudentByID(supabase, selected, {detailed: true});
+        const { data, error } = await getStudentByID(supabase, selected, {
+          detailed: true,
+          includeContacts: isOwnClass,
+        });
         if (error) return false;
         setSelectedStudent(data);
         return true;
       },
       toggleLoading,
-      { hasEndToggle: true }
+      { hasEndToggle: true },
     );
   }, [selected, atBreakpoint === "base"]);
 
@@ -92,7 +99,7 @@ const ClassStudents: FC<{
         const { data, error } = await getStudentsByIDs(
           supabase,
           studentList.map((student) => student.id),
-          { detailed: true }
+          { detailed: true },
         );
         if (error) return false;
 
@@ -103,7 +110,7 @@ const ClassStudents: FC<{
               await Promise.all(vCards.map(async (vCard) => await vCard.text()))
             ).join("\n"),
           ],
-          { type: "text/vcard;charset=utf-8" }
+          { type: "text/vcard;charset=utf-8" },
         );
 
         window.location.href = URL.createObjectURL(mergedVCard);
@@ -111,7 +118,7 @@ const ClassStudents: FC<{
         return true;
       },
       toggleVCardLoading,
-      { hasEndToggle: true }
+      { hasEndToggle: true },
     );
   }
 
@@ -157,7 +164,7 @@ const ClassStudents: FC<{
                 .includes(query.toLowerCase()) ||
               getLocaleName("en-US", student)
                 .toLowerCase()
-                .includes(query.toLowerCase())
+                .includes(query.toLowerCase()),
           )
           .map((student) => (
             <ClassStudentCard

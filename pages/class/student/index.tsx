@@ -1,41 +1,28 @@
-// External libraries
-import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
-
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import Head from "next/head";
-
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
-// Internal components
+// Imports
 import ClassStudents from "@/components/class/ClassStudents";
 import MySKPageHeader from "@/components/common/MySKPageHeader";
 import ClassTabs from "@/components/lookup/class/ClassTabs";
-
-// Backend
-// import { getUserMetadata } from "@/utils/backend/account/getUserByEmail";
-// import {
-//   getClassFromUser,
-//   getClassStudentList,
-// } from "@/utils/backend/classroom/classroom";
-// import { getClassAdvisorAt } from "@/utils/backend/person/teacher";
-
-// Helpers
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
+import getStudentsOfClass from "@/utils/backend/classroom/getStudentsOfClass";
 import { createTitleStr } from "@/utils/helpers/title";
-
-// Types
 import { Classroom } from "@/utils/types/classroom";
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { UserRole, Student } from "@/utils/types/person";
-import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
-import getStudentsOfClass from "@/utils/backend/classroom/getStudentsOfClass";
+import { Student, UserRole } from "@/utils/types/person";
+import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Head from "next/head";
 
 const ClassStudentsPage: CustomPage<{
-  classItem: Pick<Classroom, "id" | "number">;
-  studentList: Pick<Student, "id" | "first_name" | "last_name" | "nickname" | "class_no">[];
+  classroom: Pick<Classroom, "id" | "number">;
+  studentList: Pick<
+    Student,
+    "id" | "first_name" | "last_name" | "nickname" | "class_no"
+  >[];
   userRole: UserRole;
-}> = ({ classItem, studentList, userRole }) => {
+}> = ({ classroom, studentList, userRole }) => {
   const { t } = useTranslation(["class", "common"]);
 
   return (
@@ -44,9 +31,9 @@ const ClassStudentsPage: CustomPage<{
         <title>{createTitleStr(t(`student.title.${userRole}`), t)}</title>
       </Head>
       <MySKPageHeader title={t(`student.title.${userRole}`)} parentURL="/class">
-        <ClassTabs number={classItem.number} type="class" />
+        <ClassTabs number={classroom.number} type="class" />
       </MySKPageHeader>
-      <ClassStudents {...{ studentList }} />
+      <ClassStudents studentList={studentList} isOwnClass />
     </>
   );
 };
@@ -70,15 +57,13 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   const userRole = user!.role;
 
-  let classItem: Pick<Classroom, "id" | "number"> = user!.role === "student" ? user!.classroom! : user!.class_advisor_at!;
-  // }
+  let classroom: Pick<Classroom, "id" | "number"> =
+    user!.role === "student" ? user!.classroom! : user!.class_advisor_at!;
 
-  const { data: studentList, error } = await getStudentsOfClass(
+  const { data: studentList } = await getStudentsOfClass(
     supabase,
-    classItem!.id
+    classroom!.id,
   );
-
-  // console.log({studentList});
 
   return {
     props: {
@@ -87,7 +72,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         "class",
         "lookup",
       ])),
-      classItem: classItem!,
+      classroom: classroom!,
       studentList,
       userRole,
     },

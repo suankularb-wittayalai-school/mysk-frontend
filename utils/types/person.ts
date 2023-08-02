@@ -40,7 +40,7 @@ export type Person = {
   nickname: MultiLangString | null;
   profile: string | null;
   citizen_id: string | null;
-  birthdate: string;
+  birthdate: string | null;
   shirt_size: ShirtSize | null;
   pants_size: string | null;
   allergies: string[] | null;
