@@ -90,10 +90,9 @@ const LogInSection: FC = () => {
       <div className="flex grow flex-col gap-2">
         <div
           id="button-google-sign-in"
-          className={cn([
-            `h-[38px] rounded-full [color-scheme:light]`,
-            loading && `bg-surface-2`,
-          ])}
+          className="h-[38px] rounded-full [color-scheme:light]
+            [&:not(:has(iframe))]:animate-pulse
+            [&:not(:has(iframe))]:bg-surface-variant"
         />
         <p className="skc-body-small mx-4 text-on-surface-variant">
           {t("googleHelper")}
