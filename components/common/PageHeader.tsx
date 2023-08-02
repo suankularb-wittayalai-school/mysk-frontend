@@ -6,6 +6,7 @@ import BlobsTopLargeDark from "@/public/images/graphics/blobs/top-large-dark.svg
 import BlobsTopLargeLight from "@/public/images/graphics/blobs/top-large-light.svg";
 import BlobsTopSmallDark from "@/public/images/graphics/blobs/top-small-dark.svg";
 import BlobsTopSmallLight from "@/public/images/graphics/blobs/top-small-light.svg";
+import { cn } from "@/utils/helpers/className";
 import { usePageIsLoading } from "@/utils/hooks/routing";
 import {
   Button,
@@ -18,8 +19,8 @@ import { useTranslation } from "next-i18next";
 import { FC, useContext } from "react";
 
 const PageHeader: FC<
-  Pick<PageHeaderProps, "title" | "parentURL" | "onBack">
-> = ({ title, parentURL, onBack }) => {
+  Pick<PageHeaderProps, "children" | "title" | "parentURL" | "onBack">
+> = ({ children, title, parentURL, onBack }) => {
   const { t } = useTranslation("common", { keyPrefix: "pageHeader" });
   const { t: tx } = useTranslation("common");
 
@@ -74,7 +75,16 @@ const PageHeader: FC<
         </div>
 
         {/* Header text */}
-        <h1 className="skc-display-large mx-4 sm:mx-0">{title}</h1>
+        <h1
+          className={cn([
+            `skc-display-large mx-4 sm:mx-0`,
+            children ? `mb-4` : undefined,
+          ])}
+        >
+          {title}
+        </h1>
+
+        {children}
       </ContentLayout>
     </>
   );
