@@ -62,8 +62,6 @@ const Layout: FC<
   // Class data (for Navigation links)
   const { person: user } = useLoggedInPerson();
 
-  // console.log(user);
-
   const [isClassAdvisor, setIsClassAdvisor] = useState<boolean>(false);
   useEffect(() => {
     if (!user) return;
@@ -346,6 +344,8 @@ const Layout: FC<
             </>
           }
           onNavToggle={() => setNavOpen(true)}
+          locale={locale}
+          className="!bg-[#fbfcff7f] dark:!bg-[#191c1e7f] backdrop-blur-lg"
         >
           {(navType || user?.role) === "teacher" ? (
             <NavBarItem

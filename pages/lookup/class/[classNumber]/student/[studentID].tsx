@@ -10,7 +10,7 @@ import Head from "next/head";
 
 // Internal components
 import DynamicAvatar from "@/components/common/DynamicAvatar";
-import MySKPageHeader from "@/components/common/MySKPageHeader";
+import PageHeader from "@/components/common/PageHeader";
 import PersonActions from "@/components/lookup/person/PersonActions";
 import PersonDetailsContent from "@/components/lookup/person/PersonDetailsContent";
 
@@ -41,7 +41,7 @@ const PersonDetailsPage: CustomPage<{
       <Head>
         <title>{createTitleStr(getLocaleName(locale, student), t)}</title>
       </Head>
-      <MySKPageHeader
+      <PageHeader
         title={getLocaleName(locale, student)}
         parentURL={`/lookup/class/${classNumber}`}
         className="!overflow-visible"
@@ -51,7 +51,7 @@ const PersonDetailsPage: CustomPage<{
           profile={student.profile}
           className="relative z-[80] -mb-12 -mt-6 !h-20 !w-20 self-end"
         />
-      </MySKPageHeader>
+      </PageHeader>
       <PersonDetailsContent person={student} />
     </>
   );

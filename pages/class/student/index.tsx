@@ -1,6 +1,6 @@
 // Imports
 import ClassStudents from "@/components/class/ClassStudents";
-import MySKPageHeader from "@/components/common/MySKPageHeader";
+import PageHeader from "@/components/common/PageHeader";
 import ClassTabs from "@/components/lookup/class/ClassTabs";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
@@ -30,9 +30,9 @@ const ClassStudentsPage: CustomPage<{
       <Head>
         <title>{createTitleStr(t(`student.title.${userRole}`), t)}</title>
       </Head>
-      <MySKPageHeader title={t(`student.title.${userRole}`)} parentURL="/class">
+      <PageHeader title={t(`student.title.${userRole}`)} parentURL="/class">
         <ClassTabs number={classroom.number} type="class" />
-      </MySKPageHeader>
+      </PageHeader>
       <ClassStudents studentList={studentList} isOwnClass />
     </>
   );

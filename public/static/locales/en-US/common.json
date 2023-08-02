@@ -34,6 +34,33 @@
       }
     }
   },
+  "pageHeader": {
+    "action": {
+      "navigation": "Open navigation",
+      "back": "Navigate up"
+    },
+    "appDrawer": {
+      "toggle": "Apps",
+      "mysk": {
+        "title": "MySK apps",
+        "mysk": "MySK",
+        "clubRegistry": "Club Registry"
+      },
+      "school": {
+        "title": "School apps",
+        "skAcTh": "sk.ac.th",
+        "kularbFah": "Kularb Fah",
+        "kularbLuang": "Kularb Luang",
+        "library": "Library",
+        "libraryEBook": "Library eBook",
+        "libraryOPAC": "Library OPAC"
+      },
+      "other": {
+        "title": "Other apps",
+        "schoolICT": "School ICT"
+      }
+    }
+  },
   "pageLoading": "Loading page…",
   "name": {
     "prefix": {

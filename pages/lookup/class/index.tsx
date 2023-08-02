@@ -1,5 +1,5 @@
 // Imports
-import MySKPageHeader from "@/components/common/MySKPageHeader";
+import PageHeader from "@/components/common/PageHeader";
 import ClassCard from "@/components/lookup/class/ClassCard";
 import ClassSearchResult from "@/components/lookup/class/ClassSearchResult";
 import getLookupClassrooms from "@/utils/backend/classroom/getLookupClassrooms";
@@ -42,7 +42,7 @@ const LookupClassesPage: CustomPage<{
       <Head>
         <title>{createTitleStr(t("classes.title"), tx)}</title>
       </Head>
-      <MySKPageHeader
+      <PageHeader
         title={t("classes.title")}
         icon={<MaterialIcon icon="search" />}
         parentURL="/lookup"
@@ -72,7 +72,7 @@ const LookupClassesPage: CustomPage<{
             </List>
           </Search>
         </Columns>
-      </MySKPageHeader>
+      </PageHeader>
       <ContentLayout>
         {/* The Classes list is separated by grade
             (i.e. the M.1 section contains M.101, M.102, ..., M.113) */}

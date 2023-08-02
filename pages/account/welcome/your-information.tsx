@@ -29,7 +29,7 @@ import {
 // Internal components
 import ContactsSection from "@/components/account/ContactSection";
 import PersonFields from "@/components/account/PersonFields";
-import MySKPageHeader from "@/components/common/MySKPageHeader";
+import PageHeader from "@/components/common/PageHeader";
 import NextWarningCard from "@/components/welcome/NextWarningCard";
 
 // Contexts
@@ -209,7 +209,7 @@ const WelcomePage: CustomPage<{
       <Head>
         <title>{createTitleStr(t("yourInformation.title"), t)}</title>
       </Head>
-      <MySKPageHeader
+      <PageHeader
         title={t("yourInformation.title")}
         icon={<MaterialIcon icon="badge" />}
         parentURL="/account/welcome"

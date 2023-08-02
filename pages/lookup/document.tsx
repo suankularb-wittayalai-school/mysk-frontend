@@ -20,7 +20,7 @@ import {
 } from "@suankularb-components/react";
 
 // Internal components
-import MySKPageHeader from "@/components/common/MySKPageHeader";
+import PageHeader from "@/components/common/PageHeader";
 import EmptyDetail from "@/components/lookup/EmptyDetail";
 import LookupList from "@/components/lookup/LookupList";
 import DocumentCard from "@/components/lookup/document/DocumentCard";
@@ -85,7 +85,7 @@ const LookupDocumentsPage: CustomPage<{
       <Head>
         <title>{createTitleStr(t("documents.title"), t)}</title>
       </Head>
-      <MySKPageHeader
+      <PageHeader
         title={t("documents.title")}
         icon={<MaterialIcon icon="search" />}
         parentURL="/lookup"

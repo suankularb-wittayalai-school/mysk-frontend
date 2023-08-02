@@ -6,7 +6,6 @@
  * **Sections**
  * - {@link LogInSection}
  * - {@link PatchNotesSection}
- * - {@link CreditsSection}
  *
  * **Page**
  * - {@link LandingPage}
@@ -16,10 +15,9 @@
 import MultiSchemeImage from "@/components/common/MultiSchemeImage";
 import MySKDark from "@/public/images/brand/mysk-dark.svg";
 import MySKLight from "@/public/images/brand/mysk-light.svg";
-import BackgroundDark from "@/public/images/graphics/landing/background-dark.svg";
-import BackgroundLight from "@/public/images/graphics/landing/background-light.svg";
+import BlobsFullDark from "@/public/images/graphics/blobs/full-dark.svg";
+import BlobsFullLight from "@/public/images/graphics/blobs/full-light.svg";
 import { useOneTapSignin } from "@/utils/helpers/auth";
-import { cn } from "@/utils/helpers/className";
 import { useLocale } from "@/utils/hooks/i18n";
 import { usePreferences } from "@/utils/hooks/preferences";
 import { usePageIsLoading, useRefreshProps } from "@/utils/hooks/routing";
@@ -52,7 +50,7 @@ const LogInSection: FC = () => {
   const { atBreakpoint } = useBreakpoint();
   const [buttonWidth, setButtonWidth] = useState<number>();
 
-  const { loading } = useOneTapSignin({
+  useOneTapSignin({
     redirect: false,
     parentButtonID: "button-google-sign-in",
     buttonWidth,
@@ -246,8 +244,8 @@ const LandingPage: CustomPage = () => {
 
       {/* Background */}
       <MultiSchemeImage
-        srcLight={BackgroundLight}
-        srcDark={BackgroundDark}
+        srcLight={BlobsFullLight}
+        srcDark={BlobsFullDark}
         alt=""
         priority
         className="fixed inset-0 -z-10 [&_img]:h-full [&_img]:object-cover"

@@ -1,5 +1,5 @@
 // Imports
-import MySKPageHeader from "@/components/common/MySKPageHeader";
+import PageHeader from "@/components/common/PageHeader";
 import NewsFeed from "@/components/news/NewsFeed";
 import { mergeDBLocales } from "@/utils/helpers/string";
 import { createTitleStr } from "@/utils/helpers/title";
@@ -21,10 +21,10 @@ const NewsPage: CustomPage<{ newsFeed: Info[] }> = ({ newsFeed }) => {
       <Head>
         <title>{createTitleStr(t("title"), t)}</title>
       </Head>
-      <MySKPageHeader
+      <PageHeader
         title={t("title")}
         icon={<MaterialIcon icon="newspaper" />}
-      ></MySKPageHeader>
+      ></PageHeader>
       <ContentLayout>
         <NewsFeed news={newsFeed} />
       </ContentLayout>

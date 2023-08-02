@@ -29,7 +29,7 @@ import {
 
 // Internal components
 import BlockingPane from "@/components/common/BlockingPane";
-import MySKPageHeader from "@/components/common/MySKPageHeader";
+import PageHeader from "@/components/common/PageHeader";
 
 // Helpers
 import { logError } from "@/utils/helpers/debug";
@@ -291,7 +291,7 @@ const LoggingInPage: CustomPage<{ user: User }> = ({ user }) => {
       <Head>
         <title>{createTitleStr(t("loggingIn.title"), t)}</title>
       </Head>
-      <MySKPageHeader
+      <PageHeader
         title={t("loggingIn.title")}
         icon={<MaterialIcon icon="password" />}
         parentURL="/account/welcome/your-subjects"

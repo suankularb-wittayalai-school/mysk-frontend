@@ -17,7 +17,7 @@ import ContactsSection from "@/components/account/ContactSection";
 import LogOutDialog from "@/components/account/LogOutDialog";
 import PersonFields from "@/components/account/PersonFields";
 import DynamicAvatar from "@/components/common/DynamicAvatar";
-import MySKPageHeader from "@/components/common/MySKPageHeader";
+import PageHeader from "@/components/common/PageHeader";
 import SnackbarContext from "@/contexts/SnackbarContext";
 // import { createContact, updateContact } from "@/utils/backend/contact";
 // import {
@@ -427,7 +427,7 @@ const AccountPage: CustomPage<{
       <Head>
         <title>{createTitleStr(t("title"), t)}</title>
       </Head>
-      <MySKPageHeader
+      <PageHeader
         title={t("title")}
         icon={<MaterialIcon icon="account_circle" />}
       />
