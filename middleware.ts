@@ -3,7 +3,7 @@ import getUserByEmail from "@/utils/backend/account/getUserByEmail";
 import { logError } from "@/utils/helpers/debug";
 import { getLocalePath } from "@/utils/helpers/string";
 import { LangCode } from "@/utils/types/common";
-import { UserRole } from "@/utils/types/person";
+import { User, UserRole } from "@/utils/types/person";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
@@ -46,9 +46,13 @@ export async function middleware(req: NextRequest) {
   const supabase = createMiddlewareClient({ req, res });
 
   // Get user metadata
-  const { email } = (await getToken({ req }))!;
-  const { data: user, error } = await getUserByEmail(supabase, email!);
-  if (error) logError("middleware (user)", error);
+  const jwt = await getToken({ req });
+  let user: User | null = null;
+  if (jwt?.email) {
+    const { data, error } = await getUserByEmail(supabase, jwt?.email);
+    if (error) logError("middleware (user)", error);
+    user = data;
+  }
 
   // Decide on destination based on user and page protection type
   let destination: string | null = null;
