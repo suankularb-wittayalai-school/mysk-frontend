@@ -86,7 +86,7 @@ this dialog box twice. Ignore the second one.",
       google.accounts.id.initialize({
         client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
         cancel_on_tap_outside: false,
-        log_level: "info",
+        log_level: "debug",
         callback: async ({ credential }) => {
           if (process.env.NEXT_PUBLIC_ALLOW_PASTE_GOOGLE_CREDENTIAL === "true")
             console.log(

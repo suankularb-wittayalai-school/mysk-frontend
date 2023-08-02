@@ -1,5 +1,6 @@
 // Imports
 import getUserByEmail from "@/utils/backend/account/getUserByEmail";
+import { logError } from "@/utils/helpers/debug";
 import { getLocalePath } from "@/utils/helpers/string";
 import { LangCode } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
@@ -7,6 +8,13 @@ import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { decode } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
 
+/**
+ * The middleware is run before a request is completed.
+ * 
+ * @param req The incoming request.
+ * 
+ * @see {@link https://nextjs.org/docs/pages/building-your-application/routing/middleware Next.js documentation}
+ */
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next();
 
@@ -19,14 +27,21 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(
       new URL(getLocalePath("/maintenance", locale), req.url),
     );
-  // else if (route === "/maintenance")
-  //   return NextResponse.redirect(new URL(getLocalePath("/", locale), req.url));
+  else if (route === "/maintenance")
+    return NextResponse.redirect(new URL(getLocalePath("/", locale), req.url));
 
   // Since we are using next-auth and middleware is not fully supported yet, we
   // can decode the token and get the user info from it
   const decoded = await decode({
     token: req.cookies.get("next-auth.session-token")?.value,
     secret: process.env.NEXTAUTH_SECRET as string,
+  });
+
+  // DEBUG
+  console.log({
+    sessionToken: req.cookies.get("next-auth.session-token")?.value,
+    secret: process.env.NEXTAUTH_SECRET,
+    decoded,
   });
 
   // Get current page protection type
@@ -45,10 +60,14 @@ export async function middleware(req: NextRequest) {
   const supabase = createMiddlewareClient({ req, res });
 
   // Get user metadata
-  const { data: user } = await getUserByEmail(
+  const { data: user, error } = await getUserByEmail(
     supabase,
     decoded?.email as string,
   );
+  if (error) logError("middleware (user)", error);
+
+  // DEBUG
+  console.log({ user });
 
   // Decide on destination based on user and page protection type
   let destination: string | null = null;
@@ -93,6 +112,9 @@ export async function middleware(req: NextRequest) {
       else if (user?.role === "teacher") destination = "/teach";
     }
   }
+
+  // DEBUG
+  console.log({ pageRole, destination });
 
   // Redirect if decided so, continue if not
   if (destination)
