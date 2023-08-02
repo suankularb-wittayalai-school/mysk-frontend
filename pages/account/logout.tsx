@@ -17,7 +17,7 @@ const LogOutPage: CustomPage = () => {
   const router = useRouter();
   useEffect(() => {
     (async () => {
-      signOut();
+      await signOut({ redirect: false });
       router.push("/");
     })();
   }, []);
