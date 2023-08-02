@@ -1,16 +1,9 @@
-// External libraries
-import { useTranslation } from "next-i18next";
-
-// Helpers
-import { getLocaleString } from "@/utils/helpers/string";
-import { getLocaleName } from "@/utils/helpers/string";
-
-// Hooks
+// Imports
+import { getLocaleName, getLocaleString } from "@/utils/helpers/string";
 import { useLocale } from "@/utils/hooks/i18n";
-
-// Types
 import { Contact } from "@/utils/types/contact";
 import { Student, Teacher } from "@/utils/types/person";
+import { useTranslation } from "next-i18next";
 
 /**
  * Converts Contact value into a URL depending on the type.
@@ -84,7 +77,7 @@ export function useGetVCard() {
           })}`,
 
           // Birthday
-          `BDAY:${person.birthdate.split("-").join("")}`,
+          person.birthdate && `BDAY:${person.birthdate.replace("-", "/")}`,
 
           // Contacts
           person.contacts
