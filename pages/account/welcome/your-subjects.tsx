@@ -46,7 +46,6 @@ const YourSubjectsPage: CustomPage<{
       </Head>
       <PageHeader
         title={t("yourSubjects.title")}
-        icon={<MaterialIcon icon="book" />}
         parentURL="/account/welcome/your-information"
       />
       <ContentLayout>
@@ -91,10 +90,10 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   const { data: subjects, error: subjectError } = await getTeachingSubjects(
     supabase,
-    user!.id
+    user!.id,
   );
 
-  console.log({subjects, subjectError})
+  console.log({ subjects, subjectError });
 
   return {
     props: {

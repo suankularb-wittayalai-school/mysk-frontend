@@ -151,10 +151,7 @@ const TeachPage: CustomPage<{
       <Head>
         <title>{createTitleStr(t("title"), tx)}</title>
       </Head>
-      <PageHeader
-        title={t("title")}
-        icon={<MaterialIcon icon="school" />}
-      />
+      <PageHeader title={t("title")} />
       <ContentLayout>
         <LayoutGroup>
           <ScheduleAtAGlance schedule={schedule} role="teacher" />

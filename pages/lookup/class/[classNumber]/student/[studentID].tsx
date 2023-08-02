@@ -1,33 +1,19 @@
-// External libraries
-import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
-
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
-import Head from "next/head";
-
-// Internal components
+// Imports
 import DynamicAvatar from "@/components/common/DynamicAvatar";
 import PageHeader from "@/components/common/PageHeader";
 import PersonActions from "@/components/lookup/person/PersonActions";
 import PersonDetailsContent from "@/components/lookup/person/PersonDetailsContent";
-
-// Backend
-
-// Helpers
+import { getStudentByID } from "@/utils/backend/person/getStudentByID";
 import { getLocaleName } from "@/utils/helpers/string";
 import { createTitleStr } from "@/utils/helpers/title";
-
-// Hooks
 import { useLocale } from "@/utils/hooks/i18n";
-
-// Types
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Student } from "@/utils/types/person";
-import { getCurrentAcademicYear } from "@/utils/helpers/date";
-import { getStudentByID } from "@/utils/backend/person/getStudentByID";
+import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Head from "next/head";
 
 const PersonDetailsPage: CustomPage<{
   student: Student;
@@ -44,7 +30,6 @@ const PersonDetailsPage: CustomPage<{
       <PageHeader
         title={getLocaleName(locale, student)}
         parentURL={`/lookup/class/${classNumber}`}
-        className="!overflow-visible"
       >
         <PersonActions person={student} suggestionsType="full" />
         <DynamicAvatar
@@ -66,8 +51,6 @@ export const getServerSideProps: GetServerSideProps = async ({
   const classNumber = Number(params?.classNumber);
   if (Number.isNaN(classNumber)) return { notFound: true };
 
-  
-
   const supabase = createPagesServerClient({
     req: req as NextApiRequest,
     res: res as NextApiResponse,
@@ -78,7 +61,10 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   if (!studentID) return { notFound: true };
 
-  const { data: student, error } = await getStudentByID(supabase, studentID as string);
+  const { data: student, error } = await getStudentByID(
+    supabase,
+    studentID as string,
+  );
   if (error) return { notFound: true };
 
   return {

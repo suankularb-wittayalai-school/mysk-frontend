@@ -6,7 +6,7 @@ import { createTitleStr } from "@/utils/helpers/title";
 import { DatabaseClient } from "@/utils/types/backend";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Info } from "@/utils/types/news";
-import { ContentLayout, MaterialIcon } from "@suankularb-components/react";
+import { ContentLayout } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { useTranslation } from "next-i18next";
@@ -21,10 +21,7 @@ const NewsPage: CustomPage<{ newsFeed: Info[] }> = ({ newsFeed }) => {
       <Head>
         <title>{createTitleStr(t("title"), t)}</title>
       </Head>
-      <PageHeader
-        title={t("title")}
-        icon={<MaterialIcon icon="newspaper" />}
-      ></PageHeader>
+      <PageHeader title={t("title")} />
       <ContentLayout>
         <NewsFeed news={newsFeed} />
       </ContentLayout>

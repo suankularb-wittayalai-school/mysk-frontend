@@ -40,7 +40,6 @@ const TeacherDetailsPage: CustomPage<{ teacher: Teacher }> = ({ teacher }) => {
       <PageHeader
         title={getLocaleName(locale, teacher)}
         parentURL="/lookup/person"
-        className="!overflow-visible"
       >
         <PersonActions person={teacher} suggestionsType="full" />
         <DynamicAvatar

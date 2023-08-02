@@ -113,10 +113,7 @@ const LookupPage: CustomPage<{
       <Head>
         <title>{createTitleStr(t("title"), t)}</title>
       </Head>
-      <PageHeader
-        title={t("title")}
-        icon={<MaterialIcon icon="search" />}
-      />
+      <PageHeader title={t("title")} />
       <ContentLayout>
         <Columns columns={3} className="mx-4 !items-stretch sm:mx-0">
           {/* Lookup People */}

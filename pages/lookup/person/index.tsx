@@ -179,11 +179,7 @@ const LookupPeoplePage: CustomPage<{
       <Head>
         <title>{createTitleStr(t("people.title"), t)}</title>
       </Head>
-      <PageHeader
-        title={t("people.title")}
-        icon={<MaterialIcon icon="search" />}
-        parentURL="/lookup"
-      />
+      <PageHeader title={t("people.title")} parentURL="/lookup" />
       <SplitLayout ratio="list-detail">
         <LookupList
           length={people.length}

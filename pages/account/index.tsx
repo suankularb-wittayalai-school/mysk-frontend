@@ -357,7 +357,6 @@ const UserContactsSection: FC<{ person: Student | Teacher }> = ({ person }) => {
       contactID,
     );
 
-
     if (personContactError) {
       console.error(personContactError);
       setSnackbar(<Snackbar>{t("snackbar.failure")}</Snackbar>);
@@ -388,8 +387,10 @@ const UserContactsSection: FC<{ person: Student | Teacher }> = ({ person }) => {
    * @param contactID The ID of the Contact to delete.
    */
   async function handleRemove(contactID: string) {
-
-    const { error} = await supabase.from("contacts").delete().match({id: contactID})
+    const { error } = await supabase
+      .from("contacts")
+      .delete()
+      .match({ id: contactID });
 
     if (error) {
       setSnackbar(<Snackbar>{t("snackbar.failure")}</Snackbar>);
@@ -427,10 +428,7 @@ const AccountPage: CustomPage<{
       <Head>
         <title>{createTitleStr(t("title"), t)}</title>
       </Head>
-      <PageHeader
-        title={t("title")}
-        icon={<MaterialIcon icon="account_circle" />}
-      />
+      <PageHeader title={t("title")} />
       <ContentLayout>
         <BasicInfoSection {...{ person: user }} />
         <UserFieldsSection {...{ person: user, subjectGroups }} />
@@ -466,7 +464,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     return {
       notFound: true,
     };
-  };
+  }
 
   const { data: subjectGroups } = await getSubjectGroups(supabase);
 

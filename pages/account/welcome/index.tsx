@@ -119,7 +119,6 @@ const WelcomePage: CustomPage = () => {
       </Head>
       <PageHeader
         title={t("instructions.title")}
-        icon={<MaterialIcon icon="waving_hand" />}
         onBack={() => setLogOutOpen(true)}
       />
       <ContentLayout>

@@ -14,7 +14,6 @@ import {
   ContentLayout,
   Header,
   List,
-  MaterialIcon,
   Search,
   Section,
 } from "@suankularb-components/react";
@@ -42,12 +41,7 @@ const LookupClassesPage: CustomPage<{
       <Head>
         <title>{createTitleStr(t("classes.title"), tx)}</title>
       </Head>
-      <PageHeader
-        title={t("classes.title")}
-        icon={<MaterialIcon icon="search" />}
-        parentURL="/lookup"
-        className="!overflow-visible"
-      >
+      <PageHeader title={t("classes.title")} parentURL="/lookup">
         <Columns columns={3} className="!w-[calc(100%-2rem)] sm:!w-full">
           <Search
             alt={t("classes.list.searchAlt")}

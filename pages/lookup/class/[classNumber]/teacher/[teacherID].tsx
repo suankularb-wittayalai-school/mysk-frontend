@@ -1,32 +1,19 @@
-// External libraries
-import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
-
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
-import Head from "next/head";
-
-// Internal components
+// Imports
 import DynamicAvatar from "@/components/common/DynamicAvatar";
 import PageHeader from "@/components/common/PageHeader";
 import PersonActions from "@/components/lookup/person/PersonActions";
 import PersonDetailsContent from "@/components/lookup/person/PersonDetailsContent";
-
-// Backend
-
-// Helpers
+import { getTeacherByID } from "@/utils/backend/person/getTeacherByID";
 import { getLocaleName } from "@/utils/helpers/string";
 import { createTitleStr } from "@/utils/helpers/title";
-
-// Hooks
 import { useLocale } from "@/utils/hooks/i18n";
-
-// Types
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Teacher } from "@/utils/types/person";
-import { getTeacherByID } from "@/utils/backend/person/getTeacherByID";
+import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Head from "next/head";
 
 const PersonDetailsPage: CustomPage<{
   teacher: Teacher;
@@ -43,7 +30,6 @@ const PersonDetailsPage: CustomPage<{
       <PageHeader
         title={getLocaleName(locale, teacher)}
         parentURL={`/lookup/class/${classNumber}`}
-        className="!overflow-visible"
       >
         <PersonActions person={teacher} suggestionsType="full" />
         <DynamicAvatar
@@ -74,7 +60,10 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
-  const { data: teacher, error } = await getTeacherByID(supabase, teacherID as string);
+  const { data: teacher, error } = await getTeacherByID(
+    supabase,
+    teacherID as string,
+  );
   if (error) return { notFound: true };
 
   return {

@@ -323,11 +323,7 @@ const ManageStudentsPage: CustomPage<{
       <Head>
         <title>{createTitleStr(t("title"), tCommon)}</title>
       </Head>
-      <PageHeader
-        title={t("title")}
-        icon={<MaterialIcon icon="table" />}
-        parentURL="/admin"
-      />
+      <PageHeader title={t("title")} parentURL="/admin" />
       <ContentLayout>
         <Section>
           <AdminDataTable

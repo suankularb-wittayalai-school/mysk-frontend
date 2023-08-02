@@ -24,9 +24,9 @@ import { createTitleStr } from "@/utils/helpers/title";
 import { useLocale } from "@/utils/hooks/i18n";
 
 // Types
+import { getStudentByID } from "@/utils/backend/person/getStudentByID";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Student } from "@/utils/types/person";
-import { getStudentByID } from "@/utils/backend/person/getStudentByID";
 
 const StudentDetailsPage: CustomPage<{ student: Student }> = ({ student }) => {
   const locale = useLocale();
@@ -40,7 +40,6 @@ const StudentDetailsPage: CustomPage<{ student: Student }> = ({ student }) => {
       <PageHeader
         title={getLocaleName(locale, student)}
         parentURL="/lookup/person"
-        className="!overflow-visible"
       >
         <PersonActions person={student} suggestionsType="full" />
         <DynamicAvatar

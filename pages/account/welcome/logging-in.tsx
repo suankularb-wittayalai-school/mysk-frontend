@@ -293,7 +293,6 @@ const LoggingInPage: CustomPage<{ user: User }> = ({ user }) => {
       </Head>
       <PageHeader
         title={t("loggingIn.title")}
-        icon={<MaterialIcon icon="password" />}
         parentURL="/account/welcome/your-subjects"
       />
       <ContentLayout>

@@ -27,7 +27,6 @@ import { useLocale } from "@/utils/hooks/i18n";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Student } from "@/utils/types/person";
 
-
 const StudentDetailsPage: CustomPage<{ student: Student }> = ({ student }) => {
   const locale = useLocale();
   const { t } = useTranslation("common");
@@ -40,7 +39,6 @@ const StudentDetailsPage: CustomPage<{ student: Student }> = ({ student }) => {
       <PageHeader
         title={getLocaleName(locale, student)}
         parentURL="/class/student"
-        className="!overflow-visible"
       >
         <PersonActions person={student} suggestionsType="share-only" />
         <DynamicAvatar
@@ -68,7 +66,10 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
-  const { data: student, error } = await getStudentByID(supabase, studentID as string);
+  const { data: student, error } = await getStudentByID(
+    supabase,
+    studentID as string,
+  );
   if (error) return { notFound: true };
 
   return {
