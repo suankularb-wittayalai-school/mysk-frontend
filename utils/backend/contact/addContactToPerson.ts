@@ -36,8 +36,6 @@ export default async function addContactToPerson(
     personID = data!.person_id;
   }
 
-  //   console.log({ personID, person });
-
   if (!personID) {
     logError("addContactToPerson", { message: "No person ID found" });
     return { error: { message: "No person ID found" }, data: null };

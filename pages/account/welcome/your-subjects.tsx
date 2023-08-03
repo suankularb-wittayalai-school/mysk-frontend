@@ -80,7 +80,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
-  const { data: user, error } = await getLoggedInPerson(
+  const { data: user } = await getLoggedInPerson(
     supabase,
     authOptions,
     req,
@@ -88,12 +88,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     { includeContacts: true, detailed: true },
   );
 
-  const { data: subjects, error: subjectError } = await getTeachingSubjects(
-    supabase,
-    user!.id,
-  );
-
-  console.log({ subjects, subjectError });
+  const { data: subjects } = await getTeachingSubjects(supabase, user!.id);
 
   return {
     props: {
