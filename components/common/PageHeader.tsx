@@ -47,7 +47,7 @@ const PageHeader: FC<
         visible={pageIsLoading}
         className="!ml-0"
       />
-      <ContentLayout className="!pb-0 !pt-6 [&>.skc-content-layout\_\_content]:!gap-y-0">
+      <ContentLayout className="!pb-2 !pt-6 [&>.skc-content-layout\_\_content]:!gap-y-0">
         <div className="ml-2 mr-4 flex flex-row gap-2 sm:-ml-2 sm:mr-0">
           {parentURL || onBack ? (
             <Button
