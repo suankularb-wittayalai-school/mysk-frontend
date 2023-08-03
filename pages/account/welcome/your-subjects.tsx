@@ -19,22 +19,23 @@ import {
 } from "@suankularb-components/react";
 
 // Internal components
-import MySKPageHeader from "@/components/common/MySKPageHeader";
+import PageHeader from "@/components/common/PageHeader";
 import TeachingSubjectCard from "@/components/subject/TeachingSubjectCard";
 
 // Backend
-import { getUserMetadata } from "@/utils/backend/account";
-import { getTeachingSubjects } from "@/utils/backend/subject/roomSubject";
+import getTeachingSubjects from "@/utils/backend/subject/getTeachingSubjects";
 
 // Helpers
 import { createTitleStr } from "@/utils/helpers/title";
 
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { TeacherSubjectItem } from "@/utils/types/subject";
+import { SubjectClassrooms } from "@/utils/types/subject";
+import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
 
 const YourSubjectsPage: CustomPage<{
-  subjects: TeacherSubjectItem[];
+  subjects: SubjectClassrooms[];
 }> = ({ subjects }) => {
   const { t } = useTranslation(["welcome", "common"]);
 
@@ -43,9 +44,8 @@ const YourSubjectsPage: CustomPage<{
       <Head>
         <title>{createTitleStr(t("yourSubjects.title"), t)}</title>
       </Head>
-      <MySKPageHeader
+      <PageHeader
         title={t("yourSubjects.title")}
-        icon={<MaterialIcon icon="book" />}
         parentURL="/account/welcome/your-information"
       />
       <ContentLayout>
@@ -80,20 +80,20 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  const { data: metadata, error: metadataError } = await getUserMetadata(
+  const { data: user, error } = await getLoggedInPerson(
     supabase,
-    session!.user.id
+    authOptions,
+    req,
+    res,
+    { includeContacts: true, detailed: true },
   );
-  if (metadataError) console.error(metadataError);
 
-  const { data: subjects } = await getTeachingSubjects(
+  const { data: subjects, error: subjectError } = await getTeachingSubjects(
     supabase,
-    metadata!.teacher!
+    user!.id,
   );
+
+  console.log({ subjects, subjectError });
 
   return {
     props: {

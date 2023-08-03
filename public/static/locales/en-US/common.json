@@ -34,6 +34,33 @@
       }
     }
   },
+  "pageHeader": {
+    "action": {
+      "navigation": "Open navigation",
+      "back": "Navigate up"
+    },
+    "appDrawer": {
+      "toggle": "Apps",
+      "mysk": {
+        "title": "MySK apps",
+        "mysk": "MySK",
+        "clubRegistry": "Club Registry"
+      },
+      "school": {
+        "title": "School apps",
+        "skAcTh": "sk.ac.th",
+        "kularbFah": "Kularb Fah",
+        "kularbLuang": "Kularb Luang",
+        "library": "Library",
+        "libraryEBook": "Library eBook",
+        "libraryOPAC": "Library OPAC"
+      },
+      "other": {
+        "title": "Other apps",
+        "schoolICT": "School ICT"
+      }
+    }
+  },
   "pageLoading": "Loading page…",
   "name": {
     "prefix": {
@@ -153,6 +180,15 @@
     }
   },
   "dialog": {
+    "accountNotFound": {
+      "title": "You need to use a MySK account",
+      "desc": "You didn’t use a MySK account. Make sure you log in with <strong>an email that ends with “@student.sk.ac.th” or “@sk.ac.th.”</strong>",
+      "contact": "Contact us if you think this is a mistake.",
+      "action": {
+        "report": "Report an issue",
+        "tryAgain": "Try again"
+      }
+    },
     "confirmDelete": {
       "title": "Confirm deletion",
       "desc": "This action cannot be undone.",

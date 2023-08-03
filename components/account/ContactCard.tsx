@@ -1,39 +1,27 @@
-// External libraries
-import { useTranslation } from "next-i18next";
-import Image from "next/image";
-import { FC, forwardRef, useContext, useState } from "react";
-
-// SK Components
+// Imports
+import ContactDialog from "@/components/account/ContactDialog";
+import SnackbarContext from "@/contexts/SnackbarContext";
+import DiscordLogo from "@/public/images/social/discord.svg";
+import FacebookLogo from "@/public/images/social/facebook.svg";
+import InstragramLogo from "@/public/images/social/instagram.svg";
+import LineLogo from "@/public/images/social/line.svg";
+import { range } from "@/utils/helpers/array";
+import { getContactIsLinkable, getContactURL } from "@/utils/helpers/contact";
+import { getLocaleString } from "@/utils/helpers/string";
+import { useLocale } from "@/utils/hooks/i18n";
+import { Contact } from "@/utils/types/contact";
 import {
-  MaterialIcon,
+  Avatar,
   Card,
   CardHeader,
-  Avatar,
+  MaterialIcon,
   Menu,
   MenuItem,
   Snackbar,
 } from "@suankularb-components/react";
-
-// Contacts
-import ContactDialog from "@/components/account/ContactDialog";
-
-// Images
-import FacebookLogo from "@/public/images/social/facebook.svg";
-import LineLogo from "@/public/images/social/line.svg";
-import InstragramLogo from "@/public/images/social/instagram.svg";
-import DiscordLogo from "@/public/images/social/discord.svg";
-
-// Helpers
-import { getLocaleString } from "@/utils/helpers/i18n";
-import { getContactIsLinkable, getContactURL } from "@/utils/helpers/contact";
-
-// Hooks
-import { useLocale } from "@/utils/hooks/i18n";
-
-// Types
-import { Contact } from "@/utils/types/contact";
-import { range } from "@/utils/helpers/array";
-import SnackbarContext from "@/contexts/SnackbarContext";
+import { useTranslation } from "next-i18next";
+import Image from "next/image";
+import { FC, forwardRef, useContext, useState } from "react";
 
 /**
  * A contact Card.
@@ -60,36 +48,36 @@ const ContactCard: FC<{
   const [showEdit, setShowEdit] = useState<boolean>(false);
 
   const avatarMap = {
-    Phone: <MaterialIcon icon="phone" />,
-    Email: <MaterialIcon icon="email" />,
-    Facebook: <Image src={FacebookLogo} width={40} height={40} alt="" />,
-    Line: <Image src={LineLogo} width={40} height={40} alt="" />,
-    Instagram: <Image src={InstragramLogo} width={40} height={40} alt="" />,
-    Website: <MaterialIcon icon="language" />,
-    Discord: <Image src={DiscordLogo} width={40} height={40} alt="" />,
-    Other: <MaterialIcon icon="forum" />,
+    phone: <MaterialIcon icon="phone" />,
+    email: <MaterialIcon icon="email" />,
+    facebook: <Image src={FacebookLogo} width={40} height={40} alt="" />,
+    line: <Image src={LineLogo} width={40} height={40} alt="" />,
+    instagram: <Image src={InstragramLogo} width={40} height={40} alt="" />,
+    website: <MaterialIcon icon="language" />,
+    discord: <Image src={DiscordLogo} width={40} height={40} alt="" />,
+    other: <MaterialIcon icon="forum" />,
   };
 
   const subtitleMap = {
-    Phone: tx("contact.phone"),
-    Email: tx("contact.email"),
-    Facebook: tx("contact.facebook"),
-    Line: tx("contact.line"),
-    Instagram: tx("contact.instagram"),
-    Website: tx("contact.website"),
-    Discord: tx("contact.discord"),
-    Other: tx("contact.other"),
+    phone: tx("contact.phone"),
+    email: tx("contact.email"),
+    facebook: tx("contact.facebook"),
+    line: tx("contact.line"),
+    instagram: tx("contact.instagram"),
+    website: tx("contact.website"),
+    discord: tx("contact.discord"),
+    other: tx("contact.other"),
   };
 
-  const formattedLabel = contact.name
+  const formattedLabel = contact.name?.th
     ? getLocaleString(contact.name, locale)
-    : contact.type === "Phone"
+    : contact.type === "phone"
     ? range(Math.min(Math.ceil(contact.value.length / 3), 3))
         .map((setIdx) =>
           contact.value.slice(
             setIdx * 3,
-            setIdx === 2 ? contact.value.length : setIdx * 3 + 3
-          )
+            setIdx === 2 ? contact.value.length : setIdx * 3 + 3,
+          ),
         )
         .join(" ")
     : contact.value;
@@ -114,7 +102,7 @@ const ContactCard: FC<{
                 onClick: () => {
                   navigator.clipboard.writeText(contact.value);
                   setSnackbar(
-                    <Snackbar>{tx("snackbar.copiedToClipboard")}</Snackbar>
+                    <Snackbar>{tx("snackbar.copiedToClipboard")}</Snackbar>,
                   );
                 },
               }

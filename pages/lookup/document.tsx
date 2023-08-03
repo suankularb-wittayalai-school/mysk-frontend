@@ -20,19 +20,21 @@ import {
 } from "@suankularb-components/react";
 
 // Internal components
-import MySKPageHeader from "@/components/common/MySKPageHeader";
+import PageHeader from "@/components/common/PageHeader";
 import EmptyDetail from "@/components/lookup/EmptyDetail";
 import LookupList from "@/components/lookup/LookupList";
 import DocumentCard from "@/components/lookup/document/DocumentCard";
 import DocumentDetails from "@/components/lookup/document/DocumentDetails";
 
 // Backend
-import { getUserMetadata } from "@/utils/backend/account";
-import {
-  getSchoolDocs,
-  getSchoolDocsByID,
-  searchSchoolDocs,
-} from "@/utils/backend/news/document";
+// import { getUserMetadata } from "@/utils/backend/account/getUserByEmail";
+// import {
+//   getSchoolDocs,
+//   getSchoolDocsByID,
+//   searchSchoolDocs,
+// } from "@/utils/backend/news/document";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 
 // Helpers
 import { createTitleStr } from "@/utils/helpers/title";
@@ -40,30 +42,36 @@ import { createTitleStr } from "@/utils/helpers/title";
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { SchoolDocument, SchoolDocumentType } from "@/utils/types/news";
-import { Role } from "@/utils/types/person";
+import { UserRole } from "@/utils/types/person";
+import { getSchoolDocuments } from "@/utils/backend/document/getSchoolDocuments";
+import { getSchoolDocumentByID } from "@/utils/backend/document/getSchoolDocumentByID";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { searchSchoolDocuments } from "@/utils/backend/document/searchSchoolDocuments";
 
 const LookupDocumentsPage: CustomPage<{
   recentDocs: SchoolDocument[];
   selectedIdx: number;
-  userRole: Role;
+  userRole: UserRole;
 }> = ({ recentDocs, selectedIdx, userRole }) => {
   // Translation
   const { t } = useTranslation(["lookup", "common"]);
 
   const [documents, setDocuments] = useState<SchoolDocument[]>(recentDocs);
+  const supabase = useSupabaseClient();
 
   // Selected Document
   const [selected, setSelected] = useState<SchoolDocument>(
-    recentDocs[selectedIdx]
+    recentDocs[selectedIdx],
   );
 
   // Type
   const [type, setType] = useState<SchoolDocumentType>(
-    userRole === "teacher" ? "order" : "document"
+    userRole === "teacher" ? "order" : "announcement",
   );
   useEffect(() => {
     (async () => {
-      const { data } = await getSchoolDocs(type, userRole);
+      const { data } = await getSchoolDocuments(supabase, userRole, type);
+      if (!data) return;
       setDocuments(data);
     })();
   }, [type]);
@@ -77,11 +85,7 @@ const LookupDocumentsPage: CustomPage<{
       <Head>
         <title>{createTitleStr(t("documents.title"), t)}</title>
       </Head>
-      <MySKPageHeader
-        title={t("documents.title")}
-        icon={<MaterialIcon icon="search" />}
-        parentURL="/lookup"
-      />
+      <PageHeader title={t("documents.title")} parentURL="/lookup" />
       <SplitLayout ratio="list-detail">
         <LookupList
           length={documents.length}
@@ -96,8 +100,8 @@ const LookupDocumentsPage: CustomPage<{
                   {t("documents.list.filter.orders")}
                 </FilterChip>
                 <FilterChip
-                  selected={type === "document"}
-                  onClick={() => setType("document")}
+                  selected={type === "announcement"}
+                  onClick={() => setType("announcement")}
                 >
                   {t("documents.list.filter.documents")}
                 </FilterChip>
@@ -112,7 +116,8 @@ const LookupDocumentsPage: CustomPage<{
               setDocuments(recentDocs);
               return;
             }
-            const { data } = await searchSchoolDocs("order", query);
+            const { data } = await searchSchoolDocuments(supabase, query, type);
+            if (!data) return;
             setDocuments(data);
           }}
         >
@@ -145,33 +150,45 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  const { data: user, error } = await getLoggedInPerson(
+    supabase,
+    authOptions,
+    req,
+    res,
+    { includeContacts: true, detailed: true },
+  );
 
-  const { data: metadata } = await getUserMetadata(supabase, session!.user.id);
-  const userRole = metadata!.role;
+  if (error) {
+    return {
+      notFound: true,
+    };
+  }
+  const userRole = user!.role;
 
   const selected = {
-    id: query.id ? Number(query.id) : null,
+    id: query.id ? (query.id as string) : null,
     type: query.type ? (query.type as SchoolDocumentType) : null,
   };
   let selectedIdx = 0;
 
   let recentDocs;
-  const { data: defaultDocuments } = await getSchoolDocs(
-    selected.type || (userRole === "teacher" ? "order" : "document"),
-    userRole
+  const { data: defaultDocuments } = await getSchoolDocuments(
+    supabase,
+    userRole,
+    selected.type || (userRole === "teacher" ? "order" : "announcement"),
   );
 
-  selectedIdx = defaultDocuments.findIndex(
-    (document) => selected.id === document.id && selected.type === document.type
-  );
+  if (!defaultDocuments) {
+    selectedIdx = defaultDocuments!.findIndex(
+      (document) =>
+        selected.id === document.id && selected.type === document.type,
+    );
+  }
 
   if (selected.id && selectedIdx === -1) {
-    const { data, error } = await getSchoolDocsByID("document", selected.id);
+    const { data, error } = await getSchoolDocumentByID(supabase, selected.id);
     if (error) recentDocs = defaultDocuments;
-    else recentDocs = [data, ...defaultDocuments];
+    else recentDocs = [data, ...defaultDocuments!];
   } else recentDocs = defaultDocuments;
 
   selectedIdx = Math.max(selectedIdx, 0);

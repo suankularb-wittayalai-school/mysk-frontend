@@ -40,15 +40,13 @@ import {
 // Internal components
 import AdminDataTable from "@/components/admin/AdminDataTable";
 import ConfirmDeleteDialog from "@/components/common/ConfirmDeleteDialog";
-import MySKPageHeader from "@/components/common/MySKPageHeader";
+import PageHeader from "@/components/common/PageHeader";
 
 // Backend
-import { getAdminSubjectList } from "@/utils/backend/subject/subject";
 
 // Helpers
-import { getLocaleYear } from "@/utils/helpers/date";
-import { getLocaleObj, getLocaleString } from "@/utils/helpers/i18n";
 import { withLoading } from "@/utils/helpers/loading";
+import { getLocaleString } from "@/utils/helpers/string";
 import { createTitleStr } from "@/utils/helpers/title";
 
 // Hooks
@@ -56,6 +54,7 @@ import { useLocale } from "@/utils/hooks/i18n";
 import { useToggle } from "@/utils/hooks/toggle";
 
 // Types
+import { getSubjectsForAdmin } from "@/utils/backend/subject/getSubjectsForAdmin";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Subject } from "@/utils/types/subject";
 
@@ -71,7 +70,9 @@ const rowsPerPage = 20;
  *
  * @returns A Segmented Button.
  */
-const SubjectRowActions: FC<{ row: Subject }> = ({ row }) => {
+const SubjectRowActions: FC<{ row: Pick<Subject, "id" | "name" | "code"> }> = ({
+  row,
+}) => {
   const [editOpen, setEditOpen] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
 
@@ -124,7 +125,7 @@ const SubjectRowActions: FC<{ row: Subject }> = ({ row }) => {
  * @returns A Page.
  */
 const ManageSubjectsPage: CustomPage<{
-  subjectList: Subject[];
+  subjectList: Pick<Subject, "id" | "name" | "code">[];
   totalSubjectCount: number;
 }> = ({ subjectList, totalSubjectCount }) => {
   const locale = useLocale();
@@ -162,21 +163,21 @@ const ManageSubjectsPage: CustomPage<{
 
             // For other pages, we have to fetch that specific page from the
             // database
-            const { data, error } = await getAdminSubjectList(
+            const { data, error } = await getSubjectsForAdmin(
               supabase,
               page,
               rowsPerPage,
               globalFilter, // <-- For when a search result spans many pages
-              sorting
+              sorting,
             );
             if (error) return subjectList;
             return data;
-          })()
+          })(),
         );
         return true;
       },
       toggleLoading,
-      { hasEndToggle: true }
+      { hasEndToggle: true },
     );
   }, [page, sorting]);
 
@@ -195,27 +196,29 @@ const ManageSubjectsPage: CustomPage<{
 
             // Fetch the rows with the global filter
             setPage(1);
-            const { data, count, error } = await getAdminSubjectList(
+            const { data, count, error } = await getSubjectsForAdmin(
               supabase,
               1,
               rowsPerPage,
               globalFilter,
-              sorting
+              sorting,
             );
             setTotalRows(count);
             if (error) return [];
             return data;
-          })()
+          })(),
         );
         return true;
       },
       toggleLoading,
-      { hasEndToggle: true }
+      { hasEndToggle: true },
     );
   }, [globalFilter]);
 
   // Column definitions
-  const columns = useMemo<DataTableColumnDef<Subject>[]>(
+  const columns = useMemo<
+    DataTableColumnDef<Pick<Subject, "id" | "name" | "code">>[]
+  >(
     () => [
       {
         id: "codeTH",
@@ -231,32 +234,21 @@ const ManageSubjectsPage: CustomPage<{
       },
       {
         id: "nameTH",
-        accessorFn: (row) => getLocaleObj(row.name, "th").name,
+        accessorFn: (row) => getLocaleString(row.name, "th"),
         header: t("thead.nameTH"),
         thAttr: { className: "w-3/12" },
       },
       {
         id: "nameEN",
-        accessorFn: (row) => getLocaleObj(row.name, "en-US").name,
+        accessorFn: (row) => getLocaleString(row.name, "en-US"),
         header: t("thead.nameEN"),
         thAttr: { className: "w-3/12" },
       },
-      {
-        id: "year",
-        accessorFn: (row) => getLocaleYear(locale, row.year),
-        header: t("thead.year"),
-        thAttr: { className: "w-1/12" },
-        tdAttr: { align: "center" },
-      },
-      {
-        accessorKey: "semester",
-        header: t("thead.semester"),
-        thAttr: { className: "w-1/12" },
-        tdAttr: { align: "center" },
-      },
     ],
-    [locale]
+    [locale],
   );
+
+  // console.log(data);
 
   // Tanstack Table setup
   const { getHeaderGroups, getRowModel } = useReactTable({
@@ -276,11 +268,7 @@ const ManageSubjectsPage: CustomPage<{
       <Head>
         <title>{createTitleStr(t("title"), tCommon)}</title>
       </Head>
-      <MySKPageHeader
-        title={t("title")}
-        icon={<MaterialIcon icon="table" />}
-        parentURL="/admin"
-      />
+      <PageHeader title={t("title")} parentURL="/admin" />
       <ContentLayout>
         <Section>
           <AdminDataTable
@@ -311,7 +299,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   });
 
   const { data: subjectList, count: totalSubjectCount } =
-    await getAdminSubjectList(supabase, 1, rowsPerPage);
+    await getSubjectsForAdmin(supabase, 1, rowsPerPage);
 
   return {
     props: {

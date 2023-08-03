@@ -1,8 +1,5 @@
 // External libraries
-import {
-  createPagesServerClient,
-  User,
-} from "@supabase/auth-helpers-nextjs";
+import { createPagesServerClient, User } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
@@ -29,15 +26,15 @@ import {
 // Internal components
 import ContactsSection from "@/components/account/ContactSection";
 import PersonFields from "@/components/account/PersonFields";
-import MySKPageHeader from "@/components/common/MySKPageHeader";
+import PageHeader from "@/components/common/PageHeader";
 import NextWarningCard from "@/components/welcome/NextWarningCard";
 
 // Contexts
 import SnackbarContext from "@/contexts/SnackbarContext";
 
 // Backend
-import { getPersonFromUser, editPerson } from "@/utils/backend/person/person";
-import { getSubjectGroups } from "@/utils/backend/subject/subjectGroup";
+// import { getPersonFromUser, editPerson } from "@/utils/backend/person/person";
+// import { getSubjectGroups } from "@/utils/backend/subject/subjectGroup";
 
 // Helpers
 import { changeItem } from "@/utils/helpers/array";
@@ -56,6 +53,10 @@ import { SubjectGroup } from "@/utils/types/subject";
 
 // Miscellaneous
 import { pantsSizeRegex } from "@/utils/patterns";
+import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import getSubjectGroups from "@/utils/backend/subject/getSubjectGroups";
+import { updatePerson } from "@/utils/backend/person/updatePerson";
 
 const WelcomePage: CustomPage<{
   person: Student | Teacher;
@@ -107,15 +108,15 @@ const WelcomePage: CustomPage<{
     {
       key: "firstNameTH",
       required: true,
-      defaultValue: person.name.th.firstName,
+      defaultValue: person.first_name.th,
     },
-    { key: "middleNameTH", defaultValue: person.name.th.middleName },
+    { key: "middleNameTH", defaultValue: person.middle_name?.th },
     {
       key: "lastNameTH",
       required: true,
-      defaultValue: person.name.th.lastName,
+      defaultValue: person.last_name.th,
     },
-    { key: "nicknameTH", defaultValue: person.name.th.nickname },
+    { key: "nicknameTH", defaultValue: person.nickname?.th },
     {
       key: "prefixEN",
       required: true,
@@ -126,27 +127,35 @@ const WelcomePage: CustomPage<{
     {
       key: "firstNameEN",
       required: true,
-      defaultValue: person.name["en-US"]?.firstName,
+      defaultValue: person.first_name["en-US"],
     },
-    { key: "middleNameEN", defaultValue: person.name["en-US"]?.middleName },
+    {
+      key: "middleNameEN",
+      defaultValue: person.middle_name
+        ? person.middle_name["en-US"]
+        : undefined,
+    },
     {
       key: "lastNameEN",
       required: true,
-      defaultValue: person.name["en-US"]?.lastName,
+      defaultValue: person.last_name["en-US"],
     },
-    { key: "nicknameEN", defaultValue: person.name["en-US"]?.nickname },
+    {
+      key: "nicknameEN",
+      defaultValue: person.nickname ? person.nickname["en-US"] : undefined,
+    },
     {
       key: "subjectGroup",
       defaultValue:
         person.role === "teacher" && subjectGroups.length
-          ? person.subjectGroup.id || subjectGroups[0].id
+          ? person.subject_group.id || subjectGroups[0].id
           : undefined,
     },
     {
       key: "classAdvisorAt",
       defaultValue:
-        person.role === "teacher" && person.classAdvisorAt
-          ? String(person.classAdvisorAt.number)
+        person.role === "teacher" && person.class_advisor_at
+          ? String(person.class_advisor_at.number)
           : undefined,
     },
     // { key: "gender", required: true },
@@ -166,10 +175,10 @@ const WelcomePage: CustomPage<{
     //     t("profile.general.passportNumber_error", { ns: "account" }),
     // },
     { key: "allergies", defaultValue: person.allergies },
-    { key: "shirtSize", defaultValue: person.shirtSize },
+    { key: "shirtSize", defaultValue: person.shirt_size },
     {
       key: "pantsSize",
-      defaultValue: person.pantsSize,
+      defaultValue: person.pants_size,
       validate: (value: string) => pantsSizeRegex.test(value),
     },
     // { key: "bloodGroup", required: true },
@@ -180,15 +189,15 @@ const WelcomePage: CustomPage<{
   const [loading, toggleLoading] = useToggle();
   async function handleSubmit() {
     withLoading(async () => {
-      const { error } = await editPerson(
+      const { error } = await updatePerson(
         supabase,
         { ...form, contacts },
-        person
+        person,
       );
 
       if (error) {
         setSnackbar(
-          <Snackbar>{t("snackbar.failure", { ns: "common" })}</Snackbar>
+          <Snackbar>{t("snackbar.failure", { ns: "common" })}</Snackbar>,
         );
         return false;
       }
@@ -205,9 +214,8 @@ const WelcomePage: CustomPage<{
       <Head>
         <title>{createTitleStr(t("yourInformation.title"), t)}</title>
       </Head>
-      <MySKPageHeader
+      <PageHeader
         title={t("yourInformation.title")}
-        icon={<MaterialIcon icon="badge" />}
         parentURL="/account/welcome"
       />
       <ContentLayout>
@@ -216,11 +224,17 @@ const WelcomePage: CustomPage<{
           <Header>{t("yourInformation.general.title")}</Header>
           <p className="-mt-2">{t("yourInformation.general.desc")}</p>
           <p className="-mt-2">
-            <Trans i18nKey="yourInformation.general.inControl" ns="welcome">
-              <Link href="/help/essentials/onboarding" className="link">
-                ทำไมโรงเรียนจึงต้องขอข้อมูลนี้
-              </Link>
-            </Trans>
+            <Trans
+              i18nKey="yourInformation.general.inControl"
+              ns="welcome"
+              components={[
+                <Link
+                  key={0}
+                  href="/help/essentials/onboarding"
+                  className="link"
+                />,
+              ]}
+            />
           </p>
           <PersonFields
             subjectGroups={
@@ -265,17 +279,15 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  const { data: person } = await getPersonFromUser(
+  const { data: user, error } = await getLoggedInPerson(
     supabase,
-    session!.user as User,
-    { contacts: true, allergies: true, classAdvisorAt: true }
+    authOptions,
+    req,
+    res,
+    { includeContacts: true, detailed: true },
   );
 
-  const { data: subjectGroups } = await getSubjectGroups();
+  const { data: subjectGroups } = await getSubjectGroups(supabase);
 
   return {
     props: {
@@ -284,7 +296,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         "welcome",
         "account",
       ])),
-      person,
+      person: user,
       subjectGroups,
     },
   };

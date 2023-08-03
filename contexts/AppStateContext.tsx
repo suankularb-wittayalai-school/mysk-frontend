@@ -13,11 +13,15 @@ const AppStateContext = createContext<{
   setColorScheme: (mode: ColorScheme) => void;
   navOpen: boolean;
   setNavOpen: (open: boolean) => void;
+  accountNotFoundOpen: boolean;
+  setAccountNotFoundOpen: (open: boolean) => void;
 }>({
   colorScheme: "auto",
   setColorScheme: () => {},
   navOpen: false,
   setNavOpen: () => {},
+  accountNotFoundOpen: false,
+  setAccountNotFoundOpen: () => {},
 });
 
 export default AppStateContext;

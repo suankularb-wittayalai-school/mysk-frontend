@@ -1,38 +1,28 @@
-// External libraries
+// Imports
+import ClassStudents from "@/components/class/ClassStudents";
+import PageHeader from "@/components/common/PageHeader";
+import ClassTabs from "@/components/lookup/class/ClassTabs";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
+import getStudentsOfClass from "@/utils/backend/classroom/getStudentsOfClass";
+import { createTitleStr } from "@/utils/helpers/title";
+import { Classroom } from "@/utils/types/classroom";
+import { CustomPage, LangCode } from "@/utils/types/common";
+import { Student, UserRole } from "@/utils/types/person";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
-
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import Head from "next/head";
-
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
-// Internal components
-import ClassStudents from "@/components/class/ClassStudents";
-import MySKPageHeader from "@/components/common/MySKPageHeader";
-import ClassTabs from "@/components/lookup/class/ClassTabs";
-
-// Backend
-import { getUserMetadata } from "@/utils/backend/account";
-import {
-  getClassFromUser,
-  getClassStudentList,
-} from "@/utils/backend/classroom/classroom";
-import { getClassAdvisorAt } from "@/utils/backend/person/teacher";
-
-// Helpers
-import { createTitleStr } from "@/utils/helpers/title";
-
-// Types
-import { ClassWNumber } from "@/utils/types/class";
-import { CustomPage, LangCode } from "@/utils/types/common";
-import { Role, Student } from "@/utils/types/person";
+import Head from "next/head";
 
 const ClassStudentsPage: CustomPage<{
-  classItem: ClassWNumber;
-  studentList: Student[];
-  userRole: Role;
-}> = ({ classItem, studentList, userRole }) => {
+  classroom: Pick<Classroom, "id" | "number">;
+  studentList: Pick<
+    Student,
+    "id" | "first_name" | "last_name" | "nickname" | "class_no"
+  >[];
+  userRole: UserRole;
+}> = ({ classroom, studentList, userRole }) => {
   const { t } = useTranslation(["class", "common"]);
 
   return (
@@ -40,10 +30,10 @@ const ClassStudentsPage: CustomPage<{
       <Head>
         <title>{createTitleStr(t(`student.title.${userRole}`), t)}</title>
       </Head>
-      <MySKPageHeader title={t(`student.title.${userRole}`)} parentURL="/class">
-        <ClassTabs number={classItem.number} type="class" />
-      </MySKPageHeader>
-      <ClassStudents {...{ studentList }} />
+      <PageHeader title={t(`student.title.${userRole}`)} parentURL="/class">
+        <ClassTabs number={classroom.number} type="class" />
+      </PageHeader>
+      <ClassStudents studentList={studentList} isOwnClass />
     </>
   );
 };
@@ -58,25 +48,21 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  const { data: metadata } = await getUserMetadata(supabase, session!.user.id);
-
-  const userRole = metadata!.role;
-
-  let classItem: ClassWNumber;
-  if (userRole === "student") {
-    const { data } = await getClassFromUser(supabase, session!.user);
-    classItem = data!;
-  } else if (userRole === "teacher") {
-    const { data } = await getClassAdvisorAt(supabase, metadata!.teacher!);
-    classItem = data!;
-  }
-
-  const { data: studentList } = await getClassStudentList(
+  const { data: user } = await getLoggedInPerson(
     supabase,
-    classItem!.id
+    authOptions,
+    req,
+    res,
+  );
+
+  const userRole = user!.role;
+
+  let classroom: Pick<Classroom, "id" | "number"> =
+    user!.role === "student" ? user!.classroom! : user!.class_advisor_at!;
+
+  const { data: studentList } = await getStudentsOfClass(
+    supabase,
+    classroom!.id,
   );
 
   return {
@@ -86,7 +72,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         "class",
         "lookup",
       ])),
-      classItem: classItem!,
+      classroom: classroom!,
       studentList,
       userRole,
     },

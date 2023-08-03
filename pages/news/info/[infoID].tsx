@@ -14,20 +14,21 @@ import NewsMeta from "@/components/news/NewsMeta";
 import NewsPageHeader from "@/components/news/NewsPageHeader";
 
 // Backend
-import { getInfo, getAllInfoIDs } from "@/utils/backend/news/info";
+// import { getInfo, getAllInfoIDs } from "@/utils/backend/news/info";
 
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { InfoPage as InfoPageType } from "@/utils/types/news";
+import { Info } from "@/utils/types/news";
 
 // Helpers
 import { createTitleStr } from "@/utils/helpers/title";
-import { getLocaleString } from "@/utils/helpers/i18n";
+import { getLocaleString, mergeDBLocales } from "@/utils/helpers/string";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
+import { supabase } from "@/utils/supabase-backend";
 
-const InfoPage: CustomPage<{ infoPage: InfoPageType }> = ({ infoPage }) => {
+const InfoPage: CustomPage<{ infoPage: Info }> = ({ infoPage }) => {
   // Translation
   const locale = useLocale();
   const { t } = useTranslation("common");
@@ -36,7 +37,7 @@ const InfoPage: CustomPage<{ infoPage: InfoPageType }> = ({ infoPage }) => {
     <>
       <Head>
         <title>
-          {createTitleStr(getLocaleString(infoPage.content.title, locale), t)}
+          {createTitleStr(getLocaleString(infoPage.title, locale), t)}
         </title>
       </Head>
       <NewsMeta newsItem={infoPage} />
@@ -47,9 +48,7 @@ const InfoPage: CustomPage<{ infoPage: InfoPageType }> = ({ infoPage }) => {
             className="skc-body-large col-span-2 -my-5 mx-4 sm:col-span-4
               sm:mx-0 md:col-start-2"
           >
-            <Markdown>
-              {getLocaleString(infoPage.content.body, locale)}
-            </Markdown>
+            <Markdown>{getLocaleString(infoPage.body, locale)}</Markdown>
           </div>
         </Columns>
       </ContentLayout>
@@ -58,22 +57,36 @@ const InfoPage: CustomPage<{ infoPage: InfoPageType }> = ({ infoPage }) => {
 };
 
 export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
-  const { data: infoPage, error } = await getInfo(Number(params?.infoID));
+  const { data: newsItem, error } = await supabase
+    .from("infos")
+    .select("*, news(*)")
+    .eq("id", params!.infoID)
+    .single();
   if (error) return { notFound: true };
 
   return {
     props: {
       ...(await serverSideTranslations(locale as LangCode, ["common", "news"])),
-      infoPage,
+      infoPage: {
+        id: newsItem.id,
+        title: mergeDBLocales(newsItem.news, "title"),
+        description: mergeDBLocales(newsItem.news, "description"),
+        image: newsItem.news!.image,
+        created_at: newsItem.news!.created_at,
+        old_url: newsItem.news!.old_url,
+        body: mergeDBLocales(newsItem, "body"),
+      },
     },
     revalidate: 300,
   };
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
+  const { data } = await supabase.from("infos").select("id");
+
   return {
-    paths: (await getAllInfoIDs()).map((number) => ({
-      params: { infoID: number.toString() },
+    paths: data!.map((number) => ({
+      params: { infoID: number.id.toString() },
     })),
     fallback: "blocking",
   };

@@ -1,9 +1,10 @@
-// External libraries
-import { useTranslation } from "next-i18next";
-import { AnimatePresence, motion } from "framer-motion";
-import { FC, useEffect } from "react";
-
-// SK Components
+// Imports
+import PeriodDetailsContent from "@/components/schedule/PeriodDetailsContent";
+import { periodTimes } from "@/utils/helpers/schedule";
+import { getLocaleString } from "@/utils/helpers/string";
+import { useLocale } from "@/utils/hooks/i18n";
+import { DialogFC } from "@/utils/types/component";
+import { PeriodContentItem, SchedulePeriod } from "@/utils/types/schedule";
 import {
   Button,
   Card,
@@ -12,20 +13,9 @@ import {
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
-
-// Internal components
-import PeriodDetailsContent from "@/components/schedule/PeriodDetailsContent";
-
-// Helpers
-import { getLocaleObj } from "@/utils/helpers/i18n";
-import { periodTimes } from "@/utils/helpers/schedule";
-
-// Hooks
-import { useLocale } from "@/utils/hooks/i18n";
-
-// Types
-import { DialogComponent } from "@/utils/types/common";
-import { PeriodContentItem, SchedulePeriod } from "@/utils/types/schedule";
+import { AnimatePresence, motion } from "framer-motion";
+import { useTranslation } from "next-i18next";
+import { FC, useEffect } from "react";
 
 const SubjectPeriodCard: FC<{
   period: SchedulePeriod;
@@ -39,17 +29,17 @@ const SubjectPeriodCard: FC<{
       <div className="flex flex-row gap-2 border-b-1 border-b-outline-variant px-4 py-2">
         <div className="flex flex-col">
           <h2 className="skc-title-medium">
-            {getLocaleObj(subject.subject.name, locale).name}
+            {getLocaleString(subject.subject.name, locale)}
           </h2>
           <time className="skc-body-small">
-            {[period.startTime - 1, period.startTime + period.duration - 1]
+            {[period.start_time - 1, period.start_time + period.duration - 1]
               .map((j) =>
                 // Get the start/end time of this Period
                 Object.values(periodTimes[j])
                   // Format the hours and minutes parts of the time
                   .map((part) => part.toString().padStart(2, "0"))
                   // Join those parts
-                  .join(":")
+                  .join(":"),
               )
               // Join the start and end
               .join("-")}
@@ -63,11 +53,9 @@ const SubjectPeriodCard: FC<{
   );
 };
 
-const ElectivePeriodDetails: DialogComponent<{ period: SchedulePeriod }> = ({
-  period,
-  open,
-  onClose,
-}) => {
+const ElectivePeriodDetails: DialogFC<{
+  period: SchedulePeriod;
+}> = ({ period, open, onClose }) => {
   // Translation
   const { t } = useTranslation("schedule");
 
@@ -128,7 +116,7 @@ const ElectivePeriodDetails: DialogComponent<{ period: SchedulePeriod }> = ({
 
                 {period.content
                   .sort((a, b) =>
-                    a.subject.code.th > b.subject.code.th ? 1 : -1
+                    a.subject.code.th > b.subject.code.th ? 1 : -1,
                   )
                   .map((subject) => (
                     <SubjectPeriodCard

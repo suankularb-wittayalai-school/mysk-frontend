@@ -9,29 +9,28 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 // Internal components
 import ClassTeachers from "@/components/class/ClassTeachers";
-import MySKPageHeader from "@/components/common/MySKPageHeader";
+import PageHeader from "@/components/common/PageHeader";
 import ClassTabs from "@/components/lookup/class/ClassTabs";
 
 // Backend
-import { getUserMetadata } from "@/utils/backend/account";
-import {
-  getClassFromUser,
-  getClassTeachersList,
-} from "@/utils/backend/classroom/classroom";
-import { getClassAdvisorAt } from "@/utils/backend/person/teacher";
+import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
 
 // Helpers
 import { createTitleStr } from "@/utils/helpers/title";
 
 // Types
-import { ClassTeachersListSection, ClassWNumber } from "@/utils/types/class";
+import { Classroom } from "@/utils/types/classroom";
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { Role } from "@/utils/types/person";
+import { UserRole } from "@/utils/types/person";
+import { SubjectGroupTeachers } from "@/utils/types/subject";
+import getTeachersOfClass from "@/utils/backend/classroom/getTeachersOfClass";
+
 
 const ClassTeachersPage: CustomPage<{
-  classItem: ClassWNumber;
-  teacherList: ClassTeachersListSection[];
-  userRole: Role;
+  classItem: Pick<Classroom, "id" | "number">;
+  teacherList: SubjectGroupTeachers[];
+  userRole: UserRole;
 }> = ({ classItem, teacherList, userRole }) => {
   const { t } = useTranslation(["class", "common"]);
 
@@ -40,9 +39,9 @@ const ClassTeachersPage: CustomPage<{
       <Head>
         <title>{createTitleStr(t(`teacher.title.${userRole}`), t)}</title>
       </Head>
-      <MySKPageHeader title={t(`teacher.title.${userRole}`)} parentURL="/class">
+      <PageHeader title={t(`teacher.title.${userRole}`)} parentURL="/class">
         <ClassTabs number={classItem.number} type="class" />
-      </MySKPageHeader>
+      </PageHeader>
       <ClassTeachers {...{ teacherList }} />
     </>
   );
@@ -58,26 +57,42 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  const { data: metadata } = await getUserMetadata(supabase, session!.user.id);
+  const { data: user } = await getLoggedInPerson(
+    supabase,
+    authOptions,
+    req,
+    res,
+  );
 
-  const userRole = metadata!.role;
+  const userRole = user!.role;
 
-  let classItem: ClassWNumber;
-  if (userRole === "student") {
-    const { data } = await getClassFromUser(supabase, session!.user);
-    classItem = data!;
-  } else if (userRole === "teacher") {
-    const { data } = await getClassAdvisorAt(supabase, metadata!.teacher!);
-    classItem = data!;
-  }
+  let classItem: Pick<Classroom, "id" | "number"> = user!.role === "student" ? user!.classroom! : user!.class_advisor_at!;
 
-  const { data: teacherList } = await getClassTeachersList(
+  const { data: allTeacherList } = await getTeachersOfClass(
     supabase,
     classItem!.id
   );
+
+
+  // group by subject group
+  const teacherList: SubjectGroupTeachers[] = [];
+  for (const teacher of allTeacherList!) {
+    const subjectGroup = teacher.subject_group;
+    const subjectGroupIndex = teacherList.findIndex(
+      (t) => t.subject_group.id === subjectGroup.id,
+    );
+
+    if (subjectGroupIndex === -1) {
+      teacherList.push({
+        subject_group: subjectGroup,
+        teachers: [teacher],
+      });
+    } else {
+      teacherList[subjectGroupIndex].teachers.push(teacher);
+    }
+  }
+
+
 
   return {
     props: {

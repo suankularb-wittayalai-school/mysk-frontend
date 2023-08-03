@@ -1,36 +1,27 @@
 {
   "main": {
-    "title": "Your one-stop school portal",
-    "options": {
-      "language": "Language",
-      "action": {
-        "magicLink": "Magic link",
-        "help": "Help"
-      }
+    "logoAlt": "MySK logo",
+    "title": "Log in to MySK",
+    "googleHelper": "Use email ending with sk.ac.th",
+    "action": {
+      "help": "Help",
+      "report": "Report an issue"
     }
   },
-  "imageAlt": "Pink and blue hand holding phone with MySK logo",
   "aside": {
     "patchNotes": {
-      "title": "New in {{version}}",
-      "subtitle": "This version brings a brand new MySK experience.",
+      "alt": "Patch notes",
+      "overline": "MySK {{version}}",
+      "title": "Schedule just got more helpful",
       "list": {
-        "1": "Student List Printout: Get a fully customizable name list printout of your students in both Thai and English",
-        "2": "Save all your students/classmates’ contacts to your phone in just one click",
-        "3": "Bug fixes"
-      },
-      "action": {
-        "more": "More patch notes…"
+        "1": "Schedule at a Glance shows the most relevant information from your schedule.",
+        "2": "Find any teacher’s schedule with Lookup.",
+        "3": "Add multiple rooms and classes to your schedule."
       }
     },
-    "credits": {
-      "supervisors": "MySK is supervised by Supannee Supeerath and Atipol Sukrisadanon.",
-      "developers": "Its development was led by Siravit Phokeed and Smart Wattanapornmongkol with help from Sadudee Theparree and Tempoom Leelacharoen.",
-      "translations": "Translations to Thai contributed by <a>Suankularb English Club</a>.",
-      "logo": {
-        "skelc": "SK English Club",
-        "skiso": "SK IT Solutions"
-      }
+    "action": {
+      "patchNotes": "More patch notes…"
     }
-  }
+  },
+  "credits": "MySK is supervised by Supannee Supeerath and Atipol Sukrisadanon • Its development was led by Siravit Phokeed and Smart Wattanapornmongkol • Quality assurance by Tempoom Leelacharoen • Translations to Thai contributed by Suankularb English Club"
 }

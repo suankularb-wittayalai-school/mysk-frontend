@@ -3,18 +3,18 @@ import Head from "next/head";
 import { FC } from "react";
 
 // Helpers
-import { getLocaleString } from "@/utils/helpers/i18n";
+import { getLocaleString } from "@/utils/helpers/string";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
 
 // Types
-import { FormPage, InfoPage } from "@/utils/types/news";
+import { Info } from "@/utils/types/news";
 
 /**
  * A set of `<meta>` for a news article.
  */
-const NewsMeta: FC<{ newsItem: InfoPage | FormPage }> = ({ newsItem }) => {
+const NewsMeta: FC<{ newsItem: Info }> = ({ newsItem }) => {
   // Thanks @ImSadudee!
 
   // Translation
@@ -24,11 +24,11 @@ const NewsMeta: FC<{ newsItem: InfoPage | FormPage }> = ({ newsItem }) => {
     <Head>
       <meta
         property="description"
-        content={getLocaleString(newsItem.content.description, locale)}
+        content={getLocaleString(newsItem.description, locale)}
       />
       <meta
         property="og:title"
-        content={getLocaleString(newsItem.content.title, locale)}
+        content={getLocaleString(newsItem.title, locale)}
       />
       <meta property="og:type" content="news" />
       <meta
@@ -45,7 +45,7 @@ const NewsMeta: FC<{ newsItem: InfoPage | FormPage }> = ({ newsItem }) => {
       />
       <meta
         property="og:description"
-        content={getLocaleString(newsItem.content.description, locale)}
+        content={getLocaleString(newsItem.description, locale)}
       />
       <meta property="og:locale" content={locale} />
       <meta property="og:site_name" content="MySK" />

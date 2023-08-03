@@ -11,28 +11,29 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import PrintStudentList from "@/components/class/PrintStudentList";
 
 // Backend
-import { getUserMetadata } from "@/utils/backend/account";
-import {
-  getClassFromUser,
-  getClassOverview,
-  getClassStudentList,
-} from "@/utils/backend/classroom/classroom";
-import { getClassAdvisorAt } from "@/utils/backend/person/teacher";
+import getClassroomOverview from "@/utils/backend/classroom/getClassroomOverview";
 
 // Helpers
 import { createTitleStr } from "@/utils/helpers/title";
 
 // Types
-import { ClassOverview, ClassWNumber } from "@/utils/types/class";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
+import getStudentsOfClass from "@/utils/backend/classroom/getStudentsOfClass";
+import { getStudentsByIDs } from "@/utils/backend/person/getStudentsByIDs";
+import { Classroom } from "@/utils/types/classroom";
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { Role, Student } from "@/utils/types/person";
+import { Student, UserRole } from "@/utils/types/person";
 
 const StudentsListPrintPage: CustomPage<{
-  classItem: ClassWNumber;
-  classOverview: ClassOverview;
+  classItem: Pick<Classroom, "id" | "number">;
+  classroomOverview: Pick<
+    Classroom,
+    "id" | "number" | "class_advisors" | "contacts" | "subjects"
+  >;
   studentList: Student[];
-  userRole: Role;
-}> = ({ classItem, classOverview, studentList, userRole }) => {
+  userRole: UserRole;
+}> = ({ classItem, classroomOverview, studentList, userRole }) => {
   const { t } = useTranslation(["class", "common"]);
 
   return (
@@ -41,7 +42,7 @@ const StudentsListPrintPage: CustomPage<{
         <title>{createTitleStr(t("student.print.title"), t)}</title>
       </Head>
       <PrintStudentList
-        {...{ classItem, classOverview, studentList, userRole }}
+        {...{ classItem, classroomOverview, studentList, userRole }}
       />
     </>
   );
@@ -57,30 +58,43 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  const { data: metadata } = await getUserMetadata(supabase, session!.user.id);
-
-  const userRole = metadata!.role;
-
-  let classItem: ClassWNumber;
-  if (userRole === "student") {
-    const { data } = await getClassFromUser(supabase, session!.user);
-    classItem = data!;
-  } else if (userRole === "teacher") {
-    const { data } = await getClassAdvisorAt(supabase, metadata!.teacher!);
-    classItem = data!;
-  }
-
-  const { data: classOverview } = await getClassOverview(
+  const { data: user } = await getLoggedInPerson(
     supabase,
-    classItem!.number
+    authOptions,
+    req,
+    res,
+    { includeContacts: true, detailed: true },
   );
 
-  const { data: studentList } = await getClassStudentList(
+  const userRole = user!.role;
+
+  let classroom: Pick<Classroom, "id" | "number"> | null = null;
+
+  switch (userRole) {
+    case "student":
+      classroom = user?.classroom!;
+      break;
+    case "teacher":
+      classroom = user?.class_advisor_at!;
+      break;
+  }
+
+  if (!classroom) return { notFound: true };
+
+  const { data: classroomOverview } = await getClassroomOverview(
     supabase,
-    classItem!.id
+    classroom!.id,
+  );
+
+  const { data: compactStudentList } = await getStudentsOfClass(
+    supabase,
+    classroom!.id,
+  );
+
+  const { data: studentList } = await getStudentsByIDs(
+    supabase,
+    compactStudentList!.map((student) => student.id),
+    { detailed: true },
   );
 
   return {
@@ -90,9 +104,12 @@ export const getServerSideProps: GetServerSideProps = async ({
         "class",
         "lookup",
       ])),
-      classItem: classItem!,
-      classOverview,
-      studentList,
+      classItem: classroom!,
+      classroomOverview,
+      studentList: studentList!.sort(
+        // Put Students with no class No. first
+        (a, b) => (a.class_no || 0) - (b.class_no || 0),
+      ),
       userRole,
     },
   };

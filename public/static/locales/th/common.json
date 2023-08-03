@@ -34,6 +34,33 @@
       }
     }
   },
+  "pageHeader": {
+    "action": {
+      "navigation": "เปิดเมนู",
+      "back": "กลับ"
+    },
+    "appDrawer": {
+      "toggle": "ตัวเลือกแอพ",
+      "mysk": {
+        "title": "แอพ MySK",
+        "mysk": "MySK",
+        "clubRegistry": "ทะเบียนชุมนุม"
+      },
+      "school": {
+        "title": "แอพโรงเรียน",
+        "skAcTh": "sk.ac.th",
+        "kularbFah": "กุหลาบฟ้า",
+        "kularbLuang": "กุหลาบหลวง",
+        "library": "ห้องสมุด",
+        "libraryEBook": "Library eBook",
+        "libraryOPAC": "Library OPAC"
+      },
+      "other": {
+        "title": "แอพอื่น ๆ",
+        "schoolICT": "School ICT"
+      }
+    }
+  },
   "pageLoading": "หน้ากำลังโหลด…",
   "name": {
     "prefix": {
@@ -157,6 +184,15 @@
     }
   },
   "dialog": {
+    "accountNotFound": {
+      "title": "คุณต้องใช้บัญชี MySK เข้าสู่ระบบเท่านั้น",
+      "desc": "บัญชีที่คุณเพิ่งใช้เข้าสู่ระบบไม่ใช่บัญชี MySK ให้เข้าสู่ระบบด้วย<strong>อีเมลที่ลงท้ายด้วย “@student.sk.ac.th” หรือ “@sk.ac.th”</strong> เท่านั้น",
+      "contact": "ติดต่อเราหากคุณคิดว่านี่เป็นข้อผิดพลาด",
+      "action": {
+        "report": "รายงานปัญหา",
+        "tryAgain": "ลองอีกครั้ง"
+      }
+    },
     "confirmDelete": {
       "title": "ยืนยันการลบ",
       "desc": "ตรวจสอบให้แน่ใจว่าต้องการลบรายการนี้ เพราะการกระทำนี้ไม่สามารถย้อนกลับได้",

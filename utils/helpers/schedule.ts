@@ -15,6 +15,7 @@ import { range } from "@/utils/helpers/array";
 import { LangCode } from "@/utils/types/common";
 import { Schedule, SchedulePeriod } from "@/utils/types/schedule";
 import { Subject } from "@/utils/types/subject";
+import { getLocaleString } from "@/utils/helpers/string";
 
 /**
  * The start times of each period (index 0-9; period 1-10).
@@ -49,7 +50,7 @@ export function isInPeriod(
   date: Date,
   periodDay: Date,
   periodStart: number,
-  periodDuration: number
+  periodDuration: number,
 ) {
   return isWithinInterval(date, {
     start: new Date(
@@ -57,16 +58,16 @@ export function isInPeriod(
         periodTimes[periodStart - 1].hours,
         periodTimes[periodStart - 1].min,
         0,
-        0
-      )
+        0,
+      ),
     ),
     end: new Date(
       periodDay.setHours(
         periodTimes[periodStart + periodDuration - 1].hours,
         periodTimes[periodStart + periodDuration - 1].min,
         0,
-        0
-      )
+        0,
+      ),
     ),
   });
 }
@@ -82,8 +83,8 @@ export function getCurrentPeriod(): number {
     : Math.floor(
         differenceInMinutes(
           new Date(),
-          new Date().setHours(periodTimes[0].hours, periodTimes[0].min)
-        ) / 50
+          new Date().setHours(periodTimes[0].hours, periodTimes[0].min),
+        ) / 50,
       ) + 1;
 }
 
@@ -107,9 +108,22 @@ export function isSchoolInSessionNow(): "before" | "in-session" | "after" {
     : "in-session";
 }
 
+export function getTodaySetToPeriodTime(
+  periodNumber: number,
+  edge?: "start" | "end",
+): Date {
+  return new Date(
+    new Date().setHours(
+      periodTimes[periodNumber + (edge === "end" ? 0 : -1)].hours,
+      periodTimes[periodNumber + (edge === "end" ? 0 : -1)].min,
+      0,
+    ),
+  );
+}
+
 export function arePeriodsOverlapping(
   period1: { day?: Day; startTime: number; duration: number },
-  period2: { day?: Day; startTime: number; duration: number }
+  period2: { day?: Day; startTime: number; duration: number },
 ): boolean {
   // If the Periods are not on the same day, they are not overlapping
   if (period1.day && period2.day && period1.day != period2.day) return false;
@@ -133,7 +147,7 @@ export function arePeriodsOverlapping(
 }
 
 /**
- * Converts a curosor position into a Period Location.
+ * Converts a cursor position into a Period Location.
  *
  * @param x The horizontal position of the cursor on the screen.
  * @param y The vertical position of the cursor on the screen.
@@ -172,27 +186,29 @@ export function periodDurationToWidth(duration: number) {
 }
 
 /**
- * Format a Subject Period’s Subject name with the duration in mind
+ * Format a Subject Period’s Subject name with the duration in mind.
  *
- * @param duration The length of this Period
- * @param subjectName The Subject name object
+ * @param duration The length of this Period.
+ * @param subject The Subject name object.
  *
- * @returns A formatted Subject name to be shown in a Subject Period
+ * @returns A formatted Subject name to be shown in a Subject Period.
  */
 export function getSubjectName(
   duration: SchedulePeriod["duration"],
-  subjectName: Subject["name"],
-  locale: LangCode
+  subject: Pick<Subject, "name" | "short_name">,
+  locale: LangCode,
 ) {
+  // console.log(subject)
+
   return duration < 2
     ? // If short period, use short name
-      subjectName[locale]?.shortName ||
-        subjectName.th.shortName ||
+      subject.short_name[locale] ||
+        subject.short_name.th ||
         // If no short name, use name
-        subjectName[locale]?.name ||
-        subjectName.th.name
+        subject.name[locale] ||
+        subject.name.th
     : // If long period, use name
-      subjectName[locale]?.name || subjectName.th.name;
+      getLocaleString(subject.name, locale);
 }
 
 /**
@@ -209,7 +225,7 @@ export function createEmptySchedule(startDay: Day, endDay?: Day): Schedule {
     content: range(endDay ? endDay - startDay + 1 : 1).map((day) => ({
       day: (day + startDay) as Day,
       content: range(10, 1).map((startTime) => ({
-        startTime,
+        start_time: startTime,
         duration: 1,
         content: [],
       })),

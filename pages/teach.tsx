@@ -11,49 +11,37 @@
  * - {@link TeachPage}
  */
 
-// External libraries
-import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
-
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import Head from "next/head";
-
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
-import { FC, useState } from "react";
-
-// SK Components
+// Imports
+import PageHeader from "@/components/common/PageHeader";
+import Schedule from "@/components/schedule/Schedule";
+import ScheduleAtAGlance from "@/components/schedule/ScheduleAtAGlance";
+import TeachingSubjectCard from "@/components/subject/TeachingSubjectCard";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
+import getTeacherSchedule from "@/utils/backend/schedule/getTeacherSchedule";
+import getTeachingSubjects from "@/utils/backend/subject/getTeachingSubjects";
+import { getLocalePath } from "@/utils/helpers/string";
+import { createTitleStr } from "@/utils/helpers/title";
+import { useLocale } from "@/utils/hooks/i18n";
+import { CustomPage, LangCode } from "@/utils/types/common";
+import { Schedule as ScheduleType } from "@/utils/types/schedule";
+import { Subject, SubjectClassrooms } from "@/utils/types/subject";
 import {
   Columns,
   ContentLayout,
   Header,
   MaterialIcon,
   Search,
-  Section,
+  transition,
+  useAnimationConfig,
 } from "@suankularb-components/react";
-
-// Internal components
-import MySKPageHeader from "@/components/common/MySKPageHeader";
-import Schedule from "@/components/schedule/Schedule";
-import TeachingSubjectCard from "@/components/subject/TeachingSubjectCard";
-
-// Backend
-import { getUserMetadata } from "@/utils/backend/account";
-import { getSchedule } from "@/utils/backend/schedule/schedule";
-import { getTeachingSubjects } from "@/utils/backend/subject/roomSubject";
-import { getSubjectsInCharge } from "@/utils/backend/subject/subject";
-
-// Helpers
-import { getLocalePath } from "@/utils/helpers/i18n";
-import { createTitleStr } from "@/utils/helpers/title";
-
-// Hooks
-import { useLocale } from "@/utils/hooks/i18n";
-
-// Types
-import { CustomPage, LangCode } from "@/utils/types/common";
-import { Schedule as ScheduleType } from "@/utils/types/schedule";
-import { SubjectWNameAndCode, TeacherSubjectItem } from "@/utils/types/subject";
+import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
+import { LayoutGroup, motion } from "framer-motion";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Head from "next/head";
+import { FC, useState } from "react";
 
 /**
  * Displays the Teacher’s Schedule and relevant related information.
@@ -66,36 +54,52 @@ import { SubjectWNameAndCode, TeacherSubjectItem } from "@/utils/types/subject";
  */
 const ScheduleSection: FC<{
   schedule: ScheduleType;
-  subjectsInCharge: SubjectWNameAndCode[];
-  teacherID: number;
+  subjectsInCharge: Pick<Subject, "id" | "name" | "code" | "short_name">[];
+  teacherID: string;
 }> = ({ schedule, subjectsInCharge, teacherID }) => {
   const { t } = useTranslation("teach");
 
+  const { duration, easing } = useAnimationConfig();
+
   return (
-    <Section>
+    <motion.section
+      className="skc-section"
+      layout="position"
+      transition={transition(duration.medium4, easing.standard)}
+    >
       <Header>{t("schedule.title")}</Header>
-      <Schedule {...{ schedule, subjectsInCharge, teacherID }} role="teacher" />
-    </Section>
+      <Schedule
+        {...{ schedule, subjectsInCharge, teacherID }}
+        view="teacher"
+        editable
+      />
+    </motion.section>
   );
 };
 
 /**
  * Displays the Teacher’s Subjects.
  *
- * @param subjects An array of Teacher Subject Items, an abstraction of Room Subjects connected to this Teacher.
+ * @param subjects An array of Subject Classrooms, an abstraction of Classroom Subjects connected to this Teacher.
  *
  * @returns A Section.
  */
 const SubjectsSection: FC<{
-  subjects: TeacherSubjectItem[];
+  subjects: SubjectClassrooms[];
 }> = ({ subjects }) => {
   const locale = useLocale();
   const { t } = useTranslation("teach");
 
+  const { duration, easing } = useAnimationConfig();
+
   const [globalFilter, setGlobalFilter] = useState<string>("");
 
   return (
-    <Section className="!gap-y-3">
+    <motion.section
+      className="skc-section !gap-y-3"
+      layout="position"
+      transition={transition(duration.medium4, easing.standard)}
+    >
       <Columns columns={3} className="!items-end">
         <Header className="md:col-span-2">{t("subjects.title")}</Header>
         <Search
@@ -109,16 +113,16 @@ const SubjectsSection: FC<{
         {subjects
           .filter(
             (subject) =>
-              subject.subject.name.th.name.includes(globalFilter) ||
-              subject.subject.name["en-US"]?.name.includes(globalFilter) ||
-              subject.subject.code["en-US"].includes(globalFilter) ||
-              subject.subject.code["en-US"].includes(globalFilter)
+              subject.subject.name.th.includes(globalFilter) ||
+              subject.subject.name["en-US"]?.includes(globalFilter) ||
+              subject.subject.code["en-US"]?.includes(globalFilter) ||
+              subject.subject.code["en-US"]?.includes(globalFilter),
           )
           .map((subject) => (
             <TeachingSubjectCard key={subject.id} subject={subject} />
           ))}
       </Columns>
-    </Section>
+    </motion.section>
   );
 };
 
@@ -135,24 +139,25 @@ const SubjectsSection: FC<{
  */
 const TeachPage: CustomPage<{
   schedule: ScheduleType;
-  subjectsInCharge: SubjectWNameAndCode[];
-  teachingSubjects: TeacherSubjectItem[];
-  teacherID: number;
+  subjectsInCharge: Pick<Subject, "id" | "name" | "code" | "short_name">[];
+  teachingSubjects: SubjectClassrooms[];
+  teacherID: string;
 }> = ({ schedule, subjectsInCharge, teachingSubjects, teacherID }) => {
-  const { t } = useTranslation(["teach", "common"]);
+  const { t } = useTranslation("teach");
+  const { t: tx } = useTranslation("common");
 
   return (
     <>
       <Head>
-        <title>{createTitleStr(t("title"), t)}</title>
+        <title>{createTitleStr(t("title"), tx)}</title>
       </Head>
-      <MySKPageHeader
-        title={t("title")}
-        icon={<MaterialIcon icon="school" />}
-      />
+      <PageHeader title={t("title")} />
       <ContentLayout>
-        <ScheduleSection {...{ schedule, subjectsInCharge, teacherID }} />
-        <SubjectsSection subjects={teachingSubjects} />
+        <LayoutGroup>
+          <ScheduleAtAGlance schedule={schedule} role="teacher" />
+          <ScheduleSection {...{ schedule, subjectsInCharge, teacherID }} />
+          <SubjectsSection subjects={teachingSubjects} />
+        </LayoutGroup>
       </ContentLayout>
     </>
   );
@@ -168,33 +173,27 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  const { data: metadata, error: metadataError } = await getUserMetadata(
+  const { data: user, error } = await getLoggedInPerson(
     supabase,
-    session!.user.id
+    authOptions,
+    req,
+    res,
+    { includeContacts: true, detailed: true },
   );
-  if (metadataError) console.error(metadataError);
 
-  if (!metadata?.onboarded)
+  if (error) return { notFound: true };
+  if (user.role !== "teacher")
     return {
       redirect: {
-        destination: getLocalePath("/account/welcome", locale as LangCode),
+        destination: getLocalePath("/learn", locale as LangCode),
         permanent: false,
       },
     };
 
-  const teacherID = metadata.teacher!;
-  const { data: schedule } = await getSchedule(supabase, "teacher", teacherID);
-  const { data: subjectsInCharge } = await getSubjectsInCharge(
-    supabase,
-    teacherID
-  );
+  const { data: schedule } = await getTeacherSchedule(supabase, user.id);
   const { data: teachingSubjects } = await getTeachingSubjects(
     supabase,
-    teacherID
+    user.id,
   );
 
   return {
@@ -206,9 +205,9 @@ export const getServerSideProps: GetServerSideProps = async ({
         "schedule",
       ])),
       schedule,
-      subjectsInCharge,
+      subjectsInCharge: user.subjects_in_charge,
       teachingSubjects,
-      teacherID,
+      teacherID: user.id,
     },
   };
 };

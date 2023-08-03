@@ -1,16 +1,9 @@
-// External libraries
+// Imports
+import BaseImportDialog from "@/components/admin/BaseImportDialog";
+// import importTeachers from "@/utils/backend/person/importTeachers";
+import { DialogFC } from "@/utils/types/component";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useTranslation } from "next-i18next";
-
-// Internal components
-import BaseImportDialog from "@/components/admin/BaseImportDialog";
-
-// Backend
-import { importTeachers } from "@/utils/backend/person/teacher";
-
-// Types
-import { SubmittableDialogComponent } from "@/utils/types/common";
-import { ImportedTeacherData } from "@/utils/types/person";
 
 /**
  * An interface for importing Teachers with a CSV file.
@@ -21,11 +14,9 @@ import { ImportedTeacherData } from "@/utils/types/person";
  *
  * @returns A Full-screen Dialog.
  */
-const ImportTeachersDialog: SubmittableDialogComponent = ({
-  open,
-  onClose,
-  onSubmit,
-}) => {
+const ImportTeachersDialog: DialogFC<{
+  onSubmit: () => void;
+}> = ({ open, onClose, onSubmit }) => {
   const { t } = useTranslation("admin");
 
   const supabase = useSupabaseClient();
@@ -34,8 +25,9 @@ const ImportTeachersDialog: SubmittableDialogComponent = ({
     <BaseImportDialog
       open={open}
       onClose={onClose}
-      onSubmit={async (data: ImportedTeacherData[]) => {
-        await importTeachers(supabase, data);
+      // onSubmit={async (data: ImportedTeacherData[]) => {
+      onSubmit={async (data: any[]) => {
+        // await importTeachers(supabase, data);
         onSubmit();
       }}
       title={t("data.import.dialog.import.title.teacher")}

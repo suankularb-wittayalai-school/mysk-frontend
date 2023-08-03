@@ -1,8 +1,31 @@
-// External libraries
+// Imports
+import HoverList from "@/components/person/HoverList";
+import PeriodDetails from "@/components/schedule/PeriodDetails";
+import SubjectPeriodMenu from "@/components/schedule/SubjectPeriodMenu";
+import ScheduleContext from "@/contexts/ScheduleContext";
+import deleteScheduleItem from "@/utils/backend/schedule/deleteScheduleItem";
+import lengthenScheduleItem from "@/utils/backend/schedule/lengthenScheduleItem";
+import moveScheduleItem from "@/utils/backend/schedule/moveScheduleItem";
+import { cn } from "@/utils/helpers/className";
+import { withLoading } from "@/utils/helpers/loading";
+import {
+  getSubjectName,
+  periodDurationToWidth,
+  positionPxToPeriod,
+} from "@/utils/helpers/schedule";
+import { getLocaleString } from "@/utils/helpers/string";
+import { useLocale } from "@/utils/hooks/i18n";
+import { useRefreshProps } from "@/utils/hooks/routing";
+import { useToggle } from "@/utils/hooks/toggle";
+import { PeriodContentItem } from "@/utils/types/schedule";
+import {
+  Interactive,
+  MaterialIcon,
+  transition,
+  useAnimationConfig,
+} from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import va from "@vercel/analytics";
-import { useRouter } from "next/router";
-import { useTranslation } from "next-i18next";
 import {
   AnimatePresence,
   PanInfo,
@@ -10,6 +33,8 @@ import {
   useAnimationControls,
   useDragControls,
 } from "framer-motion";
+import { useTranslation } from "next-i18next";
+import { pick } from "radash";
 import {
   FC,
   MouseEvent,
@@ -20,74 +45,25 @@ import {
   useState,
 } from "react";
 
-// SK Components
-import {
-  Interactive,
-  MaterialIcon,
-  transition,
-  useAnimationConfig,
-} from "@suankularb-components/react";
-
-// Internal components
-import HoverList from "@/components/person/HoverList";
-import PeriodDetails from "@/components/schedule/PeriodDetails";
-import SubjectPeriodMenu from "@/components/schedule/SubjectPeriodMenu";
-
-// Contexts
-import ScheduleContext from "@/contexts/ScheduleContext";
-
-// Backend
-import {
-  deleteScheduleItem,
-  editScheduleItemDuration,
-  moveScheduleItem,
-} from "@/utils/backend/schedule/schedule";
-
-// Helpers
-import { cn } from "@/utils/helpers/className";
-import { getLocaleObj } from "@/utils/helpers/i18n";
-import { withLoading } from "@/utils/helpers/loading";
-import {
-  getSubjectName,
-  periodDurationToWidth,
-  positionPxToPeriod,
-} from "@/utils/helpers/schedule";
-
-// Hooks
-import { useLocale } from "@/utils/hooks/i18n";
-import { useToggle } from "@/utils/hooks/toggle";
-
-// Types
-import { PeriodContentItem } from "@/utils/types/schedule";
-
 const SubjectPeriod: FC<{
   period: PeriodContentItem;
   day: Day;
   isInSession?: boolean;
 }> = ({ period, day, isInSession }) => {
-  // Translation
+  const refreshProps = useRefreshProps();
   const locale = useLocale();
   const { t } = useTranslation(["schedule", "common"]);
 
-  // Router
-  const router = useRouter();
-
-  // Animation
   const { duration, easing } = useAnimationConfig();
   const animationControls = useAnimationControls();
   const dragControls = useDragControls();
 
-  // Supabase
   const supabase = useSupabaseClient();
 
-  // Context
-  const { role, teacherID, periodWidth, periodHeight, constraintsRef } =
+  const { view, editable, periodWidth, periodHeight, constraintsRef } =
     useContext(ScheduleContext);
 
-  // Dialog control
   const [detailsOpen, setDetailsOpen] = useState<boolean>(false);
-
-  // Hover menu
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
 
   // Keyboard support for opening/closing hover menu
@@ -101,6 +77,8 @@ const SubjectPeriod: FC<{
       tabOutCloseTimeout = setTimeout(() => setMenuOpen(false), 600);
   }
   useEffect(() => {
+    if (!editable) return;
+
     const period = periodRef?.current;
     if (!period) return;
 
@@ -129,11 +107,11 @@ const SubjectPeriod: FC<{
         setDetailsOpen(false);
         const { error } = await deleteScheduleItem(supabase, period.id!);
         if (error) return false;
-        await router.replace(router.asPath);
+        await refreshProps();
         return true;
       },
       toggleLoading,
-      { hasEndToggle: true }
+      { hasEndToggle: true },
     );
   }
 
@@ -143,7 +121,7 @@ const SubjectPeriod: FC<{
   // Look at that drag
   async function handleDragEnd(
     _: globalThis.MouseEvent | TouchEvent | PointerEvent,
-    info: PanInfo
+    info: PanInfo,
   ) {
     await withLoading(
       async () => {
@@ -160,7 +138,7 @@ const SubjectPeriod: FC<{
         const { startTime: newStartTime, day: newDay } = positionPxToPeriod(
           info.point.x,
           info.point.y,
-          constraints
+          constraints,
         );
 
         // Validate position
@@ -170,18 +148,17 @@ const SubjectPeriod: FC<{
         }
 
         // Don’t do anything if the Period is in the same location
-        if (newStartTime === period.startTime && newDay === day) {
+        if (newStartTime === period.start_time && newDay === day) {
           animationControls.start({ x: 0, y: 0 });
           return false;
         }
 
         // Save the change to Supabase
-        const { error } = await moveScheduleItem(
-          supabase,
-          newDay,
-          { ...period, startTime: newStartTime },
-          teacherID!
-        );
+        const { error } = await moveScheduleItem(supabase, {
+          ...pick(period, ["id", "duration"]),
+          start_time: newStartTime,
+          day: newDay,
+        });
 
         if (error) {
           animationControls.start({ x: 0, y: 0 });
@@ -190,17 +167,17 @@ const SubjectPeriod: FC<{
 
         // Visually move the Period
         animationControls.start({
-          x: (newStartTime - period.startTime) * periodWidth,
+          x: (newStartTime - period.start_time) * periodWidth,
           y: (newDay - day) * (periodHeight + 4),
         });
 
         // Refetch the Schedule
-        await router.replace(router.asPath);
+        await refreshProps();
 
         return true;
       },
       toggleLoading,
-      { hasEndToggle: true }
+      { hasEndToggle: true },
     );
   }
 
@@ -211,9 +188,7 @@ const SubjectPeriod: FC<{
 
   useEffect(() => {
     window.addEventListener("resize", handleWindowResize);
-    return () => {
-      window.removeEventListener("resize", handleWindowResize);
-    };
+    return () => window.removeEventListener("resize", handleWindowResize);
   }, []);
 
   // Period extension
@@ -236,7 +211,7 @@ const SubjectPeriod: FC<{
     // Calculate the drop position within the Schedule content area
     const duration = Math.max(
       Math.round((event.clientX - left) / periodWidth),
-      1
+      1,
     );
     setPeriodDuration(duration);
   }
@@ -250,18 +225,19 @@ const SubjectPeriod: FC<{
         va.track("Extend Period");
 
         // Don’t do anything if the period’s duration stays the same
-        if (periodDuration === period.duration) {
+        if (
+          periodDuration === period.duration ||
+          period.start_time + periodDuration - 1 > 10
+        ) {
           setExtending(false);
           return false;
         }
 
         // Save to Supabase
-        const { error } = await editScheduleItemDuration(
-          supabase,
-          day,
-          { ...period, duration: periodDuration },
-          teacherID!
-        );
+        const { error } = await lengthenScheduleItem(supabase, {
+          id: period.id!,
+          duration: periodDuration,
+        });
 
         if (error) {
           setExtending(false);
@@ -269,12 +245,12 @@ const SubjectPeriod: FC<{
         }
 
         // Refetch the Schedule
-        await router.replace(router.asPath);
+        await refreshProps();
 
         return true;
       },
       toggleLoading,
-      { hasEndToggle: true }
+      { hasEndToggle: true },
     );
   }
 
@@ -285,26 +261,26 @@ const SubjectPeriod: FC<{
         layoutId={`period-${period.id}`}
         animate={animationControls}
         transition={transition(duration.medium2, easing.standard)}
-        drag={role === "teacher"}
+        drag={editable}
         dragListener={false}
         dragControls={dragControls}
         whileDrag={{ boxShadow: "var(--shadow-3)", zIndex: 35 }}
         dragConstraints={constraintsRef}
         dragMomentum={false}
         onDragEnd={handleDragEnd}
-        onMouseEnter={() => setMenuOpen(true)}
-        onMouseLeave={() => !detailsOpen && setMenuOpen(false)}
+        onMouseEnter={() => editable && setMenuOpen(true)}
+        onMouseLeave={() => editable && !detailsOpen && setMenuOpen(false)}
         className={cn([
           `relative rounded-sm transition-shadow focus-within:shadow-2`,
-          role === "teacher" && "touch-none",
+          editable && "touch-none",
           !loading &&
             (isInSession ? `shadow-1 hover:shadow-2` : `hover:shadow-1`),
         ])}
       >
         {/* Period content */}
         <Interactive
-          stateLayerEffect={role !== "teacher"}
-          rippleEffect={role !== "teacher"}
+          stateLayerEffect={editable}
+          rippleEffect={editable}
           className={cn([
             `tap-highlight-none flex h-14 w-24 flex-col rounded-sm
              bg-secondary-container text-left text-on-secondary-container
@@ -316,14 +292,14 @@ const SubjectPeriod: FC<{
                  text-on-tertiary-container`
               : `bg-secondary-container text-on-secondary-container`,
             (loading || extending) && `bg-surface text-secondary`,
-            role === "teacher"
+            editable
               ? `cursor-default overflow-visible border-4
                  border-secondary-container px-3 py-1`
               : `px-4 py-2`,
           ])}
           style={{ width: periodDurationToWidth(period.duration) }}
           onClick={
-            role === "student"
+            !editable
               ? () => {
                   va.track("Open Period Details");
                   setDetailsOpen(true);
@@ -332,37 +308,40 @@ const SubjectPeriod: FC<{
           }
         >
           {/* Subject name / class */}
-          {role === "teacher" ? (
+          {view === "teacher" ? (
             <motion.span
               layoutId={`period-${period.id}-class`}
               transition={transition(
                 duration.short2,
-                easing.standardDecelerate
+                easing.standardDecelerate,
               )}
               className="skc-title-medium !w-fit"
             >
-              {t("class", { ns: "common", number: period.class!.number })}
+              {t("class", {
+                ns: "common",
+                number: period.classrooms?.map(({ number }) => number).join(),
+              })}
             </motion.span>
           ) : (
             <span
               className="skc-title-medium"
               title={
-                role === "student"
-                  ? getLocaleObj(period.subject.name, locale).name
+                view === "student"
+                  ? getLocaleString(period.subject.name, locale)
                   : undefined
               }
             >
-              {getSubjectName(period.duration, period.subject.name, locale)}
+              {getSubjectName(period.duration, period.subject, locale)}
             </span>
           )}
 
           {/* Teacher / subject name */}
-          {(role === "student" || !menuOpen || extending || loading) && (
+          {(view === "student" || !menuOpen || extending || loading) && (
             <span className="skc-body-small">
-              {role === "teacher" ? (
-                getSubjectName(period.duration, period.subject.name, locale)
+              {view === "teacher" ? (
+                getSubjectName(period.duration, period.subject, locale)
               ) : (
-                <HoverList people={period.subject.teachers} />
+                <HoverList people={period.teachers} />
               )}
             </span>
           )}
@@ -370,7 +349,7 @@ const SubjectPeriod: FC<{
 
         {/* Hover menu */}
         <SubjectPeriodMenu
-          open={role === "teacher" && (extending || (!loading && menuOpen))}
+          open={view === "teacher" && (extending || (!loading && menuOpen))}
           {...{ period, dragControls, extending, setExtending, setDetailsOpen }}
         />
 
@@ -388,14 +367,14 @@ const SubjectPeriod: FC<{
                   x: -10,
                   transition: transition(
                     duration.short2,
-                    easing.standardAccelerate
+                    easing.standardAccelerate,
                   ),
                 }}
                 aria-hidden
                 className="absolute -right-12 bottom-0.5 z-20 text-secondary"
                 transition={transition(
                   duration.short4,
-                  easing.standardDecelerate
+                  easing.standardDecelerate,
                 )}
               >
                 <MaterialIcon icon="double_arrow" size={40} />
@@ -437,7 +416,6 @@ const SubjectPeriod: FC<{
       {/* Dialog */}
       <PeriodDetails
         period={period}
-        role={role}
         open={detailsOpen}
         onClose={() => setDetailsOpen(false)}
         onDelete={handleDelete}

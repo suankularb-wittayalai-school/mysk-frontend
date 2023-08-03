@@ -13,20 +13,20 @@ import { Card, CardHeader, useBreakpoint } from "@suankularb-components/react";
 import DynamicAvatar from "@/components/common/DynamicAvatar";
 
 // Types
-import { PersonLookupItem, Role } from "@/utils/types/person";
+import { PersonLookupItem, UserRole } from "@/utils/types/person";
 
 // Helpers
 import { cn } from "@/utils/helpers/className";
-import { getLocaleString } from "@/utils/helpers/i18n";
-import { nameJoiner } from "@/utils/helpers/name";
+import { getLocaleString } from "@/utils/helpers/string";
+import { getLocaleName } from "@/utils/helpers/string";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
 
 const PersonCard: FC<{
   person: PersonLookupItem;
-  selected?: { id: number; role: Role };
-  setSelected?: (selected: { id: number; role: Role }) => void;
+  selected?: { id: string; role: UserRole };
+  setSelected?: (selected: { id: string; role: UserRole }) => void;
 }> = ({ person, selected, setSelected }) => {
   // Translation
   const locale = useLocale();
@@ -63,7 +63,7 @@ const PersonCard: FC<{
               router.push(
                 `/lookup/person?id=${person.id}&role=${person.role}`,
                 undefined,
-                { shallow: true }
+                { shallow: true },
               );
             },
           })}
@@ -84,7 +84,9 @@ const PersonCard: FC<{
       <CardHeader
         avatar={
           <DynamicAvatar
-            name={person.name}
+            // name={person.name}
+            first_name={person.first_name}
+            last_name={person.last_name}
             className={
               person.role === "teacher"
                 ? cn([
@@ -97,14 +99,19 @@ const PersonCard: FC<{
             }
           />
         }
-        title={nameJoiner(locale, person.name, undefined, {
+        title={getLocaleName(locale, person, {
           prefix: person.role === "teacher" ? "teacher" : false,
         })}
         subtitle={
-          person.metadata
-            ? person.role === "teacher"
-              ? getLocaleString(person.metadata.name, locale)
-              : t("class", { number: person.metadata.number })
+          // person.metadata
+          //   ? person.role === "teacher"
+          //     ? getLocaleString(person.metadata.name, locale)
+          //     : t("class", { number: person.metadata.number })
+          //   : undefined
+          person.role === "teacher"
+            ? getLocaleString(person.subject_group.name, locale)
+            : person.classroom
+            ? t("class", { number: person.classroom.number })
             : undefined
         }
       />

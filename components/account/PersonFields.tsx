@@ -1,8 +1,9 @@
-// External libraries
-import { useTranslation } from "next-i18next";
-import { FC } from "react";
-
-// SK Components
+// Imports
+import AllergiesField from "@/components/person/AllergiesField";
+import { getLocaleString } from "@/utils/helpers/string";
+import { useLocale } from "@/utils/hooks/i18n";
+import { FormControlProps, FormControlValues } from "@/utils/types/common";
+import { SubjectGroup } from "@/utils/types/subject";
 import {
   Columns,
   Header,
@@ -11,17 +12,8 @@ import {
   Select,
   TextField,
 } from "@suankularb-components/react";
-
-// Helpers
-import { getLocaleString } from "@/utils/helpers/i18n";
-
-// Hooks
-import { useLocale } from "@/utils/hooks/i18n";
-
-// Types
-import { FormControlProps, FormControlValues } from "@/utils/types/common";
-import { SubjectGroup } from "@/utils/types/subject";
-import AllergiesField from "../person/AllergiesField";
+import { useTranslation } from "next-i18next";
+import { FC } from "react";
 
 const ThaiNameSection: FC<{ formProps: FormControlProps }> = ({
   formProps,

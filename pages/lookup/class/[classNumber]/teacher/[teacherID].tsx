@@ -1,32 +1,19 @@
-// External libraries
-import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
-
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
-import Head from "next/head";
-
-// Internal components
+// Imports
 import DynamicAvatar from "@/components/common/DynamicAvatar";
-import MySKPageHeader from "@/components/common/MySKPageHeader";
+import PageHeader from "@/components/common/PageHeader";
 import PersonActions from "@/components/lookup/person/PersonActions";
 import PersonDetailsContent from "@/components/lookup/person/PersonDetailsContent";
-
-// Backend
-import { getTeacher } from "@/utils/backend/person/teacher";
-
-// Helpers
-import { nameJoiner } from "@/utils/helpers/name";
+import { getTeacherByID } from "@/utils/backend/person/getTeacherByID";
+import { getLocaleName } from "@/utils/helpers/string";
 import { createTitleStr } from "@/utils/helpers/title";
-
-// Hooks
 import { useLocale } from "@/utils/hooks/i18n";
-
-// Types
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Teacher } from "@/utils/types/person";
+import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Head from "next/head";
 
 const PersonDetailsPage: CustomPage<{
   teacher: Teacher;
@@ -38,19 +25,18 @@ const PersonDetailsPage: CustomPage<{
   return (
     <>
       <Head>
-        <title>{createTitleStr(nameJoiner(locale, teacher.name), t)}</title>
+        <title>{createTitleStr(getLocaleName(locale, teacher), t)}</title>
       </Head>
-      <MySKPageHeader
-        title={nameJoiner(locale, teacher.name)}
+      <PageHeader
+        title={getLocaleName(locale, teacher)}
         parentURL={`/lookup/class/${classNumber}`}
-        className="!overflow-visible"
       >
         <PersonActions person={teacher} suggestionsType="full" />
         <DynamicAvatar
           profile={teacher.profile}
           className="relative z-[80] -mb-12 -mt-6 !h-20 !w-20 self-end"
         />
-      </MySKPageHeader>
+      </PageHeader>
       <PersonDetailsContent person={teacher} />
     </>
   );
@@ -63,14 +49,21 @@ export const getServerSideProps: GetServerSideProps = async ({
   res,
 }) => {
   const classNumber = Number(params?.classNumber);
-  const teacherID = Number(params?.teacherID);
+  if (Number.isNaN(classNumber)) return { notFound: true };
+
+  const teacherID = params?.teacherID;
+
+  if (!teacherID) return { notFound: true };
 
   const supabase = createPagesServerClient({
     req: req as NextApiRequest,
     res: res as NextApiResponse,
   });
 
-  const { data: teacher, error } = await getTeacher(supabase, teacherID);
+  const { data: teacher, error } = await getTeacherByID(
+    supabase,
+    teacherID as string,
+  );
   if (error) return { notFound: true };
 
   return {

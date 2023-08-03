@@ -1,9 +1,10 @@
-// External libraries
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { Trans, useTranslation } from "next-i18next";
-import { useEffect } from "react";
-
-// SK Components
+// Imports
+import bulkCreateClassrooms from "@/utils/backend/classroom/bulkCreateClassrooms";
+import { range } from "@/utils/helpers/array";
+import { withLoading } from "@/utils/helpers/loading";
+import { useForm } from "@/utils/hooks/form";
+import { useToggle } from "@/utils/hooks/toggle";
+import { DialogFC } from "@/utils/types/component";
 import {
   Button,
   ChipSet,
@@ -13,20 +14,9 @@ import {
   Section,
   TextField,
 } from "@suankularb-components/react";
-
-// Backend
-import { generateClasses } from "@/utils/backend/classroom/classroom";
-
-// Helpers
-import { range } from "@/utils/helpers/array";
-
-// Hooks
-import { useForm } from "@/utils/hooks/form";
-
-// Types
-import { SubmittableDialogComponent } from "@/utils/types/common";
-import { withLoading } from "@/utils/helpers/loading";
-import { useToggle } from "@/utils/hooks/toggle";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { Trans, useTranslation } from "next-i18next";
+import { useEffect } from "react";
 
 /**
  * An interface to bulk generate classes with the number of classes each grade.
@@ -37,14 +27,13 @@ import { useToggle } from "@/utils/hooks/toggle";
  *
  * @returns A Dialog.
  */
-const GenerateClassesDialog: SubmittableDialogComponent = ({
-  open,
-  onClose,
-  onSubmit,
-}) => {
-  const { t } = useTranslation(["admin", "common"], {
+const GenerateClassesDialog: DialogFC<{
+  onSubmit: () => void;
+}> = ({ open, onClose, onSubmit }) => {
+  const { t } = useTranslation("admin", {
     keyPrefix: "data.import.dialog.generateClasses",
   });
+  const { t: tx } = useTranslation("common");
 
   const supabase = useSupabaseClient();
 
@@ -81,10 +70,10 @@ const GenerateClassesDialog: SubmittableDialogComponent = ({
               // (Nothing will happen if the grades are already equal since we
               // would just concatenate an empty array)
               form.numClasses.concat(
-                range(form.numGrades - form.numClasses.length).fill(0)
+                range(form.numGrades - form.numClasses.length).fill(0),
               ),
       })),
-    [form.numGrades]
+    [form.numGrades],
   );
 
   const [loading, toggleLoading] = useToggle();
@@ -92,7 +81,7 @@ const GenerateClassesDialog: SubmittableDialogComponent = ({
   async function handleSubmit() {
     withLoading(async () => {
       if (!formOK) return false;
-      await generateClasses(supabase, form.numClasses);
+      await bulkCreateClassrooms(supabase, form.numClasses);
       onSubmit();
       return true;
     }, toggleLoading);
@@ -155,7 +144,7 @@ const GenerateClassesDialog: SubmittableDialogComponent = ({
         <div className="grid grid-cols-2 gap-x-6 gap-y-3">
           {range(
             // Limit number of inputs shown for performance reasons
-            form.numGrades > 12 ? 12 : form.numGrades
+            form.numGrades > 12 ? 12 : form.numGrades,
           ).map((grade) => (
             <TextField
               key={grade}
@@ -174,7 +163,7 @@ const GenerateClassesDialog: SubmittableDialogComponent = ({
                         ? // Limit number of classes shown for performance
                           // reasons
                           Math.min(Number(value), 15)
-                        : numClassesInGrade
+                        : numClassesInGrade,
                   ),
                 })
               }
@@ -189,7 +178,7 @@ const GenerateClassesDialog: SubmittableDialogComponent = ({
           The check works because 0 is falsy, and thus an array filled with 0s
           would become an empty array whose length is 0. */}
       {(form.numClasses as number[]).filter(
-        (numClassesInGrade) => numClassesInGrade
+        (numClassesInGrade) => numClassesInGrade,
       ).length !== 0 ? (
         <Section
           element={(props) => (
@@ -210,10 +199,10 @@ const GenerateClassesDialog: SubmittableDialogComponent = ({
                 ].join("");
                 return (
                   <InputChip key={classNumber}>
-                    {t("preview.class", { number: classNumber })}
+                    {tx("class", { number: classNumber })}
                   </InputChip>
                 );
-              })
+              }),
             )}
           </ChipSet>
         </Section>

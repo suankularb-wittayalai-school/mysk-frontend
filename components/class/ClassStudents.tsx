@@ -26,26 +26,32 @@ import LookupList from "@/components/lookup/LookupList";
 import PersonDetails from "@/components/lookup/person/PersonDetails";
 
 // Backend
-import {
-  getFullStudentsFromIDs,
-  getStudent,
-} from "@/utils/backend/person/student";
+// import {
+//   getFullStudentsFromIDs,
+//   getStudent,
+// } from "@/utils/backend/person/student";
 
 // Helpers
 import { useGetVCard } from "@/utils/helpers/contact";
 import { withLoading } from "@/utils/helpers/loading";
-import { nameJoiner } from "@/utils/helpers/name";
+import { getLocaleName } from "@/utils/helpers/string";
 
 // Hooks
 import { useToggle } from "@/utils/hooks/toggle";
 
 // Types
 import { Student } from "@/utils/types/person";
+import { getStudentByID } from "@/utils/backend/person/getStudentByID";
+import { getStudentsByIDs } from "@/utils/backend/person/getStudentsByIDs";
 
 const ClassStudents: FC<{
-  studentList: Student[];
+  studentList: Pick<
+    Student,
+    "id" | "first_name" | "last_name" | "nickname" | "class_no"
+  >[];
   classNumber?: number;
-}> = ({ studentList, classNumber }) => {
+  isOwnClass?: boolean;
+}> = ({ studentList, classNumber, isOwnClass }) => {
   const { t } = useTranslation("class", { keyPrefix: "student.list" });
 
   const { atBreakpoint } = useBreakpoint();
@@ -57,7 +63,7 @@ const ClassStudents: FC<{
   const supabase = useSupabaseClient();
   const [loading, toggleLoading] = useToggle();
 
-  const [selectedStudent, setSelectedStudent] = useState<Student>();
+  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   useEffect(() => {
     if (
       !selected ||
@@ -68,14 +74,16 @@ const ClassStudents: FC<{
 
     withLoading(
       async () => {
-        const { data, error } = await getStudent(supabase, selected);
+        const { data, error } = await getStudentByID(supabase, selected, {
+          detailed: true,
+          includeContacts: isOwnClass,
+        });
         if (error) return false;
-
         setSelectedStudent(data);
         return true;
       },
       toggleLoading,
-      { hasEndToggle: true }
+      { hasEndToggle: true },
     );
   }, [selected, atBreakpoint === "base"]);
 
@@ -88,9 +96,10 @@ const ClassStudents: FC<{
   async function handleSaveVCard() {
     withLoading(
       async () => {
-        const { data, error } = await getFullStudentsFromIDs(
+        const { data, error } = await getStudentsByIDs(
           supabase,
-          studentList.map((student) => student.id)
+          studentList.map((student) => student.id),
+          { detailed: true },
         );
         if (error) return false;
 
@@ -101,7 +110,7 @@ const ClassStudents: FC<{
               await Promise.all(vCards.map(async (vCard) => await vCard.text()))
             ).join("\n"),
           ],
-          { type: "text/vcard;charset=utf-8" }
+          { type: "text/vcard;charset=utf-8" },
         );
 
         window.location.href = URL.createObjectURL(mergedVCard);
@@ -109,7 +118,7 @@ const ClassStudents: FC<{
         return true;
       },
       toggleVCardLoading,
-      { hasEndToggle: true }
+      { hasEndToggle: true },
     );
   }
 
@@ -149,13 +158,13 @@ const ClassStudents: FC<{
         {studentList
           .filter(
             (student) =>
-              String(student.classNo).includes(query) ||
-              nameJoiner("th", student.name)
+              String(student.class_no).includes(query) ||
+              getLocaleName("th", student)
                 .toLowerCase()
                 .includes(query.toLowerCase()) ||
-              nameJoiner("en-US", student.name)
+              getLocaleName("en-US", student)
                 .toLowerCase()
-                .includes(query.toLowerCase())
+                .includes(query.toLowerCase()),
           )
           .map((student) => (
             <ClassStudentCard
@@ -168,7 +177,7 @@ const ClassStudents: FC<{
             />
           ))}
       </LookupList>
-      {selected ? (
+      {selectedStudent ? (
         <PersonDetails
           person={selectedStudent}
           suggestionsType="share-only"

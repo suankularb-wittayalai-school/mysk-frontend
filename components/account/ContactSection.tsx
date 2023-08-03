@@ -25,7 +25,7 @@ const ContactsSection: FC<{
   contacts: Contact[];
   handleAdd?: (contact: Contact) => any;
   handleEdit?: (contact: Contact, idx: number) => any;
-  handleRemove?: (contactID: number) => any;
+  handleRemove?: (contactID: string) => any;
 }> = ({ contacts, handleAdd, handleEdit, handleRemove }) => {
   const { t } = useTranslation("account");
   const editable = Boolean(handleAdd || handleEdit || handleRemove);

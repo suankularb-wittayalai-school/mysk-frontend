@@ -2,23 +2,21 @@
 import { MultiLangString } from "@/utils/types/common";
 
 export type Contact = {
-  id: number;
-  name?: MultiLangString;
-  type: ContactVia;
-  includes?: {
-    students: boolean;
-    parents: boolean;
-    teachers: boolean;
-  };
+  id: string;
+  name: MultiLangString | null | null;
+  type: ContactType;
+  include_students: boolean | null;
+  include_teachers: boolean | null;
+  include_parents: boolean | null;
   value: string;
 };
 
-export type ContactVia =
-  | "Phone"
-  | "Email"
-  | "Facebook"
-  | "Line"
-  | "Instagram"
-  | "Website"
-  | "Discord"
-  | "Other";
+export type ContactType =
+  | "phone"
+  | "email"
+  | "facebook"
+  | "line"
+  | "instagram"
+  | "website"
+  | "discord"
+  | "other";

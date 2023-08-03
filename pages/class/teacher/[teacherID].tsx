@@ -10,15 +10,14 @@ import Head from "next/head";
 
 // Internal components
 import DynamicAvatar from "@/components/common/DynamicAvatar";
-import MySKPageHeader from "@/components/common/MySKPageHeader";
+import PageHeader from "@/components/common/PageHeader";
 import PersonActions from "@/components/lookup/person/PersonActions";
 import PersonDetailsContent from "@/components/lookup/person/PersonDetailsContent";
 
 // Backend
-import { getTeacher } from "@/utils/backend/person/teacher";
-
+import { getTeacherByID } from "@/utils/backend/person/getTeacherByID";
 // Helpers
-import { nameJoiner } from "@/utils/helpers/name";
+import { getLocaleName } from "@/utils/helpers/string";
 import { createTitleStr } from "@/utils/helpers/title";
 
 // Hooks
@@ -35,19 +34,18 @@ const TeacherDetailsPage: CustomPage<{ teacher: Teacher }> = ({ teacher }) => {
   return (
     <>
       <Head>
-        <title>{createTitleStr(nameJoiner(locale, teacher.name), t)}</title>
+        <title>{createTitleStr(getLocaleName(locale, teacher), t)}</title>
       </Head>
-      <MySKPageHeader
-        title={nameJoiner(locale, teacher.name)}
+      <PageHeader
+        title={getLocaleName(locale, teacher)}
         parentURL="/class/teacher"
-        className="!overflow-visible"
       >
         <PersonActions person={teacher} suggestionsType="share-only" />
         <DynamicAvatar
           profile={teacher.profile}
           className="relative z-[80] -mb-12 -mt-6 !h-20 !w-20 self-end"
         />
-      </MySKPageHeader>
+      </PageHeader>
       <PersonDetailsContent person={teacher} />
     </>
   );
@@ -59,14 +57,19 @@ export const getServerSideProps: GetServerSideProps = async ({
   req,
   res,
 }) => {
-  const teacherID = Number(params?.teacherID);
+  const teacherID = params?.teacherID;
+
+  if (!teacherID) return { notFound: true };
 
   const supabase = createPagesServerClient({
     req: req as NextApiRequest,
     res: res as NextApiResponse,
   });
 
-  const { data: teacher, error } = await getTeacher(supabase, teacherID);
+  const { data: teacher, error } = await getTeacherByID(
+    supabase,
+    teacherID as string,
+  );
   if (error) return { notFound: true };
 
   return {

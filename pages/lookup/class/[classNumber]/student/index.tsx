@@ -7,18 +7,13 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 // Internal components
 import ClassStudents from "@/components/class/ClassStudents";
-import MySKPageHeader from "@/components/common/MySKPageHeader";
+import PageHeader from "@/components/common/PageHeader";
 import ClassTabs from "@/components/lookup/class/ClassTabs";
 
 // Supabase
 import { supabase } from "@/utils/supabase-backend";
 
 // Backend
-import {
-  getAllClassNumbers,
-  getClassIDFromNumber,
-  getClassStudentList,
-} from "@/utils/backend/classroom/classroom";
 
 // Helpers
 import { createTitleStr } from "@/utils/helpers/title";
@@ -26,6 +21,8 @@ import { createTitleStr } from "@/utils/helpers/title";
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Student } from "@/utils/types/person";
+import getStudentsOfClass from "@/utils/backend/classroom/getStudentsOfClass";
+import { getCurrentAcademicYear } from "@/utils/helpers/date";
 
 const ClassStudentsPage: CustomPage<{
   classNumber: number;
@@ -43,12 +40,12 @@ const ClassStudentsPage: CustomPage<{
           )}
         </title>
       </Head>
-      <MySKPageHeader
+      <PageHeader
         title={t("student.title.lookup", { number: classNumber })}
         parentURL={`/lookup/class/${classNumber}`}
       >
         <ClassTabs number={classNumber} type="lookup" />
-      </MySKPageHeader>
+      </PageHeader>
       <ClassStudents {...{ studentList }} />
     </>
   );
@@ -58,13 +55,13 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   const classNumber = Number(params?.classNumber);
   if (Number.isNaN(classNumber)) return { notFound: true };
 
-  const { data: classID, error: classIDError } = await getClassIDFromNumber(
-    supabase,
-    classNumber
-  );
-  if (classIDError) return { notFound: true };
+  const {data, error} = await supabase.from("classrooms").select("id").eq("number", classNumber).eq("year", getCurrentAcademicYear()).single();
 
-  const { data: studentList } = await getClassStudentList(supabase, classID);
+  if (error) return { notFound: true };
+
+  const classID = data?.id;
+
+  const { data: studentList } = await getStudentsOfClass(supabase, classID);
 
   return {
     props: {
@@ -81,9 +78,13 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
+  const { data: classNumbers, error } = await supabase.from("classrooms").select("number").eq("year", getCurrentAcademicYear());
+  
+  if (error) return { paths: [], fallback: "blocking" };
+
   return {
-    paths: (await getAllClassNumbers(supabase)).map((number) => ({
-      params: { classNumber: number.toString() },
+    paths: classNumbers!.map((classroom) => ({
+      params: { classNumber: classroom.number.toString() },
     })),
     fallback: "blocking",
   };

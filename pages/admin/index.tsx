@@ -23,12 +23,11 @@
 import { GetStaticProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
-import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { FC, ReactNode, useState } from "react";
+import { FC, ReactNode } from "react";
 
 // SK Components
 import {
@@ -42,11 +41,11 @@ import {
 } from "@suankularb-components/react";
 
 // Internal components
-import GenerateClassesDialog from "@/components/admin/GenerateClassesDialog";
-import ImportStudentsDialog from "@/components/admin/ImportStudentsDialog";
-import ImportSubjectsDialog from "@/components/admin/ImportSubjectsDialog";
-import ImportTeachersDialog from "@/components/admin/ImportTeachersDialog";
-import MySKPageHeader from "@/components/common/MySKPageHeader";
+// import GenerateClassesDialog from "@/components/admin/GenerateClassesDialog";
+// import ImportStudentsDialog from "@/components/admin/ImportStudentsDialog";
+// import ImportSubjectsDialog from "@/components/admin/ImportSubjectsDialog";
+// import ImportTeachersDialog from "@/components/admin/ImportTeachersDialog";
+import PageHeader from "@/components/common/PageHeader";
 
 // Supabase
 import { supabase } from "@/utils/supabase-backend";
@@ -60,8 +59,16 @@ import { createTitleStr } from "@/utils/helpers/title";
 import { useLocale } from "@/utils/hooks/i18n";
 
 // Types
-import { AdminPanelStatistics } from "@/utils/types/admin";
+// import { AdminPanelStatistics } from "@/utils/types/admin";
 import { CustomPage, LangCode } from "@/utils/types/common";
+
+type AdminPanelStatistics = {
+  students: { all: number; onboarded: number };
+  teachers: { all: number; onboarded: number };
+  classes: { all: number; thisYear: number };
+  news: { all: number; thisYear: number };
+  lastUpdated: number;
+};
 
 /**
  * This page groups content into Cards. This is a template for those Cards.
@@ -343,102 +350,102 @@ const ManageDataCard: FC = () => {
  *
  * @returns A Card.
  */
-const ImportDataCard: FC = () => {
-  const { t } = useTranslation("admin", { keyPrefix: "data.import" });
+// const ImportDataCard: FC = () => {
+//   const { t } = useTranslation("admin", { keyPrefix: "data.import" });
 
-  const router = useRouter();
+//   const router = useRouter();
 
-  // Dialog control
-  const [studentOpen, setStudentOpen] = useState<boolean>(false);
-  const [teacherOpen, setTeacherOpen] = useState<boolean>(false);
-  const [subjectOpen, setSubjectOpen] = useState<boolean>(false);
-  const [classOpen, setClassOpen] = useState<boolean>(false);
+//   // Dialog control
+//   const [studentOpen, setStudentOpen] = useState<boolean>(false);
+//   const [teacherOpen, setTeacherOpen] = useState<boolean>(false);
+//   const [subjectOpen, setSubjectOpen] = useState<boolean>(false);
+//   const [classOpen, setClassOpen] = useState<boolean>(false);
 
-  return (
-    <AdminPanelCard
-      accentColor="surface-1"
-      icon={<MaterialIcon icon="upload" size={48} />}
-      className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr,6fr]"
-    >
-      {/* Text */}
-      <div className="flex flex-col gap-1">
-        <h2 className="skc-headline-small">{t("title")}</h2>
-        <p>{t("desc")}</p>
-      </div>
+//   return (
+//     <AdminPanelCard
+//       accentColor="surface-1"
+//       icon={<MaterialIcon icon="upload" size={48} />}
+//       className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr,6fr]"
+//     >
+//       {/* Text */}
+//       <div className="flex flex-col gap-1">
+//         <h2 className="skc-headline-small">{t("title")}</h2>
+//         <p>{t("desc")}</p>
+//       </div>
 
-      {/* Actions */}
-      <div className="grid grid-cols-1 gap-x-3 gap-y-2 sm:grid-cols-2">
-        {/* Students */}
-        <AdminCardAction
-          onClick={() => setStudentOpen(true)}
-          color="secondary"
-          icon={<MaterialIcon icon="face" />}
-        >
-          {t("action.student")}
-        </AdminCardAction>
-        <ImportStudentsDialog
-          open={studentOpen}
-          onClose={() => setStudentOpen(false)}
-          onSubmit={() => {
-            setStudentOpen(false);
-            router.push("/admin/table/student");
-          }}
-        />
+//       {/* Actions */}
+//       <div className="grid grid-cols-1 gap-x-3 gap-y-2 sm:grid-cols-2">
+//         {/* Students */}
+//         <AdminCardAction
+//           onClick={() => setStudentOpen(true)}
+//           color="secondary"
+//           icon={<MaterialIcon icon="face" />}
+//         >
+//           {t("action.student")}
+//         </AdminCardAction>
+//         <ImportStudentsDialog
+//           open={studentOpen}
+//           onClose={() => setStudentOpen(false)}
+//           onSubmit={() => {
+//             setStudentOpen(false);
+//             router.push("/admin/table/student");
+//           }}
+//         />
 
-        {/* Teachers */}
-        <AdminCardAction
-          onClick={() => setTeacherOpen(true)}
-          color="secondary"
-          icon={<MaterialIcon icon="support_agent" />}
-        >
-          {t("action.teacher")}
-        </AdminCardAction>
-        <ImportTeachersDialog
-          open={teacherOpen}
-          onClose={() => setTeacherOpen(false)}
-          onSubmit={() => {
-            setTeacherOpen(false);
-            router.push("/admin/table/teacher");
-          }}
-        />
+//         {/* Teachers */}
+//         <AdminCardAction
+//           onClick={() => setTeacherOpen(true)}
+//           color="secondary"
+//           icon={<MaterialIcon icon="support_agent" />}
+//         >
+//           {t("action.teacher")}
+//         </AdminCardAction>
+//         <ImportTeachersDialog
+//           open={teacherOpen}
+//           onClose={() => setTeacherOpen(false)}
+//           onSubmit={() => {
+//             setTeacherOpen(false);
+//             router.push("/admin/table/teacher");
+//           }}
+//         />
 
-        {/* Subjects */}
-        <AdminCardAction
-          onClick={() => setSubjectOpen(true)}
-          color="secondary"
-          icon={<MaterialIcon icon="book" />}
-        >
-          {t("action.subject")}
-        </AdminCardAction>
-        <ImportSubjectsDialog
-          open={subjectOpen}
-          onClose={() => setSubjectOpen(false)}
-          onSubmit={() => {
-            setSubjectOpen(false);
-            router.push("/admin/table/subject");
-          }}
-        />
+//         {/* Subjects */}
+//         <AdminCardAction
+//           onClick={() => setSubjectOpen(true)}
+//           color="secondary"
+//           icon={<MaterialIcon icon="book" />}
+//         >
+//           {t("action.subject")}
+//         </AdminCardAction>
+//         <ImportSubjectsDialog
+//           open={subjectOpen}
+//           onClose={() => setSubjectOpen(false)}
+//           onSubmit={() => {
+//             setSubjectOpen(false);
+//             router.push("/admin/table/subject");
+//           }}
+//         />
 
-        {/* Classes */}
-        <AdminCardAction
-          onClick={() => setClassOpen(true)}
-          color="secondary"
-          icon={<MaterialIcon icon="groups" />}
-        >
-          {t("action.class")}
-        </AdminCardAction>
-        <GenerateClassesDialog
-          open={classOpen}
-          onClose={() => setClassOpen(false)}
-          onSubmit={() => {
-            setClassOpen(false);
-            router.push("/admin/table/class");
-          }}
-        />
-      </div>
-    </AdminPanelCard>
-  );
-};
+//         {/* Classes */}
+//         <AdminCardAction
+//           onClick={() => setClassOpen(true)}
+//           color="secondary"
+//           icon={<MaterialIcon icon="groups" />}
+//         >
+//           {t("action.class")}
+//         </AdminCardAction>
+//         <GenerateClassesDialog
+//           open={classOpen}
+//           onClose={() => setClassOpen(false)}
+//           onSubmit={() => {
+//             setClassOpen(false);
+//             router.push("/admin/table/class");
+//           }}
+//         />
+//       </div>
+//     </AdminPanelCard>
+//   );
+// };
 
 /**
  * Links to pages for creating and editing News Articles and Forms.
@@ -503,11 +510,7 @@ const AdminPanelPage: CustomPage<{
       <Head>
         <title>{createTitleStr(t("title"), t)}</title>
       </Head>
-      <MySKPageHeader
-        title={t("title")}
-        icon={<MaterialIcon icon="shield_person" />}
-        parentURL="/account"
-      />
+      <PageHeader title={t("title")} parentURL="/account" />
       <ContentLayout>
         {/* Suggestions */}
         <Section className="!gap-3 empty:hidden">
@@ -523,7 +526,7 @@ const AdminPanelPage: CustomPage<{
         {/* Data */}
         <Section className="!gap-3">
           <ManageDataCard />
-          <ImportDataCard />
+          {/* <ImportDataCard /> */}
         </Section>
 
         {/* News */}
@@ -540,30 +543,30 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
 
   // Students
   const { count: allStudents } = await supabase
-    .from("student")
+    .from("students")
     .select("id", { count: "exact", head: true });
 
   // Teachers
   const { count: allTeachers } = await supabase
-    .from("teacher")
+    .from("teachers")
     .select("id", { count: "exact", head: true });
 
   // Onboarded
   const { count: onboardedStudents } = await supabase
     .from("users")
     .select("id", { count: "exact", head: true })
-    .match({ role: '"student"', onboarded: true });
+    .match({ role: "student", onboarded: true });
   const { count: onboardedTeachers } = await supabase
     .from("users")
     .select("id", { count: "exact", head: true })
-    .match({ role: '"teacher"', onboarded: true });
+    .match({ role: "teacher", onboarded: true });
 
   // Classes
   const { count: allClasses } = await supabase
-    .from("classroom")
+    .from("classrooms")
     .select("id", { count: "exact", head: true });
   const { count: classesThisYear } = await supabase
-    .from("classroom")
+    .from("classrooms")
     .select("id", { count: "exact", head: true })
     .match({ year: getCurrentAcademicYear() });
 

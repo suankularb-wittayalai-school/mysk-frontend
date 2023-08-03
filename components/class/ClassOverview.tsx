@@ -23,28 +23,32 @@ import DynamicAvatar from "@/components/common/DynamicAvatar";
 import SnackbarContext from "@/contexts/SnackbarContext";
 
 // Backend
-import {
-  addContactToClassroom,
-  removeContactFromClassroom,
-} from "@/utils/backend/classroom/classroom";
-import {
-  createContact,
-  deleteContact,
-  updateContact,
-} from "@/utils/backend/contact";
+// import {
+//   addContactToClassroom,
+//   removeContactFromClassroom,
+// } from "@/utils/backend/classroom/classroom";
+// import {
+//   createContact,
+//   deleteContact,
+//   updateContact,
+// } from "@/utils/backend/contact";
 
 // Helpers
-import { getLocaleString } from "@/utils/helpers/i18n";
-import { nameJoiner } from "@/utils/helpers/name";
+import { getLocaleName, getLocaleString } from "@/utils/helpers/string";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
 import { useRefreshProps } from "@/utils/hooks/routing";
-
-// Types
-import { ClassOverview as ClassOverviewType } from "@/utils/types/class";
+import { Classroom } from "@/utils/types/classroom";
 import { Contact } from "@/utils/types/contact";
 import { Teacher } from "@/utils/types/person";
+import createContact from "@/utils/backend/contact/createContact";
+import updateContact from "@/utils/backend/contact/updateContact";
+
+// Types
+// import { ClassOverview as ClassOverviewType } from "@/utils/types/class";
+// import { Contact } from "@/utils/types/contact";
+// import { Teacher } from "@/utils/types/person";
 
 /**
  * Displays a list of this class’ Class Advisors.
@@ -53,7 +57,9 @@ import { Teacher } from "@/utils/types/person";
  *
  * @returns A Section.
  */
-const AdvisorsSection: FC<{ advisors: Teacher[] }> = ({ advisors }) => {
+const AdvisorsSection: FC<{ advisors: Classroom["class_advisors"] }> = ({
+  advisors,
+}) => {
   const locale = useLocale();
   const { t } = useTranslation("class");
 
@@ -71,8 +77,8 @@ const AdvisorsSection: FC<{ advisors: Teacher[] }> = ({ advisors }) => {
           >
             <CardHeader
               avatar={<DynamicAvatar profile={teacher.profile} />}
-              title={nameJoiner(locale, teacher.name)}
-              subtitle={getLocaleString(teacher.subjectGroup.name, locale)}
+              title={getLocaleName(locale, teacher)}
+              subtitle={getLocaleString(teacher.subject_group.name, locale)}
             />
           </Card>
         ))}
@@ -88,8 +94,9 @@ const AdvisorsSection: FC<{ advisors: Teacher[] }> = ({ advisors }) => {
  * @param advisors The list of Contacts to display.
  */
 const ClassContactsSection: FC<{
+  // contacts: Contact[];
   contacts: Contact[];
-  classID?: number;
+  classID?: string;
   editable?: boolean;
 }> = ({ contacts, classID, editable }) => {
   const { t } = useTranslation("common");
@@ -103,17 +110,17 @@ const ClassContactsSection: FC<{
    * @param contact The Contact to add.
    */
   async function handleAdd(contact: Contact) {
-    const { data, error } = await createContact(supabase, contact);
+    const { data: contactID, error } = await createContact(supabase, contact);
     if (error) {
       setSnackbar(<Snackbar>{t("snackbar.failure")}</Snackbar>);
       return;
     }
 
-    const { error: classError } = await addContactToClassroom(
-      supabase,
-      data!.id,
-      classID!
-    );
+    const { error: classError } = await supabase.from("classroom_contacts").insert({
+      classroom_id: classID,
+      contact_id: contactID,
+    });
+
     if (classError) {
       setSnackbar(<Snackbar>{t("snackbar.failure")}</Snackbar>);
       return;
@@ -142,12 +149,8 @@ const ClassContactsSection: FC<{
    *
    * @param contactID The ID of the Contact to delete.
    */
-  async function handleRemove(contactID: number) {
-    const { error } = await removeContactFromClassroom(
-      supabase,
-      contactID,
-      classID!
-    );
+  async function handleRemove(contactID: string) {
+    const { error } = await supabase.from("contacts").delete().match({ id: contactID });
     if (error) {
       setSnackbar(<Snackbar>{t("snackbar.failure")}</Snackbar>);
       return;
@@ -172,21 +175,22 @@ const ClassContactsSection: FC<{
  * Displays an overview of a Class. Used for Class Overview pages like `/class`
  * and `/lookup/class/[classNumber]`. Occupies the full page.
  *
- * @param classItem The overview information (Advisors and Contacts) of the Class to display.
+ * @param classroom The overview information (Advisors and Contacts) of the Class to display.
  * @param editable If the user can edit information about this class. Reserved for this class’ Class Advisors and admins.
  *
  * @returns A Content Layout.
  */
 const ClassOverview: FC<{
-  classItem: ClassOverviewType;
+  // classroom: ClassOverviewType;
+  classroom: Pick<Classroom, "id" | "class_advisors" | "contacts">;
   editable?: boolean;
-}> = ({ classItem, editable }) => {
+}> = ({ classroom, editable }) => {
   return (
     <ContentLayout>
-      <AdvisorsSection advisors={classItem.classAdvisors} />
+      <AdvisorsSection advisors={classroom.class_advisors} />
       <ClassContactsSection
-        contacts={classItem.contacts}
-        classID={classItem.id}
+        contacts={classroom.contacts}
+        classID={classroom.id}
         editable={editable}
       />
     </ContentLayout>

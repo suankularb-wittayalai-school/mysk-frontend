@@ -1,34 +1,22 @@
-// External libraries
-import { motion, useAnimationControls } from "framer-motion";
-import { FC, useContext, useState } from "react";
-
-// SK Components
+// Imports
+import AddPeriodDialog from "@/components/schedule/AddPeriodDialog";
+import ScheduleContext from "@/contexts/ScheduleContext";
+import { positionPxToPeriod } from "@/utils/helpers/schedule";
+import { getLocaleString } from "@/utils/helpers/string";
+import { useLocale } from "@/utils/hooks/i18n";
+import { Subject } from "@/utils/types/subject";
 import {
   InputChip,
   MaterialIcon,
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
+import { motion, useAnimationControls } from "framer-motion";
+import { FC, useContext, useState } from "react";
 
-// Internal components
-import AddPeriodDialog from "@/components/schedule/AddPeriodDialog";
-
-// Contexts
-import ScheduleContext from "@/contexts/ScheduleContext";
-
-// Helpers
-import { getLocaleObj, getLocaleString } from "@/utils/helpers/i18n";
-import { positionPxToPeriod } from "@/utils/helpers/schedule";
-
-// Hooks
-import { useLocale } from "@/utils/hooks/i18n";
-
-// Types
-import { SubjectWNameAndCode } from "@/utils/types/subject";
-
-const ScheduleSubjectChip: FC<{ subject: SubjectWNameAndCode }> = ({
-  subject,
-}) => {
+const ScheduleSubjectChip: FC<{
+  subject: Pick<Subject, "id" | "name" | "code" | "short_name">;
+}> = ({ subject }) => {
   // Translation
   const locale = useLocale();
 
@@ -95,7 +83,7 @@ const ScheduleSubjectChip: FC<{ subject: SubjectWNameAndCode }> = ({
         >
           {[
             getLocaleString(subject.code, locale),
-            getLocaleObj(subject.name, locale).name,
+            getLocaleString(subject.name, locale),
           ].join(" • ")}
         </InputChip>
       </motion.div>
@@ -104,9 +92,7 @@ const ScheduleSubjectChip: FC<{ subject: SubjectWNameAndCode }> = ({
         open={addOpen}
         subject={subject}
         onClose={handleDialogClose}
-        onSubmit={() => {
-          handleDialogClose();
-        }}
+        onSubmit={handleDialogClose}
       />
     </>
   );

@@ -4,6 +4,30 @@
     "studentWithClass": "M.{{number}} schedule",
     "teacher": "Schedule"
   },
+  "atAGlance": {
+    "timeLeft": {
+      "pre": "",
+      "post_one": "minute left",
+      "post_other": "minutes left"
+    },
+    "title": {
+      "learnCurrent": "You’re learning <strong>{{subject}}</strong>.",
+      "learnNext": "You’ll learn <strong>{{subject}}</strong> next.",
+      "lunch": "Enjoy your lunch time!",
+      "teachCurrent": "You’re teaching <strong>{{subject}}</strong>.",
+      "teachWrapUp": "Get ready to wrap up {{subject}}.",
+      "teachTravel": "Go to room <strong>{{room}}</strong> now.",
+      "teachFuture": "Nothing right now; your next class today is <strong>{{subject}}</strong>.",
+      "electiveSegment": "your chosen elective"
+    },
+    "details": {
+      "subject": "Subject",
+      "code": "Subject code",
+      "teachers": "Teachers",
+      "class": "Class",
+      "room": "Room"
+    }
+  },
   "schedule": {
     "yourSubjects": "Your subjects",
     "additionGuide": "Drag a subject into the period when you teach that subject, then fill in the rest of the information.",

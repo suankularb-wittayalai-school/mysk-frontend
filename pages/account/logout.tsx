@@ -1,30 +1,23 @@
-// External libraries
+// Imports
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-
 import { GetStaticProps } from "next";
 import { useRouter } from "next/router";
-
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
 import { useEffect } from "react";
-
-// SK Components
 import { Progress } from "@suankularb-components/react";
-
-// Types
 import { CustomPage, LangCode } from "@/utils/types/common";
+import { signOut } from "next-auth/react";
 
 const LogOutPage: CustomPage = () => {
   // Translation
   const { t } = useTranslation("account");
 
   // Log the user out
-  const supabase = useSupabaseClient();
   const router = useRouter();
   useEffect(() => {
     (async () => {
-      await supabase.auth.signOut();
+      await signOut({ redirect: false });
       router.push("/");
     })();
   }, []);
@@ -35,7 +28,7 @@ const LogOutPage: CustomPage = () => {
         supports-[height:100svh]:min-h-[100svh] sm:mb-0"
     >
       <div className="flex flex-col items-center gap-4">
-        <Progress appearance="circular" alt="Logging you out…" visible />
+        <Progress appearance="circular" alt={t("logOut.loading")} visible />
         <h1 className="skc-label-large">{t("logOut.loading")}</h1>
       </div>
     </div>

@@ -3,7 +3,7 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 import va from "@vercel/analytics";
 
-import { GetServerSideProps } from "next";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
@@ -22,20 +22,17 @@ import {
 } from "@suankularb-components/react";
 
 // Internal components
-import MySKPageHeader from "@/components/common/MySKPageHeader";
+import PageHeader from "@/components/common/PageHeader";
 import EmptyDetail from "@/components/lookup/EmptyDetail";
 import LookupList from "@/components/lookup/LookupList";
 import PersonCard from "@/components/lookup/person/PersonCard";
 import PersonDetails from "@/components/lookup/person/PersonDetails";
 
 // Backend
-import {
-  getLookupListPerson,
-  getPeopleLookupList,
-} from "@/utils/backend/person/person";
-import { getStudent } from "@/utils/backend/person/student";
-import { getTeacher } from "@/utils/backend/person/teacher";
-
+// import {
+//   getLookupListPerson,
+//   getPeopleLookupList,
+// } from "@/utils/backend/person/person";
 // Helpers
 import { toggleItem } from "@/utils/helpers/array";
 import { withLoading } from "@/utils/helpers/loading";
@@ -45,8 +42,18 @@ import { createTitleStr } from "@/utils/helpers/title";
 import { useToggle } from "@/utils/hooks/toggle";
 
 // Types
+import { getPeopleLookupList } from "@/utils/backend/person/getPeopleLookupList";
+import { getPersonForLookupDetail } from "@/utils/backend/person/getPersonForLookupDetail";
+import { getStudentByID } from "@/utils/backend/person/getStudentByID";
+import { getTeacherByID } from "@/utils/backend/person/getTeacherByID";
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { PersonLookupItem, Role, Student, Teacher } from "@/utils/types/person";
+import {
+  PersonLookupItem,
+  Student,
+  Teacher,
+  UserRole,
+} from "@/utils/types/person";
+import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 
 const LookupPeoplePage: CustomPage<{
   initialPeople: PersonLookupItem[];
@@ -58,13 +65,19 @@ const LookupPeoplePage: CustomPage<{
   const [people, setPeople] = useState<PersonLookupItem[]>(initialPeople);
 
   // Information for identifying the selected Person, used in fetch later
-  const [selected, setSelected] = useState(
+  const [selected, setSelected] = useState<
+    | {
+        id: string;
+        role: UserRole;
+      }
+    | undefined
+  >(
     initialPeople[selectedIdx]
       ? {
           id: initialPeople[selectedIdx].id,
           role: initialPeople[selectedIdx].role,
         }
-      : undefined
+      : undefined,
   );
 
   // Redirect mobile users to the details page when URL has query
@@ -91,7 +104,7 @@ const LookupPeoplePage: CustomPage<{
       router.replace(
         `/lookup/person?id=${selected.id}&role=${selected.role}`,
         undefined,
-        { shallow: true }
+        { shallow: true },
       );
   }, []);
 
@@ -115,9 +128,9 @@ const LookupPeoplePage: CustomPage<{
 
         // If a Student is selected
         if (selected.role === "student") {
-          const { data: student, error } = await getStudent(
+          const { data: student, error } = await getStudentByID(
             supabase,
-            selected.id
+            selected.id,
           );
           if (error) return false;
           person = student;
@@ -125,9 +138,9 @@ const LookupPeoplePage: CustomPage<{
 
         // If a Teacher is selected
         else if (selected.role === "teacher") {
-          const { data: teacher, error } = await getTeacher(
+          const { data: teacher, error } = await getTeacherByID(
             supabase,
-            selected.id
+            selected.id,
           );
           if (error) return false;
           person = teacher;
@@ -137,13 +150,13 @@ const LookupPeoplePage: CustomPage<{
         return true;
       },
       toggleLoading,
-      { hasEndToggle: true }
+      { hasEndToggle: true },
     );
   }, [selected, atBreakpoint === "base"]);
 
   // For showing Filter Chips when the list is already filterred by text
   const [filterred, setFilterred] = useState<boolean>(false);
-  const [filters, setFilters] = useState<Role[]>(["student", "teacher"]);
+  const [filters, setFilters] = useState<UserRole[]>(["student", "teacher"]);
 
   async function handleSearch(query: string) {
     va.track("Search Person");
@@ -154,9 +167,11 @@ const LookupPeoplePage: CustomPage<{
       return;
     }
 
-    const { data: people } = await getPeopleLookupList(query);
-    setFilterred(true);
+    // TODO: Implement search
+    const { data: people } = await getPeopleLookupList(supabase, query);
+    if (!people) return;
     setPeople(people);
+    setFilterred(true);
   }
 
   return (
@@ -164,11 +179,7 @@ const LookupPeoplePage: CustomPage<{
       <Head>
         <title>{createTitleStr(t("people.title"), t)}</title>
       </Head>
-      <MySKPageHeader
-        title={t("people.title")}
-        icon={<MaterialIcon icon="search" />}
-        parentURL="/lookup"
-      />
+      <PageHeader title={t("people.title")} parentURL="/lookup" />
       <SplitLayout ratio="list-detail">
         <LookupList
           length={people.length}
@@ -179,7 +190,7 @@ const LookupPeoplePage: CustomPage<{
                 <FilterChip
                   selected={filters.includes("student")}
                   onClick={() =>
-                    setFilters(toggleItem<Role>("student", filters))
+                    setFilters(toggleItem<UserRole>("student", filters))
                   }
                 >
                   {t("people.list.filter.student")}
@@ -187,7 +198,7 @@ const LookupPeoplePage: CustomPage<{
                 <FilterChip
                   selected={filters.includes("teacher")}
                   onClick={() =>
-                    setFilters(toggleItem<Role>("teacher", filters))
+                    setFilters(toggleItem<UserRole>("teacher", filters))
                   }
                 >
                   {t("people.list.filter.teacher")}
@@ -219,32 +230,39 @@ const LookupPeoplePage: CustomPage<{
 };
 
 export const getServerSideProps: GetServerSideProps = async ({
+  req,
+  res,
   locale,
   query,
 }) => {
   const selected = query.id
-    ? { id: Number(query.id), role: query.role as Role }
+    ? { id: query.id, role: query.role as UserRole }
     : null;
   let selectedIdx = 0;
 
-  let initialPeople: PersonLookupItem[];
+  const supabase = createPagesServerClient({
+    req: req as NextApiRequest,
+    res: res as NextApiResponse,
+  });
 
-  const { data: defaultPeople } = await getPeopleLookupList();
-  initialPeople = defaultPeople;
+  let initialPeople: PersonLookupItem[] = [];
+
+  const { data: defaultPeople } = await getPeopleLookupList(supabase);
+  if (defaultPeople) initialPeople = defaultPeople;
 
   if (selected) {
     selectedIdx = initialPeople.findIndex(
-      (person) => selected.id === person.id && selected.role === person.role
+      (person) => selected.id === person.id && selected.role === person.role,
     );
 
     if (selectedIdx === -1) {
-      const { data, error } = await getLookupListPerson(
-        selected.id,
-        selected.role
+      const { data } = await getPersonForLookupDetail(
+        supabase,
+        selected.id as string,
+        selected.role,
       );
-      if (error) initialPeople = defaultPeople;
-      else initialPeople = [data, ...defaultPeople];
-    } else initialPeople = defaultPeople;
+      if (data) initialPeople = [data, ...initialPeople];
+    }
   }
 
   selectedIdx = Math.max(selectedIdx, 0);

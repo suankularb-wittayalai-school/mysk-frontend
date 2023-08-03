@@ -18,16 +18,16 @@ import {
 import SubjectClassesDialog from "@/components/subject/SubjectClassesDialog";
 
 // Helpers
-import { getLocaleObj, getLocaleString } from "@/utils/helpers/i18n";
+import { getLocaleString } from "@/utils/helpers/string";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
 
 // Types
-import { TeacherSubjectItem } from "@/utils/types/subject";
+import { SubjectClassrooms } from "@/utils/types/subject";
 
 const TeachingSubjectCard: FC<{
-  subject: TeacherSubjectItem;
+  subject: SubjectClassrooms;
 }> = ({ subject }) => {
   const locale = useLocale();
   const { t } = useTranslation(["teach", "common"]);
@@ -40,11 +40,11 @@ const TeachingSubjectCard: FC<{
       <Card appearance="outlined">
         <div className="flex flex-row items-center pr-3">
           <CardHeader
-            title={getLocaleObj(subject.subject.name, locale).name}
+            title={getLocaleString(subject.subject.name, locale)}
             subtitle={getLocaleString(subject.subject.code, locale)}
             className="grow"
           />
-          {subject.classes.length !== 0 && (
+          {subject.classrooms.length !== 0 && (
             <Button
               appearance="text"
               icon={<MaterialIcon icon="open_in_full" />}
@@ -54,9 +54,9 @@ const TeachingSubjectCard: FC<{
           )}
         </div>
         <CardContent>
-          {subject.classes.length ? (
+          {subject.classrooms.length ? (
             <ChipSet>
-              {subject.classes.map((classItem) => (
+              {subject.classrooms.map((classItem) => (
                 <InputChip key={classItem.id}>
                   {t("class", { ns: "common", number: classItem.number })}
                 </InputChip>
