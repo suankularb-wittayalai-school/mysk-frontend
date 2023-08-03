@@ -10,8 +10,8 @@ import {
 } from "@/utils/helpers/schedule";
 import { mergeDBLocales } from "@/utils/helpers/string";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
-import { Schedule, PeriodContentItem } from "@/utils/types/schedule";
-import { list, omit } from "radash";
+import { PeriodContentItem, Schedule } from "@/utils/types/schedule";
+import { list, omit, pick, unique } from "radash";
 
 /**
  * Construct a Schedule from Schedule Items from the student’s perspective.
@@ -87,8 +87,6 @@ export default async function getClassSchedule(
       rooms: scheduleItem.schedule_item_rooms.map((room) => room.room),
     }));
 
-    // console.log({ scheduleItems })
-
   // Add Supabase data to empty schedule
   for (let incomingPeriod of periodsItems) {
     // Find the index of the row (day) we want to manipulate
@@ -128,10 +126,11 @@ export default async function getClassSchedule(
 
       // Replace empty period
       if (schedulePeriod.content.length === 0) {
-        schedule.content[scheduleRowIndex].content[idx].content = [
-          omittedPeriod,
-        ];
-        schedule.content[scheduleRowIndex].content[idx].id = omittedPeriod.id;
+        schedule.content[scheduleRowIndex].content[idx] = {
+          ...schedulePeriod,
+          ...pick(omittedPeriod, ["id", "duration"]),
+          content: [omittedPeriod],
+        };
 
         // Remove empty periods that is now overlapping the new incoming period
         schedule.content[scheduleRowIndex].content.splice(
@@ -145,12 +144,19 @@ export default async function getClassSchedule(
       // new period, it is likely that the Teacher and the Co-teacher both
       // added their subjects (which are identical), thus only one should be
       // shown
-      if (
-        schedulePeriod.content.filter(
-          (period) => period.subject.id === incomingPeriod.subject.id,
-        ).length
-      )
+      const repeatedPeriodIndex = schedulePeriod.content.findIndex(
+        (period) => period.subject.id === incomingPeriod.subject.id,
+      );
+      if (repeatedPeriodIndex !== -1) {
+        schedulePeriod.content[repeatedPeriodIndex].teachers = unique(
+          [
+            ...schedulePeriod.content[repeatedPeriodIndex].teachers,
+            ...incomingPeriod.teachers,
+          ],
+          (teacher) => teacher.id,
+        );
         continue;
+      }
 
       // If a period already exists here, just adjust duration and modify the
       // `subjects` array
