@@ -16,9 +16,8 @@ import { useEffect, useState } from "react";
 import {
   ChipSet,
   FilterChip,
-  MaterialIcon,
   SplitLayout,
-  useBreakpoint,
+  useBreakpoint
 } from "@suankularb-components/react";
 
 // Internal components
@@ -66,11 +65,7 @@ const LookupPeoplePage: CustomPage<{
 
   // Information for identifying the selected Person, used in fetch later
   const [selected, setSelected] = useState<
-    | {
-        id: string;
-        role: UserRole;
-      }
-    | undefined
+    { id: string; role: UserRole } | undefined
   >(
     initialPeople[selectedIdx]
       ? {
@@ -96,17 +91,6 @@ const LookupPeoplePage: CustomPage<{
       router.push(`/lookup/person/${role}/${id}`);
     }
   }, [breakpointChecked]);
-
-  // Update the URL with the selected Person query, so as to make sharing
-  // easier
-  useEffect(() => {
-    if (selected)
-      router.replace(
-        `/lookup/person?id=${selected.id}&role=${selected.role}`,
-        undefined,
-        { shallow: true },
-      );
-  }, []);
 
   const supabase = useSupabaseClient();
   const [loading, toggleLoading] = useToggle();
