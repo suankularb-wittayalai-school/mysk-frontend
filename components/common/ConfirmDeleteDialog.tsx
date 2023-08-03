@@ -1,16 +1,12 @@
-// External libraries
-import { useTranslation } from "next-i18next";
-
-// SK Components
+// Imports
+import { DialogFC } from "@/utils/types/component";
 import {
   Actions,
   Button,
   Dialog,
   DialogHeader,
 } from "@suankularb-components/react";
-
-// Types
-import { SubmittableDialogComponent } from "@/utils/types/common";
+import { useTranslation } from "next-i18next";
 
 /**
  * A Dialog to show before performing an irreversible deletion of something,
@@ -18,11 +14,9 @@ import { SubmittableDialogComponent } from "@/utils/types/common";
  *
  * @returns A Dialog.
  */
-const ConfirmDeleteDialog: SubmittableDialogComponent = ({
-  open,
-  onClose,
-  onSubmit,
-}) => {
+const ConfirmDeleteDialog: DialogFC<{
+  onSubmit: () => void;
+}> = ({ open, onClose, onSubmit }) => {
   const { t } = useTranslation("common", { keyPrefix: "dialog.confirmDelete" });
 
   return (

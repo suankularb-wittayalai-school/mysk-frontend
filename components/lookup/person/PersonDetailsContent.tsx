@@ -1,9 +1,12 @@
-// External libraries
-import va from "@vercel/analytics";
-import { useTranslation } from "next-i18next";
-import { FC, forwardRef, useContext, useEffect, useState } from "react";
-
-// SK Components
+// Imports
+import ContactCard from "@/components/account/ContactCard";
+import MultilangText from "@/components/common/MultilingualText";
+import DetailSection from "@/components/lookup/person/DetailSection";
+import SnackbarContext from "@/contexts/SnackbarContext";
+import { getLocaleName, getLocaleString } from "@/utils/helpers/string";
+import { useLocale } from "@/utils/hooks/i18n";
+import { Student, Teacher } from "@/utils/types/person";
+import { Subject } from "@/utils/types/subject";
 import {
   AssistChip,
   Card,
@@ -16,25 +19,9 @@ import {
   Section,
   Snackbar,
 } from "@suankularb-components/react";
-
-// Internal components
-import ContactCard from "@/components/account/ContactCard";
-import MultilangText from "@/components/common/MultilingualText";
-import DetailSection from "@/components/lookup/person/DetailSection";
-
-// Contexts
-import SnackbarContext from "@/contexts/SnackbarContext";
-
-// Types
-import { Student, Teacher } from "@/utils/types/person";
-import { SubjectWNameAndCode } from "@/utils/types/subject";
-
-// Helpers
-import { getLocaleObj, getLocaleString } from "@/utils/helpers/i18n";
-import { nameJoiner } from "@/utils/helpers/name";
-
-// Hooks
-import { useLocale } from "@/utils/hooks/i18n";
+import va from "@vercel/analytics";
+import { useTranslation } from "next-i18next";
+import { FC, forwardRef, useContext, useEffect, useState } from "react";
 
 const StarbucksCard: FC = () => {
   const locale = useLocale();
@@ -94,7 +81,7 @@ const StarbucksCard: FC = () => {
       synthVoices.find(
         (voice) =>
           voice.voiceURI ===
-          "Microsoft Premwadee Online (Natural) - Thai (Thailand)"
+          "Microsoft Premwadee Online (Natural) - Thai (Thailand)",
       ) || null;
 
     // Speak the utterance
@@ -122,6 +109,7 @@ const StarbucksCard: FC = () => {
           </AssistChip>
           <AssistChip
             icon={<MaterialIcon icon="open_in_new" />}
+            href={`https://www.starbucks.co.th/${locale}/delivery-in-app/`}
             onClick={() =>
               va.track("Find Starbucks Easter Egg", {
                 action: "Open Starbucks",
@@ -129,13 +117,7 @@ const StarbucksCard: FC = () => {
             }
             // eslint-disable-next-line react/display-name
             element={forwardRef((props, ref) => (
-              <a
-                {...props}
-                ref={ref}
-                href={`https://www.starbucks.co.th/${locale}/delivery-in-app/`}
-                target="_blank"
-                rel="noreferrer"
-              />
+              <a {...props} ref={ref} target="_blank" rel="noreferrer" />
             ))}
           >
             {t("detail.starbucks.action.openStarbucks")}
@@ -167,24 +149,24 @@ const GeneralInfoSection: FC<{
       >
         <MultilangText
           text={{
-            th: nameJoiner("th", person.name, person.prefix, { prefix: true }),
-            "en-US": person.name["en-US"]
-              ? nameJoiner("en-US", person.name, person.prefix, {
-                  prefix: true,
-                })
-              : undefined,
+            th: getLocaleName("th", person, { prefix: true }),
+            "en-US": getLocaleName("en-US", person, {
+              prefix: true,
+            }),
           }}
           options={{ hideIconsIfOnlyLanguage: true }}
         />
       </DetailSection>
 
       {/* Nickname */}
-      {(person.name.th.nickname || person.name["en-US"]?.nickname) && (
+      {(person.nickname?.th || person.nickname
+        ? person.nickname["en-US"]
+        : "") && (
         <DetailSection title={t("nickname")}>
           <MultilangText
             text={{
-              th: person.name.th.nickname!,
-              "en-US": person.name["en-US"]?.nickname,
+              th: person.nickname!.th,
+              "en-US": person.nickname!["en-US"],
             }}
             options={{ hideIconsIfOnlyLanguage: true }}
           />
@@ -192,38 +174,42 @@ const GeneralInfoSection: FC<{
       )}
 
       {/* Class */}
-      {person.role === "student" && person.class && (
+      {person.role === "student" && person.classroom && (
         <DetailSection title={t("class.title")}>
           <span className="block">
-            {tx("class", { number: person.class.number })}
+            {tx("class", { number: person.classroom.number })}
           </span>
           <span className="block">
-            {t("class.classNo", { classNo: person.classNo })}
+            {t("class.classNo", { classNo: person.class_no })}
           </span>
         </DetailSection>
       )}
-      {person.role === "teacher" && person.classAdvisorAt && (
+      {person.role === "teacher" && person.class_advisor_at && (
         <DetailSection title={t("classAdvisorAt")}>
-          <span>{tx("class", { number: person.classAdvisorAt.number })}</span>
+          <span>{tx("class", { number: person.class_advisor_at.number })}</span>
         </DetailSection>
       )}
 
       {/* Birthdate */}
-      <DetailSection title={t("birthdate")}>
-        <time>
-          {new Date(person.birthdate).toLocaleDateString(locale, {
-            day: "numeric",
-            month: "long",
-            year: undefined,
-          })}
-        </time>
-      </DetailSection>
+      {person.birthdate &&
+        // Assuming no real person is born on Jan 1, 1970
+        person.birthdate !== "1970-01-01" && (
+          <DetailSection title={t("birthdate")}>
+            <time>
+              {new Date(person.birthdate).toLocaleDateString(locale, {
+                day: "numeric",
+                month: "long",
+                year: undefined,
+              })}
+            </time>
+          </DetailSection>
+        )}
     </Section>
   );
 };
 
 const SubjectsSection: FC<{
-  subjects: SubjectWNameAndCode[];
+  subjects: Pick<Subject, "id" | "code" | "name" | "short_name">[];
 }> = ({ subjects }) => {
   const locale = useLocale();
   const { t } = useTranslation("lookup", { keyPrefix: "people.detail" });
@@ -235,7 +221,7 @@ const SubjectsSection: FC<{
         {subjects.map((subject) => (
           <Card key={subject.id} appearance="outlined" direction="row">
             <CardHeader
-              title={getLocaleObj(subject.name, locale).name}
+              title={getLocaleString(subject.name, locale)}
               subtitle={getLocaleString(subject.code, locale)}
             />
           </Card>
@@ -253,7 +239,7 @@ const PersonDetailsContent: FC<{
 
   return (
     <ContentLayout>
-      {person.name["en-US"]?.firstName === "Supannee" && <StarbucksCard />}
+      {person.first_name["en-US"] === "Supannee" && <StarbucksCard />}
       <GeneralInfoSection {...{ person }} />
       {person.contacts.length > 0 && (
         <Section>
@@ -266,9 +252,9 @@ const PersonDetailsContent: FC<{
         </Section>
       )}
       {person.role === "teacher" &&
-        person.subjectsInCharge &&
-        person.subjectsInCharge.length !== 0 && (
-          <SubjectsSection subjects={person.subjectsInCharge} />
+        person.subjects_in_charge &&
+        person.subjects_in_charge.length !== 0 && (
+          <SubjectsSection subjects={person.subjects_in_charge} />
         )}
     </ContentLayout>
   );

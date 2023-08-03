@@ -50,7 +50,7 @@ const DocumentCard: FC<{
         ? // If the user is on mobile, take then straight to the Google
           // Drive file
           {
-            href: document.documentLink,
+            href: document.document_link,
             aAttr: { target: "_blank", rel: "noreferrer" },
           }
         : // If the user is on tablet/desktop, show the selected Order in

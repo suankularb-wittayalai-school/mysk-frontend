@@ -1,25 +1,8 @@
-// External libraries
-import type { NextPage } from "next";
-import type { AppProps } from "next/app";
-
-import type { FC, ReactNode } from "react";
-
-import type {
-  AuthError,
-  PostgrestError,
-  SupabaseClient,
-} from "@supabase/supabase-js";
-
-import type { ColumnDef } from "@tanstack/react-table";
-
-// SK Components
-import type { TextFieldProps } from "@suankularb-components/react";
-
-// Types
-import { Role } from "@/utils/types/person";
-import { Database } from "@/utils/types/supabase";
-
-export type OrUndefined<T> = T | undefined;
+// Imports
+import { TextFieldProps } from "@suankularb-components/react";
+import { NextPage } from "next";
+import { AppProps } from "next/app";
+import { FC, ReactNode } from "react";
 
 /**
  * The language code of a supported UI language.
@@ -66,7 +49,7 @@ export type CustomPage<T = {}> = NextPage<T> &
      *
      * `hidden` — Navigation Bar/Rail not shown at all.
      */
-    navType: Role | "hidden";
+    navType: "student" | "teacher" | "hidden";
 
     /**
      * A list of child URLs of the current page.
@@ -82,65 +65,42 @@ export type CustomAppProps = {
   pageProps: AppProps["pageProps"];
 };
 
-export type MultiLangString = {
-  th: string;
-  "en-US"?: string;
-};
-
-export type MultiLangObj<T = object> = {
-  th: T;
-  "en-US"?: T;
-};
-
-export type DialogProps = {
-  open: boolean;
-  onClose: () => void;
-};
-
-export type SubmittableDialogProps<T = () => void> = DialogProps & {
-  onSubmit: T;
-};
-
-export type BackendReturn = { error: Partial<PostgrestError> | null };
-export type BackendAuthReturn = { error: Partial<AuthError> | null };
-export type BackendDataReturn<T, U = []> =
-  | { data: T; error: null }
-  | { data: U; error: Partial<PostgrestError> };
-export type BackendCountedDataReturn<T, U = []> = BackendDataReturn<T, U> & {
-  count: number;
-};
-
-export type DatabaseClient = SupabaseClient<
-  Database,
-  "public",
-  Database["public"]
->;
-
-export type DataTableColumnDef = ColumnDef<object> &
-  Partial<{
-    thClass: string;
-    tdClass: string;
-    render: (row: any) => JSX.Element;
-    noDataMsg: string | JSX.Element;
-  }>;
-
-export type DialogComponent<T = {}> = FC<T & DialogProps>;
-export type SubmittableDialogComponent<T = () => void, U = {}> = FC<
-  U & SubmittableDialogProps<T>
->;
-
+/**
+ * Values of a form.
+ */
 export type FormControlValues<T extends string | symbol = string> = {
   [key in T]: any;
 };
+
+/**
+ * The validity of each value in a form, represented as booleans.
+ */
 export type FormControlValids<T extends string | symbol = string> = {
   [key in T]: boolean;
 };
+
+/**
+ * The validity of each value in a form, represented as booleans or error
+ * messages.
+ */
 export type FormControlValidsWMessages<T extends string | symbol = string> = {
   [key in T]: boolean | string;
 };
+
+/**
+ * Props of each value in a form, can be applied directly on Text Field.
+ */
 export type FormControlProps<T extends string | symbol = string> = {
   [key in T]: Pick<
     TextFieldProps<string | File>,
     "helperMsg" | "value" | "onChange" | "required" | "error"
   >;
+};
+
+/**
+ * A string that supports Thai and English, with the latter being optional.
+ */
+export type MultiLangString = {
+  th: string;
+  "en-US": string | null;
 };

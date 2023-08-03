@@ -1,15 +1,8 @@
-// External libraries
-import { useTranslation } from "next-i18next";
-
-// Internal components
+// Imports
 import BaseImportDialog from "@/components/admin/BaseImportDialog";
-
-// Backend
-import { importSubjects } from "@/utils/backend/subject/subject";
-
-// Types
-import { SubmittableDialogComponent } from "@/utils/types/common";
-import { ImportedSubjectData } from "@/utils/types/subject";
+// import importSubjects from "@/utils/backend/subject/importSubjects";
+import { DialogFC } from "@/utils/types/component";
+import { useTranslation } from "next-i18next";
 
 /**
  * An interface for importing Subjects with a CSV file.
@@ -20,19 +13,18 @@ import { ImportedSubjectData } from "@/utils/types/subject";
  *
  * @returns A Full-screen Dialog.
  */
-const ImportSubjectsDialog: SubmittableDialogComponent = ({
-  open,
-  onClose,
-  onSubmit,
-}) => {
+const ImportSubjectsDialog: DialogFC<{
+  onSubmit: () => void;
+}> = ({ open, onClose, onSubmit }) => {
   const { t } = useTranslation("admin");
 
   return (
     <BaseImportDialog
       open={open}
       onClose={onClose}
-      onSubmit={async (data: ImportedSubjectData[]) => {
-        await importSubjects(data);
+      // onSubmit={async (data: ImportedSubjectData[]) => {
+      onSubmit={async (data: any[]) => {
+        // await importSubjects(data);
         onSubmit();
       }}
       title={t("data.import.dialog.import.title.subject")}

@@ -8,7 +8,7 @@ import { FC, useEffect, useState } from "react";
 import HoverList from "@/components/person/HoverList";
 
 // Types
-import { ClassLookupListItem } from "@/utils/types/class";
+import { Classroom } from "@/utils/types/classroom";
 
 // SK Components
 import {
@@ -23,7 +23,7 @@ import {
 } from "@suankularb-components/react";
 
 // Helpers
-import { nameJoiner } from "@/utils/helpers/name";
+import { getLocaleName } from "@/utils/helpers/string";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
@@ -36,7 +36,9 @@ import { useLocale } from "@/utils/hooks/i18n";
  *
  * @returns A Card.
  */
-const ClassCard: FC<{ classItem: ClassLookupListItem }> = ({ classItem }) => {
+const ClassCard: FC<{ classItem: (Pick<Classroom, "id" | "number" | "class_advisors"> & {
+  studentCount: number;
+}) }> = ({ classItem }) => {
   const locale = useLocale();
   const { t } = useTranslation("common");
 
@@ -67,7 +69,7 @@ const ClassCard: FC<{ classItem: ClassLookupListItem }> = ({ classItem }) => {
             title={t("class", { number: classItem.number })}
             subtitle={
               <HoverList
-                people={classItem.classAdvisors}
+                people={classItem.class_advisors}
                 options={{
                   nameJoinerOptions: {
                     prefix: locale === "th" ? "teacher" : false,
@@ -93,7 +95,9 @@ const ClassCard: FC<{ classItem: ClassLookupListItem }> = ({ classItem }) => {
 };
 
 const ClassPeekModal: FC<{
-  classItem: ClassLookupListItem;
+  classItem: (Pick<Classroom, "id" | "number" | "class_advisors"> & {
+    studentCount: number;
+  });
   open?: boolean;
   onClose: () => void;
 }> = ({ classItem, open, onClose }) => {
@@ -145,9 +149,9 @@ const ClassPeekModal: FC<{
                     {t("class", { ns: "common", number: classItem.number })}
                   </Link>
                 }
-                subtitle={classItem.classAdvisors
+                subtitle={classItem.class_advisors
                   .map((teacher) =>
-                    nameJoiner(locale, teacher.name, undefined, {
+                    getLocaleName(locale, teacher, {
                       prefix: "teacher",
                     })
                   )

@@ -1,71 +1,47 @@
-// External libraries
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import va from "@vercel/analytics";
-import { useTranslation } from "next-i18next";
-import { useRouter } from "next/router";
-import { useContext } from "react";
-
-// SK Components
+// Imports
+import { withLoading } from "@/utils/helpers/loading";
+import { useToggle } from "@/utils/hooks/toggle";
+import { DialogFC } from "@/utils/types/component";
 import {
   Actions,
   Button,
   Dialog,
   DialogHeader,
-  Snackbar,
 } from "@suankularb-components/react";
-
-// Contexts
-import SnackbarContext from "@/contexts/SnackbarContext";
-
-// Helpers
-import { logError } from "@/utils/helpers/debug";
-import { withLoading } from "@/utils/helpers/loading";
-
-// Hooks
-import { useToggle } from "@/utils/hooks/toggle";
-
-// Types
-import { DialogComponent } from "@/utils/types/common";
+import va from "@vercel/analytics";
+import { signOut } from "next-auth/react";
+import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
 
 /**
  * Ask the user to confirm their log out.
  *
  * @returns A Dialog.
  */
-const LogOutDialog: DialogComponent = ({ open, onClose }) => {
-  // Translation
-  const { t } = useTranslation("common", { keyPrefix: "dialog.logOut" });
-  const { t: tx } = useTranslation("common");
-
-  const { setSnackbar } = useContext(SnackbarContext);
-
+const LogOutDialog: DialogFC = ({ open, onClose }) => {
   const router = useRouter();
+  const { t } = useTranslation("common", { keyPrefix: "dialog.logOut" });
 
-  const supabase = useSupabaseClient();
   const [loading, toggleLoading] = useToggle();
 
   function handleSubmit() {
     withLoading(
       async () => {
-        // Log the user out
-        const { error } = await supabase.auth.signOut();
-        if (error) {
-          logError("handleSubmit in LogOutDialog", error);
-          setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
-          return false;
-        }
-
         // Track event
         va.track("Log out");
+
+        // Log the user out (without reload)
+        await signOut({ redirect: false });
+
         // Close the Dialog
         onClose();
+
         // Redirect to Landing
         router.push("/");
-
         return true;
       },
       toggleLoading,
-      { hasEndToggle: true }
+      { hasEndToggle: true },
     );
   }
 

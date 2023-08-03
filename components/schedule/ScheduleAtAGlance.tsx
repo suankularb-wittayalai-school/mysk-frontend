@@ -4,14 +4,14 @@ import GlanceCountdown from "@/components/schedule/GlanceCountdown";
 import { range } from "@/utils/helpers/array";
 import { cn } from "@/utils/helpers/className";
 import { useNow } from "@/utils/helpers/date";
-import { getLocaleObj, getLocaleString } from "@/utils/helpers/i18n";
 import {
   getCurrentPeriod,
   getTodaySetToPeriodTime,
 } from "@/utils/helpers/schedule";
+import { getLocaleString } from "@/utils/helpers/string";
 import { useLocale } from "@/utils/hooks/i18n";
-import { Role } from "@/utils/types/person";
-import { Schedule } from "@/utils/types/schedule";
+import { UserRole } from "@/utils/types/person";
+import { Schedule, SchedulePeriod } from "@/utils/types/schedule";
 import {
   MaterialIcon,
   transition,
@@ -31,13 +31,13 @@ import { FC } from "react";
  */
 const ScheduleAtAGlance: FC<{
   schedule: Schedule;
-  role: Role;
+  role: UserRole;
 }> = ({ schedule, role }) => {
   const locale = useLocale();
   const { t } = useTranslation("schedule", { keyPrefix: "atAGlance" });
 
   const { duration, easing } = useAnimationConfig();
-  
+
   const now = useNow();
 
   // Determine relevant periods every second
@@ -48,21 +48,20 @@ const ScheduleAtAGlance: FC<{
 
   const currentPeriod = todayRow.find(
     (period) =>
-      period.content.length &&
       // The period starts before or at the current period
-      period.startTime <= periodNumber &&
+      period.start_time <= periodNumber &&
       // The period ends at or after the end of the current period (current
       // period number + 1)
-      period.startTime + period.duration > periodNumber,
+      period.start_time + period.duration > periodNumber,
   );
 
   const immediateNextPeriod = todayRow.find(
     // The period starts at the next period
-    (period) => periodNumber + 1 === period.startTime,
+    (period) => periodNumber + 1 === period.start_time,
   );
   const todayNextPeriod = todayRow.filter(
     // The period starts at any period after the current
-    (period) => period.content.length && period.startTime > periodNumber,
+    (period) => period.content.length && period.start_time > periodNumber,
   )[0];
 
   // Note: `differenceInSeconds` and `differenceInMinutes` operate by
@@ -70,13 +69,16 @@ const ScheduleAtAGlance: FC<{
 
   // The edges of periods relative to current time, used in calculating the
   // display type
-  const secondsSinceStart = currentPeriod
-    ? differenceInSeconds(now, getTodaySetToPeriodTime(currentPeriod.startTime))
+  const secondsSinceStart = currentPeriod?.content.length
+    ? differenceInSeconds(
+        now,
+        getTodaySetToPeriodTime(currentPeriod.start_time),
+      )
     : 0;
   const minutesTilEnd = currentPeriod
     ? differenceInMinutes(
         getTodaySetToPeriodTime(
-          currentPeriod.startTime + currentPeriod.duration - 1,
+          currentPeriod.start_time + currentPeriod.duration - 1,
           "end",
         ),
         now,
@@ -85,14 +87,14 @@ const ScheduleAtAGlance: FC<{
     : null;
   const minutesTilImmediateNext = immediateNextPeriod?.content.length
     ? differenceInMinutes(
-        getTodaySetToPeriodTime(immediateNextPeriod.startTime),
+        getTodaySetToPeriodTime(immediateNextPeriod.start_time),
         now,
         { roundingMethod: "ceil" },
       )
     : null;
   const minutesTilTodayNext = todayNextPeriod?.content.length
     ? differenceInMinutes(
-        getTodaySetToPeriodTime(todayNextPeriod.startTime),
+        getTodaySetToPeriodTime(todayNextPeriod.start_time),
         now,
         { roundingMethod: "ceil" },
       )
@@ -155,7 +157,23 @@ const ScheduleAtAGlance: FC<{
       : "none"
     : "none";
 
-  // console.log(minutesTilImmediateNext);
+  const displayPeriod = ["learn-next", "teach-travel"].includes(displayType)
+    ? immediateNextPeriod
+    : displayType === "teach-future"
+    ? todayNextPeriod
+    : currentPeriod;
+
+  function getSubjectStringFromPeriod(period?: SchedulePeriod) {
+    switch (period?.content.length) {
+      case undefined:
+      case 0:
+        return null;
+      case 1:
+        return getLocaleString(period.content[0].subject.name, locale);
+      default:
+        return t("title.electiveSegment");
+    }
+  }
 
   return (
     <AnimatePresence initial={false}>
@@ -220,12 +238,7 @@ const ScheduleAtAGlance: FC<{
                         i18nKey="atAGlance.title.learnCurrent"
                         ns="schedule"
                         values={{
-                          subject:
-                            currentPeriod?.content.length &&
-                            getLocaleObj(
-                              currentPeriod.content[0].subject.name,
-                              locale,
-                            ).name,
+                          subject: getSubjectStringFromPeriod(currentPeriod),
                         }}
                       />
                     ),
@@ -235,11 +248,7 @@ const ScheduleAtAGlance: FC<{
                         ns="schedule"
                         values={{
                           subject:
-                            immediateNextPeriod?.content.length &&
-                            getLocaleObj(
-                              immediateNextPeriod.content[0].subject.name,
-                              locale,
-                            ).name,
+                            getSubjectStringFromPeriod(immediateNextPeriod),
                         }}
                       />
                     ),
@@ -249,12 +258,7 @@ const ScheduleAtAGlance: FC<{
                         i18nKey="atAGlance.title.teachCurrent"
                         ns="schedule"
                         values={{
-                          subject:
-                            currentPeriod?.content.length &&
-                            getLocaleObj(
-                              currentPeriod.content[0].subject.name,
-                              locale,
-                            ).name,
+                          subject: getSubjectStringFromPeriod(currentPeriod),
                         }}
                       />
                     ),
@@ -263,12 +267,7 @@ const ScheduleAtAGlance: FC<{
                         i18nKey="atAGlance.title.teachWrapUp"
                         ns="schedule"
                         values={{
-                          subject:
-                            currentPeriod?.content.length &&
-                            getLocaleObj(
-                              currentPeriod.content[0].subject.name,
-                              locale,
-                            ).name,
+                          subject: getSubjectStringFromPeriod(currentPeriod),
                         }}
                       />
                     ),
@@ -276,7 +275,11 @@ const ScheduleAtAGlance: FC<{
                       <Trans
                         i18nKey="atAGlance.title.teachTravel"
                         ns="schedule"
-                        values={{ room: immediateNextPeriod?.content[0]?.room }}
+                        values={{
+                          room: immediateNextPeriod?.content[0]?.rooms?.join(
+                            ", ",
+                          ),
+                        }}
                       />
                     ),
                     "teach-future": (
@@ -284,12 +287,7 @@ const ScheduleAtAGlance: FC<{
                         i18nKey="atAGlance.title.teachFuture"
                         ns="schedule"
                         values={{
-                          subject:
-                            todayNextPeriod?.content.length &&
-                            getLocaleObj(
-                              todayNextPeriod.content[0].subject.name,
-                              locale,
-                            ).name,
+                          subject: getSubjectStringFromPeriod(todayNextPeriod),
                         }}
                       />
                     ),
@@ -302,12 +300,7 @@ const ScheduleAtAGlance: FC<{
             <LayoutGroup>
               <AnimatePresence initial={false}>
                 <motion.ul layout="position" role="list" className="contents">
-                  {(["learn-next", "teach-travel"].includes(displayType)
-                    ? immediateNextPeriod
-                    : displayType === "teach-future"
-                    ? todayNextPeriod
-                    : currentPeriod
-                  )?.content.map((period) => (
+                  {displayPeriod?.content.map((period, idx) => (
                     <motion.li
                       key={period.id}
                       layoutId={`subject-${period.id}`}
@@ -319,20 +312,34 @@ const ScheduleAtAGlance: FC<{
                     >
                       {/* Subject */}
                       <div className="flex flex-col">
-                        <h3 className="skc-title-medium">
-                          {t("details.subject")}
-                        </h3>
-                        <p className="skc-body-medium text-on-surface-variant">
-                          {getLocaleObj(period.subject.name, locale).name}
+                        {idx === 0 && (
+                          <h3 className="skc-title-medium">
+                            {t("details.subject")}
+                          </h3>
+                        )}
+                        <p
+                          className={cn([
+                            `skc-body-medium text-on-surface-variant`,
+                            idx !== 0 && `-mt-2`,
+                          ])}
+                        >
+                          {getLocaleString(period.subject.name, locale)}
                         </p>
                       </div>
 
                       {/* Subject code */}
                       <div className="flex flex-col">
-                        <h3 className="skc-title-medium">
-                          {t("details.code")}
-                        </h3>
-                        <p className="skc-body-medium text-on-surface-variant">
+                        {idx === 0 && (
+                          <h3 className="skc-title-medium">
+                            {t("details.code")}
+                          </h3>
+                        )}
+                        <p
+                          className={cn([
+                            `skc-body-medium text-on-surface-variant`,
+                            idx !== 0 && `-mt-2`,
+                          ])}
+                        >
                           {getLocaleString(period.subject.code, locale)}
                         </p>
                       </div>
@@ -341,28 +348,45 @@ const ScheduleAtAGlance: FC<{
                       <div
                         className={cn([
                           `flex flex-col`,
-                          !period.room && `sm:col-span-2`,
+                          !(period.rooms && period.rooms.length > 0) &&
+                            `sm:col-span-2`,
                         ])}
                       >
-                        <h3 className="skc-title-medium">
-                          {t("details.teachers")}
-                        </h3>
-                        <p className="skc-body-medium text-on-surface-variant">
+                        {idx === 0 && (
+                          <h3 className="skc-title-medium">
+                            {t("details.teachers")}
+                          </h3>
+                        )}
+                        <p
+                          className={cn([
+                            `skc-body-medium text-on-surface-variant`,
+                            idx !== 0 && `-mt-2`,
+                          ])}
+                        >
                           <HoverList
-                            people={period.subject.teachers}
+                            people={period.teachers}
                             options={{ nameJoinerOptions: { lastName: true } }}
                           />
                         </p>
                       </div>
 
                       {/* Room */}
-                      {period.room && (
+                      {displayPeriod.content.find(
+                        (period) => period.rooms?.length,
+                      ) && (
                         <div className="flex flex-col">
-                          <h3 className="skc-title-medium">
-                            {t("details.room")}
-                          </h3>
-                          <p className="skc-body-medium text-on-surface-variant">
-                            {period.room}
+                          {idx === 0 && (
+                            <h3 className="skc-title-medium">
+                              {t("details.room")}
+                            </h3>
+                          )}
+                          <p
+                            className={cn([
+                              `skc-body-medium text-on-surface-variant`,
+                              idx !== 0 && `-mt-2`,
+                            ])}
+                          >
+                            {period.rooms?.join(", ") || " "}
                           </p>
                         </div>
                       )}

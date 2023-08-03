@@ -12,23 +12,40 @@
  * - {@link AccountPage}
  */
 
-// External libraries
-import {
-  createPagesServerClient,
-  User,
-} from "@supabase/auth-helpers-nextjs";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
-
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import Head from "next/head";
-import Link from "next/link";
-
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
-import { FC, useContext, useState } from "react";
-
-// SK Components
+// Imports
+import ContactsSection from "@/components/account/ContactSection";
+import LogOutDialog from "@/components/account/LogOutDialog";
+import PersonFields from "@/components/account/PersonFields";
+import DynamicAvatar from "@/components/common/DynamicAvatar";
+import MySKPageHeader from "@/components/common/MySKPageHeader";
+import SnackbarContext from "@/contexts/SnackbarContext";
+// import { createContact, updateContact } from "@/utils/backend/contact";
+// import {
+//   addContactToPerson,
+//   editPerson,
+//   getPersonFromUser,
+//   removeContactFromPerson,
+// } from "@/utils/backend/person/person";
+// import { getSubjectGroups } from "@/utils/backend/subject/subjectGroup";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
+import addContactToPerson from "@/utils/backend/contact/addContactToPerson";
+import createContact from "@/utils/backend/contact/createContact";
+import updateContact from "@/utils/backend/contact/updateContact";
+import { updatePerson } from "@/utils/backend/person/updatePerson";
+import getSubjectGroups from "@/utils/backend/subject/getSubjectGroups";
+import { withLoading } from "@/utils/helpers/loading";
+import { getLocaleName, getLocaleString } from "@/utils/helpers/string";
+import { createTitleStr } from "@/utils/helpers/title";
+import { useForm } from "@/utils/hooks/form";
+import { useLocale } from "@/utils/hooks/i18n";
+import { useRefreshProps } from "@/utils/hooks/routing";
+import { useToggle } from "@/utils/hooks/toggle";
+import { pantsSizeRegex } from "@/utils/patterns";
+import { CustomPage, LangCode } from "@/utils/types/common";
+import { Contact } from "@/utils/types/contact";
+import { Student, Teacher } from "@/utils/types/person";
+import { SubjectGroup } from "@/utils/types/subject";
 import {
   Actions,
   Button,
@@ -37,48 +54,13 @@ import {
   Section,
   Snackbar,
 } from "@suankularb-components/react";
-
-// Internal components
-import ChangePasswordDialog from "@/components/account/ChangePasswordDialog";
-import ContactsSection from "@/components/account/ContactSection";
-import LogOutDialog from "@/components/account/LogOutDialog";
-import PersonFields from "@/components/account/PersonFields";
-import DynamicAvatar from "@/components/common/DynamicAvatar";
-import MySKPageHeader from "@/components/common/MySKPageHeader";
-
-// Contexts
-import SnackbarContext from "@/contexts/SnackbarContext";
-
-// Backend
-import { createContact, updateContact } from "@/utils/backend/contact";
-import {
-  addContactToPerson,
-  editPerson,
-  getPersonFromUser,
-  removeContactFromPerson,
-} from "@/utils/backend/person/person";
-import { getSubjectGroups } from "@/utils/backend/subject/subjectGroup";
-
-// Helpers
-import { getLocaleString } from "@/utils/helpers/i18n";
-import { withLoading } from "@/utils/helpers/loading";
-import { nameJoiner } from "@/utils/helpers/name";
-import { createTitleStr } from "@/utils/helpers/title";
-
-// Hooks
-import { useForm } from "@/utils/hooks/form";
-import { useLocale } from "@/utils/hooks/i18n";
-import { useRefreshProps } from "@/utils/hooks/routing";
-import { useToggle } from "@/utils/hooks/toggle";
-
-// Types
-import { CustomPage, LangCode } from "@/utils/types/common";
-import { Contact } from "@/utils/types/contact";
-import { Student, Teacher } from "@/utils/types/person";
-import { SubjectGroup } from "@/utils/types/subject";
-
-// Miscellaneous
-import { pantsSizeRegex } from "@/utils/patterns";
+import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Head from "next/head";
+import { FC, useContext, useState } from "react";
 
 /**
  * The most basic information about a Person, their name and their role inside
@@ -94,7 +76,6 @@ const BasicInfoSection: FC<{ person: Student | Teacher }> = ({ person }) => {
 
   // Dialog control
   const [logOutOpen, setLogOutOpen] = useState<boolean>(false);
-  const [changePwdOpen, setChangePwdOpen] = useState<boolean>(false);
 
   return (
     <section className="mx-4 flex flex-col gap-4 sm:mx-0">
@@ -108,27 +89,25 @@ const BasicInfoSection: FC<{ person: Student | Teacher }> = ({ person }) => {
         {/* Text */}
         <div className="grow">
           {/* Name */}
-          <h2 className="skc-display-small">
-            {nameJoiner(locale, person.name)}
-          </h2>
+          <h2 className="skc-display-small">{getLocaleName(locale, person)}</h2>
           {/* Role within the school */}
           <p className="skc-headline-small">
             {
               // For a teacher: Class Advisor at and Subject Group
               person.role === "teacher"
                 ? [
-                    person.classAdvisorAt &&
+                    person.class_advisor_at &&
                       t("basicInfo.classAdvisorAt", {
-                        classAdvisorAt: person.classAdvisorAt.number,
+                        classAdvisorAt: person.class_advisor_at.number,
                       }),
-                    getLocaleString(person.subjectGroup.name, locale),
+                    getLocaleString(person.subject_group.name, locale),
                   ]
                     .filter((segment) => segment)
                     .join(" • ")
-                : person.class && // For a student: Class and Class No.
+                : person.classroom && // For a student: Class and Class No.
                   t("basicInfo.classAndNo", {
-                    class: person.class.number,
-                    classNo: person.classNo,
+                    class: person.classroom.number,
+                    classNo: person.class_no,
                   })
             }
           </p>
@@ -155,19 +134,6 @@ const BasicInfoSection: FC<{ person: Student | Teacher }> = ({ person }) => {
           {t("action.logOut")}
         </Button>
         <LogOutDialog open={logOutOpen} onClose={() => setLogOutOpen(false)} />
-
-        {/* Change password */}
-        <Button
-          appearance="outlined"
-          icon={<MaterialIcon icon="password" />}
-          onClick={() => setChangePwdOpen(true)}
-        >
-          {t("action.changePassword")}
-        </Button>
-        <ChangePasswordDialog
-          open={changePwdOpen}
-          onClose={() => setChangePwdOpen(false)}
-        />
       </Actions>
     </section>
   );
@@ -221,15 +187,15 @@ const UserFieldsSection: FC<{
     {
       key: "firstNameTH",
       required: true,
-      defaultValue: person.name.th.firstName,
+      defaultValue: person.first_name.th,
     },
-    { key: "middleNameTH", defaultValue: person.name.th.middleName },
+    { key: "middleNameTH", defaultValue: person.middle_name?.th },
     {
       key: "lastNameTH",
       required: true,
-      defaultValue: person.name.th.lastName,
+      defaultValue: person.last_name.th,
     },
-    { key: "nicknameTH", defaultValue: person.name.th.nickname },
+    { key: "nicknameTH", defaultValue: person.nickname?.th },
     {
       key: "prefixEN",
       required: true,
@@ -240,27 +206,27 @@ const UserFieldsSection: FC<{
     {
       key: "firstNameEN",
       required: true,
-      defaultValue: person.name["en-US"]?.firstName,
+      defaultValue: person.first_name["en-US"],
     },
-    { key: "middleNameEN", defaultValue: person.name["en-US"]?.middleName },
+    { key: "middleNameEN", defaultValue: person.middle_name?.["en-US"] },
     {
       key: "lastNameEN",
       required: true,
-      defaultValue: person.name["en-US"]?.lastName,
+      defaultValue: person.last_name["en-US"],
     },
-    { key: "nicknameEN", defaultValue: person.name["en-US"]?.nickname },
+    { key: "nicknameEN", defaultValue: person.nickname?.["en-US"] },
     {
       key: "subjectGroup",
       defaultValue:
-        person.role === "teacher" && subjectGroups.length
-          ? person.subjectGroup.id || subjectGroups[0].id
+        person.role === "teacher" && subjectGroups.length > 0
+          ? person.subject_group.id || subjectGroups[0].id
           : undefined,
     },
     {
       key: "classAdvisorAt",
       defaultValue:
-        person.role === "teacher" && person.classAdvisorAt
-          ? String(person.classAdvisorAt.number)
+        person.role === "teacher" && person.class_advisor_at
+          ? String(person.class_advisor_at.number)
           : undefined,
     },
     // { key: "gender", required: true },
@@ -280,10 +246,10 @@ const UserFieldsSection: FC<{
     //     t("profile.general.passportNumber_error", { ns: "account" }),
     // },
     { key: "allergies", defaultValue: person.allergies },
-    { key: "shirtSize", defaultValue: person.shirtSize },
+    { key: "shirtSize", defaultValue: person.shirt_size },
     {
       key: "pantsSize",
-      defaultValue: person.pantsSize,
+      defaultValue: person.pants_size,
       validate: (value: string) => pantsSizeRegex.test(value),
     },
     // { key: "bloodGroup", required: true },
@@ -302,28 +268,28 @@ const UserFieldsSection: FC<{
       async () => {
         if (!formOK) {
           setSnackbar(
-            <Snackbar>{t("snackbar.formInvalid", { ns: "common" })}</Snackbar>
+            <Snackbar>{t("snackbar.formInvalid", { ns: "common" })}</Snackbar>,
           );
           return false;
         }
 
-        const { error } = await editPerson(supabase, form, person);
+        const { error } = await updatePerson(supabase, form, person);
 
         if (error) {
           setSnackbar(
-            <Snackbar>{t("snackbar.failure", { ns: "common" })}</Snackbar>
+            <Snackbar>{t("snackbar.failure", { ns: "common" })}</Snackbar>,
           );
           return false;
         }
 
         await refreshProps();
         setSnackbar(
-          <Snackbar>{t("snackbar.changesSaved", { ns: "common" })}</Snackbar>
+          <Snackbar>{t("snackbar.changesSaved", { ns: "common" })}</Snackbar>,
         );
         return true;
       },
       toggleLoading,
-      { hasEndToggle: true }
+      { hasEndToggle: true },
     );
   }
 
@@ -379,18 +345,21 @@ const UserContactsSection: FC<{ person: Student | Teacher }> = ({ person }) => {
    * @param contact The Contact to add.
    */
   async function handleAdd(contact: Contact) {
-    const { data, error } = await createContact(supabase, contact);
+    const { data: contactID, error } = await createContact(supabase, contact);
     if (error) {
       setSnackbar(<Snackbar>{t("snackbar.failure")}</Snackbar>);
       return;
     }
 
-    const { error: personError } = await addContactToPerson(
+    const { error: personContactError } = await addContactToPerson(
       supabase,
-      data!.id,
-      person
+      person,
+      contactID,
     );
-    if (personError) {
+
+
+    if (personContactError) {
+      console.error(personContactError);
       setSnackbar(<Snackbar>{t("snackbar.failure")}</Snackbar>);
       return;
     }
@@ -418,12 +387,10 @@ const UserContactsSection: FC<{ person: Student | Teacher }> = ({ person }) => {
    *
    * @param contactID The ID of the Contact to delete.
    */
-  async function handleRemove(contactID: number) {
-    const { error } = await removeContactFromPerson(
-      supabase,
-      contactID,
-      person
-    );
+  async function handleRemove(contactID: string) {
+
+    const { error} = await supabase.from("contacts").delete().match({id: contactID})
+
     if (error) {
       setSnackbar(<Snackbar>{t("snackbar.failure")}</Snackbar>);
       return;
@@ -449,9 +416,9 @@ const UserContactsSection: FC<{ person: Student | Teacher }> = ({ person }) => {
  * @returns A Page.
  */
 const AccountPage: CustomPage<{
-  person: Student | Teacher;
+  user: Student | Teacher;
   subjectGroups: SubjectGroup[];
-}> = ({ person, subjectGroups }) => {
+}> = ({ user, subjectGroups }) => {
   // Translation
   const { t } = useTranslation(["account", "common"]);
 
@@ -465,9 +432,9 @@ const AccountPage: CustomPage<{
         icon={<MaterialIcon icon="account_circle" />}
       />
       <ContentLayout>
-        <BasicInfoSection {...{ person }} />
-        <UserFieldsSection {...{ person, subjectGroups }} />
-        <UserContactsSection {...{ person }} />
+        <BasicInfoSection {...{ person: user }} />
+        <UserFieldsSection {...{ person: user, subjectGroups }} />
+        <UserContactsSection {...{ person: user }} />
       </ContentLayout>
     </>
   );
@@ -483,17 +450,25 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  // const {
+  //   data: { session },
+  // } = await supabase.auth.getSession();
 
-  const { data: person } = await getPersonFromUser(
+  const { data: user, error } = await getLoggedInPerson(
     supabase,
-    session!.user as User,
-    { contacts: true, allergies: true, classAdvisorAt: true }
+    authOptions,
+    req,
+    res,
+    { includeContacts: true, detailed: true },
   );
 
-  const { data: subjectGroups } = await getSubjectGroups();
+  if (error) {
+    return {
+      notFound: true,
+    };
+  };
+
+  const { data: subjectGroups } = await getSubjectGroups(supabase);
 
   return {
     props: {
@@ -502,7 +477,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         "welcome",
         "account",
       ])),
-      person,
+      user,
       subjectGroups,
     },
   };

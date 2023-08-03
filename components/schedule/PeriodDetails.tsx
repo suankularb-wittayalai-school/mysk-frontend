@@ -1,9 +1,10 @@
-// External libraries
-import { useTranslation } from "next-i18next";
-import { AnimatePresence, motion } from "framer-motion";
-import { useEffect } from "react";
-
-// SK Components
+// Imports
+import PeriodDetailsContent from "@/components/schedule/PeriodDetailsContent";
+import ScheduleContext from "@/contexts/ScheduleContext";
+import { getLocaleString } from "@/utils/helpers/string";
+import { useLocale } from "@/utils/hooks/i18n";
+import { DialogFC } from "@/utils/types/component";
+import { PeriodContentItem } from "@/utils/types/schedule";
 import {
   Button,
   DialogContent,
@@ -11,32 +12,20 @@ import {
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
+import { AnimatePresence, motion } from "framer-motion";
+import { useTranslation } from "next-i18next";
+import { useContext, useEffect } from "react";
 
-// Internal components
-import PeriodDetailsContent from "@/components/schedule/PeriodDetailsContent";
-
-// Helpers
-import { getLocaleObj } from "@/utils/helpers/i18n";
-
-// Hooks
-import { useLocale } from "@/utils/hooks/i18n";
-
-// Types
-import { DialogComponent } from "@/utils/types/common";
-import { Role } from "@/utils/types/person";
-import { PeriodContentItem } from "@/utils/types/schedule";
-
-const PeriodDetails: DialogComponent<{
+const PeriodDetails: DialogFC<{
   period: PeriodContentItem;
-  role: Role;
   onDelete?: () => void;
-}> = ({ period, role, open, onClose, onDelete }) => {
-  // Translation
+}> = ({ period, open, onClose, onDelete }) => {
   const locale = useLocale();
   const { t } = useTranslation("schedule");
 
-  // Animation
   const { duration, easing } = useAnimationConfig();
+
+  const { editable } = useContext(ScheduleContext);
 
   // Close the Dialog with the escape key
   useEffect(() => {
@@ -78,12 +67,12 @@ const PeriodDetails: DialogComponent<{
                     [&_span]:!bg-on-surface"
                 />
                 <h1 className="skc-headline-small my-1 mr-4">
-                  {getLocaleObj(period.subject.name, locale).name}
+                  {getLocaleString(period.subject.name, locale)}
                 </h1>
               </div>
               <DialogContent className="flex flex-col gap-4 p-6 pt-4">
                 <PeriodDetailsContent period={period} />
-                {role === "teacher" && (
+                {editable && (
                   <Button
                     appearance="outlined"
                     icon={<MaterialIcon icon="delete" />}

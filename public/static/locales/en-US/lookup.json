@@ -47,6 +47,9 @@
         "title": "Subjects in charge"
       }
     },
+    "schedule": {
+      "title": "{{name}}’s schedule"
+    },
     "dialog": {
       "share": {
         "title": "Share {{name}}…",

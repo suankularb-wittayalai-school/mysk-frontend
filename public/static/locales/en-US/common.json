@@ -153,6 +153,15 @@
     }
   },
   "dialog": {
+    "accountNotFound": {
+      "title": "You need to use a MySK account",
+      "desc": "You didn’t use a MySK account. Make sure you log in with <strong>an email that ends with “@student.sk.ac.th” or “@sk.ac.th.”</strong>",
+      "contact": "Contact us if you think this is a mistake.",
+      "action": {
+        "report": "Report an issue",
+        "tryAgain": "Try again"
+      }
+    },
     "confirmDelete": {
       "title": "Confirm deletion",
       "desc": "This action cannot be undone.",

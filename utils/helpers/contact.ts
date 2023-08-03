@@ -1,16 +1,9 @@
-// External libraries
-import { useTranslation } from "next-i18next";
-
-// Helpers
-import { getLocaleString } from "@/utils/helpers/i18n";
-import { nameJoiner } from "@/utils/helpers/name";
-
-// Hooks
+// Imports
+import { getLocaleName, getLocaleString } from "@/utils/helpers/string";
 import { useLocale } from "@/utils/hooks/i18n";
-
-// Types
 import { Contact } from "@/utils/types/contact";
 import { Student, Teacher } from "@/utils/types/person";
+import { useTranslation } from "next-i18next";
 
 /**
  * Converts Contact value into a URL depending on the type.
@@ -21,18 +14,18 @@ import { Student, Teacher } from "@/utils/types/person";
  */
 export function getContactURL({ type, value }: Contact) {
   switch (type) {
-    case "Phone":
+    case "phone":
       return `tel:${value}`;
-    case "Email":
+    case "email":
       return `mailto:${value}`;
-    case "Facebook":
+    case "facebook":
       return `https://www.facebook.com/search/people/?q=${value}`;
-    case "Line":
+    case "line":
       if (/^https:\/\/line\.me(\/R)?\/ti\/g\//.test(value)) return value;
       return `https://line.me/ti/p/~${value}`;
-    case "Instagram":
+    case "instagram":
       return `https://www.instagram.com/${value}`;
-    case "Discord":
+    case "discord":
       return `https://discord.gg/invite/${value}`;
     default:
       return value;
@@ -47,7 +40,7 @@ export function getContactURL({ type, value }: Contact) {
  * @returns A boolean.
  */
 export function getContactIsLinkable({ type, value }: Contact): boolean {
-  if (type !== "Other") return true;
+  if (type !== "other") return true;
   try {
     new URL(value);
     return true;
@@ -70,29 +63,29 @@ export function useGetVCard() {
           `VERSION:3.0`,
 
           // Name
-          `N:${nameJoiner(locale, person.name, undefined, {
+          `N:${getLocaleName(locale, person, {
             firstName: false,
-          })};${nameJoiner(locale, person.name, undefined, {
+          })};${getLocaleName(locale, person, {
             lastName: false,
           })};;${
             person.role === "teacher"
               ? t("people.dialog.share.saveVCard.segment.teacherPrefix")
               : ""
           };`,
-          `FN:${nameJoiner(locale, person.name, undefined, {
+          `FN:${getLocaleName(locale, person, {
             prefix: person.role === "teacher" ? "teacher" : false,
           })}`,
 
           // Birthday
-          `BDAY:${person.birthdate.split("-").join("")}`,
+          person.birthdate && `BDAY:${person.birthdate.replace("-", "/")}`,
 
           // Contacts
           person.contacts
             .map((contact, idx) => {
               switch (contact.type) {
-                case "Phone":
+                case "phone":
                   return `item${idx + 1}.TEL;type=CELL:${contact.value}`;
-                case "Email":
+                case "email":
                   return `item${idx + 1}.EMAIL;type=INTERNET:${contact.value}`;
                 default:
                   if (getContactIsLinkable(contact))
@@ -101,10 +94,10 @@ export function useGetVCard() {
                       !["Website", "Other"].includes(contact.value) &&
                         `item${idx + 1}.X-ABLabel:${
                           {
-                            Facebook: tx("contact.facebook"),
-                            Line: tx("contact.line"),
-                            Instagram: tx("contact.instagram"),
-                            Discord: tx("contact.discord"),
+                            facebook: tx("contact.facebook"),
+                            line: tx("contact.line"),
+                            instagram: tx("contact.instagram"),
+                            discord: tx("contact.discord"),
                           }[contact.type as string]
                         }`,
                     ]
@@ -120,12 +113,12 @@ export function useGetVCard() {
           person.role === "teacher" &&
             [
               `item1.ORG:${t(
-                "people.dialog.share.saveVCard.segment.org"
-              )};${getLocaleString(person.subjectGroup.name, locale)}`,
+                "people.dialog.share.saveVCard.segment.org",
+              )};${getLocaleString(person.subject_group.name, locale)}`,
               `item2.TITLE:${t("people.dialog.share.saveVCard.segment.title")}`,
-              person.classAdvisorAt &&
+              person.class_advisor_at &&
                 `NOTE:${t("people.dialog.share.saveVCard.segment.note", {
-                  number: person.classAdvisorAt.number,
+                  number: person.class_advisor_at.number,
                 })}`,
             ]
               .filter((segment) => segment)
@@ -141,6 +134,6 @@ export function useGetVCard() {
           .filter((segment) => segment)
           .join("\n"),
       ],
-      { type: "text/vcard;charset=utf-8" }
+      { type: "text/vcard;charset=utf-8" },
     );
 }

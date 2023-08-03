@@ -1,22 +1,11 @@
 {
   "main": {
-    "logoAlt": "โลโก้ MySK",
+    "logoAlt": "MySK logo",
     "title": "Log in to MySK",
-    "logIn": {
-      "form": {
-        "email": "School email",
-        "email_helper": "Use the email ending in sk.ac.th",
-        "password": "Password"
-      },
-      "action": {
-        "continueWithPassword": "Continue with password",
-        "sendOTP": "Send OTP",
-        "logIn": "Log in"
-      }
-    },
-    "snackbar": {
-      "invalidCreds": "Invalid email or password",
-      "tooManyOTPRequests": "You’ve just made an OTP request; you have to wait until you can make another"
+    "googleHelper": "Use email ending with sk.ac.th",
+    "action": {
+      "help": "Help",
+      "report": "Report an issue"
     }
   },
   "aside": {
@@ -27,12 +16,11 @@
       "list": {
         "1": "Schedule at a Glance shows the most relevant information from your schedule.",
         "2": "Find any teacher’s schedule with Lookup.",
-        "3": "Email OTP—a new, easier way to log in without a password."
+        "3": "Add multiple rooms and classes to your schedule."
       }
     },
     "action": {
-      "patchNotes": "Patch notes",
-      "report": "Report issues"
+      "patchNotes": "More patch notes…"
     }
   },
   "credits": "MySK is supervised by Supannee Supeerath and Atipol Sukrisadanon • Its development was led by Siravit Phokeed and Smart Wattanapornmongkol • Quality assurance by Tempoom Leelacharoen • Translations to Thai contributed by Suankularb English Club"

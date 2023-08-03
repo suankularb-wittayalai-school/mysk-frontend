@@ -47,12 +47,12 @@ import ConfirmDeleteDialog from "@/components/common/ConfirmDeleteDialog";
 import MySKPageHeader from "@/components/common/MySKPageHeader";
 
 // Backend
-import { getAdminClasses } from "@/utils/backend/classroom/classroom";
+// import { getAdminClasses } from "@/utils/backend/classroom/classroom";
 
 // Helpers
 import { getLocaleYear } from "@/utils/helpers/date";
 import { withLoading } from "@/utils/helpers/loading";
-import { nameJoiner } from "@/utils/helpers/name";
+import { getLocaleName } from "@/utils/helpers/string";
 import { createTitleStr } from "@/utils/helpers/title";
 
 // Hooks
@@ -60,8 +60,9 @@ import { useLocale } from "@/utils/hooks/i18n";
 import { useToggle } from "@/utils/hooks/toggle";
 
 // Types
-import { ClassAdminListItem } from "@/utils/types/class";
+import { Classroom } from "@/utils/types/classroom";
 import { CustomPage, LangCode } from "@/utils/types/common";
+import { getClassroomsForAdmin } from "@/utils/backend/classroom/getClassroomsForAdmin";
 
 /**
  * The number of rows visible per page. Used in pagination.
@@ -75,7 +76,11 @@ const rowsPerPage = 20;
  *
  * @returns A Segmented Button.
  */
-const ClassRowActions: FC<{ row: ClassAdminListItem }> = ({ row }) => {
+const ClassRowActions: FC<{
+  row: Pick<Classroom, "id" | "number" | "class_advisors" | "year"> & {
+    studentCount: number;
+  };
+}> = ({ row }) => {
   const [editOpen, setEditOpen] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
 
@@ -128,7 +133,9 @@ const ClassRowActions: FC<{ row: ClassAdminListItem }> = ({ row }) => {
  * @returns A Page.
  */
 const ManageClassesPage: CustomPage<{
-  classList: ClassAdminListItem[];
+  classList: (Pick<Classroom, "id" | "number" | "class_advisors" | "year"> & {
+    studentCount: number;
+  })[];
   totalClassCount: number;
 }> = ({ classList, totalClassCount }) => {
   const locale = useLocale();
@@ -143,7 +150,11 @@ const ManageClassesPage: CustomPage<{
   const [page, setPage] = useState<number>(1);
   const [loading, toggleLoading] = useToggle();
 
-  const [data, setData] = useState<ClassAdminListItem[]>(classList);
+  const [data, setData] = useState<
+    (Pick<Classroom, "id" | "number" | "class_advisors" | "year"> & {
+      studentCount: number;
+    })[]
+  >(classList);
   const [totalRows, setTotalRows] = useState<number>(totalClassCount);
 
   // NOTE: the code for page and global filter change is nearly identical
@@ -166,22 +177,24 @@ const ManageClassesPage: CustomPage<{
 
             // For other pages, we have to fetch that specific page from the
             // database
-            const { data, error } = await getAdminClasses(
+            const { data, error } = await getClassroomsForAdmin(
               supabase,
               page,
               rowsPerPage,
-              globalFilter // <-- For when a search result spans many pages
+              globalFilter, // <-- For when a search result spans many pages
             );
             if (error) return classList;
             return data;
-          })()
+          })(),
         );
         return true;
       },
       toggleLoading,
-      { hasEndToggle: true }
+      { hasEndToggle: true },
     );
   }, [page]);
+
+  // console.log(data);
 
   // Handle global filter
   useEffect(() => {
@@ -198,26 +211,32 @@ const ManageClassesPage: CustomPage<{
 
             // Fetch the rows with the global filter
             setPage(1);
-            const { data, count, error } = await getAdminClasses(
+            const { data, count, error } = await getClassroomsForAdmin(
               supabase,
               1,
               rowsPerPage,
-              globalFilter
+              globalFilter,
             );
             setTotalRows(count);
             if (error) return [];
             return data;
-          })()
+          })(),
         );
         return true;
       },
       toggleLoading,
-      { hasEndToggle: true }
+      { hasEndToggle: true },
     );
   }, [globalFilter]);
 
   // Column definitions
-  const columns = useMemo<DataTableColumnDef<ClassAdminListItem>[]>(
+  const columns = useMemo<
+    DataTableColumnDef<
+      Pick<Classroom, "id" | "number" | "class_advisors" | "year"> & {
+        studentCount: number;
+      }
+    >[]
+  >(
     () => [
       // 3-digit number
       {
@@ -230,17 +249,15 @@ const ManageClassesPage: CustomPage<{
       {
         id: "classAdvisorsTH",
         accessorFn: (row) =>
-          row.classAdvisors
-            .map((advisor) => nameJoiner("th", advisor.name))
+          row.class_advisors
+            .map((advisor) => getLocaleName("th", advisor))
             .join(", "),
         header: t("thead.classAdvisorsTH"),
         thAttr: { className: "w-4/12" },
         render: (row) => (
           <ul className="list-disc pl-6">
-            {row.classAdvisors.map((advisor) => (
-              <li key={advisor.id}>
-                {nameJoiner("th", advisor.name, advisor.prefix)}
-              </li>
+            {row.class_advisors.map((advisor) => (
+              <li key={advisor.id}>{getLocaleName("th", advisor)}</li>
             ))}
           </ul>
         ),
@@ -248,17 +265,15 @@ const ManageClassesPage: CustomPage<{
       {
         id: "classAdvisorsEN",
         accessorFn: (row) =>
-          row.classAdvisors
-            .map((advisor) => nameJoiner("en-US", advisor.name))
+          row.class_advisors
+            .map((advisor) => getLocaleName("en-US", advisor))
             .join(", "),
         header: t("thead.classAdvisorsEN"),
         thAttr: { className: "w-4/12" },
         render: (row) => (
           <ul className="list-disc pl-6">
-            {row.classAdvisors.map((advisor) => (
-              <li key={advisor.id}>
-                {nameJoiner("en-US", advisor.name, advisor.prefix)}
-              </li>
+            {row.class_advisors.map((advisor) => (
+              <li key={advisor.id}>{getLocaleName("en-US", advisor)}</li>
             ))}
           </ul>
         ),
@@ -279,7 +294,7 @@ const ManageClassesPage: CustomPage<{
         thAttr: { className: "w-1/12" },
       },
     ],
-    [locale]
+    [locale],
   );
 
   // Tanstack Table setup
@@ -332,10 +347,14 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
-  const { data: classList } = await getAdminClasses(supabase, 1, rowsPerPage);
+  const { data: classList } = await getClassroomsForAdmin(
+    supabase,
+    1,
+    rowsPerPage,
+  );
 
   const { count: totalClassCount } = await supabase
-    .from("classroom")
+    .from("classrooms")
     .select("id", { count: "exact", head: true });
 
   return {

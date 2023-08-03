@@ -17,7 +17,8 @@
       "teachCurrent": "You’re teaching <strong>{{subject}}</strong>.",
       "teachWrapUp": "Get ready to wrap up {{subject}}.",
       "teachTravel": "Go to room <strong>{{room}}</strong> now.",
-      "teachFuture": "Nothing right now; your next class today is <strong>{{subject}}</strong>."
+      "teachFuture": "Nothing right now; your next class today is <strong>{{subject}}</strong>.",
+      "electiveSegment": "your chosen elective"
     },
     "details": {
       "subject": "Subject",

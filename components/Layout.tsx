@@ -1,23 +1,14 @@
-// External libraries
-import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
-
-import va from "@vercel/analytics";
-
-import Link from "next/link";
-import { useRouter } from "next/router";
-
-import { useTranslation } from "next-i18next";
-
-import {
-  FC,
-  ReactNode,
-  forwardRef,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
-
-// SK Components
+// Imports
+import LogOutDialog from "@/components/account/LogOutDialog";
+import RailLogo from "@/components/brand/RailLogo";
+import SchemeIcon from "@/components/icons/SchemeIcon";
+import AppStateContext from "@/contexts/AppStateContext";
+import { useLoggedInPerson } from "@/utils/helpers/auth";
+import { useLocale } from "@/utils/hooks/i18n";
+import { usePreferences } from "@/utils/hooks/preferences";
+import { useRefreshProps } from "@/utils/hooks/routing";
+import { useSnackbar } from "@/utils/hooks/snackbar";
+import { CustomPage } from "@/utils/types/common";
 import {
   MaterialIcon,
   NavBar,
@@ -28,29 +19,28 @@ import {
   RootLayout,
   Snackbar,
 } from "@suankularb-components/react";
+import va from "@vercel/analytics";
+import { useTranslation } from "next-i18next";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import {
+  FC,
+  ReactNode,
+  forwardRef,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
-// Internal components
-import LogOutDialog from "@/components/account/LogOutDialog";
-import RailLogo from "@/components/brand/RailLogo";
-import SchemeIcon from "@/components/icons/SchemeIcon";
-
-// Backend
-import { getUserMetadata } from "@/utils/backend/account";
-import { getClassAdvisorAt } from "@/utils/backend/person/teacher";
-
-// Contexts
-import AppStateContext from "@/contexts/AppStateContext";
-
-// Hooks
-import { useLocale } from "@/utils/hooks/i18n";
-import { usePreferences } from "@/utils/hooks/preferences";
-import { useRefreshProps } from "@/utils/hooks/routing";
-import { useSnackbar } from "@/utils/hooks/snackbar";
-
-// Types
-import { CustomPage } from "@/utils/types/common";
-import { UserMetadata } from "@/utils/types/person";
-
+/**
+ * The root layout of MySK.
+ *
+ * @param children
+ *
+ * @see {@link CustomPage} for other props.
+ *
+ * @returns A Root Layout or a Root Layout wrapped in the given context.
+ */
 const Layout: FC<
   { children: ReactNode } & Pick<
     CustomPage,
@@ -70,38 +60,22 @@ const Layout: FC<
     useContext(AppStateContext);
 
   // Class data (for Navigation links)
-  const supabase = useSupabaseClient();
-  const user = useUser();
-  const [userMetadata, setUserMetadata] = useState<UserMetadata | null>();
+  const { person: user } = useLoggedInPerson();
+
+  // console.log(user);
+
   const [isClassAdvisor, setIsClassAdvisor] = useState<boolean>(false);
   useEffect(() => {
     if (!user) return;
     (async () => {
-      // Get user metadata
-      const { data: metadata, error: metadataError } = await getUserMetadata(
-        supabase,
-        user!.id
-      );
-      if (metadataError) {
-        console.error(metadataError);
-        setUserMetadata(null);
-        return;
-      }
-      setUserMetadata(metadata);
-
       // Check if the user is a Class Advisor
-      if (metadata!.role === "teacher") {
-        const { data: classAdvisorAt, error } = await getClassAdvisorAt(
-          supabase,
-          metadata!.teacher!
-        );
-
-        if (classAdvisorAt) {
+      if (user!.role === "teacher") {
+        if (user.class_advisor_at) {
           setIsClassAdvisor(true);
           return;
         }
 
-        if (error) console.error(error);
+        // if (error) console.error(error);
         setIsClassAdvisor(false);
       }
     })();
@@ -121,12 +95,13 @@ const Layout: FC<
     setColorScheme(
       window.matchMedia("(prefers-color-scheme: dark)").matches
         ? "dark"
-        : "light"
+        : "light",
     );
   }
   useEffect(() => {
     if (preferences)
       if (preferences.colorScheme === "auto") {
+        setSchemeFromMedia();
         // If the color scheme preference is `auto`, listen to the
         // `prefers-color-scheme` media query for the color scheme
         const media = window.matchMedia("(prefers-color-scheme: dark)");
@@ -150,12 +125,12 @@ const Layout: FC<
     if (!preferences) return;
     window.addEventListener("beforeprint", () => setColorScheme("light"));
     window.addEventListener("afterprint", () =>
-      setColorScheme(preferences.colorScheme)
+      setColorScheme(preferences.colorScheme),
     );
     return () => {
       window.removeEventListener("beforeprint", () => setColorScheme("light"));
       window.removeEventListener("afterprint", () =>
-        setColorScheme(preferences.colorScheme)
+        setColorScheme(preferences.colorScheme),
       );
     };
   }, [preferences]);
@@ -169,7 +144,7 @@ const Layout: FC<
           header={<span className="skc-headline-small">MySK</span>}
           alt="MySK"
         >
-          {userMetadata?.role === "teacher" || navType === "teacher" ? (
+          {user?.role === "teacher" || navType === "teacher" ? (
             <NavDrawerItem
               icon={<MaterialIcon icon="school" />}
               label={t("navigation.teach")}
@@ -186,9 +161,8 @@ const Layout: FC<
               element={Link}
             />
           )}
-          {((navType || userMetadata?.role) === "student" ||
-            ((navType || userMetadata?.role) === "teacher" &&
-              isClassAdvisor)) && (
+          {((navType || user?.role) === "student" ||
+            ((navType || user?.role) === "teacher" && isClassAdvisor)) && (
             <NavDrawerItem
               icon={<MaterialIcon icon="groups" />}
               label={t("navigation.class")}
@@ -272,7 +246,7 @@ const Layout: FC<
               />
             ))}
           />
-          {userMetadata?.isAdmin && (
+          {user?.is_admin && (
             <NavDrawerItem
               icon={<MaterialIcon icon="shield_person" />}
               label={t("navigation.drawer.about.admin")}
@@ -351,7 +325,7 @@ const Layout: FC<
                 label={t(
                   `navigation.colorScheme.${
                     colorScheme === "dark" ? "light" : "dark"
-                  }`
+                  }`,
                 )}
                 onClick={() => {
                   const newScheme = colorScheme === "dark" ? "light" : "dark";
@@ -373,7 +347,7 @@ const Layout: FC<
           }
           onNavToggle={() => setNavOpen(true)}
         >
-          {(navType || userMetadata?.role) === "teacher" ? (
+          {(navType || user?.role) === "teacher" ? (
             <NavBarItem
               icon={<MaterialIcon icon="school" />}
               label={t("navigation.teach")}
@@ -390,9 +364,8 @@ const Layout: FC<
               element={Link}
             />
           )}
-          {((navType || userMetadata?.role) === "student" ||
-            ((navType || userMetadata?.role) === "teacher" &&
-              isClassAdvisor)) && (
+          {((navType || user?.role) === "student" ||
+            ((navType || user?.role) === "teacher" && isClassAdvisor)) && (
             <NavBarItem
               icon={<MaterialIcon icon="groups" />}
               label={t("navigation.class")}

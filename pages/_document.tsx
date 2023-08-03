@@ -1,5 +1,7 @@
 // External libraries
 import { Html, Head, Main, NextScript } from "next/document";
+import Script from "next/script";
+
 
 export default function Document() {
   return (
@@ -40,10 +42,12 @@ export default function Document() {
           media="(prefers-color-scheme: dark)"
           key="theme-dark"
         />
+        <meta name="google" content="notranslate" />
       </Head>
       <body>
         <Main />
         <NextScript />
+        <Script src="https://accounts.google.com/gsi/client" strategy="beforeInteractive" />
       </body>
     </Html>
   );

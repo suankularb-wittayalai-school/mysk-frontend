@@ -1,15 +1,22 @@
-// Types
-import { ClassWNumber } from "@/utils/types/class";
-import { MultiLangObj, MultiLangString } from "@/utils/types/common";
+// Imports
+import { MultiLangString } from "@/utils/types/common";
 import { Contact } from "@/utils/types/contact";
-import { SubjectGroup, SubjectWNameAndCode } from "@/utils/types/subject";
+import { Classroom } from "@/utils/types/classroom";
+import { SubjectGroup, Subject } from "@/utils/types/subject";
 
-export type UserMetadata = {
-  role: Role;
-  student?: number;
-  teacher?: number;
-  isAdmin: boolean;
+export type UserRole =
+  | "student"
+  | "teacher"
+  | "organization"
+  | "staff"
+  | "management";
+
+export type User = {
+  id: string;
+  email: string | null;
+  is_admin: boolean;
   onboarded: boolean;
+  role: UserRole;
 };
 
 export type ShirtSize =
@@ -25,121 +32,57 @@ export type ShirtSize =
   | "6XL";
 
 export type Person = {
-  id: number;
+  id: string;
   prefix: MultiLangString;
-  role: Role;
-  name: MultiLangObj<PersonName>;
-  profile?: string;
-  citizenID?: string;
-  birthdate: string;
-  shirtSize?: ShirtSize;
-  pantsSize?: string;
-  allergies?: string[];
+  first_name: MultiLangString;
+  last_name: MultiLangString;
+  middle_name: MultiLangString | null;
+  nickname: MultiLangString | null;
+  profile: string | null;
+  citizen_id: string | null;
+  birthdate: string | null;
+  shirt_size: ShirtSize | null;
+  pants_size: string | null;
+  allergies: string[] | null;
   contacts: Contact[];
-  isAdmin?: boolean;
+  is_admin: boolean | null;
 };
-
-export type PersonWName = {
-  id: Person["id"];
-  name: Person["name"];
-};
-
-export type PersonName = {
-  firstName: string;
-  middleName?: string;
-  lastName: string;
-  nickname?: string;
-};
-
-export type Role = "student" | "teacher";
-
-export type DefaultTHPrefix = "เด็กชาย" | "นาย" | "นาง" | "นางสาว";
-export type DefaultENPrefix = "Master." | "Mr." | "Mrs." | "Miss.";
 
 export type Student = Person & {
+  student_id: string;
+  classroom: Pick<Classroom, "id" | "number"> | null;
+  class_no: number | null;
   role: "student";
-  studentID: string;
-  class?: ClassWNumber;
-  classNo: number;
 };
 
 export type Teacher = Person & {
-  role: "teacher";
-  teacherID: string;
-  classAdvisorAt?: ClassWNumber;
-  subjectGroup: SubjectGroup;
-  subjectsInCharge?: SubjectWNameAndCode[];
-};
-
-export type StudentListItem = {
-  id: number;
-  classNo: number;
-  prefix: MultiLangString;
-  name: MultiLangObj<PersonName>;
-};
-
-export type PersonLookupItem = {
-  id: number;
-  prefix: MultiLangString;
-  name: MultiLangObj<PersonName>;
-} & (
-  | { role: "student"; metadata: ClassWNumber }
-  | { role: "teacher"; metadata: SubjectGroup }
-);
-
-export type PersonLookupItemGeneric<Metadata> = {
-  id: number;
-  role: Role;
-  metadata?: Metadata;
-  prefix: MultiLangString;
-  name: MultiLangObj<PersonName>;
-};
-
-export type StudentAdminListItem = {
-  id: number;
-  studentID: string;
-  classItem: ClassWNumber;
-  classNo: number;
-  name: MultiLangString;
-};
-
-export type ImportedStudentData = {
-  prefix: DefaultTHPrefix;
-  first_name_th: string;
-  first_name_en: string;
-  middle_name_th?: string;
-  middle_name_en?: string;
-  last_name_th: string;
-  last_name_en: string;
-  birthdate: string;
-  citizen_id: number;
-  student_id: number;
-  class: number;
-  class_number: number;
-  email: string;
-};
-
-export type ImportedTeacherData = {
-  prefix: DefaultTHPrefix;
-  first_name_th: string;
-  first_name_en: string;
-  middle_name_th?: string;
-  middle_name_en?: string;
-  last_name_th: string;
-  last_name_en: string;
-  birthdate: string;
-  citizen_id: number;
   teacher_id: string;
-  subject_group:
-    | "วิทยาศาสตร์ และเทคโนโลยี"
-    | "คณิตศาสตร์"
-    | "ภาษาต่างประเทศ"
-    | "ภาษาไทย"
-    | "สุขศึกษา และพลศึกษา"
-    | "การงานอาชีพ"
-    | "ศิลปะ"
-    | "สังคมศึกษา ศาสนา และวัฒนธรรม"
-    | "กิจกรรมพัฒนาผู้เรียน"
-    | "อาจารย์พิเศษ";
-  email: string;
+  class_advisor_at: Pick<Classroom, "id" | "number"> | null;
+  subject_group: SubjectGroup;
+  subjects_in_charge: Pick<Subject, "id" | "name" | "code" | "short_name">[];
+  role: "teacher";
 };
+
+export type PersonLookupItem =
+  | Pick<
+      Student,
+      | "id"
+      | "prefix"
+      | "first_name"
+      | "last_name"
+      | "middle_name"
+      | "nickname"
+      | "role"
+      | "classroom"
+    >
+  | Pick<
+      Teacher,
+      | "id"
+      | "prefix"
+      | "first_name"
+      | "last_name"
+      | "middle_name"
+      | "nickname"
+      | "role"
+      | "subject_group"
+    >;

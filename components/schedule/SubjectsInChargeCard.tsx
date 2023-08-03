@@ -9,7 +9,7 @@ import { Card, ChipSet } from "@suankularb-components/react";
 import ScheduleSubjectChip from "@/components/schedule/ScheduleSubjectChip";
 
 // Types
-import { SubjectWNameAndCode } from "@/utils/types/subject";
+import { Subject } from "@/utils/types/subject";
 
 /**
  * Displays a Card with a set of Chips, each denoting a Subject, that a Teacher
@@ -20,7 +20,7 @@ import { SubjectWNameAndCode } from "@/utils/types/subject";
  * @returns A Card.
  */
 const SubjectsInChargeCard: FC<{
-  subjects: SubjectWNameAndCode[];
+  subjects: Pick<Subject, "id" | "name" | "code" | "short_name">[];
 }> = ({ subjects }) => {
   // Translation
   const { t } = useTranslation("schedule");

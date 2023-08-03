@@ -11,7 +11,7 @@ import PersonActions from "@/components/lookup/person/PersonActions";
 
 // Helpers
 import { cn } from "@/utils/helpers/className";
-import { nameJoiner } from "@/utils/helpers/name";
+import { getLocaleName } from "@/utils/helpers/string";
 
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
@@ -36,7 +36,7 @@ const PersonHeader: FC<ComponentProps<typeof PersonActions>> = ({
       <div className="flex flex-col gap-4 md:gap-2">
         <Header hAttr={{ id: "header-person-details" }}>
           {person
-            ? nameJoiner(locale, person.name, undefined, {
+            ? getLocaleName(locale, person, {
                 prefix: person.role === "teacher" ? "teacher" : false,
               })
             : t("loading")}

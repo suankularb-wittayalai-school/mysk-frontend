@@ -93,6 +93,25 @@
   margin-inline: 0.25rem;
 }
 
+.skc-chip-field__content > .skc-chip-set:empty ~ .skc-chip-field__input::placeholder {
+  padding-left: 0;
+}
+
 .skc-chip-field__content > .skc-chip-set:empty {
   display: none;
+}
+
+.skc-dialog .skc-chip-field__label,
+.skc-card--filled .skc-dialog .skc-chip-field__label {
+  background-color: var(--surface-3);
+}
+
+/* Google One Tap UI */
+
+#credential_picker_container {
+  @apply !right-2 !top-2;
+}
+
+.dark #credential_picker_container {
+  @apply rounded-md overflow-hidden
 }

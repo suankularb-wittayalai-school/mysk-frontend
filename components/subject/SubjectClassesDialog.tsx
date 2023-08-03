@@ -1,4 +1,4 @@
-// Externa libraries
+// Imports
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import {
   PaginationState,
@@ -19,8 +19,6 @@ import {
   useMemo,
   useState,
 } from "react";
-
-// SK Components
 import {
   Actions,
   Button,
@@ -40,35 +38,21 @@ import {
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
-
-// Internal components
 import ConfirmDeleteDialog from "@/components/common/ConfirmDeleteDialog";
 import MultilangText from "@/components/common/MultilingualText";
 import BrandIcon from "@/components/icons/BrandIcon";
-import RoomSubjectDialog from "@/components/subject/RoomSubjectDialog";
-
-// Contexts
+import ClassroomSubjectDialog from "@/components/subject/ClassroomSubjectDialog";
 import SnackbarContext from "@/contexts/SnackbarContext";
-
-// Backend
-import {
-  deleteRoomSubject,
-  getTeachingSubjectClasses,
-} from "@/utils/backend/subject/roomSubject";
-
-// Helpers
-import { getLocaleObj } from "@/utils/helpers/i18n";
+import { getLocaleString } from "@/utils/helpers/string";
 import { withLoading } from "@/utils/helpers/loading";
-import { nameJoiner } from "@/utils/helpers/name";
-
-// Hooks
+import { getLocaleName } from "@/utils/helpers/string";
 import { useLocale } from "@/utils/hooks/i18n";
 import { useToggle } from "@/utils/hooks/toggle";
 import { useRefreshProps } from "@/utils/hooks/routing";
-
-// Types
-import { DialogComponent } from "@/utils/types/common";
-import { SubjectListItem, SubjectWNameAndCode } from "@/utils/types/subject";
+import { ClassroomSubject, Subject } from "@/utils/types/subject";
+import { DialogFC } from "@/utils/types/component";
+import getClassroomSubjectsOfSubject from "@/utils/backend/subject/getClassroomSubjectsOfSubject";
+import deleteClassroomSubject from "@/utils/backend/subject/deleteClassroomSubject";
 
 /**
  * Row actions for a Class this subject is taught to.
@@ -78,7 +62,7 @@ import { SubjectListItem, SubjectWNameAndCode } from "@/utils/types/subject";
  * @returns
  */
 const ClassRowActions: FC<{
-  row: SubjectListItem;
+  row: ClassroomSubject;
   onEditOpen: () => void;
   onDeleteOpen: () => void;
 }> = ({ row, onEditOpen, onDeleteOpen }) => {
@@ -89,12 +73,12 @@ const ClassRowActions: FC<{
   return (
     <SegmentedButton alt="Row actions">
       {/* Edit */}
-      {row.ggcLink && (
+      {row.ggc_link && (
         <Button
           appearance="outlined"
           icon={<BrandIcon icon="gg-classroom" />}
           tooltip={t("classLink")}
-          href={row.ggcLink}
+          href={row.ggc_link}
           // eslint-disable-next-line react/display-name
           element={forwardRef((props, ref) => (
             <a {...props} ref={ref} target="_blank" rel="noreferrer" />
@@ -102,12 +86,12 @@ const ClassRowActions: FC<{
           className="!text-secondary state-layer:!bg-secondary"
         />
       )}
-      {row.ggMeetLink && (
+      {row.gg_meet_link && (
         <Button
           appearance="outlined"
           icon={<BrandIcon icon="gg-meet" />}
           tooltip={t("meetLink")}
-          href={row.ggMeetLink}
+          href={row.gg_meet_link}
           // eslint-disable-next-line react/display-name
           element={forwardRef((props, ref) => (
             <a {...props} ref={ref} target="_blank" rel="noreferrer" />
@@ -138,8 +122,8 @@ const ClassRowActions: FC<{
 
 /**
  * Allows the Teacher to view and edit the Classes that they teach this Subject
- * to. Behind the scenes, this is a list of Room Subjects connected to this
- * Teacher and this Subject.
+ * to. Behind the scenes, this is a list of Classroom Subjects connected to
+ * this Teacher and this Subject.
  *
  * @param open If the Full-screen Dialog is open and shown.
  * @param onClose The function triggered when the Full-screen Dialog is closed.
@@ -147,8 +131,8 @@ const ClassRowActions: FC<{
  *
  * @returns A Full-screen Dialog.
  */
-const SubjectClassesDialog: DialogComponent<{
-  subject: SubjectWNameAndCode;
+const SubjectClassesDialog: DialogFC<{
+  subject: Pick<Subject, "id" | "code" | "name" | "short_name">;
 }> = ({ open, onClose, subject }) => {
   const locale = useLocale();
   const { t } = useTranslation("teach", { keyPrefix: "dialog.subjectClasses" });
@@ -171,14 +155,14 @@ const SubjectClassesDialog: DialogComponent<{
   ]);
   const [loading, toggleLoading] = useToggle();
 
-  const [data, setData] = useState<SubjectListItem[] | null>(null);
+  const [data, setData] = useState<ClassroomSubject[] | null>(null);
   useEffect(() => {
     if (!open || data) return;
     withLoading(
       async () => {
-        const { data, error } = await getTeachingSubjectClasses(
+        const { data, error } = await getClassroomSubjectsOfSubject(
           supabase,
-          subject.id
+          subject.id,
         );
         if (error) {
           setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
@@ -188,11 +172,11 @@ const SubjectClassesDialog: DialogComponent<{
         return true;
       },
       toggleLoading,
-      { hasEndToggle: true }
+      { hasEndToggle: true },
     );
   }, [open, data]);
 
-  const columns = useMemo<DataTableColumnDef<SubjectListItem>[]>(
+  const columns = useMemo<DataTableColumnDef<ClassroomSubject>[]>(
     () => [
       {
         id: "class",
@@ -202,7 +186,7 @@ const SubjectClassesDialog: DialogComponent<{
       },
       {
         id: "classCode",
-        accessorFn: (row) => row.ggcCode,
+        accessorFn: (row) => row.ggc_code,
         header: t("thead.classCode"),
         thAttr: { className: "w-1/12" },
         tdAttr: { className: "!font-mono" },
@@ -210,13 +194,13 @@ const SubjectClassesDialog: DialogComponent<{
       {
         id: "teachers",
         accessorFn: (row) =>
-          row.teachers.map((teacher) => nameJoiner(locale, teacher.name)),
+          row.teachers.map((teacher) => getLocaleName(locale, teacher)),
         header: t("thead.teachers"),
         thAttr: { className: "w-3/12" },
         render: (row) => (
           <ul className="list-disc pl-4">
             {row.teachers.map((teacher) => (
-              <li key={teacher.id}>{nameJoiner(locale, teacher.name)}</li>
+              <li key={teacher.id}>{getLocaleName(locale, teacher)}</li>
             ))}
           </ul>
         ),
@@ -224,21 +208,21 @@ const SubjectClassesDialog: DialogComponent<{
       {
         id: "coTeachers",
         accessorFn: (row) =>
-          row.coTeachers?.map((teacher) => nameJoiner(locale, teacher.name)),
+          row.co_teachers?.map((teacher) => getLocaleName(locale, teacher)),
         header: t("thead.coTeachers"),
         thAttr: { className: "w-3/12" },
         render: (row) =>
-          row.coTeachers ? (
+          row.co_teachers ? (
             <ul className="list-disc pl-6">
-              {row.coTeachers.map((teacher) => (
-                <li key={teacher.id}>{nameJoiner(locale, teacher.name)}</li>
+              {row.co_teachers.map((teacher) => (
+                <li key={teacher.id}>{getLocaleName(locale, teacher)}</li>
               ))}
             </ul>
           ) : null,
       },
       {
         id: "classLink",
-        accessorFn: (row) => row.ggcLink,
+        accessorFn: (row) => row.ggc_link,
         header: t("thead.classLink"),
         thAttr: { className: "w-2/12" },
         tdAttr: { className: "[&>*]:!py-2" },
@@ -249,19 +233,19 @@ const SubjectClassesDialog: DialogComponent<{
               icon={
                 <MaterialIcon
                   icon="link"
-                  className={row.ggcLink ? "!text-primary" : undefined}
+                  className={row.ggc_link ? "!text-primary" : undefined}
                 />
               }
-              href={row.ggcLink}
-              disabled={!row.ggcLink}
+              href={row.ggc_link ?? undefined}
+              disabled={!row.ggc_link}
             />
-            {row.ggcLink && <span>{row.ggcLink.slice(0, 20)}…</span>}
+            {row.ggc_link && <span>{row.ggc_link.slice(0, 20)}…</span>}
           </>
         ),
       },
       {
         id: "meetLink",
-        accessorFn: (row) => row.ggMeetLink,
+        accessorFn: (row) => row.gg_meet_link,
         header: t("thead.meetLink"),
         thAttr: { className: "w-2/12" },
         tdAttr: { className: "[&>*]:!py-2" },
@@ -272,18 +256,18 @@ const SubjectClassesDialog: DialogComponent<{
               icon={
                 <MaterialIcon
                   icon="link"
-                  className={row.ggMeetLink ? "!text-primary" : undefined}
+                  className={row.gg_meet_link ? "!text-primary" : undefined}
                 />
               }
-              href={row.ggMeetLink}
-              disabled={!row.ggMeetLink}
+              href={row.gg_meet_link ?? undefined}
+              disabled={!row.gg_meet_link}
             />
-            {row.ggMeetLink && <span>{row.ggMeetLink.slice(0, 23)}…</span>}
+            {row.gg_meet_link && <span>{row.gg_meet_link.slice(0, 23)}…</span>}
           </>
         ),
       },
     ],
-    []
+    [],
   );
 
   // Tanstack Table setup
@@ -301,14 +285,14 @@ const SubjectClassesDialog: DialogComponent<{
 
   // Dialog control
   const [addOpen, setAddOpen] = useState<boolean>(false);
-  const [editRow, setEditRow] = useState<SubjectListItem | null>(null);
-  const [deleteID, setDeleteID] = useState<number | null>(null);
+  const [editRow, setEditRow] = useState<ClassroomSubject | null>(null);
+  const [deleteID, setDeleteID] = useState<string | null>(null);
 
   return (
     <>
       <FullscreenDialog
         open={open}
-        title={getLocaleObj(subject.name, locale).name}
+        title={getLocaleString(subject.name, locale)}
         // TODO: Remove this when `action` is optional.
         action={null as any}
         width={640}
@@ -328,8 +312,8 @@ const SubjectClassesDialog: DialogComponent<{
             <h3 className="skc-title-medium">{t("summary.subject")}</h3>
             <MultilangText
               text={{
-                th: subject.name.th.name,
-                "en-US": subject.name["en-US"]?.name,
+                th: subject.name.th,
+                "en-US": subject.name["en-US"],
               }}
             />
           </div>
@@ -395,32 +379,32 @@ const SubjectClassesDialog: DialogComponent<{
       </FullscreenDialog>
 
       {/* Dialogs */}
-      <RoomSubjectDialog
+      <ClassroomSubjectDialog
         open={addOpen}
+        subjectID={subject.id}
         onClose={() => setAddOpen(false)}
         onSubmit={() => {
           setAddOpen(false);
           setData(null);
           refreshProps();
         }}
-        subject={subject}
       />
-      <RoomSubjectDialog
+      <ClassroomSubjectDialog
         open={editRow !== null}
+        data={editRow || undefined}
+        subjectID={subject.id}
         onClose={() => setEditRow(null)}
         onSubmit={() => {
           setEditRow(null);
           setData(null);
           refreshProps();
         }}
-        data={editRow || undefined}
-        subject={subject}
       />
       <ConfirmDeleteDialog
         open={deleteID !== null}
         onClose={() => setDeleteID(null)}
         onSubmit={async () => {
-          await deleteRoomSubject(supabase, deleteID!);
+          await deleteClassroomSubject(supabase, deleteID!);
           setDeleteID(null);
           setData(null);
           refreshProps();

@@ -11,7 +11,7 @@ import PersonDetailsContent from "@/components/lookup/person/PersonDetailsConten
 import PersonHeader from "@/components/lookup/person/PersonHeader";
 
 // Helpers
-import { nameJoiner } from "@/utils/helpers/name";
+import { getLocaleName } from "@/utils/helpers/string";
 import { createTitleStr } from "@/utils/helpers/title";
 
 // Hooks
@@ -23,11 +23,12 @@ const PersonDetails: FC<
   const locale = useLocale();
   const { t } = useTranslation(["lookup", "common"]);
 
+
   return (
     <>
       <Head>
         {person && (
-          <title>{createTitleStr(nameJoiner(locale, person.name), t)}</title>
+          <title>{createTitleStr(getLocaleName(locale, person), t)}</title>
         )}
       </Head>
       <main
