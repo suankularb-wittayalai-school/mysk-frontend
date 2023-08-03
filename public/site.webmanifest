@@ -1,7 +1,7 @@
 {
   "name": "MySK",
   "short_name": "MySK",
-  "display": "fullscreen",
+  "display": "standalone",
   "scope": "/",
   "start_url": "/",
   "icons": [
