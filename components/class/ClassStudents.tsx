@@ -40,9 +40,9 @@ import { getLocaleName } from "@/utils/helpers/string";
 import { useToggle } from "@/utils/hooks/toggle";
 
 // Types
-import { Student } from "@/utils/types/person";
 import { getStudentByID } from "@/utils/backend/person/getStudentByID";
 import { getStudentsByIDs } from "@/utils/backend/person/getStudentsByIDs";
+import { Student } from "@/utils/types/person";
 
 const ClassStudents: FC<{
   studentList: Pick<
@@ -125,8 +125,8 @@ const ClassStudents: FC<{
   return (
     <SplitLayout
       ratio="list-detail"
-      className="sm:[&>*>*]:!h-[calc(100vh-14.75rem-1px)]
-        supports-[height:100dvh]:sm:[&>*>*]:!h-[calc(100dvh-14.75rem-1px)]"
+      className="sm:[&>*>*]:!h-[calc(100vh-13.5rem-1px)]
+        supports-[height:100dvh]:sm:[&>*>*]:!h-[calc(100dvh-13.5rem-1px)]"
     >
       <LookupList
         length={studentList.length}

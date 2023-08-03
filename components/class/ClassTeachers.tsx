@@ -1,34 +1,19 @@
-// External libraries
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { FC, useEffect, useState } from "react";
-
-// SK Components
-import { SplitLayout, useBreakpoint } from "@suankularb-components/react";
-
-// Internal components
+// Imports
 import ClassTeacherCard from "@/components/class/ClassTeacherCard";
 import EmptyDetail from "@/components/lookup/EmptyDetail";
 import PersonDetails from "@/components/lookup/person/PersonDetails";
-
-// Backend
-// import { getTeacher } from "@/utils/backend/person/teacher";
-
-// Helpers
-import { getLocaleString } from "@/utils/helpers/string";
+import { getTeacherByID } from "@/utils/backend/person/getTeacherByID";
 import { withLoading } from "@/utils/helpers/loading";
-
-// Hooks
+import { getLocaleString } from "@/utils/helpers/string";
 import { useLocale } from "@/utils/hooks/i18n";
 import { useToggle } from "@/utils/hooks/toggle";
-
-// Types
-// import { ClassTeachersListSection } from "@/utils/types/class";
 import { Teacher } from "@/utils/types/person";
 import { SubjectGroupTeachers } from "@/utils/types/subject";
-import { getTeacherByID } from "@/utils/backend/person/getTeacherByID";
+import { SplitLayout, useBreakpoint } from "@suankularb-components/react";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { FC, useEffect, useState } from "react";
 
 const ClassTeachers: FC<{
-  // teacherList: ClassTeachersListSection[];
   teacherList: SubjectGroupTeachers[];
   classNumber?: number;
 }> = ({ teacherList, classNumber }) => {
@@ -37,8 +22,6 @@ const ClassTeachers: FC<{
 
   // Selected Person
   const [selected, setSelected] = useState(teacherList[0]?.teachers[0]?.id);
-
-  
 
   const supabase = useSupabaseClient();
   const [loading, toggleLoading] = useToggle();
@@ -54,21 +37,24 @@ const ClassTeachers: FC<{
 
     withLoading(
       async () => {
-        const { data, error } = await getTeacherByID(supabase, selected, {detailed: true});
+        const { data, error } = await getTeacherByID(supabase, selected, {
+          detailed: true,
+        });
         if (error) return false;
 
         setSelectedTeacher(data);
         return true;
       },
       toggleLoading,
-      { hasEndToggle: true }
+      { hasEndToggle: true },
     );
   }, [selected, atBreakpoint === "base"]);
 
   return (
     <SplitLayout
       ratio="list-detail"
-      className="sm:[&>*>*]:!h-[calc(100vh-14.75rem-1px)]"
+      className="sm:[&>*>*]:!h-[calc(100vh-13.5rem-1px)]
+        supports-[height:100dvh]:sm:[&>*>*]:!h-[calc(100dvh-13.5rem-1px)]"
     >
       <aside className="!flex flex-col gap-6">
         {teacherList.map((section) => (
