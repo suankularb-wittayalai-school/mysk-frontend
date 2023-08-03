@@ -16,6 +16,7 @@ import {
   Progress,
 } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
+import Link from "next/link";
 import { FC, useContext } from "react";
 
 const PageHeader: FC<
@@ -56,8 +57,9 @@ const PageHeader: FC<
               appearance="text"
               icon={<MaterialIcon icon="arrow_backward" />}
               alt={t("action.navigation")}
-              href={parentURL}
               onClick={onBack}
+              href={parentURL}
+              element={Link}
             />
           ) : (
             <Button
