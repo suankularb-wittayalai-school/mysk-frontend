@@ -1,32 +1,20 @@
-// External libraries
-import { GetStaticPaths, GetStaticProps } from "next";
-import Head from "next/head";
-
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
-import { useEffect, useState } from "react";
-
-// Supabase
-import { supabase } from "@/utils/supabase-backend";
-
-// Backend
-
-// Internal components
+// Imports
 import PrintStudentList from "@/components/class/PrintStudentList";
-
-// Helpers
-import { createTitleStr } from "@/utils/helpers/title";
-
-// Types
 import getClassroomOverview from "@/utils/backend/classroom/getClassroomOverview";
 import getStudentsOfClass from "@/utils/backend/classroom/getStudentsOfClass";
 import { getStudentsByIDs } from "@/utils/backend/person/getStudentsByIDs";
 import { useLoggedInPerson } from "@/utils/helpers/auth";
 import { getCurrentAcademicYear } from "@/utils/helpers/date";
+import { createTitleStr } from "@/utils/helpers/title";
+import { supabase } from "@/utils/supabase-backend";
 import { Classroom } from "@/utils/types/classroom";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Student, UserRole } from "@/utils/types/person";
+import { GetStaticPaths, GetStaticProps } from "next";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Head from "next/head";
+import { useEffect, useState } from "react";
 
 const StudentsListPrintPage: CustomPage<{
   classItem: Pick<Classroom, "id" | "number">;
@@ -113,20 +101,9 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   };
 };
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const { data: classNumbers, error } = await supabase
-    .from("classrooms")
-    .select("number")
-    .eq("year", getCurrentAcademicYear());
-
-  if (error) return { paths: [], fallback: "blocking" };
-
-  return {
-    paths: classNumbers!.map((classroom) => ({
-      params: { classNumber: classroom.number.toString() },
-    })),
-    fallback: "blocking",
-  };
-};
+export const getStaticPaths: GetStaticPaths = async () => ({
+  paths: [],
+  fallback: "blocking",
+});
 
 export default StudentsListPrintPage;

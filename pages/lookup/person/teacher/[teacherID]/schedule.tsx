@@ -78,18 +78,10 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   };
 };
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const { data: teachers, error } = await supabase
-    .from("teachers")
-    .select("id");
-
-  if (error) return { paths: [], fallback: "blocking" };
-
-  return {
-    paths: teachers!.map((teacher) => ({ params: { teacherID: teacher.id } })),
-    fallback: "blocking",
-  };
-};
+export const getStaticPaths: GetStaticPaths = async () => ({
+  paths: [],
+  fallback: "blocking",
+});
 
 LookupTeacherSchedulePage.navType = "student";
 

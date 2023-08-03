@@ -96,17 +96,9 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   };
 };
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const { data: classNumbers, error } = await supabase.from("classrooms").select("number").eq("year", getCurrentAcademicYear());
-  
-  if (error) return { paths: [], fallback: "blocking" };
-
-  return {
-    paths: classNumbers!.map((classroom) => ({
-      params: { classNumber: classroom.number.toString() },
-    })),
-    fallback: "blocking",
-  };
-};
+export const getStaticPaths: GetStaticPaths = async () => ({
+  paths: [],
+  fallback: "blocking",
+});
 
 export default ClassTeachersPage;

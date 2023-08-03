@@ -1,54 +1,48 @@
-// External libraries
-import { GetStaticPaths, GetStaticProps } from "next";
-import Head from "next/head";
-
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
-// Internal components
+// Imports
 import ClassOverview from "@/components/class/ClassOverview";
 import PageHeader from "@/components/common/PageHeader";
 import ClassTabs from "@/components/lookup/class/ClassTabs";
-
-// Supabase
-import { supabase } from "@/utils/supabase-backend";
-
-// Backend
-
-// Helpers
-import { createTitleStr } from "@/utils/helpers/title";
-
-// Types
-import { Classroom } from "@/utils/types/classroom";
-import { CustomPage, LangCode } from "@/utils/types/common";
 import getClassroomOverview from "@/utils/backend/classroom/getClassroomOverview";
 import { getCurrentAcademicYear } from "@/utils/helpers/date";
+import { createTitleStr } from "@/utils/helpers/title";
+import { supabase } from "@/utils/supabase-backend";
+import { Classroom } from "@/utils/types/classroom";
+import { CustomPage, LangCode } from "@/utils/types/common";
+import { GetStaticPaths, GetStaticProps } from "next";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Head from "next/head";
 
-const ClassOverviewPage: CustomPage<{ classItem: Pick<
-      Classroom,
-      "id" | "number" | "class_advisors" | "contacts" | "subjects"
-    > }> = ({
-  classItem,
-}) => {
-  const { t } = useTranslation(["class", "common"]);
+/**
+ * Displays an overview of a Class via the Class Overview component.
+ *
+ * @param classroom The overview information (Advisors and Contacts) of the Class to display.
+ *
+ * @returns A Page.
+ */
+const ClassOverviewPage: CustomPage<{
+  classroom: Pick<
+    Classroom,
+    "id" | "number" | "class_advisors" | "contacts" | "subjects"
+  >;
+}> = ({ classroom }) => {
+  const { t } = useTranslation("class", { keyPrefix: "overview" });
+  const { t: tx } = useTranslation("common");
 
   return (
     <>
       <Head>
         <title>
-          {createTitleStr(
-            t("overview.title.lookup", { number: classItem.number }),
-            t
-          )}
+          {createTitleStr(t("title.lookup", { number: classroom.number }), tx)}
         </title>
       </Head>
       <PageHeader
-        title={t("overview.title.lookup", { number: classItem.number })}
+        title={t("title.lookup", { number: classroom.number })}
         parentURL="/lookup/class"
       >
-        <ClassTabs number={classItem.number} type="lookup" />
+        <ClassTabs number={classroom.number} type="lookup" />
       </PageHeader>
-      <ClassOverview {...{ classroom: classItem }} />
+      <ClassOverview {...{ classroom: classroom }} />
     </>
   );
 };
@@ -57,17 +51,20 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   const classNumber = Number(params?.classNumber);
   if (Number.isNaN(classNumber)) return { notFound: true };
 
-  const {data, error} = await supabase.from("classrooms").select("id").eq("number", classNumber).eq("year", getCurrentAcademicYear()).single();
+  const { data, error } = await supabase
+    .from("classrooms")
+    .select("id")
+    .eq("number", classNumber)
+    .eq("year", getCurrentAcademicYear())
+    .single();
 
   if (error) return { notFound: true };
 
-  const { data: classItem, error: classItemError } = await getClassroomOverview(
+  const { data: classroom, error: classroomError } = await getClassroomOverview(
     supabase,
-    data!.id
+    data!.id,
   );
-  if (classItemError) return { notFound: true };
-
-  // console.log({classItem});
+  if (classroomError) return { notFound: true };
 
   return {
     props: {
@@ -76,23 +73,15 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
         "account",
         "class",
       ])),
-      classItem,
+      classroom,
     },
     revalidate: 300,
   };
 };
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const { data: classNumbers, error } = await supabase.from("classrooms").select("number").eq("year", getCurrentAcademicYear());
-  
-  if (error) return { paths: [], fallback: "blocking" };
-
-  return {
-    paths: classNumbers!.map((classroom) => ({
-      params: { classNumber: classroom.number.toString() },
-    })),
-    fallback: "blocking",
-  };
-};
+export const getStaticPaths: GetStaticPaths = async () => ({
+  paths: [],
+  fallback: "blocking",
+});
 
 export default ClassOverviewPage;
