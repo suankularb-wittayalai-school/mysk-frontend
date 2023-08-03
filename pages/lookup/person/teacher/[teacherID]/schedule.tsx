@@ -1,5 +1,5 @@
 // Imports
-import MySKPageHeader from "@/components/common/MySKPageHeader";
+import PageHeader from "@/components/common/PageHeader";
 import Schedule from "@/components/schedule/Schedule";
 import { getTeacherByID } from "@/utils/backend/person/getTeacherByID";
 import getTeacherSchedule from "@/utils/backend/schedule/getTeacherSchedule";
@@ -40,7 +40,7 @@ const LookupTeacherSchedulePage: CustomPage<{
           )}
         </title>
       </Head>
-      <MySKPageHeader
+      <PageHeader
         title={t("title", {
           name: getLocaleName(locale, teacher, {
             prefix: "teacher",

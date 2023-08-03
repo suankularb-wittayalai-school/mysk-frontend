@@ -23,7 +23,7 @@ import {
 // Internal components
 import LogOutDialog from "@/components/account/LogOutDialog";
 import MultiSchemeImage from "@/components/common/MultiSchemeImage";
-import MySKPageHeader from "@/components/common/MySKPageHeader";
+import PageHeader from "@/components/common/PageHeader";
 
 // Images
 import WelcomeImageDark from "@/public/images/graphics/welcome-dark.webp";
@@ -117,9 +117,8 @@ const WelcomePage: CustomPage = () => {
       <Head>
         <title>{createTitleStr(t("instructions.title"), t)}</title>
       </Head>
-      <MySKPageHeader
+      <PageHeader
         title={t("instructions.title")}
-        icon={<MaterialIcon icon="waving_hand" />}
         onBack={() => setLogOutOpen(true)}
       />
       <ContentLayout>

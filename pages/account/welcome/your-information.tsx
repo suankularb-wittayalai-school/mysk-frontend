@@ -1,8 +1,5 @@
 // External libraries
-import {
-  createPagesServerClient,
-  User,
-} from "@supabase/auth-helpers-nextjs";
+import { createPagesServerClient, User } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
@@ -29,7 +26,7 @@ import {
 // Internal components
 import ContactsSection from "@/components/account/ContactSection";
 import PersonFields from "@/components/account/PersonFields";
-import MySKPageHeader from "@/components/common/MySKPageHeader";
+import PageHeader from "@/components/common/PageHeader";
 import NextWarningCard from "@/components/welcome/NextWarningCard";
 
 // Contexts
@@ -132,13 +129,21 @@ const WelcomePage: CustomPage<{
       required: true,
       defaultValue: person.first_name["en-US"],
     },
-    { key: "middleNameEN", defaultValue: person.middle_name ? person.middle_name["en-US"] : undefined },
+    {
+      key: "middleNameEN",
+      defaultValue: person.middle_name
+        ? person.middle_name["en-US"]
+        : undefined,
+    },
     {
       key: "lastNameEN",
       required: true,
       defaultValue: person.last_name["en-US"],
     },
-    { key: "nicknameEN", defaultValue: person.nickname ? person.nickname["en-US"] : undefined },
+    {
+      key: "nicknameEN",
+      defaultValue: person.nickname ? person.nickname["en-US"] : undefined,
+    },
     {
       key: "subjectGroup",
       defaultValue:
@@ -187,12 +192,12 @@ const WelcomePage: CustomPage<{
       const { error } = await updatePerson(
         supabase,
         { ...form, contacts },
-        person
+        person,
       );
 
       if (error) {
         setSnackbar(
-          <Snackbar>{t("snackbar.failure", { ns: "common" })}</Snackbar>
+          <Snackbar>{t("snackbar.failure", { ns: "common" })}</Snackbar>,
         );
         return false;
       }
@@ -209,9 +214,8 @@ const WelcomePage: CustomPage<{
       <Head>
         <title>{createTitleStr(t("yourInformation.title"), t)}</title>
       </Head>
-      <MySKPageHeader
+      <PageHeader
         title={t("yourInformation.title")}
-        icon={<MaterialIcon icon="badge" />}
         parentURL="/account/welcome"
       />
       <ContentLayout>
@@ -220,11 +224,17 @@ const WelcomePage: CustomPage<{
           <Header>{t("yourInformation.general.title")}</Header>
           <p className="-mt-2">{t("yourInformation.general.desc")}</p>
           <p className="-mt-2">
-            <Trans i18nKey="yourInformation.general.inControl" ns="welcome">
-              <Link href="/help/essentials/onboarding" className="link">
-                ทำไมโรงเรียนจึงต้องขอข้อมูลนี้
-              </Link>
-            </Trans>
+            <Trans
+              i18nKey="yourInformation.general.inControl"
+              ns="welcome"
+              components={[
+                <Link
+                  key={0}
+                  href="/help/essentials/onboarding"
+                  className="link"
+                />,
+              ]}
+            />
           </p>
           <PersonFields
             subjectGroups={

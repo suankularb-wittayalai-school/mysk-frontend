@@ -1,5 +1,5 @@
 // Imports
-import MySKPageHeader from "@/components/common/MySKPageHeader";
+import PageHeader from "@/components/common/PageHeader";
 import ClassCard from "@/components/lookup/class/ClassCard";
 import ClassSearchResult from "@/components/lookup/class/ClassSearchResult";
 import getLookupClassrooms from "@/utils/backend/classroom/getLookupClassrooms";
@@ -14,7 +14,6 @@ import {
   ContentLayout,
   Header,
   List,
-  MaterialIcon,
   Search,
   Section,
 } from "@suankularb-components/react";
@@ -42,12 +41,7 @@ const LookupClassesPage: CustomPage<{
       <Head>
         <title>{createTitleStr(t("classes.title"), tx)}</title>
       </Head>
-      <MySKPageHeader
-        title={t("classes.title")}
-        icon={<MaterialIcon icon="search" />}
-        parentURL="/lookup"
-        className="!overflow-visible"
-      >
+      <PageHeader title={t("classes.title")} parentURL="/lookup">
         <Columns columns={3} className="!w-[calc(100%-2rem)] sm:!w-full">
           <Search
             alt={t("classes.list.searchAlt")}
@@ -72,7 +66,7 @@ const LookupClassesPage: CustomPage<{
             </List>
           </Search>
         </Columns>
-      </MySKPageHeader>
+      </PageHeader>
       <ContentLayout>
         {/* The Classes list is separated by grade
             (i.e. the M.1 section contains M.101, M.102, ..., M.113) */}

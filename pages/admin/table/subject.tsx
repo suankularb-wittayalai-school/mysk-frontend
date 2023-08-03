@@ -40,7 +40,7 @@ import {
 // Internal components
 import AdminDataTable from "@/components/admin/AdminDataTable";
 import ConfirmDeleteDialog from "@/components/common/ConfirmDeleteDialog";
-import MySKPageHeader from "@/components/common/MySKPageHeader";
+import PageHeader from "@/components/common/PageHeader";
 
 // Backend
 
@@ -268,11 +268,7 @@ const ManageSubjectsPage: CustomPage<{
       <Head>
         <title>{createTitleStr(t("title"), tCommon)}</title>
       </Head>
-      <MySKPageHeader
-        title={t("title")}
-        icon={<MaterialIcon icon="table" />}
-        parentURL="/admin"
-      />
+      <PageHeader title={t("title")} parentURL="/admin" />
       <ContentLayout>
         <Section>
           <AdminDataTable

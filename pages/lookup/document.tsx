@@ -20,7 +20,7 @@ import {
 } from "@suankularb-components/react";
 
 // Internal components
-import MySKPageHeader from "@/components/common/MySKPageHeader";
+import PageHeader from "@/components/common/PageHeader";
 import EmptyDetail from "@/components/lookup/EmptyDetail";
 import LookupList from "@/components/lookup/LookupList";
 import DocumentCard from "@/components/lookup/document/DocumentCard";
@@ -61,12 +61,12 @@ const LookupDocumentsPage: CustomPage<{
 
   // Selected Document
   const [selected, setSelected] = useState<SchoolDocument>(
-    recentDocs[selectedIdx]
+    recentDocs[selectedIdx],
   );
 
   // Type
   const [type, setType] = useState<SchoolDocumentType>(
-    userRole === "teacher" ? "order" : "announcement"
+    userRole === "teacher" ? "order" : "announcement",
   );
   useEffect(() => {
     (async () => {
@@ -85,11 +85,7 @@ const LookupDocumentsPage: CustomPage<{
       <Head>
         <title>{createTitleStr(t("documents.title"), t)}</title>
       </Head>
-      <MySKPageHeader
-        title={t("documents.title")}
-        icon={<MaterialIcon icon="search" />}
-        parentURL="/lookup"
-      />
+      <PageHeader title={t("documents.title")} parentURL="/lookup" />
       <SplitLayout ratio="list-detail">
         <LookupList
           length={documents.length}
@@ -165,7 +161,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   if (error) {
     return {
       notFound: true,
-    }
+    };
   }
   const userRole = user!.role;
 
@@ -182,9 +178,10 @@ export const getServerSideProps: GetServerSideProps = async ({
     selected.type || (userRole === "teacher" ? "order" : "announcement"),
   );
 
-  if(!defaultDocuments) {
+  if (!defaultDocuments) {
     selectedIdx = defaultDocuments!.findIndex(
-      (document) => selected.id === document.id && selected.type === document.type
+      (document) =>
+        selected.id === document.id && selected.type === document.type,
     );
   }
 

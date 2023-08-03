@@ -19,7 +19,7 @@ import {
 } from "@suankularb-components/react";
 
 // Internal components
-import MySKPageHeader from "@/components/common/MySKPageHeader";
+import PageHeader from "@/components/common/PageHeader";
 import TeachingSubjectCard from "@/components/subject/TeachingSubjectCard";
 
 // Backend
@@ -44,9 +44,8 @@ const YourSubjectsPage: CustomPage<{
       <Head>
         <title>{createTitleStr(t("yourSubjects.title"), t)}</title>
       </Head>
-      <MySKPageHeader
+      <PageHeader
         title={t("yourSubjects.title")}
-        icon={<MaterialIcon icon="book" />}
         parentURL="/account/welcome/your-information"
       />
       <ContentLayout>
@@ -91,10 +90,10 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   const { data: subjects, error: subjectError } = await getTeachingSubjects(
     supabase,
-    user!.id
+    user!.id,
   );
 
-  console.log({subjects, subjectError})
+  console.log({ subjects, subjectError });
 
   return {
     props: {

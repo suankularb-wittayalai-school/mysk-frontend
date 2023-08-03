@@ -10,7 +10,7 @@ import Head from "next/head";
 
 // Internal components
 import DynamicAvatar from "@/components/common/DynamicAvatar";
-import MySKPageHeader from "@/components/common/MySKPageHeader";
+import PageHeader from "@/components/common/PageHeader";
 import PersonActions from "@/components/lookup/person/PersonActions";
 import PersonDetailsContent from "@/components/lookup/person/PersonDetailsContent";
 
@@ -27,7 +27,6 @@ import { useLocale } from "@/utils/hooks/i18n";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Teacher } from "@/utils/types/person";
 
-
 const TeacherDetailsPage: CustomPage<{ teacher: Teacher }> = ({ teacher }) => {
   const locale = useLocale();
   const { t } = useTranslation("common");
@@ -37,17 +36,16 @@ const TeacherDetailsPage: CustomPage<{ teacher: Teacher }> = ({ teacher }) => {
       <Head>
         <title>{createTitleStr(getLocaleName(locale, teacher), t)}</title>
       </Head>
-      <MySKPageHeader
+      <PageHeader
         title={getLocaleName(locale, teacher)}
         parentURL="/class/teacher"
-        className="!overflow-visible"
       >
         <PersonActions person={teacher} suggestionsType="share-only" />
         <DynamicAvatar
           profile={teacher.profile}
           className="relative z-[80] -mb-12 -mt-6 !h-20 !w-20 self-end"
         />
-      </MySKPageHeader>
+      </PageHeader>
       <PersonDetailsContent person={teacher} />
     </>
   );
@@ -63,13 +61,15 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   if (!teacherID) return { notFound: true };
 
-
   const supabase = createPagesServerClient({
     req: req as NextApiRequest,
     res: res as NextApiResponse,
   });
 
-  const { data: teacher, error } = await getTeacherByID(supabase, teacherID as string);
+  const { data: teacher, error } = await getTeacherByID(
+    supabase,
+    teacherID as string,
+  );
   if (error) return { notFound: true };
 
   return {

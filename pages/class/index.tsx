@@ -9,7 +9,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 // Internal components
 import ClassOverview from "@/components/class/ClassOverview";
-import MySKPageHeader from "@/components/common/MySKPageHeader";
+import PageHeader from "@/components/common/PageHeader";
 import ClassTabs from "@/components/lookup/class/ClassTabs";
 
 // Backend
@@ -49,9 +49,9 @@ const ClassroomOverviewPage: CustomPage<{
       <Head>
         <title>{createTitleStr(t(`overview.title.${userRole}`), t)}</title>
       </Head>
-      <MySKPageHeader title={t(`overview.title.${userRole}`)}>
+      <PageHeader title={t(`overview.title.${userRole}`)}>
         <ClassTabs number={classroom.number} type="class" />
-      </MySKPageHeader>
+      </PageHeader>
       <ClassOverview {...{ classroom, editable }} />
     </>
   );

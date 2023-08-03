@@ -10,7 +10,7 @@ import Head from "next/head";
 
 // Internal components
 import DynamicAvatar from "@/components/common/DynamicAvatar";
-import MySKPageHeader from "@/components/common/MySKPageHeader";
+import PageHeader from "@/components/common/PageHeader";
 import PersonActions from "@/components/lookup/person/PersonActions";
 import PersonDetailsContent from "@/components/lookup/person/PersonDetailsContent";
 
@@ -24,9 +24,9 @@ import { createTitleStr } from "@/utils/helpers/title";
 import { useLocale } from "@/utils/hooks/i18n";
 
 // Types
+import { getStudentByID } from "@/utils/backend/person/getStudentByID";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Student } from "@/utils/types/person";
-import { getStudentByID } from "@/utils/backend/person/getStudentByID";
 
 const StudentDetailsPage: CustomPage<{ student: Student }> = ({ student }) => {
   const locale = useLocale();
@@ -37,17 +37,16 @@ const StudentDetailsPage: CustomPage<{ student: Student }> = ({ student }) => {
       <Head>
         <title>{createTitleStr(getLocaleName(locale, student), t)}</title>
       </Head>
-      <MySKPageHeader
+      <PageHeader
         title={getLocaleName(locale, student)}
         parentURL="/lookup/person"
-        className="!overflow-visible"
       >
         <PersonActions person={student} suggestionsType="full" />
         <DynamicAvatar
           profile={student.profile}
           className="relative z-[80] -mb-12 -mt-6 !h-20 !w-20 self-end"
         />
-      </MySKPageHeader>
+      </PageHeader>
       <PersonDetailsContent person={student} />
     </>
   );

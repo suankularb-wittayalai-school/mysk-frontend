@@ -1,5 +1,5 @@
 // Imports
-import MySKPageHeader from "@/components/common/MySKPageHeader";
+import PageHeader from "@/components/common/PageHeader";
 import ClassTabs from "@/components/lookup/class/ClassTabs";
 import Schedule from "@/components/schedule/Schedule";
 import SubjectList from "@/components/subject/SubjectList";
@@ -71,12 +71,12 @@ const LookupClassSchedulePage: CustomPage<{
           )}
         </title>
       </Head>
-      <MySKPageHeader
+      <PageHeader
         title={t("schedule.title", { number: classroom.number })}
         parentURL={parentURL}
       >
         <ClassTabs number={classroom.number} type="lookup" />
-      </MySKPageHeader>
+      </PageHeader>
       <ContentLayout>
         <Schedule schedule={schedule} view="student" />
         <SubjectListSection subjectList={subjectList} />

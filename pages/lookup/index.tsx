@@ -19,7 +19,7 @@ import {
 
 // Internal components
 import MultiSchemeImage from "@/components/common/MultiSchemeImage";
-import MySKPageHeader from "@/components/common/MySKPageHeader";
+import PageHeader from "@/components/common/PageHeader";
 
 // Supabase
 import { supabase } from "@/utils/supabase-backend";
@@ -113,10 +113,7 @@ const LookupPage: CustomPage<{
       <Head>
         <title>{createTitleStr(t("title"), t)}</title>
       </Head>
-      <MySKPageHeader
-        title={t("title")}
-        icon={<MaterialIcon icon="search" />}
-      />
+      <PageHeader title={t("title")} />
       <ContentLayout>
         <Columns columns={3} className="mx-4 !items-stretch sm:mx-0">
           {/* Lookup People */}

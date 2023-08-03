@@ -1,6 +1,6 @@
 // Imports
 import MultiSchemeImage from "@/components/common/MultiSchemeImage";
-import PageHeader from "@/components/common/MySKPageHeader";
+import PageHeader from "@/components/common/PageHeader";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import NewsPlaceholderDark from "@/public/images/graphics/news-placeholder-dark.webp";
 import NewsPlaceholderLight from "@/public/images/graphics/news-placeholder-light.webp";

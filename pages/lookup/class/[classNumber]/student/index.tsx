@@ -7,7 +7,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 // Internal components
 import ClassStudents from "@/components/class/ClassStudents";
-import MySKPageHeader from "@/components/common/MySKPageHeader";
+import PageHeader from "@/components/common/PageHeader";
 import ClassTabs from "@/components/lookup/class/ClassTabs";
 
 // Supabase
@@ -40,12 +40,12 @@ const ClassStudentsPage: CustomPage<{
           )}
         </title>
       </Head>
-      <MySKPageHeader
+      <PageHeader
         title={t("student.title.lookup", { number: classNumber })}
         parentURL={`/lookup/class/${classNumber}`}
       >
         <ClassTabs number={classNumber} type="lookup" />
-      </MySKPageHeader>
+      </PageHeader>
       <ClassStudents {...{ studentList }} />
     </>
   );

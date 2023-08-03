@@ -23,12 +23,11 @@
 import { GetStaticProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
-import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { FC, ReactNode, useState } from "react";
+import { FC, ReactNode } from "react";
 
 // SK Components
 import {
@@ -46,7 +45,7 @@ import {
 // import ImportStudentsDialog from "@/components/admin/ImportStudentsDialog";
 // import ImportSubjectsDialog from "@/components/admin/ImportSubjectsDialog";
 // import ImportTeachersDialog from "@/components/admin/ImportTeachersDialog";
-import MySKPageHeader from "@/components/common/MySKPageHeader";
+import PageHeader from "@/components/common/PageHeader";
 
 // Supabase
 import { supabase } from "@/utils/supabase-backend";
@@ -511,11 +510,7 @@ const AdminPanelPage: CustomPage<{
       <Head>
         <title>{createTitleStr(t("title"), t)}</title>
       </Head>
-      <MySKPageHeader
-        title={t("title")}
-        icon={<MaterialIcon icon="shield_person" />}
-        parentURL="/account"
-      />
+      <PageHeader title={t("title")} parentURL="/account" />
       <ContentLayout>
         {/* Suggestions */}
         <Section className="!gap-3 empty:hidden">

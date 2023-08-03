@@ -12,7 +12,7 @@
  */
 
 // Imports
-import MySKPageHeader from "@/components/common/MySKPageHeader";
+import PageHeader from "@/components/common/PageHeader";
 import Schedule from "@/components/schedule/Schedule";
 import ScheduleAtAGlance from "@/components/schedule/ScheduleAtAGlance";
 import SubjectList from "@/components/subject/SubjectList";
@@ -31,10 +31,9 @@ import {
   Columns,
   ContentLayout,
   Header,
-  MaterialIcon,
   Search,
   transition,
-  useAnimationConfig,
+  useAnimationConfig
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { LayoutGroup, motion } from "framer-motion";
@@ -109,10 +108,7 @@ const LearnPage: CustomPage<{
       <Head>
         <title>{createTitleStr(t("title"), t)}</title>
       </Head>
-      <MySKPageHeader
-        title={t("title")}
-        icon={<MaterialIcon icon="school" />}
-      />
+      <PageHeader title={t("title")} />
       <ContentLayout>
         <LayoutGroup>
           <ScheduleAtAGlance schedule={schedule} role="student" />
@@ -148,8 +144,6 @@ export const getServerSideProps: GetServerSideProps = async ({
     supabase,
     (user as Student).classroom!.id,
   );
-
-  // console.log({ user, schedule, subjectList })
 
   return {
     props: {

@@ -22,7 +22,7 @@ import {
 } from "@suankularb-components/react";
 
 // Internal components
-import MySKPageHeader from "@/components/common/MySKPageHeader";
+import PageHeader from "@/components/common/PageHeader";
 import EmptyDetail from "@/components/lookup/EmptyDetail";
 import LookupList from "@/components/lookup/LookupList";
 import PersonCard from "@/components/lookup/person/PersonCard";
@@ -179,11 +179,7 @@ const LookupPeoplePage: CustomPage<{
       <Head>
         <title>{createTitleStr(t("people.title"), t)}</title>
       </Head>
-      <MySKPageHeader
-        title={t("people.title")}
-        icon={<MaterialIcon icon="search" />}
-        parentURL="/lookup"
-      />
+      <PageHeader title={t("people.title")} parentURL="/lookup" />
       <SplitLayout ratio="list-detail">
         <LookupList
           length={people.length}
