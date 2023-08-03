@@ -32,12 +32,14 @@ const PageHeader: FC<
       <MultiSchemeImage
         srcLight={BlobsTopLargeLight}
         srcDark={BlobsTopLargeDark}
+        priority
         alt=""
         className="absolute inset-0 bottom-0 -z-10 hidden sm:block"
       />
       <MultiSchemeImage
         srcLight={BlobsTopSmallLight}
         srcDark={BlobsTopSmallDark}
+        priority
         alt=""
         className="absolute inset-0 bottom-0 -z-10 sm:hidden"
       />
