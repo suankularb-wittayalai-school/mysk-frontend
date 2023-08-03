@@ -1,16 +1,17 @@
 // Imports
 import { Interactive } from "@suankularb-components/react";
+import va from "@vercel/analytics";
 import Image from "next/image";
 import { dash } from "radash";
 import { ComponentProps, FC, forwardRef } from "react";
 
 /**
  * An app inside the App Drawer. A child of App Drawer Segment.
- * 
+ *
  * @param src The `next/image` source for the logo.
  * @param name The name of the app.
  * @param href The link to the app or the app’s install page.
- * 
+ *
  * @returns An `<li>`.
  */
 const AppDrawerItem: FC<{
@@ -20,6 +21,7 @@ const AppDrawerItem: FC<{
 }> = ({ src, name, href }) => (
   <li className="flex w-16 flex-col gap-1">
     <Interactive
+      onClick={() => va.track("Open App from App Drawer")}
       href={href}
       // eslint-disable-next-line react/display-name
       element={forwardRef((props, ref) => (
