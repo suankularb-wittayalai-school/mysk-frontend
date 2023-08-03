@@ -1,14 +1,11 @@
-// External libraries
-import { GetStaticProps } from "next";
-import Head from "next/head";
-import Link from "next/link";
-
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
-import { FC, useState } from "react";
-
-// SK Components
+// Imports
+import LogOutDialog from "@/components/account/LogOutDialog";
+import MultiSchemeImage from "@/components/common/MultiSchemeImage";
+import PageHeader from "@/components/common/PageHeader";
+import WelcomeImageDark from "@/public/images/graphics/welcome-dark.webp";
+import WelcomeImageLight from "@/public/images/graphics/welcome-light.webp";
+import { createTitleStr } from "@/utils/helpers/title";
+import { CustomPage, LangCode } from "@/utils/types/common";
 import {
   Actions,
   Button,
@@ -19,21 +16,12 @@ import {
   MaterialIcon,
   Section,
 } from "@suankularb-components/react";
-
-// Internal components
-import LogOutDialog from "@/components/account/LogOutDialog";
-import MultiSchemeImage from "@/components/common/MultiSchemeImage";
-import PageHeader from "@/components/common/PageHeader";
-
-// Images
-import WelcomeImageDark from "@/public/images/graphics/welcome-dark.webp";
-import WelcomeImageLight from "@/public/images/graphics/welcome-light.webp";
-
-// Helpers
-import { createTitleStr } from "@/utils/helpers/title";
-
-// Types
-import { CustomPage, LangCode } from "@/utils/types/common";
+import { GetServerSideProps } from "next";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Head from "next/head";
+import Link from "next/link";
+import { FC, useState } from "react";
 
 const ThankYouSection: FC = () => {
   // Translation
@@ -150,7 +138,7 @@ const WelcomePage: CustomPage = () => {
   );
 };
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => ({
+export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
   props: await serverSideTranslations(locale as LangCode, [
     "common",
     "welcome",
