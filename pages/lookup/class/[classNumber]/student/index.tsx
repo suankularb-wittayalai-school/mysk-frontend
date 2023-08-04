@@ -1,28 +1,17 @@
-// External libraries
-import { GetStaticPaths, GetStaticProps } from "next";
-import Head from "next/head";
-
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
-// Internal components
+// Imports
 import ClassStudents from "@/components/class/ClassStudents";
 import PageHeader from "@/components/common/PageHeader";
 import ClassTabs from "@/components/lookup/class/ClassTabs";
-
-// Supabase
-import { supabase } from "@/utils/supabase-backend";
-
-// Backend
-
-// Helpers
-import { createTitleStr } from "@/utils/helpers/title";
-
-// Types
-import { CustomPage, LangCode } from "@/utils/types/common";
-import { Student } from "@/utils/types/person";
 import getStudentsOfClass from "@/utils/backend/classroom/getStudentsOfClass";
 import { getCurrentAcademicYear } from "@/utils/helpers/date";
+import { createTitleStr } from "@/utils/helpers/title";
+import { supabase } from "@/utils/supabase-backend";
+import { CustomPage, LangCode } from "@/utils/types/common";
+import { Student } from "@/utils/types/person";
+import { GetStaticPaths, GetStaticProps } from "next";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Head from "next/head";
 
 const ClassStudentsPage: CustomPage<{
   classNumber: number;
@@ -36,7 +25,7 @@ const ClassStudentsPage: CustomPage<{
         <title>
           {createTitleStr(
             t("student.title.lookup", { number: classNumber }),
-            t
+            t,
           )}
         </title>
       </Head>
@@ -55,7 +44,12 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   const classNumber = Number(params?.classNumber);
   if (Number.isNaN(classNumber)) return { notFound: true };
 
-  const {data, error} = await supabase.from("classrooms").select("id").eq("number", classNumber).eq("year", getCurrentAcademicYear()).single();
+  const { data, error } = await supabase
+    .from("classrooms")
+    .select("id")
+    .eq("number", classNumber)
+    .eq("year", getCurrentAcademicYear())
+    .single();
 
   if (error) return { notFound: true };
 
@@ -77,17 +71,9 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   };
 };
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const { data: classNumbers, error } = await supabase.from("classrooms").select("number").eq("year", getCurrentAcademicYear());
-  
-  if (error) return { paths: [], fallback: "blocking" };
-
-  return {
-    paths: classNumbers!.map((classroom) => ({
-      params: { classNumber: classroom.number.toString() },
-    })),
-    fallback: "blocking",
-  };
-};
+export const getStaticPaths: GetStaticPaths = async () => ({
+  paths: [],
+  fallback: "blocking",
+});
 
 export default ClassStudentsPage;

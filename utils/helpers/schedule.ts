@@ -1,4 +1,9 @@
-// External libraries
+// Imports
+import { range } from "@/utils/helpers/array";
+import { getLocaleString } from "@/utils/helpers/string";
+import { LangCode } from "@/utils/types/common";
+import { Schedule, SchedulePeriod } from "@/utils/types/schedule";
+import { Subject } from "@/utils/types/subject";
 import {
   differenceInMinutes,
   isFuture,
@@ -7,15 +12,6 @@ import {
   isSunday,
   isWithinInterval,
 } from "date-fns";
-
-// Helpers
-import { range } from "@/utils/helpers/array";
-
-// Types
-import { LangCode } from "@/utils/types/common";
-import { Schedule, SchedulePeriod } from "@/utils/types/schedule";
-import { Subject } from "@/utils/types/subject";
-import { getLocaleString } from "@/utils/helpers/string";
 
 /**
  * The start times of each period (index 0-9; period 1-10).
@@ -198,8 +194,6 @@ export function getSubjectName(
   subject: Pick<Subject, "name" | "short_name">,
   locale: LangCode,
 ) {
-  // console.log(subject)
-
   return duration < 2
     ? // If short period, use short name
       subject.short_name[locale] ||

@@ -8,7 +8,6 @@ export default async function moveScheduleItem(
   supabase: DatabaseClient,
   scheduleItem: Omit<SchedulePeriod, "content"> & { day: number },
 ): Promise<BackendReturn<null>> {
-  console.log(omit(scheduleItem, ["id"]));
   const { error } = await supabase
     .from("schedule_items")
     .update(omit(scheduleItem, ["id"]))

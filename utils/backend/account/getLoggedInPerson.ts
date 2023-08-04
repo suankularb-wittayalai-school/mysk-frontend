@@ -1,15 +1,13 @@
+// Imports
 import getUserByEmail from "@/utils/backend/account/getUserByEmail";
-import { logError } from "@/utils/helpers/debug";
-import { mergeDBLocales } from "@/utils/helpers/string";
-import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
-import { Contact } from "@/utils/types/contact";
-import { Subject } from "@/utils/types/subject";
-import { Student, Teacher } from "@/utils/types/person";
-import { GetServerSidePropsContext } from "next";
-import { NextAuthOptions, getServerSession } from "next-auth";
-
 import { getPersonByID } from "@/utils/backend/person/getPersonByID";
 import { getCurrentAcademicYear } from "@/utils/helpers/date";
+import { logError } from "@/utils/helpers/debug";
+import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
+import { Student, Teacher } from "@/utils/types/person";
+import { Subject } from "@/utils/types/subject";
+import { GetServerSidePropsContext } from "next";
+import { NextAuthOptions, getServerSession } from "next-auth";
 
 export async function getStudentFromUserID(
   supabase: DatabaseClient,
@@ -53,8 +51,6 @@ export async function getStudentFromUserID(
     );
     return { data: null, error: classroomStudentError };
   }
-
-  // console.log({studentData, classroomStudentData})
 
   let { data: classroomData, error: classroomError } = await supabase
     .from("classrooms")

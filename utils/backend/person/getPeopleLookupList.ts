@@ -42,8 +42,6 @@ export async function getPeopleLookupList(
     const teacher = teachers?.length ? teachers[0] : null;
     const personID = student?.id || teacher?.id;
 
-    // console.log(personData);
-
     people.push({
       id: personID!,
       prefix: mergeDBLocales(personData, "prefix"),

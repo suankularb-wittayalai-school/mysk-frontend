@@ -2,7 +2,6 @@
 import { Html, Head, Main, NextScript } from "next/document";
 import Script from "next/script";
 
-
 export default function Document() {
   return (
     <Html>
@@ -28,12 +27,20 @@ export default function Document() {
         <link rel="manifest" href="/site.webmanifest" />
         <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#b50077" />
         <meta name="msapplication-TileColor" content="#2b5797" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta
+          name="apple-mobile-web-app-status-bar-style"
+          content="black-translucent"
+        />
         <meta name="google" content="notranslate" />
       </Head>
       <body>
         <Main />
         <NextScript />
-        <Script src="https://accounts.google.com/gsi/client" strategy="beforeInteractive" />
+        <Script
+          src="https://accounts.google.com/gsi/client"
+          strategy="beforeInteractive"
+        />
       </body>
     </Html>
   );

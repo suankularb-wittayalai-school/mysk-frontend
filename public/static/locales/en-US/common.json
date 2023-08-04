@@ -145,7 +145,7 @@
       "offlineAvailability": "Only pages that you frequently visit are available offline.",
       "schoolWiFi": {
         "title": "School wi-fi",
-        "desc": "Inside the school? You can connect to the “SK_Student” wi-fi. Ask a classmate or a teacher for instructions."
+        "desc": "Inside the school? You can connect to the “@SK_Student” wi-fi. Ask a classmate or a teacher for instructions."
       }
     },
     "common": {

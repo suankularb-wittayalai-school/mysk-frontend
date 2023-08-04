@@ -10,8 +10,7 @@ import {
 } from "@/utils/helpers/schedule";
 import { mergeDBLocales } from "@/utils/helpers/string";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
-import { Classroom } from "@/utils/types/classroom";
-import { Schedule, PeriodContentItem } from "@/utils/types/schedule";
+import { PeriodContentItem, Schedule } from "@/utils/types/schedule";
 import { list, omit, pick } from "radash";
 
 /**

@@ -16,6 +16,7 @@ import {
   Progress,
 } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
+import Link from "next/link";
 import { FC, useContext } from "react";
 
 const PageHeader: FC<
@@ -32,12 +33,14 @@ const PageHeader: FC<
       <MultiSchemeImage
         srcLight={BlobsTopLargeLight}
         srcDark={BlobsTopLargeDark}
+        priority
         alt=""
         className="absolute inset-0 bottom-0 -z-10 hidden sm:block"
       />
       <MultiSchemeImage
         srcLight={BlobsTopSmallLight}
         srcDark={BlobsTopSmallDark}
+        priority
         alt=""
         className="absolute inset-0 bottom-0 -z-10 sm:hidden"
       />
@@ -47,15 +50,16 @@ const PageHeader: FC<
         visible={pageIsLoading}
         className="!ml-0"
       />
-      <ContentLayout className="!pb-0 !pt-6 [&>.skc-content-layout\_\_content]:!gap-y-0">
+      <ContentLayout className="!pb-2 !pt-6 [&>.skc-content-layout\_\_content]:!gap-y-0">
         <div className="ml-2 mr-4 flex flex-row gap-2 sm:-ml-2 sm:mr-0">
           {parentURL || onBack ? (
             <Button
               appearance="text"
               icon={<MaterialIcon icon="arrow_backward" />}
               alt={t("action.navigation")}
-              href={parentURL}
               onClick={onBack}
+              href={parentURL}
+              element={Link}
             />
           ) : (
             <Button

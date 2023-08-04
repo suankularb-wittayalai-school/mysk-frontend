@@ -24,7 +24,6 @@ import { getLocaleName } from "@/utils/helpers/string";
 // Hooks
 import { useLocale } from "@/utils/hooks/i18n";
 
-
 const ShareDialog: DialogFC<{
   person: Student | Teacher;
 }> = ({ person, open, onClose }) => {
@@ -53,7 +52,9 @@ const ShareDialog: DialogFC<{
 
     const shareData: ShareData = {
       title: `${getLocaleName(locale, person)} - MySK`,
-      url: window.location.href,
+      url:
+        window.location.href.split("?")[0] +
+        `?id=${person.id}&role=${person.role}`,
     };
     if (navigator.canShare && navigator.canShare(shareData))
       await navigator.share(shareData);

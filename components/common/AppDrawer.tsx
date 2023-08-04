@@ -20,6 +20,7 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { FC } from "react";
+import va from "@vercel/analytics";
 
 /**
  * A toggle for a drawer of all apps used by Suankularb students and teachers.
@@ -38,7 +39,10 @@ const AppDrawer: FC = () => {
       <Button
         appearance="text"
         icon={<MaterialIcon icon="apps" />}
-        onClick={toggleDrawer}
+        onClick={() => {
+          if (!drawerOpen) va.track("Open App Drawer");
+          toggleDrawer();
+        }}
         className="!z-[85]"
       >
         {t("toggle")}
@@ -70,7 +74,7 @@ const AppDrawer: FC = () => {
                 ),
               }}
               transition={transition(
-                duration.medium2,
+                duration.medium4,
                 easing.standardDecelerate,
               )}
               style={{ borderRadius: 16 }}

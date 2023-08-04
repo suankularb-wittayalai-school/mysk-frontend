@@ -345,7 +345,7 @@ const Layout: FC<
           }
           onNavToggle={() => setNavOpen(true)}
           locale={locale}
-          className="!bg-[#fbfcff7f] dark:!bg-[#191c1e7f] backdrop-blur-lg"
+          className="backdrop-blur-lg sm:!bg-[#fbfcff7f] sm:dark:!bg-[#191c1e7f]"
         >
           {(navType || user?.role) === "teacher" ? (
             <NavBarItem
