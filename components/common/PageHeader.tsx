@@ -57,9 +57,9 @@ const PageHeader: FC<
               appearance="text"
               icon={<MaterialIcon icon="arrow_backward" />}
               alt={t("action.navigation")}
-              onClick={onBack}
-              href={parentURL}
-              element={Link}
+              {...(onBack
+                ? { onClick: onBack }
+                : { href: parentURL, element: Link })}
             />
           ) : (
             <Button
