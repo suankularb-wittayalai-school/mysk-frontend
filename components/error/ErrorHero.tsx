@@ -1,13 +1,8 @@
-// External libraries
+// Imports
+import { Columns } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
 import Head from "next/head";
 import { FC, ReactNode } from "react";
-
-// SK Components
-import { Columns } from "@suankularb-components/react";
-
-// Helpers
-import { createTitleStr } from "@/utils/helpers/title";
 
 const ErrorHero: FC<{
   children?: ReactNode;
@@ -22,7 +17,7 @@ const ErrorHero: FC<{
   return (
     <>
       <Head>
-        <title>{createTitleStr(tabName || title, t)}</title>
+        <title>{t("tabName", { tabName: tabName || title })}</title>
       </Head>
       <Columns columns={2}>
         {image}

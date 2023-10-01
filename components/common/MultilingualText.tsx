@@ -1,11 +1,7 @@
-// External libraries
+// Imports
 import { FC, Fragment } from "react";
-
-// Types
 import { LangCode, MultiLangString } from "@/utils/types/common";
-
-// Helpers
-import { cn } from "@/utils/helpers/className";
+import cn from "@/utils/helpers/cn";
 
 const MultilangText: FC<{
   text: MultiLangString;
@@ -17,11 +13,11 @@ const MultilangText: FC<{
   className?: string;
 }> = ({ text, options, className }) => {
   const numLanguagesWithContent = (Object.keys(text) as LangCode[]).filter(
-    (locale) => text[locale]
+    (locale) => text[locale],
   ).length;
 
   return (
-    <div className={cn(["grid grid-cols-[1.25rem,1fr] gap-1", className])}>
+    <div className={cn(`grid grid-cols-[1.25rem,1fr] gap-1`, className)}>
       {(
         (options?.priorityLanguage === "en-US"
           ? ["en-US", "th"]
@@ -40,14 +36,14 @@ const MultilangText: FC<{
               ) && (
                 <div
                   aria-label={langCode === "en-US" ? "English" : "ภาษาไทย"}
-                  className={cn([
+                  className={cn(
                     `grid h-5 w-5 select-none place-content-center rounded-full
                      border-1 text-[0.5rem]`,
                     !options?.priorityLanguage ||
-                    langCode === options?.priorityLanguage
+                      langCode === options?.priorityLanguage
                       ? `border-secondary text-secondary`
                       : `border-outline text-outline`,
-                  ])}
+                  )}
                 >
                   {langCode === "en-US" ? "EN" : "TH"}
                 </div>
@@ -55,7 +51,7 @@ const MultilangText: FC<{
 
               {/* Text */}
               <p
-                className={cn([
+                className={cn(
                   options?.hideIconsIfOnlyLanguage &&
                     // Span 2 columns (taking over the icon space) if this is the
                     // only language
@@ -65,12 +61,12 @@ const MultilangText: FC<{
                     // Dim the text color if this isn’t the priority language
                     langCode !== options?.priorityLanguage &&
                     `text-outline`,
-                ])}
+                )}
               >
                 {text[langCode]}
               </p>
             </Fragment>
-          )
+          ),
       )}
     </div>
   );

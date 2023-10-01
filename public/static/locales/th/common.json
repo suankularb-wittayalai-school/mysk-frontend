@@ -1,7 +1,9 @@
 {
+  "appName": "MySK",
+  "tabName": "{{tabName}} - MySK",
   "brand": {
     "name": "MySK",
-    "description": "เข้าถึงและเข้าใจข้อมูลต่างๆ ของโรงเรียนอย่างง่ายดายด้วยระบบจัดการการศึกษา MySK โรงเรียนสวนกุหลาบวิทยาลัย",
+    "description": "เข้าถึงและเข้าใจข้อมูลต่าง ๆ ของโรงเรียนอย่างง่ายดายด้วยระบบจัดการการศึกษา MySK โรงเรียนสวนกุหลาบวิทยาลัย",
     "school": "โรงเรียนสวนกุหลาบวิทยาลัย"
   },
   "navigation": {
@@ -34,31 +36,26 @@
       }
     }
   },
-  "pageHeader": {
-    "action": {
-      "navigation": "เปิดเมนู",
-      "back": "กลับ"
+  "appDrawer": {
+    "toggle": "ตัวเลือกแอพ",
+    "mysk": {
+      "title": "แอพ MySK",
+      "mysk": "MySK",
+      "clubRegistry": "ทะเบียนชุมนุม"
     },
-    "appDrawer": {
-      "toggle": "ตัวเลือกแอพ",
-      "mysk": {
-        "title": "แอพ MySK",
-        "mysk": "MySK",
-        "clubRegistry": "ทะเบียนชุมนุม"
-      },
-      "school": {
-        "title": "แอพโรงเรียน",
-        "skAcTh": "sk.ac.th",
-        "kularbFah": "กุหลาบฟ้า",
-        "kularbLuang": "กุหลาบหลวง",
-        "library": "ห้องสมุด",
-        "libraryEBook": "Library eBook",
-        "libraryOPAC": "Library OPAC"
-      },
-      "other": {
-        "title": "แอพอื่น ๆ",
-        "schoolICT": "School ICT"
-      }
+    "school": {
+      "title": "แอพโรงเรียน",
+      "skAcTh": "sk.ac.th",
+      "kularbFah": "กุหลาบฟ้า",
+      "kularbLuang": "กุหลาบหลวง",
+      "shopping": "SK Shopping",
+      "library": "ห้องสมุด",
+      "libraryEBook": "Library eBook",
+      "libraryOPAC": "Library OPAC"
+    },
+    "other": {
+      "title": "แอพอื่น ๆ",
+      "schoolICT": "School ICT"
     }
   },
   "pageLoading": "หน้ากำลังโหลด…",
