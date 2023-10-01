@@ -18,6 +18,7 @@ import {
   NavDrawerSection,
   RootLayout,
   Snackbar,
+  Text,
 } from "@suankularb-components/react";
 import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
@@ -139,7 +140,7 @@ const Layout: FC<
       <NavDrawer open={navOpen} onClose={() => setNavOpen(false)}>
         {/* Top-level pages */}
         <NavDrawerSection
-          header={<span className="skc-headline-small">MySK</span>}
+          header={<Text type="headline-small">{t("appName")}</Text>}
           alt="MySK"
         >
           {user?.role === "teacher" || navType === "teacher" ? (
@@ -253,7 +254,7 @@ const Layout: FC<
               element={Link}
             />
           )}
-          <NavDrawerItem
+          {/* <NavDrawerItem
             icon={<MaterialIcon icon="web" />}
             label={t("navigation.drawer.about.legacy")}
             href="http://mysk.school.61.19.250.243.no-domain.name/"
@@ -266,7 +267,7 @@ const Layout: FC<
                 target="_blank"
               />
             ))}
-          />
+          /> */}
           <NavDrawerItem
             icon={<MaterialIcon icon="translate" />}
             label={t("navigation.language")}

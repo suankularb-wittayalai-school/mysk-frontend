@@ -3,12 +3,13 @@ import PeriodDetailsContent from "@/components/schedule/PeriodDetailsContent";
 import ScheduleContext from "@/contexts/ScheduleContext";
 import { getLocaleString } from "@/utils/helpers/string";
 import { useLocale } from "@/utils/hooks/i18n";
-import { DialogFC } from "@/utils/types/component";
+import { StylableFC } from "@/utils/types/common";
 import { PeriodContentItem } from "@/utils/types/schedule";
 import {
   Button,
   DialogContent,
   MaterialIcon,
+  Text,
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
@@ -16,8 +17,10 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { useContext, useEffect } from "react";
 
-const PeriodDetails: DialogFC<{
+const PeriodDetails: StylableFC<{
   period: PeriodContentItem;
+  open: boolean;
+  onClose: () => void;
   onDelete?: () => void;
 }> = ({ period, open, onClose, onDelete }) => {
   const locale = useLocale();
@@ -66,9 +69,9 @@ const PeriodDetails: DialogFC<{
                   className="!text-on-surface before:!bg-on-surface
                     [&_span]:!bg-on-surface"
                 />
-                <h1 className="skc-headline-small my-1 mr-4">
+                <Text type="headline-small" element="h1" className="my-1 mr-4">
                   {getLocaleString(period.subject.name, locale)}
-                </h1>
+                </Text>
               </div>
               <DialogContent className="flex flex-col gap-4 p-6 pt-4">
                 <PeriodDetailsContent period={period} />
