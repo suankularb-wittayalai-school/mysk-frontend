@@ -72,10 +72,15 @@ const PeriodDetailsContent: FC<{
 
       {/* Subject code */}
       <section aria-labelledby="period-code">
-        <h2 id="period-code" className="skc-title-medium">
+        <Text
+          type="title-medium"
+          element={(props) => <h2 id="period-code" {...props} />}
+        >
           {t("dialog.periodDetails.code")}
-        </h2>
-        <MultilangText text={period.subject.code} className="skc-body-medium" />
+        </Text>
+        <Text type="body-medium" element="div">
+          <MultilangText text={period.subject.code} />
+        </Text>
       </section>
     </>
   );

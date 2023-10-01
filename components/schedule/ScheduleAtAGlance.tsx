@@ -1,8 +1,7 @@
 // Imports
 import HoverList from "@/components/person/HoverList";
 import GlanceCountdown from "@/components/schedule/GlanceCountdown";
-import { range } from "@/utils/helpers/array";
-import { cn } from "@/utils/helpers/className";
+import cn from "@/utils/helpers/cn";
 import { useNow } from "@/utils/helpers/date";
 import {
   getCurrentPeriod,
@@ -10,17 +9,19 @@ import {
 } from "@/utils/helpers/schedule";
 import { getLocaleString } from "@/utils/helpers/string";
 import { useLocale } from "@/utils/hooks/i18n";
+import { StylableFC } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
 import { Schedule, SchedulePeriod } from "@/utils/types/schedule";
 import {
   MaterialIcon,
+  Text,
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
 import { differenceInMinutes, differenceInSeconds } from "date-fns";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { Trans, useTranslation } from "next-i18next";
-import { FC } from "react";
+import { list } from "radash";
 
 /**
  * A glanceable banner dynamically updated by the current and upcoming schedule
@@ -29,10 +30,10 @@ import { FC } from "react";
  * @param schedule Data for displaying Schedule at a Glance.
  * @param role The user’s role. Used in determining the Schedule at a Glance view.
  */
-const ScheduleAtAGlance: FC<{
+const ScheduleAtAGlance: StylableFC<{
   schedule: Schedule;
   role: UserRole;
-}> = ({ schedule, role }) => {
+}> = ({ schedule, role, style, className }) => {
   const locale = useLocale();
   const { t } = useTranslation("schedule", { keyPrefix: "atAGlance" });
 
@@ -42,7 +43,7 @@ const ScheduleAtAGlance: FC<{
 
   // Determine relevant periods every second
   const periodNumber = getCurrentPeriod();
-  const todayRow = range(5, 1).includes(now.getDay())
+  const todayRow = list(1, 5).includes(now.getDay())
     ? schedule.content[now.getDay() - 1].content
     : [];
 
@@ -187,10 +188,13 @@ const ScheduleAtAGlance: FC<{
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={transition(duration.medium4, easing.standard)}
-            className="relative isolate mx-4 flex flex-col gap-3 overflow-hidden
+            style={{ borderRadius: 16, ...style }}
+            className={cn(
+              `relative isolate mx-4 flex flex-col gap-3 overflow-hidden
               rounded-lg border-1 border-outline-variant bg-surface-5 p-4
-              sm:mx-0"
-            style={{ borderRadius: 16 }}
+              sm:mx-0`,
+              className,
+            )}
           >
             {/* Class Progress Indicator */}
             <motion.div
@@ -229,7 +233,7 @@ const ScheduleAtAGlance: FC<{
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
                 transition={transition(duration.medium4, easing.standard)}
-                className="skc-headline-medium"
+                className="skc-text skc-text--headline-medium"
               >
                 {
                   {
@@ -313,61 +317,67 @@ const ScheduleAtAGlance: FC<{
                       {/* Subject */}
                       <div className="flex flex-col">
                         {idx === 0 && (
-                          <h3 className="skc-title-medium">
+                          <Text type="title-medium" element="h3">
                             {t("details.subject")}
-                          </h3>
+                          </Text>
                         )}
-                        <p
-                          className={cn([
-                            `skc-body-medium text-on-surface-variant`,
+                        <Text
+                          type="body-medium"
+                          element="p"
+                          className={cn(
+                            `text-on-surface-variant`,
                             idx !== 0 && `-mt-2`,
-                          ])}
+                          )}
                         >
                           {getLocaleString(period.subject.name, locale)}
-                        </p>
+                        </Text>
                       </div>
 
                       {/* Subject code */}
                       <div className="flex flex-col">
                         {idx === 0 && (
-                          <h3 className="skc-title-medium">
+                          <Text type="title-medium" element="h3">
                             {t("details.code")}
-                          </h3>
+                          </Text>
                         )}
-                        <p
-                          className={cn([
-                            `skc-body-medium text-on-surface-variant`,
+                        <Text
+                          type="body-medium"
+                          element="p"
+                          className={cn(
+                            `text-on-surface-variant`,
                             idx !== 0 && `-mt-2`,
-                          ])}
+                          )}
                         >
                           {getLocaleString(period.subject.code, locale)}
-                        </p>
+                        </Text>
                       </div>
 
                       {/* Teachers */}
                       <div
-                        className={cn([
+                        className={cn(
                           `flex flex-col`,
                           !(period.rooms && period.rooms.length > 0) &&
                             `sm:col-span-2`,
-                        ])}
+                        )}
                       >
                         {idx === 0 && (
-                          <h3 className="skc-title-medium">
+                          <Text type="title-medium" element="h3">
                             {t("details.teachers")}
-                          </h3>
+                          </Text>
                         )}
-                        <p
-                          className={cn([
-                            `skc-body-medium text-on-surface-variant`,
+                        <Text
+                          type="body-medium"
+                          element="p"
+                          className={cn(
+                            `text-on-surface-variant`,
                             idx !== 0 && `-mt-2`,
-                          ])}
+                          )}
                         >
                           <HoverList
                             people={period.teachers}
                             options={{ nameJoinerOptions: { lastName: true } }}
                           />
-                        </p>
+                        </Text>
                       </div>
 
                       {/* Room */}
@@ -376,18 +386,20 @@ const ScheduleAtAGlance: FC<{
                       ) && (
                         <div className="flex flex-col">
                           {idx === 0 && (
-                            <h3 className="skc-title-medium">
+                            <Text type="title-medium" element="h3">
                               {t("details.room")}
-                            </h3>
+                            </Text>
                           )}
-                          <p
-                            className={cn([
-                              `skc-body-medium text-on-surface-variant`,
+                          <Text
+                            type="body-medium"
+                            element="p"
+                            className={cn(
+                              `text-on-surface-variant`,
                               idx !== 0 && `-mt-2`,
-                            ])}
+                            )}
                           >
                             {period.rooms?.join(", ") || " "}
-                          </p>
+                          </Text>
                         </div>
                       )}
                     </motion.li>

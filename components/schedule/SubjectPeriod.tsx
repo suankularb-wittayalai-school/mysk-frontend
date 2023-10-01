@@ -6,7 +6,7 @@ import ScheduleContext from "@/contexts/ScheduleContext";
 import deleteScheduleItem from "@/utils/backend/schedule/deleteScheduleItem";
 import lengthenScheduleItem from "@/utils/backend/schedule/lengthenScheduleItem";
 import moveScheduleItem from "@/utils/backend/schedule/moveScheduleItem";
-import { cn } from "@/utils/helpers/className";
+import cn from "@/utils/helpers/cn";
 import { withLoading } from "@/utils/helpers/loading";
 import {
   getSubjectName,
@@ -21,6 +21,7 @@ import { PeriodContentItem } from "@/utils/types/schedule";
 import {
   Interactive,
   MaterialIcon,
+  Text,
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
@@ -270,18 +271,18 @@ const SubjectPeriod: FC<{
         onDragEnd={handleDragEnd}
         onMouseEnter={() => editable && setMenuOpen(true)}
         onMouseLeave={() => editable && !detailsOpen && setMenuOpen(false)}
-        className={cn([
+        className={cn(
           `relative rounded-sm transition-shadow focus-within:shadow-2`,
           editable && "touch-none",
           !loading &&
             (isInSession ? `shadow-1 hover:shadow-2` : `hover:shadow-1`),
-        ])}
+        )}
       >
         {/* Period content */}
         <Interactive
           stateLayerEffect={editable}
           rippleEffect={editable}
-          className={cn([
+          className={cn(
             `tap-highlight-none flex h-14 w-24 flex-col rounded-sm
              bg-secondary-container text-left text-on-secondary-container
              transition-[border,background-color,color]
@@ -296,7 +297,7 @@ const SubjectPeriod: FC<{
               ? `cursor-default overflow-visible border-4
                  border-secondary-container px-3 py-1`
               : `px-4 py-2`,
-          ])}
+          )}
           style={{ width: periodDurationToWidth(period.duration) }}
           onClick={
             !editable
@@ -315,7 +316,7 @@ const SubjectPeriod: FC<{
                 duration.short2,
                 easing.standardDecelerate,
               )}
-              className="skc-title-medium !w-fit"
+              className="skc-text skc-text--title-medium !w-fit"
             >
               {t("class", {
                 ns: "common",
@@ -324,7 +325,7 @@ const SubjectPeriod: FC<{
             </motion.span>
           ) : (
             <span
-              className="skc-title-medium"
+              className="skc-text skc-text--title-medium"
               title={
                 view === "student"
                   ? getLocaleString(period.subject.name, locale)
@@ -337,13 +338,13 @@ const SubjectPeriod: FC<{
 
           {/* Teacher / subject name */}
           {(view === "student" || !menuOpen || extending || loading) && (
-            <span className="skc-body-small">
+            <Text type="body-small">
               {view === "teacher" ? (
                 getSubjectName(period.duration, period.subject, locale)
               ) : (
                 <HoverList people={period.teachers} />
               )}
-            </span>
+            </Text>
           )}
         </Interactive>
 

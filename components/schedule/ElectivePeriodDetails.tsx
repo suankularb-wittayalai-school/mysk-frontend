@@ -1,8 +1,10 @@
 // Imports
 import PeriodDetailsContent from "@/components/schedule/PeriodDetailsContent";
+import cn from "@/utils/helpers/cn";
 import { periodTimes } from "@/utils/helpers/schedule";
 import { getLocaleString } from "@/utils/helpers/string";
 import { useLocale } from "@/utils/hooks/i18n";
+import { StylableFC } from "@/utils/types/common";
 import { DialogFC } from "@/utils/types/component";
 import { PeriodContentItem, SchedulePeriod } from "@/utils/types/schedule";
 import {
@@ -10,28 +12,36 @@ import {
   Card,
   Columns,
   MaterialIcon,
+  Text,
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
-import { FC, useEffect } from "react";
+import { useEffect } from "react";
 
-const SubjectPeriodCard: FC<{
+const SubjectPeriodCard: StylableFC<{
   period: SchedulePeriod;
   subject: PeriodContentItem;
-}> = ({ period, subject }) => {
+}> = ({ period, subject, style, className }) => {
   // Translation
   const locale = useLocale();
 
   return (
-    <Card appearance="filled" className="!bg-surface">
-      <div className="flex flex-row gap-2 border-b-1 border-b-outline-variant px-4 py-2">
+    <Card
+      appearance="filled"
+      style={style}
+      className={cn(`!bg-surface`, className)}
+    >
+      <div
+        className={cn(`flex flex-row gap-2 border-b-1 border-b-outline-variant
+          px-4 py-2`)}
+      >
         <div className="flex flex-col">
-          <h2 className="skc-title-medium">
+          <Text type="title-medium" element="h2">
             {getLocaleString(subject.subject.name, locale)}
-          </h2>
-          <time className="skc-body-small">
+          </Text>
+          <Text type="body-small" element="time">
             {[period.start_time - 1, period.start_time + period.duration - 1]
               .map((j) =>
                 // Get the start/end time of this Period
@@ -43,7 +53,7 @@ const SubjectPeriodCard: FC<{
               )
               // Join the start and end
               .join("-")}
-          </time>
+          </Text>
         </div>
       </div>
       <Columns columns={2} className="px-4 pb-3 pt-2">
@@ -79,8 +89,8 @@ const ElectivePeriodDetails: DialogFC<{
         <>
           {/* Dialog container (for positioning) */}
           <div
-            className="pointer-events-none fixed inset-0 z-[100] grid
-              place-items-center"
+            className={cn(`pointer-events-none fixed inset-0 z-[100] grid
+              place-items-center`)}
           >
             {/* Dialog */}
             <motion.div
@@ -88,31 +98,33 @@ const ElectivePeriodDetails: DialogFC<{
               aria-modal
               layoutId={`elective-period-${period.id}`}
               transition={transition(duration.medium4, easing.standard)}
-              className="pointer-events-auto max-h-[calc(100vh-3rem)] w-96
+              className={cn(`pointer-events-auto max-h-[calc(100vh-3rem)] w-96
                 max-w-[calc(100vw-3rem)] overflow-y-auto overflow-x-hidden
                 rounded-xl bg-surface-3 text-on-surface-variant
-                supports-[height:100dvh]:max-h-[calc(100dvh-3rem)]"
+                supports-[height:100dvh]:max-h-[calc(100dvh-3rem)]`)}
             >
               {/* Top app bar */}
               <div
-                className="sticky top-0 flex flex-row items-center
-                  gap-2 border-b-1 border-b-outline bg-surface-3 p-2"
+                className={cn(`sticky top-0 flex flex-row items-center
+                  gap-2 border-b-1 border-b-outline bg-surface-3 p-2`)}
               >
                 <Button
                   appearance="text"
                   icon={<MaterialIcon icon="close" />}
                   onClick={onClose}
-                  className="!text-on-surface before:!bg-on-surface
-                    [&_span]:!bg-on-surface"
+                  className={cn(`!text-on-surface before:!bg-on-surface
+                    [&_span]:!bg-on-surface`)}
                 />
-                <h1 className="skc-headline-small">
+                <Text type="headline-small" element="h1">
                   {t("dialog.electivePeriodDetails.title")}
-                </h1>
+                </Text>
               </div>
 
               {/* Subject list */}
               <div className="flex flex-col gap-4 p-6 pt-5">
-                <p>{t("dialog.electivePeriodDetails.desc")}</p>
+                <Text type="body-medium" element="p">
+                  {t("dialog.electivePeriodDetails.desc")}
+                </Text>
 
                 {period.content
                   .sort((a, b) =>

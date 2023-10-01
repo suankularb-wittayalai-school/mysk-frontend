@@ -13,7 +13,7 @@ import {
 } from "@suankularb-components/react";
 
 // Helpers
-import { cn } from "@/utils/helpers/className";
+import { cn } from "@/utils/helpers/cn";
 
 // Types
 import { PeriodContentItem } from "@/utils/types/schedule";
