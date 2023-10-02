@@ -1,16 +1,3 @@
-/**
- * `/learn` TABLE OF CONTENTS
- *
- * Note: `Ctrl` + click to jump to a component.
- *
- * **Sections**
- * - {@link ScheduleSection}
- * - {@link SubjectListSection}
- *
- * **Page**
- * - {@link LearnPage}
- */
-
 // Imports
 import PageHeader from "@/components/common/PageHeader";
 import Schedule from "@/components/schedule/Schedule";
@@ -42,6 +29,13 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import { useState } from "react";
 
+/**
+ * The Student’s counterpart to Teach, where the user can see their Schedule
+ * and their Subjects.
+ *
+ * @param schedule Data for displaying Schedule.
+ * @param subjectList The Subjects this Student’s Classroom is enrolled in.
+ */
 const LearnPage: CustomPage<{
   schedule: ScheduleType;
   subjectList: ClassroomSubject[];
