@@ -1,6 +1,6 @@
 // Imports
 import HoverList from "@/components/person/HoverList";
-import PeriodDetails from "@/components/schedule/PeriodDetails";
+import PeriodDetailsDialog from "@/components/schedule/PeriodDetails";
 import SubjectPeriodMenu from "@/components/schedule/SubjectPeriodMenu";
 import ScheduleContext from "@/contexts/ScheduleContext";
 import deleteScheduleItem from "@/utils/backend/schedule/deleteScheduleItem";
@@ -415,7 +415,7 @@ const SubjectPeriod: FC<{
       )}
 
       {/* Dialog */}
-      <PeriodDetails
+      <PeriodDetailsDialog
         period={period}
         open={detailsOpen}
         onClose={() => setDetailsOpen(false)}

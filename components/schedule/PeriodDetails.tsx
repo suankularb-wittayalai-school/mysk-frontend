@@ -1,6 +1,7 @@
 // Imports
 import PeriodDetailsContent from "@/components/schedule/PeriodDetailsContent";
 import ScheduleContext from "@/contexts/ScheduleContext";
+import cn from "@/utils/helpers/cn";
 import { getLocaleString } from "@/utils/helpers/string";
 import { useLocale } from "@/utils/hooks/i18n";
 import { StylableFC } from "@/utils/types/common";
@@ -17,7 +18,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { useContext, useEffect } from "react";
 
-const PeriodDetails: StylableFC<{
+const PeriodDetailsDialog: StylableFC<{
   period: PeriodContentItem;
   open: boolean;
   onClose: () => void;
@@ -45,8 +46,8 @@ const PeriodDetails: StylableFC<{
         <>
           {/* Dialog container (for positioning) */}
           <div
-            className="pointer-events-none fixed inset-0 z-[100] grid
-              place-items-center"
+            className={cn(`pointer-events-none fixed inset-0 z-[100] grid
+              place-items-center`)}
           >
             {/* Dialog */}
             <motion.div
@@ -54,20 +55,20 @@ const PeriodDetails: StylableFC<{
               aria-modal
               layoutId={`period-${period.id}`}
               transition={transition(duration.medium4, easing.standard)}
-              className="pointer-events-auto w-80 overflow-hidden rounded-xl
-                bg-surface-3 text-on-surface-variant"
+              className={cn(`pointer-events-auto w-80 overflow-hidden
+                rounded-xl bg-surface-3 text-on-surface-variant`)}
             >
               <div
-                className="grid grid-cols-[2.5rem,auto] items-start gap-2 border-b-1
-                  border-b-outline bg-surface-3 p-2"
+                className={cn(`grid grid-cols-[2.5rem,auto] items-start gap-2
+                  border-b-1 border-b-outline bg-surface-3 p-2`)}
               >
                 <Button
                   appearance="text"
                   icon={<MaterialIcon icon="close" />}
                   alt={t("dialog.periodDetails.action.close")}
                   onClick={onClose}
-                  className="!text-on-surface before:!bg-on-surface
-                    [&_span]:!bg-on-surface"
+                  className={cn(`text-on-surface before:!bg-on-surface
+                    [&_span]:!bg-on-surface`)}
                 />
                 <Text type="headline-small" element="h1" className="my-1 mr-4">
                   {getLocaleString(period.subject.name, locale)}
@@ -105,4 +106,4 @@ const PeriodDetails: StylableFC<{
   );
 };
 
-export default PeriodDetails;
+export default PeriodDetailsDialog;
