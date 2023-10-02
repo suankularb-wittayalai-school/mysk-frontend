@@ -1,6 +1,6 @@
 // Imports
 import HoverList from "@/components/person/HoverList";
-import PeriodDetailsDialog from "@/components/schedule/PeriodDetails";
+import PeriodDetailsDialog from "@/components/schedule/PeriodDetailsDialog";
 import SubjectPeriodMenu from "@/components/schedule/SubjectPeriodMenu";
 import ScheduleContext from "@/contexts/ScheduleContext";
 import deleteScheduleItem from "@/utils/backend/schedule/deleteScheduleItem";
