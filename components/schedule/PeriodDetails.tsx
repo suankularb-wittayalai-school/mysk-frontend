@@ -67,7 +67,7 @@ const PeriodDetailsDialog: StylableFC<{
                   icon={<MaterialIcon icon="close" />}
                   alt={t("dialog.periodDetails.action.close")}
                   onClick={onClose}
-                  className={cn(`text-on-surface before:!bg-on-surface
+                  className={cn(`!text-on-surface before:!bg-on-surface
                     [&_span]:!bg-on-surface`)}
                 />
                 <Text type="headline-small" element="h1" className="my-1 mr-4">
