@@ -39,6 +39,22 @@
   .skc-icon {
     @apply !font-icon;
   }
+
+  .light .skc-page-header__blob-primary {
+    @apply !fill-primary-95;
+  }
+
+  .light .skc-page-header__blob-secondary {
+    @apply !fill-secondary-90;
+  }
+
+  .dark .skc-page-header__blob-primary {
+    @apply !fill-primary-20;
+  }
+
+  .dark .skc-page-header__blob-secondary {
+    @apply !fill-secondary-20;
+  }
 }
 
 @layer utilities {
