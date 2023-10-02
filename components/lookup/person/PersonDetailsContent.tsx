@@ -234,7 +234,6 @@ const SubjectsSection: FC<{
 const PersonDetailsContent: FC<{
   person: Student | Teacher;
 }> = ({ person }) => {
-  const locale = useLocale();
   const { t } = useTranslation("lookup", { keyPrefix: "people.detail" });
 
   return (

@@ -5,7 +5,6 @@ import ClassTabs from "@/components/lookup/class/ClassTabs";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import getStudentsOfClass from "@/utils/backend/classroom/getStudentsOfClass";
-import { createTitleStr } from "@/utils/helpers/title";
 import { Classroom } from "@/utils/types/classroom";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Student, UserRole } from "@/utils/types/person";
@@ -23,16 +22,20 @@ const ClassStudentsPage: CustomPage<{
   >[];
   userRole: UserRole;
 }> = ({ classroom, studentList, userRole }) => {
-  const { t } = useTranslation(["class", "common"]);
+  const { t } = useTranslation("class");
+  const { t: tx } = useTranslation("common");
 
   return (
     <>
       <Head>
-        <title>{createTitleStr(t(`student.title.${userRole}`), t)}</title>
+        <title>
+          {tx("tabName", { tabName: t(`student.title.${userRole}`) })}
+        </title>
       </Head>
-      <PageHeader title={t(`student.title.${userRole}`)} parentURL="/class">
-        <ClassTabs number={classroom.number} type="class" />
+      <PageHeader parentURL="/class">
+        {t(`student.title.${userRole}`)}
       </PageHeader>
+      <ClassTabs number={classroom.number} type="class" />
       <ClassStudents studentList={studentList} isOwnClass />
     </>
   );

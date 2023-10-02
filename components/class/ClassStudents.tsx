@@ -1,16 +1,16 @@
-// External libraries
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
-
-import va from "@vercel/analytics";
-
-import Link from "next/link";
-import { useRouter } from "next/router";
-
-import { useTranslation } from "next-i18next";
-
-import { FC, useEffect, useState } from "react";
-
-// SK Components
+// Imports
+import ClassStudentCard from "@/components/class/ClassStudentCard";
+import EmptyDetail from "@/components/lookup/EmptyDetail";
+import LookupList from "@/components/lookup/LookupList";
+import PersonDetails from "@/components/lookup/person/PersonDetails";
+import { getStudentByID } from "@/utils/backend/person/getStudentByID";
+import { getStudentsByIDs } from "@/utils/backend/person/getStudentsByIDs";
+import cn from "@/utils/helpers/cn";
+import { useGetVCard } from "@/utils/helpers/contact";
+import { withLoading } from "@/utils/helpers/loading";
+import { getLocaleName } from "@/utils/helpers/string";
+import { useToggle } from "@/utils/hooks/toggle";
+import { Student } from "@/utils/types/person";
 import {
   Actions,
   Button,
@@ -18,31 +18,12 @@ import {
   SplitLayout,
   useBreakpoint,
 } from "@suankularb-components/react";
-
-// Internal components
-import ClassStudentCard from "@/components/class/ClassStudentCard";
-import EmptyDetail from "@/components/lookup/EmptyDetail";
-import LookupList from "@/components/lookup/LookupList";
-import PersonDetails from "@/components/lookup/person/PersonDetails";
-
-// Backend
-// import {
-//   getFullStudentsFromIDs,
-//   getStudent,
-// } from "@/utils/backend/person/student";
-
-// Helpers
-import { useGetVCard } from "@/utils/helpers/contact";
-import { withLoading } from "@/utils/helpers/loading";
-import { getLocaleName } from "@/utils/helpers/string";
-
-// Hooks
-import { useToggle } from "@/utils/hooks/toggle";
-
-// Types
-import { getStudentByID } from "@/utils/backend/person/getStudentByID";
-import { getStudentsByIDs } from "@/utils/backend/person/getStudentsByIDs";
-import { Student } from "@/utils/types/person";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import va from "@vercel/analytics";
+import { useTranslation } from "next-i18next";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { FC, useEffect, useState } from "react";
 
 const ClassStudents: FC<{
   studentList: Pick<
@@ -125,14 +106,16 @@ const ClassStudents: FC<{
   return (
     <SplitLayout
       ratio="list-detail"
-      className="sm:[&>*>*]:!h-[calc(100vh-13.5rem-1px)]
-        supports-[height:100dvh]:sm:[&>*>*]:!h-[calc(100dvh-13.5rem-1px)]"
+      className="sm:[&>*>*]:!h-[calc(100dvh-8.25rem-1px)]"
     >
       <LookupList
         length={studentList.length}
         searchAlt={t("searchAlt")}
         actions={
-          <Actions className="-mt-3 mb-4 !grid grid-cols-1 md:!grid-cols-[1fr,2fr]">
+          <Actions
+            className={cn(`-mt-3 mb-4 !grid grid-cols-1
+              md:!grid-cols-[1fr,2fr]`)}
+          >
             <Button
               appearance="filled"
               icon={<MaterialIcon icon="print" />}

@@ -1,22 +1,17 @@
-// External libraries
+// Imports
+import DynamicAvatar from "@/components/common/DynamicAvatar";
+import cn from "@/utils/helpers/cn";
+import { getLocaleName, getLocaleString } from "@/utils/helpers/string";
+import { useLocale } from "@/utils/hooks/i18n";
+import { Student } from "@/utils/types/person";
+import {
+  Card,
+  CardHeader,
+  Text,
+  useBreakpoint,
+} from "@suankularb-components/react";
 import Link from "next/link";
 import { FC } from "react";
-
-// SK Component
-import { Card, CardHeader, useBreakpoint } from "@suankularb-components/react";
-
-// Internal components
-import DynamicAvatar from "@/components/common/DynamicAvatar";
-
-// Helpers
-import { cn } from "@/utils/helpers/className";
-import { getLocaleName, getLocaleString } from "@/utils/helpers/string";
-
-// Hooks
-import { useLocale } from "@/utils/hooks/i18n";
-
-// Types
-import { Student } from "@/utils/types/person";
 
 const ClassStudentCard: FC<{
   student: Pick<
@@ -35,13 +30,13 @@ const ClassStudentCard: FC<{
   return (
     <li
       aria-label={getLocaleName(locale, student)}
-      className={
+      className={cn(
         seperated
           ? `-mx-4 border-t-outline px-4 sm:mx-0 sm:px-0
-             [&:nth-child(10n+1):not(:first-child)]:border-t-1
-             [&:nth-child(10n+1):not(:first-child)]:pt-2`
-          : undefined
-      }
+            [&:nth-child(10n+1):not(:first-child)]:border-t-1
+            [&:nth-child(10n+1):not(:first-child)]:pt-2`
+          : undefined,
+      )}
     >
       <Card
         appearance="outlined"
@@ -58,12 +53,12 @@ const ClassStudentCard: FC<{
           : // If the user is on tablet/desktop, show the selected Student in
             // the detail section
             { onClick: () => setSelectedID && setSelectedID(student.id) })}
-        className={cn([
+        className={cn(
           `w-full items-center !border-transparent pr-3 text-left`,
           thisSelected &&
             `sm:!border-outline-variant sm:!bg-primary-container
-             sm:focus:!border-primary`,
-        ])}
+            sm:focus:!border-primary`,
+        )}
       >
         <CardHeader
           avatar={
@@ -81,18 +76,18 @@ const ClassStudentCard: FC<{
           }
           className="grow"
         />
-        <span
-          className={cn([
-            `skc-display-small text-outline
-             [font-feature-settings:"tnum"on,"lnum"on]`,
+        <Text
+          type="display-small"
+          className={cn(
+            `text-outline [font-feature-settings:"tnum"on,"lnum"on]`,
             thisSelected && `sm:!text-primary`,
-          ])}
+          )}
         >
           {student.class_no && student.class_no < 10 && (
             <span className="font-light opacity-30">0</span>
           )}
           {student.class_no}
-        </span>
+        </Text>
       </Card>
     </li>
   );
