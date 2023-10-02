@@ -18,14 +18,8 @@ import PatchNotesSide from "@/components/landing/PatchNotesSide";
 import BlobsFullDark from "@/public/images/graphics/blobs/full-dark.svg";
 import BlobsFullLight from "@/public/images/graphics/blobs/full-light.svg";
 import cn from "@/utils/helpers/cn";
-import { usePageIsLoading } from "@/utils/hooks/routing";
 import { CustomPage, LangCode } from "@/utils/types/common";
-import {
-  Columns,
-  ContentLayout,
-  Progress,
-  Text,
-} from "@suankularb-components/react";
+import { Columns, ContentLayout, Text } from "@suankularb-components/react";
 import { LayoutGroup } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -39,21 +33,12 @@ const LandingPage: CustomPage = () => {
   const { t } = useTranslation("landing");
   const { t: tx } = useTranslation("common");
 
-  const { pageIsLoading } = usePageIsLoading();
-
   return (
     <>
       <Head>
         <title>{tx("appName")}</title>
         <meta name="description" content={tx("brand.description")} />
       </Head>
-
-      {/* Page Loading Indicator */}
-      <Progress
-        appearance="linear"
-        alt={tx("pageLoading")}
-        visible={pageIsLoading}
-      />
 
       {/* Background */}
       <MultiSchemeImage

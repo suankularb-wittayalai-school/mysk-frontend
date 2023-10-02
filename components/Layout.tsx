@@ -6,7 +6,7 @@ import AppStateContext from "@/contexts/AppStateContext";
 import { useLoggedInPerson } from "@/utils/helpers/auth";
 import { useLocale } from "@/utils/hooks/i18n";
 import { usePreferences } from "@/utils/hooks/preferences";
-import { useRefreshProps } from "@/utils/hooks/routing";
+import { usePageIsLoading, useRefreshProps } from "@/utils/hooks/routing";
 import { useSnackbar } from "@/utils/hooks/snackbar";
 import { CustomPage } from "@/utils/types/common";
 import {
@@ -16,6 +16,7 @@ import {
   NavDrawer,
   NavDrawerItem,
   NavDrawerSection,
+  Progress,
   RootLayout,
   Snackbar,
   Text,
@@ -82,6 +83,9 @@ const Layout: FC<
 
   // Snackbar
   const { snackbarOpen, setSnackbarOpen, snackbarProps } = useSnackbar();
+
+  // Page loading indicator
+  const { pageIsLoading } = usePageIsLoading();
 
   // Dialog control
   const [logOutOpen, setLogOutOpen] = useState<boolean>(false);
@@ -346,7 +350,6 @@ const Layout: FC<
           }
           onNavToggle={() => setNavOpen(true)}
           locale={locale}
-          className="backdrop-blur-lg sm:!bg-[#fbfcff7f] sm:dark:!bg-[#191c1e7f]"
         >
           {(navType || user?.role) === "teacher" ? (
             <NavBarItem
@@ -401,6 +404,13 @@ const Layout: FC<
 
       {/* Log out Dialog */}
       <LogOutDialog open={logOutOpen} onClose={() => setLogOutOpen(false)} />
+
+      {/* Page loading indicator */}
+      <Progress
+        appearance="linear"
+        alt={t("pageIsLoading")}
+        visible={pageIsLoading}
+      />
 
       {/* Snackbar */}
       <Snackbar
