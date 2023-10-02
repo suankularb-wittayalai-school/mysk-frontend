@@ -104,7 +104,9 @@
       "searchAlt": "Search documents",
       "filter": {
         "orders": "Orders",
-        "documents": "Documents"
+        "records": "Records",
+        "announcements": "Announcements",
+        "other": "Other"
       },
       "metadata": {
         "order": "№ {{code}}/{{year}} • {{date}}",
