@@ -113,6 +113,7 @@
       "metadata": {
         "order": "ที่ {{code}}/{{year}} • {{date}}",
         "record": "{{code}} • {{date}}",
+        "announcement": "{{date}}",
         "other": "{{date}}"
       }
     },
