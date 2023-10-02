@@ -34,11 +34,6 @@ const RoomsField: FC<{
       value={field}
       onChange={setField}
       onDeleteLast={() => onChange(rooms.slice(0, -1))}
-      onNewEntry={(value) => {
-        if (rooms.includes(value)) return;
-        if (value.length === 3) return;
-        onChange([...rooms, field]);
-      }}
       locale={locale}
     >
       <ChipSet>

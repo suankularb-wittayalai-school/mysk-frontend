@@ -1,5 +1,6 @@
 // Imports
 import { range } from "@/utils/helpers/array";
+import cn from "@/utils/helpers/cn";
 import { periodTimes } from "@/utils/helpers/schedule";
 import { StylableFC } from "@/utils/types/common";
 import { Text } from "@suankularb-components/react";
@@ -9,13 +10,14 @@ const NumbersRow: StylableFC = ({ style, className }) => (
     <ul className="mb-1 flex w-fit flex-row gap-2">
       <li
         aria-hidden
-        className="z-20 -mb-2 -mt-1 w-36 pb-2 pt-1 sm:sticky sm:left-0 sm:bg-background"
+        className={cn(`z-20 -mb-2 -mt-1 w-36 pb-2 pt-1 sm:sticky sm:left-0
+          sm:bg-background`)}
       />
       {range(10, 1).map((i) => (
         <li
           key={i}
-          className="flex w-24 flex-row items-center gap-2 rounded-full
-              bg-surface-2 px-4 py-2"
+          className={cn(`flex w-24 flex-row items-center gap-2 rounded-full
+            bg-surface-2 px-4 py-2`)}
         >
           <Text type="title-small" className="!leading-none">
             {i}

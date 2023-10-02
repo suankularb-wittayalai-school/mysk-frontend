@@ -18,6 +18,7 @@ import {
 import { StylableFC } from "@/utils/types/common";
 import { PeriodLocation, Schedule } from "@/utils/types/schedule";
 import { Subject } from "@/utils/types/subject";
+import { Text } from "@suankularb-components/react";
 import { setDay } from "date-fns";
 import { LayoutGroup } from "framer-motion";
 import { useTranslation } from "next-i18next";
@@ -94,15 +95,20 @@ const Schedule: StylableFC<{
     >
       <div
         style={style}
-        className={cn(`relative !mx-0 -my-2 flex flex-col-reverse gap-3
-          sm:flex-col`)}
+        className={cn(
+          `relative !mx-0 -my-2 flex flex-col-reverse gap-3
+          sm:flex-col`,
+          className,
+        )}
       >
         {editable && (
           <>
             {/* Subjects in Charge Card: for Subjects to be added to
                 Schedule */}
             <SubjectsInChargeCard subjects={subjectsInCharge!} />
-            <p className="mx-4 sm:mx-0">{t("schedule.additionGuide")}</p>
+            <Text type="body-medium" element="p" className="mx-4 sm:mx-0">
+              {t("schedule.additionGuide")}
+            </Text>
           </>
         )}
 

@@ -4,6 +4,7 @@ import RoomsField from "@/components/room/RoomsField";
 import ScheduleContext from "@/contexts/ScheduleContext";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import createScheduleItem from "@/utils/backend/schedule/createScheduleItem";
+import cn from "@/utils/helpers/cn";
 import { withLoading } from "@/utils/helpers/loading";
 import {
   getSubjectName,
@@ -114,7 +115,7 @@ const AddPeriodDialog: DialogFC<{
       open={open}
       width={360}
       onClose={onClose}
-      className="[&_.skc-text-field\_\_label]:!bg-surface-3"
+      className="[&_.skc-chip-field\_\_label]:!bg-surface-3"
     >
       <DialogHeader
         title={t("dialog.editPeriod.title.add")}
@@ -138,14 +139,14 @@ const AddPeriodDialog: DialogFC<{
               width: periodDurationToWidth(form.duration),
               borderRadius: 8,
             }}
-            className="flex h-14 flex-col overflow-hidden rounded-sm
+            className={cn(`flex h-14 flex-col overflow-hidden rounded-sm
               bg-secondary px-4 py-2 text-on-secondary
-              dark:bg-secondary-container dark:text-on-secondary-container"
+              dark:bg-secondary-container dark:text-on-secondary-container`)}
           >
             <motion.span
               key={form.duration}
               layout="position"
-              className="skc-title-medium truncate"
+              className="skc-text skc-text--title-medium truncate"
             >
               {tx("class", {
                 number: form.classrooms.length
@@ -163,7 +164,7 @@ const AddPeriodDialog: DialogFC<{
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
                 transition={transition(duration.short4, easing.standard)}
-                className="skc-body-small"
+                className="skc-text skc-text--body-small"
               >
                 {getSubjectName(form.duration, subject, locale)}
               </motion.span>
