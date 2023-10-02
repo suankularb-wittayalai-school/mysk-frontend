@@ -38,7 +38,9 @@ const PeriodDetailsContent: FC<{
 
       {/* Room */}
       {period.classrooms && (
-        <section aria-labelledby="period-class">
+        <section
+          aria-labelledby="period-class"
+        >
           <Text
             type="title-medium"
             element={(props) => <h2 id="period-class" {...props} />}
@@ -56,7 +58,7 @@ const PeriodDetailsContent: FC<{
       )}
 
       {/* Room */}
-      {period.rooms && (
+      {period.rooms?.find((room) => room) && (
         <section aria-labelledby="period-room">
           <Text
             type="title-medium"

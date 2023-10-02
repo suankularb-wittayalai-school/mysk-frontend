@@ -356,8 +356,9 @@ const ScheduleAtAGlance: StylableFC<{
                       <div
                         className={cn(
                           `flex flex-col`,
-                          !(period.rooms && period.rooms.length > 0) &&
-                            `sm:col-span-2`,
+                          !(
+                            period.rooms && period.rooms?.find((room) => room)
+                          ) && `col-span-2`,
                         )}
                       >
                         {idx === 0 && (
@@ -382,7 +383,7 @@ const ScheduleAtAGlance: StylableFC<{
 
                       {/* Room */}
                       {displayPeriod.content.find(
-                        (period) => period.rooms?.length,
+                        (period) => period.rooms?.find((room) => room),
                       ) && (
                         <div className="flex flex-col">
                           {idx === 0 && (
