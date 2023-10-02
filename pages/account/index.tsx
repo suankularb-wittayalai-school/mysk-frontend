@@ -34,9 +34,9 @@ import createContact from "@/utils/backend/contact/createContact";
 import updateContact from "@/utils/backend/contact/updateContact";
 import { updatePerson } from "@/utils/backend/person/updatePerson";
 import getSubjectGroups from "@/utils/backend/subject/getSubjectGroups";
+import cn from "@/utils/helpers/cn";
 import { withLoading } from "@/utils/helpers/loading";
 import { getLocaleName, getLocaleString } from "@/utils/helpers/string";
-import { createTitleStr } from "@/utils/helpers/title";
 import { useForm } from "@/utils/hooks/form";
 import { useLocale } from "@/utils/hooks/i18n";
 import { useRefreshProps } from "@/utils/hooks/routing";
@@ -53,6 +53,7 @@ import {
   MaterialIcon,
   Section,
   Snackbar,
+  Text,
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
@@ -89,9 +90,11 @@ const BasicInfoSection: FC<{ person: Student | Teacher }> = ({ person }) => {
         {/* Text */}
         <div className="grow">
           {/* Name */}
-          <h2 className="skc-display-small">{getLocaleName(locale, person)}</h2>
+          <Text type="display-small" element="h2">
+            {getLocaleName(locale, person)}
+          </Text>
           {/* Role within the school */}
-          <p className="skc-headline-small">
+          <Text type="headline-small" element="p">
             {
               // For a teacher: Class Advisor at and Subject Group
               person.role === "teacher"
@@ -110,7 +113,7 @@ const BasicInfoSection: FC<{ person: Student | Teacher }> = ({ person }) => {
                     classNo: person.class_no,
                   })
             }
-          </p>
+          </Text>
         </div>
       </div>
       <Actions align="left">
@@ -302,8 +305,8 @@ const UserFieldsSection: FC<{
         formProps={formProps}
       />
       <Actions
-        className="sticky inset-0 bottom-20 z-20 !mx-0 bg-surface-1 px-4 py-4
-          sm:static sm:bg-transparent sm:p-0"
+        className={cn(`sticky inset-0 bottom-20 z-20 !mx-0 -my-4 bg-surface px-4
+          py-4 sm:static sm:my-0 sm:bg-transparent sm:p-0`)}
       >
         <Button
           appearance="outlined"
@@ -421,14 +424,15 @@ const AccountPage: CustomPage<{
   subjectGroups: SubjectGroup[];
 }> = ({ user, subjectGroups }) => {
   // Translation
-  const { t } = useTranslation(["account", "common"]);
+  const { t } = useTranslation("account");
+  const { t: tx } = useTranslation("common");
 
   return (
     <>
       <Head>
-        <title>{createTitleStr(t("title"), t)}</title>
+        <title>{tx("tabName", { tabName: t("title") })}</title>
       </Head>
-      <PageHeader title={t("title")} />
+      <PageHeader>{t("title")}</PageHeader>
       <ContentLayout>
         <BasicInfoSection {...{ person: user }} />
         <UserFieldsSection {...{ person: user, subjectGroups }} />
@@ -447,10 +451,6 @@ export const getServerSideProps: GetServerSideProps = async ({
     req: req as NextApiRequest,
     res: res as NextApiResponse,
   });
-
-  // const {
-  //   data: { session },
-  // } = await supabase.auth.getSession();
 
   const { data: user, error } = await getLoggedInPerson(
     supabase,
