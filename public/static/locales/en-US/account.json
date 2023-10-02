@@ -65,7 +65,7 @@
       "passportNumber": "Passport number",
       "passportNumber_error": "Invalid passport number or unsupported passport.",
       "allergies": "Allergies (in Thai)",
-      "allergies_helper": "Field is comma-seperated • Leave blank if you don’t have any",
+      "allergies_helper": "Field is comma-seperated • Leave blank if you don’t have any.",
       "shirtSize": {
         "label": "Shirt size",
         "metadata_one": "{{count, number}} inch",
