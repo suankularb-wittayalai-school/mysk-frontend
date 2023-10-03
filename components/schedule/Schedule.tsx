@@ -114,7 +114,7 @@ const Schedule: StylableFC<{
 
         <figure
           ref={scheduleRef}
-          className="relative overflow-x-auto overflow-y-hidden pb-2"
+          className="relative overflow-x-auto overflow-y-hidden pb-1"
         >
           {/* Now indicator line */}
           {isSchoolInSessionNow() === "in-session" && <NowLine />}
