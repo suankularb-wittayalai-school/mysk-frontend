@@ -21,7 +21,7 @@ import {
   TextField,
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
-import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import { Trans, useTranslation } from "next-i18next";
@@ -29,7 +29,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
 const LastPageCard: FC = () => {
   // Translation
@@ -148,35 +148,24 @@ const CheckEmailSection: FC<{ user: User }> = ({ user }) => {
   );
 };
 
-const CreatePasswordSection: FC = () => {
+const LoggingInPage: CustomPage<{ user: User }> = ({ user }) => {
   // Translation
   const { t } = useTranslation("welcome");
+  const { t: tx } = useTranslation("common");
+
+  // Routing
+  const router = useRouter();
 
   // Supabase
   const supabase = useSupabaseClient();
-  const user = useUser();
 
-  const [form, setForm] = useState({
-    password: "",
-    confirmPassword: "",
-  });
-
+  // Loading
   const [loading, toggleLoading] = useToggle();
-  const [success, toggleSuccess] = useToggle();
-  function handleSubmit() {
+
+  useEffect(() => {
+    // Flag the user as onboarded
     withLoading(
       async () => {
-        // Set new password
-        const { error: pwdError } = await supabase.auth.updateUser({
-          password: form.password,
-        });
-        if (pwdError) {
-          console.error(pwdError);
-          return false;
-        }
-
-        // Flag the user as onboarded
-
         // In Supabase’s internals
         const { error: sbUserError } = await supabase.auth.updateUser({
           data: { onboarded: true },
@@ -196,77 +185,12 @@ const CreatePasswordSection: FC = () => {
           return false;
         }
 
-        toggleSuccess();
         return true;
       },
       toggleLoading,
       { hasEndToggle: true },
     );
-  }
-
-  return (
-    <Section className="relative">
-      <BlockingPane
-        icon={<MaterialIcon icon="done" size={48} />}
-        open={success}
-      >
-        {t("loggingIn.createPassword.success")}
-      </BlockingPane>
-      <Header>{t("loggingIn.createPassword.title")}</Header>
-      <p>{t("loggingIn.createPassword.desc")}</p>
-      <Columns columns={6}>
-        <div className="col-span-4 flex flex-col gap-4 md:col-start-2">
-          <TextField
-            appearance="outlined"
-            label={t("loggingIn.createPassword.form.newPwd")}
-            error={form.password.length > 0 && form.password.length < 8}
-            value={form.password}
-            onChange={(value) =>
-              setForm({ ...form, password: value as string })
-            }
-            inputAttr={{ type: "password" }}
-          />
-          <TextField
-            appearance="outlined"
-            label={t("loggingIn.createPassword.form.confirmNewPwd")}
-            error={
-              form.confirmPassword.length > 0 &&
-              form.confirmPassword !== form.password
-            }
-            value={form.confirmPassword}
-            onChange={(value) =>
-              setForm({ ...form, confirmPassword: value as string })
-            }
-            inputAttr={{ type: "password" }}
-          />
-        </div>
-      </Columns>
-      <Actions>
-        <Button
-          appearance="tonal"
-          loading={loading || undefined}
-          onClick={handleSubmit}
-        >
-          {t("loggingIn.createPassword.action.set")}
-        </Button>
-      </Actions>
-    </Section>
-  );
-};
-
-const LoggingInPage: CustomPage<{ user: User }> = ({ user }) => {
-  // Translation
-  const { t } = useTranslation("welcome");
-  const { t: tx } = useTranslation("common");
-
-  // Routing
-  const router = useRouter();
-
-  // Supabase
-  const supabase = useSupabaseClient();
-
-  // Loading
-  const [loading, toggleLoading] = useToggle();
+  }, []);
 
   return (
     <>
@@ -293,8 +217,7 @@ const LoggingInPage: CustomPage<{ user: User }> = ({ user }) => {
                   .update({ onboarded: true })
                   .match({ id: user!.id });
                 if (userError) {
-                  // console.error(userError);
-                  logError("Done submit(onboarding user)", userError);
+                  logError("Done submit (onboarding user)", userError);
                   return false;
                 }
 
