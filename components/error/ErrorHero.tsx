@@ -1,5 +1,5 @@
 // Imports
-import { Columns } from "@suankularb-components/react";
+import { Columns, Text } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
 import Head from "next/head";
 import { FC, ReactNode } from "react";
@@ -23,11 +23,13 @@ const ErrorHero: FC<{
         {image}
         <div className="flex flex-col gap-6">
           <header className="flex flex-col gap-2">
-            <h1 className="skc-headline-large">{title}</h1>
+            <Text type="headline-large" element="h1">
+              {title}
+            </Text>
             {(code || verbose) && (
-              <p className="skc-title-large text-on-surface-variant">
+              <Text type="title-large" className="text-on-surface-variant">
                 {[code, verbose].filter((segment) => segment).join(": ")}
-              </p>
+              </Text>
             )}
           </header>
           {children}
