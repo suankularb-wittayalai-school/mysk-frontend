@@ -9,12 +9,12 @@ import SubjectPeriod from "@/components/schedule/SubjectPeriod";
 import SubjectsInChargeCard from "@/components/schedule/SubjectsInChargeCard";
 import ScheduleContext from "@/contexts/ScheduleContext";
 import cn from "@/utils/helpers/cn";
-import { useNow } from "@/utils/helpers/date";
 import {
   getCurrentPeriod,
   isInPeriod,
   isSchoolInSessionNow,
 } from "@/utils/helpers/schedule";
+import useNow from "@/utils/helpers/useNow";
 import { StylableFC } from "@/utils/types/common";
 import { PeriodLocation, Schedule } from "@/utils/types/schedule";
 import { Subject } from "@/utils/types/subject";
