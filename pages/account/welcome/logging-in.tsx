@@ -1,20 +1,14 @@
-// External libraries
-import {
-  createPagesServerClient,
-} from "@supabase/auth-helpers-nextjs";
-import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
-
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import Head from "next/head";
-import Link from "next/link";
-import { useRouter } from "next/router";
-
-import { Trans, useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
-import { FC, useState } from "react";
-
-// SK Components
+// Imports
+import BlockingPane from "@/components/common/BlockingPane";
+import PageHeader from "@/components/common/PageHeader";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import getUserByEmail from "@/utils/backend/account/getUserByEmail";
+import { logError } from "@/utils/helpers/debug";
+import { withLoading } from "@/utils/helpers/loading";
+import { useLocale } from "@/utils/hooks/i18n";
+import { useToggle } from "@/utils/hooks/toggle";
+import type { CustomPage, LangCode } from "@/utils/types/common";
+import { User } from "@/utils/types/person";
 import {
   Actions,
   Button,
@@ -26,30 +20,17 @@ import {
   Section,
   TextField,
 } from "@suankularb-components/react";
-
-// Internal components
-import BlockingPane from "@/components/common/BlockingPane";
-import PageHeader from "@/components/common/PageHeader";
-
-// Helpers
-import { logError } from "@/utils/helpers/debug";
-import { withLoading } from "@/utils/helpers/loading";
-import { createTitleStr } from "@/utils/helpers/title";
-
-// Hooks
-import { useLocale } from "@/utils/hooks/i18n";
-import { useToggle } from "@/utils/hooks/toggle";
-
-// Types
-import type { CustomPage, LangCode } from "@/utils/types/common";
-import { User } from "@/utils/types/person";
-
-//Backend
-import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
-import getUserByEmail from "@/utils/backend/account/getUserByEmail";
-import { log } from "console";
+import { Trans, useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Head from "next/head";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { FC, useState } from "react";
+
 const LastPageCard: FC = () => {
   // Translation
   const { t } = useTranslation("welcome");
@@ -110,7 +91,7 @@ const CheckEmailSection: FC<{ user: User }> = ({ user }) => {
         return true;
       },
       toggleLoading,
-      { hasEndToggle: true }
+      { hasEndToggle: true },
     );
   }
 
@@ -146,7 +127,7 @@ const CheckEmailSection: FC<{ user: User }> = ({ user }) => {
             setEmail(
               (value as string).endsWith("sk.ac.th")
                 ? (value as string).slice(0, -8)
-                : (value as string)
+                : (value as string),
             )
           }
           locale={locale}
@@ -219,7 +200,7 @@ const CreatePasswordSection: FC = () => {
         return true;
       },
       toggleLoading,
-      { hasEndToggle: true }
+      { hasEndToggle: true },
     );
   }
 
@@ -275,7 +256,8 @@ const CreatePasswordSection: FC = () => {
 
 const LoggingInPage: CustomPage<{ user: User }> = ({ user }) => {
   // Translation
-  const { t } = useTranslation(["welcome", "common"]);
+  const { t } = useTranslation("welcome");
+  const { t: tx } = useTranslation("common");
 
   // Routing
   const router = useRouter();
@@ -289,12 +271,11 @@ const LoggingInPage: CustomPage<{ user: User }> = ({ user }) => {
   return (
     <>
       <Head>
-        <title>{createTitleStr(t("loggingIn.title"), t)}</title>
+        <title>{tx("tabName", { tabName: t("loggingIn.title") })}</title>
       </Head>
-      <PageHeader
-        title={t("loggingIn.title")}
-        parentURL="/account/welcome/your-subjects"
-      />
+      <PageHeader parentURL="/account/welcome">
+        {t("loggingIn.title")}
+      </PageHeader>
       <ContentLayout>
         <LastPageCard />
         <Columns columns={2} className="!gap-y-8">
