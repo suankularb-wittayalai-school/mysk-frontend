@@ -16,7 +16,7 @@ import {
 } from "@suankularb-components/react";
 
 // Hooks
-import { useLocale } from "@/utils/hooks/i18n";
+import useLocale from "@/utils/helpers/useLocale";
 
 /**
  * Data Table for admin pages.

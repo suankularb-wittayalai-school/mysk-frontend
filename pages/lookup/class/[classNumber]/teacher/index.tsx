@@ -21,7 +21,7 @@ import { createTitleStr } from "@/utils/helpers/title";
 // Types
 import { SubjectGroupTeachers } from "@/utils/types/subject";
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { getCurrentAcademicYear } from "@/utils/helpers/date";
+import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import getTeachersOfClass from "@/utils/backend/classroom/getTeachersOfClass";
 
 const ClassTeachersPage: CustomPage<{

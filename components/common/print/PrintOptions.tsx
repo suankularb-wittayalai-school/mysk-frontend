@@ -15,7 +15,7 @@ import {
 import PrintPage from "@/components/common/print/PrintPage";
 
 // Hooks
-import { usePageIsLoading } from "@/utils/hooks/routing";
+import usePageIsLoading from "@/utils/helpers/usePageIsLoading";
 
 /**
  * Configurations for a print preview. The second child of

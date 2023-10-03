@@ -1,6 +1,6 @@
 // Imports
 import SnackbarContext from "@/contexts/SnackbarContext";
-import { useLocale } from "@/utils/hooks/i18n";
+import useLocale from "@/utils/helpers/useLocale";
 import {
   FormControlProps,
   FormControlValids,

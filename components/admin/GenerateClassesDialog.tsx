@@ -1,8 +1,8 @@
 // Imports
 import bulkCreateClassrooms from "@/utils/backend/classroom/bulkCreateClassrooms";
-import { withLoading } from "@/utils/helpers/loading";
+import withLoading from "@/utils/helpers/withLoading";
 import useForm from "@/utils/helpers/useForm";
-import { useToggle } from "@/utils/hooks/toggle";
+import useToggle from "@/utils/helpers/useToggle";
 import { DialogFC } from "@/utils/types/component";
 import {
   Button,

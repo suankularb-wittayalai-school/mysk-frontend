@@ -1,8 +1,8 @@
-import { logError } from "@/utils/helpers/debug";
-import { mergeDBLocales } from "@/utils/helpers/string";
+import logError from "@/utils/helpers/logError";
+import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
 import { Classroom } from "@/utils/types/classroom";
-import { getCurrentAcademicYear } from "@/utils/helpers/date";
+import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 
 export default async function getLookupClassrooms(
   supabase: DatabaseClient,

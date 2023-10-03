@@ -2,8 +2,8 @@
 import PeriodDetailsContent from "@/components/schedule/PeriodDetailsContent";
 import ScheduleContext from "@/contexts/ScheduleContext";
 import cn from "@/utils/helpers/cn";
-import { getLocaleString } from "@/utils/helpers/string";
-import { useLocale } from "@/utils/hooks/i18n";
+import getLocaleString from "@/utils/helpers/getLocaleString";
+import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import { PeriodContentItem } from "@/utils/types/schedule";
 import {

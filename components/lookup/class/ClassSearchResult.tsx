@@ -8,10 +8,10 @@ import { FC } from "react";
 import { ListItem, ListItemContent } from "@suankularb-components/react";
 
 // Helpers
-import { getLocaleName } from "@/utils/helpers/string";
+import getLocaleName from "@/utils/helpers/getLocaleName";
 
 // Hooks
-import { useLocale } from "@/utils/hooks/i18n";
+import useLocale from "@/utils/helpers/useLocale";
 
 // Types
 import { Classroom } from "@/utils/types/classroom";

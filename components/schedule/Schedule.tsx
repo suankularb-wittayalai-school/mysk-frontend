@@ -9,11 +9,9 @@ import SubjectPeriod from "@/components/schedule/SubjectPeriod";
 import SubjectsInChargeCard from "@/components/schedule/SubjectsInChargeCard";
 import ScheduleContext from "@/contexts/ScheduleContext";
 import cn from "@/utils/helpers/cn";
-import {
-  getCurrentPeriod,
-  isInPeriod,
-  isSchoolInSessionNow,
-} from "@/utils/helpers/schedule";
+import getCurrentPeriod from "@/utils/helpers/schedule/getCurrentPeriod";
+import isInPeriod from "@/utils/helpers/schedule/isInPeriod";
+import isSchoolInSessionNow from "@/utils/helpers/schedule/isSchoolInSessionNow";
 import useNow from "@/utils/helpers/useNow";
 import { StylableFC } from "@/utils/types/common";
 import { PeriodLocation, Schedule } from "@/utils/types/schedule";

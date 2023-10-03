@@ -48,19 +48,19 @@ import PageHeader from "@/components/common/PageHeader";
 // Backend
 
 // Helpers
-import { withLoading } from "@/utils/helpers/loading";
+import withLoading from "@/utils/helpers/withLoading";
 import { createTitleStr } from "@/utils/helpers/title";
 
 // Hooks
-import { useLocale } from "@/utils/hooks/i18n";
-import { useToggle } from "@/utils/hooks/toggle";
+import useLocale from "@/utils/helpers/useLocale";
+import useToggle from "@/utils/helpers/useToggle";
 
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Student } from "@/utils/types/person";
 import ConfirmDeleteDialog from "@/components/common/ConfirmDeleteDialog";
 import { getStudentsForAdmin } from "@/utils/backend/person/getStudentForAdmin";
-import { getLocaleName } from "@/utils/helpers/string";
+import getLocaleName from "@/utils/helpers/getLocaleName";
 
 /**
  * The number of rows visible per page. Used in pagination.

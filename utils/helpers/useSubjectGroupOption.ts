@@ -2,7 +2,7 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { SubjectGroup } from "@/utils/types/subject";
 import { useState, useEffect } from "react";
 
-export function useSubjectGroupOption() {
+export default function useSubjectGroupOption() {
   const supabase = useSupabaseClient();
   const [subjectGroups, setSubjectGroups] = useState<SubjectGroup[]>([]);
 

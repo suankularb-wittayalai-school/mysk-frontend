@@ -10,10 +10,10 @@ import {
 } from "@suankularb-components/react";
 import DynamicAvatar from "@/components/common/DynamicAvatar";
 import SnackbarContext from "@/contexts/SnackbarContext";
-import { withLoading } from "@/utils/helpers/loading";
-import { getLocaleName } from "@/utils/helpers/string";
-import { useLocale } from "@/utils/hooks/i18n";
-import { useToggle } from "@/utils/hooks/toggle";
+import withLoading from "@/utils/helpers/withLoading";
+import getLocaleName from "@/utils/helpers/getLocaleName";
+import useLocale from "@/utils/helpers/useLocale";
+import useToggle from "@/utils/helpers/useToggle";
 import { Teacher } from "@/utils/types/person";
 import getTeachersByFirstName from "@/utils/backend/person/getTeacherByFirstName";
 

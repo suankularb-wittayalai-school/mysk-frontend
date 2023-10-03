@@ -1,8 +1,8 @@
 // Imports
 import PersonDetailsContent from "@/components/lookup/person/PersonDetailsContent";
 import PersonHeader from "@/components/lookup/person/PersonHeader";
-import { getLocaleName } from "@/utils/helpers/string";
-import { useLocale } from "@/utils/hooks/i18n";
+import getLocaleName from "@/utils/helpers/getLocaleName";
+import useLocale from "@/utils/helpers/useLocale";
 import { Card, Progress } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
 import Head from "next/head";

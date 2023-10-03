@@ -1,7 +1,7 @@
 // Imports
 import MultilangText from "@/components/common/MultilingualText";
-import { getLocaleName } from "@/utils/helpers/string";
-import { useLocale } from "@/utils/hooks/i18n";
+import getLocaleName from "@/utils/helpers/getLocaleName";
+import useLocale from "@/utils/helpers/useLocale";
 import { PeriodContentItem } from "@/utils/types/schedule";
 import { Text } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";

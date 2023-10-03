@@ -1,6 +1,6 @@
 // Imports
 import MultiSchemeImage from "@/components/common/MultiSchemeImage";
-import { useOneTapSignin } from "@/utils/helpers/auth";
+import useOneTapSignin from "@/utils/helpers/useOneTapSignin";
 import { StylableFC } from "@/utils/types/common";
 import {
   Button,

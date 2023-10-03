@@ -51,13 +51,13 @@ import PageHeader from "@/components/common/PageHeader";
 
 // Helpers
 import { getLocaleYear } from "@/utils/helpers/date";
-import { withLoading } from "@/utils/helpers/loading";
-import { getLocaleName } from "@/utils/helpers/string";
+import withLoading from "@/utils/helpers/withLoading";
+import getLocaleName from "@/utils/helpers/getLocaleName";
 import { createTitleStr } from "@/utils/helpers/title";
 
 // Hooks
-import { useLocale } from "@/utils/hooks/i18n";
-import { useToggle } from "@/utils/hooks/toggle";
+import useLocale from "@/utils/helpers/useLocale";
+import useToggle from "@/utils/helpers/useToggle";
 
 // Types
 import { Classroom } from "@/utils/types/classroom";

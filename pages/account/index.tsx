@@ -19,14 +19,6 @@ import PersonFields from "@/components/account/PersonFields";
 import DynamicAvatar from "@/components/common/DynamicAvatar";
 import PageHeader from "@/components/common/PageHeader";
 import SnackbarContext from "@/contexts/SnackbarContext";
-// import { createContact, updateContact } from "@/utils/backend/contact";
-// import {
-//   addContactToPerson,
-//   editPerson,
-//   getPersonFromUser,
-//   removeContactFromPerson,
-// } from "@/utils/backend/person/person";
-// import { getSubjectGroups } from "@/utils/backend/subject/subjectGroup";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import addContactToPerson from "@/utils/backend/contact/addContactToPerson";
@@ -35,12 +27,13 @@ import updateContact from "@/utils/backend/contact/updateContact";
 import { updatePerson } from "@/utils/backend/person/updatePerson";
 import getSubjectGroups from "@/utils/backend/subject/getSubjectGroups";
 import cn from "@/utils/helpers/cn";
-import { withLoading } from "@/utils/helpers/loading";
-import { getLocaleName, getLocaleString } from "@/utils/helpers/string";
+import getLocaleName from "@/utils/helpers/getLocaleName";
+import getLocaleString from "@/utils/helpers/getLocaleString";
 import useForm from "@/utils/helpers/useForm";
-import { useLocale } from "@/utils/hooks/i18n";
-import { useRefreshProps } from "@/utils/hooks/routing";
-import { useToggle } from "@/utils/hooks/toggle";
+import useLocale from "@/utils/helpers/useLocale";
+import useRefreshProps from "@/utils/helpers/useRefreshProps";
+import useToggle from "@/utils/helpers/useToggle";
+import withLoading from "@/utils/helpers/withLoading";
 import { pantsSizeRegex } from "@/utils/patterns";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Contact } from "@/utils/types/contact";

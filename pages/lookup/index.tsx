@@ -8,8 +8,8 @@ import LookupDocumentsLight from "@/public/images/graphics/lookup/document-light
 import LookupPeopleDark from "@/public/images/graphics/lookup/person-dark.svg";
 import LookupPeopleLight from "@/public/images/graphics/lookup/person-light.svg";
 import cn from "@/utils/helpers/cn";
-import { getCurrentAcademicYear } from "@/utils/helpers/date";
-import { useLocale } from "@/utils/hooks/i18n";
+import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
+import useLocale from "@/utils/helpers/useLocale";
 import { supabase } from "@/utils/supabase-backend";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import {

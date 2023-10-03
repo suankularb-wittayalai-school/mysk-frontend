@@ -2,13 +2,11 @@
 import HoverList from "@/components/person/HoverList";
 import GlanceCountdown from "@/components/schedule/GlanceCountdown";
 import cn from "@/utils/helpers/cn";
-import {
-  getCurrentPeriod,
-  getTodaySetToPeriodTime,
-} from "@/utils/helpers/schedule";
-import { getLocaleString } from "@/utils/helpers/string";
+import getLocaleString from "@/utils/helpers/getLocaleString";
+import getCurrentPeriod from "@/utils/helpers/schedule/getCurrentPeriod";
+import getTodaySetToPeriodTime from "@/utils/helpers/schedule/getTodaySetToPeriodTime";
+import useLocale from "@/utils/helpers/useLocale";
 import useNow from "@/utils/helpers/useNow";
-import { useLocale } from "@/utils/hooks/i18n";
 import { StylableFC } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
 import { Schedule, SchedulePeriod } from "@/utils/types/schedule";

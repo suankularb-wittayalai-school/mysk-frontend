@@ -22,10 +22,11 @@ import { Info } from "@/utils/types/news";
 
 // Helpers
 import { createTitleStr } from "@/utils/helpers/title";
-import { getLocaleString, mergeDBLocales } from "@/utils/helpers/string";
+import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
+import getLocaleString from "@/utils/helpers/getLocaleString";
 
 // Hooks
-import { useLocale } from "@/utils/hooks/i18n";
+import useLocale from "@/utils/helpers/useLocale";
 import { supabase } from "@/utils/supabase-backend";
 
 const InfoPage: CustomPage<{ infoPage: Info }> = ({ infoPage }) => {

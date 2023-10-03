@@ -3,7 +3,7 @@ import ClassStudents from "@/components/class/ClassStudents";
 import PageHeader from "@/components/common/PageHeader";
 import ClassTabs from "@/components/lookup/class/ClassTabs";
 import getStudentsOfClass from "@/utils/backend/classroom/getStudentsOfClass";
-import { getCurrentAcademicYear } from "@/utils/helpers/date";
+import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import { createTitleStr } from "@/utils/helpers/title";
 import { supabase } from "@/utils/supabase-backend";
 import { CustomPage, LangCode } from "@/utils/types/common";

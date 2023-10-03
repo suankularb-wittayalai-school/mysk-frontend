@@ -1,7 +1,7 @@
 // Imports
 import AllergiesField from "@/components/person/AllergiesField";
-import { getLocaleString } from "@/utils/helpers/string";
-import { useLocale } from "@/utils/hooks/i18n";
+import getLocaleString from "@/utils/helpers/getLocaleString";
+import useLocale from "@/utils/helpers/useLocale";
 import { FormControlProps, FormControlValues } from "@/utils/types/common";
 import { SubjectGroup } from "@/utils/types/subject";
 import {

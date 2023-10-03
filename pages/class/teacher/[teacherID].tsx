@@ -17,11 +17,11 @@ import PersonDetailsContent from "@/components/lookup/person/PersonDetailsConten
 // Backend
 import { getTeacherByID } from "@/utils/backend/person/getTeacherByID";
 // Helpers
-import { getLocaleName } from "@/utils/helpers/string";
+import getLocaleName from "@/utils/helpers/getLocaleName";
 import { createTitleStr } from "@/utils/helpers/title";
 
 // Hooks
-import { useLocale } from "@/utils/hooks/i18n";
+import useLocale from "@/utils/helpers/useLocale";
 
 // Types
 import { CustomPage, LangCode } from "@/utils/types/common";

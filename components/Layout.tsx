@@ -3,11 +3,12 @@ import LogOutDialog from "@/components/account/LogOutDialog";
 import RailLogo from "@/components/brand/RailLogo";
 import SchemeIcon from "@/components/icons/SchemeIcon";
 import AppStateContext from "@/contexts/AppStateContext";
-import { useLoggedInPerson } from "@/utils/helpers/auth";
-import { useLocale } from "@/utils/hooks/i18n";
-import { usePreferences } from "@/utils/hooks/preferences";
-import { usePageIsLoading, useRefreshProps } from "@/utils/hooks/routing";
-import { useSnackbar } from "@/utils/hooks/snackbar";
+import useLocale from "@/utils/helpers/useLocale";
+import useLoggedInPerson from "@/utils/helpers/useLoggedInPerson";
+import usePageIsLoading from "@/utils/helpers/usePageIsLoading";
+import usePreferences from "@/utils/helpers/usePreferences";
+import useRefreshProps from "@/utils/helpers/useRefreshProps";
+import useSnackbar from "@/utils/helpers/useSnackbar";
 import { CustomPage } from "@/utils/types/common";
 import {
   MaterialIcon,

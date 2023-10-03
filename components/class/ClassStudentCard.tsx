@@ -1,8 +1,9 @@
 // Imports
 import DynamicAvatar from "@/components/common/DynamicAvatar";
 import cn from "@/utils/helpers/cn";
-import { getLocaleName, getLocaleString } from "@/utils/helpers/string";
-import { useLocale } from "@/utils/hooks/i18n";
+import getLocaleName from "@/utils/helpers/getLocaleName";
+import getLocaleString from "@/utils/helpers/getLocaleString";
+import useLocale from "@/utils/helpers/useLocale";
 import { Student } from "@/utils/types/person";
 import {
   Card,

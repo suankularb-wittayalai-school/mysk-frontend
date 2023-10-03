@@ -1,7 +1,7 @@
 // Imports
-import { useLocale } from "@/utils/hooks/i18n";
-import { usePreferences } from "@/utils/hooks/preferences";
-import { useRefreshProps } from "@/utils/hooks/routing";
+import useLocale from "@/utils/helpers/useLocale";
+import usePreferences from "@/utils/helpers/usePreferences";
+import useRefreshProps from "@/utils/helpers/useRefreshProps";
 import { LangCode, StylableFC } from "@/utils/types/common";
 import { SegmentedButton, Button, Text } from "@suankularb-components/react";
 import { useState } from "react";

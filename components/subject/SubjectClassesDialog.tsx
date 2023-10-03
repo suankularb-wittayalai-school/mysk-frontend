@@ -1,4 +1,38 @@
 // Imports
+import ConfirmDeleteDialog from "@/components/common/ConfirmDeleteDialog";
+import MultilangText from "@/components/common/MultilingualText";
+import BrandIcon from "@/components/icons/BrandIcon";
+import ClassroomSubjectDialog from "@/components/subject/ClassroomSubjectDialog";
+import SnackbarContext from "@/contexts/SnackbarContext";
+import deleteClassroomSubject from "@/utils/backend/subject/deleteClassroomSubject";
+import getClassroomSubjectsOfSubject from "@/utils/backend/subject/getClassroomSubjectsOfSubject";
+import getLocaleName from "@/utils/helpers/getLocaleName";
+import getLocaleString from "@/utils/helpers/getLocaleString";
+import useLocale from "@/utils/helpers/useLocale";
+import useRefreshProps from "@/utils/helpers/useRefreshProps";
+import useToggle from "@/utils/helpers/useToggle";
+import withLoading from "@/utils/helpers/withLoading";
+import { DialogFC } from "@/utils/types/component";
+import { ClassroomSubject, Subject } from "@/utils/types/subject";
+import {
+  Actions,
+  Button,
+  Columns,
+  DataTable,
+  DataTableBody,
+  DataTableColumnDef,
+  DataTableContent,
+  DataTableHead,
+  DataTablePagination,
+  DataTableSearch,
+  FullscreenDialog,
+  MaterialIcon,
+  Progress,
+  SegmentedButton,
+  Snackbar,
+  transition,
+  useAnimationConfig,
+} from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import {
   PaginationState,
@@ -19,40 +53,6 @@ import {
   useMemo,
   useState,
 } from "react";
-import {
-  Actions,
-  Button,
-  Columns,
-  DataTable,
-  DataTableBody,
-  DataTableColumnDef,
-  DataTableContent,
-  DataTableHead,
-  DataTablePagination,
-  DataTableSearch,
-  FullscreenDialog,
-  MaterialIcon,
-  Progress,
-  SegmentedButton,
-  Snackbar,
-  transition,
-  useAnimationConfig,
-} from "@suankularb-components/react";
-import ConfirmDeleteDialog from "@/components/common/ConfirmDeleteDialog";
-import MultilangText from "@/components/common/MultilingualText";
-import BrandIcon from "@/components/icons/BrandIcon";
-import ClassroomSubjectDialog from "@/components/subject/ClassroomSubjectDialog";
-import SnackbarContext from "@/contexts/SnackbarContext";
-import { getLocaleString } from "@/utils/helpers/string";
-import { withLoading } from "@/utils/helpers/loading";
-import { getLocaleName } from "@/utils/helpers/string";
-import { useLocale } from "@/utils/hooks/i18n";
-import { useToggle } from "@/utils/hooks/toggle";
-import { useRefreshProps } from "@/utils/hooks/routing";
-import { ClassroomSubject, Subject } from "@/utils/types/subject";
-import { DialogFC } from "@/utils/types/component";
-import getClassroomSubjectsOfSubject from "@/utils/backend/subject/getClassroomSubjectsOfSubject";
-import deleteClassroomSubject from "@/utils/backend/subject/deleteClassroomSubject";
 
 /**
  * Row actions for a Class this subject is taught to.

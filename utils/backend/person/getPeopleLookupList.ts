@@ -1,8 +1,8 @@
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
 import { PersonLookupItem, UserRole } from "@/utils/types/person";
-import { logError } from "@/utils/helpers/debug";
-import { mergeDBLocales } from "@/utils/helpers/string";
-import { getCurrentAcademicYear } from "@/utils/helpers/date";
+import logError from "@/utils/helpers/logError";
+import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
+import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 
 export async function getPeopleLookupList(
   supabase: DatabaseClient,

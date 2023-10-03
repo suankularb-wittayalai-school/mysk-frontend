@@ -4,10 +4,10 @@ import TeachersField from "@/components/person/TeachersField";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import { createClassroomSubject } from "@/utils/backend/subject/createClassroomSubject";
 import { updateClassroomSubject } from "@/utils/backend/subject/updateClassroomSubject";
-import { useLoggedInPerson } from "@/utils/helpers/auth";
-import { withLoading } from "@/utils/helpers/loading";
 import useForm from "@/utils/helpers/useForm";
-import { useToggle } from "@/utils/hooks/toggle";
+import useLoggedInPerson from "@/utils/helpers/useLoggedInPerson";
+import useToggle from "@/utils/helpers/useToggle";
+import withLoading from "@/utils/helpers/withLoading";
 import {
   classRegex,
   ggMeetLinkRegex,

@@ -45,13 +45,13 @@ import PageHeader from "@/components/common/PageHeader";
 // Backend
 
 // Helpers
-import { withLoading } from "@/utils/helpers/loading";
-import { getLocaleString } from "@/utils/helpers/string";
+import withLoading from "@/utils/helpers/withLoading";
+import getLocaleString from "@/utils/helpers/getLocaleString";
 import { createTitleStr } from "@/utils/helpers/title";
 
 // Hooks
-import { useLocale } from "@/utils/hooks/i18n";
-import { useToggle } from "@/utils/hooks/toggle";
+import useLocale from "@/utils/helpers/useLocale";
+import useToggle from "@/utils/helpers/useToggle";
 
 // Types
 import { getSubjectsForAdmin } from "@/utils/backend/subject/getSubjectsForAdmin";

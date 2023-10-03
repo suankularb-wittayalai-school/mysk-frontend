@@ -7,9 +7,9 @@ import { getStudentByID } from "@/utils/backend/person/getStudentByID";
 import { getStudentsByIDs } from "@/utils/backend/person/getStudentsByIDs";
 import cn from "@/utils/helpers/cn";
 import { useGetVCard } from "@/utils/helpers/contact";
-import { withLoading } from "@/utils/helpers/loading";
-import { getLocaleName } from "@/utils/helpers/string";
-import { useToggle } from "@/utils/hooks/toggle";
+import withLoading from "@/utils/helpers/withLoading";
+import getLocaleName from "@/utils/helpers/getLocaleName";
+import useToggle from "@/utils/helpers/useToggle";
 import { Student } from "@/utils/types/person";
 import {
   Actions,

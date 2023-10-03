@@ -8,7 +8,7 @@ import { PostgrestError } from "@supabase/supabase-js";
  * @param error A `PostgrestError`.
  * @param clientSide If the error happened client-side.
  */
-export function logError(location: string, error: Partial<PostgrestError>) {
+export default function logError(location: string, error: Partial<PostgrestError>) {
   console.error(
     [
       // Header

@@ -1,4 +1,4 @@
-import { useLocale } from "@/utils/hooks/i18n";
+import useLocale from "@/utils/helpers/useLocale";
 import { roomRegex } from "@/utils/patterns";
 import { ChipField, ChipSet, InputChip } from "@suankularb-components/react";
 import { last, replace } from "radash";

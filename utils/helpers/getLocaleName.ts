@@ -1,43 +1,7 @@
 // Imports
-import { LangCode, MultiLangString } from "@/utils/types/common";
+import getFirstLetterOfName from "@/utils/helpers/getFirstLetterOfName";
+import { LangCode } from "@/utils/types/common";
 import { Person } from "@/utils/types/person";
-
-/**
- * Vowels that can be at the start of Thai words.
- */
-const THAI_STARTING_VOWELS = ["เ", "แ", "โ", "ไ", "ใ"];
-
-/**
- * If a given string starts with a vowel (“เ”, “แ”, “โ”, “ไ”, “ใ”).
- * @param string A string to test.
- * @returns True if it does, false if not.
- */
-export function startsWithThaiVowel(string: string) {
-  return THAI_STARTING_VOWELS.includes(string?.[0]);
-}
-
-export function getFirstLetterOfName(name: string) {
-  return name
-    .split("")
-    .find((letter) => !THAI_STARTING_VOWELS.includes(letter));
-}
-
-export function getLocaleString(
-  multiLangString: MultiLangString,
-  locale: LangCode,
-): string {
-  return multiLangString[locale] || multiLangString.th;
-}
-
-export function getLocalePath(path: string, locale: LangCode): string {
-  return [locale == "th" ? "" : "/en-US", path].join("");
-}
-
-export function mergeDBLocales(data?: any, key?: string): MultiLangString {
-  return data && key
-    ? { th: data[`${key}_th`], "en-US": data[`${key}_en`] }
-    : { th: "", "en-US": null };
-}
 
 /**
  * Joins segments of a name into a single string.
@@ -53,7 +17,7 @@ export function mergeDBLocales(data?: any, key?: string): MultiLangString {
  *
  * @returns The name formatted into a single string.
  */
-export function getLocaleName(
+export default function getLocaleName(
   locale: LangCode,
   name: Partial<
     Pick<Person, "prefix" | "first_name" | "middle_name" | "last_name">

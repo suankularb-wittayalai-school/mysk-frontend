@@ -7,7 +7,7 @@ import AppStateContext from "@/contexts/AppStateContext";
 import PreviousRouteContext from "@/contexts/PreviousRouteContext";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import "@/styles/global.css";
-import { usePreviousPath } from "@/utils/hooks/routing";
+import usePreviousPath from "@/utils/helpers/usePreviousPath";
 import { ColorScheme, CustomAppProps } from "@/utils/types/common";
 import { Database } from "@/utils/types/supabase";
 import { ThemeProvider } from "@suankularb-components/react";

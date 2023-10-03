@@ -34,11 +34,12 @@ import SnackbarContext from "@/contexts/SnackbarContext";
 // } from "@/utils/backend/contact";
 
 // Helpers
-import { getLocaleName, getLocaleString } from "@/utils/helpers/string";
+import getLocaleName from "@/utils/helpers/getLocaleName";
+import getLocaleString from "@/utils/helpers/getLocaleString";
 
 // Hooks
-import { useLocale } from "@/utils/hooks/i18n";
-import { useRefreshProps } from "@/utils/hooks/routing";
+import useLocale from "@/utils/helpers/useLocale";
+import useRefreshProps from "@/utils/helpers/useRefreshProps";
 import { Classroom } from "@/utils/types/classroom";
 import { Contact } from "@/utils/types/contact";
 import { Teacher } from "@/utils/types/person";

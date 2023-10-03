@@ -3,10 +3,10 @@ import BlockingPane from "@/components/common/BlockingPane";
 import PageHeader from "@/components/common/PageHeader";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getUserByEmail from "@/utils/backend/account/getUserByEmail";
-import { logError } from "@/utils/helpers/debug";
-import { withLoading } from "@/utils/helpers/loading";
-import { useLocale } from "@/utils/hooks/i18n";
-import { useToggle } from "@/utils/hooks/toggle";
+import logError from "@/utils/helpers/logError";
+import useLocale from "@/utils/helpers/useLocale";
+import useToggle from "@/utils/helpers/useToggle";
+import withLoading from "@/utils/helpers/withLoading";
 import type { CustomPage, LangCode } from "@/utils/types/common";
 import { User } from "@/utils/types/person";
 import {

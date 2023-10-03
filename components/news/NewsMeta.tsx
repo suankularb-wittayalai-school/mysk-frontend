@@ -3,10 +3,10 @@ import Head from "next/head";
 import { FC } from "react";
 
 // Helpers
-import { getLocaleString } from "@/utils/helpers/string";
+import getLocaleString from "@/utils/helpers/getLocaleString";
 
 // Hooks
-import { useLocale } from "@/utils/hooks/i18n";
+import useLocale from "@/utils/helpers/useLocale";
 
 // Types
 import { Info } from "@/utils/types/news";

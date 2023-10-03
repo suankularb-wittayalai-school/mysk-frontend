@@ -1,4 +1,4 @@
-export async function withLoading(
+export default async function withLoading(
   callback: () => boolean | Promise<boolean>,
   toggleLoading: () => void,
   options?: Partial<{ hasEndToggle: boolean }>

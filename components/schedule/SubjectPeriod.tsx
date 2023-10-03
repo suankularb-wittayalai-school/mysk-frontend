@@ -7,16 +7,14 @@ import deleteScheduleItem from "@/utils/backend/schedule/deleteScheduleItem";
 import lengthenScheduleItem from "@/utils/backend/schedule/lengthenScheduleItem";
 import moveScheduleItem from "@/utils/backend/schedule/moveScheduleItem";
 import cn from "@/utils/helpers/cn";
-import { withLoading } from "@/utils/helpers/loading";
-import {
-  getSubjectName,
-  periodDurationToWidth,
-  positionPxToPeriod,
-} from "@/utils/helpers/schedule";
-import { getLocaleString } from "@/utils/helpers/string";
-import { useLocale } from "@/utils/hooks/i18n";
-import { useRefreshProps } from "@/utils/hooks/routing";
-import { useToggle } from "@/utils/hooks/toggle";
+import getLocaleString from "@/utils/helpers/getLocaleString";
+import { getSubjectName } from "@/utils/helpers/getSubjectName";
+import periodDurationToWidth from "@/utils/helpers/schedule/periodDurationToWidth";
+import positionPxToPeriod from "@/utils/helpers/schedule/positionPxToPeriod";
+import useLocale from "@/utils/helpers/useLocale";
+import useRefreshProps from "@/utils/helpers/useRefreshProps";
+import useToggle from "@/utils/helpers/useToggle";
+import withLoading from "@/utils/helpers/withLoading";
 import { PeriodContentItem } from "@/utils/types/schedule";
 import {
   Interactive,

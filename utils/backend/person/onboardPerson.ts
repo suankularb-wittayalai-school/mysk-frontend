@@ -1,4 +1,4 @@
-import { logError } from "@/utils/helpers/debug";
+import logError from "@/utils/helpers/logError";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
 import { Student, Teacher } from "@/utils/types/person";
 

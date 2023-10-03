@@ -1,9 +1,10 @@
-// External libraries
-import { LayoutGroup, motion } from "framer-motion";
-import { useTranslation } from "next-i18next";
-import { FC } from "react";
-
-// SK Components
+// Imports
+import BrandIcon from "@/components/icons/BrandIcon";
+import HoverList from "@/components/person/HoverList";
+import getLocaleName from "@/utils/helpers/getLocaleName";
+import getLocaleString from "@/utils/helpers/getLocaleString";
+import useLocale from "@/utils/helpers/useLocale";
+import { ClassroomSubject } from "@/utils/types/subject";
 import {
   Button,
   Card,
@@ -14,20 +15,9 @@ import {
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
-
-// Internal components
-import BrandIcon from "@/components/icons/BrandIcon";
-import HoverList from "@/components/person/HoverList";
-
-// Types
-import { ClassroomSubject } from "@/utils/types/subject";
-
-// Helpers
-import { getLocaleString } from "@/utils/helpers/string";
-import { getLocaleName } from "@/utils/helpers/string";
-
-// Hooks
-import { useLocale } from "@/utils/hooks/i18n";
+import { LayoutGroup, motion } from "framer-motion";
+import { useTranslation } from "next-i18next";
+import { FC } from "react";
 
 const SubjectList: FC<{
   subjectList: ClassroomSubject[];

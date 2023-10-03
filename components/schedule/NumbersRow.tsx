@@ -1,6 +1,6 @@
 // Imports
 import cn from "@/utils/helpers/cn";
-import { periodTimes } from "@/utils/helpers/schedule";
+import { PERIOD_TIMES } from "@/utils/helpers/schedule/setDateToPeriodTime";
 import { StylableFC } from "@/utils/types/common";
 import { Text } from "@suankularb-components/react";
 import { list } from "radash";
@@ -29,7 +29,7 @@ const NumbersRow: StylableFC = ({ style, className }) => (
             {list(i - 1, i)
               .map((j) =>
                 // Get the start/end time of this Period
-                Object.values(periodTimes[j])
+                Object.values(PERIOD_TIMES[j])
                   // Format the hours and minutes parts of the time
                   .map((part) => part.toString().padStart(2, "0"))
                   // Join those parts

@@ -9,7 +9,7 @@ import MySKLogo from "@/public/images/drawer/mysk.png";
 import SchoolICTLogo from "@/public/images/drawer/school-ict.png";
 import ShoppingLogo from "@/public/images/drawer/shopping.png";
 import SKACTHLogo from "@/public/images/drawer/sk-ac-th.png";
-import { useLocale } from "@/utils/hooks/i18n";
+import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import {
   AppDrawerItem,

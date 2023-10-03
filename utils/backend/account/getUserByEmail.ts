@@ -1,6 +1,6 @@
 // Imports
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
-import { logError } from "@/utils/helpers/debug";
+import logError from "@/utils/helpers/logError";
 import { User } from "@/utils/types/person";
 
 /**

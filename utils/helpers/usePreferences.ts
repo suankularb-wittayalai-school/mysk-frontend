@@ -1,10 +1,6 @@
-// External libraries
+// Imports
 import { useEffect, useState } from "react";
-
-// Hooks
-import { useLocale } from "@/utils/hooks/i18n";
-
-// Types
+import useLocale from "@/utils/helpers/useLocale";
 import { ColorScheme, Preferences } from "@/utils/types/common";
 
 /**
@@ -14,7 +10,7 @@ import { ColorScheme, Preferences } from "@/utils/types/common";
  * `preferences` — live user preferences from local storage;
  * `setPreference` — set the value of a specific preferences key.
  */
-export function usePreferences() {
+export default function usePreferences() {
   const locale = useLocale();
 
   const [preferences, setPreferences] = useState<Preferences | null>(null);

@@ -1,9 +1,9 @@
 // Imports
 import PeriodDetailsContent from "@/components/schedule/PeriodDetailsContent";
 import cn from "@/utils/helpers/cn";
-import { periodTimes } from "@/utils/helpers/schedule";
-import { getLocaleString } from "@/utils/helpers/string";
-import { useLocale } from "@/utils/hooks/i18n";
+import getLocaleString from "@/utils/helpers/getLocaleString";
+import { PERIOD_TIMES } from "@/utils/helpers/schedule/setDateToPeriodTime";
+import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import { DialogFC } from "@/utils/types/component";
 import { PeriodContentItem, SchedulePeriod } from "@/utils/types/schedule";
@@ -45,7 +45,7 @@ const SubjectPeriodCard: StylableFC<{
             {[period.start_time - 1, period.start_time + period.duration - 1]
               .map((j) =>
                 // Get the start/end time of this Period
-                Object.values(periodTimes[j])
+                Object.values(PERIOD_TIMES[j])
                   // Format the hours and minutes parts of the time
                   .map((part) => part.toString().padStart(2, "0"))
                   // Join those parts

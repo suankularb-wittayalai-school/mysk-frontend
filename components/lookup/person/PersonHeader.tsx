@@ -2,8 +2,8 @@
 import DynamicAvatar from "@/components/common/DynamicAvatar";
 import PersonActions from "@/components/lookup/person/PersonActions";
 import cn from "@/utils/helpers/cn";
-import { getLocaleName } from "@/utils/helpers/string";
-import { useLocale } from "@/utils/hooks/i18n";
+import getLocaleName from "@/utils/helpers/getLocaleName";
+import useLocale from "@/utils/helpers/useLocale";
 import { Header } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
 import { ComponentProps, FC } from "react";

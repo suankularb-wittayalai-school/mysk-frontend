@@ -7,23 +7,20 @@ import { sum } from "radash";
  * @param citizenID Citizen ID
  * @returns `true` if citizen ID is valid, `false` if not
  */
-export function validateCitizenID(citizenID: string): boolean {
+export default function validateCitizenID(citizenID: string): boolean {
   // Citizen ID has enough digits
   if (!citizenID || !citizenIDRegex.test(citizenID)) return false;
   const citizenIDDigits = citizenID.split("").map((digit) => Number(digit));
 
   // Citizen ID has valid checksum
-
   // - Checksum is the last digit
   // - Mulitplied sum is calculated from the sum of each digit multiplied by
   //   its index (counting down from 13)
-
   // checksum = 11 - (multiplied sum % 11) % 10
-
   if (
     (11 -
       (sum(
-        citizenIDDigits.slice(0, 12).map((digit, idx) => digit * (13 - idx))
+        citizenIDDigits.slice(0, 12).map((digit, idx) => digit * (13 - idx)),
       ) %
         11)) %
       10 !=
@@ -32,25 +29,4 @@ export function validateCitizenID(citizenID: string): boolean {
     return false;
 
   return true;
-}
-
-export function validatePassport(passportNumber: string): string | false {
-  // Thai passport
-  if (/^(([A-Za-z]{1}\d{6,7})|[A-Za-z]{2}\d{7})$/.test(passportNumber))
-    return "TH";
-
-  // Indian passport
-  if (/^[A-Z]{1}[0-9]{7}$/.test(passportNumber)) return "IN";
-
-  // Philippine passport
-  if (/^[A-Za-z][0-9]{7}[A-Za-z]$/.test(passportNumber)) return "PH";
-
-  // United States passport
-  if (/^\d{9}$/.test(passportNumber)) return "US";
-
-  // Chinese passport
-  if (/^([A-Za-z]|\d)[A-Za-z0-9]{8,9}$/.test(passportNumber)) return "ZH";
-
-  // Invalid passport
-  return false;
 }

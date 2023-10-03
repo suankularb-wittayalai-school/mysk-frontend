@@ -5,7 +5,7 @@ import ClassSearchResult from "@/components/lookup/class/ClassSearchResult";
 import getLookupClassrooms from "@/utils/backend/classroom/getLookupClassrooms";
 import { range } from "@/utils/helpers/addAt";
 import { createTitleStr } from "@/utils/helpers/title";
-import { useLocale } from "@/utils/hooks/i18n";
+import useLocale from "@/utils/helpers/useLocale";
 import { supabase } from "@/utils/supabase-backend";
 import { Classroom } from "@/utils/types/classroom";
 import { CustomPage, LangCode } from "@/utils/types/common";

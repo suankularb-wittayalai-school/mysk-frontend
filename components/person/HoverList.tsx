@@ -5,10 +5,10 @@ import { FC } from "react";
 import { Person } from "@/utils/types/person";
 
 // Helpers
-import { getLocaleName } from "@/utils/helpers/string";
+import getLocaleName from "@/utils/helpers/getLocaleName";
 
 // Hooks
-import { useLocale } from "@/utils/hooks/i18n";
+import useLocale from "@/utils/helpers/useLocale";
 
 const HoverList: FC<{
   people: Parameters<typeof getLocaleName>["1"][];

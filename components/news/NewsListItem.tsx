@@ -25,7 +25,7 @@ import { LangCode } from "@/utils/types/common";
 import { Info } from "@/utils/types/news";
 
 // Helpers
-import { getLocaleString } from "@/utils/helpers/string";
+import getLocaleString from "@/utils/helpers/getLocaleString";
 
 const NewsListItem: FC<{
   newsItem: Info;

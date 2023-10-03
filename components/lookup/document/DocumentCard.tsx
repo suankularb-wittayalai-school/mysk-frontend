@@ -1,7 +1,7 @@
 // Imports
 import cn from "@/utils/helpers/cn";
-import { getLocaleYear } from "@/utils/helpers/date";
-import { useLocale } from "@/utils/hooks/i18n";
+import getLocaleYear from "@/utils/helpers/getLocaleYear";
+import useLocale from "@/utils/helpers/useLocale";
 import { SchoolDocument } from "@/utils/types/news";
 import { Card, CardHeader, useBreakpoint } from "@suankularb-components/react";
 import { isThisYear } from "date-fns";

@@ -1,9 +1,9 @@
 // Imports
 import SnackbarContext from "@/contexts/SnackbarContext";
 import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
-import { withLoading } from "@/utils/helpers/loading";
-import { useLocale } from "@/utils/hooks/i18n";
-import { useToggle } from "@/utils/hooks/toggle";
+import withLoading from "@/utils/helpers/withLoading";
+import useLocale from "@/utils/helpers/useLocale";
+import useToggle from "@/utils/helpers/useToggle";
 import { classRegex } from "@/utils/patterns";
 import { Classroom } from "@/utils/types/classroom";
 import {

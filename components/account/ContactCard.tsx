@@ -6,8 +6,8 @@ import FacebookLogo from "@/public/images/social/facebook.svg";
 import InstragramLogo from "@/public/images/social/instagram.svg";
 import LineLogo from "@/public/images/social/line.svg";
 import { getContactIsLinkable, getContactURL } from "@/utils/helpers/contact";
-import { getLocaleString } from "@/utils/helpers/string";
-import { useLocale } from "@/utils/hooks/i18n";
+import getLocaleString from "@/utils/helpers/getLocaleString";
+import useLocale from "@/utils/helpers/useLocale";
 import { Contact } from "@/utils/types/contact";
 import {
   Avatar,

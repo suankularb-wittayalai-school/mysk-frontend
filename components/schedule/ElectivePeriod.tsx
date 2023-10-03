@@ -1,7 +1,7 @@
 // Imports
 import ElectivePeriodDetails from "@/components/schedule/ElectivePeriodDetails";
 import cn from "@/utils/helpers/cn";
-import { periodDurationToWidth } from "@/utils/helpers/schedule";
+import periodDurationToWidth from "@/utils/helpers/schedule/periodDurationToWidth";
 import { StylableFC } from "@/utils/types/common";
 import { SchedulePeriod } from "@/utils/types/schedule";
 import {

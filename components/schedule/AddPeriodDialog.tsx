@@ -5,15 +5,13 @@ import ScheduleContext from "@/contexts/ScheduleContext";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import createScheduleItem from "@/utils/backend/schedule/createScheduleItem";
 import cn from "@/utils/helpers/cn";
-import { withLoading } from "@/utils/helpers/loading";
-import {
-  getSubjectName,
-  periodDurationToWidth,
-} from "@/utils/helpers/schedule";
-import { getLocaleString } from "@/utils/helpers/string";
+import getLocaleString from "@/utils/helpers/getLocaleString";
+import { getSubjectName } from "@/utils/helpers/getSubjectName";
+import periodDurationToWidth from "@/utils/helpers/schedule/periodDurationToWidth";
 import useForm from "@/utils/helpers/useForm";
-import { useLocale } from "@/utils/hooks/i18n";
-import { useToggle } from "@/utils/hooks/toggle";
+import useLocale from "@/utils/helpers/useLocale";
+import useToggle from "@/utils/helpers/useToggle";
+import withLoading from "@/utils/helpers/withLoading";
 import { roomRegex } from "@/utils/patterns";
 import { Classroom } from "@/utils/types/classroom";
 import { DialogFC } from "@/utils/types/component";

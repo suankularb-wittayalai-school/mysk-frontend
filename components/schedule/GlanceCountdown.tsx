@@ -1,7 +1,7 @@
 // Imports
 import ScheduleAtAGlance from "@/components/schedule/ScheduleAtAGlance";
 import cn from "@/utils/helpers/cn";
-import { useLocale } from "@/utils/hooks/i18n";
+import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import { transition, useAnimationConfig } from "@suankularb-components/react";
 import { AnimatePresence, motion } from "framer-motion";

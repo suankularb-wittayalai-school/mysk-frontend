@@ -1,7 +1,7 @@
 // Imports
 import AppDrawer from "@/components/common/AppDrawer";
 import AppStateContext from "@/contexts/AppStateContext";
-import { useLocale } from "@/utils/hooks/i18n";
+import useLocale from "@/utils/helpers/useLocale";
 import {
   PageHeader as BasePageHeader,
   PageHeaderProps,

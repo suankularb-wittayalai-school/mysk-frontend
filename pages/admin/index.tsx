@@ -56,7 +56,7 @@ import { getCurrentAcademicYear, getLocaleYear } from "@/utils/helpers/date";
 import { createTitleStr } from "@/utils/helpers/title";
 
 // Hooks
-import { useLocale } from "@/utils/hooks/i18n";
+import useLocale from "@/utils/helpers/useLocale";
 
 // Types
 // import { AdminPanelStatistics } from "@/utils/types/admin";

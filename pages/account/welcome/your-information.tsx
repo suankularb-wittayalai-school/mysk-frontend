@@ -8,14 +8,12 @@ import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import { updatePerson } from "@/utils/backend/person/updatePerson";
 import getSubjectGroups from "@/utils/backend/subject/getSubjectGroups";
-import { withLoading } from "@/utils/helpers/loading";
 import useForm from "@/utils/helpers/useForm";
-import {
-  validateCitizenID,
-  validatePassport,
-} from "@/utils/helpers/validators";
-import { useLocale } from "@/utils/hooks/i18n";
-import { useToggle } from "@/utils/hooks/toggle";
+import useLocale from "@/utils/helpers/useLocale";
+import useToggle from "@/utils/helpers/useToggle";
+import validateCitizenID from "@/utils/helpers/validateCitizenID";
+import validatePassport from "@/utils/helpers/validatePassport";
+import withLoading from "@/utils/helpers/withLoading";
 import { pantsSizeRegex } from "@/utils/patterns";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Contact } from "@/utils/types/contact";
@@ -146,7 +144,7 @@ const WelcomePage: CustomPage<{
     // {
     //   key: "citizenID",
     //   required: locale === "th",
-    //   defaultValue: person.citizenID,
+    //   defaultValue: person.citizen_id,
     //   validate: (value) =>
     //   validateCitizenID(value) ||
     //     t("profile.general.citizenID_error", { ns: "account" }),
