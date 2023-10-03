@@ -1,6 +1,5 @@
 // Imports
 import bulkCreateClassrooms from "@/utils/backend/classroom/bulkCreateClassrooms";
-import { range } from "@/utils/helpers/array";
 import { withLoading } from "@/utils/helpers/loading";
 import useForm from "@/utils/helpers/useForm";
 import { useToggle } from "@/utils/hooks/toggle";
@@ -16,6 +15,7 @@ import {
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { Trans, useTranslation } from "next-i18next";
+import { list } from "radash";
 import { useEffect } from "react";
 
 /**
@@ -46,7 +46,7 @@ const GenerateClassesDialog: DialogFC<{
     },
     {
       key: "numClasses",
-      defaultValue: range(6).fill(0),
+      defaultValue: list(1, 6).fill(0),
       validate: (value: number[]) =>
         !value.filter((value) => value < 1 || value > 15).length,
     },
@@ -70,7 +70,7 @@ const GenerateClassesDialog: DialogFC<{
               // (Nothing will happen if the grades are already equal since we
               // would just concatenate an empty array)
               form.numClasses.concat(
-                range(form.numGrades - form.numClasses.length).fill(0),
+                list(form.numGrades - form.numClasses.length - 1).fill(0),
               ),
       })),
     [form.numGrades],
@@ -142,24 +142,27 @@ const GenerateClassesDialog: DialogFC<{
 
         {/* Inputs */}
         <div className="grid grid-cols-2 gap-x-6 gap-y-3">
-          {range(
+          {list(
+            1,
             // Limit number of inputs shown for performance reasons
             form.numGrades > 12 ? 12 : form.numGrades,
           ).map((grade) => (
             <TextField
               key={grade}
               appearance="outlined"
-              label={t("numClasses.input", { grade: grade + 1 })}
+              label={t("numClasses.input", { grade })}
               // Don’t show 0
               value={
-                form.numClasses[grade] ? String(form.numClasses[grade]) : ""
+                form.numClasses[grade - 1]
+                  ? String(form.numClasses[grade - 1])
+                  : ""
               }
               onChange={(value) =>
                 setForm({
                   ...form,
                   numClasses: (form.numClasses as number[]).map(
                     (numClassesInGrade, index) =>
-                      index === grade
+                      index === grade - 1
                         ? // Limit number of classes shown for performance
                           // reasons
                           Math.min(Number(value), 15)
@@ -192,7 +195,7 @@ const GenerateClassesDialog: DialogFC<{
             {/* Loop through `numClasses`, where the value is the number of
                 classes and the index is the grade (counting from zero) */}
             {(form.numClasses as number[]).map((value, index) =>
-              range(value).map((classSuffix) => {
+              list(value - 1).map((classSuffix) => {
                 const classNumber = [
                   index + 1,
                   (classSuffix + 1).toString().padStart(2, "0"),

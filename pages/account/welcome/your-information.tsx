@@ -8,7 +8,6 @@ import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import { updatePerson } from "@/utils/backend/person/updatePerson";
 import getSubjectGroups from "@/utils/backend/subject/getSubjectGroups";
-import { changeItem } from "@/utils/helpers/array";
 import { withLoading } from "@/utils/helpers/loading";
 import useForm from "@/utils/helpers/useForm";
 import {
@@ -38,6 +37,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { replace } from "radash";
 import { useContext, useState } from "react";
 
 const WelcomePage: CustomPage<{
@@ -231,7 +231,9 @@ const WelcomePage: CustomPage<{
           contacts={contacts}
           handleAdd={(contact) => setContacts([...contacts, contact])}
           handleEdit={(contact, idx) =>
-            setContacts(changeItem<Contact>(contact, idx, contacts))
+            setContacts(
+              replace(contacts, contact, (_, mapIdx) => idx === mapIdx),
+            )
           }
           handleRemove={(contactID) =>
             setContacts(contacts.filter((item) => contactID !== item.id))

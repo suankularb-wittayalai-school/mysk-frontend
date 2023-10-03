@@ -1,5 +1,4 @@
 // Imports
-import { range } from "@/utils/helpers/array";
 import { getLocaleString } from "@/utils/helpers/string";
 import { LangCode } from "@/utils/types/common";
 import { Schedule, SchedulePeriod } from "@/utils/types/schedule";
@@ -12,6 +11,7 @@ import {
   isSunday,
   isWithinInterval,
 } from "date-fns";
+import { list } from "radash";
 
 /**
  * The start times of each period (index 0-9; period 1-10).
@@ -216,9 +216,9 @@ export function getSubjectName(
  */
 export function createEmptySchedule(startDay: Day, endDay?: Day): Schedule {
   return {
-    content: range(endDay ? endDay - startDay + 1 : 1).map((day) => ({
+    content: list(endDay ? endDay - startDay : 0).map((day) => ({
       day: (day + startDay) as Day,
-      content: range(10, 1).map((startTime) => ({
+      content: list(1, 10).map((startTime) => ({
         start_time: startTime,
         duration: 1,
         content: [],

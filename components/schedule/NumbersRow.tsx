@@ -1,9 +1,9 @@
 // Imports
-import { range } from "@/utils/helpers/array";
 import cn from "@/utils/helpers/cn";
 import { periodTimes } from "@/utils/helpers/schedule";
 import { StylableFC } from "@/utils/types/common";
 import { Text } from "@suankularb-components/react";
+import { list } from "radash";
 
 const NumbersRow: StylableFC = ({ style, className }) => (
   <li style={style} className={className}>
@@ -13,7 +13,7 @@ const NumbersRow: StylableFC = ({ style, className }) => (
         className={cn(`z-20 -mb-2 -mt-1 w-36 pb-2 pt-1 sm:sticky sm:left-0
           sm:bg-background`)}
       />
-      {range(10, 1).map((i) => (
+      {list(1, 10).map((i) => (
         <li
           key={i}
           className={cn(`flex w-24 flex-row items-center gap-2 rounded-full
@@ -26,7 +26,7 @@ const NumbersRow: StylableFC = ({ style, className }) => (
             type="label-small"
             className="!leading-none text-on-surface-variant opacity-80"
           >
-            {range(2, i - 1)
+            {list(i - 1, i)
               .map((j) =>
                 // Get the start/end time of this Period
                 Object.values(periodTimes[j])

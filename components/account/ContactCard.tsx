@@ -5,7 +5,6 @@ import DiscordLogo from "@/public/images/social/discord.svg";
 import FacebookLogo from "@/public/images/social/facebook.svg";
 import InstragramLogo from "@/public/images/social/instagram.svg";
 import LineLogo from "@/public/images/social/line.svg";
-import { range } from "@/utils/helpers/array";
 import { getContactIsLinkable, getContactURL } from "@/utils/helpers/contact";
 import { getLocaleString } from "@/utils/helpers/string";
 import { useLocale } from "@/utils/hooks/i18n";
@@ -21,6 +20,7 @@ import {
 } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
 import Image from "next/image";
+import { list } from "radash";
 import { FC, forwardRef, useContext, useState } from "react";
 
 /**
@@ -72,7 +72,7 @@ const ContactCard: FC<{
   const formattedLabel = contact.name?.th
     ? getLocaleString(contact.name, locale)
     : contact.type === "phone"
-    ? range(Math.min(Math.ceil(contact.value.length / 3), 3))
+    ? list(Math.min(Math.ceil(contact.value.length / 3), 3) - 1)
         .map((setIdx) =>
           contact.value.slice(
             setIdx * 3,

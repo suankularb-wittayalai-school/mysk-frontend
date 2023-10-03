@@ -33,7 +33,7 @@ import PersonDetails from "@/components/lookup/person/PersonDetails";
 //   getPeopleLookupList,
 // } from "@/utils/backend/person/person";
 // Helpers
-import { toggleItem } from "@/utils/helpers/array";
+import { toggleItem } from "@/utils/helpers/addAt";
 import { withLoading } from "@/utils/helpers/loading";
 import { createTitleStr } from "@/utils/helpers/title";
 

@@ -2,7 +2,7 @@
 import PaperPreview from "@/components/common/print/PaperPreview";
 import PrintOptions from "@/components/common/print/PrintOptions";
 import PrintPage from "@/components/common/print/PrintPage";
-import { range, toggleItem } from "@/utils/helpers/array";
+import cn from "@/utils/helpers/cn";
 import { getCurrentAcademicYear, getLocaleYear } from "@/utils/helpers/date";
 import { getLocaleName, getLocaleString } from "@/utils/helpers/string";
 import useForm from "@/utils/helpers/useForm";
@@ -21,6 +21,7 @@ import {
 } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
+import { list, toggle } from "radash";
 import { FC } from "react";
 
 /**
@@ -93,8 +94,8 @@ const StudentsListPaper: FC<{
       {/* Class number and Advisors */}
       <div className="flex flex-row">
         <span
-          className="-mt-2 ml-4 mr-14 inline-block self-end whitespace-nowrap
-            text-xl font-medium"
+          className={cn(`-mt-2 ml-4 mr-14 inline-block self-end
+            whitespace-nowrap text-xl font-medium`)}
         >
           {options.language === "en-US"
             ? `M.${classItem.number}`
@@ -116,9 +117,9 @@ const StudentsListPaper: FC<{
 
       {/* Table */}
       <table
-        className="w-full border-2 border-black [&_td]:whitespace-nowrap
+        className={cn(`w-full border-2 border-black [&_td]:whitespace-nowrap
           [&_td]:border-1 [&_td]:border-black [&_td]:px-1 [&_td]:py-0.5
-          [&_th]:border-1 [&_th]:border-black [&_th]:px-1 [&_th]:py-0.5"
+          [&_th]:border-1 [&_th]:border-black [&_th]:px-1 [&_th]:py-0.5`)}
       >
         {/* Head area */}
         <thead className="border-b-2 border-black">
@@ -185,7 +186,7 @@ const StudentsListPaper: FC<{
             )}
 
             {/* Empty columns */}
-            {range(Math.min(options.numEmpty, maximumEmptyColumns)).map(
+            {list(Math.min(options.numEmpty, maximumEmptyColumns) - 1).map(
               (idx) => (
                 <th key={idx} className={idx === 0 ? "!border-l-2" : undefined}>
                   {idx === 0 && options.columns.length === 0 ? " " : undefined}
@@ -240,7 +241,10 @@ const StudentsListPaper: FC<{
 
               {/* Nickname */}
               {options.columns.includes("nickname") && (
-                <td>{getLocaleString(student.first_name, options.language)}</td>
+                <td>
+                  {student.nickname &&
+                    getLocaleString(student.nickname, options.language)}
+                </td>
               )}
 
               {options.columns.includes("allergies") && (
@@ -260,7 +264,7 @@ const StudentsListPaper: FC<{
               )}
 
               {/* Empty columns */}
-              {range(Math.min(options.numEmpty, maximumEmptyColumns)).map(
+              {list(Math.min(options.numEmpty, maximumEmptyColumns) - 1).map(
                 (idx) => (
                   <td
                     key={idx}
@@ -343,10 +347,7 @@ const StudentsPrintOptions: FC<{
               <Checkbox
                 value={form.columns.includes(column)}
                 onChange={() =>
-                  setForm({
-                    ...form,
-                    columns: toggleItem(column, form.columns),
-                  })
+                  setForm({ ...form, columns: toggle(form.columns, column) })
                 }
               />
             </FormItem>
@@ -365,7 +366,7 @@ const StudentsPrintOptions: FC<{
         />
         <FormItem
           label={t("enableNotes")}
-          labelAttr={{ className: "grow skc-title-medium" }}
+          labelAttr={{ className: "skc-text skc-text--title-medium grow" }}
           className="items-center"
         >
           <Switch
@@ -375,7 +376,7 @@ const StudentsPrintOptions: FC<{
         </FormItem>
         <FormItem
           label={t("enableTimestamp")}
-          labelAttr={{ className: "grow skc-title-medium" }}
+          labelAttr={{ className: "skc-text skc-text--title-medium grow" }}
           className="items-center"
         >
           <Switch
@@ -420,14 +421,11 @@ const PrintStudentList: FC<{
     {
       key: "numEmpty",
       defaultValue: "10",
-      validate: (value) =>
-        range(maximumEmptyColumns + 1).includes(Number(value)),
+      validate: (value) => list(maximumEmptyColumns).includes(Number(value)),
     },
     { key: "enableNotes", defaultValue: false },
     { key: "enableTimestamp", defaultValue: false },
   ]);
-
-  // console.log(classOverview);
 
   return (
     <>

@@ -1,29 +1,18 @@
-// External libraries
-import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
-
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import Head from "next/head";
-
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
-// Internal components
+// Imports
 import PrintStudentList from "@/components/class/PrintStudentList";
-
-// Backend
-import getClassroomOverview from "@/utils/backend/classroom/getClassroomOverview";
-
-// Helpers
-import { createTitleStr } from "@/utils/helpers/title";
-
-// Types
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
+import getClassroomOverview from "@/utils/backend/classroom/getClassroomOverview";
 import getStudentsOfClass from "@/utils/backend/classroom/getStudentsOfClass";
 import { getStudentsByIDs } from "@/utils/backend/person/getStudentsByIDs";
 import { Classroom } from "@/utils/types/classroom";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Student, UserRole } from "@/utils/types/person";
+import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Head from "next/head";
 
 const StudentsListPrintPage: CustomPage<{
   classItem: Pick<Classroom, "id" | "number">;
@@ -34,12 +23,13 @@ const StudentsListPrintPage: CustomPage<{
   studentList: Student[];
   userRole: UserRole;
 }> = ({ classItem, classroomOverview, studentList, userRole }) => {
-  const { t } = useTranslation(["class", "common"]);
+  const { t } = useTranslation("class");
+  const { t: tx } = useTranslation("common");
 
   return (
     <>
       <Head>
-        <title>{createTitleStr(t("student.print.title"), t)}</title>
+        <title>{tx("tabName", { tabName: t("student.print.title") })}</title>
       </Head>
       <PrintStudentList
         {...{ classItem, classroomOverview, studentList, userRole }}

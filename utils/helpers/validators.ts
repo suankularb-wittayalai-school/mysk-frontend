@@ -1,8 +1,6 @@
-// Helpers
-import { sumArray } from "@/utils/helpers/array";
-
-// Miscellaneous
+// Imports
 import { citizenIDRegex } from "@/utils/patterns";
+import { sum } from "radash";
 
 /**
  * Validates citizen ID.
@@ -24,7 +22,7 @@ export function validateCitizenID(citizenID: string): boolean {
 
   if (
     (11 -
-      (sumArray(
+      (sum(
         citizenIDDigits.slice(0, 12).map((digit, idx) => digit * (13 - idx))
       ) %
         11)) %
