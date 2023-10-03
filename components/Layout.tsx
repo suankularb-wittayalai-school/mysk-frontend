@@ -288,12 +288,13 @@ const Layout: FC<
           />
 
           {/* Version number */}
-          <p
-            className="skc-label-small p-4 pt-8 !font-display
-              text-on-surface-variant"
+          <Text
+            type="label-small"
+            element="p"
+            className="p-4 pt-8 !font-display text-on-surface-variant"
           >
             {process.env.NEXT_PUBLIC_VERSION || "Preview version"}
-          </p>
+          </Text>
         </NavDrawerSection>
       </NavDrawer>
 
