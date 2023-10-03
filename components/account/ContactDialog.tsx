@@ -1,6 +1,6 @@
 // Imports
 import ContactCard from "@/components/account/ContactCard";
-import { useForm } from "@/utils/hooks/form";
+import useForm from "@/utils/helpers/useForm";
 import { DialogFC } from "@/utils/types/component";
 import { Contact, ContactType } from "@/utils/types/contact";
 import {

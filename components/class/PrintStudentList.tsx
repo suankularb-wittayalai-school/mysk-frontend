@@ -1,9 +1,15 @@
-// External libraries
-import { useRouter } from "next/router";
-import { useTranslation } from "next-i18next";
-import { FC } from "react";
-
-// SK Components
+// Imports
+import PaperPreview from "@/components/common/print/PaperPreview";
+import PrintOptions from "@/components/common/print/PrintOptions";
+import PrintPage from "@/components/common/print/PrintPage";
+import { range, toggleItem } from "@/utils/helpers/array";
+import { getCurrentAcademicYear, getLocaleYear } from "@/utils/helpers/date";
+import { getLocaleName, getLocaleString } from "@/utils/helpers/string";
+import useForm from "@/utils/helpers/useForm";
+import { useLocale } from "@/utils/hooks/i18n";
+import { Classroom } from "@/utils/types/classroom";
+import { FormControlProps, LangCode } from "@/utils/types/common";
+import { Student, UserRole } from "@/utils/types/person";
 import {
   Checkbox,
   FormGroup,
@@ -13,26 +19,9 @@ import {
   Switch,
   TextField,
 } from "@suankularb-components/react";
-
-// Internal components
-import PaperPreview from "@/components/common/print/PaperPreview";
-import PrintOptions from "@/components/common/print/PrintOptions";
-import PrintPage from "@/components/common/print/PrintPage";
-
-// Helpers
-import { range, toggleItem } from "@/utils/helpers/array";
-import { getCurrentAcademicYear, getLocaleYear } from "@/utils/helpers/date";
-import { getLocaleString } from "@/utils/helpers/string";
-import { getLocaleName } from "@/utils/helpers/string";
-
-// Hooks
-import { useForm } from "@/utils/hooks/form";
-import { useLocale } from "@/utils/hooks/i18n";
-
-// Types
-import { Classroom } from "@/utils/types/classroom";
-import { FormControlProps, LangCode } from "@/utils/types/common";
-import { UserRole, Student } from "@/utils/types/person";
+import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
+import { FC } from "react";
 
 /**
  * The options type for the Student List Printout.

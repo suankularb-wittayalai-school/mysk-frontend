@@ -2,7 +2,7 @@
 import bulkCreateClassrooms from "@/utils/backend/classroom/bulkCreateClassrooms";
 import { range } from "@/utils/helpers/array";
 import { withLoading } from "@/utils/helpers/loading";
-import { useForm } from "@/utils/hooks/form";
+import useForm from "@/utils/helpers/useForm";
 import { useToggle } from "@/utils/hooks/toggle";
 import { DialogFC } from "@/utils/types/component";
 import {

@@ -1,62 +1,44 @@
-// External libraries
-import { createPagesServerClient, User } from "@supabase/auth-helpers-nextjs";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
-
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import Head from "next/head";
-import Link from "next/link";
-import { useRouter } from "next/router";
-
-import { Trans, useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
-import { useContext, useState } from "react";
-
-// SK Components
+// Imports
+import ContactsSection from "@/components/account/ContactSection";
+import PersonFields from "@/components/account/PersonFields";
+import PageHeader from "@/components/common/PageHeader";
+import NextWarningCard from "@/components/welcome/NextWarningCard";
+import SnackbarContext from "@/contexts/SnackbarContext";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
+import { updatePerson } from "@/utils/backend/person/updatePerson";
+import getSubjectGroups from "@/utils/backend/subject/getSubjectGroups";
+import { changeItem } from "@/utils/helpers/array";
+import { withLoading } from "@/utils/helpers/loading";
+import useForm from "@/utils/helpers/useForm";
+import {
+  validateCitizenID,
+  validatePassport,
+} from "@/utils/helpers/validators";
+import { useLocale } from "@/utils/hooks/i18n";
+import { useToggle } from "@/utils/hooks/toggle";
+import { pantsSizeRegex } from "@/utils/patterns";
+import { CustomPage, LangCode } from "@/utils/types/common";
+import { Contact } from "@/utils/types/contact";
+import { Student, Teacher } from "@/utils/types/person";
+import { SubjectGroup } from "@/utils/types/subject";
 import {
   Actions,
   Button,
   ContentLayout,
   Header,
-  MaterialIcon,
   Section,
   Snackbar,
 } from "@suankularb-components/react";
-
-// Internal components
-import ContactsSection from "@/components/account/ContactSection";
-import PersonFields from "@/components/account/PersonFields";
-import PageHeader from "@/components/common/PageHeader";
-import NextWarningCard from "@/components/welcome/NextWarningCard";
-
-// Contexts
-import SnackbarContext from "@/contexts/SnackbarContext";
-
-// Backend
-// import { getPersonFromUser, editPerson } from "@/utils/backend/person/person";
-// import { getSubjectGroups } from "@/utils/backend/subject/subjectGroup";
-
-// Helpers
-import { changeItem } from "@/utils/helpers/array";
-import { withLoading } from "@/utils/helpers/loading";
-import { createTitleStr } from "@/utils/helpers/title";
-
-// Hooks
-import { useForm } from "@/utils/hooks/form";
-import { useToggle } from "@/utils/hooks/toggle";
-
-// Types
-import { CustomPage, LangCode } from "@/utils/types/common";
-import { Contact } from "@/utils/types/contact";
-import { Student, Teacher } from "@/utils/types/person";
-import { SubjectGroup } from "@/utils/types/subject";
-
-// Miscellaneous
-import { pantsSizeRegex } from "@/utils/patterns";
-import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
-import getSubjectGroups from "@/utils/backend/subject/getSubjectGroups";
-import { updatePerson } from "@/utils/backend/person/updatePerson";
+import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
+import { Trans, useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Head from "next/head";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useContext, useState } from "react";
 
 const WelcomePage: CustomPage<{
   person: Student | Teacher;
@@ -64,7 +46,8 @@ const WelcomePage: CustomPage<{
 }> = ({ person, subjectGroups }) => {
   // Translation
   // const locale = useLocale();
-  const { t } = useTranslation(["welcome", "common"]);
+  const { t } = useTranslation("welcome");
+  const { t: tx } = useTranslation("common");
 
   // Routing
   const router = useRouter();
@@ -165,7 +148,7 @@ const WelcomePage: CustomPage<{
     //   required: locale === "th",
     //   defaultValue: person.citizenID,
     //   validate: (value) =>
-    //     validateCitizenID(value) ||
+    //   validateCitizenID(value) ||
     //     t("profile.general.citizenID_error", { ns: "account" }),
     // },
     // {
@@ -212,12 +195,11 @@ const WelcomePage: CustomPage<{
   return (
     <>
       <Head>
-        <title>{createTitleStr(t("yourInformation.title"), t)}</title>
+        <title>{tx("tabName", { tabName: t("yourInformation.title") })}</title>
       </Head>
-      <PageHeader
-        title={t("yourInformation.title")}
-        parentURL="/account/welcome"
-      />
+      <PageHeader parentURL="/account/welcome">
+        {t("yourInformation.title")}
+      </PageHeader>
       <ContentLayout>
         <NextWarningCard />
         <Section className="pb-6">

@@ -11,7 +11,7 @@ import {
   periodDurationToWidth,
 } from "@/utils/helpers/schedule";
 import { getLocaleString } from "@/utils/helpers/string";
-import { useForm } from "@/utils/hooks/form";
+import useForm from "@/utils/helpers/useForm";
 import { useLocale } from "@/utils/hooks/i18n";
 import { useToggle } from "@/utils/hooks/toggle";
 import { roomRegex } from "@/utils/patterns";

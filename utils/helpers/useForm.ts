@@ -1,21 +1,15 @@
-// External libraries
-import { useTranslation } from "next-i18next";
-import { createElement, useContext, useMemo, useState } from "react";
-
-// SK Components
-import { Snackbar } from "@suankularb-components/react";
-
-// Hooks
+// Imports
+import SnackbarContext from "@/contexts/SnackbarContext";
 import { useLocale } from "@/utils/hooks/i18n";
-
-// Types
 import {
   FormControlProps,
   FormControlValids,
   FormControlValidsWMessages,
   FormControlValues,
 } from "@/utils/types/common";
-import SnackbarContext from "@/contexts/SnackbarContext";
+import { Snackbar } from "@suankularb-components/react";
+import { useTranslation } from "next-i18next";
+import { createElement, useContext, useMemo, useState } from "react";
 
 /**
  * A form state manager, handling values, error state, and props for Text Field.
@@ -32,7 +26,7 @@ import SnackbarContext from "@/contexts/SnackbarContext";
  * `formOK` — If the form as a whole is valid;
  * `formProps` — Props for each field’s Text Field or Select component.
  */
-export function useForm<KeyEnum extends string | symbol>(
+export default function useForm<KeyEnum extends string | symbol>(
   formSpecs: {
     key: KeyEnum;
     defaultValue?: any;

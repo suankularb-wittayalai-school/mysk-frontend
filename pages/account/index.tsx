@@ -37,7 +37,7 @@ import getSubjectGroups from "@/utils/backend/subject/getSubjectGroups";
 import cn from "@/utils/helpers/cn";
 import { withLoading } from "@/utils/helpers/loading";
 import { getLocaleName, getLocaleString } from "@/utils/helpers/string";
-import { useForm } from "@/utils/hooks/form";
+import useForm from "@/utils/helpers/useForm";
 import { useLocale } from "@/utils/hooks/i18n";
 import { useRefreshProps } from "@/utils/hooks/routing";
 import { useToggle } from "@/utils/hooks/toggle";

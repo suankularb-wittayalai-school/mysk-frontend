@@ -1,10 +1,26 @@
-// External libraries
-import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
-
-import { Trans, useTranslation } from "next-i18next";
-import { FC, useContext, useEffect, useMemo } from "react";
-
-// SK Components
+// Imports
+import BrandIcon from "@/components/icons/BrandIcon";
+import TeachersField from "@/components/person/TeachersField";
+import SnackbarContext from "@/contexts/SnackbarContext";
+import { createClassroomSubject } from "@/utils/backend/subject/createClassroomSubject";
+import { updateClassroomSubject } from "@/utils/backend/subject/updateClassroomSubject";
+import { useLoggedInPerson } from "@/utils/helpers/auth";
+import { withLoading } from "@/utils/helpers/loading";
+import useForm from "@/utils/helpers/useForm";
+import { useToggle } from "@/utils/hooks/toggle";
+import {
+  classRegex,
+  ggMeetLinkRegex,
+  ggcCodeRegex,
+  ggcLinkRegex,
+} from "@/utils/patterns";
+import {
+  FormControlProps,
+  FormControlValues,
+} from "@/utils/types/common";
+import { DialogFC } from "@/utils/types/component";
+import { Teacher } from "@/utils/types/person";
+import { ClassroomSubject } from "@/utils/types/subject";
 import {
   Button,
   Columns,
@@ -13,49 +29,9 @@ import {
   Snackbar,
   TextField,
 } from "@suankularb-components/react";
-
-// Internal components
-import BrandIcon from "@/components/icons/BrandIcon";
-import TeachersField from "@/components/person/TeachersField";
-
-// Contexts
-import SnackbarContext from "@/contexts/SnackbarContext";
-
-// Backend
-// import {
-//   createRoomSubject,
-//   editRoomSubject,
-// } from "@/utils/backend/subject/roomSubject";
-
-// Helpers
-import { withLoading } from "@/utils/helpers/loading";
-
-// Hooks
-import { useForm } from "@/utils/hooks/form";
-import { useToggle } from "@/utils/hooks/toggle";
-
-// Types
-import {
-  FormControlProps,
-  FormControlValues,
-  // SubmittableDialogComponent,
-} from "@/utils/types/common";
-import { Teacher } from "@/utils/types/person";
-// import { SubjectListItem, SubjectWNameAndCode } from "@/utils/types/subject";
-
-// Miscellaneous
-import {
-  classRegex,
-  ggMeetLinkRegex,
-  ggcCodeRegex,
-  ggcLinkRegex,
-} from "@/utils/patterns";
-import { DialogFC } from "@/utils/types/component";
-import { ClassroomSubject, Subject } from "@/utils/types/subject";
-import { useLoggedInPerson } from "@/utils/helpers/auth";
-import { createClassroomSubject } from "@/utils/backend/subject/createClassroomSubject";
-import { updateClassroomSubject } from "@/utils/backend/subject/updateClassroomSubject";
-// import { getPersonFromUser } from "@/utils/backend/person/person";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { Trans, useTranslation } from "next-i18next";
+import { FC, useContext, useEffect } from "react";
 
 /**
  * Teachers and Co-teachers.

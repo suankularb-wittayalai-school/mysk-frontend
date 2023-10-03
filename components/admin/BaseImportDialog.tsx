@@ -1,6 +1,6 @@
 // Imports
 import SnackbarContext from "@/contexts/SnackbarContext";
-import { useForm } from "@/utils/hooks/form";
+import useForm from "@/utils/helpers/useForm";
 import { useLocale } from "@/utils/hooks/i18n";
 import { DialogFC } from "@/utils/types/component";
 import {
