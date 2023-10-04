@@ -1,17 +1,7 @@
 {
-  "title": "School lookup",
-  "search": "Search everything",
+  "title": "Lookup",
+  "subtitle": "<0>Lookup everything</0> in MySK Lookup.",
   "people": {
-    "title": "Lookup people",
-    "desc": "Find your classmates, teachers, and everyone else in Suankularb. Better connect with people with contacts and live schedule information.",
-    "count": "{{students}} students and {{teachers}} teachers available.",
-    "list": {
-      "searchAlt": "Search people",
-      "filter": {
-        "student": "Students",
-        "teacher": "Teachers"
-      }
-    },
     "header": {
       "loading": "Loading…",
       "action": {
@@ -80,26 +70,30 @@
       "thaiSpeechNotSupported": "Your browser doesn’t support Thai text-to-speech"
     }
   },
-  "classes": {
-    "title": "Lookup classes",
-    "desc": "Get the students, teachers, subjects, and schedule of any class.",
-    "count": "{{classes}} classes available.",
+  "students": {
+    "title": "Lookup <strong>students</strong>",
+    "desc": "Find a student’s class, class number, and more.",
     "list": {
-      "searchAlt": "Search classes",
-      "numStudents_one": "{{count}} student",
-      "numStudents_other": "{{count}} students",
-      "action": {
-        "schedule": "See schedule",
-        "students": "Students",
-        "teachers": "Teachers"
-      }
+      "searchAlt": "Search students"
+    }
+  },
+  "teachers": {
+    "title": "Lookup <strong>teachers</strong>",
+    "desc": "Find a teacher’s subjects, office, schedule, contacts, and more.",
+    "list": {
+      "searchAlt": "Search teachers"
+    }
+  },
+  "classes": {
+    "title": "Lookup <strong>classes</strong>",
+    "desc": "See a list of a class’ students and teachers, get a printout, and more.",
+    "list": {
+      "searchAlt": "Search classes"
     }
   },
   "documents": {
-    "title": "Lookup documents",
-    "desc": "No more shuffling through file cabinets; find everything from orders to school documents.",
-    "count": "{{orders}} orders and {{documents}} school documents available.",
-    "thaiOnly": "Available in Thai only.",
+    "title": "Lookup <strong>documents</strong>",
+    "desc": "Easily locate, read, and download school orders and documents.",
     "list": {
       "searchAlt": "Search documents",
       "filter": {
