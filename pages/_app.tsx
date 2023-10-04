@@ -30,6 +30,7 @@ import {
 } from "next/font/google";
 import localFont from "next/font/local";
 import { FC, ReactNode, useEffect, useState } from "react";
+import { Provider as BalancerProvider } from "react-wrap-balancer";
 
 // English fonts
 const bodyFontEN = Inter({ subsets: ["latin"] });
@@ -83,7 +84,7 @@ const Contexts: FC<{ children: ReactNode }> = ({ children }) => {
             setAccountNotFoundOpen,
           }}
         >
-          {children}
+          <BalancerProvider>{children}</BalancerProvider>
           <AccountNotFoundDialog
             open={accountNotFoundOpen}
             onClose={() => setAccountNotFoundOpen(false)}
