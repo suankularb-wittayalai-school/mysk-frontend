@@ -12,6 +12,7 @@ import {
   MaterialIcon,
   Progress,
   Snackbar,
+  Text,
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
@@ -126,9 +127,11 @@ const RestrictionsCard: FC<{
           size={20}
           className="text-on-surface-variant"
         />
-        <h2 className="skc-title-small">{t("title")}</h2>
+        <Text type="title-small" element="h2">
+          {t("title")}
+        </Text>
       </div>
-      <p className="skc-body-small">
+      <Text type="body-small" element="p">
         {allowedRoles.length === 1
           ? t("desc_one", { role: t(`descSegment.${allowedRoles[0]}`) })
           : allowedRoles.length === 2
@@ -137,7 +140,7 @@ const RestrictionsCard: FC<{
               role2: t(`descSegment.${allowedRoles[1]}`),
             })
           : t("desc_all")}
-      </p>
+      </Text>
     </Card>
   );
 };
@@ -188,7 +191,9 @@ const DocumentDetails: FC<{
           className="grid items-start bg-surface-2 md:grid-cols-8"
         >
           <div className="flex flex-col gap-2 px-5 py-4 md:col-span-5">
-            <h2 className="skc-headline-small">{document.subject}</h2>
+            <Text type="headline-small" element="h2">
+              {document.subject}
+            </Text>
             <DocumentActions document={document} />
           </div>
           <RestrictionsCard

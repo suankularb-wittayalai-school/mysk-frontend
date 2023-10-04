@@ -1,8 +1,8 @@
-// External libraries
-import { useTranslation } from "next-i18next";
-import { FC, useState } from "react";
-
-// SK Components
+// Imports
+import SubjectClassesDialog from "@/components/subject/SubjectClassesDialog";
+import getLocaleString from "@/utils/helpers/getLocaleString";
+import useLocale from "@/utils/helpers/useLocale";
+import { SubjectClassrooms } from "@/utils/types/subject";
 import {
   Actions,
   Button,
@@ -13,18 +13,8 @@ import {
   InputChip,
   MaterialIcon,
 } from "@suankularb-components/react";
-
-// Internal components
-import SubjectClassesDialog from "@/components/subject/SubjectClassesDialog";
-
-// Helpers
-import { getLocaleString } from "@/utils/helpers/string";
-
-// Hooks
-import { useLocale } from "@/utils/hooks/i18n";
-
-// Types
-import { SubjectClassrooms } from "@/utils/types/subject";
+import { useTranslation } from "next-i18next";
+import { FC, useState } from "react";
 
 const TeachingSubjectCard: FC<{
   subject: SubjectClassrooms;

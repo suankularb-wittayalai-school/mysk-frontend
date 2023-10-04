@@ -1,47 +1,30 @@
-// External libraries
-import { GetStaticProps } from "next";
-import Head from "next/head";
-import Link from "next/link";
-
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
-import { FC, ReactNode, forwardRef } from "react";
-
-// SK Components
-import {
-  Card,
-  CardContent,
-  Columns,
-  ContentLayout,
-  MaterialIcon,
-} from "@suankularb-components/react";
-
-// Internal components
+// Imports
 import MultiSchemeImage from "@/components/common/MultiSchemeImage";
 import PageHeader from "@/components/common/PageHeader";
-
-// Supabase
-import { supabase } from "@/utils/supabase-backend";
-
-// Images
 import LookupClassesDark from "@/public/images/graphics/lookup/class-dark.svg";
 import LookupClassesLight from "@/public/images/graphics/lookup/class-light.svg";
 import LookupDocumentsDark from "@/public/images/graphics/lookup/document-dark.svg";
 import LookupDocumentsLight from "@/public/images/graphics/lookup/document-light.svg";
 import LookupPeopleDark from "@/public/images/graphics/lookup/person-dark.svg";
 import LookupPeopleLight from "@/public/images/graphics/lookup/person-light.svg";
-
-// Helpers
-import { cn } from "@/utils/helpers/className";
-import { getCurrentAcademicYear } from "@/utils/helpers/date";
-import { createTitleStr } from "@/utils/helpers/title";
-
-// Hooks
-import { useLocale } from "@/utils/hooks/i18n";
-
-// Types
+import cn from "@/utils/helpers/cn";
+import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
+import useLocale from "@/utils/helpers/useLocale";
+import { supabase } from "@/utils/supabase-backend";
 import { CustomPage, LangCode } from "@/utils/types/common";
+import {
+  Card,
+  CardContent,
+  Columns,
+  ContentLayout,
+  Text,
+} from "@suankularb-components/react";
+import { GetStaticProps } from "next";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Head from "next/head";
+import Link from "next/link";
+import { FC, ReactNode, forwardRef } from "react";
 
 const LookupCard: FC<{
   children?: ReactNode;
@@ -54,10 +37,11 @@ const LookupCard: FC<{
   <Card
     appearance="outlined"
     stateLayerEffect
-    className={cn([
-      `group !justify-end divide-y-1 divide-outline-variant sm:min-h-[9.25rem]`,
+    className={cn(
+      `group !justify-end divide-y-1 divide-outline-variant
+      sm:min-h-[9.25rem]`,
       className,
-    ])}
+    )}
     href={`/lookup/${id}`}
     // eslint-disable-next-line react/display-name
     element={forwardRef((props, ref) => (
@@ -79,17 +63,26 @@ const LookupCard: FC<{
     )}
 
     <CardContent
-      className="grow !flex-row items-center !gap-3
-        bg-surface-5 sm:!flex-col sm:items-stretch"
+      className={cn(`grow !flex-row items-center !gap-3 bg-surface-5
+        sm:!flex-col sm:items-stretch`)}
     >
       <div className="flex flex-col gap-1">
         {/* Title */}
-        <h2 id={`title-${id}`} className="skc-headline-small text-on-surface">
+        <Text
+          type="headline-small"
+          element={(props) => <h4 id={`title-${id}`} {...props} />}
+          className="text-on-surface"
+        >
           {title}
-        </h2>
+        </Text>
 
         {/* Description */}
-        <p id={`desc-${id}`}>{desc}</p>
+        <Text
+          type="body-medium"
+          element={(props) => <p id={`desc-${id}`} {...props} />}
+        >
+          {desc}
+        </Text>
       </div>
     </CardContent>
   </Card>
@@ -106,14 +99,15 @@ const LookupPage: CustomPage<{
   };
 }> = ({ count }) => {
   const locale = useLocale();
-  const { t } = useTranslation(["lookup", "common"]);
+  const { t } = useTranslation("lookup");
+  const { t: tx } = useTranslation("common");
 
   return (
     <>
       <Head>
-        <title>{createTitleStr(t("title"), t)}</title>
+        <title>{tx("tabName", { tabName: t("title") })}</title>
       </Head>
-      <PageHeader title={t("title")} />
+      <PageHeader>{t("title")}</PageHeader>
       <ContentLayout>
         <Columns columns={3} className="mx-4 !items-stretch sm:mx-0">
           {/* Lookup People */}
@@ -174,8 +168,7 @@ const LookupPage: CustomPage<{
             <p>
               {t("documents.count", {
                 orders: count.orders.toLocaleString(),
-                // documents: count.documents.toLocaleString(),
-                documents: "0",
+                documents: count.documents.toLocaleString(),
               })}
             </p>
             {locale !== "th" && (
@@ -207,12 +200,12 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
     .from("school_documents")
     .select("id", { count: "exact", head: true })
     .match({ type: "order" });
-  // const { count: documents } = await supabase
-  //   .from("school_documents")
-  //   .select("id", { count: "exact", head: true })
-  //   .match({ type: "announcement" });
+  const { count: documents } = await supabase
+    .from("school_documents")
+    .select("id", { count: "exact", head: true })
+    .match({ type: "announcement" });
 
-  const count = { students, teachers, classes, orders };
+  const count = { students, teachers, classes, orders, documents };
 
   return {
     props: {

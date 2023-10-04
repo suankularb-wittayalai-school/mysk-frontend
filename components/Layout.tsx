@@ -3,11 +3,12 @@ import LogOutDialog from "@/components/account/LogOutDialog";
 import RailLogo from "@/components/brand/RailLogo";
 import SchemeIcon from "@/components/icons/SchemeIcon";
 import AppStateContext from "@/contexts/AppStateContext";
-import { useLoggedInPerson } from "@/utils/helpers/auth";
-import { useLocale } from "@/utils/hooks/i18n";
-import { usePreferences } from "@/utils/hooks/preferences";
-import { useRefreshProps } from "@/utils/hooks/routing";
-import { useSnackbar } from "@/utils/hooks/snackbar";
+import useLocale from "@/utils/helpers/useLocale";
+import useLoggedInPerson from "@/utils/helpers/useLoggedInPerson";
+import usePageIsLoading from "@/utils/helpers/usePageIsLoading";
+import usePreferences from "@/utils/helpers/usePreferences";
+import useRefreshProps from "@/utils/helpers/useRefreshProps";
+import useSnackbar from "@/utils/helpers/useSnackbar";
 import { CustomPage } from "@/utils/types/common";
 import {
   MaterialIcon,
@@ -16,8 +17,10 @@ import {
   NavDrawer,
   NavDrawerItem,
   NavDrawerSection,
+  Progress,
   RootLayout,
   Snackbar,
+  Text,
 } from "@suankularb-components/react";
 import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
@@ -82,6 +85,9 @@ const Layout: FC<
   // Snackbar
   const { snackbarOpen, setSnackbarOpen, snackbarProps } = useSnackbar();
 
+  // Page loading indicator
+  const { pageIsLoading } = usePageIsLoading();
+
   // Dialog control
   const [logOutOpen, setLogOutOpen] = useState<boolean>(false);
 
@@ -139,7 +145,7 @@ const Layout: FC<
       <NavDrawer open={navOpen} onClose={() => setNavOpen(false)}>
         {/* Top-level pages */}
         <NavDrawerSection
-          header={<span className="skc-headline-small">MySK</span>}
+          header={<Text type="headline-small">{t("appName")}</Text>}
           alt="MySK"
         >
           {user?.role === "teacher" || navType === "teacher" ? (
@@ -253,7 +259,7 @@ const Layout: FC<
               element={Link}
             />
           )}
-          <NavDrawerItem
+          {/* <NavDrawerItem
             icon={<MaterialIcon icon="web" />}
             label={t("navigation.drawer.about.legacy")}
             href="http://mysk.school.61.19.250.243.no-domain.name/"
@@ -266,7 +272,7 @@ const Layout: FC<
                 target="_blank"
               />
             ))}
-          />
+          /> */}
           <NavDrawerItem
             icon={<MaterialIcon icon="translate" />}
             label={t("navigation.language")}
@@ -283,12 +289,13 @@ const Layout: FC<
           />
 
           {/* Version number */}
-          <p
-            className="skc-label-small p-4 pt-8 !font-display
-              text-on-surface-variant"
+          <Text
+            type="label-small"
+            element="p"
+            className="p-4 pt-8 !font-display text-on-surface-variant"
           >
             {process.env.NEXT_PUBLIC_VERSION || "Preview version"}
-          </p>
+          </Text>
         </NavDrawerSection>
       </NavDrawer>
 
@@ -345,7 +352,6 @@ const Layout: FC<
           }
           onNavToggle={() => setNavOpen(true)}
           locale={locale}
-          className="backdrop-blur-lg sm:!bg-[#fbfcff7f] sm:dark:!bg-[#191c1e7f]"
         >
           {(navType || user?.role) === "teacher" ? (
             <NavBarItem
@@ -400,6 +406,13 @@ const Layout: FC<
 
       {/* Log out Dialog */}
       <LogOutDialog open={logOutOpen} onClose={() => setLogOutOpen(false)} />
+
+      {/* Page loading indicator */}
+      <Progress
+        appearance="linear"
+        alt={t("pageIsLoading")}
+        visible={pageIsLoading}
+      />
 
       {/* Snackbar */}
       <Snackbar

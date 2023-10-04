@@ -3,8 +3,9 @@ import ContactCard from "@/components/account/ContactCard";
 import MultilangText from "@/components/common/MultilingualText";
 import DetailSection from "@/components/lookup/person/DetailSection";
 import SnackbarContext from "@/contexts/SnackbarContext";
-import { getLocaleName, getLocaleString } from "@/utils/helpers/string";
-import { useLocale } from "@/utils/hooks/i18n";
+import getLocaleName from "@/utils/helpers/getLocaleName";
+import getLocaleString from "@/utils/helpers/getLocaleString";
+import useLocale from "@/utils/helpers/useLocale";
 import { Student, Teacher } from "@/utils/types/person";
 import { Subject } from "@/utils/types/subject";
 import {
@@ -234,7 +235,6 @@ const SubjectsSection: FC<{
 const PersonDetailsContent: FC<{
   person: Student | Teacher;
 }> = ({ person }) => {
-  const locale = useLocale();
   const { t } = useTranslation("lookup", { keyPrefix: "people.detail" });
 
   return (

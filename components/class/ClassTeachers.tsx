@@ -3,13 +3,13 @@ import ClassTeacherCard from "@/components/class/ClassTeacherCard";
 import EmptyDetail from "@/components/lookup/EmptyDetail";
 import PersonDetails from "@/components/lookup/person/PersonDetails";
 import { getTeacherByID } from "@/utils/backend/person/getTeacherByID";
-import { withLoading } from "@/utils/helpers/loading";
-import { getLocaleString } from "@/utils/helpers/string";
-import { useLocale } from "@/utils/hooks/i18n";
-import { useToggle } from "@/utils/hooks/toggle";
+import withLoading from "@/utils/helpers/withLoading";
+import getLocaleString from "@/utils/helpers/getLocaleString";
+import useLocale from "@/utils/helpers/useLocale";
+import useToggle from "@/utils/helpers/useToggle";
 import { Teacher } from "@/utils/types/person";
 import { SubjectGroupTeachers } from "@/utils/types/subject";
-import { SplitLayout, useBreakpoint } from "@suankularb-components/react";
+import { SplitLayout, Text, useBreakpoint } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { FC, useEffect, useState } from "react";
 
@@ -53,8 +53,7 @@ const ClassTeachers: FC<{
   return (
     <SplitLayout
       ratio="list-detail"
-      className="sm:[&>*>*]:!h-[calc(100vh-13.5rem-1px)]
-        supports-[height:100dvh]:sm:[&>*>*]:!h-[calc(100dvh-13.5rem-1px)]"
+      className="sm:[&>*>*]:!h-[calc(100dvh-8.25rem-1px)]"
     >
       <aside className="!flex flex-col gap-6">
         {teacherList.map((section) => (
@@ -62,9 +61,9 @@ const ClassTeachers: FC<{
             key={section.subject_group.id}
             className="flex flex-col gap-2"
           >
-            <h3 className="skc-headline-small">
+            <Text type="headline-small" element="h3">
               {getLocaleString(section.subject_group.name, locale)}
-            </h3>
+            </Text>
             {section.teachers.map((teacher) => (
               <ClassTeacherCard
                 key={teacher.id}

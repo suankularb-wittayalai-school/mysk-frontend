@@ -1,8 +1,6 @@
-import {
-  getCurrentAcademicYear,
-  getCurrentSemester,
-} from "@/utils/helpers/date";
-import { logError } from "@/utils/helpers/debug";
+import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
+import getCurrentSemester from "@/utils/helpers/getCurrentSemester";
+import logError from "@/utils/helpers/logError";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
 import { Teacher } from "@/utils/types/person";
 import { PeriodContentItem } from "@/utils/types/schedule";

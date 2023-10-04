@@ -1,47 +1,39 @@
-// External libraries
-import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
-
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import Head from "next/head";
-
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
-// Internal components
+// Imports
 import ClassTeachers from "@/components/class/ClassTeachers";
 import PageHeader from "@/components/common/PageHeader";
 import ClassTabs from "@/components/lookup/class/ClassTabs";
-
-// Backend
-import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
-
-// Helpers
-import { createTitleStr } from "@/utils/helpers/title";
-
-// Types
+import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
+import getTeachersOfClass from "@/utils/backend/classroom/getTeachersOfClass";
 import { Classroom } from "@/utils/types/classroom";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
 import { SubjectGroupTeachers } from "@/utils/types/subject";
-import getTeachersOfClass from "@/utils/backend/classroom/getTeachersOfClass";
-
+import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Head from "next/head";
 
 const ClassTeachersPage: CustomPage<{
   classItem: Pick<Classroom, "id" | "number">;
   teacherList: SubjectGroupTeachers[];
   userRole: UserRole;
 }> = ({ classItem, teacherList, userRole }) => {
-  const { t } = useTranslation(["class", "common"]);
+  const { t } = useTranslation("class");
+  const { t: tx } = useTranslation("common");
 
   return (
     <>
       <Head>
-        <title>{createTitleStr(t(`teacher.title.${userRole}`), t)}</title>
+        <title>
+          {tx("tabName", { tabName: t(`teacher.title.${userRole}`) })}
+        </title>
       </Head>
-      <PageHeader title={t(`teacher.title.${userRole}`)} parentURL="/class">
-        <ClassTabs number={classItem.number} type="class" />
+      <PageHeader parentURL="/class">
+        {t(`teacher.title.${userRole}`)}
       </PageHeader>
+      <ClassTabs number={classItem.number} type="class" />
       <ClassTeachers {...{ teacherList }} />
     </>
   );
@@ -66,13 +58,13 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   const userRole = user!.role;
 
-  let classItem: Pick<Classroom, "id" | "number"> = user!.role === "student" ? user!.classroom! : user!.class_advisor_at!;
+  let classItem: Pick<Classroom, "id" | "number"> =
+    user!.role === "student" ? user!.classroom! : user!.class_advisor_at!;
 
   const { data: allTeacherList } = await getTeachersOfClass(
     supabase,
-    classItem!.id
+    classItem!.id,
   );
-
 
   // group by subject group
   const teacherList: SubjectGroupTeachers[] = [];
@@ -91,8 +83,6 @@ export const getServerSideProps: GetServerSideProps = async ({
       teacherList[subjectGroupIndex].teachers.push(teacher);
     }
   }
-
-
 
   return {
     props: {

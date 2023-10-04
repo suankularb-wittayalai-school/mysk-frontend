@@ -1,12 +1,12 @@
-import { logError } from "@/utils/helpers/debug";
-import { mergeDBLocales } from "@/utils/helpers/string";
+import logError from "@/utils/helpers/logError";
+import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
 import { Contact } from "@/utils/types/contact";
 import { Subject } from "@/utils/types/subject";
 import { Student } from "@/utils/types/person";
 import { GetServerSidePropsContext } from "next";
 
-import { getCurrentAcademicYear } from "@/utils/helpers/date";
+import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 
 export default async function getStudentsOfClass(
   supabase: DatabaseClient,

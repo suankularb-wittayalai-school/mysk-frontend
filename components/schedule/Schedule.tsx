@@ -1,10 +1,4 @@
-// External libraries
-import { setDay } from "date-fns";
-import { LayoutGroup } from "framer-motion";
-import { useTranslation } from "next-i18next";
-import { FC, RefObject, useEffect, useRef, useState } from "react";
-
-// Internal components
+// Imports
 import DayCard from "@/components/schedule/DayCard";
 import ElectivePeriod from "@/components/schedule/ElectivePeriod";
 import EmptyPeriod from "@/components/schedule/EmptyPeriod";
@@ -13,21 +7,20 @@ import NumbersRow from "@/components/schedule/NumbersRow";
 import PeriodAdditionHint from "@/components/schedule/PeriodAdditionHint";
 import SubjectPeriod from "@/components/schedule/SubjectPeriod";
 import SubjectsInChargeCard from "@/components/schedule/SubjectsInChargeCard";
-
-// Contexts
 import ScheduleContext from "@/contexts/ScheduleContext";
-
-// Helpers
-import {
-  getCurrentPeriod,
-  isInPeriod,
-  isSchoolInSessionNow,
-} from "@/utils/helpers/schedule";
-
-// Types
-import { useNow } from "@/utils/helpers/date";
+import cn from "@/utils/helpers/cn";
+import getCurrentPeriod from "@/utils/helpers/schedule/getCurrentPeriod";
+import isInPeriod from "@/utils/helpers/schedule/isInPeriod";
+import isSchoolInSessionNow from "@/utils/helpers/schedule/isSchoolInSessionNow";
+import useNow from "@/utils/helpers/useNow";
+import { StylableFC } from "@/utils/types/common";
 import { PeriodLocation, Schedule } from "@/utils/types/schedule";
 import { Subject } from "@/utils/types/subject";
+import { Text } from "@suankularb-components/react";
+import { setDay } from "date-fns";
+import { LayoutGroup } from "framer-motion";
+import { useTranslation } from "next-i18next";
+import { RefObject, useEffect, useRef, useState } from "react";
 
 /**
  * An interactive Schedule.
@@ -36,16 +29,22 @@ import { Subject } from "@/utils/types/subject";
  * @param subjectsInCharge The Subjects assigned to this teacher. Used in editing the Schedule.
  * @param teacherID The Teacher’s database ID. Used in validating edits in the Schedule.
  * @param role The Schedule view, from the perspective of a student or a teacher.
- *
- * @returns A JSX Element.
  */
-const Schedule: FC<{
+const Schedule: StylableFC<{
   schedule: Schedule;
   subjectsInCharge?: Pick<Subject, "id" | "name" | "code" | "short_name">[];
   teacherID?: string;
   view: "student" | "teacher";
   editable?: boolean;
-}> = ({ schedule, subjectsInCharge, teacherID, view, editable }) => {
+}> = ({
+  schedule,
+  subjectsInCharge,
+  teacherID,
+  view,
+  editable,
+  style,
+  className,
+}) => {
   // Translation
   const { t } = useTranslation("schedule");
 
@@ -53,7 +52,7 @@ const Schedule: FC<{
   const scheduleRef: RefObject<HTMLElement> = useRef(null);
 
   // (@SiravitPhokeed)
-  // we’re using a long update interval because this updates the Period
+  // We’re using a long update interval because this updates the Period
   // components. When a Period is expanded, the original unexpanded period is
   // hidden by Framer Motion. When the Period update from a change in `now`,
   // the original shows again. This means if we use a short interval like 1
@@ -93,21 +92,27 @@ const Schedule: FC<{
       }}
     >
       <div
-        className="relative !mx-0 -my-2 flex flex-col-reverse gap-3
-          sm:flex-col"
+        style={style}
+        className={cn(
+          `relative !mx-0 -my-2 flex flex-col-reverse gap-3
+          sm:flex-col`,
+          className,
+        )}
       >
         {editable && (
           <>
             {/* Subjects in Charge Card: for Subjects to be added to
                 Schedule */}
             <SubjectsInChargeCard subjects={subjectsInCharge!} />
-            <p className="mx-4 sm:mx-0">{t("schedule.additionGuide")}</p>
+            <Text type="body-medium" element="p" className="mx-4 sm:mx-0">
+              {t("schedule.additionGuide")}
+            </Text>
           </>
         )}
 
         <figure
           ref={scheduleRef}
-          className="relative overflow-x-auto overflow-y-hidden pb-2"
+          className="relative overflow-x-auto overflow-y-hidden pb-1"
         >
           {/* Now indicator line */}
           {isSchoolInSessionNow() === "in-session" && <NowLine />}

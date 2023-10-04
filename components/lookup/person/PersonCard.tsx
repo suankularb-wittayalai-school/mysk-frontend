@@ -17,11 +17,11 @@ import { PersonLookupItem, UserRole } from "@/utils/types/person";
 
 // Helpers
 import { cn } from "@/utils/helpers/className";
-import { getLocaleString } from "@/utils/helpers/string";
-import { getLocaleName } from "@/utils/helpers/string";
+import getLocaleString from "@/utils/helpers/getLocaleString";
+import getLocaleName from "@/utils/helpers/getLocaleName";
 
 // Hooks
-import { useLocale } from "@/utils/hooks/i18n";
+import useLocale from "@/utils/helpers/useLocale";
 
 const PersonCard: FC<{
   person: PersonLookupItem;

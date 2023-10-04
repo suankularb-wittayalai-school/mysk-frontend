@@ -1,6 +1,6 @@
 // Imports
-import { getCurrentAcademicYear } from "@/utils/helpers/date";
-import { logError } from "@/utils/helpers/debug";
+import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
+import logError from "@/utils/helpers/logError";
 import { DatabaseClient } from "@/utils/types/backend";
 import { Classroom } from "@/utils/types/classroom";
 import { list } from "radash";

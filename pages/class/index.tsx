@@ -1,35 +1,15 @@
-// External libraries
+// Imports
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
-
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import Head from "next/head";
-
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
-// Internal components
 import ClassOverview from "@/components/class/ClassOverview";
 import PageHeader from "@/components/common/PageHeader";
 import ClassTabs from "@/components/lookup/class/ClassTabs";
-
-// Backend
-// import { getUserMetadata } from "@/utils/backend/account/getUserByEmail";
-// import {
-//   getClassFromUser,
-//   getClassOverview,
-// } from "@/utils/backend/classroom/classroom";
 import getClassroomOverview from "@/utils/backend/classroom/getClassroomOverview";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
-
-// Helpers
-import { createTitleStr } from "@/utils/helpers/title";
-
-// Types
-// import {
-//   ClassOverview as ClassOverviewType,
-//   ClassWNumber,
-// } from "@/utils/types/class";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
 import { Classroom } from "@/utils/types/classroom";
@@ -42,16 +22,18 @@ const ClassroomOverviewPage: CustomPage<{
   editable: boolean;
   userRole: UserRole;
 }> = ({ classroom, editable, userRole }) => {
-  const { t } = useTranslation(["class", "common"]);
+  const { t } = useTranslation("class");
+  const { t: tx } = useTranslation("common");
 
   return (
     <>
       <Head>
-        <title>{createTitleStr(t(`overview.title.${userRole}`), t)}</title>
+        <title>
+          {tx("tabName", { tabName: t(`overview.title.${userRole}`) })}
+        </title>
       </Head>
-      <PageHeader title={t(`overview.title.${userRole}`)}>
-        <ClassTabs number={classroom.number} type="class" />
-      </PageHeader>
+      <PageHeader>{t(`overview.title.${userRole}`)}</PageHeader>
+      <ClassTabs number={classroom.number} type="class" />
       <ClassOverview {...{ classroom, editable }} />
     </>
   );
@@ -92,10 +74,8 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   if (!classroom) return { notFound: true };
 
-  const { data: classroomOverview, error: classroomOverviewError } = await getClassroomOverview(
-    supabase,
-    classroom!.id,
-  );
+  const { data: classroomOverview, error: classroomOverviewError } =
+    await getClassroomOverview(supabase, classroom!.id);
 
   // console.log({classroomOverview, classroomOverviewError});
 

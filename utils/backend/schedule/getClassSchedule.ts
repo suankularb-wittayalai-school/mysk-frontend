@@ -1,14 +1,10 @@
 // Imports
-import {
-  getCurrentAcademicYear,
-  getCurrentSemester,
-} from "@/utils/helpers/date";
-import { logError } from "@/utils/helpers/debug";
-import {
-  arePeriodsOverlapping,
-  createEmptySchedule,
-} from "@/utils/helpers/schedule";
-import { mergeDBLocales } from "@/utils/helpers/string";
+import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
+import getCurrentSemester from "@/utils/helpers/getCurrentSemester";
+import logError from "@/utils/helpers/logError";
+import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
+import { arePeriodsOverlapping } from "@/utils/helpers/schedule/arePeriodsOverlapping";
+import createEmptySchedule from "@/utils/helpers/schedule/createEmptySchedule";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
 import { PeriodContentItem, Schedule } from "@/utils/types/schedule";
 import { list, omit, pick, unique } from "radash";

@@ -105,12 +105,16 @@
     "list": {
       "searchAlt": "ค้นหาเอกสาร",
       "filter": {
-        "orders": "คำสั่งโรงเรียน",
-        "documents": "หนังสือออก"
+        "orders": "คำสั่ง",
+        "records": "บันทึกข้อความ",
+        "announcements": "ประกาศ",
+        "other": "อื่น ๆ"
       },
       "metadata": {
         "order": "ที่ {{code}}/{{year}} • {{date}}",
-        "document": "ศธ 04290.20/{{code}} • {{date}}"
+        "record": "{{code}} • {{date}}",
+        "announcement": "{{date}}",
+        "other": "{{date}}"
       }
     },
     "header": {

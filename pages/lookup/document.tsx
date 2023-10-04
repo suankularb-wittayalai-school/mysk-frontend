@@ -1,52 +1,26 @@
-// External libraries
-import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
-
-import va from "@vercel/analytics";
-
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import Head from "next/head";
-
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
-import { useEffect, useState } from "react";
-
-// SK Components
-import {
-  ChipSet,
-  FilterChip,
-  MaterialIcon,
-  SplitLayout,
-} from "@suankularb-components/react";
-
-// Internal components
+// Imports
 import PageHeader from "@/components/common/PageHeader";
 import EmptyDetail from "@/components/lookup/EmptyDetail";
 import LookupList from "@/components/lookup/LookupList";
 import DocumentCard from "@/components/lookup/document/DocumentCard";
 import DocumentDetails from "@/components/lookup/document/DocumentDetails";
-
-// Backend
-// import { getUserMetadata } from "@/utils/backend/account/getUserByEmail";
-// import {
-//   getSchoolDocs,
-//   getSchoolDocsByID,
-//   searchSchoolDocs,
-// } from "@/utils/backend/news/document";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
-
-// Helpers
-import { createTitleStr } from "@/utils/helpers/title";
-
-// Types
+import { getSchoolDocumentByID } from "@/utils/backend/document/getSchoolDocumentByID";
+import { getSchoolDocuments } from "@/utils/backend/document/getSchoolDocuments";
+import { searchSchoolDocuments } from "@/utils/backend/document/searchSchoolDocuments";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { SchoolDocument, SchoolDocumentType } from "@/utils/types/news";
 import { UserRole } from "@/utils/types/person";
-import { getSchoolDocuments } from "@/utils/backend/document/getSchoolDocuments";
-import { getSchoolDocumentByID } from "@/utils/backend/document/getSchoolDocumentByID";
+import { ChipSet, FilterChip, SplitLayout } from "@suankularb-components/react";
+import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { searchSchoolDocuments } from "@/utils/backend/document/searchSchoolDocuments";
+import va from "@vercel/analytics";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Head from "next/head";
+import { useEffect, useState } from "react";
 
 const LookupDocumentsPage: CustomPage<{
   recentDocs: SchoolDocument[];
@@ -54,7 +28,8 @@ const LookupDocumentsPage: CustomPage<{
   userRole: UserRole;
 }> = ({ recentDocs, selectedIdx, userRole }) => {
   // Translation
-  const { t } = useTranslation(["lookup", "common"]);
+  const { t } = useTranslation("lookup");
+  const { t: tx } = useTranslation("common");
 
   const [documents, setDocuments] = useState<SchoolDocument[]>(recentDocs);
   const supabase = useSupabaseClient();
@@ -83,9 +58,9 @@ const LookupDocumentsPage: CustomPage<{
   return (
     <>
       <Head>
-        <title>{createTitleStr(t("documents.title"), t)}</title>
+        <title>{tx("tabName", { tabName: t("documents.title") }, t)}</title>
       </Head>
-      <PageHeader title={t("documents.title")} parentURL="/lookup" />
+      <PageHeader parentURL="/lookup">{t("documents.title")}</PageHeader>
       <SplitLayout ratio="list-detail">
         <LookupList
           length={documents.length}
@@ -100,17 +75,34 @@ const LookupDocumentsPage: CustomPage<{
                   {t("documents.list.filter.orders")}
                 </FilterChip>
                 <FilterChip
+                  selected={type === "record"}
+                  onClick={() => setType("record")}
+                >
+                  {t("documents.list.filter.records")}
+                </FilterChip>
+                <FilterChip
                   selected={type === "announcement"}
                   onClick={() => setType("announcement")}
                 >
-                  {t("documents.list.filter.documents")}
+                  {t("documents.list.filter.announcements")}
+                </FilterChip>
+                <FilterChip
+                  selected={type === "other"}
+                  onClick={() => setType("other")}
+                >
+                  {t("documents.list.filter.other")}
                 </FilterChip>
               </ChipSet>
             ) : undefined
           }
           onSearch={async (query) => {
             va.track("Search Document", {
-              type: type === "order" ? "Order" : "School Document",
+              type: {
+                order: "Orders",
+                record: "Records",
+                announcement: "Announcements",
+                other: "Other",
+              }[type],
             });
             if (!query) {
               setDocuments(recentDocs);

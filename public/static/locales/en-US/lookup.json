@@ -104,11 +104,15 @@
       "searchAlt": "Search documents",
       "filter": {
         "orders": "Orders",
-        "documents": "Documents"
+        "records": "Records",
+        "announcements": "Announcements",
+        "other": "Other"
       },
       "metadata": {
         "order": "№ {{code}}/{{year}} • {{date}}",
-        "document": "MoE 04290.20/{{code}} • {{date}}"
+        "record": "{{code}} • {{date}}",
+        "announcement": "{{date}}",
+        "other": "{{date}}"
       }
     },
     "header": {

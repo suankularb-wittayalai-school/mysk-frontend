@@ -1,16 +1,3 @@
-/**
- * `/learn` TABLE OF CONTENTS
- *
- * Note: `Ctrl` + click to jump to a component.
- *
- * **Sections**
- * - {@link ScheduleSection}
- * - {@link SubjectListSection}
- *
- * **Page**
- * - {@link LearnPage}
- */
-
 // Imports
 import PageHeader from "@/components/common/PageHeader";
 import Schedule from "@/components/schedule/Schedule";
@@ -20,9 +7,8 @@ import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import getClassSchedule from "@/utils/backend/schedule/getClassSchedule";
 import getClassroomSubjectsOfClass from "@/utils/backend/subject/getClassroomSubjectsOfClass";
-import { createEmptySchedule } from "@/utils/helpers/schedule";
-import { createTitleStr } from "@/utils/helpers/title";
-import { useLocale } from "@/utils/hooks/i18n";
+import createEmptySchedule from "@/utils/helpers/schedule/createEmptySchedule";
+import useLocale from "@/utils/helpers/useLocale";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Student } from "@/utils/types/person";
 import { Schedule as ScheduleType } from "@/utils/types/schedule";
@@ -33,7 +19,7 @@ import {
   Header,
   Search,
   transition,
-  useAnimationConfig
+  useAnimationConfig,
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { LayoutGroup, motion } from "framer-motion";
@@ -41,36 +27,21 @@ import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
-import { FC, useState } from "react";
+import { useState } from "react";
 
 /**
- * Displays the Student’s Schedule and relevant related information.
+ * The Student’s counterpart to Teach, where the user can see their Schedule
+ * and their Subjects.
  *
  * @param schedule Data for displaying Schedule.
- *
- * @returns A Section.
+ * @param subjectList The Subjects this Student’s Classroom is enrolled in.
  */
-const ScheduleSection: FC<{ schedule: ScheduleType }> = ({ schedule }) => {
-  const { t } = useTranslation("learn");
-
-  const { duration, easing } = useAnimationConfig();
-
-  return (
-    <motion.section
-      className="skc-section"
-      layout="position"
-      transition={transition(duration.medium4, easing.standard)}
-    >
-      <Header>{t("schedule")}</Header>
-      <Schedule schedule={schedule} view="student" />
-    </motion.section>
-  );
-};
-
-const SubjectListSection: FC<{
+const LearnPage: CustomPage<{
+  schedule: ScheduleType;
   subjectList: ClassroomSubject[];
-}> = ({ subjectList }) => {
-  const { t } = useTranslation("schedule");
+}> = ({ schedule, subjectList }) => {
+  const { t } = useTranslation("learn");
+  const { t: tx } = useTranslation(["common", "schedule"]);
   const locale = useLocale();
 
   const { duration, easing } = useAnimationConfig();
@@ -78,42 +49,46 @@ const SubjectListSection: FC<{
   const [query, setQuery] = useState<string>("");
 
   return (
-    <motion.section
-      className="skc-section"
-      layout="position"
-      transition={transition(duration.medium4, easing.standard)}
-    >
-      <Columns columns={3} className="!items-end">
-        <Header className="md:col-span-2">{t("subjectList.title")}</Header>
-        <Search
-          alt={t("subjectList.search")}
-          value={query}
-          locale={locale}
-          onChange={setQuery}
-        />
-      </Columns>
-      <SubjectList {...{ subjectList, query }} />
-    </motion.section>
-  );
-};
-
-const LearnPage: CustomPage<{
-  schedule: ScheduleType;
-  subjectList: ClassroomSubject[];
-}> = ({ schedule, subjectList }) => {
-  const { t } = useTranslation("learn");
-
-  return (
     <>
       <Head>
-        <title>{createTitleStr(t("title"), t)}</title>
+        <title>{tx("tabName", { tabName: t("title") })}</title>
       </Head>
-      <PageHeader title={t("title")} />
+      <PageHeader>{t("title")}</PageHeader>
+
       <ContentLayout>
         <LayoutGroup>
+          {/* At a Glance */}
           <ScheduleAtAGlance schedule={schedule} role="student" />
-          <ScheduleSection schedule={schedule} />
-          <SubjectListSection subjectList={subjectList} />
+
+          {/* Schedule */}
+          <motion.section
+            className="skc-section"
+            layout="position"
+            transition={transition(duration.medium4, easing.standard)}
+          >
+            <Header>{t("schedule")}</Header>
+            <Schedule schedule={schedule} view="student" />
+          </motion.section>
+
+          {/* Subject list */}
+          <motion.section
+            className="skc-section"
+            layout="position"
+            transition={transition(duration.medium4, easing.standard)}
+          >
+            <Columns columns={3} className="!items-end">
+              <Header className="md:col-span-2">
+                {tx("subjectList.title", { ns: "schedule" })}
+              </Header>
+              <Search
+                alt={tx("subjectList.search", { ns: "schedule" })}
+                value={query}
+                locale={locale}
+                onChange={setQuery}
+              />
+            </Columns>
+            <SubjectList subjectList={subjectList} query={query} />
+          </motion.section>
         </LayoutGroup>
       </ContentLayout>
     </>

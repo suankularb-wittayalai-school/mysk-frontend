@@ -7,6 +7,7 @@ import {
   DialogContent,
   DialogHeader,
   MaterialIcon,
+  Text,
 } from "@suankularb-components/react";
 import { forwardRef } from "react";
 import { Trans, useTranslation } from "next-i18next";
@@ -30,9 +31,13 @@ const AccountNotFoundDialog: DialogFC = ({ open, onClose }) => {
         }
       />
       <DialogContent className="-mt-3 px-6">
-        <p className="skc-body-medium text-on-surface-variant">
+        <Text
+          type="body-medium"
+          element="p"
+          className="text-on-surface-variant"
+        >
           {t("contact")}
-        </p>
+        </Text>
       </DialogContent>
       <Actions className="!justify-between">
         <Button

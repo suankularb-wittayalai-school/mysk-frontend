@@ -1,4 +1,5 @@
 // External libraries
+import { Text } from "@suankularb-components/react";
 import { FC, ReactNode } from "react";
 
 const DetailSection: FC<{
@@ -8,7 +9,9 @@ const DetailSection: FC<{
 }> = ({ children, title, className }) => {
   return (
     <div {...{ className }}>
-      <h4 className="skc-title-medium">{title}</h4>
+      <Text type="title-medium" element="h4">
+        {title}
+      </Text>
       {children}
     </div>
   );

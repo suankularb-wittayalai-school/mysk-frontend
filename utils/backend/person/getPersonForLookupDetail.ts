@@ -2,7 +2,7 @@ import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
 import { PersonLookupItem, UserRole } from "@/utils/types/person";
 import { getStudentByID } from "./getStudentByID";
 import { getTeacherByID } from "./getTeacherByID";
-import { logError } from "@/utils/helpers/debug";
+import logError from "@/utils/helpers/logError";
 
 export async function getPersonForLookupDetail(
   supabase: DatabaseClient,

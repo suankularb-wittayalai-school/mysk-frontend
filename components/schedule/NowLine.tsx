@@ -1,5 +1,5 @@
 // Imports
-import { useNow } from "@/utils/helpers/date";
+import useNow from "@/utils/helpers/useNow";
 import { differenceInSeconds } from "date-fns";
 import { FC } from "react";
 

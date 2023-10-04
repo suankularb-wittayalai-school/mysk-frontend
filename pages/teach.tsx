@@ -1,16 +1,3 @@
-/**
- * `/teach` TABLE OF CONTENTS
- *
- * Note: `Ctrl` + click to jump to a component.
- *
- * **Sections**
- * - {@link ScheduleSection}
- * - {@link SubjectsSection}
- *
- * **Page**
- * - {@link TeachPage}
- */
-
 // Imports
 import PageHeader from "@/components/common/PageHeader";
 import Schedule from "@/components/schedule/Schedule";
@@ -20,9 +7,8 @@ import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import getTeacherSchedule from "@/utils/backend/schedule/getTeacherSchedule";
 import getTeachingSubjects from "@/utils/backend/subject/getTeachingSubjects";
-import { getLocalePath } from "@/utils/helpers/string";
-import { createTitleStr } from "@/utils/helpers/title";
-import { useLocale } from "@/utils/hooks/i18n";
+import getLocalePath from "@/utils/helpers/getLocalePath";
+import useLocale from "@/utils/helpers/useLocale";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Schedule as ScheduleType } from "@/utils/types/schedule";
 import { Subject, SubjectClassrooms } from "@/utils/types/subject";
@@ -30,7 +16,6 @@ import {
   Columns,
   ContentLayout,
   Header,
-  MaterialIcon,
   Search,
   transition,
   useAnimationConfig,
@@ -41,90 +26,7 @@ import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
-import { FC, useState } from "react";
-
-/**
- * Displays the Teacher’s Schedule and relevant related information.
- *
- * @param schedule Data for displaying Schedule.
- * @param subjectsInCharge The Subjects assigned to this teacher. Used in editing the Schedule.
- * @param teacherID The Teacher’s database ID. Used in validating edits in the Schedule.
- *
- * @returns A Section.
- */
-const ScheduleSection: FC<{
-  schedule: ScheduleType;
-  subjectsInCharge: Pick<Subject, "id" | "name" | "code" | "short_name">[];
-  teacherID: string;
-}> = ({ schedule, subjectsInCharge, teacherID }) => {
-  const { t } = useTranslation("teach");
-
-  const { duration, easing } = useAnimationConfig();
-
-  return (
-    <motion.section
-      className="skc-section"
-      layout="position"
-      transition={transition(duration.medium4, easing.standard)}
-    >
-      <Header>{t("schedule.title")}</Header>
-      <Schedule
-        {...{ schedule, subjectsInCharge, teacherID }}
-        view="teacher"
-        editable
-      />
-    </motion.section>
-  );
-};
-
-/**
- * Displays the Teacher’s Subjects.
- *
- * @param subjects An array of Subject Classrooms, an abstraction of Classroom Subjects connected to this Teacher.
- *
- * @returns A Section.
- */
-const SubjectsSection: FC<{
-  subjects: SubjectClassrooms[];
-}> = ({ subjects }) => {
-  const locale = useLocale();
-  const { t } = useTranslation("teach");
-
-  const { duration, easing } = useAnimationConfig();
-
-  const [globalFilter, setGlobalFilter] = useState<string>("");
-
-  return (
-    <motion.section
-      className="skc-section !gap-y-3"
-      layout="position"
-      transition={transition(duration.medium4, easing.standard)}
-    >
-      <Columns columns={3} className="!items-end">
-        <Header className="md:col-span-2">{t("subjects.title")}</Header>
-        <Search
-          alt="Search subjects"
-          value={globalFilter}
-          locale={locale}
-          onChange={setGlobalFilter}
-        />
-      </Columns>
-      <Columns columns={3}>
-        {subjects
-          .filter(
-            (subject) =>
-              subject.subject.name.th.includes(globalFilter) ||
-              subject.subject.name["en-US"]?.includes(globalFilter) ||
-              subject.subject.code["en-US"]?.includes(globalFilter) ||
-              subject.subject.code["en-US"]?.includes(globalFilter),
-          )
-          .map((subject) => (
-            <TeachingSubjectCard key={subject.id} subject={subject} />
-          ))}
-      </Columns>
-    </motion.section>
-  );
-};
+import { useState } from "react";
 
 /**
  * The Teacher’s counterpart to Learn, where the user can see their Schedule
@@ -134,8 +36,6 @@ const SubjectsSection: FC<{
  * @param subjectsInCharge The Subjects assigned to this teacher. Used in editing the Schedule.
  * @param teachingSubjects An array of Teacher Subject Items, an abstraction of Room Subjects connected to this Teacher.
  * @param teacherID The Teacher’s database ID. Used in validating edits in the Schedule.
- *
- * @returns A Page.
  */
 const TeachPage: CustomPage<{
   schedule: ScheduleType;
@@ -143,20 +43,68 @@ const TeachPage: CustomPage<{
   teachingSubjects: SubjectClassrooms[];
   teacherID: string;
 }> = ({ schedule, subjectsInCharge, teachingSubjects, teacherID }) => {
+  const locale = useLocale();
   const { t } = useTranslation("teach");
   const { t: tx } = useTranslation("common");
+
+  const { duration, easing } = useAnimationConfig();
+
+  const [query, setQuery] = useState<string>("");
 
   return (
     <>
       <Head>
-        <title>{createTitleStr(t("title"), tx)}</title>
+        <title>{tx("tabName", { tabName: t("title") })}</title>
       </Head>
-      <PageHeader title={t("title")} />
+      <PageHeader>{t("title")}</PageHeader>
       <ContentLayout>
         <LayoutGroup>
+          {/* At a Glance */}
           <ScheduleAtAGlance schedule={schedule} role="teacher" />
-          <ScheduleSection {...{ schedule, subjectsInCharge, teacherID }} />
-          <SubjectsSection subjects={teachingSubjects} />
+
+          {/* Schedule */}
+          <motion.section
+            className="skc-section"
+            layout="position"
+            transition={transition(duration.medium4, easing.standard)}
+          >
+            <Header>{t("schedule.title")}</Header>
+            <Schedule
+              {...{ schedule, subjectsInCharge, teacherID }}
+              view="teacher"
+              editable
+            />
+          </motion.section>
+
+          {/* Subjects */}
+          <motion.section
+            className="skc-section !gap-y-3"
+            layout="position"
+            transition={transition(duration.medium4, easing.standard)}
+          >
+            <Columns columns={3} className="!items-end">
+              <Header className="md:col-span-2">{t("subjects.title")}</Header>
+              <Search
+                alt="Search subjects"
+                value={query}
+                locale={locale}
+                onChange={setQuery}
+              />
+            </Columns>
+            <Columns columns={3}>
+              {teachingSubjects
+                .filter(
+                  (subject) =>
+                    subject.subject.name.th.includes(query) ||
+                    subject.subject.name["en-US"]?.includes(query) ||
+                    subject.subject.code["en-US"]?.includes(query) ||
+                    subject.subject.code["en-US"]?.includes(query),
+                )
+                .map((subject) => (
+                  <TeachingSubjectCard key={subject.id} subject={subject} />
+                ))}
+            </Columns>
+          </motion.section>
         </LayoutGroup>
       </ContentLayout>
     </>

@@ -1,4 +1,4 @@
-import { useLocale } from "@/utils/hooks/i18n";
+import useLocale from "@/utils/helpers/useLocale";
 import { roomRegex } from "@/utils/patterns";
 import { ChipField, ChipSet, InputChip } from "@suankularb-components/react";
 import { last, replace } from "radash";
@@ -34,11 +34,6 @@ const RoomsField: FC<{
       value={field}
       onChange={setField}
       onDeleteLast={() => onChange(rooms.slice(0, -1))}
-      onNewEntry={(value) => {
-        if (rooms.includes(value)) return;
-        if (value.length === 3) return;
-        onChange([...rooms, field]);
-      }}
       locale={locale}
     >
       <ChipSet>

@@ -1,5 +1,5 @@
-import { logError } from "@/utils/helpers/debug";
-import { mergeDBLocales } from "@/utils/helpers/string";
+import logError from "@/utils/helpers/logError";
+import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
 import { Contact } from "@/utils/types/contact";
 import { Person } from "@/utils/types/person";

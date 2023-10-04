@@ -1,7 +1,7 @@
 // Imports
 import getUserByEmail from "@/utils/backend/account/getUserByEmail";
-import { logError } from "@/utils/helpers/debug";
-import { getLocalePath } from "@/utils/helpers/string";
+import logError from "@/utils/helpers/logError";
+import getLocalePath from "./utils/helpers/getLocalePath";
 import { LangCode } from "@/utils/types/common";
 import { User, UserRole } from "@/utils/types/person";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";

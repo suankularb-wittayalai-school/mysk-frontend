@@ -1,5 +1,5 @@
 // Imports
-import { logError } from "@/utils/helpers/debug";
+import logError from "@/utils/helpers/logError";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
 import { SchedulePeriod } from "@/utils/types/schedule";
 import { omit } from "radash";

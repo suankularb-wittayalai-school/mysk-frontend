@@ -6,10 +6,10 @@ import { FC } from "react";
 import { Avatar } from "@suankularb-components/react";
 
 // Helpers
-import { startsWithThaiVowel } from "@/utils/helpers/string";
+import startsWithThaiVowel from "@/utils/helpers/startsWithThaiVowel";
 
 // Hooks
-import { useLocale } from "@/utils/hooks/i18n";
+import useLocale from "@/utils/helpers/useLocale";
 
 // Types
 import { Person } from "@/utils/types/person";

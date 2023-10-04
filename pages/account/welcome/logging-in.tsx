@@ -1,20 +1,14 @@
-// External libraries
-import {
-  createPagesServerClient,
-} from "@supabase/auth-helpers-nextjs";
-import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
-
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import Head from "next/head";
-import Link from "next/link";
-import { useRouter } from "next/router";
-
-import { Trans, useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
-import { FC, useState } from "react";
-
-// SK Components
+// Imports
+import BlockingPane from "@/components/common/BlockingPane";
+import PageHeader from "@/components/common/PageHeader";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import getUserByEmail from "@/utils/backend/account/getUserByEmail";
+import logError from "@/utils/helpers/logError";
+import useLocale from "@/utils/helpers/useLocale";
+import useToggle from "@/utils/helpers/useToggle";
+import withLoading from "@/utils/helpers/withLoading";
+import type { CustomPage, LangCode } from "@/utils/types/common";
+import { User } from "@/utils/types/person";
 import {
   Actions,
   Button,
@@ -26,30 +20,17 @@ import {
   Section,
   TextField,
 } from "@suankularb-components/react";
-
-// Internal components
-import BlockingPane from "@/components/common/BlockingPane";
-import PageHeader from "@/components/common/PageHeader";
-
-// Helpers
-import { logError } from "@/utils/helpers/debug";
-import { withLoading } from "@/utils/helpers/loading";
-import { createTitleStr } from "@/utils/helpers/title";
-
-// Hooks
-import { useLocale } from "@/utils/hooks/i18n";
-import { useToggle } from "@/utils/hooks/toggle";
-
-// Types
-import type { CustomPage, LangCode } from "@/utils/types/common";
-import { User } from "@/utils/types/person";
-
-//Backend
-import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
-import getUserByEmail from "@/utils/backend/account/getUserByEmail";
-import { log } from "console";
+import { Trans, useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Head from "next/head";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { FC, useEffect, useState } from "react";
+
 const LastPageCard: FC = () => {
   // Translation
   const { t } = useTranslation("welcome");
@@ -110,7 +91,7 @@ const CheckEmailSection: FC<{ user: User }> = ({ user }) => {
         return true;
       },
       toggleLoading,
-      { hasEndToggle: true }
+      { hasEndToggle: true },
     );
   }
 
@@ -146,7 +127,7 @@ const CheckEmailSection: FC<{ user: User }> = ({ user }) => {
             setEmail(
               (value as string).endsWith("sk.ac.th")
                 ? (value as string).slice(0, -8)
-                : (value as string)
+                : (value as string),
             )
           }
           locale={locale}
@@ -167,35 +148,24 @@ const CheckEmailSection: FC<{ user: User }> = ({ user }) => {
   );
 };
 
-const CreatePasswordSection: FC = () => {
+const LoggingInPage: CustomPage<{ user: User }> = ({ user }) => {
   // Translation
   const { t } = useTranslation("welcome");
+  const { t: tx } = useTranslation("common");
+
+  // Routing
+  const router = useRouter();
 
   // Supabase
   const supabase = useSupabaseClient();
-  const user = useUser();
 
-  const [form, setForm] = useState({
-    password: "",
-    confirmPassword: "",
-  });
-
+  // Loading
   const [loading, toggleLoading] = useToggle();
-  const [success, toggleSuccess] = useToggle();
-  function handleSubmit() {
+
+  useEffect(() => {
+    // Flag the user as onboarded
     withLoading(
       async () => {
-        // Set new password
-        const { error: pwdError } = await supabase.auth.updateUser({
-          password: form.password,
-        });
-        if (pwdError) {
-          console.error(pwdError);
-          return false;
-        }
-
-        // Flag the user as onboarded
-
         // In Supabase’s internals
         const { error: sbUserError } = await supabase.auth.updateUser({
           data: { onboarded: true },
@@ -215,86 +185,21 @@ const CreatePasswordSection: FC = () => {
           return false;
         }
 
-        toggleSuccess();
         return true;
       },
       toggleLoading,
-      { hasEndToggle: true }
+      { hasEndToggle: true },
     );
-  }
-
-  return (
-    <Section className="relative">
-      <BlockingPane
-        icon={<MaterialIcon icon="done" size={48} />}
-        open={success}
-      >
-        {t("loggingIn.createPassword.success")}
-      </BlockingPane>
-      <Header>{t("loggingIn.createPassword.title")}</Header>
-      <p>{t("loggingIn.createPassword.desc")}</p>
-      <Columns columns={6}>
-        <div className="col-span-4 flex flex-col gap-4 md:col-start-2">
-          <TextField
-            appearance="outlined"
-            label={t("loggingIn.createPassword.form.newPwd")}
-            error={form.password.length > 0 && form.password.length < 8}
-            value={form.password}
-            onChange={(value) =>
-              setForm({ ...form, password: value as string })
-            }
-            inputAttr={{ type: "password" }}
-          />
-          <TextField
-            appearance="outlined"
-            label={t("loggingIn.createPassword.form.confirmNewPwd")}
-            error={
-              form.confirmPassword.length > 0 &&
-              form.confirmPassword !== form.password
-            }
-            value={form.confirmPassword}
-            onChange={(value) =>
-              setForm({ ...form, confirmPassword: value as string })
-            }
-            inputAttr={{ type: "password" }}
-          />
-        </div>
-      </Columns>
-      <Actions>
-        <Button
-          appearance="tonal"
-          loading={loading || undefined}
-          onClick={handleSubmit}
-        >
-          {t("loggingIn.createPassword.action.set")}
-        </Button>
-      </Actions>
-    </Section>
-  );
-};
-
-const LoggingInPage: CustomPage<{ user: User }> = ({ user }) => {
-  // Translation
-  const { t } = useTranslation(["welcome", "common"]);
-
-  // Routing
-  const router = useRouter();
-
-  // Supabase
-  const supabase = useSupabaseClient();
-
-  // Loading
-  const [loading, toggleLoading] = useToggle();
+  }, []);
 
   return (
     <>
       <Head>
-        <title>{createTitleStr(t("loggingIn.title"), t)}</title>
+        <title>{tx("tabName", { tabName: t("loggingIn.title") })}</title>
       </Head>
-      <PageHeader
-        title={t("loggingIn.title")}
-        parentURL="/account/welcome/your-subjects"
-      />
+      <PageHeader parentURL="/account/welcome">
+        {t("loggingIn.title")}
+      </PageHeader>
       <ContentLayout>
         <LastPageCard />
         <Columns columns={2} className="!gap-y-8">
@@ -312,8 +217,7 @@ const LoggingInPage: CustomPage<{ user: User }> = ({ user }) => {
                   .update({ onboarded: true })
                   .match({ id: user!.id });
                 if (userError) {
-                  // console.error(userError);
-                  logError("Done submit(onboarding user)", userError);
+                  logError("Done submit (onboarding user)", userError);
                   return false;
                 }
 

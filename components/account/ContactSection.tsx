@@ -12,6 +12,7 @@ import {
   Header,
   MaterialIcon,
   Section,
+  Text,
 } from "@suankularb-components/react";
 
 // Internal components
@@ -91,9 +92,13 @@ const ContactsSection: FC<{
           appearance="outlined"
           className="box-content !grid h-[4.5rem] place-content-center"
         >
-          <p className="skc-body-medium text-on-surface-variant">
+          <Text
+            type="body-medium"
+            className="text-on-surface-variant"
+            element="p"
+          >
             {t("profile.contacts.noContacts")}
-          </p>
+          </Text>
         </Card>
       )}
     </Section>

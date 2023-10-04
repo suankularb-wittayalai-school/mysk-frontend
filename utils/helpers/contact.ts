@@ -1,6 +1,7 @@
 // Imports
-import { getLocaleName, getLocaleString } from "@/utils/helpers/string";
-import { useLocale } from "@/utils/hooks/i18n";
+import getLocaleName from "@/utils/helpers/getLocaleName";
+import getLocaleString from "./getLocaleString";
+import useLocale from "@/utils/helpers/useLocale";
 import { Contact } from "@/utils/types/contact";
 import { Student, Teacher } from "@/utils/types/person";
 import { useTranslation } from "next-i18next";

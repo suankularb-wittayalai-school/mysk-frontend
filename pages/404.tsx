@@ -1,20 +1,14 @@
-// External libraries
-import { GetStaticProps } from "next";
-
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
-// Images
-import NotFoundLight from "@/public/images/graphics/error/404-light.png";
-import NotFoundDark from "@/public/images/graphics/error/404-dark.png";
-
-// Internal components
+// Imports
 import MultiSchemeImage from "@/components/common/MultiSchemeImage";
 import ErrorHero from "@/components/error/ErrorHero";
 import ErrorLayout from "@/components/error/ErrorLayout";
-
-// Types
+import NotFoundDark from "@/public/images/graphics/error/404-dark.png";
+import NotFoundLight from "@/public/images/graphics/error/404-light.png";
 import { CustomPage, LangCode } from "@/utils/types/common";
+import { Text } from "@suankularb-components/react";
+import { GetStaticProps } from "next";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 const NotFoundPage: CustomPage = () => {
   const { t } = useTranslation("common");
@@ -36,7 +30,9 @@ const NotFoundPage: CustomPage = () => {
         verbose={t("error.404.verbose")}
         tabName={t("error.404.tabName")}
       >
-        <p className="skc-body-large">{t("error.404.desc")}</p>
+        <Text type="body-large" element="p">
+          {t("error.404.desc")}
+        </Text>
       </ErrorHero>
     </ErrorLayout>
   );

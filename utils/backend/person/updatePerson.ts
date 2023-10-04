@@ -1,10 +1,10 @@
-import { logError } from "@/utils/helpers/debug";
+import logError from "@/utils/helpers/logError";
 import { DatabaseClient, BackendReturn } from "@/utils/types/backend";
 import { Contact } from "@/utils/types/contact";
 import { ShirtSize, Student, Teacher } from "@/utils/types/person";
 import createContact from "../contact/createContact";
 import addContactToPerson from "../contact/addContactToPerson";
-import { getCurrentAcademicYear } from "@/utils/helpers/date";
+import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 
 export async function updatePerson(
   supabase: DatabaseClient,

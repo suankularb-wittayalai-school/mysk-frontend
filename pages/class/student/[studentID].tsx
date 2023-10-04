@@ -1,31 +1,18 @@
-// External libraries
-import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
-
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
-import Head from "next/head";
-
-// Internal components
+// Imports
 import DynamicAvatar from "@/components/common/DynamicAvatar";
 import PageHeader from "@/components/common/PageHeader";
 import PersonActions from "@/components/lookup/person/PersonActions";
 import PersonDetailsContent from "@/components/lookup/person/PersonDetailsContent";
-
-// Backend
 import { getStudentByID } from "@/utils/backend/person/getStudentByID";
-// Helpers
-import { getLocaleName } from "@/utils/helpers/string";
-import { createTitleStr } from "@/utils/helpers/title";
-
-// Hooks
-import { useLocale } from "@/utils/hooks/i18n";
-
-// Types
+import getLocaleName from "@/utils/helpers/getLocaleName";
+import useLocale from "@/utils/helpers/useLocale";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Student } from "@/utils/types/person";
+import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Head from "next/head";
 
 const StudentDetailsPage: CustomPage<{ student: Student }> = ({ student }) => {
   const locale = useLocale();
@@ -34,18 +21,18 @@ const StudentDetailsPage: CustomPage<{ student: Student }> = ({ student }) => {
   return (
     <>
       <Head>
-        <title>{createTitleStr(getLocaleName(locale, student), t)}</title>
+        <title>
+          {t("tabName", { tabName: getLocaleName(locale, student) })}
+        </title>
       </Head>
-      <PageHeader
-        title={getLocaleName(locale, student)}
-        parentURL="/class/student"
-      >
-        <PersonActions person={student} suggestionsType="share-only" />
-        <DynamicAvatar
-          profile={student.profile}
-          className="relative z-[80] -mb-12 -mt-6 !h-20 !w-20 self-end"
-        />
+      <PageHeader parentURL="/class/student">
+        {getLocaleName(locale, student)}
       </PageHeader>
+      <PersonActions person={student} suggestionsType="share-only" />
+      <DynamicAvatar
+        profile={student.profile}
+        className="relative z-[80] -mb-12 -mt-6 !h-20 !w-20 self-end"
+      />
       <PersonDetailsContent person={student} />
     </>
   );

@@ -1,34 +1,27 @@
-// External libraries
+// Imports
+import PersonDetailsContent from "@/components/lookup/person/PersonDetailsContent";
+import PersonHeader from "@/components/lookup/person/PersonHeader";
+import getLocaleName from "@/utils/helpers/getLocaleName";
+import useLocale from "@/utils/helpers/useLocale";
+import { Card, Progress } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
 import Head from "next/head";
 import { ComponentProps, FC } from "react";
-
-// SK Components
-import { Card, Progress } from "@suankularb-components/react";
-
-// Internal components
-import PersonDetailsContent from "@/components/lookup/person/PersonDetailsContent";
-import PersonHeader from "@/components/lookup/person/PersonHeader";
-
-// Helpers
-import { getLocaleName } from "@/utils/helpers/string";
-import { createTitleStr } from "@/utils/helpers/title";
-
-// Hooks
-import { useLocale } from "@/utils/hooks/i18n";
 
 const PersonDetails: FC<
   ComponentProps<typeof PersonHeader> & { loading?: boolean }
 > = ({ person, suggestionsType, loading }) => {
   const locale = useLocale();
-  const { t } = useTranslation(["lookup", "common"]);
-
+  const { t } = useTranslation("lookup");
+  const { t: tx } = useTranslation("common");
 
   return (
     <>
       <Head>
         {person && (
-          <title>{createTitleStr(getLocaleName(locale, person), t)}</title>
+          <title>
+            {tx("tabName", { tabName: getLocaleName(locale, person) })}
+          </title>
         )}
       </Head>
       <main

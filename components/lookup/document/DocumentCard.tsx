@@ -1,21 +1,13 @@
-// External libraries
-import { isThisYear } from "date-fns";
-import { useRouter } from "next/router";
-import { useTranslation } from "next-i18next";
-import { FC } from "react";
-
-// SK Components
-import { Card, CardHeader, useBreakpoint } from "@suankularb-components/react";
-
-// Helpers
-import { cn } from "@/utils/helpers/className";
-import { getLocaleYear } from "@/utils/helpers/date";
-
-// Hooks
-import { useLocale } from "@/utils/hooks/i18n";
-
-// Types
+// Imports
+import cn from "@/utils/helpers/cn";
+import getLocaleYear from "@/utils/helpers/getLocaleYear";
+import useLocale from "@/utils/helpers/useLocale";
 import { SchoolDocument } from "@/utils/types/news";
+import { Card, CardHeader, useBreakpoint } from "@suankularb-components/react";
+import { isThisYear } from "date-fns";
+import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
+import { FC } from "react";
 
 const DocumentCard: FC<{
   document: SchoolDocument;
@@ -40,12 +32,12 @@ const DocumentCard: FC<{
       appearance="outlined"
       direction="row"
       stateLayerEffect
-      className={cn([
+      className={cn(
         `w-full items-center !border-transparent pr-3 text-left`,
         selected?.id === document.id &&
           `sm:!border-outline-variant sm:!bg-primary-container
-           sm:focus:!border-primary`,
-      ])}
+          sm:focus:!border-primary`,
+      )}
       {...(atBreakpoint === "base"
         ? // If the user is on mobile, take then straight to the Google
           // Drive file

@@ -4,7 +4,7 @@ import MultiSchemeImage from "@/components/common/MultiSchemeImage";
 import PageHeader from "@/components/common/PageHeader";
 import WelcomeImageDark from "@/public/images/graphics/welcome-dark.webp";
 import WelcomeImageLight from "@/public/images/graphics/welcome-light.webp";
-import { createTitleStr } from "@/utils/helpers/title";
+import cn from "@/utils/helpers/cn";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import {
   Actions,
@@ -15,6 +15,7 @@ import {
   Header,
   MaterialIcon,
   Section,
+  Text,
 } from "@suankularb-components/react";
 import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
@@ -35,8 +36,8 @@ const ThankYouSection: FC = () => {
         width={720}
         height={480}
         alt=""
-        className="mx-4 mb-4 overflow-hidden rounded-lg
-          border-1 border-outline-variant sm:mx-0 sm:translate-y-0"
+        className={cn(`mx-4 mb-4 overflow-hidden rounded-lg
+          border-1 border-outline-variant sm:mx-0 sm:translate-y-0`)}
       />
       <Section
         className="sm:col-span-2"
@@ -44,12 +45,16 @@ const ThankYouSection: FC = () => {
           <section {...props} aria-labelledby="header-thank-you" />
         )}
       >
-        <div className="skc-headline-small">
+        <Text type="headline-small" element="div">
           <h2 id="header-thank-you">{t("instructions.thankYou.title")}</h2>
           <p>{t("instructions.thankYou.subtitle")}</p>
-        </div>
-        <p>{t("instructions.thankYou.reason")}</p>
-        <p>{t("instructions.thankYou.usage")}</p>
+        </Text>
+        <Text type="body-medium" element="p">
+          {t("instructions.thankYou.reason")}
+        </Text>
+        <Text type="body-medium" element="p">
+          {t("instructions.thankYou.usage")}
+        </Text>
       </Section>
     </Columns>
   );
@@ -62,13 +67,15 @@ const ComingUpSection: FC = () => {
   return (
     <Section>
       <Header>{t("instructions.comingUp.title")}</Header>
-      <p>{t("instructions.comingUp.desc")}</p>
-      <ol className="list-decimal pl-6">
+      <Text type="body-medium" element="p">
+        {t("instructions.comingUp.desc")}
+      </Text>
+      <Text type="body-medium" element="ol" className="list-decimal pl-6">
         <li>{t("instructions.comingUp.step.1")}</li>
         {/* <li>{t("instructions.comingUp.step.2")}</li> */}
         <li>{t("instructions.comingUp.step.3")}</li>
         <li>{t("instructions.comingUp.step.4")}</li>
-      </ol>
+      </Text>
     </Section>
   );
 };
@@ -95,7 +102,8 @@ const NoticesSection: FC = () => {
 
 const WelcomePage: CustomPage = () => {
   // Translation
-  const { t } = useTranslation(["welcome", "common"]);
+  const { t } = useTranslation("welcome");
+  const { t: tx } = useTranslation("common");
 
   // Dialog control
   const [logOutOpen, setLogOutOpen] = useState<boolean>(false);
@@ -103,12 +111,11 @@ const WelcomePage: CustomPage = () => {
   return (
     <>
       <Head>
-        <title>{createTitleStr(t("instructions.title"), t)}</title>
+        <title>{tx("tabName", { tabName: t("instructions.title") })}</title>
       </Head>
-      <PageHeader
-        title={t("instructions.title")}
-        onBack={() => setLogOutOpen(true)}
-      />
+      <PageHeader parentURL="/account/welcome">
+        {t("instructions.title")}
+      </PageHeader>
       <ContentLayout>
         <ThankYouSection />
         <ComingUpSection />

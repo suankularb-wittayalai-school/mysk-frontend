@@ -1,7 +1,7 @@
 // Imports
 import PageHeader from "@/components/common/PageHeader";
 import NewsFeed from "@/components/news/NewsFeed";
-import { mergeDBLocales } from "@/utils/helpers/string";
+import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
 import { createTitleStr } from "@/utils/helpers/title";
 import { DatabaseClient } from "@/utils/types/backend";
 import { CustomPage, LangCode } from "@/utils/types/common";
