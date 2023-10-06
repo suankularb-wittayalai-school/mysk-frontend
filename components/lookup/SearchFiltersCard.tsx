@@ -4,12 +4,11 @@ import { StylableFC } from "@/utils/types/common";
 import {
   Actions,
   Button,
-  CardHeader,
   Columns,
   MaterialIcon,
   Text,
   transition,
-  useAnimationConfig,
+  useAnimationConfig
 } from "@suankularb-components/react";
 import { motion } from "framer-motion";
 import { ReactNode } from "react";
