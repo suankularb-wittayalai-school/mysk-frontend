@@ -1,50 +1,15 @@
-// External libraries
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
-
-import va from "@vercel/analytics";
-
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import Head from "next/head";
-import { useRouter } from "next/router";
-
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
-import { useEffect, useState } from "react";
-
-// SK Components
-import {
-  ChipSet,
-  FilterChip,
-  SplitLayout,
-  useBreakpoint
-} from "@suankularb-components/react";
-
-// Internal components
+// Imports
 import PageHeader from "@/components/common/PageHeader";
 import EmptyDetail from "@/components/lookup/EmptyDetail";
 import LookupList from "@/components/lookup/LookupList";
 import PersonCard from "@/components/lookup/person/PersonCard";
 import PersonDetails from "@/components/lookup/person/PersonDetails";
-
-// Backend
-// import {
-//   getLookupListPerson,
-//   getPeopleLookupList,
-// } from "@/utils/backend/person/person";
-// Helpers
-import { toggleItem } from "@/utils/helpers/addAt";
-import withLoading from "@/utils/helpers/withLoading";
-import { createTitleStr } from "@/utils/helpers/title";
-
-// Hooks
-import useToggle from "@/utils/helpers/useToggle";
-
-// Types
 import { getPeopleLookupList } from "@/utils/backend/person/getPeopleLookupList";
 import { getPersonForLookupDetail } from "@/utils/backend/person/getPersonForLookupDetail";
 import { getStudentByID } from "@/utils/backend/person/getStudentByID";
 import { getTeacherByID } from "@/utils/backend/person/getTeacherByID";
+import useToggle from "@/utils/helpers/useToggle";
+import withLoading from "@/utils/helpers/withLoading";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import {
   PersonLookupItem,
@@ -52,14 +17,30 @@ import {
   Teacher,
   UserRole,
 } from "@/utils/types/person";
+import {
+  ChipSet,
+  FilterChip,
+  SplitLayout,
+  useBreakpoint,
+} from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import va from "@vercel/analytics";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Head from "next/head";
+import { useRouter } from "next/router";
+import { toggle } from "radash";
+import { useEffect, useState } from "react";
 
 const LookupPeoplePage: CustomPage<{
   initialPeople: PersonLookupItem[];
   selectedIdx: number;
 }> = ({ initialPeople, selectedIdx }) => {
   // Translation
-  const { t } = useTranslation(["lookup", "common"]);
+  const { t } = useTranslation("lookup");
+  const { t: tx } = useTranslation("common");
 
   const [people, setPeople] = useState<PersonLookupItem[]>(initialPeople);
 
@@ -90,7 +71,7 @@ const LookupPeoplePage: CustomPage<{
       const { id, role } = initialPeople[selectedIdx];
       router.push(`/lookup/person/${role}/${id}`);
     }
-  }, [breakpointChecked]);
+}, [breakpointChecked]);
 
   const supabase = useSupabaseClient();
   const [loading, toggleLoading] = useToggle();
@@ -161,9 +142,9 @@ const LookupPeoplePage: CustomPage<{
   return (
     <>
       <Head>
-        <title>{createTitleStr(t("people.title"), t)}</title>
+        <title>{tx("tabName", { tabName: t("people.title") })}</title>
       </Head>
-      <PageHeader title={t("people.title")} parentURL="/lookup" />
+      <PageHeader parentURL="/lookup">{t("people.title")}</PageHeader>
       <SplitLayout ratio="list-detail">
         <LookupList
           length={people.length}
@@ -173,17 +154,13 @@ const LookupPeoplePage: CustomPage<{
               <ChipSet>
                 <FilterChip
                   selected={filters.includes("student")}
-                  onClick={() =>
-                    setFilters(toggleItem<UserRole>("student", filters))
-                  }
+                  onClick={() => setFilters(toggle(filters, "student"))}
                 >
                   {t("people.list.filter.student")}
                 </FilterChip>
                 <FilterChip
                   selected={filters.includes("teacher")}
-                  onClick={() =>
-                    setFilters(toggleItem<UserRole>("teacher", filters))
-                  }
+                  onClick={() => setFilters(toggle(filters, "teacher"))}
                 >
                   {t("people.list.filter.teacher")}
                 </FilterChip>
