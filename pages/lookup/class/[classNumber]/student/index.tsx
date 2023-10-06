@@ -4,7 +4,6 @@ import PageHeader from "@/components/common/PageHeader";
 import ClassTabs from "@/components/lookup/class/ClassTabs";
 import getStudentsOfClass from "@/utils/backend/classroom/getStudentsOfClass";
 import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
-import { createTitleStr } from "@/utils/helpers/title";
 import { supabase } from "@/utils/supabase-backend";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Student } from "@/utils/types/person";
@@ -17,24 +16,22 @@ const ClassStudentsPage: CustomPage<{
   classNumber: number;
   studentList: Student[];
 }> = ({ classNumber, studentList }) => {
-  const { t } = useTranslation(["class", "common"]);
+  const { t } = useTranslation("class");
+  const { t: tx } = useTranslation("common");
 
   return (
     <>
       <Head>
         <title>
-          {createTitleStr(
-            t("student.title.lookup", { number: classNumber }),
-            t,
-          )}
+          {tx("tabName", {
+            tabName: t("student.title.lookup", { number: classNumber }),
+          })}
         </title>
       </Head>
-      <PageHeader
-        title={t("student.title.lookup", { number: classNumber })}
-        parentURL={`/lookup/class/${classNumber}`}
-      >
-        <ClassTabs number={classNumber} type="lookup" />
+      <PageHeader parentURL={`/lookup/class/${classNumber}`}>
+        {t("student.title.lookup", { number: classNumber })}
       </PageHeader>
+      <ClassTabs number={classNumber} type="lookup" />
       <ClassStudents {...{ studentList }} />
     </>
   );

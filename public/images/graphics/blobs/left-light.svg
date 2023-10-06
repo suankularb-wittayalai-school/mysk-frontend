@@ -1,0 +1,23 @@
+<svg width="489" height="128" viewBox="0 0 489 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g clip-path="url(#clip-left-light)">
+    <g filter="url(#filter-left-light)">
+      <path
+        d="M118.266 82.9183C118.266 120.364 -14.6528 190.269 -52.098 190.269C-89.5432 190.269 -191 120.364 -191 82.9183C-191 45.4731 -9.5803 -65.321 27.8649 -65.321C65.3101 -65.321 118.266 45.4731 118.266 82.9183Z"
+        fill="#FFD8E8" />
+      <path
+        d="M229.551 18.9692C229.551 56.4144 22.855 70.2656 -14.5902 70.2656C-52.0354 70.2656 -87 4.96924 -87 -32.476C-87 -69.9212 -18.5812 -75 18.864 -75C56.3092 -75 229.551 -18.476 229.551 18.9692Z"
+        fill="#E4F3FF" />
+    </g>
+  </g>
+  <defs>
+    <filter id="filter-left-light" x="-241" y="-125" width="520.551" height="365.269" filterUnits="userSpaceOnUse"
+      color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix" />
+      <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+      <feGaussianBlur stdDeviation="25" result="effect1_foregroundBlur_821_3281" />
+    </filter>
+    <clipPath id="clip-left-light">
+      <rect width="489" height="128" fill="white" />
+    </clipPath>
+  </defs>
+</svg>

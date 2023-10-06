@@ -31,6 +31,7 @@
     "react-dom": "^18.2.0",
     "react-i18next": "^13.2.2",
     "react-markdown": "^8.0.7",
+    "react-wrap-balancer": "^1.1.0",
     "remark-gfm": "^3.0.1",
     "sharp": "^0.32.5"
   },

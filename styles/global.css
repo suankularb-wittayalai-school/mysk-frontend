@@ -36,10 +36,6 @@
     }
   }
 
-  .skc-icon {
-    @apply !font-icon;
-  }
-
   .light .skc-page-header__blob-primary {
     @apply !fill-primary-95;
   }
@@ -97,4 +93,8 @@
       prose-h6:text-on-primary-container prose-li:marker:font-display
       prose-li:marker:text-outline;
   }
+}
+
+.skc-icon {
+  @apply !font-icon;
 }

@@ -44,7 +44,12 @@ module.exports = withBundleAnalyzer(
           permanent: true,
         },
         { source: "/learn/:id", destination: "/learn", permanent: true },
+        {
+          source: "/lookup/document",
+          destination: "/lookup/documents",
+          permanent: true,
+        },
       ];
     },
-  })
+  }),
 );
