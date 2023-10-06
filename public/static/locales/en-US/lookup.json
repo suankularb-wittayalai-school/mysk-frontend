@@ -1,6 +1,24 @@
 {
   "title": "Lookup",
   "subtitle": "<0>Find everything</0> in MySK Lookup.",
+  "choice": {
+    "students": {
+      "title": "Lookup <strong>students</strong>",
+      "desc": "Find a student’s class, class number, and more."
+    },
+    "teachers": {
+      "title": "Lookup <strong>teachers</strong>",
+      "desc": "Find a teacher’s subjects, office, schedule, contacts, and more."
+    },
+    "classes": {
+      "title": "Lookup <strong>classes</strong>",
+      "desc": "See a list of a class’ students and teachers, get a printout, and more."
+    },
+    "documents": {
+      "title": "Lookup <strong>documents</strong>",
+      "desc": "Easily locate, read, and download school orders and documents."
+    }
+  },
   "people": {
     "header": {
       "loading": "Loading…",
@@ -71,29 +89,25 @@
     }
   },
   "students": {
-    "title": "Lookup <strong>students</strong>",
-    "desc": "Find a student’s class, class number, and more.",
+    "title": "Lookup students",
     "list": {
       "searchAlt": "Search students"
     }
   },
   "teachers": {
-    "title": "Lookup <strong>teachers</strong>",
-    "desc": "Find a teacher’s subjects, office, schedule, contacts, and more.",
+    "title": "Lookup teachers",
     "list": {
       "searchAlt": "Search teachers"
     }
   },
   "classes": {
-    "title": "Lookup <strong>classes</strong>",
-    "desc": "See a list of a class’ students and teachers, get a printout, and more.",
+    "title": "Lookup classes",
     "list": {
       "searchAlt": "Search classes"
     }
   },
   "documents": {
-    "title": "Lookup <strong>documents</strong>",
-    "desc": "Easily locate, read, and download school orders and documents.",
+    "title": "Lookup documents",
     "list": {
       "searchAlt": "Search documents",
       "filter": {
