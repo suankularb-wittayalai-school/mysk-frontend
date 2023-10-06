@@ -1,22 +1,16 @@
-// External libraries
-import va from "@vercel/analytics";
-import { AnimatePresence, DragControls, motion } from "framer-motion";
-import { useTranslation } from "next-i18next";
-import { FC, useState } from "react";
-
-// SK Components
+// Imports
+import cn from "@/utils/helpers/cn";
+import { PeriodContentItem } from "@/utils/types/schedule";
 import {
   Interactive,
   MaterialIcon,
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
-
-// Helpers
-import { cn } from "@/utils/helpers/cn";
-
-// Types
-import { PeriodContentItem } from "@/utils/types/schedule";
+import va from "@vercel/analytics";
+import { AnimatePresence, DragControls, motion } from "framer-motion";
+import { useTranslation } from "next-i18next";
+import { FC, useState } from "react";
 
 const SubjectPeriodMenu: FC<{
   open: boolean;
@@ -52,10 +46,10 @@ const SubjectPeriodMenu: FC<{
     <AnimatePresence>
       {open && !extending && (
         <div
-          className={cn([
+          className={cn(
             `absolute inset-0 flex h-14 flex-col rounded-sm p-1 pt-0.5`,
             moving && `bg-secondary-container`,
-          ])}
+          )}
         >
           <motion.span
             layoutId={`period-${period.id}-class`}
@@ -73,10 +67,10 @@ const SubjectPeriodMenu: FC<{
             animate={{ y: "0%", scaleY: 1 }}
             exit={{ y: "50%", scaleY: 0, transition: exitTransition }}
             transition={entranceTransition}
-            className={cn([
+            className={cn(
               `grid w-full grow gap-1`,
               moving || extending ? `grid-cols-1` : `grid-cols-[2fr,3fr,2fr]`,
-            ])}
+            )}
           >
             {/* Move period */}
             {!extending && (
@@ -92,12 +86,12 @@ const SubjectPeriodMenu: FC<{
                   },
                   onPointerUp: () => setMoving(false),
                 }}
-                className={cn([
+                className={cn(
                   `grid place-content-center rounded-xs transition-colors`,
                   moving
                     ? `cursor-grabbing bg-secondary text-on-secondary`
                     : `cursor-grab bg-surface text-on-surface`,
-                ])}
+                )}
               >
                 <MaterialIcon icon="drag_indicator" size={20} />
               </Interactive>
@@ -129,13 +123,13 @@ const SubjectPeriodMenu: FC<{
                   title: t("schedule.hoverMenu.extend"),
                   onPointerDown: () => setExtending(true),
                 }}
-                className={cn([
+                className={cn(
                   `grid cursor-ew-resize place-content-center rounded-xs
                    transition-colors`,
                   extending
                     ? `bg-secondary text-on-secondary`
                     : `bg-surface text-on-surface`,
-                ])}
+                )}
               >
                 <MaterialIcon icon="straighten" size={20} />
               </Interactive>
