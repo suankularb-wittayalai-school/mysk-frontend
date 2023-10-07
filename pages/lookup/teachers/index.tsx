@@ -2,6 +2,7 @@
 import PageHeader from "@/components/common/PageHeader";
 import SearchFiltersCard from "@/components/lookup/SearchFiltersCard";
 import getSubjectGroups from "@/utils/backend/subject/getSubjectGroups";
+import cn from "@/utils/helpers/cn";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useForm from "@/utils/helpers/useForm";
 import useLocale from "@/utils/helpers/useLocale";
@@ -64,8 +65,6 @@ const LookupTeachersPage: NextPage<{
             .map(([key, value]) => [snake(key), value]),
         ),
       )}`,
-      undefined,
-      { scroll: false },
     );
   }
 
@@ -78,7 +77,10 @@ const LookupTeachersPage: NextPage<{
       <ContentLayout>
         <SearchFiltersCard
           onSubmit={handleSubmit}
-          className={overflowHid ? `!overflow-hidden` : `!overflow-visible`}
+          className={cn(
+            `mb-52`,
+            overflowHid ? `!overflow-hidden` : `!overflow-visible`,
+          )}
         >
           <TextField
             appearance="outlined"
