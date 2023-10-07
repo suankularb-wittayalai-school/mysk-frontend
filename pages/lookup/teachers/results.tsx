@@ -1,6 +1,7 @@
 // Imports
 import PageHeader from "@/components/common/PageHeader";
 import ActiveSearchFiltersCard from "@/components/lookup/ActiveSearchFiltersCard";
+import TeacherDetailsCard from "@/components/lookup/teachers/TeacherDetailsCard";
 import LookupTeacherCard from "@/components/lookup/teachers/LookupTeacherCard";
 import getTeachersByLookupFilters from "@/utils/backend/person/getTeachersByLookupFilters";
 import getSubjectGroups from "@/utils/backend/subject/getSubjectGroups";
@@ -14,7 +15,7 @@ import {
   MaterialIcon,
   SplitLayout,
   transition,
-  useAnimationConfig
+  useAnimationConfig,
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { motion } from "framer-motion";
@@ -28,7 +29,7 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import { alphabetical, camel } from "radash";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export type SearchFilters = Partial<
   {
@@ -51,6 +52,13 @@ const LookupTeachersResultsPage: NextPage<{
   const { duration, easing } = useAnimationConfig();
 
   const [selected, setSelected] = useState<string>();
+  useEffect(() => {
+    const timeout = setTimeout(
+      () => setSelected(teachers[0]?.id),
+      duration.medium2 * 1000,
+    );
+    return () => clearTimeout(timeout);
+  }, []);
 
   return (
     <>
@@ -62,7 +70,7 @@ const LookupTeachersResultsPage: NextPage<{
         ratio="list-detail"
         className="sm:[&>div]:!grid-cols-2 md:[&>div]:!grid-cols-3"
       >
-        <section className="sm:grid sm:!overflow-visible sm:!pb-0">
+        <section className="sm:flex sm:flex-col sm:!overflow-visible sm:!pb-0">
           {/* Active Search Filters */}
           {Object.keys(filters).length > 0 && (
             <ActiveSearchFiltersCard
@@ -126,17 +134,17 @@ const LookupTeachersResultsPage: NextPage<{
             </ul>
           </div>
         </section>
-        <main className="md:!col-span-2">
-          <motion.div
+        {selected && (
+          <motion.main
+            key={selected}
             initial={{ opacity: 0, scale: 0.95, x: -10 }}
             animate={{ opacity: 1, scale: 1, x: 0 }}
-            transition={{
-              ...transition(duration.medium2, easing.standardDecelerate),
-              delay: duration.medium2,
-            }}
-            className="h-full rounded-md bg-surface-1"
-          ></motion.div>
-        </main>
+            transition={transition(duration.medium2, easing.standardDecelerate)}
+            className="md:!col-span-2"
+          >
+            <TeacherDetailsCard id={selected} />
+          </motion.main>
+        )}
       </SplitLayout>
     </>
   );
