@@ -4,43 +4,36 @@ import cn from "@/utils/helpers/cn";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
+import { StylableFC } from "@/utils/types/common";
 import { TeacherLookupItem } from "@/utils/types/person";
-import {
-  Card,
-  CardHeader,
-  useAnimationConfig,
-} from "@suankularb-components/react";
-import { useTranslation } from "next-i18next";
-import { FC } from "react";
+import { Card, CardHeader } from "@suankularb-components/react";
 
-const LookupTeacherCard: FC<{
+const LookupTeacherCard: StylableFC<{
   teacher: TeacherLookupItem;
   selected?: string;
-  setSelected: (value: string) => void;
-}> = ({ teacher, selected, setSelected }) => {
-  // Translation
+  onClick: (value: string) => void;
+}> = ({ teacher, selected, onClick, style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("common");
-
-  const { duration, easing } = useAnimationConfig();
 
   return (
     <Card
       appearance="outlined"
       direction="row"
       stateLayerEffect
-      onClick={() => setSelected(teacher.id)}
+      onClick={() => onClick(teacher.id)}
+      style={style}
       className={cn(
-        `w-full !border-transparent !bg-transparent text-left`,
+        `w-full !rounded-none !border-transparent !bg-transparent text-left
+        sm:!rounded-full`,
         teacher.id === selected &&
-          `sm:!border-outline-variant sm:!bg-primary-container sm:!text-on-primary-container
-            sm:focus:!border-primary`,
+          `sm:!border-outline-variant sm:!bg-primary-container
+          sm:!text-on-primary-container sm:focus:!border-primary`,
+        className,
       )}
     >
       <CardHeader
         avatar={
           <DynamicAvatar
-            // name={person.name}
             first_name={teacher.first_name}
             last_name={teacher.last_name}
             className={

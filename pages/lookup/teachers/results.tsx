@@ -70,7 +70,7 @@ const LookupTeachersResultsPage: NextPage<{
             className={cn(`mt-4 sm:-mr-3 sm:h-[calc(100dvh-12.75rem)]
               sm:overflow-auto`)}
           >
-            <ul className="flex flex-col gap-1 pb-6 sm:pr-3">
+            <ul className="-mx-4 flex flex-col gap-1 pb-6 sm:mx-0 sm:pr-3">
               {teachers.map((teacher, idx) => (
                 <motion.li
                   key={teacher.id}
@@ -88,7 +88,7 @@ const LookupTeachersResultsPage: NextPage<{
                   <LookupTeacherCard
                     teacher={teacher}
                     selected={selected}
-                    setSelected={setSelected}
+                    onClick={setSelected}
                   />
                 </motion.li>
               ))}
