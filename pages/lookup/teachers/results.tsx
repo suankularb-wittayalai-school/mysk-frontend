@@ -5,6 +5,7 @@ import LookupTeacherCard from "@/components/lookup/teachers/LookupTeacherCard";
 import getTeachersByLookupFilters from "@/utils/backend/person/getTeachersByLookupFilters";
 import getSubjectGroups from "@/utils/backend/subject/getSubjectGroups";
 import cn from "@/utils/helpers/cn";
+import getLocaleString from "@/utils/helpers/getLocaleString";
 import { LangCode } from "@/utils/types/common";
 import { TeacherLookupItem } from "@/utils/types/person";
 import { SubjectGroup } from "@/utils/types/subject";
@@ -25,6 +26,7 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import { camel } from "radash";
+import { alphabetical, camel } from "radash";
 import { useState } from "react";
 
 export type SearchFilters = Partial<
@@ -59,13 +61,15 @@ const LookupTeachersResultsPage: NextPage<{
         ratio="list-detail"
         className="sm:[&>div]:!grid-cols-2 md:[&>div]:!grid-cols-3"
       >
-        <section className="sm:!overflow-visible">
+        <section className="sm:grid sm:!overflow-visible sm:!pb-0">
+          {/* Active Search Filters */}
           {Object.keys(filters).length > 0 && (
             <ActiveSearchFiltersCard
               filters={filters}
               subjectGroups={subjectGroups}
             />
           )}
+          {/* Results */}
           <div
             className={cn(`mt-4 sm:-mr-3 sm:h-[calc(100dvh-12.75rem)]
               sm:overflow-auto`)}
@@ -141,9 +145,13 @@ export const getServerSideProps: GetServerSideProps = async ({
       ]),
   ) as SearchFilters;
 
-  const { data: teachers } = await getTeachersByLookupFilters(
-    supabase,
-    filters,
+  const { data } = await getTeachersByLookupFilters(supabase, filters);
+  const teachers = alphabetical(
+    alphabetical(data!, (teacher) =>
+      getLocaleString(teacher.first_name, locale as LangCode),
+    ),
+    (teacher) =>
+      getLocaleString(teacher.subject_group.name, locale as LangCode),
   );
 
   return {
