@@ -10,9 +10,11 @@ import { LangCode } from "@/utils/types/common";
 import { TeacherLookupItem } from "@/utils/types/person";
 import { SubjectGroup } from "@/utils/types/subject";
 import {
+  CardHeader,
+  MaterialIcon,
   SplitLayout,
   transition,
-  useAnimationConfig,
+  useAnimationConfig
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { motion } from "framer-motion";
@@ -25,7 +27,6 @@ import {
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
-import { camel } from "radash";
 import { alphabetical, camel } from "radash";
 import { useState } from "react";
 
@@ -69,12 +70,38 @@ const LookupTeachersResultsPage: NextPage<{
               subjectGroups={subjectGroups}
             />
           )}
+
+          {/* If the cap is reached, there are likely omitted results */}
+          {teachers.length === 50 && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: [0, 1, 1], scale: [0.8, 1.05, 1] }}
+              transition={{
+                ...transition(duration.medium4, easing.standardDecelerate),
+                delay: duration.long4,
+              }}
+              className={cn(`mt-2 rounded-sm bg-error-container
+                text-on-error-container`)}
+            >
+              <CardHeader
+                icon={
+                  <MaterialIcon
+                    icon="warning"
+                    className="!text-on-error-container"
+                  />
+                }
+                title="Filters too wide"
+                subtitle="Results are incomplete"
+              />
+            </motion.div>
+          )}
+
           {/* Results */}
           <div
-            className={cn(`mt-4 sm:-mr-3 sm:h-[calc(100dvh-12.75rem)]
+            className={cn(`-mx-4 sm:mx-0 sm:-mr-3 sm:grow
               sm:overflow-auto`)}
           >
-            <ul className="-mx-4 flex flex-col gap-1 pb-6 sm:mx-0 sm:pr-3">
+            <ul className="flex flex-col gap-1 pb-6 pt-4 sm:pr-3">
               {teachers.map((teacher, idx) => (
                 <motion.li
                   key={teacher.id}
