@@ -1,5 +1,8 @@
 // Imports
+import CurrentTeachingPeriodCard from "@/components/lookup/teachers/CurrentTeachingPeriodCard";
+import TeacherHeader from "@/components/lookup/teachers/TeacherHeader";
 import { getTeacherByID } from "@/utils/backend/person/getTeacherByID";
+import cn from "@/utils/helpers/cn";
 import useToggle from "@/utils/helpers/useToggle";
 import withLoading from "@/utils/helpers/withLoading";
 import { StylableFC } from "@/utils/types/common";
@@ -10,10 +13,8 @@ import {
   useAnimationConfig,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { useEffect, useState } from "react";
-import TeacherHeader from "./TeacherHeader";
 import { AnimatePresence, motion } from "framer-motion";
-import cn from "@/utils/helpers/cn";
+import { useEffect, useState } from "react";
 
 const TeacherDetailsCard: StylableFC<{
   id?: string;
@@ -37,8 +38,8 @@ const TeacherDetailsCard: StylableFC<{
           detailed: true,
           includeContacts: true,
         });
-
         if (error) return false;
+
         setTeacher(data);
         return true;
       },
@@ -49,8 +50,12 @@ const TeacherDetailsCard: StylableFC<{
 
   return (
     <div
-      className={cn(`relative flex h-full flex-col overflow-hidden rounded-lg
-        bg-surface-3`)}
+      style={style}
+      className={cn(
+        `relative flex h-full flex-col overflow-auto rounded-lg bg-surface-3
+        md:overflow-hidden`,
+        className,
+      )}
     >
       <Progress
         appearance="linear"
@@ -69,8 +74,11 @@ const TeacherDetailsCard: StylableFC<{
                 duration.medium2,
                 easing.standardDecelerate,
               )}
-              className="grow rounded-[inherit] bg-surface-1"
-            ></motion.section>
+              className={cn(`flex grow-0 flex-col gap-4 rounded-[inherit]
+                bg-surface-1 p-4 md:grow md:overflow-auto`)}
+            >
+              <CurrentTeachingPeriodCard teacherID={teacher.id} />
+            </motion.section>
           </>
         )}
       </AnimatePresence>
