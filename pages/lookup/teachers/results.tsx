@@ -134,17 +134,23 @@ const LookupTeachersResultsPage: NextPage<{
             </ul>
           </div>
         </section>
-        {selected && (
-          <motion.main
-            key={selected}
-            initial={{ opacity: 0, scale: 0.95, x: -10 }}
-            animate={{ opacity: 1, scale: 1, x: 0 }}
-            transition={transition(duration.medium2, easing.standardDecelerate)}
-            className="md:!col-span-2"
-          >
-            <TeacherDetailsCard id={selected} />
-          </motion.main>
-        )}
+
+        <main className="md:!col-span-2">
+          {selected && (
+            <motion.div
+              key={selected}
+              initial={{ opacity: 0, scale: 0.95, x: -10 }}
+              animate={{ opacity: 1, scale: 1, x: 0 }}
+              transition={transition(
+                duration.medium2,
+                easing.standardDecelerate,
+              )}
+              className="h-full"
+            >
+              <TeacherDetailsCard id={selected} />
+            </motion.div>
+          )}
+        </main>
       </SplitLayout>
     </>
   );
