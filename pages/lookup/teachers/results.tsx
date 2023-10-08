@@ -1,6 +1,11 @@
 // Imports
 import PageHeader from "@/components/common/PageHeader";
 import ActiveSearchFiltersCard from "@/components/lookup/ActiveSearchFiltersCard";
+import LookupDetailSide from "@/components/lookup/LookupDetailSide";
+import LookupListSide from "@/components/lookup/LookupListSide";
+import LookupResultsItem from "@/components/lookup/LookupResultsItem";
+import LookupResultsList from "@/components/lookup/LookupResultsList";
+import TooWideCard from "@/components/lookup/TooWideCard";
 import LookupTeacherCard from "@/components/lookup/teachers/LookupTeacherCard";
 import TeacherDetailsCard from "@/components/lookup/teachers/TeacherDetailsCard";
 import { getTeacherByID } from "@/utils/backend/person/getTeacherByID";
@@ -12,20 +17,13 @@ import { LangCode } from "@/utils/types/common";
 import { Teacher, TeacherLookupItem } from "@/utils/types/person";
 import { SubjectGroup } from "@/utils/types/subject";
 import {
-  Button,
-  Card,
-  CardHeader,
   FullscreenDialog,
-  MaterialIcon,
   SplitLayout,
-  Text,
-  transition,
   useAnimationConfig,
-  useBreakpoint,
+  useBreakpoint
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { motion } from "framer-motion";
 import {
   GetServerSideProps,
   NextApiRequest,
@@ -35,10 +33,8 @@ import {
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
-import Link from "next/link";
 import { alphabetical, camel } from "radash";
 import { useEffect, useState } from "react";
-import Balancer from "react-wrap-balancer";
 
 export type SearchFilters = Partial<{
   fullName: string;
@@ -112,12 +108,7 @@ const LookupTeachersResultsPage: NextPage<{
         ratio="list-detail"
         className="sm:[&>div]:!grid-cols-2 md:[&>div]:!grid-cols-3"
       >
-        <section
-          className={cn(
-            `flex flex-col sm:block sm:!pb-0 md:flex md:!overflow-visible`,
-            teachers.length === 0 && `h-[calc(100dvh-9rem)] sm:flex`,
-          )}
-        >
+        <LookupListSide length={teachers.length}>
           {/* Active Search Filters */}
           {Object.keys(filters).length > 0 && (
             <ActiveSearchFiltersCard
@@ -125,111 +116,36 @@ const LookupTeachersResultsPage: NextPage<{
               subjectGroups={subjectGroups}
             />
           )}
-
-          {/* If the cap is reached, there are likely omitted results */}
-          {teachers.length === 100 && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: [0, 1, 1], scale: [0.8, 1.05, 1] }}
-              transition={{
-                ...transition(duration.medium4, easing.standardDecelerate),
-                delay: duration.long4,
-              }}
-              className={cn(`mt-2 rounded-sm bg-error-container
-              text-on-error-container`)}
-            >
-              <CardHeader
-                icon={
-                  <MaterialIcon
-                    icon="warning"
-                    className="!text-on-error-container"
-                  />
-                }
-                title={tx("common.list.tooWide.title")}
-                subtitle={tx("common.list.tooWide.subtitle")}
-              />
-            </motion.div>
-          )}
+          <TooWideCard length={teachers.length} />
 
           {/* Results */}
-          {teachers.length > 0 ? (
-            <div
-              className={cn(`-mx-4 sm:mx-0 sm:-mr-3 md:grow
-              md:overflow-auto`)}
-            >
-              <ul className="flex flex-col gap-1 pb-6 pt-4 sm:pr-3">
-                {teachers.map((teacher, idx) => (
-                  <motion.li
-                    key={teacher.id}
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      ...transition(
-                        duration.medium2,
-                        easing.standardDecelerate,
-                      ),
-                      delay:
-                        Math.max(
-                          (idx / Math.min(teachers.length, 10)) *
-                            duration.long2,
-                          duration.short4,
-                        ) + duration.short4,
-                    }}
-                  >
-                    <LookupTeacherCard
-                      teacher={teacher}
-                      selected={selectedID}
-                      onClick={(id) => {
-                        setSelectedID(id);
-                        if (atBreakpoint === "base") setDetailsOpen(true);
-                      }}
-                    />
-                  </motion.li>
-                ))}
-              </ul>
-            </div>
-          ) : (
-            // Empty state
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                ...transition(duration.medium2, easing.standardDecelerate),
-                delay: duration.medium2,
-              }}
-              className="skc-card skc-card--outlined mt-4 flex grow flex-col items-center justify-center gap-1 p-4 sm:mb-6"
-            >
-              <Text
-                type="body-medium"
-                element="p"
-                className="text-center text-on-surface-variant"
+          <LookupResultsList length={teachers.length}>
+            {teachers.map((teacher, idx) => (
+              <LookupResultsItem
+                key={teacher.id}
+                idx={idx}
+                length={teachers.length}
               >
-                <Balancer>{tx("common.list.empty.desc")}</Balancer>
-              </Text>
-              <Button appearance="text" href="/lookup/teachers" element={Link}>
-                {tx("common.list.empty.action.clear")}
-              </Button>
-            </motion.div>
-          )}
-        </section>
+                <LookupTeacherCard
+                  teacher={teacher}
+                  selected={selectedID}
+                  onClick={(id) => {
+                    setSelectedID(id);
+                    if (atBreakpoint === "base") setDetailsOpen(true);
+                  }}
+                />
+              </LookupResultsItem>
+            ))}
+          </LookupResultsList>
+        </LookupListSide>
 
         {/* Details */}
-        <main className="md:!col-span-2">
-          {(selectedID || teachers.length === 0) && (
-            <motion.div
-              key={selectedTeacher?.id || selectedID}
-              initial={{ opacity: 0, scale: 0.95, x: -10 }}
-              animate={{ opacity: 1, scale: 1, x: 0 }}
-              transition={{
-                ...transition(duration.medium2, easing.standardDecelerate),
-                delay: teachers.length === 0 ? duration.medium4 : 0,
-              }}
-              className="h-full"
-            >
-              <TeacherDetailsCard teacher={selectedTeacher} />
-            </motion.div>
-          )}
-        </main>
+        <LookupDetailSide
+          selectedID={selectedTeacher?.id || selectedID}
+          length={teachers.length}
+        >
+          <TeacherDetailsCard teacher={selectedTeacher} />
+        </LookupDetailSide>
       </SplitLayout>
 
       {/* Details Dialog */}
