@@ -8,6 +8,7 @@ import LineLogo from "@/public/images/social/line.svg";
 import { getContactIsLinkable, getContactURL } from "@/utils/helpers/contact";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
+import { StylableFC } from "@/utils/types/common";
 import { Contact } from "@/utils/types/contact";
 import {
   Avatar,
@@ -32,11 +33,11 @@ import { FC, forwardRef, useContext, useState } from "react";
  *
  * @returns A Card.
  */
-const ContactCard: FC<{
+const ContactCard: StylableFC<{
   contact: Contact;
   onChange?: (value: Contact) => void;
   onRemove?: () => void;
-}> = ({ contact, onChange, onRemove }) => {
+}> = ({ contact, onChange, onRemove, style, className }) => {
   // Translation
   const locale = useLocale();
   const { t } = useTranslation("account");
@@ -107,6 +108,8 @@ const ContactCard: FC<{
                 },
               }
           : {})}
+        style={style}
+        className={className}
       >
         <CardHeader
           avatar={<Avatar>{avatarMap[contact.type]}</Avatar>}
