@@ -12,10 +12,13 @@ import { LangCode } from "@/utils/types/common";
 import { Teacher, TeacherLookupItem } from "@/utils/types/person";
 import { SubjectGroup } from "@/utils/types/subject";
 import {
+  Button,
+  Card,
   CardHeader,
   FullscreenDialog,
   MaterialIcon,
   SplitLayout,
+  Text,
   transition,
   useAnimationConfig,
   useBreakpoint,
@@ -32,8 +35,10 @@ import {
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
+import Link from "next/link";
 import { alphabetical, camel } from "radash";
 import { useEffect, useState } from "react";
+import Balancer from "react-wrap-balancer";
 
 export type SearchFilters = Partial<{
   fullName: string;
@@ -55,6 +60,7 @@ const LookupTeachersResultsPage: NextPage<{
   const { duration, easing } = useAnimationConfig();
 
   const [selectedID, setSelectedID] = useState<string>();
+  // Select the first result automatically after a short delay
   useEffect(() => {
     const timeout = setTimeout(
       () => setSelectedID(teachers[0]?.id),
@@ -65,17 +71,23 @@ const LookupTeachersResultsPage: NextPage<{
 
   const supabase = useSupabaseClient();
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher>();
+  // Fetch the selected Teacher when the selected Teacher ID changes
   useEffect(() => {
     (async () => {
+      // Clear the selected Teacher data first
+      // (This, combined with some more logic in child components, prevents the
+      // old Teacher data from flashing at selected Teacher ID change)
       setSelectedTeacher(undefined);
       if (!selectedID) return false;
 
+      // Fetch the selected Teacher with the selected ID
       const { data, error } = await getTeacherByID(supabase, selectedID, {
         detailed: true,
         includeContacts: true,
       });
       if (error) return false;
 
+      // Set the state
       setSelectedTeacher(data);
       return true;
     })();
@@ -83,6 +95,7 @@ const LookupTeachersResultsPage: NextPage<{
 
   const [detailsOpen, setDetailsOpen] = useState(false);
 
+  // Open the Teacher Details Dialog on mobile, otherwise close it
   const { atBreakpoint } = useBreakpoint();
   useEffect(() => {
     if (atBreakpoint !== "base") setDetailsOpen(false);
@@ -99,7 +112,12 @@ const LookupTeachersResultsPage: NextPage<{
         ratio="list-detail"
         className="sm:[&>div]:!grid-cols-2 md:[&>div]:!grid-cols-3"
       >
-        <section className="sm:!pb-0 md:flex md:flex-col md:!overflow-visible">
+        <section
+          className={cn(
+            `flex flex-col sm:block sm:!pb-0 md:flex md:!overflow-visible`,
+            teachers.length === 0 && `h-[calc(100dvh-9rem)] sm:flex`,
+          )}
+        >
           {/* Active Search Filters */}
           {Object.keys(filters).length > 0 && (
             <ActiveSearchFiltersCard
@@ -134,49 +152,78 @@ const LookupTeachersResultsPage: NextPage<{
           )}
 
           {/* Results */}
-          <div
-            className={cn(`-mx-4 sm:mx-0 sm:-mr-3 md:grow
+          {teachers.length > 0 ? (
+            <div
+              className={cn(`-mx-4 sm:mx-0 sm:-mr-3 md:grow
               md:overflow-auto`)}
-          >
-            <ul className="flex flex-col gap-1 pb-6 pt-4 sm:pr-3">
-              {teachers.map((teacher, idx) => (
-                <motion.li
-                  key={teacher.id}
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    ...transition(duration.medium2, easing.standardDecelerate),
-                    delay:
-                      Math.max(
-                        (idx / Math.min(teachers.length, 10)) * duration.long2,
-                        duration.short4,
-                      ) + duration.short4,
-                  }}
-                >
-                  <LookupTeacherCard
-                    teacher={teacher}
-                    selected={selectedID}
-                    onClick={(id) => {
-                      setSelectedID(id);
-                      if (atBreakpoint === "base") setDetailsOpen(true);
+            >
+              <ul className="flex flex-col gap-1 pb-6 pt-4 sm:pr-3">
+                {teachers.map((teacher, idx) => (
+                  <motion.li
+                    key={teacher.id}
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      ...transition(
+                        duration.medium2,
+                        easing.standardDecelerate,
+                      ),
+                      delay:
+                        Math.max(
+                          (idx / Math.min(teachers.length, 10)) *
+                            duration.long2,
+                          duration.short4,
+                        ) + duration.short4,
                     }}
-                  />
-                </motion.li>
-              ))}
-            </ul>
-          </div>
+                  >
+                    <LookupTeacherCard
+                      teacher={teacher}
+                      selected={selectedID}
+                      onClick={(id) => {
+                        setSelectedID(id);
+                        if (atBreakpoint === "base") setDetailsOpen(true);
+                      }}
+                    />
+                  </motion.li>
+                ))}
+              </ul>
+            </div>
+          ) : (
+            // Empty state
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                ...transition(duration.medium2, easing.standardDecelerate),
+                delay: duration.medium2,
+              }}
+              className="skc-card skc-card--outlined mt-4 flex grow flex-col items-center justify-center gap-1 p-4 sm:mb-6"
+            >
+              <Text
+                type="body-medium"
+                element="p"
+                className="text-center text-on-surface-variant"
+              >
+                <Balancer>{tx("common.list.empty.desc")}</Balancer>
+              </Text>
+              <Button appearance="text" href="/lookup/teachers" element={Link}>
+                {tx("common.list.empty.action.clear")}
+              </Button>
+            </motion.div>
+          )}
         </section>
 
+        {/* Details */}
         <main className="md:!col-span-2">
-          {selectedID && (
+          {(selectedID || teachers.length === 0) && (
             <motion.div
               key={selectedTeacher?.id || selectedID}
               initial={{ opacity: 0, scale: 0.95, x: -10 }}
               animate={{ opacity: 1, scale: 1, x: 0 }}
-              transition={transition(
-                duration.medium2,
-                easing.standardDecelerate,
-              )}
+              transition={{
+                ...transition(duration.medium2, easing.standardDecelerate),
+                delay: teachers.length === 0 ? duration.medium4 : 0,
+              }}
               className="h-full"
             >
               <TeacherDetailsCard teacher={selectedTeacher} />
@@ -185,6 +232,7 @@ const LookupTeachersResultsPage: NextPage<{
         </main>
       </SplitLayout>
 
+      {/* Details Dialog */}
       <FullscreenDialog
         open={detailsOpen}
         title=""
