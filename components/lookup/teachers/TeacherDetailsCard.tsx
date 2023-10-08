@@ -4,79 +4,40 @@ import MultilangText from "@/components/common/MultilingualText";
 import CurrentTeachingPeriodCard from "@/components/lookup/teachers/CurrentTeachingPeriodCard";
 import InformationCard from "@/components/lookup/teachers/InformationCard";
 import TeacherHeader from "@/components/lookup/teachers/TeacherHeader";
-import { getTeacherByID } from "@/utils/backend/person/getTeacherByID";
 import cn from "@/utils/helpers/cn";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
-import useToggle from "@/utils/helpers/useToggle";
-import withLoading from "@/utils/helpers/withLoading";
 import { StylableFC } from "@/utils/types/common";
 import { Teacher } from "@/utils/types/person";
 import {
   Columns,
-  Progress,
   Text,
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
-import { useEffect, useState } from "react";
 import SubjectInChardCard from "./SubjectInChargeCard";
 
 const TeacherDetailsCard: StylableFC<{
-  id?: string;
-}> = ({ id, style, className }) => {
+  teacher?: Teacher;
+}> = ({ teacher, style, className }) => {
   const locale = useLocale();
   const { t } = useTranslation("lookup", { keyPrefix: "teachers.detail" });
   const { t: tx } = useTranslation("common");
 
   const { duration, easing } = useAnimationConfig();
 
-  const supabase = useSupabaseClient();
-
-  const [loading, toggleLoading] = useToggle();
-  const [teacher, setTeacher] = useState<Teacher | null>(null);
-
-  useEffect(() => {
-    withLoading(
-      async () => {
-        if (!id) {
-          setTeacher(null);
-          return false;
-        }
-
-        const { data, error } = await getTeacherByID(supabase, id, {
-          detailed: true,
-          includeContacts: true,
-        });
-        if (error) return false;
-
-        setTeacher(data);
-        return true;
-      },
-      toggleLoading,
-      { hasEndToggle: true },
-    );
-  }, [id]);
-
   return (
     <div
       style={style}
       className={cn(
-        `relative flex h-full flex-col overflow-auto rounded-lg border-1
-        border-outline-variant bg-surface-3 md:overflow-hidden`,
+        `relative flex h-full flex-col overflow-hidden rounded-lg border-1
+        border-outline-variant bg-surface-3 sm:overflow-auto md:overflow-hidden`,
         className,
       )}
     >
-      <Progress
-        appearance="linear"
-        alt="Loading teacher…"
-        visible={loading}
-        className="absolute inset-0 bottom-auto"
-      />
       <AnimatePresence>
         {teacher && (
           <>
@@ -88,12 +49,13 @@ const TeacherDetailsCard: StylableFC<{
                 duration.medium2,
                 easing.standardDecelerate,
               )}
-              className={cn(`flex grow flex-col gap-5
-                rounded-[inherit] bg-surface-1 p-4 md:overflow-auto`)}
+              className={cn(`flex grow flex-col gap-5 overflow-auto
+                rounded-t-lg bg-surface-1 p-4 sm:overflow-visible
+                md:overflow-auto`)}
             >
               <CurrentTeachingPeriodCard teacherID={teacher.id} />
 
-              <Columns columns={4} className="!items-stretch !gap-2">
+              <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
                 <InformationCard
                   title={t("information.fullName")}
                   className="col-span-2"
@@ -149,7 +111,7 @@ const TeacherDetailsCard: StylableFC<{
                       </time>
                     </InformationCard>
                   )}
-              </Columns>
+              </div>
 
               {teacher.contacts.length > 0 && (
                 <section className="space-y-2">

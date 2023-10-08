@@ -43,6 +43,7 @@ const CurrentTeachingPeriodCard: StylableFC<{
     : 0;
 
   useEffect(() => {
+    if (currentPeriod && percentage === 100) return;
     (async () => {
       setLoading(true);
       const { data, error } = await getCurrentPeriodByTeacherID(
@@ -62,7 +63,8 @@ const CurrentTeachingPeriodCard: StylableFC<{
     <div
       style={style}
       className={cn(
-        `relative isolate min-h-[2.5rem] overflow-hidden rounded-md bg-surface px-3 py-2`,
+        `relative isolate min-h-[2.5rem] overflow-hidden rounded-md bg-surface
+        px-3 py-2`,
         loading && `animate-pulse`,
         className,
       )}

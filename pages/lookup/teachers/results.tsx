@@ -3,21 +3,25 @@ import PageHeader from "@/components/common/PageHeader";
 import ActiveSearchFiltersCard from "@/components/lookup/ActiveSearchFiltersCard";
 import LookupTeacherCard from "@/components/lookup/teachers/LookupTeacherCard";
 import TeacherDetailsCard from "@/components/lookup/teachers/TeacherDetailsCard";
+import { getTeacherByID } from "@/utils/backend/person/getTeacherByID";
 import getTeachersByLookupFilters from "@/utils/backend/person/getTeachersByLookupFilters";
 import getSubjectGroups from "@/utils/backend/subject/getSubjectGroups";
 import cn from "@/utils/helpers/cn";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import { LangCode } from "@/utils/types/common";
-import { TeacherLookupItem } from "@/utils/types/person";
+import { Teacher, TeacherLookupItem } from "@/utils/types/person";
 import { SubjectGroup } from "@/utils/types/subject";
 import {
   CardHeader,
+  FullscreenDialog,
   MaterialIcon,
   SplitLayout,
   transition,
   useAnimationConfig,
+  useBreakpoint,
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { motion } from "framer-motion";
 import {
   GetServerSideProps,
@@ -31,15 +35,13 @@ import Head from "next/head";
 import { alphabetical, camel } from "radash";
 import { useEffect, useState } from "react";
 
-export type SearchFilters = Partial<
-  {
-    fullName: string;
-    nickname: string;
-    subjectGroup: number;
-    classroom: string;
-    contact: string;
-  }
->;
+export type SearchFilters = Partial<{
+  fullName: string;
+  nickname: string;
+  subjectGroup: number;
+  classroom: string;
+  contact: string;
+}>;
 
 const LookupTeachersResultsPage: NextPage<{
   filters: SearchFilters;
@@ -52,14 +54,40 @@ const LookupTeachersResultsPage: NextPage<{
 
   const { duration, easing } = useAnimationConfig();
 
-  const [selected, setSelected] = useState<string>();
+  const [selectedID, setSelectedID] = useState<string>();
   useEffect(() => {
     const timeout = setTimeout(
-      () => setSelected(teachers[0]?.id),
+      () => setSelectedID(teachers[0]?.id),
       duration.medium2 * 1000,
     );
     return () => clearTimeout(timeout);
   }, []);
+
+  const supabase = useSupabaseClient();
+  const [selectedTeacher, setSelectedTeacher] = useState<Teacher>();
+  useEffect(() => {
+    (async () => {
+      setSelectedTeacher(undefined);
+      if (!selectedID) return false;
+
+      const { data, error } = await getTeacherByID(supabase, selectedID, {
+        detailed: true,
+        includeContacts: true,
+      });
+      if (error) return false;
+
+      setSelectedTeacher(data);
+      return true;
+    })();
+  }, [selectedID]);
+
+  const [detailsOpen, setDetailsOpen] = useState(false);
+
+  const { atBreakpoint } = useBreakpoint();
+  useEffect(() => {
+    if (atBreakpoint !== "base") setDetailsOpen(false);
+    else if (selectedID) setDetailsOpen(true);
+  }, [atBreakpoint === "base"]);
 
   return (
     <>
@@ -71,7 +99,7 @@ const LookupTeachersResultsPage: NextPage<{
         ratio="list-detail"
         className="sm:[&>div]:!grid-cols-2 md:[&>div]:!grid-cols-3"
       >
-        <section className="md:flex md:flex-col md:!overflow-visible sm:!pb-0">
+        <section className="sm:!pb-0 md:flex md:flex-col md:!overflow-visible">
           {/* Active Search Filters */}
           {Object.keys(filters).length > 0 && (
             <ActiveSearchFiltersCard
@@ -127,8 +155,11 @@ const LookupTeachersResultsPage: NextPage<{
                 >
                   <LookupTeacherCard
                     teacher={teacher}
-                    selected={selected}
-                    onClick={setSelected}
+                    selected={selectedID}
+                    onClick={(id) => {
+                      setSelectedID(id);
+                      if (atBreakpoint === "base") setDetailsOpen(true);
+                    }}
                   />
                 </motion.li>
               ))}
@@ -137,9 +168,9 @@ const LookupTeachersResultsPage: NextPage<{
         </section>
 
         <main className="md:!col-span-2">
-          {selected && (
+          {selectedID && (
             <motion.div
-              key={selected}
+              key={selectedTeacher?.id || selectedID}
               initial={{ opacity: 0, scale: 0.95, x: -10 }}
               animate={{ opacity: 1, scale: 1, x: 0 }}
               transition={transition(
@@ -148,11 +179,28 @@ const LookupTeachersResultsPage: NextPage<{
               )}
               className="h-full"
             >
-              <TeacherDetailsCard id={selected} />
+              <TeacherDetailsCard teacher={selectedTeacher} />
             </motion.div>
           )}
         </main>
       </SplitLayout>
+
+      <FullscreenDialog
+        open={detailsOpen}
+        title=""
+        width={720}
+        onClose={() => setDetailsOpen(false)}
+        className={cn(`[&>:first-child]:!flex-row-reverse
+          [&>:first-child]:!bg-transparent [&>:last-child>div]:!mx-0
+          [&>:last-child>div]:!rounded-none [&>:last-child>div]:!border-0
+          [&>:last-child]:h-[100dvh] [&>:last-child]:!p-0`)}
+      >
+        <TeacherDetailsCard
+          teacher={
+            selectedID === selectedTeacher?.id ? selectedTeacher : undefined
+          }
+        />
+      </FullscreenDialog>
     </>
   );
 };
