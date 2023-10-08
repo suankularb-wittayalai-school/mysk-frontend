@@ -79,7 +79,7 @@ export default async function getTeachersByLookupFilters(
       { foreignTable: "people" },
     );
 
-  if (filters.subjectGroup && filters.subjectGroup !== "any")
+  if (filters.subjectGroup)
     query = query.eq("subject_groups.id", filters.subjectGroup);
 
   if (filters.classroom)
@@ -93,7 +93,7 @@ export default async function getTeachersByLookupFilters(
   if (filters.contact)
     query = query.eq("people.person_contacts.contacts.value", filters.contact);
 
-  const { data, error } = await query.limit(50);
+  const { data, error } = await query.limit(100);
 
   if (error) {
     logError("getTeachersByLookupFilters", error);

@@ -109,7 +109,7 @@ const LookupTeachersResultsPage: NextPage<{
           )}
 
           {/* If the cap is reached, there are likely omitted results */}
-          {teachers.length === 50 && (
+          {teachers.length === 100 && (
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: [0, 1, 1], scale: [0.8, 1.05, 1] }}
