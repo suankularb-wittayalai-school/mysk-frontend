@@ -3,6 +3,7 @@ import ContactCard from "@/components/account/ContactCard";
 import MultilangText from "@/components/common/MultilingualText";
 import CurrentTeachingPeriodCard from "@/components/lookup/teachers/CurrentTeachingPeriodCard";
 import InformationCard from "@/components/lookup/teachers/InformationCard";
+import SubjectInChardCard from "@/components/lookup/teachers/SubjectInChargeCard";
 import TeacherHeader from "@/components/lookup/teachers/TeacherHeader";
 import cn from "@/utils/helpers/cn";
 import getLocaleName from "@/utils/helpers/getLocaleName";
@@ -18,7 +19,6 @@ import {
 } from "@suankularb-components/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
-import SubjectInChardCard from "./SubjectInChargeCard";
 
 const TeacherDetailsCard: StylableFC<{
   teacher?: Teacher;

@@ -50,7 +50,7 @@ const LookupTeachersResultsPage: NextPage<{
 }> = ({ filters, subjectGroups, teachers }) => {
   // Translation
   const { t } = useTranslation("lookup", { keyPrefix: "teachers" });
-  const { t: tx } = useTranslation("common");
+  const { t: tx } = useTranslation(["lookup", "common"]);
 
   const { duration, easing } = useAnimationConfig();
 
@@ -92,7 +92,7 @@ const LookupTeachersResultsPage: NextPage<{
   return (
     <>
       <Head>
-        <title>{tx("tabName", { tabName: t("title") })}</title>
+        <title>{tx("tabName", { tabName: t("title"), ns: "common" })}</title>
       </Head>
       <PageHeader parentURL="/lookup/teachers">{t("title")}</PageHeader>
       <SplitLayout
@@ -118,7 +118,7 @@ const LookupTeachersResultsPage: NextPage<{
                 delay: duration.long4,
               }}
               className={cn(`mt-2 rounded-sm bg-error-container
-                text-on-error-container`)}
+              text-on-error-container`)}
             >
               <CardHeader
                 icon={
@@ -127,8 +127,8 @@ const LookupTeachersResultsPage: NextPage<{
                     className="!text-on-error-container"
                   />
                 }
-                title="Filters too wide"
-                subtitle="Results are incomplete"
+                title={tx("common.list.tooWide.title")}
+                subtitle={tx("common.list.tooWide.subtitle")}
               />
             </motion.div>
           )}

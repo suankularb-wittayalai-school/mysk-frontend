@@ -189,17 +189,18 @@
     }
   },
   "common": {
-    "list": {
-      "searchFilters": {
-        "title": "Search filters",
-        "desc": "Add optional filters to narrow down your search results.<br>Just enter the fields you want to filter by—no need to enter every field.",
-        "action": {
-          "search": "Search"
-        }
+    "searchFilters": {
+      "title": "Search filters",
+      "desc": "Add optional filters to narrow down your search results.<br>Just enter the fields you want to filter by—no need to enter every field.",
+      "action": {
+        "search": "Search"
       }
     },
-    "detail": {
-      "noneSelected": "Nothing selected."
+    "list": {
+      "tooWide": {
+        "title": "Filters too wide",
+        "subtitle": "Results are incomplete"
+      }
     }
   }
 }

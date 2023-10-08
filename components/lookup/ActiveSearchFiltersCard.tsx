@@ -49,7 +49,7 @@ const ActiveSearchFiltersCard: StylableFC<{
         transition={transition(duration.long2, easing.emphasized)}
         className="skc-text skc-text--title-medium px-4 pb-2 pt-3"
       >
-        {tx("common.list.searchFilters.title")}
+        {tx("common.searchFilters.title")}
       </motion.h2>
       <motion.div
         layout="position"

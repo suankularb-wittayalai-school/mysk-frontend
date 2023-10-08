@@ -20,7 +20,7 @@ const SearchFiltersCard: StylableFC<{
 }> = ({ children, onSubmit, style, className }) => {
   const { duration, easing } = useAnimationConfig();
   const { t } = useTranslation("lookup", {
-    keyPrefix: "common.list.searchFilters",
+    keyPrefix: "common.searchFilters",
   });
 
   return (
@@ -46,7 +46,7 @@ const SearchFiltersCard: StylableFC<{
         className="flex flex-col gap-4 p-4 pt-0"
       >
         <Text type="body-medium" element="p">
-          <Trans i18nKey="common.list.searchFilters.desc" ns="lookup" />
+          <Trans i18nKey="common.searchFilters.desc" ns="lookup" />
         </Text>
         <Columns columns={4} className="!gap-y-12 py-2">
           {children}
