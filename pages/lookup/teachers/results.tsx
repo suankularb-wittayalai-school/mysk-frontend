@@ -1,8 +1,8 @@
 // Imports
 import PageHeader from "@/components/common/PageHeader";
 import ActiveSearchFiltersCard from "@/components/lookup/ActiveSearchFiltersCard";
-import TeacherDetailsCard from "@/components/lookup/teachers/TeacherDetailsCard";
 import LookupTeacherCard from "@/components/lookup/teachers/LookupTeacherCard";
+import TeacherDetailsCard from "@/components/lookup/teachers/TeacherDetailsCard";
 import getTeachersByLookupFilters from "@/utils/backend/person/getTeachersByLookupFilters";
 import getSubjectGroups from "@/utils/backend/subject/getSubjectGroups";
 import cn from "@/utils/helpers/cn";
@@ -70,7 +70,7 @@ const LookupTeachersResultsPage: NextPage<{
         ratio="list-detail"
         className="sm:[&>div]:!grid-cols-2 md:[&>div]:!grid-cols-3"
       >
-        <section className="sm:flex sm:flex-col sm:!overflow-visible sm:!pb-0">
+        <section className="md:flex md:flex-col md:!overflow-visible sm:!pb-0">
           {/* Active Search Filters */}
           {Object.keys(filters).length > 0 && (
             <ActiveSearchFiltersCard
@@ -106,8 +106,8 @@ const LookupTeachersResultsPage: NextPage<{
 
           {/* Results */}
           <div
-            className={cn(`-mx-4 sm:mx-0 sm:-mr-3 sm:grow
-              sm:overflow-auto`)}
+            className={cn(`-mx-4 sm:mx-0 sm:-mr-3 md:grow
+              md:overflow-auto`)}
           >
             <ul className="flex flex-col gap-1 pb-6 pt-4 sm:pr-3">
               {teachers.map((teacher, idx) => (

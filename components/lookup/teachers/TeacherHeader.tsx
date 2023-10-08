@@ -40,7 +40,7 @@ const TeacherHeader: StylableFC<{
         >
           {getLocaleName(locale, teacher, { prefix: "teacher" })}
         </Header>
-        <ChipSet>
+        <ChipSet scrollable className="-mx-4 px-4">
           <AssistChip icon={<MaterialIcon icon="groups" />}>
             See class
           </AssistChip>
