@@ -105,14 +105,20 @@ const TeacherDetailsCard: StylableFC<{
                         prefix: true,
                       }),
                     }}
-                    options={{ hideIconsIfOnlyLanguage: true }}
+                    options={{
+                      combineIfAllIdentical: true,
+                      hideIconsIfOnlyLanguage: true,
+                    }}
                   />
                 </InformationCard>
                 {teacher.nickname?.th && (
                   <InformationCard title={t("information.nickname")}>
                     <MultilangText
                       text={teacher.nickname}
-                      options={{ hideIconsIfOnlyLanguage: true }}
+                      options={{
+                        combineIfAllIdentical: true,
+                        hideIconsIfOnlyLanguage: true,
+                      }}
                     />
                   </InformationCard>
                 )}
