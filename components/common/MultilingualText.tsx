@@ -37,12 +37,13 @@ const MultilangText: FC<{
                 <div
                   aria-label={langCode === "en-US" ? "English" : "ภาษาไทย"}
                   className={cn(
-                    `grid h-5 w-5 select-none place-content-center rounded-full
-                     border-1 text-[0.5rem]`,
+                    `grid h-5 w-5 select-none place-content-center rounded-xs
+                    border-1 font-display text-[0.6875rem] font-bold
+                    tracking-tight`,
                     !options?.priorityLanguage ||
                       langCode === options?.priorityLanguage
-                      ? `border-secondary text-secondary`
-                      : `border-outline text-outline`,
+                      ? `bg-surface-variant text-primary`
+                      : `bg-surface-2 text-outline`,
                   )}
                 >
                   {langCode === "en-US" ? "EN" : "TH"}
@@ -53,8 +54,8 @@ const MultilangText: FC<{
               <p
                 className={cn(
                   options?.hideIconsIfOnlyLanguage &&
-                    // Span 2 columns (taking over the icon space) if this is the
-                    // only language
+                    // Span 2 columns (taking over the icon space) if this is
+                    // the only language
                     numLanguagesWithContent === 1 &&
                     `col-span-2`,
                   options?.priorityLanguage &&
