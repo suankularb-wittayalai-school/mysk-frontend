@@ -11,6 +11,7 @@ import {
   useAnimationConfig
 } from "@suankularb-components/react";
 import { motion } from "framer-motion";
+import { Trans, useTranslation } from "next-i18next";
 import { ReactNode } from "react";
 
 const SearchFiltersCard: StylableFC<{
@@ -18,6 +19,9 @@ const SearchFiltersCard: StylableFC<{
   onSubmit: () => void;
 }> = ({ children, onSubmit, style, className }) => {
   const { duration, easing } = useAnimationConfig();
+  const { t } = useTranslation("lookup", {
+    keyPrefix: "common.list.searchFilters",
+  });
 
   return (
     <motion.div
@@ -32,7 +36,7 @@ const SearchFiltersCard: StylableFC<{
         transition={transition(duration.long2, easing.emphasized)}
         className="skc-text skc-text--title-medium px-4 pb-2 pt-3"
       >
-        Search filters
+        {t("title")}
       </motion.h2>
       <motion.div
         layout="position"
@@ -41,15 +45,9 @@ const SearchFiltersCard: StylableFC<{
         transition={transition(duration.medium4, easing.standardDecelerate)}
         className="flex flex-col gap-4 p-4 pt-0"
       >
-        <div>
-          <Text type="body-medium" element="p">
-            Add optional filters to narrow down your search results.
-          </Text>
-          <Text type="body-medium" element="p">
-            Just enter the fields you want to filter by—no need to enter every
-            field.
-          </Text>
-        </div>
+        <Text type="body-medium" element="p">
+          <Trans i18nKey="common.list.searchFilters.desc" ns="lookup" />
+        </Text>
         <Columns columns={4} className="!gap-y-12 py-2">
           {children}
         </Columns>
@@ -59,7 +57,7 @@ const SearchFiltersCard: StylableFC<{
             icon={<MaterialIcon icon="search" />}
             onClick={onSubmit}
           >
-            Search
+            {t("action.search")}
           </Button>
         </Actions>
       </motion.div>

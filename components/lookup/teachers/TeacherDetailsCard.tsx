@@ -18,7 +18,7 @@ import {
   Progress,
   Text,
   transition,
-  useAnimationConfig
+  useAnimationConfig,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -30,6 +30,7 @@ const TeacherDetailsCard: StylableFC<{
   id?: string;
 }> = ({ id, style, className }) => {
   const locale = useLocale();
+  const { t } = useTranslation("lookup", { keyPrefix: "teachers.detail" });
   const { t: tx } = useTranslation("common");
 
   const { duration, easing } = useAnimationConfig();
@@ -93,7 +94,10 @@ const TeacherDetailsCard: StylableFC<{
               <CurrentTeachingPeriodCard teacherID={teacher.id} />
 
               <Columns columns={4} className="!items-stretch !gap-2">
-                <InformationCard title="Full name" className="col-span-2">
+                <InformationCard
+                  title={t("information.fullName")}
+                  className="col-span-2"
+                >
                   <MultilangText
                     text={{
                       th: getLocaleName("th", teacher, { prefix: true }),
@@ -105,25 +109,28 @@ const TeacherDetailsCard: StylableFC<{
                   />
                 </InformationCard>
                 {teacher.nickname?.th && (
-                  <InformationCard title="Nickname">
+                  <InformationCard title={t("information.nickname")}>
                     <MultilangText
                       text={teacher.nickname}
                       options={{ hideIconsIfOnlyLanguage: true }}
                     />
                   </InformationCard>
                 )}
-                <InformationCard title="Subject group">
+                <InformationCard
+                  title={t("information.subjectGroup")}
+                  className="[&>div]:line-clamp-2"
+                >
                   {getLocaleString(teacher.subject_group.name, locale)}
                 </InformationCard>
                 {teacher.class_advisor_at && (
-                  <InformationCard title="Class advisor at">
+                  <InformationCard title={t("information.classAdvisorAt")}>
                     {tx("class", { number: teacher.class_advisor_at.number })}
                   </InformationCard>
                 )}
                 {teacher.birthdate &&
                   // Assuming no real person is born on Jan 1, 1970
                   teacher.birthdate !== "1970-01-01" && (
-                    <InformationCard title="Birthday">
+                    <InformationCard title={t("information.birthday")}>
                       <time>
                         {new Date(teacher.birthdate).toLocaleDateString(
                           locale,
@@ -145,7 +152,7 @@ const TeacherDetailsCard: StylableFC<{
                     element="h3"
                     className="rounded-md bg-surface px-3 py-2"
                   >
-                    Contacts
+                    {t("contacts.title")}
                   </Text>
                   <Columns columns={2} className="!gap-2">
                     {teacher.contacts.map((contact) => (
@@ -167,7 +174,7 @@ const TeacherDetailsCard: StylableFC<{
                     element="h3"
                     className="rounded-md bg-surface px-3 py-2"
                   >
-                    Subjects in charge
+                    {t("subjects.title")}
                   </Text>
                   <div className="-mx-4 overflow-auto">
                     <ul className="flex w-fit flex-row gap-2 px-4">

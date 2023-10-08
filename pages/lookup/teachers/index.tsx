@@ -1,6 +1,7 @@
 // Imports
 import PageHeader from "@/components/common/PageHeader";
 import SearchFiltersCard from "@/components/lookup/SearchFiltersCard";
+import SnackbarContext from "@/contexts/SnackbarContext";
 import getSubjectGroups from "@/utils/backend/subject/getSubjectGroups";
 import cn from "@/utils/helpers/cn";
 import getLocaleString from "@/utils/helpers/getLocaleString";
@@ -14,6 +15,7 @@ import {
   Divider,
   MenuItem,
   Select,
+  Snackbar,
   TextField,
   useAnimationConfig,
 } from "@suankularb-components/react";
@@ -23,7 +25,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { snake } from "radash";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 const LookupTeachersPage: NextPage<{
   subjectGroups: SubjectGroup[];
@@ -32,6 +34,8 @@ const LookupTeachersPage: NextPage<{
   const locale = useLocale();
   const { t } = useTranslation("lookup", { keyPrefix: "teachers" });
   const { t: tx } = useTranslation("common");
+
+  const { setSnackbar } = useContext(SnackbarContext);
 
   const router = useRouter();
 
@@ -53,17 +57,21 @@ const LookupTeachersPage: NextPage<{
   ]);
 
   function handleSubmit() {
+    const entries = Object.entries(form).filter(
+      ([key, value]) => value && !(key === "subjectGroup" && value === "any"),
+    );
+    if (entries.length === 0) {
+      setSnackbar(<Snackbar>{tx("snackbar.formInvalid")}</Snackbar>);
+      return;
+    }
+
     setOverflowHid(true);
     // URLSearchParams is used to encode the form values as query
     // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams
     router.push(
       `/lookup/teachers/results?${new URLSearchParams(
         // Convert form keys to snake case
-        Object.fromEntries(
-          Object.entries(form)
-            .filter(([_, value]) => value)
-            .map(([key, value]) => [snake(key), value]),
-        ),
+        Object.fromEntries(entries.map(([key, value]) => [snake(key), value])),
       )}`,
     );
   }
@@ -84,23 +92,25 @@ const LookupTeachersPage: NextPage<{
         >
           <TextField
             appearance="outlined"
-            label="Search full name"
-            helperMsg="Enter partially or fully the full name of a teacher"
+            label={t("searchFilters.form.fullName")}
+            helperMsg={t("searchFilters.form.fullName_helper")}
             {...formProps.fullName}
           />
           <TextField
             appearance="outlined"
-            label="Search nickname"
-            helperMsg="Enter partially or fully the nickname of a teacher"
+            label={t("searchFilters.form.nickname")}
+            helperMsg={t("searchFilters.form.nickname_helper")}
             {...formProps.nickname}
           />
           <Select
             appearance="outlined"
-            label="Choose subject group"
-            helperMsg="Select from a list of subject groups assigned to a teacher"
+            label={t("searchFilters.form.subjectGroup")}
+            helperMsg={t("searchFilters.form.subjectGroup_helper")}
             {...formProps.subjectGroup}
           >
-            <MenuItem value="any">Any subject group</MenuItem>
+            <MenuItem value="any">
+              {t("searchFilters.form.subjectGroup_default")}
+            </MenuItem>
             <Divider className="my-1" />
             {subjectGroups.map((subjectGroup) => (
               <MenuItem key={subjectGroup.id} value={subjectGroup.id}>
@@ -110,14 +120,14 @@ const LookupTeachersPage: NextPage<{
           </Select>
           <TextField
             appearance="outlined"
-            label="Search class"
-            helperMsg="Enter fully the class number a teacher is the advisor of"
+            label={t("searchFilters.form.classroom")}
+            helperMsg={t("searchFilters.form.classroom_helper")}
             {...formProps.classroom}
           />
           <TextField
             appearance="outlined"
-            label="Search contact"
-            helperMsg="Enter fully a username, email, or URL of a class contact"
+            label={t("searchFilters.form.contact")}
+            helperMsg={t("searchFilters.form.contact_helper")}
             {...formProps.contact}
           />
         </SearchFiltersCard>

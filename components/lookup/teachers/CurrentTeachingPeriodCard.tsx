@@ -7,19 +7,21 @@ import useLocale from "@/utils/helpers/useLocale";
 import useNow from "@/utils/helpers/useNow";
 import { StylableFC } from "@/utils/types/common";
 import { SchedulePeriod } from "@/utils/types/schedule";
-import {
-  transition,
-  useAnimationConfig
-} from "@suankularb-components/react";
+import { transition, useAnimationConfig } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { differenceInSeconds } from "date-fns";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { useTranslation } from "next-i18next";
 
 const CurrentTeachingPeriodCard: StylableFC<{
   teacherID: string;
 }> = ({ teacherID, style, className }) => {
   const locale = useLocale();
+  const { t } = useTranslation("lookup", {
+    keyPrefix: "teachers.detail.teaching",
+  });
+
   const now = useNow();
 
   const { duration, easing } = useAnimationConfig();
@@ -60,7 +62,7 @@ const CurrentTeachingPeriodCard: StylableFC<{
     <div
       style={style}
       className={cn(
-        `relative isolate h-10 overflow-hidden rounded-md bg-surface px-3 py-2`,
+        `relative isolate min-h-[2.5rem] overflow-hidden rounded-md bg-surface px-3 py-2`,
         loading && `animate-pulse`,
         className,
       )}
@@ -81,11 +83,13 @@ const CurrentTeachingPeriodCard: StylableFC<{
             className="skc-text skc-text--title-medium"
           >
             {currentPeriod
-              ? `Teaching ${getLocaleString(
-                  currentPeriod?.content[0].subject.name,
-                  locale,
-                )}`
-              : "Not teaching"}
+              ? t("ongoing", {
+                  subject: getLocaleString(
+                    currentPeriod?.content[0].subject.name,
+                    locale,
+                  ),
+                })
+              : t("free")}
           </motion.p>
         )}
       </AnimatePresence>

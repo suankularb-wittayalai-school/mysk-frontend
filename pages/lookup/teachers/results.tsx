@@ -35,9 +35,10 @@ export type SearchFilters = Partial<
   {
     fullName: string;
     nickname: string;
+    subjectGroup: number;
     classroom: string;
     contact: string;
-  } & { subjectGroup: number | "any" }
+  }
 >;
 
 const LookupTeachersResultsPage: NextPage<{
