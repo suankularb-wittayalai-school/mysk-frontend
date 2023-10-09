@@ -23,7 +23,7 @@ const TeacherHeader: StylableFC<{
 }> = ({ teacher, style, className }) => {
   // Translation
   const locale = useLocale();
-  const { t } = useTranslation("lookup", { keyPrefix: "people.header" });
+  const { t } = useTranslation("lookup", { keyPrefix: "teachers.header" });
 
   const { duration, easing } = useAnimationConfig();
 
@@ -57,17 +57,14 @@ const TeacherHeader: StylableFC<{
             icon={<MaterialIcon icon="download" />}
             onClick={handleSaveVCard}
           >
-            Save contact
+            {t("action.saveContact")}
           </AssistChip>
           <AssistChip icon={<MaterialIcon icon="groups" />}>
-            See class
+            {t("action.seeClass")}
           </AssistChip>
           <AssistChip icon={<MaterialIcon icon="dashboard" />}>
-            See schedule
+            {t("action.seeSchedule")}
           </AssistChip>
-          {/* <AssistChip icon={<MaterialIcon icon="lock" />}>
-            Request info
-          </AssistChip> */}
         </ChipSet>
       </div>
     </motion.div>

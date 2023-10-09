@@ -118,6 +118,13 @@
         "contact": "Contact: “{{content}}”"
       }
     },
+    "header": {
+      "action": {
+        "saveContact": "Save contact",
+        "seeClass": "See class",
+        "seeSchedule": "See schedule"
+      }
+    },
     "detail": {
       "teaching": {
         "free": "Not teaching right now",

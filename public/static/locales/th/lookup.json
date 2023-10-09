@@ -122,6 +122,13 @@
         "contact": "ช่องทางการติดต่อ: “{{content}}”"
       }
     },
+    "header": {
+      "action": {
+        "saveContact": "บันทึก",
+        "seeClass": "ดูห้องเรียน",
+        "seeSchedule": "ดูตารางสอน"
+      }
+    },
     "detail": {
       "teaching": {
         "free": "ไม่มีคาบสอนตอนนี้",
