@@ -19,6 +19,7 @@ import {
 } from "@suankularb-components/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
+import { sift } from "radash";
 
 const TeacherDetailsCard: StylableFC<{
   teacher?: Teacher;
@@ -73,17 +74,18 @@ const TeacherDetailsCard: StylableFC<{
                     }}
                   />
                 </InformationCard>
-                {teacher.nickname?.th && (
-                  <InformationCard title={t("information.nickname")}>
-                    <MultilangText
-                      text={teacher.nickname}
-                      options={{
-                        combineIfAllIdentical: true,
-                        hideIconsIfOnlyLanguage: true,
-                      }}
-                    />
-                  </InformationCard>
-                )}
+                {teacher.nickname &&
+                  sift(Object.values(teacher.nickname)).length > 0 && (
+                    <InformationCard title={t("information.nickname")}>
+                      <MultilangText
+                        text={teacher.nickname}
+                        options={{
+                          combineIfAllIdentical: true,
+                          hideIconsIfOnlyLanguage: true,
+                        }}
+                      />
+                    </InformationCard>
+                  )}
                 <InformationCard
                   title={t("information.subjectGroup")}
                   className="[&>div]:line-clamp-2"
