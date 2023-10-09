@@ -12,16 +12,14 @@ import TeacherDetailsCard from "@/components/lookup/teachers/TeacherDetailsCard"
 import { getTeacherByID } from "@/utils/backend/person/getTeacherByID";
 import getTeachersByLookupFilters from "@/utils/backend/person/getTeachersByLookupFilters";
 import getSubjectGroups from "@/utils/backend/subject/getSubjectGroups";
-import cn from "@/utils/helpers/cn";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import { LangCode } from "@/utils/types/common";
 import { Teacher, TeacherLookupItem } from "@/utils/types/person";
 import { SubjectGroup } from "@/utils/types/subject";
 import {
-  FullscreenDialog,
   SplitLayout,
   useAnimationConfig,
-  useBreakpoint
+  useBreakpoint,
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
@@ -54,7 +52,7 @@ const LookupTeachersResultsPage: NextPage<{
   const { t } = useTranslation("lookup", { keyPrefix: "teachers" });
   const { t: tx } = useTranslation(["lookup", "common"]);
 
-  const { duration, easing } = useAnimationConfig();
+  const { duration } = useAnimationConfig();
 
   const [selectedID, setSelectedID] = useState<string>();
   // Select the first result automatically after a short delay
@@ -150,22 +148,16 @@ const LookupTeachersResultsPage: NextPage<{
       </SplitLayout>
 
       {/* Details Dialog */}
-      <FullscreenDialog
+      <LookupDetailsDialog
         open={detailsOpen}
-        title=""
-        width={720}
         onClose={() => setDetailsOpen(false)}
-        className={cn(`[&>:first-child]:!flex-row-reverse
-          [&>:first-child]:!bg-transparent [&>:last-child>div]:!mx-0
-          [&>:last-child>div]:!rounded-none [&>:last-child>div]:!border-0
-          [&>:last-child]:h-[100dvh] [&>:last-child]:!p-0`)}
       >
         <TeacherDetailsCard
           teacher={
             selectedID === selectedTeacher?.id ? selectedTeacher : undefined
           }
         />
-      </FullscreenDialog>
+      </LookupDetailsDialog>
     </>
   );
 };
