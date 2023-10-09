@@ -22,15 +22,15 @@
     "drawer": {
       "lookup": {
         "title": "Lookup",
-        "person": "Students/teachers",
-        "class": "Classes",
-        "document": "School documents/orders"
+        "students": "Students",
+        "teachers": "Teachers",
+        "classes": "Classes",
+        "documents": "Documents"
       },
       "about": {
         "title": "About",
         "help": "Help/report issue",
         "admin": "Admin panel",
-        "legacy": "Legacy MySK",
         "language": "ภาษาไทย",
         "logOut": "Log out"
       }
