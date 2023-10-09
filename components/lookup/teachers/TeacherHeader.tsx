@@ -1,6 +1,7 @@
 // Imports
 import DynamicAvatar from "@/components/common/DynamicAvatar";
 import cn from "@/utils/helpers/cn";
+import { useGetVCard } from "@/utils/helpers/contact";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
@@ -13,6 +14,7 @@ import {
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
+import va from "@vercel/analytics";
 import { motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 
@@ -24,6 +26,16 @@ const TeacherHeader: StylableFC<{
   const { t } = useTranslation("lookup", { keyPrefix: "people.header" });
 
   const { duration, easing } = useAnimationConfig();
+
+  const getVCard = useGetVCard();
+  async function handleSaveVCard() {
+    va.track("Share Person", {
+      person: getLocaleName("en-US", teacher),
+      method: "vCard",
+    });
+    var vCard = getVCard(teacher);
+    window.location.href = URL.createObjectURL(vCard);
+  }
 
   return (
     <motion.div
@@ -41,15 +53,21 @@ const TeacherHeader: StylableFC<{
           {getLocaleName(locale, teacher, { prefix: "teacher" })}
         </Header>
         <ChipSet scrollable className="-mx-4 px-4">
+          <AssistChip
+            icon={<MaterialIcon icon="download" />}
+            onClick={handleSaveVCard}
+          >
+            Save contact
+          </AssistChip>
           <AssistChip icon={<MaterialIcon icon="groups" />}>
             See class
           </AssistChip>
-          <AssistChip icon={<MaterialIcon icon="lock" />}>
+          <AssistChip icon={<MaterialIcon icon="dashboard" />}>
+            See schedule
+          </AssistChip>
+          {/* <AssistChip icon={<MaterialIcon icon="lock" />}>
             Request info
-          </AssistChip>
-          <AssistChip icon={<MaterialIcon icon="share" />}>
-            Share
-          </AssistChip>
+          </AssistChip> */}
         </ChipSet>
       </div>
     </motion.div>
