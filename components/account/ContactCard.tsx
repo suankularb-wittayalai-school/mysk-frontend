@@ -5,8 +5,11 @@ import DiscordLogo from "@/public/images/social/discord.svg";
 import FacebookLogo from "@/public/images/social/facebook.svg";
 import InstragramLogo from "@/public/images/social/instagram.svg";
 import LineLogo from "@/public/images/social/line.svg";
+import cn from "@/utils/helpers/cn";
 import { getContactIsLinkable, getContactURL } from "@/utils/helpers/contact";
+import getFormattedLabel from "@/utils/helpers/contact/getFormattedLabel";
 import getLocaleString from "@/utils/helpers/getLocaleString";
+import isURL from "@/utils/helpers/isURL";
 import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import { Contact } from "@/utils/types/contact";
@@ -21,7 +24,7 @@ import {
 } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
 import Image from "next/image";
-import { list } from "radash";
+import { list, sift } from "radash";
 import { FC, forwardRef, useContext, useState } from "react";
 
 /**
@@ -70,19 +73,6 @@ const ContactCard: StylableFC<{
     other: tx("contact.other"),
   };
 
-  const formattedLabel = contact.name?.th
-    ? getLocaleString(contact.name, locale)
-    : contact.type === "phone"
-    ? list(Math.min(Math.ceil(contact.value.length / 3), 3) - 1)
-        .map((setIdx) =>
-          contact.value.slice(
-            setIdx * 3,
-            setIdx === 2 ? contact.value.length : setIdx * 3 + 3,
-          ),
-        )
-        .join(" ")
-    : contact.value;
-
   return (
     <>
       <Card
@@ -121,13 +111,25 @@ const ContactCard: StylableFC<{
                 rel="noreferrer"
                 className="break-all"
               >
-                {formattedLabel}
+                {getFormattedLabel(contact)}
               </a>
             ) : (
-              formattedLabel
+              <>
+                {isURL(contact.value) && (
+                  <MaterialIcon
+                    icon="link"
+                    size={20}
+                    className="-mb-1.5 mr-1 !inline-block !text-outline"
+                  />
+                )}
+                {getFormattedLabel(contact)}
+              </>
             )
           }
-          subtitle={subtitleMap[contact.type]}
+          subtitle={sift([
+            contact.name?.th && getLocaleString(contact.name, locale),
+            subtitleMap[contact.type],
+          ]).join(" • ")}
           overflow={
             editable ? (
               <Menu>
@@ -155,7 +157,12 @@ const ContactCard: StylableFC<{
               </Menu>
             ) : undefined
           }
-          className={editable ? "[&_h3>a]:link" : undefined}
+          className={cn(
+            `!grid [&>:nth-child(2)>*]:!truncate [&>:nth-child(2)>span]:block`,
+            editable
+              ? `[&_h3>a]:link grid-cols-[2.5rem,minmax(0,1fr),3rem]`
+              : `grid-cols-[2.5rem,minmax(0,1fr)]`,
+          )}
         />
       </Card>
       <ContactDialog

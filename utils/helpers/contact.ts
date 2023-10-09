@@ -1,6 +1,7 @@
 // Imports
 import getLocaleName from "@/utils/helpers/getLocaleName";
-import getLocaleString from "./getLocaleString";
+import getLocaleString from "@/utils/helpers/getLocaleString";
+import isURL from "@/utils/helpers/isURL";
 import useLocale from "@/utils/helpers/useLocale";
 import { Contact } from "@/utils/types/contact";
 import { Student, Teacher } from "@/utils/types/person";
@@ -22,11 +23,12 @@ export function getContactURL({ type, value }: Contact) {
     case "facebook":
       return `https://www.facebook.com/search/people/?q=${value}`;
     case "line":
-      if (/^https:\/\/line\.me(\/R)?\/ti\/g\//.test(value)) return value;
+      if (isURL(value)) return value;
       return `https://line.me/ti/p/~${value}`;
     case "instagram":
       return `https://www.instagram.com/${value}`;
     case "discord":
+      if (isURL(value)) return value;
       return `https://discord.gg/invite/${value}`;
     default:
       return value;
@@ -41,13 +43,8 @@ export function getContactURL({ type, value }: Contact) {
  * @returns A boolean.
  */
 export function getContactIsLinkable({ type, value }: Contact): boolean {
-  if (type !== "other") return true;
-  try {
-    new URL(value);
-    return true;
-  } catch (TypeError) {
-    return false;
-  }
+  if (type !== "other" && !(type === "discord" && !isURL(value))) return true;
+  return isURL(value);
 }
 
 export function useGetVCard() {
