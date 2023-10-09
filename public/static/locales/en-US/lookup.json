@@ -200,12 +200,12 @@
       "tooWide": {
         "title": "Filters too wide",
         "subtitle": "Results are incomplete"
-      }
-    },
-    "empty": {
-      "desc": "No results for the given filters.",
-      "action": {
-        "clear": "Clear filters"
+      },
+      "empty": {
+        "desc": "No results for the given filters.",
+        "action": {
+          "clear": "Clear filters"
+        }
       }
     }
   }
