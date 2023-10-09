@@ -1,7 +1,8 @@
 // Imports
 import PageHeader from "@/components/common/PageHeader";
 import ActiveSearchFiltersCard from "@/components/lookup/ActiveSearchFiltersCard";
-import LookupDetailSide from "@/components/lookup/LookupDetailSide";
+import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
+import LookupDetailsSide from "@/components/lookup/LookupDetailsSide";
 import LookupListSide from "@/components/lookup/LookupListSide";
 import LookupResultsItem from "@/components/lookup/LookupResultsItem";
 import LookupResultsList from "@/components/lookup/LookupResultsList";
@@ -140,12 +141,12 @@ const LookupTeachersResultsPage: NextPage<{
         </LookupListSide>
 
         {/* Details */}
-        <LookupDetailSide
+        <LookupDetailsSide
           selectedID={selectedTeacher?.id || selectedID}
           length={teachers.length}
         >
           <TeacherDetailsCard teacher={selectedTeacher} />
-        </LookupDetailSide>
+        </LookupDetailsSide>
       </SplitLayout>
 
       {/* Details Dialog */}

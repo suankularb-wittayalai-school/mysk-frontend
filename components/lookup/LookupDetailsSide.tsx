@@ -4,7 +4,7 @@ import { transition, useAnimationConfig } from "@suankularb-components/react";
 import { motion } from "framer-motion";
 import { ReactNode } from "react";
 
-const LookupDetailSide: StylableFC<{
+const LookupDetailsSide: StylableFC<{
   children: ReactNode;
   selectedID?: string;
   length: number;
@@ -31,4 +31,4 @@ const LookupDetailSide: StylableFC<{
   );
 };
 
-export default LookupDetailSide;
+export default LookupDetailsSide;
