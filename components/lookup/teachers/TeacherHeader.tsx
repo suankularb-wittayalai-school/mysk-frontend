@@ -43,7 +43,10 @@ const TeacherHeader: StylableFC<{
       animate={{ opacity: 1 }}
       transition={transition(duration.medium2, easing.standard)}
       style={style}
-      className={cn(`flex flex-col gap-6 p-4 md:flex-row`, className)}
+      className={cn(
+        `flex flex-col gap-6 p-4 md:grid md:grid-cols-[3.5rem,minmax(0,1fr)]`,
+        className,
+      )}
     >
       <DynamicAvatar className="!h-14 !w-14" />
       <div className="flex flex-col gap-4 md:gap-2">
@@ -52,7 +55,7 @@ const TeacherHeader: StylableFC<{
         >
           {getLocaleName(locale, teacher, { prefix: "teacher" })}
         </Header>
-        <ChipSet scrollable className="-mx-4 px-4">
+        <ChipSet scrollable className="-mx-4 px-4 md:ml-0 md:pl-0">
           <AssistChip
             icon={<MaterialIcon icon="download" />}
             onClick={handleSaveVCard}
