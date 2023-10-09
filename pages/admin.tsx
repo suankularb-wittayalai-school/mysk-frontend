@@ -17,11 +17,12 @@ import {
   Section,
   Text,
 } from "@suankularb-components/react";
+import va from "@vercel/analytics";
 import { GetStaticProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
-import { FC } from "react";
+import { FC, forwardRef } from "react";
 
 type AdminPanelStatistics = {
   students: { all: number; onboarded: number };
@@ -156,7 +157,28 @@ const AdminPanelPage: CustomPage<{
             {t("supabase.title")}
           </Text>
           <Actions align="full">
-            <Button appearance="filled" icon={<MaterialIcon icon="bolt" />}>
+            <Button
+              appearance="filled"
+              icon={<MaterialIcon icon="bolt" />}
+              href={`https://supabase.com/dashboard/project/${
+                // Find the subdomain inside the Supabase URL
+                // (The subdomain is the project Reference ID, which is used in
+                // this URL)
+                new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).hostname.split(
+                  ".",
+                )[0]
+              }/editor`}
+              // eslint-disable-next-line react/display-name
+              element={forwardRef((props, ref) => (
+                <a
+                  {...props}
+                  ref={ref}
+                  onClick={() => va.track("Open Supabase Table Editor")}
+                  target="_blank"
+                  rel="noreferrer"
+                />
+              ))}
+            >
               {t("supabase.action.open")}
             </Button>
           </Actions>
