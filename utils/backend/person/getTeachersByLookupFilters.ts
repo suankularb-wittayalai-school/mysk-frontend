@@ -1,3 +1,4 @@
+// Imports
 import { SearchFilters } from "@/pages/lookup/teachers/results";
 import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import logError from "@/utils/helpers/logError";
@@ -10,25 +11,28 @@ export default async function getTeachersByLookupFilters(
   filters: SearchFilters,
   options?: { year?: number },
 ): Promise<BackendReturn<TeacherLookupItem[]>> {
+  if (Object.keys(filters).length === 0 || Number.isNaN(filters.subjectGroup))
+    return { data: [], error: null };
+
   let query = supabase.from("teachers").select(
     `id,
-      subject_groups!inner(id, name_en, name_th),
-      people!inner(
-        prefix_th,
-        prefix_en,
-        first_name_th,
-        middle_name_th,
-        last_name_th,
-        nickname_th,
-        first_name_en,
-        middle_name_en,
-        last_name_en,
-        nickname_en,
-        person_contacts${filters.contact ? "!inner" : ""}(contacts!inner(value))
-      ),
-      classroom_advisors${
-        filters.classroom ? "!inner" : ""
-      }(classrooms!inner(number, year))`,
+    subject_groups!inner(id, name_en, name_th),
+    people!inner(
+      prefix_th,
+      prefix_en,
+      first_name_th,
+      middle_name_th,
+      last_name_th,
+      nickname_th,
+      first_name_en,
+      middle_name_en,
+      last_name_en,
+      nickname_en,
+      person_contacts${filters.contact ? "!inner" : ""}(contacts!inner(value))
+    ),
+    classroom_advisors${filters.classroom ? "!inner" : ""}(
+      classrooms!inner(number, year)
+    )`,
   );
 
   if (filters.fullName) {
