@@ -309,7 +309,7 @@ const SubjectPeriod: FC<{
           {/* Subject name / class */}
           {view === "teacher" ? (
             <motion.span
-              layoutId={`period-${period.id}-class`}
+              layoutId={editable ? `period-${period.id}-class` : undefined}
               transition={transition(
                 duration.short2,
                 easing.standardDecelerate,
@@ -322,16 +322,21 @@ const SubjectPeriod: FC<{
               })}
             </motion.span>
           ) : (
-            <span
-              className="skc-text skc-text--title-medium"
-              title={
-                view === "student"
-                  ? getLocaleString(period.subject.name, locale)
-                  : undefined
-              }
+            <Text
+              type="title-medium"
+              element={(props) => (
+                <span
+                  {...props}
+                  title={
+                    view === "student"
+                      ? getLocaleString(period.subject.name, locale)
+                      : undefined
+                  }
+                />
+              )}
             >
               {getSubjectName(period.duration, period.subject, locale)}
-            </span>
+            </Text>
           )}
 
           {/* Teacher / subject name */}

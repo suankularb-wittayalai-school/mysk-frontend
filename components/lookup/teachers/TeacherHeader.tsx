@@ -20,7 +20,8 @@ import { useTranslation } from "next-i18next";
 
 const TeacherHeader: StylableFC<{
   teacher: Teacher;
-}> = ({ teacher, style, className }) => {
+  onScheduleOpenClick: () => void;
+}> = ({ teacher, onScheduleOpenClick, style, className }) => {
   // Translation
   const locale = useLocale();
   const { t } = useTranslation("lookup", { keyPrefix: "teachers.header" });
@@ -55,17 +56,25 @@ const TeacherHeader: StylableFC<{
         >
           {getLocaleName(locale, teacher, { prefix: "teacher" })}
         </Header>
-        <ChipSet scrollable className="-mx-4 px-4 md:ml-0 md:pl-0">
+        <ChipSet
+          scrollable
+          className="-mx-4 !overflow-auto px-4 md:ml-0 md:pl-0"
+        >
           <AssistChip
             icon={<MaterialIcon icon="download" />}
             onClick={handleSaveVCard}
           >
             {t("action.saveContact")}
           </AssistChip>
-          <AssistChip icon={<MaterialIcon icon="groups" />}>
-            {t("action.seeClass")}
-          </AssistChip>
-          <AssistChip icon={<MaterialIcon icon="dashboard" />}>
+          {teacher.class_advisor_at && (
+            <AssistChip icon={<MaterialIcon icon="groups" />}>
+              {t("action.seeClass")}
+            </AssistChip>
+          )}
+          <AssistChip
+            icon={<MaterialIcon icon="dashboard" />}
+            onClick={onScheduleOpenClick}
+          >
             {t("action.seeSchedule")}
           </AssistChip>
         </ChipSet>

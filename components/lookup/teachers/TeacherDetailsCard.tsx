@@ -9,6 +9,7 @@ import cn from "@/utils/helpers/cn";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
+import useToggle from "@/utils/helpers/useToggle";
 import { StylableFC } from "@/utils/types/common";
 import { Teacher } from "@/utils/types/person";
 import {
@@ -20,6 +21,7 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { sift } from "radash";
+import PersonScheduleCard from "../person/PersonScheduleCard";
 
 const TeacherDetailsCard: StylableFC<{
   teacher?: Teacher;
@@ -29,6 +31,8 @@ const TeacherDetailsCard: StylableFC<{
   const { t: tx } = useTranslation("common");
 
   const { duration, easing } = useAnimationConfig();
+
+  const [scheduleOpen, toggleScheduleOpen] = useToggle();
 
   return (
     <div
@@ -42,7 +46,10 @@ const TeacherDetailsCard: StylableFC<{
       <AnimatePresence>
         {teacher && (
           <>
-            <TeacherHeader teacher={teacher} />
+            <TeacherHeader
+              teacher={teacher}
+              onScheduleOpenClick={toggleScheduleOpen}
+            />
             <motion.section
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
@@ -54,9 +61,19 @@ const TeacherDetailsCard: StylableFC<{
                 rounded-t-lg bg-surface-1 p-4 sm:overflow-visible
                 md:overflow-auto`)}
             >
-              <CurrentTeachingPeriodCard teacherID={teacher.id} />
+              <div className="grid gap-2">
+                <CurrentTeachingPeriodCard
+                  teacherID={teacher.id}
+                  onClick={toggleScheduleOpen}
+                />
+                <PersonScheduleCard person={teacher} open={scheduleOpen} />
+              </div>
 
-              <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+              <motion.div
+                layout="position"
+                transition={transition(duration.medium2, easing.standard)}
+                className="grid grid-cols-2 gap-2 md:grid-cols-4"
+              >
                 <InformationCard
                   title={t("information.fullName")}
                   className="col-span-2"
@@ -113,10 +130,14 @@ const TeacherDetailsCard: StylableFC<{
                       </time>
                     </InformationCard>
                   )}
-              </div>
+              </motion.div>
 
               {teacher.contacts.length > 0 && (
-                <section className="space-y-2">
+                <motion.section
+                  layout="position"
+                  transition={transition(duration.medium2, easing.standard)}
+                  className="space-y-2"
+                >
                   <Text
                     type="title-medium"
                     element="h3"
@@ -134,11 +155,15 @@ const TeacherDetailsCard: StylableFC<{
                       />
                     ))}
                   </Columns>
-                </section>
+                </motion.section>
               )}
 
               {teacher.subjects_in_charge.length > 0 && (
-                <section className="space-y-2">
+                <motion.section
+                  layout="position"
+                  transition={transition(duration.medium2, easing.standard)}
+                  className="space-y-2"
+                >
                   <Text
                     type="title-medium"
                     element="h3"
@@ -156,7 +181,7 @@ const TeacherDetailsCard: StylableFC<{
                       ))}
                     </ul>
                   </div>
-                </section>
+                </motion.section>
               )}
             </motion.section>
           </>

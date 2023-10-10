@@ -7,7 +7,11 @@ import useLocale from "@/utils/helpers/useLocale";
 import useNow from "@/utils/helpers/useNow";
 import { StylableFC } from "@/utils/types/common";
 import { SchedulePeriod } from "@/utils/types/schedule";
-import { transition, useAnimationConfig } from "@suankularb-components/react";
+import {
+  Card,
+  transition,
+  useAnimationConfig,
+} from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { differenceInSeconds } from "date-fns";
 import { AnimatePresence, motion } from "framer-motion";
@@ -17,7 +21,8 @@ import isSchoolInSessionNow from "@/utils/helpers/schedule/isSchoolInSessionNow"
 
 const CurrentTeachingPeriodCard: StylableFC<{
   teacherID: string;
-}> = ({ teacherID, style, className }) => {
+  onClick: () => void;
+}> = ({ teacherID, onClick, style, className }) => {
   const locale = useLocale();
   const { t } = useTranslation("lookup", {
     keyPrefix: "teachers.detail.teaching",
@@ -65,11 +70,14 @@ const CurrentTeachingPeriodCard: StylableFC<{
   }, [percentage === 100]);
 
   return (
-    <div
+    <Card
+      appearance="outlined"
+      stateLayerEffect
+      onClick={onClick}
       style={style}
       className={cn(
-        `relative isolate min-h-[2.5rem] overflow-hidden rounded-md bg-surface
-        px-3 py-2`,
+        `relative isolate !m-[1px] min-h-[2.5rem] overflow-hidden rounded-md
+        !border-0 bg-surface px-3 py-2 hover:!m-0 hover:!border-1 focus:!m-0 focus:!border-1 focus:!border-outline-variant `,
         loading && `animate-pulse`,
         className,
       )}
@@ -100,7 +108,7 @@ const CurrentTeachingPeriodCard: StylableFC<{
           </motion.p>
         )}
       </AnimatePresence>
-    </div>
+    </Card>
   );
 };
 
