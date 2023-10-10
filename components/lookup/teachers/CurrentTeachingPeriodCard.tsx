@@ -77,7 +77,8 @@ const CurrentTeachingPeriodCard: StylableFC<{
       style={style}
       className={cn(
         `relative isolate !m-[1px] min-h-[2.5rem] overflow-hidden rounded-md
-        !border-0 bg-surface px-3 py-2 hover:!m-0 hover:!border-1 focus:!m-0 focus:!border-1 focus:!border-outline-variant `,
+        !border-0 bg-surface px-3 py-2 hover:!m-0 hover:!border-1 focus:!m-0
+        focus:!border-1 focus:!border-outline-variant `,
         loading && `animate-pulse`,
         className,
       )}
