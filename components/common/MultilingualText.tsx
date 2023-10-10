@@ -67,6 +67,7 @@ const MultilangText: FC<{
                     // Dim the text color if this isn’t the priority language
                     langCode !== options?.priorityLanguage &&
                     `text-outline`,
+                  `empty:hidden`,
                 )}
               >
                 {options?.combineIfAllIdentical && allLanguagesAreIdentical
