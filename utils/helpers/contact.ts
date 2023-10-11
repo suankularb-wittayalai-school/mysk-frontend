@@ -75,7 +75,7 @@ export function useGetVCard() {
           })}`,
 
           // Nickname
-          person.nickname &&
+          (person.nickname?.th || person.nickname?.["en-US"]) &&
             `NICKNAME:${getLocaleString(person.nickname, locale)}`,
 
           // Birthday
