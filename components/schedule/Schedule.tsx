@@ -11,7 +11,7 @@ import ScheduleContext from "@/contexts/ScheduleContext";
 import cn from "@/utils/helpers/cn";
 import getCurrentPeriod from "@/utils/helpers/schedule/getCurrentPeriod";
 import isInPeriod from "@/utils/helpers/schedule/isInPeriod";
-import isSchoolInSessionNow from "@/utils/helpers/schedule/isSchoolInSessionNow";
+import getCurrentSchoolSessionState from "@/utils/helpers/schedule/getCurrentSchoolSessionState";
 import useNow from "@/utils/helpers/useNow";
 import { StylableFC } from "@/utils/types/common";
 import { PeriodLocation, Schedule } from "@/utils/types/schedule";
@@ -70,12 +70,12 @@ const Schedule: StylableFC<{
   useEffect(() => {
     const schedule = scheduleRef.current;
     if (!schedule) return;
-    if (isSchoolInSessionNow() !== "in-session") return;
     schedule.scrollTo({
       top: 0,
       left: (getCurrentPeriod() - 2) * 104,
       behavior: "smooth",
     });
+    if (getCurrentSchoolSessionState() !== "in-session") return;
   }, []);
 
   return (
@@ -115,7 +115,7 @@ const Schedule: StylableFC<{
           className="relative overflow-x-auto overflow-y-hidden pb-1"
         >
           {/* Now indicator line */}
-          {isSchoolInSessionNow() === "in-session" && <NowLine />}
+          {getCurrentSchoolSessionState() === "in-session" && <NowLine />}
 
           <ul className="flex w-fit flex-col gap-2 px-4 py-2 sm:px-0">
             {/* Period numbers and start-end times */}

@@ -17,7 +17,7 @@ import { differenceInSeconds } from "date-fns";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useTranslation } from "next-i18next";
-import isSchoolInSessionNow from "@/utils/helpers/schedule/isSchoolInSessionNow";
+import getCurrentSchoolSessionState from "@/utils/helpers/schedule/getCurrentSchoolSessionState";
 
 const CurrentTeachingPeriodCard: StylableFC<{
   teacherID: string;
@@ -49,7 +49,7 @@ const CurrentTeachingPeriodCard: StylableFC<{
     : 0;
 
   useEffect(() => {
-    if (isSchoolInSessionNow() !== "in-session") {
+    if (getCurrentSchoolSessionState() !== "in-session") {
       setLoading(false);
       return;
     }
