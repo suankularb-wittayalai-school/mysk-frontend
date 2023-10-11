@@ -11,7 +11,7 @@ import ScheduleContext from "@/contexts/ScheduleContext";
 import cn from "@/utils/helpers/cn";
 import getCurrentPeriod from "@/utils/helpers/schedule/getCurrentPeriod";
 import isInPeriod from "@/utils/helpers/schedule/isInPeriod";
-import isSchoolInSessionNow from "@/utils/helpers/schedule/isSchoolInSessionNow";
+import getCurrentSchoolSessionState from "@/utils/helpers/schedule/getCurrentSchoolSessionState";
 import useNow from "@/utils/helpers/useNow";
 import { StylableFC } from "@/utils/types/common";
 import { PeriodLocation, Schedule } from "@/utils/types/schedule";
@@ -51,17 +51,8 @@ const Schedule: StylableFC<{
   // Ref for drag constrains and scrolling
   const scheduleRef: RefObject<HTMLElement> = useRef(null);
 
-  // (@SiravitPhokeed)
-  // We’re using a long update interval because this updates the Period
-  // components. When a Period is expanded, the original unexpanded period is
-  // hidden by Framer Motion. When the Period update from a change in `now`,
-  // the original shows again. This means if we use a short interval like 1
-  // second, it would take a maximum of 1 second of looking at the details of a
-  // Period for it to bug out slightly. It’s not a huge deal, so I decided to
-  // just settle on making it happen less.
-
   // Time calculation set up
-  const now = useNow(20000);
+  const now = useNow();
 
   // State for dropping to add a new period
   const [additionSite, setAdditionSite] = useState<PeriodLocation>();
@@ -70,12 +61,8 @@ const Schedule: StylableFC<{
   useEffect(() => {
     const schedule = scheduleRef.current;
     if (!schedule) return;
-    if (isSchoolInSessionNow() !== "in-session") return;
-    schedule.scrollTo({
-      top: 0,
-      left: (getCurrentPeriod() - 2) * 104,
-      behavior: "smooth",
-    });
+    if (getCurrentSchoolSessionState() !== "in-session") return;
+    schedule.scrollTo({ top: 0, left: (getCurrentPeriod() - 2) * 104 });
   }, []);
 
   return (
@@ -115,7 +102,7 @@ const Schedule: StylableFC<{
           className="relative overflow-x-auto overflow-y-hidden pb-1"
         >
           {/* Now indicator line */}
-          {isSchoolInSessionNow() === "in-session" && <NowLine />}
+          {getCurrentSchoolSessionState() === "in-session" && <NowLine />}
 
           <ul className="flex w-fit flex-col gap-2 px-4 py-2 sm:px-0">
             {/* Period numbers and start-end times */}

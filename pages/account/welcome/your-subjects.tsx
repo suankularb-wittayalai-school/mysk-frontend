@@ -1,53 +1,39 @@
-// External libraries
+// Imports
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
-
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import Head from "next/head";
 import Link from "next/link";
-
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
-// SK Components
 import {
   Actions,
   Button,
   Columns,
   ContentLayout,
-  MaterialIcon,
   Section,
 } from "@suankularb-components/react";
-
-// Internal components
 import PageHeader from "@/components/common/PageHeader";
 import TeachingSubjectCard from "@/components/subject/TeachingSubjectCard";
-
-// Backend
 import getTeachingSubjects from "@/utils/backend/subject/getTeachingSubjects";
-
-// Helpers
-import { createTitleStr } from "@/utils/helpers/title";
-
-// Types
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { SubjectClassrooms } from "@/utils/types/subject";
-import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
 
 const YourSubjectsPage: CustomPage<{
   subjects: SubjectClassrooms[];
 }> = ({ subjects }) => {
-  const { t } = useTranslation(["welcome", "common"]);
+  const { t } = useTranslation("welcome");
+  const { t: tx } = useTranslation("common");
 
   return (
     <>
       <Head>
-        <title>{createTitleStr(t("yourSubjects.title"), t)}</title>
+        <title>{tx("tabName", { tabName: t("yourSubjects.title") })}</title>
       </Head>
-      <PageHeader
-        title={t("yourSubjects.title")}
-        parentURL="/account/welcome/your-information"
-      />
+      <PageHeader parentURL="/account/welcome/your-information">
+        {t("yourSubjects.title")}
+      </PageHeader>
       <ContentLayout>
         <Section>
           <Columns columns={3}>

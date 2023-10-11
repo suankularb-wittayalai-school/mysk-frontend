@@ -1,7 +1,7 @@
 // Imports
 import ContactCard from "@/components/account/ContactCard";
 import useForm from "@/utils/helpers/useForm";
-import { DialogFC } from "@/utils/types/component";
+import { StylableFC } from "@/utils/types/common";
 import { Contact, ContactType } from "@/utils/types/contact";
 import {
   Actions,
@@ -15,10 +15,12 @@ import {
   TextField,
 } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
-import { ComponentProps, useEffect, useReducer } from "react";
+import { ComponentProps, useReducer } from "react";
 
-const ContactDialog: DialogFC<{
+const ContactDialog: StylableFC<{
+  open?: boolean;
   contact?: Contact;
+  onClose: () => void;
   onSubmit: (contact: Contact) => void;
 }> = ({ open, contact, onClose, onSubmit }) => {
   const { t } = useTranslation("account");
@@ -42,15 +44,12 @@ const ContactDialog: DialogFC<{
       type: "text",
       validate: (value) => /^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/i.test(value),
     },
-    discord: {
-      type: "text",
-      validate: (value) => /^([a-zA-Z0-9]{8}|.{3,32}#[0-9]{4})$/.test(value),
-    },
+    discord: { type: "text" },
     other: { type: "text" },
   };
 
   const [counter, incrementCounter] = useReducer((counter) => counter + 1, 1);
-  const { form, setForm, resetForm, formOK, formProps } = useForm<
+  const { form, resetForm, formOK, formProps } = useForm<
     "nameTH" | "nameEN" | "type" | "value"
   >([
     { key: "nameTH", defaultValue: contact?.name?.th },
@@ -58,15 +57,6 @@ const ContactDialog: DialogFC<{
     { key: "type", required: true, defaultValue: contact?.type || "phone" },
     { key: "value", required: true, defaultValue: contact?.value },
   ]);
-
-  // Format group invite codes from invite links for Discord
-  useEffect(() => {
-    if (form.type === "discord")
-      setForm({
-        ...form,
-        value: (form.value as string).split("https://discord.gg/").join(""),
-      });
-  }, [form.value, form.type]);
 
   /**
    * Pass the form data onto `onSubmit`.

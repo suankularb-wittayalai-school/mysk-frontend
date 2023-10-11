@@ -1,5 +1,6 @@
 // Imports
 import MultilangText from "@/components/common/MultilingualText";
+import cn from "@/utils/helpers/cn";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import useLocale from "@/utils/helpers/useLocale";
 import { PeriodContentItem } from "@/utils/types/schedule";
@@ -38,9 +39,7 @@ const PeriodDetailsContent: FC<{
 
       {/* Room */}
       {period.classrooms && (
-        <section
-          aria-labelledby="period-class"
-        >
+        <section aria-labelledby="period-class">
           <Text
             type="title-medium"
             element={(props) => <h2 id="period-class" {...props} />}
@@ -81,7 +80,12 @@ const PeriodDetailsContent: FC<{
           {t("dialog.periodDetails.code")}
         </Text>
         <Text type="body-medium" element="div">
-          <MultilangText text={period.subject.code} />
+          <MultilangText
+            text={period.subject.code}
+            className={cn(`[&>:nth-child(odd)]:border-1
+              [&>:nth-child(odd)]:border-outline-variant
+              [&>:nth-child(odd)]:!bg-surface`)}
+          />
         </Text>
       </section>
     </>

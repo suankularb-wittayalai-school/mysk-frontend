@@ -35,26 +35,26 @@ const LookupPage: CustomPage = () => {
         <Columns columns={2} className="mx-4 !gap-y-3 sm:mx-0">
           <LookupChoice
             icon={<MaterialIcon icon="face_6" size={48} />}
-            title={<Trans i18nKey="students.title" ns="lookup" />}
-            desc={t("students.desc")}
+            title={<Trans i18nKey="choice.students.title" ns="lookup" />}
+            desc={t("choice.students.desc")}
             href="/lookup/students"
           />
           <LookupChoice
             icon={<MaterialIcon icon="support_agent" size={48} />}
-            title={<Trans i18nKey="teachers.title" ns="lookup" />}
-            desc={t("teachers.desc")}
+            title={<Trans i18nKey="choice.teachers.title" ns="lookup" />}
+            desc={t("choice.teachers.desc")}
             href="/lookup/teachers"
           />
           <LookupChoice
             icon={<MaterialIcon icon="groups" size={48} />}
-            title={<Trans i18nKey="classes.title" ns="lookup" />}
-            desc={t("classes.desc")}
+            title={<Trans i18nKey="choice.classes.title" ns="lookup" />}
+            desc={t("choice.classes.desc")}
             href="/lookup/classes"
           />
           <LookupChoice
             icon={<MaterialIcon icon="document_scanner" size={48} />}
-            title={<Trans i18nKey="documents.title" ns="lookup" />}
-            desc={t("documents.desc")}
+            title={<Trans i18nKey="choice.documents.title" ns="lookup" />}
+            desc={t("choice.documents.desc")}
             href="/lookup/documents"
           />
         </Columns>

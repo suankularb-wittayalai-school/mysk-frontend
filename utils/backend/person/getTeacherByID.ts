@@ -3,6 +3,7 @@ import logError from "@/utils/helpers/logError";
 import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
 import { Teacher } from "@/utils/types/person";
+import { alphabetical } from "radash";
 
 export async function getTeacherByID(
   supabase: DatabaseClient,
@@ -50,18 +51,21 @@ export async function getTeacherByID(
           }
         : null,
     contacts: options?.includeContacts
-      ? teacherData!.people!.person_contacts.map((contacts) => {
-          const { contacts: contact } = contacts;
-          return {
-            id: contact!.id,
-            type: contact!.type,
-            value: contact!.value,
-            name: mergeDBLocales(contact!, "name"),
-            include_parents: contact!.include_parents,
-            include_students: contact!.include_students,
-            include_teachers: contact!.include_teachers,
-          };
-        })
+      ? alphabetical(
+          teacherData!.people!.person_contacts.map((contacts) => {
+            const { contacts: contact } = contacts;
+            return {
+              id: contact!.id,
+              type: contact!.type,
+              value: contact!.value,
+              name: mergeDBLocales(contact!, "name"),
+              include_parents: contact!.include_parents,
+              include_students: contact!.include_students,
+              include_teachers: contact!.include_teachers,
+            };
+          }),
+          (contact) => contact.type,
+        )
       : [],
     allergies: options?.detailed
       ? teacherData!.people!.person_allergies.map(
@@ -80,12 +84,12 @@ export async function getTeacherByID(
       name: mergeDBLocales(teacherData!.subject_groups, "name"),
     },
     subjects_in_charge: options?.detailed
-      ? teacherData!.subject_teachers.map((subject) => ({
+      ? alphabetical(teacherData!.subject_teachers.map((subject) => ({
           id: subject.subjects!.id,
           name: mergeDBLocales(subject.subjects, "name"),
           code: mergeDBLocales(subject.subjects, "code"),
           short_name: mergeDBLocales(subject.subjects, "short_name"),
-        }))
+        })), subject => subject.code.th)
       : [],
     birthdate: teacherData!.people!.birthdate,
     pants_size: options?.detailed

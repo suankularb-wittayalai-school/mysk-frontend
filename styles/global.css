@@ -98,3 +98,9 @@
 .skc-icon {
   @apply !font-icon;
 }
+
+/* SK Components workarounds */
+
+.skc-page-header__blobs {
+  pointer-events: none;
+}

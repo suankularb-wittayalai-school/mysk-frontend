@@ -1,7 +1,6 @@
 // Imports
 import DynamicAvatar from "@/components/common/DynamicAvatar";
 import PersonActions from "@/components/lookup/person/PersonActions";
-import cn from "@/utils/helpers/cn";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import useLocale from "@/utils/helpers/useLocale";
 import { Header } from "@suankularb-components/react";
@@ -18,15 +17,11 @@ const PersonHeader: FC<ComponentProps<typeof PersonActions>> = ({
 
   return (
     <div className="flex flex-col gap-6 bg-surface-2 px-5 py-4 md:flex-row">
-      <DynamicAvatar
-        className={cn(
-          "!h-14 !w-14",
-          person?.role === "teacher" &&
-            "!bg-secondary-container !text-on-secondary-container",
-        )}
-      />
+      <DynamicAvatar className="!h-14 !w-14" />
       <div className="flex flex-col gap-4 md:gap-2">
-        <Header hAttr={{ id: "header-person-details" }}>
+        <Header
+          element={(props) => <h2 id="header-person-details" {...props} />}
+        >
           {person
             ? getLocaleName(locale, person, {
                 prefix: person.role === "teacher" ? "teacher" : false,

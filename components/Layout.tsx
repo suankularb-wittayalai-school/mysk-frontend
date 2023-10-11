@@ -181,9 +181,10 @@ const Layout: FC<
             selected={
               router.pathname.startsWith("/lookup") &&
               !(
-                router.pathname.startsWith("/lookup/person") ||
-                router.pathname.startsWith("/lookup/class") ||
-                router.pathname.startsWith("/lookup/document")
+                router.pathname.startsWith("/lookup/students") ||
+                router.pathname.startsWith("/lookup/teachers") ||
+                router.pathname.startsWith("/lookup/classes") ||
+                router.pathname.startsWith("/lookup/documents")
               )
             }
             href="/lookup"
@@ -208,24 +209,31 @@ const Layout: FC<
         {/* Lookup */}
         <NavDrawerSection header={t("navigation.drawer.lookup.title")}>
           <NavDrawerItem
-            icon={<MaterialIcon icon="badge" />}
-            label={t("navigation.drawer.lookup.person")}
-            selected={router.pathname.startsWith("/lookup/person")}
-            href="/lookup/person"
+            icon={<MaterialIcon icon="face_6" />}
+            label={t("navigation.drawer.lookup.students")}
+            selected={router.pathname.startsWith("/lookup/students")}
+            href="/lookup/students"
+            element={Link}
+          />
+          <NavDrawerItem
+            icon={<MaterialIcon icon="support_agent" />}
+            label={t("navigation.drawer.lookup.teachers")}
+            selected={router.pathname.startsWith("/lookup/teachers")}
+            href="/lookup/teachers"
             element={Link}
           />
           <NavDrawerItem
             icon={<MaterialIcon icon="groups" />}
-            label={t("navigation.drawer.lookup.class")}
-            selected={router.pathname.startsWith("/lookup/class")}
-            href="/lookup/class"
+            label={t("navigation.drawer.lookup.classes")}
+            selected={router.pathname.startsWith("/lookup/classes")}
+            href="/lookup/classes"
             element={Link}
           />
           <NavDrawerItem
-            icon={<MaterialIcon icon="description" />}
-            label={t("navigation.drawer.lookup.document")}
-            selected={router.pathname.startsWith("/lookup/document")}
-            href="/lookup/document"
+            icon={<MaterialIcon icon="document_scanner" />}
+            label={t("navigation.drawer.lookup.documents")}
+            selected={router.pathname.startsWith("/lookup/documents")}
+            href="/lookup/documents"
             element={Link}
           />
         </NavDrawerSection>
@@ -259,20 +267,6 @@ const Layout: FC<
               element={Link}
             />
           )}
-          {/* <NavDrawerItem
-            icon={<MaterialIcon icon="web" />}
-            label={t("navigation.drawer.about.legacy")}
-            href="http://mysk.school.61.19.250.243.no-domain.name/"
-            // eslint-disable-next-line react/display-name
-            element={forwardRef((props, ref) => (
-              <a
-                {...props}
-                ref={ref}
-                onClick={() => va.track("Open Legacy MySK")}
-                target="_blank"
-              />
-            ))}
-          /> */}
           <NavDrawerItem
             icon={<MaterialIcon icon="translate" />}
             label={t("navigation.language")}

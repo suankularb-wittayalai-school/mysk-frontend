@@ -20,6 +20,7 @@ import { differenceInMinutes, differenceInSeconds } from "date-fns";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { Trans, useTranslation } from "next-i18next";
 import { list } from "radash";
+import { useMemo } from "react";
 
 /**
  * A glanceable banner dynamically updated by the current and upcoming schedule
@@ -45,23 +46,35 @@ const ScheduleAtAGlance: StylableFC<{
     ? schedule.content[now.getDay() - 1].content
     : [];
 
-  const currentPeriod = todayRow.find(
-    (period) =>
-      // The period starts before or at the current period
-      period.start_time <= periodNumber &&
-      // The period ends at or after the end of the current period (current
-      // period number + 1)
-      period.start_time + period.duration > periodNumber,
+  const currentPeriod = useMemo(
+    () =>
+      todayRow.find(
+        (period) =>
+          // The period starts before or at the current period
+          period.start_time <= periodNumber &&
+          // The period ends at or after the end of the current period (current
+          // period number + 1)
+          period.start_time + period.duration > periodNumber,
+      ),
+    [todayRow],
   );
 
-  const immediateNextPeriod = todayRow.find(
-    // The period starts at the next period
-    (period) => periodNumber + 1 === period.start_time,
+  const immediateNextPeriod = useMemo(
+    () =>
+      todayRow.find(
+        // The period starts at the next period
+        (period) => periodNumber + 1 === period.start_time,
+      ),
+    [todayRow],
   );
-  const todayNextPeriod = todayRow.filter(
-    // The period starts at any period after the current
-    (period) => period.content.length && period.start_time > periodNumber,
-  )[0];
+  const todayNextPeriod = useMemo(
+    () =>
+      todayRow.filter(
+        // The period starts at any period after the current
+        (period) => period.content.length && period.start_time > periodNumber,
+      )[0],
+    [todayRow],
+  );
 
   // Note: `differenceInSeconds` and `differenceInMinutes` operate by
   // [first param] - [second param]

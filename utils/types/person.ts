@@ -63,26 +63,28 @@ export type Teacher = Person & {
   role: "teacher";
 };
 
-export type PersonLookupItem =
-  | Pick<
-      Student,
-      | "id"
-      | "prefix"
-      | "first_name"
-      | "last_name"
-      | "middle_name"
-      | "nickname"
-      | "role"
-      | "classroom"
-    >
-  | Pick<
-      Teacher,
-      | "id"
-      | "prefix"
-      | "first_name"
-      | "last_name"
-      | "middle_name"
-      | "nickname"
-      | "role"
-      | "subject_group"
-    >;
+export type StudentLookupItem = Pick<
+  Student,
+  | "id"
+  | "prefix"
+  | "first_name"
+  | "last_name"
+  | "middle_name"
+  | "nickname"
+  | "role"
+  | "classroom"
+>;
+
+export type TeacherLookupItem = Pick<
+  Teacher,
+  | "id"
+  | "prefix"
+  | "first_name"
+  | "last_name"
+  | "middle_name"
+  | "nickname"
+  | "role"
+  | "subject_group"
+>;
+
+export type PersonLookupItem = StudentLookupItem | TeacherLookupItem;

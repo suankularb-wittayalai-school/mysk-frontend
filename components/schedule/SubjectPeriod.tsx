@@ -255,150 +255,168 @@ const SubjectPeriod: FC<{
 
   return (
     <>
-      <motion.li
-        ref={periodRef}
-        layoutId={`period-${period.id}`}
-        animate={animationControls}
-        transition={transition(duration.medium2, easing.standard)}
-        drag={editable}
-        dragListener={false}
-        dragControls={dragControls}
-        whileDrag={{ boxShadow: "var(--shadow-3)", zIndex: 35 }}
-        dragConstraints={constraintsRef}
-        dragMomentum={false}
-        onDragEnd={handleDragEnd}
-        onMouseEnter={() => editable && setMenuOpen(true)}
-        onMouseLeave={() => editable && !detailsOpen && setMenuOpen(false)}
-        className={cn(
-          `relative rounded-sm transition-shadow focus-within:shadow-2`,
-          editable && "touch-none",
-          !loading &&
-            (isInSession ? `shadow-1 hover:shadow-2` : `hover:shadow-1`),
-        )}
-      >
-        {/* Period content */}
-        <Interactive
-          stateLayerEffect={editable}
-          rippleEffect={editable}
+      {!detailsOpen ? (
+        <motion.li
+          ref={periodRef}
+          layoutId={`period-${period.id}`}
+          animate={animationControls}
+          transition={transition(duration.medium2, easing.standard)}
+          drag={editable}
+          dragListener={false}
+          dragControls={dragControls}
+          whileDrag={{ boxShadow: "var(--shadow-3)", zIndex: 35 }}
+          dragConstraints={constraintsRef}
+          dragMomentum={false}
+          onDragEnd={handleDragEnd}
+          onMouseEnter={() => editable && setMenuOpen(true)}
+          onMouseLeave={() => editable && !detailsOpen && setMenuOpen(false)}
           className={cn(
-            `tap-highlight-none flex h-14 w-24 flex-col rounded-sm
-             bg-secondary-container text-left text-on-secondary-container
-             transition-[border,background-color,color]
-             state-layer:!bg-on-secondary-container
-             [&>*]:w-full [&>*]:truncate [&>*]:break-all`,
-            !(loading || extending) && isInSession
-              ? `border-tertiary-container bg-tertiary-container
-                 text-on-tertiary-container`
-              : `bg-secondary-container text-on-secondary-container`,
-            (loading || extending) && `bg-surface text-secondary`,
-            editable
-              ? `cursor-default overflow-visible border-4
-                 border-secondary-container px-3 py-1`
-              : `px-4 py-2`,
+            `relative rounded-sm transition-shadow focus-within:shadow-2`,
+            editable && "touch-none",
+            !loading &&
+              (isInSession ? `shadow-1 hover:shadow-2` : `hover:shadow-1`),
           )}
-          style={{ width: periodDurationToWidth(period.duration) }}
-          onClick={
-            !editable
-              ? () => {
-                  va.track("Open Period Details");
-                  setDetailsOpen(true);
-                }
-              : undefined
-          }
         >
-          {/* Subject name / class */}
-          {view === "teacher" ? (
-            <motion.span
-              layoutId={`period-${period.id}-class`}
-              transition={transition(
-                duration.short2,
-                easing.standardDecelerate,
-              )}
-              className="skc-text skc-text--title-medium !w-fit"
-            >
-              {t("class", {
-                ns: "common",
-                number: period.classrooms?.map(({ number }) => number).join(),
-              })}
-            </motion.span>
-          ) : (
-            <span
-              className="skc-text skc-text--title-medium"
-              title={
-                view === "student"
-                  ? getLocaleString(period.subject.name, locale)
-                  : undefined
-              }
-            >
-              {getSubjectName(period.duration, period.subject, locale)}
-            </span>
-          )}
-
-          {/* Teacher / subject name */}
-          {(view === "student" || !menuOpen || extending || loading) && (
-            <Text type="body-small">
-              {view === "teacher" ? (
-                getSubjectName(period.duration, period.subject, locale)
-              ) : (
-                <HoverList people={period.teachers} />
-              )}
-            </Text>
-          )}
-        </Interactive>
-
-        {/* Hover menu */}
-        <SubjectPeriodMenu
-          open={view === "teacher" && (extending || (!loading && menuOpen))}
-          {...{ period, dragControls, extending, setExtending, setDetailsOpen }}
-        />
-
-        {/* Extension hints */}
-        <AnimatePresence>
-          {extending && (
-            <>
-              {/* Arrow */}
-              <motion.div
-                initial={{ opacity: 0, scaleY: 0, x: -30 }}
-                animate={{ opacity: 1, scaleY: 1, x: 0 }}
-                exit={{
-                  opacity: 0,
-                  scaleY: 0,
-                  x: -10,
-                  transition: transition(
-                    duration.short2,
-                    easing.standardAccelerate,
-                  ),
-                }}
-                aria-hidden
-                className="absolute -right-12 bottom-0.5 z-20 text-secondary"
+          {/* Period content */}
+          <Interactive
+            stateLayerEffect={editable}
+            rippleEffect={editable}
+            className={cn(
+              `tap-highlight-none flex h-14 w-24 flex-col rounded-sm
+              bg-secondary-container text-left text-on-secondary-container
+              transition-[border,background-color,color]
+              state-layer:!bg-on-secondary-container
+              [&>*]:w-full [&>*]:truncate [&>*]:break-all`,
+              !(loading || extending) && isInSession
+                ? `border-tertiary-container bg-tertiary-container
+                  text-on-tertiary-container`
+                : `bg-secondary-container text-on-secondary-container`,
+              (loading || extending) && `bg-surface text-secondary`,
+              editable
+                ? `cursor-default overflow-visible border-4
+                  border-secondary-container px-3 py-1`
+                : `px-4 py-2`,
+            )}
+            style={{ width: periodDurationToWidth(period.duration) }}
+            onClick={
+              !editable
+                ? () => {
+                    va.track("Open Period Details");
+                    setDetailsOpen(true);
+                  }
+                : undefined
+            }
+          >
+            {/* Subject name / class */}
+            {view === "teacher" ? (
+              <motion.span
+                layoutId={editable ? `period-${period.id}-class` : undefined}
                 transition={transition(
-                  duration.short4,
+                  duration.short2,
                   easing.standardDecelerate,
                 )}
+                className="skc-text skc-text--title-medium !w-fit"
               >
-                <MaterialIcon icon="double_arrow" size={40} />
-              </motion.div>
+                {t("class", {
+                  ns: "common",
+                  number: period.classrooms?.map(({ number }) => number).join(),
+                })}
+              </motion.span>
+            ) : (
+              <Text
+                type="title-medium"
+                element={(props) => (
+                  <span
+                    {...props}
+                    title={
+                      view === "student"
+                        ? getLocaleString(period.subject.name, locale)
+                        : undefined
+                    }
+                  />
+                )}
+              >
+                {getSubjectName(period.duration, period.subject, locale)}
+              </Text>
+            )}
 
-              {/* Result guide */}
-              <motion.div
-                aria-hidden
-                initial={{ opacity: 0 }}
-                animate={{
-                  opacity: 1,
-                  width:
-                    // Calculate period width by duration
-                    periodDuration * 96 +
-                    // Correct for missing gap in the middle of multi-period periods
-                    (periodDuration - 1) * 8,
-                }}
-                exit={{ opacity: 0 }}
-                transition={transition(duration.short4, easing.standard)}
-                className="absolute inset-0 rounded-sm border-4 border-secondary"
-              />
-            </>
-          )}
-        </AnimatePresence>
-      </motion.li>
+            {/* Teacher / subject name */}
+            {(view === "student" || !menuOpen || extending || loading) && (
+              <Text type="body-small">
+                {view === "teacher" ? (
+                  getSubjectName(period.duration, period.subject, locale)
+                ) : (
+                  <HoverList people={period.teachers} />
+                )}
+              </Text>
+            )}
+          </Interactive>
+
+          {/* Hover menu */}
+          <SubjectPeriodMenu
+            open={view === "teacher" && (extending || (!loading && menuOpen))}
+            {...{
+              period,
+              dragControls,
+              extending,
+              setExtending,
+              setDetailsOpen,
+            }}
+          />
+
+          {/* Extension hints */}
+          <AnimatePresence>
+            {extending && (
+              <>
+                {/* Arrow */}
+                <motion.div
+                  initial={{ opacity: 0, scaleY: 0, x: -30 }}
+                  animate={{ opacity: 1, scaleY: 1, x: 0 }}
+                  exit={{
+                    opacity: 0,
+                    scaleY: 0,
+                    x: -10,
+                    transition: transition(
+                      duration.short2,
+                      easing.standardAccelerate,
+                    ),
+                  }}
+                  aria-hidden
+                  className="absolute -right-12 bottom-0.5 z-20 text-secondary"
+                  transition={transition(
+                    duration.short4,
+                    easing.standardDecelerate,
+                  )}
+                >
+                  <MaterialIcon icon="double_arrow" size={40} />
+                </motion.div>
+
+                {/* Result guide */}
+                <motion.div
+                  aria-hidden
+                  initial={{ opacity: 0 }}
+                  animate={{
+                    opacity: 1,
+                    width:
+                      // Calculate period width by duration
+                      periodDuration * 96 +
+                      // Correct for missing gap in the middle of multi-period periods
+                      (periodDuration - 1) * 8,
+                  }}
+                  exit={{ opacity: 0 }}
+                  transition={transition(duration.short4, easing.standard)}
+                  className="absolute inset-0 rounded-sm border-4 border-secondary"
+                />
+              </>
+            )}
+          </AnimatePresence>
+        </motion.li>
+      ) : (
+        <li
+          style={{ width: periodDurationToWidth(period.duration) }}
+          className="h-14 w-24"
+        />
+      )}
 
       {/* Extension capture area */}
       {extending && (

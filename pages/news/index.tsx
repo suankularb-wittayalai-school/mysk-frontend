@@ -2,7 +2,6 @@
 import PageHeader from "@/components/common/PageHeader";
 import NewsFeed from "@/components/news/NewsFeed";
 import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
-import { createTitleStr } from "@/utils/helpers/title";
 import { DatabaseClient } from "@/utils/types/backend";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Info } from "@/utils/types/news";
@@ -14,14 +13,15 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 
 const NewsPage: CustomPage<{ newsFeed: Info[] }> = ({ newsFeed }) => {
-  const { t } = useTranslation(["news", "common"]);
+  const { t } = useTranslation("news");
+  const { t: tx } = useTranslation("common");
 
   return (
     <>
       <Head>
-        <title>{createTitleStr(t("title"), t)}</title>
+        <title>{tx("tabName", { tabName: t("title") })}</title>
       </Head>
-      <PageHeader title={t("title")} />
+      <PageHeader>{t("title")}</PageHeader>
       <ContentLayout>
         <NewsFeed news={newsFeed} />
       </ContentLayout>

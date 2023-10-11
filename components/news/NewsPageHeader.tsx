@@ -5,7 +5,6 @@ import SnackbarContext from "@/contexts/SnackbarContext";
 import NewsPlaceholderDark from "@/public/images/graphics/news-placeholder-dark.webp";
 import NewsPlaceholderLight from "@/public/images/graphics/news-placeholder-light.webp";
 import getLocaleString from "@/utils/helpers/getLocaleString";
-import { createTitleStr } from "@/utils/helpers/title";
 import useLocale from "@/utils/helpers/useLocale";
 import { MultiLangString } from "@/utils/types/common";
 import { StylableFC } from "@/utils/types/component";
@@ -48,7 +47,10 @@ const PageActions: StylableFC<{
             title: getLocaleString(title, "en-US"),
           });
           const shareData = {
-            title: createTitleStr(getLocaleString(title, locale), t),
+            title: t("tabName", {
+              ns: "common",
+              tabName: getLocaleString(title, locale),
+            }),
             url: window.location.href,
           };
           if (navigator.canShare && navigator.canShare(shareData)) {
