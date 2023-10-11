@@ -8,12 +8,16 @@ import { StylableFC } from "@/utils/types/common";
 import { Person, Student, Teacher } from "@/utils/types/person";
 import { Schedule as ScheduleType } from "@/utils/types/schedule";
 import {
+  Button,
+  MaterialIcon,
   Progress,
+  Text,
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { motion } from "framer-motion";
+import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
 
 const PersonScheduleCard: StylableFC<{
@@ -21,6 +25,8 @@ const PersonScheduleCard: StylableFC<{
     (Pick<Student, "role" | "classroom"> | Pick<Teacher, "role">);
   open?: boolean;
 }> = ({ person, open, style, className }) => {
+  const { t } = useTranslation("schedule");
+
   const { duration, easing } = useAnimationConfig();
 
   const [loading, setLoading] = useState(true);
@@ -50,7 +56,7 @@ const PersonScheduleCard: StylableFC<{
       animate={{ opacity: 1, scale: 1 }}
       transition={transition(duration.medium2, easing.standardDecelerate)}
       style={{ ...style, borderRadius: 12 }}
-      className={cn(`overflow-hidden rounded-md bg-surface py-2`, className)}
+      className={cn(`overflow-hidden rounded-md bg-surface`, className)}
     >
       {loading ? (
         <motion.div
@@ -64,7 +70,11 @@ const PersonScheduleCard: StylableFC<{
         <motion.div
           layout="position"
           transition={transition(duration.medium2, easing.standard)}
+          className="bg-surface-3"
         >
+          <Text type="title-medium" element="h3" className="px-3 py-2">
+            {t(`title.${person.role}`)}
+          </Text>
           <Schedule
             schedule={schedule}
             view={person.role}
@@ -75,7 +85,9 @@ const PersonScheduleCard: StylableFC<{
               // Add right padding to content (and fix left padding on mobile)
               `[&>figure>ul]:!px-3 sm:[&>figure>ul]:!pl-0 sm:[&>figure>ul]:!pr-3`,
               // Resize and vertical scroll on container
-              `[&>figure]:resize-y [&>figure]:!overflow-y-auto sm:[&>figure]:h-72`,
+              `[&>figure]:resize-y [&>figure]:!overflow-y-auto sm:[&>figure]:h-72
+              sm:[&>figure]:max-h-[24.9375rem]`,
+              `!mt-0 overflow-hidden rounded-md bg-surface !pb-2`,
             )}
           />
         </motion.div>
