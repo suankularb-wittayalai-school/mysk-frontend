@@ -51,17 +51,8 @@ const Schedule: StylableFC<{
   // Ref for drag constrains and scrolling
   const scheduleRef: RefObject<HTMLElement> = useRef(null);
 
-  // (@SiravitPhokeed)
-  // We’re using a long update interval because this updates the Period
-  // components. When a Period is expanded, the original unexpanded period is
-  // hidden by Framer Motion. When the Period update from a change in `now`,
-  // the original shows again. This means if we use a short interval like 1
-  // second, it would take a maximum of 1 second of looking at the details of a
-  // Period for it to bug out slightly. It’s not a huge deal, so I decided to
-  // just settle on making it happen less.
-
   // Time calculation set up
-  const now = useNow(20000);
+  const now = useNow();
 
   // State for dropping to add a new period
   const [additionSite, setAdditionSite] = useState<PeriodLocation>();
