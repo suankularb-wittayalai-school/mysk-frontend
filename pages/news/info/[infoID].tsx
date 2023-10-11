@@ -1,31 +1,16 @@
-// External libraries
+// Imports
 import { GetStaticPaths, GetStaticProps } from "next";
 import Head from "next/head";
-
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
-// SK Components
 import { Columns, ContentLayout } from "@suankularb-components/react";
-
-// Internal components
 import Markdown from "@/components/formatting/Markdown";
 import NewsMeta from "@/components/news/NewsMeta";
 import NewsPageHeader from "@/components/news/NewsPageHeader";
-
-// Backend
-// import { getInfo, getAllInfoIDs } from "@/utils/backend/news/info";
-
-// Types
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Info } from "@/utils/types/news";
-
-// Helpers
-import { createTitleStr } from "@/utils/helpers/title";
 import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
 import getLocaleString from "@/utils/helpers/getLocaleString";
-
-// Hooks
 import useLocale from "@/utils/helpers/useLocale";
 import { supabase } from "@/utils/supabase-backend";
 
@@ -38,7 +23,7 @@ const InfoPage: CustomPage<{ infoPage: Info }> = ({ infoPage }) => {
     <>
       <Head>
         <title>
-          {createTitleStr(getLocaleString(infoPage.title, locale), t)}
+          {t("tabName", { tabName: getLocaleString(infoPage.title, locale) })}
         </title>
       </Head>
       <NewsMeta newsItem={infoPage} />
@@ -61,7 +46,7 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   const { data: newsItem, error } = await supabase
     .from("infos")
     .select("*, news(*)")
-    .eq("id", params!.infoID)
+    .eq("id", params!.infoID as string)
     .single();
   if (error) return { notFound: true };
 
