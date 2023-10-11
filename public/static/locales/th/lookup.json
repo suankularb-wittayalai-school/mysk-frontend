@@ -32,16 +32,6 @@
     },
     "detail": {
       "loading": "กำลังโหลดรายละเอียดบุคคล…",
-      "starbucks": {
-        "order": {
-          "line1": "ชาเขียว Starbucks เย็น แก้วใหญ่ ไม่ใส่ syrup",
-          "line2": "extra green tea 7 ช้อน แยกน้ำแข็ง ฝาโดม"
-        },
-        "action": {
-          "readAloud": "อ่านออกเสียง",
-          "openStarbucks": "เปิด Starbucks"
-        }
-      },
       "general": {
         "fullName": "ชื่อ-สกุล",
         "nickname": "ชื่อเล่น",
@@ -134,6 +124,16 @@
         "free": "ไม่มีคาบสอนตอนนี้",
         "future": "ไม่มีคาบสอนตอนนี้ (คาบต่อไปในอีก {{time}})",
         "ongoing": "กำลังสอน{{subject}}"
+      },
+      "starbucks": {
+        "order": {
+          "line1": "ชาเขียว Starbucks เย็น แก้วใหญ่ ไม่ใส่ syrup",
+          "line2": "extra green tea 7 ช้อน แยกน้ำแข็ง ฝาโดม"
+        },
+        "action": {
+          "readAloud": "อ่านออกเสียง",
+          "openStarbucks": "เปิด Starbucks"
+        }
       },
       "information": {
         "fullName": "ชื่อ-สกุล",

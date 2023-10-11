@@ -22,6 +22,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { sift } from "radash";
 import PersonScheduleCard from "../person/PersonScheduleCard";
+import StarbucksCard from "./StarbucksCard";
 
 const TeacherDetailsCard: StylableFC<{
   teacher?: Teacher;
@@ -68,6 +69,8 @@ const TeacherDetailsCard: StylableFC<{
                 />
                 <PersonScheduleCard person={teacher} open={scheduleOpen} />
               </div>
+
+              {teacher.first_name["en-US"] === "Supannee" && <StarbucksCard />}
 
               <motion.div
                 layout="position"

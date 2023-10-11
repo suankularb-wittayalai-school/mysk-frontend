@@ -32,12 +32,6 @@
     },
     "detail": {
       "loading": "Loading person details…",
-      "starbucks": {
-        "action": {
-          "readAloud": "Read aloud",
-          "openStarbucks": "Open Starbucks"
-        }
-      },
       "general": {
         "fullName": "Full name",
         "nickname": "Nickname",
@@ -130,6 +124,12 @@
         "free": "Not teaching right now",
         "future": "Not teaching (next period in {{time}})",
         "ongoing": "Teaching {{subject}}"
+      },
+      "starbucks": {
+        "action": {
+          "readAloud": "Read aloud",
+          "openStarbucks": "Open Starbucks"
+        }
       },
       "information": {
         "title": "Information",
