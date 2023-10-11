@@ -61,12 +61,8 @@ const Schedule: StylableFC<{
   useEffect(() => {
     const schedule = scheduleRef.current;
     if (!schedule) return;
-    schedule.scrollTo({
-      top: 0,
-      left: (getCurrentPeriod() - 2) * 104,
-      behavior: "smooth",
-    });
     if (getCurrentSchoolSessionState() !== "in-session") return;
+    schedule.scrollTo({ top: 0, left: (getCurrentPeriod() - 2) * 104 });
   }, []);
 
   return (
