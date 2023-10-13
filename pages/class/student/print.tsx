@@ -1,5 +1,5 @@
 // Imports
-import PrintStudentList from "@/components/class/PrintStudentList";
+import StudentListPrintout from "@/components/class/StudentListPrintout";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import getClassroomOverview from "@/utils/backend/classroom/getClassroomOverview";
@@ -31,7 +31,7 @@ const StudentsListPrintPage: CustomPage<{
       <Head>
         <title>{tx("tabName", { tabName: t("student.print.title") })}</title>
       </Head>
-      <PrintStudentList
+      <StudentListPrintout
         {...{ classItem, classroomOverview, studentList, userRole }}
       />
     </>

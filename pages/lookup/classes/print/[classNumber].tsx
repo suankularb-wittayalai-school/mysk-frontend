@@ -1,11 +1,10 @@
 // Imports
-import PrintStudentList from "@/components/class/PrintStudentList";
+import StudentListPrintout from "@/components/class/StudentListPrintout";
 import getClassroomOverview from "@/utils/backend/classroom/getClassroomOverview";
 import getStudentsOfClass from "@/utils/backend/classroom/getStudentsOfClass";
 import { getStudentsByIDs } from "@/utils/backend/person/getStudentsByIDs";
 import useLoggedInPerson from "@/utils/helpers/useLoggedInPerson";
 import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
-import { createTitleStr } from "@/utils/helpers/title";
 import { supabase } from "@/utils/supabase-backend";
 import { Classroom } from "@/utils/types/classroom";
 import { CustomPage, LangCode } from "@/utils/types/common";
@@ -24,7 +23,8 @@ const StudentsListPrintPage: CustomPage<{
   >;
   studentList: Student[];
 }> = ({ classItem, classroomOverview, studentList }) => {
-  const { t } = useTranslation(["class", "common"]);
+  const { t } = useTranslation("class");
+  const { t: tx } = useTranslation("common");
 
   const { person: user } = useLoggedInPerson();
   const [userRole, setUserRole] = useState<UserRole>("student");
@@ -36,10 +36,13 @@ const StudentsListPrintPage: CustomPage<{
   return (
     <>
       <Head>
-        <title>{createTitleStr(t("student.print.title"), t)}</title>
+        <title>{tx("tabName", { tabName: t("student.print.title") })}</title>
       </Head>
-      <PrintStudentList
-        {...{ classItem, classroomOverview, studentList, userRole }}
+      <StudentListPrintout
+        classItem={classItem}
+        classroomOverview={classroomOverview}
+        studentList={studentList}
+        userRole={userRole}
       />
     </>
   );
