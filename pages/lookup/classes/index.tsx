@@ -1,20 +1,33 @@
 // Imports
 import PageHeader from "@/components/common/PageHeader";
+import LookupDetailsCard from "@/components/lookup/LookupDetailsCard";
+import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
 import LookupDetailsSide from "@/components/lookup/LookupDetailsSide";
 import LookupListSide from "@/components/lookup/LookupListSide";
 import LookupResultsList from "@/components/lookup/LookupResultsList";
+import ClassDetailsCard from "@/components/lookup/classes/ClassDetailsCards";
 import GradeSection from "@/components/lookup/classes/GradeSection";
+import LookupClassCard from "@/components/lookup/classes/LookupClassCard";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
+import getClassroomByID from "@/utils/backend/classroom/getClassroomByID";
+import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
 import getLookupClassrooms from "@/utils/backend/classroom/getLookupClassrooms";
 import getCurrentPeriod from "@/utils/helpers/schedule/getCurrentPeriod";
 import useNow from "@/utils/helpers/useNow";
 import useRefreshProps from "@/utils/helpers/useRefreshProps";
+import withLoading from "@/utils/helpers/withLoading";
 import { Classroom } from "@/utils/types/classroom";
 import { LangCode } from "@/utils/types/common";
+import { UserRole } from "@/utils/types/person";
 import { SchedulePeriod } from "@/utils/types/schedule";
-import { SplitLayout } from "@suankularb-components/react";
+import {
+  SplitLayout,
+  useAnimationConfig,
+  useBreakpoint,
+} from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { LayoutGroup } from "framer-motion";
 import {
   GetServerSideProps,
@@ -51,9 +64,10 @@ const LookupClassesPage: NextPage<{
   grades: {
     [grade: string]: LookupClassItem[];
   };
+  userRole: UserRole;
   userClassroom?: LookupClassItem;
   periodNumberAtFetch: number;
-}> = ({ grades, userClassroom, periodNumberAtFetch }) => {
+}> = ({ grades, userRole, userClassroom, periodNumberAtFetch }) => {
   const { t } = useTranslation("lookup");
   const { t: tx } = useTranslation("common");
 
@@ -61,16 +75,49 @@ const LookupClassesPage: NextPage<{
 
   const now = useNow();
 
+  // Refresh the page when the current Period can change
   const currentPeriodNumber = getCurrentPeriod();
   useEffect(() => {
     if (currentPeriodNumber !== periodNumberAtFetch) refreshProps();
   }, [currentPeriodNumber]);
 
+  /**
+   * The total number of Classrooms.
+   */
   const length = useMemo(() => Object.values(grades).flat().length, [grades]);
 
-  const [selected, setSelected] = useState<string | undefined>(
-    userClassroom?.id || undefined,
+  const [selectedID, setSelectedID] = useState<string | undefined>(
+    userClassroom?.id || grades[1][0]?.id,
   );
+
+  const supabase = useSupabaseClient();
+  const [selectedClassroom, setSelectedClassroom] =
+    useState<Omit<Classroom, "students" | "year" | "subjects">>();
+  // Fetch the selected Classroom when the selected Classroom ID changes
+  useEffect(() => {
+    (async () => {
+      // Clear the selected Classroom data first
+      setSelectedClassroom(undefined);
+      if (!selectedID) return false;
+
+      // Fetch the selected Classroom with the selected ID
+      const { data, error } = await getClassroomByID(supabase, selectedID);
+      if (error) return false;
+
+      // Set the state
+      setSelectedClassroom(data);
+      return true;
+    })();
+  }, [selectedID]);
+
+  const [detailsOpen, setDetailsOpen] = useState(false);
+
+  // Open the Teacher Details Dialog on mobile, otherwise close it
+  const { atBreakpoint } = useBreakpoint();
+  useEffect(() => {
+    if (atBreakpoint !== "base") setDetailsOpen(false);
+    else if (selectedID !== userClassroom?.id) setDetailsOpen(true);
+  }, [atBreakpoint === "base"]);
 
   return (
     <>
@@ -93,8 +140,11 @@ const LookupClassesPage: NextPage<{
               {userClassroom && (
                 <GradeSection
                   classrooms={[userClassroom]}
-                  selected={selected}
-                  onSelectedChange={setSelected}
+                  selected={selectedID}
+                  onSelectedChange={(id) => {
+                    setSelectedID(id);
+                    if (atBreakpoint === "base") setDetailsOpen(true);
+                  }}
                   now={now}
                   expandedByDefault
                   titleOverride="Your class"
@@ -106,17 +156,45 @@ const LookupClassesPage: NextPage<{
                   key={grade}
                   grade={grade}
                   classrooms={classrooms}
-                  selected={selected}
-                  onSelectedChange={setSelected}
+                  selected={selectedID}
+                  onSelectedChange={(id) => {
+                    setSelectedID(id);
+                    if (atBreakpoint === "base") setDetailsOpen(true);
+                  }}
                   now={now}
-                  expandedByDefault={grade === "1"}
+                  expandedByDefault={
+                    grade ===
+                    (userClassroom ? String(userClassroom.number)[0] : "1")
+                  }
                 />
               ))}
             </LayoutGroup>
           </LookupResultsList>
         </LookupListSide>
-        <LookupDetailsSide length={length}>{}</LookupDetailsSide>
+        <LookupDetailsSide
+          selectedID={selectedClassroom?.id || selectedID}
+          length={length}
+        >
+          <ClassDetailsCard
+            classroom={selectedClassroom}
+            isOwnClass={userClassroom?.id === selectedClassroom?.id}
+            role={userRole}
+          />
+        </LookupDetailsSide>
       </SplitLayout>
+
+      {/* Details Dialog */}
+      <LookupDetailsDialog
+        open={detailsOpen}
+        onClose={() => setDetailsOpen(false)}
+      >
+        <ClassDetailsCard
+          classroom={
+            selectedID === selectedClassroom?.id ? selectedClassroom : undefined
+          }
+          role={userRole}
+        />
+      </LookupDetailsDialog>
     </>
   );
 };
@@ -140,7 +218,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     Math.floor(classroom.number / 100),
   );
 
-  // PS: I hate how “grade” means both the year level and the scoring system.
+  // PS: I hate how “grade” means both the year level and the scoring system!
 
   // Get the Classroom the user is a part of
   const { data: user } = await getLoggedInPerson(
@@ -149,6 +227,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     req,
     res,
   );
+  const userRole = user?.role;
   const userClassroom =
     user && ["student", "teacher"].includes(user.role)
       ? classrooms.find(
@@ -156,7 +235,7 @@ export const getServerSideProps: GetServerSideProps = async ({
             (user?.role === "teacher"
               ? user.class_advisor_at?.id
               : user?.classroom?.id) === classroom.id,
-        )
+        ) || null
       : null;
 
   const periodNumberAtFetch = getCurrentPeriod();
@@ -168,6 +247,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         "lookup",
       ])),
       grades,
+      userRole,
       userClassroom,
       periodNumberAtFetch,
     },

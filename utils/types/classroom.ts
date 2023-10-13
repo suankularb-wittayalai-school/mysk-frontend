@@ -6,7 +6,7 @@ import { Subject } from "@/utils/types/subject";
 export type Classroom = {
   id: string;
   number: number;
-  main_room?: number;
+  main_room: string | null;
   class_advisors: Pick<
     Teacher,
     | "id"

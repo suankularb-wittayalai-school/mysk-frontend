@@ -11,9 +11,11 @@ const InformationCard: StylableFC<{
   return (
     <section
       style={style}
-      className={cn(`rounded-md bg-surface px-3 py-2`, className)}
+      className={cn(`space-y-0.5 rounded-md bg-surface px-3 py-2`, className)}
     >
-      <Text type="title-medium" element="h4">{title}</Text>
+      <Text type="title-medium" element="h4">
+        {title}
+      </Text>
       <Text type="body-medium" element="div">
         {children}
       </Text>

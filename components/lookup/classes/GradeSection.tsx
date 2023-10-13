@@ -22,7 +22,7 @@ import { useTranslation } from "next-i18next";
  * @param classrooms The Classrooms in this section.
  * @param selected The ID of the selected Classroom.
  * @param onSelectedChange The function to call when a Classroom is selected.
- * @param now The current time. Should be the same across all sections to prevent dyssynchrony.
+ * @param now The current time. Should be the same across all Cards to prevent them going out of sync with each other.
  * @param expandedByDefault Whether this section should be expanded by default.
  * @param titleOverride The title to show instead of the grade.
  */

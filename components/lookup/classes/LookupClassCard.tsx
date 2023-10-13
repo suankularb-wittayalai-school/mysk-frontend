@@ -95,7 +95,7 @@ const LookupClassCard: StylableFC<{
           className={cn(
             `m-3 rounded-full border-1 border-outline-variant bg-surface-2 p-3
             transition-[border-color]`,
-            classroom.id === selected && `group-focus:border-primary`,
+            classroom.id === selected && `sm:group-focus:border-primary`,
           )}
         >
           {period ? (
