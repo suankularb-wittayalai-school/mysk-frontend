@@ -1,4 +1,5 @@
 // Imports
+import useConvertContactsForVCard from "@/utils/helpers/contact/useConvertContactsForVCard";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import isURL from "@/utils/helpers/isURL";
@@ -50,7 +51,8 @@ export function getContactIsLinkable({ type, value }: Contact): boolean {
 export function useGetVCard() {
   const locale = useLocale();
   const { t } = useTranslation("lookup");
-  const { t: tx } = useTranslation("common");
+
+  const convertContactsForVCard = useConvertContactsForVCard()
 
   return (person: Student | Teacher) =>
     new Blob(
@@ -83,34 +85,7 @@ export function useGetVCard() {
             `BDAY:${new Date(person.birthdate).toISOString()}`,
 
           // Contacts
-          person.contacts
-            .map((contact, idx) => {
-              switch (contact.type) {
-                case "phone":
-                  return `item${idx + 1}.TEL:${contact.value}`;
-                case "email":
-                  return `item${idx + 1}.EMAIL:${contact.value}`;
-                default:
-                  if (getContactIsLinkable(contact))
-                    return [
-                      `item${idx + 1}.URL:${getContactURL(contact)}`,
-                      !["Website", "Other"].includes(contact.value) &&
-                        `item${idx + 1}.X-ABLabel:${
-                          {
-                            facebook: tx("contact.facebook"),
-                            line: tx("contact.line"),
-                            instagram: tx("contact.instagram"),
-                            discord: tx("contact.discord"),
-                          }[contact.type as string]
-                        }`,
-                    ]
-                      .filter((segment) => segment)
-                      .join("\n");
-                  break;
-              }
-            })
-            .filter((segment) => segment)
-            .join("\n"),
+          convertContactsForVCard(person.contacts),
 
           // Role within the school
           person.role === "teacher" &&
