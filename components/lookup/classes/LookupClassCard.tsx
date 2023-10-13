@@ -2,7 +2,6 @@
 import cn from "@/utils/helpers/cn";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import getCurrentPeriod from "@/utils/helpers/schedule/getCurrentPeriod";
-import getCurrentSchoolSessionState from "@/utils/helpers/schedule/getCurrentSchoolSessionState";
 import getTodaySetToPeriodTime from "@/utils/helpers/schedule/getTodaySetToPeriodTime";
 import useLocale from "@/utils/helpers/useLocale";
 import { Classroom } from "@/utils/types/classroom";
@@ -58,7 +57,7 @@ const LookupClassCard: StylableFC<{
       onClick={() => onClick(classroom.id)}
       style={style}
       className={cn(
-        `!grid w-full !grid-cols-[minmax(0,1fr),4.5rem] items-center
+        `group !grid w-full !grid-cols-[minmax(0,1fr),calc(4.5rem+2px)] items-center
         !rounded-none !border-transparent !bg-transparent text-left
         !transition-[padding,border,background-color] sm:!rounded-full`,
         classroom.id === selected &&
@@ -88,10 +87,17 @@ const LookupClassCard: StylableFC<{
           alt="Period progress in percent"
           value={percentage}
           visible={periodIsCurrent}
-          className="m-3"
+          // +1px on all sides to compensate for the lack of border
+          className="m-[calc(0.75rem+1px)]"
         />
       ) : (
-        <div className="m-3 rounded-full bg-surface-2 p-3">
+        <div
+          className={cn(
+            `m-3 rounded-full border-1 border-outline-variant bg-surface-2 p-3
+            transition-[border-color]`,
+            classroom.id === selected && `group-focus:border-primary`,
+          )}
+        >
           {period ? (
             <MaterialIcon icon="fastfood" className="text-tertiary" />
           ) : (
