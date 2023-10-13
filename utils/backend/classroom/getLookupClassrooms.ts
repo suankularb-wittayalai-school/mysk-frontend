@@ -33,7 +33,7 @@ export default async function getLookupClassrooms(
       `id,
       number,
       main_room,
-      schedule_item_classrooms!inner(
+      schedule_item_classrooms(
         schedule_items!inner(
           id,
           day,
