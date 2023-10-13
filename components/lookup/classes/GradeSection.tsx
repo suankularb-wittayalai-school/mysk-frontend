@@ -28,7 +28,7 @@ import { useTranslation } from "next-i18next";
  */
 const GradeSection: StylableFC<{
   grade?: string;
-  classrooms: (Pick<Classroom, "id" | "number"> & {
+  classrooms: (Pick<Classroom, "id" | "number" | "main_room"> & {
     relevantPeriod: SchedulePeriod;
   })[];
   selected?: string;

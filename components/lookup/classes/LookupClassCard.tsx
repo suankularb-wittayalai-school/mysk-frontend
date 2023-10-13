@@ -2,6 +2,7 @@
 import cn from "@/utils/helpers/cn";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import getCurrentPeriod from "@/utils/helpers/schedule/getCurrentPeriod";
+import getCurrentSchoolSessionState from "@/utils/helpers/schedule/getCurrentSchoolSessionState";
 import getTodaySetToPeriodTime from "@/utils/helpers/schedule/getTodaySetToPeriodTime";
 import useLocale from "@/utils/helpers/useLocale";
 import { Classroom } from "@/utils/types/classroom";
@@ -16,7 +17,6 @@ import {
 import { differenceInSeconds, formatDistanceToNowStrict } from "date-fns";
 import { enUS, th } from "date-fns/locale";
 import { useTranslation } from "next-i18next";
-import { useMemo } from "react";
 
 /**
  * Lookup Class Card is a card that displays a Classroom in the Lookup Classes
@@ -28,7 +28,7 @@ import { useMemo } from "react";
  * @param onClick The function to call when the card is clicked. Should select this Classroom.
  */
 const LookupClassCard: StylableFC<{
-  classroom: Pick<Classroom, "id" | "number">;
+  classroom: Pick<Classroom, "id" | "number" | "main_room">;
   period: SchedulePeriod;
   now: Date;
   selected?: string;
@@ -69,7 +69,8 @@ const LookupClassCard: StylableFC<{
     >
       <CardHeader
         title={tx("class", { number: classroom.number })}
-        subtitle={
+        subtitle={[
+          classroom.main_room,
           period
             ? periodIsCurrent
               ? getLocaleString(period.content[0].subject.name, locale)
@@ -77,8 +78,8 @@ const LookupClassCard: StylableFC<{
                   getTodaySetToPeriodTime(period.start_time, "start"),
                   { locale: locale === "en-US" ? enUS : th },
                 )}`
-            : "Finished for today"
-        }
+            : "Finished for today",
+        ].join(" • ")}
         className="grow [&>*>*]:block [&>*>*]:!truncate [&>*]:w-full"
       />
       {periodIsCurrent ? (

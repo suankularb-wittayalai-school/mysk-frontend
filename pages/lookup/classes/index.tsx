@@ -31,7 +31,7 @@ import { useEffect, useMemo, useState } from "react";
 /**
  * A Classroom with the Schedule for today.
  */
-export type LookupClassItem = Pick<Classroom, "id" | "number"> & {
+export type LookupClassItem = Pick<Classroom, "id" | "number" | "main_room"> & {
   relevantPeriod: SchedulePeriod;
 };
 

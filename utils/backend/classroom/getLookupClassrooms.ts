@@ -32,6 +32,7 @@ export default async function getLookupClassrooms(
     .select(
       `id,
       number,
+      main_room,
       schedule_item_classrooms!inner(
         schedule_items!inner(
           id,
@@ -114,7 +115,7 @@ export default async function getLookupClassrooms(
 
     // Group the Classroom data with the Schedule Item data
     return {
-      ...pick(classroom, ["id", "number"]),
+      ...pick(classroom, ["id", "number", "main_room"]),
       relevantPeriod: (currentPeriod || nextPeriod || null) as
         | SchedulePeriod
         | undefined,
