@@ -8,10 +8,7 @@ import { StylableFC } from "@/utils/types/common";
 import { Person, Student, Teacher } from "@/utils/types/person";
 import { Schedule as ScheduleType } from "@/utils/types/schedule";
 import {
-  Button,
-  MaterialIcon,
   Progress,
-  Text,
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
@@ -52,8 +49,8 @@ const PersonScheduleCard: StylableFC<{
   return open ? (
     <motion.div
       layout="size"
-      initial={{ opacity: 0, scale: 0.8 }}
-      animate={{ opacity: 1, scale: 1 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       transition={transition(duration.medium2, easing.standardDecelerate)}
       style={{ ...style, borderRadius: 12 }}
       className={cn(`overflow-hidden rounded-md bg-surface`, className)}
@@ -70,11 +67,7 @@ const PersonScheduleCard: StylableFC<{
         <motion.div
           layout="position"
           transition={transition(duration.medium2, easing.standard)}
-          className="bg-surface-3"
         >
-          <Text type="title-medium" element="h3" className="px-3 py-2">
-            {t(`title.${person.role}`)}
-          </Text>
           <Schedule
             schedule={schedule}
             view={person.role}
@@ -85,9 +78,8 @@ const PersonScheduleCard: StylableFC<{
               // Add right padding to content (and fix left padding on mobile)
               `[&>figure>ul]:!px-3 sm:[&>figure>ul]:!pl-0 sm:[&>figure>ul]:!pr-3`,
               // Resize and vertical scroll on container
-              `[&>figure]:resize-y [&>figure]:!overflow-y-auto sm:[&>figure]:h-72
-              sm:[&>figure]:max-h-[24.9375rem]`,
-              `!mt-0 overflow-hidden rounded-md bg-surface !pb-2`,
+              `!mt-0 !pb-2 [&>figure]:resize-y [&>figure]:!overflow-y-auto
+              sm:[&>figure]:h-72 sm:[&>figure]:max-h-[24.9375rem]`,
             )}
           />
         </motion.div>

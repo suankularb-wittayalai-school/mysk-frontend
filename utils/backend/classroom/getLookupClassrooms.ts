@@ -1,70 +1,125 @@
+// Imports
+import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import logError from "@/utils/helpers/logError";
 import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
+import getCurrentPeriod from "@/utils/helpers/schedule/getCurrentPeriod";
+import getCurrentSchoolSessionState from "@/utils/helpers/schedule/getCurrentSchoolSessionState";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
 import { Classroom } from "@/utils/types/classroom";
-import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
+import { SchedulePeriod } from "@/utils/types/schedule";
+import { group, pick, sift, unique } from "radash";
 
+/**
+ * Fetch all Classrooms in the current (or specified) academic year, including
+ * the current/upcoming Schedule Period.
+ *
+ * @param supabase The Supabase client to use.
+ * @param options Options.
+ * @param options.year The academic year to fetch Classrooms from.
+ *
+ * @returns A Backend Return of an array of Classrooms.
+ */
 export default async function getLookupClassrooms(
   supabase: DatabaseClient,
-  options?: { year?: number },
+  options?: Partial<{ year: number }>,
 ): Promise<
   BackendReturn<
-    (Pick<Classroom, "id" | "number" | "class_advisors"> & {
-      studentCount: number;
-    })[]
+    (Pick<Classroom, "id" | "number"> & { relevantPeriod?: SchedulePeriod })[]
   >
 > {
-  const { data: classroomsData, error: classroomsError } = await supabase
+  const { data, error } = await supabase
     .from("classrooms")
     .select(
       `id,
       number,
-      classroom_advisors!inner(
-        teachers(
+      schedule_item_classrooms!inner(
+        schedule_items!inner(
           id,
-          subject_groups(*),
-          people(
-            first_name_en,
-            first_name_th,
-            last_name_en,
-            last_name_th,
-            middle_name_en,
-            middle_name_th,
-            profile
+          day,
+          start_time,
+          duration,
+          subjects!inner(
+            id,
+            name_en,
+            name_th,
+            code_th,
+            code_en,
+            short_name_en,
+            short_name_th
           )
         )
-      ),
-      classroom_students!inner(id)`,
+      )`,
     )
-    .eq("year", options?.year || getCurrentAcademicYear());
+    .order("number")
+    .eq("year", options?.year || getCurrentAcademicYear())
+    .eq("schedule_item_classrooms.schedule_items.day", new Date().getDay());
 
-  if (classroomsError) {
-    logError("getLookupClassrooms (classrooms)", classroomsError);
-    return { error: classroomsError, data: null };
+  if (error) {
+    logError("getLookupClassrooms", error);
+    return { data: null, error };
   }
 
-  const classrooms: (Pick<Classroom, "id" | "number" | "class_advisors"> & {
-    studentCount: number;
-  })[] =
-    classroomsData?.map((classroom) => ({
-      id: classroom.id,
-      number: classroom.number,
-      class_advisors: classroom.classroom_advisors?.map((classroomAdvisor) => {
-        const teacher = classroomAdvisor.teachers!;
-        return {
-          id: teacher.id,
-          first_name: mergeDBLocales(teacher.people, "first_name"),
-          middle_name: mergeDBLocales(teacher.people, "middle_name"),
-          last_name: mergeDBLocales(teacher.people, "last_name"),
-          profile: teacher.people!.profile,
-          subject_group: {
-            id: teacher.subject_groups!.id,
-            name: mergeDBLocales(teacher.subject_groups, "name"),
-          },
-        };
-      }),
-      studentCount: classroom.classroom_students?.length ?? 0,
-    })) ?? [];
+  // Add the current/upcoming Schedule Item data to the Classroom data
+  const classrooms = data!.map((classroom) => {
+    // Format the data into Schedule Items
+    const todayRow = Object.values(
+      group(
+        sift(
+          classroom.schedule_item_classrooms.map(
+            ({ schedule_items }) => schedule_items,
+          ),
+        ),
+        // Group by start time for handling duplicate periods and electives
+        (scheduleItem) => scheduleItem.start_time,
+      ),
+    ).map((scheduleItems) => {
+      const scheduleItem = scheduleItems![0];
+
+      return {
+        id: scheduleItem.id,
+        day: scheduleItem.day,
+        start_time: scheduleItem.start_time,
+        duration: scheduleItem.duration,
+        content:
+          // Filter out duplicate periods with `unique`
+          unique(scheduleItems!, (contentItem) => contentItem.subjects!.id)!
+            // Using map to handle electives
+            .map((contentItem) => ({
+              start_time: contentItem.start_time,
+              duration: contentItem.duration,
+              subject: {
+                id: contentItem.subjects!.id,
+                code: mergeDBLocales(contentItem.subjects, "code"),
+                name: mergeDBLocales(contentItem.subjects, "name"),
+                short_name: mergeDBLocales(contentItem.subjects, "short_name"),
+              },
+              teachers: [],
+            })),
+      };
+    });
+
+    // If the School Session is not in session, return the Classroom data as-is
+    if (getCurrentSchoolSessionState() !== "in-session") return classroom;
+
+    // Get the current and upcoming Schedule Items
+    const periodNumber = getCurrentPeriod();
+    const currentPeriod = todayRow.find(
+      (period) =>
+        period.start_time <= periodNumber &&
+        period.start_time + period.duration > periodNumber,
+    );
+    const nextPeriod = todayRow.find(
+      (period) => period.start_time > periodNumber,
+    );
+
+    // Group the Classroom data with the Schedule Item data
+    return {
+      ...pick(classroom, ["id", "number"]),
+      relevantPeriod: (currentPeriod || nextPeriod || null) as
+        | SchedulePeriod
+        | undefined,
+    };
+  });
 
   return { data: classrooms, error: null };
 }
