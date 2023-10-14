@@ -1,4 +1,5 @@
 // Imports
+import AttendanceDialog from "@/components/lookup/classes/AttendanceDialog";
 import cn from "@/utils/helpers/cn";
 import useConvertContactsForVCard from "@/utils/helpers/contact/useConvertContactsForVCard";
 import useLocale from "@/utils/helpers/useLocale";
@@ -17,12 +18,14 @@ import va from "@vercel/analytics";
 import { motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
+import { useState } from "react";
 
 const ClassHeader: StylableFC<{
   classroom: Omit<Classroom, "students" | "year" | "subjects">;
+  teacherID?: string;
   isOwnClass?: boolean;
   role: UserRole;
-}> = ({ classroom, isOwnClass, role, style, className }) => {
+}> = ({ classroom, teacherID, isOwnClass, role, style, className }) => {
   const locale = useLocale();
   const { t } = useTranslation("lookup", { keyPrefix: "classes.details" });
   const { t: tx } = useTranslation("common");
@@ -30,6 +33,8 @@ const ClassHeader: StylableFC<{
   const convertContactsForVCard = useConvertContactsForVCard();
 
   const { duration, easing } = useAnimationConfig();
+
+  const [attendanceOpen, setAttendanceOpen] = useState(false);
 
   /**
    * Save the Classroom Contacts as a vCard file.
@@ -93,9 +98,20 @@ const ClassHeader: StylableFC<{
           Save contact
         </AssistChip>
         {isOwnClass && (
-          <AssistChip icon={<MaterialIcon icon="assignment_turned_in" />}>
-            Check attendance
-          </AssistChip>
+          <>
+            <AssistChip
+              icon={<MaterialIcon icon="assignment_turned_in" />}
+              onClick={() => setAttendanceOpen(true)}
+            >
+              Check attendance
+            </AssistChip>
+            <AttendanceDialog
+              classroomID={classroom.id}
+              teacherID={teacherID}
+              open={attendanceOpen}
+              onClose={() => setAttendanceOpen(false)}
+            />
+          </>
         )}
         {/* <AssistChip icon={<MaterialIcon icon="lock" />}>
           Request info

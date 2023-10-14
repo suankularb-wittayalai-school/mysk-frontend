@@ -15,9 +15,10 @@ import { useTranslation } from "next-i18next";
 
 const ClassDetailsCard: StylableFC<{
   classroom?: Omit<Classroom, "students" | "year" | "subjects">;
+  teacherID?: string;
   isOwnClass?: boolean;
   role: UserRole;
-}> = ({ classroom, isOwnClass, role, style, className }) => {
+}> = ({ classroom, teacherID, isOwnClass, role, style, className }) => {
   const locale = useLocale();
   const { t } = useTranslation("lookup", { keyPrefix: "classes.details" });
   const { t: tx } = useTranslation("common");
@@ -28,6 +29,7 @@ const ClassDetailsCard: StylableFC<{
         <>
           <ClassHeader
             classroom={classroom}
+            teacherID={teacherID}
             isOwnClass={isOwnClass}
             role={role}
           />

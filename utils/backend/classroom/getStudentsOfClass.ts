@@ -1,72 +1,60 @@
 import logError from "@/utils/helpers/logError";
 import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
-import { Contact } from "@/utils/types/contact";
-import { Subject } from "@/utils/types/subject";
 import { Student } from "@/utils/types/person";
-import { GetServerSidePropsContext } from "next";
 
-import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
-
+/**
+ * Retrieves a list of Students in a given Classroom from the database.
+ *
+ * @param supabase The Supabase client to use.
+ * @param classroomID The ID of the classroom to retrieve students from.
+ * @param options Optional parameters.
+ * @param options.year The academic year to filter the results by. Defaults to the current academic year.
+ *
+ * @returns A Backend Return of Students (ID, full name, nickname, and class No.).
+ */
 export default async function getStudentsOfClass(
   supabase: DatabaseClient,
   classroomID: string,
-  options?: { year?: number },
 ): Promise<
   BackendReturn<
     Pick<Student, "id" | "first_name" | "last_name" | "nickname" | "class_no">[]
   >
 > {
-  const { data: students, error } = await supabase
-    .from("students")
+  const { data, error } = await supabase
+    .from("classroom_students")
     .select(
-      `
-            id,
-            people ( first_name_th, last_name_th, nickname_th, first_name_en, last_name_en, nickname_en ),
-            classroom_students!inner(class_no, classrooms(id))
-            `,
+      `class_no,
+      students(
+        id,
+        people(
+          first_name_en,
+          first_name_th,
+          middle_name_en,
+          middle_name_th,
+          last_name_en,
+          last_name_th,
+          nickname_en,
+          nickname_th
+        )
+      )`,
     )
-    .eq("classroom_students.classroom_id", classroomID)
-    .eq(
-      "classroom_students.classrooms.year",
-      options?.year ?? getCurrentAcademicYear(),
-    );
-  // .order("classroom_students.class_no", );
+    .eq("classroom_id", classroomID)
+    .order("class_no");
 
   if (error) {
-    logError("getClassStudentList", error);
-    return { data: null, error: error };
+    logError("getStudentsOfClass", error);
+    return { data: null, error };
   }
 
-  const studentList: Pick<
-    Student,
-    "id" | "first_name" | "last_name" | "nickname" | "class_no"
-  >[] = students?.map((student) => {
-    const { id, people, classroom_students } = student;
-    const {
-      first_name_th,
-      last_name_th,
-      nickname_th,
-      first_name_en,
-      last_name_en,
-      nickname_en,
-    } = people!;
-    const { class_no } =
-      classroom_students.length > 0 ? classroom_students[0] : { class_no: 0 };
-    return {
-      id,
-      first_name: { th: first_name_th, "en-US": first_name_en },
-      last_name: { th: last_name_th, "en-US": last_name_en },
-      nickname: { th: nickname_th ?? "", "en-US": nickname_en },
-      class_no,
-    };
-  });
+  const students = data.map(({ class_no, students }) => ({
+    id: students!.id,
+    first_name: mergeDBLocales(students!.people, "first_name"),
+    middle_name: mergeDBLocales(students!.people, "middle_name"),
+    last_name: mergeDBLocales(students!.people, "last_name"),
+    nickname: mergeDBLocales(students!.people, "nickname"),
+    class_no: class_no,
+  }));
 
-  return {
-    data: studentList.sort(
-      // Put Students with no class No. first
-      (a, b) => (a.class_no || 0) - (b.class_no || 0),
-    ),
-    error: null,
-  };
+  return { data: students, error: null };
 }

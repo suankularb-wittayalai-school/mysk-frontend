@@ -1,31 +1,22 @@
 // Imports
 import PageHeader from "@/components/common/PageHeader";
-import LookupDetailsCard from "@/components/lookup/LookupDetailsCard";
 import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
 import LookupDetailsSide from "@/components/lookup/LookupDetailsSide";
 import LookupListSide from "@/components/lookup/LookupListSide";
 import LookupResultsList from "@/components/lookup/LookupResultsList";
-import ClassDetailsCard from "@/components/lookup/classes/ClassDetailsCards";
+import ClassDetailsCard from "@/components/lookup/classes/ClassDetailsCard";
 import GradeSection from "@/components/lookup/classes/GradeSection";
-import LookupClassCard from "@/components/lookup/classes/LookupClassCard";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import getClassroomByID from "@/utils/backend/classroom/getClassroomByID";
-import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
 import getLookupClassrooms from "@/utils/backend/classroom/getLookupClassrooms";
 import getCurrentPeriod from "@/utils/helpers/schedule/getCurrentPeriod";
-import useNow from "@/utils/helpers/useNow";
 import useRefreshProps from "@/utils/helpers/useRefreshProps";
-import withLoading from "@/utils/helpers/withLoading";
 import { Classroom } from "@/utils/types/classroom";
 import { LangCode } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
 import { SchedulePeriod } from "@/utils/types/schedule";
-import {
-  SplitLayout,
-  useAnimationConfig,
-  useBreakpoint,
-} from "@suankularb-components/react";
+import { SplitLayout, useBreakpoint } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { LayoutGroup } from "framer-motion";
@@ -66,16 +57,15 @@ const LookupClassesPage: NextPage<{
   };
   userRole: UserRole;
   userClassroom?: LookupClassItem;
+  teacherID?: string;
   periodNumberAtFetch: number;
-}> = ({ grades, userRole, userClassroom, periodNumberAtFetch }) => {
+}> = ({ grades, userRole, userClassroom, teacherID, periodNumberAtFetch }) => {
   const { t } = useTranslation("lookup");
   const { t: tx } = useTranslation("common");
 
   const refreshProps = useRefreshProps();
 
-  const now = useNow();
-
-  // Refresh the page when the current Period can change
+  // Refresh the page when the current Period might change
   const currentPeriodNumber = getCurrentPeriod();
   useEffect(() => {
     if (currentPeriodNumber !== periodNumberAtFetch) refreshProps();
@@ -145,7 +135,6 @@ const LookupClassesPage: NextPage<{
                     setSelectedID(id);
                     if (atBreakpoint === "base") setDetailsOpen(true);
                   }}
-                  now={now}
                   expandedByDefault
                   titleOverride="Your class"
                 />
@@ -161,7 +150,6 @@ const LookupClassesPage: NextPage<{
                     setSelectedID(id);
                     if (atBreakpoint === "base") setDetailsOpen(true);
                   }}
-                  now={now}
                   expandedByDefault={
                     grade ===
                     (userClassroom ? String(userClassroom.number)[0] : "1")
@@ -177,6 +165,7 @@ const LookupClassesPage: NextPage<{
         >
           <ClassDetailsCard
             classroom={selectedClassroom}
+            teacherID={teacherID}
             isOwnClass={userClassroom?.id === selectedClassroom?.id}
             role={userRole}
           />
@@ -192,6 +181,8 @@ const LookupClassesPage: NextPage<{
           classroom={
             selectedID === selectedClassroom?.id ? selectedClassroom : undefined
           }
+          teacherID={teacherID}
+          isOwnClass={userClassroom?.id === selectedClassroom?.id}
           role={userRole}
         />
       </LookupDetailsDialog>
@@ -238,6 +229,8 @@ export const getServerSideProps: GetServerSideProps = async ({
         ) || null
       : null;
 
+  const teacherID = user?.role === "teacher" ? user.id : null;
+
   const periodNumberAtFetch = getCurrentPeriod();
 
   return {
@@ -249,6 +242,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       grades,
       userRole,
       userClassroom,
+      teacherID,
       periodNumberAtFetch,
     },
   };

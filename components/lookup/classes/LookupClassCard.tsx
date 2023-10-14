@@ -4,6 +4,7 @@ import getLocaleString from "@/utils/helpers/getLocaleString";
 import getCurrentPeriod from "@/utils/helpers/schedule/getCurrentPeriod";
 import getTodaySetToPeriodTime from "@/utils/helpers/schedule/getTodaySetToPeriodTime";
 import useLocale from "@/utils/helpers/useLocale";
+import useNow from "@/utils/helpers/useNow";
 import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
 import { SchedulePeriod } from "@/utils/types/schedule";
@@ -23,16 +24,14 @@ import { useTranslation } from "next-i18next";
  *
  * @param classroom The Classroom to display.
  * @param period The currently relevant Schedule Item fro this Classroom.
- * @param now The current time. Should be the same across all Cards to prevent them going out of sync with each other.
  * @param onClick The function to call when the card is clicked. Should select this Classroom.
  */
 const LookupClassCard: StylableFC<{
   classroom: Pick<Classroom, "id" | "number" | "main_room">;
   period: SchedulePeriod;
-  now: Date;
   selected?: string;
   onClick: (value: string) => void;
-}> = ({ classroom, period, now, selected, onClick, style, className }) => {
+}> = ({ classroom, period, selected, onClick, style, className }) => {
   const locale = useLocale();
   const { t } = useTranslation("lookup");
   const { t: tx } = useTranslation("common");
@@ -43,6 +42,7 @@ const LookupClassCard: StylableFC<{
     period.start_time <= currentPeriodNumber &&
     period.start_time + period.duration > currentPeriodNumber;
 
+  const now = useNow();
   const percentage = periodIsCurrent
     ? (differenceInSeconds(now, getTodaySetToPeriodTime(period.start_time)) /
         (period.duration * 3000)) *
