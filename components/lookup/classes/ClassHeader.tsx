@@ -27,7 +27,7 @@ const ClassHeader: StylableFC<{
   role: UserRole;
 }> = ({ classroom, teacherID, isOwnClass, role, style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("lookup", { keyPrefix: "classes.details" });
+  const { t } = useTranslation("lookup", { keyPrefix: "classes.header" });
   const { t: tx } = useTranslation("common");
 
   const convertContactsForVCard = useConvertContactsForVCard();
@@ -88,14 +88,14 @@ const ClassHeader: StylableFC<{
             href={`/lookup/classes/print/${classroom.number}`}
             element={Link}
           >
-            Print
+            {t("action.print")}
           </AssistChip>
         )}
         <AssistChip
           icon={<MaterialIcon icon="download" />}
           onClick={handleSaveVCard}
         >
-          Save contact
+          {t("action.saveContact")}
         </AssistChip>
         {isOwnClass && (
           <>
@@ -103,7 +103,7 @@ const ClassHeader: StylableFC<{
               icon={<MaterialIcon icon="assignment_turned_in" />}
               onClick={() => setAttendanceOpen(true)}
             >
-              Check attendance
+              {t("action.takeAttendance")}
             </AssistChip>
             <AttendanceDialog
               classroomID={classroom.id}
@@ -114,7 +114,7 @@ const ClassHeader: StylableFC<{
           </>
         )}
         {/* <AssistChip icon={<MaterialIcon icon="lock" />}>
-          Request info
+          {t("action.requestInfo")}
         </AssistChip> */}
       </ChipSet>
     </motion.div>

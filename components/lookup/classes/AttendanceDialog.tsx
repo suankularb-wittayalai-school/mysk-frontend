@@ -26,7 +26,7 @@ import {
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { isFuture, isWithinInterval } from "date-fns";
 import { LayoutGroup, motion } from "framer-motion";
-import { useTranslation } from "next-i18next";
+import { Trans, useTranslation } from "next-i18next";
 import { replace } from "radash";
 import { useContext, useEffect, useState } from "react";
 
@@ -45,8 +45,11 @@ const AttendanceDialog: StylableFC<{
   onClose: () => void;
 }> = ({ classroomID, teacherID, open, onClose, style, className }) => {
   const { t } = useTranslation("lookup", {
-    keyPrefix: "classes.details.dialog.attendance",
+    keyPrefix: "classes.dialog.attendance",
   });
+  const { t: ts } = useTranslation("lookup", {
+    keyPrefix: "classes.dialog.confirmAttendanceSave",
+  }); // <-- Is this good practice?
   const { t: tx } = useTranslation("common");
 
   const { setSnackbar } = useContext(SnackbarContext);
@@ -173,7 +176,7 @@ const AttendanceDialog: StylableFC<{
     <>
       <FullscreenDialog
         open={open}
-        title="Attendance"
+        title={t("title")}
         action={
           // Only show Save Button for teachers
           teacherID ? (
@@ -188,7 +191,7 @@ const AttendanceDialog: StylableFC<{
               }}
               disabled={loading || !editable}
             >
-              Save
+              {t("action.save")}
             </Button>
           ) : undefined
         }
@@ -212,14 +215,14 @@ const AttendanceDialog: StylableFC<{
               selected={event === "assembly"}
               onClick={() => setEvent("assembly")}
             >
-              Assembly
+              {t("event.assembly.name")}
             </Button>
             <Button
               appearance="outlined"
               selected={event === "homeroom"}
               onClick={() => setEvent("homeroom")}
             >
-              Homeroom
+              {t("event.homeroom.name")}
             </Button>
           </SegmentedButton>
           <Text
@@ -227,19 +230,10 @@ const AttendanceDialog: StylableFC<{
             element="p"
             className="text-on-surface-variant"
           >
-            {event === "assembly" ? (
-              <>
-                Assembly attendance is done <strong>prior to 08:00</strong>.
-                Attendance data <strong>cannot</strong> be saved after this
-                period.
-              </>
-            ) : (
-              <>
-                Homeroom attendance is done{" "}
-                <strong>between 08:00 and 08:30</strong>. Attendance data{" "}
-                <strong>cannot</strong> be saved after this period.
-              </>
-            )}
+            <Trans
+              i18nKey={`classes.dialog.attendance.event.${event}.desc`}
+              ns="lookup"
+            />
           </Text>
         </Section>
 
@@ -279,15 +273,15 @@ const AttendanceDialog: StylableFC<{
         onClose={() => setConfirmOpen(false)}
       >
         <DialogHeader
-          title="Confirm save"
-          desc="Once you save attendance data, you cannot edit it later."
+          title={ts("title")}
+          desc={ts("desc")}
         />
         <Actions>
           <Button appearance="text" onClick={() => setConfirmOpen(false)}>
-            Go back
+            {ts("action.goBack")}
           </Button>
           <Button appearance="text" onClick={handleSave}>
-            Confirm
+            {ts("action.confirm")}
           </Button>
         </Actions>
       </Dialog>

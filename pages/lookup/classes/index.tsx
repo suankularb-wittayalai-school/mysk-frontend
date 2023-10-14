@@ -60,7 +60,7 @@ const LookupClassesPage: NextPage<{
   teacherID?: string;
   periodNumberAtFetch: number;
 }> = ({ grades, userRole, userClassroom, teacherID, periodNumberAtFetch }) => {
-  const { t } = useTranslation("lookup");
+  const { t } = useTranslation("lookup", { keyPrefix: "classes" });
   const { t: tx } = useTranslation("common");
 
   const refreshProps = useRefreshProps();
@@ -112,9 +112,9 @@ const LookupClassesPage: NextPage<{
   return (
     <>
       <Head>
-        <title>{tx("tabName", { tabName: t("classes.title") })}</title>
+        <title>{tx("tabName", { tabName: t("title") })}</title>
       </Head>
-      <PageHeader parentURL="/lookup">{t("classes.title")}</PageHeader>
+      <PageHeader parentURL="/lookup">{t("title")}</PageHeader>
 
       <SplitLayout
         ratio="list-detail"
@@ -136,7 +136,7 @@ const LookupClassesPage: NextPage<{
                     if (atBreakpoint === "base") setDetailsOpen(true);
                   }}
                   expandedByDefault
-                  titleOverride="Your class"
+                  titleOverride={t("list.yourClass")}
                 />
               )}
               {/* Other Classrooms grouped by grade */}

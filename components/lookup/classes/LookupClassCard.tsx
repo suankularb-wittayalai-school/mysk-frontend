@@ -33,7 +33,7 @@ const LookupClassCard: StylableFC<{
   onClick: (value: string) => void;
 }> = ({ classroom, period, selected, onClick, style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("lookup");
+  const { t } = useTranslation("lookup", { keyPrefix: "classes.list.item" });
   const { t: tx } = useTranslation("common");
 
   const currentPeriodNumber = getCurrentPeriod();
@@ -73,11 +73,13 @@ const LookupClassCard: StylableFC<{
           period
             ? periodIsCurrent
               ? getLocaleString(period.content[0].subject.name, locale)
-              : `Next in ${formatDistanceToNowStrict(
-                  getTodaySetToPeriodTime(period.start_time, "start"),
-                  { locale: locale === "en-US" ? enUS : th },
-                )}`
-            : "Finished for today",
+              : t("period.upcoming", {
+                  duration: formatDistanceToNowStrict(
+                    getTodaySetToPeriodTime(period.start_time, "start"),
+                    { locale: locale === "en-US" ? enUS : th },
+                  ),
+                })
+            : t("period.finished"),
         ].join(" • ")}
         className="grow [&>*>*]:block [&>*>*]:!truncate [&>*]:w-full"
       />

@@ -13,6 +13,14 @@ import { UserRole } from "@/utils/types/person";
 import { Columns, Text } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
 
+/**
+ * A Lookup Detail Card that displays details of a Classroom.
+ *
+ * @param classroom The Classroom to display details for.
+ * @param teacherID The ID of the Teacher currently logged in, if the user is a Teacher. Used for Attendance.
+ * @param isOwnClass Whether the Classroom belongs to the current user.
+ * @param role The role of the current user.
+ */
 const ClassDetailsCard: StylableFC<{
   classroom?: Omit<Classroom, "students" | "year" | "subjects">;
   teacherID?: string;
@@ -20,8 +28,7 @@ const ClassDetailsCard: StylableFC<{
   role: UserRole;
 }> = ({ classroom, teacherID, isOwnClass, role, style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("lookup", { keyPrefix: "classes.details" });
-  const { t: tx } = useTranslation("common");
+  const { t } = useTranslation("lookup", { keyPrefix: "classes.detail" });
 
   return (
     <LookupDetailsCard style={style} className={className}>
@@ -36,7 +43,10 @@ const ClassDetailsCard: StylableFC<{
           <LookupDetailsContent>
             <section className="grid grid-cols-2 gap-2 md:grid-cols-4">
               {/* Class advisors */}
-              <InformationCard title="Class advisors" className="col-span-2">
+              <InformationCard
+                title={t("general.classAdvisors")}
+                className="col-span-2"
+              >
                 <ul className="list-disc pb-1 pl-6">
                   {classroom.class_advisors.map((advisor) => (
                     <li key={advisor.id}>
@@ -47,7 +57,7 @@ const ClassDetailsCard: StylableFC<{
               </InformationCard>
 
               {/* Room */}
-              <InformationCard title="Room">
+              <InformationCard title={t("general.room")}>
                 {classroom.main_room}
               </InformationCard>
             </section>
@@ -59,7 +69,7 @@ const ClassDetailsCard: StylableFC<{
                   element="h3"
                   className="rounded-md bg-surface px-3 py-2"
                 >
-                  Contacts
+                  {t("general.contact")}
                 </Text>
                 <Columns columns={2} className="!gap-2">
                   {classroom.contacts.map((contact) => (

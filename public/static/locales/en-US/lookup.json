@@ -150,7 +150,67 @@
   "classes": {
     "title": "Lookup classes",
     "list": {
-      "searchAlt": "Search classes"
+      "yourClass": "Your class",
+      "item": {
+        "period": {
+          "upcoming": "Next in {{duration}}",
+          "finished": "Finished for today"
+        }
+      }
+    },
+    "header": {
+      "action": {
+        "print": "Print",
+        "saveContact": "Save contact",
+        "takeAttendance": "Take attendance",
+        "requestInfo": "Request info"
+      }
+    },
+    "detail": {
+      "general": {
+        "classAdvisors": "Class advisors",
+        "room": "Room"
+      }
+    },
+    "dialog": {
+      "attendance": {
+        "title": "Attendance",
+        "event": {
+          "assembly": {
+            "name": "Assembly",
+            "desc": "Assembly attendance is done <strong>prior to 08:00</strong>. Attendance data <strong>cannot</strong> be saved after this period."
+          },
+          "homeroom": {
+            "name": "Homeroom",
+            "desc": "Homeroom attendance is done <strong>between 08:00 and 08:30</strong>. Attendance data <strong>cannot</strong> be saved after this period."
+          }
+        },
+        "item": {
+          "classNo": "No. {{classNo}}",
+          "presence": {
+            "present": "Present",
+            "absent": "Absent"
+          },
+          "absenceType": {
+            "sick": "Sick leave",
+            "business": "Business leave",
+            "activity": "School activity",
+            "other": "Other"
+          },
+          "enterReason": "Enter reason"
+        },
+        "action": {
+          "save": "Save"
+        }
+      },
+      "confirmAttendanceSave": {
+        "title": "Confirm save",
+        "desc": "Once you save attendance data, you cannot edit it later.",
+        "action": {
+          "goBack": "Go back",
+          "confirm": "Confirm"
+        }
+      }
     }
   },
   "documents": {

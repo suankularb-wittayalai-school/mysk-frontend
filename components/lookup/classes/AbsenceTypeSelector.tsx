@@ -15,31 +15,31 @@ const AbsenceTypeSelector: StylableFC<{
   onChange: (value: AbsenceType) => void;
 }> = ({ value, onChange, style, className }) => {
   const { t } = useTranslation("lookup", {
-    keyPrefix: "classes.details.dialog.attendance",
+    keyPrefix: "classes.dialog.attendance.item.absenceType",
   });
 
   return (
     <ChipSet scrollable style={style} className={className}>
       <FilterChip selected={value === "sick"} onClick={() => onChange("sick")}>
-        Sick leave
+        {t("sick")}
       </FilterChip>
       <FilterChip
         selected={value === "business"}
         onClick={() => onChange("business")}
       >
-        Business leave
+        {t("business")}
       </FilterChip>
       <FilterChip
         selected={value === "activity"}
         onClick={() => onChange("activity")}
       >
-        School activity
+        {t("activity")}
       </FilterChip>
       <FilterChip
         selected={value === "other"}
         onClick={() => onChange("other")}
       >
-        Other
+        {t("other")}
       </FilterChip>
     </ChipSet>
   );

@@ -1,14 +1,13 @@
 // Imports
+import AbsenceTypeSelector from "@/components/lookup/classes/AbsenceTypeSelector";
 import cn from "@/utils/helpers/cn";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
-import { AbsenceType, StudentAttendance } from "@/utils/types/attendance";
+import { StudentAttendance } from "@/utils/types/attendance";
 import { StylableFC } from "@/utils/types/common";
 import {
   CardHeader,
-  ChipSet,
-  FilterChip,
   Interactive,
   MaterialIcon,
   SegmentedButton,
@@ -17,8 +16,8 @@ import {
   useAnimationConfig,
 } from "@suankularb-components/react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useTranslation } from "next-i18next";
 import { sift } from "radash";
-import AbsenceTypeSelector from "./AbsenceTypeSelector";
 
 /**
  * A single Student Attendance record.
@@ -39,7 +38,12 @@ const AttendanceListItem: StylableFC<{
   ) => void;
 }> = ({ attendance, editable, onAttendanceChange, style, className }) => {
   const { student } = attendance;
+
   const locale = useLocale();
+  const { t } = useTranslation("lookup", {
+    keyPrefix: "classes.dialog.attendance.item",
+  });
+
   const { duration, easing } = useAnimationConfig();
 
   return (
@@ -57,7 +61,7 @@ const AttendanceListItem: StylableFC<{
           title={getLocaleName(locale, student)}
           subtitle={sift([
             // Class no.
-            `No. ${student.class_no}`,
+            t("classNo", { classNo: student.class_no }),
             // Nickname
             (student.nickname?.th || student.nickname?.["en-US"]) &&
               `${getLocaleString(student.nickname, locale)}`,
@@ -79,6 +83,9 @@ const AttendanceListItem: StylableFC<{
                   })
                 : undefined
             }
+            element={(props) => (
+              <button {...props} title={t("presence.present")} />
+            )}
             className={cn(
               `skc-button skc-button--outlined !text-on-surface
               focus:!border-on-surface state-layer:!bg-on-surface`,
@@ -99,6 +106,9 @@ const AttendanceListItem: StylableFC<{
                 ? () => onAttendanceChange({ ...attendance, is_present: false })
                 : undefined
             }
+            element={(props) => (
+              <button {...props} title={t("presence.absent")} />
+            )}
             className={cn(
               `skc-button skc-button--outlined skc-button--dangerous`,
               attendance.is_present === false && `!bg-error !text-on-error`,
@@ -155,7 +165,7 @@ const AttendanceListItem: StylableFC<{
           >
             <TextField<string>
               appearance="outlined"
-              label="Enter reason"
+              label={t("enterReason")}
               value={attendance.absence_reason || ""}
               onChange={
                 editable
