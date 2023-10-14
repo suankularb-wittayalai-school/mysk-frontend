@@ -133,7 +133,7 @@ const AttendanceDialog: StylableFC<{
    */
   function validateAttendances() {
     for (const attendance of attendances) {
-      if (attendance.is_present === undefined) return false;
+      if (attendance.is_present === null) return false;
       if (attendance.is_present === false) {
         if (!attendance.absence_type) return false;
         if (attendance.absence_type === "other" && !attendance.absence_reason)
