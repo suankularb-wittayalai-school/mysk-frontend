@@ -2,15 +2,16 @@ import logError from "@/utils/helpers/logError";
 import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
 import { AttendanceEvent, StudentAttendance } from "@/utils/types/attendance";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
+import { subMinutes } from "date-fns";
 
 /**
  * Retrieves the Attendance records of a Classroom for a specific date and Attendance event.
- * 
+ *
  * @param supabase The Supabase client to use.
  * @param classroomID The ID of the Classroom to retrieve Attendance records for.
  * @param date The date to retrieve Attendance records for.
  * @param attendanceEvent The Attendance event to retrieve records for, assembly or homeroom.
- * 
+ *
  * @returns A Backend Return of an array of Student Attendances.
  */
 export default async function getAttendancesOfClassAtDate(
@@ -48,13 +49,21 @@ export default async function getAttendancesOfClassAtDate(
     )
     .eq("students.classroom_students.classroom_id", classroomID)
     .eq("attendance_event", attendanceEvent)
-    .eq("date", date.toISOString().split("T")[0]);
+    .eq(
+      "date",
+      // Since ISO dates are in UTC, we lose the timezone offset when
+      // converting to ISO. We correct this by adding the timezone offset back.
+      // We also remove the time portion of the date, since we only want to
+      // match the date.
+      subMinutes(date, date.getTimezoneOffset()).toISOString().split("T")[0],
+    );
 
   if (error) {
     logError("getAttendancesOfClassAtDate", error);
     return { data: null, error };
   }
 
+  // Reformat the data
   const attendances = data.map((attendance) => {
     return {
       id: attendance.id,
