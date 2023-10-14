@@ -86,8 +86,7 @@ export default async function getLookupClassrooms(
           unique(scheduleItems!, (contentItem) => contentItem.subjects!.id)!
             // Using map to handle electives
             .map((contentItem) => ({
-              start_time: contentItem.start_time,
-              duration: contentItem.duration,
+              ...pick(contentItem, ["id", "start_time", "duration"]),
               subject: {
                 id: contentItem.subjects!.id,
                 code: mergeDBLocales(contentItem.subjects, "code"),

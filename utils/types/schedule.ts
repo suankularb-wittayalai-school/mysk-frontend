@@ -20,7 +20,7 @@ export type SchedulePeriod = {
 };
 
 export type PeriodContentItem = {
-  id?: string;
+  id: string;
   start_time: number;
   duration: number;
   subject: Pick<Subject, "id" | "code" | "name" | "short_name">;

@@ -144,7 +144,7 @@ export async function getTeacherFromUserID(
   let { data: subjectGroupData, error: subjectGroupError } = await supabase
     .from("subject_groups")
     .select("*")
-    .eq("id", teacherData?.subject_group_id)
+    .eq("id", teacherData!.subject_group_id)
     .single();
 
   if (subjectGroupError) {
