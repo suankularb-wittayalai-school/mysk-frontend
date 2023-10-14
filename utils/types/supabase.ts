@@ -936,9 +936,9 @@ export interface Database {
       };
       student_attendances: {
         Row: {
-          absense_reason: string | null;
-          absense_type: Database["public"]["Enums"]["absense_type"] | null;
-          attendence_event: Database["public"]["Enums"]["attendance_event"];
+          absence_reason: string | null;
+          absence_type: Database["public"]["Enums"]["absence_type"] | null;
+          attendance_event: Database["public"]["Enums"]["attendance_event"];
           checker_id: string | null;
           created_at: string;
           date: string;
@@ -947,9 +947,9 @@ export interface Database {
           student_id: string;
         };
         Insert: {
-          absense_reason?: string | null;
-          absense_type?: Database["public"]["Enums"]["absense_type"] | null;
-          attendence_event: Database["public"]["Enums"]["attendance_event"];
+          absence_reason?: string | null;
+          absence_type?: Database["public"]["Enums"]["absence_type"] | null;
+          attendance_event: Database["public"]["Enums"]["attendance_event"];
           checker_id?: string | null;
           created_at?: string;
           date: string;
@@ -958,9 +958,9 @@ export interface Database {
           student_id: string;
         };
         Update: {
-          absense_reason?: string | null;
-          absense_type?: Database["public"]["Enums"]["absense_type"] | null;
-          attendence_event?: Database["public"]["Enums"]["attendance_event"];
+          absence_reason?: string | null;
+          absence_type?: Database["public"]["Enums"]["absence_type"] | null;
+          attendance_event?: Database["public"]["Enums"]["attendance_event"];
           checker_id?: string | null;
           created_at?: string;
           date?: string;
@@ -1326,7 +1326,7 @@ export interface Database {
       };
     };
     Enums: {
-      absense_type: "sick" | "business" | "activity" | "other";
+      absence_type: "sick" | "business" | "activity" | "other";
       activity_day_houses: "felis" | "cornicula" | "sciurus" | "cyprinus";
       attendance_event: "homeroom" | "assembly";
       blood_group: "O-" | "O+" | "A-" | "A+" | "B-" | "B+" | "AB-" | "AB+";
