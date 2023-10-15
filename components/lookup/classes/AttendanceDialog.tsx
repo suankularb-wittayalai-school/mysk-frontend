@@ -198,7 +198,10 @@ const AttendanceDialog: StylableFC<{
         width={400}
         onClose={onClose}
         style={style}
-        className={cn(`sm:!h-[calc(100dvh-2rem)]`, className)}
+        className={cn(
+          `sm:!h-[calc(100dvh-2rem)] [&>:last-child]:!overflow-x-hidden`,
+          className,
+        )}
       >
         <Progress
           appearance="linear"
@@ -272,10 +275,7 @@ const AttendanceDialog: StylableFC<{
         width={312}
         onClose={() => setConfirmOpen(false)}
       >
-        <DialogHeader
-          title={ts("title")}
-          desc={ts("desc")}
-        />
+        <DialogHeader title={ts("title")} desc={ts("desc")} />
         <Actions>
           <Button appearance="text" onClick={() => setConfirmOpen(false)}>
             {ts("action.goBack")}
