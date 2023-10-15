@@ -4,9 +4,9 @@ import PrintOptions from "@/components/common/print/PrintOptions";
 import PrintPage from "@/components/common/print/PrintPage";
 import cn from "@/utils/helpers/cn";
 import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
-import getLocaleYear from "@/utils/helpers/getLocaleYear";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import getLocaleString from "@/utils/helpers/getLocaleString";
+import getLocaleYear from "@/utils/helpers/getLocaleYear";
 import useForm from "@/utils/helpers/useForm";
 import useLocale from "@/utils/helpers/useLocale";
 import { Classroom } from "@/utils/types/classroom";
@@ -22,7 +22,6 @@ import {
   TextField,
 } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
-import { useRouter } from "next/router";
 import { list, toggle } from "radash";
 import { FC } from "react";
 
@@ -319,10 +318,8 @@ const StudentsPrintOptions: FC<{
 }> = ({ form, setForm, formProps, userRole }) => {
   const { t } = useTranslation("class", { keyPrefix: "student.print" });
 
-  const router = useRouter();
-
   return (
-    <PrintOptions parentURL={router.asPath.replace(/\/print$/, "")}>
+    <PrintOptions parentURL="/lookup/classes">
       <section className="flex flex-col gap-6 px-4 pb-5 pt-6">
         <Select
           appearance="outlined"
@@ -403,7 +400,7 @@ const StudentsPrintOptions: FC<{
  *
  * @returns A Print Page.
  */
-const PrintStudentList: FC<{
+const StudentListPrintout: FC<{
   classItem: Pick<Classroom, "id" | "number">;
   classroomOverview: Pick<
     Classroom,
@@ -437,10 +434,12 @@ const PrintStudentList: FC<{
           {...{ classItem, classroomOverview, studentList }}
           options={form}
         />
-        <StudentsPrintOptions {...{ form, setForm, formProps, userRole }} />
+        <StudentsPrintOptions
+          {...{ form, setForm, formProps, classItem, userRole }}
+        />
       </PrintPage>
     </>
   );
 };
 
-export default PrintStudentList;
+export default StudentListPrintout;

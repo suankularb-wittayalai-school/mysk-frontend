@@ -56,7 +56,7 @@ export type Student = Person & {
 };
 
 export type Teacher = Person & {
-  teacher_id: string;
+  teacher_id: string | null;
   class_advisor_at: Pick<Classroom, "id" | "number"> | null;
   subject_group: SubjectGroup;
   subjects_in_charge: Pick<Subject, "id" | "name" | "code" | "short_name">[];

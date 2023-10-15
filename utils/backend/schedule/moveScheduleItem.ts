@@ -8,6 +8,12 @@ export default async function moveScheduleItem(
   supabase: DatabaseClient,
   scheduleItem: Omit<SchedulePeriod, "content"> & { day: number },
 ): Promise<BackendReturn<null>> {
+  if (!scheduleItem.id) {
+    const error = { message: "no ID provided." };
+    logError("moveScheduleItem", error);
+    return { data: null, error };
+  }
+
   const { error } = await supabase
     .from("schedule_items")
     .update(omit(scheduleItem, ["id"]))

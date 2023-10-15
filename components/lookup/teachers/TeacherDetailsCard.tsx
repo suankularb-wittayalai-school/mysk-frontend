@@ -1,8 +1,12 @@
 // Imports
 import ContactCard from "@/components/account/ContactCard";
 import MultilangText from "@/components/common/MultilingualText";
+import LookupDetailsContent from "@/components/lookup//LookupDetailsContent";
+import LookupDetailsCard from "@/components/lookup/LookupDetailsCard";
+import PersonScheduleCard from "@/components/lookup/person/PersonScheduleCard";
 import CurrentTeachingPeriodCard from "@/components/lookup/teachers/CurrentTeachingPeriodCard";
 import InformationCard from "@/components/lookup/teachers/InformationCard";
+import StarbucksCard from "@/components/lookup/teachers/StarbucksCard";
 import SubjectInChardCard from "@/components/lookup/teachers/SubjectInChargeCard";
 import TeacherHeader from "@/components/lookup/teachers/TeacherHeader";
 import cn from "@/utils/helpers/cn";
@@ -21,9 +25,12 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { sift } from "radash";
-import PersonScheduleCard from "../person/PersonScheduleCard";
-import StarbucksCard from "./StarbucksCard";
 
+/**
+ * A Card that contains the details of a Teacher in Lookup Teachers.
+ *
+ * @param teacher The Teacher to show the details of.
+ */
 const TeacherDetailsCard: StylableFC<{
   teacher?: Teacher;
 }> = ({ teacher, style, className }) => {
@@ -36,14 +43,7 @@ const TeacherDetailsCard: StylableFC<{
   const [scheduleOpen, toggleScheduleOpen] = useToggle();
 
   return (
-    <div
-      style={style}
-      className={cn(
-        `relative flex h-full flex-col overflow-hidden rounded-lg border-1
-        border-outline-variant bg-surface-3 sm:overflow-auto md:overflow-hidden`,
-        className,
-      )}
-    >
+    <LookupDetailsCard style={style} className={className}>
       <AnimatePresence>
         {teacher && (
           <>
@@ -51,17 +51,7 @@ const TeacherDetailsCard: StylableFC<{
               teacher={teacher}
               onScheduleOpenClick={toggleScheduleOpen}
             />
-            <motion.section
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={transition(
-                duration.medium2,
-                easing.standardDecelerate,
-              )}
-              className={cn(`flex grow flex-col gap-5 overflow-auto
-                rounded-t-lg bg-surface-1 p-4 sm:overflow-visible
-                md:overflow-auto`)}
-            >
+            <LookupDetailsContent>
               <div className="grid gap-2">
                 <CurrentTeachingPeriodCard
                   teacherID={teacher.id}
@@ -186,11 +176,11 @@ const TeacherDetailsCard: StylableFC<{
                   </div>
                 </motion.section>
               )}
-            </motion.section>
+            </LookupDetailsContent>
           </>
         )}
       </AnimatePresence>
-    </div>
+    </LookupDetailsCard>
   );
 };
 
