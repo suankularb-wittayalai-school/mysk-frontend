@@ -165,7 +165,10 @@
       "action": {
         "print": "พิมพ์",
         "saveContact": "บันทึก",
-        "takeAttendance": "เช็คชื่อ",
+        "attendance": {
+          "view": "ข้อมูลเช็คชื่อ",
+          "take": "เช็คชื่อ"
+        },
         "requestInfo": "ขอข้อมูลเพิ่มเติม"
       }
     },
@@ -180,7 +183,10 @@
     },
     "dialog": {
       "attendance": {
-        "title": "เช็คชื่อ",
+        "title": {
+          "view": "ข้อมูลเช็คชื่อ",
+          "take": "เช็คชื่อ"
+        },
         "event": {
           "assembly": {
             "name": "เข้าแถว",

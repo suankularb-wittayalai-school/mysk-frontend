@@ -162,7 +162,10 @@
       "action": {
         "print": "Print",
         "saveContact": "Save contact",
-        "takeAttendance": "Take attendance",
+        "attendance": {
+          "view": "View attendance",
+          "take": "Take attendance"
+        },
         "requestInfo": "Request info"
       }
     },
@@ -174,7 +177,10 @@
     },
     "dialog": {
       "attendance": {
-        "title": "Attendance",
+        "title": {
+          "view": "View attendance",
+          "take": "Take attendance"
+        },
         "event": {
           "assembly": {
             "name": "Assembly",

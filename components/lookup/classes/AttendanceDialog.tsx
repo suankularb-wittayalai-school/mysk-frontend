@@ -176,7 +176,7 @@ const AttendanceDialog: StylableFC<{
     <>
       <FullscreenDialog
         open={open}
-        title={t("title")}
+        title={t(`title.${teacherID ? "take" : "view"}`)}
         action={
           // Only show Save Button for teachers
           teacherID ? (
@@ -228,16 +228,18 @@ const AttendanceDialog: StylableFC<{
               {t("event.homeroom.name")}
             </Button>
           </SegmentedButton>
-          <Text
-            type="body-medium"
-            element="p"
-            className="text-on-surface-variant"
-          >
-            <Trans
-              i18nKey={`classes.dialog.attendance.event.${event}.desc`}
-              ns="lookup"
-            />
-          </Text>
+          {teacherID && (
+            <Text
+              type="body-medium"
+              element="p"
+              className="text-on-surface-variant"
+            >
+              <Trans
+                i18nKey={`classes.dialog.attendance.event.${event}.desc`}
+                ns="lookup"
+              />
+            </Text>
+          )}
         </Section>
 
         {/* List */}
