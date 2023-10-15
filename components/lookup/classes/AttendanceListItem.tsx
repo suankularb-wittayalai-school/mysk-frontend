@@ -144,7 +144,7 @@ const AttendanceListItem: StylableFC<{
                   absence_reason: null,
                 })
               }
-              className="-mx-4 px-4 sm:-mx-6 sm:px-6"
+              className="-mx-4 sm:-mx-6 [&>*]:px-4 [&>*]:sm:px-6"
             />
           </motion.div>
         )}
