@@ -69,7 +69,7 @@ const ClassDetailsCard: StylableFC<{
                   element="h3"
                   className="rounded-md bg-surface px-3 py-2"
                 >
-                  {t("general.contact")}
+                  {t("contacts.title")}
                 </Text>
                 <Columns columns={2} className="!gap-2">
                   {classroom.contacts.map((contact) => (
