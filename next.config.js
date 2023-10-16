@@ -49,6 +49,7 @@ module.exports = withBundleAnalyzer(
           destination: "/lookup/documents",
           permanent: true,
         },
+        { source: "/news/info/:id", destination: "/news/:id", permanent: true },
       ];
     },
   }),
