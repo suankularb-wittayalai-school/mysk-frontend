@@ -9,12 +9,12 @@ import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
 
 // Types
-import { Info } from "@/utils/types/news";
+import { NewsArticle } from "@/utils/types/news";
 
 /**
  * A set of `<meta>` for a news article.
  */
-const NewsMeta: FC<{ newsItem: Info }> = ({ newsItem }) => {
+const NewsMeta: FC<{ newsItem: NewsArticle }> = ({ newsItem }) => {
   // Thanks @ImSadudee!
 
   // Translation

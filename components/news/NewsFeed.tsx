@@ -1,6 +1,6 @@
 // Imports
 import NewsListItem from "@/components/news/NewsListItem";
-import { Info } from "@/utils/types/news";
+import { NewsArticle } from "@/utils/types/news";
 import {
   List,
   transition,
@@ -10,7 +10,7 @@ import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { FC } from "react";
 
 const NewsFeed: FC<{
-  news: Info[];
+  news: NewsArticle[];
   isForAdmin?: boolean;
 }> = ({ news, isForAdmin }) => {
   const { duration, easing } = useAnimationConfig();

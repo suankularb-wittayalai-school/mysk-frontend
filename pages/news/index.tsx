@@ -4,15 +4,18 @@ import NewsFeed from "@/components/news/NewsFeed";
 import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
 import { DatabaseClient } from "@/utils/types/backend";
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { Info } from "@/utils/types/news";
 import { ContentLayout } from "@suankularb-components/react";
+import { NewsArticle } from "@/utils/types/news";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 
-const NewsPage: CustomPage<{ newsFeed: Info[] }> = ({ newsFeed }) => {
+/**
+ * A feed of News Articles, with the 2 most recent Articles highlighted.
+ */
+const NewsPage: CustomPage<{ newsFeed: NewsArticle[] }> = ({ newsFeed }) => {
   const { t } = useTranslation("news");
   const { t: tx } = useTranslation("common");
 

@@ -22,13 +22,13 @@ import {
 
 // Types
 import { LangCode } from "@/utils/types/common";
-import { Info } from "@/utils/types/news";
+import { NewsArticle } from "@/utils/types/news";
 
 // Helpers
 import getLocaleString from "@/utils/helpers/getLocaleString";
 
 const NewsListItem: FC<{
-  newsItem: Info;
+  newsItem: NewsArticle;
   editable?: boolean;
 }> = ({ newsItem, editable }) => {
   const { t } = useTranslation("news");

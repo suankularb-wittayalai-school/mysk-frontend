@@ -8,7 +8,7 @@ import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
 import { MultiLangString } from "@/utils/types/common";
 import { StylableFC } from "@/utils/types/component";
-import { Info } from "@/utils/types/news";
+import { NewsArticle } from "@/utils/types/news";
 import {
   Actions,
   Button,
@@ -78,7 +78,7 @@ const PageActions: StylableFC<{
  *
  * @returns A Page Header.
  */
-const NewsPageHeader: FC<{ newsItem: Info }> = ({ newsItem }) => {
+const NewsPageHeader: FC<{ newsItem: NewsArticle }> = ({ newsItem }) => {
   const locale = useLocale();
 
   return (
