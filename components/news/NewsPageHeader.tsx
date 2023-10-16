@@ -2,8 +2,8 @@
 import MultiSchemeImage from "@/components/common/MultiSchemeImage";
 import PageHeader from "@/components/common/PageHeader";
 import SnackbarContext from "@/contexts/SnackbarContext";
-import NewsPlaceholderDark from "@/public/images/graphics/news-placeholder-dark.webp";
-import NewsPlaceholderLight from "@/public/images/graphics/news-placeholder-light.webp";
+import NewsPlaceholderDark from "@/public/images/graphics/news-placeholder-dark.svg";
+import NewsPlaceholderLight from "@/public/images/graphics/news-placeholder-light.svg";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
 import { MultiLangString } from "@/utils/types/common";
