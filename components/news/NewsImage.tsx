@@ -24,8 +24,8 @@ const NewsImage: StylableFC<{
       alt=""
       style={style}
       className={cn(
-        `aspect-[3/2] overflow-hidden rounded-md bg-surface-5 [&>img]:h-full
-        [&>img]:object-cover`,
+        `block aspect-[3/2] overflow-hidden rounded-md bg-surface-5
+        [&>img]:h-full [&>img]:object-cover`,
         className,
       )}
     />
