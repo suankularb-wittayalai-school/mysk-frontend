@@ -1,11 +1,12 @@
 // Imports
 import PageHeader from "@/components/common/PageHeader";
-import NewsFeed from "@/components/news/NewsFeed";
+import NewsArticleItem from "@/components/news/NewsArticleItem";
+import LatestArticlesSection from "@/components/news/LatestArticlesSection";
 import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
 import { DatabaseClient } from "@/utils/types/backend";
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { ContentLayout } from "@suankularb-components/react";
 import { NewsArticle } from "@/utils/types/news";
+import { Columns, ContentLayout } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { useTranslation } from "next-i18next";
@@ -26,7 +27,19 @@ const NewsPage: CustomPage<{ newsFeed: NewsArticle[] }> = ({ newsFeed }) => {
       </Head>
       <PageHeader>{t("title")}</PageHeader>
       <ContentLayout>
-        <NewsFeed news={newsFeed} />
+        <Columns columns={4} className="!gap-y-5">
+          <LatestArticlesSection
+            mainArticle={newsFeed[0]}
+            asideArticle={newsFeed[1]}
+          />
+          {newsFeed.slice(2).map((article) => (
+            <NewsArticleItem
+              key={article.id}
+              article={article}
+              className="sm:col-span-2"
+            />
+          ))}
+        </Columns>
       </ContentLayout>
     </>
   );
