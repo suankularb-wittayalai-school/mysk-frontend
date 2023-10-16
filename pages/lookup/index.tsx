@@ -33,12 +33,12 @@ const LookupPage: CustomPage = () => {
       <ContentLayout>
         <LookupLandingSubtitle className="mx-4 sm:mx-0 sm:-mt-8 md:hidden" />
         <Columns columns={2} className="mx-4 !gap-y-3 sm:mx-0">
-          <LookupChoice
+          {/* <LookupChoice
             icon={<MaterialIcon icon="face_6" size={48} />}
             title={<Trans i18nKey="choice.students.title" ns="lookup" />}
             desc={t("choice.students.desc")}
             href="/lookup/students"
-          />
+          /> */}
           <LookupChoice
             icon={<MaterialIcon icon="support_agent" size={48} />}
             title={<Trans i18nKey="choice.teachers.title" ns="lookup" />}
