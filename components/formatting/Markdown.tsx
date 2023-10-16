@@ -1,86 +1,80 @@
-// External libraries
+// Imports
+import isURL from "@/utils/helpers/isURL";
+import { Table } from "@suankularb-components/react";
 import Image from "next/image";
+import { Children, FC, ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
 import gfm from "remark-gfm";
 
-// SK Components
-import { Table } from "@suankularb-components/react";
-import { FC, ReactNode } from "react";
-
-const Markdown = ({
-  noStyles,
-  children,
-}: {
-  noStyles?: boolean;
+/**
+ * A Markdown renderer.
+ *
+ * @param children The Markdown string.
+ * @param noStyles Whether to disable the default styles.
+ */
+const Markdown: FC<{
   children: string;
-}) => {
-  return (
-    <ReactMarkdown
-      remarkPlugins={[gfm]}
-      components={{
-        a: ({ href, title, children }) => {
-          const maxLength = 36;
-          const text = children ? children[0]?.toString() : "";
+  disableStyles?: boolean;
+}> = ({ children, disableStyles }) => (
+  <ReactMarkdown
+    remarkPlugins={[gfm]}
+    components={{
+      a: ({ href, title, children }) => {
+        const maxLength = 36;
+        const text = children
+          ? Children.toArray(children as ReactNode)[0]?.toString()
+          : "";
 
-          const AWithProps: FC<{ children: ReactNode }> = ({ children }) => (
-            <a {...{ href, title }} target="_blank" rel="noreferrer">
+        // Don’t modify if empty or not link
+        if (!text || !isURL(text))
+          return (
+            <a href={href} title={title} target="_blank" rel="noreferrer">
               {children}
             </a>
           );
 
-          // Don’t modify if empty or not link
-          if (!text) return <AWithProps>{children}</AWithProps>;
-
-          try {
-            new URL(text);
-          } catch (_) {
-            return <AWithProps>{children}</AWithProps>;
-          }
-
-          // Shorten link
+        // Shorten link
+        return (
+          <a href={href} title={title} target="_blank" rel="noreferrer">
+            {text.length > maxLength
+              ? [text.slice(0, maxLength), "…"].join("")
+              : (children as ReactNode)}
+          </a>
+        );
+      },
+      img: ({ src, alt }) => {
+        if (
+          src?.startsWith(
+            `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/`,
+          )
+        ) {
           return (
-            <AWithProps>
-              {text.length > maxLength
-                ? [children[0]?.toString().slice(0, maxLength), "…"].join("")
-                : children}
-            </AWithProps>
+            // This somehow works. I don’t know how.
+            // I’d love it if someone explains this to me.
+            <Image
+              src={src}
+              width={720} // <-- Cap the width at 720px
+              height={0} // <-- This apparently doesn’t matter
+              alt={alt || ""}
+              className="mx-auto rounded-xl"
+            />
           );
-        },
-        img: ({ src, alt }) => {
-          if (
-            src?.startsWith(
-              `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/`
-            )
-          ) {
-            return (
-              // (@SiravitPhokeed)
-              // This somehow works. I don’t know how.
-              // I’d love it if someone explains this to me.
-              <Image
-                src={src}
-                width={720} // <-- Cap the width at 720px
-                height={0} // <-- This apparently doesn’t matter
-                alt={alt || ""}
-                className="mx-auto rounded-xl"
-              />
-            );
-          }
-          return <>Invalid image.</>;
-        },
-        table: ({ children }) => (
-          <Table
-            contentWidth={640}
-            className={noStyles ? "not-prose" : "not-prose my-5"}
-          >
-            {children}
-          </Table>
-        ),
-      }}
-      className={noStyles ? undefined : "markdown"}
-    >
-      {children}
-    </ReactMarkdown>
-  );
-};
+        }
+        return <>Invalid image.</>;
+      },
+      table: ({ children }) => (
+        <Table
+          contentWidth={640}
+          className={disableStyles ? "not-prose" : "not-prose my-5"}
+        >
+          {children as ReactNode}
+        </Table>
+      ),
+    }}
+    className={!disableStyles ? "markdown" : undefined}
+  >
+    {children}
+  </ReactMarkdown>
+);
 
 export default Markdown;
