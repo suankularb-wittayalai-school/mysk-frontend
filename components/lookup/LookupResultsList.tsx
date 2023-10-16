@@ -15,14 +15,16 @@ import Balancer from "react-wrap-balancer";
 
 /**
  * The wrapper for the results list; the last child of Lookup List Side.
- * 
+ *
  * @param children The results list.
  * @param length The length of the results, used in determining whether to show the empty state.
+ * @param filtersURL The URL of the parent page, used in the empty state.
  */
 const LookupResultsList: StylableFC<{
   children: ReactNode;
+  filtersURL?: string;
   length: number;
-}> = ({ children, length, style, className }) => {
+}> = ({ children, filtersURL, length, style, className }) => {
   const { t } = useTranslation("lookup");
 
   const { duration, easing } = useAnimationConfig();
@@ -57,9 +59,11 @@ const LookupResultsList: StylableFC<{
       >
         <Balancer>{t("common.list.empty.desc")}</Balancer>
       </Text>
-      <Button appearance="text" href="/lookup/teachers" element={Link}>
-        {t("common.list.empty.action.clear")}
-      </Button>
+      {filtersURL && (
+        <Button appearance="text" href={filtersURL} element={Link}>
+          {t("common.list.empty.action.clear")}
+        </Button>
+      )}
     </motion.div>
   );
 };

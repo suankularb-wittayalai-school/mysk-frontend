@@ -1,7 +1,8 @@
 // Imports
 import PageHeader from "@/components/common/PageHeader";
-import EmptyDetail from "@/components/lookup/EmptyDetail";
-import LookupList from "@/components/lookup/LookupList";
+import LookupDetailsSide from "@/components/lookup/LookupDetailsSide";
+import LookupListSide from "@/components/lookup/LookupListSide";
+import LookupResultsList from "@/components/lookup/LookupResultsList";
 import DocumentCard from "@/components/lookup/document/DocumentCard";
 import DocumentDetails from "@/components/lookup/document/DocumentDetails";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
@@ -9,10 +10,17 @@ import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import { getSchoolDocumentByID } from "@/utils/backend/document/getSchoolDocumentByID";
 import { getSchoolDocuments } from "@/utils/backend/document/getSchoolDocuments";
 import { searchSchoolDocuments } from "@/utils/backend/document/searchSchoolDocuments";
+import useLocale from "@/utils/helpers/useLocale";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { SchoolDocument, SchoolDocumentType } from "@/utils/types/news";
 import { UserRole } from "@/utils/types/person";
-import { ChipSet, FilterChip, SplitLayout } from "@suankularb-components/react";
+import {
+  ChipSet,
+  FilterChip,
+  Search,
+  SplitLayout,
+  useAnimationConfig,
+} from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import va from "@vercel/analytics";
@@ -28,8 +36,11 @@ const LookupDocumentsPage: CustomPage<{
   userRole: UserRole;
 }> = ({ recentDocs, selectedIdx, userRole }) => {
   // Translation
+  const locale = useLocale();
   const { t } = useTranslation("lookup");
   const { t: tx } = useTranslation("common");
+
+  const { duration, easing } = useAnimationConfig();
 
   const [documents, setDocuments] = useState<SchoolDocument[]>(recentDocs);
   const supabase = useSupabaseClient();
@@ -38,6 +49,26 @@ const LookupDocumentsPage: CustomPage<{
   const [selected, setSelected] = useState<SchoolDocument>(
     recentDocs[selectedIdx],
   );
+
+  // Query
+  const [query, setQuery] = useState("");
+  async function handleSearch() {
+    va.track("Search Document", {
+      type: {
+        order: "Orders",
+        record: "Records",
+        announcement: "Announcements",
+        other: "Other",
+      }[type],
+    });
+    if (!query) {
+      setDocuments(recentDocs);
+      return;
+    }
+    const { data } = await searchSchoolDocuments(supabase, query, type);
+    if (!data) return;
+    setDocuments(data);
+  }
 
   // Type
   const [type, setType] = useState<SchoolDocumentType>(
@@ -61,12 +92,20 @@ const LookupDocumentsPage: CustomPage<{
         <title>{tx("tabName", { tabName: t("documents.title") }, t)}</title>
       </Head>
       <PageHeader parentURL="/lookup">{t("documents.title")}</PageHeader>
-      <SplitLayout ratio="list-detail">
-        <LookupList
-          length={documents.length}
-          searchAlt={t("documents.list.searchAlt")}
-          searchFilters={
-            userRole === "teacher" ? (
+      <SplitLayout
+        ratio="list-detail"
+        className="sm:[&>div]:!grid-cols-2 md:[&>div]:!grid-cols-3"
+      >
+        <LookupListSide length={documents.length}>
+          <section className="space-y-3">
+            <Search
+              alt={t("documents.list.searchAlt")}
+              value={query}
+              locale={locale}
+              onChange={setQuery}
+              onSearch={handleSearch}
+            />
+            {userRole === "teacher" && (
               <ChipSet>
                 <FilterChip
                   selected={type === "order"}
@@ -93,39 +132,22 @@ const LookupDocumentsPage: CustomPage<{
                   {t("documents.list.filter.other")}
                 </FilterChip>
               </ChipSet>
-            ) : undefined
-          }
-          onSearch={async (query) => {
-            va.track("Search Document", {
-              type: {
-                order: "Orders",
-                record: "Records",
-                announcement: "Announcements",
-                other: "Other",
-              }[type],
-            });
-            if (!query) {
-              setDocuments(recentDocs);
-              return;
-            }
-            const { data } = await searchSchoolDocuments(supabase, query, type);
-            if (!data) return;
-            setDocuments(data);
-          }}
-        >
-          {documents.map((document) => (
-            <DocumentCard
-              key={document.id}
-              document={document}
-              {...{ selected, setSelected }}
-            />
-          ))}
-        </LookupList>
-        {selected ? (
+            )}
+          </section>
+          <LookupResultsList length={documents.length}>
+            {documents.map((document) => (
+              <DocumentCard
+                key={document.id}
+                document={document}
+                selected={selected}
+                onSelectedChange={setSelected}
+              />
+            ))}
+          </LookupResultsList>
+        </LookupListSide>
+        <LookupDetailsSide selectedID={selected?.id} length={documents.length}>
           <DocumentDetails document={selected} {...{ loading, setLoading }} />
-        ) : (
-          <EmptyDetail />
-        )}
+        </LookupDetailsSide>
       </SplitLayout>
     </>
   );
