@@ -13,7 +13,7 @@ export default function logError(location: string, error: Partial<PostgrestError
     [
       // Header
       typeof window === "undefined"
-        ? `\x1b[0m- \x1b[31merror\x1b[0m an error occurred at \x1b[33m${location}\x1b[0m`
+        ? `\x1b[31m ⨯\x1b[0m An error occurred at \x1b[33m${location}\x1b[0m`
         : `\x1b[0m[Error]`,
 
       // Content
