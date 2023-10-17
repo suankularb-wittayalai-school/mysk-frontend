@@ -37,7 +37,11 @@ const LatestArticlesSection: FC<{
             md:col-span-3`)}
         >
           <article className="grid md:grid-cols-[4fr,5fr]">
-            <NewsImage image={mainArticle.image} priority className="m-3" />
+            <NewsImage
+              image={mainArticle.image}
+              priority
+              className="m-3 mb-0 md:mb-3"
+            />
             <main className="m-3 flex flex-col justify-between gap-1">
               <header className="space-y-1">
                 <Text
