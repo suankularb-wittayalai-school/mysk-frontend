@@ -5,7 +5,6 @@ import NewsImage from "@/components/news/NewsImage";
 import NewsMeta from "@/components/news/NewsMeta";
 import getNewsArticleByID from "@/utils/backend/news/getNewsArticleByID";
 import getLocaleString from "@/utils/helpers/getLocaleString";
-import insertLocaleIntoStaticPaths from "@/utils/helpers/insertLocaleIntoStaticPaths";
 import useLocale from "@/utils/helpers/useLocale";
 import { supabase } from "@/utils/supabase-backend";
 import { CustomPage, LangCode } from "@/utils/types/common";
@@ -163,7 +162,5 @@ export const getStaticPaths: GetStaticPaths = async () => {
     fallback: "blocking",
   };
 };
-
-NewsArticlePage.navType = "student";
 
 export default NewsArticlePage;
