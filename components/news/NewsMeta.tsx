@@ -38,14 +38,17 @@ const NewsMeta: FC<{ article: NewsArticle }> = ({ article }) => {
         content={
           article.image
             ? article.image
-            : "https://beta.mysk.school/images/graphics/news-placeholder-light.webp"
+            : "https://www.mysk.school/images/graphics/news-placeholder-light.svg"
         }
       />
       <meta
         property="og:description"
         content={getLocaleString(article.description, locale)}
       />
-      <meta property="og:locale" content={locale} />
+      <meta
+        property="og:locale"
+        content={article.body["en-US"] ? "en-US" : "th"}
+      />
       <meta property="og:site_name" content="MySK" />
     </Head>
   );
