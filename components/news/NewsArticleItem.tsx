@@ -30,9 +30,9 @@ const NewsArticleItem: StylableFC<{
       className={cn(`-m-2 px-6 py-2 sm:rounded-lg sm:px-2`, className)}
       style={style}
     >
-      <article className="grid grid-cols-4 gap-6 sm:grid-cols-3">
-        <NewsImage image={article.image} className="max-w-[12rem]" />
-        <main className="col-span-3 space-y-1 sm:col-span-2">
+      <article className="grid grid-cols-4 gap-4 sm:gap-6 md:grid-cols-3">
+        <NewsImage image={article.image} className="rounded-sm md:rounded-md" />
+        <main className="col-span-3 space-y-1 md:col-span-2">
           <Text type="title-large" element="h1" className="line-clamp-2">
             {getLocaleString(article.title, locale)}
           </Text>

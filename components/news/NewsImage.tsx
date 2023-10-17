@@ -22,8 +22,8 @@ const NewsImage: FC<
       {...(image
         ? { srcLight: image, srcDark: undefined }
         : { srcLight: NewsPlaceholderLight, srcDark: NewsPlaceholderDark })}
-      width={305}
-      height={203}
+      width={630}
+      height={420}
       alt=""
       style={style}
       className={cn(

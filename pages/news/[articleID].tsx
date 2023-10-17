@@ -5,6 +5,7 @@ import NewsImage from "@/components/news/NewsImage";
 import NewsMeta from "@/components/news/NewsMeta";
 import getNewsArticleByID from "@/utils/backend/news/getNewsArticleByID";
 import getLocaleString from "@/utils/helpers/getLocaleString";
+import insertLocaleIntoStaticPaths from "@/utils/helpers/insertLocaleIntoStaticPaths";
 import useLocale from "@/utils/helpers/useLocale";
 import { supabase } from "@/utils/supabase-backend";
 import { CustomPage, LangCode } from "@/utils/types/common";
@@ -85,16 +86,11 @@ const NewsArticlePage: CustomPage<{ article: NewsArticle }> = ({ article }) => {
                 {getLocaleString(article.description, locale)}
               </Text>
               <Text
-                type="title-small"
+                type="title-medium"
                 element="time"
                 className="mt-2 block text-on-surface-variant"
               >
                 {t("date", { date: new Date(article.created_at) })}
-                {/* {new Date(article.created_at).toLocaleDateString(locale, {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })} */}
               </Text>
             </div>
             <Actions align="left">

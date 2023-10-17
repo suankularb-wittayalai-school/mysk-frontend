@@ -32,7 +32,7 @@ const LatestArticlesSection: FC<{
         <Interactive
           href={`/news/${fromUUID(mainArticle.id)}`}
           element={Link}
-          className={cn(`-m-2 p-2 sm:col-span-2 sm:m-0 sm:rounded-lg
+          className={cn(`-my-5 sm:col-span-2 sm:m-0 sm:rounded-lg
             sm:border-1 sm:border-outline-variant sm:bg-surface-2 sm:p-0
             md:col-span-3`)}
         >
@@ -75,9 +75,13 @@ const LatestArticlesSection: FC<{
           className={cn(`p-2 px-4 sm:col-span-2 sm:-m-2 sm:rounded-lg sm:px-2
             md:col-span-1`)}
         >
-          <article className="grid grid-cols-2 gap-x-6 gap-y-3 md:grid-cols-1">
-            <NewsImage image={asideArticle.image} priority />
-            <main className="col-span-2 space-y-1 sm:col-span-1">
+          <article className="grid grid-cols-4 gap-x-4 gap-y-3 sm:gap-x-6 md:grid-cols-1">
+            <NewsImage
+              image={asideArticle.image}
+              priority
+              className="rounded-sm md:rounded-md"
+            />
+            <main className="col-span-3 space-y-1 md:col-span-1">
               <Text type="title-large" element="h1" className="mb-1">
                 {getLocaleString(asideArticle.title, locale)}
               </Text>
