@@ -89,11 +89,12 @@ const NewsArticlePage: CustomPage<{ article: NewsArticle }> = ({ article }) => {
                 element="time"
                 className="mt-2 block text-on-surface-variant"
               >
-                {new Date(article.created_at).toLocaleDateString(locale, {
+                {t("date", { date: new Date(article.created_at) })}
+                {/* {new Date(article.created_at).toLocaleDateString(locale, {
                   year: "numeric",
                   month: "long",
                   day: "numeric",
-                })}
+                })} */}
               </Text>
             </div>
             <Actions align="left">
@@ -103,7 +104,7 @@ const NewsArticlePage: CustomPage<{ article: NewsArticle }> = ({ article }) => {
                 onClick={handleShare}
                 className="!mt-auto"
               >
-                Share
+                {t("action.share")}
               </Button>
             </Actions>
           </section>
