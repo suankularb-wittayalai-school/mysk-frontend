@@ -60,11 +60,7 @@ const LatestArticlesSection: FC<{
                 element="time"
                 className="text-on-surface-variant"
               >
-                {new Date(mainArticle.created_at).toLocaleDateString(locale, {
-                  day: "numeric",
-                  month: "short",
-                  year: "numeric",
-                })}
+                {t("date", { date: new Date(mainArticle.created_at) })}
               </Text>
             </main>
           </article>
@@ -86,11 +82,7 @@ const LatestArticlesSection: FC<{
                 {getLocaleString(asideArticle.title, locale)}
               </Text>
               <Text type="title-small" element="time">
-                {new Date(asideArticle.created_at).toLocaleDateString(locale, {
-                  day: "numeric",
-                  month: "short",
-                  year: "numeric",
-                })}
+                {t("date", { date: new Date(asideArticle.created_at) })}
               </Text>
             </main>
           </article>

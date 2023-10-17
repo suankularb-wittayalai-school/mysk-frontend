@@ -6,18 +6,20 @@ import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import { NewsArticle } from "@/utils/types/news";
 import { Interactive, Text } from "@suankularb-components/react";
+import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import shortUUID from "short-uuid";
 
 /**
  * A normal News Article item in the feed.
- * 
+ *
  * @param article The News Article to display.
  */
 const NewsArticleItem: StylableFC<{
   article: NewsArticle;
 }> = ({ article, style, className }) => {
   const locale = useLocale();
+  const { t } = useTranslation("news");
 
   const { fromUUID } = shortUUID();
 
@@ -35,11 +37,7 @@ const NewsArticleItem: StylableFC<{
             {getLocaleString(article.title, locale)}
           </Text>
           <Text type="title-small" element="time" className="block truncate">
-            {new Date(article.created_at).toLocaleDateString(locale, {
-              day: "numeric",
-              month: "short",
-              year: "numeric",
-            })}
+            {t("date", { date: new Date(article.created_at) })}
           </Text>
         </main>
       </article>
