@@ -126,14 +126,9 @@ const RestrictionsCard: FC<{
         </Text>
       </div>
       <Text type="body-small" element="p">
-        {allowedRoles.length === 1
-          ? t("desc_one", { role: t(`descSegment.${allowedRoles[0]}`) })
-          : allowedRoles.length === 2
-          ? t("desc_two", {
-              role1: t(`descSegment.${allowedRoles[0]}`),
-              role2: t(`descSegment.${allowedRoles[1]}`),
-            })
-          : t("desc_all")}
+        {t("desc", {
+          roles: allowedRoles.map((role) => t(`descSegment.${role}`)),
+        })}
       </Text>
     </Card>
   );

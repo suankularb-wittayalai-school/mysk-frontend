@@ -239,9 +239,7 @@
     "header": {
       "restrictions": {
         "title": "Restricted",
-        "desc_one": "Only {{role}} should access.",
-        "desc_two": "Only {{role1}} and {{role2}} should access.",
-        "desc_all": "Students, teachers, and parents can access.",
+        "desc": "Only {{roles, list}} should access.",
         "descSegment": {
           "student": "students",
           "teacher": "teachers",
