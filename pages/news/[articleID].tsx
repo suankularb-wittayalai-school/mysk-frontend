@@ -1,6 +1,6 @@
 // Imports
 import PageHeader from "@/components/common/PageHeader";
-import Markdown from "@/components/formatting/Markdown";
+import ArticleFormatter from "@/components/news/ArticleFormatter";
 import NewsImage from "@/components/news/NewsImage";
 import NewsMeta from "@/components/news/NewsMeta";
 import getNewsArticleByID from "@/utils/backend/news/getNewsArticleByID";
@@ -112,10 +112,11 @@ const NewsArticlePage: CustomPage<{ article: NewsArticle }> = ({ article }) => {
           <Text
             type="body-large"
             element="div"
-            className="mx-4 sm:mx-0 md:col-span-7
-              md:col-start-3"
+            className="mx-4 sm:mx-0 md:col-span-7 md:col-start-3"
           >
-            <Markdown>{getLocaleString(article.body, locale)}</Markdown>
+            <ArticleFormatter>
+              {getLocaleString(article.body, locale)}
+            </ArticleFormatter>
           </Text>
         </main>
       </ContentLayout>
