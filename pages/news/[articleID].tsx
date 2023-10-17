@@ -64,6 +64,7 @@ const NewsArticlePage: CustomPage<{ article: NewsArticle }> = ({ article }) => {
         <header className="mx-4 grid gap-6 sm:mx-0 md:grid-cols-12">
           <NewsImage
             image={article.image}
+            priority
             className="md:col-span-4 md:col-start-2"
           />
 

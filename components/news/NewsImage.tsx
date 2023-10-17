@@ -3,19 +3,22 @@ import MultiSchemeImage from "@/components/common/MultiSchemeImage";
 import NewsPlaceholderDark from "@/public/images/graphics/news-placeholder-dark.svg";
 import NewsPlaceholderLight from "@/public/images/graphics/news-placeholder-light.svg";
 import cn from "@/utils/helpers/cn";
-import { StylableFC } from "@/utils/types/common";
 import { NewsArticle } from "@/utils/types/news";
+import Image from "next/image";
+import { ComponentProps, FC } from "react";
 
 /**
  * An image for a News Article.
  *
  * @param image The URL of the image.
  */
-const NewsImage: StylableFC<{
-  image: NewsArticle["image"];
-}> = ({ image, style, className }) => {
+const NewsImage: FC<
+  Omit<ComponentProps<typeof Image>, "src" | "alt"> & Pick<NewsArticle, "image">
+> = (props) => {
+  const { image, style, className } = props;
   return (
     <MultiSchemeImage
+      {...props}
       {...(image
         ? { srcLight: image, srcDark: undefined }
         : { srcLight: NewsPlaceholderLight, srcDark: NewsPlaceholderDark })}

@@ -1,5 +1,6 @@
 // Imports
 import NewsImage from "@/components/news/NewsImage";
+import cn from "@/utils/helpers/cn";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
 import { NewsArticle } from "@/utils/types/news";
@@ -31,10 +32,12 @@ const LatestArticlesSection: FC<{
         <Interactive
           href={`/news/${fromUUID(mainArticle.id)}`}
           element={Link}
-          className="-m-2 p-2 sm:col-span-2 sm:m-0 sm:rounded-lg sm:border-1 sm:border-outline-variant sm:bg-surface-2 sm:p-0 md:col-span-3"
+          className={cn(`-m-2 p-2 sm:col-span-2 sm:m-0 sm:rounded-lg
+            sm:border-1 sm:border-outline-variant sm:bg-surface-2 sm:p-0
+            md:col-span-3`)}
         >
           <article className="grid md:grid-cols-[4fr,5fr]">
-            <NewsImage image={mainArticle.image} className="m-3" />
+            <NewsImage image={mainArticle.image} priority className="m-3" />
             <main className="m-3 flex flex-col justify-between gap-1">
               <header className="space-y-1">
                 <Text
@@ -73,10 +76,11 @@ const LatestArticlesSection: FC<{
         <Interactive
           href={`/news/${fromUUID(asideArticle.id)}`}
           element={Link}
-          className="p-2 px-4 sm:col-span-2 sm:-m-2 sm:rounded-lg sm:px-2 md:col-span-1"
+          className={cn(`p-2 px-4 sm:col-span-2 sm:-m-2 sm:rounded-lg sm:px-2
+            md:col-span-1`)}
         >
           <article className="grid grid-cols-2 gap-x-6 gap-y-3 md:grid-cols-1">
-            <NewsImage image={asideArticle.image} />
+            <NewsImage image={asideArticle.image} priority />
             <main className="col-span-2 space-y-1 sm:col-span-1">
               <Text type="title-large" element="h1" className="mb-1">
                 {getLocaleString(asideArticle.title, locale)}
