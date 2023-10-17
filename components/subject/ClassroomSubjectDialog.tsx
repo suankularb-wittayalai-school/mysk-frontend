@@ -17,8 +17,8 @@ import {
 import {
   FormControlProps,
   FormControlValues,
+  StylableFC,
 } from "@/utils/types/common";
-import { DialogFC } from "@/utils/types/component";
 import { Teacher } from "@/utils/types/person";
 import { ClassroomSubject } from "@/utils/types/subject";
 import {
@@ -27,6 +27,7 @@ import {
   FullscreenDialog,
   Section,
   Snackbar,
+  Text,
   TextField,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
@@ -55,10 +56,15 @@ const PeopleSection: FC<{
         <section {...props} aria-labelledby="header-people" />
       )}
     >
-      <h2 id="header-people" className="skc-title-large">
+      <Text
+        type="title-large"
+        element={(props) => <h2 id="header-people" {...props} />}
+      >
         {t("title")}
-      </h2>
-      <p className="skc-body-medium pb-3">{t("desc")}</p>
+      </Text>
+      <Text type="body-medium" element="p" className="pb-3">
+        {t("desc")}
+      </Text>
       <div className="flex flex-col gap-6">
         <TeachersField
           label={t("teachers")}
@@ -95,10 +101,13 @@ const GoogleSection: FC<{
         <section {...props} aria-labelledby="header-google" />
       )}
     >
-      <h2 id="header-google" className="skc-title-large">
+      <Text
+        type="title-large"
+        element={(props) => <h2 id="header-google" {...props} />}
+      >
         <BrandIcon icon="google" className="inline-block" /> {t("title")}
-      </h2>
-      <p className="skc-body-medium pb-3">
+      </Text>
+      <Text type="body-medium" element="p" className="pb-3">
         <Trans
           i18nKey="dialog.roomSubject.google.desc"
           ns="teach"
@@ -113,7 +122,7 @@ const GoogleSection: FC<{
             ),
           }}
         />
-      </p>
+      </Text>
 
       {/* Fields */}
       <Columns columns={2} className="!gap-y-9">
@@ -180,21 +189,17 @@ const GoogleSection: FC<{
  * Allows the user to add or edit a Class to a Subject they teach (an
  * abstraction of editing a Room Subject).
  *
+ * @param data Existing data for a Room Subject, for editing.
+ * @param subjectID The Subject ID of the Subject Classes Dialog that triggered this Dialog.
  * @param open If the Full-screen Dialog is open and shown.
  * @param onClose Triggers when the Full-screen Dialog is closed.
  * @param onSubmit Triggers when the Room Subject is done being added/edited. This returns no data, but expects a reload.
- * @param data Existing data for a Room Subject, for editing.
- * @param subject The Subject of the Subject Classes Dialog that triggered this Dialog.
- *
- * @returns A Full-screen Dialog.
  */
-// const ClassroomSubjectDialog: SubmittableDialogComponent<
-//   () => void,
-//   { data?: SubjectListItem; subject: SubjectWNameAndCode }
-// > = ({ open, onClose, onSubmit, data, subject }) => {
-const ClassroomSubjectDialog: DialogFC<{
+const ClassroomSubjectDialog: StylableFC<{
   data?: ClassroomSubject;
   subjectID: string;
+  open?: boolean;
+  onClose: () => void;
   onSubmit: () => void;
 }> = ({ open, data, subjectID, onClose, onSubmit }) => {
   const { t } = useTranslation("teach", { keyPrefix: "dialog.roomSubject" });
