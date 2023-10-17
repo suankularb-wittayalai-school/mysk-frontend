@@ -38,7 +38,6 @@
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^13.5.4",
-    "@tailwindcss/typography": "^0.5.10",
     "@types/google-one-tap": "^1.2.3",
     "@types/node": "^20.8.6",
     "@types/react": "^18.2.28",

@@ -1,8 +1,11 @@
-/** @type {import('tailwindcss').Config} */
+// Imports
+import type { Config } from "tailwindcss";
+import plugin from "tailwindcss/plugin";
 
-const plugin = require("tailwindcss/plugin");
-
-module.exports = {
+/**
+ * TailwindCSS configuration.
+ */
+const config: Config = {
   content: [
     "./app/**/*.{js,ts,jsx,tsx}",
     "./pages/**/*.{js,ts,jsx,tsx}",
@@ -232,9 +235,10 @@ module.exports = {
     },
   },
   plugins: [
-    require("@tailwindcss/typography"),
     plugin(function ({ addVariant }) {
       addVariant("state-layer", ["&::before", "&>span:empty"]);
     }),
   ],
 };
+
+export default config;
