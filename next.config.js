@@ -21,7 +21,12 @@ const withPWA = require("next-pwa")({
 module.exports = withBundleAnalyzer(
   withPWA({
     reactStrictMode: true,
-    images: { domains: ["ykqqepbodqjhiwfjcvxe.supabase.co"] },
+    images: {
+      domains: [
+        process.env.NEXT_PUBLIC_SUPABASE_URL.replace("https://", ""),
+        "lh3.googleusercontent.com",
+      ],
+    },
     i18n,
     async redirects() {
       return [
