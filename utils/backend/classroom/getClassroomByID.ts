@@ -58,8 +58,6 @@ export default async function getClassroomByID(
     year`,
   );
 
-  console.log(options?.includeStudents)
-
   // Blank out Students if not requested
   if (options?.includeStudents)
     query = query.order("class_no", { foreignTable: "classroom_students" });
