@@ -1,6 +1,7 @@
 import logError from "@/utils/helpers/logError";
 import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
+import { Classroom } from "@/utils/types/classroom";
 import { Student } from "@/utils/types/person";
 
 /**
@@ -16,11 +17,7 @@ import { Student } from "@/utils/types/person";
 export default async function getStudentsOfClass(
   supabase: DatabaseClient,
   classroomID: string,
-): Promise<
-  BackendReturn<
-    Pick<Student, "id" | "first_name" | "last_name" | "nickname" | "class_no">[]
-  >
-> {
+): Promise<BackendReturn<Classroom["students"]>> {
   const { data, error } = await supabase
     .from("classroom_students")
     .select(
@@ -35,7 +32,8 @@ export default async function getStudentsOfClass(
           last_name_en,
           last_name_th,
           nickname_en,
-          nickname_th
+          nickname_th,
+          profile
         )
       )`,
     )
@@ -53,6 +51,7 @@ export default async function getStudentsOfClass(
     middle_name: mergeDBLocales(students!.people, "middle_name"),
     last_name: mergeDBLocales(students!.people, "last_name"),
     nickname: mergeDBLocales(students!.people, "nickname"),
+    profile: students!.people!.profile,
     class_no: class_no,
   }));
 
