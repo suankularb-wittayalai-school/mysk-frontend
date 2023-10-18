@@ -1,5 +1,6 @@
 // Imports
 import ContactCard from "@/components/account/ContactCard";
+import ContactDialog from "@/components/account/ContactDialog";
 import ClassDetailsListSection from "@/components/classes/ClassDetailsListSection";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import createClassroomContact from "@/utils/backend/classroom/createClassroomContact";
@@ -17,7 +18,6 @@ import {
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useTranslation } from "next-i18next";
 import { useContext, useState } from "react";
-import ContactDialog from "../account/ContactDialog";
 
 /**
  * A list of Contacts for Class Details Card. It can be used in both read-only and editable modes.
