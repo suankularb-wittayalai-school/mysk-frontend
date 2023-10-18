@@ -29,7 +29,7 @@ export default function useConvertContactsForVCard() {
         if (getContactIsLinkable(contact))
           return sift([
             `item${idx + 1}.URL:${getContactURL(contact)}`,
-            !["Website", "Other"].includes(contact.value) &&
+            !["website", "other"].includes(contact.value) &&
               `item${idx + 1}.X-ABLabel:${
                 {
                   facebook: t("contact.facebook"),
