@@ -1,7 +1,7 @@
 // Imports
 import getUserByEmail from "@/utils/backend/account/getUserByEmail";
+import getLocalePath from "@/utils/helpers/getLocalePath";
 import logError from "@/utils/helpers/logError";
-import getLocalePath from "./utils/helpers/getLocalePath";
 import { LangCode } from "@/utils/types/common";
 import { User, UserRole } from "@/utils/types/person";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
@@ -120,8 +120,6 @@ export const config = {
     "/lookup/:path*",
     "/maintenance",
     "/news",
-    "/news/stats/:id",
-    "/news/form/:id",
-    "/news/payment/:id",
+    "/news/:id",
   ],
 };

@@ -118,7 +118,10 @@ const LookupTeachersResultsPage: NextPage<{
           <TooWideCard length={teachers.length} />
 
           {/* Results */}
-          <LookupResultsList length={teachers.length}>
+          <LookupResultsList
+            length={teachers.length}
+            filtersURL="/lookup/teachers"
+          >
             {teachers.map((teacher, idx) => (
               <LookupResultsItem
                 key={teacher.id}

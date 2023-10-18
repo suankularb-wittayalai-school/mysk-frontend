@@ -1,73 +1,7 @@
 {
-  "title": "News and forms",
-  "filter": {
-    "info": "Info",
-    "form": "Forms",
-    "payment": "Payments",
-    "amountDone": {
-      "notDone": "Not done",
-      "done": "Done",
-      "fewDone": "Few done",
-      "mostDone": "Most done",
-      "allDone": "All done"
-    }
-  },
-  "itemType": {
-    "form": "Form",
-    "stats": "Statistics",
-    "info": "Info",
-    "payment": "Payment"
-  },
-  "itemFrequency": {
-    "once": "Once",
-    "daily": "Daily",
-    "weekly": "Weekly",
-    "monthly": "Monthly",
-    "repeating": "Repeating"
-  },
-  "itemDue": {
-    "dueWithin": "Due within {{dueDate}}",
-    "pastDueBy": "Past due by {{timePast}}"
-  },
+  "title": "News",
+  "date": "{{date, datetime(day: numeric; month: long; year: numeric;)}}",
   "action": {
-    "admin": {
-      "edit": "Edit article"
-    },
-    "common": {
-      "copyLink": "Copy link"
-    },
-    "form": {
-      "do": "Do form",
-      "reset": "Reset",
-      "submit": "Submit form"
-    }
-  },
-  "snackbar": {
-    "requiredButEmpty": "Please fill in the required field “{{field}}”",
-    "success": "Your form is submitted"
-  },
-  "form": {
-    "pastSubmissions": "Past submissions",
-    "submitNew": "Submit a new one"
-  },
-  "schoolDocs": {
-    "orders": {
-      "title": "School orders",
-      "newNotice_one": "{{count}} new order this week",
-      "newNotice_other": "{{count}} new orders this week",
-      "searchPlh": "Search orders",
-      "code": "№ <span>{{code}}</span>/{{year}}"
-    },
-    "documents": {
-      "title": "Documents",
-      "newNotice_one": "{{count}} new document this week",
-      "newNotice_other": "{{count}} new documents this week",
-      "searchPlh": "Search documents",
-      "code": "MoE 04290.20/<span>{{code}}</span>"
-    },
-    "action": {
-      "back": "Back",
-      "next": "Next"
-    }
+    "share": "Share"
   }
 }

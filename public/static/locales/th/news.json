@@ -1,71 +1,7 @@
 {
-  "title": "ข่าวสารและแบบสอบถาม",
-  "filter": {
-    "info": "บทความ",
-    "form": "แบบสอบถาม",
-    "payment": "การชำระเงิน",
-    "amountDone": {
-      "notDone": "ยังไม่ได้ทำ",
-      "done": "ทำแล้ว",
-      "fewDone": "นักเรียนทำน้อย",
-      "mostDone": "นักเรียนทำมาก",
-      "allDone": "นักเรียนทุกคนทำแล้ว"
-    }
-  },
-  "itemType": {
-    "form": "แบบสอบถาม",
-    "stats": "สถิติ",
-    "info": "บทความ",
-    "payment": "การชำระเงิน"
-  },
-  "itemFrequency": {
-    "once": "ทำครั้งเดียว",
-    "daily": "ทำทุกวัน",
-    "weekly": "ทำทุกสัปดาห์",
-    "monthly": "ทำทุกเดือน",
-    "repeating": "ทำหลายครั้ง"
-  },
-  "itemDue": {
-    "dueWithin": "ภายใน {{dueDate}}",
-    "pastDueBy": "{{timePast}}ที่แล้ว"
-  },
+  "title": "ข่าวสาร",
+  "date": "{{date, datetime(day: numeric; month: long; year: numeric;)}}",
   "action": {
-    "admin": {
-      "edit": "แก้ไขบทความ"
-    },
-    "common": {
-      "copyLink": "คัดลอกลิงก์"
-    },
-    "form": {
-      "do": "ทำแบบสอบถาม",
-      "reset": "รีเซต",
-      "submit": "ส่งแบบสอบถาม"
-    }
-  },
-  "snackbar": {
-    "requiredButEmpty": "กรุณาใส่ข้อมูลในช่อง “{{field}}”",
-    "success": "ส่งแบบสอบถามเรียบร้อย"
-  },
-  "form": {
-    "pastSubmissions": "ประวัติการทำ",
-    "submitNew": "ส่งแบบสอบถามใหม่"
-  },
-  "schoolDocs": {
-    "orders": {
-      "title": "คำสั่งโรงเรียน",
-      "newNotice": "มีคำสั่งใหม่ {{count}} คำสั่งในสัปดาห์นี้",
-      "searchPlh": "ค้นหาคำสั่ง",
-      "code": "ที่ <span>{{code}}</span>/{{year}}"
-    },
-    "documents": {
-      "title": "หนังสือออก",
-      "newNotice": "มีหนังสือออกใหม่ {{count}} หนังสือในสัปดาห์นี้",
-      "searchPlh": "ค้นหาหนังสือออก",
-      "code": "ศธ 04290.20/<span>{{code}}</span>"
-    },
-    "action": {
-      "back": "หน้าที่แล้ว",
-      "next": "หน้าต่อไป"
-    }
+    "share": "แชร์"
   }
 }

@@ -1,5 +1,6 @@
 // Imports
 import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
+import getCurrentSemester from "@/utils/helpers/getCurrentSemester";
 import logError from "@/utils/helpers/logError";
 import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
 import getCurrentPeriod from "@/utils/helpers/schedule/getCurrentPeriod";
@@ -53,6 +54,14 @@ export default async function getLookupClassrooms(
     )
     .order("number")
     .eq("year", options?.year || getCurrentAcademicYear())
+    .eq(
+      "schedule_item_classrooms.schedule_items.year",
+      options?.year || getCurrentAcademicYear(),
+    )
+    .eq(
+      "schedule_item_classrooms.schedule_items.semester",
+      getCurrentSemester(),
+    )
     .eq("schedule_item_classrooms.schedule_items.day", new Date().getDay());
 
   if (error) {
@@ -99,7 +108,7 @@ export default async function getLookupClassrooms(
     });
 
     // If the School Session is not in session, return the Classroom data as-is
-    if (getCurrentSchoolSessionState() !== "in-session") return classroom;
+    // if (getCurrentSchoolSessionState() !== "in-session") return classroom;
 
     // Get the current and upcoming Schedule Items
     const periodNumber = getCurrentPeriod();

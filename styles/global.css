@@ -78,20 +78,11 @@
       active:translate-y-0.5 active:border-b-[0.25px];
   }
 
-  .link,
-  .markdown a {
+  .link {
     @apply font-medium text-primary underline decoration-primary decoration-2
       underline-offset-4 transition-[text-decoration-color]
       hover:decoration-tertiary hover:transition-none
       focus-visible:decoration-tertiary focus-visible:transition-none;
-  }
-
-  .markdown {
-    @apply prose max-w-none font-body text-base text-on-background
-      dark:prose-invert prose-headings:font-display
-      prose-h5:text-on-primary-container prose-h6:font-body
-      prose-h6:text-on-primary-container prose-li:marker:font-display
-      prose-li:marker:text-outline;
   }
 }
 

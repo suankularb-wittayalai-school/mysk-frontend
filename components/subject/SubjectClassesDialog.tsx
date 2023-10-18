@@ -6,6 +6,7 @@ import ClassroomSubjectDialog from "@/components/subject/ClassroomSubjectDialog"
 import SnackbarContext from "@/contexts/SnackbarContext";
 import deleteClassroomSubject from "@/utils/backend/subject/deleteClassroomSubject";
 import getClassroomSubjectsOfSubject from "@/utils/backend/subject/getClassroomSubjectsOfSubject";
+import cn from "@/utils/helpers/cn";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
@@ -30,6 +31,7 @@ import {
   Progress,
   SegmentedButton,
   Snackbar,
+  Text,
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
@@ -293,12 +295,9 @@ const SubjectClassesDialog: DialogFC<{
       <FullscreenDialog
         open={open}
         title={getLocaleString(subject.name, locale)}
-        // TODO: Remove this when `action` is optional.
-        action={null as any}
         width={640}
         onClose={onClose}
-        className="skc-body-medium relative
-          [&_.skc-fullscreen-dialog\_\_content]:sm:!h-[39rem]"
+        className="relative [&>:last-child]:sm:!h-[39rem]"
       >
         <Progress
           appearance="linear"
@@ -309,7 +308,7 @@ const SubjectClassesDialog: DialogFC<{
 
         <Columns columns={2}>
           <div>
-            <h3 className="skc-title-medium">{t("summary.subject")}</h3>
+            <Text type="title-medium">{t("summary.subject")}</Text>
             <MultilangText
               text={{
                 th: subject.name.th,
@@ -318,7 +317,7 @@ const SubjectClassesDialog: DialogFC<{
             />
           </div>
           <div>
-            <h3 className="skc-title-medium">{t("summary.subjectCode")}</h3>
+            <Text type="title-medium">{t("summary.subjectCode")}</Text>
             <MultilangText text={subject.code} />
           </div>
         </Columns>

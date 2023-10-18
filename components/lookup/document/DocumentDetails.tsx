@@ -1,10 +1,7 @@
-// External libraries
-import va from "@vercel/analytics";
-import { AnimatePresence, motion } from "framer-motion";
-import { useTranslation } from "next-i18next";
-import { FC, RefObject, useContext, useEffect, useRef, useState } from "react";
-
-// SK Components
+// Imports
+import SnackbarContext from "@/contexts/SnackbarContext";
+import { SchoolDocument } from "@/utils/types/news";
+import { UserRole } from "@/utils/types/person";
 import {
   AssistChip,
   Card,
@@ -16,13 +13,10 @@ import {
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
-
-// Contexts
-import SnackbarContext from "@/contexts/SnackbarContext";
-
-// Types
-import { SchoolDocument } from "@/utils/types/news";
-import { UserRole } from "@/utils/types/person";
+import va from "@vercel/analytics";
+import { AnimatePresence, motion } from "framer-motion";
+import { useTranslation } from "next-i18next";
+import { FC, RefObject, useContext, useEffect, useRef, useState } from "react";
 
 const DocumentActions: FC<{ document: SchoolDocument }> = ({ document }) => {
   // Translation
@@ -132,14 +126,9 @@ const RestrictionsCard: FC<{
         </Text>
       </div>
       <Text type="body-small" element="p">
-        {allowedRoles.length === 1
-          ? t("desc_one", { role: t(`descSegment.${allowedRoles[0]}`) })
-          : allowedRoles.length === 2
-          ? t("desc_two", {
-              role1: t(`descSegment.${allowedRoles[0]}`),
-              role2: t(`descSegment.${allowedRoles[1]}`),
-            })
-          : t("desc_all")}
+        {t("desc", {
+          roles: allowedRoles.map((role) => t(`descSegment.${role}`)),
+        })}
       </Text>
     </Card>
   );
@@ -171,7 +160,7 @@ const DocumentDetails: FC<{
     if (!main || !header) return;
     setIframeSize({
       width: main.clientWidth - 12,
-      height: main.clientHeight - header.clientHeight - 48,
+      height: main.clientHeight - header.clientHeight,
     });
   }
 
@@ -183,7 +172,7 @@ const DocumentDetails: FC<{
   useEffect(updateIframeSize, [document]);
 
   return (
-    <main ref={mainRef}>
+    <main ref={mainRef} className="h-full">
       <Card appearance="outlined" className="relative h-full overflow-hidden">
         {/* Top App Bar */}
         <div
@@ -211,8 +200,7 @@ const DocumentDetails: FC<{
             {/* Hide embed while loading */}
             {loading && (
               <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+                initial={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 className="absolute inset-0 bg-surface"
                 transition={transition(duration.medium4, easing.standard)}
