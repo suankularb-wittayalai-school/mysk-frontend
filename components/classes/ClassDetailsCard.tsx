@@ -77,7 +77,10 @@ const ClassDetailsCard: StylableFC<{
               </InformationCard>
             </section>
 
-            <section className="-mb-4 flex flex-col-reverse gap-x-2 gap-y-5 md:grid md:grow md:grid-cols-2">
+            <section
+              className={cn(`flex flex-col-reverse gap-x-2 gap-y-5 md:-mb-4
+                md:grid md:grow md:grid-cols-2`)}
+            >
               {/* Students */}
               {classroom.students.length > 0 && (
                 <ClassStudentList
