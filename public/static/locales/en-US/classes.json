@@ -1,5 +1,5 @@
 {
-  "title": "Classes",
+  "title": "Classrooms",
   "list": {
     "yourClass": "Your class",
     "item": {
@@ -24,6 +24,18 @@
     "general": {
       "classAdvisors": "Class advisors",
       "room": "Room"
+    },
+    "students": {
+      "title": "Students",
+      "item": {
+        "classNo": "No. {{classNo}}"
+      },
+      "action": {
+        "saveAll": "Save all"
+      }
+    },
+    "contacts": {
+      "title": "Contacts"
     }
   },
   "dialog": {

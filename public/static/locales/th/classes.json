@@ -25,6 +25,15 @@
       "classAdvisors": "ครูที่ปรึกษา",
       "room": "ห้องที่ใช้เรียน"
     },
+    "students": {
+      "title": "นักเรียน",
+      "item": {
+        "classNo": "เลขที่ {{classNo}}"
+      },
+      "action": {
+        "saveAll": "บันทึกทั้งหมด"
+      }
+    },
     "contacts": {
       "title": "ช่องทางการติดต่อ"
     }

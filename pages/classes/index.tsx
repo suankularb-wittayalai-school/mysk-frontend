@@ -82,7 +82,7 @@ const LookupClassesPage: NextPage<{
 
   const supabase = useSupabaseClient();
   const [selectedClassroom, setSelectedClassroom] =
-    useState<Omit<Classroom, "students" | "year" | "subjects">>();
+    useState<Omit<Classroom, "year" | "subjects">>();
   // Fetch the selected Classroom when the selected Classroom ID changes
   useEffect(() => {
     (async () => {
@@ -91,7 +91,9 @@ const LookupClassesPage: NextPage<{
       if (!selectedID) return false;
 
       // Fetch the selected Classroom with the selected ID
-      const { data, error } = await getClassroomByID(supabase, selectedID);
+      const { data, error } = await getClassroomByID(supabase, selectedID, {
+        includeStudents: teacherID !== null || selectedID === userClassroom?.id,
+      });
       if (error) return false;
 
       // Set the state
