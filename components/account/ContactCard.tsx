@@ -83,10 +83,17 @@ const ContactCard: StylableFC<{
             ? // If the Contact is linkable, link to it
               {
                 href: getContactURL(contact),
-                // eslint-disable-next-line react/display-name
-                element: forwardRef((props, ref) => (
-                  <a {...props} ref={ref} target="_blank" rel="noreferrer" />
-                )),
+                element: !["phone", "email"].includes(contact.type)
+                  ? // eslint-disable-next-line react/display-name
+                    forwardRef((props, ref) => (
+                      <a
+                        {...props}
+                        ref={ref}
+                        target="_blank"
+                        rel="noreferrer"
+                      />
+                    ))
+                  : "a",
               }
             : // Otherwise, copy the value to clipboard
               {
@@ -107,7 +114,11 @@ const ContactCard: StylableFC<{
             editable ? (
               <a
                 href={getContactURL(contact)}
-                target="_blank"
+                target={
+                  !["phone", "email"].includes(contact.type)
+                    ? "_blank"
+                    : "_self"
+                }
                 rel="noreferrer"
                 className="break-all"
               >
