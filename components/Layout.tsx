@@ -165,16 +165,13 @@ const Layout: FC<
               element={Link}
             />
           )}
-          {((navType || user?.role) === "student" ||
-            ((navType || user?.role) === "teacher" && isClassAdvisor)) && (
-            <NavDrawerItem
-              icon={<MaterialIcon icon="groups" />}
-              label={t("navigation.class")}
-              selected={router.pathname.startsWith("/class")}
-              href="/class"
-              element={Link}
-            />
-          )}
+          <NavDrawerItem
+            icon={<MaterialIcon icon="groups" />}
+            label={t("navigation.classes")}
+            selected={router.pathname.startsWith("/classes")}
+            href="/classes"
+            element={Link}
+          />
           <NavDrawerItem
             icon={<MaterialIcon icon="search" />}
             label={t("navigation.lookup")}
@@ -183,7 +180,6 @@ const Layout: FC<
               !(
                 router.pathname.startsWith("/lookup/students") ||
                 router.pathname.startsWith("/lookup/teachers") ||
-                router.pathname.startsWith("/lookup/classes") ||
                 router.pathname.startsWith("/lookup/documents")
               )
             }
@@ -191,7 +187,7 @@ const Layout: FC<
             element={Link}
           />
           <NavDrawerItem
-            icon={<MaterialIcon icon="newspaper" />}
+            icon={<MaterialIcon icon="newsmode" />}
             label={t("navigation.news")}
             selected={router.pathname.startsWith("/news")}
             href="/news"
@@ -208,25 +204,18 @@ const Layout: FC<
 
         {/* Lookup */}
         <NavDrawerSection header={t("navigation.drawer.lookup.title")}>
-          <NavDrawerItem
+          {/* <NavDrawerItem
             icon={<MaterialIcon icon="face_6" />}
             label={t("navigation.drawer.lookup.students")}
             selected={router.pathname.startsWith("/lookup/students")}
             href="/lookup/students"
             element={Link}
-          />
+          /> */}
           <NavDrawerItem
             icon={<MaterialIcon icon="support_agent" />}
             label={t("navigation.drawer.lookup.teachers")}
             selected={router.pathname.startsWith("/lookup/teachers")}
             href="/lookup/teachers"
-            element={Link}
-          />
-          <NavDrawerItem
-            icon={<MaterialIcon icon="groups" />}
-            label={t("navigation.drawer.lookup.classes")}
-            selected={router.pathname.startsWith("/lookup/classes")}
-            href="/lookup/classes"
             element={Link}
           />
           <NavDrawerItem
@@ -368,9 +357,9 @@ const Layout: FC<
             ((navType || user?.role) === "teacher" && isClassAdvisor)) && (
             <NavBarItem
               icon={<MaterialIcon icon="groups" />}
-              label={t("navigation.class")}
-              selected={router.pathname.startsWith("/class")}
-              href="/class"
+              label={t("navigation.classes")}
+              selected={router.pathname.startsWith("/classes")}
+              href="/classes"
               element={Link}
             />
           )}
@@ -382,7 +371,7 @@ const Layout: FC<
             element={Link}
           />
           <NavBarItem
-            icon={<MaterialIcon icon="newspaper" />}
+            icon={<MaterialIcon icon="newsmode" />}
             label={t("navigation.news")}
             selected={router.pathname.startsWith("/news")}
             href="/news"

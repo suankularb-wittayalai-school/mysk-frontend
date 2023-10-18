@@ -2,7 +2,7 @@
 import ContactCard from "@/components/account/ContactCard";
 import LookupDetailsCard from "@/components/lookup/LookupDetailsCard";
 import LookupDetailsContent from "@/components/lookup/LookupDetailsContent";
-import ClassHeader from "@/components/lookup/classes/ClassHeader";
+import ClassHeader from "@/components/classes/ClassHeader";
 import InformationCard from "@/components/lookup/teachers/InformationCard";
 import cn from "@/utils/helpers/cn";
 import getLocaleName from "@/utils/helpers/getLocaleName";
@@ -28,7 +28,7 @@ const ClassDetailsCard: StylableFC<{
   role: UserRole;
 }> = ({ classroom, teacherID, isOwnClass, role, style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("lookup", { keyPrefix: "classes.detail" });
+  const { t } = useTranslation("classes", { keyPrefix: "detail" });
 
   return (
     <LookupDetailsCard style={style} className={className}>

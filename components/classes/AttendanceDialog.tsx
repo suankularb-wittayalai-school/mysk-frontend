@@ -1,5 +1,5 @@
 // Imports
-import AttendanceListItem from "@/components/lookup/classes/AttendanceListItem";
+import AttendanceListItem from "@/components/classes/AttendanceListItem";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import getAttendancesOfClassAtDate from "@/utils/backend/attendance/getAttendancesOfClass";
 import recordAttendances from "@/utils/backend/attendance/recordAttendances";
@@ -44,11 +44,9 @@ const AttendanceDialog: StylableFC<{
   open: boolean;
   onClose: () => void;
 }> = ({ classroomID, teacherID, open, onClose, style, className }) => {
-  const { t } = useTranslation("lookup", {
-    keyPrefix: "classes.dialog.attendance",
-  });
-  const { t: ts } = useTranslation("lookup", {
-    keyPrefix: "classes.dialog.confirmAttendanceSave",
+  const { t } = useTranslation("classes", { keyPrefix: "dialog.attendance" });
+  const { t: ts } = useTranslation("classes", {
+    keyPrefix: "dialog.confirmAttendanceSave",
   }); // <-- Is this good practice?
   const { t: tx } = useTranslation("common");
 
@@ -235,8 +233,8 @@ const AttendanceDialog: StylableFC<{
               className="text-on-surface-variant"
             >
               <Trans
-                i18nKey={`classes.dialog.attendance.event.${event}.desc`}
-                ns="lookup"
+                i18nKey={`dialog.attendance.event.${event}.desc`}
+                ns="classes"
               />
             </Text>
           )}

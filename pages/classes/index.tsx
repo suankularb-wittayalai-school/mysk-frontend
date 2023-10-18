@@ -4,8 +4,8 @@ import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
 import LookupDetailsSide from "@/components/lookup/LookupDetailsSide";
 import LookupListSide from "@/components/lookup/LookupListSide";
 import LookupResultsList from "@/components/lookup/LookupResultsList";
-import ClassDetailsCard from "@/components/lookup/classes/ClassDetailsCard";
-import GradeSection from "@/components/lookup/classes/GradeSection";
+import ClassDetailsCard from "@/components/classes/ClassDetailsCard";
+import GradeSection from "@/components/classes/GradeSection";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import getClassroomByID from "@/utils/backend/classroom/getClassroomByID";
@@ -60,7 +60,7 @@ const LookupClassesPage: NextPage<{
   teacherID?: string;
   periodNumberAtFetch: number;
 }> = ({ grades, userRole, userClassroom, teacherID, periodNumberAtFetch }) => {
-  const { t } = useTranslation("lookup", { keyPrefix: "classes" });
+  const { t } = useTranslation("classes");
   const { t: tx } = useTranslation("common");
 
   const refreshProps = useRefreshProps();
@@ -237,7 +237,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
         "common",
-        "lookup",
+        "classes",
       ])),
       grades,
       userRole,
