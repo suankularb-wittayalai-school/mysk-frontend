@@ -81,25 +81,24 @@ const LookupClassesPage: NextPage<{
   );
 
   const supabase = useSupabaseClient();
+
+  /**
+   * Fetch data for the selected Classroom.
+   */
+  async function fetchSelectedClass() {
+    if (!selectedID) return;
+    const { data, error } = await getClassroomByID(supabase, selectedID, {
+      includeStudents: teacherID !== null || selectedID === userClassroom?.id,
+    });
+    if (!error) setSelectedClassroom(data);
+  }
+
   const [selectedClassroom, setSelectedClassroom] =
     useState<Omit<Classroom, "year" | "subjects">>();
   // Fetch the selected Classroom when the selected Classroom ID changes
   useEffect(() => {
-    (async () => {
-      // Clear the selected Classroom data first
-      setSelectedClassroom(undefined);
-      if (!selectedID) return false;
-
-      // Fetch the selected Classroom with the selected ID
-      const { data, error } = await getClassroomByID(supabase, selectedID, {
-        includeStudents: teacherID !== null || selectedID === userClassroom?.id,
-      });
-      if (error) return false;
-
-      // Set the state
-      setSelectedClassroom(data);
-      return true;
-    })();
+    setSelectedClassroom(undefined);
+    fetchSelectedClass();
   }, [selectedID]);
 
   const [detailsOpen, setDetailsOpen] = useState(false);
@@ -170,6 +169,7 @@ const LookupClassesPage: NextPage<{
             teacherID={teacherID}
             isOwnClass={userClassroom?.id === selectedClassroom?.id}
             role={userRole}
+            refreshData={fetchSelectedClass}
           />
         </LookupDetailsSide>
       </SplitLayout>
@@ -186,6 +186,7 @@ const LookupClassesPage: NextPage<{
           teacherID={teacherID}
           isOwnClass={userClassroom?.id === selectedClassroom?.id}
           role={userRole}
+          refreshData={fetchSelectedClass}
         />
       </LookupDetailsDialog>
     </>
@@ -239,6 +240,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
         "common",
+        ...(user?.role === "teacher" ? ["account"] : []),
         "classes",
       ])),
       grades,

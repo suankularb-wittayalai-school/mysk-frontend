@@ -1,29 +1,17 @@
 // Imports
-import ContactCard from "@/components/account/ContactCard";
+import ClassContactList from "@/components/classes/ClassContactList";
 import ClassHeader from "@/components/classes/ClassHeader";
+import ClassStudentList from "@/components/classes/ClassStudentList";
 import LookupDetailsCard from "@/components/lookup/LookupDetailsCard";
 import LookupDetailsContent from "@/components/lookup/LookupDetailsContent";
 import InformationCard from "@/components/lookup/teachers/InformationCard";
 import cn from "@/utils/helpers/cn";
 import getLocaleName from "@/utils/helpers/getLocaleName";
-import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
 import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
-import {
-  Avatar,
-  Button,
-  Card,
-  CardHeader,
-  MaterialIcon,
-  Text,
-} from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
-import Image from "next/image";
-import { sift } from "radash";
-import ClassDetailsListSection from "./ClassDetailsListSection";
-import ClassStudentList from "./ClassStudentList";
 
 /**
  * A Lookup Detail Card that displays details of a Classroom.
@@ -38,7 +26,16 @@ const ClassDetailsCard: StylableFC<{
   teacherID?: string;
   isOwnClass?: boolean;
   role: UserRole;
-}> = ({ classroom, teacherID, isOwnClass, role, style, className }) => {
+  refreshData: () => void;
+}> = ({
+  classroom,
+  teacherID,
+  isOwnClass,
+  role,
+  refreshData,
+  style,
+  className,
+}) => {
   const locale = useLocale();
   const { t } = useTranslation("classes", { keyPrefix: "detail" });
 
@@ -90,24 +87,13 @@ const ClassDetailsCard: StylableFC<{
               )}
 
               {/* Contacts */}
-              {classroom.contacts.length > 0 && (
-                <ClassDetailsListSection
-                  title={
-                    <Text type="title-medium" element="h3">
-                      {t("contacts.title")}
-                    </Text>
-                  }
-                >
-                  {classroom.contacts.map((contact) => (
-                    <li key={contact.id}>
-                      <ContactCard
-                        contact={contact}
-                        className={cn(`!border-0 hover:m-[-1px] hover:!border-1
-                          focus:m-[-1px] focus:!border-1`)}
-                      />
-                    </li>
-                  ))}
-                </ClassDetailsListSection>
+              {((teacherID && isOwnClass) || classroom.contacts.length > 0) && (
+                <ClassContactList
+                  contacts={classroom.contacts}
+                  classroomID={classroom.id}
+                  editable={teacherID !== null && isOwnClass}
+                  refreshData={refreshData}
+                />
               )}
             </section>
           </LookupDetailsContent>

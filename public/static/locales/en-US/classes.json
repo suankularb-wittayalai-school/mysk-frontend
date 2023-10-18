@@ -35,7 +35,10 @@
       }
     },
     "contacts": {
-      "title": "Contacts"
+      "title": "Contacts",
+      "action": {
+        "add": "Add contact"
+      }
     }
   },
   "dialog": {
