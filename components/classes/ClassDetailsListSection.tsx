@@ -13,7 +13,10 @@ const ClassDetailsListSection: StylableFC<{
     </div>
     {/* I don’t know why but the scrollbar only shows if I put in `h-0`
         CSS is weird! */}
-    <div className="-m-[1px] mb-0 grow md:overflow-y-auto md:overflow-x-hidden rounded-md p-[1px] md:h-0">
+    <div
+      className={cn(`-m-[1px] mb-0 grow rounded-t-md p-[1px] md:h-0
+        md:overflow-y-auto md:overflow-x-hidden`)}
+    >
       <ul className="grid gap-2 md:pb-4">{children}</ul>
     </div>
   </section>
