@@ -22,6 +22,9 @@ export async function middleware(req: NextRequest) {
   const route = req.nextUrl.pathname;
   const locale = req.nextUrl.locale as LangCode;
 
+  // Log middleware start
+  console.log(`\u001b[1m ○\u001b[0m Running middlware on ${route} …`);
+
   // Ignore all page requests if under maintenance
   if (process.env.CLOSED_FOR_MAINTENANCE === "true")
     return NextResponse.redirect(
@@ -97,6 +100,13 @@ export async function middleware(req: NextRequest) {
       else if (user?.role === "teacher") destination = "/teach";
     }
   }
+
+  // Log middleware end
+  console.log(
+    `\u001b[1m\x1b[92m ✓\x1b[0m\u001b[0m ${
+      destination ? `Redirected to ${destination}` : "Continued"
+    }`,
+  );
 
   // Redirect if decided so, continue if not
   if (destination)
