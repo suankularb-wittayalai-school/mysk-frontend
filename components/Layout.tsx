@@ -65,23 +65,6 @@ const Layout: FC<
   // Class data (for Navigation links)
   const { person: user } = useLoggedInPerson();
 
-  const [isClassAdvisor, setIsClassAdvisor] = useState<boolean>(false);
-  useEffect(() => {
-    if (!user) return;
-    (async () => {
-      // Check if the user is a Class Advisor
-      if (user!.role === "teacher") {
-        if (user.class_advisor_at) {
-          setIsClassAdvisor(true);
-          return;
-        }
-
-        // if (error) console.error(error);
-        setIsClassAdvisor(false);
-      }
-    })();
-  }, [user]);
-
   // Snackbar
   const { snackbarOpen, setSnackbarOpen, snackbarProps } = useSnackbar();
 
@@ -353,16 +336,13 @@ const Layout: FC<
               element={Link}
             />
           )}
-          {((navType || user?.role) === "student" ||
-            ((navType || user?.role) === "teacher" && isClassAdvisor)) && (
-            <NavBarItem
-              icon={<MaterialIcon icon="groups" />}
-              label={t("navigation.classes")}
-              selected={router.pathname.startsWith("/classes")}
-              href="/classes"
-              element={Link}
-            />
-          )}
+          <NavBarItem
+            icon={<MaterialIcon icon="groups" />}
+            label={t("navigation.classes")}
+            selected={router.pathname.startsWith("/classes")}
+            href="/classes"
+            element={Link}
+          />
           <NavBarItem
             icon={<MaterialIcon icon="search" />}
             label={t("navigation.lookup")}
