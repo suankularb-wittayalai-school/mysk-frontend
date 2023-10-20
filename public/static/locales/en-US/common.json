@@ -9,7 +9,7 @@
   "navigation": {
     "learn": "Learn",
     "teach": "Teach",
-    "class": "Class",
+    "classes": "Classes",
     "lookup": "Lookup",
     "news": "News",
     "account": "Account",
@@ -59,14 +59,6 @@
     }
   },
   "pageLoading": "Loading page…",
-  "name": {
-    "prefix": {
-      "Master": "Master ",
-      "Mr.": "Mr. ",
-      "Miss.": "Miss ",
-      "Mrs.": "Mrs. "
-    }
-  },
   "class": "M.{{number}}",
   "contact": {
     "phone": "Phone",

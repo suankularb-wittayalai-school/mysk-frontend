@@ -1,5 +1,5 @@
 // Imports
-import LookupClassCard from "@/components/lookup/classes/LookupClassCard";
+import LookupClassCard from "@/components/classes/LookupClassCard";
 import cn from "@/utils/helpers/cn";
 import useToggle from "@/utils/helpers/useToggle";
 import { Classroom } from "@/utils/types/classroom";

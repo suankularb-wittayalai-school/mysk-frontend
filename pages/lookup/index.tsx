@@ -46,12 +46,6 @@ const LookupPage: CustomPage = () => {
             href="/lookup/teachers"
           />
           <LookupChoice
-            icon={<MaterialIcon icon="groups" size={48} />}
-            title={<Trans i18nKey="choice.classes.title" ns="lookup" />}
-            desc={t("choice.classes.desc")}
-            href="/lookup/classes"
-          />
-          <LookupChoice
             icon={<MaterialIcon icon="document_scanner" size={48} />}
             title={<Trans i18nKey="choice.documents.title" ns="lookup" />}
             desc={t("choice.documents.desc")}

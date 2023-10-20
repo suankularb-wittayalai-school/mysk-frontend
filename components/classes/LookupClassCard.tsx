@@ -33,7 +33,7 @@ const LookupClassCard: StylableFC<{
   onClick: (value: string) => void;
 }> = ({ classroom, period, selected, onClick, style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("lookup", { keyPrefix: "classes.list.item" });
+  const { t } = useTranslation("classes", { keyPrefix: "list.item" });
   const { t: tx } = useTranslation("common");
 
   const currentPeriodNumber = getCurrentPeriod();

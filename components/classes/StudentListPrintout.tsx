@@ -316,10 +316,10 @@ const StudentsPrintOptions: FC<{
   formProps: FormControlProps<keyof OptionsType>;
   userRole: UserRole;
 }> = ({ form, setForm, formProps, userRole }) => {
-  const { t } = useTranslation("class", { keyPrefix: "student.print" });
+  const { t } = useTranslation("classes", { keyPrefix: "print" });
 
   return (
-    <PrintOptions parentURL="/lookup/classes">
+    <PrintOptions parentURL="/classes">
       <section className="flex flex-col gap-6 px-4 pb-5 pt-6">
         <Select
           appearance="outlined"

@@ -1,18 +1,19 @@
 // Imports
-import StudentListPrintout from "@/components/class/StudentListPrintout";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
-import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
+import StudentListPrintout from "@/components/classes/StudentListPrintout";
 import getClassroomOverview from "@/utils/backend/classroom/getClassroomOverview";
 import getStudentsOfClass from "@/utils/backend/classroom/getStudentsOfClass";
 import { getStudentsByIDs } from "@/utils/backend/person/getStudentsByIDs";
+import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
+import useLoggedInPerson from "@/utils/helpers/useLoggedInPerson";
+import { supabase } from "@/utils/supabase-backend";
 import { Classroom } from "@/utils/types/classroom";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Student, UserRole } from "@/utils/types/person";
-import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
+import { GetStaticPaths, GetStaticProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
+import { useEffect, useState } from "react";
 
 const StudentsListPrintPage: CustomPage<{
   classItem: Pick<Classroom, "id" | "number">;
@@ -21,10 +22,16 @@ const StudentsListPrintPage: CustomPage<{
     "id" | "number" | "class_advisors" | "contacts" | "subjects"
   >;
   studentList: Student[];
-  userRole: UserRole;
-}> = ({ classItem, classroomOverview, studentList, userRole }) => {
+}> = ({ classItem, classroomOverview, studentList }) => {
   const { t } = useTranslation("class");
   const { t: tx } = useTranslation("common");
+
+  const { person: user } = useLoggedInPerson();
+  const [userRole, setUserRole] = useState<UserRole>("student");
+
+  useEffect(() => {
+    if (user?.role) setUserRole(user.role);
+  }, [user]);
 
   return (
     <>
@@ -32,53 +39,46 @@ const StudentsListPrintPage: CustomPage<{
         <title>{tx("tabName", { tabName: t("student.print.title") })}</title>
       </Head>
       <StudentListPrintout
-        {...{ classItem, classroomOverview, studentList, userRole }}
+        classItem={classItem}
+        classroomOverview={classroomOverview}
+        studentList={studentList}
+        userRole={userRole}
       />
     </>
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  req,
-  res,
-}) => {
-  const supabase = createPagesServerClient({
-    req: req as NextApiRequest,
-    res: res as NextApiResponse,
-  });
+export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
+  const classNumber = Number(params?.classNumber);
+  if (Number.isNaN(classNumber)) return { notFound: true };
 
-  const { data: user } = await getLoggedInPerson(
-    supabase,
-    authOptions,
-    req,
-    res,
-    { includeContacts: true, detailed: true },
-  );
+  const { data, error } = await supabase
+    .from("classrooms")
+    .select("id")
+    .eq("number", classNumber)
+    .eq("year", getCurrentAcademicYear())
+    .single();
 
-  const userRole = user!.role;
+  if (error) return { notFound: true };
 
-  let classroom: Pick<Classroom, "id" | "number"> | null = null;
+  const classID = data.id;
 
-  switch (userRole) {
-    case "student":
-      classroom = user?.classroom!;
-      break;
-    case "teacher":
-      classroom = user?.class_advisor_at!;
-      break;
-  }
+  const { data: classItem, error: classError } = await supabase
+    .from("classrooms")
+    .select("id, number")
+    .eq("id", classID)
+    .single();
 
-  if (!classroom) return { notFound: true };
+  if (classError) return { notFound: true };
 
   const { data: classroomOverview } = await getClassroomOverview(
     supabase,
-    classroom!.id,
+    classID,
   );
 
   const { data: compactStudentList } = await getStudentsOfClass(
     supabase,
-    classroom!.id,
+    classID,
   );
 
   const { data: studentList } = await getStudentsByIDs(
@@ -91,18 +91,21 @@ export const getServerSideProps: GetServerSideProps = async ({
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
         "common",
-        "class",
-        "lookup",
+        "classes",
       ])),
-      classItem: classroom!,
+      classItem,
       classroomOverview,
       studentList: studentList!.sort(
         // Put Students with no class No. first
         (a, b) => (a.class_no || 0) - (b.class_no || 0),
       ),
-      userRole,
     },
   };
 };
+
+export const getStaticPaths: GetStaticPaths = async () => ({
+  paths: [],
+  fallback: "blocking",
+});
 
 export default StudentsListPrintPage;

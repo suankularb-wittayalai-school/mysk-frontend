@@ -1,5 +1,5 @@
 // Imports
-import AbsenceTypeSelector from "@/components/lookup/classes/AbsenceTypeSelector";
+import AbsenceTypeSelector from "@/components/classes/AbsenceTypeSelector";
 import cn from "@/utils/helpers/cn";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import getLocaleString from "@/utils/helpers/getLocaleString";
@@ -40,8 +40,8 @@ const AttendanceListItem: StylableFC<{
   const { student } = attendance;
 
   const locale = useLocale();
-  const { t } = useTranslation("lookup", {
-    keyPrefix: "classes.dialog.attendance.item",
+  const { t } = useTranslation("classes", {
+    keyPrefix: "dialog.attendance.item",
   });
 
   const { duration, easing } = useAnimationConfig();

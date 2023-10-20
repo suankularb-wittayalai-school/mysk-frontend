@@ -47,7 +47,7 @@ export default function useOneTapSignin(
       setAccountNotFoundOpen(true);
       return;
     }
-    router.push("/learn");
+    if (router.asPath !== "/") router.push("/learn");
     setLoading(false);
   }
 

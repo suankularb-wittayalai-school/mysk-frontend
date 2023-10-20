@@ -4,8 +4,8 @@ import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
 import LookupDetailsSide from "@/components/lookup/LookupDetailsSide";
 import LookupListSide from "@/components/lookup/LookupListSide";
 import LookupResultsList from "@/components/lookup/LookupResultsList";
-import ClassDetailsCard from "@/components/lookup/classes/ClassDetailsCard";
-import GradeSection from "@/components/lookup/classes/GradeSection";
+import ClassDetailsCard from "@/components/classes/ClassDetailsCard";
+import GradeSection from "@/components/classes/GradeSection";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import getClassroomByID from "@/utils/backend/classroom/getClassroomByID";
@@ -60,7 +60,7 @@ const LookupClassesPage: NextPage<{
   teacherID?: string;
   periodNumberAtFetch: number;
 }> = ({ grades, userRole, userClassroom, teacherID, periodNumberAtFetch }) => {
-  const { t } = useTranslation("lookup", { keyPrefix: "classes" });
+  const { t } = useTranslation("classes");
   const { t: tx } = useTranslation("common");
 
   const refreshProps = useRefreshProps();
@@ -81,23 +81,24 @@ const LookupClassesPage: NextPage<{
   );
 
   const supabase = useSupabaseClient();
+
+  /**
+   * Fetch data for the selected Classroom.
+   */
+  async function fetchSelectedClass() {
+    if (!selectedID) return;
+    const { data, error } = await getClassroomByID(supabase, selectedID, {
+      includeStudents: teacherID !== null || selectedID === userClassroom?.id,
+    });
+    if (!error) setSelectedClassroom(data);
+  }
+
   const [selectedClassroom, setSelectedClassroom] =
-    useState<Omit<Classroom, "students" | "year" | "subjects">>();
+    useState<Omit<Classroom, "year" | "subjects">>();
   // Fetch the selected Classroom when the selected Classroom ID changes
   useEffect(() => {
-    (async () => {
-      // Clear the selected Classroom data first
-      setSelectedClassroom(undefined);
-      if (!selectedID) return false;
-
-      // Fetch the selected Classroom with the selected ID
-      const { data, error } = await getClassroomByID(supabase, selectedID);
-      if (error) return false;
-
-      // Set the state
-      setSelectedClassroom(data);
-      return true;
-    })();
+    setSelectedClassroom(undefined);
+    fetchSelectedClass();
   }, [selectedID]);
 
   const [detailsOpen, setDetailsOpen] = useState(false);
@@ -168,6 +169,7 @@ const LookupClassesPage: NextPage<{
             teacherID={teacherID}
             isOwnClass={userClassroom?.id === selectedClassroom?.id}
             role={userRole}
+            refreshData={fetchSelectedClass}
           />
         </LookupDetailsSide>
       </SplitLayout>
@@ -184,6 +186,7 @@ const LookupClassesPage: NextPage<{
           teacherID={teacherID}
           isOwnClass={userClassroom?.id === selectedClassroom?.id}
           role={userRole}
+          refreshData={fetchSelectedClass}
         />
       </LookupDetailsDialog>
     </>
@@ -237,7 +240,8 @@ export const getServerSideProps: GetServerSideProps = async ({
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
         "common",
-        "lookup",
+        ...(user?.role === "teacher" ? ["account"] : []),
+        "classes",
       ])),
       grades,
       userRole,

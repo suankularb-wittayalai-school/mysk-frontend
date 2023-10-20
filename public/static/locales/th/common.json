@@ -9,7 +9,7 @@
   "navigation": {
     "learn": "การเรียน",
     "teach": "การสอน",
-    "class": "ห้องเรียน",
+    "classes": "ห้องเรียน",
     "lookup": "ค้นหา",
     "news": "ข่าวสาร",
     "account": "บัญชีผู้ใช้",
@@ -59,14 +59,6 @@
     }
   },
   "pageLoading": "หน้ากำลังโหลด…",
-  "name": {
-    "prefix": {
-      "Master": "เด็กชาย",
-      "Mr.": "นาย",
-      "Miss.": "นางสาว",
-      "Mrs.": "นาง"
-    }
-  },
   "class": "ม.{{number}}",
   "contact": {
     "phone": "โทรศัพท์",

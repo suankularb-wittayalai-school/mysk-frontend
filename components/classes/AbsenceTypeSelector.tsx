@@ -14,8 +14,8 @@ const AbsenceTypeSelector: StylableFC<{
   value: AbsenceType | null;
   onChange: (value: AbsenceType) => void;
 }> = ({ value, onChange, style, className }) => {
-  const { t } = useTranslation("lookup", {
-    keyPrefix: "classes.dialog.attendance.item.absenceType",
+  const { t } = useTranslation("classes", {
+    keyPrefix: "dialog.attendance.item.absenceType",
   });
 
   return (

@@ -37,10 +37,7 @@ export default function Document() {
       <body>
         <Main />
         <NextScript />
-        <Script
-          src="https://accounts.google.com/gsi/client"
-          strategy="beforeInteractive"
-        />
+        <script src="https://accounts.google.com/gsi/client" async />
       </body>
     </Html>
   );

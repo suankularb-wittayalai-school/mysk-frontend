@@ -1,5 +1,5 @@
 // Imports
-import ClassroomsField from "@/components/class/ClassroomsField";
+import ClassroomsField from "@/components/classes/ClassroomsField";
 import RoomsField from "@/components/room/RoomsField";
 import ScheduleContext from "@/contexts/ScheduleContext";
 import SnackbarContext from "@/contexts/SnackbarContext";

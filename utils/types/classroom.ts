@@ -17,7 +17,16 @@ export type Classroom = {
     | "subject_group"
   >[];
   contacts: Contact[];
-  students: Student[];
+  students: Pick<
+    Student,
+    | "id"
+    | "first_name"
+    | "middle_name"
+    | "last_name"
+    | "nickname"
+    | "profile"
+    | "class_no"
+  >[];
   year: number;
   subjects: Subject[];
 };

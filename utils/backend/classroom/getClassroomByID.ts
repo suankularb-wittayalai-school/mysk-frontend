@@ -16,6 +16,7 @@ import { pick } from "radash";
 export default async function getClassroomByID(
   supabase: DatabaseClient,
   id: string,
+  options?: Partial<{ includeStudents?: boolean }>,
 ): Promise<BackendReturn<Classroom>> {
   let query = supabase.from("classrooms").select(
     `id,
@@ -36,9 +37,31 @@ export default async function getClassroomByID(
         )
       )
     ),
+    classroom_students(
+      class_no,
+      students!inner(
+        id,
+        people!inner(
+          first_name_en,
+          first_name_th,
+          middle_name_en,
+          middle_name_th,
+          last_name_en,
+          last_name_th,
+          nickname_en,
+          nickname_th,
+          profile
+        )
+      )
+    ),
     classroom_contacts(contacts!inner(*)),
     year`,
   );
+
+  // Blank out Students if not requested
+  if (options?.includeStudents)
+    query = query.order("class_no", { foreignTable: "classroom_students" });
+  else query = query.eq("classroom_students.id", 0);
 
   const { data, error } = await query
     .eq("id", id)
@@ -74,7 +97,17 @@ export default async function getClassroomByID(
         ...contact,
       };
     }),
-    students: [],
+    students: options?.includeStudents
+      ? data!.classroom_students?.map(({ class_no, students }) => ({
+          id: students!.id,
+          first_name: mergeDBLocales(students!.people, "first_name"),
+          middle_name: mergeDBLocales(students!.people, "middle_name"),
+          last_name: mergeDBLocales(students!.people, "last_name"),
+          nickname: mergeDBLocales(students!.people, "nickname"),
+          profile: students!.people!.profile,
+          class_no: class_no,
+        }))
+      : [],
     subjects: [],
   };
 

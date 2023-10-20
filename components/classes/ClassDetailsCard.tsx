@@ -1,8 +1,9 @@
 // Imports
-import ContactCard from "@/components/account/ContactCard";
+import ClassContactList from "@/components/classes/ClassContactList";
+import ClassHeader from "@/components/classes/ClassHeader";
+import ClassStudentList from "@/components/classes/ClassStudentList";
 import LookupDetailsCard from "@/components/lookup/LookupDetailsCard";
 import LookupDetailsContent from "@/components/lookup/LookupDetailsContent";
-import ClassHeader from "@/components/lookup/classes/ClassHeader";
 import InformationCard from "@/components/lookup/teachers/InformationCard";
 import cn from "@/utils/helpers/cn";
 import getLocaleName from "@/utils/helpers/getLocaleName";
@@ -10,7 +11,6 @@ import useLocale from "@/utils/helpers/useLocale";
 import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
-import { Columns, Text } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
 
 /**
@@ -22,16 +22,31 @@ import { useTranslation } from "next-i18next";
  * @param role The role of the current user.
  */
 const ClassDetailsCard: StylableFC<{
-  classroom?: Omit<Classroom, "students" | "year" | "subjects">;
+  classroom?: Omit<Classroom, "year" | "subjects">;
   teacherID?: string;
   isOwnClass?: boolean;
   role: UserRole;
-}> = ({ classroom, teacherID, isOwnClass, role, style, className }) => {
+  refreshData: () => void;
+}> = ({
+  classroom,
+  teacherID,
+  isOwnClass,
+  role,
+  refreshData,
+  style,
+  className,
+}) => {
   const locale = useLocale();
-  const { t } = useTranslation("lookup", { keyPrefix: "classes.detail" });
+  const { t } = useTranslation("classes", { keyPrefix: "detail" });
 
   return (
-    <LookupDetailsCard style={style} className={className}>
+    <LookupDetailsCard
+      style={style}
+      className={cn(
+        `sm:overflow-visible [&>section]:md:overflow-visible`,
+        className,
+      )}
+    >
       {classroom && (
         <>
           <ClassHeader
@@ -62,27 +77,28 @@ const ClassDetailsCard: StylableFC<{
               </InformationCard>
             </section>
 
-            {classroom.contacts.length > 0 && (
-              <section className="space-y-2">
-                <Text
-                  type="title-medium"
-                  element="h3"
-                  className="rounded-md bg-surface px-3 py-2"
-                >
-                  {t("contacts.title")}
-                </Text>
-                <Columns columns={2} className="!gap-2">
-                  {classroom.contacts.map((contact) => (
-                    <ContactCard
-                      key={contact.id}
-                      contact={contact}
-                      className={cn(`!border-0 hover:m-[-1px] hover:!border-1
-                        focus:m-[-1px] focus:!border-1`)}
-                    />
-                  ))}
-                </Columns>
-              </section>
-            )}
+            <section
+              className={cn(`flex flex-col-reverse gap-x-2 gap-y-5 md:-mb-4
+                md:grid md:grow md:grid-cols-2`)}
+            >
+              {/* Students */}
+              {classroom.students.length > 0 && (
+                <ClassStudentList
+                  students={classroom.students}
+                  classNumber={classroom.number}
+                />
+              )}
+
+              {/* Contacts */}
+              {((teacherID && isOwnClass) || classroom.contacts.length > 0) && (
+                <ClassContactList
+                  contacts={classroom.contacts}
+                  classroomID={classroom.id}
+                  editable={teacherID !== null && isOwnClass}
+                  refreshData={refreshData}
+                />
+              )}
+            </section>
           </LookupDetailsContent>
         </>
       )}

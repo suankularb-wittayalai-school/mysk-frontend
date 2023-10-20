@@ -121,9 +121,9 @@
         "email": "Email address",
         "website": "URL",
         "facebook": "Facebook name",
-        "line": "LINE ID/invite code",
+        "line": "LINE ID/invite link",
         "instagram": "Instagram username",
-        "discord": "Discord invite code/username",
+        "discord": "Discord invite link/username",
         "other": "Value"
       },
       "value_error": "Invalid value.",

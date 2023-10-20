@@ -1,5 +1,5 @@
 // Imports
-import AttendanceDialog from "@/components/lookup/classes/AttendanceDialog";
+import AttendanceDialog from "@/components/classes/AttendanceDialog";
 import cn from "@/utils/helpers/cn";
 import useConvertContactsForVCard from "@/utils/helpers/contact/useConvertContactsForVCard";
 import { Classroom } from "@/utils/types/classroom";
@@ -34,7 +34,7 @@ const ClassHeader: StylableFC<{
   isOwnClass?: boolean;
   role: UserRole;
 }> = ({ classroom, teacherID, isOwnClass, role, style, className }) => {
-  const { t } = useTranslation("lookup", { keyPrefix: "classes.header" });
+  const { t } = useTranslation("classes", { keyPrefix: "header" });
   const { t: tx } = useTranslation("common");
 
   const convertContactsForVCard = useConvertContactsForVCard();
@@ -92,7 +92,7 @@ const ClassHeader: StylableFC<{
         {(role !== "student" || isOwnClass) && (
           <AssistChip
             icon={<MaterialIcon icon="print" />}
-            href={`/lookup/classes/print/${classroom.number}`}
+            href={`/classes/print/${classroom.number}`}
             element={Link}
           >
             {t("action.print")}

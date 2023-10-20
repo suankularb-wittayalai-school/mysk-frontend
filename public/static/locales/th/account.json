@@ -106,17 +106,17 @@
         "discord": "Discord",
         "other": "อื่น ๆ"
       },
-      "nameTH": "ชื่อ/หมายเหตุ",
-      "nameEN": "ชื่อ/หมายเหตุภาษาอังกฤษ",
+      "nameTH": "หมายเหตุ",
+      "nameEN": "หมายเหตุภาษาอังกฤษ",
       "name_helper": "(ไม่จำเป็น)",
       "value": {
         "phone": "เบอร์โทรศัพท์",
         "email": "ที่อยู่อีเมล",
         "website": "URL",
         "facebook": "ชื่อ Facebook",
-        "line": "รหัสเชิญเข้ากลุ่ม/LINE ID",
+        "line": "ลิงก์เชิญเข้ากลุ่ม/LINE ID",
         "instagram": "ชื่อผู้ใช้ Instagram",
-        "discord": "รหัสเชิญเข้า Discord/ชื่อผู้ใช้",
+        "discord": "ลิงก์เชิญเข้า Discord/ชื่อผู้ใช้",
         "other": "ชื่อ/ID ติดต่อ"
       },
       "value_error": "ค่าไม่ถูกต้อง",

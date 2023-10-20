@@ -1,16 +1,3 @@
-/**
- * `/` TABLE OF CONTENTS
- *
- * Note: `Ctrl` + click to jump to a component.
- *
- * **Sections**
- * - {@link LogInSection}
- * - {@link PatchNotesSection}
- *
- * **Page**
- * - {@link LandingPage}
- */
-
 // Imports
 import MultiSchemeImage from "@/components/common/MultiSchemeImage";
 import LogInSide from "@/components/landing/LogInSide";
@@ -18,12 +5,15 @@ import PatchNotesSide from "@/components/landing/PatchNotesSide";
 import BlobsFullDark from "@/public/images/graphics/blobs/full-dark.svg";
 import BlobsFullLight from "@/public/images/graphics/blobs/full-light.svg";
 import cn from "@/utils/helpers/cn";
+import useUser from "@/utils/helpers/useUser";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Columns, ContentLayout, Text } from "@suankularb-components/react";
 import { LayoutGroup } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 /**
  * The landing for users who have not yet logged in. Contains the Google Sign
@@ -32,6 +22,12 @@ import Head from "next/head";
 const LandingPage: CustomPage = () => {
   const { t } = useTranslation("landing");
   const { t: tx } = useTranslation("common");
+
+  const router = useRouter();
+  const { status } = useUser();
+  useEffect(() => {
+    if (status === "authenticated") router.push("/learn");
+  }, [status]);
 
   return (
     <>
