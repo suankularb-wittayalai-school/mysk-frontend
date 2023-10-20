@@ -118,7 +118,14 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    // Exclude API, Vercel, and Next.js routes and static files
-    "/((?!api|fallback|_offline|_vercel|_next/static|_next/image|sw.js|workbox|favicon|icon|maskable|mstile|site.webmanifest).*)",
+    "/account/:path*",
+    "/admin/:path*",
+    "/learn",
+    "/teach",
+    "/classes/:path*",
+    "/lookup/:path*",
+    "/maintenance",
+    "/news",
+    "/news/:id",
   ],
 };
