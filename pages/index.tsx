@@ -4,10 +4,12 @@ import LogInSide from "@/components/landing/LogInSide";
 import PatchNotesSide from "@/components/landing/PatchNotesSide";
 import BlobsFullDark from "@/public/images/graphics/blobs/full-dark.svg";
 import BlobsFullLight from "@/public/images/graphics/blobs/full-light.svg";
+import flagUserAsOnboarded from "@/utils/backend/account/flagUserAsOnboarded";
 import cn from "@/utils/helpers/cn";
 import useUser from "@/utils/helpers/useUser";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Columns, ContentLayout, Text } from "@suankularb-components/react";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { LayoutGroup } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -24,10 +26,24 @@ const LandingPage: CustomPage = () => {
   const { t: tx } = useTranslation("common");
 
   const router = useRouter();
-  const { status } = useUser();
+  const { user, status } = useUser();
+  const supabase = useSupabaseClient();
+
+  // Determine if and where to redirect depending on user status
   useEffect(() => {
-    if (status === "authenticated") router.push("/learn");
-  }, [status]);
+    (async () => {
+      if (status !== "authenticated" || !user) return;
+      // Redirect to Learn if user has already onboarded
+      if (user.onboarded) {
+        router.push("/learn");
+        return;
+      }
+      // Flag user as onboarded and redirect to account page if they are a
+      // first-time user
+      await flagUserAsOnboarded(supabase, user.id);
+      router.push("/account");
+    })();
+  }, [user, status, supabase]);
 
   return (
     <>
