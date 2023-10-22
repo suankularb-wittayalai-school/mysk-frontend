@@ -19,8 +19,9 @@ import {
 import { differenceInMinutes, differenceInSeconds } from "date-fns";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { Trans, useTranslation } from "next-i18next";
-import { list } from "radash";
+import { camel } from "radash";
 import { useMemo } from "react";
+import GlancePeriods from "./GlanceSubjects";
 
 /**
  * A glanceable banner dynamically updated by the current and upcoming schedule
@@ -41,10 +42,15 @@ const HomeGlance: StylableFC<{
   const now = useNow();
 
   // Determine relevant periods every second
-  const periodNumber = getCurrentPeriod();
-  const todayRow = list(1, 5).includes(now.getDay())
-    ? schedule.content[now.getDay() - 1].content
-    : [];
+  const periodNumber = useMemo(getCurrentPeriod, [now]);
+  // const todayRow = useMemo(
+  //   () =>
+  //     list(1, 5).includes(now.getDay())
+  //       ? schedule.content[now.getDay() - 1].content
+  //       : [],
+  //   [schedule, now.getDay()],
+  // );
+  const todayRow = schedule.content[0].content;
 
   const currentPeriod = useMemo(
     () =>
@@ -122,6 +128,8 @@ const HomeGlance: StylableFC<{
    * and upcoming schedule items to be the most relevant.
    */
   const displayType:
+    | "assembly"
+    | "homeroom"
     | "learn-current"
     | "learn-next"
     | "lunch"
@@ -199,10 +207,10 @@ const HomeGlance: StylableFC<{
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={transition(duration.medium4, easing.standard)}
-            style={{ borderRadius: 16, ...style }}
+            style={{ borderRadius: 28, ...style }}
             className={cn(
               `relative isolate mx-4 flex flex-col gap-3 overflow-hidden
-              rounded-lg border-1 border-outline-variant bg-surface-5 p-4
+              rounded-xl border-1 border-outline-variant bg-surface-5 p-4
               sm:mx-0`,
               className,
             )}
@@ -246,177 +254,36 @@ const HomeGlance: StylableFC<{
                 transition={transition(duration.medium4, easing.standard)}
                 className="skc-text skc-text--headline-medium"
               >
-                {
-                  {
-                    "learn-current": (
-                      <Trans
-                        i18nKey="atAGlance.title.learnCurrent"
-                        ns="schedule"
-                        values={{
-                          subject: getSubjectStringFromPeriod(currentPeriod),
-                        }}
-                      />
-                    ),
-                    "learn-next": (
-                      <Trans
-                        i18nKey="atAGlance.title.learnNext"
-                        ns="schedule"
-                        values={{
-                          subject:
-                            getSubjectStringFromPeriod(immediateNextPeriod),
-                        }}
-                      />
-                    ),
-                    lunch: t("title.lunch"),
-                    "teach-current": (
-                      <Trans
-                        i18nKey="atAGlance.title.teachCurrent"
-                        ns="schedule"
-                        values={{
-                          subject: getSubjectStringFromPeriod(currentPeriod),
-                        }}
-                      />
-                    ),
-                    "teach-wrap-up": (
-                      <Trans
-                        i18nKey="atAGlance.title.teachWrapUp"
-                        ns="schedule"
-                        values={{
-                          subject: getSubjectStringFromPeriod(currentPeriod),
-                        }}
-                      />
-                    ),
-                    "teach-travel": (
-                      <Trans
-                        i18nKey="atAGlance.title.teachTravel"
-                        ns="schedule"
-                        values={{
-                          room: immediateNextPeriod?.content[0]?.rooms?.join(
-                            ", ",
-                          ),
-                        }}
-                      />
-                    ),
-                    "teach-future": (
-                      <Trans
-                        i18nKey="atAGlance.title.teachFuture"
-                        ns="schedule"
-                        values={{
-                          subject: getSubjectStringFromPeriod(todayNextPeriod),
-                        }}
-                      />
-                    ),
-                  }[displayType]
-                }
+                <Trans
+                  i18nKey={`atAGlance.title.${camel(displayType)}`}
+                  ns="schedule"
+                  values={{
+                    value: {
+                      "learn-current":
+                        getSubjectStringFromPeriod(currentPeriod),
+                      "learn-next":
+                        getSubjectStringFromPeriod(immediateNextPeriod),
+                      lunch: undefined,
+                      "teach-current":
+                        getSubjectStringFromPeriod(currentPeriod),
+                      "teach-wrap-up":
+                        getSubjectStringFromPeriod(currentPeriod),
+                      "teach-travel":
+                        immediateNextPeriod?.content[0]?.rooms?.join(", "),
+                      "teach-future":
+                        getSubjectStringFromPeriod(todayNextPeriod),
+                    }[displayType],
+                  }}
+                />
               </motion.h2>
             </AnimatePresence>
 
             {/* Subjects details */}
             <LayoutGroup>
               <AnimatePresence initial={false}>
-                <motion.ul layout="position" role="list" className="contents">
-                  {displayPeriod?.content.map((period, idx) => (
-                    <motion.li
-                      key={period.id}
-                      layoutId={`subject-${period.id}`}
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
-                      transition={transition(duration.medium4, easing.standard)}
-                      className="grid grid-cols-2 gap-x-6 gap-y-3 md:grid-cols-4"
-                    >
-                      {/* Subject */}
-                      <div className="flex flex-col">
-                        {idx === 0 && (
-                          <Text type="title-medium" element="h3">
-                            {t("details.subject")}
-                          </Text>
-                        )}
-                        <Text
-                          type="body-medium"
-                          element="p"
-                          className={cn(
-                            `text-on-surface-variant`,
-                            idx !== 0 && `-mt-2`,
-                          )}
-                        >
-                          {getLocaleString(period.subject.name, locale)}
-                        </Text>
-                      </div>
-
-                      {/* Subject code */}
-                      <div className="flex flex-col">
-                        {idx === 0 && (
-                          <Text type="title-medium" element="h3">
-                            {t("details.code")}
-                          </Text>
-                        )}
-                        <Text
-                          type="body-medium"
-                          element="p"
-                          className={cn(
-                            `text-on-surface-variant`,
-                            idx !== 0 && `-mt-2`,
-                          )}
-                        >
-                          {getLocaleString(period.subject.code, locale)}
-                        </Text>
-                      </div>
-
-                      {/* Teachers */}
-                      <div
-                        className={cn(
-                          `flex flex-col`,
-                          !(
-                            period.rooms && period.rooms?.find((room) => room)
-                          ) && `col-span-2`,
-                        )}
-                      >
-                        {idx === 0 && (
-                          <Text type="title-medium" element="h3">
-                            {t("details.teachers")}
-                          </Text>
-                        )}
-                        <Text
-                          type="body-medium"
-                          element="p"
-                          className={cn(
-                            `text-on-surface-variant`,
-                            idx !== 0 && `-mt-2`,
-                          )}
-                        >
-                          <HoverList
-                            people={period.teachers}
-                            options={{ nameJoinerOptions: { lastName: true } }}
-                          />
-                        </Text>
-                      </div>
-
-                      {/* Room */}
-                      {displayPeriod.content.find(
-                        (period) => period.rooms?.find((room) => room),
-                      ) && (
-                        <div className="flex flex-col">
-                          {idx === 0 && (
-                            <Text type="title-medium" element="h3">
-                              {t("details.room")}
-                            </Text>
-                          )}
-                          <Text
-                            type="body-medium"
-                            element="p"
-                            className={cn(
-                              `text-on-surface-variant`,
-                              idx !== 0 && `-mt-2`,
-                            )}
-                          >
-                            {period.rooms?.join(", ") || " "}
-                          </Text>
-                        </div>
-                      )}
-                    </motion.li>
-                  ))}
-                </motion.ul>
+                {displayPeriod && (
+                  <GlancePeriods periods={displayPeriod.content} />
+                )}
               </AnimatePresence>
             </LayoutGroup>
           </motion.div>
