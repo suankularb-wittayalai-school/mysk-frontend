@@ -1,6 +1,5 @@
 // Imports
 import LogOutDialog from "@/components/account/LogOutDialog";
-import RailLogo from "@/components/brand/RailLogo";
 import SchemeIcon from "@/components/icons/SchemeIcon";
 import AppStateContext from "@/contexts/AppStateContext";
 import useLocale from "@/utils/helpers/useLocale";
@@ -34,6 +33,7 @@ import {
   useEffect,
   useState,
 } from "react";
+import Favicon from "./brand/Favicon";
 
 /**
  * The root layout of MySK.
@@ -127,27 +127,21 @@ const Layout: FC<
       {/* Navigation Drawer */}
       <NavDrawer open={navOpen} onClose={() => setNavOpen(false)}>
         {/* Top-level pages */}
-        <NavDrawerSection
-          header={<Text type="headline-small">{t("appName")}</Text>}
-          alt="MySK"
-        >
-          {user?.role === "teacher" || navType === "teacher" ? (
-            <NavDrawerItem
-              icon={<MaterialIcon icon="school" />}
-              label={t("navigation.teach")}
-              selected={router.pathname.startsWith("/teach")}
-              href="/teach"
-              element={Link}
-            />
-          ) : (
-            <NavDrawerItem
-              icon={<MaterialIcon icon="school" />}
-              label={t("navigation.learn")}
-              selected={router.pathname.startsWith("/learn")}
-              href="/learn"
-              element={Link}
-            />
-          )}
+        <NavDrawerSection alt={t("appName")}>
+          <NavDrawerItem
+            icon={<Favicon />}
+            label={t("appName")}
+            selected={
+              router.pathname.startsWith("/teach") ||
+              router.pathname.startsWith("/learn")
+            }
+            href={
+              user?.role === "teacher" || navType === "teacher"
+                ? "/teach"
+                : "/learn"
+            }
+            element={Link}
+          />
           <NavDrawerItem
             icon={<MaterialIcon icon="groups" />}
             label={t("navigation.classes")}
@@ -268,11 +262,6 @@ const Layout: FC<
       {/* Navigation Bar/Rail */}
       {(!navType || navType !== "hidden") && (
         <NavBar
-          brand={
-            <Link href="/" className="group">
-              <RailLogo />
-            </Link>
-          }
           fab={fab}
           end={
             <>
@@ -319,23 +308,20 @@ const Layout: FC<
           onNavToggle={() => setNavOpen(true)}
           locale={locale}
         >
-          {(navType || user?.role) === "teacher" ? (
-            <NavBarItem
-              icon={<MaterialIcon icon="school" />}
-              label={t("navigation.teach")}
-              selected={router.pathname.startsWith("/teach")}
-              href="/teach"
-              element={Link}
-            />
-          ) : (
-            <NavBarItem
-              icon={<MaterialIcon icon="school" />}
-              label={t("navigation.learn")}
-              selected={router.pathname.startsWith("/learn")}
-              href="/learn"
-              element={Link}
-            />
-          )}
+          <NavBarItem
+            icon={<Favicon />}
+            label={t("appName")}
+            selected={
+              router.pathname.startsWith("/teach") ||
+              router.pathname.startsWith("/learn")
+            }
+            href={
+              user?.role === "teacher" || navType === "teacher"
+                ? "/teach"
+                : "/learn"
+            }
+            element={Link}
+          />
           <NavBarItem
             icon={<MaterialIcon icon="groups" />}
             label={t("navigation.classes")}
