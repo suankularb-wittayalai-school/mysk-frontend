@@ -33,7 +33,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import Favicon from "./brand/Favicon";
+import Favicon from "./Favicon";
 
 /**
  * The root layout of MySK.

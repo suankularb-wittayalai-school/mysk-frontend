@@ -1,8 +1,8 @@
 // Imports
 import PageHeader from "@/components/common/PageHeader";
 import Schedule from "@/components/schedule/Schedule";
-import ScheduleAtAGlance from "@/components/schedule/ScheduleAtAGlance";
-import SubjectList from "@/components/subject/SubjectList";
+import HomeGlance from "@/components/home/HomeGlance";
+import SubjectList from "@/components/home/SubjectList";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import getClassSchedule from "@/utils/backend/schedule/getClassSchedule";
@@ -57,8 +57,8 @@ const LearnPage: CustomPage<{
 
       <ContentLayout>
         <LayoutGroup>
-          {/* At a Glance */}
-          <ScheduleAtAGlance schedule={schedule} role="student" />
+          {/* Home Glance */}
+          <HomeGlance schedule={schedule} role="student" />
 
           {/* Schedule */}
           <motion.section

@@ -1,8 +1,8 @@
 // Imports
 import PageHeader from "@/components/common/PageHeader";
 import Schedule from "@/components/schedule/Schedule";
-import ScheduleAtAGlance from "@/components/schedule/ScheduleAtAGlance";
-import TeachingSubjectCard from "@/components/subject/TeachingSubjectCard";
+import HomeGlance from "@/components/home/HomeGlance";
+import TeachingSubjectCard from "@/components/home/TeachingSubjectCard";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import getTeacherSchedule from "@/utils/backend/schedule/getTeacherSchedule";
@@ -59,8 +59,8 @@ const TeachPage: CustomPage<{
       <PageHeader>{t("title")}</PageHeader>
       <ContentLayout>
         <LayoutGroup>
-          {/* At a Glance */}
-          <ScheduleAtAGlance schedule={schedule} role="teacher" />
+          {/* Home Glance */}
+          <HomeGlance schedule={schedule} role="teacher" />
 
           {/* Schedule */}
           <motion.section

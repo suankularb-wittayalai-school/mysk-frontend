@@ -1,5 +1,5 @@
 // Imports
-import SubjectClassesDialog from "@/components/subject/SubjectClassesDialog";
+import SubjectClassesDialog from "@/components/home/SubjectClassesDialog";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
 import { SubjectClassrooms } from "@/utils/types/subject";

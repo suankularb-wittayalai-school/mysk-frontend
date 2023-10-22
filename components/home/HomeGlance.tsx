@@ -1,6 +1,6 @@
 // Imports
+import GlanceCountdown from "@/components/home/GlanceCountdown";
 import HoverList from "@/components/person/HoverList";
-import GlanceCountdown from "@/components/schedule/GlanceCountdown";
 import cn from "@/utils/helpers/cn";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import getCurrentPeriod from "@/utils/helpers/schedule/getCurrentPeriod";
@@ -26,10 +26,10 @@ import { useMemo } from "react";
  * A glanceable banner dynamically updated by the current and upcoming schedule
  * items, display the most relevant information to the user.
  *
- * @param schedule Data for displaying Schedule at a Glance.
- * @param role The user’s role. Used in determining the Schedule at a Glance view.
+ * @param schedule Data for displaying Home Glance.
+ * @param role The user’s role. Used in determining the Home Glance view.
  */
-const ScheduleAtAGlance: StylableFC<{
+const HomeGlance: StylableFC<{
   schedule: Schedule;
   role: UserRole;
 }> = ({ schedule, role, style, className }) => {
@@ -118,7 +118,7 @@ const ScheduleAtAGlance: StylableFC<{
     (secondsSinceStart / ((currentPeriod?.duration || 1) * 50 * 60)) * 100;
 
   /**
-   * The type of At a Glance to display to the user, calculated by the current
+   * The type of Home Glance to display to the user, calculated by the current
    * and upcoming schedule items to be the most relevant.
    */
   const displayType:
@@ -426,4 +426,4 @@ const ScheduleAtAGlance: StylableFC<{
   );
 };
 
-export default ScheduleAtAGlance;
+export default HomeGlance;
