@@ -23,7 +23,7 @@ export async function middleware(req: NextRequest) {
   const locale = req.nextUrl.locale as LangCode;
 
   // Log middleware start
-  console.log(`\u001b[1m ○\u001b[0m Running middlware on ${route} …`);
+  console.log(`\u001b[1m ○\u001b[0m Running middleware on ${route} …`);
 
   // Ignore all page requests if under maintenance
   if (process.env.CLOSED_FOR_MAINTENANCE === "true")
