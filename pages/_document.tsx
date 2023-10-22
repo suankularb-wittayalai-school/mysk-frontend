@@ -1,6 +1,5 @@
-// External libraries
-import { Html, Head, Main, NextScript } from "next/document";
-import Script from "next/script";
+// Imports
+import { Head, Html, Main, NextScript } from "next/document";
 
 export default function Document() {
   return (
@@ -33,11 +32,11 @@ export default function Document() {
           content="black-translucent"
         />
         <meta name="google" content="notranslate" />
+        <script src="https://accounts.google.com/gsi/client" async />
       </Head>
       <body>
         <Main />
         <NextScript />
-        <script src="https://accounts.google.com/gsi/client" async />
       </body>
     </Html>
   );

@@ -1,12 +1,14 @@
 // Imports
+import cn from "@/utils/helpers/cn";
 import useLocale from "@/utils/helpers/useLocale";
 import usePreferences from "@/utils/helpers/usePreferences";
 import useRefreshProps from "@/utils/helpers/useRefreshProps";
 import { LangCode, StylableFC } from "@/utils/types/common";
-import { SegmentedButton, Button, Text } from "@suankularb-components/react";
+import { Button, SegmentedButton, Text } from "@suankularb-components/react";
+import { Trans, useTranslation } from "next-i18next";
+import { list } from "radash";
 import { useState } from "react";
-import { useTranslation } from "next-i18next";
-import cn from "@/utils/helpers/cn";
+import Balancer from "react-wrap-balancer";
 
 /**
  * Patch notes of the most recent major update.
@@ -71,14 +73,20 @@ const PatchNotesSide: StylableFC = ({ style, className }) => {
             })}
           </Text>
           <Text type="title-large" element="p">
-            {t("patchNotes.title")}
+            <Balancer>{t("patchNotes.title")}</Balancer>
           </Text>
         </header>
-        <ul className="grow list-disc pl-6">
-          <li>{t("patchNotes.list.1")}</li>
-          <li>{t("patchNotes.list.2")}</li>
-          <li>{t("patchNotes.list.3")}</li>
-        </ul>
+        <Text type="body-medium" element="ul" className="grow list-disc pl-6">
+          {list(0, 2, (i) => (
+            <li key={i}>
+              <Trans
+                i18nKey={`aside.patchNotes.list.${i}`}
+                ns="landing"
+                components={{ 0: <wbr /> }}
+              />
+            </li>
+          ))}
+        </Text>
       </article>
 
       {/* Links */}
