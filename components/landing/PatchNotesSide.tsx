@@ -79,7 +79,11 @@ const PatchNotesSide: StylableFC = ({ style, className }) => {
         <Text type="body-medium" element="ul" className="grow list-disc pl-6">
           {list(0, 2, (i) => (
             <li key={i}>
-              <Trans i18nKey={`aside.patchNotes.list.${i}`} ns="landing" />
+              <Trans
+                i18nKey={`aside.patchNotes.list.${i}`}
+                ns="landing"
+                components={{ 0: <wbr /> }}
+              />
             </li>
           ))}
         </Text>
