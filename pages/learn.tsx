@@ -35,11 +35,13 @@ import { useState } from "react";
  *
  * @param schedule Data for displaying Schedule.
  * @param subjectList The Subjects this Student’s Classroom is enrolled in.
+ * @param classroomID The Classroom ID that the Teacher advises. Used in Attendance.
  */
 const LearnPage: CustomPage<{
   schedule: ScheduleType;
   subjectList: ClassroomSubject[];
-}> = ({ schedule, subjectList }) => {
+  classroomID: string;
+}> = ({ schedule, subjectList, classroomID }) => {
   const { t } = useTranslation("learn");
   const { t: tx } = useTranslation(["common", "schedule"]);
   const locale = useLocale();
@@ -58,7 +60,11 @@ const LearnPage: CustomPage<{
       <ContentLayout>
         <LayoutGroup>
           {/* Home Glance */}
-          <HomeGlance schedule={schedule} role="student" />
+          <HomeGlance
+            schedule={schedule}
+            role="student"
+            classroomID={classroomID}
+          />
 
           {/* Schedule */}
           <motion.section
@@ -105,20 +111,25 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
-  const { data: user } = await getLoggedInPerson(
+  const { data: user } = (await getLoggedInPerson(
     supabase,
     authOptions,
     req,
     res,
-  );
+  )) as { data: Student };
+
+  if (!user.classroom) return { notFound: true };
+
   const { data: schedule } = await getClassSchedule(
     supabase,
-    (user as Student).classroom!.id,
+    user.classroom!.id,
   );
   const { data: subjectList } = await getClassroomSubjectsOfClass(
     supabase,
-    (user as Student).classroom!.id,
+    user.classroom!.id,
   );
+
+  const classroomID = user.classroom!.id;
 
   return {
     props: {
@@ -126,10 +137,12 @@ export const getServerSideProps: GetServerSideProps = async ({
         "common",
         "account",
         "learn",
+        "classes",
         "schedule",
       ])),
       schedule: schedule || createEmptySchedule(1, 5),
       subjectList,
+      classroomID,
     },
   };
 };

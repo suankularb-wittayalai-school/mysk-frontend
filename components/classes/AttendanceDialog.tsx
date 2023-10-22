@@ -33,17 +33,27 @@ import { useContext, useEffect, useState } from "react";
 /**
  * A Dialog for taking Attendance of Students in a classroom.
  *
+ * @param event The default Attendance event to take Attendance for.
  * @param classroomID The ID of the Classroom for which Attendance is being taken.
  * @param teacherID The ID of the Teacher who is taking Attendance.
  * @param open If the Dialog is open and shown.
  * @param onClose Triggers when the Dialog is closed.
  */
 const AttendanceDialog: StylableFC<{
+  event?: "assembly" | "homeroom";
   classroomID: string;
   teacherID?: string;
   open: boolean;
   onClose: () => void;
-}> = ({ classroomID, teacherID, open, onClose, style, className }) => {
+}> = ({
+  event: defaultEvent,
+  classroomID,
+  teacherID,
+  open,
+  onClose,
+  style,
+  className,
+}) => {
   const { t } = useTranslation("classes", { keyPrefix: "dialog.attendance" });
   const { t: ts } = useTranslation("classes", {
     keyPrefix: "dialog.confirmAttendanceSave",
@@ -53,7 +63,9 @@ const AttendanceDialog: StylableFC<{
   const { setSnackbar } = useContext(SnackbarContext);
   const { duration, easing } = useAnimationConfig();
 
-  const [event, setEvent] = useState<"assembly" | "homeroom">("assembly");
+  const [event, setEvent] = useState<"assembly" | "homeroom">(
+    defaultEvent || "assembly",
+  );
 
   const supabase = useSupabaseClient();
   const [loading, toggleLoading] = useToggle();

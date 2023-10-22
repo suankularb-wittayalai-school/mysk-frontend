@@ -27,8 +27,8 @@ const GlanceCountdown: StylableFC<{
       transition={transition(duration.short4, easing.standard)}
       style={style}
       className={cn(
-        `skc-text skc-text--label-large -mb-2 w-fit !font-display
-        text-on-surface-variant md:-mb-4 [&_*]:mr-1`,
+        `skc-text skc-text--label-large -mb-2 w-fit space-x-1 !font-display
+        text-on-surface-variant md:-mb-4`,
         className,
       )}
     >
