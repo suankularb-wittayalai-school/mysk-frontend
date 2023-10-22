@@ -25,7 +25,7 @@ import {
 } from "date-fns";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { Trans, useTranslation } from "next-i18next";
-import { camel } from "radash";
+import { camel, list } from "radash";
 import { useMemo, useState } from "react";
 
 /**
@@ -65,14 +65,13 @@ const HomeGlance: StylableFC<{
 
   // Determine relevant periods every second
   const periodNumber = useMemo(getCurrentPeriod, [now]);
-  // const todayRow = useMemo(
-  //   () =>
-  //     list(1, 5).includes(now.getDay())
-  //       ? schedule.content[now.getDay() - 1].content
-  //       : [],
-  //   [schedule, now.getDay()],
-  // );
-  const todayRow = schedule.content[0].content;
+  const todayRow = useMemo(
+    () =>
+      list(1, 5).includes(now.getDay())
+        ? schedule.content[now.getDay() - 1].content
+        : [],
+    [schedule, now.getDay()],
+  );
 
   const currentPeriod = useMemo(
     () =>
