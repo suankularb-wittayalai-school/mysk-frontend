@@ -1,16 +1,26 @@
 import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
+import getCurrentSemester from "@/utils/helpers/getCurrentSemester";
 import logError from "@/utils/helpers/logError";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
 import { Classroom } from "@/utils/types/classroom";
 import { ClassroomSubject } from "@/utils/types/subject";
 
+/**
+ * Create a connection between a Classroom and a Subject for the current
+ * semester and academic year.
+ *
+ * @param supabase The Supabase client to use.
+ * @param classroomSubject The Classroom Subject to create.
+ *
+ * @returns A Backend Return.
+ */
 export async function createClassroomSubject(
   supabase: DatabaseClient,
   classroomSubject: Omit<ClassroomSubject, "id" | "classroom" | "subject"> & {
     classroom: Pick<Classroom, "number">;
     subject: Pick<Classroom, "id">;
   },
-): Promise<BackendReturn<null>> {
+): Promise<BackendReturn> {
   const { data: classroom, error: classroomError } = await supabase
     .from("classrooms")
     .select("id")
@@ -34,6 +44,8 @@ export async function createClassroomSubject(
       ggc_code: classroomSubject.ggc_code,
       ggc_link: classroomSubject.ggc_link,
       gg_meet_link: classroomSubject.gg_meet_link,
+      semester: getCurrentSemester(),
+      year: getCurrentAcademicYear(),
     })
     .select()
     .limit(1)
