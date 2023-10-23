@@ -10,21 +10,32 @@
       "post": "นาที"
     },
     "title": {
-      "learnCurrent": "คุณกำลังเรียน <strong>{{subject}}</strong>",
-      "learnNext": "เตรียมตัวเรียน <strong>{{subject}}</strong> ในคาบต่อไป",
+      "assembly": "ถึงเวลาเข้าแถวแล้ว",
+      "homeroom": "ถึงเวลาโฮมรูมแล้ว",
+      "learnCurrent": "คุณกำลังเรียน <strong>{{value}}</strong>",
+      "learnNext": "เตรียมตัวเรียน <strong>{{value}}</strong> ในคาบต่อไป",
       "lunch": "เวลารับประทานอาหารเที่ยง",
-      "teachCurrent": "คุณกำลังสอน <strong>{{subject}}</strong>",
+      "teachCurrent": "คุณกำลังสอน <strong>{{value}}</strong>",
       "teachWrapUp": "ใกล้หมดเวลาคาบนี้แล้ว",
-      "teachTravel": "ไปที่ห้อง <strong>{{room}}</strong> ตอนนี้",
-      "teachFuture": "คาบนี้ว่าง คาบต่อไปวันนี้คือ<strong>{{subject}}</strong>",
+      "teachTravel": "ไปที่ห้อง <strong>{{value}}</strong> ตอนนี้",
+      "teachFuture": "คาบนี้ว่าง คาบต่อไปวันนี้คือ<strong>{{value}}</strong>",
       "electiveSegment": "วิชาเลือก"
     },
     "details": {
-      "subject": "วิชา",
-      "code": "รหัสวิชา",
-      "teachers": "ครูผู้สอน",
-      "class": "ห้อง",
-      "room": "ห้องที่ใช้เรียน"
+      "subject": {
+        "title": "วิชา"
+      },
+      "code": {
+        "title": "รหัสวิชา"
+      },
+      "teachers": {
+        "title": "ครูผู้สอน",
+        "content": "{{teachers, list}}"
+      },
+      "room": {
+        "title": "ห้องที่ใช้เรียน",
+        "content": "{{rooms, list}}"
+      }
     }
   },
   "schedule": {

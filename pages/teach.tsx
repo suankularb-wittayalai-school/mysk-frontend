@@ -1,8 +1,8 @@
 // Imports
 import PageHeader from "@/components/common/PageHeader";
 import Schedule from "@/components/schedule/Schedule";
-import ScheduleAtAGlance from "@/components/schedule/ScheduleAtAGlance";
-import TeachingSubjectCard from "@/components/subject/TeachingSubjectCard";
+import HomeGlance from "@/components/home/HomeGlance";
+import TeachingSubjectCard from "@/components/home/TeachingSubjectCard";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import getTeacherSchedule from "@/utils/backend/schedule/getTeacherSchedule";
@@ -36,13 +36,21 @@ import { useState } from "react";
  * @param subjectsInCharge The Subjects assigned to this teacher. Used in editing the Schedule.
  * @param teachingSubjects An array of Teacher Subject Items, an abstraction of Room Subjects connected to this Teacher.
  * @param teacherID The Teacher’s database ID. Used in validating edits in the Schedule.
+ * @param classroomID The Classroom ID that the Teacher advises. Used in Attendance.
  */
 const TeachPage: CustomPage<{
   schedule: ScheduleType;
   subjectsInCharge: Pick<Subject, "id" | "name" | "code" | "short_name">[];
   teachingSubjects: SubjectClassrooms[];
   teacherID: string;
-}> = ({ schedule, subjectsInCharge, teachingSubjects, teacherID }) => {
+  classroomID?: string;
+}> = ({
+  schedule,
+  subjectsInCharge,
+  teachingSubjects,
+  teacherID,
+  classroomID,
+}) => {
   const locale = useLocale();
   const { t } = useTranslation("teach");
   const { t: tx } = useTranslation("common");
@@ -59,8 +67,12 @@ const TeachPage: CustomPage<{
       <PageHeader>{t("title")}</PageHeader>
       <ContentLayout>
         <LayoutGroup>
-          {/* At a Glance */}
-          <ScheduleAtAGlance schedule={schedule} role="teacher" />
+          {/* Home Glance */}
+          <HomeGlance
+            schedule={schedule}
+            role="teacher"
+            classroomID={classroomID}
+          />
 
           {/* Schedule */}
           <motion.section
@@ -144,18 +156,23 @@ export const getServerSideProps: GetServerSideProps = async ({
     user.id,
   );
 
+  const teacherID = user.id;
+  const classroomID = user.class_advisor_at?.id || null;
+
   return {
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
         "common",
         "account",
         "teach",
+        "classes",
         "schedule",
       ])),
       schedule,
       subjectsInCharge: user.subjects_in_charge,
       teachingSubjects,
-      teacherID: user.id,
+      teacherID,
+      classroomID,
     },
   };
 };
