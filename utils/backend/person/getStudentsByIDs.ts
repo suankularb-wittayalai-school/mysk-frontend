@@ -1,3 +1,4 @@
+import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import logError from "@/utils/helpers/logError";
 import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
@@ -14,9 +15,10 @@ export async function getStudentsByIDs(
       `*,
       people(*, person_contacts(contacts(*)),
       person_allergies(allergy_name)),
-      classroom_students!inner(class_no, classrooms(id, number))`,
+      classroom_students!inner(class_no, classrooms!inner(id, number))`,
     )
-    .in("id", studentID);
+    .in("id", studentID)
+    .eq("classroom_students.classrooms.year", getCurrentAcademicYear());
 
   if (studentError) {
     logError("getStudentByID (students)", studentError);
