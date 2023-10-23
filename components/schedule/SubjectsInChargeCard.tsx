@@ -3,12 +3,13 @@ import { useTranslation } from "next-i18next";
 import { FC } from "react";
 
 // SK Components
-import { Card, ChipSet } from "@suankularb-components/react";
+import { Card, ChipSet, Text } from "@suankularb-components/react";
 
 // Internal components
 import ScheduleSubjectChip from "@/components/schedule/ScheduleSubjectChip";
 
 // Types
+import cn from "@/utils/helpers/cn";
 import { Subject } from "@/utils/types/subject";
 
 /**
@@ -28,12 +29,12 @@ const SubjectsInChargeCard: FC<{
   return (
     <Card
       appearance="filled"
-      className="mx-4 min-h-[3rem] gap-2 px-4 pb-4 pt-2 sm:mx-0 sm:pb-3
-        md:!flex-row md:items-center md:gap-4 md:py-2"
+      className={cn(`mx-4 min-h-[3rem] gap-2 px-4 pb-4 pt-2 sm:mx-0 sm:pb-3
+        md:!flex-row md:items-center md:gap-4 md:py-2`)}
     >
-      <h3 className="skc-title-medium whitespace-nowrap">
+      <Text type="title-medium" element="h3" className="whitespace-nowrap">
         {t("schedule.yourSubjects")}
-      </h3>
+      </Text>
       <ChipSet>
         {subjects.map((subject) => (
           <ScheduleSubjectChip key={subject.id} subject={subject} />

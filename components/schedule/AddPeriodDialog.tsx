@@ -1,18 +1,17 @@
 // Imports
-import ClassroomsField from "@/components/class/ClassroomsField";
+import ClassroomsField from "@/components/classes/ClassroomsField";
 import RoomsField from "@/components/room/RoomsField";
 import ScheduleContext from "@/contexts/ScheduleContext";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import createScheduleItem from "@/utils/backend/schedule/createScheduleItem";
-import { withLoading } from "@/utils/helpers/loading";
-import {
-  getSubjectName,
-  periodDurationToWidth,
-} from "@/utils/helpers/schedule";
-import { getLocaleString } from "@/utils/helpers/string";
-import { useForm } from "@/utils/hooks/form";
-import { useLocale } from "@/utils/hooks/i18n";
-import { useToggle } from "@/utils/hooks/toggle";
+import cn from "@/utils/helpers/cn";
+import getLocaleString from "@/utils/helpers/getLocaleString";
+import { getSubjectName } from "@/utils/helpers/getSubjectName";
+import periodDurationToWidth from "@/utils/helpers/schedule/periodDurationToWidth";
+import useForm from "@/utils/helpers/useForm";
+import useLocale from "@/utils/helpers/useLocale";
+import useToggle from "@/utils/helpers/useToggle";
+import withLoading from "@/utils/helpers/withLoading";
 import { roomRegex } from "@/utils/patterns";
 import { Classroom } from "@/utils/types/classroom";
 import { DialogFC } from "@/utils/types/component";
@@ -114,7 +113,7 @@ const AddPeriodDialog: DialogFC<{
       open={open}
       width={360}
       onClose={onClose}
-      className="[&_.skc-text-field\_\_label]:!bg-surface-3"
+      className="[&_.skc-chip-field\_\_label]:!bg-surface-3"
     >
       <DialogHeader
         title={t("dialog.editPeriod.title.add")}
@@ -138,14 +137,14 @@ const AddPeriodDialog: DialogFC<{
               width: periodDurationToWidth(form.duration),
               borderRadius: 8,
             }}
-            className="flex h-14 flex-col overflow-hidden rounded-sm
+            className={cn(`flex h-14 flex-col overflow-hidden rounded-sm
               bg-secondary px-4 py-2 text-on-secondary
-              dark:bg-secondary-container dark:text-on-secondary-container"
+              dark:bg-secondary-container dark:text-on-secondary-container`)}
           >
             <motion.span
               key={form.duration}
               layout="position"
-              className="skc-title-medium truncate"
+              className="skc-text skc-text--title-medium truncate"
             >
               {tx("class", {
                 number: form.classrooms.length
@@ -163,7 +162,7 @@ const AddPeriodDialog: DialogFC<{
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
                 transition={transition(duration.short4, easing.standard)}
-                className="skc-body-small"
+                className="skc-text skc-text--body-small"
               >
                 {getSubjectName(form.duration, subject, locale)}
               </motion.span>

@@ -1,17 +1,21 @@
 {
-  "title": "School lookup",
-  "search": "Search everything",
-  "people": {
-    "title": "Lookup people",
-    "desc": "Find your classmates, teachers, and everyone else in Suankularb. Better connect with people with contacts and live schedule information.",
-    "count": "{{students}} students and {{teachers}} teachers available.",
-    "list": {
-      "searchAlt": "Search people",
-      "filter": {
-        "student": "Students",
-        "teacher": "Teachers"
-      }
+  "title": "Lookup",
+  "subtitle": "<0>Find everything</0> in MySK Lookup.",
+  "choice": {
+    "students": {
+      "title": "Lookup <strong>students</strong>",
+      "desc": "Find a student’s class, class number, and more."
     },
+    "teachers": {
+      "title": "Lookup <strong>teachers</strong>",
+      "desc": "Find a teacher’s subjects, office, schedule, contacts, and more."
+    },
+    "documents": {
+      "title": "Lookup <strong>documents</strong>",
+      "desc": "Easily locate, read, and download school orders and documents."
+    }
+  },
+  "people": {
     "header": {
       "loading": "Loading…",
       "action": {
@@ -24,12 +28,6 @@
     },
     "detail": {
       "loading": "Loading person details…",
-      "starbucks": {
-        "action": {
-          "readAloud": "Read aloud",
-          "openStarbucks": "Open Starbucks"
-        }
-      },
       "general": {
         "fullName": "Full name",
         "nickname": "Nickname",
@@ -80,43 +78,164 @@
       "thaiSpeechNotSupported": "Your browser doesn’t support Thai text-to-speech"
     }
   },
+  "students": {
+    "title": "Lookup students",
+    "list": {
+      "searchAlt": "Search students"
+    }
+  },
+  "teachers": {
+    "title": "Lookup teachers",
+    "searchFilters": {
+      "form": {
+        "fullName": "Search full name",
+        "fullName_helper": "Enter partially or fully the full name of a teacher",
+        "nickname": "Search nickname",
+        "nickname_helper": "Enter partially or fully the nickname of a teacher",
+        "subjectGroup": "Choose subject group",
+        "subjectGroup_default": "Any subject group",
+        "subjectGroup_helper": "Select from a list of subject groups assigned to a teacher",
+        "classroom": "Search class",
+        "classroom_helper": "Enter fully the class number a teacher is the advisor of",
+        "contact": "Search contact",
+        "contact_helper": "Enter fully a username, email, tel., or URL of a teacher’s contact"
+      },
+      "chip": {
+        "fullName": "Full name: “{{content}}”",
+        "nickname": "Nickname: “{{content}}”",
+        "subjectGroup": "Subject group: “{{content}}”",
+        "classroom": "Classroom: “{{content}}”",
+        "contact": "Contact: “{{content}}”"
+      }
+    },
+    "header": {
+      "action": {
+        "saveContact": "Save contact",
+        "seeClass": "See class",
+        "seeSchedule": "See schedule"
+      }
+    },
+    "detail": {
+      "teaching": {
+        "free": "Not teaching right now",
+        "future": "Not teaching (next period in {{time}})",
+        "ongoing": "Teaching {{subject}}"
+      },
+      "starbucks": {
+        "action": {
+          "readAloud": "Read aloud",
+          "openStarbucks": "Open Starbucks"
+        }
+      },
+      "information": {
+        "title": "Information",
+        "fullName": "Full name",
+        "nickname": "Nickname",
+        "subjectGroup": "Subject group",
+        "classAdvisorAt": "Class advisor at",
+        "birthday": "Birthday"
+      },
+      "contacts": {
+        "title": "Contacts"
+      },
+      "subjects": {
+        "title": "Subjects in charge"
+      }
+    }
+  },
   "classes": {
     "title": "Lookup classes",
-    "desc": "Get the students, teachers, subjects, and schedule of any class.",
-    "count": "{{classes}} classes available.",
     "list": {
-      "searchAlt": "Search classes",
-      "numStudents_one": "{{count}} student",
-      "numStudents_other": "{{count}} students",
+      "yourClass": "Your class",
+      "item": {
+        "period": {
+          "upcoming": "Next in {{duration}}",
+          "finished": "Finished for today"
+        }
+      }
+    },
+    "header": {
       "action": {
-        "schedule": "See schedule",
-        "students": "Students",
-        "teachers": "Teachers"
+        "print": "Print",
+        "saveContact": "Save contact",
+        "attendance": {
+          "view": "View attendance",
+          "take": "Take attendance"
+        },
+        "requestInfo": "Request info"
+      }
+    },
+    "detail": {
+      "general": {
+        "classAdvisors": "Class advisors",
+        "room": "Room"
+      }
+    },
+    "dialog": {
+      "attendance": {
+        "title": {
+          "view": "View attendance",
+          "take": "Take attendance"
+        },
+        "event": {
+          "assembly": {
+            "name": "Assembly",
+            "desc": "Assembly attendance is done <strong>prior to 08:00</strong>. Attendance data <strong>cannot</strong> be saved after this period."
+          },
+          "homeroom": {
+            "name": "Homeroom",
+            "desc": "Homeroom attendance is done <strong>between 08:00 and 08:30</strong>. Attendance data <strong>cannot</strong> be saved after this period."
+          }
+        },
+        "item": {
+          "classNo": "No. {{classNo}}",
+          "presence": {
+            "present": "Present",
+            "absent": "Absent"
+          },
+          "absenceType": {
+            "sick": "Sick leave",
+            "business": "Business leave",
+            "activity": "School activity",
+            "other": "Other"
+          },
+          "enterReason": "Enter reason"
+        },
+        "action": {
+          "save": "Save"
+        }
+      },
+      "confirmAttendanceSave": {
+        "title": "Confirm save",
+        "desc": "Once you save attendance data, you cannot edit it later.",
+        "action": {
+          "goBack": "Go back",
+          "confirm": "Confirm"
+        }
       }
     }
   },
   "documents": {
     "title": "Lookup documents",
-    "desc": "No more shuffling through file cabinets; find everything from orders to school documents.",
-    "count": "{{orders}} orders and {{documents}} school documents available.",
-    "thaiOnly": "Available in Thai only.",
     "list": {
       "searchAlt": "Search documents",
       "filter": {
         "orders": "Orders",
-        "documents": "Documents"
+        "records": "Records",
+        "announcements": "Announcements",
+        "other": "Other"
       },
       "metadata": {
         "order": "№ {{code}}/{{year}} • {{date}}",
-        "document": "MoE 04290.20/{{code}} • {{date}}"
+        "record": "{{code}} • {{date}}",
+        "announcement": "{{date}}",
+        "other": "{{date}}"
       }
     },
     "header": {
       "restrictions": {
         "title": "Restricted",
-        "desc_one": "Only {{role}} should access.",
-        "desc_two": "Only {{role1}} and {{role2}} should access.",
-        "desc_all": "Students, teachers, and parents can access.",
+        "desc": "Only {{roles, list}} should access.",
         "descSegment": {
           "student": "students",
           "teacher": "teachers",
@@ -137,15 +256,24 @@
     }
   },
   "common": {
-    "list": {
-      "title": "List",
-      "searchHelper": "Press the search icon to search.",
-      "maxNote": "For performance reasons, we limit the number of search results to 100. If you can’t find what you’re looking for, try a more specific query.",
-      "noResults": "No results.",
-      "endOfList": "You’ve reached the end."
+    "searchFilters": {
+      "title": "Search filters",
+      "desc": "Add optional filters to narrow down your search results.<br>Just enter the fields you want to filter by—no need to enter every field.",
+      "action": {
+        "search": "Search"
+      }
     },
-    "detail": {
-      "noneSelected": "Nothing selected."
+    "list": {
+      "tooWide": {
+        "title": "Filters too wide",
+        "subtitle": "Results are incomplete"
+      },
+      "empty": {
+        "desc": "No results for the given filters.",
+        "action": {
+          "clear": "Clear filters"
+        }
+      }
     }
   }
 }

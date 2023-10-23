@@ -1,20 +1,14 @@
-// External libraries
-import { GetStaticProps } from "next";
-
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
-// Images
-import ServerErrorLight from "@/public/images/graphics/error/500-light.png";
-import ServerErrorDark from "@/public/images/graphics/error/500-dark.png";
-
-// Internal components
+// Imports
 import MultiSchemeImage from "@/components/common/MultiSchemeImage";
 import ErrorHero from "@/components/error/ErrorHero";
 import ErrorLayout from "@/components/error/ErrorLayout";
-
-// Types
+import ServerErrorDark from "@/public/images/graphics/error/500-dark.png";
+import ServerErrorLight from "@/public/images/graphics/error/500-light.png";
 import { CustomPage, LangCode } from "@/utils/types/common";
+import { Text } from "@suankularb-components/react";
+import { GetStaticProps } from "next";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 const ServerErrorPage: CustomPage = () => {
   const { t } = useTranslation("common");
@@ -36,10 +30,10 @@ const ServerErrorPage: CustomPage = () => {
         verbose={t("error.500.verbose")}
         tabName={t("error.500.tabName")}
       >
-        <div className="skc-body-large flex flex-col gap-2">
+        <Text type="body-large" element="div" className="flex flex-col gap-2">
           <p>{t("error.500.desc")}</p>
           <p>{t("error.common.persistNotice")}</p>
-        </div>
+        </Text>
       </ErrorHero>
     </ErrorLayout>
   );

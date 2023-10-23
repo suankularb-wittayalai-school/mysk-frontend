@@ -1,27 +1,15 @@
-// External libraries
+// Imports
+import DynamicAvatar from "@/components/common/DynamicAvatar";
+import cn from "@/utils/helpers/cn";
+import getLocaleName from "@/utils/helpers/getLocaleName";
+import getLocaleString from "@/utils/helpers/getLocaleString";
+import useLocale from "@/utils/helpers/useLocale";
+import { PersonLookupItem, UserRole } from "@/utils/types/person";
+import { Card, CardHeader, useBreakpoint } from "@suankularb-components/react";
+import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useRouter } from "next/router";
-
-import { useTranslation } from "next-i18next";
-
 import { FC } from "react";
-
-// SK Components
-import { Card, CardHeader, useBreakpoint } from "@suankularb-components/react";
-
-// Internal components
-import DynamicAvatar from "@/components/common/DynamicAvatar";
-
-// Types
-import { PersonLookupItem, UserRole } from "@/utils/types/person";
-
-// Helpers
-import { cn } from "@/utils/helpers/className";
-import { getLocaleString } from "@/utils/helpers/string";
-import { getLocaleName } from "@/utils/helpers/string";
-
-// Hooks
-import { useLocale } from "@/utils/hooks/i18n";
 
 const PersonCard: FC<{
   person: PersonLookupItem;
@@ -67,7 +55,7 @@ const PersonCard: FC<{
               );
             },
           })}
-      className={cn([
+      className={cn(
         "!border-transparent !bg-transparent text-left",
         thisSelected && `sm:!border-outline-variant`,
         person.role === "teacher"
@@ -77,9 +65,9 @@ const PersonCard: FC<{
                sm:state-layer:!bg-on-secondary-container`
             : `state-layer:!bg-secondary`
           : thisSelected &&
-            `sm:!bg-primary-container sm:!text-on-primary-container
+              `sm:!bg-primary-container sm:!text-on-primary-container
              sm:focus:!border-primary`,
-      ])}
+      )}
     >
       <CardHeader
         avatar={
@@ -89,10 +77,10 @@ const PersonCard: FC<{
             last_name={person.last_name}
             className={
               person.role === "teacher"
-                ? cn([
+                ? cn(
                     thisSelected && `sm:!bg-secondary sm:!text-on-secondary`,
                     `!bg-secondary-container !text-on-secondary-container`,
-                  ])
+                  )
                 : thisSelected
                 ? `sm:!bg-primary sm:!text-on-primary`
                 : undefined

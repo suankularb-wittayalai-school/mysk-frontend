@@ -1,22 +1,16 @@
-// External libraries
+// Imports
+import MultilangText from "@/components/common/MultilingualText";
+import cn from "@/utils/helpers/cn";
+import getLocaleName from "@/utils/helpers/getLocaleName";
+import useLocale from "@/utils/helpers/useLocale";
+import { PeriodContentItem } from "@/utils/types/schedule";
+import { Text } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
 import { FC } from "react";
 
-// SK Components
-import MultilangText from "@/components/common/MultilingualText";
-
-// Helpers
-import { getLocaleName } from "@/utils/helpers/string";
-
-// Hooks
-import { useLocale } from "@/utils/hooks/i18n";
-
-// Types
-import { PeriodContentItem } from "@/utils/types/schedule";
-
-const PeriodDetailsContent: FC<{ period: PeriodContentItem }> = ({
-  period,
-}) => {
+const PeriodDetailsContent: FC<{
+  period: PeriodContentItem;
+}> = ({ period }) => {
   // Translation
   const locale = useLocale();
   const { t } = useTranslation("schedule");
@@ -25,10 +19,13 @@ const PeriodDetailsContent: FC<{ period: PeriodContentItem }> = ({
     <>
       {/* Teachers and coteachers */}
       <section aria-labelledby="period-teacher">
-        <h2 id="period-teacher" className="skc-title-medium">
+        <Text
+          type="title-medium"
+          element={(props) => <h2 id="period-teacher" {...props} />}
+        >
           {t("dialog.periodDetails.teachers")}
-        </h2>
-        <ul className="skc-body-medium">
+        </Text>
+        <Text type="body-medium" element="ul">
           {period.teachers.map((teacher) => (
             <li key={teacher.id}>{getLocaleName(locale, teacher)}</li>
           ))}
@@ -37,41 +34,59 @@ const PeriodDetailsContent: FC<{ period: PeriodContentItem }> = ({
               {getLocaleName(locale, teacher)}
             </li>
           ))}
-        </ul>
+        </Text>
       </section>
 
       {/* Room */}
       {period.classrooms && (
-        <section aria-labelledby="period-room">
-          <h2 id="period-room" className="skc-title-medium">
+        <section aria-labelledby="period-class">
+          <Text
+            type="title-medium"
+            element={(props) => <h2 id="period-class" {...props} />}
+          >
             {t("dialog.periodDetails.class")}
-          </h2>
-          <p className="skc-body-medium">
+          </Text>
+          <Text type="body-medium" element="p">
             {period.classrooms
               .map((classroom) =>
                 t("class", { ns: "common", number: classroom.number }),
               )
               .join(", ")}
-          </p>
+          </Text>
         </section>
       )}
 
       {/* Room */}
-      {period.rooms && (
+      {period.rooms?.find((room) => room) && (
         <section aria-labelledby="period-room">
-          <h2 id="period-room" className="skc-title-medium">
+          <Text
+            type="title-medium"
+            element={(props) => <h2 id="period-room" {...props} />}
+          >
             {t("dialog.periodDetails.room")}
-          </h2>
-          <p className="skc-body-medium">{period.rooms.join(", ")}</p>
+          </Text>
+          <Text type="body-medium" element="p">
+            {period.rooms.join(", ")}
+          </Text>
         </section>
       )}
 
       {/* Subject code */}
       <section aria-labelledby="period-code">
-        <h2 id="period-code" className="skc-title-medium">
+        <Text
+          type="title-medium"
+          element={(props) => <h2 id="period-code" {...props} />}
+        >
           {t("dialog.periodDetails.code")}
-        </h2>
-        <MultilangText text={period.subject.code} className="skc-body-medium" />
+        </Text>
+        <Text type="body-medium" element="div">
+          <MultilangText
+            text={period.subject.code}
+            className={cn(`[&>:nth-child(odd)]:border-1
+              [&>:nth-child(odd)]:border-outline-variant
+              [&>:nth-child(odd)]:!bg-surface`)}
+          />
+        </Text>
       </section>
     </>
   );

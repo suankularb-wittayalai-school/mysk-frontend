@@ -1,7 +1,7 @@
 // Imports
 import AllergiesField from "@/components/person/AllergiesField";
-import { getLocaleString } from "@/utils/helpers/string";
-import { useLocale } from "@/utils/hooks/i18n";
+import getLocaleString from "@/utils/helpers/getLocaleString";
+import useLocale from "@/utils/helpers/useLocale";
 import { FormControlProps, FormControlValues } from "@/utils/types/common";
 import { SubjectGroup } from "@/utils/types/subject";
 import {
@@ -149,7 +149,6 @@ const MiscellaneousSection: FC<{
       <Header level={3} className="sr-only">
         {t("profile.general.title")}
       </Header>
-      <p className="skc-body-medium">{t("profile.general.allergiesNote")}</p>
       <Columns columns={4} className="my-3 !gap-y-12">
         {/* <Select
           appearance="outlined"

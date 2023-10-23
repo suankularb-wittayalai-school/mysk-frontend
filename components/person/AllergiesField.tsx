@@ -26,6 +26,7 @@ const AllergiesField: FC<{
   return (
     <ChipField
       label={label || t("profile.general.allergies")}
+      helperMsg={ t("profile.general.allergies_helper")}
       value={allergyField}
       onChange={setAllergyField}
       onNewEntry={(value) => onChange([...allergies, value])}

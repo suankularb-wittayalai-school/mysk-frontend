@@ -6,7 +6,7 @@ import { FC, ReactNode, useState } from "react";
 import { Card, Search } from "@suankularb-components/react";
 
 // Hooks
-import { useLocale } from "@/utils/hooks/i18n";
+import useLocale from "@/utils/helpers/useLocale";
 
 /**
  * The left side of a Lookup page.

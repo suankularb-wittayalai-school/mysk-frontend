@@ -1,4 +1,4 @@
-import { logError } from "@/utils/helpers/debug";
+import logError from "@/utils/helpers/logError";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
 import { PeriodContentItem } from "@/utils/types/schedule";
 import { pick } from "radash";
@@ -12,7 +12,7 @@ export default async function updateScheduleItemDuration(
     .update(pick(scheduleItem, ["duration"]))
     .eq("id", scheduleItem.id);
 
-  if (error) logError("moveScheduleItem", error);
+  if (error) logError("updateScheduleItemDuration", error);
 
   return { data: null, error };
 }

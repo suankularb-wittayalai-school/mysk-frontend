@@ -1,10 +1,7 @@
-// External libraries
-import va from "@vercel/analytics";
-import { AnimatePresence, motion } from "framer-motion";
-import { useTranslation } from "next-i18next";
-import { FC, RefObject, useContext, useEffect, useRef, useState } from "react";
-
-// SK Components
+// Imports
+import SnackbarContext from "@/contexts/SnackbarContext";
+import { SchoolDocument } from "@/utils/types/news";
+import { UserRole } from "@/utils/types/person";
 import {
   AssistChip,
   Card,
@@ -12,16 +9,14 @@ import {
   MaterialIcon,
   Progress,
   Snackbar,
+  Text,
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
-
-// Contexts
-import SnackbarContext from "@/contexts/SnackbarContext";
-
-// Types
-import { SchoolDocument } from "@/utils/types/news";
-import { UserRole } from "@/utils/types/person";
+import va from "@vercel/analytics";
+import { AnimatePresence, motion } from "framer-motion";
+import { useTranslation } from "next-i18next";
+import { FC, RefObject, useContext, useEffect, useRef, useState } from "react";
 
 const DocumentActions: FC<{ document: SchoolDocument }> = ({ document }) => {
   // Translation
@@ -126,18 +121,15 @@ const RestrictionsCard: FC<{
           size={20}
           className="text-on-surface-variant"
         />
-        <h2 className="skc-title-small">{t("title")}</h2>
+        <Text type="title-small" element="h2">
+          {t("title")}
+        </Text>
       </div>
-      <p className="skc-body-small">
-        {allowedRoles.length === 1
-          ? t("desc_one", { role: t(`descSegment.${allowedRoles[0]}`) })
-          : allowedRoles.length === 2
-          ? t("desc_two", {
-              role1: t(`descSegment.${allowedRoles[0]}`),
-              role2: t(`descSegment.${allowedRoles[1]}`),
-            })
-          : t("desc_all")}
-      </p>
+      <Text type="body-small" element="p">
+        {t("desc", {
+          roles: allowedRoles.map((role) => t(`descSegment.${role}`)),
+        })}
+      </Text>
     </Card>
   );
 };
@@ -168,7 +160,7 @@ const DocumentDetails: FC<{
     if (!main || !header) return;
     setIframeSize({
       width: main.clientWidth - 12,
-      height: main.clientHeight - header.clientHeight - 48,
+      height: main.clientHeight - header.clientHeight,
     });
   }
 
@@ -180,7 +172,7 @@ const DocumentDetails: FC<{
   useEffect(updateIframeSize, [document]);
 
   return (
-    <main ref={mainRef}>
+    <main ref={mainRef} className="h-full">
       <Card appearance="outlined" className="relative h-full overflow-hidden">
         {/* Top App Bar */}
         <div
@@ -188,7 +180,9 @@ const DocumentDetails: FC<{
           className="grid items-start bg-surface-2 md:grid-cols-8"
         >
           <div className="flex flex-col gap-2 px-5 py-4 md:col-span-5">
-            <h2 className="skc-headline-small">{document.subject}</h2>
+            <Text type="headline-small" element="h2">
+              {document.subject}
+            </Text>
             <DocumentActions document={document} />
           </div>
           <RestrictionsCard
@@ -206,8 +200,7 @@ const DocumentDetails: FC<{
             {/* Hide embed while loading */}
             {loading && (
               <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+                initial={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 className="absolute inset-0 bg-surface"
                 transition={transition(duration.medium4, easing.standard)}

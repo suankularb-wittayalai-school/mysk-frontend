@@ -2,17 +2,14 @@
 import { MultiLangString } from "@/utils/types/common";
 import { Organization } from "@/utils/types/organization";
 
-type NewsBase = {
+export type NewsArticle = {
   id: string;
   created_at: string;
   title: MultiLangString;
   description: MultiLangString;
+  body: MultiLangString;
   image: string | null;
   old_url: string | null;
-};
-
-export type Info = NewsBase & {
-  body: MultiLangString;
 };
 
 export type SchoolDocument = {

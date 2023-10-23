@@ -1,6 +1,6 @@
 // Imports
-import { withLoading } from "@/utils/helpers/loading";
-import { useToggle } from "@/utils/hooks/toggle";
+import useToggle from "@/utils/helpers/useToggle";
+import withLoading from "@/utils/helpers/withLoading";
 import { DialogFC } from "@/utils/types/component";
 import {
   Actions,

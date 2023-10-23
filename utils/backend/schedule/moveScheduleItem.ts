@@ -1,5 +1,5 @@
 // Imports
-import { logError } from "@/utils/helpers/debug";
+import logError from "@/utils/helpers/logError";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
 import { SchedulePeriod } from "@/utils/types/schedule";
 import { omit } from "radash";
@@ -8,6 +8,12 @@ export default async function moveScheduleItem(
   supabase: DatabaseClient,
   scheduleItem: Omit<SchedulePeriod, "content"> & { day: number },
 ): Promise<BackendReturn<null>> {
+  if (!scheduleItem.id) {
+    const error = { message: "no ID provided." };
+    logError("moveScheduleItem", error);
+    return { data: null, error };
+  }
+
   const { error } = await supabase
     .from("schedule_items")
     .update(omit(scheduleItem, ["id"]))

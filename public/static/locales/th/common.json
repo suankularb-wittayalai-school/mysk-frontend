@@ -1,13 +1,13 @@
 {
+  "appName": "MySK",
+  "tabName": "{{tabName}} - MySK",
   "brand": {
     "name": "MySK",
-    "description": "เข้าถึงและเข้าใจข้อมูลต่างๆ ของโรงเรียนอย่างง่ายดายด้วยระบบจัดการการศึกษา MySK โรงเรียนสวนกุหลาบวิทยาลัย",
+    "description": "เข้าถึงและเข้าใจข้อมูลต่าง ๆ ของโรงเรียนอย่างง่ายดายด้วยระบบจัดการการศึกษา MySK โรงเรียนสวนกุหลาบวิทยาลัย",
     "school": "โรงเรียนสวนกุหลาบวิทยาลัย"
   },
   "navigation": {
-    "learn": "การเรียน",
-    "teach": "การสอน",
-    "class": "ห้องเรียน",
+    "classes": "ห้องเรียน",
     "lookup": "ค้นหา",
     "news": "ข่าวสาร",
     "account": "บัญชีผู้ใช้",
@@ -20,56 +20,43 @@
     "drawer": {
       "lookup": {
         "title": "ค้นหา",
-        "person": "นักเรียน/อาจารย์",
-        "class": "ห้องเรียน",
-        "document": "คำสั่งโรงเรียน/หนังสือออก"
+        "students": "นักเรียน",
+        "teachers": "อาจารย์",
+        "classes": "ห้องเรียน",
+        "documents": "เอกสารโรงเรียน"
       },
       "about": {
         "title": "เกี่ยวกับ",
         "help": "รายงาน/แนะนำ",
         "admin": "แผงควบคุม",
-        "legacy": "MySK เก่า",
         "language": "English",
         "logOut": "ออกจากระบบ"
       }
     }
   },
-  "pageHeader": {
-    "action": {
-      "navigation": "เปิดเมนู",
-      "back": "กลับ"
+  "appDrawer": {
+    "toggle": "ตัวเลือกแอพ",
+    "mysk": {
+      "title": "แอพ MySK",
+      "mysk": "MySK",
+      "clubRegistry": "ทะเบียนชุมนุม"
     },
-    "appDrawer": {
-      "toggle": "ตัวเลือกแอพ",
-      "mysk": {
-        "title": "แอพ MySK",
-        "mysk": "MySK",
-        "clubRegistry": "ทะเบียนชุมนุม"
-      },
-      "school": {
-        "title": "แอพโรงเรียน",
-        "skAcTh": "sk.ac.th",
-        "kularbFah": "กุหลาบฟ้า",
-        "kularbLuang": "กุหลาบหลวง",
-        "library": "ห้องสมุด",
-        "libraryEBook": "Library eBook",
-        "libraryOPAC": "Library OPAC"
-      },
-      "other": {
-        "title": "แอพอื่น ๆ",
-        "schoolICT": "School ICT"
-      }
+    "school": {
+      "title": "แอพโรงเรียน",
+      "skAcTh": "sk.ac.th",
+      "kularbFah": "กุหลาบฟ้า",
+      "kularbLuang": "กุหลาบหลวง",
+      "shopping": "SK Shopping",
+      "library": "ห้องสมุด",
+      "libraryEBook": "Library eBook",
+      "libraryOPAC": "Library OPAC"
+    },
+    "other": {
+      "title": "แอพอื่น ๆ",
+      "schoolICT": "School ICT"
     }
   },
   "pageLoading": "หน้ากำลังโหลด…",
-  "name": {
-    "prefix": {
-      "Master": "เด็กชาย",
-      "Mr.": "นาย",
-      "Miss.": "นางสาว",
-      "Mrs.": "นาง"
-    }
-  },
   "class": "ม.{{number}}",
   "contact": {
     "phone": "โทรศัพท์",

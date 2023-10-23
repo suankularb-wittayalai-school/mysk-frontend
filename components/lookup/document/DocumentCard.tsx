@@ -1,33 +1,28 @@
-// External libraries
+// Imports
+import cn from "@/utils/helpers/cn";
+import getLocaleYear from "@/utils/helpers/getLocaleYear";
+import useLocale from "@/utils/helpers/useLocale";
+import { SchoolDocument } from "@/utils/types/news";
+import { Card, CardHeader, useBreakpoint } from "@suankularb-components/react";
 import { isThisYear } from "date-fns";
-import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { FC } from "react";
 
-// SK Components
-import { Card, CardHeader, useBreakpoint } from "@suankularb-components/react";
-
-// Helpers
-import { cn } from "@/utils/helpers/className";
-import { getLocaleYear } from "@/utils/helpers/date";
-
-// Hooks
-import { useLocale } from "@/utils/hooks/i18n";
-
-// Types
-import { SchoolDocument } from "@/utils/types/news";
-
+/**
+ * A card that displays a Document in the list of Documents.
+ *
+ * @param document The Document to display.
+ * @param selected The currently selected Document.
+ * @param onSelectedChange The function to set the selected Document.
+ */
 const DocumentCard: FC<{
   document: SchoolDocument;
   selected?: SchoolDocument;
-  setSelected?: (value: SchoolDocument) => void;
-}> = ({ document, selected, setSelected }) => {
+  onSelectedChange: (value: SchoolDocument) => void;
+}> = ({ document, selected, onSelectedChange }) => {
   // Translation
   const locale = useLocale();
   const { t } = useTranslation("lookup", { keyPrefix: "documents.list" });
-
-  // Router
-  const router = useRouter();
 
   // Responsive
   const { atBreakpoint } = useBreakpoint();
@@ -40,12 +35,12 @@ const DocumentCard: FC<{
       appearance="outlined"
       direction="row"
       stateLayerEffect
-      className={cn([
+      className={cn(
         `w-full items-center !border-transparent pr-3 text-left`,
         selected?.id === document.id &&
           `sm:!border-outline-variant sm:!bg-primary-container
-           sm:focus:!border-primary`,
-      ])}
+          sm:focus:!border-primary`,
+      )}
       {...(atBreakpoint === "base"
         ? // If the user is on mobile, take then straight to the Google
           // Drive file
@@ -58,12 +53,7 @@ const DocumentCard: FC<{
           {
             onClick: () => {
               if (selected?.id === document.id) return;
-              if (setSelected) setSelected(document);
-              router.replace(
-                `/lookup/document?id=${document.id}&type=${document.type}`,
-                undefined,
-                { shallow: true }
-              );
+              onSelectedChange(document);
             },
           })}
     >

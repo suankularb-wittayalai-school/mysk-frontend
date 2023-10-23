@@ -1,13 +1,5 @@
 {
   "title": "Admin panel",
-  "suggestions": {
-    "title": "Suggestions",
-    "newYearNewData": {
-      "title": "New year, new data",
-      "desc": "We noticed that some tables for {{year}} is empty. Why not get started by importing and adding data for this year?",
-      "contactSupport": "Contact support for more details"
-    }
-  },
   "statistics": {
     "student": {
       "all_one": "{{count, number}} student",
@@ -35,114 +27,10 @@
     },
     "lastUpdated": "Last updated: {{date}}"
   },
-  "data": {
-    "title": "Data",
-    "manage": {
-      "title": "View and edit the school’s data",
-      "desc": "You have access to the entirety of the school’s data. You can add, edit, view, and delete entries.",
-      "action": {
-        "student": "Students",
-        "teacher": "Teachers",
-        "subject": "Subjects",
-        "class": "Classes"
-      },
-      "student": {
-        "title": "Manage students",
-        "thead": {
-          "studentID": "Student ID",
-          "nameTH": "Thai name",
-          "nameEN": "English name",
-          "class": "Class",
-          "classNo": "Class №"
-        }
-      },
-      "subject": {
-        "title": "Manage subjects",
-        "thead": {
-          "codeTH": "Thai code",
-          "codeEN": "English code",
-          "nameTH": "Thai name",
-          "nameEN": "English name",
-          "year": "Academic year",
-          "semester": "Semester"
-        }
-      },
-      "class": {
-        "title": "Manage classes",
-        "thead": {
-          "number": "Number",
-          "classAdvisorsTH": "Class advisors (in Thai)",
-          "classAdvisorsEN": "Class advisors",
-          "studentCount": "Student count",
-          "year": "Academic year"
-        },
-        "tbody": {
-          "class": "M.{{number}}",
-          "studentCount_zero": "No students",
-          "studentCount_one": "{{count, number}} student",
-          "studentCount_other": "{{count, number}} students"
-        }
-      }
-    },
-    "import": {
-      "title": "Quickly import data with CSV",
-      "desc": "Create a CSV file in the proper format with spreadsheet software like Google Sheets or Microsoft Excel, and import it here.",
-      "action": {
-        "student": "Import students",
-        "teacher": "Import teachers",
-        "subject": "Import subjects",
-        "class": "Generate classes"
-      },
-      "dialog": {
-        "import": {
-          "title": {
-            "student": "Import students",
-            "teacher": "Import teachers",
-            "subject": "Import subjects"
-          },
-          "desc": "You can import a CSV file to the MySK database. Please ensure that the columns in your CSV file match the following exactly.",
-          "table": {
-            "header": "Header",
-            "contentType": "Content type",
-            "required": "Required"
-          },
-          "form": {
-            "csvFile": "CSV file",
-            "hasHeader": "Has a header row"
-          },
-          "action": {
-            "import": "Import",
-            "downloadStarter": "Download starter file"
-          }
-        },
-        "generateClasses": {
-          "title": "Generate classes",
-          "desc": "Automatically generate a whole academic year of classes with this tool.",
-          "numGrades": "Number of grades",
-          "numClasses": {
-            "title": "Classes per grade",
-            "instructions": "Enter the amount of classes you would like in each grade. For example, if you want the classes <0>M.101, M.102, M.103</0>, enter “3” inside the field labeled “Num. of classes in M.1”.",
-            "input": "Num. classes in M.{{grade}}"
-          },
-          "preview": {
-            "title": "Preview",
-            "class": "M.{{number}}"
-          },
-          "action": {
-            "cancel": "Cancel",
-            "generate": "Generate"
-          }
-        }
-      }
-    }
-  },
-  "news": {
-    "title": "Interact with students with news articles and forms",
-    "desc": "You can create articles with text, image, and tables that appear right inside MySK for students and teachers. For data collection, you can also create forms for students to fill, and class advisors can view the results.",
+  "supabase": {
+    "title": "Manage data with Supabase Table Editor",
     "action": {
-      "createArticle": "Create an article",
-      "createForm": "Create a form",
-      "manage": "Manage existing"
+      "open": "Open Supabase"
     }
   }
 }

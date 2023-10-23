@@ -1,12 +1,8 @@
-// External libraries
-import Image, { StaticImageData } from "next/image";
-import { ComponentProps, FC, useContext } from "react";
-
-// Contexts
+// Imports
 import AppStateContext from "@/contexts/AppStateContext";
-
-// Helpers
-import { removeFromObjectByKeys } from "@/utils/helpers/object";
+import Image, { StaticImageData } from "next/image";
+import { omit } from "radash";
+import { ComponentProps, FC, useContext } from "react";
 
 const MultiSchemeImage: FC<
   Omit<ComponentProps<typeof Image>, "src"> &
@@ -22,9 +18,7 @@ const MultiSchemeImage: FC<
     <Image
       src={src}
       className="w-full"
-      {...removeFromObjectByKeys<
-        Omit<ComponentProps<typeof Image>, "src" | "className">
-      >(["srcLight", "srcDark", "className"], props)}
+      {...omit(props, ["srcLight", "srcDark", "className"])}
     />
   );
 

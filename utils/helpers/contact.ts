@@ -1,6 +1,9 @@
 // Imports
-import { getLocaleName, getLocaleString } from "@/utils/helpers/string";
-import { useLocale } from "@/utils/hooks/i18n";
+import useConvertContactsForVCard from "@/utils/helpers/contact/useConvertContactsForVCard";
+import getLocaleName from "@/utils/helpers/getLocaleName";
+import getLocaleString from "@/utils/helpers/getLocaleString";
+import isURL from "@/utils/helpers/isURL";
+import useLocale from "@/utils/helpers/useLocale";
 import { Contact } from "@/utils/types/contact";
 import { Student, Teacher } from "@/utils/types/person";
 import { useTranslation } from "next-i18next";
@@ -21,11 +24,12 @@ export function getContactURL({ type, value }: Contact) {
     case "facebook":
       return `https://www.facebook.com/search/people/?q=${value}`;
     case "line":
-      if (/^https:\/\/line\.me(\/R)?\/ti\/g\//.test(value)) return value;
+      if (isURL(value)) return value;
       return `https://line.me/ti/p/~${value}`;
     case "instagram":
       return `https://www.instagram.com/${value}`;
     case "discord":
+      if (isURL(value)) return value;
       return `https://discord.gg/invite/${value}`;
     default:
       return value;
@@ -40,19 +44,15 @@ export function getContactURL({ type, value }: Contact) {
  * @returns A boolean.
  */
 export function getContactIsLinkable({ type, value }: Contact): boolean {
-  if (type !== "other") return true;
-  try {
-    new URL(value);
-    return true;
-  } catch (TypeError) {
-    return false;
-  }
+  if (type !== "other" && !(type === "discord" && !isURL(value))) return true;
+  return isURL(value);
 }
 
 export function useGetVCard() {
   const locale = useLocale();
   const { t } = useTranslation("lookup");
-  const { t: tx } = useTranslation("common");
+
+  const convertContactsForVCard = useConvertContactsForVCard()
 
   return (person: Student | Teacher) =>
     new Blob(
@@ -62,7 +62,7 @@ export function useGetVCard() {
           `BEGIN:VCARD`,
           `VERSION:3.0`,
 
-          // Name
+          // Full name
           `N:${getLocaleName(locale, person, {
             firstName: false,
           })};${getLocaleName(locale, person, {
@@ -76,46 +76,24 @@ export function useGetVCard() {
             prefix: person.role === "teacher" ? "teacher" : false,
           })}`,
 
+          // Nickname
+          (person.nickname?.th || person.nickname?.["en-US"]) &&
+            `NICKNAME:${getLocaleString(person.nickname, locale)}`,
+
           // Birthday
-          person.birthdate && `BDAY:${person.birthdate.replace("-", "/")}`,
+          person.birthdate &&
+            `BDAY:${new Date(person.birthdate).toISOString()}`,
 
           // Contacts
-          person.contacts
-            .map((contact, idx) => {
-              switch (contact.type) {
-                case "phone":
-                  return `item${idx + 1}.TEL;type=CELL:${contact.value}`;
-                case "email":
-                  return `item${idx + 1}.EMAIL;type=INTERNET:${contact.value}`;
-                default:
-                  if (getContactIsLinkable(contact))
-                    return [
-                      `item${idx + 1}.URL:${getContactURL(contact)}`,
-                      !["Website", "Other"].includes(contact.value) &&
-                        `item${idx + 1}.X-ABLabel:${
-                          {
-                            facebook: tx("contact.facebook"),
-                            line: tx("contact.line"),
-                            instagram: tx("contact.instagram"),
-                            discord: tx("contact.discord"),
-                          }[contact.type as string]
-                        }`,
-                    ]
-                      .filter((segment) => segment)
-                      .join("\n");
-                  break;
-              }
-            })
-            .filter((segment) => segment)
-            .join("\n"),
+          convertContactsForVCard(person.contacts),
 
           // Role within the school
           person.role === "teacher" &&
             [
-              `item1.ORG:${t(
+              `ORG:${t(
                 "people.dialog.share.saveVCard.segment.org",
               )};${getLocaleString(person.subject_group.name, locale)}`,
-              `item2.TITLE:${t("people.dialog.share.saveVCard.segment.title")}`,
+              `TITLE:${t("people.dialog.share.saveVCard.segment.title")}`,
               person.class_advisor_at &&
                 `NOTE:${t("people.dialog.share.saveVCard.segment.note", {
                   number: person.class_advisor_at.number,
@@ -123,6 +101,9 @@ export function useGetVCard() {
             ]
               .filter((segment) => segment)
               .join("\n"),
+
+          // Profile
+          person.profile && `PHOTO:${person.profile}`,
 
           // VCard metadata
           `KIND:individual`,

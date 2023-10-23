@@ -1,8 +1,8 @@
 // Imports
 import getUserByEmail from "@/utils/backend/account/getUserByEmail";
 import { getPersonByID } from "@/utils/backend/person/getPersonByID";
-import { getCurrentAcademicYear } from "@/utils/helpers/date";
-import { logError } from "@/utils/helpers/debug";
+import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
+import logError from "@/utils/helpers/logError";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
 import { Student, Teacher } from "@/utils/types/person";
 import { Subject } from "@/utils/types/subject";
@@ -144,7 +144,7 @@ export async function getTeacherFromUserID(
   let { data: subjectGroupData, error: subjectGroupError } = await supabase
     .from("subject_groups")
     .select("*")
-    .eq("id", teacherData?.subject_group_id)
+    .eq("id", teacherData!.subject_group_id)
     .single();
 
   if (subjectGroupError) {

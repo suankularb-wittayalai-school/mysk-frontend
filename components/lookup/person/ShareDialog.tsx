@@ -19,10 +19,10 @@ import { DialogFC } from "@/utils/types/component";
 
 // Helpers
 import { useGetVCard } from "@/utils/helpers/contact";
-import { getLocaleName } from "@/utils/helpers/string";
+import getLocaleName from "@/utils/helpers/getLocaleName";
 
 // Hooks
-import { useLocale } from "@/utils/hooks/i18n";
+import useLocale from "@/utils/helpers/useLocale";
 
 const ShareDialog: DialogFC<{
   person: Student | Teacher;

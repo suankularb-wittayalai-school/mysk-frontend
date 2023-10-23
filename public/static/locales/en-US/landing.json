@@ -12,16 +12,16 @@
     "patchNotes": {
       "alt": "Patch notes",
       "overline": "MySK {{version}}",
-      "title": "Schedule just got more helpful",
-      "list": {
-        "1": "Schedule at a Glance shows the most relevant information from your schedule.",
-        "2": "Find any teacher’s schedule with Lookup.",
-        "3": "Add multiple rooms and classes to your schedule."
-      }
+      "title": "Power up your school experience",
+      "list": [
+        "<strong>Lookup just got smarter</strong>—search for teachers by name, contacts, and more.",
+        "<strong>Attendance at your fingertips</strong>—take and view attendance right on MySK.",
+        "<strong>A more polished look</strong>—news and classes get a refresh."
+      ]
     },
     "action": {
       "patchNotes": "More patch notes…"
     }
   },
-  "credits": "MySK is supervised by Supannee Supeerath and Atipol Sukrisadanon • Its development was led by Siravit Phokeed and Smart Wattanapornmongkol • Quality assurance by Tempoom Leelacharoen • Translations to Thai contributed by Suankularb English Club"
+  "credits": "MySK is supervised by Supannee Supeerath and Atipol Sukrisadanon • Development led by Siravit Phokeed and Smart Wattanapornmongkol • Quality assurance by Tempoom Leelacharoen • Translations to Thai contributed by Suankularb English Club"
 }

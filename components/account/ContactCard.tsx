@@ -5,10 +5,13 @@ import DiscordLogo from "@/public/images/social/discord.svg";
 import FacebookLogo from "@/public/images/social/facebook.svg";
 import InstragramLogo from "@/public/images/social/instagram.svg";
 import LineLogo from "@/public/images/social/line.svg";
-import { range } from "@/utils/helpers/array";
+import cn from "@/utils/helpers/cn";
 import { getContactIsLinkable, getContactURL } from "@/utils/helpers/contact";
-import { getLocaleString } from "@/utils/helpers/string";
-import { useLocale } from "@/utils/hooks/i18n";
+import getFormattedLabel from "@/utils/helpers/contact/getFormattedLabel";
+import getLocaleString from "@/utils/helpers/getLocaleString";
+import isURL from "@/utils/helpers/isURL";
+import useLocale from "@/utils/helpers/useLocale";
+import { StylableFC } from "@/utils/types/common";
 import { Contact } from "@/utils/types/contact";
 import {
   Avatar,
@@ -21,6 +24,7 @@ import {
 } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
 import Image from "next/image";
+import { list, sift } from "radash";
 import { FC, forwardRef, useContext, useState } from "react";
 
 /**
@@ -32,11 +36,11 @@ import { FC, forwardRef, useContext, useState } from "react";
  *
  * @returns A Card.
  */
-const ContactCard: FC<{
+const ContactCard: StylableFC<{
   contact: Contact;
   onChange?: (value: Contact) => void;
   onRemove?: () => void;
-}> = ({ contact, onChange, onRemove }) => {
+}> = ({ contact, onChange, onRemove, style, className }) => {
   // Translation
   const locale = useLocale();
   const { t } = useTranslation("account");
@@ -69,19 +73,6 @@ const ContactCard: FC<{
     other: tx("contact.other"),
   };
 
-  const formattedLabel = contact.name?.th
-    ? getLocaleString(contact.name, locale)
-    : contact.type === "phone"
-    ? range(Math.min(Math.ceil(contact.value.length / 3), 3))
-        .map((setIdx) =>
-          contact.value.slice(
-            setIdx * 3,
-            setIdx === 2 ? contact.value.length : setIdx * 3 + 3,
-          ),
-        )
-        .join(" ")
-    : contact.value;
-
   return (
     <>
       <Card
@@ -92,10 +83,17 @@ const ContactCard: FC<{
             ? // If the Contact is linkable, link to it
               {
                 href: getContactURL(contact),
-                // eslint-disable-next-line react/display-name
-                element: forwardRef((props, ref) => (
-                  <a {...props} ref={ref} target="_blank" rel="noreferrer" />
-                )),
+                element: !["phone", "email"].includes(contact.type)
+                  ? // eslint-disable-next-line react/display-name
+                    forwardRef((props, ref) => (
+                      <a
+                        {...props}
+                        ref={ref}
+                        target="_blank"
+                        rel="noreferrer"
+                      />
+                    ))
+                  : "a",
               }
             : // Otherwise, copy the value to clipboard
               {
@@ -107,6 +105,8 @@ const ContactCard: FC<{
                 },
               }
           : {})}
+        style={style}
+        className={className}
       >
         <CardHeader
           avatar={<Avatar>{avatarMap[contact.type]}</Avatar>}
@@ -114,17 +114,33 @@ const ContactCard: FC<{
             editable ? (
               <a
                 href={getContactURL(contact)}
-                target="_blank"
+                target={
+                  !["phone", "email"].includes(contact.type)
+                    ? "_blank"
+                    : "_self"
+                }
                 rel="noreferrer"
                 className="break-all"
               >
-                {formattedLabel}
+                {getFormattedLabel(contact)}
               </a>
             ) : (
-              formattedLabel
+              <>
+                {isURL(contact.value) && (
+                  <MaterialIcon
+                    icon="link"
+                    size={20}
+                    className="-mb-1.5 mr-1 !inline-block !text-outline"
+                  />
+                )}
+                {getFormattedLabel(contact)}
+              </>
             )
           }
-          subtitle={subtitleMap[contact.type]}
+          subtitle={sift([
+            contact.name?.th && getLocaleString(contact.name, locale),
+            subtitleMap[contact.type],
+          ]).join(" • ")}
           overflow={
             editable ? (
               <Menu>
@@ -152,7 +168,12 @@ const ContactCard: FC<{
               </Menu>
             ) : undefined
           }
-          className={editable ? "[&_h3>a]:link" : undefined}
+          className={cn(
+            `!grid [&>:nth-child(2)>*]:!truncate [&>:nth-child(2)>span]:block`,
+            editable
+              ? `[&_h3>a]:link grid-cols-[2.5rem,minmax(0,1fr),3rem]`
+              : `grid-cols-[2.5rem,minmax(0,1fr)]`,
+          )}
         />
       </Card>
       <ContactDialog

@@ -1,16 +1,26 @@
-// External libraries
+// Imports
+import Layout from "@/components/Layout";
+import AccountNotFoundDialog from "@/components/account/AccountNotFoundDialog";
+import ErrorBoundary from "@/components/error/ErrorBoundary";
+import PageFallback from "@/components/error/PageFallback";
+import AppStateContext from "@/contexts/AppStateContext";
+import PreviousRouteContext from "@/contexts/PreviousRouteContext";
+import SnackbarContext from "@/contexts/SnackbarContext";
+import "@/styles/global.css";
+import usePreviousPath from "@/utils/helpers/usePreviousPath";
+import { ColorScheme, CustomAppProps } from "@/utils/types/common";
+import { Database } from "@/utils/types/supabase";
+import { ThemeProvider } from "@suankularb-components/react";
 import {
   Session,
   createPagesBrowserClient,
 } from "@supabase/auth-helpers-nextjs";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
-import { SessionProvider } from "next-auth/react";
-
 import va from "@vercel/analytics";
 import { Analytics } from "@vercel/analytics/react";
-
 import { MotionConfig } from "framer-motion";
-
+import { SessionProvider } from "next-auth/react";
+import { appWithTranslation } from "next-i18next";
 import {
   Fira_Code,
   IBM_Plex_Sans_Thai,
@@ -19,34 +29,8 @@ import {
   Space_Grotesk,
 } from "next/font/google";
 import localFont from "next/font/local";
-
-import { appWithTranslation } from "next-i18next";
-
 import { FC, ReactNode, useEffect, useState } from "react";
-
-// SK Components
-import { ThemeProvider } from "@suankularb-components/react";
-
-// Internal components
-import Layout from "@/components/Layout";
-import ErrorBoundary from "@/components/error/ErrorBoundary";
-import PageFallback from "@/components/error/PageFallback";
-
-// Contexts
-import AppStateContext from "@/contexts/AppStateContext";
-import PreviousRouteContext from "@/contexts/PreviousRouteContext";
-import SnackbarContext from "@/contexts/SnackbarContext";
-
-// Styles
-import "@/styles/global.css";
-
-// Hooks
-import { usePreviousPath } from "@/utils/hooks/routing";
-
-// Types
-import { ColorScheme, CustomAppProps } from "@/utils/types/common";
-import { Database } from "@/utils/types/supabase";
-import AccountNotFoundDialog from "@/components/account/AccountNotFoundDialog";
+import { Provider as BalancerProvider } from "react-wrap-balancer";
 
 // English fonts
 const bodyFontEN = Inter({ subsets: ["latin"] });
@@ -100,7 +84,7 @@ const Contexts: FC<{ children: ReactNode }> = ({ children }) => {
             setAccountNotFoundOpen,
           }}
         >
-          {children}
+          <BalancerProvider>{children}</BalancerProvider>
           <AccountNotFoundDialog
             open={accountNotFoundOpen}
             onClose={() => setAccountNotFoundOpen(false)}

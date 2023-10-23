@@ -1,11 +1,9 @@
-import { logError } from "@/utils/helpers/debug";
-import { mergeDBLocales } from "@/utils/helpers/string";
+import logError from "@/utils/helpers/logError";
+import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
 import { Subject, SubjectClassrooms } from "@/utils/types/subject";
-import {
-  getCurrentAcademicYear,
-  getCurrentSemester,
-} from "@/utils/helpers/date";
+import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
+import getCurrentSemester from "@/utils/helpers/getCurrentSemester";
 
 export default async function getTeachingSubject(
   supabase: DatabaseClient,

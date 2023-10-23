@@ -56,33 +56,35 @@ export type Student = Person & {
 };
 
 export type Teacher = Person & {
-  teacher_id: string;
+  teacher_id: string | null;
   class_advisor_at: Pick<Classroom, "id" | "number"> | null;
   subject_group: SubjectGroup;
   subjects_in_charge: Pick<Subject, "id" | "name" | "code" | "short_name">[];
   role: "teacher";
 };
 
-export type PersonLookupItem =
-  | Pick<
-      Student,
-      | "id"
-      | "prefix"
-      | "first_name"
-      | "last_name"
-      | "middle_name"
-      | "nickname"
-      | "role"
-      | "classroom"
-    >
-  | Pick<
-      Teacher,
-      | "id"
-      | "prefix"
-      | "first_name"
-      | "last_name"
-      | "middle_name"
-      | "nickname"
-      | "role"
-      | "subject_group"
-    >;
+export type StudentLookupItem = Pick<
+  Student,
+  | "id"
+  | "prefix"
+  | "first_name"
+  | "last_name"
+  | "middle_name"
+  | "nickname"
+  | "role"
+  | "classroom"
+>;
+
+export type TeacherLookupItem = Pick<
+  Teacher,
+  | "id"
+  | "prefix"
+  | "first_name"
+  | "last_name"
+  | "middle_name"
+  | "nickname"
+  | "role"
+  | "subject_group"
+>;
+
+export type PersonLookupItem = StudentLookupItem | TeacherLookupItem;

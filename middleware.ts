@@ -1,7 +1,7 @@
 // Imports
 import getUserByEmail from "@/utils/backend/account/getUserByEmail";
-import { logError } from "@/utils/helpers/debug";
-import { getLocalePath } from "@/utils/helpers/string";
+import getLocalePath from "@/utils/helpers/getLocalePath";
+import logError from "@/utils/helpers/logError";
 import { LangCode } from "@/utils/types/common";
 import { User, UserRole } from "@/utils/types/person";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
@@ -21,6 +21,9 @@ export async function middleware(req: NextRequest) {
   // Get original destination
   const route = req.nextUrl.pathname;
   const locale = req.nextUrl.locale as LangCode;
+
+  // Log middleware start
+  console.log(`\u001b[1m ○\u001b[0m Running middleware on ${route} …`);
 
   // Ignore all page requests if under maintenance
   if (process.env.CLOSED_FOR_MAINTENANCE === "true")
@@ -59,10 +62,6 @@ export async function middleware(req: NextRequest) {
 
   // Disallow public users from visiting private pages
   if (pageRole !== "public" && !user) destination = "/";
-
-  // Disallow logged in users from visiting onboarding pages except for the ones not onboarded
-  if (user && !user?.onboarded && !route.startsWith("/account/welcome"))
-    destination = "/account/welcome";
   // Disallow students from vising the Your Subject page of the onboarding
   // process
   else if (route === "/account/welcome/your-subjects" && user?.role === "student")
@@ -73,8 +72,6 @@ export async function middleware(req: NextRequest) {
   else if (
     !(
       (
-        // Allow new users to visit onboarding pages
-        (route.startsWith("/account/welcome") && !user?.onboarded) ||
         // Allow admins to visit admin pages
         (pageRole === "admin" && user?.is_admin) ||
         // Allow all users to visit user pages
@@ -98,6 +95,13 @@ export async function middleware(req: NextRequest) {
     }
   }
 
+  // Log middleware end
+  console.log(
+    `\u001b[1m\x1b[92m ✓\x1b[0m\u001b[0m ${
+      destination ? `Redirected to ${destination}` : "Continued"
+    }`,
+  );
+
   // Redirect if decided so, continue if not
   if (destination)
     return NextResponse.redirect(
@@ -108,20 +112,14 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    "/",
-    "/account",
     "/account/:path*",
-    "/about",
     "/admin/:path*",
     "/learn",
-    "/learn/:id",
     "/teach",
-    "/class/:path*",
+    "/classes/:path*",
     "/lookup/:path*",
     "/maintenance",
     "/news",
-    "/news/stats/:id",
-    "/news/form/:id",
-    "/news/payment/:id",
+    "/news/:id",
   ],
 };

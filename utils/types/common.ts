@@ -2,7 +2,7 @@
 import { TextFieldProps } from "@suankularb-components/react";
 import { NextPage } from "next";
 import { AppProps } from "next/app";
-import { FC, ReactNode } from "react";
+import { CSSProperties, FC, ReactNode } from "react";
 
 /**
  * The language code of a supported UI language.
@@ -18,6 +18,13 @@ export type ColorScheme = "light" | "dark" | "auto";
  * User preferences parsed from local storage.
  */
 export type Preferences = { locale: LangCode; colorScheme: ColorScheme };
+
+/**
+ * A function component stylable through `className` and `style`.
+ */
+export type StylableFC<Props extends {} = {}> = FC<
+  Props & { className?: string; style?: CSSProperties }
+>;
 
 /**
  * The {@link NextPage} type extended with properties for SKCom.
