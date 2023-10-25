@@ -54,6 +54,7 @@
       "item": {
         "classNo": "เลขที่ {{classNo}}",
         "presence": {
+          "title": "การเข้าเรียน",
           "present": "มา",
           "absent": "ขาด"
         },
@@ -66,7 +67,17 @@
         "enterReason": "ระบุเหตุผล"
       },
       "action": {
+        "markAll": "เช็กมาทุกคน",
+        "clear": "ลบทั้งหมด",
         "save": "บันทึก"
+      }
+    },
+    "confirmMarkAll": {
+      "title": "ให้บันทึกว่ามาทุกคนใช่ไหม",
+      "desc": "เราจะเช็คชื่อให้นักเรียนทุกคนที่คุณยังไม่ได้เช็คชื่อว่ามาเรียน",
+      "action": {
+        "cancel": "ยกเลิก",
+        "confirm": "ยืนยัน"
       }
     },
     "confirmAttendanceSave": {

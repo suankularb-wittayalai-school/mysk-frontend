@@ -11,10 +11,13 @@ import { StudentAttendance } from "@/utils/types/attendance";
 import { StylableFC } from "@/utils/types/common";
 import {
   Actions,
+  AssistChip,
   Button,
+  ChipSet,
   Dialog,
   DialogHeader,
   FullscreenDialog,
+  MaterialIcon,
   Progress,
   Section,
   SegmentedButton,
@@ -222,6 +225,14 @@ const AttendanceDialog: StylableFC<{
               {t("event.homeroom")}
             </Button>
           </SegmentedButton>
+          <ChipSet scrollable className="-mx-4 px-4">
+            <AssistChip icon={<MaterialIcon icon="done_all" />}>
+              {t("action.markAll")}
+            </AssistChip>
+            <AssistChip icon={<MaterialIcon icon="delete" />} dangerous>
+              {t("action.clear")}
+            </AssistChip>
+          </ChipSet>
         </Section>
 
         {/* List */}

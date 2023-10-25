@@ -54,6 +54,7 @@
       "item": {
         "classNo": "No. {{classNo}}",
         "presence": {
+          "title": "Presence",
           "present": "Present",
           "absent": "Absent"
         },
@@ -66,7 +67,17 @@
         "enterReason": "Enter reason"
       },
       "action": {
+        "markAll": "Mark all present",
+        "clear": "Clear",
         "save": "Save"
+      }
+    },
+    "confirmMarkAll": {
+      "title": "Mark all as present?",
+      "desc": "All students whom you have not taken attendance for will be marked as present.",
+      "action": {
+        "cancel": "Cancel",
+        "confirm": "Confirm"
       }
     },
     "confirmAttendanceSave": {

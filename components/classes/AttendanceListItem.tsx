@@ -70,7 +70,7 @@ const AttendanceListItem: StylableFC<{
         />
 
         {/* Presence */}
-        <SegmentedButton alt="Attendance">
+        <SegmentedButton alt={t("presence.title")}>
           {/* Present */}
           <Interactive
             onClick={() =>
