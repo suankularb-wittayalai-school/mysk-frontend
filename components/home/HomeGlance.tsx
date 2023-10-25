@@ -6,6 +6,7 @@ import GlancePeriods from "@/components/home/GlanceSubjects";
 import cn from "@/utils/helpers/cn";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import getCurrentPeriod from "@/utils/helpers/schedule/getCurrentPeriod";
+import getCurrentSchoolSessionState from "@/utils/helpers/schedule/getCurrentSchoolSessionState";
 import getTodaySetToPeriodTime from "@/utils/helpers/schedule/getTodaySetToPeriodTime";
 import useLocale from "@/utils/helpers/useLocale";
 import useNow from "@/utils/helpers/useNow";
@@ -149,10 +150,23 @@ const HomeGlance: StylableFC<{
       )
     : null;
 
-  // A percentage of time since the start of the class relative to the total
-  // class duration
+  /**
+   * A percentage of time since the start of the class relative to the total
+   * class duration.
+   */
   const classProgress =
-    (secondsSinceStart / ((currentPeriod?.duration || 1) * 50 * 60)) * 100;
+    (secondsSinceStart /
+      // If class hasn’t started yet, it’s probably assembly or homeroom
+      ((getCurrentSchoolSessionState() === "before"
+        ? // Assembly and homeroom are each 30 minutes long
+          30
+        : // If there is a current period, use the duration of that period
+          // (A period is 50 minutes long)
+          (currentPeriod?.duration || 1) * 50) *
+        // There are 60 seconds in a minute
+        60)) *
+    // Convert decimal to percentage
+    100;
 
   /**
    * The type of Home Glance to display to the user, calculated by the current
