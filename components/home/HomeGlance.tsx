@@ -50,6 +50,7 @@ const PERIOD_START: Parameters<Date["setHours"]> = [8, 30, 0, 0];
  * @param schedule Data for displaying Home Glance.
  * @param role The user’s role. Used in determining the Home Glance view.
  * @param classroomID The ID of the Classroom the user is in. Used for Attendance.
+ * @param teacherID The Teacher ID of the user. Used for Attendance.
  */
 const HomeGlance: StylableFC<{
   schedule: Schedule;
@@ -108,14 +109,17 @@ const HomeGlance: StylableFC<{
 
   // The edges of periods relative to current time, used in calculating the
   // display type
-  const secondsSinceStart = currentPeriod?.content.length
+  const secondsSinceStart = isFuture(new Date().setHours(...PERIOD_START))
     ? differenceInSeconds(
         now,
-        isPast(new Date().setHours(...PERIOD_START))
-          ? getTodaySetToPeriodTime(currentPeriod.start_time)
-          : isPast(new Date().setHours(...HOMEROOM_START))
+        isPast(new Date().setHours(...HOMEROOM_START))
           ? new Date().setHours(...HOMEROOM_START)
           : new Date().setHours(...ASSEMBLY_START),
+      )
+    : currentPeriod?.content.length
+    ? differenceInSeconds(
+        now,
+        getTodaySetToPeriodTime(currentPeriod.start_time),
       )
     : 0;
   const minutesTilEnd = currentPeriod
