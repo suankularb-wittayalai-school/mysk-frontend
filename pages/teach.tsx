@@ -35,21 +35,21 @@ import { useState } from "react";
  * @param schedule Data for displaying Schedule.
  * @param subjectsInCharge The Subjects assigned to this teacher. Used in editing the Schedule.
  * @param teachingSubjects An array of Teacher Subject Items, an abstraction of Room Subjects connected to this Teacher.
- * @param teacherID The Teacher’s database ID. Used in validating edits in the Schedule.
  * @param classroomID The Classroom ID that the Teacher advises. Used in Attendance.
+ * @param teacherID The Teacher’s database ID. Used in validating edits in the Schedule.
  */
 const TeachPage: CustomPage<{
   schedule: ScheduleType;
   subjectsInCharge: Pick<Subject, "id" | "name" | "code" | "short_name">[];
   teachingSubjects: SubjectClassrooms[];
-  teacherID: string;
   classroomID?: string;
+  teacherID: string;
 }> = ({
   schedule,
   subjectsInCharge,
   teachingSubjects,
-  teacherID,
   classroomID,
+  teacherID,
 }) => {
   const locale = useLocale();
   const { t } = useTranslation("teach");
@@ -72,6 +72,7 @@ const TeachPage: CustomPage<{
             schedule={schedule}
             role="teacher"
             classroomID={classroomID}
+            teacherID={teacherID}
           />
 
           {/* Schedule */}

@@ -6,6 +6,7 @@ import GlancePeriods from "@/components/home/GlanceSubjects";
 import cn from "@/utils/helpers/cn";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import getCurrentPeriod from "@/utils/helpers/schedule/getCurrentPeriod";
+import getCurrentSchoolSessionState from "@/utils/helpers/schedule/getCurrentSchoolSessionState";
 import getTodaySetToPeriodTime from "@/utils/helpers/schedule/getTodaySetToPeriodTime";
 import useLocale from "@/utils/helpers/useLocale";
 import useNow from "@/utils/helpers/useNow";
@@ -20,6 +21,7 @@ import {
 import {
   differenceInMinutes,
   differenceInSeconds,
+  isFuture,
   isPast,
   isWithinInterval,
 } from "date-fns";
@@ -50,12 +52,14 @@ const PERIOD_START: Parameters<Date["setHours"]> = [8, 30, 0, 0];
  * @param schedule Data for displaying Home Glance.
  * @param role The user’s role. Used in determining the Home Glance view.
  * @param classroomID The ID of the Classroom the user is in. Used for Attendance.
+ * @param teacherID The Teacher ID of the user. Used for Attendance.
  */
 const HomeGlance: StylableFC<{
   schedule: Schedule;
   role: UserRole;
   classroomID?: string;
-}> = ({ schedule, role, classroomID, style, className }) => {
+  teacherID?: string;
+}> = ({ schedule, role, classroomID, teacherID, style, className }) => {
   const locale = useLocale();
   const { t } = useTranslation("schedule", { keyPrefix: "atAGlance" });
 
@@ -108,14 +112,17 @@ const HomeGlance: StylableFC<{
 
   // The edges of periods relative to current time, used in calculating the
   // display type
-  const secondsSinceStart = currentPeriod?.content.length
+  const secondsSinceStart = isFuture(new Date().setHours(...PERIOD_START))
     ? differenceInSeconds(
         now,
-        isPast(new Date().setHours(...PERIOD_START))
-          ? getTodaySetToPeriodTime(currentPeriod.start_time)
-          : isPast(new Date().setHours(...HOMEROOM_START))
+        isPast(new Date().setHours(...HOMEROOM_START))
           ? new Date().setHours(...HOMEROOM_START)
           : new Date().setHours(...ASSEMBLY_START),
+      )
+    : currentPeriod?.content.length
+    ? differenceInSeconds(
+        now,
+        getTodaySetToPeriodTime(currentPeriod.start_time),
       )
     : 0;
   const minutesTilEnd = currentPeriod
@@ -143,10 +150,23 @@ const HomeGlance: StylableFC<{
       )
     : null;
 
-  // A percentage of time since the start of the class relative to the total
-  // class duration
+  /**
+   * A percentage of time since the start of the class relative to the total
+   * class duration.
+   */
   const classProgress =
-    (secondsSinceStart / ((currentPeriod?.duration || 1) * 50 * 60)) * 100;
+    (secondsSinceStart /
+      // If class hasn’t started yet, it’s probably assembly or homeroom
+      ((getCurrentSchoolSessionState() === "before"
+        ? // Assembly and homeroom are each 30 minutes long
+          30
+        : // If there is a current period, use the duration of that period
+          // (A period is 50 minutes long)
+          (currentPeriod?.duration || 1) * 50) *
+        // There are 60 seconds in a minute
+        60)) *
+    // Convert decimal to percentage
+    100;
 
   /**
    * The type of Home Glance to display to the user, calculated by the current
@@ -347,6 +367,7 @@ const HomeGlance: StylableFC<{
           key={displayType}
           event={displayType as "assembly" | "homeroom"}
           classroomID={classroomID}
+          teacherID={teacherID}
           open={attendanceOpen}
           onClose={() => setAttendanceOpen(false)}
         />

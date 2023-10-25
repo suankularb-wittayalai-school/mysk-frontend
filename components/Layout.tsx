@@ -127,10 +127,10 @@ const Layout: FC<
       {/* Navigation Drawer */}
       <NavDrawer open={navOpen} onClose={() => setNavOpen(false)}>
         {/* Top-level pages */}
-        <NavDrawerSection alt={t("appName")}>
+        <NavDrawerSection alt={t("appName")} className="mt-2 [&>h2]:sr-only">
           <NavDrawerItem
             icon={<Favicon />}
-            label={t("appName")}
+            label={<Text type="title-large">{t("appName")}</Text>}
             selected={
               router.pathname.startsWith("/teach") ||
               router.pathname.startsWith("/learn")
