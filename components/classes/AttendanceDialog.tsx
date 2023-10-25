@@ -75,22 +75,6 @@ const AttendanceDialog: StylableFC<{
     })[]
   >([]);
 
-  /**
-   * Whether the Attendance data is editable or not.
-   */
-  const editable =
-    // The user must be a Teacher
-    (teacherID &&
-      // Assembly Attendance must be taken before 08:00
-      event === "assembly" &&
-      isFuture(new Date().setHours(8, 0, 0, 0))) ||
-    // Homeroom Attendance must be taken between 08:00 and 08:30
-    (event === "homeroom" &&
-      isWithinInterval(new Date(), {
-        start: new Date().setHours(8, 0, 0, 0),
-        end: new Date().setHours(8, 30, 0, 0),
-      }));
-
   useEffect(() => {
     if (
       // Don’t fetch if the Dialog is closed
@@ -199,7 +183,7 @@ const AttendanceDialog: StylableFC<{
                   );
                 else setConfirmOpen(true);
               }}
-              disabled={loading || !editable}
+              disabled={loading || !teacherID}
             >
               {t("action.save")}
             </Button>
@@ -228,28 +212,16 @@ const AttendanceDialog: StylableFC<{
               selected={event === "assembly"}
               onClick={() => setEvent("assembly")}
             >
-              {t("event.assembly.name")}
+              {t("event.assembly")}
             </Button>
             <Button
               appearance="outlined"
               selected={event === "homeroom"}
               onClick={() => setEvent("homeroom")}
             >
-              {t("event.homeroom.name")}
+              {t("event.homeroom")}
             </Button>
           </SegmentedButton>
-          {teacherID && (
-            <Text
-              type="body-medium"
-              element="p"
-              className="text-on-surface-variant"
-            >
-              <Trans
-                i18nKey={`dialog.attendance.event.${event}.desc`}
-                ns="classes"
-              />
-            </Text>
-          )}
         </Section>
 
         {/* List */}
@@ -265,7 +237,7 @@ const AttendanceDialog: StylableFC<{
               <AttendanceListItem
                 key={attendance.student.id}
                 attendance={attendance}
-                editable={editable}
+                editable={Boolean(teacherID)}
                 onAttendanceChange={(attendance) =>
                   setAttendances(
                     replace(

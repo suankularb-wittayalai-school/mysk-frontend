@@ -48,14 +48,8 @@
         "take": "Take attendance"
       },
       "event": {
-        "assembly": {
-          "name": "Assembly",
-          "desc": "Assembly attendance is done <strong>prior to 08:00</strong>. Attendance data <strong>cannot</strong> be saved after this period."
-        },
-        "homeroom": {
-          "name": "Homeroom",
-          "desc": "Homeroom attendance is done <strong>between 08:00 and 08:30</strong>. Attendance data <strong>cannot</strong> be saved after this period."
-        }
+        "assembly": "Assembly",
+        "homeroom": "Homeroom"
       },
       "item": {
         "classNo": "No. {{classNo}}",
