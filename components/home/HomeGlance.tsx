@@ -20,6 +20,7 @@ import {
 import {
   differenceInMinutes,
   differenceInSeconds,
+  isFuture,
   isPast,
   isWithinInterval,
 } from "date-fns";
@@ -56,7 +57,8 @@ const HomeGlance: StylableFC<{
   schedule: Schedule;
   role: UserRole;
   classroomID?: string;
-}> = ({ schedule, role, classroomID, style, className }) => {
+  teacherID?: string;
+}> = ({ schedule, role, classroomID, teacherID, style, className }) => {
   const locale = useLocale();
   const { t } = useTranslation("schedule", { keyPrefix: "atAGlance" });
 
@@ -351,6 +353,7 @@ const HomeGlance: StylableFC<{
           key={displayType}
           event={displayType as "assembly" | "homeroom"}
           classroomID={classroomID}
+          teacherID={teacherID}
           open={attendanceOpen}
           onClose={() => setAttendanceOpen(false)}
         />
