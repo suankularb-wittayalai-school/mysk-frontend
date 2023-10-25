@@ -103,7 +103,12 @@ const AttendanceListItem: StylableFC<{
           <Interactive
             onClick={
               editable
-                ? () => onAttendanceChange({ ...attendance, is_present: false })
+                ? () =>
+                    onAttendanceChange({
+                      ...attendance,
+                      is_present: false,
+                      absence_type: "business",
+                    })
                 : undefined
             }
             element={(props) => (
