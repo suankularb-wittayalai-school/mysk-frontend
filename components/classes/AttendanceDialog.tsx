@@ -169,6 +169,38 @@ const AttendanceDialog: StylableFC<{
     );
   }
 
+  /**
+   * Mark all Students in the client state as present.
+   */
+  async function handleMarkAllPresent() {
+    setAttendances(
+      attendances.map((attendance) =>
+        attendance.is_present !== null
+          ? attendance
+          : {
+              ...attendance,
+              is_present: true,
+              absence_type: null,
+              absence_reason: null,
+            },
+      ),
+    );
+  }
+
+  /**
+   * Clear the Attendance data in the client state.
+   */
+  async function handleClear() {
+    setAttendances(
+      attendances.map((attendance) => ({
+        ...attendance,
+        is_present: null,
+        absence_type: null,
+        absence_reason: null,
+      })),
+    );
+  }
+
   return (
     <>
       <FullscreenDialog
@@ -207,8 +239,8 @@ const AttendanceDialog: StylableFC<{
           className="absolute inset-0 bottom-auto top-16 !mx-0"
         />
 
-        {/* Event selection */}
         <Section>
+          {/* Event selection */}
           <SegmentedButton alt="View" full>
             <Button
               appearance="outlined"
@@ -225,11 +257,20 @@ const AttendanceDialog: StylableFC<{
               {t("event.homeroom")}
             </Button>
           </SegmentedButton>
+
+          {/* Bulk actions */}
           <ChipSet scrollable className="-mx-4 px-4">
-            <AssistChip icon={<MaterialIcon icon="done_all" />}>
+            <AssistChip
+              icon={<MaterialIcon icon="done_all" />}
+              onClick={handleMarkAllPresent}
+            >
               {t("action.markAll")}
             </AssistChip>
-            <AssistChip icon={<MaterialIcon icon="delete" />} dangerous>
+            <AssistChip
+              icon={<MaterialIcon icon="delete" />}
+              dangerous
+              onClick={handleClear}
+            >
               {t("action.clear")}
             </AssistChip>
           </ChipSet>
