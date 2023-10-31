@@ -2,6 +2,7 @@
 import ClassContactList from "@/components/classes/ClassContactList";
 import ClassHeader from "@/components/classes/ClassHeader";
 import ClassStudentList from "@/components/classes/ClassStudentList";
+import RecentAttendanceList from "@/components/classes/RecentAttendanceList";
 import LookupDetailsCard from "@/components/lookup/LookupDetailsCard";
 import LookupDetailsContent from "@/components/lookup/LookupDetailsContent";
 import InformationCard from "@/components/lookup/teachers/InformationCard";
@@ -56,6 +57,9 @@ const ClassDetailsCard: StylableFC<{
             role={role}
           />
           <LookupDetailsContent>
+            {/* Attendance */}
+            {isOwnClass && <RecentAttendanceList />}
+
             <section className="grid grid-cols-2 gap-2 md:grid-cols-4">
               {/* Class advisors */}
               <InformationCard

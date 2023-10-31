@@ -1,11 +1,6 @@
 // Imports
 import { Student } from "@/utils/types/person";
 
-// Note:
-// I don’t actually know what the end goal of collecting attendance is, as in
-// what way the data is going to be represented in the UI and who is going to
-// be using it, so here are some generic types.
-
 export type AttendanceEvent = "homeroom" | "assembly";
 
 export type AbsenceType = "sick" | "business" | "activity" | "other";
@@ -20,4 +15,9 @@ export type StudentAttendance = {
   attendance_event: AttendanceEvent;
   absence_type: AbsenceType | null;
   absence_reason: string | null;
+};
+
+export type AttendanceAtDate = {
+  date: string;
+  absence_count: Record<AttendanceEvent, number | null>;
 };
