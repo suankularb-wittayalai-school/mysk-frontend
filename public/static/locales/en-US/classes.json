@@ -23,7 +23,8 @@
         "title": "{{date, datetime(weekday: short; day: numeric; month: short)}}",
         "absenceCount_zero": "None absent",
         "absenceCount_one": "1 absent",
-        "absenceCount_other": "{{count, number}} absent"
+        "absenceCount_other": "{{count, number}} absent",
+        "noData": "No data"
       },
       "action": {
         "addDay": "Take attendance",
@@ -57,6 +58,7 @@
         "take": "Take attendance"
       },
       "event": {
+        "title": "View",
         "assembly": "Assembly",
         "homeroom": "Homeroom"
       },
@@ -76,6 +78,7 @@
         },
         "enterReason": "Enter reason"
       },
+      "loading": "Loading attendance…",
       "action": {
         "markAll": "Mark all present",
         "clear": "Clear",

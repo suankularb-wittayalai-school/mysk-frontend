@@ -368,8 +368,10 @@ const HomeGlance: StylableFC<{
           event={displayType as "assembly" | "homeroom"}
           classroomID={classroomID}
           teacherID={teacherID}
+          editable={role === "teacher"}
           open={attendanceOpen}
           onClose={() => setAttendanceOpen(false)}
+          onSubmit={() => setAttendanceOpen(false)}
         />
       )}
     </AnimatePresence>

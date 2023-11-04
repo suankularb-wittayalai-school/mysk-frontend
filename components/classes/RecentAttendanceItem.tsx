@@ -16,8 +16,17 @@ const RecentAttendanceItem: StylableFC<{
   attendance: AttendanceAtDate;
   classroomID: string;
   teacherID?: string;
+  isOwnClass?: boolean;
   onChange: () => void;
-}> = ({ attendance, classroomID, teacherID, onChange, style, className }) => {
+}> = ({
+  attendance,
+  classroomID,
+  teacherID,
+  isOwnClass,
+  onChange,
+  style,
+  className,
+}) => {
   const { t } = useTranslation("classes", {
     keyPrefix: "detail.attendance",
   });
@@ -36,53 +45,66 @@ const RecentAttendanceItem: StylableFC<{
         </Text>
         {(["assembly", "homeroom"] as AttendanceEvent[]).map((event) => {
           const absenceCount = attendance.absence_count[event];
+          const isInteractive =
+            (isOwnClass && teacherID && absenceCount === null) ||
+            absenceCount !== null;
           return (
-            <>
-              <Interactive
-                key={event}
-                onClick={() => setEventToEdit(event)}
-                className={cn(
-                  `flex flex-row items-center gap-2 rounded-sm px-2
+            <Interactive
+              key={event}
+              stateLayerEffect={isInteractive}
+              rippleEffect={isInteractive}
+              onClick={() => {
+                if (isInteractive) setEventToEdit(event);
+              }}
+              element={isInteractive ? "button" : "div"}
+              className={cn(
+                `flex flex-row items-center gap-2 rounded-sm px-2
                   py-1.5`,
-                  absenceCount === null
-                    ? `-m-[1px] border-1 border-outline-variant
-                      text-on-surface-variant state-layer:!bg-primary`
-                    : absenceCount === 0
-                    ? `bg-surface-2 text-on-surface-variant`
-                    : `bg-secondary-container text-on-secondary-container`,
-                )}
-              >
-                {absenceCount === null ? (
-                  <MaterialIcon icon="add" />
-                ) : (
-                  {
-                    assembly: <MaterialIcon icon="emoji_flags" />,
-                    homeroom: <MaterialIcon icon="meeting_room" />,
-                  }[event]
-                )}
-                <Text type="label-large" className="!font-display">
-                  {absenceCount === null
+                absenceCount === null
+                  ? `-m-[1px] border-1 border-outline-variant
+                      text-on-surface-variant`
+                  : absenceCount === 0
+                  ? `bg-surface-2 text-on-surface-variant`
+                  : `bg-secondary-container text-on-secondary-container`,
+                teacherID && absenceCount === null && `state-layer:!bg-primary`,
+              )}
+            >
+              {isOwnClass && teacherID && absenceCount === null ? (
+                <MaterialIcon icon="add" />
+              ) : (
+                {
+                  assembly: <MaterialIcon icon="emoji_flags" />,
+                  homeroom: <MaterialIcon icon="meeting_room" />,
+                }[event]
+              )}
+              <Text type="label-large" className="!font-display">
+                {absenceCount === null
+                  ? isOwnClass && teacherID
                     ? t("action.addEvent")
-                    : t("item.absenceCount", { count: absenceCount })}
-                </Text>
-              </Interactive>
-            </>
+                    : t("item.noData")
+                  : t("item.absenceCount", { count: absenceCount })}
+              </Text>
+            </Interactive>
           );
         })}
       </Card>
 
-      <AttendanceDialog
-        event={eventToEdit!}
-        date={new Date(attendance.date)}
-        classroomID={classroomID}
-        teacherID={teacherID}
-        open={eventToEdit !== null}
-        onClose={() => setEventToEdit(null)}
-        onSubmit={() => {
-          setEventToEdit(null);
-          onChange();
-        }}
-      />
+      {(["assembly", "homeroom"] as AttendanceEvent[]).map((event) => (
+        <AttendanceDialog
+          key={event}
+          event={event}
+          date={new Date(attendance.date)}
+          classroomID={classroomID}
+          teacherID={teacherID}
+          editable={isOwnClass && teacherID !== undefined}
+          open={eventToEdit === event}
+          onClose={() => setEventToEdit(null)}
+          onSubmit={() => {
+            setEventToEdit(null);
+            onChange();
+          }}
+        />
+      ))}
     </>
   );
 };

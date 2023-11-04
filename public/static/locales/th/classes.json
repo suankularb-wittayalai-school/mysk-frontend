@@ -22,7 +22,8 @@
       "item": {
         "title": "{{date, datetime(weekday: short; day: numeric; month: short)}}",
         "absenceCount_zero": "มาครบ",
-        "absenceCount_other": "ขาด {{count, number}} คน"
+        "absenceCount_other": "ขาด {{count, number}} คน",
+        "noData": "ไม่มีข้อมูล"
       },
       "action": {
         "addDay": "เพิ่มข้อมูลเช็กชื่อ",
@@ -56,6 +57,7 @@
         "take": "เช็คชื่อ"
       },
       "event": {
+        "title": "เลือกคาบ",
         "assembly": "เข้าแถว",
         "homeroom": "โฮมรูม"
       },
@@ -75,6 +77,7 @@
         },
         "enterReason": "ระบุเหตุผล"
       },
+      "loading": "กำลังโหลด…",
       "action": {
         "markAll": "เช็กมาทุกคน",
         "clear": "ลบทั้งหมด",

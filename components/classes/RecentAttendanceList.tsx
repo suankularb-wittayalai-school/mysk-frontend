@@ -24,12 +24,14 @@ import { useEffect, useState } from "react";
  * Card.
  *
  * @param classroomID The ID of the Classroom to display Attendance for.
- * @param teacherID The ID of the Teacher currently logged in, if the user is a Teacher. Used for Attendance.
+ * @param teacherID The ID of the Teacher currently logged in, if the user is a Teacher.
+ * @param isOwnClass Whether the Classroom belongs to the current user.
  */
 const RecentAttendanceList: StylableFC<{
   classroomID: string;
   teacherID?: string;
-}> = ({ classroomID, teacherID, style, className }) => {
+  isOwnClass?: boolean;
+}> = ({ classroomID, teacherID, isOwnClass, style, className }) => {
   const { t } = useTranslation("classes", { keyPrefix: "detail.attendance" });
 
   const { duration, easing } = useAnimationConfig();
@@ -66,7 +68,7 @@ const RecentAttendanceList: StylableFC<{
       <div className="relative -mx-4 overflow-auto">
         <ul className="flex h-[7.5rem] w-fit flex-row gap-2 px-4">
           {/* Add Attendance */}
-          {teacherID && !isWeekend(new Date()) && (
+          {isOwnClass && teacherID && !isWeekend(new Date()) && (
             <li className="h-full">
               <Card
                 appearance="filled"
@@ -86,6 +88,7 @@ const RecentAttendanceList: StylableFC<{
               <AttendanceDialog
                 classroomID={classroomID}
                 teacherID={teacherID}
+                editable
                 open={addOpen}
                 onClose={() => setAddOpen(false)}
                 onSubmit={() => {
@@ -114,6 +117,7 @@ const RecentAttendanceList: StylableFC<{
                       attendance={attendance}
                       classroomID={classroomID}
                       teacherID={teacherID}
+                      isOwnClass={isOwnClass}
                       onChange={fetchAttendance}
                     />
                   </motion.li>

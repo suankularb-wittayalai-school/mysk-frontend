@@ -57,10 +57,11 @@ const ClassDetailsCard: StylableFC<{
           />
           <LookupDetailsContent className="!overflow-auto">
             {/* Attendance */}
-            {isOwnClass && (
+            {(teacherID || isOwnClass) && (
               <RecentAttendanceList
                 classroomID={classroom.id}
                 teacherID={teacherID}
+                isOwnClass={isOwnClass}
               />
             )}
 

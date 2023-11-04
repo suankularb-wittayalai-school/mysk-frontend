@@ -38,6 +38,7 @@ import { useContext, useEffect, useState } from "react";
  * @param date The date to take Attendance for.
  * @param classroomID The ID of the Classroom for which Attendance is being taken.
  * @param teacherID The ID of the Teacher who is taking Attendance.
+ * @param editable Whether the Attendance data is editable.
  * @param open If the Dialog is open and shown.
  * @param onClose Triggers when the Dialog is closed.
  * @param onSubmit Triggers when the user submits the Attendance.
@@ -47,6 +48,7 @@ const AttendanceDialog: StylableFC<{
   date?: Date;
   classroomID: string;
   teacherID?: string;
+  editable?: boolean;
   open: boolean;
   onClose: () => void;
   onSubmit: () => void;
@@ -55,6 +57,7 @@ const AttendanceDialog: StylableFC<{
   date,
   classroomID,
   teacherID,
+  editable,
   open,
   onClose,
   onSubmit,
@@ -64,7 +67,7 @@ const AttendanceDialog: StylableFC<{
   const { t } = useTranslation("classes", { keyPrefix: "dialog.attendance" });
   const { t: ts } = useTranslation("classes", {
     keyPrefix: "dialog.confirmAttendanceSave",
-  }); // <-- Is this good practice?
+  }); // ts for “t save”
   const { t: tx } = useTranslation("common");
 
   const { setSnackbar } = useContext(SnackbarContext);
@@ -214,10 +217,10 @@ const AttendanceDialog: StylableFC<{
     <>
       <FullscreenDialog
         open={open}
-        title={t(`title.${teacherID ? "take" : "view"}`)}
+        title={t(`title.${editable ? "take" : "view"}`)}
         action={
-          // Only show Save Button for teachers
-          teacherID ? (
+          // Only show Save Button for Class Advisors
+          editable ? (
             <Button
               appearance="text"
               onClick={() => {
@@ -243,14 +246,14 @@ const AttendanceDialog: StylableFC<{
       >
         <Progress
           appearance="linear"
-          alt="Loading students"
+          alt={t("loading")}
           visible={loading}
           className="absolute inset-0 bottom-auto top-16 !mx-0"
         />
 
         <Section>
           {/* Event selection */}
-          <SegmentedButton alt="View" full>
+          <SegmentedButton alt={t("event.title")} full>
             <Button
               appearance="outlined"
               selected={event === "assembly"}
