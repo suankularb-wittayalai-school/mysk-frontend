@@ -3,7 +3,7 @@ import logError from "@/utils/helpers/logError";
 import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
 import { Classroom } from "@/utils/types/classroom";
-import { pick } from "radash";
+import { pick, unique } from "radash";
 
 /**
  * Retrieves a Classroom by its ID from the Supabase database.
@@ -76,20 +76,23 @@ export default async function getClassroomByID(
 
   const classroom: Classroom = {
     ...pick(data!, ["id", "number", "main_room", "year"]),
-    class_advisors: data!.classroom_advisors?.map((advisor) => {
-      const teacher = advisor.teachers!;
-      return {
-        id: teacher.id,
-        first_name: mergeDBLocales(teacher.people, "first_name"),
-        last_name: mergeDBLocales(teacher.people, "last_name"),
-        middle_name: mergeDBLocales(teacher.people, "middle_name"),
-        subject_group: {
-          id: teacher.subject_groups?.id ?? 0,
-          name: mergeDBLocales(teacher.subject_groups, "name"),
-        },
-        profile: teacher.people!.profile,
-      };
-    }),
+    class_advisors: unique(
+      data!.classroom_advisors?.map((advisor) => {
+        const teacher = advisor.teachers!;
+        return {
+          id: teacher.id,
+          first_name: mergeDBLocales(teacher.people, "first_name"),
+          last_name: mergeDBLocales(teacher.people, "last_name"),
+          middle_name: mergeDBLocales(teacher.people, "middle_name"),
+          subject_group: {
+            id: teacher.subject_groups?.id ?? 0,
+            name: mergeDBLocales(teacher.subject_groups, "name"),
+          },
+          profile: teacher.people!.profile,
+        };
+      }),
+      (teacher) => teacher.id,
+    ),
     contacts: data!.classroom_contacts?.map((classroomContact) => {
       const contact = classroomContact.contacts!;
       return {
