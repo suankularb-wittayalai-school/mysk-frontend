@@ -13,14 +13,22 @@
     "action": {
       "print": "พิมพ์",
       "saveContact": "บันทึก",
-      "attendance": {
-        "view": "ข้อมูลเช็คชื่อ",
-        "take": "เช็คชื่อ"
-      },
       "requestInfo": "ขอข้อมูลเพิ่มเติม"
     }
   },
   "detail": {
+    "attendance": {
+      "title": "ข้อมูลเช็กชื่อ",
+      "item": {
+        "title": "{{date, datetime(weekday: short; day: numeric; month: short)}}",
+        "absenceCount_zero": "มาครบ",
+        "absenceCount_other": "ขาด {{count, number}} คน"
+      },
+      "action": {
+        "addDay": "เพิ่มข้อมูลเช็กชื่อ",
+        "addEvent": "เพิ่ม"
+      }
+    },
     "general": {
       "classAdvisors": "ครูที่ปรึกษา",
       "room": "ห้องที่ใช้เรียน"

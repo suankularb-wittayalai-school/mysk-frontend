@@ -14,6 +14,7 @@ import {
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useTranslation } from "next-i18next";
 import { list } from "radash";
 import { useEffect, useState } from "react";
 
@@ -26,9 +27,11 @@ import { useEffect, useState } from "react";
  */
 const RecentAttendanceList: StylableFC<{
   classroomID: string;
-  classroomSize: number;
   teacherID?: string;
-}> = ({ classroomID, classroomSize, teacherID, style, className }) => {
+  onChange: () => void;
+}> = ({ classroomID, teacherID, style, className }) => {
+  const { t } = useTranslation("classes", { keyPrefix: "detail.attendance" });
+
   const { duration, easing } = useAnimationConfig();
 
   const supabase = useSupabaseClient();
@@ -38,10 +41,7 @@ const RecentAttendanceList: StylableFC<{
   useEffect(() => {
     (async () => {
       setLoading(true);
-      const { data } = await getAttendanceSummaryOfClass(
-        supabase,
-        classroomID,
-      );
+      const { data } = await getAttendanceSummaryOfClass(supabase, classroomID);
       if (data) setAttendanceList(data);
       setLoading(false);
     })();
@@ -56,7 +56,7 @@ const RecentAttendanceList: StylableFC<{
         element="h4"
         className="rounded-md bg-surface px-3 py-2"
       >
-        Attendance
+        {t("title")}
       </Text>
       <div className="relative -mx-4 overflow-auto">
         <ul className="flex h-[7.5rem] w-fit flex-row gap-2 px-4">
@@ -66,8 +66,11 @@ const RecentAttendanceList: StylableFC<{
                 appearance="filled"
                 stateLayerEffect
                 onClick={() => setAddOpen(true)}
+                element={(props) => (
+                  <button {...props} title={t("action.addDay")} />
+                )}
                 className={cn(`!grid h-full w-24 place-items-center
-                !bg-primary-container`)}
+                  !bg-primary-container`)}
               >
                 <MaterialIcon
                   icon="add"

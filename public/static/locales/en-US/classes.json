@@ -13,14 +13,23 @@
     "action": {
       "print": "Print",
       "saveContact": "Save contact",
-      "attendance": {
-        "view": "View attendance",
-        "take": "Take attendance"
-      },
       "requestInfo": "Request info"
     }
   },
   "detail": {
+    "attendance": {
+      "title": "Attendance",
+      "item": {
+        "title": "{{date, datetime(weekday: short; day: numeric; month: short)}}",
+        "absenceCount_zero": "None absent",
+        "absenceCount_one": "1 absent",
+        "absenceCount_other": "{{count, number}} absent"
+      },
+      "action": {
+        "addDay": "Take attendance",
+        "addEvent": "Add"
+      }
+    },
     "general": {
       "classAdvisors": "Class advisors",
       "room": "Room"
