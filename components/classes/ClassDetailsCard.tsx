@@ -52,11 +52,10 @@ const ClassDetailsCard: StylableFC<{
         <>
           <ClassHeader
             classroom={classroom}
-            teacherID={teacherID}
             isOwnClass={isOwnClass}
             role={role}
           />
-          <LookupDetailsContent>
+          <LookupDetailsContent className="!overflow-auto">
             {/* Attendance */}
             {isOwnClass && (
               <RecentAttendanceList
@@ -89,7 +88,7 @@ const ClassDetailsCard: StylableFC<{
 
             <section
               className={cn(`flex flex-col-reverse gap-x-2 gap-y-5 md:-mb-4
-                md:grid md:grow md:grid-cols-2`)}
+                md:grid md:min-h-[20rem] md:grow md:grid-cols-2`)}
             >
               {/* Students */}
               {classroom.students.length > 0 && (
