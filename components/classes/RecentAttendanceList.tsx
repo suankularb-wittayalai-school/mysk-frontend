@@ -18,6 +18,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { list } from "radash";
 import { useEffect, useState } from "react";
+import Balancer from "react-wrap-balancer";
 
 /**
  * A list of recent Attendance events grouped into dates for Class Details
@@ -66,7 +67,12 @@ const RecentAttendanceList: StylableFC<{
         {t("title")}
       </Text>
       <div className="relative -mx-4 overflow-auto">
-        <ul className="flex h-[7.5rem] w-fit flex-row gap-2 px-4">
+        <ul
+          className={cn(
+            `flex h-[7.5rem] flex-row gap-2 px-4`,
+            loading || attendanceList.length ? `w-fit` : `w-full`,
+          )}
+        >
           {/* Add Attendance */}
           {isOwnClass && teacherID && !isWeekend(new Date()) && (
             <li className="h-full">
@@ -101,8 +107,9 @@ const RecentAttendanceList: StylableFC<{
 
           {/* Attendance List */}
           <AnimatePresence mode="popLayout">
-            {!loading
-              ? // Show list once loaded
+            {!loading ? (
+              attendanceList.length ? (
+                // Show list once loaded
                 attendanceList.map((attendance) => (
                   <motion.li
                     key={attendance.date}
@@ -122,15 +129,28 @@ const RecentAttendanceList: StylableFC<{
                     />
                   </motion.li>
                 ))
-              : // Show skeleton while loading
-                list(3).map((idx) => (
-                  <motion.li
-                    key={idx}
-                    exit={{ opacity: 0 }}
-                    transition={transition(duration.short2, easing.standard)}
-                    className="w-40 animate-pulse rounded-md bg-surface"
-                  />
-                ))}
+              ) : (
+                // Show empty state if no Attendance
+                <Card
+                  appearance="filled"
+                  className="!grid w-full place-items-center !bg-surface"
+                >
+                  <Text type="body-medium" className="text-center">
+                    <Balancer>{t("empty")}</Balancer>
+                  </Text>
+                </Card>
+              )
+            ) : (
+              // Show skeleton while loading
+              list(4).map((idx) => (
+                <motion.li
+                  key={idx}
+                  exit={{ opacity: 0 }}
+                  transition={transition(duration.short2, easing.standard)}
+                  className="w-40 animate-pulse rounded-md bg-surface"
+                />
+              ))
+            )}
           </AnimatePresence>
         </ul>
       </div>
