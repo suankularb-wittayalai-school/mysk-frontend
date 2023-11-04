@@ -59,9 +59,10 @@
           "absent": "Absent"
         },
         "absenceType": {
-          "sick": "Sick leave",
-          "business": "Business leave",
-          "activity": "School activity",
+          "late": "Late",
+          "onLeave": "On leave",
+          "absent": "Absent",
+          "dropped": "Dropped",
           "other": "Other"
         },
         "enterReason": "Enter reason"

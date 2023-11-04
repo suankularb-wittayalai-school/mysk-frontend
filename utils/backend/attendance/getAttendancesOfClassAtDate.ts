@@ -1,7 +1,11 @@
 import getISODateString from "@/utils/backend/getISODateString";
 import logError from "@/utils/helpers/logError";
 import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
-import { AttendanceEvent, StudentAttendance } from "@/utils/types/attendance";
+import {
+  AbsenceType,
+  AttendanceEvent,
+  StudentAttendance,
+} from "@/utils/types/attendance";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
 
 /**
@@ -70,7 +74,7 @@ export default async function getAttendancesOfClassAtDate(
       },
       is_present: attendance.is_present,
       attendance_event: attendance.attendance_event,
-      absence_type: attendance.absence_type,
+      absence_type: attendance.absence_type as AbsenceType,
       absence_reason: attendance.absence_reason,
     };
   });

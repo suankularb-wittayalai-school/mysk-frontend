@@ -3,7 +3,7 @@ import { Student } from "@/utils/types/person";
 
 export type AttendanceEvent = "homeroom" | "assembly";
 
-export type AbsenceType = "sick" | "business" | "activity" | "other";
+export type AbsenceType = "late" | "on_leave" | "absent" | "dropped" | "other";
 
 export type StudentAttendance = {
   id: string;
