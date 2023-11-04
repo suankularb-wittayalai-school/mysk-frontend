@@ -40,6 +40,7 @@ import { useContext, useEffect, useState } from "react";
  * @param teacherID The ID of the Teacher who is taking Attendance.
  * @param open If the Dialog is open and shown.
  * @param onClose Triggers when the Dialog is closed.
+ * @param onSubmit Triggers when the user submits the Attendance.
  */
 const AttendanceDialog: StylableFC<{
   event?: "assembly" | "homeroom";
@@ -48,6 +49,7 @@ const AttendanceDialog: StylableFC<{
   teacherID?: string;
   open: boolean;
   onClose: () => void;
+  onSubmit: () => void;
 }> = ({
   event: defaultEvent,
   date,
@@ -55,6 +57,7 @@ const AttendanceDialog: StylableFC<{
   teacherID,
   open,
   onClose,
+  onSubmit,
   style,
   className,
 }) => {
@@ -167,7 +170,7 @@ const AttendanceDialog: StylableFC<{
         setConfirmOpen(false);
 
         if (error) return false;
-        onClose();
+        onSubmit();
         return true;
       },
       toggleLoading,

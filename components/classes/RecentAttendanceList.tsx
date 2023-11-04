@@ -13,6 +13,7 @@ import {
   useAnimationConfig,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { isWeekend } from "date-fns";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { list } from "radash";
@@ -28,7 +29,6 @@ import { useEffect, useState } from "react";
 const RecentAttendanceList: StylableFC<{
   classroomID: string;
   teacherID?: string;
-  onChange: () => void;
 }> = ({ classroomID, teacherID, style, className }) => {
   const { t } = useTranslation("classes", { keyPrefix: "detail.attendance" });
 
@@ -37,14 +37,19 @@ const RecentAttendanceList: StylableFC<{
   const supabase = useSupabaseClient();
   const [loading, setLoading] = useState(true);
 
+  /**
+   * Fetch the Attendance data for the Classroom.
+   */
+  async function fetchAttendance() {
+    if (!loading) setLoading(true);
+    const { data } = await getAttendanceSummaryOfClass(supabase, classroomID);
+    if (data) setAttendanceList(data);
+    setLoading(false);
+  }
+
   const [attendanceList, setAttendanceList] = useState<AttendanceAtDate[]>([]);
   useEffect(() => {
-    (async () => {
-      setLoading(true);
-      const { data } = await getAttendanceSummaryOfClass(supabase, classroomID);
-      if (data) setAttendanceList(data);
-      setLoading(false);
-    })();
+    fetchAttendance();
   }, [classroomID]);
 
   const [addOpen, setAddOpen] = useState(false);
@@ -60,7 +65,8 @@ const RecentAttendanceList: StylableFC<{
       </Text>
       <div className="relative -mx-4 overflow-auto">
         <ul className="flex h-[7.5rem] w-fit flex-row gap-2 px-4">
-          {teacherID && (
+          {/* Add Attendance */}
+          {teacherID && !isWeekend(new Date()) && (
             <li className="h-full">
               <Card
                 appearance="filled"
@@ -82,12 +88,19 @@ const RecentAttendanceList: StylableFC<{
                 teacherID={teacherID}
                 open={addOpen}
                 onClose={() => setAddOpen(false)}
+                onSubmit={() => {
+                  setAddOpen(false);
+                  fetchAttendance();
+                }}
               />
             </li>
           )}
+
+          {/* Attendance List */}
           <AnimatePresence mode="popLayout">
             {!loading
-              ? attendanceList.map((attendance) => (
+              ? // Show list once loaded
+                attendanceList.map((attendance) => (
                   <motion.li
                     key={attendance.date}
                     initial={{ scale: 0.8, opacity: 0 }}
@@ -101,10 +114,12 @@ const RecentAttendanceList: StylableFC<{
                       attendance={attendance}
                       classroomID={classroomID}
                       teacherID={teacherID}
+                      onChange={fetchAttendance}
                     />
                   </motion.li>
                 ))
-              : list(3).map((idx) => (
+              : // Show skeleton while loading
+                list(3).map((idx) => (
                   <motion.li
                     key={idx}
                     exit={{ opacity: 0 }}

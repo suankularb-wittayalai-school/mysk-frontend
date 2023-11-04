@@ -60,7 +60,6 @@ const ClassDetailsCard: StylableFC<{
             {isOwnClass && (
               <RecentAttendanceList
                 classroomID={classroom.id}
-                classroomSize={classroom.students.length}
                 teacherID={teacherID}
               />
             )}

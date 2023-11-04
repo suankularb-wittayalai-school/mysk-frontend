@@ -92,7 +92,7 @@
     },
     "confirmAttendanceSave": {
       "title": "Confirm save",
-      "desc": "Once you save attendance data, you cannot edit it later.",
+      "desc": "You can view and edit the attendance later in the Classes page.",
       "action": {
         "goBack": "Go back",
         "confirm": "Confirm"

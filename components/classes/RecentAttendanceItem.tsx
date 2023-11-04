@@ -17,7 +17,7 @@ const RecentAttendanceItem: StylableFC<{
   classroomID: string;
   teacherID?: string;
   onChange: () => void;
-}> = ({ attendance, classroomID, teacherID, style, className }) => {
+}> = ({ attendance, classroomID, teacherID, onChange, style, className }) => {
   const { t } = useTranslation("classes", {
     keyPrefix: "detail.attendance",
   });
@@ -78,6 +78,10 @@ const RecentAttendanceItem: StylableFC<{
         teacherID={teacherID}
         open={eventToEdit !== null}
         onClose={() => setEventToEdit(null)}
+        onSubmit={() => {
+          setEventToEdit(null);
+          onChange();
+        }}
       />
     </>
   );
