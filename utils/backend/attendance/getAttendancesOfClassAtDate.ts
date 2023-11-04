@@ -1,8 +1,8 @@
+import getISODateString from "@/utils/backend/getISODateString";
 import logError from "@/utils/helpers/logError";
 import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
 import { AttendanceEvent, StudentAttendance } from "@/utils/types/attendance";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
-import { subMinutes } from "date-fns";
 
 /**
  * Retrieves the Attendance records of a Classroom for a specific date and Attendance event.
@@ -49,14 +49,7 @@ export default async function getAttendancesOfClassAtDate(
     )
     .eq("students.classroom_students.classroom_id", classroomID)
     .eq("attendance_event", attendanceEvent)
-    .eq(
-      "date",
-      // Since ISO dates are in UTC, we lose the timezone offset when
-      // converting to ISO. We correct this by adding the timezone offset back.
-      // We also remove the time portion of the date, since we only want to
-      // match the date.
-      subMinutes(date, date.getTimezoneOffset()).toISOString().split("T")[0],
-    );
+    .eq("date", getISODateString(date));
 
   if (error) {
     logError("getAttendancesOfClassAtDate", error);
