@@ -1,7 +1,7 @@
 // Imports
 import AttendanceDialog from "@/components/classes/AttendanceDialog";
 import RecentAttendanceItem from "@/components/classes/RecentAttendanceItem";
-import getRecentAttendanceAtDaysOfClass from "@/utils/backend/attendance/getRecentAttendanceAtDaysOfClass";
+import getAttendanceSummaryOfClass from "@/utils/backend/attendance/getAttendanceSummaryOfClass";
 import cn from "@/utils/helpers/cn";
 import { AttendanceAtDate } from "@/utils/types/attendance";
 import { StylableFC } from "@/utils/types/common";
@@ -38,10 +38,9 @@ const RecentAttendanceList: StylableFC<{
   useEffect(() => {
     (async () => {
       setLoading(true);
-      const { data } = await getRecentAttendanceAtDaysOfClass(
+      const { data } = await getAttendanceSummaryOfClass(
         supabase,
         classroomID,
-        classroomSize,
       );
       if (data) setAttendanceList(data);
       setLoading(false);

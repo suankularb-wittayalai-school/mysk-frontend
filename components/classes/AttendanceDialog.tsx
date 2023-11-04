@@ -1,7 +1,7 @@
 // Imports
 import AttendanceListItem from "@/components/classes/AttendanceListItem";
 import SnackbarContext from "@/contexts/SnackbarContext";
-import getAttendancesOfClassAtDate from "@/utils/backend/attendance/getAttendancesOfClass";
+import getAttendancesOfClassAtDate from "@/utils/backend/attendance/getAttendancesOfClassAtDate";
 import recordAttendances from "@/utils/backend/attendance/recordAttendances";
 import getStudentsOfClass from "@/utils/backend/classroom/getStudentsOfClass";
 import cn from "@/utils/helpers/cn";
@@ -22,14 +22,12 @@ import {
   Section,
   SegmentedButton,
   Snackbar,
-  Text,
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { isFuture, isWithinInterval } from "date-fns";
 import { LayoutGroup, motion } from "framer-motion";
-import { Trans, useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next";
 import { replace } from "radash";
 import { useContext, useEffect, useState } from "react";
 
@@ -37,6 +35,7 @@ import { useContext, useEffect, useState } from "react";
  * A Dialog for taking Attendance of Students in a classroom.
  *
  * @param event The default Attendance event to take Attendance for.
+ * @param date The date to take Attendance for.
  * @param classroomID The ID of the Classroom for which Attendance is being taken.
  * @param teacherID The ID of the Teacher who is taking Attendance.
  * @param open If the Dialog is open and shown.
@@ -44,12 +43,14 @@ import { useContext, useEffect, useState } from "react";
  */
 const AttendanceDialog: StylableFC<{
   event?: "assembly" | "homeroom";
+  date?: Date;
   classroomID: string;
   teacherID?: string;
   open: boolean;
   onClose: () => void;
 }> = ({
   event: defaultEvent,
+  date,
   classroomID,
   teacherID,
   open,
@@ -69,6 +70,9 @@ const AttendanceDialog: StylableFC<{
   const [event, setEvent] = useState<"assembly" | "homeroom">(
     defaultEvent || "assembly",
   );
+  useEffect(() => {
+    if (defaultEvent && defaultEvent !== event) setEvent(defaultEvent);
+  }, [defaultEvent]);
 
   const supabase = useSupabaseClient();
   const [loading, toggleLoading] = useToggle();
@@ -86,13 +90,14 @@ const AttendanceDialog: StylableFC<{
       (attendances[0] && attendances[0].attendance_event === event)
     )
       return;
+
     withLoading(
       async () => {
         // Get Attendance data
         const { data } = await getAttendancesOfClassAtDate(
           supabase,
           classroomID,
-          new Date(),
+          date || new Date(),
           event,
         );
 

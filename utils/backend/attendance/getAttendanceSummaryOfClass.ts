@@ -5,24 +5,23 @@ import { addMonths } from "date-fns";
 import { group } from "radash";
 
 /**
- * Retrieves the Attendance records of a Classroom for the past 3 months.
+ * Get a summary of absences of a Classroom for the past 3 months.
  *
  * @param supabase The Supabase client to use.
- * @param classroomID The ID of the Classroom to retrieve Attendance records for.
- * @param classroomSize The size of the Classroom.
+ * @param classroomID The ID of the Classroom to get a summary for.
  *
  * @returns A Backend Return of an array of Attendance At Dates.
  */
-export default async function getRecentAttendanceAtDaysOfClass(
+export default async function getAttendanceSummaryOfClass(
   supabase: DatabaseClient,
   classroomID: string,
-  classroomSize: number,
 ): Promise<BackendReturn<AttendanceAtDate[]>> {
   // Retrieve the Attendance records of a Classroom for the past 3 months
   const { data, error } = await supabase
     .from("student_attendances")
     .select(
       `date,
+      is_present,
       attendance_event,
       students!inner(classroom_students!inner(classroom_id))`,
     )
@@ -40,19 +39,19 @@ export default async function getRecentAttendanceAtDaysOfClass(
    *
    * @param attendances The Attendace data of a date.
    * @param attendanceEvent The Attendance Event to retrieve records for, assembly or homeroom.
-   * @param classroomSize The size of the Classroom.
    *
    * @returns The number of Students absent.
    */
   function getAbsenceCount(
     attendances: typeof data,
     attendanceEvent: AttendanceEvent,
-    classroomSize: number,
   ): number | null {
-    const eventAttendances = attendances!.filter(
+    const attendancesOfEvent = attendances!.filter(
       (attendance) => attendance.attendance_event === attendanceEvent,
     );
-    return Math.max(classroomSize - eventAttendances.length, 0);
+    return attendancesOfEvent.length
+      ? attendancesOfEvent.filter((attendance) => !attendance.is_present).length
+      : null;
   }
 
   // Group the Attendance records by date, and calculate the number of students
@@ -62,12 +61,8 @@ export default async function getRecentAttendanceAtDaysOfClass(
   ).map(([date, attendances]) => ({
     date,
     absence_count: {
-      homeroom: attendances
-        ? getAbsenceCount(attendances, "homeroom", classroomSize)
-        : null,
-      assembly: attendances
-        ? getAbsenceCount(attendances, "assembly", classroomSize)
-        : null,
+      homeroom: getAbsenceCount(attendances!, "homeroom"),
+      assembly: getAbsenceCount(attendances!, "assembly"),
     },
   }));
 
