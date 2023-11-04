@@ -271,21 +271,23 @@ const AttendanceDialog: StylableFC<{
           </SegmentedButton>
 
           {/* Bulk actions */}
-          <ChipSet scrollable className="-mx-4 px-4">
-            <AssistChip
-              icon={<MaterialIcon icon="done_all" />}
-              onClick={handleMarkAllPresent}
-            >
-              {t("action.markAll")}
-            </AssistChip>
-            <AssistChip
-              icon={<MaterialIcon icon="delete" />}
-              dangerous
-              onClick={handleClear}
-            >
-              {t("action.clear")}
-            </AssistChip>
-          </ChipSet>
+          {editable && (
+            <ChipSet scrollable className="-mx-4 px-4">
+              <AssistChip
+                icon={<MaterialIcon icon="done_all" />}
+                onClick={handleMarkAllPresent}
+              >
+                {t("action.markAll")}
+              </AssistChip>
+              <AssistChip
+                icon={<MaterialIcon icon="delete" />}
+                dangerous
+                onClick={handleClear}
+              >
+                {t("action.clear")}
+              </AssistChip>
+            </ChipSet>
+          )}
         </Section>
 
         {/* List */}
