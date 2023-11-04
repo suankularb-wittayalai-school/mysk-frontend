@@ -58,7 +58,13 @@ const ClassDetailsCard: StylableFC<{
           />
           <LookupDetailsContent>
             {/* Attendance */}
-            {isOwnClass && <RecentAttendanceList />}
+            {isOwnClass && (
+              <RecentAttendanceList
+                classroomID={classroom.id}
+                classroomSize={classroom.students.length}
+                teacherID={teacherID}
+              />
+            )}
 
             <section className="grid grid-cols-2 gap-2 md:grid-cols-4">
               {/* Class advisors */}

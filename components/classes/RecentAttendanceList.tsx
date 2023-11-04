@@ -1,45 +1,54 @@
 // Imports
+import AttendanceDialog from "@/components/classes/AttendanceDialog";
+import RecentAttendanceItem from "@/components/classes/RecentAttendanceItem";
+import getRecentAttendanceAtDaysOfClass from "@/utils/backend/attendance/getRecentAttendanceAtDaysOfClass";
 import cn from "@/utils/helpers/cn";
-import useLocale from "@/utils/helpers/useLocale";
-import { AttendanceAtDate, AttendanceEvent } from "@/utils/types/attendance";
+import { AttendanceAtDate } from "@/utils/types/attendance";
 import { StylableFC } from "@/utils/types/common";
 import {
   Card,
-  Interactive,
   MaterialIcon,
   Text,
+  transition,
+  useAnimationConfig,
 } from "@suankularb-components/react";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { list } from "radash";
+import { useEffect, useState } from "react";
 
 /**
  * A list of recent Attendance events grouped into dates for Class Details
  * Card.
+ *
+ * @param classroomID The ID of the Classroom to display Attendance for.
+ * @param teacherID The ID of the Teacher currently logged in, if the user is a Teacher. Used for Attendance.
  */
-const RecentAttendanceList: StylableFC = ({ style, className }) => {
-  const locale = useLocale();
+const RecentAttendanceList: StylableFC<{
+  classroomID: string;
+  classroomSize: number;
+  teacherID?: string;
+}> = ({ classroomID, classroomSize, teacherID, style, className }) => {
+  const { duration, easing } = useAnimationConfig();
 
-  // TODO: Replace with real data
-  const attendanceList: AttendanceAtDate[] = [
-    {
-      date: "2023-10-31",
-      absence_count: { assembly: 2, homeroom: null },
-    },
-    {
-      date: "2023-10-30",
-      absence_count: { assembly: 0, homeroom: 0 },
-    },
-    {
-      date: "2023-10-27",
-      absence_count: { assembly: 1, homeroom: 1 },
-    },
-    {
-      date: "2023-10-26",
-      absence_count: { assembly: 0, homeroom: 1 },
-    },
-    {
-      date: "2023-10-25",
-      absence_count: { assembly: 1, homeroom: 1 },
-    },
-  ];
+  const supabase = useSupabaseClient();
+  const [loading, setLoading] = useState(true);
+
+  const [attendanceList, setAttendanceList] = useState<AttendanceAtDate[]>([]);
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      const { data } = await getRecentAttendanceAtDaysOfClass(
+        supabase,
+        classroomID,
+        classroomSize,
+      );
+      if (data) setAttendanceList(data);
+      setLoading(false);
+    })();
+  }, [classroomID]);
+
+  const [addOpen, setAddOpen] = useState(false);
 
   return (
     <section style={style} className={cn(`space-y-2`, className)}>
@@ -50,63 +59,58 @@ const RecentAttendanceList: StylableFC = ({ style, className }) => {
       >
         Attendance
       </Text>
-      <div className="-mx-4 !-mb-2 overflow-auto pb-2">
-        <ul className="flex w-fit flex-row gap-2 px-4">
-          <Card
-            appearance="filled"
-            stateLayerEffect
-            onClick={() => {}}
-            className="!grid w-24 place-items-center !bg-primary-container"
-          >
-            <MaterialIcon icon="add" className="text-on-primary-container" />
-          </Card>
-          {attendanceList.map((attendance) => (
-            <Card
-              key={attendance.date}
-              appearance="filled"
-              className="w-40 gap-1 !bg-surface p-2"
-            >
-              <Text type="title-medium" element="h5">
-                {new Date(attendance.date).toLocaleDateString(locale, {
-                  weekday: "short",
-                  day: "numeric",
-                  month: "short",
-                })}
-              </Text>
-              {["assembly", "homeroom"].map((event) => {
-                const absenceCount =
-                  attendance.absence_count[event as AttendanceEvent];
-                return (
-                  <Interactive
-                    key={event}
-                    onClick={() => {}}
-                    className={cn(
-                      `flex flex-row items-center gap-2 rounded-sm px-2
-                      py-1.5`,
-                      absenceCount === null
-                        ? `-m-[1px] border-1 border-outline-variant
-                          text-on-surface-variant state-layer:!bg-primary`
-                        : absenceCount === 0
-                        ? `bg-surface-2 text-on-surface-variant`
-                        : `bg-secondary-container text-on-secondary-container`,
+      <div className="relative -mx-4 overflow-auto">
+        <ul className="flex h-[7.5rem] w-fit flex-row gap-2 px-4">
+          {teacherID && (
+            <li className="h-full">
+              <Card
+                appearance="filled"
+                stateLayerEffect
+                onClick={() => setAddOpen(true)}
+                className={cn(`!grid h-full w-24 place-items-center
+                !bg-primary-container`)}
+              >
+                <MaterialIcon
+                  icon="add"
+                  className="text-on-primary-container"
+                />
+              </Card>
+              <AttendanceDialog
+                classroomID={classroomID}
+                teacherID={teacherID}
+                open={addOpen}
+                onClose={() => setAddOpen(false)}
+              />
+            </li>
+          )}
+          <AnimatePresence mode="popLayout">
+            {!loading
+              ? attendanceList.map((attendance) => (
+                  <motion.li
+                    key={attendance.date}
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={transition(
+                      duration.short4,
+                      easing.standardDecelerate,
                     )}
                   >
-                    {absenceCount === null ? (
-                      <MaterialIcon icon="add" />
-                    ) : (
-                      {
-                        assembly: <MaterialIcon icon="emoji_flags" />,
-                        homeroom: <MaterialIcon icon="meeting_room" />,
-                      }[event]
-                    )}
-                    <Text type="label-large" className="!font-display">
-                      {absenceCount === null ? "Add" : `${absenceCount} absent`}
-                    </Text>
-                  </Interactive>
-                );
-              })}
-            </Card>
-          ))}
+                    <RecentAttendanceItem
+                      attendance={attendance}
+                      classroomID={classroomID}
+                      teacherID={teacherID}
+                    />
+                  </motion.li>
+                ))
+              : list(3).map((idx) => (
+                  <motion.li
+                    key={idx}
+                    exit={{ opacity: 0 }}
+                    transition={transition(duration.short2, easing.standard)}
+                    className="w-40 animate-pulse rounded-md bg-surface"
+                  />
+                ))}
+          </AnimatePresence>
         </ul>
       </div>
     </section>
