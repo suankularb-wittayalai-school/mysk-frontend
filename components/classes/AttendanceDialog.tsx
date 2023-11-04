@@ -1,7 +1,7 @@
 // Imports
 import AttendanceListItem from "@/components/classes/AttendanceListItem";
 import SnackbarContext from "@/contexts/SnackbarContext";
-import getAttendancesOfClassAtDate from "@/utils/backend/attendance/getAttendancesOfClassAtDate";
+import getAttendanceOfClass from "@/utils/backend/attendance/getAttendanceOfClass";
 import recordAttendances from "@/utils/backend/attendance/recordAttendances";
 import getStudentsOfClass from "@/utils/backend/classroom/getStudentsOfClass";
 import cn from "@/utils/helpers/cn";
@@ -97,7 +97,7 @@ const AttendanceDialog: StylableFC<{
     withLoading(
       async () => {
         // Get Attendance data
-        const { data } = await getAttendancesOfClassAtDate(
+        const { data } = await getAttendanceOfClass(
           supabase,
           classroomID,
           date || new Date(),

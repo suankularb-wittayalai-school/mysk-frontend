@@ -18,7 +18,7 @@ import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
  *
  * @returns A Backend Return of an array of Student Attendances.
  */
-export default async function getAttendancesOfClassAtDate(
+export default async function getAttendanceOfClass(
   supabase: DatabaseClient,
   classroomID: string,
   date: Date,
