@@ -161,6 +161,7 @@ const AttendanceDialog: StylableFC<{
           // `as` is fine
           attendances as StudentAttendance[],
           event,
+          date || new Date(),
           teacherID,
         );
         setConfirmOpen(false);
