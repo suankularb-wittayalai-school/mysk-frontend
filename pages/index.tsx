@@ -2,6 +2,7 @@
 import MultiSchemeImage from "@/components/common/MultiSchemeImage";
 import LogInSide from "@/components/landing/LogInSide";
 import PatchNotesSide from "@/components/landing/PatchNotesSide";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import BlobsFullDark from "@/public/images/graphics/blobs/full-dark.svg";
 import BlobsFullLight from "@/public/images/graphics/blobs/full-light.svg";
 import flagUserAsOnboarded from "@/utils/backend/account/flagUserAsOnboarded";
@@ -11,6 +12,8 @@ import { CustomPage, LangCode } from "@/utils/types/common";
 import { Columns, ContentLayout, Text } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { LayoutGroup } from "framer-motion";
+import { GetServerSideProps } from "next";
+import { getServerSession } from "next-auth";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
@@ -123,9 +126,30 @@ const LandingPage: CustomPage = () => {
   );
 };
 
-export const getStaticProps = async ({ locale }: { locale: LangCode }) => ({
-  props: await serverSideTranslations(locale, ["common", "account", "landing"]),
-});
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  req,
+  res,
+}) => {
+  // Redirect to Learn if user is already logged in
+  // (For Teachers, the middleware will redirect them to Teach instead)
+  const data = await getServerSession(req, res, authOptions);
+  if (data)
+    return {
+      redirect: {
+        destination: (locale === "en-US" ? "/en-US" : "") + "/learn",
+        permanent: false,
+      },
+    };
+
+  return {
+    props: await serverSideTranslations(locale as LangCode, [
+      "common",
+      "account",
+      "landing",
+    ]),
+  };
+};
 
 LandingPage.navType = "hidden";
 
