@@ -89,13 +89,12 @@
         "class": "Class",
         "room": "Room code",
         "room_helper": "4-digit code in front of rooms, i.e. 1216",
-        "day": "Day",
-        "periodStart": "Starts at period",
         "duration": {
           "label": "Period duration",
           "single": "Single period (50 minutes)",
           "double": "Double period (1 hr 40 min)"
-        }
+        },
+        "isCoTeacher": "I’m a co-teacher"
       },
       "action": {
         "cancel": "Cancel",

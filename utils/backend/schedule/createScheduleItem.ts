@@ -10,11 +10,12 @@ import { pick } from "radash";
 export default async function createScheduleItem(
   supabase: DatabaseClient,
   scheduleItem: Required<
-    Omit<PeriodContentItem, "id" | "subject" | "teachers">
+    Omit<PeriodContentItem, "id" | "subject" | "teachers" | "co_teachers">
   > & {
     day: number;
     subject: Pick<Subject, "id">;
     teachers: Pick<Teacher, "id">[];
+    co_teachers: Pick<Teacher, "id">[];
   },
 ): Promise<BackendReturn<null>> {
   const { data, error } = await supabase
@@ -45,6 +46,19 @@ export default async function createScheduleItem(
   if (teachersError) {
     logError("createScheduleItem (schedule_item_teachers)", teachersError);
     return { data: null, error: teachersError };
+  }
+
+  const { error: coTeachersError } = await supabase
+    .from("schedule_item_co_teachers")
+    .upsert(
+      scheduleItem.co_teachers.map((teacher) => ({
+        schedule_item_id: data!.id,
+        teacher_id: teacher.id,
+      })),
+    );
+  if (coTeachersError) {
+    logError("createScheduleItem (schedule_item_co_teachers)", coTeachersError);
+    return { data: null, error: coTeachersError };
   }
 
   const { error: classroomsError } = await supabase
