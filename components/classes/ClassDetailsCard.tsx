@@ -2,6 +2,7 @@
 import ClassContactList from "@/components/classes/ClassContactList";
 import ClassHeader from "@/components/classes/ClassHeader";
 import ClassStudentList from "@/components/classes/ClassStudentList";
+import RecentAttendanceList from "@/components/classes/RecentAttendanceList";
 import LookupDetailsCard from "@/components/lookup/LookupDetailsCard";
 import LookupDetailsContent from "@/components/lookup/LookupDetailsContent";
 import InformationCard from "@/components/lookup/teachers/InformationCard";
@@ -51,11 +52,19 @@ const ClassDetailsCard: StylableFC<{
         <>
           <ClassHeader
             classroom={classroom}
-            teacherID={teacherID}
             isOwnClass={isOwnClass}
             role={role}
           />
-          <LookupDetailsContent>
+          <LookupDetailsContent className="!overflow-auto">
+            {/* Attendance */}
+            {(teacherID || isOwnClass) && (
+              <RecentAttendanceList
+                classroomID={classroom.id}
+                teacherID={teacherID}
+                isOwnClass={isOwnClass}
+              />
+            )}
+
             <section className="grid grid-cols-2 gap-2 md:grid-cols-4">
               {/* Class advisors */}
               <InformationCard
@@ -79,7 +88,7 @@ const ClassDetailsCard: StylableFC<{
 
             <section
               className={cn(`flex flex-col-reverse gap-x-2 gap-y-5 md:-mb-4
-                md:grid md:grow md:grid-cols-2`)}
+                md:grid md:min-h-[20rem] md:grow md:grid-cols-2`)}
             >
               {/* Students */}
               {classroom.students.length > 0 && (

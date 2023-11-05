@@ -13,14 +13,24 @@
     "action": {
       "print": "พิมพ์",
       "saveContact": "บันทึก",
-      "attendance": {
-        "view": "ข้อมูลเช็คชื่อ",
-        "take": "เช็คชื่อ"
-      },
       "requestInfo": "ขอข้อมูลเพิ่มเติม"
     }
   },
   "detail": {
+    "attendance": {
+      "title": "ข้อมูลเช็กชื่อ",
+      "item": {
+        "title": "{{date, datetime(weekday: short; day: numeric; month: short)}}",
+        "absenceCount_zero": "มาครบ",
+        "absenceCount_other": "ขาด {{count, number}} คน",
+        "noData": "ไม่มีข้อมูล"
+      },
+      "empty": "ไม่มีข้อมูลการเช็กชื่อใน 3 เดือนที่ผ่านมา",
+      "action": {
+        "addDay": "เพิ่มข้อมูลเช็กชื่อ",
+        "addEvent": "เพิ่ม"
+      }
+    },
     "general": {
       "classAdvisors": "ครูที่ปรึกษา",
       "room": "ห้องที่ใช้เรียน"
@@ -44,10 +54,11 @@
   "dialog": {
     "attendance": {
       "title": {
-        "view": "ข้อมูลเช็คชื่อ",
-        "take": "เช็คชื่อ"
+        "view": "ข้อมูลเช็กชื่อ",
+        "take": "เช็กชื่อ"
       },
       "event": {
+        "title": "เลือกคาบ",
         "assembly": "เข้าแถว",
         "homeroom": "โฮมรูม"
       },
@@ -59,32 +70,26 @@
           "absent": "ขาด"
         },
         "absenceType": {
-          "sick": "ลาป่วย",
-          "business": "ลากิจ",
-          "activity": "กิจกรรมโรงเรียน",
+          "late": "มาสาย",
+          "onLeave": "ลา",
+          "absent": "ขาด",
+          "dropped": "ลาออก",
           "other": "อื่น ๆ"
         },
         "enterReason": "ระบุเหตุผล"
       },
+      "loading": "กำลังโหลด…",
       "action": {
         "markAll": "เช็กมาทุกคน",
         "clear": "ลบทั้งหมด",
         "save": "บันทึก"
       }
     },
-    "confirmMarkAll": {
-      "title": "ให้บันทึกว่ามาทุกคนใช่ไหม",
-      "desc": "เราจะเช็คชื่อให้นักเรียนทุกคนที่คุณยังไม่ได้เช็คชื่อว่ามาเรียน",
-      "action": {
-        "cancel": "ยกเลิก",
-        "confirm": "ยืนยัน"
-      }
-    },
     "confirmAttendanceSave": {
       "title": "ยืนยันการบันทึก",
-      "desc": "เมื่อคุณบันทึกข้อมูลการเช็คชื่อแล้ว คุณจะไม่สามารถแก้ไขได้ในภายหลัง",
+      "desc": "คุณจะสามารถกลับมาแก้ไขข้อมูลการเช็กชื่อได้ที่หน้าห้องเรียน",
       "action": {
-        "goBack": "แก้ไขต่อ",
+        "goBack": "กลับ",
         "confirm": "ยืนยัน"
       }
     }

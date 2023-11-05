@@ -23,7 +23,7 @@ import { useTranslation } from "next-i18next";
  * list.
  *
  * @param classroom The Classroom to display.
- * @param period The currently relevant Schedule Item fro this Classroom.
+ * @param period The currently relevant Schedule Item for this Classroom.
  * @param onClick The function to call when the card is clicked. Should select this Classroom.
  */
 const LookupClassCard: StylableFC<{

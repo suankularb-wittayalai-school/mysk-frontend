@@ -32,12 +32,14 @@ export interface Database {
           {
             foreignKeyName: "classroom_advisors_classroom_id_fkey";
             columns: ["classroom_id"];
+            isOneToOne: false;
             referencedRelation: "classrooms";
             referencedColumns: ["id"];
           },
           {
             foreignKeyName: "classroom_advisors_teacher_id_fkey";
             columns: ["teacher_id"];
+            isOneToOne: false;
             referencedRelation: "teachers";
             referencedColumns: ["id"];
           },
@@ -66,12 +68,14 @@ export interface Database {
           {
             foreignKeyName: "classroom_contacts_classroom_id_fkey";
             columns: ["classroom_id"];
+            isOneToOne: false;
             referencedRelation: "classrooms";
             referencedColumns: ["id"];
           },
           {
             foreignKeyName: "classroom_contacts_contact_id_fkey";
             columns: ["contact_id"];
+            isOneToOne: false;
             referencedRelation: "contacts";
             referencedColumns: ["id"];
           },
@@ -103,12 +107,14 @@ export interface Database {
           {
             foreignKeyName: "classroom_students_classroom_id_fkey";
             columns: ["classroom_id"];
+            isOneToOne: false;
             referencedRelation: "classrooms";
             referencedColumns: ["id"];
           },
           {
             foreignKeyName: "classroom_students_student_id_fkey";
             columns: ["student_id"];
+            isOneToOne: false;
             referencedRelation: "students";
             referencedColumns: ["id"];
           },
@@ -137,12 +143,14 @@ export interface Database {
           {
             foreignKeyName: "classroom_subject_co_teachers_classroom_subject_id_fkey";
             columns: ["classroom_subject_id"];
+            isOneToOne: false;
             referencedRelation: "classroom_subjects";
             referencedColumns: ["id"];
           },
           {
             foreignKeyName: "classroom_subject_co_teachers_teacher_id_fkey";
             columns: ["teacher_id"];
+            isOneToOne: false;
             referencedRelation: "teachers";
             referencedColumns: ["id"];
           },
@@ -171,12 +179,14 @@ export interface Database {
           {
             foreignKeyName: "classroom_subject_teachers_classroom_subject_id_fkey";
             columns: ["classroom_subject_id"];
+            isOneToOne: false;
             referencedRelation: "classroom_subjects";
             referencedColumns: ["id"];
           },
           {
             foreignKeyName: "classroom_subject_teachers_teacher_id_fkey";
             columns: ["teacher_id"];
+            isOneToOne: false;
             referencedRelation: "teachers";
             referencedColumns: ["id"];
           },
@@ -229,12 +239,14 @@ export interface Database {
           {
             foreignKeyName: "classroom_subjects_classroom_id_fkey";
             columns: ["classroom_id"];
+            isOneToOne: false;
             referencedRelation: "classrooms";
             referencedColumns: ["id"];
           },
           {
             foreignKeyName: "classroom_subjects_subject_id_fkey";
             columns: ["subject_id"];
+            isOneToOne: false;
             referencedRelation: "subjects";
             referencedColumns: ["id"];
           },
@@ -293,12 +305,14 @@ export interface Database {
           {
             foreignKeyName: "club_contacts_club_id_fkey";
             columns: ["club_id"];
+            isOneToOne: false;
             referencedRelation: "clubs";
             referencedColumns: ["id"];
           },
           {
             foreignKeyName: "fk_club_contacts_classrooms";
             columns: ["contact_id"];
+            isOneToOne: false;
             referencedRelation: "contacts";
             referencedColumns: ["id"];
           },
@@ -336,12 +350,14 @@ export interface Database {
           {
             foreignKeyName: "club_members";
             columns: ["student_id"];
+            isOneToOne: false;
             referencedRelation: "students";
             referencedColumns: ["id"];
           },
           {
             foreignKeyName: "club_members_club_id_fkey";
             columns: ["club_id"];
+            isOneToOne: false;
             referencedRelation: "clubs";
             referencedColumns: ["id"];
           },
@@ -379,6 +395,7 @@ export interface Database {
           {
             foreignKeyName: "club_staffs_club_id_fkey";
             columns: ["club_id"];
+            isOneToOne: false;
             referencedRelation: "clubs";
             referencedColumns: ["id"];
           },
@@ -416,6 +433,7 @@ export interface Database {
           {
             foreignKeyName: "clubs_organization_id_fkey";
             columns: ["organization_id"];
+            isOneToOne: false;
             referencedRelation: "organizations";
             referencedColumns: ["id"];
           },
@@ -492,6 +510,7 @@ export interface Database {
           {
             foreignKeyName: "fk_infos_news";
             columns: ["news_id"];
+            isOneToOne: false;
             referencedRelation: "news";
             referencedColumns: ["id"];
           },
@@ -571,6 +590,7 @@ export interface Database {
           {
             foreignKeyName: "organizations_user_id_fkey";
             columns: ["user_id"];
+            isOneToOne: false;
             referencedRelation: "users";
             referencedColumns: ["id"];
           },
@@ -671,6 +691,7 @@ export interface Database {
           {
             foreignKeyName: "person_allergies_person_id_fkey";
             columns: ["person_id"];
+            isOneToOne: false;
             referencedRelation: "people";
             referencedColumns: ["id"];
           },
@@ -699,12 +720,14 @@ export interface Database {
           {
             foreignKeyName: "person_contacts_contact_id_fkey";
             columns: ["contact_id"];
+            isOneToOne: false;
             referencedRelation: "contacts";
             referencedColumns: ["id"];
           },
           {
             foreignKeyName: "person_contacts_person_id_fkey";
             columns: ["person_id"];
+            isOneToOne: false;
             referencedRelation: "people";
             referencedColumns: ["id"];
           },
@@ -733,12 +756,14 @@ export interface Database {
           {
             foreignKeyName: "schedule_item_classroom_subjects_classroom_subject_id_fkey";
             columns: ["classroom_subject_id"];
+            isOneToOne: false;
             referencedRelation: "classroom_subjects";
             referencedColumns: ["id"];
           },
           {
             foreignKeyName: "schedule_item_classroom_subjects_schedule_item_id_fkey";
             columns: ["schedule_item_id"];
+            isOneToOne: false;
             referencedRelation: "schedule_items";
             referencedColumns: ["id"];
           },
@@ -767,12 +792,14 @@ export interface Database {
           {
             foreignKeyName: "schedule_item_classrooms_classroom_id_fkey";
             columns: ["classroom_id"];
+            isOneToOne: false;
             referencedRelation: "classrooms";
             referencedColumns: ["id"];
           },
           {
             foreignKeyName: "schedule_item_classrooms_schedule_item_id_fkey";
             columns: ["schedule_item_id"];
+            isOneToOne: false;
             referencedRelation: "schedule_items";
             referencedColumns: ["id"];
           },
@@ -801,6 +828,7 @@ export interface Database {
           {
             foreignKeyName: "schedule_item_rooms_schedule_item_id_fkey";
             columns: ["schedule_item_id"];
+            isOneToOne: false;
             referencedRelation: "schedule_items";
             referencedColumns: ["id"];
           },
@@ -829,12 +857,14 @@ export interface Database {
           {
             foreignKeyName: "schedule_item_teachers_schedule_item_id_fkey";
             columns: ["schedule_item_id"];
+            isOneToOne: false;
             referencedRelation: "schedule_items";
             referencedColumns: ["id"];
           },
           {
             foreignKeyName: "schedule_item_teachers_teacher_id_fkey";
             columns: ["teacher_id"];
+            isOneToOne: false;
             referencedRelation: "teachers";
             referencedColumns: ["id"];
           },
@@ -884,6 +914,7 @@ export interface Database {
           {
             foreignKeyName: "schedule_items_subject_id_fkey";
             columns: ["subject_id"];
+            isOneToOne: false;
             referencedRelation: "subjects";
             referencedColumns: ["id"];
           },
@@ -972,12 +1003,14 @@ export interface Database {
           {
             foreignKeyName: "student_attendances_checker_id_fkey";
             columns: ["checker_id"];
+            isOneToOne: false;
             referencedRelation: "teachers";
             referencedColumns: ["id"];
           },
           {
             foreignKeyName: "student_attendances_student_id_fkey";
             columns: ["student_id"];
+            isOneToOne: false;
             referencedRelation: "students";
             referencedColumns: ["id"];
           },
@@ -1015,12 +1048,14 @@ export interface Database {
           {
             foreignKeyName: "students_person_id_fkey";
             columns: ["person_id"];
+            isOneToOne: false;
             referencedRelation: "people";
             referencedColumns: ["id"];
           },
           {
             foreignKeyName: "students_user_id_fkey";
             columns: ["user_id"];
+            isOneToOne: false;
             referencedRelation: "users";
             referencedColumns: ["id"];
           },
@@ -1052,12 +1087,14 @@ export interface Database {
           {
             foreignKeyName: "subject_co_teachers_subject_id_fkey";
             columns: ["subject_id"];
+            isOneToOne: false;
             referencedRelation: "subjects";
             referencedColumns: ["id"];
           },
           {
             foreignKeyName: "subject_co_teachers_teacher_id_fkey";
             columns: ["teacher_id"];
+            isOneToOne: false;
             referencedRelation: "teachers";
             referencedColumns: ["id"];
           },
@@ -1110,12 +1147,14 @@ export interface Database {
           {
             foreignKeyName: "subject_teachers_subject_id_fkey";
             columns: ["subject_id"];
+            isOneToOne: false;
             referencedRelation: "subjects";
             referencedColumns: ["id"];
           },
           {
             foreignKeyName: "subject_teachers_teacher_id_fkey";
             columns: ["teacher_id"];
+            isOneToOne: false;
             referencedRelation: "teachers";
             referencedColumns: ["id"];
           },
@@ -1180,6 +1219,7 @@ export interface Database {
           {
             foreignKeyName: "subjects_subject_group_id_fkey";
             columns: ["subject_group_id"];
+            isOneToOne: false;
             referencedRelation: "subject_groups";
             referencedColumns: ["id"];
           },
@@ -1220,18 +1260,21 @@ export interface Database {
           {
             foreignKeyName: "teachers_person_id_fkey";
             columns: ["person_id"];
+            isOneToOne: false;
             referencedRelation: "people";
             referencedColumns: ["id"];
           },
           {
             foreignKeyName: "teachers_subject_group_id_fkey";
             columns: ["subject_group_id"];
+            isOneToOne: false;
             referencedRelation: "subject_groups";
             referencedColumns: ["id"];
           },
           {
             foreignKeyName: "teachers_user_id_fkey";
             columns: ["user_id"];
+            isOneToOne: false;
             referencedRelation: "users";
             referencedColumns: ["id"];
           },
@@ -1308,6 +1351,7 @@ export interface Database {
           {
             foreignKeyName: "fk_vaccine_records_people";
             columns: ["person_id"];
+            isOneToOne: false;
             referencedRelation: "people";
             referencedColumns: ["id"];
           },
@@ -1326,7 +1370,15 @@ export interface Database {
       };
     };
     Enums: {
-      absence_type: "sick" | "business" | "activity" | "other";
+      absence_type:
+        | "sick"
+        | "business"
+        | "activity"
+        | "other"
+        | "late"
+        | "on_leave"
+        | "dropped"
+        | "absent";
       activity_day_houses: "felis" | "cornicula" | "sciurus" | "cyprinus";
       attendance_event: "homeroom" | "assembly";
       blood_group: "O-" | "O+" | "A-" | "A+" | "B-" | "B+" | "AB-" | "AB+";

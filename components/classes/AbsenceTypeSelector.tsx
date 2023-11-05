@@ -20,20 +20,26 @@ const AbsenceTypeSelector: StylableFC<{
 
   return (
     <ChipSet scrollable style={style} className={className}>
-      <FilterChip selected={value === "sick"} onClick={() => onChange("sick")}>
-        {t("sick")}
+      <FilterChip selected={value === "late"} onClick={() => onChange("late")}>
+        {t("late")}
       </FilterChip>
       <FilterChip
-        selected={value === "business"}
-        onClick={() => onChange("business")}
+        selected={value === "on_leave"}
+        onClick={() => onChange("on_leave")}
       >
-        {t("business")}
+        {t("onLeave")}
       </FilterChip>
       <FilterChip
-        selected={value === "activity"}
-        onClick={() => onChange("activity")}
+        selected={value === "absent"}
+        onClick={() => onChange("absent")}
       >
-        {t("activity")}
+        {t("absent")}
+      </FilterChip>
+      <FilterChip
+        selected={value === "dropped"}
+        onClick={() => onChange("dropped")}
+      >
+        {t("dropped")}
       </FilterChip>
       <FilterChip
         selected={value === "other"}

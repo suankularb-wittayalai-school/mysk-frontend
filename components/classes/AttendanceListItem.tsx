@@ -107,7 +107,7 @@ const AttendanceListItem: StylableFC<{
                     onAttendanceChange({
                       ...attendance,
                       is_present: false,
-                      absence_type: "business",
+                      absence_type: "on_leave",
                     })
                 : undefined
             }

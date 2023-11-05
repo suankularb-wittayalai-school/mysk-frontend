@@ -13,14 +13,25 @@
     "action": {
       "print": "Print",
       "saveContact": "Save contact",
-      "attendance": {
-        "view": "View attendance",
-        "take": "Take attendance"
-      },
       "requestInfo": "Request info"
     }
   },
   "detail": {
+    "attendance": {
+      "title": "Attendance",
+      "item": {
+        "title": "{{date, datetime(weekday: short; day: numeric; month: short)}}",
+        "absenceCount_zero": "None absent",
+        "absenceCount_one": "1 absent",
+        "absenceCount_other": "{{count, number}} absent",
+        "noData": "No data"
+      },
+      "empty": "No attendance data from the past 3 months.",
+      "action": {
+        "addDay": "Take attendance",
+        "addEvent": "Add"
+      }
+    },
     "general": {
       "classAdvisors": "Class advisors",
       "room": "Room"
@@ -48,6 +59,7 @@
         "take": "Take attendance"
       },
       "event": {
+        "title": "View",
         "assembly": "Assembly",
         "homeroom": "Homeroom"
       },
@@ -59,30 +71,24 @@
           "absent": "Absent"
         },
         "absenceType": {
-          "sick": "Sick leave",
-          "business": "Business leave",
-          "activity": "School activity",
+          "late": "Late",
+          "onLeave": "On leave",
+          "absent": "Absent",
+          "dropped": "Dropped",
           "other": "Other"
         },
         "enterReason": "Enter reason"
       },
+      "loading": "Loading attendance…",
       "action": {
         "markAll": "Mark all present",
         "clear": "Clear",
         "save": "Save"
       }
     },
-    "confirmMarkAll": {
-      "title": "Mark all as present?",
-      "desc": "All students whom you have not taken attendance for will be marked as present.",
-      "action": {
-        "cancel": "Cancel",
-        "confirm": "Confirm"
-      }
-    },
     "confirmAttendanceSave": {
       "title": "Confirm save",
-      "desc": "Once you save attendance data, you cannot edit it later.",
+      "desc": "You can view and edit the attendance later in the Classes page.",
       "action": {
         "goBack": "Go back",
         "confirm": "Confirm"

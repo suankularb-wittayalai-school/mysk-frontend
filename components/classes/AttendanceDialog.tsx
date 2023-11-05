@@ -1,7 +1,7 @@
 // Imports
 import AttendanceListItem from "@/components/classes/AttendanceListItem";
 import SnackbarContext from "@/contexts/SnackbarContext";
-import getAttendancesOfClassAtDate from "@/utils/backend/attendance/getAttendancesOfClass";
+import getAttendanceOfClass from "@/utils/backend/attendance/getAttendanceOfClass";
 import recordAttendances from "@/utils/backend/attendance/recordAttendances";
 import getStudentsOfClass from "@/utils/backend/classroom/getStudentsOfClass";
 import cn from "@/utils/helpers/cn";
@@ -22,14 +22,12 @@ import {
   Section,
   SegmentedButton,
   Snackbar,
-  Text,
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { isFuture, isWithinInterval } from "date-fns";
 import { LayoutGroup, motion } from "framer-motion";
-import { Trans, useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next";
 import { replace } from "radash";
 import { useContext, useEffect, useState } from "react";
 
@@ -37,30 +35,39 @@ import { useContext, useEffect, useState } from "react";
  * A Dialog for taking Attendance of Students in a classroom.
  *
  * @param event The default Attendance event to take Attendance for.
+ * @param date The date to take Attendance for.
  * @param classroomID The ID of the Classroom for which Attendance is being taken.
  * @param teacherID The ID of the Teacher who is taking Attendance.
+ * @param editable Whether the Attendance data is editable.
  * @param open If the Dialog is open and shown.
  * @param onClose Triggers when the Dialog is closed.
+ * @param onSubmit Triggers when the user submits the Attendance.
  */
 const AttendanceDialog: StylableFC<{
   event?: "assembly" | "homeroom";
+  date?: Date;
   classroomID: string;
   teacherID?: string;
+  editable?: boolean;
   open: boolean;
   onClose: () => void;
+  onSubmit: () => void;
 }> = ({
   event: defaultEvent,
+  date,
   classroomID,
   teacherID,
+  editable,
   open,
   onClose,
+  onSubmit,
   style,
   className,
 }) => {
   const { t } = useTranslation("classes", { keyPrefix: "dialog.attendance" });
   const { t: ts } = useTranslation("classes", {
     keyPrefix: "dialog.confirmAttendanceSave",
-  }); // <-- Is this good practice?
+  }); // ts for “t save”
   const { t: tx } = useTranslation("common");
 
   const { setSnackbar } = useContext(SnackbarContext);
@@ -69,6 +76,9 @@ const AttendanceDialog: StylableFC<{
   const [event, setEvent] = useState<"assembly" | "homeroom">(
     defaultEvent || "assembly",
   );
+  useEffect(() => {
+    if (defaultEvent && defaultEvent !== event) setEvent(defaultEvent);
+  }, [defaultEvent]);
 
   const supabase = useSupabaseClient();
   const [loading, toggleLoading] = useToggle();
@@ -86,13 +96,14 @@ const AttendanceDialog: StylableFC<{
       (attendances[0] && attendances[0].attendance_event === event)
     )
       return;
+
     withLoading(
       async () => {
         // Get Attendance data
-        const { data } = await getAttendancesOfClassAtDate(
+        const { data } = await getAttendanceOfClass(
           supabase,
           classroomID,
-          new Date(),
+          date || new Date(),
           event,
         );
 
@@ -156,12 +167,13 @@ const AttendanceDialog: StylableFC<{
           // `as` is fine
           attendances as StudentAttendance[],
           event,
+          date || new Date(),
           teacherID,
         );
         setConfirmOpen(false);
 
         if (error) return false;
-        onClose();
+        onSubmit();
         return true;
       },
       toggleLoading,
@@ -205,10 +217,10 @@ const AttendanceDialog: StylableFC<{
     <>
       <FullscreenDialog
         open={open}
-        title={t(`title.${teacherID ? "take" : "view"}`)}
+        title={t(`title.${editable ? "take" : "view"}`)}
         action={
-          // Only show Save Button for teachers
-          teacherID ? (
+          // Only show Save Button for Class Advisors
+          editable ? (
             <Button
               appearance="text"
               onClick={() => {
@@ -234,14 +246,14 @@ const AttendanceDialog: StylableFC<{
       >
         <Progress
           appearance="linear"
-          alt="Loading students"
+          alt={t("loading")}
           visible={loading}
           className="absolute inset-0 bottom-auto top-16 !mx-0"
         />
 
         <Section>
           {/* Event selection */}
-          <SegmentedButton alt="View" full>
+          <SegmentedButton alt={t("event.title")} full>
             <Button
               appearance="outlined"
               selected={event === "assembly"}
@@ -259,21 +271,23 @@ const AttendanceDialog: StylableFC<{
           </SegmentedButton>
 
           {/* Bulk actions */}
-          <ChipSet scrollable className="-mx-4 px-4">
-            <AssistChip
-              icon={<MaterialIcon icon="done_all" />}
-              onClick={handleMarkAllPresent}
-            >
-              {t("action.markAll")}
-            </AssistChip>
-            <AssistChip
-              icon={<MaterialIcon icon="delete" />}
-              dangerous
-              onClick={handleClear}
-            >
-              {t("action.clear")}
-            </AssistChip>
-          </ChipSet>
+          {editable && (
+            <ChipSet scrollable className="-mx-4 px-4">
+              <AssistChip
+                icon={<MaterialIcon icon="done_all" />}
+                onClick={handleMarkAllPresent}
+              >
+                {t("action.markAll")}
+              </AssistChip>
+              <AssistChip
+                icon={<MaterialIcon icon="delete" />}
+                dangerous
+                onClick={handleClear}
+              >
+                {t("action.clear")}
+              </AssistChip>
+            </ChipSet>
+          )}
         </Section>
 
         {/* List */}

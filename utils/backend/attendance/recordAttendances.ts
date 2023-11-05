@@ -1,3 +1,4 @@
+import getISODateString from "@/utils/backend/getISODateString";
 import logError from "@/utils/helpers/logError";
 import { AttendanceEvent, StudentAttendance } from "@/utils/types/attendance";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
@@ -16,14 +17,16 @@ export default async function recordAttendances(
   supabase: DatabaseClient,
   attendances: StudentAttendance[],
   attendanceEvent: AttendanceEvent,
+  date: Date,
   teacherID: string,
 ): Promise<BackendReturn> {
-  const { error } = await supabase.from("student_attendances").insert(
+  const { error } = await supabase.from("student_attendances").upsert(
     attendances.map((attendance) => ({
+      ...(attendance.id ? { id: attendance.id } : {}),
       student_id: attendance.student.id,
       attendance_event: attendanceEvent,
       checker_id: teacherID,
-      date: new Date().toISOString(),
+      date: getISODateString(date),
       is_present: attendance.is_present,
       absence_reason: attendance.absence_reason,
       absence_type: attendance.absence_type,

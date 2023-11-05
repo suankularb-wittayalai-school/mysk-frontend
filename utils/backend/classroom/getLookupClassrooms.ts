@@ -108,7 +108,7 @@ export default async function getLookupClassrooms(
     });
 
     // If the School Session is not in session, return the Classroom data as-is
-    // if (getCurrentSchoolSessionState() !== "in-session") return classroom;
+    if (getCurrentSchoolSessionState() !== "in-session") return classroom;
 
     // Get the current and upcoming Schedule Items
     const periodNumber = getCurrentPeriod();
