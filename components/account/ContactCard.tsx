@@ -22,10 +22,11 @@ import {
   MenuItem,
   Snackbar,
 } from "@suankularb-components/react";
+import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
 import Image from "next/image";
-import { list, sift } from "radash";
-import { FC, forwardRef, useContext, useState } from "react";
+import { sift } from "radash";
+import { forwardRef, useContext, useState } from "react";
 
 /**
  * A contact Card.
@@ -82,6 +83,12 @@ const ContactCard: StylableFC<{
           ? getContactIsLinkable(contact)
             ? // If the Contact is linkable, link to it
               {
+                onClick: () => {
+                  va.track("Access Contact", {
+                    method: "Link",
+                    type: contact.type,
+                  });
+                },
                 href: getContactURL(contact),
                 element: !["phone", "email"].includes(contact.type)
                   ? // eslint-disable-next-line react/display-name
@@ -98,6 +105,10 @@ const ContactCard: StylableFC<{
             : // Otherwise, copy the value to clipboard
               {
                 onClick: () => {
+                  va.track("Access Contact", {
+                    method: "Copy to Clipboard",
+                    type: contact.type,
+                  });
                   navigator.clipboard.writeText(contact.value);
                   setSnackbar(
                     <Snackbar>{tx("snackbar.copiedToClipboard")}</Snackbar>,
