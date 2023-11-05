@@ -9,9 +9,19 @@ import {
   MaterialIcon,
   Text,
 } from "@suankularb-components/react";
+import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
 import { useState } from "react";
 
+/**
+ * A day of Attendance for Class Details Card.
+ *
+ * @param attendance The Attendance At Date (a summary of absence at assembly and homeroom) data for the day.
+ * @param classroomID The ID of the Classroom the Attendance belongs to.
+ * @param teacherID The ID of the Teacher viewing the Attendance.
+ * @param isOwnClass Whether the user is viewing their Classroom.
+ * @param onChange A callback function to call when the Attendance is changed. Should refresh the data.
+ */
 const RecentAttendanceItem: StylableFC<{
   attendance: AttendanceAtDate;
   classroomID: string;
@@ -54,7 +64,13 @@ const RecentAttendanceItem: StylableFC<{
               stateLayerEffect={isInteractive}
               rippleEffect={isInteractive}
               onClick={() => {
-                if (isInteractive) setEventToEdit(event);
+                if (!isInteractive) return;
+                va.track("View Attendance", {
+                  location: "Classes",
+                  role: teacherID ? "Teacher" : "Student",
+                  isOwnClass: isOwnClass === true,
+                });
+                setEventToEdit(event);
               }}
               element={isInteractive ? "button" : "div"}
               className={cn(
@@ -62,7 +78,7 @@ const RecentAttendanceItem: StylableFC<{
                   py-1.5`,
                 absenceCount === null
                   ? `-m-[1px] border-1 border-outline-variant
-                      text-on-surface-variant`
+                    text-on-surface-variant`
                   : absenceCount === 0
                   ? `bg-surface-2 text-on-surface-variant`
                   : `bg-secondary-container text-on-secondary-container`,

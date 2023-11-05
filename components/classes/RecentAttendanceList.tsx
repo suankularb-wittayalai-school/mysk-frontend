@@ -2,6 +2,7 @@
 import AttendanceDialog from "@/components/classes/AttendanceDialog";
 import RecentAttendanceItem from "@/components/classes/RecentAttendanceItem";
 import getAttendanceSummaryOfClass from "@/utils/backend/attendance/getAttendanceSummaryOfClass";
+import getISODateString from "@/utils/backend/getISODateString";
 import cn from "@/utils/helpers/cn";
 import { AttendanceAtDate } from "@/utils/types/attendance";
 import { StylableFC } from "@/utils/types/common";
@@ -13,7 +14,7 @@ import {
   useAnimationConfig,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { isWeekend } from "date-fns";
+import { isToday, isWeekend } from "date-fns";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { list } from "radash";
@@ -74,36 +75,47 @@ const RecentAttendanceList: StylableFC<{
           )}
         >
           {/* Add Attendance */}
-          {isOwnClass && teacherID && !isWeekend(new Date()) && (
-            <li className="h-full">
-              <Card
-                appearance="filled"
-                stateLayerEffect
-                onClick={() => setAddOpen(true)}
-                element={(props) => (
-                  <button {...props} title={t("action.addDay")} />
-                )}
-                className={cn(`!grid h-full w-24 place-items-center
-                  !bg-primary-container`)}
-              >
-                <MaterialIcon
-                  icon="add"
-                  className="text-on-primary-container"
-                />
-              </Card>
-              <AttendanceDialog
-                classroomID={classroomID}
-                teacherID={teacherID}
-                editable
-                open={addOpen}
-                onClose={() => setAddOpen(false)}
-                onSubmit={() => {
-                  setAddOpen(false);
-                  fetchAttendance();
-                }}
-              />
-            </li>
-          )}
+          {
+            // Only show to Class Advisors of this Classroom
+            isOwnClass &&
+              teacherID &&
+              // Only show if it is a weekday
+              !isWeekend(new Date()) &&
+              // Only show if there is no Attendance for today
+              !attendanceList.find(
+                (attendance) =>
+                  attendance.date === getISODateString(new Date()),
+              ) && (
+                <li className="h-full">
+                  <Card
+                    appearance="filled"
+                    stateLayerEffect
+                    onClick={() => setAddOpen(true)}
+                    element={(props) => (
+                      <button {...props} title={t("action.addDay")} />
+                    )}
+                    className={cn(`!grid h-full w-24 place-items-center
+                      !bg-primary-container`)}
+                  >
+                    <MaterialIcon
+                      icon="add"
+                      className="text-on-primary-container"
+                    />
+                  </Card>
+                  <AttendanceDialog
+                    classroomID={classroomID}
+                    teacherID={teacherID}
+                    editable
+                    open={addOpen}
+                    onClose={() => setAddOpen(false)}
+                    onSubmit={() => {
+                      setAddOpen(false);
+                      fetchAttendance();
+                    }}
+                  />
+                </li>
+              )
+          }
 
           {/* Attendance List */}
           <AnimatePresence mode="popLayout">

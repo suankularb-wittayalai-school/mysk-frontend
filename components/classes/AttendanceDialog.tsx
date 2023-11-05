@@ -26,9 +26,11 @@ import {
   useAnimationConfig,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import va from "@vercel/analytics";
+import { isToday } from "date-fns";
 import { LayoutGroup, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
-import { replace } from "radash";
+import { replace, unique } from "radash";
 import { useContext, useEffect, useState } from "react";
 
 /**
@@ -108,9 +110,8 @@ const AttendanceDialog: StylableFC<{
         );
 
         // If Attendance data exists, set it
-        // This will make the Dialog read-only
         if (data && data.length > 0) {
-          setAttendances(data);
+          setAttendances(unique(data, (attendance) => attendance.student.id));
           return true;
         }
 
@@ -171,7 +172,9 @@ const AttendanceDialog: StylableFC<{
           teacherID,
         );
         setConfirmOpen(false);
-
+        va.track("Save Attendance", {
+          isToday: date !== undefined && isToday(date),
+        });
         if (error) return false;
         onSubmit();
         return true;
@@ -185,6 +188,9 @@ const AttendanceDialog: StylableFC<{
    * Mark all Students in the client state as present.
    */
   async function handleMarkAllPresent() {
+    va.track("Mark All Students as Present", {
+      isToday: date !== undefined && isToday(date),
+    });
     setAttendances(
       attendances.map((attendance) =>
         attendance.is_present !== null
@@ -203,6 +209,9 @@ const AttendanceDialog: StylableFC<{
    * Clear the Attendance data in the client state.
    */
   async function handleClear() {
+    va.track("Clear Attendance", {
+      isToday: date !== undefined && isToday(date),
+    });
     setAttendances(
       attendances.map((attendance) => ({
         ...attendance,
@@ -224,11 +233,12 @@ const AttendanceDialog: StylableFC<{
             <Button
               appearance="text"
               onClick={() => {
-                if (!validateAttendances())
+                if (!validateAttendances()) {
+                  va.track("Attempted Attendance Save With Incomplete Data");
                   setSnackbar(
                     <Snackbar>{tx("snackbar.formInvalid")}</Snackbar>,
                   );
-                else setConfirmOpen(true);
+                } else setConfirmOpen(true);
               }}
               disabled={loading || !teacherID}
             >
