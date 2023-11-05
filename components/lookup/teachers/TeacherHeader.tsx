@@ -18,6 +18,13 @@ import va from "@vercel/analytics";
 import { motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 
+/**
+ * The header of a Teacher Details Card. Contains the Teacher’s name, avatar,
+ * and actions.
+ * 
+ * @param teacher The Teacher to display.
+ * @param onScheduleOpenClick Callback to open the Teacher’s schedule.
+ */
 const TeacherHeader: StylableFC<{
   teacher: Teacher;
   onScheduleOpenClick: () => void;
@@ -73,7 +80,12 @@ const TeacherHeader: StylableFC<{
           )}
           <AssistChip
             icon={<MaterialIcon icon="dashboard" />}
-            onClick={onScheduleOpenClick}
+            onClick={() => {
+              va.track("See Schedule of Person", {
+                person: getLocaleName("en-US", teacher),
+              });
+              onScheduleOpenClick();
+            }}
           >
             {t("action.seeSchedule")}
           </AssistChip>
