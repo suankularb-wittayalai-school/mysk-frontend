@@ -31,6 +31,7 @@ import {
   TextField,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import va from "@vercel/analytics";
 import { Trans, useTranslation } from "next-i18next";
 import { FC, useContext, useEffect } from "react";
 
@@ -302,6 +303,8 @@ const ClassroomSubjectDialog: StylableFC<{
           setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
           return false;
         }
+
+        va.track("Save Classroom-Subject Connection");
 
         onSubmit();
         resetForm();
