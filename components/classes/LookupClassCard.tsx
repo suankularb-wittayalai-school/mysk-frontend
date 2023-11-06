@@ -17,6 +17,7 @@ import {
 import { differenceInSeconds, formatDistanceToNowStrict } from "date-fns";
 import { enUS, th } from "date-fns/locale";
 import { useTranslation } from "next-i18next";
+import va from "@vercel/analytics";
 
 /**
  * Lookup Class Card is a card that displays a Classroom in the Lookup Classes
@@ -24,6 +25,7 @@ import { useTranslation } from "next-i18next";
  *
  * @param classroom The Classroom to display.
  * @param period The currently relevant Schedule Item for this Classroom.
+ * @param selected The ID of the currently selected Classroom.
  * @param onClick The function to call when the card is clicked. Should select this Classroom.
  */
 const LookupClassCard: StylableFC<{
@@ -54,7 +56,10 @@ const LookupClassCard: StylableFC<{
       appearance="outlined"
       direction="row"
       stateLayerEffect
-      onClick={() => onClick(classroom.id)}
+      onClick={() => {
+        va.track("View Classroom", { number: `M.${classroom.number}` });
+        onClick(classroom.id);
+      }}
       style={style}
       className={cn(
         `group !grid w-full !grid-cols-[minmax(0,1fr),calc(4.5rem+2px)] items-center

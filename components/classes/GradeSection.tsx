@@ -12,6 +12,7 @@ import {
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
+import va from "@vercel/analytics";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 
@@ -71,7 +72,14 @@ const GradeSection: StylableFC<{
               <MaterialIcon icon="expand_more" />
             </motion.div>
           }
-          onClick={toggleExpanded}
+          onClick={() => {
+            if (!expanded)
+              va.track(
+                "Expand Grade Section",
+                grade ? { grade: `M.${grade}` } : undefined,
+              );
+            toggleExpanded();
+          }}
         />
 
         {/* Grade */}

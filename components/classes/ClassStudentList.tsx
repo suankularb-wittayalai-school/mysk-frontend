@@ -31,7 +31,7 @@ const ClassStudentList: StylableFC<{
 
   const supabase = useSupabaseClient();
 
-  const [loading, toggleoading] = useToggle();
+  const [loading, toggleLoading] = useToggle();
   const getVCard = useGetVCard();
 
   async function handleSaveVCard() {
@@ -59,7 +59,7 @@ const ClassStudentList: StylableFC<{
         va.track("Save Class VCards", { number: `M.${classNumber}` });
         return true;
       },
-      toggleoading,
+      toggleLoading,
       { hasEndToggle: true },
     );
   }

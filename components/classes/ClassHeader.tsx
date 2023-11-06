@@ -42,7 +42,7 @@ const ClassHeader: StylableFC<{
    */
   function handleSaveVCard() {
     va.track("Save Class Contact", {
-      person: `M.${classroom.number}`,
+      number: `M.${classroom.number}`,
       method: "vCard",
     });
     const vCard = new Blob(
@@ -86,6 +86,11 @@ const ClassHeader: StylableFC<{
         {(role !== "student" || isOwnClass) && (
           <AssistChip
             icon={<MaterialIcon icon="print" />}
+            onClick={() =>
+              va.track("Get Student List Printout", {
+                number: `M.${classroom.number}`,
+              })
+            }
             href={`/classes/print/${classroom.number}`}
             element={Link}
           >

@@ -19,12 +19,13 @@ import {
   TextField,
   useAnimationConfig,
 } from "@suankularb-components/react";
+import va from "@vercel/analytics";
 import { GetStaticProps, NextPage } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { snake } from "radash";
+import { pascal, snake } from "radash";
 import { useContext, useEffect, useState } from "react";
 
 const LookupTeachersPage: NextPage<{
@@ -64,6 +65,16 @@ const LookupTeachersPage: NextPage<{
       setSnackbar(<Snackbar>{tx("snackbar.formInvalid")}</Snackbar>);
       return;
     }
+
+    va.track("Search Teachers", {
+      filterCount: entries.length,
+      ...Object.fromEntries(
+        Object.keys(form).map((key) => ["include" + pascal(snake(key)), false]),
+      ),
+      ...Object.fromEntries(
+        entries.map(([key]) => ["include" + pascal(snake(key)), true]),
+      ),
+    });
 
     setOverflowHid(true);
     // URLSearchParams is used to encode the form values as query

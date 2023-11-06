@@ -18,6 +18,7 @@ import {
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useTranslation } from "next-i18next";
 import { useContext, useState } from "react";
+import va from "@vercel/analytics";
 
 /**
  * A list of Contacts for Class Details Card. It can be used in both read-only and editable modes.
@@ -48,6 +49,7 @@ const ClassContactList: StylableFC<{
       contact,
       classroomID,
     );
+    va.track("Add Classroom Contact");
     if (error) {
       setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
       setContactOpen(true);
@@ -59,6 +61,7 @@ const ClassContactList: StylableFC<{
   async function handleEdit(contact: Contact) {
     setContactOpen(false);
     const { error } = await updateContact(supabase, contact);
+    va.track("Edit Classroom Contact");
     if (error) {
       setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
       return;

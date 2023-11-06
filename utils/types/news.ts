@@ -30,4 +30,5 @@ export type SchoolDocumentType =
   | "order" //        คำสั่ง
   | "record" //       บันทึกข้อความ
   | "announcement" // ประกาศ
+  | "big_garuda" //   หนังสือออก (Garuda refers to ครุฑ)
   | "other"; //       อื่นๆ

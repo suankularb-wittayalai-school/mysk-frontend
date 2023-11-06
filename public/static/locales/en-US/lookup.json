@@ -143,92 +143,22 @@
       }
     }
   },
-  "classes": {
-    "title": "Lookup classes",
-    "list": {
-      "yourClass": "Your class",
-      "item": {
-        "period": {
-          "upcoming": "Next in {{duration}}",
-          "finished": "Finished for today"
-        }
-      }
-    },
-    "header": {
-      "action": {
-        "print": "Print",
-        "saveContact": "Save contact",
-        "attendance": {
-          "view": "View attendance",
-          "take": "Take attendance"
-        },
-        "requestInfo": "Request info"
-      }
-    },
-    "detail": {
-      "general": {
-        "classAdvisors": "Class advisors",
-        "room": "Room"
-      }
-    },
-    "dialog": {
-      "attendance": {
-        "title": {
-          "view": "View attendance",
-          "take": "Take attendance"
-        },
-        "event": {
-          "assembly": {
-            "name": "Assembly",
-            "desc": "Assembly attendance is done <strong>prior to 08:00</strong>. Attendance data <strong>cannot</strong> be saved after this period."
-          },
-          "homeroom": {
-            "name": "Homeroom",
-            "desc": "Homeroom attendance is done <strong>between 08:00 and 08:30</strong>. Attendance data <strong>cannot</strong> be saved after this period."
-          }
-        },
-        "item": {
-          "classNo": "No. {{classNo}}",
-          "presence": {
-            "present": "Present",
-            "absent": "Absent"
-          },
-          "absenceType": {
-            "sick": "Sick leave",
-            "business": "Business leave",
-            "activity": "School activity",
-            "other": "Other"
-          },
-          "enterReason": "Enter reason"
-        },
-        "action": {
-          "save": "Save"
-        }
-      },
-      "confirmAttendanceSave": {
-        "title": "Confirm save",
-        "desc": "Once you save attendance data, you cannot edit it later.",
-        "action": {
-          "goBack": "Go back",
-          "confirm": "Confirm"
-        }
-      }
-    }
-  },
   "documents": {
     "title": "Lookup documents",
     "list": {
       "searchAlt": "Search documents",
       "filter": {
-        "orders": "Orders",
-        "records": "Records",
-        "announcements": "Announcements",
+        "order": "Orders",
+        "record": "Records",
+        "announcement": "Announcements",
+        "bigGaruda": "External",
         "other": "Other"
       },
       "metadata": {
         "order": "№ {{code}}/{{year}} • {{date}}",
         "record": "{{code}} • {{date}}",
         "announcement": "{{date}}",
+        "bigGaruda": "MoE 04290.20/{{code}} • {{date}}",
         "other": "{{date}}"
       }
     },
