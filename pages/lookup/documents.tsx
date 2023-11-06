@@ -28,6 +28,7 @@ import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
+import { camel } from "radash";
 import { useEffect, useState } from "react";
 
 const LookupDocumentsPage: CustomPage<{
@@ -58,6 +59,7 @@ const LookupDocumentsPage: CustomPage<{
         order: "Orders",
         record: "Records",
         announcement: "Announcements",
+        big_garuda: "External",
         other: "Other",
       }[type],
     });
@@ -105,34 +107,25 @@ const LookupDocumentsPage: CustomPage<{
               onChange={setQuery}
               onSearch={handleSearch}
             />
-            {userRole === "teacher" && (
-              <ChipSet>
+            <ChipSet>
+              {(
+                [
+                  "order",
+                  "record",
+                  "announcement",
+                  "big_garuda",
+                  "other",
+                ] as SchoolDocumentType[]
+              ).map((mapType) => (
                 <FilterChip
-                  selected={type === "order"}
-                  onClick={() => setType("order")}
+                  key={mapType}
+                  selected={type === mapType}
+                  onClick={() => setType(mapType)}
                 >
-                  {t("documents.list.filter.orders")}
+                  {t(`documents.list.filter.${camel(mapType)}`)}
                 </FilterChip>
-                <FilterChip
-                  selected={type === "record"}
-                  onClick={() => setType("record")}
-                >
-                  {t("documents.list.filter.records")}
-                </FilterChip>
-                <FilterChip
-                  selected={type === "announcement"}
-                  onClick={() => setType("announcement")}
-                >
-                  {t("documents.list.filter.announcements")}
-                </FilterChip>
-                <FilterChip
-                  selected={type === "other"}
-                  onClick={() => setType("other")}
-                >
-                  {t("documents.list.filter.other")}
-                </FilterChip>
-              </ChipSet>
-            )}
+              ))}
+            </ChipSet>
           </section>
           <LookupResultsList length={documents.length}>
             {documents.map((document) => (
