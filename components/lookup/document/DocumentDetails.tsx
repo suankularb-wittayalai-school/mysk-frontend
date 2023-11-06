@@ -1,144 +1,29 @@
 // Imports
+import DocumentActions from "@/components/lookup/document/DocumentActions";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import { SchoolDocument } from "@/utils/types/news";
-import { UserRole } from "@/utils/types/person";
 import {
-  AssistChip,
   Card,
-  ChipSet,
   MaterialIcon,
   Progress,
-  Snackbar,
   Text,
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
-import va from "@vercel/analytics";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
+import { sift } from "radash";
 import { FC, RefObject, useContext, useEffect, useRef, useState } from "react";
-
-const DocumentActions: FC<{ document: SchoolDocument }> = ({ document }) => {
-  // Translation
-  const { t } = useTranslation("lookup", {
-    keyPrefix: "documents",
-  });
-
-  // Snackbar
-  const { setSnackbar } = useContext(SnackbarContext);
-
-  /**
-   * Opens the native share sheet (if available) for the Drive link. As a
-   * fallback, this function puts the link in the clipboard.
-   */
-  async function handleShare() {
-    va.track("Share Document", { subject: document.subject });
-
-    const shareData = {
-      title: document.subject,
-      url: document.document_link,
-    };
-    if (navigator.canShare && navigator.canShare(shareData))
-      await navigator.share(shareData);
-    else navigator.clipboard.writeText(window.location.href);
-  }
-
-  /**
-   * Open the Google Drive PDF file in a new window.
-   */
-  function handlePopOut() {
-    va.track("Pop out Document", { subject: document.subject });
-
-    window.open(document.document_link, "_blank", "popup, noreferrer");
-  }
-
-  /**
-   * Downloads the PDF file from Google Drive.
-   */
-  function handleDownload() {
-    va.track("Download Document", { subject: document.subject });
-
-    window.location.href = `https://drive.google.com/u/1/uc?id=${
-      document.document_link
-        // Remove “https://drive.google.com/file/d/” prefix
-        .slice(32)
-        // Remove “/view?usp=___” suffix
-        .split(/\/view\?usp=[a-z]+/)[0]
-    }&export=download`;
-
-    setSnackbar(<Snackbar>{t("snackbar.download")}</Snackbar>);
-  }
-
-  return (
-    <ChipSet>
-      <AssistChip icon={<MaterialIcon icon="share" />} onClick={handleShare}>
-        {t("header.action.share")}
-      </AssistChip>
-      <AssistChip
-        icon={<MaterialIcon icon="open_in_new" />}
-        onClick={handlePopOut}
-      >
-        {t("header.action.popOut")}
-      </AssistChip>
-      <AssistChip
-        icon={<MaterialIcon icon="download" />}
-        onClick={handleDownload}
-      >
-        {t("header.action.download")}
-      </AssistChip>
-    </ChipSet>
-  );
-};
-
-const RestrictionsCard: FC<{
-  // includes?: SchoolDocument["includes"];
-  includes?: {
-    students: boolean | null;
-    teachers: boolean | null;
-    parents: boolean | null;
-  };
-}> = ({ includes }) => {
-  // Translation
-  const { t } = useTranslation("lookup", {
-    keyPrefix: "documents.header.restrictions",
-  });
-
-  const allowedRoles = [
-    includes?.students && "student",
-    includes?.teachers && "teacher",
-    includes?.parents && "parent",
-  ].filter((role) => role) as (UserRole | "parent")[];
-
-  return (
-    <Card
-      appearance="outlined"
-      className="mx-5 mb-4 gap-1.5 !rounded-sm p-3 md:col-span-3 md:my-3
-        md:mr-3 md:min-h-[5.25rem]"
-    >
-      <div className="flex flex-row gap-1.5">
-        <MaterialIcon
-          icon="lock"
-          size={20}
-          className="text-on-surface-variant"
-        />
-        <Text type="title-small" element="h2">
-          {t("title")}
-        </Text>
-      </div>
-      <Text type="body-small" element="p">
-        {t("desc", {
-          roles: allowedRoles.map((role) => t(`descSegment.${role}`)),
-        })}
-      </Text>
-    </Card>
-  );
-};
+import Balancer from "react-wrap-balancer";
 
 const DocumentDetails: FC<{
   document: SchoolDocument;
   loading: boolean;
   setLoading: (value: boolean) => void;
 }> = ({ document, loading, setLoading }) => {
+  // Translation
+  const { t } = useTranslation("lookup", { keyPrefix: "documents.header" });
+
   // Animation
   const { duration, easing } = useAnimationConfig();
 
@@ -171,38 +56,61 @@ const DocumentDetails: FC<{
   }, []);
   useEffect(updateIframeSize, [document]);
 
+  const allowedRoles = sift([
+    document.include_students && "student",
+    document.include_teachers && "teacher",
+    document.include_parents && "parent",
+  ]);
+
   return (
     <main ref={mainRef} className="h-full">
-      <Card appearance="outlined" className="relative h-full overflow-hidden">
-        {/* Top App Bar */}
-        <div
-          ref={headerRef}
-          className="grid items-start bg-surface-2 md:grid-cols-8"
-        >
-          <div className="flex flex-col gap-2 px-5 py-4 md:col-span-5">
+      <Card
+        appearance="outlined"
+        className="relative h-full overflow-hidden !rounded-lg !bg-surface-2"
+      >
+        {/* Header */}
+        <div ref={headerRef} className="bg-surface-5">
+          <div className="space-y-2 p-4">
             <Text type="headline-small" element="h2">
-              {document.subject}
+              <Balancer>{document.subject}</Balancer>
             </Text>
             <DocumentActions document={document} />
           </div>
-          <RestrictionsCard
-            includes={{
-              students: document.include_students,
-              teachers: document.include_teachers,
-              parents: document.include_parents,
-            }}
-          />
+
+          <div className="flex flex-row gap-2 rounded-t-lg bg-surface-2 px-4 py-3">
+            <MaterialIcon
+              icon="lock"
+              size={20}
+              className="text-on-surface-variant"
+            />
+            <Text type="label-large" element="p">
+              {t("restrictions.desc", {
+                roles: allowedRoles.map((role) =>
+                  t(`restrictions.descSegment.${role}`),
+                ),
+              })}
+            </Text>
+          </div>
         </div>
 
         {/* Google Drive embed */}
-        <div className="relative w-full">
+        <motion.div
+          key={document.id}
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{
+            ...transition(duration.medium2, easing.standardDecelerate),
+            delay: 0.2,
+          }}
+          className="relative w-full"
+        >
           <AnimatePresence initial={false}>
             {/* Hide embed while loading */}
             {loading && (
               <motion.div
                 initial={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="absolute inset-0 bg-surface"
+                className="absolute inset-0 rounded-lg bg-surface"
                 transition={transition(duration.medium4, easing.standard)}
               />
             )}
@@ -210,10 +118,10 @@ const DocumentDetails: FC<{
 
           {/* Linear Progress */}
           <Progress
-            appearance="linear"
+            appearance="circular"
             alt="Loading document from Google Drive…"
             visible={loading}
-            className="absolute inset-0 bottom-auto"
+            className="absolute inset-0 !m-auto"
           />
 
           {/* Embed iframe */}
@@ -226,9 +134,9 @@ const DocumentDetails: FC<{
             height={iframeSize.height}
             allow="autoplay"
             onLoad={() => setLoading(false)}
-            className="w-full"
+            className="w-full rounded-lg"
           />
-        </div>
+        </motion.div>
       </Card>
     </main>
   );

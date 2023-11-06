@@ -2,6 +2,7 @@
 import PageHeader from "@/components/common/PageHeader";
 import LookupDetailsSide from "@/components/lookup/LookupDetailsSide";
 import LookupListSide from "@/components/lookup/LookupListSide";
+import LookupResultsItem from "@/components/lookup/LookupResultsItem";
 import LookupResultsList from "@/components/lookup/LookupResultsList";
 import DocumentCard from "@/components/lookup/document/DocumentCard";
 import DocumentDetails from "@/components/lookup/document/DocumentDetails";
@@ -126,13 +127,19 @@ const LookupDocumentsPage: CustomPage<{
             </ChipSet>
           </section>
           <LookupResultsList length={documents.length}>
-            {documents.map((document) => (
-              <DocumentCard
+            {documents.map((document, idx) => (
+              <LookupResultsItem
                 key={document.id}
-                document={document}
-                selected={selected}
-                onSelectedChange={setSelected}
-              />
+                idx={idx}
+                length={documents.length}
+              >
+                <DocumentCard
+                  key={document.id}
+                  document={document}
+                  selected={selected}
+                  onSelectedChange={setSelected}
+                />
+              </LookupResultsItem>
             ))}
           </LookupResultsList>
         </LookupListSide>
