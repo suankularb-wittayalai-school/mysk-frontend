@@ -7,7 +7,6 @@ import DocumentCard from "@/components/lookup/document/DocumentCard";
 import DocumentDetails from "@/components/lookup/document/DocumentDetails";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
-import { getSchoolDocumentByID } from "@/utils/backend/document/getSchoolDocumentByID";
 import { getSchoolDocuments } from "@/utils/backend/document/getSchoolDocuments";
 import { searchSchoolDocuments } from "@/utils/backend/document/searchSchoolDocuments";
 import useLocale from "@/utils/helpers/useLocale";
@@ -19,7 +18,6 @@ import {
   FilterChip,
   Search,
   SplitLayout,
-  useAnimationConfig,
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
@@ -33,23 +31,18 @@ import { useEffect, useState } from "react";
 
 const LookupDocumentsPage: CustomPage<{
   recentDocs: SchoolDocument[];
-  selectedIdx: number;
   userRole: UserRole;
-}> = ({ recentDocs, selectedIdx, userRole }) => {
+}> = ({ recentDocs, userRole }) => {
   // Translation
   const locale = useLocale();
   const { t } = useTranslation("lookup");
   const { t: tx } = useTranslation("common");
 
-  const { duration, easing } = useAnimationConfig();
-
   const [documents, setDocuments] = useState<SchoolDocument[]>(recentDocs);
   const supabase = useSupabaseClient();
 
   // Selected Document
-  const [selected, setSelected] = useState<SchoolDocument>(
-    recentDocs[selectedIdx],
-  );
+  const [selected, setSelected] = useState<SchoolDocument>(recentDocs[0]);
 
   // Query
   const [query, setQuery] = useState("");
@@ -148,7 +141,6 @@ const LookupDocumentsPage: CustomPage<{
 
 export const getServerSideProps: GetServerSideProps = async ({
   locale,
-  query,
   req,
   res,
 }) => {
@@ -157,7 +149,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
-  const { data: user, error } = await getLoggedInPerson(
+  const { data: user } = await getLoggedInPerson(
     supabase,
     authOptions,
     req,
@@ -165,40 +157,13 @@ export const getServerSideProps: GetServerSideProps = async ({
     { includeContacts: true, detailed: true },
   );
 
-  if (error) {
-    return {
-      notFound: true,
-    };
-  }
-  const userRole = user!.role;
+  const userRole = user?.role || "student";
 
-  const selected = {
-    id: query.id ? (query.id as string) : null,
-    type: query.type ? (query.type as SchoolDocumentType) : null,
-  };
-  let selectedIdx = 0;
-
-  let recentDocs;
-  const { data: defaultDocuments } = await getSchoolDocuments(
+  const { data: recentDocs } = await getSchoolDocuments(
     supabase,
     userRole,
-    selected.type || (userRole === "teacher" ? "order" : "announcement"),
+    userRole === "teacher" ? "order" : "announcement",
   );
-
-  if (!defaultDocuments) {
-    selectedIdx = defaultDocuments!.findIndex(
-      (document) =>
-        selected.id === document.id && selected.type === document.type,
-    );
-  }
-
-  if (selected.id && selectedIdx === -1) {
-    const { data, error } = await getSchoolDocumentByID(supabase, selected.id);
-    if (error) recentDocs = defaultDocuments;
-    else recentDocs = [data, ...defaultDocuments!];
-  } else recentDocs = defaultDocuments;
-
-  selectedIdx = Math.max(selectedIdx, 0);
 
   return {
     props: {
@@ -207,7 +172,6 @@ export const getServerSideProps: GetServerSideProps = async ({
         "lookup",
       ])),
       recentDocs,
-      selectedIdx,
       userRole,
     },
   };
