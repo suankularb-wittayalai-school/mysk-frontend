@@ -151,9 +151,9 @@
     "list": {
       "searchAlt": "ค้นหาเอกสาร",
       "filter": {
-        "orders": "คำสั่ง",
-        "records": "บันทึกข้อความ",
-        "announcements": "ประกาศ",
+        "order": "คำสั่ง",
+        "record": "บันทึกข้อความ",
+        "announcement": "ประกาศ",
         "bigGaruda": "หนังสือออก",
         "other": "อื่น ๆ"
       },

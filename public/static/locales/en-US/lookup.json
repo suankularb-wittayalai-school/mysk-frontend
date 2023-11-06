@@ -148,9 +148,9 @@
     "list": {
       "searchAlt": "Search documents",
       "filter": {
-        "orders": "Orders",
-        "records": "Records",
-        "announcements": "Announcements",
+        "order": "Orders",
+        "record": "Records",
+        "announcement": "Announcements",
         "bigGaruda": "External",
         "other": "Other"
       },

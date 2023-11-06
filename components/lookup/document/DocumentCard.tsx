@@ -6,6 +6,7 @@ import { SchoolDocument } from "@/utils/types/news";
 import { Card, CardHeader, useBreakpoint } from "@suankularb-components/react";
 import { isThisYear } from "date-fns";
 import { useTranslation } from "next-i18next";
+import { camel } from "radash";
 import { FC } from "react";
 
 /**
@@ -62,7 +63,7 @@ const DocumentCard: FC<{
         // Subject line
         title={document.subject}
         // {code}/{year in BE} • {date}
-        subtitle={t(`metadata.${document.type}`, {
+        subtitle={t(`metadata.${camel(document.type)}`, {
           code: document.code,
           year: getLocaleYear("th", documentDate.getFullYear()),
           date: documentDate.toLocaleDateString(locale, {
