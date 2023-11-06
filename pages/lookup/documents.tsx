@@ -9,6 +9,7 @@ import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import { getSchoolDocuments } from "@/utils/backend/document/getSchoolDocuments";
 import { searchSchoolDocuments } from "@/utils/backend/document/searchSchoolDocuments";
+import cn from "@/utils/helpers/cn";
 import useLocale from "@/utils/helpers/useLocale";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { SchoolDocument, SchoolDocumentType } from "@/utils/types/news";
@@ -100,7 +101,11 @@ const LookupDocumentsPage: CustomPage<{
               onChange={setQuery}
               onSearch={handleSearch}
             />
-            <ChipSet scrollable className="!-mx-4 !px-4 sm:!mx-0 sm:!px-0">
+            <ChipSet
+              scrollable
+              className={cn(`!-mx-4 w-screen sm:!mx-0 sm:!w-full [&>*]:!px-4
+                [&>*]:sm:!px-0`)}
+            >
               {(
                 [
                   "order",
