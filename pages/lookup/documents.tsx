@@ -100,7 +100,7 @@ const LookupDocumentsPage: CustomPage<{
               onChange={setQuery}
               onSearch={handleSearch}
             />
-            <ChipSet>
+            <ChipSet scrollable className="!-mx-4 !px-4 sm:!mx-0 sm:!px-0">
               {(
                 [
                   "order",
