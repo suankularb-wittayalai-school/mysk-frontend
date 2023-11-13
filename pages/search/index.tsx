@@ -68,7 +68,11 @@ const SearchPage: CustomPage<{
               students: <StudentsFitlersCard />,
               teachers: <TeacherFiltersCard subjectGroups={subjectGroups} />,
               documents: (
-                <SearchFiltersCard onSubmit={() => {}}>
+                <SearchFiltersCard
+                  icon={<MaterialIcon icon="document_scanner" />}
+                  title="Search documents"
+                  onSubmit={() => {}}
+                >
                   TODO: Documents
                 </SearchFiltersCard>
               ),

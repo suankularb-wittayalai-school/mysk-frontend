@@ -1,25 +1,26 @@
 // Imports
+import SearchFiltersCard from "@/components/lookup/SearchFiltersCard";
+import SnackbarContext from "@/contexts/SnackbarContext";
 import cn from "@/utils/helpers/cn";
 import getLocaleString from "@/utils/helpers/getLocaleString";
-import { StylableFC } from "@/utils/types/common";
-import {
-  TextField,
-  Select,
-  MenuItem,
-  Divider,
-  Snackbar,
-  useAnimationConfig,
-} from "@suankularb-components/react";
-import SearchFiltersCard from "@/components/lookup/SearchFiltersCard";
-import { SubjectGroup } from "@/utils/types/subject";
-import SnackbarContext from "@/contexts/SnackbarContext";
 import useForm from "@/utils/helpers/useForm";
 import useLocale from "@/utils/helpers/useLocale";
+import { StylableFC } from "@/utils/types/common";
+import { SubjectGroup } from "@/utils/types/subject";
+import {
+  Divider,
+  MaterialIcon,
+  MenuItem,
+  Select,
+  Snackbar,
+  TextField,
+  useAnimationConfig,
+} from "@suankularb-components/react";
+import va from "@vercel/analytics";
+import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { pascal, snake } from "radash";
-import { useContext, useState, useEffect } from "react";
-import { useTranslation } from "next-i18next";
-import va from "@vercel/analytics";
+import { useContext, useEffect, useState } from "react";
 
 /**
  * The Search Filters Card for Teachers.
@@ -89,6 +90,8 @@ const TeacherFiltersCard: StylableFC<{
 
   return (
     <SearchFiltersCard
+      icon={<MaterialIcon icon="support_agent" />}
+      title="Search teachers"
       onSubmit={handleSubmit}
       style={style}
       className={cn(
