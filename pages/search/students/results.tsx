@@ -11,6 +11,7 @@ import StudentActiveFiltersCard from "@/components/lookup/students/StudentActive
 import StudentDetailsCard from "@/components/lookup/students/StudentDetailsCard";
 import { getStudentByID } from "@/utils/backend/person/getStudentByID";
 import getStudentsByLookupFilters from "@/utils/backend/person/getStudentsByLookupFilters";
+import getLocaleString from "@/utils/helpers/getLocaleString";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Student, StudentLookupItem } from "@/utils/types/person";
 import { SplitLayout } from "@suankularb-components/react";
@@ -20,7 +21,7 @@ import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
-import { camel } from "radash";
+import { alphabetical, camel, sort } from "radash";
 import { useEffect, useState } from "react";
 
 export type StudentSearchFilters = Partial<{
@@ -145,9 +146,12 @@ export const getServerSideProps: GetServerSideProps = async ({
       .map(([key, value]) => [camel(key), value]),
   ) as StudentSearchFilters;
 
-  const { data: students } = await getStudentsByLookupFilters(
-    supabase,
-    filters,
+  const { data } = await getStudentsByLookupFilters(supabase, filters);
+  const students = sort(
+    alphabetical(data!, (student) =>
+      getLocaleString(student.first_name, locale as LangCode),
+    ),
+    (student) => student.classroom?.number || 1000,
   );
 
   return {
