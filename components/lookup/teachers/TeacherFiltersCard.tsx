@@ -35,6 +35,7 @@ const TeacherFiltersCard: StylableFC<{
   const { t } = useTranslation("lookup", {
     keyPrefix: "teachers.searchFilters.form",
   });
+  const { t: tc } = useTranslation("lookup");
   const { t: tx } = useTranslation("common");
 
   const { setSnackbar } = useContext(SnackbarContext);
@@ -93,7 +94,7 @@ const TeacherFiltersCard: StylableFC<{
   return (
     <SearchFiltersCard
       icon={<MaterialIcon icon="support_agent" />}
-      title="Search teachers"
+      title={tc("teachers.title")}
       onSubmit={handleSubmit}
       style={style}
       className={cn(

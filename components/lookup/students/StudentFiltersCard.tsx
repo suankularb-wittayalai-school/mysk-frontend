@@ -18,6 +18,10 @@ import { useContext } from "react";
  * The Search Filters Card for Students.
  */
 const StudentsFiltersCard: StylableFC = ({ style, className }) => {
+  const { t } = useTranslation("lookup", {
+    keyPrefix: "students.searchFilters.form",
+  });
+  const { t: tc } = useTranslation("lookup");
   const { t: tx } = useTranslation("common");
 
   const { setSnackbar } = useContext(SnackbarContext);
@@ -49,7 +53,7 @@ const StudentsFiltersCard: StylableFC = ({ style, className }) => {
     // URLSearchParams is used to encode the form values as query
     // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams
     router.push(
-      `/search/teachers/results?${new URLSearchParams(
+      `/search/students/results?${new URLSearchParams(
         // Convert form keys to snake case
         Object.fromEntries(entries.map(([key, value]) => [snake(key), value])),
       )}`,
@@ -59,27 +63,27 @@ const StudentsFiltersCard: StylableFC = ({ style, className }) => {
   return (
     <SearchFiltersCard
       icon={<MaterialIcon icon="face_6" />}
-      title="Search students"
+      title={tc("students.title")}
       onSubmit={handleSubmit}
       style={style}
       className={className}
     >
       <TextField
         appearance="outlined"
-        label="Search full name"
-        helperMsg="Enter partially or fully the full name of a student"
+        label={t("fullName")}
+        helperMsg={t("fullName_helper")}
         {...formProps.fullName}
       />
       <TextField
         appearance="outlined"
-        label="Search nickname"
-        helperMsg="Enter partially or fully the full name of a student"
+        label={t("nickname")}
+        helperMsg={t("nickname_helper")}
         {...formProps.nickname}
       />
       <TextField
         appearance="outlined"
-        label="Search contact"
-        helperMsg="Enter fully a username, email, tel., or URL of a student’s contact"
+        label={t("contact")}
+        helperMsg={t("contact_helper")}
         {...formProps.contact}
       />
     </SearchFiltersCard>

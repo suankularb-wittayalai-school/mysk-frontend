@@ -1,6 +1,11 @@
 {
   "title": "ค้นหา",
   "subtitle": "<0>ค้นหาทุกอย่าง</0>ด้วย MySK ค้นหา",
+  "view": {
+    "students": "นักเรียน",
+    "teachers": "อาจารย์",
+    "documents": "เอกสาร"
+  },
   "choice": {
     "students": {
       "title": "ค้นหา<strong>นักเรียน</strong>",
@@ -80,8 +85,20 @@
   },
   "students": {
     "title": "ค้นหานักเรียน",
-    "list": {
-      "searchAlt": "ค้นหานักเรียน"
+    "searchFilters": {
+      "form": {
+        "fullName": "ค้นหาด้วยชื่อจริง",
+        "fullName_helper": "ป้อนชื่อจริงบางส่วนหรือทั้งหมด",
+        "nickname": "ค้นหาด้วยชื่อเล่น",
+        "nickname_helper": "ป้อนชื่อเล่นบางส่วนหรือทั้งหมด",
+        "contact": "ค้นหาด้วยช่องทางการติดต่อ",
+        "contact_helper": "ป้อนชื่อผู้ใช้ อีเมล เบอร์โทร หรือ URL ของนักเรียนอย่างครบถ้วน"
+      },
+      "chip": {
+        "fullName": "ชื่อจริง: “{{content}}”",
+        "nickname": "ชื่อเล่น: “{{content}}”",
+        "contact": "ช่องทางการติดต่อ: “{{content}}”"
+      }
     }
   },
   "teachers": {

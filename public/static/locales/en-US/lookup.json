@@ -1,6 +1,11 @@
 {
-  "title": "Lookup",
-  "subtitle": "<0>Find everything</0> in MySK Lookup.",
+  "title": "Search",
+  "subtitle": "<0>Find everything</0> with Search.",
+  "view": {
+    "students": "Students",
+    "teachers": "Teachers",
+    "documents": "Documents"
+  },
   "choice": {
     "students": {
       "title": "Lookup <strong>students</strong>",
@@ -79,13 +84,25 @@
     }
   },
   "students": {
-    "title": "Lookup students",
-    "list": {
-      "searchAlt": "Search students"
+    "title": "Search students",
+    "searchFilters": {
+      "form": {
+        "fullName": "Search full name",
+        "fullName_helper": "Enter partially or fully the full name of a student",
+        "nickname": "Search nickname",
+        "nickname_helper": "Enter partially or fully the nickname of a student",
+        "contact": "Search contact",
+        "contact_helper": "Enter fully a username, email, tel., or URL of a student’s contact"
+      },
+      "chip": {
+        "fullName": "Full name: “{{content}}”",
+        "nickname": "Nickname: “{{content}}”",
+        "contact": "Contact: “{{content}}”"
+      }
     }
   },
   "teachers": {
-    "title": "Lookup teachers",
+    "title": "Search teachers",
     "searchFilters": {
       "form": {
         "fullName": "Search full name",
@@ -144,7 +161,7 @@
     }
   },
   "documents": {
-    "title": "Lookup documents",
+    "title": "Search documents",
     "list": {
       "searchAlt": "Search documents",
       "filter": {

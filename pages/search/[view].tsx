@@ -11,6 +11,7 @@ import {
   MaterialIcon,
   Tab,
   TabsContainer,
+  Text,
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
@@ -56,25 +57,26 @@ const SearchPage: CustomPage<{
       <Head>
         <title>{tx("tabName", { tabName: "Search" })}</title>
       </Head>
-      <PageHeader>Search</PageHeader>
+      <PageHeader>{t("title")}</PageHeader>
       <TabsContainer appearance="primary" alt="Searching for…">
         <Tab
           icon={<MaterialIcon icon="face_6" />}
-          label="Students"
+          label={t("view.students")}
           selected={view === "students"}
           onClick={() => changeView("students")}
         />
         <Tab
           icon={<MaterialIcon icon="support_agent" />}
-          label="Teachers"
+          label={t("view.teachers")}
           selected={view === "teachers"}
           onClick={() => changeView("teachers")}
         />
         <Tab
           icon={<MaterialIcon icon="document_scanner" />}
-          label="Documents"
+          label={t("view.documents")}
           selected={view === "documents"}
           // onClick={() => changeView("documents")}
+          onClick={() => setView("documents")}
           href="/search/documents"
           element={Link}
         />
@@ -97,7 +99,13 @@ const SearchPage: CustomPage<{
                   title="Search documents"
                   onSubmit={() => {}}
                 >
-                  TODO: Documents
+                  <Text
+                    type="body-medium"
+                    className="sm:col-span-2 md:col-span-4"
+                  >
+                    TODO: Documents filters aren’t implemented yet. Redirecting
+                    you to the Search Documents page…
+                  </Text>
                 </SearchFiltersCard>
               ),
             }[view]
