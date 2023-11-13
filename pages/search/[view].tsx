@@ -1,6 +1,6 @@
 import PageHeader from "@/components/common/PageHeader";
 import SearchFiltersCard from "@/components/lookup/SearchFiltersCard";
-import StudentsFitlersCard from "@/components/lookup/students/StudentFiltersCard";
+import StudentsFiltersCard from "@/components/lookup/students/StudentFiltersCard";
 import TeacherFiltersCard from "@/components/lookup/teachers/TeacherFiltersCard";
 import getSubjectGroups from "@/utils/backend/subject/getSubjectGroups";
 import { supabase } from "@/utils/supabase-backend";
@@ -19,10 +19,17 @@ import { GetStaticPaths, GetStaticProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
 type SearchPageView = "students" | "teachers" | "documents";
+
+const SEARCH_PAGE_VIEWS: SearchPageView[] = [
+  "students",
+  "teachers",
+  "documents",
+];
 
 const SearchPage: CustomPage<{
   view: SearchPageView;
@@ -67,7 +74,9 @@ const SearchPage: CustomPage<{
           icon={<MaterialIcon icon="document_scanner" />}
           label="Documents"
           selected={view === "documents"}
-          onClick={() => changeView("documents")}
+          // onClick={() => changeView("documents")}
+          href="/search/documents"
+          element={Link}
         />
       </TabsContainer>
       <ContentLayout>
@@ -80,7 +89,7 @@ const SearchPage: CustomPage<{
         >
           {
             {
-              students: <StudentsFitlersCard />,
+              students: <StudentsFiltersCard />,
               teachers: <TeacherFiltersCard subjectGroups={subjectGroups} />,
               documents: (
                 <SearchFiltersCard
@@ -117,12 +126,10 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
 };
 
 export const getStaticPaths: GetStaticPaths = async () => ({
-  paths: ["students", "teachers", "documents"]
-    .map((view) => [
-      { params: { view }, locale: "th" },
-      { params: { view }, locale: "en-US" },
-    ])
-    .flat(),
+  paths: SEARCH_PAGE_VIEWS.map((view) => [
+    { params: { view }, locale: "th" },
+    { params: { view }, locale: "en-US" },
+  ]).flat(),
   fallback: false,
 });
 
