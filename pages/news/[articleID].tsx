@@ -156,9 +156,13 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const { data } = await supabase.from("infos").select(`id`);
 
   return {
-    paths: (data as { id: string }[]).map(({ id }) => ({
-      params: { articleID: fromUUID(id) },
-    })),
+    paths: (data as { id: string }[])
+      .map(({ id }) => ({ articleID: fromUUID(id) }))
+      .map((params) => [
+        { params, locale: "th" },
+        { params, locale: "en-US" },
+      ])
+      .flat(),
     fallback: "blocking",
   };
 };
