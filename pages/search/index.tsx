@@ -1,7 +1,10 @@
 import PageHeader from "@/components/common/PageHeader";
 import SearchFiltersCard from "@/components/lookup/SearchFiltersCard";
 import TeacherFiltersCard from "@/components/lookup/teachers/TeacherFiltersCard";
+import getSubjectGroups from "@/utils/backend/subject/getSubjectGroups";
+import { supabase } from "@/utils/supabase-backend";
 import { CustomPage, LangCode } from "@/utils/types/common";
+import { SubjectGroup } from "@/utils/types/subject";
 import {
   ContentLayout,
   MaterialIcon,
@@ -16,7 +19,9 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import { useState } from "react";
 
-const SearchPage: CustomPage = () => {
+const SearchPage: CustomPage<{
+  subjectGroups: SubjectGroup[];
+}> = ({ subjectGroups }) => {
   const [view, setView] = useState<"students" | "teachers" | "documents">(
     "students",
   );
@@ -64,7 +69,7 @@ const SearchPage: CustomPage = () => {
                   TODO: Students
                 </SearchFiltersCard>
               ),
-              teachers: <TeacherFiltersCard subjectGroups={[]} />,
+              teachers: <TeacherFiltersCard subjectGroups={subjectGroups} />,
               documents: (
                 <SearchFiltersCard onSubmit={() => {}}>
                   TODO: Documents
@@ -78,8 +83,19 @@ const SearchPage: CustomPage = () => {
   );
 };
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => ({
-  props: await serverSideTranslations(locale as LangCode, ["common", "lookup"]),
-});
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
+  const { data: subjectGroups } = await getSubjectGroups(supabase);
+
+  return {
+    props: {
+      ...(await serverSideTranslations(locale as LangCode, [
+        "common",
+        "lookup",
+      ])),
+      subjectGroups,
+    },
+    revalidate: 3600,
+  };
+};
 
 export default SearchPage;
