@@ -1,3 +1,4 @@
+// Imports
 import PageHeader from "@/components/common/PageHeader";
 import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
 import LookupDetailsSide from "@/components/lookup/LookupDetailsSide";
@@ -28,6 +29,12 @@ export type StudentSearchFilters = Partial<{
   contact: string;
 }>;
 
+/**
+ * The results page for Search Students.
+ *
+ * @param filters The filters used to search for Students.
+ * @param students The Students that match the filters.
+ */
 const LookupStudentsResultsPage: CustomPage<{
   filters: StudentSearchFilters;
   students: StudentLookupItem[];
@@ -156,4 +163,3 @@ export const getServerSideProps: GetServerSideProps = async ({
 };
 
 export default LookupStudentsResultsPage;
-

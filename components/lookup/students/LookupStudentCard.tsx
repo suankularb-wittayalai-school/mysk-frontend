@@ -63,4 +63,3 @@ const LookupStudentCard: StylableFC<{
 };
 
 export default LookupStudentCard;
-
