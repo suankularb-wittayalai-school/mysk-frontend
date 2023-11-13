@@ -1,5 +1,5 @@
 // Imports
-import { SearchFilters } from "@/pages/lookup/teachers/results";
+import { SearchFilters } from "@/pages/search/teachers/results";
 import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import logError from "@/utils/helpers/logError";
 import mergeDBLocales from "@/utils/helpers/mergeDBLocales";

@@ -1,6 +1,5 @@
 // Imports
 import PageHeader from "@/components/common/PageHeader";
-import ActiveSearchFiltersCard from "@/components/lookup/ActiveSearchFiltersCard";
 import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
 import LookupDetailsSide from "@/components/lookup/LookupDetailsSide";
 import LookupListSide from "@/components/lookup/LookupListSide";
@@ -8,6 +7,7 @@ import LookupResultsItem from "@/components/lookup/LookupResultsItem";
 import LookupResultsList from "@/components/lookup/LookupResultsList";
 import TooWideCard from "@/components/lookup/TooWideCard";
 import LookupTeacherCard from "@/components/lookup/teachers/LookupTeacherCard";
+import TeacherActiveFiltersCard from "@/components/lookup/teachers/TeacherActiveFiltersCard";
 import TeacherDetailsCard from "@/components/lookup/teachers/TeacherDetailsCard";
 import { getTeacherByID } from "@/utils/backend/person/getTeacherByID";
 import getTeachersByLookupFilters from "@/utils/backend/person/getTeachersByLookupFilters";
@@ -102,7 +102,7 @@ const LookupTeachersResultsPage: NextPage<{
       <Head>
         <title>{tx("tabName", { tabName: t("title"), ns: "common" })}</title>
       </Head>
-      <PageHeader parentURL="/lookup/teachers">{t("title")}</PageHeader>
+      <PageHeader parentURL="/search/teachers">{t("title")}</PageHeader>
       <SplitLayout
         ratio="list-detail"
         className="sm:[&>div]:!grid-cols-2 md:[&>div]:!grid-cols-3"
@@ -110,7 +110,7 @@ const LookupTeachersResultsPage: NextPage<{
         <LookupListSide length={teachers.length}>
           {/* Active Search Filters */}
           {Object.keys(filters).length > 0 && (
-            <ActiveSearchFiltersCard
+            <TeacherActiveFiltersCard
               filters={filters}
               subjectGroups={subjectGroups}
             />

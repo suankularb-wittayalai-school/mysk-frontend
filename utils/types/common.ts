@@ -32,11 +32,6 @@ export type StylableFC<Props extends {} = {}> = FC<
 export type CustomPage<T = {}> = NextPage<T> &
   Partial<{
     /**
-     * A wrapper for the entire app, commonly used for Contexts.
-     */
-    context: FC<{ children: ReactNode }>;
-
-    /**
      * A FAB to place in Navigation Rail for or fixed on this page only.
      *
      * @see {@link https://docs.google.com/document/d/1UJeTpXcB2MBL9Df4GUUeZ78xb-RshNIC_-LCIKmCo-8/edit?usp=sharing#heading=h.v2ft1p7l7f8a SKCom documentation on FAB}

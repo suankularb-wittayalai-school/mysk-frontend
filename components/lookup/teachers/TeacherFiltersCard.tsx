@@ -81,7 +81,7 @@ const TeacherFiltersCard: StylableFC<{
     // URLSearchParams is used to encode the form values as query
     // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams
     router.push(
-      `/lookup/teachers/results?${new URLSearchParams(
+      `/search/teachers/results?${new URLSearchParams(
         // Convert form keys to snake case
         Object.fromEntries(entries.map(([key, value]) => [snake(key), value])),
       )}`,

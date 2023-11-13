@@ -117,7 +117,7 @@ export const config = {
     "/learn",
     "/teach",
     "/classes/:path*",
-    "/lookup/:path*",
+    "/search/:path*",
     "/maintenance",
     "/news",
     "/news/:id",

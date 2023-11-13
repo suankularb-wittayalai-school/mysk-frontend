@@ -1,34 +1,25 @@
 // Imports
-import { SearchFilters } from "@/pages/lookup/teachers/results";
 import cn from "@/utils/helpers/cn";
-import getLocaleString from "@/utils/helpers/getLocaleString";
-import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
-import { SubjectGroup } from "@/utils/types/subject";
 import {
   ChipSet,
-  InputChip,
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
 import { motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
+import { ReactNode } from "react";
 
+/**
+ * A small Card displaying the active search filters in the Results page when
+ * performing a search.
+ *
+ * @param children Chips representing the active search filters.
+ */
 const ActiveSearchFiltersCard: StylableFC<{
-  filters: SearchFilters;
-  subjectGroups: SubjectGroup[];
-}> = ({ filters, subjectGroups, style, className }) => {
-  const locale = useLocale();
-  const { t } = useTranslation("lookup", {
-    keyPrefix: "teachers.searchFilters",
-  });
-  const { t: tx } = useTranslation("lookup");
-
-  const subjectGroup = filters.subjectGroup
-    ? subjectGroups.find(
-        (subjectGroup) => filters.subjectGroup === subjectGroup.id,
-      )
-    : undefined;
+  children: ReactNode;
+}> = ({ children, style, className }) => {
+  const { t } = useTranslation("lookup");
 
   const { duration, easing } = useAnimationConfig();
 
@@ -49,7 +40,7 @@ const ActiveSearchFiltersCard: StylableFC<{
         transition={transition(duration.long2, easing.emphasized)}
         className="skc-text skc-text--title-medium px-4 pb-2 pt-3"
       >
-        {tx("common.searchFilters.title")}
+        {t("common.searchFilters.title")}
       </motion.h2>
       <motion.div
         layout="position"
@@ -64,33 +55,7 @@ const ActiveSearchFiltersCard: StylableFC<{
             [mask-image:linear-gradient(to_left,transparent_0.5rem,black_2rem)]
             [&>div]:pl-4 [&>div]:pr-8`)}
         >
-          {filters.fullName && (
-            <InputChip>
-              {t("chip.fullName", { content: filters.fullName })}
-            </InputChip>
-          )}
-          {filters.nickname && (
-            <InputChip>
-              {t("chip.nickname", { content: filters.nickname })}
-            </InputChip>
-          )}
-          {subjectGroup && (
-            <InputChip>
-              {t("chip.subjectGroup", {
-                content: getLocaleString(subjectGroup.name, locale),
-              })}
-            </InputChip>
-          )}
-          {filters.classroom && (
-            <InputChip>
-              {t("chip.classroom", { content: filters.classroom })}
-            </InputChip>
-          )}
-          {filters.contact && (
-            <InputChip>
-              {t("chip.contact", { content: filters.contact })}
-            </InputChip>
-          )}
+          {children}
         </ChipSet>
       </motion.div>
     </motion.div>
