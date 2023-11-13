@@ -1,15 +1,14 @@
 // Imports
-import ContactCard from "@/components/account/ContactCard";
 import MultilangText from "@/components/common/MultilingualText";
 import LookupDetailsContent from "@/components/lookup//LookupDetailsContent";
 import LookupDetailsCard from "@/components/lookup/LookupDetailsCard";
+import ContactGrid from "@/components/lookup/people/ContactGrid";
 import PersonScheduleCard from "@/components/lookup/person/PersonScheduleCard";
 import CurrentTeachingPeriodCard from "@/components/lookup/teachers/CurrentTeachingPeriodCard";
 import InformationCard from "@/components/lookup/teachers/InformationCard";
 import StarbucksCard from "@/components/lookup/teachers/StarbucksCard";
 import SubjectInChardCard from "@/components/lookup/teachers/SubjectInChargeCard";
 import TeacherHeader from "@/components/lookup/teachers/TeacherHeader";
-import cn from "@/utils/helpers/cn";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
@@ -17,7 +16,6 @@ import useToggle from "@/utils/helpers/useToggle";
 import { StylableFC } from "@/utils/types/common";
 import { Teacher } from "@/utils/types/person";
 import {
-  Columns,
   Text,
   transition,
   useAnimationConfig,
@@ -126,29 +124,12 @@ const TeacherDetailsCard: StylableFC<{
               </motion.div>
 
               {teacher.contacts.length > 0 && (
-                <motion.section
+                <motion.div
                   layout="position"
                   transition={transition(duration.medium2, easing.standard)}
-                  className="space-y-2"
                 >
-                  <Text
-                    type="title-medium"
-                    element="h3"
-                    className="rounded-md bg-surface px-3 py-2"
-                  >
-                    {t("contacts.title")}
-                  </Text>
-                  <Columns columns={2} className="!gap-2">
-                    {teacher.contacts.map((contact) => (
-                      <ContactCard
-                        key={contact.id}
-                        contact={contact}
-                        className={cn(`!border-0 hover:m-[-1px] hover:!border-1
-                          focus:m-[-1px] focus:!border-1`)}
-                      />
-                    ))}
-                  </Columns>
-                </motion.section>
+                  <ContactGrid contacts={teacher.contacts} />
+                </motion.div>
               )}
 
               {teacher.subjects_in_charge.length > 0 && (
