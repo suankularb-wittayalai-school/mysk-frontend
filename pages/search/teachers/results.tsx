@@ -120,7 +120,7 @@ const LookupTeachersResultsPage: NextPage<{
           {/* Results */}
           <LookupResultsList
             length={teachers.length}
-            filtersURL="/lookup/teachers"
+            filtersURL="/search/teachers"
           >
             {teachers.map((teacher, idx) => (
               <LookupResultsItem
