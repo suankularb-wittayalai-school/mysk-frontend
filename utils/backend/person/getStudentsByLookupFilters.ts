@@ -20,23 +20,26 @@ export default async function getStudentsByLookupFilters(
 ): Promise<BackendReturn<StudentLookupItem[]>> {
   if (Object.keys(filters).length === 0) return { data: [], error: null };
 
-  let query = supabase.from("students").select(
-    `id,
-    people!inner(
-      prefix_th,
-      prefix_en,
-      first_name_th,
-      middle_name_th,
-      last_name_th,
-      nickname_th,
-      first_name_en,
-      middle_name_en,
-      last_name_en,
-      nickname_en,
-      person_contacts${filters.contact ? "!inner" : ""}(contacts!inner(value))
-    ),
-    classroom_students(classrooms(id, number))`,
-  ).eq("classroom_students.classrooms.year", getCurrentAcademicYear());
+  let query = supabase
+    .from("students")
+    .select(
+      `id,
+      people!inner(
+        prefix_th,
+        prefix_en,
+        first_name_th,
+        middle_name_th,
+        last_name_th,
+        nickname_th,
+        first_name_en,
+        middle_name_en,
+        last_name_en,
+        nickname_en,
+        person_contacts${filters.contact ? "!inner" : ""}(contacts!inner(value))
+      ),
+      classroom_students(classrooms(id, number))`,
+    )
+    .eq("classroom_students.classrooms.year", getCurrentAcademicYear());
 
   if (filters.fullName)
     query = query.or(createOrQueryFromFullName(filters.fullName), {
@@ -69,9 +72,8 @@ export default async function getStudentsByLookupFilters(
       last_name: mergeDBLocales(student.people, "last_name"),
       nickname: mergeDBLocales(student.people, "nickname"),
       role: "student",
-      classroom: student.classroom_students[0]?.classrooms,
+      classroom: student.classroom_students[0]?.classrooms || null,
     })),
     error: null,
   };
 }
-
