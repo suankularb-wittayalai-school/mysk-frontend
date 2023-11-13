@@ -28,10 +28,19 @@ export default function Document() {
         <meta name="msapplication-TileColor" content="#2b5797" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta
+          name="theme-color"
+          content="#e7f0f6" // surface-2
+          media="(prefers-color-scheme: light)"
+        />
+        <meta
+          name="theme-color"
+          content="#004c6d" // primary-container
+          media="(prefers-color-scheme: dark)"
+        />
+        <meta
           name="apple-mobile-web-app-status-bar-style"
           content="black-translucent"
         />
-        <meta name="google" content="notranslate" />
         <script src="https://accounts.google.com/gsi/client" async />
       </Head>
       <body>
