@@ -37,7 +37,7 @@ export default async function getStudentsByLookupFilters(
         nickname_en,
         person_contacts${filters.contact ? "!inner" : ""}(contacts!inner(value))
       ),
-      classroom_students(classrooms(id, number))`,
+      classroom_students(classrooms!inner(id, number))`,
     )
     .eq("classroom_students.classrooms.year", getCurrentAcademicYear());
 
