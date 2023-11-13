@@ -1,5 +1,6 @@
 import PageHeader from "@/components/common/PageHeader";
 import SearchFiltersCard from "@/components/lookup/SearchFiltersCard";
+import TeacherFiltersCard from "@/components/lookup/teachers/TeacherFiltersCard";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import {
   ContentLayout,
@@ -9,7 +10,7 @@ import {
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { GetStaticProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
@@ -56,7 +57,21 @@ const SearchPage: CustomPage = () => {
           animate={{ opacity: 1 }}
           transition={transition(duration.long4, easing.standardDecelerate)}
         >
-          <SearchFiltersCard onSubmit={() => {}}>TODO</SearchFiltersCard>
+          {
+            {
+              students: (
+                <SearchFiltersCard onSubmit={() => {}}>
+                  TODO: Students
+                </SearchFiltersCard>
+              ),
+              teachers: <TeacherFiltersCard subjectGroups={[]} />,
+              documents: (
+                <SearchFiltersCard onSubmit={() => {}}>
+                  TODO: Documents
+                </SearchFiltersCard>
+              ),
+            }[view]
+          }
         </motion.div>
       </ContentLayout>
     </>
@@ -64,7 +79,7 @@ const SearchPage: CustomPage = () => {
 };
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => ({
-  props: await serverSideTranslations(locale as LangCode, ["common", "search"]),
+  props: await serverSideTranslations(locale as LangCode, ["common", "lookup"]),
 });
 
 export default SearchPage;
