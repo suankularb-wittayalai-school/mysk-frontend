@@ -15,24 +15,39 @@ import {
   useAnimationConfig,
 } from "@suankularb-components/react";
 import { motion } from "framer-motion";
-import { GetStaticProps } from "next";
+import { GetStaticPaths, GetStaticProps } from "next";
+import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import { useState } from "react";
 
+type SearchPageView = "students" | "teachers" | "documents";
+
 const SearchPage: CustomPage<{
+  view: SearchPageView;
   subjectGroups: SubjectGroup[];
-}> = ({ subjectGroups }) => {
+}> = ({ view: initialView, subjectGroups }) => {
+  const { t } = useTranslation("lookup");
+  const { t: tx } = useTranslation("common");
+
+  const router = useRouter();
+
   const [view, setView] = useState<"students" | "teachers" | "documents">(
-    "students",
+    initialView,
   );
 
   const { duration, easing } = useAnimationConfig();
 
+  function changeView(view: SearchPageView) {
+    setView(view);
+    router.push(`/search/${view}`, undefined, { shallow: true });
+  }
+
   return (
     <>
       <Head>
-        <title>Search</title>
+        <title>{tx("tabName", { tabName: "Search" })}</title>
       </Head>
       <PageHeader>Search</PageHeader>
       <TabsContainer appearance="primary" alt="Searching for…">
@@ -40,19 +55,19 @@ const SearchPage: CustomPage<{
           icon={<MaterialIcon icon="face_6" />}
           label="Students"
           selected={view === "students"}
-          onClick={() => setView("students")}
+          onClick={() => changeView("students")}
         />
         <Tab
           icon={<MaterialIcon icon="support_agent" />}
           label="Teachers"
           selected={view === "teachers"}
-          onClick={() => setView("teachers")}
+          onClick={() => changeView("teachers")}
         />
         <Tab
           icon={<MaterialIcon icon="document_scanner" />}
           label="Documents"
           selected={view === "documents"}
-          onClick={() => setView("documents")}
+          onClick={() => changeView("documents")}
         />
       </TabsContainer>
       <ContentLayout>
@@ -84,7 +99,8 @@ const SearchPage: CustomPage<{
   );
 };
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => {
+export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
+  const view = params?.view;
   const { data: subjectGroups } = await getSubjectGroups(supabase);
 
   return {
@@ -93,10 +109,21 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         "common",
         "lookup",
       ])),
+      view,
       subjectGroups,
     },
     revalidate: 3600,
   };
 };
+
+export const getStaticPaths: GetStaticPaths = async () => ({
+  paths: ["students", "teachers", "documents"]
+    .map((view) => [
+      { params: { view }, locale: "th" },
+      { params: { view }, locale: "en-US" },
+    ])
+    .flat(),
+  fallback: false,
+});
 
 export default SearchPage;
