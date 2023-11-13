@@ -1,5 +1,6 @@
 import PageHeader from "@/components/common/PageHeader";
 import SearchFiltersCard from "@/components/lookup/SearchFiltersCard";
+import StudentsFitlersCard from "@/components/lookup/students/StudentFiltersCard";
 import TeacherFiltersCard from "@/components/lookup/teachers/TeacherFiltersCard";
 import getSubjectGroups from "@/utils/backend/subject/getSubjectGroups";
 import { supabase } from "@/utils/supabase-backend";
@@ -64,11 +65,7 @@ const SearchPage: CustomPage<{
         >
           {
             {
-              students: (
-                <SearchFiltersCard onSubmit={() => {}}>
-                  TODO: Students
-                </SearchFiltersCard>
-              ),
+              students: <StudentsFitlersCard />,
               teachers: <TeacherFiltersCard subjectGroups={subjectGroups} />,
               documents: (
                 <SearchFiltersCard onSubmit={() => {}}>
