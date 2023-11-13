@@ -70,10 +70,12 @@ const TeacherFiltersCard: StylableFC<{
     va.track("Search Teachers", {
       filterCount: entries.length,
       ...Object.fromEntries(
-        Object.keys(form).map((key) => ["include" + pascal(snake(key)), false]),
-      ),
-      ...Object.fromEntries(
-        entries.map(([key]) => ["include" + pascal(snake(key)), true]),
+        Object.entries(form).map(([key, value]) => [
+          "include" + pascal(snake(key)),
+          key === "subjectGroup" && value === "any"
+            ? false
+            : Boolean(form[key as keyof typeof form]),
+        ]),
       ),
     });
 
