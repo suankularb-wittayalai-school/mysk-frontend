@@ -78,9 +78,6 @@
           "close": "ปิด"
         }
       }
-    },
-    "snackbar": {
-      "thaiSpeechNotSupported": "ขออภัย เบราว์เซอร์ไม่รองรับการออกเสียงภาษาไทย"
     }
   },
   "students": {
@@ -146,6 +143,9 @@
         "action": {
           "readAloud": "อ่านออกเสียง",
           "openStarbucks": "เปิด Starbucks"
+        },
+        "snackbar": {
+          "thaiSpeechNotSupported": "ขออภัย เบราว์เซอร์ไม่รองรับการออกเสียงภาษาไทย"
         }
       },
       "information": {
