@@ -14,7 +14,7 @@ import Head from "next/head";
 
 /**
  * A feed of News Articles, with the 2 most recent Articles highlighted.
- * 
+ *
  * @param newsFeed The News Articles to display.
  */
 const NewsPage: CustomPage<{ newsFeed: NewsArticle[] }> = ({ newsFeed }) => {
@@ -28,7 +28,7 @@ const NewsPage: CustomPage<{ newsFeed: NewsArticle[] }> = ({ newsFeed }) => {
       </Head>
       <PageHeader>{t("title")}</PageHeader>
       <ContentLayout>
-        <Columns columns={4} className="!gap-y-5">
+        <Columns columns={4} className="h-fit !gap-y-5">
           <LatestArticlesSection
             mainArticle={newsFeed[0]}
             asideArticle={newsFeed[1]}
