@@ -1,14 +1,15 @@
 // Imports
-import { SearchFilters } from "@/pages/search/teachers/results";
+import { TeacherSearchFilters } from "@/pages/search/teachers/results";
 import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import logError from "@/utils/helpers/logError";
 import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
+import createOrQueryFromFullName from "@/utils/helpers/person/createOrQueryFromFullName";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
 import { TeacherLookupItem } from "@/utils/types/person";
 
 export default async function getTeachersByLookupFilters(
   supabase: DatabaseClient,
-  filters: SearchFilters,
+  filters: TeacherSearchFilters,
   options?: { year?: number },
 ): Promise<BackendReturn<TeacherLookupItem[]>> {
   if (Object.keys(filters).length === 0 || Number.isNaN(filters.subjectGroup))
@@ -35,46 +36,10 @@ export default async function getTeachersByLookupFilters(
     )`,
   );
 
-  if (filters.fullName) {
-    const nameSegments = filters.fullName.split(" ");
-    const nameFilter =
-      nameSegments.length > 1
-        ? {
-            firstName: nameSegments?.[0],
-            ...(nameSegments.length > 2
-              ? {
-                  middleName: nameSegments[1],
-                  lastName: nameSegments.slice(2).join(" "),
-                }
-              : {
-                  middleName: "",
-                  lastName: nameSegments?.slice(1).join(" "),
-                }),
-          }
-        : {
-            firstName: filters.fullName,
-            middleName: filters.fullName,
-            lastName: filters.fullName,
-          };
-
-    query = query.or(
-      `first_name_th.${nameSegments.length > 1 ? "eq" : "like"}.%${
-        nameFilter.firstName
-      }%, \
-      middle_name_th.${nameSegments.length > 1 ? "eq" : "like"}.%${
-        nameFilter.middleName
-      }%, \
-      last_name_th.like.%${nameFilter.lastName}%, \
-      first_name_en.${nameSegments.length > 1 ? "eq" : "ilike"}.%${
-        nameFilter.firstName
-      }%, \
-      middle_name_en.${nameSegments.length > 1 ? "eq" : "ilike"}.%${
-        nameFilter.middleName
-      }%, \
-      last_name_en.ilike.%${nameFilter.lastName}%`,
-      { foreignTable: "people" },
-    );
-  }
+  if (filters.fullName)
+    query = query.or(createOrQueryFromFullName(filters.fullName), {
+      foreignTable: "people",
+    });
 
   if (filters.nickname)
     query = query.or(
