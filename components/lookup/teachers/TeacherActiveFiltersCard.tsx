@@ -1,6 +1,6 @@
 // Imports
 import ActiveSearchFiltersCard from "@/components/lookup/ActiveSearchFiltersCard";
-import { SearchFilters } from "@/pages/search/teachers/results";
+import { TeacherSearchFilters } from "@/pages/search/teachers/results";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
@@ -15,7 +15,7 @@ import { useTranslation } from "next-i18next";
  * @param subjectGroups The list of all Subject Groups.
  */
 const TeacherActiveFiltersCard: StylableFC<{
-  filters: SearchFilters;
+  filters: TeacherSearchFilters;
   subjectGroups: SubjectGroup[];
 }> = ({ filters, subjectGroups, style, className }) => {
   const locale = useLocale();

@@ -35,7 +35,7 @@ import Head from "next/head";
 import { alphabetical, camel } from "radash";
 import { useEffect, useState } from "react";
 
-export type SearchFilters = Partial<{
+export type TeacherSearchFilters = Partial<{
   fullName: string;
   nickname: string;
   subjectGroup: number;
@@ -44,7 +44,7 @@ export type SearchFilters = Partial<{
 }>;
 
 const LookupTeachersResultsPage: NextPage<{
-  filters: SearchFilters;
+  filters: TeacherSearchFilters;
   subjectGroups: SubjectGroup[];
   teachers: TeacherLookupItem[];
 }> = ({ filters, subjectGroups, teachers }) => {
@@ -193,7 +193,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         camel(key),
         key === "subject_group" && value !== "any" ? Number(value) : value,
       ]),
-  ) as SearchFilters;
+  ) as TeacherSearchFilters;
 
   const { data } = await getTeachersByLookupFilters(supabase, filters);
   const teachers = alphabetical(
