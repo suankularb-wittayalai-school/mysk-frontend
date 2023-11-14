@@ -60,7 +60,10 @@ const StudentDetailsCard: StylableFC<{
                   )}
                 {student.classroom && (
                   <InformationCard title="Classroom">
-                    {tx("class", { number: student.classroom.number })}
+                    {[
+                      tx("class", { number: student.classroom.number }),
+                      `No. ${student.class_no}`,
+                    ].join(" • ")}
                   </InformationCard>
                 )}
                 {student.birthdate &&
