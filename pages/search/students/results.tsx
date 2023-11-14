@@ -14,7 +14,7 @@ import getStudentsByLookupFilters from "@/utils/backend/person/getStudentsByLook
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Student, StudentLookupItem } from "@/utils/types/person";
-import { SplitLayout } from "@suankularb-components/react";
+import { SplitLayout, useAnimationConfig } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
@@ -43,9 +43,20 @@ const LookupStudentsResultsPage: CustomPage<{
   const { t } = useTranslation("lookup", { keyPrefix: "students" });
   const { t: tx } = useTranslation("common");
 
-  const supabase = useSupabaseClient();
+  const { duration } = useAnimationConfig();
 
   const [selectedID, setSelectedID] = useState<string>();
+  // Select the first result automatically after a short delay
+  useEffect(() => {
+    const timeout = setTimeout(
+      () => setSelectedID(students[0]?.id),
+      duration.medium2 * 1000,
+    );
+    return () => clearTimeout(timeout);
+  }, []);
+
+  const supabase = useSupabaseClient();
+
   const [selectedStudent, setSelectedStudent] = useState<Student>();
   // Fetch the selected Student when the selected Student ID changes
   useEffect(() => {
