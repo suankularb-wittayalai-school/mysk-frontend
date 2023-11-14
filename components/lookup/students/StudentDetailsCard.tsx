@@ -11,7 +11,7 @@ import { useTranslation } from "next-i18next";
 import { sift } from "radash";
 import LookupDetailsContent from "../LookupDetailsContent";
 import InformationCard from "../teachers/InformationCard";
-import ContactGrid from "../people/ContactGrid";
+import PersonContactGrid from "../people/PersonContactGrid";
 
 /**
  * A Card that contains the details of a Student in Search Students.
@@ -78,7 +78,7 @@ const StudentDetailsCard: StylableFC<{
               </div>
 
               {student.contacts.length > 0 && (
-                <ContactGrid contacts={student.contacts} />
+                <PersonContactGrid contacts={student.contacts} />
               )}
             </LookupDetailsContent>
           </>

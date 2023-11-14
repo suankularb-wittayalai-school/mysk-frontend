@@ -2,7 +2,7 @@
 import MultilangText from "@/components/common/MultilingualText";
 import LookupDetailsContent from "@/components/lookup//LookupDetailsContent";
 import LookupDetailsCard from "@/components/lookup/LookupDetailsCard";
-import ContactGrid from "@/components/lookup/people/ContactGrid";
+import PersonContactGrid from "@/components/lookup/people/PersonContactGrid";
 import PersonScheduleCard from "@/components/lookup/people/PersonScheduleCard";
 import CurrentTeachingPeriodCard from "@/components/lookup/teachers/CurrentTeachingPeriodCard";
 import InformationCard from "@/components/lookup/teachers/InformationCard";
@@ -128,7 +128,7 @@ const TeacherDetailsCard: StylableFC<{
                   layout="position"
                   transition={transition(duration.medium2, easing.standard)}
                 >
-                  <ContactGrid contacts={teacher.contacts} />
+                  <PersonContactGrid contacts={teacher.contacts} />
                 </motion.div>
               )}
 

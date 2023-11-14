@@ -1,3 +1,4 @@
+// Imports
 import ContactCard from "@/components/account/ContactCard";
 import cn from "@/utils/helpers/cn";
 import { StylableFC } from "@/utils/types/common";
@@ -10,7 +11,7 @@ import { useTranslation } from "next-i18next";
  *
  * @param contacts The Contacts to display.
  */
-const ContactGrid: StylableFC<{
+const PersonContactGrid: StylableFC<{
   contacts: Contact[];
 }> = ({ contacts, style, className }) => {
   const { t } = useTranslation("lookup", {
@@ -40,4 +41,4 @@ const ContactGrid: StylableFC<{
   );
 };
 
-export default ContactGrid;
+export default PersonContactGrid;
