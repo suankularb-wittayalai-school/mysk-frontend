@@ -5,7 +5,7 @@ import ClassStudentList from "@/components/classes/ClassStudentList";
 import RecentAttendanceList from "@/components/classes/RecentAttendanceList";
 import LookupDetailsCard from "@/components/lookup/LookupDetailsCard";
 import LookupDetailsContent from "@/components/lookup/LookupDetailsContent";
-import InformationCard from "@/components/lookup/teachers/InformationCard";
+import InformationCard from "@/components/lookup/people/InformationCard";
 import cn from "@/utils/helpers/cn";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import useLocale from "@/utils/helpers/useLocale";

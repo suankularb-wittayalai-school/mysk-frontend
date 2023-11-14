@@ -10,7 +10,7 @@ import { AnimatePresence } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { sift } from "radash";
 import LookupDetailsContent from "../LookupDetailsContent";
-import InformationCard from "../teachers/InformationCard";
+import InformationCard from "../people/InformationCard";
 import PersonContactGrid from "../people/PersonContactGrid";
 
 /**

@@ -5,7 +5,7 @@ import LookupDetailsCard from "@/components/lookup/LookupDetailsCard";
 import PersonContactGrid from "@/components/lookup/people/PersonContactGrid";
 import PersonScheduleCard from "@/components/lookup/people/PersonScheduleCard";
 import CurrentTeachingPeriodCard from "@/components/lookup/teachers/CurrentTeachingPeriodCard";
-import InformationCard from "@/components/lookup/teachers/InformationCard";
+import InformationCard from "@/components/lookup/people/InformationCard";
 import StarbucksCard from "@/components/lookup/teachers/StarbucksCard";
 import SubjectInChardCard from "@/components/lookup/teachers/SubjectInChargeCard";
 import TeacherHeader from "@/components/lookup/teachers/TeacherHeader";
