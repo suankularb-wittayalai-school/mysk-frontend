@@ -99,7 +99,7 @@ function App({
   Component,
   pageProps: { session, ...pageProps },
 }: CustomAppProps) {
-  const { context, fab, navType, childURLs } = Component;
+  const { fab, navType, childURLs } = Component;
 
   // Supabase client
   const [supabase] = useState(() => createPagesBrowserClient<Database>());
@@ -140,7 +140,7 @@ function App({
               {/* SKCom variables */}
               <ThemeProvider>
                 {/* Rendered app */}
-                <Layout {...{ context, fab, navType, childURLs }}>
+                <Layout {...{ fab, navType, childURLs }}>
                   <ErrorBoundary Fallback={PageFallback}>
                     <Component {...pageProps} />
                   </ErrorBoundary>
@@ -164,3 +164,4 @@ function App({
 }
 
 export default appWithTranslation(App);
+
