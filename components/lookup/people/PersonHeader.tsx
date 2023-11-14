@@ -1,9 +1,13 @@
 // Imports
+import ClassDetailsCard from "@/components/classes/ClassDetailsCard";
 import DynamicAvatar from "@/components/common/DynamicAvatar";
+import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
+import getClassroomByID from "@/utils/backend/classroom/getClassroomByID";
 import cn from "@/utils/helpers/cn";
 import { useGetVCard } from "@/utils/helpers/contact";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import useLocale from "@/utils/helpers/useLocale";
+import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
 import { Student, Teacher } from "@/utils/types/person";
 import {
@@ -14,15 +18,17 @@ import {
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import va from "@vercel/analytics";
 import { motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
+import { useEffect, useState } from "react";
 
 /**
  * The header of a Student/Teacher Details Card. Contains the name, avatar, and
  * actions.
  *
- * @param teacher The Person to display.
+ * @param person The Person to display.
  * @param onScheduleOpenClick Callback to open the Person’s schedule.
  */
 const PersonHeader: StylableFC<{
@@ -49,6 +55,28 @@ const PersonHeader: StylableFC<{
     window.location.href = URL.createObjectURL(vCard);
   }
 
+  const classroomID = (
+    person.role === "teacher" ? person.class_advisor_at : person.classroom
+  )?.id;
+
+  const supabase = useSupabaseClient();
+  const [classOpen, setClassOpen] = useState(false);
+  const [classroom, setClassroom] =
+    useState<Omit<Classroom, "year" | "subjects">>();
+
+  /**
+   * Fetch the Person’s Classroom.
+   */
+  async function fetchClassOfPerson() {
+    if (!classroomID) return;
+    const { data, error } = await getClassroomByID(supabase, classroomID);
+    if (!error) setClassroom(data);
+  }
+  useEffect(() => {
+    if (!classOpen || classroom) return;
+    fetchClassOfPerson();
+  }, [classOpen]);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -65,7 +93,11 @@ const PersonHeader: StylableFC<{
         <Header
           element={(props) => <h2 id="header-person-details" {...props} />}
         >
-          {getLocaleName(locale, person, { prefix: "teacher" })}
+          {getLocaleName(
+            locale,
+            person,
+            person.role === "teacher" ? { prefix: "teacher" } : undefined,
+          )}
         </Header>
         <ChipSet
           scrollable
@@ -77,13 +109,31 @@ const PersonHeader: StylableFC<{
           >
             {t("action.saveContact")}
           </AssistChip>
+
           {(person.role === "teacher"
             ? person.class_advisor_at
             : person.role === "student" && person.classroom) && (
-            <AssistChip icon={<MaterialIcon icon="groups" />}>
-              {t("action.seeClass")}
-            </AssistChip>
+            <>
+              <AssistChip
+                icon={<MaterialIcon icon="groups" />}
+                onClick={() => setClassOpen(true)}
+              >
+                {t("action.seeClass")}
+              </AssistChip>
+              <LookupDetailsDialog
+                open={classOpen}
+                onClose={() => setClassOpen(false)}
+              >
+                <ClassDetailsCard
+                  classroom={classroom}
+                  isOwnClass={false}
+                  role="student"
+                  refreshData={fetchClassOfPerson}
+                />
+              </LookupDetailsDialog>
+            </>
           )}
+
           <AssistChip
             icon={<MaterialIcon icon="dashboard" />}
             onClick={() => {
