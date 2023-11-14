@@ -14,7 +14,11 @@ import getStudentsByLookupFilters from "@/utils/backend/person/getStudentsByLook
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Student, StudentLookupItem } from "@/utils/types/person";
-import { SplitLayout, useAnimationConfig } from "@suankularb-components/react";
+import {
+  SplitLayout,
+  useAnimationConfig,
+  useBreakpoint,
+} from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
@@ -82,6 +86,13 @@ const LookupStudentsResultsPage: CustomPage<{
 
   const [detailsOpen, setDetailsOpen] = useState(false);
 
+  // Open the Student Details Dialog on mobile, otherwise close it
+  const { atBreakpoint } = useBreakpoint();
+  useEffect(() => {
+    if (atBreakpoint !== "base") setDetailsOpen(false);
+    else if (selectedID) setDetailsOpen(true);
+  }, [atBreakpoint === "base"]);
+
   return (
     <>
       <Head>
@@ -113,7 +124,10 @@ const LookupStudentsResultsPage: CustomPage<{
                 <LookupStudentCard
                   student={student}
                   selected={selectedID}
-                  onClick={setSelectedID}
+                  onClick={(id) => {
+                    setSelectedID(id);
+                    if (atBreakpoint === "base") setDetailsOpen(true);
+                  }}
                 />
               </LookupResultsItem>
             ))}
