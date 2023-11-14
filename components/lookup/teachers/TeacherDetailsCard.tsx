@@ -3,7 +3,7 @@ import MultilangText from "@/components/common/MultilingualText";
 import LookupDetailsContent from "@/components/lookup//LookupDetailsContent";
 import LookupDetailsCard from "@/components/lookup/LookupDetailsCard";
 import ContactGrid from "@/components/lookup/people/ContactGrid";
-import PersonScheduleCard from "@/components/lookup/person/PersonScheduleCard";
+import PersonScheduleCard from "@/components/lookup/people/PersonScheduleCard";
 import CurrentTeachingPeriodCard from "@/components/lookup/teachers/CurrentTeachingPeriodCard";
 import InformationCard from "@/components/lookup/teachers/InformationCard";
 import StarbucksCard from "@/components/lookup/teachers/StarbucksCard";
