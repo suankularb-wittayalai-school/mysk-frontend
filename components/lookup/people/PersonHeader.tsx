@@ -5,7 +5,7 @@ import { useGetVCard } from "@/utils/helpers/contact";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
-import { Student } from "@/utils/types/person";
+import { Student, Teacher } from "@/utils/types/person";
 import {
   AssistChip,
   ChipSet,
@@ -19,27 +19,33 @@ import { motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 
 /**
- * The header of a Student Details Card. Contains the Student’s name, avatar,
- * and actions.
+ * The header of a Student/Teacher Details Card. Contains the name, avatar, and
+ * actions.
  *
- * @param student The Student to display.
+ * @param teacher The Person to display.
+ * @param onScheduleOpenClick Callback to open the Person’s schedule.
  */
-const StudentHeader: StylableFC<{
-  student: Student;
-}> = ({ student, style, className }) => {
+const PersonHeader: StylableFC<{
+  person: Student | Teacher;
+  onScheduleOpenClick: () => void;
+}> = ({ person, onScheduleOpenClick, style, className }) => {
   // Translation
   const locale = useLocale();
-  const { t } = useTranslation("lookup", { keyPrefix: "students.header" });
+  const { t } = useTranslation("lookup", { keyPrefix: "people.header" });
 
   const { duration, easing } = useAnimationConfig();
 
   const getVCard = useGetVCard();
+
+  /**
+   * Save the Person’s contact as a vCard.
+   */
   async function handleSaveVCard() {
     va.track("Share Person", {
-      person: getLocaleName("en-US", student),
+      person: getLocaleName("en-US", person),
       method: "vCard",
     });
-    var vCard = getVCard(student);
+    var vCard = getVCard(person);
     window.location.href = URL.createObjectURL(vCard);
   }
 
@@ -54,12 +60,12 @@ const StudentHeader: StylableFC<{
         className,
       )}
     >
-      <DynamicAvatar className="!h-14 !w-14" />
+      <DynamicAvatar profile={person.profile} className="!h-14 !w-14" />
       <div className="flex flex-col gap-4 md:gap-2">
         <Header
           element={(props) => <h2 id="header-person-details" {...props} />}
         >
-          {getLocaleName(locale, student)}
+          {getLocaleName(locale, person, { prefix: "teacher" })}
         </Header>
         <ChipSet
           scrollable
@@ -69,7 +75,25 @@ const StudentHeader: StylableFC<{
             icon={<MaterialIcon icon="download" />}
             onClick={handleSaveVCard}
           >
-            Save contact
+            {t("action.saveContact")}
+          </AssistChip>
+          {(person.role === "teacher"
+            ? person.class_advisor_at
+            : person.role === "student" && person.classroom) && (
+            <AssistChip icon={<MaterialIcon icon="groups" />}>
+              {t("action.seeClass")}
+            </AssistChip>
+          )}
+          <AssistChip
+            icon={<MaterialIcon icon="dashboard" />}
+            onClick={() => {
+              va.track("See Schedule of Person", {
+                person: getLocaleName("en-US", person),
+              });
+              onScheduleOpenClick();
+            }}
+          >
+            {t(`action.seeSchedule.${person.role}`)}
           </AssistChip>
         </ChipSet>
       </div>
@@ -77,4 +101,4 @@ const StudentHeader: StylableFC<{
   );
 };
 
-export default StudentHeader;
+export default PersonHeader;

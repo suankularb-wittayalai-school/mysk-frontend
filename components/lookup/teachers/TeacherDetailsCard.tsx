@@ -2,13 +2,13 @@
 import MultilangText from "@/components/common/MultilingualText";
 import LookupDetailsContent from "@/components/lookup//LookupDetailsContent";
 import LookupDetailsCard from "@/components/lookup/LookupDetailsCard";
+import InformationCard from "@/components/lookup/people/InformationCard";
 import PersonContactGrid from "@/components/lookup/people/PersonContactGrid";
+import PersonHeader from "@/components/lookup/people/PersonHeader";
 import PersonScheduleCard from "@/components/lookup/people/PersonScheduleCard";
 import CurrentTeachingPeriodCard from "@/components/lookup/teachers/CurrentTeachingPeriodCard";
-import InformationCard from "@/components/lookup/people/InformationCard";
 import StarbucksCard from "@/components/lookup/teachers/StarbucksCard";
 import SubjectInChardCard from "@/components/lookup/teachers/SubjectInChargeCard";
-import TeacherHeader from "@/components/lookup/teachers/TeacherHeader";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
@@ -37,6 +37,7 @@ const TeacherDetailsCard: StylableFC<{
   const { t: tx } = useTranslation("common");
 
   const { duration, easing } = useAnimationConfig();
+  const positionTransition = transition(duration.medium2, easing.standard);
 
   const [scheduleOpen, toggleScheduleOpen] = useToggle();
 
@@ -45,8 +46,8 @@ const TeacherDetailsCard: StylableFC<{
       <AnimatePresence>
         {teacher && (
           <>
-            <TeacherHeader
-              teacher={teacher}
+            <PersonHeader
+              person={teacher}
               onScheduleOpenClick={toggleScheduleOpen}
             />
             <LookupDetailsContent>
@@ -58,11 +59,18 @@ const TeacherDetailsCard: StylableFC<{
                 <PersonScheduleCard person={teacher} open={scheduleOpen} />
               </div>
 
-              {teacher.first_name["en-US"] === "Supannee" && <StarbucksCard />}
+              {teacher.first_name["en-US"] === "Supannee" && (
+                <motion.section
+                  layout="position"
+                  transition={positionTransition}
+                >
+                  <StarbucksCard />
+                </motion.section>
+              )}
 
-              <motion.div
+              <motion.section
                 layout="position"
-                transition={transition(duration.medium2, easing.standard)}
+                transition={positionTransition}
                 className="grid grid-cols-2 gap-2 md:grid-cols-4"
               >
                 <InformationCard
@@ -121,13 +129,10 @@ const TeacherDetailsCard: StylableFC<{
                       </time>
                     </InformationCard>
                   )}
-              </motion.div>
+              </motion.section>
 
               {teacher.contacts.length > 0 && (
-                <motion.div
-                  layout="position"
-                  transition={transition(duration.medium2, easing.standard)}
-                >
+                <motion.div layout="position" transition={positionTransition}>
                   <PersonContactGrid contacts={teacher.contacts} />
                 </motion.div>
               )}
@@ -135,7 +140,7 @@ const TeacherDetailsCard: StylableFC<{
               {teacher.subjects_in_charge.length > 0 && (
                 <motion.section
                   layout="position"
-                  transition={transition(duration.medium2, easing.standard)}
+                  transition={positionTransition}
                   className="space-y-2"
                 >
                   <Text

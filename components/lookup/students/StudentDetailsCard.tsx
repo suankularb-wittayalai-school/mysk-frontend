@@ -4,9 +4,9 @@ import LookupDetailsCard from "@/components/lookup/LookupDetailsCard";
 import LookupDetailsContent from "@/components/lookup/LookupDetailsContent";
 import InformationCard from "@/components/lookup/people/InformationCard";
 import PersonContactGrid from "@/components/lookup/people/PersonContactGrid";
+import PersonHeader from "@/components/lookup/people/PersonHeader";
 import PersonScheduleCard from "@/components/lookup/people/PersonScheduleCard";
 import CurrentLearningPeriodCard from "@/components/lookup/students/CurrentLearningPeriodCard";
-import StudentHeader from "@/components/lookup/students/StudentHeader";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import useToggle from "@/utils/helpers/useToggle";
 import { StylableFC } from "@/utils/types/component";
@@ -34,7 +34,10 @@ const StudentDetailsCard: StylableFC<{
       <AnimatePresence>
         {student && (
           <>
-            <StudentHeader student={student} />
+            <PersonHeader
+              person={student}
+              onScheduleOpenClick={toggleScheduleOpen}
+            />
             <LookupDetailsContent>
               {student.classroom && (
                 <div className="grid gap-2">

@@ -6,21 +6,17 @@
     "teachers": "อาจารย์",
     "documents": "เอกสาร"
   },
-  "choice": {
-    "students": {
-      "title": "ค้นหา<strong>นักเรียน</strong>",
-      "desc": "ค้นหาข้อมูลห้องเรียน เลขที่ ช่องทางติดต่อ และอื่น ๆ ของนักเรียน"
-    },
-    "teachers": {
-      "title": "ค้นหา<strong>อาจารย์</strong>",
-      "desc": "ค้นหาข้อมูลห้องที่ปรึกษา ตารางสอน ช่องทางติดต่อ และอื่น ๆ ของครูในโรงเรียน"
-    },
-    "documents": {
-      "title": "ค้นหา<strong>เอกสาร</strong>",
-      "desc": "ค้นหาคำสั่งโรงเรียนและหนังสือออกของโรงเรียนอย่างง่ายดาย"
-    }
-  },
   "people": {
+    "header": {
+      "action": {
+        "saveContact": "บันทึก",
+        "seeClass": "ดูห้องเรียน",
+        "seeSchedule": {
+          "student": "ดูตารางเรียน",
+          "teacher": "ดูตารางสอน"
+        }
+      }
+    },
     "detail": {
       "contacts": {
         "title": "ช่องทางการติดต่อ"
@@ -42,13 +38,6 @@
         "fullName": "ชื่อจริง: “{{content}}”",
         "nickname": "ชื่อเล่น: “{{content}}”",
         "contact": "ช่องทางการติดต่อ: “{{content}}”"
-      }
-    },
-    "header": {
-      "action": {
-        "saveContact": "บันทึก",
-        "seeClass": "ดูห้องเรียน",
-        "seeSchedule": "ดูตารางเรียน"
       }
     },
     "detail": {
@@ -94,13 +83,6 @@
         "subjectGroup": "กลุ่มสาระการเรียนรู้: “{{content}}”",
         "classroom": "ห้องเรียน: “{{content}}”",
         "contact": "ช่องทางการติดต่อ: “{{content}}”"
-      }
-    },
-    "header": {
-      "action": {
-        "saveContact": "บันทึก",
-        "seeClass": "ดูห้องเรียน",
-        "seeSchedule": "ดูตารางสอน"
       }
     },
     "detail": {

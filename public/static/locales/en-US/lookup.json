@@ -6,21 +6,17 @@
     "teachers": "Teachers",
     "documents": "Documents"
   },
-  "choice": {
-    "students": {
-      "title": "Lookup <strong>students</strong>",
-      "desc": "Find a student’s class, class number, and more."
-    },
-    "teachers": {
-      "title": "Lookup <strong>teachers</strong>",
-      "desc": "Find a teacher’s subjects, office, schedule, contacts, and more."
-    },
-    "documents": {
-      "title": "Lookup <strong>documents</strong>",
-      "desc": "Easily locate, read, and download school orders and documents."
-    }
-  },
   "people": {
+    "header": {
+      "action": {
+        "saveContact": "Save contact",
+        "seeClass": "See class",
+        "seeSchedule": {
+          "student": "See schedule",
+          "teacher": "See schedule"
+        }
+      }
+    },
     "detail": {
       "contacts": {
         "title": "Contacts"
@@ -42,13 +38,6 @@
         "fullName": "Full name: “{{content}}”",
         "nickname": "Nickname: “{{content}}”",
         "contact": "Contact: “{{content}}”"
-      }
-    },
-    "header": {
-      "action": {
-        "saveContact": "Save contact",
-        "seeClass": "See class",
-        "seeSchedule": "See schedule"
       }
     },
     "detail": {
@@ -96,13 +85,6 @@
         "subjectGroup": "Subject group: “{{content}}”",
         "classroom": "Classroom: “{{content}}”",
         "contact": "Contact: “{{content}}”"
-      }
-    },
-    "header": {
-      "action": {
-        "saveContact": "Save contact",
-        "seeClass": "See class",
-        "seeSchedule": "See schedule"
       }
     },
     "detail": {
