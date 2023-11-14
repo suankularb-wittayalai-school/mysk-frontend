@@ -52,6 +52,11 @@
       }
     },
     "detail": {
+      "glance": {
+        "free": "ไม่ได้เรียนอยู่",
+        "future": "ไม่ได้เรียนอยู่ (คาบต่อไปในอีก {{time}})",
+        "ongoing": "กำลังเรียน{{subject}}"
+      },
       "information": {
         "fullName": "ชื่อ-สกุล",
         "nickname": "ชื่อเล่น",
@@ -99,7 +104,7 @@
       }
     },
     "detail": {
-      "teaching": {
+      "glance": {
         "free": "ไม่มีคาบสอนตอนนี้",
         "future": "ไม่มีคาบสอนตอนนี้ (คาบต่อไปในอีก {{time}})",
         "ongoing": "กำลังสอน{{subject}}"

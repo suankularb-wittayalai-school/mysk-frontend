@@ -1,6 +1,6 @@
 // Imports
 import CurrentPeriodCard from "@/components/lookup/people/CurrentPeriodCard";
-import getCurrentPeriodByTeacherID from "@/utils/backend/schedule/getCurrentPeriodByTeacherID";
+import getCurrentPeriodOfClass from "@/utils/backend/schedule/getCurrentPeriodOfClass";
 import { StylableFC } from "@/utils/types/common";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
@@ -10,17 +10,17 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
  * @param teacherID The ID of the Teacher to get the current period of.
  * @param onClick Triggers when the Card is clicked. Should open the Schedule.
  */
-const CurrentTeachingPeriodCard: StylableFC<{
-  teacherID: string;
+const CurrentLearningPeriodCard: StylableFC<{
+  classroomID: string;
   onClick: () => void;
-}> = ({ teacherID, onClick, style, className }) => {
+}> = ({ classroomID, onClick, style, className }) => {
   const supabase = useSupabaseClient();
 
   return (
     <CurrentPeriodCard
-      role="teacher"
+      role="student"
       getCurrentPeriod={async () => {
-        const { data } = await getCurrentPeriodByTeacherID(supabase, teacherID);
+        const { data } = await getCurrentPeriodOfClass(supabase, classroomID);
         return data;
       }}
       onClick={onClick}
@@ -30,4 +30,4 @@ const CurrentTeachingPeriodCard: StylableFC<{
   );
 };
 
-export default CurrentTeachingPeriodCard;
+export default CurrentLearningPeriodCard;

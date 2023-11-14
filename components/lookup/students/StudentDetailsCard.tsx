@@ -4,8 +4,11 @@ import LookupDetailsCard from "@/components/lookup/LookupDetailsCard";
 import LookupDetailsContent from "@/components/lookup/LookupDetailsContent";
 import InformationCard from "@/components/lookup/people/InformationCard";
 import PersonContactGrid from "@/components/lookup/people/PersonContactGrid";
+import PersonScheduleCard from "@/components/lookup/people/PersonScheduleCard";
+import CurrentLearningPeriodCard from "@/components/lookup/students/CurrentLearningPeriodCard";
 import StudentHeader from "@/components/lookup/students/StudentHeader";
 import getLocaleName from "@/utils/helpers/getLocaleName";
+import useToggle from "@/utils/helpers/useToggle";
 import { StylableFC } from "@/utils/types/component";
 import { Student } from "@/utils/types/person";
 import { differenceInYears } from "date-fns";
@@ -24,6 +27,8 @@ const StudentDetailsCard: StylableFC<{
   const { t } = useTranslation("lookup", { keyPrefix: "students.detail" });
   const { t: tx } = useTranslation("common");
 
+  const [scheduleOpen, toggleScheduleOpen] = useToggle();
+
   return (
     <LookupDetailsCard style={style} className={className}>
       <AnimatePresence>
@@ -31,6 +36,16 @@ const StudentDetailsCard: StylableFC<{
           <>
             <StudentHeader student={student} />
             <LookupDetailsContent>
+              {student.classroom && (
+                <div className="grid gap-2">
+                  <CurrentLearningPeriodCard
+                    classroomID={student.classroom.id}
+                    onClick={toggleScheduleOpen}
+                  />
+                  <PersonScheduleCard person={student} open={scheduleOpen} />
+                </div>
+              )}
+
               <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
                 <InformationCard
                   title={t("information.fullName")}

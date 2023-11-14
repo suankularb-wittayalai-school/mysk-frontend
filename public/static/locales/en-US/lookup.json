@@ -52,6 +52,11 @@
       }
     },
     "detail": {
+      "glance": {
+        "free": "No classes right now",
+        "future": "Free now (next period in {{time}})",
+        "ongoing": "Learning {{subject}}"
+      },
       "information": {
         "title": "Information",
         "fullName": "Full name",
@@ -101,7 +106,7 @@
       }
     },
     "detail": {
-      "teaching": {
+      "glance": {
         "free": "Not teaching right now",
         "future": "Not teaching (next period in {{time}})",
         "ongoing": "Teaching {{subject}}"

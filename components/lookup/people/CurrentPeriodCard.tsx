@@ -20,22 +20,23 @@ import { useEffect, useState } from "react";
 /**
  * A Card that contains the current period of a Student or Teacher and its
  * progress in Search.
- * 
+ *
  * @param getCurrentPeriod A function that returns the current period of the Student or Teacher.
  * @param onClick Triggers when the Card is clicked. Should open the Schedule.
- * 
+ *
  * @note
  * Having a fetch function as a param like `getCurrentPeriod` is a bit
  * experimental and has not been done in other components before. Let me know
  * if you have any feedback.
  */
 const CurrentPeriodCard: StylableFC<{
+  role: "student" | "teacher";
   getCurrentPeriod: () => Promise<SchedulePeriod | null>;
   onClick: () => void;
-}> = ({ getCurrentPeriod, onClick, style, className }) => {
+}> = ({ role, getCurrentPeriod, onClick, style, className }) => {
   const locale = useLocale();
   const { t } = useTranslation("lookup", {
-    keyPrefix: "teachers.detail.teaching",
+    keyPrefix: `${role}s.detail.glance`,
   });
 
   const now = useNow();
@@ -67,17 +68,13 @@ const CurrentPeriodCard: StylableFC<{
       return;
     }
 
-    // If the current period is already fetched and the percentage is 100%,
-    // don’t fetch
-    if (currentPeriod && percentage === 100) return;
-
     // Fetch the current period
     (async () => {
       setLoading(true);
       setCurrentPeriod(await getCurrentPeriod());
       setLoading(false);
     })();
-  }, [percentage === 100]);
+  }, [percentage >= 100]);
 
   return (
     <Card
