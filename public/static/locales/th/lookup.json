@@ -21,62 +21,9 @@
     }
   },
   "people": {
-    "header": {
-      "loading": "กำลังโหลด…",
-      "action": {
-        "seeClass": "ดูห้องเรียน",
-        "seeSchedule": "ดูตาราง",
-        "share": "แชร์",
-        "edit": "แก้ไข",
-        "delete": "ลบ"
-      }
-    },
     "detail": {
-      "loading": "กำลังโหลดรายละเอียดบุคคล…",
-      "general": {
-        "fullName": "ชื่อ-สกุล",
-        "nickname": "ชื่อเล่น",
-        "class": {
-          "title": "ห้องเรียน",
-          "classNo": "เลขที่ {{classNo}}"
-        },
-        "classAdvisorAt": "ห้องที่ปรึกษา",
-        "birthdate": "วันเกิด"
-      },
       "contacts": {
         "title": "ช่องทางการติดต่อ"
-      },
-      "subjects": {
-        "title": "วิชาที่สอน"
-      }
-    },
-    "schedule": {
-      "title": "ตารางสอนของ{{name}}"
-    },
-    "dialog": {
-      "share": {
-        "title": "เลือกวิธีแชร์{{name}}…",
-        "saveVCard": {
-          "label": "บันทึกลงแอพรายชื่อ",
-          "desc": "บันทึกช่องทางติดต่อและข้อมูลอื่น ๆ ของคนนี้เป็นรายชื่อติดต่อในโทรศัพท์/อุปกรณ์ของท่าน",
-          "segment": {
-            "teacherPrefix": "ครู",
-            "org": "โรงเรียนสวนกุหลาบวิทยาลัย",
-            "title": "อาจารย์",
-            "note": "ครูที่ปรึกษาห้องม.{{number}}"
-          }
-        },
-        "copyLink": {
-          "label": "คัดลอกลิงก์",
-          "desc": "คัดลอกลิงก์ที่มาหน้านี้"
-        },
-        "print": {
-          "label": "พิมพ์",
-          "desc": "พิมพ์ข้อมูลต่าง ๆ ของคนนี้"
-        },
-        "action": {
-          "close": "ปิด"
-        }
       }
     }
   },
@@ -95,6 +42,28 @@
         "fullName": "ชื่อจริง: “{{content}}”",
         "nickname": "ชื่อเล่น: “{{content}}”",
         "contact": "ช่องทางการติดต่อ: “{{content}}”"
+      }
+    },
+    "header": {
+      "action": {
+        "saveContact": "บันทึก",
+        "seeClass": "ดูห้องเรียน",
+        "seeSchedule": "ดูตารางเรียน"
+      }
+    },
+    "detail": {
+      "information": {
+        "fullName": "ชื่อ-สกุล",
+        "nickname": "ชื่อเล่น",
+        "classroom": {
+          "title": "ห้องเรียน",
+          "classNo": "เลขที่ {{number}}"
+        },
+        "birthday": {
+          "title": "วันเกิด",
+          "date": "{{date, datetime(day: numeric; month: long;)}}",
+          "age": "อายุ {{count, number}} ปี"
+        }
       }
     }
   },

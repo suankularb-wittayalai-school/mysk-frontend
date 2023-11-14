@@ -21,62 +21,9 @@
     }
   },
   "people": {
-    "header": {
-      "loading": "Loading…",
-      "action": {
-        "seeClass": "See class",
-        "seeSchedule": "See schedule",
-        "share": "Share",
-        "edit": "Edit",
-        "delete": "Delete"
-      }
-    },
     "detail": {
-      "loading": "Loading person details…",
-      "general": {
-        "fullName": "Full name",
-        "nickname": "Nickname",
-        "class": {
-          "title": "Class",
-          "classNo": "No. {{classNo}}"
-        },
-        "classAdvisorAt": "Class advisor at",
-        "birthdate": "Birthdate"
-      },
       "contacts": {
         "title": "Contacts"
-      },
-      "subjects": {
-        "title": "Subjects in charge"
-      }
-    },
-    "schedule": {
-      "title": "{{name}}’s schedule"
-    },
-    "dialog": {
-      "share": {
-        "title": "Share {{name}}…",
-        "saveVCard": {
-          "label": "Save to contacts",
-          "desc": "Save a .vcf file to see this person as a contact on your device.",
-          "segment": {
-            "teacherPrefix": "T. ",
-            "org": "Suankularb Wittayalai School",
-            "title": "Teacher",
-            "note": "Class advisor at M.{{number}}"
-          }
-        },
-        "copyLink": {
-          "label": "Copy link",
-          "desc": "Get a link to this page."
-        },
-        "print": {
-          "label": "Print",
-          "desc": "Print out the details of this person."
-        },
-        "action": {
-          "close": "Close"
-        }
       }
     }
   },
@@ -95,6 +42,30 @@
         "fullName": "Full name: “{{content}}”",
         "nickname": "Nickname: “{{content}}”",
         "contact": "Contact: “{{content}}”"
+      }
+    },
+    "header": {
+      "action": {
+        "saveContact": "Save contact",
+        "seeClass": "See class",
+        "seeSchedule": "See schedule"
+      }
+    },
+    "detail": {
+      "information": {
+        "title": "Information",
+        "fullName": "Full name",
+        "nickname": "Nickname",
+        "classroom": {
+          "title": "Classroom",
+          "classNo": "No. {{number, number}}"
+        },
+        "birthday": {
+          "title": "Birthday",
+          "date": "{{date, datetime(day: numeric; month: long;)}}",
+          "age_one": "1 year old",
+          "age_other": "{{count, number}} years old"
+        }
       }
     }
   },
@@ -151,9 +122,6 @@
         "subjectGroup": "Subject group",
         "classAdvisorAt": "Class advisor at",
         "birthday": "Birthday"
-      },
-      "contacts": {
-        "title": "Contacts"
       },
       "subjects": {
         "title": "Subjects in charge"
