@@ -1,6 +1,7 @@
 // Imports
 import PageHeader from "@/components/common/PageHeader";
 import ActiveSearchFiltersCard from "@/components/lookup/ActiveSearchFiltersCard";
+import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
 import LookupDetailsSide from "@/components/lookup/LookupDetailsSide";
 import LookupListSide from "@/components/lookup/LookupListSide";
 import LookupResultsItem from "@/components/lookup/LookupResultsItem";
@@ -10,17 +11,20 @@ import LookupDocumentCard from "@/components/lookup/document/LookupDocumentCard"
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import getDocumentsByLookupFilters from "@/utils/backend/document/getDocumentsByLookupFilters";
-import useLocale from "@/utils/helpers/useLocale";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { SchoolDocument, SchoolDocumentType } from "@/utils/types/news";
-import { SplitLayout } from "@suankularb-components/react";
+import {
+  SplitLayout,
+  useAnimationConfig,
+  useBreakpoint,
+} from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import { camel } from "radash";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export type DocumentSearchFilters = Partial<{
   types: SchoolDocumentType[];
@@ -35,14 +39,31 @@ const LookupDocumentsPage: CustomPage<{
   documents: SchoolDocument[];
 }> = ({ filters, documents }) => {
   // Translation
-  const locale = useLocale();
   const { t } = useTranslation("lookup");
   const { t: tx } = useTranslation("common");
 
+  const { duration } = useAnimationConfig();
+
   // Selected Document
-  const [selectedDocument, setSelectedDocument] = useState<SchoolDocument>(
-    documents[0],
-  );
+  const [selectedDocument, setSelectedDocument] = useState<SchoolDocument>();
+
+  // Select the first result automatically after a short delay
+  useEffect(() => {
+    const timeout = setTimeout(
+      () => setSelectedDocument(documents[0]),
+      duration.medium2 * 1000,
+    );
+    return () => clearTimeout(timeout);
+  }, []);
+
+  const [detailsOpen, setDetailsOpen] = useState(false);
+
+  // Open the Document Details Dialog on mobile, otherwise close it
+  const { atBreakpoint } = useBreakpoint();
+  useEffect(() => {
+    if (atBreakpoint !== "base") setDetailsOpen(false);
+    else if (selectedDocument) setDetailsOpen(true);
+  }, [atBreakpoint === "base"]);
 
   return (
     <>
@@ -61,6 +82,7 @@ const LookupDocumentsPage: CustomPage<{
             {/* TODO: Document filter Chips */}
             <pre>{JSON.stringify(filters)}</pre>
           </ActiveSearchFiltersCard>
+          
           <LookupResultsList length={documents.length}>
             {documents.map((document, idx) => (
               <LookupResultsItem
@@ -72,7 +94,10 @@ const LookupDocumentsPage: CustomPage<{
                   key={document.id}
                   document={document}
                   selected={selectedDocument}
-                  onClick={setSelectedDocument}
+                  onClick={(document) => {
+                    setSelectedDocument(document);
+                    if (atBreakpoint === "base") setDetailsOpen(true);
+                  }}
                 />
               </LookupResultsItem>
             ))}
@@ -82,9 +107,21 @@ const LookupDocumentsPage: CustomPage<{
           selectedID={selectedDocument?.id}
           length={documents.length}
         >
-          <DocumentDetailsCard document={selectedDocument} />
+          {selectedDocument && (
+            <DocumentDetailsCard document={selectedDocument} />
+          )}
         </LookupDetailsSide>
       </SplitLayout>
+
+      {/* Details Dialog */}
+      <LookupDetailsDialog
+        open={detailsOpen}
+        onClose={() => setDetailsOpen(false)}
+      >
+        {selectedDocument && (
+          <DocumentDetailsCard document={selectedDocument} />
+        )}
+      </LookupDetailsDialog>
     </>
   );
 };

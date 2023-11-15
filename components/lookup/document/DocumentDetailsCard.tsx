@@ -129,7 +129,7 @@ const DocumentDetailsCard: StylableFC<{
               height={iframeSize.height}
               allow="autoplay"
               onLoad={() => setLoading(false)}
-              className="w-full rounded-lg bg-surface"
+              className="w-full rounded-t-lg bg-surface"
             />
           </motion.div>
         </div>
