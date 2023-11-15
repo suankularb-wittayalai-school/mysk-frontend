@@ -29,7 +29,10 @@ const DocumentFiltersCard: StylableFC = ({ style, className }) => {
   const { form, setForm, formProps } = useForm<
     "types" | "subject" | "attendTo" | "month" | "code"
   >([
-    { key: "types", defaultValue: ["announcement"] },
+    {
+      key: "types",
+      defaultValue: ["order", "record", "announcement", "big_garuda", "other"],
+    },
     { key: "subject" },
     { key: "attendTo" },
     {
