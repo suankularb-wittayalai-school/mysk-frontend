@@ -14,16 +14,19 @@ import {
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { motion } from "framer-motion";
-import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
 
+/**
+ * A Card that contains the Schedule of a Student or Teacher.
+ *
+ * @param person The Student or Teacher to show the schedule of.
+ * @param open If the Card is open and shown.
+ */
 const PersonScheduleCard: StylableFC<{
   person: Pick<Person, "id"> &
     (Pick<Student, "role" | "classroom"> | Pick<Teacher, "role">);
   open?: boolean;
 }> = ({ person, open, style, className }) => {
-  const { t } = useTranslation("schedule");
-
   const { duration, easing } = useAnimationConfig();
 
   const [loading, setLoading] = useState(true);
@@ -33,6 +36,7 @@ const PersonScheduleCard: StylableFC<{
     createEmptySchedule(1, 5),
   );
 
+  // Fetch schedule when open
   useEffect(() => {
     if (!(open && loading)) return;
     if (person.role === "student" && !person.classroom) return;
@@ -79,7 +83,7 @@ const PersonScheduleCard: StylableFC<{
               `[&>figure>ul]:!px-3 sm:[&>figure>ul]:!pl-0 sm:[&>figure>ul]:!pr-3`,
               // Resize and vertical scroll on container
               `!mt-0 !pb-2 [&>figure]:resize-y [&>figure]:!overflow-y-auto
-              sm:[&>figure]:h-72 sm:[&>figure]:max-h-[24.9375rem]`,
+              sm:[&>figure]:h-72 sm:[&>figure]:max-h-[24.125rem]`,
             )}
           />
         </motion.div>

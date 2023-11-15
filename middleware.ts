@@ -60,12 +60,11 @@ export async function middleware(req: NextRequest) {
   // Decide on destination based on user and page protection type
   let destination: string | null = null;
 
+  // Default Search page to Students tab
+  if (route === "/search") destination = "/search/students";
+
   // Disallow public users from visiting private pages
   if (pageRole !== "public" && !user) destination = "/";
-  // Disallow students from vising the Your Subject page of the onboarding
-  // process
-  else if (route === "/account/welcome/your-subjects" && user?.role === "student")
-    destination = "/account/welcome/your-information";
   // Disallow logged in users from visiting certain pages under certain
   // circumstances
   // prettier-ignore
@@ -117,7 +116,7 @@ export const config = {
     "/learn",
     "/teach",
     "/classes/:path*",
-    "/lookup/:path*",
+    "/search/:path*",
     "/maintenance",
     "/news",
     "/news/:id",

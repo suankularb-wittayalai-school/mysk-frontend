@@ -1,4 +1,5 @@
 // Imports
+import Favicon from "@/components/Favicon";
 import LogOutDialog from "@/components/account/LogOutDialog";
 import SchemeIcon from "@/components/icons/SchemeIcon";
 import AppStateContext from "@/contexts/AppStateContext";
@@ -33,7 +34,6 @@ import {
   useEffect,
   useState,
 } from "react";
-import Favicon from "./Favicon";
 
 /**
  * The root layout of MySK.
@@ -45,11 +45,8 @@ import Favicon from "./Favicon";
  * @returns A Root Layout or a Root Layout wrapped in the given context.
  */
 const Layout: FC<
-  { children: ReactNode } & Pick<
-    CustomPage,
-    "context" | "fab" | "navType" | "childURLs"
-  >
-> = ({ children, context: Context, fab, navType, childURLs }) => {
+  { children: ReactNode } & Pick<CustomPage, "fab" | "navType" | "childURLs">
+> = ({ children, fab, navType, childURLs }) => {
   // Translation
   const locale = useLocale();
   const { t } = useTranslation("common");
@@ -122,15 +119,15 @@ const Layout: FC<
     };
   }, [preferences]);
 
-  const rootLayout = (
+  return (
     <RootLayout>
       {/* Navigation Drawer */}
       <NavDrawer open={navOpen} onClose={() => setNavOpen(false)}>
         {/* Top-level pages */}
-        <NavDrawerSection alt={t("appName")} className="mt-2 [&>h2]:sr-only">
+        <NavDrawerSection header={t("appName")}>
           <NavDrawerItem
-            icon={<Favicon />}
-            label={<Text type="title-large">{t("appName")}</Text>}
+            icon={<MaterialIcon icon="home" />}
+            label={t("navigation.home")}
             selected={
               router.pathname.startsWith("/teach") ||
               router.pathname.startsWith("/learn")
@@ -151,16 +148,16 @@ const Layout: FC<
           />
           <NavDrawerItem
             icon={<MaterialIcon icon="search" />}
-            label={t("navigation.lookup")}
+            label={t("navigation.search")}
             selected={
-              router.pathname.startsWith("/lookup") &&
+              router.pathname.startsWith("/search") &&
               !(
-                router.pathname.startsWith("/lookup/students") ||
-                router.pathname.startsWith("/lookup/teachers") ||
-                router.pathname.startsWith("/lookup/documents")
+                router.pathname.startsWith("/search/students") ||
+                router.pathname.startsWith("/search/teachers") ||
+                router.pathname.startsWith("/search/documents")
               )
             }
-            href="/lookup"
+            href="/search"
             element={Link}
           />
           <NavDrawerItem
@@ -179,27 +176,27 @@ const Layout: FC<
           />
         </NavDrawerSection>
 
-        {/* Lookup */}
-        <NavDrawerSection header={t("navigation.drawer.lookup.title")}>
-          {/* <NavDrawerItem
+        {/* Search */}
+        <NavDrawerSection header={t("navigation.drawer.search.title")}>
+          <NavDrawerItem
             icon={<MaterialIcon icon="face_6" />}
-            label={t("navigation.drawer.lookup.students")}
-            selected={router.pathname.startsWith("/lookup/students")}
-            href="/lookup/students"
+            label={t("navigation.drawer.search.students")}
+            selected={router.pathname.startsWith("/search/students")}
+            href="/search/students"
             element={Link}
-          /> */}
+          />
           <NavDrawerItem
             icon={<MaterialIcon icon="support_agent" />}
-            label={t("navigation.drawer.lookup.teachers")}
-            selected={router.pathname.startsWith("/lookup/teachers")}
-            href="/lookup/teachers"
+            label={t("navigation.drawer.search.teachers")}
+            selected={router.pathname.startsWith("/search/teachers")}
+            href="/search/teachers"
             element={Link}
           />
           <NavDrawerItem
             icon={<MaterialIcon icon="document_scanner" />}
-            label={t("navigation.drawer.lookup.documents")}
-            selected={router.pathname.startsWith("/lookup/documents")}
-            href="/lookup/documents"
+            label={t("navigation.drawer.search.documents")}
+            selected={router.pathname.startsWith("/search/documents")}
+            href="/search/documents"
             element={Link}
           />
         </NavDrawerSection>
@@ -331,9 +328,9 @@ const Layout: FC<
           />
           <NavBarItem
             icon={<MaterialIcon icon="search" />}
-            label={t("navigation.lookup")}
-            selected={router.pathname.startsWith("/lookup")}
-            href="/lookup"
+            label={t("navigation.search")}
+            selected={router.pathname.startsWith("/search")}
+            href="/search"
             element={Link}
           />
           <NavBarItem
@@ -374,8 +371,6 @@ const Layout: FC<
       {children}
     </RootLayout>
   );
-
-  return Context ? <Context>{rootLayout}</Context> : rootLayout;
 };
 
 export default Layout;

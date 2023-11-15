@@ -51,7 +51,12 @@ module.exports = withBundleAnalyzer(
         { source: "/learn/:id", destination: "/learn", permanent: true },
         {
           source: "/lookup/document",
-          destination: "/lookup/documents",
+          destination: "/search/documents",
+          permanent: true,
+        },
+        {
+          source: "/lookup/:path*",
+          destination: "/search/:path*",
           permanent: true,
         },
         { source: "/news/info/:id", destination: "/news/:id", permanent: true },

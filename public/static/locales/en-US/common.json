@@ -7,8 +7,9 @@
     "school": "Suankularb Wittayalai School"
   },
   "navigation": {
+    "home": "Home",
     "classes": "Classes",
-    "lookup": "Lookup",
+    "search": "Search",
     "news": "News",
     "account": "Account",
     "colorScheme": {
@@ -18,11 +19,10 @@
     "language": "ภาษาไทย",
     "logOut": "Log out",
     "drawer": {
-      "lookup": {
-        "title": "Lookup",
+      "search": {
+        "title": "Search",
         "students": "Students",
         "teachers": "Teachers",
-        "classes": "Classes",
         "documents": "Documents"
       },
       "about": {

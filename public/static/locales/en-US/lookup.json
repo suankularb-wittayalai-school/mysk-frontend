@@ -1,91 +1,70 @@
 {
-  "title": "Lookup",
-  "subtitle": "<0>Find everything</0> in MySK Lookup.",
-  "choice": {
-    "students": {
-      "title": "Lookup <strong>students</strong>",
-      "desc": "Find a student’s class, class number, and more."
-    },
-    "teachers": {
-      "title": "Lookup <strong>teachers</strong>",
-      "desc": "Find a teacher’s subjects, office, schedule, contacts, and more."
-    },
-    "documents": {
-      "title": "Lookup <strong>documents</strong>",
-      "desc": "Easily locate, read, and download school orders and documents."
-    }
+  "title": "Search",
+  "subtitle": "<0>Find everything</0> with Search.",
+  "view": {
+    "students": "Students",
+    "teachers": "Teachers",
+    "documents": "Documents"
   },
   "people": {
     "header": {
-      "loading": "Loading…",
       "action": {
+        "saveContact": "Save contact",
         "seeClass": "See class",
-        "seeSchedule": "See schedule",
-        "share": "Share",
-        "edit": "Edit",
-        "delete": "Delete"
-      }
-    },
-    "detail": {
-      "loading": "Loading person details…",
-      "general": {
-        "fullName": "Full name",
-        "nickname": "Nickname",
-        "class": {
-          "title": "Class",
-          "classNo": "No. {{classNo}}"
-        },
-        "classAdvisorAt": "Class advisor at",
-        "birthdate": "Birthdate"
-      },
-      "contacts": {
-        "title": "Contacts"
-      },
-      "subjects": {
-        "title": "Subjects in charge"
-      }
-    },
-    "schedule": {
-      "title": "{{name}}’s schedule"
-    },
-    "dialog": {
-      "share": {
-        "title": "Share {{name}}…",
-        "saveVCard": {
-          "label": "Save to contacts",
-          "desc": "Save a .vcf file to see this person as a contact on your device.",
-          "segment": {
-            "teacherPrefix": "T. ",
-            "org": "Suankularb Wittayalai School",
-            "title": "Teacher",
-            "note": "Class advisor at M.{{number}}"
-          }
-        },
-        "copyLink": {
-          "label": "Copy link",
-          "desc": "Get a link to this page."
-        },
-        "print": {
-          "label": "Print",
-          "desc": "Print out the details of this person."
-        },
-        "action": {
-          "close": "Close"
+        "seeSchedule": {
+          "student": "See schedule",
+          "teacher": "See schedule"
         }
       }
     },
-    "snackbar": {
-      "thaiSpeechNotSupported": "Your browser doesn’t support Thai text-to-speech"
+    "detail": {
+      "contacts": {
+        "title": "Contacts"
+      }
     }
   },
   "students": {
-    "title": "Lookup students",
-    "list": {
-      "searchAlt": "Search students"
+    "title": "Search students",
+    "searchFilters": {
+      "form": {
+        "fullName": "Search full name",
+        "fullName_helper": "Enter partially or fully the full name of a student",
+        "nickname": "Search nickname",
+        "nickname_helper": "Enter partially or fully the nickname of a student",
+        "contact": "Search contact",
+        "contact_helper": "Enter fully a username, email, tel., or URL of a student’s contact"
+      },
+      "chip": {
+        "fullName": "Full name: “{{content}}”",
+        "nickname": "Nickname: “{{content}}”",
+        "contact": "Contact: “{{content}}”"
+      }
+    },
+    "detail": {
+      "glance": {
+        "free": "No classes right now",
+        "future": "Free now (next period in {{time}})",
+        "ongoing": "Learning {{subject}}"
+      },
+      "information": {
+        "title": "Information",
+        "fullName": "Full name",
+        "nickname": "Nickname",
+        "classroom": {
+          "title": "Classroom",
+          "classNo": "No. {{number, number}}"
+        },
+        "birthday": {
+          "title": "Birthday",
+          "date": "{{date, datetime(day: numeric; month: long;)}}",
+          "age_one": "1 year old",
+          "age_other": "{{count, number}} years old"
+        }
+      }
     }
   },
   "teachers": {
-    "title": "Lookup teachers",
+    "title": "Search teachers",
     "searchFilters": {
       "form": {
         "fullName": "Search full name",
@@ -108,15 +87,8 @@
         "contact": "Contact: “{{content}}”"
       }
     },
-    "header": {
-      "action": {
-        "saveContact": "Save contact",
-        "seeClass": "See class",
-        "seeSchedule": "See schedule"
-      }
-    },
     "detail": {
-      "teaching": {
+      "glance": {
         "free": "Not teaching right now",
         "future": "Not teaching (next period in {{time}})",
         "ongoing": "Teaching {{subject}}"
@@ -125,6 +97,9 @@
         "action": {
           "readAloud": "Read aloud",
           "openStarbucks": "Open Starbucks"
+        },
+        "snackbar": {
+          "thaiSpeechNotSupported": "Your browser doesn’t support Thai text-to-speech"
         }
       },
       "information": {
@@ -135,16 +110,13 @@
         "classAdvisorAt": "Class advisor at",
         "birthday": "Birthday"
       },
-      "contacts": {
-        "title": "Contacts"
-      },
       "subjects": {
         "title": "Subjects in charge"
       }
     }
   },
   "documents": {
-    "title": "Lookup documents",
+    "title": "Search documents",
     "list": {
       "searchAlt": "Search documents",
       "filter": {
