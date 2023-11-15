@@ -86,7 +86,9 @@ const LookupDocumentsPage: CustomPage<{
       <Head>
         <title>{tx("tabName", { tabName: t("documents.title") }, t)}</title>
       </Head>
-      <PageHeader parentURL="/lookup">{t("documents.title")}</PageHeader>
+      <PageHeader parentURL="/search/documents">
+        {t("documents.title")}
+      </PageHeader>
       <SplitLayout
         ratio="list-detail"
         className="sm:[&>div]:!grid-cols-2 md:[&>div]:!grid-cols-3"
