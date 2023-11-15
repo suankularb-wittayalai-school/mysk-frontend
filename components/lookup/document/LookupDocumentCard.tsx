@@ -14,13 +14,13 @@ import { FC } from "react";
  *
  * @param document The Document to display.
  * @param selected The currently selected Document.
- * @param onSelectedChange The function to set the selected Document.
+ * @param onClick The function to set the selected Document.
  */
-const DocumentCard: FC<{
+const LookupDocumentCard: FC<{
   document: SchoolDocument;
   selected?: SchoolDocument;
-  onSelectedChange: (value: SchoolDocument) => void;
-}> = ({ document, selected, onSelectedChange }) => {
+  onClick: (value: SchoolDocument) => void;
+}> = ({ document, selected, onClick }) => {
   // Translation
   const locale = useLocale();
   const { t } = useTranslation("lookup", { keyPrefix: "documents.list" });
@@ -54,7 +54,7 @@ const DocumentCard: FC<{
           {
             onClick: () => {
               if (selected?.id === document.id) return;
-              onSelectedChange(document);
+              onClick(document);
             },
           })}
     >
@@ -81,4 +81,4 @@ const DocumentCard: FC<{
   );
 };
 
-export default DocumentCard;
+export default LookupDocumentCard;

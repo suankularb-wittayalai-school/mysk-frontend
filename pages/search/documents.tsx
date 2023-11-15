@@ -4,8 +4,8 @@ import LookupDetailsSide from "@/components/lookup/LookupDetailsSide";
 import LookupListSide from "@/components/lookup/LookupListSide";
 import LookupResultsItem from "@/components/lookup/LookupResultsItem";
 import LookupResultsList from "@/components/lookup/LookupResultsList";
-import DocumentCard from "@/components/lookup/document/DocumentCard";
-import DocumentDetails from "@/components/lookup/document/DocumentDetails";
+import LookupDocumentCard from "@/components/lookup/document/LookupDocumentCard";
+import DocumentDetailsCard from "@/components/lookup/document/DocumentDetailsCard";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import { getSchoolDocuments } from "@/utils/backend/document/getSchoolDocuments";
@@ -44,7 +44,9 @@ const LookupDocumentsPage: CustomPage<{
   const supabase = useSupabaseClient();
 
   // Selected Document
-  const [selected, setSelected] = useState<SchoolDocument>(recentDocs[0]);
+  const [selectedDocument, setSelectedDocument] = useState<SchoolDocument>(
+    recentDocs[0],
+  );
 
   // Query
   const [query, setQuery] = useState("");
@@ -78,10 +80,6 @@ const LookupDocumentsPage: CustomPage<{
       setDocuments(data);
     })();
   }, [type]);
-
-  // If the iframe is loading
-  const [loading, setLoading] = useState<boolean>(true);
-  useEffect(() => setLoading(true), [selected]);
 
   return (
     <>
@@ -133,18 +131,21 @@ const LookupDocumentsPage: CustomPage<{
                 idx={idx}
                 length={documents.length}
               >
-                <DocumentCard
+                <LookupDocumentCard
                   key={document.id}
                   document={document}
-                  selected={selected}
-                  onSelectedChange={setSelected}
+                  selected={selectedDocument}
+                  onClick={setSelectedDocument}
                 />
               </LookupResultsItem>
             ))}
           </LookupResultsList>
         </LookupListSide>
-        <LookupDetailsSide selectedID={selected?.id} length={documents.length}>
-          <DocumentDetails document={selected} {...{ loading, setLoading }} />
+        <LookupDetailsSide
+          selectedID={selectedDocument?.id}
+          length={documents.length}
+        >
+          <DocumentDetailsCard document={selectedDocument} />
         </LookupDetailsSide>
       </SplitLayout>
     </>
