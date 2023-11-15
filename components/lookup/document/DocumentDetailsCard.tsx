@@ -17,7 +17,7 @@ import { RefObject, useEffect, useRef, useState } from "react";
 
 /**
  * A card that displays a Document in the detail section.
- * 
+ *
  * @param document The Document to display.
  */
 const DocumentDetailsCard: StylableFC<{
@@ -56,7 +56,7 @@ const DocumentDetailsCard: StylableFC<{
     window.addEventListener("resize", updateIframeSize);
     return () => window.removeEventListener("resize", updateIframeSize);
   }, []);
-  useEffect(updateIframeSize, [document]);
+  useEffect(updateIframeSize, []);
 
   // Convert the allowed roles to a list of strings that can be used as
   // translation keys
@@ -68,68 +68,71 @@ const DocumentDetailsCard: StylableFC<{
 
   return (
     <LookupDetailsCard style={style} className={className}>
-      {/* Header */}
-      <div ref={headerRef} className="bg-surface-5">
-        <DocumentHeader document={document} />
-
-        <div className="flex flex-row gap-2 rounded-t-lg bg-surface-2 px-4 py-3">
-          <MaterialIcon
-            icon="lock"
-            size={20}
-            className="text-on-surface-variant"
-          />
-          <Text type="label-large" element="p">
-            {t("restrictions.desc", {
-              roles: allowedRoles.map((role) =>
-                t(`restrictions.descSegment.${role}`),
-              ),
-            })}
-          </Text>
+      <div ref={mainRef} className="h-full">
+        {/* Header */}
+        <div ref={headerRef} className="bg-surface-5">
+          <DocumentHeader document={document} />
+          <div className="flex flex-row gap-2 rounded-t-lg bg-surface-2 px-4 py-3">
+            <MaterialIcon
+              icon="lock"
+              size={20}
+              className="text-on-surface-variant"
+            />
+            <Text type="label-large" element="p">
+              {t("restrictions.desc", {
+                roles: allowedRoles.map((role) =>
+                  t(`restrictions.descSegment.${role}`),
+                ),
+              })}
+            </Text>
+          </div>
         </div>
-      </div>
 
-      {/* Google Drive embed */}
-      <div className="bg-surface-2">
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{
-            ...transition(duration.medium2, easing.standardDecelerate),
-            delay: 0.2,
-          }}
-          className="relative w-full"
-        >
-          <AnimatePresence initial={false}>
-            {/* Hide embed while loading */}
-            {loading && (
-              <motion.div
-                initial={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="absolute inset-0 rounded-lg bg-surface"
-                transition={transition(duration.medium4, easing.standard)}
-              />
-            )}
-          </AnimatePresence>
-          {/* Linear Progress */}
-          <Progress
-            appearance="circular"
-            alt="Loading document from Google Drive…"
-            visible={loading}
-            className="absolute inset-0 !m-auto"
-          />
-          {/* Embed iframe */}
-          <iframe
-            key={document.id}
-            src={`${
-              document.document_link.split(/\/view\?usp=[a-z]+/)[0]
-            }/preview`}
-            width={iframeSize.width}
-            height={iframeSize.height}
-            allow="autoplay"
-            onLoad={() => setLoading(false)}
-            className="w-full rounded-lg bg-surface"
-          />
-        </motion.div>
+        {/* Google Drive embed */}
+        <div className="bg-surface-2">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              ...transition(duration.medium2, easing.standardDecelerate),
+              delay: 0.2,
+            }}
+            className="relative w-full"
+          >
+            <AnimatePresence initial={false}>
+              {/* Hide embed while loading */}
+              {loading && (
+                <motion.div
+                  initial={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute inset-0 rounded-lg bg-surface"
+                  transition={transition(duration.medium4, easing.standard)}
+                />
+              )}
+            </AnimatePresence>
+
+            {/* Circular Progress */}
+            <Progress
+              appearance="circular"
+              alt="Loading document from Google Drive…"
+              visible={loading}
+              className="absolute inset-0 !m-auto"
+            />
+
+            {/* Embed iframe */}
+            <iframe
+              key={document.id}
+              src={`${
+                document.document_link.split(/\/view\?usp=[a-z]+/)[0]
+              }/preview`}
+              width={iframeSize.width}
+              height={iframeSize.height}
+              allow="autoplay"
+              onLoad={() => setLoading(false)}
+              className="w-full rounded-lg bg-surface"
+            />
+          </motion.div>
+        </div>
       </div>
     </LookupDetailsCard>
   );
