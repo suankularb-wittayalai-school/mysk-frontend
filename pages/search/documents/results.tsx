@@ -1,85 +1,48 @@
 // Imports
 import PageHeader from "@/components/common/PageHeader";
+import ActiveSearchFiltersCard from "@/components/lookup/ActiveSearchFiltersCard";
 import LookupDetailsSide from "@/components/lookup/LookupDetailsSide";
 import LookupListSide from "@/components/lookup/LookupListSide";
 import LookupResultsItem from "@/components/lookup/LookupResultsItem";
 import LookupResultsList from "@/components/lookup/LookupResultsList";
-import LookupDocumentCard from "@/components/lookup/document/LookupDocumentCard";
 import DocumentDetailsCard from "@/components/lookup/document/DocumentDetailsCard";
+import LookupDocumentCard from "@/components/lookup/document/LookupDocumentCard";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
-import { getSchoolDocuments } from "@/utils/backend/document/getSchoolDocuments";
-import { searchSchoolDocuments } from "@/utils/backend/document/searchSchoolDocuments";
-import cn from "@/utils/helpers/cn";
+import getDocumentsByLookupFilters from "@/utils/backend/document/getDocumentsByLookupFilters";
 import useLocale from "@/utils/helpers/useLocale";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { SchoolDocument, SchoolDocumentType } from "@/utils/types/news";
-import { UserRole } from "@/utils/types/person";
-import {
-  ChipSet,
-  FilterChip,
-  Search,
-  SplitLayout,
-} from "@suankularb-components/react";
+import { SplitLayout } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import va from "@vercel/analytics";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import { camel } from "radash";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+
+export type DocumentSearchFilters = Partial<{
+  types: SchoolDocumentType[];
+  subject: string;
+  attendTo: string;
+  month: string;
+  code: string;
+}>;
 
 const LookupDocumentsPage: CustomPage<{
-  recentDocs: SchoolDocument[];
-  userRole: UserRole;
-}> = ({ recentDocs, userRole }) => {
+  filters: DocumentSearchFilters;
+  documents: SchoolDocument[];
+}> = ({ filters, documents }) => {
   // Translation
   const locale = useLocale();
   const { t } = useTranslation("lookup");
   const { t: tx } = useTranslation("common");
 
-  const [documents, setDocuments] = useState<SchoolDocument[]>(recentDocs);
-  const supabase = useSupabaseClient();
-
   // Selected Document
   const [selectedDocument, setSelectedDocument] = useState<SchoolDocument>(
-    recentDocs[0],
+    documents[0],
   );
-
-  // Query
-  const [query, setQuery] = useState("");
-  async function handleSearch() {
-    va.track("Search Document", {
-      type: {
-        order: "Orders",
-        record: "Records",
-        announcement: "Announcements",
-        big_garuda: "External",
-        other: "Other",
-      }[type],
-    });
-    if (!query) {
-      setDocuments(recentDocs);
-      return;
-    }
-    const { data } = await searchSchoolDocuments(supabase, query, type);
-    if (!data) return;
-    setDocuments(data);
-  }
-
-  // Type
-  const [type, setType] = useState<SchoolDocumentType>(
-    userRole === "teacher" ? "order" : "announcement",
-  );
-  useEffect(() => {
-    (async () => {
-      const { data } = await getSchoolDocuments(supabase, userRole, type);
-      if (!data) return;
-      setDocuments(data);
-    })();
-  }, [type]);
 
   return (
     <>
@@ -94,38 +57,10 @@ const LookupDocumentsPage: CustomPage<{
         className="sm:[&>div]:!grid-cols-2 md:[&>div]:!grid-cols-3"
       >
         <LookupListSide length={documents.length}>
-          <section className="space-y-3">
-            <Search
-              alt={t("documents.list.searchAlt")}
-              value={query}
-              locale={locale}
-              onChange={setQuery}
-              onSearch={handleSearch}
-            />
-            <ChipSet
-              scrollable
-              className={cn(`!-mx-4 w-screen sm:!mx-0 sm:!w-full [&>*]:!px-4
-                [&>*]:sm:!px-0`)}
-            >
-              {(
-                [
-                  "order",
-                  "record",
-                  "announcement",
-                  "big_garuda",
-                  "other",
-                ] as SchoolDocumentType[]
-              ).map((mapType) => (
-                <FilterChip
-                  key={mapType}
-                  selected={type === mapType}
-                  onClick={() => setType(mapType)}
-                >
-                  {t(`documents.list.filter.${camel(mapType)}`)}
-                </FilterChip>
-              ))}
-            </ChipSet>
-          </section>
+          <ActiveSearchFiltersCard>
+            {/* TODO: Document filter Chips */}
+            <pre>{JSON.stringify(filters)}</pre>
+          </ActiveSearchFiltersCard>
           <LookupResultsList length={documents.length}>
             {documents.map((document, idx) => (
               <LookupResultsItem
@@ -156,6 +91,7 @@ const LookupDocumentsPage: CustomPage<{
 
 export const getServerSideProps: GetServerSideProps = async ({
   locale,
+  query,
   req,
   res,
 }) => {
@@ -163,6 +99,15 @@ export const getServerSideProps: GetServerSideProps = async ({
     req: req as NextApiRequest,
     res: res as NextApiResponse,
   });
+
+  const filters = Object.fromEntries([
+    ["types", (query.types as string | undefined)?.split(",") || []],
+    ...Object.entries(query)
+      .filter(([key]) =>
+        ["subject", "attend_to", "month", "code"].includes(key),
+      )
+      .map(([key, value]) => [camel(key), value]),
+  ]) as DocumentSearchFilters;
 
   const { data: user } = await getLoggedInPerson(
     supabase,
@@ -174,10 +119,10 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   const userRole = user?.role || "student";
 
-  const { data: recentDocs } = await getSchoolDocuments(
+  const { data: documents } = await getDocumentsByLookupFilters(
     supabase,
     userRole,
-    userRole === "teacher" ? "order" : "announcement",
+    filters,
   );
 
   return {
@@ -186,8 +131,8 @@ export const getServerSideProps: GetServerSideProps = async ({
         "common",
         "lookup",
       ])),
-      recentDocs,
-      userRole,
+      filters,
+      documents,
     },
   };
 };

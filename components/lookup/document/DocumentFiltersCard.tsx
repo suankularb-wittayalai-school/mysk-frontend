@@ -70,7 +70,10 @@ const DocumentFiltersCard: StylableFC = ({ style, className }) => {
       style={style}
       className={className}
     >
-      <ChipSet className="-mb-6 sm:col-span-2 md:col-span-4">
+      <ChipSet
+        scrollable
+        className="-mx-4 -mb-6 sm:col-span-2 md:col-span-4 [&>*]:px-4"
+      >
         {["order", "record", "announcement", "big_garuda", "other"].map(
           (type) => (
             <FilterChip
@@ -103,7 +106,6 @@ const DocumentFiltersCard: StylableFC = ({ style, className }) => {
         helperMsg={t("month_helper")}
         inputAttr={{ type: "month", placeholder: "YYYY-MM" }}
         {...formProps.month}
-        className="safari:[&>input]:!font-mono"
       />
       <TextField
         appearance="outlined"
