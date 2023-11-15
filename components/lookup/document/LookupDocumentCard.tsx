@@ -65,7 +65,7 @@ const LookupDocumentCard: FC<{
         // {code}/{year in BE} • {date}
         subtitle={t(`metadata.${camel(document.type)}`, {
           code: document.code,
-          year: getLocaleYear("th", documentDate.getFullYear()),
+          year: getLocaleYear("th", documentDate.getFullYear(), "AD"),
           date: documentDate.toLocaleDateString(locale, {
             year: !isThisYear(documentDate)
               ? locale === "en-US"
