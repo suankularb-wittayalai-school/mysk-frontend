@@ -1,6 +1,5 @@
 {
   "title": "Search",
-  "subtitle": "<0>Find everything</0> with Search.",
   "view": {
     "students": "Students",
     "teachers": "Teachers",
@@ -135,10 +134,16 @@
         "code": "Search code",
         "code_helper": "Enter fully the code of a document"
       },
-      "chip": {}
+      "chip": {
+        "types": "Types: {{content, list}}",
+        "types_all": "Types: all",
+        "subject": "Subject: “{{content}}”",
+        "attendTo": "Attend to: “{{content}}”",
+        "month": "Month: {{content, datetime(month: long; year: numeric;)}}",
+        "code": "Code: “{{content}}”"
+      }
     },
     "list": {
-      "searchAlt": "Search documents",
       "filter": {
         "order": "Orders",
         "record": "Records",

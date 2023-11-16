@@ -1,6 +1,5 @@
 {
   "title": "ค้นหา",
-  "subtitle": "<0>ค้นหาทุกอย่าง</0>ด้วย MySK ค้นหา",
   "view": {
     "students": "นักเรียน",
     "teachers": "อาจารย์",
@@ -139,10 +138,16 @@
         "code": "ค้นหารหัสเอกสาร",
         "code_helper": "ป้อนรหัสเอกสาร"
       },
-      "chip": {}
+      "chip": {
+        "types": "ประเภท: {{content, list}}",
+        "types_all": "ประเภท: ทั้งหมด",
+        "subject": "เรื่อง: “{{content}}”",
+        "attendTo": "เรียน: “{{content}}”",
+        "month": "เดือน: {{content, datetime(month: long; year: numeric;)}}",
+        "code": "รหัสเอกสาร: “{{content}}”"
+      }
     },
     "list": {
-      "searchAlt": "ค้นหาเอกสาร",
       "filter": {
         "order": "คำสั่ง",
         "record": "บันทึกข้อความ",

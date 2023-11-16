@@ -1,11 +1,12 @@
 // Imports
 import PageHeader from "@/components/common/PageHeader";
-import ActiveSearchFiltersCard from "@/components/lookup/ActiveSearchFiltersCard";
 import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
 import LookupDetailsSide from "@/components/lookup/LookupDetailsSide";
 import LookupListSide from "@/components/lookup/LookupListSide";
 import LookupResultsItem from "@/components/lookup/LookupResultsItem";
 import LookupResultsList from "@/components/lookup/LookupResultsList";
+import TooWideCard from "@/components/lookup/TooWideCard";
+import DocumentActiveFiltersCard from "@/components/lookup/document/DocumentActiveFiltersCard";
 import DocumentDetailsCard from "@/components/lookup/document/DocumentDetailsCard";
 import LookupDocumentCard from "@/components/lookup/document/LookupDocumentCard";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
@@ -78,11 +79,12 @@ const LookupDocumentsPage: CustomPage<{
         className="sm:[&>div]:!grid-cols-2 md:[&>div]:!grid-cols-3"
       >
         <LookupListSide length={documents.length}>
-          <ActiveSearchFiltersCard>
-            {/* TODO: Document filter Chips */}
-            <pre>{JSON.stringify(filters)}</pre>
-          </ActiveSearchFiltersCard>
-          
+          {/* Active Search Filters */}
+          {Object.keys(filters).length > 0 && (
+            <DocumentActiveFiltersCard filters={filters} />
+          )}
+          <TooWideCard length={documents.length} />
+
           <LookupResultsList length={documents.length}>
             {documents.map((document, idx) => (
               <LookupResultsItem
