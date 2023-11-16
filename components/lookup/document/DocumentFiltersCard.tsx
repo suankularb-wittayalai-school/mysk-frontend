@@ -73,6 +73,16 @@ const DocumentFiltersCard: StylableFC = ({ style, className }) => {
     Object.values(form).slice(1),
   );
 
+  // Remove the prefix and suffix from the code field
+  useEffect(() => {
+    setForm({
+      ...form,
+      code: (form.code as string)
+        .replace(/^(ศธ|MoE) 04290.20\/|/, "")
+        .replace(/\/\d{4}$/, ""),
+    });
+  }, [form.code]);
+
   /**
    * Redirect to the Document Search Results page with the form values as
    * query.
