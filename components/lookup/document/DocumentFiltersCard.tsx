@@ -1,17 +1,20 @@
 // Imports
 import SearchFiltersCard from "@/components/lookup/SearchFiltersCard";
+import SnackbarContext from "@/contexts/SnackbarContext";
 import useForm from "@/utils/helpers/useForm";
 import { StylableFC } from "@/utils/types/common";
 import {
   ChipSet,
   FilterChip,
   MaterialIcon,
+  Snackbar,
   TextField,
 } from "@suankularb-components/react";
 import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { camel, pascal, snake, toggle } from "radash";
+import { useContext, useEffect } from "react";
 
 /**
  * The Search Filters Card for Documents.
@@ -22,6 +25,9 @@ const DocumentFiltersCard: StylableFC = ({ style, className }) => {
     keyPrefix: "documents.searchFilters.form",
   });
   const { t: tc } = useTranslation("lookup");
+  const { t: tx } = useTranslation("common");
+
+  const { setSnackbar } = useContext(SnackbarContext);
 
   const router = useRouter();
 
@@ -31,7 +37,8 @@ const DocumentFiltersCard: StylableFC = ({ style, className }) => {
   >([
     {
       key: "types",
-      defaultValue: ["order", "record", "announcement", "big_garuda", "other"],
+      defaultValue: [],
+      validate: (value) => value.length > 0,
     },
     { key: "subject" },
     { key: "attendTo" },
@@ -42,8 +49,44 @@ const DocumentFiltersCard: StylableFC = ({ style, className }) => {
     { key: "code" },
   ]);
 
+  // Automatically select all types if any other field is filled as the user
+  // likely wants to search for Documents of all types
+  useEffect(
+    () => {
+      // Check if any field except type is filled
+      const someFieldsAreFilled = Object.values(form)
+        .slice(1)
+        .some((value) => value);
+
+      // If any field is filled, select all types
+      if (someFieldsAreFilled) {
+        if (form.types.length === 0)
+          setForm({
+            ...form,
+            types: ["order", "record", "announcement", "big_garuda", "other"],
+          });
+      }
+      // If no field is filled and all types are selected, deselect all types
+      else if (form.types.length === 5) setForm({ ...form, types: [] });
+    },
+    // Run when one of all fields except type are changed
+    Object.values(form).slice(1),
+  );
+
+  /**
+   * Redirect to the Document Search Results page with the form values as
+   * query.
+   */
   function handleSubmit() {
     const entries = Object.entries(form).filter(([_, value]) => value);
+    if (
+      entries.some(([key, value]) =>
+        key === "types" ? value.length === 0 : !value,
+      )
+    ) {
+      setSnackbar(<Snackbar>{tx("snackbar.formInvalid")}</Snackbar>);
+      return;
+    }
 
     va.track("Search Documents", {
       filterCount: entries.length,
