@@ -131,8 +131,6 @@ const AttendanceDialog: StylableFC<{
     );
   }, [open, event]);
 
-  const [confirmOpen, setConfirmOpen] = useState(false);
-
   /**
    * Validate the Attendance data.
    *
@@ -166,7 +164,6 @@ const AttendanceDialog: StylableFC<{
           date || new Date(),
           teacherID,
         );
-        setConfirmOpen(false);
         va.track("Save Attendance", {
           isToday: date !== undefined && isToday(date),
         });
@@ -230,7 +227,7 @@ const AttendanceDialog: StylableFC<{
               if (!validateAttendances()) {
                 va.track("Attempted Attendance Save With Incomplete Data");
                 setSnackbar(<Snackbar>{tx("snackbar.formInvalid")}</Snackbar>);
-              } else setConfirmOpen(true);
+              } else handleSave();
             }}
             disabled={loading || !teacherID}
           >
