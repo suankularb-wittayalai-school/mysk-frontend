@@ -68,6 +68,7 @@
         "presence": {
           "title": "Presence",
           "present": "Present",
+          "late": "Late",
           "absent": "Absent"
         },
         "absenceType": {

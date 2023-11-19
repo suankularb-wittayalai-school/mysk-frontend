@@ -67,6 +67,7 @@
         "presence": {
           "title": "การเข้าเรียน",
           "present": "มา",
+          "late": "สาย",
           "absent": "ขาด"
         },
         "absenceType": {
