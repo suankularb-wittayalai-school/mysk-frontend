@@ -2,31 +2,28 @@
 import cn from "@/utils/helpers/cn";
 import getLocaleYear from "@/utils/helpers/getLocaleYear";
 import useLocale from "@/utils/helpers/useLocale";
+import { StylableFC } from "@/utils/types/common";
 import { SchoolDocument } from "@/utils/types/news";
-import { Card, CardHeader, useBreakpoint } from "@suankularb-components/react";
+import { Card, CardHeader } from "@suankularb-components/react";
 import { isThisYear } from "date-fns";
 import { useTranslation } from "next-i18next";
 import { camel } from "radash";
-import { FC } from "react";
 
 /**
  * A card that displays a Document in the list of Documents.
  *
  * @param document The Document to display.
  * @param selected The currently selected Document.
- * @param onSelectedChange The function to set the selected Document.
+ * @param onClick The function to set the selected Document.
  */
-const DocumentCard: FC<{
+const LookupDocumentCard: StylableFC<{
   document: SchoolDocument;
   selected?: SchoolDocument;
-  onSelectedChange: (value: SchoolDocument) => void;
-}> = ({ document, selected, onSelectedChange }) => {
+  onClick: (value: SchoolDocument) => void;
+}> = ({ document, selected, onClick, style, className }) => {
   // Translation
   const locale = useLocale();
   const { t } = useTranslation("lookup", { keyPrefix: "documents.list" });
-
-  // Responsive
-  const { atBreakpoint } = useBreakpoint();
 
   // Cast the signed date
   const documentDate = new Date(document.date);
@@ -36,27 +33,16 @@ const DocumentCard: FC<{
       appearance="outlined"
       direction="row"
       stateLayerEffect
+      onClick={() => onClick(document)}
+      style={style}
       className={cn(
-        `w-full items-center !border-transparent pr-3 text-left`,
+        `w-full items-center !rounded-none !border-transparent pr-3 text-left
+        sm:!rounded-md`,
         selected?.id === document.id &&
           `sm:!border-outline-variant sm:!bg-primary-container
           sm:focus:!border-primary`,
+        className,
       )}
-      {...(atBreakpoint === "base"
-        ? // If the user is on mobile, take then straight to the Google
-          // Drive file
-          {
-            href: document.document_link,
-            aAttr: { target: "_blank", rel: "noreferrer" },
-          }
-        : // If the user is on tablet/desktop, show the selected Order in
-          // an iframe in the detail section
-          {
-            onClick: () => {
-              if (selected?.id === document.id) return;
-              onSelectedChange(document);
-            },
-          })}
     >
       {/* Subject line, code, and signed date */}
       <CardHeader
@@ -65,7 +51,7 @@ const DocumentCard: FC<{
         // {code}/{year in BE} • {date}
         subtitle={t(`metadata.${camel(document.type)}`, {
           code: document.code,
-          year: getLocaleYear("th", documentDate.getFullYear()),
+          year: getLocaleYear("th", documentDate.getFullYear(), "AD"),
           date: documentDate.toLocaleDateString(locale, {
             year: !isThisYear(documentDate)
               ? locale === "en-US"
@@ -76,9 +62,10 @@ const DocumentCard: FC<{
             day: "numeric",
           }),
         })}
+        className="[&_h3]:line-clamp-3"
       />
     </Card>
   );
 };
 
-export default DocumentCard;
+export default LookupDocumentCard;

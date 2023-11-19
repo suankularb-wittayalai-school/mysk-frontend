@@ -1,5 +1,5 @@
 import PageHeader from "@/components/common/PageHeader";
-import SearchFiltersCard from "@/components/lookup/SearchFiltersCard";
+import DocumentFiltersCard from "@/components/lookup/document/DocumentFiltersCard";
 import StudentsFiltersCard from "@/components/lookup/students/StudentFiltersCard";
 import TeacherFiltersCard from "@/components/lookup/teachers/TeacherFiltersCard";
 import getSubjectGroups from "@/utils/backend/subject/getSubjectGroups";
@@ -11,7 +11,6 @@ import {
   MaterialIcon,
   Tab,
   TabsContainer,
-  Text,
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
@@ -20,7 +19,6 @@ import { GetStaticPaths, GetStaticProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
@@ -75,10 +73,7 @@ const SearchPage: CustomPage<{
           icon={<MaterialIcon icon="document_scanner" />}
           label={t("view.documents")}
           selected={view === "documents"}
-          // onClick={() => changeView("documents")}
-          onClick={() => setView("documents")}
-          href="/search/documents"
-          element={Link}
+          onClick={() => changeView("documents")}
         />
       </TabsContainer>
       <ContentLayout>
@@ -93,21 +88,7 @@ const SearchPage: CustomPage<{
             {
               students: <StudentsFiltersCard />,
               teachers: <TeacherFiltersCard subjectGroups={subjectGroups} />,
-              documents: (
-                <SearchFiltersCard
-                  icon={<MaterialIcon icon="document_scanner" />}
-                  title="Search documents"
-                  onSubmit={() => {}}
-                >
-                  <Text
-                    type="body-medium"
-                    className="sm:col-span-2 md:col-span-4"
-                  >
-                    TODO: Documents filters aren’t implemented yet. Redirecting
-                    you to the Search Documents page…
-                  </Text>
-                </SearchFiltersCard>
-              ),
+              documents: <DocumentFiltersCard />,
             }[view]
           }
         </motion.div>
