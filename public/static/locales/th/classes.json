@@ -71,7 +71,6 @@
           "absent": "ขาด"
         },
         "absenceType": {
-          "late": "มาสาย",
           "onLeave": "มีใบลา",
           "absent": "ขาดไม่มีเหตุ",
           "dropped": "ลาออกแล้ว",
