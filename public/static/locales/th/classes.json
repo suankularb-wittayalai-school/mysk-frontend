@@ -72,9 +72,9 @@
         },
         "absenceType": {
           "late": "มาสาย",
-          "onLeave": "ลา",
-          "absent": "ขาด",
-          "dropped": "ลาออก",
+          "onLeave": "มีใบลา",
+          "absent": "ขาดไม่มีเหตุ",
+          "dropped": "ลาออกแล้ว",
           "other": "อื่น ๆ"
         },
         "enterReason": "ระบุเหตุผล"

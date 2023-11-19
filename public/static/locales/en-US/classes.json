@@ -74,7 +74,7 @@
         "absenceType": {
           "late": "Late",
           "onLeave": "On leave",
-          "absent": "Absent",
+          "absent": "Absent without reason",
           "dropped": "Dropped",
           "other": "Other"
         },
