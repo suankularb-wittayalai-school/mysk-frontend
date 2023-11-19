@@ -62,13 +62,19 @@
         "assembly": "เข้าแถว",
         "homeroom": "โฮมรูม"
       },
+      "legend": {
+        "title": "คำอธิบาย",
+        "present": "มา",
+        "late": "มาสาย",
+        "absent": "ลา/ขาด"
+      },
       "item": {
         "classNo": "เลขที่ {{classNo}}",
         "presence": {
           "title": "การเข้าเรียน",
           "present": "มา",
-          "late": "สาย",
-          "absent": "ขาด"
+          "late": "มาสาย",
+          "absent": "ลา/ขาด"
         },
         "absenceType": {
           "onLeave": "มีใบลา",

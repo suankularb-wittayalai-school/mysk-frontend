@@ -63,6 +63,12 @@
         "assembly": "Assembly",
         "homeroom": "Homeroom"
       },
+      "legend": {
+        "title": "Legend",
+        "present": "Present",
+        "late": "Late",
+        "absent": "Absent"
+      },
       "item": {
         "classNo": "No. {{classNo}}",
         "presence": {

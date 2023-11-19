@@ -22,6 +22,7 @@ import {
   Section,
   SegmentedButton,
   Snackbar,
+  Text,
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
@@ -250,7 +251,8 @@ const AttendanceDialog: StylableFC<{
         onClose={onClose}
         style={style}
         className={cn(
-          `sm:!h-[calc(100dvh-2rem)] [&>:last-child]:!overflow-x-hidden`,
+          `sm:!h-[calc(100dvh-2rem)] [&>:last-child]:!gap-0
+          [&>:last-child]:!overflow-x-hidden`,
           className,
         )}
       >
@@ -299,6 +301,26 @@ const AttendanceDialog: StylableFC<{
             </ChipSet>
           )}
         </Section>
+
+        {/* Legend */}
+        <section aria-label={t("legend.title")} className="flow-row mb-1 mt-6 flex justify-end gap-3">
+          <div className="flex flex-row items-center gap-1">
+            <MaterialIcon icon="check" size={20} className="text-primary" />
+            <Text type="label-medium">{t("legend.present")}</Text>
+          </div>
+          <div className="ml-1 flex flex-row items-center gap-1">
+            <MaterialIcon
+              icon="running_with_errors"
+              size={20}
+              className="text-tertiary"
+            />
+            <Text type="label-medium">{t("legend.late")}</Text>
+          </div>
+          <div className="flex flex-row items-center gap-1">
+            <MaterialIcon icon="close" size={20} className="text-error" />
+            <Text type="label-medium">{t("legend.absent")}</Text>
+          </div>
+        </section>
 
         {/* List */}
         <motion.ul
