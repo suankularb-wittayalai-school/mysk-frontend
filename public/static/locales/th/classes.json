@@ -62,18 +62,24 @@
         "assembly": "เข้าแถว",
         "homeroom": "โฮมรูม"
       },
+      "legend": {
+        "title": "คำอธิบาย",
+        "present": "มา",
+        "late": "มาสาย",
+        "absent": "ลา/ขาด"
+      },
       "item": {
         "classNo": "เลขที่ {{classNo}}",
         "presence": {
           "title": "การเข้าเรียน",
           "present": "มา",
-          "absent": "ขาด"
+          "late": "มาสาย",
+          "absent": "ลา/ขาด"
         },
         "absenceType": {
-          "late": "มาสาย",
-          "onLeave": "ลา",
-          "absent": "ขาด",
-          "dropped": "ลาออก",
+          "onLeave": "มีใบลา",
+          "absent": "ขาดไม่มีเหตุ",
+          "dropped": "ลาออกแล้ว",
           "other": "อื่น ๆ"
         },
         "enterReason": "ระบุเหตุผล"
@@ -83,14 +89,6 @@
         "markAll": "เช็กมาทุกคน",
         "clear": "ลบทั้งหมด",
         "save": "บันทึก"
-      }
-    },
-    "confirmAttendanceSave": {
-      "title": "ยืนยันการบันทึก",
-      "desc": "คุณจะสามารถกลับมาแก้ไขข้อมูลการเช็กชื่อได้ที่หน้าห้องเรียน",
-      "action": {
-        "goBack": "กลับ",
-        "confirm": "ยืนยัน"
       }
     }
   },

@@ -24,6 +24,7 @@ export default async function getAttendanceSummaryOfClass(
       `date,
       is_present,
       attendance_event,
+      absence_type,
       students!inner(classroom_students!inner(classroom_id))`,
     )
     .eq("students.classroom_students.classroom_id", classroomID)
@@ -51,7 +52,10 @@ export default async function getAttendanceSummaryOfClass(
       (attendance) => attendance.attendance_event === attendanceEvent,
     );
     return attendancesOfEvent.length
-      ? attendancesOfEvent.filter((attendance) => !attendance.is_present).length
+      ? attendancesOfEvent.filter(
+          (attendance) =>
+            !attendance.is_present && attendance.absence_type !== "late",
+        ).length
       : null;
   }
 
@@ -96,3 +100,4 @@ export default async function getAttendanceSummaryOfClass(
 
   return { data: attendanceAtDates, error: null };
 }
+

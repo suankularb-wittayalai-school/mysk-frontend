@@ -49,39 +49,36 @@ const DocumentFiltersCard: StylableFC = ({ style, className }) => {
     { key: "code" },
   ]);
 
-  // Automatically select all types if any other field is filled as the user
-  // likely wants to search for Documents of all types
   useEffect(
     () => {
-      // Check if any field except type is filled
+      // Remove the prefix and suffix from the code field
+      const code = (form.code as string)
+        .replace(/^(ศธ|MoE) 04290.20\/|/, "")
+        .replace(/\/\d{4}$/, "");
+
+      // Automatically select all types if any other field is filled as the
+      // user likely wants to search for Documents of all types
+      let types = form.types;
+
+      // Check if at least 1 field (except type) is filled
       const someFieldsAreFilled = Object.values(form)
-        .slice(1)
+        .slice(1) // Omit type
         .some((value) => value);
 
       // If any field is filled, select all types
       if (someFieldsAreFilled) {
         if (form.types.length === 0)
-          setForm({
-            ...form,
-            types: ["order", "record", "announcement", "big_garuda", "other"],
-          });
+          types = ["order", "record", "announcement", "big_garuda", "other"];
       }
       // If no field is filled and all types are selected, deselect all types
-      else if (form.types.length === 5) setForm({ ...form, types: [] });
+      else if (form.types.length === 5) types = [];
+
+      // Update the form
+      setForm({ ...form, types, code });
     },
     // Run when one of all fields except type are changed
     Object.values(form).slice(1),
   );
-
-  // Remove the prefix and suffix from the code field
-  useEffect(() => {
-    setForm({
-      ...form,
-      code: (form.code as string)
-        .replace(/^(ศธ|MoE) 04290.20\/|/, "")
-        .replace(/\/\d{4}$/, ""),
-    });
-  }, [form.code]);
 
   /**
    * Redirect to the Document Search Results page with the form values as

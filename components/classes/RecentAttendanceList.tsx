@@ -14,7 +14,7 @@ import {
   useAnimationConfig,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { isToday, isWeekend } from "date-fns";
+import { isWeekend } from "date-fns";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { list } from "radash";

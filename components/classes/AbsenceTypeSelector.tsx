@@ -11,7 +11,7 @@ import { useTranslation } from "next-i18next";
  * @param onChange Callback function to handle changes to the Absence Type.
  */
 const AbsenceTypeSelector: StylableFC<{
-  value: AbsenceType | null;
+  value: Exclude<AbsenceType, "late"> | null;
   onChange: (value: AbsenceType) => void;
 }> = ({ value, onChange, style, className }) => {
   const { t } = useTranslation("classes", {
@@ -20,9 +20,6 @@ const AbsenceTypeSelector: StylableFC<{
 
   return (
     <ChipSet scrollable style={style} className={className}>
-      <FilterChip selected={value === "late"} onClick={() => onChange("late")}>
-        {t("late")}
-      </FilterChip>
       <FilterChip
         selected={value === "on_leave"}
         onClick={() => onChange("on_leave")}

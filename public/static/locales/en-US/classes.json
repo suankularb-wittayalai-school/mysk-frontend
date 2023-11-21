@@ -63,17 +63,23 @@
         "assembly": "Assembly",
         "homeroom": "Homeroom"
       },
+      "legend": {
+        "title": "Legend",
+        "present": "Present",
+        "late": "Late",
+        "absent": "Absent"
+      },
       "item": {
         "classNo": "No. {{classNo}}",
         "presence": {
           "title": "Presence",
           "present": "Present",
+          "late": "Late",
           "absent": "Absent"
         },
         "absenceType": {
-          "late": "Late",
           "onLeave": "On leave",
-          "absent": "Absent",
+          "absent": "Absent without reason",
           "dropped": "Dropped",
           "other": "Other"
         },
@@ -84,14 +90,6 @@
         "markAll": "Mark all present",
         "clear": "Clear",
         "save": "Save"
-      }
-    },
-    "confirmAttendanceSave": {
-      "title": "Confirm save",
-      "desc": "You can view and edit the attendance later in the Classes page.",
-      "action": {
-        "goBack": "Go back",
-        "confirm": "Confirm"
       }
     }
   },

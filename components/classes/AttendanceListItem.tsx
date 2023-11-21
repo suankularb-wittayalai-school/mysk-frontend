@@ -18,6 +18,8 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { sift } from "radash";
+import PresenceSelectorItem from "./PresenceSelectorItem";
+import PresenceSelector from "./PresenceSelector";
 
 /**
  * A single Student Attendance record.
@@ -70,89 +72,41 @@ const AttendanceListItem: StylableFC<{
         />
 
         {/* Presence */}
-        <SegmentedButton alt={t("presence.title")}>
-          {/* Present */}
-          <Interactive
-            onClick={() =>
-              editable
-                ? onAttendanceChange({
-                    ...attendance,
-                    is_present: true,
-                    absence_type: null,
-                    absence_reason: null,
-                  })
-                : undefined
-            }
-            element={(props) => (
-              <button {...props} title={t("presence.present")} />
-            )}
-            className={cn(
-              `skc-button skc-button--outlined !text-on-surface
-              focus:!border-on-surface state-layer:!bg-on-surface`,
-              attendance.is_present &&
-                `!bg-primary-container !text-primary focus:!border-primary
-                state-layer:!bg-primary`,
-            )}
-          >
-            <div className="skc-button__icon">
-              <MaterialIcon icon="check" />
-            </div>
-          </Interactive>
-
-          {/* Absent */}
-          <Interactive
-            onClick={
-              editable
-                ? () =>
-                    onAttendanceChange({
-                      ...attendance,
-                      is_present: false,
-                      absence_type: "on_leave",
-                    })
-                : undefined
-            }
-            element={(props) => (
-              <button {...props} title={t("presence.absent")} />
-            )}
-            className={cn(
-              `skc-button skc-button--outlined skc-button--dangerous`,
-              attendance.is_present === false && `!bg-error !text-on-error`,
-            )}
-          >
-            <div className="skc-button__icon">
-              <MaterialIcon icon="close" />
-            </div>
-          </Interactive>
-        </SegmentedButton>
+        <PresenceSelector
+          attendance={attendance}
+          editable={editable}
+          onAttendanceChange={onAttendanceChange}
+        />
       </div>
 
       <AnimatePresence initial={false}>
         {/* Absence type */}
-        {attendance.is_present === false && (
-          <motion.div
-            key="absence-type"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{
-              opacity: 1,
-              y: 0,
-              transition: transition(duration.medium2, easing.standard),
-            }}
-            exit={{ opacity: 0 }}
-            transition={transition(duration.short4, easing.standard)}
-          >
-            <AbsenceTypeSelector
-              value={attendance.absence_type}
-              onChange={(absence_type) =>
-                onAttendanceChange({
-                  ...attendance,
-                  absence_type,
-                  absence_reason: null,
-                })
-              }
-              className="-mx-4 sm:-mx-6 [&>*]:px-4 [&>*]:sm:px-6"
-            />
-          </motion.div>
-        )}
+        {attendance.is_present === false &&
+          attendance.absence_type !== "late" && (
+            <motion.div
+              key="absence-type"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{
+                opacity: 1,
+                y: 0,
+                transition: transition(duration.medium2, easing.standard),
+              }}
+              exit={{ opacity: 0 }}
+              transition={transition(duration.short4, easing.standard)}
+            >
+              <AbsenceTypeSelector
+                value={attendance.absence_type}
+                onChange={(absence_type) =>
+                  onAttendanceChange({
+                    ...attendance,
+                    absence_type,
+                    absence_reason: null,
+                  })
+                }
+                className="-mx-4 sm:-mx-6 [&>*]:px-4 [&>*]:sm:px-6"
+              />
+            </motion.div>
+          )}
 
         {/* Absence custom reason */}
         {attendance.absence_type === "other" && (
@@ -191,3 +145,4 @@ const AttendanceListItem: StylableFC<{
 };
 
 export default AttendanceListItem;
+

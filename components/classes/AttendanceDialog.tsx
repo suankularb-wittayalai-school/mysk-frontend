@@ -10,18 +10,16 @@ import withLoading from "@/utils/helpers/withLoading";
 import { StudentAttendance } from "@/utils/types/attendance";
 import { StylableFC } from "@/utils/types/common";
 import {
-  Actions,
   AssistChip,
   Button,
   ChipSet,
-  Dialog,
-  DialogHeader,
   FullscreenDialog,
   MaterialIcon,
   Progress,
   Section,
   SegmentedButton,
   Snackbar,
+  Text,
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
@@ -67,9 +65,6 @@ const AttendanceDialog: StylableFC<{
   className,
 }) => {
   const { t } = useTranslation("classes", { keyPrefix: "dialog.attendance" });
-  const { t: ts } = useTranslation("classes", {
-    keyPrefix: "dialog.confirmAttendanceSave",
-  }); // ts for “t save”
   const { t: tx } = useTranslation("common");
 
   const { setSnackbar } = useContext(SnackbarContext);
@@ -136,8 +131,6 @@ const AttendanceDialog: StylableFC<{
     );
   }, [open, event]);
 
-  const [confirmOpen, setConfirmOpen] = useState(false);
-
   /**
    * Validate the Attendance data.
    *
@@ -171,7 +164,6 @@ const AttendanceDialog: StylableFC<{
           date || new Date(),
           teacherID,
         );
-        setConfirmOpen(false);
         va.track("Save Attendance", {
           isToday: date !== undefined && isToday(date),
         });
@@ -223,130 +215,134 @@ const AttendanceDialog: StylableFC<{
   }
 
   return (
-    <>
-      <FullscreenDialog
-        open={open}
-        title={t(`title.${editable ? "take" : "view"}`)}
-        action={
-          // Only show Save Button for Class Advisors
-          editable ? (
-            <Button
-              appearance="text"
-              onClick={() => {
-                if (!validateAttendances()) {
-                  va.track("Attempted Attendance Save With Incomplete Data");
-                  setSnackbar(
-                    <Snackbar>{tx("snackbar.formInvalid")}</Snackbar>,
-                  );
-                } else setConfirmOpen(true);
-              }}
-              disabled={loading || !teacherID}
+    <FullscreenDialog
+      open={open}
+      title={t(`title.${editable ? "take" : "view"}`)}
+      action={
+        // Only show Save Button for Class Advisors
+        editable ? (
+          <Button
+            appearance="text"
+            onClick={() => {
+              if (!validateAttendances()) {
+                va.track("Attempted Attendance Save With Incomplete Data");
+                setSnackbar(<Snackbar>{tx("snackbar.formInvalid")}</Snackbar>);
+              } else handleSave();
+            }}
+            disabled={loading || !teacherID}
+          >
+            {t("action.save")}
+          </Button>
+        ) : undefined
+      }
+      width={400}
+      onClose={onClose}
+      style={style}
+      className={cn(
+        `sm:!h-[calc(100dvh-2rem)] [&>:last-child]:!gap-0
+          [&>:last-child]:!overflow-x-hidden`,
+        className,
+      )}
+    >
+      <Progress
+        appearance="linear"
+        alt={t("loading")}
+        visible={loading}
+        className="absolute inset-0 bottom-auto top-16 !mx-0"
+      />
+
+      <Section>
+        {/* Event selection */}
+        <SegmentedButton alt={t("event.title")} full>
+          <Button
+            appearance="outlined"
+            selected={event === "assembly"}
+            onClick={() => setEvent("assembly")}
+          >
+            {t("event.assembly")}
+          </Button>
+          <Button
+            appearance="outlined"
+            selected={event === "homeroom"}
+            onClick={() => setEvent("homeroom")}
+          >
+            {t("event.homeroom")}
+          </Button>
+        </SegmentedButton>
+
+        {/* Bulk actions */}
+        {editable && (
+          <ChipSet scrollable className="-mx-4 px-4">
+            <AssistChip
+              icon={<MaterialIcon icon="done_all" />}
+              onClick={handleMarkAllPresent}
             >
-              {t("action.save")}
-            </Button>
-          ) : undefined
-        }
-        width={400}
-        onClose={onClose}
-        style={style}
-        className={cn(
-          `sm:!h-[calc(100dvh-2rem)] [&>:last-child]:!overflow-x-hidden`,
-          className,
+              {t("action.markAll")}
+            </AssistChip>
+            <AssistChip
+              icon={<MaterialIcon icon="delete" />}
+              dangerous
+              onClick={handleClear}
+            >
+              {t("action.clear")}
+            </AssistChip>
+          </ChipSet>
         )}
+      </Section>
+
+      {/* Legend */}
+      <section
+        aria-label={t("legend.title")}
+        className="flow-row mb-1 mt-6 flex justify-end gap-3"
       >
-        <Progress
-          appearance="linear"
-          alt={t("loading")}
-          visible={loading}
-          className="absolute inset-0 bottom-auto top-16 !mx-0"
-        />
+        <div className="flex flex-row items-center gap-1">
+          <MaterialIcon icon="check" size={20} className="text-primary" />
+          <Text type="label-medium">{t("legend.present")}</Text>
+        </div>
+        <div className="ml-1 flex flex-row items-center gap-1">
+          <MaterialIcon
+            icon="running_with_errors"
+            size={20}
+            className="text-tertiary"
+          />
+          <Text type="label-medium">{t("legend.late")}</Text>
+        </div>
+        <div className="flex flex-row items-center gap-1">
+          <MaterialIcon icon="close" size={20} className="text-error" />
+          <Text type="label-medium">{t("legend.absent")}</Text>
+        </div>
+      </section>
 
-        <Section>
-          {/* Event selection */}
-          <SegmentedButton alt={t("event.title")} full>
-            <Button
-              appearance="outlined"
-              selected={event === "assembly"}
-              onClick={() => setEvent("assembly")}
-            >
-              {t("event.assembly")}
-            </Button>
-            <Button
-              appearance="outlined"
-              selected={event === "homeroom"}
-              onClick={() => setEvent("homeroom")}
-            >
-              {t("event.homeroom")}
-            </Button>
-          </SegmentedButton>
-
-          {/* Bulk actions */}
-          {editable && (
-            <ChipSet scrollable className="-mx-4 px-4">
-              <AssistChip
-                icon={<MaterialIcon icon="done_all" />}
-                onClick={handleMarkAllPresent}
-              >
-                {t("action.markAll")}
-              </AssistChip>
-              <AssistChip
-                icon={<MaterialIcon icon="delete" />}
-                dangerous
-                onClick={handleClear}
-              >
-                {t("action.clear")}
-              </AssistChip>
-            </ChipSet>
-          )}
-        </Section>
-
-        {/* List */}
-        <motion.ul
-          key={event}
-          layout="position"
-          layoutRoot
-          transition={transition(duration.medium2, easing.standard)}
-          className="!mx-0 sm:!-mx-4"
-        >
-          <LayoutGroup id="attendance">
-            {attendances.map((attendance) => (
-              <AttendanceListItem
-                key={attendance.student.id}
-                attendance={attendance}
-                editable={Boolean(teacherID)}
-                onAttendanceChange={(attendance) =>
-                  setAttendances(
-                    replace(
-                      attendances,
-                      attendance,
-                      (item) => attendance.student!.id === item.student!.id,
-                    ),
-                  )
-                }
-              />
-            ))}
-          </LayoutGroup>
-        </motion.ul>
-      </FullscreenDialog>
-
-      {/* Confirm Save Dialog */}
-      <Dialog
-        open={confirmOpen}
-        width={312}
-        onClose={() => setConfirmOpen(false)}
+      {/* List */}
+      <motion.ul
+        key={event}
+        layout="position"
+        layoutRoot
+        transition={transition(duration.medium2, easing.standard)}
+        className="!mx-0 sm:!-mx-4"
       >
-        <DialogHeader title={ts("title")} desc={ts("desc")} />
-        <Actions>
-          <Button appearance="text" onClick={() => setConfirmOpen(false)}>
-            {ts("action.goBack")}
-          </Button>
-          <Button appearance="text" onClick={handleSave}>
-            {ts("action.confirm")}
-          </Button>
-        </Actions>
-      </Dialog>
-    </>
+        <LayoutGroup id="attendance">
+          {attendances.map((attendance) => (
+            <AttendanceListItem
+              key={attendance.student.id}
+              attendance={attendance}
+              editable={Boolean(teacherID)}
+              onAttendanceChange={(attendance) =>
+                setAttendances(
+                  replace(
+                    attendances,
+                    attendance,
+                    (item) => attendance.student!.id === item.student!.id,
+                  ),
+                )
+              }
+            />
+          ))}
+        </LayoutGroup>
+      </motion.ul>
+    </FullscreenDialog>
   );
 };
 
 export default AttendanceDialog;
+
