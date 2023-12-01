@@ -1,5 +1,5 @@
 import { DocumentSearchFilters } from "@/pages/search/documents/results";
-import getISODateString from "@/utils/backend/getISODateString";
+import getISODateString from "@/utils/helpers/getISODateString";
 import logError from "@/utils/helpers/logError";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
 import { SchoolDocument } from "@/utils/types/news";

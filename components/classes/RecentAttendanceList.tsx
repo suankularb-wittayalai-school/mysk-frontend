@@ -2,7 +2,7 @@
 import AttendanceDialog from "@/components/classes/AttendanceDialog";
 import RecentAttendanceItem from "@/components/classes/RecentAttendanceItem";
 import getAttendanceSummaryOfClass from "@/utils/backend/attendance/getAttendanceSummaryOfClass";
-import getISODateString from "@/utils/backend/getISODateString";
+import getISODateString from "@/utils/helpers/getISODateString";
 import cn from "@/utils/helpers/cn";
 import { AttendanceAtDate } from "@/utils/types/attendance";
 import { StylableFC } from "@/utils/types/common";
