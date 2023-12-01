@@ -2,7 +2,7 @@ import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import logError from "@/utils/helpers/logError";
 import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
-import { Teacher } from "@/utils/types/person";
+import { Teacher, UserRole } from "@/utils/types/person";
 import { alphabetical } from "radash";
 
 export async function getTeacherByID(
@@ -95,7 +95,7 @@ export async function getTeacherByID(
     pants_size: options?.detailed
       ? teacherData!.people?.pants_size ?? null
       : null,
-    role: "teacher",
+    role: UserRole.teacher,
     is_admin: null,
   };
 

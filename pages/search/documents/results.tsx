@@ -14,6 +14,7 @@ import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import getDocumentsByLookupFilters from "@/utils/backend/document/getDocumentsByLookupFilters";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { SchoolDocument, SchoolDocumentType } from "@/utils/types/news";
+import { UserRole } from "@/utils/types/person";
 import {
   SplitLayout,
   useAnimationConfig,
@@ -156,7 +157,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     { includeContacts: true, detailed: true },
   );
 
-  const userRole = user?.role || "student";
+  const userRole = user?.role || UserRole.student;
 
   const { data: documents } = await getDocumentsByLookupFilters(
     supabase,

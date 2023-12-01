@@ -9,7 +9,7 @@ import getLocaleName from "@/utils/helpers/getLocaleName";
 import useLocale from "@/utils/helpers/useLocale";
 import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
-import { Student, Teacher } from "@/utils/types/person";
+import { Student, Teacher, UserRole } from "@/utils/types/person";
 import {
   AssistChip,
   ChipSet,
@@ -127,7 +127,7 @@ const PersonHeader: StylableFC<{
                 <ClassDetailsCard
                   classroom={classroom}
                   isOwnClass={false}
-                  role="student"
+                  role={UserRole.student}
                   refreshData={fetchClassOfPerson}
                 />
               </LookupDetailsDialog>

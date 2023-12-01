@@ -4,16 +4,23 @@ import { Contact } from "@/utils/types/contact";
 import { Classroom } from "@/utils/types/classroom";
 import { SubjectGroup, Subject } from "@/utils/types/subject";
 
-export type UserRole =
-  | "student"
-  | "teacher"
-  | "organization"
-  | "staff"
-  | "management";
+export enum UserRole {
+  student = "student",
+  teacher = "teacher",
+}
+
+export enum UserPermissionKey {
+  can_see_management = "can_see_management",
+}
+
+export type UserPermissions = {
+  [key in UserPermissionKey]: boolean;
+};
 
 export type User = {
   id: string;
   email: string | null;
+  permissions: UserPermissions;
   is_admin: boolean;
   onboarded: boolean;
   role: UserRole;
@@ -52,7 +59,7 @@ export type Student = Person & {
   student_id: string;
   classroom: Pick<Classroom, "id" | "number"> | null;
   class_no: number | null;
-  role: "student";
+  role: UserRole.student;
 };
 
 export type Teacher = Person & {
@@ -60,7 +67,7 @@ export type Teacher = Person & {
   class_advisor_at: Pick<Classroom, "id" | "number"> | null;
   subject_group: SubjectGroup;
   subjects_in_charge: Pick<Subject, "id" | "name" | "code" | "short_name">[];
-  role: "teacher";
+  role: UserRole.teacher;
 };
 
 export type StudentLookupItem = Pick<

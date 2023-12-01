@@ -51,7 +51,7 @@ export async function getPeopleLookupList(
       middle_name: mergeDBLocales(personData, "middle_name"),
       ...(student
         ? {
-            role: "student",
+            role: UserRole.student,
             classroom: student.classroom_students.length
               ? student
                 ? student.classroom_students[0].classrooms!
@@ -59,7 +59,7 @@ export async function getPeopleLookupList(
               : null,
           }
         : {
-            role: "teacher",
+            role: UserRole.teacher,
             subject_group: {
               id: teacher!.subject_groups!.id,
               name: mergeDBLocales(teacher!.subject_groups, "name"),

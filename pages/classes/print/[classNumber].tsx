@@ -27,7 +27,7 @@ const StudentsListPrintPage: CustomPage<{
   const { t: tx } = useTranslation("common");
 
   const { person: user } = useLoggedInPerson();
-  const [userRole, setUserRole] = useState<UserRole>("student");
+  const [userRole, setUserRole] = useState<UserRole>(UserRole.student);
 
   useEffect(() => {
     if (user?.role) setUserRole(user.role);

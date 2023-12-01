@@ -2,7 +2,7 @@ import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import logError from "@/utils/helpers/logError";
 import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
-import { Student } from "@/utils/types/person";
+import { Student, UserRole } from "@/utils/types/person";
 import { pick } from "radash";
 
 export async function getStudentByID(
@@ -72,14 +72,15 @@ export async function getStudentByID(
       ? studentData!.people?.citizen_id ?? null
       : null,
     birthdate: options?.detailed
-      ? studentData!.people?.birthdate ?? null : null,
+      ? studentData!.people?.birthdate ?? null
+      : null,
     shirt_size: options?.detailed
       ? studentData!.people?.shirt_size ?? null
       : null,
     pants_size: options?.detailed
       ? studentData!.people?.pants_size ?? null
       : null,
-    role: "student",
+    role: UserRole.student,
     is_admin: null,
   };
 

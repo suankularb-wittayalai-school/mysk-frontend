@@ -4,7 +4,7 @@ import logError from "@/utils/helpers/logError";
 import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
 import createOrQueryFromFullName from "@/utils/helpers/person/createOrQueryFromFullName";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
-import { StudentLookupItem } from "@/utils/types/person";
+import { StudentLookupItem, UserRole } from "@/utils/types/person";
 
 /**
  * Get students by lookup filters.
@@ -71,7 +71,7 @@ export default async function getStudentsByLookupFilters(
       middle_name: mergeDBLocales(student.people, "middle_name"),
       last_name: mergeDBLocales(student.people, "last_name"),
       nickname: mergeDBLocales(student.people, "nickname"),
-      role: "student",
+      role: UserRole.student,
       classroom: student.classroom_students[0]?.classrooms || null,
     })),
     error: null,

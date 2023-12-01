@@ -34,7 +34,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL(getLocalePath("/", locale), req.url));
 
   // Get current page protection type
-  const pageRole: UserRole | "public" | "admin" | "user" =
+  const pageRole: "public" | "admin" | "student" | "teacher" | "user" =
     route === "/"
       ? "public"
       : /^\/admin|(news\/(info|form)\/(create|(\d+\/edit)))/.test(route)

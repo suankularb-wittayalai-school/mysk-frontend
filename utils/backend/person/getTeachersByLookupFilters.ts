@@ -5,7 +5,7 @@ import logError from "@/utils/helpers/logError";
 import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
 import createOrQueryFromFullName from "@/utils/helpers/person/createOrQueryFromFullName";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
-import { TeacherLookupItem } from "@/utils/types/person";
+import { TeacherLookupItem, UserRole } from "@/utils/types/person";
 
 export default async function getTeachersByLookupFilters(
   supabase: DatabaseClient,
@@ -77,7 +77,7 @@ export default async function getTeachersByLookupFilters(
       last_name: mergeDBLocales(teacher.people, "last_name"),
       nickname: mergeDBLocales(teacher.people, "nickname"),
       middle_name: mergeDBLocales(teacher.people, "middle_name"),
-      role: "teacher",
+      role: UserRole.teacher,
       subject_group: {
         id: teacher!.subject_groups!.id,
         name: mergeDBLocales(teacher!.subject_groups, "name"),
