@@ -2,7 +2,7 @@ import { DocumentSearchFilters } from "@/pages/search/documents/results";
 import getISODateString from "@/utils/helpers/getISODateString";
 import logError from "@/utils/helpers/logError";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
-import { SchoolDocument } from "@/utils/types/news";
+import { SchoolDocument, SchoolDocumentType } from "@/utils/types/news";
 import { UserRole } from "@/utils/types/person";
 import { lastDayOfMonth } from "date-fns";
 
@@ -51,7 +51,7 @@ export default async function getDocumentsByLookupFilters(
       id: document.id,
       code: document.code,
       date: document.date,
-      type: document.type,
+      type: <SchoolDocumentType>document.type,
       subject: document.subject,
       document_link: document.document_link,
       organization: null,
