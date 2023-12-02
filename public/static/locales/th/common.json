@@ -68,6 +68,12 @@
     "discord": "Discord",
     "other": "อื่น ๆ"
   },
+  "vCard": {
+    "teacherPrefix": "ครู",
+    "org": "โรงเรียนสวนกุหลาบวิทยาลัย",
+    "title": "อาจารย์",
+    "note": "ครูที่ปรึกษาห้องม.{{number}}"
+  },
   "datetime": {
     "day": {
       "0": "วันอาทิตย์",
