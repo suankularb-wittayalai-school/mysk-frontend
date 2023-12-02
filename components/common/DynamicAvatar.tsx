@@ -15,7 +15,9 @@ import useLocale from "@/utils/helpers/useLocale";
 import { Person } from "@/utils/types/person";
 
 const DynamicAvatar: FC<
-  Partial<Pick<Person, "first_name" | "last_name" | "profile">> & { className?: string }
+  Partial<Pick<Person, "first_name" | "last_name" | "profile">> & {
+    className?: string;
+  }
 > = ({ first_name, last_name, profile, className }) => {
   // Translation
   const locale = useLocale();
@@ -33,16 +35,11 @@ const DynamicAvatar: FC<
             [first_name["en-US"][0], last_name["en-US"][0]]
               .join("")
               .toUpperCase()
+          ) : // Otherwise, use Thai name
+          startsWithThaiVowel(first_name.th[0]) ? (
+            first_name.th[1]
           ) : (
-            // Otherwise, use Thai name
-            [
-              startsWithThaiVowel(first_name.th[0])
-                ? first_name.th[1]
-                : first_name.th[0],
-              startsWithThaiVowel(last_name.th[0])
-                ? last_name.th[1]
-                : last_name.th[0],
-            ].join("")
+            first_name.th[0]
           )
         ) : // If nothing available, show the default vector
         undefined
