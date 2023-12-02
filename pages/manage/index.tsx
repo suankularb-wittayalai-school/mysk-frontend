@@ -3,7 +3,7 @@ import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getUserByEmail from "@/utils/backend/account/getUserByEmail";
 import permitted from "@/utils/helpers/permitted";
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { UserPermissionKey } from "@/utils/types/person";
+import { UserPermissionKey, UserRole } from "@/utils/types/person";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
@@ -26,7 +26,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   req,
   res,
 }) => {
-  // Check if the user is logged in and has the `can_see_management` permission.
+  // Check if the user is logged in and has the correct permissions.
   // If not, return a 404.
 
   const supabase = createPagesServerClient({
@@ -37,7 +37,14 @@ export const getServerSideProps: GetServerSideProps = async ({
   if (!session?.user) return { notFound: true };
 
   const { data: user } = await getUserByEmail(supabase, session.user.email!);
-  if (!permitted(user!, UserPermissionKey.can_see_management))
+  if (
+    !(
+      // The user is a management user.
+      user?.role === UserRole.management ||
+      // The user has the `can_see_management` permission.
+      permitted(user!, UserPermissionKey.can_see_management)
+    )
+  )
     return { notFound: true };
 
   return {

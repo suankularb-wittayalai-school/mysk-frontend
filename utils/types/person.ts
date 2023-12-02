@@ -4,12 +4,24 @@ import { Contact } from "@/utils/types/contact";
 import { Classroom } from "@/utils/types/classroom";
 import { SubjectGroup, Subject } from "@/utils/types/subject";
 
+/**
+ * The role of a user.
+ */
 export enum UserRole {
   student = "student",
   teacher = "teacher",
+  management = "management",
+  organization = "organization",
+  staff = "staff",
 }
 
+/**
+ * The key of a User Permission.
+ */
 export enum UserPermissionKey {
+  /**
+   * Can see the Manage page and its children.
+   */
   can_see_management = "can_see_management",
 }
 
@@ -26,17 +38,18 @@ export type User = {
   role: UserRole;
 };
 
-export type ShirtSize =
-  | "XS"
-  | "S"
-  | "M"
-  | "L"
-  | "XL"
-  | "2XL"
-  | "3XL"
-  | "4XL"
-  | "5XL"
-  | "6XL";
+export enum ShirtSize {
+  XS = "XS",
+  S = "S",
+  M = "M",
+  L = "L",
+  XL = "XL",
+  twoXL = "2XL",
+  threeXL = "3XL",
+  fourXL = "4XL",
+  fiveXL = "5XL",
+  sixXL = "6XL",
+}
 
 export type Person = {
   id: string;
@@ -95,3 +108,4 @@ export type TeacherLookupItem = Pick<
 >;
 
 export type PersonLookupItem = StudentLookupItem | TeacherLookupItem;
+
