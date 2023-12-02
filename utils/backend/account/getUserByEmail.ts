@@ -25,7 +25,7 @@ export default async function getUserByEmail(
       is_admin,
       onboarded,
       role,
-      user_permissions!inner(permissions(name))`,
+      user_permissions(permissions(name))`,
     )
     .eq("email", email)
     .maybeSingle();
@@ -33,6 +33,7 @@ export default async function getUserByEmail(
     logError("getUserByEmail (user)", error);
     return { data: null, error };
   }
+  if (!data) return { data: null, error: null };
 
   const { data: allPermissions, error: permissionsError } =
     await getAllPermissions(supabase);
@@ -43,7 +44,7 @@ export default async function getUserByEmail(
 
   const user = {
     ...omit(data!, ["role", "user_permissions"]),
-    role: <UserRole>data!.role.slice(1, -2),
+    role: <UserRole>data!.role,
     permissions: Object.fromEntries(
       allPermissions.map((permission) => [
         permission,
