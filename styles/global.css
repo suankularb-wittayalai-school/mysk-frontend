@@ -95,3 +95,7 @@
 .skc-page-header__blobs {
   pointer-events: none;
 }
+
+.skc-nav-bar {
+  backdrop-filter: blur(16px) !important;
+}
