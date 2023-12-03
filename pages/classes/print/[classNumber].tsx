@@ -23,7 +23,7 @@ const StudentsListPrintPage: CustomPage<{
   >;
   studentList: Student[];
 }> = ({ classItem, classroomOverview, studentList }) => {
-  const { t } = useTranslation("class");
+  const { t } = useTranslation("classes", { keyPrefix: "print" });
   const { t: tx } = useTranslation("common");
 
   const { person: user } = useLoggedInPerson();
@@ -36,7 +36,7 @@ const StudentsListPrintPage: CustomPage<{
   return (
     <>
       <Head>
-        <title>{tx("tabName", { tabName: t("student.print.title") })}</title>
+        <title>{tx("tabName", { tabName: t("title") })}</title>
       </Head>
       <StudentListPrintout
         classItem={classItem}
