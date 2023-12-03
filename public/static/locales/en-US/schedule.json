@@ -37,6 +37,12 @@
         "title": "Room",
         "content": "{{rooms, list}}"
       }
+    },
+    "action": {
+      "attendance": {
+        "view": "View attendance",
+        "take": "Take attendance"
+      }
     }
   },
   "schedule": {

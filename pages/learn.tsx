@@ -1,8 +1,8 @@
 // Imports
 import PageHeader from "@/components/common/PageHeader";
-import Schedule from "@/components/schedule/Schedule";
 import HomeGlance from "@/components/home/HomeGlance";
 import SubjectList from "@/components/home/SubjectList";
+import Schedule from "@/components/schedule/Schedule";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import getClassSchedule from "@/utils/backend/schedule/getClassSchedule";
@@ -10,7 +10,7 @@ import getClassroomSubjectsOfClass from "@/utils/backend/subject/getClassroomSub
 import createEmptySchedule from "@/utils/helpers/schedule/createEmptySchedule";
 import useLocale from "@/utils/helpers/useLocale";
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { Student } from "@/utils/types/person";
+import { Student, UserRole } from "@/utils/types/person";
 import { Schedule as ScheduleType } from "@/utils/types/schedule";
 import { ClassroomSubject } from "@/utils/types/subject";
 import {
@@ -62,7 +62,7 @@ const LearnPage: CustomPage<{
           {/* Home Glance */}
           <HomeGlance
             schedule={schedule}
-            role="student"
+            role={UserRole.student}
             classroomID={classroomID}
           />
 
@@ -73,7 +73,7 @@ const LearnPage: CustomPage<{
             transition={transition(duration.medium4, easing.standard)}
           >
             <Header>{t("schedule")}</Header>
-            <Schedule schedule={schedule} view="student" />
+            <Schedule schedule={schedule} view={UserRole.student} />
           </motion.section>
 
           {/* Subject list */}

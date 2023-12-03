@@ -1,4 +1,4 @@
-import getISODateString from "@/utils/backend/getISODateString";
+import getISODateString from "@/utils/helpers/getISODateString";
 import logError from "@/utils/helpers/logError";
 import { AttendanceAtDate, AttendanceEvent } from "@/utils/types/attendance";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";

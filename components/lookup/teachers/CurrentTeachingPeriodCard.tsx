@@ -2,6 +2,7 @@
 import CurrentPeriodCard from "@/components/lookup/people/CurrentPeriodCard";
 import getCurrentPeriodByTeacherID from "@/utils/backend/schedule/getCurrentPeriodByTeacherID";
 import { StylableFC } from "@/utils/types/common";
+import { UserRole } from "@/utils/types/person";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 /**
@@ -18,7 +19,7 @@ const CurrentTeachingPeriodCard: StylableFC<{
 
   return (
     <CurrentPeriodCard
-      role="teacher"
+      role={UserRole.teacher}
       getCurrentPeriod={async () => {
         const { data } = await getCurrentPeriodByTeacherID(supabase, teacherID);
         return data;

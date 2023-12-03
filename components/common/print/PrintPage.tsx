@@ -48,8 +48,8 @@ const PrintPage: FC<{ children: ReactNode }> = ({ children }) => (
         background-color: var(--surface-2);
       }
 
-      .skc-nav-bar {
-        background-color: var(--surface-2) !important;
+      .skc-nav-bar::before {
+        background-color: transparent;
       }
 
       @media print {

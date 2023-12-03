@@ -3,7 +3,7 @@ import getUserByEmail from "@/utils/backend/account/getUserByEmail";
 import getLocalePath from "@/utils/helpers/getLocalePath";
 import logError from "@/utils/helpers/logError";
 import { LangCode } from "@/utils/types/common";
-import { User, UserRole } from "@/utils/types/person";
+import { User } from "@/utils/types/person";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
@@ -34,16 +34,24 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL(getLocalePath("/", locale), req.url));
 
   // Get current page protection type
-  const pageRole: UserRole | "public" | "admin" | "user" =
+  const pageRole:
+    | "public"
+    | "admin"
+    | "student"
+    | "teacher"
+    | "management"
+    | "user" =
     route === "/"
       ? "public"
       : /^\/admin|(news\/(info|form)\/(create|(\d+\/edit)))/.test(route)
-      ? "admin"
-      : /^\/learn/.test(route)
-      ? "student"
-      : /^\/(teach|class\/\d{3}\/form\/\d+)/.test(route)
-      ? "teacher"
-      : "user";
+        ? "admin"
+        : /^\/learn/.test(route)
+          ? "student"
+          : /^\/(teach|class\/\d{3}\/form\/\d+)/.test(route)
+            ? "teacher"
+            : /^\/manage/.test(route)
+              ? "management"
+              : "user";
 
   // Declare Supabase client
   const supabase = createMiddlewareClient({ req, res });
@@ -59,6 +67,20 @@ export async function middleware(req: NextRequest) {
 
   // Decide on destination based on user and page protection type
   let destination: string | null = null;
+
+  /**
+   * The home destination is the page the user is redirected to if they are
+   * on a page they are not allowed to be on.
+   */
+  const homeDestination = {
+    public: "/",
+    student: "/learn",
+    teacher: "/teach",
+    management: "/manage",
+    admin: "/admin",
+    organization: "/organization",
+    staff: "/staff",
+  }[user?.role || "public"];
 
   // Default Search page to Students tab
   if (route === "/search") destination = "/search/students";
@@ -80,17 +102,15 @@ export async function middleware(req: NextRequest) {
       )
     )
   ) {
-    // Set destinations for students and teachers in the wrong pages
-    if (user?.role === "student") destination = "/learn";
-    else if (user?.role === "teacher") destination = "/teach";
+    // Set destinations for users in the wrong pages
+    destination = homeDestination;
   }
   // Allow all users to visit user pages
   // Allow users with the correct roles
   else if (!(pageRole === "user" || pageRole === user?.role)) {
     if (pageRole !== "admin" || !user?.is_admin) {
-      // Set destinations for students and teachers in the wrong pages
-      if (user?.role === "student") destination = "/learn";
-      else if (user?.role === "teacher") destination = "/teach";
+      // Set destinations for users in the wrong pages
+      destination = homeDestination;
     }
   }
 
@@ -118,6 +138,7 @@ export const config = {
     "/classes/:path*",
     "/search/:path*",
     "/maintenance",
+    "/manage/:path*",
     "/news",
     "/news/:id",
   ],

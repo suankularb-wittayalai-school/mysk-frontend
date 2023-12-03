@@ -6,6 +6,7 @@ import getTodaySetToPeriodTime from "@/utils/helpers/schedule/getTodaySetToPerio
 import useLocale from "@/utils/helpers/useLocale";
 import useNow from "@/utils/helpers/useNow";
 import { StylableFC } from "@/utils/types/common";
+import { UserRole } from "@/utils/types/person";
 import { SchedulePeriod } from "@/utils/types/schedule";
 import {
   Card,
@@ -30,7 +31,7 @@ import { useEffect, useState } from "react";
  * if you have any feedback.
  */
 const CurrentPeriodCard: StylableFC<{
-  role: "student" | "teacher";
+  role: UserRole;
   getCurrentPeriod: () => Promise<SchedulePeriod | null>;
   onClick: () => void;
 }> = ({ role, getCurrentPeriod, onClick, style, className }) => {

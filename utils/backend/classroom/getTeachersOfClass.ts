@@ -1,7 +1,7 @@
 import logError from "@/utils/helpers/logError";
 import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
-import { Teacher } from "@/utils/types/person";
+import { Teacher, UserRole } from "@/utils/types/person";
 
 import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 
@@ -45,7 +45,7 @@ export default async function getTeachersOfClass(
   >[] = teachers?.map((teacher) => {
     return {
       id: teacher.id,
-      role: "teacher",
+      role: UserRole.teacher,
       prefix: mergeDBLocales(teacher.people, "prefix"),
       first_name: mergeDBLocales(teacher.people, "first_name"),
       last_name: mergeDBLocales(teacher.people, "last_name"),

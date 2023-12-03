@@ -1,8 +1,8 @@
 // Imports
 import PageHeader from "@/components/common/PageHeader";
-import Schedule from "@/components/schedule/Schedule";
 import HomeGlance from "@/components/home/HomeGlance";
 import TeachingSubjectCard from "@/components/home/TeachingSubjectCard";
+import Schedule from "@/components/schedule/Schedule";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import getTeacherSchedule from "@/utils/backend/schedule/getTeacherSchedule";
@@ -10,6 +10,7 @@ import getTeachingSubjects from "@/utils/backend/subject/getTeachingSubjects";
 import getLocalePath from "@/utils/helpers/getLocalePath";
 import useLocale from "@/utils/helpers/useLocale";
 import { CustomPage, LangCode } from "@/utils/types/common";
+import { UserRole } from "@/utils/types/person";
 import { Schedule as ScheduleType } from "@/utils/types/schedule";
 import { Subject, SubjectClassrooms } from "@/utils/types/subject";
 import {
@@ -70,7 +71,7 @@ const TeachPage: CustomPage<{
           {/* Home Glance */}
           <HomeGlance
             schedule={schedule}
-            role="teacher"
+            role={UserRole.teacher}
             classroomID={classroomID}
             teacherID={teacherID}
           />
@@ -84,7 +85,7 @@ const TeachPage: CustomPage<{
             <Header>{t("schedule.title")}</Header>
             <Schedule
               {...{ schedule, subjectsInCharge, teacherID }}
-              view="teacher"
+              view={UserRole.teacher}
               editable
             />
           </motion.section>

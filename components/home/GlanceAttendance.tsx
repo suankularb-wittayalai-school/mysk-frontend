@@ -16,8 +16,8 @@ const GlanceAttendance: StylableFC<{
   role: UserRole;
   onOpen: () => void;
 }> = ({ role, onOpen, style, className }) => {
-  const { t } = useTranslation("classes", {
-    keyPrefix: "header.action.attendance",
+  const { t } = useTranslation("schedule", {
+    keyPrefix: "atAGlance.action.attendance",
   });
 
   return (

@@ -2,7 +2,7 @@ import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import logError from "@/utils/helpers/logError";
 import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
-import { Teacher } from "@/utils/types/person";
+import { ShirtSize, Teacher, UserRole } from "@/utils/types/person";
 import { alphabetical } from "radash";
 
 export async function getTeacherByID(
@@ -76,26 +76,41 @@ export async function getTeacherByID(
     citizen_id: options?.detailed
       ? teacherData!.people?.citizen_id ?? null
       : null,
-    shirt_size: options?.detailed
-      ? teacherData!.people?.shirt_size ?? null
-      : null,
+    shirt_size:
+      options?.detailed && teacherData?.people?.shirt_size
+        ? {
+            XS: ShirtSize.XS,
+            S: ShirtSize.S,
+            M: ShirtSize.M,
+            L: ShirtSize.L,
+            XL: ShirtSize.XL,
+            "2XL": ShirtSize.twoXL,
+            "3XL": ShirtSize.threeXL,
+            "4XL": ShirtSize.fourXL,
+            "5XL": ShirtSize.fiveXL,
+            "6XL": ShirtSize.sixXL,
+          }[teacherData.people.shirt_size]
+        : null,
     subject_group: {
       id: teacherData!.subject_groups!.id,
       name: mergeDBLocales(teacherData!.subject_groups, "name"),
     },
     subjects_in_charge: options?.detailed
-      ? alphabetical(teacherData!.subject_teachers.map((subject) => ({
-          id: subject.subjects!.id,
-          name: mergeDBLocales(subject.subjects, "name"),
-          code: mergeDBLocales(subject.subjects, "code"),
-          short_name: mergeDBLocales(subject.subjects, "short_name"),
-        })), subject => subject.code.th)
+      ? alphabetical(
+          teacherData!.subject_teachers.map((subject) => ({
+            id: subject.subjects!.id,
+            name: mergeDBLocales(subject.subjects, "name"),
+            code: mergeDBLocales(subject.subjects, "code"),
+            short_name: mergeDBLocales(subject.subjects, "short_name"),
+          })),
+          (subject) => subject.code.th,
+        )
       : [],
     birthdate: teacherData!.people!.birthdate,
     pants_size: options?.detailed
       ? teacherData!.people?.pants_size ?? null
       : null,
-    role: "teacher",
+    role: UserRole.teacher,
     is_admin: null,
   };
 

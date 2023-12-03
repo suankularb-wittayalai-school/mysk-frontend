@@ -4,7 +4,7 @@ import { getPersonByID } from "@/utils/backend/person/getPersonByID";
 import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import logError from "@/utils/helpers/logError";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
-import { Student, Teacher } from "@/utils/types/person";
+import { Student, Teacher, UserRole } from "@/utils/types/person";
 import { Subject } from "@/utils/types/subject";
 import { GetServerSidePropsContext } from "next";
 import { NextAuthOptions, getServerSession } from "next-auth";
@@ -76,7 +76,7 @@ export async function getStudentFromUserID(
         id: classroomData!.id,
         number: classroomData!.number,
       },
-      role: "student",
+      role: UserRole.student,
     },
     error: null,
   };
@@ -212,7 +212,7 @@ export async function getTeacherFromUserID(
         },
       },
       subjects_in_charge: subjectsInCharge,
-      role: "teacher",
+      role: UserRole.teacher,
     },
     error: null,
   };
@@ -246,7 +246,7 @@ export default async function getLoggedInPerson(
   let loggedInAccount: Student | Teacher | null = null;
 
   switch (user!.role) {
-    case "student":
+    case UserRole.student:
       const { data, error } = await getStudentFromUserID(
         supabase,
         user!.id,
@@ -259,7 +259,7 @@ export default async function getLoggedInPerson(
       loggedInAccount = { ...data!, is_admin: user!.is_admin };
       break;
 
-    case "teacher":
+    case UserRole.teacher:
       const { data: teacherData, error: teacherError } =
         await getTeacherFromUserID(supabase, user!.id, options);
       if (teacherError) {
@@ -278,3 +278,4 @@ export default async function getLoggedInPerson(
 
   return { data: loggedInAccount, error: null };
 }
+

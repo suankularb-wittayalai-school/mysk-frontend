@@ -10,10 +10,11 @@ import SubjectsInChargeCard from "@/components/schedule/SubjectsInChargeCard";
 import ScheduleContext from "@/contexts/ScheduleContext";
 import cn from "@/utils/helpers/cn";
 import getCurrentPeriod from "@/utils/helpers/schedule/getCurrentPeriod";
-import isInPeriod from "@/utils/helpers/schedule/isInPeriod";
 import getCurrentSchoolSessionState from "@/utils/helpers/schedule/getCurrentSchoolSessionState";
+import isInPeriod from "@/utils/helpers/schedule/isInPeriod";
 import useNow from "@/utils/helpers/useNow";
 import { StylableFC } from "@/utils/types/common";
+import { UserRole } from "@/utils/types/person";
 import { PeriodLocation, Schedule } from "@/utils/types/schedule";
 import { Subject } from "@/utils/types/subject";
 import { Text } from "@suankularb-components/react";
@@ -34,7 +35,7 @@ const Schedule: StylableFC<{
   schedule: Schedule;
   subjectsInCharge?: Pick<Subject, "id" | "name" | "code" | "short_name">[];
   teacherID?: string;
-  view: "student" | "teacher";
+  view: UserRole;
   editable?: boolean;
 }> = ({
   schedule,
@@ -164,3 +165,4 @@ const Schedule: StylableFC<{
 };
 
 export default Schedule;
+

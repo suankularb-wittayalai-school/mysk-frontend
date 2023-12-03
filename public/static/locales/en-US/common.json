@@ -68,6 +68,12 @@
     "discord": "Discord",
     "other": "Other"
   },
+  "vCard": {
+    "teacherPrefix": "T. ",
+    "org": "Suankularb Wittayalai School",
+    "title": "Teacher",
+    "note": "Class advisor at M.{{number}}"
+  },
   "datetime": {
     "day": {
       "0": "Sunday",
