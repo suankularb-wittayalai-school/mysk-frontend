@@ -83,6 +83,8 @@ export type Teacher = Person & {
   role: UserRole.teacher;
 };
 
+export type Management = Person & { role: UserRole.management };
+
 export type StudentLookupItem = Pick<
   Student,
   | "id"
@@ -108,4 +110,3 @@ export type TeacherLookupItem = Pick<
 >;
 
 export type PersonLookupItem = StudentLookupItem | TeacherLookupItem;
-

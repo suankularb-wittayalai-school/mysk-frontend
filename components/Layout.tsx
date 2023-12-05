@@ -51,16 +51,18 @@ const Layout: FC<
   const locale = useLocale();
   const { t } = useTranslation("common");
 
-  // Router
   const refreshProps = useRefreshProps();
-
-  // Navigation Bar and Drawer
-  const router = useRouter();
   const { colorScheme, setColorScheme, navOpen, setNavOpen } =
     useContext(AppStateContext);
 
-  // Class data (for Navigation links)
+  // Navigation Bar and Drawer
+  const router = useRouter();
   const { person: user } = useLoggedInPerson();
+  const homeURL = {
+    student: "/learn",
+    teacher: "/teach",
+    management: "/manage",
+  }[user?.role || "student"];
 
   // Snackbar
   const { snackbarOpen, setSnackbarOpen, snackbarProps } = useSnackbar();
@@ -128,15 +130,8 @@ const Layout: FC<
           <NavDrawerItem
             icon={<MaterialIcon icon="home" />}
             label={t("navigation.home")}
-            selected={
-              router.pathname.startsWith("/teach") ||
-              router.pathname.startsWith("/learn")
-            }
-            href={
-              user?.role === "teacher" || navType === "teacher"
-                ? "/teach"
-                : "/learn"
-            }
+            selected={router.pathname.startsWith(homeURL)}
+            href={homeURL}
             element={Link}
           />
           <NavDrawerItem
@@ -308,15 +303,8 @@ const Layout: FC<
           <NavBarItem
             icon={<Favicon />}
             label={t("appName")}
-            selected={
-              router.pathname.startsWith("/teach") ||
-              router.pathname.startsWith("/learn")
-            }
-            href={
-              user?.role === "teacher" || navType === "teacher"
-                ? "/teach"
-                : "/learn"
-            }
+            selected={router.pathname.startsWith(homeURL)}
+            href={homeURL}
             element={Link}
           />
           <NavBarItem
