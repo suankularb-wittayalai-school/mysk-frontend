@@ -115,7 +115,7 @@ const LookupClassesPage: NextPage<{
       <Head>
         <title>{tx("tabName", { tabName: t("title") })}</title>
       </Head>
-      <PageHeader parentURL="/lookup">{t("title")}</PageHeader>
+      <PageHeader>{t("title")}</PageHeader>
 
       <SplitLayout
         ratio="list-detail"

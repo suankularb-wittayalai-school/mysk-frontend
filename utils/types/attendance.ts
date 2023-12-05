@@ -21,3 +21,9 @@ export type AttendanceAtDate = {
   date: string;
   absence_count: Record<AttendanceEvent, number | null>;
 };
+
+export type ManagementAttendanceSummary = {
+  presence: number;
+  late: number;
+  absence: number;
+};

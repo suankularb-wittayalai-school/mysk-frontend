@@ -1,13 +1,29 @@
 // Imports
+import AttendanceSummary from "@/components/attendance/AttendanceSummary";
+import PageHeader from "@/components/common/PageHeader";
+import ParticipationMetric from "@/components/manage/ParticipationMetric";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getUserByEmail from "@/utils/backend/account/getUserByEmail";
+import getManagementAttendanceSummary from "@/utils/backend/attendance/getManagementAttendanceSummary";
+import getParticipationMetrics from "@/utils/backend/manage/getParticipationMetrics";
 import permitted from "@/utils/helpers/permitted";
+import { ManagementAttendanceSummary } from "@/utils/types/attendance";
 import { CustomPage, LangCode } from "@/utils/types/common";
+import { ParticipationMetrics } from "@/utils/types/management";
 import { UserPermissionKey, UserRole } from "@/utils/types/person";
+import {
+  Columns,
+  ContentLayout,
+  Header,
+  Section,
+  Text,
+} from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
+import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Head from "next/head";
 
 /**
  * Management’s counterpart to Learn, where the user can view statistics about
@@ -17,22 +33,98 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
  * Management users see this page as their Home. Other users with the permission
  * can access this page from their Account page.
  *
- * @todo Implement this page.
+ * @param attendance The attendance statistics for today and this week.
+ * @param participationMetrics Metrics on MySK participation.
  */
-const ManagePage: CustomPage = () => null;
+const ManagePage: CustomPage<{
+  attendance: { [key in "today" | "this_week"]: ManagementAttendanceSummary };
+  participationMetrics: ParticipationMetrics;
+}> = ({ attendance, participationMetrics }) => {
+  const { t } = useTranslation("manage");
+  const { t: tx } = useTranslation("common");
+
+  return (
+    <>
+      <Head>
+        <title>{tx("tabName", { tabName: "Manage" })}</title>
+      </Head>
+      <PageHeader>{tx("appName")}</PageHeader>
+      <ContentLayout>
+        {/* Attendance */}
+        <Section>
+          <Header>{t("attendance.title")}</Header>
+          <Text type="body-medium" className="!-mt-1">
+            {t("attendance.description")}
+          </Text>
+          <Columns columns={2} className="!grid-cols-1 md:!grid-cols-2">
+            <AttendanceSummary
+              title={
+                <Text type="title-large" element="h3">
+                  {t("attendance.summary.today.title")}
+                </Text>
+              }
+              summary={attendance.today}
+              total={participationMetrics.students_with_classroom}
+            />
+            <AttendanceSummary
+              title={
+                <>
+                  <Text type="title-large" element="h3">
+                    {t("attendance.summary.thisWeek.title")}
+                  </Text>
+                  <Text type="title-small" className="text-on-surface-variant">
+                    {t("attendance.summary.thisWeek.subtitle")}
+                  </Text>
+                </>
+              }
+              summary={attendance.this_week}
+              total={participationMetrics.students_with_classroom}
+            />
+          </Columns>
+        </Section>
+
+        {/* Participation */}
+        <Columns columns={6}>
+          <Section className="col-span-2 !gap-4 sm:col-span-4 md:col-start-2">
+            <Header>{t("participation.title")}</Header>
+            <Text type="body-medium" className="!-mt-2">
+              {t("participation.description")}
+            </Text>
+
+            <ParticipationMetric
+              id="onboarding"
+              count={participationMetrics.onboarded_users}
+              total={participationMetrics.total_users}
+            />
+            <ParticipationMetric
+              id="teacherSchedule"
+              count={participationMetrics.teachers_with_schedule}
+              total={participationMetrics.teachers_with_assigned_subjects}
+            />
+            <ParticipationMetric
+              id="studentData"
+              count={participationMetrics.students_with_additional_account_data}
+              total={participationMetrics.students_with_classroom}
+            />
+          </Section>
+        </Columns>
+      </ContentLayout>
+    </>
+  );
+};
 
 export const getServerSideProps: GetServerSideProps = async ({
   locale,
   req,
   res,
 }) => {
-  // Check if the user is logged in and has the correct permissions.
-  // If not, return a 404.
-
   const supabase = createPagesServerClient({
     req: req as NextApiRequest,
     res: res as NextApiResponse,
   });
+
+  // Check if the user is logged in and has the correct permissions.
+  // If not, return a 404.
   const session = await getServerSession(req, res, authOptions);
   if (!session?.user) return { notFound: true };
 
@@ -40,12 +132,18 @@ export const getServerSideProps: GetServerSideProps = async ({
   if (
     !(
       // The user is a management user.
-      user?.role === UserRole.management ||
-      // The user has the `can_see_management` permission.
-      permitted(user!, UserPermissionKey.can_see_management)
+      (
+        user?.role === UserRole.management ||
+        // The user has the `can_see_management` permission.
+        permitted(user!, UserPermissionKey.can_see_management)
+      )
     )
   )
     return { notFound: true };
+
+  const { data: attendance } = await getManagementAttendanceSummary(supabase);
+  const { data: participationMetrics } =
+    await getParticipationMetrics(supabase);
 
   return {
     props: {
@@ -53,6 +151,8 @@ export const getServerSideProps: GetServerSideProps = async ({
         "common",
         "manage",
       ])),
+      attendance,
+      participationMetrics,
     },
   };
 };
