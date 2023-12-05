@@ -99,7 +99,7 @@ const ManagePage: CustomPage<{
             <ParticipationMetric
               id="teacherSchedule"
               count={participationMetrics.teachers_with_schedule}
-              total={participationMetrics.total_teachers}
+              total={participationMetrics.teachers_with_assigned_subjects}
             />
             <ParticipationMetric
               id="studentData"

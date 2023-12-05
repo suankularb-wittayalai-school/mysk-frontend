@@ -29,7 +29,7 @@ export default async function getAttendanceSummaryOfClass(
     )
     .eq("students.classroom_students.classroom_id", classroomID)
     .order("date", { ascending: false })
-    .gt("date", addMonths(new Date(), -3).toISOString().split("T")[0]);
+    .gt("date", getISODateString(addMonths(new Date(), -3)));
 
   if (error) {
     logError("getRecentAttendanceAtDaysOfClass", error);
@@ -100,4 +100,3 @@ export default async function getAttendanceSummaryOfClass(
 
   return { data: attendanceAtDates, error: null };
 }
-

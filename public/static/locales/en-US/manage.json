@@ -13,9 +13,9 @@
       },
       "card": {
         "title": {
-          "present": "{{count, number}} present",
-          "late": "{{count, number}} late",
-          "absent": "{{count, number}} absent"
+          "present": "{{count, number(maximumFractionDigits: 0;)}} present",
+          "late": "{{count, number(maximumFractionDigits: 0;)}} late",
+          "absent": "{{count, number(maximumFractionDigits: 0;)}} absent"
         },
         "content": "{{percentage, number(style: percent; maximumFractionDigits: 1;}}"
       },

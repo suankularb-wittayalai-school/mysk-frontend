@@ -13,9 +13,9 @@
       },
       "card": {
         "title": {
-          "present": "มาเรียน {{count, number}}",
-          "late": "มาสาย {{count, number}}",
-          "absent": "ขาดเรียน {{count, number}}"
+          "present": "มาเรียน {{count, number(maximumFractionDigits: 0;)}}",
+          "late": "มาสาย {{count, number(maximumFractionDigits: 0;)}}",
+          "absent": "ขาดเรียน {{count, number(maximumFractionDigits: 0;)}}"
         },
         "content": "{{percentage, number(style: percent; maximumFractionDigits: 1;}}"
       },
