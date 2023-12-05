@@ -87,14 +87,15 @@ const ClassDetailsCard: StylableFC<{
             </section>
 
             <section
-              className={cn(`flex flex-col-reverse gap-x-2 gap-y-5 md:-mb-4
-                md:grid md:min-h-[20rem] md:grow md:grid-cols-2`)}
+              className={cn(`flex flex-col-reverse gap-x-2 gap-y-5
+                md:grid md:grid-cols-2`)}
             >
               {/* Students */}
               {classroom.students.length > 0 && (
                 <ClassStudentList
                   students={classroom.students}
                   classNumber={classroom.number}
+                  className="!overflow-auto max-h-96"
                 />
               )}
 

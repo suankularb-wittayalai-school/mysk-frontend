@@ -14,10 +14,11 @@ import {
   MaterialIcon,
   Progress,
 } from "@suankularb-components/react";
+import va from "@vercel/analytics";
 import { differenceInSeconds, formatDistanceToNowStrict } from "date-fns";
 import { enUS, th } from "date-fns/locale";
 import { useTranslation } from "next-i18next";
-import va from "@vercel/analytics";
+import { sift } from "radash";
 
 /**
  * Lookup Class Card is a card that displays a Classroom in the Lookup Classes
@@ -73,7 +74,7 @@ const LookupClassCard: StylableFC<{
     >
       <CardHeader
         title={tx("class", { number: classroom.number })}
-        subtitle={[
+        subtitle={sift([
           classroom.main_room,
           period
             ? periodIsCurrent
@@ -85,7 +86,7 @@ const LookupClassCard: StylableFC<{
                   ),
                 })
             : t("period.finished"),
-        ].join(" • ")}
+        ]).join(" • ")}
         className="grow [&>*>*]:block [&>*>*]:!truncate [&>*]:w-full"
       />
       {periodIsCurrent ? (

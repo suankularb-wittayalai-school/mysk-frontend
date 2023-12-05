@@ -173,13 +173,13 @@
         "share": "Share",
         "popOut": "Pop out",
         "download": "Download"
+      },
+      "snackbar": {
+        "download": "Getting that file for you…"
       }
     },
     "detail": {
       "loading": "Loading document from Google Drive…"
-    },
-    "snackbar": {
-      "download": "Getting that file for you…"
     }
   },
   "common": {

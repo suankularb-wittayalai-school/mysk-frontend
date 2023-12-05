@@ -1,7 +1,6 @@
 // Imports
 import ContactCard from "@/components/account/ContactCard";
 import ContactDialog from "@/components/account/ContactDialog";
-import ClassDetailsListSection from "@/components/classes/ClassDetailsListSection";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import createClassroomContact from "@/utils/backend/classroom/createClassroomContact";
 import deleteContact from "@/utils/backend/contact/deleteContact";
@@ -10,18 +9,19 @@ import cn from "@/utils/helpers/cn";
 import { StylableFC } from "@/utils/types/common";
 import { Contact } from "@/utils/types/contact";
 import {
-  Button,
+  Interactive,
   MaterialIcon,
   Snackbar,
   Text,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
 import { useContext, useState } from "react";
-import va from "@vercel/analytics";
 
 /**
- * A list of Contacts for Class Details Card. It can be used in both read-only and editable modes.
+ * A list of Contacts for Class Details Card. It can be used in both read-only
+ * and editable modes.
  *
  * @param contacts The list of contacts to display.
  * @param classroomID The ID of the Classroom the Contacts belong to.
@@ -80,49 +80,53 @@ const ClassContactList: StylableFC<{
   }
 
   return (
-    <ClassDetailsListSection
-      title={
-        <>
-          <Text type="title-medium" element="h3" className="grow">
-            {t("title")}
-          </Text>
-          {editable && (
-            <>
-              <Button
-                appearance="text"
-                icon={<MaterialIcon icon="add" />}
-                tooltip={t("action.add")}
-                onClick={() => setContactOpen(true)}
-                className="!-m-2 !-mr-3"
-              />
-              <ContactDialog
-                open={contactOpen}
-                onClose={() => setContactOpen(false)}
-                onSubmit={handleAdd}
-              />
-            </>
-          )}
-        </>
-      }
-      style={style}
-      className={className}
-    >
-      {contacts.map((contact) => (
-        <li key={contact.id}>
-          <ContactCard
-            contact={contact}
-            onChange={editable ? handleEdit : undefined}
-            onRemove={editable ? () => handleRemove(contact.id) : undefined}
-            className={cn(
-              `!border-0`,
-              !editable &&
-                `hover:m-[-1px] hover:!border-1 focus:m-[-1px]
-                focus:!border-1`,
-            )}
-          />
-        </li>
-      ))}
-    </ClassDetailsListSection>
+    <div style={style} className={cn(`space-y-2`, className)}>
+      {/* Title */}
+      <Text
+        type="title-medium"
+        element="h3"
+        className="rounded-md bg-surface px-3 py-2"
+      >
+        {t("title")}
+      </Text>
+
+      <ul className="space-y-2">
+        {/* List */}
+        {contacts.map((contact) => (
+          <li key={contact.id}>
+            <ContactCard
+              contact={contact}
+              onChange={editable ? handleEdit : undefined}
+              onRemove={editable ? () => handleRemove(contact.id) : undefined}
+              className={cn(
+                `!border-0`,
+                !editable &&
+                  `hover:m-[-1px] hover:!border-1 focus:m-[-1px]
+                  focus:!border-1`,
+              )}
+            />
+          </li>
+        ))}
+
+        {/* Add button */}
+        {editable && (
+          <li>
+            <Interactive
+              onClick={() => setContactOpen(true)}
+              className={cn(`grid w-full place-content-center rounded-md
+                bg-primary-container px-3 py-6`)}
+            >
+              <MaterialIcon icon="add" />
+            </Interactive>
+            <ContactDialog
+              open={contactOpen}
+              onClose={() => setContactOpen(false)}
+              onSubmit={handleAdd}
+            />
+          </li>
+        )}
+      </ul>
+    </div>
   );
 };
 

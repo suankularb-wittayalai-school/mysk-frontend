@@ -1,4 +1,4 @@
-import ClassDetailsListSection from "@/components/classes/ClassDetailsListSection";
+import LookupDetailsListCard from "@/components/lookup/LookupDetailsListCard";
 import { getStudentsByIDs } from "@/utils/backend/person/getStudentsByIDs";
 import { useGetVCard } from "@/utils/helpers/contact";
 import getLocaleName from "@/utils/helpers/getLocaleName";
@@ -11,8 +11,8 @@ import { StylableFC } from "@/utils/types/common";
 import {
   Avatar,
   Button,
-  Card,
-  CardHeader,
+  ListItem,
+  ListItemContent,
   MaterialIcon,
   Text,
 } from "@suankularb-components/react";
@@ -65,7 +65,7 @@ const ClassStudentList: StylableFC<{
   }
 
   return (
-    <ClassDetailsListSection
+    <LookupDetailsListCard
       title={
         <>
           <Text type="title-medium" className="grow">
@@ -86,29 +86,25 @@ const ClassStudentList: StylableFC<{
       className={className}
     >
       {students.map((student) => (
-        <Card key={student.id} appearance="filled" className="!bg-surface">
-          <CardHeader
-            // Profile
-            avatar={
-              <Avatar>
-                {student.profile && <Image src={student.profile} alt="" />}
-              </Avatar>
-            }
+        <ListItem key={student.id} align="center" lines={2}>
+          {/* Profile */}
+          <Avatar>
+            {student.profile && <Image src={student.profile} alt="" />}
+          </Avatar>
+          <ListItemContent
             // Full name
             title={getLocaleName(locale, student)}
-            subtitle={sift([
+            desc={sift([
               // Class no.
-              t("item.classNo", {
-                classNo: student.class_no,
-              }),
+              t("item.classNo", { classNo: student.class_no }),
               // Nickname
               (student.nickname?.th || student.nickname?.["en-US"]) &&
                 `${getLocaleString(student.nickname, locale)}`,
             ]).join(" • ")}
           />
-        </Card>
+        </ListItem>
       ))}
-    </ClassDetailsListSection>
+    </LookupDetailsListCard>
   );
 };
 
