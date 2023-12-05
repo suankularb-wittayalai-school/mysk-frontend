@@ -4,6 +4,8 @@ import PageHeader from "@/components/common/PageHeader";
 import ParticipationMetric from "@/components/manage/ParticipationMetric";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getUserByEmail from "@/utils/backend/account/getUserByEmail";
+import getManagementAttendanceSummary from "@/utils/backend/attendance/getManagementAttendanceSummary";
+import getParticipationMetrics from "@/utils/backend/manage/getParticipationMetrics";
 import permitted from "@/utils/helpers/permitted";
 import { ManagementAttendanceSummary } from "@/utils/types/attendance";
 import { CustomPage, LangCode } from "@/utils/types/common";
@@ -30,7 +32,7 @@ import Head from "next/head";
  *
  * Management users see this page as their Home. Other users with the permission
  * can access this page from their Account page.
- * 
+ *
  * @param attendance The attendance statistics for today and this week.
  * @param participationMetrics Metrics on MySK participation.
  */
@@ -62,6 +64,7 @@ const ManagePage: CustomPage<{
                 </Text>
               }
               summary={attendance.today}
+              total={participationMetrics.students_with_classroom}
             />
             <AttendanceSummary
               title={
@@ -75,6 +78,7 @@ const ManagePage: CustomPage<{
                 </>
               }
               summary={attendance.this_week}
+              total={participationMetrics.students_with_classroom}
             />
           </Columns>
         </Section>
@@ -137,19 +141,9 @@ export const getServerSideProps: GetServerSideProps = async ({
   )
     return { notFound: true };
 
-  const attendance = {
-    today: { presence: 2436, late: 356, absence: 38 },
-    this_week: { presence: 2785, late: 7, absence: 38 },
-  };
-
-  const participationMetrics = {
-    onboarded_users: 1498,
-    total_users: 2654,
-    total_teachers: 248,
-    teachers_with_schedule: 2,
-    students_with_additional_account_data: 1376,
-    students_with_classroom: 2408,
-  };
+  const { data: attendance } = await getManagementAttendanceSummary(supabase);
+  const { data: participationMetrics } =
+    await getParticipationMetrics(supabase);
 
   return {
     props: {

@@ -1,8 +1,7 @@
 import cn from "@/utils/helpers/cn";
 import { ManagementAttendanceSummary } from "@/utils/types/attendance";
 import { StylableFC } from "@/utils/types/common";
-import { Card, CardHeader, Columns } from "@suankularb-components/react";
-import { sum } from "radash";
+import { Card, CardHeader } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
 
 /**
@@ -10,16 +9,17 @@ import { useTranslation } from "next-i18next";
  *
  * @param title The title of the summary: today or this week.
  * @param summary The summary of the presence, late, and absence counts.
+ * @param total The total number of Students.
  */
 const AttendanceSummary: StylableFC<{
   title?: string | JSX.Element;
   summary: ManagementAttendanceSummary;
-}> = ({ title, summary, style, className }) => {
+  total: number;
+}> = ({ title, summary, total, style, className }) => {
   const { t } = useTranslation("manage", {
     keyPrefix: "attendance.summary.card",
   });
 
-  const total = sum(Object.values(summary));
   const fractions = Object.fromEntries(
     Object.entries(summary).map(([key, value]) => [key, value / total]),
   ) as ManagementAttendanceSummary;
