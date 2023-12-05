@@ -29,7 +29,7 @@ const ParticipationMetric: StylableFC<{
           ns="manage"
           values={{ count, total, percentage: count / total }}
         >
-          <Text type="title-large">{}</Text>
+          <Text type="title-large">{""}</Text>
           <strong />
         </Trans>
       </Text>
