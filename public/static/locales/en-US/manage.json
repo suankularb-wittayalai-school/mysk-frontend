@@ -1,0 +1,47 @@
+{
+  "title": "Manage",
+  "attendance": {
+    "title": "Attendance",
+    "description": "Every morning, teachers take attendance of their students during assembly and homeroom. Here’s a summary.",
+    "summary": {
+      "today": {
+        "title": "Today"
+      },
+      "thisWeek": {
+        "title": "This week",
+        "subtitle": "Average"
+      },
+      "card": {
+        "title": {
+          "present": "{{count, number}} present",
+          "late": "{{count, number}} late",
+          "absent": "{{count, number}} absent"
+        },
+        "content": "{{percentage, number(style: percent; maximumFractionDigits: 1;}}"
+      },
+      "action": {
+        "print": "Print",
+        "viewDetails": "View details"
+      }
+    }
+  },
+  "participation": {
+    "title": "Participation",
+    "description": "Metrics on students and teachers participation in using the MySK infrastructure.",
+    "onboarding": {
+      "alt": "Onboarded users",
+      "content_one": "<0>{{count, number}} onboarded user</0> from a total of {{total, number}}. That’s {{percentage, number(style: percent; maximumFractionDigits: 0;)}}.",
+      "content_other": "<0>{{count, number}} onboarded users</0> from a total of {{total, number}}. That’s {{percentage, number(style: percent; maximumFractionDigits: 0;)}}."
+    },
+    "teacherSchedule": {
+      "alt": "Teachers with schedule",
+      "content_one": "<0>{{count, number}} teacher</0> have filled in their <1>schedule data</1>. That’s {{percentage, number(style: percent; maximumFractionDigits: 0;)}} of all teachers.",
+      "content_other": "<0>{{count, number}} teachers</0> have filled in their <1>schedule data</1>. That’s {{percentage, number(style: percent; maximumFractionDigits: 0;)}} of all teachers."
+    },
+    "studentData": {
+      "alt": "Student with additional account data",
+      "content_one": "<0>{{count, number}} student</0> have filled <1>additional account information</1>. That’s {{percentage, number(style: percent; maximumFractionDigits: 0;)}} of all students with classrooms.",
+      "content_other": "<0>{{count, number}} students</0> have filled <1>additional account information</1>. That’s {{percentage, number(style: percent; maximumFractionDigits: 0;)}} of all students with classrooms."
+    }
+  }
+}

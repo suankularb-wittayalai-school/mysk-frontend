@@ -3,6 +3,7 @@ import { ManagementAttendanceSummary } from "@/utils/types/attendance";
 import { StylableFC } from "@/utils/types/common";
 import { Card, CardHeader, Columns } from "@suankularb-components/react";
 import { sum } from "radash";
+import { useTranslation } from "next-i18next";
 
 /**
  * A summary of attendance statistics for management.
@@ -14,9 +15,13 @@ const AttendanceSummary: StylableFC<{
   title?: string | JSX.Element;
   summary: ManagementAttendanceSummary;
 }> = ({ title, summary, style, className }) => {
+  const { t } = useTranslation("manage", {
+    keyPrefix: "attendance.summary.card",
+  });
+
   const total = sum(Object.values(summary));
-  const percentages = Object.fromEntries(
-    Object.entries(summary).map(([key, value]) => [key, (value / total) * 100]),
+  const fractions = Object.fromEntries(
+    Object.entries(summary).map(([key, value]) => [key, value / total]),
   ) as ManagementAttendanceSummary;
 
   return (
@@ -37,8 +42,8 @@ const AttendanceSummary: StylableFC<{
           className="!bg-primary-container !text-on-primary-container"
         >
           <CardHeader
-            title={`${summary.presence.toLocaleString()} present`}
-            subtitle={percentages.presence.toFixed(1) + "%"}
+            title={t("title.present", { count: summary.presence })}
+            subtitle={t("content", { percentage: fractions.presence })}
           />
         </Card>
 
@@ -48,16 +53,16 @@ const AttendanceSummary: StylableFC<{
           className="!bg-secondary-container !text-on-secondary-container"
         >
           <CardHeader
-            title={`${summary.late.toLocaleString()} late`}
-            subtitle={percentages.late.toFixed(1) + "%"}
+            title={t("title.late", { count: summary.late })}
+            subtitle={t("content", { percentage: fractions.late })}
           />
         </Card>
 
         {/* Absence */}
         <Card appearance="filled">
           <CardHeader
-            title={`${summary.absence.toLocaleString()} absent`}
-            subtitle={percentages.absence.toFixed(1) + "%"}
+            title={t("title.absent", { count: summary.absence })}
+            subtitle={t("content", { percentage: fractions.absence })}
           />
         </Card>
       </div>
@@ -69,11 +74,11 @@ const AttendanceSummary: StylableFC<{
       >
         <div
           className="h-full bg-primary"
-          style={{ width: `${percentages.presence}%` }}
+          style={{ width: `${fractions.presence * 100}%` }}
         />
         <div
           className="h-full bg-secondary ring-2 ring-surface-variant"
-          style={{ width: `${percentages.late}%` }}
+          style={{ width: `${fractions.late * 100}%` }}
         />
       </div>
     </Card>

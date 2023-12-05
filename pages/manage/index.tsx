@@ -1,11 +1,13 @@
 // Imports
 import AttendanceSummary from "@/components/attendance/AttendanceSummary";
 import PageHeader from "@/components/common/PageHeader";
+import ParticipationMetric from "@/components/manage/ParticipationMetric";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getUserByEmail from "@/utils/backend/account/getUserByEmail";
 import permitted from "@/utils/helpers/permitted";
 import { ManagementAttendanceSummary } from "@/utils/types/attendance";
 import { CustomPage, LangCode } from "@/utils/types/common";
+import { ParticipationMetrics } from "@/utils/types/management";
 import { UserPermissionKey, UserRole } from "@/utils/types/person";
 import {
   Columns,
@@ -28,9 +30,13 @@ import Head from "next/head";
  *
  * Management users see this page as their Home. Other users with the permission
  * can access this page from their Account page.
+ * 
+ * @param attendance The attendance statistics for today and this week.
+ * @param participationMetrics Metrics on MySK participation.
  */
 const ManagePage: CustomPage<{
   attendance: { [key in "today" | "this_week"]: ManagementAttendanceSummary };
+  participationMetrics: ParticipationMetrics;
 }> = ({ attendance, participationMetrics }) => {
   const { t } = useTranslation("manage");
   const { t: tx } = useTranslation("common");
@@ -44,16 +50,15 @@ const ManagePage: CustomPage<{
       <ContentLayout>
         {/* Attendance */}
         <Section>
-          <Header>Attendance</Header>
-          <Text type="body-medium" className="!-mt-2">
-            Every morning, teachers take attendance of their students during
-            assembly and homeroom. Here’s a summary.
+          <Header>{t("attendance.title")}</Header>
+          <Text type="body-medium" className="!-mt-1">
+            {t("attendance.description")}
           </Text>
           <Columns columns={2} className="!grid-cols-1 md:!grid-cols-2">
             <AttendanceSummary
               title={
                 <Text type="title-large" element="h3">
-                  Today
+                  {t("attendance.summary.today.title")}
                 </Text>
               }
               summary={attendance.today}
@@ -62,10 +67,10 @@ const ManagePage: CustomPage<{
               title={
                 <>
                   <Text type="title-large" element="h3">
-                    This week
+                    {t("attendance.summary.thisWeek.title")}
                   </Text>
                   <Text type="title-small" className="text-on-surface-variant">
-                    Average
+                    {t("attendance.summary.thisWeek.subtitle")}
                   </Text>
                 </>
               }
@@ -76,12 +81,27 @@ const ManagePage: CustomPage<{
 
         {/* Participation */}
         <Columns columns={6}>
-          <Section className="col-span-2 sm:col-span-4 md:col-start-2">
-            <Header>Participation</Header>
+          <Section className="col-span-2 !gap-4 sm:col-span-4 md:col-start-2">
+            <Header>{t("participation.title")}</Header>
             <Text type="body-medium" className="!-mt-2">
-              Metrics on students and teachers participation in using the MySK
-              infrastructure.
+              {t("participation.description")}
             </Text>
+
+            <ParticipationMetric
+              id="onboarding"
+              count={participationMetrics.onboarded_users}
+              total={participationMetrics.total_users}
+            />
+            <ParticipationMetric
+              id="teacherSchedule"
+              count={participationMetrics.teachers_with_schedule}
+              total={participationMetrics.total_teachers}
+            />
+            <ParticipationMetric
+              id="studentData"
+              count={participationMetrics.students_with_additional_account_data}
+              total={participationMetrics.students_with_classroom}
+            />
           </Section>
         </Columns>
       </ContentLayout>
@@ -122,6 +142,15 @@ export const getServerSideProps: GetServerSideProps = async ({
     this_week: { presence: 2785, late: 7, absence: 38 },
   };
 
+  const participationMetrics = {
+    onboarded_users: 1498,
+    total_users: 2654,
+    total_teachers: 248,
+    teachers_with_schedule: 2,
+    students_with_additional_account_data: 1376,
+    students_with_classroom: 2408,
+  };
+
   return {
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
@@ -129,6 +158,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         "manage",
       ])),
       attendance,
+      participationMetrics,
     },
   };
 };
