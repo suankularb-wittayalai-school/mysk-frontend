@@ -22,9 +22,15 @@ module.exports = withBundleAnalyzer(
   withPWA({
     reactStrictMode: true,
     images: {
-      domains: [
-        process.env.NEXT_PUBLIC_SUPABASE_URL.replace("https://", ""),
-        "lh3.googleusercontent.com",
+      remotePatterns: [
+        {
+          protocol: "https",
+          hostname: process.env.NEXT_PUBLIC_SUPABASE_URL.replace(
+            "https://",
+            "",
+          ),
+        },
+        { protocol: "https", hostname: "lh3.googleusercontent.com" },
       ],
     },
     i18n,
