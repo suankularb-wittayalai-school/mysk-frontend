@@ -1,8 +1,10 @@
 // Imports
+import AttendanceSummary from "@/components/attendance/AttendanceSummary";
 import PageHeader from "@/components/common/PageHeader";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getUserByEmail from "@/utils/backend/account/getUserByEmail";
 import permitted from "@/utils/helpers/permitted";
+import { ManagementAttendanceSummary } from "@/utils/types/attendance";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { UserPermissionKey, UserRole } from "@/utils/types/person";
 import {
@@ -27,7 +29,9 @@ import Head from "next/head";
  * Management users see this page as their Home. Other users with the permission
  * can access this page from their Account page.
  */
-const ManagePage: CustomPage = () => {
+const ManagePage: CustomPage<{
+  attendance: { [key in "today" | "this_week"]: ManagementAttendanceSummary };
+}> = ({ attendance, participationMetrics }) => {
   const { t } = useTranslation("manage");
   const { t: tx } = useTranslation("common");
 
@@ -45,7 +49,29 @@ const ManagePage: CustomPage = () => {
             Every morning, teachers take attendance of their students during
             assembly and homeroom. Here’s a summary.
           </Text>
-          <Columns columns={2}>{}</Columns>
+          <Columns columns={2} className="!grid-cols-1 md:!grid-cols-2">
+            <AttendanceSummary
+              title={
+                <Text type="title-large" element="h3">
+                  Today
+                </Text>
+              }
+              summary={attendance.today}
+            />
+            <AttendanceSummary
+              title={
+                <>
+                  <Text type="title-large" element="h3">
+                    This week
+                  </Text>
+                  <Text type="title-small" className="text-on-surface-variant">
+                    Average
+                  </Text>
+                </>
+              }
+              summary={attendance.this_week}
+            />
+          </Columns>
         </Section>
 
         {/* Participation */}
@@ -68,13 +94,13 @@ export const getServerSideProps: GetServerSideProps = async ({
   req,
   res,
 }) => {
-  // Check if the user is logged in and has the correct permissions.
-  // If not, return a 404.
-
   const supabase = createPagesServerClient({
     req: req as NextApiRequest,
     res: res as NextApiResponse,
   });
+
+  // Check if the user is logged in and has the correct permissions.
+  // If not, return a 404.
   const session = await getServerSession(req, res, authOptions);
   if (!session?.user) return { notFound: true };
 
@@ -91,12 +117,18 @@ export const getServerSideProps: GetServerSideProps = async ({
   )
     return { notFound: true };
 
+  const attendance = {
+    today: { presence: 2436, late: 356, absence: 38 },
+    this_week: { presence: 2785, late: 7, absence: 38 },
+  };
+
   return {
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
         "common",
         "manage",
       ])),
+      attendance,
     },
   };
 };
