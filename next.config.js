@@ -51,13 +51,18 @@ module.exports = withBundleAnalyzer(
         { source: "/account/login", destination: "/", permanent: true },
         {
           source: "/welcome",
-          destination: "/account/welcome",
+          destination: "/account",
+          permanent: true,
+        },
+        {
+          source: "/account/welcome",
+          destination: "/account",
           permanent: true,
         },
         { source: "/learn/:id", destination: "/learn", permanent: true },
         {
-          source: "/lookup/document",
-          destination: "/search/documents",
+          source: "/classes/print/:number",
+          destination: "/classes/:number/print",
           permanent: true,
         },
         {
