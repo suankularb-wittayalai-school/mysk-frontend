@@ -1,11 +1,8 @@
-import PresenceSelector from "@/components/attendance/PresenceSelector";
 import AbsenceTypeSelector from "@/components/attendance/AbsenceTypeSelector";
+import PresenceSelector from "@/components/attendance/PresenceSelector";
 import cn from "@/utils/helpers/cn";
 import useLocale from "@/utils/helpers/useLocale";
-import {
-  AttendanceEvent,
-  StudentAttendance,
-} from "@/utils/types/attendance";
+import { AttendanceEvent, StudentAttendance } from "@/utils/types/attendance";
 import { StylableFC } from "@/utils/types/common";
 import {
   TextField,
@@ -13,6 +10,7 @@ import {
   useAnimationConfig,
 } from "@suankularb-components/react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useTranslation } from "next-i18next";
 
 /**
  * A selector for the Attendance status, including presence, absence type, and
@@ -21,7 +19,7 @@ import { AnimatePresence, motion } from "framer-motion";
  * @param attendance The Attendance of a Student at either assembly or homeroom.
  * @param editable Whether the Attendance is editable.
  * @param onAttendanceChange Callback when the Attendance is changed.
- * 
+ *
  * @note
  * `attendance` and `onAttendanceChange` accepts only either the `assembly` or
  * `homeroom` property of Student Attendance.
@@ -29,11 +27,10 @@ import { AnimatePresence, motion } from "framer-motion";
 const AttendanceStatusSelector: StylableFC<{
   attendance: StudentAttendance[AttendanceEvent];
   editable?: boolean;
-  onAttendanceChange: (
-    attendance: StudentAttendance[AttendanceEvent],
-  ) => void;
+  onAttendanceChange: (attendance: StudentAttendance[AttendanceEvent]) => void;
 }> = ({ attendance, editable, onAttendanceChange, style, className }) => {
   const locale = useLocale();
+  const { t } = useTranslation("attendance", { keyPrefix: "item" });
 
   const { duration, easing } = useAnimationConfig();
 
@@ -95,7 +92,7 @@ const AttendanceStatusSelector: StylableFC<{
           >
             <TextField<string>
               appearance="outlined"
-              label="Enter reason"
+              label={t("enterReason")}
               value={attendance.absence_reason || ""}
               onChange={(value) =>
                 editable &&

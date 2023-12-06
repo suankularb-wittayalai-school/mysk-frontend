@@ -5,10 +5,7 @@ import cn from "@/utils/helpers/cn";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
-import {
-  AttendanceEvent,
-  StudentAttendance,
-} from "@/utils/types/attendance";
+import { AttendanceEvent, StudentAttendance } from "@/utils/types/attendance";
 import { StylableFC } from "@/utils/types/common";
 import {
   ListItem,
@@ -17,6 +14,7 @@ import {
   useAnimationConfig,
 } from "@suankularb-components/react";
 import { motion } from "framer-motion";
+import { useTranslation } from "next-i18next";
 import { sift } from "radash";
 
 /**
@@ -33,6 +31,7 @@ const AttendanceListItem: StylableFC<{
   onAttendanceChange: (attendance: StudentAttendance) => void;
 }> = ({ attendance, shownEvent, editable, onAttendanceChange }) => {
   const locale = useLocale();
+  const { t } = useTranslation("attendance", { keyPrefix: "item" });
 
   const { duration, easing } = useAnimationConfig();
 
@@ -75,7 +74,7 @@ const AttendanceListItem: StylableFC<{
             <ListItemContent
               title={getLocaleName(locale, attendance.student)}
               desc={sift([
-                `No. ${attendance.student.class_no}`,
+                t("classNo", { classNo: attendance.student.class_no }),
                 (attendance.student.nickname?.th ||
                   attendance.student.nickname?.["en-US"]) &&
                   getLocaleString(attendance.student.nickname, locale),

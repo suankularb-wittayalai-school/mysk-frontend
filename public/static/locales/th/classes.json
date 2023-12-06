@@ -51,25 +51,6 @@
       }
     }
   },
-  "dialog": {
-    "attendance": {
-      "title": {
-        "view": "ข้อมูลเช็กชื่อ",
-        "take": "เช็กชื่อ"
-      },
-      "event": {
-        "title": "เลือกคาบ",
-        "assembly": "เข้าแถว",
-        "homeroom": "โฮมรูม"
-      },
-      "loading": "กำลังโหลด…",
-      "action": {
-        "markAll": "เช็กมาทุกคน",
-        "clear": "ลบทั้งหมด",
-        "save": "บันทึก"
-      }
-    }
-  },
   "print": {
     "title": "พิมพ์ใบรายชื่อ",
     "language": "ภาษา",

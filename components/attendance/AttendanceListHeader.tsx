@@ -11,6 +11,7 @@ import {
   TabsContainer,
   Text,
 } from "@suankularb-components/react";
+import { useTranslation } from "next-i18next";
 import { useContext } from "react";
 
 /**
@@ -23,6 +24,8 @@ const AttendanceListHeader: StylableFC<{
   event: AttendanceEvent;
   onEventChange: (event: AttendanceEvent) => void;
 }> = ({ event, onEventChange, style, className }) => {
+  const { t } = useTranslation("attendance");
+
   const { setSnackbar } = useContext(SnackbarContext);
 
   return (
@@ -44,38 +47,42 @@ const AttendanceListHeader: StylableFC<{
             icon="emoji_flags"
             className="text-on-surface-variant"
           />
-          <Text type="title-medium">Assembly</Text>
+          <Text type="title-medium">{t("event.assembly")}</Text>
         </div>
         <div>
           <MaterialIcon
             icon="meeting_room"
             className="text-on-surface-variant"
           />
-          <Text type="title-medium">Homeroom</Text>
+          <Text type="title-medium">{t("event.homeroom")}</Text>
         </div>
       </div>
       <div className="sm:!hidden [&>*]:!border-0">
         <TabsContainer
           appearance="primary"
-          alt="Choose event…"
+          alt={t("event.title")}
           className="!-my-2 !w-28"
         >
           <Tab
             icon={<MaterialIcon icon="emoji_flags" />}
-            alt="Assembly"
+            alt={t("event.assembly")}
             selected={event === "assembly"}
             onClick={() => {
               onEventChange("assembly");
-              setSnackbar(<Snackbar>Switched to assembly</Snackbar>);
+              setSnackbar(
+                <Snackbar>{t("event.snackbar.switchedToAssembly")}</Snackbar>,
+              );
             }}
           />
           <Tab
             icon={<MaterialIcon icon="meeting_room" />}
-            alt="Homeroom"
+            alt={t("event.homeroom")}
             selected={event === "homeroom"}
             onClick={() => {
               onEventChange("homeroom");
-              setSnackbar(<Snackbar>Switched to homeroom</Snackbar>);
+              setSnackbar(
+                <Snackbar>{t("event.snackbar.switchedToHomeroom")}</Snackbar>,
+              );
             }}
           />
         </TabsContainer>

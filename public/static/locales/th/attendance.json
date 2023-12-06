@@ -1,5 +1,24 @@
 {
   "title": "การเช็กชื่อ",
+  "viewSelector": {
+    "view": {
+      "today": "วันนี้",
+      "thisWeek": "สัปดาห์นี้"
+    },
+    "date": "ไปวันที่…",
+    "action": {
+      "go": "ไป"
+    }
+  },
+  "event": {
+    "title": "เลือก…",
+    "assembly": "เข้าแถว",
+    "homeroom": "โฮมรูม",
+    "snackbar": {
+      "switchedToAssembly": "เปลี่ยนไปเช็กชื่อเข้าแถว",
+      "switchedToHomeroom": "เปลี่ยนไปเช็กชื่อโฮมรูม"
+    }
+  },
   "legend": {
     "title": "คำอธิบาย",
     "present": "มา",
@@ -17,9 +36,31 @@
     "absenceType": {
       "onLeave": "มีใบลา",
       "absent": "ขาดไม่มีเหตุ",
-      "dropped": "ลาออกแล้ว",
+      "dropped": "พักการเรียน",
       "other": "อื่น ๆ"
     },
     "enterReason": "ระบุเหตุผล"
+  },
+  "today": {
+    "title": "มาสาย {{late, number}} • ขาด {{absent, number}}",
+    "homeroom": {
+      "field": "เนื้อหาโฮมรูม",
+      "field_placeholder": "วันนี้ได้พูดเรื่องอะไรบ้าง",
+      "action": {
+        "add": "เพิ่มข้อมูลโฮมรูม",
+        "edit": "แก้ไข",
+        "save": "บันทึก",
+        "cancel": "ยกเลิก"
+      }
+    },
+    "action": {
+      "save": "บันทึก",
+      "clear": "ลบทั้งหมด",
+      "markAll": "เช็กมาทุกคน"
+    },
+    "snackbar": {
+      "saved": "บันทึกการเช็กชื่อเข้าแถวและโฮมรูมแล้ว",
+      "incomplete": "กรุณาเช็กชื่อให้ครบทุกคนก่อนบันทึก"
+    }
   }
 }

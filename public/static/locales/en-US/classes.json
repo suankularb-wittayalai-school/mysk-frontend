@@ -52,25 +52,6 @@
       }
     }
   },
-  "dialog": {
-    "attendance": {
-      "title": {
-        "view": "View attendance",
-        "take": "Take attendance"
-      },
-      "event": {
-        "title": "View",
-        "assembly": "Assembly",
-        "homeroom": "Homeroom"
-      },
-      "loading": "Loading attendance…",
-      "action": {
-        "markAll": "Mark all present",
-        "clear": "Clear",
-        "save": "Save"
-      }
-    }
-  },
   "print": {
     "title": "Print student list",
     "language": "Language",

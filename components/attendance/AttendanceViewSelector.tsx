@@ -9,6 +9,7 @@ import {
   TextField,
 } from "@suankularb-components/react";
 import { getWeek, parseISO } from "date-fns";
+import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -30,6 +31,8 @@ enum AttendanceView {
 const AttendanceViewSelector: StylableFC<{
   date: string;
 }> = ({ date, style, className }) => {
+  const { t } = useTranslation("attendance", { keyPrefix: "viewSelector" });
+
   const { asPath } = useRouter();
 
   /**
@@ -77,7 +80,7 @@ const AttendanceViewSelector: StylableFC<{
             ].join("/")}
             element={Link}
           >
-            Today
+            {t("view.today")}
           </Button>
           <Button
             appearance="outlined"
@@ -95,7 +98,7 @@ const AttendanceViewSelector: StylableFC<{
             ].join("/")}
             element={Link}
           >
-            This week
+            {t("view.thisWeek")}
           </Button>
         </SegmentedButton>
       </div>
@@ -104,7 +107,7 @@ const AttendanceViewSelector: StylableFC<{
       <div className="flex flex-row items-center gap-2">
         <TextField<string>
           appearance="outlined"
-          label="Go to date…"
+          label={t("date")}
           value={dateField}
           onChange={setDateField}
           inputAttr={
@@ -118,7 +121,7 @@ const AttendanceViewSelector: StylableFC<{
         <Button
           appearance="filled"
           icon={<MaterialIcon icon="arrow_forward" />}
-          alt="Go"
+          alt={t("actions.go")}
           disabled={!dateIsValid}
           href={[parentURL, ["date", "week"][view], dateField].join("/")}
           element={Link}
