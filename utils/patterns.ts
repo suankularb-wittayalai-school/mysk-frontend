@@ -14,9 +14,9 @@ export const subjectCodeENRegex = /^[A-Z]{1,3}\\d{5}$/;
 
 export const ggcCodeRegex = /^[a-zA-Z0-9]{6,7}$/;
 export const ggcLinkRegex =
-  /^https:\/\/classroom.google.com\/c\/[a-zA-Z0-9]{16}(\?cjc=[a-z0-9]{6,7})?/;
+  /^https:\/\/classroom\.google\.com\/c\/[a-zA-Z0-9]{16}(\?cjc=[a-z0-9]{6,7})?/;
 export const ggMeetLinkRegex =
-  /^https:\/\/meet.google.com\/[a-z]{3}-[a-z]{4}-[a-z]{3}(\?hs=\d{3})?/;
+  /^https:\/\/meet\.google\.com\/[a-z]{3}-[a-z]{4}-[a-z]{3}(\?hs=\d{3})?/;
 
 export const studentIDRegex = /^\d{5}$/;
 export const citizenIDRegex = /^\d{13}$/;
