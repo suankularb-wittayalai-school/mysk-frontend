@@ -1,0 +1,25 @@
+{
+  "title": "การเช็กชื่อ",
+  "legend": {
+    "title": "คำอธิบาย",
+    "present": "มา",
+    "late": "มาสาย",
+    "absent": "ลา/ขาด"
+  },
+  "item": {
+    "classNo": "เลขที่ {{classNo}}",
+    "presence": {
+      "title": "การเข้าเรียน",
+      "present": "มา",
+      "late": "มาสาย",
+      "absent": "ลา/ขาด"
+    },
+    "absenceType": {
+      "onLeave": "มีใบลา",
+      "absent": "ขาดไม่มีเหตุ",
+      "dropped": "ลาออกแล้ว",
+      "other": "อื่น ๆ"
+    },
+    "enterReason": "ระบุเหตุผล"
+  }
+}

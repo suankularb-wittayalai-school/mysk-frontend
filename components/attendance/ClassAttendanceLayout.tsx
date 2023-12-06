@@ -23,14 +23,15 @@ const ClassAttendanceLayout: StylableFC<
       <Columns
         columns={12}
         style={style}
-        className={cn(
-          `mx-4 space-y-6 sm:mx-0 [&>*]:col-span-4 [&>*]:sm:col-span-8
-          md:[&>*]:col-span-10 md:[&>*]:col-start-2`,
-          className,
-        )}
+        className={cn(`mx-4 sm:mx-0`, className)}
       >
-        <AttendanceViewSelector {...omit(props, ["style", "className"])} />
-        {children}
+        <div
+          className={cn(`col-span-4 space-y-6 sm:col-span-8 md:col-span-10
+            md:col-start-2`)}
+        >
+          <AttendanceViewSelector {...omit(props, ["style", "className"])} />
+          {children}
+        </div>
       </Columns>
     </ContentLayout>
   );

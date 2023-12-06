@@ -1,0 +1,25 @@
+{
+  "title": "Attendance",
+  "legend": {
+    "title": "Legend",
+    "present": "Present",
+    "late": "Late",
+    "absent": "Absent"
+  },
+  "item": {
+    "classNo": "No. {{classNo}}",
+    "presence": {
+      "title": "Presence",
+      "present": "Present",
+      "late": "Late",
+      "absent": "Absent"
+    },
+    "absenceType": {
+      "onLeave": "On leave",
+      "absent": "Absent without reason",
+      "dropped": "Dropped",
+      "other": "Other"
+    },
+    "enterReason": "Enter reason"
+  }
+}

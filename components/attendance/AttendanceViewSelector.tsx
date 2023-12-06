@@ -1,5 +1,6 @@
 import cn from "@/utils/helpers/cn";
 import getISODateString from "@/utils/helpers/getISODateString";
+import { YYYYMMDDRegex, YYYYWwwRegex } from "@/utils/patterns";
 import { StylableFC } from "@/utils/types/common";
 import {
   Button,
@@ -48,8 +49,8 @@ const AttendanceViewSelector: StylableFC<{
 
   const [dateField, setDateField] = useState(date);
   const dateIsValid = [
-    dateField.match(/^\d{4}-\d{2}-\d{2}$/),
-    dateField.match(/^\d{4}-W(0[1-9]|[1-4]\d|5[0-3])$/),
+    YYYYMMDDRegex.test(dateField),
+    YYYYWwwRegex.test(dateField),
   ][view];
 
   return (
@@ -61,41 +62,43 @@ const AttendanceViewSelector: StylableFC<{
       )}
     >
       {/* View selector */}
-      <SegmentedButton alt="View" className="sm:!flex">
-        <Button
-          appearance="outlined"
-          selected={view === AttendanceView.today}
-          disabled={!dateIsValid}
-          href={
-            parentURL +
-            `/date/` +
-            (view === AttendanceView.today
-              ? dateField
-              : dateIsValid && getISODateString(parseISO(dateField)))
-          }
-          element={Link}
-        >
-          Today
-        </Button>
-        <Button
-          appearance="outlined"
-          selected={view === AttendanceView.thisWeek}
-          disabled={!dateIsValid}
-          href={
-            parentURL +
-            `/week/` +
-            (view === AttendanceView.thisWeek
-              ? dateField
-              : dateIsValid &&
-                `${dateField.slice(0, 4)}-W${String(
-                  getWeek(new Date(dateField)),
-                ).padStart(2, "0")}`)
-          }
-          element={Link}
-        >
-          This week
-        </Button>
-      </SegmentedButton>
+      <div className="space-y-2">
+        <SegmentedButton alt="View" className="!grid grid-cols-2 sm:!flex">
+          <Button
+            appearance="outlined"
+            selected={view === AttendanceView.today}
+            disabled={!dateIsValid}
+            href={[
+              parentURL,
+              "date",
+              view === AttendanceView.today
+                ? dateField
+                : dateIsValid && getISODateString(parseISO(dateField)),
+            ].join("/")}
+            element={Link}
+          >
+            Today
+          </Button>
+          <Button
+            appearance="outlined"
+            selected={view === AttendanceView.thisWeek}
+            disabled={!dateIsValid}
+            href={[
+              parentURL,
+              "week",
+              view === AttendanceView.thisWeek
+                ? dateField
+                : dateIsValid &&
+                  `${dateField.slice(0, 4)}-W${String(
+                    getWeek(new Date(dateField)),
+                  ).padStart(2, "0")}`,
+            ].join("/")}
+            element={Link}
+          >
+            This week
+          </Button>
+        </SegmentedButton>
+      </div>
 
       {/* Go to date */}
       <div className="flex flex-row items-center gap-2">

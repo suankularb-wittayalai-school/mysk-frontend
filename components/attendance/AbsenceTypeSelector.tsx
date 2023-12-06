@@ -14,9 +14,7 @@ const AbsenceTypeSelector: StylableFC<{
   value: Exclude<AbsenceType, "late"> | null;
   onChange: (value: AbsenceType) => void;
 }> = ({ value, onChange, style, className }) => {
-  const { t } = useTranslation("classes", {
-    keyPrefix: "dialog.attendance.item.absenceType",
-  });
+  const { t } = useTranslation("attendance", { keyPrefix: "item.absenceType" });
 
   return (
     <ChipSet scrollable style={style} className={className}>

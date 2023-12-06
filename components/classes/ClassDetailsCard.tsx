@@ -59,7 +59,7 @@ const ClassDetailsCard: StylableFC<{
             {/* Attendance */}
             {(teacherID || isOwnClass) && (
               <RecentAttendanceList
-                classroomID={classroom.id}
+                classroom={classroom}
                 teacherID={teacherID}
                 isOwnClass={isOwnClass}
               />
@@ -95,7 +95,7 @@ const ClassDetailsCard: StylableFC<{
                 <ClassStudentList
                   students={classroom.students}
                   classNumber={classroom.number}
-                  className="!overflow-auto max-h-96"
+                  className="max-h-96 !overflow-auto"
                 />
               )}
 
