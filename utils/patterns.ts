@@ -1,3 +1,6 @@
+export const YYYYMMDDRegex = /^\d{4}-\d{2}-\d{2}$/;
+export const YYYYWwwRegex = /^\d{4}-W(0[1-9]|[1-4]\d|5[0-3])$/;
+
 export const schoolEmailRegex = /((@sk.ac.th)|(@student.sk.ac.th))$/;
 
 export const classRegex = /^[1-6](0[1-9]|1[0-9])$/;
