@@ -85,7 +85,12 @@ const AttendanceListItem: StylableFC<{
             attendance={attendance.assembly}
             editable={editable}
             onAttendanceChange={(assembly) =>
-              onAttendanceChange({ ...attendance, assembly })
+              onAttendanceChange({
+                ...attendance,
+                assembly,
+                // Also overwrite homeroom, as per Sake’s request.
+                homeroom: assembly,
+              })
             }
             className={cn(
               `md:col-span-3`,
