@@ -52,47 +52,6 @@
       }
     }
   },
-  "dialog": {
-    "attendance": {
-      "title": {
-        "view": "View attendance",
-        "take": "Take attendance"
-      },
-      "event": {
-        "title": "View",
-        "assembly": "Assembly",
-        "homeroom": "Homeroom"
-      },
-      "legend": {
-        "title": "Legend",
-        "present": "Present",
-        "late": "Late",
-        "absent": "Absent"
-      },
-      "item": {
-        "classNo": "No. {{classNo}}",
-        "presence": {
-          "title": "Presence",
-          "present": "Present",
-          "late": "Late",
-          "absent": "Absent"
-        },
-        "absenceType": {
-          "onLeave": "On leave",
-          "absent": "Absent without reason",
-          "dropped": "Dropped",
-          "other": "Other"
-        },
-        "enterReason": "Enter reason"
-      },
-      "loading": "Loading attendance…",
-      "action": {
-        "markAll": "Mark all present",
-        "clear": "Clear",
-        "save": "Save"
-      }
-    }
-  },
   "print": {
     "title": "Print student list",
     "language": "Language",

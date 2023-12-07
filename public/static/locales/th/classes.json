@@ -51,47 +51,6 @@
       }
     }
   },
-  "dialog": {
-    "attendance": {
-      "title": {
-        "view": "ข้อมูลเช็กชื่อ",
-        "take": "เช็กชื่อ"
-      },
-      "event": {
-        "title": "เลือกคาบ",
-        "assembly": "เข้าแถว",
-        "homeroom": "โฮมรูม"
-      },
-      "legend": {
-        "title": "คำอธิบาย",
-        "present": "มา",
-        "late": "มาสาย",
-        "absent": "ลา/ขาด"
-      },
-      "item": {
-        "classNo": "เลขที่ {{classNo}}",
-        "presence": {
-          "title": "การเข้าเรียน",
-          "present": "มา",
-          "late": "มาสาย",
-          "absent": "ลา/ขาด"
-        },
-        "absenceType": {
-          "onLeave": "มีใบลา",
-          "absent": "ขาดไม่มีเหตุ",
-          "dropped": "ลาออกแล้ว",
-          "other": "อื่น ๆ"
-        },
-        "enterReason": "ระบุเหตุผล"
-      },
-      "loading": "กำลังโหลด…",
-      "action": {
-        "markAll": "เช็กมาทุกคน",
-        "clear": "ลบทั้งหมด",
-        "save": "บันทึก"
-      }
-    }
-  },
   "print": {
     "title": "พิมพ์ใบรายชื่อ",
     "language": "ภาษา",

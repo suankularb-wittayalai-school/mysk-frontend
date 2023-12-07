@@ -7,6 +7,7 @@ import { User } from "@/utils/types/person";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
+import getHomeURLofRole from "./utils/helpers/person/getHomeURLofRole";
 
 /**
  * The middleware is run before a request is completed.
@@ -72,15 +73,7 @@ export async function middleware(req: NextRequest) {
    * The home destination is the page the user is redirected to if they are
    * on a page they are not allowed to be on.
    */
-  const homeDestination = {
-    public: "/",
-    student: "/learn",
-    teacher: "/teach",
-    management: "/manage",
-    admin: "/admin",
-    organization: "/organization",
-    staff: "/staff",
-  }[user?.role || "public"];
+  const homeDestination = user?.role ? getHomeURLofRole(user.role) : "/";
 
   // Default Search page to Students tab
   if (route === "/search") destination = "/search/students";

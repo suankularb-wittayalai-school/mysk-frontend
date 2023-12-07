@@ -81,6 +81,38 @@ export interface Database {
           },
         ];
       };
+      classroom_homeroom_contents: {
+        Row: {
+          classroom_id: string;
+          created_at: string;
+          date: string;
+          homeroom_content: string;
+          id: string;
+        };
+        Insert: {
+          classroom_id: string;
+          created_at?: string;
+          date: string;
+          homeroom_content: string;
+          id?: string;
+        };
+        Update: {
+          classroom_id?: string;
+          created_at?: string;
+          date?: string;
+          homeroom_content?: string;
+          id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "classroom_homeroom_contents_classroom_id_fkey";
+            columns: ["classroom_id"];
+            isOneToOne: false;
+            referencedRelation: "classrooms";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       classroom_students: {
         Row: {
           class_no: number;
@@ -952,7 +984,7 @@ export interface Database {
           include_parents: boolean | null;
           include_students: boolean | null;
           include_teachers: boolean | null;
-          legacy_id: number;
+          legacy_id: number | null;
           subject: string;
           type: Database["public"]["Enums"]["school_document_type"];
         };
@@ -966,7 +998,7 @@ export interface Database {
           include_parents?: boolean | null;
           include_students?: boolean | null;
           include_teachers?: boolean | null;
-          legacy_id?: number;
+          legacy_id?: number | null;
           subject?: string;
           type: Database["public"]["Enums"]["school_document_type"];
         };
@@ -980,7 +1012,7 @@ export interface Database {
           include_parents?: boolean | null;
           include_students?: boolean | null;
           include_teachers?: boolean | null;
-          legacy_id?: number;
+          legacy_id?: number | null;
           subject?: string;
           type?: Database["public"]["Enums"]["school_document_type"];
         };
@@ -1042,7 +1074,7 @@ export interface Database {
           created_at: string | null;
           id: string;
           legacy_id: number;
-          legacy_person_id: number;
+          legacy_person_id: number | null;
           person_id: string;
           student_id: string;
           user_id: string | null;
@@ -1051,7 +1083,7 @@ export interface Database {
           created_at?: string | null;
           id?: string;
           legacy_id?: number;
-          legacy_person_id: number;
+          legacy_person_id?: number | null;
           person_id: string;
           student_id: string;
           user_id?: string | null;
@@ -1060,7 +1092,7 @@ export interface Database {
           created_at?: string | null;
           id?: string;
           legacy_id?: number;
-          legacy_person_id?: number;
+          legacy_person_id?: number | null;
           person_id?: string;
           student_id?: string;
           user_id?: string | null;
@@ -1252,7 +1284,7 @@ export interface Database {
           id: string;
           legacy_id: number;
           legacy_person_id: number | null;
-          person_id: string | null;
+          person_id: string;
           subject_group_id: number;
           teacher_id: string | null;
           user_id: string | null;
@@ -1262,7 +1294,7 @@ export interface Database {
           id?: string;
           legacy_id?: number;
           legacy_person_id?: number | null;
-          person_id?: string | null;
+          person_id: string;
           subject_group_id: number;
           teacher_id?: string | null;
           user_id?: string | null;
@@ -1272,7 +1304,7 @@ export interface Database {
           id?: string;
           legacy_id?: number;
           legacy_person_id?: number | null;
-          person_id?: string | null;
+          person_id?: string;
           subject_group_id?: number;
           teacher_id?: string | null;
           user_id?: string | null;
@@ -1340,7 +1372,7 @@ export interface Database {
       users: {
         Row: {
           created_at: string;
-          email: string | null;
+          email: string;
           id: string;
           is_admin: boolean;
           lagacy_teacher_id: number | null;
@@ -1350,7 +1382,7 @@ export interface Database {
         };
         Insert: {
           created_at?: string;
-          email?: string | null;
+          email: string;
           id?: string;
           is_admin?: boolean;
           lagacy_teacher_id?: number | null;
@@ -1360,7 +1392,7 @@ export interface Database {
         };
         Update: {
           created_at?: string;
-          email?: string | null;
+          email?: string;
           id?: string;
           is_admin?: boolean;
           lagacy_teacher_id?: number | null;
@@ -1514,14 +1546,14 @@ export type Tables<
     ? R
     : never
   : PublicTableNameOrOptions extends keyof (Database["public"]["Tables"] &
-      Database["public"]["Views"])
-  ? (Database["public"]["Tables"] &
-      Database["public"]["Views"])[PublicTableNameOrOptions] extends {
-      Row: infer R;
-    }
-    ? R
-    : never
-  : never;
+        Database["public"]["Views"])
+    ? (Database["public"]["Tables"] &
+        Database["public"]["Views"])[PublicTableNameOrOptions] extends {
+        Row: infer R;
+      }
+      ? R
+      : never
+    : never;
 
 export type TablesInsert<
   PublicTableNameOrOptions extends
@@ -1537,12 +1569,12 @@ export type TablesInsert<
     ? I
     : never
   : PublicTableNameOrOptions extends keyof Database["public"]["Tables"]
-  ? Database["public"]["Tables"][PublicTableNameOrOptions] extends {
-      Insert: infer I;
-    }
-    ? I
-    : never
-  : never;
+    ? Database["public"]["Tables"][PublicTableNameOrOptions] extends {
+        Insert: infer I;
+      }
+      ? I
+      : never
+    : never;
 
 export type TablesUpdate<
   PublicTableNameOrOptions extends
@@ -1558,12 +1590,12 @@ export type TablesUpdate<
     ? U
     : never
   : PublicTableNameOrOptions extends keyof Database["public"]["Tables"]
-  ? Database["public"]["Tables"][PublicTableNameOrOptions] extends {
-      Update: infer U;
-    }
-    ? U
-    : never
-  : never;
+    ? Database["public"]["Tables"][PublicTableNameOrOptions] extends {
+        Update: infer U;
+      }
+      ? U
+      : never
+    : never;
 
 export type Enums<
   PublicEnumNameOrOptions extends
@@ -1575,5 +1607,5 @@ export type Enums<
 > = PublicEnumNameOrOptions extends { schema: keyof Database }
   ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : PublicEnumNameOrOptions extends keyof Database["public"]["Enums"]
-  ? Database["public"]["Enums"][PublicEnumNameOrOptions]
-  : never;
+    ? Database["public"]["Enums"][PublicEnumNameOrOptions]
+    : never;

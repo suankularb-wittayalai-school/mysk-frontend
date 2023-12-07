@@ -91,7 +91,7 @@ const ClassHeader: StylableFC<{
                 number: `M.${classroom.number}`,
               })
             }
-            href={`/classes/print/${classroom.number}`}
+            href={`/classes/${classroom.number}/print`}
             element={Link}
           >
             {t("action.print")}

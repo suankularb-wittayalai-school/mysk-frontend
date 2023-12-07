@@ -36,22 +36,14 @@ import { useState } from "react";
  * @param schedule Data for displaying Schedule.
  * @param subjectsInCharge The Subjects assigned to this teacher. Used in editing the Schedule.
  * @param teachingSubjects An array of Teacher Subject Items, an abstraction of Room Subjects connected to this Teacher.
- * @param classroomID The Classroom ID that the Teacher advises. Used in Attendance.
  * @param teacherID The Teacher’s database ID. Used in validating edits in the Schedule.
  */
 const TeachPage: CustomPage<{
   schedule: ScheduleType;
   subjectsInCharge: Pick<Subject, "id" | "name" | "code" | "short_name">[];
   teachingSubjects: SubjectClassrooms[];
-  classroomID?: string;
   teacherID: string;
-}> = ({
-  schedule,
-  subjectsInCharge,
-  teachingSubjects,
-  classroomID,
-  teacherID,
-}) => {
+}> = ({ schedule, subjectsInCharge, teachingSubjects, teacherID }) => {
   const locale = useLocale();
   const { t } = useTranslation("teach");
   const { t: tx } = useTranslation("common");
@@ -69,12 +61,7 @@ const TeachPage: CustomPage<{
       <ContentLayout>
         <LayoutGroup>
           {/* Home Glance */}
-          <HomeGlance
-            schedule={schedule}
-            role={UserRole.teacher}
-            classroomID={classroomID}
-            teacherID={teacherID}
-          />
+          <HomeGlance schedule={schedule} role={UserRole.teacher} />
 
           {/* Schedule */}
           <motion.section
@@ -135,7 +122,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
-  const { data: user, error } = await getLoggedInPerson(
+  const { data: teacher, error } = await getLoggedInPerson(
     supabase,
     authOptions,
     req,
@@ -144,7 +131,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   );
 
   if (error) return { notFound: true };
-  if (user.role !== "teacher")
+  if (teacher.role !== UserRole.teacher)
     return {
       redirect: {
         destination: getLocalePath("/learn", locale as LangCode),
@@ -152,14 +139,13 @@ export const getServerSideProps: GetServerSideProps = async ({
       },
     };
 
-  const { data: schedule } = await getTeacherSchedule(supabase, user.id);
+  const { data: schedule } = await getTeacherSchedule(supabase, teacher.id);
   const { data: teachingSubjects } = await getTeachingSubjects(
     supabase,
-    user.id,
+    teacher.id,
   );
 
-  const teacherID = user.id;
-  const classroomID = user.class_advisor_at?.id || null;
+  const teacherID = teacher.id;
 
   return {
     props: {
@@ -171,10 +157,9 @@ export const getServerSideProps: GetServerSideProps = async ({
         "schedule",
       ])),
       schedule,
-      subjectsInCharge: user.subjects_in_charge,
+      subjectsInCharge: teacher.subjects_in_charge,
       teachingSubjects,
       teacherID,
-      classroomID,
     },
   };
 };

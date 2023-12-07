@@ -6,15 +6,17 @@ export type AttendanceEvent = "homeroom" | "assembly";
 export type AbsenceType = "late" | "on_leave" | "absent" | "dropped" | "other";
 
 export type StudentAttendance = {
-  id: string;
   student: Pick<
     Student,
-    "id" | "first_name" | "last_name" | "nickname" | "class_no"
+    "id" | "first_name" | "last_name" | "nickname" | "profile" | "class_no"
   >;
-  is_present: boolean;
-  attendance_event: AttendanceEvent;
-  absence_type: AbsenceType | null;
-  absence_reason: string | null;
+} & {
+  [key in AttendanceEvent]: {
+    id: string | null;
+    is_present: boolean | null;
+    absence_type: AbsenceType | null;
+    absence_reason: string | null;
+  };
 };
 
 export type AttendanceAtDate = {
@@ -26,4 +28,10 @@ export type ManagementAttendanceSummary = {
   presence: number;
   late: number;
   absence: number;
+};
+
+export type HomeroomContent = {
+  id: string | null;
+  date: string;
+  homeroom_content: string;
 };

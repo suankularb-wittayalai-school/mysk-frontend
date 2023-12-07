@@ -22,9 +22,15 @@ module.exports = withBundleAnalyzer(
   withPWA({
     reactStrictMode: true,
     images: {
-      domains: [
-        process.env.NEXT_PUBLIC_SUPABASE_URL.replace("https://", ""),
-        "lh3.googleusercontent.com",
+      remotePatterns: [
+        {
+          protocol: "https",
+          hostname: process.env.NEXT_PUBLIC_SUPABASE_URL.replace(
+            "https://",
+            "",
+          ),
+        },
+        { protocol: "https", hostname: "lh3.googleusercontent.com" },
       ],
     },
     i18n,
@@ -45,13 +51,18 @@ module.exports = withBundleAnalyzer(
         { source: "/account/login", destination: "/", permanent: true },
         {
           source: "/welcome",
-          destination: "/account/welcome",
+          destination: "/account",
+          permanent: true,
+        },
+        {
+          source: "/account/welcome",
+          destination: "/account",
           permanent: true,
         },
         { source: "/learn/:id", destination: "/learn", permanent: true },
         {
-          source: "/lookup/document",
-          destination: "/search/documents",
+          source: "/classes/print/:number",
+          destination: "/classes/:number/print",
           permanent: true,
         },
         {

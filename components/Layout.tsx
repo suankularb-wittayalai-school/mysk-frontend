@@ -3,13 +3,15 @@ import Favicon from "@/components/Favicon";
 import LogOutDialog from "@/components/account/LogOutDialog";
 import SchemeIcon from "@/components/icons/SchemeIcon";
 import AppStateContext from "@/contexts/AppStateContext";
+import getHomeURLofRole from "@/utils/helpers/person/getHomeURLofRole";
 import useLocale from "@/utils/helpers/useLocale";
-import useLoggedInPerson from "@/utils/helpers/useLoggedInPerson";
 import usePageIsLoading from "@/utils/helpers/usePageIsLoading";
 import usePreferences from "@/utils/helpers/usePreferences";
 import useRefreshProps from "@/utils/helpers/useRefreshProps";
 import useSnackbar from "@/utils/helpers/useSnackbar";
+import useUser from "@/utils/helpers/useUser";
 import { CustomPage } from "@/utils/types/common";
+import { UserRole } from "@/utils/types/person";
 import {
   MaterialIcon,
   NavBar,
@@ -57,12 +59,8 @@ const Layout: FC<
 
   // Navigation Bar and Drawer
   const router = useRouter();
-  const { person: user } = useLoggedInPerson();
-  const homeURL = {
-    student: "/learn",
-    teacher: "/teach",
-    management: "/manage",
-  }[user?.role || "student"];
+  const { user } = useUser();
+  const homeURL = getHomeURLofRole(user?.role || UserRole.student);
 
   // Snackbar
   const { snackbarOpen, setSnackbarOpen, snackbarProps } = useSnackbar();
@@ -346,6 +344,7 @@ const Layout: FC<
         appearance="linear"
         alt={t("pageIsLoading")}
         visible={pageIsLoading}
+        className="!z-[100]"
       />
 
       {/* Snackbar */}

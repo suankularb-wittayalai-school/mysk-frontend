@@ -1,5 +1,4 @@
 // Imports
-import AttendanceDialog from "@/components/classes/AttendanceDialog";
 import GlanceAttendance from "@/components/home/GlanceAttendance";
 import GlanceCountdown from "@/components/home/GlanceCountdown";
 import GlancePeriods from "@/components/home/GlanceSubjects";
@@ -10,6 +9,7 @@ import getCurrentSchoolSessionState from "@/utils/helpers/schedule/getCurrentSch
 import getTodaySetToPeriodTime from "@/utils/helpers/schedule/getTodaySetToPeriodTime";
 import useLocale from "@/utils/helpers/useLocale";
 import useNow from "@/utils/helpers/useNow";
+import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
 import { Schedule, SchedulePeriod } from "@/utils/types/schedule";
@@ -51,15 +51,13 @@ const PERIOD_START: Parameters<Date["setHours"]> = [8, 30, 0, 0];
  *
  * @param schedule Data for displaying Home Glance.
  * @param role The user’s role. Used in determining the Home Glance view.
- * @param classroomID The ID of the Classroom the user is in. Used for Attendance.
- * @param teacherID The Teacher ID of the user. Used for Attendance.
+ * @param classroom The Classroom the user is in. Used for Attendance.
  */
 const HomeGlance: StylableFC<{
   schedule: Schedule;
   role: UserRole;
-  classroomID?: string;
-  teacherID?: string;
-}> = ({ schedule, role, classroomID, teacherID, style, className }) => {
+  classroom?: Pick<Classroom, "number">;
+}> = ({ schedule, role, classroom, style, className }) => {
   const locale = useLocale();
   const { t } = useTranslation("schedule", { keyPrefix: "atAGlance" });
 
@@ -388,12 +386,8 @@ const HomeGlance: StylableFC<{
             {/* Subjects details */}
             <LayoutGroup>
               <AnimatePresence initial={false}>
-                {["assembly", "homeroom"].includes(displayType) &&
-                (role === "student" || (role === "teacher" && classroomID)) ? (
-                  <GlanceAttendance
-                    role={role}
-                    onOpen={() => setAttendanceOpen(true)}
-                  />
+                {["assembly", "homeroom"].includes(displayType) && classroom ? (
+                  <GlanceAttendance role={role} classroom={classroom} />
                 ) : (
                   displayPeriod && (
                     <GlancePeriods periods={displayPeriod.content} />
@@ -404,20 +398,6 @@ const HomeGlance: StylableFC<{
           </motion.div>
         )
       }
-
-      {/* Attendance dialog */}
-      {classroomID && ["assembly", "homeroom"].includes(displayType) && (
-        <AttendanceDialog
-          key={displayType}
-          event={displayType as "assembly" | "homeroom"}
-          classroomID={classroomID}
-          teacherID={teacherID}
-          editable={role === "teacher"}
-          open={attendanceOpen}
-          onClose={() => setAttendanceOpen(false)}
-          onSubmit={() => setAttendanceOpen(false)}
-        />
-      )}
     </AnimatePresence>
   );
 };
