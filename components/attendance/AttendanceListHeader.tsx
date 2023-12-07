@@ -10,7 +10,10 @@ import {
   Tab,
   TabsContainer,
   Text,
+  transition,
+  useAnimationConfig,
 } from "@suankularb-components/react";
+import { motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { useContext } from "react";
 
@@ -27,9 +30,13 @@ const AttendanceListHeader: StylableFC<{
   const { t } = useTranslation("attendance");
 
   const { setSnackbar } = useContext(SnackbarContext);
+  const { duration, easing } = useAnimationConfig();
 
   return (
-    <div
+    <motion.div
+      layout="position"
+      layoutId="header"
+      transition={transition(duration.medium2, easing.standard)}
       style={style}
       className={cn(
         `-top-8 z-10 flex flex-row items-end gap-x-6 gap-y-3 bg-surface px-4
@@ -87,7 +94,7 @@ const AttendanceListHeader: StylableFC<{
           />
         </TabsContainer>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

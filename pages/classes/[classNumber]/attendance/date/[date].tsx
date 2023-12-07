@@ -85,7 +85,7 @@ const DateAttendancePage: CustomPage<{
       </Head>
       <PageHeader>{t("title")}</PageHeader>
       <ClassAttendanceLayout date={date}>
-        <LayoutGroup>
+        <LayoutGroup id="attendance">
           <TodaySummary
             attendances={attendances}
             homeroomContent={
@@ -93,7 +93,7 @@ const DateAttendancePage: CustomPage<{
             }
             classroomID={classroom.id}
           />
-          <motion.div layoutId="list">
+          <motion.div layout="position" layoutId="list">
             <List
               divided
               className={cn(
@@ -102,7 +102,6 @@ const DateAttendancePage: CustomPage<{
               )}
             >
               <AttendanceListHeader event={event} onEventChange={setEvent} />
-              {/* <LayoutGroup id="attendance"> */}
               {attendances.map((attendance) => (
                 <AttendanceListItem
                   key={attendance.student.id}
@@ -112,7 +111,6 @@ const DateAttendancePage: CustomPage<{
                   onAttendanceChange={replaceAttendance}
                 />
               ))}
-              {/* </LayoutGroup> */}
               {editable && (
                 <AttendanceListFooter
                   loading={loading}
