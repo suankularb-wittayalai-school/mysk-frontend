@@ -82,7 +82,7 @@ const DateAttendancePage: CustomPage<{
                 key={attendance.student.id}
                 attendance={attendance}
                 shownEvent={event}
-                editable
+                editable={editable}
                 onAttendanceChange={replaceAttendance}
               />
             ))}
