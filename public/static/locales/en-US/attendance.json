@@ -61,5 +61,11 @@
       "saved": "Attendance saved for assembly and homeroom",
       "incomplete": "Please check attendance for everyone before saving"
     }
+  },
+  "thisWeek": {
+    "todo": {
+      "title": "We’re working hard on delivering this feature.",
+      "subtitle": "The “This Week” page will give you deeper insights into the trends of your class’ attendance. Stay tuned."
+    }
   }
 }

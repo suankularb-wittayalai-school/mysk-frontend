@@ -1,12 +1,15 @@
 // Imports
 import ClassAttendanceLayout from "@/components/attendance/ClassAttendanceLayout";
 import PageHeader from "@/components/common/PageHeader";
+import cn from "@/utils/helpers/cn";
 import { Classroom } from "@/utils/types/classroom";
 import { CustomPage, LangCode } from "@/utils/types/common";
+import { Text } from "@suankularb-components/react";
 import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
+import Balancer from "react-wrap-balancer";
 
 /**
  * Week Attendance page displays Attendance of a Classroom of a specific week.
@@ -25,7 +28,19 @@ const WeekAttendancePage: CustomPage<{
       </Head>
       <PageHeader>Attendance</PageHeader>
       <ClassAttendanceLayout date={date}>
-        <p>TODO</p>
+        <div className="py-20">
+          <div
+            className={cn(`mx-auto flex max-w-sm flex-col items-center gap-2
+              text-center`)}
+          >
+            <Text type="title-large" className="!font-bold text-secondary">
+              <Balancer>{t("thisWeek.todo.title")}</Balancer>
+            </Text>
+            <Text type="body-large">
+              <Balancer>{t("thisWeek.todo.subtitle")}</Balancer>
+            </Text>
+          </div>
+        </div>
       </ClassAttendanceLayout>
     </>
   );
