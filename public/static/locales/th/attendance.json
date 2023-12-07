@@ -44,8 +44,7 @@
   "today": {
     "title": "มาสาย {{late, number}} • ขาด {{absent, number}}",
     "homeroom": {
-      "field": "เนื้อหาโฮมรูม",
-      "field_placeholder": "วันนี้ได้พูดเรื่องอะไรบ้าง",
+      "field": "โฮมรูมวันนี้พูดเรื่องอะไรบ้าง?",
       "action": {
         "add": "เพิ่มข้อมูลโฮมรูม",
         "edit": "แก้ไข",

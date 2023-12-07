@@ -44,8 +44,7 @@
   "today": {
     "title": "{{late, number}} late • {{absent, number}} absent",
     "homeroom": {
-      "field": "Homeroom description",
-      "field_placeholder": "What did you talk about?",
+      "field": "What did you talk about?",
       "action": {
         "add": "Add homeroom",
         "edit": "Edit",

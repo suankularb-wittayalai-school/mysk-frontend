@@ -13,16 +13,23 @@ import {
 } from "@/utils/backend/account/getLoggedInPerson";
 import getUserByEmail from "@/utils/backend/account/getUserByEmail";
 import getAttendanceOfClass from "@/utils/backend/attendance/getAttendanceOfClass";
+import getHomeroomOfClass from "@/utils/backend/attendance/getHomeroomOfClass";
 import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
 import useAttendanceActions from "@/utils/helpers/attendance/useAttendanceActions";
 import cn from "@/utils/helpers/cn";
 import { YYYYMMDDRegex } from "@/utils/patterns";
-import { AttendanceEvent, StudentAttendance } from "@/utils/types/attendance";
+import {
+  AttendanceEvent,
+  HomeroomContent,
+  StudentAttendance,
+} from "@/utils/types/attendance";
+import { Classroom } from "@/utils/types/classroom";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
 import { List, Snackbar } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
-import { LayoutGroup } from "framer-motion";
+import { isFuture, isWeekend } from "date-fns";
+import { LayoutGroup, motion } from "framer-motion";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import { useTranslation } from "next-i18next";
@@ -37,13 +44,24 @@ import { useContext, useState } from "react";
  * @param teacherID The ID of the Teacher who is viewing this page. Used in Attendance.
  * @param editable Whether the Attendance data is editable.
  * @param attendances The Attendance data to display.
+ * @param homeroomContent An object containing the content of this day’s homeroom.
+ * @param classroom The Classroom that this page is for.
  */
 const DateAttendancePage: CustomPage<{
   date: string;
   teacherID?: string;
   editable?: boolean;
   attendances: StudentAttendance[];
-}> = ({ date, teacherID, editable, attendances: initialAttendances }) => {
+  homeroomContent?: HomeroomContent;
+  classroom: Pick<Classroom, "id" | "number">;
+}> = ({
+  date,
+  teacherID,
+  editable,
+  attendances: initialAttendances,
+  homeroomContent,
+  classroom,
+}) => {
   const { t } = useTranslation("attendance");
   const { t: tx } = useTranslation("common");
 
@@ -67,42 +85,54 @@ const DateAttendancePage: CustomPage<{
       </Head>
       <PageHeader>{t("title")}</PageHeader>
       <ClassAttendanceLayout date={date}>
-        <TodaySummary attendances={attendances} />
-        <List
-          divided
-          className={cn(
-            `!-mx-4 !block sm:!mx-0 [&>:first-child]:!border-b-outline`,
-            editable && `[&>:nth-last-child(2)]:!border-b-0`,
-          )}
-        >
-          <AttendanceListHeader event={event} onEventChange={setEvent} />
-          <LayoutGroup id="attendance">
-            {attendances.map((attendance) => (
-              <AttendanceListItem
-                key={attendance.student.id}
-                attendance={attendance}
-                shownEvent={event}
-                editable={editable}
-                onAttendanceChange={replaceAttendance}
-              />
-            ))}
-          </LayoutGroup>
-          {editable && (
-            <AttendanceListFooter
-              loading={loading}
-              onMarkAllPresent={handleMarkAllPresent}
-              onClear={handleClear}
-              onSave={async () => {
-                if (await handleSave())
-                  setSnackbar(<Snackbar>{t("today.snackbar.saved")}</Snackbar>);
-                else
-                  setSnackbar(
-                    <Snackbar>{t("today.snackbar.incomplete")}</Snackbar>,
-                  );
-              }}
-            />
-          )}
-        </List>
+        <LayoutGroup>
+          <TodaySummary
+            attendances={attendances}
+            homeroomContent={
+              homeroomContent || { id: null, date, homeroom_content: "" }
+            }
+            classroomID={classroom.id}
+          />
+          <motion.div layoutId="list">
+            <List
+              divided
+              className={cn(
+                `!-mx-4 !block sm:!mx-0 [&>:first-child]:!border-b-outline`,
+                editable && `[&>:nth-last-child(2)]:!border-b-0`,
+              )}
+            >
+              <AttendanceListHeader event={event} onEventChange={setEvent} />
+              {/* <LayoutGroup id="attendance"> */}
+              {attendances.map((attendance) => (
+                <AttendanceListItem
+                  key={attendance.student.id}
+                  attendance={attendance}
+                  shownEvent={event}
+                  editable={editable}
+                  onAttendanceChange={replaceAttendance}
+                />
+              ))}
+              {/* </LayoutGroup> */}
+              {editable && (
+                <AttendanceListFooter
+                  loading={loading}
+                  onMarkAllPresent={handleMarkAllPresent}
+                  onClear={handleClear}
+                  onSave={async () => {
+                    if (await handleSave())
+                      setSnackbar(
+                        <Snackbar>{t("today.snackbar.saved")}</Snackbar>,
+                      );
+                    else
+                      setSnackbar(
+                        <Snackbar>{t("today.snackbar.incomplete")}</Snackbar>,
+                      );
+                  }}
+                />
+              )}
+            </List>
+          </motion.div>
+        </LayoutGroup>
       </ClassAttendanceLayout>
     </>
   );
@@ -115,7 +145,12 @@ export const getServerSideProps: GetServerSideProps = async ({
   res,
 }) => {
   const { classNumber, date } = params as { [key: string]: string };
-  if (!YYYYMMDDRegex.test(date)) return { notFound: true };
+  if (
+    !YYYYMMDDRegex.test(date) ||
+    isFuture(new Date(date)) ||
+    isWeekend(new Date(date))
+  )
+    return { notFound: true };
 
   const supabase = createPagesServerClient({
     req: req as NextApiRequest,
@@ -162,6 +197,11 @@ export const getServerSideProps: GetServerSideProps = async ({
     classroom.id,
     date,
   );
+  const { data: homeroomContent } = await getHomeroomOfClass(
+    supabase,
+    classroom.id,
+    date,
+  );
 
   return {
     props: {
@@ -173,6 +213,8 @@ export const getServerSideProps: GetServerSideProps = async ({
       teacherID,
       editable,
       attendances,
+      homeroomContent,
+      classroom,
     },
   };
 };

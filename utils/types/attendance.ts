@@ -29,3 +29,9 @@ export type ManagementAttendanceSummary = {
   late: number;
   absence: number;
 };
+
+export type HomeroomContent = {
+  id: string | null;
+  date: string;
+  homeroom_content: string;
+};
