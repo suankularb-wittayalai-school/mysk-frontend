@@ -344,6 +344,7 @@ const Layout: FC<
         appearance="linear"
         alt={t("pageIsLoading")}
         visible={pageIsLoading}
+        className="!z-[100]"
       />
 
       {/* Snackbar */}
