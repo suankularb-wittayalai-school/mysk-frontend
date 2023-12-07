@@ -12,11 +12,10 @@
     "patchNotes": {
       "alt": "Patch notes",
       "overline": "MySK {{version}}",
-      "title": "Power up your school experience",
+      "title": "Dig deeper with all-new Search Filters",
       "list": [
-        "<strong>Lookup just got smarter</strong>—search for teachers by name, contacts, and more.",
-        "<strong>Attendance at your fingertips</strong>—take and view attendance right on MySK.",
-        "<strong>A more polished look</strong>—news and classes get a refresh."
+        "<strong>Search Filters</strong>—search for students, teachers, and documents with precision.",
+        "<strong>Attendance</strong>—jump to any date on the new Attendance page."
       ]
     },
     "action": {
