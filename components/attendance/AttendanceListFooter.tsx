@@ -1,7 +1,14 @@
 // Imports
 import cn from "@/utils/helpers/cn";
 import { StylableFC } from "@/utils/types/common";
-import { Actions, Button, MaterialIcon } from "@suankularb-components/react";
+import {
+  Actions,
+  Button,
+  MaterialIcon,
+  transition,
+  useAnimationConfig,
+} from "@suankularb-components/react";
+import { motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 
 /**
@@ -21,6 +28,8 @@ const AttendanceListFooter: StylableFC<{
 }> = ({ loading, onMarkAllPresent, onClear, onSave }) => {
   const { t } = useTranslation("attendance", { keyPrefix: "today.action" });
 
+  const { duration, easing } = useAnimationConfig();
+
   // On mobile, primary action (save) is on the first from the left and
   // secondary actions are right next to the right to save space.
 
@@ -36,7 +45,10 @@ const AttendanceListFooter: StylableFC<{
   // [ Mark all present ] [ Clear all ]                                 [ Save ]
 
   return (
-    <div
+    <motion.div
+      layout="position"
+      layoutId="footer"
+      transition={transition(duration.medium2, easing.standard)}
       className={cn(`sticky bottom-20 z-10 flex flex-row gap-2 overflow-auto
         border-t-1 border-t-outline bg-surface px-4 pb-4 pt-2 sm:bottom-0 sm:px-0`)}
     >
@@ -77,7 +89,7 @@ const AttendanceListFooter: StylableFC<{
           {t("save")}
         </Button>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
