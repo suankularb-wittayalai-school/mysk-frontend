@@ -83,7 +83,7 @@ const DateAttendancePage: CustomPage<{
       <Head>
         <title>{tx("tabName", { tabName: t("title") })}</title>
       </Head>
-      <PageHeader>{t("title")}</PageHeader>
+      <PageHeader parentURL="/classes">{t("title")}</PageHeader>
       <ClassAttendanceLayout date={date}>
         <LayoutGroup id="attendance">
           <TodaySummary
