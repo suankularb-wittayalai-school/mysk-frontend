@@ -13,7 +13,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   params,
 }) => ({
   redirect: {
-    destination: `/${locale !== "th" ? locale : ""}/classes/${
+    destination: `/${locale !== "th" ? locale + "/" : ""}classes/${
       params!.classNumber
     }/attendance/date/${getISODateString(new Date())}`,
     permanent: false,
