@@ -3,10 +3,11 @@ import getUserByEmail from "@/utils/backend/account/getUserByEmail";
 import getLocalePath from "@/utils/helpers/getLocalePath";
 import logError from "@/utils/helpers/logError";
 import { LangCode } from "@/utils/types/common";
-import { User, UserRole } from "@/utils/types/person";
+import { User } from "@/utils/types/person";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
+import getHomeURLofRole from "./utils/helpers/person/getHomeURLofRole";
 
 /**
  * The middleware is run before a request is completed.
@@ -23,7 +24,7 @@ export async function middleware(req: NextRequest) {
   const locale = req.nextUrl.locale as LangCode;
 
   // Log middleware start
-  console.log(`\u001b[1m ○\u001b[0m Running middleware on ${route} …`);
+  console.log(`\u001b[1m\x1b[35m ⇥\u001b[0m Running middleware on ${route} …`);
 
   // Ignore all page requests if under maintenance
   if (process.env.CLOSED_FOR_MAINTENANCE === "true")
@@ -34,16 +35,24 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL(getLocalePath("/", locale), req.url));
 
   // Get current page protection type
-  const pageRole: UserRole | "public" | "admin" | "user" =
+  const pageRole:
+    | "public"
+    | "admin"
+    | "student"
+    | "teacher"
+    | "management"
+    | "user" =
     route === "/"
       ? "public"
       : /^\/admin|(news\/(info|form)\/(create|(\d+\/edit)))/.test(route)
-      ? "admin"
-      : /^\/learn/.test(route)
-      ? "student"
-      : /^\/(teach|class\/\d{3}\/form\/\d+)/.test(route)
-      ? "teacher"
-      : "user";
+        ? "admin"
+        : /^\/learn/.test(route)
+          ? "student"
+          : /^\/(teach|class\/\d{3}\/form\/\d+)/.test(route)
+            ? "teacher"
+            : /^\/manage/.test(route)
+              ? "management"
+              : "user";
 
   // Declare Supabase client
   const supabase = createMiddlewareClient({ req, res });
@@ -60,12 +69,17 @@ export async function middleware(req: NextRequest) {
   // Decide on destination based on user and page protection type
   let destination: string | null = null;
 
+  /**
+   * The home destination is the page the user is redirected to if they are
+   * on a page they are not allowed to be on.
+   */
+  const homeDestination = user?.role ? getHomeURLofRole(user.role) : "/";
+
+  // Default Search page to Students tab
+  if (route === "/search") destination = "/search/students";
+
   // Disallow public users from visiting private pages
   if (pageRole !== "public" && !user) destination = "/";
-  // Disallow students from vising the Your Subject page of the onboarding
-  // process
-  else if (route === "/account/welcome/your-subjects" && user?.role === "student")
-    destination = "/account/welcome/your-information";
   // Disallow logged in users from visiting certain pages under certain
   // circumstances
   // prettier-ignore
@@ -81,23 +95,21 @@ export async function middleware(req: NextRequest) {
       )
     )
   ) {
-    // Set destinations for students and teachers in the wrong pages
-    if (user?.role === "student") destination = "/learn";
-    else if (user?.role === "teacher") destination = "/teach";
+    // Set destinations for users in the wrong pages
+    destination = homeDestination;
   }
   // Allow all users to visit user pages
   // Allow users with the correct roles
   else if (!(pageRole === "user" || pageRole === user?.role)) {
     if (pageRole !== "admin" || !user?.is_admin) {
-      // Set destinations for students and teachers in the wrong pages
-      if (user?.role === "student") destination = "/learn";
-      else if (user?.role === "teacher") destination = "/teach";
+      // Set destinations for users in the wrong pages
+      destination = homeDestination;
     }
   }
 
   // Log middleware end
   console.log(
-    `\u001b[1m\x1b[92m ✓\x1b[0m\u001b[0m ${
+    `\u001b[1m\x1b[35m ↦\x1b[0m\u001b[0m ${
       destination ? `Redirected to ${destination}` : "Continued"
     }`,
   );
@@ -117,8 +129,9 @@ export const config = {
     "/learn",
     "/teach",
     "/classes/:path*",
-    "/lookup/:path*",
+    "/search/:path*",
     "/maintenance",
+    "/manage/:path*",
     "/news",
     "/news/:id",
   ],

@@ -1,0 +1,71 @@
+{
+  "title": "Attendance",
+  "viewSelector": {
+    "view": {
+      "today": "Today",
+      "thisWeek": "This week"
+    },
+    "date": "Go to date…",
+    "action": {
+      "go": "Go"
+    }
+  },
+  "event": {
+    "title": "Choose event…",
+    "assembly": "Assembly",
+    "homeroom": "Homeroom",
+    "snackbar": {
+      "switchedToAssembly": "Switched to assembly",
+      "switchedToHomeroom": "Switched to homeroom"
+    }
+  },
+  "legend": {
+    "title": "Legend",
+    "present": "Present",
+    "late": "Late",
+    "absent": "Absent"
+  },
+  "item": {
+    "classNo": "No. {{classNo}}",
+    "presence": {
+      "title": "Presence",
+      "present": "Present",
+      "late": "Late",
+      "absent": "Absent"
+    },
+    "absenceType": {
+      "onLeave": "On leave",
+      "absent": "Absent without reason",
+      "dropped": "Dropped",
+      "other": "Other"
+    },
+    "enterReason": "Enter reason"
+  },
+  "today": {
+    "title": "{{late, number}} late • {{absent, number}} absent",
+    "homeroom": {
+      "field": "What did you talk about?",
+      "action": {
+        "add": "Add homeroom",
+        "edit": "Edit",
+        "save": "Save",
+        "cancel": "Cancel"
+      }
+    },
+    "action": {
+      "save": "Save",
+      "clear": "Clear",
+      "markAll": "Mark all present"
+    },
+    "snackbar": {
+      "saved": "Attendance saved for assembly and homeroom",
+      "incomplete": "Please check attendance for everyone before saving"
+    }
+  },
+  "thisWeek": {
+    "todo": {
+      "title": "We’re working hard on delivering this feature.",
+      "subtitle": "The “This Week” page will give you deeper insights into the trends of your class’ attendance. Stay tuned."
+    }
+  }
+}

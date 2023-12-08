@@ -8,7 +8,7 @@ import {
   MaterialIcon,
   Text,
   transition,
-  useAnimationConfig
+  useAnimationConfig,
 } from "@suankularb-components/react";
 import { motion } from "framer-motion";
 import { Trans, useTranslation } from "next-i18next";
@@ -16,8 +16,10 @@ import { ReactNode } from "react";
 
 const SearchFiltersCard: StylableFC<{
   children: ReactNode;
+  icon: JSX.Element;
+  title: string;
   onSubmit: () => void;
-}> = ({ children, onSubmit, style, className }) => {
+}> = ({ children, icon, title, onSubmit, style, className }) => {
   const { duration, easing } = useAnimationConfig();
   const { t } = useTranslation("lookup", {
     keyPrefix: "common.searchFilters",
@@ -31,13 +33,16 @@ const SearchFiltersCard: StylableFC<{
       style={{ ...style, borderRadius: 12 }}
       className={cn(`skc-card skc-card--outlined mx-4 sm:mx-0`, className)}
     >
-      <motion.h2
+      <motion.div
         layout="position"
         transition={transition(duration.long2, easing.emphasized)}
-        className="skc-text skc-text--title-medium px-4 pb-2 pt-3"
+        className="flex flex-row items-center gap-4 px-4 py-3"
       >
-        {t("title")}
-      </motion.h2>
+        <div className="text-on-surface-variant">{icon}</div>
+        <Text type="title-medium" element="h2">
+          {title}
+        </Text>
+      </motion.div>
       <motion.div
         layout="position"
         initial={{ opacity: 0, y: 40 }}
@@ -66,3 +71,4 @@ const SearchFiltersCard: StylableFC<{
 };
 
 export default SearchFiltersCard;
+

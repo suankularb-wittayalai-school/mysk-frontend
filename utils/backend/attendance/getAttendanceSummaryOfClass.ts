@@ -1,4 +1,4 @@
-import getISODateString from "@/utils/backend/getISODateString";
+import getISODateString from "@/utils/helpers/getISODateString";
 import logError from "@/utils/helpers/logError";
 import { AttendanceAtDate, AttendanceEvent } from "@/utils/types/attendance";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
@@ -24,11 +24,12 @@ export default async function getAttendanceSummaryOfClass(
       `date,
       is_present,
       attendance_event,
+      absence_type,
       students!inner(classroom_students!inner(classroom_id))`,
     )
     .eq("students.classroom_students.classroom_id", classroomID)
     .order("date", { ascending: false })
-    .gt("date", addMonths(new Date(), -3).toISOString().split("T")[0]);
+    .gt("date", getISODateString(addMonths(new Date(), -3)));
 
   if (error) {
     logError("getRecentAttendanceAtDaysOfClass", error);
@@ -51,7 +52,10 @@ export default async function getAttendanceSummaryOfClass(
       (attendance) => attendance.attendance_event === attendanceEvent,
     );
     return attendancesOfEvent.length
-      ? attendancesOfEvent.filter((attendance) => !attendance.is_present).length
+      ? attendancesOfEvent.filter(
+          (attendance) =>
+            !attendance.is_present && attendance.absence_type !== "late",
+        ).length
       : null;
   }
 

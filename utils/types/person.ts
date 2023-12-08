@@ -4,32 +4,52 @@ import { Contact } from "@/utils/types/contact";
 import { Classroom } from "@/utils/types/classroom";
 import { SubjectGroup, Subject } from "@/utils/types/subject";
 
-export type UserRole =
-  | "student"
-  | "teacher"
-  | "organization"
-  | "staff"
-  | "management";
+/**
+ * The role of a user.
+ */
+export enum UserRole {
+  student = "student",
+  teacher = "teacher",
+  management = "management",
+  organization = "organization",
+  staff = "staff",
+}
+
+/**
+ * The key of a User Permission.
+ */
+export enum UserPermissionKey {
+  /**
+   * Can see the Manage page and its children.
+   */
+  can_see_management = "can_see_management",
+}
+
+export type UserPermissions = {
+  [key in UserPermissionKey]: boolean;
+};
 
 export type User = {
   id: string;
   email: string | null;
+  permissions: UserPermissions;
   is_admin: boolean;
   onboarded: boolean;
   role: UserRole;
 };
 
-export type ShirtSize =
-  | "XS"
-  | "S"
-  | "M"
-  | "L"
-  | "XL"
-  | "2XL"
-  | "3XL"
-  | "4XL"
-  | "5XL"
-  | "6XL";
+export enum ShirtSize {
+  XS = "XS",
+  S = "S",
+  M = "M",
+  L = "L",
+  XL = "XL",
+  twoXL = "2XL",
+  threeXL = "3XL",
+  fourXL = "4XL",
+  fiveXL = "5XL",
+  sixXL = "6XL",
+}
 
 export type Person = {
   id: string;
@@ -52,7 +72,7 @@ export type Student = Person & {
   student_id: string;
   classroom: Pick<Classroom, "id" | "number"> | null;
   class_no: number | null;
-  role: "student";
+  role: UserRole.student;
 };
 
 export type Teacher = Person & {
@@ -60,8 +80,10 @@ export type Teacher = Person & {
   class_advisor_at: Pick<Classroom, "id" | "number"> | null;
   subject_group: SubjectGroup;
   subjects_in_charge: Pick<Subject, "id" | "name" | "code" | "short_name">[];
-  role: "teacher";
+  role: UserRole.teacher;
 };
+
+export type Management = Person & { role: UserRole.management };
 
 export type StudentLookupItem = Pick<
   Student,

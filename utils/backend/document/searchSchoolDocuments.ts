@@ -50,7 +50,7 @@ export async function searchSchoolDocuments(
       id: document.id,
       code: document.code,
       date: document.date,
-      type: document.type,
+      type: <SchoolDocumentType>document.type,
       subject: document.subject,
       document_link: document.document_link,
       organization: null,

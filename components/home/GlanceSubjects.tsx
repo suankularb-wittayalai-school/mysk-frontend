@@ -1,5 +1,5 @@
 // Imports
-import InformationCard from "@/components/lookup/teachers/InformationCard";
+import InformationCard from "@/components/lookup/people/InformationCard";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";

@@ -13,11 +13,17 @@ const LookupDetailsDialog: StylableFC<{
     <FullscreenDialog
       open={open}
       title=""
+      width={680}
       onClose={onClose}
-      className={cn(`[&>:first-child]:!flex-row-reverse
-        [&>:first-child]:!bg-transparent [&>:last-child>div]:!mx-0
-        [&>:last-child>div]:!rounded-none [&>:last-child>div]:!border-0
-        [&>:last-child]:h-[100dvh] [&>:last-child]:!p-0`)}
+      style={style}
+      className={cn(
+        `sm:divide-y-0 [&>:first-child]:!flex-row-reverse
+        [&>:first-child]:!bg-transparent sm:[&>:first-child]:!fixed
+        [&>:last-child>div]:!mx-0 [&>:last-child>div]:!rounded-none
+        [&>:last-child>div]:!border-0 [&>:last-child]:h-[100dvh]
+        [&>:last-child]:!p-0`,
+        className,
+      )}
     >
       {children}
     </FullscreenDialog>

@@ -237,6 +237,7 @@ const config: Config = {
   plugins: [
     plugin(function ({ addVariant }) {
       addVariant("state-layer", ["&::before", "&>span:empty"]);
+      addVariant("safari", "@supports (-webkit-hyphens: none)");
     }),
   ],
 };

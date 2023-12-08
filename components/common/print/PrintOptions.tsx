@@ -8,7 +8,7 @@ import {
   Actions,
   Button,
   MaterialIcon,
-  Text
+  Text,
 } from "@suankularb-components/react";
 
 // Internal components
@@ -34,7 +34,7 @@ const PrintOptions: FC<{
 
   return (
     <aside
-      className={cn(`fixed bottom-20 z-50 w-screen divide-y-1 divide-outline
+      className={cn(`fixed bottom-0 z-[70] w-screen divide-y-1 divide-outline
         rounded-t-xl bg-surface-3 shadow-3 print:hidden sm:inset-0 sm:left-auto
         sm:h-auto sm:w-96 sm:rounded-l-xl sm:rounded-tr-none sm:bg-surface
         md:top-0 md:shadow-none lg:sticky lg:top-8 lg:w-full lg:rounded-r-xl`)}
@@ -69,12 +69,10 @@ const PrintOptions: FC<{
           {t("note")}
         </Text>
         <div
-          className={cn(`[&_.skc-chip-set\_\_label]:!bg-surface-3
-            [&_.skc-chip-set\_\_label]:sm:!bg-surface
-            [&_.skc-select--outlined_.skc-select\_\_label]:!bg-surface-3
-            [&_.skc-select--outlined_.skc-select\_\_label]:sm:!bg-surface
-            [&_.skc-text-field--outlined_.skc-text-field\_\_label]:!bg-surface-3
-            [&_.skc-text-field--outlined_.skc-text-field\_\_label]:sm:!bg-surface`)}
+          className={cn(`[&_.skc-select--outlined_>label]:!bg-surface-3
+            [&_.skc-select--outlined_>label]:sm:!bg-surface
+            [&_.skc-text-field--outlined>span]:!bg-surface-3
+            [&_.skc-text-field--outlined>span]:sm:!bg-surface`)}
         >
           {children}
         </div>

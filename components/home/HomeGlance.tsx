@@ -1,5 +1,4 @@
 // Imports
-import AttendanceDialog from "@/components/classes/AttendanceDialog";
 import GlanceAttendance from "@/components/home/GlanceAttendance";
 import GlanceCountdown from "@/components/home/GlanceCountdown";
 import GlancePeriods from "@/components/home/GlanceSubjects";
@@ -10,6 +9,7 @@ import getCurrentSchoolSessionState from "@/utils/helpers/schedule/getCurrentSch
 import getTodaySetToPeriodTime from "@/utils/helpers/schedule/getTodaySetToPeriodTime";
 import useLocale from "@/utils/helpers/useLocale";
 import useNow from "@/utils/helpers/useNow";
+import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
 import { Schedule, SchedulePeriod } from "@/utils/types/schedule";
@@ -51,15 +51,13 @@ const PERIOD_START: Parameters<Date["setHours"]> = [8, 30, 0, 0];
  *
  * @param schedule Data for displaying Home Glance.
  * @param role The user’s role. Used in determining the Home Glance view.
- * @param classroomID The ID of the Classroom the user is in. Used for Attendance.
- * @param teacherID The Teacher ID of the user. Used for Attendance.
+ * @param classroom The Classroom the user is in. Used for Attendance.
  */
 const HomeGlance: StylableFC<{
   schedule: Schedule;
   role: UserRole;
-  classroomID?: string;
-  teacherID?: string;
-}> = ({ schedule, role, classroomID, teacherID, style, className }) => {
+  classroom?: Pick<Classroom, "number">;
+}> = ({ schedule, role, classroom, style, className }) => {
   const locale = useLocale();
   const { t } = useTranslation("schedule", { keyPrefix: "atAGlance" });
 
@@ -110,8 +108,20 @@ const HomeGlance: StylableFC<{
   // Note: `differenceInSeconds` and `differenceInMinutes` operate by
   // [first param] - [second param]
 
+  // The sequence of periods are as follows:
+  //   1. Assembly   07:30 - 08:00
+  //   2. Homeroom   08:00 - 08:30
+  //   3. Periods    08:30 onwards
+
   // The edges of periods relative to current time, used in calculating the
   // display type
+
+  /**
+   * The number of seconds since the start of the current period. This is used
+   * to calculate the {@link classProgress class progress}.
+   *
+   * Also support assembly and homeroom.
+   */
   const secondsSinceStart = isFuture(new Date().setHours(...PERIOD_START))
     ? differenceInSeconds(
         now,
@@ -120,21 +130,47 @@ const HomeGlance: StylableFC<{
           : new Date().setHours(...ASSEMBLY_START),
       )
     : currentPeriod?.content.length
-    ? differenceInSeconds(
-        now,
-        getTodaySetToPeriodTime(currentPeriod.start_time),
-      )
-    : 0;
-  const minutesTilEnd = currentPeriod
-    ? differenceInMinutes(
-        getTodaySetToPeriodTime(
-          currentPeriod.start_time + currentPeriod.duration - 1,
-          "end",
-        ),
-        now,
-        { roundingMethod: "ceil" },
-      )
-    : null;
+      ? differenceInSeconds(
+          now,
+          getTodaySetToPeriodTime(currentPeriod.start_time),
+        )
+      : 0;
+
+  /**
+   * The number of minutes until the end of the current period.
+   *
+   * Also support assembly and homeroom.
+   */
+  const minutesTilEnd =
+    // If it’s before 08:30, it’s assembly or homeroom
+    isFuture(new Date().setHours(...PERIOD_START))
+      ? differenceInMinutes(
+          // If it’s during or after 08:00, it’s homeroom
+          !isFuture(new Date().setHours(...HOMEROOM_START))
+            ? // Get the difference between the current time and the start of
+              // periods
+              new Date().setHours(...PERIOD_START)
+            : // If it’s before 08:00, it’s assembly--get the difference between
+              // the current time and the start of homeroom
+              new Date().setHours(...HOMEROOM_START),
+          now,
+        )
+      : currentPeriod?.content.length
+        ? differenceInMinutes(
+            getTodaySetToPeriodTime(
+              currentPeriod.start_time + currentPeriod.duration - 1,
+              "end",
+            ),
+            now,
+            { roundingMethod: "ceil" },
+          )
+        : null;
+
+  /**
+   * The number of minutes until the start of the immediate next period.
+   *
+   * If there is no period immediately after the current period, this is `null`.
+   */
   const minutesTilImmediateNext = immediateNextPeriod?.content.length
     ? differenceInMinutes(
         getTodaySetToPeriodTime(immediateNextPeriod.start_time),
@@ -142,6 +178,11 @@ const HomeGlance: StylableFC<{
         { roundingMethod: "ceil" },
       )
     : null;
+
+  /**
+   * The number of minutes until the start of the next period of the day,
+   * regardless of whether it’s immediately after the current period or not.
+   */
   const minutesTilTodayNext = todayNextPeriod?.content.length
     ? differenceInMinutes(
         getTodaySetToPeriodTime(todayNextPeriod.start_time),
@@ -190,56 +231,57 @@ const HomeGlance: StylableFC<{
     })
       ? "assembly"
       : // If it’s between 08:00 and 08:30, display that it’s homeroom time
-      isWithinInterval(new Date(), {
-          start: new Date().setHours(8, 0, 0, 0),
-          end: new Date().setHours(8, 30, 0, 0),
-        })
-      ? "homeroom"
-      : !todayRow.length
-      ? "none"
-      : role === "teacher"
-      ? // If the teacher is free and it’s 5 minutes before the next class
-        // starts, they are instructed to travel
-        minutesTilImmediateNext &&
-        minutesTilImmediateNext >= 0 &&
-        minutesTilImmediateNext <= 5
-        ? "teach-travel"
-        : // If the teacher is free and the next class is far away, show a
-        //   countdown
-        todayNextPeriod?.content.length && !currentPeriod?.content.length
-        ? "teach-future"
-        : // If the teacher is teaching and it’s 10 minutes until it’s over,
-        //   they are intructed to wrap the class up
-        currentPeriod?.content.length &&
-          minutesTilEnd &&
-          minutesTilEnd >= 0 &&
-          minutesTilEnd <= 10
-        ? "teach-wrap-up"
-        : // If the teacher is teaching, display the current class
-        currentPeriod?.content.length
-        ? "teach-current"
-        : "none"
-      : role === "student"
-      ? // If it’s 10 minutes before the next class, display that class
-        minutesTilImmediateNext &&
-        minutesTilImmediateNext >= 0 &&
-        minutesTilImmediateNext <= 10
-        ? "learn-next"
-        : // If the student is in class, display that class
-        currentPeriod?.content.length
-        ? "learn-current"
-        : // If the student is free and it’s a lunch period, display that it’s
-        //   lunch
-        [4, 5].includes(periodNumber)
-        ? "lunch"
-        : "none"
-      : "none";
+        isWithinInterval(new Date(), {
+            start: new Date().setHours(8, 0, 0, 0),
+            end: new Date().setHours(8, 30, 0, 0),
+          })
+        ? "homeroom"
+        : !todayRow.length
+          ? "none"
+          : role === "teacher"
+            ? // If the teacher is free and it’s 5 minutes before the next class
+              // starts, they are instructed to travel
+              minutesTilImmediateNext &&
+              minutesTilImmediateNext >= 0 &&
+              minutesTilImmediateNext <= 5
+              ? "teach-travel"
+              : // If the teacher is free and the next class is far away, show a
+                //   countdown
+                todayNextPeriod?.content.length &&
+                  !currentPeriod?.content.length
+                ? "teach-future"
+                : // If the teacher is teaching and it’s 10 minutes until it’s over,
+                  // they are intructed to wrap the class up
+                  currentPeriod?.content.length &&
+                    minutesTilEnd &&
+                    minutesTilEnd >= 0 &&
+                    minutesTilEnd <= 10
+                  ? "teach-wrap-up"
+                  : // If the teacher is teaching, display the current class
+                    currentPeriod?.content.length
+                    ? "teach-current"
+                    : "none"
+            : role === "student"
+              ? // If it’s 10 minutes before the next class, display that class
+                minutesTilImmediateNext &&
+                minutesTilImmediateNext >= 0 &&
+                minutesTilImmediateNext <= 10
+                ? "learn-next"
+                : // If the student is in class, display that class
+                  currentPeriod?.content.length
+                  ? "learn-current"
+                  : // If the student is free and it’s a lunch period, display that it’s
+                    //   lunch
+                    [4, 5].includes(periodNumber)
+                    ? "lunch"
+                    : "none"
+              : "none";
 
   const displayPeriod = ["learn-next", "teach-travel"].includes(displayType)
     ? immediateNextPeriod
     : displayType === "teach-future"
-    ? todayNextPeriod
-    : currentPeriod;
+      ? todayNextPeriod
+      : currentPeriod;
 
   const [attendanceOpen, setAttendanceOpen] = useState(false);
 
@@ -300,8 +342,8 @@ const HomeGlance: StylableFC<{
                   (["teach-travel", "teach-future"].includes(displayType)
                     ? minutesTilTodayNext
                     : ["teach-next", "learn-next"].includes(displayType)
-                    ? minutesTilImmediateNext
-                    : minutesTilEnd) || 0
+                      ? minutesTilImmediateNext
+                      : minutesTilEnd) || 0
                 }
               />
 
@@ -344,12 +386,8 @@ const HomeGlance: StylableFC<{
             {/* Subjects details */}
             <LayoutGroup>
               <AnimatePresence initial={false}>
-                {["assembly", "homeroom"].includes(displayType) &&
-                (role === "student" || (role === "teacher" && classroomID)) ? (
-                  <GlanceAttendance
-                    role={role}
-                    onOpen={() => setAttendanceOpen(true)}
-                  />
+                {["assembly", "homeroom"].includes(displayType) && classroom ? (
+                  <GlanceAttendance role={role} classroom={classroom} />
                 ) : (
                   displayPeriod && (
                     <GlancePeriods periods={displayPeriod.content} />
@@ -360,20 +398,6 @@ const HomeGlance: StylableFC<{
           </motion.div>
         )
       }
-
-      {/* Attendance dialog */}
-      {classroomID && ["assembly", "homeroom"].includes(displayType) && (
-        <AttendanceDialog
-          key={displayType}
-          event={displayType as "assembly" | "homeroom"}
-          classroomID={classroomID}
-          teacherID={teacherID}
-          editable={role === "teacher"}
-          open={attendanceOpen}
-          onClose={() => setAttendanceOpen(false)}
-          onSubmit={() => setAttendanceOpen(false)}
-        />
-      )}
     </AnimatePresence>
   );
 };

@@ -1,10 +1,10 @@
 // Imports
-import AttendanceDialog from "@/components/classes/AttendanceDialog";
 import RecentAttendanceItem from "@/components/classes/RecentAttendanceItem";
 import getAttendanceSummaryOfClass from "@/utils/backend/attendance/getAttendanceSummaryOfClass";
-import getISODateString from "@/utils/backend/getISODateString";
 import cn from "@/utils/helpers/cn";
+import getISODateString from "@/utils/helpers/getISODateString";
 import { AttendanceAtDate } from "@/utils/types/attendance";
+import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
 import {
   Card,
@@ -14,26 +14,27 @@ import {
   useAnimationConfig,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { isToday, isWeekend } from "date-fns";
+import { isWeekend } from "date-fns";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
+import Link from "next/link";
 import { list } from "radash";
-import { useEffect, useState } from "react";
+import { forwardRef, useEffect, useState } from "react";
 import Balancer from "react-wrap-balancer";
 
 /**
  * A list of recent Attendance events grouped into dates for Class Details
  * Card.
  *
- * @param classroomID The ID of the Classroom to display Attendance for.
+ * @param classroom The Classroom to display Attendance for.
  * @param teacherID The ID of the Teacher currently logged in, if the user is a Teacher.
  * @param isOwnClass Whether the Classroom belongs to the current user.
  */
 const RecentAttendanceList: StylableFC<{
-  classroomID: string;
+  classroom: Pick<Classroom, "id" | "number">;
   teacherID?: string;
   isOwnClass?: boolean;
-}> = ({ classroomID, teacherID, isOwnClass, style, className }) => {
+}> = ({ classroom, teacherID, isOwnClass, style, className }) => {
   const { t } = useTranslation("classes", { keyPrefix: "detail.attendance" });
 
   const { duration, easing } = useAnimationConfig();
@@ -46,7 +47,7 @@ const RecentAttendanceList: StylableFC<{
    */
   async function fetchAttendance() {
     if (!loading) setLoading(true);
-    const { data } = await getAttendanceSummaryOfClass(supabase, classroomID);
+    const { data } = await getAttendanceSummaryOfClass(supabase, classroom.id);
     if (data) setAttendanceList(data);
     setLoading(false);
   }
@@ -54,9 +55,7 @@ const RecentAttendanceList: StylableFC<{
   const [attendanceList, setAttendanceList] = useState<AttendanceAtDate[]>([]);
   useEffect(() => {
     fetchAttendance();
-  }, [classroomID]);
-
-  const [addOpen, setAddOpen] = useState(false);
+  }, [classroom.id]);
 
   return (
     <section style={style} className={cn(`space-y-2`, className)}>
@@ -90,10 +89,11 @@ const RecentAttendanceList: StylableFC<{
                   <Card
                     appearance="filled"
                     stateLayerEffect
-                    onClick={() => setAddOpen(true)}
-                    element={(props) => (
-                      <button {...props} title={t("action.addDay")} />
-                    )}
+                    href={`/classes/${classroom.number}/attendance`}
+                    // eslint-disable-next-line react/display-name
+                    element={forwardRef((props, ref) => (
+                      <Link {...props} ref={ref} title={t("action.addDay")} />
+                    ))}
                     className={cn(`!grid h-full w-24 place-items-center
                       !bg-primary-container`)}
                   >
@@ -102,17 +102,6 @@ const RecentAttendanceList: StylableFC<{
                       className="text-on-primary-container"
                     />
                   </Card>
-                  <AttendanceDialog
-                    classroomID={classroomID}
-                    teacherID={teacherID}
-                    editable
-                    open={addOpen}
-                    onClose={() => setAddOpen(false)}
-                    onSubmit={() => {
-                      setAddOpen(false);
-                      fetchAttendance();
-                    }}
-                  />
                 </li>
               )
           }
@@ -134,10 +123,9 @@ const RecentAttendanceList: StylableFC<{
                   >
                     <RecentAttendanceItem
                       attendance={attendance}
-                      classroomID={classroomID}
+                      classroom={classroom}
                       teacherID={teacherID}
                       isOwnClass={isOwnClass}
-                      onChange={fetchAttendance}
                     />
                   </motion.li>
                 ))
@@ -145,7 +133,7 @@ const RecentAttendanceList: StylableFC<{
                 // Show empty state if no Attendance
                 <Card
                   appearance="filled"
-                  className="!grid w-full place-items-center !bg-surface"
+                  className="!grid relative z-20 w-full place-items-center !bg-surface"
                 >
                   <Text type="body-medium" className="text-center">
                     <Balancer>{t("empty")}</Balancer>

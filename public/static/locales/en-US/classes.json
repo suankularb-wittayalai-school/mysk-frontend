@@ -52,49 +52,6 @@
       }
     }
   },
-  "dialog": {
-    "attendance": {
-      "title": {
-        "view": "View attendance",
-        "take": "Take attendance"
-      },
-      "event": {
-        "title": "View",
-        "assembly": "Assembly",
-        "homeroom": "Homeroom"
-      },
-      "item": {
-        "classNo": "No. {{classNo}}",
-        "presence": {
-          "title": "Presence",
-          "present": "Present",
-          "absent": "Absent"
-        },
-        "absenceType": {
-          "late": "Late",
-          "onLeave": "On leave",
-          "absent": "Absent",
-          "dropped": "Dropped",
-          "other": "Other"
-        },
-        "enterReason": "Enter reason"
-      },
-      "loading": "Loading attendance…",
-      "action": {
-        "markAll": "Mark all present",
-        "clear": "Clear",
-        "save": "Save"
-      }
-    },
-    "confirmAttendanceSave": {
-      "title": "Confirm save",
-      "desc": "You can view and edit the attendance later in the Classes page.",
-      "action": {
-        "goBack": "Go back",
-        "confirm": "Confirm"
-      }
-    }
-  },
   "print": {
     "title": "Print student list",
     "language": "Language",

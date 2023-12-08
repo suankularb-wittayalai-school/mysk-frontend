@@ -1,87 +1,63 @@
 {
   "title": "ค้นหา",
-  "subtitle": "<0>ค้นหาทุกอย่าง</0>ด้วย MySK ค้นหา",
-  "choice": {
-    "students": {
-      "title": "ค้นหา<strong>นักเรียน</strong>",
-      "desc": "ค้นหาข้อมูลห้องเรียน เลขที่ ช่องทางติดต่อ และอื่น ๆ ของนักเรียน"
-    },
-    "teachers": {
-      "title": "ค้นหา<strong>อาจารย์</strong>",
-      "desc": "ค้นหาข้อมูลห้องที่ปรึกษา ตารางสอน ช่องทางติดต่อ และอื่น ๆ ของครูในโรงเรียน"
-    },
-    "documents": {
-      "title": "ค้นหา<strong>เอกสาร</strong>",
-      "desc": "ค้นหาคำสั่งโรงเรียนและหนังสือออกของโรงเรียนอย่างง่ายดาย"
-    }
+  "view": {
+    "students": "นักเรียน",
+    "teachers": "อาจารย์",
+    "documents": "เอกสาร"
   },
   "people": {
     "header": {
-      "loading": "กำลังโหลด…",
       "action": {
+        "saveContact": "บันทึก",
         "seeClass": "ดูห้องเรียน",
-        "seeSchedule": "ดูตาราง",
-        "share": "แชร์",
-        "edit": "แก้ไข",
-        "delete": "ลบ"
-      }
-    },
-    "detail": {
-      "loading": "กำลังโหลดรายละเอียดบุคคล…",
-      "general": {
-        "fullName": "ชื่อ-สกุล",
-        "nickname": "ชื่อเล่น",
-        "class": {
-          "title": "ห้องเรียน",
-          "classNo": "เลขที่ {{classNo}}"
-        },
-        "classAdvisorAt": "ห้องที่ปรึกษา",
-        "birthdate": "วันเกิด"
-      },
-      "contacts": {
-        "title": "ช่องทางการติดต่อ"
-      },
-      "subjects": {
-        "title": "วิชาที่สอน"
-      }
-    },
-    "schedule": {
-      "title": "ตารางสอนของ{{name}}"
-    },
-    "dialog": {
-      "share": {
-        "title": "เลือกวิธีแชร์{{name}}…",
-        "saveVCard": {
-          "label": "บันทึกลงแอพรายชื่อ",
-          "desc": "บันทึกช่องทางติดต่อและข้อมูลอื่น ๆ ของคนนี้เป็นรายชื่อติดต่อในโทรศัพท์/อุปกรณ์ของท่าน",
-          "segment": {
-            "teacherPrefix": "ครู",
-            "org": "โรงเรียนสวนกุหลาบวิทยาลัย",
-            "title": "อาจารย์",
-            "note": "ครูที่ปรึกษาห้องม.{{number}}"
-          }
-        },
-        "copyLink": {
-          "label": "คัดลอกลิงก์",
-          "desc": "คัดลอกลิงก์ที่มาหน้านี้"
-        },
-        "print": {
-          "label": "พิมพ์",
-          "desc": "พิมพ์ข้อมูลต่าง ๆ ของคนนี้"
-        },
-        "action": {
-          "close": "ปิด"
+        "seeSchedule": {
+          "student": "ดูตารางเรียน",
+          "teacher": "ดูตารางสอน"
         }
       }
     },
-    "snackbar": {
-      "thaiSpeechNotSupported": "ขออภัย เบราว์เซอร์ไม่รองรับการออกเสียงภาษาไทย"
+    "detail": {
+      "contacts": {
+        "title": "ช่องทางการติดต่อ"
+      }
     }
   },
   "students": {
     "title": "ค้นหานักเรียน",
-    "list": {
-      "searchAlt": "ค้นหานักเรียน"
+    "searchFilters": {
+      "form": {
+        "fullName": "ค้นหาด้วยชื่อจริง",
+        "fullName_helper": "ป้อนชื่อจริงบางส่วนหรือทั้งหมด",
+        "nickname": "ค้นหาด้วยชื่อเล่น",
+        "nickname_helper": "ป้อนชื่อเล่นบางส่วนหรือทั้งหมด",
+        "contact": "ค้นหาด้วยช่องทางการติดต่อ",
+        "contact_helper": "ป้อนชื่อผู้ใช้ อีเมล เบอร์โทร หรือ URL ของนักเรียนอย่างครบถ้วน"
+      },
+      "chip": {
+        "fullName": "ชื่อจริง: “{{content}}”",
+        "nickname": "ชื่อเล่น: “{{content}}”",
+        "contact": "ช่องทางการติดต่อ: “{{content}}”"
+      }
+    },
+    "detail": {
+      "glance": {
+        "free": "ไม่ได้เรียนอยู่",
+        "future": "ไม่ได้เรียนอยู่ (คาบต่อไปในอีก {{time}})",
+        "ongoing": "กำลังเรียน{{subject}}"
+      },
+      "information": {
+        "fullName": "ชื่อ-สกุล",
+        "nickname": "ชื่อเล่น",
+        "classroom": {
+          "title": "ห้องเรียน",
+          "classNo": "เลขที่ {{number}}"
+        },
+        "birthday": {
+          "title": "วันเกิด",
+          "date": "{{date, datetime(day: numeric; month: long;)}}",
+          "age": "อายุ {{count, number}} ปี"
+        }
+      }
     }
   },
   "teachers": {
@@ -108,15 +84,8 @@
         "contact": "ช่องทางการติดต่อ: “{{content}}”"
       }
     },
-    "header": {
-      "action": {
-        "saveContact": "บันทึก",
-        "seeClass": "ดูห้องเรียน",
-        "seeSchedule": "ดูตารางสอน"
-      }
-    },
     "detail": {
-      "teaching": {
+      "glance": {
         "free": "ไม่มีคาบสอนตอนนี้",
         "future": "ไม่มีคาบสอนตอนนี้ (คาบต่อไปในอีก {{time}})",
         "ongoing": "กำลังสอน{{subject}}"
@@ -129,6 +98,9 @@
         "action": {
           "readAloud": "อ่านออกเสียง",
           "openStarbucks": "เปิด Starbucks"
+        },
+        "snackbar": {
+          "thaiSpeechNotSupported": "ขออภัย เบราว์เซอร์ไม่รองรับการออกเสียงภาษาไทย"
         }
       },
       "information": {
@@ -148,8 +120,34 @@
   },
   "documents": {
     "title": "ค้นหาเอกสาร",
+    "searchFilters": {
+      "form": {
+        "type": {
+          "order": "คำสั่ง",
+          "record": "บันทึกข้อความ",
+          "announcement": "ประกาศ",
+          "bigGaruda": "หนังสือออก",
+          "other": "อื่น ๆ"
+        },
+        "subject": "ค้นหาเรื่อง",
+        "subject_helper": "ป้อนเรื่องของเอกสารบางส่วนหรือทั้งหมด",
+        "attendTo": "ค้นหาเรียน",
+        "attendTo_helper": "ป้อนชื่อผู้ที่เอกสารเรียนถึงบางส่วนหรือทั้งหมด",
+        "month": "ค้นหาเดือน",
+        "month_helper": "เลือกเดือนที่เอกสารออก",
+        "code": "ค้นหารหัสเอกสาร",
+        "code_helper": "ป้อนรหัสเอกสาร"
+      },
+      "chip": {
+        "types": "ประเภท: {{content, list}}",
+        "types_all": "ประเภท: ทั้งหมด",
+        "subject": "เรื่อง: “{{content}}”",
+        "attendTo": "เรียน: “{{content}}”",
+        "month": "เดือน: {{content, datetime(month: long; year: numeric;)}}",
+        "code": "รหัสเอกสาร: “{{content}}”"
+      }
+    },
     "list": {
-      "searchAlt": "ค้นหาเอกสาร",
       "filter": {
         "order": "คำสั่ง",
         "record": "บันทึกข้อความ",
@@ -179,13 +177,13 @@
         "share": "แชร์",
         "popOut": "เปิดในหน้าต่างใหม่",
         "download": "ดาวน์โหลด"
+      },
+      "snackbar": {
+        "download": "กำลังเตรียมไฟล์เพื่อการดาวน์โหลด กรุณารอสักครู่…"
       }
     },
     "detail": {
       "loading": "กำลังโหลดเอกสารจาก Google Drive…"
-    },
-    "snackbar": {
-      "download": "กำลังเตรียมไฟล์เพื่อการดาวน์โหลด กรุณารอสักครู่…"
     }
   },
   "common": {

@@ -1,14 +1,17 @@
 // Imports
+import Favicon from "@/components/Favicon";
 import LogOutDialog from "@/components/account/LogOutDialog";
 import SchemeIcon from "@/components/icons/SchemeIcon";
 import AppStateContext from "@/contexts/AppStateContext";
+import getHomeURLofRole from "@/utils/helpers/person/getHomeURLofRole";
 import useLocale from "@/utils/helpers/useLocale";
-import useLoggedInPerson from "@/utils/helpers/useLoggedInPerson";
 import usePageIsLoading from "@/utils/helpers/usePageIsLoading";
 import usePreferences from "@/utils/helpers/usePreferences";
 import useRefreshProps from "@/utils/helpers/useRefreshProps";
 import useSnackbar from "@/utils/helpers/useSnackbar";
+import useUser from "@/utils/helpers/useUser";
 import { CustomPage } from "@/utils/types/common";
+import { UserRole } from "@/utils/types/person";
 import {
   MaterialIcon,
   NavBar,
@@ -33,7 +36,6 @@ import {
   useEffect,
   useState,
 } from "react";
-import Favicon from "./Favicon";
 
 /**
  * The root layout of MySK.
@@ -45,25 +47,20 @@ import Favicon from "./Favicon";
  * @returns A Root Layout or a Root Layout wrapped in the given context.
  */
 const Layout: FC<
-  { children: ReactNode } & Pick<
-    CustomPage,
-    "context" | "fab" | "navType" | "childURLs"
-  >
-> = ({ children, context: Context, fab, navType, childURLs }) => {
+  { children: ReactNode } & Pick<CustomPage, "fab" | "navType" | "childURLs">
+> = ({ children, fab, navType, childURLs }) => {
   // Translation
   const locale = useLocale();
   const { t } = useTranslation("common");
 
-  // Router
   const refreshProps = useRefreshProps();
-
-  // Navigation Bar and Drawer
-  const router = useRouter();
   const { colorScheme, setColorScheme, navOpen, setNavOpen } =
     useContext(AppStateContext);
 
-  // Class data (for Navigation links)
-  const { person: user } = useLoggedInPerson();
+  // Navigation Bar and Drawer
+  const router = useRouter();
+  const { user } = useUser();
+  const homeURL = getHomeURLofRole(user?.role || UserRole.student);
 
   // Snackbar
   const { snackbarOpen, setSnackbarOpen, snackbarProps } = useSnackbar();
@@ -122,24 +119,17 @@ const Layout: FC<
     };
   }, [preferences]);
 
-  const rootLayout = (
+  return (
     <RootLayout>
       {/* Navigation Drawer */}
       <NavDrawer open={navOpen} onClose={() => setNavOpen(false)}>
         {/* Top-level pages */}
-        <NavDrawerSection alt={t("appName")} className="mt-2 [&>h2]:sr-only">
+        <NavDrawerSection header={t("appName")}>
           <NavDrawerItem
-            icon={<Favicon />}
-            label={<Text type="title-large">{t("appName")}</Text>}
-            selected={
-              router.pathname.startsWith("/teach") ||
-              router.pathname.startsWith("/learn")
-            }
-            href={
-              user?.role === "teacher" || navType === "teacher"
-                ? "/teach"
-                : "/learn"
-            }
+            icon={<MaterialIcon icon="home" />}
+            label={t("navigation.home")}
+            selected={router.pathname.startsWith(homeURL)}
+            href={homeURL}
             element={Link}
           />
           <NavDrawerItem
@@ -151,16 +141,16 @@ const Layout: FC<
           />
           <NavDrawerItem
             icon={<MaterialIcon icon="search" />}
-            label={t("navigation.lookup")}
+            label={t("navigation.search")}
             selected={
-              router.pathname.startsWith("/lookup") &&
+              router.pathname.startsWith("/search") &&
               !(
-                router.pathname.startsWith("/lookup/students") ||
-                router.pathname.startsWith("/lookup/teachers") ||
-                router.pathname.startsWith("/lookup/documents")
+                router.pathname.startsWith("/search/students") ||
+                router.pathname.startsWith("/search/teachers") ||
+                router.pathname.startsWith("/search/documents")
               )
             }
-            href="/lookup"
+            href="/search"
             element={Link}
           />
           <NavDrawerItem
@@ -179,27 +169,27 @@ const Layout: FC<
           />
         </NavDrawerSection>
 
-        {/* Lookup */}
-        <NavDrawerSection header={t("navigation.drawer.lookup.title")}>
-          {/* <NavDrawerItem
+        {/* Search */}
+        <NavDrawerSection header={t("navigation.drawer.search.title")}>
+          <NavDrawerItem
             icon={<MaterialIcon icon="face_6" />}
-            label={t("navigation.drawer.lookup.students")}
-            selected={router.pathname.startsWith("/lookup/students")}
-            href="/lookup/students"
+            label={t("navigation.drawer.search.students")}
+            selected={router.pathname.startsWith("/search/students")}
+            href="/search/students"
             element={Link}
-          /> */}
+          />
           <NavDrawerItem
             icon={<MaterialIcon icon="support_agent" />}
-            label={t("navigation.drawer.lookup.teachers")}
-            selected={router.pathname.startsWith("/lookup/teachers")}
-            href="/lookup/teachers"
+            label={t("navigation.drawer.search.teachers")}
+            selected={router.pathname.startsWith("/search/teachers")}
+            href="/search/teachers"
             element={Link}
           />
           <NavDrawerItem
             icon={<MaterialIcon icon="document_scanner" />}
-            label={t("navigation.drawer.lookup.documents")}
-            selected={router.pathname.startsWith("/lookup/documents")}
-            href="/lookup/documents"
+            label={t("navigation.drawer.search.documents")}
+            selected={router.pathname.startsWith("/search/documents")}
+            href="/search/documents"
             element={Link}
           />
         </NavDrawerSection>
@@ -311,15 +301,8 @@ const Layout: FC<
           <NavBarItem
             icon={<Favicon />}
             label={t("appName")}
-            selected={
-              router.pathname.startsWith("/teach") ||
-              router.pathname.startsWith("/learn")
-            }
-            href={
-              user?.role === "teacher" || navType === "teacher"
-                ? "/teach"
-                : "/learn"
-            }
+            selected={router.pathname.startsWith(homeURL)}
+            href={homeURL}
             element={Link}
           />
           <NavBarItem
@@ -331,9 +314,9 @@ const Layout: FC<
           />
           <NavBarItem
             icon={<MaterialIcon icon="search" />}
-            label={t("navigation.lookup")}
-            selected={router.pathname.startsWith("/lookup")}
-            href="/lookup"
+            label={t("navigation.search")}
+            selected={router.pathname.startsWith("/search")}
+            href="/search"
             element={Link}
           />
           <NavBarItem
@@ -361,6 +344,7 @@ const Layout: FC<
         appearance="linear"
         alt={t("pageIsLoading")}
         visible={pageIsLoading}
+        className="!z-[100]"
       />
 
       {/* Snackbar */}
@@ -374,8 +358,6 @@ const Layout: FC<
       {children}
     </RootLayout>
   );
-
-  return Context ? <Context>{rootLayout}</Context> : rootLayout;
 };
 
 export default Layout;

@@ -7,8 +7,9 @@
     "school": "โรงเรียนสวนกุหลาบวิทยาลัย"
   },
   "navigation": {
+    "home": "หน้าหลัก",
     "classes": "ห้องเรียน",
-    "lookup": "ค้นหา",
+    "search": "ค้นหา",
     "news": "ข่าวสาร",
     "account": "บัญชีผู้ใช้",
     "colorScheme": {
@@ -18,11 +19,10 @@
     "language": "English",
     "logOut": "ออกจากระบบ",
     "drawer": {
-      "lookup": {
+      "search": {
         "title": "ค้นหา",
         "students": "นักเรียน",
         "teachers": "อาจารย์",
-        "classes": "ห้องเรียน",
         "documents": "เอกสารโรงเรียน"
       },
       "about": {
@@ -67,6 +67,12 @@
     "instagram": "Instagram",
     "discord": "Discord",
     "other": "อื่น ๆ"
+  },
+  "vCard": {
+    "teacherPrefix": "ครู",
+    "org": "โรงเรียนสวนกุหลาบวิทยาลัย",
+    "title": "อาจารย์",
+    "note": "ครูที่ปรึกษาห้องม.{{number}}"
   },
   "datetime": {
     "day": {

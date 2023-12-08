@@ -26,9 +26,11 @@ export type SchoolDocument = {
   organization: Pick<Organization, "id" | "name"> | null;
 };
 
-export type SchoolDocumentType =
-  | "order" //        คำสั่ง
-  | "record" //       บันทึกข้อความ
-  | "announcement" // ประกาศ
-  | "big_garuda" //   หนังสือออก (Garuda refers to ครุฑ)
-  | "other"; //       อื่นๆ
+export enum SchoolDocumentType {
+  order = "order", //                 คำสั่ง
+  record = "record", //               บันทึกข้อความ
+  announcement = "announcement", //   ประกาศ
+  big_garuda = "big_garuda", //       หนังสือออก (Garuda refers to ครุฑ)
+  rules = "rules",
+  other = "other", //                 อื่นๆ
+}

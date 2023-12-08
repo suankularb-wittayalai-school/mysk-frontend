@@ -6,6 +6,7 @@ import { FormControlProps, FormControlValues } from "@/utils/types/common";
 import { SubjectGroup } from "@/utils/types/subject";
 import {
   Columns,
+  Divider,
   Header,
   MenuItem,
   Section,
@@ -273,7 +274,9 @@ const PersonFields: FC<{
   return (
     <>
       <ThaiNameSection {...{ formProps }} />
+      <Divider />
       <EnglishNameSection {...{ formProps }} />
+      <Divider />
       {subjectGroups && <RoleSection {...{ formProps, subjectGroups }} />}
       <MiscellaneousSection {...{ form, setForm, formProps }} />
     </>

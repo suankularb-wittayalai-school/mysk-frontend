@@ -2,7 +2,7 @@ import logError from "@/utils/helpers/logError";
 import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
 import { Contact } from "@/utils/types/contact";
-import { Person } from "@/utils/types/person";
+import { Person, ShirtSize } from "@/utils/types/person";
 
 export async function getPersonByID(
   supabase: DatabaseClient,
@@ -90,7 +90,21 @@ export async function getPersonByID(
       contacts: contacts,
       profile: personData!.profile,
       citizen_id: options?.detailed ? personData!.citizen_id : null,
-      shirt_size: options?.detailed ? personData!.shirt_size : null,
+      shirt_size:
+        options?.detailed && personData?.shirt_size
+          ? {
+              XS: ShirtSize.XS,
+              S: ShirtSize.S,
+              M: ShirtSize.M,
+              L: ShirtSize.L,
+              XL: ShirtSize.XL,
+              "2XL": ShirtSize.twoXL,
+              "3XL": ShirtSize.threeXL,
+              "4XL": ShirtSize.fourXL,
+              "5XL": ShirtSize.fiveXL,
+              "6XL": ShirtSize.sixXL,
+            }[personData.shirt_size]
+          : null,
       pants_size: options?.detailed ? personData!.pants_size : null,
       allergies: options?.detailed ? allergies : [],
       is_admin: null,

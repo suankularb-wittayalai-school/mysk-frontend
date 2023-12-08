@@ -1,83 +1,80 @@
-import getISODateString from "@/utils/backend/getISODateString";
+import getStudentsOfClass from "@/utils/backend/classroom/getStudentsOfClass";
+import getISODateString from "@/utils/helpers/getISODateString";
 import logError from "@/utils/helpers/logError";
-import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
 import {
-  AbsenceType,
   AttendanceEvent,
   StudentAttendance,
 } from "@/utils/types/attendance";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
+import { sort } from "radash";
 
 /**
- * Retrieves the Attendance records of a Classroom for a specific date and Attendance event.
+ * Retrieves the Attendance records of a Classroom for a specific date.
  *
  * @param supabase The Supabase client to use.
  * @param classroomID The ID of the Classroom to retrieve Attendance records for.
  * @param date The date to retrieve Attendance records for.
- * @param attendanceEvent The Attendance event to retrieve records for, assembly or homeroom.
  *
  * @returns A Backend Return of an array of Student Attendances.
  */
 export default async function getAttendanceOfClass(
   supabase: DatabaseClient,
   classroomID: string,
-  date: Date,
-  attendanceEvent: AttendanceEvent,
+  date: Date | string,
 ): Promise<BackendReturn<StudentAttendance[]>> {
+  // Fetch students of this Classroom
+  const { data: students, error: studentsError } = await getStudentsOfClass(
+    supabase,
+    classroomID,
+  );
+  if (studentsError) return { data: null, error: studentsError };
+
+  // Fetch attendance records of this Classroom
   const { data, error } = await supabase
     .from("student_attendances")
     .select(
       `id,
-      students!inner(
-        id,
-        people!inner(
-          id,
-          first_name_en,
-          first_name_th,
-          middle_name_en,
-          middle_name_th,
-          last_name_en,
-          last_name_th,
-          nickname_en,
-          nickname_th
-        ),
-        classroom_students!inner(
-          classroom_id,
-          class_no
-        )
-      ),
       is_present,
       attendance_event,
       absence_type,
-      absence_reason`,
+      absence_reason,
+      students!inner(id, classroom_students!inner(classroom_id))`,
     )
     .eq("students.classroom_students.classroom_id", classroomID)
-    .eq("attendance_event", attendanceEvent)
-    .eq("date", getISODateString(date));
-
+    .eq("date", typeof date === "string" ? date : getISODateString(date));
   if (error) {
-    logError("getAttendancesOfClassAtDate", error);
+    logError("getFullStudentAttendanceOfClass (attendance)", error);
     return { data: null, error };
   }
 
-  // Reformat the data
-  const attendances = data.map((attendance) => {
-    return {
-      id: attendance.id,
-      student: {
-        id: attendance.students!.id,
-        first_name: mergeDBLocales(attendance.students!.people, "first_name"),
-        middle_name: mergeDBLocales(attendance.students!.people, "middle_name"),
-        last_name: mergeDBLocales(attendance.students!.people, "last_name"),
-        nickname: mergeDBLocales(attendance.students!.people, "nickname"),
-        class_no: attendance.students!.classroom_students[0].class_no,
-      },
-      is_present: attendance.is_present,
-      attendance_event: attendance.attendance_event,
-      absence_type: attendance.absence_type as AbsenceType,
-      absence_reason: attendance.absence_reason,
-    };
-  });
+  function getRecordOfStudent(
+    studentID: string,
+    attendanceEvent: AttendanceEvent,
+  ) {
+    return (
+      (data?.find(
+        (row) =>
+          row.students!.id === studentID &&
+          row.attendance_event === attendanceEvent,
+      ) as StudentAttendance[typeof attendanceEvent]) || {
+        id: null,
+        is_present: null,
+        absence_type: null,
+        absence_reason: null,
+      }
+    );
+  }
 
-  return { data: attendances, error: null };
+  // Group attendance records by student
+  const attendance: StudentAttendance[] = sort(
+    students.map((student) => ({
+      student: student,
+      assembly: getRecordOfStudent(student.id, "assembly"),
+      homeroom: getRecordOfStudent(student.id, "homeroom"),
+    })),
+    ({ student }) => student.class_no || 0,
+  );
+
+  // Return the grouped attendance records
+  return { data: attendance, error: null };
 }

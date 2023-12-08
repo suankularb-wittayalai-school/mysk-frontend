@@ -2,7 +2,7 @@ import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import logError from "@/utils/helpers/logError";
 import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
-import { Student } from "@/utils/types/person";
+import { ShirtSize, Student, UserRole } from "@/utils/types/person";
 import { pick } from "radash";
 
 export async function getStudentByID(
@@ -72,16 +72,30 @@ export async function getStudentByID(
       ? studentData!.people?.citizen_id ?? null
       : null,
     birthdate: options?.detailed
-      ? studentData!.people?.birthdate ?? null : null,
-    shirt_size: options?.detailed
-      ? studentData!.people?.shirt_size ?? null
+      ? studentData!.people?.birthdate ?? null
       : null,
+    shirt_size:
+      options?.detailed && studentData?.people?.shirt_size
+        ? {
+            XS: ShirtSize.XS,
+            S: ShirtSize.S,
+            M: ShirtSize.M,
+            L: ShirtSize.L,
+            XL: ShirtSize.XL,
+            "2XL": ShirtSize.twoXL,
+            "3XL": ShirtSize.threeXL,
+            "4XL": ShirtSize.fourXL,
+            "5XL": ShirtSize.fiveXL,
+            "6XL": ShirtSize.sixXL,
+          }[studentData.people.shirt_size]
+        : null,
     pants_size: options?.detailed
       ? studentData!.people?.pants_size ?? null
       : null,
-    role: "student",
+    role: UserRole.student,
     is_admin: null,
   };
 
   return { data: student, error: null };
 }
+

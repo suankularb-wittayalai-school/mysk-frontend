@@ -50,9 +50,9 @@ export function getContactIsLinkable({ type, value }: Contact): boolean {
 
 export function useGetVCard() {
   const locale = useLocale();
-  const { t } = useTranslation("lookup");
+  const { t } = useTranslation("common");
 
-  const convertContactsForVCard = useConvertContactsForVCard()
+  const convertContactsForVCard = useConvertContactsForVCard();
 
   return (person: Student | Teacher) =>
     new Blob(
@@ -67,11 +67,7 @@ export function useGetVCard() {
             firstName: false,
           })};${getLocaleName(locale, person, {
             lastName: false,
-          })};;${
-            person.role === "teacher"
-              ? t("people.dialog.share.saveVCard.segment.teacherPrefix")
-              : ""
-          };`,
+          })};;${person.role === "teacher" ? t("vCard.teacherPrefix") : ""};`,
           `FN:${getLocaleName(locale, person, {
             prefix: person.role === "teacher" ? "teacher" : false,
           })}`,
@@ -90,12 +86,13 @@ export function useGetVCard() {
           // Role within the school
           person.role === "teacher" &&
             [
-              `ORG:${t(
-                "people.dialog.share.saveVCard.segment.org",
-              )};${getLocaleString(person.subject_group.name, locale)}`,
-              `TITLE:${t("people.dialog.share.saveVCard.segment.title")}`,
+              `ORG:${t("vCard.org")};${getLocaleString(
+                person.subject_group.name,
+                locale,
+              )}`,
+              `TITLE:${t("vCard.title")}`,
               person.class_advisor_at &&
-                `NOTE:${t("people.dialog.share.saveVCard.segment.note", {
+                `NOTE:${t("vCard.note", {
                   number: person.class_advisor_at.number,
                 })}`,
             ]

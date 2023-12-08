@@ -1,8 +1,8 @@
 // Imports
 import PageHeader from "@/components/common/PageHeader";
-import Schedule from "@/components/schedule/Schedule";
 import HomeGlance from "@/components/home/HomeGlance";
 import SubjectList from "@/components/home/SubjectList";
+import Schedule from "@/components/schedule/Schedule";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import getClassSchedule from "@/utils/backend/schedule/getClassSchedule";
@@ -10,7 +10,7 @@ import getClassroomSubjectsOfClass from "@/utils/backend/subject/getClassroomSub
 import createEmptySchedule from "@/utils/helpers/schedule/createEmptySchedule";
 import useLocale from "@/utils/helpers/useLocale";
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { Student } from "@/utils/types/person";
+import { Student, UserRole } from "@/utils/types/person";
 import { Schedule as ScheduleType } from "@/utils/types/schedule";
 import { ClassroomSubject } from "@/utils/types/subject";
 import {
@@ -35,13 +35,11 @@ import { useState } from "react";
  *
  * @param schedule Data for displaying Schedule.
  * @param subjectList The Subjects this Student’s Classroom is enrolled in.
- * @param classroomID The Classroom ID that the Teacher advises. Used in Attendance.
  */
 const LearnPage: CustomPage<{
   schedule: ScheduleType;
   subjectList: ClassroomSubject[];
-  classroomID: string;
-}> = ({ schedule, subjectList, classroomID }) => {
+}> = ({ schedule, subjectList }) => {
   const { t } = useTranslation("learn");
   const { t: tx } = useTranslation(["common", "schedule"]);
   const locale = useLocale();
@@ -60,11 +58,7 @@ const LearnPage: CustomPage<{
       <ContentLayout>
         <LayoutGroup>
           {/* Home Glance */}
-          <HomeGlance
-            schedule={schedule}
-            role="student"
-            classroomID={classroomID}
-          />
+          <HomeGlance schedule={schedule} role={UserRole.student} />
 
           {/* Schedule */}
           <motion.section
@@ -73,7 +67,7 @@ const LearnPage: CustomPage<{
             transition={transition(duration.medium4, easing.standard)}
           >
             <Header>{t("schedule")}</Header>
-            <Schedule schedule={schedule} view="student" />
+            <Schedule schedule={schedule} view={UserRole.student} />
           </motion.section>
 
           {/* Subject list */}
@@ -111,25 +105,23 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
-  const { data: user } = (await getLoggedInPerson(
+  const { data: student } = (await getLoggedInPerson(
     supabase,
     authOptions,
     req,
     res,
   )) as { data: Student };
 
-  if (!user.classroom) return { notFound: true };
+  if (!student.classroom) return { notFound: true };
 
   const { data: schedule } = await getClassSchedule(
     supabase,
-    user.classroom!.id,
+    student.classroom!.id,
   );
   const { data: subjectList } = await getClassroomSubjectsOfClass(
     supabase,
-    user.classroom!.id,
+    student.classroom!.id,
   );
-
-  const classroomID = user.classroom!.id;
 
   return {
     props: {
@@ -142,7 +134,6 @@ export const getServerSideProps: GetServerSideProps = async ({
       ])),
       schedule: schedule || createEmptySchedule(1, 5),
       subjectList,
-      classroomID,
     },
   };
 };

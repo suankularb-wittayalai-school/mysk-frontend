@@ -48,7 +48,6 @@ const StarbucksCard: StylableFC = ({ style, className }) => {
       voices.filter((voice) => /th(-|_)TH/.test(voice.lang)),
       ({ voiceURI }) => voiceURI,
     );
-    console.log(voices);
 
     // Set the voice list state
     setSynthVoices(voices);
@@ -95,8 +94,8 @@ const StarbucksCard: StylableFC = ({ style, className }) => {
       direction="row"
       style={style}
       className={cn(
-        `mx-4 items-start !border-0 !bg-surface !bg-gradient-to-l
-        from-[#82998760] px-4 py-3 sm:mx-0 sm:px-5 sm:py-4`,
+        `items-start !border-0 !bg-surface !bg-gradient-to-l
+        from-[#82998760] px-4 py-3 sm:px-5 sm:py-4`,
         className,
       )}
     >

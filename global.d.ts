@@ -25,6 +25,17 @@ declare global {
       NEXT_PUBLIC_SUPABASE_ANON_KEY: string;
 
       /**
+       * The URL that NextAuth.js will use in redirects.
+       */
+      NEXTAUTH_URL: string;
+
+      /**
+       * Used to encrypt the NextAuth.js JWT, and to hash email verification
+       * tokens.
+       */
+      NEXTAUTH_SECRET: string;
+
+      /**
        * Whether the user is allowed to see and log in with Google credentials.
        */
       NEXT_PUBLIC_ALLOW_PASTE_GOOGLE_CREDENTIAL: "true" | "false";
@@ -50,4 +61,5 @@ declare global {
     }
   }
 }
+
 export {};

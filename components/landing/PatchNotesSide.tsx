@@ -77,7 +77,7 @@ const PatchNotesSide: StylableFC = ({ style, className }) => {
           </Text>
         </header>
         <Text type="body-medium" element="ul" className="grow list-disc pl-6">
-          {list(0, 2, (i) => (
+          {list(0, 1, (i) => (
             <li key={i}>
               <Trans
                 i18nKey={`aside.patchNotes.list.${i}`}

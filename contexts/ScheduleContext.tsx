@@ -1,12 +1,13 @@
 // Imports
-import { RefObject, createContext } from "react";
+import { UserRole } from "@/utils/types/person";
 import { PeriodLocation } from "@/utils/types/schedule";
+import { RefObject, createContext } from "react";
 
 /**
  * A Context that provides information about a Schedule.
  */
 const ScheduleContext = createContext<{
-  view: "student" | "teacher";
+  view: UserRole;
   editable?: boolean;
   teacherID?: string;
   periodWidth: number;
@@ -15,7 +16,7 @@ const ScheduleContext = createContext<{
   setAdditionSite?: (value?: PeriodLocation) => void;
   constraintsRef?: RefObject<Element>;
 }>({
-  view: "student",
+  view: UserRole.student,
   periodWidth: 0,
   periodHeight: 0,
   constraintsRef: undefined,
