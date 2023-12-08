@@ -1,6 +1,6 @@
 // Imports
 import getPeriodBoundaryTime from "@/utils/helpers/schedule/getPeriodBoundaryTime";
-import { addMinutes, differenceInMinutes, isPast } from "date-fns";
+import { differenceInMinutes, isPast } from "date-fns";
 
 /**
  * Get the current period number.
