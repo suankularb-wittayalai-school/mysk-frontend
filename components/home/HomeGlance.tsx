@@ -283,8 +283,6 @@ const HomeGlance: StylableFC<{
       ? todayNextPeriod
       : currentPeriod;
 
-  const [attendanceOpen, setAttendanceOpen] = useState(false);
-
   function getSubjectStringFromPeriod(period?: SchedulePeriod) {
     switch (period?.content.length) {
       case undefined:
