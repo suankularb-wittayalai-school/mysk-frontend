@@ -8,14 +8,8 @@ import { addMinutes, differenceInMinutes, isPast } from "date-fns";
  * @returns A number from 1 to 10.
  */
 export default function getCurrentPeriod(): number {
-  const utc7Now = addMinutes(
-    new Date(),
-    new Date().getTimezoneOffset() + 7 * 60,
-  );
-  console.log(utc7Now);
-
   return isPast(
-    utc7Now.setHours(
+    new Date().setHours(
       getPeriodBoundaryTime(10).hours,
       getPeriodBoundaryTime(10).min,
     ),
@@ -23,8 +17,8 @@ export default function getCurrentPeriod(): number {
     ? 0
     : Math.floor(
         differenceInMinutes(
-          utc7Now,
-          utc7Now.setHours(
+          new Date(),
+          new Date().setHours(
             getPeriodBoundaryTime(0).hours,
             getPeriodBoundaryTime(0).min,
           ),
