@@ -3,7 +3,7 @@ import cn from "@/utils/helpers/cn";
 import useConvertContactsForVCard from "@/utils/helpers/contact/useConvertContactsForVCard";
 import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
-import { UserRole } from "@/utils/types/person";
+import { User, UserRole } from "@/utils/types/person";
 import {
   AssistChip,
   ChipSet,
@@ -23,13 +23,13 @@ import Link from "next/link";
  *
  * @param classroom The Classroom to display.
  * @param isOwnClass Whether the user owns the class.
- * @param role The role of the currently logged in user.
+ * @param user The currently logged in user. Used for Role and Permissions.
  */
 const ClassHeader: StylableFC<{
   classroom: Omit<Classroom, "students" | "year" | "subjects">;
   isOwnClass?: boolean;
-  role: UserRole;
-}> = ({ classroom, isOwnClass, role, style, className }) => {
+  user: User;
+}> = ({ classroom, isOwnClass, user, style, className }) => {
   const { t } = useTranslation("classes", { keyPrefix: "header" });
   const { t: tx } = useTranslation("common");
 
@@ -83,7 +83,7 @@ const ClassHeader: StylableFC<{
         {tx("class", { number: classroom.number })}
       </Text>
       <ChipSet scrollable className="-mx-6 px-6">
-        {(role !== "student" || isOwnClass) && (
+        {(user.is_admin || user.role !== UserRole.student || isOwnClass) && (
           <AssistChip
             icon={<MaterialIcon icon="print" />}
             onClick={() =>

@@ -1,4 +1,5 @@
 // Imports
+import getRelevantPeriodOfClass from "@/utils/backend/schedule/getRelevantPeriodOfClass";
 import cn from "@/utils/helpers/cn";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import getCurrentPeriod from "@/utils/helpers/schedule/getCurrentPeriod";
@@ -13,12 +14,17 @@ import {
   CardHeader,
   MaterialIcon,
   Progress,
+  transition,
+  useAnimationConfig,
 } from "@suankularb-components/react";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import va from "@vercel/analytics";
 import { differenceInSeconds, formatDistanceToNowStrict } from "date-fns";
 import { enUS, th } from "date-fns/locale";
+import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { sift } from "radash";
+import { useEffect, useState } from "react";
 
 /**
  * Lookup Class Card is a card that displays a Classroom in the Lookup Classes
@@ -31,22 +37,37 @@ import { sift } from "radash";
  */
 const LookupClassCard: StylableFC<{
   classroom: Pick<Classroom, "id" | "number" | "main_room">;
-  period: SchedulePeriod;
   selected?: string;
   onClick: (value: string) => void;
-}> = ({ classroom, period, selected, onClick, style, className }) => {
+}> = ({ classroom, selected, onClick, style, className }) => {
   const locale = useLocale();
   const { t } = useTranslation("classes", { keyPrefix: "list.item" });
   const { t: tx } = useTranslation("common");
 
+  const { duration, easing } = useAnimationConfig();
+
   const currentPeriodNumber = getCurrentPeriod();
-  const periodIsCurrent =
-    period &&
-    period.start_time <= currentPeriodNumber &&
-    period.start_time + period.duration > currentPeriodNumber;
+  const supabase = useSupabaseClient();
+
+  const [loading, setLoading] = useState(true);
+  const [period, setPeriod] = useState<
+    (SchedulePeriod & { is_current: boolean }) | null
+  >(null);
+
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      const { data, error, isCurrent } = await getRelevantPeriodOfClass(
+        supabase,
+        classroom.id,
+      );
+      if (!error) setPeriod(data ? { ...data, is_current: isCurrent } : null);
+      setLoading(false);
+    })();
+  }, [currentPeriodNumber]);
 
   const now = useNow();
-  const percentage = periodIsCurrent
+  const percentage = period?.is_current
     ? (differenceInSeconds(now, getTodaySetToPeriodTime(period.start_time)) /
         (period.duration * 3000)) *
       100
@@ -74,30 +95,44 @@ const LookupClassCard: StylableFC<{
     >
       <CardHeader
         title={tx("class", { number: classroom.number })}
-        subtitle={sift([
-          classroom.main_room,
-          period
-            ? periodIsCurrent
-              ? getLocaleString(period.content[0].subject.name, locale)
-              : t("period.upcoming", {
-                  duration: formatDistanceToNowStrict(
-                    getTodaySetToPeriodTime(period.start_time, "start"),
-                    { locale: locale === "en-US" ? enUS : th },
-                  ),
-                })
-            : t("period.finished"),
-        ]).join(" • ")}
+        subtitle={
+          <AnimatePresence mode="popLayout" initial={false}>
+            <motion.span
+              key={period?.id}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={transition(duration.short4, easing.standard)}
+            >
+              {sift([
+                classroom.main_room,
+                !loading &&
+                  (period
+                    ? period.is_current
+                      ? getLocaleString(period.content[0].subject.name, locale)
+                      : t("period.upcoming", {
+                          duration: formatDistanceToNowStrict(
+                            getTodaySetToPeriodTime(period.start_time, "start"),
+                            { locale: locale === "en-US" ? enUS : th },
+                          ),
+                        })
+                    : t("period.finished")),
+              ]).join(" • ")}
+            </motion.span>
+          </AnimatePresence>
+        }
         className="grow [&>*>*]:block [&>*>*]:!truncate [&>*]:w-full"
       />
-      {periodIsCurrent ? (
-        <Progress
-          appearance="circular"
-          alt="Period progress in percent"
-          value={percentage}
-          visible={periodIsCurrent}
-          // +1px on all sides to compensate for the lack of border
-          className="m-[calc(0.75rem+1px)]"
-        />
+      {loading || period?.is_current ? (
+        // +1px on all sides to compensate for the lack of border
+        <div className="m-[calc(0.75rem+1px)] h-12">
+          <Progress
+            appearance="circular"
+            alt="Period progress in percent"
+            value={percentage}
+            visible={!loading && period?.is_current}
+          />
+        </div>
       ) : (
         <div
           className={cn(

@@ -9,8 +9,10 @@ import getTeacherSchedule from "@/utils/backend/schedule/getTeacherSchedule";
 import getTeachingSubjects from "@/utils/backend/subject/getTeachingSubjects";
 import getLocalePath from "@/utils/helpers/getLocalePath";
 import useLocale from "@/utils/helpers/useLocale";
+import { BackendReturn } from "@/utils/types/backend";
+import { Classroom } from "@/utils/types/classroom";
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { UserRole } from "@/utils/types/person";
+import { Teacher, UserRole } from "@/utils/types/person";
 import { Schedule as ScheduleType } from "@/utils/types/schedule";
 import { Subject, SubjectClassrooms } from "@/utils/types/subject";
 import {
@@ -37,13 +39,21 @@ import { useState } from "react";
  * @param subjectsInCharge The Subjects assigned to this teacher. Used in editing the Schedule.
  * @param teachingSubjects An array of Teacher Subject Items, an abstraction of Room Subjects connected to this Teacher.
  * @param teacherID The Teacher’s database ID. Used in validating edits in the Schedule.
+ * @param classroom The Classroom this Teacher is the Class Advisor of. Used in Attendance.
  */
 const TeachPage: CustomPage<{
   schedule: ScheduleType;
   subjectsInCharge: Pick<Subject, "id" | "name" | "code" | "short_name">[];
   teachingSubjects: SubjectClassrooms[];
   teacherID: string;
-}> = ({ schedule, subjectsInCharge, teachingSubjects, teacherID }) => {
+  classroom: Pick<Classroom, "number">;
+}> = ({
+  schedule,
+  subjectsInCharge,
+  teachingSubjects,
+  teacherID,
+  classroom,
+}) => {
   const locale = useLocale();
   const { t } = useTranslation("teach");
   const { t: tx } = useTranslation("common");
@@ -55,13 +65,17 @@ const TeachPage: CustomPage<{
   return (
     <>
       <Head>
-        <title>{tx("tabName", { tabName: t("title") })}</title>
+        <title>{tx("appName")}</title>
       </Head>
-      <PageHeader>{t("title")}</PageHeader>
+      <PageHeader>{tx("appName")}</PageHeader>
       <ContentLayout>
         <LayoutGroup>
           {/* Home Glance */}
-          <HomeGlance schedule={schedule} role={UserRole.teacher} />
+          <HomeGlance
+            schedule={schedule}
+            role={UserRole.teacher}
+            classroom={classroom}
+          />
 
           {/* Schedule */}
           <motion.section
@@ -122,15 +136,17 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
-  const { data: teacher, error } = await getLoggedInPerson(
+  const { data: teacher, error } = (await getLoggedInPerson(
     supabase,
     authOptions,
     req,
     res,
     { includeContacts: true, detailed: true },
-  );
-
+  )) as BackendReturn<Teacher>;
   if (error) return { notFound: true };
+
+  const classroom = teacher.class_advisor_at;
+
   if (teacher.role !== UserRole.teacher)
     return {
       redirect: {
@@ -160,6 +176,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       subjectsInCharge: teacher.subjects_in_charge,
       teachingSubjects,
       teacherID,
+      classroom,
     },
   };
 };

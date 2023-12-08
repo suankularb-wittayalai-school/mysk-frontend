@@ -11,7 +11,7 @@ import getLocaleName from "@/utils/helpers/getLocaleName";
 import useLocale from "@/utils/helpers/useLocale";
 import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
-import { UserRole } from "@/utils/types/person";
+import { User, UserRole } from "@/utils/types/person";
 import { useTranslation } from "next-i18next";
 
 /**
@@ -20,19 +20,20 @@ import { useTranslation } from "next-i18next";
  * @param classroom The Classroom to display details for.
  * @param teacherID The ID of the Teacher currently logged in, if the user is a Teacher. Used for Attendance.
  * @param isOwnClass Whether the Classroom belongs to the current user.
- * @param role The role of the current user.
+ * @param user The currently logged in user. Used for Role and Permissions.
+ * @param refreshData Should refresh Classroom data.
  */
 const ClassDetailsCard: StylableFC<{
   classroom?: Omit<Classroom, "year" | "subjects">;
   teacherID?: string;
   isOwnClass?: boolean;
-  role: UserRole;
+  user: User;
   refreshData: () => void;
 }> = ({
   classroom,
   teacherID,
   isOwnClass,
-  role,
+  user,
   refreshData,
   style,
   className,
@@ -53,11 +54,13 @@ const ClassDetailsCard: StylableFC<{
           <ClassHeader
             classroom={classroom}
             isOwnClass={isOwnClass}
-            role={role}
+            user={user}
           />
           <LookupDetailsContent className="!overflow-auto">
             {/* Attendance */}
-            {(teacherID || isOwnClass) && (
+            {(user.is_admin ||
+              user.role === UserRole.teacher ||
+              isOwnClass) && (
               <RecentAttendanceList
                 classroom={classroom}
                 teacherID={teacherID}

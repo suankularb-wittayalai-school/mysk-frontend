@@ -2,12 +2,13 @@
 import getUserByEmail from "@/utils/backend/account/getUserByEmail";
 import getLocalePath from "@/utils/helpers/getLocalePath";
 import logError from "@/utils/helpers/logError";
+import permitted from "@/utils/helpers/permitted";
+import getHomeURLofRole from "@/utils/helpers/person/getHomeURLofRole";
 import { LangCode } from "@/utils/types/common";
-import { User } from "@/utils/types/person";
+import { User, UserPermissionKey } from "@/utils/types/person";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
-import getHomeURLofRole from "./utils/helpers/person/getHomeURLofRole";
 
 /**
  * The middleware is run before a request is completed.
@@ -35,24 +36,14 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL(getLocalePath("/", locale), req.url));
 
   // Get current page protection type
-  const pageRole:
-    | "public"
-    | "admin"
-    | "student"
-    | "teacher"
-    | "management"
-    | "user" =
-    route === "/"
-      ? "public"
-      : /^\/admin|(news\/(info|form)\/(create|(\d+\/edit)))/.test(route)
-        ? "admin"
-        : /^\/learn/.test(route)
-          ? "student"
-          : /^\/(teach|class\/\d{3}\/form\/\d+)/.test(route)
-            ? "teacher"
-            : /^\/manage/.test(route)
-              ? "management"
-              : "user";
+  const pageRole = (() => {
+    if (route === "/") return "public";
+    else if (route.startsWith("/admin")) return "admin";
+    else if (route.startsWith("/learn")) return "student";
+    else if (route.startsWith("/teach")) return "teacher";
+    else if (route.startsWith("/manage")) return "management";
+    else return "user";
+  })();
 
   // Declare Supabase client
   const supabase = createMiddlewareClient({ req, res });
@@ -67,45 +58,37 @@ export async function middleware(req: NextRequest) {
   }
 
   // Decide on destination based on user and page protection type
-  let destination: string | null = null;
+  const destination = (() => {
+    // Default Search page to Students tab
+    if (route === "/search") return "/search/students";
 
-  /**
-   * The home destination is the page the user is redirected to if they are
-   * on a page they are not allowed to be on.
-   */
-  const homeDestination = user?.role ? getHomeURLofRole(user.role) : "/";
+    // Disallow public users from visiting private pages
+    if (pageRole !== "public" && !user) return "/";
 
-  // Default Search page to Students tab
-  if (route === "/search") destination = "/search/students";
-
-  // Disallow public users from visiting private pages
-  if (pageRole !== "public" && !user) destination = "/";
-  // Disallow logged in users from visiting certain pages under certain
-  // circumstances
-  // prettier-ignore
-  else if (
-    !(
-      (
-        // Allow admins to visit admin pages
-        (pageRole === "admin" && user?.is_admin) ||
-        // Allow all users to visit user pages
-        pageRole === "user" ||
-        // Allow users with the correct roles
-        pageRole === user?.role
+    // Disallow logged in users from visiting certain pages under certain
+    // circumstances
+    // prettier-ignore
+    if (
+      !(
+        (
+          // Allow admins to visit admin pages
+          (pageRole === "admin" && user?.is_admin) ||
+          // Allow those with `can_see_management` permission to visit management
+          // pages
+          (pageRole === "management" &&
+            permitted(user, UserPermissionKey.can_see_management)) ||
+          // Allow all users to visit user pages
+          pageRole === "user" ||
+          // Allow users with the correct roles
+          pageRole === user?.role
+        )
       )
-    )
-  ) {
-    // Set destinations for users in the wrong pages
-    destination = homeDestination;
-  }
-  // Allow all users to visit user pages
-  // Allow users with the correct roles
-  else if (!(pageRole === "user" || pageRole === user?.role)) {
-    if (pageRole !== "admin" || !user?.is_admin) {
-      // Set destinations for users in the wrong pages
-      destination = homeDestination;
-    }
-  }
+    ) 
+      return user?.role ? getHomeURLofRole(user.role) : "/";
+
+    // Let permitted users continue
+    return null;
+  })();
 
   // Log middleware end
   console.log(
@@ -124,15 +107,15 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    "/account/:path*",
-    "/admin/:path*",
     "/learn",
     "/teach",
+    "/manage/:path*",
     "/classes/:path*",
     "/search/:path*",
-    "/maintenance",
-    "/manage/:path*",
+    "/account/:path*",
     "/news",
     "/news/:id",
+    "/admin/:path*",
+    "/maintenance",
   ],
 };

@@ -3,6 +3,7 @@ import Favicon from "@/components/Favicon";
 import LogOutDialog from "@/components/account/LogOutDialog";
 import SchemeIcon from "@/components/icons/SchemeIcon";
 import AppStateContext from "@/contexts/AppStateContext";
+import permitted from "@/utils/helpers/permitted";
 import getHomeURLofRole from "@/utils/helpers/person/getHomeURLofRole";
 import useLocale from "@/utils/helpers/useLocale";
 import usePageIsLoading from "@/utils/helpers/usePageIsLoading";
@@ -11,7 +12,7 @@ import useRefreshProps from "@/utils/helpers/useRefreshProps";
 import useSnackbar from "@/utils/helpers/useSnackbar";
 import useUser from "@/utils/helpers/useUser";
 import { CustomPage } from "@/utils/types/common";
-import { UserRole } from "@/utils/types/person";
+import { UserPermissionKey, UserRole } from "@/utils/types/person";
 import {
   MaterialIcon,
   NavBar,
@@ -132,6 +133,17 @@ const Layout: FC<
             href={homeURL}
             element={Link}
           />
+          {user &&
+            user.role !== UserRole.management &&
+            permitted(user, UserPermissionKey.can_see_management) && (
+              <NavDrawerItem
+                icon={<MaterialIcon icon="analytics" />}
+                label={t("navigation.manage")}
+                selected={router.pathname.startsWith("/manage")}
+                href="/manage"
+                element={Link}
+              />
+            )}
           <NavDrawerItem
             icon={<MaterialIcon icon="groups" />}
             label={t("navigation.classes")}
@@ -305,6 +317,18 @@ const Layout: FC<
             href={homeURL}
             element={Link}
           />
+          {user &&
+            user.role !== UserRole.management &&
+            permitted(user, UserPermissionKey.can_see_management) && (
+              <NavBarItem
+                icon={<MaterialIcon icon="analytics" />}
+                label={t("navigation.manage")}
+                selected={router.pathname.startsWith("/manage")}
+                railOnly
+                href="/manage"
+                element={Link}
+              />
+            )}
           <NavBarItem
             icon={<MaterialIcon icon="groups" />}
             label={t("navigation.classes")}

@@ -4,7 +4,6 @@ import cn from "@/utils/helpers/cn";
 import useToggle from "@/utils/helpers/useToggle";
 import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
-import { SchedulePeriod } from "@/utils/types/schedule";
 import {
   Button,
   MaterialIcon,
@@ -28,9 +27,7 @@ import { useTranslation } from "next-i18next";
  */
 const GradeSection: StylableFC<{
   grade?: string;
-  classrooms: (Pick<Classroom, "id" | "number" | "main_room"> & {
-    relevantPeriod: SchedulePeriod;
-  })[];
+  classrooms: Pick<Classroom, "id" | "number" | "main_room">[];
   selected?: string;
   onSelectedChange: (value: string) => void;
   expandedByDefault?: boolean;
@@ -104,7 +101,6 @@ const GradeSection: StylableFC<{
               >
                 <LookupClassCard
                   classroom={classroom}
-                  period={classroom.relevantPeriod}
                   selected={selected}
                   onClick={onSelectedChange}
                 />
