@@ -18,7 +18,7 @@ import { User, UserPermissionKey, UserPermissions } from "@/utils/types/person";
  * @returns Whether the user has the permission.
  */
 export default function permitted(
-  user: User,
+  user: User | null,
   permission: UserPermissionKey,
 ): boolean;
 
@@ -36,9 +36,11 @@ export default function permitted(
 ): boolean;
 
 export default function permitted(
-  data: User | UserPermissions,
+  data: User | UserPermissions | null,
   permission: UserPermissionKey,
 ): boolean {
+  if (!data) return false;
+
   let list: UserPermissions;
 
   // If the data is a user, get the permissions from the user.
