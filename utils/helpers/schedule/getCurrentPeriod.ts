@@ -1,6 +1,6 @@
 // Imports
 import getPeriodBoundaryTime from "@/utils/helpers/schedule/getPeriodBoundaryTime";
-import { differenceInMinutes, isPast } from "date-fns";
+import { addMinutes, differenceInMinutes, isPast } from "date-fns";
 
 /**
  * Get the current period number.
@@ -8,8 +8,13 @@ import { differenceInMinutes, isPast } from "date-fns";
  * @returns A number from 1 to 10.
  */
 export default function getCurrentPeriod(): number {
+  const normalizedNow = addMinutes(
+    new Date(),
+    new Date().getTimezoneOffset() + 7 * 60,
+  );
+
   return isPast(
-    new Date().setHours(
+    normalizedNow.setHours(
       getPeriodBoundaryTime(10).hours,
       getPeriodBoundaryTime(10).min,
     ),
@@ -17,8 +22,8 @@ export default function getCurrentPeriod(): number {
     ? 0
     : Math.floor(
         differenceInMinutes(
-          new Date(),
-          new Date().setHours(
+          normalizedNow,
+          normalizedNow.setHours(
             getPeriodBoundaryTime(0).hours,
             getPeriodBoundaryTime(0).min,
           ),

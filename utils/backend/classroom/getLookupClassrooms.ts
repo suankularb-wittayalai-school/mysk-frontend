@@ -28,12 +28,6 @@ export default async function getLookupClassrooms(
     (Pick<Classroom, "id" | "number"> & { relevantPeriod?: SchedulePeriod })[]
   >
 > {
-  console.log({
-    date: new Date(),
-    timezoneOffset: new Date().getTimezoneOffset() / 60,
-    periodNumber: getCurrentPeriod(),
-  });
-
   const { data, error } = await supabase
     .from("classrooms")
     .select(
