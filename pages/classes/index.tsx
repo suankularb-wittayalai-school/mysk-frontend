@@ -69,7 +69,10 @@ const ClassesPage: NextPage<{
   async function fetchSelectedClass() {
     if (!selectedID) return;
     const { data, error } = await getClassroomByID(supabase, selectedID, {
-      includeStudents: teacherID !== null || selectedID === userClassroom?.id,
+      includeStudents:
+        user.is_admin ||
+        user.role !== UserRole.student ||
+        selectedID === userClassroom?.id,
     });
     if (!error) setSelectedClassroom(data);
   }
@@ -149,7 +152,7 @@ const ClassesPage: NextPage<{
             classroom={selectedClassroom}
             teacherID={teacherID}
             isOwnClass={userClassroom?.id === selectedClassroom?.id}
-            role={user.role}
+            user={user}
             refreshData={fetchSelectedClass}
           />
         </LookupDetailsSide>
@@ -166,7 +169,7 @@ const ClassesPage: NextPage<{
           }
           teacherID={teacherID}
           isOwnClass={userClassroom?.id === selectedClassroom?.id}
-          role={user.role}
+          user={user}
           refreshData={fetchSelectedClass}
         />
       </LookupDetailsDialog>
