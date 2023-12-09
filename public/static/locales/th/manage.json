@@ -17,7 +17,7 @@
           "late": "มาสาย {{count, number(maximumFractionDigits: 0;)}}",
           "absent": "ขาดเรียน {{count, number(maximumFractionDigits: 0;)}}"
         },
-        "content": "{{percentage, number(style: percent; maximumFractionDigits: 1;}}"
+        "content": "{{percentage, number(style: percent; minimumFractionDigits: 1; maximumFractionDigits: 1;}}"
       },
       "action": {
         "print": "พิมพ์รายงาน",
