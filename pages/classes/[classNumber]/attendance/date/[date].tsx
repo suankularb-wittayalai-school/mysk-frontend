@@ -2,6 +2,7 @@
 import AttendanceListFooter from "@/components/attendance/AttendanceListFooter";
 import AttendanceListHeader from "@/components/attendance/AttendanceListHeader";
 import AttendanceListItem from "@/components/attendance/AttendanceListItem";
+import { SelectorType } from "@/components/attendance/AttendanceViewSelector";
 import ClassAttendanceLayout from "@/components/attendance/ClassAttendanceLayout";
 import TodaySummary from "@/components/attendance/TodaySummary";
 import PageHeader from "@/components/common/PageHeader";
@@ -84,7 +85,7 @@ const DateAttendancePage: CustomPage<{
         <title>{tx("tabName", { tabName: t("title") })}</title>
       </Head>
       <PageHeader parentURL="/classes">{t("title")}</PageHeader>
-      <ClassAttendanceLayout date={date}>
+      <ClassAttendanceLayout type={SelectorType.classroom} date={date}>
         <LayoutGroup id="attendance">
           <TodaySummary
             attendances={attendances}
