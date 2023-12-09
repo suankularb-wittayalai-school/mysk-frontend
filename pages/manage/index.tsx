@@ -11,13 +11,17 @@ import { CustomPage, LangCode } from "@/utils/types/common";
 import { ParticipationMetrics } from "@/utils/types/management";
 import { User, UserRole } from "@/utils/types/person";
 import {
+  Actions,
+  Button,
   Columns,
   ContentLayout,
   Header,
+  MaterialIcon,
   Section,
   Text,
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
+import { isWeekend } from "date-fns";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import { useTranslation } from "next-i18next";
@@ -62,9 +66,19 @@ const ManagePage: CustomPage<{
           <Columns columns={2} className="!grid-cols-1 md:!grid-cols-2">
             <AttendanceSummary
               title={
-                <Text type="title-large" element="h3">
-                  {t("attendance.summary.today.title")}
-                </Text>
+                <>
+                  <Text type="title-large" element="h3">
+                    {t("attendance.summary.today.title")}
+                  </Text>
+                  {isWeekend(new Date()) && (
+                    <Text
+                      type="title-small"
+                      className="text-on-surface-variant"
+                    >
+                      {t("attendance.summary.today.subtitle")}
+                    </Text>
+                  )}
+                </>
               }
               summary={attendance.today}
               total={participationMetrics.students_with_classroom}

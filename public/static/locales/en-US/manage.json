@@ -5,7 +5,8 @@
     "description": "Every morning, teachers take attendance of their students during assembly and homeroom. Here’s a summary.",
     "summary": {
       "today": {
-        "title": "Today"
+        "title": "Today",
+        "subtitle": "Last Friday"
       },
       "thisWeek": {
         "title": "This week",
