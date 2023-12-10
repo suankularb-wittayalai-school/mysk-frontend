@@ -3,6 +3,7 @@ import getISODateString from "@/utils/helpers/getISODateString";
 import { YYYYMMDDRegex, YYYYWwwRegex } from "@/utils/patterns";
 import { StylableFC } from "@/utils/types/common";
 import {
+  Actions,
   Button,
   MaterialIcon,
   SegmentedButton,
@@ -106,8 +107,8 @@ const AttendanceViewSelector: StylableFC<{
       )}
     >
       {/* View selector */}
-      <div className="space-y-2">
-        <SegmentedButton alt="View" className="!grid grid-cols-2 sm:!flex">
+      <Actions align="left">
+        <SegmentedButton alt="View" className="!grid grow grid-cols-2 sm:!flex">
           <Button
             appearance="outlined"
             selected={view === AttendanceView.today}
@@ -142,7 +143,17 @@ const AttendanceViewSelector: StylableFC<{
             {t("view.thisWeek")}
           </Button>
         </SegmentedButton>
-      </div>
+
+        {type === SelectorType.management && (
+          <Button
+            appearance="filled"
+            icon={<MaterialIcon icon="print" />}
+            onClick={() => window.print()}
+          >
+            {t("action.print")}
+          </Button>
+        )}
+      </Actions>
 
       {/* Go to date */}
       <div className="flex flex-row items-center gap-2">
