@@ -12,7 +12,7 @@ import {
 } from "@suankularb-components/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Balancer from "react-wrap-balancer";
 
 export enum HomeroomView {
@@ -63,6 +63,15 @@ const TodaySummary: StylableFC<{
 
   const [homeroomView, setHomeroomView] = useState<HomeroomView>(
     homeroomContent.homeroom_content ? HomeroomView.view : HomeroomView.empty,
+  );
+  useEffect(
+    () =>
+      setHomeroomView(
+        homeroomContent.homeroom_content
+          ? HomeroomView.view
+          : HomeroomView.empty,
+      ),
+    [homeroomContent],
   );
 
   const { duration, easing } = useAnimationConfig();
