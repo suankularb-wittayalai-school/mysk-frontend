@@ -9,7 +9,7 @@ import { addDays, setDay } from "date-fns";
  */
 export default function lastWeekday(date: Date) {
   const day = date.getDay();
-  if (day === 0) return setDay(addDays(date, -1), 1);
+  if (day === 0) return setDay(addDays(date, -1), 5);
   if (day === 6) return setDay(date, 5);
   return date;
 }
