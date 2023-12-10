@@ -2,6 +2,7 @@
 import AttendanceListFooter from "@/components/attendance/AttendanceListFooter";
 import AttendanceListHeader from "@/components/attendance/AttendanceListHeader";
 import AttendanceListItem from "@/components/attendance/AttendanceListItem";
+import { SelectorType } from "@/components/attendance/AttendanceViewSelector";
 import ClassAttendanceLayout from "@/components/attendance/ClassAttendanceLayout";
 import TodaySummary from "@/components/attendance/TodaySummary";
 import PageHeader from "@/components/common/PageHeader";
@@ -84,7 +85,7 @@ const DateAttendancePage: CustomPage<{
         <title>{tx("tabName", { tabName: t("title") })}</title>
       </Head>
       <PageHeader parentURL="/classes">{t("title")}</PageHeader>
-      <ClassAttendanceLayout date={date}>
+      <ClassAttendanceLayout type={SelectorType.classroom} date={date}>
         <LayoutGroup id="attendance">
           <TodaySummary
             attendances={attendances}
@@ -170,11 +171,13 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   // Admins can view and edit all Attendance
   if (user?.is_admin) editable = true;
+
   switch (user?.role) {
     // Students can only view their own Attendance and cannot edit
     case UserRole.student:
       const { data: student } = await getStudentFromUserID(supabase, user.id);
-      if (student?.classroom?.id !== classroom.id) return { notFound: true };
+      if (student?.classroom?.id !== classroom.id && !user?.is_admin)
+        return { notFound: true };
       break;
     // Teachers can edit Attendance of their own Classrooms
     case UserRole.teacher:
@@ -187,7 +190,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       break;
     // Other users are not allowed to view Attendance
     default:
-      return { notFound: true };
+      if (!user?.is_admin) return { notFound: true };
   }
 
   const { data: attendances } = await getAttendanceOfClass(

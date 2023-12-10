@@ -11,18 +11,24 @@ import { CustomPage, LangCode } from "@/utils/types/common";
 import { ParticipationMetrics } from "@/utils/types/management";
 import { User, UserRole } from "@/utils/types/person";
 import {
+  Actions,
+  Button,
   Columns,
   ContentLayout,
   Header,
+  MaterialIcon,
   Section,
   Text,
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
+import { isWeekend } from "date-fns";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
 /**
  * Management’s counterpart to Learn, where the user can view statistics about
@@ -44,6 +50,8 @@ const ManagePage: CustomPage<{
   const { t } = useTranslation("manage");
   const { t: tx } = useTranslation("common");
 
+  const router = useRouter();
+
   return (
     <>
       <Head>
@@ -62,9 +70,19 @@ const ManagePage: CustomPage<{
           <Columns columns={2} className="!grid-cols-1 md:!grid-cols-2">
             <AttendanceSummary
               title={
-                <Text type="title-large" element="h3">
-                  {t("attendance.summary.today.title")}
-                </Text>
+                <>
+                  <Text type="title-large" element="h3">
+                    {t("attendance.summary.today.title")}
+                  </Text>
+                  {isWeekend(new Date()) && (
+                    <Text
+                      type="title-small"
+                      className="text-on-surface-variant"
+                    >
+                      {t("attendance.summary.today.subtitle")}
+                    </Text>
+                  )}
+                </>
               }
               summary={attendance.today}
               total={participationMetrics.students_with_classroom}
@@ -84,6 +102,26 @@ const ManagePage: CustomPage<{
               total={participationMetrics.students_with_classroom}
             />
           </Columns>
+          <Actions>
+            <Button
+              appearance="outlined"
+              icon={<MaterialIcon icon="print" />}
+              onClick={async () => {
+                await router.push("/manage/attendance");
+                setTimeout(() => window.print(), 1000);
+              }}
+            >
+              {t("attendance.action.print")}
+            </Button>
+            <Button
+              appearance="filled"
+              icon={<MaterialIcon icon="format_list_bulleted" />}
+              href="/manage/attendance"
+              element={Link}
+            >
+              {t("attendance.action.viewDetails")}
+            </Button>
+          </Actions>
         </Section>
 
         {/* Participation */}

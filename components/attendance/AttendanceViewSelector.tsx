@@ -3,12 +3,22 @@ import getISODateString from "@/utils/helpers/getISODateString";
 import { YYYYMMDDRegex, YYYYWwwRegex } from "@/utils/patterns";
 import { StylableFC } from "@/utils/types/common";
 import {
+  Actions,
   Button,
   MaterialIcon,
   SegmentedButton,
   TextField,
 } from "@suankularb-components/react";
-import { getWeek, parseISO } from "date-fns";
+import {
+  getWeek,
+  getYear,
+  isFuture,
+  isPast,
+  isWeekend,
+  parse,
+  parseISO,
+  startOfWeek,
+} from "date-fns";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -23,37 +33,69 @@ enum AttendanceView {
 }
 
 /**
+ * The type of the View Selector.
+ */
+export enum SelectorType {
+  classroom,
+  management,
+}
+
+/**
  * The view selector for the Attendance pages. Allows the user to select the
  * view and jump to a date.
  *
+ * @param type The type of the View Selector, classroom or management.
  * @param date The date to display in the date field by default.
  */
 const AttendanceViewSelector: StylableFC<{
+  type: SelectorType;
   date: string;
-}> = ({ date, style, className }) => {
+}> = ({ type, date, style, className }) => {
   const { t } = useTranslation("attendance", { keyPrefix: "viewSelector" });
 
   const { asPath } = useRouter();
 
   /**
-   * The selected view of the parent Attendance page. This is determined by the
-   * 4th path segment of the URL.
+   * The path segment to check for the selected {@link view}. The path prior to
+   * this segment is the {@link parentURL parent URL}.
+   *
+   * ---
+   *
+   * For **`SelectorType.classroom`**, this is the 4th segment.
    *
    * ```plaintext
    * /classes/604/attendance/date/2024-01-01
    *                         ~~~~
    * ```
+   *
+   * ---
+   *
+   * For **`SelectorType.management`**, this is the 3rd segment.
+   *
+   * ```plaintext
+   * /manage/attendance/date/2024-01-01
+   *                    ~~~~
+   * ```
+   */
+  const segmentToCheck = [4, 3][type];
+
+  /**
+   * The selected view of the parent Attendance page.
    */
   const view = {
     date: AttendanceView.today,
     week: AttendanceView.thisWeek,
-  }[asPath.split("/")[4]]!;
-  const parentURL = asPath.split("/").slice(0, 4).join("/");
+  }[asPath.split("/")[segmentToCheck]]!;
+  const parentURL = asPath.split("/").slice(0, segmentToCheck).join("/");
 
   const [dateField, setDateField] = useState(date);
   const dateIsValid = [
-    YYYYMMDDRegex.test(dateField),
-    YYYYWwwRegex.test(dateField),
+    YYYYMMDDRegex.test(dateField) &&
+      !isWeekend(new Date(dateField)) &&
+      isPast(new Date(dateField)),
+    YYYYWwwRegex.test(dateField) &&
+      Number(dateField.slice(0, 4)) <= getYear(new Date()) &&
+      Number(dateField.slice(6, 8)) <= getWeek(new Date()),
   ][view];
 
   return (
@@ -65,8 +107,8 @@ const AttendanceViewSelector: StylableFC<{
       )}
     >
       {/* View selector */}
-      <div className="space-y-2">
-        <SegmentedButton alt="View" className="!grid grid-cols-2 sm:!flex">
+      <Actions align="left">
+        <SegmentedButton alt="View" className="!grid grow grid-cols-2 sm:!flex">
           <Button
             appearance="outlined"
             selected={view === AttendanceView.today}
@@ -85,7 +127,7 @@ const AttendanceViewSelector: StylableFC<{
           <Button
             appearance="outlined"
             selected={view === AttendanceView.thisWeek}
-            disabled={!dateIsValid}
+            disabled={!dateIsValid || type === SelectorType.management}
             href={[
               parentURL,
               "week",
@@ -101,7 +143,17 @@ const AttendanceViewSelector: StylableFC<{
             {t("view.thisWeek")}
           </Button>
         </SegmentedButton>
-      </div>
+
+        {type === SelectorType.management && (
+          <Button
+            appearance="filled"
+            icon={<MaterialIcon icon="print" />}
+            onClick={() => window.print()}
+          >
+            {t("action.print")}
+          </Button>
+        )}
+      </Actions>
 
       {/* Go to date */}
       <div className="flex flex-row items-center gap-2">

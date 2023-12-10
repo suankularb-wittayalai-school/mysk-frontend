@@ -1,4 +1,5 @@
 import recordAttendances from "@/utils/backend/attendance/recordAttendances";
+import useRefreshProps from "@/utils/helpers/useRefreshProps";
 import useToggle from "@/utils/helpers/useToggle";
 import withLoading from "@/utils/helpers/withLoading";
 import { StudentAttendance } from "@/utils/types/attendance";
@@ -25,6 +26,7 @@ export default function useAttendanceActions(
   useEffect(() => setAttendances(initialAttendances), [initialAttendances]);
 
   const [loading, toggleLoading] = useToggle();
+  const refreshProps = useRefreshProps();
   const supabase = useSupabaseClient();
 
   /**
@@ -71,6 +73,7 @@ export default function useAttendanceActions(
           isToday: date !== undefined && isToday(new Date(date)),
         });
         if (error) return false;
+        refreshProps();
         return true;
       },
       toggleLoading,

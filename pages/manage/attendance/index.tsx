@@ -5,24 +5,19 @@ import { CustomPage } from "@/utils/types/common";
 import { GetServerSideProps } from "next";
 
 /**
- * A redirect page to the current date’s Attendance page.
+ * A redirect page to the current date’s Attendance Overview page.
  */
-const AttendancePage: CustomPage = () => null;
+const AttendanceOverviewPage: CustomPage = () => null;
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  params,
-}) => ({
+export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
   redirect: {
     destination: [
       locale !== "th" ? "/" + locale : "",
-      "classes",
-      params!.classNumber,
-      "attendance/date",
+      "manage/attendance/date",
       getISODateString(lastWeekday(new Date())),
     ].join("/"),
     permanent: false,
   },
 });
 
-export default AttendancePage;
+export default AttendanceOverviewPage;
