@@ -27,6 +27,8 @@ import { getServerSession } from "next-auth";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
 /**
  * Management’s counterpart to Learn, where the user can view statistics about
@@ -47,6 +49,8 @@ const ManagePage: CustomPage<{
 }> = ({ attendance, participationMetrics, user }) => {
   const { t } = useTranslation("manage");
   const { t: tx } = useTranslation("common");
+
+  const router = useRouter();
 
   return (
     <>
@@ -98,6 +102,26 @@ const ManagePage: CustomPage<{
               total={participationMetrics.students_with_classroom}
             />
           </Columns>
+          <Actions>
+            <Button
+              appearance="outlined"
+              icon={<MaterialIcon icon="print" />}
+              onClick={async () => {
+                await router.push("/manage/attendance");
+                setTimeout(() => window.print(), 1000);
+              }}
+            >
+              {t("attendance.action.print")}
+            </Button>
+            <Button
+              appearance="filled"
+              icon={<MaterialIcon icon="format_list_bulleted" />}
+              href="/manage/attendance"
+              element={Link}
+            >
+              {t("attendance.action.viewDetails")}
+            </Button>
+          </Actions>
         </Section>
 
         {/* Participation */}

@@ -19,11 +19,36 @@
           "absent": "ขาดเรียน {{count, number(maximumFractionDigits: 0;)}}"
         },
         "content": "{{percentage, number(style: percent; minimumFractionDigits: 1; maximumFractionDigits: 1;}}"
-      },
-      "action": {
-        "print": "พิมพ์รายงาน",
-        "viewDetails": "ดูรายละเอียด"
       }
+    },
+    "print": {
+      "title": "รายงานการเข้าเรียน {{date, datetime(day: numeric; month: short)}}",
+      "subtitle": "นำเสนอโดย MySK"
+    },
+    "chart": {
+      "legend": {
+        "presence": "มา",
+        "late": "มาสาย",
+        "absence": "ลา/ขาด"
+      },
+      "summary": {
+        "presence": "มาเรียน {{count, number(maximumFractionDigits: 0;)}}",
+        "late": "มาสาย {{count, number(maximumFractionDigits: 0;)}}",
+        "absence": "ขาดเรียน {{count, number(maximumFractionDigits: 0;)}}"
+      }
+    },
+    "table": {
+      "thead": {
+        "classroom": "ห้องเรียน",
+        "present": "มา",
+        "late": "สาย",
+        "absent": "ขาด",
+        "homeroom": "โฮมรูม"
+      }
+    },
+    "action": {
+      "print": "พิมพ์รายงาน",
+      "viewDetails": "ดูรายละเอียด"
     }
   },
   "participation": {
