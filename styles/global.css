@@ -3,6 +3,10 @@
 @tailwind utilities;
 
 @media print {
+  body {
+    background-color: var(--white);
+  }
+
   .skc-root-layout
     > *:not(.skc-content-layout, .skc-split-layout, .skc-page-header) {
     display: none;
