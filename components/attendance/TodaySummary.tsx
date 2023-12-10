@@ -1,5 +1,6 @@
 // Imports
 import HomeroomContentEditor from "@/components/attendance/HomeroomContentEditor";
+import cn from "@/utils/helpers/cn";
 import { HomeroomContent, StudentAttendance } from "@/utils/types/attendance";
 import { StylableFC } from "@/utils/types/common";
 import {
@@ -13,6 +14,7 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
+import Markdown from "react-markdown";
 import Balancer from "react-wrap-balancer";
 
 export enum HomeroomView {
@@ -128,8 +130,18 @@ const TodaySummary: StylableFC<{
             ),
             // If there is homeroom content, show the content.
             view: (
-              <Text key="view" type="body-medium" className="-mt-1">
-                <Balancer>{homeroomContent?.homeroom_content}</Balancer>
+              <Text
+                key="view"
+                type="body-medium"
+                element="div"
+                className="-mt-1"
+              >
+                <Markdown
+                  className={cn(`[&_ol]:list-decimal [&_ol]:pl-6
+                    [&_ul]:list-disc [&_ul]:pl-6`)}
+                >
+                  {homeroomContent.homeroom_content}
+                </Markdown>
               </Text>
             ),
             // If the user is editing the homeroom content, show the editor.
