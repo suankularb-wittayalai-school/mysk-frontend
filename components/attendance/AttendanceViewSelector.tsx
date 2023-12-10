@@ -8,7 +8,16 @@ import {
   SegmentedButton,
   TextField,
 } from "@suankularb-components/react";
-import { getWeek, parseISO } from "date-fns";
+import {
+  getWeek,
+  getYear,
+  isFuture,
+  isPast,
+  isWeekend,
+  parse,
+  parseISO,
+  startOfWeek,
+} from "date-fns";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -48,20 +57,20 @@ const AttendanceViewSelector: StylableFC<{
   /**
    * The path segment to check for the selected {@link view}. The path prior to
    * this segment is the {@link parentURL parent URL}.
-   * 
+   *
    * ---
-   * 
+   *
    * For **`SelectorType.classroom`**, this is the 4th segment.
-   * 
+   *
    * ```plaintext
    * /classes/604/attendance/date/2024-01-01
    *                         ~~~~
    * ```
-   * 
+   *
    * ---
-   * 
+   *
    * For **`SelectorType.management`**, this is the 3rd segment.
-   * 
+   *
    * ```plaintext
    * /manage/attendance/date/2024-01-01
    *                    ~~~~
@@ -80,8 +89,12 @@ const AttendanceViewSelector: StylableFC<{
 
   const [dateField, setDateField] = useState(date);
   const dateIsValid = [
-    YYYYMMDDRegex.test(dateField),
-    YYYYWwwRegex.test(dateField),
+    YYYYMMDDRegex.test(dateField) &&
+      !isWeekend(new Date(dateField)) &&
+      isPast(new Date(dateField)),
+    YYYYWwwRegex.test(dateField) &&
+      Number(dateField.slice(0, 4)) <= getYear(new Date()) &&
+      Number(dateField.slice(6, 8)) <= getWeek(new Date()),
   ][view];
 
   return (
@@ -113,7 +126,7 @@ const AttendanceViewSelector: StylableFC<{
           <Button
             appearance="outlined"
             selected={view === AttendanceView.thisWeek}
-            disabled={!dateIsValid}
+            disabled={!dateIsValid || type === SelectorType.management}
             href={[
               parentURL,
               "week",
