@@ -19,7 +19,7 @@ const ClassAttendanceLayout: StylableFC<
   const { children, style, className } = props;
 
   return (
-    <ContentLayout>
+    <ContentLayout className="print:text-black">
       <Columns
         columns={12}
         style={style}
