@@ -2,12 +2,10 @@
 import { SelectorType } from "@/components/attendance/AttendanceViewSelector";
 import ClassAttendanceLayout from "@/components/attendance/ClassAttendanceLayout";
 import WeekChart from "@/components/attendance/WeekChart";
-import MultiSchemeImage from "@/components/common/MultiSchemeImage";
 import PageHeader from "@/components/common/PageHeader";
 import AttendanceClassesList from "@/components/manage/AttendanceClassesList";
 import AttendanceClassesListItem from "@/components/manage/AttendanceClassesListItem";
-import MySKDark from "@/public/images/brand/mysk-dark.svg";
-import MySKLight from "@/public/images/brand/mysk-light.svg";
+import MySKLogo from "@/public/images/brand/mysk-light.svg";
 import getClassroomAttendances from "@/utils/backend/attendance/getClassroomAttendances";
 import getWeekAttendance from "@/utils/backend/attendance/getWeekAttendance";
 import cn from "@/utils/helpers/cn";
@@ -24,6 +22,7 @@ import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
+import Image from "next/image";
 import { mapValues } from "radash";
 
 /**
@@ -80,26 +79,19 @@ const DateAttendanceOverviewPage: CustomPage<{
               {t("print.subtitle")}
             </Text>
           </div>
-          <MultiSchemeImage
-            srcLight={MySKLight}
-            srcDark={MySKDark}
-            width={96}
-            height={96}
-            priority
-            alt=""
-          />
+          <Image src={MySKLogo} width={96} height={96} priority alt="" />
         </div>
 
         {/* Summary */}
         <Columns
           columns={2}
-          className="!mb-10 !gap-y-6 print:!mx-4 md:!grid-cols-5"
+          className="!mb-10 !gap-y-6 print:!mx-4 print:!grid-cols-5 md:!grid-cols-5"
         >
           {/* Chart */}
           <Card
             appearance="outlined"
-            className={cn(`light aspect-[2] px-3 py-2 print:!bg-white
-              md:col-span-3`)}
+            className={cn(`light aspect-[2] px-3 py-2 print:col-span-3
+              print:!bg-white md:col-span-3`)}
           >
             <WeekChart week={week} className="rounded-md" />
           </Card>
@@ -108,7 +100,7 @@ const DateAttendanceOverviewPage: CustomPage<{
           <Text
             type="headline-medium"
             element="p"
-            className="grid md:col-span-2"
+            className="grid print:col-span-2 md:col-span-2"
           >
             {Object.entries(totals).map(([key, count]) => (
               <span key={key}>{t(`chart.summary.${key}`, { count })}</span>
