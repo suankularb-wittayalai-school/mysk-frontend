@@ -9,6 +9,7 @@ import getCurrentSchoolSessionState from "@/utils/helpers/schedule/getCurrentSch
 import getTodaySetToPeriodTime from "@/utils/helpers/schedule/getTodaySetToPeriodTime";
 import useLocale from "@/utils/helpers/useLocale";
 import useNow from "@/utils/helpers/useNow";
+import within from "@/utils/helpers/within";
 import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
@@ -23,12 +24,11 @@ import {
   differenceInSeconds,
   isFuture,
   isPast,
-  isWithinInterval,
 } from "date-fns";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { Trans, useTranslation } from "next-i18next";
 import { camel, list } from "radash";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
 /**
  * The start time of assembly.
@@ -113,6 +113,12 @@ const HomeGlance: StylableFC<{
   //   2. Homeroom   08:00 - 08:30
   //   3. Periods    08:30 onwards
 
+  const attendanceEvent = isFuture(new Date().setHours(...PERIOD_START))
+    ? isFuture(new Date().setHours(...HOMEROOM_START))
+      ? "assembly"
+      : "homeroom"
+    : null;
+
   // The edges of periods relative to current time, used in calculating the
   // display type
 
@@ -141,30 +147,24 @@ const HomeGlance: StylableFC<{
    *
    * Also support assembly and homeroom.
    */
-  const minutesTilEnd =
-    // If it’s before 08:30, it’s assembly or homeroom
-    isFuture(new Date().setHours(...PERIOD_START))
+  const minutesTilEnd = attendanceEvent
+    ? differenceInMinutes(
+        {
+          assembly: new Date().setHours(...PERIOD_START),
+          homeroom: new Date().setHours(...HOMEROOM_START),
+        }[attendanceEvent],
+        now,
+      )
+    : currentPeriod?.content.length
       ? differenceInMinutes(
-          // If it’s during or after 08:00, it’s homeroom
-          !isFuture(new Date().setHours(...HOMEROOM_START))
-            ? // Get the difference between the current time and the start of
-              // periods
-              new Date().setHours(...PERIOD_START)
-            : // If it’s before 08:00, it’s assembly--get the difference between
-              // the current time and the start of homeroom
-              new Date().setHours(...HOMEROOM_START),
+          getTodaySetToPeriodTime(
+            currentPeriod.start_time + currentPeriod.duration - 1,
+            "end",
+          ),
           now,
+          { roundingMethod: "ceil" },
         )
-      : currentPeriod?.content.length
-        ? differenceInMinutes(
-            getTodaySetToPeriodTime(
-              currentPeriod.start_time + currentPeriod.duration - 1,
-              "end",
-            ),
-            now,
-            { roundingMethod: "ceil" },
-          )
-        : null;
+      : null;
 
   /**
    * The number of minutes until the start of the immediate next period.
@@ -213,78 +213,75 @@ const HomeGlance: StylableFC<{
    * The type of Home Glance to display to the user, calculated by the current
    * and upcoming schedule items to be the most relevant.
    */
-  const displayType:
-    | "assembly"
-    | "homeroom"
-    | "learn-current"
-    | "learn-next"
-    | "lunch"
-    | "teach-current"
-    | "teach-wrap-up"
-    | "teach-travel"
-    | "teach-future"
-    | "none" =
+  const displayType = (() => {
     // If it’s between 07:30 and 08:00, display that it’s assembly time
-    isWithinInterval(new Date(), {
-      start: new Date().setHours(7, 30, 0, 0),
-      end: new Date().setHours(8, 0, 0, 0),
-    })
-      ? "assembly"
-      : // If it’s between 08:00 and 08:30, display that it’s homeroom time
-        isWithinInterval(new Date(), {
-            start: new Date().setHours(8, 0, 0, 0),
-            end: new Date().setHours(8, 30, 0, 0),
-          })
-        ? "homeroom"
-        : !todayRow.length
-          ? "none"
-          : role === "teacher"
-            ? // If the teacher is free and it’s 5 minutes before the next class
-              // starts, they are instructed to travel
-              minutesTilImmediateNext &&
-              minutesTilImmediateNext >= 0 &&
-              minutesTilImmediateNext <= 5
-              ? "teach-travel"
-              : // If the teacher is free and the next class is far away, show a
-                //   countdown
-                todayNextPeriod?.content.length &&
-                  !currentPeriod?.content.length
-                ? "teach-future"
-                : // If the teacher is teaching and it’s 10 minutes until it’s over,
-                  // they are intructed to wrap the class up
-                  currentPeriod?.content.length &&
-                    minutesTilEnd &&
-                    minutesTilEnd >= 0 &&
-                    minutesTilEnd <= 10
-                  ? "teach-wrap-up"
-                  : // If the teacher is teaching, display the current class
-                    currentPeriod?.content.length
-                    ? "teach-current"
-                    : "none"
-            : role === "student"
-              ? // If it’s 10 minutes before the next class, display that class
-                minutesTilImmediateNext &&
-                minutesTilImmediateNext >= 0 &&
-                minutesTilImmediateNext <= 10
-                ? "learn-next"
-                : // If the student is in class, display that class
-                  currentPeriod?.content.length
-                  ? "learn-current"
-                  : // If the student is free and it’s a lunch period, display that it’s
-                    //   lunch
-                    [4, 5].includes(periodNumber)
-                    ? "lunch"
-                    : "none"
-              : "none";
+    // If it’s between 08:00 and 08:30, display that it’s homeroom time
+    if (isFuture(new Date().setHours(...PERIOD_START)))
+      if (isFuture(new Date().setHours(...HOMEROOM_START))) return "assembly";
+      else return "homeroom";
 
+    // If there are no periods today, don’t display anything
+    if (!todayRow.length) return "none";
+
+    switch (role) {
+      case UserRole.student:
+        // If it’s 5 minutes before the next class, display that class
+        if (minutesTilImmediateNext && within(minutesTilImmediateNext, 0, 5))
+          return "learn-next";
+
+        // If the student is in class, display that class
+        if (currentPeriod?.content.length) return "learn-current";
+
+        // If the student is free and it’s a lunch period, display that it’s
+        // lunch
+        if ([4, 5].includes(periodNumber)) return "lunch";
+
+        break;
+      case UserRole.teacher:
+        // If the teacher is free and it’s 5 minutes before the next class
+        // starts, they are instructed to travel
+        if (minutesTilImmediateNext && within(minutesTilImmediateNext, 0, 5))
+          return "teach-travel";
+
+        // If the teacher is free and the next class is far away, show a
+        // countdown
+        if (todayNextPeriod?.content.length && !currentPeriod?.content.length)
+          return "teach-future";
+
+        // If the teacher is teaching and it’s 10 minutes until it’s over, they
+        // are intructed to wrap the class up
+        if (
+          currentPeriod?.content.length &&
+          minutesTilEnd &&
+          within(minutesTilEnd, 0, 10)
+        )
+          return "teach-wrap-up";
+
+        // If the teacher is teaching, display the current class
+        if (currentPeriod?.content.length) return "teach-current";
+
+        break;
+    }
+    return "none";
+  })();
+
+  /**
+   * The period to display in the Home Glance.
+   */
   const displayPeriod = ["learn-next", "teach-travel"].includes(displayType)
     ? immediateNextPeriod
     : displayType === "teach-future"
       ? todayNextPeriod
       : currentPeriod;
 
-  const [attendanceOpen, setAttendanceOpen] = useState(false);
-
+  /**
+   * The string to show in the Home Glance title representing the subject(s) of
+   * the Schedule Period.
+   *
+   * @param period The Schedule Period to get the subject string from.
+   *
+   * @returns A string.
+   */
   function getSubjectStringFromPeriod(period?: SchedulePeriod) {
     switch (period?.content.length) {
       case undefined:

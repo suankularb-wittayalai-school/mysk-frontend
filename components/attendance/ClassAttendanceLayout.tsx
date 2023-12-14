@@ -19,17 +19,20 @@ const ClassAttendanceLayout: StylableFC<
   const { children, style, className } = props;
 
   return (
-    <ContentLayout>
+    <ContentLayout className="print:text-black">
       <Columns
         columns={12}
         style={style}
-        className={cn(`mx-4 sm:mx-0`, className)}
+        className={cn(`mx-4 print:!block sm:mx-0`, className)}
       >
         <div
-          className={cn(`col-span-4 space-y-6 sm:col-span-8 md:col-span-10
-            md:col-start-2`)}
+          className={cn(`col-span-4 space-y-6 print:-mt-8 sm:col-span-8
+            md:col-span-10 md:col-start-2`)}
         >
-          <AttendanceViewSelector {...omit(props, ["style", "className"])} />
+          <AttendanceViewSelector
+            {...omit(props, ["style", "className"])}
+            className="print:!hidden"
+          />
           {children}
         </div>
       </Columns>

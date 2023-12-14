@@ -1,4 +1,5 @@
 import getISODateString from "@/utils/helpers/getISODateString";
+import lastWeekday from "@/utils/helpers/lastWeekday";
 import logError from "@/utils/helpers/logError";
 import { ManagementAttendanceSummary } from "@/utils/types/attendance";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
@@ -16,10 +17,9 @@ export default async function getManagementAttendanceSummary(
 ): Promise<
   BackendReturn<{ [key in "today" | "this_week"]: ManagementAttendanceSummary }>
 > {
-  const todayString = getISODateString(new Date());
-  // const todayString = getISODateString(new Date(2023, 11, 4));
+  const todayString = getISODateString(lastWeekday(new Date()));
   const mondayString = getISODateString(
-    startOfWeek(new Date(), { weekStartsOn: 1 }),
+    startOfWeek(lastWeekday(new Date()), { weekStartsOn: 1 }),
   );
 
   const {

@@ -5,7 +5,8 @@
     "description": "Every morning, teachers take attendance of their students during assembly and homeroom. Here’s a summary.",
     "summary": {
       "today": {
-        "title": "Today"
+        "title": "Today",
+        "subtitle": "Last Friday"
       },
       "thisWeek": {
         "title": "This week",
@@ -17,12 +18,37 @@
           "late": "{{count, number(maximumFractionDigits: 0;)}} late",
           "absent": "{{count, number(maximumFractionDigits: 0;)}} absent"
         },
-        "content": "{{percentage, number(style: percent; maximumFractionDigits: 1;}}"
-      },
-      "action": {
-        "print": "Print",
-        "viewDetails": "View details"
+        "content": "{{percentage, number(style: percent; minimumFractionDigits: 1; maximumFractionDigits: 1;}}"
       }
+    },
+    "print": {
+      "title": "{{date, datetime(day: numeric; month: short)}} Attendance Summary",
+      "subtitle": "Presented by MySK"
+    },
+    "chart": {
+      "legend": {
+        "presence": "Presence",
+        "late": "Late",
+        "absence": "Absence"
+      },
+      "summary": {
+        "presence": "{{count, number(maximumFractionDigits: 0;)}} present",
+        "late": "{{count, number(maximumFractionDigits: 0;)}} late",
+        "absence": "{{count, number(maximumFractionDigits: 0;)}} absent"
+      }
+    },
+    "table": {
+      "thead": {
+        "classroom": "Classroom",
+        "present": "Present",
+        "late": "Late",
+        "absent": "Absent",
+        "homeroom": "Homeroom"
+      }
+    },
+    "action": {
+      "print": "Print",
+      "viewDetails": "View details"
     }
   },
   "participation": {

@@ -1,4 +1,5 @@
 // Imports
+import { SelectorType } from "@/components/attendance/AttendanceViewSelector";
 import ClassAttendanceLayout from "@/components/attendance/ClassAttendanceLayout";
 import PageHeader from "@/components/common/PageHeader";
 import cn from "@/utils/helpers/cn";
@@ -27,7 +28,7 @@ const WeekAttendancePage: CustomPage<{
         <title>{tx("tabName", { tabName: "Attendance" })}</title>
       </Head>
       <PageHeader parentURL="/classes">Attendance</PageHeader>
-      <ClassAttendanceLayout date={date}>
+      <ClassAttendanceLayout type={SelectorType.classroom} date={date}>
         <div className="py-20">
           <div
             className={cn(`mx-auto flex max-w-sm flex-col items-center gap-2

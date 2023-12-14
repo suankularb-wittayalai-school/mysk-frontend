@@ -9,6 +9,7 @@ import getClassSchedule from "@/utils/backend/schedule/getClassSchedule";
 import getClassroomSubjectsOfClass from "@/utils/backend/subject/getClassroomSubjectsOfClass";
 import createEmptySchedule from "@/utils/helpers/schedule/createEmptySchedule";
 import useLocale from "@/utils/helpers/useLocale";
+import { Classroom } from "@/utils/types/classroom";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Student, UserRole } from "@/utils/types/person";
 import { Schedule as ScheduleType } from "@/utils/types/schedule";
@@ -39,7 +40,8 @@ import { useState } from "react";
 const LearnPage: CustomPage<{
   schedule: ScheduleType;
   subjectList: ClassroomSubject[];
-}> = ({ schedule, subjectList }) => {
+  classroom: Pick<Classroom, "number">;
+}> = ({ schedule, subjectList, classroom }) => {
   const { t } = useTranslation("learn");
   const { t: tx } = useTranslation(["common", "schedule"]);
   const locale = useLocale();
@@ -51,14 +53,18 @@ const LearnPage: CustomPage<{
   return (
     <>
       <Head>
-        <title>{tx("tabName", { tabName: t("title") })}</title>
+        <title>{tx("appName")}</title>
       </Head>
-      <PageHeader>{t("title")}</PageHeader>
+      <PageHeader>{tx("appName")}</PageHeader>
 
       <ContentLayout>
         <LayoutGroup>
           {/* Home Glance */}
-          <HomeGlance schedule={schedule} role={UserRole.student} />
+          <HomeGlance
+            schedule={schedule}
+            role={UserRole.student}
+            classroom={classroom}
+          />
 
           {/* Schedule */}
           <motion.section
@@ -112,15 +118,13 @@ export const getServerSideProps: GetServerSideProps = async ({
     res,
   )) as { data: Student };
 
-  if (!student.classroom) return { notFound: true };
+  const { classroom } = student;
+  if (!classroom) return { notFound: true };
 
-  const { data: schedule } = await getClassSchedule(
-    supabase,
-    student.classroom!.id,
-  );
+  const { data: schedule } = await getClassSchedule(supabase, classroom!.id);
   const { data: subjectList } = await getClassroomSubjectsOfClass(
     supabase,
-    student.classroom!.id,
+    classroom!.id,
   );
 
   return {
@@ -134,6 +138,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       ])),
       schedule: schedule || createEmptySchedule(1, 5),
       subjectList,
+      classroom,
     },
   };
 };

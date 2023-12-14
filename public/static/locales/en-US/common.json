@@ -8,6 +8,7 @@
   },
   "navigation": {
     "home": "Home",
+    "manage": "Manage",
     "classes": "Classes",
     "search": "Search",
     "news": "News",
