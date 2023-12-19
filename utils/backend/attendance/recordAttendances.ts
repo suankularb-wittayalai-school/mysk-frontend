@@ -1,9 +1,6 @@
 import getISODateString from "@/utils/helpers/getISODateString";
 import logError from "@/utils/helpers/logError";
-import {
-  AttendanceEvent,
-  StudentAttendance,
-} from "@/utils/types/attendance";
+import { AttendanceEvent, StudentAttendance } from "@/utils/types/attendance";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
 import { omit } from "radash";
 
@@ -22,14 +19,24 @@ export default async function recordAttendances(
   date: Date | string,
   teacherID: string,
 ): Promise<BackendReturn> {
-  const { error } = await supabase.from("student_attendances").upsert(
+  // Clear the existing records for this date. This is to prevent duplicate
+  // records.
+  const { error: deleteError } = await supabase
+    .from("student_attendances")
+    .delete()
+    .eq("date", typeof date === "string" ? date : getISODateString(date));
+  if (deleteError) {
+    logError("recordAttendances", deleteError);
+    return { data: null, error: deleteError };
+  }
+
+  // Insert the new records.
+  const { error } = await supabase.from("student_attendances").insert(
     attendances
       .map((attendance) =>
         // Student Attendance combines all Attendance Events into one object.
         // This undoes that.
         Object.entries(omit(attendance, ["student"])).map(([event, value]) => ({
-          // Include the ID if available for upserting.
-          ...(value.id ? { id: value.id } : {}),
           student_id: attendance.student.id,
           attendance_event: event as AttendanceEvent,
           checker_id: teacherID,
