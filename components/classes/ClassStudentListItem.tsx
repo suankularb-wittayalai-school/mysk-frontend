@@ -51,6 +51,7 @@ const ClassStudentListItem: StylableFC<{
         lines={2}
         onClick={async () => {
           setDetailsOpen(true);
+          setStudentDetails(undefined);
           const { data } = await getStudentByID(supabase, student.id);
           if (data) setStudentDetails(data);
         }}
@@ -79,7 +80,10 @@ const ClassStudentListItem: StylableFC<{
         open={detailsOpen}
         onClose={() => setDetailsOpen(false)}
       >
-        <StudentDetailsCard student={studentDetails} />
+        <StudentDetailsCard
+          student={studentDetails}
+          options={{ hideSeeClass: true, hideScheduleCard: true }}
+        />
       </LookupDetailsDialog>
     </>
   );

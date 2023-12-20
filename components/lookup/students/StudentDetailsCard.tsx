@@ -21,10 +21,15 @@ import { sift } from "radash";
  * A Card that contains the details of a Student in Search Students.
  *
  * @param student The Student to show the details of.
+ *
+ * @param options Options to customize the Card.
+ * @param options.hideSeeClass Whether to hide the See class Chip.
+ * @param options.hideScheduleCard Whether to hide the Student Schedule Card.
  */
 const StudentDetailsCard: StylableFC<{
   student?: Student;
-}> = ({ student, style, className }) => {
+  options?: Partial<{ hideSeeClass: boolean; hideScheduleCard: boolean }>;
+}> = ({ student, options, style, className }) => {
   const { t } = useTranslation("lookup", { keyPrefix: "students.detail" });
   const { t: tx } = useTranslation("common");
 
@@ -42,9 +47,10 @@ const StudentDetailsCard: StylableFC<{
               <PersonHeader
                 person={student}
                 onScheduleOpenClick={toggleScheduleOpen}
+                options={options}
               />
               <LookupDetailsContent>
-                {student.classroom && (
+                {!options?.hideScheduleCard && student.classroom && (
                   <div className="grid gap-2">
                     <CurrentLearningPeriodCard
                       classroomID={student.classroom.id}
