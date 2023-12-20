@@ -45,7 +45,6 @@ export default async function getWeekAttendance(
       const preferredAttendanceEvent =
         homeroomAttendance! > assemblyAttendance! ? "homeroom" : "assembly";
       const attendance = Math.max(homeroomAttendance!, assemblyAttendance!);
-      if (i === 4) console.log(attendance, 175 + 8 + 18);
 
       // Fetch late count for the current day.
       const { count: late, error: lateError } = await supabase
