@@ -44,6 +44,7 @@ export default async function getRelevantPeriodOfClass(
       )`,
     )
     .eq("classroom_id", classroomID)
+    .eq("schedule_items.day", new Date().getDay())
     .eq("schedule_items.year", getCurrentAcademicYear())
     .eq("schedule_items.semester", getCurrentSemester());
 
