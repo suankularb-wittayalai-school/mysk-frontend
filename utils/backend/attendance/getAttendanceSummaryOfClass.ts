@@ -25,7 +25,7 @@ export default async function getAttendanceSummaryOfClass(
       is_present,
       attendance_event,
       absence_type,
-      students!inner(classroom_students!inner(classroom_id))`,
+      students!inner(id, classroom_students!inner(classroom_id))`,
     )
     .eq("students.classroom_students.classroom_id", classroomID)
     .order("date", { ascending: false })
@@ -48,8 +48,13 @@ export default async function getAttendanceSummaryOfClass(
     attendances: typeof data,
     attendanceEvent: AttendanceEvent,
   ): number | null {
-    const attendancesOfEvent = attendances!.filter(
-      (attendance) => attendance.attendance_event === attendanceEvent,
+    // Get the Attendance records for the given Attendance Event
+    // (`unique` is used in case a Student has multiple Attendance records for)
+    const attendancesOfEvent = unique(
+      attendances!.filter(
+        (attendance) => attendance.attendance_event === attendanceEvent,
+      ),
+      (attendance) => attendance.students!.id,
     );
     return attendancesOfEvent.length
       ? attendancesOfEvent.filter(
