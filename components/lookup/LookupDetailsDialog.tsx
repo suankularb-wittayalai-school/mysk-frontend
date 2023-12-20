@@ -45,11 +45,11 @@ const LookupDetailsDialog: StylableFC<{
         onClose={onClose}
         style={style}
         className={cn(
-          `sm:divide-y-0 [&>:first-child]:!flex-row-reverse
-          [&>:first-child]:!bg-transparent sm:[&>:first-child]:!fixed
-          [&>:last-child>div]:!mx-0 [&>:last-child>div]:!rounded-none
-          [&>:last-child>div]:!border-0 [&>:last-child]:h-[100dvh]
-          [&>:last-child]:!p-0`,
+          `sm:divide-y-0 [&>:first-child]:!max-w-[42.5rem]
+          [&>:first-child]:!flex-row-reverse [&>:first-child]:!bg-transparent
+          sm:[&>:first-child]:!fixed [&>:last-child>div]:!mx-0
+          [&>:last-child>div]:!rounded-none [&>:last-child>div]:!border-0
+          [&>:last-child]:h-[100dvh] [&>:last-child]:!p-0`,
           className,
         )}
       >
