@@ -1,7 +1,6 @@
 import recordAttendances from "@/utils/backend/attendance/recordAttendances";
 import useRefreshProps from "@/utils/helpers/useRefreshProps";
 import useToggle from "@/utils/helpers/useToggle";
-import withLoading from "@/utils/helpers/withLoading";
 import { StudentAttendance } from "@/utils/types/attendance";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import va from "@vercel/analytics";
@@ -61,24 +60,19 @@ export default function useAttendanceActions(
     )
       return false;
 
-    withLoading(
-      async () => {
-        const { error } = await recordAttendances(
-          supabase,
-          attendances,
-          date,
-          teacherID,
-        );
-        va.track("Save Attendance", {
-          isToday: date !== undefined && isToday(new Date(date)),
-        });
-        if (error) return false;
-        refreshProps();
-        return true;
-      },
-      toggleLoading,
-      { hasEndToggle: true },
+    toggleLoading();
+    const { error } = await recordAttendances(
+      supabase,
+      attendances,
+      date,
+      teacherID,
     );
+    toggleLoading();
+
+    va.track("Save Attendance", {
+      isToday: date !== undefined && isToday(new Date(date)),
+    });
+    if (error) return false;
     return true;
   }
 
