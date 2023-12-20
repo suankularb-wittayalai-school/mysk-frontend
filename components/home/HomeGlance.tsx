@@ -85,7 +85,7 @@ const HomeGlance: StylableFC<{
           // period number + 1)
           period.start_time + period.duration > periodNumber,
       ),
-    [todayRow],
+    [todayRow, periodNumber],
   );
 
   const immediateNextPeriod = useMemo(
@@ -94,7 +94,7 @@ const HomeGlance: StylableFC<{
         // The period starts at the next period
         (period) => periodNumber + 1 === period.start_time,
       ),
-    [todayRow],
+    [todayRow, periodNumber],
   );
   const todayNextPeriod = useMemo(
     () =>
@@ -102,13 +102,13 @@ const HomeGlance: StylableFC<{
         // The period starts at any period after the current
         (period) => period.content.length && period.start_time > periodNumber,
       )[0],
-    [todayRow],
+    [todayRow, periodNumber],
   );
 
   // Note: `differenceInSeconds` and `differenceInMinutes` operate by
   // [first param] - [second param]
 
-  // The sequence of periods are as follows:
+  // The sequence of periods is as follows:
   //   1. Assembly   07:30 - 08:00
   //   2. Homeroom   08:00 - 08:30
   //   3. Periods    08:30 onwards
@@ -120,7 +120,7 @@ const HomeGlance: StylableFC<{
     : null;
 
   // The edges of periods relative to current time, used in calculating the
-  // display type
+  // display type.
 
   /**
    * The number of seconds since the start of the current period. This is used
