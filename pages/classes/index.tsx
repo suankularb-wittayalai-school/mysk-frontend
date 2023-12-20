@@ -225,6 +225,8 @@ export const getServerSideProps: GetServerSideProps = async ({
         "common",
         ...(person?.role === "teacher" ? ["account"] : []),
         "classes",
+        "lookup",
+        "schedule",
       ])),
       grades,
       user,
