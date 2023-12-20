@@ -28,11 +28,13 @@ export default function Document() {
         <meta name="msapplication-TileColor" content="#2b5797" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta
+          key="theme-color-light"
           name="theme-color"
           content="#e7f0f6" // surface-2
           media="(prefers-color-scheme: light)"
         />
         <meta
+          key="theme-color-dark"
           name="theme-color"
           content="#004c6d" // primary-container
           media="(prefers-color-scheme: dark)"
