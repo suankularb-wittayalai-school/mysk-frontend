@@ -7,6 +7,7 @@ import RecentAttendanceList from "@/components/classes/RecentAttendanceList";
 import LookupDetailsCard from "@/components/lookup/LookupDetailsCard";
 import LookupDetailsContent from "@/components/lookup/LookupDetailsContent";
 import InformationCard from "@/components/lookup/people/InformationCard";
+import CurrentLearningPeriodCard from "@/components/lookup/students/CurrentLearningPeriodCard";
 import cn from "@/utils/helpers/cn";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import useLocale from "@/utils/helpers/useLocale";
@@ -17,7 +18,6 @@ import { User, UserRole } from "@/utils/types/person";
 import { transition, useAnimationConfig } from "@suankularb-components/react";
 import { LayoutGroup, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
-import CurrentLearningPeriodCard from "../lookup/students/CurrentLearningPeriodCard";
 
 /**
  * A Lookup Detail Card that displays details of a Classroom.
