@@ -1,27 +1,23 @@
+import ClassStudentListItem from "@/components/classes/ClassStudentListItem";
 import LookupDetailsListCard from "@/components/lookup/LookupDetailsListCard";
 import { getStudentsByIDs } from "@/utils/backend/person/getStudentsByIDs";
 import { useGetVCard } from "@/utils/helpers/contact";
-import getLocaleName from "@/utils/helpers/getLocaleName";
-import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
 import useToggle from "@/utils/helpers/useToggle";
 import withLoading from "@/utils/helpers/withLoading";
 import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
-import {
-  Avatar,
-  Button,
-  ListItem,
-  ListItemContent,
-  MaterialIcon,
-  Text,
-} from "@suankularb-components/react";
+import { Button, MaterialIcon, Text } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
-import Image from "next/image";
-import { sift } from "radash";
 
+/**
+ * The list of Students inside Class Details Card.
+ *
+ * @param students The list of Students to display.
+ * @param classNumber The 3-digit number of the Classroom.
+ */
 const ClassStudentList: StylableFC<{
   students: Classroom["students"];
   classNumber: number;
@@ -34,6 +30,9 @@ const ClassStudentList: StylableFC<{
   const [loading, toggleLoading] = useToggle();
   const getVCard = useGetVCard();
 
+  /**
+   * Save all Students’ vCards as a single file.
+   */
   async function handleSaveVCard() {
     withLoading(
       async () => {
@@ -44,6 +43,7 @@ const ClassStudentList: StylableFC<{
         );
         if (error) return false;
 
+        // Get all vCards and merge them into a single file
         const vCards = data.map((student) => getVCard(student));
         var mergedVCard = new Blob(
           [
@@ -54,6 +54,7 @@ const ClassStudentList: StylableFC<{
           { type: "text/vcard;charset=utf-8" },
         );
 
+        // Download the file
         window.location.href = URL.createObjectURL(mergedVCard);
 
         va.track("Save Class VCards", { number: `M.${classNumber}` });
@@ -86,23 +87,7 @@ const ClassStudentList: StylableFC<{
       className={className}
     >
       {students.map((student) => (
-        <ListItem key={student.id} align="center" lines={2}>
-          {/* Profile */}
-          <Avatar>
-            {student.profile && <Image src={student.profile} alt="" />}
-          </Avatar>
-          <ListItemContent
-            // Full name
-            title={getLocaleName(locale, student)}
-            desc={sift([
-              // Class no.
-              t("item.classNo", { classNo: student.class_no }),
-              // Nickname
-              (student.nickname?.th || student.nickname?.["en-US"]) &&
-                `${getLocaleString(student.nickname, locale)}`,
-            ]).join(" • ")}
-          />
-        </ListItem>
+        <ClassStudentListItem key={student.id} student={student} />
       ))}
     </LookupDetailsListCard>
   );

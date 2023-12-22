@@ -1,25 +1,24 @@
 // Imports
 import LookupScheduleCard from "@/components/lookup/LookupScheduleCard";
 import getClassSchedule from "@/utils/backend/schedule/getClassSchedule";
-import getTeacherSchedule from "@/utils/backend/schedule/getTeacherSchedule";
 import createEmptySchedule from "@/utils/helpers/schedule/createEmptySchedule";
+import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
-import { Person, Student, Teacher, UserRole } from "@/utils/types/person";
+import { UserRole } from "@/utils/types/person";
 import { Schedule as ScheduleType } from "@/utils/types/schedule";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useEffect, useState } from "react";
 
 /**
- * A Card that contains the Schedule of a Student or Teacher.
+ * A Card that contains the Schedule of a Classroom.
  *
- * @param person The Student or Teacher to show the schedule of.
+ * @param classroom The Classroom to show the schedule of.
  * @param open If the Card is open and shown.
  */
-const PersonScheduleCard: StylableFC<{
-  person: Pick<Person, "id"> &
-    (Pick<Student, "role" | "classroom"> | Pick<Teacher, "role">);
+const ClassScheduleCard: StylableFC<{
+  classroom: Pick<Classroom, "id">;
   open?: boolean;
-}> = ({ person, open, style, className }) => {
+}> = ({ classroom, open, style, className }) => {
   const [loading, setLoading] = useState(true);
   const supabase = useSupabaseClient();
 
@@ -30,21 +29,17 @@ const PersonScheduleCard: StylableFC<{
   // Fetch schedule when open
   useEffect(() => {
     if (!(open && loading)) return;
-    if (person.role === "student" && !person.classroom) return;
     (async () => {
-      const { data } = await (person.role === UserRole.teacher
-        ? getTeacherSchedule(supabase, person.id)
-        : getClassSchedule(supabase, person.classroom!.id));
+      const { data } = await getClassSchedule(supabase, classroom.id);
       if (data) setSchedule(data);
       setLoading(false);
-      return true;
     })();
   }, [open]);
 
   return (
     <LookupScheduleCard
       schedule={schedule}
-      role={person.role}
+      role={UserRole.student}
       open={open}
       loading={loading}
       style={style}
@@ -53,4 +48,4 @@ const PersonScheduleCard: StylableFC<{
   );
 };
 
-export default PersonScheduleCard;
+export default ClassScheduleCard;

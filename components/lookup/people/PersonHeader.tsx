@@ -31,11 +31,16 @@ import { useEffect, useState } from "react";
  *
  * @param person The Person to display.
  * @param onScheduleOpenClick Callback to open the Person’s schedule.
+ *
+ * @param options Options to customize the Card.
+ * @param options.hideSeeClass Whether to hide the See class Chip.
+ * @param options.hideScheduleCard Whether to hide the Student Schedule Card.
  */
 const PersonHeader: StylableFC<{
   person: Student | Teacher;
-  onScheduleOpenClick: () => void;
-}> = ({ person, onScheduleOpenClick, style, className }) => {
+  onScheduleOpenClick?: () => void;
+  options?: Partial<{ hideSeeClass: boolean; hideScheduleCard: boolean }>;
+}> = ({ person, onScheduleOpenClick, options, style, className }) => {
   // Translation
   const locale = useLocale();
   const { t } = useTranslation("lookup", { keyPrefix: "people.header" });
@@ -112,43 +117,46 @@ const PersonHeader: StylableFC<{
             {t("action.saveContact")}
           </AssistChip>
 
-          {(person.role === "teacher"
-            ? person.class_advisor_at
-            : person.role === "student" && person.classroom) && (
-            <>
-              <AssistChip
-                icon={<MaterialIcon icon="groups" />}
-                onClick={() => setClassOpen(true)}
-              >
-                {t("action.seeClass")}
-              </AssistChip>
-              <LookupDetailsDialog
-                open={classOpen}
-                onClose={() => setClassOpen(false)}
-              >
-                {user && (
-                  <ClassDetailsCard
-                    classroom={classroom}
-                    isOwnClass={false}
-                    user={user}
-                    refreshData={fetchClassOfPerson}
-                  />
-                )}
-              </LookupDetailsDialog>
-            </>
-          )}
+          {!options?.hideSeeClass &&
+            (person.role === UserRole.teacher
+              ? person.class_advisor_at
+              : person.role === UserRole.student && person.classroom) && (
+              <>
+                <AssistChip
+                  icon={<MaterialIcon icon="groups" />}
+                  onClick={() => setClassOpen(true)}
+                >
+                  {t("action.seeClass")}
+                </AssistChip>
+                <LookupDetailsDialog
+                  open={classOpen}
+                  onClose={() => setClassOpen(false)}
+                >
+                  {user && (
+                    <ClassDetailsCard
+                      classroom={classroom}
+                      isOwnClass={false}
+                      user={user}
+                      refreshData={fetchClassOfPerson}
+                    />
+                  )}
+                </LookupDetailsDialog>
+              </>
+            )}
 
-          <AssistChip
-            icon={<MaterialIcon icon="dashboard" />}
-            onClick={() => {
-              va.track("See Schedule of Person", {
-                person: getLocaleName("en-US", person),
-              });
-              onScheduleOpenClick();
-            }}
-          >
-            {t(`action.seeSchedule.${person.role}`)}
-          </AssistChip>
+          {!options?.hideScheduleCard && (
+            <AssistChip
+              icon={<MaterialIcon icon="dashboard" />}
+              onClick={() => {
+                va.track("See Schedule of Person", {
+                  person: getLocaleName("en-US", person),
+                });
+                onScheduleOpenClick?.();
+              }}
+            >
+              {t(`action.seeSchedule.${person.role}`)}
+            </AssistChip>
+          )}
         </ChipSet>
       </div>
     </motion.div>

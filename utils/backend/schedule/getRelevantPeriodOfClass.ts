@@ -15,13 +15,18 @@ import { group, pick, sift, unique } from "radash";
  * @param classroomID The ID of the Classroom to get the Schedule Period of.
  *
  * @returns A Backend Return with a Schedule Period if found and `isCurrent` to indicate if the Schedule Period is the current one.
- * 
+ *
  * @note Lifted from an old version of `getClassrooms`.
  */
 export default async function getRelevantPeriodOfClass(
   supabase: DatabaseClient,
   classroomID: string,
 ): Promise<BackendReturn<SchedulePeriod | null> & { isCurrent: boolean }> {
+  // If the school is not in session, stop early and return null
+  if (getCurrentSchoolSessionState() !== "in-session")
+    return { data: null, error: null, isCurrent: false };
+
+  // Fetch today’s Schedule Items of the Classroom
   const { data, error } = await supabase
     .from("schedule_item_classrooms")
     .select(
@@ -44,6 +49,7 @@ export default async function getRelevantPeriodOfClass(
       )`,
     )
     .eq("classroom_id", classroomID)
+    .eq("schedule_items.day", new Date().getDay())
     .eq("schedule_items.year", getCurrentAcademicYear())
     .eq("schedule_items.semester", getCurrentSemester());
 
@@ -52,7 +58,7 @@ export default async function getRelevantPeriodOfClass(
     return { data: null, error, isCurrent: false };
   }
 
-  // Format the data into Schedule Items
+  // Format the data into Schedule Periods
   const todayRow = Object.values(
     group(
       sift(data.map(({ schedule_items }) => schedule_items)),
@@ -83,10 +89,6 @@ export default async function getRelevantPeriodOfClass(
           })),
     };
   });
-
-  // If the School Session is not in session, return null
-  if (getCurrentSchoolSessionState() !== "in-session")
-    return { data: null, error, isCurrent: false };
 
   // Get the current and upcoming Schedule Items
   const periodNumber = getCurrentPeriod();
