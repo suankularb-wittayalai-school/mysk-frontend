@@ -4,7 +4,6 @@ import AttendanceListItem from "@/components/attendance/AttendanceListItem";
 import ClassAttendanceLayout from "@/components/attendance/ClassAttendanceLayout";
 import TodaySummary from "@/components/attendance/TodaySummary";
 import PageHeader from "@/components/common/PageHeader";
-import SnackbarContext from "@/contexts/SnackbarContext";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import {
   getStudentFromUserID,
@@ -14,7 +13,6 @@ import getUserByEmail from "@/utils/backend/account/getUserByEmail";
 import getAttendanceOfClass from "@/utils/backend/attendance/getAttendanceOfClass";
 import getHomeroomOfClass from "@/utils/backend/attendance/getHomeroomOfClass";
 import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
-import useAttendanceActions from "@/utils/helpers/attendance/useAttendanceActions";
 import { SelectorType } from "@/utils/helpers/attendance/useAttendanceView";
 import cn from "@/utils/helpers/cn";
 import { YYYYMMDDRegex } from "@/utils/patterns";
@@ -34,7 +32,8 @@ import { getServerSession } from "next-auth";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
-import { useContext, useState } from "react";
+import { replace } from "radash";
+import { useEffect, useState } from "react";
 
 /**
  * Date Attendance page displays Attendance of a Classroom at specific date.
@@ -64,18 +63,11 @@ const DateAttendancePage: CustomPage<{
   const { t } = useTranslation("attendance");
   const { t: tx } = useTranslation("common");
 
-  const { setSnackbar } = useContext(SnackbarContext);
-
   const [event, setEvent] = useState<AttendanceEvent>("assembly");
 
-  const {
-    attendances,
-    loading,
-    replaceAttendance,
-    handleSave,
-    handleMarkAllPresent,
-    handleClear,
-  } = useAttendanceActions(initialAttendances, date, teacherID);
+  const [attendances, setAttendances] =
+    useState<StudentAttendance[]>(initialAttendances);
+  useEffect(() => setAttendances(initialAttendances), [initialAttendances]);
 
   return (
     <>
@@ -94,7 +86,7 @@ const DateAttendancePage: CustomPage<{
             <AttendanceEventTabs
               event={event}
               onEventChange={setEvent}
-              className="bg-surface"
+              className="!-mt-2 bg-surface sm:!mt-0"
             />
             <List
               className={cn(`sm:space-y-1 sm:!p-2 sm:[&>*]:rounded-md
@@ -105,8 +97,18 @@ const DateAttendancePage: CustomPage<{
                   key={attendance.student.id}
                   attendance={attendance}
                   shownEvent={event}
+                  date={date}
+                  teacherID={teacherID}
                   editable={editable}
-                  onAttendanceChange={replaceAttendance}
+                  onAttendanceChange={(attendance) =>
+                    setAttendances(
+                      replace(
+                        attendances,
+                        attendance,
+                        (item) => attendance.student!.id === item.student!.id,
+                      ),
+                    )
+                  }
                 />
               ))}
             </List>

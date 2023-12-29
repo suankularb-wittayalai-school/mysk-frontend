@@ -1,9 +1,14 @@
 // Imports
 import AbsenceTypeSelector from "@/components/attendance/AbsenceTypeSelector";
 import DynamicAvatar from "@/components/common/DynamicAvatar";
+import SnackbarContext from "@/contexts/SnackbarContext";
+import upsertAttendance from "@/utils/backend/attendance/upsertAttendance";
+import cn from "@/utils/helpers/cn";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
+import useToggle from "@/utils/helpers/useToggle";
+import withLoading from "@/utils/helpers/withLoading";
 import {
   AbsenceType,
   AttendanceEvent,
@@ -15,13 +20,15 @@ import {
   FilterChip,
   ListItem,
   ListItemContent,
+  Snackbar,
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { sift } from "radash";
-import { ComponentProps } from "react";
+import { ComponentProps, useContext } from "react";
 
 /**
  * A List Item for the Attendance page.
@@ -33,31 +40,94 @@ import { ComponentProps } from "react";
 const AttendanceListItem: StylableFC<{
   attendance: StudentAttendance;
   shownEvent: AttendanceEvent;
+  date: string;
+  teacherID?: string;
   editable?: boolean;
   onAttendanceChange: (attendance: StudentAttendance) => void;
-}> = ({ attendance, shownEvent, editable, onAttendanceChange }) => {
+}> = ({
+  attendance,
+  shownEvent,
+  date,
+  teacherID,
+  editable,
+  onAttendanceChange,
+}) => {
   const locale = useLocale();
   const { t } = useTranslation("attendance", { keyPrefix: "item" });
+  const { t: tx } = useTranslation("common");
 
   const { duration, easing } = useAnimationConfig();
+
+  const supabase = useSupabaseClient();
+
+  const [loading, toggleLoading] = useToggle();
+  const { setSnackbar } = useContext(SnackbarContext);
 
   /**
    * Sets the Attendance of the shown Event. Also sets the Attendance for
    * Homeroom if the shown Event is Assembly.
    *
    * @param eventAttendance The Attendance of the shown Event.
+   * @param options Options.
+   * @param options.noSave Prevents saving the Attendance to the database.
    */
   function setAttendanceOfShownEvent(
     eventAttendance: StudentAttendance[AttendanceEvent],
+    options?: Partial<{ noSave: boolean }>,
   ) {
-    if (!editable) return;
-    else if (shownEvent === "assembly")
-      onAttendanceChange({
-        ...attendance,
-        assembly: eventAttendance,
-        homeroom: eventAttendance,
-      });
-    else onAttendanceChange({ ...attendance, homeroom: eventAttendance });
+    // Lock the fridge (disallow saving while another save process is ongoing)
+    // to prevent race conditions.
+    // Will anyone get this? Everyone took CS50, right?
+    if (loading || !(editable && teacherID)) return;
+
+    // Saving to Assembly also saves to Homeroom, as per Sake’s request.
+    const newAttendance =
+      shownEvent === "assembly"
+        ? {
+            ...attendance,
+            assembly: eventAttendance,
+            homeroom: { ...eventAttendance, id: attendance.homeroom.id },
+          }
+        : { ...attendance, homeroom: eventAttendance };
+
+    // Update the Attendance data locally.
+    onAttendanceChange(newAttendance);
+
+    // Save the Attendance to the database, if not prevented.
+    if (!options?.noSave) handleSave(newAttendance);
+  }
+
+  /**
+   * Saves this Attendance record with all events to the database.
+   *
+   * @param attendance The Attendance to save.
+   */
+  async function handleSave(attendance: StudentAttendance) {
+    if (!(editable && teacherID)) return;
+    withLoading(
+      async () => {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        const { data, error } = await upsertAttendance(
+          supabase,
+          attendance,
+          date,
+          teacherID,
+        );
+        if (error) {
+          setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
+          return false;
+        }
+        if (data)
+          onAttendanceChange({
+            student: attendance.student,
+            assembly: { ...attendance.assembly, id: data.assembly },
+            homeroom: { ...attendance.homeroom, id: data.homeroom },
+          });
+        return true;
+      },
+      toggleLoading,
+      { hasEndToggle: true },
+    );
   }
 
   // Ideally we would just have a motion.li > ListItem sequence, but `element`
@@ -85,8 +155,12 @@ const AttendanceListItem: StylableFC<{
     <motion.li
       layoutId={attendance.student.id}
       transition={transition(duration.medium2, easing.standard)}
+      className="first:mt-1"
     >
-      <motion.ul layout="position" className="grid w-full">
+      <motion.ul
+        layout="position"
+        className={cn(`grid w-full py-1`, loading && `animate-pulse`)}
+      >
         {/* Student information */}
         <ListItem key={attendance.student.id} align="center" lines={2}>
           <DynamicAvatar {...attendance.student} className="!min-w-[2.5rem]" />
