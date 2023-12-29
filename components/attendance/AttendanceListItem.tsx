@@ -21,11 +21,12 @@ import {
   ListItem,
   ListItemContent,
   Snackbar,
+  TextField,
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { sift } from "radash";
 import { ComponentProps, useContext } from "react";
@@ -229,6 +230,18 @@ const AttendanceListItem: StylableFC<{
               className="mb-2 [&>*]:px-4"
             />
           )}
+
+        {/* Custom reason */}
+        {attendance[shownEvent].absence_type === "other" && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={transition(duration.medium2, easing.standard)}
+            className="mt-1 px-4 sm:px-0"
+          >
+            <TextField appearance="outlined" label={t("enterReason")} />
+          </motion.div>
+        )}
       </motion.ul>
     </motion.li>
   );
