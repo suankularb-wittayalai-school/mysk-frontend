@@ -76,21 +76,22 @@ const DateAttendancePage: CustomPage<{
       </Head>
       <PageHeader parentURL="/classes">{t("title")}</PageHeader>
       <ClassAttendanceLayout type={SelectorType.classroom} date={date}>
-        <Columns columns={2}>
+        <Columns columns={2} className="!grid-cols-1 md:!grid-cols-2">
           <div
-            className={cn(`-mx-4 sm:mx-0 sm:h-[calc(100dvh-13rem)]
-              sm:overflow-auto sm:rounded-lg sm:border-1
-              sm:border-outline-variant sm:bg-surface-3 [&>:first-child]:top-0
-              [&>:first-child]:z-10 sm:[&>:first-child]:sticky`)}
+            className={cn(`-mx-4 sm:mx-0 md:h-[calc(100dvh-13rem)]
+              md:overflow-auto md:rounded-lg md:border-1
+              md:border-outline-variant md:bg-surface-3 [&>:first-child]:top-0
+              [&>:first-child]:z-10 [&>:first-child]:bg-surface
+              [&>:first-child]:sm:sticky`)}
           >
             <AttendanceEventTabs
               event={event}
               onEventChange={setEvent}
-              className="!-mt-2 bg-surface sm:!mt-0"
+              className="!-mt-2 sm:!mt-0"
             />
             <List
-              className={cn(`sm:space-y-1 sm:!p-2 sm:[&>*]:rounded-md
-                sm:[&>*]:bg-surface`)}
+              className={cn(`md:space-y-1 md:!p-2 [&>*]:md:rounded-md
+                [&>*]:md:bg-surface`)}
             >
               {attendances.map((attendance) => (
                 <AttendanceListItem

@@ -41,7 +41,7 @@ const AttendanceViewSelector: StylableFC<{
     <div
       style={style}
       className={cn(
-        `grid flex-row gap-4 sm:flex sm:items-center sm:justify-between`,
+        `grid flex-row gap-4 md:flex md:items-center md:justify-between`,
         className,
       )}
     >
@@ -87,7 +87,7 @@ const AttendanceViewSelector: StylableFC<{
           icon={<MaterialIcon icon="event" />}
           alt={t("action.go")}
           onClick={() => setDateOpen(true)}
-          className="sm:!hidden"
+          className="md:!hidden"
         >
           {(() => {
             const parsedDate =
@@ -136,7 +136,7 @@ const AttendanceViewSelector: StylableFC<{
       </Actions>
 
       {/* Go to date (desktop) */}
-      <div className="hidden flex-row items-center gap-2 sm:flex">
+      <div className="hidden flex-row items-center gap-2 md:flex">
         <TextField<string>
           appearance="outlined"
           label={t("date")}

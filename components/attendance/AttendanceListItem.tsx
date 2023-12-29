@@ -155,7 +155,7 @@ const AttendanceListItem: StylableFC<{
     <motion.li
       layoutId={attendance.student.id}
       transition={transition(duration.medium2, easing.standard)}
-      className="first:mt-1"
+      className="first:mt-1 first:md:mt-0"
     >
       <motion.ul
         layout="position"
