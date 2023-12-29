@@ -47,7 +47,10 @@ const AttendanceViewSelector: StylableFC<{
       )}
     >
       {/* View selector */}
-      <Actions align="left">
+      <Actions
+        align="left"
+        className="!flex-nowrap [&_.skc-button\_\_label]:!whitespace-nowrap"
+      >
         <SegmentedButton
           alt={t("view.title")}
           className="!grid grow grid-cols-2 sm:!flex"
