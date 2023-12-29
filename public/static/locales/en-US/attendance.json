@@ -8,7 +8,7 @@
     "date": "Go to date…",
     "action": {
       "print": "Print",
-      "go": "Go"
+      "go": "Go to date"
     }
   },
   "event": {
@@ -20,8 +20,9 @@
     "classNo": "No. {{classNo}}",
     "late": "Late",
     "absenceType": {
-      "onLeave": "On leave",
-      "absent": "Absent without reason",
+      "sick": "Sick",
+      "business": "Personal",
+      "absent": "Absent",
       "dropped": "Dropped",
       "other": "Other"
     },

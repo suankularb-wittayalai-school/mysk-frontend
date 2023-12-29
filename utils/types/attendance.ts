@@ -4,7 +4,14 @@ import { Student } from "@/utils/types/person";
 
 export type AttendanceEvent = "homeroom" | "assembly";
 
-export type AbsenceType = "late" | "on_leave" | "absent" | "dropped" | "other";
+export enum AbsenceType {
+  late = "late",
+  sick = "sick",
+  business = "business",
+  absent = "absent",
+  dropped = "dropped",
+  other = "other",
+}
 
 export type StudentAttendance = {
   student: Pick<

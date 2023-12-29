@@ -4,7 +4,11 @@ import DynamicAvatar from "@/components/common/DynamicAvatar";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
-import { AttendanceEvent, StudentAttendance } from "@/utils/types/attendance";
+import {
+  AbsenceType,
+  AttendanceEvent,
+  StudentAttendance,
+} from "@/utils/types/attendance";
 import { StylableFC } from "@/utils/types/common";
 import {
   Checkbox,
@@ -107,7 +111,7 @@ const AttendanceListItem: StylableFC<{
                   setAttendanceOfShownEvent({
                     ...attendance.assembly,
                     ...(state
-                      ? { is_present: false, absence_type: "late" }
+                      ? { is_present: false, absence_type: AbsenceType.late }
                       : { is_present: true, absence_type: null }),
                   })
                 }
@@ -127,7 +131,7 @@ const AttendanceListItem: StylableFC<{
                 ...attendance.assembly,
                 ...(value
                   ? { is_present: true, absence_type: null }
-                  : { is_present: false, absence_type: "on_leave" }),
+                  : { is_present: false, absence_type: AbsenceType.sick }),
               })
             }
             className="!-mr-2"
