@@ -106,7 +106,6 @@ const AttendanceListItem: StylableFC<{
     if (!(editable && teacherID)) return;
     withLoading(
       async () => {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
         const { data, error } = await upsertAttendance(
           supabase,
           attendance,
