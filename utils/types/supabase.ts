@@ -1069,6 +1069,47 @@ export interface Database {
           },
         ];
       };
+      student_certificates: {
+        Row: {
+          certificate_detail: string;
+          certificate_no: string;
+          certificate_type: Database["public"]["Enums"]["certificate_type"];
+          certificate_type_identifier: string;
+          created_at: string;
+          id: number;
+          student_id: string;
+          year: number;
+        };
+        Insert: {
+          certificate_detail: string;
+          certificate_no: string;
+          certificate_type: Database["public"]["Enums"]["certificate_type"];
+          certificate_type_identifier: string;
+          created_at?: string;
+          id?: number;
+          student_id: string;
+          year: number;
+        };
+        Update: {
+          certificate_detail?: string;
+          certificate_no?: string;
+          certificate_type?: Database["public"]["Enums"]["certificate_type"];
+          certificate_type_identifier?: string;
+          created_at?: string;
+          id?: number;
+          student_id?: string;
+          year?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "student_certificates_student_id_fkey";
+            columns: ["student_id"];
+            isOneToOne: false;
+            referencedRelation: "students";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       students: {
         Row: {
           created_at: string | null;
@@ -1471,6 +1512,13 @@ export interface Database {
       activity_day_houses: "felis" | "cornicula" | "sciurus" | "cyprinus";
       attendance_event: "homeroom" | "assembly";
       blood_group: "O-" | "O+" | "A-" | "A+" | "B-" | "B+" | "AB-" | "AB+";
+      certificate_type:
+        | "student_of_the_year"
+        | "excellent_student"
+        | "academic"
+        | "morale"
+        | "sports"
+        | "activity";
       contact_type:
         | "Phone"
         | "Email"
