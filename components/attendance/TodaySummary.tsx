@@ -167,7 +167,6 @@ const TodaySummary: StylableFC<{
                     homeroomContent={homeroomContent}
                     classroomID={classroomID}
                     onViewChange={setHomeroomView}
-                    className="mt-2"
                   />
                 ),
               }[homeroomView]
