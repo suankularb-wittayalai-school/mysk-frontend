@@ -14,7 +14,7 @@
     "dialog": {
       "date": {
         "desc": "Enter the date or week to jump to.",
-        "label": "Date",
+        "field": "Date",
         "action": {
           "cancel": "Cancel",
           "go": "Go"
@@ -52,13 +52,21 @@
       }
     },
     "action": {
-      "save": "Save",
-      "clear": "Clear",
-      "markAll": "Mark all present"
+      "editHomeroom": "Edit homeroom content"
     },
     "snackbar": {
       "saved": "Attendance saved for assembly and homeroom",
       "incomplete": "Please check attendance for everyone before saving"
+    },
+    "dialog": {
+      "homeroom": {
+        "desc": "Add a short description on what happened during homeroom.",
+        "field": "Homeroom content",
+        "action": {
+          "cancel": "Cancel",
+          "save": "Save"
+        }
+      }
     }
   },
   "thisWeek": {

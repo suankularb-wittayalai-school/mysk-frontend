@@ -2,6 +2,7 @@
 import AttendanceEventTabs from "@/components/attendance/AttendanceEventTabs";
 import AttendanceListItem from "@/components/attendance/AttendanceListItem";
 import ClassAttendanceLayout from "@/components/attendance/ClassAttendanceLayout";
+import HomeroomContentDialog from "@/components/attendance/HomeroomContentDialog";
 import TodaySummary from "@/components/attendance/TodaySummary";
 import PageHeader from "@/components/common/PageHeader";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
@@ -24,7 +25,12 @@ import {
 import { Classroom } from "@/utils/types/classroom";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
-import { Columns, List } from "@suankularb-components/react";
+import {
+  Button,
+  Columns,
+  List,
+  MaterialIcon,
+} from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { isFuture, isWeekend } from "date-fns";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
@@ -64,6 +70,7 @@ const DateAttendancePage: CustomPage<{
   const { t: tx } = useTranslation("common");
 
   const [event, setEvent] = useState<AttendanceEvent>("assembly");
+  const [homeroomOpen, setHomeroomOpen] = useState(false);
 
   const [attendances, setAttendances] =
     useState<StudentAttendance[]>(initialAttendances);
@@ -78,20 +85,38 @@ const DateAttendancePage: CustomPage<{
       <ClassAttendanceLayout type={SelectorType.classroom} date={date}>
         <Columns columns={2} className="!grid-cols-1 md:!grid-cols-2">
           <div
-            className={cn(`-mx-4 sm:mx-0 md:h-[calc(100dvh-13rem)]
+            className={cn(`-mx-4 grid sm:mx-0 md:h-[calc(100dvh-13rem)]
               md:overflow-auto md:rounded-lg md:border-1
               md:border-outline-variant md:bg-surface-3 [&>:first-child]:top-0
-              [&>:first-child]:z-10 [&>:first-child]:bg-surface
-              [&>:first-child]:sm:sticky`)}
+              [&>:first-child]:z-10 [&>:first-child]:sm:sticky
+              [&>:first-child]:sm:bg-surface`)}
           >
             <AttendanceEventTabs
               event={event}
               onEventChange={setEvent}
               className="!-mt-2 sm:!mt-0"
             />
+            {event === "homeroom" && (
+              <Button
+                appearance="filled"
+                icon={<MaterialIcon icon="edit" />}
+                onClick={() => setHomeroomOpen(true)}
+                className="!mx-4 !mt-3 sm:!mx-0 md:!hidden"
+              >
+                {t("today.action.editHomeroom")}
+              </Button>
+            )}
+            <HomeroomContentDialog
+              open={homeroomOpen}
+              homeroomContent={
+                homeroomContent || { id: null, date, homeroom_content: "" }
+              }
+              classroomID={classroom.id}
+              onClose={() => setHomeroomOpen(false)}
+            />
             <List
-              className={cn(`md:space-y-1 md:!p-2 [&>*]:md:rounded-md
-                [&>*]:md:bg-surface`)}
+              className={cn(`mt-1 sm:!-mx-4 md:!m-0 md:space-y-1 md:!p-2
+                [&>*]:bg-surface [&>*]:md:rounded-md`)}
             >
               {attendances.map((attendance) => (
                 <AttendanceListItem
