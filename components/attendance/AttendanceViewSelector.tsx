@@ -9,6 +9,7 @@ import {
   Actions,
   Button,
   Dialog,
+  DialogContent,
   DialogHeader,
   MaterialIcon,
   SegmentedButton,
@@ -105,10 +106,10 @@ const AttendanceViewSelector: StylableFC<{
         {/* Date picker dialog */}
         <Dialog open={dateOpen} width={320} onClose={() => setDateOpen(false)}>
           <DialogHeader desc={t("dialog.date.desc")} />
-          <div className="mx-6 mt-6">
+          <DialogContent className="px-6">
             <TextField<string>
               appearance="outlined"
-              label={t("dialog.date.label")}
+              label={t("dialog.date.field")}
               value={dateField}
               onChange={setDateField}
               inputAttr={
@@ -118,7 +119,7 @@ const AttendanceViewSelector: StylableFC<{
                 ][view]
               }
             />
-          </div>
+          </DialogContent>
           <Actions>
             <Button appearance="text" onClick={() => setDateOpen(false)}>
               {t("dialog.date.action.cancel")}
