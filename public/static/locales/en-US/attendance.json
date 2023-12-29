@@ -14,26 +14,11 @@
   "event": {
     "title": "Choose event…",
     "assembly": "Assembly",
-    "homeroom": "Homeroom",
-    "snackbar": {
-      "switchedToAssembly": "Switched to assembly",
-      "switchedToHomeroom": "Switched to homeroom"
-    }
-  },
-  "legend": {
-    "title": "Legend",
-    "present": "Present",
-    "late": "Late",
-    "absent": "Absent"
+    "homeroom": "Homeroom"
   },
   "item": {
     "classNo": "No. {{classNo}}",
-    "presence": {
-      "title": "Presence",
-      "present": "Present",
-      "late": "Late",
-      "absent": "Absent"
-    },
+    "late": "Late",
     "absenceType": {
       "onLeave": "On leave",
       "absent": "Absent without reason",
@@ -45,6 +30,7 @@
   "today": {
     "title": "{{late, number}} late • {{absent, number}} absent",
     "homeroom": {
+      "title": "Homeroom",
       "field": "What did you talk about?",
       "action": {
         "add": "Add homeroom",

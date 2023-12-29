@@ -1,7 +1,7 @@
+// Imports
 import { HomeroomView } from "@/components/attendance/TodaySummary";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import recordHomeroom from "@/utils/backend/attendance/recordHomeroom";
-import cn from "@/utils/helpers/cn";
 import useRefreshProps from "@/utils/helpers/useRefreshProps";
 import useToggle from "@/utils/helpers/useToggle";
 import withLoading from "@/utils/helpers/withLoading";
@@ -10,17 +10,20 @@ import { StylableFC } from "@/utils/types/common";
 import {
   Actions,
   Button,
-  MaterialIcon,
   Snackbar,
   TextField,
-  transition,
-  useAnimationConfig,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { useContext, useState } from "react";
 
+/**
+ * Allows the user to edit the content of the Homeroom Content for a Classroom.
+ *
+ * @param homeroomContent The Homeroom Content to be edited.
+ * @param classroomID The ID of the Classroom that this Homeroom Content is for.
+ * @param onViewChange Should change the view of the Homeroom Content Editor.
+ */
 const HomeroomContentEditor: StylableFC<{
   homeroomContent: HomeroomContent;
   classroomID: string;
@@ -31,13 +34,16 @@ const HomeroomContentEditor: StylableFC<{
 
   const [field, setField] = useState(homeroomContent?.homeroom_content || "");
 
-  const { duration, easing } = useAnimationConfig();
   const { setSnackbar } = useContext(SnackbarContext);
 
   const supabase = useSupabaseClient();
   const refreshProps = useRefreshProps();
   const [loading, toggleLoading] = useToggle();
 
+  /**
+   * Cancels editing the Homeroom Content and reverts to the previous view with
+   * the previous content.
+   */
   function handleCancel() {
     setField(homeroomContent.homeroom_content);
     onViewChange(
@@ -45,6 +51,9 @@ const HomeroomContentEditor: StylableFC<{
     );
   }
 
+  /**
+   * Saves the Homeroom Content to the database.
+   */
   async function handleSave() {
     if (!field) {
       setSnackbar(<Snackbar>{tx("snackbar.formInvalid")}</Snackbar>);
@@ -67,14 +76,7 @@ const HomeroomContentEditor: StylableFC<{
   }
 
   return (
-    <motion.div
-      initial={{ y: -20, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      exit={{ y: -20, opacity: 0 }}
-      transition={transition(duration.medium2, easing.standard)}
-      style={style}
-      className={cn(`space-y-2`, className)}
-    >
+    <>
       <TextField<string>
         appearance="outlined"
         label={t("field")}
@@ -87,16 +89,11 @@ const HomeroomContentEditor: StylableFC<{
         <Button appearance="text" onClick={handleCancel}>
           {t("action.cancel")}
         </Button>
-        <Button
-          appearance="filled"
-          icon={<MaterialIcon icon="save" />}
-          disabled={loading}
-          onClick={handleSave}
-        >
+        <Button appearance="filled" disabled={loading} onClick={handleSave}>
           {t("action.save")}
         </Button>
       </Actions>
-    </motion.div>
+    </>
   );
 };
 

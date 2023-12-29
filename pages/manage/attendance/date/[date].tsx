@@ -1,5 +1,4 @@
 // Imports
-import { SelectorType } from "@/components/attendance/AttendanceViewSelector";
 import ClassAttendanceLayout from "@/components/attendance/ClassAttendanceLayout";
 import WeekChart from "@/components/attendance/WeekChart";
 import PageHeader from "@/components/common/PageHeader";
@@ -8,6 +7,7 @@ import AttendanceClassesListItem from "@/components/manage/AttendanceClassesList
 import MySKLogo from "@/public/images/brand/mysk-light.svg";
 import getClassroomAttendances from "@/utils/backend/attendance/getClassroomAttendances";
 import getWeekAttendance from "@/utils/backend/attendance/getWeekAttendance";
+import { SelectorType } from "@/utils/helpers/attendance/useAttendanceView";
 import cn from "@/utils/helpers/cn";
 import { YYYYMMDDRegex } from "@/utils/patterns";
 import {

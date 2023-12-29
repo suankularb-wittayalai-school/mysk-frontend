@@ -5,7 +5,6 @@ import { HomeroomContent, StudentAttendance } from "@/utils/types/attendance";
 import { StylableFC } from "@/utils/types/common";
 import {
   Button,
-  Columns,
   MaterialIcon,
   Text,
   transition,
@@ -15,8 +14,10 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
 import Markdown from "react-markdown";
-import Balancer from "react-wrap-balancer";
 
+/**
+ * The view of the Homeroom Content.
+ */
 export enum HomeroomView {
   empty = "empty",
   view = "view",
@@ -35,7 +36,7 @@ const TodaySummary: StylableFC<{
   attendances: StudentAttendance[];
   homeroomContent: HomeroomContent;
   classroomID: string;
-}> = ({ attendances, homeroomContent, classroomID }) => {
+}> = ({ attendances, homeroomContent, classroomID, style, className }) => {
   const { t } = useTranslation("attendance", { keyPrefix: "today" });
 
   // Count the number of students who are marked as late at Assembly.
@@ -79,85 +80,102 @@ const TodaySummary: StylableFC<{
   const { duration, easing } = useAnimationConfig();
 
   return (
-    <Columns columns={2} className="!gap-y-0">
+    <motion.div
+      layout
+      transition={transition(duration.medium4, easing.standard)}
+      style={{ ...style, borderRadius: 12 }}
+      className={cn(
+        `overflow-hidden rounded-lg border-1 border-outline-variant
+        bg-surface-3`,
+        className,
+      )}
+    >
       {/* Quick summary */}
-      <div className="flex flex-row gap-2">
-        <Text type="headline-small" element="h2" className="grow">
-          {t("title", { late: lateCount, absent: absenceCount })}
-        </Text>
-        <AnimatePresence initial={false}>
-          {homeroomView === HomeroomView.view && (
-            <motion.div
-              initial={{ scale: 0.4, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.4, opacity: 0 }}
-              transition={transition(duration.short4, easing.standard)}
-            >
-              <Button
-                appearance="text"
-                onClick={() => setHomeroomView(HomeroomView.edit)}
-              >
-                Edit
-              </Button>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-      <div aria-hidden />
+      <Text
+        type="headline-small"
+        element={(props) => (
+          <motion.h2
+            layout="position"
+            transition={transition(duration.medium4, easing.standard)}
+            {...props}
+          />
+        )}
+        className="h-12 border-b-1 border-surface-variant bg-surface px-4 py-2"
+      >
+        {t("title", { late: lateCount, absent: absenceCount })}
+      </Text>
 
       {/* Homeroom Content */}
-      <AnimatePresence mode="wait" initial={false}>
-        {
-          {
-            // If there is no homeroom content, show a button to add content.
-            empty: (
-              <motion.div
-                key="empty"
-                initial={{ scale: 0.4, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.4, opacity: 0 }}
-                transition={transition(duration.short4, easing.standard)}
-                className="mt-1.5 !justify-self-start"
-              >
-                <Button
-                  appearance="tonal"
-                  icon={<MaterialIcon icon="add" />}
-                  onClick={() => setHomeroomView(HomeroomView.edit)}
-                >
-                  {t("homeroom.action.add")}
-                </Button>
-              </motion.div>
-            ),
-            // If there is homeroom content, show the content.
-            view: (
-              <Text
-                key="view"
-                type="body-medium"
-                element="div"
-                className="-mt-1"
-              >
-                <Markdown
-                  className={cn(`[&_ol]:list-decimal [&_ol]:pl-6
-                    [&_ul]:list-disc [&_ul]:pl-6`)}
-                >
-                  {homeroomContent.homeroom_content}
-                </Markdown>
-              </Text>
-            ),
-            // If the user is editing the homeroom content, show the editor.
-            edit: (
-              <HomeroomContentEditor
-                key="edit"
-                homeroomContent={homeroomContent}
-                classroomID={classroomID}
-                onViewChange={setHomeroomView}
-                className="mt-2"
-              />
-            ),
-          }[homeroomView]
-        }
+      <AnimatePresence initial={false}>
+        <motion.div
+          layout
+          transition={transition(duration.medium4, easing.standard)}
+          style={{ borderRadius: 12 }}
+          className="m-2 overflow-hidden rounded-md bg-surface px-3 pb-3 pt-2"
+        >
+          <motion.div
+            key={homeroomView}
+            layout="position"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={transition(duration.medium4, easing.standard)}
+            className="grid gap-2"
+          >
+            <Text type="title-medium">{t("homeroom.title")}</Text>
+            {
+              {
+                // If there is no homeroom content, show a button to add content.
+                empty: (
+                  <Button
+                    appearance="filled"
+                    icon={<MaterialIcon icon="add" />}
+                    onClick={() => setHomeroomView(HomeroomView.edit)}
+                    className="!justify-self-start"
+                  >
+                    {t("homeroom.action.add")}
+                  </Button>
+                ),
+                // If there is homeroom content, show the content.
+                view: (
+                  <>
+                    <Text
+                      key="view"
+                      type="body-medium"
+                      element="div"
+                      className="-mt-1"
+                    >
+                      <Markdown
+                        className={cn(`[&_ol]:list-decimal [&_ol]:pl-6
+                        [&_ul]:list-disc [&_ul]:pl-6`)}
+                      >
+                        {homeroomContent.homeroom_content}
+                      </Markdown>
+                    </Text>
+                    <Button
+                      appearance="text"
+                      onClick={() => setHomeroomView(HomeroomView.edit)}
+                      className="!-mt-1 !justify-self-end"
+                    >
+                      {t("homeroom.action.edit")}
+                    </Button>
+                  </>
+                ),
+                // If the user is editing the homeroom content, show the editor.
+                edit: (
+                  <HomeroomContentEditor
+                    key="edit"
+                    homeroomContent={homeroomContent}
+                    classroomID={classroomID}
+                    onViewChange={setHomeroomView}
+                    className="mt-2"
+                  />
+                ),
+              }[homeroomView]
+            }
+          </motion.div>
+        </motion.div>
       </AnimatePresence>
-    </Columns>
+    </motion.div>
   );
 };
 

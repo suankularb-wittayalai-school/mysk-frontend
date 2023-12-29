@@ -1,8 +1,6 @@
 // Imports
-import AttendanceListFooter from "@/components/attendance/AttendanceListFooter";
-import AttendanceListHeader from "@/components/attendance/AttendanceListHeader";
+import AttendanceEventTabs from "@/components/attendance/AttendanceEventTabs";
 import AttendanceListItem from "@/components/attendance/AttendanceListItem";
-import { SelectorType } from "@/components/attendance/AttendanceViewSelector";
 import ClassAttendanceLayout from "@/components/attendance/ClassAttendanceLayout";
 import TodaySummary from "@/components/attendance/TodaySummary";
 import PageHeader from "@/components/common/PageHeader";
@@ -17,6 +15,7 @@ import getAttendanceOfClass from "@/utils/backend/attendance/getAttendanceOfClas
 import getHomeroomOfClass from "@/utils/backend/attendance/getHomeroomOfClass";
 import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
 import useAttendanceActions from "@/utils/helpers/attendance/useAttendanceActions";
+import { SelectorType } from "@/utils/helpers/attendance/useAttendanceView";
 import cn from "@/utils/helpers/cn";
 import { YYYYMMDDRegex } from "@/utils/patterns";
 import {
@@ -27,10 +26,9 @@ import {
 import { Classroom } from "@/utils/types/classroom";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
-import { List, Snackbar } from "@suankularb-components/react";
+import { Columns, List } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { isFuture, isWeekend } from "date-fns";
-import { LayoutGroup, motion } from "framer-motion";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import { useTranslation } from "next-i18next";
@@ -86,23 +84,22 @@ const DateAttendancePage: CustomPage<{
       </Head>
       <PageHeader parentURL="/classes">{t("title")}</PageHeader>
       <ClassAttendanceLayout type={SelectorType.classroom} date={date}>
-        <LayoutGroup id="attendance">
-          <TodaySummary
-            attendances={attendances}
-            homeroomContent={
-              homeroomContent || { id: null, date, homeroom_content: "" }
-            }
-            classroomID={classroom.id}
-          />
-          <motion.div layout="position" layoutId="list">
+        <Columns columns={2}>
+          <div
+            className={cn(`-mx-4 sm:mx-0 sm:h-[calc(100dvh-13rem)]
+              sm:overflow-auto sm:rounded-lg sm:border-1
+              sm:border-outline-variant sm:bg-surface-3 [&>:first-child]:top-0
+              [&>:first-child]:z-10 sm:[&>:first-child]:sticky`)}
+          >
+            <AttendanceEventTabs
+              event={event}
+              onEventChange={setEvent}
+              className="bg-surface"
+            />
             <List
-              divided
-              className={cn(
-                `!-mx-4 !block sm:!mx-0 [&>:first-child]:!border-b-outline`,
-                editable && `[&>:nth-last-child(2)]:!border-b-0`,
-              )}
+              className={cn(`sm:space-y-1 sm:!p-2 sm:[&>*]:rounded-md
+                sm:[&>*]:bg-surface`)}
             >
-              <AttendanceListHeader event={event} onEventChange={setEvent} />
               {attendances.map((attendance) => (
                 <AttendanceListItem
                   key={attendance.student.id}
@@ -112,26 +109,17 @@ const DateAttendancePage: CustomPage<{
                   onAttendanceChange={replaceAttendance}
                 />
               ))}
-              {editable && (
-                <AttendanceListFooter
-                  loading={loading}
-                  onMarkAllPresent={handleMarkAllPresent}
-                  onClear={handleClear}
-                  onSave={async () => {
-                    if (await handleSave())
-                      setSnackbar(
-                        <Snackbar>{t("today.snackbar.saved")}</Snackbar>,
-                      );
-                    else
-                      setSnackbar(
-                        <Snackbar>{t("today.snackbar.incomplete")}</Snackbar>,
-                      );
-                  }}
-                />
-              )}
             </List>
-          </motion.div>
-        </LayoutGroup>
+          </div>
+          <TodaySummary
+            attendances={attendances}
+            homeroomContent={
+              homeroomContent || { id: null, date, homeroom_content: "" }
+            }
+            classroomID={classroom.id}
+            className="hidden sm:block"
+          />
+        </Columns>
       </ClassAttendanceLayout>
     </>
   );

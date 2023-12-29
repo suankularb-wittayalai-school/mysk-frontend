@@ -14,26 +14,11 @@
   "event": {
     "title": "เลือก…",
     "assembly": "เข้าแถว",
-    "homeroom": "โฮมรูม",
-    "snackbar": {
-      "switchedToAssembly": "เปลี่ยนไปเช็กชื่อเข้าแถว",
-      "switchedToHomeroom": "เปลี่ยนไปเช็กชื่อโฮมรูม"
-    }
-  },
-  "legend": {
-    "title": "คำอธิบาย",
-    "present": "มา",
-    "late": "มาสาย",
-    "absent": "ลา/ขาด"
+    "homeroom": "โฮมรูม"
   },
   "item": {
     "classNo": "เลขที่ {{classNo}}",
-    "presence": {
-      "title": "การเข้าเรียน",
-      "present": "มา",
-      "late": "มาสาย",
-      "absent": "ลา/ขาด"
-    },
+    "late": "สาย",
     "absenceType": {
       "onLeave": "มีใบลา",
       "absent": "ขาดไม่มีเหตุ",
@@ -45,6 +30,7 @@
   "today": {
     "title": "มาสาย {{late, number}} • ขาด {{absent, number}}",
     "homeroom": {
+      "title": "โฮมรูม",
       "field": "โฮมรูมวันนี้พูดเรื่องอะไรบ้าง?",
       "action": {
         "add": "เพิ่มข้อมูลโฮมรูม",
