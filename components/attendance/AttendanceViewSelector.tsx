@@ -47,7 +47,10 @@ const AttendanceViewSelector: StylableFC<{
     >
       {/* View selector */}
       <Actions align="left">
-        <SegmentedButton alt="View" className="!grid grow grid-cols-2 sm:!flex">
+        <SegmentedButton
+          alt={t("view.title")}
+          className="!grid grow grid-cols-2 sm:!flex"
+        >
           <Button
             appearance="outlined"
             selected={view === AttendanceView.today}

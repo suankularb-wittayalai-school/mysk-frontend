@@ -2,6 +2,7 @@
   "title": "Attendance",
   "viewSelector": {
     "view": {
+      "title": "Choose view…",
       "today": "Today",
       "thisWeek": "This week"
     },

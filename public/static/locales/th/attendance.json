@@ -2,6 +2,7 @@
   "title": "การเช็กชื่อ",
   "viewSelector": {
     "view": {
+      "title": "เลือกขอบเวลา…",
       "today": "วันนี้",
       "thisWeek": "สัปดาห์นี้"
     },
@@ -22,7 +23,7 @@
     }
   },
   "event": {
-    "title": "เลือก…",
+    "title": "เลือกคาบ…",
     "assembly": "เข้าแถว",
     "homeroom": "โฮมรูม"
   },
