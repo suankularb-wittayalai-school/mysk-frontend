@@ -9,6 +9,16 @@
     "action": {
       "print": "Print",
       "go": "Go to date"
+    },
+    "dialog": {
+      "date": {
+        "desc": "Enter the date or week to jump to.",
+        "label": "Date",
+        "action": {
+          "cancel": "Cancel",
+          "go": "Go"
+        }
+      }
     }
   },
   "event": {

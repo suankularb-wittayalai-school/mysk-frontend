@@ -3,16 +3,21 @@ import useAttendanceView, {
   SelectorType,
 } from "@/utils/helpers/attendance/useAttendanceView";
 import cn from "@/utils/helpers/cn";
+import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import {
   Actions,
   Button,
+  Dialog,
+  DialogHeader,
   MaterialIcon,
   SegmentedButton,
   TextField,
 } from "@suankularb-components/react";
+import { isToday, parseISO } from "date-fns";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
+import { useState } from "react";
 
 /**
  * The view selector for the Attendance pages. Allows the user to select the
@@ -25,9 +30,12 @@ const AttendanceViewSelector: StylableFC<{
   type: SelectorType;
   date: string;
 }> = ({ type, date, style, className }) => {
+  const locale = useLocale();
   const { t } = useTranslation("attendance", { keyPrefix: "viewSelector" });
   const { view, dateField, setDateField, disabled, getURLforView } =
     useAttendanceView(type, date);
+
+  const [dateOpen, setDateOpen] = useState(false);
 
   return (
     <div
@@ -69,10 +77,63 @@ const AttendanceViewSelector: StylableFC<{
             {t("action.print")}
           </Button>
         )}
+
+        {/* Go to date (mobile) */}
+        <Button
+          appearance="tonal"
+          icon={<MaterialIcon icon="event" />}
+          alt={t("action.go")}
+          onClick={() => setDateOpen(true)}
+          className="sm:!hidden"
+        >
+          {(() => {
+            const parsedDate =
+              view === AttendanceView.today
+                ? new Date(date)
+                : new Date(parseISO(date));
+            if (!isToday(parsedDate) || view === AttendanceView.thisWeek)
+              return new Date(parsedDate).toLocaleDateString(locale, {
+                month: "short",
+                day: "numeric",
+              });
+          })()}
+        </Button>
+
+        {/* Date picker dialog */}
+        <Dialog open={dateOpen} width={320} onClose={() => setDateOpen(false)}>
+          <DialogHeader desc={t("dialog.date.desc")} />
+          <div className="mx-6 mt-6">
+            <TextField<string>
+              appearance="outlined"
+              label={t("dialog.date.label")}
+              value={dateField}
+              onChange={setDateField}
+              inputAttr={
+                [
+                  { type: "date", placeholder: "YYYY-MM-DD" },
+                  { type: "week", placeholder: "YYYY-Www" },
+                ][view]
+              }
+            />
+          </div>
+          <Actions>
+            <Button appearance="text" onClick={() => setDateOpen(false)}>
+              {t("dialog.date.action.cancel")}
+            </Button>
+            <Button
+              appearance="text"
+              onClick={() => !disabled && setDateOpen(false)}
+              href={disabled ? undefined : getURLforView(view)}
+              element={disabled ? "button" : Link}
+            >
+              {t("dialog.date.action.go")}
+            </Button>
+          </Actions>
+        </Dialog>
       </Actions>
 
-      {/* Go to date */}
-      <div className="flex flex-row items-center gap-2">
+      {/* Go to date (desktop) */}
+      <div className="hidden flex-row items-center gap-2 sm:flex">
         <TextField<string>
           appearance="outlined"
           label={t("date")}
@@ -89,7 +150,7 @@ const AttendanceViewSelector: StylableFC<{
         <Button
           appearance="filled"
           icon={<MaterialIcon icon="arrow_forward" />}
-          alt={t("actions.go")}
+          alt={t("action.go")}
           disabled={disabled}
           href={getURLforView(view)}
           element={Link}
