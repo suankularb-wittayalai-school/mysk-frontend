@@ -2,40 +2,37 @@
   "title": "การเช็กชื่อ",
   "viewSelector": {
     "view": {
+      "title": "เลือกขอบเวลา…",
       "today": "วันนี้",
       "thisWeek": "สัปดาห์นี้"
     },
     "date": "ไปวันที่…",
     "action": {
       "print": "พิมพ์",
-      "go": "ไป"
+      "go": "ไปที่วันที่"
+    },
+    "dialog": {
+      "date": {
+        "desc": "เลือกวันที่หรือสัปดาห์ที่ต้องการเรียกดู",
+        "field": "วันที่",
+        "action": {
+          "cancel": "ยกเลิก",
+          "go": "ไป"
+        }
+      }
     }
   },
   "event": {
-    "title": "เลือก…",
+    "title": "เลือกคาบ…",
     "assembly": "เข้าแถว",
-    "homeroom": "โฮมรูม",
-    "snackbar": {
-      "switchedToAssembly": "เปลี่ยนไปเช็กชื่อเข้าแถว",
-      "switchedToHomeroom": "เปลี่ยนไปเช็กชื่อโฮมรูม"
-    }
-  },
-  "legend": {
-    "title": "คำอธิบาย",
-    "present": "มา",
-    "late": "มาสาย",
-    "absent": "ลา/ขาด"
+    "homeroom": "โฮมรูม"
   },
   "item": {
     "classNo": "เลขที่ {{classNo}}",
-    "presence": {
-      "title": "การเข้าเรียน",
-      "present": "มา",
-      "late": "มาสาย",
-      "absent": "ลา/ขาด"
-    },
+    "late": "สาย",
     "absenceType": {
-      "onLeave": "มีใบลา",
+      "sick": "ลาป่วย",
+      "business": "ลากิจ",
       "absent": "ขาดไม่มีเหตุ",
       "dropped": "พักการเรียน",
       "other": "อื่น ๆ"
@@ -45,6 +42,7 @@
   "today": {
     "title": "มาสาย {{late, number}} • ขาด {{absent, number}}",
     "homeroom": {
+      "title": "โฮมรูม",
       "field": "โฮมรูมวันนี้พูดเรื่องอะไรบ้าง?",
       "action": {
         "add": "เพิ่มข้อมูลโฮมรูม",
@@ -54,13 +52,21 @@
       }
     },
     "action": {
-      "save": "บันทึก",
-      "clear": "ลบทั้งหมด",
-      "markAll": "เช็กมาทุกคน"
+      "editHomeroom": "แก้ไขข้อมูลโฮมรูม"
     },
     "snackbar": {
       "saved": "บันทึกการเช็กชื่อเข้าแถวและโฮมรูมแล้ว",
       "incomplete": "กรุณาเช็กชื่อให้ครบทุกคนก่อนบันทึก"
+    },
+    "dialog": {
+      "homeroom": {
+        "desc": "เพิ่มข้อมูลโฮมรูมของวันนี้ ว่าพูดเรื่องอะไรบ้าง",
+        "field": "ข้อมูลโฮมรูม",
+        "action": {
+          "cancel": "ยกเลิก",
+          "save": "บันทึก"
+        }
+      }
     }
   },
   "thisWeek": {

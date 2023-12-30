@@ -11,7 +11,7 @@ import { useTranslation } from "next-i18next";
  * @param onChange Callback function to handle changes to the Absence Type.
  */
 const AbsenceTypeSelector: StylableFC<{
-  value: Exclude<AbsenceType, "late"> | null;
+  value: Exclude<AbsenceType, AbsenceType.late> | null;
   onChange: (value: AbsenceType) => void;
 }> = ({ value, onChange, style, className }) => {
   const { t } = useTranslation("attendance", { keyPrefix: "item.absenceType" });
@@ -19,26 +19,32 @@ const AbsenceTypeSelector: StylableFC<{
   return (
     <ChipSet scrollable style={style} className={className}>
       <FilterChip
-        selected={value === "on_leave"}
-        onClick={() => onChange("on_leave")}
+        selected={value === AbsenceType.sick}
+        onClick={() => onChange(AbsenceType.sick)}
       >
-        {t("onLeave")}
+        {t("sick")}
       </FilterChip>
       <FilterChip
-        selected={value === "absent"}
-        onClick={() => onChange("absent")}
+        selected={value === AbsenceType.business}
+        onClick={() => onChange(AbsenceType.business)}
+      >
+        {t("business")}
+      </FilterChip>
+      <FilterChip
+        selected={value === AbsenceType.absent}
+        onClick={() => onChange(AbsenceType.absent)}
       >
         {t("absent")}
       </FilterChip>
       <FilterChip
-        selected={value === "dropped"}
-        onClick={() => onChange("dropped")}
+        selected={value === AbsenceType.dropped}
+        onClick={() => onChange(AbsenceType.dropped)}
       >
         {t("dropped")}
       </FilterChip>
       <FilterChip
-        selected={value === "other"}
-        onClick={() => onChange("other")}
+        selected={value === AbsenceType.other}
+        onClick={() => onChange(AbsenceType.other)}
       >
         {t("other")}
       </FilterChip>

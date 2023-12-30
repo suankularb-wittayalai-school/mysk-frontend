@@ -12,7 +12,7 @@ import { omit } from "radash";
  *
  * @returns An empty Backend Return.
  */
-export default async function recordHomeroom(
+export default async function upsertHomeroom(
   supabase: DatabaseClient,
   homeroomContent: HomeroomContent,
   classroomID: string,

@@ -1,44 +1,24 @@
+import useAttendanceView, {
+  AttendanceView,
+  SelectorType,
+} from "@/utils/helpers/attendance/useAttendanceView";
 import cn from "@/utils/helpers/cn";
-import getISODateString from "@/utils/helpers/getISODateString";
-import { YYYYMMDDRegex, YYYYWwwRegex } from "@/utils/patterns";
+import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import {
   Actions,
   Button,
+  Dialog,
+  DialogContent,
+  DialogHeader,
   MaterialIcon,
   SegmentedButton,
   TextField,
 } from "@suankularb-components/react";
-import {
-  getWeek,
-  getYear,
-  isFuture,
-  isPast,
-  isWeekend,
-  parse,
-  parseISO,
-  startOfWeek,
-} from "date-fns";
+import { isToday, parseISO } from "date-fns";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { useState } from "react";
-
-/**
- * The possible views of the Attendance pages.
- */
-enum AttendanceView {
-  today,
-  thisWeek,
-}
-
-/**
- * The type of the View Selector.
- */
-export enum SelectorType {
-  classroom,
-  management,
-}
 
 /**
  * The view selector for the Attendance pages. Allows the user to select the
@@ -51,75 +31,35 @@ const AttendanceViewSelector: StylableFC<{
   type: SelectorType;
   date: string;
 }> = ({ type, date, style, className }) => {
+  const locale = useLocale();
   const { t } = useTranslation("attendance", { keyPrefix: "viewSelector" });
+  const { view, dateField, setDateField, disabled, getURLforView } =
+    useAttendanceView(type, date);
 
-  const { asPath } = useRouter();
-
-  /**
-   * The path segment to check for the selected {@link view}. The path prior to
-   * this segment is the {@link parentURL parent URL}.
-   *
-   * ---
-   *
-   * For **`SelectorType.classroom`**, this is the 4th segment.
-   *
-   * ```plaintext
-   * /classes/604/attendance/date/2024-01-01
-   *                         ~~~~
-   * ```
-   *
-   * ---
-   *
-   * For **`SelectorType.management`**, this is the 3rd segment.
-   *
-   * ```plaintext
-   * /manage/attendance/date/2024-01-01
-   *                    ~~~~
-   * ```
-   */
-  const segmentToCheck = [4, 3][type];
-
-  /**
-   * The selected view of the parent Attendance page.
-   */
-  const view = {
-    date: AttendanceView.today,
-    week: AttendanceView.thisWeek,
-  }[asPath.split("/")[segmentToCheck]]!;
-  const parentURL = asPath.split("/").slice(0, segmentToCheck).join("/");
-
-  const [dateField, setDateField] = useState(date);
-  const dateIsValid = [
-    YYYYMMDDRegex.test(dateField) &&
-      !isWeekend(new Date(dateField)) &&
-      isPast(new Date(dateField)),
-    YYYYWwwRegex.test(dateField) &&
-      Number(dateField.slice(0, 4)) <= getYear(new Date()) &&
-      Number(dateField.slice(6, 8)) <= getWeek(new Date()),
-  ][view];
+  const [dateOpen, setDateOpen] = useState(false);
 
   return (
     <div
       style={style}
       className={cn(
-        `grid flex-row gap-4 sm:flex sm:items-center sm:justify-between`,
+        `grid flex-row gap-4 md:flex md:items-center md:justify-between`,
         className,
       )}
     >
       {/* View selector */}
-      <Actions align="left">
-        <SegmentedButton alt="View" className="!grid grow grid-cols-2 sm:!flex">
+      <Actions
+        align="left"
+        className="!flex-nowrap [&_.skc-button\_\_label]:!whitespace-nowrap"
+      >
+        <SegmentedButton
+          alt={t("view.title")}
+          className="!grid grow grid-cols-2 sm:!flex"
+        >
           <Button
             appearance="outlined"
             selected={view === AttendanceView.today}
-            disabled={!dateIsValid}
-            href={[
-              parentURL,
-              "date",
-              view === AttendanceView.today
-                ? dateField
-                : dateIsValid && getISODateString(parseISO(dateField)),
-            ].join("/")}
+            disabled={disabled}
+            href={getURLforView(AttendanceView.today)}
             element={Link}
           >
             {t("view.today")}
@@ -127,17 +67,8 @@ const AttendanceViewSelector: StylableFC<{
           <Button
             appearance="outlined"
             selected={view === AttendanceView.thisWeek}
-            disabled={!dateIsValid || type === SelectorType.management}
-            href={[
-              parentURL,
-              "week",
-              view === AttendanceView.thisWeek
-                ? dateField
-                : dateIsValid &&
-                  `${dateField.slice(0, 4)}-W${String(
-                    getWeek(new Date(dateField)),
-                  ).padStart(2, "0")}`,
-            ].join("/")}
+            disabled={disabled || type === SelectorType.management}
+            href={getURLforView(AttendanceView.thisWeek)}
             element={Link}
           >
             {t("view.thisWeek")}
@@ -153,10 +84,63 @@ const AttendanceViewSelector: StylableFC<{
             {t("action.print")}
           </Button>
         )}
+
+        {/* Go to date (mobile) */}
+        <Button
+          appearance="tonal"
+          icon={<MaterialIcon icon="event" />}
+          alt={t("action.go")}
+          onClick={() => setDateOpen(true)}
+          className="md:!hidden"
+        >
+          {(() => {
+            const parsedDate =
+              view === AttendanceView.today
+                ? new Date(date)
+                : new Date(parseISO(date));
+            if (!isToday(parsedDate) || view === AttendanceView.thisWeek)
+              return new Date(parsedDate).toLocaleDateString(locale, {
+                month: "short",
+                day: "numeric",
+              });
+          })()}
+        </Button>
+
+        {/* Date picker dialog */}
+        <Dialog open={dateOpen} width={320} onClose={() => setDateOpen(false)}>
+          <DialogHeader desc={t("dialog.date.desc")} />
+          <DialogContent className="px-6">
+            <TextField<string>
+              appearance="outlined"
+              label={t("dialog.date.field")}
+              value={dateField}
+              onChange={setDateField}
+              inputAttr={
+                [
+                  { type: "date", placeholder: "YYYY-MM-DD" },
+                  { type: "week", placeholder: "YYYY-Www" },
+                ][view]
+              }
+            />
+          </DialogContent>
+          <Actions>
+            <Button appearance="text" onClick={() => setDateOpen(false)}>
+              {t("dialog.date.action.cancel")}
+            </Button>
+            <Button
+              appearance="text"
+              onClick={() => !disabled && setDateOpen(false)}
+              href={disabled ? undefined : getURLforView(view)}
+              element={disabled ? "button" : Link}
+            >
+              {t("dialog.date.action.go")}
+            </Button>
+          </Actions>
+        </Dialog>
       </Actions>
 
-      {/* Go to date */}
-      <div className="flex flex-row items-center gap-2">
+      {/* Go to date (desktop) */}
+      <div className="hidden flex-row items-center gap-2 md:flex">
         <TextField<string>
           appearance="outlined"
           label={t("date")}
@@ -173,9 +157,9 @@ const AttendanceViewSelector: StylableFC<{
         <Button
           appearance="filled"
           icon={<MaterialIcon icon="arrow_forward" />}
-          alt={t("actions.go")}
-          disabled={!dateIsValid}
-          href={[parentURL, ["date", "week"][view], dateField].join("/")}
+          alt={t("action.go")}
+          disabled={disabled}
+          href={getURLforView(view)}
           element={Link}
         />
       </div>

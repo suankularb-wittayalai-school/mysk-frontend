@@ -2,41 +2,38 @@
   "title": "Attendance",
   "viewSelector": {
     "view": {
+      "title": "Choose view…",
       "today": "Today",
       "thisWeek": "This week"
     },
     "date": "Go to date…",
     "action": {
       "print": "Print",
-      "go": "Go"
+      "go": "Go to date"
+    },
+    "dialog": {
+      "date": {
+        "desc": "Enter the date or week to jump to.",
+        "field": "Date",
+        "action": {
+          "cancel": "Cancel",
+          "go": "Go"
+        }
+      }
     }
   },
   "event": {
     "title": "Choose event…",
     "assembly": "Assembly",
-    "homeroom": "Homeroom",
-    "snackbar": {
-      "switchedToAssembly": "Switched to assembly",
-      "switchedToHomeroom": "Switched to homeroom"
-    }
-  },
-  "legend": {
-    "title": "Legend",
-    "present": "Present",
-    "late": "Late",
-    "absent": "Absent"
+    "homeroom": "Homeroom"
   },
   "item": {
     "classNo": "No. {{classNo}}",
-    "presence": {
-      "title": "Presence",
-      "present": "Present",
-      "late": "Late",
-      "absent": "Absent"
-    },
+    "late": "Late",
     "absenceType": {
-      "onLeave": "On leave",
-      "absent": "Absent without reason",
+      "sick": "Sick",
+      "business": "Personal",
+      "absent": "Absent",
       "dropped": "Dropped",
       "other": "Other"
     },
@@ -45,6 +42,7 @@
   "today": {
     "title": "{{late, number}} late • {{absent, number}} absent",
     "homeroom": {
+      "title": "Homeroom",
       "field": "What did you talk about?",
       "action": {
         "add": "Add homeroom",
@@ -54,13 +52,21 @@
       }
     },
     "action": {
-      "save": "Save",
-      "clear": "Clear",
-      "markAll": "Mark all present"
+      "editHomeroom": "Edit homeroom content"
     },
     "snackbar": {
       "saved": "Attendance saved for assembly and homeroom",
       "incomplete": "Please check attendance for everyone before saving"
+    },
+    "dialog": {
+      "homeroom": {
+        "desc": "Add a short description on what happened during homeroom.",
+        "field": "Homeroom content",
+        "action": {
+          "cancel": "Cancel",
+          "save": "Save"
+        }
+      }
     }
   },
   "thisWeek": {

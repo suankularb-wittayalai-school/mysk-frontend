@@ -1,12 +1,10 @@
 // Imports
-import AttendanceListFooter from "@/components/attendance/AttendanceListFooter";
-import AttendanceListHeader from "@/components/attendance/AttendanceListHeader";
+import AttendanceEventTabs from "@/components/attendance/AttendanceEventTabs";
 import AttendanceListItem from "@/components/attendance/AttendanceListItem";
-import { SelectorType } from "@/components/attendance/AttendanceViewSelector";
 import ClassAttendanceLayout from "@/components/attendance/ClassAttendanceLayout";
+import HomeroomContentDialog from "@/components/attendance/HomeroomContentDialog";
 import TodaySummary from "@/components/attendance/TodaySummary";
 import PageHeader from "@/components/common/PageHeader";
-import SnackbarContext from "@/contexts/SnackbarContext";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import {
   getStudentFromUserID,
@@ -16,7 +14,7 @@ import getUserByEmail from "@/utils/backend/account/getUserByEmail";
 import getAttendanceOfClass from "@/utils/backend/attendance/getAttendanceOfClass";
 import getHomeroomOfClass from "@/utils/backend/attendance/getHomeroomOfClass";
 import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
-import useAttendanceActions from "@/utils/helpers/attendance/useAttendanceActions";
+import { SelectorType } from "@/utils/helpers/attendance/useAttendanceView";
 import cn from "@/utils/helpers/cn";
 import { YYYYMMDDRegex } from "@/utils/patterns";
 import {
@@ -27,16 +25,21 @@ import {
 import { Classroom } from "@/utils/types/classroom";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
-import { List, Snackbar } from "@suankularb-components/react";
+import {
+  Button,
+  Columns,
+  List,
+  MaterialIcon,
+} from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { isFuture, isWeekend } from "date-fns";
-import { LayoutGroup, motion } from "framer-motion";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
-import { useContext, useState } from "react";
+import { replace } from "radash";
+import { useEffect, useState } from "react";
 
 /**
  * Date Attendance page displays Attendance of a Classroom at specific date.
@@ -66,18 +69,12 @@ const DateAttendancePage: CustomPage<{
   const { t } = useTranslation("attendance");
   const { t: tx } = useTranslation("common");
 
-  const { setSnackbar } = useContext(SnackbarContext);
-
   const [event, setEvent] = useState<AttendanceEvent>("assembly");
+  const [homeroomOpen, setHomeroomOpen] = useState(false);
 
-  const {
-    attendances,
-    loading,
-    replaceAttendance,
-    handleSave,
-    handleMarkAllPresent,
-    handleClear,
-  } = useAttendanceActions(initialAttendances, date, teacherID);
+  const [attendances, setAttendances] =
+    useState<StudentAttendance[]>(initialAttendances);
+  useEffect(() => setAttendances(initialAttendances), [initialAttendances]);
 
   return (
     <>
@@ -86,52 +83,71 @@ const DateAttendancePage: CustomPage<{
       </Head>
       <PageHeader parentURL="/classes">{t("title")}</PageHeader>
       <ClassAttendanceLayout type={SelectorType.classroom} date={date}>
-        <LayoutGroup id="attendance">
+        <Columns columns={2} className="!grid-cols-1 md:!grid-cols-2">
+          <div
+            className={cn(`-mx-4 grid sm:mx-0 md:h-[calc(100dvh-13rem)]
+              md:overflow-auto md:rounded-lg md:border-1
+              md:border-outline-variant md:bg-surface-3 [&>:first-child]:top-0
+              [&>:first-child]:z-10 [&>:first-child]:sm:sticky
+              [&>:first-child]:sm:bg-surface`)}
+          >
+            <AttendanceEventTabs
+              event={event}
+              onEventChange={setEvent}
+              className="!-mt-2 sm:!mt-0"
+            />
+            {event === "homeroom" && (
+              <Button
+                appearance="filled"
+                icon={<MaterialIcon icon="edit" />}
+                onClick={() => setHomeroomOpen(true)}
+                className="!mx-4 !mt-3 sm:!mx-0 md:!hidden"
+              >
+                {t("today.action.editHomeroom")}
+              </Button>
+            )}
+            <HomeroomContentDialog
+              open={homeroomOpen}
+              homeroomContent={
+                homeroomContent || { id: null, date, homeroom_content: "" }
+              }
+              classroomID={classroom.id}
+              onClose={() => setHomeroomOpen(false)}
+            />
+            <List
+              className={cn(`mt-1 sm:!-mx-4 md:!m-0 md:space-y-1 md:!p-2
+                [&>*]:bg-surface [&>*]:md:rounded-md`)}
+            >
+              {attendances.map((attendance) => (
+                <AttendanceListItem
+                  key={attendance.student.id}
+                  attendance={attendance}
+                  shownEvent={event}
+                  date={date}
+                  teacherID={teacherID}
+                  editable={editable}
+                  onAttendanceChange={(attendance) =>
+                    setAttendances(
+                      replace(
+                        attendances,
+                        attendance,
+                        (item) => attendance.student!.id === item.student!.id,
+                      ),
+                    )
+                  }
+                />
+              ))}
+            </List>
+          </div>
           <TodaySummary
             attendances={attendances}
             homeroomContent={
               homeroomContent || { id: null, date, homeroom_content: "" }
             }
             classroomID={classroom.id}
+            className="hidden sm:block"
           />
-          <motion.div layout="position" layoutId="list">
-            <List
-              divided
-              className={cn(
-                `!-mx-4 !block sm:!mx-0 [&>:first-child]:!border-b-outline`,
-                editable && `[&>:nth-last-child(2)]:!border-b-0`,
-              )}
-            >
-              <AttendanceListHeader event={event} onEventChange={setEvent} />
-              {attendances.map((attendance) => (
-                <AttendanceListItem
-                  key={attendance.student.id}
-                  attendance={attendance}
-                  shownEvent={event}
-                  editable={editable}
-                  onAttendanceChange={replaceAttendance}
-                />
-              ))}
-              {editable && (
-                <AttendanceListFooter
-                  loading={loading}
-                  onMarkAllPresent={handleMarkAllPresent}
-                  onClear={handleClear}
-                  onSave={async () => {
-                    if (await handleSave())
-                      setSnackbar(
-                        <Snackbar>{t("today.snackbar.saved")}</Snackbar>,
-                      );
-                    else
-                      setSnackbar(
-                        <Snackbar>{t("today.snackbar.incomplete")}</Snackbar>,
-                      );
-                  }}
-                />
-              )}
-            </List>
-          </motion.div>
-        </LayoutGroup>
+        </Columns>
       </ClassAttendanceLayout>
     </>
   );
