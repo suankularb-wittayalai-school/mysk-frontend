@@ -95,7 +95,11 @@ const PersonHeader: StylableFC<{
         className,
       )}
     >
-      <PersonAvatar profile={person.profile} className="!h-14 !w-14" />
+      <PersonAvatar
+        profile={person.profile}
+        expandable
+        className="[&>div]:!h-14 [&>div]:!w-14"
+      />
       <div className="flex flex-col gap-4 md:gap-2">
         <Header
           element={(props) => <h2 id="header-person-details" {...props} />}

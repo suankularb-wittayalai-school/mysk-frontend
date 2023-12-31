@@ -162,7 +162,11 @@ const AttendanceListItem: StylableFC<{
       >
         {/* Student information */}
         <ListItem key={attendance.student.id} align="center" lines={2}>
-          <PersonAvatar {...attendance.student} className="!min-w-[2.5rem]" />
+          <PersonAvatar
+            {...attendance.student}
+            expandable
+            className="!min-w-[2.5rem]"
+          />
           <ListItemContent
             title={getLocaleName(locale, attendance.student)}
             desc={sift([
