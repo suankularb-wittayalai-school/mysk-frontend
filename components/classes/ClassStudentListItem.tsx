@@ -1,3 +1,5 @@
+// Imports
+import PersonAvatar from "@/components/common/PersonAvatar";
 import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
 import StudentDetailsCard from "@/components/lookup/students/StudentDetailsCard";
 import { getStudentByID } from "@/utils/backend/person/getStudentByID";
@@ -6,14 +8,9 @@ import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import { Student } from "@/utils/types/person";
-import {
-  Avatar,
-  ListItem,
-  ListItemContent,
-} from "@suankularb-components/react";
+import { ListItem, ListItemContent } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useTranslation } from "next-i18next";
-import Image from "next/image";
 import { sift } from "radash";
 import { useState } from "react";
 
@@ -59,9 +56,7 @@ const ClassStudentListItem: StylableFC<{
         className={className}
       >
         {/* Profile */}
-        <Avatar>
-          {student.profile && <Image src={student.profile} alt="" />}
-        </Avatar>
+        <PersonAvatar {...student} />
         <ListItemContent
           // Full name
           title={getLocaleName(locale, student)}
