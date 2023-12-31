@@ -8,7 +8,11 @@ import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import { Student } from "@/utils/types/person";
-import { ListItem, ListItemContent } from "@suankularb-components/react";
+import {
+  ListItem,
+  ListItemContent,
+  useBreakpoint,
+} from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useTranslation } from "next-i18next";
 import { sift } from "radash";
@@ -34,6 +38,8 @@ const ClassStudentListItem: StylableFC<{
 }> = ({ student, style, className }) => {
   const locale = useLocale();
   const { t } = useTranslation("classes", { keyPrefix: "detail.students" });
+
+  const { atBreakpoint } = useBreakpoint();
 
   const [detailsOpen, setDetailsOpen] = useState(false);
 
@@ -77,7 +83,11 @@ const ClassStudentListItem: StylableFC<{
       >
         <StudentDetailsCard
           student={studentDetails}
-          options={{ hideSeeClass: true, hideScheduleCard: true }}
+          options={{
+            noProfileLayout: atBreakpoint !== "base",
+            hideSeeClass: true,
+            hideScheduleCard: true,
+          }}
         />
       </LookupDetailsDialog>
     </>

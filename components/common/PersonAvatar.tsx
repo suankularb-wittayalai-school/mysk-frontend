@@ -14,7 +14,7 @@ import {
 } from "@suankularb-components/react";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { useState } from "react";
+import { ComponentProps, useState } from "react";
 
 /**
  * An Avatar for a Person.
@@ -23,6 +23,9 @@ import { useState } from "react";
  * @param last_name The last name of the Person.
  * @param profile The profile image of the Person.
  * @param expandable Whether the Avatar can show a larger version of the profile image.
+ * 
+ * @param options Options.
+ * @param options.noLayout Whether to disable layout animation. Useful when the layout animation fails.
  *
  * @example
  * ```tsx
@@ -32,12 +35,14 @@ import { useState } from "react";
 const PersonAvatar: StylableFC<
   Partial<Pick<Person, "first_name" | "last_name" | "profile">> & {
     expandable?: boolean;
+    options?: ComponentProps<typeof PersonAvatarDialog>["options"];
   }
 > = ({
   first_name,
   last_name,
   profile,
   expandable: preferExpandable,
+  options,
   style,
   className,
 }) => {
@@ -120,6 +125,7 @@ const PersonAvatar: StylableFC<
           open={open}
           profile={profile}
           onClose={() => setOpen(false)}
+          options={options}
         />
       )}
     </>
