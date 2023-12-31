@@ -35,6 +35,7 @@ export default async function getStudentsByLookupFilters(
         middle_name_en,
         last_name_en,
         nickname_en,
+        profile,
         person_contacts${filters.contact ? "!inner" : ""}(contacts!inner(value))
       ),
       classroom_students(classrooms!inner(id, number))`,
@@ -71,6 +72,7 @@ export default async function getStudentsByLookupFilters(
       middle_name: mergeDBLocales(student.people, "middle_name"),
       last_name: mergeDBLocales(student.people, "last_name"),
       nickname: mergeDBLocales(student.people, "nickname"),
+      profile: student.people?.profile || null,
       role: UserRole.student,
       classroom: student.classroom_students[0]?.classrooms || null,
     })),

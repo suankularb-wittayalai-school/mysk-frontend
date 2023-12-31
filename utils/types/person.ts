@@ -1,8 +1,8 @@
 // Imports
+import { Classroom } from "@/utils/types/classroom";
 import { MultiLangString } from "@/utils/types/common";
 import { Contact } from "@/utils/types/contact";
-import { Classroom } from "@/utils/types/classroom";
-import { SubjectGroup, Subject } from "@/utils/types/subject";
+import { Subject, SubjectGroup } from "@/utils/types/subject";
 
 /**
  * The role of a user.
@@ -90,9 +90,10 @@ export type StudentLookupItem = Pick<
   | "id"
   | "prefix"
   | "first_name"
-  | "last_name"
   | "middle_name"
+  | "last_name"
   | "nickname"
+  | "profile"
   | "role"
   | "classroom"
 >;
@@ -102,9 +103,10 @@ export type TeacherLookupItem = Pick<
   | "id"
   | "prefix"
   | "first_name"
-  | "last_name"
   | "middle_name"
+  | "last_name"
   | "nickname"
+  | "profile"
   | "role"
   | "subject_group"
 >;

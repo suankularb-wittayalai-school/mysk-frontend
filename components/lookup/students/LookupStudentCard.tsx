@@ -42,8 +42,7 @@ const LookupStudentCard: StylableFC<{
       <CardHeader
         avatar={
           <PersonAvatar
-            first_name={student.first_name}
-            last_name={student.last_name}
+            {...student}
             className={
               student.id === selected
                 ? `sm:!bg-primary sm:!text-on-primary`
