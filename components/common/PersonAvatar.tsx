@@ -1,33 +1,22 @@
-// External libraries
-import Image from "next/image";
-import { FC } from "react";
-
-// SK Components
-import { Avatar } from "@suankularb-components/react";
-
-// Helpers
+// Imports
 import startsWithThaiVowel from "@/utils/helpers/startsWithThaiVowel";
-
-// Hooks
 import useLocale from "@/utils/helpers/useLocale";
-
-// Types
+import { StylableFC } from "@/utils/types/common";
 import { Person } from "@/utils/types/person";
+import { Avatar } from "@suankularb-components/react";
+import Image from "next/image";
 
-const DynamicAvatar: FC<
-  Partial<Pick<Person, "first_name" | "last_name" | "profile">> & {
-    className?: string;
-  }
-> = ({ first_name, last_name, profile, className }) => {
-  // Translation
+const PersonAvatar: StylableFC<
+  Partial<Pick<Person, "first_name" | "last_name" | "profile">>
+> = ({ first_name, last_name, profile, style, className }) => {
   const locale = useLocale();
 
   return (
-    <Avatar {...{ className }}>
+    <Avatar style={style} className={className}>
       {
         // Use profile image, if available
         profile ? (
-          <Image src={profile} alt="" />
+          <Image src={profile} alt="" width={48} height={48} />
         ) : // Use the first letter of first name and last name, if available
         first_name && last_name ? (
           // Use English name, if available
@@ -48,4 +37,4 @@ const DynamicAvatar: FC<
   );
 };
 
-export default DynamicAvatar;
+export default PersonAvatar;

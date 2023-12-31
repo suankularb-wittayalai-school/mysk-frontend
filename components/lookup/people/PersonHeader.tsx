@@ -1,6 +1,6 @@
 // Imports
 import ClassDetailsCard from "@/components/classes/ClassDetailsCard";
-import DynamicAvatar from "@/components/common/DynamicAvatar";
+import PersonAvatar from "@/components/common/PersonAvatar";
 import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
 import getClassroomByID from "@/utils/backend/classroom/getClassroomByID";
 import cn from "@/utils/helpers/cn";
@@ -95,7 +95,7 @@ const PersonHeader: StylableFC<{
         className,
       )}
     >
-      <DynamicAvatar profile={person.profile} className="!h-14 !w-14" />
+      <PersonAvatar profile={person.profile} className="!h-14 !w-14" />
       <div className="flex flex-col gap-4 md:gap-2">
         <Header
           element={(props) => <h2 id="header-person-details" {...props} />}

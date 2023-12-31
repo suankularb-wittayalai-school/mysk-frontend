@@ -1,21 +1,21 @@
 // Imports
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { useTranslation } from "next-i18next";
-import { FC, useContext, useState } from "react";
+import PersonAvatar from "@/components/common/PersonAvatar";
+import SnackbarContext from "@/contexts/SnackbarContext";
+import getTeachersByFirstName from "@/utils/backend/person/getTeacherByFirstName";
+import getLocaleName from "@/utils/helpers/getLocaleName";
+import useLocale from "@/utils/helpers/useLocale";
+import useToggle from "@/utils/helpers/useToggle";
+import withLoading from "@/utils/helpers/withLoading";
+import { Teacher } from "@/utils/types/person";
 import {
   ChipField,
   ChipSet,
   InputChip,
   Snackbar,
 } from "@suankularb-components/react";
-import DynamicAvatar from "@/components/common/DynamicAvatar";
-import SnackbarContext from "@/contexts/SnackbarContext";
-import withLoading from "@/utils/helpers/withLoading";
-import getLocaleName from "@/utils/helpers/getLocaleName";
-import useLocale from "@/utils/helpers/useLocale";
-import useToggle from "@/utils/helpers/useToggle";
-import { Teacher } from "@/utils/types/person";
-import getTeachersByFirstName from "@/utils/backend/person/getTeacherByFirstName";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { useTranslation } from "next-i18next";
+import { FC, useContext, useState } from "react";
 
 const TeachersField: FC<{
   label?: string;
@@ -100,7 +100,7 @@ const TeachersField: FC<{
         {teachers.map((teacher) => (
           <InputChip
             key={teacher.id}
-            avatar={<DynamicAvatar profile={teacher.profile} />}
+            avatar={<PersonAvatar profile={teacher.profile} />}
             onDelete={() =>
               onChange(
                 teachers.filter((mapTeacher) => teacher.id !== mapTeacher.id),
