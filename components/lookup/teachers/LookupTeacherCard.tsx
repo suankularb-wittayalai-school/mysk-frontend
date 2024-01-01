@@ -1,5 +1,5 @@
 // Imports
-import DynamicAvatar from "@/components/common/DynamicAvatar";
+import PersonAvatar from "@/components/common/PersonAvatar";
 import cn from "@/utils/helpers/cn";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import getLocaleString from "@/utils/helpers/getLocaleString";
@@ -33,7 +33,7 @@ const LookupTeacherCard: StylableFC<{
     >
       <CardHeader
         avatar={
-          <DynamicAvatar
+          <PersonAvatar
             first_name={teacher.first_name}
             last_name={teacher.last_name}
             className={

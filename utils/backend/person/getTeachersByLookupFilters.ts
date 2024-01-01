@@ -7,6 +7,15 @@ import createOrQueryFromFullName from "@/utils/helpers/person/createOrQueryFromF
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
 import { TeacherLookupItem, UserRole } from "@/utils/types/person";
 
+/**
+ * Get all Teachers that match the given Lookup Filters.
+ *
+ * @param supabase The Supabase Client to use.
+ * @param filters The Lookup Filters to use.
+ *
+ * @param options Options.
+ * @param options.year Academic year. Defaults to the current academic year.
+ */
 export default async function getTeachersByLookupFilters(
   supabase: DatabaseClient,
   filters: TeacherSearchFilters,
@@ -29,6 +38,7 @@ export default async function getTeachersByLookupFilters(
       middle_name_en,
       last_name_en,
       nickname_en,
+      profile,
       person_contacts${filters.contact ? "!inner" : ""}(contacts!inner(value))
     ),
     classroom_advisors${filters.classroom ? "!inner" : ""}(
@@ -74,9 +84,10 @@ export default async function getTeachersByLookupFilters(
       id: teacher.id,
       prefix: mergeDBLocales(teacher.people, "prefix"),
       first_name: mergeDBLocales(teacher.people, "first_name"),
+      middle_name: mergeDBLocales(teacher.people, "middle_name"),
       last_name: mergeDBLocales(teacher.people, "last_name"),
       nickname: mergeDBLocales(teacher.people, "nickname"),
-      middle_name: mergeDBLocales(teacher.people, "middle_name"),
+      profile: teacher.people?.profile || null,
       role: UserRole.teacher,
       subject_group: {
         id: teacher!.subject_groups!.id,

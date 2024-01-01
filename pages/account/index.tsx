@@ -16,8 +16,8 @@
 import ContactsSection from "@/components/account/ContactSection";
 import LogOutDialog from "@/components/account/LogOutDialog";
 import PersonFields from "@/components/account/PersonFields";
-import DynamicAvatar from "@/components/common/DynamicAvatar";
 import PageHeader from "@/components/common/PageHeader";
+import PersonAvatar from "@/components/common/PersonAvatar";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
@@ -68,16 +68,17 @@ const BasicInfoSection: FC<{ person: Student | Teacher }> = ({ person }) => {
   const locale = useLocale();
   const { t } = useTranslation("account");
 
-  // Dialog control
-  const [logOutOpen, setLogOutOpen] = useState<boolean>(false);
+  const [logOutOpen, setLogOutOpen] = useState(false);
 
   return (
     <section className="mx-4 flex flex-col gap-4 sm:mx-0">
       <div className="flex flex-col gap-3 md:flex-row md:gap-6">
         {/* Profile picture */}
-        <DynamicAvatar
+        <PersonAvatar
           profile={person.profile}
-          className="!h-[4.5rem] !w-[4.5rem] basis-[4.5rem]"
+          expandable
+          className={cn(`h-[4.5rem] w-[4.5rem] basis-[4.5rem] [&>div]:h-full
+            [&>div]:w-full`)}
         />
 
         {/* Text */}

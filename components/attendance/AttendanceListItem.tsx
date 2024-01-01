@@ -1,6 +1,6 @@
 // Imports
 import AbsenceTypeSelector from "@/components/attendance/AbsenceTypeSelector";
-import DynamicAvatar from "@/components/common/DynamicAvatar";
+import PersonAvatar from "@/components/common/PersonAvatar";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import upsertAttendance from "@/utils/backend/attendance/upsertAttendance";
 import cn from "@/utils/helpers/cn";
@@ -26,7 +26,7 @@ import {
   useAnimationConfig,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { sift } from "radash";
 import { ComponentProps, useContext } from "react";
@@ -162,7 +162,11 @@ const AttendanceListItem: StylableFC<{
       >
         {/* Student information */}
         <ListItem key={attendance.student.id} align="center" lines={2}>
-          <DynamicAvatar {...attendance.student} className="!min-w-[2.5rem]" />
+          <PersonAvatar
+            {...attendance.student}
+            expandable
+            className="!min-w-[2.5rem]"
+          />
           <ListItemContent
             title={getLocaleName(locale, attendance.student)}
             desc={sift([
