@@ -3,7 +3,9 @@ import getCurrentSemester from "@/utils/helpers/getCurrentSemester";
 import logError from "@/utils/helpers/logError";
 import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
 import getCurrentPeriod from "@/utils/helpers/schedule/getCurrentPeriod";
-import getCurrentSchoolSessionState from "@/utils/helpers/schedule/getCurrentSchoolSessionState";
+import getCurrentSchoolSessionState, {
+  SchoolSessionState,
+} from "@/utils/helpers/schedule/getCurrentSchoolSessionState";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
 import { SchedulePeriod } from "@/utils/types/schedule";
 import { group, pick, sift, unique } from "radash";
@@ -23,7 +25,7 @@ export default async function getRelevantPeriodOfClass(
   classroomID: string,
 ): Promise<BackendReturn<SchedulePeriod | null> & { isCurrent: boolean }> {
   // If the school is not in session, stop early and return null
-  if (getCurrentSchoolSessionState() !== "in-session")
+  if (getCurrentSchoolSessionState() !== SchoolSessionState.schedule)
     return { data: null, error: null, isCurrent: false };
 
   // Fetch today’s Schedule Items of the Classroom
