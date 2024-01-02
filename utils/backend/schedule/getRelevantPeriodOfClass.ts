@@ -106,6 +106,6 @@ export default async function getRelevantPeriodOfClass(
   return {
     data: currentPeriod || nextPeriod || null,
     error: null,
-    isCurrent: currentPeriod !== null,
+    isCurrent: currentPeriod !== undefined,
   };
 }

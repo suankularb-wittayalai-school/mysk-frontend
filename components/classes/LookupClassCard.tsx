@@ -31,7 +31,6 @@ import { useEffect, useState } from "react";
  * list.
  *
  * @param classroom The Classroom to display.
- * @param period The currently relevant Schedule Item for this Classroom.
  * @param selected The ID of the currently selected Classroom.
  * @param onClick The function to call when the card is clicked. Should select this Classroom.
  */
@@ -141,8 +140,10 @@ const LookupClassCard: StylableFC<{
             classroom.id === selected && `sm:group-focus:border-primary`,
           )}
         >
-          {period ? (
+          {[4, 5].includes(currentPeriodNumber) ? (
             <MaterialIcon icon="fastfood" className="text-tertiary" />
+          ) : period ? (
+            <MaterialIcon icon="hourglass" className="text-outline" />
           ) : (
             <MaterialIcon icon="home" className="text-secondary" />
           )}
