@@ -32,7 +32,7 @@ export default function useForm<KeyEnum extends string | symbol>(
     defaultValue?: any;
     validate?: (value: any) => string | boolean;
     required?: boolean;
-  }[]
+  }[],
 ) {
   // Translation
   const locale = useLocale();
@@ -46,9 +46,9 @@ export default function useForm<KeyEnum extends string | symbol>(
     () =>
       formSpecs.reduce(
         (form, field) => ({ ...form, [field.key]: field.defaultValue || "" }),
-        {} as FormControlValues<KeyEnum>
+        {} as FormControlValues<KeyEnum>,
       ),
-    [formSpecs]
+    [formSpecs],
   );
 
   // The actual “form control” part of this
@@ -57,9 +57,9 @@ export default function useForm<KeyEnum extends string | symbol>(
 
   // Form validation
 
-  // Both form valid states and erorr messages
+  // Both form valid states and error messages
   const formMessages: FormControlValidsWMessages<KeyEnum> = Object.keys(
-    formValues
+    formValues,
   ).reduce((form, key, idx) => {
     const { validate } = formSpecs[idx];
 
@@ -74,7 +74,7 @@ export default function useForm<KeyEnum extends string | symbol>(
 
   // Form error states
   const formValids: FormControlValids<KeyEnum> = Object.keys(
-    formMessages
+    formMessages,
   ).reduce((form, key) => {
     const messageOrValid = formMessages[key as KeyEnum];
 
@@ -87,17 +87,17 @@ export default function useForm<KeyEnum extends string | symbol>(
 
   // Form validation (taking into account `required`)
   const formValidsStrict: FormControlValids<KeyEnum> = Object.keys(
-    formValids
+    formValids,
   ).reduce((form, key, idx) => {
     const { required } = formSpecs[idx];
     return {
       ...form,
-      [key]: required ? formValues[key as KeyEnum].length > 0 : true,
+      [key]: required
+        ? formValues[key as KeyEnum].length > 0 && formValids[key as KeyEnum]
+        : true,
     };
   }, {} as FormControlValids<KeyEnum>);
-  const formOK =
-    Object.values(formValidsStrict).filter((valid) => valid).length ===
-    formSpecs.length;
+  const formOK = Object.values(formValidsStrict).every((valid) => valid);
 
   // Props for a Text Field/Select
   const formProps: FormControlProps<KeyEnum> = Object.keys(formValues).reduce(
@@ -125,7 +125,7 @@ export default function useForm<KeyEnum extends string | symbol>(
         locale,
       },
     }),
-    {} as FormControlProps<KeyEnum>
+    {} as FormControlProps<KeyEnum>,
   );
 
   return {
@@ -161,7 +161,7 @@ export default function useForm<KeyEnum extends string | symbol>(
       !formOK &&
       setSnackbar(
         // eslint-disable-next-line react/no-children-prop
-        createElement(Snackbar, { children: t("snackbar.formInvalid") })
+        createElement(Snackbar, { children: t("snackbar.formInvalid") }),
       ),
 
     /**
