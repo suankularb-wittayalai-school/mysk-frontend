@@ -1,3 +1,5 @@
+import AttendanceDatePickerDialog from "@/components/attendance/AttendanceDatePickerDialog";
+import AttendanceStatisticsDialog from "@/components/attendance/AttendanceStatisticsDialog";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
 import useAttendanceView, {
@@ -6,6 +8,7 @@ import useAttendanceView, {
 } from "@/utils/helpers/attendance/useAttendanceView";
 import cn from "@/utils/helpers/cn";
 import { StylableFC } from "@/utils/types/common";
+import { User, UserRole } from "@/utils/types/person";
 import {
   Actions,
   Button,
@@ -19,19 +22,20 @@ import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useContext, useState } from "react";
-import AttendanceDatePickerDialog from "./AttendanceDatePickerDialog";
 
 /**
  * The view selector for the Attendance pages. Allows the user to select the
  * view and jump to a date.
  *
  * @param type The type of the View Selector, classroom or management.
+ * @param user The currently logged in user.
  * @param date The date to display in the date field by default.
  */
 const AttendanceViewSelector: StylableFC<{
   type: SelectorType;
+  user?: User;
   date: string;
-}> = ({ type, date, style, className }) => {
+}> = ({ type, user, date, style, className }) => {
   const { t } = useTranslation("attendance", { keyPrefix: "viewSelector" });
 
   const { view, form, formOK, formProps, getURLforView } = useAttendanceView(
@@ -109,17 +113,25 @@ const AttendanceViewSelector: StylableFC<{
       }
 
       {/* School-wide statistics */}
-      {view === AttendanceView.today && (
-        <Button
-          appearance="outlined"
-          icon={<MaterialIcon icon="bar_chart" />}
-          alt={t("action.statistics")}
-          onClick={() => setStatisticsOpen(true)}
-          className={collapsibleButtonClassName}
-        >
-          {t("action.statistics")}
-        </Button>
-      )}
+      {(user?.role === UserRole.teacher || user?.is_admin) &&
+        view === AttendanceView.today && (
+          <>
+            <Button
+              appearance="outlined"
+              icon={<MaterialIcon icon="bar_chart" />}
+              alt={t("action.statistics")}
+              onClick={() => setStatisticsOpen(true)}
+              className={collapsibleButtonClassName}
+            >
+              {t("action.statistics")}
+            </Button>
+            <AttendanceStatisticsDialog
+              open={statisticsOpen}
+              date={date}
+              onClose={() => setStatisticsOpen(false)}
+            />
+          </>
+        )}
 
       {/* Date picker */}
       <Button

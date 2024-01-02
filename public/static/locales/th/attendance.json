@@ -25,6 +25,18 @@
           "cancel": "ยกเลิก",
           "go": "ไป"
         }
+      },
+      "statistics": {
+        "desc": "นี่คือสถิติการเข้าเรียนของโรงเรียน",
+        "total": {
+          "presence": "มาเรียน {{count, number}}",
+          "late": "มาสาย {{count, number}}",
+          "absence": "ขาดเรียน {{count, number}}"
+        },
+        "missing": "หมายเหตุ: ยังขาดข้อมูลการเช็กชื่อจากห้องเรียน {{count, number}} ห้อง",
+        "action": {
+          "close": "ปิด"
+        }
       }
     },
     "snackbar": {

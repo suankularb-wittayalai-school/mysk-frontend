@@ -24,7 +24,7 @@ import {
 } from "@/utils/types/attendance";
 import { Classroom } from "@/utils/types/classroom";
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { UserRole } from "@/utils/types/person";
+import { User, UserRole } from "@/utils/types/person";
 import {
   Button,
   Columns,
@@ -45,6 +45,7 @@ import { useEffect, useState } from "react";
  * Date Attendance page displays Attendance of a Classroom at specific date.
  *
  * @param date The date to display Attendance of, in YYYY-MM-DD format.
+ * @param user The currently logged in user.
  * @param teacherID The ID of the Teacher who is viewing this page. Used in Attendance.
  * @param editable Whether the Attendance data is editable.
  * @param attendances The Attendance data to display.
@@ -53,6 +54,7 @@ import { useEffect, useState } from "react";
  */
 const DateAttendancePage: CustomPage<{
   date: string;
+  user: User;
   teacherID?: string;
   editable?: boolean;
   attendances: StudentAttendance[];
@@ -60,6 +62,7 @@ const DateAttendancePage: CustomPage<{
   classroom: Pick<Classroom, "id" | "number">;
 }> = ({
   date,
+  user,
   teacherID,
   editable,
   attendances: initialAttendances,
@@ -88,10 +91,14 @@ const DateAttendancePage: CustomPage<{
       <PageHeader parentURL="/classes">
         {t("title", { classNumber: classroom.number })}
       </PageHeader>
-      <ClassAttendanceLayout type={SelectorType.classroom} date={date}>
+      <ClassAttendanceLayout
+        type={SelectorType.classroom}
+        user={user}
+        date={date}
+      >
         <Columns columns={2} className="!grid-cols-1 md:!grid-cols-2">
           <div
-            className={cn(`-mx-4 grid sm:mx-0 md:h-[calc(100dvh-12rem)]
+            className={cn(`-mx-4 grid sm:mx-0 md:h-[calc(100dvh-12rem-2px)]
               md:overflow-auto md:rounded-lg md:border-1
               md:border-outline-variant md:bg-surface-3 [&>:first-child]:top-0
               [&>:first-child]:z-10 [&>:first-child]:sm:sticky
@@ -233,6 +240,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         "attendance",
       ])),
       date,
+      user,
       teacherID,
       editable,
       attendances,
