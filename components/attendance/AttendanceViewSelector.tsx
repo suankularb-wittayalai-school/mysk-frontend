@@ -7,17 +7,15 @@ import { StylableFC } from "@/utils/types/common";
 import {
   Actions,
   Button,
-  Dialog,
-  DialogContent,
-  DialogHeader,
   MaterialIcon,
   SegmentedButton,
-  TextField,
 } from "@suankularb-components/react";
 import { isToday } from "date-fns";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useState } from "react";
+import AttendanceDatePickerDialog from "./AttendanceDatePickerDialog";
 
 /**
  * The view selector for the Attendance pages. Allows the user to select the
@@ -36,6 +34,8 @@ const AttendanceViewSelector: StylableFC<{
 
   const [statisticsOpen, setStatisticsOpen] = useState(false);
   const [dateOpen, setDateOpen] = useState(false);
+
+  const router = useRouter();
 
   /**
    * Whether the date picker Button can be collapsed on small screens.
@@ -128,38 +128,18 @@ const AttendanceViewSelector: StylableFC<{
           ][view]
         }
       </Button>
-
-      {/* Date picker dialog */}
-      <Dialog open={dateOpen} width={320} onClose={() => setDateOpen(false)}>
-        <DialogHeader desc={t("dialog.date.desc")} />
-        <DialogContent className="px-6">
-          <TextField<string>
-            appearance="outlined"
-            label={t("dialog.date.field")}
-            value={dateField}
-            onChange={setDateField}
-            inputAttr={
-              [
-                { type: "date", placeholder: "YYYY-MM-DD" },
-                { type: "week", placeholder: "YYYY-Www" },
-              ][view]
-            }
-          />
-        </DialogContent>
-        <Actions>
-          <Button appearance="text" onClick={() => setDateOpen(false)}>
-            {t("dialog.date.action.cancel")}
-          </Button>
-          <Button
-            appearance="text"
-            onClick={() => !disabled && setDateOpen(false)}
-            href={disabled ? undefined : getURLforView(view)}
-            element={disabled ? "button" : Link}
-          >
-            {t("dialog.date.action.go")}
-          </Button>
-        </Actions>
-      </Dialog>
+      <AttendanceDatePickerDialog
+        open={dateOpen}
+        dateField={dateField}
+        view={view}
+        onClose={() => setDateOpen(false)}
+        onDateFieldChange={setDateField}
+        onSubmit={() => {
+          if (disabled) return;
+          setDateOpen(false);
+          router.push(getURLforView(view));
+        }}
+      />
     </Actions>
   );
 };
