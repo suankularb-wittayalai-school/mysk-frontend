@@ -10,7 +10,9 @@ import SubjectsInChargeCard from "@/components/schedule/SubjectsInChargeCard";
 import ScheduleContext from "@/contexts/ScheduleContext";
 import cn from "@/utils/helpers/cn";
 import getCurrentPeriod from "@/utils/helpers/schedule/getCurrentPeriod";
-import getCurrentSchoolSessionState from "@/utils/helpers/schedule/getCurrentSchoolSessionState";
+import getCurrentSchoolSessionState, {
+  SchoolSessionState,
+} from "@/utils/helpers/schedule/getCurrentSchoolSessionState";
 import isInPeriod from "@/utils/helpers/schedule/isInPeriod";
 import useNow from "@/utils/helpers/useNow";
 import { StylableFC } from "@/utils/types/common";
@@ -62,7 +64,7 @@ const Schedule: StylableFC<{
   useEffect(() => {
     const schedule = scheduleRef.current;
     if (!schedule) return;
-    if (getCurrentSchoolSessionState() !== "in-session") return;
+    if (getCurrentSchoolSessionState() !== SchoolSessionState.schedule) return;
     schedule.scrollTo({ top: 0, left: (getCurrentPeriod() - 2) * 104 });
   }, []);
 
@@ -103,7 +105,9 @@ const Schedule: StylableFC<{
           className="relative overflow-x-auto overflow-y-hidden pb-1"
         >
           {/* Now indicator line */}
-          {getCurrentSchoolSessionState() === "in-session" && <NowLine />}
+          {getCurrentSchoolSessionState() === SchoolSessionState.schedule && (
+            <NowLine />
+          )}
 
           <ul className="flex w-fit flex-col gap-2 px-4 py-2 sm:px-0">
             {/* Period numbers and start-end times */}
@@ -165,4 +169,3 @@ const Schedule: StylableFC<{
 };
 
 export default Schedule;
-

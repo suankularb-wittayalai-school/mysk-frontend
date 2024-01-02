@@ -5,11 +5,17 @@ import GlancePeriods from "@/components/home/GlanceSubjects";
 import cn from "@/utils/helpers/cn";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import getCurrentPeriod from "@/utils/helpers/schedule/getCurrentPeriod";
-import getCurrentSchoolSessionState from "@/utils/helpers/schedule/getCurrentSchoolSessionState";
+import getCurrentSchoolSessionState, {
+  ASSEMBLY_START,
+  HOMEROOM_START,
+  SCHEDULE_START,
+  SchoolSessionState,
+} from "@/utils/helpers/schedule/getCurrentSchoolSessionState";
 import getTodaySetToPeriodTime from "@/utils/helpers/schedule/getTodaySetToPeriodTime";
 import useLocale from "@/utils/helpers/useLocale";
 import useNow from "@/utils/helpers/useNow";
 import within from "@/utils/helpers/within";
+import { AttendanceEvent } from "@/utils/types/attendance";
 import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
@@ -19,31 +25,11 @@ import {
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
-import {
-  differenceInMinutes,
-  differenceInSeconds,
-  isFuture,
-  isPast,
-} from "date-fns";
+import { differenceInMinutes, differenceInSeconds } from "date-fns";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { Trans, useTranslation } from "next-i18next";
 import { camel, list } from "radash";
 import { useMemo } from "react";
-
-/**
- * The start time of assembly.
- */
-const ASSEMBLY_START: Parameters<Date["setHours"]> = [7, 30, 0, 0];
-
-/**
- * The start time of homeroom.
- */
-const HOMEROOM_START: Parameters<Date["setHours"]> = [8, 0, 0, 0];
-
-/**
- * The start time of period 1.
- */
-const PERIOD_START: Parameters<Date["setHours"]> = [8, 30, 0, 0];
 
 /**
  * A glanceable banner dynamically updated by the current and upcoming schedule
@@ -108,15 +94,16 @@ const HomeGlance: StylableFC<{
   // Note: `differenceInSeconds` and `differenceInMinutes` operate by
   // [first param] - [second param]
 
-  // The sequence of periods is as follows:
-  //   1. Assembly   07:30 - 08:00
-  //   2. Homeroom   08:00 - 08:30
-  //   3. Periods    08:30 onwards
+  const schoolSessionState = getCurrentSchoolSessionState();
 
-  const attendanceEvent = isFuture(new Date().setHours(...PERIOD_START))
-    ? isFuture(new Date().setHours(...HOMEROOM_START))
-      ? "assembly"
-      : "homeroom"
+  /**
+   * The current Attendance Event, if any.
+   */
+  const attendanceEvent = [
+    SchoolSessionState.assembly,
+    SchoolSessionState.homeroom,
+  ].includes(schoolSessionState)
+    ? (schoolSessionState as AttendanceEvent)
     : null;
 
   // The edges of periods relative to current time, used in calculating the
@@ -128,14 +115,15 @@ const HomeGlance: StylableFC<{
    *
    * Also support assembly and homeroom.
    */
-  const secondsSinceStart = isFuture(new Date().setHours(...PERIOD_START))
+  const secondsSinceStart = attendanceEvent
     ? differenceInSeconds(
         now,
-        isPast(new Date().setHours(...HOMEROOM_START))
-          ? new Date().setHours(...HOMEROOM_START)
-          : new Date().setHours(...ASSEMBLY_START),
+        {
+          assembly: new Date().setHours(...ASSEMBLY_START),
+          homeroom: new Date().setHours(...HOMEROOM_START),
+        }[attendanceEvent],
       )
-    : currentPeriod?.content.length
+    : currentPeriod
       ? differenceInSeconds(
           now,
           getTodaySetToPeriodTime(currentPeriod.start_time),
@@ -150,12 +138,13 @@ const HomeGlance: StylableFC<{
   const minutesTilEnd = attendanceEvent
     ? differenceInMinutes(
         {
-          assembly: new Date().setHours(...PERIOD_START),
-          homeroom: new Date().setHours(...HOMEROOM_START),
+          assembly: new Date().setHours(...HOMEROOM_START),
+          homeroom: new Date().setHours(...SCHEDULE_START),
         }[attendanceEvent],
         now,
+        { roundingMethod: "ceil" },
       )
-    : currentPeriod?.content.length
+    : currentPeriod
       ? differenceInMinutes(
           getTodaySetToPeriodTime(
             currentPeriod.start_time + currentPeriod.duration - 1,
@@ -197,13 +186,12 @@ const HomeGlance: StylableFC<{
    */
   const classProgress =
     (secondsSinceStart /
-      // If class hasn’t started yet, it’s probably assembly or homeroom
-      ((getCurrentSchoolSessionState() === "before"
-        ? // Assembly and homeroom are each 30 minutes long
-          30
-        : // If there is a current period, use the duration of that period
-          // (A period is 50 minutes long)
-          (currentPeriod?.duration || 1) * 50) *
+      // If there is a current period, use the duration of that period
+      // (A period is 50 minutes long)
+      ((schoolSessionState === SchoolSessionState.schedule
+        ? (currentPeriod?.duration || 1) * 50
+        : // Assembly and homeroom are each 30 minutes long
+          30) *
         // There are 60 seconds in a minute
         60)) *
     // Convert decimal to percentage
@@ -214,11 +202,8 @@ const HomeGlance: StylableFC<{
    * and upcoming schedule items to be the most relevant.
    */
   const displayType = (() => {
-    // If it’s between 07:30 and 08:00, display that it’s assembly time
-    // If it’s between 08:00 and 08:30, display that it’s homeroom time
-    if (isFuture(new Date().setHours(...PERIOD_START)))
-      if (isFuture(new Date().setHours(...HOMEROOM_START))) return "assembly";
-      else return "homeroom";
+    // If it’s assembly or homeroom, display that
+    if (attendanceEvent) return attendanceEvent;
 
     // If there are no periods today, don’t display anything
     if (!todayRow.length) return "none";
