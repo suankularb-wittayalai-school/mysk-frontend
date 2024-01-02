@@ -3,7 +3,7 @@ import getISODateString from "@/utils/helpers/getISODateString";
 import logError from "@/utils/helpers/logError";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
 import { Classroom } from "@/utils/types/classroom";
-import { sift } from "radash";
+import { sift, unique } from "radash";
 
 /**
  * Gets a list of Classrooms that do not have ant Attendance data for a given
@@ -37,11 +37,13 @@ export default async function getClassrooomsWithoutAttendance(
     };
   }
 
-  const classroomsWithoutAttendance = classroomsWithAttendance
-    ? sift(
-        classroomsWithAttendance.map(
-          (classroom) =>
-            classroom.students?.classroom_students[0]?.classrooms?.id,
+  const classroomIDs = classroomsWithAttendance
+    ? unique(
+        sift(
+          classroomsWithAttendance.map(
+            (classroom) =>
+              classroom.students?.classroom_students[0]?.classrooms?.id,
+          ),
         ),
       )
     : [];
@@ -49,7 +51,7 @@ export default async function getClassrooomsWithoutAttendance(
   const { data: classrooms, error: classroomsError } = await supabase
     .from("classrooms")
     .select(`id, number`)
-    .not("id", "in", `(${classroomsWithoutAttendance.join()})`)
+    .not("id", "in", `(${classroomIDs.join()})`)
     .eq("year", getCurrentAcademicYear())
     .order("number");
 
