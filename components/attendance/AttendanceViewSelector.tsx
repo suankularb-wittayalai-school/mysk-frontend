@@ -1,3 +1,5 @@
+import SnackbarContext from "@/contexts/SnackbarContext";
+import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
 import useAttendanceView, {
   AttendanceView,
   SelectorType,
@@ -9,12 +11,14 @@ import {
   Button,
   MaterialIcon,
   SegmentedButton,
+  Snackbar,
 } from "@suankularb-components/react";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { isToday } from "date-fns";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import AttendanceDatePickerDialog from "./AttendanceDatePickerDialog";
 
 /**
@@ -29,13 +33,19 @@ const AttendanceViewSelector: StylableFC<{
   date: string;
 }> = ({ type, date, style, className }) => {
   const { t } = useTranslation("attendance", { keyPrefix: "viewSelector" });
-  const { view, dateField, setDateField, disabled, getURLforView } =
-    useAttendanceView(type, date);
+
+  const { view, form, formOK, formProps, getURLforView } = useAttendanceView(
+    type,
+    date,
+  );
 
   const [statisticsOpen, setStatisticsOpen] = useState(false);
   const [dateOpen, setDateOpen] = useState(false);
 
   const router = useRouter();
+  const supabase = useSupabaseClient();
+
+  const { setSnackbar } = useContext(SnackbarContext);
 
   /**
    * Whether the date picker Button can be collapsed on small screens.
@@ -68,7 +78,7 @@ const AttendanceViewSelector: StylableFC<{
             <Button
               appearance="outlined"
               selected={view === AttendanceView.today}
-              disabled={disabled}
+              disabled={!formOK}
               href={getURLforView(AttendanceView.today)}
               element={Link}
             >
@@ -77,7 +87,7 @@ const AttendanceViewSelector: StylableFC<{
             <Button
               appearance="outlined"
               selected={view === AttendanceView.thisWeek}
-              disabled={disabled}
+              disabled={!formOK}
               href={getURLforView(AttendanceView.thisWeek)}
               element={Link}
             >
@@ -130,14 +140,20 @@ const AttendanceViewSelector: StylableFC<{
       </Button>
       <AttendanceDatePickerDialog
         open={dateOpen}
-        dateField={dateField}
         view={view}
+        formProps={formProps}
         onClose={() => setDateOpen(false)}
-        onDateFieldChange={setDateField}
-        onSubmit={() => {
-          if (disabled) return;
+        onSubmit={async () => {
+          if (!formOK) return;
           setDateOpen(false);
-          router.push(getURLforView(view));
+          const { error } = await getClassroomByNumber(
+            supabase,
+            form.classroom,
+          );
+          if (error) {
+            setSnackbar(<Snackbar>{t("snackbar.classNotFound")}</Snackbar>);
+            setDateOpen(true);
+          } else router.push(getURLforView(view));
         }}
       />
     </Actions>

@@ -79,9 +79,15 @@ const DateAttendancePage: CustomPage<{
   return (
     <>
       <Head>
-        <title>{tx("tabName", { tabName: t("title") })}</title>
+        <title>
+          {tx("tabName", {
+            tabName: t("title", { classNumber: classroom.number }),
+          })}
+        </title>
       </Head>
-      <PageHeader parentURL="/classes">{t("title")}</PageHeader>
+      <PageHeader parentURL="/classes">
+        {t("title", { classNumber: classroom.number })}
+      </PageHeader>
       <ClassAttendanceLayout type={SelectorType.classroom} date={date}>
         <Columns columns={2} className="!grid-cols-1 md:!grid-cols-2">
           <div

@@ -1,5 +1,5 @@
 {
-  "title": "Attendance",
+  "title": "M.{{classNumber}} attendance",
   "viewSelector": {
     "view": {
       "title": "Choose view…",
@@ -16,13 +16,19 @@
     },
     "dialog": {
       "date": {
-        "desc": "Enter the date or week to jump to.",
-        "field": "Date",
+        "desc": "Enter the date and classroom to go to.",
+        "form": {
+          "date": "Date",
+          "classroom": "Classroom"
+        },
         "action": {
           "cancel": "Cancel",
           "go": "Go"
         }
       }
+    },
+    "snackbar": {
+      "classNotFound": "Class not found"
     }
   },
   "event": {

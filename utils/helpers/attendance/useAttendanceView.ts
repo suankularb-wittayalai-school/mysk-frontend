@@ -59,7 +59,7 @@ export default function useAttendanceView(
     week: AttendanceView.thisWeek,
   }[asPath.split("/")[segmentToCheck]]!;
 
-  const { form, setForm, formValids, formOK } = useForm<"date" | "classroom">([
+  const formReturns = useForm<"date" | "classroom">([
     {
       key: "date",
       defaultValue: dateString,
@@ -72,13 +72,16 @@ export default function useAttendanceView(
             Number(value.slice(0, 4)) <= getYear(new Date()) &&
             Number(value.slice(6, 8)) <= getWeek(new Date()),
         ][view],
+      required: true,
     },
     {
       key: "classroom",
-      defaultValue: type === SelectorType.classroom ? asPath.split("/")[1] : "",
+      defaultValue: type === SelectorType.classroom ? asPath.split("/")[2] : "",
       validate: (value: string) => classRegex.test(value),
+      required: true,
     },
   ]);
+  const { form, formValids } = formReturns;
 
   const parentURL = replace(
     asPath.split("/").slice(0, segmentToCheck),
@@ -117,9 +120,7 @@ export default function useAttendanceView(
 
   return {
     view,
-    dateField: form.date,
-    setDateField: (date: string) => setForm({ ...form, date }),
-    disabled: !formOK,
+    ...formReturns,
     getURLforView,
   };
 }
