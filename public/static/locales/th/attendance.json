@@ -6,10 +6,13 @@
       "today": "วันนี้",
       "thisWeek": "สัปดาห์นี้"
     },
-    "date": "ไปวันที่…",
     "action": {
       "print": "พิมพ์",
-      "go": "ไปที่วันที่"
+      "statistics": "ดูสถิติโรงเรียน",
+      "date": {
+        "today": "{{date, datetime(day: numeric; month: short;)}}",
+        "thisWeek": "สัปดาห์ที่ {{week, number}}"
+      }
     },
     "dialog": {
       "date": {

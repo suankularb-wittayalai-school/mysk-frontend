@@ -3,7 +3,6 @@ import useAttendanceView, {
   SelectorType,
 } from "@/utils/helpers/attendance/useAttendanceView";
 import cn from "@/utils/helpers/cn";
-import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import {
   Actions,
@@ -15,7 +14,7 @@ import {
   SegmentedButton,
   TextField,
 } from "@suankularb-components/react";
-import { isToday, parseISO } from "date-fns";
+import { isToday } from "date-fns";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useState } from "react";
@@ -31,139 +30,137 @@ const AttendanceViewSelector: StylableFC<{
   type: SelectorType;
   date: string;
 }> = ({ type, date, style, className }) => {
-  const locale = useLocale();
   const { t } = useTranslation("attendance", { keyPrefix: "viewSelector" });
   const { view, dateField, setDateField, disabled, getURLforView } =
     useAttendanceView(type, date);
 
+  const [statisticsOpen, setStatisticsOpen] = useState(false);
   const [dateOpen, setDateOpen] = useState(false);
 
-  return (
-    <div
-      style={style}
-      className={cn(
-        `grid flex-row gap-4 md:flex md:items-center md:justify-between`,
-        className,
-      )}
-    >
-      {/* View selector */}
-      <Actions
-        align="left"
-        className="!flex-nowrap [&_.skc-button\_\_label]:!whitespace-nowrap"
-      >
-        <SegmentedButton
-          alt={t("view.title")}
-          className="!grid grow grid-cols-2 sm:!flex"
-        >
-          <Button
-            appearance="outlined"
-            selected={view === AttendanceView.today}
-            disabled={disabled}
-            href={getURLforView(AttendanceView.today)}
-            element={Link}
-          >
-            {t("view.today")}
-          </Button>
-          <Button
-            appearance="outlined"
-            selected={view === AttendanceView.thisWeek}
-            disabled={disabled || type === SelectorType.management}
-            href={getURLforView(AttendanceView.thisWeek)}
-            element={Link}
-          >
-            {t("view.thisWeek")}
-          </Button>
-        </SegmentedButton>
+  /**
+   * Whether the date picker Button can be collapsed on small screens.
+   */
+  const canCollapseDateButton =
+    view === AttendanceView.today && isToday(new Date(date));
 
-        {type === SelectorType.management && (
+  /**
+   * The class name for the collapsible Buttons—Buttons that hide their label
+   * on small screens.
+   */
+  const collapsibleButtonClassName = cn(
+    `!aspect-square !p-2 sm:!aspect-auto md:!py-2.5 md:!pl-4 md:!pr-6
+    [&_span:not(:empty)]:hidden [&_span:not(:empty)]:md:inline`,
+  );
+
+  return (
+    <Actions
+      style={style}
+      className={cn(`!flex-nowrap [&_span]:!whitespace-nowrap`, className)}
+    >
+      {
+        [
+          // Show the View Selector only on the page for a Classroom.
+          <SegmentedButton
+            key="classroom"
+            alt={t("view.title")}
+            className="!grid grow grid-cols-2 sm:!flex"
+          >
+            <Button
+              appearance="outlined"
+              selected={view === AttendanceView.today}
+              disabled={disabled}
+              href={getURLforView(AttendanceView.today)}
+              element={Link}
+            >
+              {t("view.today")}
+            </Button>
+            <Button
+              appearance="outlined"
+              selected={view === AttendanceView.thisWeek}
+              disabled={disabled}
+              href={getURLforView(AttendanceView.thisWeek)}
+              element={Link}
+            >
+              {t("view.thisWeek")}
+            </Button>
+          </SegmentedButton>,
+
+          // Show the Print button only on the page for Management.
           <Button
+            key="management"
             appearance="filled"
             icon={<MaterialIcon icon="print" />}
             onClick={() => window.print()}
+            className="hidden md:!flex"
           >
             {t("action.print")}
-          </Button>
-        )}
+          </Button>,
+        ][type]
+      }
 
-        {/* Go to date (mobile) */}
+      {/* School-wide statistics */}
+      {view === AttendanceView.today && (
         <Button
-          appearance="tonal"
-          icon={<MaterialIcon icon="event" />}
-          alt={t("action.go")}
-          onClick={() => setDateOpen(true)}
-          className="md:!hidden"
-        >
-          {(() => {
-            const parsedDate =
-              view === AttendanceView.today
-                ? new Date(date)
-                : new Date(parseISO(date));
-            if (!isToday(parsedDate) || view === AttendanceView.thisWeek)
-              return new Date(parsedDate).toLocaleDateString(locale, {
-                month: "short",
-                day: "numeric",
-              });
-          })()}
-        </Button>
-
-        {/* Date picker dialog */}
-        <Dialog open={dateOpen} width={320} onClose={() => setDateOpen(false)}>
-          <DialogHeader desc={t("dialog.date.desc")} />
-          <DialogContent className="px-6">
-            <TextField<string>
-              appearance="outlined"
-              label={t("dialog.date.field")}
-              value={dateField}
-              onChange={setDateField}
-              inputAttr={
-                [
-                  { type: "date", placeholder: "YYYY-MM-DD" },
-                  { type: "week", placeholder: "YYYY-Www" },
-                ][view]
-              }
-            />
-          </DialogContent>
-          <Actions>
-            <Button appearance="text" onClick={() => setDateOpen(false)}>
-              {t("dialog.date.action.cancel")}
-            </Button>
-            <Button
-              appearance="text"
-              onClick={() => !disabled && setDateOpen(false)}
-              href={disabled ? undefined : getURLforView(view)}
-              element={disabled ? "button" : Link}
-            >
-              {t("dialog.date.action.go")}
-            </Button>
-          </Actions>
-        </Dialog>
-      </Actions>
-
-      {/* Go to date (desktop) */}
-      <div className="hidden flex-row items-center gap-2 md:flex">
-        <TextField<string>
           appearance="outlined"
-          label={t("date")}
-          value={dateField}
-          onChange={setDateField}
-          inputAttr={
-            [
-              { type: "date", placeholder: "YYYY-MM-DD" },
-              { type: "week", placeholder: "YYYY-Www" },
-            ][view]
-          }
-          className="grow sm:w-56"
-        />
-        <Button
-          appearance="filled"
-          icon={<MaterialIcon icon="arrow_forward" />}
-          alt={t("action.go")}
-          disabled={disabled}
-          href={getURLforView(view)}
-          element={Link}
-        />
-      </div>
-    </div>
+          icon={<MaterialIcon icon="bar_chart" />}
+          alt={t("action.statistics")}
+          onClick={() => setStatisticsOpen(true)}
+          className={collapsibleButtonClassName}
+        >
+          {t("action.statistics")}
+        </Button>
+      )}
+
+      {/* Date picker */}
+      <Button
+        appearance="tonal"
+        icon={<MaterialIcon icon="event" />}
+        alt={t("action.go")}
+        onClick={() => setDateOpen(true)}
+        className={
+          canCollapseDateButton ? collapsibleButtonClassName : undefined
+        }
+      >
+        {
+          [
+            t("action.date.today", { date: new Date(date) }),
+            t("action.date.thisWeek", { week: Number(date.slice(6, 8)) }),
+          ][view]
+        }
+      </Button>
+
+      {/* Date picker dialog */}
+      <Dialog open={dateOpen} width={320} onClose={() => setDateOpen(false)}>
+        <DialogHeader desc={t("dialog.date.desc")} />
+        <DialogContent className="px-6">
+          <TextField<string>
+            appearance="outlined"
+            label={t("dialog.date.field")}
+            value={dateField}
+            onChange={setDateField}
+            inputAttr={
+              [
+                { type: "date", placeholder: "YYYY-MM-DD" },
+                { type: "week", placeholder: "YYYY-Www" },
+              ][view]
+            }
+          />
+        </DialogContent>
+        <Actions>
+          <Button appearance="text" onClick={() => setDateOpen(false)}>
+            {t("dialog.date.action.cancel")}
+          </Button>
+          <Button
+            appearance="text"
+            onClick={() => !disabled && setDateOpen(false)}
+            href={disabled ? undefined : getURLforView(view)}
+            element={disabled ? "button" : Link}
+          >
+            {t("dialog.date.action.go")}
+          </Button>
+        </Actions>
+      </Dialog>
+    </Actions>
   );
 };
 
