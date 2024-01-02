@@ -123,7 +123,7 @@ const HomeGlance: StylableFC<{
           homeroom: new Date().setHours(...HOMEROOM_START),
         }[attendanceEvent],
       )
-    : currentPeriod?.content.length
+    : currentPeriod
       ? differenceInSeconds(
           now,
           getTodaySetToPeriodTime(currentPeriod.start_time),
@@ -144,7 +144,7 @@ const HomeGlance: StylableFC<{
         now,
         { roundingMethod: "ceil" },
       )
-    : currentPeriod?.content.length
+    : currentPeriod
       ? differenceInMinutes(
           getTodaySetToPeriodTime(
             currentPeriod.start_time + currentPeriod.duration - 1,
