@@ -91,7 +91,7 @@ const DateAttendancePage: CustomPage<{
       <ClassAttendanceLayout type={SelectorType.classroom} date={date}>
         <Columns columns={2} className="!grid-cols-1 md:!grid-cols-2">
           <div
-            className={cn(`-mx-4 grid sm:mx-0 md:h-[calc(100dvh-13rem)]
+            className={cn(`-mx-4 grid sm:mx-0 md:h-[calc(100dvh-12rem)]
               md:overflow-auto md:rounded-lg md:border-1
               md:border-outline-variant md:bg-surface-3 [&>:first-child]:top-0
               [&>:first-child]:z-10 [&>:first-child]:sm:sticky
@@ -121,7 +121,7 @@ const DateAttendancePage: CustomPage<{
               onClose={() => setHomeroomOpen(false)}
             />
             <List
-              className={cn(`mt-1 sm:!-mx-4 md:!m-0 md:space-y-1 md:!p-2
+              className={cn(`!mt-1 sm:!-mx-4 md:!m-0 md:space-y-1 md:!p-2
                 [&>*]:bg-surface [&>*]:md:rounded-md`)}
             >
               {attendances.map((attendance) => (
