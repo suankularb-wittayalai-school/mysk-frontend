@@ -11,15 +11,18 @@ import {
   Button,
   MaterialIcon,
   Snackbar,
+  transition,
+  useAnimationConfig,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { mapValues, omit } from "radash";
 import { useContext } from "react";
 
 /**
  * Bulk Actions for Attendance.
- * 
+ *
  * @param attendances The Attendance data to bulk edit.
  * @param onAttendancesChange Callback when the Attendance data is changed.
  * @param toggleLoading Callback to toggle loading state during saving.
@@ -49,6 +52,7 @@ const AttendanceBulkActions: StylableFC<{
 
   const supabase = useSupabaseClient();
   const { setSnackbar } = useContext(SnackbarContext);
+  const { duration, easing } = useAnimationConfig();
   const refreshProps = useRefreshProps();
 
   async function handleMarkAll() {
@@ -100,30 +104,33 @@ const AttendanceBulkActions: StylableFC<{
   }
 
   return (
-    <Actions
-      align="left"
+    <motion.li
+      layout="position"
+      transition={transition(duration.medium2, easing.standard)}
       style={style}
-      className={cn(
-        `!bg-transparent md:!gap-1 *:md:!border-0 *:md:!bg-surface`,
-        className,
-      )}
+      className={cn(`!bg-surface md:!bg-transparent`, className)}
     >
-      <Button
-        appearance="outlined"
-        icon={<MaterialIcon icon="done_all" />}
-        onClick={handleMarkAll}
+      <Actions
+        align="left"
+        className="md:!gap-1 *:md:!border-0 *:md:!bg-surface"
       >
-        {t("markAll")}
-      </Button>
-      <Button
-        appearance="outlined"
-        icon={<MaterialIcon icon="delete" />}
-        dangerous
-        onClick={handleClear}
-      >
-        {t("clear")}
-      </Button>
-    </Actions>
+        <Button
+          appearance="outlined"
+          icon={<MaterialIcon icon="done_all" />}
+          onClick={handleMarkAll}
+        >
+          {t("markAll")}
+        </Button>
+        <Button
+          appearance="outlined"
+          icon={<MaterialIcon icon="delete" />}
+          dangerous
+          onClick={handleClear}
+        >
+          {t("clear")}
+        </Button>
+      </Actions>
+    </motion.li>
   );
 };
 
