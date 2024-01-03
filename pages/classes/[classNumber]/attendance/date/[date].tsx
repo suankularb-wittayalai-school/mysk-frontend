@@ -1,4 +1,5 @@
 // Imports
+import AttendanceBulkActions from "@/components/attendance/AttendanceBulkActions";
 import AttendanceEventTabs from "@/components/attendance/AttendanceEventTabs";
 import AttendanceListItem from "@/components/attendance/AttendanceListItem";
 import ClassAttendanceLayout from "@/components/attendance/ClassAttendanceLayout";
@@ -16,6 +17,7 @@ import getHomeroomOfClass from "@/utils/backend/attendance/getHomeroomOfClass";
 import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
 import { SelectorType } from "@/utils/helpers/attendance/useAttendanceView";
 import cn from "@/utils/helpers/cn";
+import useToggle from "@/utils/helpers/useToggle";
 import { YYYYMMDDRegex } from "@/utils/patterns";
 import {
   AttendanceEvent,
@@ -75,6 +77,8 @@ const DateAttendancePage: CustomPage<{
   const [event, setEvent] = useState<AttendanceEvent>("assembly");
   const [homeroomOpen, setHomeroomOpen] = useState(false);
 
+  const [loading, toggleLoading] = useToggle();
+
   const [attendances, setAttendances] =
     useState<StudentAttendance[]>(initialAttendances);
   useEffect(() => setAttendances(initialAttendances), [initialAttendances]);
@@ -128,8 +132,11 @@ const DateAttendancePage: CustomPage<{
               onClose={() => setHomeroomOpen(false)}
             />
             <List
-              className={cn(`!mt-1 sm:!-mx-4 md:!m-0 md:space-y-1 md:!p-2
-                [&>*]:bg-surface [&>*]:md:rounded-md`)}
+              className={cn(
+                loading && `*:*:animate-pulse`,
+                `!mt-1 *:bg-surface sm:!-mx-4 md:!m-0 md:space-y-1 md:!p-2
+                *:md:rounded-md`,
+              )}
             >
               {attendances.map((attendance) => (
                 <AttendanceListItem
@@ -138,7 +145,7 @@ const DateAttendancePage: CustomPage<{
                   shownEvent={event}
                   date={date}
                   teacherID={teacherID}
-                  editable={editable}
+                  editable={editable || loading}
                   onAttendanceChange={(attendance) =>
                     setAttendances(
                       replace(
@@ -150,6 +157,19 @@ const DateAttendancePage: CustomPage<{
                   }
                 />
               ))}
+
+              {/* Bulk actions (as requested by Supannee) */}
+              {editable && teacherID && (
+                <AttendanceBulkActions
+                  attendances={attendances}
+                  onAttendancesChange={setAttendances}
+                  toggleLoading={toggleLoading}
+                  date={date}
+                  classroomID={classroom.id}
+                  teacherID={teacherID}
+                  className="mt-2 px-4 md:px-0"
+                />
+              )}
             </List>
           </div>
           <TodaySummary
@@ -158,7 +178,7 @@ const DateAttendancePage: CustomPage<{
               homeroomContent || { id: null, date, homeroom_content: "" }
             }
             classroomID={classroom.id}
-            className="hidden sm:block"
+            className="hidden md:block"
           />
         </Columns>
       </ClassAttendanceLayout>
