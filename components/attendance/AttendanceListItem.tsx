@@ -219,6 +219,21 @@ const AttendanceListItem: StylableFC<{
                 null: <MaterialIcon icon="check_box_outline_blank" />,
               }[JSON.stringify(checkboxState)]
             }
+            onClick={() => {
+              if (checkboxState)
+                setAttendanceOfShownEvent({
+                  ...attendance[shownEvent],
+                  is_present: false,
+                  absence_type: AbsenceType.sick,
+                });
+              else
+                setAttendanceOfShownEvent({
+                  ...attendance[shownEvent],
+                  is_present: true,
+                  absence_type: null,
+                  absence_reason: null,
+                });
+            }}
             dangerous={checkboxState === false}
             className={cn(
               checkboxState === null && `!text-on-surface-variant`,
@@ -243,7 +258,7 @@ const AttendanceListItem: StylableFC<{
                   absence_type,
                 });
               }}
-              className="mb-2 [&>*]:px-4"
+              className="mb-2 *:px-4"
             />
           )}
 
@@ -255,7 +270,18 @@ const AttendanceListItem: StylableFC<{
             transition={transition(duration.medium2, easing.standard)}
             className="mt-1 px-4 sm:px-0"
           >
-            <TextField appearance="outlined" label={t("enterReason")} />
+            <TextField<string>
+              appearance="outlined"
+              label={t("enterReason")}
+              value={attendance[shownEvent].absence_reason || ""}
+              onChange={(absence_reason) => {
+                setAttendanceOfShownEvent({
+                  ...attendance[shownEvent],
+                  absence_reason,
+                });
+              }}
+              inputAttr={{ onBlur: () => handleSave(attendance) }}
+            />
           </motion.div>
         )}
       </motion.ul>
