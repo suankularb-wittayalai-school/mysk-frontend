@@ -1,5 +1,5 @@
 {
-  "title": "การเช็กชื่อม.{{classNumber}}",
+  "title": "การเช็กชื่อ ม.{{classNumber}}",
   "viewSelector": {
     "view": {
       "title": "เลือกขอบเวลา…",
