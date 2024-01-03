@@ -83,7 +83,7 @@ const TodaySummary: StylableFC<{
     <motion.div
       layout
       transition={transition(duration.medium4, easing.standard)}
-      style={{ ...style, borderRadius: 12 }}
+      style={{ ...style, borderRadius: 20 }}
       className={cn(
         `overflow-hidden rounded-lg border-1 border-outline-variant
         bg-surface-3`,

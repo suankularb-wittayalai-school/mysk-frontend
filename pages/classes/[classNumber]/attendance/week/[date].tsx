@@ -25,9 +25,15 @@ const WeekAttendancePage: CustomPage<{
   return (
     <>
       <Head>
-        <title>{tx("tabName", { tabName: "Attendance" })}</title>
+        <title>
+          {tx("tabName", {
+            tabName: t("title", { classNumber: classroom.number }),
+          })}
+        </title>
       </Head>
-      <PageHeader parentURL="/classes">{t("title")}</PageHeader>
+      <PageHeader parentURL="/classes">
+        {t("title", { classNumber: classroom.number })}
+      </PageHeader>
       <ClassAttendanceLayout type={SelectorType.classroom} date={date}>
         <div className="py-20">
           <div

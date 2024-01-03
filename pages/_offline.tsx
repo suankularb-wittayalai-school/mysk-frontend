@@ -1,21 +1,17 @@
-// External libraries
 import { GetStaticProps } from "next";
-
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
-// Images
 import OfflineLight from "@/public/images/graphics/error/offline-light.png";
 import OfflineDark from "@/public/images/graphics/error/offline-dark.png";
-
-// Internal components
 import MultiSchemeImage from "@/components/common/MultiSchemeImage";
 import ErrorHero from "@/components/error/ErrorHero";
 import ErrorLayout from "@/components/error/ErrorLayout";
-
-// Types
 import { CustomPage, LangCode } from "@/utils/types/common";
+import { Text } from "@suankularb-components/react";
 
+/**
+ * An error page that is displayed when the user is offline.
+ */
 const OfflinePage: CustomPage = () => {
   const { t } = useTranslation("common");
 
@@ -41,9 +37,12 @@ const OfflinePage: CustomPage = () => {
             aria-labelledby="header-school-wi-fi"
             className="flex flex-col gap-2"
           >
-            <h2 id="header-school-wi-fi" className="skc-title-medium">
+            <Text
+              type="title-medium"
+              element={(props) => <h2 id="header-school-wi-fi" {...props} />}
+            >
               {t("error.offline.schoolWiFi.title")}
-            </h2>
+            </Text>
             <p>{t("error.offline.schoolWiFi.desc")}</p>
           </section>
         </div>

@@ -1,25 +1,46 @@
 {
-  "title": "การเช็กชื่อ",
+  "title": "การเช็กชื่อม.{{classNumber}}",
   "viewSelector": {
     "view": {
       "title": "เลือกขอบเวลา…",
       "today": "วันนี้",
       "thisWeek": "สัปดาห์นี้"
     },
-    "date": "ไปวันที่…",
     "action": {
       "print": "พิมพ์",
-      "go": "ไปที่วันที่"
+      "statistics": "ดูสถิติโรงเรียน",
+      "date": {
+        "today": "{{date, datetime(day: numeric; month: short;)}}",
+        "thisWeek": "สัปดาห์ที่ {{week, number}}"
+      }
     },
     "dialog": {
       "date": {
-        "desc": "เลือกวันที่หรือสัปดาห์ที่ต้องการเรียกดู",
-        "field": "วันที่",
+        "desc": "เลือกวันที่และห้องเรียนที่ต้องการเรียกดู",
+        "form": {
+          "date": "วันที่",
+          "classroom": "ห้องเรียน"
+        },
         "action": {
           "cancel": "ยกเลิก",
           "go": "ไป"
         }
+      },
+      "statistics": {
+        "desc": "นี่คือสถิติการเข้าเรียนของโรงเรียน",
+        "total": {
+          "presence": "มาเรียน {{count, number}}",
+          "late": "มาสาย {{count, number}}",
+          "absence": "ขาดเรียน {{count, number}}"
+        },
+        "missing": "หมายเหตุ: ยังขาดข้อมูลการเช็กชื่อจากห้องเรียน {{count, number}} ห้อง",
+        "action": {
+          "close": "ปิด"
+        }
       }
+    },
+    "snackbar": {
+      "classNotFound": "ไม่พบห้องเรียน"
     }
   },
   "event": {

@@ -1,8 +1,9 @@
 import getISODateString from "@/utils/helpers/getISODateString";
-import { YYYYMMDDRegex, YYYYWwwRegex } from "@/utils/patterns";
+import useForm from "@/utils/helpers/useForm";
+import { YYYYMMDDRegex, YYYYWwwRegex, classRegex } from "@/utils/patterns";
 import { getWeek, getYear, isPast, isWeekend, parseISO } from "date-fns";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { replace } from "radash";
 
 /**
  * The possible views of the Attendance pages.
@@ -57,21 +58,36 @@ export default function useAttendanceView(
     date: AttendanceView.today,
     week: AttendanceView.thisWeek,
   }[asPath.split("/")[segmentToCheck]]!;
-  const parentURL = asPath.split("/").slice(0, segmentToCheck).join("/");
 
-  const [dateField, setDateField] = useState(dateString);
+  const formReturns = useForm<"date" | "classroom">([
+    {
+      key: "date",
+      defaultValue: dateString,
+      validate: (value: string) =>
+        [
+          YYYYMMDDRegex.test(value) &&
+            !isWeekend(new Date(value)) &&
+            isPast(new Date(value)),
+          YYYYWwwRegex.test(value) &&
+            Number(value.slice(0, 4)) <= getYear(new Date()) &&
+            Number(value.slice(6, 8)) <= getWeek(new Date()),
+        ][view],
+      required: true,
+    },
+    {
+      key: "classroom",
+      defaultValue: type === SelectorType.classroom ? asPath.split("/")[2] : "",
+      validate: (value: string) => classRegex.test(value),
+      required: true,
+    },
+  ]);
+  const { form, formValids } = formReturns;
 
-  /**
-   * Whether the date in the date field is valid.
-   */
-  const dateIsValid = [
-    YYYYMMDDRegex.test(dateField) &&
-      !isWeekend(new Date(dateField)) &&
-      isPast(new Date(dateField)),
-    YYYYWwwRegex.test(dateField) &&
-      Number(dateField.slice(0, 4)) <= getYear(new Date()) &&
-      Number(dateField.slice(6, 8)) <= getWeek(new Date()),
-  ][view];
+  const parentURL = replace(
+    asPath.split("/").slice(0, segmentToCheck),
+    form.classroom,
+    (segment) => formValids.classroom && classRegex.test(segment),
+  ).join("/");
 
   /**
    * The URL to go to when the user clicks the “Today” or “This Week” button.
@@ -87,15 +103,15 @@ export default function useAttendanceView(
       [
         // For “Today” button.
         view === AttendanceView.today
-          ? dateField
-          : dateIsValid && getISODateString(parseISO(dateField)),
+          ? form.date
+          : formValids.date && getISODateString(parseISO(form.date)),
 
         // For “This Week” button.
         view === AttendanceView.thisWeek
-          ? dateField
-          : dateIsValid &&
-            `${dateField.slice(0, 4)}-W${String(
-              getWeek(new Date(dateField)),
+          ? form.date
+          : formValids.date &&
+            `${form.date.slice(0, 4)}-W${String(
+              getWeek(new Date(form.date)),
             ).padStart(2, "0")}`,
       ][destinationView],
       ,
@@ -104,9 +120,7 @@ export default function useAttendanceView(
 
   return {
     view,
-    dateField,
-    setDateField,
-    disabled: !dateIsValid,
+    ...formReturns,
     getURLforView,
   };
 }
