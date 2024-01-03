@@ -45,7 +45,8 @@ const LookupDetailsDialog: StylableFC<{
         onClose={onClose}
         style={style}
         className={cn(
-          `sm:divide-y-0 [&>:first-child]:!max-w-[42.5rem]
+          `sm:divide-y-0 [&>:first-child>button]:pointer-events-auto
+          [&>:first-child]:pointer-events-none [&>:first-child]:!max-w-[42.5rem]
           [&>:first-child]:!flex-row-reverse [&>:first-child]:!bg-transparent
           sm:[&>:first-child]:!fixed [&>:last-child>div]:!mx-0
           [&>:last-child>div]:!rounded-none [&>:last-child>div]:!border-0

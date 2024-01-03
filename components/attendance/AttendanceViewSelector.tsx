@@ -1,185 +1,174 @@
+import AttendanceDatePickerDialog from "@/components/attendance/AttendanceDatePickerDialog";
+import AttendanceStatisticsDialog from "@/components/attendance/AttendanceStatisticsDialog";
+import SnackbarContext from "@/contexts/SnackbarContext";
+import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
+import useAttendanceView, {
+  AttendanceView,
+  SelectorType,
+} from "@/utils/helpers/attendance/useAttendanceView";
 import cn from "@/utils/helpers/cn";
-import getISODateString from "@/utils/helpers/getISODateString";
-import { YYYYMMDDRegex, YYYYWwwRegex } from "@/utils/patterns";
 import { StylableFC } from "@/utils/types/common";
+import { User, UserRole } from "@/utils/types/person";
 import {
   Actions,
   Button,
   MaterialIcon,
   SegmentedButton,
-  TextField,
+  Snackbar,
 } from "@suankularb-components/react";
-import {
-  getWeek,
-  getYear,
-  isFuture,
-  isPast,
-  isWeekend,
-  parse,
-  parseISO,
-  startOfWeek,
-} from "date-fns";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { isToday } from "date-fns";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
-
-/**
- * The possible views of the Attendance pages.
- */
-enum AttendanceView {
-  today,
-  thisWeek,
-}
-
-/**
- * The type of the View Selector.
- */
-export enum SelectorType {
-  classroom,
-  management,
-}
+import { useContext, useState } from "react";
 
 /**
  * The view selector for the Attendance pages. Allows the user to select the
  * view and jump to a date.
  *
  * @param type The type of the View Selector, classroom or management.
+ * @param user The currently logged in user.
  * @param date The date to display in the date field by default.
  */
 const AttendanceViewSelector: StylableFC<{
   type: SelectorType;
+  user?: User;
   date: string;
-}> = ({ type, date, style, className }) => {
+}> = ({ type, user, date, style, className }) => {
   const { t } = useTranslation("attendance", { keyPrefix: "viewSelector" });
 
-  const { asPath } = useRouter();
+  const { view, form, formOK, formProps, getURLforView } = useAttendanceView(
+    type,
+    date,
+  );
+
+  const [statisticsOpen, setStatisticsOpen] = useState(false);
+  const [dateOpen, setDateOpen] = useState(false);
+
+  const router = useRouter();
+  const supabase = useSupabaseClient();
+
+  const { setSnackbar } = useContext(SnackbarContext);
 
   /**
-   * The path segment to check for the selected {@link view}. The path prior to
-   * this segment is the {@link parentURL parent URL}.
-   *
-   * ---
-   *
-   * For **`SelectorType.classroom`**, this is the 4th segment.
-   *
-   * ```plaintext
-   * /classes/604/attendance/date/2024-01-01
-   *                         ~~~~
-   * ```
-   *
-   * ---
-   *
-   * For **`SelectorType.management`**, this is the 3rd segment.
-   *
-   * ```plaintext
-   * /manage/attendance/date/2024-01-01
-   *                    ~~~~
-   * ```
+   * Whether the date picker Button can be collapsed on small screens.
    */
-  const segmentToCheck = [4, 3][type];
+  const canCollapseDateButton =
+    view === AttendanceView.today && isToday(new Date(date));
 
   /**
-   * The selected view of the parent Attendance page.
+   * The class name for the collapsible Buttons—Buttons that hide their label
+   * on small screens.
    */
-  const view = {
-    date: AttendanceView.today,
-    week: AttendanceView.thisWeek,
-  }[asPath.split("/")[segmentToCheck]]!;
-  const parentURL = asPath.split("/").slice(0, segmentToCheck).join("/");
-
-  const [dateField, setDateField] = useState(date);
-  const dateIsValid = [
-    YYYYMMDDRegex.test(dateField) &&
-      !isWeekend(new Date(dateField)) &&
-      isPast(new Date(dateField)),
-    YYYYWwwRegex.test(dateField) &&
-      Number(dateField.slice(0, 4)) <= getYear(new Date()) &&
-      Number(dateField.slice(6, 8)) <= getWeek(new Date()),
-  ][view];
+  const collapsibleButtonClassName = cn(
+    `!aspect-square !p-2 sm:!aspect-auto md:!py-2.5 md:!pl-4 md:!pr-6
+    [&_span:not(:empty)]:hidden [&_span:not(:empty)]:md:inline`,
+  );
 
   return (
-    <div
+    <Actions
       style={style}
-      className={cn(
-        `grid flex-row gap-4 sm:flex sm:items-center sm:justify-between`,
-        className,
-      )}
+      className={cn(`!flex-nowrap [&_span]:!whitespace-nowrap`, className)}
     >
-      {/* View selector */}
-      <Actions align="left">
-        <SegmentedButton alt="View" className="!grid grow grid-cols-2 sm:!flex">
-          <Button
-            appearance="outlined"
-            selected={view === AttendanceView.today}
-            disabled={!dateIsValid}
-            href={[
-              parentURL,
-              "date",
-              view === AttendanceView.today
-                ? dateField
-                : dateIsValid && getISODateString(parseISO(dateField)),
-            ].join("/")}
-            element={Link}
+      {
+        [
+          // Show the View Selector only on the page for a Classroom.
+          <SegmentedButton
+            key="classroom"
+            alt={t("view.title")}
+            className="!grid grow grid-cols-2 sm:!flex"
           >
-            {t("view.today")}
-          </Button>
-          <Button
-            appearance="outlined"
-            selected={view === AttendanceView.thisWeek}
-            disabled={!dateIsValid || type === SelectorType.management}
-            href={[
-              parentURL,
-              "week",
-              view === AttendanceView.thisWeek
-                ? dateField
-                : dateIsValid &&
-                  `${dateField.slice(0, 4)}-W${String(
-                    getWeek(new Date(dateField)),
-                  ).padStart(2, "0")}`,
-            ].join("/")}
-            element={Link}
-          >
-            {t("view.thisWeek")}
-          </Button>
-        </SegmentedButton>
+            <Button
+              appearance="outlined"
+              selected={view === AttendanceView.today}
+              disabled={!formOK}
+              href={getURLforView(AttendanceView.today)}
+              element={Link}
+            >
+              {t("view.today")}
+            </Button>
+            <Button
+              appearance="outlined"
+              selected={view === AttendanceView.thisWeek}
+              disabled={!formOK}
+              href={getURLforView(AttendanceView.thisWeek)}
+              element={Link}
+            >
+              {t("view.thisWeek")}
+            </Button>
+          </SegmentedButton>,
 
-        {type === SelectorType.management && (
+          // Show the Print button only on the page for Management.
           <Button
+            key="management"
             appearance="filled"
             icon={<MaterialIcon icon="print" />}
             onClick={() => window.print()}
+            className="hidden md:!flex"
           >
             {t("action.print")}
-          </Button>
-        )}
-      </Actions>
+          </Button>,
+        ][type]
+      }
 
-      {/* Go to date */}
-      <div className="flex flex-row items-center gap-2">
-        <TextField<string>
-          appearance="outlined"
-          label={t("date")}
-          value={dateField}
-          onChange={setDateField}
-          inputAttr={
-            [
-              { type: "date", placeholder: "YYYY-MM-DD" },
-              { type: "week", placeholder: "YYYY-Www" },
-            ][view]
-          }
-          className="grow sm:w-56"
-        />
-        <Button
-          appearance="filled"
-          icon={<MaterialIcon icon="arrow_forward" />}
-          alt={t("actions.go")}
-          disabled={!dateIsValid}
-          href={[parentURL, ["date", "week"][view], dateField].join("/")}
-          element={Link}
-        />
-      </div>
-    </div>
+      {/* School-wide statistics */}
+      {(user?.role === UserRole.teacher || user?.is_admin) &&
+        view === AttendanceView.today && (
+          <>
+            <Button
+              appearance="outlined"
+              icon={<MaterialIcon icon="bar_chart" />}
+              alt={t("action.statistics")}
+              onClick={() => setStatisticsOpen(true)}
+              className={collapsibleButtonClassName}
+            >
+              {t("action.statistics")}
+            </Button>
+            <AttendanceStatisticsDialog
+              open={statisticsOpen}
+              date={date}
+              onClose={() => setStatisticsOpen(false)}
+            />
+          </>
+        )}
+
+      {/* Date picker */}
+      <Button
+        appearance="tonal"
+        icon={<MaterialIcon icon="event" />}
+        alt={t("action.go")}
+        onClick={() => setDateOpen(true)}
+        className={
+          canCollapseDateButton ? collapsibleButtonClassName : undefined
+        }
+      >
+        {
+          [
+            t("action.date.today", { date: new Date(date) }),
+            t("action.date.thisWeek", { week: Number(date.slice(6, 8)) }),
+          ][view]
+        }
+      </Button>
+      <AttendanceDatePickerDialog
+        open={dateOpen}
+        view={view}
+        formProps={formProps}
+        onClose={() => setDateOpen(false)}
+        onSubmit={async () => {
+          if (!formOK) return;
+          setDateOpen(false);
+          const { error } = await getClassroomByNumber(
+            supabase,
+            form.classroom,
+          );
+          if (error) {
+            setSnackbar(<Snackbar>{t("snackbar.classNotFound")}</Snackbar>);
+            setDateOpen(true);
+          } else router.push(getURLforView(view));
+        }}
+      />
+    </Actions>
   );
 };
 

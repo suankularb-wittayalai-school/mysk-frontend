@@ -1,6 +1,6 @@
 // Imports
 import ClassDetailsCard from "@/components/classes/ClassDetailsCard";
-import DynamicAvatar from "@/components/common/DynamicAvatar";
+import PersonAvatar from "@/components/common/PersonAvatar";
 import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
 import getClassroomByID from "@/utils/backend/classroom/getClassroomByID";
 import cn from "@/utils/helpers/cn";
@@ -33,13 +33,18 @@ import { useEffect, useState } from "react";
  * @param onScheduleOpenClick Callback to open the Person’s schedule.
  *
  * @param options Options to customize the Card.
+ * @param options.noProfileLayout Whether to disable layout animation for the profile. Should be used if this is a child of a Dialog.
  * @param options.hideSeeClass Whether to hide the See class Chip.
  * @param options.hideScheduleCard Whether to hide the Student Schedule Card.
  */
 const PersonHeader: StylableFC<{
   person: Student | Teacher;
   onScheduleOpenClick?: () => void;
-  options?: Partial<{ hideSeeClass: boolean; hideScheduleCard: boolean }>;
+  options?: Partial<{
+    noProfileLayout: boolean;
+    hideSeeClass: boolean;
+    hideScheduleCard: boolean;
+  }>;
 }> = ({ person, onScheduleOpenClick, options, style, className }) => {
   // Translation
   const locale = useLocale();
@@ -95,7 +100,14 @@ const PersonHeader: StylableFC<{
         className,
       )}
     >
-      <DynamicAvatar profile={person.profile} className="!h-14 !w-14" />
+      <PersonAvatar
+        profile={person.profile}
+        expandable
+        // Layout animation fails when the Dialog isn’t full-screen so we only
+        // enable it on mobile.
+        options={{ noLayout: options?.noProfileLayout }}
+        className="h-16 w-16 [&>div]:!h-full [&>div]:!w-full"
+      />
       <div className="flex flex-col gap-4 md:gap-2">
         <Header
           element={(props) => <h2 id="header-person-details" {...props} />}

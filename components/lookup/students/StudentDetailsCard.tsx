@@ -23,12 +23,17 @@ import { sift } from "radash";
  * @param student The Student to show the details of.
  *
  * @param options Options to customize the Card.
+ * @param options.noProfileLayout Whether to disable layout animation for the profile. Should be used if this is a child of a Dialog.
  * @param options.hideSeeClass Whether to hide the See class Chip.
  * @param options.hideScheduleCard Whether to hide the Student Schedule Card.
  */
 const StudentDetailsCard: StylableFC<{
   student?: Student;
-  options?: Partial<{ hideSeeClass: boolean; hideScheduleCard: boolean }>;
+  options?: Partial<{
+    noProfileLayout: boolean;
+    hideSeeClass: boolean;
+    hideScheduleCard: boolean;
+  }>;
 }> = ({ student, options, style, className }) => {
   const { t } = useTranslation("lookup", { keyPrefix: "students.detail" });
   const { t: tx } = useTranslation("common");

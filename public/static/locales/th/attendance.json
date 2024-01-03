@@ -1,41 +1,59 @@
 {
-  "title": "การเช็กชื่อ",
+  "title": "การเช็กชื่อม.{{classNumber}}",
   "viewSelector": {
     "view": {
+      "title": "เลือกขอบเวลา…",
       "today": "วันนี้",
       "thisWeek": "สัปดาห์นี้"
     },
-    "date": "ไปวันที่…",
     "action": {
       "print": "พิมพ์",
-      "go": "ไป"
+      "statistics": "ดูสถิติโรงเรียน",
+      "date": {
+        "today": "{{date, datetime(day: numeric; month: short;)}}",
+        "thisWeek": "สัปดาห์ที่ {{week, number}}"
+      }
+    },
+    "dialog": {
+      "date": {
+        "desc": "เลือกวันที่และห้องเรียนที่ต้องการเรียกดู",
+        "form": {
+          "date": "วันที่",
+          "classroom": "ห้องเรียน"
+        },
+        "action": {
+          "cancel": "ยกเลิก",
+          "go": "ไป"
+        }
+      },
+      "statistics": {
+        "desc": "นี่คือสถิติการเข้าเรียนของโรงเรียน",
+        "total": {
+          "presence": "มาเรียน {{count, number}}",
+          "late": "มาสาย {{count, number}}",
+          "absence": "ขาดเรียน {{count, number}}"
+        },
+        "missing": "หมายเหตุ: ยังขาดข้อมูลการเช็กชื่อจากห้องเรียน {{count, number}} ห้อง",
+        "action": {
+          "close": "ปิด"
+        }
+      }
+    },
+    "snackbar": {
+      "classNotFound": "ไม่พบห้องเรียน"
     }
   },
   "event": {
-    "title": "เลือก…",
+    "title": "เลือกคาบ…",
     "assembly": "เข้าแถว",
-    "homeroom": "โฮมรูม",
-    "snackbar": {
-      "switchedToAssembly": "เปลี่ยนไปเช็กชื่อเข้าแถว",
-      "switchedToHomeroom": "เปลี่ยนไปเช็กชื่อโฮมรูม"
-    }
-  },
-  "legend": {
-    "title": "คำอธิบาย",
-    "present": "มา",
-    "late": "มาสาย",
-    "absent": "ลา/ขาด"
+    "homeroom": "โฮมรูม"
   },
   "item": {
     "classNo": "เลขที่ {{classNo}}",
-    "presence": {
-      "title": "การเข้าเรียน",
-      "present": "มา",
-      "late": "มาสาย",
-      "absent": "ลา/ขาด"
-    },
+    "late": "สาย",
     "absenceType": {
-      "onLeave": "มีใบลา",
+      "sick": "ลาป่วย",
+      "business": "ลากิจ",
       "absent": "ขาดไม่มีเหตุ",
       "dropped": "พักการเรียน",
       "other": "อื่น ๆ"
@@ -45,6 +63,7 @@
   "today": {
     "title": "มาสาย {{late, number}} • ขาด {{absent, number}}",
     "homeroom": {
+      "title": "โฮมรูม",
       "field": "โฮมรูมวันนี้พูดเรื่องอะไรบ้าง?",
       "action": {
         "add": "เพิ่มข้อมูลโฮมรูม",
@@ -54,13 +73,21 @@
       }
     },
     "action": {
-      "save": "บันทึก",
-      "clear": "ลบทั้งหมด",
-      "markAll": "เช็กมาทุกคน"
+      "editHomeroom": "แก้ไขข้อมูลโฮมรูม"
     },
     "snackbar": {
       "saved": "บันทึกการเช็กชื่อเข้าแถวและโฮมรูมแล้ว",
       "incomplete": "กรุณาเช็กชื่อให้ครบทุกคนก่อนบันทึก"
+    },
+    "dialog": {
+      "homeroom": {
+        "desc": "เพิ่มข้อมูลโฮมรูมของวันนี้ ว่าพูดเรื่องอะไรบ้าง",
+        "field": "ข้อมูลโฮมรูม",
+        "action": {
+          "cancel": "ยกเลิก",
+          "save": "บันทึก"
+        }
+      }
     }
   },
   "thisWeek": {

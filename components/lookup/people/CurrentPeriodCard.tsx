@@ -1,7 +1,9 @@
 // Imports
 import cn from "@/utils/helpers/cn";
 import getLocaleString from "@/utils/helpers/getLocaleString";
-import getCurrentSchoolSessionState from "@/utils/helpers/schedule/getCurrentSchoolSessionState";
+import getCurrentSchoolSessionState, {
+  SchoolSessionState,
+} from "@/utils/helpers/schedule/getCurrentSchoolSessionState";
 import getTodaySetToPeriodTime from "@/utils/helpers/schedule/getTodaySetToPeriodTime";
 import useLocale from "@/utils/helpers/useLocale";
 import useNow from "@/utils/helpers/useNow";
@@ -64,7 +66,7 @@ const CurrentPeriodCard: StylableFC<{
   // Fetch the current period once the percentage reaches 100%
   useEffect(() => {
     // If school is not in session, don’t fetch
-    if (getCurrentSchoolSessionState() !== "in-session") {
+    if (getCurrentSchoolSessionState() !== SchoolSessionState.schedule) {
       setLoading(false);
       return;
     }
