@@ -16,10 +16,11 @@ import {
 } from "@/utils/types/attendance";
 import { StylableFC } from "@/utils/types/common";
 import {
-  Checkbox,
+  Button,
   FilterChip,
   ListItem,
   ListItemContent,
+  MaterialIcon,
   Snackbar,
   TextField,
   transition,
@@ -35,6 +36,9 @@ import { ComponentProps, useContext } from "react";
  * A List Item for the Attendance page.
  *
  * @param attendance The Attendance of a Student at assembly and homeroom.
+ * @param shownEvent The Attendance Event to show.
+ * @param date The date of the Attendance. Used in saving.
+ * @param teacherID The ID of the Teacher who is viewing the Attendance. Used in saving.
  * @param editable Whether the Attendance is editable.
  * @param onAttendanceChange Callback when the Attendance is changed.
  */
@@ -63,6 +67,14 @@ const AttendanceListItem: StylableFC<{
 
   const [loading, toggleLoading] = useToggle();
   const { setSnackbar } = useContext(SnackbarContext);
+
+  /**
+   * Whether to show the Checkbox as ticked [✓], crossed [✕], or empty [ ].
+   */
+  const checkboxState =
+    attendance[shownEvent].is_present === false
+      ? shownEvent === "assembly" && attendance.assembly.absence_type === "late"
+      : attendance[shownEvent].is_present;
 
   /**
    * Sets the Attendance of the shown Event. Also sets the Attendance for
@@ -198,20 +210,35 @@ const AttendanceListItem: StylableFC<{
             )}
 
           {/* Presence */}
-          <Checkbox
-            value={
-              attendance[shownEvent].is_present ||
-              attendance.assembly.absence_type === "late"
+          <Button
+            appearance="text"
+            icon={
+              {
+                true: <MaterialIcon icon="check_box" fill />,
+                false: <MaterialIcon icon="disabled_by_default" fill />,
+                null: <MaterialIcon icon="check_box_outline_blank" />,
+              }[JSON.stringify(checkboxState)]
             }
-            onChange={(value) =>
-              setAttendanceOfShownEvent({
-                ...attendance.assembly,
-                ...(value
-                  ? { is_present: true, absence_type: null }
-                  : { is_present: false, absence_type: AbsenceType.sick }),
-              })
-            }
-            className="!-mr-2"
+            onClick={() => {
+              if (checkboxState)
+                setAttendanceOfShownEvent({
+                  ...attendance[shownEvent],
+                  is_present: false,
+                  absence_type: AbsenceType.sick,
+                });
+              else
+                setAttendanceOfShownEvent({
+                  ...attendance[shownEvent],
+                  is_present: true,
+                  absence_type: null,
+                  absence_reason: null,
+                });
+            }}
+            dangerous={checkboxState === false}
+            className={cn(
+              checkboxState === null && `!text-on-surface-variant`,
+              `!-ml-2 !-mr-6 state-layer:!bg-on-surface-variant`,
+            )}
           />
         </ListItem>
 
@@ -231,7 +258,7 @@ const AttendanceListItem: StylableFC<{
                   absence_type,
                 });
               }}
-              className="mb-2 [&>*]:px-4"
+              className="mb-2 *:px-4"
             />
           )}
 
@@ -243,7 +270,18 @@ const AttendanceListItem: StylableFC<{
             transition={transition(duration.medium2, easing.standard)}
             className="mt-1 px-4 sm:px-0"
           >
-            <TextField appearance="outlined" label={t("enterReason")} />
+            <TextField<string>
+              appearance="outlined"
+              label={t("enterReason")}
+              value={attendance[shownEvent].absence_reason || ""}
+              onChange={(absence_reason) => {
+                setAttendanceOfShownEvent({
+                  ...attendance[shownEvent],
+                  absence_reason,
+                });
+              }}
+              inputAttr={{ onBlur: () => handleSave(attendance) }}
+            />
           </motion.div>
         )}
       </motion.ul>

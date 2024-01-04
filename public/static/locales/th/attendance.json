@@ -1,5 +1,5 @@
 {
-  "title": "การเช็กชื่อม.{{classNumber}}",
+  "title": "การเช็กชื่อ ม.{{classNumber}}",
   "viewSelector": {
     "view": {
       "title": "เลือกขอบเวลา…",
@@ -73,7 +73,9 @@
       }
     },
     "action": {
-      "editHomeroom": "แก้ไขข้อมูลโฮมรูม"
+      "editHomeroom": "แก้ไขข้อมูลโฮมรูม",
+      "clear": "ลบทั้งหมด",
+      "markAll": "เช็กมาทุกคน"
     },
     "snackbar": {
       "saved": "บันทึกการเช็กชื่อเข้าแถวและโฮมรูมแล้ว",

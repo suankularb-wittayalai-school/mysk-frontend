@@ -74,7 +74,9 @@
       }
     },
     "action": {
-      "editHomeroom": "Edit homeroom content"
+      "editHomeroom": "Edit homeroom content",
+      "clear": "Clear",
+      "markAll": "Mark all present"
     },
     "snackbar": {
       "saved": "Attendance saved for assembly and homeroom",
