@@ -145,7 +145,7 @@ const DateAttendancePage: CustomPage<{
                   shownEvent={event}
                   date={date}
                   teacherID={teacherID}
-                  editable={editable || loading}
+                  editable={editable && !loading}
                   onAttendanceChange={(attendance) =>
                     setAttendances(
                       replace(
