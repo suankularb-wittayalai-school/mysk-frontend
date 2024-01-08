@@ -125,17 +125,8 @@ const AttendanceListItem: StylableFC<{
           date,
           teacherID,
         );
-        if (error) {
-          setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
-          return false;
-        }
-        if (data)
-          onAttendanceChange({
-            student: attendance.student,
-            assembly: { ...attendance.assembly, id: data.assembly },
-            homeroom: { ...attendance.homeroom, id: data.homeroom },
-          });
-        return true;
+        if (error) setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
+        return error === null;
       },
       toggleLoading,
       { hasEndToggle: true },
