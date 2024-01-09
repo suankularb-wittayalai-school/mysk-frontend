@@ -1,4 +1,7 @@
-import { AttendanceView } from "@/utils/helpers/attendance/useAttendanceView";
+import {
+  AttendanceView,
+  SelectorType,
+} from "@/utils/helpers/attendance/useAttendanceView";
 import { FormControlProps, StylableFC } from "@/utils/types/common";
 import {
   Actions,
@@ -22,10 +25,11 @@ import { useTranslation } from "next-i18next";
 const AttendanceDatePickerDialog: StylableFC<{
   open?: boolean;
   view: AttendanceView;
+  type: SelectorType;
   formProps: FormControlProps<"date" | "classroom">;
   onClose: () => void;
   onSubmit: () => void;
-}> = ({ open, view, formProps, onClose, onSubmit, style, className }) => {
+}> = ({ open, view, type, formProps, onClose, onSubmit, style, className }) => {
   const { t } = useTranslation("attendance", {
     keyPrefix: "viewSelector.dialog.date",
   });
@@ -51,11 +55,13 @@ const AttendanceDatePickerDialog: StylableFC<{
             ][view]
           }
         />
-        <TextField
-          appearance="outlined"
-          label={t("form.classroom")}
-          {...formProps.classroom}
-        />
+        {type === SelectorType.classroom && (
+          <TextField
+            appearance="outlined"
+            label={t("form.classroom")}
+            {...formProps.classroom}
+          />
+        )}
       </DialogContent>
       <Actions>
         <Button appearance="text" onClick={onClose}>

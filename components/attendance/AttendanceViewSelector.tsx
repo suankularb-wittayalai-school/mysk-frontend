@@ -160,6 +160,7 @@ const AttendanceViewSelector: StylableFC<{
       <AttendanceDatePickerDialog
         open={dateOpen}
         view={view}
+        type={type}
         formProps={formProps}
         onClose={() => setDateOpen(false)}
         onSubmit={async () => {
