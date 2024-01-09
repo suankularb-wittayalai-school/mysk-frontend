@@ -10,16 +10,12 @@ import Image from "next/image";
  * @param open Whether the Dialog is open and shown.
  * @param profile The profile image of the Person.
  * @param onClose Triggers when the Dialog is closed.
- * 
- * @param options Options.
- * @param options.noLayout Whether to disable layout animation. Useful when the layout animation fails.
  */
 const PersonAvatarDialog: StylableFC<{
   open?: boolean;
   profile: string;
   onClose: () => void;
-  options?: Partial<{ noLayout: boolean }>;
-}> = ({ open, profile, onClose, options, style, className }) => {
+}> = ({ open, profile, onClose, style, className }) => {
   const { duration, easing } = useAnimationConfig();
 
   return (
@@ -39,17 +35,13 @@ const PersonAvatarDialog: StylableFC<{
             <motion.div
               role="alertdialog"
               aria-modal
-              {...(options?.noLayout
-                ? {
-                    initial: { scale: 0.8, opacity: 0 },
-                    animate: { scale: 1, opacity: 1 },
-                    exit: {
-                      scale: 0.7,
-                      opacity: 0,
-                      transition: transition(duration.short4, easing.standard),
-                    },
-                  }
-                : { layoutId: profile })}
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{
+                scale: 0.7,
+                opacity: 0,
+                transition: transition(duration.short4, easing.standard),
+              }}
               transition={transition(duration.medium4, easing.standard)}
               className="pointer-events-auto"
             >

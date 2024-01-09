@@ -23,9 +23,6 @@ import { ComponentProps, useState } from "react";
  * @param last_name The last name of the Person.
  * @param profile The profile image of the Person.
  * @param expandable Whether the Avatar can show a larger version of the profile image.
- * 
- * @param options Options.
- * @param options.noLayout Whether to disable layout animation. Useful when the layout animation fails.
  *
  * @example
  * ```tsx
@@ -35,19 +32,16 @@ import { ComponentProps, useState } from "react";
 const PersonAvatar: StylableFC<
   Partial<Pick<Person, "first_name" | "last_name" | "profile">> & {
     expandable?: boolean;
-    options?: ComponentProps<typeof PersonAvatarDialog>["options"];
   }
 > = ({
   first_name,
   last_name,
   profile,
   expandable: preferExpandable,
-  options,
   style,
   className,
 }) => {
   const locale = useLocale();
-  const { duration, easing } = useAnimationConfig();
 
   const expandable = preferExpandable === true && typeof profile === "string";
   const [open, setOpen] = useState(false);
@@ -70,26 +64,12 @@ const PersonAvatar: StylableFC<
       : // If nothing available, show the default vector
         undefined;
 
-  /**
-   * The element to use for the Interactive component.
-   */
-  const interactiveElement = expandable
-    ? (props: InteractiveProps) => (
-        <motion.div
-          layoutId={profile}
-          transition={transition(duration.medium2, easing.standard)}
-          {...props}
-        />
-      )
-    : undefined;
-
   return (
     <>
       <Interactive
         stateLayerEffect={expandable}
         rippleEffect={expandable}
         onClick={expandable ? () => setOpen(true) : undefined}
-        element={interactiveElement}
         style={expandable ? style : undefined}
         className={
           expandable
@@ -125,7 +105,6 @@ const PersonAvatar: StylableFC<
           open={open}
           profile={profile}
           onClose={() => setOpen(false)}
-          options={options}
         />
       )}
     </>
