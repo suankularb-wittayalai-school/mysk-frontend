@@ -84,7 +84,7 @@ const ClassDetailsCard: StylableFC<{
 
               {/* Attendance */}
               {(user.is_admin ||
-                user.role === UserRole.teacher ||
+                [UserRole.teacher, UserRole.management].includes(user.role) ||
                 isOwnClass) && (
                 <motion.section
                   layout="position"

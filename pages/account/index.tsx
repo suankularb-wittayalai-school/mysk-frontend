@@ -20,7 +20,8 @@ import PageHeader from "@/components/common/PageHeader";
 import PersonAvatar from "@/components/common/PersonAvatar";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
-import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
+import { getStudentFromUserID } from "@/utils/backend/account/getLoggedInPerson";
+import getUserByEmail from "@/utils/backend/account/getUserByEmail";
 import addContactToPerson from "@/utils/backend/contact/addContactToPerson";
 import createContact from "@/utils/backend/contact/createContact";
 import updateContact from "@/utils/backend/contact/updateContact";
@@ -37,7 +38,7 @@ import withLoading from "@/utils/helpers/withLoading";
 import { pantsSizeRegex } from "@/utils/patterns";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Contact } from "@/utils/types/contact";
-import { Student, Teacher } from "@/utils/types/person";
+import { Student, Teacher, UserRole } from "@/utils/types/person";
 import { SubjectGroup } from "@/utils/types/subject";
 import {
   Actions,
@@ -51,6 +52,7 @@ import {
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
+import { getServerSession } from "next-auth";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
@@ -445,19 +447,34 @@ export const getServerSideProps: GetServerSideProps = async ({
     req: req as NextApiRequest,
     res: res as NextApiResponse,
   });
+  const session = await getServerSession(req, res, authOptions);
+  const { data: user } = await getUserByEmail(supabase, session!.user!.email!);
+  let person = null;
 
-  const { data: user, error } = await getLoggedInPerson(
-    supabase,
-    authOptions,
-    req,
-    res,
-    { includeContacts: true, detailed: true },
-  );
-
-  if (error) {
-    return {
-      notFound: true,
-    };
+  // - Fetch Person for Student or Teacher
+  // - Redirect to home page for other users (temporary fix)
+  switch (user?.role) {
+    case UserRole.student:
+      const { data: student } = await getStudentFromUserID(supabase, user.id, {
+        includeContacts: true,
+        detailed: true,
+      });
+      person = student;
+      break;
+    case UserRole.teacher:
+      const { data: teacher } = await getStudentFromUserID(supabase, user.id, {
+        includeContacts: true,
+        detailed: true,
+      });
+      person = teacher;
+      break;
+    default:
+      return {
+        redirect: {
+          destination: (locale === "th" ? "" : "/en-US") + "/learn",
+          permanent: false,
+        },
+      };
   }
 
   const { data: subjectGroups } = await getSubjectGroups(supabase);
@@ -469,7 +486,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         "welcome",
         "account",
       ])),
-      user,
+      user: person,
       subjectGroups,
     },
   };

@@ -17,6 +17,7 @@ import {
   Snackbar,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import va from "@vercel/analytics";
 import { isToday } from "date-fns";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
@@ -62,8 +63,8 @@ const AttendanceViewSelector: StylableFC<{
    * on small screens.
    */
   const collapsibleButtonClassName = cn(
-    `!aspect-square !p-2 sm:!aspect-auto md:!py-2.5 md:!pl-4 md:!pr-6
-    [&_span:not(:empty)]:hidden [&_span:not(:empty)]:md:inline`,
+    `!aspect-square !p-2 sm:!aspect-auto sm:!py-2.5 sm:!pl-4 sm:!pr-6
+    [&_span:not(:empty)]:hidden [&_span:not(:empty)]:sm:inline`,
   );
 
   return (
@@ -104,7 +105,10 @@ const AttendanceViewSelector: StylableFC<{
             key="management"
             appearance="filled"
             icon={<MaterialIcon icon="print" />}
-            onClick={() => window.print()}
+            onClick={() => {
+              window.print();
+              va.track("Print School-wide Attendance List");
+            }}
             className="hidden md:!flex"
           >
             {t("action.print")}
@@ -120,7 +124,10 @@ const AttendanceViewSelector: StylableFC<{
               appearance="outlined"
               icon={<MaterialIcon icon="bar_chart" />}
               alt={t("action.statistics")}
-              onClick={() => setStatisticsOpen(true)}
+              onClick={() => {
+                setStatisticsOpen(true);
+                va.track("Open School-wide Attendance Statistics");
+              }}
               className={collapsibleButtonClassName}
             >
               {t("action.statistics")}
@@ -153,6 +160,7 @@ const AttendanceViewSelector: StylableFC<{
       <AttendanceDatePickerDialog
         open={dateOpen}
         view={view}
+        type={type}
         formProps={formProps}
         onClose={() => setDateOpen(false)}
         onSubmit={async () => {

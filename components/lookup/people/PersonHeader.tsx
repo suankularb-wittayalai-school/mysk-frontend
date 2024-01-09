@@ -103,9 +103,6 @@ const PersonHeader: StylableFC<{
       <PersonAvatar
         profile={person.profile}
         expandable
-        // Layout animation fails when the Dialog isn’t full-screen so we only
-        // enable it on mobile.
-        options={{ noLayout: options?.noProfileLayout }}
         className="h-16 w-16 [&>div]:!h-full [&>div]:!w-full"
       />
       <div className="flex flex-col gap-4 md:gap-2">

@@ -78,7 +78,7 @@ export default function useAttendanceView(
       key: "classroom",
       defaultValue: type === SelectorType.classroom ? asPath.split("/")[2] : "",
       validate: (value: string) => classRegex.test(value),
-      required: true,
+      required: type === SelectorType.classroom,
     },
   ]);
   const { form, formValids } = formReturns;

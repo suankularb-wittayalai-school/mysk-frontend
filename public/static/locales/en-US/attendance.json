@@ -78,10 +78,6 @@
       "clear": "Clear",
       "markAll": "Mark all present"
     },
-    "snackbar": {
-      "saved": "Attendance saved for assembly and homeroom",
-      "incomplete": "Please check attendance for everyone before saving"
-    },
     "dialog": {
       "homeroom": {
         "desc": "Add a short description on what happened during homeroom.",

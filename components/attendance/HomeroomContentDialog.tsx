@@ -11,6 +11,14 @@ import {
 } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
 
+/**
+ * Dialog to edit Homeroom Content.
+ *
+ * @param open Whether the dialog is open and shown.
+ * @param homeroomContent The Homeroom Content to edit.
+ * @param classroomID The ID of the Classroom that this Homeroom Content is for.
+ * @param onClose Triggers when the Dialog is closed.
+ */
 const HomeroomContentDialog: StylableFC<{
   open?: boolean;
   homeroomContent: HomeroomContent;
