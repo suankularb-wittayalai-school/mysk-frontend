@@ -154,7 +154,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   const { data: documents } = await getDocumentsByLookupFilters(
     supabase,
-    user.role,
+    user,
     filters,
   );
 

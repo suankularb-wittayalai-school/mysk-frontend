@@ -3,26 +3,32 @@ import getISODateString from "@/utils/helpers/getISODateString";
 import logError from "@/utils/helpers/logError";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
 import { SchoolDocument, SchoolDocumentType } from "@/utils/types/news";
-import { UserRole } from "@/utils/types/person";
+import { User, UserRole } from "@/utils/types/person";
 import { lastDayOfMonth } from "date-fns";
 
 /**
  * Get Documents by Lookup filters.
  *
  * @param supabase The Supabase client to use.
+ * @param user The user to get the documents for. Used for permissions.
  * @param filters Filters to be used in the query.
  *
  * @returns A Backend Return with a list of School Documents.
  */
 export default async function getDocumentsByLookupFilters(
   supabase: DatabaseClient,
-  role: UserRole,
+  user: User,
   filters: DocumentSearchFilters,
 ): Promise<BackendReturn<SchoolDocument[]>> {
   let query = supabase
     .from("school_documents")
     .select("*")
-    .eq(role === "teacher" ? "include_teachers" : "include_students", true);
+    .eq(
+      user.is_admin || user.role === UserRole.teacher
+        ? "include_teachers"
+        : "include_students",
+      true,
+    );
 
   if (filters.types) query = query.in("type", filters.types);
   if (filters.subject) query = query.ilike("subject", `%${filters.subject}%`);
