@@ -62,8 +62,8 @@ const AttendanceViewSelector: StylableFC<{
    * on small screens.
    */
   const collapsibleButtonClassName = cn(
-    `!aspect-square !p-2 sm:!aspect-auto md:!py-2.5 md:!pl-4 md:!pr-6
-    [&_span:not(:empty)]:hidden [&_span:not(:empty)]:md:inline`,
+    `!aspect-square !p-2 sm:!aspect-auto sm:!py-2.5 sm:!pl-4 sm:!pr-6
+    [&_span:not(:empty)]:hidden [&_span:not(:empty)]:sm:inline`,
   );
 
   return (
