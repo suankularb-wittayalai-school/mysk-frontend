@@ -5,6 +5,7 @@ import cn from "@/utils/helpers/cn";
 import useRefreshProps from "@/utils/helpers/useRefreshProps";
 import withLoading from "@/utils/helpers/withLoading";
 import { StudentAttendance } from "@/utils/types/attendance";
+import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
 import {
   Actions,
@@ -15,6 +16,8 @@ import {
   useAnimationConfig,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import va from "@vercel/analytics";
+import { isToday } from "date-fns";
 import { motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { mapValues, omit } from "radash";
@@ -27,7 +30,7 @@ import { useContext } from "react";
  * @param onAttendancesChange Callback when the Attendance data is changed.
  * @param toggleLoading Callback to toggle loading state during saving.
  * @param date The date of the Attendance. Used in saving.
- * @param classroomID The ID of the Classroom. Used in saving.
+ * @param classroom The Classroom that this page is for. Used in saving.
  * @param teacherID The ID of the Teacher who is viewing this page. Used in saving.
  */
 const AttendanceBulkActions: StylableFC<{
@@ -35,14 +38,14 @@ const AttendanceBulkActions: StylableFC<{
   onAttendancesChange: (attendances: StudentAttendance[]) => void;
   toggleLoading: () => void;
   date: string;
-  classroomID: string;
+  classroom: Pick<Classroom, "id" | "number">;
   teacherID: string;
 }> = ({
   attendances,
   onAttendancesChange,
   toggleLoading,
   date,
-  classroomID,
+  classroom,
   teacherID,
   style,
   className,
@@ -59,12 +62,16 @@ const AttendanceBulkActions: StylableFC<{
    * Save all Students as present.
    */
   async function handleMarkAll() {
+    va.track("Mark All Students as Present", {
+      isToday: isToday(new Date(date)),
+      classroom: `M.${classroom.number}`,
+    });
     withLoading(
       async () => {
         const { error } = await bulkCreateAttendanceOfClass(
           supabase,
           date,
-          classroomID,
+          classroom.id,
           teacherID,
         );
         if (error) setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
@@ -80,12 +87,16 @@ const AttendanceBulkActions: StylableFC<{
    * Clear all Students’ Attendance.
    */
   async function handleClear() {
+    va.track("Clear Attendance", {
+      isToday: isToday(new Date(date)),
+      classroom: `M.${classroom.number}`,
+    });
     withLoading(
       async () => {
         const { error } = await clearAttendanceOfClass(
           supabase,
           date,
-          classroomID,
+          classroom.id,
         );
         if (error) {
           setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);

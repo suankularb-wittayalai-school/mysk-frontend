@@ -34,7 +34,8 @@ import {
   MaterialIcon,
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
-import { isFuture, isWeekend } from "date-fns";
+import va from "@vercel/analytics";
+import { isFuture, isToday, isWeekend } from "date-fns";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import { useTranslation } from "next-i18next";
@@ -117,7 +118,13 @@ const DateAttendancePage: CustomPage<{
               <Button
                 appearance="filled"
                 icon={<MaterialIcon icon="edit" />}
-                onClick={() => setHomeroomOpen(true)}
+                onClick={() => {
+                  setHomeroomOpen(true);
+                  va.track("Open Homeroom Content", {
+                    isToday: isToday(new Date(date)),
+                    classroom: `M.${classroom.number}`,
+                  });
+                }}
                 className="!mx-4 !mt-3 sm:!mx-0 md:!hidden"
               >
                 {t("today.action.editHomeroom")}
@@ -165,7 +172,7 @@ const DateAttendancePage: CustomPage<{
                   onAttendancesChange={setAttendances}
                   toggleLoading={toggleLoading}
                   date={date}
-                  classroomID={classroom.id}
+                  classroom={classroom}
                   teacherID={teacherID}
                   className="mt-2 px-4 md:px-0"
                 />
