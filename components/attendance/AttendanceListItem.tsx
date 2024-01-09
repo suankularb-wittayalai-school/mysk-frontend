@@ -99,9 +99,19 @@ const AttendanceListItem: StylableFC<{
         ? {
             ...attendance,
             assembly: eventAttendance,
-            homeroom: { ...eventAttendance, id: attendance.homeroom.id },
+            homeroom:
+              // If this Student is late in Assembly, default to present in
+              // Homeroom.
+              eventAttendance.absence_type === AbsenceType.late
+                ? {
+                    id: attendance.homeroom.id,
+                    is_present: true,
+                    absence_type: null,
+                    absence_reason: null,
+                  }
+                : eventAttendance,
           }
-        : { ...attendance, homeroom: eventAttendance };
+        : { ...attendance, [shownEvent]: eventAttendance };
 
     // Update the Attendance data locally.
     onAttendanceChange(newAttendance);
