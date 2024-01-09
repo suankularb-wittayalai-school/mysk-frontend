@@ -47,7 +47,7 @@ const AttendanceBulkActions: StylableFC<{
   style,
   className,
 }) => {
-  const { t } = useTranslation("attendance", { keyPrefix: "today.action" });
+  const { t } = useTranslation("attendance", { keyPrefix: "today" });
   const { t: tx } = useTranslation("common");
 
   const supabase = useSupabaseClient();
@@ -55,6 +55,9 @@ const AttendanceBulkActions: StylableFC<{
   const { duration, easing } = useAnimationConfig();
   const refreshProps = useRefreshProps();
 
+  /**
+   * Save all Students as present.
+   */
   async function handleMarkAll() {
     withLoading(
       async () => {
@@ -73,6 +76,9 @@ const AttendanceBulkActions: StylableFC<{
     );
   }
 
+  /**
+   * Clear all Students’ Attendance.
+   */
   async function handleClear() {
     withLoading(
       async () => {
@@ -108,18 +114,23 @@ const AttendanceBulkActions: StylableFC<{
       layout="position"
       transition={transition(duration.medium2, easing.standard)}
       style={style}
-      className={cn(`!bg-surface md:!bg-transparent`, className)}
+      className={cn(
+        `overflow-auto !rounded-none !bg-surface px-0 sm:px-4 md:-mx-4
+        md:!bg-transparent`,
+        className,
+      )}
     >
       <Actions
         align="left"
-        className="md:!gap-1 *:md:!border-0 *:md:!bg-surface"
+        className={cn(`!w-fit !flex-nowrap md:!gap-1 md:px-4 *:md:!border-0
+          *:md:!bg-surface [&>*>span]:whitespace-nowrap`)}
       >
         <Button
           appearance="outlined"
           icon={<MaterialIcon icon="done_all" />}
           onClick={handleMarkAll}
         >
-          {t("markAll")}
+          {t("action.markAll")}
         </Button>
         <Button
           appearance="outlined"
@@ -127,7 +138,7 @@ const AttendanceBulkActions: StylableFC<{
           dangerous
           onClick={handleClear}
         >
-          {t("clear")}
+          {t("action.clear")}
         </Button>
       </Actions>
     </motion.li>
