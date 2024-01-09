@@ -12,7 +12,7 @@ import { omit } from "radash";
  * @param date The date of the Attendance record.
  * @param teacherID The ID of the Reacher who is recording the attendance.
  *
- * @returns An Backend Return
+ * @returns An empty Backend Return.
  */
 export default async function upsertAttendance(
   supabase: DatabaseClient,
