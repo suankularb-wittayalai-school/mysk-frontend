@@ -1,9 +1,8 @@
 // Imports
-import ClassAttendanceLayout from "@/components/attendance/ClassAttendanceLayout";
+import AttendanceViewSelector from "@/components/attendance/AttendanceViewSelector";
+import SchoolWideAttendanceTable from "@/components/attendance/SchoolWideAttendanceTable";
 import WeekChart from "@/components/attendance/WeekChart";
 import PageHeader from "@/components/common/PageHeader";
-import AttendanceClassesList from "@/components/manage/AttendanceClassesList";
-import AttendanceClassesListItem from "@/components/manage/AttendanceClassesListItem";
 import MySKLogo from "@/public/images/brand/mysk-light.svg";
 import getClassroomAttendances from "@/utils/backend/attendance/getClassroomAttendances";
 import getWeekAttendance from "@/utils/backend/attendance/getWeekAttendance";
@@ -15,7 +14,12 @@ import {
   ManagementAttendanceSummary,
 } from "@/utils/types/attendance";
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { Card, Columns, Text } from "@suankularb-components/react";
+import {
+  Card,
+  Columns,
+  ContentLayout,
+  Text,
+} from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { isFuture, isWeekend, setDay } from "date-fns";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
@@ -61,7 +65,7 @@ const DateAttendanceOverviewPage: CustomPage<{
       <PageHeader parentURL="/manage" className="print:!hidden">
         {t("title")}
       </PageHeader>
-      <ClassAttendanceLayout type={SelectorType.management} date={date}>
+      <ContentLayout>
         {/* Print header */}
         <div
           className={cn(`hidden flex-row items-center justify-between print:mx-4
@@ -82,42 +86,19 @@ const DateAttendanceOverviewPage: CustomPage<{
           <Image src={MySKLogo} width={96} height={96} priority alt="" />
         </div>
 
-        {/* Summary */}
-        <Columns
-          columns={2}
-          className="!mb-10 !gap-y-6 print:!mx-4 print:!grid-cols-5 md:!grid-cols-5"
-        >
-          {/* Chart */}
+        {/* <Columns columns={2} className="print:!grid-cols-2">
           <Card
             appearance="outlined"
-            className={cn(`light aspect-[2] px-3 py-2 print:col-span-3
-              print:!bg-white md:col-span-3`)}
+            className={cn(`light aspect-[2] px-3 py-2 print:!bg-white`)}
           >
             <WeekChart week={week} className="rounded-md" />
-          </Card>
-
-          {/* Text */}
-          <Text
-            type="headline-medium"
-            element="p"
-            className="grid print:col-span-2 md:col-span-2"
-          >
-            {Object.entries(totals).map(([key, count]) => (
-              <span key={key}>{t(`chart.summary.${key}`, { count })}</span>
-            ))}
-          </Text>
-        </Columns>
+          </Card> */}
+        <AttendanceViewSelector type={SelectorType.management} date={date} />
+        {/* </Columns> */}
 
         {/* Classes breakdown */}
-        <AttendanceClassesList>
-          {attendances.map((attendance) => (
-            <AttendanceClassesListItem
-              key={attendance.classroom.id}
-              attendance={attendance}
-            />
-          ))}
-        </AttendanceClassesList>
-      </ClassAttendanceLayout>
+        <SchoolWideAttendanceTable attendances={attendances} />
+      </ContentLayout>
     </>
   );
 };
