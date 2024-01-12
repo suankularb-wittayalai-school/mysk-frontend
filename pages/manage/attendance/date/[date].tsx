@@ -30,14 +30,14 @@ import Image from "next/image";
 import { mapValues } from "radash";
 
 /**
- * Date Attendance Overview page displays an overview of the school’s Attendance
- * at specific date.
+ * The Attendance Summary for Management page displays the Attendance of all
+ * Classrooms in the school on a specific date.
  *
  * @param date The date to display Attendance of, in YYYY-MM-DD format.
  * @param week Attendance summary of the week that the date is in.
  * @param attendances Attendance of each Classroom.
  */
-const DateAttendanceOverviewPage: CustomPage<{
+const AttendanceSummaryForManagementPage: CustomPage<{
   date: string;
   week: ManagementAttendanceSummary[];
   attendances: ClassroomAttendance[];
@@ -93,7 +93,11 @@ const DateAttendanceOverviewPage: CustomPage<{
           >
             <WeekChart week={week} className="rounded-md" />
           </Card> */}
-        <AttendanceViewSelector type={SelectorType.management} date={date} />
+        <AttendanceViewSelector
+          type={SelectorType.management}
+          date={date}
+          className="print:!hidden"
+        />
         {/* </Columns> */}
 
         {/* Classes breakdown */}
@@ -141,4 +145,4 @@ export const getServerSideProps: GetServerSideProps = async ({
   };
 };
 
-export default DateAttendanceOverviewPage;
+export default AttendanceSummaryForManagementPage;

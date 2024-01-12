@@ -41,7 +41,7 @@ const SchoolWideAttendanceTable: StylableFC<{
   const { t: tx } = useTranslation("common");
 
   const [sorting, setSorting] = useState<SortingState>([
-    { id: "classroom", desc: true },
+    { id: "classroom", desc: false },
   ]);
 
   const columnHelper = createColumnHelper<ClassroomAttendance>();
@@ -124,7 +124,7 @@ const SchoolWideAttendanceTable: StylableFC<{
     // Absent Students
     columnHelper.accessor("absent_students", {
       cell: (info) => (
-        <ChipSet className="!gap-1 print:!gap-y-0">
+        <ChipSet className="-m-[1px] !gap-1 print:m-0 print:!gap-y-0">
           {info.getValue().map((student) => (
             <>
               <InputChip
@@ -187,8 +187,8 @@ const SchoolWideAttendanceTable: StylableFC<{
         <DataTableHead
           headerGroups={getHeaderGroups()}
           locale={locale}
-          className={cn(`[&>tr>:first-child]:w-2/12 [&>tr>:nth-child(2)]:w-3/12
-            [&>tr>:nth-child(3)]:w-3/12 [&>tr>:nth-child(4)]:w-4/12`)}
+          className={cn(`[&>tr>:first-child]:w-2/12 [&>tr>:nth-child(2)]:w-2/12
+            [&>tr>:nth-child(3)]:w-4/12 [&>tr>:nth-child(4)]:w-4/12`)}
         />
         <DataTableBody rowModel={getRowModel()} />
       </DataTableContent>
