@@ -1,6 +1,7 @@
 import PersonAvatar from "@/components/common/PersonAvatar";
 import cn from "@/utils/helpers/cn";
 import useLocale from "@/utils/helpers/useLocale";
+import usePreferences from "@/utils/helpers/usePreferences";
 import {
   ClassroomAttendance,
   ManagementAttendanceSummary,
@@ -27,7 +28,7 @@ import {
 } from "@tanstack/react-table";
 import { useTranslation } from "next-i18next";
 import { list, sum } from "radash";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Markdown from "react-markdown";
 
 /**
@@ -176,7 +177,10 @@ const SchoolWideAttendanceTable: StylableFC<{
   });
 
   return (
-    <DataTable style={style} className={className}>
+    <DataTable
+      style={style}
+      className={cn(`[&>.skc-data-table-content]:!overflow-auto`, className)}
+    >
       <DataTableFilters locale={locale} className="print:!hidden">
         <ChipSet>
           {list(1, 6).map((grade) => (
