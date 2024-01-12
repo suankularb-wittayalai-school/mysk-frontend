@@ -26,8 +26,11 @@ export default async function getClassroomAttendances(
       `id,
       number,
       classroom_students(
+        class_no,
         students!inner(
-          student_attendances!inner(
+          id,
+          people!inner(profile),
+          student_attendances(
             attendance_event,
             date,
             is_present,
@@ -83,12 +86,15 @@ export default async function getClassroomAttendances(
         : "assembly";
 
       // Use preferred event to calculate absence.
-      const absence = attendances.filter(
-        ({ attendance_event, is_present, absence_type }) =>
-          attendance_event === preferredEvent &&
-          !is_present &&
-          absence_type !== "late",
-      ).length;
+      const absentStudents = classroom.classroom_students.filter(
+        ({ students }) =>
+          students!.student_attendances.length > 0 &&
+          students!.student_attendances[0].attendance_event ===
+            preferredEvent &&
+          !students!.student_attendances[0].is_present &&
+          students!.student_attendances[0].absence_type !== "late",
+      );
+      const absence = absentStudents.length;
 
       // Presence is calculated by subtracting late and absence from total
       // attendance.
@@ -103,7 +109,15 @@ export default async function getClassroomAttendances(
 
       return {
         classroom: pick(classroom, ["id", "number"]),
+        expected_total: classroom.classroom_students.length,
         summary: { presence, late, absence },
+        absent_students: absentStudents
+          .map((student) => ({
+            id: student.students!.id,
+            profile: student.students!.people!.profile,
+            class_no: student.class_no,
+          }))
+          .sort((a, b) => a.class_no - b.class_no),
         homeroom_content:
           classroom.classroom_homeroom_contents[0]?.homeroom_content || null,
       };
