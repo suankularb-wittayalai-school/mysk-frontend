@@ -166,14 +166,18 @@ const AttendanceViewSelector: StylableFC<{
         onSubmit={async () => {
           if (!formOK) return;
           setDateOpen(false);
-          const { error } = await getClassroomByNumber(
-            supabase,
-            form.classroom,
-          );
-          if (error) {
-            setSnackbar(<Snackbar>{t("snackbar.classNotFound")}</Snackbar>);
-            setDateOpen(true);
-          } else router.push(getURLforView(view));
+          if (type === SelectorType.classroom) {
+            const { error } = await getClassroomByNumber(
+              supabase,
+              form.classroom,
+            );
+            if (error) {
+              setSnackbar(<Snackbar>{t("snackbar.classNotFound")}</Snackbar>);
+              setDateOpen(true);
+              return;
+            }
+          }
+          router.push(getURLforView(view));
         }}
       />
     </Actions>
