@@ -103,7 +103,7 @@ const AttendanceViewSelector: StylableFC<{
           // Show the Print button only on the page for Management.
           <Button
             key="management"
-            appearance="filled"
+            appearance="outlined"
             icon={<MaterialIcon icon="print" />}
             onClick={() => {
               window.print();
