@@ -40,7 +40,7 @@
         "presence": "{{count, number}} present",
         "onTime": "{{count, number}} on time",
         "late": "{{count, number}} late",
-        "absent": "{{count, number}} absent"
+        "absence": "{{count, number}} absent"
       }
     },
     "table": {
