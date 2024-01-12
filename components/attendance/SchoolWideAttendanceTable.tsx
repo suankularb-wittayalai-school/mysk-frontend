@@ -17,9 +17,11 @@ import {
   InputChip,
 } from "@suankularb-components/react";
 import {
+  ColumnFiltersState,
   SortingState,
   createColumnHelper,
   getCoreRowModel,
+  getFilteredRowModel,
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
@@ -40,6 +42,7 @@ const SchoolWideAttendanceTable: StylableFC<{
   const { t } = useTranslation("manage", { keyPrefix: "attendance.table" });
   const { t: tx } = useTranslation("common");
 
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([
     { id: "classroom", desc: false },
   ]);
@@ -126,17 +129,15 @@ const SchoolWideAttendanceTable: StylableFC<{
       cell: (info) => (
         <ChipSet className="-m-[1px] !gap-1 print:m-0 print:!gap-y-0">
           {info.getValue().map((student) => (
-            <>
-              <InputChip
-                key={student.id}
-                avatar={<PersonAvatar profile={student.profile} />}
-                className={cn(`print:!border-0 print:!p-0
-                  [&>:first-child]:print:!hidden [&>span]:print:!font-print
-                  [&>span]:print:!font-regular`)}
-              >
-                {student.class_no!.toString()}
-              </InputChip>
-            </>
+            <InputChip
+              key={student.id}
+              avatar={<PersonAvatar profile={student.profile} />}
+              className={cn(`print:!border-0 print:!p-0
+                [&>:first-child]:print:!hidden [&>span]:print:!font-print
+                [&>span]:print:!font-regular`)}
+            >
+              {student.class_no!.toString()}
+            </InputChip>
           ))}
         </ChipSet>
       ),
@@ -162,13 +163,15 @@ const SchoolWideAttendanceTable: StylableFC<{
   const { getHeaderGroups, getRowModel } = useReactTable({
     columns,
     data,
-    state: { sorting },
+    state: { columnFilters, sorting },
+    onColumnFiltersChange: setColumnFilters,
     onSortingChange: setSorting,
     sortingFns: {
       summarySorter: (a: any, b: any, columnID) =>
         a.getValue(columnID).presence - b.getValue(columnID).presence,
     },
     getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
   });
 
@@ -177,7 +180,21 @@ const SchoolWideAttendanceTable: StylableFC<{
       <DataTableFilters locale={locale} className="print:!hidden">
         <ChipSet>
           {list(1, 6).map((grade) => (
-            <FilterChip key={grade}>
+            <FilterChip
+              key={grade}
+              selected={columnFilters.some(
+                (filter) =>
+                  filter.id === "classroom" &&
+                  (filter.value as [number, number])[0] === grade * 100,
+              )}
+              onClick={(state) => {
+                if (!state) setColumnFilters([]);
+                else
+                  setColumnFilters([
+                    { id: "classroom", value: [grade * 100, grade * 100 + 99] },
+                  ]);
+              }}
+            >
               {tx("class", { number: grade })}
             </FilterChip>
           ))}
