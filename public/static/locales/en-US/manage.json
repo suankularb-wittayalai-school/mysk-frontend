@@ -40,9 +40,8 @@
     "table": {
       "thead": {
         "classroom": "Classroom",
-        "present": "Present",
-        "late": "Late",
-        "absent": "Absent",
+        "summary": "On time • late • absent",
+        "absentStudents": "Absent students",
         "homeroom": "Homeroom"
       }
     },

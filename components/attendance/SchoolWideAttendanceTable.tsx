@@ -37,6 +37,7 @@ const SchoolWideAttendanceTable: StylableFC<{
   attendances: ClassroomAttendance[];
 }> = ({ attendances, style, className }) => {
   const locale = useLocale();
+  const { t } = useTranslation("manage", { keyPrefix: "attendance.table" });
   const { t: tx } = useTranslation("common");
 
   const [sorting, setSorting] = useState<SortingState>([
@@ -49,7 +50,7 @@ const SchoolWideAttendanceTable: StylableFC<{
     columnHelper.accessor("classroom.number", {
       id: "classroom",
       cell: (info) => tx("class", { number: info.getValue() }),
-      header: "Classroom",
+      header: t("thead.classroom"),
     }),
 
     // Summary
@@ -78,7 +79,10 @@ const SchoolWideAttendanceTable: StylableFC<{
         return (
           <>
             {/* Numbers */}
-            <div className="absolute inset-0 grid w-full grid-cols-3 px-6 py-4 print:static print:p-0">
+            <div
+              className={cn(`absolute inset-0 grid w-full grid-cols-3 px-6 py-4
+                print:static print:p-0`)}
+            >
               {Object.entries(info.getValue()).map(([key, value]) => (
                 <span key={key}>{value}</span>
               ))}
@@ -113,7 +117,7 @@ const SchoolWideAttendanceTable: StylableFC<{
           </>
         );
       },
-      header: "Presence • Late • Absence",
+      header: t("thead.summary"),
       sortingFn: "summarySorter" as any,
     }),
 
@@ -136,7 +140,7 @@ const SchoolWideAttendanceTable: StylableFC<{
           ))}
         </ChipSet>
       ),
-      header: "Absent students",
+      header: t("thead.absentStudents"),
     }),
 
     // Homeroom Content
@@ -149,7 +153,7 @@ const SchoolWideAttendanceTable: StylableFC<{
           {info.getValue()}
         </Markdown>
       ),
-      header: "Homeroom",
+      header: t("thead.homeroom"),
     }),
   ];
 
@@ -173,7 +177,9 @@ const SchoolWideAttendanceTable: StylableFC<{
       <DataTableFilters locale={locale} className="print:!hidden">
         <ChipSet>
           {list(1, 6).map((grade) => (
-            <FilterChip key={grade}>M.{grade}</FilterChip>
+            <FilterChip key={grade}>
+              {tx("class", { number: grade })}
+            </FilterChip>
           ))}
         </ChipSet>
       </DataTableFilters>

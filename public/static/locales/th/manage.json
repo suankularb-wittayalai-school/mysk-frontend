@@ -40,9 +40,8 @@
     "table": {
       "thead": {
         "classroom": "ห้องเรียน",
-        "present": "มา",
-        "late": "สาย",
-        "absent": "ขาด",
+        "summary": "มาทัน • สาย • ขาด",
+        "absentStudents": "นักเรียนที่ขาดเรียน",
         "homeroom": "โฮมรูม"
       }
     },
