@@ -1,9 +1,14 @@
 import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import getISODateString from "@/utils/helpers/getISODateString";
 import logError from "@/utils/helpers/logError";
-import { ClassroomAttendance } from "@/utils/types/attendance";
+import {
+  AbsenceType,
+  AttendanceEvent,
+  ClassroomAttendance,
+  ManagementAttendanceSummary,
+} from "@/utils/types/attendance";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
-import { pick, sift } from "radash";
+import { group, list, pick, sift } from "radash";
 
 /**
  * Gets the Attendance summary of all Classrooms on a given date.
@@ -11,12 +16,17 @@ import { pick, sift } from "radash";
  * @param supabase The Supabase client to use.
  * @param date The date to get the Attendance summary of.
  *
- * @returns A Backend Return containing the Attendance summary for each Classroom.
+ * @returns A Backend Return containing the Attendance summary for all Classrooms, grouped by grade and by Classroom.
  */
 export default async function getClassroomAttendances(
   supabase: DatabaseClient,
   date: Date | string,
-): Promise<BackendReturn<ClassroomAttendance[]>> {
+): Promise<
+  BackendReturn<{
+    grades: { [key in AttendanceEvent]: ManagementAttendanceSummary }[];
+    classrooms: ClassroomAttendance[];
+  }>
+> {
   const dateObject = new Date(date);
   const dateString = typeof date === "string" ? date : getISODateString(date);
 
@@ -41,12 +51,7 @@ export default async function getClassroomAttendances(
       classroom_homeroom_contents(date, homeroom_content)`,
     )
     .eq("year", getCurrentAcademicYear(dateObject))
-    .eq("year", 2023)
     .eq("classroom_students.students.student_attendances.date", dateString)
-    .eq(
-      "classroom_students.students.student_attendances.attendance_event",
-      "assembly",
-    )
     .eq("classroom_homeroom_contents.date", dateString)
     .order("number");
 
@@ -55,6 +60,63 @@ export default async function getClassroomAttendances(
     return { data: null, error };
   }
 
+  /**
+   * Attendance summary for each grade. This is used to create a chart in Grades
+   * Breakdown Chart.
+   */
+  const grades =
+    // For each grade
+    list(1, 6).map((grade) => {
+      // Get Classrooms of that grade
+      const classrooms = data.filter(
+        ({ number }) => Math.floor(number / 100) === grade,
+      );
+      // Get all Attendance records of those Classrooms
+      const attendances = group(
+        classrooms
+          .map((classroom) =>
+            sift(
+              classroom.classroom_students
+                .map(({ students }) => students?.student_attendances)
+                .flat(),
+            ),
+          )
+          .flat(),
+        (attendance) => attendance!.attendance_event,
+      );
+
+      return {
+        assembly: {
+          presence:
+            attendances.assembly?.filter(({ is_present }) => is_present)
+              .length || 0,
+          late:
+            attendances.assembly?.filter(
+              ({ is_present, absence_type }) =>
+                !is_present && absence_type === AbsenceType.late,
+            ).length || 0,
+          absence:
+            attendances.assembly?.filter(
+              ({ is_present, absence_type }) =>
+                !is_present && absence_type !== AbsenceType.late,
+            ).length || 0,
+        },
+        homeroom: {
+          presence:
+            attendances.homeroom?.filter(({ is_present }) => is_present)
+              .length || 0,
+          late: 0,
+          absence:
+            attendances.homeroom?.filter(({ is_present }) => !is_present)
+              .length || 0,
+        },
+      };
+    });
+
+  /**
+   * Attendance summary for each Classroom. This is used to create a table in
+   * School-wide Attendance Table.
+   */
   const classrooms = data
     // Only display Classrooms with Attendance or Homeroom Content.
     .filter(
@@ -87,12 +149,16 @@ export default async function getClassroomAttendances(
 
       // Use preferred event to calculate absence.
       const absentStudents = classroom.classroom_students.filter(
-        ({ students }) =>
-          students!.student_attendances.length > 0 &&
-          students!.student_attendances[0].attendance_event ===
-            preferredEvent &&
-          !students!.student_attendances[0].is_present &&
-          students!.student_attendances[0].absence_type !== "late",
+        ({ students }) => {
+          const preferredAttendance = students!.student_attendances.find(
+            ({ attendance_event }) => attendance_event === preferredEvent,
+          );
+          return (
+            preferredAttendance &&
+            !preferredAttendance.is_present &&
+            preferredAttendance.absence_type !== AbsenceType.late
+          );
+        },
       );
       const absence = absentStudents.length;
 
@@ -123,5 +189,5 @@ export default async function getClassroomAttendances(
       };
     });
 
-  return { data: classrooms, error: null };
+  return { data: { grades, classrooms }, error: null };
 }

@@ -1,29 +1,33 @@
 // Imports
 import AttendanceViewSelector from "@/components/attendance/AttendanceViewSelector";
+import GradesBreakdownChart from "@/components/attendance/GradesBreakdownChart";
 import SchoolWideAttendanceTable from "@/components/attendance/SchoolWideAttendanceTable";
-import WeekChart from "@/components/attendance/WeekChart";
 import PageHeader from "@/components/common/PageHeader";
 import MySKLogo from "@/public/images/brand/mysk-light.svg";
 import getClassroomAttendances from "@/utils/backend/attendance/getClassroomAttendances";
 import getWeekAttendance from "@/utils/backend/attendance/getWeekAttendance";
 import { SelectorType } from "@/utils/helpers/attendance/useAttendanceView";
 import cn from "@/utils/helpers/cn";
+import useLocale from "@/utils/helpers/useLocale";
 import { YYYYMMDDRegex } from "@/utils/patterns";
 import {
+  AttendanceEvent,
   ClassroomAttendance,
   ManagementAttendanceSummary,
 } from "@/utils/types/attendance";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import {
   Card,
+  CardContent,
   Columns,
   ContentLayout,
+  Section,
   Text,
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { isFuture, isWeekend, setDay } from "date-fns";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import { useTranslation } from "next-i18next";
+import { Trans, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import Image from "next/image";
@@ -34,21 +38,23 @@ import { mapValues } from "radash";
  * Classrooms in the school on a specific date.
  *
  * @param date The date to display Attendance of, in YYYY-MM-DD format.
- * @param week Attendance summary of the week that the date is in.
- * @param attendances Attendance of each Classroom.
+ * @param attendances The Attendance of all Classrooms in the school, by grade and by Classroom.
  */
 const AttendanceSummaryForManagementPage: CustomPage<{
   date: string;
-  week: ManagementAttendanceSummary[];
-  attendances: ClassroomAttendance[];
-}> = ({ date, week, attendances }) => {
+  attendances: {
+    grades: { [key in AttendanceEvent]: ManagementAttendanceSummary }[];
+    classrooms: ClassroomAttendance[];
+  };
+}> = ({ date, attendances: { grades, classrooms } }) => {
+  const locale = useLocale();
   const { t } = useTranslation("manage", { keyPrefix: "attendance" });
   const { t: tx } = useTranslation("common");
 
   /**
    * The total number of students in each Attendance status.
    */
-  const totals = attendances.reduce(
+  const totals = classrooms.reduce(
     (accumulate, { summary }) =>
       mapValues(
         accumulate,
@@ -86,22 +92,65 @@ const AttendanceSummaryForManagementPage: CustomPage<{
           <Image src={MySKLogo} width={96} height={96} priority alt="" />
         </div>
 
-        {/* <Columns columns={2} className="print:!grid-cols-2">
+        <Columns columns={2} className="!items-stretch print:!grid-cols-2">
           <Card
             appearance="outlined"
-            className={cn(`light aspect-[2] px-3 py-2 print:!bg-white`)}
+            className="!contents !rounded-lg print:!contents sm:!flex sm:print:!contents"
           >
-            <WeekChart week={week} className="rounded-md" />
-          </Card> */}
-        <AttendanceViewSelector
-          type={SelectorType.management}
-          date={date}
-          className="print:!hidden"
-        />
-        {/* </Columns> */}
+            <CardContent className="print:!contents">
+              <GradesBreakdownChart grades={grades} />
+            </CardContent>
+          </Card>
+
+          <Section className="print:!hidden">
+            <AttendanceViewSelector
+              type={SelectorType.management}
+              date={date}
+            />
+            <div aria-hidden className="hidden grow sm:block" />
+            <Text type="body-medium">
+              <Trans
+                i18nKey="attendance.chart.note"
+                ns="manage"
+                components={{ b: <strong /> }}
+              />
+            </Text>
+            <div className="grid grid-cols-2 gap-3">
+              <Card
+                appearance="outlined"
+                className="!gap-2 !rounded-lg !bg-surface-1 !p-3 !pt-2"
+              >
+                <Text type="headline-medium">
+                  {t("chart.summary.presence", {
+                    count: totals.presence + totals.late,
+                  })}
+                </Text>
+                <div className="grid gap-2 *:rounded-sm *:bg-surface *:px-4 *:py-1.5 sm:grid-cols-2">
+                  <Text type="button" element="div">
+                    {t("chart.summary.onTime", { count: totals.presence })}
+                  </Text>
+                  <Text type="button" element="div">
+                    {t("chart.summary.late", { count: totals.late })}
+                  </Text>
+                </div>
+              </Card>
+              <Card
+                appearance="outlined"
+                className="!rounded-lg !bg-surface-1 !px-3 !py-2"
+              >
+                <Text type="headline-medium">
+                  {t("chart.summary.absence", { count: totals.absence })}
+                </Text>
+              </Card>
+            </div>
+          </Section>
+        </Columns>
 
         {/* Classes breakdown */}
-        <SchoolWideAttendanceTable attendances={attendances} />
+        <SchoolWideAttendanceTable
+          attendances={classrooms}
+          className="mx-4 -mt-2 sm:mx-0"
+        />
       </ContentLayout>
     </>
   );
