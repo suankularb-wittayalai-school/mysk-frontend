@@ -29,7 +29,9 @@ export type StudentAttendance = {
 
 export type ClassroomAttendance = {
   classroom: Pick<Classroom, "id" | "number">;
+  expected_total: number;
   summary: ManagementAttendanceSummary;
+  absent_students: Pick<Student, "id" | "profile" | "class_no">[];
   homeroom_content: string | null;
 };
 

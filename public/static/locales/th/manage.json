@@ -26,23 +26,28 @@
       "subtitle": "นำเสนอโดย MySK"
     },
     "chart": {
-      "legend": {
-        "presence": "มา",
-        "late": "มาสาย",
-        "absence": "ลา/ขาด"
+      "assembly": {
+        "presence": "มาเข้าแถวทัน",
+        "late": "มาเข้าแถวสาย",
+        "absence": "ขาดเข้าแถว"
       },
+      "homeroom": {
+        "presence": "มาเรียน",
+        "absence": "ขาดเรียน"
+      },
+      "note": "<b>คำแนะนำเกี่ยวกับแผนภูมิ:</b> แต่ละกลุ่มคือแต่ละระดับชั้น ซึ่งรวมถึงข้อมูลการเข้าแถว (ด้านบน สีเข้ม) และช่วงโฮมรูม (ด้านล่าง สีอ่อน)<br>สีชมพูคือมาสาย สีน้ำเงินคือมาเรียนทันเวลา และสีแดงคือขาดเรียน",
       "summary": {
-        "presence": "มาเรียน {{count, number(maximumFractionDigits: 0;)}}",
-        "late": "มาสาย {{count, number(maximumFractionDigits: 0;)}}",
-        "absence": "ขาดเรียน {{count, number(maximumFractionDigits: 0;)}}"
+        "presence": "มาเรียน {{count, number}} คน",
+        "onTime": "มาทันเวลา {{count, number}} คน",
+        "late": "มาสาย {{count, number}} คน",
+        "absence": "ขาดเรียน {{count, number}} คน"
       }
     },
     "table": {
       "thead": {
         "classroom": "ห้องเรียน",
-        "present": "มา",
-        "late": "สาย",
-        "absent": "ขาด",
+        "summary": "มาทัน • สาย • ขาด",
+        "absentStudents": "นักเรียนที่ขาดเรียน",
         "homeroom": "โฮมรูม"
       }
     },

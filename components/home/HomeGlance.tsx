@@ -230,7 +230,11 @@ const HomeGlance: StylableFC<{
 
         // If the teacher is free and the next class is far away, show a
         // countdown
-        if (todayNextPeriod?.content.length && !currentPeriod?.content.length)
+        if (
+          todayNextPeriod?.content.length &&
+          !currentPeriod?.content.length &&
+          schoolSessionState === SchoolSessionState.schedule
+        )
           return "teach-future";
 
         // If the teacher is teaching and it’s 10 minutes until it’s over, they

@@ -26,23 +26,28 @@
       "subtitle": "Presented by MySK"
     },
     "chart": {
-      "legend": {
-        "presence": "Presence",
-        "late": "Late",
-        "absence": "Absence"
+      "assembly": {
+        "presence": "Assembly presence",
+        "late": "Assembly late",
+        "absence": "Assembly absence"
       },
+      "homeroom": {
+        "presence": "Homeroom presence",
+        "absence": "Homeroom absence"
+      },
+      "note": "<b>Chart guide:</b> each group is a grade, including data during assembly (top) and homeroom (bottom). Late is pink, presence is blue, and absence is red.",
       "summary": {
-        "presence": "{{count, number(maximumFractionDigits: 0;)}} present",
-        "late": "{{count, number(maximumFractionDigits: 0;)}} late",
-        "absence": "{{count, number(maximumFractionDigits: 0;)}} absent"
+        "presence": "{{count, number}} present",
+        "onTime": "{{count, number}} on time",
+        "late": "{{count, number}} late",
+        "absence": "{{count, number}} absent"
       }
     },
     "table": {
       "thead": {
         "classroom": "Classroom",
-        "present": "Present",
-        "late": "Late",
-        "absent": "Absent",
+        "summary": "On time • late • absent",
+        "absentStudents": "Absent students",
         "homeroom": "Homeroom"
       }
     },
