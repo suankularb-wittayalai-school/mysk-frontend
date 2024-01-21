@@ -80,31 +80,19 @@ export const getServerSideProps: GetServerSideProps = async ({
   const session = await getServerSession(req, res, authOptions);
   const { data: user } = await getUserByEmail(supabase, session!.user!.email!);
 
-  // - Fetch Person for Student or Teacher
-  // - Redirect to home page for other users (temporary fix)
-  switch (user?.role) {
-    case UserRole.student:
-      const { data: student } = await getStudentFromUserID(supabase, user.id, {
-        includeContacts: true,
-        detailed: true,
-      });
-      person = student;
-      break;
-    case UserRole.teacher:
-      const { data: teacher } = await getStudentFromUserID(supabase, user.id, {
-        includeContacts: true,
-        detailed: true,
-      });
-      person = teacher;
-      break;
-    default:
-      return {
-        redirect: {
-          destination: (locale === "th" ? "" : "/en-US") + "/account",
-          permanent: false,
-        },
-      };
-  }
+  if (
+    user === null ||
+    ![UserRole.student, UserRole.teacher].includes(user.role)
+  )
+    return { notFound: true };
+
+  const { data: person } = await {
+    [UserRole.student]: getStudentFromUserID,
+    [UserRole.teacher]: getTeacherFromUserID,
+  }[user.role as UserRole.student | UserRole.teacher](supabase, user.id, {
+    includeContacts: true,
+    detailed: true,
+  });
 
   const { data: subjectGroups } = await getSubjectGroups(supabase);
 
