@@ -3,8 +3,7 @@ import CertficateAnnouncementBanner from "@/components/account/about/CertficateA
 import PersonFields, {
   PersonFieldsKey,
 } from "@/components/account/about/PersonFields";
-import ProfileNavigation from "@/components/account/ProfileNavigation";
-import PageHeader from "@/components/common/PageHeader";
+import ProfileLayout from "@/components/account/ProfileLayout";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import {
@@ -23,7 +22,7 @@ import { pantsSizeRegex } from "@/utils/patterns";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Student, Teacher, UserRole } from "@/utils/types/person";
 import { SubjectGroup } from "@/utils/types/subject";
-import { ContentLayout, Snackbar } from "@suankularb-components/react";
+import { Snackbar } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
@@ -33,6 +32,13 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import { useContext } from "react";
 
+/**
+ * The About You page lets the user view and edit their personal information
+ * like their name, birthday, and allergies.
+ *
+ * @param user The Person to display the information of. Should be of the currently logged in user.
+ * @param subjectGroups The list of all Subject Groups.
+ */
 const AboutYouPage: CustomPage<{
   user: Student | Teacher;
   subjectGroups: SubjectGroup[];
@@ -146,52 +152,36 @@ const AboutYouPage: CustomPage<{
       <Head>
         <title>{tx("tabName", { tabName: "About you" })}</title>
       </Head>
-      <PageHeader parentURL="/account">{t("title")}</PageHeader>
-      <ContentLayout>
-        <div className="!-mb-9 contents sm:grid sm:grid-cols-[1fr,3fr] sm:gap-6">
-          <section className="hidden sm:block">
-            <ProfileNavigation />
-          </section>
-          <section className="relative sm:h-[calc(100dvh-5.75rem)]">
-            <AboutHeader
-              person={user}
-              onSave={handleSave}
-              loading={loading}
-              className="absolute inset-0 bottom-auto top-0 z-[70]"
-            />
-            <div
-              // The About Header component has different heights for different
-              // screen sizes, represented here by the `--header-height` CSS
-              // variable.
-              // Using this variable, we can add the appropriate padding to the
-              // top of the form and the appropriately position the fade-out
-              // mask.
-              className={cn(`h-full space-y-6 overflow-y-auto px-4 pb-9
-                pt-[calc(var(--header-height)+2rem)] [--header-height:7.125rem]
-                [mask-image:linear-gradient(to_bottom,transparent_var(--header-height),black_calc(var(--header-height)+2rem))]
-                sm:px-0 md:[--header-height:4rem]`)}
-            >
-              {user.role === UserRole.student && (
-                <CertficateAnnouncementBanner className="!hidden sm:!block" />
-              )}
-              <PersonFields
-                form={form}
-                setForm={setForm}
-                formProps={formProps}
-                subjectGroups={subjectGroups}
-                role={user.role}
-              />
-            </div>
-          </section>
+      <ProfileLayout>
+        <AboutHeader
+          person={user}
+          onSave={handleSave}
+          loading={loading}
+          className="absolute inset-0 bottom-auto top-0 z-[70]"
+        />
+        <div
+          // The About Header component has different heights for different
+          // screen sizes, represented here by the `--header-height` CSS
+          // variable.
+          // Using this variable, we can add the appropriate padding to the top
+          // of the form and the appropriately position the fade-out mask.
+          className={cn(`h-full space-y-6 overflow-y-auto pb-9
+            pt-[calc(var(--header-height)+2rem)] [--header-height:7.125rem]
+            [mask-image:linear-gradient(to_bottom,transparent_var(--header-height),black_calc(var(--header-height)+2rem))]
+            sm:px-0 md:[--header-height:4rem]`)}
+        >
+          {user.role === UserRole.student && (
+            <CertficateAnnouncementBanner className="!hidden sm:!block" />
+          )}
+          <PersonFields
+            form={form}
+            setForm={setForm}
+            formProps={formProps}
+            subjectGroups={subjectGroups}
+            role={user.role}
+          />
         </div>
-        <style jsx global>{`
-          @media only screen and (min-width: 600px) {
-            body {
-              height: 100dvh;
-            }
-          }
-        `}</style>
-      </ContentLayout>
+      </ProfileLayout>
     </>
   );
 };
@@ -208,17 +198,11 @@ export const getServerSideProps: GetServerSideProps = async ({
   const session = await getServerSession(req, res, authOptions);
   const { data: user } = await getUserByEmail(supabase, session!.user!.email!);
 
-  if (
-    user === null ||
-    ![UserRole.student, UserRole.teacher].includes(user.role)
-  )
-    return { notFound: true };
-
   const { data: person } = await {
     [UserRole.student]: getStudentFromUserID,
     [UserRole.teacher]: getTeacherFromUserID,
-  }[user.role as UserRole.student | UserRole.teacher](supabase, user.id, {
-    includeContacts: true,
+  }[user!.role as UserRole.student | UserRole.teacher](supabase, user!.id, {
+    includeContacts: false,
     detailed: true,
   });
 

@@ -23,10 +23,7 @@ const AboutHeader: StylableFC<{
   return (
     <header
       style={style}
-      className={cn(
-        `grid flex-row items-end gap-2 px-4 sm:px-0 md:flex`,
-        className,
-      )}
+      className={cn(`grid flex-row items-end gap-2 md:flex`, className)}
     >
       <AboutPersonSummary person={person} className="grow" />
       <Actions className="!grid grid-cols-2 md:!flex">
