@@ -34,7 +34,9 @@ const ProfileTab: StylableFC<{
       <div
         className={
           selected
-            ? `[&>.skc-icon]:[font-variation-settings:'FILL'1]` // Fill icon
+            ? // Fill icon if selected
+              `[&>.skc-icon]:![font-variation-settings:'FILL'1,'GRAD'0]
+              [&>.skc-icon]:dark:![font-variation-settings:'FILL'1,'GRAD'-25]`
             : `text-on-surface-variant`
         }
       >
