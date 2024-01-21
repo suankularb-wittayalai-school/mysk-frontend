@@ -1,11 +1,15 @@
-import logError from "@/utils/helpers/logError";
-import { DatabaseClient, BackendReturn } from "@/utils/types/backend";
-import { Contact } from "@/utils/types/contact";
-import { ShirtSize, Student, Teacher } from "@/utils/types/person";
-import createContact from "../contact/createContact";
-import addContactToPerson from "../contact/addContactToPerson";
 import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
+import logError from "@/utils/helpers/logError";
+import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
+import { ShirtSize, Student, Teacher, UserRole } from "@/utils/types/person";
 
+/**
+ * Updates a Person's data.
+ *
+ * @param supabase The Supabase client.
+ * @param form The form data.
+ * @param person The Person to update.
+ */
 export async function updatePerson(
   supabase: DatabaseClient,
   form: {
@@ -25,81 +29,17 @@ export async function updatePerson(
     allergies: string[];
     shirtSize: ShirtSize;
     pantsSize: string;
-    contacts?: Contact[];
   },
   person: Student | Teacher,
-): Promise<BackendReturn<string>> {
-  if (form.contacts) {
-    // Delete existing contacts
-    for (let contact of person.contacts) {
-      const { error } = await supabase
-        .from("contacts")
-        .delete()
-        .eq("id", contact.id);
-      if (error) {
-        logError("updatePerson (delete existing Contacts)", error);
-        return { data: null, error };
-      }
-    }
+): Promise<BackendReturn> {
+  const { data: fetchedPerson, error: personIDError } = await supabase
+    .from(person.role === UserRole.teacher ? "teachers" : "students")
+    .select("person_id")
+    .eq("id", person.id)
+    .single();
+  const personID = fetchedPerson!.person_id;
 
-    // Create contacts
-    await Promise.all(
-      form.contacts.map(async (contact) => {
-        const { data: createdContactID, error: createContactError } =
-          await createContact(supabase, contact);
-        if (createContactError) {
-          logError("updatePerson (create Contacts)", createContactError);
-          return;
-        }
-
-        const { error } = await addContactToPerson(
-          supabase,
-          person,
-          createdContactID,
-        );
-
-        if (error) {
-          logError("updatePerson (add Contacts to Person)", error);
-          return;
-        }
-
-        return createdContactID!;
-      }),
-    );
-  }
-
-  let personID: string | null = null;
-
-  if (person.role === "student") {
-    const { data, error } = await supabase
-      .from("students")
-      .select("person_id")
-      .eq("id", person.id)
-      .single();
-
-    if (error) {
-      logError("updatePerson (student)", error);
-    }
-
-    personID = data!.person_id;
-  } else if (person.role === "teacher") {
-    const { data, error } = await supabase
-      .from("teachers")
-      .select("person_id")
-      .eq("id", person.id)
-      .single();
-
-    if (error) {
-      logError("updatePerson (teacher)", error);
-    }
-
-    personID = data!.person_id;
-  }
-
-  if (!personID) {
-    logError("addContactToPerson", { message: "No person ID found" });
-    return { error: { message: "No person ID found" }, data: null };
-  }
+  if (personIDError) return { data: null, error: personIDError };
 
   // Update allergies data
   const { error: allergiesRemoveError } = await supabase
@@ -116,7 +56,7 @@ export async function updatePerson(
     .from("person_allergies")
     .insert(
       form.allergies.map((allergy) => ({
-        person_id: personID!,
+        person_id: personID,
         allergy_name: allergy,
       })),
     );
@@ -127,7 +67,7 @@ export async function updatePerson(
   }
 
   // Update person data (`person` table)
-  const { data: updatedPerson, error: personError } = await supabase
+  const { error: personError } = await supabase
     .from("people")
     .update({
       prefix_th: form.prefixTH,
@@ -144,7 +84,7 @@ export async function updatePerson(
       shirt_size: form.shirtSize,
       pants_size: form.pantsSize,
     })
-    .match({ id: personID })
+    .eq("id", personID)
     .select("*")
     .order("id")
     .limit(1)
@@ -223,5 +163,5 @@ export async function updatePerson(
     }
   }
 
-  return { error: null, data: personID };
+  return { data: null, error: null };
 }
