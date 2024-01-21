@@ -43,7 +43,7 @@ const AboutYouPage: CustomPage<{
   user: Student | Teacher;
   subjectGroups: SubjectGroup[];
 }> = ({ user, subjectGroups }) => {
-  const { t } = useTranslation("account");
+  const { t } = useTranslation("account", { keyPrefix: "profile" });
   const { t: tx } = useTranslation("common");
 
   const { setSnackbar } = useContext(SnackbarContext);
@@ -130,16 +130,12 @@ const AboutYouPage: CustomPage<{
         const { error } = await updatePerson(supabase, form, user);
 
         if (error) {
-          setSnackbar(
-            <Snackbar>{t("snackbar.failure", { ns: "common" })}</Snackbar>,
-          );
+          setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
           return false;
         }
 
         await refreshProps();
-        setSnackbar(
-          <Snackbar>{t("snackbar.changesSaved", { ns: "common" })}</Snackbar>,
-        );
+        setSnackbar(<Snackbar>{tx("snackbar.changesSaved")}</Snackbar>);
         return true;
       },
       toggleLoading,
@@ -150,7 +146,7 @@ const AboutYouPage: CustomPage<{
   return (
     <>
       <Head>
-        <title>{tx("tabName", { tabName: "About you" })}</title>
+        <title>{tx("tabName", { tabName: t("title") })}</title>
       </Head>
       <ProfileLayout role={user.role}>
         <AboutHeader

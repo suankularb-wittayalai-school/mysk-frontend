@@ -6,6 +6,7 @@
     "certificates": "Certificates"
   },
   "profile": {
+    "title": "About you",
     "name": {
       "title": "Thai name",
       "prefix": "Prefix",
@@ -95,6 +96,7 @@
     }
   },
   "contacts": {
+    "title": "Your contacts",
     "desc": "A contact is a way people can reach you. Your contacts can be found via the Search page and are visible to anyone by default.",
     "action": {
       "add": "Add contact"

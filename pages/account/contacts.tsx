@@ -45,7 +45,7 @@ const YourContactsPage: CustomPage<{
   return (
     <>
       <Head>
-        <title>{tx("tabName", { tabName: "Your contacts" })}</title>
+        <title>{tx("tabName", { tabName: t("title") })}</title>
       </Head>
       <ProfileLayout role={role}>
         {/* Add Button */}
