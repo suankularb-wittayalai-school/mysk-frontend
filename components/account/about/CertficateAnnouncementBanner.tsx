@@ -8,7 +8,9 @@ import { useTranslation } from "next-i18next";
  * School Certificate eligibility announcement.
  */
 const CertficateAnnouncementBanner: StylableFC = ({ style, className }) => {
-  const { t } = useTranslation("account");
+  const { t } = useTranslation("account", {
+    keyPrefix: "profile.banner.certificate",
+  });
 
   return (
     <Card
@@ -19,9 +21,11 @@ const CertficateAnnouncementBanner: StylableFC = ({ style, className }) => {
         className,
       )}
     >
-      <Text type="title-medium">Check your school certificate eligibility</Text>
-      <Text type="body-medium">
-        Select the “Certificates” tab to learn more.
+      <Text type="title-medium" element="h3">
+        {t("title")}
+      </Text>
+      <Text type="body-medium" element="p">
+        {t("subtitle")}
       </Text>
     </Card>
   );

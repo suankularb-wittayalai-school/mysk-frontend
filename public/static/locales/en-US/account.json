@@ -1,13 +1,9 @@
 {
-  "title": "About",
-  "basicInfo": {
-    "classAndNo": "M.{{class}} No. {{classNo}}",
-    "classAdvisorAt": "Class advisor at M.{{classAdvisorAt}}"
-  },
-  "action": {
-    "chat": "Chat",
-    "logOut": "Log out",
-    "changePassword": "Change password"
+  "title": "Account",
+  "navigation": {
+    "about": "About you",
+    "contacts": "Your contacts",
+    "certificates": "CertificatesØ"
   },
   "profile": {
     "name": {
@@ -88,12 +84,15 @@
       "privateInfo_helper": "Only people you allow access to this information can see it."
     },
     "action": {
-      "reset": "Reset form",
-      "save": "Save"
+      "logOut": "Log out",
+      "save": "Save changes"
+    },
+    "banner": {
+      "certificate": {
+        "title": "Check your school certificate eligibility",
+        "subtitle": "Select the “Certificates” tab to learn more."
+      }
     }
-  },
-  "preferences": {
-    "title": "Preferences"
   },
   "dialog": {
     "contact": {

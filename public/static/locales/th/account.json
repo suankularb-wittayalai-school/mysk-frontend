@@ -1,22 +1,18 @@
 {
   "title": "บัญชีผู้ใช้",
-  "basicInfo": {
-    "classAndNo": "ม.{{class}} เลขที่ {{classNo}}",
-    "classAdvisorAt": "ครูที่ปรึกษา ม.{{classAdvisorAt}}"
-  },
-  "action": {
-    "chat": "การสนทนา",
-    "logOut": "ออกจากระบบ",
-    "changePassword": "เปลี่ยนรหัสผ่าน"
+  "navigation": {
+    "about": "เกี่ยวกับคุณ",
+    "contacts": "ช่องทางการติดต่อ",
+    "certificates": "ประกาศเกียรติคุณ"
   },
   "profile": {
     "name": {
       "title": "ชื่อจริง",
       "prefix": "คำนำหน้า",
       "prefix_helper": "เด็กชาย นาย นาง นางสาว ฯลฯ",
-      "middleName_helper": "เว้นช่องนี้หากไม่ต้องการแสดงชื่อกลางในชื่อ",
       "firstName": "ชื่อ",
       "middleName": "ชื่อกลาง",
+      "middleName_helper": "เว้นช่องนี้หากไม่ต้องการแสดงชื่อกลางในชื่อ",
       "lastName": "นามสกุล",
       "nickname": "ชื่อเล่น"
     },
@@ -67,26 +63,19 @@
       "pantsSize": "ขนาดกางเกงนักเรียน",
       "bloodGroup": "กรุ๊ปเลือด"
     },
-    "contacts": {
-      "title": "ช่องทางการติดต่อ",
-      "noContacts": "ยังไม่ได้เพิ่มช่องทางการติดต่อ",
-      "action": {
-        "add": "เพิ่มช่องทางการติดต่อ",
-        "edit": "แก้ไข",
-        "delete": "ลบ",
-        "link": "เปิดลิงก์"
-      }
-    },
     "common": {
       "privateInfo_helper": "จะไม่มีใครเห็นข้อมูลนี้จนกว่าจะให้คำอนุญาตต่อคนคนนั้น"
     },
     "action": {
-      "reset": "ลบการแก้ไข",
+      "logOut": "ออกจากระบบ",
       "save": "บันทึก"
+    },
+    "banner": {
+      "certificate": {
+        "title": "อย่าลืมตรวจสอบสถานะประกาศเกียรติคุณของนักเรียน",
+        "subtitle": "ไปที่หน้า “ประกาศเกียรติคุณ” ในเมนูด้านซ้ายได้เลย"
+      }
     }
-  },
-  "preferences": {
-    "title": "การตั้งค่า"
   },
   "dialog": {
     "contact": {

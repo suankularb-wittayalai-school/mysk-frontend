@@ -5,6 +5,7 @@ import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import { Student, Teacher } from "@/utils/types/person";
 import { Text } from "@suankularb-components/react";
+import { useTranslation } from "next-i18next";
 import { title } from "radash";
 
 /**
@@ -19,6 +20,7 @@ const AboutPersonSummary: StylableFC<{
   >;
 }> = ({ person, style, className }) => {
   const locale = useLocale();
+  const { t } = useTranslation("account", { keyPrefix: "profile.role" });
 
   return (
     <div
@@ -48,7 +50,7 @@ const AboutPersonSummary: StylableFC<{
           // (the Avatar on the left is circular).
           className="ml-0.5 text-on-surface-variant"
         >
-          {title(person.role)}
+          {t(`role.${person.role}`)}
         </Text>
       </div>
     </div>
