@@ -35,7 +35,7 @@ const ProfilePage: CustomPage<{ user: Student | Teacher }> = ({ user }) => {
       <PageHeader>{t("title")}</PageHeader>
       <ContentLayout>
         <AboutPersonSummary person={user} className="mx-4 sm:mx-0" />
-        <ProfileNavigation className="mx-1 sm:-mx-3" />
+        <ProfileNavigation role={user.role} className="mx-1 sm:-mx-3" />
       </ContentLayout>
     </>
   );

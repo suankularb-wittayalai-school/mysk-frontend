@@ -8,6 +8,7 @@ import getPersonIDFromUser from "@/utils/backend/person/getPersonIDFromUser";
 import useContactActions from "@/utils/helpers/contact/useContactActions";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Contact } from "@/utils/types/contact";
+import { UserRole } from "@/utils/types/person";
 import {
   Actions,
   Button,
@@ -28,11 +29,13 @@ import { useState } from "react";
  *
  * @param contacts The list of Contacts of the currently logged-in user.
  * @param personID The ID of the Person of the currently logged-in user.
+ * @param role The role of the currently logged-in user.
  */
 const YourContactsPage: CustomPage<{
   contacts: Contact[];
   personID: string;
-}> = ({ contacts, personID }) => {
+  role: UserRole;
+}> = ({ contacts, personID, role }) => {
   const { t } = useTranslation("account", { keyPrefix: "contacts" });
   const { t: tx } = useTranslation("common");
 
@@ -44,7 +47,7 @@ const YourContactsPage: CustomPage<{
       <Head>
         <title>{tx("tabName", { tabName: "Your contacts" })}</title>
       </Head>
-      <ProfileLayout>
+      <ProfileLayout role={role}>
         {/* Add Button */}
         <Actions align="left" className="mb-3">
           <Button
@@ -94,6 +97,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   });
   const session = await getServerSession(req, res, authOptions);
   const { data: user } = await getUserByEmail(supabase, session!.user!.email!);
+  const role = user!.role;
 
   const { data: personID } = await getPersonIDFromUser(supabase, user!);
   const { data: contacts } = await getContactsOfPerson(supabase, personID!);
@@ -106,6 +110,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       ])),
       contacts,
       personID,
+      role,
     },
   };
 };

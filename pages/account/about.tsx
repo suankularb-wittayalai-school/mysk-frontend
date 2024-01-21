@@ -152,7 +152,7 @@ const AboutYouPage: CustomPage<{
       <Head>
         <title>{tx("tabName", { tabName: "About you" })}</title>
       </Head>
-      <ProfileLayout>
+      <ProfileLayout role={user.role}>
         <AboutHeader
           person={user}
           onSave={handleSave}
