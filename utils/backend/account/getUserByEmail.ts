@@ -1,8 +1,7 @@
 // Imports
-import getAllPermissions from "@/utils/backend/permission/getAllPermissions";
 import logError from "@/utils/helpers/logError";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
-import { User, UserPermissions, UserRole } from "@/utils/types/person";
+import { User, UserPermissionKey, UserRole } from "@/utils/types/person";
 import { omit } from "radash";
 
 /**
@@ -35,24 +34,12 @@ export default async function getUserByEmail(
   }
   if (!data) return { data: null, error: null };
 
-  const { data: allPermissions, error: permissionsError } =
-    await getAllPermissions(supabase);
-  if (permissionsError) {
-    logError("getUserByEmail (permissions)", permissionsError);
-    return { data: null, error: permissionsError };
-  }
-
   const user = {
     ...omit(data!, ["role", "user_permissions"]),
     role: <UserRole>data!.role,
-    permissions: Object.fromEntries(
-      allPermissions.map((permission) => [
-        permission,
-        data!.user_permissions.some(
-          (item) => item.permissions!.name === permission,
-        ),
-      ]),
-    ) as UserPermissions,
+    permissions: data.user_permissions.map(
+      (permission) => permission.permissions!.name as UserPermissionKey,
+    ),
   };
 
   return { data: user, error: null };
