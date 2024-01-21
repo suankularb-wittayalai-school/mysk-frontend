@@ -44,7 +44,7 @@ const ContactCard: StylableFC<{
 }> = ({ contact, onChange, onRemove, style, className }) => {
   // Translation
   const locale = useLocale();
-  const { t } = useTranslation("account");
+  const { t } = useTranslation("account", { keyPrefix: "contacts" });
   const { t: tx } = useTranslation("common");
 
   const { setSnackbar } = useContext(SnackbarContext);
@@ -122,7 +122,7 @@ const ContactCard: StylableFC<{
         <CardHeader
           avatar={<Avatar>{avatarMap[contact.type]}</Avatar>}
           title={
-            editable ? (
+            editable && getContactIsLinkable(contact) ? (
               <a
                 href={getContactURL(contact)}
                 target={
@@ -159,13 +159,13 @@ const ContactCard: StylableFC<{
                   icon={<MaterialIcon icon="edit" />}
                   onClick={() => setShowEdit(true)}
                 >
-                  {t("profile.contacts.action.edit")}
+                  {t("action.edit")}
                 </MenuItem>
                 <MenuItem
                   icon={<MaterialIcon icon="delete" />}
                   onClick={onRemove}
                 >
-                  {t("profile.contacts.action.delete")}
+                  {t("action.delete")}
                 </MenuItem>
                 <MenuItem
                   icon={<MaterialIcon icon="open_in_new" />}
@@ -174,7 +174,7 @@ const ContactCard: StylableFC<{
                     <a {...props} target="_blank" rel="noreferrer" />
                   )}
                 >
-                  {t("profile.contacts.action.link")}
+                  {t("action.link")}
                 </MenuItem>
               </Menu>
             ) : undefined

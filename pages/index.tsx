@@ -7,8 +7,10 @@ import BlobsFullDark from "@/public/images/graphics/blobs/full-dark.svg";
 import BlobsFullLight from "@/public/images/graphics/blobs/full-light.svg";
 import flagUserAsOnboarded from "@/utils/backend/account/flagUserAsOnboarded";
 import cn from "@/utils/helpers/cn";
+import prefixLocale from "@/utils/helpers/prefixLocale";
 import useUser from "@/utils/helpers/useUser";
 import { CustomPage, LangCode } from "@/utils/types/common";
+import { UserRole } from "@/utils/types/person";
 import { Columns, ContentLayout, Text } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { LayoutGroup } from "framer-motion";
@@ -32,19 +34,19 @@ const LandingPage: CustomPage = () => {
   const { user, status } = useUser();
   const supabase = useSupabaseClient();
 
-  // Determine if and where to redirect depending on user status
+  // Determine if and where to redirect depending on user status.
   useEffect(() => {
     (async () => {
       if (status !== "authenticated" || !user) return;
-      // Redirect to Learn if user has already onboarded
-      if (user.onboarded) {
-        router.push("/learn");
-        return;
-      }
-      // Flag user as onboarded and redirect to account page if they are a
-      // first-time user
-      await flagUserAsOnboarded(supabase, user.id);
-      router.push("/account");
+      if (!user.onboarded) {
+        // Flag new users as onboarded.
+        await flagUserAsOnboarded(supabase, user.id);
+        // Redirect to account page if new Student or Teacher.
+        if ([UserRole.student, UserRole.teacher].includes(user.role))
+          router.push("/account");
+        // Otherwise redirect to home page (middleware redirects further).
+        else router.push("/learn");
+      } else router.push("/learn");
     })();
   }, [user, status, supabase]);
 
@@ -137,7 +139,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   if (data)
     return {
       redirect: {
-        destination: (locale === "en-US" ? "/en-US" : "") + "/learn",
+        destination: prefixLocale("/learn", locale),
         permanent: false,
       },
     };

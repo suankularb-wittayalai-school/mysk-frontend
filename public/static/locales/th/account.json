@@ -1,22 +1,18 @@
 {
   "title": "บัญชีผู้ใช้",
-  "basicInfo": {
-    "classAndNo": "ม.{{class}} เลขที่ {{classNo}}",
-    "classAdvisorAt": "ครูที่ปรึกษา ม.{{classAdvisorAt}}"
-  },
-  "action": {
-    "chat": "การสนทนา",
-    "logOut": "ออกจากระบบ",
-    "changePassword": "เปลี่ยนรหัสผ่าน"
+  "navigation": {
+    "about": "เกี่ยวกับคุณ",
+    "contacts": "ช่องทางการติดต่อ",
+    "certificates": "ประกาศเกียรติคุณ"
   },
   "profile": {
     "name": {
       "title": "ชื่อจริง",
       "prefix": "คำนำหน้า",
       "prefix_helper": "เด็กชาย นาย นาง นางสาว ฯลฯ",
-      "middleName_helper": "เว้นช่องนี้หากไม่ต้องการแสดงชื่อกลางในชื่อ",
       "firstName": "ชื่อ",
       "middleName": "ชื่อกลาง",
+      "middleName_helper": "เว้นช่องนี้หากไม่ต้องการแสดงชื่อกลางในชื่อ",
       "lastName": "นามสกุล",
       "nickname": "ชื่อเล่น"
     },
@@ -67,102 +63,73 @@
       "pantsSize": "ขนาดกางเกงนักเรียน",
       "bloodGroup": "กรุ๊ปเลือด"
     },
-    "contacts": {
-      "title": "ช่องทางการติดต่อ",
-      "noContacts": "ยังไม่ได้เพิ่มช่องทางการติดต่อ",
-      "action": {
-        "add": "เพิ่มช่องทางการติดต่อ",
-        "edit": "แก้ไข",
-        "delete": "ลบ",
-        "link": "เปิดลิงก์"
-      }
-    },
     "common": {
       "privateInfo_helper": "จะไม่มีใครเห็นข้อมูลนี้จนกว่าจะให้คำอนุญาตต่อคนคนนั้น"
     },
     "action": {
-      "reset": "ลบการแก้ไข",
+      "logOut": "ออกจากระบบ",
       "save": "บันทึก"
+    },
+    "banner": {
+      "certificate": {
+        "title": "อย่าลืมตรวจสอบสถานะประกาศเกียรติคุณของนักเรียน",
+        "subtitle": "ไปที่หน้า “ประกาศเกียรติคุณ” ในเมนูด้านซ้ายได้เลย"
+      }
     }
   },
-  "preferences": {
-    "title": "การตั้งค่า"
-  },
-  "dialog": {
-    "contact": {
-      "title": {
-        "add": "เพิ่มช่องทางการติดต่อ",
-        "edit": "แก้ไขช่องทางการติดต่อ"
-      },
-      "desc": "นักเรียนและอาจารย์จะสามารถค้นหาช่องทางติดต่อได้ผ่าน MySK ค้นหา",
-      "type": {
-        "label": "แพลตฟอร์ม",
-        "phone": "โทรศัพท์",
-        "email": "อีเมล",
-        "facebook": "Facebook",
-        "line": "Line",
-        "instagram": "Instagram",
-        "website": "เว็บไซต์",
-        "discord": "Discord",
-        "other": "อื่น ๆ"
-      },
-      "nameTH": "หมายเหตุ",
-      "nameEN": "หมายเหตุภาษาอังกฤษ",
-      "name_helper": "(ไม่จำเป็น)",
-      "value": {
-        "phone": "เบอร์โทรศัพท์",
-        "email": "ที่อยู่อีเมล",
-        "website": "URL",
-        "facebook": "ชื่อ Facebook",
-        "line": "ลิงก์เชิญเข้ากลุ่ม/LINE ID",
-        "instagram": "ชื่อผู้ใช้ Instagram",
-        "discord": "ลิงก์เชิญเข้า Discord/ชื่อผู้ใช้",
-        "other": "ชื่อ/ID ติดต่อ"
-      },
-      "value_error": "ค่าไม่ถูกต้อง",
-      "includes": {
-        "title": "กลุ่มที่อนุญาตให้เข้าถึง",
-        "students": "นักเรียน",
-        "teachers": "อาจารย์",
-        "parents": "ผู้ปกครอง",
-        "other": "อื่นๆ"
-      },
-      "action": {
-        "cancel": "ยกเลิก",
-        "add": "เพิ่ม",
-        "save": "บันทึก"
-      }
+  "contacts": {
+    "desc": "ผู้คนในโรงเรียนจะสามารถค้นข้อมูลการติดต่อของคุณได้ผ่าน MySK ค้นหา โปรดทราบว่าทุกคนจะสามารถเห็นข้อมูลของคุณได้ ยกเว้นข้อมูลที่คุณเลือกเป็นส่วนตัว",
+    "action": {
+      "add": "เพิ่มช่องทางการติดต่อ",
+      "edit": "แก้ไข",
+      "delete": "ลบ",
+      "link": "เปิดลิงก์"
     },
-    "emailOTP": {
-      "title": "ส่งรหัส OTP ไปให้คุณแล้ว",
-      "desc": "รหัสผ่านครั้งเดียว 6 หลัก (OTP) ไปที่ที่อยู่อีเมล {{email}} แล้ว ให้คัดลอกรหัสนั้นไปวางที่นี่เพื่อเข้าสู่ระบบ",
-      "form": {
-        "otp": "รหัส OTP"
-      },
-      "snackbar": {
-        "otpRequestExpired": "รหัส OTP ของคุณหมดอายุแล้ว ให้ขอรหัสใหม่",
-        "incorrectOTP": "รหัส OTP ไม่ถูกต้อง"
-      },
-      "action": {
-        "cancel": "ยกเลิก"
-      }
-    },
-    "changePassword": {
-      "title": "เปลี่ยนรหัสผ่าน",
-      "desc": "เปลี่ยนรหัสผ่านโดยใส่รหัสผ่านปัจจุบันเพื่อยืนยันตัวตน และใส่รหัสผ่านใหม่สองครั้ง",
-      "originalPwd": "รหัสผ่านเดิม",
-      "newPwd": "รหัสผ่านใหม่",
-      "newPwd_error": "ต้องยาวอย่างน้อย 8 ตัวอักษร",
-      "confirmNewPwd": "รหัสผ่านใหม่อีกครั้ง",
-      "confirmNewPwd_error": "รหัสผ่านใหม่ทั้งสองครั้งไม่เหมือนกัน",
-      "snackbar": {
-        "invalidPwd": "รหัสผ่านปัจจุบันไม่ถูกต้อง",
-        "success": "เปลี่ยนรหัสผ่านเรียบร้อย"
-      },
-      "action": {
-        "cancel": "ยกเลิก",
-        "save": "บันทึก"
+    "dialog": {
+      "contact": {
+        "title": {
+          "add": "เพิ่มช่องทางการติดต่อ",
+          "edit": "แก้ไขช่องทางการติดต่อ"
+        },
+        "type": {
+          "label": "แพลตฟอร์ม",
+          "phone": "โทรศัพท์",
+          "email": "อีเมล",
+          "facebook": "Facebook",
+          "line": "Line",
+          "instagram": "Instagram",
+          "website": "เว็บไซต์",
+          "discord": "Discord",
+          "other": "อื่น ๆ"
+        },
+        "nameTH": "หมายเหตุ",
+        "nameEN": "หมายเหตุภาษาอังกฤษ",
+        "name_helper": "(ไม่จำเป็น)",
+        "value": {
+          "phone": "เบอร์โทรศัพท์",
+          "email": "ที่อยู่อีเมล",
+          "website": "URL",
+          "facebook": "ชื่อ Facebook",
+          "line": "ลิงก์เชิญเข้ากลุ่ม/LINE ID",
+          "instagram": "ชื่อผู้ใช้ Instagram",
+          "discord": "ลิงก์เชิญเข้า Discord/ชื่อผู้ใช้",
+          "other": "ชื่อ/ID ติดต่อ"
+        },
+        "value_error": "ค่าไม่ถูกต้อง",
+        "includes": {
+          "title": "กลุ่มที่อนุญาตให้เข้าถึง",
+          "students": "นักเรียน",
+          "teachers": "อาจารย์",
+          "parents": "ผู้ปกครอง",
+          "other": "อื่นๆ"
+        },
+        "action": {
+          "cancel": "ยกเลิก",
+          "add": "เพิ่ม",
+          "save": "บันทึก"
+        }
       }
     }
-  }
+  },
+  "certificates": {}
 }

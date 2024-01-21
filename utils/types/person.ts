@@ -25,14 +25,10 @@ export enum UserPermissionKey {
   can_see_management = "can_see_management",
 }
 
-export type UserPermissions = {
-  [key in UserPermissionKey]: boolean;
-};
-
 export type User = {
   id: string;
   email: string | null;
-  permissions: UserPermissions;
+  permissions: UserPermissionKey[];
   is_admin: boolean;
   onboarded: boolean;
   role: UserRole;
