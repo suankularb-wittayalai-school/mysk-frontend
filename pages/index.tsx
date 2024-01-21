@@ -7,6 +7,7 @@ import BlobsFullDark from "@/public/images/graphics/blobs/full-dark.svg";
 import BlobsFullLight from "@/public/images/graphics/blobs/full-light.svg";
 import flagUserAsOnboarded from "@/utils/backend/account/flagUserAsOnboarded";
 import cn from "@/utils/helpers/cn";
+import prefixLocale from "@/utils/helpers/prefixLocale";
 import useUser from "@/utils/helpers/useUser";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
@@ -138,7 +139,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   if (data)
     return {
       redirect: {
-        destination: (locale === "en-US" ? "/en-US" : "") + "/learn",
+        destination: prefixLocale("/learn", locale),
         permanent: false,
       },
     };
