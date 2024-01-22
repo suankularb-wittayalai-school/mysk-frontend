@@ -786,6 +786,38 @@ export interface Database {
           },
         ];
       };
+      person_images: {
+        Row: {
+          created_at: string;
+          date_taken: string | null;
+          id: string;
+          image_url: string;
+          person_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          date_taken?: string | null;
+          id?: string;
+          image_url: string;
+          person_id: string;
+        };
+        Update: {
+          created_at?: string;
+          date_taken?: string | null;
+          id?: string;
+          image_url?: string;
+          person_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "person_images_person_id_fkey";
+            columns: ["person_id"];
+            isOneToOne: false;
+            referencedRelation: "people";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       schedule_item_classroom_subjects: {
         Row: {
           classroom_subject_id: string;
@@ -1072,31 +1104,25 @@ export interface Database {
       student_certificates: {
         Row: {
           certificate_detail: string;
-          certificate_no: string;
           certificate_type: Database["public"]["Enums"]["certificate_type"];
-          certificate_type_identifier: string;
           created_at: string;
-          id: number;
+          id: string;
           student_id: string;
           year: number;
         };
         Insert: {
           certificate_detail: string;
-          certificate_no: string;
           certificate_type: Database["public"]["Enums"]["certificate_type"];
-          certificate_type_identifier: string;
           created_at?: string;
-          id?: number;
+          id?: string;
           student_id: string;
           year: number;
         };
         Update: {
           certificate_detail?: string;
-          certificate_no?: string;
           certificate_type?: Database["public"]["Enums"]["certificate_type"];
-          certificate_type_identifier?: string;
           created_at?: string;
-          id?: number;
+          id?: string;
           student_id?: string;
           year?: number;
         };
@@ -1377,19 +1403,19 @@ export interface Database {
       user_permissions: {
         Row: {
           created_at: string;
-          id: number;
+          id: string;
           permission_id: number;
           user_id: string;
         };
         Insert: {
           created_at?: string;
-          id?: number;
+          id?: string;
           permission_id: number;
           user_id: string;
         };
         Update: {
           created_at?: string;
-          id?: number;
+          id?: string;
           permission_id?: number;
           user_id?: string;
         };
