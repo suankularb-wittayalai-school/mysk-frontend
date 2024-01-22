@@ -23,8 +23,14 @@ const ContactDialog: StylableFC<{
   onClose: () => void;
   onSubmit: (contact: Contact) => void;
 }> = ({ open, contact, onClose, onSubmit }) => {
-  const { t } = useTranslation("account");
+  const { t } = useTranslation("account", {
+    keyPrefix: "contacts.dialog.contact",
+  });
+  const { t: ta } = useTranslation("account");
 
+  /**
+   * Map of Contact types to their respective Text Field props.
+   */
   const contactValuesMap: {
     [key in ContactType]: {
       type: ComponentProps<"input">["type"];
@@ -91,8 +97,8 @@ const ContactDialog: StylableFC<{
   return (
     <Dialog open={open} width={580} onClose={onClose}>
       <DialogHeader
-        title={t(`dialog.contact.title.${contact ? "edit" : "add"}`)}
-        desc={t("dialog.contact.desc")}
+        title={t(`title.${contact ? "edit" : "add"}`)}
+        desc={ta("contacts.desc")}
       />
       <DialogContent className="px-6">
         <Columns columns={2} className="!gap-y-8">
@@ -118,31 +124,23 @@ const ContactDialog: StylableFC<{
           {/* Type */}
           <Select
             appearance="outlined"
-            label={t("dialog.contact.type.label")}
+            label={t("type.label")}
             {...formProps.type}
           >
-            <MenuItem value="phone">{t("dialog.contact.type.phone")}</MenuItem>
-            <MenuItem value="email">{t("dialog.contact.type.email")}</MenuItem>
-            <MenuItem value="facebook">
-              {t("dialog.contact.type.facebook")}
-            </MenuItem>
-            <MenuItem value="line">{t("dialog.contact.type.line")}</MenuItem>
-            <MenuItem value="instagram">
-              {t("dialog.contact.type.instagram")}
-            </MenuItem>
-            <MenuItem value="website">
-              {t("dialog.contact.type.website")}
-            </MenuItem>
-            <MenuItem value="discord">
-              {t("dialog.contact.type.discord")}
-            </MenuItem>
-            <MenuItem value="other">{t("dialog.contact.type.other")}</MenuItem>
+            <MenuItem value="phone">{t("type.phone")}</MenuItem>
+            <MenuItem value="email">{t("type.email")}</MenuItem>
+            <MenuItem value="facebook">{t("type.facebook")}</MenuItem>
+            <MenuItem value="line">{t("type.line")}</MenuItem>
+            <MenuItem value="instagram">{t("type.instagram")}</MenuItem>
+            <MenuItem value="website">{t("type.website")}</MenuItem>
+            <MenuItem value="discord">{t("type.discord")}</MenuItem>
+            <MenuItem value="other">{t("type.other")}</MenuItem>
           </Select>
 
           {/* Value */}
           <TextField
             appearance="outlined"
-            label={t(`dialog.contact.value.${form.type.toLowerCase()}`)}
+            label={t(`value.${form.type.toLowerCase()}`)}
             helperMsg={contactValuesMap[form.type as ContactType].helperMsg}
             inputAttr={{
               type: contactValuesMap[form.type as ContactType].type,
@@ -160,14 +158,14 @@ const ContactDialog: StylableFC<{
           {/* Label */}
           <TextField
             appearance="outlined"
-            label={t("dialog.contact.nameTH")}
-            helperMsg={t("dialog.contact.name_helper")}
+            label={t("nameTH")}
+            helperMsg={t("name_helper")}
             {...formProps.nameTH}
           />
           <TextField
             appearance="outlined"
-            label={t("dialog.contact.nameEN")}
-            helperMsg={t("dialog.contact.name_helper")}
+            label={t("nameEN")}
+            helperMsg={t("name_helper")}
             {...formProps.nameEN}
           />
         </Columns>
@@ -175,12 +173,12 @@ const ContactDialog: StylableFC<{
       <Actions>
         {/* Cancel */}
         <Button appearance="text" onClick={onClose}>
-          {t("dialog.contact.action.cancel")}
+          {t("action.cancel")}
         </Button>
 
         {/* Save */}
         <Button appearance="text" onClick={handleSubmit}>
-          {t(`dialog.contact.action.${contact ? "save" : "add"}`)}
+          {t(`action.${contact ? "save" : "add"}`)}
         </Button>
       </Actions>
     </Dialog>

@@ -24,6 +24,7 @@ import {
   RootLayout,
   Snackbar,
   Text,
+  useBreakpoint,
 } from "@suankularb-components/react";
 import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
@@ -60,6 +61,7 @@ const Layout: FC<
 
   // Navigation Bar and Drawer
   const router = useRouter();
+  const { atBreakpoint } = useBreakpoint();
   const { user } = useUser();
   const homeURL = getHomeURLofRole(user?.role || UserRole.student);
 
@@ -172,13 +174,16 @@ const Layout: FC<
             href="/news"
             element={Link}
           />
-          <NavDrawerItem
-            icon={<MaterialIcon icon="account_circle" />}
-            label={t("navigation.account")}
-            selected={router.pathname.startsWith("/account")}
-            href="/account"
-            element={Link}
-          />
+          {!user ||
+            ([UserRole.student, UserRole.teacher].includes(user.role) && (
+              <NavDrawerItem
+                icon={<MaterialIcon icon="account_circle" />}
+                label={t("navigation.account")}
+                selected={router.pathname.startsWith("/account")}
+                href={atBreakpoint === "base" ? "/account" : "/account/about"}
+                element={Link}
+              />
+            ))}
         </NavDrawerSection>
 
         {/* Search */}
@@ -350,13 +355,16 @@ const Layout: FC<
             href="/news"
             element={Link}
           />
-          <NavBarItem
-            icon={<MaterialIcon icon="account_circle" />}
-            label={t("navigation.account")}
-            selected={router.pathname.startsWith("/account")}
-            href="/account"
-            element={Link}
-          />
+          {!user ||
+            ([UserRole.student, UserRole.teacher].includes(user.role) && (
+              <NavBarItem
+                icon={<MaterialIcon icon="account_circle" />}
+                label={t("navigation.account")}
+                selected={router.pathname.startsWith("/account")}
+                href={atBreakpoint === "base" ? "/account" : "/account/about"}
+                element={Link}
+              />
+            ))}
         </NavBar>
       )}
 
