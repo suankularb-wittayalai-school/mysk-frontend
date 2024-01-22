@@ -147,5 +147,7 @@
       }
     }
   },
-  "certificates": {}
+  "certificates": {
+    "title": "Certificates"
+  }
 }
