@@ -16,7 +16,7 @@ import { camel } from "radash";
 const CertificateCard: StylableFC<{
   certificate: StudentCertificate;
 }> = ({ certificate, style, className }) => {
-  const { t } = useTranslation("account", { keyPrefix: "certificates" });
+  const { t: tx } = useTranslation("common");
 
   return (
     <Card
@@ -59,7 +59,7 @@ const CertificateCard: StylableFC<{
       {/* Text */}
       <div className="sm:col-span-2 md:col-span-1">
         <Text type="headline-small" element="h3">
-          {t(`type.${camel(certificate.certificate_type)}`)}
+          {tx(`certificate.${camel(certificate.certificate_type)}`)}
         </Text>
         <Text type="title-medium" element="p" className="empty:hidden">
           {certificate.certificate_detail}
