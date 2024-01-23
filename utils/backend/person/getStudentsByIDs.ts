@@ -2,20 +2,37 @@ import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import logError from "@/utils/helpers/logError";
 import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
+import { StudentCertificateType } from "@/utils/types/certificate";
 import { ShirtSize, Student, UserRole } from "@/utils/types/person";
+import { pick } from "radash";
 
+/**
+ * Get multiple Students by their IDs.
+ *
+ * @param supabase The Supabase Client to use.
+ * @param studentID The IDs of the Students in the database. Not to be confused with the Person ID or the 5-digit Student ID.
+ *
+ * @param options Options.
+ * @param options.detailed Whether to include detailed information about the Students.
+ *
+ * @returns A Backend Return with an array of the Students.
+ */
 export async function getStudentsByIDs(
   supabase: DatabaseClient,
   studentID: string[],
   options?: { detailed?: boolean },
 ): Promise<BackendReturn<Student[]>> {
-  let { data: studentData, error: studentError } = await supabase
+  let { data, error: studentError } = await supabase
     .from("students")
     .select(
       `*,
-      people(*, person_contacts(contacts(*)),
-      person_allergies(allergy_name)),
-      classroom_students!inner(class_no, classrooms!inner(id, number))`,
+      student_certificates(id, year, certificate_type, certificate_detail),
+      people(
+        *,
+        person_contacts(contacts(*)),
+        person_allergies(allergy_name)),
+        classroom_students(class_no, classrooms!inner(id, number)
+      )`,
     )
     .in("id", studentID)
     .eq("classroom_students.classrooms.year", getCurrentAcademicYear());
@@ -25,69 +42,60 @@ export async function getStudentsByIDs(
     return { data: null, error: studentError };
   }
 
-  let students: Student[] = studentData!.map((studentData) => ({
-    id: studentData!.id,
-    prefix: mergeDBLocales(studentData!.people, "prefix"),
-    first_name: mergeDBLocales(studentData!.people, "first_name"),
-    last_name: mergeDBLocales(studentData!.people, "last_name"),
-    nickname: mergeDBLocales(studentData!.people, "nickname"),
-    middle_name: mergeDBLocales(studentData!.people, "middle_name"),
-    student_id: studentData!.student_id,
-    classroom: {
-      id: studentData!.classroom_students[0].classrooms!.id,
-      number: studentData!.classroom_students[0].classrooms!.number,
-    },
-    class_no: studentData!.classroom_students[0].class_no,
-    contacts: options?.detailed
-      ? studentData!.people!.person_contacts.map((contacts) => {
-          const { contacts: contact } = contacts;
-          return {
-            id: contact!.id,
-            type: contact!.type,
-            value: contact!.value,
-            name: mergeDBLocales(contact!, "name"),
-            include_parents: contact!.include_parents,
-            include_students: contact!.include_students,
-            include_teachers: contact!.include_teachers,
-          };
-        })
-      : [],
-    allergies: options?.detailed
-      ? studentData!.people!.person_allergies.map(
-          (allergies) => allergies.allergy_name,
-        )
-      : null,
-    profile: studentData!.people?.profile ?? null,
-    citizen_id: options?.detailed
-      ? studentData!.people?.citizen_id ?? null
-      : null,
-    birthdate: options?.detailed
-      ? studentData!.people?.birthdate ?? null
-      : null,
-    shirt_size:
-      options?.detailed && studentData?.people?.shirt_size
-        ? {
-            XS: ShirtSize.XS,
-            S: ShirtSize.S,
-            M: ShirtSize.M,
-            L: ShirtSize.L,
-            XL: ShirtSize.XL,
-            "2XL": ShirtSize.twoXL,
-            "3XL": ShirtSize.threeXL,
-            "4XL": ShirtSize.fourXL,
-            "5XL": ShirtSize.fiveXL,
-            "6XL": ShirtSize.sixXL,
-          }[studentData.people.shirt_size]
-        : null,
-    pants_size: options?.detailed
-      ? studentData!.people?.pants_size ?? null
-      : null,
+  const students: Student[] = data!.map((student) => ({
+    id: student!.id,
+    prefix: mergeDBLocales(student!.people, "prefix"),
+    first_name: mergeDBLocales(student!.people, "first_name"),
+    last_name: mergeDBLocales(student!.people, "last_name"),
+    nickname: mergeDBLocales(student!.people, "nickname"),
+    middle_name: mergeDBLocales(student!.people, "middle_name"),
+    student_id: student!.student_id,
+    ...(student!.classroom_students.length > 0
+      ? {
+          classroom: student!.classroom_students[0].classrooms,
+          class_no: student!.classroom_students[0].class_no,
+        }
+      : { classroom: null, class_no: null }),
+    profile: student!.people?.profile ?? null,
+    ...(options?.detailed && student!.people
+      ? {
+          contacts: student!.people!.person_contacts.map(({ contacts }) => ({
+            ...pick(contacts!, [
+              "id",
+              "type",
+              "value",
+              "include_parents",
+              "include_students",
+              "include_teachers",
+            ]),
+            name: mergeDBLocales(contacts!, "name"),
+          })),
+          certificates: student!.student_certificates.map((certicate) => ({
+            ...certicate,
+            certificate_type: <StudentCertificateType>(
+              certicate.certificate_type
+            ),
+          })),
+          allergies: student!.people.person_allergies.map(
+            ({ allergy_name }) => allergy_name,
+          ),
+          citizen_id: student!.people.citizen_id,
+          birthdate: student!.people.birthdate,
+          shirt_size: <ShirtSize>student!.people.shirt_size,
+          pants_size: student!.people.pants_size,
+        }
+      : {
+          contacts: [],
+          certificates: [],
+          allergies: null,
+          citizen_id: null,
+          birthdate: null,
+          shirt_size: null,
+          pants_size: null,
+        }),
     role: UserRole.student,
     is_admin: null,
   }));
 
-  return {
-    data: students,
-    error: null,
-  };
+  return { data: students, error: null };
 }

@@ -119,7 +119,6 @@ export const getServerSideProps: GetServerSideProps = async ({
     supabase,
     personID!,
   );
-  // const certificates = [];
 
   return {
     props: {

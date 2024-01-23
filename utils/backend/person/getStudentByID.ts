@@ -54,7 +54,7 @@ export async function getStudentByID(
     return { data: null, error };
   }
 
-  let student: Student = {
+  const student: Student = {
     id: data!.id,
     prefix: mergeDBLocales(data!.people, "prefix"),
     first_name: mergeDBLocales(data!.people, "first_name"),

@@ -1,85 +1,34 @@
 // Imports
 import getUserByEmail from "@/utils/backend/account/getUserByEmail";
-import { getPersonByID } from "@/utils/backend/person/getPersonByID";
-import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
+import { getStudentByID } from "@/utils/backend/person/getStudentByID";
 import logError from "@/utils/helpers/logError";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
 import { Student, Teacher, UserRole } from "@/utils/types/person";
-import { Subject } from "@/utils/types/subject";
 import { GetServerSidePropsContext } from "next";
 import { NextAuthOptions, getServerSession } from "next-auth";
+import { getTeacherByID } from "../person/getTeacherByID";
 
 export async function getStudentFromUserID(
   supabase: DatabaseClient,
   userID: string,
   options?: { includeContacts: boolean; detailed?: boolean },
 ): Promise<BackendReturn<Student>> {
-  let { data: studentData, error } = await supabase
+  let { data: studentData, error: studentDataError } = await supabase
     .from("students")
     .select("*")
     .eq("user_id", userID)
     .single();
 
-  if (error) {
-    logError("getStudentFromUserID (student)", error);
-    return { data: null, error };
+  if (studentDataError) {
+    logError("getStudentFromUserID", studentDataError);
+    return { data: null, error: studentDataError };
   }
 
-  let { data: personData, error: personError } = await getPersonByID(
+  return (await getStudentByID(
     supabase,
-    studentData!.person_id ?? "",
+    studentData!.id,
     options,
-  );
-
-  if (personError) {
-    logError("getStudentFromUserID (person)", personError);
-    return { data: null, error: personError };
-  }
-
-  let { data: classroomStudentData, error: classroomStudentError } =
-    await supabase
-      .from("classroom_students")
-      .select("*")
-      .eq("student_id", studentData!.id);
-  // .eq("year", getCurrentAcademicYear())
-  // .single();
-
-  if (classroomStudentError) {
-    logError(
-      "getStudentFromUserID (classroom_students)",
-      classroomStudentError,
-    );
-    return { data: null, error: classroomStudentError };
-  }
-
-  let { data: classroomData, error: classroomError } = await supabase
-    .from("classrooms")
-    .select("*")
-    .in("id", [classroomStudentData!.map((cs) => cs.classroom_id)])
-    .eq("year", getCurrentAcademicYear())
-    .single();
-
-  if (classroomError) {
-    logError("getStudentFromUserID (classrooms)", classroomError);
-    return { data: null, error: classroomError };
-  }
-
-  return {
-    data: {
-      ...personData!,
-      id: studentData!.id,
-      student_id: studentData!.student_id,
-      class_no: classroomStudentData!.find(
-        (cs) => cs.classroom_id === classroomData!.id,
-      )!.class_no,
-      classroom: {
-        id: classroomData!.id,
-        number: classroomData!.number,
-      },
-      role: UserRole.student,
-    },
-    error: null,
-  };
+  )) as BackendReturn<Student>;
 }
 
 export async function getTeacherFromUserID(
@@ -98,124 +47,11 @@ export async function getTeacherFromUserID(
     return { data: null, error };
   }
 
-  let { data: personData, error: personError } = await getPersonByID(
+  return (await getTeacherByID(
     supabase,
-    teacherData!.person_id ?? "",
+    teacherData!.id,
     options,
-  );
-
-  if (personError) {
-    logError("getTeacherFromUserID (person)", personError);
-    return { data: null, error: personError };
-  }
-
-  let { data: classroomTeacherData, error: classroomTeacherError } =
-    await supabase
-      .from("classroom_advisors")
-      .select("*")
-      .eq("teacher_id", teacherData!.id);
-
-  if (classroomTeacherError) {
-    logError(
-      "getTeacherFromUserID (classroom_advisors)",
-      classroomTeacherError,
-    );
-    return { data: null, error: classroomTeacherError };
-  }
-
-  let { data: classroomData, error: classroomError } = await supabase
-    .from("classrooms")
-    .select("*")
-    .in("id", [classroomTeacherData!.map((cs) => cs.classroom_id)])
-    .eq("year", getCurrentAcademicYear());
-
-  let classroom = classroomData?.length
-    ? {
-        id: classroomData[0]!.id,
-        number: classroomData[0]!.number,
-      }
-    : null;
-
-  if (classroomError) {
-    logError("getTeacherFromUserID (classrooms)", classroomError);
-    return { data: null, error: classroomError };
-  }
-
-  let { data: subjectGroupData, error: subjectGroupError } = await supabase
-    .from("subject_groups")
-    .select("*")
-    .eq("id", teacherData!.subject_group_id)
-    .single();
-
-  if (subjectGroupError) {
-    logError("getTeacherFromUserID (subject_groups)", subjectGroupError);
-    return { data: null, error: subjectGroupError };
-  }
-
-  let subjectsInCharge: Pick<Subject, "id" | "name" | "code" | "short_name">[] =
-    [];
-
-  if (options?.detailed) {
-    let { data: subjectsInChargeData, error: subjectsInChargeError } =
-      await supabase
-        .from("subject_teachers")
-        .select("*")
-        .eq("teacher_id", teacherData!.id)
-        .eq("year", getCurrentAcademicYear());
-
-    if (subjectsInChargeError) {
-      logError(
-        "getTeacherFromUserID (subject_teachers)",
-        subjectsInChargeError,
-      );
-      return { data: null, error: subjectsInChargeError };
-    }
-
-    let { data: subjectData, error: subjectError } = await supabase
-      .from("subjects")
-      .select("*")
-      .in("id", [subjectsInChargeData!.map((cs) => cs.subject_id)]);
-
-    if (subjectError) {
-      logError("getTeacherFromUserID (subjects)", subjectError);
-      return { data: null, error: subjectError };
-    }
-
-    subjectsInCharge = subjectData!.map((s) => ({
-      id: s.id,
-      name: {
-        th: s.name_th,
-        "en-US": s.name_en,
-      },
-      code: {
-        th: s.code_th,
-        "en-US": s.code_en,
-      },
-      short_name: {
-        th: s.short_name_th ?? "",
-        "en-US": s.short_name_en,
-      },
-    }));
-  }
-
-  return {
-    data: {
-      ...personData!,
-      id: teacherData!.id,
-      teacher_id: teacherData!.teacher_id,
-      class_advisor_at: classroom,
-      subject_group: {
-        id: subjectGroupData!.id,
-        name: {
-          th: subjectGroupData!.name_th,
-          "en-US": subjectGroupData!.name_en,
-        },
-      },
-      subjects_in_charge: subjectsInCharge,
-      role: UserRole.teacher,
-    },
-    error: null,
-  };
+  )) as BackendReturn<Teacher>;
 }
 
 export default async function getLoggedInPerson(
@@ -278,4 +114,3 @@ export default async function getLoggedInPerson(
 
   return { data: loggedInAccount, error: null };
 }
-
