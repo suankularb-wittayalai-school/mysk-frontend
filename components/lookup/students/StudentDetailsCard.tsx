@@ -7,6 +7,7 @@ import PersonContactGrid from "@/components/lookup/people/PersonContactGrid";
 import PersonHeader from "@/components/lookup/people/PersonHeader";
 import PersonScheduleCard from "@/components/lookup/people/PersonScheduleCard";
 import CurrentLearningPeriodCard from "@/components/lookup/students/CurrentLearningPeriodCard";
+import StudentCertificateGrid from "@/components/lookup/students/StudentCertificateGrid";
 import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import useToggle from "@/utils/helpers/useToggle";
@@ -129,6 +130,14 @@ const StudentDetailsCard: StylableFC<{
                   <motion.div layout="position" transition={positionTransition}>
                     <PersonContactGrid contacts={student.contacts} />
                   </motion.div>
+                )}
+
+                {student.certificates.length > 0 && (
+                  <StudentCertificateGrid
+                    certificates={student.certificates.filter(
+                      ({ year }) => year === getCurrentAcademicYear(),
+                    )}
+                  />
                 )}
               </LookupDetailsContent>
             </>
