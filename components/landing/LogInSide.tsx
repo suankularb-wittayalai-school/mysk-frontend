@@ -1,5 +1,8 @@
 // Imports
 import MultiSchemeImage from "@/components/common/MultiSchemeImage";
+import MySKDark from "@/public/images/brand/mysk-dark.svg";
+import MySKLight from "@/public/images/brand/mysk-light.svg";
+import cn from "@/utils/helpers/cn";
 import useOneTapSignin from "@/utils/helpers/useOneTapSignin";
 import { StylableFC } from "@/utils/types/common";
 import {
@@ -10,9 +13,6 @@ import {
 } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
 import { forwardRef, useEffect, useRef, useState } from "react";
-import MySKDark from "@/public/images/brand/mysk-dark.svg";
-import MySKLight from "@/public/images/brand/mysk-light.svg";
-import cn from "@/utils/helpers/cn";
 
 /**
  * A form for logging in.
@@ -70,7 +70,11 @@ const LogInSide: StylableFC = ({ style, className }) => {
             [&:not(:has(iframe))]:animate-pulse
             [&:not(:has(iframe))]:bg-surface-variant`)}
         />
-        <Text type="body-small" element="p" className="mx-4 text-on-surface-variant">
+        <Text
+          type="body-small"
+          element="p"
+          className="mx-4 text-on-surface-variant"
+        >
           {t("googleHelper")}
         </Text>
       </div>
@@ -94,7 +98,7 @@ const LogInSide: StylableFC = ({ style, className }) => {
         <Button
           appearance="tonal"
           icon={<MaterialIcon icon="report" />}
-          href="https://forms.gle/v73WxeTx4hE9fbSX6"
+          href={process.env.NEXT_PUBLIC_HELP_FORM_URL}
           // eslint-disable-next-line react/display-name
           element={forwardRef((props, ref) => (
             <a ref={ref} {...props} target="_blank" rel="noreferrer" />

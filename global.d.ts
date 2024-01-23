@@ -25,6 +25,11 @@ declare global {
       NEXT_PUBLIC_SUPABASE_ANON_KEY: string;
 
       /**
+       * The URL of the Google Form that is used to report problems with MySK.
+       */
+      NEXT_PUBLIC_HELP_FORM_URL: string;
+
+      /**
        * The URL that NextAuth.js will use in redirects.
        */
       NEXTAUTH_URL: string;
