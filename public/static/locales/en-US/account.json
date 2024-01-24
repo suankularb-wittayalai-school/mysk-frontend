@@ -148,6 +148,8 @@
     }
   },
   "certificates": {
-    "title": "Certificates"
+    "title": "Certificates",
+    "empty": "You have not received any certificates yet. <0>Contact us</0> if you think this is a mistake.",
+    "help": "<0>Contact us</0> if you found a mistake."
   }
 }

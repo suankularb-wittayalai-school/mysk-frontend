@@ -7,6 +7,8 @@ import PersonContactGrid from "@/components/lookup/people/PersonContactGrid";
 import PersonHeader from "@/components/lookup/people/PersonHeader";
 import PersonScheduleCard from "@/components/lookup/people/PersonScheduleCard";
 import CurrentLearningPeriodCard from "@/components/lookup/students/CurrentLearningPeriodCard";
+import StudentCertificateGrid from "@/components/lookup/students/StudentCertificateGrid";
+import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import useToggle from "@/utils/helpers/useToggle";
 import { StylableFC } from "@/utils/types/component";
@@ -23,17 +25,13 @@ import { sift } from "radash";
  * @param student The Student to show the details of.
  *
  * @param options Options to customize the Card.
- * @param options.noProfileLayout Whether to disable layout animation for the profile. Should be used if this is a child of a Dialog.
  * @param options.hideSeeClass Whether to hide the See class Chip.
  * @param options.hideScheduleCard Whether to hide the Student Schedule Card.
  */
 const StudentDetailsCard: StylableFC<{
   student?: Student;
-  options?: Partial<{
-    noProfileLayout: boolean;
-    hideSeeClass: boolean;
-    hideScheduleCard: boolean;
-  }>;
+  isOwnClass?: boolean;
+  options?: Partial<{ hideSeeClass: boolean; hideScheduleCard: boolean }>;
 }> = ({ student, options, style, className }) => {
   const { t } = useTranslation("lookup", { keyPrefix: "students.detail" });
   const { t: tx } = useTranslation("common");
@@ -132,6 +130,14 @@ const StudentDetailsCard: StylableFC<{
                   <motion.div layout="position" transition={positionTransition}>
                     <PersonContactGrid contacts={student.contacts} />
                   </motion.div>
+                )}
+
+                {student.certificates.length > 0 && (
+                  <StudentCertificateGrid
+                    certificates={student.certificates.filter(
+                      ({ year }) => year === getCurrentAcademicYear(),
+                    )}
+                  />
                 )}
               </LookupDetailsContent>
             </>

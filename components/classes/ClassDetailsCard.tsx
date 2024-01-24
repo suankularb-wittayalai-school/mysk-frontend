@@ -134,6 +134,8 @@ const ClassDetailsCard: StylableFC<{
                   <ClassStudentList
                     students={classroom.students}
                     classNumber={classroom.number}
+                    isOwnClass={isOwnClass}
+                    user={user}
                     className="max-h-96 !overflow-auto"
                   />
                 )}

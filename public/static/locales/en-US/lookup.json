@@ -19,6 +19,9 @@
     "detail": {
       "contacts": {
         "title": "Contacts"
+      },
+      "certificates": {
+        "title": "Certificates"
       }
     }
   },

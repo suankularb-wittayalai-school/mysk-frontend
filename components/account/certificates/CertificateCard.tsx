@@ -1,3 +1,4 @@
+import CertificateTypeIcon from "@/components/account/certificates/CertificateTypeIcon";
 import MultiSchemeImage from "@/components/common/MultiSchemeImage";
 import BlobsLeftDark from "@/public/images/graphics/blobs/left-dark.svg";
 import BlobsLeftLight from "@/public/images/graphics/blobs/left-light.svg";
@@ -16,7 +17,7 @@ import { camel } from "radash";
 const CertificateCard: StylableFC<{
   certificate: StudentCertificate;
 }> = ({ certificate, style, className }) => {
-  const { t } = useTranslation("account", { keyPrefix: "certificates" });
+  const { t: tx } = useTranslation("common");
 
   return (
     <Card
@@ -43,23 +44,14 @@ const CertificateCard: StylableFC<{
           className={cn(`absolute bottom-0 right-0 z-10 aspect-square w-fit
             rounded-full bg-secondary p-1 text-on-secondary`)}
         >
-          {
-            {
-              student_of_the_year: <MaterialIcon icon="award_star" />,
-              excellent_student: <MaterialIcon icon="star" />,
-              academic: <MaterialIcon icon="school" />,
-              morale: <MaterialIcon icon="folded_hands" />,
-              sports: <MaterialIcon icon="sports_football" />,
-              activity: <MaterialIcon icon="category" />,
-            }[certificate.certificate_type]
-          }
+          <CertificateTypeIcon type={certificate.certificate_type} />
         </div>
       </div>
 
       {/* Text */}
       <div className="sm:col-span-2 md:col-span-1">
         <Text type="headline-small" element="h3">
-          {t(`type.${camel(certificate.certificate_type)}`)}
+          {tx(`certificate.${camel(certificate.certificate_type)}`)}
         </Text>
         <Text type="title-medium" element="p" className="empty:hidden">
           {certificate.certificate_detail}

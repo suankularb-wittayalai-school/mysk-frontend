@@ -43,7 +43,7 @@ const AccountNotFoundDialog: DialogFC = ({ open, onClose }) => {
         <Button
           appearance="text"
           onClick={onClose}
-          href="https://forms.gle/v73WxeTx4hE9fbSX6"
+          href={process.env.NEXT_PUBLIC_HELP_FORM_URL}
           // eslint-disable-next-line react/display-name
           element={forwardRef((props, ref) => (
             <a ref={ref} {...props} target="_blank" rel="noreferrer" />
