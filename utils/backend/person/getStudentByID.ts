@@ -37,7 +37,13 @@ export async function getStudentByID(
     .from("students")
     .select(
       `*,
-      student_certificates(id, year, certificate_type, certificate_detail),
+      student_certificates(
+        id,
+        year,
+        certificate_type,
+        certificate_detail,
+        receiving_order_number
+      ),
       people(
         *,
         person_contacts(contacts(*)),
