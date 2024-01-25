@@ -1107,6 +1107,7 @@ export interface Database {
           certificate_type: Database["public"]["Enums"]["certificate_type"];
           created_at: string;
           id: string;
+          receiving_order_number: number | null;
           student_id: string;
           year: number;
         };
@@ -1115,6 +1116,7 @@ export interface Database {
           certificate_type: Database["public"]["Enums"]["certificate_type"];
           created_at?: string;
           id?: string;
+          receiving_order_number?: number | null;
           student_id: string;
           year: number;
         };
@@ -1123,6 +1125,7 @@ export interface Database {
           certificate_type?: Database["public"]["Enums"]["certificate_type"];
           created_at?: string;
           id?: string;
+          receiving_order_number?: number | null;
           student_id?: string;
           year?: number;
         };
