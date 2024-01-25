@@ -24,7 +24,7 @@ const CertificateCard: StylableFC<{
       appearance="outlined"
       style={style}
       className={cn(
-        `relative isolate !grid grid-cols-[3.375rem,1fr] !gap-4 overflow-hidden
+        `relative isolate !grid grid-cols-[3.375rem,1fr,3rem] !gap-4 overflow-hidden
         !rounded-lg p-4`,
         className,
       )}
@@ -57,6 +57,18 @@ const CertificateCard: StylableFC<{
           {certificate.certificate_detail}
         </Text>
       </div>
+
+      {/* Receiving order */}
+      {certificate.receiving_order_number && (
+        <Text
+          type="button"
+          element="div"
+          className={cn(`w-12 self-start rounded-sm bg-tertiary-container py-1.5
+            text-center text-on-tertiary-container sm:col-start-3 sm:w-full`)}
+        >
+          {certificate.receiving_order_number}
+        </Text>
+      )}
     </Card>
   );
 };

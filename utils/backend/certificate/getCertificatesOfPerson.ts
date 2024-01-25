@@ -24,6 +24,7 @@ export default async function getCertificatesOfPerson(
       year,
       certificate_type,
       certificate_detail,
+      receiving_order_number,
       students!inner(person_id)`,
     )
     .eq("students.person_id", personID);
