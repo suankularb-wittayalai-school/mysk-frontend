@@ -29,4 +29,5 @@ export type StudentCertificate = {
   certificate_type: StudentCertificateType;
   certificate_detail: string;
   receiving_order_number: number | null;
+  seat_code: string | null;
 };

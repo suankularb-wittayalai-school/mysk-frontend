@@ -31,7 +31,8 @@ export async function getStudentsByIDs(
         year,
         certificate_type,
         certificate_detail,
-        receiving_order_number
+        receiving_order_number,
+        seat_code
       ),
       people(
         *,
