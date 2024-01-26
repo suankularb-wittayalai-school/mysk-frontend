@@ -9,7 +9,15 @@ import useLocale from "@/utils/helpers/useLocale";
 import { StudentCertificate } from "@/utils/types/certificate";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
-import { Card, Header, Section, Text } from "@suankularb-components/react";
+import {
+  AssistChip,
+  Card,
+  ChipSet,
+  Header,
+  MaterialIcon,
+  Section,
+  Text,
+} from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
@@ -45,9 +53,34 @@ const CertificatesPage: CustomPage<{
             .map(([year, certificates]) => (
               // Each year is a Section.
               <Section key={year} className="!gap-2">
+                {/* Academic year */}
                 <Header level={3}>
                   {String(getLocaleYear(locale, Number(year), "AD"))}
                 </Header>
+
+                {/* Receiving procedure information */}
+                {(() => {
+                  if (!certificates?.length) return null;
+                  const { receiving_order_number, seat_code } = certificates[0];
+                  if (!(receiving_order_number && seat_code))
+                    return (
+                      <Text type="body-medium" className="mb-1">
+                        {t("ineligibleForCeremony")}
+                      </Text>
+                    );
+                  return (
+                    <ChipSet className="pb-2">
+                      <AssistChip icon={<MaterialIcon icon="group" />}>
+                        {t("action.order", { order: receiving_order_number })}
+                      </AssistChip>
+                      <AssistChip icon={<MaterialIcon icon="event_seat" />}>
+                        {t("action.seat", { seat: seat_code })}
+                      </AssistChip>
+                    </ChipSet>
+                  );
+                })()}
+
+                {/* List */}
                 <ul className="contents">
                   {certificates?.map((certificate) => (
                     <li key={certificate.id}>
