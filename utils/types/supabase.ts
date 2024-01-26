@@ -1108,6 +1108,7 @@ export interface Database {
           created_at: string;
           id: string;
           receiving_order_number: number | null;
+          seat_code: string | null;
           student_id: string;
           year: number;
         };
@@ -1117,6 +1118,7 @@ export interface Database {
           created_at?: string;
           id?: string;
           receiving_order_number?: number | null;
+          seat_code?: string | null;
           student_id: string;
           year: number;
         };
@@ -1126,6 +1128,7 @@ export interface Database {
           created_at?: string;
           id?: string;
           receiving_order_number?: number | null;
+          seat_code?: string | null;
           student_id?: string;
           year?: number;
         };
@@ -1396,6 +1399,41 @@ export interface Database {
           },
           {
             foreignKeyName: "teachers_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      user_api_keys: {
+        Row: {
+          created_at: string;
+          expire_at: string | null;
+          id: string;
+          long_token_hash: string;
+          short_token: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          expire_at?: string | null;
+          id?: string;
+          long_token_hash: string;
+          short_token: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          expire_at?: string | null;
+          id?: string;
+          long_token_hash?: string;
+          short_token?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "user_api_keys_user_id_fkey";
             columns: ["user_id"];
             isOneToOne: false;
             referencedRelation: "users";
