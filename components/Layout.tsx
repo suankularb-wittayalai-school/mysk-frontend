@@ -355,16 +355,16 @@ const Layout: FC<
             href="/news"
             element={Link}
           />
-          {!user ||
-            ([UserRole.student, UserRole.teacher].includes(user.role) && (
-              <NavBarItem
-                icon={<MaterialIcon icon="account_circle" />}
-                label={t("navigation.account")}
-                selected={router.pathname.startsWith("/account")}
-                href={atBreakpoint === "base" ? "/account" : "/account/about"}
-                element={Link}
-              />
-            ))}
+          {(!user ||
+            [UserRole.student, UserRole.teacher].includes(user.role)) && (
+            <NavBarItem
+              icon={<MaterialIcon icon="account_circle" />}
+              label={t("navigation.account")}
+              selected={router.pathname.startsWith("/account")}
+              href={atBreakpoint === "base" ? "/account" : "/account/about"}
+              element={Link}
+            />
+          )}
         </NavBar>
       )}
 
