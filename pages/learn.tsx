@@ -1,10 +1,12 @@
 // Imports
 import PageHeader from "@/components/common/PageHeader";
+import BirthdayGlance from "@/components/home/BirthdayGlance";
 import ScheduleGlance from "@/components/home/ScheduleGlance";
 import SubjectList from "@/components/home/SubjectList";
 import Schedule from "@/components/schedule/Schedule";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
+import getBirthdayBoysOfClassroom from "@/utils/backend/classroom/getBirthdayBoysOfClassroom";
 import getClassSchedule from "@/utils/backend/schedule/getClassSchedule";
 import getClassroomSubjectsOfClass from "@/utils/backend/subject/getClassroomSubjectsOfClass";
 import createEmptySchedule from "@/utils/helpers/schedule/createEmptySchedule";
@@ -34,14 +36,16 @@ import { useState } from "react";
  * The Student’s counterpart to Teach, where the user can see their Schedule
  * and their Subjects.
  *
+ * @param birthdayBoys The Students in this Student’s Classroom who have a birthday today.
  * @param schedule Data for displaying Schedule.
  * @param subjectList The Subjects this Student’s Classroom is enrolled in.
  */
 const LearnPage: CustomPage<{
+  birthdayBoys: Pick<Student, "id" | "first_name" | "nickname" | "birthdate">[];
   schedule: ScheduleType;
   subjectList: ClassroomSubject[];
   classroom: Pick<Classroom, "number">;
-}> = ({ schedule, subjectList, classroom }) => {
+}> = ({ birthdayBoys, schedule, subjectList, classroom }) => {
   const { t } = useTranslation("learn");
   const { t: tx } = useTranslation(["common", "schedule"]);
   const locale = useLocale();
@@ -59,7 +63,10 @@ const LearnPage: CustomPage<{
 
       <ContentLayout>
         <LayoutGroup>
-          {/* Home Glance */}
+          {/* Glances */}
+          {birthdayBoys.map((birthdayBoy) => (
+            <BirthdayGlance key={birthdayBoy.id} person={birthdayBoy} />
+          ))}
           <ScheduleGlance
             schedule={schedule}
             role={UserRole.student}
@@ -121,6 +128,10 @@ export const getServerSideProps: GetServerSideProps = async ({
   const { classroom } = student;
   if (!classroom) return { notFound: true };
 
+  const { data: birthdayBoys } = await getBirthdayBoysOfClassroom(
+    supabase,
+    classroom.id,
+  );
   const { data: schedule } = await getClassSchedule(supabase, classroom!.id);
   const { data: subjectList } = await getClassroomSubjectsOfClass(
     supabase,
@@ -132,10 +143,12 @@ export const getServerSideProps: GetServerSideProps = async ({
       ...(await serverSideTranslations(locale as LangCode, [
         "common",
         "account",
+        "home",
         "learn",
         "classes",
         "schedule",
       ])),
+      birthdayBoys: birthdayBoys || [],
       schedule: schedule || createEmptySchedule(1, 5),
       subjectList,
       classroom,
