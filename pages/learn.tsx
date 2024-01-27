@@ -21,6 +21,7 @@ import {
   ContentLayout,
   Header,
   Search,
+  Section,
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
@@ -64,14 +65,16 @@ const LearnPage: CustomPage<{
       <ContentLayout>
         <LayoutGroup>
           {/* Glances */}
-          {birthdayBoys.map((birthdayBoy) => (
-            <BirthdayGlance key={birthdayBoy.id} person={birthdayBoy} />
-          ))}
-          <ScheduleGlance
-            schedule={schedule}
-            role={UserRole.student}
-            classroom={classroom}
-          />
+          <Section className="!gap-2">
+            {birthdayBoys.map((birthdayBoy) => (
+              <BirthdayGlance key={birthdayBoy.id} person={birthdayBoy} />
+            ))}
+            <ScheduleGlance
+              schedule={schedule}
+              role={UserRole.student}
+              classroom={classroom}
+            />
+          </Section>
 
           {/* Schedule */}
           <motion.section
