@@ -65,7 +65,7 @@ const LearnPage: CustomPage<{
       <ContentLayout>
         <LayoutGroup>
           {/* Glances */}
-          <Section className="!gap-2">
+          <Section className="!gap-2 empty:!hidden">
             {birthdayBoys.map((birthdayBoy) => (
               <BirthdayGlance key={birthdayBoy.id} person={birthdayBoy} />
             ))}
