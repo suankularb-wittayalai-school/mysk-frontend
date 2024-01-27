@@ -1,5 +1,6 @@
 import ProfileLayout from "@/components/account/ProfileLayout";
 import CertificateCard from "@/components/account/certificates/CertificateCard";
+import CertificatesYearSection from "@/components/account/certificates/CertificatesYearSection";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getUserByEmail from "@/utils/backend/account/getUserByEmail";
 import getCertificatesOfPerson from "@/utils/backend/certificate/getCertificatesOfPerson";
@@ -52,43 +53,11 @@ const CertificatesPage: CustomPage<{
             .sort(([a], [b]) => Number(a) - Number(b))
             .map(([year, certificates]) => (
               // Each year is a Section.
-              <Section key={year} className="!gap-2">
-                {/* Academic year */}
-                <Header level={3}>
-                  {String(getLocaleYear(locale, Number(year), "AD"))}
-                </Header>
-
-                {/* Receiving procedure information */}
-                {(() => {
-                  if (!certificates?.length) return null;
-                  const { receiving_order_number, seat_code } = certificates[0];
-                  if (!(receiving_order_number && seat_code))
-                    return (
-                      <Text type="body-medium" className="mb-1">
-                        {t("ineligibleForCeremony")}
-                      </Text>
-                    );
-                  return (
-                    <ChipSet className="pb-2">
-                      <AssistChip icon={<MaterialIcon icon="group" />}>
-                        {t("action.order", { order: receiving_order_number })}
-                      </AssistChip>
-                      <AssistChip icon={<MaterialIcon icon="event_seat" />}>
-                        {t("action.seat", { seat: seat_code })}
-                      </AssistChip>
-                    </ChipSet>
-                  );
-                })()}
-
-                {/* List */}
-                <ul className="contents">
-                  {certificates?.map((certificate) => (
-                    <li key={certificate.id}>
-                      <CertificateCard certificate={certificate} />
-                    </li>
-                  ))}
-                </ul>
-              </Section>
+              <CertificatesYearSection
+                key={year}
+                year={Number(year)}
+                certificates={certificates!}
+              />
             ))
         ) : (
           // If there are no certificates, display a message with a link to the
