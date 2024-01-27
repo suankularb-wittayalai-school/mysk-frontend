@@ -42,7 +42,7 @@ export default async function getBirthdayBoysOfClassroom(
     .filter(
       ({ students }) =>
         students!.people!.birthdate?.slice(5) ===
-        getISODateString(addDays(new Date(), -1)).slice(5),
+        getISODateString(new Date()).slice(5),
     )
     .map(({ students }) => ({
       id: students!.id,
