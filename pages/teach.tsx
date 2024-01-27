@@ -1,6 +1,6 @@
 // Imports
 import PageHeader from "@/components/common/PageHeader";
-import HomeGlance from "@/components/home/HomeGlance";
+import ScheduleGlance from "@/components/home/ScheduleGlance";
 import TeachingSubjectCard from "@/components/home/TeachingSubjectCard";
 import Schedule from "@/components/schedule/Schedule";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
@@ -71,7 +71,7 @@ const TeachPage: CustomPage<{
       <ContentLayout>
         <LayoutGroup>
           {/* Home Glance */}
-          <HomeGlance
+          <ScheduleGlance
             schedule={schedule}
             role={UserRole.teacher}
             classroom={classroom}

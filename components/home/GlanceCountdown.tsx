@@ -1,5 +1,5 @@
 // Imports
-import HomeGlance from "@/components/home/HomeGlance";
+import ScheduleGlance from "@/components/home/ScheduleGlance";
 import cn from "@/utils/helpers/cn";
 import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
@@ -8,7 +8,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 
 /**
- * A countdown overline for {@link HomeGlance Home Glance}.
+ * A countdown overline for {@link ScheduleGlance Schedule Glance}.
  *
  * @param minutesLeft The number of minutes to show.
  */

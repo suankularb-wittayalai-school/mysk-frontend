@@ -1,4 +1,5 @@
 // Imports
+import Glance from "@/components/home/Glance";
 import GlanceAttendance from "@/components/home/GlanceAttendance";
 import GlanceCountdown from "@/components/home/GlanceCountdown";
 import GlancePeriods from "@/components/home/GlanceSubjects";
@@ -32,14 +33,14 @@ import { camel, list } from "radash";
 import { useMemo } from "react";
 
 /**
- * A glanceable banner dynamically updated by the current and upcoming schedule
- * items, display the most relevant information to the user.
+ * A Glance dynamically updated by the current and upcoming schedule items,
+ * display the most relevant information to the user.
  *
- * @param schedule Data for displaying Home Glance.
- * @param role The user’s role. Used in determining the Home Glance view.
+ * @param schedule Data for displaying Schedule Glance.
+ * @param role The user’s role. Used in determining the Schedule Glance view.
  * @param classroom The Classroom the user is in. Used for Attendance.
  */
-const HomeGlance: StylableFC<{
+const ScheduleGlance: StylableFC<{
   schedule: Schedule;
   role: UserRole;
   classroom?: Pick<Classroom, "number">;
@@ -284,108 +285,88 @@ const HomeGlance: StylableFC<{
   }
 
   return (
-    <AnimatePresence initial={false}>
-      {
-        // Display the banner if the display type is not `none`
-        displayType !== "none" && (
-          <motion.div
-            layout
-            layoutRoot
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={transition(duration.medium4, easing.standard)}
-            style={{ borderRadius: 28, ...style }}
-            className={cn(
-              `relative isolate mx-4 flex flex-col gap-3 overflow-hidden
-              rounded-xl border-1 border-outline-variant bg-surface-5 p-4
-              sm:mx-0`,
-              className,
-            )}
-          >
-            {/* Class Progress Indicator */}
-            <motion.div
-              className={cn(`pointer-events-none absolute inset-0 right-auto
-                -z-10 bg-surface-2`)}
-              initial={{ width: `${classProgress}%` }}
-              animate={{ width: `${classProgress}%` }}
-              transition={transition(duration.medium2, easing.standard)}
-            />
+    <Glance
+      // Display the banner if the display type is not `none`
+      visible={displayType !== "none"}
+      className={cn(
+        `relative isolate flex flex-col gap-3 bg-surface-5 p-4`,
+        className,
+      )}
+    >
+      {/* Class Progress Indicator */}
+      <motion.div
+        className={cn(`pointer-events-none absolute inset-0 right-auto
+          -z-10 bg-surface-2`)}
+        initial={{ width: `${classProgress}%` }}
+        animate={{ width: `${classProgress}%` }}
+        transition={transition(duration.medium2, easing.standard)}
+      />
 
-            {/* Lunch icon */}
-            {displayType === "lunch" && (
-              <MaterialIcon
-                icon="fastfood"
-                size={48}
-                className="text-on-surface-variant"
-              />
-            )}
+      {/* Lunch icon */}
+      {displayType === "lunch" && (
+        <MaterialIcon
+          icon="fastfood"
+          size={48}
+          className="text-on-surface-variant"
+        />
+      )}
 
-            <AnimatePresence initial={false} mode="popLayout">
-              {/* Countdown */}
-              <GlanceCountdown
-                minutesLeft={
-                  (["teach-travel", "teach-future"].includes(displayType)
-                    ? minutesTilTodayNext
-                    : ["teach-next", "learn-next"].includes(displayType)
-                      ? minutesTilImmediateNext
-                      : minutesTilEnd) || 0
-                }
-              />
+      <AnimatePresence initial={false} mode="popLayout">
+        {/* Countdown */}
+        <GlanceCountdown
+          minutesLeft={
+            (["teach-travel", "teach-future"].includes(displayType)
+              ? minutesTilTodayNext
+              : ["teach-next", "learn-next"].includes(displayType)
+                ? minutesTilImmediateNext
+                : minutesTilEnd) || 0
+          }
+        />
 
-              {/* Title */}
-              <motion.h2
-                key={displayType}
-                layout="position"
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                transition={transition(duration.medium4, easing.standard)}
-                className="skc-text skc-text--headline-medium"
-              >
-                <Trans
-                  i18nKey={`atAGlance.title.${camel(displayType)}`}
-                  ns="schedule"
-                  values={{
-                    value: {
-                      assembly: undefined,
-                      homeroom: undefined,
-                      "learn-current":
-                        getSubjectStringFromPeriod(currentPeriod),
-                      "learn-next":
-                        getSubjectStringFromPeriod(immediateNextPeriod),
-                      lunch: undefined,
-                      "teach-current":
-                        getSubjectStringFromPeriod(currentPeriod),
-                      "teach-wrap-up":
-                        getSubjectStringFromPeriod(currentPeriod),
-                      "teach-travel":
-                        immediateNextPeriod?.content[0]?.rooms?.join(", "),
-                      "teach-future":
-                        getSubjectStringFromPeriod(todayNextPeriod),
-                    }[displayType],
-                  }}
-                />
-              </motion.h2>
-            </AnimatePresence>
+        {/* Title */}
+        <motion.h2
+          key={displayType}
+          layout="position"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 10 }}
+          transition={transition(duration.medium4, easing.standard)}
+          className="skc-text skc-text--headline-medium"
+        >
+          <Trans
+            i18nKey={`atAGlance.title.${camel(displayType)}`}
+            ns="schedule"
+            values={{
+              value: {
+                none: undefined,
+                assembly: undefined,
+                homeroom: undefined,
+                "learn-current": getSubjectStringFromPeriod(currentPeriod),
+                "learn-next": getSubjectStringFromPeriod(immediateNextPeriod),
+                lunch: undefined,
+                "teach-current": getSubjectStringFromPeriod(currentPeriod),
+                "teach-wrap-up": getSubjectStringFromPeriod(currentPeriod),
+                "teach-travel":
+                  immediateNextPeriod?.content[0]?.rooms?.join(", "),
+                "teach-future": getSubjectStringFromPeriod(todayNextPeriod),
+              }[displayType],
+            }}
+          />
+        </motion.h2>
+      </AnimatePresence>
 
-            {/* Subjects details */}
-            <LayoutGroup>
-              <AnimatePresence initial={false}>
-                {["assembly", "homeroom"].includes(displayType) && classroom ? (
-                  <GlanceAttendance role={role} classroom={classroom} />
-                ) : (
-                  displayPeriod && (
-                    <GlancePeriods periods={displayPeriod.content} />
-                  )
-                )}
-              </AnimatePresence>
-            </LayoutGroup>
-          </motion.div>
-        )
-      }
-    </AnimatePresence>
+      {/* Subjects details */}
+      <LayoutGroup>
+        <AnimatePresence initial={false}>
+          {["assembly", "homeroom"].includes(displayType) && classroom ? (
+            <GlanceAttendance role={role} classroom={classroom} />
+          ) : (
+            displayPeriod && <GlancePeriods periods={displayPeriod.content} />
+          )}
+        </AnimatePresence>
+      </LayoutGroup>
+    </Glance>
   );
 };
 
-export default HomeGlance;
+export default ScheduleGlance;
