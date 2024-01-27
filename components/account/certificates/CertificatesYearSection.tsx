@@ -1,4 +1,6 @@
 import CertificateCard from "@/components/account/certificates/CertificateCard";
+import ReceivingOrderDialog from "@/components/account/certificates/ReceivingOrderDialog";
+import SeatDialog from "@/components/account/certificates/SeatDialog";
 import cn from "@/utils/helpers/cn";
 import getLocaleYear from "@/utils/helpers/getLocaleYear";
 import useLocale from "@/utils/helpers/useLocale";
@@ -29,6 +31,9 @@ const CertificatesYearSection: StylableFC<{
   const locale = useLocale();
   const { t } = useTranslation("account", { keyPrefix: "certificates" });
 
+  const [orderOpen, setOrderOpen] = useState(false);
+  const [seatOpen, setSeatOpen] = useState(false);
+
   return (
     <Section style={style} className={cn(`!gap-2`, className)}>
       {/* Academic year */}
@@ -48,14 +53,27 @@ const CertificatesYearSection: StylableFC<{
           <ChipSet className="pb-2">
             <AssistChip
               icon={<MaterialIcon icon="group" />}
+              onClick={() => setOrderOpen(true)}
             >
               {t("action.order", { order: receiving_order_number })}
             </AssistChip>
+            <ReceivingOrderDialog
+              open={orderOpen}
+              receivingOrder={receiving_order_number}
+              onClose={() => setOrderOpen(false)}
+            />
+
             <AssistChip
               icon={<MaterialIcon icon="event_seat" />}
+              onClick={() => setSeatOpen(true)}
             >
               {t("action.seat", { seat: seat_code })}
             </AssistChip>
+            <SeatDialog
+              open={seatOpen}
+              seat={seat_code}
+              onClose={() => setSeatOpen(false)}
+            />
           </ChipSet>
         );
       })()}

@@ -157,8 +157,26 @@
       "seat": "Seat {{seat}}"
     },
     "dialog": {
-      "order": {},
-      "seat": {}
+      "order": {
+        "title": "Receiving order {{order, number}}",
+        "desc": "You are the {{order}} person to receive the certificate. Remember this number as it is how your registration table is identified.",
+        "action": {
+          "done": "Done"
+        }
+      },
+      "seat": {
+        "title": "Seat {{seat}}",
+        "desc": "This is your seating location in the Suankularb Ramluek hall. You are seated in the {{column}} seat from the left in row {{row}}.",
+        "extra": "“ส” means your seat is a plastic chair, which is usually located on the ends of a row.",
+        "graphic": {
+          "row": "Row {{row}}",
+          "column_one": "{{column, number}} seat",
+          "column_other": "{{count, number}} seats"
+        },
+        "action": {
+          "done": "Done"
+        }
+      }
     }
   }
 }
