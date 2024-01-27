@@ -155,11 +155,10 @@ export const getServerSideProps: GetServerSideProps = async ({
       },
     };
 
-  const { data: schedule } = await getTeacherSchedule(supabase, teacher.id);
-  const { data: teachingSubjects } = await getTeachingSubjects(
-    supabase,
-    teacher.id,
-  );
+  const [schedule, teachingSubjects] = await Promise.all([
+    (await getTeacherSchedule(supabase, teacher.id)).data,
+    (await getTeachingSubjects(supabase, teacher.id)).data,
+  ]);
 
   const teacherID = teacher.id;
 

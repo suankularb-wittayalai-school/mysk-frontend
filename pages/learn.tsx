@@ -131,15 +131,11 @@ export const getServerSideProps: GetServerSideProps = async ({
   const { classroom } = student;
   if (!classroom) return { notFound: true };
 
-  const { data: birthdayBoys } = await getBirthdayBoysOfClassroom(
-    supabase,
-    classroom.id,
-  );
-  const { data: schedule } = await getClassSchedule(supabase, classroom!.id);
-  const { data: subjectList } = await getClassroomSubjectsOfClass(
-    supabase,
-    classroom!.id,
-  );
+  const [birthdayBoys, schedule, subjectList] = await Promise.all([
+    (await getBirthdayBoysOfClassroom(supabase, classroom.id)).data,
+    (await getClassSchedule(supabase, classroom.id)).data,
+    (await getClassroomSubjectsOfClass(supabase, classroom.id)).data,
+  ]);
 
   return {
     props: {
