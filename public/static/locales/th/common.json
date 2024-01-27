@@ -94,6 +94,7 @@
       "6": "วันเสาร์"
     }
   },
+  "ordinal": "{{count, number}}",
   "input": {
     "classesField": {
       "label": "ห้องเรียน",

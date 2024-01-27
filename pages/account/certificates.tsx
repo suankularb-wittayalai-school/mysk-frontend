@@ -1,5 +1,6 @@
 import ProfileLayout from "@/components/account/ProfileLayout";
 import CertificateCard from "@/components/account/certificates/CertificateCard";
+import CertificatesYearSection from "@/components/account/certificates/CertificatesYearSection";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getUserByEmail from "@/utils/backend/account/getUserByEmail";
 import getCertificatesOfPerson from "@/utils/backend/certificate/getCertificatesOfPerson";
@@ -9,7 +10,15 @@ import useLocale from "@/utils/helpers/useLocale";
 import { StudentCertificate } from "@/utils/types/certificate";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
-import { Card, Header, Section, Text } from "@suankularb-components/react";
+import {
+  AssistChip,
+  Card,
+  ChipSet,
+  Header,
+  MaterialIcon,
+  Section,
+  Text,
+} from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
@@ -44,18 +53,11 @@ const CertificatesPage: CustomPage<{
             .sort(([a], [b]) => Number(a) - Number(b))
             .map(([year, certificates]) => (
               // Each year is a Section.
-              <Section key={year} className="!gap-2">
-                <Header level={3}>
-                  {String(getLocaleYear(locale, Number(year), "AD"))}
-                </Header>
-                <ul className="contents">
-                  {certificates?.map((certificate) => (
-                    <li key={certificate.id}>
-                      <CertificateCard certificate={certificate} />
-                    </li>
-                  ))}
-                </ul>
-              </Section>
+              <CertificatesYearSection
+                key={year}
+                year={Number(year)}
+                certificates={certificates!}
+              />
             ))
         ) : (
           // If there are no certificates, display a message with a link to the

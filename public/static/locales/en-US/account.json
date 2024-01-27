@@ -150,6 +150,33 @@
   "certificates": {
     "title": "Certificates",
     "empty": "You have not received any certificates yet. <0>Contact us</0> if you think this is a mistake.",
-    "help": "<0>Contact us</0> if you found a mistake."
+    "help": "<0>Contact us</0> if you found a mistake.",
+    "ineligibleForCeremony": "You are not eligible for the ceremony. Recieve this year’s certificates at the library.",
+    "action": {
+      "order": "Order {{order, number}}",
+      "seat": "Seat {{seat}}"
+    },
+    "dialog": {
+      "order": {
+        "title": "Receiving order {{order, number}}",
+        "desc": "You are the {{order}} person to receive the certificate. Remember this number as it is how your registration table is identified.",
+        "action": {
+          "done": "Done"
+        }
+      },
+      "seat": {
+        "title": "Seat {{seat}}",
+        "desc": "This is your seating location in the Suankularb Ramluek hall. You are seated in the {{column}} seat from the left in row {{row}}.",
+        "extra": "“ส” means your seat is a plastic chair, which is usually located on the ends of a row.",
+        "graphic": {
+          "row": "Row {{row}}",
+          "column_one": "{{column, number}} seat",
+          "column_other": "{{count, number}} seats"
+        },
+        "action": {
+          "done": "Done"
+        }
+      }
+    }
   }
 }

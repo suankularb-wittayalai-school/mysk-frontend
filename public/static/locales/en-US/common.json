@@ -86,6 +86,10 @@
       "6": "Saturday"
     }
   },
+  "ordinal_ordinal_one": "{{count, number}}st",
+  "ordinal_ordinal_two": "{{count, number}}nd",
+  "ordinal_ordinal_few": "{{count, number}}rd",
+  "ordinal_ordinal_other": "{{count, number}}th",
   "input": {
     "classesField": {
       "label": "Classes",
