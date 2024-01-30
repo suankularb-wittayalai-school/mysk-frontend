@@ -1,6 +1,6 @@
 // Imports
 import PageHeader from "@/components/common/PageHeader";
-import HomeGlance from "@/components/home/HomeGlance";
+import ScheduleGlance from "@/components/home/ScheduleGlance";
 import TeachingSubjectCard from "@/components/home/TeachingSubjectCard";
 import Schedule from "@/components/schedule/Schedule";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
@@ -71,7 +71,7 @@ const TeachPage: CustomPage<{
       <ContentLayout>
         <LayoutGroup>
           {/* Home Glance */}
-          <HomeGlance
+          <ScheduleGlance
             schedule={schedule}
             role={UserRole.teacher}
             classroom={classroom}
@@ -155,11 +155,10 @@ export const getServerSideProps: GetServerSideProps = async ({
       },
     };
 
-  const { data: schedule } = await getTeacherSchedule(supabase, teacher.id);
-  const { data: teachingSubjects } = await getTeachingSubjects(
-    supabase,
-    teacher.id,
-  );
+  const [schedule, teachingSubjects] = await Promise.all([
+    (await getTeacherSchedule(supabase, teacher.id)).data,
+    (await getTeachingSubjects(supabase, teacher.id)).data,
+  ]);
 
   const teacherID = teacher.id;
 
@@ -168,6 +167,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       ...(await serverSideTranslations(locale as LangCode, [
         "common",
         "account",
+        "home",
         "teach",
         "classes",
         "schedule",

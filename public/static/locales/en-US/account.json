@@ -170,7 +170,7 @@
         "extra": "“ส” means your seat is a plastic chair, which is usually located on the ends of a row.",
         "graphic": {
           "row": "Row {{row}}",
-          "column_one": "{{column, number}} seat",
+          "column_one": "{{count, number}} seat",
           "column_other": "{{count, number}} seats"
         },
         "action": {

@@ -1,10 +1,12 @@
 // Imports
 import PageHeader from "@/components/common/PageHeader";
-import HomeGlance from "@/components/home/HomeGlance";
+import BirthdayGlance from "@/components/home/BirthdayGlance";
+import ScheduleGlance from "@/components/home/ScheduleGlance";
 import SubjectList from "@/components/home/SubjectList";
 import Schedule from "@/components/schedule/Schedule";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
+import getBirthdayBoysOfClassroom from "@/utils/backend/classroom/getBirthdayBoysOfClassroom";
 import getClassSchedule from "@/utils/backend/schedule/getClassSchedule";
 import getClassroomSubjectsOfClass from "@/utils/backend/subject/getClassroomSubjectsOfClass";
 import createEmptySchedule from "@/utils/helpers/schedule/createEmptySchedule";
@@ -19,6 +21,7 @@ import {
   ContentLayout,
   Header,
   Search,
+  Section,
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
@@ -34,14 +37,16 @@ import { useState } from "react";
  * The Student’s counterpart to Teach, where the user can see their Schedule
  * and their Subjects.
  *
+ * @param birthdayBoys The Students in this Student’s Classroom who have a birthday today.
  * @param schedule Data for displaying Schedule.
  * @param subjectList The Subjects this Student’s Classroom is enrolled in.
  */
 const LearnPage: CustomPage<{
+  birthdayBoys: Pick<Student, "id" | "first_name" | "nickname" | "birthdate">[];
   schedule: ScheduleType;
   subjectList: ClassroomSubject[];
   classroom: Pick<Classroom, "number">;
-}> = ({ schedule, subjectList, classroom }) => {
+}> = ({ birthdayBoys, schedule, subjectList, classroom }) => {
   const { t } = useTranslation("learn");
   const { t: tx } = useTranslation(["common", "schedule"]);
   const locale = useLocale();
@@ -59,12 +64,17 @@ const LearnPage: CustomPage<{
 
       <ContentLayout>
         <LayoutGroup>
-          {/* Home Glance */}
-          <HomeGlance
-            schedule={schedule}
-            role={UserRole.student}
-            classroom={classroom}
-          />
+          {/* Glances */}
+          <Section className="!gap-2 empty:!hidden">
+            {birthdayBoys.map((birthdayBoy) => (
+              <BirthdayGlance key={birthdayBoy.id} person={birthdayBoy} />
+            ))}
+            <ScheduleGlance
+              schedule={schedule}
+              role={UserRole.student}
+              classroom={classroom}
+            />
+          </Section>
 
           {/* Schedule */}
           <motion.section
@@ -121,21 +131,23 @@ export const getServerSideProps: GetServerSideProps = async ({
   const { classroom } = student;
   if (!classroom) return { notFound: true };
 
-  const { data: schedule } = await getClassSchedule(supabase, classroom!.id);
-  const { data: subjectList } = await getClassroomSubjectsOfClass(
-    supabase,
-    classroom!.id,
-  );
+  const [birthdayBoys, schedule, subjectList] = await Promise.all([
+    (await getBirthdayBoysOfClassroom(supabase, classroom.id)).data,
+    (await getClassSchedule(supabase, classroom.id)).data,
+    (await getClassroomSubjectsOfClass(supabase, classroom.id)).data,
+  ]);
 
   return {
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
         "common",
         "account",
+        "home",
         "learn",
         "classes",
         "schedule",
       ])),
+      birthdayBoys: birthdayBoys || [],
       schedule: schedule || createEmptySchedule(1, 5),
       subjectList,
       classroom,
