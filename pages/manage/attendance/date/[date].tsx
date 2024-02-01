@@ -1,12 +1,11 @@
 // Imports
-import AttendanceViewSelector from "@/components/attendance/AttendanceViewSelector";
+import AttendanceViewSelector, { AttendanceView, SelectorType } from "@/components/attendance/AttendanceViewSelector";
 import GradesBreakdownChart from "@/components/attendance/GradesBreakdownChart";
 import SchoolWideAttendanceTable from "@/components/attendance/SchoolWideAttendanceTable";
 import PageHeader from "@/components/common/PageHeader";
 import MySKLogo from "@/public/images/brand/mysk-light.svg";
 import getClassroomAttendances from "@/utils/backend/attendance/getClassroomAttendances";
 import getWeekAttendance from "@/utils/backend/attendance/getWeekAttendance";
-import { SelectorType } from "@/utils/helpers/attendance/useAttendanceView";
 import cn from "@/utils/helpers/cn";
 import useLocale from "@/utils/helpers/useLocale";
 import { YYYYMMDDRegex } from "@/utils/patterns";
@@ -47,7 +46,6 @@ const AttendanceSummaryForManagementPage: CustomPage<{
     classrooms: ClassroomAttendance[];
   };
 }> = ({ date, attendances: { grades, classrooms } }) => {
-  const locale = useLocale();
   const { t } = useTranslation("manage", { keyPrefix: "attendance" });
   const { t: tx } = useTranslation("common");
 
@@ -103,10 +101,7 @@ const AttendanceSummaryForManagementPage: CustomPage<{
           </Card>
 
           <Section className="print:!hidden">
-            <AttendanceViewSelector
-              type={SelectorType.management}
-              date={date}
-            />
+            {/* TODO */}
             <div aria-hidden className="hidden grow sm:block" />
             <Text type="body-medium">
               <Trans

@@ -2,7 +2,10 @@
 import AttendanceBulkActions from "@/components/attendance/AttendanceBulkActions";
 import AttendanceEventTabs from "@/components/attendance/AttendanceEventTabs";
 import AttendanceListItem from "@/components/attendance/AttendanceListItem";
-import ClassAttendanceLayout from "@/components/attendance/ClassAttendanceLayout";
+import AttendanceStatisticsDialog from "@/components/attendance/AttendanceStatisticsDialog";
+import AttendanceViewSelector, {
+  AttendanceView,
+} from "@/components/attendance/AttendanceViewSelector";
 import HomeroomContentDialog from "@/components/attendance/HomeroomContentDialog";
 import TodaySummary from "@/components/attendance/TodaySummary";
 import PageHeader from "@/components/common/PageHeader";
@@ -15,7 +18,6 @@ import getUserByEmail from "@/utils/backend/account/getUserByEmail";
 import getAttendanceOfClass from "@/utils/backend/attendance/getAttendanceOfClass";
 import getHomeroomOfClass from "@/utils/backend/attendance/getHomeroomOfClass";
 import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
-import { SelectorType } from "@/utils/helpers/attendance/useAttendanceView";
 import cn from "@/utils/helpers/cn";
 import useToggle from "@/utils/helpers/useToggle";
 import { YYYYMMDDRegex } from "@/utils/patterns";
@@ -30,6 +32,7 @@ import { User, UserRole } from "@/utils/types/person";
 import {
   Button,
   Columns,
+  ContentLayout,
   List,
   MaterialIcon,
 } from "@suankularb-components/react";
@@ -77,6 +80,7 @@ const DateAttendancePage: CustomPage<{
 
   const [event, setEvent] = useState<AttendanceEvent>("assembly");
   const [homeroomOpen, setHomeroomOpen] = useState(false);
+  const [statisticsOpen, setStatisticsOpen] = useState(false);
 
   const [loading, toggleLoading] = useToggle();
 
@@ -96,18 +100,36 @@ const DateAttendancePage: CustomPage<{
       <PageHeader parentURL="/classes">
         {t("title", { classNumber: classroom.number })}
       </PageHeader>
-      <ClassAttendanceLayout
-        type={SelectorType.classroom}
-        user={user}
-        date={date}
-      >
+      <ContentLayout>
+        <AttendanceViewSelector
+          view={AttendanceView.day}
+          date={date}
+          classroom={classroom}
+          className="mx-4 -mb-2 sm:mx-0"
+        >
+          <Button
+            appearance="outlined"
+            icon={<MaterialIcon icon="bar_chart" />}
+            alt={t("action.statistics")}
+            onClick={() => {
+              setStatisticsOpen(true);
+              va.track("Open School-wide Attendance Statistics");
+            }}
+          >
+            {t("viewSelector.action.statistics")}
+          </Button>
+          <AttendanceStatisticsDialog
+            open={statisticsOpen}
+            date={date}
+            onClose={() => setStatisticsOpen(false)}
+          />
+        </AttendanceViewSelector>
         <Columns columns={2} className="!grid-cols-1 md:!grid-cols-2">
           <div
-            className={cn(`-mx-4 grid sm:mx-0 md:h-[calc(100dvh-12rem-2px)]
-              md:overflow-auto md:rounded-lg md:border-1
-              md:border-outline-variant md:bg-surface-3 [&>:first-child]:top-0
-              [&>:first-child]:z-10 [&>:first-child]:sm:sticky
-              [&>:first-child]:sm:bg-surface`)}
+            className={cn(`grid md:h-[calc(100dvh-12rem-2px)] md:overflow-auto
+              md:rounded-lg md:border-1 md:border-outline-variant
+              md:bg-surface-3 [&>:first-child]:top-0 [&>:first-child]:z-10
+              [&>:first-child]:sm:sticky [&>:first-child]:sm:bg-surface`)}
           >
             <AttendanceEventTabs
               event={event}
@@ -188,7 +210,7 @@ const DateAttendancePage: CustomPage<{
             className="hidden md:block"
           />
         </Columns>
-      </ClassAttendanceLayout>
+      </ContentLayout>
     </>
   );
 };

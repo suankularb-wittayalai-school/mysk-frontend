@@ -1,183 +1,161 @@
-import AttendanceDatePickerDialog from "@/components/attendance/AttendanceDatePickerDialog";
-import AttendanceStatisticsDialog from "@/components/attendance/AttendanceStatisticsDialog";
-import SnackbarContext from "@/contexts/SnackbarContext";
-import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
-import useAttendanceView, {
-  AttendanceView,
-  SelectorType,
-} from "@/utils/helpers/attendance/useAttendanceView";
 import cn from "@/utils/helpers/cn";
+import useLocale from "@/utils/helpers/useLocale";
+import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
-import { User, UserRole } from "@/utils/types/person";
+import { User } from "@/utils/types/person";
 import {
   Actions,
   Button,
   MaterialIcon,
   SegmentedButton,
-  Snackbar,
 } from "@suankularb-components/react";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import va from "@vercel/analytics";
 import { isToday } from "date-fns";
-import { useTranslation } from "next-i18next";
-import Link from "next/link";
 import { useRouter } from "next/router";
-import { useContext, useState } from "react";
+import { ReactNode, useState } from "react";
+import AttendanceDatePickerDialog from "./AttendanceDatePickerDialog";
+
+/**
+ * The possible views of the Attendance pages.
+ */
+export enum AttendanceView {
+  day,
+  month,
+}
+
+/**
+ * The type of the View Selector.
+ */
+export enum SelectorType {
+  classroom,
+  management,
+}
 
 /**
  * The view selector for the Attendance pages. Allows the user to select the
  * view and jump to a date.
- *
- * @param type The type of the View Selector, classroom or management.
- * @param user The currently logged in user.
- * @param date The date to display in the date field by default.
  */
 const AttendanceViewSelector: StylableFC<{
-  type: SelectorType;
+  children?: ReactNode;
+  view: AttendanceView;
+  classroom: Pick<Classroom, "number">;
   user?: User;
   date: string;
-}> = ({ type, user, date, style, className }) => {
-  const { t } = useTranslation("attendance", { keyPrefix: "viewSelector" });
-
-  const { view, form, formOK, formProps, getURLforView } = useAttendanceView(
-    type,
-    date,
-  );
-
-  const [statisticsOpen, setStatisticsOpen] = useState(false);
-  const [dateOpen, setDateOpen] = useState(false);
+}> = ({ children, view, classroom, user, date, style, className }) => {
+  const locale = useLocale();
 
   const router = useRouter();
-  const supabase = useSupabaseClient();
 
-  const { setSnackbar } = useContext(SnackbarContext);
+  const [datePickerOpen, setDatePickerOpen] = useState(false);
 
-  /**
-   * Whether the date picker Button can be collapsed on small screens.
-   */
-  const canCollapseDateButton =
-    view === AttendanceView.today && isToday(new Date(date));
+  function handleChangeView(newView: AttendanceView) {
+    // If the view is the same, just refresh the page.
+    if (view === newView) {
+      router.replace(router.asPath);
+      return;
+    }
 
-  /**
-   * The class name for the collapsible Buttons—Buttons that hide their label
-   * on small screens.
-   */
-  const collapsibleButtonClassName = cn(
-    `!aspect-square !p-2 sm:!aspect-auto sm:!py-2.5 sm:!pl-4 sm:!pr-6
-    [&_span:not(:empty)]:hidden [&_span:not(:empty)]:sm:inline`,
-  );
+    /**
+     * The base URL for constructing the new URL.
+     */
+    const parentURL = `/classes/${classroom.number}/attendance`;
+
+    // When converting to day view, use the original date from the query if
+    // possible, otherwise use the first date of the month.
+    if (newView === AttendanceView.day) {
+      const formattedDate = [
+        // Year and month:
+        ...date.split("-").slice(0, 2),
+        // Date:
+        typeof router.query.original === "string" &&
+        /\d{2}/.test(router.query.original)
+          ? router.query.original
+          : "01",
+      ].join("-");
+      router.push([parentURL, "date", formattedDate].join("/"));
+      return;
+    }
+
+    // When converting to month view, use the original date from the query if
+    if (newView === AttendanceView.month) {
+      const formattedDate = date.split("-").slice(0, 2).join("-");
+      router.push(
+        [parentURL, "month", formattedDate].join("/") +
+          `?original=${date.substring(8)}`,
+      );
+    }
+  }
 
   return (
     <Actions
+      align="left"
       style={style}
-      className={cn(`!flex-nowrap [&_span]:!whitespace-nowrap`, className)}
+      className={cn(
+        `!flex-nowrap [&>button_span]:!whitespace-nowrap`,
+        // Collapse Buttons on small screens
+        `[&>button]:!aspect-square [&>button]:!p-2 [&>button]:sm:!aspect-auto
+        [&>button]:sm:!py-2.5 [&>button]:sm:!pl-4 [&>button]:sm:!pr-6
+        [&>button_span:not(:empty)]:hidden
+        [&>button_span:not(:empty)]:sm:inline`,
+        className,
+      )}
     >
-      {
-        [
-          // Show the View Selector only on the page for a Classroom.
-          <SegmentedButton
-            key="classroom"
-            alt={t("view.title")}
-            className="!grid grow grid-cols-2 sm:!flex"
-          >
-            <Button
-              appearance="outlined"
-              selected={view === AttendanceView.today}
-              disabled={!formOK}
-              href={getURLforView(AttendanceView.today)}
-              element={Link}
-            >
-              {t("view.today")}
-            </Button>
-            <Button
-              appearance="outlined"
-              selected={view === AttendanceView.thisWeek}
-              disabled={!formOK}
-              href={getURLforView(AttendanceView.thisWeek)}
-              element={Link}
-            >
-              {t("view.thisWeek")}
-            </Button>
-          </SegmentedButton>,
+      <SegmentedButton
+        alt="Choose scope…"
+        className="!grid grow !grid-cols-2 md:!flex"
+      >
+        <Button
+          appearance="outlined"
+          selected={view === AttendanceView.day}
+          onClick={() => handleChangeView(AttendanceView.day)}
+        >
+          Daily
+        </Button>
+        <Button
+          appearance="outlined"
+          selected={view === AttendanceView.month}
+          onClick={() => handleChangeView(AttendanceView.month)}
+        >
+          Monthly
+        </Button>
+      </SegmentedButton>
 
-          // Show the Print button only on the page for Management.
-          <Button
-            key="management"
-            appearance="outlined"
-            icon={<MaterialIcon icon="print" />}
-            onClick={() => {
-              window.print();
-              va.track("Print School-wide Attendance List");
-            }}
-            className="hidden md:!flex"
-          >
-            {t("action.print")}
-          </Button>,
-        ][type]
-      }
+      {/* Spacer */}
+      <div aria-hidden className="hidden grow md:block" />
 
-      {/* School-wide statistics */}
-      {(user?.role === UserRole.teacher || user?.is_admin) &&
-        view === AttendanceView.today && (
-          <>
-            <Button
-              appearance="outlined"
-              icon={<MaterialIcon icon="bar_chart" />}
-              alt={t("action.statistics")}
-              onClick={() => {
-                setStatisticsOpen(true);
-                va.track("Open School-wide Attendance Statistics");
-              }}
-              className={collapsibleButtonClassName}
-            >
-              {t("action.statistics")}
-            </Button>
-            <AttendanceStatisticsDialog
-              open={statisticsOpen}
-              date={date}
-              onClose={() => setStatisticsOpen(false)}
-            />
-          </>
-        )}
+      {/* Additional actions */}
+      {children}
 
       {/* Date picker */}
       <Button
         appearance="tonal"
         icon={<MaterialIcon icon="event" />}
-        alt={t("action.go")}
-        onClick={() => setDateOpen(true)}
+        onClick={() => setDatePickerOpen(true)}
         className={
-          canCollapseDateButton ? collapsibleButtonClassName : undefined
+          !(view === AttendanceView.day && isToday(new Date(date)))
+            ? // `&&` is a trick to increase specificity.
+              // https://csswizardry.com/2014/07/hacks-for-dealing-with-specificity/#safely-increasing-specificity
+              `[&&]:!aspect-auto [&&]:!py-2.5 [&&]:!pl-4 [&&]:!pr-6
+              [&_span:not(:empty)]:!inline`
+            : undefined
         }
       >
-        {
-          [
-            t("action.date.today", { date: new Date(date) }),
-            t("action.date.thisWeek", { week: Number(date.slice(6, 8)) }),
-          ][view]
-        }
+        {new Date(date).toLocaleDateString(
+          locale,
+          view === AttendanceView.day
+            ? { month: "short", day: "numeric" }
+            : { month: "short", year: "2-digit" },
+        )}
       </Button>
       <AttendanceDatePickerDialog
-        open={dateOpen}
+        open={datePickerOpen}
         view={view}
-        type={type}
-        formProps={formProps}
-        onClose={() => setDateOpen(false)}
-        onSubmit={async () => {
-          if (!formOK) return;
-          setDateOpen(false);
-          if (type === SelectorType.classroom) {
-            const { error } = await getClassroomByNumber(
-              supabase,
-              form.classroom,
-            );
-            if (error) {
-              setSnackbar(<Snackbar>{t("snackbar.classNotFound")}</Snackbar>);
-              setDateOpen(true);
-              return;
-            }
-          }
-          router.push(getURLforView(view));
+        type={SelectorType.classroom}
+        onClose={() => setDatePickerOpen(false)}
+        onSubmit={({ date, classroom }) => {
+          setDatePickerOpen(false);
+          router.push(
+            `/classes/${classroom}/attendance/${["date", "month"][view]}/${date}`,
+          );
         }}
       />
     </Actions>
