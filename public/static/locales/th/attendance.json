@@ -3,15 +3,15 @@
   "viewSelector": {
     "view": {
       "title": "เลือกขอบเวลา…",
-      "today": "วันนี้",
-      "thisWeek": "สัปดาห์นี้"
+      "day": "ต่อวัน",
+      "month": "ต่อเดือน"
     },
     "action": {
       "print": "พิมพ์",
       "statistics": "ดูสถิติโรงเรียน",
       "date": {
-        "today": "{{date, datetime(day: numeric; month: short;)}}",
-        "thisWeek": "สัปดาห์ที่ {{week, number}}"
+        "day": "{{date, datetime(day: numeric; month: short;)}}",
+        "month": "{{date, datetime(month: short; year: 2-digit;)}}"
       }
     },
     "dialog": {

@@ -13,6 +13,7 @@ import { isToday } from "date-fns";
 import { useRouter } from "next/router";
 import { ReactNode, useState } from "react";
 import AttendanceDatePickerDialog from "./AttendanceDatePickerDialog";
+import { useTranslation } from "next-i18next";
 
 /**
  * The possible views of the Attendance pages.
@@ -42,6 +43,7 @@ const AttendanceViewSelector: StylableFC<{
   date: string;
 }> = ({ children, view, classroom, user, date, style, className }) => {
   const locale = useLocale();
+  const { t } = useTranslation("attendance", { keyPrefix: "viewSelector" });
 
   const router = useRouter();
 
@@ -90,7 +92,7 @@ const AttendanceViewSelector: StylableFC<{
       align="left"
       style={style}
       className={cn(
-        `!flex-nowrap [&>button_span]:!whitespace-nowrap`,
+        `!flex-nowrap [&_button_span]:!whitespace-nowrap`,
         // Collapse Buttons on small screens
         `[&>button]:!aspect-square [&>button]:!p-2 [&>button]:sm:!aspect-auto
         [&>button]:sm:!py-2.5 [&>button]:sm:!pl-4 [&>button]:sm:!pr-6
@@ -100,23 +102,19 @@ const AttendanceViewSelector: StylableFC<{
       )}
     >
       <SegmentedButton
-        alt="Choose scope…"
+        alt={t("view.title")}
         className="!grid grow !grid-cols-2 md:!flex"
       >
-        <Button
-          appearance="outlined"
-          selected={view === AttendanceView.day}
-          onClick={() => handleChangeView(AttendanceView.day)}
-        >
-          Daily
-        </Button>
-        <Button
-          appearance="outlined"
-          selected={view === AttendanceView.month}
-          onClick={() => handleChangeView(AttendanceView.month)}
-        >
-          Monthly
-        </Button>
+        {[AttendanceView.day, AttendanceView.month].map((scope) => (
+          <Button
+            key={scope}
+            appearance="outlined"
+            selected={view === scope}
+            onClick={() => handleChangeView(scope)}
+          >
+            {t("view." + ["day", "month"][scope])}
+          </Button>
+        ))}
       </SegmentedButton>
 
       {/* Spacer */}
@@ -139,12 +137,7 @@ const AttendanceViewSelector: StylableFC<{
             : undefined
         }
       >
-        {new Date(date).toLocaleDateString(
-          locale,
-          view === AttendanceView.day
-            ? { month: "short", day: "numeric" }
-            : { month: "short", year: "2-digit" },
-        )}
+        {t(`action.date.${["day", "month"][view]}`, { date: new Date(date) })}
       </Button>
       <AttendanceDatePickerDialog
         open={datePickerOpen}

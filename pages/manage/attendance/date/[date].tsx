@@ -1,5 +1,8 @@
 // Imports
-import AttendanceViewSelector, { AttendanceView, SelectorType } from "@/components/attendance/AttendanceViewSelector";
+import AttendanceViewSelector, {
+  AttendanceView,
+  SelectorType,
+} from "@/components/attendance/AttendanceViewSelector";
 import GradesBreakdownChart from "@/components/attendance/GradesBreakdownChart";
 import SchoolWideAttendanceTable from "@/components/attendance/SchoolWideAttendanceTable";
 import PageHeader from "@/components/common/PageHeader";
@@ -93,7 +96,8 @@ const AttendanceSummaryForManagementPage: CustomPage<{
         <Columns columns={2} className="!items-stretch print:!grid-cols-2">
           <Card
             appearance="outlined"
-            className="!contents !rounded-lg print:!contents sm:!flex sm:print:!contents"
+            className={cn(`!contents !rounded-lg sm:!flex print:!contents
+              sm:print:!contents`)}
           >
             <CardContent className="print:!contents">
               <GradesBreakdownChart grades={grades} />

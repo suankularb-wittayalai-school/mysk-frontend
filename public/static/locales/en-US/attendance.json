@@ -2,16 +2,16 @@
   "title": "M.{{classNumber}} attendance",
   "viewSelector": {
     "view": {
-      "title": "Choose view…",
-      "today": "Today",
-      "thisWeek": "This week"
+      "title": "Choose scope…",
+      "day": "Daily",
+      "month": "Monthly"
     },
     "action": {
       "print": "Print",
       "statistics": "View statistics",
       "date": {
-        "today": "{{date, datetime(day: numeric; month: short;)}}",
-        "thisWeek": "Week {{week, number}}"
+        "day": "{{date, datetime(day: numeric; month: short;)}}",
+        "month": "{{date, datetime(month: short; year: 2-digit;)}}"
       }
     },
     "dialog": {
