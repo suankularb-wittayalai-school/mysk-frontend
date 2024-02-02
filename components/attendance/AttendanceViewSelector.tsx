@@ -19,16 +19,16 @@ import { useTranslation } from "next-i18next";
  * The possible views of the Attendance pages.
  */
 export enum AttendanceView {
-  day,
-  month,
+  day = "day",
+  month = "month",
 }
 
 /**
  * The type of the View Selector.
  */
 export enum SelectorType {
-  classroom,
-  management,
+  classroom = "classroom",
+  management = "management",
 }
 
 /**
@@ -105,14 +105,14 @@ const AttendanceViewSelector: StylableFC<{
         alt={t("view.title")}
         className="!grid grow !grid-cols-2 md:!flex"
       >
-        {[AttendanceView.day, AttendanceView.month].map((scope) => (
+        {[AttendanceView.day, AttendanceView.month].map((buttonView) => (
           <Button
-            key={scope}
+            key={buttonView}
             appearance="outlined"
-            selected={view === scope}
-            onClick={() => handleChangeView(scope)}
+            selected={view === buttonView}
+            onClick={() => handleChangeView(buttonView)}
           >
-            {t("view." + ["day", "month"][scope])}
+            {t(`view.${buttonView}`)}
           </Button>
         ))}
       </SegmentedButton>
@@ -137,7 +137,7 @@ const AttendanceViewSelector: StylableFC<{
             : undefined
         }
       >
-        {t(`action.date.${["day", "month"][view]}`, { date: new Date(date) })}
+        {t(`action.date.${view}`, { date: new Date(date) })}
       </Button>
       <AttendanceDatePickerDialog
         open={datePickerOpen}
@@ -146,9 +146,7 @@ const AttendanceViewSelector: StylableFC<{
         onClose={() => setDatePickerOpen(false)}
         onSubmit={({ date, classroom }) => {
           setDatePickerOpen(false);
-          router.push(
-            `/classes/${classroom}/attendance/${["date", "month"][view]}/${date}`,
-          );
+          router.push(`/classes/${classroom}/attendance/${view}/${date}`);
         }}
       />
     </Actions>
