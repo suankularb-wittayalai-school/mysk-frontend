@@ -1,3 +1,4 @@
+import AttendanceDatePickerDialog from "@/components/attendance/AttendanceDatePickerDialog";
 import cn from "@/utils/helpers/cn";
 import useLocale from "@/utils/helpers/useLocale";
 import { Classroom } from "@/utils/types/classroom";
@@ -10,10 +11,9 @@ import {
   SegmentedButton,
 } from "@suankularb-components/react";
 import { isToday } from "date-fns";
+import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { ReactNode, useState } from "react";
-import AttendanceDatePickerDialog from "./AttendanceDatePickerDialog";
-import { useTranslation } from "next-i18next";
 
 /**
  * The possible views of the Attendance pages.
