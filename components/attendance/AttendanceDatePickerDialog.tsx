@@ -2,6 +2,8 @@ import {
   AttendanceView,
   SelectorType,
 } from "@/components/attendance/AttendanceViewSelector";
+import SnackbarContext from "@/contexts/SnackbarContext";
+import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
 import useForm from "@/utils/helpers/useForm";
 import { YYYYMMDDRegex, YYYYMMRegex, classRegex } from "@/utils/patterns";
 import { StylableFC } from "@/utils/types/common";
@@ -11,11 +13,14 @@ import {
   Dialog,
   DialogContent,
   DialogHeader,
+  Snackbar,
   TextField,
 } from "@suankularb-components/react";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { getMonth, getYear, isPast, isWeekend } from "date-fns";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
+import { useContext, useState } from "react";
 
 /**
  * A Dialog for selecting a date to jump to in the Attendance pages.
@@ -38,8 +43,14 @@ const AttendanceDatePickerDialog: StylableFC<{
   });
 
   const router = useRouter();
+  const supabase = useSupabaseClient();
+  const { setSnackbar } = useContext(SnackbarContext);
 
-  const { form, formProps } = useForm<"date" | "classroom">([
+  const [loading, setLoading] = useState(false);
+
+  const { form, openFormSnackbar, formOK, formProps } = useForm<
+    "date" | "classroom"
+  >([
     {
       key: "date",
       defaultValue: router.query.date as string,
@@ -98,7 +109,25 @@ const AttendanceDatePickerDialog: StylableFC<{
         <Button appearance="text" onClick={onClose}>
           {t("action.cancel")}
         </Button>
-        <Button appearance="text" onClick={() => onSubmit(form)}>
+        <Button
+          appearance="text"
+          onClick={async () => {
+            openFormSnackbar();
+            if (!formOK) return;
+
+            // Check if the Classroom exists.
+            setLoading(true);
+            const { error } = await getClassroomByNumber(
+              supabase,
+              Number(form.classroom),
+            );
+            setLoading(false);
+            
+            if (error)
+              setSnackbar(<Snackbar>{t("snackbar.classNotFound")}</Snackbar>);
+            else onSubmit(form);
+          }}
+        >
           {t("action.go")}
         </Button>
       </Actions>
