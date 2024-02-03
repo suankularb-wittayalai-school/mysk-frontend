@@ -16,6 +16,7 @@ import va from "@vercel/analytics";
 import { motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
+import { title } from "radash";
 
 /**
  * The header of a Class Details Card, including the class number, actions for
@@ -84,28 +85,49 @@ const ClassHeader: StylableFC<{
       </Text>
       <ChipSet scrollable className="-mx-6 px-6">
         {(user.is_admin || user.role !== UserRole.student || isOwnClass) && (
-          <AssistChip
-            icon={<MaterialIcon icon="print" />}
-            onClick={() =>
-              va.track("Get Student List Printout", {
-                number: `M.${classroom.number}`,
-              })
-            }
-            href={`/classes/${classroom.number}/print`}
-            element={Link}
-          >
-            {t("action.print")}
-          </AssistChip>
+          <>
+            {/* Student List Printout */}
+            <AssistChip
+              icon={<MaterialIcon icon="print" />}
+              onClick={() =>
+                va.track("Get Student List Printout", {
+                  number: `M.${classroom.number}`,
+                })
+              }
+              href={`/classes/${classroom.number}/print`}
+              element={Link}
+            >
+              {t("action.print")}
+            </AssistChip>
+
+            {/* Attendance */}
+            <AssistChip
+              icon={<MaterialIcon icon="assignment_turned_in" />}
+              onClick={() =>
+                va.track("View Attendance", {
+                  location: "Home Glance",
+                  role: title(user.role),
+                  number: `M.${classroom.number}`,
+                  isOwnClass: true,
+                })
+              }
+              href={`/classes/${classroom.number}/attendance`}
+              element={Link}
+            >
+              {t(
+                `action.attendance.${user.role === UserRole.teacher ? "edit" : "view"}`,
+              )}
+            </AssistChip>
+          </>
         )}
+
+        {/* Contacts */}
         <AssistChip
           icon={<MaterialIcon icon="download" />}
           onClick={handleSaveVCard}
         >
           {t("action.saveContact")}
         </AssistChip>
-        {/* <AssistChip icon={<MaterialIcon icon="lock" />}>
-          {t("action.requestInfo")}
-        </AssistChip> */}
       </ChipSet>
     </motion.div>
   );

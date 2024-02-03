@@ -12,8 +12,11 @@
   "header": {
     "action": {
       "print": "Print",
-      "saveContact": "Save contact",
-      "requestInfo": "Request info"
+      "attendance": {
+        "view": "View attendance",
+        "edit": "Take attendance"
+      },
+      "saveContact": "Save contact"
     }
   },
   "detail": {

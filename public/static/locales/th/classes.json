@@ -12,8 +12,11 @@
   "header": {
     "action": {
       "print": "พิมพ์",
-      "saveContact": "บันทึก",
-      "requestInfo": "ขอข้อมูลเพิ่มเติม"
+      "attendance": {
+        "view": "ดูการเช็กชื่อ",
+        "edit": "เช็กชื่อ"
+      },
+      "saveContact": "บันทึก"
     }
   },
   "detail": {
