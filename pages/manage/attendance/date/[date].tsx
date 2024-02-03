@@ -124,7 +124,7 @@ const AttendanceOverviewPage: CustomPage<{
               </Button>
               <AttendanceDatePickerDialog
                 open={datePickerOpen}
-                view={AttendanceView.day}
+                view={AttendanceView.date}
                 type={SelectorType.management}
                 onClose={() => setDatePickerOpen(false)}
                 onSubmit={({ date }) => {

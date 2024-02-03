@@ -1,9 +1,7 @@
 import AttendanceDatePickerDialog from "@/components/attendance/AttendanceDatePickerDialog";
 import cn from "@/utils/helpers/cn";
-import useLocale from "@/utils/helpers/useLocale";
 import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
-import { User } from "@/utils/types/person";
 import {
   Actions,
   Button,
@@ -19,7 +17,7 @@ import { ReactNode, useState } from "react";
  * The possible views of the Attendance pages.
  */
 export enum AttendanceView {
-  day = "day",
+  date = "date",
   month = "month",
 }
 
@@ -34,15 +32,18 @@ export enum SelectorType {
 /**
  * The view selector for the Attendance pages. Allows the user to select the
  * view and jump to a date.
+ *
+ * @param children Additional actions to be displayed.
+ * @param view The current Attendance View.
+ * @param classroom The classroom of the page. Used in constructing URLs.
+ * @param date The date of the page.
  */
 const AttendanceViewSelector: StylableFC<{
   children?: ReactNode;
   view: AttendanceView;
   classroom: Pick<Classroom, "number">;
-  user?: User;
   date: string;
-}> = ({ children, view, classroom, user, date, style, className }) => {
-  const locale = useLocale();
+}> = ({ children, view, classroom, date, style, className }) => {
   const { t } = useTranslation("attendance", { keyPrefix: "viewSelector" });
 
   const router = useRouter();
@@ -63,7 +64,7 @@ const AttendanceViewSelector: StylableFC<{
 
     // When converting to day view, use the original date from the query if
     // possible, otherwise use the first date of the month.
-    if (newView === AttendanceView.day) {
+    if (newView === AttendanceView.date) {
       const formattedDate = [
         // Year and month:
         ...date.split("-").slice(0, 2),
@@ -105,7 +106,7 @@ const AttendanceViewSelector: StylableFC<{
         alt={t("view.title")}
         className="!grid grow !grid-cols-2 md:!flex"
       >
-        {[AttendanceView.day, AttendanceView.month].map((buttonView) => (
+        {[AttendanceView.date, AttendanceView.month].map((buttonView) => (
           <Button
             key={buttonView}
             appearance="outlined"
@@ -129,7 +130,7 @@ const AttendanceViewSelector: StylableFC<{
         icon={<MaterialIcon icon="event" />}
         onClick={() => setDatePickerOpen(true)}
         className={
-          !(view === AttendanceView.day && isToday(new Date(date)))
+          !(view === AttendanceView.date && isToday(new Date(date)))
             ? // `&&` is a trick to increase specificity.
               // https://csswizardry.com/2014/07/hacks-for-dealing-with-specificity/#safely-increasing-specificity
               `[&&]:!aspect-auto [&&]:!py-2.5 [&&]:!pl-4 [&&]:!pr-6

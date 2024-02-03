@@ -3,14 +3,14 @@
   "viewSelector": {
     "view": {
       "title": "Choose scope…",
-      "day": "Daily",
+      "date": "Daily",
       "month": "Monthly"
     },
     "action": {
       "print": "Print",
       "statistics": "View statistics",
       "date": {
-        "day": "{{date, datetime(day: numeric; month: short;)}}",
+        "date": "{{date, datetime(day: numeric; month: short;)}}",
         "month": "{{date, datetime(month: short; year: numeric;)}}"
       }
     },

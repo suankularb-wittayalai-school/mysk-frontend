@@ -101,7 +101,7 @@ const DateAttendancePage: CustomPage<{
       </PageHeader>
       <ContentLayout className="*:lg:!items-center">
         <AttendanceViewSelector
-          view={AttendanceView.day}
+          view={AttendanceView.date}
           date={date}
           classroom={classroom}
           className="mx-4 -mb-2 sm:mx-0 lg:w-full"

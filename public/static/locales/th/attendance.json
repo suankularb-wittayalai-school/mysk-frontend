@@ -3,14 +3,14 @@
   "viewSelector": {
     "view": {
       "title": "เลือกขอบเวลา…",
-      "day": "ต่อวัน",
+      "date": "ต่อวัน",
       "month": "ต่อเดือน"
     },
     "action": {
       "print": "พิมพ์",
       "statistics": "ดูสถิติโรงเรียน",
       "date": {
-        "day": "{{date, datetime(day: numeric; month: short;)}}",
+        "date": "{{date, datetime(day: numeric; month: short;)}}",
         "month": "{{date, datetime(month: short; year: 2-digit;)}}"
       }
     },

@@ -45,7 +45,7 @@ const AttendanceDatePickerDialog: StylableFC<{
       defaultValue: router.query.date as string,
       validate: (value: string) =>
         ({
-          day:
+          date:
             YYYYMMDDRegex.test(value) &&
             !isWeekend(new Date(value)) &&
             isPast(new Date(value)),
@@ -81,7 +81,7 @@ const AttendanceDatePickerDialog: StylableFC<{
           {...formProps.date}
           inputAttr={
             {
-              day: { type: "date", placeholder: "YYYY-MM-DD" },
+              date: { type: "date", placeholder: "YYYY-MM-DD" },
               month: { type: "month", placeholder: "YYYY-MM" },
             }[view]
           }
