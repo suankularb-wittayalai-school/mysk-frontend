@@ -2,16 +2,16 @@
   "title": "M.{{classNumber}} attendance",
   "viewSelector": {
     "view": {
-      "title": "Choose view…",
-      "today": "Today",
-      "thisWeek": "This week"
+      "title": "Choose scope…",
+      "date": "Daily",
+      "month": "Monthly"
     },
     "action": {
       "print": "Print",
       "statistics": "View statistics",
       "date": {
-        "today": "{{date, datetime(day: numeric; month: short;)}}",
-        "thisWeek": "Week {{week, number}}"
+        "date": "{{date, datetime(day: numeric; month: short;)}}",
+        "month": "{{date, datetime(month: short; year: numeric;)}}"
       }
     },
     "dialog": {
@@ -92,7 +92,7 @@
   "thisWeek": {
     "todo": {
       "title": "We’re working hard on delivering this feature.",
-      "subtitle": "The “This Week” page will give you deeper insights into the trends of your class’ attendance. Stay tuned."
+      "subtitle": "The “Monthly” page will give you deeper insights into the trends of your class’ attendance. Stay tuned."
     }
   }
 }

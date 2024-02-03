@@ -1,11 +1,12 @@
 // Imports
-import ClassAttendanceLayout from "@/components/attendance/ClassAttendanceLayout";
+import AttendanceViewSelector, {
+  AttendanceView,
+} from "@/components/attendance/AttendanceViewSelector";
 import PageHeader from "@/components/common/PageHeader";
-import { SelectorType } from "@/utils/helpers/attendance/useAttendanceView";
 import cn from "@/utils/helpers/cn";
 import { Classroom } from "@/utils/types/classroom";
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { Text } from "@suankularb-components/react";
+import { ContentLayout, Text } from "@suankularb-components/react";
 import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -13,9 +14,9 @@ import Head from "next/head";
 import Balancer from "react-wrap-balancer";
 
 /**
- * Week Attendance page displays Attendance of a Classroom of a specific week.
+ * Month Attendance page displays Attendance of a Classroom of a specific month.
  */
-const WeekAttendancePage: CustomPage<{
+const MonthAttendancePage: CustomPage<{
   date: string;
   classroom: Pick<Classroom, "id" | "number">;
 }> = ({ date, classroom }) => {
@@ -34,7 +35,13 @@ const WeekAttendancePage: CustomPage<{
       <PageHeader parentURL="/classes">
         {t("title", { classNumber: classroom.number })}
       </PageHeader>
-      <ClassAttendanceLayout type={SelectorType.classroom} date={date}>
+      <ContentLayout>
+        <AttendanceViewSelector
+          view={AttendanceView.month}
+          date={date}
+          classroom={classroom}
+          className="mx-4 -mb-2 sm:mx-0"
+        />
         <div className="py-20">
           <div
             className={cn(`mx-auto flex max-w-sm flex-col items-center gap-2
@@ -48,7 +55,7 @@ const WeekAttendancePage: CustomPage<{
             </Text>
           </div>
         </div>
-      </ClassAttendanceLayout>
+      </ContentLayout>
     </>
   );
 };
@@ -75,4 +82,4 @@ export const getServerSideProps: GetServerSideProps = async ({
   };
 };
 
-export default WeekAttendancePage;
+export default MonthAttendancePage;

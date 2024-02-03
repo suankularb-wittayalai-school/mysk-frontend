@@ -1,12 +1,12 @@
 // Imports
 import getUserByEmail from "@/utils/backend/account/getUserByEmail";
 import { getStudentByID } from "@/utils/backend/person/getStudentByID";
+import { getTeacherByID } from "@/utils/backend/person/getTeacherByID";
 import logError from "@/utils/helpers/logError";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
 import { Student, Teacher, UserRole } from "@/utils/types/person";
 import { GetServerSidePropsContext } from "next";
 import { NextAuthOptions, getServerSession } from "next-auth";
-import { getTeacherByID } from "../person/getTeacherByID";
 
 export async function getStudentFromUserID(
   supabase: DatabaseClient,

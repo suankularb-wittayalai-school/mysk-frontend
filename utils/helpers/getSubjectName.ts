@@ -1,5 +1,5 @@
 // Imports
-import getLocaleString from "./getLocaleString";
+import getLocaleString from "@/utils/helpers/getLocaleString";
 import { LangCode } from "@/utils/types/common";
 import { SchedulePeriod } from "@/utils/types/schedule";
 import { Subject } from "@/utils/types/subject";

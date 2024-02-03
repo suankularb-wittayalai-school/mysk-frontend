@@ -3,15 +3,15 @@
   "viewSelector": {
     "view": {
       "title": "เลือกขอบเวลา…",
-      "today": "วันนี้",
-      "thisWeek": "สัปดาห์นี้"
+      "date": "ต่อวัน",
+      "month": "ต่อเดือน"
     },
     "action": {
       "print": "พิมพ์",
       "statistics": "ดูสถิติโรงเรียน",
       "date": {
-        "today": "{{date, datetime(day: numeric; month: short;)}}",
-        "thisWeek": "สัปดาห์ที่ {{week, number}}"
+        "date": "{{date, datetime(day: numeric; month: short;)}}",
+        "month": "{{date, datetime(month: short; year: 2-digit;)}}"
       }
     },
     "dialog": {
@@ -27,7 +27,7 @@
         }
       },
       "statistics": {
-        "desc": "นี่คือสถิติการเข้าเรียนของโรงเรียน",
+        "desc": "สถิติการเข้าเรียนของโรงเรียนในวันนี้ มีดังนี้",
         "total": {
           "presence": "มาเรียน {{count, number}}",
           "late": "มาสาย {{count, number}}",
@@ -91,7 +91,7 @@
   "thisWeek": {
     "todo": {
       "title": "เรากำลังทำงานอย่างหนักเพื่อนำฟีเจอร์นี้มาให้คุณ",
-      "subtitle": "หน้า ”สัปดาห์นี้“ จะให้ข้อมูลเชิงลึกเกี่ยวกับแนวโน้มการเข้าเรียนของชั้นเรียนของคุณ"
+      "subtitle": "หน้า ”ต่อเดือน“ จะให้ข้อมูลเกี่ยวกับแนวโน้มการเข้าเรียนของชั้นเรียนของคุณ"
     }
   }
 }

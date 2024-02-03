@@ -3,7 +3,6 @@ import ClassContactList from "@/components/classes/ClassContactList";
 import ClassHeader from "@/components/classes/ClassHeader";
 import ClassScheduleCard from "@/components/classes/ClassScheduleCard";
 import ClassStudentList from "@/components/classes/ClassStudentList";
-import RecentAttendanceList from "@/components/classes/RecentAttendanceList";
 import LookupDetailsCard from "@/components/lookup/LookupDetailsCard";
 import LookupDetailsContent from "@/components/lookup/LookupDetailsContent";
 import InformationCard from "@/components/lookup/people/InformationCard";
@@ -14,7 +13,7 @@ import useLocale from "@/utils/helpers/useLocale";
 import useToggle from "@/utils/helpers/useToggle";
 import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
-import { User, UserRole } from "@/utils/types/person";
+import { User } from "@/utils/types/person";
 import { transition, useAnimationConfig } from "@suankularb-components/react";
 import { LayoutGroup, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
@@ -82,22 +81,6 @@ const ClassDetailsCard: StylableFC<{
                 </div>
               )}
 
-              {/* Attendance */}
-              {(user.is_admin ||
-                [UserRole.teacher, UserRole.management].includes(user.role) ||
-                isOwnClass) && (
-                <motion.section
-                  layout="position"
-                  transition={positionTransition}
-                >
-                  <RecentAttendanceList
-                    classroom={classroom}
-                    teacherID={teacherID}
-                    isOwnClass={isOwnClass}
-                  />
-                </motion.section>
-              )}
-
               <motion.section
                 layout="position"
                 transition={positionTransition}
@@ -126,8 +109,8 @@ const ClassDetailsCard: StylableFC<{
               <motion.section
                 layout="position"
                 transition={positionTransition}
-                className={cn(`flex flex-col-reverse gap-x-2 gap-y-5
-                  md:grid md:grid-cols-2`)}
+                className={cn(`flex flex-col-reverse gap-x-2 gap-y-5 md:grid
+                  md:grid-cols-2`)}
               >
                 {/* Students */}
                 {classroom.students.length > 0 && (
