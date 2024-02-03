@@ -1,5 +1,9 @@
+import {
+  AttendanceView,
+  SelectorType,
+} from "@/components/attendance/AttendanceViewSelector";
 import useForm from "@/utils/helpers/useForm";
-import { YYYYMMDDRegex, YYYYWwwRegex, classRegex } from "@/utils/patterns";
+import { YYYYMMDDRegex, YYYYMMRegex, classRegex } from "@/utils/patterns";
 import { StylableFC } from "@/utils/types/common";
 import {
   Actions,
@@ -9,17 +13,16 @@ import {
   DialogHeader,
   TextField,
 } from "@suankularb-components/react";
-import { getWeek, getYear, isPast, isWeekend } from "date-fns";
+import { getMonth, getYear, isPast, isWeekend } from "date-fns";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
-import { AttendanceView, SelectorType } from "./AttendanceViewSelector";
 
 /**
  * A Dialog for selecting a date to jump to in the Attendance pages.
  *
  * @param open Whether the dialog is open and shown.
  * @param view The Attendance View of the page.
- * @param formProps The props for the form fields: date and classroom.
+ * @param type The Selector Type of the page.
  * @param onClose Triggers when the Dialog is closed.
  * @param onSubmit Triggers when the Go Button is pressed.
  */
@@ -41,14 +44,16 @@ const AttendanceDatePickerDialog: StylableFC<{
       key: "date",
       defaultValue: router.query.date as string,
       validate: (value: string) =>
-        [
-          YYYYMMDDRegex.test(value) &&
+        ({
+          day:
+            YYYYMMDDRegex.test(value) &&
             !isWeekend(new Date(value)) &&
             isPast(new Date(value)),
-          YYYYWwwRegex.test(value) &&
+          month:
+            YYYYMMRegex.test(value) &&
             Number(value.slice(0, 4)) <= getYear(new Date()) &&
-            Number(value.slice(6, 8)) <= getWeek(new Date()),
-        ][view],
+            Number(value.slice(5, 7)) <= getMonth(new Date()),
+        })[view],
       required: true,
     },
     {
@@ -75,10 +80,10 @@ const AttendanceDatePickerDialog: StylableFC<{
           label={t("form.date")}
           {...formProps.date}
           inputAttr={
-            [
-              { type: "date", placeholder: "YYYY-MM-DD" },
-              { type: "month", placeholder: "YYYY-MM" },
-            ][view]
+            {
+              day: { type: "date", placeholder: "YYYY-MM-DD" },
+              month: { type: "month", placeholder: "YYYY-MM" },
+            }[view]
           }
         />
         {type === SelectorType.classroom && (
