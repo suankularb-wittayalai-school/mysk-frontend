@@ -1,4 +1,3 @@
-// Imports
 import AttendanceBulkActions from "@/components/attendance/AttendanceBulkActions";
 import AttendanceEventTabs from "@/components/attendance/AttendanceEventTabs";
 import AttendanceListItem from "@/components/attendance/AttendanceListItem";
@@ -100,12 +99,12 @@ const DateAttendancePage: CustomPage<{
       <PageHeader parentURL="/classes">
         {t("title", { classNumber: classroom.number })}
       </PageHeader>
-      <ContentLayout>
+      <ContentLayout className="*:lg:!items-center">
         <AttendanceViewSelector
           view={AttendanceView.day}
           date={date}
           classroom={classroom}
-          className="mx-4 -mb-2 sm:mx-0"
+          className="mx-4 -mb-2 sm:mx-0 lg:w-full"
         >
           <Button
             appearance="outlined"
@@ -124,7 +123,11 @@ const DateAttendancePage: CustomPage<{
             onClose={() => setStatisticsOpen(false)}
           />
         </AttendanceViewSelector>
-        <Columns columns={2} className="!grid-cols-1 md:!grid-cols-2">
+        <Columns
+          columns={2}
+          className={cn(`!grid-cols-1 md:!grid-cols-2
+            lg:w-[calc((10/12*100%)-3rem)]`)} // 10 out of 12 columns; 2 gutters
+        >
           <div
             className={cn(`grid md:h-[calc(100dvh-12rem-2px)] md:overflow-auto
               md:rounded-lg md:border-1 md:border-outline-variant
