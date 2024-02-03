@@ -1,5 +1,6 @@
 // Imports
-import AttendanceViewSelector, {
+import AttendanceDatePickerDialog from "@/components/attendance/AttendanceDatePickerDialog";
+import {
   AttendanceView,
   SelectorType,
 } from "@/components/attendance/AttendanceViewSelector";
@@ -10,7 +11,6 @@ import MySKLogo from "@/public/images/brand/mysk-light.svg";
 import getClassroomAttendances from "@/utils/backend/attendance/getClassroomAttendances";
 import getWeekAttendance from "@/utils/backend/attendance/getWeekAttendance";
 import cn from "@/utils/helpers/cn";
-import useLocale from "@/utils/helpers/useLocale";
 import { YYYYMMDDRegex } from "@/utils/patterns";
 import {
   AttendanceEvent,
@@ -19,10 +19,13 @@ import {
 } from "@/utils/types/attendance";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import {
+  Actions,
+  Button,
   Card,
   CardContent,
   Columns,
   ContentLayout,
+  MaterialIcon,
   Section,
   Text,
 } from "@suankularb-components/react";
@@ -33,16 +36,18 @@ import { Trans, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import Image from "next/image";
+import router from "next/router";
 import { mapValues } from "radash";
+import { useState } from "react";
 
 /**
- * The Attendance Summary for Management page displays the Attendance of all
- * Classrooms in the school on a specific date.
+ * The Attendance Overview page displays the Attendance of all Classrooms in the
+ * school on a specific date.
  *
  * @param date The date to display Attendance of, in YYYY-MM-DD format.
  * @param attendances The Attendance of all Classrooms in the school, by grade and by Classroom.
  */
-const AttendanceSummaryForManagementPage: CustomPage<{
+const AttendanceOverviewPage: CustomPage<{
   date: string;
   attendances: {
     grades: { [key in AttendanceEvent]: ManagementAttendanceSummary }[];
@@ -50,6 +55,7 @@ const AttendanceSummaryForManagementPage: CustomPage<{
   };
 }> = ({ date, attendances: { grades, classrooms } }) => {
   const { t } = useTranslation("manage", { keyPrefix: "attendance" });
+  const { t: ta } = useTranslation("attendance");
   const { t: tx } = useTranslation("common");
 
   /**
@@ -63,6 +69,8 @@ const AttendanceSummaryForManagementPage: CustomPage<{
       ) as ManagementAttendanceSummary,
     { presence: 0, late: 0, absence: 0 },
   );
+
+  const [datePickerOpen, setDatePickerOpen] = useState(false);
 
   return (
     <>
@@ -105,7 +113,27 @@ const AttendanceSummaryForManagementPage: CustomPage<{
           </Card>
 
           <Section className="print:!hidden">
-            {/* TODO */}
+            <Actions>
+              {/* Date picker */}
+              <Button
+                appearance="tonal"
+                icon={<MaterialIcon icon="event" />}
+                onClick={() => setDatePickerOpen(true)}
+              >
+                {ta("viewSelector.action.date.day", { date: new Date(date) })}
+              </Button>
+              <AttendanceDatePickerDialog
+                open={datePickerOpen}
+                view={AttendanceView.day}
+                type={SelectorType.management}
+                onClose={() => setDatePickerOpen(false)}
+                onSubmit={({ date }) => {
+                  setDatePickerOpen(false);
+                  router.push(`/manage/attendance/${date}`);
+                }}
+              />
+            </Actions>
+
             <div aria-hidden className="hidden grow sm:block" />
             <Text type="body-medium">
               <Trans
@@ -193,4 +221,4 @@ export const getServerSideProps: GetServerSideProps = async ({
   };
 };
 
-export default AttendanceSummaryForManagementPage;
+export default AttendanceOverviewPage;
