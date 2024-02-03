@@ -9,7 +9,6 @@ import SchoolWideAttendanceTable from "@/components/attendance/SchoolWideAttenda
 import PageHeader from "@/components/common/PageHeader";
 import MySKLogo from "@/public/images/brand/mysk-light.svg";
 import getClassroomAttendances from "@/utils/backend/attendance/getClassroomAttendances";
-import getWeekAttendance from "@/utils/backend/attendance/getWeekAttendance";
 import cn from "@/utils/helpers/cn";
 import { YYYYMMDDRegex } from "@/utils/patterns";
 import {
@@ -30,7 +29,7 @@ import {
   Text,
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
-import { isFuture, isWeekend, setDay } from "date-fns";
+import { isFuture, isWeekend } from "date-fns";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { Trans, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -202,10 +201,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
-  const [week, attendances] = await Promise.all([
-    (await getWeekAttendance(supabase, setDay(new Date(date), 1))).data,
-    (await getClassroomAttendances(supabase, date)).data,
-  ]);
+  const { data: attendances } = await getClassroomAttendances(supabase, date);
 
   return {
     props: {
@@ -215,7 +211,6 @@ export const getServerSideProps: GetServerSideProps = async ({
         "manage",
       ])),
       date,
-      week,
       attendances,
     },
   };
