@@ -11,7 +11,7 @@
       "statistics": "View statistics",
       "date": {
         "day": "{{date, datetime(day: numeric; month: short;)}}",
-        "month": "{{date, datetime(month: short; year: 2-digit;)}}"
+        "month": "{{date, datetime(month: short; year: numeric;)}}"
       }
     },
     "dialog": {
