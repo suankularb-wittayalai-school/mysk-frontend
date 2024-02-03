@@ -3,6 +3,9 @@ import getRelevantPeriodOfClass from "@/utils/backend/schedule/getRelevantPeriod
 import cn from "@/utils/helpers/cn";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import getCurrentPeriod from "@/utils/helpers/schedule/getCurrentPeriod";
+import getCurrentSchoolSessionState, {
+  SchoolSessionState,
+} from "@/utils/helpers/schedule/getCurrentSchoolSessionState";
 import getTodaySetToPeriodTime from "@/utils/helpers/schedule/getTodaySetToPeriodTime";
 import useLocale from "@/utils/helpers/useLocale";
 import useNow from "@/utils/helpers/useNow";
@@ -140,7 +143,8 @@ const LookupClassCard: StylableFC<{
             classroom.id === selected && `sm:group-focus:border-primary`,
           )}
         >
-          {[4, 5].includes(currentPeriodNumber) ? (
+          {getCurrentSchoolSessionState() === SchoolSessionState.schedule &&
+          [4, 5].includes(currentPeriodNumber) ? (
             <MaterialIcon icon="fastfood" className="text-tertiary" />
           ) : period ? (
             <MaterialIcon icon="hourglass" className="text-outline" />
