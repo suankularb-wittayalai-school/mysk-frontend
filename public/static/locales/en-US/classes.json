@@ -17,21 +17,6 @@
     }
   },
   "detail": {
-    "attendance": {
-      "title": "Attendance",
-      "item": {
-        "title": "{{date, datetime(weekday: short; day: numeric; month: short)}}",
-        "absenceCount_zero": "None absent",
-        "absenceCount_one": "1 absent",
-        "absenceCount_other": "{{count, number}} absent",
-        "noData": "No data"
-      },
-      "empty": "No attendance data from the past 3 months.",
-      "action": {
-        "addDay": "Take attendance",
-        "addEvent": "Add"
-      }
-    },
     "general": {
       "classAdvisors": "Class advisors",
       "room": "Room"
