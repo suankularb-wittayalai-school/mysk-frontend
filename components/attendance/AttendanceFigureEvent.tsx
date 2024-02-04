@@ -19,11 +19,16 @@ enum CellType {
  * A minimal representation of a Student’s attendance during an Attendance
  * Event, representing the status through color and icon. Part of the Attendance
  * Figure.
- * 
- * @param attendance The attendance of the Student during the event, if available.
+ *
+ * @param attendance The Attendance of the Student during the event, if available.
  */
 const AttendanceFigureEvent: StylableFC<{
-  attendance: StudentAttendance[AttendanceEvent] | null;
+  attendance:
+    | (Pick<
+        StudentAttendance[AttendanceEvent],
+        "is_present" | "absence_type"
+      > & { absence_reason?: string | null })
+    | null;
 }> = ({ attendance, style, className }) => {
   const type = (() => {
     if (!attendance || attendance.is_present === null) return CellType.empty;
@@ -36,6 +41,7 @@ const AttendanceFigureEvent: StylableFC<{
 
   return (
     <div
+      title={attendance?.absence_reason || undefined}
       style={style}
       className={cn(
         `relative h-6 w-full rounded-xs *:absolute *:left-1/2 *:top-1/2
