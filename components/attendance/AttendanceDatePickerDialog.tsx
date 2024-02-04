@@ -123,6 +123,12 @@ const AttendanceDatePickerDialog: StylableFC<{
             openFormSnackbar();
             if (!formOK) return;
 
+            // Only validate Classroom if the Selector Type is Classroom.
+            if (type !== SelectorType.classroom) {
+              onSubmit(form);
+              return;
+            }
+
             // Check if the Classroom exists.
             setLoading(true);
             const { error } = await getClassroomByNumber(
