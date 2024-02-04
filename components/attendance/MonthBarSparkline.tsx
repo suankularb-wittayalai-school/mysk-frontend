@@ -6,7 +6,7 @@ const CHART_HEIGHT = 48;
 
 /**
  * A bar sparkline visualizing how Attendance is distributed in a day.
- * 
+ *
  * @param summary The summary of Attendance counts.
  */
 const MonthBarSparkline: StylableFC<{
@@ -35,11 +35,11 @@ const MonthBarSparkline: StylableFC<{
       />
       <div
         style={{ height: (summary.late / total) * CHART_HEIGHT }}
-        className="bg-tertiary-container"
+        className="bg-tertiary-container dark:bg-tertiary"
       />
       <div
         style={{ height: (summary.onLeave / total) * CHART_HEIGHT }}
-        className="bg-outline-variant"
+        className="bg-outline-variant dark:bg-outline"
       />
       <div
         style={{ height: (summary.absent / total) * CHART_HEIGHT }}
