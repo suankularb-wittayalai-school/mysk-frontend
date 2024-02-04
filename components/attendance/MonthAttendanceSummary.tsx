@@ -1,3 +1,4 @@
+import AttendanceFigureDay from "@/components/attendance/AttendanceFigureDay";
 import MonthBarSparkline from "@/components/attendance/MonthBarSparkline";
 import cn from "@/utils/helpers/cn";
 import useLocale from "@/utils/helpers/useLocale";
@@ -51,8 +52,8 @@ const MonthAttendanceSummary: StylableFC<{
       appearance="outlined"
       style={style}
       className={cn(
-        `!grid !items-center md:h-20 md:grid-cols-[3fr,7fr,2fr] md:!gap-6
-        md:!rounded-none md:!border-0 md:!border-b-1`,
+        `!grid !items-center pb-4 md:h-20 md:grid-cols-[3fr,7fr,2fr]
+        md:!gap-6 md:!rounded-none md:!border-0 md:!border-b-1 md:pb-0`,
         className,
       )}
     >
@@ -71,12 +72,20 @@ const MonthAttendanceSummary: StylableFC<{
       <div className="overflow-auto md:contents">
         <figure
           style={style}
-          className={cn(`flex h-20 flex-row items-center gap-0.5`, className)}
+          className={cn(
+            `flex h-20 w-fit flex-row items-center gap-0.5 px-4 md:w-full
+            md:px-0 [&_[role=separator]]:md:!h-[calc(4rem+1px)]`,
+            className,
+          )}
         >
           {formattedCounts.map((summary) => (
-            <div key={summary.date.getDay()} className="w-[1.375rem]">
+            <AttendanceFigureDay
+              key={summary.date.getDay()}
+              date={summary.date}
+              className="md:[&_span]:!block"
+            >
               <MonthBarSparkline summary={omit(summary, ["date"])} />
-            </div>
+            </AttendanceFigureDay>
           ))}
         </figure>
       </div>
