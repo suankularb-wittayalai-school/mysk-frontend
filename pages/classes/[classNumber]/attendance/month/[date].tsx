@@ -56,7 +56,7 @@ const MonthAttendancePage: CustomPage<{
         <MonthAttendanceLegend className="-mb-4 -mt-2" />
         <h2 className="sr-only">Chart</h2>
         <ul className="mx-4 space-y-2 sm:mx-0 md:space-y-0">
-          <li className="top-0 z-10 md:sticky">
+          <li key={classroom.id} className="top-0 z-10 md:sticky">
             <MonthAttendanceSummary
               date={new Date(date)}
               classroom={classroom}
