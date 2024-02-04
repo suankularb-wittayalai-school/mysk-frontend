@@ -49,7 +49,7 @@ const MonthAttendancePage: CustomPage<{
           classroom={classroom}
           className="mx-4 -mb-2 sm:mx-0"
         />
-        <ul className="mx-4 space-y-2 sm:mx-0">
+        <ul className="mx-4 space-y-2 sm:mx-0 sm:space-y-0">
           {students.map(({ student, attendances }) => (
             <li key={student.id}>
               <MonthStudentCard
