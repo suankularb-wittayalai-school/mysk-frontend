@@ -4,6 +4,8 @@ import {
 } from "@/components/attendance/AttendanceViewSelector";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
+import getISODateString from "@/utils/helpers/getISODateString";
+import lastWeekday from "@/utils/helpers/lastWeekday";
 import useForm from "@/utils/helpers/useForm";
 import { YYYYMMDDRegex, YYYYMMRegex, classRegex } from "@/utils/patterns";
 import { StylableFC } from "@/utils/types/common";
@@ -89,8 +91,16 @@ const AttendanceDatePickerDialog: StylableFC<{
           {...formProps.date}
           inputAttr={
             {
-              date: { type: "date", placeholder: "YYYY-MM-DD" },
-              month: { type: "month", placeholder: "YYYY-MM" },
+              date: {
+                type: "date",
+                placeholder: "YYYY-MM-DD",
+                max: getISODateString(lastWeekday(new Date())),
+              },
+              month: {
+                type: "month",
+                placeholder: "YYYY-MM",
+                max: getISODateString(new Date()).substring(0, 7),
+              },
             }[view]
           }
         />
