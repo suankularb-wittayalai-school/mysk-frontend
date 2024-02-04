@@ -1,4 +1,5 @@
 import AttendanceFigureDay from "@/components/attendance/AttendanceFigureDay";
+import AttendanceFigureEvent from "@/components/attendance/AttendanceFigureEvent";
 import cn from "@/utils/helpers/cn";
 import getISODateString from "@/utils/helpers/getISODateString";
 import { AttendanceEvent, StudentAttendance } from "@/utils/types/attendance";
@@ -9,7 +10,7 @@ import { list } from "radash";
 /**
  * A visual representation of a Student’s Attendance during a month, showing the
  * Attendance status of each day in the month.
- * 
+ *
  * @param date `YYYY-MM` of the month.
  * @param attendances The attendances of the Student during the month.
  */
@@ -44,8 +45,16 @@ const AttendanceFigure: StylableFC<{
         <AttendanceFigureDay
           key={attendance.date}
           date={new Date(attendance.date)}
-          attendance={attendance}
-        />
+        >
+          <div className="w-full space-y-[1px] overflow-hidden rounded-full">
+            {(["assembly", "homeroom"] as AttendanceEvent[]).map((event) => (
+              <AttendanceFigureEvent
+                key={event}
+                attendance={attendance[event]}
+              />
+            ))}
+          </div>
+        </AttendanceFigureDay>
       ))}
     </figure>
   );

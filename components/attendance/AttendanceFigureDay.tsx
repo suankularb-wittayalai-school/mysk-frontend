@@ -5,20 +5,18 @@ import { StylableFC } from "@/utils/types/common";
 import { Text } from "@suankularb-components/react";
 import { isSaturday, isSunday } from "date-fns";
 import { useTranslation } from "next-i18next";
+import { ReactNode } from "react";
 
 /**
- * A day in Attendance Figure, showing the Attendance status of both Events of
- * the day.
+ * A day in Attendance Figure.
  *
+ * @param children Content.
  * @param date The date of the day.
- * @param attendance The Attendance status of both Events of the day.
  */
 const AttendanceFigureDay: StylableFC<{
+  children: ReactNode;
   date: Date;
-  attendance: {
-    [key in AttendanceEvent]: StudentAttendance[AttendanceEvent] | null;
-  };
-}> = ({ date, attendance, style, className }) => {
+}> = ({ children, date, style, className }) => {
   const { t } = useTranslation("attendance", { keyPrefix: "month" });
 
   // Show Divider on weekends.
@@ -47,11 +45,7 @@ const AttendanceFigureDay: StylableFC<{
       <Text type="label-small" className="text-on-surface-variant md:hidden">
         {t("item.day", { date })}
       </Text>
-      <div className="w-full space-y-[1px] overflow-hidden rounded-full">
-        {(["assembly", "homeroom"] as AttendanceEvent[]).map((event) => (
-          <AttendanceFigureEvent key={event} attendance={attendance[event]} />
-        ))}
-      </div>
+      {children}
     </div>
   );
 };
