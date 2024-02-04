@@ -3,8 +3,8 @@
   "viewSelector": {
     "view": {
       "title": "เลือกขอบเวลา…",
-      "date": "ต่อวัน",
-      "month": "ต่อเดือน"
+      "date": "รายวัน",
+      "month": "รายเดือน"
     },
     "action": {
       "print": "พิมพ์",
