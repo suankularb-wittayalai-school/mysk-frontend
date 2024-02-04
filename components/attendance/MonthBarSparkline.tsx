@@ -39,7 +39,7 @@ const MonthBarSparkline: StylableFC<{
       />
       <div
         style={{ height: (summary.onLeave / total) * CHART_HEIGHT }}
-        className="bg-outline"
+        className="bg-outline-variant"
       />
       <div
         style={{ height: (summary.absent / total) * CHART_HEIGHT }}
