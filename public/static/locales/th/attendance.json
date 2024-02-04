@@ -24,6 +24,9 @@
         "action": {
           "cancel": "ยกเลิก",
           "go": "ไป"
+        },
+        "snackbar": {
+          "classNotFound": "ไม่พบห้องเรียน"
         }
       },
       "statistics": {
@@ -38,9 +41,6 @@
           "close": "ปิด"
         }
       }
-    },
-    "snackbar": {
-      "classNotFound": "ไม่พบห้องเรียน"
     }
   },
   "event": {
@@ -60,7 +60,7 @@
     },
     "enterReason": "ระบุเหตุผล"
   },
-  "today": {
+  "day": {
     "title": "มาสาย {{late, number}} • ขาด {{absent, number}}",
     "homeroom": {
       "title": "โฮมรูม",
@@ -88,10 +88,17 @@
       }
     }
   },
-  "thisWeek": {
-    "todo": {
-      "title": "เรากำลังทำงานอย่างหนักเพื่อนำฟีเจอร์นี้มาให้คุณ",
-      "subtitle": "หน้า ”ต่อเดือน“ จะให้ข้อมูลเกี่ยวกับแนวโน้มการเข้าเรียนของชั้นเรียนของคุณ"
+  "month": {
+    "legend": {
+      "present": "มาเรียน",
+      "late": "มาสาย",
+      "onLeave": "ลา",
+      "absent": "ขาด",
+      "empty": "ไม่มีข้อมูล"
+    },
+    "item": {
+      "classNo": "เลขที่ {{classNo}}",
+      "day": "{{date, datetime(day: numeric;)}}"
     }
   }
 }

@@ -26,7 +26,7 @@ const HomeroomContentDialog: StylableFC<{
   onClose: () => void;
 }> = ({ open, homeroomContent, classroomID, onClose, style, className }) => {
   const { t } = useTranslation("attendance", {
-    keyPrefix: "today.dialog.homeroom",
+    keyPrefix: "day.dialog.homeroom",
   });
 
   const { field, setField, handleCancel, handleSave, loading } =

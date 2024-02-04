@@ -1,10 +1,10 @@
 import AttendanceFigureEvent from "@/components/attendance/AttendanceFigureEvent";
 import cn from "@/utils/helpers/cn";
-import useLocale from "@/utils/helpers/useLocale";
 import { AttendanceEvent, StudentAttendance } from "@/utils/types/attendance";
 import { StylableFC } from "@/utils/types/common";
 import { Text } from "@suankularb-components/react";
 import { isSaturday, isSunday } from "date-fns";
+import { useTranslation } from "next-i18next";
 
 /**
  * A day in Attendance Figure, showing the Attendance status of both Events of
@@ -19,7 +19,7 @@ const AttendanceFigureDay: StylableFC<{
     [key in AttendanceEvent]: StudentAttendance[AttendanceEvent] | null;
   };
 }> = ({ date, attendance, style, className }) => {
-  const locale = useLocale();
+  const { t } = useTranslation("attendance", { keyPrefix: "month" });
 
   // Show Divider on weekends.
   if (isSaturday(date))
@@ -45,7 +45,7 @@ const AttendanceFigureDay: StylableFC<{
       )}
     >
       <Text type="label-small" className="text-on-surface-variant md:hidden">
-        {date.toLocaleDateString(locale, { day: "numeric" })}
+        {t("item.day", { date })}
       </Text>
       <div className="w-full space-y-[1px] overflow-hidden rounded-full">
         {(["assembly", "homeroom"] as AttendanceEvent[]).map((event) => (

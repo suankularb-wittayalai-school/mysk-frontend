@@ -50,7 +50,7 @@ const AttendanceBulkActions: StylableFC<{
   style,
   className,
 }) => {
-  const { t } = useTranslation("attendance", { keyPrefix: "today" });
+  const { t } = useTranslation("attendance", { keyPrefix: "day" });
   const { t: tx } = useTranslation("common");
 
   const supabase = useSupabaseClient();

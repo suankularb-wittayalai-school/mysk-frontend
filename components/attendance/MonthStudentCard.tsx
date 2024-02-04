@@ -7,12 +7,13 @@ import useLocale from "@/utils/helpers/useLocale";
 import { AbsenceType, StudentAttendance } from "@/utils/types/attendance";
 import { StylableFC } from "@/utils/types/common";
 import { Card, CardHeader, MaterialIcon } from "@suankularb-components/react";
+import { useTranslation } from "next-i18next";
 import { sift } from "radash";
 
 /**
  * A card to display a Student’s Attendance in a month, with a summary of the
  * Attendance counts.
- * 
+ *
  * @param student The Student to display the Attendance for.
  * @param date The first date of the month to display the Attendance for.
  * @param attendances The Student’s Attendance records for the month.
@@ -23,6 +24,7 @@ const MonthStudentCard: StylableFC<{
   attendances: (Omit<StudentAttendance, "student"> & { date: string })[];
 }> = ({ student, attendances, date, style, className }) => {
   const locale = useLocale();
+  const { t } = useTranslation("attendance", { keyPrefix: "month" });
 
   /**
    * Count the number of Attendance records for each type of Attendance.
@@ -60,7 +62,7 @@ const MonthStudentCard: StylableFC<{
         avatar={<PersonAvatar {...student} expandable className="!my-0" />}
         title={getLocaleName(locale, student)}
         subtitle={sift([
-          `No. ${student.class_no}`,
+          t("item.classNo", { classNo: student.class_no }),
           student.nickname?.th && getLocaleString(student.nickname, locale),
         ]).join(" • ")}
         className={cn(`!grid grid-cols-[2.5rem,minmax(0,1fr)]
@@ -77,15 +79,15 @@ const MonthStudentCard: StylableFC<{
         className={cn(`flex flex-row flex-wrap items-center gap-x-1 p-4 pb-3
           *:flex *:min-w-8 *:flex-row`)}
       >
-        <li>
+        <li title={t("legend.present")}>
           <MaterialIcon icon="done" size={20} className="text-primary" />
           <span>{counts.presence}</span>
         </li>
-        <li>
+        <li title={t("legend.late")}>
           <MaterialIcon icon="alarm" size={20} className="text-tertiary" />
           <span>{counts.late}</span>
         </li>
-        <li>
+        <li title={t("legend.onLeave")}>
           <MaterialIcon
             icon="close"
             size={20}
@@ -93,7 +95,7 @@ const MonthStudentCard: StylableFC<{
           />
           <span>{counts.onLeave}</span>
         </li>
-        <li>
+        <li title={t("legend.absent")}>
           <MaterialIcon icon="close" size={20} className="text-error" />
           <span>{counts.absence}</span>
         </li>
