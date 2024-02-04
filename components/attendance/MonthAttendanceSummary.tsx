@@ -80,7 +80,7 @@ const MonthAttendanceSummary: StylableFC<{
         >
           {formattedCounts.map((summary) => (
             <AttendanceFigureDay
-              key={summary.date.getDay()}
+              key={summary.date.toISOString()}
               date={summary.date}
               className="md:[&_span]:!block"
             >
