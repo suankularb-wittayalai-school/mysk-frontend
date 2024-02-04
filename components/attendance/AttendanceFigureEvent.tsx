@@ -38,7 +38,8 @@ const AttendanceFigureEvent: StylableFC<{
     <div
       style={style}
       className={cn(
-        `relative grid h-6 w-full place-content-center rounded-xs *:!text-lg
+        `relative h-6 w-full rounded-xs *:absolute *:left-1/2 *:top-1/2
+        *:-translate-x-1/2 *:-translate-y-1/2 *:!text-lg
         *:![font-variation-settings:'opsz'20]`,
         [
           `bg-primary-container`,
