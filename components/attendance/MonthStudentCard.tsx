@@ -1,5 +1,6 @@
 import AttendanceFigure from "@/components/attendance/AttendanceFigure";
 import PersonAvatar from "@/components/common/PersonAvatar";
+import getAttendanceSummary from "@/utils/helpers/attendance/getAttendanceSummary";
 import cn from "@/utils/helpers/cn";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import getLocaleString from "@/utils/helpers/getLocaleString";
@@ -29,23 +30,9 @@ const MonthStudentCard: StylableFC<{
   /**
    * Count the number of Attendance records for each type of Attendance.
    */
-  const counts = {
-    presence: attendances.filter((attendance) => attendance.assembly.is_present)
-      .length,
-    late: attendances.filter(
-      (attendance) => attendance.assembly.absence_type === AbsenceType.late,
-    ).length,
-    onLeave: attendances.filter(
-      (attendance) =>
-        !attendance.assembly.is_present &&
-        ![AbsenceType.late, AbsenceType.absent].includes(
-          attendance.assembly.absence_type!,
-        ),
-    ).length,
-    absence: attendances.filter(
-      (attendance) => attendance.assembly.absence_type === AbsenceType.absent,
-    ).length,
-  };
+  const counts = getAttendanceSummary(
+    attendances.map((attendance) => attendance.assembly),
+  );
 
   return (
     <Card
@@ -81,7 +68,7 @@ const MonthStudentCard: StylableFC<{
       >
         <li title={t("legend.present")}>
           <MaterialIcon icon="done" size={20} className="text-primary" />
-          <span>{counts.presence}</span>
+          <span>{counts.present}</span>
         </li>
         <li title={t("legend.late")}>
           <MaterialIcon icon="alarm" size={20} className="text-tertiary" />
@@ -97,7 +84,7 @@ const MonthStudentCard: StylableFC<{
         </li>
         <li title={t("legend.absent")}>
           <MaterialIcon icon="close" size={20} className="text-error" />
-          <span>{counts.absence}</span>
+          <span>{counts.absent}</span>
         </li>
       </ul>
     </Card>

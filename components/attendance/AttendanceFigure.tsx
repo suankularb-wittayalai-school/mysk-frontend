@@ -33,7 +33,7 @@ const AttendanceFigure: StylableFC<{
   })();
 
   return (
-    <div
+    <figure
       style={style}
       className={cn(
         `flex h-20 flex-row items-center gap-0.5 md:h-14`,
@@ -47,7 +47,7 @@ const AttendanceFigure: StylableFC<{
           attendance={attendance}
         />
       ))}
-    </div>
+    </figure>
   );
 };
 
