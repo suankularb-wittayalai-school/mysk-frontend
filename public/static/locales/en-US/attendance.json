@@ -95,7 +95,7 @@
       "late": "Late",
       "onLeave": "On leave",
       "absent": "Absent",
-      "empty": "Empty"
+      "empty": "Unknown"
     },
     "item": {
       "classNo": "No. {{classNo}}",

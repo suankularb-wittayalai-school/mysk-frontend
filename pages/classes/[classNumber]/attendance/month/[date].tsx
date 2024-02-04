@@ -2,6 +2,7 @@
 import AttendanceViewSelector, {
   AttendanceView,
 } from "@/components/attendance/AttendanceViewSelector";
+import MonthAttendanceLegend from "@/components/attendance/MonthAttendanceLegend";
 import MonthStudentCard from "@/components/attendance/MonthStudentCard";
 import PageHeader from "@/components/common/PageHeader";
 import getMonthAttendanceOfClass from "@/utils/backend/attendance/getMonthAttendanceOfClass";
@@ -49,7 +50,8 @@ const MonthAttendancePage: CustomPage<{
           classroom={classroom}
           className="mx-4 -mb-2 sm:mx-0"
         />
-        <ul className="mx-4 space-y-2 sm:mx-0 sm:space-y-0">
+        <MonthAttendanceLegend className="-mb-4 -mt-2" />
+        <ul className="mx-4 space-y-2 sm:mx-0 md:space-y-0">
           {students.map(({ student, attendances }) => (
             <li key={student.id}>
               <MonthStudentCard
