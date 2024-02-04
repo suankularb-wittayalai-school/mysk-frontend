@@ -17,7 +17,7 @@ import {
   TextField,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { getMonth, getYear, isPast, isWeekend } from "date-fns";
+import { isPast, isWeekend } from "date-fns";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useContext, useState } from "react";
@@ -60,10 +60,7 @@ const AttendanceDatePickerDialog: StylableFC<{
             YYYYMMDDRegex.test(value) &&
             !isWeekend(new Date(value)) &&
             isPast(new Date(value)),
-          month:
-            YYYYMMRegex.test(value) &&
-            Number(value.slice(0, 4)) <= getYear(new Date()) &&
-            Number(value.slice(5, 7)) <= getMonth(new Date()),
+          month: YYYYMMRegex.test(value) && isPast(new Date(value)),
         })[view],
       required: true,
     },
@@ -111,6 +108,7 @@ const AttendanceDatePickerDialog: StylableFC<{
         </Button>
         <Button
           appearance="text"
+          loading={loading}
           onClick={async () => {
             openFormSnackbar();
             if (!formOK) return;
@@ -122,7 +120,7 @@ const AttendanceDatePickerDialog: StylableFC<{
               Number(form.classroom),
             );
             setLoading(false);
-            
+
             if (error)
               setSnackbar(<Snackbar>{t("snackbar.classNotFound")}</Snackbar>);
             else onSubmit(form);
