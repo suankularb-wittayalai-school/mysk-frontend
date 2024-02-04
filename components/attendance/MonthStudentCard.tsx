@@ -40,8 +40,8 @@ const MonthStudentCard: StylableFC<{
       style={style}
       className={cn(
         `md:!grid md:!grid-cols-[minmax(0,3fr),minmax(0,7fr),minmax(0,2fr)]
-        md:!items-center md:!rounded-none md:!border-0 md:!border-b-1
-        md:!bg-transparent`,
+        md:!items-center md:!gap-6 md:!rounded-none md:!border-0
+        md:!border-b-1 md:!bg-transparent`,
         className,
       )}
     >
@@ -59,7 +59,7 @@ const MonthStudentCard: StylableFC<{
         <AttendanceFigure
           date={date}
           attendances={attendances}
-          className="w-fit px-4 md:w-full"
+          className="w-fit px-4 md:w-full md:px-0"
         />
       </div>
       <ul
