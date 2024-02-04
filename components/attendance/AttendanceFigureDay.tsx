@@ -3,7 +3,14 @@ import cn from "@/utils/helpers/cn";
 import { AttendanceEvent, StudentAttendance } from "@/utils/types/attendance";
 import { StylableFC } from "@/utils/types/common";
 import { Text } from "@suankularb-components/react";
-import { isSaturday, isSunday } from "date-fns";
+import {
+  getDaysInMonth,
+  isFirstDayOfMonth,
+  isLastDayOfMonth,
+  isSaturday,
+  isSunday,
+  isWeekend,
+} from "date-fns";
 import { useTranslation } from "next-i18next";
 import { ReactNode } from "react";
 
@@ -20,7 +27,11 @@ const AttendanceFigureDay: StylableFC<{
   const { t } = useTranslation("attendance", { keyPrefix: "month" });
 
   // Show Divider on weekends.
-  if (isSaturday(date))
+  if (isSaturday(date)) {
+    // Ensure Divider doesn’t show on the left/right edges of the month.
+    // (Because it wouldn’t really be a divider if it's not dividing anything!)
+    if (isFirstDayOfMonth(date) || date.getDate() > getDaysInMonth(date) - 2)
+      return null;
     return (
       <div
         role="separator"
@@ -32,7 +43,7 @@ const AttendanceFigureDay: StylableFC<{
         />
       </div>
     );
-  if (isSunday(date)) return null;
+  } else if (isSunday(date)) return null;
 
   return (
     <div
