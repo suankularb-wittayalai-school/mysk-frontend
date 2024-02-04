@@ -52,8 +52,8 @@ const MonthAttendanceSummary: StylableFC<{
       appearance="outlined"
       style={style}
       className={cn(
-        `!grid !items-center pb-4 md:h-20 md:grid-cols-[3fr,7fr,2fr]
-        md:!gap-6 md:!rounded-none md:!border-0 md:!border-b-1 md:pb-0`,
+        `!grid !items-end pb-4 md:grid-cols-[3fr,7fr,2fr] md:!gap-6
+        md:!rounded-none md:!border-0 md:!border-b-1 md:!py-1 md:pb-0`,
         className,
       )}
     >
