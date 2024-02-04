@@ -9,7 +9,7 @@ import PageHeader from "@/components/common/PageHeader";
 import getMonthAttendanceOfClass from "@/utils/backend/attendance/getMonthAttendanceOfClass";
 import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
 import getAttendanceSummary from "@/utils/helpers/attendance/getAttendanceSummary";
-import { AbsenceType, StudentAttendance } from "@/utils/types/attendance";
+import { StudentAttendance } from "@/utils/types/attendance";
 import { Classroom } from "@/utils/types/classroom";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { ContentLayout } from "@suankularb-components/react";
@@ -54,7 +54,7 @@ const MonthAttendancePage: CustomPage<{
           className="mx-4 -mb-2 sm:mx-0"
         />
         <MonthAttendanceLegend className="-mb-4 -mt-2" />
-        <h2 className="sr-only">Chart</h2>
+        <h2 className="sr-only">{t("month.chart")}</h2>
         <ul className="mx-4 space-y-2 sm:mx-0 md:space-y-0">
           <li key={classroom.id} className="top-0 z-10 md:sticky">
             <MonthAttendanceSummary

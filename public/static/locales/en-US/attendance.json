@@ -97,6 +97,10 @@
       "absent": "Absent",
       "empty": "Unknown"
     },
+    "chart": "Chart",
+    "summary": {
+      "subtitle": "{{date, datetime(month: long; year: numeric;)}}"
+    },
     "item": {
       "classNo": "No. {{classNo}}",
       "day": "{{date, datetime(day: numeric;)}}"

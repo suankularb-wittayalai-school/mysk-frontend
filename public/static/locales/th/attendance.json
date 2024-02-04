@@ -96,6 +96,10 @@
       "absent": "ขาด",
       "empty": "ไม่มีข้อมูล"
     },
+    "chart": "แผนภูมิ",
+    "summary": {
+      "subtitle": "{{date, datetime(month: long; year: numeric;)}}"
+    },
     "item": {
       "classNo": "เลขที่ {{classNo}}",
       "day": "{{date, datetime(day: numeric;)}}"

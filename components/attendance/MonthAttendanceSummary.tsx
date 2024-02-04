@@ -66,7 +66,7 @@ const MonthAttendanceSummary: StylableFC<{
           element="p"
           className="text-on-surface-variant"
         >
-          {date.toLocaleDateString(locale, { month: "long", year: "numeric" })}
+          {t("subtitle", { date })}
         </Text>
       </hgroup>
       <div className="overflow-auto md:contents">
