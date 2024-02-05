@@ -4,6 +4,8 @@ import {
 } from "@/components/attendance/AttendanceViewSelector";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
+import getISODateString from "@/utils/helpers/getISODateString";
+import lastWeekday from "@/utils/helpers/lastWeekday";
 import useForm from "@/utils/helpers/useForm";
 import { YYYYMMDDRegex, YYYYMMRegex, classRegex } from "@/utils/patterns";
 import { StylableFC } from "@/utils/types/common";
@@ -17,7 +19,7 @@ import {
   TextField,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { getMonth, getYear, isPast, isWeekend } from "date-fns";
+import { isPast, isWeekend } from "date-fns";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useContext, useState } from "react";
@@ -60,10 +62,7 @@ const AttendanceDatePickerDialog: StylableFC<{
             YYYYMMDDRegex.test(value) &&
             !isWeekend(new Date(value)) &&
             isPast(new Date(value)),
-          month:
-            YYYYMMRegex.test(value) &&
-            Number(value.slice(0, 4)) <= getYear(new Date()) &&
-            Number(value.slice(5, 7)) <= getMonth(new Date()),
+          month: YYYYMMRegex.test(value) && isPast(new Date(value)),
         })[view],
       required: true,
     },
@@ -92,8 +91,16 @@ const AttendanceDatePickerDialog: StylableFC<{
           {...formProps.date}
           inputAttr={
             {
-              date: { type: "date", placeholder: "YYYY-MM-DD" },
-              month: { type: "month", placeholder: "YYYY-MM" },
+              date: {
+                type: "date",
+                placeholder: "YYYY-MM-DD",
+                max: getISODateString(lastWeekday(new Date())),
+              },
+              month: {
+                type: "month",
+                placeholder: "YYYY-MM",
+                max: getISODateString(new Date()).substring(0, 7),
+              },
             }[view]
           }
         />
@@ -111,9 +118,16 @@ const AttendanceDatePickerDialog: StylableFC<{
         </Button>
         <Button
           appearance="text"
+          loading={loading}
           onClick={async () => {
             openFormSnackbar();
             if (!formOK) return;
+
+            // Only validate Classroom if the Selector Type is Classroom.
+            if (type !== SelectorType.classroom) {
+              onSubmit(form);
+              return;
+            }
 
             // Check if the Classroom exists.
             setLoading(true);
@@ -122,7 +136,7 @@ const AttendanceDatePickerDialog: StylableFC<{
               Number(form.classroom),
             );
             setLoading(false);
-            
+
             if (error)
               setSnackbar(<Snackbar>{t("snackbar.classNotFound")}</Snackbar>);
             else onSubmit(form);

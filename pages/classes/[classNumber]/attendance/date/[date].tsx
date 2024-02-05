@@ -152,7 +152,7 @@ const DateAttendancePage: CustomPage<{
                 }}
                 className="!mx-4 !mt-3 sm:!mx-0 md:!hidden"
               >
-                {t("today.action.editHomeroom")}
+                {t("day.action.editHomeroom")}
               </Button>
             )}
             <HomeroomContentDialog
