@@ -22,7 +22,12 @@ import { pantsSizeRegex } from "@/utils/patterns";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Student, Teacher, UserRole } from "@/utils/types/person";
 import { SubjectGroup } from "@/utils/types/subject";
-import { Snackbar } from "@suankularb-components/react";
+import {
+  Actions,
+  Button,
+  Divider,
+  Snackbar,
+} from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
@@ -30,7 +35,7 @@ import { getServerSession } from "next-auth";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 
 /**
  * The About You page lets the user view and edit their personal information
@@ -50,6 +55,8 @@ const AboutYouPage: CustomPage<{
   const refreshProps = useRefreshProps();
   const supabase = useSupabaseClient();
 
+  const [nameChangeOpen, setNameChangeOpen] = useState(false);
+
   const [loading, toggleLoading] = useToggle();
 
   // Form control
@@ -59,10 +66,6 @@ const AboutYouPage: CustomPage<{
         key: "prefixTH",
         required: true,
         defaultValue: user.prefix.th,
-        validate: (value: string) =>
-          user.role === UserRole.student
-            ? ["เด็กชาย", "นาย"].includes(value)
-            : true,
       },
       {
         key: "firstNameTH",
@@ -80,8 +83,6 @@ const AboutYouPage: CustomPage<{
         key: "prefixEN",
         required: true,
         defaultValue: user.prefix["en-US"],
-        validate: (value: string) =>
-          user.role === "student" ? ["Master", "Mr."].includes(value) : true,
       },
       {
         key: "firstNameEN",
@@ -166,9 +167,10 @@ const AboutYouPage: CustomPage<{
             [mask-image:linear-gradient(to_bottom,transparent_var(--header-height),black_calc(var(--header-height)+2rem))]
             sm:px-0 md:[--header-height:4rem]`)}
         >
-          {user.role === UserRole.student && (
+          {/* {user.role === UserRole.student && (
             <CertficateAnnouncementBanner className="!hidden sm:!block" />
-          )}
+          )} */}
+
           <PersonFields
             form={form}
             setForm={setForm}
@@ -176,6 +178,20 @@ const AboutYouPage: CustomPage<{
             subjectGroups={subjectGroups}
             role={user.role}
           />
+
+          {user.role === UserRole.student && (
+            <>
+              <Divider className="my-6" />
+              <Actions align="center" className="!grid !grid-cols-1 sm:!flex">
+                <Button
+                  appearance="tonal"
+                  onClick={() => setNameChangeOpen(true)}
+                >
+                  {t("action.changeName")}
+                </Button>
+              </Actions>
+            </>
+          )}
         </div>
       </ProfileLayout>
     </>

@@ -38,6 +38,15 @@ export type PersonFieldsKey =
   | "shirtSize"
   | "pantsSize";
 
+/**
+ * The form fields for the user’s personal information.
+ *
+ * @param form The form values from `useForm`.
+ * @param setForm The function to set the form values from `useForm`.
+ * @param formProps The form control props from `useForm`.
+ * @param subjectGroups The list of all Subject Groups.
+ * @param role The user’s role.
+ */
 const PersonFields: StylableFC<{
   form: FormControlValues<PersonFieldsKey>;
   setForm: (form: FormControlValues<PersonFieldsKey>) => void;
@@ -46,83 +55,105 @@ const PersonFields: StylableFC<{
   role: UserRole;
 }> = ({ form, setForm, formProps, subjectGroups, role, style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("account");
+  const { t } = useTranslation("account", { keyPrefix: "profile" });
 
   return (
     <div style={style} className={cn(`px-[2px] [&>hr]:my-6`, className)}>
-      {/* Thai name */}
-      <Section>
-        <Header level={3} className="sr-only">
-          {t("profile.name.title")}
-        </Header>
-        <Columns columns={3} className="my-3 !gap-y-12">
-          <TextField
-            appearance="outlined"
-            label={t("profile.name.prefix")}
-            helperMsg={t("profile.name.prefix_helper")}
-            {...formProps.prefixTH}
-          />
-          <TextField
-            appearance="outlined"
-            label={t("profile.name.firstName")}
-            {...formProps.firstNameTH}
-          />
-          <TextField
-            appearance="outlined"
-            label={t("profile.name.middleName")}
-            helperMsg={t("profile.name.middleName_helper")}
-            {...formProps.middleNameTH}
-          />
-          <TextField
-            appearance="outlined"
-            label={t("profile.name.lastName")}
-            {...formProps.lastNameTH}
-          />
-          <TextField
-            appearance="outlined"
-            label={t("profile.name.nickname")}
-            {...formProps.nicknameTH}
-          />
-        </Columns>
-      </Section>
+      {role === UserRole.student ? (
+        <Section>
+          <Header level={3} className="sr-only">
+            {t("name.title")}
+          </Header>
+          <Columns columns={3} className="my-3 !gap-y-12">
+            <TextField
+              appearance="outlined"
+              label={t("name.nickname")}
+              {...formProps.nicknameTH}
+            />
+            <TextField
+              appearance="outlined"
+              label={t("nameEN.nickname")}
+              {...formProps.nicknameEN}
+            />
+          </Columns>
+        </Section>
+      ) : (
+        <>
+          {/* Thai name */}
+          <Section>
+            <Header level={3} className="sr-only">
+              {t("name.title")}
+            </Header>
+            <Columns columns={3} className="my-3 !gap-y-12">
+              <TextField
+                appearance="outlined"
+                label={t("name.prefix")}
+                helperMsg={t("name.prefix_helper")}
+                {...formProps.prefixTH}
+              />
+              <TextField
+                appearance="outlined"
+                label={t("name.firstName")}
+                {...formProps.firstNameTH}
+              />
+              <TextField
+                appearance="outlined"
+                label={t("name.middleName")}
+                helperMsg={t("name.middleName_helper")}
+                {...formProps.middleNameTH}
+              />
+              <TextField
+                appearance="outlined"
+                label={t("name.lastName")}
+                {...formProps.lastNameTH}
+              />
+              <TextField
+                appearance="outlined"
+                label={t("name.nickname")}
+                {...formProps.nicknameTH}
+              />
+            </Columns>
+          </Section>
 
-      <Divider />
+          <Divider />
 
-      {/* English name */}
-      <Section>
-        <Header level={3} className="sr-only">
-          {t("profile.enName.title")}
-        </Header>
-        <Columns columns={3} className="my-3 !gap-y-12">
-          <TextField
-            appearance="outlined"
-            label={t("profile.enName.prefix")}
-            helperMsg={t("profile.enName.prefix_helper")}
-            {...formProps.prefixEN}
-          />
-          <TextField
-            appearance="outlined"
-            label={t("profile.enName.firstName")}
-            {...formProps.firstNameEN}
-          />
-          <TextField
-            appearance="outlined"
-            label={t("profile.enName.middleName")}
-            helperMsg={t("profile.name.middleName_helper")}
-            {...formProps.middleNameEN}
-          />
-          <TextField
-            appearance="outlined"
-            label={t("profile.enName.lastName")}
-            {...formProps.lastNameEN}
-          />
-          <TextField
-            appearance="outlined"
-            label={t("profile.enName.nickname")}
-            {...formProps.nicknameEN}
-          />
-        </Columns>
-      </Section>
+          {/* English name */}
+          <Section>
+            <Header level={3} className="sr-only">
+              {t("nameEN.title")}
+            </Header>
+            <Columns columns={3} className="my-3 !gap-y-12">
+              <TextField
+                appearance="outlined"
+                label={t("nameEN.prefix")}
+                helperMsg={t("nameEN.prefix_helper")}
+                {...formProps.prefixEN}
+              />
+              <TextField
+                appearance="outlined"
+                label={t("nameEN.firstName")}
+                {...formProps.firstNameEN}
+              />
+              <TextField
+                appearance="outlined"
+                label={t("nameEN.middleName")}
+                helperMsg={t("name.middleName_helper")}
+                {...formProps.middleNameEN}
+              />
+              <TextField
+                appearance="outlined"
+                label={t("nameEN.lastName")}
+                {...formProps.lastNameEN}
+              />
+              <TextField
+                appearance="outlined"
+                label={t("nameEN.nickname")}
+                {...formProps.nicknameEN}
+              />
+            </Columns>
+          </Section>
+        </>
+      )}
 
       <Divider />
 
@@ -131,13 +162,13 @@ const PersonFields: StylableFC<{
         <>
           <Section>
             <Header level={3} className="sr-only">
-              {t("profile.role.title")}
+              {t("role.title")}
             </Header>
             <Columns columns={3} className="my-3 !gap-y-12">
               <Select
                 appearance="outlined"
-                label={t("profile.role.subjectGroup")}
-                helperMsg={t("profile.role.subjectGroup_helper")}
+                label={t("role.subjectGroup")}
+                helperMsg={t("role.subjectGroup_helper")}
                 {...formProps.subjectGroup}
               >
                 {subjectGroups.map((subjectGroup) => (
@@ -148,8 +179,8 @@ const PersonFields: StylableFC<{
               </Select>
               <TextField
                 appearance="outlined"
-                label={t("profile.role.classAdvisorAt")}
-                helperMsg={t("profile.role.classAdvisorAt_helper")}
+                label={t("role.classAdvisorAt")}
+                helperMsg={t("role.classAdvisorAt_helper")}
                 {...formProps.classAdvisorAt}
               />
             </Columns>
@@ -162,12 +193,12 @@ const PersonFields: StylableFC<{
       {/* Miscellaneous */}
       <Section>
         <Header level={3} className="sr-only">
-          {t("profile.misc.title")}
+          {t("misc.title")}
         </Header>
         <Columns columns={3} className="my-3 !gap-y-12">
           <TextField
             appearance="outlined"
-            label={t("profile.general.birthDate")}
+            label={t("general.birthDate")}
             inputAttr={{ type: "date" }}
             {...formProps.birthdate}
           />
@@ -177,7 +208,7 @@ const PersonFields: StylableFC<{
           />
           <Select
             appearance="outlined"
-            label={t("profile.general.shirtSize.label")}
+            label={t("general.shirtSize.label")}
             {...formProps.shirtSize}
           >
             {[
@@ -194,7 +225,7 @@ const PersonFields: StylableFC<{
             ].map((option) => (
               <MenuItem
                 key={option.size}
-                metadata={t("profile.general.shirtSize.metadata", {
+                metadata={t("general.shirtSize.metadata", {
                   count: option.measurement,
                 })}
                 value={option.size}
@@ -205,7 +236,7 @@ const PersonFields: StylableFC<{
           </Select>
           <TextField
             appearance="outlined"
-            label={t("profile.general.pantsSize")}
+            label={t("general.pantsSize")}
             className="[&>input]:[font-feature-settings:'calt'on]"
             {...formProps.pantsSize}
           />

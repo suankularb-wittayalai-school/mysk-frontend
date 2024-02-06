@@ -17,7 +17,7 @@
       "lastName": "Last name",
       "nickname": "Nickname"
     },
-    "enName": {
+    "nameEN": {
       "title": "English name",
       "prefix": "English prefix",
       "prefix_helper": "Master, Mr., Mrs., Ms., etc.",
@@ -85,6 +85,7 @@
       "privateInfo_helper": "Only people you allow access to this information can see it."
     },
     "action": {
+      "changeName": "Change name",
       "logOut": "Log out",
       "save": "Save changes"
     },

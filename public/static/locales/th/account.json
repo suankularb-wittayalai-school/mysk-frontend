@@ -16,7 +16,7 @@
       "lastName": "นามสกุล",
       "nickname": "ชื่อเล่น"
     },
-    "enName": {
+    "nameEN": {
       "title": "ชื่อจริงภาษาอังกฤษ",
       "prefix": "คำนำหน้าภาษาอังกฤษ",
       "prefix_helper": "Master Mr. Mrs. Ms. ฯลฯ",
@@ -67,6 +67,7 @@
       "privateInfo_helper": "จะไม่มีใครเห็นข้อมูลนี้จนกว่าจะให้คำอนุญาตต่อคนคนนั้น"
     },
     "action": {
+      "changeName": "เปลี่ยนชื่อ",
       "logOut": "ออกจากระบบ",
       "save": "บันทึก"
     },
