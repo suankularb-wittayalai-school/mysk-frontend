@@ -1,5 +1,6 @@
 import AboutHeader from "@/components/account/about/AboutHeader";
 import CertficateAnnouncementBanner from "@/components/account/about/CertficateAnnouncementBanner";
+import NameChangeDialog from "@/components/account/about/NameChangeDialog";
 import PersonFields, {
   PersonFieldsKey,
 } from "@/components/account/about/PersonFields";
@@ -194,6 +195,11 @@ const AboutYouPage: CustomPage<{
           )}
         </div>
       </ProfileLayout>
+      <NameChangeDialog
+        open={nameChangeOpen}
+        person={user}
+        onClose={() => setNameChangeOpen(false)}
+      />
     </>
   );
 };
