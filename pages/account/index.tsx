@@ -1,6 +1,5 @@
 import ProfileNavigation from "@/components/account/ProfileNavigation";
 import AboutPersonSummary from "@/components/account/about/AboutPersonSummary";
-import CertficateAnnouncementBanner from "@/components/account/about/CertficateAnnouncementBanner";
 import PageHeader from "@/components/common/PageHeader";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import {
@@ -36,7 +35,7 @@ const ProfilePage: CustomPage<{ user: Student | Teacher }> = ({ user }) => {
       <PageHeader>{t("title")}</PageHeader>
       <ContentLayout className="*:*:mx-4 *:*:sm:mx-0">
         <AboutPersonSummary person={user} />
-        {user.role === UserRole.student && <CertficateAnnouncementBanner />}
+        {/* {user.role === UserRole.student && <CertficateAnnouncementBanner />} */}
         <ProfileNavigation role={user.role} className="!mx-1 sm:!-mx-3" />
       </ContentLayout>
     </>
