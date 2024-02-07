@@ -21,26 +21,16 @@ import { useTranslation } from "next-i18next";
  * A Lookup Detail Card that displays details of a Classroom.
  *
  * @param classroom The Classroom to display details for.
- * @param teacherID The ID of the Teacher currently logged in, if the user is a Teacher. Used for Attendance.
  * @param isOwnClass Whether the Classroom belongs to the current user.
  * @param user The currently logged in user. Used for Role and Permissions.
  * @param refreshData Should refresh Classroom data.
  */
 const ClassDetailsCard: StylableFC<{
   classroom?: Omit<Classroom, "year" | "subjects">;
-  teacherID?: string;
   isOwnClass?: boolean;
   user: User;
   refreshData: () => void;
-}> = ({
-  classroom,
-  teacherID,
-  isOwnClass,
-  user,
-  refreshData,
-  style,
-  className,
-}) => {
+}> = ({ classroom, isOwnClass, user, refreshData, style, className }) => {
   const locale = useLocale();
   const { t } = useTranslation("classes", { keyPrefix: "detail" });
 
@@ -123,12 +113,12 @@ const ClassDetailsCard: StylableFC<{
                 )}
 
                 {/* Contacts */}
-                {((teacherID && isOwnClass) ||
+                {((isOwnClass && user.role === UserRole.teacher) ||
                   classroom.contacts.length > 0) && (
                   <ClassContactList
                     contacts={classroom.contacts}
                     classroomID={classroom.id}
-                    editable={teacherID !== null && isOwnClass}
+                    editable={isOwnClass && user.role === UserRole.teacher}
                     refreshData={refreshData}
                   />
                 )}
