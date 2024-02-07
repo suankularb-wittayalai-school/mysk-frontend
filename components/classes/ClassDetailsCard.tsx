@@ -1,4 +1,3 @@
-// Imports
 import ClassContactList from "@/components/classes/ClassContactList";
 import ClassHeader from "@/components/classes/ClassHeader";
 import ClassScheduleCard from "@/components/classes/ClassScheduleCard";
@@ -13,7 +12,7 @@ import useLocale from "@/utils/helpers/useLocale";
 import useToggle from "@/utils/helpers/useToggle";
 import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
-import { User } from "@/utils/types/person";
+import { User, UserRole } from "@/utils/types/person";
 import { transition, useAnimationConfig } from "@suankularb-components/react";
 import { LayoutGroup, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
@@ -68,7 +67,7 @@ const ClassDetailsCard: StylableFC<{
           <LookupDetailsContent className="!overflow-auto">
             <LayoutGroup>
               {/* Schedule */}
-              {!isOwnClass && (
+              {(!isOwnClass || user.role !== UserRole.student) && (
                 <div className="grid gap-2">
                   <CurrentLearningPeriodCard
                     classroomID={classroom.id}
