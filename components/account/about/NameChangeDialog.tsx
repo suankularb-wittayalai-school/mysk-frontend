@@ -1,7 +1,7 @@
 import MultilangText from "@/components/common/MultilingualText";
 import InformationCard from "@/components/lookup/people/InformationCard";
 import getLocaleName from "@/utils/helpers/getLocaleName";
-import { StylableFC } from "@/utils/types/common";
+import { LangCode, StylableFC } from "@/utils/types/common";
 import { Person } from "@/utils/types/person";
 import {
   Actions,
@@ -34,10 +34,14 @@ const NameChangeDialog: StylableFC<{
       <DialogContent>
         <InformationCard title={t("content.fullName")} className="mx-6">
           <MultilangText
-            text={{
-              th: getLocaleName("th", person),
-              "en-US": getLocaleName("en-US", person),
-            }}
+            text={
+              Object.fromEntries(
+                (["th", "en-US"] as LangCode[]).map((locale) => [
+                  locale,
+                  getLocaleName(locale, person, { prefix: true }),
+                ]),
+              ) as { [key in LangCode]: string }
+            }
           />
         </InformationCard>
       </DialogContent>
