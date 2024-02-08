@@ -17,7 +17,7 @@
       "lastName": "Last name",
       "nickname": "Nickname"
     },
-    "enName": {
+    "nameEN": {
       "title": "English name",
       "prefix": "English prefix",
       "prefix_helper": "Master, Mr., Mrs., Ms., etc.",
@@ -85,6 +85,7 @@
       "privateInfo_helper": "Only people you allow access to this information can see it."
     },
     "action": {
+      "changeName": "Change name",
       "logOut": "Log out",
       "save": "Save changes"
     },
@@ -92,6 +93,19 @@
       "certificate": {
         "title": "Check your school certificate eligibility",
         "subtitle": "Select the “Certificates” tab to learn more."
+      }
+    },
+    "dialog": {
+      "nameChange": {
+        "title": "Change name",
+        "desc": "If you think the information below is wrong, contact us.",
+        "content": {
+          "fullName": "Full name"
+        },
+        "action": {
+          "cancel": "Cancel",
+          "contactUs": "Contact us"
+        }
       }
     }
   },

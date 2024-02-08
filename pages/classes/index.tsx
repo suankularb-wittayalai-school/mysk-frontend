@@ -1,4 +1,3 @@
-// Imports
 import ClassDetailsCard from "@/components/classes/ClassDetailsCard";
 import GradeSection from "@/components/classes/GradeSection";
 import PageHeader from "@/components/common/PageHeader";
@@ -47,8 +46,7 @@ const ClassesPage: NextPage<{
   grades: { [grade: string]: Pick<Classroom, "id" | "number" | "main_room">[] };
   user: User;
   userClassroom?: Pick<Classroom, "id" | "number" | "main_room">;
-  teacherID?: string;
-}> = ({ grades, user, userClassroom, teacherID }) => {
+}> = ({ grades, user, userClassroom }) => {
   const { t } = useTranslation("classes");
   const { t: tx } = useTranslation("common");
 
@@ -150,7 +148,6 @@ const ClassesPage: NextPage<{
         >
           <ClassDetailsCard
             classroom={selectedClassroom}
-            teacherID={teacherID}
             isOwnClass={userClassroom?.id === selectedClassroom?.id}
             user={user}
             refreshData={fetchSelectedClass}
@@ -167,7 +164,6 @@ const ClassesPage: NextPage<{
           classroom={
             selectedID === selectedClassroom?.id ? selectedClassroom : undefined
           }
-          teacherID={teacherID}
           isOwnClass={userClassroom?.id === selectedClassroom?.id}
           user={user}
           refreshData={fetchSelectedClass}
@@ -217,8 +213,6 @@ export const getServerSideProps: GetServerSideProps = async ({
         ) || null
       : null;
 
-  const teacherID = person?.role === "teacher" ? person.id : null;
-
   return {
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
@@ -231,7 +225,6 @@ export const getServerSideProps: GetServerSideProps = async ({
       grades,
       user,
       userClassroom,
-      teacherID,
     },
   };
 };
