@@ -37,7 +37,7 @@ const TodaySummary: StylableFC<{
   homeroomContent: HomeroomContent;
   classroomID: string;
 }> = ({ attendances, homeroomContent, classroomID, style, className }) => {
-  const { t } = useTranslation("attendance", { keyPrefix: "today" });
+  const { t } = useTranslation("attendance", { keyPrefix: "day" });
 
   // Count the number of students who are marked as late at Assembly.
   // Since being ”late” refers to arrving late to Assembly, we only count those

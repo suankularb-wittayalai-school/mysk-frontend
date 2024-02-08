@@ -2,16 +2,16 @@
   "title": "M.{{classNumber}} attendance",
   "viewSelector": {
     "view": {
-      "title": "Choose view…",
-      "today": "Today",
-      "thisWeek": "This week"
+      "title": "Choose scope…",
+      "date": "Daily",
+      "month": "Monthly"
     },
     "action": {
       "print": "Print",
       "statistics": "View statistics",
       "date": {
-        "today": "{{date, datetime(day: numeric; month: short;)}}",
-        "thisWeek": "Week {{week, number}}"
+        "date": "{{date, datetime(day: numeric; month: short;)}}",
+        "month": "{{date, datetime(month: short; year: numeric;)}}"
       }
     },
     "dialog": {
@@ -24,6 +24,9 @@
         "action": {
           "cancel": "Cancel",
           "go": "Go"
+        },
+        "snackbar": {
+          "classNotFound": "Class not found"
         }
       },
       "statistics": {
@@ -39,9 +42,6 @@
           "close": "Close"
         }
       }
-    },
-    "snackbar": {
-      "classNotFound": "Class not found"
     }
   },
   "event": {
@@ -61,7 +61,7 @@
     },
     "enterReason": "Enter reason"
   },
-  "today": {
+  "day": {
     "title": "{{late, number}} late • {{absent, number}} absent",
     "homeroom": {
       "title": "Homeroom",
@@ -89,10 +89,21 @@
       }
     }
   },
-  "thisWeek": {
-    "todo": {
-      "title": "We’re working hard on delivering this feature.",
-      "subtitle": "The “This Week” page will give you deeper insights into the trends of your class’ attendance. Stay tuned."
+  "month": {
+    "legend": {
+      "present": "Present",
+      "late": "Late",
+      "onLeave": "On leave",
+      "absent": "Absent",
+      "empty": "Unknown"
+    },
+    "chart": "Chart",
+    "summary": {
+      "subtitle": "{{date, datetime(month: long; year: numeric;)}}"
+    },
+    "item": {
+      "classNo": "No. {{classNo}}",
+      "day": "{{date, datetime(day: numeric;)}}"
     }
   }
 }

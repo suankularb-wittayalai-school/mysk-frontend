@@ -31,6 +31,7 @@ const GlanceAttendance: StylableFC<{
           va.track("View Attendance", {
             location: "Home Glance",
             role: title(role),
+            number: `M.${classroom.number}`,
             isOwnClass: true,
           })
         }

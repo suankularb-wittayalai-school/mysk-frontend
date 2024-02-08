@@ -1,9 +1,7 @@
-// Imports
 import ClassContactList from "@/components/classes/ClassContactList";
 import ClassHeader from "@/components/classes/ClassHeader";
 import ClassScheduleCard from "@/components/classes/ClassScheduleCard";
 import ClassStudentList from "@/components/classes/ClassStudentList";
-import RecentAttendanceList from "@/components/classes/RecentAttendanceList";
 import LookupDetailsCard from "@/components/lookup/LookupDetailsCard";
 import LookupDetailsContent from "@/components/lookup/LookupDetailsContent";
 import InformationCard from "@/components/lookup/people/InformationCard";
@@ -23,26 +21,16 @@ import { useTranslation } from "next-i18next";
  * A Lookup Detail Card that displays details of a Classroom.
  *
  * @param classroom The Classroom to display details for.
- * @param teacherID The ID of the Teacher currently logged in, if the user is a Teacher. Used for Attendance.
  * @param isOwnClass Whether the Classroom belongs to the current user.
  * @param user The currently logged in user. Used for Role and Permissions.
  * @param refreshData Should refresh Classroom data.
  */
 const ClassDetailsCard: StylableFC<{
   classroom?: Omit<Classroom, "year" | "subjects">;
-  teacherID?: string;
   isOwnClass?: boolean;
   user: User;
   refreshData: () => void;
-}> = ({
-  classroom,
-  teacherID,
-  isOwnClass,
-  user,
-  refreshData,
-  style,
-  className,
-}) => {
+}> = ({ classroom, isOwnClass, user, refreshData, style, className }) => {
   const locale = useLocale();
   const { t } = useTranslation("classes", { keyPrefix: "detail" });
 
@@ -69,7 +57,7 @@ const ClassDetailsCard: StylableFC<{
           <LookupDetailsContent className="!overflow-auto">
             <LayoutGroup>
               {/* Schedule */}
-              {!isOwnClass && (
+              {(!isOwnClass || user.role !== UserRole.student) && (
                 <div className="grid gap-2">
                   <CurrentLearningPeriodCard
                     classroomID={classroom.id}
@@ -80,22 +68,6 @@ const ClassDetailsCard: StylableFC<{
                     open={scheduleOpen}
                   />
                 </div>
-              )}
-
-              {/* Attendance */}
-              {(user.is_admin ||
-                [UserRole.teacher, UserRole.management].includes(user.role) ||
-                isOwnClass) && (
-                <motion.section
-                  layout="position"
-                  transition={positionTransition}
-                >
-                  <RecentAttendanceList
-                    classroom={classroom}
-                    teacherID={teacherID}
-                    isOwnClass={isOwnClass}
-                  />
-                </motion.section>
               )}
 
               <motion.section
@@ -126,8 +98,8 @@ const ClassDetailsCard: StylableFC<{
               <motion.section
                 layout="position"
                 transition={positionTransition}
-                className={cn(`flex flex-col-reverse gap-x-2 gap-y-5
-                  md:grid md:grid-cols-2`)}
+                className={cn(`flex flex-col-reverse gap-x-2 gap-y-5 md:grid
+                  md:grid-cols-2`)}
               >
                 {/* Students */}
                 {classroom.students.length > 0 && (
@@ -141,12 +113,12 @@ const ClassDetailsCard: StylableFC<{
                 )}
 
                 {/* Contacts */}
-                {((teacherID && isOwnClass) ||
+                {((isOwnClass && user.role === UserRole.teacher) ||
                   classroom.contacts.length > 0) && (
                   <ClassContactList
                     contacts={classroom.contacts}
                     classroomID={classroom.id}
-                    editable={teacherID !== null && isOwnClass}
+                    editable={isOwnClass && user.role === UserRole.teacher}
                     refreshData={refreshData}
                   />
                 )}

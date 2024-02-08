@@ -1,14 +1,15 @@
 // Imports
-import AttendanceViewSelector from "@/components/attendance/AttendanceViewSelector";
+import AttendanceDatePickerDialog from "@/components/attendance/AttendanceDatePickerDialog";
+import {
+  AttendanceView,
+  SelectorType,
+} from "@/components/attendance/AttendanceViewSelector";
 import GradesBreakdownChart from "@/components/attendance/GradesBreakdownChart";
 import SchoolWideAttendanceTable from "@/components/attendance/SchoolWideAttendanceTable";
 import PageHeader from "@/components/common/PageHeader";
 import MySKLogo from "@/public/images/brand/mysk-light.svg";
 import getClassroomAttendances from "@/utils/backend/attendance/getClassroomAttendances";
-import getWeekAttendance from "@/utils/backend/attendance/getWeekAttendance";
-import { SelectorType } from "@/utils/helpers/attendance/useAttendanceView";
 import cn from "@/utils/helpers/cn";
-import useLocale from "@/utils/helpers/useLocale";
 import { YYYYMMDDRegex } from "@/utils/patterns";
 import {
   AttendanceEvent,
@@ -17,38 +18,43 @@ import {
 } from "@/utils/types/attendance";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import {
+  Actions,
+  Button,
   Card,
   CardContent,
   Columns,
   ContentLayout,
+  MaterialIcon,
   Section,
   Text,
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
-import { isFuture, isWeekend, setDay } from "date-fns";
+import { isFuture, isWeekend } from "date-fns";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { Trans, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import Image from "next/image";
+import router from "next/router";
 import { mapValues } from "radash";
+import { useState } from "react";
 
 /**
- * The Attendance Summary for Management page displays the Attendance of all
- * Classrooms in the school on a specific date.
+ * The Attendance Overview page displays the Attendance of all Classrooms in the
+ * school on a specific date.
  *
  * @param date The date to display Attendance of, in YYYY-MM-DD format.
  * @param attendances The Attendance of all Classrooms in the school, by grade and by Classroom.
  */
-const AttendanceSummaryForManagementPage: CustomPage<{
+const AttendanceOverviewPage: CustomPage<{
   date: string;
   attendances: {
     grades: { [key in AttendanceEvent]: ManagementAttendanceSummary }[];
     classrooms: ClassroomAttendance[];
   };
 }> = ({ date, attendances: { grades, classrooms } }) => {
-  const locale = useLocale();
   const { t } = useTranslation("manage", { keyPrefix: "attendance" });
+  const { t: ta } = useTranslation("attendance");
   const { t: tx } = useTranslation("common");
 
   /**
@@ -62,6 +68,8 @@ const AttendanceSummaryForManagementPage: CustomPage<{
       ) as ManagementAttendanceSummary,
     { presence: 0, late: 0, absence: 0 },
   );
+
+  const [datePickerOpen, setDatePickerOpen] = useState(false);
 
   return (
     <>
@@ -95,7 +103,8 @@ const AttendanceSummaryForManagementPage: CustomPage<{
         <Columns columns={2} className="!items-stretch print:!grid-cols-2">
           <Card
             appearance="outlined"
-            className="!contents !rounded-lg print:!contents sm:!flex sm:print:!contents"
+            className={cn(`!contents !rounded-lg sm:!flex print:!contents
+              sm:print:!contents`)}
           >
             <CardContent className="print:!contents">
               <GradesBreakdownChart grades={grades} />
@@ -103,10 +112,27 @@ const AttendanceSummaryForManagementPage: CustomPage<{
           </Card>
 
           <Section className="print:!hidden">
-            <AttendanceViewSelector
-              type={SelectorType.management}
-              date={date}
-            />
+            <Actions>
+              {/* Date picker */}
+              <Button
+                appearance="tonal"
+                icon={<MaterialIcon icon="event" />}
+                onClick={() => setDatePickerOpen(true)}
+              >
+                {ta("viewSelector.action.date.day", { date: new Date(date) })}
+              </Button>
+              <AttendanceDatePickerDialog
+                open={datePickerOpen}
+                view={AttendanceView.date}
+                type={SelectorType.management}
+                onClose={() => setDatePickerOpen(false)}
+                onSubmit={({ date }) => {
+                  setDatePickerOpen(false);
+                  router.push(`/manage/attendance/${date}`);
+                }}
+              />
+            </Actions>
+
             <div aria-hidden className="hidden grow sm:block" />
             <Text type="body-medium">
               <Trans
@@ -175,10 +201,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
-  const [week, attendances] = await Promise.all([
-    (await getWeekAttendance(supabase, setDay(new Date(date), 1))).data,
-    (await getClassroomAttendances(supabase, date)).data,
-  ]);
+  const { data: attendances } = await getClassroomAttendances(supabase, date);
 
   return {
     props: {
@@ -188,10 +211,9 @@ export const getServerSideProps: GetServerSideProps = async ({
         "manage",
       ])),
       date,
-      week,
       attendances,
     },
   };
 };
 
-export default AttendanceSummaryForManagementPage;
+export default AttendanceOverviewPage;

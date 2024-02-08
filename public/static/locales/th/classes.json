@@ -12,25 +12,14 @@
   "header": {
     "action": {
       "print": "พิมพ์",
-      "saveContact": "บันทึก",
-      "requestInfo": "ขอข้อมูลเพิ่มเติม"
+      "attendance": {
+        "view": "ดูการเช็กชื่อ",
+        "edit": "เช็กชื่อ"
+      },
+      "saveContact": "บันทึก"
     }
   },
   "detail": {
-    "attendance": {
-      "title": "ข้อมูลเช็กชื่อ",
-      "item": {
-        "title": "{{date, datetime(weekday: short; day: numeric; month: short)}}",
-        "absenceCount_zero": "มาครบ",
-        "absenceCount_other": "ขาด {{count, number}} คน",
-        "noData": "ไม่มีข้อมูล"
-      },
-      "empty": "ไม่มีข้อมูลการเช็กชื่อใน 3 เดือนที่ผ่านมา",
-      "action": {
-        "addDay": "เพิ่มข้อมูลเช็กชื่อ",
-        "addEvent": "เพิ่ม"
-      }
-    },
     "general": {
       "classAdvisors": "ครูที่ปรึกษา",
       "room": "ห้องที่ใช้เรียน"

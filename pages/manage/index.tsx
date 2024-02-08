@@ -72,14 +72,14 @@ const ManagePage: CustomPage<{
               title={
                 <>
                   <Text type="title-large" element="h3">
-                    {t("attendance.summary.today.title")}
+                    {t("attendance.summary.day.title")}
                   </Text>
                   {isWeekend(new Date()) && (
                     <Text
                       type="title-small"
                       className="text-on-surface-variant"
                     >
-                      {t("attendance.summary.today.subtitle")}
+                      {t("attendance.summary.day.subtitle")}
                     </Text>
                   )}
                 </>

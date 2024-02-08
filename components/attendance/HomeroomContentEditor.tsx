@@ -18,7 +18,7 @@ const HomeroomContentEditor: FC<{
   classroomID: string;
   onViewChange: (view: HomeroomView) => void;
 }> = ({ homeroomContent, classroomID, onViewChange }) => {
-  const { t } = useTranslation("attendance", { keyPrefix: "today.homeroom" });
+  const { t } = useTranslation("attendance", { keyPrefix: "day.homeroom" });
 
   const { field, setField, handleCancel, handleSave, loading } =
     useHomeroomContent(
