@@ -1,4 +1,3 @@
-// Imports
 import AttendanceDatePickerDialog from "@/components/attendance/AttendanceDatePickerDialog";
 import {
   AttendanceView,
@@ -11,6 +10,7 @@ import MySKLogo from "@/public/images/brand/mysk-light.svg";
 import getClassroomAttendances from "@/utils/backend/attendance/getClassroomAttendances";
 import cn from "@/utils/helpers/cn";
 import { YYYYMMDDRegex } from "@/utils/patterns";
+import { supabase } from "@/utils/supabase-backend";
 import {
   AttendanceEvent,
   ClassroomAttendance,
@@ -28,9 +28,8 @@ import {
   Section,
   Text,
 } from "@suankularb-components/react";
-import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { isFuture, isWeekend } from "date-fns";
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
+import { GetStaticPaths, GetStaticProps } from "next";
 import { Trans, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
@@ -119,7 +118,7 @@ const AttendanceOverviewPage: CustomPage<{
                 icon={<MaterialIcon icon="event" />}
                 onClick={() => setDatePickerOpen(true)}
               >
-                {ta("viewSelector.action.date.day", { date: new Date(date) })}
+                {ta("viewSelector.action.date.date", { date: new Date(date) })}
               </Button>
               <AttendanceDatePickerDialog
                 open={datePickerOpen}
@@ -182,12 +181,7 @@ const AttendanceOverviewPage: CustomPage<{
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  params,
-  req,
-  res,
-}) => {
+export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   const { date } = params as { date: string };
   if (
     !YYYYMMDDRegex.test(date) ||
@@ -195,11 +189,6 @@ export const getServerSideProps: GetServerSideProps = async ({
     isWeekend(new Date(date))
   )
     return { notFound: true };
-
-  const supabase = createPagesServerClient({
-    req: req as NextApiRequest,
-    res: res as NextApiResponse,
-  });
 
   const { data: attendances } = await getClassroomAttendances(supabase, date);
 
@@ -213,7 +202,13 @@ export const getServerSideProps: GetServerSideProps = async ({
       date,
       attendances,
     },
+    revalidate: 10,
   };
 };
+
+export const getStaticPaths: GetStaticPaths = async () => ({
+  paths: [],
+  fallback: "blocking",
+});
 
 export default AttendanceOverviewPage;
