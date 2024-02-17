@@ -1,4 +1,5 @@
 import PageHeader from "@/components/common/PageHeader";
+import SakeCelebration from "@/components/home/sake/SakeCelebration";
 import { StylableFC } from "@/utils/types/common";
 import { ContentLayout } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
@@ -8,7 +9,7 @@ import { ReactNode } from "react";
 /**
  * A Content Layout with all the common elements of Home pages (like Learn and
  * Teach).
- * 
+ *
  * @param children The page content.
  */
 const HomeLayout: StylableFC<{
@@ -27,6 +28,7 @@ const HomeLayout: StylableFC<{
       <PageHeader>{tx("appName")}</PageHeader>
       <ContentLayout style={style} className={className}>
         {children}
+        <SakeCelebration />
       </ContentLayout>
     </>
   );
