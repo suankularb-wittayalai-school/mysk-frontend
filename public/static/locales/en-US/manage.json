@@ -2,25 +2,7 @@
   "title": "Manage",
   "attendance": {
     "title": "Attendance",
-    "description": "Every morning, teachers take attendance of their students during assembly and homeroom. Here’s a summary.",
-    "summary": {
-      "today": {
-        "title": "Today",
-        "subtitle": "Last Friday"
-      },
-      "thisWeek": {
-        "title": "This week",
-        "subtitle": "Average"
-      },
-      "card": {
-        "title": {
-          "present": "{{count, number(maximumFractionDigits: 0;)}} present",
-          "late": "{{count, number(maximumFractionDigits: 0;)}} late",
-          "absent": "{{count, number(maximumFractionDigits: 0;)}} absent"
-        },
-        "content": "{{percentage, number(style: percent; minimumFractionDigits: 1; maximumFractionDigits: 1;}}"
-      }
-    },
+    "desc": "Every morning, teachers take attendance of their students during assembly and homeroom.",
     "print": {
       "title": "{{date, datetime(day: numeric; month: short)}} Attendance Summary",
       "subtitle": "Presented by MySK"
@@ -52,13 +34,13 @@
       }
     },
     "action": {
-      "print": "Print",
-      "viewDetails": "View details"
+      "seeMore": "See more",
+      "print": "Print"
     }
   },
   "participation": {
     "title": "Participation",
-    "description": "Metrics on students and teachers participation in using the MySK infrastructure.",
+    "desc": "Metrics on students and teachers participation in using the MySK infrastructure.",
     "onboarding": {
       "alt": "Onboarded users",
       "content_one": "<0>{{count, number}} onboarded user</0> from a total of {{total, number}}. That’s {{percentage, number(style: percent; maximumFractionDigits: 0;)}}.",
@@ -73,6 +55,9 @@
       "alt": "Student with additional account data",
       "content_one": "<0>{{count, number}} student</0> have filled <1>additional account information</1>. That’s {{percentage, number(style: percent; maximumFractionDigits: 0;)}} of all students with classrooms.",
       "content_other": "<0>{{count, number}} students</0> have filled <1>additional account information</1>. That’s {{percentage, number(style: percent; maximumFractionDigits: 0;)}} of all students with classrooms."
+    },
+    "action": {
+      "seeMore": "See more"
     }
   }
 }

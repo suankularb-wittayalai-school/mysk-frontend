@@ -1,27 +1,19 @@
 // Imports
-import AttendanceSummary from "@/components/attendance/AttendanceSummary";
 import PageHeader from "@/components/common/PageHeader";
-import ParticipationMetric from "@/components/manage/ParticipationMetric";
+import ManagePageCard from "@/components/manage/ManagePageCard";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getUserByEmail from "@/utils/backend/account/getUserByEmail";
-import getManagementAttendanceSummary from "@/utils/backend/attendance/getManagementAttendanceSummary";
-import getParticipationMetrics from "@/utils/backend/manage/getParticipationMetrics";
-import { ManagementAttendanceSummary } from "@/utils/types/attendance";
+import getISODateString from "@/utils/helpers/getISODateString";
+import lastWeekday from "@/utils/helpers/lastWeekday";
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { ParticipationMetrics } from "@/utils/types/management";
 import { User, UserRole } from "@/utils/types/person";
 import {
-  Actions,
   Button,
   Columns,
   ContentLayout,
-  Header,
   MaterialIcon,
-  Section,
-  Text,
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
-import { isWeekend } from "date-fns";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import { useTranslation } from "next-i18next";
@@ -31,123 +23,64 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 /**
- * Management’s counterpart to Learn, where the user can view statistics about
+ * Management’s counterpart to Learn, where the user can access statistics about
  * the school. This page is only accessible to users with the
  * `can_see_management` permission.
  *
  * Management users see this page as their Home. Other users with the permission
  * can access this page from their Account page.
  *
- * @param attendance The attendance statistics for today and this week.
- * @param participationMetrics Metrics on MySK participation.
  * @param user The currently logged in user.
  */
-const ManagePage: CustomPage<{
-  attendance: { [key in "today" | "this_week"]: ManagementAttendanceSummary };
-  participationMetrics: ParticipationMetrics;
-  user: User;
-}> = ({ attendance, participationMetrics, user }) => {
+const ManagePage: CustomPage<{ user: User }> = ({ user }) => {
   const { t } = useTranslation("manage");
   const { t: tx } = useTranslation("common");
 
   const router = useRouter();
 
+  const title = user.role === UserRole.management ? tx("appName") : t("title");
+  const attendanceURL =
+    "/manage/attendance/" + getISODateString(lastWeekday(new Date()));
+
   return (
     <>
       <Head>
-        <title>{tx("appName")}</title>
+        <title>{title}</title>
       </Head>
-      <PageHeader>
-        {user.role === UserRole.management ? tx("appName") : t("title")}
-      </PageHeader>
+      <PageHeader>{title}</PageHeader>
       <ContentLayout>
-        {/* Attendance */}
-        <Section>
-          <Header>{t("attendance.title")}</Header>
-          <Text type="body-medium" className="!-mt-1">
-            {t("attendance.description")}
-          </Text>
-          <Columns columns={2} className="!grid-cols-1 md:!grid-cols-2">
-            <AttendanceSummary
-              title={
-                <>
-                  <Text type="title-large" element="h3">
-                    {t("attendance.summary.day.title")}
-                  </Text>
-                  {isWeekend(new Date()) && (
-                    <Text
-                      type="title-small"
-                      className="text-on-surface-variant"
-                    >
-                      {t("attendance.summary.day.subtitle")}
-                    </Text>
-                  )}
-                </>
-              }
-              summary={attendance.today}
-              total={participationMetrics.students_with_classroom}
-            />
-            <AttendanceSummary
-              title={
-                <>
-                  <Text type="title-large" element="h3">
-                    {t("attendance.summary.thisWeek.title")}
-                  </Text>
-                  <Text type="title-small" className="text-on-surface-variant">
-                    {t("attendance.summary.thisWeek.subtitle")}
-                  </Text>
-                </>
-              }
-              summary={attendance.this_week}
-              total={participationMetrics.students_with_classroom}
-            />
-          </Columns>
-          <Actions>
+        <Columns columns={2} className="mx-4 sm:mx-0">
+          <ManagePageCard
+            icon={<MaterialIcon icon="assignment_turned_in" size={48} />}
+            title={t("attendance.title")}
+            desc={t("attendance.desc")}
+          >
+            <Button appearance="filled" href={attendanceURL} element={Link}>
+              {t("attendance.action.seeMore")}
+            </Button>
             <Button
               appearance="outlined"
-              icon={<MaterialIcon icon="print" />}
               onClick={async () => {
-                await router.push("/manage/attendance");
+                await router.push(attendanceURL);
                 setTimeout(() => window.print(), 1000);
               }}
             >
               {t("attendance.action.print")}
             </Button>
+          </ManagePageCard>
+          <ManagePageCard
+            icon={<MaterialIcon icon="person_check" size={48} />}
+            title={t("participation.title")}
+            desc={t("participation.desc")}
+          >
             <Button
               appearance="filled"
-              icon={<MaterialIcon icon="format_list_bulleted" />}
-              href="/manage/attendance"
+              href="/manage/participation"
               element={Link}
             >
-              {t("attendance.action.viewDetails")}
+              {t("participation.action.seeMore")}
             </Button>
-          </Actions>
-        </Section>
-
-        {/* Participation */}
-        <Columns columns={6}>
-          <Section className="col-span-2 !gap-4 sm:col-span-4 md:col-start-2">
-            <Header>{t("participation.title")}</Header>
-            <Text type="body-medium" className="!-mt-2">
-              {t("participation.description")}
-            </Text>
-
-            <ParticipationMetric
-              id="onboarding"
-              count={participationMetrics.onboarded_users}
-              total={participationMetrics.total_users}
-            />
-            <ParticipationMetric
-              id="teacherSchedule"
-              count={participationMetrics.teachers_with_schedule}
-              total={participationMetrics.teachers_with_assigned_subjects}
-            />
-            <ParticipationMetric
-              id="studentData"
-              count={participationMetrics.students_with_additional_account_data}
-              total={participationMetrics.students_with_classroom}
-            />
-          </Section>
+          </ManagePageCard>
         </Columns>
       </ContentLayout>
     </>
@@ -167,18 +100,12 @@ export const getServerSideProps: GetServerSideProps = async ({
   const session = await getServerSession(req, res, authOptions);
   const { data: user } = await getUserByEmail(supabase, session!.user!.email!);
 
-  const { data: attendance } = await getManagementAttendanceSummary(supabase);
-  const { data: participationMetrics } =
-    await getParticipationMetrics(supabase);
-
   return {
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
         "common",
         "manage",
       ])),
-      attendance,
-      participationMetrics,
       user,
     },
   };
