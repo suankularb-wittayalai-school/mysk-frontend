@@ -41,20 +41,23 @@
   "participation": {
     "title": "Participation",
     "desc": "Metrics on students and teachers participation in using the MySK infrastructure.",
-    "onboarding": {
-      "alt": "Onboarded users",
-      "content_one": "<0>{{count, number}} onboarded user</0> from a total of {{total, number}}. That’s {{percentage, number(style: percent; maximumFractionDigits: 0;)}}.",
-      "content_other": "<0>{{count, number}} onboarded users</0> from a total of {{total, number}}. That’s {{percentage, number(style: percent; maximumFractionDigits: 0;)}}."
+    "awareness": {
+      "alt": "Users who have logged in at least once",
+      "overline": "Awareness",
+      "title": "{{percentage, number(style: percent;)}} of all users have logged in at least once",
+      "subtitle": "{{count, number}} out of {{total, number}} registered users"
     },
-    "teacherSchedule": {
+    "teacherParticipation": {
       "alt": "Teachers with schedule",
-      "content_one": "<0>{{count, number}} teacher</0> have filled in their <1>schedule data</1>. That’s {{percentage, number(style: percent; maximumFractionDigits: 0;)}} of all teachers.",
-      "content_other": "<0>{{count, number}} teachers</0> have filled in their <1>schedule data</1>. That’s {{percentage, number(style: percent; maximumFractionDigits: 0;)}} of all teachers."
+      "overline": "Teacher participation",
+      "title": "{{percentage, number(style: percent;)}} of all teachers have filled in their schedule",
+      "subtitle": "{{count, number}} out of {{total, number}} registered teachers"
     },
-    "studentData": {
+    "studentParticipation": {
       "alt": "Student with additional account data",
-      "content_one": "<0>{{count, number}} student</0> have filled <1>additional account information</1>. That’s {{percentage, number(style: percent; maximumFractionDigits: 0;)}} of all students with classrooms.",
-      "content_other": "<0>{{count, number}} students</0> have filled <1>additional account information</1>. That’s {{percentage, number(style: percent; maximumFractionDigits: 0;)}} of all students with classrooms."
+      "overline": "Student participation",
+      "title": "{{percentage, number(style: percent;)}} of all students have filled in additional account information",
+      "subtitle": "{{count, number}} out of {{total, number}} student with an assigned classrooms"
     },
     "action": {
       "seeMore": "See more"

@@ -1,9 +1,16 @@
 import cn from "@/utils/helpers/cn";
 import { StylableFC } from "@/utils/types/common";
 import { Progress, Text } from "@suankularb-components/react";
-import { Trans, useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next";
 import { dash } from "radash";
 
+/**
+ * A metric to display on the Participation page.
+ *
+ * @param id The unique identifier of the metric. Used in indexing into translations.
+ * @param count The count of the metric.
+ * @param total The total count of the metric.
+ */
 const ParticipationMetric: StylableFC<{
   id: string;
   count: number;
@@ -11,11 +18,17 @@ const ParticipationMetric: StylableFC<{
 }> = ({ id, count, total, style, className }) => {
   const { t } = useTranslation("manage", { keyPrefix: "participation" });
 
+  const labelID = "metric-" + dash(id);
+
   return (
     <li
-      aria-labelledby={"metric-" + dash(id)}
+      aria-labelledby={labelID}
       style={style}
-      className={cn(`grid grid-cols-[3rem,1fr] items-end gap-2`, className)}
+      className={cn(
+        `grid items-center gap-x-6 gap-y-3 rounded-xl bg-surface-variant
+        p-4 sm:grid-cols-[3rem,1fr] sm:px-6`,
+        className,
+      )}
     >
       <Progress
         appearance="circular"
@@ -23,16 +36,20 @@ const ParticipationMetric: StylableFC<{
         value={(count / total) * 100}
         visible
       />
-      <Text type="body-medium">
-        <Trans
-          i18nKey={`participation.${id}.content`}
-          ns="manage"
-          values={{ count, total, percentage: count / total }}
+      <div>
+        <Text type="title-small" className="text-on-surface-variant">
+          {t(`${id}.overline`)}
+        </Text>
+        <Text
+          type="title-medium"
+          element={(props) => <h2 id={labelID} {...props} />}
         >
-          <Text type="title-large">{""}</Text>
-          <strong />
-        </Trans>
-      </Text>
+          {t(`${id}.title`, { percentage: count / total })}
+        </Text>
+        <Text type="body-small" element="p" className="mt-3">
+          {t(`${id}.subtitle`, { count, total })}
+        </Text>
+      </div>
     </li>
   );
 };
