@@ -6,7 +6,7 @@ import Balancer from "react-wrap-balancer";
 
 /**
  * A card to a Manage page.
- * 
+ *
  * @param children Actions.
  * @param icon Icon to display on the card.
  * @param title Title of the page.
@@ -21,7 +21,8 @@ const ManagePageCard: StylableFC<{
   <div
     style={style}
     className={cn(
-      `rounded-xl bg-surface-variant p-4 [&>.skc-icon]:text-on-surface-variant`,
+      `flex flex-col justify-end rounded-xl bg-surface-variant p-4
+      [&>.skc-icon]:text-on-surface-variant`,
       className,
     )}
   >
@@ -34,7 +35,7 @@ const ManagePageCard: StylableFC<{
         <Balancer>{desc}</Balancer>
       </Text>
     )}
-    <Actions align="left" className="mt-4">
+    <Actions align="left" className="mt-4 grow !items-end">
       {children}
     </Actions>
   </div>
