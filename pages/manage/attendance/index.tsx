@@ -1,7 +1,8 @@
 // Imports
 import getISODateString from "@/utils/helpers/getISODateString";
+import getLocalePath from "@/utils/helpers/getLocalePath";
 import lastWeekday from "@/utils/helpers/lastWeekday";
-import { CustomPage } from "@/utils/types/common";
+import { CustomPage, LangCode } from "@/utils/types/common";
 import { GetServerSideProps } from "next";
 
 /**
@@ -11,11 +12,10 @@ const AttendanceOverviewPage: CustomPage = () => null;
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
   redirect: {
-    destination: [
-      locale !== "th" ? "/" + locale : "",
-      "manage/attendance/date",
-      getISODateString(lastWeekday(new Date())),
-    ].join("/"),
+    destination: getLocalePath(
+      "manage/attendance/" + getISODateString(lastWeekday(new Date())),
+      locale as LangCode,
+    ),
     permanent: false,
   },
 });
