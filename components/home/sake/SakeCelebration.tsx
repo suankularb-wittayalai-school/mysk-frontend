@@ -57,21 +57,25 @@ const SakeCelebration: StylableFC = ({ style, className }) => {
         );
       }}
       style={style}
-      className={cn(`isolate h-64 overflow-hidden`, className)}
+      className={cn(`isolate overflow-hidden sm:h-64`, className)}
     >
-      <SakeBackground className="absolute inset-0 -z-10" />
+      <SakeBackground className="absolute inset-0 left-auto right-0 -z-10" />
       <Image
         src={SakeImage}
         alt={t("headshotAlt")}
-        className="absolute right-0 h-full w-auto"
+        className="absolute right-0 top-0 h-64 w-auto"
       />
-      <div className="flex h-full flex-col p-6 pr-56 text-on-surface-variant">
+      <div
+        className={cn(`mt-64 flex h-full flex-col rounded-tl-[inherit]
+          bg-surface p-6 text-on-surface sm:mt-0 sm:rounded-none
+          sm:bg-transparent sm:pr-56 sm:text-on-surface-variant`)}
+      >
         <Text type="body-large" element="p">
           {t("body", {
             year: getLocaleYear(locale, new Date().getFullYear(), "AD"),
           })}
         </Text>
-        <div aria-hidden className="grow" />
+        <div aria-hidden className="min-h-4 grow" />
         <Text type="title-medium" element="p">
           {t("closing")}
         </Text>
