@@ -37,7 +37,6 @@ const SakeCelebration: StylableFC = ({ style, className }) => {
     ) {
       // ...display the Sake Celebration.
       timer = setTimeout(() => setOpen(true), 1000);
-      localStorage.setItem("lastSakeCelebration", getISODateString(new Date()));
       return;
     }
 
@@ -48,7 +47,15 @@ const SakeCelebration: StylableFC = ({ style, className }) => {
     <ArtDialog
       open={open}
       width={560}
-      onClose={() => setOpen(false)}
+      onClose={() => {
+        setOpen(false);
+        // Save the date of the last activation so as to not show it again this
+        // year.
+        localStorage.setItem(
+          "lastSakeCelebration",
+          getISODateString(new Date()),
+        );
+      }}
       style={style}
       className={cn(`isolate h-64 overflow-hidden`, className)}
     >
