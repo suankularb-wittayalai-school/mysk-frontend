@@ -2,25 +2,7 @@
   "title": "ภาพรวมโรงเรียน",
   "attendance": {
     "title": "การเช็กชื่อ",
-    "description": "ในเวลาเช้าของทุกวัน ครูที่ปรึกษามีหน้าที่กรอกข้อมูลการเช็กชื่อในห้องของตนผ่านระบบ MySK สรุปสถิติได้ดังนี้",
-    "summary": {
-      "today": {
-        "title": "สรุปวันนี้",
-        "subtitle": "จากวันศุกร์"
-      },
-      "thisWeek": {
-        "title": "สรุปสัปดาห์นี้",
-        "subtitle": "ค่าเฉลี่ยของสัปดาห์นี้"
-      },
-      "card": {
-        "title": {
-          "present": "มาเรียน {{count, number(maximumFractionDigits: 0;)}}",
-          "late": "มาสาย {{count, number(maximumFractionDigits: 0;)}}",
-          "absent": "ขาดเรียน {{count, number(maximumFractionDigits: 0;)}}"
-        },
-        "content": "{{percentage, number(style: percent; minimumFractionDigits: 1; maximumFractionDigits: 1;}}"
-      }
-    },
+    "desc": "ในเวลาเช้าของทุกวัน ครูที่ปรึกษามีหน้าที่กรอกข้อมูลการเช็กชื่อในห้องของตนผ่านระบบ MySK",
     "print": {
       "title": "รายงานการเข้าเรียน {{date, datetime(day: numeric; month: short)}}",
       "subtitle": "นำเสนอโดย MySK"
@@ -52,24 +34,33 @@
       }
     },
     "action": {
-      "print": "พิมพ์รายงาน",
-      "viewDetails": "ดูรายละเอียด"
+      "seeMore": "ดูรายละเอียด",
+      "print": "พิมพ์รายงาน"
     }
   },
   "participation": {
     "title": "การเข้าร่วมระบบ MySK",
-    "description": "ตัวชี้วัดการเข้าร่วมต่าง ๆ ของนักเรียนและครูในการใช้ระบบ MySK",
-    "onboarding": {
+    "desc": "ตัวชี้วัดการเข้าร่วมต่าง ๆ ของนักเรียนและครูในการใช้ระบบ MySK",
+    "awareness": {
       "alt": "แผนภูมิจำนวนผู้ใช้เข้าร่วม",
-      "content": "<0>มีผู้ใช้เข้าร่วมแล้ว {{count, number}} คน </0>จากทั้งหมด {{total, number}} ซึ่งนับเป็น {{percentage, number(style: percent; maximumFractionDigits: 0;)}} จากผู้ใช้ทั้งหมดในระบบ"
+      "overline": "การเข้าถึง",
+      "title": "{{percentage, number(style: percent;)}} ของผู้ใช้ทั้งหมดเข้าสู่ระบบอย่างน้อยหนึ่งครั้ง",
+      "subtitle": "{{count, number}} คนจากผู้ใช้ที่ลงทะเบียน {{total, number}} คน"
     },
-    "teacherSchedule": {
+    "teacherParticipation": {
       "alt": "แผนภูมิจำนวนครูที่กรอกข้อมูลตารางสอนแล้ว",
-      "content": "<0>มีครู {{count, number}} คน </0>ที่<1>กรอกข้อมูลตารางสอนแล้ว</1> ซึ่งนับเป็น {{percentage, number(style: percent; maximumFractionDigits: 0;)}} จากทั้งหมด"
+      "overline": "ความร่วมมือครู",
+      "title": "{{percentage, number(style: percent;)}} ของครูทั้งหมดกรอกข้อมูลตารางสอนแล้ว",
+      "subtitle": "{{count, number}} คนจากครูทั้งหมด {{total, number}} คน"
     },
-    "studentData": {
+    "studentParticipation": {
       "alt": "แผนภูมิจำนวนนักเรียนที่กรอกข้อมูลส่วนตัวแล้ว",
-      "content": "<0>มีนักเรียน {{count, number}} คน </0>ที่<1>กรอกข้อมูลส่วนตัวแล้ว</1> ซึ่งนับเป็น {{percentage, number(style: percent; maximumFractionDigits: 0;)}} จากนักเรียนทั้งหมดที่มีห้องเรียน"
+      "overline": "ความร่วมมือนักเรียน",
+      "title": "{{percentage, number(style: percent;)}} ของนักเรียนทั้งหมดกรอกข้อมูลส่วนตัวแล้ว",
+      "subtitle": "{{count, number}} คนจากนักเรียนที่มีห้องเรียน {{total, number}} คน"
+    },
+    "action": {
+      "seeMore": "ดูรายละเอียด"
     }
   }
 }

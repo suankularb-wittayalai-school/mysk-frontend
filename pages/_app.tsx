@@ -113,12 +113,12 @@ function App({
 
   return (
     <>
-      {/* Put Next.js generated font families into variables that SKCom and
+      {/* Put Next.js generated font families into CSS variables that SKCom and
           TailwindCSS can use */}
       <style jsx global>{`
         :root {
-          --font-body: -apple-system, BlinkMacSystemFont,
-            ${bodyFontEN.style.fontFamily}, ${bodyFontTH.style.fontFamily};
+          --font-body: ${bodyFontEN.style.fontFamily},
+            ${bodyFontTH.style.fontFamily};
           --font-display: ${displayFontEN.style.fontFamily},
             ${displayFontTH.style.fontFamily};
           --font-print: ${bodyFontTH.style.fontFamily}, Sarabun;
@@ -164,4 +164,3 @@ function App({
 }
 
 export default appWithTranslation(App);
-

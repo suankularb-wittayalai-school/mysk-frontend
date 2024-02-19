@@ -10,11 +10,6 @@ const withPWA = require("next-pwa")({
   dest: "public",
   register: true,
   runtimeCaching: require("./cache"),
-  // (@SiravitPhokeed)
-  // The docs says that `cacheOnFrontEndNav` should be enabled if the user has
-  // spotty internet connection. Since we plan to deploy this for a school
-  // with...imperfect wi-fi, it’s enabled.
-  cacheOnFrontEndNav: true,
   disable: process.env.NODE_ENV === "development",
 });
 
@@ -60,6 +55,11 @@ module.exports = withBundleAnalyzer(
           permanent: true,
         },
         { source: "/learn/:id", destination: "/learn", permanent: true },
+        {
+          source: "/manage/attendance/date/:date",
+          destination: "/manage/attendace/:date",
+          permanent: true,
+        },
         {
           source: "/classes/print/:number",
           destination: "/classes/:number/print",
