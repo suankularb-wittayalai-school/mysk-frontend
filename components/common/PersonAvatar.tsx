@@ -32,12 +32,16 @@ import { ComponentProps, useState } from "react";
 const PersonAvatar: StylableFC<
   Partial<Pick<Person, "first_name" | "last_name" | "profile">> & {
     expandable?: boolean;
+    width?: number;
+    height?: number;
   }
 > = ({
   first_name,
   last_name,
   profile,
   expandable: preferExpandable,
+  width,
+  height,
   style,
   className,
 }) => {
@@ -70,7 +74,7 @@ const PersonAvatar: StylableFC<
         stateLayerEffect={expandable}
         rippleEffect={expandable}
         onClick={expandable ? () => setOpen(true) : undefined}
-        style={expandable ? style : undefined}
+        style={{ ...(expandable ? style : undefined), width, height }}
         className={
           expandable
             ? cn(`-m-1 cursor-pointer rounded-full p-1 before:z-10`, className)
@@ -78,7 +82,7 @@ const PersonAvatar: StylableFC<
         }
       >
         <Avatar
-          style={expandable ? style : undefined}
+          style={{ ...(!expandable ? style : undefined), width, height }}
           className={!expandable ? cn(`relative`, className) : undefined}
         >
           {
@@ -87,8 +91,8 @@ const PersonAvatar: StylableFC<
               <Image
                 src={profile}
                 alt=""
-                width={48}
-                height={48}
+                width={width || 48}
+                height={height || 48}
                 className="absolute inset-0 bg-white"
               />
             ) : (
