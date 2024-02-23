@@ -92,9 +92,9 @@ export default function useForm<KeyEnum extends string | symbol>(
     const { required } = formSpecs[idx];
     return {
       ...form,
-      [key]: required
-        ? formValues[key as KeyEnum].length > 0 && formValids[key as KeyEnum]
-        : true,
+      [key]:
+        (required ? formValues[key as KeyEnum].length > 0 : true) &&
+        formValids[key as KeyEnum],
     };
   }, {} as FormControlValids<KeyEnum>);
   const formOK = Object.values(formValidsStrict).every((valid) => valid);
