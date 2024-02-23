@@ -2,7 +2,7 @@ export const YYYYMMDDRegex = /^\d{4}-(0[1-9]|1[1-2])-\d{2}$/;
 export const YYYYWwwRegex = /^\d{4}-W(0[1-9]|[1-4]\d|5[0-3])$/;
 export const YYYYMMRegex = /^\d{4}-(0[1-9]|1[0-2])$/;
 
-export const schoolEmailRegex = /((@sk.ac.th)|(@student.sk.ac.th))$/;
+export const schoolEmailRegex = /((@sk\.ac\.th)|(@student\.sk\.ac\.th))$/;
 
 export const classRegex = /^[1-6](0[1-9]|1[0-9])$/;
 export const roomRegex = /^([1-6][1-5]|70)\d{2}(\/\d)?$/;
