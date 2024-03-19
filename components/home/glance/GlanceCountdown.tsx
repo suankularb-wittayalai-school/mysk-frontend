@@ -1,5 +1,5 @@
 // Imports
-import ScheduleGlance from "@/components/home/ScheduleGlance";
+import ScheduleGlance from "@/components/home/glance/ScheduleGlance";
 import cn from "@/utils/helpers/cn";
 import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";

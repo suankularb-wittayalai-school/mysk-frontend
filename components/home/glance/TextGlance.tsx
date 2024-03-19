@@ -1,4 +1,4 @@
-import Glance from "@/components/home/Glance";
+import Glance from "@/components/home/glance/Glance";
 import cn from "@/utils/helpers/cn";
 import { StylableFC } from "@/utils/types/common";
 import { Text } from "@suankularb-components/react";

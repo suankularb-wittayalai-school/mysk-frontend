@@ -1,8 +1,8 @@
 // Imports
-import Glance from "@/components/home/Glance";
-import GlanceAttendance from "@/components/home/GlanceAttendance";
-import GlanceCountdown from "@/components/home/GlanceCountdown";
-import GlancePeriods from "@/components/home/GlanceSubjects";
+import Glance from "@/components/home/glance/Glance";
+import GlanceAttendance from "@/components/home/glance/GlanceAttendance";
+import GlanceCountdown from "@/components/home/glance/GlanceCountdown";
+import GlancePeriods from "@/components/home/glance/GlanceSubjects";
 import cn from "@/utils/helpers/cn";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import getCurrentPeriod from "@/utils/helpers/schedule/getCurrentPeriod";

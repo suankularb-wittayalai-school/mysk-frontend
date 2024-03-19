@@ -1,7 +1,7 @@
-import BirthdayGlance from "@/components/home/BirthdayGlance";
 import HomeLayout from "@/components/home/HomeLayout";
-import ScheduleGlance from "@/components/home/ScheduleGlance";
 import SubjectList from "@/components/home/SubjectList";
+import BirthdayGlance from "@/components/home/glance/BirthdayGlance";
+import ScheduleGlance from "@/components/home/glance/ScheduleGlance";
 import Schedule from "@/components/schedule/Schedule";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";

@@ -1,6 +1,6 @@
 import HomeLayout from "@/components/home/HomeLayout";
-import ScheduleGlance from "@/components/home/ScheduleGlance";
 import TeachingSubjectCard from "@/components/home/TeachingSubjectCard";
+import ScheduleGlance from "@/components/home/glance/ScheduleGlance";
 import Schedule from "@/components/schedule/Schedule";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
