@@ -5,10 +5,6 @@
     "teacher": "ตารางสอน"
   },
   "atAGlance": {
-    "timeLeft": {
-      "pre": "เหลืออีก",
-      "post": "นาที"
-    },
     "title": {
       "assembly": "ถึงเวลาเข้าแถวแล้ว",
       "homeroom": "ถึงเวลาโฮมรูมแล้ว",
@@ -37,12 +33,17 @@
         "content": "{{rooms, list}}"
       }
     },
+    "countdown": {
+      "pre": "เหลืออีก",
+      "post": "นาที"
+    },
     "action": {
       "attendance": {
         "view": "ดูข้อมูลเช็กชื่อ",
         "take": "เช็กชื่อ"
       }
-    }
+    },
+    "progressAlt": "ความคืบหน้าของคาบนี้"
   },
   "schedule": {
     "yourSubjects": "เลือกวิชา",
@@ -110,4 +111,3 @@
     }
   }
 }
-

@@ -5,11 +5,6 @@
     "teacher": "Schedule"
   },
   "atAGlance": {
-    "timeLeft": {
-      "pre": "",
-      "post_one": "minute left",
-      "post_other": "minutes left"
-    },
     "title": {
       "assembly": "It’s time for asssembly",
       "homeroom": "It’s time for homeroom",
@@ -38,12 +33,18 @@
         "content": "{{rooms, list}}"
       }
     },
+    "countdown": {
+      "pre": "",
+      "post_one": "minute left",
+      "post_other": "minutes left"
+    },
     "action": {
       "attendance": {
         "view": "View attendance",
         "take": "Take attendance"
       }
-    }
+    },
+    "progressAlt": "Class/period progress"
   },
   "schedule": {
     "yourSubjects": "Your subjects",

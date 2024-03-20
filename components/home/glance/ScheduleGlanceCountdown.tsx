@@ -14,13 +14,15 @@ const ScheduleGlanceCountdown: StylableFC<{
   minutesLeft: number;
 }> = ({ minutesLeft, style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("schedule", { keyPrefix: "atAGlance.timeLeft" });
+  const { t } = useTranslation("schedule", {
+    keyPrefix: "atAGlance.countdown",
+  });
 
   const { duration, easing } = useAnimationConfig();
 
   return (
     <motion.p
-      key="glace-time-left"
+      key="glace-countdown"
       layout="position"
       transition={transition(duration.short4, easing.standard)}
       style={style}
