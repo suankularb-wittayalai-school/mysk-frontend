@@ -6,24 +6,18 @@
   },
   "atAGlance": {
     "title": {
-      "assembly": "It’s time for asssembly",
-      "homeroom": "It’s time for homeroom",
-      "learnCurrent": "You’re learning <strong>{{value}}</strong>.",
-      "learnNext": "You’ll learn <strong>{{value}}</strong> next.",
-      "lunch": "Enjoy your lunch time!",
-      "teachCurrent": "You’re teaching <strong>{{value}}</strong>.",
-      "teachWrapUp": "Get ready to wrap up {{value}}.",
-      "teachTravel": "Go to room <strong>{{value}}</strong> now.",
-      "teachFuture": "Nothing right now; your next class today is <strong>{{value}}</strong>.",
+      "assembly": "Go to asssembly now",
+      "homeroom": "Go to homeroom now",
+      "learnCurrent": "You’re learning {{value}}",
+      "learnNext": "You’ll learn {{value}} next",
+      "lunch": "Enjoy your lunch",
+      "teachCurrent": "You’re teaching {{value}}",
+      "teachWrapUp": "Get ready to wrap up {{value}}",
+      "teachTravel": "Go to room {{value}} now",
+      "teachFuture": "Nothing right now; your next class today is {{value}}",
       "electiveSegment": "your chosen elective"
     },
     "details": {
-      "subject": {
-        "title": "Subject"
-      },
-      "code": {
-        "title": "Subject code"
-      },
       "teachers": {
         "title": "Teachers",
         "content": "{{teachers, list}}"

@@ -11,7 +11,7 @@ import {
   useAnimationConfig,
 } from "@suankularb-components/react";
 import { motion } from "framer-motion";
-import { Trans } from "next-i18next";
+import { useTranslation } from "next-i18next";
 import { camel } from "radash";
 
 /**
@@ -23,10 +23,24 @@ import { camel } from "radash";
 const ScheduleGlanceTitle: StylableFC<{
   displayType: ScheduleGlanceType;
   displayPeriod?: SchedulePeriod;
-}> = ({ displayType, displayPeriod }) => {
+}> = ({ displayType, displayPeriod, style, className }) => {
   const locale = useLocale();
+  const { t } = useTranslation("schedule", { keyPrefix: "atAGlance" });
 
   const { duration, easing } = useAnimationConfig();
+
+  /**
+   * Value to pass to the translation function for the title.
+   */
+  const value = (() => {
+    // If the display type is `teachTravel`, return the room number.
+    if (displayType === ScheduleGlanceType.teachTravel)
+      return displayPeriod?.content[0]?.rooms?.join(", ");
+    // If the display period has a subject, return the subject name.
+    else if (displayPeriod?.content.length)
+      return getLocaleString(displayPeriod.content[0].subject.name, locale);
+    else return null;
+  })();
 
   return (
     <motion.div
@@ -36,39 +50,41 @@ const ScheduleGlanceTitle: StylableFC<{
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 10 }}
       transition={transition(duration.medium4, easing.standard)}
-      className={cn(`flex flex-row items-start gap-1
-        [&_.skc-icon]:my-1 [&_.skc-icon]:text-on-surface-variant`)}
+      style={style}
+      className={cn(`space-y-0.5`, className)}
     >
-      {/* Icon */}
-      {
-        (
-          {
-            [ScheduleGlanceType.lunch]: <MaterialIcon icon="lunch_dining" />,
-            [ScheduleGlanceType.assembly]: <MaterialIcon icon="flag" />,
-            [ScheduleGlanceType.homeroom]: <MaterialIcon icon="meeting_room" />,
-          } as { [key in ScheduleGlanceType]: JSX.Element }
-        )[displayType]
-      }
+      <div
+        className={cn(`flex flex-row items-start gap-1
+        [&_.skc-icon]:my-1 [&_.skc-icon]:text-on-surface-variant`)}
+      >
+        {/* Icon */}
+        {(() => {
+          switch (displayType) {
+            case ScheduleGlanceType.lunch:
+              return <MaterialIcon icon="lunch_dining" />;
+            case ScheduleGlanceType.assembly:
+              return <MaterialIcon icon="flag" />;
+            case ScheduleGlanceType.homeroom:
+              return <MaterialIcon icon="meeting_room" />;
+          }
+        })()}
 
-      {/* Text */}
-      <Text type="headline-small" element="h2">
-        <Trans
-          i18nKey={`atAGlance.title.${camel(displayType)}`}
-          ns="schedule"
-          values={{
-            value: (() => {
-              if (displayType === ScheduleGlanceType.teachTravel)
-                return displayPeriod?.content[0]?.rooms?.join(", ");
-              else if (displayPeriod?.content.length)
-                return getLocaleString(
-                  displayPeriod.content[0].subject.name,
-                  locale,
-                );
-              else return null;
-            })(),
-          }}
-        />
-      </Text>
+        {/* Text */}
+        <Text type="headline-small" element="h2">
+          {t(`title.${camel(displayType)}`, { value })}
+        </Text>
+      </div>
+
+      {/* Subject code */}
+      {displayPeriod?.content.length && (
+        <Text
+          type="title-medium"
+          element="p"
+          className="text-on-surface-variant"
+        >
+          {getLocaleString(displayPeriod.content[0].subject.code, locale)}
+        </Text>
+      )}
     </motion.div>
   );
 };

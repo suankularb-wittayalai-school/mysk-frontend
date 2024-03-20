@@ -11,7 +11,7 @@ import { useTranslation } from "next-i18next";
 
 /**
  * Subject details for Home Glance.
- * 
+ *
  * @param periods The content of the most relevant Schedule Period.
  */
 const GlancePeriods: StylableFC<{
@@ -33,18 +33,8 @@ const GlancePeriods: StylableFC<{
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 10 }}
           transition={transition(duration.medium4, easing.standard)}
-          className="grid grid-cols-2 gap-2 md:grid-cols-4"
+          className="grid grid-cols-2 gap-2"
         >
-          {/* Subject */}
-          <InformationCard title={t("details.subject.title")}>
-            {getLocaleString(period.subject.name, locale)}
-          </InformationCard>
-
-          {/* Subject code */}
-          <InformationCard title={t("details.code.title")}>
-            {getLocaleString(period.subject.code, locale)}
-          </InformationCard>
-
           {/* Teachers */}
           <InformationCard title={t("details.teachers.title")}>
             {t("details.teachers.content", {

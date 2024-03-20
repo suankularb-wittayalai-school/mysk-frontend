@@ -46,22 +46,23 @@ const ScheduleGlance: StylableFC<{
       style={style}
       className={cn(`flex flex-col gap-3 p-4`, className)}
     >
-      {/* Title */}
-      <ScheduleGlanceTitle
-        displayType={displayType}
-        displayPeriod={displayPeriod}
-      />
-
-      {/* Subjects details */}
-      <LayoutGroup>
-        <AnimatePresence initial={false}>
-          {["assembly", "homeroom"].includes(displayType) && classroom ? (
-            <GlanceAttendance role={role} classroom={classroom} />
-          ) : (
-            displayPeriod && <GlancePeriods periods={displayPeriod.content} />
-          )}
-        </AnimatePresence>
-      </LayoutGroup>
+      <div className="contents grid-cols-2 gap-2 md:grid">
+        {/* Title */}
+        <ScheduleGlanceTitle
+          displayType={displayType}
+          displayPeriod={displayPeriod}
+        />
+        {/* Subjects details */}
+        <LayoutGroup>
+          <AnimatePresence initial={false}>
+            {["assembly", "homeroom"].includes(displayType) && classroom ? (
+              <GlanceAttendance role={role} classroom={classroom} />
+            ) : (
+              displayPeriod && <GlancePeriods periods={displayPeriod.content} />
+            )}
+          </AnimatePresence>
+        </LayoutGroup>
+      </div>
 
       <Text
         type="title-small"
