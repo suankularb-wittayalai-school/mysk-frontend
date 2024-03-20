@@ -1,6 +1,6 @@
 import Glance from "@/components/home/glance/Glance";
 import GlanceAttendance from "@/components/home/glance/GlanceAttendance";
-import GlanceCountdown from "@/components/home/glance/GlanceCountdown";
+import ScheduleGlanceCountdown from "@/components/home/glance/ScheduleGlanceCountdown";
 import GlancePeriods from "@/components/home/glance/GlanceSubjects";
 import ScheduleGlanceTitle from "@/components/home/glance/ScheduleGlanceTitle";
 import cn from "@/utils/helpers/cn";
@@ -11,7 +11,12 @@ import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
 import { Schedule } from "@/utils/types/schedule";
-import { transition, useAnimationConfig } from "@suankularb-components/react";
+import {
+  Progress,
+  Text,
+  transition,
+  useAnimationConfig,
+} from "@suankularb-components/react";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 
 /**
@@ -37,30 +42,13 @@ const ScheduleGlance: StylableFC<{
       // Display the banner if the display type is not `none`
       visible={displayType !== ScheduleGlanceType.none}
       style={style}
-      className={cn(
-        `relative isolate flex flex-col gap-3 bg-surface-5 p-4`,
-        className,
-      )}
+      className={cn(`flex flex-col gap-3 p-4`, className)}
     >
-      {/* Class Progress Indicator */}
-      <motion.div
-        className={cn(`pointer-events-none absolute inset-0 right-auto
-          -z-10 bg-surface-2`)}
-        initial={{ width: `${classProgress}%` }}
-        animate={{ width: `${classProgress}%` }}
-        transition={transition(duration.medium2, easing.standard)}
+      {/* Title */}
+      <ScheduleGlanceTitle
+        displayType={displayType}
+        displayPeriod={displayPeriod}
       />
-
-      <AnimatePresence initial={false} mode="popLayout">
-        {/* Countdown */}
-        <GlanceCountdown minutesLeft={countdownMinutes || 0} />
-
-        {/* Title */}
-        <ScheduleGlanceTitle
-          displayType={displayType}
-          displayPeriod={displayPeriod}
-        />
-      </AnimatePresence>
 
       {/* Subjects details */}
       <LayoutGroup>
@@ -72,6 +60,23 @@ const ScheduleGlance: StylableFC<{
           )}
         </AnimatePresence>
       </LayoutGroup>
+
+      <Text
+        type="title-small"
+        element="div"
+        className="-mb-1 flex flex-row justify-between"
+      >
+        {/* Countdown */}
+        <ScheduleGlanceCountdown minutesLeft={countdownMinutes || 0} />
+      </Text>
+
+      {/* Class Progress Indicator */}
+      <Progress
+        appearance="linear"
+        alt="Class progress"
+        value={classProgress}
+        visible
+      />
     </Glance>
   );
 };
