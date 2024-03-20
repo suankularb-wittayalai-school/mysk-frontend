@@ -11,8 +11,8 @@ import within from "@/utils/helpers/within";
 import { AttendanceEvent } from "@/utils/types/attendance";
 import { UserRole } from "@/utils/types/person";
 import { Schedule } from "@/utils/types/schedule";
-import { differenceInMinutes, differenceInSeconds } from "date-fns";
-import { list } from "radash";
+import { differenceInMinutes, differenceInSeconds, isWeekend } from "date-fns";
+import { list, mapValues } from "radash";
 import { useMemo } from "react";
 
 export enum ScheduleGlanceType {
@@ -30,23 +30,26 @@ export enum ScheduleGlanceType {
 
 /**
  * A hook calculating the Schedule Glance display type and relevant information.
- * 
+ *
  * @param schedule Data for displaying Schedule Glance.
  * @param role The user’s role. Used in determining the Schedule Glance view.
+ *
+ * @note This hook was created because Schedule Glance was getting unreadable. But it seems I just moved the unreadable code to another file.
  */
 export default function useScheduleGlance(schedule: Schedule, role: UserRole) {
   const now = useNow();
+  // const now = new Date(new Date().setHours(15, 0, 0, 0));
 
   // Determine relevant periods every second
   const periodNumber = useMemo(getCurrentPeriod, [now]);
   const todayRow = useMemo(
-    () =>
-      list(1, 5).includes(now.getDay())
-        ? schedule.content[now.getDay() - 1].content
-        : [],
+    () => (!isWeekend(now) ? schedule.content[now.getDay() - 1].content : []),
     [schedule, now.getDay()],
   );
 
+  /**
+   * The current period, if any.
+   */
   const currentPeriod = useMemo(
     () =>
       todayRow.find(
@@ -60,6 +63,9 @@ export default function useScheduleGlance(schedule: Schedule, role: UserRole) {
     [todayRow, periodNumber],
   );
 
+  /**
+   * The period immediately after the current period, if any.
+   */
   const immediateNextPeriod = useMemo(
     () =>
       todayRow.find(
@@ -68,6 +74,11 @@ export default function useScheduleGlance(schedule: Schedule, role: UserRole) {
       ),
     [todayRow, periodNumber],
   );
+
+  /**
+   * The next period of the day, regardless of whether it’s immediately after
+   * the current period or not.
+   */
   const todayNextPeriod = useMemo(
     () =>
       todayRow.filter(
@@ -247,7 +258,7 @@ export default function useScheduleGlance(schedule: Schedule, role: UserRole) {
   /**
    * The period to display in the Schedule Glance.
    */
-  const displayPeriod = (() => {
+  const displayPeriod = useMemo(() => {
     switch (displayType) {
       case ScheduleGlanceType.learnNext:
       case ScheduleGlanceType.teachTravel:
@@ -257,9 +268,12 @@ export default function useScheduleGlance(schedule: Schedule, role: UserRole) {
       default:
         return currentPeriod;
     }
-  })();
+  }, [displayType]);
 
-  const countdownMinutes = (() => {
+  /**
+   * The number of minutes to display in the countdown.
+   */
+  const countdownMinutes = useMemo(() => {
     switch (displayType) {
       case ScheduleGlanceType.learnNext:
       case ScheduleGlanceType.teachTravel:
@@ -269,7 +283,42 @@ export default function useScheduleGlance(schedule: Schedule, role: UserRole) {
       default:
         return minutesTilEnd;
     }
-  })();
+  }, [now]);
 
-  return { displayType, displayPeriod, classProgress, countdownMinutes };
+  /**
+   * The time boundaries for the current display type.
+   */
+  const timeBoundaries: { start: Date; end: Date } | null = useMemo(() => {
+    // If it’s assembly or homeroom, the time boundaries are calculated from
+    // constants.
+    if (attendanceEvent)
+      return mapValues(
+        {
+          assembly: { start: ASSEMBLY_START, end: HOMEROOM_START },
+          homeroom: { start: HOMEROOM_START, end: SCHEDULE_START },
+        }[displayType as AttendanceEvent],
+        // Convert constants into Date objects
+        (params) => new Date(new Date().setHours(...params)),
+      );
+    // If there is a Schedule Period on display, calculate the time boundaries
+    // from the period itself.
+    else if (displayPeriod)
+      return mapValues(
+        {
+          start: displayPeriod.start_time,
+          end: displayPeriod.start_time + displayPeriod.duration,
+        },
+        // Convert period times into Date objects
+        (params) => getTodaySetToPeriodTime(params),
+      );
+    else return null;
+  }, [displayType]);
+
+  return {
+    displayType,
+    displayPeriod,
+    classProgress,
+    timeBoundaries,
+    countdownMinutes,
+  };
 }
