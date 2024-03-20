@@ -33,6 +33,7 @@
         "content": "{{rooms, list}}"
       }
     },
+    "interval": "{{start, datetime(hour: 2-digit; minute: 2-digit; hour12: false;)}}–{{end, datetime(hour: 2-digit; minute: 2-digit; hour12: false;)}}",
     "countdown": {
       "pre": "เหลืออีก",
       "post": "นาที"

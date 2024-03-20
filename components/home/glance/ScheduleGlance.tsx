@@ -1,7 +1,8 @@
 import Glance from "@/components/home/glance/Glance";
 import GlanceAttendance from "@/components/home/glance/GlanceAttendance";
-import ScheduleGlanceCountdown from "@/components/home/glance/ScheduleGlanceCountdown";
 import GlancePeriods from "@/components/home/glance/GlanceSubjects";
+import ScheduleGlanceCountdown from "@/components/home/glance/ScheduleGlanceCountdown";
+import ScheduleGlanceInterval from "@/components/home/glance/ScheduleGlanceInterval";
 import ScheduleGlanceTitle from "@/components/home/glance/ScheduleGlanceTitle";
 import cn from "@/utils/helpers/cn";
 import useScheduleGlance, {
@@ -11,13 +12,9 @@ import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
 import { Schedule } from "@/utils/types/schedule";
-import {
-  Progress,
-  Text,
-  transition,
-  useAnimationConfig,
-} from "@suankularb-components/react";
-import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
+import { Progress, Text } from "@suankularb-components/react";
+import { AnimatePresence, LayoutGroup } from "framer-motion";
+import { useTranslation } from "next-i18next";
 
 /**
  * A Glance dynamically updated by the current and upcoming schedule items,
@@ -32,10 +29,15 @@ const ScheduleGlance: StylableFC<{
   role: UserRole;
   classroom?: Pick<Classroom, "number">;
 }> = ({ schedule, role, classroom, style, className }) => {
-  const { duration, easing } = useAnimationConfig();
+  const { t } = useTranslation("schedule", { keyPrefix: "atAGlance" });
 
-  const { displayType, displayPeriod, classProgress, countdownMinutes } =
-    useScheduleGlance(schedule, role);
+  const {
+    displayType,
+    displayPeriod,
+    classProgress,
+    countdownMinutes,
+    interval,
+  } = useScheduleGlance(schedule, role);
 
   return (
     <Glance
@@ -64,8 +66,13 @@ const ScheduleGlance: StylableFC<{
       <Text
         type="title-small"
         element="div"
-        className="-mb-1 flex flex-row justify-between"
+        className="-mb-1.5 flex flex-row justify-between"
       >
+        {/* Interval */}
+        <AnimatePresence initial={false}>
+          {interval && <ScheduleGlanceInterval interval={interval} />}
+        </AnimatePresence>
+
         {/* Countdown */}
         <ScheduleGlanceCountdown minutesLeft={countdownMinutes || 0} />
       </Text>
@@ -73,7 +80,7 @@ const ScheduleGlance: StylableFC<{
       {/* Class Progress Indicator */}
       <Progress
         appearance="linear"
-        alt="Class progress"
+        alt={t("progressAlt")}
         value={classProgress}
         visible
       />

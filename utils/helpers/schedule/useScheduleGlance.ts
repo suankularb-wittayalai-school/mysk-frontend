@@ -288,7 +288,7 @@ export default function useScheduleGlance(schedule: Schedule, role: UserRole) {
   /**
    * The time boundaries for the current display type.
    */
-  const timeBoundaries: { start: Date; end: Date } | null = useMemo(() => {
+  const interval: { start: Date; end: Date } | null = useMemo(() => {
     // If it’s assembly or homeroom, the time boundaries are calculated from
     // constants.
     if (attendanceEvent)
@@ -318,7 +318,7 @@ export default function useScheduleGlance(schedule: Schedule, role: UserRole) {
     displayType,
     displayPeriod,
     classProgress,
-    timeBoundaries,
+    interval,
     countdownMinutes,
   };
 }
