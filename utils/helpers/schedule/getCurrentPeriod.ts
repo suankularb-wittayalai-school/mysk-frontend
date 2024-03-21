@@ -14,5 +14,5 @@ export default function getCurrentPeriod(): number {
       differenceInMinutes(new Date(), getTodaySetToPeriodTime(1)) / 50,
     ) + 1;
   // Clamp the calculated period to be between 1 and 10.
-  return Math.min(Math.max(calculatedPeriod), 1), 10;
+  return Math.min(Math.max(calculatedPeriod, 1), 10);
 }
