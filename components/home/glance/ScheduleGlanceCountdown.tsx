@@ -21,13 +21,7 @@ const ScheduleGlanceCountdown: StylableFC<{
   const { duration, easing } = useAnimationConfig();
 
   return (
-    <motion.p
-      key="glace-countdown"
-      layout="position"
-      transition={transition(duration.short4, easing.standard)}
-      style={style}
-      className={cn(`[&_*]:mr-1`, className)}
-    >
+    <p style={style} className={cn(`space-x-1`, className)}>
       <motion.span layout="position" className="inline-block empty:hidden">
         {t("pre", { count: minutesLeft })}
       </motion.span>
@@ -51,7 +45,7 @@ const ScheduleGlanceCountdown: StylableFC<{
       >
         {t("post", { count: minutesLeft })}
       </motion.span>
-    </motion.p>
+    </p>
   );
 };
 

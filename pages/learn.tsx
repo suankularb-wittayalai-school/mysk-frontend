@@ -56,7 +56,11 @@ const LearnPage: CustomPage<{
     <HomeLayout>
       <LayoutGroup>
         {/* Glances */}
-        <Section className="!gap-2 empty:!hidden">
+        <motion.section
+          layout="position"
+          transition={transition(duration.medium4, easing.standard)}
+          className="space-y-2 empty:!hidden"
+        >
           {birthdayBoys.map((birthdayBoy) => (
             <BirthdayGlance key={birthdayBoy.id} person={birthdayBoy} />
           ))}
@@ -65,7 +69,7 @@ const LearnPage: CustomPage<{
             role={UserRole.student}
             classroom={classroom}
           />
-        </Section>
+        </motion.section>
 
         {/* Schedule */}
         <motion.section

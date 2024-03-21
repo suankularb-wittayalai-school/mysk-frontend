@@ -1,9 +1,8 @@
 import Glance from "@/components/home/glance/Glance";
-import GlanceAttendance from "@/components/home/glance/GlanceAttendance";
-import SingleSubjectDetails from "@/components/home/glance/SingleSubjectDetails";
 import ScheduleGlanceCountdown from "@/components/home/glance/ScheduleGlanceCountdown";
 import ScheduleGlanceInterval from "@/components/home/glance/ScheduleGlanceInterval";
 import ScheduleGlanceTitle from "@/components/home/glance/ScheduleGlanceTitle";
+import SingleSubjectDetails from "@/components/home/glance/SingleSubjectDetails";
 import cn from "@/utils/helpers/cn";
 import useScheduleGlance, {
   ScheduleGlanceType,
@@ -12,8 +11,13 @@ import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
 import { Schedule } from "@/utils/types/schedule";
-import { Progress, Text } from "@suankularb-components/react";
-import { AnimatePresence, LayoutGroup } from "framer-motion";
+import {
+  Progress,
+  Text,
+  transition,
+  useAnimationConfig,
+} from "@suankularb-components/react";
+import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 
 /**
@@ -30,6 +34,8 @@ const ScheduleGlance: StylableFC<{
   classroom?: Pick<Classroom, "number">;
 }> = ({ schedule, role, classroom, style, className }) => {
   const { t } = useTranslation("schedule", { keyPrefix: "atAGlance" });
+
+  const { duration, easing } = useAnimationConfig();
 
   const {
     displayType,
@@ -59,27 +65,34 @@ const ScheduleGlance: StylableFC<{
         )}
       </div>
 
-      <Text
-        type="title-small"
-        element="div"
-        className="-mb-1.5 flex flex-row justify-between"
+      <motion.div
+        layout="position"
+        layoutId="glance-footer"
+        transition={transition(duration.medium4, easing.standard)}
+        className="space-y-1.5"
       >
-        {/* Interval */}
-        <AnimatePresence initial={false}>
-          {interval && <ScheduleGlanceInterval interval={interval} />}
-        </AnimatePresence>
+        <Text
+          type="title-small"
+          element="div"
+          className="flex flex-row justify-between"
+        >
+          {/* Interval */}
+          <AnimatePresence initial={false}>
+            {interval && <ScheduleGlanceInterval interval={interval} />}
+          </AnimatePresence>
 
-        {/* Countdown */}
-        <ScheduleGlanceCountdown minutesLeft={countdownMinutes || 0} />
-      </Text>
+          {/* Countdown */}
+          <ScheduleGlanceCountdown minutesLeft={countdownMinutes || 0} />
+        </Text>
 
-      {/* Class Progress Indicator */}
-      <Progress
-        appearance="linear"
-        alt={t("progressAlt")}
-        value={classProgress}
-        visible
-      />
+        {/* Class Progress Indicator */}
+        <Progress
+          appearance="linear"
+          alt={t("progressAlt")}
+          value={classProgress}
+          visible
+        />
+      </motion.div>
     </Glance>
   );
 };
