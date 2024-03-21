@@ -50,7 +50,7 @@ const ScheduleGlance: StylableFC<{
       // Display the banner if the display type is not `none`
       visible={displayType !== ScheduleGlanceType.none}
       style={style}
-      className={cn(`flex flex-col gap-3 p-4`, className)}
+      className={cn(`flex flex-col gap-3 p-4 pt-3`, className)}
     >
       <motion.div
         key={displayPeriod?.id || displayType}
