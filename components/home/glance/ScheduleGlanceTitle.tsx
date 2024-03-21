@@ -76,7 +76,7 @@ const ScheduleGlanceTitle: StylableFC<{
       </div>
 
       {/* Subject code */}
-      {displayPeriod?.content.length && (
+      {displayPeriod?.content.length === 1 && (
         <Text
           type="title-medium"
           element="p"
