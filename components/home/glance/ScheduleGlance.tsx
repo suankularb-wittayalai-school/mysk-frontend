@@ -1,3 +1,4 @@
+import AttendanceButton from "@/components/home/glance/AttendanceButton";
 import ElectiveGrid from "@/components/home/glance/ElectiveGrid";
 import Glance from "@/components/home/glance/Glance";
 import ScheduleGlanceCountdown from "@/components/home/glance/ScheduleGlanceCountdown";
@@ -46,6 +47,11 @@ const ScheduleGlance: StylableFC<{
     interval,
   } = useScheduleGlance(schedule, role);
 
+  const isAttendanceButtonShown =
+    [ScheduleGlanceType.assembly, ScheduleGlanceType.homeroom].includes(
+      displayType,
+    ) && classroom !== undefined;
+
   return (
     <Glance
       // Display the banner if the display type is not `none`
@@ -91,15 +97,24 @@ const ScheduleGlance: StylableFC<{
         <Text
           type="title-small"
           element="div"
-          className="flex flex-row justify-between"
+          className="flex flex-row items-end justify-between"
         >
           {/* Interval */}
           <AnimatePresence initial={false}>
             {interval && <ScheduleGlanceInterval interval={interval} />}
           </AnimatePresence>
 
-          {/* Countdown */}
-          <ScheduleGlanceCountdown minutesLeft={countdownMinutes || 0} />
+          {isAttendanceButtonShown ? (
+            // Attendance Button
+            <AttendanceButton
+              role={role}
+              classroom={classroom}
+              className="md:!-mt-6"
+            />
+          ) : (
+            // Countdown
+            <ScheduleGlanceCountdown minutesLeft={countdownMinutes || 0} />
+          )}
         </Text>
 
         {/* Class Progress Indicator */}
