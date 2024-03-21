@@ -54,8 +54,8 @@ const ScheduleGlanceTitle: StylableFC<{
       className={cn(`space-y-0.5`, className)}
     >
       <div
-        className={cn(`flex flex-row items-start gap-1
-        [&_.skc-icon]:my-1 [&_.skc-icon]:text-on-surface-variant`)}
+        className={cn(`flex flex-row items-start gap-2 [&_.skc-icon]:my-1
+          [&_.skc-icon]:text-on-surface-variant`)}
       >
         {/* Icon */}
         {(() => {
