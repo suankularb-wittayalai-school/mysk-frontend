@@ -1,3 +1,4 @@
+import ElectiveGrid from "@/components/home/glance/ElectiveGrid";
 import Glance from "@/components/home/glance/Glance";
 import ScheduleGlanceCountdown from "@/components/home/glance/ScheduleGlanceCountdown";
 import ScheduleGlanceInterval from "@/components/home/glance/ScheduleGlanceInterval";
@@ -76,6 +77,10 @@ const ScheduleGlance: StylableFC<{
           <SingleSubjectDetails period={displayPeriod.content[0]} />
         )}
       </motion.div>
+
+      {displayPeriod && displayPeriod.content.length > 1 && (
+        <ElectiveGrid period={displayPeriod} />
+      )}
 
       <motion.div
         layout="position"
