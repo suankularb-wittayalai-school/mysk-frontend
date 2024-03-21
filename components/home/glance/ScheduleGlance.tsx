@@ -1,6 +1,6 @@
 import Glance from "@/components/home/glance/Glance";
 import GlanceAttendance from "@/components/home/glance/GlanceAttendance";
-import GlancePeriods from "@/components/home/glance/GlanceSubjects";
+import SingleSubjectDetails from "@/components/home/glance/SingleSubjectDetails";
 import ScheduleGlanceCountdown from "@/components/home/glance/ScheduleGlanceCountdown";
 import ScheduleGlanceInterval from "@/components/home/glance/ScheduleGlanceInterval";
 import ScheduleGlanceTitle from "@/components/home/glance/ScheduleGlanceTitle";
@@ -52,16 +52,11 @@ const ScheduleGlance: StylableFC<{
           displayType={displayType}
           displayPeriod={displayPeriod}
         />
-        {/* Subjects details */}
-        <LayoutGroup>
-          <AnimatePresence initial={false}>
-            {["assembly", "homeroom"].includes(displayType) && classroom ? (
-              <GlanceAttendance role={role} classroom={classroom} />
-            ) : (
-              displayPeriod && <GlancePeriods periods={displayPeriod.content} />
-            )}
-          </AnimatePresence>
-        </LayoutGroup>
+
+        {/* Subject details (singular) */}
+        {displayPeriod && displayPeriod.content.length === 1 && (
+          <SingleSubjectDetails period={displayPeriod.content[0]} />
+        )}
       </div>
 
       <Text
