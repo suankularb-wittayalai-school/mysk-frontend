@@ -8,13 +8,13 @@
     "title": {
       "assembly": "ถึงเวลาเข้าแถวแล้ว",
       "homeroom": "ถึงเวลาโฮมรูมแล้ว",
-      "learnCurrent": "คุณกำลังเรียน <strong>{{value}}</strong>",
-      "learnNext": "เตรียมตัวเรียน <strong>{{value}}</strong> ในคาบต่อไป",
+      "learnCurrent": "คุณกำลังเรียน {{value}}",
+      "learnNext": "เตรียมตัวเรียน {{value}} ในคาบต่อไป",
       "lunch": "เวลารับประทานอาหารเที่ยง",
-      "teachCurrent": "คุณกำลังสอน <strong>{{value}}</strong>",
+      "teachCurrent": "คุณกำลังสอน {{value}}",
       "teachWrapUp": "ใกล้หมดเวลาคาบนี้แล้ว",
-      "teachTravel": "ไปที่ห้อง <strong>{{value}}</strong> ตอนนี้",
-      "teachFuture": "คาบนี้ว่าง คาบต่อไปวันนี้คือ<strong>{{value}}</strong>",
+      "teachTravel": "ไปที่ห้อง {{value}} ตอนนี้",
+      "teachFuture": "คาบนี้ว่าง คาบต่อไปวันนี้คือ{{value}}",
       "electiveSegment": "วิชาเลือก"
     },
     "details": {
