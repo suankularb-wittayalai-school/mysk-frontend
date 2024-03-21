@@ -52,7 +52,19 @@ const ScheduleGlance: StylableFC<{
       style={style}
       className={cn(`flex flex-col gap-3 p-4`, className)}
     >
-      <div className="contents grid-cols-2 gap-2 md:grid">
+      <motion.div
+        key={displayPeriod?.id || displayType}
+        layout="position"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 10 }}
+        transition={transition(duration.medium4, easing.standard)}
+        className={
+          displayPeriod?.content.length === 1
+            ? `grid-cols-2 gap-2 space-y-3 md:grid md:space-y-0`
+            : undefined
+        }
+      >
         {/* Title */}
         <ScheduleGlanceTitle
           displayType={displayType}
@@ -63,7 +75,7 @@ const ScheduleGlance: StylableFC<{
         {displayPeriod && displayPeriod.content.length === 1 && (
           <SingleSubjectDetails period={displayPeriod.content[0]} />
         )}
-      </div>
+      </motion.div>
 
       <motion.div
         layout="position"

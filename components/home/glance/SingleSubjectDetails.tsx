@@ -1,10 +1,9 @@
 import InformationCard from "@/components/lookup/people/InformationCard";
+import cn from "@/utils/helpers/cn";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import { PeriodContentItem } from "@/utils/types/schedule";
-import { transition, useAnimationConfig } from "@suankularb-components/react";
-import { motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 
 /**
@@ -14,23 +13,12 @@ import { useTranslation } from "next-i18next";
  */
 const SingleSubjectDetails: StylableFC<{
   period: PeriodContentItem;
-}> = ({ period }) => {
+}> = ({ period, style, className }) => {
   const locale = useLocale();
   const { t } = useTranslation("schedule", { keyPrefix: "atAGlance" });
 
-  const { duration, easing } = useAnimationConfig();
-
   return (
-    <motion.div
-      key={period.id}
-      layout="position"
-      layoutId={`subject-${period.id}`}
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 10 }}
-      transition={transition(duration.medium4, easing.standard)}
-      className="grid grid-cols-2 gap-2"
-    >
+    <div style={style} className={cn(`grid grid-cols-2 gap-2`, className)}>
       {/* Teachers */}
       <InformationCard title={t("details.teachers.title")}>
         {t("details.teachers.content", {
@@ -44,7 +32,7 @@ const SingleSubjectDetails: StylableFC<{
       <InformationCard title={t("details.room.title")}>
         {t("details.room.content", { rooms: period.rooms })}
       </InformationCard>
-    </motion.div>
+    </div>
   );
 };
 
