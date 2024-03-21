@@ -1,6 +1,5 @@
-// Imports
-import getPeriodBoundaryTime from "@/utils/helpers/schedule/getPeriodBoundaryTime";
-import { differenceInMinutes, isPast } from "date-fns";
+import getTodaySetToPeriodTime from "@/utils/helpers/schedule/getTodaySetToPeriodTime";
+import { differenceInMinutes } from "date-fns";
 
 /**
  * Get the current period number.
@@ -8,20 +7,12 @@ import { differenceInMinutes, isPast } from "date-fns";
  * @returns A number from 1 to 10.
  */
 export default function getCurrentPeriod(): number {
-  return isPast(
-    new Date().setHours(
-      getPeriodBoundaryTime(10).hours,
-      getPeriodBoundaryTime(10).min,
-    ),
-  )
-    ? 0
-    : Math.floor(
-        differenceInMinutes(
-          new Date(),
-          new Date().setHours(
-            getPeriodBoundaryTime(0).hours,
-            getPeriodBoundaryTime(0).min,
-          ),
-        ) / 50,
-      ) + 1;
+  // Calculate the period number from the distance from now to the start of
+  // period 1.
+  const calculatedPeriod =
+    Math.floor(
+      differenceInMinutes(new Date(), getTodaySetToPeriodTime(1)) / 50,
+    ) + 1;
+  // Clamp the calculated period to be between 1 and 10.
+  return Math.min(Math.max(calculatedPeriod), 1), 10;
 }
