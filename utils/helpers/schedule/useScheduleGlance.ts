@@ -308,7 +308,14 @@ export default function useScheduleGlance(schedule: Schedule, role: UserRole) {
           start: displayPeriod.start_time,
           end: displayPeriod.start_time + displayPeriod.duration,
         },
-        // Convert period times into Date objects
+        // Convert period numbers into Date objects
+        (params) => getTodaySetToPeriodTime(params),
+      );
+    // If it is lunch, use the current period number.
+    else if (displayType === ScheduleGlanceType.lunch)
+      return mapValues(
+        { start: periodNumber, end: periodNumber + 1 },
+        // Convert period numbers into Date objects
         (params) => getTodaySetToPeriodTime(params),
       );
     else return null;
