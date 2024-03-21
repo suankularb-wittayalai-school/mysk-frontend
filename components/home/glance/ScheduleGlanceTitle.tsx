@@ -11,6 +11,7 @@ import {
 } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
 import { camel } from "radash";
+import Balancer from "react-wrap-balancer";
 
 /**
  * The title of the Schedule Glance.
@@ -60,13 +61,15 @@ const ScheduleGlanceTitle: StylableFC<{
 
         {/* Text */}
         <Text type="headline-small" element="h2">
-          {t(`title.${camel(displayType)}`, {
-            value,
-            context:
-              displayPeriod && displayPeriod.content.length > 1
-                ? "elective"
-                : "single",
-          })}
+          <Balancer>
+            {t(`title.${camel(displayType)}`, {
+              value,
+              context:
+                displayPeriod && displayPeriod.content.length > 1
+                  ? "elective"
+                  : "single",
+            })}
+          </Balancer>
         </Text>
       </div>
 
