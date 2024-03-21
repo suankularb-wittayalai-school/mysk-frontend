@@ -9,13 +9,14 @@
       "assembly": "Go to asssembly now",
       "homeroom": "Go to homeroom now",
       "learnCurrent": "You’re learning {{value}}",
+      "learnCurrent_elective": "You’re learning your chosen elective",
       "learnNext": "You’ll learn {{value}} next",
+      "learnNext_elective": "You’ll learn your chosen elective next",
       "lunch": "Enjoy your lunch",
       "teachCurrent": "You’re teaching {{value}}",
       "teachWrapUp": "Get ready to wrap up {{value}}",
       "teachTravel": "Go to room {{value}} now",
-      "teachFuture": "Nothing right now; your next class today is {{value}}",
-      "electiveSegment": "your chosen elective"
+      "teachFuture": "Nothing right now; your next class today is {{value}}"
     },
     "details": {
       "teachers": {

@@ -71,7 +71,13 @@ const ScheduleGlanceTitle: StylableFC<{
 
         {/* Text */}
         <Text type="headline-small" element="h2">
-          {t(`title.${camel(displayType)}`, { value })}
+          {t(`title.${camel(displayType)}`, {
+            value,
+            context:
+              displayPeriod && displayPeriod.content.length > 1
+                ? "elective"
+                : "single",
+          })}
         </Text>
       </div>
 
