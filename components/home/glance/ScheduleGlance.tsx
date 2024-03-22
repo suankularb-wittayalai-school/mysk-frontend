@@ -109,7 +109,7 @@ const ScheduleGlance: StylableFC<{
             <AttendanceButton
               role={role}
               classroom={classroom}
-              className="md:!-mt-6"
+              className="md:!-mt-6 !mb-0.5"
             />
           ) : (
             // Countdown
