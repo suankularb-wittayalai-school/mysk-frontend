@@ -12,7 +12,7 @@ import { AttendanceEvent } from "@/utils/types/attendance";
 import { UserRole } from "@/utils/types/person";
 import { Schedule } from "@/utils/types/schedule";
 import { differenceInMinutes, differenceInSeconds, isWeekend } from "date-fns";
-import { list, mapValues } from "radash";
+import { mapValues } from "radash";
 import { useMemo } from "react";
 
 export enum ScheduleGlanceType {
@@ -260,13 +260,14 @@ export default function useScheduleGlance(schedule: Schedule, role: UserRole) {
    */
   const displayPeriod = useMemo(() => {
     switch (displayType) {
+      case ScheduleGlanceType.learnCurrent:
+      case ScheduleGlanceType.teachCurrent:
+        return currentPeriod;
       case ScheduleGlanceType.learnNext:
       case ScheduleGlanceType.teachTravel:
         return immediateNextPeriod;
       case ScheduleGlanceType.teachFuture:
         return todayNextPeriod;
-      default:
-        return currentPeriod;
     }
   }, [displayType]);
 
