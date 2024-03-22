@@ -10,8 +10,9 @@ import useScheduleGlance, {
   ScheduleGlanceType,
 } from "@/utils/helpers/schedule/useScheduleGlance";
 import { AttendanceEvent } from "@/utils/types/attendance";
+import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
-import { Student, UserRole } from "@/utils/types/person";
+import { UserRole } from "@/utils/types/person";
 import { Schedule } from "@/utils/types/schedule";
 import {
   Progress,
@@ -28,13 +29,15 @@ import { useTranslation } from "next-i18next";
  *
  * @param schedule Data for displaying Schedule Glance.
  * @param role The user’s role. Used in determining the Schedule Glance view.
- * @param classroom The Classroom the user is in. Used for Attendance.
+ * @param studentID The Student’s database ID. Used in fetching Attendance.
+ * @param classroom The Classroom the user is in. Used for linking Attendance.
  */
 const ScheduleGlance: StylableFC<{
   schedule: Schedule;
   role: UserRole;
-  student?: Pick<Student, "id" | "classroom">;
-}> = ({ schedule, role, student, style, className }) => {
+  studentID?: string;
+  classroom?: Pick<Classroom, "number">;
+}> = ({ schedule, role, studentID, classroom, style, className }) => {
   const { t } = useTranslation("schedule", { keyPrefix: "atAGlance" });
 
   const { duration, easing } = useAnimationConfig();
@@ -50,7 +53,7 @@ const ScheduleGlance: StylableFC<{
   const isAttendanceButtonShown =
     [ScheduleGlanceType.assembly, ScheduleGlanceType.homeroom].includes(
       displayType,
-    ) && student?.classroom !== undefined;
+    ) && classroom !== undefined;
 
   return (
     <Glance
@@ -109,7 +112,8 @@ const ScheduleGlance: StylableFC<{
             <AttendanceButton
               role={role}
               attendanceEvent={displayType as AttendanceEvent}
-              student={student}
+              studentID={studentID}
+              classroom={classroom}
               className="!mb-0.5 md:!-mt-6"
             />
           ) : (

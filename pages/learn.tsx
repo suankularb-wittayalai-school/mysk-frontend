@@ -66,7 +66,8 @@ const LearnPage: CustomPage<{
           <ScheduleGlance
             schedule={schedule}
             role={UserRole.student}
-            student={student}
+            studentID={student.id}
+            classroom={student.classroom || undefined}
           />
         </motion.section>
 
