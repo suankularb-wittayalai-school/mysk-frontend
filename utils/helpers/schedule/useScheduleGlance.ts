@@ -88,9 +88,6 @@ export default function useScheduleGlance(schedule: Schedule, role: UserRole) {
     [todayRow, periodNumber],
   );
 
-  // Note: `differenceInSeconds` and `differenceInMinutes` operate by
-  // [first param] - [second param]
-
   const schoolSessionState = getCurrentSchoolSessionState();
 
   /**
@@ -105,6 +102,9 @@ export default function useScheduleGlance(schedule: Schedule, role: UserRole) {
 
   // The edges of periods relative to current time, used in calculating the
   // display type.
+
+  // Note: `differenceInSeconds` and `differenceInMinutes` operate by
+  // [first param] - [second param]
 
   /**
    * The number of seconds since the start of the current period. This is used
@@ -132,25 +132,16 @@ export default function useScheduleGlance(schedule: Schedule, role: UserRole) {
    *
    * Also support assembly and homeroom.
    */
-  const minutesTilEnd = attendanceEvent
+  const minutesTilEnd = currentPeriod
     ? differenceInMinutes(
-        {
-          assembly: new Date().setHours(...HOMEROOM_START),
-          homeroom: new Date().setHours(...SCHEDULE_START),
-        }[attendanceEvent],
+        getTodaySetToPeriodTime(
+          currentPeriod.start_time + currentPeriod.duration - 1,
+          "end",
+        ),
         now,
         { roundingMethod: "ceil" },
       )
-    : currentPeriod
-      ? differenceInMinutes(
-          getTodaySetToPeriodTime(
-            currentPeriod.start_time + currentPeriod.duration - 1,
-            "end",
-          ),
-          now,
-          { roundingMethod: "ceil" },
-        )
-      : null;
+    : null;
 
   /**
    * The number of minutes until the start of the immediate next period.
