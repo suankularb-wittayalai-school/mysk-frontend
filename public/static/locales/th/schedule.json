@@ -41,8 +41,10 @@
     },
     "action": {
       "attendance": {
-        "view": "ดูข้อมูลเช็กชื่อ",
-        "take": "เช็กชื่อ"
+        "unknown_student": "ดูข้อมูลเช็กชื่อ",
+        "unknown_teacher": "เช็กชื่อ",
+        "absent": "เช็กว่าขาดเรียน",
+        "present": "เช็กว่ามาเรียน"
       }
     },
     "progressAlt": "ความคืบหน้าของคาบนี้"

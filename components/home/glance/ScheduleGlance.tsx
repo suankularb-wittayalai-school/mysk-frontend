@@ -9,9 +9,9 @@ import cn from "@/utils/helpers/cn";
 import useScheduleGlance, {
   ScheduleGlanceType,
 } from "@/utils/helpers/schedule/useScheduleGlance";
-import { Classroom } from "@/utils/types/classroom";
+import { AttendanceEvent } from "@/utils/types/attendance";
 import { StylableFC } from "@/utils/types/common";
-import { UserRole } from "@/utils/types/person";
+import { Student, UserRole } from "@/utils/types/person";
 import { Schedule } from "@/utils/types/schedule";
 import {
   Progress,
@@ -33,8 +33,8 @@ import { useTranslation } from "next-i18next";
 const ScheduleGlance: StylableFC<{
   schedule: Schedule;
   role: UserRole;
-  classroom?: Pick<Classroom, "number">;
-}> = ({ schedule, role, classroom, style, className }) => {
+  student?: Pick<Student, "id" | "classroom">;
+}> = ({ schedule, role, student, style, className }) => {
   const { t } = useTranslation("schedule", { keyPrefix: "atAGlance" });
 
   const { duration, easing } = useAnimationConfig();
@@ -50,7 +50,7 @@ const ScheduleGlance: StylableFC<{
   const isAttendanceButtonShown =
     [ScheduleGlanceType.assembly, ScheduleGlanceType.homeroom].includes(
       displayType,
-    ) && classroom !== undefined;
+    ) && student?.classroom !== undefined;
 
   return (
     <Glance
@@ -108,8 +108,9 @@ const ScheduleGlance: StylableFC<{
             // Attendance Button
             <AttendanceButton
               role={role}
-              classroom={classroom}
-              className="md:!-mt-6 !mb-0.5"
+              attendanceEvent={displayType as AttendanceEvent}
+              student={student}
+              className="!mb-0.5 md:!-mt-6"
             />
           ) : (
             // Countdown

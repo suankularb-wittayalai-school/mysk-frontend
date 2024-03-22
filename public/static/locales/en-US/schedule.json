@@ -35,8 +35,10 @@
     },
     "action": {
       "attendance": {
-        "view": "View attendance",
-        "take": "Take attendance"
+        "unknown_student": "View attendance",
+        "unknown_teacher": "Take attendance",
+        "absent": "Marked absent",
+        "present": "Marked present"
       }
     },
     "progressAlt": "Class/period progress"

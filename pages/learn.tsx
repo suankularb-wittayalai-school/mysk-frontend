@@ -10,7 +10,6 @@ import getClassSchedule from "@/utils/backend/schedule/getClassSchedule";
 import getClassroomSubjectsOfClass from "@/utils/backend/subject/getClassroomSubjectsOfClass";
 import createEmptySchedule from "@/utils/helpers/schedule/createEmptySchedule";
 import useLocale from "@/utils/helpers/useLocale";
-import { Classroom } from "@/utils/types/classroom";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Student, UserRole } from "@/utils/types/person";
 import { Schedule as ScheduleType } from "@/utils/types/schedule";
@@ -19,7 +18,6 @@ import {
   Columns,
   Header,
   Search,
-  Section,
   transition,
   useAnimationConfig,
 } from "@suankularb-components/react";
@@ -37,13 +35,14 @@ import { useState } from "react";
  * @param birthdayBoys The Students in this Student’s Classroom who have a birthday today.
  * @param schedule Data for displaying Schedule.
  * @param subjectList The Subjects this Student’s Classroom is enrolled in.
+ * @param student The Student viewing this page.
  */
 const LearnPage: CustomPage<{
   birthdayBoys: Pick<Student, "id" | "first_name" | "nickname" | "birthdate">[];
   schedule: ScheduleType;
   subjectList: ClassroomSubject[];
-  classroom: Pick<Classroom, "number">;
-}> = ({ birthdayBoys, schedule, subjectList, classroom }) => {
+  student: Student;
+}> = ({ birthdayBoys, schedule, subjectList, student }) => {
   const { t } = useTranslation("learn");
   const { t: ts } = useTranslation("schedule");
   const locale = useLocale();
@@ -67,7 +66,7 @@ const LearnPage: CustomPage<{
           <ScheduleGlance
             schedule={schedule}
             role={UserRole.student}
-            classroom={classroom}
+            student={student}
           />
         </motion.section>
 
@@ -142,7 +141,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       birthdayBoys: birthdayBoys || [],
       schedule: schedule || createEmptySchedule(1, 5),
       subjectList,
-      classroom,
+      student,
     },
   };
 };
