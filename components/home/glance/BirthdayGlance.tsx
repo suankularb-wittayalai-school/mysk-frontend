@@ -1,4 +1,4 @@
-import TextGlance from "@/components/home/TextGlance";
+import TextGlance from "@/components/home/glance/TextGlance";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
@@ -10,7 +10,7 @@ import { Trans, useTranslation } from "next-i18next";
 
 /**
  * A Glance that celebrates a Student’s birthday.
- * 
+ *
  * @param person The Student to celebrate.
  */
 const BirthdayGlance: StylableFC<{
