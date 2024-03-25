@@ -108,3 +108,8 @@
 .skc-nav-bar {
   backdrop-filter: blur(16px) !important;
 }
+
+.skc-input-chip__avatar .skc-avatar {
+  background-color: var(--on-surface-variant);
+  color: var(--surface);
+}
