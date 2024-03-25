@@ -73,6 +73,11 @@
   .center-all * {
     @apply [grid-area:center];
   }
+
+  .fade-out-to-r {
+    --fade-width: 2rem;
+    mask-image: linear-gradient(to left, transparent, black var(--fade-width));
+  }
 }
 
 @layer components {
@@ -102,4 +107,9 @@
 
 .skc-nav-bar {
   backdrop-filter: blur(16px) !important;
+}
+
+.skc-input-chip__avatar .skc-avatar {
+  background-color: var(--on-surface-variant);
+  color: var(--surface);
 }

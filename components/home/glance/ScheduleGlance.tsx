@@ -71,7 +71,7 @@ const ScheduleGlance: StylableFC<{
         transition={transition(duration.medium4, easing.standard)}
         className={
           displayPeriod?.content.length === 1
-            ? `grid-cols-2 gap-2 space-y-3 md:grid md:space-y-0`
+            ? `grid-cols-2 items-start gap-2 space-y-3 md:grid md:space-y-0`
             : undefined
         }
       >

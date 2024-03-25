@@ -138,6 +138,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         "learn",
         "classes",
         "schedule",
+        "lookup",
       ])),
       birthdayBoys: birthdayBoys || [],
       schedule: schedule || createEmptySchedule(1, 5),
