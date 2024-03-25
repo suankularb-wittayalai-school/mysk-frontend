@@ -6,7 +6,7 @@ import { getTeacherByID } from "@/utils/backend/person/getTeacherByID";
 import { StylableFC } from "@/utils/types/common";
 import { Student, Teacher } from "@/utils/types/person";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { ReactNode, useEffect, useState } from "react";
+import { ComponentProps, ReactNode, useEffect, useState } from "react";
 
 /**
  * A component that wraps another component with a Student/Teacher Details
@@ -23,9 +23,17 @@ const WithPersonDetails: StylableFC<{
   open?: boolean;
   person: Pick<Student | Teacher, "id" | "role">;
   onClose: () => void;
-}> = ({ children, open, person, onClose, style, className }) => {
+  options?: ComponentProps<
+    typeof StudentDetailsCard | typeof TeacherDetailsCard
+  >["options"];
+}> = ({ children, open, person, onClose, options, style, className }) => {
   const supabase = useSupabaseClient();
   const [personDetails, setPersonDetails] = useState<Student | Teacher>();
+
+  const DetailsCard = {
+    student: StudentDetailsCard,
+    teacher: TeacherDetailsCard,
+  }[person.role];
 
   useEffect(() => {
     if (!open || person.id === personDetails?.id) return;
@@ -53,12 +61,7 @@ const WithPersonDetails: StylableFC<{
         style={style}
         className={className}
       >
-        {
-          {
-            student: <StudentDetailsCard student={personDetails as Student} />,
-            teacher: <TeacherDetailsCard teacher={personDetails as Teacher} />,
-          }[person.role]
-        }
+        <DetailsCard {...{ [person.role]: personDetails, options }} />
       </LookupDetailsDialog>
     </>
   );

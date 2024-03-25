@@ -4,6 +4,14 @@ import { ChipSet } from "@suankularb-components/react";
 import { omit } from "radash";
 import { ComponentProps, FC, useState } from "react";
 
+/**
+ * A Chip Set that displays a list of Students/Teachers, and when clicked, shows
+ * a Student/Teacher Details Dialog Dialog with the details of the clicked
+ * Student/Teacher.
+ *
+ * @param people The list of Students/Teachers to display.
+ * @param scrollable If the parent element is not wide enough for all Chips to be visible, the Chip Set can be scrolled horizontally.
+ */
 const PersonChipSet: FC<
   {
     people: ComponentProps<typeof PersonChip>["person"][];
@@ -21,6 +29,7 @@ const PersonChipSet: FC<
       open={detailsOpen}
       person={selectedPerson}
       onClose={() => setDetailsOpen(false)}
+      options={{ hideSeeClass: true }}
     >
       <ChipSet {...omit(props, ["people"])}>
         {people.map((person) => (
