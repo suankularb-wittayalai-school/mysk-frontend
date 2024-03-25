@@ -73,6 +73,11 @@
   .center-all * {
     @apply [grid-area:center];
   }
+
+  .fade-out-to-r {
+    --fade-width: 2rem;
+    mask-image: linear-gradient(to left, transparent, black var(--fade-width));
+  }
 }
 
 @layer components {
