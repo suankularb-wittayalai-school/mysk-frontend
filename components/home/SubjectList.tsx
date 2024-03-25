@@ -6,8 +6,13 @@ import { StylableFC } from "@/utils/types/common";
 import { ClassroomSubject } from "@/utils/types/subject";
 import { Columns } from "@suankularb-components/react";
 import { LayoutGroup } from "framer-motion";
-import { FC } from "react";
 
+/**
+ * A list of Classroom Subjects.
+ *
+ * @param subjectList The list of Classroom Subjects to display.
+ * @param query The search query to filter the list.
+ */
 const SubjectList: StylableFC<{
   subjectList: ClassroomSubject[];
   query: string;
