@@ -6,9 +6,9 @@ import { ReactNode } from "react";
  * A group of Decorative Blobs that are blurred together.
  *
  * @param children Decorative Blobs.
- * 
+ *
  * @example
- * 
+ *
  * ```tsx
  * <BlobBlurringGroup className="absolute inset-0 -z-10 *:absolute">
  *   <DecorativeBlob
@@ -27,7 +27,10 @@ const BlobsBlurringGroup: StylableFC<{
 }> = ({ children, style, className }) => (
   <div
     style={style}
-    className={cn(`overflow-hidden blur-[50px] dark:blur-[100px]`, className)}
+    className={cn(
+      `absolute blur-[50px] [&_*]:absolute dark:blur-[100px]`,
+      className,
+    )}
   >
     {children}
   </div>
