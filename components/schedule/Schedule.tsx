@@ -17,7 +17,10 @@ import isInPeriod from "@/utils/helpers/schedule/isInPeriod";
 import useNow from "@/utils/helpers/useNow";
 import { StylableFC } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
-import { PeriodLocation, Schedule } from "@/utils/types/schedule";
+import {
+  PeriodLocation,
+  Schedule as ScheduleType,
+} from "@/utils/types/schedule";
 import { Subject } from "@/utils/types/subject";
 import { Text } from "@suankularb-components/react";
 import { setDay } from "date-fns";
@@ -34,7 +37,7 @@ import { RefObject, useEffect, useRef, useState } from "react";
  * @param role The Schedule view, from the perspective of a student or a teacher.
  */
 const Schedule: StylableFC<{
-  schedule: Schedule;
+  schedule: ScheduleType;
   subjectsInCharge?: Pick<Subject, "id" | "name" | "code" | "short_name">[];
   teacherID?: string;
   view: UserRole;
