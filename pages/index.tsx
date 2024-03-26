@@ -80,8 +80,8 @@ const LandingPage: CustomPage = () => {
         </Actions>
 
         <div
-          className={cn(`flex grow flex-col gap-6 pb-10 sm:place-content-center
-            sm:gap-3`)}
+          className={cn(`flex grow flex-col gap-6 self-stretch pb-10
+            sm:place-content-center sm:gap-3`)}
         >
           {/* Card */}
           <main
