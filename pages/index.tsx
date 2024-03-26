@@ -1,19 +1,20 @@
-// Imports
+import AppDrawer from "@/components/common/AppDrawer";
 import MultiSchemeImage from "@/components/common/MultiSchemeImage";
-import LogInSide from "@/components/landing/LogInSide";
-import PatchNotesSide from "@/components/landing/PatchNotesSide";
+import GSIButton from "@/components/landing/GSIButton";
+import LandingActions from "@/components/landing/LandingActions";
+import LandingBlobs from "@/components/landing/LandingBlobs";
+import LanguageSwitcher from "@/components/landing/LanguageSwitcher";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
-import BlobsFullDark from "@/public/images/graphics/blobs/full-dark.svg";
-import BlobsFullLight from "@/public/images/graphics/blobs/full-light.svg";
+import MySKLogoDark from "@/public/images/brand/mysk-dark.svg";
+import MySKLogoLight from "@/public/images/brand/mysk-light.svg";
 import flagUserAsOnboarded from "@/utils/backend/account/flagUserAsOnboarded";
 import cn from "@/utils/helpers/cn";
 import prefixLocale from "@/utils/helpers/prefixLocale";
 import useUser from "@/utils/helpers/useUser";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
-import { Columns, ContentLayout, Text } from "@suankularb-components/react";
+import { Actions, Text } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { LayoutGroup } from "framer-motion";
 import { GetServerSideProps } from "next";
 import { getServerSession } from "next-auth";
 import { useTranslation } from "next-i18next";
@@ -58,61 +59,87 @@ const LandingPage: CustomPage = () => {
       </Head>
 
       {/* Background */}
-      <MultiSchemeImage
-        srcLight={BlobsFullLight}
-        srcDark={BlobsFullDark}
-        alt=""
-        priority
-        className="fixed inset-0 -z-10 [&_img]:h-full [&_img]:object-cover"
-      />
+      <div
+        className={cn(`fixed inset-0 -z-10 overflow-hidden sm:bottom-auto
+          sm:h-screen`)}
+      >
+        <LandingBlobs className="inset-0" />
+      </div>
 
       {/* Content */}
-      <ContentLayout className="overflow-hidden md:overflow-visible">
-        <Columns columns={6}>
-          <div
-            className={cn(`col-span-2 mx-4 flex min-h-[calc(100vh-4rem)]
-              flex-col gap-6 supports-[height:100svh]:min-h-[calc(100svh-4rem)]
-              sm:col-span-4 sm:mx-0 md:col-start-2`)}
+      <div
+        className={cn(`mx-auto -mb-20 flex min-h-svh max-w-[42.75rem] flex-col
+          items-center p-6`)}
+      >
+        {/* App Drawer */}
+        <Actions
+          className={cn(`-mb-9 -mt-1 w-[calc(100vw-var(--padding-x)*2)]
+            max-w-[70.5rem] [--padding-x:1rem] sm:mb-0 md:[--padding-x:3rem]`)}
+        >
+          <AppDrawer />
+        </Actions>
+
+        <div
+          className={cn(`flex grow flex-col gap-6 pb-10 sm:place-content-center
+            sm:gap-3`)}
+        >
+          {/* Card */}
+          <main
+            className={cn(`flex grow flex-col gap-6 rounded-xl
+              border-outline-variant sm:grid sm:h-[18.75rem] sm:grow-0
+              sm:grid-cols-2 sm:border-1 sm:bg-surface sm:p-6`)}
           >
-            <LayoutGroup>
-              {/* Main section (centers the card) */}
-              <div className="flex grow flex-col justify-center">
-                {/* Card */}
-                <div
-                  className={cn(`grid overflow-hidden rounded-xl border-1
-                    border-outline-variant md:grid-cols-2 [&>*]:p-6 [&>*]:px-4
-                    [&>*]:sm:p-6 [&>:first-child]:md:pr-3
-                    [&>:last-child]:md:pl-3`)}
-                >
-                  <LogInSide />
-                  <PatchNotesSide />
-                </div>
-              </div>
-
-              {/* Credits */}
-              <Text
-                type="body-small"
-                element="p"
-                className="text-on-surface-variant"
-              >
-                {t("credits")}
+            {/* Aside */}
+            <section className="flex flex-col">
+              <MultiSchemeImage
+                srcLight={MySKLogoLight}
+                srcDark={MySKLogoDark}
+                alt={t("aside.logoAlt")}
+                className="*:w-20"
+              />
+              <Text element="h1" type="headline-large" className="sm:max-w-48">
+                {t("aside.title")}
               </Text>
-            </LayoutGroup>
-          </div>
-        </Columns>
+              <div aria-hidden className="grow" />
+              <LanguageSwitcher className="!hidden sm:!flex" />
+            </section>
 
-        {/* Fix Google One Tap UI white box on dark mode */}
+            {/* Main */}
+            <section className="flex flex-col sm:pb-3">
+              <Text element="h2" type="headline-small">
+                {t("main.title")}
+              </Text>
+              <Text element="p" type="body-medium" className="mt-1.5">
+                {t("main.desc")}
+              </Text>
+              <GSIButton className="mt-5" />
+            </section>
+          </main>
+
+          {/* Actions */}
+          <LandingActions />
+        </div>
+
+        {/* Credits */}
+        <Text
+          type="body-small"
+          element="footer"
+          className="text-on-surface-variant"
+        >
+          {t("credits")}
+        </Text>
+
+        {/* Google One Tap UI fixes */}
         <style jsx global>{`
+          /* Fix Google One Tap UI white box on dark mode */
           #credential_picker_container {
             right: 0.5rem !important;
             top: 0.5rem !important;
             color-scheme: light;
           }
-        `}</style>
 
-        {/* Add bottom padding when Google One Tap UI displays if on mobile so
-            as to not cover the footer */}
-        <style jsx global>{`
+          /* Add bottom padding when Google One Tap UI displays (if on mobile)
+            so as to not cover the footer */
           body:has(> #credential_picker_iframe) .skc-content-layout {
             padding-bottom: 9.5625rem;
           }
@@ -123,7 +150,7 @@ const LandingPage: CustomPage = () => {
             }
           }
         `}</style>
-      </ContentLayout>
+      </div>
     </>
   );
 };
