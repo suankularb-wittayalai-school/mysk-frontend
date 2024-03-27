@@ -1,7 +1,8 @@
 import PersonChip from "@/components/person/PersonChip";
 import WithPersonDetails from "@/components/person/WithPersonDetails";
 import { ChipSet } from "@suankularb-components/react";
-import { omit } from "radash";
+import va from "@vercel/analytics";
+import { omit, title } from "radash";
 import { ComponentProps, FC, useState } from "react";
 
 /**
@@ -37,6 +38,9 @@ const PersonChipSet: FC<
             key={person.id}
             person={person}
             onClick={() => {
+              va.track("Open Person Details", {
+                personRole: title(person.role),
+              });
               setSelectedPerson(person);
               setDetailsOpen(true);
             }}
