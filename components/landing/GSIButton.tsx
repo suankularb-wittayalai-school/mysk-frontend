@@ -7,8 +7,7 @@ import { useEffect, useRef, useState } from "react";
 /**
  * A Google Sign In Button.
  *
- * @param onClick Triggers when the button is clicked.
- * @param onVerifyStart Triggers when the button starts verifying the credential.
+ * @param onStateChange Triggers when the button's state changes. Passes the new state as the `GSIStatus` enum.
  */
 const GSIButton: StylableFC<{
   onStateChange?: (state: GSIStatus) => void;
