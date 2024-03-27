@@ -87,7 +87,7 @@ const LandingPage: CustomPage = () => {
 
       {/* Content */}
       <div
-        className={cn(`mx-auto -mb-20 flex min-h-svh max-w-[42.75rem] flex-col
+        className={cn(`mx-auto -mb-20 flex min-h-dvh max-w-[42.75rem] flex-col
           items-center p-6`)}
       >
         {/* App Drawer */}
