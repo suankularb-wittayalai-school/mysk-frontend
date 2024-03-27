@@ -21,6 +21,7 @@ import {
   useAnimationConfig,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import va from "@vercel/analytics";
 import { AnimatePresence, motion } from "framer-motion";
 import { GetServerSideProps } from "next";
 import { getServerSession } from "next-auth";
@@ -31,6 +32,9 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Balancer from "react-wrap-balancer";
 
+/**
+ * The status of the Google Sign In Button.
+ */
 export enum GSIStatus {
   initial = "initial",
   chooserShown = "chooserShown",
@@ -60,6 +64,7 @@ const LandingPage: CustomPage = () => {
       setState(GSIStatus.redirecting);
       if (!user.onboarded) {
         // Flag new users as onboarded.
+        va.track("Complete Onboarding");
         await flagUserAsOnboarded(supabase, user.id);
         // Redirect to account page if new Student or Teacher.
         if ([UserRole.student, UserRole.teacher].includes(user.role))
@@ -141,16 +146,19 @@ const LandingPage: CustomPage = () => {
                 </Text>
                 {
                   {
-                    // Show GSI Button initially
+                    // Show GSI Button initially.
                     [GSIStatus.initial]: (
                       <GSIButton onStateChange={setState} className="mt-5" />
                     ),
                     // Show Cancel Button when waiting for the user to use their
-                    // Google account
+                    // Google account.
                     [GSIStatus.chooserShown]: (
                       <Actions className="grow !items-end pt-5">
                         <Button
-                          onClick={() => setState(GSIStatus.initial)}
+                          onClick={() => {
+                            va.track("Cancel Sign In");
+                            setState(GSIStatus.initial);
+                          }}
                           appearance="outlined"
                           dangerous
                         >
@@ -158,7 +166,7 @@ const LandingPage: CustomPage = () => {
                         </Button>
                       </Actions>
                     ),
-                    // Show nothing when continuing to MySK
+                    // Show nothing when continuing to MySK.
                     [GSIStatus.processing]: null,
                     [GSIStatus.redirecting]: null,
                   }[state]
