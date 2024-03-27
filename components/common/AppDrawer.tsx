@@ -1,14 +1,13 @@
-// Imports
 import ClubRegistryLogo from "@/public/images/drawer/club-registry.png";
 import KularbFahLogo from "@/public/images/drawer/kularb-fah.png";
 import KularbLuangLogo from "@/public/images/drawer/kularb-luang.png";
 import LibraryEBookLogo from "@/public/images/drawer/library-ebook.png";
 import LibraryOPACLogo from "@/public/images/drawer/library-opac.png";
 import LibraryLogo from "@/public/images/drawer/library.png";
+import MainSiteLogo from "@/public/images/drawer/main-site.png";
 import MySKLogo from "@/public/images/drawer/mysk.png";
 import SchoolICTLogo from "@/public/images/drawer/school-ict.png";
 import ShoppingLogo from "@/public/images/drawer/shopping.png";
-import SKACTHLogo from "@/public/images/drawer/sk-ac-th.png";
 import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import {
@@ -57,8 +56,8 @@ const AppDrawer: StylableFC = ({ style, className }) => {
       {/* School apps */}
       <AppDrawerSegment title={t("school.title")}>
         <AppDrawerItem
-          logo={<Image src={SKACTHLogo} alt="" />}
-          name={t("school.skAcTh")}
+          logo={<Image src={MainSiteLogo} alt="" />}
+          name={t("school.mainSite")}
           onClick={() =>
             va.track("Open App in App Drawer", { app: "sk.ac.th" })
           }
