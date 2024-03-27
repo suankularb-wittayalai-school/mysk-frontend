@@ -38,7 +38,7 @@ const GSIButton: StylableFC<{
       id="button-google-sign-in"
       style={style}
       className={cn(
-        `h-[44px] rounded-full [color-scheme:light]
+        `h-[38px] rounded-full [color-scheme:light]
         [&:not(:has(iframe))]:animate-pulse
         [&:not(:has(iframe))]:bg-surface-variant`,
         className,
