@@ -1,3 +1,4 @@
+import { GSIStatus } from "@/pages";
 import cn from "@/utils/helpers/cn";
 import useOneTapSignin from "@/utils/helpers/useOneTapSignin";
 import { StylableFC } from "@/utils/types/common";
@@ -7,10 +8,11 @@ import { useEffect, useRef, useState } from "react";
  * A Google Sign In Button.
  *
  * @param onClick Triggers when the button is clicked.
+ * @param onVerifyStart Triggers when the button starts verifying the credential.
  */
 const GSIButton: StylableFC<{
-  onClick?: () => void;
-}> = ({ onClick, style, className }) => {
+  onStateChange?: (state: GSIStatus) => void;
+}> = ({ onStateChange, style, className }) => {
   const [buttonWidth, setButtonWidth] = useState<number>();
 
   const buttonRef = useRef<HTMLDivElement>(null);
@@ -27,13 +29,13 @@ const GSIButton: StylableFC<{
     redirect: false,
     parentButtonID: "button-google-sign-in",
     buttonWidth,
+    onStateChange,
   });
 
   return (
     <div
       ref={buttonRef}
       id="button-google-sign-in"
-      onClick={onClick}
       style={style}
       className={cn(
         `h-[44px] rounded-full [color-scheme:light]

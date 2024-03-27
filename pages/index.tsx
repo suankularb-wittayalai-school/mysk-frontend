@@ -13,15 +13,30 @@ import prefixLocale from "@/utils/helpers/prefixLocale";
 import useUser from "@/utils/helpers/useUser";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
-import { Actions, Text } from "@suankularb-components/react";
+import {
+  Actions,
+  Button,
+  Text,
+  transition,
+  useAnimationConfig,
+} from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { AnimatePresence, motion } from "framer-motion";
 import { GetServerSideProps } from "next";
 import { getServerSession } from "next-auth";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import Balancer from "react-wrap-balancer";
+
+export enum GSIStatus {
+  initial = "initial",
+  chooserShown = "chooserShown",
+  processing = "processing",
+  redirecting = "redirecting",
+}
 
 /**
  * The landing for users who have not yet logged in. Contains the Google Sign
@@ -31,14 +46,18 @@ const LandingPage: CustomPage = () => {
   const { t } = useTranslation("landing");
   const { t: tx } = useTranslation("common");
 
+  const { duration, easing } = useAnimationConfig();
   const router = useRouter();
   const { user, status } = useUser();
   const supabase = useSupabaseClient();
+
+  const [state, setState] = useState<GSIStatus>(GSIStatus.initial);
 
   // Determine if and where to redirect depending on user status.
   useEffect(() => {
     (async () => {
       if (status !== "authenticated" || !user) return;
+      setState(GSIStatus.redirecting);
       if (!user.onboarded) {
         // Flag new users as onboarded.
         await flagUserAsOnboarded(supabase, user.id);
@@ -105,15 +124,47 @@ const LandingPage: CustomPage = () => {
             </section>
 
             {/* Main */}
-            <section className="flex flex-col sm:pb-3">
-              <Text element="h2" type="headline-small">
-                {t("main.title")}
-              </Text>
-              <Text element="p" type="body-medium" className="mt-1.5">
-                {t("main.desc")}
-              </Text>
-              <GSIButton className="mt-5" />
-            </section>
+            <AnimatePresence initial={false} mode="popLayout">
+              <motion.section
+                key={state}
+                initial={{ opacity: 0, y: -20, filter: "blur(4px)" }}
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                exit={{ opacity: 0, y: 20, filter: "blur(4px)" }}
+                transition={transition(duration.medium4, easing.standard)}
+                className="flex flex-col"
+              >
+                <Text element="h2" type="headline-small">
+                  {t("main.title")}
+                </Text>
+                <Text element="p" type="body-medium" className="mt-1.5">
+                  <Balancer>{t(`main.desc.${state}`)}</Balancer>
+                </Text>
+                {
+                  {
+                    // Show GSI Button initially
+                    [GSIStatus.initial]: (
+                      <GSIButton onStateChange={setState} className="mt-5" />
+                    ),
+                    // Show Cancel Button when waiting for the user to use their
+                    // Google account
+                    [GSIStatus.chooserShown]: (
+                      <Actions className="grow !items-end pt-5">
+                        <Button
+                          onClick={() => setState(GSIStatus.initial)}
+                          appearance="outlined"
+                          dangerous
+                        >
+                          {t("main.action.cancel")}
+                        </Button>
+                      </Actions>
+                    ),
+                    // Show nothing when continuing to MySK
+                    [GSIStatus.processing]: null,
+                    [GSIStatus.redirecting]: null,
+                  }[state]
+                }
+              </motion.section>
+            </AnimatePresence>
           </main>
 
           {/* Actions */}

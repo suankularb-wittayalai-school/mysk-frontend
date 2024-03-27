@@ -5,12 +5,23 @@
   },
   "main": {
     "title": "Log in",
-    "desc": "Use the email ending in sk.ac.th"
+    "desc": {
+      "initial": "Use the email ending in sk.ac.th",
+      "chooserShown": "Select the email ending in sk.ac.th in the new window.",
+      "processing": "Verifying…",
+      "redirecting": "Continuing to MySK…"
+    },
+    "action": {
+      "cancel": "Cancel"
+    }
   },
   "action": {
     "help": "Help",
     "report": "Report issue",
     "new": "What’s new"
   },
-  "credits": "MySK is a project by SK IT Solutions • Supervised by Supannee Supeerath and Atipol Sukrisadanon • Design and development by Siravit Phokeed and Smart Wattanapornmongkol • Quality assurance by Tempoom Leelacharoen • Translations to Thai contributed by Suankularb English Club"
+  "credits": "MySK is a project by SK IT Solutions • Supervised by Supannee Supeerath and Atipol Sukrisadanon • Design and development by Siravit Phokeed and Smart Wattanapornmongkol • Quality assurance by Tempoom Leelacharoen • Translations to Thai contributed by Suankularb English Club",
+  "dialog": {
+    "gsiUnavailable": "You are in a dev environment. To log in, copy over your Google credential string from your host machine and paste it here."
+  }
 }
