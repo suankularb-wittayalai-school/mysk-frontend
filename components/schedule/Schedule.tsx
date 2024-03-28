@@ -58,7 +58,7 @@ const Schedule: StylableFC<{
   const scheduleRef: RefObject<HTMLElement> = useRef(null);
 
   // Time calculation set up
-  const { now, schoolSessionState } = useNow();
+  const { now, periodNumber, schoolSessionState } = useNow();
 
   // State for dropping to add a new period
   const [additionSite, setAdditionSite] = useState<PeriodLocation>();
@@ -68,7 +68,7 @@ const Schedule: StylableFC<{
     const schedule = scheduleRef.current;
     if (!schedule) return;
     if (schoolSessionState !== SchoolSessionState.schedule) return;
-    schedule.scrollTo({ top: 0, left: (periodNumberAt() - 2) * PERIOD_WIDTH });
+    schedule.scrollTo({ top: 0, left: (periodNumber - 2) * PERIOD_WIDTH });
   }, []);
 
   return (
