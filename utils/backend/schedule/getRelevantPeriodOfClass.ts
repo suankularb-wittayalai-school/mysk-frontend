@@ -2,10 +2,10 @@ import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import getCurrentSemester from "@/utils/helpers/getCurrentSemester";
 import logError from "@/utils/helpers/logError";
 import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
-import getCurrentPeriod from "@/utils/helpers/schedule/getCurrentPeriod";
-import getCurrentSchoolSessionState, {
+import periodNumberAt from "@/utils/helpers/schedule/periodNumberAt";
+import schoolSessionStateAt, {
   SchoolSessionState,
-} from "@/utils/helpers/schedule/getCurrentSchoolSessionState";
+} from "@/utils/helpers/schedule/schoolSessionStateAt";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
 import { SchedulePeriod } from "@/utils/types/schedule";
 import { group, pick, sift, unique } from "radash";
@@ -25,7 +25,7 @@ export default async function getRelevantPeriodOfClass(
   classroomID: string,
 ): Promise<BackendReturn<SchedulePeriod | null> & { isCurrent: boolean }> {
   // If the school is not in session, stop early and return null
-  if (getCurrentSchoolSessionState() !== SchoolSessionState.schedule)
+  if (schoolSessionStateAt() !== SchoolSessionState.schedule)
     return { data: null, error: null, isCurrent: false };
 
   // Fetch today’s Schedule Items of the Classroom
@@ -93,7 +93,7 @@ export default async function getRelevantPeriodOfClass(
   });
 
   // Get the current and upcoming Schedule Items
-  const periodNumber = getCurrentPeriod();
+  const periodNumber = periodNumberAt();
   const currentPeriod = todayRow.find(
     (period) =>
       period.start_time <= periodNumber &&

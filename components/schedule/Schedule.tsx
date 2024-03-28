@@ -1,4 +1,3 @@
-// Imports
 import DayCard from "@/components/schedule/DayCard";
 import ElectivePeriod from "@/components/schedule/ElectivePeriod";
 import EmptyPeriod from "@/components/schedule/EmptyPeriod";
@@ -9,21 +8,25 @@ import SubjectPeriod from "@/components/schedule/SubjectPeriod";
 import SubjectsInChargeCard from "@/components/schedule/SubjectsInChargeCard";
 import ScheduleContext from "@/contexts/ScheduleContext";
 import cn from "@/utils/helpers/cn";
-import getCurrentPeriod from "@/utils/helpers/schedule/getCurrentPeriod";
-import getCurrentSchoolSessionState, {
-  SchoolSessionState,
-} from "@/utils/helpers/schedule/getCurrentSchoolSessionState";
 import isInPeriod from "@/utils/helpers/schedule/isInPeriod";
+import periodNumberAt from "@/utils/helpers/schedule/periodNumberAt";
+import { SchoolSessionState } from "@/utils/helpers/schedule/schoolSessionStateAt";
 import useNow from "@/utils/helpers/useNow";
 import { StylableFC } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
-import { PeriodLocation, Schedule as ScheduleType } from "@/utils/types/schedule";
+import {
+  PeriodLocation,
+  Schedule as ScheduleType,
+} from "@/utils/types/schedule";
 import { Subject } from "@/utils/types/subject";
 import { Text } from "@suankularb-components/react";
 import { setDay } from "date-fns";
 import { LayoutGroup } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { RefObject, useEffect, useRef, useState } from "react";
+
+const PERIOD_WIDTH = 104; // 96 + 8
+const PERIOD_HEIGHT = 60; // 56 + 4
 
 /**
  * An interactive Schedule.
@@ -55,7 +58,7 @@ const Schedule: StylableFC<{
   const scheduleRef: RefObject<HTMLElement> = useRef(null);
 
   // Time calculation set up
-  const now = useNow();
+  const { now, schoolSessionState } = useNow();
 
   // State for dropping to add a new period
   const [additionSite, setAdditionSite] = useState<PeriodLocation>();
@@ -64,18 +67,18 @@ const Schedule: StylableFC<{
   useEffect(() => {
     const schedule = scheduleRef.current;
     if (!schedule) return;
-    if (getCurrentSchoolSessionState() !== SchoolSessionState.schedule) return;
-    schedule.scrollTo({ top: 0, left: (getCurrentPeriod() - 2) * 104 });
+    if (schoolSessionState !== SchoolSessionState.schedule) return;
+    schedule.scrollTo({ top: 0, left: (periodNumberAt() - 2) * PERIOD_WIDTH });
   }, []);
 
   return (
     <ScheduleContext.Provider
       value={{
-        view: view,
+        view,
         editable,
         teacherID,
-        periodWidth: 104, // 96 + 8
-        periodHeight: 60, // 56 + 4
+        periodWidth: PERIOD_WIDTH,
+        periodHeight: PERIOD_HEIGHT,
         additionSite,
         setAdditionSite,
         constraintsRef: scheduleRef,
@@ -105,9 +108,7 @@ const Schedule: StylableFC<{
           className="relative overflow-x-auto overflow-y-hidden pb-1"
         >
           {/* Now indicator line */}
-          {getCurrentSchoolSessionState() === SchoolSessionState.schedule && (
-            <NowLine />
-          )}
+          {schoolSessionState === SchoolSessionState.schedule && <NowLine />}
 
           <ul className="flex w-fit flex-col gap-2 px-4 py-2 sm:px-0">
             {/* Period numbers and start-end times */}
