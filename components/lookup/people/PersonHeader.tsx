@@ -1,10 +1,9 @@
-// Imports
 import ClassDetailsCard from "@/components/classes/ClassDetailsCard";
 import PersonAvatar from "@/components/common/PersonAvatar";
 import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
 import getClassroomByID from "@/utils/backend/classroom/getClassroomByID";
 import cn from "@/utils/helpers/cn";
-import { useGetVCard } from "@/utils/helpers/contact";
+import useGetVCard from "@/utils/helpers/contact/useGetVCard";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import useLocale from "@/utils/helpers/useLocale";
 import useUser from "@/utils/helpers/useUser";

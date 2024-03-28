@@ -1,4 +1,3 @@
-// Imports
 import ContactDialog from "@/components/account/ContactDialog";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import DiscordLogo from "@/public/images/social/discord.svg";
@@ -6,7 +5,8 @@ import FacebookLogo from "@/public/images/social/facebook.svg";
 import InstragramLogo from "@/public/images/social/instagram.svg";
 import LineLogo from "@/public/images/social/line.svg";
 import cn from "@/utils/helpers/cn";
-import { getContactIsLinkable, getContactURL } from "@/utils/helpers/contact";
+import getContactIsLinkable from "@/utils/helpers/contact/getContactIsLinkable";
+import getContactURL from "@/utils/helpers/contact/getContactURL";
 import getFormattedLabel from "@/utils/helpers/contact/getFormattedLabel";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import isURL from "@/utils/helpers/isURL";

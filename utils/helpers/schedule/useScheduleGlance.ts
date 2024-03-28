@@ -1,11 +1,10 @@
-import getCurrentPeriod from "@/utils/helpers/schedule/getCurrentPeriod";
-import getCurrentSchoolSessionState, {
+import getTodaySetToPeriodTime from "@/utils/helpers/schedule/getTodaySetToPeriodTime";
+import {
   ASSEMBLY_START,
   HOMEROOM_START,
   SCHEDULE_START,
   SchoolSessionState,
-} from "@/utils/helpers/schedule/getCurrentSchoolSessionState";
-import getTodaySetToPeriodTime from "@/utils/helpers/schedule/getTodaySetToPeriodTime";
+} from "@/utils/helpers/schedule/schoolSessionStateAt";
 import useNow from "@/utils/helpers/useNow";
 import within from "@/utils/helpers/within";
 import { AttendanceEvent } from "@/utils/types/attendance";
@@ -37,11 +36,9 @@ export enum ScheduleGlanceType {
  * @note This hook was created because Schedule Glance was getting unreadable. But it seems I just moved the unreadable code to another file.
  */
 export default function useScheduleGlance(schedule: Schedule, role: UserRole) {
-  const now = useNow();
-  // const now = new Date(new Date().setHours(15, 0, 0, 0));
+  const { now, periodNumber, schoolSessionState } = useNow();
 
   // Determine relevant periods every second
-  const periodNumber = useMemo(getCurrentPeriod, [now]);
   const todayRow = useMemo(
     () => (!isWeekend(now) ? schedule.content[now.getDay() - 1].content : []),
     [schedule, now.getDay()],
@@ -87,8 +84,6 @@ export default function useScheduleGlance(schedule: Schedule, role: UserRole) {
       )[0],
     [todayRow, periodNumber],
   );
-
-  const schoolSessionState = getCurrentSchoolSessionState();
 
   /**
    * The current Attendance Event, if any.

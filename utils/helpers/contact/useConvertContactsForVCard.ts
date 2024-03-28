@@ -1,5 +1,5 @@
-// Imports
-import { getContactIsLinkable, getContactURL } from "@/utils/helpers/contact";
+import getContactURL from "@/utils/helpers/contact/getContactURL";
+import getContactIsLinkable from "@/utils/helpers/contact/getContactIsLinkable";
 import { Contact } from "@/utils/types/contact";
 import { useTranslation } from "next-i18next";
 import { sift } from "radash";
