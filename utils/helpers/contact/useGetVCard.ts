@@ -1,54 +1,14 @@
-// Imports
 import useConvertContactsForVCard from "@/utils/helpers/contact/useConvertContactsForVCard";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import getLocaleString from "@/utils/helpers/getLocaleString";
-import isURL from "@/utils/helpers/isURL";
 import useLocale from "@/utils/helpers/useLocale";
-import { Contact } from "@/utils/types/contact";
 import { Student, Teacher } from "@/utils/types/person";
 import { useTranslation } from "next-i18next";
 
 /**
- * Converts Contact value into a URL depending on the type.
- *
- * @param contact The Contact to be converted.
- *
- * @returns A URL that can be used in links.
+ * Returns a function for converting a Student or Teacher into a VCard file.
  */
-export function getContactURL({ type, value }: Contact) {
-  switch (type) {
-    case "phone":
-      return `tel:${value}`;
-    case "email":
-      return `mailto:${value}`;
-    case "facebook":
-      return `https://www.facebook.com/search/people/?q=${value}`;
-    case "line":
-      if (isURL(value)) return value;
-      return `https://line.me/ti/p/~${value}`;
-    case "instagram":
-      return `https://www.instagram.com/${value}`;
-    case "discord":
-      if (isURL(value)) return value;
-      return `https://discord.gg/invite/${value}`;
-    default:
-      return value;
-  }
-}
-
-/**
- * Checks if a given Contact can be converted into a link.
- *
- * @param contact The Contact to be checked.
- *
- * @returns A boolean.
- */
-export function getContactIsLinkable({ type, value }: Contact): boolean {
-  if (type !== "other" && !(type === "discord" && !isURL(value))) return true;
-  return isURL(value);
-}
-
-export function useGetVCard() {
+export default function useGetVCard() {
   const locale = useLocale();
   const { t } = useTranslation("common");
 

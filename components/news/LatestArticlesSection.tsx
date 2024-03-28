@@ -32,17 +32,11 @@ const LatestArticlesSection: FC<{
         <Interactive
           href={`/news/${fromUUID(mainArticle.id)}`}
           element={Link}
-          className={cn(`-my-5 sm:col-span-2 sm:m-0 sm:rounded-lg
-            sm:border-1 sm:border-outline-variant sm:bg-surface-2 sm:p-0
-            md:col-span-3`)}
+          className="-my-4 p-4 sm:col-span-2 sm:-m-2 sm:rounded-lg sm:p-2 md:col-span-3"
         >
-          <article className="grid md:grid-cols-[4fr,5fr]">
-            <NewsImage
-              image={mainArticle.image}
-              priority
-              className="m-3 mb-0 md:mb-3"
-            />
-            <main className="m-3 flex flex-col justify-between gap-1">
+          <article className="flex flex-col gap-3 md:flex-row">
+            <NewsImage image={mainArticle.image} priority />
+            <main className="flex flex-col justify-between gap-1">
               <header className="space-y-1">
                 <Text
                   type="headline-medium"

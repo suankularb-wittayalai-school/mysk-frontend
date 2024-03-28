@@ -1,10 +1,9 @@
-// Imports
 import ClassDetailsCard from "@/components/classes/ClassDetailsCard";
 import PersonAvatar from "@/components/common/PersonAvatar";
 import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
 import getClassroomByID from "@/utils/backend/classroom/getClassroomByID";
 import cn from "@/utils/helpers/cn";
-import { useGetVCard } from "@/utils/helpers/contact";
+import useGetVCard from "@/utils/helpers/contact/useGetVCard";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import useLocale from "@/utils/helpers/useLocale";
 import useUser from "@/utils/helpers/useUser";
@@ -100,11 +99,7 @@ const PersonHeader: StylableFC<{
         className,
       )}
     >
-      <PersonAvatar
-        profile={person.profile}
-        expandable
-        className="h-16 w-16 [&>div]:!h-full [&>div]:!w-full"
-      />
+      <PersonAvatar profile={person.profile} expandable size={64} />
       <div className="flex flex-col gap-4 md:gap-2">
         <Header
           element={(props) => <h2 id="header-person-details" {...props} />}

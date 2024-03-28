@@ -2,7 +2,7 @@ import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import getCurrentSemester from "@/utils/helpers/getCurrentSemester";
 import logError from "@/utils/helpers/logError";
 import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
-import getCurrentPeriod from "@/utils/helpers/schedule/getCurrentPeriod";
+import periodNumberAt from "@/utils/helpers/schedule/periodNumberAt";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
 import { SchedulePeriod } from "@/utils/types/schedule";
 
@@ -10,7 +10,7 @@ export default async function getCurrentPeriodByTeacherID(
   supabase: DatabaseClient,
   teacherID: string,
 ): Promise<BackendReturn<SchedulePeriod | null>> {
-  const periodNumber = getCurrentPeriod();
+  const periodNumber = periodNumberAt();
   const day = new Date().getDay();
 
   const { data, error } = await supabase

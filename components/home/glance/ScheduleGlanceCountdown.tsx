@@ -1,5 +1,3 @@
-// Imports
-import ScheduleGlance from "@/components/home/ScheduleGlance";
 import cn from "@/utils/helpers/cn";
 import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
@@ -8,30 +6,22 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 
 /**
- * A countdown overline for {@link ScheduleGlance Schedule Glance}.
+ * An animated countdown for Schedule Glance.
  *
  * @param minutesLeft The number of minutes to show.
  */
-const GlanceCountdown: StylableFC<{
+const ScheduleGlanceCountdown: StylableFC<{
   minutesLeft: number;
 }> = ({ minutesLeft, style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("schedule", { keyPrefix: "atAGlance.timeLeft" });
+  const { t } = useTranslation("schedule", {
+    keyPrefix: "atAGlance.countdown",
+  });
 
   const { duration, easing } = useAnimationConfig();
 
   return (
-    <motion.p
-      key="glace-time-left"
-      layout="position"
-      transition={transition(duration.short4, easing.standard)}
-      style={style}
-      className={cn(
-        `skc-text skc-text--label-large -mb-2 w-fit !font-display
-        text-on-surface-variant md:-mb-4 [&_*]:mr-1`,
-        className,
-      )}
-    >
+    <p style={style} className={cn(`space-x-1`, className)}>
       <motion.span layout="position" className="inline-block empty:hidden">
         {t("pre", { count: minutesLeft })}
       </motion.span>
@@ -55,8 +45,8 @@ const GlanceCountdown: StylableFC<{
       >
         {t("post", { count: minutesLeft })}
       </motion.span>
-    </motion.p>
+    </p>
   );
 };
 
-export default GlanceCountdown;
+export default ScheduleGlanceCountdown;

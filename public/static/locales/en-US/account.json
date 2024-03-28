@@ -87,7 +87,8 @@
     "action": {
       "changeName": "Change name",
       "logOut": "Log out",
-      "save": "Save changes"
+      "idCard": "Show ID card",
+      "save": "Save"
     },
     "banner": {
       "certificate": {

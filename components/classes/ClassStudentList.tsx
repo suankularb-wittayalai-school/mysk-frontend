@@ -1,7 +1,7 @@
 import ClassStudentListItem from "@/components/classes/ClassStudentListItem";
 import LookupDetailsListCard from "@/components/lookup/LookupDetailsListCard";
 import { getStudentsByIDs } from "@/utils/backend/person/getStudentsByIDs";
-import { useGetVCard } from "@/utils/helpers/contact";
+import useGetVCard from "@/utils/helpers/contact/useGetVCard";
 import useToggle from "@/utils/helpers/useToggle";
 import withLoading from "@/utils/helpers/withLoading";
 import { Classroom } from "@/utils/types/classroom";

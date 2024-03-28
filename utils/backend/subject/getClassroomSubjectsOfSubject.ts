@@ -1,4 +1,3 @@
-// Imports
 import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import getCurrentSemester from "@/utils/helpers/getCurrentSemester";
 import logError from "@/utils/helpers/logError";
@@ -29,6 +28,7 @@ export default async function getClassroomSubjectsOfSubject(
             people(first_name_th, last_name_th, first_name_en, last_name_en)
           )
         ),
+        subjects(id, name_th, name_en, code_th, code_en),
         ggc_code,
         ggc_link,
         gg_meet_link`,
@@ -48,8 +48,8 @@ export default async function getClassroomSubjectsOfSubject(
       id: classroomSubject.id,
       subject: {
         id: subjectID,
-        name: mergeDBLocales(),
-        code: mergeDBLocales(),
+        name: mergeDBLocales(classroomSubject.subjects, "name"),
+        code: mergeDBLocales(classroomSubject.subjects, "code"),
       },
       classroom: classroomSubject.classrooms!,
       teachers: classroomSubject.classroom_subject_teachers?.map(

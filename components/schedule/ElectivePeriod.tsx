@@ -18,7 +18,7 @@ import { useState } from "react";
 /**
  * When many Schedule Periods overlap, they are grouped into a single Elective
  * Period.
- * 
+ *
  * @param period The Schedule Period to render.
  * @param isInSession Whether the Schedule Period is currently in session.
  */
@@ -69,7 +69,7 @@ const ElectivePeriod: StylableFC<{
               setDetailsOpen(true);
             }}
           >
-            <Text type="title-medium" className="!leading-none text-on-surface">
+            <Text type="title-medium" className="!leading-none">
               {t("schedule.elective")}
             </Text>
           </Interactive>

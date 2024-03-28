@@ -35,11 +35,9 @@ export enum SchoolSessionState {
  *
  * @see {@link SchoolSessionState School Session State}
  */
-export default function getCurrentSchoolSessionState(): SchoolSessionState {
-  // Note: replace this variable to test different times. Useful if you want to
-  // test Home Glance.
-  const now = new Date();
-
+export default function schoolSessionStateAt(
+  date: Date = new Date(),
+): SchoolSessionState {
   // Here’s a diagram of how School Session States are laid out:
 
   // +--------------------------------+
@@ -55,18 +53,18 @@ export default function getCurrentSchoolSessionState(): SchoolSessionState {
   // +--------------------------------+
 
   // Weekends
-  if (isSaturday(now) || isSunday(now)) return SchoolSessionState.after;
+  if (isSaturday(date) || isSunday(date)) return SchoolSessionState.after;
 
   // Before Schedule starts
-  if (isFuture(now.setHours(...ASSEMBLY_START)))
+  if (isFuture(date.setHours(...ASSEMBLY_START)))
     return SchoolSessionState.before;
-  if (isFuture(now.setHours(...HOMEROOM_START)))
+  if (isFuture(date.setHours(...HOMEROOM_START)))
     return SchoolSessionState.assembly;
-  if (isFuture(now.setHours(...SCHEDULE_START)))
+  if (isFuture(date.setHours(...SCHEDULE_START)))
     return SchoolSessionState.homeroom;
 
   // During scheduled time
-  if (isFuture(now.setHours(...SCHEDULE_END)))
+  if (isFuture(date.setHours(...SCHEDULE_END)))
     return SchoolSessionState.schedule;
 
   // After Schedule ends

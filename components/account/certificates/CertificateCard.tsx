@@ -1,7 +1,4 @@
 import CertificateTypeIcon from "@/components/account/certificates/CertificateTypeIcon";
-import MultiSchemeImage from "@/components/common/MultiSchemeImage";
-import BlobsLeftDark from "@/public/images/graphics/blobs/left-dark.svg";
-import BlobsLeftLight from "@/public/images/graphics/blobs/left-light.svg";
 import cn from "@/utils/helpers/cn";
 import { StudentCertificate } from "@/utils/types/certificate";
 import { StylableFC } from "@/utils/types/common";
@@ -21,22 +18,14 @@ const CertificateCard: StylableFC<{
 
   return (
     <Card
-      appearance="outlined"
+      appearance="filled"
       style={style}
       className={cn(
         `relative isolate !grid grid-cols-[3.375rem,1fr] !gap-4 overflow-hidden
-        !rounded-lg p-4`,
+        !rounded-xl p-4`,
         className,
       )}
     >
-      <MultiSchemeImage
-        srcLight={BlobsLeftLight}
-        srcDark={BlobsLeftDark}
-        alt=""
-        priority
-        className="absolute inset-0 -z-10 [&_img]:h-full [&_img]:object-cover"
-      />
-
       {/* Icon */}
       <div className="relative aspect-square">
         <MaterialIcon icon="developer_guide" size={48} />

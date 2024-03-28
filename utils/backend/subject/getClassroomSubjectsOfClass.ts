@@ -1,10 +1,9 @@
-// Imports
+import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
+import getCurrentSemester from "@/utils/helpers/getCurrentSemester";
 import logError from "@/utils/helpers/logError";
 import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
-import { Subject, ClassroomSubject } from "@/utils/types/subject";
-import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
-import getCurrentSemester from "@/utils/helpers/getCurrentSemester";
+import { ClassroomSubject } from "@/utils/types/subject";
 
 export default async function getClassroomSubjectsOfClass(
   supabase: DatabaseClient,
@@ -18,8 +17,16 @@ export default async function getClassroomSubjectsOfClass(
         `id,
         subjects(id, name_en, name_th, code_en, code_th),
         classrooms(id, number),
-        classroom_subject_teachers(teachers(id, people(first_name_th, last_name_th, first_name_en, last_name_en))),
-        classroom_subject_co_teachers(teachers(id, people(first_name_th, last_name_th, first_name_en, last_name_en))),
+        classroom_subject_teachers(
+          teachers(
+            id, people(first_name_th, last_name_th, first_name_en, last_name_en)
+          )
+        ),
+        classroom_subject_co_teachers(
+          teachers(
+            id, people(first_name_th, last_name_th, first_name_en, last_name_en)
+          )
+        ),
         ggc_code,
         ggc_link,
         gg_meet_link`,
@@ -50,11 +57,11 @@ export default async function getClassroomSubjectsOfClass(
         (classroomSubjectTeacher) => ({
           id: classroomSubjectTeacher.teachers?.id ?? "",
           first_name: mergeDBLocales(
-            classroomSubjectTeacher.teachers?.people,
+            classroomSubjectTeacher.teachers?.people || null,
             "first_name",
           ),
           last_name: mergeDBLocales(
-            classroomSubjectTeacher.teachers?.people,
+            classroomSubjectTeacher.teachers?.people || null,
             "last_name",
           ),
         }),
@@ -63,11 +70,11 @@ export default async function getClassroomSubjectsOfClass(
         (classroomSubjectCoTeacher) => ({
           id: classroomSubjectCoTeacher.teachers?.id ?? "",
           first_name: mergeDBLocales(
-            classroomSubjectCoTeacher.teachers?.people,
+            classroomSubjectCoTeacher.teachers?.people || null,
             "first_name",
           ),
           last_name: mergeDBLocales(
-            classroomSubjectCoTeacher.teachers?.people,
+            classroomSubjectCoTeacher.teachers?.people || null,
             "last_name",
           ),
         }),

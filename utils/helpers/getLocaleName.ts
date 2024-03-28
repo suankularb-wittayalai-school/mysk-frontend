@@ -1,7 +1,34 @@
-// Imports
 import getFirstLetterOfName from "@/utils/helpers/getFirstLetterOfName";
-import { LangCode } from "@/utils/types/common";
+import { LangCode, MultiLangString } from "@/utils/types/common";
 import { Person } from "@/utils/types/person";
+import { sift } from "radash";
+
+/**
+ * Formats a segment of a name for `getLocaleName`.
+ *
+ * @param segment The segment to format.
+ * @param locale The preferred resulting locale of the segment.
+ * @param preference The preference to show or abbreviate the segment.
+ *
+ * @returns The formatted segment.
+ *
+ * @private
+ */
+function formatSegment(
+  segment: MultiLangString | null | undefined,
+  locale: LangCode,
+  preference?: boolean | "abbr",
+) {
+  return (
+    // Hide the segment if the preference is false
+    preference !== false &&
+    (preference === "abbr"
+      ? // Show the first letter of the segment if the preference is `abbr`
+        getFirstLetterOfName(segment?.[locale] || "") + "." // Followed by a period
+      : // Show the segment if the preference is true
+        segment?.[locale])
+  );
+}
 
 /**
  * Joins segments of a name into a single string.
@@ -11,8 +38,8 @@ import { Person } from "@/utils/types/person";
  * @param prefix A multi-language string.
  * @param options Options to show or abbreviate a segment.
  * @param options.prefix Shows prefix, defaults to false; "teacher" shows "T." or "ครู".
- * @param options.firstName Shows first name, defaults to true.
- * @param options.middleName Shows middle name, defaults to true.
+ * @param options.firstName Shows first name, defaults to true; "abbr" only shows the first letter.
+ * @param options.middleName Shows middle name, defaults to true; "abbr" only shows the first letter.
  * @param options.lastName Shows last name, defaults to true; "abbr" only shows the first letter.
  *
  * @returns The name formatted into a single string.
@@ -29,36 +56,29 @@ export default function getLocaleName(
     lastName: boolean | "abbr";
   }>,
 ) {
+  // Detect the locale of the `th` first name.
+  // (Foreigners use the Thai name field for their English name.)
   const detectedLocale =
     name.first_name?.th &&
     /^[a-zA-Z]/.test(name.first_name?.[locale] || name.first_name.th)
       ? "en-US"
       : "th";
+  // Try to use the locale passed to the function, but fallback to `th` if the
+  // first name is not available in the passed locale, as `th` is required.
   const closestLocale = name.first_name?.[locale] ? locale : "th";
 
   const teacherPrefix = { th: "ครู", "en-US": "T." };
 
-  return [
+  return sift([
     options?.prefix === "teacher"
       ? teacherPrefix[detectedLocale]
       : options?.prefix && name.prefix?.[detectedLocale],
     [
-      options?.firstName !== false &&
-        (options?.firstName === "abbr"
-          ? getFirstLetterOfName(name.first_name?.[closestLocale] || "")
-          : name.first_name?.[closestLocale]),
-      options?.middleName !== false &&
-        (options?.middleName === "abbr"
-          ? getFirstLetterOfName(name.middle_name?.[closestLocale] || "")
-          : name.middle_name?.[closestLocale]),
-      options?.lastName !== false &&
-        (options?.lastName === "abbr"
-          ? getFirstLetterOfName(name.last_name?.[closestLocale] || "")
-          : name.last_name?.[closestLocale]),
+      formatSegment(name.first_name, closestLocale, options?.firstName),
+      formatSegment(name.middle_name, closestLocale, options?.middleName),
+      formatSegment(name.last_name, closestLocale, options?.lastName),
     ]
       .filter((segment) => segment)
       .join(" "),
-  ]
-    .filter((segment) => segment)
-    .join(detectedLocale === "en-US" ? " " : "");
+  ]).join(detectedLocale === "en-US" ? " " : "");
 }

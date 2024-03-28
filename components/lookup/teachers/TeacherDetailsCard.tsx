@@ -31,7 +31,8 @@ import { sift } from "radash";
  */
 const TeacherDetailsCard: StylableFC<{
   teacher?: Teacher;
-}> = ({ teacher, style, className }) => {
+  options?: Partial<{ hideSeeClass: boolean }>
+}> = ({ teacher, options, style, className }) => {
   const locale = useLocale();
   const { t } = useTranslation("lookup", { keyPrefix: "teachers.detail" });
   const { t: tx } = useTranslation("common");
@@ -51,6 +52,7 @@ const TeacherDetailsCard: StylableFC<{
               <PersonHeader
                 person={teacher}
                 onScheduleOpenClick={toggleScheduleOpen}
+                options={options}
               />
 
               <LookupDetailsContent>

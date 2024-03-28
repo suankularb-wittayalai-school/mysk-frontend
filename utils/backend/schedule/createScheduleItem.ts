@@ -48,19 +48,6 @@ export default async function createScheduleItem(
     return { data: null, error: teachersError };
   }
 
-  const { error: coTeachersError } = await supabase
-    .from("schedule_item_co_teachers")
-    .upsert(
-      scheduleItem.co_teachers.map((teacher) => ({
-        schedule_item_id: data!.id,
-        teacher_id: teacher.id,
-      })),
-    );
-  if (coTeachersError) {
-    logError("createScheduleItem (schedule_item_co_teachers)", coTeachersError);
-    return { data: null, error: coTeachersError };
-  }
-
   const { error: classroomsError } = await supabase
     .from("schedule_item_classrooms")
     .upsert(
