@@ -59,7 +59,7 @@ const IDCardDialog: StylableFC<{
       )}
     >
       {/* Background */}
-      <BlobsBlurringGroup className="absolute inset-0 -z-10 *:absolute">
+      <BlobsBlurringGroup className="inset-0 -z-10">
         <DecorativeBlob
           variant="primary-2"
           style={{ width: 532, height: 244, top: -109, left: 72 }}
@@ -71,7 +71,7 @@ const IDCardDialog: StylableFC<{
       </BlobsBlurringGroup>
 
       {/* Identification */}
-      <PersonAvatar {...person} width={128} height={128} />
+      <PersonAvatar {...person} size={128} />
       <Text type="headline-small" className="mt-4 !text-on-surface">
         {getLocaleName("th", person)}
       </Text>

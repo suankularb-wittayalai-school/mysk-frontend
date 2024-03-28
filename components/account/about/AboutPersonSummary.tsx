@@ -30,12 +30,10 @@ const AboutPersonSummary: StylableFC<{
       <PersonAvatar
         profile={person.profile}
         expandable
-        className={cn(
-          person.profile
-            ? `[&>div]:!h-16 [&>div]:!w-16 [&>div]:border-1
-              [&>div]:border-outline-variant`
-            : `!h-16 !w-16`,
-        )}
+        size={64}
+        className={
+          person.profile ? `*:border-1 *:border-outline-variant` : undefined
+        }
       />
       <div>
         <Text type="title-large" element="h3">
