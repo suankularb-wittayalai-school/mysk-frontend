@@ -4,7 +4,6 @@ import SakeImage from "@/public/images/home/sake.png";
 import cn from "@/utils/helpers/cn";
 import getISODateString from "@/utils/helpers/getISODateString";
 import getLocaleYear from "@/utils/helpers/getLocaleYear";
-import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import { Text } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
@@ -16,7 +15,6 @@ import { useEffect, useState } from "react";
  * parody of those pop-ups celebrating holidays you see on Thai websites.
  */
 const SakeCelebration: StylableFC = ({ style, className }) => {
-  const locale = useLocale();
   const { t } = useTranslation("home", { keyPrefix: "dialog.sakeCelebration" });
 
   const [open, setOpen] = useState(false);
@@ -72,7 +70,7 @@ const SakeCelebration: StylableFC = ({ style, className }) => {
       >
         <Text type="body-large" element="p">
           {t("body", {
-            year: getLocaleYear(locale, new Date().getFullYear(), "AD"),
+            year: getLocaleYear("th", new Date().getFullYear(), "AD"),
           })}
         </Text>
         <div aria-hidden className="min-h-4 grow" />

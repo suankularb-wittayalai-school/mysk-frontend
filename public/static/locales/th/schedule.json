@@ -5,21 +5,18 @@
     "teacher": "ตารางสอน"
   },
   "atAGlance": {
-    "timeLeft": {
-      "pre": "เหลืออีก",
-      "post": "นาที"
-    },
     "title": {
       "assembly": "ถึงเวลาเข้าแถวแล้ว",
       "homeroom": "ถึงเวลาโฮมรูมแล้ว",
-      "learnCurrent": "คุณกำลังเรียน <strong>{{value}}</strong>",
-      "learnNext": "เตรียมตัวเรียน <strong>{{value}}</strong> ในคาบต่อไป",
+      "learnCurrent_single": "คุณกำลังเรียน {{value}}",
+      "learnCurrent_elective": "คุณกำลังเรียนวิชาเลือก",
+      "learnNext_single": "เตรียมตัวเรียน {{value}} ในคาบต่อไป",
+      "learnNext_elective": "เตรียมตัวเรียนวิชาเลือกในคาบต่อไป",
       "lunch": "เวลารับประทานอาหารเที่ยง",
-      "teachCurrent": "คุณกำลังสอน <strong>{{value}}</strong>",
+      "teachCurrent": "คุณกำลังสอน {{value}}",
       "teachWrapUp": "ใกล้หมดเวลาคาบนี้แล้ว",
-      "teachTravel": "ไปที่ห้อง <strong>{{value}}</strong> ตอนนี้",
-      "teachFuture": "คาบนี้ว่าง คาบต่อไปวันนี้คือ<strong>{{value}}</strong>",
-      "electiveSegment": "วิชาเลือก"
+      "teachTravel": "ไปที่ห้อง {{value}} ตอนนี้",
+      "teachFuture": "คาบนี้ว่าง (คาบต่อไปวันนี้คือ {{value}})"
     },
     "details": {
       "subject": {
@@ -37,12 +34,20 @@
         "content": "{{rooms, list}}"
       }
     },
+    "interval": "{{start, datetime(hour: 2-digit; minute: 2-digit; hour12: false;)}}–{{end, datetime(hour: 2-digit; minute: 2-digit; hour12: false;)}}",
+    "countdown": {
+      "pre": "เหลืออีก",
+      "post": "นาที"
+    },
     "action": {
       "attendance": {
-        "view": "ดูข้อมูลเช็กชื่อ",
-        "take": "เช็กชื่อ"
+        "unknown_student": "ดูข้อมูลเช็กชื่อ",
+        "unknown_teacher": "เช็กชื่อ",
+        "absent": "เช็กว่าขาดเรียน",
+        "present": "เช็กว่ามาเรียน"
       }
-    }
+    },
+    "progressAlt": "ความคืบหน้าของคาบนี้"
   },
   "schedule": {
     "yourSubjects": "เลือกวิชา",
@@ -110,4 +115,3 @@
     }
   }
 }
-

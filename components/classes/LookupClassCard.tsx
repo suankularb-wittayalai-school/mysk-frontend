@@ -2,10 +2,10 @@
 import getRelevantPeriodOfClass from "@/utils/backend/schedule/getRelevantPeriodOfClass";
 import cn from "@/utils/helpers/cn";
 import getLocaleString from "@/utils/helpers/getLocaleString";
-import getCurrentPeriod from "@/utils/helpers/schedule/getCurrentPeriod";
-import getCurrentSchoolSessionState, {
+import periodNumberAt from "@/utils/helpers/schedule/periodNumberAt";
+import schoolSessionStateAt, {
   SchoolSessionState,
-} from "@/utils/helpers/schedule/getCurrentSchoolSessionState";
+} from "@/utils/helpers/schedule/schoolSessionStateAt";
 import getTodaySetToPeriodTime from "@/utils/helpers/schedule/getTodaySetToPeriodTime";
 import useLocale from "@/utils/helpers/useLocale";
 import useNow from "@/utils/helpers/useNow";
@@ -48,10 +48,10 @@ const LookupClassCard: StylableFC<{
 
   const { duration, easing } = useAnimationConfig();
 
-  const currentPeriodNumber = getCurrentPeriod();
   const supabase = useSupabaseClient();
 
   const [loading, setLoading] = useState(true);
+  const { now, periodNumber, schoolSessionState: schooleSessionState } = useNow();
   const [period, setPeriod] = useState<
     (SchedulePeriod & { is_current: boolean }) | null
   >(null);
@@ -66,9 +66,8 @@ const LookupClassCard: StylableFC<{
       if (!error) setPeriod(data ? { ...data, is_current: isCurrent } : null);
       setLoading(false);
     })();
-  }, [currentPeriodNumber]);
+  }, [periodNumber]);
 
-  const now = useNow();
   const percentage = period?.is_current
     ? (differenceInSeconds(now, getTodaySetToPeriodTime(period.start_time)) /
         (period.duration * 3000)) *
@@ -143,8 +142,8 @@ const LookupClassCard: StylableFC<{
             classroom.id === selected && `sm:group-focus:border-primary`,
           )}
         >
-          {getCurrentSchoolSessionState() === SchoolSessionState.schedule &&
-          [4, 5].includes(currentPeriodNumber) ? (
+          {schooleSessionState === SchoolSessionState.schedule &&
+          [4, 5].includes(periodNumber) ? (
             <MaterialIcon icon="fastfood" className="text-tertiary" />
           ) : period ? (
             <MaterialIcon icon="hourglass" className="text-outline" />
