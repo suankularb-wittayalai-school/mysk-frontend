@@ -5,7 +5,7 @@ import useLocale from "@/utils/helpers/useLocale";
 import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
 import { Card, Text } from "@suankularb-components/react";
-import { getDaysInMonth } from "date-fns";
+import { getDaysInMonth, lastDayOfMonth } from "date-fns";
 import { useTranslation } from "next-i18next";
 import { list, omit } from "radash";
 
@@ -82,6 +82,7 @@ const MonthAttendanceSummary: StylableFC<{
             <AttendanceFigureDay
               key={summary.date.toISOString()}
               date={summary.date}
+              interval={{ start: date, end: lastDayOfMonth(date) }}
               className="md:[&_span]:!block"
             >
               <MonthBarSparkline summary={omit(summary, ["date"])} />
