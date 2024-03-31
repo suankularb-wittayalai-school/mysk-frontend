@@ -1,4 +1,3 @@
-// Imports
 import MultilangText from "@/components/common/MultilingualText";
 import LookupDetailsCard from "@/components/lookup/LookupDetailsCard";
 import LookupDetailsContent from "@/components/lookup/LookupDetailsContent";
@@ -7,6 +6,7 @@ import PersonContactGrid from "@/components/lookup/people/PersonContactGrid";
 import PersonHeader from "@/components/lookup/people/PersonHeader";
 import PersonScheduleCard from "@/components/lookup/people/PersonScheduleCard";
 import CurrentLearningPeriodCard from "@/components/lookup/students/CurrentLearningPeriodCard";
+import StudentAttendanceSummary from "@/components/lookup/students/StudentAttendanceSummary";
 import StudentCertificateGrid from "@/components/lookup/students/StudentCertificateGrid";
 import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import getLocaleName from "@/utils/helpers/getLocaleName";
@@ -133,12 +133,18 @@ const StudentDetailsCard: StylableFC<{
                 )}
 
                 {student.certificates.length > 0 && (
-                  <StudentCertificateGrid
-                    certificates={student.certificates.filter(
-                      ({ year }) => year === getCurrentAcademicYear(),
-                    )}
-                  />
+                  <motion.div layout="position" transition={positionTransition}>
+                    <StudentCertificateGrid
+                      certificates={student.certificates.filter(
+                        ({ year }) => year === getCurrentAcademicYear(),
+                      )}
+                    />
+                  </motion.div>
                 )}
+
+                <motion.div layout="position" transition={positionTransition}>
+                  <StudentAttendanceSummary studentID={student.id} />
+                </motion.div>
               </LookupDetailsContent>
             </>
           )}

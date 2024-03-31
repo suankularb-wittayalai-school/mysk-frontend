@@ -60,6 +60,24 @@
           "date": "{{date, datetime(day: numeric; month: long;)}}",
           "age": "อายุ {{count, number}} ปี"
         }
+      },
+      "attendance": {
+        "title": "การเข้าเรียน",
+        "today": {
+          "title": {
+            "present": "มาเรียนวันนี้",
+            "late": "มาสายวันนี้",
+            "absent": "ขาดเรียนวันนี้",
+            "noData": "ไม่มีข้อมูลวันนี้",
+            "noSchool": "ไม่มีเรียนวันนี้"
+          },
+          "subtitle": {
+            "sick": "ลาป่วย",
+            "business": "ลากิจ",
+            "absent": "ขาดไม่มีเหตุ",
+            "dropped": "พักการเรียน"
+          }
+        }
       }
     }
   },

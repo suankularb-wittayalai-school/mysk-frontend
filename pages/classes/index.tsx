@@ -218,6 +218,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       ...(await serverSideTranslations(locale as LangCode, [
         "common",
         ...(person?.role === "teacher" ? ["account"] : []),
+        "attendance",
         "classes",
         "lookup",
         "schedule",
