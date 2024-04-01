@@ -8,6 +8,7 @@ import { UserRole } from "@/utils/types/person";
 import { PeriodContentItem } from "@/utils/types/schedule";
 import { ChipSet } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
+import { sift } from "radash";
 
 /**
  * The details of a single Subject in a Schedule Period.
@@ -39,7 +40,10 @@ const SingleSubjectDetails: StylableFC<{
       {/* Room */}
       <InformationCard title={t("details.room.title")}>
         <ChipSet scrollable className="fade-out-to-r -mx-3 *:pl-3 *:pr-8">
-          {period.rooms?.map((room) => <RoomChip key={room} room={room} />)}
+          {period.rooms &&
+            sift(period.rooms).map((room) => (
+              <RoomChip key={room} room={room} />
+            ))}
         </ChipSet>
       </InformationCard>
     </div>
