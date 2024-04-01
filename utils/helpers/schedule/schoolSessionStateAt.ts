@@ -1,4 +1,4 @@
-import { isFuture, isSaturday, isSunday } from "date-fns";
+import { isAfter, isSaturday, isSunday } from "date-fns";
 
 /**
  * The start time of assembly.
@@ -26,6 +26,10 @@ export enum SchoolSessionState {
   homeroom = "homeroom",
   schedule = "schedule",
   after = "after",
+}
+
+function isAfterTime(time: Parameters<Date["setHours"]>, date: Date) {
+  return isAfter(new Date(date).setHours(...time), date);
 }
 
 /**
@@ -56,16 +60,12 @@ export default function schoolSessionStateAt(
   if (isSaturday(date) || isSunday(date)) return SchoolSessionState.after;
 
   // Before Schedule starts
-  if (isFuture(date.setHours(...ASSEMBLY_START)))
-    return SchoolSessionState.before;
-  if (isFuture(date.setHours(...HOMEROOM_START)))
-    return SchoolSessionState.assembly;
-  if (isFuture(date.setHours(...SCHEDULE_START)))
-    return SchoolSessionState.homeroom;
+  if (isAfterTime(ASSEMBLY_START, date)) return SchoolSessionState.before;
+  if (isAfterTime(HOMEROOM_START, date)) return SchoolSessionState.assembly;
+  if (isAfterTime(SCHEDULE_START, date)) return SchoolSessionState.homeroom;
 
   // During scheduled time
-  if (isFuture(date.setHours(...SCHEDULE_END)))
-    return SchoolSessionState.schedule;
+  if (isAfterTime(SCHEDULE_END, date)) return SchoolSessionState.schedule;
 
   // After Schedule ends
   return SchoolSessionState.after;
