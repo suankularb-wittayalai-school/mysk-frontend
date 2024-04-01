@@ -29,10 +29,7 @@ const AttendanceFigureDay: StylableFC<{
     )
       return null;
     return (
-      <div
-        role="separator"
-        className="h-[calc(4rem+1px)] px-1 md:h-[calc(3rem+1px)]"
-      >
+      <div role="separator" className="h-[calc(4rem+1px)] px-1">
         <div
           aria-hidden
           className="h-full w-0 border-r-1 border-r-outline-variant"

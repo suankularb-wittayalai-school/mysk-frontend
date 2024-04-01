@@ -73,7 +73,9 @@ const MonthStudentCard: StylableFC<{
         <AttendanceFigure
           interval={interval}
           attendances={attendances}
-          className="w-fit px-4 md:w-full md:px-0 md:[&>*:not([role=separator])>*:first-child]:hidden"
+          className={cn(`w-fit px-4 md:w-full md:px-0
+            md:[&>*:not([role=separator])>*:first-child]:hidden
+            md:[&_[role=separator]]:h-[calc(3rem+1px)]`)}
         />
       </div>
       <AttendanceCountsGrid counts={counts} className="p-4 pb-3" />

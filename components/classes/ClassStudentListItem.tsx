@@ -1,15 +1,11 @@
-// Imports
 import PersonAvatar from "@/components/common/PersonAvatar";
-import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
-import StudentDetailsCard from "@/components/lookup/students/StudentDetailsCard";
-import { getStudentByID } from "@/utils/backend/person/getStudentByID";
+import WithPersonDetails from "@/components/person/WithPersonDetails";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import { Student, User, UserRole } from "@/utils/types/person";
 import { ListItem, ListItemContent } from "@suankularb-components/react";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useTranslation } from "next-i18next";
 import { sift } from "radash";
 import { useState } from "react";
@@ -41,26 +37,19 @@ const ClassStudentListItem: StylableFC<{
 
   const [detailsOpen, setDetailsOpen] = useState(false);
 
-  const supabase = useSupabaseClient();
-  const [studentDetails, setStudentDetails] = useState<Student>();
-
   return (
-    <>
+    <WithPersonDetails
+      open={detailsOpen}
+      person={{ ...student, role: UserRole.student }}
+      user={user}
+      onClose={() => setDetailsOpen(false)}
+      options={{ isOwnClass, hideSeeClass: true, hideScheduleCard: true }}
+    >
       <ListItem
         key={student.id}
         align="center"
         lines={2}
-        onClick={async () => {
-          setDetailsOpen(true);
-          setStudentDetails(undefined);
-          const { data } = await getStudentByID(supabase, student.id, {
-            includeCertificates:
-              user.is_admin || user.role === UserRole.teacher,
-            includeContacts:
-              isOwnClass || user.is_admin || user.role === UserRole.teacher,
-          });
-          if (data) setStudentDetails(data);
-        }}
+        onClick={() => setDetailsOpen(true)}
         style={style}
         className={className}
       >
@@ -78,18 +67,7 @@ const ClassStudentListItem: StylableFC<{
           ]).join(" • ")}
         />
       </ListItem>
-
-      {/* Details */}
-      <LookupDetailsDialog
-        open={detailsOpen}
-        onClose={() => setDetailsOpen(false)}
-      >
-        <StudentDetailsCard
-          student={studentDetails}
-          options={{ hideSeeClass: true, hideScheduleCard: true }}
-        />
-      </LookupDetailsDialog>
-    </>
+    </WithPersonDetails>
   );
 };
 
