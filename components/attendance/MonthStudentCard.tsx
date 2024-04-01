@@ -1,7 +1,7 @@
 import AttendanceCountsGrid from "@/components/attendance/AttendanceCountsGrid";
 import AttendanceFigure from "@/components/attendance/AttendanceFigure";
 import PersonAvatar from "@/components/common/PersonAvatar";
-import getAttendanceSummary from "@/utils/helpers/attendance/getAttendanceSummary";
+import tallyAttendances from "@/utils/helpers/attendance/tallyAttendances";
 import cn from "@/utils/helpers/cn";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import getLocaleString from "@/utils/helpers/getLocaleString";
@@ -37,7 +37,7 @@ const MonthStudentCard: StylableFC<{
   /**
    * Count the number of Attendance records for each type of Attendance.
    */
-  const counts = getAttendanceSummary(
+  const counts = tallyAttendances(
     attendances.map((attendance) => attendance.assembly),
   );
 

@@ -1,7 +1,7 @@
 import AttendanceFigureDay from "@/components/attendance/AttendanceFigureDay";
 import MonthBarSparkline from "@/components/attendance/MonthBarSparkline";
+import tallyAttendances from "@/utils/helpers/attendance/tallyAttendances";
 import cn from "@/utils/helpers/cn";
-import useLocale from "@/utils/helpers/useLocale";
 import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
 import { Card, Text } from "@suankularb-components/react";
@@ -20,16 +20,8 @@ import { list, omit } from "radash";
 const MonthAttendanceSummary: StylableFC<{
   date: Date;
   classroom: Pick<Classroom, "number">;
-  counts: {
-    date: Date;
-    present: number;
-    late: number;
-    onLeave: number;
-    absent: number;
-    empty: number;
-  }[];
+  counts: ({ date: Date } & ReturnType<typeof tallyAttendances>)[];
 }> = ({ date, classroom, counts, style, className }) => {
-  const locale = useLocale();
   const { t } = useTranslation("attendance", { keyPrefix: "month.summary" });
   const { t: tx } = useTranslation("common");
 
