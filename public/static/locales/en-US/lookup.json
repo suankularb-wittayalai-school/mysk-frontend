@@ -79,6 +79,9 @@
             "absent": "Absent",
             "dropped": "Dropped"
           }
+        },
+        "action": {
+          "seeHistory": "See history"
         }
       }
     }

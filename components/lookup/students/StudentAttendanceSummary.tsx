@@ -19,6 +19,7 @@ import {
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { addDays, isToday, isWithinInterval } from "date-fns";
 import { AnimatePresence, motion } from "framer-motion";
+import { useTranslation } from "next-i18next";
 import { last } from "radash";
 import { useEffect, useState } from "react";
 
@@ -37,6 +38,10 @@ const StudentAttendanceSummary: StylableFC<{
   studentID: string;
   classroom: Pick<Classroom, "number"> | null;
 }> = ({ studentID, classroom, style, className }) => {
+  const { t } = useTranslation("lookup", {
+    keyPrefix: "students.detail.attendance",
+  });
+
   const now = new Date();
   const interval = {
     start: addDays(now, -FIGURE_DATES_COUNT),
@@ -77,10 +82,10 @@ const StudentAttendanceSummary: StylableFC<{
           element={(props) => <h3 id="detail-attendance" {...props} />}
           className="grow"
         >
-          Attendance
+          {t("title")}
         </Text>
         <Button appearance="text" icon={<MaterialIcon icon="history" />}>
-          See history
+          {t("action.seeHistory")}
         </Button>
       </div>
       <AnimatePresence mode="popLayout">
