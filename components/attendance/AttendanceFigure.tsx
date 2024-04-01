@@ -26,6 +26,8 @@ const DEFAULT_ATTENDANCE = {
  *
  * @param interval The start and end dates of the interval.
  * @param attendances The attendances of the Student during the interval.
+ * 
+ * @note If Attendance records exceed the interval, the extra records will *still be displayed*.
  */
 const AttendanceFigure: StylableFC<{
   interval: Interval;
