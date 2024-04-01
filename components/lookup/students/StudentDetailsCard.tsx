@@ -153,7 +153,7 @@ const StudentDetailsCard: StylableFC<{
                   <motion.div layout="position" transition={positionTransition}>
                     <StudentAttendanceSummary
                       studentID={student.id}
-                      classroom={student.classroom}
+                      classroom={student.classroom || undefined}
                     />
                   </motion.div>
                 )}

@@ -36,7 +36,7 @@ const FIGURE_DATES_COUNT = 15;
  */
 const StudentAttendanceSummary: StylableFC<{
   studentID: string;
-  classroom: Pick<Classroom, "number"> | null;
+  classroom?: Pick<Classroom, "number">;
 }> = ({ studentID, classroom, style, className }) => {
   const { t } = useTranslation("lookup", {
     keyPrefix: "students.detail.attendance",
@@ -101,7 +101,7 @@ const StudentAttendanceSummary: StylableFC<{
             loading && `animate-pulse *:bg-surface`,
           )}
         >
-          {classroom && !loading ? (
+          {!loading ? (
             <>
               <TodayAttendanceCard
                 attendance={(() => {
@@ -109,7 +109,7 @@ const StudentAttendanceSummary: StylableFC<{
                   if (mostRecent && isToday(new Date(mostRecent.date)))
                     return mostRecent?.assembly;
                 })()}
-                classroom={classroom}
+                classroom={classroom || undefined}
               />
               <AttendanceCountsGrid
                 counts={tallyAttendances(

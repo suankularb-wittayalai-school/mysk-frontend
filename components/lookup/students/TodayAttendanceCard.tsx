@@ -23,7 +23,7 @@ enum TodayAttendanceState {
  */
 const TodayAttendanceCard: StylableFC<{
   attendance?: StudentAttendance["assembly"];
-  classroom: Pick<Classroom, "number">;
+  classroom?: Pick<Classroom, "number">;
 }> = ({ attendance, classroom, style, className }) => {
   const { t } = useTranslation("lookup", {
     keyPrefix: "students.detail.attendance.today",
@@ -40,9 +40,13 @@ const TodayAttendanceCard: StylableFC<{
   return (
     <Card
       appearance="outlined"
-      stateLayerEffect
-      href={`/classes/${classroom.number}/attendance`}
-      element={Link}
+      {...(classroom
+        ? {
+            stateLayerEffect: true,
+            href: `/classes/${classroom.number}/attendance`,
+            element: Link,
+          }
+        : {})}
       style={style}
       className={cn(
         {
