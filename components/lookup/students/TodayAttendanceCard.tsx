@@ -1,9 +1,11 @@
 import cn from "@/utils/helpers/cn";
 import { StudentAttendance } from "@/utils/types/attendance";
+import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
 import { Card, CardHeader } from "@suankularb-components/react";
 import { isWeekend } from "date-fns";
 import { useTranslation } from "next-i18next";
+import Link from "next/link";
 
 enum TodayAttendanceState {
   present = "present",
@@ -15,12 +17,14 @@ enum TodayAttendanceState {
 
 /**
  * A Card displaying the Student’s Attendance status today.
- * 
+ *
  * @param attendance The Student’s Attendance record at assembly for today.
+ * @param classroom The Classroom the Student is in.
  */
 const TodayAttendanceCard: StylableFC<{
   attendance?: StudentAttendance["assembly"];
-}> = ({ attendance, style, className }) => {
+  classroom: Pick<Classroom, "number">;
+}> = ({ attendance, classroom, style, className }) => {
   const { t } = useTranslation("lookup", {
     keyPrefix: "students.detail.attendance.today",
   });
@@ -35,16 +39,24 @@ const TodayAttendanceCard: StylableFC<{
 
   return (
     <Card
-      appearance="filled"
+      appearance="outlined"
+      stateLayerEffect
+      href={`/classes/${classroom.number}/attendance`}
+      element={Link}
       style={style}
       className={cn(
         {
-          present: `!bg-primary-container !text-on-primary-container`,
-          late: `!bg-tertiary-container !text-on-tertiary-container`,
-          absent: `!bg-error !text-on-error`,
-          noData: null,
-          noSchool: null,
+          present: `!bg-primary-container !text-on-primary-container
+            state-layer:!bg-on-primary-container`,
+          late: `!bg-tertiary-container !text-on-tertiary-container
+            focus:!border-tertiary state-layer:!bg-on-tertiary-container`,
+          absent: `!bg-error !text-on-error focus:!border-on-error
+            state-layer:!bg-on-error`,
+          noData: `!bg-surface-variant !text-on-surface-variant`,
+          noSchool: `!bg-surface-variant !text-on-surface-variant`,
         }[state],
+        `!border-transparent hover:!border-outline-variant
+        focus:!border-primary`,
         className,
       )}
     >

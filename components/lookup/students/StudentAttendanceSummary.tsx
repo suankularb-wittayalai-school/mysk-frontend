@@ -2,8 +2,11 @@ import AttendanceCountsGrid from "@/components/attendance/AttendanceCountsGrid";
 import AttendanceFigure from "@/components/attendance/AttendanceFigure";
 import TodayAttendanceCard from "@/components/lookup/students/TodayAttendanceCard";
 import getAttendancesOfStudent from "@/utils/backend/attendance/getAttendancesOfStudent";
+import tallyAttendances from "@/utils/helpers/attendance/tallyAttendances";
 import cn from "@/utils/helpers/cn";
+import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import { StudentAttendance } from "@/utils/types/attendance";
+import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
 import {
   Button,
@@ -13,7 +16,7 @@ import {
   useAnimationConfig,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { addDays } from "date-fns";
+import { addDays, isWithinInterval } from "date-fns";
 import { AnimatePresence, motion } from "framer-motion";
 import { last } from "radash";
 import { useEffect, useState } from "react";
@@ -27,12 +30,18 @@ const FIGURE_DATES_COUNT = 15;
  * A summary of a Student’s Attendance for display in Student Details Card.
  *
  * @param studentID The ID of the Student. Used in fetching.
+ * @param classroom The Classroom the Student is in.
  */
 const StudentAttendanceSummary: StylableFC<{
   studentID: string;
-}> = ({ studentID, style, className }) => {
+  classroom: Pick<Classroom, "number"> | null;
+}> = ({ studentID, classroom, style, className }) => {
   const now = new Date();
-  const interval = { start: addDays(now, -1 * FIGURE_DATES_COUNT), end: now };
+  const interval = {
+    start: addDays(now, -FIGURE_DATES_COUNT),
+    end: now,
+  };
+  const academicYear = getCurrentAcademicYear();
 
   const { duration, easing } = useAnimationConfig();
 
@@ -49,7 +58,12 @@ const StudentAttendanceSummary: StylableFC<{
       const { data } = await getAttendancesOfStudent(
         supabase,
         studentID,
-        interval,
+        // Is it bad that we’re hard-coding the acadmic year start and end months
+        // here?
+        {
+          start: new Date(academicYear, 4, 1), // May 1st
+          end: new Date(academicYear + 1, 3, 30), // April 30th
+        },
       );
       if (data) setAttendances(data);
       setLoading(false);
@@ -87,23 +101,24 @@ const StudentAttendanceSummary: StylableFC<{
             loading && `animate-pulse *:bg-surface`,
           )}
         >
-          {!loading ? (
+          {classroom && !loading ? (
             <>
-              <TodayAttendanceCard attendance={last(attendances)?.assembly} />
+              <TodayAttendanceCard
+                attendance={last(attendances)?.assembly}
+                classroom={classroom}
+              />
               <AttendanceCountsGrid
-                counts={{
-                  present: 0,
-                  late: 0,
-                  onLeave: 0,
-                  absent: 0,
-                  empty: 0,
-                }}
+                counts={tallyAttendances(
+                  attendances.map((attendance) => attendance.assembly),
+                )}
                 className={cn(`!grid !grid-cols-2 !items-stretch gap-1
                   *:gap-0.5 *:rounded-md *:bg-surface *:pl-2 *:pr-3`)}
               />
               <AttendanceFigure
                 interval={interval}
-                attendances={attendances}
+                attendances={attendances.filter((attendance) =>
+                  isWithinInterval(new Date(attendance.date), interval),
+                )}
                 className="!h-auto bg-surface p-2"
               />
             </>
