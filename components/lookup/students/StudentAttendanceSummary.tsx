@@ -17,7 +17,7 @@ import {
   useAnimationConfig,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { addDays, isWithinInterval } from "date-fns";
+import { addDays, isToday, isWithinInterval } from "date-fns";
 import { AnimatePresence, motion } from "framer-motion";
 import { last } from "radash";
 import { useEffect, useState } from "react";
@@ -99,7 +99,11 @@ const StudentAttendanceSummary: StylableFC<{
           {classroom && !loading ? (
             <>
               <TodayAttendanceCard
-                attendance={last(attendances)?.assembly}
+                attendance={(() => {
+                  const mostRecent = last(attendances);
+                  if (mostRecent && isToday(new Date(mostRecent.date)))
+                    return mostRecent?.assembly;
+                })()}
                 classroom={classroom}
               />
               <AttendanceCountsGrid

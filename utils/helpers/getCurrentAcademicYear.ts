@@ -10,6 +10,6 @@ export default function getCurrentAcademicYear(date?: Date): number {
   date = date || new Date();
   const month = date.getMonth() + 1;
   const year = date.getFullYear();
-  if (month <= SEMESTER_1_START_MONTH) return year - 1;
+  if (month < SEMESTER_1_START_MONTH) return year - 1;
   else return year;
 }
