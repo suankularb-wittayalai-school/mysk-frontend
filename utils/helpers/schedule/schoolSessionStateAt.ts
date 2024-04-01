@@ -28,6 +28,14 @@ export enum SchoolSessionState {
   after = "after",
 }
 
+/**
+ * Is the second time is after the first time?
+ *
+ * @param time The first time as parameters of `Date.setHours`.
+ * @param date The second time as `Date` object.
+ *
+ * @returns A boolean.
+ */
 function isAfterTime(time: Parameters<Date["setHours"]>, date: Date) {
   return isAfter(new Date(date).setHours(...time), date);
 }
