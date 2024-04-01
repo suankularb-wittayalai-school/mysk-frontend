@@ -6,8 +6,9 @@ import { SEMESTER_1_START_MONTH } from "@/utils/helpers/getCurrentSemester";
  *
  * @param date The date to check. Defaults to the current date.
  */
-export default function getCurrentAcademicYear(date?: Date): number {
-  date = date || new Date();
+export default function getCurrentAcademicYear(
+  date: Date = new Date(),
+): number {
   const month = date.getMonth() + 1;
   const year = date.getFullYear();
   if (month < SEMESTER_1_START_MONTH) return year - 1;
