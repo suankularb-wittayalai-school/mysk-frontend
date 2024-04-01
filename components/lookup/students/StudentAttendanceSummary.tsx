@@ -1,5 +1,6 @@
 import AttendanceCountsGrid from "@/components/attendance/AttendanceCountsGrid";
 import AttendanceFigure from "@/components/attendance/AttendanceFigure";
+import AbsenceHistoryDialog from "@/components/lookup/students/AbsenceHistoryDialog";
 import TodayAttendanceCard from "@/components/lookup/students/TodayAttendanceCard";
 import getAttendancesOfStudent from "@/utils/backend/attendance/getAttendancesOfStudent";
 import tallyAttendances from "@/utils/helpers/attendance/tallyAttendances";
@@ -42,7 +43,8 @@ const StudentAttendanceSummary: StylableFC<{
     keyPrefix: "students.detail.attendance",
   });
 
-  const now = new Date();
+  // const now = new Date();
+  const now = new Date(2024, 1, 9, 8);
   const interval = {
     start: addDays(now, -FIGURE_DATES_COUNT),
     end: now,
@@ -57,6 +59,8 @@ const StudentAttendanceSummary: StylableFC<{
 
   const supabase = useSupabaseClient();
   const [loading, setLoading] = useState(true);
+
+  const [historyOpen, setHistoryOpen] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -84,9 +88,19 @@ const StudentAttendanceSummary: StylableFC<{
         >
           {t("title")}
         </Text>
-        <Button appearance="text" icon={<MaterialIcon icon="history" />}>
+        <Button
+          appearance="text"
+          icon={<MaterialIcon icon="history" />}
+          onClick={() => setHistoryOpen(true)}
+        >
           {t("action.seeHistory")}
         </Button>
+        <AbsenceHistoryDialog
+          open={historyOpen}
+          attendances={attendances}
+          classroom={classroom}
+          onClose={() => setHistoryOpen(false)}
+        />
       </div>
       <AnimatePresence mode="popLayout">
         <motion.div

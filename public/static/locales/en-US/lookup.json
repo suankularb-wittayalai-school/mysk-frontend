@@ -82,6 +82,28 @@
         },
         "action": {
           "seeHistory": "See history"
+        },
+        "dialog": {
+          "history": {
+            "title": "Absence history",
+            "item": {
+              "title": {
+                "late": "Late",
+                "sick": "Sick leave",
+                "business": "Business leave",
+                "absent": "Absent",
+                "dropped": "Dropped"
+              },
+              "subtitle": "{{date, datetime(month: short; day: numeric;)}}"
+            }
+          },
+          "perfect": {
+            "title": "No absences",
+            "desc": "This student has never been absent or arrived late throughout this academic year.",
+            "action": {
+              "close": "Close"
+            }
+          }
         }
       }
     }
