@@ -9,6 +9,6 @@
  */
 export default function getCurrentSemester(date?: Date): 1 | 2 {
   const month = (date || new Date()).getMonth() + 1;
-  if (month >= 4 && month < 10) return 1;
+  if (month >= 5 && month < 10) return 1;
   else return 2;
 }
