@@ -5,6 +5,7 @@ import getAttendancesOfStudent from "@/utils/backend/attendance/getAttendancesOf
 import tallyAttendances from "@/utils/helpers/attendance/tallyAttendances";
 import cn from "@/utils/helpers/cn";
 import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
+import { SEMESTER_1_START_MONTH } from "@/utils/helpers/getCurrentSemester";
 import { StudentAttendance } from "@/utils/types/attendance";
 import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
@@ -55,16 +56,10 @@ const StudentAttendanceSummary: StylableFC<{
   useEffect(() => {
     (async () => {
       setLoading(true);
-      const { data } = await getAttendancesOfStudent(
-        supabase,
-        studentID,
-        // Is it bad that we’re hard-coding the acadmic year start and end months
-        // here?
-        {
-          start: new Date(academicYear, 4, 1), // May 1st
-          end: new Date(academicYear + 1, 3, 30), // April 30th
-        },
-      );
+      const { data } = await getAttendancesOfStudent(supabase, studentID, {
+        start: new Date(academicYear, SEMESTER_1_START_MONTH - 1, 1), // April 1st
+        end: new Date(academicYear + 1, SEMESTER_1_START_MONTH - 2, 30), // March 30th
+      });
       if (data) setAttendances(data);
       setLoading(false);
     })();
