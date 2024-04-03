@@ -59,6 +59,7 @@
   },
   "pageLoading": "Loading page…",
   "class": "M.{{number}}",
+  "classNo": "No. {{classNo}}",
   "contact": {
     "phone": "Phone",
     "email": "Email",

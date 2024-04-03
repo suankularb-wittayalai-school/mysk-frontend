@@ -36,10 +36,7 @@ const ClassDetailsCard: StylableFC<{
   return (
     <LookupDetailsCard
       style={style}
-      className={cn(
-        `sm:overflow-visible [&>section]:md:overflow-visible`,
-        className,
-      )}
+      className={cn(`sm:overflow-hidden`, className)}
     >
       {classroom && (
         <>
@@ -70,10 +67,8 @@ const ClassDetailsCard: StylableFC<{
               </motion.section>
 
               <motion.section
-                layout="position"
-                transition={positionTransition}
-                className={cn(`flex flex-col-reverse gap-x-2 gap-y-5 md:grid
-                  md:grid-cols-2`)}
+                className={cn(`flex flex-col-reverse gap-x-2 gap-y-5 md:-mb-4
+                  md:grid md:min-h-96 md:grow md:grid-cols-2`)}
               >
                 {/* Students */}
                 {classroom.students.length > 0 && (
@@ -82,7 +77,6 @@ const ClassDetailsCard: StylableFC<{
                     classNumber={classroom.number}
                     isOwnClass={isOwnClass}
                     user={user}
-                    className="max-h-96 !overflow-auto"
                   />
                 )}
 
