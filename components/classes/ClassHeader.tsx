@@ -82,6 +82,10 @@ const ClassHeader: StylableFC<{
     >
       <Text type="headline-medium" element="h2">
         {tx("class", { number: classroom.number })}
+        <span className="text-on-surface-variant">
+          {" • "}
+          {classroom.main_room}
+        </span>
       </Text>
       <ChipSet scrollable className="-mx-6 px-6">
         {(user.is_admin || user.role !== UserRole.student || isOwnClass) && (
