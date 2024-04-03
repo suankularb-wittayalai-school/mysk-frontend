@@ -59,6 +59,7 @@
   },
   "pageLoading": "หน้ากำลังโหลด…",
   "class": "ม.{{number}}",
+  "classNo": "เลขที่ {{classNo}}",
   "contact": {
     "phone": "โทรศัพท์",
     "email": "อีเมล",
