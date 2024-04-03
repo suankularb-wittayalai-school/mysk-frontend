@@ -1,4 +1,3 @@
-// Imports
 import AbsenceTypeSelector from "@/components/attendance/AbsenceTypeSelector";
 import PersonAvatar from "@/components/common/PersonAvatar";
 import SnackbarContext from "@/contexts/SnackbarContext";
@@ -269,7 +268,7 @@ const AttendanceListItem: StylableFC<{
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={transition(duration.medium2, easing.standard)}
-            className="mt-1 px-4 sm:px-0"
+            className="mt-1 px-4 sm:pb-2"
           >
             <TextField<string>
               appearance="outlined"

@@ -43,7 +43,7 @@ import { useEffect, useMemo, useState } from "react";
  * @param userClassroom The Classroom the user is a part of.
  */
 const ClassesPage: NextPage<{
-  grades: { [grade: string]: Pick<Classroom, "id" | "number" | "main_room">[] };
+  grades: { [grade: number]: Pick<Classroom, "id" | "number" | "main_room">[] };
   user: User;
   userClassroom?: Pick<Classroom, "id" | "number" | "main_room">;
 }> = ({ grades, user, userClassroom }) => {
@@ -56,7 +56,7 @@ const ClassesPage: NextPage<{
   const length = useMemo(() => Object.values(grades).flat().length, [grades]);
 
   const [selectedID, setSelectedID] = useState<string | undefined>(
-    userClassroom?.id || grades[1][0]?.id,
+    userClassroom?.id || grades[1]?.[0]?.id,
   );
 
   const supabase = useSupabaseClient();
@@ -218,6 +218,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       ...(await serverSideTranslations(locale as LangCode, [
         "common",
         ...(person?.role === "teacher" ? ["account"] : []),
+        "attendance",
         "classes",
         "lookup",
         "schedule",

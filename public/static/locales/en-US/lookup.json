@@ -62,6 +62,49 @@
           "age_one": "1 year old",
           "age_other": "{{count, number}} years old"
         }
+      },
+      "attendance": {
+        "title": "Attendance",
+        "today": {
+          "title": {
+            "present": "Present today",
+            "late": "Late today",
+            "absent": "Absent today",
+            "noData": "No data today",
+            "noSchool": "No school today"
+          },
+          "subtitle": {
+            "sick": "Sick leave",
+            "business": "Business leave",
+            "absent": "Absent",
+            "dropped": "Dropped"
+          }
+        },
+        "action": {
+          "seeHistory": "See history"
+        },
+        "dialog": {
+          "history": {
+            "title": "Absence history",
+            "item": {
+              "title": {
+                "late": "Late",
+                "sick": "Sick leave",
+                "business": "Business leave",
+                "absent": "Absent",
+                "dropped": "Dropped"
+              },
+              "subtitle": "{{date, datetime(month: short; day: numeric;)}}"
+            }
+          },
+          "perfect": {
+            "title": "No absences",
+            "desc": "This student has never been absent or arrived late throughout this academic year.",
+            "action": {
+              "close": "Close"
+            }
+          }
+        }
       }
     }
   },

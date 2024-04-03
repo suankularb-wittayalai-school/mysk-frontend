@@ -188,8 +188,13 @@ export default function useScheduleGlance(schedule: Schedule, role: UserRole) {
     // If it’s assembly or homeroom, display that
     if (attendanceEvent) return <ScheduleGlanceType>attendanceEvent;
 
-    // If there are no periods today, don’t display anything
-    if (!todayRow.length) return ScheduleGlanceType.none;
+    if (
+      // If there are no periods today, don’t display anything
+      !todayRow.length ||
+      // If school is over, don’t display anything
+      schoolSessionState === SchoolSessionState.after
+    )
+      return ScheduleGlanceType.none;
 
     switch (role) {
       case UserRole.student:

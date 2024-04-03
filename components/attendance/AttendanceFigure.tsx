@@ -4,34 +4,53 @@ import cn from "@/utils/helpers/cn";
 import getISODateString from "@/utils/helpers/getISODateString";
 import { AttendanceEvent, StudentAttendance } from "@/utils/types/attendance";
 import { StylableFC } from "@/utils/types/common";
-import { getDaysInMonth } from "date-fns";
+import { addDays, differenceInDays } from "date-fns";
 import { list } from "radash";
+import { useMemo } from "react";
+
+const DEFAULT_ATTENDANCE_PER_EVENT = {
+  id: null,
+  is_present: null,
+  absence_type: null,
+  absence_reason: null,
+};
+
+const DEFAULT_ATTENDANCE = {
+  assembly: DEFAULT_ATTENDANCE_PER_EVENT,
+  homeroom: DEFAULT_ATTENDANCE_PER_EVENT,
+};
 
 /**
- * A visual representation of a Student’s Attendance during a month, showing the
- * Attendance status of each day in the month.
+ * A visual representation of a Student’s Attendance during an interval, showing
+ * the Attendance status of each day in the interval.
  *
- * @param date `YYYY-MM` of the month.
- * @param attendances The attendances of the Student during the month.
+ * @param interval The start and end dates of the interval.
+ * @param attendances The attendances of the Student during the interval.
+ * 
+ * @note If Attendance records exceed the interval, the extra records will *still be displayed*.
  */
 const AttendanceFigure: StylableFC<{
-  date: Date;
+  interval: Interval;
   attendances: (Omit<StudentAttendance, "student"> & { date: string })[];
-}> = ({ date, attendances, style, className }) => {
-  // Format the Attendances to be in the same length as the days in the month.
-  const formattedAttendances = (() => {
-    const result = list(getDaysInMonth(date) - 1).map((day) => ({
-      assembly: null,
-      homeroom: null,
-      date: getISODateString(new Date(date.setDate(day + 1))),
-    })) as ({
-      [key in AttendanceEvent]: StudentAttendance[AttendanceEvent] | null;
-    } & { date: string })[];
-    for (const attendance of attendances) {
-      result[Number(attendance.date.substring(8, 10)) - 1] = attendance;
+}> = ({ interval, attendances, style, className }) => {
+  // Format the Attendances to be in the same length as the days in the
+  // interval.
+  const formattedAttendances = useMemo(() => {
+    let result = attendances;
+    const datesWithData = attendances.map((attendance) => attendance.date);
+
+    // Add default Attendances for days without data.
+    for (const daysSinceStart of list(
+      differenceInDays(interval.end, interval.start),
+    )) {
+      const date = addDays(interval.start, daysSinceStart);
+      if (datesWithData.includes(getISODateString(date))) continue;
+      result.push({ ...DEFAULT_ATTENDANCE, date: getISODateString(date) });
     }
-    return result;
-  })();
+
+    // Sort the Attendances by date.
+    return result.sort((a, b) => a.date.localeCompare(b.date));
+  }, [attendances]);
 
   return (
     <figure
@@ -41,10 +60,11 @@ const AttendanceFigure: StylableFC<{
         className,
       )}
     >
-      {formattedAttendances.map((attendance) => (
+      {formattedAttendances?.map((attendance) => (
         <AttendanceFigureDay
           key={attendance.date}
           date={new Date(attendance.date)}
+          interval={interval}
         >
           <div className="w-full space-y-[1px] overflow-hidden rounded-full">
             {(["assembly", "homeroom"] as AttendanceEvent[]).map((event) => (

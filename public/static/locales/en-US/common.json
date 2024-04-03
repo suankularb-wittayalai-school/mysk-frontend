@@ -124,7 +124,10 @@
       "title": "Something went wrong on your client.",
       "tabName": "Client-side exception",
       "desc": "We encountered an error while trying to render or perform an action on your browser. Please try again.",
-      "callStack": "Call stack for developers"
+      "callStack": "Call stack for developers",
+      "action": {
+        "copyToClipboard": "Copy call stack"
+      }
     },
     "sectionFallback": {
       "title": "Something went wrong in this section.",

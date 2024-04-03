@@ -1,13 +1,15 @@
+import AttendanceCountsGrid from "@/components/attendance/AttendanceCountsGrid";
 import AttendanceFigure from "@/components/attendance/AttendanceFigure";
 import PersonAvatar from "@/components/common/PersonAvatar";
-import getAttendanceSummary from "@/utils/helpers/attendance/getAttendanceSummary";
+import tallyAttendances from "@/utils/helpers/attendance/tallyAttendances";
 import cn from "@/utils/helpers/cn";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
-import { AbsenceType, StudentAttendance } from "@/utils/types/attendance";
+import { StudentAttendance } from "@/utils/types/attendance";
 import { StylableFC } from "@/utils/types/common";
-import { Card, CardHeader, MaterialIcon } from "@suankularb-components/react";
+import { Card, CardHeader } from "@suankularb-components/react";
+import { getDaysInMonth } from "date-fns";
 import { useTranslation } from "next-i18next";
 import { sift } from "radash";
 
@@ -27,10 +29,15 @@ const MonthStudentCard: StylableFC<{
   const locale = useLocale();
   const { t } = useTranslation("attendance", { keyPrefix: "month" });
 
+  const interval = {
+    start: date.setDate(1),
+    end: date.setDate(getDaysInMonth(date)),
+  };
+
   /**
    * Count the number of Attendance records for each type of Attendance.
    */
-  const counts = getAttendanceSummary(
+  const counts = tallyAttendances(
     attendances.map((attendance) => attendance.assembly),
   );
 
@@ -46,7 +53,14 @@ const MonthStudentCard: StylableFC<{
       )}
     >
       <CardHeader
-        avatar={<PersonAvatar {...student} expandable className="!my-0" />}
+        avatar={
+          <PersonAvatar
+            {...student}
+            expandable
+            size={40}
+            className="!my-0 !h-12"
+          />
+        }
         title={getLocaleName(locale, student)}
         subtitle={sift([
           t("item.classNo", { classNo: student.class_no }),
@@ -57,36 +71,14 @@ const MonthStudentCard: StylableFC<{
       />
       <div className="overflow-auto md:contents">
         <AttendanceFigure
-          date={date}
+          interval={interval}
           attendances={attendances}
-          className="w-fit px-4 md:w-full md:px-0"
+          className={cn(`w-fit px-4 md:w-full md:px-0
+            md:[&>*:not([role=separator])>*:first-child]:hidden
+            md:[&_[role=separator]]:h-[calc(3rem+1px)]`)}
         />
       </div>
-      <ul
-        className={cn(`flex flex-row flex-wrap items-center gap-x-1 p-4 pb-3
-          *:flex *:min-w-8 *:flex-row`)}
-      >
-        <li title={t("legend.present")}>
-          <MaterialIcon icon="done" size={20} className="text-primary" />
-          <span>{counts.present}</span>
-        </li>
-        <li title={t("legend.late")}>
-          <MaterialIcon icon="alarm" size={20} className="text-tertiary" />
-          <span>{counts.late}</span>
-        </li>
-        <li title={t("legend.onLeave")}>
-          <MaterialIcon
-            icon="close"
-            size={20}
-            className="text-on-surface-variant"
-          />
-          <span>{counts.onLeave}</span>
-        </li>
-        <li title={t("legend.absent")}>
-          <MaterialIcon icon="close" size={20} className="text-error" />
-          <span>{counts.absent}</span>
-        </li>
-      </ul>
+      <AttendanceCountsGrid counts={counts} className="p-4 pb-3" />
     </Card>
   );
 };

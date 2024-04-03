@@ -1,49 +1,50 @@
-// External libraries
-import { FC, ReactNode } from "react";
+import PageHeader from "@/components/common/PageHeader";
+import LandingBlobs from "@/components/landing/LandingBlobs";
+import cn from "@/utils/helpers/cn";
+import { StylableFC } from "@/utils/types/common";
+import { ReactNode } from "react";
 
-// SK Components
-import {
-  Button,
-  Columns,
-  ContentLayout,
-  MaterialIcon,
-} from "@suankularb-components/react";
-
-const ErrorLayout: FC<{ children: ReactNode }> = ({ children }) => {
-  return (
+/**
+ * A layout for error pages. Contains a blank Page Header and a container for
+ * the error message.
+ *
+ * @param children The error message.
+ */
+const ErrorLayout: StylableFC<{
+  children: ReactNode;
+}> = ({ children, style, className }) => (
+  <div
+    style={style}
+    className={cn(
+      `flex min-h-[calc(100dvh-5rem)] flex-col sm:min-h-dvh sm:px-0`,
+      className,
+    )}
+  >
     <div
-      className="flex min-h-screen flex-col justify-center bg-gradient-to-b
-        from-surface-5 via-transparent bg-fixed px-4
-        supports-[height:100dvh]:min-h-[calc(100dvh-5rem)] sm:px-0
-        supports-[height:100dvh]:sm:min-h-[100dvh]"
+      className={cn(`fixed inset-0 -z-10 overflow-hidden sm:bottom-auto
+        sm:h-screen`)}
     >
-      <div className="fixed left-4 right-4 top-4 sm:top-11">
-        <div
-          className="mx-auto w-full max-w-[72.5rem]
-            sm:w-[calc(100%-11rem)]"
-        >
-          <Button
-            appearance="text"
-            icon={<MaterialIcon icon="arrow_backward" />}
-            alt="Go back"
-            onClick={() => window.history.back()}
-            className="-left-2 before:!bg-on-surface [&_i]:text-on-surface
-              [&_span]:!bg-on-surface"
-          />
-        </div>
-      </div>
-      <ContentLayout>
-        <Columns columns={6}>
-          <div
-            className="col-span-2 flex flex-col gap-6 sm:col-span-4
-              md:col-span-4 md:col-start-2"
-          >
-            {children}
-          </div>
-        </Columns>
-      </ContentLayout>
+      <LandingBlobs className="md:[&>:nth-child(2)]:hidden" />
     </div>
-  );
-};
+
+    <PageHeader onBack={() => window.history.back()} buttonElement="button">
+      {null}
+    </PageHeader>
+
+    <div
+      className={cn(`mx-4 flex max-w-[46.5rem] grow flex-col justify-center
+        gap-6 pb-32 sm:mx-auto sm:pt-20`)}
+    >
+      {children}
+    </div>
+
+    {/* Hide default Page Header blobs */}
+    <style jsx global>{`
+      .skc-page-header__blobs:has(~ .skc-page-header) {
+        display: none;
+      }
+    `}</style>
+  </div>
+);
 
 export default ErrorLayout;

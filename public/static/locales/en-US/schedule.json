@@ -58,11 +58,10 @@
     "title": "Subject list",
     "search": "Search subjects",
     "card": {
-      "teachers": "Teachers",
-      "ggcCode": "Class Code",
+      "noTeachers": "No teachers",
       "action": {
         "ggcLink": "Google Classroom link",
-        "ggMeetLink": "Online meeting link"
+        "copyGGCCode": "Copy class code"
       }
     }
   },

@@ -1,16 +1,7 @@
-import AttendanceFigureEvent from "@/components/attendance/AttendanceFigureEvent";
 import cn from "@/utils/helpers/cn";
-import { AttendanceEvent, StudentAttendance } from "@/utils/types/attendance";
 import { StylableFC } from "@/utils/types/common";
 import { Text } from "@suankularb-components/react";
-import {
-  getDaysInMonth,
-  isFirstDayOfMonth,
-  isLastDayOfMonth,
-  isSaturday,
-  isSunday,
-  isWeekend,
-} from "date-fns";
+import { differenceInDays, isSameDay, isSaturday, isSunday } from "date-fns";
 import { useTranslation } from "next-i18next";
 import { ReactNode } from "react";
 
@@ -19,24 +10,26 @@ import { ReactNode } from "react";
  *
  * @param children Content.
  * @param date The date of the day.
+ * @param interval The interval of the month.
  */
 const AttendanceFigureDay: StylableFC<{
   children: ReactNode;
   date: Date;
-}> = ({ children, date, style, className }) => {
+  interval: Interval;
+}> = ({ children, date, interval, style, className }) => {
   const { t } = useTranslation("attendance", { keyPrefix: "month" });
 
-  // Show Divider on weekends.
+  // Show Divider as weekends.
   if (isSaturday(date)) {
-    // Ensure Divider doesn’t show on the left/right edges of the month.
+    // Ensure Divider doesn’t show on the left/right edges of the interval.
     // (Because it wouldn’t really be a divider if it's not dividing anything!)
-    if (isFirstDayOfMonth(date) || date.getDate() > getDaysInMonth(date) - 2)
+    if (
+      isSameDay(interval.start, date) ||
+      differenceInDays(interval.end, date) < 2
+    )
       return null;
     return (
-      <div
-        role="separator"
-        className="h-[calc(4rem+1px)] px-1 md:h-[calc(3rem+1px)]"
-      >
+      <div role="separator" className="h-[calc(4rem+1px)] px-1">
         <div
           aria-hidden
           className="h-full w-0 border-r-1 border-r-outline-variant"
@@ -53,7 +46,7 @@ const AttendanceFigureDay: StylableFC<{
         className,
       )}
     >
-      <Text type="label-small" className="text-on-surface-variant md:hidden">
+      <Text type="label-small" className="text-on-surface-variant">
         {t("item.day", { date })}
       </Text>
       {children}

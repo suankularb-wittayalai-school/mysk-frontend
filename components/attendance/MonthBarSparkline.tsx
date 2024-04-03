@@ -1,3 +1,4 @@
+import tallyAttendances from "@/utils/helpers/attendance/tallyAttendances";
 import cn from "@/utils/helpers/cn";
 import { StylableFC } from "@/utils/types/common";
 import { sum } from "radash";
@@ -10,13 +11,7 @@ const CHART_HEIGHT = 48;
  * @param summary The summary of Attendance counts.
  */
 const MonthBarSparkline: StylableFC<{
-  summary: {
-    present: number;
-    late: number;
-    onLeave: number;
-    absent: number;
-    empty: number;
-  };
+  summary: ReturnType<typeof tallyAttendances>;
 }> = ({ summary, style, className }) => {
   const total = sum(Object.values(summary));
 
