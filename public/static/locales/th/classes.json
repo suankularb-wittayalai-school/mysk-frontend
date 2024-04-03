@@ -20,9 +20,8 @@
     }
   },
   "detail": {
-    "general": {
-      "classAdvisors": "ครูที่ปรึกษา",
-      "room": "ห้องที่ใช้เรียน"
+    "advisors": {
+      "title": "ครูที่ปรึกษา"
     },
     "students": {
       "title": "นักเรียน",

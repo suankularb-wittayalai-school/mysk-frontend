@@ -1,21 +1,18 @@
+import ClassAdvisorGrid from "@/components/classes/ClassAdvisorsGrid";
 import ClassContactList from "@/components/classes/ClassContactList";
 import ClassHeader from "@/components/classes/ClassHeader";
 import ClassScheduleCard from "@/components/classes/ClassScheduleCard";
 import ClassStudentList from "@/components/classes/ClassStudentList";
 import LookupDetailsCard from "@/components/lookup/LookupDetailsCard";
 import LookupDetailsContent from "@/components/lookup/LookupDetailsContent";
-import InformationCard from "@/components/lookup/people/InformationCard";
 import CurrentLearningPeriodCard from "@/components/lookup/students/CurrentLearningPeriodCard";
 import cn from "@/utils/helpers/cn";
-import getLocaleName from "@/utils/helpers/getLocaleName";
-import useLocale from "@/utils/helpers/useLocale";
 import useToggle from "@/utils/helpers/useToggle";
 import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
 import { User, UserRole } from "@/utils/types/person";
 import { transition, useAnimationConfig } from "@suankularb-components/react";
 import { LayoutGroup, motion } from "framer-motion";
-import { useTranslation } from "next-i18next";
 
 /**
  * A Lookup Detail Card that displays details of a Classroom.
@@ -31,9 +28,6 @@ const ClassDetailsCard: StylableFC<{
   user: User;
   refreshData: () => void;
 }> = ({ classroom, isOwnClass, user, refreshData, style, className }) => {
-  const locale = useLocale();
-  const { t } = useTranslation("classes", { keyPrefix: "detail" });
-
   const { duration, easing } = useAnimationConfig();
   const positionTransition = transition(duration.medium2, easing.standard);
 
@@ -70,29 +64,9 @@ const ClassDetailsCard: StylableFC<{
                 </div>
               )}
 
-              <motion.section
-                layout="position"
-                transition={positionTransition}
-                className="grid grid-cols-2 gap-2 md:grid-cols-4"
-              >
-                {/* Class advisors */}
-                <InformationCard
-                  title={t("general.classAdvisors")}
-                  className="col-span-2"
-                >
-                  <ul className="list-disc pb-1 pl-6">
-                    {classroom.class_advisors.map((advisor) => (
-                      <li key={advisor.id}>
-                        {getLocaleName(locale, advisor, { prefix: "teacher" })}
-                      </li>
-                    ))}
-                  </ul>
-                </InformationCard>
-
-                {/* Room */}
-                <InformationCard title={t("general.room")}>
-                  {classroom.main_room}
-                </InformationCard>
+              {/* Class advisors */}
+              <motion.section layout="position" transition={positionTransition}>
+                <ClassAdvisorGrid advisors={classroom.class_advisors} />
               </motion.section>
 
               <motion.section
