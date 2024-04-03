@@ -90,7 +90,7 @@ const ClassContactList: StylableFC<{
         {t("title")}
       </Text>
 
-      <ul className="space-y-2">
+      <ul className="space-y-1">
         {/* List */}
         {contacts.map((contact) => (
           <li key={contact.id}>
