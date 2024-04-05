@@ -66,11 +66,10 @@
     "title": "รายชื่อวิชา",
     "search": "ค้นหาวิชา",
     "card": {
-      "teachers": "ครูผู้สอน",
-      "ggcCode": "Class Code",
+      "noTeachers": "ไม่มีครูผู้สอน",
       "action": {
         "ggcLink": "ลิงก์เข้า Google Classroom",
-        "ggMeetLink": "ลิงก์เข้า Google Meet"
+        "copyGGCCode": "คัดลอกรหัสเข้า Google Classroom"
       }
     }
   },

@@ -1,4 +1,3 @@
-// Imports
 import PageHeader from "@/components/common/PageHeader";
 import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
 import LookupDetailsSide from "@/components/lookup/LookupDetailsSide";
@@ -9,11 +8,13 @@ import TooWideCard from "@/components/lookup/TooWideCard";
 import LookupStudentCard from "@/components/lookup/students/LookupStudentCard";
 import StudentActiveFiltersCard from "@/components/lookup/students/StudentActiveFiltersCard";
 import StudentDetailsCard from "@/components/lookup/students/StudentDetailsCard";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import getUserByEmail from "@/utils/backend/account/getUserByEmail";
 import { getStudentByID } from "@/utils/backend/person/getStudentByID";
 import getStudentsByLookupFilters from "@/utils/backend/person/getStudentsByLookupFilters";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { Student, StudentLookupItem } from "@/utils/types/person";
+import { Student, StudentLookupItem, User } from "@/utils/types/person";
 import {
   SplitLayout,
   useAnimationConfig,
@@ -22,6 +23,7 @@ import {
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
+import { getServerSession } from "next-auth";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
@@ -39,11 +41,13 @@ export type StudentSearchFilters = Partial<{
  *
  * @param filters The filters used to search for Students.
  * @param students The Students that match the filters.
+ * @param user The current User. Used for permissions.
  */
 const LookupStudentsResultsPage: CustomPage<{
   filters: StudentSearchFilters;
   students: StudentLookupItem[];
-}> = ({ filters, students }) => {
+  user: User;
+}> = ({ filters, students, user }) => {
   const { t } = useTranslation("lookup", { keyPrefix: "students" });
   const { t: tx } = useTranslation("common");
 
@@ -139,7 +143,7 @@ const LookupStudentsResultsPage: CustomPage<{
           selectedID={selectedStudent?.id || selectedID}
           length={students.length}
         >
-          <StudentDetailsCard student={selectedStudent} />
+          <StudentDetailsCard student={selectedStudent} user={user} />
         </LookupDetailsSide>
       </SplitLayout>
 
@@ -148,7 +152,7 @@ const LookupStudentsResultsPage: CustomPage<{
         open={detailsOpen}
         onClose={() => setDetailsOpen(false)}
       >
-        <StudentDetailsCard student={selectedStudent} />
+        <StudentDetailsCard student={selectedStudent} user={user} />
       </LookupDetailsDialog>
     </>
   );
@@ -164,6 +168,8 @@ export const getServerSideProps: GetServerSideProps = async ({
     req: req as NextApiRequest,
     res: res as NextApiResponse,
   });
+  const session = await getServerSession(req, res, authOptions);
+  const { data: user } = await getUserByEmail(supabase, session!.user!.email!);
 
   const filters = Object.fromEntries(
     Object.entries(query)
@@ -183,12 +189,14 @@ export const getServerSideProps: GetServerSideProps = async ({
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
         "common",
+        "attendance",
         "classes",
         "lookup",
         "schedule",
       ])),
       filters,
       students,
+      user,
     },
   };
 };

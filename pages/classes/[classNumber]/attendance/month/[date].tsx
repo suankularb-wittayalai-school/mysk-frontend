@@ -8,7 +8,7 @@ import MonthStudentCard from "@/components/attendance/MonthStudentCard";
 import PageHeader from "@/components/common/PageHeader";
 import getMonthAttendanceOfClass from "@/utils/backend/attendance/getMonthAttendanceOfClass";
 import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
-import getAttendanceSummary from "@/utils/helpers/attendance/getAttendanceSummary";
+import tallyAttendances from "@/utils/helpers/attendance/tallyAttendances";
 import { StudentAttendance } from "@/utils/types/attendance";
 import { Classroom } from "@/utils/types/classroom";
 import { CustomPage, LangCode } from "@/utils/types/common";
@@ -67,7 +67,7 @@ const MonthAttendancePage: CustomPage<{
                 ),
               ).map(([date, attendances]) => ({
                 date: new Date(date),
-                ...getAttendanceSummary(
+                ...tallyAttendances(
                   attendances!.map((attendance) => attendance.assembly),
                 ),
               }))}

@@ -6,12 +6,12 @@ import {
 
 /**
  * Summarizes an array of Attendance records.
- * 
+ *
  * @param attendances An array of attendance records.
- * 
+ *
  * @returns An object of counts.
  */
-export default function getAttendanceSummary(
+export default function tallyAttendances(
   attendances: Pick<
     StudentAttendance[AttendanceEvent],
     "is_present" | "absence_type"
@@ -23,13 +23,7 @@ export default function getAttendanceSummary(
   absent: number;
   empty: number;
 } {
-  const summary = {
-    present: 0,
-    late: 0,
-    onLeave: 0,
-    absent: 0,
-    empty: 0,
-  };
+  const summary = { present: 0, late: 0, onLeave: 0, absent: 0, empty: 0 };
 
   for (const attendance of attendances) {
     if (attendance.is_present === null) summary.empty++;
