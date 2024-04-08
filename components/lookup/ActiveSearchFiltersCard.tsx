@@ -1,10 +1,10 @@
-// Imports
 import cn from "@/utils/helpers/cn";
 import { StylableFC } from "@/utils/types/common";
 import {
   ChipSet,
+  DURATION,
+  EASING,
   transition,
-  useAnimationConfig,
 } from "@suankularb-components/react";
 import { motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
@@ -21,13 +21,11 @@ const ActiveSearchFiltersCard: StylableFC<{
 }> = ({ children, style, className }) => {
   const { t } = useTranslation("lookup");
 
-  const { duration, easing } = useAnimationConfig();
-
   return (
     <motion.div
       layout="size"
       layoutId="search-filters"
-      transition={transition(duration.long2, easing.emphasized)}
+      transition={transition(DURATION.long2, EASING.emphasized)}
       style={{ ...style, borderRadius: 12 }}
       className={cn(
         `skc-card skc-card--outlined -mt-2 w-[calc(100dvw-2rem)] sm:mt-0
@@ -37,7 +35,7 @@ const ActiveSearchFiltersCard: StylableFC<{
     >
       <motion.h2
         layout="position"
-        transition={transition(duration.long2, easing.emphasized)}
+        transition={transition(DURATION.long2, EASING.emphasized)}
         className="skc-text skc-text--title-medium px-4 pb-2 pt-3"
       >
         {t("common.searchFilters.title")}
@@ -46,7 +44,7 @@ const ActiveSearchFiltersCard: StylableFC<{
         layout="position"
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={transition(duration.medium4, easing.standardDecelerate)}
+        transition={transition(DURATION.medium4, EASING.standardDecelerate)}
         className="pb-3"
       >
         <ChipSet

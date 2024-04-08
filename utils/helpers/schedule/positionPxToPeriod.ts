@@ -1,3 +1,5 @@
+import { Day } from "date-fns";
+
 /**
  * Converts a cursor position into a Period Location.
  *
@@ -7,7 +9,11 @@
  *
  * @returns A Period Location with `startTime` and `day`.
  */
-export default function positionPxToPeriod(x: number, y: number, constraints: Element) {
+export default function positionPxToPeriod(
+  x: number,
+  y: number,
+  constraints: Element,
+) {
   // Get rectangle
   const { top, left } = constraints.getBoundingClientRect();
 

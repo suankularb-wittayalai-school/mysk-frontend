@@ -1,21 +1,14 @@
-// External libraries
-import { useTranslation } from "next-i18next";
-import Link from "next/link";
-import { FC, ReactNode } from "react";
-
-// SK Components
+import PrintPage from "@/components/common/print/PrintPage";
+import cn from "@/utils/helpers/cn";
 import {
   Actions,
   Button,
   MaterialIcon,
   Text,
 } from "@suankularb-components/react";
-
-// Internal components
-import PrintPage from "@/components/common/print/PrintPage";
-
-// Hooks
-import cn from "@/utils/helpers/cn";
+import { useTranslation } from "next-i18next";
+import Link from "next/link";
+import { FC, ReactNode } from "react";
 
 /**
  * Configurations for a print preview. The second child of
@@ -35,9 +28,9 @@ const PrintOptions: FC<{
   return (
     <aside
       className={cn(`fixed bottom-0 z-[70] w-screen divide-y-1 divide-outline
-        rounded-t-xl bg-surface-3 shadow-3 print:hidden sm:inset-0 sm:left-auto
-        sm:h-auto sm:w-96 sm:rounded-l-xl sm:rounded-tr-none sm:bg-surface
-        md:top-0 md:shadow-none lg:sticky lg:top-8 lg:w-full lg:rounded-r-xl`)}
+        rounded-t-xl bg-surface-bright shadow-3 sm:inset-0 sm:left-auto sm:h-auto
+        sm:w-96 sm:rounded-l-xl sm:rounded-tr-none sm:bg-surface md:top-0
+        md:shadow-none lg:sticky lg:top-8 lg:w-full lg:rounded-r-xl print:hidden`)}
     >
       <header
         className={cn(`relative flex flex-row items-center gap-2 py-2 pl-2
@@ -63,15 +56,15 @@ const PrintOptions: FC<{
           type="label-medium"
           element="p"
           className={cn(`sticky top-0 z-20 border-b-1
-            border-outline bg-surface-3 p-4 text-on-surface-variant
+            border-outline bg-surface-bright p-4 text-on-surface-variant
             sm:bg-surface`)}
         >
           {t("note")}
         </Text>
         <div
-          className={cn(`[&_.skc-select--outlined_>label]:!bg-surface-3
-            [&_.skc-select--outlined_>label]:sm:!bg-surface
-            [&_.skc-text-field--outlined>span]:!bg-surface-3
+          className={cn(`[&_.skc-select--outlined>label]:!bg-surface-bright
+            [&_.skc-select--outlined>label]:sm:!bg-surface
+            [&_.skc-text-field--outlined>span]:!bg-surface-bright
             [&_.skc-text-field--outlined>span]:sm:!bg-surface`)}
         >
           {children}

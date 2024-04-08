@@ -16,9 +16,10 @@ import { UserRole } from "@/utils/types/person";
 import {
   Actions,
   Button,
+  DURATION,
+  EASING,
   Text,
   transition,
-  useAnimationConfig,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import va from "@vercel/analytics";
@@ -50,7 +51,6 @@ const LandingPage: CustomPage = () => {
   const { t } = useTranslation("landing");
   const { t: tx } = useTranslation("common");
 
-  const { duration, easing } = useAnimationConfig();
   const router = useRouter();
   const { user, status } = useUser();
   const supabase = useSupabaseClient();
@@ -135,7 +135,7 @@ const LandingPage: CustomPage = () => {
                 initial={{ opacity: 0, y: -20, filter: "blur(4px)" }}
                 animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                 exit={{ opacity: 0, y: 20, filter: "blur(4px)" }}
-                transition={transition(duration.medium4, easing.standard)}
+                transition={transition(DURATION.medium4, EASING.standard)}
                 className="flex flex-col"
               >
                 <Text element="h2" type="headline-small">

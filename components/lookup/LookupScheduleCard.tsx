@@ -4,9 +4,10 @@ import { StylableFC } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
 import { Schedule as ScheduleType } from "@/utils/types/schedule";
 import {
+  DURATION,
+  EASING,
   Progress,
   transition,
-  useAnimationConfig,
 } from "@suankularb-components/react";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -24,8 +25,6 @@ const LookupScheduleCard: StylableFC<{
   open?: boolean;
   loading?: boolean;
 }> = ({ schedule, role, open, loading, style, className }) => {
-  const { duration, easing } = useAnimationConfig();
-
   return (
     <AnimatePresence>
       {open && (
@@ -33,14 +32,14 @@ const LookupScheduleCard: StylableFC<{
           layout="size"
           initial={{ opacity: 0, y: -60 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={transition(duration.medium2, easing.standardDecelerate)}
+          transition={transition(DURATION.medium2, EASING.standardDecelerate)}
           style={{ ...style, borderRadius: 12 }}
           className={cn(`overflow-hidden rounded-md bg-surface`, className)}
         >
           {loading ? (
             <motion.div
               layout="position"
-              transition={transition(duration.medium2, easing.standard)}
+              transition={transition(DURATION.medium2, EASING.standard)}
               className="grid place-content-center p-4"
             >
               <Progress appearance="circular" alt="Loading schedule…" visible />
@@ -48,7 +47,7 @@ const LookupScheduleCard: StylableFC<{
           ) : (
             <motion.div
               layout="position"
-              transition={transition(duration.medium2, easing.standard)}
+              transition={transition(DURATION.medium2, EASING.standard)}
             >
               <Schedule
                 schedule={schedule}

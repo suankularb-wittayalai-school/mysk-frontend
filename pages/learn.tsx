@@ -16,10 +16,11 @@ import { Schedule as ScheduleType } from "@/utils/types/schedule";
 import { ClassroomSubject } from "@/utils/types/subject";
 import {
   Columns,
+  DURATION,
+  EASING,
   Header,
   Search,
   transition,
-  useAnimationConfig,
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { LayoutGroup, motion } from "framer-motion";
@@ -47,8 +48,6 @@ const LearnPage: CustomPage<{
   const { t: ts } = useTranslation("schedule");
   const locale = useLocale();
 
-  const { duration, easing } = useAnimationConfig();
-
   const [query, setQuery] = useState<string>("");
 
   return (
@@ -57,7 +56,7 @@ const LearnPage: CustomPage<{
         {/* Glances */}
         <motion.section
           layout="position"
-          transition={transition(duration.medium4, easing.standard)}
+          transition={transition(DURATION.medium4, EASING.standard)}
           className="space-y-2 empty:!hidden"
         >
           {birthdayBoys.map((birthdayBoy) => (
@@ -75,7 +74,7 @@ const LearnPage: CustomPage<{
         <motion.section
           className="skc-section"
           layout="position"
-          transition={transition(duration.medium4, easing.standard)}
+          transition={transition(DURATION.medium4, EASING.standard)}
         >
           <Header>{t("schedule")}</Header>
           <Schedule schedule={schedule} view={UserRole.student} />
@@ -85,7 +84,7 @@ const LearnPage: CustomPage<{
         <motion.section
           className="skc-section"
           layout="position"
-          transition={transition(duration.medium4, easing.standard)}
+          transition={transition(DURATION.medium4, EASING.standard)}
         >
           <Columns columns={3} className="!items-end">
             <Header className="md:col-span-2">{ts("subjectList.title")}</Header>

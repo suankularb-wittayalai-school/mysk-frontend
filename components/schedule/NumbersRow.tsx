@@ -17,7 +17,7 @@ const NumbersRow: StylableFC = ({ style, className }) => (
         <li
           key={i}
           className={cn(`flex w-24 flex-row items-center gap-2 rounded-full
-            bg-surface-2 px-4 py-2`)}
+            bg-surface-container px-4 py-2`)}
         >
           <Text type="title-small" className="!leading-none">
             {i}

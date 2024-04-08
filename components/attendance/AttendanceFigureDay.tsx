@@ -1,7 +1,13 @@
 import cn from "@/utils/helpers/cn";
 import { StylableFC } from "@/utils/types/common";
 import { Text } from "@suankularb-components/react";
-import { differenceInDays, isSameDay, isSaturday, isSunday } from "date-fns";
+import {
+  Interval,
+  differenceInDays,
+  isSameDay,
+  isSaturday,
+  isSunday,
+} from "date-fns";
 import { useTranslation } from "next-i18next";
 import { ReactNode } from "react";
 

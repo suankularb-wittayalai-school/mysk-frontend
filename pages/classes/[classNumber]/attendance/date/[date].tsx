@@ -131,8 +131,9 @@ const DateAttendancePage: CustomPage<{
           <div
             className={cn(`grid md:h-[calc(100dvh-12rem-2px)] md:overflow-auto
               md:rounded-lg md:border-1 md:border-outline-variant
-              md:bg-surface-3 [&>:first-child]:top-0 [&>:first-child]:z-10
-              [&>:first-child]:sm:sticky [&>:first-child]:sm:bg-surface`)}
+              md:bg-surface-container-high [&>:first-child]:top-0
+              [&>:first-child]:z-10 [&>:first-child]:sm:sticky
+              [&>:first-child]:sm:bg-surface`)}
           >
             <AttendanceEventTabs
               event={event}

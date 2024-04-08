@@ -1,14 +1,14 @@
-// Imports
 import HomeroomContentEditor from "@/components/attendance/HomeroomContentEditor";
 import cn from "@/utils/helpers/cn";
 import { HomeroomContent, StudentAttendance } from "@/utils/types/attendance";
 import { StylableFC } from "@/utils/types/common";
 import {
   Button,
+  DURATION,
+  EASING,
   MaterialIcon,
   Text,
   transition,
-  useAnimationConfig,
 } from "@suankularb-components/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
@@ -77,16 +77,14 @@ const TodaySummary: StylableFC<{
     [homeroomContent],
   );
 
-  const { duration, easing } = useAnimationConfig();
-
   return (
     <motion.div
       layout
-      transition={transition(duration.medium4, easing.standard)}
+      transition={transition(DURATION.medium4, EASING.standard)}
       style={{ ...style, borderRadius: 20 }}
       className={cn(
         `overflow-hidden rounded-lg border-1 border-outline-variant
-        bg-surface-3`,
+        bg-surface-container-high`,
         className,
       )}
     >
@@ -96,7 +94,7 @@ const TodaySummary: StylableFC<{
         element={(props) => (
           <motion.h2
             layout="position"
-            transition={transition(duration.medium4, easing.standard)}
+            transition={transition(DURATION.medium4, EASING.standard)}
             {...props}
           />
         )}
@@ -109,7 +107,7 @@ const TodaySummary: StylableFC<{
       <AnimatePresence initial={false}>
         <motion.div
           layout
-          transition={transition(duration.medium4, easing.standard)}
+          transition={transition(DURATION.medium4, EASING.standard)}
           style={{ borderRadius: 12 }}
           className="m-2 overflow-hidden rounded-md bg-surface px-3 pb-3 pt-2"
         >
@@ -118,7 +116,7 @@ const TodaySummary: StylableFC<{
             layout="position"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={transition(duration.medium4, easing.standard)}
+            transition={transition(DURATION.medium4, EASING.standard)}
             className="grid gap-2"
           >
             <Text type="title-medium">{t("homeroom.title")}</Text>

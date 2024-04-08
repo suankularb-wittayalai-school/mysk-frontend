@@ -1,7 +1,7 @@
 import cn from "@/utils/helpers/cn";
 import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
-import { transition, useAnimationConfig } from "@suankularb-components/react";
+import { DURATION, EASING, transition } from "@suankularb-components/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 
@@ -18,8 +18,6 @@ const ScheduleGlanceCountdown: StylableFC<{
     keyPrefix: "atAGlance.countdown",
   });
 
-  const { duration, easing } = useAnimationConfig();
-
   return (
     <p style={style} className={cn(`space-x-1`, className)}>
       <motion.span layout="position" className="inline-block empty:hidden">
@@ -32,7 +30,7 @@ const ScheduleGlanceCountdown: StylableFC<{
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 10 }}
-          transition={transition(duration.medium4, easing.standard)}
+          transition={transition(DURATION.medium4, EASING.standard)}
           className="inline-block"
         >
           {minutesLeft.toLocaleString(locale)}
@@ -40,7 +38,7 @@ const ScheduleGlanceCountdown: StylableFC<{
       </AnimatePresence>
       <motion.span
         layout="position"
-        transition={transition(duration.medium4, easing.standard)}
+        transition={transition(DURATION.medium4, EASING.standard)}
         className="inline-block empty:hidden"
       >
         {t("post", { count: minutesLeft })}

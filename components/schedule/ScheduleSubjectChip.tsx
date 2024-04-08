@@ -6,10 +6,11 @@ import positionPxToPeriod from "@/utils/helpers/schedule/positionPxToPeriod";
 import useLocale from "@/utils/helpers/useLocale";
 import { Subject } from "@/utils/types/subject";
 import {
+  DURATION,
+  EASING,
   InputChip,
   MaterialIcon,
   transition,
-  useAnimationConfig,
 } from "@suankularb-components/react";
 import { motion, useAnimationControls } from "framer-motion";
 import { FC, useContext, useState } from "react";
@@ -21,7 +22,6 @@ const ScheduleSubjectChip: FC<{
   const locale = useLocale();
 
   // Animation
-  const { duration, easing } = useAnimationConfig();
   const animationControls = useAnimationControls();
 
   // Context
@@ -65,7 +65,7 @@ const ScheduleSubjectChip: FC<{
     <>
       <motion.div
         animate={animationControls}
-        transition={transition(duration.medium2, easing.standard)}
+        transition={transition(DURATION.medium2, EASING.standard)}
         drag
         dragMomentum={false}
         whileDrag={{ boxShadow: "var(--shadow-3)" }}

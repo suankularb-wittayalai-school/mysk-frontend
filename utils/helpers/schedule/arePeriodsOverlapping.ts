@@ -1,3 +1,5 @@
+import { Day } from "date-fns";
+
 export function arePeriodsOverlapping(
   period1: { day?: Day; startTime: number; duration: number },
   period2: { day?: Day; startTime: number; duration: number },

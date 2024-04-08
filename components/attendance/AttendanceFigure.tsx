@@ -4,7 +4,7 @@ import cn from "@/utils/helpers/cn";
 import getISODateString from "@/utils/helpers/getISODateString";
 import { AttendanceEvent, StudentAttendance } from "@/utils/types/attendance";
 import { StylableFC } from "@/utils/types/common";
-import { addDays, differenceInDays } from "date-fns";
+import { Interval, addDays, differenceInDays } from "date-fns";
 import { list } from "radash";
 import { useMemo } from "react";
 
@@ -26,7 +26,7 @@ const DEFAULT_ATTENDANCE = {
  *
  * @param interval The start and end dates of the interval.
  * @param attendances The attendances of the Student during the interval.
- * 
+ *
  * @note If Attendance records exceed the interval, the extra records will *still be displayed*.
  */
 const AttendanceFigure: StylableFC<{
