@@ -1,9 +1,8 @@
-// Imports
 import cn from "@/utils/helpers/cn";
 import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import { Text } from "@suankularb-components/react";
-import { setDay } from "date-fns";
+import { Day, setDay } from "date-fns";
 import { useTranslation } from "next-i18next";
 
 const DayCard: StylableFC<{ day: Day }> = ({ day, style, className }) => {

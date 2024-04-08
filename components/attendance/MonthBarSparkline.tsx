@@ -20,7 +20,7 @@ const MonthBarSparkline: StylableFC<{
       style={{ ...style, height: CHART_HEIGHT }}
       className={cn(
         `w-full overflow-hidden rounded-full *:rounded-xs`,
-        total === 0 && `bg-surface-2`,
+        total === 0 && `bg-surface-container`,
         className,
       )}
     >
@@ -42,7 +42,7 @@ const MonthBarSparkline: StylableFC<{
       />
       <div
         style={{ height: (summary.empty / total) * CHART_HEIGHT }}
-        className="bg-surface-2"
+        className="bg-surface-container"
       />
     </div>
   );

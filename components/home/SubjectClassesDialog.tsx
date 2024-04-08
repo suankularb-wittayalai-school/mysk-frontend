@@ -1,12 +1,11 @@
 // Imports
 import ConfirmDeleteDialog from "@/components/common/ConfirmDeleteDialog";
 import MultilangText from "@/components/common/MultilingualText";
-import BrandIcon from "@/components/icons/BrandIcon";
 import ClassroomSubjectDialog from "@/components/home/ClassroomSubjectDialog";
+import BrandIcon from "@/components/icons/BrandIcon";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import deleteClassroomSubject from "@/utils/backend/subject/deleteClassroomSubject";
 import getClassroomSubjectsOfSubject from "@/utils/backend/subject/getClassroomSubjectsOfSubject";
-import cn from "@/utils/helpers/cn";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
@@ -19,6 +18,7 @@ import {
   Actions,
   Button,
   Columns,
+  DURATION,
   DataTable,
   DataTableBody,
   DataTableColumnDef,
@@ -26,6 +26,7 @@ import {
   DataTableHead,
   DataTablePagination,
   DataTableSearch,
+  EASING,
   FullscreenDialog,
   MaterialIcon,
   Progress,
@@ -33,7 +34,6 @@ import {
   Snackbar,
   Text,
   transition,
-  useAnimationConfig,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import {
@@ -140,7 +140,6 @@ const SubjectClassesDialog: DialogFC<{
   const { t } = useTranslation("teach", { keyPrefix: "dialog.subjectClasses" });
   const { t: tx } = useTranslation("common");
 
-  const { duration, easing } = useAnimationConfig();
   const { setSnackbar } = useContext(SnackbarContext);
   const refreshProps = useRefreshProps();
 
@@ -338,7 +337,7 @@ const SubjectClassesDialog: DialogFC<{
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={transition(duration.short4, easing.standard)}
+              transition={transition(DURATION.short4, EASING.standard)}
             >
               <DataTable
                 layout

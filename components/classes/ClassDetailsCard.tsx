@@ -11,7 +11,7 @@ import useToggle from "@/utils/helpers/useToggle";
 import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
 import { User, UserRole } from "@/utils/types/person";
-import { transition, useAnimationConfig } from "@suankularb-components/react";
+import { DURATION, EASING, transition } from "@suankularb-components/react";
 import { LayoutGroup, motion } from "framer-motion";
 
 /**
@@ -28,8 +28,7 @@ const ClassDetailsCard: StylableFC<{
   user: User;
   refreshData: () => void;
 }> = ({ classroom, isOwnClass, user, refreshData, style, className }) => {
-  const { duration, easing } = useAnimationConfig();
-  const positionTransition = transition(duration.medium2, easing.standard);
+  const positionTransition = transition(DURATION.medium2, EASING.standard);
 
   const [scheduleOpen, toggleScheduleOpen] = useToggle();
 

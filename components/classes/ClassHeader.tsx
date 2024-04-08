@@ -7,10 +7,11 @@ import { User, UserRole } from "@/utils/types/person";
 import {
   AssistChip,
   ChipSet,
+  DURATION,
+  EASING,
   MaterialIcon,
   Text,
   transition,
-  useAnimationConfig,
 } from "@suankularb-components/react";
 import va from "@vercel/analytics";
 import { motion } from "framer-motion";
@@ -35,8 +36,6 @@ const ClassHeader: StylableFC<{
   const { t: tx } = useTranslation("common");
 
   const convertContactsForVCard = useConvertContactsForVCard();
-
-  const { duration, easing } = useAnimationConfig();
 
   /**
    * Save the Classroom Contacts as a vCard file.
@@ -76,7 +75,7 @@ const ClassHeader: StylableFC<{
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={transition(duration.medium2, easing.standard)}
+      transition={transition(DURATION.medium2, EASING.standard)}
       style={style}
       className={cn(`grid gap-2 p-4`, className)}
     >

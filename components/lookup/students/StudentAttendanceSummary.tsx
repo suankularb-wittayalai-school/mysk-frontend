@@ -12,10 +12,11 @@ import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
 import {
   Button,
+  DURATION,
+  EASING,
   MaterialIcon,
   Text,
   transition,
-  useAnimationConfig,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { addDays, isToday, isWithinInterval } from "date-fns";
@@ -50,8 +51,6 @@ const StudentAttendanceSummary: StylableFC<{
     end: now,
   };
   const academicYear = getCurrentAcademicYear();
-
-  const { duration, easing } = useAnimationConfig();
 
   const [attendances, setAttendances] = useState<
     (Omit<StudentAttendance, "student"> & { date: string })[]
@@ -108,7 +107,7 @@ const StudentAttendanceSummary: StylableFC<{
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={transition(duration.short4, easing.standard)}
+          transition={transition(DURATION.short4, EASING.standard)}
           className={cn(
             `grid grid-cols-2 gap-2 *:h-20 *:rounded-md md:grid-cols-4
             [&>:last-child]:col-span-2`,

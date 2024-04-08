@@ -143,14 +143,17 @@ const AttendanceOverviewPage: CustomPage<{
             <div className="grid grid-cols-2 gap-3">
               <Card
                 appearance="outlined"
-                className="!gap-2 !rounded-lg !bg-surface-1 !p-3 !pt-2"
+                className="!gap-2 !rounded-lg !bg-surface-container !p-3 !pt-2"
               >
                 <Text type="headline-medium">
                   {t("chart.summary.presence", {
                     count: totals.presence + totals.late,
                   })}
                 </Text>
-                <div className="grid gap-2 *:rounded-sm *:bg-surface *:px-4 *:py-1.5 sm:grid-cols-2">
+                <div
+                  className={cn(`grid gap-2 *:rounded-sm *:bg-surface *:px-4
+                    *:py-1.5 sm:grid-cols-2`)}
+                >
                   <Text type="button" element="div">
                     {t("chart.summary.onTime", { count: totals.presence })}
                   </Text>
@@ -161,7 +164,7 @@ const AttendanceOverviewPage: CustomPage<{
               </Card>
               <Card
                 appearance="outlined"
-                className="!rounded-lg !bg-surface-1 !px-3 !py-2"
+                className="!rounded-lg !bg-surface-container !px-3 !py-2"
               >
                 <Text type="headline-medium">
                   {t("chart.summary.absence", { count: totals.absence })}

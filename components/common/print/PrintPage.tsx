@@ -23,13 +23,13 @@ const PrintPage: FC<{ children: ReactNode }> = ({ children }) => (
       {/* App bar color */}
       <meta
         name="theme-color"
-        content="#e7f0f6" // surface-3
+        content="#ebeef3" // surface-container
         media="(prefers-color-scheme: light)"
         key="theme-light"
       />
       <meta
         name="theme-color"
-        content="#212a30" // surface-3
+        content="#1c2024" // surface-container
         media="(prefers-color-scheme: dark)"
         key="theme-dark"
       />
@@ -38,14 +38,14 @@ const PrintPage: FC<{ children: ReactNode }> = ({ children }) => (
     <ContentLayout
       className="min-h-screen supports-[height:100dvh]:min-h-[100dvh]
         print:-mb-20 print:contents print:bg-white print:!py-0
-        sm:bg-surface-2"
+        sm:bg-surface-container"
     >
       <Columns columns={3}>{children}</Columns>
     </ContentLayout>
 
     <style jsx global>{`
       body {
-        background-color: var(--surface-2);
+        background-color: var(--surface-container);
       }
 
       .skc-nav-bar::before {

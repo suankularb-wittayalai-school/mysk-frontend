@@ -1,21 +1,18 @@
-// External libraries
-import { AnimatePresence, motion } from "framer-motion";
-import { FC, useContext } from "react";
-
-// SK Components
+import ScheduleContext from "@/contexts/ScheduleContext";
+import cn from "@/utils/helpers/cn";
+import { StylableFC } from "@/utils/types/common";
 import {
+  DURATION,
+  EASING,
   transition,
-  useAnimationConfig,
   useBreakpoint,
 } from "@suankularb-components/react";
+import { AnimatePresence, motion } from "framer-motion";
+import { useContext } from "react";
 
-// Contexts
-import ScheduleContext from "@/contexts/ScheduleContext";
-
-const PeriodAdditionHint: FC = () => {
+const PeriodAdditionHint: StylableFC = ({ style, className }) => {
   // Animation
   const { atBreakpoint } = useBreakpoint();
-  const { duration, easing } = useAnimationConfig();
 
   // Context
   const { periodWidth, periodHeight, additionSite } =
@@ -35,9 +32,13 @@ const PeriodAdditionHint: FC = () => {
             scale: 1,
           }}
           exit={{ opacity: 0, scale: 1.2 }}
-          transition={transition(duration.medium2, easing.standard)}
-          className="absolute left-[9.5rem] top-[3.625rem] z-20 h-14 w-24
-            rounded-sm border-4 border-primary"
+          transition={transition(DURATION.medium2, EASING.standard)}
+          style={style}
+          className={cn(
+            `absolute left-[9.5rem] top-[3.625rem] z-20 h-14 w-24 rounded-sm
+            border-4 border-primary`,
+            className,
+          )}
         />
       )}
     </AnimatePresence>

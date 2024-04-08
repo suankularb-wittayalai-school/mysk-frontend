@@ -1,11 +1,11 @@
-// Imports
 import cn from "@/utils/helpers/cn";
 import { StylableFC } from "@/utils/types/common";
 import {
   Button,
+  DURATION,
+  EASING,
   Text,
   transition,
-  useAnimationConfig,
 } from "@suankularb-components/react";
 import { motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
@@ -27,8 +27,6 @@ const LookupResultsList: StylableFC<{
 }> = ({ children, filtersURL, length, style, className }) => {
   const { t } = useTranslation("lookup");
 
-  const { duration, easing } = useAnimationConfig();
-
   return length > 0 ? (
     // List
     <div
@@ -46,8 +44,8 @@ const LookupResultsList: StylableFC<{
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{
-        ...transition(duration.medium2, easing.standardDecelerate),
-        delay: duration.medium2,
+        ...transition(DURATION.medium2, EASING.standardDecelerate),
+        delay: DURATION.medium2,
       }}
       className={cn(`skc-card skc-card--outlined mt-4 flex grow flex-col
         items-center justify-center gap-1 p-4 sm:mb-6`)}

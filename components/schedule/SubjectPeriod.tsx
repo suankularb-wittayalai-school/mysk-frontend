@@ -1,4 +1,3 @@
-// Imports
 import HoverList from "@/components/person/HoverList";
 import PeriodDetailsDialog from "@/components/schedule/PeriodDetailsDialog";
 import SubjectPeriodMenu from "@/components/schedule/SubjectPeriodMenu";
@@ -17,14 +16,16 @@ import useToggle from "@/utils/helpers/useToggle";
 import withLoading from "@/utils/helpers/withLoading";
 import { PeriodContentItem } from "@/utils/types/schedule";
 import {
+  DURATION,
+  EASING,
   Interactive,
   MaterialIcon,
   Text,
   transition,
-  useAnimationConfig,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import va from "@vercel/analytics";
+import { Day } from "date-fns";
 import {
   AnimatePresence,
   PanInfo,
@@ -53,7 +54,6 @@ const SubjectPeriod: FC<{
   const locale = useLocale();
   const { t } = useTranslation(["schedule", "common"]);
 
-  const { duration, easing } = useAnimationConfig();
   const animationControls = useAnimationControls();
   const dragControls = useDragControls();
 
@@ -260,7 +260,7 @@ const SubjectPeriod: FC<{
           ref={periodRef}
           layoutId={`period-${period.id}`}
           animate={animationControls}
-          transition={transition(duration.medium2, easing.standard)}
+          transition={transition(DURATION.medium2, EASING.standard)}
           drag={editable}
           dragListener={false}
           dragControls={dragControls}
@@ -312,8 +312,8 @@ const SubjectPeriod: FC<{
               <motion.span
                 layoutId={editable ? `period-${period.id}-class` : undefined}
                 transition={transition(
-                  duration.short2,
-                  easing.standardDecelerate,
+                  DURATION.short2,
+                  EASING.standardDecelerate,
                 )}
                 className="skc-text skc-text--title-medium !w-fit"
               >
@@ -377,15 +377,15 @@ const SubjectPeriod: FC<{
                     scaleY: 0,
                     x: -10,
                     transition: transition(
-                      duration.short2,
-                      easing.standardAccelerate,
+                      DURATION.short2,
+                      EASING.standardAccelerate,
                     ),
                   }}
                   aria-hidden
                   className="absolute -right-12 bottom-0.5 z-20 text-secondary"
                   transition={transition(
-                    duration.short4,
-                    easing.standardDecelerate,
+                    DURATION.short4,
+                    EASING.standardDecelerate,
                   )}
                 >
                   <MaterialIcon icon="double_arrow" size={40} />
@@ -404,7 +404,7 @@ const SubjectPeriod: FC<{
                       (periodDuration - 1) * 8,
                   }}
                   exit={{ opacity: 0 }}
-                  transition={transition(duration.short4, easing.standard)}
+                  transition={transition(DURATION.short4, EASING.standard)}
                   className="absolute inset-0 rounded-sm border-4 border-secondary"
                 />
               </>

@@ -1,14 +1,15 @@
-// Imports
 import LookupDetailsCard from "@/components/lookup/LookupDetailsCard";
 import DocumentHeader from "@/components/lookup/document/DocumentHeader";
+import cn from "@/utils/helpers/cn";
 import { StylableFC } from "@/utils/types/common";
 import { SchoolDocument } from "@/utils/types/news";
 import {
+  DURATION,
+  EASING,
   MaterialIcon,
   Progress,
   Text,
   transition,
-  useAnimationConfig,
 } from "@suankularb-components/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
@@ -27,7 +28,6 @@ const DocumentDetailsCard: StylableFC<{
   const { t } = useTranslation("lookup", { keyPrefix: "documents.header" });
 
   // Animation
-  const { duration, easing } = useAnimationConfig();
 
   // Loading
   const [loading, setLoading] = useState(true);
@@ -70,9 +70,12 @@ const DocumentDetailsCard: StylableFC<{
     <LookupDetailsCard style={style} className={className}>
       <div ref={mainRef} className="h-full">
         {/* Header */}
-        <div ref={headerRef} className="bg-surface-5">
+        <div ref={headerRef} className="bg-surface-variant">
           <DocumentHeader document={document} />
-          <div className="flex flex-row gap-2 rounded-t-lg bg-surface-2 px-4 py-3">
+          <div
+            className={cn(`flex flex-row gap-2 rounded-t-lg bg-surface-container
+              px-4 py-3`)}
+          >
             <MaterialIcon
               icon="lock"
               size={20}
@@ -89,12 +92,12 @@ const DocumentDetailsCard: StylableFC<{
         </div>
 
         {/* Google Drive embed */}
-        <div className="bg-surface-2">
+        <div className="bg-surface-container">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{
-              ...transition(duration.medium2, easing.standardDecelerate),
+              ...transition(DURATION.medium2, EASING.standardDecelerate),
               delay: 0.2,
             }}
             className="relative w-full"
@@ -106,7 +109,7 @@ const DocumentDetailsCard: StylableFC<{
                   initial={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   className="absolute inset-0 rounded-lg bg-surface"
-                  transition={transition(duration.medium4, easing.standard)}
+                  transition={transition(DURATION.medium4, EASING.standard)}
                 />
               )}
             </AnimatePresence>

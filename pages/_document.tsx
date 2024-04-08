@@ -30,13 +30,13 @@ export default function Document() {
         <meta
           key="theme-color-light"
           name="theme-color"
-          content="#e7f0f6" // surface-2
+          content="#e5e8ed" // surface-container-high
           media="(prefers-color-scheme: light)"
         />
         <meta
           key="theme-color-dark"
           name="theme-color"
-          content="#004c6d" // primary-container
+          content="#262a2e" // surface-container-high
           media="(prefers-color-scheme: dark)"
         />
         <meta

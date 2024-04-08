@@ -13,7 +13,7 @@ import getLocaleName from "@/utils/helpers/getLocaleName";
 import useToggle from "@/utils/helpers/useToggle";
 import { StylableFC } from "@/utils/types/component";
 import { Student, User, UserRole } from "@/utils/types/person";
-import { transition, useAnimationConfig } from "@suankularb-components/react";
+import { DURATION, EASING, transition } from "@suankularb-components/react";
 import { differenceInYears } from "date-fns";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
@@ -41,8 +41,7 @@ const StudentDetailsCard: StylableFC<{
   const { t } = useTranslation("lookup", { keyPrefix: "students.detail" });
   const { t: tx } = useTranslation("common");
 
-  const { duration, easing } = useAnimationConfig();
-  const positionTransition = transition(duration.medium2, easing.standard);
+  const positionTransition = transition(DURATION.medium2, EASING.standard);
 
   const [scheduleOpen, toggleScheduleOpen] = useToggle();
 

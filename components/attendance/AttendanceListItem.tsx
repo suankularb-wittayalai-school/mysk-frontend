@@ -16,6 +16,8 @@ import {
 import { StylableFC } from "@/utils/types/common";
 import {
   Button,
+  DURATION,
+  EASING,
   FilterChip,
   ListItem,
   ListItemContent,
@@ -23,7 +25,6 @@ import {
   Snackbar,
   TextField,
   transition,
-  useAnimationConfig,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { motion } from "framer-motion";
@@ -59,8 +60,6 @@ const AttendanceListItem: StylableFC<{
   const locale = useLocale();
   const { t } = useTranslation("attendance", { keyPrefix: "item" });
   const { t: tx } = useTranslation("common");
-
-  const { duration, easing } = useAnimationConfig();
 
   const supabase = useSupabaseClient();
 
@@ -166,7 +165,7 @@ const AttendanceListItem: StylableFC<{
   return (
     <motion.li
       layoutId={attendance.student.id}
-      transition={transition(duration.medium2, easing.standard)}
+      transition={transition(DURATION.medium2, EASING.standard)}
     >
       <motion.ul
         layout="position"
@@ -267,7 +266,7 @@ const AttendanceListItem: StylableFC<{
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={transition(duration.medium2, easing.standard)}
+            transition={transition(DURATION.medium2, EASING.standard)}
             className="mt-1 px-4 sm:pb-2"
           >
             <TextField<string>

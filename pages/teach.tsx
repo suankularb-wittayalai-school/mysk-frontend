@@ -16,10 +16,11 @@ import { Schedule as ScheduleType } from "@/utils/types/schedule";
 import { Subject, SubjectClassrooms } from "@/utils/types/subject";
 import {
   Columns,
+  DURATION,
+  EASING,
   Header,
   Search,
   transition,
-  useAnimationConfig,
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { LayoutGroup, motion } from "framer-motion";
@@ -54,8 +55,6 @@ const TeachPage: CustomPage<{
   const locale = useLocale();
   const { t } = useTranslation("teach");
 
-  const { duration, easing } = useAnimationConfig();
-
   const [query, setQuery] = useState<string>("");
 
   return (
@@ -72,7 +71,7 @@ const TeachPage: CustomPage<{
         <motion.section
           className="skc-section"
           layout="position"
-          transition={transition(duration.medium4, easing.standard)}
+          transition={transition(DURATION.medium4, EASING.standard)}
         >
           <Header>{t("schedule.title")}</Header>
           <Schedule
@@ -86,7 +85,7 @@ const TeachPage: CustomPage<{
         <motion.section
           className="skc-section !gap-y-3"
           layout="position"
-          transition={transition(duration.medium4, easing.standard)}
+          transition={transition(DURATION.medium4, EASING.standard)}
         >
           <Columns columns={3} className="!items-end">
             <Header className="md:col-span-2">{t("subjects.title")}</Header>

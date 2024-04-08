@@ -52,7 +52,7 @@ const AttendanceFigureEvent: StylableFC<{
           `bg-tertiary-container text-on-tertiary-container`,
           `bg-surface-variant text-on-surface-variant`,
           `bg-error text-on-error`,
-          `bg-surface-2`,
+          `bg-surface-container`,
         ][type],
         className,
       )}

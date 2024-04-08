@@ -35,6 +35,7 @@ const ParticipationMetric: StylableFC<{
         alt={t(`${id}.alt`)}
         value={(count / total) * 100}
         visible
+        className="[&_.skc-progress\_\_remainder]:!stroke-surface"
       />
       <div>
         <Text type="title-small" className="text-on-surface-variant">

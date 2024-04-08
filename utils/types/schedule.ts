@@ -1,6 +1,7 @@
 import { Classroom } from "@/utils/types/classroom";
 import { Teacher } from "@/utils/types/person";
 import { Subject } from "@/utils/types/subject";
+import { Day } from "date-fns";
 
 export type Schedule = {
   class?: Pick<Classroom, "id" | "number">;
