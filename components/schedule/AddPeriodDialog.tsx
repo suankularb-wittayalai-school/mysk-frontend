@@ -128,7 +128,7 @@ const AddPeriodDialog: StylableFC<{
       open={open}
       width={360}
       onClose={onClose}
-      className="[&_.skc-chip-field\_\_label]:!bg-surface-3"
+      className="[&_.skc-chip-field\_\_label]:!bg-surface-container-high"
     >
       <DialogHeader
         title={t("title.add")}

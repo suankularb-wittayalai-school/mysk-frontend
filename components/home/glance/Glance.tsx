@@ -29,7 +29,7 @@ const Glance: StylableFC<{
           style={{ borderRadius: 28, ...style }}
           className={cn(
             `mx-4 overflow-hidden rounded-xl border-1 border-outline-variant
-            bg-surface-2 sm:mx-0`,
+            bg-surface-container sm:mx-0`,
             className,
           )}
         >

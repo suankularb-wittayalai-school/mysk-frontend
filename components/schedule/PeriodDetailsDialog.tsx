@@ -56,11 +56,11 @@ const PeriodDetailsDialog: StylableFC<{
               layoutId={`period-${period.id}`}
               transition={transition(duration.medium4, easing.standard)}
               className={cn(`pointer-events-auto w-80 overflow-hidden
-                rounded-xl bg-surface-3 text-on-surface-variant`)}
+                rounded-xl bg-surface-container-high text-on-surface-variant`)}
             >
               <div
                 className={cn(`grid grid-cols-[2.5rem,auto] items-start gap-2
-                  border-b-1 border-b-outline bg-surface-3 p-2`)}
+                  border-b-1 border-b-outline bg-surface-container-high p-2`)}
               >
                 <Button
                   appearance="text"

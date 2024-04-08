@@ -86,7 +86,7 @@ const TodaySummary: StylableFC<{
       style={{ ...style, borderRadius: 20 }}
       className={cn(
         `overflow-hidden rounded-lg border-1 border-outline-variant
-        bg-surface-3`,
+        bg-surface-container-high`,
         className,
       )}
     >

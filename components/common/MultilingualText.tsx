@@ -46,7 +46,7 @@ const MultilangText: FC<{
                     !options?.priorityLanguage ||
                       langCode === options?.priorityLanguage
                       ? `bg-surface-variant text-primary`
-                      : `bg-surface-2 text-outline`,
+                      : `bg-surface-container text-outline`,
                   )}
                 >
                   {langCode === "en-US" ? "EN" : "TH"}

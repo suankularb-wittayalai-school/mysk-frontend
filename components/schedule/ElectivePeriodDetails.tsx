@@ -100,13 +100,14 @@ const ElectivePeriodDetails: DialogFC<{
               transition={transition(duration.medium4, easing.standard)}
               className={cn(`pointer-events-auto max-h-[calc(100vh-3rem)] w-96
                 max-w-[calc(100vw-3rem)] overflow-y-auto overflow-x-hidden
-                rounded-xl bg-surface-3 text-on-surface-variant
+                rounded-xl bg-surface-container-high text-on-surface-variant
                 supports-[height:100dvh]:max-h-[calc(100dvh-3rem)]`)}
             >
               {/* Top app bar */}
               <div
                 className={cn(`sticky top-0 flex flex-row items-center
-                  gap-2 border-b-1 border-b-outline bg-surface-3 p-2`)}
+                  gap-2 border-b-1 border-b-outline bg-surface-container-high
+                  p-2`)}
               >
                 <Button
                   appearance="text"

@@ -83,7 +83,7 @@
 @layer components {
   .kbd {
     @apply -my-1 inline-block select-none rounded-sm border-[0.25px] border-b-2
-      border-outline-variant bg-surface-2 px-2 py-1 active:-mb-[3.5px]
+      border-outline-variant bg-surface-container px-2 py-1 active:-mb-[3.5px]
       active:translate-y-0.5 active:border-b-[0.25px];
   }
 

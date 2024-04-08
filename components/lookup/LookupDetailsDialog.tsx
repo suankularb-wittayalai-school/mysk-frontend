@@ -27,13 +27,13 @@ const LookupDetailsDialog: StylableFC<{
           <meta
             key="theme-color-light"
             name="theme-color"
-            content="#dfebf3" // surface-3
+            content="#dde3ea" // surface-variant
             media="(prefers-color-scheme: light)"
           />
           <meta
             key="theme-color-dark"
             name="theme-color"
-            content="#243037" // surface-3
+            content="#41484d" // surface-variant
             media="(prefers-color-scheme: dark)"
           />
         </Head>

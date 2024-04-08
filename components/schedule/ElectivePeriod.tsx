@@ -1,4 +1,3 @@
-// Imports
 import ElectivePeriodDetails from "@/components/schedule/ElectivePeriodDetails";
 import cn from "@/utils/helpers/cn";
 import periodDurationToWidth from "@/utils/helpers/schedule/periodDurationToWidth";
@@ -42,26 +41,16 @@ const ElectivePeriod: StylableFC<{
           layoutId={`elective-period-${period.id}`}
           transition={transition(duration.medium2, easing.standard)}
           style={style}
-          className={cn(
-            `relative before:absolute
-            before:inset-0 before:-z-10 before:h-14
-            before:rounded-sm before:transition-[transform,box-shadow]
-            hover:before:rotate-6 hover:before:shadow-1
-            active:before:rotate-0 active:before:shadow-none`,
-            isInSession
-              ? `before:bg-tertiary-80 dark:before:bg-tertiary-20`
-              : `before:bg-surface-2`,
-            className,
-          )}
+          className={cn(`relative`, className)}
         >
           <Interactive
             className={cn(
-              `flex h-full flex-col justify-center rounded-sm bg-surface-2 px-4
-              py-2 text-left transition-shadow hover:shadow-1 focus:shadow-2`,
+              `flex h-full flex-col justify-center rounded-sm px-4 py-2
+              text-left transition-shadow hover:shadow-1 focus:shadow-2`,
               isInSession
                 ? `bg-tertiary-container text-on-tertiary-container shadow-1
                   hover:shadow-2`
-                : `bg-surface-2 text-on-surface-variant`,
+                : `bg-surface-variant text-primary`,
             )}
             style={{ width: periodDurationToWidth(period.duration) }}
             onClick={() => {

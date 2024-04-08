@@ -51,7 +51,11 @@ const LookupClassCard: StylableFC<{
   const supabase = useSupabaseClient();
 
   const [loading, setLoading] = useState(true);
-  const { now, periodNumber, schoolSessionState: schooleSessionState } = useNow();
+  const {
+    now,
+    periodNumber,
+    schoolSessionState: schooleSessionState,
+  } = useNow();
   const [period, setPeriod] = useState<
     (SchedulePeriod & { is_current: boolean }) | null
   >(null);
@@ -137,8 +141,8 @@ const LookupClassCard: StylableFC<{
       ) : (
         <div
           className={cn(
-            `m-3 rounded-full border-1 border-outline-variant bg-surface-2 p-3
-            transition-[border-color]`,
+            `m-3 rounded-full border-1 border-outline-variant
+            bg-surface-container p-3 transition-[border-color]`,
             classroom.id === selected && `sm:group-focus:border-primary`,
           )}
         >

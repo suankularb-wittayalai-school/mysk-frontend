@@ -1,6 +1,7 @@
 // Imports
 import LookupDetailsCard from "@/components/lookup/LookupDetailsCard";
 import DocumentHeader from "@/components/lookup/document/DocumentHeader";
+import cn from "@/utils/helpers/cn";
 import { StylableFC } from "@/utils/types/common";
 import { SchoolDocument } from "@/utils/types/news";
 import {
@@ -70,9 +71,12 @@ const DocumentDetailsCard: StylableFC<{
     <LookupDetailsCard style={style} className={className}>
       <div ref={mainRef} className="h-full">
         {/* Header */}
-        <div ref={headerRef} className="bg-surface-5">
+        <div ref={headerRef} className="bg-surface-variant">
           <DocumentHeader document={document} />
-          <div className="flex flex-row gap-2 rounded-t-lg bg-surface-2 px-4 py-3">
+          <div
+            className={cn(`flex flex-row gap-2 rounded-t-lg bg-surface-container
+              px-4 py-3`)}
+          >
             <MaterialIcon
               icon="lock"
               size={20}
@@ -89,7 +93,7 @@ const DocumentDetailsCard: StylableFC<{
         </div>
 
         {/* Google Drive embed */}
-        <div className="bg-surface-2">
+        <div className="bg-surface-container">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
