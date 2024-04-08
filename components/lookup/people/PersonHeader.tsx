@@ -13,10 +13,11 @@ import { Student, Teacher, UserRole } from "@/utils/types/person";
 import {
   AssistChip,
   ChipSet,
+  DURATION,
+  EASING,
   Header,
   MaterialIcon,
   transition,
-  useAnimationConfig,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import va from "@vercel/analytics";
@@ -48,8 +49,6 @@ const PersonHeader: StylableFC<{
   // Translation
   const locale = useLocale();
   const { t } = useTranslation("lookup", { keyPrefix: "people.header" });
-
-  const { duration, easing } = useAnimationConfig();
 
   const getVCard = useGetVCard();
   const { user } = useUser();
@@ -92,7 +91,7 @@ const PersonHeader: StylableFC<{
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={transition(duration.medium2, easing.standard)}
+      transition={transition(DURATION.medium2, EASING.standard)}
       style={style}
       className={cn(
         `flex flex-col gap-6 p-4 md:grid md:grid-cols-[3.5rem,minmax(0,1fr)]`,

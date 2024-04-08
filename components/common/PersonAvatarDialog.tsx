@@ -1,6 +1,6 @@
 import cn from "@/utils/helpers/cn";
 import { StylableFC } from "@/utils/types/common";
-import { transition, useAnimationConfig } from "@suankularb-components/react";
+import { DURATION, EASING, transition, useAnimationConfig } from "@suankularb-components/react";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 
@@ -16,7 +16,6 @@ const PersonAvatarDialog: StylableFC<{
   profile: string;
   onClose: () => void;
 }> = ({ open, profile, onClose, style, className }) => {
-  const { duration, easing } = useAnimationConfig();
 
   return (
     <AnimatePresence>
@@ -40,9 +39,9 @@ const PersonAvatarDialog: StylableFC<{
               exit={{
                 scale: 0.7,
                 opacity: 0,
-                transition: transition(duration.short4, easing.standard),
+                transition: transition(DURATION.short4, EASING.standard),
               }}
-              transition={transition(duration.medium4, easing.standard)}
+              transition={transition(DURATION.medium4, EASING.standard)}
               className="pointer-events-auto"
             >
               <Image
@@ -60,7 +59,7 @@ const PersonAvatarDialog: StylableFC<{
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.5 }}
             exit={{ opacity: 0 }}
-            transition={transition(duration.medium4, easing.standard)}
+            transition={transition(DURATION.medium4, EASING.standard)}
             className="skc-scrim"
             onClick={onClose}
           />

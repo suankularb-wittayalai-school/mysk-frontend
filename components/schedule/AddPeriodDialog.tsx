@@ -1,4 +1,3 @@
-// Imports
 import ClassroomsField from "@/components/classes/ClassroomsField";
 import RoomsField from "@/components/room/RoomsField";
 import ScheduleContext from "@/contexts/ScheduleContext";
@@ -19,15 +18,16 @@ import { Subject } from "@/utils/types/subject";
 import {
   Actions,
   Button,
+  DURATION,
   Dialog,
   DialogContent,
   DialogHeader,
+  EASING,
   FormGroup,
   FormItem,
   Radio,
   Snackbar,
   transition,
-  useAnimationConfig,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import va from "@vercel/analytics";
@@ -55,7 +55,6 @@ const AddPeriodDialog: StylableFC<{
   const { t } = useTranslation("schedule", { keyPrefix: "dialog.editPeriod" });
   const { t: tx } = useTranslation("common");
 
-  const { duration, easing } = useAnimationConfig();
   const { teacherID, additionSite } = useContext(ScheduleContext);
   const { setSnackbar } = useContext(SnackbarContext);
 
@@ -146,7 +145,7 @@ const AddPeriodDialog: StylableFC<{
             transition={{
               type: "spring",
               bounce: 0.325,
-              duration: duration.medium4,
+              duration: DURATION.medium4,
             }}
             style={{
               width: periodDurationToWidth(form.duration),
@@ -176,7 +175,7 @@ const AddPeriodDialog: StylableFC<{
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
-                transition={transition(duration.short4, easing.standard)}
+                transition={transition(DURATION.short4, EASING.standard)}
                 className="skc-text skc-text--body-small"
               >
                 {getSubjectName(form.duration, subject, locale)}

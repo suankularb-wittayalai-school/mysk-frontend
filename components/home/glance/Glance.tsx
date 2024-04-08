@@ -1,6 +1,6 @@
 import cn from "@/utils/helpers/cn";
 import { StylableFC } from "@/utils/types/common";
-import { transition, useAnimationConfig } from "@suankularb-components/react";
+import { DURATION, EASING, transition } from "@suankularb-components/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ReactNode } from "react";
 
@@ -15,8 +15,6 @@ const Glance: StylableFC<{
   children: ReactNode;
   visible?: boolean;
 }> = ({ children, visible, style, className }) => {
-  const { duration, easing } = useAnimationConfig();
-
   return (
     <AnimatePresence initial={false}>
       {visible && (
@@ -25,7 +23,7 @@ const Glance: StylableFC<{
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={transition(duration.medium4, easing.standard)}
+          transition={transition(DURATION.medium4, EASING.standard)}
           style={{ borderRadius: 28, ...style }}
           className={cn(
             `mx-4 overflow-hidden rounded-xl border-1 border-outline-variant

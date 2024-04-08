@@ -1,4 +1,3 @@
-// Imports
 import MultilangText from "@/components/common/MultilingualText";
 import LookupDetailsContent from "@/components/lookup//LookupDetailsContent";
 import LookupDetailsCard from "@/components/lookup/LookupDetailsCard";
@@ -16,9 +15,10 @@ import useToggle from "@/utils/helpers/useToggle";
 import { StylableFC } from "@/utils/types/common";
 import { Teacher } from "@/utils/types/person";
 import {
+  DURATION,
+  EASING,
   Text,
   transition,
-  useAnimationConfig,
 } from "@suankularb-components/react";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
@@ -31,14 +31,13 @@ import { sift } from "radash";
  */
 const TeacherDetailsCard: StylableFC<{
   teacher?: Teacher;
-  options?: Partial<{ hideSeeClass: boolean }>
+  options?: Partial<{ hideSeeClass: boolean }>;
 }> = ({ teacher, options, style, className }) => {
   const locale = useLocale();
   const { t } = useTranslation("lookup", { keyPrefix: "teachers.detail" });
   const { t: tx } = useTranslation("common");
 
-  const { duration, easing } = useAnimationConfig();
-  const positionTransition = transition(duration.medium2, easing.standard);
+  const positionTransition = transition(DURATION.medium2, EASING.standard);
 
   const [scheduleOpen, toggleScheduleOpen] = useToggle();
 

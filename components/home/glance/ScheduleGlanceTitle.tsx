@@ -7,7 +7,6 @@ import { SchedulePeriod } from "@/utils/types/schedule";
 import {
   MaterialIcon,
   Text,
-  useAnimationConfig,
 } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
 import { camel } from "radash";
@@ -25,8 +24,6 @@ const ScheduleGlanceTitle: StylableFC<{
 }> = ({ displayType, displayPeriod, style, className }) => {
   const locale = useLocale();
   const { t } = useTranslation("schedule", { keyPrefix: "atAGlance" });
-
-  const { duration, easing } = useAnimationConfig();
 
   /**
    * Value to pass to the translation function for the title.

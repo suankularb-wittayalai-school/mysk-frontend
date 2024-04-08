@@ -1,4 +1,3 @@
-// Imports
 import LookupClassCard from "@/components/classes/LookupClassCard";
 import cn from "@/utils/helpers/cn";
 import useToggle from "@/utils/helpers/useToggle";
@@ -6,10 +5,11 @@ import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
 import {
   Button,
+  DURATION,
+  EASING,
   MaterialIcon,
   Text,
   transition,
-  useAnimationConfig,
 } from "@suankularb-components/react";
 import va from "@vercel/analytics";
 import { AnimatePresence, motion } from "framer-motion";
@@ -46,13 +46,11 @@ const GradeSection: StylableFC<{
 
   const [expanded, toggleExpanded] = useToggle(expandedByDefault);
 
-  const { duration, easing } = useAnimationConfig();
-
   return (
     <motion.li
       layout="position"
       layoutId={titleOverride || grade}
-      transition={transition(duration.medium4, easing.standard)}
+      transition={transition(DURATION.medium4, EASING.standard)}
       style={style}
       className={cn(`space-y-2`, className)}
     >
@@ -64,7 +62,7 @@ const GradeSection: StylableFC<{
             <motion.div
               initial={{ rotate: expandedByDefault ? "180deg" : "0deg" }}
               animate={{ rotate: expanded ? "180deg" : "0deg" }}
-              transition={transition(duration.short4, easing.standard)}
+              transition={transition(DURATION.short4, EASING.standard)}
             >
               <MaterialIcon icon="expand_more" />
             </motion.div>
@@ -94,7 +92,7 @@ const GradeSection: StylableFC<{
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{
-                  ...transition(duration.medium4, easing.standard),
+                  ...transition(DURATION.medium4, EASING.standard),
                   delay: 0.025 * idx,
                 }}
                 key={classroom.id}

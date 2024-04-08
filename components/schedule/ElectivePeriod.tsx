@@ -4,10 +4,11 @@ import periodDurationToWidth from "@/utils/helpers/schedule/periodDurationToWidt
 import { StylableFC } from "@/utils/types/common";
 import { SchedulePeriod } from "@/utils/types/schedule";
 import {
+  DURATION,
+  EASING,
   Interactive,
   Text,
   transition,
-  useAnimationConfig,
 } from "@suankularb-components/react";
 import va from "@vercel/analytics";
 import { motion } from "framer-motion";
@@ -29,7 +30,6 @@ const ElectivePeriod: StylableFC<{
   const { t } = useTranslation("schedule");
 
   // Animation
-  const { duration, easing } = useAnimationConfig();
 
   // Dialog control
   const [detailsOpen, setDetailsOpen] = useState<boolean>(false);
@@ -39,7 +39,7 @@ const ElectivePeriod: StylableFC<{
       {!detailsOpen ? (
         <motion.li
           layoutId={`elective-period-${period.id}`}
-          transition={transition(duration.medium2, easing.standard)}
+          transition={transition(DURATION.medium2, EASING.standard)}
           style={style}
           className={cn(`relative`, className)}
         >

@@ -15,10 +15,11 @@ import { StylableFC } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
 import { Schedule } from "@/utils/types/schedule";
 import {
+  DURATION,
+  EASING,
   Progress,
   Text,
   transition,
-  useAnimationConfig,
 } from "@suankularb-components/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
@@ -39,8 +40,6 @@ const ScheduleGlance: StylableFC<{
   classroom?: Pick<Classroom, "number">;
 }> = ({ schedule, role, studentID, classroom, style, className }) => {
   const { t } = useTranslation("schedule", { keyPrefix: "atAGlance" });
-
-  const { duration, easing } = useAnimationConfig();
 
   const {
     displayType,
@@ -68,7 +67,7 @@ const ScheduleGlance: StylableFC<{
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 10 }}
-        transition={transition(duration.medium4, easing.standard)}
+        transition={transition(DURATION.medium4, EASING.standard)}
         className={
           displayPeriod?.content.length === 1
             ? `grid-cols-2 items-start gap-2 space-y-3 md:grid md:space-y-0`
@@ -94,7 +93,7 @@ const ScheduleGlance: StylableFC<{
       <motion.div
         layout="position"
         layoutId="glance-footer"
-        transition={transition(duration.medium4, easing.standard)}
+        transition={transition(DURATION.medium4, EASING.standard)}
         className="space-y-1.5"
       >
         <Text

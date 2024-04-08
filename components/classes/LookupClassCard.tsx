@@ -1,12 +1,8 @@
-// Imports
 import getRelevantPeriodOfClass from "@/utils/backend/schedule/getRelevantPeriodOfClass";
 import cn from "@/utils/helpers/cn";
 import getLocaleString from "@/utils/helpers/getLocaleString";
-import periodNumberAt from "@/utils/helpers/schedule/periodNumberAt";
-import schoolSessionStateAt, {
-  SchoolSessionState,
-} from "@/utils/helpers/schedule/schoolSessionStateAt";
 import getTodaySetToPeriodTime from "@/utils/helpers/schedule/getTodaySetToPeriodTime";
+import { SchoolSessionState } from "@/utils/helpers/schedule/schoolSessionStateAt";
 import useLocale from "@/utils/helpers/useLocale";
 import useNow from "@/utils/helpers/useNow";
 import { Classroom } from "@/utils/types/classroom";
@@ -15,10 +11,11 @@ import { SchedulePeriod } from "@/utils/types/schedule";
 import {
   Card,
   CardHeader,
+  DURATION,
+  EASING,
   MaterialIcon,
   Progress,
   transition,
-  useAnimationConfig,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import va from "@vercel/analytics";
@@ -45,8 +42,6 @@ const LookupClassCard: StylableFC<{
   const locale = useLocale();
   const { t } = useTranslation("classes", { keyPrefix: "list.item" });
   const { t: tx } = useTranslation("common");
-
-  const { duration, easing } = useAnimationConfig();
 
   const supabase = useSupabaseClient();
 
@@ -107,7 +102,7 @@ const LookupClassCard: StylableFC<{
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={transition(duration.short4, easing.standard)}
+              transition={transition(DURATION.short4, EASING.standard)}
             >
               {sift([
                 classroom.main_room,

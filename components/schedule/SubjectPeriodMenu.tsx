@@ -1,11 +1,11 @@
-// Imports
 import cn from "@/utils/helpers/cn";
 import { PeriodContentItem } from "@/utils/types/schedule";
 import {
+  DURATION,
+  EASING,
   Interactive,
   MaterialIcon,
   transition,
-  useAnimationConfig,
 } from "@suankularb-components/react";
 import va from "@vercel/analytics";
 import { AnimatePresence, DragControls, motion } from "framer-motion";
@@ -31,13 +31,11 @@ const SubjectPeriodMenu: FC<{
   const { t } = useTranslation(["schedule", "common"]);
 
   // Animation
-  const { duration, easing } = useAnimationConfig();
-
   const entranceTransition = transition(
-    duration.short4,
-    easing.standardDecelerate,
+    DURATION.short4,
+    EASING.standardDecelerate,
   );
-  const exitTransition = transition(duration.short2, easing.standardAccelerate);
+  const exitTransition = transition(DURATION.short2, EASING.standardAccelerate);
 
   // Moving
   const [moving, setMoving] = useState<boolean>(false);

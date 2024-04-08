@@ -13,8 +13,9 @@ import {
   CardContent,
   CardHeader,
   ChipSet,
+  DURATION,
+  EASING,
   transition,
-  useAnimationConfig,
 } from "@suankularb-components/react";
 import { motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
@@ -31,8 +32,6 @@ const ClassroomSubjectCard: StylableFC<{
   const locale = useLocale();
   const { t } = useTranslation("schedule", { keyPrefix: "subjectList.card" });
 
-  const { duration, easing } = useAnimationConfig();
-
   return (
     <Card
       appearance="filled"
@@ -40,7 +39,7 @@ const ClassroomSubjectCard: StylableFC<{
         <motion.li
           {...props}
           layoutId={`subject-${subject.id}`}
-          transition={transition(duration.medium4, easing.standard)}
+          transition={transition(DURATION.medium4, EASING.standard)}
         />
       )}
     >

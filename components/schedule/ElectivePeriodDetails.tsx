@@ -1,4 +1,3 @@
-// Imports
 import PeriodDetailsContent from "@/components/schedule/PeriodDetailsContent";
 import cn from "@/utils/helpers/cn";
 import getLocaleString from "@/utils/helpers/getLocaleString";
@@ -11,10 +10,11 @@ import {
   Button,
   Card,
   Columns,
+  DURATION,
+  EASING,
   MaterialIcon,
   Text,
   transition,
-  useAnimationConfig,
 } from "@suankularb-components/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
@@ -70,7 +70,6 @@ const ElectivePeriodDetails: DialogFC<{
   const { t } = useTranslation("schedule");
 
   // Animation
-  const { duration, easing } = useAnimationConfig();
 
   // Close the Dialog with the escape key
   useEffect(() => {
@@ -97,7 +96,7 @@ const ElectivePeriodDetails: DialogFC<{
               role="alertdialog"
               aria-modal
               layoutId={`elective-period-${period.id}`}
-              transition={transition(duration.medium4, easing.standard)}
+              transition={transition(DURATION.medium4, EASING.standard)}
               className={cn(`pointer-events-auto max-h-[calc(100vh-3rem)] w-96
                 max-w-[calc(100vw-3rem)] overflow-y-auto overflow-x-hidden
                 rounded-xl bg-surface-container-high text-on-surface-variant
@@ -147,7 +146,7 @@ const ElectivePeriodDetails: DialogFC<{
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.5 }}
             exit={{ opacity: 0 }}
-            transition={transition(duration.medium4, easing.standard)}
+            transition={transition(DURATION.medium4, EASING.standard)}
             className="skc-scrim"
             onClick={onClose}
           />

@@ -8,11 +8,12 @@ import { CustomPage, LangCode } from "@/utils/types/common";
 import { SubjectGroup } from "@/utils/types/subject";
 import {
   ContentLayout,
+  DURATION,
+  EASING,
   MaterialIcon,
   Tab,
   TabsContainer,
   transition,
-  useAnimationConfig,
 } from "@suankularb-components/react";
 import { motion } from "framer-motion";
 import { GetStaticPaths, GetStaticProps } from "next";
@@ -42,8 +43,6 @@ const SearchPage: CustomPage<{
   const [view, setView] = useState<"students" | "teachers" | "documents">(
     initialView,
   );
-
-  const { duration, easing } = useAnimationConfig();
 
   function changeView(view: SearchPageView) {
     setView(view);
@@ -82,7 +81,7 @@ const SearchPage: CustomPage<{
           layoutRoot
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={transition(duration.long4, easing.standardDecelerate)}
+          transition={transition(DURATION.long4, EASING.standardDecelerate)}
         >
           {
             {

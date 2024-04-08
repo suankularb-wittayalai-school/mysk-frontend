@@ -8,11 +8,12 @@ import { StylableFC } from "@/utils/types/common";
 import { PeriodContentItem } from "@/utils/types/schedule";
 import {
   Button,
+  DURATION,
   DialogContent,
+  EASING,
   MaterialIcon,
   Text,
   transition,
-  useAnimationConfig,
 } from "@suankularb-components/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
@@ -26,8 +27,6 @@ const PeriodDetailsDialog: StylableFC<{
 }> = ({ period, open, onClose, onDelete }) => {
   const locale = useLocale();
   const { t } = useTranslation("schedule");
-
-  const { duration, easing } = useAnimationConfig();
 
   const { editable } = useContext(ScheduleContext);
 
@@ -54,7 +53,7 @@ const PeriodDetailsDialog: StylableFC<{
               role="alertdialog"
               aria-modal
               layoutId={`period-${period.id}`}
-              transition={transition(duration.medium4, easing.standard)}
+              transition={transition(DURATION.medium4, EASING.standard)}
               className={cn(`pointer-events-auto w-80 overflow-hidden
                 rounded-xl bg-surface-container-high text-on-surface-variant`)}
             >
@@ -96,7 +95,7 @@ const PeriodDetailsDialog: StylableFC<{
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.5 }}
             exit={{ opacity: 0 }}
-            transition={transition(duration.medium4, easing.standard)}
+            transition={transition(DURATION.medium4, EASING.standard)}
             className="skc-scrim"
             onClick={onClose}
           />

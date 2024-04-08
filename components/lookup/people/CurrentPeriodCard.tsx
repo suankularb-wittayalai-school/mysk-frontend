@@ -9,8 +9,9 @@ import { UserRole } from "@/utils/types/person";
 import { SchedulePeriod } from "@/utils/types/schedule";
 import {
   Card,
+  DURATION,
+  EASING,
   transition,
-  useAnimationConfig,
 } from "@suankularb-components/react";
 import { differenceInSeconds } from "date-fns";
 import { AnimatePresence, motion } from "framer-motion";
@@ -40,8 +41,6 @@ const CurrentPeriodCard: StylableFC<{
   });
 
   const { now, schoolSessionState } = useNow();
-
-  const { duration, easing } = useAnimationConfig();
 
   const [loading, setLoading] = useState(true);
   const [currentPeriod, setCurrentPeriod] = useState<SchedulePeriod | null>(
@@ -94,7 +93,7 @@ const CurrentPeriodCard: StylableFC<{
       <motion.div
         initial={{ width: 0 }}
         animate={{ width: !loading ? `${percentage}%` : "0%" }}
-        transition={transition(duration.medium2, easing.standard)}
+        transition={transition(DURATION.medium2, EASING.standard)}
         className="absolute inset-0 right-auto -z-10 bg-surface-variant"
       />
 
@@ -105,7 +104,7 @@ const CurrentPeriodCard: StylableFC<{
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={transition(duration.short2, easing.standard)}
+            transition={transition(DURATION.short2, EASING.standard)}
             className="skc-text skc-text--title-medium"
           >
             {currentPeriod?.content.length

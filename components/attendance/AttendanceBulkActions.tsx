@@ -10,10 +10,11 @@ import { StylableFC } from "@/utils/types/common";
 import {
   Actions,
   Button,
+  DURATION,
+  EASING,
   MaterialIcon,
   Snackbar,
   transition,
-  useAnimationConfig,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import va from "@vercel/analytics";
@@ -55,7 +56,6 @@ const AttendanceBulkActions: StylableFC<{
 
   const supabase = useSupabaseClient();
   const { setSnackbar } = useContext(SnackbarContext);
-  const { duration, easing } = useAnimationConfig();
   const refreshProps = useRefreshProps();
 
   /**
@@ -123,7 +123,7 @@ const AttendanceBulkActions: StylableFC<{
   return (
     <motion.li
       layout="position"
-      transition={transition(duration.medium2, easing.standard)}
+      transition={transition(DURATION.medium2, EASING.standard)}
       style={style}
       className={cn(
         `overflow-auto !rounded-none !bg-surface px-0 sm:px-4 md:-mx-4

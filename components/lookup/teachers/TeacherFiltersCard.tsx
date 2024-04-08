@@ -1,4 +1,3 @@
-// Imports
 import SearchFiltersCard from "@/components/lookup/SearchFiltersCard";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import cn from "@/utils/helpers/cn";
@@ -8,13 +7,13 @@ import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import { SubjectGroup } from "@/utils/types/subject";
 import {
+  DURATION,
   Divider,
   MaterialIcon,
   MenuItem,
   Select,
   Snackbar,
   TextField,
-  useAnimationConfig,
 } from "@suankularb-components/react";
 import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
@@ -42,10 +41,9 @@ const TeacherFiltersCard: StylableFC<{
 
   const router = useRouter();
 
-  const { duration } = useAnimationConfig();
   const [overflowHid, setOverflowHid] = useState(true);
   useEffect(() => {
-    setTimeout(() => setOverflowHid(false), duration.long4 * 1000);
+    setTimeout(() => setOverflowHid(false), DURATION.long4 * 1000);
   }, []);
 
   // Form control
