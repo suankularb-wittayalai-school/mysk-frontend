@@ -1,5 +1,5 @@
-// Imports
 import { Schedule } from "@/utils/types/schedule";
+import { Day } from "date-fns";
 import { list } from "radash";
 
 /**
@@ -11,7 +11,10 @@ import { list } from "radash";
  *
  * @returns An empty Schedule.
  */
-export default function createEmptySchedule(startDay: Day, endDay?: Day): Schedule {
+export default function createEmptySchedule(
+  startDay: Day,
+  endDay?: Day,
+): Schedule {
   return {
     content: list(endDay ? endDay - startDay : 0).map((day) => ({
       day: (day + startDay) as Day,
