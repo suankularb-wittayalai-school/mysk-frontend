@@ -14,7 +14,6 @@ export default async function fetchMySKProxy<
   Data extends {} | unknown = unknown,
 >(
   path: string,
-  options?: Partial<{ query: Query; headers: HeadersInit }>,
 ): Promise<FetchReturn<Data>> {
   // Fetch the data via the MySK API proxy
   const response = await fetch("/api/mysk-api-proxy", {
@@ -26,20 +25,9 @@ export default async function fetchMySKProxy<
     }),
   });
 
-  // If the response was successful with no error, return the JSON version of the
-  // response
-  if (response.ok) return response.json();
+  // Log the fetch request while in development mode
+  if (process.env.NODE_ENV === "development")
+    console.log(`[Fetch] ${options?.method || "GET"} to ${path}`);
 
-  // Otherwise, parse the response into an error object
-  return {
-    api_version: "0.1.0",
-    data: null,
-    error: {
-      code: response.status,
-      detail: await response.text(),
-      error_type: "APIError",
-      source: "/api/mysk-api-proxy",
-    },
-    meta: null,
-  };
+  return response.json();
 }

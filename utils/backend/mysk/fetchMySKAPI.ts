@@ -43,28 +43,8 @@ export default async function fetchMySKAPI<Data extends {} | unknown = unknown>(
   // Log the fetch request while in development mode
   if (process.env.NODE_ENV === "development")
     console.log(
-      typeof window !== "undefined"
-        ? `[Fetch] ${options?.method || "GET"} to ${source}`
-        : `\x1b[0m- \x1b[35mevent\x1b[0m [${
-            options?.method || "GET"
-          }] ${source}`,
+      `\x1b[0m \x1b[35m⇄\x1b[0m ${options?.method || "GET"} to ${source}`,
     );
 
-  // If the response was successful with no error, return the JSON version of the
-  // response
-  if (response.ok) return { ...response.json(), status: response.status };
-
-  // Otherwise, parse the response into an error object
-  return {
-    api_version: "0.1.0",
-    data: null,
-    error: {
-      code: response.status,
-      detail: await response.text(),
-      error_type: "APIError",
-      source,
-    },
-    meta: null,
-    status: response.status,
-  };
+  return { ...(await response.json()), status: response.status };
 }
