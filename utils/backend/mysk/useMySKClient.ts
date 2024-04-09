@@ -16,7 +16,7 @@ export default function useMySKClient() {
   return {
     fetch: async <Data extends {} | unknown = unknown>(
       path: string,
-      options?: Partial<{ query: Query; headers: HeadersInit }>,
-    ): Promise<FetchReturn<Data> | null> => fetchMySKProxy<Data>(path, options),
+      options?: Partial<RequestInit & { query: Query }>,
+    ): Promise<FetchReturn<Data>> => await fetchMySKProxy<Data>(path, options),
   };
 }
