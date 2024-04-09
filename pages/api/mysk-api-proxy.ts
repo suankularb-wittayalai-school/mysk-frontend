@@ -12,7 +12,7 @@ const handler: NextApiHandler = async (req, res) => {
     req?.cookies["access_token"],
     options,
   );
-  res.status(response.status).json(response);
+  res.status(response.status).send(response);
 };
 
 export default handler;
