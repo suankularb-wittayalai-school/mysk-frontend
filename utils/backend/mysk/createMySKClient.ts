@@ -30,11 +30,19 @@ export default async function createMySKClient(
   }
 
   return {
+    /**
+     * Fetches data via the MySK API.
+     *
+     * @param path The path to make the fetch request to.
+     * @param options `fetch` options and query parameters.
+     *
+     * @returns The response from the API.
+     */
     fetch: async <Data extends {} | unknown = unknown>(
       path: Parameters<typeof fetchMySKAPI>["0"],
       options?: Parameters<typeof fetchMySKAPI>["2"],
     ): Promise<FetchReturn<Data> | null> =>
-      fetchMySKAPI(path, accessToken, options),
+      await fetchMySKAPI(path, accessToken, options),
     user,
   };
 }

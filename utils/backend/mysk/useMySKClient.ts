@@ -14,6 +14,14 @@ import { FetchReturn, Query } from "@/utils/types/fetch";
  */
 export default function useMySKClient() {
   return {
+    /**
+     * Fetches data via the MySK API proxy.
+     *
+     * @param path The path to make the fetch request to.
+     * @param options `fetch` options and query parameters.
+     *
+     * @returns The response from the API.
+     */
     fetch: async <Data extends {} | unknown = unknown>(
       path: string,
       options?: Partial<RequestInit & { query: Query }>,
