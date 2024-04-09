@@ -1,12 +1,16 @@
 import AppStateContext from "@/contexts/AppStateContext";
 import { GSIStatus } from "@/pages";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
+import saveAccessToken from "@/utils/helpers/account/saveAccessToken";
+import logError from "@/utils/helpers/logError";
 import useLocale from "@/utils/helpers/useLocale";
+import { OAuthResponseData } from "@/utils/types/fetch";
 import va from "@vercel/analytics";
 import { GsiButtonConfiguration } from "google-one-tap";
 import { SignInOptions, signIn, useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 
 /**
  * Tap into Google Sign in.
@@ -33,19 +37,23 @@ export default function useOneTapSignin(
   const locale = useLocale();
   const { t } = useTranslation("landing");
 
+  const mysk = useMySKClient();
+
   const { setAccountNotFoundOpen } = useContext(AppStateContext);
 
   const [loading, setLoading] = useState(false);
 
   /**
    * Signs the user in with a Google One Tap UI credential string and redirects
-   * the user afterwards.
+   * the user afterwards. We have to account for both NextAuth and MySK API.
    *
    * @param credential Credential string.
    */
   async function logInWithGoogle(credential: string) {
     setLoading(true);
     onStateChange?.(GSIStatus.processing);
+
+    // Sign in with NextAuth.
     const { status } = (await signIn("googleonetap", {
       credential,
       redirect: true,
@@ -56,6 +64,22 @@ export default function useOneTapSignin(
       setAccountNotFoundOpen(true);
       return;
     }
+
+    // Sign in with MySK API.
+    const { data, error } = await mysk.fetch<OAuthResponseData>(
+      "/auth/oauth/google",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ credential: credential + "penis" }),
+      },
+    );
+    if (error) {
+      logError("logInWithGoogle", error);
+      return;
+    }
+
+    saveAccessToken(data);
     if (router.asPath !== "/") await router.push("/learn");
     setLoading(false);
   }
