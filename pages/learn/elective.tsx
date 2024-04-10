@@ -1,19 +1,66 @@
 import PageHeader from "@/components/common/PageHeader";
+import ElectiveListItem from "@/components/elective/ElectiveListItem";
+import LandingBlobs from "@/components/landing/LandingBlobs";
+import cn from "@/utils/helpers/cn";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { ElectiveSubject } from "@/utils/types/elective";
+import {
+  Actions,
+  Button,
+  ContentLayout,
+  List,
+  MaterialIcon,
+} from "@suankularb-components/react";
 import { GetServerSideProps } from "next";
+import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 
+/**
+ * A place where Students can choose and trade their Elective Subjects.
+ *
+ * @param electiveSubjects The Elective Subjects (compact) available for choosing.
+ */
 const ElectivePage: CustomPage<{
   electiveSubjects: ElectiveSubject[];
 }> = ({ electiveSubjects }) => {
+  const { t: tx } = useTranslation("common");
+
   return (
     <>
       <Head>
-        <title>Elective</title>
+        <title>{tx("tabName", { tabName: "Electives" })}</title>
       </Head>
-      <PageHeader>MySK Elective</PageHeader>
+
+      {/* Content */}
+      <PageHeader parentURL="/learn">Choose elective</PageHeader>
+      <ContentLayout
+        className={cn(`grow *:!grid *:h-full *:grid-cols-[5fr,7fr]
+          *:!gap-6`)}
+      >
+        <section className="!flex flex-col gap-3">
+          {/* List */}
+          <div className="h-0 grow overflow-auto rounded-xl bg-surface-bright">
+            <List className="!py-2">
+              {electiveSubjects.map((electiveSubject) => (
+                <ElectiveListItem
+                  key={electiveSubject.id}
+                  electiveSubject={electiveSubject}
+                  onRadioToggle={() => {}}
+                  onClick={() => {}}
+                />
+              ))}
+            </List>
+          </div>
+
+          {/* Choose Button */}
+          <Actions>
+            <Button appearance="filled" icon={<MaterialIcon icon="done" />}>
+              Choose elective
+            </Button>
+          </Actions>
+        </section>
+      </ContentLayout>
     </>
   );
 };
