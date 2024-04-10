@@ -25,6 +25,11 @@ declare global {
       NEXT_PUBLIC_SUPABASE_ANON_KEY: string;
 
       /**
+       * The URL of the MySK API.
+       */
+      NEXT_PUBLIC_MYSK_API_URL: string;
+
+      /**
        * The URL of the Google Form that is used to report problems with MySK.
        */
       NEXT_PUBLIC_HELP_FORM_URL: string;
@@ -48,8 +53,17 @@ declare global {
       /**
        * The service role of the Supabase project, retrieved from Settings >
        * API > Project API Keys > `service_role` `secret`.
+       * 
+       * **Important**: This is a secret key. Do not expose it to the client.
        */
       SUPABASE_SERVICE_ROLE: string;
+
+      /**
+       * The API key for accessing the MySK API.
+       * 
+       * **Important**: This is a secret key. Do not expose it to the client.
+       */
+      MYSK_API_KEY: string;
 
       /**
        * Whether MySK is currently closed for maintenance. Will close off
