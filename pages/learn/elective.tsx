@@ -21,7 +21,7 @@ import Head from "next/head";
  *
  * @param electiveSubjects The Elective Subjects (compact) available for choosing.
  */
-const ElectivePage: CustomPage<{
+const StudentElectivePage: CustomPage<{
   electiveSubjects: ElectiveSubject[];
 }> = ({ electiveSubjects }) => {
   const { t: tx } = useTranslation("common");
@@ -31,6 +31,14 @@ const ElectivePage: CustomPage<{
       <Head>
         <title>{tx("tabName", { tabName: "Electives" })}</title>
       </Head>
+
+      {/* Background */}
+      <div
+        className={cn(`fixed inset-0 -z-10 overflow-hidden sm:bottom-auto
+          sm:h-screen`)}
+      >
+        <LandingBlobs className="inset-0" />
+      </div>
 
       {/* Content */}
       <PageHeader parentURL="/learn">Choose elective</PageHeader>
@@ -60,6 +68,36 @@ const ElectivePage: CustomPage<{
             </Button>
           </Actions>
         </section>
+
+        <div className="flex flex-col gap-6 *:rounded-xl *:bg-surface-bright">
+          {/* Details */}
+          <section className="grow" />
+
+          {/* Trade */}
+          <section className="h-72" />
+        </div>
+
+        <style jsx global>{`
+          body {
+            background-color: var(--surface-container);
+          }
+
+          .skc-root-layout {
+            display: flex;
+            flex-direction: column;
+            height: 100dvh;
+          }
+
+          @media only screen and (min-width: 600px) {
+            .skc-nav-bar::before {
+              background-color: transparent !important;
+            }
+
+            .skc-page-header__blobs {
+              display: none !important;
+            }
+          }
+        `}</style>
       </ContentLayout>
     </>
   );
@@ -177,4 +215,4 @@ export const getServerSideProps: GetServerSideProps = async ({
   };
 };
 
-export default ElectivePage;
+export default StudentElectivePage;
