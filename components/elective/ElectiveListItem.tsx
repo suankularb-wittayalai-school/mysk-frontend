@@ -41,7 +41,11 @@ const ElectiveListItem: StylableFC<{
       style={style}
     >
       {/* Radio */}
-      <Radio value={selected} onChange={onRadioToggle} />
+      <Radio
+        value={selected}
+        onChange={onRadioToggle}
+        disabled={electiveSubject.class_size >= electiveSubject.cap_size}
+      />
 
       {/* Text content */}
       <ListItemContent
