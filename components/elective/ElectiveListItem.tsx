@@ -1,3 +1,4 @@
+import EnrollmentIndicator from "@/components/elective/EnrollmentIndicator";
 import HoverList from "@/components/person/HoverList";
 import cn from "@/utils/helpers/cn";
 import getLocaleString from "@/utils/helpers/getLocaleString";
@@ -59,7 +60,10 @@ const ElectiveListItem: StylableFC<{
       />
 
       {/* Enrollment */}
-      {/* TODO */}
+      <EnrollmentIndicator
+        classSize={electiveSubject.class_size}
+        capSize={electiveSubject.cap_size}
+      />
     </ListItem>
   );
 };
