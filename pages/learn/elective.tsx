@@ -1,4 +1,5 @@
 import PageHeader from "@/components/common/PageHeader";
+import ElectiveDetailsCard from "@/components/elective/ElectiveDetailsCard";
 import ElectiveListItem from "@/components/elective/ElectiveListItem";
 import LandingBlobs from "@/components/landing/LandingBlobs";
 import cn from "@/utils/helpers/cn";
@@ -71,7 +72,7 @@ const StudentElectivePage: CustomPage<{
 
         <div className="flex flex-col gap-6 *:rounded-xl *:bg-surface-bright">
           {/* Details */}
-          <section className="grow" />
+          <ElectiveDetailsCard className="grow" />
 
           {/* Trade */}
           <section className="h-72" />
@@ -209,6 +210,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       ...(await serverSideTranslations(locale as LangCode, [
         "common",
         "elective",
+        "lookup",
       ])),
       electiveSubjects,
     },
