@@ -38,8 +38,8 @@ const StudentElectivePage: CustomPage<{
 
       {/* Background */}
       <div
-        className={cn(`fixed inset-0 -z-10 overflow-hidden sm:bottom-auto
-          sm:h-screen`)}
+        className={cn(`fixed inset-0 bottom-auto -z-10 hidden h-screen overflow-hidden
+          sm:block`)}
       >
         <LandingBlobs className="inset-0" />
       </div>
@@ -47,13 +47,16 @@ const StudentElectivePage: CustomPage<{
       {/* Content */}
       <PageHeader parentURL="/learn">Choose elective</PageHeader>
       <ContentLayout
-        className={cn(`grow *:!grid *:h-full *:grid-cols-[5fr,7fr]
-          *:!gap-6`)}
+        className={cn(`grow *:h-full *:!gap-6 sm:grid-cols-2
+          sm:*:!grid md:*:grid-cols-[5fr,7fr]`)}
       >
-        <section className="!flex flex-col gap-3">
+        <section className="flex-col gap-3 space-y-3 sm:flex">
           {/* List */}
-          <div className="h-0 grow overflow-auto rounded-xl bg-surface-bright">
-            <List className="!py-2">
+          <div
+            className={cn(`grow sm:overflow-auto sm:rounded-xl
+              sm:bg-surface-bright md:h-0`)}
+          >
+            <List className="sm:!py-2">
               {electiveSubjects.map((electiveSubject) => (
                 <ElectiveListItem
                   key={electiveSubject.id}
@@ -69,19 +72,33 @@ const StudentElectivePage: CustomPage<{
           </div>
 
           {/* Choose Button */}
-          <Actions>
-            <Button appearance="filled" icon={<MaterialIcon icon="done" />}>
+          <Actions
+            className={cn(`pointer-events-none sticky inset-0 bottom-20 top-auto
+              z-10 !-mt-6 !block bg-gradient-to-t from-surface-container p-4
+              pt-12 sm:static sm:!mt-0 sm:!flex sm:bg-none sm:p-0 sm:px-0`)}
+          >
+            <Button
+              appearance="filled"
+              icon={<MaterialIcon icon="done" />}
+              className="!pointer-events-auto"
+            >
               Choose elective
             </Button>
           </Actions>
         </section>
 
-        <div className="flex flex-col gap-6 *:rounded-xl *:bg-surface-bright">
+        <div
+          className={cn(`grid gap-6 *:rounded-xl *:bg-surface-bright
+            md:pb-[3.25rem]`)}
+        >
           {/* Details */}
-          <ElectiveDetailsCard className="grow" />
+          <ElectiveDetailsCard className="hidden grow md:block" />
 
           {/* Trade */}
-          <section className="h-72" />
+          <section
+            className={cn(`mb-16 h-72 !rounded-b-none sm:m-0
+              sm:!rounded-b-xl`)}
+          />
         </div>
 
         <style jsx global>{`
