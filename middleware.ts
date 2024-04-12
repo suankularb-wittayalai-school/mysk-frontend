@@ -27,7 +27,7 @@ export async function middleware(req: NextRequest) {
   // Log middleware start
   if (process.env.NODE_ENV === "development")
     console.log(
-      `\u001b[1m\x1b[35m ⇥\u001b[0m Running middleware on ${route} …`,
+      `\u001b[1m\x1b[35m →\u001b[0m Running middleware on ${route} …`,
     );
 
   // Ignore all page requests if under maintenance
@@ -96,7 +96,7 @@ export async function middleware(req: NextRequest) {
   // Log middleware end
   if (process.env.NODE_ENV === "development")
     console.log(
-      `\u001b[1m\x1b[35m ↦\x1b[0m\u001b[0m ${
+      `\u001b[1m\x1b[35m →\x1b[0m\u001b[0m ${
         destination ? `Redirected to ${destination}` : "Continued"
       }`,
     );
