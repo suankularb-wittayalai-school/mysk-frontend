@@ -45,6 +45,7 @@ const ElectiveListItem: StylableFC<{
         value={selected}
         onChange={onRadioToggle}
         disabled={electiveSubject.class_size >= electiveSubject.cap_size}
+        inputAttr={{ name: "elective" }}
       />
 
       {/* Text content */}
