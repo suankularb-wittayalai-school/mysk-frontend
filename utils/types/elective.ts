@@ -6,6 +6,7 @@ import { Classroom } from "@/utils/types/classroom";
 
 export type ElectiveSubject = {
   id: string;
+  session_code: number; // 2-digit code differentiating sessions of same Subject
   name: MultiLangString;
   short_name: MultiLangString | null;
   code: MultiLangString;
