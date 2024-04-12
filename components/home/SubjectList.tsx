@@ -6,6 +6,7 @@ import { StylableFC } from "@/utils/types/common";
 import { ClassroomSubject } from "@/utils/types/subject";
 import { Columns } from "@suankularb-components/react";
 import { LayoutGroup } from "framer-motion";
+import ElectiveEntryCard from "./ElectiveEntryCard";
 
 /**
  * A list of Classroom Subjects.
@@ -32,6 +33,7 @@ const SubjectList: StylableFC<{
 
   return (
     <Columns columns={3} element="ul" style={style} className={className}>
+      <ElectiveEntryCard />
       <LayoutGroup>
         {filterredSubjectList.map((listItem) => (
           <ClassroomSubjectCard key={listItem.id} subject={listItem} />
