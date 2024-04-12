@@ -16,6 +16,7 @@ import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
+import { useState } from "react";
 
 /**
  * A place where Students can choose and trade their Elective Subjects.
@@ -26,6 +27,8 @@ const StudentElectivePage: CustomPage<{
   electiveSubjects: ElectiveSubject[];
 }> = ({ electiveSubjects }) => {
   const { t: tx } = useTranslation("common");
+
+  const [radioSelected, setRadioSelected] = useState<string | null>(null);
 
   return (
     <>
@@ -55,7 +58,10 @@ const StudentElectivePage: CustomPage<{
                 <ElectiveListItem
                   key={electiveSubject.id}
                   electiveSubject={electiveSubject}
-                  onRadioToggle={() => {}}
+                  selected={radioSelected === electiveSubject.id}
+                  onRadioToggle={(value) => {
+                    if (value) setRadioSelected(electiveSubject.id)
+                  }}
                   onClick={() => {}}
                 />
               ))}
