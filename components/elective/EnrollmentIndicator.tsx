@@ -16,7 +16,10 @@ const EnrollmentIndicator: StylableFC<{
 
   return (
     <div className={cn(`space-y-1`, className)} style={style}>
-      <Text type="body-small" className="text-on-surface-variant">
+      <Text
+        type="body-small"
+        className="block text-center text-on-surface-variant"
+      >
         <Text
           type="body-medium"
           className={cn(`!font-medium`, isFull ? `text-error` : `text-primary`)}
@@ -32,7 +35,7 @@ const EnrollmentIndicator: StylableFC<{
         value={(classSize / capSize) * 100}
         visible
         className={cn(
-          `*:!gap-0 *:-space-x-1 [&>*>*:first-child]:z-10
+          `w-10 *:!gap-0 *:!-space-x-0.5 [&>*>*:first-child]:z-10
           [&>*>*:last-child]:hidden`,
           isFull && `![--_indicator-color:var(--error)]`,
         )}
