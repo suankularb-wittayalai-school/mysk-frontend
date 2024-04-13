@@ -8,12 +8,12 @@ import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import { ElectiveSubject } from "@/utils/types/elective";
 import { UserRole } from "@/utils/types/person";
-import { Text } from "@suankularb-components/react";
+import { ChipSet, Text } from "@suankularb-components/react";
 
 /**
  * A card similar to a Lookup Details Card that displays details of an Elective
  * Subject.
- * 
+ *
  * @todo Should accept `electiveSubject` prop.
  */
 const ElectiveDetailsCard: StylableFC = ({ style, className }) => {
@@ -27,7 +27,8 @@ const ElectiveDetailsCard: StylableFC = ({ style, className }) => {
     description: {
       th: "คอร์สที่ออกแบบมาเพื่อสอนการสร้างและออกแบบเว็บไซต์อย่างมีประสิทธิภาพ",
       "en-US":
-        "A course designed to teach you how to create and design effective websites.",
+        "A course designed to teach you how to create and design effective \
+        websites.",
     },
     room: "6306",
     credit: 1.0,
@@ -44,7 +45,7 @@ const ElectiveDetailsCard: StylableFC = ({ style, className }) => {
   } as unknown as ElectiveSubject;
 
   return (
-    <div style={style} className={cn(`flex flex-col`, className)}>
+    <section style={style} className={cn(`flex flex-col`, className)}>
       <Text
         type="headline-small"
         element="h2"
@@ -53,29 +54,51 @@ const ElectiveDetailsCard: StylableFC = ({ style, className }) => {
         {getLocaleString(electiveSubject.name, locale)}
       </Text>
 
-      <div className="grid grow grid-cols-4 gap-2 rounded-xl bg-surface-container p-4">
-        <InformationCard title="Subject name" className="col-span-2">
-          <MultilangText text={electiveSubject.name} />
-        </InformationCard>
-        {electiveSubject.description && (
-          <InformationCard title="Description" className="col-span-2">
-            {getLocaleString(electiveSubject.description, locale)}
+      <section
+        className={cn(`h-0 grow overflow-auto rounded-xl
+          bg-surface-container`)}
+      >
+        <div className="grid grid-cols-2 gap-2 p-4 md:grid-cols-4">
+          {/* Subject name */}
+          <InformationCard title="Subject name" className="col-span-2">
+            <MultilangText text={electiveSubject.name} />
           </InformationCard>
-        )}
-        <InformationCard title="Code">
-          <MultilangText text={electiveSubject.code} />
-        </InformationCard>
-        <InformationCard title="Teachers">
-          <PeopleChipSet people={electiveSubject.teachers} />
-        </InformationCard>
-        <InformationCard title="Room">
-          <RoomChip room={electiveSubject.room} />
-        </InformationCard>
-        <InformationCard title="Credit">
-          {electiveSubject.credit.toFixed(1)}
-        </InformationCard>
-      </div>
-    </div>
+
+          {/* Description */}
+          {electiveSubject.description && (
+            <InformationCard title="Description" className="col-span-2">
+              {getLocaleString(electiveSubject.description, locale)}
+            </InformationCard>
+          )}
+
+          {/* Subject code */}
+          <InformationCard title="Code">
+            <MultilangText text={electiveSubject.code} />
+          </InformationCard>
+
+          {/* Teachers */}
+          <InformationCard title="Teachers">
+            <PeopleChipSet
+              people={electiveSubject.teachers}
+              scrollable
+              className="fade-out-to-r -mx-3 *:pl-3 *:pr-8"
+            />
+          </InformationCard>
+
+          {/* Room */}
+          <InformationCard title="Room">
+            <ChipSet scrollable className="fade-out-to-r -mx-3 *:pl-3 *:pr-8">
+              <RoomChip room={electiveSubject.room} />
+            </ChipSet>
+          </InformationCard>
+
+          {/* Credit */}
+          <InformationCard title="Credit">
+            {electiveSubject.credit.toFixed(1)}
+          </InformationCard>
+        </div>
+      </section>
+    </section>
   );
 };
 

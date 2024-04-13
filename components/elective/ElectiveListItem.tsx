@@ -17,6 +17,8 @@ import {
  *
  * @param electiveSubject The Elective Subject to display.
  * @param selected Whether the Elective Subject is selected.
+ * @param onRadioToggle Triggers when the radio button is toggled.
+ * @param onClick Triggers when the item is clicked.
  */
 const ElectiveListItem: StylableFC<{
   electiveSubject: ElectiveSubject;
@@ -61,7 +63,7 @@ const ElectiveListItem: StylableFC<{
           </>
         }
         element={(props) => <Interactive {...props} onClick={onClick} />}
-        className="-m-2 rounded-md p-2"
+        className="-m-2 !grid rounded-md p-2 *:truncate"
       />
 
       {/* Enrollment */}

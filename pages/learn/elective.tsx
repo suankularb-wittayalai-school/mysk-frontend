@@ -23,7 +23,7 @@ import { useState } from "react";
  *
  * @param electiveSubjects The Elective Subjects (compact) available for choosing.
  */
-const StudentElectivePage: CustomPage<{
+const LearnElectivesPage: CustomPage<{
   electiveSubjects: ElectiveSubject[];
 }> = ({ electiveSubjects }) => {
   const { t: tx } = useTranslation("common");
@@ -47,8 +47,8 @@ const StudentElectivePage: CustomPage<{
       {/* Content */}
       <PageHeader parentURL="/learn">Choose elective</PageHeader>
       <ContentLayout
-        className={cn(`grow *:h-full *:!gap-6 sm:grid-cols-2
-          sm:*:!grid md:*:grid-cols-[5fr,7fr]`)}
+        className={cn(`grow *:h-full *:!gap-6 sm:*:!grid
+          md:*:grid-cols-[5fr,7fr]`)}
       >
         <section className="flex-col gap-3 space-y-3 sm:flex">
           {/* List */}
@@ -88,15 +88,13 @@ const StudentElectivePage: CustomPage<{
         </section>
 
         <div
-          className={cn(`grid gap-6 *:rounded-xl *:bg-surface-bright
+          className={cn(`flex flex-col gap-6 *:rounded-xl *:bg-surface-bright
             md:pb-[3.25rem]`)}
         >
           {/* Details */}
-          <ElectiveDetailsCard className="hidden grow md:block" />
+          <ElectiveDetailsCard className="hidden grow md:flex" />
 
           {/* Trade */}
-          <section
-            className={cn(`mb-16 h-72 !rounded-b-none sm:m-0
               sm:!rounded-b-xl`)}
           />
         </div>
@@ -145,11 +143,10 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
     {
       id: "7bf72240-fe5c-45b8-a8a9-6be8c5b31c1e",
       name: { th: "คอมพิวเตอร์กราฟิก 1 ", "en-US": "Computer graphics 1" },
-      code: { th: "ว20281", "en-US": "SC20281" },
+      name: { th: "คอมพิวเตอร์กราฟิก 1 ", "en-US": "Computer Graphics 1" },
+      code: { th: "ว20283", "en-US": "SC20283" },
       teachers: [
         {
-          first_name: { th: "วิยดา", "en-US": "Wiyada" },
-          last_name: { th: "ไตรยวงศ์", "en-US": "Triyawong" },
         },
       ],
       class_size: 17,
@@ -158,11 +155,9 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
     {
       id: "93fe0147-3303-4dad-b758-6db69077ba6e",
       name: { th: "ศิลป์สร้างสรรค์ 1", "en-US": "Art 1" },
-      code: { th: "ว20281", "en-US": "SC20281" },
+      code: { th: "ศ20201", "en-US": "ART20201" },
       teachers: [
         {
-          first_name: { th: "วิยดา", "en-US": "Wiyada" },
-          last_name: { th: "ไตรยวงศ์", "en-US": "Triyawong" },
         },
       ],
       class_size: 17,
@@ -171,11 +166,13 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
     {
       id: "77139c3f-f81b-43df-bfae-9eb61bbd5295",
       name: { th: "ปฏิบัติการดนตรีไทย 1", "en-US": "Thai Music 1" },
-      code: { th: "ว20281", "en-US": "SC20281" },
+      code: { th: "ศ20207", "en-US": "ART20207" },
       teachers: [
         {
-          first_name: { th: "วิยดา", "en-US": "Wiyada" },
-          last_name: { th: "ไตรยวงศ์", "en-US": "Triyawong" },
+          first_name: { th: "ปานจันทร์", "en-US": "Panjan" },
+          last_name: { th: "ปล้องทอง", "en-US": "Plongthong" },
+        },
+        {
         },
       ],
       class_size: 17,
@@ -184,11 +181,8 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
     {
       id: "ec52ecc2-5379-4681-8838-e3b14e3b8f37",
       name: { th: "ศิลปะการแสดง 1", "en-US": "Performing Arts 1" },
-      code: { th: "ว20281", "en-US": "SC20281" },
+      code: { th: "ศ20211", "en-US": "ART20211" },
       teachers: [
-        {
-          first_name: { th: "วิยดา", "en-US": "Wiyada" },
-          last_name: { th: "ไตรยวงศ์", "en-US": "Triyawong" },
         },
       ],
       class_size: 17,
@@ -197,11 +191,9 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
     {
       id: "1bb63410-c863-4588-a2bf-f3262916ad67",
       name: { th: "ธุรกิจเบเกอรี่ 1", "en-US": "Bakery Business 1" },
-      code: { th: "ว20281", "en-US": "SC20281" },
+      code: { th: "ง20227", "en-US": "WT20227" },
       teachers: [
         {
-          first_name: { th: "วิยดา", "en-US": "Wiyada" },
-          last_name: { th: "ไตรยวงศ์", "en-US": "Triyawong" },
         },
       ],
       class_size: 17,
@@ -213,11 +205,11 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
         th: "ภาษาจีนเพื่อการท่องเที่ยว 1",
         "en-US": "Chinese for Tourism 1",
       },
-      code: { th: "ว20281", "en-US": "SC20281" },
+      code: { th: "จ20201", "en-US": "CHI20201" },
       teachers: [
         {
-          first_name: { th: "วิยดา", "en-US": "Wiyada" },
-          last_name: { th: "ไตรยวงศ์", "en-US": "Triyawong" },
+          first_name: { th: "ณภกรณ์", "en-US": "Naphakorn" },
+          last_name: { th: "พรหมมาส", "en-US": "Prommas" },
         },
       ],
       class_size: 25,
@@ -236,4 +228,4 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   };
 };
 
-export default StudentElectivePage;
+export default LearnElectivesPage;
