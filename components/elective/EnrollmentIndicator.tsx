@@ -35,9 +35,11 @@ const EnrollmentIndicator: StylableFC<{
         value={(classSize / capSize) * 100}
         visible
         className={cn(
-          `w-10 *:!gap-0 *:!-space-x-0.5 [&>*>*:first-child]:z-10
-          [&>*>*:last-child]:hidden`,
-          isFull && `![--_indicator-color:var(--error)]`,
+          `w-10 ![--_remainder-color:transparent] *:!gap-0 *:overflow-hidden
+          [&>*>*:first-child]:z-10 [&>*>*:last-child]:hidden`,
+          isFull
+            ? `![--_indicator-color:var(--error)]`
+            : `*:bg-primary-container`,
         )}
       />
     </div>
