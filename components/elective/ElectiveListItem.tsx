@@ -57,7 +57,12 @@ const ElectiveListItem: StylableFC<{
           <>
             <HoverList
               people={electiveSubject.teachers}
-              options={{ nameJoinerOptions: {} }}
+              options={{
+                nameJoinerOptions: {
+                  // Shorten last name when not in Thai.
+                  lastName: locale !== "th" ? "abbr" : true,
+                },
+              }}
             />
             <span>{" • " + getLocaleString(electiveSubject.code, locale)}</span>
           </>
