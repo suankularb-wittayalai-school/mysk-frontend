@@ -1,0 +1,27 @@
+{
+  "title_student": "เลือกวิชาเลือก",
+  "title_teacher": "วิชาเลือกของคุณ",
+  "title_admin": "วิชาเลือก",
+  "list": {
+    "action": {
+      "choose_initial": "เลือกวิชานี้",
+      "choose_chosen": "เลือกแล้ว",
+      "choose_change": "เปลี่ยนเป็นวิชานี้"
+    }
+  },
+  "detail": {
+    "information": {
+      "title": "รายละเอียด",
+      "name": "ชื่อวิชา",
+      "description": "รายละเอียด",
+      "code": "รหัสวิชา",
+      "teachers": "ครู",
+      "room": "ห้องที่ใช้เรียน",
+      "credit": "หน่วยกิต"
+    },
+    "trade": {
+      "unavailable_future": "ขณะนี้นักเรียนยังไม่สามารถแลกวิชาเลือกได้ ระบบจะเปิดให้แลกวิชาเลือกในวันที่ 24 พ.ค.",
+      "unavailable_past": "หมดเวลาแลกวิชาเลือกแล้ว"
+    }
+  }
+}

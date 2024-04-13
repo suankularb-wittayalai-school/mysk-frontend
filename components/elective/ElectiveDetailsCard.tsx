@@ -9,6 +9,7 @@ import { StylableFC } from "@/utils/types/common";
 import { ElectiveSubject } from "@/utils/types/elective";
 import { UserRole } from "@/utils/types/person";
 import { ChipSet, Text } from "@suankularb-components/react";
+import { useTranslation } from "next-i18next";
 
 /**
  * A card similar to a Lookup Details Card that displays details of an Elective
@@ -18,6 +19,7 @@ import { ChipSet, Text } from "@suankularb-components/react";
  */
 const ElectiveDetailsCard: StylableFC = ({ style, className }) => {
   const locale = useLocale();
+  const { t } = useTranslation("elective", { keyPrefix: "detail" });
 
   // Mock data
   const electiveSubject = {
@@ -60,24 +62,27 @@ const ElectiveDetailsCard: StylableFC = ({ style, className }) => {
       >
         <div className="grid grid-cols-2 gap-2 p-4 md:grid-cols-4">
           {/* Subject name */}
-          <InformationCard title="Subject name" className="col-span-2">
+          <InformationCard title={t("information.name")} className="col-span-2">
             <MultilangText text={electiveSubject.name} />
           </InformationCard>
 
           {/* Description */}
           {electiveSubject.description && (
-            <InformationCard title="Description" className="col-span-2">
+            <InformationCard
+              title={t("information.description")}
+              className="col-span-2"
+            >
               {getLocaleString(electiveSubject.description, locale)}
             </InformationCard>
           )}
 
           {/* Subject code */}
-          <InformationCard title="Code">
+          <InformationCard title={t("information.code")}>
             <MultilangText text={electiveSubject.code} />
           </InformationCard>
 
           {/* Teachers */}
-          <InformationCard title="Teachers">
+          <InformationCard title={t("information.teachers")}>
             <PeopleChipSet
               people={electiveSubject.teachers}
               scrollable
@@ -86,14 +91,14 @@ const ElectiveDetailsCard: StylableFC = ({ style, className }) => {
           </InformationCard>
 
           {/* Room */}
-          <InformationCard title="Room">
+          <InformationCard title={t("information.room")}>
             <ChipSet scrollable className="fade-out-to-r -mx-3 *:pl-3 *:pr-8">
               <RoomChip room={electiveSubject.room} />
             </ChipSet>
           </InformationCard>
 
           {/* Credit */}
-          <InformationCard title="Credit">
+          <InformationCard title={t("information.credit")}>
             {electiveSubject.credit.toFixed(1)}
           </InformationCard>
         </div>

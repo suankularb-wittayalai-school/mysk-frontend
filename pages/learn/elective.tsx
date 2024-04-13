@@ -27,6 +27,7 @@ import { useState } from "react";
 const LearnElectivesPage: CustomPage<{
   electiveSubjects: ElectiveSubject[];
 }> = ({ electiveSubjects }) => {
+  const { t } = useTranslation("elective");
   const { t: tx } = useTranslation("common");
 
   const [radioSelected, setRadioSelected] = useState<string | null>(null);
@@ -34,19 +35,23 @@ const LearnElectivesPage: CustomPage<{
   return (
     <>
       <Head>
-        <title>{tx("tabName", { tabName: "Electives" })}</title>
+        <title>
+          {tx("tabName", { tabName: t("title", { context: "student" }) })}
+        </title>
       </Head>
 
       {/* Background */}
       <div
-        className={cn(`fixed inset-0 bottom-auto -z-10 hidden h-screen overflow-hidden
-          sm:block`)}
+        className={cn(`fixed inset-0 bottom-auto -z-10 hidden h-screen
+          overflow-hidden sm:block`)}
       >
         <LandingBlobs className="inset-0" />
       </div>
 
       {/* Content */}
-      <PageHeader parentURL="/learn">Choose elective</PageHeader>
+      <PageHeader parentURL="/learn">
+        {t("title", { context: "student" })}
+      </PageHeader>
       <ContentLayout
         className={cn(`grow *:h-full *:!gap-6 sm:*:!grid
           md:*:grid-cols-[5fr,7fr]`)}
@@ -83,7 +88,7 @@ const LearnElectivesPage: CustomPage<{
               icon={<MaterialIcon icon="done" />}
               className="!pointer-events-auto"
             >
-              Choose elective
+              {t("list.action.choose", { context: "initial" })}
             </Button>
           </Actions>
         </section>
