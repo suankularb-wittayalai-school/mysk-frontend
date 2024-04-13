@@ -1,6 +1,7 @@
 import PageHeader from "@/components/common/PageHeader";
 import ElectiveDetailsCard from "@/components/elective/ElectiveDetailsCard";
 import ElectiveListItem from "@/components/elective/ElectiveListItem";
+import TradesCard from "@/components/elective/TradesCard";
 import LandingBlobs from "@/components/landing/LandingBlobs";
 import cn from "@/utils/helpers/cn";
 import { CustomPage, LangCode } from "@/utils/types/common";
@@ -95,6 +96,8 @@ const LearnElectivesPage: CustomPage<{
           <ElectiveDetailsCard className="hidden grow md:flex" />
 
           {/* Trade */}
+          <TradesCard
+            className={cn(`mb-16 h-36 !rounded-b-none sm:m-0
               sm:!rounded-b-xl`)}
           />
         </div>
