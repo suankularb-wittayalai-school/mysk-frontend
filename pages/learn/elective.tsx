@@ -145,15 +145,16 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
     },
     {
       id: "7bf72240-fe5c-45b8-a8a9-6be8c5b31c1e",
-      name: { th: "คอมพิวเตอร์กราฟิก 1 ", "en-US": "Computer graphics 1" },
       name: { th: "คอมพิวเตอร์กราฟิก 1 ", "en-US": "Computer Graphics 1" },
       code: { th: "ว20283", "en-US": "SC20283" },
       teachers: [
         {
+          first_name: { th: "ภัสรา", "en-US": "Passara" },
+          last_name: { th: "กุลรัมย์", "en-US": "Kunram" },
         },
       ],
-      class_size: 17,
-      cap_size: 25,
+      class_size: 28,
+      cap_size: 30,
     },
     {
       id: "93fe0147-3303-4dad-b758-6db69077ba6e",
@@ -161,9 +162,11 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
       code: { th: "ศ20201", "en-US": "ART20201" },
       teachers: [
         {
+          first_name: { th: "กุนนฑี", "en-US": "Kunnatee" },
+          last_name: { th: "วงศ์ชัยอุดมโชค", "en-US": "Wongchaiudomchoke" },
         },
       ],
-      class_size: 17,
+      class_size: 20,
       cap_size: 25,
     },
     {
@@ -176,9 +179,11 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
           last_name: { th: "ปล้องทอง", "en-US": "Plongthong" },
         },
         {
+          first_name: { th: "ดาเรศ", "en-US": "Dares" },
+          last_name: { th: "เทวโรทร", "en-US": "Thevarotorn" },
         },
       ],
-      class_size: 17,
+      class_size: 8,
       cap_size: 25,
     },
     {
@@ -186,9 +191,9 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
       name: { th: "ศิลปะการแสดง 1", "en-US": "Performing Arts 1" },
       code: { th: "ศ20211", "en-US": "ART20211" },
       teachers: [
-        },
+        { first_name: { th: "เจตนา" }, last_name: { th: "ทองสุทัศน์" } },
       ],
-      class_size: 17,
+      class_size: 1,
       cap_size: 25,
     },
     {
@@ -197,9 +202,11 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
       code: { th: "ง20227", "en-US": "WT20227" },
       teachers: [
         {
+          first_name: { th: "เบญญา", "en-US": "Benya" },
+          last_name: { th: "เวียงหฤทัย", "en-US": "Vlangharuthai" },
         },
       ],
-      class_size: 17,
+      class_size: 2,
       cap_size: 25,
     },
     {
