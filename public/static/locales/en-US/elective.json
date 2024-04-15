@@ -3,6 +3,11 @@
   "title_teacher": "Your electives",
   "title_admin": "Electives",
   "list": {
+    "enrollment": {
+      "alt": "{{count}} enrolled out of {{max}}",
+      "label": "<0>{{count}}</0>/{{max}}",
+      "progressAlt": "Enrollment progress bar"
+    },
     "action": {
       "choose_initial": "Choose elective",
       "choose_chosen": "Chosen",

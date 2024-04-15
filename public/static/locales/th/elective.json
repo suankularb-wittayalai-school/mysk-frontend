@@ -3,6 +3,11 @@
   "title_teacher": "วิชาเลือกของคุณ",
   "title_admin": "วิชาเลือก",
   "list": {
+    "enrollment": {
+      "alt": "ลงทะเบียนแล้ว {{count}} คน จาก {{max}} คน",
+      "label": "<0>{{count}}</0>/{{max}}",
+      "progressAlt": "จำนวนนักเรียนที่ลงทะเบียนแล้ว"
+    },
     "action": {
       "choose_initial": "เลือกวิชานี้",
       "choose_chosen": "เลือกแล้ว",
