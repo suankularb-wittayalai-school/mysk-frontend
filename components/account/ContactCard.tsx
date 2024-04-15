@@ -1,3 +1,4 @@
+import ContactOverflow from "@/components/account/ContactOverflow";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import DiscordLogo from "@/public/images/social/discord.svg";
 import FacebookLogo from "@/public/images/social/facebook.svg";
@@ -23,8 +24,7 @@ import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
 import Image from "next/image";
 import { sift } from "radash";
-import { forwardRef, useContext, useState } from "react";
-import ContactOverflow from "./ContactOverflow";
+import { forwardRef, useContext } from "react";
 
 /**
  * A contact Card.

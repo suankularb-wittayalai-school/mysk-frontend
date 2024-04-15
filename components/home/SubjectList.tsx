@@ -1,4 +1,5 @@
 import ClassroomSubjectCard from "@/components/home/ClassroomSubjectCard";
+import ElectiveEntryCard from "@/components/home/ElectiveEntryCard";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
@@ -6,7 +7,6 @@ import { StylableFC } from "@/utils/types/common";
 import { ClassroomSubject } from "@/utils/types/subject";
 import { Columns } from "@suankularb-components/react";
 import { LayoutGroup } from "framer-motion";
-import ElectiveEntryCard from "./ElectiveEntryCard";
 
 /**
  * A list of Classroom Subjects.
