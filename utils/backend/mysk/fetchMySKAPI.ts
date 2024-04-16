@@ -44,6 +44,7 @@ export default async function fetchMySKAPI<Data extends {} | unknown = unknown>(
   if (process.env.NODE_ENV === "development")
     console.log(
       [
+        "",
         options?.method || "GET",
         source,
         (response.ok ? `\x1b[32m` : `\x1b[33m`) + response.status + `\x1b[0m`,
