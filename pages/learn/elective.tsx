@@ -37,7 +37,7 @@ const LearnElectivesPage: CustomPage<{
   const { t } = useTranslation("elective");
   const { t: tx } = useTranslation("common");
 
-  const [radioSelected, setRadioSelected] = useState<string | null>(null);
+  const [radioSelected, setRadioSelected] = useState<string | null>(enrolledID);
 
   return (
     <>
@@ -74,7 +74,8 @@ const LearnElectivesPage: CustomPage<{
                 <ElectiveListItem
                   key={electiveSubject.id}
                   electiveSubject={electiveSubject}
-                  selected={radioSelected === electiveSubject.id}
+                  radioSelected={radioSelected === electiveSubject.id}
+                  enrolled={enrolledID === electiveSubject.id}
                   onRadioToggle={(value) => {
                     if (value) setRadioSelected(electiveSubject.id);
                   }}

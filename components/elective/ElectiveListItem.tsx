@@ -16,18 +16,24 @@ import {
  * A List Item representing an Elective Subject.
  *
  * @param electiveSubject The Elective Subject to display.
- * @param selected Whether the Elective Subject is selected.
+ * @param radioSelected Whether the Elective Subject’s Radio is selected.
+ * @param detailSelected Whether the details of this Elective Subject are being shown.
+ * @param enrolled Whether the Student is enrolled in the Elective Subject.
  * @param onRadioToggle Triggers when the radio button is toggled.
  * @param onClick Triggers when the item is clicked.
  */
 const ElectiveListItem: StylableFC<{
   electiveSubject: ElectiveSubject;
-  selected?: boolean;
+  radioSelected?: boolean;
+  detailSelected?: boolean;
+  enrolled?: boolean;
   onRadioToggle?: (value: boolean) => void;
   onClick?: () => void;
 }> = ({
   electiveSubject,
-  selected,
+  radioSelected,
+  detailSelected,
+  enrolled,
   onRadioToggle,
   onClick,
   style,
@@ -44,7 +50,7 @@ const ElectiveListItem: StylableFC<{
     >
       {/* Radio */}
       <Radio
-        value={selected}
+        value={radioSelected}
         onChange={onRadioToggle}
         disabled={electiveSubject.class_size >= electiveSubject.cap_size}
         inputAttr={{ name: "elective" }}
