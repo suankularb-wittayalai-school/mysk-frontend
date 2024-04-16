@@ -3,9 +3,13 @@ import ElectiveDetailsCard from "@/components/elective/ElectiveDetailsCard";
 import ElectiveListItem from "@/components/elective/ElectiveListItem";
 import TradesCard from "@/components/elective/TradesCard";
 import LandingBlobs from "@/components/landing/LandingBlobs";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
+import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import cn from "@/utils/helpers/cn";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { ElectiveSubject } from "@/utils/types/elective";
+import { Student } from "@/utils/types/person";
 import {
   Actions,
   Button,
@@ -13,7 +17,8 @@ import {
   List,
   MaterialIcon,
 } from "@suankularb-components/react";
-import { GetServerSideProps } from "next";
+import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
@@ -22,11 +27,13 @@ import { useState } from "react";
 /**
  * A place where Students can choose and trade their Elective Subjects.
  *
- * @param electiveSubjects The Elective Subjects (compact) available for choosing.
+ * @param electiveSubjects The Elective Subjects (default) available for choosing.
+ * @param selectedID The ID of the Elective Subject the Student is enrolled in.
  */
 const LearnElectivesPage: CustomPage<{
   electiveSubjects: ElectiveSubject[];
-}> = ({ electiveSubjects }) => {
+  enrolledID: string | null;
+}> = ({ electiveSubjects, enrolledID }) => {
   const { t } = useTranslation("elective");
   const { t: tx } = useTranslation("common");
 
@@ -133,104 +140,52 @@ const LearnElectivesPage: CustomPage<{
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
-  const electiveSubjects = [
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  req,
+  res,
+}) => {
+  const mysk = await createMySKClient(req);
+  const supabase = createPagesServerClient({
+    req: req as NextApiRequest,
+    res: res as NextApiResponse,
+  });
+
+  // Get the logged in Student
+  const { data: student } = (await getLoggedInPerson(
+    supabase,
+    authOptions,
+    req,
+    res,
+  )) as { data: Student };
+
+  // Get the list of Elective Subjects available for this Student to enroll in
+  const { data: electiveSubjects } = await mysk.fetch<ElectiveSubject[]>(
+    "/v1/subjects/electives/",
     {
-      id: "22e1b917-525f-4533-99db-322203c9e1b8",
-      name: { th: "การสร้างเว็บเพจ 1", "en-US": "Webpage 1" },
-      code: { th: "ว20281", "en-US": "SC20281" },
-      teachers: [
-        {
-          first_name: { th: "วิยดา", "en-US": "Wiyada" },
-          last_name: { th: "ไตรยวงศ์", "en-US": "Triyawong" },
-        },
-      ],
-      class_size: 17,
-      cap_size: 25,
-    },
-    {
-      id: "7bf72240-fe5c-45b8-a8a9-6be8c5b31c1e",
-      name: { th: "คอมพิวเตอร์กราฟิก 1 ", "en-US": "Computer Graphics 1" },
-      code: { th: "ว20283", "en-US": "SC20283" },
-      teachers: [
-        {
-          first_name: { th: "ภัสรา", "en-US": "Passara" },
-          last_name: { th: "กุลรัมย์", "en-US": "Kunram" },
-        },
-      ],
-      class_size: 28,
-      cap_size: 30,
-    },
-    {
-      id: "93fe0147-3303-4dad-b758-6db69077ba6e",
-      name: { th: "ศิลป์สร้างสรรค์ 1", "en-US": "Art 1" },
-      code: { th: "ศ20201", "en-US": "ART20201" },
-      teachers: [
-        {
-          first_name: { th: "กุนนฑี", "en-US": "Kunnatee" },
-          last_name: { th: "วงศ์ชัยอุดมโชค", "en-US": "Wongchaiudomchoke" },
-        },
-      ],
-      class_size: 20,
-      cap_size: 25,
-    },
-    {
-      id: "77139c3f-f81b-43df-bfae-9eb61bbd5295",
-      name: { th: "ปฏิบัติการดนตรีไทย 1", "en-US": "Thai Music 1" },
-      code: { th: "ศ20207", "en-US": "ART20207" },
-      teachers: [
-        {
-          first_name: { th: "ปานจันทร์", "en-US": "Panjan" },
-          last_name: { th: "ปล้องทอง", "en-US": "Plongthong" },
-        },
-        {
-          first_name: { th: "ดาเรศ", "en-US": "Dares" },
-          last_name: { th: "เทวโรทร", "en-US": "Thevarotorn" },
-        },
-      ],
-      class_size: 8,
-      cap_size: 25,
-    },
-    {
-      id: "ec52ecc2-5379-4681-8838-e3b14e3b8f37",
-      name: { th: "ศิลปะการแสดง 1", "en-US": "Performing Arts 1" },
-      code: { th: "ศ20211", "en-US": "ART20211" },
-      teachers: [
-        { first_name: { th: "เจตนา" }, last_name: { th: "ทองสุทัศน์" } },
-      ],
-      class_size: 1,
-      cap_size: 25,
-    },
-    {
-      id: "1bb63410-c863-4588-a2bf-f3262916ad67",
-      name: { th: "ธุรกิจเบเกอรี่ 1", "en-US": "Bakery Business 1" },
-      code: { th: "ง20227", "en-US": "WT20227" },
-      teachers: [
-        {
-          first_name: { th: "เบญญา", "en-US": "Benya" },
-          last_name: { th: "เวียงหฤทัย", "en-US": "Vlangharuthai" },
-        },
-      ],
-      class_size: 2,
-      cap_size: 25,
-    },
-    {
-      id: "7c5a76f5-26c3-420c-a2f9-552f3c349128",
-      name: {
-        th: "ภาษาจีนเพื่อการท่องเที่ยว 1",
-        "en-US": "Chinese for Tourism 1",
+      query: {
+        fetch_level: "default",
+        descendant_fetch_level: "compact",
+        filter: { data: { as_student_id: student.id } },
+        sort: { by: ["session_code"], ascending: true },
       },
-      code: { th: "จ20201", "en-US": "CHI20201" },
-      teachers: [
-        {
-          first_name: { th: "ณภกรณ์", "en-US": "Naphakorn" },
-          last_name: { th: "พรหมมาส", "en-US": "Prommas" },
-        },
-      ],
-      class_size: 25,
-      cap_size: 25,
     },
-  ];
+  );
+
+  // Get the ID of the Elective Subject the Student is already enrolled in, if
+  // any
+  const { data: enrolledElectiveSubjects } = await mysk.fetch<
+    ElectiveSubject[]
+  >("/v1/subjects/electives/", {
+    query: {
+      fetch_level: "id_only",
+      filter: { data: { student_ids: [student.id] } },
+    },
+  });
+
+  // Crush into a single ID
+  const enrolledID = enrolledElectiveSubjects?.[0]?.id || null;
+
   return {
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
@@ -239,6 +194,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
         "lookup",
       ])),
       electiveSubjects,
+      enrolledID,
     },
   };
 };
