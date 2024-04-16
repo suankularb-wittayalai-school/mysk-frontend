@@ -41,7 +41,7 @@ export default async function createMySKClient(
     fetch: async <Data extends {} | unknown = unknown>(
       path: Parameters<typeof fetchMySKAPI>["0"],
       options?: Parameters<typeof fetchMySKAPI>["2"],
-    ): Promise<FetchReturn<Data> | null> =>
+    ): Promise<FetchReturn<Data>> =>
       await fetchMySKAPI(path, accessToken, options),
     user,
   };
