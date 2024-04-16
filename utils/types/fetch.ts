@@ -38,7 +38,7 @@ export type PaginationConfig = {
 export type Query<Data extends {} | unknown = unknown> = {
   pagination?: PaginationConfig;
   filter?: FilterConfig<Data>;
-  sorting?: SortingConfig<Data>;
+  sort?: SortingConfig<Data>;
   fetch_level?: FetchLevel;
   descendant_fetch_level?: FetchLevel;
 };
