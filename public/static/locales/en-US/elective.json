@@ -1,0 +1,32 @@
+{
+  "title_student": "Choose elective",
+  "title_teacher": "Your electives",
+  "title_admin": "Electives",
+  "list": {
+    "enrollment": {
+      "alt": "{{count}} enrolled out of {{max}}",
+      "label": "<0>{{count}}</0>/{{max}}",
+      "progressAlt": "Enrollment progress bar"
+    },
+    "action": {
+      "choose_initial": "Choose elective",
+      "choose_chosen": "Chosen",
+      "choose_change": "Change elective"
+    }
+  },
+  "detail": {
+    "information": {
+      "title": "Information",
+      "name": "Subject name",
+      "description": "Description",
+      "code": "Subject code",
+      "teachers": "Teachers",
+      "room": "Room",
+      "credit": "Credit"
+    },
+    "trade": {
+      "unavailable_future": "Trading electives is not available at the moment. You can trade electives with your friends on May 29th. Check back later.",
+      "unavailable_past": "Trading electives is no longer available."
+    }
+  }
+}

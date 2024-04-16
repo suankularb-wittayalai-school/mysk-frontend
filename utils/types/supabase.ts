@@ -514,23 +514,23 @@ export type Database = {
         Row: {
           classroom_id: string;
           created_at: string;
-          elective_code: number | null;
           elective_subject_id: string;
           id: string;
+          session_code: number | null;
         };
         Insert: {
           classroom_id: string;
           created_at?: string;
-          elective_code?: number | null;
           elective_subject_id: string;
           id?: string;
+          session_code?: number | null;
         };
         Update: {
           classroom_id?: string;
           created_at?: string;
-          elective_code?: number | null;
           elective_subject_id?: string;
           id?: string;
+          session_code?: number | null;
         };
         Relationships: [
           {
@@ -1298,6 +1298,7 @@ export type Database = {
           created_at: string;
           elective_subject_id: string;
           id: string;
+          semester: number | null;
           student_id: string;
           year: number | null;
         };
@@ -1305,6 +1306,7 @@ export type Database = {
           created_at?: string;
           elective_subject_id: string;
           id?: string;
+          semester?: number | null;
           student_id: string;
           year?: number | null;
         };
@@ -1312,6 +1314,7 @@ export type Database = {
           created_at?: string;
           elective_subject_id?: string;
           id?: string;
+          semester?: number | null;
           student_id?: string;
           year?: number | null;
         };
@@ -1768,6 +1771,7 @@ export type Database = {
           name_th: string | null;
           room: string | null;
           semester: number | null;
+          session_code: number | null;
           short_name_en: string | null;
           short_name_th: string | null;
           subject_group_id: number | null;
@@ -1799,6 +1803,18 @@ export type Database = {
           _tbl: unknown;
         };
         Returns: undefined;
+      };
+      get_current_academic_year: {
+        Args: {
+          date_param: string;
+        };
+        Returns: number;
+      };
+      get_current_semester: {
+        Args: {
+          date: string;
+        };
+        Returns: number;
       };
     };
     Enums: {

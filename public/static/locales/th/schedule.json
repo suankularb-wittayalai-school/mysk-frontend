@@ -65,6 +65,15 @@
   "subjectList": {
     "title": "รายชื่อวิชา",
     "search": "ค้นหาวิชา",
+    "elective": {
+      "title": "วิชาเลือก",
+      "subtitle": "ยังไม่ได้เลือก",
+      "action": {
+        "choose": "เลือก",
+        "change": "เปลี่ยน",
+        "view": "ดูเพิ่มเติม"
+      }
+    },
     "card": {
       "noTeachers": "ไม่มีครูผู้สอน",
       "action": {

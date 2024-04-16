@@ -1,4 +1,5 @@
 import ClassroomSubjectCard from "@/components/home/ClassroomSubjectCard";
+import ElectiveEntryCard from "@/components/home/ElectiveEntryCard";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
@@ -32,6 +33,7 @@ const SubjectList: StylableFC<{
 
   return (
     <Columns columns={3} element="ul" style={style} className={className}>
+      <ElectiveEntryCard />
       <LayoutGroup>
         {filterredSubjectList.map((listItem) => (
           <ClassroomSubjectCard key={listItem.id} subject={listItem} />

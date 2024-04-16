@@ -54,7 +54,6 @@ module.exports = withBundleAnalyzer(
           destination: "/account",
           permanent: true,
         },
-        { source: "/learn/:id", destination: "/learn", permanent: true },
         {
           source: "/manage/attendance/date/:date",
           destination: "/manage/attendace/:date",

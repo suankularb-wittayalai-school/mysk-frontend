@@ -57,6 +57,15 @@
   "subjectList": {
     "title": "Subject list",
     "search": "Search subjects",
+    "elective": {
+      "title": "Elective subject",
+      "subtitle": "Not chosen",
+      "action": {
+        "choose": "Choose",
+        "change": "Change",
+        "view": "View"
+      }
+    },
     "card": {
       "noTeachers": "No teachers",
       "action": {
