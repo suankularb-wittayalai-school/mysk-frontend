@@ -27,7 +27,7 @@ import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 /**
  * A place where Students can choose and trade their Elective Subjects.
@@ -55,6 +55,25 @@ const LearnElectivesPage: CustomPage<{
   // Details of the selected Elective Subject
   const [detailSelectedElective, setDetailSelectedElective] =
     useState<ElectiveSubject | null>(null);
+
+  async function fetchSelectedElectiveDetails(
+    electiveSubject: ElectiveSubject,
+  ) {
+    setDetailSelectedElective(null);
+    const { data } = await mysk.fetch<ElectiveSubject>(
+      `/v1/subjects/electives/${electiveSubject.session_code}/`,
+      {
+        query: {
+          fetch_level: "detailed",
+          descendant_fetch_level: "compact",
+        },
+      },
+    );
+    if (data) setDetailSelectedElective(data);
+  }
+  useEffect(() => {
+    fetchSelectedElectiveDetails(electiveSubjects[0]);
+  }, []);
 
   return (
     <>
@@ -99,19 +118,7 @@ const LearnElectivesPage: CustomPage<{
                   }}
                   onClick={() => {
                     setDetailSelectedID(electiveSubject.id);
-                    (async () => {
-                      setDetailSelectedElective(null);
-                      const { data } = await mysk.fetch<ElectiveSubject>(
-                        `/v1/subjects/electives/${electiveSubject.session_code}/`,
-                        {
-                          query: {
-                            fetch_level: "detailed",
-                            descendant_fetch_level: "compact",
-                          },
-                        },
-                      );
-                      if (data) setDetailSelectedElective(data);
-                    })();
+                    fetchSelectedElectiveDetails(electiveSubject);
                   }}
                 />
               ))}
