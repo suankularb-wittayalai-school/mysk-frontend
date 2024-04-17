@@ -192,7 +192,9 @@ export default function useScheduleGlance(schedule: Schedule, role: UserRole) {
       // If there are no periods today, don’t display anything
       !todayRow.length ||
       // If school is over, don’t display anything
-      schoolSessionState === SchoolSessionState.after
+      [SchoolSessionState.before, SchoolSessionState.after].includes(
+        schoolSessionState,
+      )
     )
       return ScheduleGlanceType.none;
 
