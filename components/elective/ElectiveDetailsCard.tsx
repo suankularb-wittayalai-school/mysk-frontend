@@ -1,4 +1,5 @@
 import MultilangText from "@/components/common/MultilingualText";
+import LookupDetailsContent from "@/components/lookup/LookupDetailsContent";
 import InformationCard from "@/components/lookup/people/InformationCard";
 import PeopleChipSet from "@/components/person/PeopleChipSet";
 import RoomChip from "@/components/room/RoomChip";
@@ -8,7 +9,14 @@ import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import { ElectiveSubject } from "@/utils/types/elective";
 import { UserRole } from "@/utils/types/person";
-import { ChipSet, Text } from "@suankularb-components/react";
+import {
+  ChipSet,
+  DURATION,
+  EASING,
+  Text,
+  transition,
+} from "@suankularb-components/react";
+import { motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 
 /**
@@ -17,92 +25,82 @@ import { useTranslation } from "next-i18next";
  *
  * @todo Should accept `electiveSubject` prop.
  */
-const ElectiveDetailsCard: StylableFC = ({ style, className }) => {
+const ElectiveDetailsCard: StylableFC<{
+  electiveSubject: ElectiveSubject | null;
+}> = ({ electiveSubject, style, className }) => {
   const locale = useLocale();
   const { t } = useTranslation("elective", { keyPrefix: "detail" });
 
-  // Mock data
-  const electiveSubject = {
-    id: 1,
-    name: { th: "การสร้างเว็บเพจ 1", "en-US": "Webpage 1" },
-    code: { th: "ว20281", "en-US": "SC20281" },
-    description: {
-      th: "คอร์สที่ออกแบบมาเพื่อสอนการสร้างและออกแบบเว็บไซต์อย่างมีประสิทธิภาพ",
-      "en-US":
-        "A course designed to teach you how to create and design effective \
-        websites.",
-    },
-    room: "6306",
-    credit: 1.0,
-    teachers: [
-      {
-        id: "d84bd1a6-4659-496e-bde3-afdaeb1221c9",
-        first_name: { th: "วิยดา", "en-US": "Wiyada" },
-        last_name: { th: "ไตรยวงศ์", "en-US": "Triyawong" },
-        role: UserRole.teacher,
-      },
-    ],
-    class_size: 17,
-    cap_size: 25,
-  } as unknown as ElectiveSubject;
-
   return (
     <section style={style} className={cn(`flex flex-col`, className)}>
-      <Text
-        type="headline-small"
-        element="h2"
-        className="px-6 pb-3 pt-[1.125rem]"
-      >
-        {getLocaleString(electiveSubject.name, locale)}
-      </Text>
+      {electiveSubject && (
+        <>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={transition(DURATION.medium2, EASING.standard)}
+            className="px-6 pb-3 pt-[1.125rem]"
+          >
+            <Text type="headline-small" element="h2">
+              {getLocaleString(electiveSubject.name, locale)}
+            </Text>
+          </motion.div>
 
-      <section
-        className={cn(`h-0 grow overflow-auto rounded-xl
-          bg-surface-container`)}
-      >
-        <div className="grid grid-cols-2 gap-2 p-4 md:grid-cols-4">
-          {/* Subject name */}
-          <InformationCard title={t("information.name")} className="col-span-2">
-            <MultilangText text={electiveSubject.name} />
-          </InformationCard>
+          <LookupDetailsContent>
+            <div className="grid grid-cols-2 gap-2 *:bg-surface-bright md:grid-cols-4">
+              {/* Subject name */}
+              <InformationCard
+                title={t("information.name")}
+                className="col-span-2"
+              >
+                <MultilangText text={electiveSubject.name} />
+              </InformationCard>
 
-          {/* Description */}
-          {electiveSubject.description && (
-            <InformationCard
-              title={t("information.description")}
-              className="col-span-2"
-            >
-              {getLocaleString(electiveSubject.description, locale)}
-            </InformationCard>
-          )}
+              {/* Description */}
+              {electiveSubject.description?.th && (
+                <InformationCard
+                  title={t("information.description")}
+                  className="col-span-2"
+                >
+                  {getLocaleString(electiveSubject.description, locale)}
+                </InformationCard>
+              )}
 
-          {/* Subject code */}
-          <InformationCard title={t("information.code")}>
-            <MultilangText text={electiveSubject.code} />
-          </InformationCard>
+              {/* Subject code */}
+              <InformationCard title={t("information.code")}>
+                <MultilangText text={electiveSubject.code} />
+              </InformationCard>
 
-          {/* Teachers */}
-          <InformationCard title={t("information.teachers")}>
-            <PeopleChipSet
-              people={electiveSubject.teachers}
-              scrollable
-              className="fade-out-to-r -mx-3 *:pl-3 *:pr-8"
-            />
-          </InformationCard>
+              {/* Teachers */}
+              <InformationCard title={t("information.teachers")}>
+                <PeopleChipSet
+                  people={electiveSubject.teachers.map((teacher) => ({
+                    ...teacher,
+                    role: UserRole.teacher,
+                  }))}
+                  scrollable
+                  className="fade-out-to-r -mx-3 *:pl-3 *:pr-8"
+                />
+              </InformationCard>
 
-          {/* Room */}
-          <InformationCard title={t("information.room")}>
-            <ChipSet scrollable className="fade-out-to-r -mx-3 *:pl-3 *:pr-8">
-              <RoomChip room={electiveSubject.room} />
-            </ChipSet>
-          </InformationCard>
+              {/* Room */}
+              <InformationCard title={t("information.room")}>
+                <ChipSet
+                  scrollable
+                  className="fade-out-to-r -mx-3 *:pl-3 *:pr-8"
+                >
+                  <RoomChip room={electiveSubject.room} />
+                </ChipSet>
+              </InformationCard>
 
-          {/* Credit */}
-          <InformationCard title={t("information.credit")}>
-            {electiveSubject.credit.toFixed(1)}
-          </InformationCard>
-        </div>
-      </section>
+              {/* Credit */}
+              <InformationCard title={t("information.credit")}>
+                {electiveSubject.credit.toFixed(1)}
+              </InformationCard>
+            </div>
+          </LookupDetailsContent>
+        </>
+      )}
     </section>
   );
 };

@@ -6,6 +6,7 @@ import LandingBlobs from "@/components/landing/LandingBlobs";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import cn from "@/utils/helpers/cn";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { ElectiveSubject } from "@/utils/types/elective";
@@ -14,10 +15,14 @@ import {
   Actions,
   Button,
   ContentLayout,
+  DURATION,
+  EASING,
   List,
   MaterialIcon,
+  transition,
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
+import { motion } from "framer-motion";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -37,10 +42,19 @@ const LearnElectivesPage: CustomPage<{
   const { t } = useTranslation("elective");
   const { t: tx } = useTranslation("common");
 
-  const [radioSelected, setRadioSelected] = useState<string | null>(enrolledID);
-  const [detailSelected, setDetailSelected] = useState<string | null>(
+  const mysk = useMySKClient();
+
+  // Selected IDs, for Radio and details
+  const [radioSelectedID, setRadioSelectedID] = useState<string | null>(
+    enrolledID,
+  );
+  const [detailSelectedID, setDetailSelectedID] = useState<string | null>(
     electiveSubjects[0]?.id,
   );
+
+  // Details of the selected Elective Subject
+  const [detailSelectedElective, setDetailSelectedElective] =
+    useState<ElectiveSubject | null>(null);
 
   return (
     <>
@@ -77,13 +91,28 @@ const LearnElectivesPage: CustomPage<{
                 <ElectiveListItem
                   key={electiveSubject.id}
                   electiveSubject={electiveSubject}
-                  radioSelected={radioSelected === electiveSubject.id}
-                  detailSelected={detailSelected === electiveSubject.id}
+                  radioSelected={radioSelectedID === electiveSubject.id}
+                  detailSelected={detailSelectedID === electiveSubject.id}
                   enrolled={enrolledID === electiveSubject.id}
                   onRadioToggle={(value) => {
-                    if (value) setRadioSelected(electiveSubject.id);
+                    if (value) setRadioSelectedID(electiveSubject.id);
                   }}
-                  onClick={() => setDetailSelected(electiveSubject.id)}
+                  onClick={() => {
+                    setDetailSelectedID(electiveSubject.id);
+                    (async () => {
+                      setDetailSelectedElective(null);
+                      const { data } = await mysk.fetch<ElectiveSubject>(
+                        `/v1/subjects/electives/${electiveSubject.session_code}/`,
+                        {
+                          query: {
+                            fetch_level: "detailed",
+                            descendant_fetch_level: "compact",
+                          },
+                        },
+                      );
+                      if (data) setDetailSelectedElective(data);
+                    })();
+                  }}
                 />
               ))}
             </List>
@@ -110,7 +139,18 @@ const LearnElectivesPage: CustomPage<{
             md:pb-[3.25rem]`)}
         >
           {/* Details */}
-          <ElectiveDetailsCard className="hidden grow md:flex" />
+          <motion.main
+            key={detailSelectedID}
+            initial={{ opacity: 0, scale: 0.95, x: -10 }}
+            animate={{ opacity: 1, scale: 1, x: 0 }}
+            transition={transition(DURATION.medium2, EASING.standardDecelerate)}
+            className="hidden grow md:block"
+          >
+            <ElectiveDetailsCard
+              electiveSubject={detailSelectedElective}
+              className="h-full"
+            />
+          </motion.main>
 
           {/* Trade */}
           <TradesCard
