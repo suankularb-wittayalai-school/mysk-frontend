@@ -84,14 +84,16 @@ const ElectiveDetailsCard: StylableFC<{
               </InformationCard>
 
               {/* Room */}
-              <InformationCard title={t("information.room")}>
-                <ChipSet
-                  scrollable
-                  className="fade-out-to-r -mx-3 *:pl-3 *:pr-8"
-                >
-                  <RoomChip room={electiveSubject.room} />
-                </ChipSet>
-              </InformationCard>
+              {electiveSubject.room && (
+                <InformationCard title={t("information.room")}>
+                  <ChipSet
+                    scrollable
+                    className="fade-out-to-r -mx-3 *:pl-3 *:pr-8"
+                  >
+                    <RoomChip room={electiveSubject.room} />
+                  </ChipSet>
+                </InformationCard>
+              )}
 
               {/* Credit */}
               <InformationCard title={t("information.credit")}>
