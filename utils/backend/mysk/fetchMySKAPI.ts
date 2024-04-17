@@ -19,10 +19,9 @@ export default async function fetchMySKAPI<Data extends {} | unknown = unknown>(
   options?: Partial<RequestInit & { query: Query }>,
 ): Promise<FetchReturn<Data> & { status: number }> {
   /**
-   * The path to make the fetch request to.
+   * The path to make the fetch request to (without the base).
    */
   const source = sift([
-    process.env.NEXT_PUBLIC_MYSK_API_URL,
     path,
     options?.query && "?",
     qs.stringify(options?.query, { encode: false }),
@@ -31,7 +30,7 @@ export default async function fetchMySKAPI<Data extends {} | unknown = unknown>(
   /**
    * The original reponse from the API.
    */
-  const response = await fetch(source, {
+  const response = await fetch(process.env.NEXT_PUBLIC_MYSK_API_URL + source, {
     ...options,
     headers: {
       "X-API-KEY": process.env.MYSK_API_KEY,
@@ -46,7 +45,7 @@ export default async function fetchMySKAPI<Data extends {} | unknown = unknown>(
       [
         "",
         options?.method || "GET",
-        source,
+        `\x1b[90m` + process.env.NEXT_PUBLIC_MYSK_API_URL + `\x1b[0m` + source,
         (response.ok ? `\x1b[32m` : `\x1b[33m`) + response.status + `\x1b[0m`,
       ].join(" "),
     );
