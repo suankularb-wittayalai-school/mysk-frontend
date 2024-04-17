@@ -164,8 +164,8 @@ const LearnElectivesPage: CustomPage<{
           {/* Choose Button */}
           <Actions
             className={cn(`pointer-events-none sticky inset-0 bottom-20 top-auto
-              z-10 !-mt-6 !block bg-gradient-to-t from-surface-container p-4
-              pt-12 sm:static sm:!mt-0 sm:!flex sm:bg-none sm:p-0 sm:px-0`)}
+              z-10 !-mt-6 !grid !justify-stretch bg-gradient-to-t from-surface-container p-4 pt-12
+              sm:static sm:!mt-0 sm:!flex sm:!justify-end sm:bg-none sm:p-0 sm:px-0`)}
           >
             <Button
               appearance="filled"
