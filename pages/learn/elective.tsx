@@ -8,6 +8,10 @@ import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import cn from "@/utils/helpers/cn";
+import logError from "@/utils/helpers/logError";
+import useRefreshProps from "@/utils/helpers/useRefreshProps";
+import useToggle from "@/utils/helpers/useToggle";
+import withLoading from "@/utils/helpers/withLoading";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { ElectiveSubject } from "@/utils/types/elective";
 import { Student } from "@/utils/types/person";
@@ -37,19 +41,20 @@ import { useEffect, useState } from "react";
  */
 const LearnElectivesPage: CustomPage<{
   electiveSubjects: ElectiveSubject[];
-  enrolledID: string | null;
+  enrolledID: number | null;
 }> = ({ electiveSubjects, enrolledID }) => {
   const { t } = useTranslation("elective");
   const { t: tx } = useTranslation("common");
 
   const mysk = useMySKClient();
+  const refreshProps = useRefreshProps();
 
   // Selected IDs, for Radio and details
-  const [radioSelectedID, setRadioSelectedID] = useState<string | null>(
+  const [radioSelectedID, setRadioSelectedID] = useState<number | null>(
     enrolledID,
   );
-  const [detailSelectedID, setDetailSelectedID] = useState<string | null>(
-    electiveSubjects[0]?.id,
+  const [detailSelectedID, setDetailSelectedID] = useState<number | null>(
+    electiveSubjects[0]?.session_code,
   );
 
   // Details of the selected Elective Subject
@@ -74,6 +79,33 @@ const LearnElectivesPage: CustomPage<{
   useEffect(() => {
     fetchSelectedElectiveDetails(electiveSubjects[0]);
   }, []);
+
+  const [loading, toggleLoading] = useToggle();
+
+  /**
+   * Choose or change to the selected Elective Subject, depending on context.
+   */
+  async function handleChoose() {
+    if (radioSelectedID === enrolledID) return;
+    withLoading(
+      async () => {
+        const { error } = await mysk.fetch(
+          `/v1/subjects/electives/${radioSelectedID}/enroll/`,
+          {
+            // POST for choosing, PUT for changing.
+            method: enrolledID ? "PUT" : "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ fetch_level: "id_only" }),
+          },
+        );
+        if (error) logError("handleChoose", error);
+        await refreshProps();
+        return true;
+      },
+      toggleLoading,
+      { hasEndToggle: true },
+    );
+  }
 
   return (
     <>
@@ -110,14 +142,18 @@ const LearnElectivesPage: CustomPage<{
                 <ElectiveListItem
                   key={electiveSubject.id}
                   electiveSubject={electiveSubject}
-                  radioSelected={radioSelectedID === electiveSubject.id}
-                  detailSelected={detailSelectedID === electiveSubject.id}
-                  enrolled={enrolledID === electiveSubject.id}
+                  radioSelected={
+                    radioSelectedID === electiveSubject.session_code
+                  }
+                  detailSelected={
+                    detailSelectedID === electiveSubject.session_code
+                  }
+                  enrolled={enrolledID === electiveSubject.session_code}
                   onRadioToggle={(value) => {
-                    if (value) setRadioSelectedID(electiveSubject.id);
+                    if (value) setRadioSelectedID(electiveSubject.session_code);
                   }}
                   onClick={() => {
-                    setDetailSelectedID(electiveSubject.id);
+                    setDetailSelectedID(electiveSubject.session_code);
                     fetchSelectedElectiveDetails(electiveSubject);
                   }}
                 />
@@ -134,9 +170,17 @@ const LearnElectivesPage: CustomPage<{
             <Button
               appearance="filled"
               icon={<MaterialIcon icon="done" />}
+              onClick={handleChoose}
+              disabled={radioSelectedID === enrolledID || loading}
               className="!pointer-events-auto"
             >
-              {t("list.action.choose", { context: "initial" })}
+              {t("list.action.choose", {
+                context: !enrolledID
+                  ? "initial"
+                  : radioSelectedID !== enrolledID
+                    ? "change"
+                    : "chosen",
+              })}
             </Button>
           </Actions>
         </section>
@@ -203,7 +247,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
-  // Get the logged in Student
+  // Get the logged in Student.
   const { data: student } = (await getLoggedInPerson(
     supabase,
     authOptions,
@@ -211,7 +255,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     res,
   )) as { data: Student };
 
-  // Get the list of Elective Subjects available for this Student to enroll in
+  // Get the list of Elective Subjects available for this Student to enroll in.
   const { data: electiveSubjects } = await mysk.fetch<ElectiveSubject[]>(
     "/v1/subjects/electives/",
     {
@@ -225,18 +269,19 @@ export const getServerSideProps: GetServerSideProps = async ({
   );
 
   // Get the ID of the Elective Subject the Student is already enrolled in, if
-  // any
+  // any.
   const { data: enrolledElectiveSubjects } = await mysk.fetch<
     ElectiveSubject[]
   >("/v1/subjects/electives/", {
     query: {
-      fetch_level: "id_only",
+      fetch_level: "compact",
       filter: { data: { student_ids: [student.id] } },
     },
   });
 
-  // Crush into a single ID
-  const enrolledID = enrolledElectiveSubjects?.[0]?.id || null;
+  // Use the session code of this Elective Subject as the ID.
+  // (A Student can only be enrolled in one Elective Subject at a time.)
+  const enrolledID = enrolledElectiveSubjects?.[0]?.session_code || null;
 
   return {
     props: {
