@@ -49,22 +49,15 @@ const LearnElectivesPage: CustomPage<{
   const mysk = useMySKClient();
   const refreshProps = useRefreshProps();
 
-  // Selected IDs, for Radio and details
-  const [radioSelectedID, setRadioSelectedID] = useState<number | null>(
-    enrolledID,
-  );
-  const [detailSelectedID, setDetailSelectedID] = useState<number | null>(
-    electiveSubjects[0]?.session_code,
-  );
-
-  // Details of the selected Elective Subject
-  const [detailSelectedElective, setDetailSelectedElective] =
+  const [selectedID, setSelectedID] = useState<number | null>(null);
+  const [selectedElective, setSelectedElective] =
     useState<ElectiveSubject | null>(null);
 
   async function fetchSelectedElectiveDetails(
     electiveSubject: ElectiveSubject,
   ) {
-    setDetailSelectedElective(null);
+    if (selectedID === electiveSubject.session_code) return;
+    setSelectedElective(null);
     const { data } = await mysk.fetch<ElectiveSubject>(
       `/v1/subjects/electives/${electiveSubject.session_code}/`,
       {
@@ -74,7 +67,7 @@ const LearnElectivesPage: CustomPage<{
         },
       },
     );
-    if (data) setDetailSelectedElective(data);
+    if (data) setSelectedElective(data);
   }
   useEffect(() => {
     fetchSelectedElectiveDetails(electiveSubjects[0]);
@@ -86,11 +79,11 @@ const LearnElectivesPage: CustomPage<{
    * Choose or change to the selected Elective Subject, depending on context.
    */
   async function handleChoose() {
-    if (radioSelectedID === enrolledID) return;
+    if (selectedID === enrolledID) return;
     withLoading(
       async () => {
         const { error } = await mysk.fetch(
-          `/v1/subjects/electives/${radioSelectedID}/enroll/`,
+          `/v1/subjects/electives/${selectedID}/enroll/`,
           {
             // POST for choosing, PUT for changing.
             method: enrolledID ? "PUT" : "POST",
@@ -142,18 +135,10 @@ const LearnElectivesPage: CustomPage<{
                 <ElectiveListItem
                   key={electiveSubject.id}
                   electiveSubject={electiveSubject}
-                  radioSelected={
-                    radioSelectedID === electiveSubject.session_code
-                  }
-                  detailSelected={
-                    detailSelectedID === electiveSubject.session_code
-                  }
+                  selected={selectedID === electiveSubject.session_code}
                   enrolled={enrolledID === electiveSubject.session_code}
-                  onRadioToggle={(value) => {
-                    if (value) setRadioSelectedID(electiveSubject.session_code);
-                  }}
                   onClick={() => {
-                    setDetailSelectedID(electiveSubject.session_code);
+                    setSelectedID(electiveSubject.session_code);
                     fetchSelectedElectiveDetails(electiveSubject);
                   }}
                 />
@@ -171,13 +156,13 @@ const LearnElectivesPage: CustomPage<{
               appearance="filled"
               icon={<MaterialIcon icon="done" />}
               onClick={handleChoose}
-              disabled={radioSelectedID === enrolledID || loading}
+              disabled={selectedID === enrolledID || loading}
               className="!pointer-events-auto"
             >
               {t("list.action.choose", {
                 context: !enrolledID
                   ? "initial"
-                  : radioSelectedID !== enrolledID
+                  : selectedID !== enrolledID
                     ? "change"
                     : "chosen",
               })}
@@ -191,14 +176,14 @@ const LearnElectivesPage: CustomPage<{
         >
           {/* Details */}
           <motion.main
-            key={detailSelectedID}
+            key={selectedID}
             initial={{ opacity: 0, scale: 0.95, x: -10 }}
             animate={{ opacity: 1, scale: 1, x: 0 }}
             transition={transition(DURATION.medium2, EASING.standardDecelerate)}
             className="hidden grow md:block"
           >
             <ElectiveDetailsCard
-              electiveSubject={detailSelectedElective}
+              electiveSubject={selectedElective}
               className="h-full"
             />
           </motion.main>

@@ -3,6 +3,7 @@
   "title_teacher": "วิชาเลือกของคุณ",
   "title_admin": "วิชาเลือก",
   "list": {
+    "enrolled": "ที่ลงทะเบียนอยู่",
     "enrollment": {
       "alt": "ลงทะเบียนแล้ว {{count}} คน จาก {{max}} คน",
       "label": "<0>{{count}}</0>/{{max}}",
