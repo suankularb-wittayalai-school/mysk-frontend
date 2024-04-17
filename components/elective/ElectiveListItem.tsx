@@ -45,7 +45,11 @@ const ElectiveListItem: StylableFC<{
     <ListItem
       align="center"
       lines={2}
-      className={cn(`!h-[4.5rem] !pl-6 !pr-7`, className)}
+      className={cn(
+        `!h-[4.5rem] !pl-6 !pr-7 transition-colors`,
+        detailSelected && `!bg-primary-container`,
+        className,
+      )}
       style={style}
     >
       {/* Radio */}
@@ -81,6 +85,10 @@ const ElectiveListItem: StylableFC<{
       <EnrollmentIndicator
         classSize={electiveSubject.class_size}
         capSize={electiveSubject.cap_size}
+        className={cn(
+          detailSelected && `[&_.skc-progress>*]:!bg-surface-bright`,
+          `[&_.skc-progress>*]:transition-colors`,
+        )}
       />
     </ListItem>
   );
