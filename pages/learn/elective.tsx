@@ -1,28 +1,34 @@
 import PageHeader from "@/components/common/PageHeader";
+import ChooseButton from "@/components/elective/ChooseButton";
 import ElectiveDetailsCard from "@/components/elective/ElectiveDetailsCard";
 import ElectiveListItem from "@/components/elective/ElectiveListItem";
 import TradesCard from "@/components/elective/TradesCard";
 import LandingBlobs from "@/components/landing/LandingBlobs";
+import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import cn from "@/utils/helpers/cn";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { ElectiveSubject } from "@/utils/types/elective";
 import { Student } from "@/utils/types/person";
 import {
   Actions,
-  Button,
   ContentLayout,
+  DURATION,
+  EASING,
   List,
-  MaterialIcon,
+  transition,
+  useBreakpoint,
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
+import { motion } from "framer-motion";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 /**
  * A place where Students can choose and trade their Elective Subjects.
@@ -32,12 +38,45 @@ import { useState } from "react";
  */
 const LearnElectivesPage: CustomPage<{
   electiveSubjects: ElectiveSubject[];
-  enrolledID: string | null;
+  enrolledID: number | null;
 }> = ({ electiveSubjects, enrolledID }) => {
   const { t } = useTranslation("elective");
   const { t: tx } = useTranslation("common");
 
-  const [radioSelected, setRadioSelected] = useState<string | null>(enrolledID);
+  const mysk = useMySKClient();
+
+  const [selectedID, setSelectedID] = useState<number | null>(null);
+  const [selectedElective, setSelectedElective] =
+    useState<ElectiveSubject | null>(null);
+
+  // Open Dialog on mobile, otherwise close it
+  const { atBreakpoint } = useBreakpoint();
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  useEffect(() => {
+    if (atBreakpoint !== "base") setDetailsOpen(false);
+    else if (selectedID) setDetailsOpen(true);
+  }, [atBreakpoint === "base"]);
+
+  async function fetchSelectedElectiveDetails(
+    electiveSubject: ElectiveSubject,
+  ) {
+    if (selectedID === electiveSubject.session_code) return;
+    setSelectedElective(null);
+    const { data } = await mysk.fetch<ElectiveSubject>(
+      `/v1/subjects/electives/${electiveSubject.session_code}/`,
+      {
+        query: {
+          fetch_level: "detailed",
+          descendant_fetch_level: "compact",
+        },
+      },
+    );
+    if (data) setSelectedElective(data);
+  }
+  useEffect(() => {
+    if (electiveSubjects.length)
+      fetchSelectedElectiveDetails(electiveSubjects[0]);
+  }, []);
 
   return (
     <>
@@ -66,20 +105,25 @@ const LearnElectivesPage: CustomPage<{
         <section className="flex-col gap-3 space-y-3 sm:flex">
           {/* List */}
           <div
-            className={cn(`grow sm:overflow-auto sm:rounded-xl
-              sm:bg-surface-bright md:h-0`)}
+            className={cn(`min-h-[calc(100dvh-25.5rem)] grow sm:overflow-auto
+              sm:rounded-xl sm:bg-surface-bright md:h-0 md:min-h-0`)}
           >
             <List className="sm:!py-2">
               {electiveSubjects.map((electiveSubject) => (
                 <ElectiveListItem
                   key={electiveSubject.id}
                   electiveSubject={electiveSubject}
-                  radioSelected={radioSelected === electiveSubject.id}
-                  enrolled={enrolledID === electiveSubject.id}
-                  onRadioToggle={(value) => {
-                    if (value) setRadioSelected(electiveSubject.id);
+                  selected={selectedID === electiveSubject.session_code}
+                  enrolled={enrolledID === electiveSubject.session_code}
+                  onClick={() => {
+                    setSelectedID(electiveSubject.session_code);
+                    if (atBreakpoint === "base")
+                      setTimeout(
+                        () => setDetailsOpen(true),
+                        DURATION.short4 * 1000,
+                      );
+                    fetchSelectedElectiveDetails(electiveSubject);
                   }}
-                  onClick={() => {}}
                 />
               ))}
             </List>
@@ -88,16 +132,15 @@ const LearnElectivesPage: CustomPage<{
           {/* Choose Button */}
           <Actions
             className={cn(`pointer-events-none sticky inset-0 bottom-20 top-auto
-              z-10 !-mt-6 !block bg-gradient-to-t from-surface-container p-4
-              pt-12 sm:static sm:!mt-0 sm:!flex sm:bg-none sm:p-0 sm:px-0`)}
+              z-10 !-mt-6 !grid !justify-stretch bg-gradient-to-t
+              from-surface-container p-4 pt-12 sm:static sm:!mt-0 sm:!flex
+              sm:!justify-end sm:bg-none sm:p-0 sm:px-0`)}
           >
-            <Button
-              appearance="filled"
-              icon={<MaterialIcon icon="done" />}
+            <ChooseButton
+              sessionCode={selectedID}
+              enrolledID={enrolledID}
               className="!pointer-events-auto"
-            >
-              {t("list.action.choose", { context: "initial" })}
-            </Button>
+            />
           </Actions>
         </section>
 
@@ -106,7 +149,18 @@ const LearnElectivesPage: CustomPage<{
             md:pb-[3.25rem]`)}
         >
           {/* Details */}
-          <ElectiveDetailsCard className="hidden grow md:flex" />
+          <motion.main
+            key={selectedID}
+            initial={{ opacity: 0, scale: 0.95, x: -10 }}
+            animate={{ opacity: 1, scale: 1, x: 0 }}
+            transition={transition(DURATION.medium2, EASING.standardDecelerate)}
+            className="hidden grow md:block"
+          >
+            <ElectiveDetailsCard
+              electiveSubject={selectedElective}
+              className="h-full"
+            />
+          </motion.main>
 
           {/* Trade */}
           <TradesCard
@@ -137,6 +191,18 @@ const LearnElectivesPage: CustomPage<{
           }
         `}</style>
       </ContentLayout>
+
+      <LookupDetailsDialog
+        open={detailsOpen}
+        onClose={() => setDetailsOpen(false)}
+      >
+        <ElectiveDetailsCard
+          electiveSubject={selectedElective}
+          enrolledID={enrolledID}
+          onChooseSuccess={() => setDetailsOpen(false)}
+          className="!mx-0 !bg-surface-container-highest"
+        />
+      </LookupDetailsDialog>
     </>
   );
 };
@@ -152,7 +218,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
-  // Get the logged in Student
+  // Get the logged in Student.
   const { data: student } = (await getLoggedInPerson(
     supabase,
     authOptions,
@@ -160,7 +226,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     res,
   )) as { data: Student };
 
-  // Get the list of Elective Subjects available for this Student to enroll in
+  // Get the list of Elective Subjects available for this Student to enroll in.
   const { data: electiveSubjects } = await mysk.fetch<ElectiveSubject[]>(
     "/v1/subjects/electives/",
     {
@@ -174,18 +240,19 @@ export const getServerSideProps: GetServerSideProps = async ({
   );
 
   // Get the ID of the Elective Subject the Student is already enrolled in, if
-  // any
+  // any.
   const { data: enrolledElectiveSubjects } = await mysk.fetch<
     ElectiveSubject[]
   >("/v1/subjects/electives/", {
     query: {
-      fetch_level: "id_only",
+      fetch_level: "compact",
       filter: { data: { student_ids: [student.id] } },
     },
   });
 
-  // Crush into a single ID
-  const enrolledID = enrolledElectiveSubjects?.[0]?.id || null;
+  // Use the session code of this Elective Subject as the ID.
+  // (A Student can only be enrolled in one Elective Subject at a time.)
+  const enrolledID = enrolledElectiveSubjects?.[0]?.session_code || null;
 
   return {
     props: {

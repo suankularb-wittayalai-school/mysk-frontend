@@ -3,6 +3,7 @@
   "title_teacher": "Your electives",
   "title_admin": "Electives",
   "list": {
+    "enrolled": "Currently enrolled",
     "enrollment": {
       "alt": "{{count}} enrolled out of {{max}}",
       "label": "<0>{{count}}</0>/{{max}}",
