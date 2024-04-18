@@ -147,6 +147,13 @@ const StudentsListPaper: FC<{
               </th>
             )}
 
+            {/* Elective */}
+            {options.columns.includes("elective") && (
+              <th className="w-12">
+                {options.language === "en-US" ? "Elective subject" : "วิชาเลือก"}
+              </th>
+            )}
+
             {/* Empty columns */}
             {list(Math.min(options.numEmpty, MAXIMUM_EMPTY_COLUMNS) - 1).map(
               (idx) => (

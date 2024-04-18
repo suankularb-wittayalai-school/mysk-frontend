@@ -56,6 +56,7 @@ const StudentsPrintOptions: FC<{
               "allergies",
               "shirtSize",
               "pantsSize",
+              "elective",
             ].filter((column) => column) as OptionsType["columns"]
           ).map((column) => (
             <FormItem key={column} label={t(`columns.${column}`)}>

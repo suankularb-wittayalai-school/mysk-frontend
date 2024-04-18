@@ -25,7 +25,9 @@ export type OptionsType = {
     | "allergies"
     | "shirtSize"
     | "pantsSize"
+    | "elective"
   )[];
+  
   numEmpty: number;
   enableNotes: boolean;
   enableTimestamp: boolean;

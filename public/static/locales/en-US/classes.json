@@ -51,7 +51,8 @@
       "nickname": "Nickname",
       "allergies": "Allergies (in Thai)",
       "shirtSize": "Shirt size",
-      "pantsSize": "School pants size"
+      "pantsSize": "School pants size",
+      "elective": "Elective subject"
     },
     "numEmpty": "Empty columns",
     "enableNotes": "Notes column",
