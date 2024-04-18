@@ -4,6 +4,7 @@ import ElectiveDetailsCard from "@/components/elective/ElectiveDetailsCard";
 import ElectiveListItem from "@/components/elective/ElectiveListItem";
 import TradesCard from "@/components/elective/TradesCard";
 import LandingBlobs from "@/components/landing/LandingBlobs";
+import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
@@ -19,6 +20,7 @@ import {
   EASING,
   List,
   transition,
+  useBreakpoint,
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { motion } from "framer-motion";
@@ -47,6 +49,14 @@ const LearnElectivesPage: CustomPage<{
   const [selectedElective, setSelectedElective] =
     useState<ElectiveSubject | null>(null);
 
+  // Open Dialog on mobile, otherwise close it
+  const { atBreakpoint } = useBreakpoint();
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  useEffect(() => {
+    if (atBreakpoint !== "base") setDetailsOpen(false);
+    else if (selectedID) setDetailsOpen(true);
+  }, [atBreakpoint === "base"]);
+
   async function fetchSelectedElectiveDetails(
     electiveSubject: ElectiveSubject,
   ) {
@@ -64,7 +74,8 @@ const LearnElectivesPage: CustomPage<{
     if (data) setSelectedElective(data);
   }
   useEffect(() => {
-    fetchSelectedElectiveDetails(electiveSubjects[0]);
+    if (electiveSubjects.length)
+      fetchSelectedElectiveDetails(electiveSubjects[0]);
   }, []);
 
   return (
@@ -106,6 +117,7 @@ const LearnElectivesPage: CustomPage<{
                   enrolled={enrolledID === electiveSubject.session_code}
                   onClick={() => {
                     setSelectedID(electiveSubject.session_code);
+                    if (atBreakpoint === "base") setDetailsOpen(true);
                     fetchSelectedElectiveDetails(electiveSubject);
                   }}
                 />
@@ -175,6 +187,18 @@ const LearnElectivesPage: CustomPage<{
           }
         `}</style>
       </ContentLayout>
+
+      <LookupDetailsDialog
+        open={detailsOpen}
+        onClose={() => setDetailsOpen(false)}
+      >
+        <ElectiveDetailsCard
+          electiveSubject={selectedElective}
+          enrolledID={enrolledID}
+          onChooseSuccess={() => setDetailsOpen(false)}
+          className="!mx-0 !bg-surface-container-highest"
+        />
+      </LookupDetailsDialog>
     </>
   );
 };
