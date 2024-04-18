@@ -39,7 +39,9 @@ const ElectiveListItem: StylableFC<{
       className={cn(
         `!pl-6 !pr-7 transition-colors`,
         enrolled ? `!py-3.5` : `!py-3`,
-        enrolled ? `!bg-surface-variant` : selected && `!bg-primary-container`,
+        enrolled
+          ? `!bg-surface-variant`
+          : selected && `!bg-primary-container state-layer:!bg-primary`,
         className,
       )}
       style={style}
