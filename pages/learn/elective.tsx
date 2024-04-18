@@ -1,4 +1,5 @@
 import PageHeader from "@/components/common/PageHeader";
+import ChooseButton from "@/components/elective/ChooseButton";
 import ElectiveDetailsCard from "@/components/elective/ElectiveDetailsCard";
 import ElectiveListItem from "@/components/elective/ElectiveListItem";
 import TradesCard from "@/components/elective/TradesCard";
@@ -8,21 +9,15 @@ import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import cn from "@/utils/helpers/cn";
-import logError from "@/utils/helpers/logError";
-import useRefreshProps from "@/utils/helpers/useRefreshProps";
-import useToggle from "@/utils/helpers/useToggle";
-import withLoading from "@/utils/helpers/withLoading";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { ElectiveSubject } from "@/utils/types/elective";
 import { Student } from "@/utils/types/person";
 import {
   Actions,
-  Button,
   ContentLayout,
   DURATION,
   EASING,
   List,
-  MaterialIcon,
   transition,
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
@@ -47,7 +42,6 @@ const LearnElectivesPage: CustomPage<{
   const { t: tx } = useTranslation("common");
 
   const mysk = useMySKClient();
-  const refreshProps = useRefreshProps();
 
   const [selectedID, setSelectedID] = useState<number | null>(null);
   const [selectedElective, setSelectedElective] =
@@ -72,33 +66,6 @@ const LearnElectivesPage: CustomPage<{
   useEffect(() => {
     fetchSelectedElectiveDetails(electiveSubjects[0]);
   }, []);
-
-  const [loading, toggleLoading] = useToggle();
-
-  /**
-   * Choose or change to the selected Elective Subject, depending on context.
-   */
-  async function handleChoose() {
-    if (selectedID === enrolledID) return;
-    withLoading(
-      async () => {
-        const { error } = await mysk.fetch(
-          `/v1/subjects/electives/${selectedID}/enroll/`,
-          {
-            // POST for choosing, PUT for changing.
-            method: enrolledID ? "PUT" : "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ fetch_level: "id_only" }),
-          },
-        );
-        if (error) logError("handleChoose", error);
-        await refreshProps();
-        return true;
-      },
-      toggleLoading,
-      { hasEndToggle: true },
-    );
-  }
 
   return (
     <>
@@ -127,8 +94,8 @@ const LearnElectivesPage: CustomPage<{
         <section className="flex-col gap-3 space-y-3 sm:flex">
           {/* List */}
           <div
-            className={cn(`grow sm:overflow-auto sm:rounded-xl
-              sm:bg-surface-bright md:h-0`)}
+            className={cn(`min-h-[calc(100dvh-25.5rem)] grow sm:overflow-auto
+              sm:rounded-xl sm:bg-surface-bright md:h-0 md:min-h-0`)}
           >
             <List className="sm:!py-2">
               {electiveSubjects.map((electiveSubject) => (
@@ -149,24 +116,15 @@ const LearnElectivesPage: CustomPage<{
           {/* Choose Button */}
           <Actions
             className={cn(`pointer-events-none sticky inset-0 bottom-20 top-auto
-              z-10 !-mt-6 !grid !justify-stretch bg-gradient-to-t from-surface-container p-4 pt-12
-              sm:static sm:!mt-0 sm:!flex sm:!justify-end sm:bg-none sm:p-0 sm:px-0`)}
+              z-10 !-mt-6 !grid !justify-stretch bg-gradient-to-t
+              from-surface-container p-4 pt-12 sm:static sm:!mt-0 sm:!flex
+              sm:!justify-end sm:bg-none sm:p-0 sm:px-0`)}
           >
-            <Button
-              appearance="filled"
-              icon={<MaterialIcon icon="done" />}
-              onClick={handleChoose}
-              disabled={selectedID === enrolledID || loading}
+            <ChooseButton
+              sessionCode={selectedID}
+              enrolledID={enrolledID}
               className="!pointer-events-auto"
-            >
-              {t("list.action.choose", {
-                context: !enrolledID
-                  ? "initial"
-                  : selectedID !== enrolledID
-                    ? "change"
-                    : "chosen",
-              })}
-            </Button>
+            />
           </Actions>
         </section>
 
