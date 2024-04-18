@@ -117,7 +117,11 @@ const LearnElectivesPage: CustomPage<{
                   enrolled={enrolledID === electiveSubject.session_code}
                   onClick={() => {
                     setSelectedID(electiveSubject.session_code);
-                    if (atBreakpoint === "base") setDetailsOpen(true);
+                    if (atBreakpoint === "base")
+                      setTimeout(
+                        () => setDetailsOpen(true),
+                        DURATION.short4 * 1000,
+                      );
                     fetchSelectedElectiveDetails(electiveSubject);
                   }}
                 />
