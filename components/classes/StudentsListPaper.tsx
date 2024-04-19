@@ -47,7 +47,7 @@ const StudentsListPaper: FC<{
               getCurrentAcademicYear(),
             );
             if (options.language === "en-US")
-              return `Mattayomsuksa ${grade} Student List; Academic Year ${year}`;
+              return `Mattayomsuksa ${grade} Student List for Academic Year ${year}`;
             return `รายชื่อนักเรียนชั้นมัธยมศึกษาปีที่ ${grade} ปีการศึกษา ${year}`;
           })()}
         </p>
@@ -147,8 +147,8 @@ const StudentsListPaper: FC<{
 
             {/* Elective */}
             {options.columns.includes("elective") && (
-              <th className="w-12">
-                {options.language === "en-US" ? "Elective subject" : "วิชาเลือก"}
+              <th colSpan={2}>
+                {options.language === "en-US" ? "Chosen elective" : "วิชาเลือก"}
               </th>
             )}
 
@@ -228,6 +228,25 @@ const StudentsListPaper: FC<{
                 <td className="text-center">
                   {student.pants_size?.replace("x", "×")}
                 </td>
+              )}
+
+              {/* Chosen elective */}
+              {options.columns.includes("elective") && (
+                <>
+                  <td className="w-4">
+                    {student.chosen_elective?.session_code}
+                  </td>
+                  <td className="w-24">
+                    {student.chosen_elective
+                      ? getLocaleString(
+                          student.chosen_elective.name,
+                          options.language,
+                        )
+                      : options.language === "en-US"
+                        ? "Not chosen"
+                        : "ยังไม่ได้เลือก"}
+                  </td>
+                </>
               )}
 
               {/* Empty columns */}
