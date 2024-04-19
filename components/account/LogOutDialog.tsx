@@ -32,6 +32,8 @@ const LogOutDialog: DialogFC = ({ open, onClose }) => {
 
         // Log the user out (without reload)
         await signOut({ redirect: false });
+        document.cookie =
+          "access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
 
         // Close the Dialog
         onClose();
