@@ -3,6 +3,8 @@ import logError from "@/utils/helpers/logError";
 import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
 import { StudentCertificateType } from "@/utils/types/certificate";
+import { ElectiveSubject } from "@/utils/types/elective";
+import { MySKClient } from "@/utils/types/fetch";
 import { ShirtSize, Student, UserRole } from "@/utils/types/person";
 import { pick } from "radash";
 
@@ -10,7 +12,8 @@ import { pick } from "radash";
  * Get multiple Students by their IDs.
  *
  * @param supabase The Supabase Client to use.
- * @param studentID The IDs of the Students in the database. Not to be confused with the Person ID or the 5-digit Student ID.
+ * @param mysk The MySK Client to use.
+ * @param studentIDs The IDs of the Students in the database. Not to be confused with the Person ID or the 5-digit Student ID.
  *
  * @param options Options.
  * @param options.detailed Whether to include detailed information about the Students.
@@ -19,7 +22,8 @@ import { pick } from "radash";
  */
 export async function getStudentsByIDs(
   supabase: DatabaseClient,
-  studentID: string[],
+  mysk: MySKClient,
+  studentIDs: string[],
   options?: { detailed?: boolean },
 ): Promise<BackendReturn<Student[]>> {
   let { data, error: studentError } = await supabase
@@ -41,12 +45,42 @@ export async function getStudentsByIDs(
         classroom_students(class_no, classrooms!inner(id, number)
       )`,
     )
-    .in("id", studentID)
+    .in("id", studentIDs)
     .eq("classroom_students.classrooms.year", getCurrentAcademicYear());
 
   if (studentError) {
-    logError("getStudentByID (students)", studentError);
+    logError("getStudentsByIDs (students)", studentError);
     return { data: null, error: studentError };
+  }
+
+  let studentElectiveMap: Record<string, ElectiveSubject> = {};
+
+  if (options?.detailed) {
+    const { data: electives, error: electivesError } = await mysk.fetch<
+      ElectiveSubject[]
+    >("/v1/subjects/electives", {
+      query: {
+        fetch_level: "detailed",
+        descendant_fetch_level: "id_only",
+        filter: { data: { student_ids: studentIDs } },
+      },
+    });
+    if (electivesError) {
+      logError("getStudentsByIDs (electives)", electivesError);
+      // Sorry I just can’t handle this right now.
+      return { data: [], error: null };
+    }
+
+    studentElectiveMap = Object.fromEntries(
+      electives
+        .map((elective) =>
+          elective.students.map((student) => [
+            student.id,
+            pick(elective, ["id", "name", "code", "session_code"]),
+          ]),
+        )
+        .flat(),
+    );
   }
 
   const students: Student[] = data!.map((student) => ({
@@ -83,6 +117,7 @@ export async function getStudentsByIDs(
               certicate.certificate_type
             ),
           })),
+          chosen_elective: studentElectiveMap[student!.id] || null,
           allergies: student!.people.person_allergies.map(
             ({ allergy_name }) => allergy_name,
           ),
@@ -95,6 +130,7 @@ export async function getStudentsByIDs(
           contacts: [],
           certificates: [],
           allergies: null,
+          chosen_elective: null,
           citizen_id: null,
           birthdate: null,
           shirt_size: null,

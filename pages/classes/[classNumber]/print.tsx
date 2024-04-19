@@ -2,6 +2,7 @@ import StudentListPrintout from "@/components/classes/StudentListPrintout";
 import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
 import getClassroomOverview from "@/utils/backend/classroom/getClassroomOverview";
 import getStudentsOfClass from "@/utils/backend/classroom/getStudentsOfClass";
+import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import { getStudentsByIDs } from "@/utils/backend/person/getStudentsByIDs";
 import useLoggedInPerson from "@/utils/helpers/useLoggedInPerson";
 import { supabase } from "@/utils/supabase-backend";
@@ -46,6 +47,8 @@ const StudentsListPrintPage: CustomPage<{
 };
 
 export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
+  const mysk = await createMySKClient();
+
   const classNumber = Number(params?.classNumber);
   if (Number.isNaN(classNumber)) return { notFound: true };
 
@@ -59,6 +62,7 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   );
   const { data: studentList } = await getStudentsByIDs(
     supabase,
+    mysk,
     compactStudentList!.map((student) => student.id),
     { detailed: true },
   );

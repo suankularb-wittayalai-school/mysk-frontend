@@ -1,8 +1,8 @@
-// Imports
 import { StudentCertificate } from "@/utils/types/certificate";
 import { Classroom } from "@/utils/types/classroom";
 import { MultiLangString } from "@/utils/types/common";
 import { Contact } from "@/utils/types/contact";
+import { ElectiveSubject } from "@/utils/types/elective";
 import { Subject, SubjectGroup } from "@/utils/types/subject";
 
 /**
@@ -70,6 +70,7 @@ export type Student = Person & {
   classroom: Pick<Classroom, "id" | "number"> | null;
   class_no: number | null;
   certificates: StudentCertificate[];
+  chosen_elective: ElectiveSubject | null;
   role: UserRole.student;
 };
 
