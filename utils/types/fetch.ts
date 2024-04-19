@@ -1,6 +1,30 @@
+import { User } from "@/utils/types/person";
+
+/**
+ * A client for fetching data from the MySK API.
+ */
+export type MySKClient = {
+  /**
+   * Fetches data via the MySK API (via the proxy if client-side).
+   *
+   * @param path The path to make the fetch request to.
+   * @param options `fetch` options and query parameters.
+   *
+   * @returns The response from the API.
+   */
+  fetch: <Data extends {} | unknown = unknown>(
+    path: string,
+    options?: Partial<RequestInit & { query: Query }>,
+  ) => Promise<FetchReturn<Data>>;
+  /**
+   * The currently logged-in user.
+   */
+  user: User | null;
+};
+
 /**
  * The level of detail for fetching data.
- * 
+ *
  * - `id_only`: Only the ID.
  * - `compact`: Compact representation for lists.
  * - `default`: Most details needed.
@@ -69,6 +93,6 @@ export type FetchError = {
  * A response from a fetch request.
  */
 export type FetchReturn<Data extends {} | unknown = unknown> = {
-  api_version: string;
+  api_version: string | null;
   meta: { timestamp: string; pagination: null } | null;
-} & ({ data: Data; error: null } | { data: null; error: FetchError });
+} & ({ data: Data; error: null } | { data: null; error: Partial<FetchError> });
