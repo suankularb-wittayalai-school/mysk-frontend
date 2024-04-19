@@ -1,5 +1,7 @@
-// Imports
-import { MAXIMUM_EMPTY_COLUMNS, OptionsType } from "@/components/classes/StudentListPrintout";
+import {
+  MAXIMUM_EMPTY_COLUMNS,
+  OptionsType,
+} from "@/components/classes/StudentListPrintout";
 import PaperPreview from "@/components/common/print/PaperPreview";
 import cn from "@/utils/helpers/cn";
 import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
@@ -14,22 +16,20 @@ import { FC } from "react";
 /**
  * A preview of the Student List Printout.
  *
- * @param classItem The Class (`ClassWNumber`) to print information of.
- * @param classOverview (`ClassOverview`); used for Class Advisors information.
+ * @param classroom The Classroom to display the Student List for.
  * @param studentList The list of all Students in this Class.
  * @param options Print options.
  *
  * @returns A Paper Preview.
  */
 const StudentsListPaper: FC<{
-  classItem: Pick<Classroom, "id" | "number">;
-  classroomOverview: Pick<
+  classroom: Pick<
     Classroom,
     "id" | "number" | "class_advisors" | "contacts" | "subjects"
   >;
   studentList: Student[];
   options: OptionsType;
-}> = ({ classItem, classroomOverview, studentList, options }) => {
+}> = ({ classroom, studentList, options }) => {
   return (
     <PaperPreview>
       {/* Header */}
@@ -41,7 +41,7 @@ const StudentsListPaper: FC<{
         </p>
         <p>
           {(() => {
-            const grade = Math.floor(classItem.number / 100);
+            const grade = Math.floor(classroom.number / 100);
             const year = getLocaleYear(
               options.language,
               getCurrentAcademicYear(),
@@ -60,18 +60,16 @@ const StudentsListPaper: FC<{
             whitespace-nowrap text-xl font-medium`)}
         >
           {options.language === "en-US"
-            ? `M.${classItem.number}`
-            : `ม.${classItem.number}`}
+            ? `M.${classroom.number}`
+            : `ม.${classroom.number}`}
         </span>
         <span className="mr-4 whitespace-nowrap font-bold">
           {options.language === "en-US" ? "Class advisors" : "ครูที่ปรึกษา"}
         </span>
         <div className="mb-1 flex grow flex-row flex-wrap gap-x-2 font-bold">
-          {classroomOverview.class_advisors.map((teacher) => (
+          {classroom.class_advisors.map((teacher) => (
             <span key={teacher.id} className="-mb-1">
-              {getLocaleName(options.language, teacher, {
-                prefix: true,
-              })}
+              {getLocaleName(options.language, teacher, { prefix: true })}
             </span>
           ))}
         </div>

@@ -1,4 +1,3 @@
-// Imports
 import StudentsListPaper from "@/components/classes/StudentsListPaper";
 import StudentsPrintOptions from "@/components/classes/StudentsPrintOptions";
 import PrintPage from "@/components/common/print/PrintPage";
@@ -27,7 +26,7 @@ export type OptionsType = {
     | "pantsSize"
     | "elective"
   )[];
-  
+
   numEmpty: number;
   enableNotes: boolean;
   enableTimestamp: boolean;
@@ -41,22 +40,20 @@ export const MAXIMUM_EMPTY_COLUMNS = 20;
 /**
  * The preview page for the Student List Printout.
  *
- * @param classItem The Class (`ClassWNumber`) to print information of.
- * @param classOverview (`ClassOverview`); used for Class Advisors information.
+ * @param classroom The Classroom to display the Student List for.
  * @param studentList The list of all Students in this Class.
  * @param userRole The role of the user visitng the page. Exposes Student ID if the user is a Teacher.
  *
  * @returns A Print Page.
  */
 const StudentListPrintout: FC<{
-  classItem: Pick<Classroom, "id" | "number">;
-  classroomOverview: Pick<
+  classroom: Pick<
     Classroom,
     "id" | "number" | "class_advisors" | "contacts" | "subjects"
   >;
   studentList: Student[];
   userRole: UserRole;
-}> = ({ classItem, classroomOverview, studentList, userRole }) => {
+}> = ({ classroom, studentList, userRole }) => {
   const locale = useLocale();
   const { t } = useTranslation("classes", { keyPrefix: "print" });
 
@@ -78,13 +75,8 @@ const StudentListPrintout: FC<{
     <>
       <h1 className="sr-only">{t("title")}</h1>
       <PrintPage>
-        <StudentsListPaper
-          {...{ classItem, classroomOverview, studentList }}
-          options={form}
-        />
-        <StudentsPrintOptions
-          {...{ form, setForm, formProps, classItem, userRole }}
-        />
+        <StudentsListPaper {...{ classroom, studentList }} options={form} />
+        <StudentsPrintOptions {...{ form, setForm, formProps, userRole }} />
       </PrintPage>
     </>
   );

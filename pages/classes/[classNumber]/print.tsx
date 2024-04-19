@@ -1,9 +1,8 @@
-// Imports
 import StudentListPrintout from "@/components/classes/StudentListPrintout";
+import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
 import getClassroomOverview from "@/utils/backend/classroom/getClassroomOverview";
 import getStudentsOfClass from "@/utils/backend/classroom/getStudentsOfClass";
 import { getStudentsByIDs } from "@/utils/backend/person/getStudentsByIDs";
-import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import useLoggedInPerson from "@/utils/helpers/useLoggedInPerson";
 import { supabase } from "@/utils/supabase-backend";
 import { Classroom } from "@/utils/types/classroom";
@@ -16,13 +15,12 @@ import Head from "next/head";
 import { useEffect, useState } from "react";
 
 const StudentsListPrintPage: CustomPage<{
-  classItem: Pick<Classroom, "id" | "number">;
-  classroomOverview: Pick<
+  classroom: Pick<
     Classroom,
     "id" | "number" | "class_advisors" | "contacts" | "subjects"
   >;
   studentList: Student[];
-}> = ({ classItem, classroomOverview, studentList }) => {
+}> = ({ classroom, studentList }) => {
   const { t } = useTranslation("classes", { keyPrefix: "print" });
   const { t: tx } = useTranslation("common");
 
@@ -39,8 +37,7 @@ const StudentsListPrintPage: CustomPage<{
         <title>{tx("tabName", { tabName: t("title") })}</title>
       </Head>
       <StudentListPrintout
-        classItem={classItem}
-        classroomOverview={classroomOverview}
+        classroom={classroom}
         studentList={studentList}
         userRole={userRole}
       />
@@ -52,35 +49,14 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   const classNumber = Number(params?.classNumber);
   if (Number.isNaN(classNumber)) return { notFound: true };
 
-  const { data, error } = await supabase
-    .from("classrooms")
-    .select("id")
-    .eq("number", classNumber)
-    .eq("year", getCurrentAcademicYear())
-    .single();
-
+  const { data, error } = await getClassroomByNumber(supabase, classNumber);
   if (error) return { notFound: true };
 
-  const classID = data.id;
-
-  const { data: classItem, error: classError } = await supabase
-    .from("classrooms")
-    .select("id, number")
-    .eq("id", classID)
-    .single();
-
-  if (classError) return { notFound: true };
-
-  const { data: classroomOverview } = await getClassroomOverview(
-    supabase,
-    classID,
-  );
-
+  const { data: classroom } = await getClassroomOverview(supabase, data.id);
   const { data: compactStudentList } = await getStudentsOfClass(
     supabase,
-    classID,
+    data.id,
   );
-
   const { data: studentList } = await getStudentsByIDs(
     supabase,
     compactStudentList!.map((student) => student.id),
@@ -93,8 +69,7 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
         "common",
         "classes",
       ])),
-      classItem,
-      classroomOverview,
+      classroom,
       studentList: studentList!.sort(
         // Put Students with no class No. first
         (a, b) => (a.class_no || 0) - (b.class_no || 0),
