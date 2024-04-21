@@ -1,10 +1,10 @@
-import Head from "next/head";
-import { FC, ReactNode } from "react";
-import { Columns, ContentLayout } from "@suankularb-components/react";
 import PaperPreview from "@/components/common/print/PaperPreview";
 import PrintOptions from "@/components/common/print/PrintOptions";
 import cn from "@/utils/helpers/cn";
 import { StylableFC } from "@/utils/types/common";
+import { Columns, ContentLayout } from "@suankularb-components/react";
+import Head from "next/head";
+import { ReactNode } from "react";
 
 /**
  * A page for previewing a print job, which allows the user to review options
