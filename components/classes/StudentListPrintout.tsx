@@ -4,11 +4,10 @@ import PrintPage from "@/components/common/print/PrintPage";
 import useForm from "@/utils/helpers/useForm";
 import useLocale from "@/utils/helpers/useLocale";
 import { Classroom } from "@/utils/types/classroom";
-import { LangCode } from "@/utils/types/common";
-import { Student, UserRole } from "@/utils/types/person";
+import { LangCode, StylableFC } from "@/utils/types/common";
+import { Student, User } from "@/utils/types/person";
 import { useTranslation } from "next-i18next";
 import { list } from "radash";
-import { FC } from "react";
 
 /**
  * The options type for the Student List Printout.
@@ -42,21 +41,22 @@ export const MAXIMUM_EMPTY_COLUMNS = 20;
  *
  * @param classroom The Classroom to display the Student List for.
  * @param studentList The list of all Students in this Class.
- * @param userRole The role of the user visitng the page. Exposes Student ID if the user is a Teacher.
- *
- * @returns A Print Page.
+ * @param user The user visitng the page. Exposes Student ID if the user isn't a Student.
  */
-const StudentListPrintout: FC<{
+const StudentListPrintout: StylableFC<{
   classroom: Pick<
     Classroom,
     "id" | "number" | "class_advisors" | "contacts" | "subjects"
   >;
   studentList: Student[];
-  userRole: UserRole;
-}> = ({ classroom, studentList, userRole }) => {
+  user: User | null;
+}> = ({ classroom, studentList, user }) => {
   const locale = useLocale();
   const { t } = useTranslation("classes", { keyPrefix: "print" });
 
+  // Form control for the options.
+  // Placed in the parent component as this state is shared between the Paper
+  // and Options.
   const { form, setForm, formProps } = useForm<
     "language" | "columns" | "numEmpty" | "enableNotes" | "enableTimestamp"
   >([
@@ -65,6 +65,7 @@ const StudentListPrintout: FC<{
     {
       key: "numEmpty",
       defaultValue: "10",
+      // Integer under MAXIMUM_EMPTY_COLUMNS.
       validate: (value) => list(MAXIMUM_EMPTY_COLUMNS).includes(Number(value)),
     },
     { key: "enableNotes", defaultValue: false },
@@ -75,8 +76,17 @@ const StudentListPrintout: FC<{
     <>
       <h1 className="sr-only">{t("title")}</h1>
       <PrintPage>
-        <StudentsListPaper {...{ classroom, studentList }} options={form} />
-        <StudentsPrintOptions {...{ form, setForm, formProps, userRole }} />
+        <StudentsListPaper
+          classroom={classroom}
+          studentList={studentList}
+          options={form}
+        />
+        <StudentsPrintOptions
+          form={form}
+          setForm={setForm}
+          formProps={formProps}
+          user={user}
+        />
       </PrintPage>
     </>
   );
