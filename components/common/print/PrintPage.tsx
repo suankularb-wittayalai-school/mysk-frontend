@@ -1,23 +1,20 @@
-// External libraries
 import Head from "next/head";
 import { FC, ReactNode } from "react";
-
-// SK Components
 import { Columns, ContentLayout } from "@suankularb-components/react";
-
-// Internal components
 import PaperPreview from "@/components/common/print/PaperPreview";
 import PrintOptions from "@/components/common/print/PrintOptions";
+import cn from "@/utils/helpers/cn";
+import { StylableFC } from "@/utils/types/common";
 
 /**
  * A page for previewing a print job, which allows the user to review options
  * before printing.
  *
  * @param children A {@link PaperPreview Paper Preview} and a {@link PrintOptions Print Options}.
- *
- * @returns A Content Layout.
  */
-const PrintPage: FC<{ children: ReactNode }> = ({ children }) => (
+const PrintPage: StylableFC<{
+  children: ReactNode;
+}> = ({ children, style, className }) => (
   <>
     <Head>
       {/* App bar color */}
@@ -36,9 +33,12 @@ const PrintPage: FC<{ children: ReactNode }> = ({ children }) => (
     </Head>
 
     <ContentLayout
-      className="min-h-screen supports-[height:100dvh]:min-h-[100dvh]
-        print:-mb-20 print:contents print:bg-white print:!py-0
-        sm:bg-surface-container"
+      style={style}
+      className={cn(
+        `min-h-dvh sm:bg-surface-container print:-mb-20 print:contents
+        print:bg-white print:!py-0`,
+        className,
+      )}
     >
       <Columns columns={3}>{children}</Columns>
     </ContentLayout>
