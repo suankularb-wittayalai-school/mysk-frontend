@@ -48,8 +48,10 @@ const PrintPage: StylableFC<{
         background-color: var(--surface-container);
       }
 
-      .skc-nav-bar::before {
-        background-color: transparent;
+      @media only screen and (min-width: 600px) {
+        .skc-nav-bar::before {
+          background-color: transparent !important;
+        }
       }
 
       @media print {
