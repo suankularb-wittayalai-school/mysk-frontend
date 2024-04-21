@@ -45,6 +45,11 @@ const StudentDetailsCard: StylableFC<{
 
   const [scheduleOpen, toggleScheduleOpen] = useToggle();
 
+  const certificates =
+    student?.certificates.filter(
+      ({ year }) => year === getCurrentAcademicYear(),
+    ) || [];
+
   return (
     <LookupDetailsCard style={style} className={className}>
       <LayoutGroup>
@@ -136,13 +141,9 @@ const StudentDetailsCard: StylableFC<{
                   </motion.div>
                 )}
 
-                {student.certificates.length > 0 && (
+                {certificates.length > 0 && (
                   <motion.div layout="position" transition={positionTransition}>
-                    <StudentCertificateGrid
-                      certificates={student.certificates.filter(
-                        ({ year }) => year === getCurrentAcademicYear(),
-                      )}
-                    />
+                    <StudentCertificateGrid certificates={certificates} />
                   </motion.div>
                 )}
 
