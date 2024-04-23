@@ -92,7 +92,7 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
         (a, b) => (a.class_no || 0) - (b.class_no || 0),
       ),
     },
-    revalidate: 3000,
+    revalidate: 10,
   };
 };
 
