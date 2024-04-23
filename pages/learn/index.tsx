@@ -6,11 +6,16 @@ import Schedule from "@/components/schedule/Schedule";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import getBirthdayBoysOfClassroom from "@/utils/backend/classroom/getBirthdayBoysOfClassroom";
+import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import getClassSchedule from "@/utils/backend/schedule/getClassSchedule";
 import getClassroomSubjectsOfClass from "@/utils/backend/subject/getClassroomSubjectsOfClass";
+import electivePermissionsAt, {
+  ElectivePermissions,
+} from "@/utils/helpers/elective/electivePermissionsAt";
 import createEmptySchedule from "@/utils/helpers/schedule/createEmptySchedule";
 import useLocale from "@/utils/helpers/useLocale";
 import { CustomPage, LangCode } from "@/utils/types/common";
+import { IDOnly } from "@/utils/types/fetch";
 import { Student, UserRole } from "@/utils/types/person";
 import { Schedule as ScheduleType } from "@/utils/types/schedule";
 import { ClassroomSubject } from "@/utils/types/subject";
@@ -37,13 +42,21 @@ import { useState } from "react";
  * @param schedule Data for displaying Schedule.
  * @param subjectList The Subjects this Student’s Classroom is enrolled in.
  * @param student The Student viewing this page.
+ * @param electivePermissions The permissions available to this Student for Electives.
  */
 const LearnPage: CustomPage<{
   birthdayBoys: Pick<Student, "id" | "first_name" | "nickname" | "birthdate">[];
   schedule: ScheduleType;
   subjectList: ClassroomSubject[];
   student: Student;
-}> = ({ birthdayBoys, schedule, subjectList, student }) => {
+  electivePermissions: ElectivePermissions;
+}> = ({
+  birthdayBoys,
+  schedule,
+  subjectList,
+  electivePermissions,
+  student,
+}) => {
   const { t } = useTranslation("learn");
   const { t: ts } = useTranslation("schedule");
   const locale = useLocale();
@@ -95,7 +108,12 @@ const LearnPage: CustomPage<{
               onChange={setQuery}
             />
           </Columns>
-          <SubjectList subjectList={subjectList} query={query} />
+          <SubjectList
+            subjectList={subjectList}
+            query={query}
+            electivePermissions={electivePermissions}
+            enrolledElective={null} // FIXME
+          />
         </motion.section>
       </LayoutGroup>
     </HomeLayout>
@@ -111,6 +129,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     req: req as NextApiRequest,
     res: res as NextApiResponse,
   });
+  const mysk = await createMySKClient(req);
 
   const { data: student } = (await getLoggedInPerson(
     supabase,
@@ -128,6 +147,20 @@ export const getServerSideProps: GetServerSideProps = async ({
     (await getClassroomSubjectsOfClass(supabase, classroom.id)).data,
   ]);
 
+  const electivePermissions = electivePermissionsAt();
+  if (electivePermissions.view) {
+    const { data: availableElectives } = await mysk.fetch<IDOnly[]>(
+      "/v1/subjects/electives",
+      {
+        query: {
+          fetch_level: "id_only",
+          filter: { data: { as_student_id: student.id } },
+        },
+      },
+    );
+    if (!availableElectives?.length) electivePermissions.view = false;
+  }
+
   return {
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
@@ -143,6 +176,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       schedule: schedule || createEmptySchedule(1, 5),
       subjectList,
       student,
+      electivePermissions,
     },
   };
 };
