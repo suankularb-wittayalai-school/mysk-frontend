@@ -1,6 +1,6 @@
 /**
  * The level of detail for fetching data.
- * 
+ *
  * - `id_only`: Only the ID.
  * - `compact`: Compact representation for lists.
  * - `default`: Most details needed.
@@ -54,6 +54,11 @@ export type OAuthResponseData = {
   scope: string;
   token_type: string;
 };
+
+/**
+ * A data object with only an ID.
+ */
+export type IDOnly = { id: string };
 
 /**
  * An error object from a fetch request.
