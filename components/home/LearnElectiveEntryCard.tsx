@@ -32,6 +32,7 @@ const LearnElectiveEntryCard: StylableFC<{
   return (
     <Card
       appearance="filled"
+      element="li"
       style={style}
       className={cn(`!bg-primary-container`, className)}
     >
