@@ -20,7 +20,7 @@ import Link from "next/link";
  * @param electivePermissions The permissions available to this Student for Electives.
  * @param enrolledElective The Elective Subject this Student is enrolled in.
  */
-const ElectiveEntryCard: StylableFC<{
+const LearnElectiveEntryCard: StylableFC<{
   electivePermissions: ElectivePermissions;
   enrolledElective: ElectiveSubject | null;
 }> = ({ electivePermissions, enrolledElective, style, className }) => {
@@ -40,7 +40,7 @@ const ElectiveEntryCard: StylableFC<{
         subtitle={
           enrolledElective
             ? getLocaleString(enrolledElective.name, locale)
-            : t("subtitle")
+            : t("subtitle", { context: "student" })
         }
       />
       <CardContent className="!pt-0">
@@ -58,4 +58,4 @@ const ElectiveEntryCard: StylableFC<{
   );
 };
 
-export default ElectiveEntryCard;
+export default LearnElectiveEntryCard;

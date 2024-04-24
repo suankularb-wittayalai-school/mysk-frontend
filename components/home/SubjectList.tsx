@@ -1,5 +1,5 @@
 import ClassroomSubjectCard from "@/components/home/ClassroomSubjectCard";
-import ElectiveEntryCard from "@/components/home/ElectiveEntryCard";
+import LearnElectiveEntryCard from "@/components/home/LearnElectiveEntryCard";
 import { ElectivePermissions } from "@/utils/helpers/elective/electivePermissionsAt";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import getLocaleString from "@/utils/helpers/getLocaleString";
@@ -47,7 +47,7 @@ const SubjectList: StylableFC<{
   return (
     <Columns columns={3} element="ul" style={style} className={className}>
       {electivePermissions.view && (
-        <ElectiveEntryCard
+        <LearnElectiveEntryCard
           electivePermissions={electivePermissions}
           enrolledElective={enrolledElective}
         />
