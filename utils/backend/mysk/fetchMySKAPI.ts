@@ -50,5 +50,16 @@ export default async function fetchMySKAPI<Data extends {} | unknown = unknown>(
       ].join(" "),
     );
 
-  return { ...(await response.json()), status: response.status };
+  // Check if the response is JSON, and return the data if it is.
+  if (response.headers.get("content-type")?.includes("application/json"))
+    return { ...(await response.json()), status: response.status };
+
+  // Otherwise, return the text as an error.
+  return {
+    api_version: null,
+    data: null,
+    error: { detail: await response.text() },
+    meta: null,
+    status: response.status,
+  };
 }
