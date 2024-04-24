@@ -10,14 +10,15 @@ import StudentActiveFiltersCard from "@/components/lookup/students/StudentActive
 import StudentDetailsCard from "@/components/lookup/students/StudentDetailsCard";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getUserByEmail from "@/utils/backend/account/getUserByEmail";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import { getStudentByID } from "@/utils/backend/person/getStudentByID";
 import getStudentsByLookupFilters from "@/utils/backend/person/getStudentsByLookupFilters";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Student, StudentLookupItem, User } from "@/utils/types/person";
 import {
+  DURATION,
   SplitLayout,
-  useAnimationConfig,
   useBreakpoint,
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
@@ -51,18 +52,17 @@ const LookupStudentsResultsPage: CustomPage<{
   const { t } = useTranslation("lookup", { keyPrefix: "students" });
   const { t: tx } = useTranslation("common");
 
-  const { duration } = useAnimationConfig();
-
   const [selectedID, setSelectedID] = useState<string>();
   // Select the first result automatically after a short delay
   useEffect(() => {
     const timeout = setTimeout(
       () => setSelectedID(students[0]?.id),
-      duration.medium2 * 1000,
+      DURATION.medium2 * 1000,
     );
     return () => clearTimeout(timeout);
   }, []);
 
+  const mysk = useMySKClient();
   const supabase = useSupabaseClient();
 
   const [selectedStudent, setSelectedStudent] = useState<Student>();
@@ -76,7 +76,7 @@ const LookupStudentsResultsPage: CustomPage<{
       if (!selectedID) return false;
 
       // Fetch the selected Student with the selected ID
-      const { data, error } = await getStudentByID(supabase, selectedID, {
+      const { data, error } = await getStudentByID(supabase, mysk, selectedID, {
         detailed: true,
         includeContacts: true,
       });

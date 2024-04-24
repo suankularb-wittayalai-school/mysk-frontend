@@ -5,11 +5,10 @@ import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
 import LookupDetailsSide from "@/components/lookup/LookupDetailsSide";
 import LookupListSide from "@/components/lookup/LookupListSide";
 import LookupResultsList from "@/components/lookup/LookupResultsList";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
-import getUserByEmail from "@/utils/backend/account/getUserByEmail";
 import getClassroomByID from "@/utils/backend/classroom/getClassroomByID";
 import getClassrooms from "@/utils/backend/classroom/getLookupClassrooms";
+import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import { Classroom } from "@/utils/types/classroom";
 import { LangCode } from "@/utils/types/common";
 import { User, UserRole } from "@/utils/types/person";
@@ -23,7 +22,6 @@ import {
   NextApiResponse,
   NextPage,
 } from "next";
-import { getServerSession } from "next-auth";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
@@ -178,12 +176,12 @@ export const getServerSideProps: GetServerSideProps = async ({
   req,
   res,
 }) => {
+  const mysk = await createMySKClient(req);
   const supabase = createPagesServerClient({
     req: req as NextApiRequest,
     res: res as NextApiResponse,
   });
-  const session = await getServerSession(req, res, authOptions);
-  const { data: user } = await getUserByEmail(supabase, session!.user!.email!);
+  const { user } = mysk;
 
   // Get all Classrooms
   const { data: classrooms, error } = await getClassrooms(supabase);
@@ -197,12 +195,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   // PS: I hate how “grade” means both the year level and the scoring system!
 
   // Get the Classroom the user is a part of
-  const { data: person } = await getLoggedInPerson(
-    supabase,
-    authOptions,
-    req,
-    res,
-  );
+  const { data: person } = await getLoggedInPerson(supabase, mysk);
   const userClassroom =
     person && ["student", "teacher"].includes(person.role)
       ? classrooms.find(

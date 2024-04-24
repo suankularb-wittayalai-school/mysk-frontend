@@ -2,11 +2,13 @@ import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import logError from "@/utils/helpers/logError";
 import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
+import { MySKClient } from "@/utils/types/fetch";
 import { ShirtSize, Teacher, UserRole } from "@/utils/types/person";
 import { alphabetical } from "radash";
 
 export async function getTeacherByID(
   supabase: DatabaseClient,
+  _: MySKClient, // Not used--for parity with `getStudentByID`.
   teacherID: string,
   options?: Partial<{
     detailed: boolean;
@@ -22,7 +24,15 @@ export async function getTeacherByID(
       classroom_advisors(classrooms!inner(id, number)),
       subject_groups(id, name_en, name_th),
       subject_teachers(
-        subjects!inner(id, name_en, name_th, code_en, code_th, short_name_en, short_name_th)
+        subjects!inner(
+          id,
+          name_en,
+          name_th,
+          code_en,
+          code_th,
+          short_name_en,
+          short_name_th
+        )
       )`,
     )
     .eq("id", teacherID)

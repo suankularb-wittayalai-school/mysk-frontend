@@ -3,6 +3,7 @@ import logError from "@/utils/helpers/logError";
 import mergeDBLocales from "@/utils/helpers/mergeDBLocales";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
 import { StudentCertificateType } from "@/utils/types/certificate";
+import { MySKClient } from "@/utils/types/fetch";
 import { ShirtSize, Student, UserRole } from "@/utils/types/person";
 import { pick } from "radash";
 
@@ -16,6 +17,7 @@ import { pick } from "radash";
  * May the API save us all. Someday.
  *
  * @param supabase The Supabase Client to use.
+ * @param mysk The MySK Client to use.
  * @param studentID The ID of the Student in the database. Not to be confused with the Person ID or the 5-digit Student ID.
  * @param options Options.
  * @param options.detailed Whether to include detailed information about the Student.
@@ -26,6 +28,7 @@ import { pick } from "radash";
  */
 export async function getStudentByID(
   supabase: DatabaseClient,
+  mysk: MySKClient,
   studentID: string,
   options?: Partial<{
     detailed: boolean;

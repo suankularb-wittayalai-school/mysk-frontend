@@ -1,17 +1,12 @@
 import AboutHeader from "@/components/account/about/AboutHeader";
-import CertficateAnnouncementBanner from "@/components/account/about/CertficateAnnouncementBanner";
 import NameChangeDialog from "@/components/account/about/NameChangeDialog";
 import PersonFields, {
   PersonFieldsKey,
 } from "@/components/account/about/PersonFields";
 import ProfileLayout from "@/components/account/ProfileLayout";
 import SnackbarContext from "@/contexts/SnackbarContext";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
-import {
-  getStudentFromUserID,
-  getTeacherFromUserID,
-} from "@/utils/backend/account/getLoggedInPerson";
-import getUserByEmail from "@/utils/backend/account/getUserByEmail";
+import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
+import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import { updatePerson } from "@/utils/backend/person/updatePerson";
 import getSubjectGroups from "@/utils/backend/subject/getSubjectGroups";
 import cn from "@/utils/helpers/cn";
@@ -32,7 +27,6 @@ import {
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import { getServerSession } from "next-auth";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
@@ -209,18 +203,13 @@ export const getServerSideProps: GetServerSideProps = async ({
   req,
   res,
 }) => {
+  const mysk = await createMySKClient(req);
   const supabase = createPagesServerClient({
     req: req as NextApiRequest,
     res: res as NextApiResponse,
   });
-  const session = await getServerSession(req, res, authOptions);
-  const { data: user } = await getUserByEmail(supabase, session!.user!.email!);
 
-  const { data: person } = await {
-    [UserRole.student]: getStudentFromUserID,
-    [UserRole.teacher]: getTeacherFromUserID,
-  }[user!.role as UserRole.student | UserRole.teacher](supabase, user!.id, {
-    includeContacts: false,
+  const { data: user } = await getLoggedInPerson(supabase, mysk, {
     detailed: true,
   });
 
@@ -232,7 +221,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         "common",
         "account",
       ])),
-      user: person,
+      user,
       subjectGroups,
     },
   };

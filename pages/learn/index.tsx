@@ -3,7 +3,6 @@ import SubjectList from "@/components/home/SubjectList";
 import BirthdayGlance from "@/components/home/glance/BirthdayGlance";
 import ScheduleGlance from "@/components/home/glance/ScheduleGlance";
 import Schedule from "@/components/schedule/Schedule";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import getBirthdayBoysOfClassroom from "@/utils/backend/classroom/getBirthdayBoysOfClassroom";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
@@ -14,6 +13,7 @@ import electivePermissionsAt, {
 } from "@/utils/helpers/elective/electivePermissionsAt";
 import createEmptySchedule from "@/utils/helpers/schedule/createEmptySchedule";
 import useLocale from "@/utils/helpers/useLocale";
+import { BackendReturn } from "@/utils/types/backend";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { IDOnly } from "@/utils/types/fetch";
 import { Student, UserRole } from "@/utils/types/person";
@@ -125,21 +125,19 @@ export const getServerSideProps: GetServerSideProps = async ({
   req,
   res,
 }) => {
+  const mysk = await createMySKClient(req);
   const supabase = createPagesServerClient({
     req: req as NextApiRequest,
     res: res as NextApiResponse,
   });
-  const mysk = await createMySKClient(req);
 
   const { data: student } = (await getLoggedInPerson(
     supabase,
-    authOptions,
-    req,
-    res,
-  )) as { data: Student };
+    mysk,
+  )) as BackendReturn<Student>;
 
+  if (!student?.classroom) return { notFound: true };
   const { classroom } = student;
-  if (!classroom) return { notFound: true };
 
   const [birthdayBoys, schedule, subjectList] = await Promise.all([
     (await getBirthdayBoysOfClassroom(supabase, classroom.id)).data,

@@ -2,8 +2,8 @@ import HomeLayout from "@/components/home/HomeLayout";
 import TeachingSubjectCard from "@/components/home/TeachingSubjectCard";
 import ScheduleGlance from "@/components/home/glance/ScheduleGlance";
 import Schedule from "@/components/schedule/Schedule";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
+import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import getTeacherSchedule from "@/utils/backend/schedule/getTeacherSchedule";
 import getTeachingSubjects from "@/utils/backend/subject/getTeachingSubjects";
 import getLocalePath from "@/utils/helpers/getLocalePath";
@@ -120,18 +120,16 @@ export const getServerSideProps: GetServerSideProps = async ({
   req,
   res,
 }) => {
+  const mysk = await createMySKClient(req);
   const supabase = createPagesServerClient({
     req: req as NextApiRequest,
     res: res as NextApiResponse,
   });
 
-  const { data: teacher, error } = (await getLoggedInPerson(
-    supabase,
-    authOptions,
-    req,
-    res,
-    { includeContacts: true, detailed: true },
-  )) as BackendReturn<Teacher>;
+  const { data: teacher, error } = (await getLoggedInPerson(supabase, mysk, {
+    includeContacts: true,
+    detailed: true,
+  })) as BackendReturn<Teacher>;
   if (error) return { notFound: true };
 
   const classroom = teacher.class_advisor_at;

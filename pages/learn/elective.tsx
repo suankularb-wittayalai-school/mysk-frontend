@@ -5,11 +5,11 @@ import ElectiveListItem from "@/components/elective/ElectiveListItem";
 import TradesCard from "@/components/elective/TradesCard";
 import LandingBlobs from "@/components/landing/LandingBlobs";
 import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import cn from "@/utils/helpers/cn";
+import { BackendReturn } from "@/utils/types/backend";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { ElectiveSubject } from "@/utils/types/elective";
 import { Student } from "@/utils/types/person";
@@ -221,10 +221,9 @@ export const getServerSideProps: GetServerSideProps = async ({
   // Get the logged in Student.
   const { data: student } = (await getLoggedInPerson(
     supabase,
-    authOptions,
-    req,
-    res,
-  )) as { data: Student };
+    mysk,
+  )) as BackendReturn<Student>;
+  if (!student) return { notFound: true };
 
   // Get the list of Elective Subjects available for this Student to enroll in.
   const { data: electiveSubjects } = await mysk.fetch<ElectiveSubject[]>(
