@@ -57,7 +57,8 @@ const ChooseButton: StylableFC<{
       appearance="filled"
       icon={<MaterialIcon icon="done" />}
       onClick={handleChoose}
-      disabled={sessionCode === enrolledID || loading}
+      loading={loading}
+      disabled={sessionCode === enrolledID}
       style={style}
       className={className}
     >

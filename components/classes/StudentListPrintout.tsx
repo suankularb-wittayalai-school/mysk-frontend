@@ -1,15 +1,13 @@
-// Imports
 import StudentsListPaper from "@/components/classes/StudentsListPaper";
 import StudentsPrintOptions from "@/components/classes/StudentsPrintOptions";
 import PrintPage from "@/components/common/print/PrintPage";
 import useForm from "@/utils/helpers/useForm";
 import useLocale from "@/utils/helpers/useLocale";
 import { Classroom } from "@/utils/types/classroom";
-import { LangCode } from "@/utils/types/common";
-import { Student, UserRole } from "@/utils/types/person";
+import { LangCode, StylableFC } from "@/utils/types/common";
+import { Student, User } from "@/utils/types/person";
 import { useTranslation } from "next-i18next";
 import { list } from "radash";
-import { FC } from "react";
 
 /**
  * The options type for the Student List Printout.
@@ -25,7 +23,9 @@ export type OptionsType = {
     | "allergies"
     | "shirtSize"
     | "pantsSize"
+    | "elective"
   )[];
+
   numEmpty: number;
   enableNotes: boolean;
   enableTimestamp: boolean;
@@ -39,25 +39,24 @@ export const MAXIMUM_EMPTY_COLUMNS = 20;
 /**
  * The preview page for the Student List Printout.
  *
- * @param classItem The Class (`ClassWNumber`) to print information of.
- * @param classOverview (`ClassOverview`); used for Class Advisors information.
+ * @param classroom The Classroom to display the Student List for.
  * @param studentList The list of all Students in this Class.
- * @param userRole The role of the user visitng the page. Exposes Student ID if the user is a Teacher.
- *
- * @returns A Print Page.
+ * @param user The user visitng the page. Exposes Student ID if the user isn't a Student.
  */
-const StudentListPrintout: FC<{
-  classItem: Pick<Classroom, "id" | "number">;
-  classroomOverview: Pick<
+const StudentListPrintout: StylableFC<{
+  classroom: Pick<
     Classroom,
     "id" | "number" | "class_advisors" | "contacts" | "subjects"
   >;
   studentList: Student[];
-  userRole: UserRole;
-}> = ({ classItem, classroomOverview, studentList, userRole }) => {
+  user: User | null;
+}> = ({ classroom, studentList, user }) => {
   const locale = useLocale();
   const { t } = useTranslation("classes", { keyPrefix: "print" });
 
+  // Form control for the options.
+  // Placed in the parent component as this state is shared between the Paper
+  // and Options.
   const { form, setForm, formProps } = useForm<
     "language" | "columns" | "numEmpty" | "enableNotes" | "enableTimestamp"
   >([
@@ -66,6 +65,7 @@ const StudentListPrintout: FC<{
     {
       key: "numEmpty",
       defaultValue: "10",
+      // Integer under MAXIMUM_EMPTY_COLUMNS.
       validate: (value) => list(MAXIMUM_EMPTY_COLUMNS).includes(Number(value)),
     },
     { key: "enableNotes", defaultValue: false },
@@ -77,11 +77,15 @@ const StudentListPrintout: FC<{
       <h1 className="sr-only">{t("title")}</h1>
       <PrintPage>
         <StudentsListPaper
-          {...{ classItem, classroomOverview, studentList }}
+          classroom={classroom}
+          studentList={studentList}
           options={form}
         />
         <StudentsPrintOptions
-          {...{ form, setForm, formProps, classItem, userRole }}
+          form={form}
+          setForm={setForm}
+          formProps={formProps}
+          user={user}
         />
       </PrintPage>
     </>

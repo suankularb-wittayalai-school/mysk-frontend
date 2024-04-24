@@ -20,12 +20,13 @@ function formatSegment(
   preference?: boolean | "abbr",
 ) {
   return (
-    // Hide the segment if the preference is false
+    // Hide the segment if the preference is false or if it is not available.
     preference !== false &&
+    segment?.[locale] &&
     (preference === "abbr"
-      ? // Show the first letter of the segment if the preference is `abbr`
-        getFirstLetterOfName(segment?.[locale] || "") + "." // Followed by a period
-      : // Show the segment if the preference is true
+      ? // Show the first letter of the segment if the preference is `abbr`.
+        getFirstLetterOfName(segment?.[locale] || "") + "." // Followed by a period.
+      : // Show the segment if the preference is true.
         segment?.[locale])
   );
 }
@@ -49,12 +50,17 @@ export default function getLocaleName(
   name: Partial<
     Pick<Person, "prefix" | "first_name" | "middle_name" | "last_name">
   >,
-  options?: Partial<{
+  options: Partial<{
     prefix: boolean | "teacher";
     firstName: boolean | "abbr";
     middleName: boolean | "abbr";
     lastName: boolean | "abbr";
-  }>,
+  }> = {
+    prefix: false,
+    firstName: true,
+    middleName: "abbr",
+    lastName: true,
+  },
 ) {
   // Detect the locale of the `th` first name.
   // (Foreigners use the Thai name field for their English name.)

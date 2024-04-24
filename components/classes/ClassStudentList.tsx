@@ -1,5 +1,6 @@
 import LookupDetailsListCard from "@/components/lookup/LookupDetailsListCard";
 import PersonCard from "@/components/person/PersonCard";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import { getStudentsByIDs } from "@/utils/backend/person/getStudentsByIDs";
 import cn from "@/utils/helpers/cn";
 import useGetVCard from "@/utils/helpers/contact/useGetVCard";
@@ -30,6 +31,7 @@ const ClassStudentList: StylableFC<{
   const { t } = useTranslation("classes", { keyPrefix: "detail.students" });
 
   const supabase = useSupabaseClient();
+  const mysk = useMySKClient();
 
   const [loading, toggleLoading] = useToggle();
   const getVCard = useGetVCard();
@@ -42,6 +44,7 @@ const ClassStudentList: StylableFC<{
       async () => {
         const { data, error } = await getStudentsByIDs(
           supabase,
+          mysk,
           students.map((student) => student.id),
           { detailed: true },
         );

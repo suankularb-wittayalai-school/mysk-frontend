@@ -67,7 +67,7 @@ export default function useOneTapSignin(
 
     // Sign in with MySK API.
     const { data, error } = await mysk.fetch<OAuthResponseData>(
-      "/auth/oauth/google",
+      "/auth/oauth/gsi",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

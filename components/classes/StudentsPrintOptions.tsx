@@ -1,8 +1,10 @@
-// Imports
-import { MAXIMUM_EMPTY_COLUMNS, OptionsType } from "@/components/classes/StudentListPrintout";
+import {
+  MAXIMUM_EMPTY_COLUMNS,
+  OptionsType,
+} from "@/components/classes/StudentListPrintout";
 import PrintOptions from "@/components/common/print/PrintOptions";
 import { FormControlProps } from "@/utils/types/common";
-import { UserRole } from "@/utils/types/person";
+import { User, UserRole } from "@/utils/types/person";
 import {
   Checkbox,
   FormGroup,
@@ -17,21 +19,20 @@ import { toggle } from "radash";
 import { FC } from "react";
 
 /**
- * Options for the Student List Printout.
+ * Options for the Student List Printout. People can choose which columns to
+ * display, how many empty columns to display, and configure other options here.
  *
  * @param form The form control values.
  * @param setForm The form setter.
  * @param formProps The form control props.
- * @param userRole The role of the user visitng the page. Exposes Student ID if the user is a Teacher.
- *
- * @returns A Print Options.
+ * @param user The user visiting the page. Exposes Student ID if the user isn't a Student.
  */
 const StudentsPrintOptions: FC<{
   form: OptionsType;
   setForm: (form: OptionsType) => void;
   formProps: FormControlProps<keyof OptionsType>;
-  userRole: UserRole;
-}> = ({ form, setForm, formProps, userRole }) => {
+  user: User | null;
+}> = ({ form, setForm, formProps, user }) => {
   const { t } = useTranslation("classes", { keyPrefix: "print" });
 
   return (
@@ -49,13 +50,16 @@ const StudentsPrintOptions: FC<{
           {(
             [
               "classNo",
-              userRole === "teacher" && "studentID",
+              user &&
+                (user.is_admin || user.role !== UserRole.student) &&
+                "studentID",
               "prefix",
               "fullName",
               "nickname",
               "allergies",
               "shirtSize",
               "pantsSize",
+              "elective",
             ].filter((column) => column) as OptionsType["columns"]
           ).map((column) => (
             <FormItem key={column} label={t(`columns.${column}`)}>

@@ -92,6 +92,7 @@ export async function getStudentByID(
           certificate_type: <StudentCertificateType>certicate.certificate_type,
         }))
       : [],
+    chosen_elective: null,
     profile: data!.people?.profile ?? null,
     ...(options?.detailed && data!.people
       ? {
