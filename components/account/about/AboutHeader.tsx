@@ -43,6 +43,9 @@ const AboutHeader: StylableFC<{
             : undefined)}
           dangerous
           onClick={() => setLogOutOpen(true)}
+          className={
+            person.role !== UserRole.student ? "!col-span-2" : undefined
+          }
         >
           {person.role !== UserRole.student && t("action.logOut")}
         </Button>
