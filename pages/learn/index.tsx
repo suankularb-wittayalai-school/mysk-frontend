@@ -112,7 +112,7 @@ const LearnPage: CustomPage<{
             subjectList={subjectList}
             query={query}
             electivePermissions={electivePermissions}
-            enrolledElective={null} // FIXME
+            enrolledElective={student.chosen_elective}
           />
         </motion.section>
       </LayoutGroup>
@@ -131,10 +131,9 @@ export const getServerSideProps: GetServerSideProps = async ({
     res: res as NextApiResponse,
   });
 
-  const { data: student } = (await getLoggedInPerson(
-    supabase,
-    mysk,
-  )) as BackendReturn<Student>;
+  const { data: student } = (await getLoggedInPerson(supabase, mysk, {
+    detailed: true,
+  })) as BackendReturn<Student>;
 
   if (!student?.classroom) return { notFound: true };
   const { classroom } = student;
@@ -156,8 +155,12 @@ export const getServerSideProps: GetServerSideProps = async ({
         },
       },
     );
+    // If the Student belongs to a Classroom that cannot choose Electives, they
+    // should not see the Elective Entry Card.
     if (!availableElectives?.length) electivePermissions.view = false;
   }
+
+  console.log(student.chosen_elective);
 
   return {
     props: {
