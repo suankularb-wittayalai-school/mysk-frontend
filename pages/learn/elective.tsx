@@ -264,6 +264,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         "common",
         "elective",
         "lookup",
+        "schedule",
       ])),
       electiveSubjects,
       enrolledID,
