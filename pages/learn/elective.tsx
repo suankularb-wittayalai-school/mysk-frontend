@@ -57,13 +57,10 @@ const LearnElectivesPage: CustomPage<{
     else if (selectedID) setDetailsOpen(true);
   }, [atBreakpoint === "base"]);
 
-  async function fetchSelectedElectiveDetails(
-    electiveSubject: ElectiveSubject,
-  ) {
-    if (selectedID === electiveSubject.session_code) return;
+  async function fetchBySessionCode(sessionCode: number | null) {
     setSelectedElective(null);
     const { data } = await mysk.fetch<ElectiveSubject>(
-      `/v1/subjects/electives/${electiveSubject.session_code}/`,
+      `/v1/subjects/electives/${sessionCode}/`,
       {
         query: {
           fetch_level: "detailed",
@@ -74,8 +71,10 @@ const LearnElectivesPage: CustomPage<{
     if (data) setSelectedElective(data);
   }
   useEffect(() => {
-    if (electiveSubjects.length)
-      fetchSelectedElectiveDetails(electiveSubjects[0]);
+    const initialSessionCode = enrolledID || electiveSubjects[0]?.session_code;
+    if (!initialSessionCode) return;
+    setSelectedID(initialSessionCode);
+    fetchBySessionCode(initialSessionCode);
   }, []);
 
   return (
@@ -122,7 +121,8 @@ const LearnElectivesPage: CustomPage<{
                         () => setDetailsOpen(true),
                         DURATION.short4 * 1000,
                       );
-                    fetchSelectedElectiveDetails(electiveSubject);
+                    if (selectedID !== electiveSubject.session_code)
+                      fetchBySessionCode(electiveSubject.session_code);
                   }}
                 />
               ))}
