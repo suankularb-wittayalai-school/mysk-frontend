@@ -16,7 +16,7 @@ import useLocale from "@/utils/helpers/useLocale";
 import { BackendReturn } from "@/utils/types/backend";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { IDOnly } from "@/utils/types/fetch";
-import { Student, UserRole } from "@/utils/types/person";
+import { Student, User, UserRole } from "@/utils/types/person";
 import { Schedule as ScheduleType } from "@/utils/types/schedule";
 import { ClassroomSubject } from "@/utils/types/subject";
 import {
@@ -41,21 +41,23 @@ import { useState } from "react";
  * @param birthdayBoys The Students in this Student’s Classroom who have a birthday today.
  * @param schedule Data for displaying Schedule.
  * @param subjectList The Subjects this Student’s Classroom is enrolled in.
- * @param student The Student viewing this page.
  * @param electivePermissions The permissions available to this Student for Electives.
+ * @param student The Student viewing this page.
  */
 const LearnPage: CustomPage<{
   birthdayBoys: Pick<Student, "id" | "first_name" | "nickname" | "birthdate">[];
   schedule: ScheduleType;
   subjectList: ClassroomSubject[];
-  student: Student;
   electivePermissions: ElectivePermissions;
+  student: Student;
+  user: User | null;
 }> = ({
   birthdayBoys,
   schedule,
   subjectList,
   electivePermissions,
   student,
+  user,
 }) => {
   const { t } = useTranslation("learn");
   const { t: ts } = useTranslation("schedule");
@@ -113,6 +115,7 @@ const LearnPage: CustomPage<{
             query={query}
             electivePermissions={electivePermissions}
             enrolledElective={student.chosen_elective}
+            user={user}
           />
         </motion.section>
       </LayoutGroup>
@@ -126,6 +129,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   res,
 }) => {
   const mysk = await createMySKClient(req);
+  const { user } = mysk;
   const supabase = createPagesServerClient({
     req: req as NextApiRequest,
     res: res as NextApiResponse,
@@ -160,8 +164,6 @@ export const getServerSideProps: GetServerSideProps = async ({
     if (!availableElectives?.length) electivePermissions.view = false;
   }
 
-  console.log(student.chosen_elective);
-
   return {
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
@@ -176,8 +178,9 @@ export const getServerSideProps: GetServerSideProps = async ({
       birthdayBoys: birthdayBoys || [],
       schedule: schedule || createEmptySchedule(1, 5),
       subjectList,
-      student,
       electivePermissions,
+      student,
+      user,
     },
   };
 };

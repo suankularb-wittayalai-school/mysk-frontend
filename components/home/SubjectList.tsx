@@ -6,6 +6,7 @@ import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import { ElectiveSubject } from "@/utils/types/elective";
+import { User } from "@/utils/types/person";
 import { ClassroomSubject } from "@/utils/types/subject";
 import { Columns } from "@suankularb-components/react";
 import { LayoutGroup } from "framer-motion";
@@ -17,17 +18,20 @@ import { LayoutGroup } from "framer-motion";
  * @param query The search query to filter the list.
  * @param electivePermissions The permissions available to this Student for Electives.
  * @param enrolledElective The Elective Subject this Student is enrolled in.
+ * @param user The currently logged in user.
  */
 const SubjectList: StylableFC<{
   subjectList: ClassroomSubject[];
   query: string;
   electivePermissions: ElectivePermissions;
   enrolledElective: ElectiveSubject | null;
+  user: User | null;
 }> = ({
   subjectList,
   query,
   electivePermissions,
   enrolledElective,
+  user,
   style,
   className,
 }) => {
@@ -46,7 +50,7 @@ const SubjectList: StylableFC<{
 
   return (
     <Columns columns={3} element="ul" style={style} className={className}>
-      {electivePermissions.view && (
+      {(electivePermissions.view || user?.is_admin) && (
         <LearnElectiveEntryCard
           electivePermissions={electivePermissions}
           enrolledElective={enrolledElective}
