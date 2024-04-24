@@ -8,15 +8,14 @@ import AttendanceViewSelector, {
 import HomeroomContentDialog from "@/components/attendance/HomeroomContentDialog";
 import TodaySummary from "@/components/attendance/TodaySummary";
 import PageHeader from "@/components/common/PageHeader";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import {
   getStudentFromUserID,
   getTeacherFromUserID,
 } from "@/utils/backend/account/getLoggedInPerson";
-import getUserByEmail from "@/utils/backend/account/getUserByEmail";
 import getAttendanceOfClass from "@/utils/backend/attendance/getAttendanceOfClass";
 import getHomeroomOfClass from "@/utils/backend/attendance/getHomeroomOfClass";
 import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
+import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import cn from "@/utils/helpers/cn";
 import useToggle from "@/utils/helpers/useToggle";
 import { YYYYMMDDRegex } from "@/utils/patterns";
@@ -39,7 +38,6 @@ import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import va from "@vercel/analytics";
 import { isFuture, isToday, isWeekend } from "date-fns";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import { getServerSession } from "next-auth";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
@@ -233,6 +231,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   )
     return { notFound: true };
 
+  const mysk = await createMySKClient(req);
   const supabase = createPagesServerClient({
     req: req as NextApiRequest,
     res: res as NextApiResponse,
@@ -244,10 +243,8 @@ export const getServerSideProps: GetServerSideProps = async ({
   );
   if (error) return { notFound: true };
 
-  const session = await getServerSession(req, res, authOptions);
-  const { data: user } = await getUserByEmail(supabase, session!.user!.email!);
-
   // Check if user is allowed to view or edit Attendance data on this page
+  const { user } = mysk;
   let editable = false;
   let teacherID = null;
 
@@ -257,13 +254,21 @@ export const getServerSideProps: GetServerSideProps = async ({
   switch (user?.role) {
     // Students can only view their own Attendance and cannot edit
     case UserRole.student:
-      const { data: student } = await getStudentFromUserID(supabase, user.id);
+      const { data: student } = await getStudentFromUserID(
+        supabase,
+        mysk,
+        user.id,
+      );
       if (student?.classroom?.id !== classroom.id && !user?.is_admin)
         return { notFound: true };
       break;
     // Teachers can edit Attendance of their own Classrooms
     case UserRole.teacher:
-      const { data: teacher } = await getTeacherFromUserID(supabase, user.id);
+      const { data: teacher } = await getTeacherFromUserID(
+        supabase,
+        mysk,
+        user.id,
+      );
       if (teacher?.class_advisor_at?.id === classroom.id) editable = true;
       teacherID = teacher?.id || null;
       break;

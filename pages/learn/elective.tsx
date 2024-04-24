@@ -5,14 +5,14 @@ import ElectiveListItem from "@/components/elective/ElectiveListItem";
 import TradesCard from "@/components/elective/TradesCard";
 import LandingBlobs from "@/components/landing/LandingBlobs";
 import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import cn from "@/utils/helpers/cn";
+import { BackendReturn } from "@/utils/types/backend";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { ElectiveSubject } from "@/utils/types/elective";
-import { Student } from "@/utils/types/person";
+import { Student, User } from "@/utils/types/person";
 import {
   Actions,
   ContentLayout,
@@ -30,16 +30,20 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import { useEffect, useState } from "react";
 
+const DIALOG_BREAKPOINTS = ["base", "sm"];
+
 /**
  * A place where Students can choose and trade their Elective Subjects.
  *
  * @param electiveSubjects The Elective Subjects (default) available for choosing.
  * @param selectedID The ID of the Elective Subject the Student is enrolled in.
+ * @param user The currently logged in user.
  */
 const LearnElectivesPage: CustomPage<{
   electiveSubjects: ElectiveSubject[];
   enrolledID: number | null;
-}> = ({ electiveSubjects, enrolledID }) => {
+  user: User | null;
+}> = ({ electiveSubjects, enrolledID, user }) => {
   const { t } = useTranslation("elective");
   const { t: tx } = useTranslation("common");
 
@@ -53,17 +57,14 @@ const LearnElectivesPage: CustomPage<{
   const { atBreakpoint } = useBreakpoint();
   const [detailsOpen, setDetailsOpen] = useState(false);
   useEffect(() => {
-    if (atBreakpoint !== "base") setDetailsOpen(false);
+    if (!DIALOG_BREAKPOINTS.includes(atBreakpoint)) setDetailsOpen(false);
     else if (selectedID) setDetailsOpen(true);
-  }, [atBreakpoint === "base"]);
+  }, [DIALOG_BREAKPOINTS.includes(atBreakpoint)]);
 
-  async function fetchSelectedElectiveDetails(
-    electiveSubject: ElectiveSubject,
-  ) {
-    if (selectedID === electiveSubject.session_code) return;
+  async function fetchBySessionCode(sessionCode: number | null) {
     setSelectedElective(null);
     const { data } = await mysk.fetch<ElectiveSubject>(
-      `/v1/subjects/electives/${electiveSubject.session_code}/`,
+      `/v1/subjects/electives/${sessionCode}/`,
       {
         query: {
           fetch_level: "detailed",
@@ -74,8 +75,10 @@ const LearnElectivesPage: CustomPage<{
     if (data) setSelectedElective(data);
   }
   useEffect(() => {
-    if (electiveSubjects.length)
-      fetchSelectedElectiveDetails(electiveSubjects[0]);
+    const initialSessionCode = enrolledID || electiveSubjects[0]?.session_code;
+    if (!initialSessionCode) return;
+    setSelectedID(initialSessionCode);
+    fetchBySessionCode(initialSessionCode);
   }, []);
 
   return (
@@ -117,12 +120,13 @@ const LearnElectivesPage: CustomPage<{
                   enrolled={enrolledID === electiveSubject.session_code}
                   onClick={() => {
                     setSelectedID(electiveSubject.session_code);
-                    if (atBreakpoint === "base")
+                    if (DIALOG_BREAKPOINTS.includes(atBreakpoint))
                       setTimeout(
                         () => setDetailsOpen(true),
                         DURATION.short4 * 1000,
                       );
-                    fetchSelectedElectiveDetails(electiveSubject);
+                    if (selectedID !== electiveSubject.session_code)
+                      fetchBySessionCode(electiveSubject.session_code);
                   }}
                 />
               ))}
@@ -130,18 +134,24 @@ const LearnElectivesPage: CustomPage<{
           </div>
 
           {/* Choose Button */}
-          <Actions
+          <div
             className={cn(`pointer-events-none sticky inset-0 bottom-20 top-auto
-              z-10 !-mt-6 !grid !justify-stretch bg-gradient-to-t
-              from-surface-container p-4 pt-12 sm:static sm:!mt-0 sm:!flex
-              sm:!justify-end sm:bg-none sm:p-0 sm:px-0`)}
+              z-10 !-mt-6 bg-gradient-to-t from-surface-container p-4 pt-12
+              sm:static sm:!mt-0 sm:bg-none sm:p-0 sm:px-0`)}
           >
-            <ChooseButton
-              sessionCode={selectedID}
-              enrolledID={enrolledID}
-              className="!pointer-events-auto"
-            />
-          </Actions>
+            <Actions
+              className={cn(`!grid !justify-stretch rounded-full
+                bg-surface-container sm:!flex sm:!justify-end
+                sm:bg-transparent`)}
+            >
+              <ChooseButton
+                sessionCode={selectedID}
+                enrolledID={enrolledID}
+                user={user}
+                className="!pointer-events-auto"
+              />
+            </Actions>
+          </div>
         </section>
 
         <div
@@ -154,7 +164,7 @@ const LearnElectivesPage: CustomPage<{
             initial={{ opacity: 0, scale: 0.95, x: -10 }}
             animate={{ opacity: 1, scale: 1, x: 0 }}
             transition={transition(DURATION.medium2, EASING.standardDecelerate)}
-            className="hidden grow md:block"
+            className="hidden grow overflow-hidden md:block"
           >
             <ElectiveDetailsCard
               electiveSubject={selectedElective}
@@ -199,6 +209,7 @@ const LearnElectivesPage: CustomPage<{
         <ElectiveDetailsCard
           electiveSubject={selectedElective}
           enrolledID={enrolledID}
+          user={user}
           onChooseSuccess={() => setDetailsOpen(false)}
           className="!mx-0 !bg-surface-container-highest"
         />
@@ -213,6 +224,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   res,
 }) => {
   const mysk = await createMySKClient(req);
+  const { user } = mysk;
   const supabase = createPagesServerClient({
     req: req as NextApiRequest,
     res: res as NextApiResponse,
@@ -221,10 +233,9 @@ export const getServerSideProps: GetServerSideProps = async ({
   // Get the logged in Student.
   const { data: student } = (await getLoggedInPerson(
     supabase,
-    authOptions,
-    req,
-    res,
-  )) as { data: Student };
+    mysk,
+  )) as BackendReturn<Student>;
+  if (!student) return { notFound: true };
 
   // Get the list of Elective Subjects available for this Student to enroll in.
   const { data: electiveSubjects } = await mysk.fetch<ElectiveSubject[]>(
@@ -260,9 +271,11 @@ export const getServerSideProps: GetServerSideProps = async ({
         "common",
         "elective",
         "lookup",
+        "schedule",
       ])),
       electiveSubjects,
       enrolledID,
+      user,
     },
   };
 };

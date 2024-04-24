@@ -8,6 +8,7 @@ import useUser from "@/utils/helpers/useUser";
 import { Student, Teacher } from "@/utils/types/person";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useEffect, useState } from "react";
+import useMySKClient from "../backend/mysk/useMySKClient";
 
 export default function useLoggedInPerson(options?: {
   includeContacts: boolean;
@@ -16,6 +17,7 @@ export default function useLoggedInPerson(options?: {
   const { user, status } = useUser();
   const [person, setPerson] = useState<Student | Teacher | null>(null);
   const supabase = useSupabaseClient();
+  const mysk = useMySKClient();
 
   useEffect(() => {
     if (!user) return;
@@ -24,8 +26,9 @@ export default function useLoggedInPerson(options?: {
         case "student":
           const { data, error } = await getStudentFromUserID(
             supabase,
+            mysk,
             user!.id,
-            options
+            options,
           );
           if (error) {
             logError("useLoggedInPerson (student)", error);
@@ -34,7 +37,8 @@ export default function useLoggedInPerson(options?: {
           break;
 
         case "teacher":
-          const { data: teacherData, error: teacherError } = await getTeacherFromUserID(supabase, user!.id, options);
+          const { data: teacherData, error: teacherError } =
+            await getTeacherFromUserID(supabase, mysk, user!.id, options);
           if (teacherError) {
             logError("useLoggedInPerson (teacher)", teacherError);
           }

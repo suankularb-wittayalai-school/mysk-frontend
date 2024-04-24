@@ -1,6 +1,7 @@
 import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
 import StudentDetailsCard from "@/components/lookup/students/StudentDetailsCard";
 import TeacherDetailsCard from "@/components/lookup/teachers/TeacherDetailsCard";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import { getStudentByID } from "@/utils/backend/person/getStudentByID";
 import { getTeacherByID } from "@/utils/backend/person/getTeacherByID";
 import { StylableFC } from "@/utils/types/common";
@@ -31,6 +32,7 @@ const WithPersonDetails: StylableFC<{
   >["options"];
 }> = ({ children, open, person, user, onClose, options, style, className }) => {
   const supabase = useSupabaseClient();
+  const mysk = useMySKClient();
   const [personDetails, setPersonDetails] = useState<Student | Teacher>();
 
   const DetailsCard = {
@@ -45,7 +47,7 @@ const WithPersonDetails: StylableFC<{
       const { data, error } = await {
         student: getStudentByID,
         teacher: getTeacherByID,
-      }[person.role](supabase, person.id, {
+      }[person.role](supabase, mysk, person.id, {
         detailed: true,
         includeContacts: true,
         includeCertificates: true,

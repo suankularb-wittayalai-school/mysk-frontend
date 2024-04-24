@@ -80,6 +80,11 @@ export type OAuthResponseData = {
 };
 
 /**
+ * A data object with only an ID.
+ */
+export type IDOnly = { id: string };
+
+/**
  * An error object from a fetch request.
  */
 export type FetchError = {

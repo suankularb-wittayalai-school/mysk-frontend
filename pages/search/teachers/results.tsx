@@ -9,6 +9,7 @@ import TooWideCard from "@/components/lookup/TooWideCard";
 import LookupTeacherCard from "@/components/lookup/teachers/LookupTeacherCard";
 import TeacherActiveFiltersCard from "@/components/lookup/teachers/TeacherActiveFiltersCard";
 import TeacherDetailsCard from "@/components/lookup/teachers/TeacherDetailsCard";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import { getTeacherByID } from "@/utils/backend/person/getTeacherByID";
 import getTeachersByLookupFilters from "@/utils/backend/person/getTeachersByLookupFilters";
 import getSubjectGroups from "@/utils/backend/subject/getSubjectGroups";
@@ -17,6 +18,7 @@ import { LangCode } from "@/utils/types/common";
 import { Teacher, TeacherLookupItem } from "@/utils/types/person";
 import { SubjectGroup } from "@/utils/types/subject";
 import {
+  DURATION,
   SplitLayout,
   useAnimationConfig,
   useBreakpoint,
@@ -52,19 +54,18 @@ const LookupTeachersResultsPage: NextPage<{
   const { t } = useTranslation("lookup", { keyPrefix: "teachers" });
   const { t: tx } = useTranslation(["lookup", "common"]);
 
-  const { duration } = useAnimationConfig();
-
   const [selectedID, setSelectedID] = useState<string>();
   // Select the first result automatically after a short delay
   useEffect(() => {
     const timeout = setTimeout(
       () => setSelectedID(teachers[0]?.id),
-      duration.medium2 * 1000,
+      DURATION.medium2 * 1000,
     );
     return () => clearTimeout(timeout);
   }, []);
 
   const supabase = useSupabaseClient();
+  const mysk = useMySKClient();
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher>();
   // Fetch the selected Teacher when the selected Teacher ID changes
   useEffect(() => {
@@ -76,7 +77,7 @@ const LookupTeachersResultsPage: NextPage<{
       if (!selectedID) return false;
 
       // Fetch the selected Teacher with the selected ID
-      const { data, error } = await getTeacherByID(supabase, selectedID, {
+      const { data, error } = await getTeacherByID(supabase, mysk, selectedID, {
         detailed: true,
         includeContacts: true,
       });
