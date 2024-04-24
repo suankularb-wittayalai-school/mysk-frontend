@@ -30,6 +30,8 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import { useEffect, useState } from "react";
 
+const DIALOG_BREAKPOINTS = ["base", "sm"];
+
 /**
  * A place where Students can choose and trade their Elective Subjects.
  *
@@ -55,9 +57,9 @@ const LearnElectivesPage: CustomPage<{
   const { atBreakpoint } = useBreakpoint();
   const [detailsOpen, setDetailsOpen] = useState(false);
   useEffect(() => {
-    if (atBreakpoint !== "base") setDetailsOpen(false);
+    if (!DIALOG_BREAKPOINTS.includes(atBreakpoint)) setDetailsOpen(false);
     else if (selectedID) setDetailsOpen(true);
-  }, [atBreakpoint === "base"]);
+  }, [DIALOG_BREAKPOINTS.includes(atBreakpoint)]);
 
   async function fetchBySessionCode(sessionCode: number | null) {
     setSelectedElective(null);
@@ -118,7 +120,7 @@ const LearnElectivesPage: CustomPage<{
                   enrolled={enrolledID === electiveSubject.session_code}
                   onClick={() => {
                     setSelectedID(electiveSubject.session_code);
-                    if (atBreakpoint === "base")
+                    if (DIALOG_BREAKPOINTS.includes(atBreakpoint))
                       setTimeout(
                         () => setDetailsOpen(true),
                         DURATION.short4 * 1000,
@@ -162,7 +164,7 @@ const LearnElectivesPage: CustomPage<{
             initial={{ opacity: 0, scale: 0.95, x: -10 }}
             animate={{ opacity: 1, scale: 1, x: 0 }}
             transition={transition(DURATION.medium2, EASING.standardDecelerate)}
-            className="hidden grow md:block"
+            className="hidden grow overflow-hidden md:block"
           >
             <ElectiveDetailsCard
               electiveSubject={selectedElective}
