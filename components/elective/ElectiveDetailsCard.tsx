@@ -9,7 +9,7 @@ import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import { ElectiveSubject } from "@/utils/types/elective";
-import { UserRole } from "@/utils/types/person";
+import { User, UserRole } from "@/utils/types/person";
 import {
   Actions,
   ChipSet,
@@ -28,13 +28,22 @@ import Balancer from "react-wrap-balancer";
  *
  * @param electiveSubject The Elective Subject to display.
  * @param enrolledID The session code of the Elective Subject the Student is currently enrolled in.
+ * @param user The currently logged in user.
  * @param onChooseSuccess Triggers after the Student has successfully chosen the Elective Subject.
  */
 const ElectiveDetailsCard: StylableFC<{
   electiveSubject: ElectiveSubject | null;
   enrolledID?: number | null;
+  user?: User | null;
   onChooseSuccess?: () => void;
-}> = ({ electiveSubject, enrolledID, onChooseSuccess, style, className }) => {
+}> = ({
+  electiveSubject,
+  enrolledID,
+  user,
+  onChooseSuccess,
+  style,
+  className,
+}) => {
   const locale = useLocale();
   const { t } = useTranslation("elective", { keyPrefix: "detail" });
 
@@ -113,11 +122,12 @@ const ElectiveDetailsCard: StylableFC<{
               </InformationCard>
             </div>
 
-            {enrolledID && (
+            {enrolledID && user !== undefined && (
               <Actions align="full">
                 <ChooseButton
                   sessionCode={electiveSubject.session_code}
                   enrolledID={enrolledID}
+                  user={user}
                   onSucess={onChooseSuccess}
                 />
               </Actions>
