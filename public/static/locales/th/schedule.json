@@ -67,7 +67,8 @@
     "search": "ค้นหาวิชา",
     "elective": {
       "title": "วิชาเลือก",
-      "subtitle": "ยังไม่ได้เลือก",
+      "subtitle_student": "ยังไม่ได้เลือก",
+      "subtitle_teacher": "{{count, number}} คาบเรียน",
       "action": {
         "choose": "เลือก",
         "change": "เปลี่ยน",

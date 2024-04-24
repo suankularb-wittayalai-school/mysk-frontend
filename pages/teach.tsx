@@ -1,4 +1,5 @@
 import HomeLayout from "@/components/home/HomeLayout";
+import TeachElectiveEntryCard from "@/components/home/TeachElectiveEntryCard";
 import TeachingSubjectCard from "@/components/home/TeachingSubjectCard";
 import ScheduleGlance from "@/components/home/glance/ScheduleGlance";
 import Schedule from "@/components/schedule/Schedule";
@@ -9,11 +10,10 @@ import getTeachingSubjects from "@/utils/backend/subject/getTeachingSubjects";
 import getLocalePath from "@/utils/helpers/getLocalePath";
 import useLocale from "@/utils/helpers/useLocale";
 import { BackendReturn } from "@/utils/types/backend";
-import { Classroom } from "@/utils/types/classroom";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { Teacher, UserRole } from "@/utils/types/person";
 import { Schedule as ScheduleType } from "@/utils/types/schedule";
-import { Subject, SubjectClassrooms } from "@/utils/types/subject";
+import { SubjectClassrooms } from "@/utils/types/subject";
 import {
   Columns,
   DURATION,
@@ -34,28 +34,18 @@ import { useState } from "react";
  * and their Subjects.
  *
  * @param schedule Data for displaying Schedule.
- * @param subjectsInCharge The Subjects assigned to this teacher. Used in editing the Schedule.
- * @param teachingSubjects An array of Teacher Subject Items, an abstraction of Room Subjects connected to this Teacher.
- * @param teacherID The Teacher’s database ID. Used in validating edits in the Schedule.
- * @param classroom The Classroom this Teacher is the Class Advisor of. Used in Attendance.
+ * @param teacher The Teacher viewing this page.
+ * @param teachingSubjects An array of Teacher Subject Items, an abstraction of Classroom Subjects connected to this Teacher.
  */
 const TeachPage: CustomPage<{
   schedule: ScheduleType;
-  subjectsInCharge: Pick<Subject, "id" | "name" | "code" | "short_name">[];
+  teacher: Teacher;
   teachingSubjects: SubjectClassrooms[];
-  teacherID: string;
-  classroom: Pick<Classroom, "number">;
-}> = ({
-  schedule,
-  subjectsInCharge,
-  teachingSubjects,
-  teacherID,
-  classroom,
-}) => {
+}> = ({ schedule, teacher, teachingSubjects }) => {
   const locale = useLocale();
   const { t } = useTranslation("teach");
 
-  const [query, setQuery] = useState<string>("");
+  const [query, setQuery] = useState("");
 
   return (
     <HomeLayout>
@@ -64,7 +54,7 @@ const TeachPage: CustomPage<{
         <ScheduleGlance
           schedule={schedule}
           role={UserRole.teacher}
-          classroom={classroom}
+          classroom={teacher.class_advisor_at || undefined}
         />
 
         {/* Schedule */}
@@ -75,7 +65,9 @@ const TeachPage: CustomPage<{
         >
           <Header>{t("schedule.title")}</Header>
           <Schedule
-            {...{ schedule, subjectsInCharge, teacherID }}
+            schedule={schedule}
+            subjectsInCharge={teacher.subjects_in_charge}
+            teacherID={teacher.id}
             view={UserRole.teacher}
             editable
           />
@@ -97,12 +89,17 @@ const TeachPage: CustomPage<{
             />
           </Columns>
           <Columns columns={3}>
+            {teacher.electives_in_charge.length > 0 && (
+              <TeachElectiveEntryCard
+                electivesInCharge={teacher.electives_in_charge}
+              />
+            )}
             {teachingSubjects
               .filter(
                 (subject) =>
                   subject.subject.name.th.includes(query) ||
                   subject.subject.name["en-US"]?.includes(query) ||
-                  subject.subject.code["en-US"]?.includes(query) ||
+                  subject.subject.code.th.includes(query) ||
                   subject.subject.code["en-US"]?.includes(query),
               )
               .map((subject) => (
@@ -132,8 +129,6 @@ export const getServerSideProps: GetServerSideProps = async ({
   })) as BackendReturn<Teacher>;
   if (error) return { notFound: true };
 
-  const classroom = teacher.class_advisor_at;
-
   if (teacher.role !== UserRole.teacher)
     return {
       redirect: {
@@ -160,10 +155,8 @@ export const getServerSideProps: GetServerSideProps = async ({
         "schedule",
       ])),
       schedule,
-      subjectsInCharge: teacher.subjects_in_charge,
+      teacher,
       teachingSubjects,
-      teacherID,
-      classroom,
     },
   };
 };

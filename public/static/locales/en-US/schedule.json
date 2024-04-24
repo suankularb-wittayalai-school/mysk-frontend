@@ -59,7 +59,9 @@
     "search": "Search subjects",
     "elective": {
       "title": "Elective subject",
-      "subtitle": "Not chosen",
+      "subtitle_student": "Not chosen",
+      "subtitle_teacher_one": "{{count, number}} session",
+      "subtitle_teacher_other": "{{count, number}} sessions",
       "action": {
         "choose": "Choose",
         "change": "Change",
