@@ -1,21 +1,17 @@
-// Imports
 import PageHeader from "@/components/common/PageHeader";
 import ManagePageCard from "@/components/manage/ManagePageCard";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
-import getUserByEmail from "@/utils/backend/account/getUserByEmail";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import getISODateString from "@/utils/helpers/getISODateString";
 import lastWeekday from "@/utils/helpers/lastWeekday";
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { User, UserRole } from "@/utils/types/person";
+import { UserRole } from "@/utils/types/person";
 import {
   Button,
   Columns,
   ContentLayout,
   MaterialIcon,
 } from "@suankularb-components/react";
-import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import { getServerSession } from "next-auth";
+import { GetStaticProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
@@ -29,16 +25,16 @@ import { useRouter } from "next/router";
  *
  * Management users see this page as their Home. Other users with the permission
  * can access this page from their Account page.
- *
- * @param user The currently logged in user.
  */
-const ManagePage: CustomPage<{ user: User }> = ({ user }) => {
+const ManagePage: CustomPage = () => {
   const { t } = useTranslation("manage");
   const { t: tx } = useTranslation("common");
 
   const router = useRouter();
+  const mysk = useMySKClient();
 
-  const title = user.role === UserRole.management ? tx("appName") : t("title");
+  const title =
+    mysk.user?.role !== UserRole.management ? t("title") : tx("appName");
   const attendanceURL =
     "/manage/attendance/" + getISODateString(lastWeekday(new Date()));
 
@@ -87,28 +83,10 @@ const ManagePage: CustomPage<{ user: User }> = ({ user }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  req,
-  res,
-}) => {
-  const supabase = createPagesServerClient({
-    req: req as NextApiRequest,
-    res: res as NextApiResponse,
-  });
-
-  const session = await getServerSession(req, res, authOptions);
-  const { data: user } = await getUserByEmail(supabase, session!.user!.email!);
-
-  return {
-    props: {
-      ...(await serverSideTranslations(locale as LangCode, [
-        "common",
-        "manage",
-      ])),
-      user,
-    },
-  };
-};
+export const getStaticProps: GetStaticProps = async ({ locale }) => ({
+  props: {
+    ...(await serverSideTranslations(locale as LangCode, ["common", "manage"])),
+  },
+});
 
 export default ManagePage;

@@ -1,6 +1,9 @@
+import {
+  MAXIMUM_EMPTY_COLUMNS,
+  OptionsType,
+} from "@/components/classes/StudentListPrintout";
 import { StylableFC } from "@/utils/types/common";
 import { list } from "radash";
-import { MAXIMUM_EMPTY_COLUMNS, OptionsType } from "./StudentListPrintout";
 
 /**
  * The head area of the table shown in Student List Printout. Displays the

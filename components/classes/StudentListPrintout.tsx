@@ -5,7 +5,7 @@ import useForm from "@/utils/helpers/useForm";
 import useLocale from "@/utils/helpers/useLocale";
 import { Classroom } from "@/utils/types/classroom";
 import { LangCode, StylableFC } from "@/utils/types/common";
-import { Student, User } from "@/utils/types/person";
+import { Student } from "@/utils/types/person";
 import { useTranslation } from "next-i18next";
 import { list } from "radash";
 
@@ -41,7 +41,6 @@ export const MAXIMUM_EMPTY_COLUMNS = 20;
  *
  * @param classroom The Classroom to display the Student List for.
  * @param studentList The list of all Students in this Class.
- * @param user The user visitng the page. Exposes Student ID if the user isn't a Student.
  */
 const StudentListPrintout: StylableFC<{
   classroom: Pick<
@@ -49,8 +48,7 @@ const StudentListPrintout: StylableFC<{
     "id" | "number" | "class_advisors" | "contacts" | "subjects"
   >;
   studentList: Student[];
-  user: User | null;
-}> = ({ classroom, studentList, user }) => {
+}> = ({ classroom, studentList }) => {
   const locale = useLocale();
   const { t } = useTranslation("classes", { keyPrefix: "print" });
 
@@ -85,7 +83,6 @@ const StudentListPrintout: StylableFC<{
           form={form}
           setForm={setForm}
           formProps={formProps}
-          user={user}
         />
       </PrintPage>
     </>

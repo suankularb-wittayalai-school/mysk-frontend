@@ -9,7 +9,7 @@ import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import { ElectiveSubject } from "@/utils/types/elective";
-import { User, UserRole } from "@/utils/types/person";
+import { UserRole } from "@/utils/types/person";
 import {
   Actions,
   ChipSet,
@@ -34,16 +34,8 @@ import Balancer from "react-wrap-balancer";
 const ElectiveDetailsCard: StylableFC<{
   electiveSubject: ElectiveSubject | null;
   enrolledID?: number | null;
-  user?: User | null;
   onChooseSuccess?: () => void;
-}> = ({
-  electiveSubject,
-  enrolledID,
-  user,
-  onChooseSuccess,
-  style,
-  className,
-}) => {
+}> = ({ electiveSubject, enrolledID, onChooseSuccess, style, className }) => {
   const locale = useLocale();
   const { t } = useTranslation("elective", { keyPrefix: "detail" });
 
@@ -122,12 +114,11 @@ const ElectiveDetailsCard: StylableFC<{
               </InformationCard>
             </div>
 
-            {enrolledID && user !== undefined && (
+            {enrolledID && (
               <Actions align="full">
                 <ChooseButton
                   sessionCode={electiveSubject.session_code}
                   enrolledID={enrolledID}
-                  user={user}
                   onSucess={onChooseSuccess}
                 />
               </Actions>

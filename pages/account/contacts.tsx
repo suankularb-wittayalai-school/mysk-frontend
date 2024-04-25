@@ -1,9 +1,8 @@
 import ContactCard from "@/components/account/ContactCard";
 import ContactDialog from "@/components/account/ContactDialog";
 import ProfileLayout from "@/components/account/ProfileLayout";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
-import getUserByEmail from "@/utils/backend/account/getUserByEmail";
 import getContactsOfPerson from "@/utils/backend/contact/getContactsOfPerson";
+import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import getPersonIDFromUser from "@/utils/backend/person/getPersonIDFromUser";
 import useContactActions from "@/utils/helpers/contact/useContactActions";
 import { CustomPage, LangCode } from "@/utils/types/common";
@@ -18,7 +17,6 @@ import {
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import { getServerSession } from "next-auth";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
@@ -91,15 +89,14 @@ export const getServerSideProps: GetServerSideProps = async ({
   req,
   res,
 }) => {
+  const mysk = await createMySKClient(req);
   const supabase = createPagesServerClient({
     req: req as NextApiRequest,
     res: res as NextApiResponse,
   });
-  const session = await getServerSession(req, res, authOptions);
-  const { data: user } = await getUserByEmail(supabase, session!.user!.email!);
-  const role = user!.role;
+  const role = mysk.user!.role;
 
-  const { data: personID } = await getPersonIDFromUser(supabase, user!);
+  const { data: personID } = await getPersonIDFromUser(supabase, mysk.user!);
   const { data: contacts } = await getContactsOfPerson(supabase, personID!);
 
   return {

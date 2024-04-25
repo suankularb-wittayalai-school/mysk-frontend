@@ -4,7 +4,6 @@ import getClassroomOverview from "@/utils/backend/classroom/getClassroomOverview
 import getStudentsOfClass from "@/utils/backend/classroom/getStudentsOfClass";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import { getStudentsByIDs } from "@/utils/backend/person/getStudentsByIDs";
-import useUser from "@/utils/helpers/useUser";
 import { supabase } from "@/utils/supabase-backend";
 import { Classroom } from "@/utils/types/classroom";
 import { CustomPage, LangCode } from "@/utils/types/common";
@@ -32,21 +31,12 @@ const StudentsListPrintPage: CustomPage<{
   const { t } = useTranslation("classes", { keyPrefix: "print" });
   const { t: tx } = useTranslation("common");
 
-  // Get the user.
-  // We’re doing this client-side because we can’t get auth info with
-  // incremental static regeneration (ISR).
-  const { user } = useUser();
-
   return (
     <>
       <Head>
         <title>{tx("tabName", { tabName: t("title") })}</title>
       </Head>
-      <StudentListPrintout
-        classroom={classroom}
-        studentList={studentList}
-        user={user}
-      />
+      <StudentListPrintout classroom={classroom} studentList={studentList} />
     </>
   );
 };

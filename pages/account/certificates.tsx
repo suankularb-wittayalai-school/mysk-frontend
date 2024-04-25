@@ -1,27 +1,14 @@
 import ProfileLayout from "@/components/account/ProfileLayout";
-import CertificateCard from "@/components/account/certificates/CertificateCard";
 import CertificatesYearSection from "@/components/account/certificates/CertificatesYearSection";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
-import getUserByEmail from "@/utils/backend/account/getUserByEmail";
 import getCertificatesOfPerson from "@/utils/backend/certificate/getCertificatesOfPerson";
+import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import getPersonIDFromUser from "@/utils/backend/person/getPersonIDFromUser";
-import getLocaleYear from "@/utils/helpers/getLocaleYear";
-import useLocale from "@/utils/helpers/useLocale";
 import { StudentCertificate } from "@/utils/types/certificate";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
-import {
-  AssistChip,
-  Card,
-  ChipSet,
-  Header,
-  MaterialIcon,
-  Section,
-  Text,
-} from "@suankularb-components/react";
+import { Card, Section, Text } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import { getServerSession } from "next-auth";
 import { Trans, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
@@ -36,7 +23,6 @@ import Balancer from "react-wrap-balancer";
 const CertificatesPage: CustomPage<{
   certificates: StudentCertificate[];
 }> = ({ certificates }) => {
-  const locale = useLocale();
   const { t } = useTranslation("account", { keyPrefix: "certificates" });
   const { t: tx } = useTranslation("common");
 
@@ -109,13 +95,12 @@ export const getServerSideProps: GetServerSideProps = async ({
   req,
   res,
 }) => {
+  const mysk = await createMySKClient(req);
   const supabase = createPagesServerClient({
     req: req as NextApiRequest,
     res: res as NextApiResponse,
   });
-  const session = await getServerSession(req, res, authOptions);
-  const { data: user } = await getUserByEmail(supabase, session!.user!.email!);
-  const { data: personID } = await getPersonIDFromUser(supabase, user!);
+  const { data: personID } = await getPersonIDFromUser(supabase, mysk.user!);
 
   const { data: certificates } = await getCertificatesOfPerson(
     supabase,

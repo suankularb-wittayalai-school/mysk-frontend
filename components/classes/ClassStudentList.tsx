@@ -8,7 +8,7 @@ import useToggle from "@/utils/helpers/useToggle";
 import withLoading from "@/utils/helpers/withLoading";
 import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
-import { User, UserRole } from "@/utils/types/person";
+import { UserRole } from "@/utils/types/person";
 import { Button, MaterialIcon, Text } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import va from "@vercel/analytics";
@@ -19,15 +19,11 @@ import { useTranslation } from "next-i18next";
  *
  * @param students The list of Students to display.
  * @param classNumber The 3-digit number of the Classroom.
- * @param isOwnClass Whether the Classroom belongs to the current user.
- * @param user The currently logged in user. Used for permissions.
  */
 const ClassStudentList: StylableFC<{
   students: Classroom["students"];
   classNumber: number;
-  isOwnClass?: boolean;
-  user: User;
-}> = ({ students, classNumber, isOwnClass, user, style, className }) => {
+}> = ({ students, classNumber, style, className }) => {
   const { t } = useTranslation("classes", { keyPrefix: "detail.students" });
 
   const supabase = useSupabaseClient();
@@ -101,7 +97,6 @@ const ClassStudentList: StylableFC<{
             hideClassroomInSubtitle: true,
             showNicknameinSubtitle: true,
             hideSeeClass: true,
-            isOwnClass,
           }}
           element="li"
           className={cn(`cursor-pointer !border-0 hover:m-[-1px] hover:!border-1

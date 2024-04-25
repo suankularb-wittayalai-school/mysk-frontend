@@ -15,15 +15,13 @@ import { useTranslation } from "next-i18next";
  *
  * @param sessionCode The session code of the Elective Subject to choose.
  * @param enrolledID The session code of the Elective Subject the Student is currently enrolled in.
- * @param user The currently logged in user.
  * @param onSucess Triggers after the Student has successfully chosen the Elective Subject.
  */
 const ChooseButton: StylableFC<{
   sessionCode: number | null;
   enrolledID: number | null;
-  user: User | null;
   onSucess?: () => void;
-}> = ({ sessionCode, enrolledID, user, onSucess, style, className }) => {
+}> = ({ sessionCode, enrolledID, onSucess, style, className }) => {
   const { t } = useTranslation("elective", { keyPrefix: "list" });
 
   const { now } = useNow();
@@ -35,7 +33,7 @@ const ChooseButton: StylableFC<{
   const [loading, toggleLoading] = useToggle();
   const disabled =
     // Disallow choosing if not in time window (admins bypass this check).
-    !(permissions.choose || user?.is_admin) ||
+    !(permissions.choose || mysk.user?.is_admin) ||
     // Disallow choosing if none is selected.
     !sessionCode ||
     // Disallow choosing if already enrolled in the same Elective Subject.

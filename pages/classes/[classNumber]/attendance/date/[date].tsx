@@ -57,7 +57,6 @@ import { useEffect, useState } from "react";
  */
 const DateAttendancePage: CustomPage<{
   date: string;
-  user: User;
   teacherID?: string;
   editable?: boolean;
   attendances: StudentAttendance[];
@@ -65,7 +64,6 @@ const DateAttendancePage: CustomPage<{
   classroom: Pick<Classroom, "id" | "number">;
 }> = ({
   date,
-  user,
   teacherID,
   editable,
   attendances: initialAttendances,
@@ -298,7 +296,6 @@ export const getServerSideProps: GetServerSideProps = async ({
         "attendance",
       ])),
       date,
-      user,
       teacherID,
       editable,
       attendances,
