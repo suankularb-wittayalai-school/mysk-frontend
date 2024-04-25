@@ -1,4 +1,3 @@
-// Imports
 import Favicon from "@/components/Favicon";
 import LogOutDialog from "@/components/account/LogOutDialog";
 import SchemeIcon from "@/components/icons/SchemeIcon";
@@ -9,7 +8,7 @@ import useLocale from "@/utils/helpers/useLocale";
 import usePageIsLoading from "@/utils/helpers/usePageIsLoading";
 import usePreferences from "@/utils/helpers/usePreferences";
 import useRefreshProps from "@/utils/helpers/useRefreshProps";
-import useSnackbar from "@/utils/helpers/useSnackbar";
+import useSnackbarController from "@/utils/helpers/useSnackbarController";
 import useUser from "@/utils/helpers/useUser";
 import { CustomPage } from "@/utils/types/common";
 import { UserPermissionKey, UserRole } from "@/utils/types/person";
@@ -66,7 +65,8 @@ const Layout: FC<
   const homeURL = getHomeURLofRole(user?.role || UserRole.student);
 
   // Snackbar
-  const { snackbarOpen, setSnackbarOpen, snackbarProps } = useSnackbar();
+  const { snackbarOpen, setSnackbarOpen, snackbarProps } =
+    useSnackbarController();
 
   // Page loading indicator
   const { pageIsLoading } = usePageIsLoading();

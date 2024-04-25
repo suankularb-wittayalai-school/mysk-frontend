@@ -12,11 +12,13 @@ import SnackbarContext from "@/contexts/SnackbarContext";
  * returns can be used to control a Snackbar at Root Layout.
  *
  * @returns
- * `snackbarOpen` — If the Snackbar should be open;
- * `setSnackbarOpen` — Sets the state that should control if the Snackbar is open;
- * `snackbarProps` — The current props for Snackbar.
+ * | Property          | Description                                                |
+ * |-------------------|------------------------------------------------------------|
+ * | `snackbarOpen`    | If the Snackbar should be open.                            |
+ * | `setSnackbarOpen` | Sets the state that should control if the Snackbar is open.|
+ * | `snackbarProps`   | The current props for Snackbar.                            |
  */
-export default function useSnackbar() {
+export default function useSnackbarController() {
   const { snackbar } = useContext(SnackbarContext);
   const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
   const [snackbarProps, setSnackbarProps] = useState<SnackbarProps>();
