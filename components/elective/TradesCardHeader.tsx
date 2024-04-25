@@ -1,3 +1,4 @@
+import CreateRequestDialog from "@/components/elective/CreateRequestDialog";
 import cn from "@/utils/helpers/cn";
 import { StylableFC } from "@/utils/types/common";
 import {
@@ -39,6 +40,10 @@ const TradesCardHeader: StylableFC = ({ style, className }) => {
           {t("action.create")}
         </Button>
       </Actions>
+      <CreateRequestDialog
+        open={createOpen}
+        onClose={() => setCreateOpen(false)}
+      />
     </header>
   );
 };
