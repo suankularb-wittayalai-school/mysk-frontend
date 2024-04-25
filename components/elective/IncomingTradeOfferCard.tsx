@@ -10,13 +10,13 @@ import { StylableFC } from "@/utils/types/common";
 import { ElectiveTradeOffer } from "@/utils/types/elective";
 import {
   Button,
-  DURATION,
   MaterialIcon,
   SegmentedButton,
   Snackbar,
 } from "@suankularb-components/react";
+import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 
 /**
  * A Card that displays an incoming Trade Offer.
@@ -67,6 +67,15 @@ const IncomingTradeOfferCard: StylableFC<{
       visuallySwapElectiveSubjects();
       return false;
     }
+    va.track(
+      status === "approved"
+        ? "Approve Incoming Elective Trade Offer"
+        : "Decline Incoming Elective Trade Offer",
+      {
+        sending: tradeOffer.sender_elective_subject.session_code,
+        receiving: tradeOffer.receiver_elective_subject.session_code,
+      },
+    );
     await refreshProps();
     setSnackbar(<Snackbar>{t(`snackbar.${status}`)}</Snackbar>);
     return true;

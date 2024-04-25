@@ -10,6 +10,7 @@ import { ElectiveTradeOffer } from "@/utils/types/elective";
 import { Actions, Button, Snackbar } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
 import { useContext } from "react";
+import va from "@vercel/analytics";
 import logError from "@/utils/helpers/logError";
 
 /**
@@ -51,6 +52,10 @@ const OutgoingTradeOfferCard: StylableFC<{
       logError("handleCancel", error);
       return false;
     }
+    va.track("Cancel Outgoing Elective Trade Offer", {
+      sending: tradeOffer.sender_elective_subject.session_code,
+      receiving: tradeOffer.receiver_elective_subject.session_code,
+    });
     await refreshProps();
     setSnackbar(<Snackbar>{t("snackbar.cancelled")}</Snackbar>);
     return true;
