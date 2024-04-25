@@ -45,16 +45,17 @@ const CreateRequestDialog: StylableFC<{
   const supabase = useSupabaseClient();
   const mysk = useMySKClient();
 
-  const { form, openFormSnackbar, formOK, formProps } = useForm<"studentID">([
-    {
-      key: "studentID",
-      defaultValue: "",
-      validate: (value: string) =>
-        studentIDRegex.test(value) &&
-        value !== (mysk.person as Student)?.student_id,
-      required: true,
-    },
-  ]);
+  const { form, resetForm, openFormSnackbar, formOK, formProps } =
+    useForm<"studentID">([
+      {
+        key: "studentID",
+        defaultValue: "",
+        validate: (value: string) =>
+          studentIDRegex.test(value) &&
+          value !== (mysk.person as Student)?.student_id,
+        required: true,
+      },
+    ]);
 
   /**
    * Validates and sends the request to the API.
@@ -111,6 +112,7 @@ const CreateRequestDialog: StylableFC<{
     setSnackbar(<Snackbar>Request sent</Snackbar>);
     await refreshProps();
     onClose();
+    resetForm();
     return true;
   }
 
