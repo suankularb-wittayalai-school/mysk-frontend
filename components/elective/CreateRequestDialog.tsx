@@ -109,8 +109,8 @@ const CreateRequestDialog: StylableFC<{
     );
 
     // Reflect the success to the user.
-    setSnackbar(<Snackbar>Request sent</Snackbar>);
     await refreshProps();
+    setSnackbar(<Snackbar>{t("snackbar.success")}</Snackbar>);
     onClose();
     resetForm();
     return true;
