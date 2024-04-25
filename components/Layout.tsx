@@ -1,16 +1,15 @@
-// Imports
 import Favicon from "@/components/Favicon";
 import LogOutDialog from "@/components/account/LogOutDialog";
 import SchemeIcon from "@/components/icons/SchemeIcon";
 import AppStateContext from "@/contexts/AppStateContext";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import permitted from "@/utils/helpers/permitted";
 import getHomeURLofRole from "@/utils/helpers/person/getHomeURLofRole";
 import useLocale from "@/utils/helpers/useLocale";
 import usePageIsLoading from "@/utils/helpers/usePageIsLoading";
 import usePreferences from "@/utils/helpers/usePreferences";
 import useRefreshProps from "@/utils/helpers/useRefreshProps";
-import useSnackbar from "@/utils/helpers/useSnackbar";
-import useUser from "@/utils/helpers/useUser";
+import useSnackbarController from "@/utils/helpers/useSnackbarController";
 import { CustomPage } from "@/utils/types/common";
 import { UserPermissionKey, UserRole } from "@/utils/types/person";
 import {
@@ -62,11 +61,12 @@ const Layout: FC<
   // Navigation Bar and Drawer
   const router = useRouter();
   const { atBreakpoint } = useBreakpoint();
-  const { user } = useUser();
-  const homeURL = getHomeURLofRole(user?.role || UserRole.student);
+  const mysk = useMySKClient();
+  const homeURL = getHomeURLofRole(mysk.user?.role || UserRole.student);
 
   // Snackbar
-  const { snackbarOpen, setSnackbarOpen, snackbarProps } = useSnackbar();
+  const { snackbarOpen, setSnackbarOpen, snackbarProps } =
+    useSnackbarController();
 
   // Page loading indicator
   const { pageIsLoading } = usePageIsLoading();
@@ -135,9 +135,9 @@ const Layout: FC<
             href={homeURL}
             element={Link}
           />
-          {user &&
-            user.role !== UserRole.management &&
-            permitted(user, UserPermissionKey.can_see_management) && (
+          {mysk.user &&
+            mysk.user.role !== UserRole.management &&
+            permitted(mysk.user, UserPermissionKey.can_see_management) && (
               <NavDrawerItem
                 icon={<MaterialIcon icon="analytics" />}
                 label={t("navigation.manage")}
@@ -174,8 +174,8 @@ const Layout: FC<
             href="/news"
             element={Link}
           />
-          {!user ||
-            ([UserRole.student, UserRole.teacher].includes(user.role) && (
+          {!mysk.user ||
+            ([UserRole.student, UserRole.teacher].includes(mysk.user.role) && (
               <NavDrawerItem
                 icon={<MaterialIcon icon="account_circle" />}
                 label={t("navigation.account")}
@@ -231,7 +231,7 @@ const Layout: FC<
               />
             ))}
           />
-          {user?.is_admin && (
+          {mysk.user?.is_admin && (
             <NavDrawerItem
               icon={<MaterialIcon icon="shield_person" />}
               label={t("navigation.drawer.about.admin")}
@@ -322,9 +322,9 @@ const Layout: FC<
             href={homeURL}
             element={Link}
           />
-          {user &&
-            user.role !== UserRole.management &&
-            permitted(user, UserPermissionKey.can_see_management) && (
+          {mysk.user &&
+            mysk.user.role !== UserRole.management &&
+            permitted(mysk.user, UserPermissionKey.can_see_management) && (
               <NavBarItem
                 icon={<MaterialIcon icon="analytics" />}
                 label={t("navigation.manage")}
@@ -355,8 +355,8 @@ const Layout: FC<
             href="/news"
             element={Link}
           />
-          {(!user ||
-            [UserRole.student, UserRole.teacher].includes(user.role)) && (
+          {(!mysk.user ||
+            [UserRole.student, UserRole.teacher].includes(mysk.user.role)) && (
             <NavBarItem
               icon={<MaterialIcon icon="account_circle" />}
               label={t("navigation.account")}

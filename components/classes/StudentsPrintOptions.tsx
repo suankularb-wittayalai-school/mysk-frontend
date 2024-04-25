@@ -3,6 +3,8 @@ import {
   OptionsType,
 } from "@/components/classes/StudentListPrintout";
 import PrintOptions from "@/components/common/print/PrintOptions";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
+import permitted from "@/utils/helpers/permitted";
 import { FormControlProps } from "@/utils/types/common";
 import { User, UserRole } from "@/utils/types/person";
 import {
@@ -25,15 +27,15 @@ import { FC } from "react";
  * @param form The form control values.
  * @param setForm The form setter.
  * @param formProps The form control props.
- * @param user The user visiting the page. Exposes Student ID if the user isn't a Student.
  */
 const StudentsPrintOptions: FC<{
   form: OptionsType;
   setForm: (form: OptionsType) => void;
   formProps: FormControlProps<keyof OptionsType>;
-  user: User | null;
-}> = ({ form, setForm, formProps, user }) => {
+}> = ({ form, setForm, formProps }) => {
   const { t } = useTranslation("classes", { keyPrefix: "print" });
+
+  const mysk = useMySKClient();
 
   return (
     <PrintOptions parentURL="/classes">
@@ -50,8 +52,8 @@ const StudentsPrintOptions: FC<{
           {(
             [
               "classNo",
-              user &&
-                (user.is_admin || user.role !== UserRole.student) &&
+              mysk.user &&
+                (mysk.user.is_admin || mysk.user.role !== UserRole.student) &&
                 "studentID",
               "prefix",
               "fullName",

@@ -1,10 +1,15 @@
 import AppStateContext from "@/contexts/AppStateContext";
+import UserContext from "@/contexts/UserContext";
 import { GSIStatus } from "@/pages";
+import getUserByEmail from "@/utils/backend/account/getUserByEmail";
+import fetchMySKProxy from "@/utils/backend/mysk/fetchMySKProxy";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import saveAccessToken from "@/utils/helpers/account/saveAccessToken";
 import logError from "@/utils/helpers/logError";
 import useLocale from "@/utils/helpers/useLocale";
 import { OAuthResponseData } from "@/utils/types/fetch";
+import { User } from "@/utils/types/person";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import va from "@vercel/analytics";
 import { GsiButtonConfiguration } from "google-one-tap";
 import { SignInOptions, signIn, useSession } from "next-auth/react";
@@ -37,7 +42,9 @@ export default function useOneTapSignin(
   const locale = useLocale();
   const { t } = useTranslation("landing");
 
+  const supabase = useSupabaseClient();
   const mysk = useMySKClient();
+  const { setUser } = useContext(UserContext);
 
   const { setAccountNotFoundOpen } = useContext(AppStateContext);
 
@@ -79,7 +86,15 @@ export default function useOneTapSignin(
       return;
     }
 
+    // Save the access token.
     saveAccessToken(data);
+
+    // Set the user context.
+    const { data: apiUser } = await fetchMySKProxy<User>("/auth/user");
+    if (!apiUser) return;
+    const { data: user } = await getUserByEmail(supabase, apiUser.email!);
+    if (user) setUser(user); // See explanation in `useMySKClient`.
+
     if (router.asPath !== "/") await router.push("/learn");
     setLoading(false);
   }

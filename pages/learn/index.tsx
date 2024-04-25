@@ -16,7 +16,7 @@ import useLocale from "@/utils/helpers/useLocale";
 import { BackendReturn } from "@/utils/types/backend";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { IDOnly } from "@/utils/types/fetch";
-import { Student, User, UserRole } from "@/utils/types/person";
+import { Student, UserRole } from "@/utils/types/person";
 import { Schedule as ScheduleType } from "@/utils/types/schedule";
 import { ClassroomSubject } from "@/utils/types/subject";
 import {
@@ -50,14 +50,12 @@ const LearnPage: CustomPage<{
   subjectList: ClassroomSubject[];
   electivePermissions: ElectivePermissions;
   student: Student;
-  user: User | null;
 }> = ({
   birthdayBoys,
   schedule,
   subjectList,
   electivePermissions,
   student,
-  user,
 }) => {
   const { t } = useTranslation("learn");
   const { t: ts } = useTranslation("schedule");
@@ -115,7 +113,6 @@ const LearnPage: CustomPage<{
             query={query}
             electivePermissions={electivePermissions}
             enrolledElective={student.chosen_elective}
-            user={user}
           />
         </motion.section>
       </LayoutGroup>
@@ -129,7 +126,6 @@ export const getServerSideProps: GetServerSideProps = async ({
   res,
 }) => {
   const mysk = await createMySKClient(req);
-  const { user } = mysk;
   const supabase = createPagesServerClient({
     req: req as NextApiRequest,
     res: res as NextApiResponse,
@@ -180,7 +176,6 @@ export const getServerSideProps: GetServerSideProps = async ({
       subjectList,
       electivePermissions,
       student,
-      user,
     },
   };
 };

@@ -4,13 +4,13 @@ import GSIButton from "@/components/landing/GSIButton";
 import LandingActions from "@/components/landing/LandingActions";
 import LandingBlobs from "@/components/landing/LandingBlobs";
 import LanguageSwitcher from "@/components/landing/LanguageSwitcher";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import MySKLogoDark from "@/public/images/brand/mysk-dark.svg";
 import MySKLogoLight from "@/public/images/brand/mysk-light.svg";
 import flagUserAsOnboarded from "@/utils/backend/account/flagUserAsOnboarded";
+import createMySKClient from "@/utils/backend/mysk/createMySKClient";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import cn from "@/utils/helpers/cn";
 import prefixLocale from "@/utils/helpers/prefixLocale";
-import useUser from "@/utils/helpers/useUser";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
 import {
@@ -25,7 +25,6 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import va from "@vercel/analytics";
 import { AnimatePresence, motion } from "framer-motion";
 import { GetServerSideProps } from "next";
-import { getServerSession } from "next-auth";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
@@ -52,7 +51,7 @@ const LandingPage: CustomPage = () => {
   const { t: tx } = useTranslation("common");
 
   const router = useRouter();
-  const { user, status } = useUser();
+  const mysk = useMySKClient();
   const supabase = useSupabaseClient();
 
   const [state, setState] = useState<GSIStatus>(GSIStatus.initial);
@@ -60,20 +59,20 @@ const LandingPage: CustomPage = () => {
   // Determine if and where to redirect depending on user status.
   useEffect(() => {
     (async () => {
-      if (status !== "authenticated" || !user) return;
+      if (!mysk.user) return;
       setState(GSIStatus.redirecting);
-      if (!user.onboarded) {
+      if (!mysk.user.onboarded) {
         // Flag new users as onboarded.
         va.track("Complete Onboarding");
-        await flagUserAsOnboarded(supabase, user.id);
+        await flagUserAsOnboarded(supabase, mysk.user.id);
         // Redirect to account page if new Student or Teacher.
-        if ([UserRole.student, UserRole.teacher].includes(user.role))
+        if ([UserRole.student, UserRole.teacher].includes(mysk.user.role))
           router.push("/account");
         // Otherwise redirect to home page (middleware redirects further).
         else router.push("/learn");
       } else router.push("/learn");
     })();
-  }, [user, status, supabase]);
+  }, [mysk.user]);
 
   return (
     <>
@@ -221,8 +220,8 @@ export const getServerSideProps: GetServerSideProps = async ({
 }) => {
   // Redirect to Learn if user is already logged in
   // (For Teachers, the middleware will redirect them to Teach instead)
-  const data = await getServerSession(req, res, authOptions);
-  if (data)
+  const { user } = await createMySKClient(req);
+  if (user)
     return {
       redirect: {
         destination: prefixLocale("/learn", locale),

@@ -1,4 +1,3 @@
-// Imports
 import PageHeader from "@/components/common/PageHeader";
 import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
 import LookupDetailsSide from "@/components/lookup/LookupDetailsSide";
@@ -9,9 +8,8 @@ import TooWideCard from "@/components/lookup/TooWideCard";
 import DocumentActiveFiltersCard from "@/components/lookup/document/DocumentActiveFiltersCard";
 import DocumentDetailsCard from "@/components/lookup/document/DocumentDetailsCard";
 import LookupDocumentCard from "@/components/lookup/document/LookupDocumentCard";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
-import getUserByEmail from "@/utils/backend/account/getUserByEmail";
 import getDocumentsByLookupFilters from "@/utils/backend/document/getDocumentsByLookupFilters";
+import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { SchoolDocument, SchoolDocumentType } from "@/utils/types/news";
 import {
@@ -21,7 +19,6 @@ import {
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import { getServerSession } from "next-auth";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
@@ -135,13 +132,12 @@ export const getServerSideProps: GetServerSideProps = async ({
   req,
   res,
 }) => {
+  const mysk = await createMySKClient(req);
   const supabase = createPagesServerClient({
     req: req as NextApiRequest,
     res: res as NextApiResponse,
   });
-  const session = await getServerSession(req, res, authOptions);
-  const { data: user } = await getUserByEmail(supabase, session!.user!.email!);
-  if (!user) return { notFound: true };
+  if (!mysk.user) return { notFound: true };
 
   const filters = Object.fromEntries([
     ["types", (query.types as string | undefined)?.split(",") || []],
@@ -154,7 +150,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   const { data: documents } = await getDocumentsByLookupFilters(
     supabase,
-    user,
+    mysk.user,
     filters,
   );
 

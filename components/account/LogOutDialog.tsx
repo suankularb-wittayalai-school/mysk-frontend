@@ -1,4 +1,4 @@
-// Imports
+import UserContext from "@/contexts/UserContext";
 import useToggle from "@/utils/helpers/useToggle";
 import withLoading from "@/utils/helpers/withLoading";
 import { DialogFC } from "@/utils/types/component";
@@ -12,6 +12,7 @@ import va from "@vercel/analytics";
 import { signOut } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
+import { useContext } from "react";
 
 /**
  * Ask the user to confirm their log out.
@@ -19,8 +20,10 @@ import { useRouter } from "next/router";
  * @returns A Dialog.
  */
 const LogOutDialog: DialogFC = ({ open, onClose }) => {
-  const router = useRouter();
   const { t } = useTranslation("common", { keyPrefix: "dialog.logOut" });
+
+  const router = useRouter();
+  const { setUser } = useContext(UserContext);
 
   const [loading, toggleLoading] = useToggle();
 
@@ -32,6 +35,7 @@ const LogOutDialog: DialogFC = ({ open, onClose }) => {
 
         // Log the user out (without reload)
         await signOut({ redirect: false });
+        setUser(null);
         document.cookie =
           "access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
 

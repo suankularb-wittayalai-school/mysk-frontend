@@ -1,11 +1,10 @@
-// Imports
 import BrandIcon from "@/components/icons/BrandIcon";
 import TeachersField from "@/components/person/TeachersField";
 import SnackbarContext from "@/contexts/SnackbarContext";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import { createClassroomSubject } from "@/utils/backend/subject/createClassroomSubject";
 import { updateClassroomSubject } from "@/utils/backend/subject/updateClassroomSubject";
 import useForm from "@/utils/helpers/useForm";
-import useLoggedInPerson from "@/utils/helpers/useLoggedInPerson";
 import useToggle from "@/utils/helpers/useToggle";
 import withLoading from "@/utils/helpers/withLoading";
 import {
@@ -232,16 +231,16 @@ const ClassroomSubjectDialog: StylableFC<{
 
   // Fetch the Teacher that is the user
   const supabase = useSupabaseClient();
-  const { person: user } = useLoggedInPerson();
+  const mysk = useMySKClient();
 
   // Teachers Chip Field default if in add mode
   useEffect(() => {
     if (!open || data) return;
     resetForm();
     // If the Teacher is fetched, insert it into the Teachers Chip Field
-    if (user) setForm({ ...form, teachers: [user] });
+    if (mysk.person) setForm({ ...form, teachers: [mysk.person] });
     return;
-  }, [open, user]);
+  }, [open, mysk.person]);
 
   // Populate form with data if in edit mode
   useEffect(() => {

@@ -12,7 +12,7 @@ import cn from "@/utils/helpers/cn";
 import { BackendReturn } from "@/utils/types/backend";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { ElectiveSubject } from "@/utils/types/elective";
-import { Student, User } from "@/utils/types/person";
+import { Student } from "@/utils/types/person";
 import {
   Actions,
   ContentLayout,
@@ -36,14 +36,12 @@ const DIALOG_BREAKPOINTS = ["base", "sm"];
  * A place where Students can choose and trade their Elective Subjects.
  *
  * @param electiveSubjects The Elective Subjects (default) available for choosing.
- * @param selectedID The ID of the Elective Subject the Student is enrolled in.
- * @param user The currently logged in user.
+ * @param enrolledID The ID of the Elective Subject the Student is enrolled in.
  */
 const LearnElectivesPage: CustomPage<{
   electiveSubjects: ElectiveSubject[];
   enrolledID: number | null;
-  user: User | null;
-}> = ({ electiveSubjects, enrolledID, user }) => {
+}> = ({ electiveSubjects, enrolledID }) => {
   const { t } = useTranslation("elective");
   const { t: tx } = useTranslation("common");
 
@@ -147,7 +145,6 @@ const LearnElectivesPage: CustomPage<{
               <ChooseButton
                 sessionCode={selectedID}
                 enrolledID={enrolledID}
-                user={user}
                 className="!pointer-events-auto"
               />
             </Actions>
@@ -209,7 +206,6 @@ const LearnElectivesPage: CustomPage<{
         <ElectiveDetailsCard
           electiveSubject={selectedElective}
           enrolledID={enrolledID}
-          user={user}
           onChooseSuccess={() => setDetailsOpen(false)}
           className="!mx-0 !bg-surface-container-highest"
         />
@@ -224,7 +220,6 @@ export const getServerSideProps: GetServerSideProps = async ({
   res,
 }) => {
   const mysk = await createMySKClient(req);
-  const { user } = mysk;
   const supabase = createPagesServerClient({
     req: req as NextApiRequest,
     res: res as NextApiResponse,
@@ -275,7 +270,6 @@ export const getServerSideProps: GetServerSideProps = async ({
       ])),
       electiveSubjects,
       enrolledID,
-      user,
     },
   };
 };

@@ -8,11 +8,12 @@ import PersonScheduleCard from "@/components/lookup/people/PersonScheduleCard";
 import CurrentLearningPeriodCard from "@/components/lookup/students/CurrentLearningPeriodCard";
 import StudentAttendanceSummary from "@/components/lookup/students/StudentAttendanceSummary";
 import StudentCertificateGrid from "@/components/lookup/students/StudentCertificateGrid";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import useToggle from "@/utils/helpers/useToggle";
 import { StylableFC } from "@/utils/types/component";
-import { Student, User, UserRole } from "@/utils/types/person";
+import { Student, UserRole } from "@/utils/types/person";
 import { DURATION, EASING, transition } from "@suankularb-components/react";
 import { differenceInYears } from "date-fns";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
@@ -25,21 +26,25 @@ import { sift } from "radash";
  * @param student The Student to show the details of.
  *
  * @param options Options to customize the Card.
- * @param options.isOwnClass Whether the Student is in the current user’s Classroom.
  * @param options.hideSeeClass Whether to hide the See class Chip.
  * @param options.hideScheduleCard Whether to hide the Student Schedule Card.
  */
 const StudentDetailsCard: StylableFC<{
   student?: Student;
-  user?: User;
   options?: Partial<{
-    isOwnClass: boolean;
     hideSeeClass: boolean;
     hideScheduleCard: boolean;
   }>;
-}> = ({ student, user, options, style, className }) => {
+}> = ({ student, options, style, className }) => {
   const { t } = useTranslation("lookup", { keyPrefix: "students.detail" });
   const { t: tx } = useTranslation("common");
+
+  const mysk = useMySKClient();
+  const canSeeSensitive =
+    mysk.user?.is_admin ||
+    mysk.user?.role !== UserRole.student ||
+    mysk.person?.id === student?.id || // Self
+    false;
 
   const positionTransition = transition(DURATION.medium2, EASING.standard);
 
@@ -147,9 +152,7 @@ const StudentDetailsCard: StylableFC<{
                   </motion.div>
                 )}
 
-                {(user?.is_admin ||
-                  user?.role === UserRole.teacher ||
-                  options?.isOwnClass) && (
+                {canSeeSensitive && (
                   <motion.div layout="position" transition={positionTransition}>
                     <StudentAttendanceSummary
                       studentID={student.id}

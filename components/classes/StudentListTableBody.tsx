@@ -2,13 +2,13 @@ import getLocaleName from "@/utils/helpers/getLocaleName";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import { Student } from "@/utils/types/person";
 import { list } from "radash";
-import { MAXIMUM_EMPTY_COLUMNS, OptionsType } from "./StudentListPrintout";
+import { MAXIMUM_EMPTY_COLUMNS, OptionsType } from "@/components/classes/StudentListPrintout";
 import { StylableFC } from "@/utils/types/common";
 
 /**
  * The body area of the table shown in Student List Printout. Displays the
  * student data based on the given options.
- * 
+ * ØÏ
  * Blank cells are filled with non-breaking spaces (`&nbsp;`) to ensure the
  * table structure is maintained.
  *

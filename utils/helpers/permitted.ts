@@ -1,10 +1,10 @@
-import { User, UserPermissionKey } from "@/utils/types/person";
+import { User, UserPermissionKey, UserRole } from "@/utils/types/person";
 
 /**
  * Check if a user has a given permission.
  *
  * @param user The user to check.
- * @param permission The permission to check for.
+ * @param permission The permission or role to check for.
  *
  * @example
  * The following example checks if a user has the permission to see management.
@@ -19,7 +19,7 @@ import { User, UserPermissionKey } from "@/utils/types/person";
  */
 export default function permitted(
   user: User | null,
-  permission: UserPermissionKey,
+  permission: UserPermissionKey | UserRole,
 ): boolean;
 
 /**
@@ -37,9 +37,14 @@ export default function permitted(
 
 export default function permitted(
   data: User | UserPermissionKey[] | null,
-  permission: UserPermissionKey,
+  permission: UserPermissionKey | UserRole,
 ): boolean {
   if (!data) return false;
-  if ("permissions" in data) return data.permissions.includes(permission);
-  else return data.includes(permission);
+  if ("permissions" in data)
+    return (
+      data.is_admin ||
+      data.role === (permission as UserRole) ||
+      data.permissions.includes(permission as UserPermissionKey)
+    );
+  else return data.includes(permission as UserPermissionKey);
 }

@@ -9,7 +9,7 @@ export async function getStudentFromUserID(
   supabase: DatabaseClient,
   mysk: MySKClient,
   userID: string,
-  options?: Partial<{ includeContacts: boolean; detailed: boolean }>,
+  options?: Parameters<typeof getStudentByID>[3],
 ): Promise<BackendReturn<Student>> {
   let { data: studentData, error: studentDataError } = await supabase
     .from("students")
@@ -29,7 +29,7 @@ export async function getTeacherFromUserID(
   supabase: DatabaseClient,
   mysk: MySKClient,
   userID: string,
-  options?: Partial<{ includeContacts: boolean; detailed: boolean }>,
+  options?: Parameters<typeof getTeacherByID>[3],
 ): Promise<BackendReturn<Teacher>> {
   let { data: teacherData, error } = await supabase
     .from("teachers")
@@ -48,7 +48,9 @@ export async function getTeacherFromUserID(
 export default async function getLoggedInPerson(
   supabase: DatabaseClient,
   mysk: MySKClient,
-  options?: Partial<{ includeContacts: boolean; detailed: boolean }>,
+  options?: Parameters<
+    typeof getStudentFromUserID | typeof getTeacherFromUserID
+  >[3],
 ): Promise<BackendReturn<Student | Teacher>> {
   const { user } = mysk;
   return await {

@@ -6,7 +6,6 @@ import cn from "@/utils/helpers/cn";
 import useGetVCard from "@/utils/helpers/contact/useGetVCard";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import useLocale from "@/utils/helpers/useLocale";
-import useUser from "@/utils/helpers/useUser";
 import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
 import { Student, Teacher, UserRole } from "@/utils/types/person";
@@ -46,12 +45,10 @@ const PersonHeader: StylableFC<{
     hideScheduleCard: boolean;
   }>;
 }> = ({ person, onScheduleOpenClick, options, style, className }) => {
-  // Translation
   const locale = useLocale();
   const { t } = useTranslation("lookup", { keyPrefix: "people.header" });
 
   const getVCard = useGetVCard();
-  const { user } = useUser();
 
   /**
    * Save the Person’s contact as a vCard.
@@ -135,14 +132,10 @@ const PersonHeader: StylableFC<{
                   open={classOpen}
                   onClose={() => setClassOpen(false)}
                 >
-                  {user && (
-                    <ClassDetailsCard
-                      classroom={classroom}
-                      isOwnClass={false}
-                      user={user}
-                      refreshData={fetchClassOfPerson}
-                    />
-                  )}
+                  <ClassDetailsCard
+                    classroom={classroom}
+                    refreshData={fetchClassOfPerson}
+                  />
                 </LookupDetailsDialog>
               </>
             )}

@@ -1,4 +1,3 @@
-// Imports
 import Layout from "@/components/Layout";
 import AccountNotFoundDialog from "@/components/account/AccountNotFoundDialog";
 import ErrorBoundary from "@/components/error/ErrorBoundary";
@@ -6,9 +5,11 @@ import PageFallback from "@/components/error/PageFallback";
 import AppStateContext from "@/contexts/AppStateContext";
 import PreviousRouteContext from "@/contexts/PreviousRouteContext";
 import SnackbarContext from "@/contexts/SnackbarContext";
+import UserContext from "@/contexts/UserContext";
 import "@/styles/global.css";
 import usePreviousPath from "@/utils/helpers/usePreviousPath";
 import { ColorScheme, CustomAppProps } from "@/utils/types/common";
+import { Student, Teacher, User } from "@/utils/types/person";
 import { Database } from "@/utils/types/supabase";
 import { ThemeProvider } from "@suankularb-components/react";
 import {
@@ -66,31 +67,38 @@ const iconFont = localFont({
  */
 const Contexts: FC<{ children: ReactNode }> = ({ children }) => {
   const { previousPath } = usePreviousPath();
+
+  const [user, setUser] = useState<User | null>(null);
+  const [person, setPerson] = useState<Student | Teacher | null>(null);
+
   const [snackbar, setSnackbar] = useState<JSX.Element | null>(null);
+
   const [colorScheme, setColorScheme] = useState<ColorScheme>();
   const [navOpen, setNavOpen] = useState(false);
   const [accountNotFoundOpen, setAccountNotFoundOpen] = useState(false);
 
   return (
     <PreviousRouteContext.Provider value={previousPath}>
-      <SnackbarContext.Provider value={{ snackbar, setSnackbar }}>
-        <AppStateContext.Provider
-          value={{
-            colorScheme,
-            setColorScheme,
-            navOpen,
-            setNavOpen,
-            accountNotFoundOpen,
-            setAccountNotFoundOpen,
-          }}
-        >
-          <BalancerProvider>{children}</BalancerProvider>
-          <AccountNotFoundDialog
-            open={accountNotFoundOpen}
-            onClose={() => setAccountNotFoundOpen(false)}
-          />
-        </AppStateContext.Provider>
-      </SnackbarContext.Provider>
+      <UserContext.Provider value={{ user, setUser, person, setPerson }}>
+        <SnackbarContext.Provider value={{ snackbar, setSnackbar }}>
+          <AppStateContext.Provider
+            value={{
+              colorScheme,
+              setColorScheme,
+              navOpen,
+              setNavOpen,
+              accountNotFoundOpen,
+              setAccountNotFoundOpen,
+            }}
+          >
+            <BalancerProvider>{children}</BalancerProvider>
+            <AccountNotFoundDialog
+              open={accountNotFoundOpen}
+              onClose={() => setAccountNotFoundOpen(false)}
+            />
+          </AppStateContext.Provider>
+        </SnackbarContext.Provider>
+      </UserContext.Provider>
     </PreviousRouteContext.Provider>
   );
 };

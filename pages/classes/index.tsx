@@ -9,9 +9,10 @@ import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import getClassroomByID from "@/utils/backend/classroom/getClassroomByID";
 import getClassrooms from "@/utils/backend/classroom/getLookupClassrooms";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import { Classroom } from "@/utils/types/classroom";
 import { LangCode } from "@/utils/types/common";
-import { User, UserRole } from "@/utils/types/person";
+import { UserRole } from "@/utils/types/person";
 import { SplitLayout, useBreakpoint } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
@@ -37,14 +38,12 @@ import { useEffect, useMemo, useState } from "react";
  * issues.
  *
  * @param grades The Classrooms grouped by grade.
- * @param user The currently logged in user. Used for Role and Permissions.
  * @param userClassroom The Classroom the user is a part of.
  */
 const ClassesPage: NextPage<{
   grades: { [grade: number]: Pick<Classroom, "id" | "number" | "main_room">[] };
-  user: User;
   userClassroom?: Pick<Classroom, "id" | "number" | "main_room">;
-}> = ({ grades, user, userClassroom }) => {
+}> = ({ grades, userClassroom }) => {
   const { t } = useTranslation("classes");
   const { t: tx } = useTranslation("common");
 
@@ -58,6 +57,7 @@ const ClassesPage: NextPage<{
   );
 
   const supabase = useSupabaseClient();
+  const mysk = useMySKClient();
 
   /**
    * Fetch data for the selected Classroom.
@@ -66,8 +66,8 @@ const ClassesPage: NextPage<{
     if (!selectedID) return;
     const { data, error } = await getClassroomByID(supabase, selectedID, {
       includeStudents:
-        user.is_admin ||
-        user.role !== UserRole.student ||
+        (mysk.user &&
+          (mysk.user.is_admin || mysk.user.role !== UserRole.student)) ||
         selectedID === userClassroom?.id,
     });
     if (!error) setSelectedClassroom(data);
@@ -146,8 +146,6 @@ const ClassesPage: NextPage<{
         >
           <ClassDetailsCard
             classroom={selectedClassroom}
-            isOwnClass={userClassroom?.id === selectedClassroom?.id}
-            user={user}
             refreshData={fetchSelectedClass}
           />
         </LookupDetailsSide>
@@ -162,8 +160,6 @@ const ClassesPage: NextPage<{
           classroom={
             selectedID === selectedClassroom?.id ? selectedClassroom : undefined
           }
-          isOwnClass={userClassroom?.id === selectedClassroom?.id}
-          user={user}
           refreshData={fetchSelectedClass}
         />
       </LookupDetailsDialog>
@@ -181,7 +177,6 @@ export const getServerSideProps: GetServerSideProps = async ({
     req: req as NextApiRequest,
     res: res as NextApiResponse,
   });
-  const { user } = mysk;
 
   // Get all Classrooms
   const { data: classrooms, error } = await getClassrooms(supabase);
@@ -217,7 +212,6 @@ export const getServerSideProps: GetServerSideProps = async ({
         "schedule",
       ])),
       grades,
-      user,
       userClassroom,
     },
   };
