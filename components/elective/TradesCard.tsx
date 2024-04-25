@@ -1,6 +1,7 @@
 import cn from "@/utils/helpers/cn";
 import { StylableFC } from "@/utils/types/common";
 import { Text } from "@suankularb-components/react";
+import { ElectiveTradeOffer } from "@/utils/types/elective";
 import { useTranslation } from "next-i18next";
 import Balancer from "react-wrap-balancer";
 
@@ -11,8 +12,14 @@ import Balancer from "react-wrap-balancer";
  * Trading is only available on the day exactly 2 weeks after the first school
  * day of the semester, i.e. if school starts on May 15th, trading will be
  * available only on May 29th.
+ *
+ * @param incomingTrades The pending Elective Trade Offers sent to the Student.
+ * @param outgoingTrades The pending Elective Trade Offers made by the Student.
  */
-const TradesCard: StylableFC = ({ style, className }) => {
+const TradesCard: StylableFC<{
+  incomingTrades: ElectiveTradeOffer[];
+  outgoingTrades: ElectiveTradeOffer[];
+}> = ({ incomingTrades, outgoingTrades, style, className }) => {
   const { t } = useTranslation("elective", { keyPrefix: "detail.trade" });
 
   return (
