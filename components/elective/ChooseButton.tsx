@@ -1,3 +1,4 @@
+import SnackbarContext from "@/contexts/SnackbarContext";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import electivePermissionsAt from "@/utils/helpers/elective/electivePermissionsAt";
 import logError from "@/utils/helpers/logError";
@@ -6,9 +7,10 @@ import useRefreshProps from "@/utils/helpers/useRefreshProps";
 import useToggle from "@/utils/helpers/useToggle";
 import withLoading from "@/utils/helpers/withLoading";
 import { StylableFC } from "@/utils/types/common";
-import { Button, MaterialIcon } from "@suankularb-components/react";
+import { Button, MaterialIcon, Snackbar } from "@suankularb-components/react";
 import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
+import { useContext } from "react";
 
 /**
  * A Button that allows the Student to choose an Elective Subject.
@@ -23,9 +25,12 @@ const ChooseButton: StylableFC<{
   onSucess?: () => void;
 }> = ({ sessionCode, enrolledID, onSucess, style, className }) => {
   const { t } = useTranslation("elective", { keyPrefix: "list" });
+  const { t: tx } = useTranslation("common");
 
   const { now } = useNow();
   const permissions = electivePermissionsAt(now);
+
+  const { setSnackbar } = useContext(SnackbarContext);
 
   const mysk = useMySKClient();
   const refreshProps = useRefreshProps();
@@ -55,7 +60,13 @@ const ChooseButton: StylableFC<{
             body: JSON.stringify({ fetch_level: "id_only" }),
           },
         );
-        if (error) logError("handleChoose", error);
+        if (error) {
+          if (error.code === 403 || error.code === 409) {
+            va.track("Attempt to Choose Invalid Elective", { sessionCode });
+            setSnackbar(<Snackbar>{t("snackbar.notAllowed")}</Snackbar>);
+          } else setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
+          logError("handleChoose", error);
+        }
         if (enrolledID)
           va.track("Change Elective", { from: enrolledID, to: sessionCode });
         va.track("Choose Elective", { sessionCode });
