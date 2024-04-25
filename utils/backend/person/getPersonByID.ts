@@ -89,6 +89,7 @@ export async function getPersonByID(
       birthdate: personData!.birthdate,
       contacts: contacts,
       profile: personData!.profile,
+      profile_url: personData!.profile,
       citizen_id: options?.detailed ? personData!.citizen_id : null,
       shirt_size:
         options?.detailed && personData?.shirt_size

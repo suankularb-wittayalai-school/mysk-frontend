@@ -98,6 +98,7 @@ export async function getTeacherByID(
         )
       : null,
     profile: data!.people?.profile ?? null,
+    profile_url: data!.people?.profile ?? null,
     citizen_id: options?.detailed ? data!.people?.citizen_id ?? null : null,
     shirt_size:
       options?.detailed && data?.people?.shirt_size

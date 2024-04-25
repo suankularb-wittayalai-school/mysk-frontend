@@ -27,7 +27,7 @@ const TradeOfferParticipant: StylableFC<{
       style={style}
       className={cn(`flex flex-row items-center gap-3`, className)}
     >
-      <PersonAvatar {...participant} />
+      <PersonAvatar {...participant} expandable size={40} />
       <div className="grid *:truncate">
         <Text type="title-medium">
           {mysk.person?.id === participant.id ? (

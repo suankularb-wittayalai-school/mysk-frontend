@@ -112,6 +112,7 @@ export async function getStudentByID(
       : [],
     chosen_elective: chosenElective,
     profile: data!.people?.profile ?? null,
+    profile_url: data!.people?.profile ?? null,
     ...(options?.detailed && data!.people
       ? {
           allergies: data!.people.person_allergies.map(

@@ -98,6 +98,7 @@ export async function getStudentsByIDs(
         }
       : { classroom: null, class_no: null }),
     profile: student!.people?.profile ?? null,
+    profile_url: student!.people?.profile ?? null,
     ...(options?.detailed && student!.people
       ? {
           contacts: student!.people!.person_contacts.map(({ contacts }) => ({
