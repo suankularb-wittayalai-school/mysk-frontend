@@ -64,7 +64,7 @@ const LearnElectivesPage: CustomPage<{
     else if (selectedID) setDetailsOpen(true);
   }, [DIALOG_BREAKPOINTS.includes(atBreakpoint)]);
 
-  async function fetchBySessionCode(sessionCode: number | null) {
+  async function fetchBySessionCode(sessionCode: number) {
     setSelectedElective(null);
     const { data } = await mysk.fetch<ElectiveSubject>(
       `/v1/subjects/electives/${sessionCode}/`,
