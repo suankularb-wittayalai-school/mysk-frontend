@@ -1,6 +1,7 @@
 import TradeOfferCard from "@/components/elective/TradeOfferCard";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
+import cn from "@/utils/helpers/cn";
 import useRefreshProps from "@/utils/helpers/useRefreshProps";
 import useToggle from "@/utils/helpers/useToggle";
 import withLoading from "@/utils/helpers/withLoading";
@@ -54,12 +55,16 @@ const OutgoingTradeOfferCard: StylableFC<{
   }
 
   return (
-    <TradeOfferCard tradeOffer={tradeOffer} style={style} className={className}>
+    <TradeOfferCard
+      tradeOffer={tradeOffer}
+      style={style}
+      className={cn(loading && `animate-pulse`, className)}
+    >
       <Actions align="center">
         <Button
           appearance="outlined"
           dangerous
-          loading={loading}
+          disabled={loading}
           onClick={() =>
             withLoading(handleCancel, toggleLoading, { hasEndToggle: true })
           }
