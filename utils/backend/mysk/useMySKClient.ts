@@ -24,36 +24,33 @@ export default function useMySKClient(): MySKClient {
   const mysk = { fetch: fetchMySKProxy, user, person };
   const supabase = useSupabaseClient();
 
-  // Fetch the user data if not yet fetched.
   useEffect(() => {
-    if (user) return;
+    // Fetch the user data if not yet fetched.
+    if (user || person) return;
     (async () => {
       const { data: apiUser } = await fetchMySKProxy<User>("/auth/user");
       if (!apiUser) return;
 
       // Permissions aren’t implemented in MySK API yet (per @smartwhatt), so we
       // have to use the Supabase implementation.
-      const { data } = await getUserByEmail(supabase, apiUser.email!);
-      if (data) setUser(data);
-    })();
-  }, [user]);
+      const { data: user } = await getUserByEmail(supabase, apiUser.email!);
+      if (user) setUser(user);
 
-  // Once the user data is fetched, fetch the person (Student/Teacher) data,
-  // which is more detailed.
-  useEffect(() => {
-    if (person || !user) return;
-    // We can’t use this client directly because a hook can’t be used in another
-    // hook, so we create a new client here.
-    (async () => {
-      const { data } = await getLoggedInPerson(supabase, mysk, {
+      // Once the user data is fetched, fetch the person (Student/Teacher) data,
+      // which is more detailed.
+      const { data: person } = await getLoggedInPerson(
+        supabase,
+        { ...mysk, user },
         // We get everything!
-        detailed: true,
-        includeContacts: true,
-        includeCertificates: true,
-      });
-      if (data) setPerson(data);
+        {
+          detailed: true,
+          includeContacts: true,
+          includeCertificates: true,
+        },
+      );
+      if (person) setPerson(person);
     })();
-  }, [user]);
+  }, []);
 
   return mysk;
 }
