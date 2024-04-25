@@ -69,5 +69,12 @@ export default function electivePermissionsAt(date: Date = new Date()) {
   )
     permissions.trade = true;
 
+  // May 30
+  // - The system is locked.
+  if (!isBefore(normalizedDate, new Date(year, 4, 30))) {
+    permissions.choose = false;
+    permissions.trade = false;
+  }
+
   return permissions;
 }

@@ -25,6 +25,7 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import va from "@vercel/analytics";
 import { AnimatePresence, motion } from "framer-motion";
 import { GetServerSideProps } from "next";
+import { signOut, useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
@@ -53,6 +54,14 @@ const LandingPage: CustomPage = () => {
   const router = useRouter();
   const mysk = useMySKClient();
   const supabase = useSupabaseClient();
+
+  // If there is a mismatch between NextAuth and MySK API authentication,
+  // log the user out.
+  const session = useSession();
+  useEffect(() => {
+    if (session.status === "authenticated" && !mysk.user)
+      signOut({ redirect: false });
+  }, [session.status, mysk.user]);
 
   const [state, setState] = useState<GSIStatus>(GSIStatus.initial);
 
@@ -216,11 +225,11 @@ const LandingPage: CustomPage = () => {
 export const getServerSideProps: GetServerSideProps = async ({
   locale,
   req,
-  res,
 }) => {
+  const { user } = await createMySKClient(req);
+
   // Redirect to Learn if user is already logged in
   // (For Teachers, the middleware will redirect them to Teach instead)
-  const { user } = await createMySKClient(req);
   if (user)
     return {
       redirect: {

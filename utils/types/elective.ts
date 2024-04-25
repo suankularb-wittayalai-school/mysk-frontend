@@ -26,7 +26,7 @@ export type ElectiveSubject = {
 export type ElectiveTradeOffer = {
   id: string;
   sender: Student;
-  reveiver: Student;
+  receiver: Student;
   sender_elective_subject: ElectiveSubject;
   receiver_elective_subject: ElectiveSubject;
   status: "approved" | "pending" | "declined";
