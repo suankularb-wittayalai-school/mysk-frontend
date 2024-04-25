@@ -8,6 +8,14 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
 import { useContext, useEffect } from "react";
 
+/**
+ * An emergency page to log the user out, in case authentication completely
+ * fails.
+ * 
+ * We currently use 2 concurrent methods of authentication: NextAuth and MySK
+ * API, and when those get out of sync somehow, we can direct users to this page
+ * to log out and log back in.
+ */
 const LogOutPage: CustomPage = () => {
   const { t } = useTranslation("account");
 
