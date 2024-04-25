@@ -33,5 +33,10 @@ export default async function createMySKClient(
     fetch: async (path, options) =>
       await fetchMySKAPI(path, accessToken, options),
     user,
+    // Person data is not fetched here because it is more detailed and fetching
+    // that every time a new client is created would be inefficient.
+    // The client-side `useMySKClient` hook has Person data because it fetches
+    // only once and stores it in the context.
+    person: null,
   };
 }

@@ -1,4 +1,4 @@
-import { User } from "@/utils/types/person";
+import { Student, Teacher, User } from "@/utils/types/person";
 
 /**
  * A client for fetching data from the MySK API.
@@ -16,10 +16,12 @@ export type MySKClient = {
     path: string,
     options?: Partial<RequestInit & { query: Query }>,
   ) => Promise<FetchReturn<Data>>;
-  /**
-   * The currently logged-in user.
-   */
+
+  /** The currently loggedin user. */
   user: User | null;
+
+  /** The currently logged in Student or Teacher, if they are one. */
+  person: Student | Teacher | null;
 };
 
 /**
