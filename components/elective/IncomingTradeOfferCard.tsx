@@ -2,6 +2,7 @@ import TradeOfferCard from "@/components/elective/TradeOfferCard";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import cn from "@/utils/helpers/cn";
+import logError from "@/utils/helpers/logError";
 import useRefreshProps from "@/utils/helpers/useRefreshProps";
 import useToggle from "@/utils/helpers/useToggle";
 import withLoading from "@/utils/helpers/withLoading";
@@ -62,6 +63,7 @@ const IncomingTradeOfferCard: StylableFC<{
     );
     if (error) {
       setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
+      logError("updateStatus", error);
       visuallySwapElectiveSubjects();
       return false;
     }

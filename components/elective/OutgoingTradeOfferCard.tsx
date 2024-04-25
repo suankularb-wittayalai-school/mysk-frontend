@@ -10,6 +10,7 @@ import { ElectiveTradeOffer } from "@/utils/types/elective";
 import { Actions, Button, Snackbar } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
 import { useContext } from "react";
+import logError from "@/utils/helpers/logError";
 
 /**
  * A Card that displays an outgoing Trade Offer.
@@ -47,6 +48,7 @@ const OutgoingTradeOfferCard: StylableFC<{
     );
     if (error) {
       setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
+      logError("handleCancel", error);
       return false;
     }
     await refreshProps();
