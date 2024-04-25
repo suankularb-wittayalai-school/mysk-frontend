@@ -8,6 +8,7 @@ import { ElectiveTradeOffer } from "@/utils/types/elective";
 import { MaterialIcon, Text } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
 import Balancer from "react-wrap-balancer";
+import OutgoingTradeOfferCard from "./OutgoingTradeOfferCard";
 
 /**
  * A Card for creating and managing Trades of Elective Subjects. Students can
@@ -20,7 +21,7 @@ import Balancer from "react-wrap-balancer";
  * @param incomingTrades The pending Elective Trade Offers sent to the Student.
  * @param outgoingTrades The pending Elective Trade Offers made by the Student.
  */
-const TradesCard: StylableFC<{
+const ManageTradesCard: StylableFC<{
   incomingTrades: ElectiveTradeOffer[];
   outgoingTrades: ElectiveTradeOffer[];
 }> = ({ incomingTrades, outgoingTrades, style, className }) => {
@@ -97,11 +98,16 @@ const TradesCard: StylableFC<{
           }
           title={t("outgoing")}
         >
-          TODO
+          {outgoingTrades.map((tradeOffer) => (
+            <OutgoingTradeOfferCard
+              key={tradeOffer.id}
+              tradeOffer={tradeOffer}
+            />
+          ))}
         </TradesCardSection>
       )}
     </section>
   );
 };
 
-export default TradesCard;
+export default ManageTradesCard;

@@ -2,7 +2,7 @@ import PageHeader from "@/components/common/PageHeader";
 import ChooseButton from "@/components/elective/ChooseButton";
 import ElectiveDetailsCard from "@/components/elective/ElectiveDetailsCard";
 import ElectiveListItem from "@/components/elective/ElectiveListItem";
-import TradesCard from "@/components/elective/TradesCard";
+import ManageTradesCard from "@/components/elective/ManageTradesCard";
 import LandingBlobs from "@/components/landing/LandingBlobs";
 import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
@@ -178,7 +178,7 @@ const LearnElectivesPage: CustomPage<{
           </motion.main>
 
           {/* Trade */}
-          <TradesCard
+          <ManageTradesCard
             incomingTrades={incomingTrades}
             outgoingTrades={outgoingTrades}
             className={cn(`mb-16 min-h-36 !rounded-b-none sm:m-0
