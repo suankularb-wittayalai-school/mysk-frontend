@@ -23,6 +23,7 @@ import {
   useBreakpoint,
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
+import va from "@vercel/analytics";
 import { motion } from "framer-motion";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { useTranslation } from "next-i18next";
@@ -121,6 +122,9 @@ const LearnElectivesPage: CustomPage<{
                   selected={selectedID === electiveSubject.session_code}
                   enrolled={enrolledID === electiveSubject.session_code}
                   onClick={() => {
+                    va.track("View Elective", {
+                      sessionCode: electiveSubject.session_code,
+                    });
                     setSelectedID(electiveSubject.session_code);
                     if (DIALOG_BREAKPOINTS.includes(atBreakpoint))
                       setTimeout(

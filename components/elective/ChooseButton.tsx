@@ -6,8 +6,8 @@ import useRefreshProps from "@/utils/helpers/useRefreshProps";
 import useToggle from "@/utils/helpers/useToggle";
 import withLoading from "@/utils/helpers/withLoading";
 import { StylableFC } from "@/utils/types/common";
-import { User } from "@/utils/types/person";
 import { Button, MaterialIcon } from "@suankularb-components/react";
+import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
 
 /**
@@ -56,6 +56,9 @@ const ChooseButton: StylableFC<{
           },
         );
         if (error) logError("handleChoose", error);
+        if (enrolledID)
+          va.track("Change Elective", { from: enrolledID, to: sessionCode });
+        va.track("Choose Elective", { sessionCode });
         await refreshProps();
         onSucess?.();
         return true;

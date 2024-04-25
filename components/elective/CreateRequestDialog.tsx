@@ -19,6 +19,7 @@ import {
   TextField,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
 import { useContext } from "react";
 
@@ -64,6 +65,7 @@ const CreateRequestDialog: StylableFC<{
     // Special case: cannot trade with oneself. Thought this was funny.
     // Try it and let me know if it was funny.
     if (form.studentID === (mysk.person as Student)?.student_id) {
+      va.track("Attempt to Trade Electives with Self");
       setSnackbar(<Snackbar>{t("snackbar.self")}</Snackbar>);
       return false;
     }
@@ -97,6 +99,13 @@ const CreateRequestDialog: StylableFC<{
       else setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
       return false;
     }
+
+    va.track(
+      "Send Elective Trade Offer",
+      (mysk.person as Student).classroom
+        ? { classroom: `M.${(mysk.person as Student).classroom!.number}` }
+        : undefined,
+    );
 
     // Reflect the success to the user.
     setSnackbar(<Snackbar>Request sent</Snackbar>);
