@@ -1,6 +1,7 @@
 import SnackbarContext from "@/contexts/SnackbarContext";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import getStudentIDByFiveDigitID from "@/utils/backend/person/getStudentIDByFiveDigitID";
+import logError from "@/utils/helpers/logError";
 import useForm from "@/utils/helpers/useForm";
 import useRefreshProps from "@/utils/helpers/useRefreshProps";
 import useToggle from "@/utils/helpers/useToggle";
@@ -24,12 +25,12 @@ import { useTranslation } from "next-i18next";
 import { useContext } from "react";
 
 /**
- * A Dialog for creating a Trade Request with a friend.
+ * A Dialog for creating an Elective Trade Offer with a friend.
  *
  * @param open Whether the Dialog is open and shown.
  * @param onClose Triggers when the Dialog is closed.
  */
-const CreateRequestDialog: StylableFC<{
+const CreateOfferDialog: StylableFC<{
   open?: boolean;
   onClose: () => void;
 }> = ({ open, onClose, style, className }) => {
@@ -98,6 +99,7 @@ const CreateRequestDialog: StylableFC<{
       if (error.code === 403)
         setSnackbar(<Snackbar>{t("snackbar.notAllowed")}</Snackbar>);
       else setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
+      logError("handleSubmit", error);
       return false;
     }
 
@@ -155,4 +157,4 @@ const CreateRequestDialog: StylableFC<{
   );
 };
 
-export default CreateRequestDialog;
+export default CreateOfferDialog;
