@@ -26,7 +26,7 @@ const TradesCardSection: StylableFC<{
         {title}
       </Text>
     </header>
-    <ul className="-ml-3 -mr-1">{children}</ul>
+    <ul className="-ml-3 -mr-1 space-y-1">{children}</ul>
   </section>
 );
 
