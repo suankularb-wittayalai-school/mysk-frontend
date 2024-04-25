@@ -1,23 +1,26 @@
-// Imports
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import UserContext from "@/contexts/UserContext";
+import { CustomPage, LangCode } from "@/utils/types/common";
+import { Progress } from "@suankularb-components/react";
 import { GetStaticProps } from "next";
-import { useRouter } from "next/router";
+import { signOut } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useEffect } from "react";
-import { Progress } from "@suankularb-components/react";
-import { CustomPage, LangCode } from "@/utils/types/common";
-import { signOut } from "next-auth/react";
+import { useRouter } from "next/router";
+import { useContext, useEffect } from "react";
 
 const LogOutPage: CustomPage = () => {
-  // Translation
   const { t } = useTranslation("account");
+
+  const { setUser } = useContext(UserContext);
 
   // Log the user out
   const router = useRouter();
   useEffect(() => {
     (async () => {
       await signOut({ redirect: false });
+      setUser(null);
+      document.cookie =
+        "access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
       router.push("/");
     })();
   }, []);

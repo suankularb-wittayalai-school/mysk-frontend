@@ -1,13 +1,10 @@
-// Imports
-import getUserByEmail from "@/utils/backend/account/getUserByEmail";
+import fetchMySKAPI from "@/utils/backend/mysk/fetchMySKAPI";
 import getLocalePath from "@/utils/helpers/getLocalePath";
 import logError from "@/utils/helpers/logError";
 import permitted from "@/utils/helpers/permitted";
 import getHomeURLofRole from "@/utils/helpers/person/getHomeURLofRole";
 import { LangCode } from "@/utils/types/common";
 import { User, UserPermissionKey } from "@/utils/types/person";
-import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
-import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
@@ -18,8 +15,6 @@ import { NextRequest, NextResponse } from "next/server";
  * @see {@link https://nextjs.org/docs/pages/building-your-application/routing/middleware Next.js documentation}
  */
 export async function middleware(req: NextRequest) {
-  const res = NextResponse.next();
-
   // Get original destination
   const route = req.nextUrl.pathname;
   const locale = req.nextUrl.locale as LangCode;
@@ -48,16 +43,14 @@ export async function middleware(req: NextRequest) {
     else return "user";
   })();
 
-  // Declare Supabase client
-  const supabase = createMiddlewareClient({ req, res });
-
   // Get user metadata
-  const jwt = await getToken({ req });
+  const accessToken = req.cookies.get("access_token")?.value;
   let user: User | null = null;
-  if (jwt?.email) {
-    const { data, error } = await getUserByEmail(supabase, jwt?.email);
+  if (accessToken) {
+    const { data, error } = await fetchMySKAPI<User>("/auth/user", accessToken);
     if (error) logError("middleware (user)", error);
-    user = data;
+     // FIXME: Permissions aren’t implemented in MySK API yet (per @smartwhatt).
+     user = data ? { ...data, permissions: [] } : null;
   }
 
   // Decide on destination based on user and page protection type
