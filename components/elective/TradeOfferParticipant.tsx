@@ -7,9 +7,21 @@ import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import { ElectiveSubject } from "@/utils/types/elective";
 import { Student } from "@/utils/types/person";
-import { Text } from "@suankularb-components/react";
+import {
+  DURATION,
+  EASING,
+  Text,
+  transition,
+} from "@suankularb-components/react";
+import { motion } from "framer-motion";
 import { Trans, useTranslation } from "next-i18next";
 
+/**
+ * A participant (sender or receiver) in a Trade Offer.
+ * 
+ * @param participant The Student to display.
+ * @param electiveSubject The Elective Subject the Student is offering.
+ */
 const TradeOfferParticipant: StylableFC<{
   participant: Student;
   electiveSubject: ElectiveSubject;
@@ -38,7 +50,18 @@ const TradeOfferParticipant: StylableFC<{
             name
           )}
         </Text>
-        <Text type="body-medium" className="text-on-surface-variant">
+        <Text
+          type="body-medium"
+          element={(props) => (
+            <motion.span
+              layout="position"
+              layoutId={electiveSubject.session_code}
+              transition={transition(DURATION.long2, EASING.emphasized)}
+              {...props}
+            />
+          )}
+          className="block text-on-surface-variant"
+        >
           {getLocaleString(electiveSubject.name, locale)}
         </Text>
       </div>
