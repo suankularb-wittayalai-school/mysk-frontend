@@ -26,7 +26,7 @@ export default async function createMySKClient(
   // If there is an access token, fetch the user data
   if (accessToken) {
     const { data } = await fetchMySKAPI<User>("/auth/user", accessToken);
-    if (data) user = data;
+    if (data) user = { ...data, permissions: [] };
   }
 
   return {
