@@ -34,10 +34,7 @@ const LogOutPage: CustomPage = () => {
   }, []);
 
   return (
-    <div
-      className="-mb-20 grid min-h-screen place-content-center
-        supports-[height:100svh]:min-h-[100svh] sm:mb-0"
-    >
+    <div className="-mb-20 grid min-h-svh place-content-center sm:mb-0">
       <div className="flex flex-col items-center gap-4">
         <Progress appearance="circular" alt={t("logOut.loading")} visible />
         <h1 className="skc-label-large">{t("logOut.loading")}</h1>
