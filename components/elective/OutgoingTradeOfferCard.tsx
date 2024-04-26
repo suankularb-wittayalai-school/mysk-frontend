@@ -1,6 +1,7 @@
 import TradeOfferCard from "@/components/elective/TradeOfferCard";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
+import cn from "@/utils/helpers/cn";
 import useRefreshProps from "@/utils/helpers/useRefreshProps";
 import useToggle from "@/utils/helpers/useToggle";
 import withLoading from "@/utils/helpers/withLoading";
@@ -9,6 +10,8 @@ import { ElectiveTradeOffer } from "@/utils/types/elective";
 import { Actions, Button, Snackbar } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
 import { useContext } from "react";
+import va from "@vercel/analytics";
+import logError from "@/utils/helpers/logError";
 
 /**
  * A Card that displays an outgoing Trade Offer.
@@ -46,20 +49,29 @@ const OutgoingTradeOfferCard: StylableFC<{
     );
     if (error) {
       setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
+      logError("handleCancel", error);
       return false;
     }
+    va.track("Cancel Outgoing Elective Trade Offer", {
+      sending: tradeOffer.sender_elective_subject.session_code,
+      receiving: tradeOffer.receiver_elective_subject.session_code,
+    });
     await refreshProps();
     setSnackbar(<Snackbar>{t("snackbar.cancelled")}</Snackbar>);
     return true;
   }
 
   return (
-    <TradeOfferCard tradeOffer={tradeOffer} style={style} className={className}>
+    <TradeOfferCard
+      tradeOffer={tradeOffer}
+      style={style}
+      className={cn(loading && `animate-pulse`, className)}
+    >
       <Actions align="center">
         <Button
           appearance="outlined"
           dangerous
-          loading={loading}
+          disabled={loading}
           onClick={() =>
             withLoading(handleCancel, toggleLoading, { hasEndToggle: true })
           }

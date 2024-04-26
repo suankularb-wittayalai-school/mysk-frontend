@@ -64,7 +64,7 @@ const LearnElectivesPage: CustomPage<{
     else if (selectedID) setDetailsOpen(true);
   }, [DIALOG_BREAKPOINTS.includes(atBreakpoint)]);
 
-  async function fetchBySessionCode(sessionCode: number | null) {
+  async function fetchBySessionCode(sessionCode: number) {
     setSelectedElective(null);
     const { data } = await mysk.fetch<ElectiveSubject>(
       `/v1/subjects/electives/${sessionCode}/`,
@@ -242,63 +242,69 @@ export const getServerSideProps: GetServerSideProps = async ({
   )) as BackendReturn<Student>;
   if (!student) return { notFound: true };
 
-  const [electiveSubjects, enrolledElectiveSubjects, pendingTrades] =
-    await Promise.all([
-      // Get the list of Elective Subjects available for this Student to enroll in.
-      (
-        await mysk.fetch<ElectiveSubject[]>("/v1/subjects/electives/", {
+  const [
+    electiveSubjects,
+    enrolledElectiveSubjects,
+    incomingTrades,
+    outgoingTrades,
+  ] = await Promise.all([
+    // Get the list of Elective Subjects available for this Student to enroll in.
+    (
+      await mysk.fetch<ElectiveSubject[]>("/v1/subjects/electives/", {
+        query: {
+          fetch_level: "default",
+          descendant_fetch_level: "compact",
+          filter: { data: { as_student_id: student.id } },
+          sort: { by: ["session_code"], ascending: true },
+        },
+      })
+    ).data,
+
+    // Get the ID of the Elective Subject the Student is already enrolled in, if
+    // any.
+    (
+      await mysk.fetch<ElectiveSubject[]>("/v1/subjects/electives/", {
+        query: {
+          fetch_level: "compact",
+          filter: { data: { student_ids: [student.id] } },
+        },
+      })
+    ).data,
+
+    // Get active incoming and outgoing trades of the Student.
+    (
+      await mysk.fetch<ElectiveTradeOffer[]>(
+        "/v1/subjects/electives/trade-offers",
+        {
           query: {
             fetch_level: "default",
             descendant_fetch_level: "compact",
-            filter: { data: { as_student_id: student.id } },
-            sort: { by: ["session_code"], ascending: true },
-          },
-        })
-      ).data,
-
-      // Get the ID of the Elective Subject the Student is already enrolled in, if
-      // any.
-      (
-        await mysk.fetch<ElectiveSubject[]>("/v1/subjects/electives/", {
-          query: {
-            fetch_level: "compact",
-            filter: { data: { student_ids: [student.id] } },
-          },
-        })
-      ).data,
-
-      // Get active incoming and outgoing trades of the Student.
-      (
-        await mysk.fetch<ElectiveTradeOffer[]>(
-          "/v1/subjects/electives/trade-offers",
-          {
-            query: {
-              fetch_level: "default",
-              descendant_fetch_level: "compact",
-              filter: {
-                data: {
-                  sender_ids: [student.id],
-                  reciever_ids: [student.id],
-                  status: "pending",
-                },
-              },
+            filter: {
+              data: { receiver_ids: [student.id], status: "pending" },
             },
           },
-        )
-      ).data,
-    ]);
+        },
+      )
+    ).data,
+    (
+      await mysk.fetch<ElectiveTradeOffer[]>(
+        "/v1/subjects/electives/trade-offers",
+        {
+          query: {
+            fetch_level: "default",
+            descendant_fetch_level: "compact",
+            filter: {
+              data: { sender_ids: [student.id], status: "pending" },
+            },
+          },
+        },
+      )
+    ).data,
+  ]);
 
   // Use the session code of this Elective Subject as the ID.
   // (A Student can only be enrolled in one Elective Subject at a time.)
   const enrolledID = enrolledElectiveSubjects?.[0]?.session_code || null;
-
-  // Separate incoming and outgoing trades.
-  const incomingTrades = pendingTrades?.filter(
-    (tradeOffer) => tradeOffer.receiver.id === student.id,
-  );
-  const outgoingTrades = pendingTrades?.filter(
-    (tradeOffer) => tradeOffer.sender.id === student.id,
-  );
 
   return {
     props: {

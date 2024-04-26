@@ -13,6 +13,9 @@
       "choose_initial": "Choose elective",
       "choose_chosen": "Chosen",
       "choose_change": "Change elective"
+    },
+    "snackbar": {
+      "notAllowed": "You can’t enroll in that elective"
     }
   },
   "detail": {
@@ -36,14 +39,14 @@
       "action": {
         "create": "Create request",
         "respond": "Respond with…",
-        "accept": "Accept",
-        "reject": "Reject",
+        "approve": "Approve",
+        "decline": "Decline",
         "cancel": "Cancel"
       },
       "snackbar": {
         "cancelled": "Request cancelled",
-        "accepted": "Request accepted",
-        "rejected": "Request rejected"
+        "approved": "Request approved",
+        "declined": "Request declined"
       }
     }
   },

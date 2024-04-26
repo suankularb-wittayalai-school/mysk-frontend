@@ -56,6 +56,7 @@ export type Person = {
   middle_name: MultiLangString | null;
   nickname: MultiLangString | null;
   profile: string | null;
+  profile_url: string | null;
   citizen_id: string | null;
   birthdate: string | null;
   shirt_size: ShirtSize | null;

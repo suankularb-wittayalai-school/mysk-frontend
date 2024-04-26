@@ -29,6 +29,7 @@ const DEFAULT_SIZE = 48;
  */
 const PersonAvatar: StylableFC<
   Partial<Pick<Person, "first_name" | "last_name" | "profile">> & {
+    profile_url?: string | null; // Workaround for MySK API inconsistency.
     expandable?: boolean;
     size?: number;
   }
@@ -36,6 +37,7 @@ const PersonAvatar: StylableFC<
   first_name,
   last_name,
   profile,
+  profile_url,
   expandable: preferExpandable,
   size,
   style,
@@ -45,7 +47,8 @@ const PersonAvatar: StylableFC<
 
   const locale = useLocale();
 
-  const expandable = preferExpandable === true && typeof profile === "string";
+  const expandable =
+    preferExpandable === true && typeof (profile || profile_url) === "string";
   const [open, setOpen] = useState(false);
 
   // Ensure that the Avatar is a circle
@@ -95,9 +98,9 @@ const PersonAvatar: StylableFC<
         >
           {
             // Use profile image, if available
-            profile ? (
+            profile || profile_url ? (
               <Image
-                src={profile}
+                src={(profile || profile_url) as string}
                 alt=""
                 width={definedSize}
                 height={definedSize}
@@ -115,7 +118,7 @@ const PersonAvatar: StylableFC<
       {expandable && (
         <PersonAvatarDialog
           open={open}
-          profile={profile}
+          profile={(profile || profile_url) as string}
           onClose={() => setOpen(false)}
         />
       )}

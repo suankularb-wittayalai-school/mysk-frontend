@@ -8,6 +8,7 @@ import { ElectiveTradeOffer } from "@/utils/types/elective";
 import { MaterialIcon, Text } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
 import Balancer from "react-wrap-balancer";
+import IncomingTradeOfferCard from "./IncomingTradeOfferCard";
 import OutgoingTradeOfferCard from "./OutgoingTradeOfferCard";
 
 /**
@@ -82,7 +83,12 @@ const ManageTradesCard: StylableFC<{
           }
           title={t("incoming")}
         >
-          TODO
+          {incomingTrades.map((tradeOffer) => (
+            <IncomingTradeOfferCard
+              key={tradeOffer.id}
+              tradeOffer={tradeOffer}
+            />
+          ))}
         </TradesCardSection>
       )}
 
