@@ -56,7 +56,7 @@ const ElectiveDetailsCard: StylableFC<{
                     role: UserRole.teacher,
                   }))}
                   scrollable
-                  className="fade-out-to-r -mx-3 *:pl-3 *:pr-8"
+                  className="fade-out-to-r -mx-3 pb-1 *:pl-3 *:pr-8"
                 />
               </InformationCard>
 
@@ -65,7 +65,7 @@ const ElectiveDetailsCard: StylableFC<{
                 <InformationCard title={t("room")}>
                   <ChipSet
                     scrollable
-                    className="fade-out-to-r -mx-3 *:pl-3 *:pr-8"
+                    className="fade-out-to-r -mx-3 pb-1 *:pl-3 *:pr-8"
                   >
                     <RoomChip room={electiveSubject.room} />
                   </ChipSet>
