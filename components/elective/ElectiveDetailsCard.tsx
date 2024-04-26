@@ -31,7 +31,7 @@ const ElectiveDetailsCard: StylableFC<{
   const { t } = useTranslation("elective", { keyPrefix: "detail.information" });
 
   return (
-    <section style={style} className={cn(`flex h-full flex-col`, className)}>
+    <section style={style} className={cn(`flex flex-col`, className)}>
       {electiveSubject && (
         <>
           <ElectiveDetailsHeader electiveSubject={electiveSubject} />

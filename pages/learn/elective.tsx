@@ -169,12 +169,10 @@ const LearnElectivesPage: CustomPage<{
             initial={{ opacity: 0, scale: 0.95, x: -10 }}
             animate={{ opacity: 1, scale: 1, x: 0 }}
             transition={transition(DURATION.medium2, EASING.standardDecelerate)}
-            className="hidden grow overflow-hidden md:block"
+            className={cn(`relative hidden grow overflow-hidden *:absolute
+              *:inset-0 md:block`)}
           >
-            <ElectiveDetailsCard
-              electiveSubject={selectedElective}
-              className="h-full"
-            />
+            <ElectiveDetailsCard electiveSubject={selectedElective} />
           </motion.main>
 
           {/* Trade */}
