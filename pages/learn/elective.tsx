@@ -19,6 +19,7 @@ import {
   DURATION,
   EASING,
   List,
+  Text,
   transition,
   useBreakpoint,
 } from "@suankularb-components/react";
@@ -78,11 +79,10 @@ const LearnElectivesPage: CustomPage<{
     if (data) setSelectedElective(data);
   }
   useEffect(() => {
-    const initialSessionCode = enrolledID || electiveSubjects[0]?.session_code;
-    if (!initialSessionCode) return;
-    setSelectedID(initialSessionCode);
-    fetchBySessionCode(initialSessionCode);
-  }, []);
+    if (!enrolledID) return;
+    setSelectedID(enrolledID);
+    fetchBySessionCode(enrolledID);
+  }, [enrolledID]);
 
   return (
     <>
@@ -165,14 +165,28 @@ const LearnElectivesPage: CustomPage<{
         >
           {/* Details */}
           <motion.main
-            key={selectedID}
+            key={selectedID || "empty"}
             initial={{ opacity: 0, scale: 0.95, x: -10 }}
             animate={{ opacity: 1, scale: 1, x: 0 }}
             transition={transition(DURATION.medium2, EASING.standardDecelerate)}
             className={cn(`relative hidden grow overflow-hidden *:absolute
               *:inset-0 md:block`)}
           >
-            <ElectiveDetailsCard electiveSubject={selectedElective} />
+            {selectedID ? (
+              // Content state
+              <ElectiveDetailsCard electiveSubject={selectedElective} />
+            ) : (
+              // Empty state
+              <div className="grid place-content-center">
+                <Text
+                  type="body-medium"
+                  element="p"
+                  className="max-w-52 text-center text-on-surface-variant"
+                >
+                  {t("detail.empty")}
+                </Text>
+              </div>
+            )}
           </motion.main>
 
           {/* Trade */}

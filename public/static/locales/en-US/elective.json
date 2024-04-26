@@ -19,6 +19,7 @@
     }
   },
   "detail": {
+    "empty": "Select the elective you want to enroll in and press ”Choose elective.”",
     "information": {
       "title": "Information",
       "name": "Subject name",
