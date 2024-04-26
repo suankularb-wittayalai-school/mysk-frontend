@@ -22,10 +22,10 @@
     "information": {
       "title": "Information",
       "name": "Subject name",
-      "description": "Description",
       "code": "Subject code",
       "teachers": "Teachers",
       "room": "Room",
+      "description": "Description",
       "action": {
         "seeSyllabus": "See syllabus"
       }

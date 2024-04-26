@@ -75,6 +75,21 @@ const ElectiveDetailsCard: StylableFC<{
               )}
             </div>
 
+            {electiveSubject.description?.th && (
+              <section className="space-y-1">
+                <Text type="title-medium" element="h3">
+                  {t("description")}
+                </Text>
+                <Text
+                  type="body-medium"
+                  element="p"
+                  className="text-on-surface-variant"
+                >
+                  {getLocaleString(electiveSubject.description, locale)}
+                </Text>
+              </section>
+            )}
+
             {enrolledID !== undefined && (
               <Actions align="full">
                 <ChooseButton

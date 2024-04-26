@@ -22,10 +22,10 @@
     "information": {
       "title": "รายละเอียด",
       "name": "ชื่อวิชา",
-      "description": "รายละเอียด",
       "code": "รหัสวิชา",
       "teachers": "ครูผู้สอน",
       "room": "ห้องที่ใช้เรียน",
+      "description": "รายละเอียด",
       "action": {
         "seeSyllabus": "ดูคำอธิบายวิชา"
       }
