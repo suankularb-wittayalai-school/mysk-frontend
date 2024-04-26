@@ -13,7 +13,6 @@ import { ElectiveSubject } from "@/utils/types/elective";
 import { UserRole } from "@/utils/types/person";
 import { Actions, ChipSet, Text } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
-import Balancer from "react-wrap-balancer";
 
 /**
  * A card similar to a Lookup Details Card that displays details of an Elective
@@ -38,10 +37,7 @@ const ElectiveDetailsCard: StylableFC<{
           <ElectiveDetailsHeader electiveSubject={electiveSubject} />
 
           <LookupDetailsContent>
-            <div
-              className={cn(`grid grid-cols-2 gap-2 *:bg-surface-bright
-                md:grid-cols-4`)}
-            >
+            <div className={cn(`grid grid-cols-2 gap-2 *:bg-surface-bright`)}>
               {/* Subject name */}
               <InformationCard
                 title={t("information.name")}
@@ -49,16 +45,6 @@ const ElectiveDetailsCard: StylableFC<{
               >
                 <MultilangText text={electiveSubject.name} />
               </InformationCard>
-
-              {/* Description */}
-              {electiveSubject.description?.th && (
-                <InformationCard
-                  title={t("information.description")}
-                  className="col-span-2"
-                >
-                  {getLocaleString(electiveSubject.description, locale)}
-                </InformationCard>
-              )}
 
               {/* Subject code */}
               <InformationCard title={t("information.code")}>
@@ -88,11 +74,6 @@ const ElectiveDetailsCard: StylableFC<{
                   </ChipSet>
                 </InformationCard>
               )}
-
-              {/* Credit */}
-              <InformationCard title={t("information.credit")}>
-                {electiveSubject.credit.toFixed(1)}
-              </InformationCard>
             </div>
 
             {enrolledID && (
