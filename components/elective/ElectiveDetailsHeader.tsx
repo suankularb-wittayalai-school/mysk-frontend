@@ -5,7 +5,6 @@ import { StylableFC } from "@/utils/types/common";
 import { ElectiveSubject } from "@/utils/types/elective";
 import {
   AssistChip,
-  ChipSet,
   DURATION,
   EASING,
   MaterialIcon,
@@ -38,14 +37,15 @@ const ElectiveDetailsHeader: StylableFC<{
       transition={transition(DURATION.medium2, EASING.standard)}
       style={style}
       className={cn(
-        `flex flex-col gap-1 p-4 sm:flex-row sm:items-center sm:px-6 sm:py-3`,
+        `flex flex-col items-start gap-1 p-4 sm:flex-row sm:items-center sm:px-6
+        sm:py-3`,
         className,
       )}
     >
       <Text type="headline-small" element="h2" className="sm:grow sm:pt-1.5">
         <Balancer>{getLocaleString(electiveSubject.name, locale)}</Balancer>
       </Text>
-      <AssistChip icon={<MaterialIcon icon="book" />}>
+      <AssistChip icon={<MaterialIcon icon="book" />} className="mr-10 md:mr-0">
         {t("action.seeSyllabus")}
       </AssistChip>
     </motion.div>
