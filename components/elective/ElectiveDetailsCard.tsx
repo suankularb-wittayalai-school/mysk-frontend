@@ -76,7 +76,7 @@ const ElectiveDetailsCard: StylableFC<{
               )}
             </div>
 
-            {enrolledID && (
+            {enrolledID !== undefined && (
               <Actions align="full">
                 <ChooseButton
                   sessionCode={electiveSubject.session_code}
