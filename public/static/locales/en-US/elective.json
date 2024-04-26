@@ -26,7 +26,9 @@
       "code": "Subject code",
       "teachers": "Teachers",
       "room": "Room",
-      "credit": "Credit"
+      "action": {
+        "seeSyllabus": "See syllabus"
+      }
     },
     "trade": {
       "title": "Trade electives",

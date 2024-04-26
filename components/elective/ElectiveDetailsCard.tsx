@@ -1,5 +1,6 @@
 import MultilangText from "@/components/common/MultilingualText";
 import ChooseButton from "@/components/elective/ChooseButton";
+import ElectiveDetailsHeader from "@/components/elective/ElectiveDetailsHeader";
 import LookupDetailsContent from "@/components/lookup/LookupDetailsContent";
 import InformationCard from "@/components/lookup/people/InformationCard";
 import PeopleChipSet from "@/components/person/PeopleChipSet";
@@ -10,15 +11,7 @@ import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import { ElectiveSubject } from "@/utils/types/elective";
 import { UserRole } from "@/utils/types/person";
-import {
-  Actions,
-  ChipSet,
-  DURATION,
-  EASING,
-  Text,
-  transition,
-} from "@suankularb-components/react";
-import { motion } from "framer-motion";
+import { Actions, ChipSet, Text } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
 import Balancer from "react-wrap-balancer";
 
@@ -28,7 +21,6 @@ import Balancer from "react-wrap-balancer";
  *
  * @param electiveSubject The Elective Subject to display.
  * @param enrolledID The session code of the Elective Subject the Student is currently enrolled in.
- * @param user The currently logged in user.
  * @param onChooseSuccess Triggers after the Student has successfully chosen the Elective Subject.
  */
 const ElectiveDetailsCard: StylableFC<{
@@ -43,18 +35,7 @@ const ElectiveDetailsCard: StylableFC<{
     <section style={style} className={cn(`flex h-full flex-col`, className)}>
       {electiveSubject && (
         <>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={transition(DURATION.medium2, EASING.standard)}
-            className="px-6 pb-3 pt-[1.125rem]"
-          >
-            <Text type="headline-small" element="h2">
-              <Balancer>
-                {getLocaleString(electiveSubject.name, locale)}
-              </Balancer>
-            </Text>
-          </motion.div>
+          <ElectiveDetailsHeader electiveSubject={electiveSubject} />
 
           <LookupDetailsContent>
             <div
