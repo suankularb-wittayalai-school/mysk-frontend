@@ -28,7 +28,7 @@ const ElectiveDetailsCard: StylableFC<{
   onChooseSuccess?: () => void;
 }> = ({ electiveSubject, enrolledID, onChooseSuccess, style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("elective", { keyPrefix: "detail" });
+  const { t } = useTranslation("elective", { keyPrefix: "detail.information" });
 
   return (
     <section style={style} className={cn(`flex h-full flex-col`, className)}>
@@ -39,20 +39,17 @@ const ElectiveDetailsCard: StylableFC<{
           <LookupDetailsContent>
             <div className={cn(`grid grid-cols-2 gap-2 *:bg-surface-bright`)}>
               {/* Subject name */}
-              <InformationCard
-                title={t("information.name")}
-                className="col-span-2"
-              >
+              <InformationCard title={t("name")}>
                 <MultilangText text={electiveSubject.name} />
               </InformationCard>
 
               {/* Subject code */}
-              <InformationCard title={t("information.code")}>
+              <InformationCard title={t("code")}>
                 <MultilangText text={electiveSubject.code} />
               </InformationCard>
 
               {/* Teachers */}
-              <InformationCard title={t("information.teachers")}>
+              <InformationCard title={t("teachers")}>
                 <PeopleChipSet
                   people={electiveSubject.teachers.map((teacher) => ({
                     ...teacher,
@@ -65,7 +62,7 @@ const ElectiveDetailsCard: StylableFC<{
 
               {/* Room */}
               {electiveSubject.room && (
-                <InformationCard title={t("information.room")}>
+                <InformationCard title={t("room")}>
                   <ChipSet
                     scrollable
                     className="fade-out-to-r -mx-3 *:pl-3 *:pr-8"
