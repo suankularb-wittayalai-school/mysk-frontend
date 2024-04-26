@@ -67,7 +67,9 @@ const ElectiveDetailsCard: StylableFC<{
                     scrollable
                     className="fade-out-to-r -mx-3 pb-1 *:pl-3 *:pr-8"
                   >
-                    <RoomChip room={electiveSubject.room} />
+                    {electiveSubject.room.split(", ").map((room) => (
+                      <RoomChip key={room} room={room} />
+                    ))}
                   </ChipSet>
                 </InformationCard>
               )}
