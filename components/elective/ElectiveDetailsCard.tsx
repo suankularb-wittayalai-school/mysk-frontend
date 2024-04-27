@@ -36,7 +36,7 @@ const ElectiveDetailsCard: StylableFC<{
         <>
           <ElectiveDetailsHeader electiveSubject={electiveSubject} />
 
-          <LookupDetailsContent>
+          <LookupDetailsContent className="!rounded-xl pb-28 md:pb-4">
             <div className={cn(`grid grid-cols-2 gap-2 *:bg-surface-bright`)}>
               {/* Subject name */}
               <InformationCard title={t("name")}>
@@ -91,13 +91,23 @@ const ElectiveDetailsCard: StylableFC<{
             )}
 
             {enrolledID !== undefined && (
-              <Actions align="full">
-                <ChooseButton
-                  sessionCode={electiveSubject.session_code}
-                  enrolledID={enrolledID}
-                  onSucess={onChooseSuccess}
-                />
-              </Actions>
+              <div
+                className={cn(`pointer-events-none fixed inset-0 top-auto z-10
+                  overflow-hidden bg-gradient-to-t from-surface-container p-4
+                  pt-12 sm:rounded-b-xl`)}
+              >
+                <Actions
+                  align="full"
+                  className="rounded-full bg-surface-container"
+                >
+                  <ChooseButton
+                    sessionCode={electiveSubject.session_code}
+                    enrolledID={enrolledID}
+                    onSucess={onChooseSuccess}
+                    className="!pointer-events-auto"
+                  />
+                </Actions>
+              </div>
             )}
           </LookupDetailsContent>
         </>
