@@ -7,6 +7,13 @@ declare global {
       NEXT_PUBLIC_VERSION: string;
 
       /**
+       * The timezone of the school, in IANA format.
+       * 
+       * @see {@link https://en.wikipedia.org/wiki/List_of_tz_database_time_zones List of tz database time zones}
+       */
+      NEXT_PUBLIC_SCHOOL_TZ: string;
+
+      /**
        * The Google Client ID of this application, retrieved from Google Cloud
        * Console > APIs and Service > Credentials > OAuth 2.0 Client ID.
        */
