@@ -28,7 +28,11 @@
       "room": "ห้องที่ใช้เรียน",
       "description": "รายละเอียด",
       "action": {
-        "seeSyllabus": "ดูคำอธิบายวิชา"
+        "seeSyllabus_available": "ดูคำอธิบายวิชา",
+        "seeSyllabus_unavailable": "ไม่มีคำอธิบายวิชา"
+      },
+      "dialog": {
+        "syllabus": "คำอธิบายวิชา"
       }
     },
     "trade": {

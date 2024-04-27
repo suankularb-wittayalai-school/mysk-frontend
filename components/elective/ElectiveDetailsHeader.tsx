@@ -1,3 +1,4 @@
+import PDFViewerDialog from "@/components/common/PDFViewerDialog";
 import cn from "@/utils/helpers/cn";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
@@ -42,12 +43,30 @@ const ElectiveDetailsHeader: StylableFC<{
         className,
       )}
     >
+      {/* Title */}
       <Text type="headline-small" element="h2" className="sm:grow sm:pt-1.5">
         <Balancer>{getLocaleString(electiveSubject.name, locale)}</Balancer>
       </Text>
-      <AssistChip icon={<MaterialIcon icon="book" />} className="mr-10 md:mr-0">
-        {t("action.seeSyllabus")}
+
+      {/* Syllabus */}
+      <AssistChip
+        icon={<MaterialIcon icon="book" />}
+        disabled={!electiveSubject.syllabus}
+        onClick={() => setSyllabusOpen(true)}
+        className="mr-10 md:mr-0"
+      >
+        {t("action.seeSyllabus", {
+          context: electiveSubject.syllabus ? "available" : "unavailable",
+        })}
       </AssistChip>
+      {electiveSubject.syllabus && (
+        <PDFViewerDialog
+          open={syllabusOpen}
+          title={t("dialog.syllabus")}
+          url={electiveSubject.syllabus.replace("?", "")}
+          onClose={() => setSyllabusOpen(false)}
+        />
+      )}
     </motion.div>
   );
 };

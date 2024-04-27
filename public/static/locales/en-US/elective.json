@@ -28,7 +28,11 @@
       "room": "Room",
       "description": "Description",
       "action": {
-        "seeSyllabus": "See syllabus"
+        "seeSyllabus_available": "See syllabus",
+        "seeSyllabus_unavailable": "Syllabus not available"
+      },
+      "dialog": {
+        "syllabus": "Syllabus"
       }
     },
     "trade": {
