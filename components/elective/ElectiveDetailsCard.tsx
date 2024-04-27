@@ -83,7 +83,7 @@ const ElectiveDetailsCard: StylableFC<{
                 <Text
                   type="body-medium"
                   element="p"
-                  className="text-on-surface-variant"
+                  className="!leading-normal text-on-surface-variant"
                 >
                   {getLocaleString(electiveSubject.description, locale)}
                 </Text>
