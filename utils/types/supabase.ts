@@ -556,6 +556,27 @@ export type Database = {
           },
         ];
       };
+      elective_subject_enrollment_periods: {
+        Row: {
+          created_at: string;
+          end_time: string;
+          id: string;
+          start_time: string;
+        };
+        Insert: {
+          created_at?: string;
+          end_time: string;
+          id?: string;
+          start_time: string;
+        };
+        Update: {
+          created_at?: string;
+          end_time?: string;
+          id?: string;
+          start_time?: string;
+        };
+        Relationships: [];
+      };
       elective_subject_requirements: {
         Row: {
           created_at: string;
