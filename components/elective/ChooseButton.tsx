@@ -1,8 +1,6 @@
 import SnackbarContext from "@/contexts/SnackbarContext";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
-import electivePermissionsAt from "@/utils/helpers/elective/electivePermissionsAt";
 import logError from "@/utils/helpers/logError";
-import useNow from "@/utils/helpers/useNow";
 import useRefreshProps from "@/utils/helpers/useRefreshProps";
 import useToggle from "@/utils/helpers/useToggle";
 import withLoading from "@/utils/helpers/withLoading";
@@ -17,18 +15,24 @@ import { useContext } from "react";
  *
  * @param sessionCode The session code of the Elective Subject to choose.
  * @param enrolledID The session code of the Elective Subject the Student is currently enrolled in.
+ * @param inEnrollmentPeriod Whether the time now is in an Enrollment Period.
  * @param onSucess Triggers after the Student has successfully chosen the Elective Subject.
  */
 const ChooseButton: StylableFC<{
   sessionCode: number | null;
   enrolledID: number | null;
+  inEnrollmentPeriod?: boolean;
   onSucess?: () => void;
-}> = ({ sessionCode, enrolledID, onSucess, style, className }) => {
+}> = ({
+  sessionCode,
+  enrolledID,
+  inEnrollmentPeriod,
+  onSucess,
+  style,
+  className,
+}) => {
   const { t } = useTranslation("elective", { keyPrefix: "list" });
   const { t: tx } = useTranslation("common");
-
-  const { now } = useNow();
-  const permissions = electivePermissionsAt(now);
 
   const { setSnackbar } = useContext(SnackbarContext);
 
@@ -37,8 +41,8 @@ const ChooseButton: StylableFC<{
 
   const [loading, toggleLoading] = useToggle();
   const disabled =
-    // Disallow choosing if not in time window (admins bypass this check).
-    !(permissions.choose || mysk.user?.is_admin) ||
+    // Disallow choosing if not in time window.
+    !inEnrollmentPeriod ||
     // Disallow choosing if none is selected.
     !sessionCode ||
     // Disallow choosing if already enrolled in the same Elective Subject.

@@ -38,15 +38,23 @@ const DIALOG_BREAKPOINTS = ["base", "sm"];
  *
  * @param electiveSubjects The Elective Subjects (default) available for choosing.
  * @param enrolledID The ID of the Elective Subject the Student is enrolled in.
+ * @param inEnrollmentPeriod Whether the time now is in an Enrollment Period.
  * @param incomingTrades The pending Elective Trade Offers sent to the Student.
  * @param outgoingTrades The pending Elective Trade Offers made by the Student.
  */
 const LearnElectivesPage: CustomPage<{
   electiveSubjects: ElectiveSubject[];
   enrolledID: number | null;
+  inEnrollmentPeriod: boolean;
   incomingTrades: ElectiveTradeOffer[];
   outgoingTrades: ElectiveTradeOffer[];
-}> = ({ electiveSubjects, enrolledID, incomingTrades, outgoingTrades }) => {
+}> = ({
+  electiveSubjects,
+  enrolledID,
+  inEnrollmentPeriod,
+  incomingTrades,
+  outgoingTrades,
+}) => {
   const { t } = useTranslation("elective");
   const { t: tx } = useTranslation("common");
 
@@ -153,6 +161,7 @@ const LearnElectivesPage: CustomPage<{
               <ChooseButton
                 sessionCode={selectedID}
                 enrolledID={enrolledID}
+                inEnrollmentPeriod={inEnrollmentPeriod}
                 className="!pointer-events-auto"
               />
             </Actions>
@@ -181,6 +190,7 @@ const LearnElectivesPage: CustomPage<{
           <ManageTradesCard
             incomingTrades={incomingTrades}
             outgoingTrades={outgoingTrades}
+            inEnrollmentPeriod={inEnrollmentPeriod}
             className={cn(`mb-16 min-h-36 !rounded-b-none sm:m-0
               sm:!rounded-b-xl`)}
           />
@@ -243,64 +253,71 @@ export const getServerSideProps: GetServerSideProps = async ({
   if (!student) return { notFound: true };
 
   const [
-    electiveSubjects,
-    enrolledElectiveSubjects,
-    incomingTrades,
-    outgoingTrades,
+    { data: electiveSubjects },
+    { data: enrolledElectiveSubjects },
+    { data: inEnrollmentPeriod },
   ] = await Promise.all([
     // Get the list of Elective Subjects available for this Student to enroll in.
-    (
-      await mysk.fetch<ElectiveSubject[]>("/v1/subjects/electives/", {
-        query: {
-          fetch_level: "default",
-          descendant_fetch_level: "compact",
-          filter: { data: { as_student_id: student.id } },
-          sort: { by: ["session_code"], ascending: true },
-        },
-      })
-    ).data,
+    await mysk.fetch<ElectiveSubject[]>("/v1/subjects/electives", {
+      query: {
+        fetch_level: "default",
+        descendant_fetch_level: "compact",
+        filter: { data: { as_student_id: student.id } },
+        sort: { by: ["session_code"], ascending: true },
+      },
+    }),
 
     // Get the ID of the Elective Subject the Student is already enrolled in, if
     // any.
-    (
-      await mysk.fetch<ElectiveSubject[]>("/v1/subjects/electives/", {
-        query: {
-          fetch_level: "compact",
-          filter: { data: { student_ids: [student.id] } },
-        },
-      })
-    ).data,
+    await mysk.fetch<ElectiveSubject[]>("/v1/subjects/electives", {
+      query: {
+        fetch_level: "compact",
+        filter: { data: { student_ids: [student.id] } },
+      },
+    }),
 
-    // Get active incoming and outgoing trades of the Student.
-    (
-      await mysk.fetch<ElectiveTradeOffer[]>(
-        "/v1/subjects/electives/trade-offers",
-        {
-          query: {
-            fetch_level: "default",
-            descendant_fetch_level: "compact",
-            filter: {
-              data: { receiver_ids: [student.id], status: "pending" },
-            },
-          },
-        },
-      )
-    ).data,
-    (
-      await mysk.fetch<ElectiveTradeOffer[]>(
-        "/v1/subjects/electives/trade-offers",
-        {
-          query: {
-            fetch_level: "default",
-            descendant_fetch_level: "compact",
-            filter: {
-              data: { sender_ids: [student.id], status: "pending" },
-            },
-          },
-        },
-      )
-    ).data,
+    // Check if the time now is in an Enrollment Period.
+    await mysk.fetch<boolean>("/v1/subjects/electives/in-enrollment-period"),
   ]);
+
+  const trades = {
+    incomingTrades: [] as ElectiveTradeOffer[],
+    outgoingTrades: [] as ElectiveTradeOffer[],
+  };
+
+  // If we are in an Enrollment Period, get the pending Elective Trade Offers
+  // sent to and made by the Student.
+  if (inEnrollmentPeriod) {
+    const [{ data: incomingTrades }, { data: outgoingTrades }] =
+      await Promise.all([
+        await mysk.fetch<ElectiveTradeOffer[]>(
+          "/v1/subjects/electives/trade-offers",
+          {
+            query: {
+              fetch_level: "default",
+              descendant_fetch_level: "compact",
+              filter: {
+                data: { receiver_ids: [student.id], status: "pending" },
+              },
+            },
+          },
+        ),
+        await mysk.fetch<ElectiveTradeOffer[]>(
+          "/v1/subjects/electives/trade-offers",
+          {
+            query: {
+              fetch_level: "default",
+              descendant_fetch_level: "compact",
+              filter: {
+                data: { sender_ids: [student.id], status: "pending" },
+              },
+            },
+          },
+        ),
+      ]);
+    if (incomingTrades) trades.incomingTrades = incomingTrades;
+    if (outgoingTrades) trades.outgoingTrades = outgoingTrades;
+  }
 
   // Use the session code of this Elective Subject as the ID.
   // (A Student can only be enrolled in one Elective Subject at a time.)
@@ -316,8 +333,8 @@ export const getServerSideProps: GetServerSideProps = async ({
       ])),
       electiveSubjects,
       enrolledID,
-      incomingTrades,
-      outgoingTrades,
+      inEnrollmentPeriod,
+      ...trades,
     },
   };
 };

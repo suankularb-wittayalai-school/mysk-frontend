@@ -33,8 +33,7 @@
       "incoming": "Incoming requests",
       "outgoing": "Outgoing requests",
       "empty": "Didn’t like the elective you chose? Create a trade request and find a friend to trade with.",
-      "unavailable_future": "Trading electives is not available at the moment. You can trade electives with your friends on May 29th. Check back later.",
-      "unavailable_past": "Trading electives is no longer available.",
+      "unavailable": "Trading electives is not available right now.",
       "you": "{{name}} <0>(You)</0>",
       "action": {
         "create": "Create request",
@@ -62,7 +61,7 @@
         "send": "Send request"
       },
       "snackbar": {
-        "self": "You really thought we would allow that?",
+        "self": "You can’t trade electives with yourself",
         "notFound": "Student not found",
         "notAllowed": "You can’t trade electives with that person",
         "success": "Request sent"

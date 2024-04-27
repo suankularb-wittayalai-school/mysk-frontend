@@ -1,5 +1,4 @@
 import cn from "@/utils/helpers/cn";
-import { ElectivePermissions } from "@/utils/helpers/elective/electivePermissionsAt";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
@@ -17,13 +16,13 @@ import Link from "next/link";
 /**
  * A Card that links to a page where the user can choose an Elective Subject.
  *
- * @param electivePermissions The permissions available to this Student for Electives.
+ * @param inEnrollmentPeriod Whether the time now is in an Enrollment Period.
  * @param enrolledElective The Elective Subject this Student is enrolled in.
  */
 const LearnElectiveEntryCard: StylableFC<{
-  electivePermissions: ElectivePermissions;
+  inEnrollmentPeriod?: boolean;
   enrolledElective: ElectiveSubject | null;
-}> = ({ electivePermissions, enrolledElective, style, className }) => {
+}> = ({ inEnrollmentPeriod, enrolledElective, style, className }) => {
   const locale = useLocale();
   const { t } = useTranslation("schedule", {
     keyPrefix: "subjectList.elective",
@@ -49,7 +48,7 @@ const LearnElectiveEntryCard: StylableFC<{
           <Button appearance="filled" href="/learn/elective" element={Link}>
             {enrolledElective
               ? t("action.change")
-              : electivePermissions.choose
+              : inEnrollmentPeriod
                 ? t("action.choose")
                 : t("action.view")}
           </Button>

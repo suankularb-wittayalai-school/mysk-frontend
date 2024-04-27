@@ -1,7 +1,6 @@
 import ClassroomSubjectCard from "@/components/home/ClassroomSubjectCard";
 import LearnElectiveEntryCard from "@/components/home/LearnElectiveEntryCard";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
-import { ElectivePermissions } from "@/utils/helpers/elective/electivePermissionsAt";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
@@ -16,25 +15,23 @@ import { LayoutGroup } from "framer-motion";
  *
  * @param subjectList The list of Classroom Subjects to display.
  * @param query The search query to filter the list.
- * @param electivePermissions The permissions available to this Student for Electives.
+ * @param inEnrollmentPeriod Whether the time now is in an Enrollment Period.
  * @param enrolledElective The Elective Subject this Student is enrolled in.
  */
 const SubjectList: StylableFC<{
   subjectList: ClassroomSubject[];
   query: string;
-  electivePermissions: ElectivePermissions;
+  inEnrollmentPeriod?: boolean;
   enrolledElective: ElectiveSubject | null;
 }> = ({
   subjectList,
   query,
-  electivePermissions,
+  inEnrollmentPeriod,
   enrolledElective,
   style,
   className,
 }) => {
   const locale = useLocale();
-
-  const mysk = useMySKClient();
 
   const filterredSubjectList = query
     ? subjectList.filter(
@@ -49,12 +46,10 @@ const SubjectList: StylableFC<{
 
   return (
     <Columns columns={3} element="ul" style={style} className={className}>
-      {(electivePermissions.view || mysk.user?.is_admin) && (
-        <LearnElectiveEntryCard
-          electivePermissions={electivePermissions}
-          enrolledElective={enrolledElective}
-        />
-      )}
+      <LearnElectiveEntryCard
+        inEnrollmentPeriod={inEnrollmentPeriod}
+        enrolledElective={enrolledElective}
+      />
       <LayoutGroup>
         {filterredSubjectList.map((listItem) => (
           <ClassroomSubjectCard key={listItem.id} subject={listItem} />

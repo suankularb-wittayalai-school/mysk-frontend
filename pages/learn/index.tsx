@@ -8,9 +8,6 @@ import getBirthdayBoysOfClassroom from "@/utils/backend/classroom/getBirthdayBoy
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import getClassSchedule from "@/utils/backend/schedule/getClassSchedule";
 import getClassroomSubjectsOfClass from "@/utils/backend/subject/getClassroomSubjectsOfClass";
-import electivePermissionsAt, {
-  ElectivePermissions,
-} from "@/utils/helpers/elective/electivePermissionsAt";
 import createEmptySchedule from "@/utils/helpers/schedule/createEmptySchedule";
 import useLocale from "@/utils/helpers/useLocale";
 import { BackendReturn } from "@/utils/types/backend";
@@ -41,22 +38,16 @@ import { useState } from "react";
  * @param birthdayBoys The Students in this Student’s Classroom who have a birthday today.
  * @param schedule Data for displaying Schedule.
  * @param subjectList The Subjects this Student’s Classroom is enrolled in.
- * @param electivePermissions The permissions available to this Student for Electives.
+ * @param inEnrollmentPeriod Whether the time now is in an Enrollment Period.
  * @param student The Student viewing this page.
  */
 const LearnPage: CustomPage<{
   birthdayBoys: Pick<Student, "id" | "first_name" | "nickname" | "birthdate">[];
   schedule: ScheduleType;
   subjectList: ClassroomSubject[];
-  electivePermissions: ElectivePermissions;
+  inEnrollmentPeriod: boolean;
   student: Student;
-}> = ({
-  birthdayBoys,
-  schedule,
-  subjectList,
-  electivePermissions,
-  student,
-}) => {
+}> = ({ birthdayBoys, schedule, subjectList, inEnrollmentPeriod, student }) => {
   const { t } = useTranslation("learn");
   const { t: ts } = useTranslation("schedule");
   const locale = useLocale();
@@ -111,7 +102,7 @@ const LearnPage: CustomPage<{
           <SubjectList
             subjectList={subjectList}
             query={query}
-            electivePermissions={electivePermissions}
+            inEnrollmentPeriod={inEnrollmentPeriod}
             enrolledElective={student.chosen_elective}
           />
         </motion.section>
@@ -138,26 +129,27 @@ export const getServerSideProps: GetServerSideProps = async ({
   if (!student?.classroom) return { notFound: true };
   const { classroom } = student;
 
-  const [birthdayBoys, schedule, subjectList] = await Promise.all([
-    (await getBirthdayBoysOfClassroom(supabase, classroom.id)).data,
-    (await getClassSchedule(supabase, classroom.id)).data,
-    (await getClassroomSubjectsOfClass(supabase, classroom.id)).data,
-  ]);
+  const [birthdayBoys, schedule, subjectList, inEnrollmentPeriod] =
+    await Promise.all([
+      (await getBirthdayBoysOfClassroom(supabase, classroom.id)).data,
+      (await getClassSchedule(supabase, classroom.id)).data,
+      (await getClassroomSubjectsOfClass(supabase, classroom.id)).data,
+      (await mysk.fetch<boolean>("/v1/subjects/electives/in-enrollment-period"))
+        .data,
+    ]);
 
-  const electivePermissions = electivePermissionsAt();
-  if (electivePermissions.view) {
-    const { data: availableElectives } = await mysk.fetch<IDOnly[]>(
-      "/v1/subjects/electives",
-      {
-        query: {
-          fetch_level: "id_only",
-          filter: { data: { as_student_id: student.id } },
-        },
+  // If the Student belongs to a Classroom that cannot choose Electives, they
+  // should not see the Elective Entry Card.
+  let availableElectives: IDOnly[] = [];
+  if (inEnrollmentPeriod) {
+    // Fetch the Electives the Student can choose from.
+    const { data } = await mysk.fetch<IDOnly[]>("/v1/subjects/electives", {
+      query: {
+        fetch_level: "id_only",
+        filter: { data: { as_student_id: student.id } },
       },
-    );
-    // If the Student belongs to a Classroom that cannot choose Electives, they
-    // should not see the Elective Entry Card.
-    if (!availableElectives?.length) electivePermissions.view = false;
+    });
+    if (data) availableElectives = data;
   }
 
   return {
@@ -174,7 +166,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       birthdayBoys: birthdayBoys || [],
       schedule: schedule || createEmptySchedule(1, 5),
       subjectList,
-      electivePermissions,
+      inEnrollmentPeriod: inEnrollmentPeriod && availableElectives.length > 0,
       student,
     },
   };
