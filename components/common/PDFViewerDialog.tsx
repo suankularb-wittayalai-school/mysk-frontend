@@ -23,13 +23,15 @@ const DEFAULT_VIEWER_SIZE = { width: 800, height: 600 };
  * @param title The title of the PDF file, shown in the Top App Bar.
  * @param url The source URL of the PDF file.
  * @param onClose Triggers when the Full-screen Dialog is closed.
+ * @param onDownload Triggers when the user clicks the download Button.
  */
 const PDFViewerDialog: StylableFC<{
   open?: boolean;
   title: string | JSX.Element;
   url: string;
   onClose: () => void;
-}> = ({ open, title, url, onClose, style, className }) => {
+  onDownload?: () => void;
+}> = ({ open, title, url, onClose, onDownload, style, className }) => {
   const locale = useLocale();
   const { t } = useTranslation("common", { keyPrefix: "dialog.pdf" });
 
@@ -80,6 +82,7 @@ const PDFViewerDialog: StylableFC<{
           appearance="text"
           icon={<MaterialIcon icon="download" />}
           tooltip={t("action.download")}
+          onClick={onDownload}
           href={url}
           // eslint-disable-next-line react/display-name
           element={forwardRef((props, ref) => (

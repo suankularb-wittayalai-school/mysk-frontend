@@ -12,6 +12,7 @@ import {
   Text,
   transition,
 } from "@suankularb-components/react";
+import va from "@vercel/analytics";
 import { motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { useState } from "react";
@@ -52,7 +53,12 @@ const ElectiveDetailsHeader: StylableFC<{
       <AssistChip
         icon={<MaterialIcon icon="book" />}
         disabled={!electiveSubject.syllabus}
-        onClick={() => setSyllabusOpen(true)}
+        onClick={() => {
+          va.track("View Elective Syllabus", {
+            sessionCode: electiveSubject.session_code,
+          });
+          setSyllabusOpen(true);
+        }}
         className="mr-10 md:mr-0"
       >
         {t("action.seeSyllabus", {
@@ -65,6 +71,11 @@ const ElectiveDetailsHeader: StylableFC<{
           title={t("dialog.syllabus")}
           url={electiveSubject.syllabus.replace("?", "")}
           onClose={() => setSyllabusOpen(false)}
+          onDownload={() => {
+            va.track("Download Elective Syllabus", {
+              sessionCode: electiveSubject.session_code,
+            });
+          }}
         />
       )}
     </motion.div>
