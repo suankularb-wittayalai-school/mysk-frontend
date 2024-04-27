@@ -169,8 +169,7 @@ const LearnElectivesPage: CustomPage<{
             initial={{ opacity: 0, scale: 0.95, x: -10 }}
             animate={{ opacity: 1, scale: 1, x: 0 }}
             transition={transition(DURATION.medium2, EASING.standardDecelerate)}
-            className={cn(`relative hidden grow overflow-hidden *:absolute
-              *:inset-0 md:block`)}
+            className="relative hidden grow *:absolute *:inset-0 md:block"
           >
             {selectedID ? (
               // Content state
@@ -229,7 +228,8 @@ const LearnElectivesPage: CustomPage<{
           electiveSubject={selectedElective}
           enrolledID={enrolledID}
           onChooseSuccess={() => setDetailsOpen(false)}
-          className="!mx-0 !bg-surface-container-highest"
+          className={cn(`!mx-0 h-full !bg-surface-container-highest
+            *:!rounded-b-none`)}
         />
       </LookupDetailsDialog>
     </>
