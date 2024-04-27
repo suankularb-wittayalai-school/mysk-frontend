@@ -39,7 +39,10 @@ const ElectiveDetailsCard: StylableFC<{
           <LookupDetailsContent className="!rounded-xl pb-28 md:pb-4">
             <div className={cn(`grid grid-cols-2 gap-2 *:bg-surface-bright`)}>
               {/* Subject name */}
-              <InformationCard title={t("name")}>
+              <InformationCard
+                title={t("name")}
+                className="col-span-2 sm:col-span-1"
+              >
                 <MultilangText text={electiveSubject.name} />
               </InformationCard>
 
