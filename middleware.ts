@@ -1,10 +1,13 @@
+import { getStudentFromUserID } from "@/utils/backend/account/getLoggedInPerson";
 import fetchMySKAPI from "@/utils/backend/mysk/fetchMySKAPI";
 import getLocalePath from "@/utils/helpers/getLocalePath";
 import logError from "@/utils/helpers/logError";
 import permitted from "@/utils/helpers/permitted";
 import getHomeURLofRole from "@/utils/helpers/person/getHomeURLofRole";
 import { LangCode } from "@/utils/types/common";
-import { User, UserPermissionKey } from "@/utils/types/person";
+import { MySKClient } from "@/utils/types/fetch";
+import { Student, User, UserPermissionKey } from "@/utils/types/person";
+import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
@@ -15,6 +18,8 @@ import { NextRequest, NextResponse } from "next/server";
  * @see {@link https://nextjs.org/docs/pages/building-your-application/routing/middleware Next.js documentation}
  */
 export async function middleware(req: NextRequest) {
+  const res = NextResponse.next();
+
   // Get original destination
   const route = req.nextUrl.pathname;
   const locale = req.nextUrl.locale as LangCode;
@@ -43,14 +48,37 @@ export async function middleware(req: NextRequest) {
     else return "user";
   })();
 
-  // Get user metadata
+  // Declare Supabase client
+  const supabase = createMiddlewareClient({ req, res });
+
+  // Get data about user
   const accessToken = req.cookies.get("access_token")?.value;
   let user: User | null = null;
+  let student: Student | null = null;
   if (accessToken) {
+    // Declare MySK client
+    const mysk = {
+      fetch: async (path, options) =>
+        await fetchMySKAPI(path, accessToken, options),
+      user: null,
+      person: null,
+    } as MySKClient;
+
+    // Get user metadata
     const { data, error } = await fetchMySKAPI<User>("/auth/user", accessToken);
     if (error) logError("middleware (user)", error);
-     // FIXME: Permissions aren’t implemented in MySK API yet (per @smartwhatt).
-     user = data ? { ...data, permissions: [] } : null;
+    user = data;
+
+    // Get Student data (Students have more granular permissions)
+    if (user?.role === "student") {
+      const { data, error } = await getStudentFromUserID(
+        supabase,
+        mysk,
+        user.id,
+      );
+      if (error) logError("middleware (student)", error);
+      student = data;
+    }
   }
 
   // Decide on destination based on user and page protection type
@@ -66,21 +94,32 @@ export async function middleware(req: NextRequest) {
     // prettier-ignore
     if (
       !(
-        (
-          // Allow admins to visit admin pages
-          (pageRole === "admin" && user?.is_admin) ||
-          // Allow those with `can_see_management` permission to visit management
-          // pages
-          (pageRole === "management" &&
-            permitted(user, UserPermissionKey.can_see_management)) ||
-          // Allow all users to visit user pages
-          pageRole === "user" ||
-          // Allow users with the correct roles
-          pageRole === user?.role
-        )
+        // Allow Students to visit their own Classroom pages
+        // Allow admins to visit admin pages
+        (pageRole === "admin" && user?.is_admin) ||
+        // Allow those with `can_see_management` permission to visit management
+        // pages
+        (pageRole === "management" &&
+          permitted(user, UserPermissionKey.can_see_management)) ||
+        // Allow all users to visit user pages
+        pageRole === "user" ||
+        // Allow users with the correct roles
+        pageRole === user?.role
       )
     ) 
       return user?.role ? getHomeURLofRole(user.role) : "/";
+
+    // Disallow Students from visiting pages of other Classrooms
+    const ownClassroomURL = student?.classroom
+      ? `/classes/${student.classroom.number}`
+      : null;
+    if (
+      user?.role === "student" &&
+      !user.is_admin &&
+      route.startsWith("/classes/") &&
+      (!ownClassroomURL || !route.startsWith(ownClassroomURL))
+    )
+      return "/classes";
 
     // Let permitted users continue
     return null;

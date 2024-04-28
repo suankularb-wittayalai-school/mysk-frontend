@@ -8,17 +8,15 @@ import AttendanceViewSelector, {
 import HomeroomContentDialog from "@/components/attendance/HomeroomContentDialog";
 import TodaySummary from "@/components/attendance/TodaySummary";
 import PageHeader from "@/components/common/PageHeader";
-import {
-  getStudentFromUserID,
-  getTeacherFromUserID,
-} from "@/utils/backend/account/getLoggedInPerson";
 import getAttendanceOfClass from "@/utils/backend/attendance/getAttendanceOfClass";
 import getHomeroomOfClass from "@/utils/backend/attendance/getHomeroomOfClass";
 import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
-import createMySKClient from "@/utils/backend/mysk/createMySKClient";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
+import classroomOfPerson from "@/utils/helpers/classroom/classroomOfPerson";
 import cn from "@/utils/helpers/cn";
 import useToggle from "@/utils/helpers/useToggle";
 import { YYYYMMDDRegex } from "@/utils/patterns";
+import { supabase } from "@/utils/supabase-backend";
 import {
   AttendanceEvent,
   HomeroomContent,
@@ -26,7 +24,7 @@ import {
 } from "@/utils/types/attendance";
 import { Classroom } from "@/utils/types/classroom";
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { User, UserRole } from "@/utils/types/person";
+import { UserRole } from "@/utils/types/person";
 import {
   Button,
   Columns,
@@ -34,10 +32,9 @@ import {
   List,
   MaterialIcon,
 } from "@suankularb-components/react";
-import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import va from "@vercel/analytics";
 import { isFuture, isToday, isWeekend } from "date-fns";
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
+import { GetStaticPaths, GetStaticProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
@@ -48,30 +45,25 @@ import { useEffect, useState } from "react";
  * Date Attendance page displays Attendance of a Classroom at specific date.
  *
  * @param date The date to display Attendance of, in YYYY-MM-DD format.
- * @param user The currently logged in user.
- * @param teacherID The ID of the Teacher who is viewing this page. Used in Attendance.
- * @param editable Whether the Attendance data is editable.
  * @param attendances The Attendance data to display.
  * @param homeroomContent An object containing the content of this day’s homeroom.
  * @param classroom The Classroom that this page is for.
  */
 const DateAttendancePage: CustomPage<{
   date: string;
-  teacherID?: string;
-  editable?: boolean;
   attendances: StudentAttendance[];
   homeroomContent?: HomeroomContent;
   classroom: Pick<Classroom, "id" | "number">;
 }> = ({
   date,
-  teacherID,
-  editable,
   attendances: initialAttendances,
   homeroomContent,
   classroom,
 }) => {
   const { t } = useTranslation("attendance");
   const { t: tx } = useTranslation("common");
+
+  const mysk = useMySKClient();
 
   const [event, setEvent] = useState<AttendanceEvent>("assembly");
   const [homeroomOpen, setHomeroomOpen] = useState(false);
@@ -82,6 +74,14 @@ const DateAttendancePage: CustomPage<{
   const [attendances, setAttendances] =
     useState<StudentAttendance[]>(initialAttendances);
   useEffect(() => setAttendances(initialAttendances), [initialAttendances]);
+
+  /** Admin Teachers and Advisors of this Classroom can edit Attendance. */
+  const editable =
+    (mysk.user?.role === UserRole.teacher &&
+      (mysk.user?.is_admin ||
+        (mysk.person &&
+          classroomOfPerson(mysk.person)?.id === classroom.id))) ||
+    false;
 
   return (
     <>
@@ -173,7 +173,7 @@ const DateAttendancePage: CustomPage<{
                   attendance={attendance}
                   shownEvent={event}
                   date={date}
-                  teacherID={teacherID}
+                  teacherID={mysk.person?.id}
                   editable={editable && !loading}
                   onAttendanceChange={(attendance) =>
                     setAttendances(
@@ -188,14 +188,14 @@ const DateAttendancePage: CustomPage<{
               ))}
 
               {/* Bulk actions (as requested by Supannee) */}
-              {editable && teacherID && (
+              {editable && mysk.person && (
                 <AttendanceBulkActions
                   attendances={attendances}
                   onAttendancesChange={setAttendances}
                   toggleLoading={toggleLoading}
                   date={date}
                   classroom={classroom}
-                  teacherID={teacherID}
+                  teacherID={mysk.person?.id}
                   className="mt-2 px-4 md:px-0"
                 />
               )}
@@ -215,12 +215,7 @@ const DateAttendancePage: CustomPage<{
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  params,
-  req,
-  res,
-}) => {
+export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   const { classNumber, date } = params as { [key: string]: string };
   if (
     !YYYYMMDDRegex.test(date) ||
@@ -229,54 +224,11 @@ export const getServerSideProps: GetServerSideProps = async ({
   )
     return { notFound: true };
 
-  const mysk = await createMySKClient(req);
-  const supabase = createPagesServerClient({
-    req: req as NextApiRequest,
-    res: res as NextApiResponse,
-  });
-
   const { data: classroom, error } = await getClassroomByNumber(
     supabase,
     Number(classNumber),
   );
   if (error) return { notFound: true };
-
-  // Check if user is allowed to view or edit Attendance data on this page
-  const { user } = mysk;
-  let editable = false;
-  let teacherID = null;
-
-  // Admins can view and edit all Attendance
-  if (user?.is_admin) editable = true;
-
-  switch (user?.role) {
-    // Students can only view their own Attendance and cannot edit
-    case UserRole.student:
-      const { data: student } = await getStudentFromUserID(
-        supabase,
-        mysk,
-        user.id,
-      );
-      if (student?.classroom?.id !== classroom.id && !user?.is_admin)
-        return { notFound: true };
-      break;
-    // Teachers can edit Attendance of their own Classrooms
-    case UserRole.teacher:
-      const { data: teacher } = await getTeacherFromUserID(
-        supabase,
-        mysk,
-        user.id,
-      );
-      if (teacher?.class_advisor_at?.id === classroom.id) editable = true;
-      teacherID = teacher?.id || null;
-      break;
-    // Management cannot edit Attendance of all Classrooms
-    case UserRole.management:
-      break;
-    // Other users are not allowed to view Attendance
-    default:
-      if (!user?.is_admin) return { notFound: true };
-  }
 
   const { data: attendances } = await getAttendanceOfClass(
     supabase,
@@ -296,13 +248,17 @@ export const getServerSideProps: GetServerSideProps = async ({
         "attendance",
       ])),
       date,
-      teacherID,
-      editable,
       attendances,
       homeroomContent,
       classroom,
     },
+    revalidate: 10,
   };
 };
+
+export const getStaticPaths: GetStaticPaths = async () => ({
+  paths: [],
+  fallback: "blocking",
+});
 
 export default DateAttendancePage;
