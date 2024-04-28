@@ -233,6 +233,12 @@
       "action": {
         "close": "ปิดหน้าต่าง"
       }
+    },
+    "pdf": {
+      "loading": "กำลังโหลด PDF…",
+      "action": {
+        "download": "ดาวน์โหลด"
+      }
     }
   },
   "action": {

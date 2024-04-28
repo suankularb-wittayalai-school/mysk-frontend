@@ -19,14 +19,21 @@
     }
   },
   "detail": {
+    "empty": "Select the elective you want to enroll in and press ”Choose elective.”",
     "information": {
       "title": "Information",
       "name": "Subject name",
-      "description": "Description",
       "code": "Subject code",
       "teachers": "Teachers",
       "room": "Room",
-      "credit": "Credit"
+      "description": "Description",
+      "action": {
+        "seeSyllabus_available": "See syllabus",
+        "seeSyllabus_unavailable": "Syllabus not available"
+      },
+      "dialog": {
+        "syllabus": "Syllabus"
+      }
     },
     "trade": {
       "title": "Trade electives",

@@ -224,6 +224,12 @@
       "action": {
         "close": "Close"
       }
+    },
+    "pdf": {
+      "loading": "Loading PDF…",
+      "action": {
+        "download": "Download"
+      }
     }
   },
   "action": {
