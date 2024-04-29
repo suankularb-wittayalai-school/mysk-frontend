@@ -106,17 +106,18 @@ const LookupClassCard: StylableFC<{
             >
               {sift([
                 classroom.main_room,
-                !loading &&
-                  (period
-                    ? period.is_current
-                      ? getLocaleString(period.content[0].subject.name, locale)
-                      : t("period.upcoming", {
-                          duration: formatDistanceToNowStrict(
-                            getTodaySetToPeriodTime(period.start_time, "start"),
-                            { locale: locale === "en-US" ? enUS : th },
-                          ),
-                        })
-                    : t("period.finished")),
+                (() => {
+                  if (loading) return;
+                  if (!period) return t("period.finished");
+                  if (period.is_current)
+                    return getLocaleString(
+                      period.content[0].subject.name,
+                      locale,
+                    );
+                  return t("period.upcoming", {
+                    time: getTodaySetToPeriodTime(period.start_time, "start"),
+                  });
+                })(),
               ]).join(" • ")}
             </motion.span>
           </AnimatePresence>
