@@ -1,4 +1,5 @@
 import { isAfter, isSaturday, isSunday } from "date-fns";
+import { toZonedTime } from "date-fns-tz";
 
 /**
  * The start time of assembly.
@@ -50,6 +51,8 @@ function isAfterTime(time: Parameters<Date["setHours"]>, date: Date) {
 export default function schoolSessionStateAt(
   date: Date = new Date(),
 ): SchoolSessionState {
+  const zonedDate = toZonedTime(date, process.env.NEXT_PUBLIC_SCHOOL_TZ);
+
   // Here’s a diagram of how School Session States are laid out:
 
   // +--------------------------------+
@@ -65,15 +68,15 @@ export default function schoolSessionStateAt(
   // +--------------------------------+
 
   // Weekends
-  if (isSaturday(date) || isSunday(date)) return SchoolSessionState.after;
+  if (isSaturday(zonedDate) || isSunday(zonedDate)) return SchoolSessionState.after;
 
   // Before Schedule starts
-  if (isAfterTime(ASSEMBLY_START, date)) return SchoolSessionState.before;
-  if (isAfterTime(HOMEROOM_START, date)) return SchoolSessionState.assembly;
-  if (isAfterTime(SCHEDULE_START, date)) return SchoolSessionState.homeroom;
+  if (isAfterTime(ASSEMBLY_START, zonedDate)) return SchoolSessionState.before;
+  if (isAfterTime(HOMEROOM_START, zonedDate)) return SchoolSessionState.assembly;
+  if (isAfterTime(SCHEDULE_START, zonedDate)) return SchoolSessionState.homeroom;
 
   // During scheduled time
-  if (isAfterTime(SCHEDULE_END, date)) return SchoolSessionState.schedule;
+  if (isAfterTime(SCHEDULE_END, zonedDate)) return SchoolSessionState.schedule;
 
   // After Schedule ends
   return SchoolSessionState.after;

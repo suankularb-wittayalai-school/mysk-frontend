@@ -556,6 +556,66 @@ export type Database = {
           },
         ];
       };
+      elective_subject_enrollment_periods: {
+        Row: {
+          created_at: string;
+          end_time: string;
+          id: string;
+          start_time: string;
+        };
+        Insert: {
+          created_at?: string;
+          end_time: string;
+          id?: string;
+          start_time: string;
+        };
+        Update: {
+          created_at?: string;
+          end_time?: string;
+          id?: string;
+          start_time?: string;
+        };
+        Relationships: [];
+      };
+      elective_subject_requirements: {
+        Row: {
+          created_at: string;
+          elective_subject_id: string;
+          id: string;
+          label_en: string | null;
+          label_th: string;
+        };
+        Insert: {
+          created_at?: string;
+          elective_subject_id: string;
+          id?: string;
+          label_en?: string | null;
+          label_th: string;
+        };
+        Update: {
+          created_at?: string;
+          elective_subject_id?: string;
+          id?: string;
+          label_en?: string | null;
+          label_th?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "elective_subject_requirements_elective_subject_id_fkey";
+            columns: ["elective_subject_id"];
+            isOneToOne: false;
+            referencedRelation: "complete_elective_subjects_view";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "elective_subject_requirements_elective_subject_id_fkey";
+            columns: ["elective_subject_id"];
+            isOneToOne: false;
+            referencedRelation: "elective_subjects";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       elective_subject_trade_offers: {
         Row: {
           created_at: string;
@@ -1298,6 +1358,7 @@ export type Database = {
           created_at: string;
           elective_subject_id: string;
           id: string;
+          is_randomized: boolean;
           semester: number | null;
           student_id: string;
           year: number | null;
@@ -1306,6 +1367,7 @@ export type Database = {
           created_at?: string;
           elective_subject_id: string;
           id?: string;
+          is_randomized?: boolean;
           semester?: number | null;
           student_id: string;
           year?: number | null;
@@ -1314,6 +1376,7 @@ export type Database = {
           created_at?: string;
           elective_subject_id?: string;
           id?: string;
+          is_randomized?: boolean;
           semester?: number | null;
           student_id?: string;
           year?: number | null;

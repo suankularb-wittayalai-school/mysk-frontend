@@ -1,38 +1,37 @@
+import IncomingTradeOfferCard from "@/components/elective/IncomingTradeOfferCard";
+import OutgoingTradeOfferCard from "@/components/elective/OutgoingTradeOfferCard";
 import TradesCardHeader from "@/components/elective/TradesCardHeader";
 import TradesCardSection from "@/components/elective/TradesCardSection";
-import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import cn from "@/utils/helpers/cn";
-import electivePermissionsAt from "@/utils/helpers/elective/electivePermissionsAt";
 import { StylableFC } from "@/utils/types/common";
 import { ElectiveTradeOffer } from "@/utils/types/elective";
 import { MaterialIcon, Text } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
 import Balancer from "react-wrap-balancer";
-import IncomingTradeOfferCard from "./IncomingTradeOfferCard";
-import OutgoingTradeOfferCard from "./OutgoingTradeOfferCard";
 
 /**
  * A Card for creating and managing Trades of Elective Subjects. Students can
  * accept incoming Trade Requests and cancel outgoing ones.
  *
- * Trading is only available on the day exactly 2 weeks after the first school
- * day of the semester, i.e. if school starts on May 15th, trading will be
- * available only on May 29th.
- *
  * @param incomingTrades The pending Elective Trade Offers sent to the Student.
  * @param outgoingTrades The pending Elective Trade Offers made by the Student.
+ * @param inEnrollmentPeriod Whether the time now is in an Enrollment Period.
  */
 const ManageTradesCard: StylableFC<{
   incomingTrades: ElectiveTradeOffer[];
   outgoingTrades: ElectiveTradeOffer[];
-}> = ({ incomingTrades, outgoingTrades, style, className }) => {
+  inEnrollmentPeriod?: boolean;
+}> = ({
+  incomingTrades,
+  outgoingTrades,
+  inEnrollmentPeriod,
+  style,
+  className,
+}) => {
   const { t } = useTranslation("elective", { keyPrefix: "detail.trade" });
 
-  const mysk = useMySKClient();
-  const permissions = electivePermissionsAt();
-
   // Unavailable state
-  if (!permissions.trade && !mysk.user?.is_admin)
+  if (!inEnrollmentPeriod)
     return (
       <section
         style={style}
@@ -42,11 +41,7 @@ const ManageTradesCard: StylableFC<{
           type="body-medium"
           className="max-w-md text-center text-on-surface-variant"
         >
-          <Balancer>
-            {t("unavailable", {
-              context: permissions.choose ? "future" : "past",
-            })}
-          </Balancer>
+          <Balancer>{t("unavailable")}</Balancer>
         </Text>
       </section>
     );
