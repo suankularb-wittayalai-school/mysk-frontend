@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
  * A hook to get the current time and related information.
  *
  * @param updateFrequency The frequency to update the current time in milliseconds. Defaults to 1000 ms (1 second).
- * @param timezone The timezone to convert the time to. Defaults to "Asia/Bangkok". Use `null` to use the client’s timezone.
+ * @param timezone The timezone to convert the time to. Defaults to the school timezone. Use `null` to use the client’s timezone.
  *
  * @returns An object with the current time and related information.
  */
