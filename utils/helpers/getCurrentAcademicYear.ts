@@ -1,4 +1,5 @@
 import { SEMESTER_1_START_MONTH } from "@/utils/helpers/getCurrentSemester";
+import { toZonedTime } from "date-fns-tz";
 
 /**
  * Returns the current academic year based on a date. The academic year starts
@@ -9,8 +10,9 @@ import { SEMESTER_1_START_MONTH } from "@/utils/helpers/getCurrentSemester";
 export default function getCurrentAcademicYear(
   date: Date = new Date(),
 ): number {
-  const month = date.getMonth() + 1;
-  const year = date.getFullYear();
+  const zonedDate = toZonedTime(date, process.env.NEXT_PUBLIC_SCHOOL_TZ);
+  const month = zonedDate.getMonth() + 1;
+  const year = zonedDate.getFullYear();
   if (month < SEMESTER_1_START_MONTH) return year - 1;
   else return year;
 }

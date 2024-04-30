@@ -1,3 +1,5 @@
+import { toZonedTime } from "date-fns-tz";
+
 export const SEMESTER_1_START_MONTH = 4;
 export const SEMESTER_2_START_MONTH = 10;
 
@@ -12,7 +14,8 @@ export const SEMESTER_2_START_MONTH = 10;
  * @param date The date to check. Defaults to the current date.
  */
 export default function getCurrentSemester(date: Date = new Date()): 1 | 2 {
-  const month = date.getMonth() + 1;
+  const zonedDate = toZonedTime(date, process.env.NEXT_PUBLIC_SCHOOL_TZ);
+  const month = zonedDate.getMonth() + 1;
   if (month >= SEMESTER_1_START_MONTH && month < SEMESTER_2_START_MONTH)
     return 1;
   else return 2;
