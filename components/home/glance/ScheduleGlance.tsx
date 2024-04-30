@@ -68,6 +68,7 @@ const ScheduleGlance: StylableFC<{
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 10 }}
         transition={transition(DURATION.medium4, EASING.standard)}
+        suppressHydrationWarning // This component is calculated client-side.
         className={
           displayPeriod?.content.length === 1
             ? `grid-cols-2 items-start gap-2 space-y-3 md:grid md:space-y-0`
