@@ -19,8 +19,7 @@ import {
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import va from "@vercel/analytics";
-import { differenceInSeconds, formatDistanceToNowStrict } from "date-fns";
-import { enUS, th } from "date-fns/locale";
+import { differenceInSeconds } from "date-fns";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { sift } from "radash";
