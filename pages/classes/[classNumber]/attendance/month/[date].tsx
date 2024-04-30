@@ -1,4 +1,3 @@
-// Imports
 import AttendanceViewSelector, {
   AttendanceView,
 } from "@/components/attendance/AttendanceViewSelector";
@@ -9,12 +8,12 @@ import PageHeader from "@/components/common/PageHeader";
 import getMonthAttendanceOfClass from "@/utils/backend/attendance/getMonthAttendanceOfClass";
 import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
 import tallyAttendances from "@/utils/helpers/attendance/tallyAttendances";
+import { supabase } from "@/utils/supabase-backend";
 import { StudentAttendance } from "@/utils/types/attendance";
 import { Classroom } from "@/utils/types/classroom";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { ContentLayout } from "@suankularb-components/react";
-import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
+import { GetStaticPaths, GetStaticProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
@@ -22,6 +21,10 @@ import { group } from "radash";
 
 /**
  * Month Attendance page displays Attendance of a Classroom of a specific month.
+ * 
+ * @param date The month to display Attendance for in `YYYY-MM`.
+ * @param classroom The Classroom to display Attendance for.
+ * @param students The list of Students in the Classroom with their Attendance.
  */
 const MonthAttendancePage: CustomPage<{
   date: string;
@@ -88,18 +91,8 @@ const MonthAttendancePage: CustomPage<{
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  params,
-  req,
-  res,
-}) => {
+export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   const { classNumber, date } = params as { [key: string]: string };
-
-  const supabase = createPagesServerClient({
-    req: req as NextApiRequest,
-    res: res as NextApiResponse,
-  });
 
   const { data: classroom, error } = await getClassroomByNumber(
     supabase,
@@ -123,7 +116,13 @@ export const getServerSideProps: GetServerSideProps = async ({
       classroom,
       students,
     },
+    revalidate: 10,
   };
 };
+
+export const getStaticPaths: GetStaticPaths = async () => ({
+  paths: [],
+  fallback: "blocking",
+});
 
 export default MonthAttendancePage;

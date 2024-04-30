@@ -4,7 +4,7 @@
     "yourClass": "ห้องเรียนของคุณ",
     "item": {
       "period": {
-        "upcoming": "คาบต่อไปใน {{duration}}",
+        "upcoming": "คาบต่อไปเวลา {{time, datetime(hour: 2-digit; minute: 2-digit; hour12: false;)}}",
         "finished": "เลิกเรียนแล้ว"
       }
     }

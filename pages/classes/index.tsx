@@ -5,29 +5,23 @@ import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
 import LookupDetailsSide from "@/components/lookup/LookupDetailsSide";
 import LookupListSide from "@/components/lookup/LookupListSide";
 import LookupResultsList from "@/components/lookup/LookupResultsList";
-import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import getClassroomByID from "@/utils/backend/classroom/getClassroomByID";
 import getClassrooms from "@/utils/backend/classroom/getLookupClassrooms";
-import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
+import classroomOfPerson from "@/utils/helpers/classroom/classroomOfPerson";
+import { supabase } from "@/utils/supabase-backend";
 import { Classroom } from "@/utils/types/classroom";
 import { LangCode } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
 import { SplitLayout, useBreakpoint } from "@suankularb-components/react";
-import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { LayoutGroup } from "framer-motion";
-import {
-  GetServerSideProps,
-  NextApiRequest,
-  NextApiResponse,
-  NextPage,
-} from "next";
+import { GetStaticProps, NextPage } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
-import { group } from "radash";
-import { useEffect, useMemo, useState } from "react";
+import { first, group } from "radash";
+import { useEffect, useState } from "react";
 
 /**
  * The Classes page shows a list of all Classrooms in the current academic year.
@@ -38,26 +32,29 @@ import { useEffect, useMemo, useState } from "react";
  * issues.
  *
  * @param grades The Classrooms grouped by grade.
- * @param userClassroom The Classroom the user is a part of.
  */
 const ClassesPage: NextPage<{
-  grades: { [grade: number]: Pick<Classroom, "id" | "number" | "main_room">[] };
-  userClassroom?: Pick<Classroom, "id" | "number" | "main_room">;
-}> = ({ grades, userClassroom }) => {
+  classrooms: Pick<Classroom, "id" | "number" | "main_room">[];
+}> = ({ classrooms }) => {
   const { t } = useTranslation("classes");
   const { t: tx } = useTranslation("common");
 
-  /**
-   * The total number of Classrooms.
-   */
-  const length = useMemo(() => Object.values(grades).flat().length, [grades]);
-
-  const [selectedID, setSelectedID] = useState<string | undefined>(
-    userClassroom?.id || grades[1]?.[0]?.id,
-  );
-
   const supabase = useSupabaseClient();
   const mysk = useMySKClient();
+
+  const userClassroom =
+    (mysk.person &&
+      classrooms.find(
+        (classroom) => classroomOfPerson(mysk.person!)?.id === classroom.id,
+      )) ||
+    null;
+
+  const [selectedID, setSelectedID] = useState<string | undefined>(
+    userClassroom?.id || first(classrooms)?.id,
+  );
+  useEffect(() => {
+    if (userClassroom) setSelectedID(userClassroom.id);
+  }, [userClassroom]);
 
   /**
    * Fetch data for the selected Classroom.
@@ -101,9 +98,9 @@ const ClassesPage: NextPage<{
         ratio="list-detail"
         className="sm:[&>div]:!grid-cols-2 md:[&>div]:!grid-cols-3"
       >
-        <LookupListSide length={length}>
+        <LookupListSide length={classrooms.length}>
           <LookupResultsList
-            length={length}
+            length={classrooms.length}
             className="[&>ul]:!gap-8 [&>ul]:!pt-0"
           >
             <LayoutGroup>
@@ -121,7 +118,11 @@ const ClassesPage: NextPage<{
                 />
               )}
               {/* Other Classrooms grouped by grade */}
-              {Object.entries(grades).map(([grade, classrooms]) => (
+              {Object.entries(
+                group(classrooms, (classroom) =>
+                  Math.floor(classroom.number / 100),
+                ) as Record<string, typeof classrooms>,
+              ).map(([grade, classrooms]) => (
                 <GradeSection
                   key={grade}
                   grade={grade}
@@ -142,7 +143,7 @@ const ClassesPage: NextPage<{
         </LookupListSide>
         <LookupDetailsSide
           selectedID={selectedClassroom?.id || selectedID}
-          length={length}
+          length={classrooms.length}
         >
           <ClassDetailsCard
             classroom={selectedClassroom}
@@ -167,53 +168,22 @@ const ClassesPage: NextPage<{
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-  req,
-  res,
-}) => {
-  const mysk = await createMySKClient(req);
-  const supabase = createPagesServerClient({
-    req: req as NextApiRequest,
-    res: res as NextApiResponse,
-  });
-
-  // Get all Classrooms
-  const { data: classrooms, error } = await getClassrooms(supabase);
-  if (error) return { notFound: true };
-
-  // Group Classrooms by first digit of Classroom number
-  const grades = group(classrooms, (classroom) =>
-    Math.floor(classroom.number / 100),
-  );
-
-  // PS: I hate how “grade” means both the year level and the scoring system!
-
-  // Get the Classroom the user is a part of
-  const { data: person } = await getLoggedInPerson(supabase, mysk);
-  const userClassroom =
-    person && ["student", "teacher"].includes(person.role)
-      ? classrooms.find(
-          (classroom) =>
-            (person?.role === "teacher"
-              ? person.class_advisor_at?.id
-              : person?.classroom?.id) === classroom.id,
-        ) || null
-      : null;
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
+  const { data: classrooms } = await getClassrooms(supabase);
 
   return {
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
         "common",
-        ...(person?.role === "teacher" ? ["account"] : []),
+        "account",
         "attendance",
         "classes",
         "lookup",
         "schedule",
       ])),
-      grades,
-      userClassroom,
+      classrooms,
     },
+    revalidate: 300,
   };
 };
 
