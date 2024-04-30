@@ -19,14 +19,21 @@
     }
   },
   "detail": {
+    "empty": "เลือกวิชาเลือกที่ต้องการลงทะเบียน แล้วกด “เลือกวิชานี้”",
     "information": {
       "title": "รายละเอียด",
       "name": "ชื่อวิชา",
-      "description": "รายละเอียด",
       "code": "รหัสวิชา",
       "teachers": "ครูผู้สอน",
       "room": "ห้องที่ใช้เรียน",
-      "credit": "หน่วยกิต"
+      "description": "รายละเอียด",
+      "action": {
+        "seeSyllabus_available": "ดูคำอธิบายวิชา",
+        "seeSyllabus_unavailable": "ไม่มีคำอธิบายวิชา"
+      },
+      "dialog": {
+        "syllabus": "คำอธิบายวิชา"
+      }
     },
     "trade": {
       "title": "แลกวิชาเลือก",

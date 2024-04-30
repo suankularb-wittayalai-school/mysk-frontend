@@ -19,6 +19,7 @@ import {
   DURATION,
   EASING,
   List,
+  Text,
   transition,
   useBreakpoint,
 } from "@suankularb-components/react";
@@ -78,11 +79,10 @@ const LearnElectivesPage: CustomPage<{
     if (data) setSelectedElective(data);
   }
   useEffect(() => {
-    const initialSessionCode = enrolledID || electiveSubjects[0]?.session_code;
-    if (!initialSessionCode) return;
-    setSelectedID(initialSessionCode);
-    fetchBySessionCode(initialSessionCode);
-  }, []);
+    if (!enrolledID) return;
+    setSelectedID(enrolledID);
+    fetchBySessionCode(enrolledID);
+  }, [enrolledID]);
 
   return (
     <>
@@ -165,16 +165,27 @@ const LearnElectivesPage: CustomPage<{
         >
           {/* Details */}
           <motion.main
-            key={selectedID}
+            key={selectedID || "empty"}
             initial={{ opacity: 0, scale: 0.95, x: -10 }}
             animate={{ opacity: 1, scale: 1, x: 0 }}
             transition={transition(DURATION.medium2, EASING.standardDecelerate)}
-            className="hidden grow overflow-hidden md:block"
+            className="relative hidden grow *:absolute *:inset-0 md:block"
           >
-            <ElectiveDetailsCard
-              electiveSubject={selectedElective}
-              className="h-full"
-            />
+            {selectedID ? (
+              // Content state
+              <ElectiveDetailsCard electiveSubject={selectedElective} />
+            ) : (
+              // Empty state
+              <div className="grid place-content-center">
+                <Text
+                  type="body-medium"
+                  element="p"
+                  className="max-w-52 text-center text-on-surface-variant"
+                >
+                  {t("detail.empty")}
+                </Text>
+              </div>
+            )}
           </motion.main>
 
           {/* Trade */}
@@ -217,7 +228,8 @@ const LearnElectivesPage: CustomPage<{
           electiveSubject={selectedElective}
           enrolledID={enrolledID}
           onChooseSuccess={() => setDetailsOpen(false)}
-          className="!mx-0 !bg-surface-container-highest"
+          className={cn(`!mx-0 h-full !bg-surface-container-highest
+            *:!rounded-b-none`)}
         />
       </LookupDetailsDialog>
     </>

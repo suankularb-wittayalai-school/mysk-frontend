@@ -199,10 +199,13 @@ const LandingPage: CustomPage = () => {
         {/* Google One Tap UI fixes */}
         <style jsx global>{`
           /* Fix Google One Tap UI white box on dark mode */
+          #credential_picker_iframe,
+          #credential_picker_container {
+            color-scheme: light;
+          }
           #credential_picker_container {
             right: 0.5rem !important;
             top: 0.5rem !important;
-            color-scheme: light;
           }
 
           /* Add bottom padding when Google One Tap UI displays (if on mobile)
