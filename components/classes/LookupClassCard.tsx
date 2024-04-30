@@ -80,8 +80,8 @@ const LookupClassCard: StylableFC<{
       }}
       style={style}
       className={cn(
-        `group !grid w-full !grid-cols-[minmax(0,1fr),calc(4.5rem+2px)] items-center
-        !rounded-none !border-transparent !bg-transparent text-left
+        `group !grid w-full !grid-cols-[minmax(0,1fr),calc(4.5rem+2px)]
+        items-center !rounded-none !border-transparent !bg-transparent text-left
         !transition-[padding,border,background-color] sm:!rounded-full`,
         classroom.id === selected &&
           `sm:!border-outline-variant sm:!bg-primary-container sm:pl-2
@@ -128,6 +128,11 @@ const LookupClassCard: StylableFC<{
             alt="Period progress in percent"
             value={percentage}
             visible={!loading && period?.is_current}
+            className={cn(
+              `[&_*]:transition-colors`,
+              classroom.id === selected &&
+                `![--_remainder-color:var(--surface)]`,
+            )}
           />
         </div>
       ) : (
