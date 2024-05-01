@@ -76,7 +76,10 @@ const ElectiveListItem: StylableFC<{
                 },
               }}
             />
-            <span>{" • " + getLocaleString(electiveSubject.code, locale)}</span>
+            <span>
+              {electiveSubject.teachers.length > 0 && " • "}
+              {getLocaleString(electiveSubject.code, locale)}
+            </span>
           </>
         }
         className="!grid *:truncate"
