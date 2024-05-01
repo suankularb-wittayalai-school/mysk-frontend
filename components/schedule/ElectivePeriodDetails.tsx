@@ -1,158 +1,66 @@
-import PeriodDetailsContent from "@/components/schedule/PeriodDetailsContent";
+import ElectiveGridItem from "@/components/home/glance/ElectiveGridItem";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import cn from "@/utils/helpers/cn";
-import getLocaleString from "@/utils/helpers/getLocaleString";
-import { PERIOD_TIMES } from "@/utils/helpers/schedule/setDateToPeriodTime";
-import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
-import { DialogFC } from "@/utils/types/component";
-import { PeriodContentItem, SchedulePeriod } from "@/utils/types/schedule";
-import {
-  Button,
-  Card,
-  Columns,
-  DURATION,
-  EASING,
-  MaterialIcon,
-  Text,
-  transition,
-} from "@suankularb-components/react";
-import { AnimatePresence, motion } from "framer-motion";
+import { Student, UserRole } from "@/utils/types/person";
+import { SchedulePeriod } from "@/utils/types/schedule";
+import { FullscreenDialog } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
-import { useEffect } from "react";
 
-const SubjectPeriodCard: StylableFC<{
+/**
+ * A Full-screen Dialog displaying all options in an Elective Period.
+ *
+ * @param open Whether the Full-screen Dialog is open and shown.
+ * @param period The Schedule Period to display.
+ * @param onClose Triggers when the Full-screen Dialog is closed.
+ */
+const ElectivePeriodDetails: StylableFC<{
+  open?: boolean;
   period: SchedulePeriod;
-  subject: PeriodContentItem;
-}> = ({ period, subject, style, className }) => {
-  // Translation
-  const locale = useLocale();
+  onClose: () => void;
+}> = ({ open, period, onClose }) => {
+  const { t } = useTranslation("schedule", {
+    keyPrefix: "dialog.electivePeriodDetails",
+  });
 
-  return (
-    <Card
-      appearance="filled"
-      style={style}
-      className={cn(`!bg-surface`, className)}
-    >
-      <div
-        className={cn(`flex flex-row gap-2 border-b-1 border-b-outline-variant
-          px-4 py-2`)}
-      >
-        <div className="flex flex-col">
-          <Text type="title-medium" element="h2">
-            {getLocaleString(subject.subject.name, locale)}
-          </Text>
-          <Text type="body-small" element="time">
-            {[period.start_time - 1, period.start_time + period.duration - 1]
-              .map((j) =>
-                // Get the start/end time of this Period
-                Object.values(PERIOD_TIMES[j])
-                  // Format the hours and minutes parts of the time
-                  .map((part) => part.toString().padStart(2, "0"))
-                  // Join those parts
-                  .join(":"),
-              )
-              // Join the start and end
-              .join("-")}
-          </Text>
-        </div>
-      </div>
-      <Columns columns={2} className="px-4 pb-3 pt-2">
-        <PeriodDetailsContent period={subject} />
-      </Columns>
-    </Card>
+  const mysk = useMySKClient();
+
+  const chosenElective =
+    (mysk.person?.role === UserRole.student &&
+      // Find the chosen Elective in the Schedule Period.
+      period.content.find(
+        (subject) =>
+          (mysk.person as Student).chosen_elective?.code.th ===
+          subject.subject.code.th,
+      )) ||
+    null;
+  const content = period.content.filter(
+    (subject) => chosenElective?.subject.code.th !== subject.subject.code.th,
   );
-};
-
-const ElectivePeriodDetails: DialogFC<{
-  period: SchedulePeriod;
-}> = ({ period, open, onClose }) => {
-  // Translation
-  const { t } = useTranslation("schedule");
-
-  // Animation
-
-  // Close the Dialog with the escape key
-  useEffect(() => {
-    const handleKeyUp = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
-    };
-    window.addEventListener("keyup", handleKeyUp);
-    return () => {
-      window.removeEventListener("keyup", handleKeyUp);
-    };
-  }, []);
 
   return (
-    <AnimatePresence>
-      {open && (
-        <>
-          {/* Dialog container (for positioning) */}
-          <div
-            className={cn(`pointer-events-none fixed inset-0 z-[100] grid
-              place-items-center`)}
-          >
-            {/* Dialog */}
-            <motion.div
-              role="alertdialog"
-              aria-modal
-              layoutId={`elective-period-${period.id}`}
-              transition={transition(DURATION.medium4, EASING.standard)}
-              className={cn(`pointer-events-auto max-h-[calc(100vh-3rem)] w-96
-                max-w-[calc(100vw-3rem)] overflow-y-auto overflow-x-hidden
-                rounded-xl bg-surface-container-high text-on-surface-variant
-                supports-[height:100dvh]:max-h-[calc(100dvh-3rem)]`)}
-            >
-              {/* Top app bar */}
-              <div
-                className={cn(`sticky top-0 flex flex-row items-center
-                  gap-2 border-b-1 border-b-outline bg-surface-container-high
-                  p-2`)}
-              >
-                <Button
-                  appearance="text"
-                  icon={<MaterialIcon icon="close" />}
-                  onClick={onClose}
-                  className={cn(`!text-on-surface before:!bg-on-surface
-                    [&_span]:!bg-on-surface`)}
-                />
-                <Text type="headline-small" element="h1">
-                  {t("dialog.electivePeriodDetails.title")}
-                </Text>
-              </div>
-
-              {/* Subject list */}
-              <div className="flex flex-col gap-4 p-6 pt-5">
-                <Text type="body-medium" element="p">
-                  {t("dialog.electivePeriodDetails.desc")}
-                </Text>
-
-                {period.content
-                  .sort((a, b) =>
-                    a.subject.code.th > b.subject.code.th ? 1 : -1,
-                  )
-                  .map((subject) => (
-                    <SubjectPeriodCard
-                      key={subject.id}
-                      period={period}
-                      subject={subject}
-                    />
-                  ))}
-              </div>
-            </motion.div>
-          </div>
-
-          {/* Scrim */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.5 }}
-            exit={{ opacity: 0 }}
-            transition={transition(DURATION.medium4, EASING.standard)}
-            className="skc-scrim"
-            onClick={onClose}
-          />
-        </>
+    <FullscreenDialog
+      open={open}
+      title={t("title")}
+      onClose={onClose}
+      className={cn(
+        `[&>:last-child]:max-h-96`,
+        // Workaround: Full-screen Dialog currently can’t appear within another
+        // Full-screen Dialog. The component was made back when <dialog> wasn’t
+        // really a thing yet.
+        // Ideally we’d show the nested Full-screen Dialogs but alas.
+        `[&_.skc-fullscreen-dialog]:sm:!hidden [&_.skc-scrim]:sm:!hidden`,
       )}
-    </AnimatePresence>
+    >
+      <ul className="space-y-2 sm:!-m-3">
+        {chosenElective && (
+          <ElectiveGridItem subject={chosenElective} enrolled />
+        )}
+        {content.map((subject) => (
+          <ElectiveGridItem key={subject.id} subject={subject} />
+        ))}
+      </ul>
+    </FullscreenDialog>
   );
 };
 
