@@ -7,7 +7,7 @@ import { formatSubjectPeriodName } from "@/utils/helpers/schedule/formatSubjectP
 import periodDurationToWidth from "@/utils/helpers/schedule/periodDurationToWidth";
 import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
-import { Student } from "@/utils/types/person";
+import { Student, UserRole } from "@/utils/types/person";
 import { SchedulePeriod } from "@/utils/types/schedule";
 import { Interactive, MaterialIcon, Text } from "@suankularb-components/react";
 import va from "@vercel/analytics";
@@ -33,11 +33,14 @@ const ElectivePeriod: StylableFC<{
   const { t } = useTranslation("schedule");
 
   const mysk = useMySKClient();
-  const chosenElective = period.content.find(
-    (subject) =>
-      (mysk.person as Student)?.chosen_elective?.code.th ===
-      subject.subject.code.th,
-  );
+  const chosenElective =
+    (mysk.person?.role === UserRole.student &&
+      period.content.find(
+        (subject) =>
+          (mysk.person as Student)?.chosen_elective?.code.th ===
+          subject.subject.code.th,
+      )) ||
+    null;
 
   const [detailsOpen, setDetailsOpen] = useState(false);
 
