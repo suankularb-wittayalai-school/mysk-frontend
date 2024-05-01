@@ -9,7 +9,7 @@ import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import { Student } from "@/utils/types/person";
 import { SchedulePeriod } from "@/utils/types/schedule";
-import { Interactive, Text } from "@suankularb-components/react";
+import { Interactive, MaterialIcon, Text } from "@suankularb-components/react";
 import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
 import { useState } from "react";
@@ -17,6 +17,10 @@ import { useState } from "react";
 /**
  * When many Schedule Periods overlap, they are grouped into a single Elective
  * Period.
+ *
+ * If the Student has chosen an Elective, Elective Period imitates a Subject
+ * Period of that Elective. The More Indicator is shown to distinguish it from a
+ * Subject Period.
  *
  * @param period The Schedule Period to render.
  * @param isInSession Whether the Schedule Period is currently in session.
@@ -56,8 +60,7 @@ const ElectivePeriod: StylableFC<{
       >
         <Interactive
           className={cn(
-            `flex h-full flex-col justify-center rounded-sm
-            bg-[--_background-color] px-4 py-2 text-left
+            `h-full rounded-sm bg-[--_background-color]
             text-[--_foreground-color] transition-shadow focus:shadow-2`,
             isInSession ? "shadow-1 hover:shadow-2" : "hover:shadow-1",
           )}
@@ -68,7 +71,7 @@ const ElectivePeriod: StylableFC<{
           }}
         >
           {chosenElective ? (
-            <>
+            <div className="grid px-4 py-2 text-left">
               <Text type="title-medium">
                 {formatSubjectPeriodName(
                   period.duration,
@@ -79,11 +82,19 @@ const ElectivePeriod: StylableFC<{
               <Text type="body-small">
                 <HoverList people={chosenElective.teachers} />
               </Text>
-            </>
+            </div>
           ) : (
-            <Text type="title-medium" className="!leading-none">
-              {t("schedule.elective")}
-            </Text>
+            <div
+              className={cn(
+                `flex items-center justify-center`,
+                period.duration < 2 ? `flex-col pt-1` : `flex-row gap-1.5`,
+              )}
+            >
+              <MaterialIcon icon="collections_bookmark" size={20} />
+              <Text type={period.duration < 2 ? "title-small" : "title-medium"}>
+                {t("schedule.elective")}
+              </Text>
+            </div>
           )}
         </Interactive>
         <MoreIndicator
