@@ -374,7 +374,7 @@ const Layout: FC<
       {/* Page loading indicator */}
       <Progress
         appearance="linear"
-        alt={t("pageIsLoading")}
+        alt={t("pageLoading")}
         visible={pageIsLoading}
         className="!z-[100]"
       />
