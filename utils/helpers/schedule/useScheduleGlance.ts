@@ -43,8 +43,7 @@ export default function useScheduleGlance(schedule: Schedule, role: UserRole) {
 
   // Determine relevant periods every second
   const todayRow = useMemo(
-    // () => (!isWeekend(now) ? schedule.content[now.getDay() - 1].content : []),
-    () => (!isWeekend(now) ? schedule.content[4].content : []),
+    () => (!isWeekend(now) ? schedule.content[now.getDay() - 1].content : []),
     [schedule, now.getDay()],
   );
 
