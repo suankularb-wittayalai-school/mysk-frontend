@@ -1,4 +1,3 @@
-// Imports
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import { LangCode } from "@/utils/types/common";
 import { SchedulePeriod } from "@/utils/types/schedule";
@@ -9,21 +8,18 @@ import { Subject } from "@/utils/types/subject";
  *
  * @param duration The length of this Period.
  * @param subject The Subject name object.
+ * @param locale The locale to format the Subject name in.
  *
  * @returns A formatted Subject name to be shown in a Subject Period.
  */
-export function getSubjectName(
+export function formatSubjectPeriodName(
   duration: SchedulePeriod["duration"],
   subject: Pick<Subject, "name" | "short_name">,
   locale: LangCode,
 ) {
-  return duration < 2
-    ? // If short period, use short name
-      subject.short_name[locale] ||
-        subject.short_name.th ||
-        // If no short name, use name
-        subject.name[locale] ||
-        subject.name.th
-    : // If long period, use name
-      getLocaleString(subject.name, locale);
+  // Show the short name for a single period, if available.
+  if (duration < 2 && subject.short_name)
+    return getLocaleString(subject.short_name, locale);
+  // Otherwise, show the full name.
+  return getLocaleString(subject.name, locale);
 }

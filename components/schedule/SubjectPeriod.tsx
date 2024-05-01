@@ -7,7 +7,7 @@ import lengthenScheduleItem from "@/utils/backend/schedule/lengthenScheduleItem"
 import moveScheduleItem from "@/utils/backend/schedule/moveScheduleItem";
 import cn from "@/utils/helpers/cn";
 import getLocaleString from "@/utils/helpers/getLocaleString";
-import { getSubjectName } from "@/utils/helpers/getSubjectName";
+import { formatSubjectPeriodName } from "@/utils/helpers/schedule/formatSubjectPeriodName";
 import periodDurationToWidth from "@/utils/helpers/schedule/periodDurationToWidth";
 import positionPxToPeriod from "@/utils/helpers/schedule/positionPxToPeriod";
 import useLocale from "@/utils/helpers/useLocale";
@@ -336,7 +336,7 @@ const SubjectPeriod: FC<{
                   />
                 )}
               >
-                {getSubjectName(period.duration, period.subject, locale)}
+                {formatSubjectPeriodName(period.duration, period.subject, locale)}
               </Text>
             )}
 
@@ -344,7 +344,7 @@ const SubjectPeriod: FC<{
             {(view === "student" || !menuOpen || extending || loading) && (
               <Text type="body-small">
                 {view === "teacher" ? (
-                  getSubjectName(period.duration, period.subject, locale)
+                  formatSubjectPeriodName(period.duration, period.subject, locale)
                 ) : (
                   <HoverList people={period.teachers} />
                 )}
