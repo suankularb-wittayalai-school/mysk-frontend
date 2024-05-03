@@ -8,8 +8,6 @@ import SubjectPeriod from "@/components/schedule/SubjectPeriod";
 import SubjectsInChargeCard from "@/components/schedule/SubjectsInChargeCard";
 import ScheduleContext from "@/contexts/ScheduleContext";
 import cn from "@/utils/helpers/cn";
-import isInPeriod from "@/utils/helpers/schedule/isInPeriod";
-import periodNumberAt from "@/utils/helpers/schedule/periodNumberAt";
 import { SchoolSessionState } from "@/utils/helpers/schedule/schoolSessionStateAt";
 import useNow from "@/utils/helpers/useNow";
 import { StylableFC } from "@/utils/types/common";
@@ -20,7 +18,6 @@ import {
 } from "@/utils/types/schedule";
 import { Subject } from "@/utils/types/subject";
 import { Text } from "@suankularb-components/react";
-import { setDay } from "date-fns";
 import { LayoutGroup } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { RefObject, useEffect, useRef, useState } from "react";
@@ -119,48 +116,42 @@ const Schedule: StylableFC<{
 
             <LayoutGroup>
               {/* For each day */}
-              {schedule.content.map((row) => {
-                const day = setDay(now, row.day);
+              {schedule.content.map((row) => (
+                <li key={row.day} className="flex flex-row gap-2">
+                  {/* The day of this row */}
+                  <DayCard day={row.day} />
 
-                return (
-                  <li key={row.day} className="flex flex-row gap-2">
-                    {/* The day of this row */}
-                    <DayCard day={row.day} />
+                  {/* The periods in this row */}
+                  <ul className="flex flex-row gap-2">
+                    {row.content.map((period) => {
+                      const { length } = period.content;
+                      const key = row.day + "-" + period.start_time;
+                      const isInSession =
+                        schoolSessionState === SchoolSessionState.schedule &&
+                        now.getDay() === row.day &&
+                        periodNumber >= period.start_time &&
+                        periodNumber < period.start_time + period.duration;
 
-                    {/* The periods in this row */}
-                    <ul className="flex flex-row gap-2">
-                      {row.content.map((period) => {
-                        const isInSession = isInPeriod(
-                          now,
-                          day,
-                          period.start_time,
-                          period.duration,
-                        );
-
-                        return period.content.length === 1 ? (
-                          <SubjectPeriod
-                            key={[row.day, period.start_time].join("-")}
-                            period={period.content[0]}
-                            day={row.day}
-                            isInSession={isInSession}
-                          />
-                        ) : period.content.length ? (
-                          <ElectivePeriod
-                            key={[row.day, period.start_time].join("-")}
-                            period={period}
-                            isInSession={isInSession}
-                          />
-                        ) : (
-                          <EmptyPeriod
-                            key={[row.day, period.start_time].join("-")}
-                            isInSession={isInSession}
-                          />
-                        );
-                      })}
-                    </ul>
-                  </li>
-                );
-              })}
+                      return length === 0 ? (
+                        <EmptyPeriod key={key} isInSession={isInSession} />
+                      ) : length === 1 ? (
+                        <SubjectPeriod
+                          key={key}
+                          period={period.content[0]}
+                          day={row.day}
+                          isInSession={isInSession}
+                        />
+                      ) : (
+                        <ElectivePeriod
+                          key={key}
+                          period={period}
+                          isInSession={isInSession}
+                        />
+                      );
+                    })}
+                  </ul>
+                </li>
+              ))}
             </LayoutGroup>
           </ul>
         </figure>
