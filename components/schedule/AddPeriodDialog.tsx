@@ -5,7 +5,7 @@ import SnackbarContext from "@/contexts/SnackbarContext";
 import createScheduleItem from "@/utils/backend/schedule/createScheduleItem";
 import cn from "@/utils/helpers/cn";
 import getLocaleString from "@/utils/helpers/getLocaleString";
-import { getSubjectName } from "@/utils/helpers/getSubjectName";
+import { formatSubjectPeriodName } from "@/utils/helpers/schedule/formatSubjectPeriodName";
 import periodDurationToWidth from "@/utils/helpers/schedule/periodDurationToWidth";
 import useForm from "@/utils/helpers/useForm";
 import useLocale from "@/utils/helpers/useLocale";
@@ -178,7 +178,7 @@ const AddPeriodDialog: StylableFC<{
                 transition={transition(DURATION.short4, EASING.standard)}
                 className="skc-text skc-text--body-small"
               >
-                {getSubjectName(form.duration, subject, locale)}
+                {formatSubjectPeriodName(form.duration, subject, locale)}
               </motion.span>
             </AnimatePresence>
           </motion.div>

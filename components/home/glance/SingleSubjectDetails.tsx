@@ -23,7 +23,10 @@ const SingleSubjectDetails: StylableFC<{
   return (
     <div
       style={style}
-      className={cn(`grid grid-cols-2 gap-2 *:space-y-1`, className)}
+      className={cn(
+        `grid grid-cols-2 gap-2 *:space-y-1 *:bg-surface-bright`,
+        className,
+      )}
     >
       {/* Teachers */}
       <InformationCard title={t("details.teachers.title")}>

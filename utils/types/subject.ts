@@ -17,7 +17,7 @@ export type Subject = {
   id: string;
   code: Required<MultiLangString>;
   name: MultiLangString;
-  short_name: MultiLangString;
+  short_name: MultiLangString | null;
   type: SubjectTypeEnum;
   description?: MultiLangString;
   teachers: Teacher[];

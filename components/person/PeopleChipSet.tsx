@@ -25,6 +25,7 @@ const PersonChipSet: FC<
     ComponentProps<typeof WithPersonDetails>["person"]
   >(people[0]);
 
+  if (!selectedPerson) return <ul />;
   return (
     <WithPersonDetails
       open={detailsOpen}

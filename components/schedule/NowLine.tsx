@@ -1,4 +1,5 @@
 import cn from "@/utils/helpers/cn";
+import { SCHEDULE_START } from "@/utils/helpers/schedule/schoolSessionStateAt";
 import useNow from "@/utils/helpers/useNow";
 import { StylableFC } from "@/utils/types/common";
 import { differenceInSeconds } from "date-fns";
@@ -29,7 +30,7 @@ const NowLine: StylableFC = ({ style, className }) => {
         // School starts at 08:30, so we use the number of minutes from then to
         // now
         transform: `translateX(${
-          differenceInSeconds(now, new Date().setHours(8, 30), {
+          differenceInSeconds(now, new Date(now).setHours(...SCHEDULE_START), {
             roundingMethod: "round",
           }) *
           (104 / 3000)

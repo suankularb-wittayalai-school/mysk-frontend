@@ -1,3 +1,4 @@
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import getTodaySetToPeriodTime from "@/utils/helpers/schedule/getTodaySetToPeriodTime";
 import {
   ASSEMBLY_START,
@@ -8,8 +9,8 @@ import {
 import useNow from "@/utils/helpers/useNow";
 import within from "@/utils/helpers/within";
 import { AttendanceEvent } from "@/utils/types/attendance";
-import { UserRole } from "@/utils/types/person";
-import { Schedule } from "@/utils/types/schedule";
+import { Student, UserRole } from "@/utils/types/person";
+import { Schedule, SchedulePeriod } from "@/utils/types/schedule";
 import { differenceInMinutes, differenceInSeconds, isWeekend } from "date-fns";
 import { mapValues } from "radash";
 import { useMemo } from "react";
@@ -37,6 +38,8 @@ export enum ScheduleGlanceType {
  */
 export default function useScheduleGlance(schedule: Schedule, role: UserRole) {
   const { now, periodNumber, schoolSessionState } = useNow();
+
+  const mysk = useMySKClient();
 
   // Determine relevant periods every second
   const todayRow = useMemo(
@@ -252,17 +255,38 @@ export default function useScheduleGlance(schedule: Schedule, role: UserRole) {
    * The period to display in the Schedule Glance.
    */
   const displayPeriod = useMemo(() => {
+    let displayPeriod: SchedulePeriod | undefined;
     switch (displayType) {
       case ScheduleGlanceType.learnCurrent:
       case ScheduleGlanceType.teachCurrent:
-        return currentPeriod;
+        displayPeriod = currentPeriod;
+        break;
       case ScheduleGlanceType.learnNext:
       case ScheduleGlanceType.teachTravel:
-        return immediateNextPeriod;
+        displayPeriod = immediateNextPeriod;
+        break;
       case ScheduleGlanceType.teachFuture:
-        return todayNextPeriod;
+        displayPeriod = todayNextPeriod;
+        break;
     }
-  }, [displayType]);
+
+    // If the student has chosen an Elective, only display that Elective.
+    if (
+      displayPeriod &&
+      displayPeriod.content.length > 1 &&
+      (mysk.person as Student)?.chosen_elective
+    )
+      return {
+        ...displayPeriod,
+        content: displayPeriod.content.filter(
+          (period) =>
+            period.subject.code.th ===
+            (mysk.person as Student).chosen_elective!.code.th,
+        ),
+      };
+
+    return displayPeriod;
+  }, [displayType, mysk.person]);
 
   /**
    * The number of minutes to display in the countdown.
