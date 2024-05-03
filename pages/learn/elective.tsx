@@ -161,7 +161,7 @@ const LearnElectivesPage: CustomPage<{
               <ChooseButton
                 sessionCode={selectedID}
                 enrolledID={enrolledID}
-                inEnrollmentPeriod={inEnrollmentPeriod}
+                disabled={!inEnrollmentPeriod}
                 className="!pointer-events-auto"
               />
             </Actions>
@@ -236,7 +236,7 @@ const LearnElectivesPage: CustomPage<{
       >
         <ElectiveDetailsCard
           electiveSubject={selectedElective}
-          enrolledID={enrolledID}
+          enrolledID={inEnrollmentPeriod ? enrolledID : null}
           onChooseSuccess={() => setDetailsOpen(false)}
           className={cn(`!mx-0 h-full !bg-surface-container-highest
             *:!rounded-b-none`)}

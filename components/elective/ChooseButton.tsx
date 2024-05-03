@@ -15,18 +15,18 @@ import { useContext } from "react";
  *
  * @param sessionCode The session code of the Elective Subject to choose.
  * @param enrolledID The session code of the Elective Subject the Student is currently enrolled in.
- * @param inEnrollmentPeriod Whether the time now is in an Enrollment Period.
+ * @param disabled Whether the Button is disabled.
  * @param onSucess Triggers after the Student has successfully chosen the Elective Subject.
  */
 const ChooseButton: StylableFC<{
   sessionCode: number | null;
   enrolledID: number | null;
-  inEnrollmentPeriod?: boolean;
+  disabled?: boolean;
   onSucess?: () => void;
 }> = ({
   sessionCode,
   enrolledID,
-  inEnrollmentPeriod,
+  disabled: forceDisabled,
   onSucess,
   style,
   className,
@@ -41,8 +41,8 @@ const ChooseButton: StylableFC<{
 
   const [loading, toggleLoading] = useToggle();
   const disabled =
-    // Disallow choosing if not in time window.
-    !inEnrollmentPeriod ||
+    // Disallow choosing if forced to be disabled.
+    forceDisabled ||
     // Disallow choosing if none is selected.
     !sessionCode ||
     // Disallow choosing if already enrolled in the same Elective Subject.
