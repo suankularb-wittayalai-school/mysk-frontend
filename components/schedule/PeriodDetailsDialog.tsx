@@ -1,4 +1,4 @@
-// Imports
+import SingleSubjectDetails from "@/components/home/glance/SingleSubjectDetails";
 import PeriodDetailsContent from "@/components/schedule/PeriodDetailsContent";
 import ScheduleContext from "@/contexts/ScheduleContext";
 import cn from "@/utils/helpers/cn";
@@ -7,9 +7,12 @@ import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import { PeriodContentItem } from "@/utils/types/schedule";
 import {
+  Actions,
   Button,
   DURATION,
+  Dialog,
   DialogContent,
+  DialogHeader,
   EASING,
   MaterialIcon,
   Text,
@@ -17,27 +20,72 @@ import {
 } from "@suankularb-components/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 
+/**
+ * A Dialog displaying all details of a Subject Period.
+ * 
+ * @param open Whether the Dialog is open and shown.
+ * @param period The Period Content Item to display.
+ * @param onClose Triggers when the Dialog is closed.
+ * @param onDelete Should delete the Period.
+ */
 const PeriodDetailsDialog: StylableFC<{
-  period: PeriodContentItem;
   open: boolean;
+  period: PeriodContentItem;
   onClose: () => void;
   onDelete?: () => void;
-}> = ({ period, open, onClose, onDelete }) => {
+}> = ({ open, period, onClose, onDelete, style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("schedule");
+  const { t } = useTranslation("schedule", {
+    keyPrefix: "dialog.periodDetails",
+  });
 
   const { editable } = useContext(ScheduleContext);
 
-  // Close the Dialog with the escape key
-  useEffect(() => {
-    const handleKeyUp = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
-    };
-    window.addEventListener("keyup", handleKeyUp);
-    return () => window.removeEventListener("keyup", handleKeyUp);
-  }, []);
+  return (
+    <Dialog
+      open={open}
+      width={360}
+      onClose={onClose}
+      style={style}
+      className={cn(
+        // Workaround: Full-screen Dialog currently can’t appear within another
+        // Dialog. The component was made back when <dialog> wasn’t really a
+        // thing yet.
+        // Ideally we’d show the nested Full-screen Dialogs but alas.
+        `[&_.skc-fullscreen-dialog]:!hidden [&_.skc-scrim]:!hidden`,
+        className,
+      )}
+    >
+      <DialogHeader
+        title={getLocaleString(period.subject.name, locale)}
+        desc={
+          <Text type="title-medium" className="-mt-3 block">
+            {getLocaleString(period.subject.code, locale)}
+          </Text>
+        }
+      />
+      <DialogContent className="px-4">
+        <SingleSubjectDetails period={period} />
+      </DialogContent>
+      <Actions className={editable ? "!justify-between" : undefined}>
+        {editable && (
+          <Button
+            appearance="text"
+            icon={<MaterialIcon icon="delete" />}
+            tooltip={t("action.delete")}
+            dangerous
+            onClick={onDelete}
+            className="!ml-1"
+          />
+        )}
+        <Button appearance="text" onClick={onClose}>
+          {t("action.close")}
+        </Button>
+      </Actions>
+    </Dialog>
+  );
 
   return (
     <AnimatePresence>
