@@ -8,20 +8,19 @@ import {
   Button,
   Dialog,
   DialogContent,
-  FullscreenDialog,
   MaterialIcon,
   Text,
 } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
 
 /**
- * A Full-screen Dialog displaying all options in an Elective Period.
+ * A Dialog displaying all options in an Elective Period.
  *
- * @param open Whether the Full-screen Dialog is open and shown.
+ * @param open Whether the Dialog is open and shown.
  * @param period The Schedule Period to display.
- * @param onClose Triggers when the Full-screen Dialog is closed.
+ * @param onClose Triggers when the Dialog is closed.
  */
-const ElectivePeriodDetails: StylableFC<{
+const ElectivePeriodDialog: StylableFC<{
   open?: boolean;
   period: SchedulePeriod;
   onClose: () => void;
@@ -91,4 +90,4 @@ const ElectivePeriodDetails: StylableFC<{
   );
 };
 
-export default ElectivePeriodDetails;
+export default ElectivePeriodDialog;

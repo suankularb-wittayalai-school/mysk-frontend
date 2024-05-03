@@ -1,5 +1,5 @@
 import ExtensionHints from "@/components/schedule/ExtensionHints";
-import PeriodDetailsDialog from "@/components/schedule/PeriodDetailsDialog";
+import SubjectPeriodDialog from "@/components/schedule/SubjectPeriodDialog";
 import SubjectPeriodMenu from "@/components/schedule/SubjectPeriodMenu";
 import SubjectPeriodText from "@/components/schedule/SubjectPeriodText";
 import ScheduleContext from "@/contexts/ScheduleContext";
@@ -126,7 +126,7 @@ const SubjectPeriod: StylableFC<{
       )}
 
       {/* Dialog */}
-      <PeriodDetailsDialog
+      <SubjectPeriodDialog
         period={period}
         open={detailsOpen}
         onClose={() => {
