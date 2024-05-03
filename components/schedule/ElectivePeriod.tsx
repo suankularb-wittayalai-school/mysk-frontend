@@ -74,7 +74,7 @@ const ElectivePeriod: StylableFC<{
           }}
         >
           {chosenElective ? (
-            <div className="grid px-4 py-2 text-left">
+            <div className="grid px-4 py-2 text-left *:truncate">
               <Text type="title-medium">
                 {formatSubjectPeriodName(
                   period.duration,
