@@ -44,7 +44,8 @@ const ElectivePeriodDetails: StylableFC<{
       title={t("title")}
       onClose={onClose}
       className={cn(
-        `[&>:last-child]:max-h-96`,
+        `!bg-surface-container-high [&>:first-child]:!bg-surface-container-high
+        [&>:last-child]:max-h-96`,
         // Workaround: Full-screen Dialog currently can’t appear within another
         // Full-screen Dialog. The component was made back when <dialog> wasn’t
         // really a thing yet.
