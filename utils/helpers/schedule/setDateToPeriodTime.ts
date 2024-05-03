@@ -18,9 +18,10 @@ export default function setDateToPeriodTime(
   edge?: "start" | "end",
 ) {
   return new Date(
-    date.setHours(
-      PERIOD_TIMES[periodNumber + (edge === "end" ? 0 : -1)].hours,
-      PERIOD_TIMES[periodNumber + (edge === "end" ? 0 : -1)].min,
+    new Date(date).setHours(
+      ...(Object.values(
+        PERIOD_TIMES[periodNumber + (edge === "end" ? 0 : -1)],
+      ) as [number, number]),
       0,
       0,
     ),
