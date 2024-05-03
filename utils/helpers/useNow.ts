@@ -27,8 +27,8 @@ export default function useNow(
     return () => clearInterval(interval);
   }, []);
 
-  const periodNumber = periodNumberAt();
-  const schoolSessionState = schoolSessionStateAt();
+  const periodNumber = periodNumberAt(now);
+  const schoolSessionState = schoolSessionStateAt(now);
 
   return {
     /** The current time as a Date object. */
