@@ -43,8 +43,8 @@ const LearnElectiveEntryCard: StylableFC<{
             : t("subtitle", { context: "student" })
         }
       />
-      <CardContent className="!pt-0">
-        <Actions align="right" className="!-mt-2.5">
+      <CardContent className="!p-3 !pt-0">
+        <Actions align="right" className="!-mt-2">
           <Button appearance="filled" href="/learn/elective" element={Link}>
             {inEnrollmentPeriod
               ? enrolledElective
