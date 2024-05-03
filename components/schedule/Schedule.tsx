@@ -48,19 +48,18 @@ const Schedule: StylableFC<{
   style,
   className,
 }) => {
-  // Translation
   const { t } = useTranslation("schedule");
 
-  // Ref for drag constrains and scrolling
+  // Ref for drag constrains and scrolling.
   const scheduleRef: RefObject<HTMLElement> = useRef(null);
 
-  // Time calculation set up
+  // Time calculation set up.
   const { now, periodNumber, schoolSessionState } = useNow();
 
-  // State for dropping to add a new period
+  // State for dropping to add a new period.
   const [additionSite, setAdditionSite] = useState<PeriodLocation>();
 
-  // Scroll to near current period
+  // Scroll to near current period on load.
   useEffect(() => {
     const schedule = scheduleRef.current;
     if (!schedule) return;
@@ -84,8 +83,7 @@ const Schedule: StylableFC<{
       <div
         style={style}
         className={cn(
-          `relative !mx-0 -my-2 flex flex-col-reverse gap-3
-          sm:flex-col`,
+          `relative !mx-0 -my-2 flex flex-col-reverse gap-3 sm:flex-col`,
           className,
         )}
       >
