@@ -48,8 +48,8 @@ export async function getTeacherByID(
 
   const electivesInCharge: ElectiveSubject[] = [];
   if (options?.detailed) {
-    const { data } = await mysk.fetch<ElectiveSubject[]>(
-      "/v1/subjects/electives/",
+    const { data, error } = await mysk.fetch<ElectiveSubject[]>(
+      "/v1/subjects/electives",
       {
         query: {
           fetch_level: "compact",
@@ -57,6 +57,7 @@ export async function getTeacherByID(
         },
       },
     );
+    if (error) logError("getTeacherByID (electives)", error);
     if (data?.length) electivesInCharge.push(...data);
   }
 
