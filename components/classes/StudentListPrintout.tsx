@@ -24,7 +24,7 @@ export type OptionsType = {
     | "shirtSize"
     | "pantsSize"
     | "elective"
-  );
+  )[];
   filters: (
     | "noElective"
     | "hasAllergies"

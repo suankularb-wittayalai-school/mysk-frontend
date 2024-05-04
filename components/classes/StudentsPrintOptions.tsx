@@ -84,13 +84,13 @@ const StudentsPrintOptions: FC<{
                 (mysk.user.is_admin || mysk.user.role !== UserRole.student) &&
                 "noElective",
                 "hasAllergies",
-            ].filter((column) => column) as OptionsType["filters"]
-          ).map((column) => (
-            <FormItem key={column} label={t(`filters.${column}`)}>
+            ].filter((filters) => filters) as OptionsType["filters"]
+          ).map((filters) => (
+            <FormItem key={filters} label={t(`filters.${filters}`)}>
               <Checkbox
-                value={form.columns.includes(column)}
+                value={form.filters.includes(filters)}
                 onChange={() =>
-                  setForm({ ...form, filters: toggle(form.filters, column) })
+                  setForm({ ...form, filters: toggle(form.filters, filters) })
                 }
               />
             </FormItem>
