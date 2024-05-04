@@ -42,9 +42,10 @@ const LearnElectiveEntryCard: StylableFC<{
             ? getLocaleString(enrolledElective.name, locale)
             : t("subtitle", { context: "student" })
         }
+        className="grow items-start"
       />
-      <CardContent className="!pt-0">
-        <Actions align="right" className="!-mt-2.5">
+      <CardContent className="!p-3 !pt-0">
+        <Actions className="!-mt-2.5">
           <Button appearance="filled" href="/learn/elective" element={Link}>
             {inEnrollmentPeriod
               ? enrolledElective

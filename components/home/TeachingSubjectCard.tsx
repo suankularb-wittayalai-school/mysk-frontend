@@ -1,7 +1,7 @@
-// Imports
 import SubjectClassesDialog from "@/components/home/SubjectClassesDialog";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
+import { StylableFC } from "@/utils/types/common";
 import { SubjectClassrooms } from "@/utils/types/subject";
 import {
   Actions,
@@ -14,21 +14,27 @@ import {
   MaterialIcon,
 } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
-import { FC, useState } from "react";
+import { useState } from "react";
 
-const TeachingSubjectCard: FC<{
+/**
+ * The Teach page counterpart to Classroom Subject Card. Lists the Classrooms
+ * this Teacher teaches this Subject to.
+ *
+ * @param subject The Subject and its Classrooms.
+ */
+const TeachingSubjectCard: StylableFC<{
   subject: SubjectClassrooms;
-}> = ({ subject }) => {
+}> = ({ subject, style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation(["teach", "common"]);
+  const { t } = useTranslation("teach", { keyPrefix: "subjects" });
+  const { t: tx } = useTranslation("common");
 
-  // Dialog control
-  const [classesOpen, setClassesOpen] = useState<boolean>(false);
+  const [classesOpen, setClassesOpen] = useState(false);
 
   return (
     <>
-      <Card appearance="outlined">
-        <div className="flex flex-row items-center pr-3">
+      <Card appearance="filled" style={style} className={className}>
+        <div className="flex grow flex-row items-start pr-3">
           <CardHeader
             title={getLocaleString(subject.subject.name, locale)}
             subtitle={getLocaleString(subject.subject.code, locale)}
@@ -37,25 +43,26 @@ const TeachingSubjectCard: FC<{
           {subject.classrooms.length !== 0 && (
             <Button
               appearance="text"
-              icon={<MaterialIcon icon="open_in_full" />}
-              alt={t("subjects.action.seeDetails")}
+              icon={<MaterialIcon icon="edit" />}
+              alt={t("action.seeDetails")}
               onClick={() => setClassesOpen(true)}
+              className="!my-4"
             />
           )}
         </div>
-        <CardContent>
+        <CardContent className="!p-3 !pt-0">
           {subject.classrooms.length ? (
             <ChipSet>
               {subject.classrooms.map((classItem) => (
                 <InputChip key={classItem.id}>
-                  {t("class", { ns: "common", number: classItem.number })}
+                  {tx("class", { number: classItem.number })}
                 </InputChip>
               ))}
             </ChipSet>
           ) : (
-            <Actions align="full" className="!mt-0">
+            <Actions className="!-mt-2.5">
               <Button appearance="filled" onClick={() => setClassesOpen(true)}>
-                {t("subjects.action.setUp")}
+                {t("action.setUp")}
               </Button>
             </Actions>
           )}

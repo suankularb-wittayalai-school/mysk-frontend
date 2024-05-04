@@ -88,7 +88,7 @@ const TeachPage: CustomPage<{
               onChange={setQuery}
             />
           </Columns>
-          <Columns columns={3}>
+          <Columns columns={3} className="!items-stretch">
             {teacher.electives_in_charge.length > 0 && (
               <TeachElectiveEntryCard
                 electivesInCharge={teacher.electives_in_charge}
