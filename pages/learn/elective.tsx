@@ -1,9 +1,8 @@
-import PageHeader from "@/components/common/PageHeader";
 import ChooseButton from "@/components/elective/ChooseButton";
 import ElectiveDetailsCard from "@/components/elective/ElectiveDetailsCard";
+import ElectiveLayout from "@/components/elective/ElectiveLayout";
 import ElectiveListItem from "@/components/elective/ElectiveListItem";
 import ManageTradesCard from "@/components/elective/ManageTradesCard";
-import LandingBlobs from "@/components/landing/LandingBlobs";
 import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
@@ -12,10 +11,9 @@ import cn from "@/utils/helpers/cn";
 import { BackendReturn } from "@/utils/types/backend";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { ElectiveSubject, ElectiveTradeOffer } from "@/utils/types/elective";
-import { Student } from "@/utils/types/person";
+import { Student, UserRole } from "@/utils/types/person";
 import {
   Actions,
-  ContentLayout,
   DURATION,
   EASING,
   List,
@@ -29,7 +27,6 @@ import { motion } from "framer-motion";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import Head from "next/head";
 import { useEffect, useState } from "react";
 
 const DIALOG_BREAKPOINTS = ["base", "sm"];
@@ -37,7 +34,7 @@ const DIALOG_BREAKPOINTS = ["base", "sm"];
 /**
  * A place where Students can choose and trade their Elective Subjects.
  *
- * @param electiveSubjects The Elective Subjects (default) available for choosing.
+ * @param electiveSubjects The Elective Subjects available for choosing.
  * @param enrolledID The ID of the Elective Subject the Student is enrolled in.
  * @param inEnrollmentPeriod Whether the time now is in an Enrollment Period.
  * @param incomingTrades The pending Elective Trade Offers sent to the Student.
@@ -57,7 +54,6 @@ const LearnElectivesPage: CustomPage<{
   outgoingTrades,
 }) => {
   const { t } = useTranslation("elective");
-  const { t: tx } = useTranslation("common");
 
   const mysk = useMySKClient();
 
@@ -94,28 +90,7 @@ const LearnElectivesPage: CustomPage<{
 
   return (
     <>
-      <Head>
-        <title>
-          {tx("tabName", { tabName: t("title", { context: "student" }) })}
-        </title>
-      </Head>
-
-      {/* Background */}
-      <div
-        className={cn(`fixed inset-0 bottom-auto -z-10 hidden h-screen
-          overflow-hidden sm:block`)}
-      >
-        <LandingBlobs className="inset-0" />
-      </div>
-
-      {/* Content */}
-      <PageHeader parentURL="/learn">
-        {t("title", { context: "student" })}
-      </PageHeader>
-      <ContentLayout
-        className={cn(`grow *:h-full *:!gap-6 sm:*:!grid
-          md:*:grid-cols-[5fr,7fr]`)}
-      >
+      <ElectiveLayout role={UserRole.student}>
         <section className="flex-col gap-3 space-y-3 sm:flex">
           {/* List */}
           <div
@@ -168,10 +143,7 @@ const LearnElectivesPage: CustomPage<{
           </div>
         </section>
 
-        <div
-          className={cn(`flex flex-col gap-6 *:rounded-xl *:bg-surface-bright
-            md:pb-[3.25rem]`)}
-        >
+        <div className="flex flex-col gap-6 md:pb-[3.25rem]">
           {/* Details */}
           <motion.main
             key={selectedID || "empty"}
@@ -206,29 +178,7 @@ const LearnElectivesPage: CustomPage<{
               sm:!rounded-b-xl`)}
           />
         </div>
-
-        <style jsx global>{`
-          body {
-            background-color: var(--surface-container);
-          }
-
-          .skc-root-layout {
-            display: flex;
-            flex-direction: column;
-            height: 100dvh;
-          }
-
-          @media only screen and (min-width: 600px) {
-            .skc-nav-bar::before {
-              background-color: transparent !important;
-            }
-
-            .skc-page-header__blobs {
-              display: none !important;
-            }
-          }
-        `}</style>
-      </ContentLayout>
+      </ElectiveLayout>
 
       <LookupDetailsDialog
         open={detailsOpen}
