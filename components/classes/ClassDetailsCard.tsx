@@ -32,6 +32,20 @@ const ClassDetailsCard: StylableFC<{
 
   const [scheduleOpen, toggleScheduleOpen] = useToggle();
 
+  const contactsShown =
+    // Admins can view all Contacts
+    user.is_admin ||
+    // Other users can view Contacts in their own Classrooms
+    (isOwnClass &&
+      // Teachers can see the Contact list even if there are no
+      // Contacts, as this is where they can add them.
+      (user.role === UserRole.teacher ||
+        // Students only see the list if there are Contacts.
+        (user.role !== UserRole.student && classroom?.contacts.length)));
+
+  const contactsEditable =
+    user.is_admin || (isOwnClass && user.role === UserRole.teacher);
+
   return (
     <LookupDetailsCard
       style={style}
@@ -80,12 +94,11 @@ const ClassDetailsCard: StylableFC<{
                 )}
 
                 {/* Contacts */}
-                {((isOwnClass && user.role === UserRole.teacher) ||
-                  classroom.contacts.length > 0) && (
+                {contactsShown && (
                   <ClassContactList
                     contacts={classroom.contacts}
                     classroomID={classroom.id}
-                    editable={isOwnClass && user.role === UserRole.teacher}
+                    editable={contactsEditable}
                     refreshData={refreshData}
                   />
                 )}
