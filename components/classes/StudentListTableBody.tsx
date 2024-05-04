@@ -4,7 +4,6 @@ import { Student } from "@/utils/types/person";
 import { list } from "radash";
 import { MAXIMUM_EMPTY_COLUMNS, OptionsType } from "@/components/classes/StudentListPrintout";
 import { StylableFC } from "@/utils/types/common";
-import permitted from "@/utils/helpers/permitted";
 
 /**
  * The body area of the table shown in Student List Printout. Displays the
@@ -22,8 +21,8 @@ const StudentListTableBody: StylableFC<{
 }> = ({ studentList, options, style, className }) => (
   <tbody style={style} className={className}>
     {studentList.map((student) => (
-      !(options.columns.includes("noElective") && student.chosen_elective) && 
-      !(options.columns.includes("hasAllergies") && !student.allergies?.length) &&
+      !(options.filters.includes("noElective") && student.chosen_elective) && 
+      !(options.filters.includes("hasAllergies") && !student.allergies?.length) &&
       <tr key={student.id}>
         {/* Class no. */}
         {options.columns.includes("classNo") && (

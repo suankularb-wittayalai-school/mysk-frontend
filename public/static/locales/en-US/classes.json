@@ -42,7 +42,7 @@
   "print": {
     "title": "Print student list",
     "language": "Language",
-    "infoColumns": {
+    "columns": {
       "label": "Information to show",
       "classNo": "Class №",
       "studentID": "Student ID",
@@ -54,10 +54,10 @@
       "pantsSize": "School pants size",
       "elective": "Chosen elective"
     },
-    "filterColumns": {
+    "filters": {
       "label": "Filters",
       "noElective": "Without elective",
-      "hasAllergies": "Allergies"
+      "hasAllergies": "With allergies"
     },
     "numEmpty": "Empty columns",
     "enableNotes": "Notes column",
