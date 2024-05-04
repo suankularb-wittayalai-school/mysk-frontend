@@ -11,6 +11,7 @@ import {
   ContentLayout,
   MaterialIcon,
 } from "@suankularb-components/react";
+import { toZonedTime } from "date-fns-tz";
 import { GetStaticProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -36,7 +37,10 @@ const ManagePage: CustomPage = () => {
   const title =
     mysk.user?.role !== UserRole.management ? t("title") : tx("appName");
   const attendanceURL =
-    "/manage/attendance/" + getISODateString(lastWeekday(new Date()));
+    "/manage/attendance/" +
+    getISODateString(
+      lastWeekday(toZonedTime(new Date(), process.env.NEXT_PUBLIC_SCHOOL_TZ)),
+    );
 
   return (
     <>
