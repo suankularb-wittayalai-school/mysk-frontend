@@ -1,6 +1,8 @@
 import ChooseButton from "@/components/elective/ChooseButton";
 import ElectiveDetailsCard from "@/components/elective/ElectiveDetailsCard";
-import ElectiveLayout, { DIALOG_BREAKPOINTS } from "@/components/elective/ElectiveLayout";
+import ElectiveLayout, {
+  DIALOG_BREAKPOINTS,
+} from "@/components/elective/ElectiveLayout";
 import ElectiveListItem from "@/components/elective/ElectiveListItem";
 import ManageTradesCard from "@/components/elective/ManageTradesCard";
 import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
@@ -8,6 +10,7 @@ import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import cn from "@/utils/helpers/cn";
+import getLocaleString from "@/utils/helpers/getLocaleString";
 import { BackendReturn } from "@/utils/types/backend";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { ElectiveSubject, ElectiveTradeOffer } from "@/utils/types/elective";
@@ -40,13 +43,13 @@ import { useEffect, useState } from "react";
  */
 const LearnElectivesPage: CustomPage<{
   electiveSubjects: ElectiveSubject[];
-  enrolledID: number | null;
+  enrolledElective: ElectiveSubject | null;
   inEnrollmentPeriod: boolean;
   incomingTrades: ElectiveTradeOffer[];
   outgoingTrades: ElectiveTradeOffer[];
 }> = ({
   electiveSubjects,
-  enrolledID,
+  enrolledElective,
   inEnrollmentPeriod,
   incomingTrades,
   outgoingTrades,
@@ -55,7 +58,7 @@ const LearnElectivesPage: CustomPage<{
 
   const mysk = useMySKClient();
 
-  const [selectedID, setSelectedID] = useState<number | null>(null);
+  const [selectedID, setSelectedID] = useState<string | null>(null);
   const [selectedElective, setSelectedElective] =
     useState<ElectiveSubject | null>(null);
 
@@ -67,10 +70,10 @@ const LearnElectivesPage: CustomPage<{
     else if (selectedID) setDetailsOpen(true);
   }, [DIALOG_BREAKPOINTS.includes(atBreakpoint)]);
 
-  async function fetchBySessionCode(sessionCode: number) {
+  async function fetchByID(id: string) {
     setSelectedElective(null);
     const { data } = await mysk.fetch<ElectiveSubject>(
-      `/v1/subjects/electives/${sessionCode}/`,
+      `/v1/subjects/electives/${id}`,
       {
         query: {
           fetch_level: "detailed",
@@ -81,10 +84,10 @@ const LearnElectivesPage: CustomPage<{
     if (data) setSelectedElective(data);
   }
   useEffect(() => {
-    if (!enrolledID) return;
-    setSelectedID(enrolledID);
-    fetchBySessionCode(enrolledID);
-  }, [enrolledID]);
+    if (!enrolledElective) return;
+    setSelectedID(enrolledElective.id);
+    fetchByID(enrolledElective.id);
+  }, [enrolledElective]);
 
   return (
     <>
@@ -100,20 +103,20 @@ const LearnElectivesPage: CustomPage<{
                 <ElectiveListItem
                   key={electiveSubject.id}
                   electiveSubject={electiveSubject}
-                  selected={selectedID === electiveSubject.session_code}
-                  enrolled={enrolledID === electiveSubject.session_code}
+                  selected={selectedID === electiveSubject.id}
+                  enrolled={enrolledElective?.id === electiveSubject.id}
                   onClick={() => {
                     va.track("View Elective", {
-                      sessionCode: electiveSubject.session_code,
+                      subject: getLocaleString(electiveSubject.name, "en-US"),
                     });
-                    setSelectedID(electiveSubject.session_code);
+                    setSelectedID(electiveSubject.id);
                     if (DIALOG_BREAKPOINTS.includes(atBreakpoint))
                       setTimeout(
                         () => setDetailsOpen(true),
                         DURATION.short4 * 1000,
                       );
-                    if (selectedID !== electiveSubject.session_code)
-                      fetchBySessionCode(electiveSubject.session_code);
+                    if (selectedID !== electiveSubject.id)
+                      fetchByID(electiveSubject.id);
                   }}
                 />
               ))}
@@ -132,9 +135,13 @@ const LearnElectivesPage: CustomPage<{
                 sm:bg-transparent`)}
             >
               <ChooseButton
-                sessionCode={selectedID}
-                enrolledID={enrolledID}
-                disabled={!inEnrollmentPeriod}
+                electiveSubject={
+                  electiveSubjects.find((subject) => subject.id === selectedID)!
+                }
+                enrolledElective={enrolledElective}
+                disabled={
+                  !inEnrollmentPeriod || enrolledElective?.id === selectedID
+                }
                 className="!pointer-events-auto"
               />
             </Actions>
@@ -184,7 +191,7 @@ const LearnElectivesPage: CustomPage<{
       >
         <ElectiveDetailsCard
           electiveSubject={selectedElective}
-          enrolledID={inEnrollmentPeriod ? enrolledID : null}
+          enrolledElective={inEnrollmentPeriod ? enrolledElective : null}
           onChooseSuccess={() => setDetailsOpen(false)}
           className={cn(`!mx-0 h-full !bg-surface-container-highest
             *:!rounded-b-none`)}
@@ -222,7 +229,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       query: {
         fetch_level: "default",
         descendant_fetch_level: "compact",
-        filter: { data: { as_student_id: student.id } },
+        filter: { data: { applicable_classroom_ids: [student.classroom?.id] } },
         sort: { by: ["session_code"], ascending: true },
       },
     }),
@@ -237,7 +244,8 @@ export const getServerSideProps: GetServerSideProps = async ({
     }),
 
     // Check if the time now is in an Enrollment Period.
-    await mysk.fetch<boolean>("/v1/subjects/electives/in-enrollment-period"),
+    // await mysk.fetch<boolean>("/v1/subjects/electives/in-enrollment-period"),
+    { data: true },
   ]);
 
   const trades = {
@@ -279,9 +287,8 @@ export const getServerSideProps: GetServerSideProps = async ({
     if (outgoingTrades) trades.outgoingTrades = outgoingTrades;
   }
 
-  // Use the session code of this Elective Subject as the ID.
-  // (A Student can only be enrolled in one Elective Subject at a time.)
-  const enrolledID = enrolledElectiveSubjects?.[0]?.session_code || null;
+  // A Student can only be enrolled in one Elective Subject at a time.
+  const enrolledElective = enrolledElectiveSubjects?.[0] || null;
 
   return {
     props: {
@@ -292,7 +299,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         "schedule",
       ])),
       electiveSubjects,
-      enrolledID,
+      enrolledElective,
       inEnrollmentPeriod,
       ...trades,
     },

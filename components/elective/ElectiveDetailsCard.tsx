@@ -19,14 +19,20 @@ import { useTranslation } from "next-i18next";
  * Subject.
  *
  * @param electiveSubject The Elective Subject to display.
- * @param enrolledID The session code of the Elective Subject the Student is currently enrolled in.
+ * @param enrolledElective The session code of the Elective Subject the Student is currently enrolled in.
  * @param onChooseSuccess Triggers after the Student has successfully chosen the Elective Subject.
  */
 const ElectiveDetailsCard: StylableFC<{
   electiveSubject: ElectiveSubject | null;
-  enrolledID?: number | null;
+  enrolledElective?: ElectiveSubject | null;
   onChooseSuccess?: () => void;
-}> = ({ electiveSubject, enrolledID, onChooseSuccess, style, className }) => {
+}> = ({
+  electiveSubject,
+  enrolledElective,
+  onChooseSuccess,
+  style,
+  className,
+}) => {
   const locale = useLocale();
   const { t } = useTranslation("elective", { keyPrefix: "detail.information" });
 
@@ -93,7 +99,7 @@ const ElectiveDetailsCard: StylableFC<{
               </section>
             )}
 
-            {enrolledID !== undefined && (
+            {enrolledElective !== undefined && (
               <div
                 className={cn(`pointer-events-none fixed inset-0 top-auto z-10
                   overflow-hidden bg-gradient-to-t from-surface-container p-4
@@ -104,8 +110,8 @@ const ElectiveDetailsCard: StylableFC<{
                   className="rounded-full bg-surface-container"
                 >
                   <ChooseButton
-                    sessionCode={electiveSubject.session_code}
-                    enrolledID={enrolledID}
+                    electiveSubject={electiveSubject}
+                    enrolledElective={enrolledElective}
                     onSucess={onChooseSuccess}
                     className="!pointer-events-auto"
                   />

@@ -1,10 +1,12 @@
 import SnackbarContext from "@/contexts/SnackbarContext";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
+import getLocaleString from "@/utils/helpers/getLocaleString";
 import logError from "@/utils/helpers/logError";
 import useRefreshProps from "@/utils/helpers/useRefreshProps";
 import useToggle from "@/utils/helpers/useToggle";
 import withLoading from "@/utils/helpers/withLoading";
 import { StylableFC } from "@/utils/types/common";
+import { ElectiveSubject } from "@/utils/types/elective";
 import { Button, MaterialIcon, Snackbar } from "@suankularb-components/react";
 import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
@@ -13,19 +15,19 @@ import { useContext } from "react";
 /**
  * A Button that allows the Student to choose an Elective Subject.
  *
- * @param sessionCode The session code of the Elective Subject to choose.
+ * @param electiveSubjectID The session code of the Elective Subject to choose.
  * @param enrolledID The session code of the Elective Subject the Student is currently enrolled in.
  * @param disabled Whether the Button is disabled.
  * @param onSucess Triggers after the Student has successfully chosen the Elective Subject.
  */
 const ChooseButton: StylableFC<{
-  sessionCode: number | null;
-  enrolledID: number | null;
+  electiveSubject: ElectiveSubject | null;
+  enrolledElective: ElectiveSubject | null;
   disabled?: boolean;
   onSucess?: () => void;
 }> = ({
-  sessionCode,
-  enrolledID,
+  electiveSubject,
+  enrolledElective,
   disabled: forceDisabled,
   onSucess,
   style,
@@ -44,36 +46,40 @@ const ChooseButton: StylableFC<{
     // Disallow choosing if forced to be disabled.
     forceDisabled ||
     // Disallow choosing if none is selected.
-    !sessionCode ||
+    !electiveSubject ||
     // Disallow choosing if already enrolled in the same Elective Subject.
-    sessionCode === enrolledID;
+    electiveSubject.id === enrolledElective?.id;
 
   /**
    * Choose or change to the selected Elective Subject, depending on context.
    */
   async function handleChoose() {
     if (disabled) return;
+    const subject = getLocaleString(electiveSubject.name, "en-US");
     withLoading(
       async () => {
         const { error } = await mysk.fetch(
-          `/v1/subjects/electives/${sessionCode}/enroll/`,
+          `/v1/subjects/electives/${electiveSubject.id}/enroll`,
           {
             // POST for choosing, PUT for changing.
-            method: enrolledID ? "PUT" : "POST",
+            method: enrolledElective ? "PUT" : "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ fetch_level: "id_only" }),
           },
         );
         if (error) {
           if (error.code === 403 || error.code === 409) {
-            va.track("Attempt to Choose Invalid Elective", { sessionCode });
+            va.track("Attempt to Choose Invalid Elective", { subject });
             setSnackbar(<Snackbar>{t("snackbar.notAllowed")}</Snackbar>);
           } else setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
           logError("handleChoose", error);
         }
-        if (enrolledID)
-          va.track("Change Elective", { from: enrolledID, to: sessionCode });
-        va.track("Choose Elective", { sessionCode });
+        if (enrolledElective)
+          va.track("Change Elective", {
+            from: getLocaleString(enrolledElective.name, "en-US"),
+            to: subject,
+          });
+        va.track("Choose Elective", { subject });
         await refreshProps();
         onSucess?.();
         return true;
@@ -94,9 +100,9 @@ const ChooseButton: StylableFC<{
       className={className}
     >
       {t("action.choose", {
-        context: !enrolledID
+        context: !enrolledElective
           ? "initial"
-          : sessionCode !== enrolledID
+          : electiveSubject?.id !== enrolledElective.id
             ? "change"
             : "chosen",
       })}
