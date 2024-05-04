@@ -3,15 +3,20 @@ import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import { Text } from "@suankularb-components/react";
 import { Day, setDay } from "date-fns";
+import { toZonedTime } from "date-fns-tz";
 import { useTranslation } from "next-i18next";
 
+/**
+ * A Card in the header column of Schedule.
+ * 
+ * @param day The day of the week.
+ */
 const DayCard: StylableFC<{ day: Day }> = ({ day, style, className }) => {
-  // Translation
   const locale = useLocale();
   const { t } = useTranslation("common");
 
-  // Get today
-  const today = new Date();
+  // Get today.
+  const today = toZonedTime(new Date(), process.env.NEXT_PUBLIC_SCHOOL_TZ);
 
   return (
     <div
