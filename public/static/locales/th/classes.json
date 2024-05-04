@@ -42,7 +42,7 @@
   "print": {
     "title": "พิมพ์ใบรายชื่อ",
     "language": "ภาษา",
-    "columns": {
+    "infoColumns": {
       "label": "ข้อมูลที่แสดง",
       "classNo": "เลขที่ในห้อง",
       "studentID": "เลขประจำตัวนักเรียน",
@@ -53,6 +53,11 @@
       "shirtSize": "ไซส์เสื้อ",
       "pantsSize": "ขนาดกางเกงนักเรียน",
       "elective": "วิชาเลือก"
+    },
+    "filterColumns": {
+      "label": "ตัวกรอง",
+      "noElective": "ไม่มีวิชาเลือก",
+      "hasAllergies": "ภูมิแพ้"
     },
     "numEmpty": "เพิ่มหลัก",
     "enableNotes": "หลักหมายเหตุ",
