@@ -142,8 +142,6 @@ export const getServerSideProps: GetServerSideProps = async ({
     (await getTeachingSubjects(supabase, teacher.id)).data,
   ]);
 
-  const teacherID = teacher.id;
-
   return {
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
