@@ -1,6 +1,6 @@
 import ChooseButton from "@/components/elective/ChooseButton";
 import ElectiveDetailsCard from "@/components/elective/ElectiveDetailsCard";
-import ElectiveLayout from "@/components/elective/ElectiveLayout";
+import ElectiveLayout, { DIALOG_BREAKPOINTS } from "@/components/elective/ElectiveLayout";
 import ElectiveListItem from "@/components/elective/ElectiveListItem";
 import ManageTradesCard from "@/components/elective/ManageTradesCard";
 import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
@@ -28,8 +28,6 @@ import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useEffect, useState } from "react";
-
-const DIALOG_BREAKPOINTS = ["base", "sm"];
 
 /**
  * A place where Students can choose and trade their Elective Subjects.

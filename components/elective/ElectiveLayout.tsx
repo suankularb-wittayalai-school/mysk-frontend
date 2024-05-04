@@ -9,10 +9,12 @@ import { useTranslation } from "next-i18next";
 import Head from "next/head";
 import { ReactNode } from "react";
 
+export const DIALOG_BREAKPOINTS = ["base", "sm"];
+
 /**
  * A Layout for Elective pages. Handles layout, background, and other
  * adjustments.
- * 
+ *
  * @param children The content of the page. Should be 2 `<section>`s, the first for the list and the second for the main content.
  * @param role The role of the user: Student, Teacher, or Management.
  */
