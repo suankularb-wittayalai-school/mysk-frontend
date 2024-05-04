@@ -24,6 +24,8 @@ export type OptionsType = {
     | "shirtSize"
     | "pantsSize"
     | "elective"
+    | "noElective"
+    | "hasAllergies"
   )[];
 
   numEmpty: number;

@@ -48,7 +48,7 @@ const StudentsPrintOptions: FC<{
           <MenuItem value="en-US">English</MenuItem>
           <MenuItem value="th">ภาษาไทย</MenuItem>
         </Select>
-        <FormGroup label={t("columns.label")}>
+        <FormGroup label={t("infoColumns.label")}>
           {(
             [
               "classNo",
@@ -61,10 +61,12 @@ const StudentsPrintOptions: FC<{
               "allergies",
               "shirtSize",
               "pantsSize",
+              mysk.user &&
+                (mysk.user.is_admin || mysk.user.role !== UserRole.student) &&
               "elective",
             ].filter((column) => column) as OptionsType["columns"]
           ).map((column) => (
-            <FormItem key={column} label={t(`columns.${column}`)}>
+            <FormItem key={column} label={t(`infoColumns.${column}`)}>
               <Checkbox
                 value={form.columns.includes(column)}
                 onChange={() =>
@@ -74,6 +76,27 @@ const StudentsPrintOptions: FC<{
             </FormItem>
           ))}
         </FormGroup>
+
+        <FormGroup label={t("filterColumns.label")}>
+          {(
+            [
+              mysk.user &&
+                (mysk.user.is_admin || mysk.user.role !== UserRole.student) &&
+                "noElective",
+                "hasAllergies",
+            ].filter((column) => column) as OptionsType["columns"]
+          ).map((column) => (
+            <FormItem key={column} label={t(`filterColumns.${column}`)}>
+              <Checkbox
+                value={form.columns.includes(column)}
+                onChange={() =>
+                  setForm({ ...form, columns: toggle(form.columns, column) })
+                }
+              />
+            </FormItem>
+          ))}
+        </FormGroup>
+
         <TextField
           appearance="outlined"
           label={t("numEmpty")}
