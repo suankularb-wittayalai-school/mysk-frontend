@@ -3,6 +3,7 @@ import ElectiveLayout, {
   DIALOG_BREAKPOINTS,
 } from "@/components/elective/ElectiveLayout";
 import ElectiveListItem from "@/components/elective/ElectiveListItem";
+import ElectiveStudentListCard from "@/components/elective/ElectiveStudentListCard";
 import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
@@ -90,9 +91,12 @@ const TeachElectivesPage: CustomPage<{
           </motion.main>
 
           {/* Enrolled Students */}
-          <section className="grid h-[18rem] place-content-center text-center">
-            TODO
-          </section>
+          {selectedElective && (
+            <ElectiveStudentListCard
+              electiveSubject={selectedElective}
+              className="h-[18rem]"
+            />
+          )}
         </section>
       </ElectiveLayout>
 
