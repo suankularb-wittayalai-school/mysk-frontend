@@ -8,7 +8,7 @@ import { StylableFC } from "@/utils/types/common";
 /**
  * The body area of the table shown in Student List Printout. Displays the
  * student data based on the given options.
- * 
+ *
  * Blank cells are filled with non-breaking spaces (`&nbsp;`) to ensure the
  * table structure is maintained.
  *
