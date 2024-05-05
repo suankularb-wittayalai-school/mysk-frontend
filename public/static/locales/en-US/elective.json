@@ -54,6 +54,13 @@
         "approved": "Request approved",
         "declined": "Request declined"
       }
+    },
+    "students": {
+      "title": "Enrolled students",
+      "searchAlt": "Search enrolled studets",
+      "action": {
+        "print": "Print"
+      }
     }
   },
   "dialog": {

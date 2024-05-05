@@ -151,7 +151,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         "attendance",
         "elective",
         "lookup",
-        "schedule"
+        "schedule",
       ])),
       electiveSubjects,
     },

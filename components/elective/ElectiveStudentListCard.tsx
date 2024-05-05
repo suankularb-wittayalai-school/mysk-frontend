@@ -30,7 +30,7 @@ const ElectiveStudentListCard: StylableFC<{
 }> = ({ electiveSubject, style, className }) => {
   const locale = useLocale();
   const { locales } = useRouter();
-  const { t } = useTranslation("elective");
+  const { t } = useTranslation("elective", { keyPrefix: "detail.students" });
 
   const [query, setQuery] = useState("");
 
@@ -55,14 +55,14 @@ const ElectiveStudentListCard: StylableFC<{
   return (
     <section style={style} className={cn(`grid grid-cols-2 gap-6`, className)}>
       <div className="flex flex-col gap-2 py-4 pl-6">
-        <Text type="title-medium">รายชื่อนักเรียน</Text>
+        <Text type="title-medium">{t("title")}</Text>
         <ChipSet>
           <AssistChip
             icon={<MaterialIcon icon="print" />}
             href={`/teach/electives/${electiveSubject.session_code}/print`}
             element={Link}
           >
-            พิมพ์
+            {t("action.print")}
           </AssistChip>
         </ChipSet>
         <div className="grow" />
@@ -83,7 +83,7 @@ const ElectiveStudentListCard: StylableFC<{
             value={query}
             onChange={setQuery}
             locale={locale}
-            alt="Search enrolled Students"
+            alt={t("searchAlt")}
           />
         </div>
 
