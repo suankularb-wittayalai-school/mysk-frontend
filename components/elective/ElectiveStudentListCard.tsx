@@ -9,10 +9,14 @@ import { UserRole } from "@/utils/types/person";
 import {
   AssistChip,
   ChipSet,
+  DURATION,
+  EASING,
   MaterialIcon,
   Search,
   Text,
+  transition,
 } from "@suankularb-components/react";
+import { motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -88,7 +92,12 @@ const ElectiveStudentListCard: StylableFC<{
         </div>
 
         {/* List */}
-        <div className="space-y-1 pb-4 pr-4">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={transition(DURATION.medium2, EASING.standardDecelerate)}
+          className="space-y-1 pb-4 pr-4"
+        >
           {students.map((student) => (
             <PersonCard
               key={student.id}
@@ -102,7 +111,7 @@ const ElectiveStudentListCard: StylableFC<{
               className="w-full !border-0 !bg-surface-container"
             />
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

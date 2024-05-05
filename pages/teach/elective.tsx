@@ -77,18 +77,18 @@ const TeachElectivesPage: CustomPage<{
         </section>
 
         {/* Details */}
-        <section className="hidden flex-col gap-6 md:flex">
-          <motion.main
-            key={selectedElective?.session_code || "empty"}
-            initial={{ opacity: 0, scale: 0.95, x: -10 }}
-            animate={{ opacity: 1, scale: 1, x: 0 }}
-            transition={transition(DURATION.medium2, EASING.standardDecelerate)}
-            className="relative grow *:absolute *:inset-0"
-          >
+        <motion.section
+          key={selectedElective?.session_code || "empty"}
+          initial={{ opacity: 0, scale: 0.95, x: -10 }}
+          animate={{ opacity: 1, scale: 1, x: 0 }}
+          transition={transition(DURATION.medium2, EASING.standardDecelerate)}
+          className="hidden flex-col gap-6 md:flex"
+        >
+          <main className="relative grow *:absolute *:inset-0">
             {selectedElective && (
               <ElectiveDetailsCard electiveSubject={selectedElective} />
             )}
-          </motion.main>
+          </main>
 
           {/* Enrolled Students */}
           {selectedElective && (
@@ -97,7 +97,7 @@ const TeachElectivesPage: CustomPage<{
               className="h-[18rem]"
             />
           )}
-        </section>
+        </motion.section>
       </ElectiveLayout>
 
       <LookupDetailsDialog
