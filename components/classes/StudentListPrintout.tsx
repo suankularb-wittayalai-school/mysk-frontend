@@ -25,10 +25,7 @@ export type OptionsType = {
     | "pantsSize"
     | "elective"
   )[];
-  filters: (
-    | "noElective"
-    | "hasAllergies"
-  )[];
+  filters: ("noElective" | "hasAllergies")[];
   numEmpty: number;
   enableNotes: boolean;
   enableTimestamp: boolean;
@@ -59,11 +56,16 @@ const StudentListPrintout: StylableFC<{
   // Placed in the parent component as this state is shared between the Paper
   // and Options.
   const { form, setForm, formProps } = useForm<
-    "language" | "columns" | "filters" | "numEmpty" | "enableNotes" | "enableTimestamp"
+    | "language"
+    | "columns"
+    | "filters"
+    | "numEmpty"
+    | "enableNotes"
+    | "enableTimestamp"
   >([
     { key: "language", defaultValue: locale },
     { key: "columns", defaultValue: ["classNo", "prefix", "fullName"] },
-    { key: "filters", defaultValue: []},
+    { key: "filters", defaultValue: [] },
     {
       key: "numEmpty",
       defaultValue: "10",

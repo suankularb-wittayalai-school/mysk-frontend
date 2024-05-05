@@ -4,9 +4,8 @@ import {
 } from "@/components/classes/StudentListPrintout";
 import PrintOptions from "@/components/common/print/PrintOptions";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
-import permitted from "@/utils/helpers/permitted";
 import { FormControlProps } from "@/utils/types/common";
-import { User, UserRole } from "@/utils/types/person";
+import { UserRole } from "@/utils/types/person";
 import {
   Checkbox,
   FormGroup,
@@ -63,7 +62,7 @@ const StudentsPrintOptions: FC<{
               "pantsSize",
               mysk.user &&
                 (mysk.user.is_admin || mysk.user.role !== UserRole.student) &&
-              "elective",
+                "elective",
             ].filter((column) => column) as OptionsType["columns"]
           ).map((column) => (
             <FormItem key={column} label={t(`columns.${column}`)}>
@@ -83,7 +82,7 @@ const StudentsPrintOptions: FC<{
               mysk.user &&
                 (mysk.user.is_admin || mysk.user.role !== UserRole.student) &&
                 "noElective",
-                "hasAllergies",
+              "hasAllergies",
             ].filter((filters) => filters) as OptionsType["filters"]
           ).map((filters) => (
             <FormItem key={filters} label={t(`filters.${filters}`)}>
