@@ -3,7 +3,6 @@ import ChooseButton from "@/components/elective/ChooseButton";
 import ElectiveDetailsCard from "@/components/elective/ElectiveDetailsCard";
 import ElectiveListItem from "@/components/elective/ElectiveListItem";
 import ManageTradesCard from "@/components/elective/ManageTradesCard";
-import RequirementDialog from "@/components/elective/RequirementDialog";
 import LandingBlobs from "@/components/landing/LandingBlobs";
 import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
@@ -243,10 +242,6 @@ const LearnElectivesPage: CustomPage<{
             *:!rounded-b-none`)}
         />
       </LookupDetailsDialog>
-      <RequirementDialog 
-        open={true}
-        onClose={() => {}}
-      />
     </>
   );
 };

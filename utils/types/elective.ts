@@ -18,7 +18,6 @@ export type ElectiveSubject = {
   credit: number;
   class_size: number;
   cap_size: number;
-  requirements: MultiLangString[];
   applicable_classrooms: Classroom[];
   room: string;
   students: Student[];
