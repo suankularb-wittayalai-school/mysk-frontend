@@ -53,7 +53,7 @@ const TeachElectivesPage: CustomPage<{
     <>
       <ElectiveLayout role={UserRole.teacher}>
         {/* List */}
-        <section className="overflow-scroll md:-mb-9">
+        <section className="overflow-auto md:-mb-9">
           <ul className="md:h-0">
             {electiveSubjects.map((electiveSubject) => (
               <ElectiveListItem
