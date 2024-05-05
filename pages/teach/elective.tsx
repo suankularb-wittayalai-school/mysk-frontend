@@ -137,7 +137,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     {
       query: {
         fetch_level: "detailed",
-        descendant_fetch_level: "compact",
+        descendant_fetch_level: "default",
         filter: { data: { teacher_ids: [teacher.id] } },
         sort: { by: ["session_code"], ascending: true },
       },
@@ -148,9 +148,10 @@ export const getServerSideProps: GetServerSideProps = async ({
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
         "common",
+        "attendance",
         "elective",
         "lookup",
-        "schedule",
+        "schedule"
       ])),
       electiveSubjects,
     },
