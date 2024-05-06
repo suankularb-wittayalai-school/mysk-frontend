@@ -3,7 +3,6 @@ import StudentsPrintOptions from "@/components/classes/StudentsPrintOptions";
 import PrintPage from "@/components/common/print/PrintPage";
 import useForm from "@/utils/helpers/useForm";
 import useLocale from "@/utils/helpers/useLocale";
-import { Classroom } from "@/utils/types/classroom";
 import { LangCode, StylableFC } from "@/utils/types/common";
 import { Student } from "@/utils/types/person";
 import { useTranslation } from "next-i18next";
@@ -15,6 +14,7 @@ import { list } from "radash";
 export type OptionsType = {
   language: LangCode;
   columns: (
+    | "index"
     | "classNo"
     | "studentID"
     | "prefix"
@@ -40,15 +40,16 @@ export const MAXIMUM_EMPTY_COLUMNS = 20;
  * The preview page for the Student List Printout.
  *
  * @param classroom The Classroom to display the Student List for.
+ * @param columns The columns the user can choose to display.
+ * @param filters The filters the user can choose to apply.
  * @param studentList The list of all Students in this Class.
  */
 const StudentListPrintout: StylableFC<{
-  classroom: Pick<
-    Classroom,
-    "id" | "number" | "class_advisors" | "contacts" | "subjects"
-  >;
+  header: StylableFC<{ locale: LangCode }>;
+  columns: OptionsType["columns"];
+  filters: OptionsType["filters"];
   studentList: Student[];
-}> = ({ classroom, studentList }) => {
+}> = ({ header, columns, filters, studentList, style, className }) => {
   const locale = useLocale();
   const { t } = useTranslation("classes", { keyPrefix: "print" });
 
@@ -64,12 +65,17 @@ const StudentListPrintout: StylableFC<{
     | "enableTimestamp"
   >([
     { key: "language", defaultValue: locale },
-    { key: "columns", defaultValue: ["classNo", "prefix", "fullName"] },
+    {
+      key: "columns",
+      defaultValue: (
+        ["index", "classNo", "prefix", "fullName"] as OptionsType["columns"]
+      ).filter((column) => columns.includes(column)),
+    },
     { key: "filters", defaultValue: [] },
     {
       key: "numEmpty",
       defaultValue: "10",
-      // Integer under MAXIMUM_EMPTY_COLUMNS.
+      // Must be an integer under MAXIMUM_EMPTY_COLUMNS.
       validate: (value) => list(MAXIMUM_EMPTY_COLUMNS).includes(Number(value)),
     },
     { key: "enableNotes", defaultValue: false },
@@ -79,14 +85,16 @@ const StudentListPrintout: StylableFC<{
   return (
     <>
       <h1 className="sr-only">{t("title")}</h1>
-      <PrintPage>
+      <PrintPage style={style} className={className}>
         <StudentsListPaper
-          classroom={classroom}
+          header={header}
           studentList={studentList}
           options={form}
         />
         <StudentsPrintOptions
           form={form}
+          allowedColumns={columns}
+          allowedFilters={filters}
           setForm={setForm}
           formProps={formProps}
         />

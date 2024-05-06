@@ -1,17 +1,20 @@
+import ClassroomPrintoutHeader from "@/components/classes/ClassroomPrintoutHeader";
 import StudentListPrintout from "@/components/classes/StudentListPrintout";
 import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
 import getClassroomOverview from "@/utils/backend/classroom/getClassroomOverview";
 import getStudentsOfClass from "@/utils/backend/classroom/getStudentsOfClass";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import { getStudentsByIDs } from "@/utils/backend/person/getStudentsByIDs";
 import { supabase } from "@/utils/supabase-backend";
 import { Classroom } from "@/utils/types/classroom";
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { Student } from "@/utils/types/person";
+import { Student, UserRole } from "@/utils/types/person";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
+import { sift } from "radash";
 
 /**
  * A preview and options page for printing a list of Students in a Classroom,
@@ -31,12 +34,33 @@ const StudentsListPrintPage: CustomPage<{
   const { t } = useTranslation("classes", { keyPrefix: "print" });
   const { t: tx } = useTranslation("common");
 
+  const mysk = useMySKClient();
+  const canSeeSensitive =
+    mysk.user && (mysk.user.is_admin || mysk.user.role !== UserRole.student);
+
   return (
     <>
       <Head>
         <title>{tx("tabName", { tabName: t("title") })}</title>
       </Head>
-      <StudentListPrintout classroom={classroom} studentList={studentList} />
+      <StudentListPrintout
+        header={({ locale }) => (
+          <ClassroomPrintoutHeader classroom={classroom} locale={locale} />
+        )}
+        columns={sift([
+          "classNo",
+          canSeeSensitive && "studentID",
+          "prefix",
+          "fullName",
+          "nickname",
+          "allergies",
+          "shirtSize",
+          "pantsSize",
+          canSeeSensitive && "elective",
+        ])}
+        filters={sift([canSeeSensitive && "noElective", "hasAllergies"])}
+        studentList={studentList}
+      />
     </>
   );
 };
