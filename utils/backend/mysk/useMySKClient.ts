@@ -1,6 +1,5 @@
 import UserContext from "@/contexts/UserContext";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
-import getUserByEmail from "@/utils/backend/account/getUserByEmail";
 import fetchMySKProxy from "@/utils/backend/mysk/fetchMySKProxy";
 import { MySKClient } from "@/utils/types/fetch";
 import { User } from "@/utils/types/person";
@@ -19,22 +18,20 @@ import { useContext, useEffect } from "react";
  * ```
  */
 export default function useMySKClient(): MySKClient {
-  const { user, setUser, person, setPerson } = useContext(UserContext);
+  const { user, setUser, person, setPerson, loading, setLoading } =
+    useContext(UserContext);
 
   const mysk = { fetch: fetchMySKProxy, user, person };
   const supabase = useSupabaseClient();
 
   useEffect(() => {
     // Fetch the user data if not yet fetched.
-    if (user || person) return;
+    if (loading || user || person) return;
     (async () => {
-      const { data: apiUser } = await fetchMySKProxy<User>("/auth/user");
-      if (!apiUser) return;
-
-      // Permissions aren’t implemented in MySK API yet (per @smartwhatt), so we
-      // have to use the Supabase implementation.
-      const { data: user } = await getUserByEmail(supabase, apiUser.email!);
-      if (user) setUser(user);
+      setLoading(true);
+      const { data: user } = await fetchMySKProxy<User>("/auth/user");
+      if (!user) return;
+      setUser(user);
 
       // Once the user data is fetched, fetch the person (Student/Teacher) data,
       // which is more detailed.
@@ -49,6 +46,7 @@ export default function useMySKClient(): MySKClient {
         },
       );
       if (person) setPerson(person);
+      setLoading(false);
     })();
   }, []);
 

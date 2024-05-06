@@ -6,6 +6,15 @@ const UserContext = createContext<{
   setUser: (user: User | null) => void;
   person: Student | Teacher | null;
   setPerson: (person: Student | Teacher | null) => void;
-}>({ user: null, setUser: () => {}, person: null, setPerson: () => {} });
+  loading: boolean;
+  setLoading: (loading: boolean) => void;
+}>({
+  user: null,
+  setUser: () => {},
+  person: null,
+  setPerson: () => {},
+  loading: false,
+  setLoading: () => {},
+});
 
 export default UserContext;

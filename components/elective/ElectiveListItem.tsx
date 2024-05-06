@@ -90,7 +90,7 @@ const ElectiveListItem: StylableFC<{
         classSize={electiveSubject.class_size}
         capSize={electiveSubject.cap_size}
         className={cn(
-          selected && `[&_.skc-progress>*]:!bg-surface-bright`,
+          (enrolled || selected) && `[&_.skc-progress>*]:!bg-surface-bright`,
           `[&_.skc-progress>*]:transition-colors`,
         )}
       />

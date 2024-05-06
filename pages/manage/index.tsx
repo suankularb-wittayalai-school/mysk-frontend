@@ -11,6 +11,7 @@ import {
   ContentLayout,
   MaterialIcon,
 } from "@suankularb-components/react";
+import { toZonedTime } from "date-fns-tz";
 import { GetStaticProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -36,7 +37,10 @@ const ManagePage: CustomPage = () => {
   const title =
     mysk.user?.role !== UserRole.management ? t("title") : tx("appName");
   const attendanceURL =
-    "/manage/attendance/" + getISODateString(lastWeekday(new Date()));
+    "/manage/attendance/" +
+    getISODateString(
+      lastWeekday(toZonedTime(new Date(), process.env.NEXT_PUBLIC_SCHOOL_TZ)),
+    );
 
   return (
     <>
@@ -45,14 +49,14 @@ const ManagePage: CustomPage = () => {
       </Head>
       <PageHeader>{title}</PageHeader>
       <ContentLayout>
-        <Columns columns={2} className="mx-4 !items-stretch sm:mx-0">
+        <Columns columns={2} className="mx-4 !items-stretch !gap-6 sm:mx-0">
           <ManagePageCard
             icon={<MaterialIcon icon="assignment_turned_in" size={48} />}
             title={t("attendance.title")}
             desc={t("attendance.desc")}
           >
             <Button appearance="filled" href={attendanceURL} element={Link}>
-              {t("attendance.action.seeMore")}
+              {t("attendance.action.showMore")}
             </Button>
             <Button
               appearance="outlined"
@@ -74,7 +78,16 @@ const ManagePage: CustomPage = () => {
               href="/manage/participation"
               element={Link}
             >
-              {t("participation.action.seeMore")}
+              {t("participation.action.showMore")}
+            </Button>
+          </ManagePageCard>
+          <ManagePageCard
+            icon={<MaterialIcon icon="collections_bookmark" size={48} />}
+            title={t("elective.title")}
+            desc={t("elective.desc")}
+          >
+            <Button appearance="filled" href="/manage/elective" element={Link}>
+              {t("elective.action.showMore")}
             </Button>
           </ManagePageCard>
         </Columns>

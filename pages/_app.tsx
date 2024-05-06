@@ -70,6 +70,7 @@ const Contexts: FC<{ children: ReactNode }> = ({ children }) => {
 
   const [user, setUser] = useState<User | null>(null);
   const [person, setPerson] = useState<Student | Teacher | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const [snackbar, setSnackbar] = useState<JSX.Element | null>(null);
 
@@ -79,7 +80,9 @@ const Contexts: FC<{ children: ReactNode }> = ({ children }) => {
 
   return (
     <PreviousRouteContext.Provider value={previousPath}>
-      <UserContext.Provider value={{ user, setUser, person, setPerson }}>
+      <UserContext.Provider
+        value={{ user, setUser, person, setPerson, loading, setLoading }}
+      >
         <SnackbarContext.Provider value={{ snackbar, setSnackbar }}>
           <AppStateContext.Provider
             value={{

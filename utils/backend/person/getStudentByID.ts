@@ -67,8 +67,8 @@ export async function getStudentByID(
 
   let chosenElective: ElectiveSubject | null = null;
   if (options?.detailed) {
-    const { data } = await mysk.fetch<ElectiveSubject[]>(
-      "/v1/subjects/electives/",
+    const { data, error } = await mysk.fetch<ElectiveSubject[]>(
+      "/v1/subjects/electives",
       {
         query: {
           fetch_level: "compact",
@@ -76,6 +76,7 @@ export async function getStudentByID(
         },
       },
     );
+    if (error) logError("getStudentByID (electives)", error);
     if (data?.length) chosenElective = data[0];
   }
 

@@ -1,12 +1,11 @@
-import { MultiLangString } from "@/utils/types/common";
-import { Teacher } from "@/utils/types/person";
-import { SubjectGroup } from "@/utils/types/subject";
-import { Student } from "@/utils/types/person";
 import { Classroom } from "@/utils/types/classroom";
+import { MultiLangString } from "@/utils/types/common";
+import { Student, Teacher } from "@/utils/types/person";
+import { SubjectGroup } from "@/utils/types/subject";
 
 export type ElectiveSubject = {
   id: string;
-  session_code: number; // 2-digit code differentiating sessions of same Subject
+  session_code: string; // 2-digit code differentiating sessions of same Subject
   name: MultiLangString;
   short_name: MultiLangString | null;
   code: MultiLangString;
@@ -18,6 +17,7 @@ export type ElectiveSubject = {
   credit: number;
   class_size: number;
   cap_size: number;
+  requirements: MultiLangString[];
   applicable_classrooms: Classroom[];
   room: string;
   students: Student[];

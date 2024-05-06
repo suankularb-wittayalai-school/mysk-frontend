@@ -616,47 +616,191 @@ export type Database = {
           },
         ];
       };
+      elective_subject_session_classrooms: {
+        Row: {
+          classroom_id: string;
+          created_at: string;
+          elective_subject_session_id: string;
+          id: string;
+        };
+        Insert: {
+          classroom_id: string;
+          created_at?: string;
+          elective_subject_session_id: string;
+          id?: string;
+        };
+        Update: {
+          classroom_id?: string;
+          created_at?: string;
+          elective_subject_session_id?: string;
+          id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "elective_subject_session_class_elective_subject_session_id_fkey";
+            columns: ["elective_subject_session_id"];
+            isOneToOne: false;
+            referencedRelation: "elective_subject_sessions";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "elective_subject_session_class_elective_subject_session_id_fkey";
+            columns: ["elective_subject_session_id"];
+            isOneToOne: false;
+            referencedRelation: "elective_subject_sessions_with_detail_view";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "elective_subject_session_classrooms_classroom_id_fkey";
+            columns: ["classroom_id"];
+            isOneToOne: false;
+            referencedRelation: "classrooms";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      elective_subject_session_enrolled_students: {
+        Row: {
+          created_at: string;
+          elective_subject_session_id: string;
+          id: string;
+          is_randomized: boolean;
+          student_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          elective_subject_session_id: string;
+          id?: string;
+          is_randomized?: boolean;
+          student_id: string;
+        };
+        Update: {
+          created_at?: string;
+          elective_subject_session_id?: string;
+          id?: string;
+          is_randomized?: boolean;
+          student_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "elective_subjects_session_enro_elective_subject_session_id_fkey";
+            columns: ["elective_subject_session_id"];
+            isOneToOne: false;
+            referencedRelation: "elective_subject_sessions";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "elective_subjects_session_enro_elective_subject_session_id_fkey";
+            columns: ["elective_subject_session_id"];
+            isOneToOne: false;
+            referencedRelation: "elective_subject_sessions_with_detail_view";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "elective_subjects_session_enrolled_students_student_id_fkey";
+            columns: ["student_id"];
+            isOneToOne: false;
+            referencedRelation: "students";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      elective_subject_sessions: {
+        Row: {
+          cap_size: number;
+          created_at: string;
+          id: string;
+          room: string;
+          semester: number;
+          session_code: string;
+          subject_id: string;
+          year: number;
+        };
+        Insert: {
+          cap_size: number;
+          created_at?: string;
+          id?: string;
+          room: string;
+          semester: number;
+          session_code: string;
+          subject_id: string;
+          year: number;
+        };
+        Update: {
+          cap_size?: number;
+          created_at?: string;
+          id?: string;
+          room?: string;
+          semester?: number;
+          session_code?: string;
+          subject_id?: string;
+          year?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "elective_subject_sessions_subject_id_fkey";
+            columns: ["subject_id"];
+            isOneToOne: false;
+            referencedRelation: "subjects";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       elective_subject_trade_offers: {
         Row: {
           created_at: string;
           id: string;
-          receiver_elective_subject_id: string;
+          receiver_elective_subject_session_id: string;
           receiver_id: string;
-          sender_elective_subject_id: string;
+          sender_elective_subject_session_id: string;
           sender_id: string;
           status: Database["public"]["Enums"]["submission_status"];
         };
         Insert: {
           created_at?: string;
           id?: string;
-          receiver_elective_subject_id: string;
+          receiver_elective_subject_session_id: string;
           receiver_id: string;
-          sender_elective_subject_id: string;
+          sender_elective_subject_session_id: string;
           sender_id: string;
           status?: Database["public"]["Enums"]["submission_status"];
         };
         Update: {
           created_at?: string;
           id?: string;
-          receiver_elective_subject_id?: string;
+          receiver_elective_subject_session_id?: string;
           receiver_id?: string;
-          sender_elective_subject_id?: string;
+          sender_elective_subject_session_id?: string;
           sender_id?: string;
           status?: Database["public"]["Enums"]["submission_status"];
         };
         Relationships: [
           {
-            foreignKeyName: "public_elective_subject_trade_offers_receiver_elective__subject";
-            columns: ["receiver_elective_subject_id"];
+            foreignKeyName: "elective_subject_trade_offers_receiver_elective_subject_se_fkey";
+            columns: ["receiver_elective_subject_session_id"];
             isOneToOne: false;
-            referencedRelation: "complete_elective_subjects_view";
+            referencedRelation: "elective_subject_sessions";
             referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "public_elective_subject_trade_offers_receiver_elective__subject";
-            columns: ["receiver_elective_subject_id"];
+            foreignKeyName: "elective_subject_trade_offers_receiver_elective_subject_se_fkey";
+            columns: ["receiver_elective_subject_session_id"];
             isOneToOne: false;
-            referencedRelation: "elective_subjects";
+            referencedRelation: "elective_subject_sessions_with_detail_view";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "elective_subject_trade_offers_sender_elective_subject_sess_fkey";
+            columns: ["sender_elective_subject_session_id"];
+            isOneToOne: false;
+            referencedRelation: "elective_subject_sessions";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "elective_subject_trade_offers_sender_elective_subject_sess_fkey";
+            columns: ["sender_elective_subject_session_id"];
+            isOneToOne: false;
+            referencedRelation: "elective_subject_sessions_with_detail_view";
             referencedColumns: ["id"];
           },
           {
@@ -664,20 +808,6 @@ export type Database = {
             columns: ["receiver_id"];
             isOneToOne: false;
             referencedRelation: "students";
-            referencedColumns: ["id"];
-          },
-          {
-            foreignKeyName: "public_elective_subject_trade_offers_sender_elective_subject_id";
-            columns: ["sender_elective_subject_id"];
-            isOneToOne: false;
-            referencedRelation: "complete_elective_subjects_view";
-            referencedColumns: ["id"];
-          },
-          {
-            foreignKeyName: "public_elective_subject_trade_offers_sender_elective_subject_id";
-            columns: ["sender_elective_subject_id"];
-            isOneToOne: false;
-            referencedRelation: "elective_subjects";
             referencedColumns: ["id"];
           },
           {
@@ -1510,6 +1640,38 @@ export type Database = {
         };
         Relationships: [];
       };
+      subject_requirements: {
+        Row: {
+          created_at: string;
+          id: string;
+          label_en: string | null;
+          label_th: string;
+          subject_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          label_en?: string | null;
+          label_th: string;
+          subject_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          label_en?: string | null;
+          label_th?: string;
+          subject_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "subject_requirements_subject_id_fkey";
+            columns: ["subject_id"];
+            isOneToOne: false;
+            referencedRelation: "subjects";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       subject_teachers: {
         Row: {
           created_at: string | null;
@@ -1845,6 +2007,47 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "public_elective_subjects_subject_id_fkey";
+            columns: ["subject_id"];
+            isOneToOne: false;
+            referencedRelation: "subjects";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "subjects_subject_group_id_fkey";
+            columns: ["subject_group_id"];
+            isOneToOne: false;
+            referencedRelation: "subject_groups";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      elective_subject_sessions_with_detail_view: {
+        Row: {
+          cap_size: number | null;
+          class_size: number | null;
+          code_en: string | null;
+          code_th: string | null;
+          created_at: string | null;
+          credit: number | null;
+          description_en: string | null;
+          description_th: string | null;
+          id: string | null;
+          name_en: string | null;
+          name_th: string | null;
+          room: string | null;
+          semester: number | null;
+          session_code: string | null;
+          short_name_en: string | null;
+          short_name_th: string | null;
+          subject_group_id: number | null;
+          subject_id: string | null;
+          syllabus: string | null;
+          type: Database["public"]["Enums"]["subject_type_en_enum"] | null;
+          year: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "elective_subject_sessions_subject_id_fkey";
             columns: ["subject_id"];
             isOneToOne: false;
             referencedRelation: "subjects";
