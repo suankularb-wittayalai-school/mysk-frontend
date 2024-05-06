@@ -54,6 +54,11 @@
       "pantsSize": "ขนาดกางเกงนักเรียน",
       "elective": "วิชาเลือก"
     },
+    "filters": {
+      "label": "ตัวกรอง",
+      "noElective": "ไม่มีวิชาเลือก",
+      "hasAllergies": "มีภูมิแพ้"
+    },
     "numEmpty": "เพิ่มหลัก",
     "enableNotes": "หลักหมายเหตุ",
     "enableTimestamp": "ประทับเวลา"

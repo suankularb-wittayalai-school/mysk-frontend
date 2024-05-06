@@ -4,9 +4,8 @@ import {
 } from "@/components/classes/StudentListPrintout";
 import PrintOptions from "@/components/common/print/PrintOptions";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
-import permitted from "@/utils/helpers/permitted";
 import { FormControlProps } from "@/utils/types/common";
-import { User, UserRole } from "@/utils/types/person";
+import { UserRole } from "@/utils/types/person";
 import {
   Checkbox,
   FormGroup,
@@ -61,7 +60,9 @@ const StudentsPrintOptions: FC<{
               "allergies",
               "shirtSize",
               "pantsSize",
-              "elective",
+              mysk.user &&
+                (mysk.user.is_admin || mysk.user.role !== UserRole.student) &&
+                "elective",
             ].filter((column) => column) as OptionsType["columns"]
           ).map((column) => (
             <FormItem key={column} label={t(`columns.${column}`)}>
@@ -74,6 +75,27 @@ const StudentsPrintOptions: FC<{
             </FormItem>
           ))}
         </FormGroup>
+
+        <FormGroup label={t("filters.label")}>
+          {(
+            [
+              mysk.user &&
+                (mysk.user.is_admin || mysk.user.role !== UserRole.student) &&
+                "noElective",
+              "hasAllergies",
+            ].filter((filters) => filters) as OptionsType["filters"]
+          ).map((filters) => (
+            <FormItem key={filters} label={t(`filters.${filters}`)}>
+              <Checkbox
+                value={form.filters.includes(filters)}
+                onChange={() =>
+                  setForm({ ...form, filters: toggle(form.filters, filters) })
+                }
+              />
+            </FormItem>
+          ))}
+        </FormGroup>
+
         <TextField
           appearance="outlined"
           label={t("numEmpty")}
