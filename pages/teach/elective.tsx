@@ -3,6 +3,7 @@ import ElectiveLayout, {
   DIALOG_BREAKPOINTS,
 } from "@/components/elective/ElectiveLayout";
 import ElectiveListItem from "@/components/elective/ElectiveListItem";
+import ElectiveStudentListCard from "@/components/elective/ElectiveStudentListCard";
 import LookupDetailsDialog from "@/components/lookup/LookupDetailsDialog";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
@@ -52,7 +53,7 @@ const TeachElectivesPage: CustomPage<{
     <>
       <ElectiveLayout role={UserRole.teacher}>
         {/* List */}
-        <section className="overflow-scroll md:-mb-9">
+        <section className="overflow-auto md:-mb-9">
           <ul className="md:h-0">
             {electiveSubjects.map((electiveSubject) => (
               <ElectiveListItem
@@ -76,24 +77,27 @@ const TeachElectivesPage: CustomPage<{
         </section>
 
         {/* Details */}
-        <section className="hidden flex-col gap-6 md:flex">
-          <motion.main
-            key={selectedElective?.session_code || "empty"}
-            initial={{ opacity: 0, scale: 0.95, x: -10 }}
-            animate={{ opacity: 1, scale: 1, x: 0 }}
-            transition={transition(DURATION.medium2, EASING.standardDecelerate)}
-            className="relative grow *:absolute *:inset-0"
-          >
+        <motion.section
+          key={selectedElective?.session_code || "empty"}
+          initial={{ opacity: 0, scale: 0.95, x: -10 }}
+          animate={{ opacity: 1, scale: 1, x: 0 }}
+          transition={transition(DURATION.medium2, EASING.standardDecelerate)}
+          className="hidden flex-col gap-6 md:flex"
+        >
+          <main className="relative grow *:absolute *:inset-0">
             {selectedElective && (
               <ElectiveDetailsCard electiveSubject={selectedElective} />
             )}
-          </motion.main>
+          </main>
 
           {/* Enrolled Students */}
-          <section className="grid h-[18rem] place-content-center text-center">
-            TODO
-          </section>
-        </section>
+          {selectedElective && (
+            <ElectiveStudentListCard
+              electiveSubject={selectedElective}
+              className="h-[18rem]"
+            />
+          )}
+        </motion.section>
       </ElectiveLayout>
 
       <LookupDetailsDialog
@@ -133,7 +137,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     {
       query: {
         fetch_level: "detailed",
-        descendant_fetch_level: "compact",
+        descendant_fetch_level: "default",
         filter: { data: { teacher_ids: [teacher.id] } },
         sort: { by: ["session_code"], ascending: true },
       },
@@ -144,6 +148,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     props: {
       ...(await serverSideTranslations(locale as LangCode, [
         "common",
+        "attendance",
         "elective",
         "lookup",
         "schedule",
