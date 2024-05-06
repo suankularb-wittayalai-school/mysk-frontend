@@ -37,8 +37,8 @@ const TeachElectiveEntryCard: StylableFC<{
           count: electivesInCharge.length,
         })}
       />
-      <CardContent className="!pt-0">
-        <Actions align="right" className="!-mt-2.5">
+      <CardContent className="!p-3 !pt-0">
+        <Actions align="right" className="!-mt-2">
           <Button appearance="filled" href="/teach/elective" element={Link}>
             {t("action.view")}
           </Button>

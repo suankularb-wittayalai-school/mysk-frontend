@@ -1,4 +1,4 @@
-import getTodaySetToPeriodTime from "@/utils/helpers/schedule/getTodaySetToPeriodTime";
+import setDateToPeriodTime from "@/utils/helpers/schedule/setDateToPeriodTime";
 import { differenceInMinutes } from "date-fns";
 import { toZonedTime } from "date-fns-tz";
 
@@ -14,7 +14,7 @@ export default function periodNumberAt(date: Date = new Date()): number {
   // period 1.
   const calculatedPeriod =
     Math.floor(
-      differenceInMinutes(zonedDate, getTodaySetToPeriodTime(1)) / 50,
+      differenceInMinutes(zonedDate, setDateToPeriodTime(zonedDate, 1)) / 50,
     ) + 1;
   // Clamp the calculated period to be between 1 and 10.
   return Math.min(Math.max(calculatedPeriod, 1), 10);

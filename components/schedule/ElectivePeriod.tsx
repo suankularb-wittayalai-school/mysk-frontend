@@ -1,5 +1,5 @@
 import HoverList from "@/components/person/HoverList";
-import ElectivePeriodDetails from "@/components/schedule/ElectivePeriodDetails";
+import ElectivePeriodDialog from "@/components/schedule/ElectivePeriodDialog";
 import MoreIndicator from "@/components/schedule/MoreIndicator";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import cn from "@/utils/helpers/cn";
@@ -105,7 +105,7 @@ const ElectivePeriod: StylableFC<{
           className="absolute top-auto"
         />
       </li>
-      <ElectivePeriodDetails
+      <ElectivePeriodDialog
         period={period}
         open={detailsOpen}
         onClose={() => setDetailsOpen(false)}
