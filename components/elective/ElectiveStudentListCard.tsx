@@ -38,22 +38,43 @@ const ElectiveStudentListCard: StylableFC<{
 
   const [query, setQuery] = useState("");
 
+  /** Convert `applicable_classrooms` into an indexable format. */
   const classrooms = Object.fromEntries(
     electiveSubject.applicable_classrooms.map((classroom) => [
       classroom.id,
       classroom,
     ]),
   );
+
+  /** Treat `students` for mapping. */
   const students = sort(
     sort(
-      electiveSubject.students.filter((student) =>
-        locales?.some((locale) =>
-          getLocaleName(locale as LangCode, student).includes(query),
-        ),
-      ),
-      (student) => student.classroom?.number || 1000,
+      electiveSubject.students
+        // Filter by name.
+        .filter(
+          (student) =>
+            // Show all if there is no query.
+            !query ||
+            // Show if the query matches the student's name in at least one
+            // locale.
+            locales?.some((locale) =>
+              getLocaleName(locale as LangCode, student).includes(query),
+            ),
+        )
+        // Add Classroom information (API only returns ID).
+        .map((student) => ({
+          ...student,
+          classroom: student.classroom
+            ? classrooms[student.classroom.id]
+            : null,
+        })),
+      // Sort by number in classroom, none at top.
+      (student) => student.class_no || 0,
     ),
-    (student) => (student.classroom ? -1 : student.class_no!),
+    // Sort by classroom number, none at bottom. Students must have a Classroom
+    // to enroll in an Elective Subject anyway so this is just a way to hide
+    // if things go wrong but not being dishonest, according to @smartwhatt.
+    (student) => student.classroom?.number || 1000,
   );
 
   return (
