@@ -25,7 +25,7 @@ import { useState } from "react";
 
 /**
  * A Card that displays a list of all Students enrolled in an Elective Subject,
- * filterrable by name.
+ * filterable by name.
  *
  * @param electiveSubject The Elective Subject to display the Students of.
  */
