@@ -77,7 +77,7 @@ const ClassDetailsCard: StylableFC<{
                 {classroom.students.length > 0 && (
                   <ClassStudentList
                     students={classroom.students}
-                    classNumber={classroom.number}
+                    classroom={classroom}
                   />
                 )}
 
