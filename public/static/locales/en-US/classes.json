@@ -44,6 +44,7 @@
     "language": "Language",
     "columns": {
       "label": "Information to show",
+      "index": "Order",
       "classNo": "Class №",
       "studentID": "Student ID",
       "prefix": "Prefix",

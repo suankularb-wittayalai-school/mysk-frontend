@@ -31,8 +31,13 @@ const StudentListTableBody: StylableFC<{
           (!options.filters.includes("hasAllergies") ||
             student.allergies?.length),
       )
-      .map((student) => (
+      .map((student, index) => (
         <tr key={student.id}>
+          {/* Index */}
+          {options.columns.includes("index") && (
+            <td className="text-center">{index + 1}</td>
+          )}
+
           {/* Class no. */}
           {options.columns.includes("classNo") && (
             <td className="text-center">{student.class_no}</td>
