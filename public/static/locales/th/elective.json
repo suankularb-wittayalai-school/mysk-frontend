@@ -63,6 +63,9 @@
       }
     }
   },
+  "print": {
+    "title": "พิมพ์ใบรายชื่อ"
+  },
   "dialog": {
     "createRequest": {
       "title": "ส่งคำขอแลกวิชา",
