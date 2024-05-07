@@ -15,6 +15,7 @@ import {
   Radio,
 } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
+import { sort } from "radash";
 
 /**
  * A List Item representing an Elective Subject.
@@ -51,12 +52,20 @@ const ElectiveListItem: StylableFC<{
       stateLayerEffect
       onClick={onClick}
       className={cn(
-        `!pl-6 !pr-7 transition-colors`,
-        enrolled ? `!py-3.5` : `!py-3`,
-        enrolled
-          ? `!bg-surface-variant`
-          : selected && `!bg-primary-container state-layer:!bg-primary`,
-        role === UserRole.teacher && `!rounded-xl`,
+        `transition-colors`,
+        ...{
+          student: [
+            `!pl-6 !pr-7`,
+            enrolled ? `!py-3.5` : `!py-3`,
+            enrolled
+              ? `!bg-surface-variant`
+              : selected && `!bg-primary-container state-layer:!bg-primary`,
+          ],
+          teacher: [
+            `!rounded-xl !bg-surface-bright !px-5 !py-4`,
+            selected && `md:!bg-primary-container state-layer:md:!bg-primary`,
+          ],
+        }[role],
         className,
       )}
       style={style}
@@ -78,7 +87,9 @@ const ElectiveListItem: StylableFC<{
         ))}
 
       {/* Text content */}
-      <div className="space-y-3">
+      <div
+        className={role === UserRole.teacher ? "grid grow gap-3" : "contents"}
+      >
         <ListItemContent
           overline={enrolled ? t("enrolled") : undefined}
           title={getLocaleString(electiveSubject.name, locale)}
@@ -101,11 +112,18 @@ const ElectiveListItem: StylableFC<{
           }
           className="!grid *:truncate"
         />
-        <ChipSet>
-          {electiveSubject.applicable_classrooms.map((classroom) => (
-            <InputChip>{tx("class", { number: classroom.number })}</InputChip>
-          ))}
-        </ChipSet>
+        {role === UserRole.teacher && (
+          <ChipSet scrollable>
+            {sort(
+              electiveSubject.applicable_classrooms,
+              (classroom) => classroom.number,
+            ).map((classroom) => (
+              <InputChip key={classroom.id} className="!cursor-pointer">
+                {tx("class", { number: classroom.number })}
+              </InputChip>
+            ))}
+          </ChipSet>
+        )}
       </div>
 
       {/* Enrollment */}
@@ -113,7 +131,11 @@ const ElectiveListItem: StylableFC<{
         classSize={electiveSubject.class_size}
         capSize={electiveSubject.cap_size}
         className={cn(
-          (enrolled || selected) && `[&_.skc-progress>*]:!bg-surface-bright`,
+          (enrolled || selected) &&
+            {
+              student: `[&_.skc-progress>*]:!bg-surface-bright`,
+              teacher: `[&_.skc-progress>*]:md:!bg-surface-bright`,
+            }[role],
           `[&_.skc-progress>*]:transition-colors`,
         )}
       />
