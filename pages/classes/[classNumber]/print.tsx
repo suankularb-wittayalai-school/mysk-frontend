@@ -43,6 +43,7 @@ const StudentsListPrintPage: CustomPage<{
       <Head>
         <title>{tx("tabName", { tabName: t("title") })}</title>
       </Head>
+      <h1 className="sr-only">{t("title")}</h1>
       <StudentListPrintout
         header={({ locale }) => (
           <ClassroomPrintoutHeader classroom={classroom} locale={locale} />

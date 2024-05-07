@@ -5,7 +5,6 @@ import useForm from "@/utils/helpers/useForm";
 import useLocale from "@/utils/helpers/useLocale";
 import { LangCode, StylableFC } from "@/utils/types/common";
 import { Student } from "@/utils/types/person";
-import { useTranslation } from "next-i18next";
 import { list } from "radash";
 
 /**
@@ -51,7 +50,6 @@ const StudentListPrintout: StylableFC<{
   studentList: Student[];
 }> = ({ header, columns, filters, studentList, style, className }) => {
   const locale = useLocale();
-  const { t } = useTranslation("classes", { keyPrefix: "print" });
 
   // Form control for the options.
   // Placed in the parent component as this state is shared between the Paper
@@ -83,23 +81,16 @@ const StudentListPrintout: StylableFC<{
   ]);
 
   return (
-    <>
-      <h1 className="sr-only">{t("title")}</h1>
-      <PrintPage style={style} className={className}>
-        <StudentsListPaper
-          header={header}
-          studentList={studentList}
-          options={form}
-        />
-        <StudentsPrintOptions
-          form={form}
-          allowedColumns={columns}
-          allowedFilters={filters}
-          setForm={setForm}
-          formProps={formProps}
-        />
-      </PrintPage>
-    </>
+    <PrintPage style={style} className={className}>
+      <StudentsListPaper header={header} students={students} options={form} />
+      <StudentsPrintOptions
+        form={form}
+        allowedColumns={columns}
+        allowedFilters={filters}
+        setForm={setForm}
+        formProps={formProps}
+      />
+    </PrintPage>
   );
 };
 
