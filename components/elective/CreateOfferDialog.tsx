@@ -131,20 +131,19 @@ const CreateOfferDialog: StylableFC<{
         desc={t("desc")}
       />
       <DialogContent className="px-6">
-        <TextField<string>
+        <TextField
           appearance="outlined"
           label={t("form.email")}
           disabled={loading}
           {...formProps.email}
-          onChange={(value) =>
-            setForm({
-              email:
-                value.endsWith("@") && !value.includes("student.sk.ac.th")
-                  ? value + "student.sk.ac.th"
-                  : value,
-            })
-          }
-          inputAttr={{ type: "email" }}
+          inputAttr={{
+            type: "email",
+            // Auto-append the school email domain.
+            onKeyUp: ({ key }) =>
+              key === "@" &&
+              !form.email.includes("student.sk.ac.th") &&
+              setForm({ email: form.email + "student.sk.ac.th" }),
+          }}
         />
       </DialogContent>
       <Actions>
