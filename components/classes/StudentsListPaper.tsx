@@ -15,9 +15,9 @@ import { Student } from "@/utils/types/person";
  */
 const StudentsListPaper: StylableFC<{
   header?: StylableFC<{ locale: LangCode }>;
-  studentList: Student[];
+  students: Student[];
   options: OptionsType;
-}> = ({ header: PrintoutHeader, studentList, options, style, className }) => (
+}> = ({ header: PrintoutHeader, students, options, style, className }) => (
   <PaperPreview style={style} className={cn(className, "p-4")}>
     {/* Header */}
     {PrintoutHeader && <PrintoutHeader locale={options.language} />}
@@ -35,7 +35,7 @@ const StudentsListPaper: StylableFC<{
       />
 
       {/* Body area */}
-      <StudentListTableBody studentList={studentList} options={options} />
+      <StudentListTableBody studentList={students} options={options} />
     </table>
 
     {/* Timestamp */}

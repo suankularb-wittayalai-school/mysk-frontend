@@ -47,8 +47,8 @@ const StudentListPrintout: StylableFC<{
   header: StylableFC<{ locale: LangCode }>;
   columns: OptionsType["columns"];
   filters: OptionsType["filters"];
-  studentList: Student[];
-}> = ({ header, columns, filters, studentList, style, className }) => {
+  students: Student[];
+}> = ({ header, columns, filters, students, style, className }) => {
   const locale = useLocale();
 
   // Form control for the options.

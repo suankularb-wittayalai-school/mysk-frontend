@@ -14,7 +14,7 @@ import { GetStaticPaths, GetStaticProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
-import { sift } from "radash";
+import { sift, sort } from "radash";
 
 /**
  * A preview and options page for printing a list of Students in a Classroom,
@@ -29,8 +29,8 @@ const StudentsListPrintPage: CustomPage<{
     Classroom,
     "id" | "number" | "class_advisors" | "contacts" | "subjects"
   >;
-  studentList: Student[];
-}> = ({ classroom, studentList }) => {
+  students: Student[];
+}> = ({ classroom, students }) => {
   const { t } = useTranslation("classes", { keyPrefix: "print" });
   const { t: tx } = useTranslation("common");
 
@@ -60,7 +60,7 @@ const StudentsListPrintPage: CustomPage<{
           canSeeSensitive && "elective",
         ])}
         filters={sift([canSeeSensitive && "noElective", "hasAllergies"])}
-        studentList={studentList}
+        students={students}
       />
     </>
   );
@@ -88,7 +88,7 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
     supabase,
     data.id,
   );
-  const { data: studentList } = await getStudentsByIDs(
+  const { data: students } = await getStudentsByIDs(
     supabase,
     mysk,
     compactStudentList!.map((student) => student.id),
@@ -102,10 +102,7 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
         "classes",
       ])),
       classroom,
-      studentList: studentList!.sort(
-        // Put Students with no class No. first.
-        (a, b) => (a.class_no || 0) - (b.class_no || 0),
-      ),
+      students: sort(students!, (student) => student.class_no || 0),
     },
     revalidate: 10,
   };
