@@ -21,7 +21,6 @@ import {
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { motion } from "framer-motion";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { first } from "radash";
 import { useEffect, useState } from "react";
@@ -35,8 +34,6 @@ import { useEffect, useState } from "react";
 const TeachElectivesPage: CustomPage<{
   electiveSubjects: ElectiveSubject[];
 }> = ({ electiveSubjects }) => {
-  const { t } = useTranslation("elective");
-
   const [selectedElective, setSelectedElective] =
     useState<ElectiveSubject | null>(null);
 
