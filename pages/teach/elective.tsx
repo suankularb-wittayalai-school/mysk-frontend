@@ -58,6 +58,7 @@ const TeachElectivesPage: CustomPage<{
             {electiveSubjects.map((electiveSubject) => (
               <ElectiveListItem
                 key={electiveSubject.session_code}
+                role={UserRole.teacher}
                 electiveSubject={electiveSubject}
                 selected={
                   selectedElective?.session_code ===
