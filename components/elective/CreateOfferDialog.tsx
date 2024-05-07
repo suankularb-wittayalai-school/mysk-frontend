@@ -95,7 +95,7 @@ const CreateOfferDialog: StylableFC<{
       }),
     });
     if (error) {
-      if (error.code === 403)
+      if (error.code === 400 || error.code === 403)
         setSnackbar(<Snackbar>{t("snackbar.notAllowed")}</Snackbar>);
       else setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
       logError("handleSubmit", error);
