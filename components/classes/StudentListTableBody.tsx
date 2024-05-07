@@ -78,6 +78,19 @@ const StudentListTableBody: StylableFC<{
             </td>
           )}
 
+          {/* Classroom */}
+          {options.columns.includes("classroom") && (
+            <>
+              <td className="w-12 text-center">
+                {student.classroom &&
+                  (options.language === "en-US" ? "M." : "ม.") +
+                    student.classroom.number}
+              </td>
+              <td className="w-4 text-center">{student.class_no}</td>
+            </>
+          )}
+
+          {/* Allergies */}
           {options.columns.includes("allergies") && (
             <td>{student.allergies?.join()}</td>
           )}

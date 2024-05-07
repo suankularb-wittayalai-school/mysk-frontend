@@ -63,6 +63,13 @@ const StudentListTableHead: StylableFC<{
         </th>
       )}
 
+      {/* Class no. */}
+      {options.columns.includes("classroom") && (
+        <th colSpan={2} className="w-16">
+          {options.language === "en-US" ? "Class" : "ห้องเรียน"}
+        </th>
+      )}
+
       {/* Notes */}
       {options.columns.includes("allergies") && (
         <th className="w-32">

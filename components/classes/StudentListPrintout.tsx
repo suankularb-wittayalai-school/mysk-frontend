@@ -19,6 +19,7 @@ export type OptionsType = {
     | "prefix"
     | "fullName"
     | "nickname"
+    | "classroom"
     | "allergies"
     | "shirtSize"
     | "pantsSize"
