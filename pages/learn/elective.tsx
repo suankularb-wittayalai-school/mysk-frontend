@@ -245,8 +245,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     }),
 
     // Check if the time now is in an Enrollment Period.
-    // await mysk.fetch<boolean>("/v1/subjects/electives/in-enrollment-period"),
-    { data: true },
+    await mysk.fetch<boolean>("/v1/subjects/electives/in-enrollment-period"),
   ]);
 
   const trades = {
