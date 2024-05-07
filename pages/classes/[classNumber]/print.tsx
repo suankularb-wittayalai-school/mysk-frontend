@@ -24,7 +24,7 @@ import { sift, sort } from "radash";
  * @param classroom The Classroom to print the Student List for.
  * @param studentList The list of Students in the Classroom.
  */
-const StudentsListPrintPage: CustomPage<{
+const ClassroomPrintPage: CustomPage<{
   classroom: Pick<
     Classroom,
     "id" | "number" | "class_advisors" | "contacts" | "subjects"
@@ -113,4 +113,4 @@ export const getStaticPaths: GetStaticPaths = async () => ({
   fallback: "blocking",
 });
 
-export default StudentsListPrintPage;
+export default ClassroomPrintPage;
