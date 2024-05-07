@@ -20,14 +20,14 @@ import { sort } from "radash";
 /**
  * A List Item representing an Elective Subject.
  *
- * @param role The role of the user viewing this component.
+ * @param role The role of the User viewing the Elective Subject.
  * @param electiveSubject The Elective Subject to display.
  * @param selected Whether this Elective Subject is selected.
  * @param enrolled Whether the Student is enrolled in the Elective Subject.
  * @param onRadioToggle Triggers when the radio button is toggled.
  */
 const ElectiveListItem: StylableFC<{
-  role: UserRole.student | UserRole.teacher;
+  role: UserRole;
   electiveSubject: ElectiveSubject;
   selected?: boolean;
   enrolled?: boolean;
@@ -47,25 +47,24 @@ const ElectiveListItem: StylableFC<{
 
   return (
     <ListItem
-      align="center"
+      align="top"
       lines={2}
       stateLayerEffect
       onClick={onClick}
       className={cn(
         `transition-colors`,
-        ...{
-          student: [
-            `!pl-6 !pr-7`,
-            enrolled ? `!py-3.5` : `!py-3`,
-            enrolled
-              ? `!bg-surface-variant`
-              : selected && `!bg-primary-container state-layer:!bg-primary`,
-          ],
-          teacher: [
-            `!rounded-xl !bg-surface-bright !px-5 !py-4`,
-            selected && `md:!bg-primary-container state-layer:md:!bg-primary`,
-          ],
-        }[role],
+        ...(role === UserRole.student
+          ? [
+              `!pl-6 !pr-7`,
+              enrolled ? `!py-3.5` : `!py-3`,
+              enrolled
+                ? `!bg-surface-variant`
+                : selected && `!bg-primary-container state-layer:!bg-primary`,
+            ]
+          : [
+              `!rounded-xl !bg-surface-bright !px-5 !py-4`,
+              selected && `md:!bg-primary-container state-layer:md:!bg-primary`,
+            ]),
         className,
       )}
       style={style}
@@ -113,7 +112,10 @@ const ElectiveListItem: StylableFC<{
           className="!grid *:truncate"
         />
         {role === UserRole.teacher && (
-          <ChipSet scrollable>
+          <ChipSet
+            scrollable
+            className="fade-out-to-r -ml-6 -mr-16 *:pl-6 *:pr-8"
+          >
             {sort(
               electiveSubject.applicable_classrooms,
               (classroom) => classroom.number,
@@ -132,11 +134,10 @@ const ElectiveListItem: StylableFC<{
         capSize={electiveSubject.cap_size}
         className={cn(
           (enrolled || selected) &&
-            {
-              student: `[&_.skc-progress>*]:!bg-surface-bright`,
-              teacher: `[&_.skc-progress>*]:md:!bg-surface-bright`,
-            }[role],
-          `[&_.skc-progress>*]:transition-colors`,
+            (role === UserRole.student
+              ? `[&_.skc-progress>*]:!bg-surface-bright`
+              : `[&_.skc-progress>*]:md:!bg-surface-bright`),
+          `pt-2 [&_.skc-progress>*]:transition-colors`,
         )}
       />
     </ListItem>
