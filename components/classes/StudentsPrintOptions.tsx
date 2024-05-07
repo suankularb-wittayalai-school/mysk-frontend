@@ -3,7 +3,6 @@ import {
   OptionsType,
 } from "@/components/classes/StudentListPrintout";
 import PrintOptions from "@/components/common/print/PrintOptions";
-import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import { FormControlProps } from "@/utils/types/common";
 import {
   Checkbox,
@@ -25,6 +24,7 @@ import { FC } from "react";
  * @param form The form control values.
  * @param allowedColumns The columns the user can choose to display.
  * @param allowedFilters The filters the user can choose to apply.
+ * @param parentURL The URL of the parent page.
  * @param setForm The form setter.
  * @param formProps The form control props.
  */
@@ -32,15 +32,21 @@ const StudentsPrintOptions: FC<{
   form: OptionsType;
   allowedColumns: OptionsType["columns"];
   allowedFilters: OptionsType["filters"];
+  parentURL: string;
   setForm: (form: OptionsType) => void;
   formProps: FormControlProps<keyof OptionsType>;
-}> = ({ form, allowedColumns, allowedFilters, setForm, formProps }) => {
+}> = ({
+  form,
+  allowedColumns,
+  allowedFilters,
+  parentURL,
+  setForm,
+  formProps,
+}) => {
   const { t } = useTranslation("classes", { keyPrefix: "print" });
 
-  const mysk = useMySKClient();
-
   return (
-    <PrintOptions parentURL="/classes">
+    <PrintOptions parentURL={parentURL}>
       <section className="flex flex-col gap-6 px-4 pb-5 pt-6">
         <Select
           appearance="outlined"

@@ -42,14 +42,16 @@ export const MAXIMUM_EMPTY_COLUMNS = 20;
  * @param classroom The Classroom to display the Student List for.
  * @param columns The columns the user can choose to display.
  * @param filters The filters the user can choose to apply.
- * @param studentList The list of all Students in this Class.
+ * @param parentURL The URL of the parent page.
+ * @param students The list of all Students in this Class.
  */
 const StudentListPrintout: StylableFC<{
   header: StylableFC<{ locale: LangCode }>;
   columns: OptionsType["columns"];
   filters: OptionsType["filters"];
+  parentURL: string;
   students: Student[];
-}> = ({ header, columns, filters, students, style, className }) => {
+}> = ({ header, columns, filters, students, parentURL, style, className }) => {
   const locale = useLocale();
 
   // Form control for the options.
@@ -88,6 +90,7 @@ const StudentListPrintout: StylableFC<{
         form={form}
         allowedColumns={columns}
         allowedFilters={filters}
+        parentURL={parentURL}
         setForm={setForm}
         formProps={formProps}
       />

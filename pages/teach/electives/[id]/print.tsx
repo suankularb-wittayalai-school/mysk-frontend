@@ -58,6 +58,7 @@ const EnrollmentListPrintPage: CustomPage<{
           "pantsSize",
         ])}
         filters={["hasAllergies"]}
+        parentURL="/teach/electives"
         students={students}
       />
     </>

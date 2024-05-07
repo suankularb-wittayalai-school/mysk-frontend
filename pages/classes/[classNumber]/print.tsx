@@ -60,6 +60,7 @@ const ClassroomPrintPage: CustomPage<{
           canSeeSensitive && "elective",
         ])}
         filters={sift([canSeeSensitive && "noElective", "hasAllergies"])}
+        parentURL="/classes"
         students={students}
       />
     </>
