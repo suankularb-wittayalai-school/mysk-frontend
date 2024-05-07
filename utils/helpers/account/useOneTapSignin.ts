@@ -1,7 +1,7 @@
 import AppStateContext from "@/contexts/AppStateContext";
 import UserContext from "@/contexts/UserContext";
 import { GSIStatus } from "@/pages";
-import getUserByEmail from "@/utils/backend/account/getUserByEmail";
+import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import fetchMySKProxy from "@/utils/backend/mysk/fetchMySKProxy";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import saveAccessToken from "@/utils/helpers/account/saveAccessToken";
@@ -44,7 +44,7 @@ export default function useOneTapSignin(
 
   const supabase = useSupabaseClient();
   const mysk = useMySKClient();
-  const { setUser } = useContext(UserContext);
+  const { setUser, setPerson } = useContext(UserContext);
 
   const { setAccountNotFoundOpen } = useContext(AppStateContext);
 
@@ -90,10 +90,18 @@ export default function useOneTapSignin(
     saveAccessToken(data);
 
     // Set the user context.
-    const { data: apiUser } = await fetchMySKProxy<User>("/auth/user");
-    if (!apiUser) return;
-    const { data: user } = await getUserByEmail(supabase, apiUser.email!);
-    if (user) setUser(user); // See explanation in `useMySKClient`.
+    const { data: user } = await fetchMySKProxy<User>("/auth/user");
+    if (user) setUser(user);
+    const { data: person } = await getLoggedInPerson(
+      supabase,
+      { ...mysk, user },
+      {
+        detailed: true,
+        includeContacts: true,
+        includeCertificates: true,
+      },
+    );
+    if (person) setPerson(person);
 
     if (router.asPath !== "/") await router.push("/learn");
     setLoading(false);
