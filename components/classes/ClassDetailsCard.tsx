@@ -34,11 +34,19 @@ const ClassDetailsCard: StylableFC<{
   const isOwnClass =
     (mysk.person && classroomOfPerson(mysk.person)?.id === classroom?.id) ||
     false;
-  const canSeeSensitive =
-    isOwnClass ||
-    (mysk.user &&
-      (mysk.user.is_admin || mysk.user.role !== UserRole.student)) ||
-    false;
+  const contactsShown =
+    // Admins can view all Contacts
+    mysk.user?.is_admin ||
+    // Other users can view Contacts in their own Classrooms
+    (isOwnClass &&
+      // Teachers can see the Contact list even if there are no
+      // Contacts, as this is where they can add them.
+      (mysk.user?.role === UserRole.teacher ||
+        // Students only see the list if there are Contacts.
+        (mysk.user?.role !== UserRole.student && classroom?.contacts.length)));
+
+  const contactsEditable =
+    mysk.user?.is_admin || (isOwnClass && mysk.user?.role === UserRole.teacher);
 
   return (
     <LookupDetailsCard
@@ -82,11 +90,11 @@ const ClassDetailsCard: StylableFC<{
                 )}
 
                 {/* Contacts */}
-                {canSeeSensitive && classroom.contacts.length > 0 && (
+                {contactsShown && (
                   <ClassContactList
                     contacts={classroom.contacts}
                     classroomID={classroom.id}
-                    editable={isOwnClass && mysk.user.role === UserRole.teacher}
+                    editable={contactsEditable}
                     refreshData={refreshData}
                   />
                 )}
