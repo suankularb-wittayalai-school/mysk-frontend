@@ -126,8 +126,9 @@ const LearnElectivesPage: CustomPage<{
           {/* Choose Button */}
           <div
             className={cn(`pointer-events-none sticky inset-0 bottom-20 top-auto
-              z-10 !-mt-6 bg-gradient-to-t from-surface-container p-4 pt-12
-              sm:static sm:!mt-0 sm:bg-none sm:p-0 sm:px-0`)}
+              z-[90] !-mt-6 bg-gradient-to-t from-surface-container p-4 pt-12
+              sm:pointer-events-auto sm:static sm:!mt-0 sm:bg-none sm:p-0
+              sm:px-0`)}
           >
             <Actions
               className={cn(`!grid !justify-stretch rounded-full

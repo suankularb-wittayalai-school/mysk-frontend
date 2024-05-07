@@ -103,17 +103,17 @@ const ElectiveDetailsCard: StylableFC<{
               <div
                 className={cn(`pointer-events-none fixed inset-0 top-auto z-10
                   overflow-hidden bg-gradient-to-t from-surface-container p-4
-                  pt-12 sm:rounded-b-xl`)}
+                  pt-12 sm:pointer-events-auto sm:rounded-b-xl`)}
               >
                 <Actions
                   align="full"
-                  className="rounded-full bg-surface-container"
+                  className={cn(`pointer-events-auto rounded-full
+                    bg-surface-container`)}
                 >
                   <ChooseButton
                     electiveSubject={electiveSubject}
                     enrolledElective={enrolledElective}
                     onSucess={onChooseSuccess}
-                    className="!pointer-events-auto"
                   />
                 </Actions>
               </div>
