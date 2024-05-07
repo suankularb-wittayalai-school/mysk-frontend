@@ -2,6 +2,7 @@ import EnrollmentIndicator from "@/components/elective/EnrollmentIndicator";
 import PersonCard from "@/components/person/PersonCard";
 import cn from "@/utils/helpers/cn";
 import getLocaleName from "@/utils/helpers/getLocaleName";
+import sortStudents from "@/utils/helpers/person/sortStudents";
 import useLocale from "@/utils/helpers/useLocale";
 import { LangCode, StylableFC } from "@/utils/types/common";
 import { ElectiveSubject } from "@/utils/types/elective";
@@ -50,34 +51,24 @@ const ElectiveStudentListCard: StylableFC<{
   );
 
   /** Treat `students` for mapping. */
-  const students = sort(
-    sort(
-      electiveSubject.students
-        // Filter by name.
-        .filter(
-          (student) =>
-            // Show all if there is no query.
-            !query ||
-            // Show if the query matches the student's name in at least one
-            // locale.
-            locales?.some((locale) =>
-              getLocaleName(locale as LangCode, student).includes(query),
-            ),
-        )
-        // Add Classroom information (API only returns ID).
-        .map((student) => ({
-          ...student,
-          classroom: student.classroom
-            ? classrooms[student.classroom.id]
-            : null,
-        })),
-      // Sort by number in classroom, none at top.
-      (student) => student.class_no || 0,
-    ),
-    // Sort by classroom number, none at bottom. Students must have a Classroom
-    // to enroll in an Elective Subject anyway so this is just a way to hide
-    // if things go wrong but not being dishonest, according to @smartwhatt.
-    (student) => student.classroom?.number || 1000,
+  const students = sortStudents(
+    electiveSubject.students
+      // Filter by name.
+      .filter(
+        (student) =>
+          // Show all if there is no query.
+          !query ||
+          // Show if the query matches the student's name in at least one
+          // locale.
+          locales?.some((locale) =>
+            getLocaleName(locale as LangCode, student).includes(query),
+          ),
+      )
+      // Add Classroom information (API only returns ID).
+      .map((student) => ({
+        ...student,
+        classroom: student.classroom ? classrooms[student.classroom.id] : null,
+      })),
   );
 
   return (
