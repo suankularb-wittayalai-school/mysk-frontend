@@ -22,6 +22,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { sort } from "radash";
 import { useState } from "react";
+import shortUUID from "short-uuid";
 
 /**
  * A Card that displays a list of all Students enrolled in an Elective Subject,
@@ -35,6 +36,8 @@ const ElectiveStudentListCard: StylableFC<{
   const locale = useLocale();
   const { locales } = useRouter();
   const { t } = useTranslation("elective", { keyPrefix: "detail.students" });
+
+  const { fromUUID } = shortUUID();
 
   const [query, setQuery] = useState("");
 
@@ -84,7 +87,7 @@ const ElectiveStudentListCard: StylableFC<{
         <ChipSet>
           <AssistChip
             icon={<MaterialIcon icon="print" />}
-            href={`/teach/electives/${electiveSubject.session_code}/print`}
+            href={`/teach/electives/${fromUUID(electiveSubject.id)}/print`}
             element={Link}
           >
             {t("action.print")}
