@@ -102,8 +102,9 @@ const ElectiveStudentListCard: StylableFC<{
       <div className="overflow-y-auto overflow-x-hidden">
         {/* Search */}
         <div
-          className={cn(`sticky top-0 z-10 mb-10 h-11 rounded-tr-xl
-            bg-surface-bright pr-4 pt-4`)}
+          className={cn(`sticky top-0 z-10 pb-3 pr-4 pt-4 before:absolute
+            before:inset-0 before:rounded-tr-xl before:bg-gradient-to-b
+            before:from-surface-bright`)}
         >
           <Search
             value={query}
