@@ -125,6 +125,16 @@ const ElectiveStudentListCard: StylableFC<{
             <PersonCard
               key={student.id}
               person={student}
+              options={{
+                // Show an asterisk if the Student is enrolled via
+                // randomization.
+                suffix: electiveSubject.randomized_students.some(
+                  (randomizedStudent) => student.id === randomizedStudent.id,
+                ) ? (
+                  <span title={t("randomized")} className="text-tertiary">
+                    *
+                  </span>
+                ) : undefined,
               }}
               className="w-full !border-0 !bg-surface-container"
             />

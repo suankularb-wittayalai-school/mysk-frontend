@@ -57,7 +57,8 @@
     },
     "students": {
       "title": "Enrolled students",
-      "searchAlt": "Search enrolled studets",
+      "searchAlt": "Search enrolled students",
+      "randomized": "Enrolled via randomization",
       "action": {
         "print": "Print"
       }
