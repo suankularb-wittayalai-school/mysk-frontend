@@ -28,7 +28,7 @@ const PersonCard: StylableFC<
       (Pick<Student, "classroom"> | Pick<Teacher, "subject_group">);
     options?: Partial<{
       hideClassroomInSubtitle: boolean;
-      showNicknameinSubtitle: boolean;
+      showNicknameInSubtitle: boolean;
     }> &
       ComponentProps<typeof WithPersonDetails>["options"];
   }
@@ -63,7 +63,7 @@ const PersonCard: StylableFC<
                 ]).join(" • ")
               : (person as Teacher).subject_group &&
                 getLocaleString((person as Teacher).subject_group.name, locale),
-            options?.showNicknameinSubtitle &&
+            options?.showNicknameInSubtitle &&
               person.nickname?.th &&
               getLocaleString(person.nickname, locale),
           ]).join(" • ")}

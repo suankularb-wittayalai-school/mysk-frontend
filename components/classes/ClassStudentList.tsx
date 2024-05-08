@@ -95,7 +95,7 @@ const ClassStudentList: StylableFC<{
           person={{ ...student, classroom: null, role: UserRole.student }}
           options={{
             hideClassroomInSubtitle: true,
-            showNicknameinSubtitle: true,
+            showNicknameInSubtitle: true,
             hideSeeClass: true,
           }}
           element="li"
