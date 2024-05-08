@@ -67,6 +67,7 @@ const ElectiveStudentListCard: StylableFC<{
           classroom: student.classroom
             ? classrooms[student.classroom.id]
             : null,
+          role: UserRole.student as const,
         })),
       // Sort by number in classroom, none at top.
       (student) => student.class_no || 0,
@@ -122,12 +123,7 @@ const ElectiveStudentListCard: StylableFC<{
           {students.map((student) => (
             <PersonCard
               key={student.id}
-              person={{
-                ...student,
-                classroom: student.classroom
-                  ? classrooms[student.classroom.id]
-                  : null,
-                role: UserRole.student,
+              person={student}
               }}
               className="w-full !border-0 !bg-surface-container"
             />
