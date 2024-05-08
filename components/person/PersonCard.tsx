@@ -27,6 +27,7 @@ const PersonCard: StylableFC<
       // Role-specific fields
       (Pick<Student, "classroom"> | Pick<Teacher, "subject_group">);
     options?: Partial<{
+      suffix: string | JSX.Element;
       hideClassroomInSubtitle: boolean;
       showNicknameInSubtitle: boolean;
     }> &
@@ -53,7 +54,12 @@ const PersonCard: StylableFC<
       >
         <CardHeader
           avatar={<PersonAvatar {...person} />}
-          title={getLocaleName(locale, person)}
+          title={
+            <>
+              {getLocaleName(locale, person)}
+              {options?.suffix}
+            </>
+          }
           subtitle={sift([
             person.role === UserRole.student && (person as Student).classroom
               ? sift([
