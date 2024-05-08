@@ -11,7 +11,8 @@ export type SubjectGroup = {
 export type SubjectTypeEnum =
   | "core_course"
   | "additional_course"
-  | "learners_development_activities";
+  | "learners_development_activities"
+  | "elective_course";
 
 export type Subject = {
   id: string;
