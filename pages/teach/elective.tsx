@@ -21,7 +21,6 @@ import {
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { motion } from "framer-motion";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { first } from "radash";
 import { useEffect, useState } from "react";
@@ -35,8 +34,6 @@ import { useEffect, useState } from "react";
 const TeachElectivesPage: CustomPage<{
   electiveSubjects: ElectiveSubject[];
 }> = ({ electiveSubjects }) => {
-  const { t } = useTranslation("elective");
-
   const [selectedElective, setSelectedElective] =
     useState<ElectiveSubject | null>(null);
 
@@ -53,11 +50,15 @@ const TeachElectivesPage: CustomPage<{
     <>
       <ElectiveLayout role={UserRole.teacher}>
         {/* List */}
-        <section className="overflow-auto md:-mb-9">
-          <ul className="md:h-0">
+        <section
+          className={cn(`md:fade-out-to-t overflow-auto md:-mb-9 md:-mt-8
+            md:pt-8`)}
+        >
+          <ul className="space-y-1.5 px-4 sm:px-0 md:h-0">
             {electiveSubjects.map((electiveSubject) => (
               <ElectiveListItem
                 key={electiveSubject.session_code}
+                role={UserRole.teacher}
                 electiveSubject={electiveSubject}
                 selected={
                   selectedElective?.session_code ===

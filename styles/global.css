@@ -74,9 +74,32 @@
     @apply [grid-area:center];
   }
 
-  .fade-out-to-r {
+  .fade-out-to-t,
+  .fade-out-to-b,
+  .fade-out-to-r,
+  .fade-out-to-l {
     --fade-width: 2rem;
-    mask-image: linear-gradient(to left, transparent, black var(--fade-width));
+    mask-image: linear-gradient(
+      to var(--fade-direction),
+      transparent,
+      black var(--fade-width)
+    );
+  }
+
+  .fade-out-to-t {
+    --fade-direction: bottom;
+  }
+
+  .fade-out-to-b {
+    --fade-direction: top;
+  }
+
+  .fade-out-to-r {
+    --fade-direction: left;
+  }
+
+  .fade-out-to-l {
+    --fade-direction: right;
   }
 }
 
