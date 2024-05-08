@@ -2,28 +2,28 @@ import logError from "@/utils/helpers/logError";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
 
 /**
- * Convert a 5-digit Student ID to the Student’s database ID.
+ * Find a Student’s database ID by their email.
  *
  * @param supabase The Supabase Client to use.
- * @param fiveDigitID The 5-digit Student ID to search for.
+ * @param email The email of the Student to find.
  *
  * @returns A Backend Return with the Student ID, or null if not found.
  */
-export default async function getStudentIDByFiveDigitID(
+export default async function getStudentIDByEmail(
   supabase: DatabaseClient,
-  fiveDigitID: string,
+  email: string,
 ): Promise<BackendReturn<string | null>> {
   const { data, error } = await supabase
-    .from("students")
-    .select("id")
-    .eq("student_id", fiveDigitID)
+    .from("users")
+    .select(`students(id)`)
+    .eq("email", email)
     .limit(1)
     .maybeSingle();
 
   if (error) {
-    logError("getStudentIDByFiveDigitID", error);
+    logError("", error);
     return { data: null, error };
   }
 
-  return { data: data?.id || null, error: null };
+  return { data: data?.students[0]?.id || null, error: null };
 }

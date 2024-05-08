@@ -1,12 +1,12 @@
 import SnackbarContext from "@/contexts/SnackbarContext";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
-import getStudentIDByFiveDigitID from "@/utils/backend/person/getStudentIDByFiveDigitID";
+import getStudentIDByEmail from "@/utils/backend/person/getStudentIDByFiveDigitID";
 import logError from "@/utils/helpers/logError";
 import useForm from "@/utils/helpers/useForm";
 import useRefreshProps from "@/utils/helpers/useRefreshProps";
 import useToggle from "@/utils/helpers/useToggle";
 import withLoading from "@/utils/helpers/withLoading";
-import { studentIDRegex } from "@/utils/patterns";
+import { schoolEmailRegex } from "@/utils/patterns";
 import { StylableFC } from "@/utils/types/common";
 import { Student } from "@/utils/types/person";
 import {
@@ -46,14 +46,13 @@ const CreateOfferDialog: StylableFC<{
   const supabase = useSupabaseClient();
   const mysk = useMySKClient();
 
-  const { form, resetForm, openFormSnackbar, formOK, formProps } =
-    useForm<"studentID">([
+  const { form, setForm, resetForm, openFormSnackbar, formOK, formProps } =
+    useForm<"email">([
       {
-        key: "studentID",
+        key: "email",
         defaultValue: "",
         validate: (value: string) =>
-          studentIDRegex.test(value) &&
-          value !== (mysk.person as Student)?.student_id,
+          schoolEmailRegex.test(value) && value !== mysk.user?.email,
         required: true,
       },
     ]);
@@ -66,7 +65,7 @@ const CreateOfferDialog: StylableFC<{
   async function handleSubmit() {
     // Special case: cannot trade with oneself. Thought this was funny.
     // Try it and let me know if it was funny.
-    if (form.studentID === (mysk.person as Student)?.student_id) {
+    if (form.email === mysk.user?.email) {
       va.track("Attempt to Trade Electives with Self");
       setSnackbar(<Snackbar>{t("snackbar.self")}</Snackbar>);
       return false;
@@ -78,7 +77,7 @@ const CreateOfferDialog: StylableFC<{
 
     // Get the recipient's database ID.
     const { data: recipientID, error: recipientIDError } =
-      await getStudentIDByFiveDigitID(supabase, form.studentID);
+      await getStudentIDByEmail(supabase, form.email);
     if (!recipientID) {
       if (recipientIDError)
         setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
@@ -96,7 +95,7 @@ const CreateOfferDialog: StylableFC<{
       }),
     });
     if (error) {
-      if (error.code === 403)
+      if (error.code === 400 || error.code === 403)
         setSnackbar(<Snackbar>{t("snackbar.notAllowed")}</Snackbar>);
       else setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
       logError("handleSubmit", error);
@@ -134,9 +133,17 @@ const CreateOfferDialog: StylableFC<{
       <DialogContent className="px-6">
         <TextField
           appearance="outlined"
-          label={t("form.studentID")}
+          label={t("form.email")}
           disabled={loading}
-          {...formProps.studentID}
+          {...formProps.email}
+          inputAttr={{
+            type: "email",
+            // Auto-append the school email domain.
+            onKeyUp: ({ key }) =>
+              key === "@" &&
+              !form.email.includes("student.sk.ac.th") &&
+              setForm({ email: form.email + "student.sk.ac.th" }),
+          }}
         />
       </DialogContent>
       <Actions>

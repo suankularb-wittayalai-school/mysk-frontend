@@ -102,6 +102,7 @@ const LearnElectivesPage: CustomPage<{
               {electiveSubjects.map((electiveSubject) => (
                 <ElectiveListItem
                   key={electiveSubject.id}
+                  role={UserRole.student}
                   electiveSubject={electiveSubject}
                   selected={selectedID === electiveSubject.id}
                   enrolled={enrolledElective?.id === electiveSubject.id}

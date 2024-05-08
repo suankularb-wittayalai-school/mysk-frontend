@@ -69,9 +69,9 @@
   "dialog": {
     "createRequest": {
       "title": "Trade with a friend",
-      "desc": "Enter the 5-digit student ID of the friend you want to trade electives with.",
+      "desc": "Enter the school email (ends with sk.ac.th) of the friend you want to trade electives with.",
       "form": {
-        "studentID": "Student ID"
+        "email": "School email"
       },
       "action": {
         "cancel": "Cancel",
