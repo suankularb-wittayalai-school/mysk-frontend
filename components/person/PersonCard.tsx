@@ -73,6 +73,7 @@ const PersonCard: StylableFC<
               person.nickname?.th &&
               getLocaleString(person.nickname, locale),
           ]).join(" • ")}
+          className="[&_h3]:!leading-none [&_h3]:my-1"
         />
       </Card>
     </WithPersonDetails>
