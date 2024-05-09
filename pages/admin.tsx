@@ -1,4 +1,3 @@
-// Imports
 import PageHeader from "@/components/common/PageHeader";
 import cn from "@/utils/helpers/cn";
 import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
@@ -17,10 +16,10 @@ import {
   Section,
   Text,
 } from "@suankularb-components/react";
-import va from "@vercel/analytics";
 import { GetStaticProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { usePlausible } from "next-plausible";
 import Head from "next/head";
 import { FC, forwardRef } from "react";
 
@@ -82,10 +81,11 @@ const StatisticsCard: FC<{
 const AdminPanelPage: CustomPage<{
   count: AdminPanelStatistics;
 }> = ({ count }) => {
-  // Translation
   const locale = useLocale();
   const { t } = useTranslation("admin");
   const { t: tx } = useTranslation("common");
+
+  const plausible = usePlausible();
 
   return (
     <>
@@ -173,7 +173,7 @@ const AdminPanelPage: CustomPage<{
                 <a
                   {...props}
                   ref={ref}
-                  onClick={() => va.track("Open Supabase Table Editor")}
+                  onClick={() => plausible("Open Supabase Table Editor")}
                   target="_blank"
                   rel="noreferrer"
                 />

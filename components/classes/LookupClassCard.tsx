@@ -18,10 +18,10 @@ import {
   transition,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import va from "@vercel/analytics";
 import { differenceInSeconds } from "date-fns";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
+import { usePlausible } from "next-plausible";
 import { sift } from "radash";
 import { useEffect, useState } from "react";
 
@@ -42,6 +42,7 @@ const LookupClassCard: StylableFC<{
   const { t } = useTranslation("classes", { keyPrefix: "list.item" });
   const { t: tx } = useTranslation("common");
 
+  const plausible = usePlausible();
   const supabase = useSupabaseClient();
 
   const [loading, setLoading] = useState(true);
@@ -74,7 +75,9 @@ const LookupClassCard: StylableFC<{
       direction="row"
       stateLayerEffect
       onClick={() => {
-        va.track("View Classroom", { number: `M.${classroom.number}` });
+        plausible("View Classroom", {
+          props: { number: `M.${classroom.number}` },
+        });
         onClick(classroom.id);
       }}
       style={style}

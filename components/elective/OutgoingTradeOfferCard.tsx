@@ -6,12 +6,13 @@ import useRefreshProps from "@/utils/helpers/useRefreshProps";
 import useToggle from "@/utils/helpers/useToggle";
 import withLoading from "@/utils/helpers/withLoading";
 import { StylableFC } from "@/utils/types/common";
-import { ElectiveTradeOffer } from "@/utils/types/elective";
+import { ElectiveSubject, ElectiveTradeOffer } from "@/utils/types/elective";
 import { Actions, Button, Snackbar } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
 import { useContext } from "react";
-import va from "@vercel/analytics";
 import logError from "@/utils/helpers/logError";
+import { usePlausible } from "next-plausible";
+import getLocaleString from "@/utils/helpers/getLocaleString";
 
 /**
  * A Card that displays an outgoing Trade Offer.
@@ -24,11 +25,17 @@ const OutgoingTradeOfferCard: StylableFC<{
   const { t } = useTranslation("elective", { keyPrefix: "detail.trade" });
   const { t: tx } = useTranslation("common");
 
+  const plausible = usePlausible();
   const refreshProps = useRefreshProps();
   const { setSnackbar } = useContext(SnackbarContext);
   const mysk = useMySKClient();
 
   const [loading, toggleLoading] = useToggle();
+
+  /** Format an Elective Subject for analytics. */
+  function getName(electiveSubject: ElectiveSubject) {
+    return getLocaleString(electiveSubject.name, "en-US");
+  }
 
   /**
    * Cancels the outgoing Trade Offer.
@@ -52,9 +59,11 @@ const OutgoingTradeOfferCard: StylableFC<{
       logError("handleCancel", error);
       return false;
     }
-    va.track("Cancel Outgoing Elective Trade Offer", {
-      sending: tradeOffer.sender_elective_subject.session_code,
-      receiving: tradeOffer.receiver_elective_subject.session_code,
+    plausible("Cancel Outgoing Elective Trade Offer", {
+      props: {
+        sending: getName(tradeOffer.sender_elective_subject),
+        receiving: getName(tradeOffer.receiver_elective_subject),
+      },
     });
     await refreshProps();
     setSnackbar(<Snackbar>{t("snackbar.cancelled")}</Snackbar>);

@@ -1,6 +1,6 @@
-// Imports
 import SearchFiltersCard from "@/components/lookup/SearchFiltersCard";
 import SnackbarContext from "@/contexts/SnackbarContext";
+import useTrackSearch from "@/utils/helpers/search/useTrackSearch";
 import useForm from "@/utils/helpers/useForm";
 import { StylableFC } from "@/utils/types/common";
 import {
@@ -10,25 +10,23 @@ import {
   Snackbar,
   TextField,
 } from "@suankularb-components/react";
-import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
-import { camel, pascal, snake, toggle } from "radash";
+import { camel, snake, toggle } from "radash";
 import { useContext, useEffect } from "react";
 
 /**
  * The Search Filters Card for Documents.
  */
 const DocumentFiltersCard: StylableFC = ({ style, className }) => {
-  // Translation
   const { t } = useTranslation("lookup", {
     keyPrefix: "documents.searchFilters.form",
   });
   const { t: tc } = useTranslation("lookup");
   const { t: tx } = useTranslation("common");
 
+  const trackSearch = useTrackSearch();
   const { setSnackbar } = useContext(SnackbarContext);
-
   const router = useRouter();
 
   // Form control
@@ -95,15 +93,7 @@ const DocumentFiltersCard: StylableFC = ({ style, className }) => {
       return;
     }
 
-    va.track("Search Documents", {
-      filterCount: entries.length,
-      ...Object.fromEntries(
-        Object.entries(form).map(([key, value]) => [
-          "include" + pascal(snake(key)),
-          Boolean(value),
-        ]),
-      ),
-    });
+    trackSearch("Search Documents", form, entries.length);
 
     // URLSearchParams is used to encode the form values as query
     // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams

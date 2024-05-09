@@ -25,11 +25,11 @@ import {
   useBreakpoint,
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
-import va from "@vercel/analytics";
 import { motion } from "framer-motion";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { usePlausible } from "next-plausible";
 import { useEffect, useState } from "react";
 
 /**
@@ -56,13 +56,14 @@ const LearnElectivesPage: CustomPage<{
 }) => {
   const { t } = useTranslation("elective");
 
+  const plausible = usePlausible();
   const mysk = useMySKClient();
 
   const [selectedID, setSelectedID] = useState<string | null>(null);
   const [selectedElective, setSelectedElective] =
     useState<ElectiveSubject | null>(null);
 
-  // Open Dialog on mobile, otherwise close it
+  // Open Dialog on mobile, otherwise close it.
   const { atBreakpoint } = useBreakpoint();
   const [detailsOpen, setDetailsOpen] = useState(false);
   useEffect(() => {
@@ -107,8 +108,10 @@ const LearnElectivesPage: CustomPage<{
                   selected={selectedID === electiveSubject.id}
                   enrolled={enrolledElective?.id === electiveSubject.id}
                   onClick={() => {
-                    va.track("View Elective", {
-                      subject: getLocaleString(electiveSubject.name, "en-US"),
+                    plausible("View Elective", {
+                      props: {
+                        subject: getLocaleString(electiveSubject.name, "en-US"),
+                      },
                     });
                     setSelectedID(electiveSubject.id);
                     if (DIALOG_BREAKPOINTS.includes(atBreakpoint))
@@ -127,8 +130,9 @@ const LearnElectivesPage: CustomPage<{
           {/* Choose Button */}
           <div
             className={cn(`pointer-events-none sticky inset-0 bottom-20 top-auto
-              z-10 !-mt-6 bg-gradient-to-t from-surface-container p-4 pt-12
-              sm:static sm:!mt-0 sm:bg-none sm:p-0 sm:px-0`)}
+              z-[90] !-mt-6 bg-gradient-to-t from-surface-container p-4 pt-12
+              sm:pointer-events-auto sm:static sm:!mt-0 sm:bg-none sm:p-0
+              sm:px-0`)}
           >
             <Actions
               className={cn(`!grid !justify-stretch rounded-full
@@ -245,8 +249,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     }),
 
     // Check if the time now is in an Enrollment Period.
-    // await mysk.fetch<boolean>("/v1/subjects/electives/in-enrollment-period"),
-    { data: true },
+    await mysk.fetch<boolean>("/v1/subjects/electives/in-enrollment-period"),
   ]);
 
   const trades = {

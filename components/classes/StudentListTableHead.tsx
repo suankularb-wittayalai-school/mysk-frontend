@@ -18,6 +18,13 @@ const StudentListTableHead: StylableFC<{
 }> = ({ options, style, className }) => (
   <thead style={style} className={className}>
     <tr>
+      {/* Index */}
+      {options.columns.includes("index") && (
+        <th className="w-12">
+          {options.language === "en-US" ? "№" : "ลำดับ"}
+        </th>
+      )}
+
       {/* Class no. */}
       {options.columns.includes("classNo") && (
         <th className="w-12">
@@ -53,6 +60,13 @@ const StudentListTableHead: StylableFC<{
       {options.columns.includes("nickname") && (
         <th className="w-20">
           {options.language === "en-US" ? "Nickname" : "ชื่อเล่น"}
+        </th>
+      )}
+
+      {/* Class no. */}
+      {options.columns.includes("classroom") && (
+        <th colSpan={2} className="w-16">
+          {options.language === "en-US" ? "Class" : "ห้องเรียน"}
         </th>
       )}
 

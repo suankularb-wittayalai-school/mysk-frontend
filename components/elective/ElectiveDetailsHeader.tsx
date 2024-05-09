@@ -12,9 +12,9 @@ import {
   Text,
   transition,
 } from "@suankularb-components/react";
-import va from "@vercel/analytics";
 import { motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
+import { usePlausible } from "next-plausible";
 import { useState } from "react";
 import Balancer from "react-wrap-balancer";
 
@@ -29,6 +29,10 @@ const ElectiveDetailsHeader: StylableFC<{
 }> = ({ electiveSubject, style, className }) => {
   const locale = useLocale();
   const { t } = useTranslation("elective", { keyPrefix: "detail.information" });
+
+  const plausible = usePlausible();
+  /** Formatted Elective Subject name for trakcking. */
+  const subject = getLocaleString(electiveSubject.name, "en-US");
 
   const [syllabusOpen, setSyllabusOpen] = useState(false);
 
@@ -54,9 +58,7 @@ const ElectiveDetailsHeader: StylableFC<{
         icon={<MaterialIcon icon="book" />}
         disabled={!electiveSubject.syllabus}
         onClick={() => {
-          va.track("View Elective Syllabus", {
-            sessionCode: electiveSubject.session_code,
-          });
+          plausible("View Elective Syllabus", { props: { subject } });
           setSyllabusOpen(true);
         }}
         className="mr-10 md:mr-0"
@@ -72,9 +74,7 @@ const ElectiveDetailsHeader: StylableFC<{
           url={electiveSubject.syllabus.replace("?", "")}
           onClose={() => setSyllabusOpen(false)}
           onDownload={() => {
-            va.track("Download Elective Syllabus", {
-              sessionCode: electiveSubject.session_code,
-            });
+            plausible("Download Elective Syllabus", { props: { subject } });
           }}
         />
       )}

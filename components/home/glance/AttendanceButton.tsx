@@ -6,8 +6,8 @@ import { StylableFC } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
 import { Button, MaterialIcon } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
+import { usePlausible } from "next-plausible";
 import Link from "next/link";
 import { title } from "radash";
 import { useEffect, useState } from "react";
@@ -30,7 +30,9 @@ const AttendanceButton: StylableFC<{
     keyPrefix: "atAGlance.action.attendance",
   });
 
+  const plausible = usePlausible();
   const supabase = useSupabaseClient();
+
   const [isPresent, setIsPresent] = useState<boolean | null>(null);
 
   // Get the Attendance of the Student.
@@ -55,11 +57,13 @@ const AttendanceButton: StylableFC<{
       icon={<MaterialIcon icon="assignment_turned_in" />}
       dangerous={isPresent === false}
       onClick={() =>
-        va.track("View Attendance", {
-          location: "Home Glance",
-          role: title(role),
-          number: `M.${classroom.number}`,
-          isOwnClass: true,
+        plausible("View Attendance", {
+          props: {
+            location: "Schedule Glance",
+            role: title(role),
+            number: `M.${classroom.number}`,
+            isOwnClass: true,
+          },
         })
       }
       href={`/classes/${classroom.number}/attendance`}

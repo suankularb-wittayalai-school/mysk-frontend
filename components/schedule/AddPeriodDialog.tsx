@@ -30,14 +30,14 @@ import {
   transition,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import va from "@vercel/analytics";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
+import { usePlausible } from "next-plausible";
 import { useRouter } from "next/router";
 import { useContext } from "react";
 
 /**
- * A dialog for adding a Period to the user’s Schedule.
+ * A Dialog for adding a Period to the user’s Schedule.
  *
  * @param subject The Subject to create a Schedule Period for.
  * @param open Whether the Dialog is open and shown.
@@ -55,6 +55,7 @@ const AddPeriodDialog: StylableFC<{
   const { t } = useTranslation("schedule", { keyPrefix: "dialog.editPeriod" });
   const { t: tx } = useTranslation("common");
 
+  const plausible = usePlausible();
   const { teacherID, additionSite } = useContext(ScheduleContext);
   const { setSnackbar } = useContext(SnackbarContext);
 
@@ -109,7 +110,7 @@ const AddPeriodDialog: StylableFC<{
           return false;
         }
 
-        va.track("Add Period");
+        plausible("Add Period");
 
         await router.replace(router.asPath);
         onSubmit();

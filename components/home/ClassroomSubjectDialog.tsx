@@ -30,8 +30,8 @@ import {
   TextField,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import va from "@vercel/analytics";
 import { Trans, useTranslation } from "next-i18next";
+import { usePlausible } from "next-plausible";
 import { FC, useContext, useEffect } from "react";
 
 /**
@@ -205,6 +205,7 @@ const ClassroomSubjectDialog: StylableFC<{
   const { t } = useTranslation("teach", { keyPrefix: "dialog.roomSubject" });
   const { t: tx } = useTranslation("common");
 
+  const plausible = usePlausible();
   const { setSnackbar } = useContext(SnackbarContext);
 
   const { form, setForm, resetForm, formOK, formProps } = useForm<
@@ -303,7 +304,7 @@ const ClassroomSubjectDialog: StylableFC<{
           return false;
         }
 
-        va.track("Save Classroom-Subject Connection");
+        plausible("Save Classroom-Subject Connection");
 
         onSubmit();
         resetForm();

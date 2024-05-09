@@ -1,17 +1,20 @@
+import ClassroomPrintoutHeader from "@/components/classes/ClassroomPrintoutHeader";
 import StudentListPrintout from "@/components/classes/StudentListPrintout";
 import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
 import getClassroomOverview from "@/utils/backend/classroom/getClassroomOverview";
 import getStudentsOfClass from "@/utils/backend/classroom/getStudentsOfClass";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import { getStudentsByIDs } from "@/utils/backend/person/getStudentsByIDs";
 import { supabase } from "@/utils/supabase-backend";
 import { Classroom } from "@/utils/types/classroom";
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { Student } from "@/utils/types/person";
+import { Student, UserRole } from "@/utils/types/person";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
+import { sift, sort } from "radash";
 
 /**
  * A preview and options page for printing a list of Students in a Classroom,
@@ -21,22 +24,45 @@ import Head from "next/head";
  * @param classroom The Classroom to print the Student List for.
  * @param studentList The list of Students in the Classroom.
  */
-const StudentsListPrintPage: CustomPage<{
+const ClassroomPrintPage: CustomPage<{
   classroom: Pick<
     Classroom,
     "id" | "number" | "class_advisors" | "contacts" | "subjects"
   >;
-  studentList: Student[];
-}> = ({ classroom, studentList }) => {
+  students: Student[];
+}> = ({ classroom, students }) => {
   const { t } = useTranslation("classes", { keyPrefix: "print" });
   const { t: tx } = useTranslation("common");
+
+  const mysk = useMySKClient();
+  const canSeeSensitive =
+    mysk.user && (mysk.user.is_admin || mysk.user.role !== UserRole.student);
 
   return (
     <>
       <Head>
         <title>{tx("tabName", { tabName: t("title") })}</title>
       </Head>
-      <StudentListPrintout classroom={classroom} studentList={studentList} />
+      <h1 className="sr-only">{t("title")}</h1>
+      <StudentListPrintout
+        header={({ locale }) => (
+          <ClassroomPrintoutHeader classroom={classroom} locale={locale} />
+        )}
+        columns={sift([
+          "classNo",
+          canSeeSensitive && "studentID",
+          "prefix",
+          "fullName",
+          "nickname",
+          "allergies",
+          "shirtSize",
+          "pantsSize",
+          canSeeSensitive && "elective",
+        ])}
+        filters={sift([canSeeSensitive && "noElective", "hasAllergies"])}
+        parentURL="/classes"
+        students={students}
+      />
     </>
   );
 };
@@ -63,7 +89,7 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
     supabase,
     data.id,
   );
-  const { data: studentList } = await getStudentsByIDs(
+  const { data: students } = await getStudentsByIDs(
     supabase,
     mysk,
     compactStudentList!.map((student) => student.id),
@@ -77,10 +103,7 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
         "classes",
       ])),
       classroom,
-      studentList: studentList!.sort(
-        // Put Students with no class No. first.
-        (a, b) => (a.class_no || 0) - (b.class_no || 0),
-      ),
+      students: sort(students!, (student) => student.class_no || 0),
     },
     revalidate: 10,
   };
@@ -91,4 +114,4 @@ export const getStaticPaths: GetStaticPaths = async () => ({
   fallback: "blocking",
 });
 
-export default StudentsListPrintPage;
+export default ClassroomPrintPage;
