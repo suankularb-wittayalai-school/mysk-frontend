@@ -20,9 +20,7 @@ const StudentListTableHead: StylableFC<{
     <tr>
       {/* Index */}
       {options.columns.includes("index") && (
-        <th className="w-12">
-          {options.language === "en-US" ? "№" : "ลำดับ"}
-        </th>
+        <th className="w-12">{options.language === "en-US" ? "№" : "ลำดับ"}</th>
       )}
 
       {/* Class no. */}
@@ -62,6 +60,9 @@ const StudentListTableHead: StylableFC<{
           {options.language === "en-US" ? "Nickname" : "ชื่อเล่น"}
         </th>
       )}
+
+      {/* Enrollment via randomization */}
+      {options.columns.includes("randomized") && <th className="w-4"> </th>}
 
       {/* Class no. */}
       {options.columns.includes("classroom") && (

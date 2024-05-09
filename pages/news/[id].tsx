@@ -1,4 +1,3 @@
-// Imports
 import PageHeader from "@/components/common/PageHeader";
 import ArticleFormatter from "@/components/news/ArticleFormatter";
 import NewsImage from "@/components/news/NewsImage";
@@ -124,13 +123,13 @@ const NewsArticlePage: CustomPage<{ article: NewsArticle }> = ({ article }) => {
 export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   const { fromUUID, toUUID } = shortUUID();
 
-  const articleID = params!.articleID as string;
+  const id = params!.id as string;
 
   // Redirect full UUID URLs to short UUID URLs
-  if (articleID.length === 36)
+  if (id.length === 36)
     return {
       redirect: {
-        destination: `/news/${fromUUID(articleID)}`,
+        destination: `/news/${fromUUID(id)}`,
         permanent: true,
       },
     };
@@ -138,7 +137,7 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
   // Fetch the News Article
   const { data: article, error } = await getNewsArticleByID(
     supabase,
-    toUUID(articleID),
+    toUUID(id),
   );
   if (error) return { notFound: true };
 
@@ -157,7 +156,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
   return {
     paths: (data as { id: string }[])
-      .map(({ id }) => ({ articleID: fromUUID(id) }))
+      .map(({ id }) => ({ id: fromUUID(id) }))
       .map((params) => [
         { params, locale: "th" },
         { params, locale: "en-US" },

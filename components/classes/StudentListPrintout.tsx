@@ -24,6 +24,7 @@ export type OptionsType = {
     | "shirtSize"
     | "pantsSize"
     | "elective"
+    | "randomized"
   )[];
   filters: ("noElective" | "hasAllergies")[];
   numEmpty: number;
@@ -69,7 +70,13 @@ const StudentListPrintout: StylableFC<{
     {
       key: "columns",
       defaultValue: (
-        ["index", "classNo", "prefix", "fullName"] as OptionsType["columns"]
+        [
+          "index",
+          "classNo",
+          "prefix",
+          "fullName",
+          "randomized",
+        ] as OptionsType["columns"]
       ).filter((column) => columns.includes(column)),
     },
     { key: "filters", defaultValue: [] },

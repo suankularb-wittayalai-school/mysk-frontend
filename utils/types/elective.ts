@@ -5,7 +5,7 @@ import { SubjectGroup } from "@/utils/types/subject";
 
 export type ElectiveSubject = {
   id: string;
-  session_code: string; // 2-digit code differentiating sessions of same Subject
+  session_code: string;
   name: MultiLangString;
   short_name: MultiLangString | null;
   code: MultiLangString;
@@ -20,7 +20,10 @@ export type ElectiveSubject = {
   requirements: MultiLangString[];
   applicable_classrooms: Classroom[];
   room: string;
+  type: "elective_course";
+  semester: number;
   students: Student[];
+  randomized_students: Student[];
 };
 
 export type ElectiveTradeOffer = {

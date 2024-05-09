@@ -21,7 +21,6 @@ import { motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { sort } from "radash";
 import { useState } from "react";
 import shortUUID from "short-uuid";
 
@@ -68,6 +67,7 @@ const ElectiveStudentListCard: StylableFC<{
       .map((student) => ({
         ...student,
         classroom: student.classroom ? classrooms[student.classroom.id] : null,
+        role: UserRole.student,
       })),
   );
 
@@ -95,8 +95,9 @@ const ElectiveStudentListCard: StylableFC<{
       <div className="overflow-y-auto overflow-x-hidden">
         {/* Search */}
         <div
-          className={cn(`sticky top-0 z-10 mb-10 h-11 rounded-tr-xl
-            bg-surface-bright pr-4 pt-4`)}
+          className={cn(`sticky top-0 z-10 pb-3 pr-4 pt-4 before:absolute
+            before:inset-0 before:rounded-tr-xl before:bg-gradient-to-b
+            before:from-surface-bright`)}
         >
           <Search
             value={query}
@@ -116,12 +117,17 @@ const ElectiveStudentListCard: StylableFC<{
           {students.map((student) => (
             <PersonCard
               key={student.id}
-              person={{
-                ...student,
-                classroom: student.classroom
-                  ? classrooms[student.classroom.id]
-                  : null,
-                role: UserRole.student,
+              person={student}
+              options={{
+                // Show an asterisk if the Student is enrolled via
+                // randomization.
+                suffix: electiveSubject.randomized_students.some(
+                  (randomizedStudent) => student.id === randomizedStudent.id,
+                ) ? (
+                  <span title={t("randomized")} className="text-tertiary">
+                    *
+                  </span>
+                ) : undefined,
               }}
               className="w-full !border-0 !bg-surface-container"
             />
