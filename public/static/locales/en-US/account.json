@@ -71,16 +71,6 @@
       "pantsSize": "School pants size",
       "bloodGroup": "Blood group"
     },
-    "contacts": {
-      "title": "Contacts",
-      "noContacts": "No contacts added yet.",
-      "action": {
-        "add": "Add contact",
-        "edit": "Edit",
-        "delete": "Delete",
-        "link": "Go to"
-      }
-    },
     "common": {
       "privateInfo_helper": "Only people you allow access to this information can see it."
     },
@@ -114,7 +104,10 @@
     "title": "Your contacts",
     "desc": "A contact is a way people can reach you. Your contacts can be found via the Search page and are visible to anyone by default.",
     "action": {
-      "add": "Add contact"
+      "add": "Add contact",
+      "edit": "Edit",
+      "delete": "Delete",
+      "link": "Go to"
     },
     "dialog": {
       "contact": {
