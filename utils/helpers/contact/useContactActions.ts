@@ -33,8 +33,8 @@ export default function useContactActions(personID: string) {
     }
     const { error: personError } = await addContactToPerson(
       supabase,
-      personID,
       contactID,
+      personID,
     );
     if (personError)
       setSnackbar(createElement(Snackbar, null, t("snackbar.failure")));
