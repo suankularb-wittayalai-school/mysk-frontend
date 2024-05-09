@@ -82,6 +82,7 @@ const ElectiveListItem: StylableFC<{
             value={selected}
             disabled={electiveSubject.class_size >= electiveSubject.cap_size}
             inputAttr={{ name: "elective" }}
+            className="py-3"
           />
         ))}
 
