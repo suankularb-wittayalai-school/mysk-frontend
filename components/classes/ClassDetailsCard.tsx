@@ -43,7 +43,8 @@ const ClassDetailsCard: StylableFC<{
       // Contacts, as this is where they can add them.
       (mysk.user?.role === UserRole.teacher ||
         // Students only see the list if there are Contacts.
-        (mysk.user?.role !== UserRole.student && classroom?.contacts.length)));
+        (classroom && classroom.contacts.length > 0))) ||
+    false;
 
   const contactsEditable =
     mysk.user?.is_admin || (isOwnClass && mysk.user?.role === UserRole.teacher);
