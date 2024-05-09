@@ -11,8 +11,8 @@ import { StylableFC } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
 import { Button, MaterialIcon, Text } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
+import { usePlausible } from "next-plausible";
 
 /**
  * The list of Students inside Class Details Card.
@@ -26,6 +26,7 @@ const ClassStudentList: StylableFC<{
 }> = ({ students, classroom, style, className }) => {
   const { t } = useTranslation("classes", { keyPrefix: "detail.students" });
 
+  const plausible = usePlausible();
   const supabase = useSupabaseClient();
   const mysk = useMySKClient();
 
@@ -60,7 +61,9 @@ const ClassStudentList: StylableFC<{
         // Download the file
         window.location.href = URL.createObjectURL(mergedVCard);
 
-        va.track("Save Class VCards", { number: `M.${classroom.number}` });
+        plausible("Save vCards of Students in Classroom", {
+          props: { number: `M.${classroom.number}` },
+        });
         return true;
       },
       toggleLoading,

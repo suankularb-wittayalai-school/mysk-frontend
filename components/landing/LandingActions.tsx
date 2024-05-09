@@ -3,8 +3,8 @@ import cn from "@/utils/helpers/cn";
 import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import { Actions, Button, MaterialIcon } from "@suankularb-components/react";
-import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
+import { usePlausible } from "next-plausible";
 import { forwardRef } from "react";
 
 /**
@@ -13,6 +13,8 @@ import { forwardRef } from "react";
 const LandingActions: StylableFC = ({ style, className }) => {
   const locale = useLocale();
   const { t } = useTranslation("landing", { keyPrefix: "action" });
+
+  const plausible = usePlausible();
 
   return (
     <Actions
@@ -32,7 +34,9 @@ const LandingActions: StylableFC = ({ style, className }) => {
       <Button
         appearance="outlined"
         icon={<MaterialIcon icon="help" />}
-        onClick={() => va.track("Open User Guide", { location: "Landing" })}
+        onClick={() =>
+          plausible("Open User Guide", { props: { location: "Landing" } })
+        }
         href="https://docs.google.com/document/d/1yAEVK09BgbpFIPpG5j1xvfCRUGUdRyL9S1gAxh9UjfU/edit?usp=sharing"
         // eslint-disable-next-line react/display-name
         element={forwardRef((props, ref) => (
@@ -44,7 +48,9 @@ const LandingActions: StylableFC = ({ style, className }) => {
       <Button
         appearance="outlined"
         icon={<MaterialIcon icon="report" />}
-        onClick={() => va.track("Open Report Form", { location: "Landing" })}
+        onClick={() =>
+          plausible("Open Report Form", { props: { location: "Landing" } })
+        }
         href={process.env.NEXT_PUBLIC_HELP_FORM_URL}
         // eslint-disable-next-line react/display-name
         element={forwardRef((props, ref) => (
@@ -56,7 +62,9 @@ const LandingActions: StylableFC = ({ style, className }) => {
       <Button
         appearance="outlined"
         icon={<MaterialIcon icon="star" />}
-        onClick={() => va.track("Open Patch Notes")}
+        onClick={() =>
+          plausible("Open Patch Notes", { props: { location: "Landing" } })
+        }
         href="https://github.com/suankularb-wittayalai-school/mysk-frontend/pulls?q=is%3Apr+is%3Aclosed+base%3Amain+release+in%3Atitle"
         // eslint-disable-next-line react/display-name
         element={forwardRef((props, ref) => (

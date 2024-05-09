@@ -15,8 +15,8 @@ import {
   Text,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
+import { usePlausible } from "next-plausible";
 import { useContext, useState } from "react";
 
 /**
@@ -36,8 +36,8 @@ const ClassContactList: StylableFC<{
   const { t } = useTranslation("classes", { keyPrefix: "detail.contacts" });
   const { t: tx } = useTranslation("common");
 
+  const plausible = usePlausible();
   const { setSnackbar } = useContext(SnackbarContext);
-
   const supabase = useSupabaseClient();
 
   const [contactOpen, setContactOpen] = useState(false);
@@ -49,7 +49,7 @@ const ClassContactList: StylableFC<{
       contact,
       classroomID,
     );
-    va.track("Add Classroom Contact");
+    plausible("Add Classroom Contact");
     if (error) {
       setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
       setContactOpen(true);
@@ -61,7 +61,7 @@ const ClassContactList: StylableFC<{
   async function handleEdit(contact: Contact) {
     setContactOpen(false);
     const { error } = await updateContact(supabase, contact);
-    va.track("Edit Classroom Contact");
+    plausible("Edit Classroom Contact");
     if (error) {
       setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
       return;

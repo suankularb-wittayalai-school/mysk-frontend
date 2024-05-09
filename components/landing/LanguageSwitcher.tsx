@@ -1,36 +1,39 @@
 import cn from "@/utils/helpers/cn";
-import useLocale from "@/utils/helpers/useLocale";
 import usePreferences from "@/utils/helpers/usePreferences";
 import useRefreshProps from "@/utils/helpers/useRefreshProps";
 import { LangCode, StylableFC } from "@/utils/types/common";
 import { Button, SegmentedButton } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
+import { usePlausible } from "next-plausible";
+import { useRouter } from "next/router";
 import { useState } from "react";
-import va from "@vercel/analytics";
 
 /**
  * A Segmented Button to switch between languages in Landing.
  */
 const LanguageSwitcher: StylableFC = ({ style, className }) => {
-  const locale = useLocale();
-  const [visibleLocale, setVisibleLocale] = useState<LangCode>(locale);
+  const { locale, locales } = useRouter();
+  const [visibleLocale, setVisibleLocale] = useState<LangCode>(
+    locale as LangCode,
+  );
   const { t } = useTranslation("landing", {
     keyPrefix: "aside.languageSwitcher",
   });
 
+  const plausible = usePlausible();
   const { setPreference } = usePreferences();
   const refreshProps = useRefreshProps();
 
   /**
    * Change the locale to the given one.
-   * 
+   *
    * @param locale The new locale.
    */
   function changeLocaleTo(locale: LangCode) {
     // Give immediate visual feedback
     setVisibleLocale(locale);
     // Log the event
-    va.track("Change Language", { locale, location: "Landing" });
+    plausible("Change Language", { props: { locale, location: "Landing" } });
     // Remember the preference
     setPreference("locale", locale);
     // Redirect to the new language
@@ -44,7 +47,7 @@ const LanguageSwitcher: StylableFC = ({ style, className }) => {
       style={style}
       className={cn(`*:!whitespace-nowrap`, className)}
     >
-      {(["th", "en-US"] as LangCode[]).map((locale) => (
+      {((locales || []) as LangCode[]).map((locale) => (
         <Button
           key={locale}
           appearance="outlined"

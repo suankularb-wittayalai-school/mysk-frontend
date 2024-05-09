@@ -17,10 +17,10 @@ import {
   transition,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import va from "@vercel/analytics";
 import { isToday } from "date-fns";
 import { motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
+import { usePlausible } from "next-plausible";
 import { mapValues, omit } from "radash";
 import { useContext } from "react";
 
@@ -55,6 +55,7 @@ const AttendanceBulkActions: StylableFC<{
   const { t: tx } = useTranslation("common");
 
   const supabase = useSupabaseClient();
+  const plausible = usePlausible();
   const { setSnackbar } = useContext(SnackbarContext);
   const refreshProps = useRefreshProps();
 
@@ -62,9 +63,11 @@ const AttendanceBulkActions: StylableFC<{
    * Save all Students as present.
    */
   async function handleMarkAll() {
-    va.track("Mark All Students as Present", {
-      isToday: isToday(new Date(date)),
-      classroom: `M.${classroom.number}`,
+    plausible("Mark All Students as Present", {
+      props: {
+        isToday: isToday(new Date(date)),
+        classroom: `M.${classroom.number}`,
+      },
     });
     withLoading(
       async () => {
@@ -87,9 +90,11 @@ const AttendanceBulkActions: StylableFC<{
    * Clear all Students’ Attendance.
    */
   async function handleClear() {
-    va.track("Clear Attendance", {
-      isToday: isToday(new Date(date)),
-      classroom: `M.${classroom.number}`,
+    plausible("Clear Attendance", {
+      props: {
+        isToday: isToday(new Date(date)),
+        classroom: `M.${classroom.number}`,
+      },
     });
     withLoading(
       async () => {

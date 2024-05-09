@@ -8,9 +8,9 @@ import {
   Dialog,
   DialogHeader,
 } from "@suankularb-components/react";
-import va from "@vercel/analytics";
 import { signOut } from "next-auth/react";
 import { useTranslation } from "next-i18next";
+import { usePlausible } from "next-plausible";
 import { useRouter } from "next/router";
 import { useContext } from "react";
 
@@ -23,6 +23,7 @@ const LogOutDialog: DialogFC = ({ open, onClose }) => {
   const { t } = useTranslation("common", { keyPrefix: "dialog.logOut" });
 
   const router = useRouter();
+  const plausible = usePlausible();
   const { setUser } = useContext(UserContext);
 
   const [loading, toggleLoading] = useToggle();
@@ -31,7 +32,7 @@ const LogOutDialog: DialogFC = ({ open, onClose }) => {
     withLoading(
       async () => {
         // Track event
-        va.track("Log out");
+        plausible("Log out");
 
         // Log the user out (without reload)
         await signOut({ redirect: false });

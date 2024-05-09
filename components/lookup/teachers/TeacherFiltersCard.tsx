@@ -2,6 +2,7 @@ import SearchFiltersCard from "@/components/lookup/SearchFiltersCard";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import cn from "@/utils/helpers/cn";
 import getLocaleString from "@/utils/helpers/getLocaleString";
+import useTrackSearch from "@/utils/helpers/search/useTrackSearch";
 import useForm from "@/utils/helpers/useForm";
 import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
@@ -15,10 +16,9 @@ import {
   Snackbar,
   TextField,
 } from "@suankularb-components/react";
-import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
-import { pascal, snake } from "radash";
+import { snake } from "radash";
 import { useContext, useEffect, useState } from "react";
 
 /**
@@ -29,7 +29,6 @@ import { useContext, useEffect, useState } from "react";
 const TeacherFiltersCard: StylableFC<{
   subjectGroups: SubjectGroup[];
 }> = ({ subjectGroups, style, className }) => {
-  // Translation
   const locale = useLocale();
   const { t } = useTranslation("lookup", {
     keyPrefix: "teachers.searchFilters.form",
@@ -37,8 +36,8 @@ const TeacherFiltersCard: StylableFC<{
   const { t: tc } = useTranslation("lookup");
   const { t: tx } = useTranslation("common");
 
+  const trackSearch = useTrackSearch();
   const { setSnackbar } = useContext(SnackbarContext);
-
   const router = useRouter();
 
   const [overflowHid, setOverflowHid] = useState(true);
@@ -66,17 +65,7 @@ const TeacherFiltersCard: StylableFC<{
       return;
     }
 
-    va.track("Search Teachers", {
-      filterCount: entries.length,
-      ...Object.fromEntries(
-        Object.entries(form).map(([key, value]) => [
-          "include" + pascal(snake(key)),
-          key === "subjectGroup" && value === "any"
-            ? false
-            : Boolean(form[key as keyof typeof form]),
-        ]),
-      ),
-    });
+    trackSearch("Search Teachers", form, entries.length);
 
     setOverflowHid(true);
     // URLSearchParams is used to encode the form values as query

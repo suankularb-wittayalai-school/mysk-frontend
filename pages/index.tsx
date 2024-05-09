@@ -22,12 +22,12 @@ import {
   transition,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import va from "@vercel/analytics";
 import { AnimatePresence, motion } from "framer-motion";
 import { GetServerSideProps } from "next";
 import { signOut, useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { usePlausible } from "next-plausible";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -51,6 +51,7 @@ const LandingPage: CustomPage = () => {
   const { t } = useTranslation("landing");
   const { t: tx } = useTranslation("common");
 
+  const plausible = usePlausible();
   const router = useRouter();
   const mysk = useMySKClient();
   const supabase = useSupabaseClient();
@@ -72,7 +73,7 @@ const LandingPage: CustomPage = () => {
       setState(GSIStatus.redirecting);
       if (!mysk.user.onboarded) {
         // Flag new users as onboarded.
-        va.track("Complete Onboarding");
+        plausible("Complete Onboarding");
         await flagUserAsOnboarded(supabase, mysk.user.id);
         // Redirect to account page if new Student or Teacher.
         if ([UserRole.student, UserRole.teacher].includes(mysk.user.role))
@@ -164,7 +165,7 @@ const LandingPage: CustomPage = () => {
                       <Actions className="grow !items-end pt-5">
                         <Button
                           onClick={() => {
-                            va.track("Cancel Sign In");
+                            plausible("Cancel Log in");
                             setState(GSIStatus.initial);
                           }}
                           appearance="outlined"

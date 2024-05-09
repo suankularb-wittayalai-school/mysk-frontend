@@ -32,11 +32,11 @@ import {
   List,
   MaterialIcon,
 } from "@suankularb-components/react";
-import va from "@vercel/analytics";
 import { isFuture, isToday, isWeekend } from "date-fns";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { usePlausible } from "next-plausible";
 import Head from "next/head";
 import { replace } from "radash";
 import { useEffect, useState } from "react";
@@ -63,6 +63,7 @@ const DateAttendancePage: CustomPage<{
   const { t } = useTranslation("attendance");
   const { t: tx } = useTranslation("common");
 
+  const plausible = usePlausible();
   const mysk = useMySKClient();
 
   const [event, setEvent] = useState<AttendanceEvent>("assembly");
@@ -108,7 +109,7 @@ const DateAttendancePage: CustomPage<{
             alt={t("action.statistics")}
             onClick={() => {
               setStatisticsOpen(true);
-              va.track("Open School-wide Attendance Statistics");
+              plausible("Open School-wide Attendance Statistics");
             }}
           >
             {t("viewSelector.action.statistics")}
@@ -142,9 +143,11 @@ const DateAttendancePage: CustomPage<{
                 icon={<MaterialIcon icon="edit" />}
                 onClick={() => {
                   setHomeroomOpen(true);
-                  va.track("Open Homeroom Content", {
-                    isToday: isToday(new Date(date)),
-                    classroom: `M.${classroom.number}`,
+                  plausible("Open Homeroom Content", {
+                    props: {
+                      isToday: isToday(new Date(date)),
+                      classroom: `M.${classroom.number}`,
+                    },
                   });
                 }}
                 className="!mx-4 !mt-3 sm:!mx-0 md:!hidden"

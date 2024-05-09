@@ -10,8 +10,8 @@ import { StylableFC } from "@/utils/types/common";
 import { Student, UserRole } from "@/utils/types/person";
 import { SchedulePeriod } from "@/utils/types/schedule";
 import { Interactive, MaterialIcon, Text } from "@suankularb-components/react";
-import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
+import { usePlausible } from "next-plausible";
 import { useState } from "react";
 
 /**
@@ -32,7 +32,9 @@ const ElectivePeriod: StylableFC<{
   const locale = useLocale();
   const { t } = useTranslation("schedule");
 
+  const plausible = usePlausible();
   const mysk = useMySKClient();
+
   const chosenElective =
     (mysk.person?.role === UserRole.student &&
       period.content.find(
@@ -69,7 +71,7 @@ const ElectivePeriod: StylableFC<{
           )}
           style={{ width: periodDurationToWidth(period.duration) }}
           onClick={() => {
-            va.track("Open Period Details");
+            plausible("Open Period Details", { props: { type: "Elective" } });
             setDetailsOpen(true);
           }}
         >
