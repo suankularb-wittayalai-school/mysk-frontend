@@ -1,4 +1,3 @@
-// Imports
 import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
 import logError from "@/utils/helpers/logError";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
@@ -17,11 +16,16 @@ export default async function getClassrooms(
   supabase: DatabaseClient,
   options?: Partial<{ year: number }>,
 ): Promise<BackendReturn<Pick<Classroom, "id" | "number" | "main_room">[]>> {
-  const { data, error } = await supabase
+  const query = supabase
     .from("classrooms")
     .select(`id, number, main_room`)
     .order("number")
     .eq("year", options?.year || getCurrentAcademicYear());
+
+  // Exclude test Classrooms in production.
+  if (process.env.NODE_ENV !== "development") query.lt("number", 900);
+
+  const { data, error } = await query;
 
   if (error) {
     logError("getClassrooms", error);
