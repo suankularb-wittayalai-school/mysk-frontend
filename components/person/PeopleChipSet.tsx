@@ -1,7 +1,7 @@
 import PersonChip from "@/components/person/PersonChip";
 import WithPersonDetails from "@/components/person/WithPersonDetails";
 import { ChipSet } from "@suankularb-components/react";
-import va from "@vercel/analytics";
+import { usePlausible } from "next-plausible";
 import { omit, title } from "radash";
 import { ComponentProps, FC, useState } from "react";
 
@@ -19,6 +19,8 @@ const PersonChipSet: FC<
   } & Omit<ComponentProps<typeof ChipSet>, "children">
 > = (props) => {
   const { people } = props;
+
+  const plausible = usePlausible();
 
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [selectedPerson, setSelectedPerson] = useState<
@@ -39,8 +41,8 @@ const PersonChipSet: FC<
             key={person.id}
             person={person}
             onClick={() => {
-              va.track("Open Person Details", {
-                personRole: title(person.role),
+              plausible("Open Person Details", {
+                props: { personRole: title(person.role) },
               });
               setSelectedPerson(person);
               setDetailsOpen(true);

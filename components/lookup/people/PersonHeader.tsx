@@ -19,9 +19,9 @@ import {
   transition,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import va from "@vercel/analytics";
 import { motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
+import { usePlausible } from "next-plausible";
 import { useEffect, useState } from "react";
 
 /**
@@ -48,15 +48,15 @@ const PersonHeader: StylableFC<{
   const locale = useLocale();
   const { t } = useTranslation("lookup", { keyPrefix: "people.header" });
 
+  const plausible = usePlausible();
   const getVCard = useGetVCard();
 
   /**
    * Save the Person’s contact as a vCard.
    */
   async function handleSaveVCard() {
-    va.track("Share Person", {
-      person: getLocaleName("en-US", person),
-      method: "vCard",
+    plausible("Save Person Contact", {
+      props: { person: getLocaleName("en-US", person) },
     });
     var vCard = getVCard(person);
     window.location.href = URL.createObjectURL(vCard);
@@ -144,8 +144,8 @@ const PersonHeader: StylableFC<{
             <AssistChip
               icon={<MaterialIcon icon="dashboard" />}
               onClick={() => {
-                va.track("See Schedule of Person", {
-                  person: getLocaleName("en-US", person),
+                plausible("See Schedule of Person", {
+                  props: { person: getLocaleName("en-US", person) },
                 });
                 onScheduleOpenClick?.();
               }}

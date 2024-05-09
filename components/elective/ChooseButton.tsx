@@ -9,8 +9,8 @@ import withLoading from "@/utils/helpers/withLoading";
 import { StylableFC } from "@/utils/types/common";
 import { ElectiveSubject } from "@/utils/types/elective";
 import { Button, MaterialIcon, Snackbar } from "@suankularb-components/react";
-import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
+import { usePlausible } from "next-plausible";
 import { useContext, useState } from "react";
 
 /**
@@ -40,6 +40,7 @@ const ChooseButton: StylableFC<{
   const { setSnackbar } = useContext(SnackbarContext);
   const [requirementsOpen, setRequirementsOpen] = useState(false);
 
+  const plausible = usePlausible();
   const mysk = useMySKClient();
   const refreshProps = useRefreshProps();
 
@@ -70,17 +71,21 @@ const ChooseButton: StylableFC<{
     );
     if (error) {
       if (error.code === 403 || error.code === 409) {
-        va.track("Attempt to Choose Invalid Elective", { subject });
+        plausible("Attempt to Enroll in Invalid Elective", {
+          props: { subject },
+        });
         setSnackbar(<Snackbar>{t("snackbar.notAllowed")}</Snackbar>);
       } else setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
       logError("enroll", error);
     }
     if (enrolledElective)
-      va.track("Change Elective", {
-        from: getLocaleString(enrolledElective.name, "en-US"),
-        to: subject,
+      plausible("Change Elective", {
+        props: {
+          from: getLocaleString(enrolledElective.name, "en-US"),
+          to: subject,
+        },
       });
-    va.track("Choose Elective", { subject });
+    plausible("Enroll in Elective", { props: { subject } });
     await refreshProps();
     onSucess?.();
     return true;

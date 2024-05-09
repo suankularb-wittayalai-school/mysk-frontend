@@ -25,8 +25,8 @@ import {
   Text,
   useBreakpoint,
 } from "@suankularb-components/react";
-import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
+import { usePlausible } from "next-plausible";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import {
@@ -53,6 +53,9 @@ const Layout: FC<
   // Translation
   const locale = useLocale();
   const { t } = useTranslation("common");
+
+  // Analytics
+  const plausible = usePlausible();
 
   const refreshProps = useRefreshProps();
   const { colorScheme, setColorScheme, navOpen, setNavOpen } =
@@ -224,7 +227,9 @@ const Layout: FC<
                 {...props}
                 ref={ref}
                 onClick={() =>
-                  va.track("Open User Guide", { location: "Naviation Drawer" })
+                  plausible("Open User Guide", {
+                    props: { location: "Navigation Drawer" },
+                  })
                 }
                 target="_blank"
                 rel="noreferrer"
@@ -298,10 +303,12 @@ const Layout: FC<
                   const newScheme = colorScheme === "dark" ? "light" : "dark";
                   setColorScheme(newScheme);
                   setPreference("colorScheme", newScheme);
-                  va.track("Toggle Color Scheme", {
-                    newScheme:
-                      newScheme === "dark" ? "Dark mode" : "Light mode",
-                    location: "Navigation Rail",
+                  plausible("Toggle Color Scheme", {
+                    props: {
+                      newScheme:
+                        newScheme === "dark" ? "Dark mode" : "Light mode",
+                      location: "Navigation Rail",
+                    },
                   });
                 }}
               />

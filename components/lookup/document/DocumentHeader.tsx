@@ -1,4 +1,3 @@
-// Imports
 import SnackbarContext from "@/contexts/SnackbarContext";
 import { StylableFC } from "@/utils/types/common";
 import { SchoolDocument } from "@/utils/types/news";
@@ -9,8 +8,8 @@ import {
   Snackbar,
   Text,
 } from "@suankularb-components/react";
-import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
+import { usePlausible } from "next-plausible";
 import { useContext } from "react";
 import Balancer from "react-wrap-balancer";
 
@@ -22,10 +21,9 @@ import Balancer from "react-wrap-balancer";
 const DocumentHeader: StylableFC<{
   document: SchoolDocument;
 }> = ({ document, style, className }) => {
-  // Translation
   const { t } = useTranslation("lookup", { keyPrefix: "documents.header" });
 
-  // Snackbar
+  const plausible = usePlausible();
   const { setSnackbar } = useContext(SnackbarContext);
 
   /**
@@ -33,7 +31,7 @@ const DocumentHeader: StylableFC<{
    * fallback, this function puts the link in the clipboard.
    */
   async function handleShare() {
-    va.track("Share Document", { subject: document.subject });
+    plausible("Share Document", { props: { subject: document.subject } });
 
     const shareData = {
       title: document.subject,
@@ -48,7 +46,7 @@ const DocumentHeader: StylableFC<{
    * Open the Google Drive PDF file in a new window.
    */
   function handlePopOut() {
-    va.track("Pop out Document", { subject: document.subject });
+    plausible("Pop out Document", { props: { subject: document.subject } });
 
     window.open(document.document_link, "_blank", "popup, noreferrer");
   }
@@ -57,7 +55,7 @@ const DocumentHeader: StylableFC<{
    * Downloads the PDF file from Google Drive.
    */
   function handleDownload() {
-    va.track("Download Document", { subject: document.subject });
+    plausible("Download Document", { props: { subject: document.subject } });
 
     window.location.href = `https://drive.google.com/u/1/uc?id=${
       document.document_link

@@ -18,8 +18,8 @@ import {
   AppDrawerSegment,
   AppDrawer as BaseAppDrawer,
 } from "@suankularb-components/react";
-import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
+import { usePlausible } from "next-plausible";
 import Image from "next/image";
 
 /**
@@ -31,19 +31,21 @@ const AppDrawer: StylableFC = ({ style, className }) => {
   const locale = useLocale();
   const { t } = useTranslation("common", { keyPrefix: "appDrawer" });
 
+  const plausible = usePlausible();
+
   /**
    * Track an app open event.
-   * 
+   *
    * @param app The name of the app.
    */
   function trackAppOpen(app: string) {
-    va.track("Open App in App Drawer", { app });
+    plausible("Open App in App Drawer", { props: { app } });
   }
 
   return (
     <BaseAppDrawer
       locale={locale}
-      onOpen={() => va.track("Open App Drawer")}
+      onOpen={() => plausible("Open App Drawer")}
       style={style}
       className={className}
     >

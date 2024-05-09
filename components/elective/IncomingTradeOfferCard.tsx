@@ -2,20 +2,21 @@ import TradeOfferCard from "@/components/elective/TradeOfferCard";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import cn from "@/utils/helpers/cn";
+import getLocaleString from "@/utils/helpers/getLocaleString";
 import logError from "@/utils/helpers/logError";
 import useRefreshProps from "@/utils/helpers/useRefreshProps";
 import useToggle from "@/utils/helpers/useToggle";
 import withLoading from "@/utils/helpers/withLoading";
 import { StylableFC } from "@/utils/types/common";
-import { ElectiveTradeOffer } from "@/utils/types/elective";
+import { ElectiveSubject, ElectiveTradeOffer } from "@/utils/types/elective";
 import {
   Button,
   MaterialIcon,
   SegmentedButton,
   Snackbar,
 } from "@suankularb-components/react";
-import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
+import { usePlausible } from "next-plausible";
 import { useContext } from "react";
 
 /**
@@ -29,11 +30,17 @@ const IncomingTradeOfferCard: StylableFC<{
   const { t } = useTranslation("elective", { keyPrefix: "detail.trade" });
   const { t: tx } = useTranslation("common");
 
+  const plausible = usePlausible();
   const refreshProps = useRefreshProps();
   const { setSnackbar } = useContext(SnackbarContext);
   const mysk = useMySKClient();
 
   const [loading, toggleLoading] = useToggle();
+
+  /** Format an Elective Subject for analytics. */
+  function getName(electiveSubject: ElectiveSubject) {
+    return getLocaleString(electiveSubject.name, "en-US");
+  }
 
   /**
    * Visually swaps the Elective Subjects of the Trade Offer. Does not affect
@@ -67,13 +74,15 @@ const IncomingTradeOfferCard: StylableFC<{
       visuallySwapElectiveSubjects();
       return false;
     }
-    va.track(
+    plausible(
       status === "approved"
         ? "Approve Incoming Elective Trade Offer"
         : "Decline Incoming Elective Trade Offer",
       {
-        sending: tradeOffer.sender_elective_subject.session_code,
-        receiving: tradeOffer.receiver_elective_subject.session_code,
+        props: {
+          sending: getName(tradeOffer.sender_elective_subject),
+          receiving: getName(tradeOffer.receiver_elective_subject),
+        },
       },
     );
     await refreshProps();

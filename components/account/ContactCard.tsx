@@ -20,8 +20,8 @@ import {
   MaterialIcon,
   Snackbar,
 } from "@suankularb-components/react";
-import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
+import { usePlausible } from "next-plausible";
 import Image from "next/image";
 import { sift } from "radash";
 import { forwardRef, useContext } from "react";
@@ -41,6 +41,7 @@ const ContactCard: StylableFC<{
   const locale = useLocale();
   const { t: tx } = useTranslation("common");
 
+  const plausible = usePlausible();
   const { setSnackbar } = useContext(SnackbarContext);
 
   const editable = Boolean(onChange || onRemove);
@@ -77,9 +78,8 @@ const ContactCard: StylableFC<{
           ? // If the Contact is linkable, link to it
             {
               onClick: () => {
-                va.track("Access Contact", {
-                  method: "Link",
-                  type: contact.type,
+                plausible("Access Contact", {
+                  props: { method: "Link", type: contact.type },
                 });
               },
               href: getContactURL(contact),
@@ -93,9 +93,8 @@ const ContactCard: StylableFC<{
           : // Otherwise, copy the value to clipboard
             {
               onClick: () => {
-                va.track("Access Contact", {
-                  method: "Copy to Clipboard",
-                  type: contact.type,
+                plausible("Access Contact", {
+                  props: { method: "Copy to Clipboard", type: contact.type },
                 });
                 navigator.clipboard.writeText(contact.value);
                 setSnackbar(

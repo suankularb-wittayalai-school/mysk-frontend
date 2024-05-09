@@ -14,11 +14,11 @@ import {
   Text,
   transition,
 } from "@suankularb-components/react";
-import va from "@vercel/analytics";
 import { motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { title } from "radash";
+import { usePlausible } from "next-plausible";
 
 /**
  * The header of a Class Details Card, including the class number, actions for
@@ -33,6 +33,7 @@ const ClassHeader: StylableFC<{
   const { t: tx } = useTranslation("common");
 
   const mysk = useMySKClient();
+  const plausible = usePlausible();
   const convertContactsForVCard = useConvertContactsForVCard();
 
   const isOwnClass =
@@ -47,9 +48,8 @@ const ClassHeader: StylableFC<{
    * Save the Classroom Contacts as a vCard file.
    */
   function handleSaveVCard() {
-    va.track("Save Class Contact", {
-      number: `M.${classroom.number}`,
-      method: "vCard",
+    plausible("Save Classroom Contact", {
+      props: { number: `M.${classroom.number}` },
     });
     const vCard = new Blob(
       [
@@ -99,8 +99,8 @@ const ClassHeader: StylableFC<{
             <AssistChip
               icon={<MaterialIcon icon="print" />}
               onClick={() =>
-                va.track("Get Student List Printout", {
-                  number: `M.${classroom.number}`,
+                plausible("Get Student List Printout", {
+                  props: { number: `M.${classroom.number}` },
                 })
               }
               href={`/classes/${classroom.number}/print`}
@@ -113,11 +113,13 @@ const ClassHeader: StylableFC<{
             <AssistChip
               icon={<MaterialIcon icon="assignment_turned_in" />}
               onClick={() =>
-                va.track("View Attendance", {
-                  location: "Home Glance",
-                  role: title(mysk.user!.role),
-                  number: `M.${classroom.number}`,
-                  isOwnClass,
+                plausible("View Attendance", {
+                  props: {
+                    location: "Classroom",
+                    role: title(mysk.user!.role),
+                    number: `M.${classroom.number}`,
+                    isOwnClass,
+                  },
                 })
               }
               href={`/classes/${classroom.number}/attendance`}

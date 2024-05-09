@@ -10,9 +10,9 @@ import {
   Text,
   transition,
 } from "@suankularb-components/react";
-import va from "@vercel/analytics";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
+import { usePlausible } from "next-plausible";
 import { useEffect, useState } from "react";
 
 /**
@@ -44,6 +44,8 @@ const GradeSection: StylableFC<{
 }) => {
   const { t: tx } = useTranslation("common");
 
+  const plausible = usePlausible();
+
   const [expanded, setExpanded] = useState(expandedByDefault);
   useEffect(() => setExpanded(expandedByDefault), [expandedByDefault]);
 
@@ -70,10 +72,9 @@ const GradeSection: StylableFC<{
           }
           onClick={() => {
             if (!expanded)
-              va.track(
-                "Expand Grade Section",
-                grade ? { grade: `M.${grade}` } : undefined,
-              );
+              plausible("Expand Grade Section", {
+                props: grade ? { grade: `M.${grade}` } : undefined,
+              });
             setExpanded(!expanded);
           }}
         />

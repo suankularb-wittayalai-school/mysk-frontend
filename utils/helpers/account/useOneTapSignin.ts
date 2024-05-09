@@ -10,10 +10,10 @@ import useLocale from "@/utils/helpers/useLocale";
 import { OAuthResponseData } from "@/utils/types/fetch";
 import { User } from "@/utils/types/person";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import va from "@vercel/analytics";
 import { GsiButtonConfiguration } from "google-one-tap";
 import { SignInOptions, signIn, useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
+import { usePlausible } from "next-plausible";
 import { useRouter } from "next/router";
 import { useContext, useState } from "react";
 
@@ -38,13 +38,14 @@ export default function useOneTapSignin(
 ) {
   const { parentButtonID, buttonWidth, onStateChange } = options || {};
 
-  const router = useRouter();
   const locale = useLocale();
   const { t } = useTranslation("landing");
 
+  const plausible = usePlausible();
   const supabase = useSupabaseClient();
   const mysk = useMySKClient();
   const { setUser, setPerson } = useContext(UserContext);
+  const router = useRouter();
 
   const { setAccountNotFoundOpen } = useContext(AppStateContext);
 
@@ -116,7 +117,7 @@ export default function useOneTapSignin(
     setTimeout(() => {
       const credential = prompt(t("dialog.gsiUnavailable"));
       if (!credential) return;
-      va.track("Log in", { method: "Manual Credential String" });
+      plausible("Log in", { props: { method: "Manual Credential String" } });
       logInWithGoogle(credential);
     }, 400);
   }
@@ -136,16 +137,15 @@ export default function useOneTapSignin(
         cancel_on_tap_outside: false,
         log_level: "info",
         callback: async ({ credential, select_by }) => {
-          va.track(
-            "Log in",
-            /btn|user/.test(select_by)
+          plausible("Log in", {
+            props: /btn|user/.test(select_by)
               ? {
                   method: select_by.includes("btn")
                     ? "GSI Button"
                     : "Google One Tap UI",
                 }
               : undefined,
-          );
+          });
           if (process.env.NEXT_PUBLIC_ALLOW_PASTE_GOOGLE_CREDENTIAL === "true")
             console.log(
               `[Google One Tap UI] Logged in with credential \`${credential}\``,

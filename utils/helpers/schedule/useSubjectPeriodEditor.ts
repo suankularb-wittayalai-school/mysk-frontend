@@ -8,13 +8,13 @@ import useToggle from "@/utils/helpers/useToggle";
 import withLoading from "@/utils/helpers/withLoading";
 import { PeriodContentItem } from "@/utils/types/schedule";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import va from "@vercel/analytics";
 import {
   PanInfo,
   motion,
   useAnimationControls,
   useDragControls,
 } from "framer-motion";
+import { usePlausible } from "next-plausible";
 import { pick } from "radash";
 import {
   ComponentProps,
@@ -57,6 +57,7 @@ export default function useSubjectPeriodEditor(
   period: PeriodContentItem,
   day: number,
 ) {
+  const plausible = usePlausible();
   const refreshProps = useRefreshProps();
 
   const animationControls = useAnimationControls();
@@ -103,7 +104,7 @@ export default function useSubjectPeriodEditor(
   async function handleDelete() {
     withLoading(
       async () => {
-        va.track("Delete Period");
+        plausible("Delete Period");
         setDetailsOpen(false);
         const { error } = await deleteScheduleItem(supabase, period.id!);
         if (error) return false;
@@ -122,7 +123,7 @@ export default function useSubjectPeriodEditor(
     await withLoading(
       async () => {
         // Analytics.
-        va.track("Move Period");
+        plausible("Move Period");
 
         // Get the rectangle.
         const constraints = constraintsRef?.current;
@@ -217,7 +218,7 @@ export default function useSubjectPeriodEditor(
     withLoading(
       async () => {
         // Analytics.
-        va.track("Extend Period");
+        plausible("Extend Period");
 
         // Don’t do anything if the period’s duration stays the same.
         if (
