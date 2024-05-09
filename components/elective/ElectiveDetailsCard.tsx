@@ -20,15 +20,18 @@ import { useTranslation } from "next-i18next";
  *
  * @param electiveSubject The Elective Subject to display.
  * @param enrolledElective The session code of the Elective Subject the Student is currently enrolled in.
+ * @param inEnrollmentPeriod Whether the time now is in an Enrollment Period.
  * @param onChooseSuccess Triggers after the Student has successfully chosen the Elective Subject.
  */
 const ElectiveDetailsCard: StylableFC<{
   electiveSubject: ElectiveSubject | null;
   enrolledElective?: ElectiveSubject | null;
+  inEnrollmentPeriod?: boolean;
   onChooseSuccess?: () => void;
 }> = ({
   electiveSubject,
   enrolledElective,
+  inEnrollmentPeriod,
   onChooseSuccess,
   style,
   className,
@@ -99,7 +102,7 @@ const ElectiveDetailsCard: StylableFC<{
               </section>
             )}
 
-            {enrolledElective !== undefined && (
+            {inEnrollmentPeriod && enrolledElective !== undefined && (
               <div
                 className={cn(`pointer-events-none fixed inset-0 top-auto z-10
                   overflow-hidden bg-gradient-to-t from-surface-container p-4

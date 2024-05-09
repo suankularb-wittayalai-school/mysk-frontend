@@ -196,7 +196,8 @@ const LearnElectivesPage: CustomPage<{
       >
         <ElectiveDetailsCard
           electiveSubject={selectedElective}
-          enrolledElective={inEnrollmentPeriod ? enrolledElective : null}
+          enrolledElective={enrolledElective || null}
+          inEnrollmentPeriod={inEnrollmentPeriod}
           onChooseSuccess={() => setDetailsOpen(false)}
           className={cn(`!mx-0 h-full !bg-surface-container-highest
             *:!rounded-b-none`)}
