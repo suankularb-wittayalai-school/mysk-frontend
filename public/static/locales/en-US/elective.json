@@ -63,6 +63,9 @@
       }
     }
   },
+  "print": {
+    "title": "Print student list"
+  },
   "dialog": {
     "requirements": {
       "title": "Check if you meet requirements",

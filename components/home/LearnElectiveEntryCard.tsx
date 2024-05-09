@@ -46,7 +46,7 @@ const LearnElectiveEntryCard: StylableFC<{
       />
       <CardContent className="!p-3 !pt-0">
         <Actions className="!-mt-2.5">
-          <Button appearance="filled" href="/learn/elective" element={Link}>
+          <Button appearance="filled" href="/learn/electives" element={Link}>
             {inEnrollmentPeriod
               ? enrolledElective
                 ? t("action.change")

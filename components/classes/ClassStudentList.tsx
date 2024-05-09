@@ -18,12 +18,12 @@ import { useTranslation } from "next-i18next";
  * The list of Students inside Class Details Card.
  *
  * @param students The list of Students to display.
- * @param classNumber The 3-digit number of the Classroom.
+ * @param classroom The Classroom to display the Students for.
  */
 const ClassStudentList: StylableFC<{
   students: Classroom["students"];
-  classNumber: number;
-}> = ({ students, classNumber, style, className }) => {
+  classroom: Pick<Classroom, "id" | "number">;
+}> = ({ students, classroom, style, className }) => {
   const { t } = useTranslation("classes", { keyPrefix: "detail.students" });
 
   const supabase = useSupabaseClient();
@@ -60,7 +60,7 @@ const ClassStudentList: StylableFC<{
         // Download the file
         window.location.href = URL.createObjectURL(mergedVCard);
 
-        va.track("Save Class VCards", { number: `M.${classNumber}` });
+        va.track("Save Class VCards", { number: `M.${classroom.number}` });
         return true;
       },
       toggleLoading,
@@ -92,7 +92,7 @@ const ClassStudentList: StylableFC<{
       {students.map((student) => (
         <PersonCard
           key={student.id}
-          person={{ ...student, classroom: null, role: UserRole.student }}
+          person={{ ...student, classroom, role: UserRole.student }}
           options={{
             hideClassroomInSubtitle: true,
             showNicknameinSubtitle: true,

@@ -3,9 +3,7 @@ import {
   OptionsType,
 } from "@/components/classes/StudentListPrintout";
 import PrintOptions from "@/components/common/print/PrintOptions";
-import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import { FormControlProps } from "@/utils/types/common";
-import { UserRole } from "@/utils/types/person";
 import {
   Checkbox,
   FormGroup,
@@ -24,20 +22,31 @@ import { FC } from "react";
  * display, how many empty columns to display, and configure other options here.
  *
  * @param form The form control values.
+ * @param allowedColumns The columns the user can choose to display.
+ * @param allowedFilters The filters the user can choose to apply.
+ * @param parentURL The URL of the parent page.
  * @param setForm The form setter.
  * @param formProps The form control props.
  */
 const StudentsPrintOptions: FC<{
   form: OptionsType;
+  allowedColumns: OptionsType["columns"];
+  allowedFilters: OptionsType["filters"];
+  parentURL: string;
   setForm: (form: OptionsType) => void;
   formProps: FormControlProps<keyof OptionsType>;
-}> = ({ form, setForm, formProps }) => {
+}> = ({
+  form,
+  allowedColumns,
+  allowedFilters,
+  parentURL,
+  setForm,
+  formProps,
+}) => {
   const { t } = useTranslation("classes", { keyPrefix: "print" });
 
-  const mysk = useMySKClient();
-
   return (
-    <PrintOptions parentURL="/classes">
+    <PrintOptions parentURL={parentURL}>
       <section className="flex flex-col gap-6 px-4 pb-5 pt-6">
         <Select
           appearance="outlined"
@@ -48,23 +57,7 @@ const StudentsPrintOptions: FC<{
           <MenuItem value="th">ภาษาไทย</MenuItem>
         </Select>
         <FormGroup label={t("columns.label")}>
-          {(
-            [
-              "classNo",
-              mysk.user &&
-                (mysk.user.is_admin || mysk.user.role !== UserRole.student) &&
-                "studentID",
-              "prefix",
-              "fullName",
-              "nickname",
-              "allergies",
-              "shirtSize",
-              "pantsSize",
-              mysk.user &&
-                (mysk.user.is_admin || mysk.user.role !== UserRole.student) &&
-                "elective",
-            ].filter((column) => column) as OptionsType["columns"]
-          ).map((column) => (
+          {allowedColumns.map((column) => (
             <FormItem key={column} label={t(`columns.${column}`)}>
               <Checkbox
                 value={form.columns.includes(column)}
@@ -77,14 +70,7 @@ const StudentsPrintOptions: FC<{
         </FormGroup>
 
         <FormGroup label={t("filters.label")}>
-          {(
-            [
-              mysk.user &&
-                (mysk.user.is_admin || mysk.user.role !== UserRole.student) &&
-                "noElective",
-              "hasAllergies",
-            ].filter((filters) => filters) as OptionsType["filters"]
-          ).map((filters) => (
+          {allowedFilters.map((filters) => (
             <FormItem key={filters} label={t(`filters.${filters}`)}>
               <Checkbox
                 value={form.filters.includes(filters)}
