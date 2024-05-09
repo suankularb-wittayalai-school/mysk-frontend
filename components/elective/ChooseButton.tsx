@@ -1,3 +1,4 @@
+import RequirementsDialog from "@/components/elective/RequirementsDialog";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import getLocaleString from "@/utils/helpers/getLocaleString";
@@ -10,7 +11,7 @@ import { ElectiveSubject } from "@/utils/types/elective";
 import { Button, MaterialIcon, Snackbar } from "@suankularb-components/react";
 import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 
 /**
  * A Button that allows the Student to choose an Elective Subject.
@@ -37,6 +38,7 @@ const ChooseButton: StylableFC<{
   const { t: tx } = useTranslation("common");
 
   const { setSnackbar } = useContext(SnackbarContext);
+  const [requirementsOpen, setRequirementsOpen] = useState(false);
 
   const mysk = useMySKClient();
   const refreshProps = useRefreshProps();
@@ -51,62 +53,85 @@ const ChooseButton: StylableFC<{
     electiveSubject.id === enrolledElective?.id;
 
   /**
-   * Choose or change to the selected Elective Subject, depending on context.
+   * Choose or change enrollment to the selected Elective Subject, depending on
+   * context.
    */
-  async function handleChoose() {
-    if (disabled) return;
+  async function enroll() {
+    if (!electiveSubject) return false;
     const subject = getLocaleString(electiveSubject.name, "en-US");
-    withLoading(
-      async () => {
-        const { error } = await mysk.fetch(
-          `/v1/subjects/electives/${electiveSubject.id}/enroll`,
-          {
-            // POST for choosing, PUT for changing.
-            method: enrolledElective ? "PUT" : "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ fetch_level: "id_only" }),
-          },
-        );
-        if (error) {
-          if (error.code === 403 || error.code === 409) {
-            va.track("Attempt to Choose Invalid Elective", { subject });
-            setSnackbar(<Snackbar>{t("snackbar.notAllowed")}</Snackbar>);
-          } else setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
-          logError("handleChoose", error);
-        }
-        if (enrolledElective)
-          va.track("Change Elective", {
-            from: getLocaleString(enrolledElective.name, "en-US"),
-            to: subject,
-          });
-        va.track("Choose Elective", { subject });
-        await refreshProps();
-        onSucess?.();
-        return true;
+    const { error } = await mysk.fetch(
+      `/v1/subjects/electives/${electiveSubject.id}/enroll`,
+      {
+        // POST for choosing, PUT for changing.
+        method: enrolledElective ? "PUT" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fetch_level: "id_only" }),
       },
-      toggleLoading,
-      { hasEndToggle: true },
     );
+    if (error) {
+      if (error.code === 403 || error.code === 409) {
+        va.track("Attempt to Choose Invalid Elective", { subject });
+        setSnackbar(<Snackbar>{t("snackbar.notAllowed")}</Snackbar>);
+      } else setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
+      logError("enroll", error);
+    }
+    if (enrolledElective)
+      va.track("Change Elective", {
+        from: getLocaleString(enrolledElective.name, "en-US"),
+        to: subject,
+      });
+    va.track("Choose Elective", { subject });
+    await refreshProps();
+    onSucess?.();
+    return true;
   }
 
   return (
-    <Button
-      appearance="filled"
-      icon={<MaterialIcon icon="done" />}
-      onClick={handleChoose}
-      loading={loading}
-      disabled={disabled}
-      style={style}
-      className={className}
-    >
-      {t("action.choose", {
-        context: !enrolledElective
-          ? "initial"
-          : electiveSubject?.id !== enrolledElective.id
-            ? "change"
-            : "chosen",
-      })}
-    </Button>
+    <>
+      {/* Button */}
+      <Button
+        appearance="filled"
+        icon={<MaterialIcon icon="done" />}
+        onClick={async () => {
+          if (disabled || loading) return;
+          withLoading(
+            async () => {
+              if (electiveSubject.requirements.length > 0) {
+                setRequirementsOpen(true);
+                return false;
+              } else return await enroll();
+            },
+            toggleLoading,
+            { hasEndToggle: true },
+          );
+        }}
+        loading={loading}
+        disabled={disabled}
+        style={style}
+        className={className}
+      >
+        {t("action.choose", {
+          context: !enrolledElective
+            ? "initial"
+            : electiveSubject?.id !== enrolledElective.id
+              ? "change"
+              : "chosen",
+        })}
+      </Button>
+
+      {/* Requirements */}
+      {electiveSubject && electiveSubject.requirements.length > 0 && (
+        <RequirementsDialog
+          open={requirementsOpen}
+          requirements={electiveSubject.requirements}
+          onClose={() => setRequirementsOpen(false)}
+          onSubmit={async () => {
+            setRequirementsOpen(false);
+            await withLoading(enroll, toggleLoading, { hasEndToggle: true });
+          }}
+        />
+      )}
+    </>
   );
 };
 
