@@ -17,11 +17,10 @@ import {
   createPagesBrowserClient,
 } from "@supabase/auth-helpers-nextjs";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
-import va from "@vercel/analytics";
-import { Analytics } from "@vercel/analytics/react";
 import { MotionConfig } from "framer-motion";
 import { SessionProvider } from "next-auth/react";
 import { appWithTranslation } from "next-i18next";
+import PlausibleProvider, { usePlausible } from "next-plausible";
 import {
   Fira_Code,
   IBM_Plex_Sans_Thai,
@@ -116,8 +115,9 @@ function App({
   const [supabase] = useState(() => createPagesBrowserClient<Database>());
 
   // Track PWA installs
+  const plausible = usePlausible();
   useEffect(() => {
-    const trackInstall = () => va.track("Install PWA");
+    const trackInstall = () => plausible("Install PWA");
     window.addEventListener("appinstalled", trackInstall);
     return () => window.removeEventListener("appinstalled", trackInstall);
   });
@@ -148,24 +148,18 @@ function App({
           <Contexts>
             {/* Framer Motion a11y */}
             <MotionConfig reducedMotion="user">
-              {/* SKCom variables */}
-              <ThemeProvider>
-                {/* Rendered app */}
-                <Layout {...{ fab, navType, childURLs }}>
-                  <ErrorBoundary Fallback={PageFallback}>
-                    <Component {...pageProps} />
-                  </ErrorBoundary>
-                </Layout>
-              </ThemeProvider>
-
               {/* Analytics */}
-              <Analytics
-                beforeSend={(event) => {
-                  // Ignore locale when reporting pages
-                  const url = event.url.replace(/\/(en-US|th)/, "");
-                  return { ...event, url };
-                }}
-              />
+              <PlausibleProvider domain="mysk.school" taggedEvents>
+                {/* SKCom variables */}
+                <ThemeProvider>
+                  {/* Rendered app */}
+                  <Layout fab={fab} navType={navType} childURLs={childURLs}>
+                    <ErrorBoundary Fallback={PageFallback}>
+                      <Component {...pageProps} />
+                    </ErrorBoundary>
+                  </Layout>
+                </ThemeProvider>
+              </PlausibleProvider>
             </MotionConfig>
           </Contexts>
         </SessionContextProvider>
