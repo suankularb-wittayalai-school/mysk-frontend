@@ -29,6 +29,7 @@ import {
   Space_Grotesk,
 } from "next/font/google";
 import localFont from "next/font/local";
+import { useRouter } from "next/router";
 import { FC, ReactNode, useEffect, useState } from "react";
 import { Provider as BalancerProvider } from "react-wrap-balancer";
 
@@ -110,17 +111,27 @@ function App({
   pageProps: { session, ...pageProps },
 }: CustomAppProps) {
   const { fab, navType, childURLs } = Component;
+  const plausible = usePlausible();
+  const router = useRouter();
 
-  // Supabase client
+  // Create Supabase client.
   const [supabase] = useState(() => createPagesBrowserClient<Database>());
 
-  // Track PWA installs
-  const plausible = usePlausible();
+  // Track PWA installs.
   useEffect(() => {
     const trackInstall = () => plausible("Install PWA");
     window.addEventListener("appinstalled", trackInstall);
     return () => window.removeEventListener("appinstalled", trackInstall);
   });
+
+  // Track page views.
+  // See https://plausible.io/docs/custom-locations
+  useEffect(() => {
+    plausible("pageview", {
+      // We’re not using `router.asPath` as we’re ignoring locale and query.
+      u: window.location.origin + router.pathname + window.location.search,
+    });
+  }, [router.pathname]);
 
   return (
     <>
@@ -149,7 +160,11 @@ function App({
             {/* Framer Motion a11y */}
             <MotionConfig reducedMotion="user">
               {/* Analytics */}
-              <PlausibleProvider domain="mysk.school" taggedEvents>
+              <PlausibleProvider
+                domain="mysk.school"
+                taggedEvents
+                manualPageviews
+              >
                 {/* SKCom variables */}
                 <ThemeProvider>
                   {/* Rendered app */}
