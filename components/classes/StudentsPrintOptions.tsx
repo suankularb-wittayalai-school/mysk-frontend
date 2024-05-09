@@ -57,16 +57,18 @@ const StudentsPrintOptions: FC<{
           <MenuItem value="th">ภาษาไทย</MenuItem>
         </Select>
         <FormGroup label={t("columns.label")}>
-          {allowedColumns.map((column) => (
-            <FormItem key={column} label={t(`columns.${column}`)}>
-              <Checkbox
-                value={form.columns.includes(column)}
-                onChange={() =>
-                  setForm({ ...form, columns: toggle(form.columns, column) })
-                }
-              />
-            </FormItem>
-          ))}
+          {allowedColumns
+            .filter((column) => column !== "randomized")
+            .map((column) => (
+              <FormItem key={column} label={t(`columns.${column}`)}>
+                <Checkbox
+                  value={form.columns.includes(column)}
+                  onChange={() =>
+                    setForm({ ...form, columns: toggle(form.columns, column) })
+                  }
+                />
+              </FormItem>
+            ))}
         </FormGroup>
 
         <FormGroup label={t("filters.label")}>

@@ -56,6 +56,7 @@ const EnrollmentListPrintPage: CustomPage<{
           "allergies",
           "shirtSize",
           "pantsSize",
+          "randomized",
         ])}
         filters={["hasAllergies"]}
         parentURL="/teach/electives"
