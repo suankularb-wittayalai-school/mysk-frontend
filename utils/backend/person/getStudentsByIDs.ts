@@ -76,7 +76,13 @@ export async function getStudentsByIDs(
         .map((elective) =>
           elective.students.map((student) => [
             student.id,
-            pick(elective, ["id", "name", "code", "session_code"]),
+            pick(elective, [
+              "id",
+              "name",
+              "code",
+              "session_code",
+              "randomized_students",
+            ]),
           ]),
         )
         .flat(),
