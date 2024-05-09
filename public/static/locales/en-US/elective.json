@@ -64,6 +64,17 @@
     }
   },
   "dialog": {
+    "requirements": {
+      "title": "Check if you meet requirements",
+      "desc": "You must read and accept these requirements before you can enroll in this elective.",
+      "form": {
+        "requirements": "Requirements"
+      },
+      "action": {
+        "cancel": "Cancel",
+        "continue": "Continue"
+      }
+    },
     "createRequest": {
       "title": "Trade with a friend",
       "desc": "Enter the school email (ends with sk.ac.th) of the friend you want to trade electives with.",
