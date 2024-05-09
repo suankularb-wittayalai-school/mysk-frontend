@@ -1,3 +1,4 @@
+import ContactOverflow from "@/components/account/ContactOverflow";
 import SnackbarContext from "@/contexts/SnackbarContext";
 import DiscordLogo from "@/public/images/social/discord.svg";
 import FacebookLogo from "@/public/images/social/facebook.svg";
@@ -19,12 +20,11 @@ import {
   MaterialIcon,
   Snackbar,
 } from "@suankularb-components/react";
-import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
+import { usePlausible } from "next-plausible";
 import Image from "next/image";
 import { sift } from "radash";
-import { forwardRef, useContext, useState } from "react";
-import ContactOverflow from "./ContactOverflow";
+import { forwardRef, useContext } from "react";
 
 /**
  * A contact Card.
@@ -41,6 +41,7 @@ const ContactCard: StylableFC<{
   const locale = useLocale();
   const { t: tx } = useTranslation("common");
 
+  const plausible = usePlausible();
   const { setSnackbar } = useContext(SnackbarContext);
 
   const editable = Boolean(onChange || onRemove);
@@ -77,9 +78,8 @@ const ContactCard: StylableFC<{
           ? // If the Contact is linkable, link to it
             {
               onClick: () => {
-                va.track("Access Contact", {
-                  method: "Link",
-                  type: contact.type,
+                plausible("Access Contact", {
+                  props: { method: "Link", type: contact.type },
                 });
               },
               href: getContactURL(contact),
@@ -93,9 +93,8 @@ const ContactCard: StylableFC<{
           : // Otherwise, copy the value to clipboard
             {
               onClick: () => {
-                va.track("Access Contact", {
-                  method: "Copy to Clipboard",
-                  type: contact.type,
+                plausible("Access Contact", {
+                  props: { method: "Copy to Clipboard", type: contact.type },
                 });
                 navigator.clipboard.writeText(contact.value);
                 setSnackbar(

@@ -1,17 +1,15 @@
-// Imports
-import getUserByEmail from "@/utils/backend/account/getUserByEmail";
 import { getStudentByID } from "@/utils/backend/person/getStudentByID";
 import { getTeacherByID } from "@/utils/backend/person/getTeacherByID";
 import logError from "@/utils/helpers/logError";
 import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
-import { Student, Teacher, UserRole } from "@/utils/types/person";
-import { GetServerSidePropsContext } from "next";
-import { NextAuthOptions, getServerSession } from "next-auth";
+import { MySKClient } from "@/utils/types/fetch";
+import { Student, Teacher } from "@/utils/types/person";
 
 export async function getStudentFromUserID(
   supabase: DatabaseClient,
+  mysk: MySKClient,
   userID: string,
-  options?: { includeContacts: boolean; detailed?: boolean },
+  options?: Parameters<typeof getStudentByID>[3],
 ): Promise<BackendReturn<Student>> {
   let { data: studentData, error: studentDataError } = await supabase
     .from("students")
@@ -24,17 +22,14 @@ export async function getStudentFromUserID(
     return { data: null, error: studentDataError };
   }
 
-  return (await getStudentByID(
-    supabase,
-    studentData!.id,
-    options,
-  )) as BackendReturn<Student>;
+  return await getStudentByID(supabase, mysk, studentData!.id, options);
 }
 
 export async function getTeacherFromUserID(
   supabase: DatabaseClient,
+  mysk: MySKClient,
   userID: string,
-  options?: { includeContacts: boolean; detailed?: boolean },
+  options?: Parameters<typeof getTeacherByID>[3],
 ): Promise<BackendReturn<Teacher>> {
   let { data: teacherData, error } = await supabase
     .from("teachers")
@@ -47,70 +42,24 @@ export async function getTeacherFromUserID(
     return { data: null, error };
   }
 
-  return (await getTeacherByID(
-    supabase,
-    teacherData!.id,
-    options,
-  )) as BackendReturn<Teacher>;
+  return await getTeacherByID(supabase, mysk, teacherData!.id, options);
 }
 
 export default async function getLoggedInPerson(
   supabase: DatabaseClient,
-  authOptions: NextAuthOptions,
-  req: GetServerSidePropsContext["req"],
-  res: GetServerSidePropsContext["res"],
-  options?: { includeContacts: boolean; detailed?: boolean },
+  mysk: MySKClient,
+  options?: Parameters<
+    typeof getStudentFromUserID | typeof getTeacherFromUserID
+  >[3],
 ): Promise<BackendReturn<Student | Teacher>> {
-  const data = await getServerSession(req, res, authOptions);
-
-  if (!data) {
-    const error = { message: "no logged in user is found" };
-    logError("getLoggedInPerson", error);
-    return { data: null, error };
-  }
-
-  const { data: user, error } = await getUserByEmail(
+  const { user } = mysk;
+  return await {
+    student: getStudentFromUserID,
+    teacher: getTeacherFromUserID,
+  }[user!.role as (Student | Teacher)["role"]](
     supabase,
-    data.user!.email as string,
+    mysk,
+    user!.id,
+    options,
   );
-
-  if (error) {
-    logError("getLoggedInPerson", error);
-    return { data: null, error };
-  }
-
-  let loggedInAccount: Student | Teacher | null = null;
-
-  switch (user!.role) {
-    case UserRole.student:
-      const { data, error } = await getStudentFromUserID(
-        supabase,
-        user!.id,
-        options,
-      );
-      if (error) {
-        logError("getLoggedInPerson", error);
-        return { data: null, error };
-      }
-      loggedInAccount = { ...data!, is_admin: user!.is_admin };
-      break;
-
-    case UserRole.teacher:
-      const { data: teacherData, error: teacherError } =
-        await getTeacherFromUserID(supabase, user!.id, options);
-      if (teacherError) {
-        logError("getLoggedInPerson", teacherError);
-        return { data: null, error: teacherError };
-      }
-      loggedInAccount = { ...teacherData!, is_admin: user!.is_admin };
-      break;
-  }
-
-  if (!loggedInAccount) {
-    const error = { message: "no logged in user is found" };
-    logError("getLoggedInPerson", error);
-    return { data: null, error };
-  }
-
-  return { data: loggedInAccount, error: null };
 }

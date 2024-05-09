@@ -46,7 +46,7 @@
   "schedule": {
     "yourSubjects": "Your subjects",
     "additionGuide": "Drag a subject into the period when you teach that subject, then fill in the rest of the information.",
-    "elective": "Elective period",
+    "elective": "Elective",
     "hoverMenu": {
       "add": "Add period here",
       "more": "View details",
@@ -57,6 +57,17 @@
   "subjectList": {
     "title": "Subject list",
     "search": "Search subjects",
+    "elective": {
+      "title": "Elective subject",
+      "subtitle_student": "Not chosen",
+      "subtitle_teacher_one": "{{count, number}} session",
+      "subtitle_teacher_other": "{{count, number}} sessions",
+      "action": {
+        "choose": "Choose",
+        "change": "Change",
+        "view": "View"
+      }
+    },
     "card": {
       "noTeachers": "No teachers",
       "action": {

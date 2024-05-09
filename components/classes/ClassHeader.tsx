@@ -1,9 +1,10 @@
-// Imports
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import cn from "@/utils/helpers/cn";
 import useConvertContactsForVCard from "@/utils/helpers/contact/useConvertContactsForVCard";
+import classroomOfPerson from "@/utils/helpers/classroom/classroomOfPerson";
 import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
-import { User, UserRole } from "@/utils/types/person";
+import { UserRole } from "@/utils/types/person";
 import {
   AssistChip,
   ChipSet,
@@ -13,37 +14,42 @@ import {
   Text,
   transition,
 } from "@suankularb-components/react";
-import va from "@vercel/analytics";
 import { motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { title } from "radash";
+import { usePlausible } from "next-plausible";
 
 /**
  * The header of a Class Details Card, including the class number, actions for
  * the user’s role, and Attendance Dialog.
  *
  * @param classroom The Classroom to display.
- * @param isOwnClass Whether the user owns the class.
- * @param user The currently logged in user. Used for Role and Permissions.
  */
 const ClassHeader: StylableFC<{
   classroom: Omit<Classroom, "students" | "year" | "subjects">;
-  isOwnClass?: boolean;
-  user: User;
-}> = ({ classroom, isOwnClass, user, style, className }) => {
+}> = ({ classroom, style, className }) => {
   const { t } = useTranslation("classes", { keyPrefix: "header" });
   const { t: tx } = useTranslation("common");
 
+  const mysk = useMySKClient();
+  const plausible = usePlausible();
   const convertContactsForVCard = useConvertContactsForVCard();
+
+  const isOwnClass =
+    mysk.person && classroomOfPerson(mysk.person)?.id === classroom?.id;
+  const canSeeSensitive =
+    isOwnClass ||
+    (mysk.user &&
+      (mysk.user.is_admin || mysk.user.role !== UserRole.student)) ||
+    false;
 
   /**
    * Save the Classroom Contacts as a vCard file.
    */
   function handleSaveVCard() {
-    va.track("Save Class Contact", {
-      number: `M.${classroom.number}`,
-      method: "vCard",
+    plausible("Save Classroom Contact", {
+      props: { number: `M.${classroom.number}` },
     });
     const vCard = new Blob(
       [
@@ -87,14 +93,14 @@ const ClassHeader: StylableFC<{
         </span>
       </Text>
       <ChipSet scrollable className="-mx-6 px-6">
-        {(user.is_admin || user.role !== UserRole.student || isOwnClass) && (
+        {canSeeSensitive && (
           <>
             {/* Student List Printout */}
             <AssistChip
               icon={<MaterialIcon icon="print" />}
               onClick={() =>
-                va.track("Get Student List Printout", {
-                  number: `M.${classroom.number}`,
+                plausible("Get Student List Printout", {
+                  props: { number: `M.${classroom.number}` },
                 })
               }
               href={`/classes/${classroom.number}/print`}
@@ -107,18 +113,22 @@ const ClassHeader: StylableFC<{
             <AssistChip
               icon={<MaterialIcon icon="assignment_turned_in" />}
               onClick={() =>
-                va.track("View Attendance", {
-                  location: "Home Glance",
-                  role: title(user.role),
-                  number: `M.${classroom.number}`,
-                  isOwnClass: true,
+                plausible("View Attendance", {
+                  props: {
+                    location: "Classroom",
+                    role: title(mysk.user!.role),
+                    number: `M.${classroom.number}`,
+                    isOwnClass,
+                  },
                 })
               }
               href={`/classes/${classroom.number}/attendance`}
               element={Link}
             >
               {t(
-                `action.attendance.${user.role === UserRole.teacher ? "edit" : "view"}`,
+                `action.attendance.${
+                  mysk.user!.role === UserRole.teacher ? "edit" : "view"
+                }`,
               )}
             </AssistChip>
           </>

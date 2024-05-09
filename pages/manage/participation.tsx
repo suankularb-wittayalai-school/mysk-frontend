@@ -1,7 +1,6 @@
 import PageHeader from "@/components/common/PageHeader";
 import ParticipationMetric from "@/components/manage/ParticipationMetric";
 import getParticipationMetrics from "@/utils/backend/manage/getParticipationMetrics";
-import cn from "@/utils/helpers/cn";
 import { supabase } from "@/utils/supabase-backend";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { ParticipationMetrics } from "@/utils/types/management";
@@ -11,6 +10,11 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 
+/**
+ * Metrics on MySK participation.
+ *
+ * @param metrics The Participation Metrics.
+ */
 const ParticipationPage: CustomPage<{
   metrics: ParticipationMetrics;
 }> = ({ metrics }) => {

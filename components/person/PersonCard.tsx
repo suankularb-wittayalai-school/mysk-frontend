@@ -3,11 +3,12 @@ import WithPersonDetails from "@/components/person/WithPersonDetails";
 import getLocaleName from "@/utils/helpers/getLocaleName";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import useLocale from "@/utils/helpers/useLocale";
+import { StylableFC } from "@/utils/types/common";
 import { Person, Student, Teacher, UserRole } from "@/utils/types/person";
 import { Card, CardHeader } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
 import { sift } from "radash";
-import { ComponentProps, FC, useState } from "react";
+import { ComponentProps, useState } from "react";
 
 /**
  * A Card that displays a Person’s details.
@@ -15,7 +16,7 @@ import { ComponentProps, FC, useState } from "react";
  * @param person The Person to display.
  * @param options Options for the Card.
  */
-const PersonCard: FC<
+const PersonCard: StylableFC<
   Partial<Omit<ComponentProps<typeof Card>, "children">> & {
     person: // Fetching and Avatar
     Pick<Student | Teacher, "id" | "role" | "profile"> &
@@ -26,8 +27,9 @@ const PersonCard: FC<
       // Role-specific fields
       (Pick<Student, "classroom"> | Pick<Teacher, "subject_group">);
     options?: Partial<{
+      suffix: string | JSX.Element;
       hideClassroomInSubtitle: boolean;
-      showNicknameinSubtitle: boolean;
+      showNicknameInSubtitle: boolean;
     }> &
       ComponentProps<typeof WithPersonDetails>["options"];
   }
@@ -52,21 +54,26 @@ const PersonCard: FC<
       >
         <CardHeader
           avatar={<PersonAvatar {...person} />}
-          title={getLocaleName(locale, person)}
+          title={
+            <>
+              {getLocaleName(locale, person)}
+              {options?.suffix}
+            </>
+          }
           subtitle={sift([
-            person.role === UserRole.student
+            person.role === UserRole.student && (person as Student).classroom
               ? sift([
                   !options?.hideClassroomInSubtitle &&
-                    (person as Student).classroom &&
                     t("class", (person as Student).classroom),
                   t("classNo", { classNo: (person as Student).class_no }),
                 ]).join(" • ")
               : (person as Teacher).subject_group &&
                 getLocaleString((person as Teacher).subject_group.name, locale),
-            options?.showNicknameinSubtitle &&
+            options?.showNicknameInSubtitle &&
               person.nickname?.th &&
               getLocaleString(person.nickname, locale),
           ]).join(" • ")}
+          className="[&_h3]:!leading-none [&_h3]:my-1"
         />
       </Card>
     </WithPersonDetails>

@@ -5,7 +5,7 @@ import SnackbarContext from "@/contexts/SnackbarContext";
 import createScheduleItem from "@/utils/backend/schedule/createScheduleItem";
 import cn from "@/utils/helpers/cn";
 import getLocaleString from "@/utils/helpers/getLocaleString";
-import { getSubjectName } from "@/utils/helpers/getSubjectName";
+import { formatSubjectPeriodName } from "@/utils/helpers/schedule/formatSubjectPeriodName";
 import periodDurationToWidth from "@/utils/helpers/schedule/periodDurationToWidth";
 import useForm from "@/utils/helpers/useForm";
 import useLocale from "@/utils/helpers/useLocale";
@@ -30,14 +30,14 @@ import {
   transition,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import va from "@vercel/analytics";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
+import { usePlausible } from "next-plausible";
 import { useRouter } from "next/router";
 import { useContext } from "react";
 
 /**
- * A dialog for adding a Period to the user’s Schedule.
+ * A Dialog for adding a Period to the user’s Schedule.
  *
  * @param subject The Subject to create a Schedule Period for.
  * @param open Whether the Dialog is open and shown.
@@ -55,6 +55,7 @@ const AddPeriodDialog: StylableFC<{
   const { t } = useTranslation("schedule", { keyPrefix: "dialog.editPeriod" });
   const { t: tx } = useTranslation("common");
 
+  const plausible = usePlausible();
   const { teacherID, additionSite } = useContext(ScheduleContext);
   const { setSnackbar } = useContext(SnackbarContext);
 
@@ -109,7 +110,7 @@ const AddPeriodDialog: StylableFC<{
           return false;
         }
 
-        va.track("Add Period");
+        plausible("Add Period");
 
         await router.replace(router.asPath);
         onSubmit();
@@ -178,7 +179,7 @@ const AddPeriodDialog: StylableFC<{
                 transition={transition(DURATION.short4, EASING.standard)}
                 className="skc-text skc-text--body-small"
               >
-                {getSubjectName(form.duration, subject, locale)}
+                {formatSubjectPeriodName(form.duration, subject, locale)}
               </motion.span>
             </AnimatePresence>
           </motion.div>

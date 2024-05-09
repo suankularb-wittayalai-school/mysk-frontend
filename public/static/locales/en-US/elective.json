@@ -1,0 +1,100 @@
+{
+  "title_student": "Choose elective",
+  "title_teacher": "Your electives",
+  "title_admin": "Electives",
+  "list": {
+    "enrolled": "Currently enrolled",
+    "enrollment": {
+      "alt": "{{count}} enrolled out of {{max}}",
+      "label": "<0>{{count}}</0>/{{max}}",
+      "progressAlt": "Enrollment progress bar"
+    },
+    "action": {
+      "choose_initial": "Choose elective",
+      "choose_chosen": "Chosen",
+      "choose_change": "Change elective"
+    },
+    "snackbar": {
+      "notAllowed": "You can’t enroll in that elective"
+    }
+  },
+  "detail": {
+    "empty": "Select the elective you want to enroll in and press ”Choose elective.”",
+    "information": {
+      "title": "Information",
+      "name": "Subject name",
+      "code": "Subject code",
+      "teachers": "Teachers",
+      "room": "Room",
+      "description": "Description",
+      "action": {
+        "seeSyllabus_available": "See syllabus",
+        "seeSyllabus_unavailable": "Syllabus not available"
+      },
+      "dialog": {
+        "syllabus": "Syllabus"
+      }
+    },
+    "trade": {
+      "title": "Trade electives",
+      "incoming": "Incoming requests",
+      "outgoing": "Outgoing requests",
+      "empty": "Didn’t like the elective you chose? Create a trade request and find a friend to trade with.",
+      "unavailable": "Trading electives is not available right now.",
+      "you": "{{name}} <0>(You)</0>",
+      "action": {
+        "create": "Create request",
+        "respond": "Respond with…",
+        "approve": "Approve",
+        "decline": "Decline",
+        "cancel": "Cancel"
+      },
+      "snackbar": {
+        "cancelled": "Request cancelled",
+        "approved": "Request approved",
+        "declined": "Request declined"
+      }
+    },
+    "students": {
+      "title": "Enrolled students",
+      "searchAlt": "Search enrolled students",
+      "randomized": "Enrolled via randomization",
+      "action": {
+        "print": "Print"
+      }
+    }
+  },
+  "print": {
+    "title": "Print student list"
+  },
+  "dialog": {
+    "requirements": {
+      "title": "Check if you meet requirements",
+      "desc": "You must read and accept these requirements before you can enroll in this elective.",
+      "form": {
+        "requirements": "Requirements"
+      },
+      "action": {
+        "cancel": "Cancel",
+        "continue": "Continue"
+      }
+    },
+    "createRequest": {
+      "title": "Trade with a friend",
+      "desc": "Enter the school email (ends with sk.ac.th) of the friend you want to trade electives with.",
+      "form": {
+        "email": "School email"
+      },
+      "action": {
+        "cancel": "Cancel",
+        "send": "Send request"
+      },
+      "snackbar": {
+        "self": "You can’t trade electives with yourself",
+        "notFound": "Student not found",
+        "notAllowed": "You can’t trade electives with that person",
+        "success": "Request sent"
+      }
+    }
+  }
+}

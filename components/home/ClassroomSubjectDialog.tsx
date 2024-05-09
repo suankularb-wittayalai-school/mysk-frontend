@@ -1,11 +1,10 @@
-// Imports
 import BrandIcon from "@/components/icons/BrandIcon";
 import TeachersField from "@/components/person/TeachersField";
 import SnackbarContext from "@/contexts/SnackbarContext";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import { createClassroomSubject } from "@/utils/backend/subject/createClassroomSubject";
 import { updateClassroomSubject } from "@/utils/backend/subject/updateClassroomSubject";
 import useForm from "@/utils/helpers/useForm";
-import useLoggedInPerson from "@/utils/helpers/useLoggedInPerson";
 import useToggle from "@/utils/helpers/useToggle";
 import withLoading from "@/utils/helpers/withLoading";
 import {
@@ -31,8 +30,8 @@ import {
   TextField,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import va from "@vercel/analytics";
 import { Trans, useTranslation } from "next-i18next";
+import { usePlausible } from "next-plausible";
 import { FC, useContext, useEffect } from "react";
 
 /**
@@ -206,6 +205,7 @@ const ClassroomSubjectDialog: StylableFC<{
   const { t } = useTranslation("teach", { keyPrefix: "dialog.roomSubject" });
   const { t: tx } = useTranslation("common");
 
+  const plausible = usePlausible();
   const { setSnackbar } = useContext(SnackbarContext);
 
   const { form, setForm, resetForm, formOK, formProps } = useForm<
@@ -232,16 +232,16 @@ const ClassroomSubjectDialog: StylableFC<{
 
   // Fetch the Teacher that is the user
   const supabase = useSupabaseClient();
-  const { person: user } = useLoggedInPerson();
+  const mysk = useMySKClient();
 
   // Teachers Chip Field default if in add mode
   useEffect(() => {
     if (!open || data) return;
     resetForm();
     // If the Teacher is fetched, insert it into the Teachers Chip Field
-    if (user) setForm({ ...form, teachers: [user] });
+    if (mysk.person) setForm({ ...form, teachers: [mysk.person] });
     return;
-  }, [open, user]);
+  }, [open, mysk.person]);
 
   // Populate form with data if in edit mode
   useEffect(() => {
@@ -304,7 +304,7 @@ const ClassroomSubjectDialog: StylableFC<{
           return false;
         }
 
-        va.track("Save Classroom-Subject Connection");
+        plausible("Save Classroom-Subject Connection");
 
         onSubmit();
         resetForm();

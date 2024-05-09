@@ -10,8 +10,8 @@ import {
   Snackbar,
   Text,
 } from "@suankularb-components/react";
-import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
+import { usePlausible } from "next-plausible";
 import { unique } from "radash";
 import { forwardRef, useContext, useEffect, useState } from "react";
 
@@ -25,6 +25,7 @@ const StarbucksCard: StylableFC = ({ style, className }) => {
     keyPrefix: "teachers.detail.starbucks",
   });
 
+  const plausible = usePlausible();
   const { setSnackbar } = useContext(SnackbarContext);
 
   const [synthVoices, setSynthVoices] = useState<SpeechSynthesisVoice[]>();
@@ -60,9 +61,8 @@ const StarbucksCard: StylableFC = ({ style, className }) => {
 
   function handleReadAloud() {
     // Track easter egg discovery
-    va.track("Find Starbucks Easter Egg", {
-      action: "Read aloud",
-      successful: Boolean(synthVoices?.length),
+    plausible("Find Starbucks Easter Egg", {
+      props: { action: "Read aloud", successful: Boolean(synthVoices?.length) },
     });
 
     // If no Thai voices found, the user is notified of the failure
@@ -119,8 +119,8 @@ const StarbucksCard: StylableFC = ({ style, className }) => {
             icon={<MaterialIcon icon="open_in_new" />}
             href={`https://www.starbucks.co.th/${locale}/delivery-in-app/`}
             onClick={() =>
-              va.track("Find Starbucks Easter Egg", {
-                action: "Open Starbucks",
+              plausible("Find Starbucks Easter Egg", {
+                props: { action: "Open Starbucks" },
               })
             }
             // eslint-disable-next-line react/display-name

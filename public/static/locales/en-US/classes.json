@@ -4,7 +4,7 @@
     "yourClass": "Your class",
     "item": {
       "period": {
-        "upcoming": "Next in {{duration}}",
+        "upcoming": "Next at {{time, datetime(hour: 2-digit; minute: 2-digit; hour12: false;)}}",
         "finished": "Finished for today"
       }
     }
@@ -44,14 +44,22 @@
     "language": "Language",
     "columns": {
       "label": "Information to show",
+      "index": "Order",
       "classNo": "Class №",
       "studentID": "Student ID",
       "prefix": "Prefix",
       "fullName": "Full name",
       "nickname": "Nickname",
+      "classroom": "Classroom",
       "allergies": "Allergies (in Thai)",
       "shirtSize": "Shirt size",
-      "pantsSize": "School pants size"
+      "pantsSize": "School pants size",
+      "elective": "Chosen elective"
+    },
+    "filters": {
+      "label": "Filters",
+      "noElective": "Without elective",
+      "hasAllergies": "With allergies"
     },
     "numEmpty": "Empty columns",
     "enableNotes": "Notes column",

@@ -1,4 +1,3 @@
-// Imports
 import cn from "@/utils/helpers/cn";
 import { StylableFC } from "@/utils/types/common";
 import { FullscreenDialog, useBreakpoint } from "@suankularb-components/react";
@@ -27,13 +26,13 @@ const LookupDetailsDialog: StylableFC<{
           <meta
             key="theme-color-light"
             name="theme-color"
-            content="#dde3ea" // surface-variant
+            content="#dfe3e7" // surface-container-highest
             media="(prefers-color-scheme: light)"
           />
           <meta
             key="theme-color-dark"
             name="theme-color"
-            content="#41484d" // surface-variant
+            content="#313539" // surface-container-highest
             media="(prefers-color-scheme: dark)"
           />
         </Head>
@@ -45,12 +44,21 @@ const LookupDetailsDialog: StylableFC<{
         onClose={onClose}
         style={style}
         className={cn(
-          `sm:divide-y-0 [&>:first-child>button]:pointer-events-auto
+          // Support children Dialogs and remove border under Top App Bar.
+          `!overflow-y-visible sm:divide-y-0`,
+
+          // Remove Top App Bar but keep close Button (moved to the right).
+          `[&>:first-child>button]:pointer-events-auto
           [&>:first-child]:pointer-events-none [&>:first-child]:!max-w-[42.5rem]
           [&>:first-child]:!flex-row-reverse [&>:first-child]:!bg-transparent
-          sm:[&>:first-child]:!fixed [&>:last-child>div]:!mx-0
+          [&>:first-child]:sm:!fixed`,
+
+          // Return rounded corners removed by removing overflow clipping
+          // and format content.
+          `[&>:last-child>div]:!mx-0
           [&>:last-child>div]:!rounded-none [&>:last-child>div]:!border-0
-          [&>:last-child]:h-[100dvh] [&>:last-child]:!p-0`,
+          [&>:last-child]:h-dvh [&>:last-child]:!rounded-xl
+          [&>:last-child]:!p-0`,
           className,
         )}
       >

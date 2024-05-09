@@ -7,6 +7,13 @@ declare global {
       NEXT_PUBLIC_VERSION: string;
 
       /**
+       * The timezone of the school, in IANA format.
+       * 
+       * @see {@link https://en.wikipedia.org/wiki/List_of_tz_database_time_zones List of tz database time zones}
+       */
+      NEXT_PUBLIC_SCHOOL_TZ: string;
+
+      /**
        * The Google Client ID of this application, retrieved from Google Cloud
        * Console > APIs and Service > Credentials > OAuth 2.0 Client ID.
        */
@@ -23,6 +30,11 @@ declare global {
        * Project API Keys > `anon` `public`.
        */
       NEXT_PUBLIC_SUPABASE_ANON_KEY: string;
+
+      /**
+       * The URL of the MySK API.
+       */
+      NEXT_PUBLIC_MYSK_API_URL: string;
 
       /**
        * The URL of the Google Form that is used to report problems with MySK.
@@ -48,8 +60,17 @@ declare global {
       /**
        * The service role of the Supabase project, retrieved from Settings >
        * API > Project API Keys > `service_role` `secret`.
+       * 
+       * **Important**: This is a secret key. Do not expose it to the client.
        */
       SUPABASE_SERVICE_ROLE: string;
+
+      /**
+       * The API key for accessing the MySK API.
+       * 
+       * **Important**: This is a secret key. Do not expose it to the client.
+       */
+      MYSK_API_KEY: string;
 
       /**
        * Whether MySK is currently closed for maintenance. Will close off

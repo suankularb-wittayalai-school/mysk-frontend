@@ -18,11 +18,10 @@ import {
   transition,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import va from "@vercel/analytics";
-import { differenceInSeconds, formatDistanceToNowStrict } from "date-fns";
-import { enUS, th } from "date-fns/locale";
+import { differenceInSeconds } from "date-fns";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
+import { usePlausible } from "next-plausible";
 import { sift } from "radash";
 import { useEffect, useState } from "react";
 
@@ -43,14 +42,11 @@ const LookupClassCard: StylableFC<{
   const { t } = useTranslation("classes", { keyPrefix: "list.item" });
   const { t: tx } = useTranslation("common");
 
+  const plausible = usePlausible();
   const supabase = useSupabaseClient();
 
   const [loading, setLoading] = useState(true);
-  const {
-    now,
-    periodNumber,
-    schoolSessionState: schooleSessionState,
-  } = useNow();
+  const { now, periodNumber, schoolSessionState } = useNow();
   const [period, setPeriod] = useState<
     (SchedulePeriod & { is_current: boolean }) | null
   >(null);
@@ -79,13 +75,15 @@ const LookupClassCard: StylableFC<{
       direction="row"
       stateLayerEffect
       onClick={() => {
-        va.track("View Classroom", { number: `M.${classroom.number}` });
+        plausible("View Classroom", {
+          props: { number: `M.${classroom.number}` },
+        });
         onClick(classroom.id);
       }}
       style={style}
       className={cn(
-        `group !grid w-full !grid-cols-[minmax(0,1fr),calc(4.5rem+2px)] items-center
-        !rounded-none !border-transparent !bg-transparent text-left
+        `group !grid w-full !grid-cols-[minmax(0,1fr),calc(4.5rem+2px)]
+        items-center !rounded-none !border-transparent !bg-transparent text-left
         !transition-[padding,border,background-color] sm:!rounded-full`,
         classroom.id === selected &&
           `sm:!border-outline-variant sm:!bg-primary-container sm:pl-2
@@ -106,17 +104,18 @@ const LookupClassCard: StylableFC<{
             >
               {sift([
                 classroom.main_room,
-                !loading &&
-                  (period
-                    ? period.is_current
-                      ? getLocaleString(period.content[0].subject.name, locale)
-                      : t("period.upcoming", {
-                          duration: formatDistanceToNowStrict(
-                            getTodaySetToPeriodTime(period.start_time, "start"),
-                            { locale: locale === "en-US" ? enUS : th },
-                          ),
-                        })
-                    : t("period.finished")),
+                (() => {
+                  if (loading) return;
+                  if (!period) return t("period.finished");
+                  if (period.is_current)
+                    return getLocaleString(
+                      period.content[0].subject.name,
+                      locale,
+                    );
+                  return t("period.upcoming", {
+                    time: getTodaySetToPeriodTime(period.start_time, "start"),
+                  });
+                })(),
               ]).join(" • ")}
             </motion.span>
           </AnimatePresence>
@@ -131,6 +130,11 @@ const LookupClassCard: StylableFC<{
             alt="Period progress in percent"
             value={percentage}
             visible={!loading && period?.is_current}
+            className={cn(
+              `[&_*]:transition-colors`,
+              classroom.id === selected &&
+                `![--_remainder-color:var(--surface)]`,
+            )}
           />
         </div>
       ) : (
@@ -141,7 +145,7 @@ const LookupClassCard: StylableFC<{
             classroom.id === selected && `sm:group-focus:border-primary`,
           )}
         >
-          {schooleSessionState === SchoolSessionState.schedule &&
+          {schoolSessionState === SchoolSessionState.schedule &&
           [4, 5].includes(periodNumber) ? (
             <MaterialIcon icon="fastfood" className="text-tertiary" />
           ) : period ? (

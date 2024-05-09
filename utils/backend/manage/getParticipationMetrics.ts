@@ -62,8 +62,14 @@ export default async function getParticipationMetrics(
     error: studentsWithAdditionalAccountDataError,
   } = await supabase
     .from("students")
-    .select("id, people!inner(nickname_th)", { count: "exact", head: true })
-    .neq("people.nickname_th", null);
+    .select(
+      `id,
+      people!inner(nickname_th),
+      classroom_students!inner(classrooms!inner(year))`,
+      { count: "exact", head: true },
+    )
+    .neq("people.nickname_th", null)
+    .eq("classroom_students.classrooms.year", getCurrentAcademicYear());
 
   const { data: classrooms, error: classroomsError } = await supabase
     .from("classrooms")

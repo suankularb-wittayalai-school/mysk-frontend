@@ -45,16 +45,20 @@
     "school": {
       "title": "แอพโรงเรียน",
       "mainSite": "เว็บหลัก",
-      "kularbFah": "กุหลาบฟ้า",
-      "kularbLuang": "กุหลาบหลวง",
+      "samak": "สมัคร",
       "shopping": "SK Shopping",
+      "schoolICT": "School ICT",
+      "sar": "ระบบ SAR",
+      "ita": "ระบบ ITA",
+      "basedLine": "Based Line",
+      "kularbLuang": "กุหลาบหลวง"
+    },
+    "learning": {
+      "title": "แอพสำหรับการเรียนรู้",
+      "kularbFah": "กุหลาบฟ้า",
       "library": "ห้องสมุด",
       "libraryEBook": "Library eBook",
       "libraryOPAC": "Library OPAC"
-    },
-    "other": {
-      "title": "แอพอื่น ๆ",
-      "schoolICT": "School ICT"
     }
   },
   "pageLoading": "หน้ากำลังโหลด…",
@@ -228,6 +232,12 @@
       "title": "รูปภาพ",
       "action": {
         "close": "ปิดหน้าต่าง"
+      }
+    },
+    "pdf": {
+      "loading": "กำลังโหลด PDF…",
+      "action": {
+        "download": "ดาวน์โหลด"
       }
     }
   },

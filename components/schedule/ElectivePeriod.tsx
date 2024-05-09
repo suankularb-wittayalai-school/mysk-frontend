@@ -1,23 +1,26 @@
-import ElectivePeriodDetails from "@/components/schedule/ElectivePeriodDetails";
+import HoverList from "@/components/person/HoverList";
+import ElectivePeriodDialog from "@/components/schedule/ElectivePeriodDialog";
+import MoreIndicator from "@/components/schedule/MoreIndicator";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import cn from "@/utils/helpers/cn";
+import { formatSubjectPeriodName } from "@/utils/helpers/schedule/formatSubjectPeriodName";
 import periodDurationToWidth from "@/utils/helpers/schedule/periodDurationToWidth";
+import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
+import { Student, UserRole } from "@/utils/types/person";
 import { SchedulePeriod } from "@/utils/types/schedule";
-import {
-  DURATION,
-  EASING,
-  Interactive,
-  Text,
-  transition,
-} from "@suankularb-components/react";
-import va from "@vercel/analytics";
-import { motion } from "framer-motion";
+import { Interactive, MaterialIcon, Text } from "@suankularb-components/react";
 import { useTranslation } from "next-i18next";
+import { usePlausible } from "next-plausible";
 import { useState } from "react";
 
 /**
  * When many Schedule Periods overlap, they are grouped into a single Elective
  * Period.
+ *
+ * If the Student has chosen an Elective, Elective Period imitates a Subject
+ * Period of that Elective. The More Indicator is shown to distinguish it from a
+ * Subject Period.
  *
  * @param period The Schedule Period to render.
  * @param isInSession Whether the Schedule Period is currently in session.
@@ -26,50 +29,85 @@ const ElectivePeriod: StylableFC<{
   period: SchedulePeriod;
   isInSession?: boolean;
 }> = ({ period, isInSession, style, className }) => {
-  // Translation
+  const locale = useLocale();
   const { t } = useTranslation("schedule");
 
-  // Animation
+  const plausible = usePlausible();
+  const mysk = useMySKClient();
 
-  // Dialog control
-  const [detailsOpen, setDetailsOpen] = useState<boolean>(false);
+  const chosenElective =
+    (mysk.person?.role === UserRole.student &&
+      period.content.find(
+        (subject) =>
+          (mysk.person as Student)?.chosen_elective?.code.th ===
+          subject.subject.code.th,
+      )) ||
+    null;
+
+  const [detailsOpen, setDetailsOpen] = useState(false);
 
   return (
     <>
-      {!detailsOpen ? (
-        <motion.li
-          layoutId={`elective-period-${period.id}`}
-          transition={transition(DURATION.medium2, EASING.standard)}
-          style={style}
-          className={cn(`relative`, className)}
-        >
-          <Interactive
-            className={cn(
-              `flex h-full flex-col justify-center rounded-sm px-4 py-2
-              text-left transition-shadow hover:shadow-1 focus:shadow-2`,
-              isInSession
-                ? `bg-tertiary-container text-on-tertiary-container shadow-1
-                  hover:shadow-2`
-                : `bg-surface-variant text-primary`,
-            )}
-            style={{ width: periodDurationToWidth(period.duration) }}
-            onClick={() => {
-              va.track("Open Period Details");
-              setDetailsOpen(true);
-            }}
-          >
-            <Text type="title-medium" className="!leading-none">
-              {t("schedule.elective")}
-            </Text>
-          </Interactive>
-        </motion.li>
-      ) : (
-        <li
+      <li
+        style={style}
+        className={cn(
+          `group relative`,
+          isInSession
+            ? `[--_background-color:var(--tertiary-container)]
+              [--_foreground-color:var(--on-tertiary-container)]`
+            : chosenElective
+              ? `[--_background-color:var(--secondary-container)]
+                [--_foreground-color:var(--on-secondary-container)]`
+              : `[--_background-color:var(--surface-variant)]
+                [--_foreground-color:var(--primary)]`,
+          className,
+        )}
+      >
+        <Interactive
+          className={cn(
+            `h-full rounded-sm bg-[--_background-color]
+            text-[--_foreground-color] transition-shadow focus:shadow-2`,
+            isInSession ? "shadow-1 hover:shadow-2" : "hover:shadow-1",
+          )}
           style={{ width: periodDurationToWidth(period.duration) }}
-          className="h-14 w-24"
+          onClick={() => {
+            plausible("Open Period Details", { props: { type: "Elective" } });
+            setDetailsOpen(true);
+          }}
+        >
+          {chosenElective ? (
+            <div className="grid px-4 py-2 text-left *:truncate">
+              <Text type="title-medium">
+                {formatSubjectPeriodName(
+                  period.duration,
+                  chosenElective.subject,
+                  locale,
+                )}
+              </Text>
+              <Text type="body-small">
+                <HoverList people={chosenElective.teachers} />
+              </Text>
+            </div>
+          ) : (
+            <div
+              className={cn(
+                `flex items-center justify-center`,
+                period.duration < 2 ? `flex-col pt-1` : `flex-row gap-1.5`,
+              )}
+            >
+              <MaterialIcon icon="collections_bookmark" size={20} />
+              <Text type={period.duration < 2 ? "title-small" : "title-medium"}>
+                {t("schedule.elective")}
+              </Text>
+            </div>
+          )}
+        </Interactive>
+        <MoreIndicator
+          style={{ height: 3, left: 12, bottom: -4, right: 12 }}
+          className="absolute top-auto"
         />
-      )}
-      <ElectivePeriodDetails
+      </li>
+      <ElectivePeriodDialog
         period={period}
         open={detailsOpen}
         onClose={() => setDetailsOpen(false)}

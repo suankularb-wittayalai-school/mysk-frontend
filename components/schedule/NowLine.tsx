@@ -1,21 +1,26 @@
+import ScheduleContext from "@/contexts/ScheduleContext";
 import cn from "@/utils/helpers/cn";
+import { SCHEDULE_START } from "@/utils/helpers/schedule/schoolSessionStateAt";
 import useNow from "@/utils/helpers/useNow";
 import { StylableFC } from "@/utils/types/common";
 import { differenceInSeconds } from "date-fns";
+import { useContext } from "react";
 
 /**
  * A vertical red line indicating the current time in the Schedule.
  */
 const NowLine: StylableFC = ({ style, className }) => {
+  const { periodWidth, periodHeight } = useContext(ScheduleContext);
   const { now } = useNow();
 
   return (
     <div
+      aria-hidden
       // The Schedule’s content starts at 152 pixels from the left edge
       // (9.5rem), so we add that as the initial value
       // Note: 168 pixels (10.5rem) for mobile to account for 1rem left padding
       className={cn(
-        `pointer-events-none absolute left-[10.5rem] top-12 z-20 -mx-1
+        `pointer-events-none absolute left-[10.5rem] top-1.5 z-20 -mx-1
         text-error drop-shadow-3 transition-transform sm:left-[9.5rem]`,
         className,
       )}
@@ -29,32 +34,31 @@ const NowLine: StylableFC = ({ style, className }) => {
         // School starts at 08:30, so we use the number of minutes from then to
         // now
         transform: `translateX(${
-          differenceInSeconds(now, new Date().setHours(8, 30), {
+          differenceInSeconds(now, new Date(now).setHours(...SCHEDULE_START), {
             roundingMethod: "round",
           }) *
-          (104 / 3000)
+          (periodWidth / 3000)
         }px)`,
       }}
     >
       <svg
-        width={8}
-        height={327}
-        viewBox="0 0 8 327"
+        width={10}
+        height={366}
+        viewBox="0 0 10 366"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
-          d="M2.50001 325C2.50001 325.828 3.17159 326.5 4.00001 326.5C4.82844
-            326.5 5.50001 325.828 5.50001 325L2.50001 325ZM2.5 5L2.50001
-            325L5.50001 325L5.5 5L2.5 5Z"
-          fill="currentColor"
+          d="M5 2L5 364"
+          stroke="currentColor"
+          strokeWidth={3}
+          strokeLinecap="round"
         />
         <circle
-          cx={4}
-          cy={4}
-          r={3.5}
+          cx={5}
+          cy={48 + (periodHeight + 4) * (now.getDay() - 1)}
+          r={5}
           fill="currentColor"
-          stroke="currentColor"
         />
       </svg>
     </div>

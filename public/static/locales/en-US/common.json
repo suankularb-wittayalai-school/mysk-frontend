@@ -44,17 +44,21 @@
     },
     "school": {
       "title": "School apps",
-      "mainSite": "Main site",
-      "kularbFah": "Kularb Fah",
-      "kularbLuang": "Kularb Luang",
+      "mainSite": "Main Site",
+      "samak": "Samak",
       "shopping": "SK Shopping",
+      "schoolICT": "School ICT",
+      "sar": "SAR",
+      "ita": "ITA",
+      "basedLine": "Based Line",
+      "kularbLuang": "Kularb Luang"
+    },
+    "learning": {
+      "title": "Learning apps",
+      "kularbFah": "Kularb Fah",
       "library": "Library",
       "libraryEBook": "Library eBook",
       "libraryOPAC": "Library OPAC"
-    },
-    "other": {
-      "title": "Other apps",
-      "schoolICT": "School ICT"
     }
   },
   "pageLoading": "Loading page…",
@@ -219,6 +223,12 @@
       "title": "Image",
       "action": {
         "close": "Close"
+      }
+    },
+    "pdf": {
+      "loading": "Loading PDF…",
+      "action": {
+        "download": "Download"
       }
     }
   },

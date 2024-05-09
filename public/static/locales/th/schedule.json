@@ -65,6 +65,16 @@
   "subjectList": {
     "title": "รายชื่อวิชา",
     "search": "ค้นหาวิชา",
+    "elective": {
+      "title": "วิชาเลือก",
+      "subtitle_student": "ยังไม่ได้เลือก",
+      "subtitle_teacher": "{{count, number}} คาบเรียน",
+      "action": {
+        "choose": "เลือก",
+        "change": "เปลี่ยน",
+        "view": "ดูเพิ่มเติม"
+      }
+    },
     "card": {
       "noTeachers": "ไม่มีครูผู้สอน",
       "action": {

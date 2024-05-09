@@ -1,13 +1,13 @@
-// Imports
-import getUserByEmail from "@/utils/backend/account/getUserByEmail";
+import { getStudentFromUserID } from "@/utils/backend/account/getLoggedInPerson";
+import fetchMySKAPI from "@/utils/backend/mysk/fetchMySKAPI";
 import getLocalePath from "@/utils/helpers/getLocalePath";
 import logError from "@/utils/helpers/logError";
 import permitted from "@/utils/helpers/permitted";
 import getHomeURLofRole from "@/utils/helpers/person/getHomeURLofRole";
 import { LangCode } from "@/utils/types/common";
-import { User, UserPermissionKey } from "@/utils/types/person";
+import { MySKClient } from "@/utils/types/fetch";
+import { Student, User, UserPermissionKey } from "@/utils/types/person";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
-import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
@@ -27,7 +27,7 @@ export async function middleware(req: NextRequest) {
   // Log middleware start
   if (process.env.NODE_ENV === "development")
     console.log(
-      `\u001b[1m\x1b[35m ⇥\u001b[0m Running middleware on ${route} …`,
+      `\u001b[1m\x1b[35m →\u001b[0m Running middleware on ${route} …`,
     );
 
   // Ignore all page requests if under maintenance
@@ -51,13 +51,34 @@ export async function middleware(req: NextRequest) {
   // Declare Supabase client
   const supabase = createMiddlewareClient({ req, res });
 
-  // Get user metadata
-  const jwt = await getToken({ req });
+  // Get data about user
+  const accessToken = req.cookies.get("access_token")?.value;
   let user: User | null = null;
-  if (jwt?.email) {
-    const { data, error } = await getUserByEmail(supabase, jwt?.email);
+  let student: Student | null = null;
+  if (accessToken) {
+    // Declare MySK client
+    const mysk = {
+      fetch: async (path, options) =>
+        await fetchMySKAPI(path, accessToken, options),
+      user: null,
+      person: null,
+    } as MySKClient;
+
+    // Get user metadata
+    const { data, error } = await fetchMySKAPI<User>("/auth/user", accessToken);
     if (error) logError("middleware (user)", error);
     user = data;
+
+    // Get Student data (Students have more granular permissions)
+    if (user?.role === "student") {
+      const { data, error } = await getStudentFromUserID(
+        supabase,
+        mysk,
+        user.id,
+      );
+      if (error) logError("middleware (student)", error);
+      student = data;
+    }
   }
 
   // Decide on destination based on user and page protection type
@@ -73,21 +94,32 @@ export async function middleware(req: NextRequest) {
     // prettier-ignore
     if (
       !(
-        (
-          // Allow admins to visit admin pages
-          (pageRole === "admin" && user?.is_admin) ||
-          // Allow those with `can_see_management` permission to visit management
-          // pages
-          (pageRole === "management" &&
-            permitted(user, UserPermissionKey.can_see_management)) ||
-          // Allow all users to visit user pages
-          pageRole === "user" ||
-          // Allow users with the correct roles
-          pageRole === user?.role
-        )
+        // Allow Students to visit their own Classroom pages
+        // Allow admins to visit admin pages
+        (pageRole === "admin" && user?.is_admin) ||
+        // Allow those with `can_see_management` permission to visit management
+        // pages
+        (pageRole === "management" &&
+          permitted(user, UserPermissionKey.can_see_management)) ||
+        // Allow all users to visit user pages
+        pageRole === "user" ||
+        // Allow users with the correct roles
+        pageRole === user?.role
       )
     ) 
       return user?.role ? getHomeURLofRole(user.role) : "/";
+
+    // Disallow Students from visiting pages of other Classrooms
+    const ownClassroomURL = student?.classroom
+      ? `/classes/${student.classroom.number}`
+      : null;
+    if (
+      user?.role === "student" &&
+      !user.is_admin &&
+      route.startsWith("/classes/") &&
+      (!ownClassroomURL || !route.startsWith(ownClassroomURL))
+    )
+      return "/classes";
 
     // Let permitted users continue
     return null;
@@ -96,7 +128,7 @@ export async function middleware(req: NextRequest) {
   // Log middleware end
   if (process.env.NODE_ENV === "development")
     console.log(
-      `\u001b[1m\x1b[35m ↦\x1b[0m\u001b[0m ${
+      `\u001b[1m\x1b[35m →\x1b[0m\u001b[0m ${
         destination ? `Redirected to ${destination}` : "Continued"
       }`,
     );

@@ -1,13 +1,16 @@
-import ClubRegistryLogo from "@/public/images/drawer/club-registry.png";
-import KularbFahLogo from "@/public/images/drawer/kularb-fah.png";
+import ClubRegistryLogo from "@/public/images/drawer/club-registry.svg";
+import ITALogo from "@/public/images/drawer/ita.png";
+import KularbFahLogo from "@/public/images/drawer/kularb-fah.svg";
 import KularbLuangLogo from "@/public/images/drawer/kularb-luang.png";
 import LibraryEBookLogo from "@/public/images/drawer/library-ebook.png";
 import LibraryOPACLogo from "@/public/images/drawer/library-opac.png";
-import LibraryLogo from "@/public/images/drawer/library.png";
+import LibraryLogo from "@/public/images/drawer/library.svg";
 import MainSiteLogo from "@/public/images/drawer/main-site.png";
-import MySKLogo from "@/public/images/drawer/mysk.png";
+import MySKLogo from "@/public/images/drawer/mysk.svg";
+import SamakLogo from "@/public/images/drawer/samak.svg";
+import SARLogo from "@/public/images/drawer/sar.png";
 import SchoolICTLogo from "@/public/images/drawer/school-ict.png";
-import ShoppingLogo from "@/public/images/drawer/shopping.png";
+import ShoppingLogo from "@/public/images/drawer/shopping.svg";
 import useLocale from "@/utils/helpers/useLocale";
 import { StylableFC } from "@/utils/types/common";
 import {
@@ -15,8 +18,8 @@ import {
   AppDrawerSegment,
   AppDrawer as BaseAppDrawer,
 } from "@suankularb-components/react";
-import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
+import { usePlausible } from "next-plausible";
 import Image from "next/image";
 
 /**
@@ -28,10 +31,21 @@ const AppDrawer: StylableFC = ({ style, className }) => {
   const locale = useLocale();
   const { t } = useTranslation("common", { keyPrefix: "appDrawer" });
 
+  const plausible = usePlausible();
+
+  /**
+   * Track an app open event.
+   *
+   * @param app The name of the app.
+   */
+  function trackAppOpen(app: string) {
+    plausible("Open App in App Drawer", { props: { app } });
+  }
+
   return (
     <BaseAppDrawer
       locale={locale}
-      onOpen={() => va.track("Open App Drawer")}
+      onOpen={() => plausible("Open App Drawer")}
       style={style}
       className={className}
     >
@@ -40,15 +54,13 @@ const AppDrawer: StylableFC = ({ style, className }) => {
         <AppDrawerItem
           logo={<Image src={MySKLogo} alt="" />}
           name={t("mysk.mysk")}
-          onClick={() => va.track("Open App in App Drawer", { app: "MySK" })}
+          onClick={() => trackAppOpen("MySK")}
           href="https://www.mysk.school/"
         />
         <AppDrawerItem
           logo={<Image src={ClubRegistryLogo} alt="" />}
           name={t("mysk.clubRegistry")}
-          onClick={() =>
-            va.track("Open App in App Drawer", { app: "MySK Club Registry" })
-          }
+          onClick={() => trackAppOpen("MySK Club Registry")}
           href="https://clubs.mysk.school/"
         />
       </AppDrawerSegment>
@@ -58,65 +70,78 @@ const AppDrawer: StylableFC = ({ style, className }) => {
         <AppDrawerItem
           logo={<Image src={MainSiteLogo} alt="" />}
           name={t("school.mainSite")}
-          onClick={() =>
-            va.track("Open App in App Drawer", { app: "sk.ac.th" })
-          }
+          onClick={() => trackAppOpen("sk.ac.th")}
           href="http://www.sk.ac.th/"
         />
         <AppDrawerItem
-          logo={<Image src={KularbFahLogo} alt="" />}
-          name={t("school.kularbFah")}
-          onClick={() =>
-            va.track("Open App in App Drawer", { app: "Kularb Fah" })
-          }
-          href="https://store.kularbfah-online.sk.ac.th/browse"
-        />
-        <AppDrawerItem
-          logo={<Image src={KularbLuangLogo} alt="" />}
-          name={t("school.kularbLuang")}
-          onClick={() =>
-            va.track("Open App in App Drawer", { app: "Kularb Luang" })
-          }
-          href="https://sites.google.com/sk.ac.th/standard11suan"
+          logo={<Image src={SamakLogo} alt="" />}
+          name={t("school.samak")}
+          onClick={() => trackAppOpen("Samak")}
+          href="http://samak.sk.ac.th/"
         />
         <AppDrawerItem
           logo={<Image src={ShoppingLogo} alt="" />}
           name={t("school.shopping")}
-          onClick={() =>
-            va.track("Open App in App Drawer", { app: "SK Shopping" })
-          }
+          onClick={() => trackAppOpen("SK Shopping")}
           href="https://shopping.skkornor.org/"
         />
         <AppDrawerItem
+          logo={<Image src={SchoolICTLogo} alt="" />}
+          name={t("school.schoolICT")}
+          onClick={() => trackAppOpen("School ICT")}
+          href="https://fin.sch.cloud/sk"
+        />
+        <AppDrawerItem
+          logo={<Image src={SARLogo} alt="" />}
+          name={t("school.sar")}
+          onClick={() => trackAppOpen("SAR")}
+          href="http://161.82.218.12/sksar"
+        />
+        <AppDrawerItem
+          logo={<Image src={ITALogo} alt="" />}
+          name={t("school.ita")}
+          onClick={() => trackAppOpen("ITA")}
+          href="https://sites.google.com/sk.ac.th/oit"
+        />
+        <AppDrawerItem
+          logo={<Image src={KularbLuangLogo} alt="" />}
+          name={t("school.basedLine")}
+          onClick={() => trackAppOpen("Based Line")}
+          href="http://43.229.77.153/~ztrad/sk/"
+        />
+        <AppDrawerItem
+          logo={<Image src={KularbLuangLogo} alt="" />}
+          name={t("school.kularbLuang")}
+          onClick={() => trackAppOpen("Kularb Luang")}
+          href="https://sites.google.com/sk.ac.th/standard11suan"
+        />
+      </AppDrawerSegment>
+
+      {/* Learning apps */}
+      <AppDrawerSegment title={t("learning.title")}>
+        <AppDrawerItem
+          logo={<Image src={KularbFahLogo} alt="" />}
+          name={t("learning.kularbFah")}
+          onClick={() => trackAppOpen("Kularb Fah")}
+          href="https://store.kularbfah-online.sk.ac.th/browse"
+        />
+        <AppDrawerItem
           logo={<Image src={LibraryLogo} alt="" />}
-          name={t("school.library")}
-          onClick={() => va.track("Open App in App Drawer", { app: "Library" })}
+          name={t("learning.library")}
+          onClick={() => trackAppOpen("Library")}
           href="http://library.sk.ac.th/"
         />
         <AppDrawerItem
           logo={<Image src={LibraryEBookLogo} alt="" />}
-          name={t("school.libraryEBook")}
-          onClick={() =>
-            va.track("Open App in App Drawer", { app: "Library E-book" })
-          }
+          name={t("learning.libraryEBook")}
+          onClick={() => trackAppOpen("Library E-book")}
           href="http://sk.vlcloud.net/"
         />
         <AppDrawerItem
           logo={<Image src={LibraryOPACLogo} alt="" />}
-          name={t("school.libraryOPAC")}
-          onClick={() =>
-            va.track("Open App in App Drawer", { app: "Library OPAC" })
-          }
+          name={t("learning.libraryOPAC")}
+          onClick={() => trackAppOpen("Library OPAC")}
           href="http://library.sk.ac.th/openbib/opac/index.php"
-        />
-      </AppDrawerSegment>
-
-      {/* Other apps */}
-      <AppDrawerSegment title={t("other.title")}>
-        <AppDrawerItem
-          logo={<Image src={SchoolICTLogo} alt="" />}
-          name={t("other.schoolICT")}
-          href="https://fin.sch.cloud/sk"
         />
       </AppDrawerSegment>
     </BaseAppDrawer>

@@ -4,13 +4,13 @@ import GSIButton from "@/components/landing/GSIButton";
 import LandingActions from "@/components/landing/LandingActions";
 import LandingBlobs from "@/components/landing/LandingBlobs";
 import LanguageSwitcher from "@/components/landing/LanguageSwitcher";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import MySKLogoDark from "@/public/images/brand/mysk-dark.svg";
 import MySKLogoLight from "@/public/images/brand/mysk-light.svg";
 import flagUserAsOnboarded from "@/utils/backend/account/flagUserAsOnboarded";
+import createMySKClient from "@/utils/backend/mysk/createMySKClient";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import cn from "@/utils/helpers/cn";
 import prefixLocale from "@/utils/helpers/prefixLocale";
-import useUser from "@/utils/helpers/useUser";
 import { CustomPage, LangCode } from "@/utils/types/common";
 import { UserRole } from "@/utils/types/person";
 import {
@@ -22,12 +22,12 @@ import {
   transition,
 } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import va from "@vercel/analytics";
 import { AnimatePresence, motion } from "framer-motion";
 import { GetServerSideProps } from "next";
-import { getServerSession } from "next-auth";
+import { signOut, useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { usePlausible } from "next-plausible";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -51,29 +51,38 @@ const LandingPage: CustomPage = () => {
   const { t } = useTranslation("landing");
   const { t: tx } = useTranslation("common");
 
+  const plausible = usePlausible();
   const router = useRouter();
-  const { user, status } = useUser();
+  const mysk = useMySKClient();
   const supabase = useSupabaseClient();
+
+  // If there is a mismatch between NextAuth and MySK API authentication,
+  // log the user out.
+  const session = useSession();
+  useEffect(() => {
+    if (session.status === "authenticated" && !mysk.user)
+      signOut({ redirect: false });
+  }, [session.status, mysk.user]);
 
   const [state, setState] = useState<GSIStatus>(GSIStatus.initial);
 
   // Determine if and where to redirect depending on user status.
   useEffect(() => {
     (async () => {
-      if (status !== "authenticated" || !user) return;
+      if (!mysk.user) return;
       setState(GSIStatus.redirecting);
-      if (!user.onboarded) {
+      if (!mysk.user.onboarded) {
         // Flag new users as onboarded.
-        va.track("Complete Onboarding");
-        await flagUserAsOnboarded(supabase, user.id);
+        plausible("Complete Onboarding");
+        await flagUserAsOnboarded(supabase, mysk.user.id);
         // Redirect to account page if new Student or Teacher.
-        if ([UserRole.student, UserRole.teacher].includes(user.role))
+        if ([UserRole.student, UserRole.teacher].includes(mysk.user.role))
           router.push("/account");
         // Otherwise redirect to home page (middleware redirects further).
         else router.push("/learn");
       } else router.push("/learn");
     })();
-  }, [user, status, supabase]);
+  }, [mysk.user]);
 
   return (
     <>
@@ -156,7 +165,7 @@ const LandingPage: CustomPage = () => {
                       <Actions className="grow !items-end pt-5">
                         <Button
                           onClick={() => {
-                            va.track("Cancel Sign In");
+                            plausible("Cancel Log in");
                             setState(GSIStatus.initial);
                           }}
                           appearance="outlined"
@@ -191,10 +200,13 @@ const LandingPage: CustomPage = () => {
         {/* Google One Tap UI fixes */}
         <style jsx global>{`
           /* Fix Google One Tap UI white box on dark mode */
+          #credential_picker_iframe,
+          #credential_picker_container {
+            color-scheme: light;
+          }
           #credential_picker_container {
             right: 0.5rem !important;
             top: 0.5rem !important;
-            color-scheme: light;
           }
 
           /* Add bottom padding when Google One Tap UI displays (if on mobile)
@@ -217,12 +229,12 @@ const LandingPage: CustomPage = () => {
 export const getServerSideProps: GetServerSideProps = async ({
   locale,
   req,
-  res,
 }) => {
+  const { user } = await createMySKClient(req);
+
   // Redirect to Learn if user is already logged in
   // (For Teachers, the middleware will redirect them to Teach instead)
-  const data = await getServerSession(req, res, authOptions);
-  if (data)
+  if (user)
     return {
       redirect: {
         destination: prefixLocale("/learn", locale),

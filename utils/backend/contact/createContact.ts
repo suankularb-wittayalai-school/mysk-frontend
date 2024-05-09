@@ -1,5 +1,5 @@
 import logError from "@/utils/helpers/logError";
-import { DatabaseClient, BackendReturn } from "@/utils/types/backend";
+import { BackendReturn, DatabaseClient } from "@/utils/types/backend";
 import { Contact } from "@/utils/types/contact";
 
 export default async function createContact(
@@ -17,9 +17,9 @@ export default async function createContact(
       include_students: contact.include_students,
       include_teachers: contact.include_teachers,
     })
-    .select("*")
-    .limit(1)
+    .select("id")
     .order("id")
+    .limit(1)
     .single();
 
   if (error) {

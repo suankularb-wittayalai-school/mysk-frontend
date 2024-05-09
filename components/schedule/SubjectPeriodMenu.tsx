@@ -7,9 +7,9 @@ import {
   MaterialIcon,
   transition,
 } from "@suankularb-components/react";
-import va from "@vercel/analytics";
 import { AnimatePresence, DragControls, motion } from "framer-motion";
 import { useTranslation } from "next-i18next";
+import { usePlausible } from "next-plausible";
 import { FC, useState } from "react";
 
 const SubjectPeriodMenu: FC<{
@@ -27,17 +27,16 @@ const SubjectPeriodMenu: FC<{
   setExtending,
   setDetailsOpen,
 }) => {
-  // Translation
   const { t } = useTranslation(["schedule", "common"]);
 
-  // Animation
+  const plausible = usePlausible();
+
   const entranceTransition = transition(
     DURATION.short4,
     EASING.standardDecelerate,
   );
   const exitTransition = transition(DURATION.short2, EASING.standardAccelerate);
 
-  // Moving
   const [moving, setMoving] = useState<boolean>(false);
 
   return (
@@ -100,7 +99,9 @@ const SubjectPeriodMenu: FC<{
               <Interactive
                 shadowEffect
                 onClick={() => {
-                  va.track("Open Period Details");
+                  plausible("Open Period Details", {
+                    props: { type: "Subject" },
+                  });
                   setDetailsOpen(true);
                 }}
                 attr={{ title: t("schedule.hoverMenu.more") }}

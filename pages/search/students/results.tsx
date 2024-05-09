@@ -8,22 +8,20 @@ import TooWideCard from "@/components/lookup/TooWideCard";
 import LookupStudentCard from "@/components/lookup/students/LookupStudentCard";
 import StudentActiveFiltersCard from "@/components/lookup/students/StudentActiveFiltersCard";
 import StudentDetailsCard from "@/components/lookup/students/StudentDetailsCard";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
-import getUserByEmail from "@/utils/backend/account/getUserByEmail";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import { getStudentByID } from "@/utils/backend/person/getStudentByID";
 import getStudentsByLookupFilters from "@/utils/backend/person/getStudentsByLookupFilters";
 import getLocaleString from "@/utils/helpers/getLocaleString";
 import { CustomPage, LangCode } from "@/utils/types/common";
-import { Student, StudentLookupItem, User } from "@/utils/types/person";
+import { Student, StudentLookupItem } from "@/utils/types/person";
 import {
+  DURATION,
   SplitLayout,
-  useAnimationConfig,
   useBreakpoint,
 } from "@suankularb-components/react";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
-import { getServerSession } from "next-auth";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
@@ -41,28 +39,25 @@ export type StudentSearchFilters = Partial<{
  *
  * @param filters The filters used to search for Students.
  * @param students The Students that match the filters.
- * @param user The current User. Used for permissions.
  */
 const LookupStudentsResultsPage: CustomPage<{
   filters: StudentSearchFilters;
   students: StudentLookupItem[];
-  user: User;
-}> = ({ filters, students, user }) => {
+}> = ({ filters, students }) => {
   const { t } = useTranslation("lookup", { keyPrefix: "students" });
   const { t: tx } = useTranslation("common");
-
-  const { duration } = useAnimationConfig();
 
   const [selectedID, setSelectedID] = useState<string>();
   // Select the first result automatically after a short delay
   useEffect(() => {
     const timeout = setTimeout(
       () => setSelectedID(students[0]?.id),
-      duration.medium2 * 1000,
+      DURATION.medium2 * 1000,
     );
     return () => clearTimeout(timeout);
   }, []);
 
+  const mysk = useMySKClient();
   const supabase = useSupabaseClient();
 
   const [selectedStudent, setSelectedStudent] = useState<Student>();
@@ -76,7 +71,7 @@ const LookupStudentsResultsPage: CustomPage<{
       if (!selectedID) return false;
 
       // Fetch the selected Student with the selected ID
-      const { data, error } = await getStudentByID(supabase, selectedID, {
+      const { data, error } = await getStudentByID(supabase, mysk, selectedID, {
         detailed: true,
         includeContacts: true,
       });
@@ -143,7 +138,7 @@ const LookupStudentsResultsPage: CustomPage<{
           selectedID={selectedStudent?.id || selectedID}
           length={students.length}
         >
-          <StudentDetailsCard student={selectedStudent} user={user} />
+          <StudentDetailsCard student={selectedStudent} />
         </LookupDetailsSide>
       </SplitLayout>
 
@@ -152,7 +147,7 @@ const LookupStudentsResultsPage: CustomPage<{
         open={detailsOpen}
         onClose={() => setDetailsOpen(false)}
       >
-        <StudentDetailsCard student={selectedStudent} user={user} />
+        <StudentDetailsCard student={selectedStudent} />
       </LookupDetailsDialog>
     </>
   );
@@ -168,8 +163,6 @@ export const getServerSideProps: GetServerSideProps = async ({
     req: req as NextApiRequest,
     res: res as NextApiResponse,
   });
-  const session = await getServerSession(req, res, authOptions);
-  const { data: user } = await getUserByEmail(supabase, session!.user!.email!);
 
   const filters = Object.fromEntries(
     Object.entries(query)
@@ -196,7 +189,6 @@ export const getServerSideProps: GetServerSideProps = async ({
       ])),
       filters,
       students,
-      user,
     },
   };
 };

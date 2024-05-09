@@ -1,5 +1,6 @@
 import LookupDetailsListCard from "@/components/lookup/LookupDetailsListCard";
 import PersonCard from "@/components/person/PersonCard";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import { getStudentsByIDs } from "@/utils/backend/person/getStudentsByIDs";
 import cn from "@/utils/helpers/cn";
 import useGetVCard from "@/utils/helpers/contact/useGetVCard";
@@ -7,29 +8,27 @@ import useToggle from "@/utils/helpers/useToggle";
 import withLoading from "@/utils/helpers/withLoading";
 import { Classroom } from "@/utils/types/classroom";
 import { StylableFC } from "@/utils/types/common";
-import { User, UserRole } from "@/utils/types/person";
+import { UserRole } from "@/utils/types/person";
 import { Button, MaterialIcon, Text } from "@suankularb-components/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import va from "@vercel/analytics";
 import { useTranslation } from "next-i18next";
+import { usePlausible } from "next-plausible";
 
 /**
  * The list of Students inside Class Details Card.
  *
  * @param students The list of Students to display.
- * @param classNumber The 3-digit number of the Classroom.
- * @param isOwnClass Whether the Classroom belongs to the current user.
- * @param user The currently logged in user. Used for permissions.
+ * @param classroom The Classroom to display the Students for.
  */
 const ClassStudentList: StylableFC<{
   students: Classroom["students"];
-  classNumber: number;
-  isOwnClass?: boolean;
-  user: User;
-}> = ({ students, classNumber, isOwnClass, user, style, className }) => {
+  classroom: Pick<Classroom, "id" | "number">;
+}> = ({ students, classroom, style, className }) => {
   const { t } = useTranslation("classes", { keyPrefix: "detail.students" });
 
+  const plausible = usePlausible();
   const supabase = useSupabaseClient();
+  const mysk = useMySKClient();
 
   const [loading, toggleLoading] = useToggle();
   const getVCard = useGetVCard();
@@ -42,6 +41,7 @@ const ClassStudentList: StylableFC<{
       async () => {
         const { data, error } = await getStudentsByIDs(
           supabase,
+          mysk,
           students.map((student) => student.id),
           { detailed: true },
         );
@@ -61,7 +61,9 @@ const ClassStudentList: StylableFC<{
         // Download the file
         window.location.href = URL.createObjectURL(mergedVCard);
 
-        va.track("Save Class VCards", { number: `M.${classNumber}` });
+        plausible("Save vCards of Students in Classroom", {
+          props: { number: `M.${classroom.number}` },
+        });
         return true;
       },
       toggleLoading,
@@ -93,12 +95,11 @@ const ClassStudentList: StylableFC<{
       {students.map((student) => (
         <PersonCard
           key={student.id}
-          person={{ ...student, classroom: null, role: UserRole.student }}
+          person={{ ...student, classroom, role: UserRole.student }}
           options={{
             hideClassroomInSubtitle: true,
-            showNicknameinSubtitle: true,
+            showNicknameInSubtitle: true,
             hideSeeClass: true,
-            isOwnClass,
           }}
           element="li"
           className={cn(`cursor-pointer !border-0 hover:m-[-1px] hover:!border-1

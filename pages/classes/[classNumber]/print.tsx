@@ -1,10 +1,11 @@
-// Imports
+import ClassroomPrintoutHeader from "@/components/classes/ClassroomPrintoutHeader";
 import StudentListPrintout from "@/components/classes/StudentListPrintout";
+import getClassroomByNumber from "@/utils/backend/classroom/getClassroomByNumber";
 import getClassroomOverview from "@/utils/backend/classroom/getClassroomOverview";
 import getStudentsOfClass from "@/utils/backend/classroom/getStudentsOfClass";
+import createMySKClient from "@/utils/backend/mysk/createMySKClient";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import { getStudentsByIDs } from "@/utils/backend/person/getStudentsByIDs";
-import getCurrentAcademicYear from "@/utils/helpers/getCurrentAcademicYear";
-import useLoggedInPerson from "@/utils/helpers/useLoggedInPerson";
 import { supabase } from "@/utils/supabase-backend";
 import { Classroom } from "@/utils/types/classroom";
 import { CustomPage, LangCode } from "@/utils/types/common";
@@ -13,76 +14,84 @@ import { GetStaticPaths, GetStaticProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
-import { useEffect, useState } from "react";
+import { sift, sort } from "radash";
 
-const StudentsListPrintPage: CustomPage<{
-  classItem: Pick<Classroom, "id" | "number">;
-  classroomOverview: Pick<
+/**
+ * A preview and options page for printing a list of Students in a Classroom,
+ * formatted in the same way as the official Student List printout you get in
+ * front of the Records Office.
+ *
+ * @param classroom The Classroom to print the Student List for.
+ * @param studentList The list of Students in the Classroom.
+ */
+const ClassroomPrintPage: CustomPage<{
+  classroom: Pick<
     Classroom,
     "id" | "number" | "class_advisors" | "contacts" | "subjects"
   >;
-  studentList: Student[];
-}> = ({ classItem, classroomOverview, studentList }) => {
+  students: Student[];
+}> = ({ classroom, students }) => {
   const { t } = useTranslation("classes", { keyPrefix: "print" });
   const { t: tx } = useTranslation("common");
 
-  const { person: user } = useLoggedInPerson();
-  const [userRole, setUserRole] = useState<UserRole>(UserRole.student);
-
-  useEffect(() => {
-    if (user?.role) setUserRole(user.role);
-  }, [user]);
+  const mysk = useMySKClient();
+  const canSeeSensitive =
+    mysk.user && (mysk.user.is_admin || mysk.user.role !== UserRole.student);
 
   return (
     <>
       <Head>
         <title>{tx("tabName", { tabName: t("title") })}</title>
       </Head>
+      <h1 className="sr-only">{t("title")}</h1>
       <StudentListPrintout
-        classItem={classItem}
-        classroomOverview={classroomOverview}
-        studentList={studentList}
-        userRole={userRole}
+        header={({ locale }) => (
+          <ClassroomPrintoutHeader classroom={classroom} locale={locale} />
+        )}
+        columns={sift([
+          "classNo",
+          canSeeSensitive && "studentID",
+          "prefix",
+          "fullName",
+          "nickname",
+          "allergies",
+          "shirtSize",
+          "pantsSize",
+          canSeeSensitive && "elective",
+        ])}
+        filters={sift([canSeeSensitive && "noElective", "hasAllergies"])}
+        parentURL="/classes"
+        students={students}
       />
     </>
   );
 };
 
 export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
+  const mysk = await createMySKClient();
+
+  // 1. Fetch a compact Classroom object with the 3-digit class number.
+  // 2. Fetch the Classroom Overview which contains enough information for this
+  //    page.
+  // 3. Fetch the list of compact Students objects in the Classroom.
+  // 4. Fetch the detailed Student objects using those compact objects as IDs.
+
+  // That’s a lot of steps! This is why we need a tailor-made API.
+
   const classNumber = Number(params?.classNumber);
   if (Number.isNaN(classNumber)) return { notFound: true };
 
-  const { data, error } = await supabase
-    .from("classrooms")
-    .select("id")
-    .eq("number", classNumber)
-    .eq("year", getCurrentAcademicYear())
-    .single();
-
+  const { data, error } = await getClassroomByNumber(supabase, classNumber);
   if (error) return { notFound: true };
 
-  const classID = data.id;
-
-  const { data: classItem, error: classError } = await supabase
-    .from("classrooms")
-    .select("id, number")
-    .eq("id", classID)
-    .single();
-
-  if (classError) return { notFound: true };
-
-  const { data: classroomOverview } = await getClassroomOverview(
-    supabase,
-    classID,
-  );
-
+  const { data: classroom } = await getClassroomOverview(supabase, data.id);
   const { data: compactStudentList } = await getStudentsOfClass(
     supabase,
-    classID,
+    data.id,
   );
-
-  const { data: studentList } = await getStudentsByIDs(
+  const { data: students } = await getStudentsByIDs(
     supabase,
+    mysk,
     compactStudentList!.map((student) => student.id),
     { detailed: true },
   );
@@ -93,13 +102,10 @@ export const getStaticProps: GetStaticProps = async ({ locale, params }) => {
         "common",
         "classes",
       ])),
-      classItem,
-      classroomOverview,
-      studentList: studentList!.sort(
-        // Put Students with no class No. first
-        (a, b) => (a.class_no || 0) - (b.class_no || 0),
-      ),
+      classroom,
+      students: sort(students!, (student) => student.class_no || 0),
     },
+    revalidate: 10,
   };
 };
 
@@ -108,4 +114,4 @@ export const getStaticPaths: GetStaticPaths = async () => ({
   fallback: "blocking",
 });
 
-export default StudentsListPrintPage;
+export default ClassroomPrintPage;

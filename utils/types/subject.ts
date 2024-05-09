@@ -11,13 +11,14 @@ export type SubjectGroup = {
 export type SubjectTypeEnum =
   | "core_course"
   | "additional_course"
-  | "learners_development_activities";
+  | "learners_development_activities"
+  | "elective_course";
 
 export type Subject = {
   id: string;
   code: Required<MultiLangString>;
   name: MultiLangString;
-  short_name: MultiLangString;
+  short_name: MultiLangString | null;
   type: SubjectTypeEnum;
   description?: MultiLangString;
   teachers: Teacher[];

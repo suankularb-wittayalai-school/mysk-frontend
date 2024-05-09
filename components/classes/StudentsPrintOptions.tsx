@@ -1,8 +1,9 @@
-// Imports
-import { MAXIMUM_EMPTY_COLUMNS, OptionsType } from "@/components/classes/StudentListPrintout";
+import {
+  MAXIMUM_EMPTY_COLUMNS,
+  OptionsType,
+} from "@/components/classes/StudentListPrintout";
 import PrintOptions from "@/components/common/print/PrintOptions";
 import { FormControlProps } from "@/utils/types/common";
-import { UserRole } from "@/utils/types/person";
 import {
   Checkbox,
   FormGroup,
@@ -17,25 +18,35 @@ import { toggle } from "radash";
 import { FC } from "react";
 
 /**
- * Options for the Student List Printout.
+ * Options for the Student List Printout. People can choose which columns to
+ * display, how many empty columns to display, and configure other options here.
  *
  * @param form The form control values.
+ * @param allowedColumns The columns the user can choose to display.
+ * @param allowedFilters The filters the user can choose to apply.
+ * @param parentURL The URL of the parent page.
  * @param setForm The form setter.
  * @param formProps The form control props.
- * @param userRole The role of the user visitng the page. Exposes Student ID if the user is a Teacher.
- *
- * @returns A Print Options.
  */
 const StudentsPrintOptions: FC<{
   form: OptionsType;
+  allowedColumns: OptionsType["columns"];
+  allowedFilters: OptionsType["filters"];
+  parentURL: string;
   setForm: (form: OptionsType) => void;
   formProps: FormControlProps<keyof OptionsType>;
-  userRole: UserRole;
-}> = ({ form, setForm, formProps, userRole }) => {
+}> = ({
+  form,
+  allowedColumns,
+  allowedFilters,
+  parentURL,
+  setForm,
+  formProps,
+}) => {
   const { t } = useTranslation("classes", { keyPrefix: "print" });
 
   return (
-    <PrintOptions parentURL="/classes">
+    <PrintOptions parentURL={parentURL}>
       <section className="flex flex-col gap-6 px-4 pb-5 pt-6">
         <Select
           appearance="outlined"
@@ -46,28 +57,33 @@ const StudentsPrintOptions: FC<{
           <MenuItem value="th">ภาษาไทย</MenuItem>
         </Select>
         <FormGroup label={t("columns.label")}>
-          {(
-            [
-              "classNo",
-              userRole === "teacher" && "studentID",
-              "prefix",
-              "fullName",
-              "nickname",
-              "allergies",
-              "shirtSize",
-              "pantsSize",
-            ].filter((column) => column) as OptionsType["columns"]
-          ).map((column) => (
-            <FormItem key={column} label={t(`columns.${column}`)}>
+          {allowedColumns
+            .filter((column) => column !== "randomized")
+            .map((column) => (
+              <FormItem key={column} label={t(`columns.${column}`)}>
+                <Checkbox
+                  value={form.columns.includes(column)}
+                  onChange={() =>
+                    setForm({ ...form, columns: toggle(form.columns, column) })
+                  }
+                />
+              </FormItem>
+            ))}
+        </FormGroup>
+
+        <FormGroup label={t("filters.label")}>
+          {allowedFilters.map((filters) => (
+            <FormItem key={filters} label={t(`filters.${filters}`)}>
               <Checkbox
-                value={form.columns.includes(column)}
+                value={form.filters.includes(filters)}
                 onChange={() =>
-                  setForm({ ...form, columns: toggle(form.columns, column) })
+                  setForm({ ...form, filters: toggle(form.filters, filters) })
                 }
               />
             </FormItem>
           ))}
         </FormGroup>
+
         <TextField
           appearance="outlined"
           label={t("numEmpty")}

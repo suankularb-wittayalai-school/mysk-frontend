@@ -62,7 +62,11 @@ const ScheduleGlance: StylableFC<{
       className={cn(`flex flex-col gap-3 p-4 pt-3`, className)}
     >
       <motion.div
-        key={displayPeriod?.id || displayType}
+        key={
+          displayPeriod?.id
+            ? displayPeriod.id + displayPeriod.content.length
+            : displayType
+        }
         layout="position"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}

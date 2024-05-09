@@ -1,4 +1,3 @@
-// Imports
 import Layout from "@/components/Layout";
 import AccountNotFoundDialog from "@/components/account/AccountNotFoundDialog";
 import ErrorBoundary from "@/components/error/ErrorBoundary";
@@ -6,9 +5,11 @@ import PageFallback from "@/components/error/PageFallback";
 import AppStateContext from "@/contexts/AppStateContext";
 import PreviousRouteContext from "@/contexts/PreviousRouteContext";
 import SnackbarContext from "@/contexts/SnackbarContext";
+import UserContext from "@/contexts/UserContext";
 import "@/styles/global.css";
 import usePreviousPath from "@/utils/helpers/usePreviousPath";
 import { ColorScheme, CustomAppProps } from "@/utils/types/common";
+import { Student, Teacher, User } from "@/utils/types/person";
 import { Database } from "@/utils/types/supabase";
 import { ThemeProvider } from "@suankularb-components/react";
 import {
@@ -16,11 +17,10 @@ import {
   createPagesBrowserClient,
 } from "@supabase/auth-helpers-nextjs";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
-import va from "@vercel/analytics";
-import { Analytics } from "@vercel/analytics/react";
 import { MotionConfig } from "framer-motion";
 import { SessionProvider } from "next-auth/react";
 import { appWithTranslation } from "next-i18next";
+import PlausibleProvider, { usePlausible } from "next-plausible";
 import {
   Fira_Code,
   IBM_Plex_Sans_Thai,
@@ -29,6 +29,7 @@ import {
   Space_Grotesk,
 } from "next/font/google";
 import localFont from "next/font/local";
+import { useRouter } from "next/router";
 import { FC, ReactNode, useEffect, useState } from "react";
 import { Provider as BalancerProvider } from "react-wrap-balancer";
 
@@ -66,31 +67,41 @@ const iconFont = localFont({
  */
 const Contexts: FC<{ children: ReactNode }> = ({ children }) => {
   const { previousPath } = usePreviousPath();
+
+  const [user, setUser] = useState<User | null>(null);
+  const [person, setPerson] = useState<Student | Teacher | null>(null);
+  const [loading, setLoading] = useState(false);
+
   const [snackbar, setSnackbar] = useState<JSX.Element | null>(null);
+
   const [colorScheme, setColorScheme] = useState<ColorScheme>();
   const [navOpen, setNavOpen] = useState(false);
   const [accountNotFoundOpen, setAccountNotFoundOpen] = useState(false);
 
   return (
     <PreviousRouteContext.Provider value={previousPath}>
-      <SnackbarContext.Provider value={{ snackbar, setSnackbar }}>
-        <AppStateContext.Provider
-          value={{
-            colorScheme,
-            setColorScheme,
-            navOpen,
-            setNavOpen,
-            accountNotFoundOpen,
-            setAccountNotFoundOpen,
-          }}
-        >
-          <BalancerProvider>{children}</BalancerProvider>
-          <AccountNotFoundDialog
-            open={accountNotFoundOpen}
-            onClose={() => setAccountNotFoundOpen(false)}
-          />
-        </AppStateContext.Provider>
-      </SnackbarContext.Provider>
+      <UserContext.Provider
+        value={{ user, setUser, person, setPerson, loading, setLoading }}
+      >
+        <SnackbarContext.Provider value={{ snackbar, setSnackbar }}>
+          <AppStateContext.Provider
+            value={{
+              colorScheme,
+              setColorScheme,
+              navOpen,
+              setNavOpen,
+              accountNotFoundOpen,
+              setAccountNotFoundOpen,
+            }}
+          >
+            <BalancerProvider>{children}</BalancerProvider>
+            <AccountNotFoundDialog
+              open={accountNotFoundOpen}
+              onClose={() => setAccountNotFoundOpen(false)}
+            />
+          </AppStateContext.Provider>
+        </SnackbarContext.Provider>
+      </UserContext.Provider>
     </PreviousRouteContext.Provider>
   );
 };
@@ -100,16 +111,27 @@ function App({
   pageProps: { session, ...pageProps },
 }: CustomAppProps) {
   const { fab, navType, childURLs } = Component;
+  const plausible = usePlausible();
+  const router = useRouter();
 
-  // Supabase client
+  // Create Supabase client.
   const [supabase] = useState(() => createPagesBrowserClient<Database>());
 
-  // Track PWA installs
+  // Track PWA installs.
   useEffect(() => {
-    const trackInstall = () => va.track("Install PWA");
+    const trackInstall = () => plausible("Install PWA");
     window.addEventListener("appinstalled", trackInstall);
     return () => window.removeEventListener("appinstalled", trackInstall);
   });
+
+  // Track page views.
+  // See https://plausible.io/docs/custom-locations
+  useEffect(() => {
+    plausible("pageview", {
+      // We’re not using `router.asPath` as we’re ignoring locale and query.
+      u: window.location.origin + router.pathname + window.location.search,
+    });
+  }, [router.pathname]);
 
   return (
     <>
@@ -137,24 +159,22 @@ function App({
           <Contexts>
             {/* Framer Motion a11y */}
             <MotionConfig reducedMotion="user">
-              {/* SKCom variables */}
-              <ThemeProvider>
-                {/* Rendered app */}
-                <Layout {...{ fab, navType, childURLs }}>
-                  <ErrorBoundary Fallback={PageFallback}>
-                    <Component {...pageProps} />
-                  </ErrorBoundary>
-                </Layout>
-              </ThemeProvider>
-
               {/* Analytics */}
-              <Analytics
-                beforeSend={(event) => {
-                  // Ignore locale when reporting pages
-                  const url = event.url.replace(/\/(en-US|th)/, "");
-                  return { ...event, url };
-                }}
-              />
+              <PlausibleProvider
+                domain="mysk.school"
+                taggedEvents
+                manualPageviews
+              >
+                {/* SKCom variables */}
+                <ThemeProvider>
+                  {/* Rendered app */}
+                  <Layout fab={fab} navType={navType} childURLs={childURLs}>
+                    <ErrorBoundary Fallback={PageFallback}>
+                      <Component {...pageProps} />
+                    </ErrorBoundary>
+                  </Layout>
+                </ThemeProvider>
+              </PlausibleProvider>
             </MotionConfig>
           </Contexts>
         </SessionContextProvider>

@@ -1,8 +1,8 @@
-// Imports
 import { StudentCertificate } from "@/utils/types/certificate";
 import { Classroom } from "@/utils/types/classroom";
 import { MultiLangString } from "@/utils/types/common";
 import { Contact } from "@/utils/types/contact";
+import { ElectiveSubject } from "@/utils/types/elective";
 import { Subject, SubjectGroup } from "@/utils/types/subject";
 
 /**
@@ -56,6 +56,7 @@ export type Person = {
   middle_name: MultiLangString | null;
   nickname: MultiLangString | null;
   profile: string | null;
+  profile_url: string | null;
   citizen_id: string | null;
   birthdate: string | null;
   shirt_size: ShirtSize | null;
@@ -70,6 +71,7 @@ export type Student = Person & {
   classroom: Pick<Classroom, "id" | "number"> | null;
   class_no: number | null;
   certificates: StudentCertificate[];
+  chosen_elective: ElectiveSubject | null;
   role: UserRole.student;
 };
 
@@ -78,6 +80,7 @@ export type Teacher = Person & {
   class_advisor_at: Pick<Classroom, "id" | "number"> | null;
   subject_group: SubjectGroup;
   subjects_in_charge: Pick<Subject, "id" | "name" | "code" | "short_name">[];
+  electives_in_charge: ElectiveSubject[];
   role: UserRole.teacher;
 };
 

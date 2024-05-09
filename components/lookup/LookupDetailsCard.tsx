@@ -15,7 +15,7 @@ const LookupDetailsCard: StylableFC<{
     style={style}
     className={cn(
       `relative flex h-full flex-col overflow-hidden rounded-xl border-1
-      border-outline-variant bg-surface-variant sm:overflow-auto
+      border-outline-variant bg-surface-container-highest sm:overflow-auto
       md:overflow-hidden`,
       className,
     )}
