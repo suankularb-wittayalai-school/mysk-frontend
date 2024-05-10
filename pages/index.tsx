@@ -1,3 +1,4 @@
+import AccountNotFoundDialog from "@/components/account/AccountNotFoundDialog";
 import AppDrawer from "@/components/common/AppDrawer";
 import MultiSchemeImage from "@/components/common/MultiSchemeImage";
 import GSIButton from "@/components/landing/GSIButton";
@@ -16,7 +17,6 @@ import { UserRole } from "@/utils/types/person";
 import {
   Actions,
   Button,
-  DURATION,
   EASING,
   Text,
   transition,
@@ -65,6 +65,7 @@ const LandingPage: CustomPage = () => {
   }, [session.status, mysk.user]);
 
   const [state, setState] = useState<GSIStatus>(GSIStatus.initial);
+  const [accountNotFoundOpen, setAccountNotFoundOpen] = useState(true);
 
   // Determine if and where to redirect depending on user status.
   useEffect(() => {
@@ -144,7 +145,7 @@ const LandingPage: CustomPage = () => {
                 initial={{ opacity: 0, y: -20, filter: "blur(4px)" }}
                 animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                 exit={{ opacity: 0, y: 20, filter: "blur(4px)" }}
-                transition={transition(DURATION.medium4, EASING.standard)}
+                transition={transition(5, EASING.standard)}
                 className="flex flex-col"
               >
                 <Text element="h2" type="headline-small">
@@ -157,7 +158,11 @@ const LandingPage: CustomPage = () => {
                   {
                     // Show GSI Button initially.
                     [GSIStatus.initial]: (
-                      <GSIButton onStateChange={setState} className="mt-5" />
+                      <GSIButton
+                        onStateChange={setState}
+                        onNotFound={() => setAccountNotFoundOpen(true)}
+                        className="mt-5"
+                      />
                     ),
                     // Show Cancel Button when waiting for the user to use their
                     // Google account.
@@ -222,6 +227,12 @@ const LandingPage: CustomPage = () => {
           }
         `}</style>
       </div>
+
+      {/* Account Not Found Dialog */}
+      <AccountNotFoundDialog
+        open={accountNotFoundOpen}
+        onClose={() => setAccountNotFoundOpen(false)}
+      />
     </>
   );
 };
