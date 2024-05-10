@@ -16,18 +16,18 @@ import { LayoutGroup } from "framer-motion";
  * @param subjectList The list of Classroom Subjects to display.
  * @param query The search query to filter the list.
  * @param inEnrollmentPeriod Whether the time now is in an Enrollment Period.
- * @param enrolledElective The Elective Subject this Student is enrolled in.
+ * @param isElectiveEligible Whether the Student is in a Classroom that is eligible to enroll in Elective Subjects.
  */
 const SubjectList: StylableFC<{
   subjectList: ClassroomSubject[];
   query: string;
   inEnrollmentPeriod?: boolean;
-  enrolledElective: ElectiveSubject | null;
+  isElectiveEligible?: boolean;
 }> = ({
   subjectList,
   query,
   inEnrollmentPeriod,
-  enrolledElective,
+  isElectiveEligible,
   style,
   className,
 }) => {
@@ -46,10 +46,9 @@ const SubjectList: StylableFC<{
 
   return (
     <Columns columns={3} element="ul" style={style} className={className}>
-      <LearnElectiveEntryCard
-        inEnrollmentPeriod={inEnrollmentPeriod}
-        enrolledElective={enrolledElective}
-      />
+      {isElectiveEligible && (
+        <LearnElectiveEntryCard inEnrollmentPeriod={inEnrollmentPeriod} />
+      )}
       <LayoutGroup>
         {filterredSubjectList.map((listItem) => (
           <ClassroomSubjectCard key={listItem.id} subject={listItem} />

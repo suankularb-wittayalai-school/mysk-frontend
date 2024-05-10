@@ -6,6 +6,7 @@ import Schedule from "@/components/schedule/Schedule";
 import getLoggedInPerson from "@/utils/backend/account/getLoggedInPerson";
 import getBirthdayBoysOfClassroom from "@/utils/backend/classroom/getBirthdayBoysOfClassroom";
 import createMySKClient from "@/utils/backend/mysk/createMySKClient";
+import useMySKClient from "@/utils/backend/mysk/useMySKClient";
 import getClassSchedule from "@/utils/backend/schedule/getClassSchedule";
 import getClassroomSubjectsOfClass from "@/utils/backend/subject/getClassroomSubjectsOfClass";
 import createEmptySchedule from "@/utils/helpers/schedule/createEmptySchedule";
@@ -39,20 +40,28 @@ import { useState } from "react";
  * @param schedule Data for displaying Schedule.
  * @param subjectList The Subjects this Student’s Classroom is enrolled in.
  * @param inEnrollmentPeriod Whether the time now is in an Enrollment Period.
- * @param student The Student viewing this page.
+ * @param isElectiveEligible Whether the Student is in a Classroom that is eligible to enroll in Elective Subjects.
  */
 const LearnPage: CustomPage<{
   birthdayBoys: Pick<Student, "id" | "first_name" | "nickname" | "birthdate">[];
   schedule: ScheduleType;
   subjectList: ClassroomSubject[];
   inEnrollmentPeriod: boolean;
-  student: Student;
-}> = ({ birthdayBoys, schedule, subjectList, inEnrollmentPeriod, student }) => {
+  isElectiveEligible: boolean;
+}> = ({
+  birthdayBoys,
+  schedule,
+  subjectList,
+  inEnrollmentPeriod,
+  isElectiveEligible,
+}) => {
   const { t } = useTranslation("learn");
   const { t: ts } = useTranslation("schedule");
   const locale = useLocale();
 
-  const [query, setQuery] = useState<string>("");
+  const [query, setQuery] = useState("");
+
+  const mysk = useMySKClient();
 
   return (
     <HomeLayout>
@@ -69,8 +78,8 @@ const LearnPage: CustomPage<{
           <ScheduleGlance
             schedule={schedule}
             role={UserRole.student}
-            studentID={student.id}
-            classroom={student.classroom || undefined}
+            studentID={(mysk.person as Student)?.id}
+            classroom={(mysk.person as Student)?.classroom || undefined}
           />
         </motion.section>
 
@@ -103,7 +112,7 @@ const LearnPage: CustomPage<{
             subjectList={subjectList}
             query={query}
             inEnrollmentPeriod={inEnrollmentPeriod}
-            enrolledElective={student.chosen_elective}
+            isElectiveEligible={isElectiveEligible}
           />
         </motion.section>
       </LayoutGroup>
@@ -129,28 +138,29 @@ export const getServerSideProps: GetServerSideProps = async ({
   if (!student?.classroom) return { notFound: true };
   const { classroom } = student;
 
-  const [birthdayBoys, schedule, subjectList, inEnrollmentPeriod] =
-    await Promise.all([
-      (await getBirthdayBoysOfClassroom(supabase, classroom.id)).data,
-      (await getClassSchedule(supabase, classroom.id)).data,
-      (await getClassroomSubjectsOfClass(supabase, classroom.id)).data,
-      (await mysk.fetch<boolean>("/v1/subjects/electives/in-enrollment-period"))
-        .data,
-    ]);
+  const [
+    birthdayBoys,
+    schedule,
+    subjectList,
+    { data: inEnrollmentPeriod },
+    { data: availableElectives },
+  ] = await Promise.all([
+    (await getBirthdayBoysOfClassroom(supabase, classroom.id)).data,
+    (await getClassSchedule(supabase, classroom.id)).data,
+    (await getClassroomSubjectsOfClass(supabase, classroom.id)).data,
+    await mysk.fetch<boolean>("/v1/subjects/electives/in-enrollment-period"),
+    await mysk.fetch<IDOnly[]>("/v1/subjects/electives", {
+      query: {
+        fetch_level: "id_only",
+        filter: { data: { applicable_classroom_ids: [classroom.id] } },
+      },
+    }),
+  ]);
 
   // If the Student belongs to a Classroom that cannot choose Electives, they
   // should not see the Elective Entry Card.
-  let availableElectives: IDOnly[] = [];
-  if (inEnrollmentPeriod) {
-    // Fetch the Electives the Student can choose from.
-    const { data } = await mysk.fetch<IDOnly[]>("/v1/subjects/electives", {
-      query: {
-        fetch_level: "id_only",
-        filter: { data: { as_student_id: student.id } },
-      },
-    });
-    if (data) availableElectives = data;
-  }
+  const isElectiveEligible =
+    availableElectives !== null && availableElectives.length > 0;
 
   return {
     props: {
@@ -166,8 +176,8 @@ export const getServerSideProps: GetServerSideProps = async ({
       birthdayBoys: birthdayBoys || [],
       schedule: schedule || createEmptySchedule(1, 5),
       subjectList,
-      inEnrollmentPeriod: inEnrollmentPeriod && availableElectives.length > 0,
-      student,
+      inEnrollmentPeriod,
+      isElectiveEligible,
     },
   };
 };
