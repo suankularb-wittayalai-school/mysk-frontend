@@ -77,6 +77,8 @@ const ChooseButton: StylableFC<{
         setSnackbar(<Snackbar>{t("snackbar.notAllowed")}</Snackbar>);
       } else setSnackbar(<Snackbar>{tx("snackbar.failure")}</Snackbar>);
       logError("enroll", error);
+      await refreshProps();
+      return false;
     }
     if (enrolledElective)
       plausible("Change Elective", {
