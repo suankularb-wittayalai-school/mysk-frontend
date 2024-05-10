@@ -89,6 +89,7 @@ const ChooseButton: StylableFC<{
       });
     plausible("Enroll in Elective", { props: { subject } });
     await refreshProps();
+    setSnackbar(<Snackbar>{t("snackbar.enrolled")}</Snackbar>);
     onSucess?.();
     return true;
   }
