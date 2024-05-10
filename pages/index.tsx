@@ -17,6 +17,7 @@ import { UserRole } from "@/utils/types/person";
 import {
   Actions,
   Button,
+  DURATION,
   EASING,
   Text,
   transition,
@@ -65,7 +66,7 @@ const LandingPage: CustomPage = () => {
   }, [session.status, mysk.user]);
 
   const [state, setState] = useState<GSIStatus>(GSIStatus.initial);
-  const [accountNotFoundOpen, setAccountNotFoundOpen] = useState(true);
+  const [accountNotFoundOpen, setAccountNotFoundOpen] = useState(false);
 
   // Determine if and where to redirect depending on user status.
   useEffect(() => {
@@ -145,7 +146,7 @@ const LandingPage: CustomPage = () => {
                 initial={{ opacity: 0, y: -20, filter: "blur(4px)" }}
                 animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                 exit={{ opacity: 0, y: 20, filter: "blur(4px)" }}
-                transition={transition(5, EASING.standard)}
+                transition={transition(DURATION.medium4, EASING.standard)}
                 className="flex flex-col"
               >
                 <Text element="h2" type="headline-small">
